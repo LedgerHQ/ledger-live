@@ -7,12 +7,41 @@ import * as config from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { Account, TokenAccount, Operation } from "@ledgerhq/types-live";
 import { ActionButtonEvent } from "~/components/FabActions";
-import * as featureFlagsIndex from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import * as accountIndex from "@ledgerhq/live-common/account/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { TFunction } from "i18next";
 import { render } from "@testing-library/react-native";
 import React from "react";
+
+jest.mock("@ledgerhq/live-common/config/index", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/config/index"),
+}));
+
+jest.mock("@ledgerhq/live-common/account/index", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/account/index");
+  const mocked: Record<string, unknown> = { __esModule: true };
+  for (const key of Object.keys(actual)) {
+    let value: unknown;
+    let assigned = false;
+    Object.defineProperty(mocked, key, {
+      configurable: true,
+      enumerable: true,
+      get: () => (assigned ? value : actual[key]),
+      set: v => {
+        value = v;
+        assigned = true;
+      },
+    });
+  }
+  return mocked;
+});
+
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
+  useFeature: jest.fn(),
+}));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridgeOrNull: jest.fn(),
@@ -39,7 +68,7 @@ describe("Testing ListHeaderComponent Component", () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      jest.spyOn(featureFlagsIndex, "useFeature").mockImplementation(jest.fn());
+      (useFeature as jest.Mock).mockReturnValue(undefined);
       jest
         .spyOn(accountIndex, "getMainAccount")
         .mockImplementation((account: TokenAccount | Account, _: unknown) => account as Account);

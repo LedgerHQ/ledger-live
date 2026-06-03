@@ -8,8 +8,8 @@ import {
   CAROUSEL_CAMPAIGN_ID,
   carouselCampaignCard,
   genericAwarenessModalTestContentCards,
-} from "../../__tests__/fixtures";
-import { dispatchGenericAwarenessModalThunk } from "../../__tests__/testHelpers";
+} from "../../testUtils/fixtures";
+import { dispatchGenericAwarenessModalThunk } from "../../testUtils/modalTestUtils";
 import {
   closeGenericAwarenessModalDialog,
   openGenericAwarenessModalDialog,

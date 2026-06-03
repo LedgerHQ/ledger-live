@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { Device } from "@ledgerhq/types-devices";
 import Animation from "~/renderer/animations";
@@ -9,11 +9,21 @@ import { getProductName } from "LLD/utils/getProductName";
 
 type SimplifiedTransactionConfirmProps = Readonly<{
   device: Device | null | undefined;
+  onShown?: () => void;
 }>;
 
-export const SimplifiedTransactionConfirm = ({ device }: SimplifiedTransactionConfirmProps) => {
+export const SimplifiedTransactionConfirm = ({
+  device,
+  onShown,
+}: SimplifiedTransactionConfirmProps) => {
   const { t } = useTranslation();
   const type = useTheme().theme;
+
+  const hasTrackedRef = useRef(false);
+  if (device && !hasTrackedRef.current) {
+    hasTrackedRef.current = true;
+    onShown?.();
+  }
 
   if (!device) return null;
 

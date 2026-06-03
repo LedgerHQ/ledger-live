@@ -201,7 +201,7 @@ describe("datadog logs", () => {
       broadcastLogger({
         status: "failure",
         error,
-        txPayload: "payload",
+        txPayload: { signature: "signature" },
         appVersion: "1.0.0",
         currencyId: "ethereum",
         family: "evm",
@@ -212,7 +212,7 @@ describe("datadog logs", () => {
         {
           event: {
             status: "failure",
-            txPayload: "payload",
+            txPayload: { signature: "signature" },
             appVersion: "1.0.0",
             currencyId: "ethereum",
             family: "evm",

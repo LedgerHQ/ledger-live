@@ -9,6 +9,7 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { SourceFlowProvider } from "../utils/SourceFlowContext";
 import { DeviceConnectionComponentLWMView } from "./DeviceConnectionComponentLWMView";
 import type { DeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
@@ -34,12 +35,14 @@ function renderView(
   callbacks: Partial<Omit<DeviceConnectionComponentLWMViewModel, "state">> = {},
 ) {
   return render(
-    <DeviceConnectionComponentLWMView
-      state={state}
-      platform={callbacks.platform ?? "android"}
-      onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
-      onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
-    />,
+    <SourceFlowProvider value="my_ledger">
+      <DeviceConnectionComponentLWMView
+        state={state}
+        platform={callbacks.platform ?? "android"}
+        onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
+        onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
+      />
+    </SourceFlowProvider>,
   );
 }
 
@@ -107,7 +110,7 @@ describe("DeviceConnectionComponentLWMView", () => {
   });
 
   it("should render the connecting state", () => {
-    renderView({ type: ConnectDeviceUIStateTypes.Connecting });
+    renderView({ type: ConnectDeviceUIStateTypes.Connecting, device: makeKnownDevice() });
 
     expect(screen.getByText("Loading")).toBeVisible();
   });
@@ -116,6 +119,7 @@ describe("DeviceConnectionComponentLWMView", () => {
     renderView({
       type: ConnectDeviceUIStateTypes.ConnectionError,
       error: { type: ConnectionErrorTypes.Unknown },
+      device: makeKnownDevice(),
       retry: jest.fn(),
       ignore: jest.fn(),
     });
@@ -130,8 +134,8 @@ describe("DeviceConnectionComponentLWMView", () => {
   });
 
   it("should throw when the state is not handled", () => {
-    expect(() =>
-      renderView({ type: "unsupported" } as unknown as ConnectDeviceUIState),
-    ).toThrow('Unhandled connect device state: {"type":"unsupported"}');
+    expect(() => renderView({ type: "unsupported" } as unknown as ConnectDeviceUIState)).toThrow(
+      'Unhandled connect device state: {"type":"unsupported"}',
+    );
   });
 });

@@ -5,9 +5,6 @@ export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], t
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
-        featureFlags: {
-          llmAccountListUI: { enabled: true },
-        },
         cliCommands: [liveDataCommand(account)],
       });
       await app.portfolio.waitForPortfolioPageToLoad();

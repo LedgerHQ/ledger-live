@@ -17,6 +17,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import Button from "~/components/Button";
+import SafeAreaView from "~/components/SafeAreaView";
 import CurrencyInput from "~/components/CurrencyInput";
 import LText from "~/components/LText";
 import Warning from "~/icons/Warning";
@@ -137,13 +138,14 @@ function DelegationAmount({ navigation, route }: Props) {
         : "cosmos.delegation.flow.steps.amount.incorrectAmount";
 
   return (
-    <View
+    <SafeAreaView
       style={[
         styles.root,
         {
           backgroundColor: colors.background.main,
         },
       ]}
+      edges={["bottom"]}
     >
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -281,7 +283,7 @@ function DelegationAmount({ navigation, route }: Props) {
           </View>
         </TouchableWithoutFeedback>
       </KeyboardView>
-    </View>
+    </SafeAreaView>
   );
 }
 

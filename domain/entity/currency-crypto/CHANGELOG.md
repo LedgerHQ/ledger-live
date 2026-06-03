@@ -1,5 +1,17 @@
 # @domain/entity-currency-crypto
 
+## 0.3.0
+
+### Minor Changes
+
+- [#17657](https://github.com/LedgerHQ/ledger-live/pull/17657) [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Trigger Sei app instead of Ethereum app for SEI EVM send & receive
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#17657](https://github.com/LedgerHQ/ledger-live/pull/17657) [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Trigger Sei app instead of Ethereum app for SEI EVM send & receive
+
 ## 0.2.0
 
 ### Minor Changes

@@ -328,6 +328,11 @@ export const setDismissedContentCards = (payload: { id: string; timestamp: numbe
   payload,
 });
 
+export const removeDismissedContentCards = (payload: { ids: string[] }) => ({
+  type: "REMOVE_DISMISSED_CONTENT_CARDS",
+  payload,
+});
+
 export const clearDismissedContentCards = (payload: { now: Date }) => ({
   type: "CLEAR_DISMISSED_CONTENT_CARDS",
   payload,

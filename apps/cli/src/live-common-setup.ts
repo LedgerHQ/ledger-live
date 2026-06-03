@@ -1,4 +1,6 @@
 export * from "./live-common-setup-base";
+import fs from "node:fs";
+import path from "node:path";
 import invariant from "invariant";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { Observable } from "rxjs";
@@ -103,18 +105,73 @@ if (SPECULOS_API_PORT) {
 
 const cacheBle = {};
 
-async function init() {
-  const {
-    default: TransportNodeHid,
+const DEVICE_DEPS_HINT =
+  "\n[device-deps] Native USB/HID bindings look missing or broken. " +
+  "Run this from the monorepo root, then retry:\n  pnpm build:device-deps\n";
+
+let deviceDepsHintShown = false;
+function printDeviceDepsHint() {
+  if (deviceDepsHintShown) return;
+  deviceDepsHintShown = true;
+  console.error(DEVICE_DEPS_HINT);
+}
+
+function isMissingNativeBinding(e: unknown): boolean {
+  const msg = (e as { message?: string })?.message ?? "";
+  return (
+    msg.includes("Could not locate the bindings file") ||
+    msg.includes("HID.node") ||
+    msg.includes("HID_hidraw.node") ||
+    msg.includes("NODE_MODULE_VERSION") ||
+    (msg.includes("dlopen") && msg.includes(".node")) ||
+    /Cannot find module ['"]node-hid['"]/.test(msg)
+  );
+}
+
+function isNodeHidNativeBindingBuilt(): boolean {
+  try {
     // oxlint-disable-next-line typescript/no-require-imports
-  } = require("@ledgerhq/hw-transport-node-hid");
+    const pkgDir = path.dirname(require.resolve("node-hid"));
+    const releaseDir = path.join(pkgDir, "build", "Release");
+    return ["HID.node", "HID_hidraw.node"].some(c =>
+      fs.existsSync(path.join(releaseDir, c)),
+    );
+  } catch {
+    return false;
+  }
+}
+
+async function init() {
+  if (!SPECULOS_APDU_PORT && !isNodeHidNativeBindingBuilt()) {
+    printDeviceDepsHint();
+  }
+
+  let TransportNodeHid: any;
+  try {
+    // oxlint-disable-next-line typescript/no-require-imports
+    TransportNodeHid = require("@ledgerhq/hw-transport-node-hid").default;
+  } catch (e) {
+    if (isMissingNativeBinding(e)) {
+      if (!SPECULOS_APDU_PORT) printDeviceDepsHint();
+      return;
+    }
+    throw e;
+  }
 
   registerTransportModule({
     id: "hid",
-    open: devicePath =>
-      retry(() => TransportNodeHid.open(devicePath), {
-        context: "open-hid",
-      }),
+    open: async devicePath => {
+      try {
+        return await retry(() => TransportNodeHid.open(devicePath), {
+          context: "open-hid",
+        });
+      } catch (e) {
+        if (isMissingNativeBinding(e)) {
+          printDeviceDepsHint();
+        }
+        throw e;
+      }
+    },
     discovery: new Observable(TransportNodeHid.listen).pipe(
       map((e: any) => ({
         type: e.type,

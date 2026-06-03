@@ -22,6 +22,10 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arc Testnet unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arc unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
@@ -167,6 +171,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
@@ -432,6 +438,10 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arc Testnet unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arc unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
@@ -577,6 +587,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
@@ -842,6 +854,10 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arc Testnet unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arc unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
@@ -987,6 +1003,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
@@ -1252,6 +1270,10 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arc Testnet unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arc unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ark unit (ARK) 1`] = `"123 456 789,00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Assethub Westend unit (WND) 1`] = `"12 345,678900000000- -WND"`;
@@ -1397,6 +1419,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hcash unit (hcash) 1`] = `"123 456 789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hedera unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
@@ -1662,6 +1686,10 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arc Testnet unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arc unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
@@ -1807,6 +1835,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
@@ -2072,6 +2102,10 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arc Testnet unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arc unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
@@ -2217,6 +2251,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
@@ -2482,6 +2518,10 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arc Testnet unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arc unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
@@ -2627,6 +2667,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
@@ -2892,6 +2934,10 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arc Testnet unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arc unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ark unit (ARK) 1`] = `"123 456 789,00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Assethub Westend unit (WND) 1`] = `"12 345,678900000000- -WND"`;
@@ -3037,6 +3083,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hcash unit (hcash) 1`] = `"123 456 789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hedera unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
@@ -3302,6 +3350,10 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arc Testnet unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arc unit (USDC) 1`] = `"0,012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
@@ -3447,6 +3499,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
@@ -3712,6 +3766,10 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arc Testnet unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arc unit (USDC) 1`] = `"0.012345678900000000- -USDC"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
@@ -3857,6 +3915,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
@@ -4122,6 +4182,10 @@ exports[`formatCurrencyUnit with default options should correctly format Arbitru
 
 exports[`formatCurrencyUnit with default options should correctly format Arbitrum unit (ETH) 1`] = `"0.0123456"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Arc Testnet unit (USDC) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Arc unit (USDC) 1`] = `"0.0123456"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Ark unit (ARK) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Assethub Westend unit (WND) 1`] = `"12,345.6"`;
@@ -4267,6 +4331,8 @@ exports[`formatCurrencyUnit with default options should correctly format Groestl
 exports[`formatCurrencyUnit with default options should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Hcash unit (hcash) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Hedera unit (HBAR) 1`] = `"123,456,789"`;
 

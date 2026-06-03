@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
 
-const TITLE_NUMBER_OF_LINES = 2;
+const TITLE_NUMBER_OF_LINES = 1;
 const SUBTITLE_NUMBER_OF_LINES = 3;
 
 type CarouselSlideItemProps = GenericAwarenessModalCarouselSlide &
@@ -93,6 +93,6 @@ export function CarouselSlideItem({
 const styles = StyleSheet.create({
   image: {
     width: "80%",
-    aspectRatio: 9 / 16,
+    aspectRatio: 2 / 3,
   },
 });

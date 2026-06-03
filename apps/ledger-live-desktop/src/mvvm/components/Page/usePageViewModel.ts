@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SCROLL_UP_BUTTON_THRESHOLD, SCROLL_TO_TOP_EVENT } from "./constants";
 import { shouldDisplayRightPanel as isRightPanelPage } from "./utils";
-import { useRightPanelViewModel } from "LLD/components/RightPanel/useRightPanelViewModel";
+import { useRightPanelVisibility } from "LLD/components/RightPanel/useRightPanelVisibility";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
@@ -28,7 +28,7 @@ export const usePageViewModel = (): PageViewModelResult => {
     shouldDisplayBrazePlacement,
     shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
-  const { shouldDisplay: isRightPanelEnabled } = useRightPanelViewModel();
+  const isRightPanelEnabled = useRightPanelVisibility();
 
   const shouldRenderRightPanel =
     isRightPanelPage(pathname, { shouldDisplayAggregatedAssets }) && isRightPanelEnabled;

@@ -26,26 +26,46 @@ import {
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 
-// Generic Coin Framework currency bridges are created on demand; cache ensures referential stability.
-const currencyBridgeCache: Record<string, CurrencyBridge> = {};
-// All account bridges are wrapped (wrapAccountBridge); cache ensures referential stability.
-const accountBridgeCache: Record<string, ResolvedAccountBridge<any>> = {};
+// Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
+// Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
+const currencyBridgePromiseCache: Record<string, Promise<CurrencyBridge>> = {};
+const accountBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>>> = {};
+const mockBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>> | undefined> = {};
+const unsupportedBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>>> = {};
 
-/**
- * Returns the CurrencyBridge for a given CryptoCurrency.
- *
- * **Ongoing migration**: this function will become async as part of the ESM coin modules migration
- * (dynamic `import()` replacing synchronous `require()`). Write call sites that are async-compatible today:
- *
- * - **React component**: use the `useCurrencyBridge(currency)` hook instead — it handles loading states.
- * - **RxJS observable**: wrap with `from(Promise.resolve(getCurrencyBridge(currency))).pipe(mergeMap(bridge => ...))`
- * - **async function**:
- *   - ❌ `const bridge = getCurrencyBridge(currency)` — not forward-compatible
- *   - ✅ `const bridge = await Promise.resolve(getCurrencyBridge(currency))` — compatible with both sync and future async forms.
- */
-export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+// Annotate a Promise with React's use() hint fields so it returns synchronously after settlement.
+function annotatePromise<T>(p: Promise<T>): Promise<T> {
+  p.then(
+    value => {
+      Object.assign(p, { status: "fulfilled", value });
+    },
+    reason => {
+      Object.assign(p, { status: "rejected", reason });
+    },
+  );
+  return p;
+}
+
+export function clearBridgeCache(family?: string): void {
+  if (family === undefined) {
+    for (const k of Object.keys(currencyBridgePromiseCache)) delete currencyBridgePromiseCache[k];
+    for (const k of Object.keys(accountBridgePromiseCache)) delete accountBridgePromiseCache[k];
+    for (const k of Object.keys(mockBridgePromiseCache)) delete mockBridgePromiseCache[k];
+    for (const k of Object.keys(unsupportedBridgePromiseCache)) delete unsupportedBridgePromiseCache[k];
+    return;
+  }
+  delete currencyBridgePromiseCache[family];
+  delete accountBridgePromiseCache[family];
+  delete mockBridgePromiseCache[family];
+  const prefix = `${family}|`;
+  for (const k of Object.keys(unsupportedBridgePromiseCache)) {
+    if (k.startsWith(prefix)) delete unsupportedBridgePromiseCache[k];
+  }
+}
+
+async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBridge> {
   if (getEnv("MOCK")) {
-    const mockBridge = loadMockBridgeForFamily(currency.family);
+    const mockBridge = await loadMockBridgeForFamily(currency.family);
     // TODO Remove once we delete mock bridges tests
     if (mockBridge) {
       mockBridge.loadCoinConfig?.();
@@ -57,95 +77,107 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   if (isGenericCoinFrameworkFamily(currency.family)) {
-    if (!currencyBridgeCache[currency.family]) {
-      currencyBridgeCache[currency.family] = getCoinFrameworkCurrencyBridge(currency.family, "local");
-    }
-    return currencyBridgeCache[currency.family];
+    return getCoinFrameworkCurrencyBridge(currency.family, "local");
   }
 
-  const setup = loadSetupForFamily(currency.family);
+  const setup = await loadSetupForFamily(currency.family);
   if (!setup?.bridge) {
     throw new CurrencyNotSupported("no implementation available for currency " + currency.id, {
       currencyName: currency.id,
     });
   }
   return setup.bridge.currencyBridge;
+}
+
+export const getCurrencyBridge = (currency: CryptoCurrency): Promise<CurrencyBridge> => {
+  const family = currency.family;
+  if (!currencyBridgePromiseCache[family]) {
+    currencyBridgePromiseCache[family] = annotatePromise(buildCurrencyBridge(currency));
+  }
+  return currencyBridgePromiseCache[family];
 };
 
-/**
- * Returns the AccountBridge for a given account (and optional parent account).
- *
- * **Ongoing migration**: this function will become async as part of the ESM coin modules migration
- * (dynamic `import()` replacing synchronous `require()`). Write call sites that are async-compatible today:
- *
- * - **React component**: use the `useAccountBridge(account)` hook instead — it handles loading states.
- * - **RxJS observable**: wrap with `from(Promise.resolve(getAccountBridge(account))).pipe(mergeMap(bridge => ...))`
- * - **async function**:
- *   - ❌ `const bridge = getAccountBridge(account)` — not forward-compatible
- *   - ✅ `const bridge = await Promise.resolve(getAccountBridge(account))` — compatible with both sync and future async forms.
- */
-export const getAccountBridge = (
+async function buildAccountBridgeForFamily(family: string): Promise<ResolvedAccountBridge<any>> {
+  let rawBridge: AccountBridge<any>;
+  if (isGenericCoinFrameworkFamily(family)) {
+    rawBridge = await getCoinFrameworkAccountBridge(family, "local");
+  } else {
+    const setup = await loadSetupForFamily(family);
+    if (!setup?.bridge) {
+      throw new CurrencyNotSupported("account bridge not found " + family);
+    }
+    rawBridge = setup.bridge.accountBridge;
+  }
+  return wrapAccountBridge(rawBridge, family);
+}
+
+function getCachedBridgePromise(family: string): Promise<ResolvedAccountBridge<any>> {
+  if (!accountBridgePromiseCache[family]) {
+    accountBridgePromiseCache[family] = annotatePromise(buildAccountBridgeForFamily(family));
+  }
+  return accountBridgePromiseCache[family];
+}
+
+export function getAccountBridgeByFamily(
+  family: string,
+  accountId?: string,
+): Promise<ResolvedAccountBridge<any>> {
+  if (accountId) {
+    const { type } = decodeAccountId(accountId);
+    if (type === "mock") {
+      if (!mockBridgePromiseCache[family]) {
+        const mockP = loadMockBridgeForFamily(family);
+        if (mockP) {
+          mockBridgePromiseCache[family] = annotatePromise(
+            (async () => {
+              const mockBridge = await mockP;
+              if (mockBridge) {
+                // TODO Remove once we delete mock bridges tests
+                mockBridge.loadCoinConfig?.();
+                return wrapAccountBridge(mockBridge.accountBridge, family);
+              }
+              return getCachedBridgePromise(family);
+            })(),
+          );
+        }
+      }
+      const cachedMock = mockBridgePromiseCache[family];
+      if (cachedMock) {
+        return cachedMock;
+      }
+    }
+  }
+  return getCachedBridgePromise(family);
+}
+
+export function getAccountBridge(
   account: AccountLike,
   parentAccount?: Account | null,
-): ResolvedAccountBridge<any> => {
+): Promise<ResolvedAccountBridge<any>> {
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
 
   if (supportedError) {
-    throw supportedError;
-  }
-
-  try {
-    return getAccountBridgeByFamily(currency.family, mainAccount.id);
-  } catch {
-    throw new CurrencyNotSupported("currency not supported " + currency.id, {
-      currencyName: currency.id,
-    });
-  }
-};
-
-export function getAccountBridgeByFamily(
-  family: string,
-  accountId?: string,
-): ResolvedAccountBridge<any> {
-  if (accountId) {
-    const { type } = decodeAccountId(accountId);
-
-    if (type === "mock") {
-      const mockBridge = loadMockBridgeForFamily(family);
-      // TODO Remove once we delete mock bridges tests
-      if (mockBridge) {
-        mockBridge.loadCoinConfig?.();
-        return wrapAccountBridge(mockBridge.accountBridge, family);
-      }
+    const key = `${currency.family}|${currency.id}|${mainAccount.derivationMode}`;
+    if (!unsupportedBridgePromiseCache[key]) {
+      unsupportedBridgePromiseCache[key] = annotatePromise(Promise.reject(supportedError));
     }
+    return unsupportedBridgePromiseCache[key];
   }
 
-  if (!accountBridgeCache[family]) {
-    let rawBridge: AccountBridge<any>;
-    if (isGenericCoinFrameworkFamily(family)) {
-      rawBridge = getCoinFrameworkAccountBridge(family, "local");
-    } else {
-      const setup = loadSetupForFamily(family);
-      if (!setup?.bridge) {
-        throw new CurrencyNotSupported("account bridge not found " + family);
-      }
-      rawBridge = setup.bridge.accountBridge;
-    }
-    accountBridgeCache[family] = wrapAccountBridge(rawBridge, family);
-  }
-  return accountBridgeCache[family];
+  return getAccountBridgeByFamily(currency.family, mainAccount.id);
 }
 
-function wrapAccountBridge<T extends TransactionCommon>(
+async function wrapAccountBridge<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
   family: string,
-): ResolvedAccountBridge<T> {
+): Promise<ResolvedAccountBridge<T>> {
+  const extensions = await loadBridgeExtensionsForFamily(family);
   return {
     ...defaultBridgeExtensions,
     ...bridge,
-    ...loadBridgeExtensionsForFamily(family),
+    ...extensions,
     getTransactionStatus: async (...args) => {
       const blockchainTransactionStatus = await bridge.getTransactionStatus(...args);
 

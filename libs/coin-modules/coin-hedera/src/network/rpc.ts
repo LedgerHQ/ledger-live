@@ -1,37 +1,59 @@
 import type { Transaction as HederaTransaction, TransactionResponse } from "@hashgraph/sdk";
 import { Client } from "@hashgraph/sdk";
+import { type HederaCoinConfig } from "../config";
+import { resolveConfig } from "../logic/utils";
 
-let _hederaClientPromise: Promise<Client> | null = null;
-
-async function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
-  return transaction.execute(await getInstance());
+async function broadcastTransaction({
+  configOrCurrencyId,
+  transaction,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  transaction: HederaTransaction;
+}): Promise<TransactionResponse> {
+  return transaction.execute(await getInstance(configOrCurrencyId));
 }
 
-async function createClient(): Promise<Client> {
-  const client = await Client.forMainnetAsync();
+const _hederaClients: Map<string, Promise<Client>> = new Map();
+
+async function createClient(networkType: string): Promise<Client> {
+  const client =
+    networkType === "mainnet" ? await Client.forMainnetAsync() : await Client.forTestnetAsync();
+
+  // limit max nodes per transaction to 1 to avoid multiple signatures
   client.setMaxNodesPerTransaction(1);
+
   return client;
 }
 
-async function getInstance(): Promise<Client> {
-  _hederaClientPromise ??= createClient().catch(error => {
-    _hederaClientPromise = null;
-    throw error;
-  });
+async function getInstance(configOrCurrencyId: HederaCoinConfig | string): Promise<Client> {
+  const { networkType } = resolveConfig(configOrCurrencyId);
 
-  return _hederaClientPromise;
+  if (!_hederaClients.has(networkType)) {
+    const promise = createClient(networkType).catch(error => {
+      _hederaClients.delete(networkType);
+      throw error;
+    });
+
+    _hederaClients.set(networkType, promise);
+  }
+
+  return _hederaClients.get(networkType)!;
 }
 
-// for testing purposes only, used to reset singleton client instance
+// for testing purposes only, used to reset singleton client instances
 async function _resetInstance() {
-  try {
-    const client = await _hederaClientPromise;
-    client?.close();
-  } catch {
-    // intentionally ignored during clean up
-  } finally {
-    _hederaClientPromise = null;
+  const promises = [..._hederaClients.values()];
+
+  for (const promise of promises) {
+    try {
+      const client = await promise;
+      client?.close();
+    } catch {
+      // intentionally ignored during clean up
+    }
   }
+
+  _hederaClients.clear();
 }
 
 export const rpcClient = {

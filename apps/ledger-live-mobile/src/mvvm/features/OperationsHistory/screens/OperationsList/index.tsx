@@ -35,6 +35,7 @@ export default function OperationsList({ route }: Props) {
     sections,
     completed,
     isEmpty,
+    hasPendingOperations,
     onEndReached,
   } = useOperationsListViewModel(accountIds);
 
@@ -89,7 +90,7 @@ export default function OperationsList({ route }: Props) {
 
   return (
     <Box lx={rootStyle}>
-      <TrackScreen name="OperationsList" />
+      <TrackScreen name="OperationsList" has_pending_operations={hasPendingOperations} />
       <SectionList
         sections={sections}
         testID="operations-list-section-list"

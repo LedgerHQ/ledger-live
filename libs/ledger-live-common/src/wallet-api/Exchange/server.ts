@@ -62,6 +62,7 @@ import { handleErrors } from "./handleSwapErrors";
 import get from "lodash/get";
 import { SwapError } from "./SwapError";
 import { getQuotes } from "./quotes";
+import { resolveQuotesInput } from "./quotes/resolveQuotesInput";
 import { fetchSpotPrices } from "./quotes/service/fetchSpotPrices";
 
 export { ExchangeType };
@@ -170,6 +171,8 @@ type ExchangeUiHooks = {
  *   countervalue strings on `Quote.formatted` and to price spot values
  *   for the unrealistic-quote warning. Sourced from the wallet's
  *   counter-value setting.
+ * @param deps.deviceModelId - Optional last-seen device model id, used for
+ *   device-specific quote warnings.
  * @param deps.uiHooks - Host-specific callbacks that drive the
  *   device / drawer flows.
  * @returns The wallet-api `Handlers` map for the Exchange module.
@@ -181,6 +184,7 @@ export const handlers = ({
   flags,
   locale,
   counterValueCurrency,
+  deviceModelId,
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
@@ -195,6 +199,7 @@ export const handlers = ({
   flags?: FeatureFlags;
   locale: string;
   counterValueCurrency: string;
+  deviceModelId?: DeviceModelId;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
@@ -762,20 +767,27 @@ export const handlers = ({
         if (!params) {
           throw new ServerError(createUnknownError({ message: "params is undefined" }));
         }
-        // Fetch spot prices for the three currency ids that matter for
-        // the `unrealisticQuote` warning (send + receive + optional
-        // network-fee currency) against the wallet's counter-value
-        // setting. `fetchSpotPrices` never throws: on any failure it
+        const quotesInput = resolveQuotesInput(params.data, accounts);
+        // Fetch spot prices for the resolved currency ids that matter for
+        // quote warnings. `fetchSpotPrices` never throws: on any failure it
         // returns `{}` and the warning check short-circuits.
         const spotPrices = await fetchSpotPrices({
-          currencyIds: [
-            params.data.sendCurrencyId,
-            params.data.receiveCurrencyId,
-            params.data.networkFeesCurrencyId,
-          ],
+          currencyIds: quotesInput
+            ? [
+                quotesInput.sendCurrencyId,
+                quotesInput.receiveCurrencyId,
+                quotesInput.networkFeesCurrencyId,
+              ]
+            : [],
           counterValue: counterValueCurrency,
         });
-        return getQuotes(params, { accounts, spotPrices, locale, counterValueCurrency });
+        return getQuotes(params, {
+          accounts,
+          spotPrices,
+          locale,
+          counterValueCurrency,
+          deviceModelId,
+        });
       },
     ),
   }) as const satisfies Handlers;

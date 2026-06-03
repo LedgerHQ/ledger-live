@@ -7,6 +7,14 @@ export type introspection_types = {
     kind: "OBJECT";
     name: "Address";
     fields: {
+      address: {
+        name: "address";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "SuiAddress"; ofType: null };
+        };
+      };
       balances: {
         name: "balances";
         type: { kind: "OBJECT"; name: "BalanceConnection"; ofType: null };
@@ -19,6 +27,13 @@ export type introspection_types = {
         name: "objects";
         type: { kind: "OBJECT"; name: "MoveObjectConnection"; ofType: null };
       };
+    };
+  };
+  AddressOwner: {
+    kind: "OBJECT";
+    name: "AddressOwner";
+    fields: {
+      address: { name: "address"; type: { kind: "OBJECT"; name: "Address"; ofType: null } };
     };
   };
   Balance: {
@@ -82,7 +97,26 @@ export type introspection_types = {
         };
       };
       digest: { name: "digest"; type: { kind: "SCALAR"; name: "String"; ofType: null } };
+      previousCheckpointDigest: {
+        name: "previousCheckpointDigest";
+        type: { kind: "SCALAR"; name: "String"; ofType: null };
+      };
       timestamp: { name: "timestamp"; type: { kind: "SCALAR"; name: "DateTime"; ofType: null } };
+      transactions: {
+        name: "transactions";
+        type: { kind: "OBJECT"; name: "TransactionConnection"; ofType: null };
+      };
+    };
+  };
+  ConsensusAddressOwner: {
+    kind: "OBJECT";
+    name: "ConsensusAddressOwner";
+    fields: {
+      startVersion: {
+        name: "startVersion";
+        type: { kind: "SCALAR"; name: "UInt53"; ofType: null };
+      };
+      address: { name: "address"; type: { kind: "OBJECT"; name: "Address"; ofType: null } };
     };
   };
   DateTime: unknown;
@@ -123,18 +157,106 @@ export type introspection_types = {
           ofType: { kind: "SCALAR"; name: "UInt53"; ofType: null };
         };
       };
+      endTimestamp: {
+        name: "endTimestamp";
+        type: { kind: "SCALAR"; name: "DateTime"; ofType: null };
+      };
+      referenceGasPrice: {
+        name: "referenceGasPrice";
+        type: { kind: "SCALAR"; name: "BigInt"; ofType: null };
+      };
+      startTimestamp: {
+        name: "startTimestamp";
+        type: { kind: "SCALAR"; name: "DateTime"; ofType: null };
+      };
       systemState: {
         name: "systemState";
         type: { kind: "OBJECT"; name: "MoveValue"; ofType: null };
       };
     };
   };
+  Event: {
+    kind: "OBJECT";
+    name: "Event";
+    fields: {
+      contents: { name: "contents"; type: { kind: "OBJECT"; name: "MoveValue"; ofType: null } };
+    };
+  };
+  EventConnection: {
+    kind: "OBJECT";
+    name: "EventConnection";
+    fields: {
+      nodes: {
+        name: "nodes";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: {
+            kind: "LIST";
+            name: never;
+            ofType: {
+              kind: "NON_NULL";
+              name: never;
+              ofType: { kind: "OBJECT"; name: "Event"; ofType: null };
+            };
+          };
+        };
+      };
+    };
+  };
+  ExecutionResult: {
+    kind: "OBJECT";
+    name: "ExecutionResult";
+    fields: {
+      effects: {
+        name: "effects";
+        type: { kind: "OBJECT"; name: "TransactionEffects"; ofType: null };
+      };
+    };
+  };
+  ExecutionStatus: { name: "ExecutionStatus"; enumValues: "SUCCESS" | "FAILURE" };
   Float: unknown;
+  GasCostSummary: {
+    kind: "OBJECT";
+    name: "GasCostSummary";
+    fields: {
+      computationCost: {
+        name: "computationCost";
+        type: { kind: "SCALAR"; name: "UInt53"; ofType: null };
+      };
+      storageCost: { name: "storageCost"; type: { kind: "SCALAR"; name: "UInt53"; ofType: null } };
+      storageRebate: {
+        name: "storageRebate";
+        type: { kind: "SCALAR"; name: "UInt53"; ofType: null };
+      };
+      nonRefundableStorageFee: {
+        name: "nonRefundableStorageFee";
+        type: { kind: "SCALAR"; name: "UInt53"; ofType: null };
+      };
+    };
+  };
+  GasEffects: {
+    kind: "OBJECT";
+    name: "GasEffects";
+    fields: {
+      gasSummary: {
+        name: "gasSummary";
+        type: { kind: "OBJECT"; name: "GasCostSummary"; ofType: null };
+      };
+    };
+  };
+  GasInput: {
+    kind: "OBJECT";
+    name: "GasInput";
+    fields: {
+      gasBudget: { name: "gasBudget"; type: { kind: "SCALAR"; name: "BigInt"; ofType: null } };
+    };
+  };
   IAddressable: {
     kind: "INTERFACE";
     name: "IAddressable";
     fields: {};
-    possibleTypes: "Address" | "DynamicField" | "MoveObject";
+    possibleTypes: "Address" | "DynamicField" | "MoveObject" | "MovePackage" | "Object";
   };
   ID: unknown;
   IMoveObject: {
@@ -147,14 +269,109 @@ export type introspection_types = {
     kind: "INTERFACE";
     name: "IObject";
     fields: {};
-    possibleTypes: "DynamicField" | "MoveObject";
+    possibleTypes: "DynamicField" | "MoveObject" | "MovePackage" | "Object";
   };
   Int: unknown;
   JSON: unknown;
+  MoveAbility: { name: "MoveAbility"; enumValues: "COPY" | "DROP" | "KEY" | "STORE" };
+  MoveFunction: {
+    kind: "OBJECT";
+    name: "MoveFunction";
+    fields: {
+      name: {
+        name: "name";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "String"; ofType: null };
+        };
+      };
+      isEntry: { name: "isEntry"; type: { kind: "SCALAR"; name: "Boolean"; ofType: null } };
+      parameters: {
+        name: "parameters";
+        type: {
+          kind: "LIST";
+          name: never;
+          ofType: {
+            kind: "NON_NULL";
+            name: never;
+            ofType: { kind: "OBJECT"; name: "OpenMoveType"; ofType: null };
+          };
+        };
+      };
+      return: {
+        name: "return";
+        type: {
+          kind: "LIST";
+          name: never;
+          ofType: {
+            kind: "NON_NULL";
+            name: never;
+            ofType: { kind: "OBJECT"; name: "OpenMoveType"; ofType: null };
+          };
+        };
+      };
+      typeParameters: {
+        name: "typeParameters";
+        type: {
+          kind: "LIST";
+          name: never;
+          ofType: {
+            kind: "NON_NULL";
+            name: never;
+            ofType: { kind: "OBJECT"; name: "MoveFunctionTypeParameter"; ofType: null };
+          };
+        };
+      };
+      visibility: {
+        name: "visibility";
+        type: { kind: "ENUM"; name: "MoveVisibility"; ofType: null };
+      };
+    };
+  };
+  MoveFunctionTypeParameter: {
+    kind: "OBJECT";
+    name: "MoveFunctionTypeParameter";
+    fields: {
+      constraints: {
+        name: "constraints";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: {
+            kind: "LIST";
+            name: never;
+            ofType: {
+              kind: "NON_NULL";
+              name: never;
+              ofType: { kind: "ENUM"; name: "MoveAbility"; ofType: null };
+            };
+          };
+        };
+      };
+    };
+  };
+  MoveModule: {
+    kind: "OBJECT";
+    name: "MoveModule";
+    fields: {
+      function: { name: "function"; type: { kind: "OBJECT"; name: "MoveFunction"; ofType: null } };
+    };
+  };
   MoveObject: {
     kind: "OBJECT";
     name: "MoveObject";
     fields: {
+      address: {
+        name: "address";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "SuiAddress"; ofType: null };
+        };
+      };
+      version: { name: "version"; type: { kind: "SCALAR"; name: "UInt53"; ofType: null } };
+      digest: { name: "digest"; type: { kind: "SCALAR"; name: "String"; ofType: null } };
       contents: { name: "contents"; type: { kind: "OBJECT"; name: "MoveValue"; ofType: null } };
     };
   };
@@ -188,6 +405,13 @@ export type introspection_types = {
       };
     };
   };
+  MovePackage: {
+    kind: "OBJECT";
+    name: "MovePackage";
+    fields: {
+      module: { name: "module"; type: { kind: "OBJECT"; name: "MoveModule"; ofType: null } };
+    };
+  };
   MoveType: {
     kind: "OBJECT";
     name: "MoveType";
@@ -205,14 +429,61 @@ export type introspection_types = {
   MoveValue: {
     kind: "OBJECT";
     name: "MoveValue";
-    fields: { json: { name: "json"; type: { kind: "SCALAR"; name: "JSON"; ofType: null } } };
+    fields: {
+      json: { name: "json"; type: { kind: "SCALAR"; name: "JSON"; ofType: null } };
+      type: { name: "type"; type: { kind: "OBJECT"; name: "MoveType"; ofType: null } };
+    };
   };
-  Mutation: { kind: "OBJECT"; name: "Mutation"; fields: {} };
+  MoveVisibility: { name: "MoveVisibility"; enumValues: "PUBLIC" | "PRIVATE" | "FRIEND" };
+  Mutation: {
+    kind: "OBJECT";
+    name: "Mutation";
+    fields: {
+      executeTransaction: {
+        name: "executeTransaction";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "OBJECT"; name: "ExecutionResult"; ofType: null };
+        };
+      };
+    };
+  };
   Node: {
     kind: "INTERFACE";
     name: "Node";
     fields: {};
-    possibleTypes: "Address" | "Checkpoint" | "DynamicField" | "Epoch" | "MoveObject";
+    possibleTypes:
+      | "Address"
+      | "Checkpoint"
+      | "DynamicField"
+      | "Epoch"
+      | "MoveObject"
+      | "MovePackage"
+      | "Object"
+      | "Transaction";
+  };
+  Object: {
+    kind: "OBJECT";
+    name: "Object";
+    fields: {
+      address: {
+        name: "address";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "SuiAddress"; ofType: null };
+        };
+      };
+      version: { name: "version"; type: { kind: "SCALAR"; name: "UInt53"; ofType: null } };
+      digest: { name: "digest"; type: { kind: "SCALAR"; name: "String"; ofType: null } };
+      asMoveObject: {
+        name: "asMoveObject";
+        type: { kind: "OBJECT"; name: "MoveObject"; ofType: null };
+      };
+      objectBcs: { name: "objectBcs"; type: { kind: "SCALAR"; name: "Base64"; ofType: null } };
+      owner: { name: "owner"; type: { kind: "UNION"; name: "Owner"; ofType: null } };
+    };
   };
   ObjectFilter: {
     kind: "INPUT_OBJECT";
@@ -222,10 +493,47 @@ export type introspection_types = {
       { name: "type"; type: { kind: "SCALAR"; name: "String"; ofType: null }; defaultValue: null },
     ];
   };
+  OpenMoveType: {
+    kind: "OBJECT";
+    name: "OpenMoveType";
+    fields: {
+      signature: {
+        name: "signature";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "OpenMoveTypeSignature"; ofType: null };
+        };
+      };
+      repr: {
+        name: "repr";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "String"; ofType: null };
+        };
+      };
+    };
+  };
+  OpenMoveTypeSignature: unknown;
+  Owner: {
+    kind: "UNION";
+    name: "Owner";
+    fields: {};
+    possibleTypes: "AddressOwner" | "Shared" | "ConsensusAddressOwner";
+  };
   PageInfo: {
     kind: "OBJECT";
     name: "PageInfo";
     fields: {
+      hasPreviousPage: {
+        name: "hasPreviousPage";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "Boolean"; ofType: null };
+        };
+      };
       hasNextPage: {
         name: "hasNextPage";
         type: {
@@ -234,6 +542,7 @@ export type introspection_types = {
           ofType: { kind: "SCALAR"; name: "Boolean"; ofType: null };
         };
       };
+      startCursor: { name: "startCursor"; type: { kind: "SCALAR"; name: "String"; ofType: null } };
       endCursor: { name: "endCursor"; type: { kind: "SCALAR"; name: "String"; ofType: null } };
     };
   };
@@ -242,15 +551,170 @@ export type introspection_types = {
     name: "Query";
     fields: {
       address: { name: "address"; type: { kind: "OBJECT"; name: "Address"; ofType: null } };
+      chainIdentifier: {
+        name: "chainIdentifier";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "String"; ofType: null };
+        };
+      };
       checkpoint: {
         name: "checkpoint";
         type: { kind: "OBJECT"; name: "Checkpoint"; ofType: null };
       };
       epoch: { name: "epoch"; type: { kind: "OBJECT"; name: "Epoch"; ofType: null } };
+      object: { name: "object"; type: { kind: "OBJECT"; name: "Object"; ofType: null } };
+      package: { name: "package"; type: { kind: "OBJECT"; name: "MovePackage"; ofType: null } };
+      transaction: {
+        name: "transaction";
+        type: { kind: "OBJECT"; name: "Transaction"; ofType: null };
+      };
+      transactions: {
+        name: "transactions";
+        type: { kind: "OBJECT"; name: "TransactionConnection"; ofType: null };
+      };
+      simulateTransaction: {
+        name: "simulateTransaction";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "OBJECT"; name: "SimulationResult"; ofType: null };
+        };
+      };
+    };
+  };
+  Shared: {
+    kind: "OBJECT";
+    name: "Shared";
+    fields: {
+      initialSharedVersion: {
+        name: "initialSharedVersion";
+        type: { kind: "SCALAR"; name: "UInt53"; ofType: null };
+      };
+    };
+  };
+  SimulationResult: {
+    kind: "OBJECT";
+    name: "SimulationResult";
+    fields: {
+      effects: {
+        name: "effects";
+        type: { kind: "OBJECT"; name: "TransactionEffects"; ofType: null };
+      };
     };
   };
   String: unknown;
   SuiAddress: unknown;
+  Transaction: {
+    kind: "OBJECT";
+    name: "Transaction";
+    fields: {
+      digest: {
+        name: "digest";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "String"; ofType: null };
+        };
+      };
+      effects: {
+        name: "effects";
+        type: { kind: "OBJECT"; name: "TransactionEffects"; ofType: null };
+      };
+      gasInput: { name: "gasInput"; type: { kind: "OBJECT"; name: "GasInput"; ofType: null } };
+      transactionJson: {
+        name: "transactionJson";
+        type: { kind: "SCALAR"; name: "JSON"; ofType: null };
+      };
+    };
+  };
+  TransactionConnection: {
+    kind: "OBJECT";
+    name: "TransactionConnection";
+    fields: {
+      pageInfo: {
+        name: "pageInfo";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "OBJECT"; name: "PageInfo"; ofType: null };
+        };
+      };
+      nodes: {
+        name: "nodes";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: {
+            kind: "LIST";
+            name: never;
+            ofType: {
+              kind: "NON_NULL";
+              name: never;
+              ofType: { kind: "OBJECT"; name: "Transaction"; ofType: null };
+            };
+          };
+        };
+      };
+    };
+  };
+  TransactionEffects: {
+    kind: "OBJECT";
+    name: "TransactionEffects";
+    fields: {
+      digest: {
+        name: "digest";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "String"; ofType: null };
+        };
+      };
+      transaction: {
+        name: "transaction";
+        type: { kind: "OBJECT"; name: "Transaction"; ofType: null };
+      };
+      checkpoint: {
+        name: "checkpoint";
+        type: { kind: "OBJECT"; name: "Checkpoint"; ofType: null };
+      };
+      status: { name: "status"; type: { kind: "ENUM"; name: "ExecutionStatus"; ofType: null } };
+      timestamp: { name: "timestamp"; type: { kind: "SCALAR"; name: "DateTime"; ofType: null } };
+      events: { name: "events"; type: { kind: "OBJECT"; name: "EventConnection"; ofType: null } };
+      balanceChangesJson: {
+        name: "balanceChangesJson";
+        type: { kind: "SCALAR"; name: "JSON"; ofType: null };
+      };
+      effectsJson: { name: "effectsJson"; type: { kind: "SCALAR"; name: "JSON"; ofType: null } };
+      gasEffects: {
+        name: "gasEffects";
+        type: { kind: "OBJECT"; name: "GasEffects"; ofType: null };
+      };
+    };
+  };
+  TransactionFilter: {
+    kind: "INPUT_OBJECT";
+    name: "TransactionFilter";
+    isOneOf: false;
+    inputFields: [
+      {
+        name: "afterCheckpoint";
+        type: { kind: "SCALAR"; name: "UInt53"; ofType: null };
+        defaultValue: null;
+      },
+      {
+        name: "beforeCheckpoint";
+        type: { kind: "SCALAR"; name: "UInt53"; ofType: null };
+        defaultValue: null;
+      },
+      {
+        name: "affectedAddress";
+        type: { kind: "SCALAR"; name: "SuiAddress"; ofType: null };
+        defaultValue: null;
+      },
+    ];
+  };
   UInt53: unknown;
   __Directive: { kind: "OBJECT"; name: "__Directive"; fields: {} };
   __DirectiveLocation: {

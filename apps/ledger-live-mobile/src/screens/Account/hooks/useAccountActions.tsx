@@ -11,7 +11,7 @@ import { useTranslation } from "~/context/Locale";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";

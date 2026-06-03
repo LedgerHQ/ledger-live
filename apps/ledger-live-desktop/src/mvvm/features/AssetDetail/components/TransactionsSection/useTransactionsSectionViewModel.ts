@@ -6,12 +6,14 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { track } from "~/renderer/analytics/segment";
+import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { useHistoryTable } from "LLD/features/History/hooks/useHistoryTable";
 import { useHistoryOperationItemsForRootAccounts } from "LLD/features/History/hooks/useHistoryOperationItemsForRootAccounts";
 import {
   filterOperationTableItemsByAllowedAccountIds,
   filterTopLevelAccountsByAllowedAccountIds,
 } from "LLD/features/History/utils/accountScopeForHistory";
+import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import type { HistoryTable, OperationRow } from "LLD/features/History/types";
 
 const RECENT_TRANSACTIONS_COUNT = 3;
@@ -57,24 +59,35 @@ export function useTransactionsSectionViewModel(
 
   const table = useHistoryTable(recentItems);
 
-  const onRowClick = useCallback((row: OperationRow) => {
-    const { operation, account, parentAccount } = row.original;
-    track("transaction_clicked", {
-      transaction: operation.type,
-    });
-    setDrawer(OperationDetails, {
-      operationId: operation.id,
-      accountId: account.id,
-      parentId: parentAccount?.id,
-    });
-  }, []);
+  const onRowClick = useCallback(
+    (row: OperationRow) => {
+      const { operation, account, parentAccount } = row.original;
+      track("transaction_clicked", {
+        transaction: operation.type,
+        page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+        currency: distributionItem.currency.id,
+      });
+      setDrawer(OperationDetails, {
+        operationId: operation.id,
+        accountId: account.id,
+        parentId: parentAccount?.id,
+      });
+    },
+    [distributionItem.currency.id],
+  );
 
   const onSeeAll = useCallback(() => {
-    const query = distributionItem.accounts.map(a => a.id).join(",");
-    navigate(`/history?accountIds=${encodeURIComponent(query)}`, {
-      state: { historyBackPath: assetDetailPath },
+    track("button_clicked", {
+      button: "Transactions",
+      currency: distributionItem.currency.id,
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
-  }, [assetDetailPath, distributionItem.accounts, navigate]);
+    const query = distributionItem.accounts.map(a => a.id).join(",");
+    navigate(
+      `/history?accountIds=${encodeURIComponent(query)}`,
+      buildNavigationBackState("historyBackPath", assetDetailPath),
+    );
+  }, [assetDetailPath, distributionItem.accounts, distributionItem.currency.id, navigate]);
 
   return {
     visible: scopedOperationItems.length > 0,

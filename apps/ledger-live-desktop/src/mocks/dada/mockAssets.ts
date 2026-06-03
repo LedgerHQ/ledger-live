@@ -128,6 +128,8 @@ export const mockAssets = {
         monad: "monad/erc20/usdc_0x754704bc059f8c67012fed69bc8a327a5aafb603",
         sei_evm: "sei_evm/erc20/usdc_0xe15fc38f6d8c56af07bbcbe3baf5708a2bf42392",
         unichain: "unichain/erc20/usdc_0x078d782b760474a361dda0af3839290b0ef57ad6",
+        arc: "arc",
+        arc_testnet: "arc_testnet",
       },
     },
     "ethereum/erc20/steth": {
@@ -319,6 +321,14 @@ export const mockAssets = {
     dogecoin: {
       id: "dogecoin",
       name: "Dogecoin",
+    },
+    arc: {
+      id: "arc",
+      name: "Arc",
+    },
+    arc_testnet: {
+      id: "arc_testnet",
+      name: "Arc Testnet",
     },
   },
   cryptoOrTokenCurrencies: {
@@ -2356,6 +2366,60 @@ export const mockAssets = {
       hasTokens: true,
       hrp: null,
       disableCountervalue: false,
+    },
+    arc: {
+      type: "crypto_currency",
+      id: "arc",
+      name: "Arc",
+      ticker: "USDC",
+      units: [
+        {
+          code: "USDC",
+          name: "USDC",
+          magnitude: 18,
+        },
+        {
+          code: "Gwei",
+          name: "Gwei",
+          magnitude: 9,
+        },
+      ],
+      chainId: "5042",
+      confirmationsNeeded: 30,
+      symbol: "USDC",
+      coinType: 60,
+      family: "ethereum",
+      hasSegwit: false,
+      hasTokens: true,
+      hrp: null,
+      disableCountervalue: false,
+    },
+    arc_testnet: {
+      type: "crypto_currency",
+      id: "arc_testnet",
+      name: "Arc Testnet",
+      ticker: "USDC",
+      units: [
+        {
+          code: "USDC",
+          name: "USDC",
+          magnitude: 18,
+        },
+        {
+          code: "Gwei",
+          name: "Gwei",
+          magnitude: 9,
+        },
+      ],
+      chainId: "5042002",
+      confirmationsNeeded: 30,
+      symbol: "USDC",
+      coinType: 60,
+      family: "ethereum",
+      hasSegwit: false,
+      hasTokens: true,
+      hrp: null,
+      disableCountervalue: true,
     },
     "algorand/asa/312769": {
       type: "token_currency",

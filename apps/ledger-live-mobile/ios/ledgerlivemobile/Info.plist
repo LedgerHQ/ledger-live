@@ -89,8 +89,6 @@
 	<string>Allow $(PRODUCT_NAME) to use the microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to access your photos</string>
-	<key>RCTNewArchEnabled</key>
-	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Bold.otf</string>

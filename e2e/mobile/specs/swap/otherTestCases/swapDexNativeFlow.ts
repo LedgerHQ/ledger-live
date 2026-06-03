@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
@@ -10,7 +10,7 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 export function runSwapDexNativeFlow(
   fromAccount: Account,
   toAccount: Account,
-  provider: Provider,
+  provider: SwapProvider,
   tmsLinks: string[],
   tags: string[],
 ) {

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -10,6 +10,8 @@ import {
   type SendFlowTransactionActions,
   type SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
+import { trackPage } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -40,6 +42,19 @@ export function useAmountScreen(): AmountScreenViewModel {
   const location = useLocation();
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
+
+  const trackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount ?? null),
+    [account, parentAccount],
+  );
+
+  const isReady = Boolean(account && transaction && status && uiConfig && transactionActions);
+
+  const hasTrackedRef = useRef(false);
+  if (!hasTrackedRef.current && isReady) {
+    hasTrackedRef.current = true;
+    trackPage("Modal send - step amount", null, trackingProperties);
+  }
 
   const onGetFunds = useCallback(() => {
     if (!account) return;

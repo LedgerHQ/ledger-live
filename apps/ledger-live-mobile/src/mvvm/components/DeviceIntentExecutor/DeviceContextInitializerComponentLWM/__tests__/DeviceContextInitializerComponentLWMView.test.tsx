@@ -20,18 +20,23 @@ const device: InitializerDevice = {
 
 function renderView(state: EnsureAppReadyState) {
   return render(
-    <DeviceContextInitializerComponentLWMView state={state} device={device} onCancel={jest.fn()} />,
+    <DeviceContextInitializerComponentLWMView
+      state={state}
+      device={device}
+      sourceFlow="my_ledger"
+      onCancel={jest.fn()}
+    />,
   );
 }
 
 describe("DeviceContextInitializerComponentLWMView", () => {
-  it("should render the loading state", () => {
+  it("GIVEN the loading state WHEN rendering THEN it renders the loading content", () => {
     renderView({ type: LoadingStateType.Loading });
 
     expect(screen.getByText("Loading")).toBeVisible();
   });
 
-  it("should render the device storage blocking state", () => {
+  it("GIVEN the device storage blocking state WHEN rendering THEN it renders the storage content", () => {
     renderView({
       type: BlockingStateType.DeviceOutOfStorageSpace,
       appNames: ["Ethereum"],
@@ -41,7 +46,7 @@ describe("DeviceContextInitializerComponentLWMView", () => {
     expect(screen.getByText("Go to My Ledger")).toBeVisible();
   });
 
-  it("should render no content for the success state", () => {
+  it("GIVEN the success state WHEN rendering THEN it renders no content", () => {
     const { queryByText } = renderView({
       type: FinalStateType.Success,
       extractedContext: {

@@ -7,7 +7,7 @@ import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
 import { getModularSelector } from "./modularSelectorUtils";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import {
   isTokenAllowanceSufficientCommand,
   approveTokenCommand,
@@ -121,7 +121,7 @@ export async function handleSwapErrorOrSuccess(
 
 export async function ensureTokenApproval(
   fromAccount: Account | TokenAccount,
-  provider: Provider,
+  provider: SwapProvider,
   minAmount: string,
 ) {
   if (!provider.contractAddress || !fromAccount.parentAccount) return;
@@ -148,7 +148,7 @@ export async function ensureTokenApproval(
   }
 }
 
-export async function revokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
+export async function revokeTokenApproval(fromAccount: TokenAccount, provider: SwapProvider) {
   if (!provider.contractAddress) return;
 
   const allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);

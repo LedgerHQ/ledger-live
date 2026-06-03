@@ -71,6 +71,7 @@ export function usePricePerformanceViewModel(currencyData: MarketDataSectionCurr
     atlBlock,
     showSkeleton,
     sectionTitle,
+    sectionDisclaimer: t("assetDetails.marketStatsDisclaimer"),
   };
 }
 

@@ -55,7 +55,7 @@ export function computeAssetPnL(
       to: fiat,
       disableRounding: true,
     });
-    if (typeof latestCV === "number") {
+    if (latestCV != null && Number.isFinite(latestCV)) {
       unrealisedPnL = new BigNumber(latestCV).minus(state.totalCostInCounterValue);
     } else if (!hasHistory) {
       return null;

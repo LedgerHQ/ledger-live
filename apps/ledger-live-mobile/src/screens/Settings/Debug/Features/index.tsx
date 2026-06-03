@@ -8,7 +8,7 @@ import CustomImage from "./CustomImage";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import InfoModal from "~/modals/Info";
 

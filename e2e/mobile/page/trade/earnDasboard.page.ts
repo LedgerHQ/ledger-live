@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { normalizeText } from "../../helpers/commonHelpers";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class EarnDashboardPage {
@@ -53,7 +53,7 @@ export default class EarnDashboardPage {
   }
 
   @Step("Go to provider live app")
-  async goToProviderLiveApp(provider: Provider) {
+  async goToProviderLiveApp(provider: EarnProvider) {
     const uiName = await getTextOfElement(this.stakingProviderTitle(provider.name));
     await scrollToText(uiName);
     jestExpect(normalizeText(uiName)).toBe(provider.uiName);
@@ -61,7 +61,7 @@ export default class EarnDashboardPage {
   }
 
   @Step("verify provider URL")
-  async verifyProviderURL(provider: Provider, account: Account) {
+  async verifyProviderURL(provider: EarnProvider, account: Account) {
     const url = await getCurrentWebviewUrl();
     switch (provider.uiName) {
       case this.providers(account).Lido.name: {

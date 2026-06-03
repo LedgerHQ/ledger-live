@@ -38,6 +38,7 @@ describe("FeatureFlagsStateSchema", () => {
       overrides: { mockFeature: { enabled: true } },
       resolved: { ...FEATURE_FLAGS_DEFAULTS, mockFeature: { enabled: true } },
       bannerVisible: false,
+      remoteFlagsReady: false,
     };
     expect(FeatureFlagsStateSchema.parse(input)).toEqual(input);
   });
@@ -47,6 +48,7 @@ describe("FeatureFlagsStateSchema", () => {
       overrides: {},
       resolved: FEATURE_FLAGS_DEFAULTS,
       bannerVisible: false,
+      remoteFlagsReady: false,
     };
     expect(FeatureFlagsStateSchema.parse(input)).toEqual(input);
   });
@@ -56,9 +58,19 @@ describe("FeatureFlagsStateSchema", () => {
       overrides: {},
       resolved: {},
       bannerVisible: false,
+      remoteFlagsReady: false,
     });
     expect(result.resolved).toEqual(FEATURE_FLAGS_DEFAULTS);
     expect(result.overrides).toEqual({});
+  });
+
+  it("defaults remoteFlagsReady to false when omitted", () => {
+    const result = FeatureFlagsStateSchema.parse({
+      overrides: {},
+      resolved: FEATURE_FLAGS_DEFAULTS,
+      bannerVisible: false,
+    });
+    expect(result.remoteFlagsReady).toBe(false);
   });
 
   it("rejects when resolved is missing", () => {

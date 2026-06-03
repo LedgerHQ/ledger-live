@@ -3,6 +3,7 @@ import React from "react";
 import type { ComponentType } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -53,6 +54,8 @@ export default function DelegationDrawer({
   const color = getCurrencyColor(currency);
   const unit = useAccountUnit(account);
   const iconWidth = normalize(64);
+  const insets = useSafeAreaInsets();
+  const scrollMaxHeight = height - normalize(425) - insets.bottom;
   return (
     <QueuedDrawer style={styles.modal} isRequestingToBeOpened={isOpen} onClose={onClose}>
       <View style={styles.root}>
@@ -85,13 +88,18 @@ export default function DelegationDrawer({
           </LText>
         </View>
 
-        <ScrollView style={styles.scrollSection} showsVerticalScrollIndicator={true}>
+        <ScrollView
+          style={[styles.scrollSection, { maxHeight: scrollMaxHeight }]}
+          showsVerticalScrollIndicator={true}
+        >
           {data.map((field, i) => (
             <DataField {...field} key={"data-" + i} isLast={i === data.length - 1} />
           ))}
         </ScrollView>
 
-        <View style={[styles.row, styles.actionsRow]}>
+        <View
+          style={[styles.row, styles.actionsRow, { paddingBottom: Math.max(16, insets.bottom) }]}
+        >
           {actions.map((props, i) => (
             <ActionButton key={`actions-${i}`} {...props} />
           ))}

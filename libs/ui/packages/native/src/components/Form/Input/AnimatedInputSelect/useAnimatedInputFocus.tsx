@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { TextInputProps } from "react-native";
+import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
 
 type useAnimatedInputFocusProps = {
-  onFocusCallback?: TextInputProps["onFocus"];
-  onBlurCallback?: TextInputProps["onBlur"];
+  onFocusCallback?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>,
+  ) => TextInputFocusEventData | void;
+  onBlurCallback?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>,
+  ) => TextInputFocusEventData | void;
 };
 
 export const useAnimatedInputFocus = ({
@@ -12,12 +16,12 @@ export const useAnimatedInputFocus = ({
 }: useAnimatedInputFocusProps) => {
   const [focused, setFocused] = useState(false);
 
-  const onFocus: NonNullable<TextInputProps["onFocus"]> = e => {
+  const onFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setFocused(true);
     onFocusCallback?.(e);
   };
 
-  const onBlur: NonNullable<TextInputProps["onBlur"]> = e => {
+  const onBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setFocused(false);
     onBlurCallback?.(e);
   };

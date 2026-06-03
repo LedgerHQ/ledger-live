@@ -9,7 +9,7 @@ import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import {
   FEATURE_INTRO_CAMPAIGN_ID,
   genericAwarenessModalTestContentCards,
-} from "LLD/features/GenericAwarenessModal/__tests__/fixtures";
+} from "LLD/features/GenericAwarenessModal/testUtils/fixtures";
 import { useDeepLinkHandler } from "../useDeepLinkHandler";
 import BigNumber from "bignumber.js";
 

@@ -18,7 +18,7 @@ import QueuedDrawer from "../../QueuedDrawer";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/settings";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 

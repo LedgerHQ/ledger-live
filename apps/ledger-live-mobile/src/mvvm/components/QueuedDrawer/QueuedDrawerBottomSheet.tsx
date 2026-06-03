@@ -4,6 +4,7 @@ import { BottomSheet, BottomSheetProps } from "@ledgerhq/lumen-ui-rnative";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/native-ui";
+import { BottomSheetBackgroundContext } from "LLM/contexts/BottomSheetBackgroundContext";
 import useQueuedDrawerBottomSheet from "./useQueuedDrawerBottomSheet";
 
 export type QueuedDrawerBottomSheetProps = {
@@ -15,6 +16,8 @@ export type QueuedDrawerBottomSheetProps = {
   noCloseButton?: boolean;
   /** Show a back button in the header. */
   hasBackButton?: boolean;
+  /** Hide the handle. */
+  hideHandle?: boolean;
   /** Callback when back button is pressed. */
   onBack?: () => void;
   /** Callback when the drawer is closed. */
@@ -50,6 +53,7 @@ const QueuedDrawerBottomSheet = ({
   onModalHide,
   noCloseButton,
   preventBackdropClick,
+  hideHandle,
   children,
   snapPoints = ["70%", "90%"],
   enableDynamicSizing = false,
@@ -64,8 +68,11 @@ const QueuedDrawerBottomSheet = ({
     areDrawersLocked,
     handleUserClose,
     handleDismiss,
+    handleCloseAnimationStart,
     onBack: hookOnBack,
     enablePanDownToClose: computedEnablePanDownToClose,
+    backgroundContextValue,
+    backgroundComponent,
   } = useQueuedDrawerBottomSheet({
     isRequestingToBeOpened,
     isForcingToBeOpened,
@@ -86,12 +93,17 @@ const QueuedDrawerBottomSheet = ({
       enableHandlePanningGesture={enableHandlePanningGesture}
       maxDynamicContentSize={maxDynamicContentSize}
       hideCloseButton={noCloseButton || areDrawersLocked}
+      hideHandle={hideHandle}
       onBack={hasBackButton ? hookOnBack : undefined}
+      onAnimate={handleCloseAnimationStart}
       onDismiss={handleDismiss}
       backdropPressBehavior={preventBackdropClick || areDrawersLocked ? "none" : "close"}
       onBackdropPress={handleUserClose}
+      backgroundComponent={backgroundComponent}
     >
-      <IsInDrawerProvider>{children}</IsInDrawerProvider>
+      <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
+        <IsInDrawerProvider>{children}</IsInDrawerProvider>
+      </BottomSheetBackgroundContext.Provider>
       <OnscreenNavigationSafeArea />
     </BottomSheet>
   );

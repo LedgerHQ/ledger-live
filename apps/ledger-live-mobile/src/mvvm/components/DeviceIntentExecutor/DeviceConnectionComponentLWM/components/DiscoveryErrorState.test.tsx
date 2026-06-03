@@ -8,7 +8,24 @@ import {
   type DiscoveryError,
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
+import { TrackScreen, track } from "~/analytics";
+import { previousRouteNameRef } from "~/analytics/screenRefs";
+import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DiscoveryErrorState } from "./DiscoveryErrorState";
+
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(() => null),
+    track: jest.fn(),
+  };
+});
+
+const mockedTrackScreen = jest.mocked(TrackScreen);
+const mockedTrack = jest.mocked(track);
+const TEST_SOURCE = "Connect Device - Discovery Error";
 
 type DiscoveryErrorUIState = Extract<
   ConnectDeviceUIState,
@@ -115,12 +132,21 @@ function renderState({
     ignore,
   };
 
-  const view = render(<DiscoveryErrorState state={state} platform={platform} />);
+  const view = render(
+    <SourceFlowProvider value="my_ledger">
+      <DiscoveryErrorState state={state} platform={platform} />
+    </SourceFlowProvider>,
+  );
 
   return { ...view, ignore };
 }
 
 describe("DiscoveryErrorState", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    previousRouteNameRef.current = TEST_SOURCE;
+  });
+
   it.each(errorCases)(
     "should render the $type error title and description",
     ({ type, title, description }) => {
@@ -182,5 +208,79 @@ describe("DiscoveryErrorState", () => {
       ),
     ).toBeVisible();
     expect(screen.queryByText("Continue with USB")).toBeNull();
+  });
+
+  it("GIVEN a discovery error WHEN rendering THEN it tracks the Device UX V2 page event", () => {
+    // GIVEN / WHEN
+    renderState({ type: DiscoveryErrorTypes.BluetoothDisabledPromptable });
+
+    // THEN
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_CONNECT_DEVICE.DiscoveryError,
+        sourceFlow: "my_ledger",
+        transport: "ble",
+        subError: "BluetoothDisabledPromptable",
+        deviceUxV2: true,
+      }),
+      undefined,
+    );
+  });
+
+  it("GIVEN an unknown discovery error without transport WHEN rendering THEN it does not invent a transport", () => {
+    // GIVEN / WHEN
+    renderState({ type: DiscoveryErrorTypes.Unknown });
+
+    // THEN
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_CONNECT_DEVICE.DiscoveryError,
+        sourceFlow: "my_ledger",
+        subError: "Unknown",
+        deviceUxV2: true,
+      }),
+      undefined,
+    );
+    expect(mockedTrackScreen.mock.calls[0]?.[0]).not.toHaveProperty("transport");
+  });
+
+  it("GIVEN a retry CTA WHEN it is pressed THEN it tracks button_clicked", async () => {
+    // GIVEN
+    const retry = jest.fn();
+    const { user } = renderState({
+      type: DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable,
+      retry,
+    });
+
+    // WHEN
+    await user.press(screen.getByText("Allow"));
+
+    // THEN
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      source: TEST_SOURCE,
+      deviceUxV2: true,
+      button: "Retry",
+    });
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN an ignore CTA WHEN it is pressed THEN it tracks button_clicked", async () => {
+    // GIVEN
+    const { user, ignore } = renderState({
+      type: DiscoveryErrorTypes.LocationDisabledManualAction,
+    });
+
+    // WHEN
+    await user.press(screen.getByText("Continue with USB"));
+
+    // THEN
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      source: TEST_SOURCE,
+      deviceUxV2: true,
+      button: "Continue with USB",
+    });
+    expect(ignore).toHaveBeenCalledTimes(1);
   });
 });

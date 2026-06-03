@@ -4,7 +4,8 @@ import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import ValidatorHead from "../shared/ValidatorHead";
@@ -49,7 +50,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen
         category="DelegationFlow"
         name="SelectValidator"

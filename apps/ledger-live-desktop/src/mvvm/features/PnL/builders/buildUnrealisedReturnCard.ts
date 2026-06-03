@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { TFunction } from "i18next";
 import type { PnLCardProps } from "../components/PnLCard/types";
 import type { PnlNamespace } from "../types";
-import { getTrendIcon } from "./trend";
+import { buildReturnCard } from "./buildReturnCard";
 
 export type BuildUnrealisedReturnCardInput = {
   namespace: PnlNamespace;
@@ -19,12 +19,12 @@ export function buildUnrealisedReturnCard({
   onClick,
   t,
 }: BuildUnrealisedReturnCardInput): PnLCardProps {
-  return {
+  return buildReturnCard({
     id: "unrealisedReturn",
-    title: t(`${namespace}.return.title`),
-    value: formatFiat(unrealisedPnL),
-    type: "interactive",
-    trendIcon: getTrendIcon(unrealisedPnL),
+    titleKey: `${namespace}.return.title`,
+    value: unrealisedPnL,
+    formatFiat,
+    t,
     onClick,
-  };
+  });
 }

@@ -99,6 +99,36 @@ pnpm test:android <testFileName>         # single file
 For complete setup, debugging, workflow, writing tests, and CI integration, see the official wiki:
 [Ledger Wallet Mobile E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing)
 
+### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+
+You can inject extra feature flags globally for Mobile E2E by setting `E2E_FEATURE_FLAGS_JSON`.
+
+Example shape:
+
+```json
+{
+  "myFeature": {
+    "enabled": true,
+    "params": {
+      "foo": "bar"
+    }
+  }
+}
+```
+
+Usage examples:
+
+```bash
+# Enable one feature with params
+export E2E_FEATURE_FLAGS_JSON='{"myFeature":{"enabled":true,"params":{"foo":"bar"}}}'
+```
+
+Notes:
+
+- Arrays, scalars, or invalid JSON are rejected.
+- `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
+- Per-test `featureFlags` passed to `InitializationManager.initialize` still override env-provided values when both set the same key.
+
 ### Skipping Tests from CI
 
 To temporarily exclude a test file from CI runs, rename it with a `.skip.spec.ts` suffix instead of `.spec.ts`. For example:

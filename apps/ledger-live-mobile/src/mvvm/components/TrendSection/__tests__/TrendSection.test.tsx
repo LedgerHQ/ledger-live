@@ -3,10 +3,17 @@ import { render, screen } from "@tests/test-renderer";
 import { TrendSection } from "../index";
 
 describe("TrendSection", () => {
-  it.each([0, NaN])("renders a dash when percentage is %s", percentage => {
-    render(<TrendSection percentage={percentage} />);
+  it("renders a dash when percentage is NaN (no data)", () => {
+    render(<TrendSection percentage={NaN} />);
 
     expect(screen.getByText("−")).toBeVisible();
+  });
+
+  it("renders a neutral 0.00% when percentage is exactly 0", () => {
+    render(<TrendSection percentage={0} timeLabel="1 day" testID="trend" />);
+
+    expect(screen.getByText("0.00%")).toBeVisible();
+    expect(screen.getByText("1 day")).toBeVisible();
   });
 
   it("renders positive percentage", () => {

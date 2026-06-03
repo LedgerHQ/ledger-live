@@ -7,7 +7,12 @@ import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceI
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { FEATURE_FLAGS_INITIAL_STATE, type Features } from "@shared/feature-flags";
 import { State } from ".";
-import { purgeExpiredAnonymousUserNotifications } from "../actions/settings";
+import {
+  clearDismissedContentCards,
+  purgeExpiredAnonymousUserNotifications,
+  removeDismissedContentCards,
+  setDismissedContentCards,
+} from "../actions/settings";
 import reducer, {
   lastSeenDeviceSelector,
   languageSelector,
@@ -287,6 +292,128 @@ describe("action: purgeAnonymousUserNotifications", () => {
     const newState = reducer(state, purgeExpiredAnonymousUserNotifications({ now }));
 
     expect(newState).toBe(state);
+  });
+});
+
+describe("dismissed content cards", () => {
+  describe("SET_DISMISSED_CONTENT_CARDS", () => {
+    it("should store dismissed campaign id with timestamp", () => {
+      const newState = reducer(
+        SETTINGS_INITIAL_STATE,
+        setDismissedContentCards({ id: "campaign-1", timestamp: 100 }),
+      );
+
+      expect(newState.dismissedContentCards).toEqual({ "campaign-1": 100 });
+    });
+
+    it("should merge with existing dismissed ids", () => {
+      const state: SettingsState = {
+        ...SETTINGS_INITIAL_STATE,
+        dismissedContentCards: { "campaign-1": 100 },
+      };
+
+      const newState = reducer(
+        state,
+        setDismissedContentCards({ id: "campaign-2", timestamp: 200 }),
+      );
+
+      expect(newState.dismissedContentCards).toEqual({
+        "campaign-1": 100,
+        "campaign-2": 200,
+      });
+    });
+  });
+
+  describe("REMOVE_DISMISSED_CONTENT_CARDS", () => {
+    it("should remove dismissed ids from the store", () => {
+      const state: SettingsState = {
+        ...SETTINGS_INITIAL_STATE,
+        dismissedContentCards: {
+          "campaign-1": 100,
+          "campaign-2": 200,
+        },
+      };
+
+      const newState = reducer(
+        state,
+        removeDismissedContentCards({ ids: ["campaign-1", "campaign-2"] }),
+      );
+
+      expect(newState.dismissedContentCards).toEqual({});
+    });
+
+    it("should return original state when ids is empty", () => {
+      const state: SettingsState = {
+        ...SETTINGS_INITIAL_STATE,
+        dismissedContentCards: { "campaign-1": 100 },
+      };
+
+      const newState = reducer(state, removeDismissedContentCards({ ids: [] }));
+
+      expect(newState).toBe(state);
+    });
+
+    it("should return original state when no ids match", () => {
+      const state: SettingsState = {
+        ...SETTINGS_INITIAL_STATE,
+        dismissedContentCards: { "campaign-1": 100 },
+      };
+
+      const newState = reducer(state, removeDismissedContentCards({ ids: ["missing"] }));
+
+      expect(newState).toBe(state);
+    });
+  });
+
+  describe("CLEAR_DISMISSED_CONTENT_CARDS", () => {
+    it("should remove dismissed ids older than cutoff but keep newer ones", () => {
+      const now = new Date();
+      const cutoff = getBrazeCampaignCutoff(now);
+
+      const oldTimestamp = cutoff - 1;
+      const newTimestamp = cutoff + 1;
+
+      const state: SettingsState = {
+        ...SETTINGS_INITIAL_STATE,
+        dismissedContentCards: {
+          expired: oldTimestamp,
+          active: newTimestamp,
+        },
+      };
+
+      const newState = reducer(state, clearDismissedContentCards({ now }));
+
+      expect(newState.dismissedContentCards).toEqual({ active: newTimestamp });
+    });
+
+    it("should return original state when none are expired", () => {
+      const now = new Date();
+      const ts = now.getTime() - 1000;
+
+      const state: SettingsState = {
+        ...SETTINGS_INITIAL_STATE,
+        dismissedContentCards: {
+          a: ts,
+          b: ts,
+        },
+      };
+
+      const newState = reducer(state, clearDismissedContentCards({ now }));
+
+      expect(newState).toBe(state);
+    });
+
+    it("should return original state when dismissedContentCards is empty", () => {
+      const now = new Date();
+      const state: SettingsState = {
+        ...SETTINGS_INITIAL_STATE,
+        dismissedContentCards: {},
+      };
+
+      const newState = reducer(state, clearDismissedContentCards({ now }));
+
+      expect(newState).toBe(state);
+    });
   });
 });
 

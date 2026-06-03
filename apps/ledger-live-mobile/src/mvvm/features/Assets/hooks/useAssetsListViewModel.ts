@@ -1,21 +1,16 @@
 import { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
-import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseNavigationComposite,
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
-import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 export interface Props {
   sourceScreenName?: ScreenName;
@@ -24,19 +19,14 @@ export interface Props {
   onContentChange?: (width: number, height: number) => void;
 }
 
-export type NavigationProp = BaseNavigationComposite<
-  | StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.Assets>
-  | StackNavigatorNavigation<PortfolioNavigatorStackParamList>
->;
-
 const useAssetsListViewModel = ({
   isSyncEnabled = false,
   limitNumberOfAssets,
   onContentChange,
 }: Props) => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const navigation = useNavigation<NavigationProp>();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("mobile");
+  const { openFromAsset } = useAssetDetailNavigation();
 
   const filteredDistribution = useNonBlacklistedDistribution({
     showEmptyAccounts: true,
@@ -65,14 +55,14 @@ const useAssetsListViewModel = ({
         page: "Assets",
       });
 
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: {
-          currency: asset.currency,
-        },
+      openFromAsset({
+        currency: asset.currency,
+        source: "assets",
+        isPlaceholder: asset.isPlaceholder,
+        marketId: asset.marketId,
       });
     },
-    [navigation],
+    [openFromAsset],
   );
 
   return {

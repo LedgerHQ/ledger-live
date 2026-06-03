@@ -51,22 +51,24 @@ describe("Wallet 4.0 - Main Navigation", () => {
     await app.mainNavigation.expectDiscoverPageVisible();
   });
 
-  it("should navigate to My Ledger via top bar and show Manager page", async () => {
+  it("should open My Wallet via top bar avatar", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.mainNavigation.tapTopBarMyLedger();
-    await app.mainNavigation.expectMyLedgerPageVisible();
-    await app.mainNavigation.tapHeaderBackButton();
+    await app.mainNavigation.tapTopBarMyWallet();
+    await app.myWallet.expectScreenVisible();
+    await app.myWallet.tapHeaderBack();
   });
 
-  it("should navigate to Notifications via top bar and show Notifications page", async () => {
+  it("should navigate to Notifications from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.mainNavigation.tapTopBarNotifications();
+    await app.mainNavigation.tapTopBarMyWallet();
+    await app.myWallet.tapHeaderNotifications();
     await app.mainNavigation.expectNotificationsPageVisible();
   });
 
-  it("should navigate to Settings via top bar and show Settings page", async () => {
+  it("should navigate to Settings from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.mainNavigation.tapTopBarSettings();
-    await app.mainNavigation.expectSettingsPageVisible();
+    await app.mainNavigation.tapTopBarMyWallet();
+    await app.myWallet.tapHeaderSettings();
+    await app.myWallet.expectSettingsScreenVisible();
   });
 });

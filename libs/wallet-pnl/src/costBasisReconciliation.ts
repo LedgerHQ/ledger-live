@@ -74,7 +74,7 @@ export function applyBalanceReconciliation(
     date: valuationDate,
     disableRounding: true,
   });
-  if (typeof cvAtDelta !== "number") {
+  if (cvAtDelta == null || !Number.isFinite(cvAtDelta)) {
     return { state, applied: false };
   }
 

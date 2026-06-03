@@ -43,15 +43,6 @@ export function AmountScreenInner({
     [account, parentAccount],
   );
 
-  const handleReview = useCallback(() => {
-    track("button_clicked", {
-      button: "review",
-      page: "step amount",
-      ...sendFlowTrackingProperties,
-    });
-    onReview();
-  }, [onReview, sendFlowTrackingProperties]);
-
   const viewModel = useAmountScreenViewModel({
     account,
     parentAccount,
@@ -62,6 +53,18 @@ export function AmountScreenInner({
     uiConfig,
     transactionActions,
   });
+
+  const handleReview = useCallback(() => {
+    const activeQuickAction = viewModel.quickActions?.find(a => a.active)?.id ?? null;
+    track("button_clicked", {
+      button: "review",
+      page: "step amount",
+      quick_amount: activeQuickAction,
+      fee_strategy: viewModel.selectedFeeStrategy ?? null,
+      ...sendFlowTrackingProperties,
+    });
+    onReview();
+  }, [onReview, viewModel.quickActions, viewModel.selectedFeeStrategy, sendFlowTrackingProperties]);
 
   return (
     <>

@@ -2,7 +2,13 @@
 
 import { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
-import { getCallData } from "./common";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
+import { getNodeApi } from "../network/node";
+import { mockNodeApi } from "../network/node/node.fixtures";
+import { buildStakingTransactionParams } from "../staking";
+import { USEI_TO_EVM_SCALE } from "../utils";
+import { getCallData, prepareUnsignedTxParams } from "./common";
 import * as getErc20DataModule from "./getErc20Data";
 
 jest.mock("./getErc20Data", () => {
@@ -13,6 +19,19 @@ jest.mock("./getErc20Data", () => {
     ),
   };
 });
+
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
+}));
+
+jest.mock("../staking", () => ({
+  ...jest.requireActual("../staking"),
+  buildStakingTransactionParams: jest.fn(),
+}));
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
+const mockBuildStakingTransactionParams = jest.mocked(buildStakingTransactionParams);
 
 const getErc20DataMock = getErc20DataModule.getErc20Data as jest.Mock;
 
@@ -120,6 +139,145 @@ describe("common", () => {
       expect(getErc20DataMock).toHaveBeenCalledTimes(1);
       expect(getErc20DataMock).toHaveBeenCalledWith(recipient, amount);
       expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe("prepareUnsignedTxParams — staking gas estimation retry", () => {
+    const mockCurrency = {
+      id: "sei_evm",
+      family: "evm",
+      ethereumLikeInfo: { chainId: 1329 },
+    } as CryptoCurrency;
+
+    const stakingContractAddress = "0x0000000000000000000000000000000000001005";
+    const stakingData = Buffer.from("encoded-delegate-calldata");
+    const GAS_ESTIMATION_ERROR = new Error(
+      'execution reverted (action="estimateGas", data="0x", reason="require(false)")',
+    );
+
+    const makeStakingIntent = (amount: bigint) =>
+      ({
+        intentType: "staking",
+        type: "staking-legacy",
+        mode: "delegate",
+        amount,
+        asset: { type: "native" },
+        recipient: stakingContractAddress,
+        sender: "0xSender",
+        valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+        feesStrategy: "medium",
+        data: { type: "buffer", value: Buffer.from([]) },
+      }) as unknown as TransactionIntent<MemoNotSupported, BufferTxData>;
+
+    const nodeApiMock = mockNodeApi();
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      mockGetNodeApi.mockReturnValue(nodeApiMock);
+    });
+
+    it("retries with the chain calldataAmountScale (USEI_TO_EVM_SCALE for SEI) when initial gas estimation fails for a payable staking call (value > 0)", async () => {
+      const spendableBalance = 1_000_000_000_000_000_000n; // 1 SEI
+
+      mockBuildStakingTransactionParams.mockReturnValue({
+        to: stakingContractAddress,
+        data: stakingData,
+        value: spendableBalance, // payable: amount goes into msg.value
+      });
+
+      // First call (full balance) fails, retry (1 usei) succeeds
+      nodeApiMock.getGasEstimation
+        .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
+        .mockResolvedValueOnce(new BigNumber(70_000));
+
+      const result = await prepareUnsignedTxParams(
+        mockCurrency,
+        makeStakingIntent(spendableBalance),
+      );
+
+      expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
+      // First call used the full balance
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
+        1,
+        { currency: mockCurrency, freshAddress: "0xSender" },
+        {
+          amount: new BigNumber(spendableBalance.toString()),
+          recipient: stakingContractAddress,
+          data: stakingData,
+        },
+      );
+      // Retry used the minimum calldata unit for the chain (calldataAmountScale)
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
+        2,
+        { currency: mockCurrency, freshAddress: "0xSender" },
+        {
+          amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
+          recipient: stakingContractAddress,
+          data: stakingData,
+        },
+      );
+      expect(result.gasLimit).toEqual(new BigNumber(70_000));
+    });
+
+    it("retries with the chain calldataAmountScale (USEI_TO_EVM_SCALE for SEI) when initial gas estimation fails for a staking call with amount=0 (delegation form freshly opened)", async () => {
+      mockBuildStakingTransactionParams.mockReturnValue({
+        to: stakingContractAddress,
+        data: stakingData,
+        value: 0n, // amount=0 → 0 usei → precompile rejects
+      });
+
+      nodeApiMock.getGasEstimation
+        .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
+        .mockResolvedValueOnce(new BigNumber(70_000));
+
+      const result = await prepareUnsignedTxParams(mockCurrency, makeStakingIntent(0n));
+
+      expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
+        2,
+        { currency: mockCurrency, freshAddress: "0xSender" },
+        {
+          amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
+          recipient: stakingContractAddress,
+          data: stakingData,
+        },
+      );
+      expect(result.gasLimit).toEqual(new BigNumber(70_000));
+    });
+
+    it("falls back to gasLimit=0 when both the initial and retry gas estimation fail for a staking call", async () => {
+      mockBuildStakingTransactionParams.mockReturnValue({
+        to: stakingContractAddress,
+        data: stakingData,
+        value: 0n,
+      });
+
+      nodeApiMock.getGasEstimation.mockRejectedValue(GAS_ESTIMATION_ERROR);
+
+      const result = await prepareUnsignedTxParams(mockCurrency, makeStakingIntent(0n));
+
+      expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
+      expect(result.gasLimit).toEqual(new BigNumber(0));
+    });
+
+    it("does not retry for send transactions — falls back to gasLimit=0 on first failure without a second call", async () => {
+      const sendIntent = {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: 1n,
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xSender",
+        feesStrategy: "medium",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>;
+
+      nodeApiMock.getGasEstimation.mockRejectedValueOnce(GAS_ESTIMATION_ERROR);
+
+      const result = await prepareUnsignedTxParams(mockCurrency, sendIntent);
+
+      expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(1);
+      expect(result.gasLimit).toEqual(new BigNumber(0));
     });
   });
 });

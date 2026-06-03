@@ -28,6 +28,7 @@ import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import Box from "~/renderer/components/Box";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
+import { buildEarnGoToURL } from "./buildEarnGoToURL";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxEarnLiveApp.params?.manifest_id;
@@ -73,11 +74,52 @@ const Earn = () => {
 
   const { updateManifests } = useRemoteLiveAppContext();
 
+  const inputs = useMemo(() => {
+    const routeState = (location.state as Record<string, string | undefined> | null) ?? {};
+    const { customDappUrl, ...earnRouteParams } = routeState;
+
+    const earnInitParams = {
+      theme: themeType,
+      lang: language,
+      locale,
+      countryLocale,
+      currencyTicker: fiatCurrency.ticker,
+      discreetMode: discreetMode ? "true" : "false",
+      OS: "web",
+      uiVersion: isLwd40Enabled ? computedUiVersion : "v1",
+      lw40enabled: isLwd40Enabled ? "true" : "false",
+      stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+      stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
+      ethDepositCohort,
+    };
+
+    return {
+      ...earnInitParams,
+      ...earnRouteParams,
+      devMode,
+      routerState: JSON.stringify(location.state ?? {}),
+      goToURL: customDappUrl ? buildEarnGoToURL(customDappUrl, earnInitParams) : undefined,
+    };
+  }, [
+    location.state,
+    themeType,
+    language,
+    locale,
+    countryLocale,
+    fiatCurrency.ticker,
+    discreetMode,
+    devMode,
+    isLwd40Enabled,
+    computedUiVersion,
+    stakeProgramsParam,
+    stakeCurrenciesParam,
+    ethDepositCohort,
+  ]);
+
   if (!manifest) {
     return <NetworkErrorScreen refresh={updateManifests} type="warning" />;
   }
 
-  // if LWM40 is enabled, use Box for transparency, otherwise use Card
   const Container = isLwd40Enabled ? Box : Card;
 
   return (
@@ -92,24 +134,7 @@ const Earn = () => {
           },
         }}
         manifest={manifest}
-        inputs={{
-          theme: themeType,
-          lang: language,
-          locale: locale,
-          countryLocale,
-          currencyTicker: fiatCurrency.ticker,
-          devMode,
-          discreetMode: discreetMode ? "true" : "false",
-          OS: "web",
-          routerState: JSON.stringify(location.state ?? {}),
-          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
-          stakeCurrenciesParam: stakeCurrenciesParam
-            ? JSON.stringify(stakeCurrenciesParam)
-            : undefined,
-          ethDepositCohort,
-          uiVersion: isLwd40Enabled ? computedUiVersion : "v1",
-          lw40enabled: isLwd40Enabled ? "true" : "false",
-        }}
+        inputs={inputs}
       />
     </Container>
   );

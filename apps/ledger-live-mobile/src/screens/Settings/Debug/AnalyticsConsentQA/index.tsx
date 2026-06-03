@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,

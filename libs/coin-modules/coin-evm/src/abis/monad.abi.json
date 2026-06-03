@@ -1,0 +1,161 @@
+[
+    {
+      "type": "function",
+      "name": "delegate",
+      "inputs": [{ "name": "validatorId", "type": "uint64", "internalType": "uint64" }],
+      "outputs": [{ "name": "success", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "undelegate",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "internalType": "uint64" },
+        { "name": "amount", "type": "uint256", "internalType": "uint256" },
+        { "name": "withdrawId", "type": "uint8", "internalType": "uint8" }
+      ],
+      "outputs": [{ "name": "success", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "withdraw",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "internalType": "uint64" },
+        { "name": "withdrawId", "type": "uint8", "internalType": "uint8" }
+      ],
+      "outputs": [{ "name": "success", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "claimRewards",
+      "inputs": [{ "name": "validatorId", "type": "uint64", "internalType": "uint64" }],
+      "outputs": [{ "name": "success", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getDelegator",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "internalType": "uint64" },
+        { "name": "delegator", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [
+        { "name": "stake", "type": "uint256", "internalType": "uint256" },
+        { "name": "accRewardPerToken", "type": "uint256", "internalType": "uint256" },
+        { "name": "unclaimedRewards", "type": "uint256", "internalType": "uint256" },
+        { "name": "deltaStake", "type": "uint256", "internalType": "uint256" },
+        { "name": "nextDeltaStake", "type": "uint256", "internalType": "uint256" },
+        { "name": "deltaEpoch", "type": "uint64", "internalType": "uint64" },
+        { "name": "nextDeltaEpoch", "type": "uint64", "internalType": "uint64" }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getDelegations",
+      "inputs": [
+        { "name": "delegator", "type": "address", "internalType": "address" },
+        { "name": "startValId", "type": "uint64", "internalType": "uint64" }
+      ],
+      "outputs": [
+        { "name": "isDone", "type": "bool", "internalType": "bool" },
+        { "name": "nextValId", "type": "uint64", "internalType": "uint64" },
+        { "name": "valIds", "type": "uint64[]", "internalType": "uint64[]" }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getExecutionValidatorSet",
+      "inputs": [{ "name": "startIndex", "type": "uint32", "internalType": "uint32" }],
+      "outputs": [
+        { "name": "isDone", "type": "bool", "internalType": "bool" },
+        { "name": "nextIndex", "type": "uint32", "internalType": "uint32" },
+        { "name": "valIds", "type": "uint64[]", "internalType": "uint64[]" }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getValidator",
+      "inputs": [{ "name": "validatorId", "type": "uint64", "internalType": "uint64" }],
+      "outputs": [
+        { "name": "authAddress", "type": "address", "internalType": "address" },
+        { "name": "flags", "type": "uint64", "internalType": "uint64" },
+        { "name": "stake", "type": "uint256", "internalType": "uint256" },
+        { "name": "accRewardPerToken", "type": "uint256", "internalType": "uint256" },
+        { "name": "commission", "type": "uint256", "internalType": "uint256" },
+        { "name": "unclaimedRewards", "type": "uint256", "internalType": "uint256" },
+        { "name": "consensusStake", "type": "uint256", "internalType": "uint256" },
+        { "name": "consensusCommission", "type": "uint256", "internalType": "uint256" },
+        { "name": "snapshotStake", "type": "uint256", "internalType": "uint256" },
+        { "name": "snapshotCommission", "type": "uint256", "internalType": "uint256" },
+        { "name": "secpPubkey", "type": "bytes", "internalType": "bytes" },
+        { "name": "blsPubkey", "type": "bytes", "internalType": "bytes" }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getWithdrawalRequest",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "internalType": "uint64" },
+        { "name": "delegator", "type": "address", "internalType": "address" },
+        { "name": "withdrawId", "type": "uint8", "internalType": "uint8" }
+      ],
+      "outputs": [
+        { "name": "withdrawalAmount", "type": "uint256", "internalType": "uint256" },
+        { "name": "accRewardPerToken", "type": "uint256", "internalType": "uint256" },
+        { "name": "withdrawEpoch", "type": "uint64", "internalType": "uint64" }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "Delegate",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "indexed": true, "internalType": "uint64" },
+        { "name": "delegator", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" },
+        { "name": "activationEpoch", "type": "uint64", "indexed": false, "internalType": "uint64" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Undelegate",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "indexed": true, "internalType": "uint64" },
+        { "name": "delegator", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "withdrawId", "type": "uint8", "indexed": false, "internalType": "uint8" },
+        { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" },
+        { "name": "activationEpoch", "type": "uint64", "indexed": false, "internalType": "uint64" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "ClaimRewards",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "indexed": true, "internalType": "uint64" },
+        { "name": "delegator", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" },
+        { "name": "epoch", "type": "uint64", "indexed": false, "internalType": "uint64" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Withdraw",
+      "inputs": [
+        { "name": "validatorId", "type": "uint64", "indexed": true, "internalType": "uint64" },
+        { "name": "delegator", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "withdrawId", "type": "uint8", "indexed": false, "internalType": "uint8" },
+        { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" },
+        { "name": "withdrawEpoch", "type": "uint64", "indexed": false, "internalType": "uint64" }
+      ],
+      "anonymous": false
+    }
+  ]

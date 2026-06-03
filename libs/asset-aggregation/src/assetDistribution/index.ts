@@ -6,6 +6,8 @@ export type {
   MarketStateSlice,
   ResolveDistributionItemParams,
 } from "./resolveDistributionItem";
+export { resolveAssetMarketInputs } from "./resolveAssetMarketInputs";
+export type { AssetMarketInputs, ResolveAssetMarketInputsParams } from "./resolveAssetMarketInputs";
 export { buildMainAccountByIdMap, lookupParentAccountFromMap } from "./parentAccountLookup";
 export type {
   AssetsDataLike,

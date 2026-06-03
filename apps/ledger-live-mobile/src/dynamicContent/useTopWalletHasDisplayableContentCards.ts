@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import useDynamicContent from "./useDynamicContent";
 import { ContentCardLocation } from "./types";
 import { filterCategoriesByLocation, formatCategories } from "./utils";

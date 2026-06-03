@@ -14,7 +14,7 @@ describe("createApi", () => {
     {
       ...mockConfig,
       apiUrls: {
-        node: getEnv("ALEO_TESTNET_NODE_ENDPOINT"),
+        node: getEnv("ALEO_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
     },

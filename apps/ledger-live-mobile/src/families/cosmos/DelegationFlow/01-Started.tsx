@@ -18,6 +18,7 @@ import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SafeAreaView from "~/components/SafeAreaView";
 import { CosmosDelegationFlowParamList } from "./types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -43,7 +44,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [mainAccount.currency.id]);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"
@@ -97,7 +98,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.cta" />
         </Button>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

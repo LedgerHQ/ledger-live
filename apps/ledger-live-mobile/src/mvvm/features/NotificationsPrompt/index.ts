@@ -13,7 +13,12 @@ export {
   getNextRepromptDelay,
   shouldPromptOptInDrawerAfterAction,
 } from "./utils/notificationsPromptEngine";
-export type { DataOfUser, InitPushNotificationsDataResult } from "./types";
+export type {
+  DataOfUser,
+  InitPushNotificationsDataResult,
+  NotificationCategory,
+  NotificationPromptTarget,
+} from "./types";
 export type {
   AfterActionTriggerDecision,
   InactivityTriggerDecision,

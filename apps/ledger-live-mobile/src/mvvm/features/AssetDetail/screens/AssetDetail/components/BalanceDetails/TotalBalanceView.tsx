@@ -30,7 +30,12 @@ export function TotalBalanceView({
           {t("assetDetail.balanceDetails.totalBalance")}
         </Text>
         {counterValue != null && (
-          <AmountDisplay value={counterValue} formatter={counterValueFormatter} hidden={discreet} />
+          <AmountDisplay
+            value={counterValue}
+            formatter={counterValueFormatter}
+            hidden={discreet}
+            size="sm"
+          />
         )}
         <Text typography="body3" lx={{ color: "muted" }}>
           {formattedTotalBalance}

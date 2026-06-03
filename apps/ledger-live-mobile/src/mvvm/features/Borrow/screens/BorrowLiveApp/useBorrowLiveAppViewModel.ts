@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -41,7 +41,7 @@ type BorrowLiveAppViewModel = {
 };
 
 const DEFAULT_MANIFEST_ID =
-  DEFAULT_FEATURES.ptxBorrowLiveApp?.params?.manifest_id ?? "borrow";
+  FEATURE_FLAGS_DEFAULTS.ptxBorrowLiveApp?.params?.manifest_id ?? "borrow";
 
 export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const { t } = useTranslation();

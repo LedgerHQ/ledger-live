@@ -7,8 +7,16 @@ jest.mock("../../bridge", () => ({
   getCurrencyBridge: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/coin-canton/config", () => ({
+  __esModule: true,
+  default: {
+    getCoinConfig: () => ({ nativeInstrumentId: "Amulet" }),
+  },
+}));
+
 import { renderHook, act } from "@testing-library/react";
-import { getRemainingTime, useTimeRemaining } from "./react";
+import BigNumber from "bignumber.js";
+import { getRemainingTime, useTimeRemaining, useWithdrawableBalance } from "./react";
 
 const MILLISECOND = 1000;
 const SECOND = 1 * MILLISECOND;
@@ -147,5 +155,103 @@ describe("useTimeRemaining", () => {
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
+  });
+});
+
+describe("useWithdrawableBalance", () => {
+  const PARTY = "test-party-id";
+  const PAST_MICROS = (Date.now() - 60_000) * 1000;
+  const FUTURE_MICROS = (Date.now() + 60_000) * 1000;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const makeParent = (proposals: any[]) =>
+    ({
+      type: "Account",
+      xpub: PARTY,
+      currency: { id: "canton", units: [{ code: "CC", magnitude: 10, name: "Amulet" }] },
+      cantonResources: { pendingTransferProposals: proposals },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any;
+
+  test("returns 0 when account has no canton resources", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const account = { type: "Account", xpub: PARTY } as any;
+    const { result } = renderHook(() => useWithdrawableBalance(account, []));
+    expect(result.current.toString()).toBe("0");
+  });
+
+  test("sums only outgoing AND expired native proposals on a parent account", () => {
+    const parent = makeParent([
+      {
+        sender: PARTY,
+        amount: "1000",
+        expires_at_micros: PAST_MICROS,
+        instrument_id: "Amulet",
+      },
+      // outgoing but not expired → skip
+      {
+        sender: PARTY,
+        amount: "2000",
+        expires_at_micros: FUTURE_MICROS,
+        instrument_id: "Amulet",
+      },
+      // incoming, expired → skip
+      {
+        sender: "someone-else",
+        amount: "4000",
+        expires_at_micros: PAST_MICROS,
+        instrument_id: "Amulet",
+      },
+    ]);
+    const { result } = renderHook(() => useWithdrawableBalance(parent, [parent]));
+    expect(result.current).toEqual(new BigNumber("1000"));
+  });
+
+  test("excludes token proposals from the parent-account sum (would mis-render as native unit)", () => {
+    const parent = makeParent([
+      {
+        sender: PARTY,
+        amount: "500",
+        expires_at_micros: PAST_MICROS,
+        instrument_id: "Amulet",
+      },
+      {
+        sender: PARTY,
+        amount: "99999999",
+        expires_at_micros: PAST_MICROS,
+        instrument_id: "cbtc-instrument-id",
+      },
+    ]);
+    const { result } = renderHook(() => useWithdrawableBalance(parent, [parent]));
+    expect(result.current).toEqual(new BigNumber("500"));
+  });
+
+  test("token sub-account sums its own (already-filtered) proposals", () => {
+    const subAccount = {
+      type: "TokenAccount",
+      parentId: "parent-id",
+      cantonResources: {
+        pendingTransferProposals: [
+          {
+            sender: PARTY,
+            amount: "123",
+            expires_at_micros: PAST_MICROS,
+            instrument_id: "cbtc-instrument-id",
+          },
+        ],
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+    const parent = {
+      type: "Account",
+      id: "parent-id",
+      xpub: PARTY,
+      currency: { id: "canton", units: [{ code: "CC", magnitude: 10, name: "Amulet" }] },
+      subAccounts: [subAccount],
+      cantonResources: { pendingTransferProposals: [] },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+    const { result } = renderHook(() => useWithdrawableBalance(subAccount, [parent]));
+    expect(result.current).toEqual(new BigNumber("123"));
   });
 });

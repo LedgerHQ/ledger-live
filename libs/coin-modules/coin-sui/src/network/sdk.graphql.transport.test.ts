@@ -1,8 +1,17 @@
+import { JsonRpcHTTPTransport } from "@mysten/sui/jsonRpc";
 import { createSuiGraphQLClient } from "./graphql/client";
 import coinConfig from "../config";
 import { fetcher } from "./fetcher";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
-import { getAllBalancesCached, getCheckpoint, isGraphQLEnabled } from "./sdk";
+import {
+  getAllBalancesCached,
+  getBlock,
+  getBlockInfo,
+  getCheckpoint,
+  isGraphQLEnabled,
+  withApi,
+} from "./sdk";
+import { withGraphQLApi } from "./sdk.graphql";
 import { bindMockNextGraphQLClient, fakeBalancesPage } from "./sdk.graphql.fixtures";
 
 // JSON-RPC stays mocked — any caller leaking onto it fails loudly via this proxy.
@@ -16,6 +25,8 @@ jest.mock("./graphql/client", () => ({
 
 jest.mock("@mysten/sui/jsonRpc", () => ({
   ...jest.requireActual("@mysten/sui/jsonRpc"),
+  // Captures the `{ url }` arg so the dual-URL routing test can assert it.
+  JsonRpcHTTPTransport: jest.fn(),
   SuiJsonRpcClient: jest.fn().mockImplementation(
     () =>
       new Proxy(
@@ -32,13 +43,15 @@ jest.mock("@mysten/sui/jsonRpc", () => ({
 }));
 
 const factoryMock = createSuiGraphQLClient as unknown as jest.Mock;
+const JsonRpcHTTPTransportMock = JsonRpcHTTPTransport as unknown as jest.Mock;
 const mockNext = bindMockNextGraphQLClient(factoryMock);
 
 beforeEach(() => {
   factoryMock.mockReset();
+  JsonRpcHTTPTransportMock.mockReset();
   unexpectedJsonRpc.mockClear();
   coinConfig.setCoinConfig(() => ({
-    node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
+    node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
     status: { type: "active" },
     features: { graphql: true },
   }));
@@ -49,16 +62,16 @@ beforeEach(() => {
 describe("isGraphQLEnabled", () => {
   it("should return true when features.graphql === true", () => {
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
+      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
       features: { graphql: true },
     }));
     expect(isGraphQLEnabled()).toBe(true);
   });
 
-  it("should return false when features.graphql is false", () => {
+  it("should return false when features.graphql === false", () => {
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
+      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
       features: { graphql: false },
     }));
@@ -180,5 +193,119 @@ describe("fetcher: retry behaviour", () => {
     } finally {
       jest.useRealTimers();
     }
+  });
+});
+
+// ---- dual-URL routing invariant ----
+//
+// Locks in the round-1 architectural fix: `withApi` (build path) MUST read `node.url`
+// (JSON-RPC fullnode) and `withGraphQLApi` MUST read `node.graphqlUrl`, regardless of
+// `features.graphql`. A future config refactor that conflated the two would silently
+// reintroduce the original `paymentInfo` failure documented in `sdk.migration.integ.test.ts`.
+
+describe("dispatcher dual-URL routing", () => {
+  const JSON_RPC_URL = "https://json-rpc.example.test";
+  const GRAPHQL_URL = "https://graphql.example.test/graphql";
+
+  beforeEach(() => {
+    coinConfig.setCoinConfig(() => ({
+      node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
+      status: { type: "active" },
+      features: { graphql: true },
+    }));
+  });
+
+  it("withApi reads node.url even when features.graphql is true", async () => {
+    // GIVEN
+    const captured = jest.fn();
+
+    // WHEN
+    await withApi(async () => {
+      captured();
+      return null;
+    });
+
+    // THEN
+    expect(captured).toHaveBeenCalledTimes(1);
+    expect(JsonRpcHTTPTransportMock).toHaveBeenCalledTimes(1);
+    expect(JsonRpcHTTPTransportMock.mock.calls[0][0]).toMatchObject({ url: JSON_RPC_URL });
+    expect(factoryMock).not.toHaveBeenCalled();
+  });
+
+  it("withGraphQLApi reads node.graphqlUrl, not node.url", async () => {
+    // GIVEN
+    const captured = jest.fn();
+    mockNext();
+
+    // WHEN
+    await withGraphQLApi(async () => {
+      captured();
+      return null;
+    });
+
+    // THEN
+    expect(captured).toHaveBeenCalledTimes(1);
+    expect(factoryMock).toHaveBeenCalledTimes(1);
+    expect(factoryMock.mock.calls[0][0]).toMatchObject({ url: GRAPHQL_URL });
+    expect(JsonRpcHTTPTransportMock).not.toHaveBeenCalled();
+  });
+});
+
+// ---- getBlock / getBlockInfo: digest input routes to JSON-RPC even with GraphQL on ----
+//
+// GraphQL's `checkpoint(sequenceNumber:)` field doesn't accept digests. To preserve the
+// public contract of accepting either form, digest inputs must fall back to JSON-RPC
+// instead of throwing. These tests pin that routing so a regression flips loudly.
+
+describe("getBlock/getBlockInfo digest routing", () => {
+  beforeEach(() => {
+    coinConfig.setCoinConfig(() => ({
+      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
+      status: { type: "active" },
+      features: { graphql: true },
+    }));
+  });
+
+  it("getBlockInfo with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
+    // 44-char base58-ish digest; not numeric, so isSequenceNumber returns false.
+    const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
+    await expect(getBlockInfo(digest)).rejects.toThrow();
+    // GraphQL client must NOT have been created — JSON-RPC arm took over.
+    expect(factoryMock).not.toHaveBeenCalled();
+    // JSON-RPC transport WAS constructed (then the mocked SuiJsonRpcClient throws on any call).
+    expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
+  });
+
+  it("getBlock with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
+    const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
+    await expect(getBlock(digest)).rejects.toThrow();
+    expect(factoryMock).not.toHaveBeenCalled();
+    expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
+  });
+
+  it("getBlockInfo with a sequence number constructs a GraphQL client (flag on)", async () => {
+    mockNext({
+      query: jest.fn().mockResolvedValueOnce({
+        data: {
+          checkpoint: {
+            digest: "0xdgst",
+            sequenceNumber: 42,
+            timestamp: "2026-01-01T00:00:00Z",
+            previousCheckpointDigest: null,
+          },
+        },
+      }),
+    });
+    const out = await getBlockInfo("42");
+    expect(factoryMock).toHaveBeenCalled();
+    expect(out.hash).toBe("0xdgst");
+  });
+
+  it("isSequenceNumber rejects 16+ digit numerics above 2^53-1", async () => {
+    // 17-digit number — Number(id) would silently lose precision; must route to JSON-RPC.
+    const bigNumeric = "99999999999999999";
+    await expect(getBlockInfo(bigNumeric)).rejects.toThrow();
+    expect(factoryMock).not.toHaveBeenCalled();
+    expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
   });
 });

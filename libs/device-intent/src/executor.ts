@@ -1,4 +1,5 @@
 import type React from "react";
+import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
 import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
@@ -49,6 +50,7 @@ export type DeviceContextInitializerComponent<
  */
 export type ErrorComponent = React.ComponentType<{
   error: unknown;
+  device: ConnectedDevice;
   onRetry: () => void;
   /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
   onClose: () => void;
@@ -61,6 +63,7 @@ export type ErrorComponent = React.ComponentType<{
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
  */
 export type DeviceDisconnectedComponent = React.ComponentType<{
+  device: ConnectedDevice;
   onRetry: () => void;
   /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
   onClose: () => void;
@@ -97,13 +100,33 @@ export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConf
 /**
  * Observable state of the `DeviceIntentExecutor`, reported to the caller via
  * {@link DeviceIntentExecutorProps.onExecutorStateChanged}.
+ *
+ * States carry the data the executor has accumulated up to that point so that
+ * callers can react without keeping their own out-of-band copy:
+ * - `initializingDeviceContext` → `connectionResult` (set on `DEVICE_CONNECTED`).
+ * - `executingIntent` → `connectionResult` and `extractedContext`
+ *   (set on `DEVICE_CONNECTED` and `DEVICE_INITIALIZED` respectively).
+ * - `executingIntentError` → both, plus the original error.
+ * - `deviceDisconnected` → the disconnected device from the last successful connection.
  */
 export type ExecutorState =
   | { type: "connectingDevice" }
-  | { type: "deviceDisconnected" }
-  | { type: "initializingDeviceContext" }
-  | { type: "executingIntent" }
-  | { type: "executingIntentError"; error: unknown }
+  | { type: "deviceDisconnected"; device: ConnectedDevice }
+  | {
+      type: "initializingDeviceContext";
+      connectionResult: DeviceConnectionResult;
+    }
+  | {
+      type: "executingIntent";
+      connectionResult: DeviceConnectionResult;
+      extractedContext: DeviceExtractedContext;
+    }
+  | {
+      type: "executingIntentError";
+      error: unknown;
+      connectionResult: DeviceConnectionResult;
+      extractedContext: DeviceExtractedContext;
+    }
   | { type: "invalidOperation"; error: unknown }
   | { type: "idle" };
 

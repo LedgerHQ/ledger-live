@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { AB_TESTING_VARIANTS } from "./types/variants";
 import { CommonActions, NavigationProp, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -170,7 +170,7 @@ describe("NotificationsPrompt swap flow", () => {
         {
           action: "swap",
           shouldPrompt: true,
-          variant: ABTestingVariants.variantB,
+          variant: AB_TESTING_VARIANTS.B,
           repromptDelay: null,
           dismissedCount: 0,
           skipReason: undefined,
@@ -187,7 +187,7 @@ describe("NotificationsPrompt swap flow", () => {
         source: "swap",
         repromptDelay: null,
         dismissedCount: 0,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -217,7 +217,7 @@ describe("NotificationsPrompt swap flow", () => {
         {
           action: "swap",
           shouldPrompt: true,
-          variant: ABTestingVariants.variantB,
+          variant: AB_TESTING_VARIANTS.B,
           repromptDelay: null,
           dismissedCount: 0,
           skipReason: undefined,
@@ -231,7 +231,7 @@ describe("NotificationsPrompt swap flow", () => {
         source: "swap",
         repromptDelay: null,
         dismissedCount: 0,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
   });
@@ -282,7 +282,7 @@ describe("NotificationsPrompt swap flow", () => {
         {
           action: "swap",
           shouldPrompt: true,
-          variant: ABTestingVariants.variantB,
+          variant: AB_TESTING_VARIANTS.B,
           repromptDelay: null,
           dismissedCount: 0,
           skipReason: undefined,
@@ -295,7 +295,7 @@ describe("NotificationsPrompt swap flow", () => {
         source: "swap",
         repromptDelay: null,
         dismissedCount: 0,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -325,7 +325,7 @@ describe("NotificationsPrompt swap flow", () => {
         {
           action: "swap",
           shouldPrompt: true,
-          variant: ABTestingVariants.variantB,
+          variant: AB_TESTING_VARIANTS.B,
           repromptDelay: null,
           dismissedCount: 0,
           skipReason: undefined,
@@ -339,7 +339,7 @@ describe("NotificationsPrompt swap flow", () => {
         source: "swap",
         repromptDelay: null,
         dismissedCount: 0,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
   });

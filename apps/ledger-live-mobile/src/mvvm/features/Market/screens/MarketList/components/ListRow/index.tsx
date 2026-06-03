@@ -1,9 +1,8 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { ScreenName } from "~/const";
 import MarketRowItem from "LLM/features/Market/components/MarketRowItem";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 interface ListRowProps {
   item: MarketCurrencyData;
@@ -12,12 +11,14 @@ interface ListRowProps {
   range?: string;
 }
 function ListRow({ item, index, counterCurrency, range }: ListRowProps) {
-  const navigation = useNavigation();
+  const { openFromMarket } = useAssetDetailNavigation();
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(ScreenName.MarketDetail, {
-          currencyId: item.id,
+        openFromMarket({
+          marketCurrencyId: item.id,
+          ledgerCurrencyIds: item.ledgerIds,
+          source: "market",
         });
       }}
     >

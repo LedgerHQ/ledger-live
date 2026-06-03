@@ -7,7 +7,7 @@ import { useTranslation } from "~/context/Locale";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigationProps } from "../types";
 import ArrowLeft from "~/icons/ArrowLeft";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Layout } from "./Layout";

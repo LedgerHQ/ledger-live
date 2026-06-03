@@ -74,12 +74,6 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   };
 };
 
-/**
- * Synchronise the account with the latest operations and balance.
- * @function sync
- * @param {Object} params - The parameters for synchronisation.
- * @returns {Promise<void>} A promise that resolves when synchronisation is complete.
- */
 export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
 async function buildSubAccounts({
@@ -100,8 +94,8 @@ async function buildSubAccounts({
   if (subAccountsBalances.length === 0) return undefined;
   const { blacklistedTokenIds = [] } = syncConfig;
   const tokenAccounts: TokenAccount[] = [];
-  const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
-  const existingAccountTickers: string[] = []; // used to keep track of ordering
+  const existingAccountByTicker: { [ticker: string]: TokenAccount } = {};
+  const existingAccountTickers: string[] = [];
 
   for (const existingSubAccount of subAccounts) {
     if (existingSubAccount.type === "TokenAccount") {
@@ -133,7 +127,6 @@ async function buildSubAccounts({
     }
   });
 
-  // Preserve order of tokenAccounts from the existing token accounts
   tokenAccounts.sort((a, b) => {
     const i = existingAccountTickers.indexOf(a.token.ticker);
     const j = existingAccountTickers.indexOf(b.token.ticker);

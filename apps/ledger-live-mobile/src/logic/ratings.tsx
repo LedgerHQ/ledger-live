@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, parseISO } from "date-fns";
 import storage from "LLM/storage";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
   ratingsModalOpenSelector,

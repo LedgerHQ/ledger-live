@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -20,7 +20,8 @@ export function usePortfolioAddRecoverPostOnboardingAction() {
   const dispatch = useDispatch();
   const recoverServices = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverServices);
-  const { shouldDisplayFinishOnboardingWidget } = useWalletFeaturesConfig("desktop");
+  const onboardingWidgetFeature = useFeature("onboardingWidget");
+  const shouldDisplayFinishOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
   const { actionsState } = usePostOnboardingHubState();
   const { areAllActionsCompleted, loading } = usePostOnboardingHubStepperDisplay(actionsState);
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";

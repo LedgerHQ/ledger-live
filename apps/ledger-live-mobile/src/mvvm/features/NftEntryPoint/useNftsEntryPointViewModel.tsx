@@ -1,5 +1,5 @@
 import React from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { AnalyticsPage, Entry, EntryPointNft } from "./types";
 import { Row } from "./components/Row";
 import { track } from "~/analytics";

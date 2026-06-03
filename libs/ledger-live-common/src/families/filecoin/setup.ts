@@ -7,7 +7,12 @@ import filecoinResolver from "@ledgerhq/coin-filecoin/signer/index";
 import { signMessage } from "@ledgerhq/coin-filecoin/hw-signMessage";
 import type { Account, Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-filecoin/test/cli";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import {
+  CreateSigner,
+  createMessageSigner,
+  createResolver,
+  executeWithSigner,
+} from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { TransactionStatus, Transaction, FilecoinSigner } from "./types";
 import { getPath } from "./common";
@@ -26,7 +31,7 @@ const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
 );
 
 const messageSigner = {
-  signMessage,
+  signMessage: createMessageSigner(createSigner, signMessage),
 };
 
 const resolver: Resolver = createResolver(createSigner, filecoinResolver);

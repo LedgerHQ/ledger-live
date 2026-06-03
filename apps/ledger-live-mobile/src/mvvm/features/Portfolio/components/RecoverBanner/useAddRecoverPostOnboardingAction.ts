@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -14,7 +14,8 @@ export function useAddRecoverPostOnboardingAction(
   subscriptionState: LedgerRecoverSubscriptionStateEnum | undefined,
 ) {
   const dispatch = useDispatch();
-  const { shouldDisplayOnboardingWidget } = useWalletFeaturesConfig("mobile");
+  const onboardingWidgetFeature = useFeature("onboardingWidget");
+  const shouldDisplayOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
   const { actionsState } = usePostOnboardingHubState();
   const { areAllActionsCompleted, loading } = usePostOnboardingHubStepperDisplay(actionsState);
 

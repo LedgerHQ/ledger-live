@@ -8,7 +8,12 @@ import {
 } from "@ledgerhq/live-common/e2e/speculos";
 import { setEnv } from "@ledgerhq/live-env";
 import { device, log } from "detox";
-import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
+import {
+  waitForSpeculosReady,
+  fetchSpeculinhoLogs,
+  fetchSpeculinhoStatus,
+  getSpeculinhoRunIdFromError,
+} from "@ledgerhq/live-common/e2e/speculosCI";
 import { isSpeculosRemote } from "../helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
 import { CLI } from "./cliUtils";
@@ -102,6 +107,10 @@ export async function launchSpeculos(appName: string) {
     const err = e instanceof Error ? e : new Error(String(e));
     globalThis.speculosStartupErrorMessage = err.message;
     globalThis.speculosFailureStderr = getCapturedStderr();
+    const failedRunId = getSpeculinhoRunIdFromError(e);
+    if (failedRunId) {
+      (globalThis.speculosFailedRunIds ??= new Set()).add(failedRunId);
+    }
     await attachSpeculosOutputToAllure(err.message);
     const message = ["[E2E Setup] Speculos failed to start.", err.message]
       .filter(Boolean)
@@ -210,6 +219,31 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
   delete process.env.SPECULOS_API_PORT;
 
   return port;
+}
+
+export async function attachSpeculinhoLogsToAllure() {
+  if (!isSpeculosRemote()) {
+    return;
+  }
+
+  const deviceIds = new Set<string>(speculosDevices.keys());
+  for (const runId of globalThis.speculosFailedRunIds ?? []) {
+    deviceIds.add(runId);
+  }
+  globalThis.speculosFailedRunIds?.clear();
+
+  for (const deviceId of deviceIds) {
+    try {
+      const [logs, status] = await Promise.all([
+        fetchSpeculinhoLogs(deviceId),
+        fetchSpeculinhoStatus(deviceId),
+      ]);
+      await allure.attachment(`Speculos ${deviceId} logs`, logs, "text/plain");
+      await allure.attachment(`Speculos ${deviceId} status`, status, "text/plain");
+    } catch (error) {
+      log.warn("E2E", `attachSpeculinhoLogsToAllure: ${sanitizeError(error)}`);
+    }
+  }
 }
 
 export async function takeSpeculosScreenshot() {

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Operation, DailyOperationsSection } from "@ledgerhq/types-live";
 import { Button } from "@ledgerhq/native-ui";
 import { SectionListRenderItemInfo, SectionList } from "react-native";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import SectionHeader from "~/components/SectionHeader";
 import { ViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";

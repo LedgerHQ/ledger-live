@@ -6,7 +6,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import type { DataOfUser } from "LLM/features/NotificationsPrompt/types";
+import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {
@@ -133,6 +133,7 @@ export type NotificationsState = {
     | "stake"
     | "add_favorite_coin"
     | "inactivity";
+  drawerPromptTarget?: NotificationPromptTarget;
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
 };

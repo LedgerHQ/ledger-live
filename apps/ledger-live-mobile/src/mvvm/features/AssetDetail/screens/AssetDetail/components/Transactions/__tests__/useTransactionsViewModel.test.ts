@@ -195,7 +195,7 @@ describe("useTransactionsViewModel", () => {
         params: { accountIds: accounts.map(a => a.id) },
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "transactions_header",
+        button: "Transactions",
         currency: "bitcoin",
         page: "Asset Detail",
       });

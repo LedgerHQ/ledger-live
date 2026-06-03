@@ -11,6 +11,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import type { HederaCoinConfig } from "../config";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import {
@@ -46,7 +47,7 @@ const calculateCoinAmount = async ({
   transaction: Transaction;
   operationType: Exclude<HEDERA_OPERATION_TYPES, HEDERA_OPERATION_TYPES.ContractCall>;
 }): Promise<CalculateAmountResult> => {
-  const estimatedFees = await estimateFees({ currency: account.currency, operationType });
+  const estimatedFees = await estimateFees({ currencyId: account.currency.id, operationType });
   const amount = transaction.useAllAmount
     ? await estimateMaxSpendable({ account, transaction })
     : transaction.amount;
@@ -529,6 +530,8 @@ export const patchContractCallOperation = ({
 
 // TODO: remove once migration to new API is complete
 export const integrateERC20Operations = async ({
+  config,
+  currencyId,
   ledgerAccountId,
   address,
   allOperations,
@@ -536,6 +539,8 @@ export const integrateERC20Operations = async ({
   pendingOperationHashes,
   erc20OperationHashes,
 }: {
+  config?: HederaCoinConfig;
+  currencyId: string;
   ledgerAccountId: string;
   address: string;
   allOperations: Operation[];
@@ -548,8 +553,15 @@ export const integrateERC20Operations = async ({
 }> => {
   const newERC20TokenOperations: Operation[] = [];
   const [latestERC20Operations, evmAddress] = await Promise.all([
-    getERC20Operations(latestERC20Transactions),
-    toEVMAddress(address),
+    getERC20Operations({
+      currencyId,
+      latestERC20Transactions,
+      ...(config && { config }),
+    }),
+    toEVMAddress({
+      configOrCurrencyId: config ?? currencyId,
+      accountId: address,
+    }),
   ]);
 
   // avoid duplicated CONTRACT_CALL operations if ERC20 operations are already present

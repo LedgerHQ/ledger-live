@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";

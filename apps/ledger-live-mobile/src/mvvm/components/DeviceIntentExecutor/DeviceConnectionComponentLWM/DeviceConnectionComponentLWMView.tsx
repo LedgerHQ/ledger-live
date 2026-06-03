@@ -43,7 +43,7 @@ export function DeviceConnectionComponentLWMView({
       return <DiscoveryErrorState state={state} platform={platform} />;
 
     case ConnectDeviceUIStateTypes.Connecting:
-      return <ConnectingState />;
+      return <ConnectingState state={state} />;
 
     case ConnectDeviceUIStateTypes.ConnectionError:
       return <ConnectionErrorState state={state} />;

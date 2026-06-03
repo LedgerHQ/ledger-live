@@ -35,13 +35,12 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
-      shouldDisplayOnboardingWidget: isEnabled && Boolean(params?.onboardingWidget),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
       shouldDisplayMyWallet: isEnabled && Boolean(params?.myWallet),
       shouldDisplayPnl: isEnabled && Boolean(params?.pnl),
-      shouldDisplayFinishOnboardingWidget: isEnabled && Boolean(params?.finishOnboardingWidget),
+      shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
       shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
     };
@@ -91,8 +90,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayTour: boolean;
   /** Whether to show the asset section */
   readonly shouldDisplayAssetSection: boolean;
-  /** Whether to show the onboarding widget (mobile only) */
-  readonly shouldDisplayOnboardingWidget: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */
   readonly shouldDisplayBrazePlacement: boolean;
   /** Whether to show the TX History section */
@@ -103,8 +100,8 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayMyWallet: boolean;
   /** Whether to show the PNL component */
   readonly shouldDisplayPnl: boolean;
-  /** Whether to show the Finish Onboarding widget on Portfolio (desktop / lwdWallet40) */
-  readonly shouldDisplayFinishOnboardingWidget: boolean;
+  /** Whether to show the Asset Discoverability feature */
+  readonly shouldDisplayAssetDiscoverability: boolean;
   /** Whether to show the Earn Upselling component */
   readonly shouldDisplayEarnUpselling: boolean;
   /** Whether to show the Earn Simulator component */

@@ -89,6 +89,60 @@ describe("Earn screen", () => {
     expect(lastCall.inputs.ethDepositCohort).toBe("cohort-a");
   });
 
+  it("passes goToURL when location state includes customDappUrl", () => {
+    const customDappUrl = "https://earn.example/?yieldId=tron-native-staking&accountId=abc";
+    const useLocationSpy = jest.spyOn(require("react-router"), "useLocation").mockReturnValue({
+      pathname: "/earn",
+      search: "",
+      hash: "",
+      state: { customDappUrl },
+    });
+
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    const goToURL = lastCall.inputs.goToURL as string;
+    expect(goToURL).toContain("yieldId=tron-native-staking");
+    expect(goToURL).toContain("accountId=abc");
+    expect(goToURL).toContain("theme=");
+    expect(goToURL).toContain("lang=");
+    expect(goToURL).toContain("uiVersion=");
+    expect(goToURL).toContain("lw40enabled=");
+    useLocationSpy.mockRestore();
+  });
+
+  it("passes deposit intent params in inputs like mobile route params", () => {
+    const useLocationSpy = jest.spyOn(require("react-router"), "useLocation").mockReturnValue({
+      pathname: "/earn",
+      search: "",
+      hash: "",
+      state: { intent: "deposit", cryptoAssetId: "bitcoin" },
+    });
+
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs.intent).toBe("deposit");
+    expect(lastCall.inputs.cryptoAssetId).toBe("bitcoin");
+    useLocationSpy.mockRestore();
+  });
+
   it("passes fallback uiVersion and lw40enabled=false when feature is disabled", () => {
     render(<Earn />, {
       initialState: withFlagOverrides({

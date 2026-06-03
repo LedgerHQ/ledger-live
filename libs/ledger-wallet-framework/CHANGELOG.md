@@ -1,5 +1,45 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 1.6.0
+
+### Minor Changes
+
+- [#17423](https://github.com/LedgerHQ/ledger-live/pull/17423) [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Change BridgeApi.getChainSpecificRules from a function returning ChainSpecificRules to a plain ChainSpecificRules field, and update Stellar accordingly (LIVE-28622)
+
+- [#17528](https://github.com/LedgerHQ/ledger-live/pull/17528) [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Move EVM staking types to `@ledgerhq/types-live` and strongly type the `BridgeApi.enrichStakingResources` hook so the generic coin framework no longer depends on `@ledgerhq/coin-evm`.
+
+- [#16785](https://github.com/LedgerHQ/ledger-live/pull/16785) [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d) Thanks [@qperrot](https://github.com/qperrot)! - Feature: evm redelegation flow lwd
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`bb25536`](https://github.com/LedgerHQ/ledger-live/commit/bb2553672eca7fc9a8e5b9c9b9869792b604a06a), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46)]:
+  - @ledgerhq/cryptoassets@13.49.0
+  - @ledgerhq/types-cryptoassets@7.37.0
+  - @ledgerhq/types-live@6.109.0
+  - @ledgerhq/live-currency-format@0.9.0
+  - @ledgerhq/live-env@2.36.0
+  - @ledgerhq/live-network@2.6.2
+
+## 1.6.0-next.0
+
+### Minor Changes
+
+- [#17423](https://github.com/LedgerHQ/ledger-live/pull/17423) [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Change BridgeApi.getChainSpecificRules from a function returning ChainSpecificRules to a plain ChainSpecificRules field, and update Stellar accordingly (LIVE-28622)
+
+- [#17528](https://github.com/LedgerHQ/ledger-live/pull/17528) [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Move EVM staking types to `@ledgerhq/types-live` and strongly type the `BridgeApi.enrichStakingResources` hook so the generic coin framework no longer depends on `@ledgerhq/coin-evm`.
+
+- [#16785](https://github.com/LedgerHQ/ledger-live/pull/16785) [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d) Thanks [@qperrot](https://github.com/qperrot)! - Feature: evm redelegation flow lwd
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`bb25536`](https://github.com/LedgerHQ/ledger-live/commit/bb2553672eca7fc9a8e5b9c9b9869792b604a06a), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46)]:
+  - @ledgerhq/cryptoassets@13.49.0-next.0
+  - @ledgerhq/types-cryptoassets@7.37.0-next.0
+  - @ledgerhq/types-live@6.109.0-next.0
+  - @ledgerhq/live-currency-format@0.9.0-next.0
+  - @ledgerhq/live-env@2.36.0-next.0
+  - @ledgerhq/live-network@2.6.2-next.0
+
 ## 1.5.0
 
 ### Minor Changes

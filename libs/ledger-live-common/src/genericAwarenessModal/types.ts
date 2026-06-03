@@ -3,6 +3,7 @@ import { z } from "zod";
 export enum GenericAwarenessModalLayout {
   Carousel = "carousel",
   FeatureIntro = "featureIntro",
+  Prompt = "prompt",
 }
 
 export enum FeatureIntroRole {
@@ -12,58 +13,119 @@ export enum FeatureIntroRole {
 
 export type GenericAwarenessModalLocation = "generic_awareness_modal";
 
+const GENERIC_AWARENESS_MODAL_LOCATION = "generic_awareness_modal" satisfies GenericAwarenessModalLocation;
+
+export const GenericAwarenessModalCampaignIdInputSchema = z.string().trim();
+
+export const GenericAwarenessModalStringFieldSchema = z
+  .string()
+  .catch("")
+  .transform(value => value.trim());
+
+export const GenericAwarenessModalLocationInputSchema = z
+  .string()
+  .trim()
+  .refine(value => value.toLowerCase() === GENERIC_AWARENESS_MODAL_LOCATION)
+  .transform(() => GENERIC_AWARENESS_MODAL_LOCATION)
+  .default(GENERIC_AWARENESS_MODAL_LOCATION);
+
+export const GenericAwarenessModalCarouselLayoutInputSchema = z
+  .string()
+  .trim()
+  .refine(value => value.toLowerCase() === GenericAwarenessModalLayout.Carousel.toLowerCase())
+  .transform(() => GenericAwarenessModalLayout.Carousel);
+
+export const GenericAwarenessModalFeatureIntroLayoutInputSchema = z
+  .string()
+  .trim()
+  .refine(value => value.toLowerCase() === GenericAwarenessModalLayout.FeatureIntro.toLowerCase())
+  .transform(() => GenericAwarenessModalLayout.FeatureIntro);
+
+export const GenericAwarenessModalPromptLayoutInputSchema = z
+  .string()
+  .trim()
+  .refine(value => value.toLowerCase() === GenericAwarenessModalLayout.Prompt.toLowerCase())
+  .transform(() => GenericAwarenessModalLayout.Prompt);
+
+export const GenericAwarenessModalFeatureIntroMainRoleInputSchema = z
+  .string()
+  .trim()
+  .refine(value => value.toLowerCase() === FeatureIntroRole.Main)
+  .transform(() => FeatureIntroRole.Main);
+
+export const GenericAwarenessModalFeatureIntroItemRoleInputSchema = z
+  .string()
+  .trim()
+  .refine(value => value.toLowerCase() === FeatureIntroRole.Item)
+  .transform(() => FeatureIntroRole.Item);
+
 export const GenericAwarenessModalInputIndexSchema = z
   .string()
+  .trim()
   .regex(/^\d+$/)
   .transform(value => Number.parseInt(value, 10));
 
 export const GenericAwarenessModalCarouselSlideSchema = z.object({
-  title: z.string().catch(""),
-  subtitle: z.string().catch(""),
-  imageUrl: z.string().catch(""),
-  primaryButtonLabel: z.string().catch(""),
-  primaryButtonLink: z.string().catch(""),
+  title: GenericAwarenessModalStringFieldSchema,
+  subtitle: GenericAwarenessModalStringFieldSchema,
+  imageUrl: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLink: GenericAwarenessModalStringFieldSchema,
 });
 
 export const GenericAwarenessModalCarouselInputSchema = z.object({
-  layout: z.literal(GenericAwarenessModalLayout.Carousel),
-  campaignId: z.string(),
+  layout: GenericAwarenessModalCarouselLayoutInputSchema,
+  campaignId: GenericAwarenessModalCampaignIdInputSchema,
   index: GenericAwarenessModalInputIndexSchema,
-  location: z.literal("generic_awareness_modal").default("generic_awareness_modal"),
-  title: z.string().catch(""),
-  subtitle: z.string().catch(""),
-  imageUrl: z.string().catch(""),
-  primaryButtonLabel: z.string().catch(""),
-  primaryButtonLink: z.string().catch(""),
+  location: GenericAwarenessModalLocationInputSchema,
+  title: GenericAwarenessModalStringFieldSchema,
+  subtitle: GenericAwarenessModalStringFieldSchema,
+  imageUrl: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLink: GenericAwarenessModalStringFieldSchema,
 });
 
 export const GenericAwarenessModalFeatureIntroMainInputSchema = z.object({
-  layout: z.literal(GenericAwarenessModalLayout.FeatureIntro),
-  campaignId: z.string(),
-  role: z.literal(FeatureIntroRole.Main),
-  location: z.literal("generic_awareness_modal").default("generic_awareness_modal"),
-  title: z.string().catch(""),
-  subtitle: z.string().catch(""),
-  imageUrl: z.string().catch(""),
-  primaryButtonLabel: z.string().catch(""),
-  primaryButtonLink: z.string().catch(""),
-  secondaryButtonLabel: z.string().catch(""),
-  secondaryButtonLink: z.string().catch(""),
+  layout: GenericAwarenessModalFeatureIntroLayoutInputSchema,
+  campaignId: GenericAwarenessModalCampaignIdInputSchema,
+  role: GenericAwarenessModalFeatureIntroMainRoleInputSchema,
+  location: GenericAwarenessModalLocationInputSchema,
+  title: GenericAwarenessModalStringFieldSchema,
+  subtitle: GenericAwarenessModalStringFieldSchema,
+  imageUrl: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLink: GenericAwarenessModalStringFieldSchema,
+  secondaryButtonLabel: GenericAwarenessModalStringFieldSchema,
+  secondaryButtonLink: GenericAwarenessModalStringFieldSchema,
 });
 
 export const GenericAwarenessModalFeatureIntroItemInputSchema = z.object({
-  layout: z.literal(GenericAwarenessModalLayout.FeatureIntro),
-  campaignId: z.string(),
-  role: z.literal(FeatureIntroRole.Item),
+  layout: GenericAwarenessModalFeatureIntroLayoutInputSchema,
+  campaignId: GenericAwarenessModalCampaignIdInputSchema,
+  role: GenericAwarenessModalFeatureIntroItemRoleInputSchema,
   index: GenericAwarenessModalInputIndexSchema,
-  location: z.literal("generic_awareness_modal").default("generic_awareness_modal"),
-  icon: z.string().catch(""),
-  title: z.string().catch(""),
-  subtitle: z.string().catch(""),
+  location: GenericAwarenessModalLocationInputSchema,
+  icon: GenericAwarenessModalStringFieldSchema,
+  title: GenericAwarenessModalStringFieldSchema,
+  subtitle: GenericAwarenessModalStringFieldSchema,
+});
+
+export const GenericAwarenessModalPromptInputSchema = z.object({
+  layout: GenericAwarenessModalPromptLayoutInputSchema,
+  campaignId: GenericAwarenessModalCampaignIdInputSchema,
+  location: GenericAwarenessModalLocationInputSchema,
+  imageUrl: GenericAwarenessModalStringFieldSchema,
+  title: GenericAwarenessModalStringFieldSchema,
+  subtitle: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
+  primaryButtonLink: GenericAwarenessModalStringFieldSchema,
+  secondaryButtonLabel: GenericAwarenessModalStringFieldSchema,
+  secondaryButtonLink: GenericAwarenessModalStringFieldSchema,
 });
 
 export const GenericAwarenessModalInputSchema = z.union([
   GenericAwarenessModalCarouselInputSchema,
+  GenericAwarenessModalPromptInputSchema,
   GenericAwarenessModalFeatureIntroMainInputSchema,
   GenericAwarenessModalFeatureIntroItemInputSchema,
 ]);
@@ -86,6 +148,14 @@ export type GenericAwarenessModalParsedCarouselInput = z.output<
   typeof GenericAwarenessModalCarouselInputSchema
 >;
 
+export type GenericAwarenessModalPromptInput = z.input<
+  typeof GenericAwarenessModalPromptInputSchema
+>;
+
+export type GenericAwarenessModalParsedPromptInput = z.output<
+  typeof GenericAwarenessModalPromptInputSchema
+>;
+
 export type GenericAwarenessModalFeatureIntroMainInput = z.input<
   typeof GenericAwarenessModalFeatureIntroMainInputSchema
 >;
@@ -104,6 +174,7 @@ export type GenericAwarenessModalParsedFeatureIntroItemInput = z.output<
 
 export type GenericAwarenessModalInput =
   | GenericAwarenessModalCarouselInput
+  | GenericAwarenessModalPromptInput
   | GenericAwarenessModalFeatureIntroMainInput
   | GenericAwarenessModalFeatureIntroItemInput;
 
@@ -156,13 +227,28 @@ export type GenericAwarenessModalFeatureIntro = {
   items: GenericAwarenessModalFeatureIntroItem[];
 };
 
+export type GenericAwarenessModalPrompt = {
+  layout: GenericAwarenessModalLayout.Prompt;
+  id: string;
+  imageUrl: string;
+  title: string;
+  subtitle: string;
+  primaryButtonLabel: string;
+  primaryButtonLink: string;
+  secondaryButtonLabel: string;
+  secondaryButtonLink: string;
+};
+
 export type GenericAwarenessModalContentCard =
   | GenericAwarenessModalCarousel
-  | GenericAwarenessModalFeatureIntro;
+  | GenericAwarenessModalFeatureIntro
+  | GenericAwarenessModalPrompt;
 
 export type GenericAwarenessModalOutput = GenericAwarenessModalContentCard;
 
 export type GenericAwarenessModalCarouselExtrasType = GenericAwarenessModalCarouselInput;
+
+export type GenericAwarenessModalPromptExtrasType = GenericAwarenessModalPromptInput;
 
 export type GenericAwarenessModalFeatureIntroExtrasMainType =
   GenericAwarenessModalFeatureIntroMainInput;

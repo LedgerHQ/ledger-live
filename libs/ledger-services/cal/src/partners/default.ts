@@ -134,6 +134,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://swaps.xyz/",
     needsKYC: false,
   },
+  moonpay_trade: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "MoonPay Trade",
+    termsOfUseUrl: "https://docs.swaps.xyz/resources/terms-of-service",
+    supportUrl: "https://scan.swaps.xyz/",
+    mainUrl: "https://swaps.xyz/",
+    needsKYC: false,
+  },
   lifi: {
     useInExchangeApp: true,
     displayName: "LI.FI",

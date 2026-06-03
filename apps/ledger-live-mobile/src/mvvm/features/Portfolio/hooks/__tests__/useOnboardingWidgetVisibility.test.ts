@@ -35,9 +35,8 @@ function stateWith({
   return {
     overrideInitialState: withFlagOverrides(
       {
-        lwmWallet40: featureFlagOff
-          ? { enabled: false }
-          : { enabled: true, params: { onboardingWidget: true } },
+        lwmWallet40: { enabled: !featureFlagOff },
+        onboardingWidget: { enabled: !featureFlagOff },
       },
       state => ({
         ...state,

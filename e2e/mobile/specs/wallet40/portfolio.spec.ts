@@ -26,9 +26,6 @@ describe("Wallet 4.0 - Portfolio", () => {
       // to-do remove when wallet 4.0 is default
       featureFlags: {
         ...WALLET_40_FEATURE_FLAGS,
-        llmAccountListUI: {
-          enabled: true,
-        },
       },
     });
     await app.portfolio.waitForPortfolioPageToLoad();

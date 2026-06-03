@@ -80,6 +80,11 @@ on:
         required: false
         type: boolean
         default: false
+      feature_flags_json:
+        description: "JSON to override feature flags"
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -125,6 +130,11 @@ on:
         required: false
         type: boolean
         default: false
+      feature_flags_json:
+        description: "JSON to override feature flags"
+        required: false
+        type: string
+        default: ""
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -146,6 +156,7 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
   E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
+  E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
@@ -258,9 +269,13 @@ jobs:
           SMOKE_TESTS="${{ inputs.smoke_tests }}"
           TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
           TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
+          EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
           if [ -z "$FILTER_PATTERN" ]; then
             FILTER_PATTERN="(none)"
+          fi
+          if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
+            EXTRA_FEATURE_FLAGS="(none)"
           fi
           {
           echo "## Workflow Context"
@@ -277,7 +292,25 @@ jobs:
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           echo "- **Wallet 4.0:** ${{ env.E2E_ENABLE_WALLET40 == '1' && 'enabled' || 'disabled' }}"
+          echo "- **Extra feature flags:** $EXTRA_FEATURE_FLAGS"
           } >> $GITHUB_STEP_SUMMARY
+
+      - name: Validate feature flags JSON input
+        shell: bash
+        run: |
+          raw="$E2E_FEATURE_FLAGS_JSON"
+          if [ -z "$raw" ]; then
+            exit 0
+          fi
+          node -e '
+            try {
+              JSON.parse(process.argv[1]);
+            } catch (error) {
+              const message = error instanceof Error ? error.message : String(error);
+              console.error(`Invalid E2E_FEATURE_FLAGS_JSON: ${message}`);
+              process.exit(1);
+            }
+          ' "$raw"
 
       - name: Determine cache keys
         id: cache-keys
@@ -515,12 +548,6 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
-      - name: Boot iOS Simulator in Background
-        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
-        with:
-          worker_count: 3
-          artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
-
       - uses: nick-fields/retry@v3
         name: install dependencies
         id: install-dependencies
@@ -529,6 +556,12 @@ jobs:
           timeout_minutes: 15
           command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="poc-wdio" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="poc-wdio" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
+      - name: Boot iOS Simulator in Background
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        with:
+          worker_count: 3
+          artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
@@ -567,14 +600,6 @@ jobs:
           command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
 
-      - name: Setup Speculos image and Coin Apps
-        id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
       - name: Set DISABLE_TRANSACTION_BROADCAST
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
@@ -604,6 +629,7 @@ jobs:
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           # Workaround for missing lsof in path:
           PATH: /usr/sbin:/usr/bin:/bin:/sbin:${{ env.PATH }}
+          E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
         run: pnpm e2e:mobile:wdio ios
 
       - name: Upload iOS artifacts
@@ -781,6 +807,7 @@ jobs:
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        timeout-minutes: 20
         with:
           coinapps_path: ${{ env.COINAPPS }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
@@ -817,6 +844,7 @@ jobs:
           # ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
+          E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
         run: pnpm e2e:mobile:wdio android
 
       - name: Upload Android artifacts
@@ -859,6 +887,9 @@ jobs:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
           merge-multiple: true
+      - name: Remove Detox simulator artifacts
+        if: ${{ !cancelled() }}
+        run: rm -rf ios-test-artifacts/ios.sim.release.*
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}
         id: upload
@@ -932,6 +963,9 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
+      - name: Remove Detox emulator artifacts
+        if: ${{ !cancelled() }}
+        run: rm -rf android-test-artifacts/android.emu.release.*
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         if: ${{ !cancelled() }}

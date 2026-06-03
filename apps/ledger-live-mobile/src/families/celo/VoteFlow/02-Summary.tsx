@@ -15,7 +15,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
-import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -124,7 +125,7 @@ export default function VoteSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen category="VoteFlow" name="Summary" flow="stake" action="vote" currency="celo" />
 
       <View style={styles.body}>

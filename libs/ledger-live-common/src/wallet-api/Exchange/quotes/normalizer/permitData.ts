@@ -2,10 +2,10 @@ import type { QuotePermit2Message, QuotePermitData } from "../types";
 import type { RawQuote } from "../service/types";
 
 /**
- * Fold the legacy `customFields` permit-related bag into the wallet-side
+ * Fold the raw `customFields` permit-related bag into the wallet-side
  * `QuotePermitData` envelope.
  *
- * Legacy representation on `customFields` (read directly by consumers today):
+ * Provider representation on `customFields`:
  * - `customFields.permitData`                    → UniswapX EIP-712 typed-data
  * - `customFields.quoteResponse.typedData`       → 1inch-fusion typed-data
  * - `customFields.quoteResponse.orderHash`       → 1inch-fusion order hash
@@ -13,10 +13,9 @@ import type { RawQuote } from "../service/types";
  * - `customFields["@type"]`                      → provider tag
  *
  * Wallet target: a single optional object grouping these siblings under
- * stable names so non-Swap consumers don't have to know about the raw
- * `customFields` layout. The UniswapX `permitData` source wins when both
- * it and `quoteResponse.typedData` are present, mirroring the `??`
- * fallback used by the swap-live-app `signOrderMessage` helper today.
+ * stable names so consumers don't have to know about the raw `customFields`
+ * layout. The UniswapX `permitData` source wins when both it and
+ * `quoteResponse.typedData` are present.
  *
  * Returns `undefined` when all four sources are absent so the output field
  * stays unset on non-permit rows (CEX, classic oneinch, lifi).

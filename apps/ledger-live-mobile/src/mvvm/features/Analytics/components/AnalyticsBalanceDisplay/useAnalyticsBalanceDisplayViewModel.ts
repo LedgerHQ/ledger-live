@@ -5,7 +5,7 @@ import { BigNumber } from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioBalanceForDisplay } from "LLM/hooks/usePortfolioBalanceForDisplay";
 
 type Params = {

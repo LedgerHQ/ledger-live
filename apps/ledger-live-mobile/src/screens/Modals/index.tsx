@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { EventArg, NavigationState, useNavigation } from "@react-navigation/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import RatingsModal from "../RatingsModal";
 import NpsRatingsModal from "../NpsRatingsModal";
 import useRatings from "~/logic/ratings";

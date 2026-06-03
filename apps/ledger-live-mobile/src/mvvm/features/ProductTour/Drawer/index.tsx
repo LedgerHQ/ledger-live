@@ -3,6 +3,7 @@ import { Slides } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
 import { Platform, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Box,
   BottomSheetView,
@@ -35,6 +36,7 @@ export const ProductTourDrawer = () => {
     completeProductTour,
   } = useProductTourControls();
   const { t } = useTranslation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   if (!isDrawerOpen) {
     return null;
@@ -47,6 +49,7 @@ export const ProductTourDrawer = () => {
           isRequestingToBeOpened={isDrawerOpen}
           onClose={closeProductTour}
           noCloseButton
+          snapPoints={Platform.OS === "ios" ? ["80%", "90%"] : ["90%"]}
         >
           <BottomSheetView>
             <Box lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}>
@@ -80,7 +83,7 @@ export const ProductTourDrawer = () => {
                 <ProgressIndicator />
               </Slides.ProgressIndicator>
 
-              <Slides.Footer>
+              <Slides.Footer style={{ marginBottom: bottomInset }}>
                 <SlideFooterButton
                   onPrimaryAction={onPrimaryAction}
                   onComplete={completeProductTour}

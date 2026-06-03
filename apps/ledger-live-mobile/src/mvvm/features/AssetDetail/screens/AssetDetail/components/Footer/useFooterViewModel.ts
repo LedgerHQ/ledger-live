@@ -34,7 +34,7 @@ export function useSecondaryButtonType(currency: AssetDetailCurrencyProps): Seco
   }, [accounts, currency, isAcceptedCurrency]);
 }
 
-export function useFooterViewModel(currency: AssetDetailCurrencyProps) {
+export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds?: string[]) {
   const { handleOpenBuySell } = useOpenBuySell({
     currency,
     sourceScreenName: "Asset Detail",
@@ -47,6 +47,7 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps) {
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency,
+    currencyIds: ledgerIds,
     sourceScreenName: "Asset Detail",
   });
 

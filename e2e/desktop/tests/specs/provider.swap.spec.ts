@@ -6,7 +6,7 @@ import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
@@ -20,14 +20,14 @@ const providerFlowTests = [
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDC_1,
-    provider: Provider.ONE_INCH,
+    provider: SwapProvider.ONE_INCH,
     xrayTicket: "B2CQA-3120",
     bugTickets: ["LIVE-29454", "LIVE-29858"],
   },
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.ETH_1,
-    provider: Provider.OKX,
+    provider: SwapProvider.OKX,
     xrayTicket: "B2CQA-4728",
     bugTickets: ["LIVE-29858"],
   },

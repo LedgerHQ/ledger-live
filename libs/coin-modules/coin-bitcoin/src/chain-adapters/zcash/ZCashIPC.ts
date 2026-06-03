@@ -164,6 +164,10 @@ export function createZCashIPCClient(
           viewingKey: syncArgs.viewingKey,
           startBlockHeight: syncArgs.startBlockHeight,
           maxBatchSize: syncArgs.maxBatchSize,
+          ...(syncArgs.knownNullifiers &&
+            syncArgs.knownNullifiers.length > 0 && {
+              knownNullifiers: syncArgs.knownNullifiers,
+            }),
         };
 
         ipcRenderer.invoke(ZCASH_IPC.startSync, startPayload).catch(err => {

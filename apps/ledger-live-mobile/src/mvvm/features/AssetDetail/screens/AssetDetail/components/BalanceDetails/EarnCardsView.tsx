@@ -22,44 +22,50 @@ type Props = Readonly<{
   formattedAvailable: string;
   formattedDeposit: string;
   onEarnDepositPress: () => void;
+  onAvailableBalanceTooltipOpen: (open: boolean) => void;
 }>;
 
-export function EarnCardsView({ formattedAvailable, formattedDeposit, onEarnDepositPress }: Props) {
+export function EarnCardsView({
+  formattedAvailable,
+  formattedDeposit,
+  onEarnDepositPress,
+  onAvailableBalanceTooltipOpen,
+}: Props) {
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
 
   return (
     <Box lx={rowStyle}>
       <Box lx={cardWrapperStyle} testID={ASSET_DETAIL_TEST_IDS.availableBalance}>
-        <Card type="info">
-          <CardHeader>
-            <CardLeading>
-              <CardContent>
-                <Box lx={tooltipLabelStyle}>
-                  <CardContentDescription>
-                    {t("assetDetail.balanceDetails.availableBalance")}
-                  </CardContentDescription>
-                  <Tooltip>
-                    <TooltipTrigger>
+        <Tooltip onOpenChange={onAvailableBalanceTooltipOpen}>
+          <TooltipTrigger asChild>
+            <Card type="interactive">
+              <CardHeader>
+                <CardLeading>
+                  <CardContent>
+                    <Box lx={tooltipLabelStyle}>
+                      <CardContentDescription>
+                        {t("assetDetail.balanceDetails.availableBalance")}
+                      </CardContentDescription>
                       <Information size={16} color="muted" />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      title={t("assetDetail.balanceDetails.availableBalance")}
-                      content={
-                        <Box style={{ paddingBottom: bottom + 24 }}>
-                          <Text typography="body1" lx={{ color: "base" }}>
-                            {t("assetDetail.balanceDetails.availableBalanceTooltip")}
-                          </Text>
-                        </Box>
-                      }
-                    />
-                  </Tooltip>
-                </Box>
-                <CardContentTitle>{formattedAvailable}</CardContentTitle>
-              </CardContent>
-            </CardLeading>
-          </CardHeader>
-        </Card>
+                    </Box>
+                    <CardContentTitle>{formattedAvailable}</CardContentTitle>
+                  </CardContent>
+                </CardLeading>
+              </CardHeader>
+            </Card>
+          </TooltipTrigger>
+          <TooltipContent
+            title={t("assetDetail.balanceDetails.availableBalance")}
+            content={
+              <Box style={{ paddingBottom: bottom + 24 }}>
+                <Text typography="body1" lx={{ color: "base" }}>
+                  {t("assetDetail.balanceDetails.availableBalanceTooltip")}
+                </Text>
+              </Box>
+            }
+          />
+        </Tooltip>
       </Box>
       <Box lx={cardWrapperStyle}>
         <Card onPress={onEarnDepositPress} testID={ASSET_DETAIL_TEST_IDS.earnDeposit}>

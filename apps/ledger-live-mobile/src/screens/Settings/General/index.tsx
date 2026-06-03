@@ -1,5 +1,5 @@
 import React from "react";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { TrackScreen } from "~/analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import ThemeSettingsRow from "./ThemeSettingsRow";

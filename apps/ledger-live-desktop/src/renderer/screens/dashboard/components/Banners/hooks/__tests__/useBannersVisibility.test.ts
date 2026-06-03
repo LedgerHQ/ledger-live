@@ -46,7 +46,7 @@ const basePostOnboarding = {
 
 const wallet40WithFinishWidget = withFlagOverrides({
   lldActionCarousel: { enabled: false },
-  lwdWallet40: { enabled: true, params: { finishOnboardingWidget: true } },
+  onboardingWidget: { enabled: true },
 });
 
 const defaultInitialState = {
@@ -120,7 +120,7 @@ describe("useBannersVisibility", () => {
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
-  it("should hide finish onboarding widget when finishOnboardingWidget param is off", () => {
+  it("should hide finish onboarding widget when onboardingWidget flag is off", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
 
     const { result } = renderHook(() => useBannersVisibility(), {
@@ -128,7 +128,7 @@ describe("useBannersVisibility", () => {
         ...defaultInitialState,
         ...withFlagOverrides({
           lldActionCarousel: { enabled: false },
-          lwdWallet40: { enabled: true, params: { finishOnboardingWidget: false } },
+          onboardingWidget: { enabled: false },
         }),
       },
     });

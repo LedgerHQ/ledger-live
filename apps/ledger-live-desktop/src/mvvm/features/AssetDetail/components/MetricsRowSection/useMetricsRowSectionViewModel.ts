@@ -9,11 +9,9 @@ type Props = Readonly<{
 export function useMetricsRowSectionViewModel({ distributionItem }: Props) {
   const pnlVisible = useShouldDisplayAssetPnl(distributionItem);
   const { getCanStakeCurrency } = useStake();
-  const stakingVisible =
-    distributionItem.accounts.length > 0 && getCanStakeCurrency(distributionItem.currency.id);
+  const stakingVisible = getCanStakeCurrency(distributionItem.currency.id);
 
   return {
     shouldRenderSection: pnlVisible || stakingVisible,
-    pnlVisible,
   };
 }

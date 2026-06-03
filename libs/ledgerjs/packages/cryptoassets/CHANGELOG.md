@@ -1,5 +1,33 @@
 # @ledgerhq/cryptoassets
 
+## 13.49.0
+
+### Minor Changes
+
+- [#17675](https://github.com/LedgerHQ/ledger-live/pull/17675) [`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add Bittensor (TAO) currency metadata: CoinType.BITTENSOR = 1005 in types-cryptoassets and bittensor currency entry with TAO/RAO units in cryptoassets
+
+- [#17657](https://github.com/LedgerHQ/ledger-live/pull/17657) [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Trigger Sei app instead of Ethereum app for SEI EVM send & receive
+
+### Patch Changes
+
+- Updated dependencies [[`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554)]:
+  - @ledgerhq/types-live@6.109.0
+  - @ledgerhq/live-env@2.36.0
+
+## 13.49.0-next.0
+
+### Minor Changes
+
+- [#17675](https://github.com/LedgerHQ/ledger-live/pull/17675) [`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add Bittensor (TAO) currency metadata: CoinType.BITTENSOR = 1005 in types-cryptoassets and bittensor currency entry with TAO/RAO units in cryptoassets
+
+- [#17657](https://github.com/LedgerHQ/ledger-live/pull/17657) [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Trigger Sei app instead of Ethereum app for SEI EVM send & receive
+
+### Patch Changes
+
+- Updated dependencies [[`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554)]:
+  - @ledgerhq/types-live@6.109.0-next.0
+  - @ledgerhq/live-env@2.36.0-next.0
+
 ## 13.48.0
 
 ### Minor Changes

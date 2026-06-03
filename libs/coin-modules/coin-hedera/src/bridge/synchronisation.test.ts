@@ -80,7 +80,10 @@ describe("getAccountShape", () => {
     await getAccountShape(mockInfo, { paginationConfig: {} });
 
     expect(mockGetERC20BalancesForAccountV2).toHaveBeenCalledTimes(1);
-    expect(mockGetERC20BalancesForAccountV2).toHaveBeenCalledWith(mockAddress);
+    expect(mockGetERC20BalancesForAccountV2).toHaveBeenCalledWith({
+      configOrCurrencyId: mockConfig,
+      address: mockAddress,
+    });
     expect(networkUtils.getERC20BalancesForAccount).not.toHaveBeenCalled();
   });
 

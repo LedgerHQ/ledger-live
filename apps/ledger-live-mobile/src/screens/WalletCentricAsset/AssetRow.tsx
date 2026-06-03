@@ -4,37 +4,26 @@ import { BigNumber } from "bignumber.js";
 import isEqual from "lodash/isEqual";
 import { GestureResponderEvent } from "react-native";
 
-import { NavigatorName, ScreenName } from "~/const";
 import { usePortfolioForAccounts } from "~/hooks/portfolio";
 import AssetRowLayout from "~/components/AssetRowLayout";
 import { track } from "~/analytics";
-import {
-  BaseNavigationComposite,
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
-import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { Asset } from "~/types/asset";
-
-export type NavigationProp = BaseNavigationComposite<
-  | StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.Assets>
-  | StackNavigatorNavigation<PortfolioNavigatorStackParamList>
->;
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 type Props = {
   asset: Asset;
-  navigation: NavigationProp;
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
 };
 
-const AssetRow = ({ asset, navigation, hideDelta, topLink, bottomLink }: Props) => {
+const AssetRow = ({ asset, hideDelta, topLink, bottomLink }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = asset.currency;
   const name = currency.name;
   const unit = currency.units[0];
+  const { openFromAsset } = useAssetDetailNavigation();
 
   // TODO: implement a much lighter hook to get this simple value
   const { countervalueChange } = usePortfolioForAccounts(asset.accounts);
@@ -45,14 +34,14 @@ const AssetRow = ({ asset, navigation, hideDelta, topLink, bottomLink }: Props) 
         asset: currency.name,
       });
 
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: {
-          currency,
-        },
+      openFromAsset({
+        currency,
+        source: "wallet_centric_asset",
+        isPlaceholder: asset.isPlaceholder,
+        marketId: asset.marketId,
       });
     },
-    [currency, navigation],
+    [currency, asset.isPlaceholder, asset.marketId, openFromAsset],
   );
 
   /**

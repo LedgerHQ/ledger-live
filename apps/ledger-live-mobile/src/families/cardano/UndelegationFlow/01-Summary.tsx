@@ -3,7 +3,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -108,6 +109,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   return (
     <SafeAreaView
       style={[styles.root, { backgroundColor: colors.background }]}
+      edges={["bottom"]}
       testID="Cardano-Undelegation-Summary"
     >
       <TrackScreen category="DelegationFlow" name="Summary" />

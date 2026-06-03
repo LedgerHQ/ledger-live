@@ -5,8 +5,14 @@ import {
   defaultFetchParams,
   fetchTronAccount,
   fetchTronAccountTxs,
+  getChainParameters,
   getTronAccountNetwork,
+  triggerConstantContract,
 } from ".";
+import { decode58Check } from "./format";
+import { abiEncodeTrc20Transfer } from "./utils";
+
+const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
 /**
  * Tests used to help to develop and debug. Can't be reliable for the CI.
@@ -83,6 +89,38 @@ describe("TronGrid", () => {
       ]) {
         expect(result).toHaveProperty(p);
       }
+    });
+  });
+
+  describe("getChainParameters", () => {
+    beforeEach(() => {
+      getChainParameters.reset();
+    });
+
+    it("returns the four parameters used by fee estimation with mainnet values", async () => {
+      const params = await getChainParameters();
+
+      expect(params.transactionFee).toBe(1000);
+      expect(params.createAccountFee).toBe(100_000);
+      expect(params.createNewAccountFeeInSystemContract).toBe(1_000_000);
+      // gov-voted; historical values 100, 280, 420 sun/energy.
+      expect(params.energyFee).toBeGreaterThanOrEqual(50);
+      expect(params.energyFee).toBeLessThanOrEqual(500);
+    });
+  });
+
+  describe("triggerConstantContract", () => {
+    it("returns energy_used within the documented USDT transfer range", async () => {
+      const response = await triggerConstantContract({
+        ownerAddress: decode58Check(address),
+        contractAddress: decode58Check(USDT_CONTRACT),
+        functionSelector: "transfer(address,uint256)",
+        parameter: abiEncodeTrc20Transfer(decode58Check(address), new BigNumber(1)),
+      });
+
+      // Revert overhead ~5k; transfer to existing holder ~14k; to brand-new ~65k.
+      expect(response.energy_used).toBeGreaterThanOrEqual(5_000);
+      expect(response.energy_used).toBeLessThanOrEqual(100_000);
     });
   });
 });

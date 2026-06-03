@@ -163,6 +163,9 @@ const SwapOperationDetails = ({
     case "swapsxyz":
       url = `https://scan.swaps.xyz/transactions/${swapId}`;
       break;
+    case "moonpay_trade":
+      url = `https://scan.swaps.xyz/transactions/${swapId}`;
+      break;
     case "okx":
       if (mainCurrency?.id) {
         url = `https://web3.okx.com/fi/explorer/${mainCurrency.id}/tx/${operation.hash}`;

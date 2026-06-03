@@ -10,13 +10,10 @@ type Options = {
 };
 
 /**
- * Locale-aware number formatter ported from `swap-live-app`'s
- * `@workspace/formatter/src/formatters/getFormattedNumber.ts`. The port
- * is intentionally 1:1 so wallet-side and legacy live-app output stay
- * byte-identical: non-breakable space (`\xA0`) between value and suffix,
- * BigNumber-driven `toFormat` to preserve precision beyond
- * `Number.MAX_SAFE_INTEGER`, and `""` for null / undefined / NaN /
- * non-finite inputs (legacy callers rely on `?? ""` cascades).
+ * Locale-aware number formatter for quote display strings:
+ * non-breakable space (`\xA0`) between value and suffix, BigNumber-driven
+ * `toFormat` to preserve precision beyond `Number.MAX_SAFE_INTEGER`, and
+ * `""` for null / undefined / NaN / non-finite inputs.
  *
  * Higher-level callers should prefer {@link toFormattedNumber}, which
  * wraps this formatter and returns the `FormattedNumber` triplet used by

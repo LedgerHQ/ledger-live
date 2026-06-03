@@ -8,6 +8,8 @@ export * from "./currencyAptos";
 export * from "./currencyAptosTestnet";
 export * from "./currencyArbitrum";
 export * from "./currencyArbitrumSepolia";
+export * from "./currencyArc";
+export * from "./currencyArcTestnet";
 export * from "./currencyAssetHubPolkadot";
 export * from "./currencyAssetHubWestend";
 export * from "./currencyAstar";

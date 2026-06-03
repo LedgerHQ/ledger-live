@@ -80,6 +80,7 @@ export type SuiValidatorSummary = {
   description: string;
   imageUrl: string;
   projectUrl: string;
+  stakingPoolId: string;
   stakingPoolSuiBalance: string;
   commissionRate: string;
 };

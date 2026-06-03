@@ -33,7 +33,7 @@ export function AssetHeaderView({
   return (
     <NavBar
       data-testid="asset-detail-header"
-      className="sticky top-0 z-10 w-full min-w-0 items-center gap-4 bg-canvas pb-12"
+      className="sticky top-0 z-20 w-full min-w-0 items-center gap-4 bg-canvas pb-12"
     >
       <NavBarBackButton onClick={onBack} />
       <NavBarCoinCapsule className="min-w-0 max-w-full" ticker={assetTicker} icon={icon} />

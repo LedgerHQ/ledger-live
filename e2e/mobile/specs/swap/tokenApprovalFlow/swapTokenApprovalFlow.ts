@@ -1,13 +1,13 @@
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../../utils/swapUtils";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
 
 export function runSwapTokenApprovalFlow(
   fromAccount: TokenAccount,
   toAccount: Account,
-  provider: Provider,
+  provider: SwapProvider,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -60,7 +60,7 @@ export function runSwapTokenApprovalFlow(
       await app.swapLiveApp.tapGiveApprovalButton();
       await app.send.summaryContinue();
       await app.speculos.signTokenApproval();
-      if (provider === Provider.UNISWAP) {
+      if (provider === SwapProvider.UNISWAP) {
         await app.swapLiveApp.tapGiveAuthorizationButton();
         await app.speculos.signTypedMessage();
       }

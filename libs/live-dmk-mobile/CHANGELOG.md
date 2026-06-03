@@ -1,5 +1,41 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.23.0
+
+### Minor Changes
+
+- [#17592](https://github.com/LedgerHQ/ledger-live/pull/17592) [`efbc7ee`](https://github.com/LedgerHQ/ledger-live/commit/efbc7ee371c74253fa78f8b7c5518dd79bb0bc4d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Tighten the Device Intent Executor error model:
+
+  - Replace the catch-all `connectionError` executor state with a focused `deviceDisconnected` state entered only via the `DEVICE_DISCONNECTED` event. The `DeviceConnectionComponent` no longer receives `onError`, and `ExecutorPlatformConfiguration` requires a `DeviceDisconnectedComponent` in place of the previous `ConnectionErrorComponent`.
+  - Funnel any unexpected error escaping the inner connect-device state machine into a new terminal `UnknownError` `ConnectDeviceUIState` via a `catchError` wrapper in `connectDeviceUseCase`, so the observable's error channel is never reached in normal operation.
+  - Add a `UnknownErrorState` component in the LWM connection view that renders the shared `intentError` wording for this terminal state.
+
+- [#17445](https://github.com/LedgerHQ/ledger-live/pull/17445) [`dd293fe`](https://github.com/LedgerHQ/ledger-live/commit/dd293fed9a3fd5aa715f4cacec216b3aa9771553) Thanks [@benruseau](https://github.com/benruseau)! - Add connect device state machine
+
+### Patch Changes
+
+- Updated dependencies [[`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84), [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0), [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66)]:
+  - @ledgerhq/live-dmk-shared@0.25.0
+  - @ledgerhq/live-env@2.36.0
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#17592](https://github.com/LedgerHQ/ledger-live/pull/17592) [`efbc7ee`](https://github.com/LedgerHQ/ledger-live/commit/efbc7ee371c74253fa78f8b7c5518dd79bb0bc4d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Tighten the Device Intent Executor error model:
+
+  - Replace the catch-all `connectionError` executor state with a focused `deviceDisconnected` state entered only via the `DEVICE_DISCONNECTED` event. The `DeviceConnectionComponent` no longer receives `onError`, and `ExecutorPlatformConfiguration` requires a `DeviceDisconnectedComponent` in place of the previous `ConnectionErrorComponent`.
+  - Funnel any unexpected error escaping the inner connect-device state machine into a new terminal `UnknownError` `ConnectDeviceUIState` via a `catchError` wrapper in `connectDeviceUseCase`, so the observable's error channel is never reached in normal operation.
+  - Add a `UnknownErrorState` component in the LWM connection view that renders the shared `intentError` wording for this terminal state.
+
+- [#17445](https://github.com/LedgerHQ/ledger-live/pull/17445) [`dd293fe`](https://github.com/LedgerHQ/ledger-live/commit/dd293fed9a3fd5aa715f4cacec216b3aa9771553) Thanks [@benruseau](https://github.com/benruseau)! - Add connect device state machine
+
+### Patch Changes
+
+- Updated dependencies [[`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84), [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0), [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66)]:
+  - @ledgerhq/live-dmk-shared@0.25.0-next.0
+  - @ledgerhq/live-env@2.36.0-next.0
+
 ## 0.22.0
 
 ### Minor Changes

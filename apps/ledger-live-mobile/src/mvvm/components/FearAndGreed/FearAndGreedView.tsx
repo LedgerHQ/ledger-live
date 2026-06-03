@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "~/context/Locale";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { Text, BottomSheetView, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import FearAndGreedCard from "./components/FearAndGreedCard";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
@@ -39,6 +39,9 @@ export const FearAndGreedView = ({
             <Text typography="body1" lx={{ color: "base" }}>
               {t("fearAndGreed.description")}
             </Text>
+            <Text typography="body4" lx={{ color: "muted", marginTop: "s16" }}>
+              {t("fearAndGreed.disclaimer")}
+            </Text>
           </BottomSheetView>
         </QueuedDrawerBottomSheet>
       </>
@@ -57,6 +60,9 @@ export const FearAndGreedView = ({
           <FearAndGreedTitle />
           <Text typography="body1" lx={{ color: "base" }}>
             {t("fearAndGreed.description")}
+          </Text>
+          <Text typography="body4" lx={{ color: "muted", marginTop: "s20" }}>
+            {t("fearAndGreed.disclaimer")}
           </Text>
         </GorhomBottomSheetView>
       </QueuedDrawerGorhom>

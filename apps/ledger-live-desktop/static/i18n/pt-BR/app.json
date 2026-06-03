@@ -1019,7 +1019,6 @@
         "switchLabel" : "<1>Eu li e concordo com os </1><0>Termos de uso</0><1>.</1>"
       },
       "steps" : {
-        "title" : "Passo <0>{{step}} / {{total}}</0>",
         "1" : {
           "subtitle" : "Aprove uma conta para permitir que o protocolo",
           "subtitle2" : "processe futuros empréstimos.",
@@ -1032,7 +1031,8 @@
         "3" : {
           "subtitle" : "Saque ativos a qualquer momento",
           "description" : "Você pode sacar seus ativos e juros recebidos a qualquer momento, parcial ou totalmente, diretamente da sua conta Ledger."
-        }
+        },
+        "title" : "Passo <0>{{step}} / {{total}}</0>"
       }
     },
     "supply" : {
@@ -1363,6 +1363,10 @@
         "recover" : {
           "title" : "Conclua a proteção do seu backup",
           "description" : "Concluir ativação do Ledger Recover"
+        },
+        "discoverWallet" : {
+          "title" : "Descubra o que sua carteira pode fazer",
+          "description" : "Explore os recursos da sua carteira"
         }
       }
     },
@@ -1403,7 +1407,14 @@
       "recover" : {
         "title" : "Inscrever-se no Ledger Recover",
         "description" : "Restaure o acesso à sua carteira sem precisar de sua Frase de Recuperação Secreta.",
-        "actionCompletedPopupLabel" : "Você se inscreveu com sucesso no Ledger Recover"
+        "actionCompletedPopupLabel" : "Você se inscreveu com sucesso no Ledger Recover",
+        "titleCompleted" : "Backup protegido"
+      },
+      "discoverWallet" : {
+        "title" : "Descubra o que sua carteira pode fazer",
+        "titleCompleted" : "Descubra o que sua carteira pode fazer",
+        "description" : "Explore os recursos da sua carteira",
+        "actionCompletedPopupLabel" : "Tour do produto concluído"
       }
     }
   },
@@ -1808,7 +1819,9 @@
       "gasConsumed" : "Gás consumido",
       "gasUsed" : "Gás usado",
       "gasLimit" : "Limite de gás",
-      "functionId" : "ID da Função"
+      "functionId" : "ID da Função",
+      "delegatedTo" : "Delegado a",
+      "delegatedAmount" : "Quantia Delegada"
     }
   },
   "operationList" : {
@@ -2210,8 +2223,6 @@
     }
   },
   "buyDeviceModal" : {
-    "title" : "Conectar um dispositivo Ledger",
-    "subtitle" : "Para aproveitar todo o potencial da sua Ledger Wallet, conecte sua Ledger.",
     "0" : {
       "title" : "Propriedade total",
       "desc" : "Você tem o controle sobre suas chaves privadas."
@@ -2224,6 +2235,8 @@
       "title" : "Tenha acesso à carteira mais poderosa",
       "desc" : "Gerencie todos os seus ativos em um único lugar."
     },
+    "title" : "Conectar um dispositivo Ledger",
+    "subtitle" : "Para aproveitar todo o potencial da sua Ledger Wallet, conecte sua Ledger.",
     "connectCTA" : "Conectar",
     "buyCTA" : "Compre seu dispositivo Ledger"
   },
@@ -2704,7 +2717,11 @@
           },
           "starter" : {
             "description" : "Você pode obter recompensas delegando os seus ativos EGLD a um Provedor de Staking.",
-            "bullet" : ["Você continua tendo posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos ficarão disponíveis 10 dias após a desdelegação."],
+            "bullet" : [
+              "Você continua tendo posse dos ativos delegados",
+              "Delegar usando seu dispositivo Ledger",
+              "Os ativos ficarão disponíveis 10 dias após a desdelegação."
+            ],
             "warning" : {
               "description" : "Escolha o seu provedor de staking sabiamente. Atualmente, o único risco é o de não obter recompensas por vários motivos, portanto, você deve selecionar um provedor com base em confiabilidade, comunicação e economia."
             }
@@ -2847,7 +2864,11 @@
         "steps" : {
           "starter" : {
             "description" : "Você pode ganhar recompensas ao delegar sua ADA a uma reserva.",
-            "bullet" : ["Você mantém a posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos podem ser redelegados a outra reserva ou você pode optar por desdelegar a qualquer momento."]
+            "bullet" : [
+              "Você mantém a posse dos ativos delegados",
+              "Delegar usando seu dispositivo Ledger",
+              "Os ativos podem ser redelegados a outra reserva ou você pode optar por desdelegar a qualquer momento."
+            ]
           },
           "validator" : {
             "title" : "Reservas"
@@ -2890,6 +2911,19 @@
               "cta" : "Ver detalhes"
             },
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      },
+      "selfTransactionFlow" : {
+        "title" : "Preparar Desdelegação",
+        "steps" : {
+          "starter" : {
+            "description" : [
+              "Para fechar sua conta de staking e recuperar o depósito de ADA:",
+              "A governança da Cardano agora exige que você defina seu status de voto antes de poder desdelegar.",
+              "Essa etapa envolve o envio de uma transação para seu próprio endereço na Ledger, que serve apenas para registrar sua escolha de se abster de votar. Ela custará apenas a taxa de rede padrão e sua ADA permanecerá em sua carteira.",
+              "Depois que essa preferência for registrada, você poderá desdelegar normalmente."
+            ]
           }
         }
       }
@@ -3298,7 +3332,11 @@
         "steps" : {
           "starter" : {
             "description" : "Você pode receber recompensas delegando seus ativos {{currencyTicker}} a um validador.",
-            "bullet" : ["Você continua tendo a posse dos ativos delegados", "Delegue usando seu dispositivo Ledger", "Os ativos ficarão disponíveis {{numberOfDays}} dias após a desdelegação."],
+            "bullet" : [
+              "Você continua tendo a posse dos ativos delegados",
+              "Delegue usando seu dispositivo Ledger",
+              "Os ativos ficarão disponíveis {{numberOfDays}} dias após a desdelegação."
+            ],
             "warning" : {
               "description" : "Escolha cuidadosamente seu validador: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
             }
@@ -3614,7 +3652,11 @@
       "steps" : {
         "starter" : {
           "description" : "Você pode ganhar recompensas vinculando seus ativos e nomeando seus validadores.",
-          "bullet" : ["Você continua tendo posse dos ativos vinculados", "Nomeie usando seu dispositivo Ledger", "Os ativos estarão disponíveis novamente 28 dias após a desvinculação"],
+          "bullet" : [
+            "Você continua tendo posse dos ativos vinculados",
+            "Nomeie usando seu dispositivo Ledger",
+            "Os ativos estarão disponíveis novamente 28 dias após a desvinculação"
+          ],
           "help" : "Como funcionam as nomeações",
           "warning" : "Escolha cuidadosamente o seu validador: parte de seus ativos vinculados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
         },
@@ -4011,7 +4053,11 @@
         "steps" : {
           "starter" : {
             "description" : "Você pode ganhar recompensas fazendo staking de seus ativos Aptos com um validador.",
-            "bullet" : ["Você mantém a propriedade dos ativos em staking.", "Faça staking usando seu dispositivo Ledger", "Os ativos estarão disponíveis de 0 a 14 dias após a desaplicação"],
+            "bullet" : [
+              "Você mantém a propriedade dos ativos em staking.",
+              "Faça staking usando seu dispositivo Ledger",
+              "Os ativos estarão disponíveis de 0 a 14 dias após a desaplicação"
+            ],
             "warning" : {
               "description" : "Escolha cuidadosamente o seu validador: parte de seus ativos aplicados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
             }
@@ -4250,7 +4296,11 @@
           "steps" : {
             "starter" : {
               "description" : "Você pode receber recompensas delegando seus ativos {{currencyTicker}} a um validador.",
-              "bullet" : ["Você continua tendo posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos estarão disponíveis após parar delegação"],
+              "bullet" : [
+                "Você continua tendo posse dos ativos delegados",
+                "Delegar usando seu dispositivo Ledger",
+                "Os ativos estarão disponíveis após parar delegação"
+              ],
               "warning" : {
                 "description" : "Escolha seu validador com sabedoria: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
               }
@@ -4278,7 +4328,38 @@
         }
       },
       "redelegation" : {
-        "header" : "Redelegações"
+        "header" : "Redelegações",
+        "flow" : {
+          "title" : "Redelegar ativos",
+          "steps" : {
+            "starter" : {
+              "title" : "Redelegação",
+              "description" : "Use a redelegação para trocar de validadores de um jeito fácil. Contudo, se mudar de ideia novamente, terá que esperar porque a redelegação aciona um bloqueio temporal de {{ numberOfDays }}.",
+              "warning" : "Escolha o seu validador com muito cuidado: parte dos seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente. Você pode ter no máximo 7 <0>{{maxRedelegations}} delegações pendentes</0>.",
+              "howDelegationWorks" : "Como funciona a delegação?"
+            },
+            "validators" : {
+              "title" : "Validadores",
+              "currentDelegation" : "Delegação Atual",
+              "newDelegation" : "Nova Delegação",
+              "chooseValidator" : "Escolha um validador",
+              "warning" : "Você terá que esperar <0>{{numberOfDays}} dias</0> para redelegar do novo validador, se mudar de ideia novamente",
+              "amountLabel" : "Quantia a redelegar"
+            },
+            "connectDevice" : {
+              "title" : "Dispositivo"
+            },
+            "confirmation" : {
+              "title" : "Confirmação",
+              "success" : {
+                "title" : "Você redelegou seus ativos com sucesso",
+                "text" : "A redelegação será atualizada assim que a blockchain confirmar a transação",
+                "cta" : "Ver detalhes"
+              },
+              "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+            }
+          }
+        }
       },
       "undelegation" : {
         "header" : "Remoções de delegação",
@@ -4367,7 +4448,11 @@
         "steps" : {
           "starter" : {
             "description" : "Você pode ganhar recompensas fazendo staking de seus ativos NEAR a um validador.",
-            "bullet" : ["Você mantém a propriedade dos ativos em staking.", "Faça staking usando seu dispositivo Ledger.", "Ativos estarão disponíveis de 52 a 65 horas após desaplicá-los"],
+            "bullet" : [
+              "Você mantém a propriedade dos ativos em staking.",
+              "Faça staking usando seu dispositivo Ledger.",
+              "Ativos estarão disponíveis de 52 a 65 horas após desaplicá-los"
+            ],
             "warning" : {
               "description" : "Escolha cuidadosamente o seu validador: parte de seus ativos aplicados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
             }
@@ -4874,6 +4959,12 @@
           "completed" : "O tour do produto foi marcado como concluído.",
           "notCompleted" : "O tour do produto ainda não foi concluído.",
           "open" : "Abrir"
+        },
+        "recover" : {
+          "description" : "Defina o estado da inscrição no Ledger Recover para testar o hub pós-onboarding e recuperar o banner.",
+          "noSubscription" : "Sem inscrição",
+          "inProgress" : "Em progresso",
+          "backupDone" : "Backup concluído"
         }
       },
       "walletFeaturesDevTool" : {
@@ -5580,7 +5671,6 @@
             }
           },
           "recoverHowTo" : {
-            "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
             "1" : {
               "title" : "Selecione \"Restore\" (Restaurar)",
               "descr" : "Pressione ambos os botões simultaneamente para selecionar."
@@ -5588,6 +5678,7 @@
             "2" : {
               "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)"
             },
+            "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
             "help" : {
               "iDontSee" : "Não vejo \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
               "modal" : {
@@ -5872,12 +5963,6 @@
     "connected" : "Conectado!",
     "backToPortfolio" : "Voltar ao Portfólio",
     "steps" : {
-      "entry" : {
-        "title" : "Solução de problemas de conexão USB",
-        "desc" : "Parece haver um problema ao conectar seu dispositivo. Não se preocupe, você pode tentar diferentes soluções até que seu dispositivo se conecte!",
-        "cta" : "Vamos resolver isso!",
-        "back" : "Voltar"
-      },
       "1" : {
         "windows" : {
           "title" : "Executar a Ledger Wallet como Administrador",
@@ -5990,6 +6075,12 @@
           "updateInstructions" : "Siga as instruções de atualização do dispositivo",
           "somethingElse" : "Outras Opções"
         }
+      },
+      "entry" : {
+        "title" : "Solução de problemas de conexão USB",
+        "desc" : "Parece haver um problema ao conectar seu dispositivo. Não se preocupe, você pode tentar diferentes soluções até que seu dispositivo se conecte!",
+        "cta" : "Vamos resolver isso!",
+        "back" : "Voltar"
       }
     }
   },
@@ -6009,8 +6100,7 @@
     "doubleCheck" : "Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
     "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>",
     "termsAndConditionsWithPrivacy" : "Ao assinar esta transação, você aceita os Termos de uso do <0>{{appName}}</0> e a <1>Política de privacidade</1>.",
-    "warningWording" : {
-    },
+    "warningWording" : {},
     "titleWording" : {
       "send" : "Confirme no seu dispositivo para finalizar a operação",
       "claimReward" : "Confirme no seu dispositivo para finalizar a operação",
@@ -6075,7 +6165,11 @@
     "title" : "Atualização dos Termos de uso",
     "body" : {
       "intro" : "Olá! Atualizamos nossos Termos de Uso da Ledger Wallet com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis na Ledger Wallet. As principais atualizações estão focadas:",
-      "bulletPoints" : ["Esclarecer quais serviços estão disponíveis e como funcionam", "Explicar como funcionam as taxas de serviços", "Melhorar nosso processo de notificação para garantir que você seja devidamente informado de quaisquer novas alterações em nossos Termos de uso"],
+      "bulletPoints" : [
+        "Esclarecer quais serviços estão disponíveis e como funcionam",
+        "Explicar como funcionam as taxas de serviços",
+        "Melhorar nosso processo de notificação para garantir que você seja devidamente informado de quaisquer novas alterações em nossos Termos de uso"
+      ],
       "agreement" : "Ao clicar em \"Continuar\" você concorda que leu e aceitou os Termos de uso abaixo."
     },
     "link" : "Termos de uso",
@@ -6221,6 +6315,36 @@
               "description" : "A oferta de transferência foi retirada com sucesso."
             }
           }
+        }
+      },
+      "disclaimer" : {
+        "title" : "Configurar Rede Canton",
+        "intro" : "Canton tem propriedades exclusivas que requerem sua atenção antes de continuar:",
+        "bullets" : {
+          "utxo" : {
+            "title" : "Saldo baseado em UTXO",
+            "body" : "O saldo existe como contratos individuais de moedas, limitado a 100 por transferência. Contratos ociosos perdem valor com o tempo e expiram se as taxas excederem seu saldo."
+          },
+          "offers" : {
+            "title" : "Transferências baseadas em ofertas",
+            "body" : "Nada se resolve automaticamente. Transferências enviadas podem ser sacadas; as transferências recebidas precisam ser aceitas ou rejeitadas manualmente. Gerencie as ofertas em seu painel Canton."
+          },
+          "dualValidator" : {
+            "title" : "Segurança de validador duplo",
+            "body" : "As transações exigem a co-assinatura tanto da Ledger como da Klin. Nenhum dos dois pode agir sozinho em seu nome."
+          },
+          "tokenLiability" : {
+            "title" : "Responsabilidade padrão do token ⚠️",
+            "body" : "A recuperação do token em um cenário de falha é de responsabilidade do emissor, não da Ledger."
+          }
+        },
+        "agreeLabel" : "Concordo com os <1>Termos da Rede Canton e com a exclusão de responsabilidade da Ledger</1>",
+        "cancel" : "Cancelar",
+        "agree" : "Concordo",
+        "terms" : {
+          "title" : "Termos da Rede Canton",
+          "sectionTitle" : "Responsabilidade e Recuperação de Token Padrão",
+          "body" : "A Ledger só é compatível com tokens padrão emitidos por meio do Registro de Ativos Digitais (DA). A Ledger não é a emissora desses tokens e não assume responsabilidade por seu valor, gestão ou contratos inteligentes subjacentes.\n\nNo caso de uma interrupção de um serviço da Ledger ou uma falha de “recuperação de desastres”, a Ledger não poderá recuperar seus ativos. Você deve entrar em contato diretamente com o emissor do token específico (administrador dos ativos) para iniciar a recuperação por meio de seus protocolos “Asset Freeze” (“Congelamento de Ativos”) ou “Registry Recovery” (“Recuperação de Registro”). Seu recurso está exclusivamente com o Emissor do Token sob os Contratos de Nível de Serviço (SLAs) existentes dele. Ao prosseguir, você reconhece que a Ledger e suas afiliadas estão isentas de qualquer responsabilidade decorrente da perda, recuperação ou incapacidade de recuperar esses tokens."
         }
       }
     },
@@ -7595,6 +7719,17 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "Quantia muito grande para as restrições UTXO."
+    },
+    "MustDelegateBeforeStaking" : {
+      "title" : "Delegue sua conta antes de fazer staking"
+    },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "Muitos registros privados selecionados",
+      "description" : "Você pode usar no máximo {{count}} registros privados por transação."
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "Quantia muito grande para uma transação",
+      "description" : "Seus registros privados não conseguem cobrir esta quantia em uma única transação. Tente uma quantia menor."
     }
   },
   "cryptoOrg" : {
@@ -8401,7 +8536,8 @@
     "title" : "Contas",
     "tableActions" : {
       "searchAddress" : "Pesquisar por nome e endereço",
-      "addAddress" : "Adicionar endereço"
+      "addAddress" : "Adicionar endereço",
+      "addAccount" : "Adicionar conta"
     },
     "table" : {
       "columns" : {
@@ -8543,7 +8679,13 @@
       "stepViewKeyWarning" : {
         "title" : "Configurar saldo privado Aleo",
         "description" : "A Ledger Wallet armazena sua chave de visualização para exibir seu saldo privado e utiliza serviços de terceiros para processar transações privadas. <0>Saiba mais</0>",
-        "bullets" : ["Acesso somente de leitura para descriptografar seu saldo privado", "A Ledger não pode enviar nem gastar seus fundos", "Somente você pode assinar e gastar seus fundos", "A geração de provas é feita por serviços de comprovação externos, a fim de garantir um processamento rápido", "Os comprovadores não podem acessar nem gastar seus fundos"],
+        "bullets" : [
+          "Acesso somente de leitura para descriptografar seu saldo privado",
+          "A Ledger não pode enviar nem gastar seus fundos",
+          "Somente você pode assinar e gastar seus fundos",
+          "A geração de provas é feita por serviços de comprovação externos, a fim de garantir um processamento rápido",
+          "Os comprovadores não podem acessar nem gastar seus fundos"
+        ],
         "cta" : {
           "allow" : "Permitir",
           "cancel" : "Cancelar"
@@ -8593,6 +8735,21 @@
         "noRecordsAlert" : "Você não tem registros disponíveis. Transfira para si mesmo ou receba fundos privados para começar.",
         "alert" : "A quantia máxima a ser gasta depende do valor máximo do registro selecionado. As taxas são cobertas pela Provable para usuários Ledger.",
         "recordsLimit" : "Máximo de {{max}} registros é mostrado"
+      },
+      "quickAmountSelector" : {
+        "strategies" : {
+          "fast" : "Rápido",
+          "balanced" : "Equilibrado",
+          "full" : "Completo"
+        },
+        "recordCount_one" : "{{count}} registro",
+        "recordCount_other" : "{{count}} registros",
+        "unavailable" : "Não disponível",
+        "spendableBalance" : "Saldo máximo a ser gasto:"
+      },
+      "infoBanner" : {
+        "descPartOne" : "Remetente, quantia e destinatário ocultos na cadeia.",
+        "descPartTwo" : "Até {{max}} registros por envio."
       }
     },
     "account" : {
@@ -8620,7 +8777,9 @@
         "selectLabel" : "Enviar de"
       },
       "summary" : {
-        "proofGenerationWarning" : "A transação Aleo requer gerar uma prova. Isso pode levar algum tempo"
+        "proofGenerationWarning" : "A transação Aleo requer gerar uma prova. Isso pode levar algum tempo",
+        "recordsUsed" : "Registros utilizados",
+        "signingTime" : "Tempo da assinatura"
       },
       "mandatoryPrivateSync" : {
         "title" : "Sincronizando seu saldo privado ({{percentage}}%)",
@@ -8665,6 +8824,28 @@
       "growYourRewards" : "Multiplique suas recompensas",
       "spendYourCrypto" : "Gaste sua cripto",
       "everythingAtAGlance" : "Tudo em um piscar de olhos"
+    },
+    "slides" : {
+      "fund" : {
+        "title" : "Comece depositando fundos na sua carteira",
+        "subTitle" : "Deposite fundos na sua Ledger Wallet do seu jeito — transfira, compre ou converta dinheiro em stablecoins."
+      },
+      "portfolio" : {
+        "title" : "Mantenha-se à frente do mercado",
+        "subTitle" : "Acompanhe seus ativos, recompensas e tendências do mercado facilmente."
+      },
+      "earn" : {
+        "title" : "Aproveite recompensas com sua cripto.",
+        "subTitle" : "Coloque sua cripto para rentabilizar na seção Ganhar."
+      },
+      "card" : {
+        "title" : "Use cripto no dia a dia",
+        "subTitle" : "Pague com seu cartão cripto e ganhe cashback, online ou em lojas físicas"
+      },
+      "swap" : {
+        "title" : "Troque sem mudar de aplicativo",
+        "subTitle" : "Negocie milhares de ativos ilimitadamente através dos nossos provedores de trocas confiáveis."
+      }
     }
   },
   "history" : {
@@ -8723,6 +8904,197 @@
     "explore" : "Explore todos os dispositivos Ledger"
   },
   "assetDetails" : {
-    "totalBalance" : "Saldo Total"
+    "totalBalance" : "Saldo Total",
+    "header" : {
+      "optionsMenu" : "Opções de ativos",
+      "addFavourite" : "Adicionar aos favoritos",
+      "removeFavourite" : "Remover dos favoritos",
+      "hideFromPortfolio" : "Ocultar do portfólio",
+      "showInPortfolio" : "Mostrar no portfólio"
+    },
+    "hiddenBanner" : {
+      "description" : "Este ativo está oculto em seu portfolio.",
+      "showAsset" : "Mostrar ativo"
+    },
+    "marketPrice" : "Preço de mercado",
+    "addresses" : "Endereços",
+    "addressesDialog" : {
+      "title" : "Endereços",
+      "description" : "Todos os seus endereços que possuem {{ticker}}."
+    },
+    "add" : "Adicionar",
+    "notFound" : "Item de distribuição de ativos não encontrado.",
+    "marketStats" : "Estatísticas de mercado",
+    "marketStatsTooltip" : "Métricas de mercado para este ativo.",
+    "pricePerformance" : "Desempenho de preço",
+    "marketRank" : "Posição no mercado",
+    "tradingVolume24h" : "Volume de negociação 24h",
+    "day" : "1 dia",
+    "staking" : {
+      "availableBalance" : "Saldo disponível",
+      "availableBalanceTooltip" : "A parte de seus ativos que você pode usar agora, livre para enviar, trocar ou sacar a qualquer momento.",
+      "earnDeposit" : "Depositar para Ganhar",
+      "earnBanner" : "Rende até {{apy}}% {{type}}",
+      "earnBannerDefault" : "Rentabilizar este ativo",
+      "earnBannerSubtitle" : "Guarde e rentabilize este ativo",
+      "earnBannerAction" : "Ir para a aba Ganhar"
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "Ganhe Recompensas Tezos: Delegar ou Fazer Staking",
+      "description" : "Ganhe recompensas em seu Tezos (XTZ) delegando a um Baker, mantendo o controle total. Para retornos mais altos, faça staking de sua XTZ, entendendo o baixo risco associado. Escolha a melhor maneira de multiplicar seus ativos.",
+      "howItWorks" : "Como isso funciona",
+      "delegate" : {
+        "header" : "Delegar",
+        "bullet" : {
+          "0" : "Sem bloqueio",
+          "1" : "Todo o seu saldo está delegado",
+          "2" : "Envie ou troque seu XTZ a qualquer momento",
+          "3" : "Sem riscos"
+        },
+        "cta" : "Delegar"
+      },
+      "stake" : {
+        "header" : "Aplicar",
+        "bullet" : {
+          "0" : "Aumente seus ganhos (2–3x)",
+          "1" : "XTZ está bloqueado para staking",
+          "2" : "Desaplicação: 4 dias",
+          "3" : "Risco: Baixo (Corte)"
+        },
+        "cta" : "Aplicar"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "Desaplicar XTZ",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "amountLabel" : "Quantia a desaplicar",
+            "availableLabel" : "Aplicado",
+            "maxLabel" : "Máximo",
+            "unbondingNotice" : "A desaplicação levará 4 dias. Durante esse período, sua XTZ permanece delegada e para de receber recompensas de staking."
+          },
+          "device" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "broadcastError" : "Sua transação de desaplicação não pôde ser enviada à rede. Tente novamente.",
+            "success" : {
+              "title" : "Desaplicação enviada",
+              "text" : "Sua XTZ está sendo desbloqueada e estará disponível para saque em aproximadamente quatro dias.",
+              "cta" : "Ver detalhes"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "Aplicar",
+        "amount" : {
+          "disclaimer" : "A desaplicação levará 4 dias.",
+          "awaitingDelegation" : "Confirmando sua delegação. Isso geralmente leva menos de um minuto…"
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "Validador",
+            "description" : "Escolha um baker a quem delegar. Você poderá fazer staking de XTZ após a confirmação da delegação."
+          },
+          "deviceDelegation" : {
+            "title" : "Confirmar Delegação"
+          },
+          "amount" : {
+            "title" : "Quantia"
+          },
+          "deviceStaking" : {
+            "title" : "Confirmar Staking"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você fez staking de seus ativos com sucesso",
+              "text" : "Você fez staking de {{amount}}. O saldo de sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Visitar o Painel Ganhar"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente.",
+            "howItWorks" : "Como o Staking Funciona"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Desaplicar antes de mudar de baker",
+        "description" : "Você fez staking de XTZ com o seu baker atual. Desaplique seus fundos antes de delegá-los a um novo baker."
+      },
+      "endDelegation" : {
+        "title" : "Desaplicar antes de encerrar a delegação",
+        "description" : "Você fez staking de XTZ com o seu baker atual. Desaplique seus fundos antes de encerrar a delegação."
+      },
+      "steps" : {
+        "0" : "Abra o painel Ganhar e selecione Desaplicar.",
+        "1" : "Confirme a quantia e envie a transação de desaplicação em seu dispositivo.",
+        "2" : "Aguarde cerca de 4 dias para que o período de desaplicação seja concluído.",
+        "3" : "Uma vez sacado, você pode mudar o baker ou encerrar a delegação."
+      },
+      "learnMore" : "Saiba mais sobre o staking de Tezos",
+      "close" : "Fechar"
+    }
+  },
+  "pnl" : {
+    "asset" : {
+      "entry" : {
+        "title" : "Preço médio de entrada",
+        "tooltip" : "O preço médio que você pagou por este ativo nesta carteira, incluindo tudo o que você comprou ou recebeu de outras carteiras. Isto é usado para rastrear seu lucro ou prejuízo."
+      },
+      "return" : {
+        "title" : "Retorno não realizado"
+      },
+      "dialog" : {
+        "title" : "Ganhos e perdas",
+        "description" : "Um resumo do desempenho desse ativo em seu portfólio.",
+        "totalReturn" : {
+          "title" : "Retorno total",
+          "description" : "A soma dos retornos não realizados e realizados."
+        },
+        "unrealisedReturn" : {
+          "title" : "Retorno não realizado",
+          "description" : "O ganho ou perda estimados se for vendido ao preço de hoje."
+        },
+        "realisedReturn" : {
+          "title" : "Retorno realizado",
+          "description" : "Lucro ou prejuízo confirmado a partir de vendas ou transferências anteriores."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "Retorno não realizado"
+      },
+      "costBasis" : {
+        "title" : "Base de custo",
+        "tooltip" : "A quantia total que você pagou para adquirir suas participações atuais, incluindo taxas."
+      },
+      "dialog" : {
+        "title" : "Ganhos e perdas",
+        "description" : "O desempenho do seu portfólio está detalhado em retornos realizados e não realizados.",
+        "totalReturn" : {
+          "title" : "Retorno total",
+          "description" : "Retornos realizados e não realizados combinados, refletindo a sua posição geral."
+        },
+        "unrealisedReturn" : {
+          "title" : "Retorno não realizado",
+          "description" : "Ganho ou perda estimada de seus investimentos atuais."
+        },
+        "realisedReturn" : {
+          "title" : "Retorno realizado",
+          "description" : "Lucro ou prejuízo confirmado a partir de vendas ou transferências de saída anteriores."
+        }
+      }
+    }
   }
 }

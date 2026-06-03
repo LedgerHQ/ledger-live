@@ -15,6 +15,8 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 
 type Props = {
   account: AccountLike;
@@ -27,6 +29,7 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
   const { t } = useTranslation();
   const { locale } = useSettings();
   const navigation = useNavigation<Navigation>();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const accounts = useSelector(shallowAccountsSelector);
 
   const unit = useAccountUnit(account);
@@ -66,18 +69,41 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     [currency.name, navigation, routeToButtonLabel],
   );
 
-  const renderLink = useCallback(
-    (route: Route) => (
+  const renderTextLink = useCallback(
+    (onPress: () => void) => (
       <Text
         variant="bodyLineHeight"
         fontWeight="bold"
         style={{ textDecorationLine: "underline" }}
         fontSize={14}
-        onPress={() => onNavigate(route)}
+        onPress={onPress}
       />
     ),
-    [onNavigate],
+    [],
   );
+
+  const renderLink = useCallback(
+    (route: Route) => renderTextLink(() => onNavigate(route)),
+    [onNavigate, renderTextLink],
+  );
+
+  // Swap is reached via the Wallet 4.0-aware helper so it lands on the Main > Swap
+  // tab (with header + tab bar) instead of the legacy base-level Swap stack.
+  const goToSwap = useCallback(() => {
+    track("button_clicked", {
+      button: "swap",
+      asset: currency.name,
+      source: "UndelegateFlowScreen",
+    });
+    navigateToSwapTab({
+      navigation,
+      shouldDisplayWallet40MainNav,
+      params: {
+        currency,
+        accountId: account.id,
+      },
+    });
+  }, [account.id, currency, navigation, shouldDisplayWallet40MainNav]);
 
   const ctasSupported = useMemo(() => {
     const ctas = [];
@@ -99,16 +125,7 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     if (canBeSwapped) {
       ctas.push({
         label: t("errors.NotEnoughBalanceForUnstaking.ctas.swap"),
-        component: renderLink([
-          NavigatorName.Swap,
-          {
-            screen: ScreenName.SwapTab,
-            params: {
-              currency,
-              accountId: account.id,
-            },
-          },
-        ]),
+        component: renderTextLink(goToSwap),
       });
     }
     ctas.push({
@@ -126,7 +143,17 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
       ]),
     });
     return ctas;
-  }, [account.id, canBeBought, canBeSwapped, currency, parentAccount.id, renderLink, t]);
+  }, [
+    account.id,
+    canBeBought,
+    canBeSwapped,
+    currency,
+    parentAccount.id,
+    renderLink,
+    renderTextLink,
+    goToSwap,
+    t,
+  ]);
 
   const ctasKey =
     ctasSupported.length === 3

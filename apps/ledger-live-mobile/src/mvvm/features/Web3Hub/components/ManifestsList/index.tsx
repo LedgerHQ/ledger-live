@@ -22,9 +22,7 @@ type Props = {
   headerComponent?: React.ReactNode;
 };
 
-const AnimatedFlashList = Animated.createAnimatedComponent(
-  FlashList as React.ComponentType<FlashListProps<AppManifest>>,
-);
+const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<AppManifest>>(FlashList);
 
 const keyExtractor = (item: AppManifest) => item.id;
 

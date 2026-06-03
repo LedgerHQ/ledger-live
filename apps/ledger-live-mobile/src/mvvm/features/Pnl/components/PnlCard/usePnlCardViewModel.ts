@@ -1,4 +1,4 @@
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TriangleDown, TriangleUp } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { LumenTextStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { CardType } from "@ledgerhq/lumen-ui-rnative";
@@ -33,8 +33,10 @@ export function usePnlCardViewModel(props: PnlCardProps): PnlCardViewModel {
   const { shouldDisplayPnl } = useWalletFeaturesConfig("mobile");
 
   const isInteractive = props.type === "interactive";
-  const onPress = props.onPress;
+  const onPress = props.type === "value" ? undefined : props.onPress;
   const cardType: CardType = onPress ? "interactive" : "info";
+  const TrendIcon = props.type === "info" ? undefined : TREND_ICON[props.trend];
+  const trendColor = props.type === "info" ? undefined : TREND_COLOR[props.trend];
 
   return {
     shouldRender: shouldDisplayPnl,
@@ -43,8 +45,8 @@ export function usePnlCardViewModel(props: PnlCardProps): PnlCardViewModel {
     cardType,
     showInfoIcon: props.type === "info",
     showChevron: isInteractive,
-    TrendIcon: isInteractive ? TREND_ICON[props.trend] : undefined,
-    trendColor: isInteractive ? TREND_COLOR[props.trend] : undefined,
+    TrendIcon,
+    trendColor,
     onPress,
     testID: props.testID,
   };

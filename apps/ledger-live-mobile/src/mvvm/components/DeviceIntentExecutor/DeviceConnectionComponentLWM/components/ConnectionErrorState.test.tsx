@@ -1,18 +1,47 @@
 import React from "react";
 import { Linking } from "react-native";
 import { render, screen } from "@tests/test-renderer";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import {
   ConnectionErrorTypes,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
+import { TrackScreen, track } from "~/analytics";
+import { previousRouteNameRef } from "~/analytics/screenRefs";
 import { urls } from "~/utils/urls";
+import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { ConnectionErrorState } from "./ConnectionErrorState";
+
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(() => null),
+    track: jest.fn(),
+  };
+});
+
+const mockedTrackScreen = jest.mocked(TrackScreen);
+const mockedTrack = jest.mocked(track);
+const TEST_SOURCE = "Connect Device - Connection Error";
 
 type ConnectionErrorUIState = Extract<
   ConnectDeviceUIState,
   { type: ConnectDeviceUIStateTypes.ConnectionError }
 >;
+
+function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {
+  return {
+    id: "device-id",
+    name: "Ledger Nano X",
+    deviceModelId: DeviceModelId.nanoX,
+    transport: "ble" as KnownDevice["transport"],
+    ...overrides,
+  };
+}
 
 const errorCases = [
   {
@@ -42,17 +71,24 @@ function renderState(errorType: ConnectionErrorTypes) {
   const state: ConnectionErrorUIState = {
     type: ConnectDeviceUIStateTypes.ConnectionError,
     error: { type: errorType },
+    device: makeKnownDevice(),
     retry,
     ignore,
   };
 
-  const view = render(<ConnectionErrorState state={state} />);
+  const view = render(
+    <SourceFlowProvider value="my_ledger">
+      <ConnectionErrorState state={state} />
+    </SourceFlowProvider>,
+  );
 
   return { ...view, retry, ignore };
 }
 
 describe("ConnectionErrorState", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+    previousRouteNameRef.current = TEST_SOURCE;
     jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
@@ -81,6 +117,12 @@ describe("ConnectionErrorState", () => {
 
     await user.press(screen.getByText("Try again"));
 
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      source: TEST_SOURCE,
+      deviceUxV2: true,
+      button: "Retry",
+    });
     expect(retry).toHaveBeenCalledTimes(1);
   });
 
@@ -89,6 +131,30 @@ describe("ConnectionErrorState", () => {
 
     await user.press(screen.getByText("Get help"));
 
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      source: TEST_SOURCE,
+      deviceUxV2: true,
+      button: "Get Help",
+    });
     expect(Linking.openURL).toHaveBeenCalledWith(urls.pairingIssues);
+  });
+
+  it("GIVEN a connection error WHEN rendering THEN it tracks the Device UX V2 page event", () => {
+    // GIVEN / WHEN
+    renderState(ConnectionErrorTypes.Unknown);
+
+    // THEN
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_CONNECT_DEVICE.ConnectionError,
+        sourceFlow: "my_ledger",
+        modelId: DeviceModelId.nanoX,
+        transport: "ble",
+        subError: "Unknown",
+        deviceUxV2: true,
+      }),
+      undefined,
+    );
   });
 });

@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Flex, FullBackgroundCard } from "@ledgerhq/native-ui";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MediaCard, MediaCardTitle, Tag } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "styled-components/native";
 import { WalletContentCard } from "~/dynamicContent/types";

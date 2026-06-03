@@ -70,6 +70,11 @@ describe("marketApi", () => {
       ["week", "1w"],
       ["month", "1m"],
       ["year", "1y"],
+      ["1d", "1d"],
+      ["1w", "1w"],
+      ["1m", "1m"],
+      ["6m", "6m"],
+      ["5y", "5y"],
     ])("maps UI range '%s' to URL segment '%s'", async (range, segment) => {
       const seenUrls: string[] = [];
       server.use(
@@ -84,6 +89,26 @@ describe("marketApi", () => {
       );
 
       expect(new URL(seenUrls[0]).pathname).toBe(`/v3/markets/chart/${segment}/bitcoin`);
+    });
+
+    it("percent-encodes the asset id so reserved characters do not break the URL path", async () => {
+      const seenUrls: string[] = [];
+      server.use(
+        http.get("*/v3/markets/chart/*", ({ request }) => {
+          seenUrls.push(request.url);
+          return HttpResponse.json(validResponse);
+        }),
+      );
+
+      const ledgerId = "arbitrum/erc20/rain_0x25118290e6a5f4139381d072181157035864099d";
+      await store.dispatch(
+        getAssetChartData.initiate({ id: ledgerId, counterCurrency: "usd", range: "1w" }),
+      );
+
+      expect(seenUrls).toHaveLength(1);
+      const url = new URL(seenUrls[0]);
+      expect(url.pathname).toBe(`/v3/markets/chart/1w/${encodeURIComponent(ledgerId)}`);
+      expect(decodeURIComponent(url.pathname.split("/").pop() ?? "")).toBe(ledgerId);
     });
 
     it("defaults to '1d' segment when range is omitted", async () => {
@@ -127,29 +152,41 @@ describe("marketApi", () => {
       expect(Object.keys(result.data ?? {})).toEqual(["24h"]);
     });
 
-    it("returns isError when the response schema is invalid", async () => {
-      server.use(
-        http.get("*/v3/markets/chart/*", () =>
-          HttpResponse.json({ values: [["not-a-number", 1]] }),
-        ),
-      );
+    describe("schema validation errors", () => {
+      let consoleErrorSpy: jest.SpiedFunction<typeof console.error>;
 
-      const result = await store.dispatch(
-        getAssetChartData.initiate({ id: "ethereum", counterCurrency: "eur", range: "24h" }),
-      );
+      beforeEach(() => {
+        consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+      });
 
-      expect(result.isError).toBe(true);
-      expect(result.data).toBeUndefined();
-    });
+      afterEach(() => {
+        consoleErrorSpy.mockRestore();
+      });
 
-    it("returns isError when the response is missing the `values` array", async () => {
-      server.use(http.get("*/v3/markets/chart/*", () => HttpResponse.json({})));
+      it("returns isError when the response schema is invalid", async () => {
+        server.use(
+          http.get("*/v3/markets/chart/*", () =>
+            HttpResponse.json({ values: [["not-a-number", 1]] }),
+          ),
+        );
 
-      const result = await store.dispatch(
-        getAssetChartData.initiate({ id: "ethereum", counterCurrency: "eur", range: "24h" }),
-      );
+        const result = await store.dispatch(
+          getAssetChartData.initiate({ id: "ethereum", counterCurrency: "eur", range: "24h" }),
+        );
 
-      expect(result.isError).toBe(true);
+        expect(result.isError).toBe(true);
+        expect(result.data).toBeUndefined();
+      });
+
+      it("returns isError when the response is missing the `values` array", async () => {
+        server.use(http.get("*/v3/markets/chart/*", () => HttpResponse.json({})));
+
+        const result = await store.dispatch(
+          getAssetChartData.initiate({ id: "ethereum", counterCurrency: "eur", range: "24h" }),
+        );
+
+        expect(result.isError).toBe(true);
+      });
     });
   });
 });

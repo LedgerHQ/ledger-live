@@ -34,7 +34,9 @@ import {
   TransactionBlockData,
   TransactionEffects,
 } from "@mysten/sui/jsonRpc";
+import type { ClientWithCoreApi } from "@mysten/sui/client";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
+import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
@@ -53,23 +55,37 @@ import { getCurrentSuiPreloadData } from "./preload-data";
 import { mapDryRunError } from "../logic/mapDryRunError";
 import {
   type AsyncGraphQLApiFunction,
+  executeTransactionGraphQL,
   getAllBalancesCachedGraphQL,
+  getBlockGraphQL,
+  getBlockInfoFieldsGraphQL,
   getCheckpointGraphQL,
   getLastBlockGraphQL,
   getDelegatedStakesGraphQL,
+  getTransactionByDigestGraphQL,
+  getTransactionsByAddressGraphQL,
+  getTransactionsWithCheckpointDigestsGraphQL,
+  getValidatorsGraphQL,
+  resolveCheckpointSequenceForDigestGraphQL,
+  simulateTransactionGraphQL,
   withGraphQLApi,
 } from "./sdk.graphql";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
 
-/** Read-side feature flag; transaction execution always stays on JSON-RPC. */
+/**
+ * Single source of truth consulted by every `withTransport` dispatcher. When
+ * `true`, read paths (balances, stakes, last block, checkpoint, operations,
+ * validators) and write paths (transaction construction, fee dry-run,
+ * broadcast) route through GraphQL via `node.graphqlUrl`. Callers bound
+ * directly to `withApi` (none in the current hot path) always use `node.url`.
+ */
 export function isGraphQLEnabled(currencyId?: string): boolean {
   return coinConfig.getCoinConfig(currencyId).features?.graphql === true;
 }
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
-const MULTI_GET_OBJECTS_LIMIT = 50;
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
@@ -96,7 +112,7 @@ export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: stri
   return execute(api);
 }
 
-/** Dispatcher gated on `features.graphql`. No silent fallback — flip the flag to revert. */
+/** Dispatcher gated on `features.graphql` */
 export function withTransport<T>(
   currencyId: string | undefined,
   impls: {
@@ -107,39 +123,6 @@ export function withTransport<T>(
   return isGraphQLEnabled(currencyId)
     ? withGraphQLApi(impls.graphql, currencyId)
     : withApi(impls.jsonRpc, currencyId);
-}
-
-/**
- * Wraps a SuiJsonRpcClient to batch multiGetObjects calls in chunks of 50,
- * working around the SUI RPC limit.
- */
-export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpcClient {
-  return new Proxy(client, {
-    get(target, prop, _receiver) {
-      if (prop === "multiGetObjects") {
-        return async (params: Parameters<SuiJsonRpcClient["multiGetObjects"]>[0]) => {
-          const { ids } = params;
-          if (ids.length <= MULTI_GET_OBJECTS_LIMIT) {
-            return target.multiGetObjects(params);
-          }
-          const results = [];
-          for (let i = 0; i < ids.length; i += MULTI_GET_OBJECTS_LIMIT) {
-            const chunk = await target.multiGetObjects({
-              ...params,
-              ids: ids.slice(i, i + MULTI_GET_OBJECTS_LIMIT),
-            });
-            results.push(...chunk);
-          }
-          return results;
-        };
-      }
-      const value = Reflect.get(target, prop, target);
-      if (typeof value === "function") {
-        return value.bind(target);
-      }
-      return value;
-    },
-  });
 }
 
 /**
@@ -442,37 +425,48 @@ export const getOperationExtra = (
   digest: string,
   currencyId?: string,
 ): Promise<Record<string, string>> =>
-  withApi(async api => {
-    const response = await api.getTransactionBlock({
-      digest,
-      options: {
-        showInput: true,
-        showBalanceChanges: true,
-        showEffects: true,
-        showEvents: true,
-      },
-    });
-    const tx = response.transaction?.data?.transaction;
-    if (isStaking(tx)) {
-      const inputs = tx.inputs;
-      const pure = inputs.filter(x => x.type === "pure") as { valueType: string; value: string }[];
-      const amount = pure.find(x => x.valueType === "u64")?.value as string;
-      const address = pure.find(x => x.valueType === "address")?.value as string;
-      const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
-      return { amount, address, name: name || "" };
-    }
+  withTransport(currencyId, {
+    jsonRpc: async api => {
+      const response = await api.getTransactionBlock({
+        digest,
+        options: {
+          showInput: true,
+          showBalanceChanges: true,
+          showEffects: true,
+          showEvents: true,
+        },
+      });
+      return extractStakingEventDetails(response);
+    },
+    graphql: async api => {
+      const response = await getTransactionByDigestGraphQL(api, digest);
+      if (!response) return {};
+      return extractStakingEventDetails(response);
+    },
+  });
 
-    if (isUnstaking(response.transaction?.data?.transaction)) {
-      const { principal_amount: amount, validator_address: address } = response.events?.find(
-        e => e.type === UNSTAKING_REQUEST_EVENT,
-      )?.parsedJson as Record<string, string>;
-      const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
-
-      return { amount, address, name: name || "" };
-    }
-
-    return {};
-  }, currencyId);
+/** Shared between transports — staking/unstaking event extraction is transport-agnostic. */
+function extractStakingEventDetails(response: SuiTransactionBlockResponse): Record<string, string> {
+  const tx = response.transaction?.data?.transaction;
+  if (isStaking(tx)) {
+    const inputs = tx.inputs;
+    const pure = inputs.filter(x => x.type === "pure") as { valueType: string; value: string }[];
+    // Missing inputs default to "" rather than masquerading as a `string` so the
+    // declared `Record<string, string>` return contract holds at runtime.
+    const amount = pure.find(x => x.valueType === "u64")?.value ?? "";
+    const address = pure.find(x => x.valueType === "address")?.value ?? "";
+    const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
+    return { amount, address, name: name || "" };
+  }
+  if (isUnstaking(response.transaction?.data?.transaction)) {
+    const event = response.events?.find(e => e.type === UNSTAKING_REQUEST_EVENT);
+    const { principal_amount: amount = "", validator_address: address = "" } =
+      (event?.parsedJson as Record<string, string> | undefined) ?? {};
+    const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
+    return { amount, address, name: name || "" };
+  }
+  return {};
+}
 
 /**
  * Extract date from transaction
@@ -679,11 +673,16 @@ export function transactionToCoinFrameworkOperation(
 }
 
 /**
- * Convert a SUI RPC checkpoint info to a {@link BlockInfo}.
- *
- * @param checkpoint SUI RPC checkpoint info
+ * Convert a SUI RPC checkpoint info to a {@link BlockInfo}. Param is narrowed
+ * to the four fields actually read so the GraphQL helper output flows through
+ * the same mapper without an inline duplicate.
  */
-export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
+export function toBlockInfo(
+  checkpoint: Pick<
+    Checkpoint,
+    "digest" | "sequenceNumber" | "timestampMs" | "previousDigest"
+  >,
+): BlockInfo {
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
     hash: checkpoint.digest,
@@ -820,7 +819,10 @@ export const getLastBlock = (
   });
 
 /**
- * Fetch operation list
+ * Paginated transaction history. JSON-RPC: two parallel `queryTransactionBlocks`
+ * calls (FromAddress + ToAddress) merged + deduped by `filterOperations`.
+ * GraphQL: a single `transactions(filter: { affectedAddress })` query covers
+ * sender/sponsor/recipient in one round-trip (no IN+OUT merge needed).
  */
 export const getOperations = async (
   accountId: string,
@@ -829,37 +831,66 @@ export const getOperations = async (
   order?: "asc" | "desc",
   currencyId?: string,
 ): Promise<Operation[]> =>
-  withApi(async api => {
-    let rpcOrder: "ascending" | "descending";
-    if (order) {
-      rpcOrder = order === "asc" ? "ascending" : "descending";
-    } else {
-      rpcOrder = cursor ? "ascending" : "descending";
-    }
+  withTransport(currencyId, {
+    jsonRpc: async api => {
+      let rpcOrder: "ascending" | "descending";
+      if (order) {
+        rpcOrder = order === "asc" ? "ascending" : "descending";
+      } else {
+        rpcOrder = cursor ? "ascending" : "descending";
+      }
 
-    const sendOps = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const receivedOps = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
-    const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
+      const sendOps = await loadOperations({
+        api,
+        addr,
+        type: "OUT",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+      });
+      const receivedOps = await loadOperations({
+        api,
+        addr,
+        type: "IN",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+      });
+      // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
+      const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
-    return rawTransactions.operations
-      .filter(tx => !isSettlementTransaction(tx))
-      .map(transaction => transactionToOperation(accountId, addr, transaction));
-  }, currencyId);
+      return rawTransactions.operations
+        .filter(tx => !isSettlementTransaction(tx))
+        .map(transaction => transactionToOperation(accountId, addr, transaction));
+    },
+    graphql: async api => {
+      // The bridge passes `cursor = latestHash(operations) = transaction.digest` (see
+      // `bridge/synchronisation.ts` + `transactionToOperation`), which is a Sui digest
+      // — NOT an opaque GraphQL connection cursor. Translate it to a server-side
+      // `afterCheckpoint` filter so incremental sync returns only newer ops; the
+      // cursor checkpoint's own ops were ingested on the previous sync.
+      const cursorDigest = typeof cursor === "string" ? cursor : null;
+      let filter: { afterCheckpoint?: number } | undefined;
+      if (cursorDigest) {
+        const seq = await resolveCheckpointSequenceForDigestGraphQL(api, cursorDigest);
+        if (seq !== null) filter = { afterCheckpoint: seq };
+      }
+      // Single-page fetch: server caps `last` at 50; per-page payload (events +
+      // balanceChangesJson per tx) is heavy enough that multi-page accumulation
+      // can outrun the bridge's sync window on high-traffic addresses.
+      const { items } = await getTransactionsByAddressGraphQL(
+        api,
+        addr,
+        TRANSACTIONS_LIMIT_PER_QUERY,
+        TRANSACTIONS_LIMIT_PER_QUERY,
+        null,
+        filter,
+      );
+      return items
+        .filter(tx => !isSettlementTransaction(tx))
+        .map(transaction => transactionToOperation(accountId, addr, transaction));
+    },
+  });
 
 export const filterOperations = (
   sendOps: LoadOperationResponse,
@@ -1035,16 +1066,76 @@ function parseListOperationsCursor(cursor: string | undefined): ListOperationsCu
   return { digest, timestamp: ts };
 }
 
+// `withApiImpl` is a DI seam used by ~30 unit-test call sites in
+// `sdk.test.ts` to inject a fake JSON-RPC api without a `jest.spyOn` per
+// test. The default points at the real `withApi`, so production callers
+// pass through unchanged.
 export const getListOperations = async (
   addr: string,
   order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
   cursor?: string,
   currencyId?: string,
-): Promise<Page<Op>> =>
-  withApiImpl(async api => {
+): Promise<Page<Op>> => {
+  const parsedCursor = parseListOperationsCursor(cursor);
+
+  // GraphQL path: alpaca cursor (`timestamp:digest`) → server-side
+  // `before/afterCheckpoint` filter via a digest→checkpoint lookup. Per-tx
+  // checkpoint digests come back in the same round-trip (no JSON-RPC-style
+  // per-checkpoint fan-out).
+  if (isGraphQLEnabled(currencyId)) {
+    return withGraphQLApi(async api => {
+      let cursorCheckpoint: number | null = null;
+      if (parsedCursor) {
+        cursorCheckpoint = await resolveCheckpointSequenceForDigestGraphQL(
+          api,
+          parsedCursor.digest,
+        );
+      }
+      // `desc` order paginates backwards in time → server filter excludes
+      // anything at-or-after the cursor; `asc` does the opposite.
+      let filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined;
+      if (cursorCheckpoint !== null) {
+        filter =
+          order === "desc"
+            ? { beforeCheckpoint: cursorCheckpoint }
+            : { afterCheckpoint: cursorCheckpoint };
+      }
+      const pairs = await getTransactionsWithCheckpointDigestsGraphQL(
+        api,
+        addr,
+        TRANSACTIONS_LIMIT_PER_QUERY,
+        filter,
+      );
+      const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
+      const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
+      // Server filter already excluded items strictly past the cursor;
+      // the additional client-side drop guards against same-checkpoint ties.
+      const afterCursor = dropOperationsBeforeCursor({
+        operations: sorted.map(p => p.tx),
+        order,
+        cursor: parsedCursor,
+      });
+      const digestToHash = new Map(
+        sorted.map(({ tx, checkpointDigest }) => [tx.digest, checkpointDigest]),
+      );
+      const items = afterCursor.map(t =>
+        transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
+      );
+      const last = afterCursor.at(-1);
+      const next =
+        afterCursor.length >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
+          ? serializeListOperationsCursor({
+              digest: last.digest,
+              timestamp: Number(last.timestampMs),
+            })
+          : undefined;
+      return { items, next };
+    }, currencyId);
+  }
+
+  return withApiImpl(async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
-    const parsedCursor = parseListOperationsCursor(cursor);
     const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
 
     const [opsOut, opsIn] = await Promise.all([
@@ -1125,6 +1216,7 @@ export const getListOperations = async (
       next: nextCursor,
     };
   }, currencyId);
+};
 
 /**
  * Subset of `Checkpoint` populated by both transports. Narrowed at the
@@ -1133,28 +1225,25 @@ export const getListOperations = async (
  */
 export type MinimalCheckpoint = Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">;
 
+// Sequence numbers are UInt53 — fit in the JS safe-integer range. Base58
+// digests (~44 chars) fail `^\d+$` and route to JSON-RPC. The `isSafeInteger`
+// check rules out 16-digit numeric strings above 2^53-1 that would silently
+// lose precision via `Number(id)`.
+const isSequenceNumber = (id: string): boolean => {
+  if (id.length === 0 || !/^\d+$/.test(id)) return false;
+  const seq = Number(id);
+  return Number.isSafeInteger(seq) && seq >= 0;
+};
+
 /**
- * Get a checkpoint (a.k.a, a block) metadata. JSON-RPC accepts either a
- * sequence number or a digest; GraphQL only accepts a sequence number
- * — digest IDs throw. Returns the narrow {@link MinimalCheckpoint}.
- *
- * @param id the checkpoint digest or sequence number (as a string)
+ * Get a checkpoint metadata. JSON-RPC accepts either a sequence number or a digest; GraphQL
+ * only accepts a sequence number — digest IDs throw. Returns the narrow {@link MinimalCheckpoint}.
  */
 export const getCheckpoint = async (
   id: string,
   currencyId?: string,
 ): Promise<MinimalCheckpoint> => {
-  // Digest guard for GraphQL: sequence numbers are UInt53 — fit in the JS
-  // safe-integer range. Base58 digests (~44 chars) fail `^\d+$` and route to
-  // JSON-RPC. The `isSafeInteger` check rules out 16-digit numeric strings
-  // above 2^53-1 that would silently lose precision via `Number(id)`.
-  const seqCandidate = Number(id);
-  const isSequenceNumber =
-    id.length > 0 &&
-    /^\d+$/.test(id) &&
-    Number.isSafeInteger(seqCandidate) &&
-    seqCandidate >= 0;
-  if (isGraphQLEnabled(currencyId) && !isSequenceNumber) {
+  if (isGraphQLEnabled(currencyId) && !isSequenceNumber(id)) {
     throw new Error(
       `getCheckpoint(${id}): digest-based lookups are not supported on the GraphQL transport. ` +
         "Pass a sequence number, or route this caller through the JSON-RPC endpoint.",
@@ -1173,33 +1262,52 @@ export const getCheckpoint = async (
   });
 };
 
-/**
- * Get a checkpoint (a.k.a, a block) metadata only.
- *
- * @param id the checkpoint digest or sequence number (as a string)
- * @see {@link getBlock}
- */
-export const getBlockInfo = async (id: string, currencyId?: string): Promise<BlockInfo> =>
-  withApi(async api => {
+/** Checkpoint metadata only; see {@link getBlock} for the variant that includes the transactions. */
+export const getBlockInfo = async (id: string, currencyId?: string): Promise<BlockInfo> => {
+  const fromJsonRpc = async (api: SuiJsonRpcClient): Promise<BlockInfo> => {
     const checkpoint = await api.getCheckpoint({ id });
     return toBlockInfo(checkpoint);
-  }, currencyId);
+  };
+  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
+  // lookups fall back to JSON-RPC even when the GraphQL flag is on.
+  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId);
+  return withTransport(currencyId, {
+    jsonRpc: fromJsonRpc,
+    graphql: async api => {
+      const cp = await getBlockInfoFieldsGraphQL(api, Number(id));
+      if (!cp) throw new Error(`GraphQL Checkpoint not found: ${id}`);
+      return toBlockInfo(cp);
+    },
+  });
+};
 
-/**
- * Get a checkpoint (a.k.a, a block) metadata with all transactions.
- *
- * @param id the checkpoint digest or sequence number (as a string)
- * @see {@link getBlockInfo}
- */
-export const getBlock = async (id: string, currencyId?: string): Promise<Block> =>
-  withApi(async api => {
+/** Checkpoint metadata + all transactions in the block; see {@link getBlockInfo} for the metadata-only variant. */
+export const getBlock = async (id: string, currencyId?: string): Promise<Block> => {
+  const fromJsonRpc = async (api: SuiJsonRpcClient): Promise<Block> => {
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
     return {
       info: toBlockInfo(checkpoint),
       transactions: rawTxs.filter(tx => !isSettlementTransaction(tx)).map(toBlockTransaction),
     };
-  }, currencyId);
+  };
+  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
+  // lookups fall back to JSON-RPC even when the GraphQL flag is on.
+  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId);
+  return withTransport(currencyId, {
+    jsonRpc: fromJsonRpc,
+    graphql: async api => {
+      const block = await getBlockGraphQL(api, Number(id));
+      if (!block) throw new Error(`GraphQL Block not found: ${id}`);
+      return {
+        info: toBlockInfo(block.info),
+        transactions: block.transactions
+          .filter(tx => !isSettlementTransaction(tx))
+          .map(toBlockTransaction),
+      };
+    },
+  });
+};
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   const gasSummary = effects?.gasUsed;
@@ -1222,24 +1330,26 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
  * transparently converts them into `FundsWithdrawal` operations.
  */
 export const getCoinsForAmount = async (
-  api: SuiJsonRpcClient,
+  client: ClientWithCoreApi,
   address: string,
   coinType: string,
   requiredAmount: bigint,
 ) => {
-  const coins = [];
-  let cursor = null;
+  const coins: { coinObjectId: string; version: string; digest: string; balance: string }[] = [];
+  let cursor: string | null = null;
   let hasNextPage = true;
   let totalBalance = 0n;
 
+  // `client.core.listCoins` is shared between JSON-RPC and the synthetic
+  // GraphQL adapter; the SDK normalizes both to the same `Coin[]` shape.
   while (hasNextPage && totalBalance < requiredAmount) {
-    const response = await api.getCoins({
+    const response = await client.core.listCoins({
       owner: address,
       coinType,
       cursor,
     });
 
-    const validCoins = response.data
+    const validCoins = response.objects
       .filter(coin => BigInt(coin.balance) > 0n)
       .sort((a, b) => {
         const diff = BigInt(b.balance) - BigInt(a.balance);
@@ -1250,13 +1360,18 @@ export const getCoinsForAmount = async (
     let i = 0;
     while (i < validCoins.length && currentBalance < requiredAmount) {
       const coin = validCoins[i];
-      coins.push(coin);
+      coins.push({
+        coinObjectId: coin.objectId,
+        version: coin.version,
+        digest: coin.digest,
+        balance: coin.balance,
+      });
       currentBalance += BigInt(coin.balance);
       i++;
     }
     totalBalance = currentBalance;
 
-    cursor = response.nextCursor;
+    cursor = response.cursor;
     hasNextPage = response.hasNextPage && totalBalance < requiredAmount;
   }
 
@@ -1274,13 +1389,13 @@ export const getCoinsForAmount = async (
  * this avoids picking a real coin object that may be too small for the auto-
  * computed gas budget.
  */
-async function hasGasCoinObjects(api: SuiJsonRpcClient, address: string): Promise<boolean> {
-  const balances = await api.getAllBalances({ owner: address });
-  const sui = balances.find(b => b.coinType === DEFAULT_COIN_TYPE);
-  if (!sui) return false;
-  const addressBalance = BigInt(sui.fundsInAddressBalance ?? "0");
-  if (addressBalance > 0n) return false;
-  return BigInt(sui.totalBalance) > 0n;
+async function hasGasCoinObjects(client: ClientWithCoreApi, address: string): Promise<boolean> {
+  // `client.core.getBalance` returns a single SDK-normalized `Balance` —
+  // `addressBalance` is the SIP-58 address-balance reservation, `balance` is
+  // the total. If any address-balance funds exist, prefer them for gas.
+  const { balance } = await client.core.getBalance({ owner: address, coinType: DEFAULT_COIN_TYPE });
+  if (BigInt(balance.addressBalance ?? "0") > 0n) return false;
+  return BigInt(balance.balance ?? "0") > 0n;
 }
 
 /**
@@ -1332,95 +1447,120 @@ const createTransactionFromMode = (
 };
 
 /**
+ * Shared post-processing for the three transaction builders: build BCS via
+ * `Transaction.build({ client })` and optionally collect input-object BCS for
+ * clear-signing. Both transports flow through this — the JSON-RPC branch
+ * passes a `SuiJsonRpcClient`, the GraphQL branch passes the synthetic
+ * `ClientWithCoreApi` from `makeSuiClientFromGraphQL`.
+ */
+async function finalizeBuild(
+  tx: Transaction,
+  client: ClientWithCoreApi,
+  withObjects: boolean,
+): Promise<{ serialized: Uint8Array; bcsObjects: Uint8Array[] }> {
+  const serialized = await tx.build({ client });
+  const bcsObjects = withObjects ? (await getInputObjects(tx, client)).bcsObjects : [];
+  return { serialized, bcsObjects };
+}
+
+/**
  * SIP-58: when no coin objects exist, `setGasPayment([])` tells the network
  * to source gas from the address balance via FundsWithdrawal.
  */
-const createTransactionForDelegate = async (
+const buildDelegateBody = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  withObjects: boolean,
+  client: ClientWithCoreApi,
+) => {
+  const tx = new Transaction();
+  const sender = ensureAddressFormat(address);
+  tx.setSender(sender);
+
+  const senderHasGasCoins = await hasGasCoinObjects(client, sender);
+  if (!senderHasGasCoins) {
+    tx.setGasPayment([]);
+  }
+
+  const { amount } = transaction;
+  // When gas is paid from the SIP-58 address balance (`setGasPayment([])`),
+  // `tx.gas` is sized only for the auto-computed gas budget, so we can't
+  // split the stake amount out of it. Resolve it via `coinWithBalance`,
+  // which the SDK turns into a FundsWithdrawal sized for the stake amount.
+  const stakeCoin = senderHasGasCoins
+    ? tx.splitCoins(tx.gas, [BigInt(amount.toFixed())])[0]
+    : coinWithBalance({ balance: BigInt(amount.toFixed()) })(tx);
+
+  tx.moveCall({
+    target: "0x3::sui_system::request_add_stake",
+    arguments: [
+      tx.object(SUI_SYSTEM_STATE_OBJECT_ID),
+      stakeCoin,
+      tx.pure.address(transaction.recipient),
+    ],
+  });
+
+  tx.setGasBudgetIfNotSet(ONE_SUI / 10);
+  return finalizeBuild(tx, client, withObjects);
+};
+
+const createTransactionForDelegate = (
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
   currencyId?: string,
 ) =>
-  withApi(async api => {
-    const tx = new Transaction();
-    const sender = ensureAddressFormat(address);
-    tx.setSender(sender);
+  withTransport(currencyId, {
+    jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
+    graphql: api => buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+  });
 
-    const senderHasGasCoins = await hasGasCoinObjects(api, sender);
-    if (!senderHasGasCoins) {
-      tx.setGasPayment([]);
-    }
+const buildUndelegateBody = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  withObjects: boolean,
+  client: ClientWithCoreApi,
+) => {
+  const tx = new Transaction();
+  const sender = ensureAddressFormat(address);
+  tx.setSender(sender);
 
-    const { amount } = transaction;
-    // When gas is paid from the SIP-58 address balance (`setGasPayment([])`),
-    // `tx.gas` is sized only for the auto-computed gas budget, so we can't
-    // split the stake amount out of it. Resolve it via `coinWithBalance`,
-    // which the SDK turns into a FundsWithdrawal sized for the stake amount.
-    const stakeCoin = senderHasGasCoins
-      ? tx.splitCoins(tx.gas, [BigInt(amount.toFixed())])[0]
-      : coinWithBalance({ balance: BigInt(amount.toFixed()) })(tx);
+  if (!(await hasGasCoinObjects(client, sender))) {
+    tx.setGasPayment([]);
+  }
 
+  const { useAllAmount, amount } = transaction;
+
+  if (useAllAmount) {
     tx.moveCall({
-      target: "0x3::sui_system::request_add_stake",
-      arguments: [
-        tx.object(SUI_SYSTEM_STATE_OBJECT_ID),
-        stakeCoin,
-        tx.pure.address(transaction.recipient),
-      ],
+      target: "0x3::sui_system::request_withdraw_stake",
+      arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), tx.object(transaction.stakedSuiId!)],
     });
+  } else {
+    const res = tx.moveCall({
+      target: "0x3::staking_pool::split",
+      arguments: [tx.object(transaction.stakedSuiId!), tx.pure.u64(amount.toString())],
+    });
+    tx.moveCall({
+      target: "0x3::sui_system::request_withdraw_stake",
+      arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), res],
+    });
+  }
 
-    tx.setGasBudgetIfNotSet(ONE_SUI / 10);
+  tx.setGasBudgetIfNotSet(ONE_SUI / 10);
+  return finalizeBuild(tx, client, withObjects);
+};
 
-    const serialized = await tx.build({ client: api });
-    const bcsObjects = withObjects
-      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
-      : [];
-
-    return { serialized, bcsObjects };
-  }, currencyId);
-
-const createTransactionForUndelegate = async (
+const createTransactionForUndelegate = (
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
   currencyId?: string,
 ) =>
-  withApi(async api => {
-    const tx = new Transaction();
-    const sender = ensureAddressFormat(address);
-    tx.setSender(sender);
-
-    if (!(await hasGasCoinObjects(api, sender))) {
-      tx.setGasPayment([]);
-    }
-
-    const { useAllAmount, amount } = transaction;
-
-    if (useAllAmount) {
-      tx.moveCall({
-        target: "0x3::sui_system::request_withdraw_stake",
-        arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), tx.object(transaction.stakedSuiId!)],
-      });
-    } else {
-      const res = tx.moveCall({
-        target: "0x3::staking_pool::split",
-        arguments: [tx.object(transaction.stakedSuiId!), tx.pure.u64(amount.toString())],
-      });
-      tx.moveCall({
-        target: "0x3::sui_system::request_withdraw_stake",
-        arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), res],
-      });
-    }
-
-    tx.setGasBudgetIfNotSet(ONE_SUI / 10);
-
-    const serialized = await tx.build({ client: api });
-    const bcsObjects = withObjects
-      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
-      : [];
-
-    return { serialized, bcsObjects };
-  }, currencyId);
+  withTransport(currencyId, {
+    jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
+    graphql: api => buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+  });
 
 /**
  * SIP-58 transfer builder:
@@ -1433,63 +1573,68 @@ const createTransactionForUndelegate = async (
  *   `coinWithBalance` which resolves the funds from the address balance
  *   automatically (including FundsWithdrawal).
  */
-const createTransactionForOthers = async (
+const buildOthersBody = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  withObjects: boolean,
+  client: ClientWithCoreApi,
+) => {
+  const tx = new Transaction();
+  const sender = ensureAddressFormat(address);
+  tx.setSender(sender);
+
+  const senderHasGasCoins = await hasGasCoinObjects(client, sender);
+  if (!senderHasGasCoins) {
+    tx.setGasPayment([]);
+  }
+
+  if (transaction.coinType !== DEFAULT_COIN_TYPE) {
+    const requiredAmount = BigInt(transaction.amount.toFixed());
+    const coins = await getCoinsForAmount(client, sender, transaction.coinType, requiredAmount);
+    const collectedBalance = coins.reduce((sum, c) => sum + BigInt(c.balance), 0n);
+
+    if (coins.length > 0 && collectedBalance >= requiredAmount) {
+      const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
+
+      if (coinObjects.length > 1) {
+        tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
+      }
+
+      const [coin] = tx.splitCoins(coinObjects[0], [BigInt(transaction.amount.toFixed())]);
+      tx.transferObjects([coin], transaction.recipient);
+    } else {
+      const coin = coinWithBalance({
+        type: transaction.coinType,
+        balance: BigInt(transaction.amount.toFixed()),
+      })(tx);
+      tx.transferObjects([coin], transaction.recipient);
+    }
+  } else if (senderHasGasCoins) {
+    const [coin] = tx.splitCoins(tx.gas, [BigInt(transaction.amount.toFixed())]);
+    tx.transferObjects([coin], transaction.recipient);
+  } else {
+    // SIP-58 native SUI path: gas is paid from address balance via
+    // `setGasPayment([])`, so the gas reservation is sized only for fees.
+    // We can't split the transfer amount out of `tx.gas`; instead resolve
+    // the transfer via `coinWithBalance`, which the SDK turns into a
+    // FundsWithdrawal sized for the transfer amount itself.
+    const coin = coinWithBalance({ balance: BigInt(transaction.amount.toFixed()) })(tx);
+    tx.transferObjects([coin], transaction.recipient);
+  }
+
+  return finalizeBuild(tx, client, withObjects);
+};
+
+const createTransactionForOthers = (
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
   currencyId?: string,
 ) =>
-  withApi(async api => {
-    const tx = new Transaction();
-    const sender = ensureAddressFormat(address);
-    tx.setSender(sender);
-
-    const senderHasGasCoins = await hasGasCoinObjects(api, sender);
-    if (!senderHasGasCoins) {
-      tx.setGasPayment([]);
-    }
-
-    if (transaction.coinType !== DEFAULT_COIN_TYPE) {
-      const requiredAmount = BigInt(transaction.amount.toFixed());
-      const coins = await getCoinsForAmount(api, sender, transaction.coinType, requiredAmount);
-      const collectedBalance = coins.reduce((sum, c) => sum + BigInt(c.balance), 0n);
-
-      if (coins.length > 0 && collectedBalance >= requiredAmount) {
-        const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
-
-        if (coinObjects.length > 1) {
-          tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
-        }
-
-        const [coin] = tx.splitCoins(coinObjects[0], [BigInt(transaction.amount.toFixed())]);
-        tx.transferObjects([coin], transaction.recipient);
-      } else {
-        const coin = coinWithBalance({
-          type: transaction.coinType,
-          balance: BigInt(transaction.amount.toFixed()),
-        })(tx);
-        tx.transferObjects([coin], transaction.recipient);
-      }
-    } else if (senderHasGasCoins) {
-      const [coin] = tx.splitCoins(tx.gas, [BigInt(transaction.amount.toFixed())]);
-      tx.transferObjects([coin], transaction.recipient);
-    } else {
-      // SIP-58 native SUI path: gas is paid from address balance via
-      // `setGasPayment([])`, so the gas reservation is sized only for fees.
-      // We can't split the transfer amount out of `tx.gas`; instead resolve
-      // the transfer via `coinWithBalance`, which the SDK turns into a
-      // FundsWithdrawal sized for the transfer amount itself.
-      const coin = coinWithBalance({ balance: BigInt(transaction.amount.toFixed()) })(tx);
-      tx.transferObjects([coin], transaction.recipient);
-    }
-
-    const serialized = await tx.build({ client: api });
-    const bcsObjects = withObjects
-      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
-      : [];
-
-    return { serialized, bcsObjects };
-  }, currencyId);
+  withTransport(currencyId, {
+    jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
+    graphql: api => buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+  });
 
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees.
@@ -1504,36 +1649,87 @@ export const paymentInfo = async (
   sender: string,
   fakeTransaction: TransactionType,
   currencyId?: string,
-) =>
-  withApi(async api => {
-    try {
-      const { unsigned: txb } = await createTransaction(
-        sender,
-        fakeTransaction,
-        false,
-        undefined,
-        currencyId,
-      );
+) => {
+  const { unsigned: txb } = await createTransaction(
+    sender,
+    fakeTransaction,
+    false,
+    undefined,
+    currencyId,
+  );
+  return withTransport(currencyId, {
+    jsonRpc: async api => {
+      try {
+        const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
+        const fees = getTotalGasUsed(dryRunTxResponse.effects);
+        return {
+          gasBudget: dryRunTxResponse.input.gasData.budget,
+          totalGasUsed: fees,
+          fees,
+        };
+      } catch (error) {
+        throw mapDryRunError(error);
+      }
+    },
+    graphql: async api => {
+      const sim = await simulateTransactionGraphQL(api, txb);
+      const fees =
+        BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
+      return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
+    },
+  });
+};
 
-      const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
-      const fees = getTotalGasUsed(dryRunTxResponse.effects);
-      return {
-        gasBudget: dryRunTxResponse.input.gasData.budget,
-        totalGasUsed: fees,
-        fees,
-      };
-    } catch (error) {
-      throw mapDryRunError(error);
-    }
-  }, currencyId);
+/**
+ * Narrow public shape: `digest` + `effects.status`. GraphQL's
+ * `executeTransaction` mutation returns only this subset; the JSON-RPC SDK
+ * returns much more but no current consumer reads the rest. Anyone needing
+ * post-finality state (events, balanceChanges, gasUsed) should poll
+ * `transaction(digest:)` after broadcast.
+ */
+export type ExecuteTransactionBlockResult = {
+  digest: string;
+  effects: { status: { status: "success" | "failure"; error?: string } };
+};
+
+const toExecuteResult = (
+  digest: string,
+  status: "success" | "failure",
+  error?: string,
+): ExecuteTransactionBlockResult => ({
+  digest,
+  effects: { status: { status, ...(error ? { error } : {}) } },
+});
 
 export const executeTransactionBlock = async (
   params: ExecuteTransactionBlockParams,
   currencyId?: string,
-) =>
-  withApi(async api => {
-    return api.executeTransactionBlock(params);
-  }, currencyId);
+): Promise<ExecuteTransactionBlockResult> =>
+  withTransport(currencyId, {
+    jsonRpc: async api => {
+      const r = await api.executeTransactionBlock(params);
+      // `effects` requires `options.showEffects: true` upstream — `broadcast.ts`
+      // always sets it. A null/missing payload here means the proxy stripped
+      // it; surface that as a distinct error rather than masquerading as a
+      // genuine on-chain failure.
+      if (!r.effects?.status) {
+        return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
+      }
+      const s = r.effects.status;
+      return toExecuteResult(r.digest, s.status, s.error);
+    },
+    graphql: async api => {
+      const signatures = Array.isArray(params.signature) ? params.signature : [params.signature];
+      const r = await executeTransactionGraphQL(api, params.transactionBlock, signatures);
+      // Mirror the JSON-RPC branch: a null status (effects/status absent in the
+      // GraphQL response) is a transport-shape issue, not a real on-chain failure.
+      if (r.status === null) {
+        return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
+      }
+      const status = r.status === "SUCCESS" ? "success" : "failure";
+      return toExecuteResult(r.digest, status, status === "failure" ? r.error : undefined);
+    },
+  });
 
 type LoadOperationResponse = {
   operations: SuiTransactionBlockResponse[];
@@ -1639,15 +1835,6 @@ export const queryTransactionsByDigest = async (params: {
   return responses;
 };
 
-export const getStakes = (address: string, currencyId?: string): Promise<Stake[]> =>
-  withApi(
-    async api =>
-      api
-        .getStakes({ owner: address })
-        .then(delegations => delegations.flatMap(delegation => toStakes(address, delegation))),
-    currencyId,
-  );
-
 export const toStakes = (address: string, delegation: DelegatedStake): Stake[] =>
   delegation.stakes.map(stake => {
     const { deposited, rewarded } = toStakeAmounts(stake);
@@ -1691,17 +1878,21 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
 };
 
 /**
- * Active validator set with APY. Two parallel JSON-RPC calls merged by `suiAddress`.
+ * Active validator set with APY. JSON-RPC: two parallel calls merged by
+ * `suiAddress`. GraphQL: see {@link getValidatorsGraphQL}.
  */
 export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
-  withApi(async api => {
-    const [{ activeValidators }, { apys }] = await Promise.all([
-      api.getLatestSuiSystemState(),
-      api.getValidatorsApy(),
-    ]);
-    const hash = apys.reduce<Record<string, number>>((acc, item) => {
-      acc[item.address] = item.apy;
-      return acc;
-    }, {});
-    return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
-  }, currencyId);
+  withTransport(currencyId, {
+    jsonRpc: async api => {
+      const [{ activeValidators }, { apys }] = await Promise.all([
+        api.getLatestSuiSystemState(),
+        api.getValidatorsApy(),
+      ]);
+      const hash = Object.fromEntries(apys.map(({ address, apy }) => [address, apy]));
+      // `getValidatorsApy` and `getLatestSuiSystemState` are independent calls;
+      // a missing APY entry (race, partial response) defaults to 0 to honour
+      // the `SuiValidator.apy: number` contract. Matches the GraphQL branch.
+      return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] ?? 0 }));
+    },
+    graphql: getValidatorsGraphQL,
+  });

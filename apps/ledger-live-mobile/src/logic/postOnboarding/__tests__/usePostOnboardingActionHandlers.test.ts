@@ -2,12 +2,19 @@ import { usePostOnboardingActionHandlers } from "../usePostOnboardingActionHandl
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { renderHook, act } from "@tests/test-renderer";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { navigateToPortfolioWalletTab } from "~/navigation/navigateToPortfolioWalletTab";
+import { productTourDeeplinkNonceSelector } from "~/reducers/appstate";
 
 jest.mock("LLM/features/Receive", () => ({
   useOpenReceiveDrawer: jest.fn(),
 }));
 
+jest.mock("~/navigation/navigateToPortfolioWalletTab", () => ({
+  navigateToPortfolioWalletTab: jest.fn(),
+}));
+
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
+const mockNavigateToPortfolioWalletTab = jest.mocked(navigateToPortfolioWalletTab);
 
 describe("usePostOnboardingActionHandlers", () => {
   const mockHandleOpenReceiveDrawer = jest.fn();
@@ -63,5 +70,33 @@ describe("usePostOnboardingActionHandlers", () => {
 
     expect(result.current[PostOnboardingActionId.buyCrypto]).toBeUndefined();
     expect(result.current[PostOnboardingActionId.customImage]).toBeUndefined();
+  });
+
+  it("should provide a discoverWallet handler", () => {
+    mockUseOpenReceiveDrawer.mockReturnValue({
+      handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+    });
+
+    const { result } = renderHook(() => usePostOnboardingActionHandlers());
+
+    expect(result.current).toHaveProperty(PostOnboardingActionId.discoverWallet);
+    expect(typeof result.current[PostOnboardingActionId.discoverWallet]).toBe("function");
+  });
+
+  it("should tick product tour deeplink and navigate to portfolio wallet tab when discoverWallet is invoked", () => {
+    mockUseOpenReceiveDrawer.mockReturnValue({
+      handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+    });
+
+    const { result, store } = renderHook(() => usePostOnboardingActionHandlers());
+
+    expect(productTourDeeplinkNonceSelector(store.getState())).toBe(0);
+
+    act(() => {
+      result.current[PostOnboardingActionId.discoverWallet]?.();
+    });
+
+    expect(productTourDeeplinkNonceSelector(store.getState())).toBe(1);
+    expect(mockNavigateToPortfolioWalletTab).toHaveBeenCalledTimes(1);
   });
 });

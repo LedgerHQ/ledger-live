@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { TrackScreen } from "~/analytics";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { PostOnboardingHubDrawerView } from "./PostOnboardingHubDrawerView";
 import { usePostOnboardingHubDrawerViewModel } from "./hooks/usePostOnboardingHubDrawerViewModel";
-import { getPostOnboardingHubSnapHeightPercent } from "./utils/postOnboardingHubDrawerSnapPoints";
 
 export function PostOnboardingHubDrawerWrapper() {
   const {
@@ -24,14 +23,6 @@ export function PostOnboardingHubDrawerWrapper() {
     onRequestExit,
   } = usePostOnboardingHubDrawerViewModel();
 
-  const snapPoints = useMemo(() => {
-    const percent = getPostOnboardingHubSnapHeightPercent(
-      stepperDisplay.totalSteps,
-      areAllPostOnboardingActionsCompleted,
-    );
-    return [`${percent}%`];
-  }, [areAllPostOnboardingActionsCompleted, stepperDisplay.totalSteps]);
-
   const canOpenPostOnboardingHubDrawer = isPostOnboardingHubDrawerOpen && !!deviceModelId;
 
   useEffect(() => {
@@ -45,7 +36,6 @@ export function PostOnboardingHubDrawerWrapper() {
       <QueuedDrawerBottomSheet
         isRequestingToBeOpened={canOpenPostOnboardingHubDrawer}
         onClose={closePostOnboardingHubDrawer}
-        snapPoints={snapPoints}
       >
         {deviceModelId ? (
           <>

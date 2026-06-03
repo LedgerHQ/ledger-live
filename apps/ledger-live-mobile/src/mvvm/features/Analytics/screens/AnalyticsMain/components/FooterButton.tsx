@@ -5,7 +5,7 @@ import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { NavigatorName } from "~/const";
 import { track } from "~/analytics";
 import { ANALYTICS_PAGE } from "../../../const";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const FooterButton: React.FC = () => {
   const { t } = useTranslation();

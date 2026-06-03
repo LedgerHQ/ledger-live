@@ -2,7 +2,7 @@ import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useTranslation } from "~/context/Locale";
 import RingChart from "./RingChart";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";

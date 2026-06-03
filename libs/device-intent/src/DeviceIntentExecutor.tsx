@@ -50,7 +50,13 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
         />
       );
     case "deviceDisconnected":
-      return <DeviceDisconnectedComponent onRetry={state.onRetry} onClose={state.onClose} />;
+      return (
+        <DeviceDisconnectedComponent
+          device={state.device}
+          onRetry={state.onRetry}
+          onClose={state.onClose}
+        />
+      );
     case "deviceInitialization":
       return (
         <DeviceContextInitializerComponent
@@ -73,7 +79,12 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
     }
     case "intentError":
       return (
-        <IntentErrorComponent error={state.error} onRetry={state.onRetry} onClose={state.onClose} />
+        <IntentErrorComponent
+          error={state.error}
+          device={state.device}
+          onRetry={state.onRetry}
+          onClose={state.onClose}
+        />
       );
     case "invalidOperation":
       return <InvalidOperationComponent error={state.error} onClose={state.onClose} />;

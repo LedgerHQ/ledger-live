@@ -89,23 +89,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 
-      - uses: actions/github-script@v7
-        name: trigger release wallet-cli sign and JFrog publish
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "release-wallet-cli.yml",
-              inputs: {
-                ref: "${{ inputs.ref }}",
-                publish_to_jfrog: "true",
-                jfrog_registry: "${{ env.NPM_REGISTRY }}"
-              }
-            });
-
       - name: check if desktop versions are different
         if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}
         id: desktop-changed

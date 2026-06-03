@@ -19,11 +19,30 @@ import type { EstimateFeesResult } from "../types";
 import { calculateAmount, getSubAccounts, integrateERC20Operations } from "./utils";
 
 describe("utils", () => {
+  const address = "0.0.12345";
+  const evmAddress = "0x0000000000000000000000000000000000003039";
   const mockedAccount = getMockedAccount();
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
     setupCalClientStore();
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    jest.spyOn(apiClient, "getAccount").mockResolvedValue({
+      account: address,
+      evm_address: evmAddress,
+      max_automatic_token_associations: 0,
+      balance: { balance: 1000000000, timestamp: "0", tokens: [] },
+      pending_reward: 0,
+      staked_node_id: null,
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe("calculateAmount", () => {
@@ -32,11 +51,11 @@ describe("utils", () => {
     beforeAll(async () => {
       const [crypto, associate] = await Promise.all([
         estimateFees({
-          currency: mockedAccount.currency,
+          currencyId: mockedAccount.currency.id,
           operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
         }),
         estimateFees({
-          currency: mockedAccount.currency,
+          currencyId: mockedAccount.currency.id,
           operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
         }),
       ]);
@@ -256,14 +275,8 @@ describe("utils", () => {
   });
 
   describe("integrateERC20Operations", () => {
-    const address = "0.0.12345";
-    const evmAddress = "0x0000000000000000000000000000000000003039";
     const ledgerAccountId = `js:2:hedera:${address}:`;
     const tokenCurrency = getTokenCurrencyFromCALByType("erc20");
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
 
     it("creates new operation for erc20 in transfer", async () => {
       const mockGetContractCallResult = jest.spyOn(apiClient, "getContractCallResult");
@@ -311,6 +324,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations, newERC20TokenOperations } = await integrateERC20Operations({
+        currencyId: mockedAccount.currency.id,
         ledgerAccountId,
         address,
         allOperations: oldMirrorOperations,
@@ -389,6 +403,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations, newERC20TokenOperations } = await integrateERC20Operations({
+        currencyId: mockedAccount.currency.id,
         ledgerAccountId,
         address,
         allOperations: oldMirrorOperations,
@@ -484,6 +499,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations } = await integrateERC20Operations({
+        currencyId: mockedAccount.currency.id,
         ledgerAccountId,
         address,
         allOperations: operationsWithDuplicate,
@@ -522,6 +538,7 @@ describe("utils", () => {
       ];
 
       const { updatedOperations } = await integrateERC20Operations({
+        currencyId: mockedAccount.currency.id,
         ledgerAccountId,
         address,
         allOperations: operationsWithPending,
@@ -628,6 +645,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations, newERC20TokenOperations } = await integrateERC20Operations({
+        currencyId: mockedAccount.currency.id,
         ledgerAccountId,
         address,
         allOperations: fridaySyncOperations,

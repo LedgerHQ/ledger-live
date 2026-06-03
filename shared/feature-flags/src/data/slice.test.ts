@@ -5,6 +5,7 @@ import {
   setOverride,
   setAllOverrides,
   setBannerVisible,
+  setRemoteFlagsReady,
   importState,
 } from "./slice";
 import { createFeatureFlagsMiddleware, type FeatureFlagsMiddlewareConfig } from "./middleware";
@@ -64,6 +65,7 @@ describe("featureFlagsSlice reducers", () => {
       overrides: {},
       resolved: defaults,
       bannerVisible: false,
+      remoteFlagsReady: false,
     });
   });
 
@@ -80,6 +82,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true } },
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
+        remoteFlagsReady: false,
       });
       store.dispatch(
         setOverride({ key: "mockFeature", value: { enabled: false, params: { x: 1 } } }),
@@ -95,6 +98,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true } },
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
+        remoteFlagsReady: false,
       });
       store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
       expect(store.getState().featureFlags.overrides.mockFeature).toBeUndefined();
@@ -114,6 +118,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true } },
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
+        remoteFlagsReady: false,
       });
       store.dispatch(setAllOverrides({ ptxCard: { enabled: false } }));
       expect(store.getState().featureFlags.overrides).toEqual({ ptxCard: { enabled: false } });
@@ -129,6 +134,25 @@ describe("featureFlagsSlice reducers", () => {
     });
   });
 
+  describe("setRemoteFlagsReady", () => {
+    it("starts false and flips to true once, idempotently", () => {
+      const store = createStore();
+      expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
+
+      store.dispatch(setRemoteFlagsReady());
+      expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+
+      store.dispatch(setRemoteFlagsReady());
+      store.dispatch(setRemoteFlagsReady());
+      expect(store.getState().featureFlags).toEqual({
+        overrides: {},
+        resolved: defaults,
+        bannerVisible: false,
+        remoteFlagsReady: true,
+      });
+    });
+  });
+
   describe("importState", () => {
     it("replaces entire state", () => {
       const store = createStore();
@@ -136,6 +160,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true, params: "test" } },
         resolved: { ...defaults, mockFeature: { enabled: true, params: "test" } },
         bannerVisible: true,
+        remoteFlagsReady: true,
       };
       store.dispatch(importState(newState));
       expect(store.getState().featureFlags).toEqual(newState);
@@ -303,6 +328,26 @@ describe("middleware behavior", () => {
     // Reducer state is unchanged because syncRemoteConfig is not dispatched on failure;
     // the previous resolved value remains visible.
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
+  });
+
+  it("marks remoteFlagsReady after the first successful fetch", async () => {
+    const store = createStore(undefined, {
+      fetchRemoteFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
+    });
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
+
+    await flushPromises();
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+  });
+
+  it("marks remoteFlagsReady even when the first fetch rejects", async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error("network down"));
+    const store = createStore(undefined, { fetchRemoteFlags: fetcher, refreshInterval: 1_000 });
+
+    await flushPromises();
+    // syncRemoteConfig never fires on failure, so resolved stays at defaults.
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+    expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
   });
 
   it("does not schedule any timer when fetchRemoteFlags is omitted", () => {

@@ -19,7 +19,7 @@ export function CryptoBalanceTextView({
 }: CryptoBalanceTextViewProps) {
   return (
     <span
-      className="body-2 text-muted inline-flex flex-wrap items-baseline gap-0 tabular-nums"
+      className="body-3 text-muted inline-flex flex-wrap items-baseline gap-0 tabular-nums"
       data-testid="asset-detail-crypto-balance"
     >
       {prefixSymbol ? <span className="mr-1">{prefixSymbol}</span> : null}

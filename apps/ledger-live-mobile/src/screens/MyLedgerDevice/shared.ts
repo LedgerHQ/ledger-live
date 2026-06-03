@@ -3,7 +3,7 @@ import type { Exec, ListAppsResult } from "@ledgerhq/live-common/apps/index";
 import { useAppsRunner } from "@ledgerhq/live-common/apps/react";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export function useApps(listAppsRes: ListAppsResult, device: Device, appsToRestore?: string[]) {

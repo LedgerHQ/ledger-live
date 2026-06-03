@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
 import { isWallet40 } from "../../helpers/commonHelpers";
@@ -98,7 +98,7 @@ export async function runInlineAddAccountTest(
 
 export async function runStartETHStakingFromEarnDashboardTest(
   account: Account,
-  provider: Provider,
+  provider: EarnProvider,
   tmsLinks: string[],
   tags: string[],
 ) {

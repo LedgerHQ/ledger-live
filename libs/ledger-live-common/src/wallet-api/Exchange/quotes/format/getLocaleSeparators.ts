@@ -1,9 +1,7 @@
 /**
  * Extract locale-aware decimal + thousands separators from
- * `Intl.NumberFormat`. Ported verbatim from swap-live-app's
- * `@workspace/formatter/src/utils/getLocaleSeparators.ts` so formatted
- * quote strings stay byte-identical across the wallet normalizer and
- * the legacy live-app during the migration.
+ * `Intl.NumberFormat` so formatted quote strings stay stable across
+ * wallet-side formatting paths.
  *
  * @param locale - BCP 47 tag (e.g. `"en"`, `"fr"`).
  * @returns `{ decimal, thousands }` pair for the locale, falling back to

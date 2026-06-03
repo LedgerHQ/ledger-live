@@ -1,6 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { pad } from "viem";
+import type { HederaCoinConfig } from "../config";
 import { HEDERA_MAINNET_CHAIN_ID, ERC20_TRANSFER_EVENT_TOPIC } from "../constants";
 import type { HederaThirdwebTransaction, HederaThirdwebContractEventsResponse } from "../types";
 import { toEVMAddress } from "./utils";
@@ -45,18 +46,20 @@ async function fetchERC20Transactions(
 }
 
 async function getERC20TransactionsForAccount({
+  configOrCurrencyId,
   address,
   contractAddresses,
   transactionFetcher = fetchERC20Transactions,
   since,
 }: {
+  configOrCurrencyId: HederaCoinConfig | string;
   address: string;
   contractAddresses: string[];
   since?: string | null;
   transactionFetcher?: typeof fetchERC20Transactions; // optional dependency injection for testing
 }): Promise<HederaThirdwebTransaction[]> {
   const allTransactions: HederaThirdwebTransaction[] = [];
-  const evmAddress = await toEVMAddress(address);
+  const evmAddress = await toEVMAddress({ configOrCurrencyId, accountId: address });
 
   if (contractAddresses.length === 0) {
     return allTransactions;

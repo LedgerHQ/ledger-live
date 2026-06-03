@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any */
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { ProcessedProposal, RawTransferProposal } from "../types";
 
 export const ACCOUNT_XPUB = "test-xpub";
+export const MOCK_UNIT: Unit = { name: "Canton", code: "CANTON", magnitude: 38 };
 
 export const createCantonAccount = (
   overrides: Partial<Account> & Record<string, unknown> = {},
@@ -88,6 +90,7 @@ export const createProcessedProposal = (
     receiver: ACCOUNT_XPUB,
     amount: new BigNumber("1000000"),
     instrumentId: "instrument-1",
+    unit: MOCK_UNIT,
     memo: "",
     expiresAtMicros: futureMicros,
     isExpired: false,

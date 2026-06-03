@@ -27,7 +27,7 @@
     "release": "changeset publish",
     "build:libs": "nx run-many -t build -p \"@ledgerhq/*\" --exclude \"@ledgerhq/dummy-*-app,@ledgerhq/live-cli,@ledgerhq/web-tools,@ledgerhq/wallet-cli\" --parallel=20",
     "build:libs:force": "pnpm run build:libs --skip-nx-cache",
-    "build:tests": "nx run-many -t build --include \"@ledgerhq/dummy-*-app\"",
+    "build:tests": "nx run-many -t build -p \"@ledgerhq/dummy-*-app\"",
     "build:dummy-apps": "nx run-many -t build -p \"@ledgerhq/dummy-*-app\"",
     "build:dummy-wallet-app": "nx run-many -t build -p @ledgerhq/dummy-wallet-app",
     "build:dummy-live-app": "nx run-many -t build -p @ledgerhq/dummy-live-app",
@@ -132,6 +132,7 @@
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
     "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",
     "coin:tester:tezos": "pnpm --filter coin-tester-tezos",
+    "coin:tester:tron": "pnpm --filter coin-tester-tron",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -322,12 +323,11 @@
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
-      "react-native@0.81.6": "patches/react-native@0.81.6.patch",
+      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
       "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch",
       "@callstack/repack@5.2.5": "patches/@callstack__repack@5.2.5.patch",
       "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch",
-      "usb@2.17.0": "patches/usb@2.17.0.patch",
-      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+      "usb@2.17.0": "patches/usb@2.17.0.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

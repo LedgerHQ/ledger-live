@@ -1,13 +1,16 @@
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import { Subject, firstValueFrom } from "rxjs";
+import { Observable, firstValueFrom, share } from "rxjs";
 import { filter, timeout as rxTimeout } from "rxjs/operators";
 import {
   DeviceManagementKitBuilder,
   DeviceManagementKit,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { speculosTransportFactory } from "@ledgerhq/device-transport-kit-speculos";
+import {
+  HttpSpeculosDatasource,
+  speculosTransportFactory,
+} from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { ButtonKey, deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
 import { withTransientHttpRetries } from "./speculosTransientHttpRetry";
@@ -51,14 +54,16 @@ export default class SpeculosHttpTransport extends Transport {
     [SpeculosButton.RIGHT]: "right",
     [SpeculosButton.LEFT]: "left",
   } as const;
-  private eventStream: ReadableStream<Uint8Array> | null = null;
   private buttonClient: ButtonsController | undefined;
 
   readonly dmk: DeviceManagementKit;
   sessionId: string;
 
-  // emits events coming from Speculos automation SSE stream.
-  automationEvents: Subject<Record<string, unknown>> = new Subject();
+  // Emits events from the Speculos automation SSE stream.
+  // Lazy: the SSE stream is opened on first subscription and torn down when
+  // the last subscriber leaves. Smoke e2e tests never subscribe, so they pay
+  // no socket cost; the LKRP recorder subscribes and gets prompt events.
+  readonly automationEvents: Observable<Record<string, unknown>>;
 
   constructor(options: SpeculosHttpTransportOpts, dmk: DeviceManagementKit, sessionId: string) {
     super();
@@ -66,6 +71,39 @@ export default class SpeculosHttpTransport extends Transport {
     this.baseUrl = SpeculosHttpTransport.resolveBaseFromEnv(options);
     this.dmk = dmk;
     this.sessionId = sessionId;
+    this.automationEvents = this.createAutomationEvents$();
+  }
+
+  private createAutomationEvents$(): Observable<Record<string, unknown>> {
+    return new Observable<Record<string, unknown>>(observer => {
+      const datasource = new HttpSpeculosDatasource(this.baseUrl);
+      let stream: ReadableStream<Uint8Array> | null = null;
+      let unsubscribed = false;
+
+      datasource
+        .openEventStream(
+          evt => observer.next(evt),
+          () => observer.complete(),
+        )
+        .then(s => {
+          if (unsubscribed) {
+            s.cancel?.().catch(() => {});
+          } else {
+            stream = s;
+          }
+        })
+        .catch(e => {
+          log("speculos-event", `SSE connection error: ${String(e)}`);
+          observer.error(e);
+        });
+
+      return () => {
+        unsubscribed = true;
+        if (stream && typeof stream.cancel === "function") {
+          stream.cancel().catch(() => {});
+        }
+      };
+    }).pipe(share({ resetOnRefCountZero: true }));
   }
 
   private static resolveBaseFromEnv(options: SpeculosHttpTransportOpts): string {
@@ -228,18 +266,6 @@ export default class SpeculosHttpTransport extends Transport {
   }
 
   async close() {
-    try {
-      const s = this.eventStream;
-      if (!s) return;
-      if (typeof s.cancel === "function") {
-        await s.cancel();
-      }
-    } catch {
-      // ignore cleanup errors
-    } finally {
-      this.eventStream = null;
-      this.buttonClient = undefined;
-      this.automationEvents.complete?.();
-    }
+    this.buttonClient = undefined;
   }
 }

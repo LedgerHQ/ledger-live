@@ -376,6 +376,32 @@ describe("useBalanceDetailsViewModel", () => {
       expect(mockHandleOpenStakeDrawer).toHaveBeenCalledTimes(2);
     });
 
+    it("onAvailableBalanceTooltipOpen tracks market_stat_definition only when the tooltip opens", () => {
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      act(() => result.current.onAvailableBalanceTooltipOpen(true));
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "market_stat_definition",
+        currency: "bitcoin",
+        type: "available_balance",
+        page: "Asset Detail",
+      });
+
+      jest.mocked(track).mockClear();
+      act(() => result.current.onAvailableBalanceTooltipOpen(false));
+      expect(track).not.toHaveBeenCalled();
+    });
+
     it("configures useOpenStakeDrawer with the current currency and Asset Detail source", () => {
       const btcAccount = genAccount("bitcoin-0", {
         currency: mockBtcCryptoCurrency,

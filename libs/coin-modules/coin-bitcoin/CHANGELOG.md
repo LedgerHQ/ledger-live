@@ -1,5 +1,51 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.42.0
+
+### Minor Changes
+
+- [#17599](https://github.com/LedgerHQ/ledger-live/pull/17599) [`d1e22fc`](https://github.com/LedgerHQ/ledger-live/commit/d1e22fc955464984b33920ec3a6d9265f9b01fa1) Thanks [@semeano](https://github.com/semeano)! - Update shielded txs activation flow to viewing key
+
+- [#17563](https://github.com/LedgerHQ/ledger-live/pull/17563) [`b2ee27c`](https://github.com/LedgerHQ/ledger-live/commit/b2ee27c2e1a508a6da44701d1881484f4f806e22) Thanks [@semeano](https://github.com/semeano)! - Add support to get full viewing key for Zcash
+
+- [#17450](https://github.com/LedgerHQ/ledger-live/pull/17450) [`40f9d3b`](https://github.com/LedgerHQ/ledger-live/commit/40f9d3b64cd697865b761412147e6c181fdd4a63) Thanks [@semeano](https://github.com/semeano)! - Add live-signer-zcash; getAddress implementation for Zcash chain adapter
+
+- [#17597](https://github.com/LedgerHQ/ledger-live/pull/17597) [`59c2b56`](https://github.com/LedgerHQ/ledger-live/commit/59c2b56e3096c352aad58923e070513a373ffae3) Thanks [@cted-ledger](https://github.com/cted-ledger)! - fix ZCash send transaction broken after DMK support
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`b2ee27c`](https://github.com/LedgerHQ/ledger-live/commit/b2ee27c2e1a508a6da44701d1881484f4f806e22), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`40f9d3b`](https://github.com/LedgerHQ/ledger-live/commit/40f9d3b64cd697865b761412147e6c181fdd4a63), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
+  - @ledgerhq/cryptoassets@13.49.0
+  - @ledgerhq/types-cryptoassets@7.37.0
+  - @ledgerhq/live-signer-zcash@0.2.0
+  - @ledgerhq/types-live@6.109.0
+  - @ledgerhq/ledger-wallet-framework@1.6.0
+  - @ledgerhq/live-env@2.36.0
+  - @ledgerhq/live-network@2.6.2
+
+## 0.42.0-next.0
+
+### Minor Changes
+
+- [#17599](https://github.com/LedgerHQ/ledger-live/pull/17599) [`d1e22fc`](https://github.com/LedgerHQ/ledger-live/commit/d1e22fc955464984b33920ec3a6d9265f9b01fa1) Thanks [@semeano](https://github.com/semeano)! - Update shielded txs activation flow to viewing key
+
+- [#17563](https://github.com/LedgerHQ/ledger-live/pull/17563) [`b2ee27c`](https://github.com/LedgerHQ/ledger-live/commit/b2ee27c2e1a508a6da44701d1881484f4f806e22) Thanks [@semeano](https://github.com/semeano)! - Add support to get full viewing key for Zcash
+
+- [#17450](https://github.com/LedgerHQ/ledger-live/pull/17450) [`40f9d3b`](https://github.com/LedgerHQ/ledger-live/commit/40f9d3b64cd697865b761412147e6c181fdd4a63) Thanks [@semeano](https://github.com/semeano)! - Add live-signer-zcash; getAddress implementation for Zcash chain adapter
+
+- [#17597](https://github.com/LedgerHQ/ledger-live/pull/17597) [`59c2b56`](https://github.com/LedgerHQ/ledger-live/commit/59c2b56e3096c352aad58923e070513a373ffae3) Thanks [@cted-ledger](https://github.com/cted-ledger)! - fix ZCash send transaction broken after DMK support
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`b2ee27c`](https://github.com/LedgerHQ/ledger-live/commit/b2ee27c2e1a508a6da44701d1881484f4f806e22), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`40f9d3b`](https://github.com/LedgerHQ/ledger-live/commit/40f9d3b64cd697865b761412147e6c181fdd4a63), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
+  - @ledgerhq/cryptoassets@13.49.0-next.0
+  - @ledgerhq/types-cryptoassets@7.37.0-next.0
+  - @ledgerhq/live-signer-zcash@0.2.0-next.0
+  - @ledgerhq/types-live@6.109.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.6.0-next.0
+  - @ledgerhq/live-env@2.36.0-next.0
+  - @ledgerhq/live-network@2.6.2-next.0
+
 ## 0.41.0
 
 ### Minor Changes

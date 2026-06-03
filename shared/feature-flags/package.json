@@ -1,6 +1,6 @@
 {
   "name": "@shared/feature-flags",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "Shared feature flags: Zod-first flag registry, RTK slice, selectors",
   "main": "src/index.ts",

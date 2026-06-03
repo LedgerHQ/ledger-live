@@ -5,9 +5,9 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import type { HederaCoinConfig } from "../config";
 import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { parseTransfers, analyzeStakingOperation } from "../network/utils";
@@ -67,14 +67,14 @@ function getCommonOperationData(
 async function processTokenTransfers({
   rawTx,
   address,
-  currency,
+  currencyId,
   ledgerAccountId,
   commonData,
   skipFeesForTokenOperations,
 }: {
   rawTx: HederaMirrorTransaction;
   address: string;
-  currency: CryptoCurrency;
+  currencyId: string;
   ledgerAccountId: string;
   commonData: ReturnType<typeof getCommonOperationData>;
   skipFeesForTokenOperations: boolean;
@@ -86,7 +86,7 @@ async function processTokenTransfers({
   if (tokenTransfers.length === 0) return null;
 
   const tokenId = tokenTransfers[0].token_id;
-  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currency.id);
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currencyId);
   if (!token) return null;
 
   const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
@@ -241,7 +241,8 @@ function processTransfers({
 }
 
 export async function listOperations({
-  currency,
+  config,
+  currencyId,
   address,
   mirrorTokens,
   cursor,
@@ -252,7 +253,8 @@ export async function listOperations({
   useEncodedHash,
   useSyntheticBlocks,
 }: {
-  currency: CryptoCurrency;
+  config?: HederaCoinConfig;
+  currencyId: string;
   address: string;
   mirrorTokens: HederaMirrorToken[];
   cursor?: string | undefined;
@@ -271,6 +273,7 @@ export async function listOperations({
   const coinOperations: Operation<HederaOperationExtra>[] = [];
   const tokenOperations: Operation<HederaOperationExtra>[] = [];
   const mirrorResult = await apiClient.getAccountTransactions({
+    configOrCurrencyId: config ?? currencyId,
     address,
     pagingToken: cursor ?? null,
     order: order,
@@ -280,7 +283,7 @@ export async function listOperations({
   const ledgerAccountId = encodeAccountId({
     type: "js",
     version: "2",
-    currencyId: currency.id,
+    currencyId: currencyId,
     xpubOrAddress: address,
     derivationMode: "hederaBip44",
   });
@@ -291,14 +294,18 @@ export async function listOperations({
     // try to distinguish staking operations for CRYPTOUPDATEACCOUNT transactions
     const stakingAnalysis =
       rawTx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount
-        ? await analyzeStakingOperation(address, rawTx)
+        ? await analyzeStakingOperation({
+            configOrCurrencyId: config ?? currencyId,
+            address,
+            mirrorTx: rawTx,
+          })
         : null;
 
     // process token transfers
     const tokenResult = await processTokenTransfers({
       rawTx,
       address,
-      currency,
+      currencyId,
       ledgerAccountId,
       commonData,
       skipFeesForTokenOperations,

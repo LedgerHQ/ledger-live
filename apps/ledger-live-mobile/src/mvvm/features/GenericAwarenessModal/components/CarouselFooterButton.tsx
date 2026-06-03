@@ -9,6 +9,9 @@ import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/g
 type CarouselFooterButtonProps = Readonly<{
   slides: GenericAwarenessModalCarouselSlide[];
   onClose: () => void;
+  onNavigationPress: (slideIndex: number, button: string, isLastSlide: boolean) => void;
+  onPrimaryPress: (slideIndex: number) => void;
+  onMalformedUrl: (slideIndex: number) => void;
 }>;
 
 const PRIMARY_BUTTON_SPACING = 12;
@@ -16,7 +19,13 @@ const PRIMARY_BUTTON_SPACING = 12;
 const hasPrimaryButton = (slide: GenericAwarenessModalCarouselSlide) =>
   Boolean(slide.primaryButtonLink && slide.primaryButtonLabel);
 
-export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonProps) {
+export function CarouselFooterButton({
+  slides,
+  onClose,
+  onNavigationPress,
+  onPrimaryPress,
+  onMalformedUrl,
+}: CarouselFooterButtonProps) {
   const { t } = useTranslation();
   const { currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
   const primaryButtonHeight = useSharedValue(0);
@@ -54,12 +63,16 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
     [primaryButtonHeight],
   );
 
-  const onPrimaryPress = async (slide: GenericAwarenessModalCarouselSlide) => {
+  const handlePrimaryPress = async (
+    slide: GenericAwarenessModalCarouselSlide,
+    slideIndex: number,
+  ) => {
     if (!slide.primaryButtonLink) {
       return;
     }
 
     const isExternalLink = slide.primaryButtonLink.startsWith("http");
+    onPrimaryPress(slideIndex);
 
     try {
       await Linking.openURL(slide.primaryButtonLink);
@@ -67,11 +80,14 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
         requestAnimationFrame(onClose);
       }
     } catch {
-      // TODO: track("malformed_url")
+      onMalformedUrl(slideIndex);
     }
   };
 
-  const onNavigationPress = () => {
+  const handleNavigationPress = () => {
+    const button = isLastSlide ? t("common.close") : t("common.continue");
+    onNavigationPress(currentIndex, button, isLastSlide);
+
     if (!isLastSlide) {
       goToNext();
       return;
@@ -82,7 +98,7 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
 
   return (
     <Box lx={{ position: "relative" }}>
-      <Button appearance="base" size="lg" onPress={onNavigationPress}>
+      <Button appearance="base" size="lg" onPress={handleNavigationPress}>
         {isLastSlide ? t("common.close") : t("common.continue")}
       </Button>
       <Box pointerEvents="none" style={styles.primaryButtonMeasurer} accessibilityElementsHidden>
@@ -93,7 +109,11 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
 
           return (
             <Box key={slideIndex} onLayout={onPrimaryButtonLayout}>
-              <Button appearance="gray" size="lg" onPress={() => onPrimaryPress(slide)}>
+              <Button
+                appearance="gray"
+                size="lg"
+                onPress={() => handlePrimaryPress(slide, slideIndex)}
+              >
                 {slide.primaryButtonLabel}
               </Button>
             </Box>
@@ -111,7 +131,7 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
             key={slideIndex}
             slide={slide}
             slideIndex={slideIndex}
-            onPress={onPrimaryPress}
+            onPress={handlePrimaryPress}
           />
         ))}
       </Animated.View>
@@ -122,7 +142,7 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
 type CarouselPrimaryButtonProps = Readonly<{
   slide: GenericAwarenessModalCarouselSlide;
   slideIndex: number;
-  onPress: (slide: GenericAwarenessModalCarouselSlide) => void;
+  onPress: (slide: GenericAwarenessModalCarouselSlide, slideIndex: number) => void;
 }>;
 
 function CarouselPrimaryButton({ slide, slideIndex, onPress }: CarouselPrimaryButtonProps) {
@@ -150,7 +170,7 @@ function CarouselPrimaryButton({ slide, slideIndex, onPress }: CarouselPrimaryBu
       accessibilityElementsHidden={!isCurrentSlide}
       importantForAccessibility={isCurrentSlide ? "auto" : "no-hide-descendants"}
     >
-      <Button appearance="gray" size="lg" onPress={() => onPress(slide)}>
+      <Button appearance="gray" size="lg" onPress={() => onPress(slide, slideIndex)}>
         {slide.primaryButtonLabel}
       </Button>
     </Animated.View>

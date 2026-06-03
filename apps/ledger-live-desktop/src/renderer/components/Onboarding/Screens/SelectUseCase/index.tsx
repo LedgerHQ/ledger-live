@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
@@ -26,6 +26,8 @@ import restoreUsingRecoverDark from "./assets/restoreUsingRecoverDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
 import { openModal } from "~/renderer/actions/modals";
+import CounterfeitWarningDialog from "LLD/features/Onboarding/components/CounterfeitWarningDialog";
+import { isLegacyNano } from "LLD/features/Onboarding/utils/isLegacyNano";
 
 registerAssets([
   connectNanoLight,
@@ -85,143 +87,195 @@ type Props = {
   setOpenedPedagogyModal: (isOpened: boolean) => void;
 };
 
+type UseCaseAction = "setup" | "connect" | "restore" | "recover";
+
 export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
   const { t } = useTranslation();
   const { deviceModelId } = useContext(OnboardingContext);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const servicesConfig = useFeature("protectServicesDesktop");
+  const counterfeitWarningFeature = useFeature("lwdOnboardingCounterfeitWarning");
+  const shouldShowCounterfeitWarning =
+    counterfeitWarningFeature?.enabled === true && isLegacyNano(deviceModelId);
+  const [pendingAction, setPendingAction] = useState<UseCaseAction | null>(null);
+
+  const runAction = useCallback(
+    (action: UseCaseAction) => {
+      switch (action) {
+        case "setup":
+          track("Onboarding - Setup new");
+          setUseCase(OnboardingUseCase.setupDevice);
+          setOpenedPedagogyModal(true);
+          navigate(`/onboarding/${OnboardingUseCase.setupDevice}/${ScreenId.howToGetStarted}`);
+          return;
+        case "connect":
+          track("Onboarding - Connect");
+          setUseCase(OnboardingUseCase.connectDevice);
+          navigate(`/onboarding/${OnboardingUseCase.connectDevice}/${ScreenId.pairMyNano}`);
+          return;
+        case "restore":
+          track("Onboarding - Restore");
+          setUseCase(OnboardingUseCase.recoveryPhrase);
+          navigate(
+            `/onboarding/${OnboardingUseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
+          );
+          return;
+        case "recover":
+          track("Onboarding - Restore With Recover");
+          if (deviceModelId === DeviceModelId.nanoS) {
+            dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+          } else {
+            setUseCase(OnboardingUseCase.recover);
+            navigate(`/onboarding/${OnboardingUseCase.recover}/${ScreenId.recoverHowTo}`);
+          }
+          return;
+      }
+    },
+    [deviceModelId, dispatch, navigate, setOpenedPedagogyModal, setUseCase],
+  );
+
+  const runWithCounterfeitWarningGate = useCallback(
+    (action: UseCaseAction) => {
+      if (shouldShowCounterfeitWarning) {
+        setPendingAction(action);
+        return;
+      }
+      runAction(action);
+    },
+    [runAction, shouldShowCounterfeitWarning],
+  );
+
+  const handleCounterfeitWarningProceed = useCallback(() => {
+    const action = pendingAction;
+    setPendingAction(null);
+    if (action) {
+      runAction(action);
+    }
+  }, [pendingAction, runAction]);
+
+  const handleCounterfeitWarningDismiss = useCallback(() => {
+    setPendingAction(null);
+  }, []);
 
   return (
-    <ScrollArea withHint>
-      <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
-      <SelectUseCaseContainer>
-        <Row>
-          <LeftColumn>
-            <LeftText variant="h3">
-              <Trans
-                i18nKey="onboarding.screens.selectUseCase.hasNoRecovery"
-                values={{
-                  deviceName: t("devices." + deviceModelId),
-                }}
-              />
-            </LeftText>
-          </LeftColumn>
-          <RightColumn>
-            <UseCaseOption
-              dataTestId="v3-onboarding-new-device"
-              id="first-use"
-              title={
+    <>
+      <ScrollArea withHint>
+        <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
+        <SelectUseCaseContainer>
+          <Row>
+            <LeftColumn>
+              <LeftText variant="h3">
                 <Trans
-                  i18nKey="onboarding.screens.selectUseCase.options.1.title"
+                  i18nKey="onboarding.screens.selectUseCase.hasNoRecovery"
                   values={{
                     deviceName: t("devices." + deviceModelId),
                   }}
                 />
-              }
-              description={t("onboarding.screens.selectUseCase.options.1.description")}
-              illustration={
-                <Illustration lightSource={setupNanoLight} darkSource={setupNanoDark} size={220} />
-              }
-              onClick={() => {
-                track("Onboarding - Setup new");
-                setUseCase(OnboardingUseCase.setupDevice);
-                setOpenedPedagogyModal(true);
-                navigate(
-                  `/onboarding/${OnboardingUseCase.setupDevice}/${ScreenId.howToGetStarted}`,
-                );
-              }}
-            />
-          </RightColumn>
-        </Row>
-        <Separator />
-        <Row>
-          <LeftColumn>
-            <LeftText variant="h3">{t("onboarding.screens.selectUseCase.hasRecovery")}</LeftText>
-          </LeftColumn>
-          <RightColumn>
-            <UseCaseOption
-              dataTestId="v3-onboarding-initialized-device"
-              id="initialized-device"
-              title={
-                <Trans
-                  i18nKey="onboarding.screens.selectUseCase.options.2.title"
-                  values={{
-                    deviceName: t("devices." + deviceModelId),
-                  }}
-                />
-              }
-              description={t("onboarding.screens.selectUseCase.options.2.description")}
-              illustration={
-                <Illustration
-                  lightSource={connectNanoLight}
-                  darkSource={connectNanoDark}
-                  size={200}
-                />
-              }
-              onClick={() => {
-                track("Onboarding - Connect");
-                setUseCase(OnboardingUseCase.connectDevice);
-                navigate(`/onboarding/${OnboardingUseCase.connectDevice}/${ScreenId.pairMyNano}`);
-              }}
-            />
-            <UseCaseOption
-              dataTestId="v3-onboarding-restore-device"
-              id="restore-device"
-              title={t("onboarding.screens.selectUseCase.options.3.title")}
-              description={
-                <Trans
-                  i18nKey="onboarding.screens.selectUseCase.options.3.description"
-                  values={{
-                    deviceName: t("devices." + deviceModelId),
-                  }}
-                />
-              }
-              illustration={
-                <Illustration
-                  lightSource={restorePhraseLight}
-                  darkSource={restorePhraseDark}
-                  size={220}
-                />
-              }
-              onClick={() => {
-                track("Onboarding - Restore");
-                setUseCase(OnboardingUseCase.recoveryPhrase);
-                navigate(
-                  `/onboarding/${OnboardingUseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
-                );
-              }}
-            />
-            {isRecoverDisplayed(servicesConfig, deviceModelId) && (
+              </LeftText>
+            </LeftColumn>
+            <RightColumn>
               <UseCaseOption
-                dataTestId="v3-onboarding-restore-using-recover"
-                id="restore-device"
-                title={t("onboarding.screens.selectUseCase.options.4.title")}
-                description={
-                  <Trans i18nKey="onboarding.screens.selectUseCase.options.4.description" />
+                dataTestId="v3-onboarding-new-device"
+                id="first-use"
+                title={
+                  <Trans
+                    i18nKey="onboarding.screens.selectUseCase.options.1.title"
+                    values={{
+                      deviceName: t("devices." + deviceModelId),
+                    }}
+                  />
                 }
+                description={t("onboarding.screens.selectUseCase.options.1.description")}
                 illustration={
                   <Illustration
-                    lightSource={restoreUsingRecoverDark}
-                    darkSource={restoreUsingRecoverDark}
+                    lightSource={setupNanoLight}
+                    darkSource={setupNanoDark}
                     size={220}
                   />
                 }
-                onClick={() => {
-                  track("Onboarding - Restore With Recover");
-
-                  if (deviceModelId === DeviceModelId.nanoS) {
-                    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
-                  } else {
-                    setUseCase(OnboardingUseCase.recover);
-                    navigate(`/onboarding/${OnboardingUseCase.recover}/${ScreenId.recoverHowTo}`);
-                  }
-                }}
+                onClick={() => runWithCounterfeitWarningGate("setup")}
               />
-            )}
-          </RightColumn>
-        </Row>
-      </SelectUseCaseContainer>
-    </ScrollArea>
+            </RightColumn>
+          </Row>
+          <Separator />
+          <Row>
+            <LeftColumn>
+              <LeftText variant="h3">{t("onboarding.screens.selectUseCase.hasRecovery")}</LeftText>
+            </LeftColumn>
+            <RightColumn>
+              <UseCaseOption
+                dataTestId="v3-onboarding-initialized-device"
+                id="initialized-device"
+                title={
+                  <Trans
+                    i18nKey="onboarding.screens.selectUseCase.options.2.title"
+                    values={{
+                      deviceName: t("devices." + deviceModelId),
+                    }}
+                  />
+                }
+                description={t("onboarding.screens.selectUseCase.options.2.description")}
+                illustration={
+                  <Illustration
+                    lightSource={connectNanoLight}
+                    darkSource={connectNanoDark}
+                    size={200}
+                  />
+                }
+                onClick={() => runWithCounterfeitWarningGate("connect")}
+              />
+              <UseCaseOption
+                dataTestId="v3-onboarding-restore-device"
+                id="restore-device"
+                title={t("onboarding.screens.selectUseCase.options.3.title")}
+                description={
+                  <Trans
+                    i18nKey="onboarding.screens.selectUseCase.options.3.description"
+                    values={{
+                      deviceName: t("devices." + deviceModelId),
+                    }}
+                  />
+                }
+                illustration={
+                  <Illustration
+                    lightSource={restorePhraseLight}
+                    darkSource={restorePhraseDark}
+                    size={220}
+                  />
+                }
+                onClick={() => runWithCounterfeitWarningGate("restore")}
+              />
+              {isRecoverDisplayed(servicesConfig, deviceModelId) && (
+                <UseCaseOption
+                  dataTestId="v3-onboarding-restore-using-recover"
+                  id="restore-device"
+                  title={t("onboarding.screens.selectUseCase.options.4.title")}
+                  description={
+                    <Trans i18nKey="onboarding.screens.selectUseCase.options.4.description" />
+                  }
+                  illustration={
+                    <Illustration
+                      lightSource={restoreUsingRecoverDark}
+                      darkSource={restoreUsingRecoverDark}
+                      size={220}
+                    />
+                  }
+                  onClick={() => runWithCounterfeitWarningGate("recover")}
+                />
+              )}
+            </RightColumn>
+          </Row>
+        </SelectUseCaseContainer>
+      </ScrollArea>
+      {shouldShowCounterfeitWarning && deviceModelId ? (
+        <CounterfeitWarningDialog
+          open={pendingAction !== null}
+          deviceModelId={deviceModelId}
+          onProceed={handleCounterfeitWarningProceed}
+          onDismiss={handleCounterfeitWarningDismiss}
+        />
+      ) : null}
+    </>
   );
 }

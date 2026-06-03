@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   selectIsRefreshing,
   selectLastOfflineRefreshAttemptTimestamp,

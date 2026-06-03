@@ -1,14 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Switch,
-  Keyboard,
-  SafeAreaView,
-} from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback, Switch, Keyboard } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -45,17 +39,20 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const bridge = useAccountBridge<CeloTransaction>(account);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(bridge, () => {
-    return {
-      account,
-      transaction: {
-        ...route.params.transaction,
-        amount: new BigNumber(route.params.amount ?? 0),
-        mode: "revoke",
-        index: route.params.vote?.index,
-      } as CeloTransaction,
-    };
-  });
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(
+    bridge,
+    () => {
+      return {
+        account,
+        transaction: {
+          ...route.params.transaction,
+          amount: new BigNumber(route.params.amount ?? 0),
+          mode: "revoke",
+          index: route.params.vote?.index,
+        } as CeloTransaction,
+      };
+    },
+  );
 
   invariant(transaction, "transaction must be defined");
 
@@ -109,7 +106,10 @@ export default function VoteAmount({ navigation, route }: Props) {
         action="revoke"
         currency="celo"
       />
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+        edges={["bottom"]}
+      >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={[styles.root, { backgroundColor: colors.background }]}>

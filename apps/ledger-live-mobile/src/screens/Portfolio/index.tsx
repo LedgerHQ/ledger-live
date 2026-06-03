@@ -44,10 +44,10 @@ import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 export { default as PortfolioTabIcon } from "./TabIcon";
 import Animated, { useSharedValue } from "react-native-reanimated";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
-import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { ddAddViewLoadingTime } from "LLM/utils/ddAddViewLoadingTime";
@@ -82,7 +82,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   useEffect(() => {
     async function handleMigration() {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      await storage.handleMigration(mmkvMigrationFF as Feature_LlmMmkvMigration);
+      await storage.handleMigration(mmkvMigrationFF as Features["llmMmkvMigration"]);
     }
     handleMigration();
   }, [mmkvMigrationFF]);

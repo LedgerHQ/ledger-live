@@ -19,7 +19,6 @@ import {
   CosmosValidatorItem,
 } from "../types";
 import * as CosmosSDKTypes from "./types";
-import { GetValidatorItem } from "./types";
 
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
 
@@ -111,16 +110,16 @@ export class CosmosAPI {
    * @sdk https://docs.cosmos.network/api#tag/Query/operation/Pool
    */
   getValidators = async (): Promise<CosmosValidatorItem[]> => {
-    const { data } = await network({
+    const { data } = await network<CosmosSDKTypes.GetValidatorsSDK>({
       url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/validators?status=BOND_STATUS_BONDED&pagination.limit=200`,
       method: "GET",
     });
-    const validators = data.validators.map((validator: GetValidatorItem) => {
+    const validators = data.validators.map(validator => {
       const commission = parseFloat(validator.commission.commission_rates.rate);
       return {
         validatorAddress: validator.operator_address,
         name: validator.description.moniker,
-        tokens: parseFloat(validator.tokens),
+        tokens: validator.tokens,
         votingPower: 0,
         commission,
         estimatedYearlyRewardsRate: 0,

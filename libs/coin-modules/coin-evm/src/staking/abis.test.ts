@@ -13,6 +13,12 @@ describe("getStakingABI", () => {
     expect(abi?.length).toBeGreaterThan(0);
   });
 
+  it("should return Monad ABI for monad", () => {
+    const abi = getStakingABI("monad");
+    expect(abi).toBeInstanceOf(Array);
+    expect(abi?.length).toBeGreaterThan(0);
+  });
+
   it("should return undefined for unsupported currency", () => {
     const abi = getStakingABI("unsupported_currency");
     expect(abi).toBeUndefined();
@@ -49,6 +55,28 @@ describe("isPayable", () => {
     it("should return false for non-existent function", () => {
       const result = isPayable("sei_evm", "nonExistentFunction");
       expect(result).toBe(false);
+    });
+  });
+
+  describe("Monad", () => {
+    it("should return true for delegate function (payable)", () => {
+      expect(isPayable("monad", "delegate")).toBe(true);
+    });
+
+    it("should return false for undelegate function (nonpayable)", () => {
+      expect(isPayable("monad", "undelegate")).toBe(false);
+    });
+
+    it("should return false for claimRewards function (nonpayable)", () => {
+      expect(isPayable("monad", "claimRewards")).toBe(false);
+    });
+
+    it("should return false for getDelegator function (nonpayable — precompile getter)", () => {
+      expect(isPayable("monad", "getDelegator")).toBe(false);
+    });
+
+    it("should return false for non-existent function", () => {
+      expect(isPayable("monad", "nonExistentFunction")).toBe(false);
     });
   });
 

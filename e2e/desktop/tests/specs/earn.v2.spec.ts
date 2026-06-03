@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { EARN_V2_DESKTOP_FLAGS, useLocalEarnManifest } from "tests/utils/featureFlagUtils";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -266,8 +266,8 @@ test.describe("Earn [v2]", () => {
   // --- Navigation: ETH Provider Staking Flows ---
 
   const ethProviders = [
-    { provider: Provider.LIDO, xrayTickets: ["B2CQA-4722", "B2CQA-4644"] },
-    { provider: Provider.KILN, xrayTickets: ["B2CQA-4724"] },
+    { provider: EarnProvider.LIDO, xrayTickets: ["B2CQA-4722", "B2CQA-4644"] },
+    { provider: EarnProvider.KILN, xrayTickets: ["B2CQA-4724"] },
   ];
 
   for (const { provider, xrayTickets } of ethProviders) {

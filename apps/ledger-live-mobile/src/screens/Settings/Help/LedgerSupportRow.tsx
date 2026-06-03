@@ -4,7 +4,7 @@ import { Linking } from "react-native";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { urls } from "~/utils/urls";
 import SettingsRow from "~/components/SettingsRow";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 function LedgerSupportRow() {
   const chatbotSupportFeature = useFeature("llmChatbotSupport");

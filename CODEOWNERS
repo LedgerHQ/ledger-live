@@ -98,6 +98,7 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Wallet
 .github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/wallet-ci
 .github/workflow-templates/bot-coin**                               @ledgerhq/coin-integration
 apps/**/families/                                                   @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
 libs/ledger-wallet-framework/                                       @ledgerhq/coin-integration
@@ -145,7 +146,6 @@ tools/actions/composites/monitor/                        @ledgerhq/coin-integrat
 ## Blockchain support
 libs/coin-modules/coin-aptos/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-near/                                             @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-cardano/                                          @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-vechain/                                          @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-casper/                                           @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-filecoin/                                         @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
@@ -159,6 +159,7 @@ libs/coin-modules/coin-sui/                                              @ledger
 libs/coin-modules/coin-canton/                                           @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-concordium/                                       @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-tezos/                                            @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-cardano/                                          @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 
 ## Blockydevs
 libs/coin-modules/coin-hedera/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
@@ -345,6 +346,7 @@ apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/FinishOnboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/GenericAwarenessModalDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/ProductTour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement

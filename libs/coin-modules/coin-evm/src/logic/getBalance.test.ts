@@ -2,6 +2,7 @@
 import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import { EvmCoinConfig, setCoinConfig } from "../config";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
@@ -25,12 +26,16 @@ const mockGetNodeApi = jest.mocked(getNodeApi);
 const mockGetExplorerApi = jest.mocked(getExplorerApi);
 const mockGetStakes = jest.mocked(getStakes);
 
+const setNativeContracts = (nativeContracts?: string[]) =>
+  setCoinConfig(() => ({ info: { nativeContracts } }) as unknown as EvmCoinConfig);
+
 describe("getBalance", () => {
   const nodeApiMock = mockNodeApi();
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetNodeApi.mockReturnValue(nodeApiMock);
+    setNativeContracts();
   });
 
   it.each([
@@ -238,6 +243,78 @@ describe("getBalance", () => {
         value: 2n,
       },
     ]);
+  });
+
+  describe("nativeContracts", () => {
+    const NATIVE_CONTRACT = "0x3600000000000000000000000000000000000000";
+    const REGULAR_CONTRACT = "0x123";
+
+    it("skips fetching ERC20 balance for contracts listed in nativeContracts", async () => {
+      setNativeContracts([NATIVE_CONTRACT]);
+      nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber("42"));
+      nodeApiMock.getTokenBalance.mockResolvedValue(new BigNumber("999"));
+      mockGetStakes.mockResolvedValue({ items: [] });
+      mockGetExplorerApi.mockReturnValue({
+        getOperations: jest.fn().mockResolvedValue({
+          lastTokenOperations: [{ contract: NATIVE_CONTRACT }, { contract: REGULAR_CONTRACT }],
+          nextPagingToken: "",
+        }),
+      });
+
+      const result = await getBalance({} as CryptoCurrency, "address");
+
+      expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(1);
+      expect(nodeApiMock.getTokenBalance).toHaveBeenCalledWith(
+        expect.anything(),
+        "address",
+        REGULAR_CONTRACT,
+      );
+      expect(nodeApiMock.getTokenBalance).not.toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        NATIVE_CONTRACT,
+      );
+      expect(result).toEqual([
+        { asset: { type: "native" }, value: 42n },
+        {
+          asset: { type: "erc20", assetReference: REGULAR_CONTRACT, assetOwner: "address" },
+          value: 999n,
+        },
+      ]);
+    });
+
+    it("matches nativeContracts case-insensitively", async () => {
+      setNativeContracts([NATIVE_CONTRACT.toUpperCase()]);
+      nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber("0"));
+      mockGetStakes.mockResolvedValue({ items: [] });
+      mockGetExplorerApi.mockReturnValue({
+        getOperations: jest.fn().mockResolvedValue({
+          lastTokenOperations: [{ contract: NATIVE_CONTRACT.toLowerCase() }],
+          nextPagingToken: "",
+        }),
+      });
+
+      await getBalance({} as CryptoCurrency, "address");
+
+      expect(nodeApiMock.getTokenBalance).not.toHaveBeenCalled();
+    });
+
+    it("does not skip any contract when nativeContracts is undefined", async () => {
+      setNativeContracts(undefined);
+      nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber("0"));
+      nodeApiMock.getTokenBalance.mockResolvedValue(new BigNumber("1"));
+      mockGetStakes.mockResolvedValue({ items: [] });
+      mockGetExplorerApi.mockReturnValue({
+        getOperations: jest.fn().mockResolvedValue({
+          lastTokenOperations: [{ contract: NATIVE_CONTRACT }, { contract: REGULAR_CONTRACT }],
+          nextPagingToken: "",
+        }),
+      });
+
+      await getBalance({} as CryptoCurrency, "address");
+
+      expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(2);
+    });
   });
 
   it("returns empty stake when balance is zero", async () => {

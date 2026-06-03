@@ -71,6 +71,7 @@ export default function SideDrawerFilter({
         menuPortalTarget={document.body}
         onChange={onChange}
         options={options}
+        searchable={false}
         value={[
           ...(!starred.value && !liveCompatible.value
             ? [

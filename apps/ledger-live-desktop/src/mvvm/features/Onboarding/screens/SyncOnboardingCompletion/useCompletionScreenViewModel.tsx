@@ -41,14 +41,18 @@ export function useCompletionScreenViewModel(): ViewProps {
       dispatch(setHasRedirectedToPostOnboarding(false));
       dispatch(setHasBeenUpsoldRecover(false));
     }
-    dispatch(setLastOnboardedDevice(currentDevice));
+    // Fall back to lastSeenDevice when disconnected, so post-onboarding redirect still fires.
+    const onboardedDevice: Device | null =
+      currentDevice ??
+      (lastSeenDevice ? { deviceId: "", modelId: lastSeenDevice.modelId, wired: false } : null);
+    dispatch(setLastOnboardedDevice(onboardedDevice));
     const timeout = setTimeout(() => {
       redirectToPostOnboarding();
     }, COMPLETION_SCREEN_TIMEOUT);
     return () => {
       clearTimeout(timeout);
     };
-  }, [currentDevice, dispatch, redirectToPostOnboarding]);
+  }, [currentDevice, lastSeenDevice, dispatch, redirectToPostOnboarding]);
 
   return {
     seedConfiguration: state?.seedConfiguration,

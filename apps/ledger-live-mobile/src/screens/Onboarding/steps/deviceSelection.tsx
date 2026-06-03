@@ -15,7 +15,7 @@ import { ScreenName } from "~/const";
 import { DeviceCards } from "./Cards/DeviceCard";
 import OnboardingView from "./OnboardingView";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 type NavigationProp = RootNavigationComposite<
   BaseNavigationComposite<

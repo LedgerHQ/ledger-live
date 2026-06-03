@@ -105,10 +105,10 @@ describe("EVM Staking - getStakes", () => {
   it("should handle multiple validators and filter zero amounts", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockResolvedValue([
-      makeValidator("seivaloper1abc"),
-      makeValidator("seivaloper1def"),
-    ]);
+    mockGetValidators.mockResolvedValue({
+      items: [makeValidator("seivaloper1abc"), makeValidator("seivaloper1def")],
+      next: undefined,
+    });
 
     mockWithApi.mockImplementation(async (_cur, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
@@ -179,7 +179,10 @@ describe("EVM Staking - getStakes", () => {
   it("should treat SEI missing delegation reverts as an empty stake without logging", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockResolvedValue([makeValidator("seivaloper1abc")]);
+    mockGetValidators.mockResolvedValue({
+      items: [makeValidator("seivaloper1abc")],
+      next: undefined,
+    });
     mockWithApi.mockImplementation(async (_cur, fn) => {
       const api = {
         call: jest.fn().mockRejectedValue(
@@ -207,7 +210,7 @@ describe("EVM Staking - getStakes", () => {
   it("should handle SEI when no validators are available", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockResolvedValue([]);
+    mockGetValidators.mockResolvedValue({ items: [], next: undefined });
 
     const result = await getStakes(currency, address);
 

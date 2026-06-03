@@ -2,7 +2,7 @@ import test from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
@@ -17,12 +17,12 @@ const xrayTicket = "B2CQA-5632";
 const fromAccount = TokenAccount.ETH_USDC_1;
 const toAccount = Account.ETH_1;
 const eligibleProviders = [
-  Provider.THORCHAIN,
-  Provider.UNISWAP,
-  Provider.LIFI,
-  Provider.OKX,
-  Provider.ONE_INCH,
-  Provider.VELORA,
+  SwapProvider.THORCHAIN,
+  SwapProvider.UNISWAP,
+  SwapProvider.LIFI,
+  SwapProvider.OKX,
+  SwapProvider.ONE_INCH,
+  SwapProvider.VELORA,
 ];
 const provider = pickRotatingProvider(eligibleProviders);
 
@@ -79,7 +79,7 @@ test.describe("Token approval - flow", () => {
       await app.swap.clickGiveApprovalButton();
       await app.swap.clickContinueButton();
       await app.speculos.signTokenApproval();
-      if (provider === Provider.UNISWAP) {
+      if (provider === SwapProvider.UNISWAP) {
         await app.swap.clickGiveAuthorizationButton();
         await app.speculos.signTypedMessage();
       }

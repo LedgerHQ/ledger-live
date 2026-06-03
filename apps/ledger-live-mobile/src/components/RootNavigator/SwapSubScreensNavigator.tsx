@@ -9,7 +9,7 @@ import SwapHistory from "~/screens/Swap/History";
 import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/index";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import { SwapSubScreensNavigatorParamList } from "./types/SwapSubScreensNavigator";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   isGoingToSwapHistory,
   navigateBackToSwapTab,

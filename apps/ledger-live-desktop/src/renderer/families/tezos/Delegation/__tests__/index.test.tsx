@@ -16,6 +16,11 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   useTezosStakingInfo: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  __esModule: true,
+  useAccountBridge: () => ({ isAccountEmpty: () => false }),
+}));
+
 jest.mock("../StakingSection", () => ({
   __esModule: true,
   default: () => <div data-testid="staking-section" />,

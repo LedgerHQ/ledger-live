@@ -202,6 +202,7 @@ export const urls = {
   },
   howToUpdateNewLedger: "https://support.ledger.com/article/9305992683165-zd",
   genuineCheck: "https://support.ledger.com/article/4404389367057-zd",
+  ledgerReseller: "https://www.ledger.com/reseller",
   ledgerShop:
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:

@@ -86,7 +86,9 @@ export default function DebugDeviceIntentExecutorOrchestration() {
       </Button>
 
       {/* --- Executor --- */}
-      {orchestration.enabled && <DeviceIntentExecutorLWM {...orchestration.executorProps} />}
+      {orchestration.enabled && (
+        <DeviceIntentExecutorLWM sourceFlow="debug" {...orchestration.executorProps} />
+      )}
     </ScrollView>
   );
 }

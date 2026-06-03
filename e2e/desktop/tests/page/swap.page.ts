@@ -3,7 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -106,7 +106,7 @@ export class SwapPage extends WebViewAppPage {
   @step("Check quotes container infos")
   async checkQuotesContainerInfos(providerList: string[], ticker: string) {
     const webview = await this.getWebView();
-    const provider = Provider.getNameByUiName(providerList[0]);
+    const provider = SwapProvider.getNameByUiName(providerList[0]);
 
     await webview
       .locator(this.providerContainerInfoSelector(provider, "amount-label"))
@@ -135,10 +135,10 @@ export class SwapPage extends WebViewAppPage {
         .getByText(ticker),
     ).toBeVisible();
     if (
-      provider === Provider.ONE_INCH.name ||
-      provider === Provider.VELORA.name ||
-      provider === Provider.UNISWAP.name ||
-      provider === Provider.LIFI.name
+      provider === SwapProvider.ONE_INCH.name ||
+      provider === SwapProvider.VELORA.name ||
+      provider === SwapProvider.UNISWAP.name ||
+      provider === SwapProvider.LIFI.name
     ) {
       await expect(
         webview
@@ -155,7 +155,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Select specific provider")
-  async selectSpecificProvider(provider: Provider) {
+  async selectSpecificProvider(provider: SwapProvider) {
     const webview = await this.getWebView();
 
     const providersList = await this.getProviderList();
@@ -186,13 +186,13 @@ export class SwapPage extends WebViewAppPage {
           swap.accountToCredit.currency.id === Currency.ETH.id));
 
     const providersWithoutKYC = providersList.filter(providerName => {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
       if (!provider || provider.kyc) {
         return false;
       }
 
       // Exclude LiFi for ETH <-> SOL pairs on all devices
-      if (isEthSolPair && provider.name === Provider.LIFI.name) {
+      if (isEthSolPair && provider.name === SwapProvider.LIFI.name) {
         return false;
       }
 
@@ -205,8 +205,8 @@ export class SwapPage extends WebViewAppPage {
     });
 
     for (const providerName of providersWithoutKYC) {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (provider && provider.isNative) {
+      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
+      if (provider && !provider.app) {
         const providerLocator = webview
           .locator(this.specificQuoteCardProviderName(provider.name))
           .first();
@@ -229,10 +229,10 @@ export class SwapPage extends WebViewAppPage {
     const providers = providersList
       .map(providerName => ({
         providerName,
-        provider: Object.values(Provider).find(p => p.uiName === providerName),
+        provider: Object.values(SwapProvider).find(p => p.uiName === providerName),
       }))
       .filter(
-        (entry): entry is { providerName: string; provider: Provider } =>
+        (entry): entry is { providerName: string; provider: SwapProvider } =>
           entry.provider !== undefined,
       );
 
@@ -509,7 +509,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Check swap operation row details")
-  async checkSwapOperation(swapId: string, provider: Provider, swap: Swap) {
+  async checkSwapOperation(swapId: string, provider: SwapProvider, swap: Swap) {
     await expect(this.operationRows).toBeVisible();
     await expect(this.selectSpecificOperation(swapId)).toBeVisible();
     await expect(this.selectSpecificOperationProvider(swapId)).toContainText(provider.uiName);
@@ -538,7 +538,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Check contents of exported operations file")
-  async checkExportedFileContents(swap: Swap, provider: Provider, id: string) {
+  async checkExportedFileContents(swap: Swap, provider: SwapProvider, id: string) {
     const fileContents = await readFile(SwapPage.EXPORT_ARTIFACT_PATH, "utf-8");
 
     expect(fileContents).toContain(provider.name);
@@ -564,7 +564,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Ensure token approval has been revoked")
-  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
+  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: SwapProvider) {
     if (!provider.contractAddress) {
       throw new Error(
         `Provider "${provider.name}" has no contractAddress - revoke requires an EVM token provider`,

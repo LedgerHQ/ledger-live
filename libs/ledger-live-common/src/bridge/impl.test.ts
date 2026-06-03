@@ -1,10 +1,12 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
+import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
 import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
 import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import type { DerivationMode } from "@ledgerhq/types-live";
 import { genAccount } from "../mock/account";
 import { setSupportedCurrencies } from "../currencies";
-import { getAccountBridge } from ".";
+import { getAccountBridge, clearBridgeCache } from ".";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
@@ -50,5 +52,83 @@ describe("wrapAccountBridge — extension routing", () => {
 
     const bridge = await getAccountBridge(account);
     expect(bridge.isAccountEmpty(account)).toBe(true);
+  });
+});
+
+describe("getAccountBridge — unsupported account rejection", () => {
+  function makeUnsupportedCurrencyAccount(id: string) {
+    const account = genAccount(id, { currency: BTC });
+    return { ...account, currency: getCryptoCurrencyById("tron") };
+  }
+
+  function makeUnsupportedDerivationAccount(id: string) {
+    const account = genAccount(id, { currency: BTC });
+    return { ...account, derivationMode: "not-a-real-derivation-mode" as unknown as DerivationMode };
+  }
+
+  test("rejected Promise is annotated with status='rejected' once the microtask runs", async () => {
+    const account = makeUnsupportedCurrencyAccount("annotation");
+    const p = getAccountBridge(account);
+    await p.catch(() => {});
+    expect((p as unknown as { status?: string }).status).toBe("rejected");
+    expect((p as unknown as { reason?: unknown }).reason).toBeInstanceOf(CurrencyNotSupported);
+  });
+
+  test("unsupported-derivation rejection is annotated the same way", async () => {
+    const account = makeUnsupportedDerivationAccount("annotation-derivation");
+    const p = getAccountBridge(account);
+    await p.catch(() => {});
+    expect((p as unknown as { status?: string }).status).toBe("rejected");
+    expect((p as unknown as { reason?: unknown }).reason).toBeInstanceOf(AccountNotSupported);
+  });
+
+  test("rejection identity is stable across calls (avoids React.use() loop)", async () => {
+    const account = makeUnsupportedCurrencyAccount("identity");
+    const p1 = getAccountBridge(account);
+    const p2 = getAccountBridge(account);
+    p1.catch(() => {});
+    expect(p1).toBe(p2);
+    await expect(p1).rejects.toBeInstanceOf(CurrencyNotSupported);
+  });
+
+  test("clearBridgeCache invalidates so a re-supported currency can resolve", async () => {
+    const account = makeUnsupportedCurrencyAccount("dynamic-resupport");
+    const p1 = getAccountBridge(account);
+    p1.catch(() => {});
+    await expect(p1).rejects.toBeInstanceOf(CurrencyNotSupported);
+
+    setSupportedCurrencies(["bitcoin", "ethereum", "tron"]);
+    clearBridgeCache();
+    try {
+      const p2 = getAccountBridge(account);
+      await expect(p2).resolves.toBeDefined();
+    } finally {
+      setSupportedCurrencies(["bitcoin", "ethereum"]);
+      clearBridgeCache();
+    }
+  });
+
+  test("clearBridgeCache(family) evicts unsupported-cache entries for that family", async () => {
+    const account = makeUnsupportedCurrencyAccount("family-targeted-eviction");
+    const p1 = getAccountBridge(account);
+    p1.catch(() => {});
+    await expect(p1).rejects.toBeInstanceOf(CurrencyNotSupported);
+
+    setSupportedCurrencies(["bitcoin", "ethereum", "tron"]);
+    clearBridgeCache("tron");
+    try {
+      const p2 = getAccountBridge(account);
+      await expect(p2).resolves.toBeDefined();
+    } finally {
+      setSupportedCurrencies(["bitcoin", "ethereum"]);
+      clearBridgeCache();
+    }
+  });
+
+  test("success path identity is preserved (family cache regression guard)", () => {
+    const account = genAccount("supported-identity", { currency: BTC });
+    const p1 = getAccountBridge(account);
+    const p2 = getAccountBridge(account);
+    expect(p1).toBe(p2);
   });
 });

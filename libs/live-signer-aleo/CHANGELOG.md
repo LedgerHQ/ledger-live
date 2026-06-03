@@ -1,5 +1,27 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.17.0
+
+### Minor Changes
+
+- [#17573](https://github.com/LedgerHQ/ledger-live/pull/17573) [`97349fe`](https://github.com/LedgerHQ/ledger-live/commit/97349fe48706a83d88dafe18a6c080ea56b0df6c) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo sign operation with nested calls
+
+### Patch Changes
+
+- Updated dependencies [[`97349fe`](https://github.com/LedgerHQ/ledger-live/commit/97349fe48706a83d88dafe18a6c080ea56b0df6c), [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490)]:
+  - @ledgerhq/coin-aleo@1.13.0
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#17573](https://github.com/LedgerHQ/ledger-live/pull/17573) [`97349fe`](https://github.com/LedgerHQ/ledger-live/commit/97349fe48706a83d88dafe18a6c080ea56b0df6c) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo sign operation with nested calls
+
+### Patch Changes
+
+- Updated dependencies [[`97349fe`](https://github.com/LedgerHQ/ledger-live/commit/97349fe48706a83d88dafe18a6c080ea56b0df6c), [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490)]:
+  - @ledgerhq/coin-aleo@1.13.0-next.0
+
 ## 0.16.3
 
 ### Patch Changes

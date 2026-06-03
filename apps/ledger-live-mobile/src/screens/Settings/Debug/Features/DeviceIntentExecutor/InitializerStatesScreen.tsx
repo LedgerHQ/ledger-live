@@ -246,6 +246,7 @@ export default function DebugInitializerStatesScreen() {
             <DeviceContextInitializerComponentLWMView
               state={selectedScenario.state}
               device={mockDevice}
+              sourceFlow="debug"
               onCancel={() => setSelectedScenario(null)}
             />
           ) : null}

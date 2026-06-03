@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { CONTENT_AREA_HEIGHT } from "LLM/components/ScreenHeroSection/constants";
 
 interface PortfolioHeaderSectionViewModel {

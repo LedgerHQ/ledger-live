@@ -18,7 +18,6 @@ const beforeAllFunction = async (transaction: TransactionType, options?: SendTes
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),
     featureFlags: {
-      llmAccountListUI: { enabled: true },
       ...options?.featureFlags,
     },
     cliCommands: [
@@ -42,9 +41,6 @@ const beforeAllInvalidAddressFunction = async (
 ) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
-    featureFlags: {
-      llmAccountListUI: { enabled: true },
-    },
     cliCommands: [
       async (userdataPath?: string) => {
         await liveDataCommand(transaction.accountToDebit)(userdataPath);

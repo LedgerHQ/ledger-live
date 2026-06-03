@@ -1,5 +1,17 @@
 # @features/market-banner
 
+## 0.8.0
+
+### Minor Changes
+
+- [#17238](https://github.com/LedgerHQ/ledger-live/pull/17238) [`e82e99b`](https://github.com/LedgerHQ/ledger-live/commit/e82e99bb172b610ce3226844d2ddd05f13408779) Thanks [@ysitbon](https://github.com/ysitbon)! - Move `@features/market-banner` to `@features/flow-market-banner` under `features/flow/` per the Iteration 5 Data Layer ADR. [LIVE-30363](https://ledgerhq.atlassian.net/browse/LIVE-30363)
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#17238](https://github.com/LedgerHQ/ledger-live/pull/17238) [`e82e99b`](https://github.com/LedgerHQ/ledger-live/commit/e82e99bb172b610ce3226844d2ddd05f13408779) Thanks [@ysitbon](https://github.com/ysitbon)! - Move `@features/market-banner` to `@features/flow-market-banner` under `features/flow/` per the Iteration 5 Data Layer ADR. [LIVE-30363](https://ledgerhq.atlassian.net/browse/LIVE-30363)
+
 ## 0.7.0
 
 ### Minor Changes

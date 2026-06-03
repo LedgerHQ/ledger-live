@@ -1,25 +1,25 @@
 import { add } from "date-fns";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { ABTestingVariants } from "@ledgerhq/types-live";
-import type {
-  Feature_BrazePushNotifications,
-  Feature_LwmNewWordingOptInNotificationsDrawer,
-} from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
+import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 import type { NotificationsState } from "~/reducers/types";
 import type { DataOfUser } from "../types";
+
+type BrazePushNotifications = Features["brazePushNotifications"];
+type LwmNewWordingOptInNotificationsDrawer = Features["lwmNewWordingOptInNotificationsDrawer"];
 
 type PermissionStatus =
   | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
   | null
   | undefined;
 
-type BrazePushNotificationsFeature = Feature_BrazePushNotifications | null | undefined;
-type WordingFeature = Feature_LwmNewWordingOptInNotificationsDrawer | null | undefined;
+type BrazePushNotificationsFeature = BrazePushNotifications | null | undefined;
+type WordingFeature = LwmNewWordingOptInNotificationsDrawer | null | undefined;
 
 export type NotificationsPromptSource = NonNullable<NotificationsState["drawerSource"]>;
 export type NotificationsPromptAfterActionSource = Exclude<NotificationsPromptSource, "inactivity">;
 export type NotificationsPromptRepromptDelay = NonNullable<
-  Feature_BrazePushNotifications["params"]
+  BrazePushNotifications["params"]
 >["reprompt_schedule"][number];
 
 export type NotificationsPromptSkipReason =
@@ -100,7 +100,7 @@ type EvaluateInactivityTriggerParams = {
 type CheckIsInactiveInput = {
   inactivityEnabled: boolean | undefined;
   inactivityReprompt:
-    | NonNullable<Feature_BrazePushNotifications["params"]>["inactivity_reprompt"]
+    | NonNullable<BrazePushNotifications["params"]>["inactivity_reprompt"]
     | null
     | undefined;
   lastActionAt?: number;
@@ -117,7 +117,7 @@ const AFTER_ACTION_SOURCE_TO_EVENT_KEY = {
   add_favorite_coin: "add_favorite_coin",
 } as const satisfies Record<
   NotificationsPromptAfterActionSource,
-  keyof NonNullable<Feature_BrazePushNotifications["params"]>["action_events"]
+  keyof NonNullable<BrazePushNotifications["params"]>["action_events"]
 >;
 
 export const INACTIVITY_DRAWER_DELAY_MS = 1000;
@@ -126,7 +126,7 @@ const getVariant = (wordingFeature: WordingFeature) =>
   wordingFeature?.enabled ? wordingFeature.params?.variant : undefined;
 
 const isVariantA = (wordingFeature: WordingFeature) =>
-  getVariant(wordingFeature) === ABTestingVariants.variantA;
+  getVariant(wordingFeature) === AB_TESTING_VARIANTS.A;
 
 const getDismissedCount = (pushNotificationsDataOfUser: DataOfUser | null | undefined) =>
   pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0;

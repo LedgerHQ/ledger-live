@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import FeatureIntroContent from "../FeatureIntroContent";
+import { FEATURE_INTRO_TEXT_LINE_LIMITS } from "../clampedText";
 
 const baseProps = {
   title: "Test title",
@@ -23,28 +24,24 @@ describe("FeatureIntroContent", () => {
     jest.clearAllMocks();
   });
 
-  it("should render title, subtitle, and list item copy", () => {
+  it("should render copy with line limits", () => {
     render(<FeatureIntroContent {...baseProps} />);
 
     expect(screen.getByText("Test title")).toBeVisible();
-    expect(screen.getByText("Test subtitle")).toBeVisible();
-    expect(screen.getByText("Item title")).toBeVisible();
     expect(screen.getByText("Item description")).toBeVisible();
+    expect(screen.getByText("Test title").style.getPropertyValue("-webkit-line-clamp")).toBe(
+      String(FEATURE_INTRO_TEXT_LINE_LIMITS.title),
+    );
+    expect(screen.getByText("Item title")).toHaveClass("truncate");
   });
 
-  it("should call onPrimaryClick when the primary button is pressed", async () => {
+  it("should call action handlers when buttons are pressed", async () => {
     const { user } = render(<FeatureIntroContent {...baseProps} />);
 
     await user.click(screen.getByTestId("generic-awareness-modal-primary-button"));
-
-    expect(baseProps.onPrimaryClick).toHaveBeenCalledTimes(1);
-  });
-
-  it("should call onSecondaryClick when the secondary button is pressed", async () => {
-    const { user } = render(<FeatureIntroContent {...baseProps} />);
-
     await user.click(screen.getByTestId("generic-awareness-modal-secondary-button"));
 
+    expect(baseProps.onPrimaryClick).toHaveBeenCalledTimes(1);
     expect(baseProps.onSecondaryClick).toHaveBeenCalledTimes(1);
   });
 

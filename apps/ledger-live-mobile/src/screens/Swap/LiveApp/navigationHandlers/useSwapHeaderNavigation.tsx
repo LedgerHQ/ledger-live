@@ -13,7 +13,7 @@ import Touchable from "~/components/Touchable";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";
 import { useIsSwapTab } from "./useIsSwapTab";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 function getScreenTitle({
   webviewCurrentPage,

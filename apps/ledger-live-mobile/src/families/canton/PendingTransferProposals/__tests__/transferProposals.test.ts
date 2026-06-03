@@ -5,20 +5,21 @@ import {
   isValidRestoreModalState,
   INSTRUCTION_TYPE_MAP,
 } from "../utils/transferProposals";
-import { ACCOUNT_XPUB, createRawProposal, createProcessedProposal } from "./test-utils";
+import { ACCOUNT_XPUB, createRawProposal, createProcessedProposal, MOCK_UNIT } from "./test-utils";
 
 const OTHER_XPUB = "other-xpub";
+const getMockUnit = () => MOCK_UNIT;
 
 describe("processTransferProposals", () => {
   it("should return empty incoming and outgoing arrays when given no proposals", () => {
-    const result = processTransferProposals([], ACCOUNT_XPUB);
+    const result = processTransferProposals([], ACCOUNT_XPUB, getMockUnit);
     expect(result.incoming).toEqual([]);
     expect(result.outgoing).toEqual([]);
   });
 
   it("should classify a proposal as incoming when sender differs from accountXpub", () => {
     const raw = createRawProposal("contract-1", OTHER_XPUB, ACCOUNT_XPUB);
-    const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB);
+    const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
 
     expect(incoming).toHaveLength(1);
     expect(outgoing).toHaveLength(0);
@@ -27,7 +28,7 @@ describe("processTransferProposals", () => {
 
   it("should classify a proposal as outgoing when sender matches accountXpub", () => {
     const raw = createRawProposal("contract-2", ACCOUNT_XPUB, OTHER_XPUB);
-    const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB);
+    const { incoming, outgoing } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
 
     expect(outgoing).toHaveLength(1);
     expect(incoming).toHaveLength(0);
@@ -41,7 +42,7 @@ describe("processTransferProposals", () => {
       createRawProposal("in-2", OTHER_XPUB, ACCOUNT_XPUB),
     ];
 
-    const { incoming, outgoing } = processTransferProposals(proposals, ACCOUNT_XPUB);
+    const { incoming, outgoing } = processTransferProposals(proposals, ACCOUNT_XPUB, getMockUnit);
 
     expect(incoming).toHaveLength(2);
     expect(outgoing).toHaveLength(1);
@@ -53,7 +54,7 @@ describe("processTransferProposals", () => {
       expires_at_micros: pastMicros,
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
 
     expect(incoming[0].isExpired).toBe(true);
   });
@@ -64,7 +65,7 @@ describe("processTransferProposals", () => {
       expires_at_micros: futureMicros,
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
 
     expect(incoming[0].isExpired).toBe(false);
   });
@@ -76,7 +77,7 @@ describe("processTransferProposals", () => {
       memo: "test memo",
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
     const proposal = incoming[0];
 
     expect(proposal.contractId).toBe("contract-map");
@@ -94,7 +95,7 @@ describe("processTransferProposals", () => {
       memo: undefined,
     });
 
-    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB);
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB, getMockUnit);
 
     expect(incoming[0].memo).toBe("");
   });

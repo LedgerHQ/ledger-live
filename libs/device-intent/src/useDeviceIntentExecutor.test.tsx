@@ -81,6 +81,13 @@ const makeConnectionResult = (
   };
 };
 
+// Sentinel data used by tests that only care about state-machine TRANSITIONS,
+// not the payload carried by the new ExecutorState variants. These tests stub
+// the SM, so the values just need to exist to satisfy the union.
+const TEST_CONNECTION_RESULT = makeBaseConnectionResult();
+const TEST_EXTRACTED_CONTEXT = makeExtractedContext();
+const TEST_DEVICE = TEST_CONNECTION_RESULT.connectedDevice;
+
 type TestProps = DeviceIntentExecutorProps<
   unknown,
   unknown,
@@ -613,7 +620,10 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       });
 
       // The second (latest) callback should be called, not the first
-      expect(secondCallback).toHaveBeenCalledWith({ type: "deviceDisconnected" });
+      expect(secondCallback).toHaveBeenCalledWith({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
     });
 
     it("WHEN onUserCancel prop changes between renders THEN onClose forwards to the latest callback", () => {
@@ -755,7 +765,10 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       act(() => {
         const connectionResult = makeConnectionResult();
         inPhase(result.current, "deviceConnection").onConnected(connectionResult);
-        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+        listeners.onExecutorStateChanged({
+          type: "initializingDeviceContext",
+          connectionResult: TEST_CONNECTION_RESULT,
+        });
       });
 
       const ctx = makeExtractedContext();
@@ -770,7 +783,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       const { result, sm, listeners } = renderWithMockSM();
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
 
       act(() => {
@@ -790,7 +803,11 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "executingIntent" });
+        listeners.onExecutorStateChanged({
+          type: "executingIntent",
+          connectionResult: TEST_CONNECTION_RESULT,
+          extractedContext: TEST_EXTRACTED_CONTEXT,
+        });
       });
 
       const state = inPhase(result.current, "intentExecution");
@@ -805,7 +822,11 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "executingIntent" });
+        listeners.onExecutorStateChanged({
+          type: "executingIntent",
+          connectionResult: TEST_CONNECTION_RESULT,
+          extractedContext: TEST_EXTRACTED_CONTEXT,
+        });
       });
 
       act(() => {
@@ -826,7 +847,10 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       const connectionResult = makeConnectionResult();
       act(() => {
         inPhase(result.current, "deviceConnection").onConnected(connectionResult);
-        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+        listeners.onExecutorStateChanged({
+          type: "initializingDeviceContext",
+          connectionResult: TEST_CONNECTION_RESULT,
+        });
       });
 
       act(() => {
@@ -842,11 +866,14 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       const connectionResult = makeConnectionResult();
       act(() => {
         inPhase(result.current, "deviceConnection").onConnected(connectionResult);
-        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+        listeners.onExecutorStateChanged({
+          type: "initializingDeviceContext",
+          connectionResult: TEST_CONNECTION_RESULT,
+        });
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
 
       inPhase(result.current, "deviceDisconnected");
@@ -860,7 +887,11 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "executingIntent" });
+        listeners.onExecutorStateChanged({
+          type: "executingIntent",
+          connectionResult: TEST_CONNECTION_RESULT,
+          extractedContext: TEST_EXTRACTED_CONTEXT,
+        });
       });
 
       act(() => {
@@ -932,11 +963,17 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       rerender({ p: { ...props, onExecutorStateChanged: secondCallback } });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
 
-      expect(secondCallback).toHaveBeenCalledWith({ type: "deviceDisconnected" });
-      expect(firstCallback).not.toHaveBeenCalledWith({ type: "deviceDisconnected" });
+      expect(secondCallback).toHaveBeenCalledWith({
+        type: "deviceDisconnected",
+        device: TEST_DEVICE,
+      });
+      expect(firstCallback).not.toHaveBeenCalledWith({
+        type: "deviceDisconnected",
+        device: TEST_DEVICE,
+      });
     });
   });
 
@@ -1080,19 +1117,26 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       expect(onUserCancel).toHaveBeenCalledTimes(1);
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
       inPhase(result.current, "deviceDisconnected").onClose();
       expect(onUserCancel).toHaveBeenCalledTimes(2);
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+        listeners.onExecutorStateChanged({
+          type: "initializingDeviceContext",
+          connectionResult: TEST_CONNECTION_RESULT,
+        });
       });
       inPhase(result.current, "deviceInitialization").onClose();
       expect(onUserCancel).toHaveBeenCalledTimes(3);
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "executingIntent" });
+        listeners.onExecutorStateChanged({
+          type: "executingIntent",
+          connectionResult: TEST_CONNECTION_RESULT,
+          extractedContext: TEST_EXTRACTED_CONTEXT,
+        });
       });
       inPhase(result.current, "intentExecution").onClose();
       expect(onUserCancel).toHaveBeenCalledTimes(4);
@@ -1101,6 +1145,8 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
         listeners.onExecutorStateChanged({
           type: "executingIntentError",
           error: new Error("e"),
+          connectionResult: TEST_CONNECTION_RESULT,
+          extractedContext: TEST_EXTRACTED_CONTEXT,
         });
       });
       inPhase(result.current, "intentError").onClose();
@@ -1129,7 +1175,11 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       const { result, listeners } = renderWithMockSM({ intent });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "executingIntent" });
+        listeners.onExecutorStateChanged({
+          type: "executingIntent",
+          connectionResult: TEST_CONNECTION_RESULT,
+          extractedContext: TEST_EXTRACTED_CONTEXT,
+        });
       });
 
       expect(inPhase(result.current, "intentExecution").jobState).toBeUndefined();

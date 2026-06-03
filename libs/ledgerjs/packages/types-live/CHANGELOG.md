@@ -1,5 +1,47 @@
 # @ledgerhq/types-live
 
+## 6.109.0
+
+### Minor Changes
+
+- [#17577](https://github.com/LedgerHQ/ledger-live/pull/17577) [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd - add product tour in post onboarding widget and hub
+
+- [#17542](https://github.com/LedgerHQ/ledger-live/pull/17542) [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add lwmAnalyticsConsentOnboarding feature flag (default disabled) for mobile
+
+- [#17654](https://github.com/LedgerHQ/ledger-live/pull/17654) [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: remove sonic blaze feature flags
+
+- [#17528](https://github.com/LedgerHQ/ledger-live/pull/17528) [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Move EVM staking types to `@ledgerhq/types-live` and strongly type the `BridgeApi.enrichStakingResources` hook so the generic coin framework no longer depends on `@ledgerhq/coin-evm`.
+
+- [#17560](https://github.com/LedgerHQ/ledger-live/pull/17560) [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Move Concordium ID App store links (App Store / Google Play) to a new `concordiumIdAppLinks` feature flag with runtime override support via Firebase
+
+- [#17635](https://github.com/LedgerHQ/ledger-live/pull/17635) [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwm feature flag for new notification opt in
+
+### Patch Changes
+
+- Updated dependencies [[`e278291`](https://github.com/LedgerHQ/ledger-live/commit/e2782919681ec2619e2433a18eef954b8ca9eddb)]:
+  - @ledgerhq/client-ids@0.10.0
+
+## 6.109.0-next.0
+
+### Minor Changes
+
+- [#17577](https://github.com/LedgerHQ/ledger-live/pull/17577) [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd - add product tour in post onboarding widget and hub
+
+- [#17542](https://github.com/LedgerHQ/ledger-live/pull/17542) [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add lwmAnalyticsConsentOnboarding feature flag (default disabled) for mobile
+
+- [#17654](https://github.com/LedgerHQ/ledger-live/pull/17654) [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: remove sonic blaze feature flags
+
+- [#17528](https://github.com/LedgerHQ/ledger-live/pull/17528) [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Move EVM staking types to `@ledgerhq/types-live` and strongly type the `BridgeApi.enrichStakingResources` hook so the generic coin framework no longer depends on `@ledgerhq/coin-evm`.
+
+- [#17560](https://github.com/LedgerHQ/ledger-live/pull/17560) [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Move Concordium ID App store links (App Store / Google Play) to a new `concordiumIdAppLinks` feature flag with runtime override support via Firebase
+
+- [#17635](https://github.com/LedgerHQ/ledger-live/pull/17635) [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwm feature flag for new notification opt in
+
+### Patch Changes
+
+- Updated dependencies [[`e278291`](https://github.com/LedgerHQ/ledger-live/commit/e2782919681ec2619e2433a18eef954b8ca9eddb)]:
+  - @ledgerhq/client-ids@0.10.0-next.0
+
 ## 6.108.0
 
 ### Minor Changes

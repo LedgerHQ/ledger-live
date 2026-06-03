@@ -1,5 +1,39 @@
 # @ledgerhq/live-dmk
 
+## 0.25.0
+
+### Minor Changes
+
+- [#17583](https://github.com/LedgerHQ/ledger-live/pull/17583) [`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix sticky user interaction state in EnsureAppReady pending mapping: when ConnectApp reports `UserInteractionRequired.None` without an install plan, emit a generic loading state instead of returning null so the UI no longer remains stuck on the previous interaction prompt.
+
+- [#17617](https://github.com/LedgerHQ/ledger-live/pull/17617) [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Improve console log readability when debugging via Chrome / React Native DevTools: mobile's `ConsoleLogger` now uses `console.groupCollapsed` with raw objects instead of stringifying everything to JSON, and the DMK logger emits a clearer `DMK[tag]` log type (with backward-compatible filtering in the logs viewer) instead of the generic `live-dmk-logger`.
+
+- [#17436](https://github.com/LedgerHQ/ledger-live/pull/17436) [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Reduce `EnsureAppReadyState` installing-app variant to `{ type }` only so consecutive emissions during installation dedupe via deep-equality and render at most once
+
+- [#17578](https://github.com/LedgerHQ/ledger-live/pull/17578) [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66) Thanks [@qperrot](https://github.com/qperrot)! - fix(live-dmk-shared): handle Node.js 22 ESM/CJS interop for hw-transport default import
+
+  When loaded via require() in Node.js 22, @ledgerhq/hw-transport resolves to its
+  CJS build where the class is exposed as `module.exports.default`. Unwrap the
+  default export with a fallback so DmkCompatTransport can correctly extend Transport
+  in both ESM and CJS environments.
+
+## 0.25.0-next.0
+
+### Minor Changes
+
+- [#17583](https://github.com/LedgerHQ/ledger-live/pull/17583) [`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix sticky user interaction state in EnsureAppReady pending mapping: when ConnectApp reports `UserInteractionRequired.None` without an install plan, emit a generic loading state instead of returning null so the UI no longer remains stuck on the previous interaction prompt.
+
+- [#17617](https://github.com/LedgerHQ/ledger-live/pull/17617) [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Improve console log readability when debugging via Chrome / React Native DevTools: mobile's `ConsoleLogger` now uses `console.groupCollapsed` with raw objects instead of stringifying everything to JSON, and the DMK logger emits a clearer `DMK[tag]` log type (with backward-compatible filtering in the logs viewer) instead of the generic `live-dmk-logger`.
+
+- [#17436](https://github.com/LedgerHQ/ledger-live/pull/17436) [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Reduce `EnsureAppReadyState` installing-app variant to `{ type }` only so consecutive emissions during installation dedupe via deep-equality and render at most once
+
+- [#17578](https://github.com/LedgerHQ/ledger-live/pull/17578) [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66) Thanks [@qperrot](https://github.com/qperrot)! - fix(live-dmk-shared): handle Node.js 22 ESM/CJS interop for hw-transport default import
+
+  When loaded via require() in Node.js 22, @ledgerhq/hw-transport resolves to its
+  CJS build where the class is exposed as `module.exports.default`. Unwrap the
+  default export with a fallback so DmkCompatTransport can correctly extend Transport
+  in both ESM and CJS environments.
+
 ## 0.24.0
 
 ### Minor Changes

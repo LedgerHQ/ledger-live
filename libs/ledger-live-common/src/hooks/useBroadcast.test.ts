@@ -105,6 +105,7 @@ describe("useBroadcast", () => {
         await expect(
           result.current({
             signature: "signed-transaction",
+            rawData: { raw_hex: "raw-hex" }
           } as any),
         ).rejects.toThrow(new Error("Broadcast failed"));
       });
@@ -117,7 +118,7 @@ describe("useBroadcast", () => {
         family: "family",
         appVersion: "llc/test",
         source: { type: "coin-module", name: "ledger-live-desktop" },
-        txPayload: "signed-transaction",
+        txPayload: { signature: "signed-transaction", rawData: { raw_hex: "raw-hex" } },
       });
     });
   });

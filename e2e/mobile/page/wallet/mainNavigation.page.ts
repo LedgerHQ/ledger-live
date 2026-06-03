@@ -9,11 +9,10 @@ export default class MainNavigationPage {
   wallet40Tab = (tabName: Wallet40TabName) => element(by.id(`w40-tab-${tabName}`));
 
   // --- Wallet 4.0 top bar buttons ---
-  topBarMyLedgerId = "topbar-myledger";
   topBarDiscoverId = "topbar-discover";
-  topBarNotificationsId = "topbar-notifications";
-  topBarSettingsId = "topbar-settings";
+  topBarMyWalletId = "topbar-mywallet";
   topBarTransactionHistoryId = "topbar-transaction-history";
+  headerBackButtonId = "header-back-button";
 
   // --- Legacy bottom tabs ---
   legacyPortfolioTabId = "tab-bar-portfolio";
@@ -27,10 +26,8 @@ export default class MainNavigationPage {
   swapFormId = "swap-form-tab";
   earnScreenId = "earn-screen";
   cardScreenId = "card-landing-screen";
-  managerHeaderTitle = "My Ledger";
   discoverHeaderTitle = "Discover";
   notificationsHeaderTitle = "Notifications";
-  settingsCardId = "general-settings-card";
 
   // =====================
   // Wait helpers
@@ -38,7 +35,7 @@ export default class MainNavigationPage {
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
   async waitForWallet40Ready() {
-    await waitForElementById(this.topBarSettingsId);
+    await waitForElementById(this.topBarMyWalletId);
   }
 
   @Step("Wait for Legacy navigation to be ready")
@@ -59,24 +56,14 @@ export default class MainNavigationPage {
   // Wallet 4.0 Top Bar Actions
   // =====================
 
-  @Step("Tap My Ledger in top bar")
-  async tapTopBarMyLedger() {
-    await tapById(this.topBarMyLedgerId);
+  @Step("Tap My Wallet avatar in top bar")
+  async tapTopBarMyWallet() {
+    await tapById(this.topBarMyWalletId);
   }
 
   @Step("Tap Discover in top bar")
   async tapTopBarDiscover() {
     await tapById(this.topBarDiscoverId);
-  }
-
-  @Step("Tap Notifications in top bar")
-  async tapTopBarNotifications() {
-    await tapById(this.topBarNotificationsId);
-  }
-
-  @Step("Tap Settings in top bar")
-  async tapTopBarSettings() {
-    await tapById(this.topBarSettingsId);
   }
 
   @Step("Tap Transaction History in top bar")
@@ -122,10 +109,9 @@ export default class MainNavigationPage {
 
   @Step("Expect Wallet 4.0 top bar to be visible")
   async expectWallet40TopBarVisible() {
-    await detoxExpect(getElementById(this.topBarMyLedgerId)).toBeVisible();
+    await detoxExpect(getElementById(this.topBarMyWalletId)).toBeVisible();
     await detoxExpect(getElementById(this.topBarDiscoverId)).toBeVisible();
-    await detoxExpect(getElementById(this.topBarNotificationsId)).toBeVisible();
-    await detoxExpect(getElementById(this.topBarSettingsId)).toBeVisible();
+    await detoxExpect(getElementById(this.topBarTransactionHistoryId)).toBeVisible();
   }
 
   @Step("Expect legacy bottom tabs NOT visible")
@@ -149,7 +135,7 @@ export default class MainNavigationPage {
 
   @Step("Expect Wallet 4.0 top bar NOT visible")
   async expectWallet40TopBarNotVisible() {
-    await detoxExpect(getElementById(this.topBarMyLedgerId)).not.toBeVisible();
+    await detoxExpect(getElementById(this.topBarMyWalletId)).not.toBeVisible();
   }
 
   // =====================
@@ -182,14 +168,9 @@ export default class MainNavigationPage {
     await waitForElementById(this.cardScreenId);
   }
 
-  @Step("Expect My Ledger page visible")
-  async expectMyLedgerPageVisible() {
-    await detoxExpect(element(by.text(this.managerHeaderTitle)).atIndex(0)).toBeVisible();
-  }
-
   @Step("Go back via header back button")
   async tapHeaderBackButton() {
-    await tapById("header-back-button");
+    await tapById(this.headerBackButtonId);
   }
 
   @Step("Expect Discover page visible")
@@ -200,10 +181,5 @@ export default class MainNavigationPage {
   @Step("Expect Notifications page visible")
   async expectNotificationsPageVisible() {
     await detoxExpect(element(by.text(this.notificationsHeaderTitle)).atIndex(0)).toBeVisible();
-  }
-
-  @Step("Expect Settings page visible")
-  async expectSettingsPageVisible() {
-    await waitForElementById(this.settingsCardId);
   }
 }

@@ -92,10 +92,11 @@ function ProposalsTable({
             px={3}
             horizontal={true}
             alignItems="center"
+            justifyContent="flex-end"
             style={{
               flex: "0 0 auto",
               gap: "4px",
-              minWidth: "150px",
+              minWidth: "220px",
             }}
           >
             <Text fontSize={3} color="neutral.c70" ff="Inter|SemiBold">

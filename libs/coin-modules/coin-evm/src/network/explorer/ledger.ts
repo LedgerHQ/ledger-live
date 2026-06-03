@@ -107,9 +107,20 @@ export const getOperations: ExplorerApi["getOperations"] = async (
   const lastNftOperations: Operation[] = [];
   const lastInternalOperations: Operation[] = [];
 
+  // Drop ERC20 Transfer events on contracts that mirror the native asset
+  const nativeContractsSet = new Set((config.nativeContracts ?? []).map(c => c.toLowerCase()));
+  const isNativeContract = (contract: string): boolean =>
+    nativeContractsSet.has(contract.toLowerCase());
+
   for (const ledgerOp of ledgerExplorerOps) {
     const coinOps = ledgerOperationToOperations(accountId, ledgerOp);
-    const erc20Ops = ledgerOp.transfer_events.flatMap((event, index) =>
+
+    const erc20TransferEvents =
+      nativeContractsSet.size === 0
+        ? ledgerOp.transfer_events
+        : ledgerOp.transfer_events.filter(event => !isNativeContract(event.contract));
+
+    const erc20Ops = erc20TransferEvents.flatMap((event, index) =>
       ledgerERC20EventToOperations(coinOps[0], event, index),
     );
     const erc721Ops =

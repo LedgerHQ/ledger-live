@@ -1,3 +1,5 @@
+import type { ProviderErrorCodes } from "../types";
+
 export type TradeMethod = "fixed" | "float";
 
 export type ProviderTypes = "DEX" | "CEX";
@@ -77,7 +79,7 @@ export type RawQuoteCustomFields = {
   quote?: unknown;
   priceRoute?: unknown;
   "@type"?: string;
-  quoteId?: string;
+  quoteId?: unknown;
   quoteResponse?: {
     typedData: Partial<RawPermit2Message>;
     orderHash?: string;
@@ -114,7 +116,7 @@ export type RawQuoteErrorParameter = {
 };
 
 export type RawQuoteError = {
-  code: string;
+  code: ProviderErrorCodes | (string & {});
   type: "float" | "fixed";
   provider: string;
   message: string;
@@ -126,5 +128,5 @@ export type RawQuoteAPIResponse = Array<RawQuoteAPI>;
 
 export type FetchQuotesResult = {
   rawQuotes: RawQuote[];
-  errors: RawQuoteError[];
+  providerErrors: RawQuoteError[];
 };

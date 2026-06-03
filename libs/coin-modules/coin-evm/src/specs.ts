@@ -68,6 +68,8 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   unichain: 0.001,
   unichain_sepolia: 0.001,
   adi: 0.001,
+  arc: 0.001,
+  arc_testnet: 0.001,
 };
 
 /**

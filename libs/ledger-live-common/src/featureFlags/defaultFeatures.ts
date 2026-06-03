@@ -123,6 +123,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyAdi: DEFAULT_FEATURE,
   currencyUnichain: DEFAULT_FEATURE,
   currencyUnichainSepolia: DEFAULT_FEATURE,
+  currencyArc: { enabled: true },
+  currencyArcTestnet: { enabled: true },
 };
 
 /**
@@ -796,6 +798,7 @@ export const DEFAULT_FEATURES: Features = {
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
+  onboardingWidget: DEFAULT_FEATURE,
   noah: {
     ...DEFAULT_FEATURE,
     params: {
@@ -841,11 +844,13 @@ export const DEFAULT_FEATURES: Features = {
       balanceRefreshRework: true,
       brazePlacement: true,
       assetSection: false,
-      onboardingWidget: false,
       operationsList: false,
       aggregatedAssets: false,
       myWallet: false,
       pnl: false,
+      assetDiscoverability: false,
+      earnUpselling: false,
+      earnSimulator: false,
     },
   },
   lwdWallet40: {
@@ -866,7 +871,9 @@ export const DEFAULT_FEATURES: Features = {
       aggregatedAssets: false,
       myWallet: false,
       pnl: false,
-      finishOnboardingWidget: false,
+      assetDiscoverability: false,
+      earnUpselling: false,
+      earnSimulator: false,
     },
   },
   addressPoisoningOperationsFilter: {

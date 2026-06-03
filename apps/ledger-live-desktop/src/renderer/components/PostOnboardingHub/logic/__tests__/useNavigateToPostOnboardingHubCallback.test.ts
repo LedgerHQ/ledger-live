@@ -24,10 +24,7 @@ const protectDesktopDefaultParams = FEATURE_FLAGS_DEFAULTS.protectServicesDeskto
 
 function featureFlagsWithRecover() {
   return withFlagOverrides({
-    lwdWallet40: {
-      enabled: true,
-      params: { finishOnboardingWidget: true },
-    },
+    onboardingWidget: { enabled: true },
     protectServicesDesktop: {
       enabled: true,
       params: {
@@ -46,10 +43,7 @@ function featureFlagsWithRecover() {
 
 function featureFlagsWithWallet40WithoutRecover() {
   return withFlagOverrides({
-    lwdWallet40: {
-      enabled: true,
-      params: { finishOnboardingWidget: true },
-    },
+    onboardingWidget: { enabled: true },
     protectServicesDesktop: { enabled: false },
   });
 }
@@ -160,7 +154,7 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
   it("should navigate to post-onboarding hub when finish widget is disabled", () => {
     const { result, store } = renderNavigateHook({
       ...withFlagOverrides({
-        lwdWallet40: { enabled: false },
+        onboardingWidget: { enabled: false },
         protectServicesDesktop: { enabled: true },
       }),
       postOnboarding: postOnboardingState(),
@@ -176,7 +170,7 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
 
   it("should replace history when navigating to post-onboarding hub with resetNavigationStack", () => {
     const { result } = renderNavigateHook({
-      ...withFlagOverrides({ lwdWallet40: { enabled: false } }),
+      ...withFlagOverrides({ onboardingWidget: { enabled: false } }),
       postOnboarding: postOnboardingState(),
     });
 

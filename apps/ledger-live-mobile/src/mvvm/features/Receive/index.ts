@@ -13,6 +13,12 @@ import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerCont
 
 type Props = {
   currency?: CryptoOrTokenCurrency;
+  /**
+   * Pre-selection list of ledger currency ids forwarded to the Modular Drawer.
+   * When non-empty, takes priority over `currency` to pre-select every network
+   * of a multi-network asset (e.g. USDC on Ethereum + Polygon + Base).
+   */
+  currencyIds?: string[];
   sourceScreenName: string;
   navigationOverride?: RootNavigation;
   hideBackButton?: boolean;
@@ -20,6 +26,7 @@ type Props = {
 };
 export function useOpenReceiveDrawer({
   currency,
+  currencyIds,
   sourceScreenName,
   navigationOverride,
   hideBackButton,
@@ -74,15 +81,18 @@ export function useOpenReceiveDrawer({
       if (showNoahMenu && !fromReceiveOptionsDrawer) {
         openReceiveOptionsDrawer({
           currency: currency,
+          currencyIds: currencyIds,
           sourceScreenName: sourceScreenName,
           fromMenu: fromMenu,
         });
       } else {
+        const hasCurrencyIds = !!currencyIds?.length;
+        const currencies = hasCurrencyIds ? currencyIds : currency ? [currency.id] : [];
         return openDrawer({
-          currencies: currency ? [currency.id] : [],
+          currencies,
           flow: "receive_flow",
           source: sourceScreenName,
-          areCurrenciesFiltered: !!currency,
+          areCurrenciesFiltered: hasCurrencyIds || !!currency,
           enableAccountSelection: true,
           onAccountSelected: openReceiveConfirmation,
         });
@@ -90,6 +100,7 @@ export function useOpenReceiveDrawer({
     },
     [
       currency,
+      currencyIds,
       openDrawer,
       sourceScreenName,
       openReceiveConfirmation,

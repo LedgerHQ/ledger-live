@@ -1,6 +1,6 @@
 import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { t } from "i18next";
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import {
   getRecipientDisplayValue,
@@ -14,6 +14,8 @@ import {
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { trackPage } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../utils/tracking";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -52,6 +54,19 @@ export function useSendHeaderModel({
       recipientSearch.value.length > 0 &&
       isRecipientAddressComplete,
   );
+
+  const trackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+    [state.account.account, state.account.parentAccount],
+  );
+
+  const hasFiredMemoPageViewRef = useRef(false);
+  if (showMemoControls && !hasFiredMemoPageViewRef.current) {
+    hasFiredMemoPageViewRef.current = true;
+    trackPage("Modal send - step memo", null, trackingProperties);
+  } else if (!showMemoControls) {
+    hasFiredMemoPageViewRef.current = false;
+  }
 
   const backTarget = currentStepConfig?.backTarget;
 

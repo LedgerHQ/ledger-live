@@ -39,13 +39,8 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, sou
     const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount);
 
     if (platformAppRoute) {
-      // Redirect to the platform app preferentially
       dispatch(closeModal("MODAL_START_STAKE"));
-      navigate(platformAppRoute.pathname, {
-        state: {
-          ...platformAppRoute.state,
-        },
-      });
+      navigate("/earn", { state: platformAppRoute.state });
       return;
     }
 

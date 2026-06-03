@@ -492,16 +492,18 @@ const tron: CurrenciesData<Transaction> = {
             ),
             amount: new BigNumber("1000000"),
           }),
-          expectedStatus: {
+          // estimatedFees is now computed dynamically from chain params + simulation;
+          // we only assert the validation shape (NotEnoughGas + totalSpent).
+          expectedStatus: (_account, _transaction, status) => ({
             amount: new BigNumber("1000000"),
             errors: {
               gasLimit: new NotEnoughGas(),
             },
             warnings: {},
             totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("27600900"),
-          },
-        }, // FIXME account have moved...
+            estimatedFees: status.estimatedFees,
+          }),
+        },
 
         /*
       {

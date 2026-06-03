@@ -282,6 +282,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mirror node API for Hedera",
   },
+  API_HEDERA_MIRROR_TESTNET: {
+    def: "https://hedera-testnet.coin.ledger.com",
+    parser: stringParser,
+    desc: "testnet mirror node API for Hedera",
+  },
   API_HEDERA_THIRDWEB_URL: {
     def: "https://hedera-tokens.coin.ledger.com",
     parser: stringParser,
@@ -292,12 +297,17 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Hgraph API for Hedera (ERC20 data source)",
   },
+  API_HEDERA_HGRAPH_TESTNET: {
+    def: "https://hedera-indexer-testnet.coin.ledger.com/v1/graphql",
+    parser: stringParser,
+    desc: "testnet hgraph API for Hedera",
+  },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,
     desc: "Thorest API for VeChain",
   },
-  ALEO_MAINNET_NODE_ENDPOINT: {
+  ALEO_NODE_ENDPOINT: {
     def: "https://aleo.coin.ledger.com",
     parser: stringParser,
     desc: "Aleo mainnet node URL",
@@ -306,11 +316,6 @@ const envDefinitions = {
     def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
     parser: stringParser,
     desc: "Aleo mainnet SDK URL",
-  },
-  ALEO_TESTNET_NODE_ENDPOINT: {
-    def: "https://aleo.coin.ledger.com",
-    parser: stringParser,
-    desc: "Aleo testnet node URL",
   },
   ALEO_TESTNET_SDK_ENDPOINT: {
     def: "https://aleo-backend.api.live.ledger.com/network/testnet",

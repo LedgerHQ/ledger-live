@@ -14,7 +14,6 @@ export class Layout extends Component {
   readonly drawerAccountsButton = this.page.getByTestId("drawer-accounts-button");
   readonly drawerSendButton = this.page.getByTestId("drawer-send-button");
   readonly drawerEarnButton = this.page.getByTestId("drawer-earn-button");
-  readonly drawerBuycryptoButton = this.page.getByTestId("drawer-exchange-button");
   readonly drawerSwapButton = this.page.getByTestId("drawer-swap-button");
   readonly drawerDiscoverButton = this.page.getByTestId("drawer-catalog-button");
   readonly drawerReferButton = this.page.getByTestId("drawer-refer-button");
@@ -47,11 +46,6 @@ export class Layout extends Component {
     await this.drawerSendButton.click();
   }
 
-  @step("Go to buy crypto")
-  async goToBuySellCrypto() {
-    await this.drawerBuycryptoButton.click();
-  }
-
   @step("Go to Settings")
   async goToSettings() {
     await this.topbarSettingsButton.click();
@@ -77,10 +71,5 @@ export class Layout extends Component {
   @step("Wait for accounts sync to be finished")
   async waitForSyncButtonToBeEnabled() {
     await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled");
-  }
-
-  @step("Expect buy/sell sidebar to be selected")
-  async verifyBuySellSideBarIsSelected() {
-    await expect(this.drawerBuycryptoButton).toHaveAttribute("data-active", "true");
   }
 }

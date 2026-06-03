@@ -15,7 +15,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Touchable from "~/components/Touchable";
@@ -136,7 +137,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen
         category="CeloRevoke"
         name="Summary"

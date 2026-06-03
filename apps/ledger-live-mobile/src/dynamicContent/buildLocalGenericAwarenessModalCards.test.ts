@@ -4,11 +4,12 @@ import {
   buildLocalGenericAwarenessModalBrazeCards,
   buildLocalGenericAwarenessModalContentCards,
   getDefaultGenericAwarenessModalCampaignId,
+  type GenericAwarenessModalDebugFormValues,
 } from "./buildLocalGenericAwarenessModalCards";
 
 describe("buildLocalGenericAwarenessModalCards", () => {
   it("should build carousel content cards from raw Braze-like cards", () => {
-    const values = {
+    const values: GenericAwarenessModalDebugFormValues = {
       ...buildDefaultGenericAwarenessModalFormValues(),
       campaignId: "debug-carousel",
       items: [
@@ -65,7 +66,7 @@ describe("buildLocalGenericAwarenessModalCards", () => {
   });
 
   it("should build feature intro content cards from main and item Braze-like cards", () => {
-    const values = {
+    const values: GenericAwarenessModalDebugFormValues = {
       ...buildDefaultGenericAwarenessModalFormValues(),
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "debug-feature-intro",
@@ -118,6 +119,54 @@ describe("buildLocalGenericAwarenessModalCards", () => {
             subtitle: "Keep keys safe.",
           },
         ],
+      },
+    ]);
+  });
+
+  it("should build prompt content cards from one Braze-like card", () => {
+    const values: GenericAwarenessModalDebugFormValues = {
+      ...buildDefaultGenericAwarenessModalFormValues(),
+      layout: GenericAwarenessModalLayout.Prompt,
+      campaignId: "debug-prompt",
+      title: "Prompt title",
+      subtitle: "Prompt subtitle",
+      imageUrl: "https://example.com/prompt.png",
+      primaryButtonLabel: "Learn more",
+      primaryButtonLink: "https://example.com",
+      secondaryButtonLabel: "Maybe later",
+      secondaryButtonLink: "ledgerlive://myledger",
+    };
+
+    const rawCards = buildLocalGenericAwarenessModalBrazeCards(values);
+    const contentCards = buildLocalGenericAwarenessModalContentCards(values);
+
+    expect(rawCards).toHaveLength(1);
+    expect(rawCards[0].extras).toMatchObject({
+      campaignId: "debug-prompt",
+      layout: GenericAwarenessModalLayout.Prompt,
+      location: "generic_awareness_modal",
+      title: "Prompt title",
+      subtitle: "Prompt subtitle",
+      imageUrl: "https://example.com/prompt.png",
+      primaryButtonLabel: "Learn more",
+      primaryButtonLink: "https://example.com",
+      secondaryButtonLabel: "Maybe later",
+      secondaryButtonLink: "ledgerlive://myledger",
+    });
+    expect(rawCards[0].extras).not.toHaveProperty("index");
+    expect(rawCards[0].extras).not.toHaveProperty("role");
+    expect(contentCards).toEqual([
+      {
+        id: "debug-prompt",
+        isLocal: true,
+        layout: GenericAwarenessModalLayout.Prompt,
+        title: "Prompt title",
+        subtitle: "Prompt subtitle",
+        imageUrl: "https://example.com/prompt.png",
+        primaryButtonLabel: "Learn more",
+        primaryButtonLink: "https://example.com",
+        secondaryButtonLabel: "Maybe later",
+        secondaryButtonLink: "ledgerlive://myledger",
       },
     ]);
   });

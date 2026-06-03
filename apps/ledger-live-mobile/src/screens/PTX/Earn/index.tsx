@@ -2,8 +2,8 @@ import {
   stakeProgramsToEarnParam,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -28,7 +28,6 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { EarnV2Webview } from "./EarnV2Webview";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
@@ -36,7 +35,7 @@ export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenNam
 const appManifestNotFoundError = new Error("Earn App not found");
 
 const DEFAULT_MANIFEST_ID =
-  process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
+  process.env.DEFAULT_EARN_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxEarnLiveApp.params?.manifest_id;
 
 /** Persists across remounts (e.g. Strict Mode in dev) to avoid loader flicker when provider rehydrates. */
 let lastKnownManifest: LiveAppManifest | undefined;

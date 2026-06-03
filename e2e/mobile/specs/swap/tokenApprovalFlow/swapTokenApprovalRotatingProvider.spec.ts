@@ -1,14 +1,14 @@
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { runSwapTokenApprovalFlow } from "./swapTokenApprovalFlow";
 import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
 
 const eligibleProviders = [
-  Provider.THORCHAIN,
-  Provider.UNISWAP,
-  Provider.LIFI,
-  Provider.OKX,
-  Provider.ONE_INCH,
-  Provider.VELORA,
+  SwapProvider.THORCHAIN,
+  SwapProvider.UNISWAP,
+  SwapProvider.LIFI,
+  SwapProvider.OKX,
+  SwapProvider.ONE_INCH,
+  SwapProvider.VELORA,
 ];
 const provider = pickRotatingProvider(eligibleProviders);
 

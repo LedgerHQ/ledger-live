@@ -1,4 +1,5 @@
 import type { TransferInstructionType } from "@ledgerhq/live-common/families/canton/react";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import type {
   GroupedProposals,
@@ -22,6 +23,7 @@ const startOfDay = (date: Date): Date => {
 export const processTransferProposals = (
   proposals: RawTransferProposal[],
   accountXpub: string,
+  getUnit: (instrumentId: string) => Unit,
 ): { incoming: ProcessedProposal[]; outgoing: ProcessedProposal[] } => {
   const currentTime = Date.now();
   const incoming: ProcessedProposal[] = [];
@@ -42,6 +44,7 @@ export const processTransferProposals = (
       receiver: proposal.receiver,
       amount: new BigNumber(proposal.amount),
       instrumentId: proposal.instrument_id,
+      unit: getUnit(proposal.instrument_id),
       memo: proposal.memo ?? "",
       expiresAtMicros: proposal.expires_at_micros,
       isExpired,

@@ -14,7 +14,7 @@ export type { FormattedNumber, FormattedQuoteValues };
  *   Used as the key into {@link FormatQuoteInput.spotPrices}.
  * - `decimals` is the display magnitude (e.g. ETH → 18, USDC → 6). The
  *   formatter caps the rendered decimals at `min(DEFAULT_MAX_DECIMALS, decimals)`
- *   to match the swap-live-app app-config default.
+ *   to keep crypto amounts readable.
  * - `ticker` is appended as a non-breaking suffix (e.g. "1.23 ETH").
  */
 export type CurrencyMeta = {

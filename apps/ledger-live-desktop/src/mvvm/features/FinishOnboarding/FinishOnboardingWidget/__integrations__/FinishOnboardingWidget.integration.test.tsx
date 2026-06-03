@@ -87,10 +87,6 @@ function renderDiscoverWalletPostOnboarding() {
           analyticsOptIn: {
             enabled: false,
           },
-          lwdWallet40: {
-            enabled: true,
-            params: { finishOnboardingWidget: true },
-          },
           lwdProductTour: {
             enabled: true,
           },

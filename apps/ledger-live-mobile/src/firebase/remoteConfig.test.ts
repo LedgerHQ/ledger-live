@@ -37,33 +37,71 @@ beforeEach(() => {
 });
 
 describe("fetchRemoteFlags", () => {
-  it("filters out non-feature keys, strips feature_ prefix, and camelCases", async () => {
+  it("maps known Firebase keys to FeatureIds, drops unknown keys", async () => {
     mockGetAll.mockReturnValue({
-      feature_mock_feature: value(JSON.stringify({ enabled: true })),
-      feature_some_other_flag: value(JSON.stringify({ enabled: false, params: { x: 1 } })),
+      feature_counter_value: value(JSON.stringify({ enabled: true })),
+      feature_lwm_wallet_40: value(JSON.stringify({ enabled: false, params: { mainNav: true } })),
       config_unrelated: value("\"ignored\""),
       stranger_key: value("\"ignored\""),
+      feature_unknown_flag: value("\"ignored\""),
     });
 
     const { fetchRemoteFlags } = await loadModule();
     const result = await fetchRemoteFlags();
 
     expect(result).toEqual({
-      mockFeature: { enabled: true },
-      someOtherFlag: { enabled: false, params: { x: 1 } },
+      counterValue: { enabled: true },
+      lwmWallet40: { enabled: false, params: { mainNav: true } },
     });
   });
 
-  it("silently drops keys whose value is not valid JSON", async () => {
+  it("resolves Firebase keys whose snake_case ↔ camelCase round-trip is lossy", async () => {
+    // `lodash.camelCase(lodash.snakeCase(id))` is not an identity for FeatureIds that
+    // contain digits or ≥2 consecutive uppercase letters. These four flags fail the
+    // round-trip and were silently dropped by the previous camelCase-based decoder.
     mockGetAll.mockReturnValue({
-      feature_good: value(JSON.stringify({ enabled: true })),
-      feature_bad: value("not json"),
+      feature_llm_account_list_ui: value(JSON.stringify({ enabled: true })),
+      feature_llm_reborn_lp: value(JSON.stringify({ enabled: true })),
+      feature_web_3_hub: value(JSON.stringify({ enabled: true })),
+      feature_ptx_swap_receive_trc_20_without_trx: value(JSON.stringify({ enabled: true })),
     });
 
     const { fetchRemoteFlags } = await loadModule();
     const result = await fetchRemoteFlags();
 
-    expect(result).toEqual({ good: { enabled: true } });
+    expect(result).toEqual({
+      llmAccountListUI: { enabled: true },
+      llmRebornLP: { enabled: true },
+      web3hub: { enabled: true },
+      ptxSwapReceiveTRC20WithoutTrx: { enabled: true },
+    });
+  });
+
+  it("matches Firebase keys case-insensitively", async () => {
+    mockGetAll.mockReturnValue({
+      Feature_Counter_Value: value(JSON.stringify({ enabled: true })),
+      FEATURE_LWM_WALLET_40: value(JSON.stringify({ enabled: true })),
+    });
+
+    const { fetchRemoteFlags } = await loadModule();
+    const result = await fetchRemoteFlags();
+
+    expect(result).toEqual({
+      counterValue: { enabled: true },
+      lwmWallet40: { enabled: true },
+    });
+  });
+
+  it("silently drops keys whose value is not valid JSON", async () => {
+    mockGetAll.mockReturnValue({
+      feature_counter_value: value(JSON.stringify({ enabled: true })),
+      feature_lwm_wallet_40: value("not json"),
+    });
+
+    const { fetchRemoteFlags } = await loadModule();
+    const result = await fetchRemoteFlags();
+
+    expect(result).toEqual({ counterValue: { enabled: true } });
   });
 
   it("propagates the fetchAndActivate failure (middleware swallows it)", async () => {
@@ -110,7 +148,9 @@ describe("fetchRemoteFlags", () => {
 
 describe("subscribeToRemoteFlags", () => {
   it("notifies every subscriber after a successful fetch", async () => {
-    mockGetAll.mockReturnValue({ feature_mock_feature: value(JSON.stringify({ enabled: true })) });
+    mockGetAll.mockReturnValue({
+      feature_counter_value: value(JSON.stringify({ enabled: true })),
+    });
     const { fetchRemoteFlags, subscribeToRemoteFlags } = await loadModule();
 
     const a = jest.fn();

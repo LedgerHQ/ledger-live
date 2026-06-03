@@ -23,15 +23,15 @@ export const useCurrencyData = ({ id, counterCurrency }: MarketCurrencyRequestPa
     },
   );
 
-export const useAssetChartData = ({
-  id,
-  counterCurrency,
-  range,
-}: MarketAssetChartDataRequestParams) =>
+export const useAssetChartData = (
+  { id, counterCurrency, range }: MarketAssetChartDataRequestParams,
+  options?: { skip?: boolean },
+) =>
   useGetAssetChartDataQuery(
     { id, counterCurrency, range },
     {
       pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+      skip: options?.skip,
     },
   );
 

@@ -1,4 +1,4 @@
-import type { Features } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import {
   parseLastSeenMs,
   isOperationUnread,

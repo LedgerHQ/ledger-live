@@ -1,77 +1,486 @@
-import { assert } from "console";
 import { InvalidTransactionError } from "@ledgerhq/errors";
+import network from "@ledgerhq/live-network";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import { HttpResponse, http } from "msw";
-import { setupServer, SetupServerApi } from "msw/node";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
-import { getBlock as getBlockLogic, getBlockInfo } from "../logic/getBlock";
-import { Transaction } from "../types";
-import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
+import { TronTransactionExpired } from "../types/errors";
 import {
+  broadcastHexTron,
+  broadcastTron,
+  claimRewardTronTransaction,
+  craftStandardTransaction,
+  craftTrc20Transaction,
   createTronTransaction,
   defaultFetchParams,
+  fetchTronAccount,
   fetchTronAccountTxs,
+  fetchTronAccountTxsPage,
+  fetchTronContract,
+  freezeTronTransaction,
+  getAccountName,
   getBlock,
   getBlockWithTransactions,
+  getChainParameters,
+  getContractUserEnergyRatioConsumption,
+  getDelegatedResource,
+  getLastBlock,
+  getNextVotingDate,
   getTransactionInfoByBlockNum,
+  getTronAccountNetwork,
+  getTronSuperRepresentativeData,
+  getTronSuperRepresentatives,
+  getUnwithdrawnReward,
+  hydrateSuperRepresentatives,
+  legacyUnfreezeTronTransaction,
+  post,
+  triggerConstantContract,
+  unDelegateResourceTransaction,
+  unfreezeTronTransaction,
+  validateAddress,
+  voteTronSuperRepresentatives,
+  withdrawExpireUnfreezeTronTransaction,
 } from ".";
 
-const TRON_BASE_URL_TEST = "https://httpbin.org";
+jest.mock("@ledgerhq/live-network/network");
+jest.mock("@ledgerhq/logs");
 
-const defaultGetTransactionsH = http.get(
-  `${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions`,
-  () => HttpResponse.json(TRANSACTION_FIXTURE),
-);
-
-const defaultGetTrc20TransactionsH = http.get(
-  `${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`,
-  () => HttpResponse.json(TRC20_FIXTURE),
-);
-
-const defaultGetTxInfo = http.get(
-  `${TRON_BASE_URL_TEST}/wallet/gettransactioninfobyid`,
-  ({ request }) => {
-    const url = new URL(request.url);
-    const value = url.searchParams.get("value") ?? "UNKNOWN";
-    return HttpResponse.json(TRANSACTION_DETAIL_FIXTURE(value));
-  },
-);
-
-function doBeforeAll(server: SetupServerApi): () => void {
-  return () => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      explorer: {
-        url: TRON_BASE_URL_TEST,
-      },
-    }));
-
-    server.listen();
-  };
-}
-
-function doBeforeEach(server: SetupServerApi): () => void {
-  return () => server.resetHandlers();
-}
-
-function doAfterAll(server: SetupServerApi): () => void {
-  return () => server.close();
-}
-
-function buildTriggerSmartContractFixture(txId: string, contractRet: "REVERT" | "SUCCESS") {
+jest.mock("tronweb", () => {
+  const extendExpiration = jest.fn((tx, extension: number) => ({
+    ...tx,
+    raw_data: { ...tx.raw_data, expiration: tx.raw_data.expiration + extension * 1000 },
+  }));
   return {
-    ret: [{ contractRet, fee: 0 }],
+    TronWeb: jest.fn().mockImplementation(() => ({
+      transactionBuilder: { extendExpiration },
+    })),
+    providers: { HttpProvider: jest.fn() },
+    __extendExpiration: extendExpiration,
+  };
+});
+
+const mockedNetwork = network as jest.MockedFunction<typeof network>;
+
+const TRON_BASE_URL = "https://tron-test.example.com";
+
+const senderBase58 = "TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH";
+const recipientBase58 = "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj";
+const senderHex = "4105cc125604448afeb6867eb688efb7e80411d57a";
+const recipientHex = "419b3281a60ab7a44f351ef2896c653f134972ad22";
+
+function mockResponse<T>(data: T) {
+  return { data, status: 200 } as never;
+}
+
+beforeAll(() => {
+  coinConfig.setCoinConfig(() => ({
+    status: { type: "active" },
+    explorer: { url: TRON_BASE_URL },
+  }));
+});
+
+beforeEach(() => {
+  mockedNetwork.mockReset();
+});
+
+describe("post / fetch error handling", () => {
+  it("throws when the response body contains a key 'Error'", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "boom" } }));
+    await expect(post("/wallet/anything", {})).rejects.toThrow();
+  });
+
+  it("throws using error.toString() when stringified Error is empty", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: "raw-string" }));
+    await expect(post("/wallet/anything", {})).rejects.toThrow("raw-string");
+  });
+
+  it("propagates GET errors from fetch", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
+    await expect(fetchTronAccount(senderBase58)).resolves.toEqual([]);
+  });
+});
+
+describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
+  it("freezeTronTransaction posts to freezebalancev2", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await freezeTronTransaction(
+      { freshAddress: senderBase58 } as Account,
+      { amount: new BigNumber(1000), resource: "BANDWIDTH" } as never,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "POST",
+        url: expect.stringContaining("/wallet/freezebalancev2"),
+        data: expect.objectContaining({ frozen_balance: 1000, resource: "BANDWIDTH" }),
+      }),
+    );
+  });
+
+  it("unfreezeTronTransaction posts to unfreezebalancev2", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await unfreezeTronTransaction(
+      { freshAddress: senderBase58 } as Account,
+      { amount: new BigNumber(500), resource: "ENERGY" } as never,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/wallet/unfreezebalancev2"),
+        data: expect.objectContaining({ unfreeze_balance: 500, resource: "ENERGY" }),
+      }),
+    );
+  });
+
+  it("withdrawExpireUnfreezeTronTransaction posts to withdrawexpireunfreeze", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await withdrawExpireUnfreezeTronTransaction(
+      { freshAddress: senderBase58 } as Account,
+      {} as never,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ url: expect.stringContaining("/wallet/withdrawexpireunfreeze") }),
+    );
+  });
+
+  it("unDelegateResourceTransaction posts to undelegateresource", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await unDelegateResourceTransaction(
+      { freshAddress: senderBase58 } as Account,
+      { amount: new BigNumber(1000), resource: "BANDWIDTH", recipient: recipientBase58 } as never,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ url: expect.stringContaining("/wallet/undelegateresource") }),
+    );
+  });
+
+  it("legacyUnfreezeTronTransaction with recipient", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await legacyUnfreezeTronTransaction(
+      { freshAddress: senderBase58 } as Account,
+      { resource: "ENERGY", recipient: recipientBase58 } as never,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ receiver_address: expect.any(String) }),
+      }),
+    );
+  });
+
+  it("legacyUnfreezeTronTransaction without recipient", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await legacyUnfreezeTronTransaction(
+      { freshAddress: senderBase58 } as Account,
+      { resource: "ENERGY", recipient: "" } as never,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ receiver_address: undefined }),
+      }),
+    );
+  });
+});
+
+describe("getDelegatedResource", () => {
+  it("returns BANDWIDTH amount when resource=BANDWIDTH", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        delegatedResource: [
+          { frozen_balance_for_bandwidth: 100, frozen_balance_for_energy: 0 },
+          { frozen_balance_for_bandwidth: 50, frozen_balance_for_energy: 200 },
+        ],
+      }),
+    );
+    const result = await getDelegatedResource(
+      { freshAddress: senderBase58 } as Account,
+      { recipient: recipientBase58 } as never,
+      "BANDWIDTH",
+    );
+    expect(result.toNumber()).toBe(150);
+  });
+
+  it("returns ENERGY amount when resource=ENERGY", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        delegatedResource: [
+          { frozen_balance_for_bandwidth: 100, frozen_balance_for_energy: 50 },
+          { frozen_balance_for_bandwidth: 0, frozen_balance_for_energy: 75 },
+        ],
+      }),
+    );
+    const result = await getDelegatedResource(
+      { freshAddress: senderBase58 } as Account,
+      { recipient: recipientBase58 } as never,
+      "ENERGY",
+    );
+    expect(result.toNumber()).toBe(125);
+  });
+
+  it("returns 0 when no delegatedResource is present", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    const result = await getDelegatedResource(
+      { freshAddress: senderBase58 } as Account,
+      { recipient: recipientBase58 } as never,
+      "BANDWIDTH",
+    );
+    expect(result.toNumber()).toBe(0);
+  });
+});
+
+describe("craftTrc20Transaction", () => {
+  it("uses custom fees when provided", async () => {
+    const expirationInFuture = Date.now() + 10 * 60 * 1000;
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ transaction: { raw_data: { expiration: expirationInFuture } } }),
+    );
+    await craftTrc20Transaction(
+      "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+      recipientHex,
+      senderHex,
+      new BigNumber(100),
+      99_999,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ fee_limit: 99_999 }),
+      }),
+    );
+  });
+
+  it("uses DEFAULT_TRC20_FEES_LIMIT when no custom fees are provided", async () => {
+    const expirationInFuture = Date.now() + 10 * 60 * 1000;
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ transaction: { raw_data: { expiration: expirationInFuture } } }),
+    );
+    await craftTrc20Transaction(
+      "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+      recipientHex,
+      senderHex,
+      new BigNumber(100),
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ fee_limit: 50_000_000 }),
+      }),
+    );
+  });
+});
+
+describe("craftStandardTransaction", () => {
+  it("uses /wallet/transferasset when isTransferAsset is true (and includes hex memo)", async () => {
+    const expirationInFuture = Date.now() + 10 * 60 * 1000;
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: { expiration: expirationInFuture } }));
+    await craftStandardTransaction(
+      "1002000",
+      recipientHex,
+      senderHex,
+      new BigNumber(100),
+      true,
+      "memo",
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/wallet/transferasset"),
+        data: expect.objectContaining({
+          asset_name: Buffer.from("1002000").toString("hex"),
+          extra_data: Buffer.from("memo").toString("hex"),
+        }),
+      }),
+    );
+  });
+
+  it("uses /wallet/createtransaction when isTransferAsset is false", async () => {
+    const expirationInFuture = Date.now() + 10 * 60 * 1000;
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: { expiration: expirationInFuture } }));
+    await craftStandardTransaction(undefined, recipientHex, senderHex, new BigNumber(50), false);
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ url: expect.stringContaining("/wallet/createtransaction") }),
+    );
+  });
+});
+
+describe("createTronTransaction", () => {
+  it.each([
+    {
+      name: "native",
+      subAccount: null,
+      expectedUrl: "/wallet/createtransaction",
+    },
+    {
+      name: "trc10",
+      subAccount: { type: "TokenAccount", token: { id: "tron/trc10/1000001" } } as TokenAccount,
+      expectedUrl: "/wallet/transferasset",
+    },
+    {
+      name: "trc20",
+      subAccount: {
+        type: "TokenAccount",
+        token: {
+          id: "tron/trc20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        },
+      } as unknown as TokenAccount,
+      expectedUrl: "/wallet/triggersmartcontract",
+    },
+  ])("dispatches a $name transaction to the right endpoint", async ({ subAccount, expectedUrl }) => {
+    const expirationInFuture = Date.now() + 10 * 60 * 1000;
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse(
+        expectedUrl.includes("triggersmartcontract")
+          ? { transaction: { raw_data: { expiration: expirationInFuture } } }
+          : { raw_data: { expiration: expirationInFuture } },
+      ),
+    );
+    await createTronTransaction(
+      { freshAddress: senderBase58 } as Account,
+      { recipient: recipientBase58, amount: new BigNumber(1) } as never,
+      subAccount,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ url: expect.stringContaining(expectedUrl) }),
+    );
+  });
+
+  it("throws InvalidTransactionError if the node returns an expired transaction", async () => {
+    const pastExpiration = Date.now() - 60 * 60 * 1000;
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: { expiration: pastExpiration } }));
+    await expect(
+      createTronTransaction(
+        { freshAddress: senderBase58 } as Account,
+        { recipient: recipientBase58, amount: new BigNumber(1) } as never,
+        null,
+      ),
+    ).rejects.toThrow(InvalidTransactionError);
+  });
+});
+
+describe("broadcastTron", () => {
+  it("returns the txid on success", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ result: true, txid: "abc" }));
+    await expect(
+      broadcastTron({ signature: ["sig"] } as never),
+    ).resolves.toBe("abc");
+  });
+
+  it("throws TronTransactionExpired when code is TRANSACTION_EXPIRATION_ERROR", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        result: false,
+        txid: "abc",
+        code: "TRANSACTION_EXPIRATION_ERROR",
+        message: "expired",
+      }),
+    );
+    await expect(broadcastTron({ signature: ["sig"] } as never)).rejects.toBeInstanceOf(
+      TronTransactionExpired,
+    );
+  });
+
+  it("throws a generic error when result is not true and code is something else", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ result: false, txid: "abc", code: "OTHER", message: "msg" }),
+    );
+    await expect(broadcastTron({ signature: ["sig"] } as never)).rejects.toThrow("OTHER: msg");
+  });
+});
+
+describe("broadcastHexTron", () => {
+  it("returns the txid on success", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ result: true, txid: "hex-tx" }));
+    await expect(broadcastHexTron("raw")).resolves.toBe("hex-tx");
+  });
+
+  it("throws when broadcast fails", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ result: false, txid: "hex-tx", code: "BAD" }),
+    );
+    await expect(broadcastHexTron("raw")).rejects.toThrow(/BAD/);
+  });
+});
+
+describe("fetchTronAccount", () => {
+  it("returns parsed data on success", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [{ address: senderHex }] }));
+    const result = await fetchTronAccount(senderBase58);
+    expect(result).toEqual([{ address: senderHex }]);
+  });
+
+  it("returns [] on network error", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("network"));
+    await expect(fetchTronAccount(senderBase58)).resolves.toEqual([]);
+  });
+});
+
+describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInfoByBlockNum", () => {
+  it("getLastBlock returns a block including its time", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        blockID: "hash",
+        block_header: { raw_data: { number: 10, timestamp: 1739540559000 } },
+      }),
+    );
+    const block = await getLastBlock();
+    expect(block).toEqual({ height: 10, hash: "hash", time: new Date(1739540559000) });
+  });
+
+  it("getLastBlock returns a block without time when timestamp is missing", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ blockID: "h2", block_header: { raw_data: { number: 11 } } }),
+    );
+    const block = await getLastBlock();
+    expect(block.time).toBeUndefined();
+  });
+
+  it("getBlock sends POST with detail:false", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        blockID: "h",
+        block_header: { raw_data: { number: 42, timestamp: 1000 } },
+      }),
+    );
+    const block = await getBlock(42);
+    expect(block).toEqual({ height: 42, hash: "h", time: new Date(1000) });
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "POST",
+        url: expect.stringContaining("/wallet/getblock"),
+        data: { id_or_num: "42", detail: false },
+      }),
+    );
+  });
+
+  it("getBlockWithTransactions sends POST with detail:true", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        blockID: "h",
+        block_header: { raw_data: { number: 42, timestamp: 1000 } },
+        transactions: [],
+      }),
+    );
+    await getBlockWithTransactions(42);
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { id_or_num: "42", detail: true } }),
+    );
+  });
+
+  it("getTransactionInfoByBlockNum forwards num in body", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse([{ id: "tx1" }]));
+    const result = await getTransactionInfoByBlockNum(5);
+    expect(result).toEqual([{ id: "tx1" }]);
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { num: 5 } }),
+    );
+  });
+});
+
+describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
+  const validNativeTx = {
+    ret: [{ contractRet: "SUCCESS", fee: 0 }],
     signature: ["sig"],
-    txID: txId,
+    txID: "tx-native",
     net_usage: 0,
     raw_data_hex: "",
     net_fee: 0,
     energy_usage: 0,
     block_timestamp: 1717419792000,
-    blockNumber: 80285488,
+    blockNumber: 100,
     energy_fee: 0,
     energy_usage_total: 0,
     raw_data: {
@@ -79,27 +488,45 @@ function buildTriggerSmartContractFixture(txId: string, contractRet: "REVERT" | 
         {
           parameter: {
             value: {
-              owner_address: "4105cc125604448afeb6867eb688efb7e80411d57a",
-              contract_address: "41a614f803b6fd780986a42c78ec9c7f77e6ded13c",
-              data: "",
+              owner_address: senderHex,
+              to_address: recipientHex,
+              amount: 1000,
             },
+            type_url: "type.googleapis.com/protocol.TransferContract",
+          },
+          type: "TransferContract",
+        },
+      ],
+      ref_block_bytes: "00",
+      ref_block_hash: "00",
+      expiration: 0,
+      timestamp: 0,
+    },
+    internal_transactions: [],
+  };
+
+  const successfulSmartContract = {
+    ...validNativeTx,
+    txID: "tx-smart-success",
+    ret: [{ contractRet: "SUCCESS", fee: 0 }],
+    raw_data: {
+      ...validNativeTx.raw_data,
+      contract: [
+        {
+          parameter: {
+            value: { owner_address: senderHex, contract_address: recipientHex, data: "" },
             type_url: "type.googleapis.com/protocol.TriggerSmartContract",
           },
           type: "TriggerSmartContract",
         },
       ],
-      ref_block_bytes: "00",
-      ref_block_hash: "00",
-      expiration: 1717419846000,
-      timestamp: 1717419788444,
     },
-    internal_transactions: [],
   };
-}
 
-function buildTrc20TransferFixture(txId: string) {
-  return {
-    transaction_id: txId,
+  const malformedTx = { ...validNativeTx, txID: "malformed", tx_id: "malformed" };
+
+  const validTrc20Tx = {
+    transaction_id: "tx-trc20",
     token_info: {
       symbol: "USDT",
       address: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
@@ -107,599 +534,481 @@ function buildTrc20TransferFixture(txId: string) {
       name: "Tether USD",
     },
     block_timestamp: 1717419792000,
-    from: "TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH",
-    to: "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
+    from: senderBase58,
+    to: recipientBase58,
     detail: {
       ret: [{ contractRet: "SUCCESS", fee: 0 }],
-      signature: ["sig"],
-      txID: txId,
-      net_usage: 345,
-      raw_data_hex: "",
-      net_fee: 0,
-      energy_usage: 0,
-      blockNumber: 80285488,
-      block_timestamp: 1717419792000,
-      energy_fee: 0,
-      energy_usage_total: 0,
+      blockNumber: 200,
       raw_data: {
         contract: [
           {
             parameter: {
-              value: {
-                owner_address: "4105cc125604448afeb6867eb688efb7e80411d57a",
-                contract_address: "41a614f803b6fd780986a42c78ec9c7f77e6ded13c",
-                data: "",
-              },
+              value: { owner_address: senderHex, contract_address: recipientHex },
               type_url: "type.googleapis.com/protocol.TriggerSmartContract",
             },
             type: "TriggerSmartContract",
           },
         ],
-        ref_block_bytes: "00",
-        ref_block_hash: "00",
-        expiration: 1717419846000,
-        timestamp: 1717419788444,
       },
-      internal_transactions: [],
     },
     type: "Transfer",
-    value: "1000000",
+    value: "1000",
   };
-}
 
-describe("fetchTronAccountTxs", () => {
-  const handlers = [defaultGetTransactionsH, defaultGetTrc20TransactionsH, defaultGetTxInfo];
-
-  const mockServer = setupServer(...handlers);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(doBeforeEach(mockServer));
-  afterAll(doAfterAll(mockServer));
-
-  it("convert correctly operations from the blockchain", async () => {
-    // WHEN
-    const results = await fetchTronAccountTxs(
-      "ADDRESS",
-      txs => txs.length < 100,
-      {},
-      defaultFetchParams,
-    );
-
-    // THEN
-    expect(results).toContainEqual(
-      expect.objectContaining({
-        blockHeight: 62258698,
-        from: "TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH",
-        to: "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
-      }),
-    );
-  }, 10_000);
-});
-
-describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
-  const tx1Hash = "1237889e91c0ebbe389436c341865df09921f8f0c029d9286102372cbaadc585";
-  const tx2Hash = "154164dd04482ae78f930033d0ad95730b8b19fde171a33c3920d18c228426ab";
-  let counterGetTrc20 = 0;
-  const invalidTrc20Handler = http.get(
-    `${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`,
-    () => {
-      const ret: any = JSON.parse(JSON.stringify(TRC20_FIXTURE));
-      switch (counterGetTrc20) {
-        case 0: {
-          const tx1 = ret.data[0];
-          assert(tx1.transaction_id === tx1Hash);
-          ret.data[0].detail.ret = undefined;
-          break;
-        }
-        case 1: {
-          const tx2 = ret.data[1];
-          assert(tx2.transaction_id === tx2Hash);
-          ret.data[1].detail.ret = undefined;
-          break;
-        }
-        default:
-          // the 3rd call should not happen
-          // because merging the 1st and 2nd results is enough to have a full set, perfectly well formed
-          throw "results should be merged after 2 calls";
-      }
-      counterGetTrc20++;
-      return HttpResponse.json(ret);
-    },
-  );
-  const handlers = [defaultGetTransactionsH, invalidTrc20Handler, defaultGetTxInfo];
-  const mockServer = setupServer(...handlers);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(doBeforeEach(mockServer));
-  afterAll(doAfterAll(mockServer));
-
-  it("retry several times until result is correct", async () => {
-    // WHEN
-    const results = await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
-
-    // THEN
-    expect(results).toContainEqual(expect.objectContaining({ txID: tx1Hash }));
-    expect(results).toContainEqual(expect.objectContaining({ txID: tx2Hash }));
-  }, 10_000);
-});
-
-describe("Failed TRC20 txs", () => {
-  const txId = "f8a52daf9a247f73432afa292b8063d5c5429c8fdb0f8c66f5e8b15b3767e14b";
-  const mockServer = setupServer(defaultGetTxInfo);
-
-  const getTrc20 = (trc20Txs: any[]) =>
-    http.get(`${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`, () =>
-      HttpResponse.json({
-        data: trc20Txs,
-        success: true,
-        meta: { at: 0, page_size: 0 },
-      }),
-    );
-
-  const getEmptyTrc20 = getTrc20([]);
-
-  const getNativeTx = (nativeTxs: any[]) =>
-    http.get(`${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions`, () =>
-      HttpResponse.json({
-        data: nativeTxs,
-        success: true,
-        meta: { at: 1717419792000, page_size: 1 },
-      }),
-    );
-
-  const fetchTxs = (address: string) =>
-    fetchTronAccountTxs(address, () => true, {}, defaultFetchParams);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(doBeforeEach(mockServer));
-  afterAll(doAfterAll(mockServer));
-
-  // this scenario is to make sure that failed TRC20 tx are returned
-  it("returns the failed TriggerSmartContract tx when tx not in TRC20 set", async () => {
-    const failedTriggerSmartContractFixture = buildTriggerSmartContractFixture(txId, "REVERT");
-    mockServer.use(getNativeTx([failedTriggerSmartContractFixture]), getEmptyTrc20);
-
-    const results = await fetchTxs("ADDRESS");
-
-    expect(results).toEqual([
-      expect.objectContaining({
-        txID: txId,
-        hasFailed: true,
-        type: "TriggerSmartContract",
-      }),
-    ]);
-  }, 10_000);
-
-  it("excludes successful TriggerSmartContract tx when tx not in TRC20 set", async () => {
-    const successfulTriggerSmartContractFixture = buildTriggerSmartContractFixture(txId, "SUCCESS");
-    mockServer.use(getNativeTx([successfulTriggerSmartContractFixture]), getEmptyTrc20);
-
-    const results = await fetchTxs("ADDRESS");
-
-    expect(results).not.toContainEqual(expect.objectContaining({ txID: txId }));
-  }, 10_000);
-
-  it("returns a single successful TriggerSmartContract from TRC20 (deduped with native) when tx is in TRC20 set", async () => {
-    const successfulTriggerSmartContractFixture = buildTriggerSmartContractFixture(txId, "SUCCESS");
-    mockServer.use(
-      getNativeTx([successfulTriggerSmartContractFixture]),
-      getTrc20([buildTrc20TransferFixture(txId)]),
-    );
-
-    const results = await fetchTxs("ADDRESS");
-    expect(results).toEqual([
-      expect.objectContaining({
-        txID: txId,
-        hasFailed: false,
-        type: "TriggerSmartContract",
-        tokenType: "trc20",
-      }),
-    ]);
-  }, 10_000);
-});
-
-describe("Transactions with internal_transactions", () => {
-  const txId = "2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435";
-  const mockServer = setupServer(defaultGetTxInfo);
-
-  const getEmptyTrc20 = http.get(`${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`, () =>
-    HttpResponse.json({
-      data: [],
-      success: true,
-      meta: { at: 0, page_size: 0 },
-    }),
-  );
-
-  const getNativeTx = (nativeTxs: any[]) =>
-    http.get(`${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions`, () =>
-      HttpResponse.json({
-        data: nativeTxs,
-        success: true,
-        meta: { at: 1717419792000, page_size: 1 },
-      }),
-    );
-
-  const fetchTxs = (address: string) =>
-    fetchTronAccountTxs(address, () => true, {}, defaultFetchParams);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(doBeforeEach(mockServer));
-  afterAll(doAfterAll(mockServer));
-
-  function buildTxWithInternalTransactions(txId: string, fee: number) {
-    return {
-      ret: [{ contractRet: "FAILED", fee }],
-      signature: ["sig"],
-      txID: txId,
-      net_usage: 0,
-      raw_data_hex: "",
-      net_fee: 0,
-      energy_usage: 0,
-      block_timestamp: 1717419792000,
-      blockNumber: 73343824,
-      energy_fee: 0,
-      energy_usage_total: 0,
-      raw_data: {
-        contract: [
-          {
-            parameter: {
-              value: {
-                owner_address: "41a5c7c47bc8a62a90aece66734d2bacae16e1dde5",
-                contract_address: "41cebde71077b830b958c8da17bcddeeb85d0bcf25",
-                data: "",
-              },
-              type_url: "type.googleapis.com/protocol.TriggerSmartContract",
-            },
-            type: "TriggerSmartContract",
-          },
-        ],
-        ref_block_bytes: "00",
-        ref_block_hash: "00",
-        expiration: 1717419846000,
-        timestamp: 1717419788444,
-      },
-      internal_transactions: [
-        {
-          internal_tx_id: "fbbd70a9c997cd7f60325dd5c967e94e106d6d2ee607560e5a98383e61cba48e",
-          data: { note: "63616c6c", rejected: true },
-          to_address: "41cebde71077b830b958c8da17bcddeeb85d0bcf25",
-          from_address: "41cebde71077b830b958c8da17bcddeeb85d0bcf25",
-        },
-      ],
+  it("fetchTronAccountTxsPage keeps a failed TriggerSmartContract native tx when not in TRC20 set", async () => {
+    const failedSmart = {
+      ...successfulSmartContract,
+      txID: "tx-smart-failed",
+      ret: [{ contractRet: "REVERT", fee: 0 }],
     };
-  }
+    mockedNetwork
+      .mockResolvedValueOnce(mockResponse({ data: [failedSmart], meta: {} }))
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
 
-  it("includes transactions with internal_transactions to track fees", async () => {
-    const txWithInternalTxs = buildTxWithInternalTransactions(txId, 2341260);
-    mockServer.use(getNativeTx([txWithInternalTxs]), getEmptyTrc20);
+    const result = await fetchTronAccountTxsPage(senderBase58, {
+      limit: 100,
+      minTimestamp: 0,
+      order: "desc",
+    });
 
-    const results = await fetchTxs("ADDRESS");
+    expect(result.nativeTxs.txs.map(t => t.txID)).toEqual(["tx-smart-failed"]);
+  });
 
-    expect(results).toContainEqual(
+  it("fetchTronAccountTxsPage falls back to [] when data field is missing on native page", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(mockResponse({ meta: {} }))
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
+    const result = await fetchTronAccountTxsPage(senderBase58, {
+      limit: 100,
+      minTimestamp: 0,
+      order: "desc",
+    });
+    expect(result.nativeTxs.txs).toEqual([]);
+  });
+
+  it("fetchTronAccountTxsPage returns native + trc20 results, dedupes successful smart contract", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        mockResponse({ data: [validNativeTx, malformedTx, successfulSmartContract], meta: {} }),
+      )
+      .mockResolvedValueOnce(
+        mockResponse({
+          data: [{ ...validTrc20Tx, transaction_id: "tx-smart-success" }],
+          meta: { links: { next: "https://api.trongrid.io/next" } },
+        }),
+      );
+
+    const result = await fetchTronAccountTxsPage(senderBase58, {
+      limit: 100,
+      minTimestamp: 0,
+      order: "desc",
+    });
+
+    expect(result.nativeTxs.txs.map(t => t.txID)).toEqual(["tx-native"]);
+    expect(result.trc20Txs.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);
+    expect(result.trc20Txs.hasNextPage).toBe(true);
+  });
+
+  it("fetchTronAccountTxsPage forwards maxTimestamp param when provided", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
+    await fetchTronAccountTxsPage(senderBase58, {
+      limit: 10,
+      minTimestamp: 0,
+      order: "asc",
+      maxTimestamp: 999,
+    });
+    expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
-        txID: txId,
-        hasFailed: true,
-        type: "TriggerSmartContract",
-        fee: expect.any(Object),
+        url: expect.stringMatching(/max_timestamp=999/),
       }),
     );
-    expect(results.find(tx => tx.txID === txId)?.fee?.toNumber()).toBe(2341260);
-  }, 10_000);
-});
+  });
 
-describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries it throws an exception", () => {
-  const tx1Hash = "1237889e91c0ebbe389436c341865df09921f8f0c029d9286102372cbaadc585";
-  const alwaysInvalidTrc20Handler = http.get(
-    `${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`,
-    () => {
-      const ret: any = JSON.parse(JSON.stringify(TRC20_FIXTURE));
-      const tx1 = ret.data[0];
-      assert(tx1.transaction_id === tx1Hash);
-      ret.data[0].detail.ret = undefined;
-      return HttpResponse.json(ret);
-    },
-  );
+  it("fetchTronAccountTxs follows native pagination via meta.links.next", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        mockResponse({
+          data: [validNativeTx],
+          meta: { links: { next: `${TRON_BASE_URL}/v1/accounts/x/transactions?page=2` } },
+        }),
+      )
+      .mockResolvedValueOnce(mockResponse({ data: [validNativeTx], meta: {} }))
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
 
-  const handlers = [defaultGetTransactionsH, alwaysInvalidTrc20Handler, defaultGetTxInfo];
-  const mockServer = setupServer(...handlers);
+    const results = await fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams);
+    expect(results).toHaveLength(2);
+  });
 
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(doBeforeEach(mockServer));
-  afterAll(doAfterAll(mockServer));
+  it("fetchTronAccountTxs respects hintGlobalLimit to limit page size", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
 
-  it("after several retry, it gives up on retry", async () => {
-    await expect(
-      fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams),
-    ).rejects.toThrow(
-      "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
+    await fetchTronAccountTxs(senderBase58, () => true, { ...defaultFetchParams, hintGlobalLimit: 7 });
+
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ url: expect.stringMatching(/limit=7/) }),
     );
-  }, 10_000);
+  });
+
+  it("fetchTronAccountTxs retries when TRC20 results are invalid and merges them", async () => {
+    const trc20WithoutRet = JSON.parse(JSON.stringify(validTrc20Tx));
+    trc20WithoutRet.detail.ret = undefined;
+
+    mockedNetwork
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
+      .mockResolvedValueOnce(mockResponse({ data: [trc20WithoutRet], meta: {} }))
+      .mockResolvedValueOnce(mockResponse({ data: [validTrc20Tx], meta: {} }));
+
+    const results = await fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams);
+    expect(results.map(r => r.txID)).toContain("tx-trc20");
+  });
+
+  it("fetchTronAccountTxs gives up after several invalid TRC20 retries", async () => {
+    const trc20WithoutRet = JSON.parse(JSON.stringify(validTrc20Tx));
+    trc20WithoutRet.detail.ret = undefined;
+
+    mockedNetwork
+      .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
+      .mockResolvedValue(mockResponse({ data: [trc20WithoutRet], meta: {} }));
+
+    await expect(
+      fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams),
+    ).rejects.toThrow(/couldn't fetch trc20/);
+  });
 });
 
-describe("getBlock", () => {
-  let capturedRequest: { method: string; url: string; body: unknown } | null = null;
-
-  const getBlockHandler = http.post(
-    `${TRON_BASE_URL_TEST}/wallet/getblock`,
-    async ({ request }) => {
-      capturedRequest = {
-        method: request.method,
-        url: request.url,
-        body: await request.json(),
-      };
-      return HttpResponse.json({
-        blockID: "000000000426763400000000000000000000000000000000000000000000000",
-        block_header: {
-          raw_data: {
-            number: 69629492,
-            timestamp: 1739540559000,
-            parentHash: "00000000042676330000000000000000000000000000000000000000000000",
-          },
-        },
-      });
-    },
-  );
-
-  const mockServer = setupServer(getBlockHandler);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(() => {
-    capturedRequest = null;
-    mockServer.resetHandlers();
+describe("fetchTronContract / getContractUserEnergyRatioConsumption", () => {
+  it("returns undefined when contract response is empty", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await expect(fetchTronContract(senderBase58)).resolves.toBeUndefined();
   });
-  afterAll(doAfterAll(mockServer));
 
-  it("sends POST request with detail: false", async () => {
-    const result = await getBlock(69629492);
-
-    expect(capturedRequest).not.toBeNull();
-    expect(capturedRequest!.method).toBe("POST");
-    expect(capturedRequest!.url).toContain("/wallet/getblock");
-    expect(capturedRequest!.body).toEqual({
-      id_or_num: "69629492",
-      detail: false,
+  it("returns the contract data when non-empty", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ consume_user_resource_percent: 30 }));
+    await expect(fetchTronContract(senderBase58)).resolves.toEqual({
+      consume_user_resource_percent: 30,
     });
-    expect(result.height).toBe(69629492);
-    expect(result.hash).toBe("000000000426763400000000000000000000000000000000000000000000000");
+  });
+
+  it("returns undefined on error", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("nope"));
+    await expect(fetchTronContract(senderBase58)).resolves.toBeUndefined();
+  });
+
+  it("getContractUserEnergyRatioConsumption returns the percent when present", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ consume_user_resource_percent: 30 }));
+    await expect(getContractUserEnergyRatioConsumption(senderBase58)).resolves.toBe(30);
+  });
+
+  it("getContractUserEnergyRatioConsumption returns 0 when contract is empty", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await expect(getContractUserEnergyRatioConsumption(senderBase58)).resolves.toBe(0);
   });
 });
 
-describe("getBlockWithTransactions", () => {
-  let capturedRequest: { method: string; url: string; body: unknown } | null = null;
-
-  const getBlockHandler = http.post(
-    `${TRON_BASE_URL_TEST}/wallet/getblock`,
-    async ({ request }) => {
-      capturedRequest = {
-        method: request.method,
-        url: request.url,
-        body: await request.json(),
-      };
-      return HttpResponse.json({
-        blockID: "000000000426763400000000000000000000000000000000000000000000000",
-        block_header: {
-          raw_data: {
-            number: 69629492,
-            timestamp: 1739540559000,
-            parentHash: "00000000042676330000000000000000000000000000000000000000000000",
-          },
-        },
-        transactions: [],
-      });
-    },
-  );
-
-  const mockServer = setupServer(getBlockHandler);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(() => {
-    capturedRequest = null;
-    mockServer.resetHandlers();
+describe("getTronAccountNetwork", () => {
+  it("returns parsed network info from a fully populated response", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        freeNetUsed: 1,
+        freeNetLimit: 2,
+        NetUsed: 3,
+        NetLimit: 4,
+        EnergyUsed: 5,
+        EnergyLimit: 6,
+      }),
+    );
+    const ni = await getTronAccountNetwork(senderBase58);
+    expect(ni.freeNetUsed.toNumber()).toBe(1);
+    expect(ni.freeNetLimit.toNumber()).toBe(2);
+    expect(ni.netUsed.toNumber()).toBe(3);
+    expect(ni.netLimit.toNumber()).toBe(4);
+    expect(ni.energyUsed.toNumber()).toBe(5);
+    expect(ni.energyLimit.toNumber()).toBe(6);
   });
-  afterAll(doAfterAll(mockServer));
 
-  it("sends POST request with detail: true", async () => {
-    const result = await getBlockWithTransactions(69629492);
-
-    expect(capturedRequest).not.toBeNull();
-    expect(capturedRequest!.method).toBe("POST");
-    expect(capturedRequest!.url).toContain("/wallet/getblock");
-    expect(capturedRequest!.body).toEqual({
-      id_or_num: "69629492",
-      detail: true,
-    });
-    expect(result.block_header.raw_data.number).toBe(69629492);
-    expect(result.blockID).toBe("000000000426763400000000000000000000000000000000000000000000000");
+  it("defaults every missing field to 0", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    const ni = await getTronAccountNetwork(senderBase58);
+    expect(ni.freeNetUsed.toNumber()).toBe(0);
+    expect(ni.freeNetLimit.toNumber()).toBe(0);
+    expect(ni.netUsed.toNumber()).toBe(0);
+    expect(ni.netLimit.toNumber()).toBe(0);
+    expect(ni.energyUsed.toNumber()).toBe(0);
+    expect(ni.energyLimit.toNumber()).toBe(0);
   });
 });
 
-describe("getTransactionInfoByBlockNum", () => {
-  let capturedRequest: { method: string; url: string; body: unknown } | null = null;
-
-  const txInfoFixture = [
-    { id: "abc123", fee: 1000 },
-    { id: "def456", fee: 2000 },
-  ];
-
-  const getTxInfoHandler = http.post(
-    `${TRON_BASE_URL_TEST}/wallet/gettransactioninfobyblocknum`,
-    async ({ request }) => {
-      capturedRequest = {
-        method: request.method,
-        url: request.url,
-        body: await request.json(),
-      };
-      return HttpResponse.json(txInfoFixture);
-    },
-  );
-
-  const mockServer = setupServer(getTxInfoHandler);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(() => {
-    capturedRequest = null;
-    mockServer.resetHandlers();
+describe("validateAddress", () => {
+  it("returns true when the API confirms the address", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ result: true }));
+    await expect(validateAddress(senderBase58)).resolves.toBe(true);
   });
-  afterAll(doAfterAll(mockServer));
 
-  it("sends POST request with num in body", async () => {
-    const result = await getTransactionInfoByBlockNum(69629492);
+  it("returns false when result is missing", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await expect(validateAddress(senderBase58)).resolves.toBe(false);
+  });
 
-    expect(capturedRequest).not.toBeNull();
-    expect(capturedRequest!.method).toBe("POST");
-    expect(capturedRequest!.url).toContain("/wallet/gettransactioninfobyblocknum");
-    expect(capturedRequest!.body).toEqual({ num: 69629492 });
-    expect(result).toEqual(txInfoFixture);
+  it("returns false on error and logs the failure", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("invalid"));
+    await expect(validateAddress(senderBase58)).resolves.toBe(false);
   });
 });
 
-describe("createTronTransaction", () => {
-  const mockServer = setupServer(
-    http.post(`${TRON_BASE_URL_TEST}/wallet/createtransaction`, () =>
-      HttpResponse.json({ raw_data: { expiration: Date.now() - 3_600_000 } }),
-    ),
-    http.post(`${TRON_BASE_URL_TEST}/wallet/transferasset`, () =>
-      HttpResponse.json({ raw_data: { expiration: Date.now() - 3_600_000 } }),
-    ),
-    http.post(`${TRON_BASE_URL_TEST}/wallet/triggersmartcontract`, () =>
-      HttpResponse.json({ transaction: { raw_data: { expiration: Date.now() - 3_600_000 } } }),
-    ),
-  );
+describe("getAccountName", () => {
+  it("returns the ascii name when present", async () => {
+    const accountName = Buffer.from("MyAccount").toString("hex");
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ data: [{ address: senderHex, account_name: accountName }] }),
+    );
+    await expect(getAccountName(senderBase58)).resolves.toBe("MyAccount");
+  });
 
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(doBeforeEach(mockServer));
-  afterAll(doAfterAll(mockServer));
+  it("returns undefined when no account is returned", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [] }));
+    await expect(getAccountName(senderBase58)).resolves.toBeUndefined();
+  });
 
-  it.each([
-    ["native", null],
-    [
-      "trc10",
-      {
-        type: "TokenAccount",
-        token: { id: "tron/trc10/1000001" },
-      } as unknown as TokenAccount,
-    ],
-    [
-      "trc20",
-      {
-        type: "TokenAccount",
-        token: {
-          id: "tron/trc20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-          contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-        },
-      } as unknown as TokenAccount,
-    ],
-  ])(
-    "throws InvalidTransactionError for %s asset when the node returns an expired transaction",
-    async (_, subAccount) => {
-      await expect(
-        createTronTransaction(
-          { freshAddress: "TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH" } as Account,
-          {
-            recipient: "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
-            amount: new BigNumber(1000000),
-          } as Transaction,
-          subAccount,
-        ),
-      ).rejects.toThrow(InvalidTransactionError);
-    },
-  );
+  it("returns undefined when account has no name", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [{ address: senderHex }] }));
+    await expect(getAccountName(senderBase58)).resolves.toBeUndefined();
+  });
 });
 
-describe("getBlock API integration", () => {
-  const blockFixture = {
-    blockID: "0000000004267634abc123def456789000000000000000000000000000000000",
-    block_header: {
-      raw_data: {
-        number: 69629492,
-        timestamp: 1739540559000,
-        parentHash: "0000000004267633def456789abc123000000000000000000000000000000000",
-        txTrieRoot: "0000000000000000000000000000000000000000000000000000000000000000",
-        witness_address: "41ffffffffffffffffffffffffffffffffffffffff",
-      },
-      witness_signature: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
-    },
-    transactions: [
-      {
-        txID: "abc123def456789",
-        raw_data: {
-          contract: [
-            {
-              type: "TransferContract",
-              parameter: {
-                value: {
-                  owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
-                  to_address: "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
-                  amount: 1000000,
-                },
-              },
-            },
+describe("super representatives", () => {
+  it("fetches super representatives from /wallet/listwitnesses on cache miss", async () => {
+    await jest.isolateModulesAsync(async () => {
+      const coinConfigLocal = require("../config").default as typeof coinConfig;
+      coinConfigLocal.setCoinConfig(() => ({
+        status: { type: "active" },
+        explorer: { url: TRON_BASE_URL },
+      }));
+      const mod = require(".") as typeof import(".");
+      mockedNetwork.mockResolvedValueOnce(
+        mockResponse({
+          witnesses: [
+            { address: senderHex, voteCount: 50, isJobs: true },
+            { address: recipientHex, voteCount: 100 },
+            { address: senderHex },
           ],
-        },
-        ret: [{ contractRet: "SUCCESS", fee: 1000 }],
-      },
+        }),
+      );
+      const list = await mod.getTronSuperRepresentatives();
+      expect(list.map(w => w.voteCount)).toEqual([100, 50, 0]);
+      expect(list[2].isJobs).toBe(false);
+      expect(list[1].isJobs).toBe(true);
+    });
+  });
+
+  it("accountNamesCache resolves through getAccountName on miss", async () => {
+    await jest.isolateModulesAsync(async () => {
+      const coinConfigLocal = require("../config").default as typeof coinConfig;
+      coinConfigLocal.setCoinConfig(() => ({
+        status: { type: "active" },
+        explorer: { url: TRON_BASE_URL },
+      }));
+      const mod = require(".") as typeof import(".");
+      const accountName = Buffer.from("CacheName").toString("hex");
+      mockedNetwork.mockResolvedValueOnce(
+        mockResponse({ data: [{ address: senderHex, account_name: accountName }] }),
+      );
+      const name = await mod.accountNamesCache(senderBase58);
+      expect(name).toBe("CacheName");
+    });
+  });
+
+  it("hydrate + getTronSuperRepresentatives returns the cached list", async () => {
+    hydrateSuperRepresentatives([
+      { address: senderBase58, voteCount: 100, isJobs: false } as never,
+    ]);
+    const list = await getTronSuperRepresentatives();
+    expect(list.length).toBeGreaterThan(0);
+  });
+
+  it("getNextVotingDate returns a Date built from the API's num", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ num: 1739540559000 }));
+    await expect(getNextVotingDate()).resolves.toEqual(new Date(1739540559000));
+  });
+
+  it("getTronSuperRepresentativeData applies max and computes totalVotes", async () => {
+    hydrateSuperRepresentatives([
+      { address: senderBase58, voteCount: 100, isJobs: false } as never,
+      { address: recipientBase58, voteCount: 50, isJobs: false } as never,
+    ]);
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ num: 1 }));
+    const data = await getTronSuperRepresentativeData(1);
+    expect(data.list).toHaveLength(1);
+    expect(data.totalVotes).toBe(150);
+  });
+
+  it("getTronSuperRepresentativeData returns the full list when max is null", async () => {
+    hydrateSuperRepresentatives([
+      { address: senderBase58, voteCount: 100, isJobs: false } as never,
+      { address: recipientBase58, voteCount: 50, isJobs: false } as never,
+    ]);
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ num: 1 }));
+    const data = await getTronSuperRepresentativeData(null);
+    expect(data.list).toHaveLength(2);
+  });
+});
+
+describe("voteTronSuperRepresentatives", () => {
+  it("forwards encoded addresses and vote counts", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await voteTronSuperRepresentatives(
+      { freshAddress: senderBase58 } as Account,
+      { votes: [{ address: recipientBase58, voteCount: 7 }] } as never,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/wallet/votewitnessaccount"),
+        data: expect.objectContaining({
+          votes: [expect.objectContaining({ vote_count: 7 })],
+        }),
+      }),
+    );
+  });
+});
+
+describe("getUnwithdrawnReward", () => {
+  it("returns the BigNumber of reward when present", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ reward: 12345 }));
+    const reward = await getUnwithdrawnReward(senderBase58);
+    expect(reward.toNumber()).toBe(12345);
+  });
+
+  it("returns 0 when reward is missing", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    const reward = await getUnwithdrawnReward(senderBase58);
+    expect(reward.toNumber()).toBe(0);
+  });
+
+  it("returns 0 on network error", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("network"));
+    const reward = await getUnwithdrawnReward(senderBase58);
+    expect(reward.toNumber()).toBe(0);
+  });
+});
+
+describe("claimRewardTronTransaction", () => {
+  it("POSTs to /wallet/withdrawbalance", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
+    await claimRewardTronTransaction({ freshAddress: senderBase58 } as Account);
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ url: expect.stringContaining("/wallet/withdrawbalance") }),
+    );
+  });
+});
+
+describe("getChainParameters", () => {
+  beforeEach(() => {
+    getChainParameters.reset();
+  });
+
+  const fullParams = {
+    chainParameter: [
+      { key: "getEnergyFee", value: 100 },
+      { key: "getTransactionFee", value: 1000 },
+      { key: "getCreateAccountFee", value: 100_000 },
+      { key: "getCreateNewAccountFeeInSystemContract", value: 1_000_000 },
+      { key: "getMaintenanceTimeInterval", value: 21_600_000 },
     ],
   };
 
-  const txInfoFixture = [
-    {
-      id: "abc123def456789",
-      fee: 1000,
-      blockNumber: 69629492,
-      blockTimeStamp: 1739540559000,
-    },
-  ];
+  it("parses the four governance-voted parameters used for fee estimation", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse(fullParams));
 
-  const getBlockHandler = http.post(`${TRON_BASE_URL_TEST}/wallet/getblock`, async () =>
-    HttpResponse.json(blockFixture),
-  );
+    const params = await getChainParameters();
 
-  const getTxInfoByBlockNumHandler = http.post(
-    `${TRON_BASE_URL_TEST}/wallet/gettransactioninfobyblocknum`,
-    async () => HttpResponse.json(txInfoFixture),
-  );
-
-  const mockServer = setupServer(getBlockHandler, getTxInfoByBlockNumHandler);
-
-  beforeAll(doBeforeAll(mockServer));
-  beforeEach(() => mockServer.resetHandlers());
-  afterAll(doAfterAll(mockServer));
-
-  it("getBlockInfo returns correct block info from API through logic layer", async () => {
-    const result = await getBlockInfo(69629492);
-
-    expect(result.height).toBe(69629492);
-    expect(result.hash).toBe("0000000004267634abc123def456789000000000000000000000000000000000");
-    expect(result.time).toEqual(new Date(1739540559000));
+    expect(params).toEqual({
+      energyFee: 100,
+      transactionFee: 1000,
+      createAccountFee: 100_000,
+      createNewAccountFeeInSystemContract: 1_000_000,
+    });
   });
 
-  it("getBlock returns block with transactions and operations from API through logic layer", async () => {
-    const result = await getBlockLogic(69629492);
-
-    expect(result.info.height).toBe(69629492);
-    expect(result.info.hash).toBe(
-      "0000000004267634abc123def456789000000000000000000000000000000000",
+  it("falls back to hardcoded values for missing keys", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        chainParameter: [
+          { key: "getTransactionFee", value: 1000 },
+          { key: "getCreateAccountFee" }, // value omitted
+        ],
+      }),
     );
-    expect(result.info.time).toEqual(new Date(1739540559000));
-    expect(result.info.parent).toEqual({
-      height: 69629491,
-      hash: "0000000004267633def456789abc123000000000000000000000000000000000",
+
+    const params = await getChainParameters();
+
+    expect(params.transactionFee).toBe(1000);
+    expect(params.energyFee).toBe(100); // fallback
+    expect(params.createAccountFee).toBe(100_000); // fallback
+    expect(params.createNewAccountFeeInSystemContract).toBe(1_000_000); // fallback
+  });
+
+  it("caches the result across calls (no second HTTP request)", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse(fullParams));
+
+    await getChainParameters();
+    await getChainParameters();
+    await getChainParameters();
+
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("triggerConstantContract", () => {
+  const okResponse = {
+    result: { result: true },
+    energy_used: 14_170,
+    constant_result: ["0".repeat(64)],
+  };
+  const revertResponse = {
+    result: { result: false, code: "REVERT", message: "transfer amount exceeds balance" },
+    energy_used: 0,
+  };
+
+  it("forwards parameters and returns the parsed response on success", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse(okResponse));
+
+    const response = await triggerConstantContract({
+      ownerAddress: senderHex,
+      contractAddress: recipientHex,
+      functionSelector: "transfer(address,uint256)",
+      parameter: "deadbeef",
     });
 
-    expect(result.transactions).toHaveLength(1);
-    expect(result.transactions[0].hash).toBe("abc123def456789");
-    expect(result.transactions[0].failed).toBe(false);
-    expect(result.transactions[0].fees).toBe(BigInt(1000));
-    expect(result.transactions[0].operations).toHaveLength(2);
-    expect(result.transactions[0].operations[0]).toMatchObject({
-      type: "transfer",
-      asset: { type: "native" },
-      amount: BigInt(-1000000),
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "POST",
+        url: expect.stringContaining("/wallet/triggerconstantcontract"),
+        data: {
+          owner_address: senderHex,
+          contract_address: recipientHex,
+          function_selector: "transfer(address,uint256)",
+          parameter: "deadbeef",
+        },
+      }),
+    );
+    expect(response.energy_used).toBe(14_170);
+    expect(response.result?.result).toBe(true);
+  });
+
+  it("returns the revert payload without throwing (caller decides what to do)", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse(revertResponse));
+
+    const response = await triggerConstantContract({
+      ownerAddress: senderHex,
+      contractAddress: recipientHex,
+      functionSelector: "transfer(address,uint256)",
+      parameter: "deadbeef",
     });
-    expect(result.transactions[0].operations[1]).toMatchObject({
-      type: "transfer",
-      asset: { type: "native" },
-      amount: BigInt(1000000),
-    });
+
+    expect(response.result?.result).toBe(false);
+    expect(response.result?.code).toBe("REVERT");
   });
 });

@@ -3,7 +3,7 @@ import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
 import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";

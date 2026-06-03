@@ -103,6 +103,10 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
           viewingKey: syncArgs.viewingKey,
           startBlockHeight: syncArgs.startBlockHeight,
           maxBatchSize: syncArgs.maxBatchSize,
+          ...(syncArgs.knownNullifiers &&
+            syncArgs.knownNullifiers.length > 0 && {
+              knownNullifiers: syncArgs.knownNullifiers,
+            }),
         };
 
         deps

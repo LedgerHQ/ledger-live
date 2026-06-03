@@ -7,6 +7,7 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import { screen, render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -98,7 +99,7 @@ function createScreenProps(): React.ComponentProps<typeof OnboardScreen> {
 }
 
 describe("Canton onboarding integration", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     previousCurrencyIds = listSupportedCurrencies().map(c => c.id);
     if (!previousCurrencyIds.includes("canton_network_devnet")) {
       setSupportedCurrencies([...previousCurrencyIds, "canton_network_devnet"]);
@@ -107,6 +108,8 @@ describe("Canton onboarding integration", () => {
     currency = getCryptoCurrencyById("canton_network_devnet");
     creatableAccount = { ...genAccount("canton-devnet-integ", { currency }), used: false };
     importableAccount = { ...genAccount("canton-devnet-import", { currency }), used: true };
+
+    await getCurrencyBridge(currency);
   });
 
   afterAll(() => {

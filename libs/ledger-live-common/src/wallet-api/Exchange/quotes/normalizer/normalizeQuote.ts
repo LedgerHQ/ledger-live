@@ -5,9 +5,11 @@ import type { ProviderData } from "../lookupProviderConfig";
 import { buildFormattedQuoteValues } from "./buildFormattedQuoteValues";
 import { buildProviderDetails } from "./buildProviderDetails";
 import { buildQuoteDetails } from "./buildQuoteDetails";
-import { computeError, computeWarning, type NormalizationContext } from "./computeQuoteStatus";
+
 import type { FeeEstimate } from "./networkFeeEstimate";
 import { isGasLess, normalizedProviderId, resolveQuoteId } from "./quoteHelpers";
+import { buildQuoteWarnings, NormalizationContext } from "./buildQuoteWarnings";
+import { buildQuoteErrors } from "./buildQuoteErrors";
 
 const EMPTY_CONTEXT: NormalizationContext = {
   sendCurrencyId: "",
@@ -29,7 +31,7 @@ const EMPTY_CONTEXT: NormalizationContext = {
  * @param feeEstimate - Wallet-side default-strategy fee estimate from
  *   {@link computeFeeEstimate}. When absent, `estimatedNetworkFee` /
  *   `approvalNetworkFee` stay undefined and `notEnoughBalanceForFees` is
- *   not emitted.
+ *   not included in `errors`.
  * @param formatContext - Locale / counter-value fiat / resolved currency
  *   metadata needed to produce `Quote.formatted`. When absent, the
  *   returned quote omits `formatted` and consumers fall back to their
@@ -48,14 +50,17 @@ export function normalizeQuote(
   const gasLess = isGasLess(rawQuote);
   const quoteDetails = buildQuoteDetails(rawQuote, gasLess, feeEstimate);
 
+  const warnings = buildQuoteWarnings(rawQuote, context);
+  const errors = buildQuoteErrors(feeEstimate);
+
   const quote: Quote = {
     id: resolveQuoteId(rawQuote),
     key: rawQuote.key ?? `${provider}-${rawQuote.type}`,
     provider,
     providerDetails: buildProviderDetails(rawQuote, providerData),
     quoteDetails,
-    warning: computeWarning(rawQuote, context),
-    error: computeError(rawQuote, feeEstimate),
+    warnings,
+    errors,
   };
 
   if (formatContext) {

@@ -6,13 +6,11 @@ import { shouldShowAssetDetailSectionSkeleton } from "../../utils/shouldShowAsse
 
 type StakingSectionProps = Readonly<{
   distributionItem?: DistributionItem;
-  pnlVisible?: boolean;
   isLoading: boolean;
 }>;
 
 export function StakingSection({
   distributionItem,
-  pnlVisible = false,
   isLoading,
 }: StakingSectionProps) {
   if (shouldShowAssetDetailSectionSkeleton(isLoading, distributionItem != null)) {
@@ -26,5 +24,5 @@ export function StakingSection({
 
   if (!distributionItem) return null;
 
-  return <StakingSectionComponent distributionItem={distributionItem} pnlVisible={pnlVisible} />;
+  return <StakingSectionComponent distributionItem={distributionItem} />;
 }

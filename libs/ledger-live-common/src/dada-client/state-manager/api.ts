@@ -79,7 +79,7 @@ export function buildAssetsQueryParams(
     ...(queryArg.currencyIds &&
       queryArg.currencyIds.length > 0 && {
         // FIXME: Transform legacy ID to API format before querying
-        currencyIds: queryArg.currencyIds.map(legacyIdToApiId),
+        currencyIds: queryArg.currencyIds.map(id => legacyIdToApiId(id)),
       }),
     ...(queryArg.search && { search: queryArg.search }),
     product: queryArg.product,

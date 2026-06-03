@@ -103,6 +103,7 @@ const InitializerComponent: React.FC<{
 );
 
 const DeviceDisconnectedComponent: React.FC<{
+  device: DeviceConnectionResult["connectedDevice"];
   onRetry: () => void;
   onClose: () => void;
 }> = ({ onRetry, onClose }) => (
@@ -118,6 +119,7 @@ const DeviceDisconnectedComponent: React.FC<{
 
 const IntentErrorComponent: React.FC<{
   error: unknown;
+  device: DeviceConnectionResult["connectedDevice"];
   onRetry: () => void;
   onClose: () => void;
 }> = ({ onRetry, onClose }) => (
@@ -343,15 +345,16 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const onRetry = jest.fn();
       const onClose = jest.fn();
+      const device = makeConnectionResult().connectedDevice;
       const props = makeUnitProps(
-        { phase: "deviceDisconnected", onRetry, onClose },
+        { phase: "deviceDisconnected", device, onRetry, onClose },
         { platformConfig: mockConfig },
       );
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("device-disconnected")).toBeTruthy();
       expect(mockConfig.DeviceDisconnectedComponent).toHaveBeenCalledWith(
-        { onRetry, onClose },
+        { device, onRetry, onClose },
         undefined,
       );
     });
@@ -419,15 +422,16 @@ describe("DeviceIntentExecutor (unit)", () => {
       const error = new Error("job fail");
       const onRetry = jest.fn();
       const onClose = jest.fn();
+      const device = makeConnectionResult().connectedDevice;
       const props = makeUnitProps(
-        { phase: "intentError", error, onRetry, onClose },
+        { phase: "intentError", error, device, onRetry, onClose },
         { platformConfig: mockConfig },
       );
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("intent-error")).toBeTruthy();
       expect(mockConfig.IntentErrorComponent).toHaveBeenCalledWith(
-        { error, onRetry, onClose },
+        { error, device, onRetry, onClose },
         undefined,
       );
     });

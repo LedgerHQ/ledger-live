@@ -30,6 +30,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";
 import { isNative, StakingOperation, TransactionTypes } from "../types";
+import { STAKING_CONTRACTS } from "../staking";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
 import {
   getTransactionType,
@@ -279,6 +280,14 @@ function validateStaking(
     return { errors: {}, warnings: {} };
   }
 
+  // A gasLimit of 0 means the fee estimation failed (treated as FeeNotLoaded).
+  // On Sei EVM this typically happens when the account's EVM key is not yet
+  // associated on-chain; the staking precompile rejects calls until the first
+  // outbound transaction is confirmed.
+  if (estimatedFees.parameters?.gasLimit === 0n) {
+    errors.gasLimit = new FeeNotLoaded();
+  }
+
   if (!intent.valAddress) {
     errors.valAddress = new ValAddressRequired();
   }
@@ -297,6 +306,7 @@ function validateStaking(
 }
 
 function computeAmount(
+  currency: CryptoCurrency,
   intent: TransactionIntent,
   estimatedFees: FeeEstimation,
   balance: Balance,
@@ -304,8 +314,27 @@ function computeAmount(
   if (!intent.useAllAmount) return intent.amount;
 
   const available = balance.value - (balance.locked ?? 0n);
-
   if (isNative(intent.asset)) {
+    if (isStakingIntent(intent) && intent.mode === "delegate") {
+      const additionalFees =
+        typeof estimatedFees.parameters?.additionalFees === "bigint"
+          ? estimatedFees.parameters.additionalFees
+          : 0n;
+      const totalFees = estimatedFees.value + additionalFees;
+      // Use max(configuredReserve, totalFees) so that:
+      // - chains with a large per-chain reserve keep their existing behaviour,
+      // - unconfigured chains (reserve = 0n) fall back to the current fees,
+      // - high-fee selections never produce an amount the account cannot afford.
+      const configuredReserve = STAKING_CONTRACTS[currency.id]?.delegationMaxAmountReserve ?? 0n;
+      const effectiveReserve = configuredReserve > totalFees ? configuredReserve : totalFees;
+      const rawAmount = available > effectiveReserve ? available - effectiveReserve : 0n;
+      // Floor-round to the nearest minimum calldata unit for this chain's staking precompile.
+      // Chains like SEI require msg.value to be a whole multiple of their unit scale
+      // (e.g. 10^12 wei = 1 usei), otherwise the precompile reverts.
+      // For chains without a scale (calldataAmountScale = 1n), this is a no-op.
+      const scale = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
+      return (rawAmount / scale) * scale;
+    }
     const additionalFees =
       typeof estimatedFees.parameters?.additionalFees === "bigint"
         ? estimatedFees.parameters.additionalFees
@@ -352,7 +381,7 @@ export async function validateIntent(
     ? { ...customFees, value: refreshEstimationValue(intent, customFees.parameters) }
     : await estimateFees(currency, intent);
   const balance = findBalance(intent.asset, balances);
-  const amount = computeAmount(intent, estimatedFees, balance);
+  const amount = computeAmount(currency, intent, estimatedFees, balance);
   const additionalFees =
     typeof estimatedFees.parameters?.additionalFees === "bigint"
       ? estimatedFees.parameters.additionalFees

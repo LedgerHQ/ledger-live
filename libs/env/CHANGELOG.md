@@ -1,5 +1,17 @@
 # @ledgerhq/live-env
 
+## 2.36.0
+
+### Minor Changes
+
+- [#17517](https://github.com/LedgerHQ/ledger-live/pull/17517) [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove debug Asset Detail FAB and its `DEBUG_ASSET_DETAIL_FAB` env toggle. Asset/market detail is now reachable from regular navigation entry points.
+
+## 2.36.0-next.0
+
+### Minor Changes
+
+- [#17517](https://github.com/LedgerHQ/ledger-live/pull/17517) [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove debug Asset Detail FAB and its `DEBUG_ASSET_DETAIL_FAB` env toggle. Asset/market detail is now reachable from regular navigation entry points.
+
 ## 2.35.0
 
 ### Minor Changes

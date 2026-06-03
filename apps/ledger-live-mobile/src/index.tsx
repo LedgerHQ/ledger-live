@@ -67,7 +67,8 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";

@@ -7,7 +7,7 @@ import {
   readOnlyModeEnabledSelector,
 } from "~/reducers/settings";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 /**
  * Get options to spread in a Stack.Screen you want to have a wall preventing

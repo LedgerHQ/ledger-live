@@ -14,6 +14,7 @@ import { urls } from "~/utils/urls";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SafeAreaView from "~/components/SafeAreaView";
 import { CardanoDelegationFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -34,7 +35,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"
@@ -75,7 +76,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           <Trans i18nKey="cardano.delegation.flow.steps.starter.cta" />
         </Button>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -290,6 +290,7 @@ const extraProperties = (store: ReduxStore) => {
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
+  const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
 
   return {
@@ -332,6 +333,7 @@ const extraProperties = (store: ReduxStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     newSendFlow,
   };
 };

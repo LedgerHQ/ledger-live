@@ -18,10 +18,9 @@ import { lastValueFrom, Observable } from "rxjs";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
 import { attachNetworkLogging } from "../utils/networkLogging";
-import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
-import { parseExtraFeatureFlags } from "../utils/featureFlagsJsonUtils";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -83,9 +82,6 @@ const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
       live_apps_blocklist: [],
     },
   },
-  ...(process.env.E2E_ENABLE_WALLET40 === "0"
-    ? LWD_WALLET_40_FF_DISABLED
-    : LWD_WALLET_40_FF_ENABLED),
 };
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {

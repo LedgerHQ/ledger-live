@@ -3,11 +3,21 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
-import {
-  ConnectDeviceUIStateTypes,
-  type ConnectDeviceUIState,
-} from "@ledgerhq/live-dmk-mobile";
+import { TrackScreen } from "~/analytics";
+import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
+import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
+
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(() => null),
+  };
+});
+
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 type WaitingForSelectedDeviceUIState = Extract<
   ConnectDeviceUIState,
@@ -30,10 +40,18 @@ function renderState(device: KnownDevice) {
     device,
   };
 
-  return render(<WaitingForSelectedDeviceState state={state} />);
+  return render(
+    <SourceFlowProvider value="my_ledger">
+      <WaitingForSelectedDeviceState state={state} />
+    </SourceFlowProvider>,
+  );
 }
 
 describe("WaitingForSelectedDeviceState", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should render the selected device name and product-specific title", () => {
     renderState(makeKnownDevice({ name: "My Ledger" }));
 
@@ -49,5 +67,24 @@ describe("WaitingForSelectedDeviceState", () => {
     renderState(makeKnownDevice({ name: null }));
 
     expect(screen.getByText("Ledger device")).toBeVisible();
+  });
+
+  it("GIVEN a selected device WHEN rendering THEN it tracks the Device UX V2 page event", () => {
+    // GIVEN
+    const device = makeKnownDevice();
+
+    // WHEN
+    renderState(device);
+
+    // THEN
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_CONNECT_DEVICE.WaitingForSelectedDevice,
+        sourceFlow: "my_ledger",
+        modelId: DeviceModelId.nanoX,
+        deviceUxV2: true,
+      }),
+      undefined,
+    );
   });
 });

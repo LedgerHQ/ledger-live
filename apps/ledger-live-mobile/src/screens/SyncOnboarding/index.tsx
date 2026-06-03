@@ -21,7 +21,7 @@ import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import { TwoStepSyncOnboardingCompanion } from "./TwoStepStepper/TwoStepSyncOnboardingCompanion";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { NavigatorName, ScreenName } from "~/const";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";

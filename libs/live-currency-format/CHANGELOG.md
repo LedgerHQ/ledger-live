@@ -1,5 +1,29 @@
 # @ledgerhq/live-currency-format
 
+## 0.9.0
+
+### Minor Changes
+
+- [#17662](https://github.com/LedgerHQ/ledger-live/pull/17662) [`bb25536`](https://github.com/LedgerHQ/ledger-live/commit/bb2553672eca7fc9a8e5b9c9b9869792b604a06a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Centralize price formatting with consistent digit rules (2/6 fractional digits) and threshold marker for tiny variations
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
+  - @ledgerhq/types-cryptoassets@7.37.0
+  - @ledgerhq/live-env@2.36.0
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#17662](https://github.com/LedgerHQ/ledger-live/pull/17662) [`bb25536`](https://github.com/LedgerHQ/ledger-live/commit/bb2553672eca7fc9a8e5b9c9b9869792b604a06a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Centralize price formatting with consistent digit rules (2/6 fractional digits) and threshold marker for tiny variations
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
+  - @ledgerhq/types-cryptoassets@7.37.0-next.0
+  - @ledgerhq/live-env@2.36.0-next.0
+
 ## 0.8.3
 
 ### Patch Changes

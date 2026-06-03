@@ -19,3 +19,5 @@ export { computeAssetPnL } from "./assetPnL";
 export { computeAssetGroupPnL } from "./assetGroupPnL";
 export { computePortfolioPnL } from "./portfolioPnL";
 export { pnlPercentage } from "./percentage";
+export { trendFromSign } from "./trend";
+export type { PnlTrend } from "./trend";

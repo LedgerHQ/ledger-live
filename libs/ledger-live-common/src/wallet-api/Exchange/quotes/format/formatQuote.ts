@@ -9,8 +9,7 @@ import type { CurrencyMeta, FiatMeta, FormatQuoteInput, FormattedQuoteValues } f
 const NBSP = "\u00A0";
 
 /**
- * Cap crypto display decimals at the historical swap-live-app app-config
- * default. Mirrors `useGetDefaultMaxDecimals`.
+ * Cap crypto display decimals so very high-precision currencies remain readable.
  *
  * @param decimals - Native magnitude of the currency (e.g. 18 for ETH).
  * @returns The decimal cap to pass to the number formatter, bounded above
@@ -128,8 +127,8 @@ function formatRateNumber(
 }
 
 /**
- * Format the slippage percentage triplet. Matches the legacy display
- * rule: integer values render as `"0%"` / `"1%"`, non-integers are
+ * Format the slippage percentage triplet: integer values render as
+ * `"0%"` / `"1%"`, non-integers are
  * rounded to one decimal place (`"0.5%"`). The `%` suffix sits flush
  * against the number (no NBSP separator).
  *
@@ -153,7 +152,7 @@ function formatSlippageNumber(slippage: number, locale: string): FormattedNumber
  * fee estimate to display units, and threads locale / fiat / spot prices
  * down from the server handler context).
  *
- * Parity contract with swap-live-app's `useFormattedValues`:
+ * Formatting contract:
  * - missing crypto currency metadata falls back to
  *   {@link DEFAULT_MAX_DECIMALS} decimals and empty ticker,
  * - missing spot price collapses the corresponding countervalue triplet

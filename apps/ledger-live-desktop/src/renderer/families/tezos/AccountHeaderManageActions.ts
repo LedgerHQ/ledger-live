@@ -7,6 +7,7 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { TezosFamily } from "./types";
 import { StepId } from "./DelegateFlowModal/types";
+import { getTezosEarnFlow } from "./earnFlow";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
@@ -19,53 +20,50 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
   const label = useGetStakeLabelLocaleBased();
   const lldTezosStaking = useFeature("lldTezosStaking");
 
-  const { delegation, isStaked } = useTezosStakingInfo(account);
+  const { isDelegated } = useTezosStakingInfo(account);
 
   const onClick = useCallback(() => {
     if (account.type !== "Account") return;
-    if (bridge.isAccountEmpty(account)) {
-      dispatch(
-        openModal("MODAL_NO_FUNDS_STAKE", {
-          account,
-          parentAccount,
-        }),
-      );
-      return;
+    const flow = getTezosEarnFlow({
+      isEmpty: bridge.isAccountEmpty(account),
+      stakingEnabled: !!lldTezosStaking?.enabled,
+      isDelegated,
+    });
+    switch (flow.kind) {
+      case "no-funds":
+        dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+        return;
+      case "earning-choice":
+        dispatch(openModal("MODAL_TEZOS_EARNING_CHOICE", { account, parentAccount, source }));
+        return;
+      case "stake":
+        dispatch(
+          openModal("MODAL_TEZOS_STAKE", {
+            account,
+            parentAccount,
+            source,
+            skipDelegation: flow.skipDelegation,
+          }),
+        );
+        return;
+      case "delegate":
+        dispatch(
+          openModal(
+            "MODAL_DELEGATE",
+            flow.redelegate
+              ? {
+                  parentAccount,
+                  account,
+                  eventType: "redelegate",
+                  stepId: "summary" as StepId, // FIXME: "summary is not detected as StepId"
+                  source,
+                }
+              : { parentAccount, account, source },
+          ),
+        );
+        return;
     }
-    if (lldTezosStaking?.enabled && !isStaked) {
-      dispatch(
-        openModal("MODAL_TEZOS_EARNING_CHOICE", {
-          account,
-          parentAccount,
-          source,
-        }),
-      );
-      return;
-    }
-    const options = delegation
-      ? {
-          parentAccount,
-          account,
-          eventType: "redelegate",
-          stepId: "summary" as StepId, // FIXME: "summary is not detected as StepId"
-          source,
-        }
-      : {
-          parentAccount,
-          account,
-          source,
-        };
-    dispatch(openModal("MODAL_DELEGATE", options));
-  }, [
-    account,
-    bridge,
-    delegation,
-    isStaked,
-    lldTezosStaking?.enabled,
-    parentAccount,
-    dispatch,
-    source,
-  ]);
+  }, [account, bridge, isDelegated, lldTezosStaking?.enabled, parentAccount, dispatch, source]);
 
   if (parentAccount) return null;
 

@@ -72,6 +72,6 @@ export function mergeCspHeaders(
  * NOT set `default-src` / `script-src` here so we don't break Live App JS.
  */
 export const WEBVIEW_GUEST_CSP =
-  "frame-src 'self' http: https:; " +
-  "child-src 'self' http: https:; " +
+  "frame-src 'self' http: https: blob:; " +
+  "child-src 'self' http: https: blob:; " +
   "form-action 'self' http: https:;";

@@ -6,9 +6,18 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { InfoState } from "LLM/components/InfoState";
+import { TrackScreen } from "~/analytics";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";
+import { useSourceFlow } from "../../utils/SourceFlowContext";
+import {
+  CONNECT_DEVICE_BUTTON,
+  getTrackingSubError,
+  getTrackingTransport,
+  PAGE_CONNECT_DEVICE,
+  trackConnectDeviceButtonClicked,
+} from "../../utils/trackDeviceIntent";
 import { PeerRemovedPairingState } from "./PeerRemovedPairingState";
 
 type ConnectionErrorStateProps = {
@@ -45,21 +54,42 @@ const connectionErrorTranslationBaseKey =
 
 export function ConnectionErrorState({ state }: Readonly<ConnectionErrorStateProps>): React.ReactNode {
   const { t } = useTranslation();
+  const sourceFlow = useSourceFlow();
   const bleForgetDeviceUrl = useLocalizedUrl(urls.errors.BleForgetDevice);
   const pairingIssuesUrl = useLocalizedUrl(urls.pairingIssues);
   const productName = t("deviceIntentExecutor.connectDevice.common.ledgerDevice");
+  const trackingScreen = (
+    <TrackScreen
+      category={PAGE_CONNECT_DEVICE.ConnectionError}
+      sourceFlow={sourceFlow}
+      modelId={state.device.deviceModelId}
+      transport={getTrackingTransport(state.device.transport)}
+      subError={getTrackingSubError(state.error.type)}
+      deviceUxV2
+    />
+  );
 
-  const retryCta = (labelKey: string): InfoStateCta => ({
-    label: t(labelKey),
-    onPress: state.retry,
-  });
+  const retryCta = (labelKey: string): InfoStateCta => {
+    const label = t(labelKey);
+    return {
+      label,
+      onPress: () => {
+        trackConnectDeviceButtonClicked({ sourceFlow, button: CONNECT_DEVICE_BUTTON.Retry });
+        state.retry();
+      },
+    };
+  };
 
-  const helpCta = (labelKey: string, url: string): InfoStateCta => ({
-    label: t(labelKey),
-    onPress: () => {
-      Linking.openURL(url).catch(() => undefined);
-    },
-  });
+  const helpCta = (labelKey: string, url: string): InfoStateCta => {
+    const label = t(labelKey);
+    return {
+      label,
+      onPress: () => {
+        trackConnectDeviceButtonClicked({ sourceFlow, button: CONNECT_DEVICE_BUTTON.GetHelp });
+        Linking.openURL(url).catch(() => undefined);
+      },
+    };
+  };
 
   const connectionErrorViewStates: ConnectionErrorViewStates = {
     [ConnectionErrorTypes.BlePairingRefused]: {
@@ -87,32 +117,44 @@ export function ConnectionErrorState({ state }: Readonly<ConnectionErrorStatePro
 
   if (state.error.type === ConnectionErrorTypes.BlePairingPeerRemovedPairing) {
     const errorState = connectionErrorViewStates[state.error.type];
+    const helpLabel = t(errorState.helpLabel);
+    const retryLabel = t(errorState.retryLabel);
 
     return (
-      <PeerRemovedPairingState
-        title={t(errorState.title, { productName })}
-        description={t(errorState.description, { productName })}
-        helpLabel={t(errorState.helpLabel)}
-        retryLabel={t(errorState.retryLabel)}
-        onHelp={() => {
-          Linking.openURL(bleForgetDeviceUrl).catch(() => undefined);
-        }}
-        onRetry={state.retry}
-      />
+      <>
+        {trackingScreen}
+        <PeerRemovedPairingState
+          title={t(errorState.title, { productName })}
+          description={t(errorState.description, { productName })}
+          helpLabel={helpLabel}
+          retryLabel={retryLabel}
+          onHelp={() => {
+            trackConnectDeviceButtonClicked({ sourceFlow, button: CONNECT_DEVICE_BUTTON.GetHelp });
+            Linking.openURL(bleForgetDeviceUrl).catch(() => undefined);
+          }}
+          onRetry={() => {
+            trackConnectDeviceButtonClicked({ sourceFlow, button: CONNECT_DEVICE_BUTTON.Retry });
+            state.retry();
+          }}
+        />
+      </>
     );
   }
 
   const errorState = connectionErrorViewStates[state.error.type];
 
   return (
-    <InfoState
-      preset={errorState.preset}
-      size="hug"
-      title={t(errorState.title)}
-      description={errorState.description ? t(errorState.description) : undefined}
-      banner={errorState.banner ? { title: t(errorState.banner.title) } : undefined}
-      primaryCta={errorState.primaryCta}
-      secondaryCta={errorState.secondaryCta}
-    />
+    <>
+      {trackingScreen}
+      <InfoState
+        preset={errorState.preset}
+        size="hug"
+        title={t(errorState.title)}
+        description={errorState.description ? t(errorState.description) : undefined}
+        banner={errorState.banner ? { title: t(errorState.banner.title) } : undefined}
+        primaryCta={errorState.primaryCta}
+        secondaryCta={errorState.secondaryCta}
+      />
+    </>
   );
 }

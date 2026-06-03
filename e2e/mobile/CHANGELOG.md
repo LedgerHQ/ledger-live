@@ -1,5 +1,25 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.24.0
+
+### Minor Changes
+
+- [#17541](https://github.com/LedgerHQ/ledger-live/pull/17541) [`daffb50`](https://github.com/LedgerHQ/ledger-live/commit/daffb50773bcb8af5de8305180361fdcf4a7b411) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Disable aggregatedAssets flag in Wallet 4.0 e2e feature flags
+
+- [#17580](https://github.com/LedgerHQ/ledger-live/pull/17580) [`9b2fe05`](https://github.com/LedgerHQ/ledger-live/commit/9b2fe05703fcb4d09ed69c10161b08d61631a725) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Fix mobile deeplinks E2E nightly flake by excluding 1inch from the random discover pool and add a dedicated Kiln deeplink test (QAA-1225).
+
+- [#17636](https://github.com/LedgerHQ/ledger-live/pull/17636) [`70a1e58`](https://github.com/LedgerHQ/ledger-live/commit/70a1e58f493b2e6e546f615a7c38586d66bed4b5) Thanks [@sergiubreban](https://github.com/sergiubreban)! - test: change selector to match for earn inline account
+
+## 0.24.0-next.0
+
+### Minor Changes
+
+- [#17541](https://github.com/LedgerHQ/ledger-live/pull/17541) [`daffb50`](https://github.com/LedgerHQ/ledger-live/commit/daffb50773bcb8af5de8305180361fdcf4a7b411) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Disable aggregatedAssets flag in Wallet 4.0 e2e feature flags
+
+- [#17580](https://github.com/LedgerHQ/ledger-live/pull/17580) [`9b2fe05`](https://github.com/LedgerHQ/ledger-live/commit/9b2fe05703fcb4d09ed69c10161b08d61631a725) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Fix mobile deeplinks E2E nightly flake by excluding 1inch from the random discover pool and add a dedicated Kiln deeplink test (QAA-1225).
+
+- [#17636](https://github.com/LedgerHQ/ledger-live/pull/17636) [`70a1e58`](https://github.com/LedgerHQ/ledger-live/commit/70a1e58f493b2e6e546f615a7c38586d66bed4b5) Thanks [@sergiubreban](https://github.com/sergiubreban)! - test: change selector to match for earn inline account
+
 ## 0.23.0
 
 ### Minor Changes

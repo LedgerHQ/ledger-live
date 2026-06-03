@@ -1,6 +1,7 @@
 import type { Balance, AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
+import { getCoinConfig } from "../config";
 import { getExplorerApi } from "../network/explorer";
 import { ExplorerApi } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
@@ -77,34 +78,17 @@ async function getTokenBalances(
       ? tokenOperationsResult.value.lastTokenOperations
       : [];
 
-  // Collect unique contract addresses and their types
-  const contracts = new Set<string>();
-  const assets = new Map<string, AssetInfo>();
-  for (const operation of lastTokenOperations) {
-    if (operation.contract) {
-      let assetType = "erc20";
-      switch (operation.standard) {
-        case "ERC721":
-          assetType = "erc721";
-          break;
-        case "ERC1155":
-          assetType = "erc1155";
-          break;
-      }
+  // Contracts whose ERC20 balance mirrors the native balance — skip them here to avoid
+  // counting the same value twice (the native balance is already returned upstream).
+  const { nativeContracts = [] } = getCoinConfig(currency.id).info;
+  const nativeContractsSet = new Set(nativeContracts.map(c => c.toLowerCase()));
 
-      const assetInfo: AssetInfo = {
-        type: assetType,
-        assetReference: operation.contract,
-        assetOwner: address,
-      };
-
-      const includeAssets = !options?.includeAssets || (await options.includeAssets(assetInfo));
-      if (includeAssets) {
-        contracts.add(operation.contract);
-        assets.set(operation.contract, assetInfo);
-      }
-    }
-  }
+  const { contracts, assets } = await collectTokenAssets(
+    lastTokenOperations,
+    address,
+    nativeContractsSet,
+    options,
+  );
 
   // Fetch balances in parallel (by batches)
   const contractsArray = Array.from(contracts);
@@ -125,6 +109,51 @@ async function getTokenBalances(
   }
 
   return balances;
+}
+
+/**
+ * Walk token-transfer operations and build the set of contracts whose balance we need,
+ * along with their AssetInfo metadata. Contracts in `nativeContractsSet` are skipped
+ * (their balance is the native balance, returned upstream).
+ */
+async function collectTokenAssets(
+  lastTokenOperations: { contract?: string; standard?: string }[],
+  address: string,
+  nativeContractsSet: Set<string>,
+  options: BalanceOptions | undefined,
+): Promise<{ contracts: Set<string>; assets: Map<string, AssetInfo> }> {
+  const contracts = new Set<string>();
+  const assets = new Map<string, AssetInfo>();
+
+  for (const operation of lastTokenOperations) {
+    if (!operation.contract) continue;
+    if (nativeContractsSet.has(operation.contract.toLowerCase())) continue;
+
+    const assetInfo: AssetInfo = {
+      type: assetTypeFromStandard(operation.standard),
+      assetReference: operation.contract,
+      assetOwner: address,
+    };
+
+    const includeAssets = !options?.includeAssets || (await options.includeAssets(assetInfo));
+    if (includeAssets) {
+      contracts.add(operation.contract);
+      assets.set(operation.contract, assetInfo);
+    }
+  }
+
+  return { contracts, assets };
+}
+
+function assetTypeFromStandard(standard: string | undefined): string {
+  switch (standard) {
+    case "ERC721":
+      return "erc721";
+    case "ERC1155":
+      return "erc1155";
+    default:
+      return "erc20";
+  }
 }
 
 export default getBalance;

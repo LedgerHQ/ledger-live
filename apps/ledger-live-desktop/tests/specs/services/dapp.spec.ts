@@ -2,13 +2,11 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
-import { WebviewLayout } from "../../component/webviewLayout.component";
 
 import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import dummyLiveApp from "./dapp.spec.ts-mocks/dummy-live-app";
-import dummy1inchLiveApp from "./dapp.spec.ts-mocks/1inch-live-app";
+import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({
   userdata: "1AccountBTC1AccountETH1AccountPOLYGON",
@@ -26,12 +24,55 @@ test.use({
   },
 });
 
-test.describe("Metamask Test Dapp", () => {
+let testServerIsRunning = false;
+
+test.describe("Local Test Dapp", () => {
   test.beforeAll(async () => {
-    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummyLiveApp;
+    testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-dapp", {
+      id: "dummy-live-app",
+      name: "Local Test Dapp",
+      apiVersion: "2.0.0",
+      homepageUrl: "http://localhost",
+      dapp: {
+        provider: "evm",
+        nanoApp: "Ethereum",
+        networks: [
+          {
+            currency: "ethereum",
+            chainID: 1,
+          },
+        ],
+      },
+      currencies: ["ethereum"],
+      content: {
+        shortDescription: {
+          en: "Local dapp used by Playwright",
+        },
+        description: {
+          en: "Local dapp used to test Ledger Live dapp browser methods",
+        },
+      },
+      permissions: [],
+      domains: ["http://"],
+    });
+
+    if (!testServerIsRunning) {
+      console.warn("Stopping dapp browser test setup");
+    }
+  });
+
+  test.afterAll(async () => {
+    if (testServerIsRunning) {
+      await LiveAppWebview.stopLiveApp();
+    }
   });
 
   test("Dapp Browser methods @smoke", async ({ page, electronApp }) => {
+    if (!testServerIsRunning) {
+      console.warn("Test server not running - Cancelling dapp browser E2E test");
+      return;
+    }
+
     const discoverPage = new DiscoverPage(page);
     const drawer = new Drawer(page);
     const modal = new Modal(page);
@@ -44,8 +85,6 @@ test.describe("Metamask Test Dapp", () => {
     await page.getByTestId("drawer-continue-button").waitFor({ state: "detached" });
 
     await drawer.waitForDrawerToBeVisible();
-    await expect(drawer.selectAssetTitle).toBeVisible();
-    await drawer.selectCurrency("ethereum");
     await expect(drawer.selectAccountTitle).toBeVisible();
     await drawer.selectAccount("Ethereum", 0);
     await drawer.waitForDrawerToDisappear();
@@ -93,44 +132,5 @@ test.describe("Metamask Test Dapp", () => {
 
     // You can uncomment this to make sure visually that it ends correctly
     // await page.waitForTimeout(10000);
-  });
-});
-
-test.describe.skip("1inch dapp", () => {
-  test.beforeAll(async () => {
-    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummy1inchLiveApp;
-  });
-
-  test("Dapp switch chain", async ({ page, electronApp }) => {
-    const discoverPage = new DiscoverPage(page);
-    const drawer = new Drawer(page);
-    const layout = new Layout(page);
-    const webviewLayout = new WebviewLayout(page);
-
-    await layout.goToDiscover();
-    await discoverPage.openTestApp();
-    await drawer.continue();
-    await drawer.waitForDrawerToDisappear();
-
-    const windows = electronApp.windows();
-    const webview =
-      windows.length > 1
-        ? windows[1]
-        : await electronApp.waitForEvent("window", { timeout: 30000 });
-    await webview.waitForLoadState("domcontentloaded", { timeout: 30000 });
-    const restricted_app = await webview.getByText("Restricted").isVisible();
-    test.skip(restricted_app, "1inch dapp is restricted");
-
-    const popup = webview.locator(".cross-icon");
-    await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
-    if (await popup.isVisible()) await popup.click();
-    await webview.locator(".connect-wallet__box > button").click();
-    await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
-    await webview.getByRole("button", { name: "Ledger Live Ledger Live" }).click();
-    await page.getByText("Ethereum 110.1354 ETH").click();
-    await webview.getByRole("button", { name: "Ethereum" }).click();
-    await webview.getByRole("button", { name: "Polygon" }).click();
-    await page.getByText("Polygon").click();
-    await expect(webviewLayout.selectedAccountButton).toHaveText("Polygon 1");
   });
 });

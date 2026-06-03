@@ -2,6 +2,7 @@
   "entry": [
     "src/account.ts",
     "src/api/getPools.ts",
+    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/cli-transaction.ts",
     "src/datasets/rawAccount.1.ts",

@@ -50,7 +50,10 @@ async function validateRecipient(account: Account, recipient: string): Promise<E
     return new RecipientRequired();
   }
 
-  const [parsingError, parsingResult] = await safeParseAccountId(recipient);
+  const [parsingError, parsingResult] = await safeParseAccountId({
+    configOrCurrencyId: account.currency.id,
+    address: recipient,
+  });
 
   if (parsingError) {
     return parsingError;
@@ -75,7 +78,7 @@ async function handleTokenAssociateTransaction(
   const [usdRate, estimatedFees] = await Promise.all([
     getCurrencyToUSDRate(account.currency),
     estimateFees({
-      currency: account.currency,
+      currencyId: account.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
     }),
   ]);
@@ -120,7 +123,7 @@ async function handleHTSTokenTransaction(
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
     estimateFees({
-      currency: account.currency,
+      currencyId: account.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenTransfer,
     }),
   ]);
@@ -184,6 +187,7 @@ async function handleERC20TokenTransaction(
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
     estimateFees({
+      configOrCurrencyId: account.currency.id,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
       txIntent: {
         intentType: "transaction",
@@ -241,7 +245,7 @@ async function handleCoinTransaction(
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
     estimateFees({
-      currency: account.currency,
+      currencyId: account.currency.id,
       operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
     }),
   ]);
@@ -281,7 +285,7 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
   const { validators } = getCurrentHederaPreloadData(account.currency);
   const estimatedFees = await estimateFees({
     operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
-    currency: account.currency,
+    currencyId: account.currency.id,
   });
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);

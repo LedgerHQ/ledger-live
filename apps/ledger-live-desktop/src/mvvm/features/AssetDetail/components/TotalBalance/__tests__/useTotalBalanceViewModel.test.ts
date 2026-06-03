@@ -1,5 +1,4 @@
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { useTotalBalanceViewModel } from "../useTotalBalanceViewModel";
@@ -39,39 +38,43 @@ describe("useTotalBalanceViewModel", () => {
     expect(result.current.totalBalanceLabel).toBe("Total balance");
   });
 
-  it("uses 0 for fiat display when countervalue is undefined", () => {
-    const { result } = renderHook(
-      () => useTotalBalanceViewModel(buildDistributionItem({ countervalue: undefined })),
-      { initialState },
-    );
-
-    expect(result.current.fiatDisplayValue).toBe(0);
-  });
-
-  it("uses countervalue for fiat display when set", () => {
-    const { result } = renderHook(
-      () => useTotalBalanceViewModel(buildDistributionItem({ countervalue: 9_999.42 })),
-      { initialState },
-    );
-
-    expect(result.current.fiatDisplayValue).toBe(9_999.42);
-  });
-
-  it("forwards locale, discreet, and showCode to the fiat formatter", () => {
-    const { result } = renderHook(
-      () => useTotalBalanceViewModel(buildDistributionItem({ currency: btc })),
-      {
-        initialState: { settings: { counterValue: "USD", locale: "de-DE", discreetMode: true } },
-      },
-    );
-
-    result.current.fiatFormatter(12.34);
+  it("formats countervalue 0 when countervalue is undefined", () => {
+    renderHook(() => useTotalBalanceViewModel(buildDistributionItem({ countervalue: undefined })), {
+      initialState,
+    });
 
     expect(mockedFormatCurrencyUnitFragment).toHaveBeenCalledWith(
       expect.anything(),
-      new BigNumber(12.34),
-      expect.objectContaining({ locale: "de-DE", discreet: true, showCode: true }),
+      expect.objectContaining({ toString: expect.any(Function) }),
+      expect.objectContaining({ locale: "en-US", showCode: true }),
     );
+    expect(mockedFormatCurrencyUnitFragment.mock.calls[0][1].toString()).toBe("0");
+  });
+
+  it("forwards locale, discreet and full precision options in the fragment formatter", () => {
+    renderHook(() => useTotalBalanceViewModel(buildDistributionItem({ currency: btc })), {
+      initialState: { settings: { counterValue: "USD", locale: "de-DE", discreetMode: true } },
+    });
+
+    expect(mockedFormatCurrencyUnitFragment).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({
+        locale: "de-DE",
+        discreet: true,
+        showCode: true,
+        disableRounding: true,
+        showAllDigits: true,
+      }),
+    );
+  });
+
+  it("uses the total balance label as fiat aria label when discreet mode is enabled", () => {
+    const { result } = renderHook(() => useTotalBalanceViewModel(buildDistributionItem()), {
+      initialState: { settings: { counterValue: "USD", locale: "en-US", discreetMode: true } },
+    });
+
+    expect(result.current.fiatAriaLabel).toBe("Total balance");
   });
 
   it("exposes amount and crypto unit from the distribution item", () => {
@@ -80,13 +83,5 @@ describe("useTotalBalanceViewModel", () => {
 
     expect(result.current.amount).toBe(15_000_000);
     expect(result.current.cryptoUnit).toBe(btc.units[0]);
-  });
-
-  it("maps discreet mode to hidden for AmountDisplay", () => {
-    const { result } = renderHook(() => useTotalBalanceViewModel(buildDistributionItem()), {
-      initialState: { settings: { counterValue: "USD", locale: "en-US", discreetMode: true } },
-    });
-
-    expect(result.current.hidden).toBe(true);
   });
 });

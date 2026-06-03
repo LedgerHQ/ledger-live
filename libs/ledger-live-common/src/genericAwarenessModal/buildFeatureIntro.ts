@@ -9,6 +9,8 @@ import {
   type GenericAwarenessModalParsedFeatureIntroMainInput,
 } from "./types";
 
+const MAX_FEATURE_INTRO_ITEMS = 3;
+
 const buildFeatureIntroItem = (
   input: GenericAwarenessModalParsedFeatureIntroItemInput,
 ): GenericAwarenessModalFeatureIntroItem => ({
@@ -50,6 +52,7 @@ export const buildFeatureIntro = (
       return input ? [input] : [];
     })
     .sort((a, b) => a.index - b.index)
+    .slice(0, MAX_FEATURE_INTRO_ITEMS)
     .map(buildFeatureIntroItem);
 
   return {

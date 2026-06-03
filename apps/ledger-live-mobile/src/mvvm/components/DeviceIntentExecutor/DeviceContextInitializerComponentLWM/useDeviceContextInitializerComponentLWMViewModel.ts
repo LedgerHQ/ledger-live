@@ -17,6 +17,7 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { InitializationInput } from "../types";
 import { buildInitializerDevice } from "./utils/buildInitializerDevice";
 import type { InitializerDevice } from "./types";
+import { useSourceFlow, type SourceFlow } from "../utils/SourceFlowContext";
 
 type UseDeviceContextInitializerComponentLWMViewModelParams = {
   connectionResult: DeviceConnectionResult;
@@ -28,6 +29,7 @@ type UseDeviceContextInitializerComponentLWMViewModelParams = {
 type UseDeviceContextInitializerComponentLWMViewModelResult = {
   state: EnsureAppReadyState;
   device: InitializerDevice;
+  sourceFlow: SourceFlow;
 };
 
 const LOADING_STATE: EnsureAppReadyState = { type: LoadingStateType.Loading };
@@ -39,6 +41,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
   dependencies,
 }: UseDeviceContextInitializerComponentLWMViewModelParams): UseDeviceContextInitializerComponentLWMViewModelResult {
   const dispatch = useDispatch();
+  const sourceFlow = useSourceFlow();
   const deprecationDismissedCurrencyNames =
     useSelector(settingsStoreSelector).deprecationDoNotRemind;
   const [state, setState] = useState<EnsureAppReadyState>(LOADING_STATE);
@@ -103,5 +106,5 @@ export function useDeviceContextInitializerComponentLWMViewModel({
     sideEffects,
   ]);
 
-  return { state, device };
+  return { state, device, sourceFlow };
 }

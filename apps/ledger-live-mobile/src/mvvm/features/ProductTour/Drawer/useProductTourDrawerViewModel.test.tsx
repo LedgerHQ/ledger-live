@@ -1,10 +1,7 @@
 import { act, renderHook } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { tickProductTourDeeplink } from "~/actions/appstate";
-import {
-  __resetProductTourAutoOpenForTests,
-  useProductTourDrawerViewModel,
-} from "./hooks/useProductTourDrawerViewModel";
+import { useProductTourDrawerViewModel } from "./hooks/useProductTourDrawerViewModel";
 
 const withNonce = (nonce: number) => (state: State) => ({
   ...state,
@@ -17,13 +14,15 @@ const withNonce = (nonce: number) => (state: State) => ({
 });
 
 describe("useProductTourDrawerViewModel", () => {
-  beforeEach(() => {
-    __resetProductTourAutoOpenForTests();
-  });
-
   it("should open the drawer when openProductTour is called", () => {
     const { result } = renderHook(() => useProductTourDrawerViewModel(), {
       overrideInitialState: withNonce(0),
+    });
+
+    expect(result.current.isDrawerOpen).toBe(false);
+
+    act(() => {
+      result.current.openProductTour();
     });
 
     expect(result.current.isDrawerOpen).toBe(true);

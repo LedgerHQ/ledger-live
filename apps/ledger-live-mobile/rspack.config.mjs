@@ -93,9 +93,15 @@ function getRsdoctorPlugin() {
   const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
   const isCI = process.env.CI === "true" || process.env.CI === "1";
   const reportDir = path.join(projectRootDir, "rsdoctor", "mobile");
+  // Rsdoctor's loader interceptor crashes on Rspack v2's native resolver
+  // ("Given napi value is not an array on NapiResolveOptions.fallback") because of the
+  // resolve.fallback object below. Disable loader analysis until a fixed Rsdoctor
+  // ships; bundle analysis (the PR report) is unaffected.
+  const features = { loader: false };
   const options = isCI
     ? {
         disableClientServer: true,
+        features,
         linter: RSDOCTOR_LINTER,
         output: {
           mode: "brief",
@@ -104,6 +110,7 @@ function getRsdoctorPlugin() {
         },
       }
     : {
+        features,
         linter: RSDOCTOR_LINTER,
         output: {
           mode: "brief",
@@ -161,6 +168,12 @@ const detoxAliases = isDetoxBuild
 const hermesNonCompatibleDependencies = [
   "@polkadot/types-codec",
   "@mysten/sui",
+  // ethers v6 ships CJS with native private class fields (#field). Repack 5.2.5 fix #1364
+  // made SWC own the class-properties transform, but SWC targets node:24 (which supports
+  // private fields natively) so it doesn't downlevel them. Hermes for RN 0.81 has no
+  // private field support. Route ethers through babel-loader so @react-native/babel-preset
+  // applies @babel/plugin-transform-class-properties and compiles them away.
+  "ethers",
 ];
 
 /**
@@ -189,6 +202,23 @@ export default withRozeniteUrlFix(
         // and hurt performance with Hermes. Disable async chunk creation globally.
         // When running rsdoctor, also emit main bundle as .js so it's counted as JavaScript (not Other)
         output: { asyncChunks: false, ...(isRsdoctor && { filename: "[name].js" }) },
+        // Repack 5.2.5 forces Terser for rspack ≥1.5.0 (getMinimizerConfig.js shouldUseTerserForRspack)
+        // as a workaround for a SwcJsMinimizerRspackPlugin regression in rspack 1.5.0. That regression
+        // was fixed in later rspack releases. Terser fails on native private class fields (#field) present
+        // in dependencies (e.g. ethers@6). Override with SwcJsMinimizerRspackPlugin which handles them.
+        optimization: {
+          minimizer: [
+            new rspack.SwcJsMinimizerRspackPlugin({
+              test: /\.(js)?bundle(\?.*)?$/i,
+              extractComments: false,
+              minimizerOptions: {
+                format: {
+                  comments: false,
+                },
+              },
+            }),
+          ],
+        },
         resolve: {
           ...Repack.getResolveOptions(platform, {
             enablePackageExports: true,

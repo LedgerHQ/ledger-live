@@ -10,6 +10,11 @@ import { SeedPhraseType } from "@ledgerhq/types-live";
 import useCompanionSteps, { Step, StepKey, StepStatus } from "../hooks/useCompanionSteps";
 import { Flex } from "@ledgerhq/react-ui/index";
 
+jest.mock("@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling"),
+}));
+
 jest.mock("~/renderer/hooks/useRecoverRestoreOnboarding", () => ({
   useRecoverRestoreOnboarding: jest.fn(),
 }));

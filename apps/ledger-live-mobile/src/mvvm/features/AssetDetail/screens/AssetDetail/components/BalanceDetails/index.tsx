@@ -12,5 +12,7 @@ type Props = Readonly<{
 
 export function BalanceDetails({ currency, distributionItem, isLoading }: Props) {
   const viewModel = useBalanceDetailsViewModel(currency, distributionItem);
-  return <BalanceDetailsView {...viewModel} isLoading={isLoading} />;
+  return (
+    <BalanceDetailsView {...viewModel} distributionItem={distributionItem} isLoading={isLoading} />
+  );
 }

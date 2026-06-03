@@ -1,4 +1,4 @@
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import type { Feature_StakePrograms } from "@ledgerhq/types-live";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useMemo } from "react";
@@ -62,6 +62,7 @@ export const useVersionedStakePrograms = (): Feature_StakePrograms | null => {
       return null;
     }
 
-    return getVersionedRedirects(rawStakePrograms, appVersion);
+    // TODO(LIVE-31326): drop cast once types-live's `Redirect<M>.queryParams` brand is loosened.
+    return getVersionedRedirects(rawStakePrograms as unknown as Feature_StakePrograms, appVersion);
   }, [rawStakePrograms, appVersion]);
 };

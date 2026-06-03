@@ -38,8 +38,8 @@ jest.mock("@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling", ()
 }));
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({
-  rnBleTransportIdentifier: "react-native-ble",
-  rnHidTransportIdentifier: "react-native-hid",
+  rnBleTransportIdentifier: "RN_BLE",
+  rnHidTransportIdentifier: "RN_HID",
   isAllowedOnboardingStatePollingErrorDmk: () => true,
 }));
 
@@ -254,7 +254,7 @@ describe("useFirstStepSyncOnboardingViewModel", () => {
           id: "device-1",
           name: "My Ledger",
           deviceModelId: "Europa",
-          transport: "react-native-ble",
+          transport: "RN_BLE",
         }),
       }),
     );

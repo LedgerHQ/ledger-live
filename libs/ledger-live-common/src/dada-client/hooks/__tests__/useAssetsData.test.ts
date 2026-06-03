@@ -192,4 +192,33 @@ describe("useAssetsData", () => {
     expect(result.current.data).toBeUndefined();
     expect(result.current.loadNext).toBeUndefined();
   });
+
+  it("should forward polling options to the underlying query", () => {
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({ ...defaultMockValues });
+
+    renderHook(() =>
+      useAssetsData({
+        product: "lld",
+        version: "1.0.0",
+        pollingInterval: 60_000,
+        skipPollingIfUnfocused: true,
+      }),
+    );
+
+    expect(mockuseGetAssetsDataInfiniteQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ pollingInterval: 60_000, skipPollingIfUnfocused: true }),
+    );
+  });
+
+  it("should not poll by default", () => {
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({ ...defaultMockValues });
+
+    renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
+
+    expect(mockuseGetAssetsDataInfiniteQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ pollingInterval: undefined }),
+    );
+  });
 });

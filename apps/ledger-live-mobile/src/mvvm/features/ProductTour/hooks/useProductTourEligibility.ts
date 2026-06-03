@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector, productTourCompletedSelector } from "~/reducers/settings";
 

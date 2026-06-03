@@ -375,4 +375,102 @@ describe("useQueuedDrawerBottomSheet", () => {
     expect(firstOnModalHide).not.toHaveBeenCalled();
     expect(secondOnModalHide).toHaveBeenCalledTimes(1);
   });
+
+  it("clears consumer state at the start of the close animation, and not again on dismiss", () => {
+    const onClose = jest.fn();
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+        onClose,
+      }),
+    );
+
+    signal(true);
+    expect(onClose).not.toHaveBeenCalled();
+
+    // X button / backdrop / pan-down all animate towards index -1.
+    act(() => {
+      result.current.handleCloseAnimationStart(0, -1);
+    });
+    expect(onClose).toHaveBeenCalledTimes(1);
+
+    // onDismiss fires later (after the animation) and must not clear again.
+    act(() => {
+      result.current.handleDismiss();
+    });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not clear consumer state on open or snap-point animations", () => {
+    const onClose = jest.fn();
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+        onClose,
+      }),
+    );
+
+    signal(true);
+
+    act(() => {
+      result.current.handleCloseAnimationStart(-1, 0); // opening
+      result.current.handleCloseAnimationStart(0, 1); // expanding to a higher snap point
+    });
+
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("reopens the drawer after dismiss when it is still requested (re-tapped while closing)", () => {
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+      }),
+    );
+
+    signal(true);
+    expect(mockPresent).toHaveBeenCalledTimes(1);
+    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+
+    // Close starts, then finishes while the consumer still requests the drawer to be open.
+    act(() => {
+      result.current.handleCloseAnimationStart(0, -1);
+    });
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    // Re-enqueued so it can open again on the first interaction.
+    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(2);
+
+    signal(true);
+    expect(mockPresent).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not reopen after dismiss when it is no longer requested (normal close)", () => {
+    const { signal } = setupDrawerStateCapture();
+    let isRequestingToBeOpened = true;
+
+    const { result, rerender } = renderHook(() =>
+      useQueuedDrawerBottomSheet({ isRequestingToBeOpened }),
+    );
+
+    signal(true);
+    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+
+    // Consumer clears its request (drawer genuinely closed), then the sheet finishes dismissing.
+    isRequestingToBeOpened = false;
+    rerender(undefined);
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+  });
 });

@@ -311,6 +311,13 @@ export const getTokenOperations = async (
     params: paginationParams(params),
   });
 
+  // Drop ERC20 Transfer events on contracts that mirror the native asset
+  const nativeContractsSet = new Set((config.nativeContracts ?? []).map(c => c.toLowerCase()));
+  const filteredOps =
+    nativeContractsSet.size === 0
+      ? ops
+      : ops.filter(op => !nativeContractsSet.has(op.contractAddress.toLowerCase()));
+
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
   // those transfer events can go from anyone to anyone, which
@@ -320,7 +327,7 @@ export const getTokenOperations = async (
   // To make sure every event (transformed into an operation here)
   // has a unique id, we're groupping them by transaction hash
   // and using the index for each event fired.
-  const opsByHash = groupByHash(ops);
+  const opsByHash = groupByHash(filteredOps);
 
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) =>
@@ -732,9 +739,9 @@ export const getOperations = makeLRUCache<
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
         const effectiveToBlock =
-          order === "asc" ? (boundBlock ?? toBlock) : (paginationBlock ?? toBlock);
+          order === "asc" ? boundBlock ?? toBlock : paginationBlock ?? toBlock;
         const effectiveFromBlock =
-          order === "asc" ? (paginationBlock ?? fromBlock) : (boundBlock ?? fromBlock);
+          order === "asc" ? paginationBlock ?? fromBlock : boundBlock ?? fromBlock;
         const params: FetchOperationsParams = {
           ...baseParams,
           fromBlock: effectiveFromBlock,

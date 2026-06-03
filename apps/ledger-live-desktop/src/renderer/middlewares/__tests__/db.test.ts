@@ -58,7 +58,7 @@ type FakeState = {
   accounts: unknown[];
   identities: unknown;
   history: unknown;
-  featureFlags: { overrides: unknown; bannerVisible: unknown };
+  featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
   trustchain?: unknown;
 };
 
@@ -153,5 +153,34 @@ describe("DBMiddleware - MARKET branch", () => {
 
     expect(mockedSetKey).toHaveBeenCalledTimes(0);
     expect(mockedSetKey).not.toHaveBeenCalledWith("app", "settings", expect.anything());
+  });
+});
+
+describe("DBMiddleware - featureFlags branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists only { overrides, bannerVisible } — never the transient remoteFlagsReady gate", () => {
+    const before = baseState();
+    const after: FakeState = {
+      ...before,
+      featureFlags: {
+        overrides: { mockFeature: { enabled: true } },
+        bannerVisible: false,
+        remoteFlagsReady: true,
+      },
+    };
+
+    runMiddleware([before, after], { type: "FEATURE_FLAGS_SET_OVERRIDE" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "featureFlags", {
+      overrides: after.featureFlags.overrides,
+      bannerVisible: false,
+    });
+
+    const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
+    expect(persisted).not.toHaveProperty("remoteFlagsReady");
   });
 });

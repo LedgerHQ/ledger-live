@@ -1,8 +1,10 @@
 import { validatePublicKey, ValidationResult } from "@taquito/utils";
 import {
+  computeMaxStakeAmount,
   normalizePublicKeyForAddress,
   parseTezosTokenAsset,
   resolveTezosOperationMode,
+  STAKE_USE_ALL_RESERVE_MUTEZ,
 } from "./utils";
 
 describe("parseTezosTokenAsset", () => {
@@ -135,5 +137,28 @@ describe("normalizePublicKeyForAddress", () => {
     const result = normalizePublicKeyForAddress(sec1Hex, tz1Address);
 
     expect(result).toBeUndefined();
+  });
+});
+
+describe("computeMaxStakeAmount", () => {
+  it("subtracts already-staked funds, fees and the reserve", () => {
+    expect(computeMaxStakeAmount(1_000_000n, 300_000n, 1000n)).toBe(
+      700_000n - 1000n - STAKE_USE_ALL_RESERVE_MUTEZ,
+    );
+  });
+
+  it("uses the full balance when nothing is staked", () => {
+    expect(computeMaxStakeAmount(1_000_000n, 0n, 1000n)).toBe(
+      1_000_000n - 1000n - STAKE_USE_ALL_RESERVE_MUTEZ,
+    );
+  });
+
+  it("clamps to 0 when staked balance covers the whole balance", () => {
+    expect(computeMaxStakeAmount(300_000n, 300_000n, 1000n)).toBe(0n);
+    expect(computeMaxStakeAmount(200_000n, 300_000n, 1000n)).toBe(0n);
+  });
+
+  it("clamps to 0 when the liquid balance cannot cover fees and reserve", () => {
+    expect(computeMaxStakeAmount(305_000n, 300_000n, 1000n)).toBe(0n);
   });
 });

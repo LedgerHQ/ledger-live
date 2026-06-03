@@ -7,7 +7,6 @@ import {
   TouchableWithoutFeedback,
   Switch,
   Keyboard,
-  SafeAreaView,
 } from "react-native";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
@@ -31,6 +30,7 @@ import { CeloLockFlowParamList } from "./types";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import SafeAreaView from "~/components/SafeAreaView";
 
 type Props = BaseComposite<StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockAmount>>;
 
@@ -120,7 +120,7 @@ export default function LockAmount({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="LockFlow" name="Amount" flow="stake" action="lock" currency="celo" />
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={[styles.root, { backgroundColor: colors.background }]}>

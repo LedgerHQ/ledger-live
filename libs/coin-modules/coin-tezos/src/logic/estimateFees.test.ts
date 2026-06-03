@@ -1,5 +1,6 @@
 import { getRevealFee } from "@taquito/taquito";
 import coinConfig from "../config";
+import { STAKE_USE_ALL_RESERVE_MUTEZ } from "../utils";
 import { estimateFees } from "./estimateFees";
 import { getTezosToolkit } from "./tezosToolkit";
 
@@ -330,6 +331,33 @@ describe("estimateFees", () => {
     });
 
     expect(result.amount).toBe(0n);
+  });
+
+  it("useAllAmount stake excludes already-staked funds from maxStakable", async () => {
+    const suggestedFee = 700;
+    const balance = 1_000_000n;
+    const stakedBalance = 300_000n;
+    mockTezosToolkit.estimate.stake.mockResolvedValue({
+      suggestedFeeMutez: suggestedFee,
+      gasLimit: 1100,
+      storageLimit: 5,
+      burnFeeMutez: 0,
+      opSize: 100,
+    });
+
+    const result = await estimateFees({
+      account: { ...revealedAccount, balance, stakedBalance },
+      transaction: {
+        mode: "stake",
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      },
+    });
+
+    expect(result.amount).toBe(
+      balance - stakedBalance - BigInt(suggestedFee) - STAKE_USE_ALL_RESERVE_MUTEZ,
+    );
   });
 
   it("useAllAmount unstake coerces amount to 1 for Taquito estimation", async () => {

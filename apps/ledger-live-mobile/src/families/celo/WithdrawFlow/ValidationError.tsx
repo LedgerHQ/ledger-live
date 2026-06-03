@@ -1,7 +1,7 @@
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
@@ -30,7 +30,7 @@ export default function ValidationError({ navigation, route }: Props) {
   const error = route.params?.error;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen
         category="CeloWithdraw"
         name="ValidationError"

@@ -1,5 +1,13 @@
 import React from "react";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Text,
+  DescriptionItem,
+  DescriptionItemLeading,
+  DescriptionItemLabel,
+  DescriptionItemTrailing,
+  DescriptionItemValue,
+} from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
@@ -45,24 +53,24 @@ export function PricePerformanceView({ records, isLoading, isError, hasData }: P
       >
         <Box lx={listStyle}>
           {records.map(record => (
-            <Box key={record.id} lx={recordStyle}>
-              <Box lx={recordLeftStyle}>
-                <Text typography="body2" lx={{ color: "muted" }}>
-                  {record.label}
-                </Text>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {record.date} ({record.relativeTime})
-                </Text>
-              </Box>
-              <Box lx={recordRightStyle}>
-                <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                  {record.value}
-                </Text>
-                <Text typography="body3" lx={{ color: "muted" }}>
-                  {record.changePercentage}
-                </Text>
-              </Box>
-            </Box>
+            <DescriptionItem key={record.id} size="md">
+              <DescriptionItemLeading>
+                <Box lx={leadingColumnStyle}>
+                  <DescriptionItemLabel>{record.label}</DescriptionItemLabel>
+                  <Text typography="body3" lx={{ color: "muted" }}>
+                    {record.date} ({record.relativeTime})
+                  </Text>
+                </Box>
+              </DescriptionItemLeading>
+              <DescriptionItemTrailing>
+                <Box lx={trailingColumnStyle}>
+                  <DescriptionItemValue>{record.value}</DescriptionItemValue>
+                  <Text typography="body3" lx={{ color: "muted" }}>
+                    {record.changePercentage}
+                  </Text>
+                </Box>
+              </DescriptionItemTrailing>
+            </DescriptionItem>
           ))}
         </Box>
       </SectionContentState>
@@ -76,19 +84,16 @@ const containerStyle: LumenViewStyle = {
 
 const listStyle: LumenViewStyle = {
   gap: "s16",
+  marginBottom: "s12",
 };
 
-const recordStyle: LumenViewStyle = {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
-};
-
-const recordLeftStyle: LumenViewStyle = {
+const leadingColumnStyle: LumenViewStyle = {
+  flex: 1,
+  minWidth: "s0",
   gap: "s2",
 };
 
-const recordRightStyle: LumenViewStyle = {
+const trailingColumnStyle: LumenViewStyle = {
   alignItems: "flex-end",
   gap: "s2",
 };

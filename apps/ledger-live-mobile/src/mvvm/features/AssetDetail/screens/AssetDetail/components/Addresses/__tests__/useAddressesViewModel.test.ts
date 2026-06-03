@@ -333,7 +333,7 @@ describe("useAddressesViewModel", () => {
         params: { accountId: btcAccounts[0].id },
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "address",
+        button: "Account",
         currency: "bitcoin",
         chain: "bitcoin",
         page: "Asset Detail",
@@ -366,7 +366,7 @@ describe("useAddressesViewModel", () => {
         },
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "address",
+        button: "Account",
         currency: usdtEthToken.id,
         chain: mockEthCryptoCurrency.id,
         page: "Asset Detail",

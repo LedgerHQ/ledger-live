@@ -37,6 +37,7 @@ import { useNavigate } from "react-router";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import {
   counterValueCurrencySelector,
+  lastSeenDeviceSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helpers";
@@ -58,6 +59,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const walletState = useSelector(walletSelector);
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
   const syncAccountsById = useSyncAccountsById();
@@ -179,6 +181,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         flags,
         locale,
         counterValueCurrency: counterValueCurrency.ticker,
+        deviceModelId: lastSeenDevice?.modelId,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             dispatch(
@@ -402,6 +405,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     flags,
     locale,
     counterValueCurrency,
+    lastSeenDevice,
     dispatch,
     setDrawer,
     navigate,

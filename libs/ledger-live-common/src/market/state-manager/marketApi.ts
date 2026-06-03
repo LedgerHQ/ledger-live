@@ -57,7 +57,7 @@ export const marketApi = createApi({
     }),
     getAssetChartData: build.query<MarketCoinDataChart, MarketAssetChartDataRequestParams>({
       query: ({ id, counterCurrency, range = "24h" }) => ({
-        url: `/v3/markets/chart/${getChartRangeSegment(range)}/${id}`,
+        url: `/v3/markets/chart/${getChartRangeSegment(range)}/${encodeURIComponent(id ?? "")}`,
         params: { to: counterCurrency },
       }),
       providesTags: [MarketDataTags.ChartData],

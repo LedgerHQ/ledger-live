@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWalletFeaturesConfig, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig, useFeature } from "@features/platform-feature-flags";
 import { useManagerNavLockCallback } from "../CustomBlockRouterNavigator";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";

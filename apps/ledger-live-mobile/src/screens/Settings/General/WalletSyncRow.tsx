@@ -17,7 +17,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { activateDrawerSelector } from "~/reducers/walletSync";
 import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 const WalletSyncRow = () => {
   const { t } = useTranslation();

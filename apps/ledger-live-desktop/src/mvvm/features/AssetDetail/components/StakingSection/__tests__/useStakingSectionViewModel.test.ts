@@ -7,24 +7,22 @@ import { track } from "~/renderer/analytics/segment";
 import { computeFiatPortionsFromDistribution } from "LLD/features/AssetDetail/utils/computeFiatPortionsFromDistribution";
 import { useStakingSectionViewModel } from "../useStakingSectionViewModel";
 
-const mockNavigate = jest.fn();
 const mockGetCanStakeCurrency = jest.fn().mockReturnValue(false);
 const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
-
-jest.mock("react-router", () => ({
-  ...jest.requireActual("react-router"),
-  useNavigate: () => mockNavigate,
-}));
+const mockStartStakeFlow = jest.fn();
 
 jest.mock("LLD/hooks/useStake", () => ({
   useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
 }));
+
+jest.mock("~/renderer/screens/stake", () => () => mockStartStakeFlow);
 
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
   useInterestRatesByCurrencies: (...args: unknown[]) => mockUseInterestRatesByCurrencies(...args),
 }));
 
 const btc = getCryptoCurrencyById("bitcoin");
+const tron = getCryptoCurrencyById("tron");
 
 const defaultSettingsState = {
   settings: { counterValue: "USD", locale: "en-US", discreetMode: false },
@@ -50,13 +48,58 @@ describe("useStakingSectionViewModel", () => {
     expect(result.current.state.type).toBe("hidden");
   });
 
-  it("returns hidden state when there are no accounts", () => {
+  it("shows the earn banner when stakeable without accounts", () => {
     mockGetCanStakeCurrency.mockReturnValue(true);
     const item = buildDistributionItem({ currency: btc, accounts: [] });
 
     const { result } = renderHook(() => useStakingSectionViewModel(item));
 
-    expect(result.current.state.type).toBe("hidden");
+    expect(result.current.state.type).toBe("banner");
+    if (result.current.state.type === "banner") {
+      expect(result.current.state.label).toBe("Earn with this asset");
+    }
+
+    act(() => result.current.onEarnBannerPress());
+
+    expect(mockStartStakeFlow).toHaveBeenCalledWith({
+      currencies: ["bitcoin"],
+      source: "Asset",
+    });
+  });
+
+  it("shows APY in the earn banner when stakeable without accounts and interest rate is available", () => {
+    mockGetCanStakeCurrency.mockReturnValue(true);
+    mockUseInterestRatesByCurrencies.mockReturnValue({
+      bitcoin: { value: 0.12, type: "APY" },
+    });
+    const item = buildDistributionItem({ currency: btc, accounts: [] });
+
+    const { result } = renderHook(() => useStakingSectionViewModel(item));
+
+    expect(result.current.state.type).toBe("banner");
+    if (result.current.state.type === "banner") {
+      expect(result.current.state.label).toBe("Earn up to 12.0% APY");
+    }
+  });
+
+  it("shows the earn banner when stakeable with a zero-balance account", () => {
+    mockGetCanStakeCurrency.mockReturnValue(true);
+    const account = genAccount("staking-btc-zero-balance", { currency: btc });
+    account.balance = new BigNumber(0);
+    account.spendableBalance = new BigNumber(0);
+    const item = buildDistributionItem({
+      currency: btc,
+      accounts: [account],
+      amount: 0,
+      countervalue: 0,
+    });
+
+    const { result } = renderHook(() => useStakingSectionViewModel(item));
+
+    expect(result.current.state.type).toBe("banner");
+    if (result.current.state.type === "banner") {
+      expect(result.current.state.label).toBe("Earn with this asset");
+    }
   });
 
   it("shows the default earn banner when stakeable without an earn deposit and no APY", () => {
@@ -104,7 +147,7 @@ describe("useStakingSectionViewModel", () => {
     }
   });
 
-  it("shows staked balances in the app fiat currency when balance exceeds spendable balance", () => {
+  it("shows staked balances when an earn deposit exists", () => {
     mockGetCanStakeCurrency.mockReturnValue(true);
     const account = genAccount("staking-btc-deposit", { currency: btc });
     account.balance = new BigNumber(10);
@@ -182,26 +225,27 @@ describe("useStakingSectionViewModel", () => {
     }
   });
 
-  it("navigates to earn and tracks analytics on banner press", () => {
+  it("opens the stake drawer when earn banner is pressed", () => {
     mockGetCanStakeCurrency.mockReturnValue(true);
-    const account = genAccount("staking-btc-nav", { currency: btc });
-    const item = buildDistributionItem({ currency: btc, accounts: [account] });
+    const account = genAccount("staking-tron-nav", { currency: tron });
+    const item = buildDistributionItem({ currency: tron, accounts: [account] });
 
     const { result } = renderHook(() => useStakingSectionViewModel(item));
 
     act(() => result.current.onEarnBannerPress());
 
-    expect(mockNavigate).toHaveBeenCalledWith("/earn", {
-      state: { intent: "deposit", cryptoAssetId: "bitcoin" },
+    expect(mockStartStakeFlow).toHaveBeenCalledWith({
+      currencies: ["tron"],
+      source: "Asset",
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "earn_banner",
-      currency: "bitcoin",
-      page: "Asset detail",
+      currency: "tron",
+      page: "Asset",
     });
   });
 
-  it("navigates to earn and tracks analytics on earn deposit press", () => {
+  it("opens the stake drawer when earn deposit card is pressed", () => {
     mockGetCanStakeCurrency.mockReturnValue(true);
     const account = genAccount("staking-btc-deposit-nav", { currency: btc });
     account.balance = new BigNumber(10);
@@ -212,13 +256,14 @@ describe("useStakingSectionViewModel", () => {
 
     act(() => result.current.onEarnDepositPress());
 
-    expect(mockNavigate).toHaveBeenCalledWith("/earn", {
-      state: { intent: "deposit", cryptoAssetId: "bitcoin" },
+    expect(mockStartStakeFlow).toHaveBeenCalledWith({
+      currencies: ["bitcoin"],
+      source: "Asset",
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "earn_deposit",
       currency: "bitcoin",
-      page: "Asset detail",
+      page: "Asset",
     });
   });
 });

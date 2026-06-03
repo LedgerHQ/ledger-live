@@ -1,6 +1,6 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import { getStakes, getAllBalancesCached } from "../network";
-import { toSuiAsset } from "../network/sdk";
+import { getDelegatedStakes, getAllBalancesCached } from "../network";
+import { toStakes, toSuiAsset } from "../network/sdk";
 
 export async function getBalance(address: string, currencyId?: string): Promise<Balance[]> {
   const [native, staking] = await Promise.all([
@@ -21,10 +21,12 @@ const getNativeBalance = async (address: string, currencyId?: string): Promise<B
 };
 
 const getStakingBalances = (address: string, currencyId?: string): Promise<Balance[]> =>
-  getStakes(address, currencyId).then(stakes =>
-    stakes.map(stake => ({
-      value: stake.amount,
-      asset: stake.asset,
-      stake: stake,
-    })),
+  getDelegatedStakes(address, currencyId).then(delegations =>
+    delegations
+      .flatMap(d => toStakes(address, d))
+      .map(stake => ({
+        value: stake.amount,
+        asset: stake.asset,
+        stake: stake,
+      })),
   );

@@ -15,6 +15,7 @@ export type OnboardingPreQuizModalNavigatorParamList = {
 export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingWelcome]: undefined;
   [ScreenName.OnboardingPostWelcomeSelection]: { userHasDevice: boolean };
+  [ScreenName.OnboardingNotificationsOptIn]: undefined;
   [ScreenName.OnboardingWelcomeBack]: undefined;
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>

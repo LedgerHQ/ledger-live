@@ -1019,7 +1019,6 @@
         "switchLabel" : "<1></1><0>이용 약관</0><1>을 읽고 동의합니다.</1>"
       },
       "steps" : {
-        "title" : "단계 <0>{{step}} / {{total}}</0>",
         "1" : {
           "subtitle" : "계정에서 프로토콜이 향후",
           "subtitle2" : "대출을 처리하도록 승인합니다.",
@@ -1032,7 +1031,8 @@
         "3" : {
           "subtitle" : "언제든 자산을 출금하세요",
           "description" : "언제든 자산의 일부, 또는 전부를 Ledger 계정에서 바로 출금하고 이자를 받을 수 있습니다."
-        }
+        },
+        "title" : "단계 <0>{{step}} / {{total}}</0>"
       }
     },
     "supply" : {
@@ -1363,6 +1363,10 @@
         "recover" : {
           "title" : "백업 보안 설정 마무리",
           "description" : "Ledger Recover 활성화 완료"
+        },
+        "discoverWallet" : {
+          "title" : "지갑의 다양한 기능 알아보기",
+          "description" : "지갑의 주요 기능 자세히 살펴보기"
         }
       }
     },
@@ -1403,7 +1407,14 @@
       "recover" : {
         "title" : "Ledger Recover 구독하기",
         "description" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
-        "actionCompletedPopupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
+        "actionCompletedPopupLabel" : "Ledger Recover를 성공적으로 구독했습니다",
+        "titleCompleted" : "백업 보안 설정 완료"
+      },
+      "discoverWallet" : {
+        "title" : "지갑의 다양한 기능 알아보기",
+        "titleCompleted" : "지갑의 다양한 기능 알아보기 완료",
+        "description" : "지갑의 주요 기능 자세히 살펴보기",
+        "actionCompletedPopupLabel" : "제품 둘러보기 완료"
       }
     }
   },
@@ -1808,7 +1819,9 @@
       "gasConsumed" : "소모된 가스비",
       "gasUsed" : "사용된 가스비",
       "gasLimit" : "가스 한도",
-      "functionId" : "함수 ID"
+      "functionId" : "함수 ID",
+      "delegatedTo" : "다음에게 위임됨",
+      "delegatedAmount" : "위임된 금액"
     }
   },
   "operationList" : {
@@ -2210,8 +2223,6 @@
     }
   },
   "buyDeviceModal" : {
-    "title" : "Ledger 장치를 연결하세요",
-    "subtitle" : "Ledger 장치를 연결하여 Ledger Wallet의 모든 기능을 온전히 누려보세요.",
     "0" : {
       "title" : "완전한 소유권",
       "desc" : "사용자가 개인 키에 대한 온전한 소유권을 보유합니다."
@@ -2224,6 +2235,8 @@
       "title" : "가장 강력한 암호화폐 지갑",
       "desc" : "수천 가지 디지털 자산을 한 곳에서 관리하세요."
     },
+    "title" : "Ledger 장치를 연결하세요",
+    "subtitle" : "Ledger 장치를 연결하여 Ledger Wallet의 모든 기능을 온전히 누려보세요.",
     "connectCTA" : "연결",
     "buyCTA" : "Ledger 장치 구매하기"
   },
@@ -2704,7 +2717,11 @@
           },
           "starter" : {
             "description" : "EGLD 자산을 스테이킹 공급자에게 위임하여 보상을 받을 수 있습니다.",
-            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 해제 10일 후에 이용 가능합니다"],
+            "bullet" : [
+              "위임된 자산의 소유권은 귀하가 갖습니다",
+              "Ledger 장치를 이용하여 위임하세요",
+              "자산은 위임 해제 10일 후에 이용 가능합니다"
+            ],
             "warning" : {
               "description" : "스테이킹 제공자를 현명하게 선택하세요. 현재 유일한 위험 요소는 다양한 사유로 보상을 받지 못하는 상황이 발생하는 것입니다. 따라서, 제공자는 신뢰성, 커뮤니케이션 및 경제성을 기준으로 선택해야 합니다."
             }
@@ -2847,7 +2864,11 @@
         "steps" : {
           "starter" : {
             "description" : "풀에 ADA를 위임하여 보상을 받을 수 있습니다.",
-            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "언제든지 자산을 다른 풀에 다시 위임하거나 위임 취소를 선택할 수 있습니다."]
+            "bullet" : [
+              "위임된 자산의 소유권은 귀하가 갖습니다",
+              "Ledger 장치를 이용하여 위임하세요",
+              "언제든지 자산을 다른 풀에 다시 위임하거나 위임 취소를 선택할 수 있습니다."
+            ]
           },
           "validator" : {
             "title" : "풀"
@@ -2890,6 +2911,19 @@
               "cta" : "세부사항 보기"
             },
             "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      },
+      "selfTransactionFlow" : {
+        "title" : "위임 해제 준비",
+        "steps" : {
+          "starter" : {
+            "description" : [
+              "스테이킹 종료 및 ADA 예치금 회수 방법:",
+              "변경된 카르다노 거버넌스 정책에 따라, 위임을 해제하려면 먼저 투표 상태(Voting status)를 설정해야 합니다",
+              "이 단계에서는 사용자가 기권 의사를 등록하기 위해 자신의 Ledger 주소로 트랜잭션을 전송하는 과정을 포함합니다. 표준 네트워크 수수료만 지불하면 ADA는 지갑에 그대로 보관됩니다.",
+              "이 기본 설정이 기록되면 평소처럼 위임 해제를 진행할 수 있습니다."
+            ]
           }
         }
       }
@@ -3298,7 +3332,11 @@
         "steps" : {
           "starter" : {
             "description" : "{{currencyTicker}} 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
-            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 해제 {{numberOfDays}}일 후에 이용 가능합니다"],
+            "bullet" : [
+              "위임된 자산의 소유권은 귀하가 갖습니다",
+              "Ledger 장치를 이용하여 위임하세요",
+              "자산은 위임 해제 {{numberOfDays}}일 후에 이용 가능합니다"
+            ],
             "warning" : {
               "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
             }
@@ -3614,7 +3652,11 @@
       "steps" : {
         "starter" : {
           "description" : "자산을 본딩하여 보상을 받고 검증인을 지명하세요.",
-          "bullet" : ["본딩된 자산의 소유권은 여전히 귀하에게 있습니다", "Ledger 장치를 이용해 지명하세요", "언본딩한지 28일이 지나면 다시 자산을 이용할 수 있습니다"],
+          "bullet" : [
+            "본딩된 자산의 소유권은 여전히 귀하에게 있습니다",
+            "Ledger 장치를 이용해 지명하세요",
+            "언본딩한지 28일이 지나면 다시 자산을 이용할 수 있습니다"
+          ],
           "help" : "지명이 어떻게 이루어지는지",
           "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 본딩된 자산이 영구 손실될 수 있습니다."
         },
@@ -4011,7 +4053,11 @@
         "steps" : {
           "starter" : {
             "description" : "Aptos 암호화폐를 검증인에게 스테이킹하여 보상을 받을 수 있습니다.",
-            "bullet" : ["스테이킹된 자산의 소유권은 귀하에게 있습니다", "Ledger 장치를 사용한 스테이킹", "자산은 언스테이킹 0~14일 후에 이용 가능합니다"],
+            "bullet" : [
+              "스테이킹된 자산의 소유권은 귀하에게 있습니다",
+              "Ledger 장치를 사용한 스테이킹",
+              "자산은 언스테이킹 0~14일 후에 이용 가능합니다"
+            ],
             "warning" : {
               "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
             }
@@ -4250,7 +4296,11 @@
           "steps" : {
             "starter" : {
               "description" : "{{currencyTicker}} 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
-              "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 취소 후 사용 가능합니다"],
+              "bullet" : [
+                "위임된 자산의 소유권은 귀하가 갖습니다",
+                "Ledger 장치를 이용하여 위임하세요",
+                "자산은 위임 취소 후 사용 가능합니다"
+              ],
               "warning" : {
                 "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
               }
@@ -4278,7 +4328,38 @@
         }
       },
       "redelegation" : {
-        "header" : "재위임"
+        "header" : "재위임",
+        "flow" : {
+          "title" : "자산 재위임",
+          "steps" : {
+            "starter" : {
+              "title" : "재위임",
+              "description" : "재위임 기능을 이용해 손쉽게 검증인을 변경하세요. 하지만 재위임 시 {{ numberOfDays }}일 타임 락이 적용되기 때문에, 다시 변경을 원하는 경우 기다려야 합니다.",
+              "warning" : "검증인을 신중하게 선택하세요. 선택한 검증인에게 문제가 발생할 경우, 위임한 자산의 일부가 영구적으로 손실될 수 있습니다. 최대 <0>{{maxRedelegations}}건의 대기 중 재위임이 가능합니다.",
+              "howDelegationWorks" : "위임은 어떤 원리인가요?"
+            },
+            "validators" : {
+              "title" : "검증인",
+              "currentDelegation" : "현재 위임",
+              "newDelegation" : "새로운 위임",
+              "chooseValidator" : "검증인 선택",
+              "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>{{numberOfDays}}일</0>을 기다려야 합니다",
+              "amountLabel" : "재위임할 금액"
+            },
+            "connectDevice" : {
+              "title" : "장치"
+            },
+            "confirmation" : {
+              "title" : "확인",
+              "success" : {
+                "title" : "귀하의 자산을 성공적으로 재위임했습니다",
+                "text" : "블록체인이 트랜잭션 확인을 마치고 나면 재위임이 업데이트됩니다.",
+                "cta" : "세부사항 보기"
+              },
+              "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+            }
+          }
+        }
       },
       "undelegation" : {
         "header" : "위임 해제",
@@ -4367,7 +4448,11 @@
         "steps" : {
           "starter" : {
             "description" : "니어 암호화폐를 검증인에게 스테이킹하여 보상을 받을 수 있습니다.",
-            "bullet" : ["스테이킹된 자산의 소유권은 귀하에게 있습니다", "Ledger 장치를 사용한 스테이킹", "자산은 언스테이킹 후 52~65시간 후에 이용 가능합니다"],
+            "bullet" : [
+              "스테이킹된 자산의 소유권은 귀하에게 있습니다",
+              "Ledger 장치를 사용한 스테이킹",
+              "자산은 언스테이킹 후 52~65시간 후에 이용 가능합니다"
+            ],
             "warning" : {
               "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
             }
@@ -4874,6 +4959,13 @@
           "completed" : "제품 둘러보기가 완료로 표시됩니다.",
           "notCompleted" : "제품 둘러보기가 아직 완료되지 않았습니다.",
           "open" : "열기"
+        },
+        "recover" : {
+          "title" : "복구",
+          "description" : "로컬 Ledger Recover 구독 상태를 변경하여, 온보딩 완료 후의 허브 화면과 복구 배너를 테스트하세요.",
+          "noSubscription" : "구독 없음",
+          "inProgress" : "진행 중",
+          "backupDone" : "백업 완료"
         }
       },
       "walletFeaturesDevTool" : {
@@ -5580,7 +5672,6 @@
             }
           },
           "recoverHowTo" : {
-            "title" : "\"Ledger Recover로 복구\"를 선택합니다.",
             "1" : {
               "title" : "'복구'를 선택합니다",
               "descr" : "두 버튼을 동시에 눌러 선택하세요."
@@ -5588,6 +5679,7 @@
             "2" : {
               "title" : "\"Ledger Recover로 복구\"를 선택합니다."
             },
+            "title" : "\"Ledger Recover로 복구\"를 선택합니다.",
             "help" : {
               "iDontSee" : "'Ledger Recover로 복구' 메뉴가 보이지 않습니다.",
               "modal" : {
@@ -5872,12 +5964,6 @@
     "connected" : "연결됨",
     "backToPortfolio" : "포트폴리오로 돌아가기",
     "steps" : {
-      "entry" : {
-        "title" : "USB 연결 문제 해결",
-        "desc" : "장치 연결에 문제가 있는 것 같습니다. 걱정 마세요. 장치가 무사히 연결될 때까지 다양한 해결책을 하나씩 시도해볼 수 있습니다!",
-        "cta" : "해결해 봅시다!",
-        "back" : "돌아가기"
-      },
       "1" : {
         "windows" : {
           "title" : "Ledger Wallet을 관리자 권한으로 실행",
@@ -5990,6 +6076,12 @@
           "updateInstructions" : "장치 업데이트 지침을 따르세요",
           "somethingElse" : "다른 항목"
         }
+      },
+      "entry" : {
+        "title" : "USB 연결 문제 해결",
+        "desc" : "장치 연결에 문제가 있는 것 같습니다. 걱정 마세요. 장치가 무사히 연결될 때까지 다양한 해결책을 하나씩 시도해볼 수 있습니다!",
+        "cta" : "해결해 봅시다!",
+        "back" : "돌아가기"
       }
     }
   },
@@ -6009,8 +6101,7 @@
     "doubleCheck" : "서명하기 전에 Ledger 장치에서 트랜잭션 세부 정보를 다시 확인하세요.",
     "termsAndConditions" : "본 트랜잭션에 서명함으로써 본인은 <0>{{appName}}의 이용약관</0>을 수락합니다.",
     "termsAndConditionsWithPrivacy" : "본 트랜잭션에 서명함으로써, 본인은 <0>{{appName}}의 이용 약관</0> 및 <1>개인 정보 보호 정책</1>을 수락합니다.",
-    "warningWording" : {
-    },
+    "warningWording" : {},
     "titleWording" : {
       "send" : "거래를 장치에서 확인하고 완료하세요",
       "claimReward" : "거래를 장치에서 확인하고 완료하세요",
@@ -6075,7 +6166,11 @@
     "title" : "이용약관 업데이트",
     "body" : {
       "intro" : "안녕하세요! Ledger Wallet 이용 약관이 업데이트되었습니다. 이번 업데이트에서는 약관을 보다 명확하게 다듬고 Ledger Wallet에 새롭게 추가된 서비스 및 기능을 반영했습니다. 다음 사항을 중심으로 업데이트가 이루어졌습니다.",
-      "bulletPoints" : ["이용 가능한 서비스와 그 작동 방법의 명확한 설명", "서비스 수수료 운영 방식 설명", "공지 프로세스를 개선하여 이용약관의 새로운 변경 사항을 사용자에게 적절하게 알림"],
+      "bulletPoints" : [
+        "이용 가능한 서비스와 그 작동 방법의 명확한 설명",
+        "서비스 수수료 운영 방식 설명",
+        "공지 프로세스를 개선하여 이용약관의 새로운 변경 사항을 사용자에게 적절하게 알림"
+      ],
       "agreement" : "\"계속\"을 클릭하면 아래 이용약관을 읽고 동의하는 것으로 간주합니다."
     },
     "link" : "이용 약관",
@@ -6221,6 +6316,36 @@
               "description" : "요청이 철회되었습니다."
             }
           }
+        }
+      },
+      "disclaimer" : {
+        "title" : "Canton 네트워크 설정",
+        "intro" : "Canton은 고유한 특성을 가지고 있으며, 계속 진행하려면 다음 사항을 숙지하셔야 합니다.",
+        "bullets" : {
+          "utxo" : {
+            "title" : "UTXO 기반 잔액(UTXO-based balance)",
+            "body" : "잔액은 개별 코인 컨트랙트(계약)로 존재하며, 1회 전송당 최대 100개로 제한됩니다. 유휴 상태의 컨트랙트는 시간이 지남에 따라 가치가 하락하며, 수수료가 잔액을 초과할 경우 만료됩니다."
+          },
+          "offers" : {
+            "title" : "오퍼 기반 전송(Offer-based transfers)",
+            "body" : "어떠한 항목도 자동으로 정산되지 않습니다. 보낸 전송은 철회할 수 있으며, 받은 전송은 수동으로 수락하거나 거절해야 합니다. Canton 대시보드에서 오퍼를 관리하세요."
+          },
+          "dualValidator" : {
+            "title" : "이중 검증인 보안(Dual-validator security)",
+            "body" : "트랜잭션을 처리하려면 Ledger와 Klin 양측의 공동 서명이 필요합니다. 어느 한쪽도 단독으로는 사용자를 대신하여 권한을 행사할 수 없습니다."
+          },
+          "tokenLiability" : {
+            "title" : "표준 토큰 관련 책임(Standard token liability) ⚠️",
+            "body" : "재해 복구 상황 발생 시, 토큰 복구 책임은 Ledger가 아닌 토큰 발행자에게 있습니다."
+          }
+        },
+        "agreeLabel" : "본인은 <1>Canton 네트워크 이용약관 및 Ledger의 면책 조항</1>에 동의합니다.",
+        "cancel" : "취소",
+        "agree" : "허용",
+        "terms" : {
+          "title" : "Canton 네트워크 약관",
+          "sectionTitle" : "표준 토큰 관련 책임 및 복구",
+          "body" : "Ledger는 디지털 자산(DA) 레지스트리를 통해 발행된 표준 토큰만을 지원합니다. Ledger는 해당 토큰의 발행자가 아니며, 토큰의 가치, 관리 또는 기반 스마트 컨트랙트에 대해 어떠한 책임도 지지 않습니다.\n\nLedger 서비스 중단 또는 \"재해 복구(disaster recovery)\" 실패가 발생할 경우, Ledger는 사용자의 자산을 복구할 수 없습니다 자산을 복구하려면 특정 토큰 발행자(자산 관리자)에게 직접 연락하여, 해당 발행자의 \"자산 동결(Asset Freeze)\" 또는 \"레지스트리 복구(Registry Recovery)\" 프로토콜을 통해 복구 절차를 시작해야 합니다. 사용자의 구제 수단은 전적으로 토큰 발행자의 기존 서비스 수준 계약(SLA)에 따라 해당 발행자에게만 있습니다. 본 절차를 진행하는 것은 해당 토큰의 손실, 복구 과정 또는 복구 불가 상황으로 인해 발생하는 모든 책임으로부터 Ledger 및 그 계열사가 면제된다는 사실을 인지하고 동의하는 행위로 간주됩니다."
         }
       }
     },
@@ -7595,6 +7720,17 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "UTXO 제한을 초과하는 수량입니다."
+    },
+    "MustDelegateBeforeStaking" : {
+      "title" : "스테이킹 전 계정 위임이 필요합니다"
+    },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "선택된 프라이빗 레코드가 너무 많습니다",
+      "description" : "트랜잭션당 최대 {{count}}개의 프라이빗 레코드만 사용할 수 있습니다."
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "1회 트랜잭션 전송 한도 초과",
+      "description" : "보유한 프라이빗 레코드로는 한 번에 전송할 수 없는 액수입니다. 금액을 줄여 다시 시도하세요."
     }
   },
   "cryptoOrg" : {
@@ -8401,7 +8537,8 @@
     "title" : "계정",
     "tableActions" : {
       "searchAddress" : "이름 또는 주소로 검색",
-      "addAddress" : "주소 추가"
+      "addAddress" : "주소 추가",
+      "addAccount" : "계정 추가"
     },
     "table" : {
       "columns" : {
@@ -8543,7 +8680,13 @@
       "stepViewKeyWarning" : {
         "title" : "Aleo 비공개 잔액 설정하기",
         "description" : "Ledger Wallet은 조회 키(view Key)를 통해 비공개 잔액을 표시하고 타사 서비스를 통해 비공개 트랜잭션을 처리합니다. <0>자세히 알아보기</0>",
-        "bullets" : ["읽기 전용 권한을 통한 비공개 잔액 표시", "Ledger는 사용자의 자금을 전송하거나 사용할 수 없으며,", "자금 사용이나 서명은 사용자 본인만 가능합니다.", "빠른 처리를 위해 증명 생성은 제3자 증명 서비스를 통해 처리되지만,", "이들 서비스는 사용자의 자금에 액세스하거나 사용할 권한은 없습니다."],
+        "bullets" : [
+          "읽기 전용 권한을 통한 비공개 잔액 표시",
+          "Ledger는 사용자의 자금을 전송하거나 사용할 수 없으며,",
+          "자금 사용이나 서명은 사용자 본인만 가능합니다.",
+          "빠른 처리를 위해 증명 생성은 제3자 증명 서비스를 통해 처리되지만,",
+          "이들 서비스는 사용자의 자금에 액세스하거나 사용할 권한은 없습니다."
+        ],
         "cta" : {
           "allow" : "허용",
           "cancel" : "취소"
@@ -8593,6 +8736,21 @@
         "noRecordsAlert" : "사용 가능한 레코드가 없습니다. 시작하려면 셀프 전송을 진행하거나 프라이빗 자산을 수령하세요.",
         "alert" : "최대 사용 가능 금액은 선택한 레코드의 최대 가치에 따라 달라집니다. Ledger 사용자의 수수료는 Provable에서 부담합니다.",
         "recordsLimit" : "최대 {{max}} 레코드가 표시됩니다"
+      },
+      "quickAmountSelector" : {
+        "strategies" : {
+          "fast" : "빠름",
+          "balanced" : "균형",
+          "full" : "최대"
+        },
+        "recordCount_one" : "{{count}}개 레코드",
+        "recordCount_other" : "{{count}}개 레코드",
+        "unavailable" : "사용 불가",
+        "spendableBalance" : "최대 사용 가능 잔액:"
+      },
+      "infoBanner" : {
+        "descPartOne" : "온 체인에서 전송자, 수량, 수령인이 숨김 처리됩니다.",
+        "descPartTwo" : "1회 전송당 최대 {{max}}개의 레코드."
       }
     },
     "account" : {
@@ -8620,7 +8778,9 @@
         "selectLabel" : "보내는 계정"
       },
       "summary" : {
-        "proofGenerationWarning" : "Aleo 트랜잭션에는 증명 생성이 필요합니다. 이 작업은 시간이 다소 소요될 수 있습니다."
+        "proofGenerationWarning" : "Aleo 트랜잭션에는 증명 생성이 필요합니다. 이 작업은 시간이 다소 소요될 수 있습니다.",
+        "recordsUsed" : "사용된 레코드",
+        "signingTime" : "서명 시간"
       },
       "mandatoryPrivateSync" : {
         "title" : "비공개 수량 동기화 중({{percentage}}%)",
@@ -8665,6 +8825,28 @@
       "growYourRewards" : "보상 수익 늘리기",
       "spendYourCrypto" : "암호화폐로 결제하세요",
       "everythingAtAGlance" : "모든 정보를 한눈에"
+    },
+    "slides" : {
+      "fund" : {
+        "title" : "자산을 입금하고 시작하세요",
+        "subTitle" : "간편한 암호화폐 전송과 매수는 물론 Cash-to-Stablecoin 옵션까지, 원하는 방식으로 Ledger Wallet에 자산을 추가하세요."
+      },
+      "portfolio" : {
+        "title" : "시장 트렌드 앞서가기",
+        "subTitle" : "내 자산과 보상 내역, 그리고 시장 트렌드를 한눈에 확인하세요."
+      },
+      "earn" : {
+        "title" : "보유한 암호화폐로 누리는 리워드 혜택",
+        "subTitle" : "수익 창출 섹션에서 암호화폐를 다양하게 활용해 보세요."
+      },
+      "card" : {
+        "title" : "암호화폐를 실생활에서도 자유롭게",
+        "subTitle" : "온·오프라인 어디서든 크립토 카드로 결제하고 캐시백 혜택을 누려보세요."
+      },
+      "swap" : {
+        "title" : "앱 전환 없이 간편하게 스왑하기",
+        "subTitle" : "신뢰할 수 있는 스왑 업체를 통해 수천 가지 자산을 제약 없이 거래하세요."
+      }
     }
   },
   "history" : {
@@ -8723,6 +8905,197 @@
     "explore" : "모든 Ledger 장치 살펴보기"
   },
   "assetDetails" : {
-    "totalBalance" : "총 잔액"
+    "totalBalance" : "총 잔액",
+    "header" : {
+      "optionsMenu" : "자산 옵션",
+      "addFavourite" : "즐겨찾기에 추가",
+      "removeFavourite" : "즐겨찾기에서 제거",
+      "hideFromPortfolio" : "포트폴리오에서 숨기기",
+      "showInPortfolio" : "포트폴리오에 표시"
+    },
+    "hiddenBanner" : {
+      "description" : "이 자산은 포트폴리오에서 숨김 처리되었습니다.",
+      "showAsset" : "자산 표시"
+    },
+    "marketPrice" : "시장가",
+    "addresses" : "주소",
+    "addressesDialog" : {
+      "title" : "주소",
+      "description" : "모든 {{ticker}} 보유 주소."
+    },
+    "add" : "추가",
+    "notFound" : "자산 배포 항목을 찾을 수 없습니다.",
+    "marketStats" : "시장 통계",
+    "marketStatsTooltip" : "이 자산에 대한 시장 지표",
+    "pricePerformance" : "가격 변동 추이",
+    "marketRank" : "시장 순위",
+    "tradingVolume24h" : "24시간 거래량",
+    "day" : "1일",
+    "staking" : {
+      "availableBalance" : "이용 가능 수량",
+      "availableBalanceTooltip" : "현재 즉시 사용할 수 있는 보유 자산으로, 언제든지 자유롭게 전송, 스왑, 출금이 가능합니다.",
+      "earnDeposit" : "수익 예치금",
+      "earnBanner" : "최대 수익 {{apy}}% {{type}}",
+      "earnBannerDefault" : "이 자산으로 수익 창출",
+      "earnBannerSubtitle" : "이 자산을 보유하고 추가 수익 창출하기",
+      "earnBannerAction" : "수익 창출로 이동"
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "Tezos 보상 받기: 위임 또는 스테이킹",
+      "description" : "자산 통제권을 그대로 유지하고 싶다면 베이커(Baker)에게 위임하여 보상을 받아보세요. 약간의 위험을 감수하더라도 더 높은 수익을 원하신다면 XTZ를 직접 스테이킹할 수 있습니다. 내 투자 성향에 맞는 방식을 선택해 보세요.",
+      "howItWorks" : "이벤트 상세 내역",
+      "delegate" : {
+        "header" : "위임하기",
+        "bullet" : {
+          "0" : "락업 없음",
+          "1" : "보유 잔액 전체가 위임됨",
+          "2" : "언제든지 XTZ 전송/스왑 가능",
+          "3" : "위험 없음"
+        },
+        "cta" : "위임하기"
+      },
+      "stake" : {
+        "header" : "스테이킹",
+        "bullet" : {
+          "0" : "더 큰 수익(2~3배)",
+          "1" : "스테이킹 기간 중 XTZ 락업됨",
+          "2" : "언스테이킹: 4일 소요",
+          "3" : "리스크: 낮음(슬래싱 위험)"
+        },
+        "cta" : "스테이킹"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "XTZ를 언스테이킹하기",
+        "steps" : {
+          "amount" : {
+            "title" : "수량",
+            "amountLabel" : "언스테이킹할 금액",
+            "availableLabel" : "스테이킹 완료",
+            "maxLabel" : "최대",
+            "unbondingNotice" : "언스테이킹은 4일 소요됩니다. 이 기간 동안 XTZ는 위임된 상태를 유지하지만 스테이킹 보상이 발생하지 않습니다."
+          },
+          "device" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "broadcastError" : "언스테이킹 트랜잭션을 네트워크로 전송할 수 없습니다. 다시 시도해 주세요.",
+            "success" : {
+              "title" : "언스테이킹 요청 완료",
+              "text" : "XTZ가 언스테이킹이 진행 중입니다. 최대 4일 후 출금할 수 있습니다.",
+              "cta" : "세부사항 보기"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "스테이킹",
+        "amount" : {
+          "disclaimer" : "언스테이킹에는 4일이 소요됩니다.",
+          "awaitingDelegation" : "위임 확인 중. 보통 1분 이내에 완료됩니다."
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "검증인",
+            "description" : "위임할 베이커를 선택하세요. 위임 확인이 완료되면 XTZ를 스테이킹할 수 있습니다."
+          },
+          "deviceDelegation" : {
+            "title" : "위임 확인"
+          },
+          "amount" : {
+            "title" : "수량"
+          },
+          "deviceStaking" : {
+            "title" : "스테이킹 확인"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "{{amount}} 스테이킹 완료 블록체인에서 트랜잭션 승인이 완료되면 계정 잔액이 업데이트됩니다.",
+              "cta" : "수익 창출 대시보드로 이동"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",
+            "howItWorks" : "스테이킹 작동 방식"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "베이커 변경 전 언스테이킹하기",
+        "description" : "현재 베이커에게 XTZ를 스테이킹했습니다. 새로운 베이커에게 위임하려면 먼저 해당 자산을 언스테이킹하세요."
+      },
+      "endDelegation" : {
+        "title" : "위임 종료 전 언스테이킹하기",
+        "description" : "현재 베이커에게 XTZ를 스테이킹했습니다. 위임을 종료하려면 먼저 해당 자산을 언스테이킹하세요."
+      },
+      "steps" : {
+        "0" : "수익 창출 메뉴에서 언스테이킹을 선택합니다.",
+        "1" : "수량(금액)을 확인하고 장치에서 언스테이킹 트랜잭션을 승인합니다.",
+        "2" : "스테이킹 해제까지 약 4일이 소요됩니다.",
+        "3" : "출금 후에는 베이커를 변경하거나 위임을 종료할 수 있습니다."
+      },
+      "learnMore" : "테조스 스테이킹 자세히 알아보기",
+      "close" : "닫기"
+    }
+  },
+  "pnl" : {
+    "asset" : {
+      "entry" : {
+        "title" : "평균 매수가",
+        "tooltip" : "이 지갑에서 직접 매수하거나 다른 지갑에서 전송된 자산을 모두 합산한 평균 단가입니다. 이는 손익을 추적하는 기준이 됩니다."
+      },
+      "return" : {
+        "title" : "평가 손익"
+      },
+      "dialog" : {
+        "title" : "손익",
+        "description" : "포트폴리오에서 해당 자산이 기록한 성과를 요약해서 보여줍니다.",
+        "totalReturn" : {
+          "title" : "총 손익",
+          "description" : "평가 손익과 실현 손익을 합산한 금액입니다."
+        },
+        "unrealisedReturn" : {
+          "title" : "평가 손익",
+          "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실입니다."
+        },
+        "realisedReturn" : {
+          "title" : "실현 손익",
+          "description" : "자산을 매도하거나 다른 곳으로 전송하여 최종 확정된 실제 수익과 손실입니다."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "평가 손익"
+      },
+      "costBasis" : {
+        "title" : "취득 원가",
+        "tooltip" : "수수료를 포함하여 현재 보유 자산을 취득하기 위해 지불한 총 금액."
+      },
+      "dialog" : {
+        "title" : "손익",
+        "description" : "실현 수익 및 평가 손익으로 나뉘어 표시된 포트폴리오 성과.",
+        "totalReturn" : {
+          "title" : "총 손익",
+          "description" : "실현 수익과 평가 손익을 합산한 결과로, 전체 포지션 현황을 반영합니다."
+        },
+        "unrealisedReturn" : {
+          "title" : "평가 손익",
+          "description" : "현재 보유 자산에 대해 예상되는 평가 손익."
+        },
+        "realisedReturn" : {
+          "title" : "실현 손익",
+          "description" : "이전 매도 또는 출금을 통해 확정된 손익."
+        }
+      }
+    }
   }
 }

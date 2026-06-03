@@ -76,6 +76,7 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule {
   /*
    * check if bluetooth is available.
    */
+  @ReactMethod
   public boolean isBluetoothAvailable() {
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     return bluetoothAdapter != null && bluetoothAdapter.isEnabled();

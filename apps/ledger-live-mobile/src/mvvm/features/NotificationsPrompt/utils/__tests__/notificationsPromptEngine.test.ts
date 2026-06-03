@@ -1,10 +1,10 @@
 import { sub } from "date-fns";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { ABTestingVariants } from "@ledgerhq/types-live";
-import type {
-  Feature_BrazePushNotifications,
-  Feature_LwmNewWordingOptInNotificationsDrawer,
-} from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
+import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../../types/variants";
+
+type BrazePushNotifications = Features["brazePushNotifications"];
+type LwmNewWordingOptInNotificationsDrawer = Features["lwmNewWordingOptInNotificationsDrawer"];
 import {
   INACTIVITY_DRAWER_DELAY_MS,
   evaluateAfterActionTrigger,
@@ -15,8 +15,8 @@ import {
 const NOW = new Date("2026-01-01T00:00:00.000Z").getTime();
 
 const createBrazePushNotificationsFeature = (
-  overrides?: Partial<Feature_BrazePushNotifications>,
-): Feature_BrazePushNotifications =>
+  overrides?: Partial<BrazePushNotifications>,
+): BrazePushNotifications =>
   ({
     enabled: true,
     params: {
@@ -36,19 +36,19 @@ const createBrazePushNotificationsFeature = (
       notificationsCategories: [],
     },
     ...overrides,
-  }) as Feature_BrazePushNotifications;
+  }) as BrazePushNotifications;
 
 const createWordingFeature = (
-  variant: ABTestingVariants = ABTestingVariants.variantB,
-): Feature_LwmNewWordingOptInNotificationsDrawer =>
+  variant: ABTestingVariants = AB_TESTING_VARIANTS.B,
+): LwmNewWordingOptInNotificationsDrawer =>
   ({
     enabled: true,
     params: { variant },
-  }) as Feature_LwmNewWordingOptInNotificationsDrawer;
+  }) as LwmNewWordingOptInNotificationsDrawer;
 
 type EvaluationContext = {
-  brazePushNotifications: Feature_BrazePushNotifications;
-  wordingFeature: Feature_LwmNewWordingOptInNotificationsDrawer;
+  brazePushNotifications: BrazePushNotifications;
+  wordingFeature: LwmNewWordingOptInNotificationsDrawer;
   isRatingsModalOpen: boolean;
   isDrawerPending: boolean;
   now: number;
@@ -87,7 +87,7 @@ describe("notificationsPromptEngine", () => {
         delayMs: 200,
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -108,7 +108,7 @@ describe("notificationsPromptEngine", () => {
         reason: "fully_opted_in",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -133,7 +133,7 @@ describe("notificationsPromptEngine", () => {
         reason: "reprompt_delay_not_reached",
         dismissedCount: 1,
         nextRepromptDelay: { days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 },
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -158,12 +158,12 @@ describe("notificationsPromptEngine", () => {
         delayMs: 200,
         dismissedCount: 1,
         nextRepromptDelay: { days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 },
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
     it("preserves variant A onboarding-only behavior", () => {
-      const wordingFeature = createWordingFeature(ABTestingVariants.variantA);
+      const wordingFeature = createWordingFeature(AB_TESTING_VARIANTS.A);
 
       const nonOnboardingDecision = evaluateAfterActionTrigger(
         {
@@ -191,7 +191,7 @@ describe("notificationsPromptEngine", () => {
         reason: "variant_a_only_onboarding",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantA,
+        variant: AB_TESTING_VARIANTS.A,
       });
 
       expect(onboardingDecision).toEqual({
@@ -200,7 +200,7 @@ describe("notificationsPromptEngine", () => {
         delayMs: 100,
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantA,
+        variant: AB_TESTING_VARIANTS.A,
       });
     });
   });
@@ -225,7 +225,7 @@ describe("notificationsPromptEngine", () => {
         reason: "onboarding_incomplete",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -248,7 +248,7 @@ describe("notificationsPromptEngine", () => {
         reason: "ratings_modal_open",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -271,7 +271,7 @@ describe("notificationsPromptEngine", () => {
         reason: "drawer_already_pending",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -294,7 +294,7 @@ describe("notificationsPromptEngine", () => {
         delayMs: INACTIVITY_DRAWER_DELAY_MS,
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: ABTestingVariants.variantB,
+        variant: AB_TESTING_VARIANTS.B,
       });
     });
   });

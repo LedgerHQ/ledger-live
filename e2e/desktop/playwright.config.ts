@@ -29,6 +29,7 @@ const config: PlaywrightTestConfig = {
         [
           "allure-playwright",
           {
+            detail: false,
             links: {
               issue: {
                 nameTemplate: "%s",
@@ -43,7 +44,7 @@ const config: PlaywrightTestConfig = {
         ],
         ["./tests/utils/customJsonReporter.ts"],
       ]
-    : [["allure-playwright"]],
+    : [["allure-playwright", {detail: false}]],
 };
 
 export default config;

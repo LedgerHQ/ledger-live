@@ -3,6 +3,7 @@ import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/ind
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
+import { parseCurrencyUnitFragment } from "LLD/features/AssetDetail/utils/parseCurrencyUnitFragment";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 
 type UseCryptoBalanceTextViewModelParams = Readonly<{
@@ -17,28 +18,12 @@ export function useCryptoBalanceTextViewModel({
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
 
-  const fragment = useMemo(
-    () =>
-      formatCurrencyUnitFragment(cryptoUnit, new BigNumber(amount), {
-        locale,
-        discreet,
-        showCode: true,
-      }),
-    [amount, cryptoUnit, locale, discreet],
-  );
-
-  const prefixSymbol =
-    fragment.currencyPosition === "start" && fragment.currencyText ? fragment.currencyText : null;
-  const suffixSymbol =
-    fragment.currencyPosition === "end" && fragment.currencyText ? fragment.currencyText : null;
-  const hasDecimals = Boolean(fragment.decimalPart);
-
-  return {
-    prefixSymbol,
-    suffixSymbol,
-    hasDecimals,
-    integerPart: fragment.integerPart,
-    decimalSeparator: fragment.decimalSeparator,
-    decimalPart: fragment.decimalPart,
-  };
+  return useMemo(() => {
+    const fragment = formatCurrencyUnitFragment(cryptoUnit, new BigNumber(amount), {
+      locale,
+      discreet,
+      showCode: true,
+    });
+    return parseCurrencyUnitFragment(fragment);
+  }, [amount, cryptoUnit, locale, discreet]);
 }

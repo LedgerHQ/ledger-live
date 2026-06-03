@@ -26,6 +26,10 @@ describe("createApi", () => {
       ...getMockedConfig(),
       useHgraphForErc20: true,
       useNetworkTimestamp: true,
+      apiUrls: {
+        mirrorNode: getEnv("API_HEDERA_MIRROR"),
+        hgraph: getEnv("API_HEDERA_HGRAPH"),
+      },
     },
     "hedera",
   );

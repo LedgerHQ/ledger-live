@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import Illustration from "~/images/illustration/Illustration";
 import BaseStepperView, {

@@ -4,13 +4,21 @@ import { TrendingAssetsList } from "../components/TrendingAssetsList";
 import { useNavigate } from "react-router";
 import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtures";
 import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { MARKET_BANNER_TRACKING_SOURCE } from "../utils/constants";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(),
 }));
 
+jest.mock("~/renderer/analytics/TrackPage", () => ({
+  setTrackingSource: jest.fn(),
+}));
+
 jest.mock("../hooks/useHorizontalScroll");
+
+const mockSetTrackingSource = jest.mocked(setTrackingSource);
 
 const mockNavigate = jest.fn();
 (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
@@ -50,6 +58,7 @@ describe("TrendingAssetsList", () => {
     const { user } = render(<TrendingAssetsList items={MOCK_MARKET_PERFORMERS} />);
 
     await user.click(screen.getByTestId("market-banner-asset-bitcoin"));
+    expect(mockSetTrackingSource).toHaveBeenCalledWith(MARKET_BANNER_TRACKING_SOURCE);
     expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin");
   });
 

@@ -1,5 +1,27 @@
 # @ledgerhq/client-ids
 
+## 0.10.0
+
+### Minor Changes
+
+- [#17704](https://github.com/LedgerHQ/ledger-live/pull/17704) [`e278291`](https://github.com/LedgerHQ/ledger-live/commit/e2782919681ec2619e2433a18eef954b8ca9eddb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Gate the device-ids push middleware behind the `analyticsOptIn` feature flag in addition to the user analytics consent. Device IDs are now only sent to `/v2/pushdevices` when the FF is enabled AND the user has opted in.
+
+### Patch Changes
+
+- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
+  - @ledgerhq/live-env@2.36.0
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#17704](https://github.com/LedgerHQ/ledger-live/pull/17704) [`e278291`](https://github.com/LedgerHQ/ledger-live/commit/e2782919681ec2619e2433a18eef954b8ca9eddb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Gate the device-ids push middleware behind the `analyticsOptIn` feature flag in addition to the user analytics consent. Device IDs are now only sent to `/v2/pushdevices` when the FF is enabled AND the user has opted in.
+
+### Patch Changes
+
+- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
+  - @ledgerhq/live-env@2.36.0-next.0
+
 ## 0.9.1
 
 ### Patch Changes

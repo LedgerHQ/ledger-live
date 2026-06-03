@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
+import { getQuotes, type QuotesError } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import { WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
@@ -15,6 +15,16 @@ import {
 import { mapSwapQuoteLine, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./quote-shared";
 
 const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
+
+function formatQuotesError(error: QuotesError): string {
+  if ("minAmount" in error) {
+    return `amount too low (minimum: ${error.minAmount})`;
+  }
+  if ("maxAmount" in error) {
+    return `amount too high (maximum: ${error.maxAmount})`;
+  }
+  return error.code;
+}
 
 async function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): Promise<void> {
   if (walletCliSupportedSwapCurrencyIds.has(id)) {
@@ -131,15 +141,19 @@ export default defineCommand({
         { accounts: [], spotPrices: {}, locale: "en", counterValueCurrency: "USD" },
       );
 
+      if (result.quotes.length === 0 && result.providerErrors.length > 0) {
+        out.swapQuotesUnavailable("No quotes available", result.providerErrors);
+      }
+
       if (result.quotes.length === 0 && result.errors.length > 0) {
-        out.swapQuotesUnavailable("No quotes available", result.errors);
+        throw new Error(`No quotes available: ${result.errors.map(formatQuotesError).join(", ")}`);
       }
 
       const mapped = result.quotes.map(q =>
         mapSwapQuoteLine(q, flags.from, flags.to, flags.amount),
       );
       s?.success(`${result.quotes.length} quote(s) received`);
-      out.swapQuotes({ quotes: mapped, partialErrors: result.errors });
+      out.swapQuotes({ quotes: mapped, partialErrors: result.providerErrors });
     });
   },
 });

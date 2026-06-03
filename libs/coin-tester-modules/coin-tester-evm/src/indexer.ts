@@ -101,22 +101,15 @@ export const resetIndexer = () => {
 };
 
 const handleLog = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
-  let hasDecimals = false;
-
-  try {
-    const res = await provider.call({
-      to: log.address,
-      data: ERC20Interface.encodeFunctionData("decimals"),
-    });
-    // if call didn’t revert and returned something valid
-    hasDecimals = !!(res && res !== "0x");
-  } catch {
-    // execution reverted → no decimals()
-    hasDecimals = false;
-  }
-
-  const isERC20 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC20 && hasDecimals;
-  const isERC721 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC721 && !hasDecimals;
+  // ERC20 and ERC721 Transfer events share the same topic hash (same signature). The
+  // structural difference is the number of indexed topics:
+  //   ERC20  Transfer(address indexed from, address indexed to, uint256 value)        → 3 topics (value in data)
+  //   ERC721 Transfer(address indexed from, address indexed to, uint256 indexed id)   → 4 topics
+  // Discriminating by `topics.length` is robust to non-standard emitters (e.g. system
+  // contracts or precompiles that don't respond to `decimals()`).
+  const isTransferTopic = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC20;
+  const isERC20 = isTransferTopic && log.topics.length === 3;
+  const isERC721 = isTransferTopic && log.topics.length === 4;
   const isERC1155 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC1155;
 
   if (isERC20) {
@@ -128,17 +121,61 @@ const handleLog = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
   }
 };
 
+/**
+ * Read a string metadata field (`name` / `symbol`) from an ERC20-shaped contract, falling
+ * back to a default when the call returns empty bytes or reverts.
+ *
+ * Why the defensiveness:
+ *   Most ERC20 contracts implement `name()` / `symbol()` returning a string. But on chains
+ *   where the "token" is an EVM-level precompile (e.g. Arc's USDC at 0x36…0000), the
+ *   precompile only handles balance/transfer selectors — calls to `name()` / `symbol()`
+ *   return `0x` (empty bytes) through anvil's fork. Decoding `0x` as a string would crash
+ *   with BUFFER_OVERRUN. Switching to a different ABI doesn't help because the underlying
+ *   response is truly empty, not malformed.
+ */
+const safeReadString = async (
+  provider: ethers.JsonRpcProvider,
+  to: string,
+  fnName: "name" | "symbol",
+  fallback: string,
+): Promise<string> => {
+  try {
+    const res = await provider.call({ to, data: ERC20Interface.encodeFunctionData(fnName) });
+    if (!res || res === "0x") return fallback;
+    return abiCoder.decode(["string"], res)[0];
+  } catch {
+    return fallback;
+  }
+};
+
+/**
+ * Read a uint metadata field (`decimals`) from an ERC20-shaped contract, falling back to
+ * "0" when the call returns empty bytes or reverts.
+ *
+ * Same rationale as {@link safeReadString}: some EVM precompiles don't expose this
+ * selector and return `0x`, which `new BigNumber("0x")` doesn't handle gracefully.
+ */
+const safeReadDecimals = async (
+  provider: ethers.JsonRpcProvider,
+  to: string,
+): Promise<string> => {
+  try {
+    const res = await provider.call({
+      to,
+      data: ERC20Interface.encodeFunctionData("decimals"),
+    });
+    if (!res || res === "0x") return "0";
+    return new BigNumber(res).toString();
+  } catch {
+    return "0";
+  }
+};
+
 const handleERC20Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
   const [name, ticker, decimals, block, tx, receipt] = await Promise.all([
-    provider
-      .call({ to: log.address, data: ERC20Interface.encodeFunctionData("name") })
-      .then(res => abiCoder.decode(["string"], res)[0]),
-    provider
-      .call({ to: log.address, data: ERC20Interface.encodeFunctionData("symbol") })
-      .then(res => abiCoder.decode(["string"], res)[0]),
-    provider
-      .call({ to: log.address, data: ERC20Interface.encodeFunctionData("decimals") })
-      .then(res => new BigNumber(res).toString()),
+    safeReadString(provider, log.address, "name", "Unknown Token"),
+    safeReadString(provider, log.address, "symbol", "UNKNOWN"),
+    safeReadDecimals(provider, log.address),
     provider.getBlock(log.blockHash),
     provider.getTransaction(log.transactionHash),
     provider.getTransactionReceipt(log.transactionHash),

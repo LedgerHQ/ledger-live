@@ -26,7 +26,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "~/components/PreventDoubleClickButton";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { OnboardingType } from "~/reducers/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 const StyledContainerView = styled(Flex)`
   padding-left: 16px;

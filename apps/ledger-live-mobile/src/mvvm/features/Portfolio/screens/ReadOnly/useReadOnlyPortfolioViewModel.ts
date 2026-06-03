@@ -3,7 +3,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";

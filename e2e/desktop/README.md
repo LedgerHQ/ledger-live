@@ -82,20 +82,7 @@ pnpm e2e:desktop test:playwright <testFileName>
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
-### 6. Wallet 4.0
-
-The Wallet 4.0 feature is ON by default (regardless of Firebase).
-You can force Wallet 4.0 OFF (legacy) by setting the E2E environment variable:
-
-```bash
-export E2E_ENABLE_WALLET40=0
-```
-
-Individual tests can still switch Wallet 4.0 OFF by explicitly passing the `LWD_WALLET_40_FF_DISABLED` FF.
-
-To switch Wallet 4.0 OFF on CI please untick the checkbox on the Github Workflow.
-
-### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON
 
 You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.
 

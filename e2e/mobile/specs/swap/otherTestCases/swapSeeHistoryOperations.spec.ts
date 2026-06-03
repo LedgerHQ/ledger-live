@@ -1,10 +1,10 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { runSwapHistoryOperationsTest } from "./swap.other";
 
 const swapHistoryTestConfig = {
   swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
-  provider: Provider.EXODUS,
+  provider: SwapProvider.EXODUS,
   swapId: "wQ90NrWdvJz5dA4",
   tmsLinks: ["B2CQA-602"],
   tags: [

@@ -1,5 +1,5 @@
 import React, { type ComponentProps, useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import BackButton from "LLM/features/Web3Hub/components/BackButton";
 import type { MainProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";

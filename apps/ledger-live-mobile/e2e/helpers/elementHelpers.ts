@@ -47,7 +47,8 @@ export const ElementHelpers = {
   },
 
   async getWebElementText(id: string, index = 0) {
-    return await getWebElementByTestId(id).atIndex(index).getText();
+    const element = await ElementHelpers.waitWebElementByTestId(id);
+    return await element.atIndex(index).getText();
   },
 
   async getWebElementValue(id: string, index = 0) {

@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import styled from "styled-components/native";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { NavigationProp } from "@react-navigation/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 type Props = {
   title: React.ReactNode;

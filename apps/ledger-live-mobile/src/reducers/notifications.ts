@@ -5,6 +5,7 @@ import type {
   NotificationsPayload,
   NotificationsSetDataOfUserPayload,
   NotificationsSetModalOpenPayload,
+  NotificationsSetDrawerPromptTargetPayload,
   NotificationsSetDrawerSourcePayload,
   DangerouslyOverrideStatePayload,
   NotificationSetPermissionStatusPayload,
@@ -14,6 +15,7 @@ import { NotificationsActionTypes } from "../actions/types";
 export const INITIAL_STATE: NotificationsState = {
   isPushNotificationsModalOpen: false,
   drawerSource: undefined,
+  drawerPromptTarget: undefined,
   dataOfUser: undefined,
   permissionStatus: undefined,
 };
@@ -26,6 +28,10 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
   [NotificationsActionTypes.NOTIFICATIONS_SET_DRAWER_SOURCE]: (state, action) => ({
     ...state,
     drawerSource: (action as Action<NotificationsSetDrawerSourcePayload>).payload,
+  }),
+  [NotificationsActionTypes.NOTIFICATIONS_SET_DRAWER_PROMPT_TARGET]: (state, action) => ({
+    ...state,
+    drawerPromptTarget: (action as Action<NotificationsSetDrawerPromptTargetPayload>).payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER]: (state, action) => ({
     ...state,
@@ -49,6 +55,8 @@ export const notificationsModalOpenSelector = (s: State) =>
   s.notifications.isPushNotificationsModalOpen;
 
 export const notificationsDrawerSource = (s: State) => s.notifications.drawerSource;
+
+export const notificationsDrawerPromptTarget = (s: State) => s.notifications.drawerPromptTarget;
 
 export const notificationsDataOfUserSelector = (s: State) => s.notifications.dataOfUser;
 

@@ -18,7 +18,7 @@ import {
 import { navigateToNewUpdateFlow } from "../../utils/navigateToNewUpdateFlow";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { track } from "~/analytics";
 
 export function useUpdateBannerViewModel({

@@ -1,7 +1,7 @@
 import { type Action, type Middleware, isAction } from "@reduxjs/toolkit";
 import type { PartialFeatures, ResolutionConfig } from "./schema";
 import { FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS } from "../constants";
-import { syncRemoteConfig } from "./slice";
+import { syncRemoteConfig, setRemoteFlagsReady } from "./slice";
 
 /** Feature-flags metadata that the middleware injects into every `featureFlags/*` action. */
 export interface FeatureFlagsMeta {
@@ -42,8 +42,20 @@ export function createFeatureFlagsMiddleware(config: FeatureFlagsMiddlewareConfi
   return ({ dispatch }) => {
     const { resolutionConfig, fetchRemoteFlags, refreshInterval } = config;
     if (fetchRemoteFlags) {
-      const dispatchRemoteFlags = () => dispatch(syncRemoteConfig());
-      void pollRemoteFlags(fetchRemoteFlags, remoteFlagsRef, dispatchRemoteFlags, refreshInterval);
+      let readyDispatched = false;
+      const dispatchSync = () => dispatch(syncRemoteConfig());
+      const dispatchReady = () => {
+        if (readyDispatched) return;
+        readyDispatched = true;
+        dispatch(setRemoteFlagsReady());
+      };
+      void pollRemoteFlags(
+        fetchRemoteFlags,
+        remoteFlagsRef,
+        dispatchSync,
+        dispatchReady,
+        refreshInterval,
+      );
     }
     return next => action => {
       if (isAction(action) && action.type.startsWith("featureFlags/")) {
@@ -80,9 +92,9 @@ function getMeta(action: Action<string>) {
 
 /**
  * Self-rescheduling poll loop: fetches remote flags, writes them to the ref on
- * success, dispatches the update, then schedules the next iteration. A failed
- * fetch resolves to `null` (via `.catch`), leaves the ref untouched, and still
- * re-schedules so transient errors don't kill the loop.
+ * success, dispatches the update, signals readiness, then schedules the next
+ * iteration. A failed fetch resolves to `null` (via `.catch`), leaves the ref
+ * untouched, and still re-schedules so transient errors don't kill the loop.
  *
  * @param fetch
  * Async callback that returns the latest remote flags map.
@@ -91,9 +103,14 @@ function getMeta(action: Action<string>) {
  * Mutable container that receives each successful fetch result. Read by the
  * middleware when injecting `action.meta.remoteFlags`.
  *
- * @param dispatch
- * Callback fired after each successful fetch — used to dispatch
+ * @param dispatchSync
+ * Callback fired after each *successful* fetch — used to dispatch
  * `syncRemoteConfig()` so reducers re-resolve.
+ *
+ * @param dispatchReady
+ * Callback fired after each *settled* fetch (resolved or rejected) — used to
+ * dispatch `setRemoteFlagsReady()`. The caller guards it so only the first
+ * settle propagates; idempotent on the reducer side regardless.
  *
  * @param ms
  * Delay between iterations, in milliseconds. Defaults to
@@ -102,15 +119,17 @@ function getMeta(action: Action<string>) {
 async function pollRemoteFlags(
   fetch: () => Promise<PartialFeatures>,
   ref: RemoteFlagsRef,
-  dispatch: () => void,
+  dispatchSync: () => void,
+  dispatchReady: () => void,
   ms: number = FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS,
 ) {
   const remote = await fetch().catch(() => null);
   if (remote !== null) {
     ref.current = remote;
-    dispatch();
+    dispatchSync();
   }
-  setTimeout(pollRemoteFlags, ms, fetch, ref, dispatch, ms);
+  dispatchReady();
+  setTimeout(pollRemoteFlags, ms, fetch, ref, dispatchSync, dispatchReady, ms);
 }
 
 /**

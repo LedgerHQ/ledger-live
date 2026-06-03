@@ -1,7 +1,11 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
 import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import {
+  buildUnitResolver,
+  byTokenAndDate,
+} from "@ledgerhq/live-common/families/canton/proposalSorting";
 import type {
   TransferInstructionParams,
   TransferInstructionType,
@@ -117,7 +121,11 @@ export function usePendingTransferProposalsViewModel({
       const { incoming, outgoing } = processTransferProposals(
         pendingTransferProposals,
         accountXpub,
+        buildUnitResolver(parentAccount),
       );
+
+      incoming.sort(byTokenAndDate);
+      outgoing.sort(byTokenAndDate);
 
       return {
         groupedIncoming: groupByDay(incoming),
@@ -126,7 +134,7 @@ export function usePendingTransferProposalsViewModel({
         outgoingCount: outgoing.length,
         allProposals: [...incoming, ...outgoing],
       };
-    }, [account, accountXpub]);
+    }, [account, accountXpub, parentAccount]);
 
   const selectedProposal = useMemo(
     () => allProposals.find(p => p.contractId === selectedContractId) ?? null,

@@ -14,13 +14,16 @@ import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM, {
   InitializerConfig,
 } from "./DeviceContextInitializerComponentLWM";
+import { SourceFlowProvider, type SourceFlow } from "./utils/SourceFlowContext";
 import type { InitializationInput } from "./types";
+import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
 export {
   buildDeviceInitializationInput,
   type BuildDeviceInitializationInputParams,
 } from "./DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
+export type { SourceFlow } from "./utils/SourceFlowContext";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,
@@ -29,6 +32,10 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   InitializationInput
 > & {
   initializerConfig?: InitializerConfig;
+  /**
+   * Originating user intent that initiated the device flow. Required for analytics.
+   */
+  sourceFlow: SourceFlow;
 };
 
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
@@ -40,36 +47,32 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
 };
 
 /**
- * NOTE: this is a work in progress. It does not yet follow mvvm architecture and has no tests,
- * the point for now it to allow manual testing of the DeviceIntentExecutor component.
- *
- * Initial implementation of the DeviceIntentExecutor for LWM.
- *
- * TODO (final version):
- * - Use Lumen UI components instead of hardcoded Native UI components
- * - MVVM architecture
- * - Tests
+ * LWM wrapper around `@ledgerhq/device-intent`'s `DeviceIntentExecutor`.
  */
 export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { sourceFlow, wrappedProps } = useDeviceIntentExecutorLWMViewModel(props);
 
   return (
     <QueuedDrawerBottomSheet
-      isRequestingToBeOpened={props.enabled}
-      onClose={props.onUserCancel}
-      preventBackdropClick={!props.cancellableUI}
+      isRequestingToBeOpened={wrappedProps.enabled}
+      onClose={wrappedProps.onUserCancel}
+      preventBackdropClick={!wrappedProps.cancellableUI}
+      hideHandle
       enableDynamicSizing
     >
-      <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
-        {props.cancellableUI && <BottomSheetHeader density="expanded" />}
-        <DeviceIntentExecutor
-          {...props}
-          platformConfig={platformConfig}
-          initializerConfig={props.initializerConfig}
-        />
-      </BottomSheetView>
+      <SourceFlowProvider value={sourceFlow}>
+        <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
+          {wrappedProps.cancellableUI && <BottomSheetHeader density="expanded" />}
+          <DeviceIntentExecutor
+            {...wrappedProps}
+            platformConfig={platformConfig}
+            initializerConfig={wrappedProps.initializerConfig}
+          />
+        </BottomSheetView>
+      </SourceFlowProvider>
     </QueuedDrawerBottomSheet>
   );
 }

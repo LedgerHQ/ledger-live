@@ -96,6 +96,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const concordiumTestnet = useFeature("currencyConcordiumTestnet");
   const unichain = useFeature("currencyUnichain");
   const unichainSepolia = useFeature("currencyUnichainSepolia");
+  const arc = useFeature("currencyArc");
+  const arcTestnet = useFeature("currencyArcTestnet");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -188,6 +190,8 @@ export function useCurrenciesUnderFeatureFlag() {
       concordium_testnet: concordiumTestnet,
       unichain,
       unichain_sepolia: unichainSepolia,
+      arc,
+      arc_testnet: arcTestnet,
     }),
     [
       adi,
@@ -279,6 +283,8 @@ export function useCurrenciesUnderFeatureFlag() {
       concordiumTestnet,
       unichain,
       unichainSepolia,
+      arc,
+      arcTestnet,
     ],
   );
 

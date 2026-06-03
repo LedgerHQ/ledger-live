@@ -191,25 +191,16 @@ export function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
-      const genericAwarenessModalBrazeCards = filterByPage(
+      const genericAwarenessModalBrazeCardsFromBraze = filterByPage(
         filteredDesktopCards,
         LocationContentCard.GenericAwarenessModal,
-      )
-        .filter(card => {
-          const campaignId = card.extras?.campaignId;
-          return (
-            campaignId === undefined ||
-            campaignId === "" ||
-            !dismissedCardIds.includes(String(campaignId))
-          );
-        })
-        .map(card => ({
-          id: String(card.id),
-          extras: card.extras,
-        }));
+      ).map(card => ({
+        id: String(card.id),
+        extras: card.extras,
+      }));
 
       const genericAwarenessModalContentCards = filterDismissedGenericAwarenessModalContentCards(
-        processGenericAwarenessModalBrazeCards(genericAwarenessModalBrazeCards),
+        processGenericAwarenessModalBrazeCards(genericAwarenessModalBrazeCardsFromBraze),
         dismissedCardIds,
       );
 

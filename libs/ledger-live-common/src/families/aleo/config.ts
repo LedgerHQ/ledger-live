@@ -50,7 +50,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       },
       networkType: "mainnet",
       apiUrls: {
-        node: getEnv("ALEO_MAINNET_NODE_ENDPOINT"),
+        node: getEnv("ALEO_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_MAINNET_SDK_ENDPOINT"),
       },
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
@@ -69,7 +69,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       },
       networkType: "testnet",
       apiUrls: {
-        node: getEnv("ALEO_TESTNET_NODE_ENDPOINT"),
+        node: getEnv("ALEO_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,

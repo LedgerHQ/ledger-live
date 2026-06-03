@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
@@ -150,9 +150,17 @@ export default function ConnectDevice({ route, navigation }: Props) {
     account,
     parentAccount,
   });
+  // `renderOnResult` is invoked on every render of the DeviceAction result state,
+  // so guard the broadcast side-effect to fire only once per mount. Without this,
+  // any re-render while the signed result is shown re-broadcasts the same signed
+  // transaction (e.g. Hedera DUPLICATE_TRANSACTION).
+  const hasHandledTx = useRef(false);
   const onResult = useCallback(
     (payload: { signedOperation: SignedOperation; transactionSignError?: Error }) => {
-      handleTx(payload);
+      if (!hasHandledTx.current) {
+        hasHandledTx.current = true;
+        handleTx(payload);
+      }
       return renderLoading({
         t,
       });

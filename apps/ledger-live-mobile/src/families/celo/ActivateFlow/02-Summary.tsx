@@ -12,7 +12,8 @@ import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Touchable from "~/components/Touchable";
@@ -109,7 +110,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
     status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen
         category="ActivateFlow"
         name="Summary"

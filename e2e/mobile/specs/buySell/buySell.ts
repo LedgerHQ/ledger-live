@@ -59,9 +59,6 @@ export async function runNavigateToBuyFromAccountPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto)],
-        featureFlags: {
-          llmAccountListUI: { enabled: true },
-        },
       });
     });
 

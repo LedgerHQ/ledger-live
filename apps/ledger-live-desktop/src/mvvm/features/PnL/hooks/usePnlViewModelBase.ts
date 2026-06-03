@@ -13,21 +13,36 @@ import { buildPnlDetail } from "../builders/buildPnlDetail";
 import { buildUnrealisedReturnCard } from "../builders/buildUnrealisedReturnCard";
 import { buildInfoCard } from "../builders/buildInfoCard";
 import type { PnlNamespace, PnlNumbers, PnlSecondaryCardConfig, PnlViewModel } from "../types";
+import type { PnLCardProps } from "../components/PnLCard/types";
+import { track } from "~/renderer/analytics/segment";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 const ZERO = new BigNumber(0);
+
+type BuildCardsContext = {
+  namespace: PnlNamespace;
+  unrealisedPnL: BigNumber;
+  realisedPnL: BigNumber;
+  totalPnL: BigNumber;
+  formatFiat: (value: BigNumber) => string;
+  openDetail: () => void;
+  t: ReturnType<typeof useTranslation>["t"];
+};
 
 export type UsePnlViewModelBaseInput = {
   namespace: PnlNamespace;
   pnlData: PnlNumbers | null;
-  secondaryCard: PnlSecondaryCardConfig;
   accountsCount: number;
-};
+} & (
+  | { secondaryCard: PnlSecondaryCardConfig; buildCards?: never }
+  | { buildCards: (context: BuildCardsContext) => PnLCardProps[]; secondaryCard?: never }
+);
 
 export function usePnlViewModelBase({
   namespace,
   pnlData,
-  secondaryCard,
   accountsCount,
+  ...cardConfig
 }: UsePnlViewModelBaseInput): PnlViewModel {
   const { t } = useTranslation();
   const { shouldDisplayPnl: isPnlFlagOn } = useWalletFeaturesConfig("desktop");
@@ -36,7 +51,13 @@ export function usePnlViewModelBase({
   const fiatCurrency = useSelector(counterValueCurrencySelector);
 
   const [isDetailOpen, setDetailOpen] = useState(false);
-  const openDetail = useCallback(() => setDetailOpen(true), []);
+  const openDetail = useCallback(() => {
+    setDetailOpen(true);
+    track("button_clicked", {
+      button: "Pnl details",
+      page: currentRouteNameRef.current,
+    });
+  }, []);
 
   const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnlData ?? {};
 
@@ -46,8 +67,22 @@ export function usePnlViewModelBase({
     [fiatCurrency, locale, discreet],
   );
 
-  const items = useMemo(
-    () => [
+  const items = useMemo(() => {
+    const context: BuildCardsContext = {
+      namespace,
+      unrealisedPnL,
+      realisedPnL,
+      totalPnL,
+      formatFiat,
+      openDetail,
+      t,
+    };
+
+    if ("buildCards" in cardConfig && cardConfig.buildCards) {
+      return cardConfig.buildCards(context);
+    }
+
+    return [
       buildUnrealisedReturnCard({
         namespace,
         unrealisedPnL,
@@ -55,10 +90,9 @@ export function usePnlViewModelBase({
         onClick: openDetail,
         t,
       }),
-      buildInfoCard({ ...secondaryCard, formatFiat, t }),
-    ],
-    [namespace, unrealisedPnL, formatFiat, openDetail, secondaryCard, t],
-  );
+      buildInfoCard({ ...cardConfig.secondaryCard, formatFiat, t }),
+    ];
+  }, [namespace, unrealisedPnL, realisedPnL, totalPnL, formatFiat, openDetail, cardConfig, t]);
 
   const detail = useMemo(
     () =>
@@ -82,6 +116,7 @@ export function usePnlViewModelBase({
     dialog: {
       isOpen: isDetailOpen,
       onOpenChange: setDetailOpen,
+      onOpen: openDetail,
     },
   };
 }

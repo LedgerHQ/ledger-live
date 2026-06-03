@@ -1,5 +1,9 @@
 # @ledgerhq/wallet-cli-darwin-arm64
 
+## 1.1.0
+
+## 1.1.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

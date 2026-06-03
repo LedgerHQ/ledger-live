@@ -54,6 +54,36 @@ export type EvmConfig = {
    * Use "safe" or "finalized" on chains where reorg protection is needed.
    */
   finalizationLevel?: BlockFinalizationTag;
+  /**
+   * ERC20 contract addresses that mirror the native balance and must be skipped when
+   * computing token balances to avoid double-counting (e.g. Circle's Arc, where USDC
+   * is the native unit of account exposed at a fixed ERC20 address).
+   * Addresses are matched case-insensitively.
+   */
+  nativeContracts?: string[];
+  /**
+   * Minimum effective price per gas (in wei, decimal string) accepted by this chain's
+   * mempool. Applied as a floor to both the legacy `gasPrice` and the EIP-1559
+   * `maxPriorityFeePerGas`. Useful on sparse testnets where the network's effective
+   * floor sits above what `eth_feeHistory` / `eth_gasPrice` reports, causing
+   * underpriced transactions to be silently dropped.
+   * 20 gwei example value: "20000000000"
+   */
+  minGasPrice?: string;
+  /**
+   * Number of blocks to request from `eth_feeHistory` when estimating priority fees.
+   * Defaults to 5. Increase on chains with fast block times or sparse traffic so the
+   * sample window covers enough transactions to be representative (e.g. a 0.5s-block
+   * chain with 5 blocks only sees 2.5s of history, often not enough to surface a
+   * meaningful priority fee). Most nodes cap this around 1024; keep well below.
+   */
+  feeHistoryBlockCount?: number;
+  /**
+   * Percentile (0-100) of priority fees actually paid per block to sample from
+   * `eth_feeHistory`. Defaults to 50 (median). Higher values bias toward faster
+   * inclusion at the cost of paying more; lower values bias toward minimal cost.
+   */
+  feeHistoryRewardPercentile?: number;
 };
 
 export type ExternalNodeConfig = Extract<EvmConfig["node"], { type: "external" }>;

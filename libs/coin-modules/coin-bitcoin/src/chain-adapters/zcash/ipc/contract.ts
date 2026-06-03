@@ -74,6 +74,7 @@ export type StartSyncArgs = {
   viewingKey: string;
   startBlockHeight: number;
   maxBatchSize: number;
+  knownNullifiers?: string[];
 };
 
 export type CancelSyncArgs = {

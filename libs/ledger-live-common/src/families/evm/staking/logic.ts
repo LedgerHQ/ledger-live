@@ -19,6 +19,6 @@ export {
   getMaxRedelegations,
   hasUnbondingPeriod,
   getValidators,
-  getCachedValidators,
   prefetchValidators,
+  isSeiAccountUnassociated,
 } from "@ledgerhq/coin-evm/staking/index";

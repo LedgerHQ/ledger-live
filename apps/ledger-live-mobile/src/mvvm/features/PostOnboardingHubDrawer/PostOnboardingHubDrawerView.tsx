@@ -47,16 +47,13 @@ export function PostOnboardingHubDrawerView({
   areAllPostOnboardingActionsCompleted,
 }: PostOnboardingHubDrawerViewProps) {
   const { t } = useTranslation();
-  const safeAreaInsets = useSafeAreaInsets();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const { currentStep, totalSteps, stepperLabel } = stepperDisplay;
 
   return (
-    <BottomSheetView
-      testID="post-onboarding-hub-container"
-      style={{ paddingBottom: safeAreaInsets.bottom + 16 }}
-    >
-      <BottomSheetHeader />
-      <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+    <BottomSheetView testID="post-onboarding-hub-container">
+      <BottomSheetScrollView>
+        <BottomSheetHeader />
         <Box
           lx={{
             alignSelf: "flex-start",
@@ -98,15 +95,15 @@ export function PostOnboardingHubDrawerView({
             }}
           />
         ))}
-
-        {areAllPostOnboardingActionsCompleted ? (
-          <Box lx={{ marginTop: "s24" }}>
-            <Button appearance="base" size="lg" isFull onPress={onRequestExit}>
-              {t("postOnboarding.drawer.primaryLabel")}
-            </Button>
-          </Box>
-        ) : null}
       </BottomSheetScrollView>
+
+      {areAllPostOnboardingActionsCompleted ? (
+        <Box lx={{ marginTop: "s24" }} style={{ marginBottom: bottomInset }}>
+          <Button appearance="base" size="lg" isFull onPress={onRequestExit}>
+            {t("postOnboarding.drawer.primaryLabel")}
+          </Button>
+        </Box>
+      ) : null}
     </BottomSheetView>
   );
 }

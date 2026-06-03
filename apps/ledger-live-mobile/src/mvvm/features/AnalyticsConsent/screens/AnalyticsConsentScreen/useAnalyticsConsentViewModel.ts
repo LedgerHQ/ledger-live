@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
@@ -23,7 +22,6 @@ export const useAnalyticsConsentViewModel = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const route = useRoute() as RouteProp;
-  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const entryPoint: EntryPoint = route.params?.entryPoint ?? "Onboarding";
   const animationSource = theme === "dark" ? darkAnimationSource : lightAnimationSource;
@@ -34,9 +32,14 @@ export const useAnalyticsConsentViewModel = () => {
     handleAcceptAll,
     handleRefuseAll,
     goToPersonalizedRecommendationsStep,
+    navigation,
   } = useAnalyticsConsentLogic({ entryPoint });
 
   const onPrivacyPolicyPress = usePrivacyPolicyPress({ flow, shouldWeTrack });
+
+  const onBackPress = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
   const onSetPreferencesPress = useCallback(() => {
     goToPersonalizedRecommendationsStep();
@@ -83,8 +86,10 @@ export const useAnalyticsConsentViewModel = () => {
     setPreferencesCTA: t("analyticsConsent.setPreferencesCTA"),
     refuseCTA: t("analyticsConsent.refuseCTA"),
     acceptCTA: t("analyticsConsent.acceptCTA"),
+    backLabel: t("common.back"),
     animationSource,
-    bottomInset,
+    shouldShowBackButton: entryPoint !== "Portfolio",
+    onBackPress,
     onSetPreferencesPress,
     onRefusePress,
     onAcceptPress,

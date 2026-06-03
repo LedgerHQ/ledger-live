@@ -3,10 +3,10 @@ import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { track } from "~/analytics";
@@ -34,6 +34,7 @@ interface UsePortfolioViewModelResult {
   hideEmptyTokenAccount: boolean;
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
+  shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayQuickActionCtas: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
@@ -69,6 +70,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetSection,
     shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
+    shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const borrowConfig = useBorrowLiveConfig();
@@ -82,7 +84,7 @@ const usePortfolioViewModel = (navigation: {
 
   useEffect(() => {
     async function handleMigration() {
-      await storage.handleMigration(mmkvMigrationFF as Feature_LlmMmkvMigration);
+      await storage.handleMigration(mmkvMigrationFF as Features["llmMmkvMigration"]);
     }
     handleMigration();
   }, [mmkvMigrationFF]);
@@ -159,6 +161,7 @@ const usePortfolioViewModel = (navigation: {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
+    shouldDisplayAssetDiscoverability,
     shouldDisplayQuickActionCtas,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,

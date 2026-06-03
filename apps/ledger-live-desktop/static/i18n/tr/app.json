@@ -307,7 +307,7 @@
     "earn" : "Kazan",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
-    "perps" : "Perpetuals",
+    "perps" : "Perpetual işlemler",
     "borrow" : "Borç al",
     "home" : "Ana Sayfa",
     "refer" : "Arkadaşına Öner",
@@ -1019,7 +1019,6 @@
         "switchLabel" : "<0>Kullanım Koşullarını</0><1> okudum ve kabul ediyorum.</1>"
       },
       "steps" : {
-        "title" : "Adım <0>{{step}} / {{total}}</0>",
         "1" : {
           "subtitle" : "Bir hesabı onaylayarak protokolün",
           "subtitle2" : "gelecekteki kredileri işleme almasını sağlayın.",
@@ -1032,7 +1031,8 @@
         "3" : {
           "subtitle" : "Varlıklarınızı istediğiniz zaman çekebilirsiniz",
           "description" : "Varlıklarınızı ve kazandığınız faizi, kısmen veya tamamen, doğrudan Ledger hesabınızdan istediğiniz zaman çekebilirsiniz."
-        }
+        },
+        "title" : "Adım <0>{{step}} / {{total}}</0>"
       }
     },
     "supply" : {
@@ -1363,6 +1363,10 @@
         "recover" : {
           "title" : "Yedeklemenizi güvenceye alın",
           "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın"
+        },
+        "discoverWallet" : {
+          "title" : "Cüzdanınızla yapabileceklerinizi görün",
+          "description" : "Cüzdanınızın özelliklerini keşfedin"
         }
       }
     },
@@ -1403,7 +1407,14 @@
       "recover" : {
         "title" : "Ledger Recover'a abone olun",
         "description" : "Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.",
-        "actionCompletedPopupLabel" : "Ledger Recover'a başarıyla abone oldunuz"
+        "actionCompletedPopupLabel" : "Ledger Recover'a başarıyla abone oldunuz",
+        "titleCompleted" : "Yedekleme güvenceye alındı"
+      },
+      "discoverWallet" : {
+        "title" : "Cüzdanınızla yapabileceklerinizi görün",
+        "titleCompleted" : "Cüzdanınızın neler yapabileceğini keşfedin",
+        "description" : "Cüzdanınızın özelliklerini keşfedin",
+        "actionCompletedPopupLabel" : "Ürün turu tamamlandı"
       }
     }
   },
@@ -1808,7 +1819,9 @@
       "gasConsumed" : "Harcanan gas",
       "gasUsed" : "Kullanılan gas",
       "gasLimit" : "Gas limiti",
-      "functionId" : "İşlev Kimliği"
+      "functionId" : "İşlev Kimliği",
+      "delegatedTo" : "Yetkiyi devralan taraf",
+      "delegatedAmount" : "Yetkisi devredilen tutar"
     }
   },
   "operationList" : {
@@ -2210,8 +2223,6 @@
     }
   },
   "buyDeviceModal" : {
-    "title" : "Bir Ledger cihazı bağlayın",
-    "subtitle" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
     "0" : {
       "title" : "Tam mülkiyet",
       "desc" : "Özel anahtarlarınızın kontrolü sizdedir."
@@ -2224,6 +2235,8 @@
       "title" : "En güçlü cüzdana erişin",
       "desc" : "Binlerce varlığı tek bir yerden yönetin."
     },
+    "title" : "Bir Ledger cihazı bağlayın",
+    "subtitle" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
     "connectCTA" : "Bağlan",
     "buyCTA" : "Ledger cihazınızı satın alın"
   },
@@ -2704,7 +2717,11 @@
           },
           "starter" : {
             "description" : "EGLD varlıklarınızla bir Staking Sağlayıcısına yetki devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetki Devirleri İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"],
+            "bullet" : [
+              "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "Ledger cihazınızı kullanarak yetki devredin.",
+              "Yetki Devirleri İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"
+            ],
             "warning" : {
               "description" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz."
             }
@@ -2847,7 +2864,11 @@
         "steps" : {
           "starter" : {
             "description" : "ADA varlıklarınızın yetkisini bir havuza devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıkların yetkisini farklı bir havuza yeniden devredebilir veya yetki devrini istediğiniz zaman iptal edebilirsiniz."]
+            "bullet" : [
+              "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "Ledger cihazınızı kullanarak yetki devredin.",
+              "Varlıkların yetkisini farklı bir havuza yeniden devredebilir veya yetki devrini istediğiniz zaman iptal edebilirsiniz."
+            ]
           },
           "validator" : {
             "title" : "Havuzlar"
@@ -2890,6 +2911,19 @@
               "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      },
+      "selfTransactionFlow" : {
+        "title" : "Yetki Devri Sonlandırmaya Hazırlık",
+        "steps" : {
+          "starter" : {
+            "description" : [
+              "Staking hesabınızı kapatmak ve ADA depozitonuzu geri almak için:",
+              "Cardano’nun yönetişimi, artık yetki devrini sonlandırmadan önce oylama durumunuzu belirlemenizi gerektiriyor.",
+              "Bu işlem, çekimser kalma tercihinizi kaydetmek için kendi adresinize bir transfer yapmanızı gerektirir. Sadece standart ağ ücretini ödersiniz, ADA bakiyeniz cüzdanınızda güvende kalır",
+              "Bu tercih kaydedildikten sonra her zamanki gibi yetki devrini sonlandırabilirsiniz."
+            ]
           }
         }
       }
@@ -3298,7 +3332,11 @@
         "steps" : {
           "starter" : {
             "description" : "{{currencyTicker}} varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devirleri iptal edildikten {{numberOfDays}} gün sonra tekrar kullanılabilir"],
+            "bullet" : [
+              "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "Ledger cihazınızı kullanarak yetki devredin.",
+              "Varlıklar, yetki devirleri iptal edildikten {{numberOfDays}} gün sonra tekrar kullanılabilir"
+            ],
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
             }
@@ -3614,7 +3652,11 @@
       "steps" : {
         "starter" : {
           "description" : "Varlıklarınızı bağlayıp, çeşitli doğrulayıcıları aday göstererek ödül kazanabilirsiniz.",
-          "bullet" : ["Bağladığınız varlıklar size ait olmaya devam eder", "Ledger cihazınızı kullanarak adaylarınızı gösterin", "Çözülmüş varlıklar 21 gün sonra yeniden kullanılabilir"],
+          "bullet" : [
+            "Bağladığınız varlıklar size ait olmaya devam eder",
+            "Ledger cihazınızı kullanarak adaylarınızı gösterin",
+            "Çözülmüş varlıklar 21 gün sonra yeniden kullanılabilir"
+          ],
           "help" : "Aday gösterme nasıl çalışır?",
           "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde bağladığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
         },
@@ -4011,7 +4053,11 @@
         "steps" : {
           "starter" : {
             "description" : "Aptos varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Stake ettiğiniz varlıkların mülkiyeti sizde kalır", "Ledger cihazınızı kullanarak stake edin", "Staking’i durdurulan varlıklar 0-14 gün sonra yeniden kullanılabilir"],
+            "bullet" : [
+              "Stake ettiğiniz varlıkların mülkiyeti sizde kalır",
+              "Ledger cihazınızı kullanarak stake edin",
+              "Staking’i durdurulan varlıklar 0-14 gün sonra yeniden kullanılabilir"
+            ],
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
             }
@@ -4250,7 +4296,11 @@
           "steps" : {
             "starter" : {
               "description" : "{{currencyTicker}} varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
-              "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devri iptal edildikten sonra mevcut olacak"],
+              "bullet" : [
+                "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+                "Ledger cihazınızı kullanarak yetki devredin.",
+                "Varlıklar, yetki devri iptal edildikten sonra mevcut olacak"
+              ],
               "warning" : {
                 "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
               }
@@ -4278,7 +4328,38 @@
         }
       },
       "redelegation" : {
-        "header" : "Yetki yeniden devri"
+        "header" : "Yetki yeniden devri",
+        "flow" : {
+          "title" : "Varlıkların Yetkisini Yeniden Devredin",
+          "steps" : {
+            "starter" : {
+              "title" : "Yetkinin Yeniden Devri",
+              "description" : "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Ancak fikrinizi bir kez daha değiştirmeniz hâlinde beklemeniz gerekir çünkü yetkiyi yeniden devretmek {{ numberOfDays }} günlük bir zaman kilidini etkinleştirir.",
+              "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi hâlinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz. En fazla <0>{{maxRedelegations}} adet yeniden yetkilendirme bekleme aşamasında</0> olabilir.",
+              "howDelegationWorks" : "Yetki devri nasıl çalışır?"
+            },
+            "validators" : {
+              "title" : "Doğrulayıcılar",
+              "currentDelegation" : "Mevcut yetkili",
+              "newDelegation" : "Yeni yetkili",
+              "chooseValidator" : "Doğrulayıcı seçin",
+              "warning" : "Fikrinizin tekrar değişmesi durumunda, yeni doğrulayıcının yetkisini başkasına devretmek için <0>{{numberOfDays}} gün</0> beklemeniz gerekir",
+              "amountLabel" : "Yetkisi devredilecek tutar"
+            },
+            "connectDevice" : {
+              "title" : "Cihaz"
+            },
+            "confirmation" : {
+              "title" : "Onaylayın",
+              "success" : {
+                "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
+                "text" : "İşlem blok zinciri tarafından onaylandığında yetkinizin yeniden devri gerçekleşecek",
+                "cta" : "Ayrıntıları gör"
+              },
+              "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+            }
+          }
+        }
       },
       "undelegation" : {
         "header" : "Yetki Devri İptalleri",
@@ -4367,7 +4448,11 @@
         "steps" : {
           "starter" : {
             "description" : "NEAR varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Stake ettiğiniz varlıkların mülkiyeti sizde kalır", "Ledger cihazınızı kullanarak stake edin", "Stake'i iptal edilen varlıklar 52 ila 65 saat sonra yeniden kullanılabilir"],
+            "bullet" : [
+              "Stake ettiğiniz varlıkların mülkiyeti sizde kalır",
+              "Ledger cihazınızı kullanarak stake edin",
+              "Stake'i iptal edilen varlıklar 52 ila 65 saat sonra yeniden kullanılabilir"
+            ],
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
             }
@@ -4874,6 +4959,12 @@
           "completed" : "Ürün tanıtımı tamamlandı olarak işaretlendi.",
           "notCompleted" : "Ürün tanıtımı henüz tamamlanmadı.",
           "open" : "Aç"
+        },
+        "recover" : {
+          "description" : "Kurulum sonrası arayüzünü ve Ledger Recover banner'ını test etmek için yerel Ledger Recover abonelik durumunu belirleyin.",
+          "noSubscription" : "Abonelik yok",
+          "inProgress" : "Devam ediyor",
+          "backupDone" : "Yedekleme tamamlandı"
         }
       },
       "walletFeaturesDevTool" : {
@@ -5580,7 +5671,6 @@
             }
           },
           "recoverHowTo" : {
-            "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
             "1" : {
               "title" : "“Geri yükle” seçimini yapın",
               "descr" : "Seçmek için iki tuşa aynı anda basın."
@@ -5588,6 +5678,7 @@
             "2" : {
               "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın"
             },
+            "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
             "help" : {
               "iDontSee" : "“Ledger Recover ile geri yükleyin” seçeneği yok",
               "modal" : {
@@ -5872,12 +5963,6 @@
     "connected" : "Bağlandı!",
     "backToPortfolio" : "Portföye geri dön",
     "steps" : {
-      "entry" : {
-        "title" : "USB bağlantı sorunlarını giderme",
-        "desc" : "Cihazınıza bağlanırken bir sorun var gibi görünüyor. Endişelenmeyin, cihazınız bağlanana kadar farklı çözümleri tek tek deneyebilirsiniz!",
-        "cta" : "Haydi düzeltelim!",
-        "back" : "Geri dön"
-      },
       "1" : {
         "windows" : {
           "title" : "Ledger Wallet'ı Y\"önetici Olarak Çalıştırın",
@@ -5990,6 +6075,12 @@
           "updateInstructions" : "Cihaz güncelleme yönergelerini izleyin",
           "somethingElse" : "Başka bir şey"
         }
+      },
+      "entry" : {
+        "title" : "USB bağlantı sorunlarını giderme",
+        "desc" : "Cihazınıza bağlanırken bir sorun var gibi görünüyor. Endişelenmeyin, cihazınız bağlanana kadar farklı çözümleri tek tek deneyebilirsiniz!",
+        "cta" : "Haydi düzeltelim!",
+        "back" : "Geri dön"
       }
     }
   },
@@ -6009,8 +6100,7 @@
     "doubleCheck" : "İmzalamadan önce Ledger cihazınızdaki işlem bilgilerini iki kez kontrol edin.",
     "termsAndConditions" : "Bu işlemi imzaladığınızda <0>{{appName}} kullanım koşullarını kabul etmiş olursunuz.</0>",
     "termsAndConditionsWithPrivacy" : "Bu işlemi imzaladığınızda <0>{{appName}} kullanım koşullarını</0> ve <1>Gizlilik Politikasını</1> kabul etmiş olursunuz.",
-    "warningWording" : {
-    },
+    "warningWording" : {},
     "titleWording" : {
       "send" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
       "claimReward" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
@@ -6075,7 +6165,11 @@
     "title" : "Kullanım Koşulları Güncellemesi",
     "body" : {
       "intro" : "Merhaba! Ledger Wallet Kullanım Koşullarımızı güncelleyerek daha anlaşılır bir hâle getirdik ve Ledger Wallet'ın yeni sunulan hizmet ve özelliklerini ekledik. Güncellemeyle yapılan önemli değişiklikler:",
-      "bulletPoints" : ["Hangi hizmetlerin mevcut olduğu ve nasıl çalıştıklarıyla ilgili açıklamalar", "Hizmetler için ücretlerin nasıl çalıştığıyla ilgili açıklamalar", "Kullanım Koşullarımızdaki herhangi bir değişiklikten gerektiği gibi haberdar olmanızı sağlamak için bildirim sürecindeki iyileştirmeler"],
+      "bulletPoints" : [
+        "Hangi hizmetlerin mevcut olduğu ve nasıl çalıştıklarıyla ilgili açıklamalar",
+        "Hizmetler için ücretlerin nasıl çalıştığıyla ilgili açıklamalar",
+        "Kullanım Koşullarımızdaki herhangi bir değişiklikten gerektiği gibi haberdar olmanızı sağlamak için bildirim sürecindeki iyileştirmeler"
+      ],
       "agreement" : "\"Devam\" butonuna tıklayarak, aşağıdaki Kullanım Koşullarını okuyup kabul ettiğinizi beyan etmiş olursunuz."
     },
     "link" : "Kullanım Koşulları",
@@ -6221,6 +6315,36 @@
               "description" : "Transfer teklifi başarıyla geri çekildi."
             }
           }
+        }
+      },
+      "disclaimer" : {
+        "title" : "Canton Network'ü kurun",
+        "intro" : "Canton, devam etmeden önce bilmeniz gereken kendine has özelliklere sahiptir:",
+        "bullets" : {
+          "utxo" : {
+            "title" : "UTXO tabanlı bakiye",
+            "body" : "Bakiyeler, her transferde en fazla 100 adetle sınırlandırılmış münferit coin sözleşmeleri şeklinde tutulur. Atıl durumdaki sözleşmeler zamanla değer kaybeder; biriken masraflar sözleşme bakiyesini aştığında ise bu sözleşmeler geçerliliğini yitirir."
+          },
+          "offers" : {
+            "title" : "Teklif bazlı transferler",
+            "body" : "Hiçbir işlem otomatik olarak tamamlanmaz. Gönderilen transferler geri çekilebilir; gelen transferlerin ise manuel olarak kabul edilmesi veya reddedilmesi gerekir. Teklifleri Canton panelinizden yönetebilirsiniz."
+          },
+          "dualValidator" : {
+            "title" : "Çift doğrulayıcılı güvenlik",
+            "body" : "İşlemler hem Ledger hem de Kiln'in ortak imzasını gerektirir. Taraflardan hiçbiri, sizin adınıza tek başına işlem yapamaz."
+          },
+          "tokenLiability" : {
+            "title" : "Standart token sorumluluğu ⚠️",
+            "body" : "Başarısızlık senaryosunda token'ın kurtarılması, Ledger'ın değil, token ihraççısının sorumluluğundadır."
+          }
+        },
+        "agreeLabel" : "<1>Canton Network Hükümlerini ve Ledger'ın sorumluluk reddini kabul ediyorum</1>",
+        "cancel" : "İptal et",
+        "agree" : "Kabul Ediyorum",
+        "terms" : {
+          "title" : "Canton Ağı Terimleri",
+          "sectionTitle" : "Standart Token Yükümlülüğü ve Kurtarma",
+          "body" : "Ledger yalnızca Dijital Varlık Kaydı (Digital Asset Registry) üzerinden ihraç edilen standart token'ları destekler. Ledger bu token'ların ihraççısı değildir; bu varlıkların değeri, yönetimi veya dayanak akıllı sözleşmeleri konusunda hiçbir sorumluluk taşımaz.\n\nLedger'da bir hizmet kesintisi veya \"felaket kurtarma\" hatası yaşanırsa Ledger, varlıklarınızı kurtaramaz. Kurtarma işlemini başlatmak için belirli bir Token İhraççısı (Varlık Yöneticisi) ile doğrudan iletişime geçerek Varlık Dondurma (Asset Freeze) veya Kayıt Kurtarma (Registry Recovery) protokollerini kullanmanız gerekir. Token İhraççısına karşı mevcut Hizmet Seviyesi Anlaşmaları (Service Level Agreements) çerçevesinde rücu edebilirsiniz. Devam ettiğinizde, Ledger ve satış ortaklarının bu token'ların kaybı, kurtarılması veya kurtarılamaması durumunda ortaya çıkabilecek tüm sorumluluklardan muaf tutulduğunu kabul etmiş olursunuz."
         }
       }
     },
@@ -7595,6 +7719,17 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "Miktar, UTXO kısıtlamaları için fazla büyük."
+    },
+    "MustDelegateBeforeStaking" : {
+      "title" : "Lütfen stake etmeden önce hesabınızla yetki devredin"
+    },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "Çok fazla gizli kayıt seçildi",
+      "description" : "İşlem başına en fazla {{count}} gizli kayıt kullanabilirsiniz."
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "Tutar, bir işlem için fazla büyük.",
+      "description" : "Gizli kayıtlarınız tek bir işlemde bu tutarı karşılayamaz. Daha küçük bir miktar deneyin."
     }
   },
   "cryptoOrg" : {
@@ -8336,7 +8471,7 @@
     "addAccountCta" : "Kripto hesabı ekle",
     "noBalanceTitle" : "Cüzdanınıza fon aktararak başlayın.",
     "perpsEntry" : {
-      "title" : "Perpetuals",
+      "title" : "Perpetual işlemler",
       "description" : "Kaldıraçlı işlem yapın",
       "cta" : "Keşfet"
     },
@@ -8401,7 +8536,8 @@
     "title" : "Hesaplar",
     "tableActions" : {
       "searchAddress" : "İsim veya adrese göre ara",
-      "addAddress" : "Adres ekle"
+      "addAddress" : "Adres ekle",
+      "addAccount" : "Hesap ekle"
     },
     "table" : {
       "columns" : {
@@ -8543,7 +8679,13 @@
       "stepViewKeyWarning" : {
         "title" : "Aleo gizli bakiyesini belirleyin",
         "description" : "Ledger Wallet, gizli bakiyenizi görüntülemek için görüntüleme anahtarınızı saklar ve gizli işlemleri işlemek için üçüncü taraf hizmetleri kullanır. <0>Daha fazla bilgi edinin</0>",
-        "bullets" : ["Gizli bakiyenizin şifresini çözmek için salt okunur erişim", "Ledger, fonlarınızı gönderemez ve harcayamaz", "Fonlarınızı sadece siz imzalayabilir ve harcayabilirsiniz", "İspat oluşturma süreci, hızlı işleme için üçüncü taraf ispatlayıcı hizmetleri tarafından gerçekleştirilir", "İspatlayıcılar fonlarınıza erişemez ve onları harcayamaz"],
+        "bullets" : [
+          "Gizli bakiyenizin şifresini çözmek için salt okunur erişim",
+          "Ledger, fonlarınızı gönderemez ve harcayamaz",
+          "Fonlarınızı sadece siz imzalayabilir ve harcayabilirsiniz",
+          "İspat oluşturma süreci, hızlı işleme için üçüncü taraf ispatlayıcı hizmetleri tarafından gerçekleştirilir",
+          "İspatlayıcılar fonlarınıza erişemez ve onları harcayamaz"
+        ],
         "cta" : {
           "allow" : "İzin ver",
           "cancel" : "İptal et"
@@ -8593,6 +8735,21 @@
         "noRecordsAlert" : "Herhangi bir kaydınız yok. Başlamak için kendi transferinizi gerçekleştirin veya özel fonlar alın.",
         "alert" : "Maksimum harcanabilir tutar, seçtiğiniz kaydın maksimum değerine bağlıdır. Ücretler, Ledger kullanıcıları için Provable tarafından sponsor edilmektedir.",
         "recordsLimit" : "Maksimum {{max}} kayıt gösterilmektedir."
+      },
+      "quickAmountSelector" : {
+        "strategies" : {
+          "fast" : "Hızlı",
+          "balanced" : "Dengeli",
+          "full" : "Tam"
+        },
+        "recordCount_one" : "{{count}} kayıt",
+        "recordCount_other" : "{{count}} kayıt",
+        "unavailable" : "Mevcut değil",
+        "spendableBalance" : "Maksimum Harcanabilir Bakiye:"
+      },
+      "infoBanner" : {
+        "descPartOne" : "Gönderici, tutar ve alıcı bilgileri zincir üstünde gizli tutulur.",
+        "descPartTwo" : "Gönderim başına en fazla {{max}} kayıt."
       }
     },
     "account" : {
@@ -8620,7 +8777,9 @@
         "selectLabel" : "Gönderen:"
       },
       "summary" : {
-        "proofGenerationWarning" : "Aleo işlemi kanıt oluşturulmasını gerektirir. Bu biraz zaman alabilir."
+        "proofGenerationWarning" : "Aleo işlemi kanıt oluşturulmasını gerektirir. Bu biraz zaman alabilir.",
+        "recordsUsed" : "Kullanılan kayıtlar",
+        "signingTime" : "İmzalama zamanı"
       },
       "mandatoryPrivateSync" : {
         "title" : "Gizli bakiyeniz senkronize ediliyor (%{{percentage}}).",
@@ -8665,6 +8824,28 @@
       "growYourRewards" : "Ödüllerinizi artırın",
       "spendYourCrypto" : "Kriptonuzla alışveriş yapın",
       "everythingAtAGlance" : "Tek bir bakışta her şeyi görün"
+    },
+    "slides" : {
+      "fund" : {
+        "title" : "Cüzdanınıza fon aktararak başlayın.",
+        "subTitle" : "Ledger Wallet'ı dilediğiniz şekilde fonlayın: transfer edin, satın alın veya nakit paranızı stabil coinlere dönüştürün."
+      },
+      "portfolio" : {
+        "title" : "Piyasanın bir adım önünde olun",
+        "subTitle" : "Varlıklarınızı, ödüllerinizi ve piyasa trendlerinizi kolayca takip edin."
+      },
+      "earn" : {
+        "title" : "Kriptolarınızla ödüller kazanın",
+        "subTitle" : "Kripto varlıklarınızı Kazan bölümünde çalıştırın."
+      },
+      "card" : {
+        "title" : "Kriptolarınızı gerçek hayatta harcayın",
+        "subTitle" : "Kripto kartınızla ister internette ister mağazada ödeme yapın ve para iadesi kazanın"
+      },
+      "swap" : {
+        "title" : "Uygulama değiştirmeden takas yapın",
+        "subTitle" : "Güvenilir takas sağlayıcılarımız aracılığıyla binlerce varlık ile sınırsız işlem yapmanın keyfini çıkarın."
+      }
     }
   },
   "history" : {
@@ -8723,6 +8904,197 @@
     "explore" : "Tüm Ledger cihazlarını keşfedin"
   },
   "assetDetails" : {
-    "totalBalance" : "Toplam bakiye"
+    "totalBalance" : "Toplam bakiye",
+    "header" : {
+      "optionsMenu" : "Varlık seçenekleri",
+      "addFavourite" : "Favorilere ekle",
+      "removeFavourite" : "Favorilerden kaldır",
+      "hideFromPortfolio" : "Portföyden gizle",
+      "showInPortfolio" : "Portföyde göster"
+    },
+    "hiddenBanner" : {
+      "description" : "Bu varlık, portföyünüzden gizlenmiştir.",
+      "showAsset" : "Varlığı göster"
+    },
+    "marketPrice" : "Piyasa fiyatı",
+    "addresses" : "Adresler",
+    "addressesDialog" : {
+      "title" : "Adresler",
+      "description" : "{{ticker}} içeren tüm adresleriniz."
+    },
+    "add" : "Ekle",
+    "notFound" : "Varlık dağıtım ögesi bulunamadı.",
+    "marketStats" : "Piyasa istatistikleri",
+    "marketStatsTooltip" : "Bu varlıklar için piyasa metrikleri.",
+    "pricePerformance" : "Fiyat performansı",
+    "marketRank" : "Piyasa sıralaması",
+    "tradingVolume24h" : "24 saatlik işlem hacmi",
+    "day" : "1 gün",
+    "staking" : {
+      "availableBalance" : "Mevcut bakiye",
+      "availableBalanceTooltip" : "Varlıklarınızın şu anda kullanabileceğiniz; dilediğiniz an gönderebileceğiniz, takas edebileceğiniz veya çekebileceğiniz kısmıdır.",
+      "earnDeposit" : "Getiri bakiyesi",
+      "earnBanner" : "%{{apy}} {{type}} oranına kadar kazanın",
+      "earnBannerDefault" : "Bu varlıkla kazanın",
+      "earnBannerSubtitle" : "Bu varlığı elinizde tutarak kazanın",
+      "earnBannerAction" : "Kazan bölümüne gidin"
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "Tezos Ödülleri Kazanın: Yetki Devredin veya Stake Edin",
+      "description" : "Tam kontrolü elinizde tutarken Tezos (XTZ) varlıklarınızla bir Baker'a yetki devrederek ödüller kazanın. Daha yüksek getiriler için, ilişkili düşük riskleri göz önünde bulundurarak XTZ varlıklarınızı stake edin. Varlıklarınızı büyütmek için en iyi yöntemi seçin.",
+      "howItWorks" : "Süreç nasıl işler?",
+      "delegate" : {
+        "header" : "Yetki Devret",
+        "bullet" : {
+          "0" : "Kilitleme yok",
+          "1" : "Tüm bakiyeniz ile yetki devredilmiş",
+          "2" : "XTZ varlıklarınızı istediğiniz zaman gönderin/takas edin",
+          "3" : "Risksiz"
+        },
+        "cta" : "Yetki Devret"
+      },
+      "stake" : {
+        "header" : "Stake edin",
+        "bullet" : {
+          "0" : "Getirinizi artırın (2-3 kata kadar)",
+          "1" : "XTZ, staking için kilitlendi",
+          "2" : "Stake durdurma: 4 gün",
+          "3" : "Risk: Düşük (Ceza kesintisi)"
+        },
+        "cta" : "Stake edin"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "XTZ stake etmeyi durdurun",
+        "steps" : {
+          "amount" : {
+            "title" : "Miktar",
+            "amountLabel" : "Staking'i iptal edilecek miktar",
+            "availableLabel" : "Stake edildi",
+            "maxLabel" : "Maks.",
+            "unbondingNotice" : "Stake durdurma işlemi 4 gün sürer. Bu süre zarfında XTZ varlıklarınız yetki devrinde kalır ve staking ödülleri kazanmayı durdurur."
+          },
+          "device" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "broadcastError" : "Stake durdurma işleminiz ağa gönderilemedi. Lütfen tekrar deneyin.",
+            "success" : {
+              "title" : "Stake durdurma işlemi gönderildi",
+              "text" : "XTZ varlıklarınızın stake işlemi sonlandırılıyor ve yaklaşık 4 gün içinde çekime hazır olacaklar.",
+              "cta" : "Ayrıntıları gör"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "Stake edin",
+        "amount" : {
+          "disclaimer" : "Stake durdurma işlemi 4 gün sürer.",
+          "awaitingDelegation" : "Yetki devriniz onaylanıyor. Bu genellikle en fazla bir dakika sürer..."
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "Doğrulayıcı",
+            "description" : "Yetki devredeceğiniz bir baker seçin. Yetki devri onaylandıktan sonra XTZ varlıklarınızı stake edebileceksiniz."
+          },
+          "deviceDelegation" : {
+            "title" : "Yetki Devrini Onaylayın"
+          },
+          "amount" : {
+            "title" : "Miktar"
+          },
+          "deviceStaking" : {
+            "title" : "Stake'i Onaylayın"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "{{amount}} yatırdınız. İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecektir.",
+              "cta" : "Kazan Panosuna git"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
+            "howItWorks" : "Staking Nasıl Çalışır?"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Baker'ı değiştirmeden önce stake etmeyi durdurun",
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yeni bir doğrulayıcıya yetki devretmeden önce fonlarınızı stake etmeyi durdurun."
+      },
+      "endDelegation" : {
+        "title" : "Yetki devrini sonlandırmadan önce stake etmeyi durdurun",
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yetki devrini sonlandırmadan önce fonlarınızı stake etmeyi durdurun."
+      },
+      "steps" : {
+        "0" : "Kazan menüsünü açın ve Staking'i durdur seçimini uygulayın.",
+        "1" : "Tutarı cihazınızda onaylayın ve stake etmeyi durdurma talebini gönderin.",
+        "2" : "Stake durdurulma süresinin tamamlanması için yaklaşık 4 gün bekleyin.",
+        "3" : "Çektiğinizde, baker'ı değiştirebilir veya yetki devrini sonlandırabilirsiniz."
+      },
+      "learnMore" : "Tezos stake etme hakkında daha fazla bilgi edinin",
+      "close" : "Kapat"
+    }
+  },
+  "pnl" : {
+    "asset" : {
+      "entry" : {
+        "title" : "Ortalama giriş fiyatı",
+        "tooltip" : "Satın aldığınız veya diğer cüzdanlardan transfer aldığınız her şey dâhil olmak üzere, bu cüzdandaki bu varlık için ödediğiniz ortalama fiyat. Bu, kârınızı veya zararınızı izlemek için kullanılır."
+      },
+      "return" : {
+        "title" : "Gerçekleşmemiş getiri"
+      },
+      "dialog" : {
+        "title" : "Kâr ve zarar",
+        "description" : "Bu varlığın portföyünüzde nasıl bir performans sergilediğine dair bir özet.",
+        "totalReturn" : {
+          "title" : "Toplam getiri",
+          "description" : "Gerçekleşmemiş ve gerçekleşmiş getirilerin toplamı."
+        },
+        "unrealisedReturn" : {
+          "title" : "Gerçekleşmemiş getiri",
+          "description" : "Bugünkü fiyat üzerinden satılırsa tahmini kazanç veya zarar."
+        },
+        "realisedReturn" : {
+          "title" : "Gerçekleşen getiri",
+          "description" : "Önceki satışlardan veya transferlerden teyit edilmiş kâr veya zararlar."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "Gerçekleşmemiş getiri"
+      },
+      "costBasis" : {
+        "title" : "Maliyet tabanı",
+        "tooltip" : "Ücretler dâhil olmak üzere mevcut varlıklarınızı edinmek için ödediğiniz toplam tutar."
+      },
+      "dialog" : {
+        "title" : "Kâr ve zarar",
+        "description" : "Portföy performansınız, gerçekleşmiş ve gerçekleşmemiş getiriler olarak ayrılmıştır.",
+        "totalReturn" : {
+          "title" : "Toplam getiri",
+          "description" : "Genel pozisyonunuzu yansıtan, gerçekleşmiş ve gerçekleşmemiş getirilerin toplamıdır."
+        },
+        "unrealisedReturn" : {
+          "title" : "Gerçekleşmemiş getiri",
+          "description" : "Mevcut varlıklarınız için tahmini kazanç veya kayıp."
+        },
+        "realisedReturn" : {
+          "title" : "Gerçekleşen getiri",
+          "description" : "Önceki satışlardan veya giden transferlerden teyit edilmiş kâr veya zararlar."
+        }
+      }
+    }
   }
 }

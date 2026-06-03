@@ -1,8 +1,8 @@
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { useFeature } from "@features/platform-feature-flags";
+import { AB_TESTING_VARIANTS } from "../types/variants";
 
 export const NotificationsPromptContent = () => {
   const { t } = useTranslation();
@@ -10,7 +10,7 @@ export const NotificationsPromptContent = () => {
 
   const isVariantB =
     featureNewWordingNotificationsDrawer?.enabled === true &&
-    featureNewWordingNotificationsDrawer?.params?.variant === ABTestingVariants.variantB;
+    featureNewWordingNotificationsDrawer?.params?.variant === AB_TESTING_VARIANTS.B;
 
   return (
     <>

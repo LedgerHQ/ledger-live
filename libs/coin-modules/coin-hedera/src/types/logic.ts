@@ -1,7 +1,8 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
+import type { HederaCoinConfig } from "../config";
 import type { HEDERA_OPERATION_TYPES } from "../constants";
 import type { HederaOperationExtra } from "./bridge";
 import type { ERC20TokenTransfer } from "./hgraph";
@@ -10,10 +11,11 @@ import type { HederaThirdwebTransaction } from "./thirdweb";
 
 export type EstimateFeesParams =
   | {
-      currency: CryptoCurrency;
+      currencyId: string;
       operationType: Exclude<HEDERA_OPERATION_TYPES, HEDERA_OPERATION_TYPES.ContractCall>;
     }
   | {
+      configOrCurrencyId: HederaCoinConfig | string;
       operationType: HEDERA_OPERATION_TYPES.ContractCall;
       txIntent: TransactionIntent;
     };

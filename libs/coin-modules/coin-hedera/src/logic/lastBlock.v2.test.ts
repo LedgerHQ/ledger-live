@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { lastBlockV2 } from "./lastBlock.v2";
@@ -11,6 +12,7 @@ jest.mock("../network/hgraph");
 const BLOCK_WINDOW_MS = SYNTHETIC_BLOCK_WINDOW_SECONDS * 1000;
 
 describe("lastBlockV2", () => {
+  const mockCurrency = getMockedCurrency();
   const mockHgraphTimestampNs = new BigNumber("1625097500000000000");
   const mockHgraphTimestamp = nanosToSeconds(mockHgraphTimestampNs).minus(
     SYNTHETIC_BLOCK_WINDOW_SECONDS,
@@ -28,7 +30,7 @@ describe("lastBlockV2", () => {
   });
 
   it("should return the last block info using the smaller timestamp", async () => {
-    const result = await lastBlockV2();
+    const result = await lastBlockV2({ configOrCurrencyId: mockCurrency.id });
     const expectedSyntheticBlock = getSyntheticBlock(mockHgraphTimestamp.toFixed(9));
 
     expect(apiClient.getLatestTransaction).toHaveBeenCalledTimes(1);
@@ -40,7 +42,7 @@ describe("lastBlockV2", () => {
 
   it("should only query transactions from fully finalized blocks", async () => {
     const now = Date.now();
-    await lastBlockV2();
+    await lastBlockV2({ configOrCurrencyId: mockCurrency.id });
 
     // lastBlockV2() accounts for block window size: a transaction at the start of a block
     // creates a block whose END time is BLOCK_WINDOW later, so we query transactions
@@ -48,7 +50,8 @@ describe("lastBlockV2", () => {
     const expectedBefore = now - FINALITY_MS - BLOCK_WINDOW_MS;
 
     expect(apiClient.getLatestTransaction).toHaveBeenCalledTimes(1);
-    const calledWithDate = (apiClient.getLatestTransaction as jest.Mock).mock.calls[0][0] as Date;
+    const calledWithDate = (apiClient.getLatestTransaction as jest.Mock).mock.calls[0][0]
+      .before as Date;
     expect(calledWithDate.getTime()).toBeGreaterThanOrEqual(expectedBefore - 500);
     expect(calledWithDate.getTime()).toBeLessThanOrEqual(expectedBefore + 500);
   });

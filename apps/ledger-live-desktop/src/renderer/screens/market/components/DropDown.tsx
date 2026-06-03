@@ -116,6 +116,7 @@ export default function Dropdown<O>(props: Props<O>): React.JSX.Element {
             justifyContent: "center",
             alignItems: "center",
             display: "flex",
+            cursor: "pointer",
           }),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any

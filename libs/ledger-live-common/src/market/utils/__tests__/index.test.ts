@@ -272,12 +272,17 @@ describe("getChartRangeSegment", () => {
     ["1h", "1h"],
     ["24h", "1d"],
     ["day", "1d"],
+    ["1d", "1d"],
     ["7d", "1w"],
     ["week", "1w"],
+    ["1w", "1w"],
     ["30d", "1m"],
     ["month", "1m"],
+    ["1m", "1m"],
+    ["6m", "6m"],
     ["1y", "1y"],
     ["year", "1y"],
+    ["5y", "5y"],
     ["all", "all"],
   ])("maps UI range '%s' to URL segment '%s'", (input, expected) => {
     expect(getChartRangeSegment(input)).toBe(expected);

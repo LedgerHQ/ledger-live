@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
@@ -26,7 +26,8 @@ export default class SwapLiveAppPage {
   incompatibilityBannerPartnerId = "incompatibility-banner-partner";
   swapMainContainerCssSelector = "main";
   swapMainContainerWebElement = getWebElementByCssSelector(this.swapMainContainerCssSelector);
-  swapMaxToggle = "from-account-max-toggle";
+  percentageToggle = (percent: "25%" | "50%" | "75%" | "max") =>
+    `mobile-keyboard-percentage-${percent}`;
   switchButton = "to-account-switch-accounts";
   lnsUnsupportedBannerPattern =
     /Ledger Nano S[\s\S]*(not supported|unsupported|does not support|not compatible)/i;
@@ -35,7 +36,7 @@ export default class SwapLiveAppPage {
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
   baseProviderCssSelector = (provider: string) =>
-    `[data-testid^="quote-container-${Provider.getNameByUiName(provider)}"]`;
+    `[data-testid^="quote-container-${SwapProvider.getNameByUiName(provider)}"]`;
   providerExecuteButtonCss = (provider: string) =>
     `${this.baseProviderCssSelector(provider)} [data-testid="${this.executeSwapButton}"]`;
   providerQuoteContainerSelector = (provider: string) =>
@@ -45,10 +46,15 @@ export default class SwapLiveAppPage {
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
-    await waitWebElementByTestId(this.fromSelector);
-    await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
-    await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
-    await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
+    const required = [
+      this.fromSelector,
+      this.toSelector,
+      ...(["max", "75%", "50%", "25%"] as const).map(this.percentageToggle),
+    ];
+    for (const testId of required) {
+      await waitWebElementByTestId(testId);
+      await detoxExpect(getWebElementByTestId(testId)).toExist();
+    }
   }
 
   @Step("Expect swap live app form")
@@ -112,16 +118,12 @@ export default class SwapLiveAppPage {
   @Step("Select available provider")
   async selectExchange() {
     const providersList = (await this.getProviderList()).filter(
-      name => name !== Provider.LIFI.uiName,
+      name => name !== SwapProvider.LIFI.uiName,
     );
 
-    const providersWithoutKYC = providersList.filter(providerName => {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      return provider && !provider.kyc;
-    });
-    for (const providerName of providersWithoutKYC) {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (provider?.isNative) {
+    for (const providerName of providersList) {
+      const provider = SwapProvider.getByUiName(providerName);
+      if (provider && !provider.kyc && !provider.app) {
         await waitWebElementByTestId(this.specificQuoteCardProviderName(provider.name));
         const selectedProvider = getWebElementsByIdAndText(
           this.specificQuoteCardProviderName(provider.name),
@@ -132,7 +134,7 @@ export default class SwapLiveAppPage {
         return provider;
       }
     }
-    throw new Error("No providers without KYC found");
+    throw new Error("No single-app exchange providers found");
   }
 
   @Step("Wait for quotes countdown to be stable")
@@ -213,7 +215,7 @@ export default class SwapLiveAppPage {
 
   @Step("Check first quote container infos")
   async checkFirstQuoteContainerInfos(providerList: string[]) {
-    const provider: string = Provider.getNameByUiName(providerList[0]);
+    const provider: string = SwapProvider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}`;
     await waitWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
     await tapWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
@@ -237,10 +239,10 @@ export default class SwapLiveAppPage {
     ).toExist();
 
     if (
-      provider === Provider.ONE_INCH.name ||
-      provider === Provider.VELORA.name ||
-      provider === Provider.UNISWAP.name ||
-      provider === Provider.LIFI.name
+      provider === SwapProvider.ONE_INCH.name ||
+      provider === SwapProvider.VELORA.name ||
+      provider === SwapProvider.UNISWAP.name ||
+      provider === SwapProvider.LIFI.name
     ) {
       await detoxExpect(
         getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-slippage-infoIcon" }),
@@ -333,7 +335,7 @@ export default class SwapLiveAppPage {
 
   @Step("Click on swap max")
   async clickSwapMax() {
-    await tapWebElementByTestId(this.swapMaxToggle);
+    await tapWebElementByTestId(this.percentageToggle("max"));
     await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex);
   }
 
@@ -421,7 +423,7 @@ export default class SwapLiveAppPage {
     if (!providersList.includes(provider)) {
       throw new Error(`Provider "${provider}" not found in the list`);
     }
-    const providerName = Provider.getNameByUiName(provider);
+    const providerName = SwapProvider.getNameByUiName(provider);
     const providerTestId = this.specificQuoteCardProviderName(providerName);
     await waitWebElementByTestId(providerTestId);
     await tapWebElementByTestId(providerTestId);

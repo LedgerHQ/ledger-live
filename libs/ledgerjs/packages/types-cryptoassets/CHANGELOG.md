@@ -1,5 +1,17 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.37.0
+
+### Minor Changes
+
+- [#17675](https://github.com/LedgerHQ/ledger-live/pull/17675) [`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add Bittensor (TAO) currency metadata: CoinType.BITTENSOR = 1005 in types-cryptoassets and bittensor currency entry with TAO/RAO units in cryptoassets
+
+## 7.37.0-next.0
+
+### Minor Changes
+
+- [#17675](https://github.com/LedgerHQ/ledger-live/pull/17675) [`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add Bittensor (TAO) currency metadata: CoinType.BITTENSOR = 1005 in types-cryptoassets and bittensor currency entry with TAO/RAO units in cryptoassets
+
 ## 7.36.0
 
 ### Minor Changes

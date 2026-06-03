@@ -3,6 +3,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useBaker, useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeature } from "@features/platform-feature-flags";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
@@ -16,6 +17,8 @@ import Header from "./Header";
 import Row from "./Row";
 import StakingSection from "./StakingSection";
 import UnstakingSection from "./UnstakingSection";
+import { getTezosEarnFlow } from "../earnFlow";
+import { StepId } from "../DelegateFlowModal/types";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import type { Delegation, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -34,6 +37,7 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 const Delegation = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
+  const bridge = useAccountBridge(account, parentAccount);
   const { t } = useTranslation();
   const info = useTezosStakingInfo(account);
   const stakingEnabled = !!useFeature("lldTezosStaking")?.enabled;
@@ -51,11 +55,43 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const hasDelegation = !!info.delegation || !!info.delegateAddress;
 
   const onEarn = () => {
-    if (stakingEnabled && !info.isStaked) {
-      dispatch(openModal("MODAL_TEZOS_EARNING_CHOICE", { account, parentAccount }));
-      return;
+    const flow = getTezosEarnFlow({
+      isEmpty: bridge.isAccountEmpty(account),
+      stakingEnabled,
+      isDelegated: info.isDelegated,
+    });
+    switch (flow.kind) {
+      case "no-funds":
+        dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+        return;
+      case "earning-choice":
+        dispatch(openModal("MODAL_TEZOS_EARNING_CHOICE", { account, parentAccount }));
+        return;
+      case "stake":
+        dispatch(
+          openModal("MODAL_TEZOS_STAKE", {
+            account,
+            parentAccount,
+            skipDelegation: flow.skipDelegation,
+          }),
+        );
+        return;
+      case "delegate":
+        dispatch(
+          openModal(
+            "MODAL_DELEGATE",
+            flow.redelegate
+              ? {
+                  account,
+                  parentAccount,
+                  eventType: "redelegate",
+                  stepId: "summary" as StepId,
+                }
+              : { account, parentAccount },
+          ),
+        );
+        return;
     }
-    dispatch(openModal("MODAL_DELEGATE", { account, parentAccount }));
   };
 
   return (

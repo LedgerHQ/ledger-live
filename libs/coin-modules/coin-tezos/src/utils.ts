@@ -16,6 +16,17 @@ export const DUST_MARGIN_MUTEZ = 500;
 // Tezos rejects `empty_implicit_delegated_contract`; stake-max leaves this buffer.
 export const STAKE_USE_ALL_RESERVE_MUTEZ = 10_000n;
 
+/** Stake "Use Max": already-staked funds count toward `balance` but aren't re-stakeable, so subtract them. */
+export function computeMaxStakeAmount(
+  balance: bigint,
+  stakedBalance: bigint,
+  fees: bigint,
+): bigint {
+  const liquid = balance > stakedBalance ? balance - stakedBalance : 0n;
+  const reserved = fees + STAKE_USE_ALL_RESERVE_MUTEZ;
+  return liquid > reserved ? liquid - reserved : 0n;
+}
+
 /**
  * Suggested fee returned by Taquito for a minimal amount pre-estimation (mutez)
  * Used as a stable fallback for send-max when RPC estimation is unavailable.

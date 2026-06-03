@@ -35,18 +35,19 @@ function assertNever(value: never): never {
 export function DeviceContextInitializerComponentLWMView({
   state,
   device,
+  sourceFlow,
   onCancel,
 }: Readonly<DeviceContextInitializerComponentLWMViewProps>) {
-  const commonProps = { device, onCancel } as const;
+  const commonProps = { device, sourceFlow, onCancel } as const;
 
   return (
     <Box lx={rootStyle}>
       {(() => {
         switch (state.type) {
           case LoadingStateType.Loading:
-            return <LoadingState />;
+            return <LoadingState device={device} sourceFlow={sourceFlow} />;
           case LoadingStateType.InstallingApp:
-            return <InstallingAppState />;
+            return <InstallingAppState device={device} sourceFlow={sourceFlow} />;
           case DeviceInteractionRequiredType.UnlockDevice:
             return <UnlockDeviceState state={state} {...commonProps} />;
           case DeviceInteractionRequiredType.AllowSecureConnection:

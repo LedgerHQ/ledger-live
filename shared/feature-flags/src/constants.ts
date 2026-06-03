@@ -24,6 +24,7 @@ export const FEATURE_FLAGS_INITIAL_STATE: FeatureFlagsState = {
   overrides: {},
   resolved: FEATURE_FLAGS_DEFAULTS,
   bannerVisible: false,
+  remoteFlagsReady: false,
 };
 
 /** Default polling interval for fetching remote flags, in milliseconds: 5 minutes. */

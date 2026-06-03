@@ -1,8 +1,9 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { ScrollView, TextInput } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import type { FeatureId, Feature } from "@ledgerhq/types-live";
+import { useDispatch } from "react-redux";
+import { setOverride } from "@shared/feature-flags";
+import type { FeatureId, Feature } from "@shared/feature-flags";
 
 import { Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
@@ -17,7 +18,7 @@ const FeatureFlagEdit: React.FC<{
   flagValue: Feature;
 }> = props => {
   const { colors } = useTheme();
-  const featureFlagsProvider = useFeatureFlags();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { flagName, flagValue } = props;
   const [error, setError] = useState<Error | unknown | undefined>();
@@ -58,8 +59,8 @@ const FeatureFlagEdit: React.FC<{
 
   const handleRestoreFeature = useCallback(() => {
     setError(undefined);
-    featureFlagsProvider.resetFeature(flagName);
-  }, [featureFlagsProvider, flagName]);
+    dispatch(setOverride({ key: flagName, value: undefined }));
+  }, [dispatch, flagName]);
 
   const handleOverrideFeature = useCallback(() => {
     setError(undefined);
@@ -67,11 +68,16 @@ const FeatureFlagEdit: React.FC<{
       // Nb if value is invalid or missing, JSON parse will fail
       const newValue = inputValueStringified ? JSON.parse(inputValueStringified) : undefined;
       setFeatureFlagValue(newValue);
-      featureFlagsProvider.overrideFeature(flagName, newValue);
+      dispatch(
+        setOverride({
+          key: flagName,
+          value: newValue ? { ...newValue, overridesRemote: true } : undefined,
+        }),
+      );
     } catch (e) {
       setError(e);
     }
-  }, [inputValueStringified, flagName, featureFlagsProvider]);
+  }, [inputValueStringified, flagName, dispatch]);
 
   const isChecked = useMemo(() => {
     if (!featureFlagValue) return false;
@@ -87,9 +93,9 @@ const FeatureFlagEdit: React.FC<{
       const newValue = { ...featureFlagValue, enabled };
       setFeatureFlagValue(newValue);
       setInputValueStringified(formatValue(newValue));
-      featureFlagsProvider.overrideFeature(flagName, newValue);
+      dispatch(setOverride({ key: flagName, value: { ...newValue, overridesRemote: true } }));
     },
-    [featureFlagsProvider, flagName, featureFlagValue],
+    [dispatch, flagName, featureFlagValue],
   );
 
   return (

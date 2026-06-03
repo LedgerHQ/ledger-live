@@ -113,15 +113,16 @@ export type SwapLiveError = {
 // Swap quotes (`custom.exchange.getQuotes`). Internal HTTP shapes live in ledger-live-common only.
 
 export type UniswapOrderType = "classic" | "uniswapxv2" | "all";
+export type QuotesAppPlatform = "lld" | "llm-ios" | "llm-android" | "unknown";
 
 export type QuotesInput = {
   amount: string;
   sendAccountId: string;
   receiveAccountId: string;
-  sendAddress: string;
-  receiveAddress: string;
-  sendCurrencyId: string;
-  receiveCurrencyId: string;
+  sendAddress?: string;
+  receiveAddress?: string;
+  sendCurrencyId?: string;
+  receiveCurrencyId?: string;
   networkFeesCurrencyId?: string;
   slippage?: number;
   uniswapOrderType?: UniswapOrderType;
@@ -140,9 +141,24 @@ export type TradeMethod = "fixed" | "float";
 
 export type ProviderTypes = "DEX" | "CEX";
 
-export type QuoteWarning = { code: "unrealisticQuote"; gainPercent: number };
+export enum QuoteWarningCodes {
+  HIGH_VALUE_LOSS = "highValueLoss",
+  NANO_S_PROVIDER_INCOMPATIBILITY = "nanoSProviderIncompatibility",
+  UNREALISTIC_QUOTE = "unrealisticQuote",
+  UNKNOWN_RECEIVE_FIAT_PRICE = "unknownReceiveFiatPrice",
+}
 
-export type QuoteError = "notEnoughBalanceForFees";
+export type QuoteWarning =
+  | { code: QuoteWarningCodes.HIGH_VALUE_LOSS; lossPercent: number }
+  | { code: QuoteWarningCodes.NANO_S_PROVIDER_INCOMPATIBILITY; provider: string }
+  | { code: QuoteWarningCodes.UNREALISTIC_QUOTE; gainPercent: number }
+  | { code: QuoteWarningCodes.UNKNOWN_RECEIVE_FIAT_PRICE };
+
+export enum QuoteErrorCodes {
+  NOT_ENOUGH_BALANCE_FOR_FEES = "notEnoughBalanceForFees",
+}
+
+export type QuoteError = { code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES };
 
 export type ProviderDetails = {
   name: string;
@@ -155,6 +171,7 @@ export type ProviderDetails = {
 
 export type QuoteNetworkFees = {
   currencyId: string;
+  value?: number;
   gasLimit?: string;
 };
 
@@ -308,8 +325,8 @@ export type Quote = {
   provider: string;
   providerDetails: ProviderDetails;
   quoteDetails: QuoteDetails;
-  warning: QuoteWarning | null;
-  error: QuoteError | null;
+  warnings: QuoteWarning[];
+  errors: QuoteError[];
   /**
    * Optional wallet-formatted display strings. Additive field:
    * producers that cannot format (no locale / counter-value fiat context)
@@ -318,16 +335,76 @@ export type Quote = {
   formatted?: FormattedQuoteValues;
 };
 
+export enum ProviderErrorCodes {
+  AMOUNT_OFF_LIMITS = "amount_off_limits",
+  FAILED_TO_GET_QUOTE_ERROR = "failed_to_get_quote_error",
+}
+
 /** Error rows returned next to quotes (swap API error objects). */
 export type QuoteProviderError = {
-  code: string;
+  code: ProviderErrorCodes | (string & {});
   type: TradeMethod;
   provider: string;
   message: string;
   parameter: { [key: string]: string };
 };
 
+/**
+ * Digested global state attached to {@link GetQuotesResponse.errors}.
+ * Discriminated by `code`; multiple variants can stack (e.g. `noQuotes`
+ * alongside `amountTooLow`). Empty array means "nothing to surface".
+ *
+ * Producers live wallet-side; this is the contract consumers read.
+ */
+export enum QuotesErrorCodes {
+  AMOUNT_TOO_HIGH = "amountTooHigh",
+  AMOUNT_TOO_LOW = "amountTooLow",
+  LEDGER_LIVE_VERSION_INCOMPATIBILITY = "ledgerLiveVersionIncompatibility",
+  NO_QUOTES = "noQuotes",
+  QUOTE_INPUT_RESOLUTION_FAILED = "quoteInputResolutionFailed",
+}
+
+export type QuotesError =
+  | { code: QuotesErrorCodes.NO_QUOTES }
+  | { code: QuotesErrorCodes.QUOTE_INPUT_RESOLUTION_FAILED }
+  | { code: QuotesErrorCodes.AMOUNT_TOO_LOW; minAmount: string }
+  | { code: QuotesErrorCodes.AMOUNT_TOO_HIGH; maxAmount: string }
+  | {
+      code: QuotesErrorCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY;
+      currencyId: string;
+      platform: QuotesAppPlatform;
+      currentVersion: string;
+      requiredVersion: string;
+    };
+
+export enum QuotesWarningCodes {
+  NANO_S_CURRENCY_INCOMPATIBILITY = "nanoSCurrencyIncompatibility",
+}
+
+export type QuotesWarning = {
+  code: QuotesWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY;
+  currencyId: string;
+};
+
 export type GetQuotesResponse = {
   quotes: Quote[];
-  errors: QuoteProviderError[];
+  /**
+   * Per-provider rejection rows from the aggregator. Each row is one
+   * provider declining to quote with a reason (e.g. `amount_off_limits`).
+   * Pure pass-through of the aggregator response — the wallet does not
+   * digest these into globals here, that lives in {@link errors}.
+   */
+  providerErrors: QuoteProviderError[];
+  /**
+   * Digested global warnings for the whole batch. Empty array when there is
+   * nothing to surface.
+   */
+  warnings: QuotesWarning[];
+  /**
+   * Digested global state for the whole batch (e.g. `noQuotes` when no
+   * successful quotes came back, `amountTooLow` / `amountTooHigh` when
+   * every provider rejected on amount bounds). Empty array when there is
+   * nothing to surface.
+   */
+  errors: QuotesError[];
 };

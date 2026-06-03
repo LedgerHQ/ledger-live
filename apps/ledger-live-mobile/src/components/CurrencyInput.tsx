@@ -1,4 +1,5 @@
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
 
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions, StyleProp, ViewStyle, TextInputProps } from "react-native";
@@ -39,7 +40,7 @@ function format(
 
 type Props = {
   isActive: boolean;
-  onFocus: (_: boolean, event?: Parameters<NonNullable<TextInputProps["onFocus"]>>[0]) => void;
+  onFocus: (_: boolean, event?: NativeSyntheticEvent<TextInputFocusEventData>) => void;
   onChange: (_: BigNumber, keepRatio?: boolean) => void;
   unit: Unit;
   value: BigNumber | null | undefined;
@@ -136,7 +137,7 @@ class CurrencyInput extends PureComponent<Props, State> {
     });
     this.props.onFocus(false);
   };
-  handleFocus: NonNullable<TextInputProps["onFocus"]> = event => {
+  handleFocus = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
     this.syncInput({
       isFocused: true,
     });

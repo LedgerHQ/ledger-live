@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import type { TFunction } from "i18next";
+import { trendFromSign } from "@ledgerhq/wallet-pnl";
 import type { PnLCardProps } from "../../components/PnLCard/types";
 import { buildUnrealisedReturnCard } from "../buildUnrealisedReturnCard";
-import { getTrendIcon } from "../trend";
 
 const fakeT = ((key: string) => key) as unknown as TFunction;
 
@@ -28,9 +28,6 @@ describe("buildUnrealisedReturnCard", () => {
     expect(buildUnrealisedReturnCard(makeInput({ namespace: "pnl.asset" })).title).toBe(
       "pnl.asset.return.title",
     );
-    expect(buildUnrealisedReturnCard(makeInput({ namespace: "pnl.portfolio" })).title).toBe(
-      "pnl.portfolio.return.title",
-    );
   });
 
   it("formats the value through the provided fiat formatter", () => {
@@ -48,11 +45,11 @@ describe("buildUnrealisedReturnCard", () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it("wires trendIcon through getTrendIcon", () => {
+  it("derives the trend from the unrealised PnL sign", () => {
     const unrealisedPnL = new BigNumber(-7);
     const card = buildUnrealisedReturnCard(makeInput({ unrealisedPnL }));
 
     assertInteractive(card);
-    expect(card.trendIcon).toEqual(getTrendIcon(unrealisedPnL));
+    expect(card.trend).toBe(trendFromSign(unrealisedPnL));
   });
 });

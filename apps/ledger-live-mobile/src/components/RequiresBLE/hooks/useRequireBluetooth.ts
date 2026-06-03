@@ -55,7 +55,7 @@ export const useRequireBluetooth = ({
 
   const {
     hasPermissions: androidHasBluetoothPermissions,
-    neverAskAgain: androidBluetoothPermissionsNeverAskAgain,
+    neverAskAgain: _androidBluetoothPermissionsNeverAskAgain,
     requestForPermissionsAgain: androidBluetoothPermissionsRequestForPermissionsAgain,
   } = useAndroidBluetoothPermissions({
     isHookEnabled: isAndroidBluetoothPermissionsHookEnabled,
@@ -81,7 +81,7 @@ export const useRequireBluetooth = ({
 
   const {
     hasPermission: androidHasLocationPermission,
-    neverAskAgain: androidLocationPermissionNeverAskAgain,
+    neverAskAgain: _androidLocationPermissionNeverAskAgain,
     requestForPermissionAgain: androidLocationPermissionRequestForPermissionsAgain,
   } = useAndroidLocationPermission({
     isHookEnabled: isAndroidLocationPermissionHookEnabled,
@@ -115,7 +115,12 @@ export const useRequireBluetooth = ({
     if (androidHasBluetoothPermissions === "denied") {
       bluetoothRequirementsState = "bluetooth_permissions_ungranted";
       retryRequestOnIssue = androidBluetoothPermissionsRequestForPermissionsAgain;
-      cannotRetryRequest = androidBluetoothPermissionsNeverAskAgain;
+      /*
+       * FIXME: temporary fix to avoid this issue: https://github.com/facebook/react-native/issues/53887
+       * Revert `cannotRetryRequest` to `_androidBluetoothPermissionsNeverAskAgain` when React Native gets upgraded to 0.81.5
+       * to include the fix https://github.com/facebook/react-native/commit/447a7a3527e3e38e4c3ceb330d12d77afe7bc0b4
+       */
+      cannotRetryRequest = true;
     } else if (androidHasBluetoothPermissions !== "granted") {
       someUnknown = true;
     }
@@ -125,7 +130,12 @@ export const useRequireBluetooth = ({
     if (androidHasLocationPermission === "denied") {
       bluetoothRequirementsState = "location_permission_ungranted";
       retryRequestOnIssue = androidLocationPermissionRequestForPermissionsAgain;
-      cannotRetryRequest = androidLocationPermissionNeverAskAgain;
+      /*
+       * FIXME: temporary fix to avoid this issue: https://github.com/facebook/react-native/issues/53887
+       * Revert `cannotRetryRequest` to `_androidLocationPermissionNeverAskAgain` when React Native gets upgraded to 0.81.5
+       * to include the fix https://github.com/facebook/react-native/commit/447a7a3527e3e38e4c3ceb330d12d77afe7bc0b4
+       */
+      cannotRetryRequest = true;
     } else if (androidHasLocationPermission !== "granted") {
       someUnknown = true;
     }

@@ -15,6 +15,7 @@ import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SafeAreaView from "~/components/SafeAreaView";
 import { CeloVoteFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteStarted>;
@@ -33,7 +34,7 @@ export default function VoteStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"
@@ -76,7 +77,7 @@ export default function VoteStarted({ navigation, route }: Props) {
           <Trans i18nKey="celo.vote.flow.steps.starter.cta" />
         </Button>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

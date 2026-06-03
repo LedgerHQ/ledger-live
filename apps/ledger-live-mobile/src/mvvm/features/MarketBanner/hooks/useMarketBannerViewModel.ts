@@ -13,9 +13,10 @@ import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 import { MARKET_BANNER_TILE_COUNT, PAGE_NAME, BANNER_NAME } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   TIME_RANGE,
   MARKET_BANNER_DATA_SORT_ORDER,
@@ -27,6 +28,7 @@ import {
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const baseNavigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
+  const { openFromMarket } = useAssetDetailNavigation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -62,13 +64,6 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     baseNavigation.navigate(ScreenName.MarketList);
   }, [baseNavigation]);
 
-  const navigateToMarketDetail = useCallback(
-    (currencyId: string) => {
-      baseNavigation.navigate(ScreenName.MarketDetail, { currencyId });
-    },
-    [baseNavigation],
-  );
-
   const onTilePress = useCallback(
     (item: MarketItemPerformer) => {
       track("button_clicked", {
@@ -77,9 +72,13 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
         coin: item.name,
         banner: BANNER_NAME,
       });
-      navigateToMarketDetail(item.id);
+      openFromMarket({
+        marketCurrencyId: item.id,
+        ledgerCurrencyIds: item.ledgerIds,
+        source: "market_banner",
+      });
     },
-    [navigateToMarketDetail],
+    [openFromMarket],
   );
 
   const onViewAllPress = useCallback(() => {

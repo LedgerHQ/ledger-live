@@ -199,6 +199,35 @@ export function parseAmountStringToNumber(amountString: string, unitCode: string
 }
 
 /**
+ * Returns true when a Sei EVM account's public key has not yet been confirmed on-chain
+ * (via an outbound transaction), meaning its EVM (0x) and Cosmos (sei1) addresses are not yet
+ * linked.  Delegation will fail in this state because the staking precompile
+ * routes internally through the Cosmos layer and cannot resolve the Cosmos
+ * address for an unregistered EVM key.
+ *
+ * Association happens automatically once the account has its first successful outbound
+ * transaction confirmed on-chain (e.g. a simple send). We detect the absence of
+ * any prior confirmed outbound tx by checking whether the account has ever
+ * appeared as a sender in its local confirmed operation history. For a
+ * genuinely unassociated account every recorded operation is incoming.
+ * Only applies to `sei_evm`; returns false for every other currency.
+ */
+export function isSeiAccountUnassociated(
+  currencyId: string,
+  freshAddress: string,
+  operations: ReadonlyArray<{ blockHeight: number | null | undefined; senders: string[] }>,
+): boolean {
+  if (currencyId !== "sei_evm") return false;
+  const addressLower = freshAddress.toLowerCase();
+  return !operations.some(
+    op =>
+      op.blockHeight !== null &&
+      op.blockHeight !== undefined &&
+      op.senders.some(s => s.toLowerCase() === addressLower),
+  );
+}
+
+/**
  * Decode the src/dst validator addresses from a REDELEGATE operation's
  * `contractPayload` (ABI-encoded calldata). Returns `null` when the payload is
  * absent or malformed so callers can fall back gracefully.

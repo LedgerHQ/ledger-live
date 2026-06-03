@@ -15,7 +15,6 @@ jest.mock("~/renderer/store", () => ({
 jest.mock("@features/platform-feature-flags", () => ({
   ...jest.requireActual("@features/platform-feature-flags"),
   useFeature: jest.fn(),
-  useWalletFeaturesConfig: () => ({ shouldDisplayFinishOnboardingWidget: true }),
 }));
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useUpsellPath: () => "/protect/upsell",
@@ -53,6 +52,9 @@ function setup({
   jest.mocked(useFeature).mockImplementation(key => {
     if (key === "protectServicesDesktop") {
       return { enabled: true, params: { protectId: PROTECT_ID } };
+    }
+    if (key === "onboardingWidget") {
+      return { enabled: true };
     }
     return null;
   });

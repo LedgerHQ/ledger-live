@@ -18,10 +18,6 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
             ...app.ledgerSync.ledgerSyncPushDataArgs,
           }),
       ],
-      //TODO: Remove line when LIVE-24337 is fixed
-      featureFlags: {
-        llmAccountListUI: { enabled: true },
-      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

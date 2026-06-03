@@ -176,7 +176,7 @@ export default function DebugDeviceIntentExecutorInitialization() {
           {enabled ? "Stop Initialization" : "Start Initialization"}
         </Button>
 
-        {enabled ? <DeviceIntentExecutorLWM {...executorProps} /> : null}
+        {enabled ? <DeviceIntentExecutorLWM sourceFlow="debug" {...executorProps} /> : null}
       </ScrollView>
 
       <QueuedDrawerBottomSheet

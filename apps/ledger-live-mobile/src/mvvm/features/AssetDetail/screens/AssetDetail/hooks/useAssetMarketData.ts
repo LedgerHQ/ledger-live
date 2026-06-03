@@ -1,27 +1,38 @@
 import VersionNumber from "react-native-version-number";
 import { useAssetMarketData as useSharedAssetMarketData } from "@ledgerhq/asset-detail";
 import { useSelector } from "~/context/hooks";
-import { marketParamsSelector } from "~/reducers/market";
-import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 
-export function useAssetMarketData(currency: AssetDetailCurrencyProps) {
-  const marketParams = useSelector(marketParamsSelector);
-  const { counterCurrency = "usd" } = marketParams;
+type Params = {
+  marketApiId?: string;
+  knownLedgerIds?: readonly string[];
+  knownMarketId?: string;
+};
 
-  const knownLedgerIds = currency ? [currency.id] : undefined;
+/**
+ * Mobile wrapper around `useAssetMarketData` from `@ledgerhq/asset-detail`.
+ * Inputs must be already resolved — see `resolveAssetMarketInputs` from
+ * `@ledgerhq/asset-aggregation`. No silent fallback to `currency.id` so a
+ * mismatch between ledger id and market id (e.g. BNB → "bsc" vs "binancecoin")
+ * cannot reintroduce the wrong query.
+ */
+export function useAssetMarketData({ marketApiId, knownLedgerIds, knownMarketId }: Params) {
+  const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
 
-  const { marketCurrencyData, marketId, isLoading, isError } = useSharedAssetMarketData({
-    marketApiId: currency?.id,
+  const { marketCurrencyData, marketId, ledgerIds, isLoading, isError } = useSharedAssetMarketData({
+    marketApiId,
     knownLedgerIds,
     counterCurrency,
     product: "llm",
     version: VersionNumber.appVersion,
+    knownMarketId,
   });
 
   return {
     marketCurrency: marketCurrencyData,
     marketId,
     counterCurrency,
+    ledgerIds,
     isLoading,
     isError,
   };

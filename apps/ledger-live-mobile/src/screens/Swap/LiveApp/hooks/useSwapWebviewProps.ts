@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Platform } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";

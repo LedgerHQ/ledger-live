@@ -11,18 +11,18 @@ const mockUpdateTransaction = jest.fn((_tx: unknown, patch: unknown) => ({
   ...(patch as object),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn().mockReturnValue({
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const bridge = {
     updateTransaction: (tx: unknown, patch: unknown) => mockUpdateTransaction(tx, patch),
-  }),
-}));
-
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: (_account: unknown, parentAccount: unknown) => parentAccount ?? _account,
-  findSubAccountById: (account: { subAccounts?: { id: string }[] }, id: string | null) =>
-    account.subAccounts?.find(sub => sub.id === id) ?? null,
-}));
+  };
+  const settledPromise = Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled",
+    value: bridge,
+  });
+  return {
+    getAccountBridge: jest.fn().mockReturnValue(settledPromise),
+  };
+});
 
 const usdcContractAddress = "0xceba9300f2b948710d2653dd7b07f33a8b32118c";
 const unknownContractAddress = "0x0000000000000000000000000000000000000001";

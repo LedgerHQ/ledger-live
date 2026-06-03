@@ -27,7 +27,6 @@ type ViewProps = PendingTransferProposalsDetailsViewModel & {
 };
 
 export function View({
-  unit,
   timeRemaining,
   handleAction,
   handleCopy,
@@ -70,7 +69,7 @@ export function View({
             color={isIncoming ? "success.c50" : "neutral.c70"}
           >
             <CurrencyUnitValue
-              unit={unit}
+              unit={proposal.unit}
               value={isIncoming ? proposal.amount : proposal.amount.negated()}
               showCode
               alwaysShowSign

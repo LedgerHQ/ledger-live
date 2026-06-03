@@ -1,6 +1,6 @@
 module.exports = {
   transform: {
-    "^.+\\.(ts|tsx)?$": [
+    "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {

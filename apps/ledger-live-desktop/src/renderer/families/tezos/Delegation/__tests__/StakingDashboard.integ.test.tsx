@@ -22,6 +22,11 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   isFinalizablePosition: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  __esModule: true,
+  useAccountBridge: () => ({ isAccountEmpty: () => false }),
+}));
+
 jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
 const MOCK_NOW = new Date("2030-01-01T00:00:00Z").getTime();

@@ -107,12 +107,18 @@ const onboardingWidgetBaseState = (state: State): State => ({
 });
 
 export const overrideInitialStateWithOnboardingWidgetVisible = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true, onboardingWidget: true } } },
+  {
+    lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true } },
+    onboardingWidget: { enabled: true },
+  },
   onboardingWidgetBaseState,
 );
 
 export const overrideInitialStateWithOnboardingWidgetVisibleAndReadOnly = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true, onboardingWidget: true } } },
+  {
+    lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true } },
+    onboardingWidget: { enabled: true },
+  },
   state => ({
     ...onboardingWidgetBaseState(state),
     settings: {

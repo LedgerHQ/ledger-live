@@ -1,6 +1,7 @@
 import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
+import { allure } from "jest-allure2-reporter/api";
 import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { isSpeculosRemote, isWallet40 } from "../helpers/commonHelpers";
 import {
@@ -13,6 +14,7 @@ import {
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
@@ -330,12 +332,15 @@ export class InitializationManager {
           lazyOnboarding: isWallet40,
           balanceRefreshRework: isWallet40,
           assetSection: false,
-          onboardingWidget: isWallet40,
           operationsList: false,
           aggregatedAssets: false,
           myWallet: isWallet40,
           pnl: false,
+          assetDiscoverability: false,
         },
+      },
+      onboardingWidget: {
+        enabled: true,
       },
       llmModularDrawer: {
         enabled: true,
@@ -352,9 +357,19 @@ export class InitializationManager {
         },
       },
     };
-    await setFeatureFlags({
+    const extraFeatureFlags = parseExtraFeatureFlags<PartialFeatures>(
+      process.env.E2E_FEATURE_FLAGS_JSON,
+    );
+    const mergedFeatureFlags = {
       ...defaultFlags,
+      ...extraFeatureFlags,
       ...featureFlags,
-    });
+    };
+    await allure.attachment(
+      "Merged Feature Flags",
+      JSON.stringify(mergedFeatureFlags, null, 2),
+      "application/json",
+    );
+    await setFeatureFlags(mergedFeatureFlags);
   }
 }

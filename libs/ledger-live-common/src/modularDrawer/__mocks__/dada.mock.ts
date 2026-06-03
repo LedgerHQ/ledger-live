@@ -401,6 +401,14 @@ export const mockData = {
       id: "arbitrum",
       name: "Arbitrum",
     },
+    arc: {
+      id: "arc",
+      name: "Arc",
+    },
+    arc_testnet: {
+      id: "arc_testnet",
+      name: "Arc Testnet",
+    },
   },
   cryptoOrTokenCurrencies: {
     "optimism/erc20/usd_coin": {
@@ -493,6 +501,60 @@ export const mockData = {
       hasTokens: true,
       hrp: null,
       disableCountervalue: false,
+    },
+    arc: {
+      type: "crypto_currency",
+      id: "arc",
+      name: "Arc",
+      ticker: "USDC",
+      units: [
+        {
+          code: "USDC",
+          name: "USDC",
+          magnitude: 18,
+        },
+        {
+          code: "Gwei",
+          name: "Gwei",
+          magnitude: 9,
+        },
+      ],
+      chainId: "5042",
+      confirmationsNeeded: 30,
+      symbol: "USDC",
+      coinType: 60,
+      family: "ethereum",
+      hasSegwit: false,
+      hasTokens: true,
+      hrp: null,
+      disableCountervalue: false,
+    },
+    arc_testnet: {
+      type: "crypto_currency",
+      id: "arc_testnet",
+      name: "Arc Testnet",
+      ticker: "USDC",
+      units: [
+        {
+          code: "USDC",
+          name: "USDC",
+          magnitude: 18,
+        },
+        {
+          code: "Gwei",
+          name: "Gwei",
+          magnitude: 9,
+        },
+      ],
+      chainId: "5042002",
+      confirmationsNeeded: 30,
+      symbol: "USDC",
+      coinType: 60,
+      family: "ethereum",
+      hasSegwit: false,
+      hasTokens: true,
+      hrp: null,
+      disableCountervalue: true,
     },
     "arbitrum/erc20/tether_usd": {
       type: "token_currency",

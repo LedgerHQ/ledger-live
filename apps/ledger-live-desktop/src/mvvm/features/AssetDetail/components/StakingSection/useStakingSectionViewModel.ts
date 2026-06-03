@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
-import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import {
@@ -12,6 +11,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { useStake } from "LLD/hooks/useStake";
+import useStakeFlow from "~/renderer/screens/stake";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { computeAvailableAndEarnDeposit } from "LLD/features/AssetDetail/utils/computeAvailableAndEarnDeposit";
 import { computeFiatPortionsFromDistribution } from "LLD/features/AssetDetail/utils/computeFiatPortionsFromDistribution";
@@ -24,7 +24,6 @@ export type StakingSectionState =
 
 export function useStakingSectionViewModel(distributionItem: DistributionItem) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -32,14 +31,13 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
   const { currency, accounts } = distributionItem;
   const currencyId = currency.id;
 
-  const hasAccounts = accounts.length > 0;
-
   const { availableBalance, earnDeposit } = useMemo(
     () => computeAvailableAndEarnDeposit(accounts),
     [accounts],
   );
 
   const { getCanStakeCurrency } = useStake();
+  const startStakeFlow = useStakeFlow();
   const isStakeable = getCanStakeCurrency(currencyId);
   const hasEarnDeposit = earnDeposit.gt(0);
 
@@ -51,7 +49,7 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
   );
 
   const state: StakingSectionState = useMemo(() => {
-    if (!hasAccounts || !isStakeable) return { type: "hidden" };
+    if (!isStakeable) return { type: "hidden" };
 
     const buildBannerState = (label: string): Extract<StakingSectionState, { type: "banner" }> => ({
       type: "banner",
@@ -90,9 +88,8 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
 
     return buildBannerState(t("assetDetails.staking.earnBannerDefault"));
   }, [
-    hasAccounts,
-    hasEarnDeposit,
     isStakeable,
+    hasEarnDeposit,
     distributionItem,
     availableBalance,
     earnDeposit,
@@ -104,14 +101,12 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
     locale,
   ]);
 
-  const navigateToEarn = useCallback(() => {
-    navigate("/earn", {
-      state: {
-        intent: "deposit",
-        cryptoAssetId: currencyId,
-      },
+  const openStakeDrawer = useCallback(() => {
+    startStakeFlow({
+      currencies: [currencyId],
+      source: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
-  }, [navigate, currencyId]);
+  }, [currencyId, startStakeFlow]);
 
   const onEarnBannerPress = useCallback(() => {
     track("button_clicked", {
@@ -119,8 +114,8 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
       currency: currencyId,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
-    navigateToEarn();
-  }, [currencyId, navigateToEarn]);
+    openStakeDrawer();
+  }, [currencyId, openStakeDrawer]);
 
   const onEarnDepositPress = useCallback(() => {
     track("button_clicked", {
@@ -128,8 +123,22 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
       currency: currencyId,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
-    navigateToEarn();
-  }, [currencyId, navigateToEarn]);
+    openStakeDrawer();
+  }, [currencyId, openStakeDrawer]);
+
+  const onAvailableBalanceTooltipOpen = useCallback(
+    (open: boolean) => {
+      if (open) {
+        track("button_clicked", {
+          button: "market_stat_definition",
+          currency: currencyId,
+          type: "available_balance",
+          page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+        });
+      }
+    },
+    [currencyId],
+  );
 
   return {
     state,
@@ -140,6 +149,7 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
     earnBannerActionLabel: t("assetDetails.staking.earnBannerAction"),
     onEarnBannerPress,
     onEarnDepositPress,
+    onAvailableBalanceTooltipOpen,
   };
 }
 

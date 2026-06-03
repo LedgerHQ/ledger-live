@@ -1,15 +1,20 @@
+import { BigNumber } from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { ChainAdapter } from "../types";
 import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../../signer";
-import type { Transaction } from "../../types";
+import type { Transaction, TransactionStatus } from "../../types";
 import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
 import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
-import type { ZcashAccount, ZcashAccountRaw } from "./types";
+import type { ZcashAccount, ZcashAccountRaw, ZcashTransaction } from "./types";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
+import { collectSpendableNotes } from "./operations";
+import { selectNotes, estimateMaxSpendableAmount, ZIP317_MINIMUM_FEE } from "./coin-selection";
 import { composeXpub } from "./xpub";
+import { computeZcashBalance } from "./balance";
+import type { BitcoinAccount } from "../../types";
 
 type DmkTransport = {
   dmk: ConstructorParameters<typeof DmkSignerZcash>[0];
@@ -46,6 +51,13 @@ const zcashChainAdapter: ChainAdapter = {
 
   buildExtraSyncObservable,
 
+  computeAccountBalance(account: BitcoinAccount | undefined, transparentBalance: BigNumber) {
+    return computeZcashBalance(
+      transparentBalance,
+      (account as ZcashAccount | undefined)?.privateInfo,
+    );
+  },
+
   assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
     const zcashAccount = account as ZcashAccount;
     if (zcashAccount.privateInfo) {
@@ -74,23 +86,134 @@ const zcashChainAdapter: ChainAdapter = {
     return undefined;
   },
 
-  getTransactionStatus(_account: Account, _transaction: Transaction) {
-    // TODO: implement PCZT transaction validation + ZIP-317 fee estimation
-    return undefined;
+  getTransactionStatus(account: Account, transaction: Transaction) {
+    const zcashAccount = account as ZcashAccount;
+    const tx = transaction as ZcashTransaction;
+    // Only handle flows with shielded inputs (Orchard note selection).
+    // transparent and transparent-to-shielded use the Bitcoin legacy path.
+    if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
+      return undefined;
+
+    const errors: Record<string, Error> = {};
+    const warnings: Record<string, Error> = {};
+
+    // Bitcoin-specific fields — not applicable for shielded transactions
+    const bitcoinExtras: Pick<
+      TransactionStatus,
+      "txInputs" | "txOutputs" | "opReturnData" | "changeAddress"
+    > = {
+      txInputs: undefined,
+      txOutputs: undefined,
+      opReturnData: undefined,
+      changeAddress: undefined,
+    };
+
+    const privateInfo = zcashAccount.privateInfo;
+    if (!privateInfo) {
+      errors.account = new Error("Shielded sync not complete");
+      return Promise.resolve({
+        errors,
+        warnings,
+        estimatedFees: new BigNumber(0),
+        amount: tx.amount,
+        totalSpent: tx.amount,
+        ...bitcoinExtras,
+      } satisfies TransactionStatus);
+    }
+
+    const orchardBalance = privateInfo.orchardBalance;
+    const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
+    const amount = tx.amount;
+    const totalSpent = amount.plus(fee);
+
+    // Recipient validation for shielded-to-transparent (transparent address required).
+    // For shielded-to-shielded, recipient validation is deferred to the PCZT builder.
+    if (tx.transferType === "shielded-to-transparent" && !tx.recipient) {
+      errors.recipient = new Error("Recipient address is required for shielded-to-transparent");
+    }
+
+    if (amount.lte(0) && !tx.useAllAmount) {
+      errors.amount = new Error("Amount must be positive");
+    } else if (!tx.selectedNotes || tx.selectedNotes.length === 0) {
+      errors.amount = new Error("Insufficient shielded balance");
+    } else if (totalSpent.gt(orchardBalance)) {
+      errors.amount = new Error("Insufficient shielded balance");
+    } else {
+      // Verify selected notes actually cover the spend (consistency check)
+      const selectedTotal = tx.selectedNotes.reduce(
+        (sum, n) => sum.plus(n.amount),
+        new BigNumber(0),
+      );
+      if (selectedTotal.lt(totalSpent)) {
+        errors.amount = new Error("Selected notes do not cover amount + fee");
+      }
+    }
+
+    return Promise.resolve({
+      errors,
+      warnings,
+      estimatedFees: fee,
+      amount: tx.amount,
+      totalSpent,
+      ...bitcoinExtras,
+    } satisfies TransactionStatus);
   },
 
   estimateMaxSpendable(
-    _account: Account,
+    account: Account,
     _parentAccount: Account | null | undefined,
-    _transaction: Transaction | null | undefined,
+    transaction: Transaction | null | undefined,
   ) {
-    // TODO: implement PCZT balance estimation
-    return undefined;
+    const zcashAccount = account as ZcashAccount;
+    const tx = transaction as ZcashTransaction | null | undefined;
+    const transferType = tx?.transferType ?? "transparent";
+    if (transferType !== "shielded" && transferType !== "shielded-to-transparent") return undefined;
+
+    const notes = collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
+    return Promise.resolve(estimateMaxSpendableAmount(notes, transferType));
   },
 
-  prepareTransaction(_account: Account, _transaction: Transaction) {
-    // TODO: implement PCZT transaction preparation (ZIP-317 fee info)
-    return undefined;
+  prepareTransaction(account: Account, transaction: Transaction) {
+    const zcashAccount = account as ZcashAccount;
+    const tx = transaction as ZcashTransaction;
+    // Only handle flows with shielded inputs (Orchard note selection).
+    if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
+      return undefined;
+
+    const notes = collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
+
+    // When useAllAmount is set, compute the effective amount from max spendable
+    const effectiveAmount = tx.useAllAmount
+      ? estimateMaxSpendableAmount(notes, tx.transferType)
+      : tx.amount;
+
+    if (effectiveAmount.lte(0)) {
+      const { zcashFee: _, changeAmount: __, ...rest } = tx;
+      return Promise.resolve({
+        ...rest,
+        amount: effectiveAmount,
+        selectedNotes: [],
+      } as ZcashTransaction);
+    }
+
+    const result = selectNotes(notes, effectiveAmount, tx.transferType);
+    if (!result) {
+      // Destructure to strip stale zcashFee/changeAmount from a prior prepare
+      const { zcashFee: _, changeAmount: __, ...rest } = tx;
+      return Promise.resolve({
+        ...rest,
+        amount: effectiveAmount,
+        selectedNotes: [],
+      } as ZcashTransaction);
+    }
+
+    return Promise.resolve({
+      ...tx,
+      amount: effectiveAmount,
+      selectedNotes: result.selectedNotes,
+      zcashFee: result.fee,
+      changeAmount: result.changeAmount,
+    } as ZcashTransaction);
   },
 
   getAddress(deviceId, { currency, path, verify }, signerContext: SignerContext) {

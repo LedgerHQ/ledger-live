@@ -1,11 +1,9 @@
-import {
-  groupedFeatures,
-  GroupedFeature,
-} from "@ledgerhq/live-common/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
+import { useFeatureFlags } from "@features/platform-feature-flags";
+import { groupedFeatures, GroupedFeature, setOverride } from "@shared/feature-flags";
+import type { FeatureId } from "@shared/feature-flags";
 import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
-import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "~/context/Locale";
 import { Pressable } from "react-native";
 import FeatureFlagDetails, { TagEnabled } from "./FeatureFlagDetails";
@@ -22,7 +20,8 @@ const GroupedFeatures: React.FC<Props> = ({ groupName, focused, setFocusedGroupN
   const { featureIds } = groupedFeatures[groupName];
   const { t } = useTranslation();
 
-  const { getFeature, overrideFeature, resetFeature } = useFeatureFlags();
+  const flags = useFeatureFlags();
+  const dispatch = useDispatch();
 
   const flagsList = useMemo(
     () =>
@@ -42,7 +41,7 @@ const GroupedFeatures: React.FC<Props> = ({ groupName, focused, setFocusedGroupN
   let allEnabled = true;
   let someOverridden = false;
   featureIds.forEach(featureId => {
-    const val = getFeature(featureId);
+    const val = flags[featureId];
     const { enabled, overridesRemote } = val || {};
     someEnabled = someEnabled || Boolean(enabled);
     allEnabled = allEnabled && Boolean(enabled);
@@ -52,15 +51,22 @@ const GroupedFeatures: React.FC<Props> = ({ groupName, focused, setFocusedGroupN
   const handleSwitchChange = useCallback(
     (enabled: boolean) => {
       featureIds.forEach(featureId =>
-        overrideFeature(featureId, { ...getFeature(featureId), enabled }),
+        dispatch(
+          setOverride({
+            key: featureId,
+            value: { ...flags[featureId], enabled, overridesRemote: true },
+          }),
+        ),
       );
     },
-    [featureIds, getFeature, overrideFeature],
+    [featureIds, flags, dispatch],
   );
 
   const handleReset = useCallback(() => {
-    featureIds.forEach(featureId => resetFeature(featureId));
-  }, [featureIds, resetFeature]);
+    featureIds.forEach(featureId =>
+      dispatch(setOverride({ key: featureId, value: undefined })),
+    );
+  }, [featureIds, dispatch]);
 
   return (
     <Flex mb={2}>

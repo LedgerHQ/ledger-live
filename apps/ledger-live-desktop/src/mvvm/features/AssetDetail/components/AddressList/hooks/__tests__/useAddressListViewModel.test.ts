@@ -14,6 +14,7 @@ const mockNavigate = jest.fn();
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
+  useLocation: () => ({ pathname: "/asset/bitcoin" }),
 }));
 
 /** Stubs the add-account flow so this suite does not load the full drawer/modal dependency graph. */
@@ -81,7 +82,10 @@ describe("useAddressListViewModel", () => {
       result.current.onAccountClick(tokenAccount, ETH_ACCOUNT);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(getAccountUrl(tokenAccount.id, ETH_ACCOUNT.id));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      getAccountUrl(tokenAccount.id, ETH_ACCOUNT.id),
+      expect.objectContaining({ state: { accountBackPath: "/asset/bitcoin" } }),
+    );
   });
 
   it.each([false, true] as const)(

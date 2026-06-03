@@ -1,5 +1,39 @@
 # @ledgerhq/device-intent
 
+## 3.0.0
+
+### Minor Changes
+
+- [#17592](https://github.com/LedgerHQ/ledger-live/pull/17592) [`efbc7ee`](https://github.com/LedgerHQ/ledger-live/commit/efbc7ee371c74253fa78f8b7c5518dd79bb0bc4d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Tighten the Device Intent Executor error model:
+
+  - Replace the catch-all `connectionError` executor state with a focused `deviceDisconnected` state entered only via the `DEVICE_DISCONNECTED` event. The `DeviceConnectionComponent` no longer receives `onError`, and `ExecutorPlatformConfiguration` requires a `DeviceDisconnectedComponent` in place of the previous `ConnectionErrorComponent`.
+  - Funnel any unexpected error escaping the inner connect-device state machine into a new terminal `UnknownError` `ConnectDeviceUIState` via a `catchError` wrapper in `connectDeviceUseCase`, so the observable's error channel is never reached in normal operation.
+  - Add a `UnknownErrorState` component in the LWM connection view that renders the shared `intentError` wording for this terminal state.
+
+- [#17557](https://github.com/LedgerHQ/ledger-live/pull/17557) [`3603d91`](https://github.com/LedgerHQ/ledger-live/commit/3603d9192f9c29bb056443afea889cf35b247c9d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add generic error UI for the DeviceIntentExecutor (LWM) covering connection, intent and invalid-operation failures, and wire the executor's `onUserCancel` callback to every phase as a uniform `onClose` prop so platform and intent components can offer a close action.
+
+### Patch Changes
+
+- Updated dependencies [[`e278291`](https://github.com/LedgerHQ/ledger-live/commit/e2782919681ec2619e2433a18eef954b8ca9eddb)]:
+  - @ledgerhq/client-ids@0.10.0
+
+## 3.0.0-next.0
+
+### Minor Changes
+
+- [#17592](https://github.com/LedgerHQ/ledger-live/pull/17592) [`efbc7ee`](https://github.com/LedgerHQ/ledger-live/commit/efbc7ee371c74253fa78f8b7c5518dd79bb0bc4d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Tighten the Device Intent Executor error model:
+
+  - Replace the catch-all `connectionError` executor state with a focused `deviceDisconnected` state entered only via the `DEVICE_DISCONNECTED` event. The `DeviceConnectionComponent` no longer receives `onError`, and `ExecutorPlatformConfiguration` requires a `DeviceDisconnectedComponent` in place of the previous `ConnectionErrorComponent`.
+  - Funnel any unexpected error escaping the inner connect-device state machine into a new terminal `UnknownError` `ConnectDeviceUIState` via a `catchError` wrapper in `connectDeviceUseCase`, so the observable's error channel is never reached in normal operation.
+  - Add a `UnknownErrorState` component in the LWM connection view that renders the shared `intentError` wording for this terminal state.
+
+- [#17557](https://github.com/LedgerHQ/ledger-live/pull/17557) [`3603d91`](https://github.com/LedgerHQ/ledger-live/commit/3603d9192f9c29bb056443afea889cf35b247c9d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add generic error UI for the DeviceIntentExecutor (LWM) covering connection, intent and invalid-operation failures, and wire the executor's `onUserCancel` callback to every phase as a uniform `onClose` prop so platform and intent components can offer a close action.
+
+### Patch Changes
+
+- Updated dependencies [[`e278291`](https://github.com/LedgerHQ/ledger-live/commit/e2782919681ec2619e2433a18eef954b8ca9eddb)]:
+  - @ledgerhq/client-ids@0.10.0-next.0
+
 ## 2.1.0
 
 ### Minor Changes

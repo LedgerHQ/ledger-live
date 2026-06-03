@@ -9,7 +9,7 @@ import {
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { Operation } from "@ledgerhq/types-live";
 import QrCode from "@ledgerhq/icons-ui/native/QrCode";

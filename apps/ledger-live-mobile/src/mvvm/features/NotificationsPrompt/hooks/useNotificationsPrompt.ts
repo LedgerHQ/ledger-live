@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { type DataOfUser } from "../types";
 import {
   checkIsInactive,

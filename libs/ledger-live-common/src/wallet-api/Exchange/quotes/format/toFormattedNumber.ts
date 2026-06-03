@@ -5,11 +5,10 @@ import type { FormattedNumber } from "@ledgerhq/wallet-api-exchange-module";
 import { getFormattedNumber } from "./getFormattedNumber";
 
 /**
- * Default separator inserted between the number and its suffix. Mirrors
- * swap-live-app's `getFormattedNumber` behavior (non-breaking space to
- * keep the ticker glued to the value when the line wraps). Overridable
- * via {@link ToFormattedNumberOptions.suffixSeparator} for suffixes that
- * should sit flush against the number (e.g. `%`).
+ * Default separator inserted between the number and its suffix. A non-breaking
+ * space keeps the ticker glued to the value when the line wraps. Overridable via
+ * {@link ToFormattedNumberOptions.suffixSeparator} for suffixes that should sit
+ * flush against the number (e.g. `%`).
  */
 const DEFAULT_SUFFIX_SEPARATOR = "\u00A0";
 
@@ -51,8 +50,7 @@ export type ToFormattedNumberOptions = {
  *
  * When `value` is nullish / NaN / non-finite, returns an all-empty
  * triplet so consumers can treat "missing data" identically across the
- * three fields (mirrors the `?? ""` convention in swap-live-app's
- * `useFormattedValues`).
+ * three fields.
  *
  * @param value - The underlying number to format.
  * @param options - Locale, decimal cap, and optional prefix / suffix.

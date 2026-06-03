@@ -105,7 +105,7 @@ export function useAddressesViewModel(
       if (!currency) return;
       const { account, balanceAccount } = data;
       track("button_clicked", {
-        button: "address",
+        button: "Account",
         currency: currency.id,
         chain: account.currency.id,
         page: "Asset Detail",

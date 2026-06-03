@@ -63,10 +63,6 @@ on:
         required: false
         type: boolean
         default: false
-      enable_wallet40:
-        description: "Enable Wallet 4.0 feature"
-        type: boolean
-        default: true
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -111,10 +107,6 @@ on:
         required: false
         type: boolean
         default: false
-      enable_wallet40:
-        description: "Enable Wallet 4.0 feature"
-        type: boolean
-        default: true
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -292,7 +284,6 @@ jobs:
             echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
-            echo "- **Wallet:** ${{ (github.event_name == 'schedule' || inputs.enable_wallet40 != false) && 'Wallet 4.0' || 'Legacy' }}"
             echo "- **Device selected:** $DEVICE"
             echo "- **Filtered pattern:** $FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
@@ -325,7 +316,6 @@ jobs:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
-          enable_wallet40: ${{ github.event_name == 'schedule' || inputs.enable_wallet40 != false }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ matrix.is_primary && inputs.export_to_xray || false }}

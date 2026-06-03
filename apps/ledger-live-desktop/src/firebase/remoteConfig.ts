@@ -5,11 +5,20 @@ import {
   getAll,
   RemoteConfig,
 } from "firebase/remote-config";
-import camelCase from "lodash/camelCase";
+import snakeCase from "lodash/snakeCase";
 import { formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
-import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
-import type { PartialFeatures } from "@shared/feature-flags";
+import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
+import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
+
+// Precomputed inverse of live-common's `formatToFirebaseFeatureId` (`feature_${snakeCase(id)}`).
+// `lodash.camelCase(snakeCase(id))` is not a clean round-trip for FeatureIds with digits
+// or consecutive uppercase letters (e.g. `web3hub` → `web_3_hub` → `web3Hub`,
+// `ptxSwapReceiveTRC20WithoutTrx` → `..._trc_20_..._trx` → `ptxSwapReceiveTrc20WithoutTrx`),
+// which would silently drop the flag at the slice boundary.
+const FIREBASE_KEY_TO_FEATURE_ID: Record<string, FeatureId> = Object.fromEntries(
+  FeatureIdSchema.options.map(id => [`feature_${snakeCase(id)}`, id]),
+);
 
 type Subscriber = (event: { fetchedAt: number }) => void;
 
@@ -84,21 +93,22 @@ export function whenReady(): Promise<void> {
  * stays in sync, and exposed via {@link subscribeToRemoteFlags} so the legacy
  * Context provider hydrates from the same payload at the same tick.
  *
- * Filters out `config_*` keys (owned by `LiveConfig`), strips the `feature_`
- * prefix, camelCases the remainder, and JSON-parses each value. Malformed JSON
- * values are dropped silently — at worst the slice falls back to defaults for
- * that key. Unknown feature IDs are dropped at runtime inside `resolveAll`, so
- * the closing cast to {@link PartialFeatures} is safe.
+ * Maps each known Firebase key (`feature_${snakeCase(id)}`) back to its canonical
+ * FeatureId via {@link FIREBASE_KEY_TO_FEATURE_ID}, then JSON-parses each value.
+ * Unknown keys (`config_*`, stray entries) and malformed JSON are dropped
+ * silently — at worst the slice falls back to defaults for that flag.
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   try {
     const rc = getRemoteConfigSingleton();
     await fetchAndActivate(rc);
     const all = getAll(rc);
-    const flags: Record<string, unknown> = {};
+    const flags: PartialFeatures = {};
     for (const [key, value] of Object.entries(all)) {
-      if (!key.startsWith("feature_")) continue;
-      const featureId = camelCase(key.slice("feature_".length));
+      // `lodash.snakeCase` always lowercases — match it on the read side so any
+      // case drift in Firebase admin entries still resolves to the canonical id.
+      const featureId = FIREBASE_KEY_TO_FEATURE_ID[key.toLowerCase()];
+      if (!featureId) continue;
       try {
         flags[featureId] = JSON.parse(value.asString());
       } catch {
@@ -108,7 +118,7 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
     const fetchedAt = Date.now();
     lastFetchedAt = fetchedAt;
     subscribers.forEach(callback => callback({ fetchedAt }));
-    return flags as PartialFeatures;
+    return flags;
   } finally {
     resolveReady?.();
     resolveReady = null;

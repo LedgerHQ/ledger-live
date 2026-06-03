@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import React, { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import {
   availablePendingWithdrawals,
   hasActivatableVotes,
@@ -117,7 +117,11 @@ function ManageAssetsNavigator() {
   const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount).length;
 
   return (
-    <SafeAreaView style={{ flex: 1, justifyContent: "space-between", alignItems: "center" }}>
+    <SafeAreaView
+      style={{ flex: 1, justifyContent: "space-between", alignItems: "center" }}
+      edges={["bottom"]}
+      isFlex
+    >
       <View>
         {!isRegistered ? (
           <Button

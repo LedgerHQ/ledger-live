@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";

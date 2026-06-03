@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { ratingsModalOpenSelector } from "~/reducers/ratings";
 import { hasCompletedOnboardingSelector, notificationsSelector } from "~/reducers/settings";

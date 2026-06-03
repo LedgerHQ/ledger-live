@@ -6,7 +6,6 @@ import type {
   TransactionBlockData,
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
-  SuiObjectResponse,
 } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
@@ -143,8 +142,47 @@ const sharedRpcMock = {
     },
   }),
   multiGetObjects: jest.fn().mockResolvedValue([]),
+  // `client.core.*` is the post-refactor abstraction for transport-agnostic
+  // helpers (`hasGasCoinObjects`, `getCoinsForAmount`, `getInputObjects`).
+  // Each mock derives its return value from the existing top-level mocks so
+  // tests that tweak `mockApi.getAllBalances` / `mockApi.getCoins` keep working.
   core: {
     getObjects: jest.fn().mockResolvedValue({ objects: [] }),
+    getBalance: jest.fn().mockImplementation(async ({ owner: _owner, coinType }) => {
+      const balances = await sharedRpcMock.getAllBalances({ owner: _owner });
+      const match = balances.find((b: { coinType: string }) => b.coinType === coinType);
+      const total = String(match?.totalBalance ?? "0");
+      const addr = String(match?.fundsInAddressBalance ?? "0");
+      // Mirror the real adapter: `coinBalance = total − addressBalance` (SIP-58).
+      // Mocking it as `total` would let tests pass against a different
+      // invariant than production code.
+      const coinBalance = String(BigInt(total) - BigInt(addr));
+      return {
+        balance: {
+          coinType,
+          balance: total,
+          coinBalance,
+          addressBalance: addr,
+        },
+      };
+    }),
+    listCoins: jest.fn().mockImplementation(async ({ owner, coinType: _coinType, cursor }) => {
+      const r = await sharedRpcMock.getCoins({ owner, coinType: _coinType, cursor });
+      return {
+        objects: (r.data ?? []).map(
+          (c: { coinObjectId: string; version: string; digest: string; balance: string; coinType: string }) => ({
+            objectId: c.coinObjectId,
+            version: c.version,
+            digest: c.digest,
+            owner: { $kind: "AddressOwner", AddressOwner: owner },
+            type: c.coinType,
+            balance: c.balance,
+          }),
+        ),
+        hasNextPage: r.hasNextPage,
+        cursor: r.nextCursor ?? null,
+      };
+    }),
   },
 };
 
@@ -775,15 +813,12 @@ describe("SDK Functions", () => {
   });
 
   test("paymentInfo should throw NotEnoughBalanceFees when dryRunTransactionBlock fails with needed amount message", async () => {
-    const defaultImpl = (SuiJsonRpcClient as jest.Mock).getMockImplementation()!;
-    (SuiJsonRpcClient as jest.Mock).mockImplementationOnce((...args) => ({
-      ...defaultImpl(...args),
-      dryRunTransactionBlock: jest
-        .fn()
-        .mockRejectedValue(
-          new Error("Balance of gas object 10 is lower than the needed amount: 100"),
-        ),
-    }));
+    // Override on the shared mock so we don't consume a `mockImplementationOnce`
+    // slot — `createTransaction` (called before withTransport) instantiates its
+    // own SuiJsonRpcClient and would eat the once-mock.
+    sharedRpcMock.dryRunTransactionBlock.mockRejectedValueOnce(
+      new Error("Balance of gas object 10 is lower than the needed amount: 100"),
+    );
 
     const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const fakeTransaction = {
@@ -799,11 +834,7 @@ describe("SDK Functions", () => {
   });
 
   test("paymentInfo should rethrow unrecognised errors from dryRunTransactionBlock", async () => {
-    const defaultImpl = (SuiJsonRpcClient as jest.Mock).getMockImplementation()!;
-    (SuiJsonRpcClient as jest.Mock).mockImplementationOnce((...args) => ({
-      ...defaultImpl(...args),
-      dryRunTransactionBlock: jest.fn().mockRejectedValue(new Error("Network timeout")),
-    }));
+    sharedRpcMock.dryRunTransactionBlock.mockRejectedValueOnce(new Error("Network timeout"));
 
     const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const fakeTransaction = {
@@ -3175,21 +3206,10 @@ describe("filterOperations", () => {
 
     test("toBlockInfo should map checkpoints correctly", async () => {
       const result = await sdk.toBlockInfo({
-        checkpointCommitments: [],
         digest: "0xaaaaaaaaa",
         previousDigest: "0xbbbbbbbbbb",
-        epoch: "",
-        epochRollingGasCostSummary: {
-          computationCost: "",
-          nonRefundableStorageFee: "",
-          storageCost: "",
-          storageRebate: "",
-        },
-        networkTotalTransactions: "",
         sequenceNumber: "42",
         timestampMs: "1751696298663",
-        transactions: [],
-        validatorSignature: "",
       });
       expect(result).toEqual({
         height: 42,
@@ -3559,99 +3579,6 @@ describe("getCoinsForAmount – SIP-58 fake coins", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].balance).toBe("10000");
-  });
-});
-
-describe("withBatchedMultiGetObjects", () => {
-  const createMockClient = () => {
-    const multiGetObjects = jest.fn(
-      async (params: { ids: string[]; options?: Record<string, boolean> }) => {
-        if (params.ids.length > 50) {
-          throw new Error("Input exceeds limit of 50");
-        }
-        return params.ids.map(
-          id =>
-            ({
-              data: {
-                objectId: id,
-                version: "1",
-                digest: `digest-${id}`,
-              },
-            }) as SuiObjectResponse,
-        );
-      },
-    );
-    return { client: { multiGetObjects } as unknown as SuiJsonRpcClient, multiGetObjects };
-  };
-
-  it("should pass through when <= 50 objects", async () => {
-    // GIVEN
-    const { client, multiGetObjects } = createMockClient();
-    const ids = Array.from({ length: 30 }, (_, i) => `0xobj${i}`);
-
-    // WHEN
-    const batched = sdk.withBatchedMultiGetObjects(client);
-    const result = await batched.multiGetObjects({ ids, options: { showBcs: true } });
-
-    // THEN
-    expect(multiGetObjects).toHaveBeenCalledTimes(1);
-    expect(result).toHaveLength(30);
-  });
-
-  it("should batch when > 50 objects", async () => {
-    // GIVEN
-    const { client, multiGetObjects } = createMockClient();
-    const ids = Array.from({ length: 120 }, (_, i) => `0xobj${i}`);
-
-    // WHEN
-    const batched = sdk.withBatchedMultiGetObjects(client);
-    const result = await batched.multiGetObjects({ ids, options: { showBcs: true } });
-
-    // THEN
-    expect(multiGetObjects).toHaveBeenCalledTimes(3);
-    expect(multiGetObjects).toHaveBeenNthCalledWith(1, {
-      ids: ids.slice(0, 50),
-      options: { showBcs: true },
-    });
-    expect(multiGetObjects).toHaveBeenNthCalledWith(2, {
-      ids: ids.slice(50, 100),
-      options: { showBcs: true },
-    });
-    expect(multiGetObjects).toHaveBeenNthCalledWith(3, {
-      ids: ids.slice(100, 120),
-      options: { showBcs: true },
-    });
-    expect(result).toHaveLength(120);
-    expect(result[0].data?.objectId).toBe("0xobj0");
-    expect(result[119].data?.objectId).toBe("0xobj119");
-  });
-
-  it("should handle exactly 50 objects without batching", async () => {
-    // GIVEN
-    const { client, multiGetObjects } = createMockClient();
-    const ids = Array.from({ length: 50 }, (_, i) => `0xobj${i}`);
-
-    // WHEN
-    const batched = sdk.withBatchedMultiGetObjects(client);
-    const result = await batched.multiGetObjects({ ids });
-
-    // THEN
-    expect(multiGetObjects).toHaveBeenCalledTimes(1);
-    expect(result).toHaveLength(50);
-  });
-
-  it("should handle exactly 51 objects with batching", async () => {
-    // GIVEN
-    const { client, multiGetObjects } = createMockClient();
-    const ids = Array.from({ length: 51 }, (_, i) => `0xobj${i}`);
-
-    // WHEN
-    const batched = sdk.withBatchedMultiGetObjects(client);
-    const result = await batched.multiGetObjects({ ids });
-
-    // THEN
-    expect(multiGetObjects).toHaveBeenCalledTimes(2);
-    expect(result).toHaveLength(51);
   });
 });
 

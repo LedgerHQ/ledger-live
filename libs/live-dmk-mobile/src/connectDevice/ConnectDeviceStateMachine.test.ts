@@ -393,6 +393,13 @@ describe("ConnectDeviceStateMachine", () => {
       expect(deviceDiscoveryService.stop).toHaveBeenCalled();
       const connectingState = states[states.length - 1];
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
+      const connectingStateDevice = (
+        connectingState as {
+          type: ConnectDeviceUIStateTypes.Connecting;
+          device: KnownDevice;
+        }
+      ).device;
+      expect(connectingStateDevice).toEqual(expect.objectContaining(knownDeviceA));
       expect(connect).toHaveBeenCalledWith({
         device: discoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },
@@ -474,6 +481,13 @@ describe("ConnectDeviceStateMachine", () => {
       });
       const connectingState = states[states.length - 1];
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
+      const connectingStateDevice = (
+        connectingState as {
+          type: ConnectDeviceUIStateTypes.Connecting;
+          device: KnownDevice;
+        }
+      ).device;
+      expect(connectingStateDevice).toEqual(expect.objectContaining(knownDeviceB));
     });
 
     it("waits for a selected unavailable displayed device", () => {
@@ -569,6 +583,13 @@ describe("ConnectDeviceStateMachine", () => {
       });
       const connectingState = states[states.length - 1];
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
+      const connectingStateDevice = (
+        connectingState as {
+          type: ConnectDeviceUIStateTypes.Connecting;
+          device: KnownDevice;
+        }
+      ).device;
+      expect(connectingStateDevice).toEqual(expect.objectContaining(knownDeviceA));
     });
 
     it("stays waiting when discovered one device does not include the selected device", () => {
@@ -629,6 +650,13 @@ describe("ConnectDeviceStateMachine", () => {
       });
       const connectingState = states[states.length - 1];
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
+      const connectingStateDevice = (
+        connectingState as {
+          type: ConnectDeviceUIStateTypes.Connecting;
+          device: KnownDevice;
+        }
+      ).device;
+      expect(connectingStateDevice).toEqual(expect.objectContaining(knownDeviceA));
     });
 
     it("returns to Discovering after selected device timeout when there are more than one known device", () => {
@@ -922,6 +950,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectionErrorError).toEqual({
         type: ConnectionErrorTypes.BlePairingRefused,
       });
+      expect(connectionErrorState).toEqual(expect.objectContaining({ device: knownDeviceA }));
     });
 
     it("emits a BLE peer-removed-pairing ConnectionError when connection fails", async () => {
@@ -954,6 +983,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectionErrorError).toEqual({
         type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
       });
+      expect(connectionErrorState).toEqual(expect.objectContaining({ device: knownDeviceA }));
     });
 
     it("retries the connection when the ConnectionError retry action is used", async () => {

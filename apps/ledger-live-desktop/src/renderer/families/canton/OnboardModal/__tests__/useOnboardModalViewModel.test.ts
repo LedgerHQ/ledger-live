@@ -18,9 +18,10 @@ const mockObservable = () => ({
 const mockOnboardAccount = jest.fn(mockObservable);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: jest.fn(() => ({
-    onboardAccount: mockOnboardAccount,
-  })),
+  getCurrencyBridge: jest.fn(() => {
+    const bridge = { onboardAccount: mockOnboardAccount };
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
 }));
 jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
   addAccountsAction: jest.fn(params => ({

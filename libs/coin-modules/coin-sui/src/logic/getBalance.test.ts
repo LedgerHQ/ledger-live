@@ -1,5 +1,5 @@
-import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
-import { getAllBalancesCached, getStakes } from "../network";
+import type { DelegatedStake } from "@mysten/sui/jsonRpc";
+import { getAllBalancesCached, getDelegatedStakes } from "../network";
 import { getBalance } from "./getBalance";
 
 jest.mock("../network", () => ({
@@ -7,10 +7,10 @@ jest.mock("../network", () => ({
     { coinType: "0x2::sui::SUI", totalBalance: 1000000000 },
     { coinType: "0x3::usdt::USDT", totalBalance: 500000000 },
   ]),
-  getStakes: jest.fn().mockResolvedValue([]),
+  getDelegatedStakes: jest.fn().mockResolvedValue([]),
 }));
 
-const mockedGetStakes = jest.mocked(getStakes);
+const mockedGetDelegatedStakes = jest.mocked(getDelegatedStakes);
 
 describe("getBalance", () => {
   beforeEach(() => {
@@ -37,26 +37,31 @@ describe("getBalance", () => {
     });
   });
 
-  it("should return staking balances when stakes are available", async () => {
-    const mockStakes: Stake[] = [
+  it("should return staking balances when delegations are available", async () => {
+    const mockDelegations: DelegatedStake[] = [
       {
-        uid: "stake_1",
-        address: "0x123",
-        delegate: "0xvalidator1",
-        state: "active",
-        asset: { type: "native" },
-        amount: BigInt(2000000000),
-        actions: [],
+        validatorAddress: "0xvalidator1",
+        stakingPool: "0xpool1",
+        stakes: [
+          {
+            stakedSuiId: "stake_1",
+            stakeActiveEpoch: "1",
+            stakeRequestEpoch: "0",
+            principal: "2000000000",
+            status: "Active",
+            estimatedReward: "0",
+          },
+        ],
       },
     ];
 
-    mockedGetStakes.mockResolvedValueOnce(mockStakes);
+    mockedGetDelegatedStakes.mockResolvedValueOnce(mockDelegations);
 
     const address = "0x123";
     const result = await getBalance(address);
 
     expect(getAllBalancesCached).toHaveBeenCalledWith(address, undefined);
-    expect(getStakes).toHaveBeenCalledWith(address, undefined);
+    expect(getDelegatedStakes).toHaveBeenCalledWith(address, undefined);
     expect(result).toHaveLength(3);
 
     expect(result[2]).toMatchObject({
@@ -69,6 +74,8 @@ describe("getBalance", () => {
         state: "active",
         asset: { type: "native" },
         amount: BigInt(2000000000),
+        amountDeposited: BigInt(2000000000),
+        amountRewarded: BigInt(0),
       },
     });
   });

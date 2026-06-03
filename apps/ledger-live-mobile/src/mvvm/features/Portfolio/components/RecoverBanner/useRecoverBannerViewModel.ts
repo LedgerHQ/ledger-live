@@ -1,5 +1,5 @@
 import { GestureResponderEvent, Linking } from "react-native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTranslation } from "~/context/Locale";
 import {

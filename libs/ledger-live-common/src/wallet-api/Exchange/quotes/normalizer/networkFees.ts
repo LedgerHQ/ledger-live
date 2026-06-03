@@ -6,13 +6,16 @@ import type { RawQuote } from "../service/types";
  *
  * Only the `currencyId` is required on the wire. `gasLimit` is carried over
  * when the provider returns a non-empty value; empty strings are treated as
- * "not provided" to match legacy `useGetQuotes` behavior.
+ * "not provided" so consumers do not render a meaningless gas value.
  */
 export function buildNetworkFees(quote: RawQuote): QuoteNetworkFees {
   const raw = quote.networkFees;
   const networkFees: QuoteNetworkFees = {
     currencyId: raw.currency,
   };
+  if (raw.value !== undefined) {
+    networkFees.value = raw.value;
+  }
   if (raw.gasLimit !== undefined && raw.gasLimit !== "") {
     networkFees.gasLimit = raw.gasLimit;
   }

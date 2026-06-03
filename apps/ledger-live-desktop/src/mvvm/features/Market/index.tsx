@@ -105,6 +105,7 @@ export default function Market() {
                 control: () => ({
                   display: "flex",
                   padding: 0,
+                  cursor: "pointer",
                 }),
               }}
             />

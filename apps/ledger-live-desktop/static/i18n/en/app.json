@@ -4303,7 +4303,8 @@
               ],
               "warning": {
                 "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
-              }
+              },
+              "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
             },
             "amount": {
               "title": "Amount"
@@ -4397,6 +4398,19 @@
   },
   "graph": {
     "noGraphWarning": "The graph is not available for this token"
+  },
+  "lineChart": {
+    "error": "Unable to load chart",
+    "rangeSelectorLabel": "Select time range",
+    "range": {
+      "1d": "1D",
+      "1w": "1W",
+      "1m": "1M",
+      "6m": "6M",
+      "1y": "1Y",
+      "5y": "5Y",
+      "all": "ALL"
+    }
   },
   "near": {
     "account": {
@@ -5576,6 +5590,14 @@
         "title": "Please check the box contents",
         "description": "If your {{device}} came with a PIN or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
         "alert": "Only use a recovery phrase that your device displayed when it was set up"
+      }
+    },
+    "counterfeitWarning": {
+      "title": "Before you start",
+      "body": "We recommend buying from <ledgerCom>Ledger.com</ledgerCom> or our <resellerLink>official reseller network</resellerLink>. This helps ensure your device is genuine and ready to use.",
+      "cta": {
+        "primary": "Continue setup",
+        "secondary": "Learn more"
       }
     },
     "alerts": {
@@ -8298,6 +8320,9 @@
         "value": "Value",
         "allocation": "Allocation"
       }
+    },
+    "pnl": {
+      "title": "Profit and loss"
     }
   },
   "walletSync": {
@@ -8627,15 +8652,16 @@
   },
   "fearAndGreed": {
     "levels": {
+      "fearPlus": "Fear+",
       "fear": "Fear",
-      "cautious": "Cautious",
       "neutral": "Neutral",
-      "optimistic": "Optimistic",
-      "greedy": "Greedy"
+      "greed": "Greed",
+      "greedPlus": "Greed+"
     },
     "dialog": {
       "title": "Mood index",
-      "content": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
+      "content": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
+      "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -9053,10 +9079,26 @@
     "notFound": "Asset distribution item not found.",
     "marketStats": "Market stats",
     "marketStatsTooltip": "Market metrics for this asset.",
+    "marketCapTooltip": "The total value of all coins in circulation. Think of it as the crypto's total worth on the market.",
+    "circulatingSupplyTooltip": "The total number of tokens currently available in the market and held by the public. It excludes locked, reserved, or unminted tokens.",
+    "maxSupplyTooltip": "The maximum number of tokens that will ever exist. For some assets, this is fixed to prevent inflation.",
     "pricePerformance": "Price performance",
     "marketRank": "Market rank",
     "tradingVolume24h": "24h trading volume",
+    "tradingVolume24hTooltip": "The total amount traded in the last 24 hours.",
+    "marketStatsDisclaimer": "Market stats sourced from CoinGecko",
     "day": "1 day",
+    "week": "1 week",
+    "month": "1 month",
+    "sixMonths": "6 months",
+    "year": "1 year",
+    "fiveYears": "5 years",
+    "allTime": "All time",
+    "chart": {
+      "received": "Received",
+      "sent": "Sent",
+      "transactionsCount": "{{count}} transactions"
+    },
     "staking": {
       "availableBalance": "Available balance",
       "availableBalanceTooltip": "The portion of your holdings you can use right now, free to send, swap, or withdraw at any time.",
@@ -9071,7 +9113,7 @@
     "asset": {
       "entry": {
         "title": "Average entry price",
-        "tooltip": "The average price you paid for this asset in this wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
+        "tooltip": "The average price you paid for this asset through Ledger Wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
       },
       "return": {
         "title": "Unrealised return"
@@ -9081,42 +9123,46 @@
         "description": "A summary of how this asset has performed in your portfolio.",
         "totalReturn": {
           "title": "Total return",
-          "description": "The sum of unrealised and realised returns."
+          "description": "The sum of estimated unrealised and realised returns."
         },
         "unrealisedReturn": {
           "title": "Unrealised return",
-          "description": "The estimated gain or loss if sold at today's price."
+          "description": "The estimated profit or loss if sold at current price."
         },
         "realisedReturn": {
           "title": "Realised return",
-          "description": "Profit or loss confirmed from previous sales or transfers."
+          "description": "Profit or loss estimated from previous sale, send or swap."
         }
       }
     },
     "portfolio": {
-      "return": {
-        "title": "Unrealised return"
+      "cards": {
+        "totalReturn": "Total return",
+        "unrealisedReturn": "Unrealised return",
+        "realisedReturn": "Realised return"
       },
       "costBasis": {
         "title": "Cost basis",
         "tooltip": "The total amount you paid to acquire your current holdings, including fees."
       },
+      "detail": "Details",
       "dialog": {
         "title": "Profit and loss",
-        "description": "Your portfolio performance broken down into realised and unrealised returns.",
+        "description": "Your portfolio performance broken down into estimated realised and unrealised returns.",
         "totalReturn": {
           "title": "Total return",
-          "description": "Realised and unrealised returns combined, reflecting your overall position."
+          "description": "The sum of estimated unrealised and realised returns."
         },
         "unrealisedReturn": {
           "title": "Unrealised return",
-          "description": "Estimated gain or loss on your current holdings."
+          "description": "The estimated profit or loss if sold at current price."
         },
         "realisedReturn": {
           "title": "Realised return",
-          "description": "Profit or loss confirmed from previous sales or outgoing transfers."
+          "description": "Profit or loss estimated from previous sale, send or swap."
         }
       }
-    }
+    },
+    "disclaimer": "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes."
   }
 }

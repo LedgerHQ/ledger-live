@@ -13,7 +13,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import { NoLedgerYetModal } from "./NoLedgerYetModal";
 import OnboardingView from "./OnboardingView";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 

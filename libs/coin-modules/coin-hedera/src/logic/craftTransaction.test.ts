@@ -62,7 +62,10 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction({ txIntent, config: mockConfig });
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -99,7 +102,10 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction({ txIntent, config: mockConfig });
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -142,7 +148,10 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo, HederaTxData>;
 
-    const result = await craftTransaction({ txIntent, config: mockConfig });
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
     invariant(
@@ -180,7 +189,10 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction({ txIntent, config: mockConfig });
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TokenAssociateTransaction);
     invariant(
@@ -204,6 +216,7 @@ describe("craftTransaction", () => {
     };
 
     const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
       txIntent: {
         intentType: "transaction",
         type: HEDERA_TRANSACTION_MODES.Send,
@@ -220,7 +233,6 @@ describe("craftTransaction", () => {
         },
       },
       customFees,
-      config: mockConfig,
     });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
@@ -245,7 +257,7 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction({ txIntent, config: mockConfig })).rejects.toThrow(
+    await expect(craftTransaction({ txIntent, configOrCurrencyId: mockConfig })).rejects.toThrow(
       "hedera: invalid asset type",
     );
   });
@@ -267,7 +279,7 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction({ txIntent, config: mockConfig })).rejects.toThrow(
+    await expect(craftTransaction({ txIntent, configOrCurrencyId: mockConfig })).rejects.toThrow(
       "hedera: assetReference is missing",
     );
   });
@@ -289,7 +301,7 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction({ txIntent, config: mockConfig })).rejects.toThrow(
+    await expect(craftTransaction({ txIntent, configOrCurrencyId: mockConfig })).rejects.toThrow(
       "hedera: no assetReference in token transfer",
     );
   });
@@ -318,7 +330,7 @@ describe("craftTransaction", () => {
 
     const result = await craftTransaction({
       txIntent,
-      config: {
+      configOrCurrencyId: {
         ...mockConfig,
         useNetworkTimestamp: true,
       },
@@ -350,7 +362,7 @@ describe("craftTransaction", () => {
 
     const result = await craftTransaction({
       txIntent,
-      config: {
+      configOrCurrencyId: {
         ...mockConfig,
         useNetworkTimestamp: true,
       },
@@ -387,14 +399,14 @@ describe("craftTransaction", () => {
     const [withoutMirror, withMirror] = await Promise.all([
       craftTransaction({
         txIntent,
-        config: {
+        configOrCurrencyId: {
           ...mockConfig,
           useNetworkTimestamp: false,
         },
       }),
       craftTransaction({
         txIntent,
-        config: {
+        configOrCurrencyId: {
           ...mockConfig,
           useNetworkTimestamp: true,
         },

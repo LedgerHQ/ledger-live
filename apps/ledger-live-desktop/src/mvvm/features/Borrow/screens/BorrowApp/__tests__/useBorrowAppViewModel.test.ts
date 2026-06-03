@@ -174,4 +174,64 @@ describe("useBorrowAppViewModel", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
     });
   });
+
+  describe("onGoToSwap", () => {
+    it("builds /swap state with defaultCurrency/Token/AccountId and forwards amount, affiliate and from pathname", () => {
+      jest.mocked(useLocation).mockReturnValue({
+        pathname: "/borrow/active",
+        search: "",
+        hash: "",
+        state: null,
+        key: "default",
+      });
+
+      const { result } = renderHook(() => useBorrowAppViewModel(), { initialState });
+
+      act(() =>
+        result.current.onGoToSwap({
+          fromCurrencyId: "ethereum",
+          toCurrencyId: "bitcoin",
+          fromTokenId: "ethereum/erc20/usdt",
+          toTokenId: "bitcoin/erc20/wbtc",
+          fromAccountId: "account-from",
+          toAccountId: "account-to",
+          amountFrom: "12.5",
+          affiliate: "borrow-app",
+        }),
+      );
+
+      expect(mockNavigate).toHaveBeenCalledWith("/swap", {
+        state: {
+          defaultCurrency: { fromCurrencyId: "ethereum", toCurrencyId: "bitcoin" },
+          defaultToken: {
+            fromTokenId: "ethereum/erc20/usdt",
+            toTokenId: "bitcoin/erc20/wbtc",
+          },
+          defaultAccountId: {
+            fromAccountId: "account-from",
+            toAccountId: "account-to",
+          },
+          defaultAmountFrom: "12.5",
+          affiliate: "borrow-app",
+          from: "/borrow/active",
+        },
+      });
+    });
+
+    it("omits defaultCurrency / defaultToken / defaultAccountId when no related ids are provided", () => {
+      const { result } = renderHook(() => useBorrowAppViewModel(), { initialState });
+
+      act(() => result.current.onGoToSwap({ amountFrom: "1" }));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/swap", {
+        state: expect.objectContaining({
+          defaultCurrency: undefined,
+          defaultToken: undefined,
+          defaultAccountId: undefined,
+          defaultAmountFrom: "1",
+          affiliate: undefined,
+        }),
+      });
+    });
+  });
 });

@@ -19,7 +19,7 @@ import {
   StakingMappedDelegation,
   StakingMappedUnbonding,
 } from "@ledgerhq/live-common/families/evm/staking/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
@@ -362,7 +362,7 @@ export default function EvmDelegations({ account }: { account: AccountLike }) {
   const { enabled, params } = useFeature("evmNativeStaking") ?? {};
   const isSupported =
     account.type === "Account" &&
-    params?.supportedCurrencyIds?.some(id => id === account.currency.id) === true;
+    params?.supportedCurrencyIds?.some((id: string) => id === account.currency.id) === true;
 
   if (!enabled || !isSupported || account.type !== "Account" || !isStakingAccount(account)) {
     return null;

@@ -515,4 +515,165 @@ describe("startSyncJob", () => {
     expect(mapped.decryptedData.orchard_outputs[0].amount).toBe("123456");
     expect(mapped.decryptedData.sapling_outputs[0].amount).toBe("789");
   });
+
+  it("propagates nullifiers discovered in chunk N to chunk N+1 via knownNullifiers", async () => {
+    // 2 chunks: [100..199] and [200..299]
+    // Chunk 1 discovers a note with nullifier NF1.
+    // Chunk 2 must receive NF1 in its knownNullifiers so it can detect if NF1 was spent.
+    const NF1 = "aa".repeat(32);
+    const args: StartSyncJobArgs = { ...baseArgs, maxBatchSize: 100 };
+    mockGetChainTip.mockResolvedValue(299);
+
+    const tx1 = makeNativeTx({
+      txid: "tx-receive",
+      orchardNotes: [
+        { amount: 100000n, memo: "", transferType: "incoming", nullifier: NF1 },
+      ],
+      saplingNotes: [],
+    });
+
+    const stream1 = makeMockStream([tx1], { blocksScanned: 100, elapsedMs: 50 });
+    const stream2 = makeMockStream([], {
+      blocksScanned: 100,
+      elapsedMs: 50,
+      spentKnownNullifiers: [NF1],
+    } as any);
+
+    mockStartSync.mockResolvedValueOnce(stream1).mockResolvedValueOnce(stream2);
+
+    const onChunk = jest.fn();
+    await startSyncJob(args, onChunk, { isCancelled: () => false });
+
+    expect(mockStartSync).toHaveBeenCalledTimes(2);
+
+    // Chunk 2's call to startSync must include NF1 in knownNullifiers
+    const chunk2Args = mockStartSync.mock.calls[1][0];
+    expect(chunk2Args.knownNullifiers).toBeDefined();
+    expect(chunk2Args.knownNullifiers).toContain(NF1);
+  });
+
+  it("does not propagate outgoing note nullifiers to subsequent chunks", async () => {
+    // Outgoing notes are not ours to spend — their nullifiers should not
+    // be added to knownNullifiers.
+    const args: StartSyncJobArgs = { ...baseArgs, maxBatchSize: 100 };
+    mockGetChainTip.mockResolvedValue(299);
+
+    const tx1 = makeNativeTx({
+      txid: "tx-outgoing",
+      orchardNotes: [
+        { amount: 50000n, memo: "", transferType: "outgoing", nullifier: "ff".repeat(32) },
+      ],
+      saplingNotes: [],
+    });
+
+    const stream1 = makeMockStream([tx1], { blocksScanned: 100, elapsedMs: 50 });
+    const stream2 = makeMockStream([], { blocksScanned: 100, elapsedMs: 50 });
+
+    mockStartSync.mockResolvedValueOnce(stream1).mockResolvedValueOnce(stream2);
+
+    const onChunk = jest.fn();
+    await startSyncJob(args, onChunk, { isCancelled: () => false });
+
+    // Chunk 2 should NOT receive the outgoing nullifier
+    const chunk2Args = mockStartSync.mock.calls[1][0];
+    if (chunk2Args.knownNullifiers) {
+      expect(chunk2Args.knownNullifiers).not.toContain("ff".repeat(32));
+    }
+  });
+
+  it("combines caller-provided knownNullifiers with discovered ones across chunks", async () => {
+    const CALLER_NF = "11".repeat(32);
+    const DISCOVERED_NF = "22".repeat(32);
+    const args: StartSyncJobArgs = {
+      ...baseArgs,
+      maxBatchSize: 100,
+      knownNullifiers: [CALLER_NF],
+    };
+    mockGetChainTip.mockResolvedValue(299);
+
+    const tx1 = makeNativeTx({
+      txid: "tx-new",
+      orchardNotes: [
+        { amount: 100000n, memo: "", transferType: "incoming", nullifier: DISCOVERED_NF },
+      ],
+      saplingNotes: [],
+    });
+
+    const stream1 = makeMockStream([tx1], { blocksScanned: 100, elapsedMs: 50 });
+    const stream2 = makeMockStream([], { blocksScanned: 100, elapsedMs: 50 });
+
+    mockStartSync.mockResolvedValueOnce(stream1).mockResolvedValueOnce(stream2);
+
+    const onChunk = jest.fn();
+    await startSyncJob(args, onChunk, { isCancelled: () => false });
+
+    // Chunk 1 should have the caller-provided nullifier
+    const chunk1Args = mockStartSync.mock.calls[0][0];
+    expect(chunk1Args.knownNullifiers).toContain(CALLER_NF);
+
+    // Chunk 2 should have BOTH the caller-provided AND the discovered nullifier
+    const chunk2Args = mockStartSync.mock.calls[1][0];
+    expect(chunk2Args.knownNullifiers).toContain(CALLER_NF);
+    expect(chunk2Args.knownNullifiers).toContain(DISCOVERED_NF);
+  });
+
+  it("preserves isSpent flag from Rust (spent detection done server-side after Phase 5)", async () => {
+    // Rust now emits transactions AFTER Phase 5 with correct isSpent flags.
+    // Verify engine.ts faithfully passes them through to the onChunk output.
+    const args: StartSyncJobArgs = { ...baseArgs };
+    mockGetChainTip.mockResolvedValue(200);
+
+    const tx1 = makeNativeTx({
+      txid: "tx1-receive",
+      orchardNotes: [
+        {
+          amount: 100000n,
+          memo: "funding",
+          transferType: "incoming",
+          nullifier: "aa".repeat(32),
+          isSpent: true, // Rust Phase 5 already set this
+        },
+      ],
+      saplingNotes: [],
+    });
+
+    const tx2 = makeNativeTx({
+      txid: "tx2-spend",
+      orchardNotes: [
+        {
+          amount: 10000n,
+          memo: "payment",
+          transferType: "incoming",
+          nullifier: "bb".repeat(32),
+          isSpent: false,
+        },
+        {
+          amount: 80000n,
+          memo: "",
+          transferType: "incoming",
+          nullifier: "cc".repeat(32),
+          isSpent: false,
+        },
+      ],
+      saplingNotes: [],
+    });
+
+    const stream = makeMockStream([tx1, tx2]);
+    mockStartSync.mockResolvedValue(stream);
+
+    const onChunk = jest.fn();
+    await startSyncJob(args, onChunk, { isCancelled: () => false });
+
+    expect(onChunk).toHaveBeenCalledTimes(1);
+    const chunk = onChunk.mock.calls[0][0];
+
+    // TX1's isSpent=true from Rust must be preserved in the mapped output
+    const mappedTx1 = chunk.transactions.find((t: { id: string }) => t.id === "tx1-receive");
+    expect(mappedTx1.decryptedData.orchard_outputs[0].is_spent).toBe(true);
+
+    // TX2's notes remain unspent
+    const mappedTx2 = chunk.transactions.find((t: { id: string }) => t.id === "tx2-spend");
+    expect(mappedTx2.decryptedData.orchard_outputs[0].is_spent).toBe(false);
+    expect(mappedTx2.decryptedData.orchard_outputs[1].is_spent).toBe(false);
+  });
 });

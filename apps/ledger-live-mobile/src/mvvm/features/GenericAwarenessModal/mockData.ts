@@ -1,6 +1,7 @@
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalContentCard,
+  type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 
 export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCard = {
@@ -147,4 +148,16 @@ export const featureIntroMockData: GenericAwarenessModalContentCard = {
       subtitle: "Manage thousands of assets in one place.",
     },
   ],
+};
+
+export const promptMockData: GenericAwarenessModalPrompt = {
+  id: "prompt",
+  layout: GenericAwarenessModalLayout.Prompt,
+  imageUrl: "https://picsum.photos/480/640",
+  title: "Try Ledger Wallet when you are ready",
+  subtitle: "Open the feature from Ledger Wallet whenever you need it.",
+  primaryButtonLabel: "Learn more",
+  primaryButtonLink: "https://www.ledger.com",
+  secondaryButtonLabel: "Buy your Ledger device",
+  secondaryButtonLink: "ledgerlive://buy",
 };

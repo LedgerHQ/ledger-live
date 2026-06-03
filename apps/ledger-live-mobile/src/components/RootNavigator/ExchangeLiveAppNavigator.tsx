@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { useTranslation } from "~/context/Locale";

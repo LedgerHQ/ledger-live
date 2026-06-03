@@ -21,7 +21,13 @@ type CommonLogEvent = {
   tokenId?: string;
 };
 
-type ErrorLogEvent = { status: "failure"; error: Error; txPayload: string } & CommonLogEvent;
+type ErrorLogEvent = {
+  status: "failure"; error: Error; txPayload:
+  {
+    signature: string;
+    rawData?: Record<string, unknown>;
+  }
+} & CommonLogEvent;
 
 type SuccessLogEvent = { status: "success" } & CommonLogEvent;
 
@@ -92,7 +98,10 @@ export const useBroadcast = ({
             logger({
               status: "failure",
               error,
-              txPayload: signedOperation.signature,
+              txPayload: {
+                signature: signedOperation.signature,
+                ...(signedOperation.rawData ? { rawData: signedOperation.rawData } : {})
+              },
               ...commonLogEvent,
             });
           }

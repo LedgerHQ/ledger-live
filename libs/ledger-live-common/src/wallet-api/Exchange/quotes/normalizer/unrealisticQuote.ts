@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
 import type { RawQuote } from "../service/types";
-import type { QuoteWarning } from "../types";
+import { QuoteWarningCodes, type QuoteWarning } from "../types";
 
 export function computeUnrealisticQuote(
   quote: RawQuote,
@@ -39,5 +39,5 @@ export function computeUnrealisticQuote(
     return null;
   }
 
-  return { code: "unrealisticQuote", gainPercent: gainPercentNumber };
+  return { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: gainPercentNumber };
 }

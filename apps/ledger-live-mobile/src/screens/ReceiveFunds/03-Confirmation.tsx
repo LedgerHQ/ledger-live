@@ -11,7 +11,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";

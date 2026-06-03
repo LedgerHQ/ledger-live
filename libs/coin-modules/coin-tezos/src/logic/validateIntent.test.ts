@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/errors";
 import coinConfig from "../config";
 import { InvalidAddressBecauseAlreadyDelegated, MustDelegateBeforeStaking } from "../types/errors";
+import { STAKE_USE_ALL_RESERVE_MUTEZ } from "../utils";
 import { validateIntent } from "./validateIntent";
 
 const mockEstimateFees = jest.fn();
@@ -346,6 +347,37 @@ describe("validateIntent", () => {
       expect(result.amount).toBe(0n);
     });
 
+    it("excludes already-staked funds when stake useAllAmount falls back to balance computation", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          balance: 5_000_000,
+          stakedBalance: 1_000_000,
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+      // No `amount` field => estimatedAmount is undefined, exercising the fallback path.
+      mockEstimateFees.mockResolvedValueOnce({
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        estimatedFees: 1000n,
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      });
+
+      expect(result.errors.amount).toBeUndefined();
+      expect(result.amount).toBe(4_000_000n - 1000n - STAKE_USE_ALL_RESERVE_MUTEZ);
+    });
+
     it("should return NotEnoughBalance when unstake has no staked balance", async () => {
       mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 0 }));
 
@@ -677,6 +709,34 @@ describe("validateIntent", () => {
         sender: senderAddress,
         recipient: "",
         amount: 1n,
+      });
+
+      expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseAlreadyDelegated);
+    });
+
+    it("maps delegate.unchanged to InvalidAddressBecauseAlreadyDelegated for delegate", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+
+      mockEstimateFees.mockResolvedValue({
+        fees: 0n,
+        gasLimit: 0n,
+        storageLimit: 0n,
+        estimatedFees: 500n,
+        taquitoError: "proto.024-PtTALLiN.delegate.unchanged",
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "delegate",
+        sender: senderAddress,
+        recipient: validRecipient,
+        amount: 0n,
       });
 
       expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseAlreadyDelegated);

@@ -184,7 +184,7 @@ const cryptoAssetsNotEquals = (a: State, b: State) =>
 const featureFlagsNotEquals = (a: State, b: State) =>
   a.featureFlags.overrides !== b.featureFlags.overrides ||
   a.featureFlags.bannerVisible !== b.featureFlags.bannerVisible;
-const featureFlagsLense = (state: State) => ({
+export const featureFlagsLense = (state: State) => ({
   overrides: state.featureFlags.overrides,
   bannerVisible: state.featureFlags.bannerVisible,
 });

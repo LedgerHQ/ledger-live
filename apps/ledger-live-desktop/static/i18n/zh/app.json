@@ -1019,7 +1019,6 @@
         "switchLabel" : "<1>我已阅读并同意</1> <0>使用条款</0><1>。</1>"
       },
       "steps" : {
-        "title" : "步骤 <0>{{step}} 之 {{total}}</0>",
         "1" : {
           "subtitle" : "批准账户以允许协议",
           "subtitle2" : "处理未来贷款。",
@@ -1032,7 +1031,8 @@
         "3" : {
           "subtitle" : "随时提取资产",
           "description" : "您可以直接通过您的 Ledger 账户，部分或全部的，随时提取您的资产以及所赚取的利息。"
-        }
+        },
+        "title" : "步骤 <0>{{step}} 之 {{total}}</0>"
       }
     },
     "supply" : {
@@ -1363,6 +1363,10 @@
         "recover" : {
           "title" : "完成保护您的备份",
           "description" : "完成激活 Ledger Recover"
+        },
+        "discoverWallet" : {
+          "title" : "探索您的钱包功能",
+          "description" : "深入了解您的钱包功能"
         }
       }
     },
@@ -1403,7 +1407,14 @@
       "recover" : {
         "title" : "订阅 Ledger Recover",
         "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
-        "actionCompletedPopupLabel" : "已成功订阅 Ledger Recover"
+        "actionCompletedPopupLabel" : "已成功订阅 Ledger Recover",
+        "titleCompleted" : "备份已受保护"
+      },
+      "discoverWallet" : {
+        "title" : "探索您的钱包功能",
+        "titleCompleted" : "已了解您的钱包功能",
+        "description" : "深入了解您的钱包功能",
+        "actionCompletedPopupLabel" : "产品导览已完成"
       }
     }
   },
@@ -1808,7 +1819,9 @@
       "gasConsumed" : "Gas 消耗量",
       "gasUsed" : "Gas 使用量",
       "gasLimit" : "Gas 限值",
-      "functionId" : "函数标识"
+      "functionId" : "函数标识",
+      "delegatedTo" : "已委托给",
+      "delegatedAmount" : "已委托数额"
     }
   },
   "operationList" : {
@@ -2210,8 +2223,6 @@
     }
   },
   "buyDeviceModal" : {
-    "title" : "连接 Ledger 设备",
-    "subtitle" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
     "0" : {
       "title" : "完全所有权",
       "desc" : "您的私钥由您掌控。"
@@ -2224,6 +2235,8 @@
       "title" : "使用功能强大的钱包",
       "desc" : "一站式管理数千种资产。"
     },
+    "title" : "连接 Ledger 设备",
+    "subtitle" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
     "connectCTA" : "连接",
     "buyCTA" : "购买 Ledger 设备"
   },
@@ -2704,7 +2717,11 @@
           },
           "starter" : {
             "description" : "您可以通过将 EGLD 资产委托给权益质押服务提供商来赚取奖励。",
-            "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在取消委托 10 天后可用"],
+            "bullet" : [
+              "您保有对已委托资产的所有权",
+              "使用您的 Ledger 设备进行委托",
+              "资产将在取消委托 10 天后可用"
+            ],
             "warning" : {
               "description" : "明智选择权益质押服务提供商：目前您面临的唯一风险是由于各种原因无法获得奖励，因此您应该根据可靠程度、沟通和经济因素选择提供商。"
             }
@@ -2847,7 +2864,11 @@
         "steps" : {
           "starter" : {
             "description" : "您可以将 ADA 委托给池来赚取奖励。",
-            "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产可以重新委托给不同的池，或者您可以选择随时取消委托。"]
+            "bullet" : [
+              "您保有对已委托资产的所有权",
+              "使用您的 Ledger 设备进行委托",
+              "资产可以重新委托给不同的池，或者您可以选择随时取消委托。"
+            ]
           },
           "validator" : {
             "title" : "池"
@@ -2890,6 +2911,19 @@
               "cta" : "查看详情"
             },
             "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      },
+      "selfTransactionFlow" : {
+        "title" : "准备解除委托",
+        "steps" : {
+          "starter" : {
+            "description" : [
+              "要关闭您的质押账户并取回您的 ADA 存款：",
+              "根据 Cardano 卡尔达诺的治理规则，您现在需要先定义您的投票状态才能解除委托。",
+              "此步骤涉及向您自己的 Ledger 地址发送交易，该交易仅用于登记您选择弃权的投票。只需标准网络费用，您的 ADA 仍保留在您的钱包中。",
+              "该偏好被记录后，您便可以像往常一样解除委托。"
+            ]
           }
         }
       }
@@ -3298,7 +3332,11 @@
         "steps" : {
           "starter" : {
             "description" : "您可以通过将 {{currencyTicker}} 资产委托给验证者来赚取奖励。",
-            "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在取消委托 {{numberOfDays}} 天后可用"],
+            "bullet" : [
+              "您保有对已委托资产的所有权",
+              "使用您的 Ledger 设备进行委托",
+              "资产将在取消委托 {{numberOfDays}} 天后可用"
+            ],
             "warning" : {
               "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
             }
@@ -3614,7 +3652,11 @@
       "steps" : {
         "starter" : {
           "description" : "您可通过绑定资产并提名验证者来赚取奖励。",
-          "bullet" : ["您保有对已绑定资产的所有权", "使用您的 Ledger 设备进行提名", "经过 28 天的解绑期后，资产将会再次可用"],
+          "bullet" : [
+            "您保有对已绑定资产的所有权",
+            "使用您的 Ledger 设备进行提名",
+            "经过 28 天的解绑期后，资产将会再次可用"
+          ],
           "help" : "提名机制如何运作",
           "warning" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已绑定资产。"
         },
@@ -4011,7 +4053,11 @@
         "steps" : {
           "starter" : {
             "description" : "您可以通过将 Aptos 资产质押给验证者来赚取奖励。",
-            "bullet" : ["您仍然保持对已权益质押资产的所有权", "使用 Ledger 设备进行权益质押", "资产将在取消权益质押 0 至 14 天后可用"],
+            "bullet" : [
+              "您仍然保持对已权益质押资产的所有权",
+              "使用 Ledger 设备进行权益质押",
+              "资产将在取消权益质押 0 至 14 天后可用"
+            ],
             "warning" : {
               "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分权益质押资产并且无法挽回。"
             }
@@ -4250,7 +4296,11 @@
           "steps" : {
             "starter" : {
               "description" : "您可以通过将 {{currencyTicker}} 资产委托给验证者来赚取奖励。",
-              "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在解除委托后可用"],
+              "bullet" : [
+                "您保有对已委托资产的所有权",
+                "使用您的 Ledger 设备进行委托",
+                "资产将在解除委托后可用"
+              ],
               "warning" : {
                 "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
               }
@@ -4278,7 +4328,38 @@
         }
       },
       "redelegation" : {
-        "header" : "重新委托"
+        "header" : "重新委托",
+        "flow" : {
+          "title" : "重新委托资产",
+          "steps" : {
+            "starter" : {
+              "title" : "重新委托",
+              "description" : "使用重新委托功能来轻松地更换验证者。不过，如果想再次更换验证者，则需要等待，因为重新委托会触发 {{ numberOfDays }} 天的时间锁。",
+              "warning" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。您最多可以有 <0>{{maxRedelegations}} 个待处理的重新委托</0> 。",
+              "howDelegationWorks" : "委托机制如何运作？"
+            },
+            "validators" : {
+              "title" : "验证者",
+              "currentDelegation" : "当前委托",
+              "newDelegation" : "新的委托",
+              "chooseValidator" : "选择一个验证者",
+              "warning" : "如果再次改变主意，那么必须等待 <0>{{numberOfDays}} 天</0>才能从新的验证者重新委托。",
+              "amountLabel" : "要重新委托的数额"
+            },
+            "connectDevice" : {
+              "title" : "设备"
+            },
+            "confirmation" : {
+              "title" : "确认",
+              "success" : {
+                "title" : "您的资产已成功重新委托",
+                "text" : "一旦区块链确认该交易，就会更新重新委托信息",
+                "cta" : "查看详情"
+              },
+              "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+            }
+          }
+        }
       },
       "undelegation" : {
         "header" : "解除委托",
@@ -4367,7 +4448,11 @@
         "steps" : {
           "starter" : {
             "description" : "您可以通过将 NEAR 资产权益质押给验证者来赚取奖励。",
-            "bullet" : ["您仍然保持对已权益质押资产的所有权", "使用 Ledger 设备进行权益质押", "资产将在解除权益质押 52 至 65 小时后可用"],
+            "bullet" : [
+              "您仍然保持对已权益质押资产的所有权",
+              "使用 Ledger 设备进行权益质押",
+              "资产将在解除权益质押 52 至 65 小时后可用"
+            ],
             "warning" : {
               "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分权益质押资产并且无法挽回。"
             }
@@ -4874,6 +4959,13 @@
           "completed" : "产品导览已标记为已完成。",
           "notCompleted" : "产品导览尚未完成。",
           "open" : "打开"
+        },
+        "recover" : {
+          "title" : "恢复",
+          "description" : "设置本地 Ledger Recover 订阅状态，以测试导引后中心和恢复横幅。",
+          "noSubscription" : "无订阅",
+          "inProgress" : "处理中",
+          "backupDone" : "备份完成"
         }
       },
       "walletFeaturesDevTool" : {
@@ -5580,7 +5672,6 @@
             }
           },
           "recoverHowTo" : {
-            "title" : "选择“使用 Ledger Recover 重置”",
             "1" : {
               "title" : "选择“重置”",
               "descr" : "同时按下两个按钮进行选择。"
@@ -5588,6 +5679,7 @@
             "2" : {
               "title" : "选择“使用 Ledger Recover 重置”"
             },
+            "title" : "选择“使用 Ledger Recover 重置”",
             "help" : {
               "iDontSee" : "我没有看到“使用 Ledger Recover 重置”",
               "modal" : {
@@ -5872,12 +5964,6 @@
     "connected" : "已连接！",
     "backToPortfolio" : "返回 Portfolio（资产组合）",
     "steps" : {
-      "entry" : {
-        "title" : "USB 连接的故障排除",
-        "desc" : "连接到您的设备似乎有问题。不要担心，您可以逐一尝试不同的解决方案，直到您的设备连接上为止！",
-        "cta" : "让我们来解决这个问题！",
-        "back" : "返回"
-      },
       "1" : {
         "windows" : {
           "title" : "以管理员身份运行 Ledger Wallet",
@@ -5990,6 +6076,12 @@
           "updateInstructions" : "请遵照设备更新指示",
           "somethingElse" : "其他"
         }
+      },
+      "entry" : {
+        "title" : "USB 连接的故障排除",
+        "desc" : "连接到您的设备似乎有问题。不要担心，您可以逐一尝试不同的解决方案，直到您的设备连接上为止！",
+        "cta" : "让我们来解决这个问题！",
+        "back" : "返回"
       }
     }
   },
@@ -6009,8 +6101,7 @@
     "doubleCheck" : "签署之前请仔细检查 Ledger 设备上的交易详情。",
     "termsAndConditions" : "签署此交易，即表示您接受 <0>{{appName}} 的使用条款</0>。",
     "termsAndConditionsWithPrivacy" : "签署此交易，即表示您接受 <0>{{appName}} 的使用条款</0>和<1>隐私政策</1>。",
-    "warningWording" : {
-    },
+    "warningWording" : {},
     "titleWording" : {
       "send" : "请在您的设备上确认并完成操作",
       "claimReward" : "请在您的设备上确认并完成操作",
@@ -6075,7 +6166,11 @@
     "title" : "使用条款更新",
     "body" : {
       "intro" : "您好！我们更新了 Ledger Wallet 使用条款，目的是让它们更清晰，并反映 Ledger Wallet 新推出的服务和功能。主要更新集中在：",
-      "bulletPoints" : ["明确哪些服务可用以及它们如何工作", "解释服务费用的运作方式", "改进我们的通知流程，确保您正确了解我们的使用条款的任何新更改"],
+      "bulletPoints" : [
+        "明确哪些服务可用以及它们如何工作",
+        "解释服务费用的运作方式",
+        "改进我们的通知流程，确保您正确了解我们的使用条款的任何新更改"
+      ],
       "agreement" : "点击“继续”即表示您同意您已阅读并接受以下使用条款。"
     },
     "link" : "使用条款",
@@ -6221,6 +6316,36 @@
               "description" : "转账报价已成功撤回。"
             }
           }
+        }
+      },
+      "disclaimer" : {
+        "title" : "设置 Canton 网络",
+        "intro" : "Canton 拥有独特的特性，在继续之前需要您了解：",
+        "bullets" : {
+          "utxo" : {
+            "title" : "基于 UTXO 的余额",
+            "body" : "余额以单个加密货币合约形式存在，每次转账上限为 100。闲置合约会随着时间的推移而失去价值，并在费用超过其余额时失效。"
+          },
+          "offers" : {
+            "title" : "基于报价的转账",
+            "body" : "不会有任何内容自动结算。已发送的转账可以提取；接收的转账需要手动接受或拒绝。通过 Canton 功能面板管理报价。"
+          },
+          "dualValidator" : {
+            "title" : "双验证者安全性",
+            "body" : "交易需要 Ledger 和 Kiln 的共同签名。任何一方都不能代表您单独行事。"
+          },
+          "tokenLiability" : {
+            "title" : "标准代币责任 ⚠️",
+            "body" : "在故障场景中恢复代币是代币发行方的责任，与 Ledger 无关。"
+          }
+        },
+        "agreeLabel" : "我同意 <1>Canton 网络条款和 Ledger 的免责声明</1>",
+        "cancel" : "取消",
+        "agree" : "同意",
+        "terms" : {
+          "title" : "Canton 网络条款",
+          "sectionTitle" : "标准代币责任与恢复",
+          "body" : "Ledger 仅支持通过 Digital Asset (DA) 注册处发行的标准代币。Ledger 不是这些代币的发行者，也不对其价值、管理、或基础智能合约承担任何责任。\n\n如果 Ledger 服务中断或“灾难恢复”失败，Ledger 将无法恢复您的资产。您必须直接联系相应的代币发行方（资产管理员），通过其“资产冻结”或“注册表恢复”流程发起资产恢复。您只能依据代币发行方现有的服务等级协议（SLA）寻求解决方案。继续操作即表示您承认，Ledger 及其关联公司不承担因丢失、恢复或无法恢复这些代币而引起的一切责任。"
         }
       }
     },
@@ -7595,6 +7720,17 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "数额过大，超出 UTXO 限制。"
+    },
+    "MustDelegateBeforeStaking" : {
+      "title" : "请先委托您的账户，然后再进行质押"
+    },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "选择的私密记录过多",
+      "description" : "每笔交易最多可以使用 {{count}} 条私密记录。"
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "单笔交易金额过大",
+      "description" : "您的私密记录无法在单笔交易中覆盖该金额。请尝试较小的金额。"
     }
   },
   "cryptoOrg" : {
@@ -8401,7 +8537,8 @@
     "title" : "账户",
     "tableActions" : {
       "searchAddress" : "按名称或地址搜索",
-      "addAddress" : "添加地址"
+      "addAddress" : "添加地址",
+      "addAccount" : "添加账户"
     },
     "table" : {
       "columns" : {
@@ -8543,7 +8680,13 @@
       "stepViewKeyWarning" : {
         "title" : "设置 Aleo 私密余额",
         "description" : "Ledger Wallet 存储您的查看密钥以显示您的私密余额，并使用第三方服务来处理私密交易。<0>了解更多</0>",
-        "bullets" : ["只读权限，旨在解密您的私密余额", "Ledger 无法发送或使用您的资金", "只有您本人可以签署和使用您的资金", "为确保快速处理，证明生成由第三方证明者服务处理", "证明者无法访问或使用您的资金"],
+        "bullets" : [
+          "只读权限，旨在解密您的私密余额",
+          "Ledger 无法发送或使用您的资金",
+          "只有您本人可以签署和使用您的资金",
+          "为确保快速处理，证明生成由第三方证明者服务处理",
+          "证明者无法访问或使用您的资金"
+        ],
         "cta" : {
           "allow" : "允许",
           "cancel" : "取消"
@@ -8593,6 +8736,21 @@
         "noRecordsAlert" : "您没有任何记录。进行自转账或接收私人资金即可开始使用。",
         "alert" : "最大可支出数额取决于您所选记录的最大值。费用由 Provable 为 Ledger 用户承担。",
         "recordsLimit" : "最多显示 {{max}} 条记录"
+      },
+      "quickAmountSelector" : {
+        "strategies" : {
+          "fast" : "快速",
+          "balanced" : "平衡的",
+          "full" : "完整的"
+        },
+        "recordCount_one" : "{{count}} 条记录",
+        "recordCount_other" : "{{count}} 条记录",
+        "unavailable" : "不可用",
+        "spendableBalance" : "最大可支出余额："
+      },
+      "infoBanner" : {
+        "descPartOne" : "发送方、数额和接收方信息均在链上隐藏。",
+        "descPartTwo" : "每次发送最多 {{max}} 条记录。"
       }
     },
     "account" : {
@@ -8620,7 +8778,9 @@
         "selectLabel" : "来自"
       },
       "summary" : {
-        "proofGenerationWarning" : "Aleo 交易需要生成证明。这可能需要一些时间。"
+        "proofGenerationWarning" : "Aleo 交易需要生成证明。这可能需要一些时间。",
+        "recordsUsed" : "已使用的记录",
+        "signingTime" : "签署时间"
       },
       "mandatoryPrivateSync" : {
         "title" : "正在同步您的私密余额 ({{percentage}}%)",
@@ -8665,6 +8825,28 @@
       "growYourRewards" : "提升收益",
       "spendYourCrypto" : "使用加密货币消费",
       "everythingAtAGlance" : "一目了然"
+    },
+    "slides" : {
+      "fund" : {
+        "title" : "首先为您的钱包充值",
+        "subTitle" : "以您偏好的方式为 Ledger Wallet 注资——转账、买入或将现金转换为稳定币。"
+      },
+      "portfolio" : {
+        "title" : "抢占市场先机",
+        "subTitle" : "轻松追踪您的资产、奖励和市场趋势。"
+      },
+      "earn" : {
+        "title" : "享受您的加密货币奖励",
+        "subTitle" : "通过“赚取”让您的加密货币发挥功用。"
+      },
+      "card" : {
+        "title" : "在现实生活中使用加密货币",
+        "subTitle" : "使用加密货币卡付款，线上或店内赚取返现。"
+      },
+      "swap" : {
+        "title" : "无需切换应用程序即可互换",
+        "subTitle" : "通过我们值得信赖的互换服务提供商，对数千种资产进行无限交易。"
+      }
     }
   },
   "history" : {
@@ -8723,6 +8905,197 @@
     "explore" : "探索所有 Ledger 设备"
   },
   "assetDetails" : {
-    "totalBalance" : "总余额"
+    "totalBalance" : "总余额",
+    "header" : {
+      "optionsMenu" : "资产选项",
+      "addFavourite" : "添加到收藏",
+      "removeFavourite" : "从收藏中删除",
+      "hideFromPortfolio" : "从资产组合中隐藏",
+      "showInPortfolio" : "显示在资产组合中"
+    },
+    "hiddenBanner" : {
+      "description" : "此资产已从您的资产组合中隐藏。",
+      "showAsset" : "显示资产"
+    },
+    "marketPrice" : "市场价格",
+    "addresses" : "地址",
+    "addressesDialog" : {
+      "title" : "地址",
+      "description" : "持有 {{ticker}} 的所有地址。"
+    },
+    "add" : "添加",
+    "notFound" : "未找到资产分配项目。",
+    "marketStats" : "市场数据",
+    "marketStatsTooltip" : "该资产的市场指标。",
+    "pricePerformance" : "价格表现",
+    "marketRank" : "市场排名",
+    "tradingVolume24h" : "24 小时交易量",
+    "day" : "1 天",
+    "staking" : {
+      "availableBalance" : "可用余额",
+      "availableBalanceTooltip" : "您现在可以使用的持仓部分，可随时自由发送、互换或提取。",
+      "earnDeposit" : "赚取存款收益",
+      "earnBanner" : "赚取高达 {{apy}}% {{type}}",
+      "earnBannerDefault" : "通过此资产赚取收益",
+      "earnBannerSubtitle" : "持有此资产并赚取收益",
+      "earnBannerAction" : "前往“赚取”"
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "赚取 Tezos 奖励：委托或质押",
+      "description" : "将您的 Tezos (XTZ) 委托给 Baker，即可赚取奖励，同时始终保持对资产的完全控制。若希望获得更高收益，您可以质押 XTZ，了解其中所涉及的较低风险。选择增长资产的最佳方式。",
+      "howItWorks" : "运作方式",
+      "delegate" : {
+        "header" : "委托",
+        "bullet" : {
+          "0" : "无锁定",
+          "1" : "您的全部余额已委托",
+          "2" : "随时发送/互换您的 XTZ",
+          "3" : "无风险"
+        },
+        "cta" : "委托"
+      },
+      "stake" : {
+        "header" : "质押",
+        "bullet" : {
+          "0" : "收益提升 (2－3 倍)",
+          "1" : "XTZ 已锁定用于质押",
+          "2" : "解除质押：4 天",
+          "3" : "风险：低（削减）"
+        },
+        "cta" : "质押"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "解除质押 XTZ",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "amountLabel" : "要取消权益质押的数额",
+            "availableLabel" : "已权益质押",
+            "maxLabel" : "最大值",
+            "unbondingNotice" : "解除质押用时 4 天。在此期间，您的 XTZ 仍处于委托状态并停止赚取权益质押奖励。"
+          },
+          "device" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "broadcastError" : "您的解除质押交易无法发送到网络。请重试。",
+            "success" : {
+              "title" : "已提交解除质押",
+              "text" : "您的 XTZ 正在解除质押，将于约四天后可供提取。",
+              "cta" : "查看详情"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "质押",
+        "amount" : {
+          "disclaimer" : "解除质押需要 4 天。",
+          "awaitingDelegation" : "正在确认您的委托。这通常需要不到一分钟……"
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "验证者",
+            "description" : "选择要委托的 Baker。确认委托后，您即可质押 XTZ。"
+          },
+          "deviceDelegation" : {
+            "title" : "确认委托"
+          },
+          "amount" : {
+            "title" : "数额"
+          },
+          "deviceStaking" : {
+            "title" : "确认质押"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功权益质押资产",
+              "text" : "您已质押了{{amount}} 。当区块链确认该笔交易后，您的账户余额将会更新。",
+              "cta" : "访问赚取功能面板"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。",
+            "howItWorks" : "权益质押的运作方式"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "更换 Baker 验证者前解除质押",
+        "description" : "您与当前的 Baker 验证者质押了 XTZ。在委托给新的 Baker 之前，先解除质押您的资金。"
+      },
+      "endDelegation" : {
+        "title" : "结束委托之前，先解除质押",
+        "description" : "您与当前的 Baker 验证者质押了 XTZ。在结束委托之前，先解除质押您的资金。"
+      },
+      "steps" : {
+        "0" : "打开“赚取”菜单，选择“解除质押”。",
+        "1" : "在您的设备上确认数额并提交解除质押交易。",
+        "2" : "等待约 4 天，解除质押期完成。",
+        "3" : "提取后，您可以更改 Baker 验证者或结束委托。"
+      },
+      "learnMore" : "详细了解 Tezos 质押",
+      "close" : "关闭"
+    }
+  },
+  "pnl" : {
+    "asset" : {
+      "entry" : {
+        "title" : "平均持仓成本",
+        "tooltip" : "您在此钱包中持有该资产的平均买入价格，包括您购买的资产以及从其他钱包转入的资产。用于追踪您的盈亏情况。"
+      },
+      "return" : {
+        "title" : "未实现收益"
+      },
+      "dialog" : {
+        "title" : "盈亏",
+        "description" : "概览该资产在您资产组合中的表现。",
+        "totalReturn" : {
+          "title" : "总收益",
+          "description" : "未实现收益与已实现收益的总和。"
+        },
+        "unrealisedReturn" : {
+          "title" : "未实现收益",
+          "description" : "按当前价格卖出时的预估盈亏。"
+        },
+        "realisedReturn" : {
+          "title" : "已实现收益",
+          "description" : "此前出售或转出资产后已确认的盈亏。"
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "未实现收益"
+      },
+      "costBasis" : {
+        "title" : "成本基础",
+        "tooltip" : "为获得当前资产而支付的总金额，包括费用。"
+      },
+      "dialog" : {
+        "title" : "盈亏",
+        "description" : "资产组合表现分为已实现和未实现收益。",
+        "totalReturn" : {
+          "title" : "总收益",
+          "description" : "已实现和未实现收益之和，反映您的整体仓位。"
+        },
+        "unrealisedReturn" : {
+          "title" : "未实现收益",
+          "description" : "您当前持有资产的预估盈亏。"
+        },
+        "realisedReturn" : {
+          "title" : "已实现收益",
+          "description" : "此前出售或转出资产后已确认的盈亏。"
+        }
+      }
+    }
   }
 }

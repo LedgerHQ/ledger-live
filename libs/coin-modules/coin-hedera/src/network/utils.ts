@@ -1,16 +1,16 @@
 import invariant from "invariant";
 import { AccountId, TransactionId } from "@hashgraph/sdk";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
+import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { TokenCurrency, type Currency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { HederaConfig } from "../config";
+import type { HederaCoinConfig } from "../config";
 import { SUPPORTED_ERC20_TOKENS } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { getChecksum, nanosToSeconds, toEntityId, toTimestamp } from "../logic/utils";
@@ -32,14 +32,14 @@ import { rpcClient } from "./rpc";
 
 export async function createTransactionId(
   accountId: string,
-  config: HederaConfig,
+  config: HederaCoinConfig,
 ): Promise<TransactionId> {
   if (!config.useNetworkTimestamp) {
     return TransactionId.generate(accountId);
   }
 
   try {
-    const lastBlock = await apiClient.getLatestBlock();
+    const lastBlock = await apiClient.getLatestBlock({ configOrCurrencyId: config });
     const validStart = toTimestamp(lastBlock.timestamp.to ?? lastBlock.timestamp.from);
 
     return TransactionId.withValidStart(AccountId.fromString(accountId), validStart);
@@ -115,10 +115,15 @@ export function parseTransfers(
 }
 
 // TODO: remove once migration to new API is complete
-export async function getERC20BalancesForAccount(
-  evmAccountId: string,
+export async function getERC20BalancesForAccount({
+  configOrCurrencyId,
+  evmAccountId,
   supportedTokenIds = SUPPORTED_ERC20_TOKENS.map(token => token.id),
-): Promise<HederaERC20TokenBalance[]> {
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  evmAccountId: string;
+  supportedTokenIds?: string[];
+}): Promise<HederaERC20TokenBalance[]> {
   const availableTokens: TokenCurrency[] = [];
 
   for (const erc20TokenId of supportedTokenIds) {
@@ -130,7 +135,11 @@ export async function getERC20BalancesForAccount(
   }
 
   const promises = availableTokens.map(async erc20token => {
-    const balance = await apiClient.getERC20Balance(evmAccountId, erc20token.contractAddress);
+    const balance = await apiClient.getERC20Balance({
+      configOrCurrencyId,
+      accountEvmAddress: evmAccountId,
+      contractEvmAddress: erc20token.contractAddress,
+    });
 
     return {
       balance,
@@ -143,12 +152,16 @@ export async function getERC20BalancesForAccount(
   return balances;
 }
 
-export async function getERC20BalancesForAccountV2(
-  address: string,
-): Promise<HederaERC20TokenBalance[]> {
+export async function getERC20BalancesForAccountV2({
+  configOrCurrencyId,
+  address,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  address: string;
+}): Promise<HederaERC20TokenBalance[]> {
   const balances: HederaERC20TokenBalance[] = [];
 
-  const rawBalances = await hgraphClient.getERC20Balances({ address });
+  const rawBalances = await hgraphClient.getERC20Balances({ configOrCurrencyId, address });
 
   for (const rawBalance of rawBalances) {
     const rawBalanceTokenId = toEntityId({ num: rawBalance.token_id });
@@ -177,23 +190,33 @@ export async function getERC20BalancesForAccountV2(
 }
 
 // TODO: remove once migration to new API is complete
-export const getERC20Operations = async (
-  latestERC20Transactions: HederaThirdwebTransaction[],
-): Promise<OperationERC20[]> => {
+export const getERC20Operations = async ({
+  config,
+  currencyId,
+  latestERC20Transactions,
+}: {
+  config?: HederaCoinConfig;
+  currencyId: string;
+  latestERC20Transactions: HederaThirdwebTransaction[];
+}): Promise<OperationERC20[]> => {
   const latestERC20Operations: OperationERC20[] = [];
 
   for (const thirdwebTransaction of latestERC20Transactions) {
     const tokenId = thirdwebTransaction.address;
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, "hedera");
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currencyId);
 
     if (!token) continue;
 
     const hash = thirdwebTransaction.transactionHash;
-    const contractCallResult = await apiClient.getContractCallResult(hash);
-    const mirrorTransaction = await apiClient.findTransactionByContractCall(
-      contractCallResult.timestamp,
-      contractCallResult.contract_id,
-    );
+    const contractCallResult = await apiClient.getContractCallResult({
+      configOrCurrencyId: config ?? currencyId,
+      transactionHash: hash,
+    });
+    const mirrorTransaction = await apiClient.findTransactionByContractCall({
+      configOrCurrencyId: config ?? currencyId,
+      timestamp: contractCallResult.timestamp,
+      contractId: contractCallResult.contract_id,
+    });
 
     if (!mirrorTransaction) continue;
 
@@ -229,7 +252,13 @@ export function parseThirdwebTransactionParams(
  * @param erc20Transfers - Raw ERC20 transfers from Hgraph API
  * @returns Array of enriched transfers with complete operation data, filtered to supported tokens only
  */
-export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[]) => {
+export const enrichERC20Transfers = async ({
+  configOrCurrencyId,
+  erc20Transfers,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  erc20Transfers: ERC20TokenTransfer[];
+}) => {
   const enrichedTransfers: EnrichedERC20Transfer[] = [];
 
   // with hgraph we can get two different transfers with the same transaction hash
@@ -251,8 +280,9 @@ export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[])
     const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(9);
 
     const [contractCallResult, mirrorTransaction] = await Promise.all([
-      apiClient.getContractCallResult(txHash),
+      apiClient.getContractCallResult({ configOrCurrencyId, transactionHash: txHash }),
       apiClient.findTransactionByContractCallV2({
+        configOrCurrencyId,
         payerAddress,
         timestamp: inaccurateConsensusTimestamp,
       }),
@@ -301,14 +331,20 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
       return true;
     }
 
-    const [parsingError, parsingResult] = await safeParseAccountId(address);
+    const [parsingError, parsingResult] = await safeParseAccountId({
+      configOrCurrencyId: token.parentCurrency.id,
+      address,
+    });
 
     if (parsingError) {
       throw parsingError;
     }
 
     const addressWithoutChecksum = parsingResult.accountId;
-    const mirrorAccount = await apiClient.getAccount(addressWithoutChecksum);
+    const mirrorAccount = await apiClient.getAccount({
+      configOrCurrencyId: token.parentCurrency.id,
+      address: addressWithoutChecksum,
+    });
 
     // auto association is enabled
     if (mirrorAccount.max_automatic_token_associations === -1) {
@@ -325,10 +361,14 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
   seconds(30),
 );
 
-export const safeParseAccountId = async (
-  address: string,
-): Promise<[Error, null] | [null, { accountId: string; checksum: string | null }]> => {
-  const currency = findCryptoCurrencyById("hedera");
+export const safeParseAccountId = async ({
+  configOrCurrencyId,
+  address,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  address: string;
+}): Promise<[Error, null] | [null, { accountId: string; checksum: string | null }]> => {
+  const currency = getCryptoCurrencyById("hedera");
   const currencyName = currency?.name ?? "Hedera";
 
   try {
@@ -336,7 +376,7 @@ export const safeParseAccountId = async (
     const checksum = getChecksum(address);
 
     if (checksum) {
-      const client = await rpcClient.getInstance();
+      const client = await rpcClient.getInstance(configOrCurrencyId);
       const expectedChecksum = accountId.toStringWithChecksum(client).split("-")[1];
 
       if (checksum !== expectedChecksum) {
@@ -362,9 +402,18 @@ export const safeParseAccountId = async (
  * @param accountId - Hedera account ID in the format `shard.realm.num`
  * @returns EVM address (`0x...`) or null if fetch fails
  */
-export const toEVMAddress = async (accountId: string): Promise<string | null> => {
+export const toEVMAddress = async ({
+  configOrCurrencyId,
+  accountId,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  accountId: string;
+}): Promise<string | null> => {
   try {
-    const account = await apiClient.getAccount(accountId);
+    const account = await apiClient.getAccount({
+      configOrCurrencyId,
+      address: accountId,
+    });
 
     return account.evm_address;
   } catch {
@@ -385,10 +434,12 @@ export const toEVMAddress = async (accountId: string): Promise<string | null> =>
  * @returns The net balance change as BigInt (sum of all transfers to/from the account)
  */
 export const calculateUncommittedBalanceChange = async ({
+  configOrCurrencyId,
   address,
   startTimestamp,
   endTimestamp,
 }: {
+  configOrCurrencyId: HederaCoinConfig | string;
   address: string;
   startTimestamp: string;
   endTimestamp: string;
@@ -398,6 +449,7 @@ export const calculateUncommittedBalanceChange = async ({
   }
 
   const uncommittedTransactions = await apiClient.getTransactionsByTimestampRange({
+    configOrCurrencyId,
     address,
     startTimestamp: `gt:${startTimestamp}`,
     endTimestamp: `lte:${endTimestamp}`,
@@ -438,13 +490,26 @@ export const calculateUncommittedBalanceChange = async ({
  *
  * Batching would complicate code for minimal gain given low staking op frequency.
  */
-export const analyzeStakingOperation = async (
-  address: string,
-  mirrorTx: HederaMirrorTransaction,
-): Promise<StakingAnalysis | null> => {
+export const analyzeStakingOperation = async ({
+  configOrCurrencyId,
+  address,
+  mirrorTx,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  address: string;
+  mirrorTx: HederaMirrorTransaction;
+}): Promise<StakingAnalysis | null> => {
   const [accountBefore, accountAfter] = await Promise.all([
-    apiClient.getAccount(address, `lt:${mirrorTx.consensus_timestamp}`),
-    apiClient.getAccount(address, `eq:${mirrorTx.consensus_timestamp}`),
+    apiClient.getAccount({
+      configOrCurrencyId,
+      address,
+      timestamp: `lt:${mirrorTx.consensus_timestamp}`,
+    }),
+    apiClient.getAccount({
+      configOrCurrencyId,
+      address,
+      timestamp: `eq:${mirrorTx.consensus_timestamp}`,
+    }),
   ]);
 
   let operationType: OperationType | null = null;
@@ -474,6 +539,7 @@ export const analyzeStakingOperation = async (
 
   // calculate uncommitted balance changes between the last snapshot and the staking tx
   const uncommittedBalanceChange = await calculateUncommittedBalanceChange({
+    configOrCurrencyId,
     address,
     startTimestamp: accountAfter.balance.timestamp,
     endTimestamp: mirrorTx.consensus_timestamp,

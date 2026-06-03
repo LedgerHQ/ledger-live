@@ -92,6 +92,10 @@ export type APINetworkInfo = {
   protocolParams: ProtocolParams;
 };
 
+export type APILatestBlock = {
+  blockHeight: number;
+};
+
 export type APIDelegation = {
   deposit: string;
   stakeHex: string;

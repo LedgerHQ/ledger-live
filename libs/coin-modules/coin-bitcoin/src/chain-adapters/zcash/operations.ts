@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { OperationType } from "@ledgerhq/types-live";
-import type { ShieldedTransaction } from "./types";
+import type { ShieldedTransaction, SpendableNote } from "./types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { BtcOperation } from "../../types";
 
@@ -62,6 +62,57 @@ export function computeOutgoingFees(transactions: ShieldedTransaction[]): BigNum
     }
   }
   return fees;
+}
+
+/**
+ * Compute Orchard balance by summing unspent notes.
+ * Notes without `isSpent` are treated as unspent (conservative).
+ * Sapling balance is not computed (Ledger is Orchard-only).
+ */
+export function computeBalanceFromNotes(
+  transactions: ShieldedTransaction[],
+): BigNumber {
+  return transactions
+    .flatMap(tx => tx.decryptedData?.orchard_outputs ?? [])
+    .filter(
+      n => n.isSpent !== true && (n.transfer_type === "incoming" || n.transfer_type === "internal"),
+    )
+    .reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
+}
+
+/**
+ * Collect all unspent Orchard notes with full spending data.
+ * Returns only notes that have all spending fields (rseed, cmx, position, etc.).
+ */
+export function collectSpendableNotes(transactions: ShieldedTransaction[]): SpendableNote[] {
+  const notes: SpendableNote[] = [];
+  for (const tx of transactions) {
+    for (const [i, n] of (tx.decryptedData?.orchard_outputs ?? []).entries()) {
+      if (
+        n.isSpent !== true &&
+        (n.transfer_type === "incoming" || n.transfer_type === "internal") &&
+        n.nullifier !== undefined &&
+        n.rho !== undefined &&
+        n.rseed !== undefined &&
+        n.cmx !== undefined &&
+        n.position !== undefined &&
+        n.recipient !== undefined
+      ) {
+        notes.push({
+          txid: tx.id,
+          outputIndex: i,
+          nullifier: n.nullifier,
+          amount: n.amount,
+          rho: n.rho,
+          rseed: n.rseed,
+          cmx: n.cmx,
+          position: n.position,
+          recipient: n.recipient,
+        });
+      }
+    }
+  }
+  return notes;
 }
 
 /**

@@ -58,7 +58,15 @@ const MockNavigator = () => (
 describe("OperationsList", () => {
   it("tracks the OperationsList screen on focus", () => {
     render(<MockNavigator />);
-    expect(screen).toHaveBeenCalledWith(undefined, "OperationsList", {}, true, true, false, false);
+    expect(screen).toHaveBeenCalledWith(
+      undefined,
+      "OperationsList",
+      { has_pending_operations: false },
+      true,
+      true,
+      false,
+      false,
+    );
   });
 
   describe("when the list is empty", () => {

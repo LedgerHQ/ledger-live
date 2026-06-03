@@ -1,6 +1,10 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useFeature } from "@features/platform-feature-flags";
+import {
+  buildUnitResolver,
+  byTokenAndDate,
+} from "@ledgerhq/live-common/families/canton/proposalSorting";
 import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
 import { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -73,7 +77,11 @@ export function usePendingTransferProposalsViewModel(
       const { incoming, outgoing } = processTransferProposals(
         pendingTransferProposals,
         accountXpub,
+        buildUnitResolver(parentAccount),
       );
+
+      incoming.sort(byTokenAndDate);
+      outgoing.sort(byTokenAndDate);
 
       return {
         groupedIncoming: groupByDay(incoming),
@@ -82,7 +90,7 @@ export function usePendingTransferProposalsViewModel(
         outgoingCount: outgoing.length,
         allProposals: [...incoming, ...outgoing],
       };
-    }, [account, accountXpub]);
+    }, [account, accountXpub, parentAccount]);
 
   const onOpenModal = useCallback((contractId: string, action: TransferProposalAction) => {
     setModal({ isOpen: true, action, contractId });

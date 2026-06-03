@@ -683,6 +683,235 @@ describe("EVM Family", () => {
       });
     });
 
+    describe("feeHistoryBlockCount", () => {
+      const stubFeeHistory = () =>
+        jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
+          if (method === "eth_feeHistory") {
+            return {
+              reward: [["0x0", "0x0"]],
+              baseFeePerGas: ["0xd", "0xd"],
+              gasUsedRatio: [0.1],
+            };
+          }
+        });
+
+      it("defaults to 5 blocks (0x5) when not configured", async () => {
+        const sendSpy = stubFeeHistory();
+
+        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+        expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [50]]);
+      });
+
+      it("defaults to the 50th percentile when feeHistoryRewardPercentile is not configured", async () => {
+        const sendSpy = stubFeeHistory();
+
+        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+        expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [50]]);
+      });
+
+      it.each([
+        [25, 25],
+        [50, 50],
+        [75, 75],
+        [90, 90],
+        [99, 99],
+      ])(
+        "forwards feeHistoryRewardPercentile %i to eth_feeHistory",
+        async (configured, expected) => {
+          mockGetConfig.mockImplementation((): any => ({
+            info: {
+              node: { type: "external", uri: "my-rpc.com" },
+              feeHistoryRewardPercentile: configured,
+            },
+          }));
+          const sendSpy = stubFeeHistory();
+
+          await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+          expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [expected]]);
+        },
+      );
+
+      it("combines feeHistoryBlockCount and feeHistoryRewardPercentile when both configured", async () => {
+        mockGetConfig.mockImplementation((): any => ({
+          info: {
+            node: { type: "external", uri: "my-rpc.com" },
+            feeHistoryBlockCount: 20,
+            feeHistoryRewardPercentile: 75,
+          },
+        }));
+        const sendSpy = stubFeeHistory();
+
+        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+        expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x14", "latest", [75]]);
+      });
+
+      it.each([
+        [1, "0x1"],
+        [20, "0x14"],
+        [100, "0x64"],
+        [256, "0x100"],
+        [4095, "0xfff"],
+      ])(
+        "forwards block count %i to eth_feeHistory as %s (hex-encoded)",
+        async (blockCount, expectedHex) => {
+          mockGetConfig.mockImplementation((): any => ({
+            info: {
+              node: { type: "external", uri: "my-rpc.com" },
+              feeHistoryBlockCount: blockCount,
+            },
+          }));
+          const sendSpy = stubFeeHistory();
+
+          await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+          expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", [expectedHex, "latest", [50]]);
+        },
+      );
+
+      it("is not used on the legacy path (eth_feeHistory is never called)", async () => {
+        mockGetConfig.mockImplementation((): any => ({
+          info: {
+            node: { type: "external", uri: "my-rpc.com" },
+            feeHistoryBlockCount: 50,
+          },
+        }));
+        const sendSpy = jest
+          .spyOn(JsonRpcProvider.prototype as any, "send")
+          .mockImplementation(async method => {
+            if (method === "eth_getBlockByNumber") {
+              return {
+                parentHash: "0x0",
+                number: 1,
+                timestamp: 123,
+                difficulty: 0n,
+                gasLimit: 1n,
+                gasUsed: 2n,
+                extraData: "0x",
+              };
+            }
+          });
+
+        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, legacyTx);
+
+        expect(sendSpy).not.toHaveBeenCalledWith("eth_feeHistory", expect.anything());
+      });
+
+      it("combines block count and minGasPrice floor correctly", async () => {
+        mockGetConfig.mockImplementation((): any => ({
+          info: {
+            node: { type: "external", uri: "my-rpc.com" },
+            feeHistoryBlockCount: 20,
+            minGasPrice: "20000000000", // 20 Gwei
+          },
+        }));
+        const sendSpy = jest
+          .spyOn(JsonRpcProvider.prototype, "send")
+          .mockImplementation(async method => {
+            if (method === "eth_feeHistory") {
+              return {
+                // priority avg = 1 Gwei (well below the 20 Gwei floor)
+                reward: [["0x3b9aca00", "0x3b9aca00"]],
+                baseFeePerGas: ["0xd", "0xd"],
+                gasUsedRatio: [0.1],
+              };
+            }
+          });
+
+        const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+        expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x14", "latest", [50]]);
+        expect(result.maxPriorityFeePerGas).toEqual(new BigNumber("20000000000"));
+      });
+    });
+
+    it("applies minGasPrice floor to maxPriorityFeePerGas (EIP-1559) when feeHistory reports a lower value", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          node: { type: "external", uri: "my-rpc.com" },
+          minGasPrice: "20000000000", // 20 Gwei floor
+        },
+      }));
+
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_feeHistory") {
+          return {
+            // average ~500 Mwei — well below the 20 Gwei floor
+            reward: [["0x1dcd6500", "0x1dcd6500"]],
+            baseFeePerGas: ["0xd", "0xd"],
+            gasUsedRatio: [0.1],
+          };
+        }
+      });
+
+      const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+      expect(result.maxPriorityFeePerGas).toEqual(new BigNumber("20000000000"));
+      // maxFeePerGas = nextBaseFee * 2 + floored priority = 13*2 + 20e9
+      expect(result.maxFeePerGas).toEqual(new BigNumber("20000000026"));
+    });
+
+    it("does not lower the priority fee when feeHistory already reports above the configured floor", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          node: { type: "external", uri: "my-rpc.com" },
+          minGasPrice: "1000000000", // 1 Gwei floor
+        },
+      }));
+
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_feeHistory") {
+          return {
+            // average is exactly 5 Gwei (well above 1 Gwei floor)
+            reward: [["0x12a05f200", "0x12a05f200"]],
+            baseFeePerGas: ["0xd", "0xd"],
+            gasUsedRatio: [0.1],
+          };
+        }
+      });
+
+      const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+
+      expect(result.maxPriorityFeePerGas).toEqual(new BigNumber("5000000000"));
+    });
+
+    it("applies minGasPrice floor from coin config for legacy txs when node reports lower", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          node: { type: "external", uri: "my-rpc.com" },
+          minGasPrice: "20000000000", // 20 Gwei
+        },
+      }));
+
+      jest.spyOn(JsonRpcProvider.prototype as any, "send").mockImplementationOnce(async method => {
+        if (method === "eth_getBlockByNumber") {
+          return {
+            parentHash: "0x0",
+            number: 1,
+            timestamp: 123,
+            difficulty: 0n,
+            gasLimit: 1n,
+            gasUsed: 2n,
+            extraData: "0x",
+          };
+        }
+      });
+      // node reports 1 Gwei via the getFeeData mock at the top of the suite (666 wei), but
+      // we override here to assert the floor wins
+      jest.spyOn(JsonRpcProvider.prototype, "getFeeData").mockResolvedValueOnce({
+        gasPrice: BigInt("1000000000"), // 1 Gwei
+        maxFeePerGas: 0n,
+        maxPriorityFeePerGas: 0n,
+      } as ethers.FeeData);
+
+      const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, legacyTx);
+
+      expect(result.gasPrice).toEqual(new BigNumber("20000000000"));
+    });
+
     it("should return the expected payload for an EIP1559 tx when network returns 0 priority fee for 0G", async () => {
       jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
         if (method === "eth_feeHistory") {

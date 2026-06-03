@@ -3,6 +3,7 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetHeader } from "./components/AssetHeader";
 import { ActionBar } from "./components/ActionBar";
+import { ChartSection } from "./components/ChartSection";
 import { HiddenBanner } from "./components/HiddenBanner";
 import { MarketPriceSection } from "./components/MarketPriceSection";
 import { AddressListSection } from "./components/AddressList";
@@ -25,6 +26,8 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
     ledgerId,
     ledgerCurrency,
     isDistributionLoading,
+    selectedRange,
+    onRangeChange,
   } = viewModel;
 
   const { isLoading: isMarketLoading, marketCurrencyData } = marketData;
@@ -64,6 +67,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         ledgerId={ledgerId}
         marketData={marketData}
         isDistributionLoading={isDistributionLoading}
+        selectedRange={selectedRange}
       />
 
       <ActionBar
@@ -75,6 +79,16 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         isMarketLoading={isMarketLoading}
       />
 
+      <ChartSection
+        marketData={marketData}
+        ledgerId={ledgerId}
+        currencyId={ledgerCurrency?.id}
+        isDistributionLoading={isDistributionLoading}
+        selectedRange={selectedRange}
+        onRangeChange={onRangeChange}
+        distributionItem={distributionItem}
+      />
+
       <div className="flex flex-col gap-32">
         {showPortfolioSections && (
           <TotalBalance distributionItem={distributionItem} isLoading={portfolioSectionLoading} />
@@ -82,6 +96,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
 
         <MetricsRowSection
           distributionItem={distributionItem}
+          ledgerCurrency={ledgerCurrency}
           isDistributionLoading={isDistributionLoading}
           isMarketLoading={isMarketLoading}
         />
@@ -97,6 +112,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
           <MarketDataSection
             marketData={marketData}
             isDistributionLoading={isDistributionLoading}
+            ledgerCurrencyId={ledgerCurrency?.id ?? ledgerId}
           />
         )}
 

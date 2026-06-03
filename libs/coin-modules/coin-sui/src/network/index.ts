@@ -1,16 +1,4 @@
-import {
-  getAccountBalances,
-  getAllBalancesCached,
-  getOperations,
-  getBlock,
-  getBlockInfo,
-  getDelegatedStakes,
-  paymentInfo,
-  createTransaction,
-  executeTransactionBlock,
-  getStakes,
-  getValidators,
-} from "./sdk";
+import * as sdk from "./sdk";
 
 export {
   getAccountBalances,
@@ -22,20 +10,18 @@ export {
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
-  getStakes,
   getValidators,
 } from "./sdk";
 
 export default {
-  getAccountBalances,
-  getAllBalancesCached,
-  getOperations,
-  getBlock,
-  getBlockInfo,
-  getDelegatedStakes,
-  paymentInfo,
-  createTransaction,
-  executeTransactionBlock,
-  getStakes,
-  getValidators,
+  getAccountBalances: sdk.getAccountBalances,
+  getAllBalancesCached: sdk.getAllBalancesCached,
+  getOperations: sdk.getOperations,
+  getBlock: sdk.getBlock,
+  getBlockInfo: sdk.getBlockInfo,
+  getDelegatedStakes: sdk.getDelegatedStakes,
+  paymentInfo: sdk.paymentInfo,
+  createTransaction: sdk.createTransaction,
+  executeTransactionBlock: sdk.executeTransactionBlock,
+  getValidators: sdk.getValidators,
 };

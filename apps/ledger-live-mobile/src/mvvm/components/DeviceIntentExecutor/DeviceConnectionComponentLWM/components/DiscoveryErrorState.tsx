@@ -6,8 +6,17 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { InfoState } from "LLM/components/InfoState";
+import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useSourceFlow } from "../../utils/SourceFlowContext";
+import {
+  CONNECT_DEVICE_BUTTON,
+  getTrackingSubError,
+  getTrackingTransport,
+  PAGE_CONNECT_DEVICE,
+  trackConnectDeviceButtonClicked,
+} from "../../utils/trackDeviceIntent";
 
 type DiscoveryErrorStateProps = {
   state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.DiscoveryError }>;
@@ -39,19 +48,43 @@ export function DiscoveryErrorState({
   platform,
 }: Readonly<DiscoveryErrorStateProps>): React.ReactNode {
   const { t } = useTranslation();
+  const sourceFlow = useSourceFlow();
+  const trackingTransport = getTrackingTransport(state.error.transportId);
+  const trackingScreen = (
+    <TrackScreen
+      category={PAGE_CONNECT_DEVICE.DiscoveryError}
+      sourceFlow={sourceFlow}
+      {...(trackingTransport ? { transport: trackingTransport } : {})}
+      subError={getTrackingSubError(state.error.type)}
+      deviceUxV2
+    />
+  );
 
-  const retryCta = (labelKey: string): InfoStateCta | undefined =>
-    state.retry
-      ? {
-          label: t(labelKey),
-          onPress: state.retry,
-        }
-      : undefined;
+  const retryCta = (labelKey: string): InfoStateCta | undefined => {
+    if (!state.retry) return undefined;
+    const label = t(labelKey);
+    return {
+      label,
+      onPress: () => {
+        trackConnectDeviceButtonClicked({ sourceFlow, button: CONNECT_DEVICE_BUTTON.Retry });
+        state.retry?.();
+      },
+    };
+  };
 
-  const ignoreCta = (labelKey: string): InfoStateCta => ({
-    label: t(labelKey),
-    onPress: state.ignore,
-  });
+  const ignoreCta = (labelKey: string): InfoStateCta => {
+    const label = t(labelKey);
+    return {
+      label,
+      onPress: () => {
+        trackConnectDeviceButtonClicked({
+          sourceFlow,
+          button: CONNECT_DEVICE_BUTTON.ContinueWithUsb,
+        });
+        state.ignore();
+      },
+    };
+  };
 
   const discoveryErrorViewStates: DiscoveryErrorViewStates = {
     [DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable]: {
@@ -157,6 +190,7 @@ export function DiscoveryErrorState({
 
     return (
       <Box lx={{ width: "full", alignItems: "center", paddingTop: "s16" }}>
+        {trackingScreen}
         <Spinner size={32} color="base" />
         <Text
           typography="heading4SemiBold"
@@ -171,13 +205,16 @@ export function DiscoveryErrorState({
   const errorState = discoveryErrorViewStates[state.error.type];
 
   return (
-    <InfoState
-      preset={errorState.preset}
-      size="hug"
-      title={t(errorState.title)}
-      description={errorState.description ? t(errorState.description) : undefined}
-      primaryCta={errorState.primaryCta}
-      secondaryCta={errorState.secondaryCta}
-    />
+    <>
+      {trackingScreen}
+      <InfoState
+        preset={errorState.preset}
+        size="hug"
+        title={t(errorState.title)}
+        description={errorState.description ? t(errorState.description) : undefined}
+        primaryCta={errorState.primaryCta}
+        secondaryCta={errorState.secondaryCta}
+      />
+    </>
   );
 }

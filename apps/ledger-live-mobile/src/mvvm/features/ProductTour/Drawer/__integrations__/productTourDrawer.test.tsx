@@ -4,7 +4,6 @@ import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { track } from "~/analytics";
 import { ProductTourControlsProvider } from "../../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../index";
-import { __resetProductTourAutoOpenForTests } from "../hooks/useProductTourDrawerViewModel";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_SLIDES } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
@@ -49,10 +48,6 @@ const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
 };
 
 describe("ProductTourDrawer integration", () => {
-  beforeEach(() => {
-    __resetProductTourAutoOpenForTests();
-  });
-
   function renderTestComponent(
     {
       productTourCompleted,
@@ -105,7 +100,7 @@ describe("ProductTourDrawer integration", () => {
     return rendered;
   }
 
-  it("should auto-open and display the first slide when the tour is not completed", async () => {
+  it("should open and display the first slide when openProductTour is triggered and the tour is not completed", async () => {
     await openTourOnFirstSlide({ productTourCompleted: false, featureFlagEnabled: true });
 
     await waitFor(() => expect(screen.getByText(FIRST_SLIDE_TITLE)).toBeVisible());

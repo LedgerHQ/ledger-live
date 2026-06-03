@@ -23,6 +23,9 @@ import type { AssetCoinOptionsViewModel } from "./components/CoinOptions/useAsse
 type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
   distributionItem: DistributionItem | undefined;
+  marketApiId?: string;
+  knownLedgerIds?: readonly string[];
+  knownMarketId?: string;
   source?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
@@ -31,11 +34,15 @@ type Props = Readonly<{
   showFallbackBanner: boolean;
   coinOptions: AssetCoinOptionsViewModel;
   isLoading: boolean;
+  ledgerIds: string[];
 }>;
 
 export function AssetDetailView({
   currency,
   distributionItem,
+  marketApiId,
+  knownLedgerIds,
+  knownMarketId,
   source,
   isRefreshing,
   onRefresh,
@@ -44,6 +51,7 @@ export function AssetDetailView({
   showFallbackBanner,
   coinOptions,
   isLoading,
+  ledgerIds,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
   const scrollPaddingBottom = useMemo(
@@ -61,7 +69,15 @@ export function AssetDetailView({
       >
         <Box lx={contentStyle}>
           <HiddenAssetBanner show={coinOptions.isHidden} onShowAsset={coinOptions.onShowAsset} />
-          <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
+          <BalanceGraph
+            currency={currency}
+            distributionItem={distributionItem}
+            marketApiId={marketApiId}
+            knownLedgerIds={knownLedgerIds}
+            knownMarketId={knownMarketId}
+            hideReceive={hideReceiveInBalanceGraph}
+            ledgerIds={ledgerIds}
+          />
           <BalanceDetails
             currency={currency}
             distributionItem={distributionItem}
@@ -72,7 +88,12 @@ export function AssetDetailView({
             distributionItem={distributionItem}
             isLoading={isLoading}
           />
-          <MarketData currency={currency} />
+          <MarketData
+            currency={currency}
+            marketApiId={marketApiId}
+            knownLedgerIds={knownLedgerIds}
+            knownMarketId={knownMarketId}
+          />
           <Transactions
             currency={currency}
             distributionItem={distributionItem}
@@ -81,8 +102,8 @@ export function AssetDetailView({
           <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>
-      <Footer currency={currency} />
-      <TransferDrawer currency={currency} />
+      <Footer currency={currency} ledgerIds={ledgerIds} />
+      <TransferDrawer currency={currency} ledgerIds={ledgerIds} />
       <AssetCoinOptionsSheetView
         isOpen={coinOptions.isCoinOptionsSheetOpen}
         onClose={coinOptions.closeCoinOptions}
@@ -101,5 +122,5 @@ const screenStyle: LumenViewStyle = {
 
 const contentStyle: LumenViewStyle = {
   padding: "s16",
-  gap: "s32",
+  gap: "s24",
 };

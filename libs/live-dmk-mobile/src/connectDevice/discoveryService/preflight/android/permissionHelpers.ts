@@ -1,4 +1,4 @@
-import { PermissionsAndroid, type Permission } from "react-native";
+import { PermissionsAndroid, type Permission, type PermissionStatus } from "react-native";
 import type { DiscoveryError } from "../../../types";
 import {
   mapDiscoveryErrorToPreflightResult,
@@ -7,6 +7,11 @@ import {
 } from "../preflightResult";
 
 const { RESULTS } = PermissionsAndroid;
+
+export const DEFAULT_PERMISSION_REQUEST_TIMEOUT_MS = 10_000;
+export const shouldUseManualActionForPermissionDenial = true;
+
+type PermissionRequestStatuses = Partial<Record<Permission, PermissionStatus>>;
 
 export type PermissionRequestResult = {
   granted: boolean;
@@ -38,7 +43,10 @@ export const arePermissionsGranted = async (permissions: Permission[]): Promise<
 export const requestPermissions = async (
   permissions: Permission[],
 ): Promise<PermissionRequestResult> => {
-  const requestResult = await PermissionsAndroid.requestMultiple(permissions);
+  const requestResult = await withPermissionRequestTimeout<PermissionRequestStatuses>(
+    PermissionsAndroid.requestMultiple(permissions),
+    getPermissionRequestTimeoutStatuses(permissions),
+  );
   const deniedPermissions = permissions.filter(
     permission => requestResult[permission] !== RESULTS.GRANTED,
   );
@@ -55,7 +63,10 @@ export const requestPermissions = async (
 export const requestPermission = async (
   permission: Permission,
 ): Promise<PermissionRequestResult> => {
-  const status = await PermissionsAndroid.request(permission);
+  const status = await withPermissionRequestTimeout(
+    PermissionsAndroid.request(permission),
+    RESULTS.NEVER_ASK_AGAIN,
+  );
 
   return {
     granted: status === RESULTS.GRANTED,
@@ -89,7 +100,7 @@ export const runPermissionPreflight = async (
   }
 
   return mapDiscoveryErrorToPreflightResult(
-    requestResult.neverAskAgain
+    shouldUseManualActionForPermissionDenial || requestResult.neverAskAgain
       ? config.buildManualSettingsError(requestResult.deniedPermissions, config.retry)
       : config.buildPromptableError(requestResult.deniedPermissions, config.retry),
   );
@@ -104,4 +115,39 @@ const getMissingPermissions = async (permissions: Permission[]): Promise<Permiss
   );
 
   return results.filter(({ granted }) => !granted).map(({ permission }) => permission);
+};
+
+/**
+ * TODO(LIVE-23757): This workaround for never resolving permission request
+ * can be removed once React Native is upgraded to 0.81.6
+ */
+const withPermissionRequestTimeout = async <T>(
+  request: Promise<T>,
+  timeoutValue: T,
+  timeoutMs = DEFAULT_PERMISSION_REQUEST_TIMEOUT_MS,
+): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<T>(resolve => {
+    timeoutId = setTimeout(() => resolve(timeoutValue), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([request, timeout]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+};
+
+const getPermissionRequestTimeoutStatuses = (
+  permissions: Permission[],
+): PermissionRequestStatuses => {
+  const statuses: PermissionRequestStatuses = {};
+
+  permissions.forEach(permission => {
+    statuses[permission] = RESULTS.NEVER_ASK_AGAIN;
+  });
+
+  return statuses;
 };

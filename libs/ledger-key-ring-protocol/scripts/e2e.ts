@@ -1,9 +1,15 @@
 /* oxlint-disable eslint/no-console */
 import fsPromises from "fs/promises";
+import { createRequire } from "module";
 import { listen } from "@ledgerhq/logs";
 import { recordTestTrustchainSdk } from "../tests/test-helpers/recordTrustchainSdkTests";
 import path from "path";
 import expect from "expect";
+
+// Use CJS require so ts-node's CJS hook handles .ts scenario files.
+// Dynamic `import()` would go through Node's native ESM resolver, which
+// does not understand TypeScript paths (broken on Node 22+).
+const requireScenario = createRequire(__filename);
 
 // we force inject expect to allow us to have expect() code in the test-scenarios
 (global as any).expect = expect;
@@ -24,7 +30,7 @@ async function main() {
     if (file.endsWith(".ts") && !file.startsWith("_")) {
       const slug = file.slice(0, -3);
       const e2eFile = path.join(scenarioFolder, file);
-      const mod = await import(e2eFile);
+      const mod = requireScenario(e2eFile);
       const scenario = mod.scenario;
       const snapshotFile = path.join(mockFolder, slug + ".json");
       const snapshotFileExists = await exists(snapshotFile);

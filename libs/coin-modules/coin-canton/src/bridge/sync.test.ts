@@ -397,6 +397,70 @@ describe("makeGetAccountShape", () => {
     });
   });
 
+  it("should expose token transfer proposals on parent account so the offer UI is reachable from the main view", async () => {
+    // GIVEN
+    // a pending token offer addressed to the user
+    const tokenAdminId = "token-admin-party::1220abc";
+    const tokenInstrumentId = "cbtc-instrument-id";
+    const cbtcToken = {
+      type: "TokenCurrency" as const,
+      id: "canton_network/cip56/cbtc",
+      contractAddress: tokenAdminId,
+      parentCurrency: sampleCurrency,
+      tokenType: "cip56",
+      name: "CBTC",
+      ticker: "CBTC",
+      delisted: false,
+      disableCountervalue: false,
+      units: [{ name: "CBTC", code: "CBTC", magnitude: 8 }],
+    };
+
+    mockedGetCalTokensCached.mockResolvedValue(
+      new Map([["canton_network/cip56/cbtc", tokenInstrumentId]]),
+    );
+    mockFindTokenById.mockImplementation(async (id: string) =>
+      id === "canton_network/cip56/cbtc" ? cbtcToken : undefined,
+    );
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(
+      new Set([`${tokenInstrumentId}____${tokenAdminId}`]),
+    );
+
+    // No native balance, no token balance — the sub-account exists only because of the pending offer
+    mockedGetBalance.mockResolvedValue([]);
+    mockedGetOperations.mockResolvedValue({ operations: [] });
+    mockedGetPendingTransferProposals.mockResolvedValue([
+      {
+        contract_id: "cbtc-offer-1",
+        sender: "faucet-party",
+        receiver: "test-party-id",
+        amount: "1",
+        instrument_id: tokenInstrumentId,
+        instrument_admin: tokenAdminId,
+        memo: "Faucet drop",
+        expires_at_micros: (Date.now() + 100000) * 1000,
+        update_id: "update-cbtc-1",
+      },
+    ]);
+
+    // WHEN
+    // we sync the account
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
+
+    // THEN
+    // the proposal lands on both the parent account and the token sub-account
+    expect(shape.cantonResources?.pendingTransferProposals).toEqual([
+      expect.objectContaining({ contract_id: "cbtc-offer-1", instrument_id: tokenInstrumentId }),
+    ]);
+    const subAccount = (shape.subAccounts as TokenAccount[] | undefined)?.[0] as
+      | (TokenAccount & { cantonResources?: { pendingTransferProposals: unknown[] } })
+      | undefined;
+    expect(subAccount?.token.ticker).toBe("CBTC");
+    expect(subAccount?.cantonResources?.pendingTransferProposals).toEqual([
+      expect.objectContaining({ contract_id: "cbtc-offer-1" }),
+    ]);
+  });
+
   it("should sync without device when account has xpub but no publicKey", async () => {
     mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
     mockedGetOperations.mockResolvedValue({

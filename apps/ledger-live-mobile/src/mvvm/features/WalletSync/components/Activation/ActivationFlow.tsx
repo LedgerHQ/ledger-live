@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
 import Activation from ".";
 import ActivationModal from "./ActivationModal";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { TrackScreen } from "~/analytics";
 import {
   RootNavigationComposite,

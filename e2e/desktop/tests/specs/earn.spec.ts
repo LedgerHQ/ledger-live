@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
@@ -29,12 +29,12 @@ function setupEnv(disableBroadcast?: boolean) {
 const ethEarn = [
   {
     account: Account.ETH_1,
-    provider: Provider.LIDO,
+    provider: EarnProvider.LIDO,
     xrayTicket: "B2CQA-3676, B2CQA-1713",
   },
   {
     account: Account.ETH_1,
-    provider: Provider.KILN,
+    provider: EarnProvider.KILN,
     xrayTicket: "B2CQA-3678",
   },
 ];

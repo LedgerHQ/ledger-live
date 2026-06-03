@@ -1,5 +1,5 @@
 import React from "react";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import { NotificationsPromptDrawer } from "LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawer";
 import { NotificationsPromptBootstrap } from "LLM/features/NotificationsPrompt/new/NotificationsPromptBootstrap";
 

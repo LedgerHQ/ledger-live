@@ -38,12 +38,16 @@ import {
   AccountTronAPI,
   Block,
   BlockWithTransactionsAPI,
+  ChainParameters,
+  ChainParametersAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
   TransactionInfoByBlockNumAPI,
   TransactionResponseTronAPI,
   TransactionTronAPI,
   Trc20API,
+  TriggerConstantContractParams,
+  TriggerConstantContractResponse,
 } from "./types";
 import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 
@@ -209,6 +213,53 @@ export async function getDelegatedResource(
 }
 
 export const DEFAULT_TRC20_FEES_LIMIT = 50000000;
+
+export async function triggerConstantContract({
+  ownerAddress,
+  contractAddress,
+  functionSelector,
+  parameter,
+}: TriggerConstantContractParams): Promise<TriggerConstantContractResponse> {
+  return await post<unknown, TriggerConstantContractResponse>(`/wallet/triggerconstantcontract`, {
+    owner_address: ownerAddress,
+    contract_address: contractAddress,
+    function_selector: functionSelector,
+    parameter,
+  });
+}
+
+const CHAIN_PARAMETER_KEYS = {
+  energyFee: "getEnergyFee",
+  transactionFee: "getTransactionFee",
+  createAccountFee: "getCreateAccountFee",
+  createNewAccountFeeInSystemContract: "getCreateNewAccountFeeInSystemContract",
+} as const;
+
+const FALLBACK_CHAIN_PARAMETERS: ChainParameters = {
+  energyFee: 100,
+  transactionFee: 1000,
+  createAccountFee: 100_000,
+  createNewAccountFeeInSystemContract: 1_000_000,
+};
+
+const fetchChainParameters = async (): Promise<ChainParameters> => {
+  const data = await fetch<ChainParametersAPI>(`/wallet/getchainparameters`);
+  const byKey = new Map(data.chainParameter.map(entry => [entry.key, entry.value]));
+  const resolved = {} as ChainParameters;
+  let key: keyof ChainParameters;
+  for (key in CHAIN_PARAMETER_KEYS) {
+    const value = byKey.get(CHAIN_PARAMETER_KEYS[key]);
+    if (typeof value === "number") {
+      resolved[key] = value;
+    } else {
+      log("tron/chainParameters", `missing ${CHAIN_PARAMETER_KEYS[key]}, using fallback`);
+      resolved[key] = FALLBACK_CHAIN_PARAMETERS[key];
+    }
+  }
+  return resolved;
+};
+
+export const getChainParameters = makeLRUCache(fetchChainParameters, getBaseApiUrl, hours(1, 8));
 
 export async function craftTrc20Transaction(
   tokenAddress: string,

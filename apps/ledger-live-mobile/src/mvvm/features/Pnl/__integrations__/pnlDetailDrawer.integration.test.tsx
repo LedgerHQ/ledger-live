@@ -1,7 +1,19 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
+import { TrackScreen } from "~/analytics";
 import { PnlDetailDrawer } from "../components/PnlDetailDrawer";
 import { PnlDetailItem } from "../components/PnlDetailDrawer/types";
+import { PNL_DETAIL_PAGE } from "../const";
+
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(() => null),
+  };
+});
+
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 const TITLE = "Profit & Loss";
 const DESCRIPTION = "Lifetime metrics for your portfolio.";
@@ -56,19 +68,53 @@ describe("PnlDetailDrawer integration", () => {
   });
 
   it("renders rows without a definition", () => {
-    const ITEMS_WITHOUT_DEFINITION: PnlDetailItem[] = [
-      { title: "Bare row", value: "$50.00 USD" },
-    ];
+    const ITEMS_WITHOUT_DEFINITION: PnlDetailItem[] = [{ title: "Bare row", value: "$50.00 USD" }];
     render(
-      <PnlDetailDrawer
-        isOpen
-        onClose={jest.fn()}
-        title={TITLE}
-        items={ITEMS_WITHOUT_DEFINITION}
-      />,
+      <PnlDetailDrawer isOpen onClose={jest.fn()} title={TITLE} items={ITEMS_WITHOUT_DEFINITION} />,
     );
 
     expect(screen.getByText("Bare row")).toBeVisible();
     expect(screen.getByText("$50.00 USD")).toBeVisible();
+  });
+
+  describe("TrackScreen", () => {
+    beforeEach(() => mockedTrackScreen.mockClear());
+
+    it("renders TrackScreen with pageName and source when open", () => {
+      render(
+        <PnlDetailDrawer
+          isOpen
+          onClose={jest.fn()}
+          title={TITLE}
+          pageName={PNL_DETAIL_PAGE}
+          source="Analytics"
+        />,
+      );
+
+      expect(mockedTrackScreen).toHaveBeenCalledWith(
+        expect.objectContaining({ name: PNL_DETAIL_PAGE, source: "Analytics" }),
+        undefined,
+      );
+    });
+
+    it("does not render TrackScreen when closed", () => {
+      render(
+        <PnlDetailDrawer
+          isOpen={false}
+          onClose={jest.fn()}
+          title={TITLE}
+          pageName={PNL_DETAIL_PAGE}
+          source="Analytics"
+        />,
+      );
+
+      expect(mockedTrackScreen).not.toHaveBeenCalled();
+    });
+
+    it("does not render TrackScreen when pageName is not provided", () => {
+      render(<PnlDetailDrawer isOpen onClose={jest.fn()} title={TITLE} />);
+
+      expect(mockedTrackScreen).not.toHaveBeenCalled();
+    });
   });
 });

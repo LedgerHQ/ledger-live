@@ -93,6 +93,8 @@ setSupportedCurrencies([
   "sei_evm",
   "berachain",
   "hyperevm",
+  "arc",
+  "arc_testnet",
   "coreum",
   "injective",
   "casper",

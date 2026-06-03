@@ -1,8 +1,19 @@
 import React from "react";
-import { Box, Text, Tooltip, TooltipTrigger, TooltipContent } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Text,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  DescriptionItem,
+  DescriptionItemLeading,
+  DescriptionItemLabel,
+  DescriptionItemTrailing,
+  DescriptionItemValue,
+  InteractiveIcon,
+} from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { SectionContentState } from "../SectionContentState";
@@ -25,7 +36,6 @@ type Props = Readonly<{
 
 export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipOpen }: Props) {
   const { t } = useTranslation();
-  const { bottom } = useSafeAreaInsets();
 
   if (isLoading && !hasData) {
     return (
@@ -47,33 +57,30 @@ export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipO
       >
         <Box lx={listStyle}>
           {stats.map(stat => (
-            <Box key={stat.key} lx={rowStyle}>
-              <Box lx={labelContainerStyle}>
-                <Text typography="body2" lx={{ color: "muted" }}>
-                  {stat.label}
-                </Text>
+            <DescriptionItem key={stat.key} size="md">
+              <DescriptionItemLeading>
+                <DescriptionItemLabel>{stat.label}</DescriptionItemLabel>
                 {stat.tooltip && (
                   <Tooltip onOpenChange={open => onTooltipOpen(stat.key, open)}>
-                    <TooltipTrigger>
-                      <Information size={16} color="muted" />
+                    <TooltipTrigger asChild>
+                      <InteractiveIcon
+                        icon={Information}
+                        size={16}
+                        iconType="stroked"
+                        accessibilityLabel={stat.tooltip.title}
+                      />
                     </TooltipTrigger>
                     <TooltipContent
                       title={stat.tooltip.title}
-                      content={
-                        <Box style={{ paddingBottom: bottom + 24 }}>
-                          <Text typography="body1" lx={{ color: "base" }}>
-                            {stat.tooltip.content}
-                          </Text>
-                        </Box>
-                      }
+                      content={stat.tooltip.content}
                     />
                   </Tooltip>
                 )}
-              </Box>
-              <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                {stat.value}
-              </Text>
-            </Box>
+              </DescriptionItemLeading>
+              <DescriptionItemTrailing>
+                <DescriptionItemValue>{stat.value}</DescriptionItemValue>
+              </DescriptionItemTrailing>
+            </DescriptionItem>
           ))}
         </Box>
       </SectionContentState>
@@ -87,16 +94,4 @@ const containerStyle: LumenViewStyle = {
 
 const listStyle: LumenViewStyle = {
   gap: "s12",
-};
-
-const rowStyle: LumenViewStyle = {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-};
-
-const labelContainerStyle: LumenViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  gap: "s4",
 };

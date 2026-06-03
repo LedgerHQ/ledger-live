@@ -1,7 +1,12 @@
+import type { PaginationConfig } from "@ledgerhq/types-live";
 import { getOperationsPageSize } from "./pagination";
 
 describe("getOperationsPageSize", () => {
-  it.each([
+  it.each<{
+    description: string;
+    accountId: string | undefined | null;
+    paginationConfig: PaginationConfig;
+  }>([
     {
       description: "the synced account is missing from operationsPerAccountId",
       accountId: "acc-1",

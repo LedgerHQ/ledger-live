@@ -1,11 +1,25 @@
-import { act } from "react";
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { genMockAccount } from "@ledgerhq/live-common/mock/account";
+import type { Account } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { track } from "~/analytics";
 import { State } from "~/reducers/types";
+import { PNL_BUTTON, PNL_DETAIL_PAGE } from "LLM/features/Pnl/const";
+import { ANALYTICS_PAGE } from "../../../../../const";
 import { usePnlSectionViewModel } from "../usePnlSectionViewModel";
 
-const withPnl = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } });
+const btc = getCryptoCurrencyById("bitcoin");
+let btcAccount: Account;
+
+beforeAll(async () => {
+  btcAccount = await genMockAccount("btc-1", { currency: btc, operationsSize: 0 });
+});
+
+const withAccounts = (state: State): State => ({
+  ...state,
+  accounts: { ...state.accounts, active: [btcAccount] },
+});
 
 const withDiscreet =
   (discreetMode: boolean) =>
@@ -19,67 +33,72 @@ const compose =
   (state: State): State =>
     transforms.reduce((acc, t) => t(acc), state);
 
+const withPnl = (enabled: boolean) =>
+  compose(
+    withAccounts,
+    withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } }),
+  );
+
 describe("usePnlSectionViewModel", () => {
-  it("keeps both drawers closed by default", () => {
+  it("keeps the detail drawer closed by default", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
       overrideInitialState: withPnl(true),
     });
 
-    expect(result.current.pnlDrawer.isOpen).toBe(false);
-    expect(result.current.costBasisDrawer.isOpen).toBe(false);
+    expect(result.current.drawer.isOpen).toBe(false);
   });
 
-  it("opens the PnL drawer when the unrealised card press handler runs", () => {
+  it("opens the detail drawer when the title press handler runs", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
       overrideInitialState: withPnl(true),
     });
 
-    act(() => result.current.unrealised.onPress());
+    act(() => result.current.openDrawer());
 
-    expect(result.current.pnlDrawer.isOpen).toBe(true);
-    expect(result.current.costBasisDrawer.isOpen).toBe(false);
+    expect(result.current.drawer.isOpen).toBe(true);
   });
 
-  it("opens the cost basis drawer when the cost basis card press handler runs", () => {
+  it("closes the detail drawer when its onClose runs", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
       overrideInitialState: withPnl(true),
     });
 
-    act(() => result.current.costBasis.onPress());
+    act(() => result.current.openDrawer());
+    expect(result.current.drawer.isOpen).toBe(true);
 
-    expect(result.current.pnlDrawer.isOpen).toBe(false);
-    expect(result.current.costBasisDrawer.isOpen).toBe(true);
+    act(() => result.current.drawer.onClose());
+    expect(result.current.drawer.isOpen).toBe(false);
   });
 
-  it("closes the open drawer when its onClose runs", () => {
+  it("exposes an unrealised and a realised return card", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
       overrideInitialState: withPnl(true),
     });
 
-    act(() => result.current.unrealised.onPress());
-    expect(result.current.pnlDrawer.isOpen).toBe(true);
-
-    act(() => result.current.pnlDrawer.onClose());
-    expect(result.current.pnlDrawer.isOpen).toBe(false);
-
-    act(() => result.current.costBasis.onPress());
-    expect(result.current.costBasisDrawer.isOpen).toBe(true);
-
-    act(() => result.current.costBasisDrawer.onClose());
-    expect(result.current.costBasisDrawer.isOpen).toBe(false);
+    expect(result.current.unrealised.title).toBe("Unrealised return");
+    expect(result.current.realised.title).toBe("Realised return");
+    expect(result.current.unrealised.value).toBeTruthy();
+    expect(result.current.realised.value).toBeTruthy();
   });
 
-  it("opening one drawer closes the other (single-drawer state machine)", () => {
-    const { result } = renderHook(() => usePnlSectionViewModel(), {
-      overrideInitialState: withPnl(true),
+  describe("rendering gate", () => {
+    it("disables the section when there are no accounts even if the flag is on", () => {
+      const { result } = renderHook(() => usePnlSectionViewModel(), {
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { pnl: true } },
+        }),
+      });
+
+      expect(result.current.shouldDisplayPnl).toBe(false);
     });
 
-    act(() => result.current.unrealised.onPress());
-    expect(result.current.pnlDrawer.isOpen).toBe(true);
+    it("enables the section when the flag is on and there are accounts", () => {
+      const { result } = renderHook(() => usePnlSectionViewModel(), {
+        overrideInitialState: withPnl(true),
+      });
 
-    act(() => result.current.costBasis.onPress());
-    expect(result.current.pnlDrawer.isOpen).toBe(false);
-    expect(result.current.costBasisDrawer.isOpen).toBe(true);
+      expect(result.current.shouldDisplayPnl).toBe(true);
+    });
   });
 
   describe("discreet mode", () => {
@@ -89,7 +108,7 @@ describe("usePnlSectionViewModel", () => {
       });
 
       expect(result.current.unrealised.value).toContain("***");
-      expect(result.current.costBasis.value).toContain("***");
+      expect(result.current.realised.value).toContain("***");
     });
 
     it("masks every drawer item value when discreet mode is on", () => {
@@ -97,7 +116,7 @@ describe("usePnlSectionViewModel", () => {
         overrideInitialState: compose(withPnl(true), withDiscreet(true)),
       });
 
-      for (const item of result.current.pnlDrawer.items) {
+      for (const item of result.current.drawer.items) {
         expect(item.value).toContain("***");
       }
     });
@@ -108,10 +127,61 @@ describe("usePnlSectionViewModel", () => {
       });
 
       expect(result.current.unrealised.value).not.toContain("***");
-      expect(result.current.costBasis.value).not.toContain("***");
-      for (const item of result.current.pnlDrawer.items) {
+      expect(result.current.realised.value).not.toContain("***");
+      for (const item of result.current.drawer.items) {
         expect(item.value).not.toContain("***");
       }
+    });
+  });
+
+  describe("tracking", () => {
+    const mockedTrack = jest.mocked(track);
+
+    beforeEach(() => mockedTrack.mockClear());
+
+    it("fires a button_clicked track event when the drawer opens", () => {
+      const { result } = renderHook(() => usePnlSectionViewModel(), {
+        overrideInitialState: withPnl(true),
+      });
+
+      act(() => result.current.openDrawer());
+
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        button: PNL_BUTTON,
+        page: ANALYTICS_PAGE,
+      });
+    });
+
+    it("does not fire track again when openDrawer is called twice without closing", () => {
+      const { result } = renderHook(() => usePnlSectionViewModel(), {
+        overrideInitialState: withPnl(true),
+      });
+
+      act(() => result.current.openDrawer());
+      act(() => result.current.openDrawer());
+
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+    });
+
+    it("fires track again after close → reopen", () => {
+      const { result } = renderHook(() => usePnlSectionViewModel(), {
+        overrideInitialState: withPnl(true),
+      });
+
+      act(() => result.current.openDrawer());
+      act(() => result.current.drawer.onClose());
+      act(() => result.current.openDrawer());
+
+      expect(mockedTrack).toHaveBeenCalledTimes(2);
+    });
+
+    it("exposes pageName and source on the drawer", () => {
+      const { result } = renderHook(() => usePnlSectionViewModel(), {
+        overrideInitialState: withPnl(true),
+      });
+
+      expect(result.current.drawer.pageName).toBe(PNL_DETAIL_PAGE);
+      expect(result.current.drawer.source).toBe(ANALYTICS_PAGE);
     });
   });
 
@@ -144,6 +214,19 @@ describe("usePnlSectionViewModel", () => {
 
       const [accountsArg] = spy.mock.calls[0];
       expect(Array.isArray(accountsArg)).toBe(true);
+      expect((accountsArg as unknown[]).length).toBeGreaterThan(0);
+    });
+
+    it("falls back to zero returns when usePortfolioPnL returns an empty object", () => {
+      // @ts-expect-error mockReturnValue expects a PortfolioPnL, but we're returning an empty object
+      spy.mockReturnValue({});
+
+      const { result } = renderHook(() => usePnlSectionViewModel(), {
+        overrideInitialState: withPnl(true),
+      });
+
+      expect(result.current.unrealised.value).toMatch(/0(?:[.,]00)?/);
+      expect(result.current.realised.value).toMatch(/0(?:[.,]00)?/);
     });
   });
 });

@@ -48,7 +48,7 @@ const featureFlagsSlice = createSlice({
      * Re-resolves every flag against the latest remote values. Payload-less:
      * the middleware injects the freshly fetched remote map via
      * `action.meta.remoteFlags`. Dispatched by `createFeatureFlagsMiddleware`
-     * after each successful Firebase fetch.
+     * after each successful remote fetch.
      */
     syncRemoteConfig: {
       prepare: prepareWithoutPayload,
@@ -64,6 +64,15 @@ const featureFlagsSlice = createSlice({
     },
 
     /**
+     * Marks the first remote-flag fetch as settled (readiness gate). Payload-less and
+     * idempotent: the middleware dispatches it once the first fetch settles, whether it
+     * resolved or rejected.
+     */
+    setRemoteFlagsReady(state) {
+      state.remoteFlagsReady = true;
+    },
+
+    /**
      * Replaces the entire feature-flags state. Used during hydration from
      * persisted storage to restore the slice in a single step.
      */
@@ -73,8 +82,14 @@ const featureFlagsSlice = createSlice({
   },
 });
 
-export const { setOverride, setAllOverrides, syncRemoteConfig, setBannerVisible, importState } =
-  featureFlagsSlice.actions;
+export const {
+  setOverride,
+  setAllOverrides,
+  syncRemoteConfig,
+  setBannerVisible,
+  setRemoteFlagsReady,
+  importState,
+} = featureFlagsSlice.actions;
 
 /** Reducer for the `featureFlags` slice — register under `state.featureFlags`. */
 export const featureFlagsReducer = featureFlagsSlice.reducer;

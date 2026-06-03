@@ -5,7 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { useAccountName } from "~/renderer/reducers/wallet";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import { useCounterValueCellViewModel } from "LLD/components/Cells/CounterValueCell/useCounterValueCellViewModel";
 
@@ -35,7 +35,11 @@ export function useAddressListItemViewModel(
       ? parentAccount?.currency ?? account.token.parentCurrency
       : currency;
 
-  const displayName = getDefaultAccountName(account);
+  const accountForDisplayName =
+    account.type === "TokenAccount"
+      ? parentAccount ?? lookupParentAccount(account.parentId)
+      : account;
+  const displayName = useAccountName(accountForDisplayName ?? account);
   const rawAddress = getCryptoAccountAddress(account, lookupParentAccount);
   const formattedAddress = formatAddress(rawAddress, { prefixLength: 5, suffixLength: 5 });
   const { formattedCounterValue } = useCounterValueCellViewModel(currency, account.balance);

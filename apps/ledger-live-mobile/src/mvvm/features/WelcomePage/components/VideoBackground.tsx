@@ -48,7 +48,7 @@ export function VideoBackground({
           style={[styles.backgroundVideo]}
           onLoad={onVideoLoad}
           onEnd={() => {
-            if (isOnStage) onVideoEnd?.();
+            onVideoEnd?.();
           }}
           paused={!isOnStage}
         />

@@ -13,6 +13,7 @@ const baseViewModel: StakingSectionViewModelResult = {
   earnBannerActionLabel: "Go to Earn",
   onEarnBannerPress: jest.fn(),
   onEarnDepositPress: jest.fn(),
+  onAvailableBalanceTooltipOpen: jest.fn(),
 };
 
 describe("StakingSectionView", () => {
@@ -59,15 +60,15 @@ describe("StakingSectionView", () => {
     expect(screen.getByText("$200.00")).toBeVisible();
   });
 
-  it("spans two columns for the earn banner when PnL is visible", () => {
+  it("keeps earn banner width aligned with other cards", () => {
     render(
       <StakingSectionView
         {...baseViewModel}
-        pnlVisible
         state={{ type: "banner", label: "Earn up to 12.0% APY" }}
       />,
     );
 
-    expect(screen.getByTestId("asset-detail-earn-banner")).toHaveClass("flex-[2]");
+    expect(screen.getByTestId("asset-detail-earn-banner")).toHaveClass("min-w-[12rem]");
+    expect(screen.getByTestId("asset-detail-earn-banner")).toHaveClass("flex-1");
   });
 });

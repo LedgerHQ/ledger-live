@@ -1,5 +1,69 @@
 # @ledgerhq/coin-evm
 
+## 4.0.0
+
+### Major Changes
+
+- [#17528](https://github.com/LedgerHQ/ledger-live/pull/17528) [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Move EVM staking types to `@ledgerhq/types-live` and strongly type the `BridgeApi.enrichStakingResources` hook so the generic coin framework no longer depends on `@ledgerhq/coin-evm`.
+
+### Minor Changes
+
+- [#16952](https://github.com/LedgerHQ/ledger-live/pull/16952) [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(BACK-11212): update code base after `alpaca` -> `coin-service` renaming
+
+- [#17253](https://github.com/LedgerHQ/ledger-live/pull/17253) [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(ADR-025): rename `AlpacaApi` -> `CoinModuleApi`
+
+- [#17375](https://github.com/LedgerHQ/ledger-live/pull/17375) [`c4d44f6`](https://github.com/LedgerHQ/ledger-live/commit/c4d44f6c682bf9375d43de778e50d7adfa47eeab) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix zkSync L1→L2 priority deposits (receipt type 0xff) producing a null net balance on the user's L2 account. We now parse `Mint(account, amount)` events into Transfer-equivalent ops with `peer = 0x0` (generic ERC20 mint convention). On zkSync L1→L2 priority txs, this surfaces the deposit credit, the bootloader fee, and the gas refund. On the native side, the cancelling self pair from `tx.value` is replaced with a single credit op (`peer = 0x0`). Mint-source ops on `0x0` are filtered out as accounting noise.
+
+- [#17168](https://github.com/LedgerHQ/ledger-live/pull/17168) [`c9ec82a`](https://github.com/LedgerHQ/ledger-live/commit/c9ec82a2f1078a52c25028f71402aa4dcc03f735) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Cronos missing fees in block receipt
+
+- [#17340](https://github.com/LedgerHQ/ledger-live/pull/17340) [`73e9f74`](https://github.com/LedgerHQ/ledger-live/commit/73e9f746de01be5dc4e4161eb19e5f0ae99615cd) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add claim reward staking flow for Sei EVM - encode, route, and validate
+
+- [#16785](https://github.com/LedgerHQ/ledger-live/pull/16785) [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d) Thanks [@qperrot](https://github.com/qperrot)! - Feature: evm redelegation flow lwd
+
+- [#16745](https://github.com/LedgerHQ/ledger-live/pull/16745) [`21290f4`](https://github.com/LedgerHQ/ledger-live/commit/21290f4a9cdd90e182674bd67dde5369638dc72f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [LWM] Delegated balance in account summary
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
+  - @ledgerhq/cryptoassets@13.49.0
+  - @ledgerhq/ledger-wallet-framework@1.6.0
+  - @ledgerhq/live-env@2.36.0
+  - @ledgerhq/domain-service@1.8.4
+  - @ledgerhq/evm-tools@1.12.7
+  - @ledgerhq/live-network@2.6.2
+
+## 4.0.0-next.0
+
+### Major Changes
+
+- [#17528](https://github.com/LedgerHQ/ledger-live/pull/17528) [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Move EVM staking types to `@ledgerhq/types-live` and strongly type the `BridgeApi.enrichStakingResources` hook so the generic coin framework no longer depends on `@ledgerhq/coin-evm`.
+
+### Minor Changes
+
+- [#16952](https://github.com/LedgerHQ/ledger-live/pull/16952) [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(BACK-11212): update code base after `alpaca` -> `coin-service` renaming
+
+- [#17253](https://github.com/LedgerHQ/ledger-live/pull/17253) [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(ADR-025): rename `AlpacaApi` -> `CoinModuleApi`
+
+- [#17375](https://github.com/LedgerHQ/ledger-live/pull/17375) [`c4d44f6`](https://github.com/LedgerHQ/ledger-live/commit/c4d44f6c682bf9375d43de778e50d7adfa47eeab) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix zkSync L1→L2 priority deposits (receipt type 0xff) producing a null net balance on the user's L2 account. We now parse `Mint(account, amount)` events into Transfer-equivalent ops with `peer = 0x0` (generic ERC20 mint convention). On zkSync L1→L2 priority txs, this surfaces the deposit credit, the bootloader fee, and the gas refund. On the native side, the cancelling self pair from `tx.value` is replaced with a single credit op (`peer = 0x0`). Mint-source ops on `0x0` are filtered out as accounting noise.
+
+- [#17168](https://github.com/LedgerHQ/ledger-live/pull/17168) [`c9ec82a`](https://github.com/LedgerHQ/ledger-live/commit/c9ec82a2f1078a52c25028f71402aa4dcc03f735) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Cronos missing fees in block receipt
+
+- [#17340](https://github.com/LedgerHQ/ledger-live/pull/17340) [`73e9f74`](https://github.com/LedgerHQ/ledger-live/commit/73e9f746de01be5dc4e4161eb19e5f0ae99615cd) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add claim reward staking flow for Sei EVM - encode, route, and validate
+
+- [#16785](https://github.com/LedgerHQ/ledger-live/pull/16785) [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d) Thanks [@qperrot](https://github.com/qperrot)! - Feature: evm redelegation flow lwd
+
+- [#16745](https://github.com/LedgerHQ/ledger-live/pull/16745) [`21290f4`](https://github.com/LedgerHQ/ledger-live/commit/21290f4a9cdd90e182674bd67dde5369638dc72f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [LWM] Delegated balance in account summary
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
+  - @ledgerhq/cryptoassets@13.49.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.6.0-next.0
+  - @ledgerhq/live-env@2.36.0-next.0
+  - @ledgerhq/domain-service@1.8.4-next.0
+  - @ledgerhq/evm-tools@1.12.7-next.0
+  - @ledgerhq/live-network@2.6.2-next.0
+
 ## 3.7.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { AB_TESTING_VARIANTS } from "./types/variants";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   renderWithReactQuery,
@@ -125,7 +125,7 @@ describe("NotificationsPrompt send flow", () => {
     expect(track).toHaveBeenCalledWith("attempt_to_trigger_push_notification_drawer_after_action", {
       action: "send",
       shouldPrompt: true,
-      variant: ABTestingVariants.variantB,
+      variant: AB_TESTING_VARIANTS.B,
       repromptDelay: null,
       dismissedCount: 0,
       skipReason: undefined,
@@ -141,7 +141,7 @@ describe("NotificationsPrompt send flow", () => {
       source: "send",
       repromptDelay: null,
       dismissedCount: 0,
-      variant: ABTestingVariants.variantB,
+      variant: AB_TESTING_VARIANTS.B,
     });
   });
 });

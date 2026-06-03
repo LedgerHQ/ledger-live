@@ -6,7 +6,8 @@ import type { GenericAwarenessModalMobileContentCard } from "~/reducers/genericA
 
 export type GenericAwarenessModalDebugLayout =
   | GenericAwarenessModalLayout.Carousel
-  | GenericAwarenessModalLayout.FeatureIntro;
+  | GenericAwarenessModalLayout.FeatureIntro
+  | GenericAwarenessModalLayout.Prompt;
 
 export type GenericAwarenessModalDebugTrigger = "appStart" | "deeplink";
 
@@ -45,11 +46,13 @@ const DEFAULT_IMAGE_URL =
 const DEFAULT_APP_START_CAMPAIGN_IDS: Record<GenericAwarenessModalDebugLayout, string> = {
   [GenericAwarenessModalLayout.Carousel]: "app_start_debug_generic_awareness_carousel",
   [GenericAwarenessModalLayout.FeatureIntro]: "app_start_debug_generic_awareness_feature_intro",
+  [GenericAwarenessModalLayout.Prompt]: "app_start_debug_generic_awareness_prompt",
 };
 
 const DEFAULT_DEEPLINK_CAMPAIGN_IDS: Record<GenericAwarenessModalDebugLayout, string> = {
   [GenericAwarenessModalLayout.Carousel]: "debug_generic_awareness_carousel",
   [GenericAwarenessModalLayout.FeatureIntro]: "debug_generic_awareness_feature_intro",
+  [GenericAwarenessModalLayout.Prompt]: "debug_generic_awareness_prompt",
 };
 
 export function getDefaultGenericAwarenessModalCampaignId(
@@ -162,11 +165,37 @@ function buildFeatureIntroBrazeCards(
   return [mainCard, ...itemCards];
 }
 
+function buildPromptBrazeCard(
+  values: GenericAwarenessModalDebugFormValues,
+): GenericAwarenessModalDebugBrazeCard[] {
+  return [
+    {
+      id: values.campaignId,
+      extras: {
+        campaignId: values.campaignId,
+        layout: GenericAwarenessModalLayout.Prompt,
+        location: GENERIC_AWARENESS_LOCATION,
+        title: values.title,
+        subtitle: values.subtitle,
+        imageUrl: values.imageUrl,
+        primaryButtonLabel: values.primaryButtonLabel,
+        primaryButtonLink: values.primaryButtonLink,
+        secondaryButtonLabel: values.secondaryButtonLabel,
+        secondaryButtonLink: values.secondaryButtonLink,
+      },
+    },
+  ];
+}
+
 export function buildLocalGenericAwarenessModalBrazeCards(
   values: GenericAwarenessModalDebugFormValues,
 ): GenericAwarenessModalDebugBrazeCard[] {
   if (values.layout === GenericAwarenessModalLayout.Carousel) {
     return buildCarouselBrazeCards(values);
+  }
+
+  if (values.layout === GenericAwarenessModalLayout.Prompt) {
+    return buildPromptBrazeCard(values);
   }
 
   return buildFeatureIntroBrazeCards(values);

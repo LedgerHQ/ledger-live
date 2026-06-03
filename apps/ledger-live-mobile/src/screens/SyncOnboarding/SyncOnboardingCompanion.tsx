@@ -20,7 +20,7 @@ import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 
 import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
@@ -40,9 +40,9 @@ import {
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { TrackScreen, screen, useTrack } from "~/analytics";
-import ContinueOnStax from "./assets/ContinueOnStax";
-import ContinueOnEuropa from "./assets/ContinueOnEuropa";
-import ContinueOnApex from "./assets/ContinueOnApex";
+import ContinueOnStax from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/ContinueOnStax";
+import ContinueOnEuropa from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/ContinueOnEuropa";
+import ContinueOnApex from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/ContinueOnApex";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useIsFocused } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
@@ -55,7 +55,7 @@ import {
   Note,
   ShieldCheck,
 } from "@ledgerhq/native-ui/assets/icons";
-import SecretRecoveryPhraseImage from "./assets/srp.png";
+import SecretRecoveryPhraseImage from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/srp.png";
 import BackgroundBlue from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundBlue";
 import BackgroundRed from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundRed";
 import Animation from "~/components/Animation";

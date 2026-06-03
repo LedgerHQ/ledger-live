@@ -1,7 +1,9 @@
 import React from "react";
-import { fireEvent, render, screen } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
 import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
-import CarouselContent from "../CarouselContent";
+import { advanceCarouselSlide } from "../../testUtils/modalTestUtils";
+import CarouselContent, { type CarouselContentProps } from "../CarouselContent";
+import { CAROUSEL_SLIDE_TEXT_LINE_LIMITS } from "../clampedText";
 
 const slides: GenericAwarenessModalCarouselSlide[] = [
   {
@@ -16,48 +18,88 @@ const slides: GenericAwarenessModalCarouselSlide[] = [
     subtitle: "Second slide subtitle",
     imageUrl: "https://example.com/b.png",
     primaryButtonLabel: "Primary B",
-    primaryButtonLink: "https://www.ledger.com",
+    primaryButtonLink: "https://www.ledger.com/compare",
   },
 ];
 
-describe("CarouselContent", () => {
-  it("should render the first slide copy and primary label", () => {
-    const onSlidePrimaryClick = jest.fn();
-    render(<CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />);
+const defaultProps: CarouselContentProps = {
+  slides,
+  onSlidePrimaryClick: jest.fn(),
+  onSlideChange: jest.fn(),
+  onContinueClick: jest.fn(),
+  onClose: jest.fn(),
+};
 
-    expect(screen.getByText("First slide title")).toBeVisible();
-    expect(screen.getByText("First slide subtitle")).toBeVisible();
+const renderCarousel = (props: Partial<CarouselContentProps> = {}) =>
+  render(<CarouselContent {...defaultProps} {...props} />);
+
+describe("CarouselContent", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should render the first slide with line limits and primary label", () => {
+    renderCarousel();
+
+    expect(screen.getByText("First slide title")).toHaveClass("truncate");
+    expect(
+      screen.getByText("First slide subtitle").style.getPropertyValue("-webkit-line-clamp"),
+    ).toBe(String(CAROUSEL_SLIDE_TEXT_LINE_LIMITS.subtitle));
     expect(screen.getByTestId("generic-awareness-modal-primary-button")).toHaveTextContent(
       "Primary A",
     );
   });
 
-  it("should advance visible slide after Continue and slide-out animation start", async () => {
-    const onSlidePrimaryClick = jest.fn();
-    const { user } = render(
-      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />,
-    );
+  it("should render the slide image when imageUrl is provided", () => {
+    renderCarousel();
 
-    await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));
+    const image = screen.getByRole("presentation");
+    expect(image).toBeVisible();
+    expect(image).toHaveAttribute("src", "https://example.com/a.png");
+    expect(image).toHaveAttribute("alt", "");
+  });
 
-    const slideOutAnimationStart = new Event("animationstart", { bubbles: true });
-    Object.defineProperty(slideOutAnimationStart, "animationName", {
-      value: "slide-out-to-left",
-    });
-    fireEvent(screen.getByText("First slide title"), slideOutAnimationStart);
+  it("should not render an image when imageUrl is empty", () => {
+    const slidesWithoutImage: GenericAwarenessModalCarouselSlide[] = [
+      { ...slides[0], imageUrl: "" },
+      slides[1],
+    ];
+
+    const { container } = renderCarousel({ slides: slidesWithoutImage });
+
+    expect(container.querySelector("img")).not.toBeInTheDocument();
+    expect(screen.getByText("First slide title")).toBeVisible();
+  });
+
+  it("should advance to the last slide and show Close", async () => {
+    const { user } = renderCarousel();
+
+    expect(screen.getByRole("button", { name: "Continue" })).toBeVisible();
+
+    await advanceCarouselSlide(user, "First slide title");
 
     expect(screen.getByText("Second slide title")).toBeVisible();
-    expect(screen.getByText("Second slide subtitle")).toBeVisible();
     expect(screen.getByTestId("generic-awareness-modal-primary-button")).toHaveTextContent(
       "Primary B",
     );
+    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+  });
+
+  it("should call onContinueClick and onSlideChange when advancing from the first slide", async () => {
+    const onContinueClick = jest.fn();
+    const onSlideChange = jest.fn();
+    const { user } = renderCarousel({ onContinueClick, onSlideChange });
+
+    await advanceCarouselSlide(user, "First slide title");
+
+    expect(onContinueClick).toHaveBeenCalledWith(0, false);
+    expect(onSlideChange).toHaveBeenCalledWith(1);
+    expect(defaultProps.onClose).not.toHaveBeenCalled();
   });
 
   it("should invoke onSlidePrimaryClick with the current slide", async () => {
     const onSlidePrimaryClick = jest.fn();
-    const { user } = render(
-      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />,
-    );
+    const { user } = renderCarousel({ onSlidePrimaryClick });
 
     await user.click(screen.getByTestId("generic-awareness-modal-primary-button"));
 
@@ -65,33 +107,42 @@ describe("CarouselContent", () => {
     expect(onSlidePrimaryClick).toHaveBeenCalledWith(slides[0]);
   });
 
-  it("should return to the first slide when Go to first slide is clicked on the last slide", async () => {
+  it("should invoke onSlidePrimaryClick with the second slide after advancing", async () => {
     const onSlidePrimaryClick = jest.fn();
-    const { user } = render(
-      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />,
-    );
+    const { user } = renderCarousel({ onSlidePrimaryClick });
+
+    await advanceCarouselSlide(user, "First slide title");
+    await user.click(screen.getByTestId("generic-awareness-modal-primary-button"));
+
+    expect(onSlidePrimaryClick).toHaveBeenCalledTimes(1);
+    expect(onSlidePrimaryClick).toHaveBeenCalledWith(slides[1]);
+  });
+
+  it("should call onContinueClick with last slide flag and onClose when Close is clicked", async () => {
+    const onContinueClick = jest.fn();
+    const onClose = jest.fn();
+    const onSlidePrimaryClick = jest.fn();
+    const { user } = renderCarousel({ onContinueClick, onClose, onSlidePrimaryClick });
+
+    await advanceCarouselSlide(user, "First slide title");
+
+    await user.click(screen.getByRole("button", { name: "Close" }));
+
+    expect(onContinueClick).toHaveBeenCalledWith(1, true);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onSlidePrimaryClick).not.toHaveBeenCalled();
+  });
+
+  it("should call onContinueClick and onClose when Continue is clicked on a single-slide carousel", async () => {
+    const onContinueClick = jest.fn();
+    const onClose = jest.fn();
+    const { user } = renderCarousel({ slides: [slides[0]], onContinueClick, onClose });
+
+    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
 
     await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));
 
-    const slideOutAnimationStart = new Event("animationstart", { bubbles: true });
-    Object.defineProperty(slideOutAnimationStart, "animationName", {
-      value: "slide-out-to-left",
-    });
-    fireEvent(screen.getByText("First slide title"), slideOutAnimationStart);
-
-    expect(screen.getByText("Second slide title")).toBeVisible();
-
-    await user.click(screen.getByRole("button", { name: "Go to first slide" }));
-
-    const slideOutRight = new Event("animationstart", { bubbles: true });
-    Object.defineProperty(slideOutRight, "animationName", {
-      value: "slide-out-to-right",
-    });
-    fireEvent(screen.getByText("Second slide title"), slideOutRight);
-
-    expect(screen.getByText("First slide title")).toBeVisible();
-    expect(screen.getByTestId("generic-awareness-modal-primary-button")).toHaveTextContent(
-      "Primary A",
-    );
+    expect(onContinueClick).toHaveBeenCalledWith(0, true);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

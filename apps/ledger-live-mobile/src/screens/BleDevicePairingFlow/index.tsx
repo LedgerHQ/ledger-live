@@ -15,7 +15,7 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { useIncrementOnNavigationFocusState } from "~/helpers/useIncrementOnNavigationFocusState";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 export type Props = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.BleDevicePairingFlow>

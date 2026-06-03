@@ -15,11 +15,11 @@ const mockNavigate = jest.fn();
 const mockUseNavigate = jest.mocked(useNavigate);
 const mockUseLocation = jest.mocked(useLocation);
 
-const createLocation = (pathname: string) => ({
+const createLocation = (pathname: string, search = "") => ({
   pathname,
   state: null,
   key: "default",
-  search: "",
+  search,
   hash: "",
 });
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { Banner, Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useBottomSheetBackgroundTone } from "LLM/hooks/useBottomSheetBackgroundTone";
 import type { InfoStateProps } from "./types";
 import { InfoStateButton } from "./components/InfoStateButton";
 import { PresetVisual } from "./components/PresetVisual";
@@ -11,6 +12,7 @@ import {
   rootStyle,
   titleDescriptionStyle,
 } from "./styles";
+import { getInfoStateSheetTone } from "./utils/getInfoStateSheetTone";
 
 /**
  * Shared mobile state layout for informational, success, and error screens.
@@ -27,6 +29,7 @@ export function InfoState(props: InfoStateProps) {
   } = props;
   const isTextPreset = props.preset === "text";
   const isFullHeight = size === "full-height";
+  useBottomSheetBackgroundTone(getInfoStateSheetTone(props.preset));
 
   return (
     <Box lx={rootStyle(isFullHeight)} testID={testID}>

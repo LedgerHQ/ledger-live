@@ -1,4 +1,4 @@
-import { takeSpeculosScreenshot } from "./utils/speculosUtils";
+import { attachSpeculinhoLogsToAllure, takeSpeculosScreenshot } from "./utils/speculosUtils";
 import {
   attachTestExecutionConsoleToAllure,
   attachFailureLogsToAllure,
@@ -41,6 +41,11 @@ const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
 
 async function captureFailureDiagnostics(): Promise<void> {
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
+  await withTimeout(
+    attachSpeculinhoLogsToAllure(),
+    SLOW_DIAGNOSTIC_TIMEOUT_MS,
+    "attachSpeculinhoLogsToAllure",
+  );
   await withTimeout(
     takeAppScreenshot("Test Failure"),
     FAST_DIAGNOSTIC_TIMEOUT_MS,
@@ -238,9 +243,14 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
+    if (event.name === "hook_failure") {
+      this.global.IS_FAILED = true;
+      await captureFailureDiagnostics();
+    }
+
     await super.handleTestEvent(event, state);
 
-    if (["hook_failure", "test_fn_failure"].includes(event.name)) {
+    if (event.name === "test_fn_failure") {
       this.global.IS_FAILED = true;
       await captureFailureDiagnostics();
     }

@@ -1,33 +1,48 @@
 import React from "react";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
-import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
 
 export type TotalBalanceViewProps = Readonly<{
   totalBalanceLabel: string;
-  fiatDisplayValue: number;
-  fiatFormatter: (value: number) => FormattedValue;
-  hidden: boolean;
+  fiatAriaLabel: string;
+  prefixSymbol: string | null;
+  suffixSymbol: string | null;
+  hasDecimals: boolean;
+  integerPart: string;
+  decimalSeparator: string;
+  decimalPart?: string;
   cryptoBalance: React.ReactNode;
 }>;
 
 export function TotalBalanceView({
   totalBalanceLabel,
-  fiatDisplayValue,
-  fiatFormatter,
-  hidden,
+  fiatAriaLabel,
+  prefixSymbol,
+  suffixSymbol,
+  hasDecimals,
+  integerPart,
+  decimalSeparator,
+  decimalPart,
   cryptoBalance,
 }: TotalBalanceViewProps) {
   return (
-    <div className="flex flex-col gap-8" data-testid="asset-detail-total-balance">
+    <div className="flex flex-col gap-4" data-testid="asset-detail-total-balance">
       <p className="body-3 text-muted">{totalBalanceLabel}</p>
 
       <div className="flex min-w-0 flex-wrap items-baseline gap-4">
-        <AmountDisplay
-          value={fiatDisplayValue}
-          formatter={fiatFormatter}
-          hidden={hidden}
+        <span
+          className="heading-2-semi-bold inline-flex flex-wrap items-baseline text-base tabular-nums"
           data-testid="asset-detail-fiat-balance"
-        />
+          aria-label={fiatAriaLabel}
+        >
+          {prefixSymbol ? <span className="me-4">{prefixSymbol}</span> : null}
+          <span>{integerPart}</span>
+          {hasDecimals ? (
+            <>
+              <span>{decimalSeparator}</span>
+              <span>{decimalPart}</span>
+            </>
+          ) : null}
+          {suffixSymbol ? <span className="ms-4">{suffixSymbol}</span> : null}
+        </span>
         <span className="body-2 select-none text-muted" aria-hidden>
           /
         </span>

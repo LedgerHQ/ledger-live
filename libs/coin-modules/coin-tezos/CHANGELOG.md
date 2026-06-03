@@ -1,5 +1,39 @@
 # @ledgerhq/coin-tezos
 
+## 7.3.0
+
+### Minor Changes
+
+- [#17253](https://github.com/LedgerHQ/ledger-live/pull/17253) [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(ADR-025): rename `AlpacaApi` -> `CoinModuleApi`
+
+- [#17466](https://github.com/LedgerHQ/ledger-live/pull/17466) [`990438b`](https://github.com/LedgerHQ/ledger-live/commit/990438bee754d772fa7ca9cca1d083aaf3ac8ec9) Thanks [@amaslakov](https://github.com/amaslakov)! - Fall back to requestedAmount (or 0) when parsing failed staking operations from TzKT. Failed stake ops return only requestedAmount and no amount field;
+  BigInt(undefined) was throwing and stalling account sync on any account that has a failed staking operation in its history.
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
+  - @ledgerhq/cryptoassets@13.49.0
+  - @ledgerhq/types-live@6.109.0
+  - @ledgerhq/ledger-wallet-framework@1.6.0
+  - @ledgerhq/live-network@2.6.2
+
+## 7.3.0-next.0
+
+### Minor Changes
+
+- [#17253](https://github.com/LedgerHQ/ledger-live/pull/17253) [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(ADR-025): rename `AlpacaApi` -> `CoinModuleApi`
+
+- [#17466](https://github.com/LedgerHQ/ledger-live/pull/17466) [`990438b`](https://github.com/LedgerHQ/ledger-live/commit/990438bee754d772fa7ca9cca1d083aaf3ac8ec9) Thanks [@amaslakov](https://github.com/amaslakov)! - Fall back to requestedAmount (or 0) when parsing failed staking operations from TzKT. Failed stake ops return only requestedAmount and no amount field;
+  BigInt(undefined) was throwing and stalling account sync on any account that has a failed staking operation in its history.
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
+  - @ledgerhq/cryptoassets@13.49.0-next.0
+  - @ledgerhq/types-live@6.109.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.6.0-next.0
+  - @ledgerhq/live-network@2.6.2-next.0
+
 ## 7.2.0
 
 ### Minor Changes

@@ -11,6 +11,6 @@ export default function useIsAppInBackground() {
     return () => {
       listener.remove();
     };
-  }, []);
+  });
   return isInBackground;
 }

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, type ListRenderItem } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useTranslation } from "~/context/Locale";
@@ -8,14 +8,14 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 import GradientContainer from "~/components/GradientContainer";
 import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
+import AssetRow from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
 import { Asset } from "~/types/asset";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 
 const maxReadOnlyCryptoCurrencies = 10;
 
-function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
+function ReadOnlyAssets() {
   const { sortedCryptoCurrencies } = useReadOnlyCoins({
     maxDisplayed: maxReadOnlyCryptoCurrencies,
   });
@@ -32,9 +32,9 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
 
   const { t } = useTranslation();
 
-  const renderItem = useCallback(
-    ({ item }: { item: Asset }) => <AssetRow asset={item} navigation={navigation} />,
-    [navigation],
+  const renderItem = useCallback<ListRenderItem<Asset>>(
+    ({ item }) => <AssetRow asset={item} />,
+    [],
   );
 
   return (

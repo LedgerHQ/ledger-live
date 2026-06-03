@@ -350,6 +350,10 @@ export const getCeloAmount = (decoded: unknown): bigint => {
 /**
  * Checks if a transaction intent is a staking intent
  */
-export function isStakingIntent(intent: TransactionIntent): intent is StakingTransactionIntent {
+// NOTE: `valId` should eventually be promoted to a first-class property of `StakingTransactionIntent`
+// in @ledgerhq/coin-module-framework. Kept as a local augmentation for now.
+export type EvmStakingIntent = StakingTransactionIntent & { valId?: string };
+
+export function isStakingIntent(intent: TransactionIntent): intent is EvmStakingIntent {
   return intent.intentType === "staking";
 }

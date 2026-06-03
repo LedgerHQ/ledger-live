@@ -108,7 +108,24 @@ type CountervaluesChildren = React.ComponentProps<typeof CountervaluesProvider>[
 type WrapperProps = { children?: NavigationChildren };
 
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
-  const state = overrideInitialState(INITIAL_STATE);
+  const transformed = overrideInitialState(INITIAL_STATE);
+  // Mirror the slice's resolution chain (override > default) so tests that mutate
+  // `featureFlags.overrides` directly (custom helpers, ad-hoc state shaping) get a
+  // `resolved` consistent with their overrides — the Redux-backed `useFeature` reads
+  // from `resolved`, not `overrides`. `withFlagOverrides` already does this; this
+  // safety net covers everything else.
+  const state: State = {
+    ...transformed,
+    featureFlags: {
+      ...transformed.featureFlags,
+      resolved: {
+        ...FEATURE_FLAGS_DEFAULTS,
+        ...Object.fromEntries(
+          Object.entries(transformed.featureFlags.overrides).filter(([, v]) => v !== undefined),
+        ),
+      } as Features,
+    },
+  };
 
   return configureStore({
     reducer: reducers,
@@ -175,6 +192,12 @@ function withFlagOverrides(
           ...base.featureFlags.overrides,
           ...(merged as unknown as PartialFeatures),
         },
+        // Mirror the slice's resolution chain (override > default) so hooks reading
+        // from `resolved` see the override immediately, without needing an action dispatch.
+        resolved: {
+          ...base.featureFlags.resolved,
+          ...merged,
+        } as Features,
       },
     };
   };
@@ -344,16 +367,28 @@ const customRenderHook = <Result,>(
   hook: () => Result,
   {
     overrideInitialState: overrideInitialState = state => state,
+    innerWrapper,
     ...renderOptions
-  }: ExtraOptions = {},
+  }: ExtraOptions & {
+    /**
+     * Optional wrapper rendered INSIDE the test-renderer `Providers`. Use this
+     * to inject feature-scoped React Contexts (e.g. local providers a
+     * ViewModel hook depends on) while keeping Redux / Theme / Navigation
+     * from the test renderer.
+     */
+    innerWrapper?: React.ComponentType<{ children?: React.ReactNode }>;
+  } = {},
 ) => {
   const store = createStore({
     overrideInitialState,
   });
   const ProvidersWrapper = ({ children }: WrapperProps): React.JSX.Element => {
+    const inner = innerWrapper
+      ? React.createElement(innerWrapper, undefined, children)
+      : children;
     return (
       <Providers store={store} renderType={RenderType.HOOK}>
-        {children}
+        {inner}
       </Providers>
     );
   };

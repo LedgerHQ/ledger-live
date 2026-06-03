@@ -58,7 +58,10 @@ const transformIncludePatterns = [
 module.exports = {
   /** CI sets `JEST_MAX_WORKERS` (e.g. `100%`); local default leaves laptops headroom. */
   maxWorkers: process.env.JEST_MAX_WORKERS || "50%",
-  verbose: true,
+  // CI: `verbose: false` so Jest uses BufferedConsole and jest-quiet-reporter
+  // can replay captured logs only on failure. Local: keep verbose streaming so
+  // engineers see per-test logs live.
+  verbose: !process.env.CI,
   preset: "react-native",
   workerIdleMemoryLimit: "1GB",
   modulePaths: [compilerOptions.baseUrl ?? "."],
@@ -106,8 +109,16 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
+    // CI: jest-quiet-reporter buffers stdout/stderr per test and flushes only on
+    // failure, keeping passing-run logs out of the workflow output. Local: keep
+    // the default reporter so engineers see live streaming logs.
+    process.env.CI ? "jest-quiet-reporter" : "default",
+    // CI: emit GitHub Actions ::error file=… annotations. We use a thin subclass
+    // of the built-in github-actions reporter that writes via fs.writeSync(2, …)
+    // instead of process.stderr.write — jest-quiet-reporter's __wrapStdio replaces
+    // process.stderr.write with a swallow-everything stub, so the built-in
+    // string reporter's annotations would otherwise be dropped on the floor.
+    ...(process.env.CI ? [["<rootDir>/scripts/jestGithubActionsReporter.js", {}]] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   resolver: "<rootDir>/scripts/resolver.js",
@@ -125,7 +136,8 @@ module.exports = {
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",
-    "^@tanstack/react-query$": "<rootDir>/node_modules/@tanstack/react-query",
+    "^@tanstack/react-query$":
+      "<rootDir>/../../node_modules/.pnpm/@tanstack+react-query@5.28.9_react@19.0.0/node_modules/@tanstack/react-query",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
     "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
     // Global mock for .lottie (dotLottie) files

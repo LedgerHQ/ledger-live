@@ -80,6 +80,9 @@ export const EXCLUDED_ERROR_DESCRIPTION = [
   "524 undefined",
   "Missing or invalid topic field", // wallet connect issue
   "Bad status on response: 503", // cryptoorg node
+  // Braze content cards sync (network/rate-limit; emitted by Braze SDK, not actionable in-app)
+  "BrazeKit.ContentCards.Error.syncFailure",
+  "ContentCards.Error.syncFailure",
 ];
 
 export const FIRST_PARTY_MAIN_HOST_DOMAIN = "ledger.com";

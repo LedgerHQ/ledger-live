@@ -7,8 +7,8 @@ import {
   carouselCampaignCard,
   featureIntroCampaignCard,
   genericAwarenessModalTestContentCards,
-} from "../../__tests__/fixtures";
-import { initialGenericAwarenessModalState } from "../../__tests__/testHelpers";
+} from "../../testUtils/fixtures";
+import { initialGenericAwarenessModalState } from "../../testUtils/modalTestUtils";
 import useGenericAwarenessModalAppStart from "../useGenericAwarenessModalAppStart";
 import { renderHookWithStore } from "../testHelpers/renderHookWithStore";
 

@@ -25,7 +25,8 @@ const assetsTransferAction = makeAction(PostOnboardingActionId.assetsTransfer);
 const recoverAction = makeAction(PostOnboardingActionId.recover);
 
 const withPostOnboardingWidgetEnabled = withFlagOverrides({
-  lwmWallet40: { enabled: true, params: { onboardingWidget: true } },
+  lwmWallet40: { enabled: true },
+  onboardingWidget: { enabled: true },
 });
 
 type TestHookProps = {
@@ -159,7 +160,8 @@ describe("useAddRecoverPostOnboardingAction", () => {
       overrideInitialState: withPostOnboardingActions(
         { [PostOnboardingActionId.assetsTransfer]: false },
         withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { onboardingWidget: false } },
+          lwmWallet40: { enabled: true },
+          onboardingWidget: { enabled: false },
         }),
       ),
     });

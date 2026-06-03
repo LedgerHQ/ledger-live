@@ -220,7 +220,7 @@ function renderWithMockedCounterValuesProvider(
   const {
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
     userEventOptions = {},
     skipRouter = false,
     withRampCatalog = false,
@@ -259,7 +259,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
   const {
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
     userEventOptions = {},
     skipRouter = false,
     initialRoute,
@@ -320,7 +320,7 @@ function renderHook<Result, Props>(
     initialProps,
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
     minimal = true,
     skipRouter = false,
     initialRoute,
@@ -357,7 +357,7 @@ function renderHookWithLiveAppProvider<Result, Props>(
     initialProps,
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
   } = options;
 
   return {

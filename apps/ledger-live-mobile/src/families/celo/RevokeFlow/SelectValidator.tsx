@@ -1,7 +1,8 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-native";
+import { FlatList, StyleSheet, View, ListRenderItem } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import {
   CeloAccount,
   CeloValidatorGroup,
@@ -67,7 +68,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen
         category="CeloRevoke"
         name="SelectValidator"

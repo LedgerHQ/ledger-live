@@ -1,9 +1,10 @@
 import React, { Fragment, Component, useMemo, useState } from "react";
 import { ObjectInspector } from "react-inspector";
-// @ts-expect-error react-table v6 ships an index.d.ts that is not a module
+// @ts-expect-error react-table v6 types don't export a module
 import ReactTable from "react-table";
 import styled from "styled-components";
 import "react-table/react-table.css";
+import { Button as LumenButton } from "@ledgerhq/lumen-ui-react";
 import { AccountRaw } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -107,7 +108,7 @@ const HeaderRow = styled.div`
 const dmkLoggerTags = ["live-dmk-logger", "DMK"]; // "live-dmk-logger" is kept for backward compatibility
 
 function isDmkLog(log: Log): boolean {
-  return dmkLoggerTags.some(tag => log.type.startsWith(tag));
+  return typeof log.type === "string" && dmkLoggerTags.some(tag => log.type.startsWith(tag));
 }
 
 const Header = ({
@@ -317,7 +318,12 @@ const Header = ({
   return (
     <HeaderWrapper>
       <HeaderRow>
-        <input type="file" onChange={onChange} accept=".json" />
+        <LumenButton asChild appearance="accent">
+          <label>
+            Load Logs
+            <input type="file" onChange={onChange} accept=".json" className="hidden" />
+          </label>
+        </LumenButton>
 
         {apdusLogs.length ? (
           <Button download="apdus" href={href}>
@@ -588,7 +594,17 @@ class HeaderEmptyState extends Component<{
           <code>Ctrl+E</code> / Export Logs )
         </p>
         <p>
-          <input type="file" onChange={this.onChange} accept=".json,.txt" />
+          <LumenButton asChild appearance="accent">
+            <label>
+              Load Logs
+              <input
+                type="file"
+                onChange={this.onChange}
+                accept=".json,.txt"
+                className="hidden"
+              />
+            </label>
+          </LumenButton>
         </p>
       </header>
     );

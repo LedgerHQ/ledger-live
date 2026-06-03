@@ -11,7 +11,7 @@ import {
   ROLLBACK_STATUS_KEY,
 } from "./utils/migrations/constants";
 import { track } from "~/analytics";
-import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import { trackStorageOperation } from "./utils/performance";
 
 /** Singleton reference to the global application storage object. */
@@ -254,7 +254,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
-    async handleMigration(featureFlag: Feature_LlmMmkvMigration) {
+    async handleMigration(featureFlag: Features["llmMmkvMigration"]) {
       try {
         await migrator.handleMigration(state, featureFlag);
       } catch (e) {

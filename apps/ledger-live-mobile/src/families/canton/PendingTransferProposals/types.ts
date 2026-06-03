@@ -1,3 +1,4 @@
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
 
 export type TransferProposalAction = "accept" | "reject" | "withdraw";
@@ -20,6 +21,9 @@ export type ProcessedProposal = {
   receiver: string;
   amount: BigNumber;
   instrumentId: string;
+  // Unit resolved per-instrument so token offers render with the token's
+  // ticker / magnitude even when shown on the parent (native) account.
+  unit: Unit;
   memo: string;
   expiresAtMicros: number;
   isExpired: boolean;

@@ -4,6 +4,19 @@ import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { destroyAllRpcProviders } from "@ledgerhq/coin-evm/network/node/rpc.common";
 import { getCurrencyConfiguration } from "../../config";
 import { evmConfig } from "./config";
+
+const IGNORE_LIST: string[] = [
+  // Mainnet is behind auth
+  "arc",
+  // Down for now
+  "boba",
+  "klaytn",
+  "klaytn_baobab",
+  "story",
+  // Network changed
+  "polygon_zk_evm_testnet",
+];
+
 /**
  * Build the list of currency IDs that have a node configured.
  * Chains without a node entry (akroma, atheios, callisto…) have no
@@ -12,10 +25,12 @@ import { evmConfig } from "./config";
  * Currency ID is derived by stripping the `config_currency_` prefix from
  * the config key (e.g. `config_currency_base` → `base`).
  */
-const CURRENCY_IDS: string[] = Object.entries(evmConfig).flatMap(([key, entry]) => {
-  if (entry.type !== "object" || !entry.default["node"]) return [];
-  return [key.replace(/^config_currency_/, "")];
-});
+const CURRENCY_IDS: string[] = Object.entries(evmConfig)
+  .flatMap(([key, entry]) => {
+    if (entry.type !== "object" || !entry.default["node"]) return [];
+    return [key.replace(/^config_currency_/, "")];
+  })
+  .filter(currencyId => !IGNORE_LIST.includes(currencyId));
 
 afterAll(() => {
   destroyAllRpcProviders();

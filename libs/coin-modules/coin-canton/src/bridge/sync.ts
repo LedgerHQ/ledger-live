@@ -313,9 +313,7 @@ export function makeGetAccountShape(
     const cantonResources: CantonResources = {
       isOnboarded,
       instrumentUtxoCounts,
-      pendingTransferProposals: pendingTransferProposals.filter(
-        proposal => proposal.instrument_id === nativeInstrumentId,
-      ),
+      pendingTransferProposals,
       ...(publicKey ? { publicKey } : {}),
       xpub: xpubOrAddress,
     };

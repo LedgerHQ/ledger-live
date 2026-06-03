@@ -7,51 +7,35 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 
-// Temporary: getAccountBridge is currently synchronous but will become async soon.
-// Pre-annotate the Promise as fulfilled so React's use() returns it on the first
-// render without suspending. Once getAccountBridge is truly async, remove
-// fulfilledPromise and return a plain Promise — use() will suspend once, handled
-// by the screenLayout <Suspense> boundary.
-function fulfilledPromise<T>(value: T): Promise<T> {
-  const p = Promise.resolve(value) as Promise<T> & { status: "fulfilled"; value: T };
-  p.status = "fulfilled";
-  p.value = value;
-  return p;
-}
-
 // Requires a <Suspense> boundary in the parent tree.
 export function useAccountBridge<T extends TransactionCommon>(
   account: AccountLike,
   parentAccount?: Account | null,
 ): ResolvedAccountBridge<T> {
-  const promise = useMemo(
-    () => fulfilledPromise(getAccountBridge(account, parentAccount) as ResolvedAccountBridge<T>),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [account.id, parentAccount?.id],
-  );
-  return use(promise);
+  return use(getAccountBridge(account, parentAccount) as Promise<ResolvedAccountBridge<T>>);
 }
 
 // Null-safe variant: returns null when account is null.
+// use() can be called conditionally (unlike regular React hooks).
 export function useAccountBridgeOrNull<T extends TransactionCommon>(
   account: AccountLike | null,
   parentAccount?: Account | null,
 ): ResolvedAccountBridge<T> | null {
   if (!account) return null;
-  return getAccountBridge(account, parentAccount) as ResolvedAccountBridge<T>;
+  return use(getAccountBridge(account, parentAccount) as Promise<ResolvedAccountBridge<T>>);
 }
 
-// Multi-account variant. Today getAccountBridge is sync so we map it directly.
-// Once getAccountBridge becomes async, this hook should become
-// `accounts.map(a => useAccountBridge(a))` — React's `use()` (called inside useAccountBridge)
-// is explicitly allowed in loops: "Unlike all other React Hooks, use can be called within
-// loops and conditional statements like if." — https://react.dev/reference/react/use
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Multi-account variant. use() is allowed in loops at the top level of a component/hook,
+// but NOT inside useMemo/useEffect/useCallback callbacks (React 19.1 enforces this strictly).
+// See https://react.dev/reference/react/use
+// Memoize on the (id-derived) shape rather than `accounts` reference so callers that rebuild
+// the array each render (e.g. inline `.map().filter()`) still get a stable list as long as
+// account ids haven't changed.
 export function useAccountBridgeMany(accounts: Account[]): ResolvedAccountBridge<any>[] {
-  // Memoize on the (id-derived) shape rather than `accounts` reference: callers that
-  // rebuild the array each render (e.g. inline `.map().filter()`) still get a stable
-  // bridge list as long as the account ids haven't changed.
+  const bridges = accounts.map(a =>
+    use(getAccountBridge(a) as Promise<ResolvedAccountBridge<any>>),
+  );
   const idsKey = accounts.map(a => a.id).join("|");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => accounts.map(a => getAccountBridge(a)), [idsKey]);
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => bridges, [idsKey]);
 }

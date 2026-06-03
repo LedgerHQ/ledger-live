@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import {
   ListItem,
   ListItemLeading,

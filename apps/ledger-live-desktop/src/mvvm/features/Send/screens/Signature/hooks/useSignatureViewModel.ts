@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { trackPage } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
@@ -44,6 +46,15 @@ export function useSignatureViewModel() {
   const transaction = state.transaction.transaction;
   const txStatus = state.transaction.status;
   const currency = state.account.currency;
+
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount ?? null),
+    [account, parentAccount],
+  );
+
+  const onDeviceConfirmationShown = useCallback(() => {
+    trackPage("Modal send - step device review", null, sendFlowTrackingProperties);
+  }, [sendFlowTrackingProperties]);
 
   const depsRef = useRef({
     account,
@@ -173,5 +184,6 @@ export function useSignatureViewModel() {
     request,
     onDeviceActionResult,
     finishWithError,
+    onDeviceConfirmationShown,
   };
 }

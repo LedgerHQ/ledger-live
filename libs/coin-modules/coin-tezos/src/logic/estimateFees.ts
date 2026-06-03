@@ -5,12 +5,12 @@ import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { TezosOperationMode } from "../types/model";
 import {
+  computeMaxStakeAmount,
   createFallbackEstimation,
   createMockSigner,
   DUST_MARGIN_MUTEZ,
   MIN_SUGGESTED_FEE_SMALL_TRANSFER,
   OP_SIZE_XTZ_TRANSFER,
-  STAKE_USE_ALL_RESERVE_MUTEZ,
   normalizePublicKeyForAddress,
 } from "../utils";
 import { getTezosToolkit } from "./tezosToolkit";
@@ -18,6 +18,7 @@ import { getTezosToolkit } from "./tezosToolkit";
 export type CoreAccountInfo = {
   address: string;
   balance: bigint;
+  stakedBalance?: bigint;
   revealed: boolean;
   xpub?: string;
 };
@@ -186,9 +187,11 @@ export async function estimateFees({
       const maxMinusBuff = maxAmount - (DUST_MARGIN_MUTEZ - incr);
       estimation.amount = maxMinusBuff > 0 ? BigInt(maxMinusBuff) : 0n;
     } else if (transaction.useAllAmount && transaction.mode === "stake") {
-      const maxStakable =
-        BigInt(account.balance) - BigInt(mainOpFee) - revealFee - STAKE_USE_ALL_RESERVE_MUTEZ;
-      estimation.amount = maxStakable > 0n ? maxStakable : 0n;
+      estimation.amount = computeMaxStakeAmount(
+        BigInt(account.balance),
+        account.stakedBalance ?? 0n,
+        BigInt(mainOpFee) + revealFee,
+      );
     } else {
       estimation.amount = transaction.amount;
     }

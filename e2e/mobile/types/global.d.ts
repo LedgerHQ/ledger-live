@@ -29,6 +29,7 @@ declare global {
   var speculosDevices: Map<string, number>;
   var speculosStartupErrorMessage: string | undefined;
   var speculosFailureStderr: string | undefined;
+  var speculosFailedRunIds: Set<string> | undefined;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;

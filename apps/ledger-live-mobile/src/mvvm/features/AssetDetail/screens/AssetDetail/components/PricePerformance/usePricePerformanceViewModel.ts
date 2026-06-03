@@ -41,10 +41,26 @@ function formatPercentage(value: number): string {
   return `${sign}${value.toFixed(2)}%`;
 }
 
-export function usePricePerformanceViewModel(currency: AssetDetailCurrencyProps) {
+type Params = {
+  currency: AssetDetailCurrencyProps;
+  marketApiId?: string;
+  knownLedgerIds?: readonly string[];
+  knownMarketId?: string;
+};
+
+export function usePricePerformanceViewModel({
+  currency,
+  marketApiId,
+  knownLedgerIds,
+  knownMarketId,
+}: Params) {
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const { marketCurrency, counterCurrency, isLoading, isError } = useAssetMarketData(currency);
+  const { marketCurrency, counterCurrency, isLoading, isError } = useAssetMarketData({
+    marketApiId,
+    knownLedgerIds,
+    knownMarketId,
+  });
 
   const dateFormatter = useMemo(
     () =>

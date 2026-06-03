@@ -123,6 +123,35 @@ describe("buildFeatureIntro", () => {
     expect(featureIntro).toBeUndefined();
   });
 
+  it("should keep at most three items sorted by index", () => {
+    const mainCard = makeCard("main", {
+      layout: GenericAwarenessModalLayout.FeatureIntro,
+      campaignId: "campaign-1",
+      role: FeatureIntroRole.Main,
+      title: "Main",
+    });
+    const itemCards = [0, 1, 2, 3].map(index =>
+      makeCard(`item-${index}`, {
+        layout: GenericAwarenessModalLayout.FeatureIntro,
+        campaignId: "campaign-1",
+        role: FeatureIntroRole.Item,
+        index: String(index),
+        icon: `icon-${index}`,
+        title: `Item ${index}`,
+        subtitle: `Subtitle ${index}`,
+      }),
+    );
+
+    const featureIntro = buildFeatureIntro("campaign-1", [mainCard, ...itemCards]);
+
+    expect(featureIntro?.items).toHaveLength(3);
+    expect(featureIntro?.items).toEqual([
+      { icon: "icon-0", title: "Item 0", subtitle: "Subtitle 0" },
+      { icon: "icon-1", title: "Item 1", subtitle: "Subtitle 1" },
+      { icon: "icon-2", title: "Item 2", subtitle: "Subtitle 2" },
+    ]);
+  });
+
   it("should skip invalid item inputs", () => {
     const mainCard = makeCard("main", {
       layout: GenericAwarenessModalLayout.FeatureIntro,

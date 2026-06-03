@@ -1,11 +1,10 @@
-import {
-  ABTestingVariants,
-  type Feature_BrazePushNotifications,
-  type Feature_LwmNewWordingOptInNotificationsDrawer,
-} from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
+import { AB_TESTING_VARIANTS } from "./types/variants";
 
-type BrazePushNotificationsParams = NonNullable<Feature_BrazePushNotifications["params"]>;
-type WordingFeatureParams = NonNullable<Feature_LwmNewWordingOptInNotificationsDrawer["params"]>;
+type BrazePushNotificationsParams = NonNullable<Features["brazePushNotifications"]["params"]>;
+type WordingFeatureParams = NonNullable<
+  Features["lwmNewWordingOptInNotificationsDrawer"]["params"]
+>;
 
 const defaultRepromptSchedule: BrazePushNotificationsParams["reprompt_schedule"] = [
   { months: 0, days: 7, hours: 0, minutes: 0, seconds: 0 },
@@ -55,7 +54,7 @@ export const notificationsPromptActionEvents: BrazePushNotificationsParams["acti
 };
 
 export function createNotificationsPromptFeatureFlags({
-  variant = ABTestingVariants.variantB,
+  variant = AB_TESTING_VARIANTS.B,
   repromptSchedule = defaultRepromptSchedule,
   inactivityEnabled = false,
   inactivityReprompt = defaultInactivityReprompt,

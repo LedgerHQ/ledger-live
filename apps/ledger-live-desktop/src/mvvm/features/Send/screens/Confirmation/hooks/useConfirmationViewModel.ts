@@ -73,11 +73,25 @@ export function useConfirmationViewModel() {
         page: "step confirmation",
         ...sendFlowTrackingProperties,
       });
-      setDrawer(OperationDetails, {
-        operationId: concernedOperation.id,
-        accountId: account.id,
-        parentId: parentAccount?.id,
-      });
+      trackPage("Modal send - transaction details", null, sendFlowTrackingProperties);
+      setDrawer(
+        OperationDetails,
+        {
+          operationId: concernedOperation.id,
+          accountId: account.id,
+          parentId: parentAccount?.id,
+        },
+        {
+          onRequestClose: () => {
+            track("button_clicked", {
+              button: "close transaction details",
+              page: "transaction details",
+              ...sendFlowTrackingProperties,
+            });
+            setDrawer();
+          },
+        },
+      );
     }
   }, [close, account, concernedOperation, parentAccount, sendFlowTrackingProperties]);
 

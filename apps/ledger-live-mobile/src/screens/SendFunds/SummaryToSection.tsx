@@ -6,7 +6,7 @@ import { useTheme } from "styled-components/native";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "~/components/Circle";

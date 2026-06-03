@@ -252,14 +252,15 @@ describe("rawOperationsToOperations", () => {
 
   describe("operation type filtering", () => {
     it.each(["manage_offer", "set_options", "allow_trust", "manage_data", "bump_sequence"])(
-      "should filter out unsupported %s operation",
+      "should not surface a typed Operation for unsupported %s operation",
       async type => {
         const op = makeOp({
           type,
           source_account: ADDR,
         });
         const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
-        expect(result).toHaveLength(0);
+        // No typed Operation (OUT/IN/OPT_IN/...) is emitted for unsupported types
+        expect(result.find(o => o.type !== "FEES")).toBeUndefined();
       },
     );
 
@@ -276,6 +277,161 @@ describe("rawOperationsToOperations", () => {
       const op = makeOp({ type, ...extra } as RawOpInput);
       const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
       expect(result).toHaveLength(1);
+    });
+  });
+
+  describe("fee-only operations", () => {
+    // Non-fee-bump Stellar transactions have `fee_account === source_account`,
+    // which is what most of these fixtures model.
+    it.each(["set_options", "manage_offer", "manage_data", "bump_sequence", "allow_trust"])(
+      "emits a single FEES Operation for unsupported %s when address paid the fee",
+      async type => {
+        const op = makeOp(
+          { type, source_account: ADDR, transaction_hash: `tx-${type}` },
+          { fee_account: ADDR, fee_charged: "150" },
+        );
+        const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+          type: "FEES",
+          value: 0n,
+          asset: { type: "native" },
+          senders: [ADDR],
+          recipients: [],
+          tx: { hash: `tx-${type}`, fees: 150n, feesPayer: ADDR, failed: false },
+        });
+        expect(result[0].details).toMatchObject({ ledgerOpType: "FEES" });
+        expect(result[0].id).toBe(`${ACCOUNT_ID}-tx-${type}-FEES`);
+      },
+    );
+
+    it("emits a FEES Operation for create_claimable_balance when address is the sponsor", async () => {
+      const op = makeOp(
+        {
+          type: "create_claimable_balance",
+          source_account: ADDR,
+          asset: "USDC:GISSUER",
+          amount: "100",
+          sponsor: ADDR,
+          transaction_hash: "tx-ccb",
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const [out] = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(out.type).toBe("FEES");
+      expect(out.tx.fees).toBe(100n);
+      // The token amount locked in the claimable balance is intentionally NOT
+      // exposed on the FEES op; only the XLM fee deduction is.
+      expect(out.value).toBe(0n);
+      expect(out.asset).toEqual({ type: "native" });
+    });
+
+    it("does NOT emit a FEES Operation when address is not the fee payer (fee-bump or unrelated)", async () => {
+      const op = makeOp(
+        {
+          type: "set_options",
+          source_account: ADDR,
+          transaction_hash: "tx-fee-bumped",
+        },
+        // fee bumped by another account
+        { fee_account: OTHER_ADDR, fee_charged: "150" },
+      );
+      const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(result).toHaveLength(0);
+    });
+
+    it("does NOT emit a FEES Operation when the tx already has a surfaced Operation (avoids double-counting)", async () => {
+      // Multi-op transaction: one supported (change_trust, OPT_IN) + one
+      // unsupported (set_options). Only the supported op is surfaced; the
+      // unsupported one does not produce an extra FEES row since the tx fee is
+      // already carried on the OPT_IN op's `tx.fees`.
+      const supportedOp = makeOp(
+        {
+          type: "change_trust",
+          trustor: ADDR,
+          limit: "1000",
+          asset_code: "BTC",
+          asset_issuer: "GISSUER",
+          source_account: ADDR,
+          transaction_hash: "tx-mixed",
+          id: "op-1",
+          paging_token: "pt-1",
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const unsupportedOp = makeOp(
+        {
+          type: "set_options",
+          source_account: ADDR,
+          transaction_hash: "tx-mixed",
+          id: "op-2",
+          paging_token: "pt-2",
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const result = await rawOperationsToOperations(
+        [supportedOp, unsupportedOp],
+        ADDR,
+        ACCOUNT_ID,
+        0,
+      );
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe("OPT_IN");
+      expect(result[0].tx.fees).toBe(100n);
+    });
+
+    it("emits a single FEES Operation per tx even when multiple unsupported ops share the same tx hash", async () => {
+      const opA = makeOp(
+        {
+          type: "set_options",
+          source_account: ADDR,
+          transaction_hash: "tx-multi",
+          id: "op-a",
+          paging_token: "pt-a",
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const opB = makeOp(
+        {
+          type: "manage_data",
+          source_account: ADDR,
+          transaction_hash: "tx-multi",
+          id: "op-b",
+          paging_token: "pt-b",
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const result = await rawOperationsToOperations([opA, opB], ADDR, ACCOUNT_ID, 0);
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe("FEES");
+      expect(result[0].tx.hash).toBe("tx-multi");
+      // The FEES op anchors at the first raw op's index/pagingToken so the
+      // descending Horizon page order is preserved.
+      expect(result[0].details).toMatchObject({ index: "op-a", pagingToken: "pt-a" });
+    });
+
+    it("honors minHeight for fee-only operations", async () => {
+      const op = makeOp(
+        { type: "set_options", source_account: ADDR },
+        { fee_account: ADDR, fee_charged: "100", ledger_attr: 99 },
+      );
+      expect(await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 100)).toHaveLength(0);
+    });
+
+    it("marks the FEES Operation as failed when the transaction failed", async () => {
+      const op = makeOp(
+        {
+          type: "set_options",
+          source_account: ADDR,
+          transaction_successful: false,
+          transaction_hash: "tx-failed",
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const [out] = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(out.type).toBe("FEES");
+      expect(out.tx.failed).toBe(true);
+      expect(out.tx.fees).toBe(100n);
     });
   });
 
@@ -368,12 +524,24 @@ describe("rawOperationsToOperations", () => {
       expect(out.type).toBe("IN");
     });
 
-    it("should always mark path_payment_strict_receive as IN", async () => {
+    it("should mark path_payment_strict_receive as OUT when address is the source", async () => {
       const op = makeOp({
         type: "path_payment_strict_receive",
         from: ADDR,
         to: OTHER_ADDR,
         amount: "5",
+      });
+      const [out] = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(out.type).toBe("OUT");
+    });
+
+    it("should mark path_payment_strict_receive as IN when address is the recipient", async () => {
+      const op = makeOp({
+        type: "path_payment_strict_receive",
+        from: OTHER_ADDR,
+        to: ADDR,
+        amount: "5",
+        source_account: OTHER_ADDR,
       });
       const [out] = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
       expect(out.type).toBe("IN");
@@ -542,6 +710,215 @@ describe("rawOperationsToOperations", () => {
     });
   });
 
+  describe("path_payment_strict_send native source side", () => {
+    it("emits a native OUT row using source_amount when address is the source and source asset is native", async () => {
+      const op = makeOp(
+        {
+          type: "path_payment_strict_send",
+          from: ADDR,
+          to: OTHER_ADDR,
+          source_account: ADDR,
+          source_asset_type: "native",
+          source_amount: "0.7920000",
+          asset_type: "credit_alphanum12",
+          asset_code: "SPDX",
+          asset_issuer: "GISSUER",
+          amount: "1234.5678901",
+        },
+        { fee_charged: "100" },
+      );
+      const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      // No FEES row: native OUT already carries the fee on `tx.fees`.
+      expect(result.map(o => `${o.type}:${o.asset.type}`)).toEqual(["OUT:native"]);
+      expect(result[0]).toMatchObject({
+        type: "OUT",
+        asset: { type: "native" },
+        value: 7920000n,
+        senders: [ADDR],
+        recipients: [OTHER_ADDR],
+        tx: { fees: 100n },
+      });
+    });
+
+    it("emits a native IN row using `amount` when address is the destination and dest asset is native", async () => {
+      const op = makeOp(
+        {
+          type: "path_payment_strict_send",
+          from: OTHER_ADDR,
+          to: ADDR,
+          source_account: OTHER_ADDR,
+          source_asset_type: "credit_alphanum4",
+          source_asset_code: "USDC",
+          source_asset_issuer: "GISSUER",
+          source_amount: "10.0000000",
+          asset_type: "native",
+          amount: "9.9000000",
+        },
+        { fee_charged: "100" },
+      );
+      const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(result).toEqual([
+        expect.objectContaining({
+          type: "IN",
+          asset: { type: "native" },
+          value: 99000000n,
+          senders: [OTHER_ADDR],
+          recipients: [ADDR],
+        }),
+      ]);
+    });
+
+    it("emits a token NONE row when the source asset is a token and address is the source", async () => {
+      const op = makeOp(
+        {
+          type: "path_payment_strict_send",
+          from: ADDR,
+          to: OTHER_ADDR,
+          source_account: ADDR,
+          source_asset_type: "credit_alphanum4",
+          source_asset_code: "USDC",
+          source_asset_issuer: "GISSUER",
+          source_amount: "5.0000000",
+          asset_type: "credit_alphanum4",
+          asset_code: "EURC",
+          asset_issuer: "GISSUER2",
+          amount: "4.5000000",
+        },
+        { fee_charged: "300" },
+      );
+      const [out] = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(out.type).toBe("NONE");
+      expect(out.asset).toEqual({
+        type: "token",
+        assetReference: "USDC",
+        assetOwner: "GISSUER",
+      });
+      // legacy convention: NONE token rows carry `value = fee_charged` and the
+      // real token amount on `details.assetAmount`.
+      expect(out.value).toBe(300n);
+      expect(out.details).toMatchObject({
+        assetCode: "USDC",
+        assetIssuer: "GISSUER",
+        assetAmount: "50000000",
+        ledgerOpType: "NONE",
+      });
+    });
+
+    it("emits both a native OUT (source) and a token NONE (dest) row for self-swaps", async () => {
+      const op = makeOp(
+        {
+          type: "path_payment_strict_send",
+          from: ADDR,
+          to: ADDR,
+          source_account: ADDR,
+          source_asset_type: "native",
+          source_amount: "0.7920000",
+          asset_type: "credit_alphanum12",
+          asset_code: "SPDX",
+          asset_issuer: "GISSUER",
+          amount: "1234.5678901",
+          id: "op-self-swap",
+        },
+        { fee_charged: "4580" },
+      );
+      const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(result.map(o => `${o.type}:${o.asset.type}`)).toEqual(["OUT:native", "NONE:token"]);
+      expect(result.map(o => (o.details as { index: string }).index)).toEqual([
+        "op-self-swap-OUT-NATIVE",
+        "op-self-swap-IN-TOKEN-SPDX",
+      ]);
+      expect(result[0]).toMatchObject({ value: 7920000n, senders: [ADDR], recipients: [ADDR] });
+      expect(result[1]).toMatchObject({
+        value: 4580n,
+        details: { assetAmount: "12345678901" },
+      });
+    });
+  });
+
+  describe("liquidity_pool_deposit", () => {
+    it("emits a native OUT row using reserves_deposited when one of the reserves is native", async () => {
+      const op = makeOp(
+        {
+          type: "liquidity_pool_deposit",
+          source_account: ADDR,
+          liquidity_pool_id: "pool-id",
+          reserves_deposited: [
+            { asset: "native", amount: "10.0000000" },
+            { asset: "SPDX:GISSUER", amount: "57173830.2052035" },
+          ],
+          shares_received: "23909.3448196",
+          id: "op-lp-deposit",
+        },
+        { fee_charged: "100" },
+      );
+      const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(result.map(o => `${o.type}:${o.asset.type}`)).toEqual(["OUT:native", "NONE:token"]);
+      expect(result[0]).toMatchObject({
+        type: "OUT",
+        asset: { type: "native" },
+        value: 100000000n,
+        tx: { fees: 100n },
+      });
+      // Token leg: legacy NONE convention with the deposited token amount on
+      // `details.assetAmount`.
+      expect(result[1]).toMatchObject({
+        type: "NONE",
+        asset: { type: "token", assetReference: "SPDX", assetOwner: "GISSUER" },
+        value: 100n,
+        details: { assetAmount: "571738302052035" },
+      });
+      expect(result.map(o => (o.details as { index: string }).index)).toEqual([
+        "op-lp-deposit-NATIVE",
+        "op-lp-deposit-TOKEN-SPDX",
+      ]);
+    });
+
+    it("does NOT emit a duplicate FEES row when liquidity_pool_deposit is surfaced", async () => {
+      const op = makeOp(
+        {
+          type: "liquidity_pool_deposit",
+          source_account: ADDR,
+          liquidity_pool_id: "pool-id",
+          reserves_deposited: [
+            { asset: "native", amount: "10.0000000" },
+            { asset: "SPDX:GISSUER", amount: "57173830.2052035" },
+          ],
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(result.map(o => o.type)).toEqual(["OUT", "NONE"]);
+      expect(result.find(o => o.type === "FEES")).toBeUndefined();
+    });
+  });
+
+  describe("liquidity_pool_withdraw", () => {
+    it("emits a native IN row using reserves_received when one of the reserves is native", async () => {
+      const op = makeOp(
+        {
+          type: "liquidity_pool_withdraw",
+          source_account: ADDR,
+          liquidity_pool_id: "pool-id",
+          reserves_received: [
+            { asset: "native", amount: "26.6614878" },
+            { asset: "SPDX:GISSUER", amount: "152433937.6498273" },
+          ],
+          shares: "63745.8705215",
+          id: "op-lp-withdraw",
+        },
+        { fee_charged: "100" },
+      );
+      const result = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
+      expect(result.map(o => `${o.type}:${o.asset.type}`)).toEqual(["IN:native", "NONE:token"]);
+      expect(result[0]).toMatchObject({
+        type: "IN",
+        asset: { type: "native" },
+        value: 266614878n,
+        senders: [ADDR],
+      });
+    });
+  });
+
   describe("failed transactions", () => {
     it("should set value=0 for IN ops when transaction failed", async () => {
       const op = makeOp(
@@ -639,7 +1016,7 @@ describe("rawOperationsToOperations", () => {
         source_account: OTHER_ADDR,
       });
       const [out] = await rawOperationsToOperations([op], ADDR, ACCOUNT_ID, 0);
-      expect(out.recipients).toEqual([]);
+      expect(out.recipients).toEqual([ADDR]);
     });
   });
 
@@ -756,11 +1133,16 @@ describe("rawOperationsToOperations", () => {
         amount: "1",
         transaction_hash: "tx-a",
       });
-      const opIgnored = makeOp({
-        type: "manage_offer",
-        source_account: ADDR,
-        transaction_hash: "tx-ignored",
-      });
+      // Unrelated to the listed address: not in any filter field and not the
+      // fee payer, so it must be dropped entirely (no fee row).
+      const opIgnored = makeOp(
+        {
+          type: "manage_offer",
+          source_account: OTHER_ADDR,
+          transaction_hash: "tx-ignored",
+        },
+        { fee_account: OTHER_ADDR },
+      );
       const opB = makeOp({
         type: "payment",
         from: OTHER_ADDR,
@@ -772,6 +1154,39 @@ describe("rawOperationsToOperations", () => {
 
       const result = await rawOperationsToOperations([opA, opIgnored, opB], ADDR, ACCOUNT_ID, 0);
       expect(result.map(o => o.tx.hash)).toEqual(["tx-a", "tx-b"]);
+    });
+
+    it("should interleave fee-only ops at the position of their first raw op in the page", async () => {
+      const opA = makeOp({
+        type: "payment",
+        from: ADDR,
+        to: OTHER_ADDR,
+        amount: "1",
+        transaction_hash: "tx-a",
+      });
+      const opFeeOnly = makeOp(
+        {
+          type: "set_options",
+          source_account: ADDR,
+          transaction_hash: "tx-fees",
+        },
+        { fee_account: ADDR, fee_charged: "100" },
+      );
+      const opB = makeOp({
+        type: "payment",
+        from: OTHER_ADDR,
+        to: ADDR,
+        amount: "2",
+        source_account: OTHER_ADDR,
+        transaction_hash: "tx-b",
+      });
+
+      const result = await rawOperationsToOperations([opA, opFeeOnly, opB], ADDR, ACCOUNT_ID, 0);
+      expect(result.map(o => `${o.tx.hash}:${o.type}`)).toEqual([
+        "tx-a:OUT",
+        "tx-fees:FEES",
+        "tx-b:IN",
+      ]);
     });
 
     it("should return an empty array when given no operations", async () => {

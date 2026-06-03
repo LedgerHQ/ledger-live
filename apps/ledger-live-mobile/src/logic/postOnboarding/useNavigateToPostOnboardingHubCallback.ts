@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
@@ -14,7 +14,8 @@ const mainPortfolioWalletTabParams = {
 export function useNavigateToPostOnboardingHubCallback() {
   const navigation = useNavigation<RootNavigation>();
   const dispatch = useDispatch();
-  const { shouldDisplayOnboardingWidget } = useWalletFeaturesConfig("mobile");
+  const onboardingWidgetFeature = useFeature("onboardingWidget");
+  const shouldDisplayOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
 
   return useCallback(
     (resetNavigationStack?: boolean) => {

@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {

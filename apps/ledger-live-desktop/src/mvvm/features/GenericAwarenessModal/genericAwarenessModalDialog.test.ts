@@ -7,11 +7,16 @@ import {
 } from "~/renderer/reducers/genericAwarenessModalSlice";
 import type { State } from "~/renderer/reducers";
 import type { AppDispatch } from "~/state-manager/configureStore";
-import { CAROUSEL_CAMPAIGN_ID, carouselCampaignCard } from "./__tests__/fixtures";
+import {
+  APP_START_CAMPAIGN_ID,
+  appStartFeatureIntroCard,
+  CAROUSEL_CAMPAIGN_ID,
+  carouselCampaignCard,
+} from "./testUtils/fixtures";
 import {
   createGenericAwarenessModalTestState,
   initialGenericAwarenessModalState,
-} from "./__tests__/testHelpers";
+} from "./testUtils/modalTestUtils";
 import {
   closeGenericAwarenessModalDialog,
   openGenericAwarenessModalDialog,
@@ -29,6 +34,14 @@ const collectThunkDispatches = (
   runThunk(dispatch, getState);
   return dispatched;
 };
+
+const isDismissedContentCardsAction = (
+  action: unknown,
+): action is ReturnType<typeof setDismissedContentCards> =>
+  typeof action === "object" &&
+  action !== null &&
+  "type" in action &&
+  action.type === "SET_DISMISSED_CONTENT_CARDS";
 
 describe("genericAwarenessModalDialog", () => {
   it("should store campaign id without opening dialog when no matching content card exists", () => {
@@ -72,7 +85,7 @@ describe("genericAwarenessModalDialog", () => {
     expect(actions[1]).toEqual(setGenericAwarenessModalCampaignId(undefined));
   });
 
-  it("should dismiss content card id and filter the slice when close thunk runs with a content card", () => {
+  it("should not dismiss non-APP_START campaigns when close thunk runs for a carousel campaign", () => {
     const actions = collectThunkDispatches(dispatch => {
       closeGenericAwarenessModalDialog()(dispatch, () =>
         createGenericAwarenessModalTestState({
@@ -85,13 +98,67 @@ describe("genericAwarenessModalDialog", () => {
       );
     });
 
-    const dismissAction = actions[0] as ReturnType<typeof setDismissedContentCards>;
-    expect(dismissAction.type).toBe("SET_DISMISSED_CONTENT_CARDS");
-    expect(dismissAction.payload.id).toBe(CAROUSEL_CAMPAIGN_ID);
-    expect(typeof dismissAction.payload.timestamp).toBe("number");
-    expect(actions[1]).toEqual(setGenericAwarenessModalContentCards([]));
-    expect(actions[2]).toEqual(closeDialog("GENERIC_AWARENESS_MODAL"));
-    expect(actions[3]).toEqual(setGenericAwarenessModalCampaignId(undefined));
+    expect(actions).toEqual([
+      closeDialog("GENERIC_AWARENESS_MODAL"),
+      setGenericAwarenessModalCampaignId(undefined),
+    ]);
+    expect(actions.some(isDismissedContentCardsAction)).toBe(false);
+    expect(
+      actions.some(
+        action =>
+          typeof action === "object" &&
+          action !== null &&
+          "type" in action &&
+          action.type === setGenericAwarenessModalContentCards.type,
+      ),
+    ).toBe(false);
+  });
+
+  it("should dismiss APP_START content card and filter the slice when close thunk runs", () => {
+    const actions = collectThunkDispatches(dispatch => {
+      closeGenericAwarenessModalDialog()(dispatch, () =>
+        createGenericAwarenessModalTestState({
+          genericAwarenessModal: {
+            contentCards: [appStartFeatureIntroCard, carouselCampaignCard],
+            campaignId: undefined,
+          },
+          dialogs: { GENERIC_AWARENESS_MODAL: true },
+        }),
+      );
+    });
+
+    const dismissAction = actions.find(isDismissedContentCardsAction);
+    expect(dismissAction?.payload.id).toBe(APP_START_CAMPAIGN_ID);
+    expect(typeof dismissAction?.payload.timestamp).toBe("number");
+    expect(actions).toContainEqual(setGenericAwarenessModalContentCards([carouselCampaignCard]));
+    expect(actions).toContainEqual(closeDialog("GENERIC_AWARENESS_MODAL"));
+    expect(actions).toContainEqual(setGenericAwarenessModalCampaignId(undefined));
+  });
+
+  it("should dismiss APP_START content cards regardless of id casing when close thunk runs", () => {
+    const lowercaseAppStartCampaignId = "app_start_lowercase";
+    const lowercaseAppStartCard = {
+      ...appStartFeatureIntroCard,
+      id: lowercaseAppStartCampaignId,
+    };
+
+    const actions = collectThunkDispatches(dispatch => {
+      closeGenericAwarenessModalDialog()(dispatch, () =>
+        createGenericAwarenessModalTestState({
+          genericAwarenessModal: {
+            contentCards: [lowercaseAppStartCard, carouselCampaignCard],
+            campaignId: lowercaseAppStartCampaignId,
+          },
+          dialogs: { GENERIC_AWARENESS_MODAL: true },
+        }),
+      );
+    });
+
+    const dismissAction = actions.find(isDismissedContentCardsAction);
+    expect(dismissAction?.payload.id).toBe(lowercaseAppStartCampaignId);
+    expect(actions).toContainEqual(setGenericAwarenessModalContentCards([carouselCampaignCard]));
+    expect(actions).toContainEqual(closeDialog("GENERIC_AWARENESS_MODAL"));
+    expect(actions).toContainEqual(setGenericAwarenessModalCampaignId(undefined));
   });
 
   it("should return false from selector when dialog is absent", () => {

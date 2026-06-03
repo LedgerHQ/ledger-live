@@ -1,6 +1,11 @@
-import { getTxType, convertShieldedTransactionsToOperations } from "../operations";
+import {
+  getTxType,
+  convertShieldedTransactionsToOperations,
+  computeBalanceFromNotes,
+  collectSpendableNotes,
+} from "../operations";
 import BigNumber from "bignumber.js";
-import type { ShieldedTransaction, DecryptedTransaction } from "../types";
+import type { ShieldedTransaction, DecryptedTransaction, DecryptedOutput } from "../types";
 
 describe("getTxType", () => {
   it("should return SHIELDED_TX_ORCHARD_IN when transfer_type is incoming", () => {
@@ -359,5 +364,184 @@ describe("convertShieldedTransactionsToOperations", () => {
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_INTERNAL");
     expect(op.value).toEqual(new BigNumber(0));
+  });
+});
+
+// ── computeBalanceFromNotes ────────────────────────────────────────────
+
+describe("computeBalanceFromNotes", () => {
+  const makeTxWithNotes = (
+    orchardNotes: DecryptedOutput[],
+    saplingNotes: DecryptedOutput[] = [],
+    id = "tx1",
+  ): ShieldedTransaction => ({
+    id,
+    hex: "00",
+    blockHeight: 100,
+    blockHash: "hash",
+    timestamp: 1700000000,
+    fee: new BigNumber(100),
+    decryptedData: { orchard_outputs: orchardNotes, sapling_outputs: saplingNotes },
+  });
+
+  it("treats notes without isSpent as unspent (conservative)", () => {
+    const txs = [
+      makeTxWithNotes([
+        { amount: new BigNumber(1000), memo: "", transfer_type: "incoming" },
+        { amount: new BigNumber(500), memo: "", transfer_type: "outgoing" },
+      ]),
+    ];
+    expect(computeBalanceFromNotes(txs)).toEqual(new BigNumber(1000));
+  });
+
+  it("sums only unspent incoming and internal orchard notes", () => {
+    const txs = [
+      makeTxWithNotes([
+        { amount: new BigNumber(5000), memo: "", transfer_type: "incoming", isSpent: false },
+        { amount: new BigNumber(2000), memo: "", transfer_type: "internal", isSpent: false },
+        { amount: new BigNumber(3000), memo: "", transfer_type: "outgoing", isSpent: false }, // excluded (outgoing)
+        { amount: new BigNumber(1000), memo: "", transfer_type: "incoming", isSpent: true }, // excluded (spent)
+      ]),
+    ];
+    expect(computeBalanceFromNotes(txs)).toEqual(new BigNumber(7000)); // 5000 + 2000
+  });
+
+  it("excludes notes where isSpent === true", () => {
+    const txs = [
+      makeTxWithNotes([
+        { amount: new BigNumber(10000), memo: "", transfer_type: "incoming", isSpent: true },
+        { amount: new BigNumber(3000), memo: "", transfer_type: "incoming", isSpent: false },
+      ]),
+    ];
+    expect(computeBalanceFromNotes(txs)).toEqual(new BigNumber(3000));
+  });
+
+  it("returns zero for empty transaction list", () => {
+    expect(computeBalanceFromNotes([])).toEqual(new BigNumber(0));
+  });
+
+  it("aggregates notes across multiple transactions", () => {
+    const txs = [
+      makeTxWithNotes(
+        [{ amount: new BigNumber(5000), memo: "", transfer_type: "incoming", isSpent: false }],
+        [],
+        "tx1",
+      ),
+      makeTxWithNotes(
+        [{ amount: new BigNumber(3000), memo: "", transfer_type: "internal", isSpent: false }],
+        [],
+        "tx2",
+      ),
+    ];
+    expect(computeBalanceFromNotes(txs)).toEqual(new BigNumber(8000));
+  });
+});
+
+// ── collectSpendableNotes ──────────────────────────────────────────────
+
+describe("collectSpendableNotes", () => {
+  const makeFullNote = (overrides: Partial<DecryptedOutput> = {}): DecryptedOutput => ({
+    amount: new BigNumber(10000),
+    memo: "",
+    transfer_type: "incoming",
+    isSpent: false,
+    nullifier: "aa".repeat(32),
+    rho: "ee".repeat(32),
+    rseed: "bb".repeat(32),
+    cmx: "cc".repeat(32),
+    position: "42",
+    recipient: "dd".repeat(43),
+    ...overrides,
+  });
+
+  const makeTx = (notes: DecryptedOutput[], id = "tx1"): ShieldedTransaction => ({
+    id,
+    hex: "00",
+    blockHeight: 100,
+    blockHash: "hash",
+    timestamp: 1700000000,
+    fee: new BigNumber(100),
+    decryptedData: { orchard_outputs: notes, sapling_outputs: [] },
+  });
+
+  it("returns only notes with all spending fields present and isSpent !== true", () => {
+    const txs = [
+      makeTx([
+        makeFullNote({ amount: new BigNumber(5000) }),
+        makeFullNote({ amount: new BigNumber(3000), transfer_type: "internal" }),
+      ]),
+    ];
+    const result = collectSpendableNotes(txs);
+    expect(result).toHaveLength(2);
+    expect(result[0].amount).toEqual(new BigNumber(5000));
+    expect(result[1].amount).toEqual(new BigNumber(3000));
+  });
+
+  it("excludes spent notes", () => {
+    const txs = [
+      makeTx([
+        makeFullNote({ isSpent: true, nullifier: "aa".repeat(32) }),
+        makeFullNote({ isSpent: false, nullifier: "bb".repeat(32), amount: new BigNumber(8000) }),
+      ]),
+    ];
+    const result = collectSpendableNotes(txs);
+    expect(result).toHaveLength(1);
+    expect(result[0].amount).toEqual(new BigNumber(8000));
+  });
+
+  it("excludes outgoing notes", () => {
+    const txs = [
+      makeTx([
+        makeFullNote({ transfer_type: "outgoing", nullifier: "aa".repeat(32) }),
+        makeFullNote({ transfer_type: "incoming", nullifier: "bb".repeat(32) }),
+      ]),
+    ];
+    const result = collectSpendableNotes(txs);
+    expect(result).toHaveLength(1);
+  });
+
+  it("excludes notes missing any spending field", () => {
+    const txs = [
+      makeTx([
+        // Missing nullifier
+        {
+          amount: new BigNumber(5000),
+          memo: "",
+          transfer_type: "incoming" as const,
+          isSpent: false,
+          rseed: "bb".repeat(32),
+          cmx: "cc".repeat(32),
+          position: "0",
+          recipient: "dd".repeat(43),
+        },
+        // Complete note
+        makeFullNote({ nullifier: "ee".repeat(32), amount: new BigNumber(3000) }),
+      ]),
+    ];
+    const result = collectSpendableNotes(txs);
+    expect(result).toHaveLength(1);
+    expect(result[0].amount).toEqual(new BigNumber(3000));
+  });
+
+  it("returns correct txid and outputIndex for each note", () => {
+    const txs = [
+      makeTx(
+        [
+          makeFullNote({ nullifier: "aa".repeat(32), amount: new BigNumber(1000) }),
+          makeFullNote({ nullifier: "bb".repeat(32), amount: new BigNumber(2000) }),
+        ],
+        "tx-abc",
+      ),
+    ];
+    const result = collectSpendableNotes(txs);
+    expect(result).toHaveLength(2);
+    expect(result[0].txid).toBe("tx-abc");
+    expect(result[0].outputIndex).toBe(0);
+    expect(result[1].txid).toBe("tx-abc");
+    expect(result[1].outputIndex).toBe(1);
+  });
+
+  it("returns empty array when there are no transactions", () => {
+    expect(collectSpendableNotes([])).toEqual([]);
   });
 });

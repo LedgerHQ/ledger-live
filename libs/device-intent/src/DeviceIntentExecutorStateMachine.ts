@@ -92,6 +92,12 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       ),
     },
     actions: {
+      notifyDeviceDisconnected: ({ context }) => {
+        context.listeners.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: context.deviceConnectionResult!.connectedDevice,
+        });
+      },
       resetConnection: assign({
         deviceConnectionResult: () => null,
         deviceExtractedContext: () => null,
@@ -127,7 +133,6 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       deviceDisconnected: {
         entry: ({ context }) => {
           log(LOG_TYPE, "state: deviceDisconnected");
-          context.listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
         },
         on: {
           RETRY: {
@@ -140,6 +145,8 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           log(LOG_TYPE, "state: deviceInitialization");
           context.listeners.onExecutorStateChanged({
             type: "initializingDeviceContext",
+            // Set by the `DEVICE_CONNECTED` action; non-null when this state is entered.
+            connectionResult: context.deviceConnectionResult!,
           });
         },
         on: {
@@ -154,7 +161,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           },
           DEVICE_DISCONNECTED: {
             target: "deviceDisconnected",
-            actions: "resetConnection",
+            actions: ["notifyDeviceDisconnected", "resetConnection"],
           },
           REINITIALIZE: {
             target: "deviceInitialization",
@@ -170,7 +177,12 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           log(LOG_TYPE, "state: intentExecution", {
             intent: context.currentIntent.label,
           });
-          context.listeners.onExecutorStateChanged({ type: "executingIntent" });
+          context.listeners.onExecutorStateChanged({
+            type: "executingIntent",
+            // Set by the `DEVICE_INITIALIZED` action; non-null when this state is entered.
+            connectionResult: context.deviceConnectionResult!,
+            extractedContext: context.deviceExtractedContext!,
+          });
         },
         invoke: {
           src: "executeJob",
@@ -210,7 +222,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
         on: {
           DEVICE_DISCONNECTED: {
             target: "deviceDisconnected",
-            actions: "resetConnection",
+            actions: ["notifyDeviceDisconnected", "resetConnection"],
           },
           SET_INTENT: {
             target: "invalidOperation",
@@ -239,6 +251,10 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           context.listeners.onExecutorStateChanged({
             type: "executingIntentError",
             error: context.error,
+            // Connection / context are NOT reset on the path into intentError, so
+            // both are still set from the previous successful initialization.
+            connectionResult: context.deviceConnectionResult!,
+            extractedContext: context.deviceExtractedContext!,
           });
         },
         on: {
@@ -276,7 +292,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           },
           DEVICE_DISCONNECTED: {
             target: "deviceDisconnected",
-            actions: "resetConnection",
+            actions: ["notifyDeviceDisconnected", "resetConnection"],
           },
           REINITIALIZE: {
             target: "deviceInitialization",

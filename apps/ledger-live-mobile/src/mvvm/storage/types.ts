@@ -1,4 +1,4 @@
-import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import type { MigrationStatus, RollbackStatus } from "./utils/migrations/types";
 
 /** Application storage interface used to store data in the application. */
@@ -103,7 +103,7 @@ export interface Storage {
   rollbackMigration(): Promise<void> | void;
 
   /** Automatically handle the migration process. */
-  handleMigration(featureFlag: Feature_LlmMmkvMigration): Promise<void> | void;
+  handleMigration(featureFlag: Features["llmMmkvMigration"]): Promise<void> | void;
 }
 
 /** Internal state of the {@link Storage}. */

@@ -6,7 +6,7 @@ import { track } from "~/analytics";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useReceiveOptionsDrawerController } from "../useReceiveOptionsDrawerController";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
@@ -16,11 +16,12 @@ function useReceiveFundsOptionsViewModel() {
   const navigation = useNavigation();
   const { isEnabled } = useWalletFeaturesConfig("mobile");
 
-  const { currency, sourceScreenName, fromMenu, isOpen, closeDrawer } =
+  const { currency, currencyIds, sourceScreenName, fromMenu, isOpen, closeDrawer } =
     useReceiveOptionsDrawerController();
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency: isCryptoOrTokenCurrency(currency) ? currency : undefined,
+    currencyIds,
     sourceScreenName,
     fromMenu,
   });

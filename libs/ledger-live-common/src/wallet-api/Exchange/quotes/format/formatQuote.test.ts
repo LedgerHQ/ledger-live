@@ -162,7 +162,7 @@ describe("formatQuote", () => {
       });
     });
 
-    it("mirrors the swap-live-app lifi 0.7775697944164467 case", () => {
+    it("rounds the lifi 0.7775697944164467 case to 0.8%", () => {
       const out = formatQuote(
         makeInput({ quote: { ...makeInput().quote, slippage: 0.7775697944164467 } }),
       );

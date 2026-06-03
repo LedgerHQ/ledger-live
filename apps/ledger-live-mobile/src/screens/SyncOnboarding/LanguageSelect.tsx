@@ -14,7 +14,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import i18next from "i18next";
 import Button from "~/components/Button";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import {
   BottomSheetScrollView as LumenBottomSheetScrollView,

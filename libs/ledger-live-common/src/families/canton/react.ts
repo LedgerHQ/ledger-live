@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect, useMemo } from "react";
 import { getCurrencyBridge } from "../../bridge";
 import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
+import coinConfig from "@ledgerhq/coin-canton/config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -104,6 +105,7 @@ type TransferProposal = {
   sender: string;
   amount: string;
   expires_at_micros: number;
+  instrument_id: string;
 };
 
 type CantonTokenAccountLike = AccountLike & {
@@ -123,6 +125,11 @@ const hasCantonResources = (
 /**
  * Hook to calculate withdrawable balance from expired outgoing offers.
  * Withdrawable balance is the sum of amounts from offers the user sent that have expired.
+ *
+ * The parent Canton account aggregates pending proposals across native + tokens,
+ * so we filter to the displayed account's own instrument before summing — mixing
+ * native and token amounts would produce a meaningless figure when rendered with
+ * the parent's native unit.
  */
 export const useWithdrawableBalance = (account: AccountLike, accounts: Account[]): BigNumber => {
   return useMemo(() => {
@@ -136,10 +143,24 @@ export const useWithdrawableBalance = (account: AccountLike, accounts: Account[]
     const accountXpub = "xpub" in mainAccount ? (mainAccount.xpub as string) ?? "" : "";
     const currentTime = Date.now();
 
+    // Restrict to the instrument this account renders amounts in: native for the
+    // parent Canton account, the token's instrument_id for a token sub-account.
+    const isParent = account.type === "Account";
+    const nativeInstrumentId = isParent
+      ? coinConfig.getCoinConfig(mainAccount.currency.id).nativeInstrumentId
+      : undefined;
+    const matchesAccountInstrument = (instrumentId: string): boolean => {
+      if (isParent) return instrumentId === nativeInstrumentId;
+      // Token sub-account: its cantonResources is already filtered per-token at
+      // sync time (see buildSubAccounts), so any proposal that landed here is
+      // for the right instrument.
+      return true;
+    };
+
     return proposals.reduce((sum, proposal) => {
       const isOutgoing = proposal.sender === accountXpub;
       const isExpired = currentTime > proposal.expires_at_micros / 1000;
-      if (isOutgoing && isExpired) {
+      if (isOutgoing && isExpired && matchesAccountInstrument(proposal.instrument_id)) {
         return sum.plus(new BigNumber(proposal.amount));
       }
       return sum;

@@ -339,10 +339,12 @@ export type ConnectDeviceUIState =
     }
   | {
       type: ConnectDeviceUIStateTypes.Connecting;
+      device: KnownDevice;
     }
   | {
       type: ConnectDeviceUIStateTypes.ConnectionError;
       error: ConnectionError;
+      device: KnownDevice;
       retry: () => void;
       ignore: () => void;
     }

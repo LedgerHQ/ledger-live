@@ -46,9 +46,13 @@ import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } fr
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  lastSeenDeviceSelector,
+  localeSelector,
+} from "~/reducers/settings";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
@@ -81,6 +85,7 @@ export function useCustomExchangeHandlers({
   const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -307,6 +312,7 @@ export function useCustomExchangeHandlers({
         flags,
         locale,
         counterValueCurrency: counterValueCurrency.ticker,
+        deviceModelId: lastSeenDevice?.modelId,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             const promiseId = `start-${Date.now()}`;
@@ -501,6 +507,7 @@ export function useCustomExchangeHandlers({
     flags,
     locale,
     counterValueCurrency,
+    lastSeenDevice,
     sendAppReady,
     syncAccountById,
     tracking,

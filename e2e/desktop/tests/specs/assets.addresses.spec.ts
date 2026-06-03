@@ -5,7 +5,6 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 /**
  * Suite: Wallet 4.0 - Portfolio-Asset/Address
@@ -29,7 +28,6 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: Currency.BTC.speculosApp,
-      featureFlags: LWD_WALLET_40_FF_ENABLED,
     });
 
     test(
@@ -105,7 +103,6 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_FF_ENABLED,
     });
 
     test(
@@ -145,7 +142,6 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "portfolioWithManyStablecoins",
-      featureFlags: LWD_WALLET_40_FF_ENABLED,
     });
 
     test(

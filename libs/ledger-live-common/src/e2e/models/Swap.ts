@@ -1,7 +1,7 @@
 import { Transaction } from "./Transaction";
 import { Fee } from "../enum/Fee";
 import { Account } from "../enum/Account";
-import { Provider } from "../enum/Provider";
+import { SwapProvider } from "../enum/Provider";
 
 export type SwapType = Swap;
 
@@ -10,7 +10,7 @@ export class Swap extends Transaction {
     accountToDebit: Account,
     accountToCredit: Account,
     amount: string,
-    public provider?: Provider,
+    public provider?: SwapProvider,
     public speed?: Fee,
     public amountToReceive?: string,
     public feesAmount?: string,
@@ -22,7 +22,7 @@ export class Swap extends Transaction {
     this.amountToReceive = value;
   }
 
-  public setProvider(provider: Provider) {
+  public setProvider(provider: SwapProvider) {
     this.provider = provider;
   }
 

@@ -28,6 +28,7 @@ export * from "./lwmProductTour";
 export * from "./nanoOnboardingFundWallet";
 export * from "./newsfeedPage";
 export * from "./npsRatingsPrompt";
+export * from "./onboardingWidget";
 export * from "./ratingsPrompt";
 export * from "./referralProgramDesktopSidebar";
 export * from "./storyly";

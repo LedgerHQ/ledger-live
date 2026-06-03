@@ -1,5 +1,5 @@
-import { Feature_EthStakingProviders } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 
 export type ListProvider = NonNullable<
-  Feature_EthStakingProviders["params"]
+  Features["ethStakingProviders"]["params"]
 >["listProvider"][number];

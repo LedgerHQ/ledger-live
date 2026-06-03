@@ -70,8 +70,7 @@ function resolveFeeCurrencyMeta(
 }
 
 /**
- * Resolve the user's counter-value fiat, mirroring swap-live-app's
- * `getCurrencyByTicker(userSetting.toUpperCase())` lookup.
+ * Resolve the user's counter-value fiat from a case-insensitive ticker.
  *
  * @param ticker - Fiat ticker (`"USD"`, `"eur"`, …), case-insensitive.
  * @returns The fiat meta, or `undefined` when the ticker does not

@@ -370,9 +370,9 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
 
-  const _transparentBalance = balance ?? BigNumber(0);
+  const _availableBalance = balance ?? BigNumber(0);
   const _privateBalance = orchardBalance.plus(saplingBalance);
-  const _availableBalance = _transparentBalance.plus(_privateBalance);
+  const _transparentBalance = _availableBalance.minus(_privateBalance);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);

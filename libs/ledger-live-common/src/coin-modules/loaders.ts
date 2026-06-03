@@ -1,235 +1,287 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-import type { CoinModuleLoader } from "./types";
+import type { CoinModuleLoader, FamilySetup, ValidateAddressFn } from "./types";
 
-// Hand-maintained: one entry per coin family. See FUTURE.md for the async evolution plan.
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
-    loadSetup: () => require("../families/aleo/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-aleo/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-aleo/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/aleo/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-aleo/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "algorand",
-    loadSetup: () => require("../families/algorand/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-algorand/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-algorand/deviceTransactionConfig").default,
-    loadMockBridge: () => require("../families/algorand/bridge/mock").default,
-    loadMockAccount: () => require("@ledgerhq/coin-algorand/mock").default,
+    loadSetup: () => import("../families/algorand/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-algorand/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-algorand/deviceTransactionConfig").then(m => m.default),
+    loadMockBridge: () => import("../families/algorand/bridge/mock.js").then(m => m.default),
+    loadMockAccount: () => import("@ledgerhq/coin-algorand/mock").then(m => m.default),
   },
   {
     family: "aptos",
-    loadSetup: () => require("../families/aptos/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-aptos/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-aptos/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/aptos/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-aptos/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-aptos/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "bitcoin",
-    loadSetup: () => require("../families/bitcoin/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-bitcoin/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-bitcoin/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/bitcoin/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/bitcoin/platformAdapter").default,
-    loadAccount: () => require("@ledgerhq/coin-bitcoin/account").default,
-    loadMockBridge: () => require("../families/bitcoin/bridge/mock").default,
-    loadBridgeExtensions: () => require("../families/bitcoin/bridgeExtensions").default,
+    loadSetup: () => import("../families/bitcoin/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-bitcoin/deviceTransactionConfig").then(m => m.default),
+    loadWalletApiAdapter: () =>
+      import("../families/bitcoin/walletApiAdapter.js").then(m => m.default),
+    loadPlatformAdapter: () =>
+      import("../families/bitcoin/platformAdapter.js").then(m => m.default),
+    loadAccount: () => import("@ledgerhq/coin-bitcoin/account").then(m => m.default),
+    loadMockBridge: () => import("../families/bitcoin/bridge/mock.js").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("../families/bitcoin/bridgeExtensions.js").then(m => m.default),
   },
   {
     family: "canton",
-    loadSetup: () => require("../families/canton/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-canton/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-canton/deviceTransactionConfig").default,
-    loadMockBridge: () => require("../families/canton/bridge/mock").default,
-    loadBridgeExtensions: () => require("../families/canton/bridgeExtensions").default,
+    loadSetup: () => import("../families/canton/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-canton/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-canton/deviceTransactionConfig").then(m => m.default),
+    loadMockBridge: () => import("../families/canton/bridge/mock.js").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("../families/canton/bridgeExtensions.js").then(m => m.default),
   },
   {
     family: "cardano",
-    loadSetup: () => require("../families/cardano/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-cardano/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-cardano/deviceTransactionConfig").default,
-    loadAccount: () => require("@ledgerhq/coin-cardano/account").default,
-    loadMockBridge: () => require("../families/cardano/bridge/mock").default,
+    loadSetup: () => import("../families/cardano/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-cardano/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-cardano/deviceTransactionConfig").then(m => m.default),
+    loadAccount: () => import("@ledgerhq/coin-cardano/account").then(m => m.default),
+    loadMockBridge: () => import("../families/cardano/bridge/mock.js").then(m => m.default),
   },
   {
     family: "casper",
-    loadSetup: () => require("../families/casper/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-casper/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-casper/deviceTransactionConfig").default,
-    loadMockBridge: () => require("../families/casper/bridge/mock").default,
+    loadSetup: () => import("../families/casper/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-casper/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-casper/deviceTransactionConfig").then(m => m.default),
+    loadMockBridge: () => import("../families/casper/bridge/mock.js").then(m => m.default),
   },
   {
     family: "celo",
-    loadSetup: () => require("../families/celo/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-celo/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-celo/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/celo/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-celo/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-celo/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "concordium",
-    loadSetup: () => require("../families/concordium/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-concordium/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-concordium/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/concordium/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "cosmos",
-    loadSetup: () => require("../families/cosmos/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-cosmos/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-cosmos/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/cosmos/walletApiAdapter").default,
-    loadMockBridge: () => require("../families/cosmos/bridge/mock").default,
-    loadMockAccount: () => require("@ledgerhq/coin-cosmos/mock").default,
-    loadBridgeExtensions: () => require("../families/cosmos/bridgeExtensions").default,
+    loadSetup: () => import("../families/cosmos/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-cosmos/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-cosmos/deviceTransactionConfig").then(m => m.default),
+    loadWalletApiAdapter: () =>
+      import("../families/cosmos/walletApiAdapter.js").then(m => m.default),
+    loadMockBridge: () => import("../families/cosmos/bridge/mock.js").then(m => m.default),
+    loadMockAccount: () => import("@ledgerhq/coin-cosmos/mock").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("../families/cosmos/bridgeExtensions.js").then(m => m.default),
   },
   {
     family: "evm",
-    loadSetup: () => require("../families/evm/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-evm/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-evm/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/evm/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/evm/platformAdapter").default,
-    loadMockBridge: () => require("../families/evm/bridge/mock").default,
-    loadValidateAddress: () => require("@ledgerhq/coin-evm/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-coin-framework/families/evm/signer").default,
-    loadBridgeExtensions: () => require("../families/evm/bridgeExtensions").default,
+    loadSetup: () => import("../families/evm/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-evm/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-evm/deviceTransactionConfig").then(m => m.default),
+    loadWalletApiAdapter: () => import("../families/evm/walletApiAdapter.js").then(m => m.default),
+    loadPlatformAdapter: () => import("../families/evm/platformAdapter.js").then(m => m.default),
+    loadMockBridge: () => import("../families/evm/bridge/mock.js").then(m => m.default),
+    loadValidateAddress: () =>
+      import("@ledgerhq/coin-evm/logic/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
+    loadSigner: () =>
+      import("../bridge/generic-coin-framework/families/evm/signer.js").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/evm/bridgeExtensions.js").then(m => m.default),
   },
   {
     family: "filecoin",
-    loadSetup: () => require("../families/filecoin/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-filecoin/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-filecoin/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/filecoin/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-filecoin/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-filecoin/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "hedera",
-    loadSetup: () => require("../families/hedera/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-hedera/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-hedera/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/hedera/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-hedera/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-hedera/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "icon",
-    loadSetup: () => require("../families/icon/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-icon/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-icon/deviceTransactionConfig").default,
-    loadAccount: () => require("@ledgerhq/coin-icon/account").default,
-    loadMockBridge: () => require("../families/icon/bridge/mock").default,
+    loadSetup: () => import("../families/icon/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-icon/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-icon/deviceTransactionConfig").then(m => m.default),
+    loadAccount: () => import("@ledgerhq/coin-icon/account").then(m => m.default),
+    loadMockBridge: () => import("../families/icon/bridge/mock.js").then(m => m.default),
   },
   {
     family: "internet_computer",
-    loadSetup: () => require("../families/internet_computer/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-internet_computer/transaction").default,
+    loadSetup: () => import("../families/internet_computer/setup.js"),
+    loadTransaction: () =>
+      import("@ledgerhq/coin-internet_computer/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      require("@ledgerhq/coin-internet_computer/deviceTransactionConfig").default,
+      import("@ledgerhq/coin-internet_computer/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "kaspa",
-    loadSetup: () => require("../families/kaspa/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-kaspa/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-kaspa/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/kaspa/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-kaspa/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-kaspa/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "mina",
-    loadSetup: () => require("../families/mina/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-mina/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-mina/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/mina/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-mina/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-mina/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "multiversx",
-    loadSetup: () => require("../families/multiversx/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-multiversx/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-multiversx/deviceTransactionConfig").default,
-    loadMockBridge: () => require("../families/multiversx/bridge/mock").default,
+    loadSetup: () => import("../families/multiversx/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-multiversx/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-multiversx/deviceTransactionConfig").then(m => m.default),
+    loadMockBridge: () => import("../families/multiversx/bridge/mock.js").then(m => m.default),
   },
   {
     family: "near",
-    loadSetup: () => require("../families/near/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-near/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-near/deviceTransactionConfig").default,
-    loadAccount: () => require("@ledgerhq/coin-near/account").default,
+    loadSetup: () => import("../families/near/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-near/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
+    loadAccount: () => import("@ledgerhq/coin-near/account").then(m => m.default),
   },
   {
     family: "polkadot",
-    loadSetup: () => require("../families/polkadot/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-polkadot/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-polkadot/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/polkadot/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/polkadot/platformAdapter").default,
-    loadMockBridge: () => require("../families/polkadot/bridge/mock").default,
+    loadSetup: () => import("../families/polkadot/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-polkadot/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-polkadot/deviceTransactionConfig").then(m => m.default),
+    loadWalletApiAdapter: () =>
+      import("../families/polkadot/walletApiAdapter.js").then(m => m.default),
+    loadPlatformAdapter: () =>
+      import("../families/polkadot/platformAdapter.js").then(m => m.default),
+    loadMockBridge: () => import("../families/polkadot/bridge/mock.js").then(m => m.default),
   },
   {
     family: "solana",
-    loadSetup: () => require("../families/solana/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-solana/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-solana/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/solana/walletApiAdapter").default,
-    loadMockBridge: () => require("../families/solana/bridge/mock").default,
+    loadSetup: () => import("../families/solana/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
+    loadWalletApiAdapter: () =>
+      import("../families/solana/walletApiAdapter.js").then(m => m.default),
+    loadMockBridge: () => import("../families/solana/bridge/mock.js").then(m => m.default),
     loadValidateAddress: () =>
-      require("@ledgerhq/coin-solana/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-coin-framework/families/solana/signer").default,
+      import("@ledgerhq/coin-solana/logic/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
+    loadSigner: () =>
+      import("../bridge/generic-coin-framework/families/solana/signer.js").then(m => m.default),
   },
   {
     family: "stacks",
-    loadSetup: () => require("../families/stacks/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-stacks/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-stacks/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/stacks/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-stacks/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-stacks/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "stellar",
-    loadSetup: () => require("../families/stellar/setup"),
-    loadTransaction: () => require("../families/stellar/transaction").default,
-    loadDeviceTxConfig: () => require("../families/stellar/deviceTransactionConfig").default,
-    loadMockBridge: () => require("../families/stellar/bridge/mock").default,
+    loadSetup: () => import("../families/stellar/setup.js"),
+    loadTransaction: () => import("../families/stellar/transaction.js").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("../families/stellar/deviceTransactionConfig.js").then(m => m.default),
+    loadMockBridge: () => import("../families/stellar/bridge/mock.js").then(m => m.default),
     loadValidateAddress: () =>
-      require("@ledgerhq/coin-stellar/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-coin-framework/families/stellar/signer").default,
+      import("@ledgerhq/coin-stellar/logic/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
+    loadSigner: () =>
+      import("../bridge/generic-coin-framework/families/stellar/signer.js").then(m => m.default),
   },
   {
     family: "sui",
-    loadSetup: () => require("../families/sui/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-sui/transaction").default,
+    loadSetup: () => import("../families/sui/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-sui/transaction").then(m => m.default),
     // No loadDeviceTxConfig: sui has no deviceTransactionConfig
   },
   {
     family: "tezos",
-    loadSetup: () => require("../families/tezos/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-tezos/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-tezos/deviceTransactionConfig").default,
-    loadMockBridge: () => require("../families/tezos/bridge/mock").default,
+    loadSetup: () => import("../families/tezos/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-tezos/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-tezos/deviceTransactionConfig").then(m => m.default),
+    loadMockBridge: () => import("../families/tezos/bridge/mock.js").then(m => m.default),
     loadValidateAddress: () =>
-      require("@ledgerhq/coin-tezos/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-coin-framework/families/tezos/signer").default,
-    loadBridgeExtensions: () => require("../families/tezos/bridgeExtensions").default,
+      import("@ledgerhq/coin-tezos/logic/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
+    loadSigner: () =>
+      import("../bridge/generic-coin-framework/families/tezos/signer.js").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("../families/tezos/bridgeExtensions.js").then(m => m.default),
   },
   {
     family: "ton",
-    loadSetup: () => require("../families/ton/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-ton/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-ton/deviceTransactionConfig").default,
+    loadSetup: () => import("../families/ton/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-ton/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-ton/deviceTransactionConfig").then(m => m.default),
   },
   {
     family: "tron",
-    loadSetup: () => require("../families/tron/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-tron/transaction").default,
-    loadDeviceTxConfig: () => require("@ledgerhq/coin-tron/deviceTransactionConfig").default,
-    loadMockBridge: () => require("../families/tron/bridge/mock").default,
-    loadBridgeExtensions: () => require("../families/tron/bridgeExtensions").default,
+    loadSetup: () => import("../families/tron/setup.js"),
+    loadTransaction: () => import("@ledgerhq/coin-tron/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-tron/deviceTransactionConfig").then(m => m.default),
+    loadMockBridge: () => import("../families/tron/bridge/mock.js").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/tron/bridgeExtensions.js").then(m => m.default),
   },
   {
     family: "vechain",
-    loadSetup: () => require("../families/vechain/setup"),
-    loadTransaction: () => require("@ledgerhq/coin-vechain/transaction").default,
+    loadSetup: () => import("../families/vechain/setup.js") as object as Promise<FamilySetup>,
+    loadTransaction: () => import("@ledgerhq/coin-vechain/transaction").then(m => m.default),
     // No loadDeviceTxConfig: vechain has no deviceTransactionConfig
-    loadAccount: () => require("@ledgerhq/coin-vechain/account").default,
-    loadMockAccount: () => require("@ledgerhq/coin-vechain/mock").default,
-    loadBridgeExtensions: () => require("../families/vechain/bridgeExtensions").default,
+    loadAccount: () => import("@ledgerhq/coin-vechain/account").then(m => m.default),
+    loadMockAccount: () => import("@ledgerhq/coin-vechain/mock").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("../families/vechain/bridgeExtensions.js").then(m => m.default),
   },
   {
     family: "xrp",
-    loadSetup: () => require("../families/xrp/setup"),
-    loadTransaction: () => require("../families/xrp/transaction").default,
-    loadDeviceTxConfig: () => require("../families/xrp/deviceTransactionConfig").default,
-    loadWalletApiAdapter: () => require("../families/xrp/walletApiAdapter").default,
-    loadPlatformAdapter: () => require("../families/xrp/platformAdapter").default,
-    loadMockBridge: () => require("../families/xrp/bridge/mock").default,
+    loadSetup: () => import("../families/xrp/setup.js"),
+    loadTransaction: () => import("../families/xrp/transaction.js").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("../families/xrp/deviceTransactionConfig.js").then(m => m.default),
+    loadWalletApiAdapter: () => import("../families/xrp/walletApiAdapter.js").then(m => m.default),
+    loadPlatformAdapter: () => import("../families/xrp/platformAdapter.js").then(m => m.default),
+    loadMockBridge: () => import("../families/xrp/bridge/mock.js").then(m => m.default),
     loadValidateAddress: () =>
-      require("@ledgerhq/coin-xrp/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-coin-framework/families/xrp/signer").default,
+      import("@ledgerhq/coin-xrp/api/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
+    loadSigner: () =>
+      import("../bridge/generic-coin-framework/families/xrp/signer.js").then(m => m.default),
   },
 ];

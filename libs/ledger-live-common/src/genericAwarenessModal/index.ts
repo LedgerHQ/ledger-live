@@ -9,6 +9,7 @@ export type {
   GenericAwarenessModalOutput,
   GenericAwarenessModalCarousel,
   GenericAwarenessModalCarouselSlide,
+  GenericAwarenessModalPrompt,
   GenericAwarenessModalFeatureIntro,
   GenericAwarenessModalFeatureIntroItem,
 } from "./types";

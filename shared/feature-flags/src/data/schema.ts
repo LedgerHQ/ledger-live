@@ -28,6 +28,12 @@ export interface FeatureFlagsState {
   resolved: Features;
   /** Whether the developer feature flags banner/button is visible in the UI. */
   bannerVisible: boolean;
+  /**
+   * Whether the first remote-flag fetch has settled (resolved or rejected). Readiness
+   * gate, set by the middleware once the first fetch settles. Transient: never persisted,
+   * so it re-arms to `false` every session.
+   */
+  remoteFlagsReady: boolean;
 }
 
 /** Represents the resolved values of all feature flags. */
@@ -55,6 +61,7 @@ export const FeatureFlagsStateSchema = z.object({
   overrides: z.record(z.string(), OverrideValueSchema.optional()).default({}),
   resolved: z.object(flagRegistry),
   bannerVisible: z.boolean(),
+  remoteFlagsReady: z.boolean().default(false),
 }) as z.ZodType<FeatureFlagsState>;
 
 /** Schema that validates the resolution configuration. */

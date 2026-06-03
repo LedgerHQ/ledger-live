@@ -7,13 +7,20 @@ describe("parseHistoryBackPath", () => {
     expect(parseHistoryBackPath({})).toBeUndefined();
     expect(parseHistoryBackPath({ historyBackPath: "" })).toBeUndefined();
     expect(parseHistoryBackPath({ historyBackPath: "../evil" })).toBeUndefined();
-    expect(parseHistoryBackPath({ historyBackPath: "/portfolio" })).toBeUndefined();
-    expect(parseHistoryBackPath({ historyBackPath: "/assets" })).toBeUndefined();
-    expect(parseHistoryBackPath({ historyBackPath: "/assets?category=cryptos" })).toBeUndefined();
+    expect(parseHistoryBackPath({ historyBackPath: "/history" })).toBeUndefined();
   });
 
-  it("returns asset detail paths", () => {
+  it("returns pathname for a safe in-app path", () => {
     expect(parseHistoryBackPath({ historyBackPath: "/asset/bitcoin" })).toBe("/asset/bitcoin");
-    expect(parseHistoryBackPath({ historyBackPath: "/asset" })).toBe("/asset");
+    expect(parseHistoryBackPath({ historyBackPath: "/asset/ethereum" })).toBe("/asset/ethereum");
+  });
+
+  it("preserves search and strips hash from historyBackPath", () => {
+    expect(parseHistoryBackPath({ historyBackPath: "/asset/bitcoin?tab=transactions" })).toBe(
+      "/asset/bitcoin?tab=transactions",
+    );
+    expect(parseHistoryBackPath({ historyBackPath: "/asset/bitcoin#chart" })).toBe(
+      "/asset/bitcoin",
+    );
   });
 });

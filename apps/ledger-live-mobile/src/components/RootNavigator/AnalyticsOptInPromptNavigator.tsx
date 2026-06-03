@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -64,7 +64,11 @@ export default function AnalyticsOptInPromptNavigator() {
       <Stack.Screen
         name={ScreenName.AnalyticsOptInPromptMain}
         component={screensByVariant[activeVariant].main}
-        options={navigationOptions}
+        options={
+          activeVariant === "AnalyticsConsent"
+            ? { ...navigationOptions, headerShown: false }
+            : navigationOptions
+        }
       />
       <Stack.Screen
         name={ScreenName.AnalyticsOptInPromptDetails}

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { Box, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";

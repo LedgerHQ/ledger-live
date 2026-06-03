@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- add /accepted and /cancelled to swap cli
+- [#17664](https://github.com/LedgerHQ/ledger-live/pull/17664) [`8056a28`](https://github.com/LedgerHQ/ledger-live/commit/8056a28b60e14ec6764343131364e2e82c54b188) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add /accepted and /cancelled to swap cli
 
 - Emit a plain greppable `hash: <txHash>` line to stdout on broadcast (human output) so scripts can capture the transaction hash without parsing ANSI-styled status lines.
 

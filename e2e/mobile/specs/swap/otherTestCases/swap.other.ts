@@ -3,7 +3,7 @@ import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { isWallet40 } from "../../../helpers/commonHelpers";
@@ -199,7 +199,7 @@ async function setupSwapAccounts(
 export function runSwapLnsNotSupportedBannerTest(
   fromAccount: Account,
   toAccount: Account,
-  unsupportedProvider: Provider,
+  unsupportedProvider: SwapProvider,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -327,7 +327,7 @@ export function runUserRefusesTransactionTest(
 
 export function runSwapHistoryOperationsTest(
   swap: SwapType,
-  provider: Provider,
+  provider: SwapProvider,
   swapId: string,
   tmsLinks: string[],
   tags: string[],
@@ -354,7 +354,7 @@ export function runSwapHistoryOperationsTest(
 
 export function runExportSwapHistoryOperationsTest(
   swap: SwapType,
-  provider: Provider,
+  provider: SwapProvider,
   swapId: string,
   addressFrom: string,
   addressTo: string,

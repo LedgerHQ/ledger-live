@@ -4,6 +4,7 @@
  */
 export type {
   QuotesInput,
+  QuotesAppPlatform,
   GetQuotesArgs,
   GetQuotesWireArgs,
   GetQuotesResponse,
@@ -12,6 +13,8 @@ export type {
   QuoteNetworkFees,
   QuoteWarning,
   QuoteError,
+  QuotesError,
+  QuotesWarning,
   ProviderDetails,
   QuoteProviderError,
   QuoteLiquiditySource,
@@ -22,4 +25,12 @@ export type {
   QuoteTokenAllowance,
   QuoteEstimatedNetworkFee,
   QuoteApprovalNetworkFee,
+} from "@ledgerhq/wallet-api-exchange-module";
+
+export {
+  ProviderErrorCodes,
+  QuoteErrorCodes,
+  QuoteWarningCodes,
+  QuotesErrorCodes,
+  QuotesWarningCodes,
 } from "@ledgerhq/wallet-api-exchange-module";

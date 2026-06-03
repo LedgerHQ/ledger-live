@@ -390,6 +390,7 @@ const extraProperties = async (store: AppStore) => {
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
+  const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
@@ -455,6 +456,7 @@ const extraProperties = async (store: AppStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...optimiseOptInNotificationsNewWordingAttributes,
     ...remoteABTestingAttributes,
   };

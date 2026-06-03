@@ -1,4 +1,4 @@
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
 import type { DistributionItem } from "../../../types/distribution";
 

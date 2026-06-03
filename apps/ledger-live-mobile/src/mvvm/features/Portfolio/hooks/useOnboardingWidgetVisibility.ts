@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   usePostOnboardingHubState,
   usePostOnboardingPortfolioWidgetVisibility,
@@ -16,7 +16,8 @@ import { addCompletionDate } from "~/actions/settings";
 
 export const useOnboardingWidgetVisibility = () => {
   const dispatch = useDispatch();
-  const { shouldDisplayOnboardingWidget } = useWalletFeaturesConfig("mobile");
+  const onboardingWidgetFeature = useFeature("onboardingWidget");
+  const shouldDisplayOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
   const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 

@@ -195,6 +195,49 @@ describe("buildGenericAwarenessModalContentCards", () => {
     ]);
   });
 
+  it("should build prompt content from grouped braze card extras", () => {
+    const promptCard = makeCard("prompt", {
+      layout: GenericAwarenessModalLayout.Prompt,
+      campaignId: "campaign-prompt",
+      imageUrl: "https://example.com/prompt.png",
+      title: "Prompt title",
+      subtitle: "Prompt subtitle",
+      primaryButtonLabel: "Primary",
+      primaryButtonLink: "ledgerwallet://primary",
+      secondaryButtonLabel: "Secondary",
+      secondaryButtonLink: "ledgerwallet://secondary",
+    });
+    const groupedCards = makeGroupedCards("campaign-prompt", [promptCard]);
+
+    const contentCards = buildGenericAwarenessModalContentCards(groupedCards);
+
+    expect(contentCards).toEqual([
+      {
+        layout: GenericAwarenessModalLayout.Prompt,
+        id: "campaign-prompt",
+        imageUrl: "https://example.com/prompt.png",
+        title: "Prompt title",
+        subtitle: "Prompt subtitle",
+        primaryButtonLabel: "Primary",
+        primaryButtonLink: "ledgerwallet://primary",
+        secondaryButtonLabel: "Secondary",
+        secondaryButtonLink: "ledgerwallet://secondary",
+      },
+    ]);
+  });
+
+  it("should skip prompt campaigns when braze cards do not parse as prompt inputs", () => {
+    const invalidPromptCard = makeCard("invalid", {
+      layout: GenericAwarenessModalLayout.Prompt,
+      title: "Missing campaignId in extras",
+    });
+    const groupedCards = makeGroupedCards("campaign-prompt", [invalidPromptCard]);
+
+    const contentCards = buildGenericAwarenessModalContentCards(groupedCards);
+
+    expect(contentCards).toEqual([]);
+  });
+
   it("should skip feature intro campaigns without a main card", () => {
     const itemCard = makeCard("item-0", {
       layout: GenericAwarenessModalLayout.FeatureIntro,
@@ -210,6 +253,35 @@ describe("buildGenericAwarenessModalContentCards", () => {
     const contentCards = buildGenericAwarenessModalContentCards(groupedCards);
 
     expect(contentCards).toEqual([]);
+  });
+
+  it("should build prompt content from grouped braze card extras", () => {
+    const promptCard = makeCard("prompt", {
+      layout: GenericAwarenessModalLayout.Prompt,
+      campaignId: "campaign-prompt",
+      title: "Prompt title",
+      subtitle: "Prompt subtitle",
+      imageUrl: "https://example.com/prompt.png",
+      primaryButtonLabel: "Learn more",
+      primaryButtonLink: "https://example.com",
+    });
+    const groupedCards = makeGroupedCards("campaign-prompt", [promptCard]);
+
+    const contentCards = buildGenericAwarenessModalContentCards(groupedCards);
+
+    expect(contentCards).toEqual([
+      {
+        layout: GenericAwarenessModalLayout.Prompt,
+        id: "campaign-prompt",
+        title: "Prompt title",
+        subtitle: "Prompt subtitle",
+        imageUrl: "https://example.com/prompt.png",
+        primaryButtonLabel: "Learn more",
+        primaryButtonLink: "https://example.com",
+        secondaryButtonLabel: "",
+        secondaryButtonLink: "",
+      },
+    ]);
   });
 
   it("should ignore campaigns with unknown layout", () => {
@@ -331,18 +403,169 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       secondaryButtonLabel: "Secondary",
       secondaryButtonLink: "ledgerwallet://secondary",
     });
+    const promptCard = makeCard("prompt", {
+      layout: GenericAwarenessModalLayout.Prompt,
+      campaignId: "campaign-prompt",
+      title: "Prompt",
+      subtitle: "Prompt subtitle",
+      imageUrl: "https://example.com/prompt.png",
+      primaryButtonLabel: "Primary",
+      primaryButtonLink: "ledgerwallet://primary",
+      secondaryButtonLabel: "Secondary",
+      secondaryButtonLink: "ledgerwallet://secondary",
+    });
 
     const contentCards = processGenericAwarenessModalBrazeCards([
       carouselCard,
       featureIntroMainCard,
+      promptCard,
     ]);
 
-    expect(contentCards).toHaveLength(2);
+    expect(contentCards).toHaveLength(3);
     expect(contentCards.map(card => card.id)).toEqual([
       "campaign-carousel",
       "campaign-feature-intro",
+      "campaign-prompt",
     ]);
     expect(contentCards[0]?.layout).toBe(GenericAwarenessModalLayout.Carousel);
     expect(contentCards[1]?.layout).toBe(GenericAwarenessModalLayout.FeatureIntro);
+    expect(contentCards[2]?.layout).toBe(GenericAwarenessModalLayout.Prompt);
+  });
+
+  it("should group cards by campaignId case-insensitively and preserve the first card casing", () => {
+    const firstCampaignCard = makeCard("1", { campaignId: "Campaign-A", layout: "carousel", index: "0" });
+    const secondCampaignCard = makeCard("2", { campaignId: "campaign-a", layout: "CAROUSEL", index: "1" });
+    const otherCampaignCard = makeCard("3", { campaignId: "Other", layout: "carousel", index: "0" });
+
+    const groupedCards = groupByCampaignId([
+      firstCampaignCard,
+      secondCampaignCard,
+      otherCampaignCard,
+    ]);
+
+    expect(groupedCards.size).toBe(2);
+    expect(groupedCards.get("Campaign-A")).toEqual([firstCampaignCard, secondCampaignCard]);
+    expect(groupedCards.get("Other")).toEqual([otherCampaignCard]);
+  });
+
+  it("should preserve the first card campaignId casing in built content cards", () => {
+    const firstCard = makeCard("1", {
+      campaignId: "Campaign-A",
+      layout: "carousel",
+      index: "0",
+      title: "Slide 1",
+    });
+    const secondCard = makeCard("2", {
+      campaignId: "campaign-a",
+      layout: "CAROUSEL",
+      index: "1",
+      title: "Slide 2",
+    });
+
+    const contentCards = processGenericAwarenessModalBrazeCards([firstCard, secondCard]);
+
+    expect(contentCards).toHaveLength(1);
+    expect(contentCards[0]).toEqual({
+      layout: GenericAwarenessModalLayout.Carousel,
+      id: "Campaign-A",
+      data: [
+        expect.objectContaining({ title: "Slide 1" }),
+        expect.objectContaining({ title: "Slide 2" }),
+      ],
+    });
+  });
+
+  it("should accept case-insensitive layout, location, and role extras", () => {
+    const carouselCard = makeCard("carousel-1", {
+      layout: "CAROUSEL",
+      campaignId: "campaign-carousel",
+      location: "GENERIC_AWARENESS_MODAL",
+      index: "0",
+      title: "Slide 1",
+    });
+    const carouselCardTwo = makeCard("carousel-2", {
+      layout: "carousel",
+      campaignId: "campaign-carousel",
+      location: "generic_awareness_modal",
+      index: "1",
+      title: "Slide 2",
+    });
+    const featureIntroMainCard = makeCard("feature-intro-main", {
+      layout: "FEATUREINTRO",
+      campaignId: "campaign-feature-intro",
+      location: "Generic_Awareness_Modal",
+      role: "MAIN",
+      title: "Main title",
+      subtitle: "Main subtitle",
+    });
+    const featureIntroItemCard = makeCard("feature-intro-item", {
+      layout: "featureIntro",
+      campaignId: "campaign-feature-intro",
+      location: "generic_awareness_modal",
+      role: "item",
+      index: "0",
+      icon: "icon",
+      title: "Item title",
+      subtitle: "Item subtitle",
+    });
+    const promptCard = makeCard("prompt", {
+      layout: "PROMPT",
+      campaignId: "campaign-prompt",
+      location: "GENERIC_AWARENESS_MODAL",
+      title: "Prompt title",
+      subtitle: "Prompt subtitle",
+    });
+
+    const contentCards = processGenericAwarenessModalBrazeCards([
+      carouselCard,
+      carouselCardTwo,
+      featureIntroMainCard,
+      featureIntroItemCard,
+      promptCard,
+    ]);
+
+    expect(contentCards).toHaveLength(3);
+    expect(contentCards[0]?.layout).toBe(GenericAwarenessModalLayout.Carousel);
+    expect(contentCards[1]?.layout).toBe(GenericAwarenessModalLayout.FeatureIntro);
+    expect(contentCards[2]?.layout).toBe(GenericAwarenessModalLayout.Prompt);
+  });
+
+  it("should reject campaigns with mixed layouts regardless of casing", () => {
+    const carouselCard = makeCard("1", { campaignId: "mixed", layout: "CAROUSEL", index: "0" });
+    const promptCard = makeCard("2", { campaignId: "mixed", layout: "prompt" });
+
+    const contentCards = processGenericAwarenessModalBrazeCards([carouselCard, promptCard]);
+
+    expect(contentCards).toEqual([]);
+  });
+
+  it("should trim whitespace from braze string fields when building content cards", () => {
+    const promptCard = makeCard("prompt", {
+      layout: ` ${GenericAwarenessModalLayout.Prompt} `,
+      campaignId: " campaign-prompt ",
+      title: "  Prompt title  ",
+      subtitle: "  Prompt subtitle  ",
+      imageUrl: "  https://example.com/prompt.png  ",
+      primaryButtonLabel: "  Primary  ",
+      primaryButtonLink: "  ledgerwallet://primary  ",
+      secondaryButtonLabel: "  Secondary  ",
+      secondaryButtonLink: "  ledgerwallet://secondary  ",
+    });
+
+    const contentCards = processGenericAwarenessModalBrazeCards([promptCard]);
+
+    expect(contentCards).toEqual([
+      {
+        layout: GenericAwarenessModalLayout.Prompt,
+        id: "campaign-prompt",
+        title: "Prompt title",
+        subtitle: "Prompt subtitle",
+        imageUrl: "https://example.com/prompt.png",
+        primaryButtonLabel: "Primary",
+        primaryButtonLink: "ledgerwallet://primary",
+        secondaryButtonLabel: "Secondary",
+        secondaryButtonLink: "ledgerwallet://secondary",
+      },
+    ]);
   });
 });

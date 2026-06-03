@@ -23,7 +23,7 @@ listen(log => {
 });
 
 setGlobalOnBridgeError(e => logger.critical(e));
-setDeviceMode("polling");
+setDeviceMode("event");
 setWalletAPIVersion(WALLET_API_VERSION);
 liveBlindSigningReporter.setContext({
   platform: "mobile",
@@ -82,6 +82,7 @@ setSupportedCurrencies([
   "ethereum_hoodi",
   "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "hedera",
+  "hedera_testnet",
   "cardano",
   "osmosis",
   "filecoin",
@@ -123,6 +124,8 @@ setSupportedCurrencies([
   "sei_evm",
   "berachain",
   "hyperevm",
+  "arc",
+  "arc_testnet",
   "coreum",
   "injective",
   "casper",

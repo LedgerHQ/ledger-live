@@ -62,6 +62,18 @@ export type StakingContractConfig = {
       abi: string;
     };
   };
+  /**
+   * Off-chain source for human-readable validator names, used purely as a display
+   * overlay on top of the trustless on-chain validator set. Each validator's name
+   * is fetched from `${baseUrl}${key}.json` where `key` is a per-chain identifier
+   * (e.g. Monad's secp pubkey). Absence simply means names are not enriched.
+   *
+   * Example (Monad): the governed `monad-developers/validator-info` repo, served
+   * via an HTTPS endpoint, keyed by compressed secp pubkey hex.
+   */
+  validatorNameSource?: {
+    baseUrl: string;
+  };
   /** How to fetch active redelegations from an off-chain source. Defaults to `"none"` when absent. */
   redelegationStrategy?: RedelegationStrategy;
   explorerConfig?: {
@@ -81,6 +93,13 @@ export type StakingContractConfig = {
    * Defaults to 1n (no conversion) when omitted.
    */
   calldataAmountScale?: bigint;
+  /**
+   * Fixed reserve (in wei) subtracted from the spendable balance when computing
+   * the maximum delegation amount ("send all").  Decouples the computed amount
+   * from gas-price fluctuations between prepareTransaction and broadcast.
+   * Defaults to 0n when omitted.
+   */
+  delegationMaxAmountReserve?: bigint;
 };
 
 export type StakeCreate = {

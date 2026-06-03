@@ -48,7 +48,7 @@ const useGenericAwarenessModalViewModel = (): GenericAwarenessModalViewProps => 
   }, [dispatch]);
 
   const displayedContentCard = isOpen
-    ? (contentCard ?? lockedContentCardRef.current)
+    ? contentCard ?? lockedContentCardRef.current
     : lockedContentCardRef.current;
 
   return {

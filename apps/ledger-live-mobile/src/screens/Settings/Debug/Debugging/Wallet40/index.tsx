@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { Box, Text, Switch, Button, Tag, Divider } from "@ledgerhq/lumen-ui-rnative";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigation, StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";

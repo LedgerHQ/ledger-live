@@ -2,7 +2,7 @@ import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import type { ClickedHistoryOperationSnapshot } from "../history.page";
 
 export class OperationDrawer extends Drawer {
@@ -62,7 +62,7 @@ export class OperationDrawer extends Drawer {
   }
 
   @step("Verify swap drawer information")
-  async expectSwapDrawerInfos(swapId: string, swap: Swap, provider: Provider) {
+  async expectSwapDrawerInfos(swapId: string, swap: Swap, provider: SwapProvider) {
     await this.waitForDrawerToBeVisible();
     expect(await this.swapDrawerTitle.textContent()).toMatch("Swap");
     await expect(this.swapIdLabel).toBeVisible();

@@ -9,10 +9,10 @@ import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { DefaultAccountSwapParamList } from "~/screens/Swap/types";
 import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
-import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 
 type UseOpenSwapProps = {
   currency?: CryptoOrTokenCurrency;
@@ -74,20 +74,7 @@ export function useOpenSwap({
           ...(currency && isTokenCurrency(currency) && { toTokenId: currency.id }),
         };
 
-        if (shouldDisplayWallet40MainNav) {
-          navigation.navigate(NavigatorName.Main, {
-            screen: NavigatorName.Swap,
-            params: {
-              screen: ScreenName.SwapTab,
-              params: swapParams,
-            },
-          });
-        } else {
-          navigation.navigate(NavigatorName.Swap, {
-            screen: ScreenName.SwapTab,
-            params: swapParams,
-          });
-        }
+        navigateToSwapTab({ navigation, shouldDisplayWallet40MainNav, params: swapParams });
         return;
       }
 
@@ -105,20 +92,7 @@ export function useOpenSwap({
         defaultParentAccount: parentAcc,
       };
 
-      if (shouldDisplayWallet40MainNav) {
-        navigation.navigate(NavigatorName.Main, {
-          screen: NavigatorName.Swap,
-          params: {
-            screen: ScreenName.SwapTab,
-            params: swapParams,
-          },
-        });
-      } else {
-        navigation.navigate(NavigatorName.Swap, {
-          screen: ScreenName.SwapTab,
-          params: swapParams,
-        });
-      }
+      navigateToSwapTab({ navigation, shouldDisplayWallet40MainNav, params: swapParams });
     },
     [currency, sourceScreenName, shallowAccounts, navigation, shouldDisplayWallet40MainNav],
   );

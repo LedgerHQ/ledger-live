@@ -48,7 +48,7 @@ describe("genericPrepareTransaction", () => {
       findTokenById: () => Promise.resolve(undefined),
     });
     (transactionToIntent as jest.Mock).mockReturnValue({ mock: "intent" });
-    (getBridgeApi as jest.Mock).mockReturnValue({
+    (getBridgeApi as jest.Mock).mockResolvedValue({
       getAssetFromToken: jest.fn().mockReturnValue(undefined),
     });
   });
@@ -172,6 +172,57 @@ describe("genericPrepareTransaction", () => {
     );
   });
 
+  describe("delegation gas estimation (useAllAmount)", () => {
+    const delegationAccount = {
+      ...account,
+      spendableBalance: new BigNumber(1_000_000_000),
+    };
+
+    it("passes transaction amount to fee estimation for delegation with useAllAmount", async () => {
+      const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(100) });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
+        estimateFees,
+        validateIntent: jest.fn().mockResolvedValue({ amount: 0n }),
+      });
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      await prepareTransaction(delegationAccount, {
+        ...baseTransaction,
+        mode: "delegate",
+        useAllAmount: true,
+      } as GenericTransaction);
+
+      expect(transactionToIntent).toHaveBeenCalledWith(
+        delegationAccount,
+        expect.objectContaining({ amount: baseTransaction.amount }),
+        undefined,
+        undefined,
+      );
+    });
+
+    it("passes transaction amount to fee estimation for non-delegation modes with useAllAmount", async () => {
+      const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(1_200_000) });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
+        estimateFees,
+        validateIntent: jest.fn().mockResolvedValue({ amount: 0n }),
+      });
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      await prepareTransaction(delegationAccount, {
+        ...baseTransaction,
+        mode: "send",
+        useAllAmount: true,
+      } as GenericTransaction);
+
+      expect(transactionToIntent).toHaveBeenCalledWith(
+        delegationAccount,
+        expect.objectContaining({ amount: baseTransaction.amount }),
+        undefined,
+        undefined,
+      );
+    });
+  });
+
   it("estimates using the token account spendable balance when sending all amount", async () => {
     (decodeTokenAccountId as jest.Mock).mockResolvedValueOnce({
       accountId: "test-sub-account",
@@ -210,7 +261,7 @@ describe("genericPrepareTransaction", () => {
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: () => Promise.resolve({ value: 0n }),
     });
-    (getBridgeApi as jest.Mock).mockReturnValue({
+    (getBridgeApi as jest.Mock).mockResolvedValue({
       getAssetFromToken: jest.fn().mockImplementation((token: TokenCurrency, owner: string) => ({
         assetOwner: owner,
         assetReference: token.id,

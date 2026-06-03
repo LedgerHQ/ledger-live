@@ -1909,6 +1909,14 @@
         }
       }
     },
+    "counterfeitWarning": {
+      "title": "Before you start",
+      "body": "We recommend buying from <ledgerCom>Ledger.com</ledgerCom> or our <resellerLink>official reseller network</resellerLink>. This helps ensure your device is genuine and ready to use.",
+      "cta": {
+        "primary": "Continue setup",
+        "secondary": "Learn more"
+      }
+    },
     "stepNewDevice": {
       "0": {
         "label": "Basics",
@@ -3199,7 +3207,6 @@
     },
     "availableBalance": "Available balance",
     "availableBalanceTooltip": "Funds you can use right now.",
-
     "claimableRewards": "Claimable rewards",
     "totalSupplied": "Amount deposited",
     "tronFrozen": "Frozen",
@@ -3669,6 +3676,7 @@
           "description": "Create raw Braze-like cards, process them through the generic awareness modal parser, then return to Portfolio to view the drawer.",
           "carousel": "Carousel",
           "featureIntro": "Feature intro",
+          "prompt": "Prompt",
           "appStart": "App start",
           "deeplink": "Deeplink",
           "campaignId": "Campaign ID",
@@ -3690,6 +3698,8 @@
           "createCarouselDesc": "Open a form to create a carousel generic awareness modal.",
           "createFeatureIntro": "Create Feature Intro Generic Awareness Modal",
           "createFeatureIntroDesc": "Open a form to create a feature intro generic awareness modal.",
+          "createPrompt": "Create Prompt Generic Awareness Modal",
+          "createPromptDesc": "Open a form to create a prompt generic awareness modal.",
           "openCurrent": "Open current campaign",
           "openCurrentDesc": "Set the drawer state for this campaign. Return to Portfolio to view it.",
           "clear": "Clear generic awareness modals",
@@ -3715,6 +3725,14 @@
       "descVariantB": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time.",
       "allow": "Allow notifications",
       "later": "Maybe later"
+    },
+    "optInScreen": {
+      "title": "Enable notifications?",
+      "description": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time in settings.",
+      "emptyTitle": "Notifications are already enabled",
+      "emptyDescription": "You are all set to receive real-time alerts from Ledger Wallet.",
+      "errorTitle": "Notifications are unavailable",
+      "errorDescription": "We could not check your notification settings. You can continue onboarding and update them later in settings."
     },
     "ptxServices": {
       "toast": {
@@ -6580,8 +6598,26 @@
       "title": "You can earn rewards by delegating your account",
       "btn": "Earn rewards"
     },
+    "manage": "Manage",
     "delegation": {
-      "addCustomValidator": "+ Add custom validator"
+      "addCustomValidator": "+ Add custom validator",
+      "sectionLabel": "Delegation"
+    },
+    "staking": {
+      "sectionLabel": "Staking",
+      "status": "Status",
+      "unstaking": "Unstaking",
+      "available": "Available"
+    },
+    "account": {
+      "availableBalanceTooltip": "Funds you can use right now.",
+      "delegatedAssetsTooltip": "XTZ delegated to a baker. Funds remain in your wallet and can be sent at any time.",
+      "stakedAssets": "Staked assets",
+      "stakedAssetsTooltip": "XTZ locked under your baker. Unstake to make them withdrawable after ~4 days.",
+      "pendingWithdrawable": "Pending withdrawable",
+      "pendingWithdrawableTooltip": "XTZ currently unstaking. Available for withdrawal in ~4 days.",
+      "withdrawableAssets": "Withdrawable assets",
+      "withdrawableAssetsTooltip": "XTZ that finished the unstaking period and is ready to be withdrawn."
     }
   },
   "evm": {
@@ -6639,7 +6675,8 @@
             "warning": {
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
-            "cta": "Continue"
+            "cta": "Continue",
+            "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
           },
           "validator": {
             "validators": "Validators",
@@ -8018,6 +8055,7 @@
   },
   "market": {
     "title": "Market",
+    "exploreTitle": "Explore the market",
     "filters": {
       "sort": "Sort",
       "filter": "Filter",
@@ -8107,30 +8145,55 @@
     }
   },
   "pnl": {
-    "unrealisedReturn": {
-      "title": "Unrealised return"
-    },
-    "costBasis": {
-      "title": "Cost basis",
+    "disclaimer": "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes.",
+    "asset": {
+      "return": {
+        "title": "Unrealised return"
+      },
+      "entry": {
+        "title": "Average entry price",
+        "tooltip": "The average price you paid for this asset through Ledger Wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
+      },
       "drawer": {
-        "title": "Cost basis",
-        "body": "The total amount you paid to acquire your current holdings, including fees."
+        "title": "Profit and loss",
+        "description": "Your asset performance broken down into estimated unrealised and realised returns.",
+        "estimatedReturn": {
+          "title": "Unrealised return",
+          "description": "The estimated profit or loss if sold at current price."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss estimated from previous sale, send or swap."
+        },
+        "totalReturn": {
+          "title": "Total return",
+          "description": "The sum of estimated unrealised and realised returns."
+        }
       }
     },
-    "drawer": {
+    "portfolio": {
       "title": "Profit and loss",
-      "description": "Your portfolio performance broken down into realised and unrealised returns.",
-      "totalReturn": {
-        "title": "Total return",
-        "definition": "Realised and unrealised returns combined, reflecting your overall position."
+      "return": {
+        "title": "Unrealised return"
       },
-      "unrealisedReturn": {
-        "title": "Unrealised return",
-        "definition": "Estimated gain or loss on your current holdings."
+      "realised": {
+        "title": "Realised return"
       },
-      "realisedReturn": {
-        "title": "Realised return",
-        "definition": "Profit or loss confirmed from previous sales or outgoing transfers."
+      "drawer": {
+        "title": "Profit and loss",
+        "description": "Your portfolio performance broken down into estimated unrealised and realised return.",
+        "estimatedReturn": {
+          "title": "Unrealised return",
+          "description": "The estimated profit or loss if sold at current price."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss estimated from previous sale, send or swap."
+        },
+        "totalReturn": {
+          "title": "Total return",
+          "description": "The sum of estimated unrealised and realised returns."
+        }
       }
     }
   },
@@ -8428,6 +8491,10 @@
         "recover": {
           "title": "Finish securing your backup",
           "description": "Complete activating Ledger Recover"
+        },
+        "discoverWallet": {
+          "title": "Discover your wallet",
+          "description": "See what’s new in your portfolio and how to get around."
         }
       }
     },
@@ -8460,6 +8527,10 @@
       "syncAccounts": {
         "titleCompleted": "Your accounts are synchronized",
         "popupLabel": "Accounts synced"
+      },
+      "discoverWallet": {
+        "titleCompleted": "Wallet tour completed",
+        "popupLabel": "Wallet tour completed"
       }
     }
   },
@@ -9051,18 +9122,32 @@
       "marketPrice": "Market price",
       "timeframeSelector": "Timeframe",
       "timeLabel": {
-        "24h": "1 day",
-        "7d": "1 week",
-        "30d": "1 month",
-        "1y": "1 year"
+        "1d": "24 hours",
+        "1w": "1 week",
+        "1m": "1 month",
+        "6m": "6 months",
+        "1y": "1 year",
+        "all": "All time"
       },
-      "chartPlaceholder": "Graphic"
+      "range": {
+        "1d": "1D",
+        "1w": "1W",
+        "1m": "1M",
+        "6m": "6M",
+        "1y": "1Y",
+        "all": "ALL"
+      },
+      "chart": {
+        "received": "Received",
+        "sent": "Sent",
+        "transactionsCount": "{{count}} transactions"
+      }
     },
     "addresses": {
-      "title": "Addresses",
+      "title": "Accounts",
       "addAccount": "Add",
       "seeAll": "See all",
-      "empty": "No addresses yet. Tap Add to get started."
+      "empty": "No accounts yet. Tap Add to get started."
     },
     "marketStats": {
       "title": "Market stats",
@@ -9075,7 +9160,8 @@
       "marketCapTooltip": "The total value of all coins in circulation. Think of it as the crypto's total worth on the market.",
       "tradingVolume": "24h trading volume",
       "tradingVolumeTooltip": "The total amount traded in the last 24 hours.",
-      "error": "Unable to load market stats"
+      "error": "Unable to load market stats",
+      "disclaimer": "Market stats sourced from CoinGecko"
     },
     "pricePerformance": {
       "title": "Price performance",
@@ -9510,13 +9596,14 @@
   },
   "fearAndGreed": {
     "title": "Mood index",
-    "description": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
+    "description": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
+    "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
     "levels": {
+      "fearPlus": "Fear+",
       "fear": "Fear",
-      "cautious": "Cautious",
       "neutral": "Neutral",
-      "optimistic": "Optimistic",
-      "greedy": "Greedy"
+      "greed": "Greed",
+      "greedPlus": "Greed+"
     },
     "tileTitle": "Mood"
   },

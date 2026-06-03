@@ -11,13 +11,12 @@ export type Wallet40Params = {
   readonly balanceRefreshRework?: boolean;
   readonly tour?: boolean;
   readonly assetSection?: boolean;
-  readonly onboardingWidget?: boolean;
   readonly brazePlacement?: boolean;
   readonly operationsList?: boolean;
   readonly aggregatedAssets?: boolean;
   readonly myWallet?: boolean;
   readonly pnl?: boolean;
-  readonly finishOnboardingWidget?: boolean;
+  readonly assetDiscoverability?: boolean;
   readonly earnUpselling?: boolean;
   readonly earnSimulator?: boolean;
 };
@@ -51,8 +50,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayTour: boolean;
   /** Whether to show the asset section */
   readonly shouldDisplayAssetSection: boolean;
-  /** Whether to show the onboarding widget (mobile only) */
-  readonly shouldDisplayOnboardingWidget: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */
   readonly shouldDisplayBrazePlacement: boolean;
   /** Whether to show the TX History section */
@@ -63,8 +60,8 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayMyWallet: boolean;
   /** Whether to show the PNL component */
   readonly shouldDisplayPnl: boolean;
-  /** Whether to show the Finish Onboarding widget on Portfolio (desktop / lwdWallet40) */
-  readonly shouldDisplayFinishOnboardingWidget: boolean;
+  /** Whether to show the Asset Discoverability feature */
+  readonly shouldDisplayAssetDiscoverability: boolean;
   /** Whether to show the Earn Upselling component */
   readonly shouldDisplayEarnUpselling: boolean;
   /** Whether to show the Earn Simulator component */

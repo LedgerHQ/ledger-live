@@ -16,7 +16,7 @@ import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;

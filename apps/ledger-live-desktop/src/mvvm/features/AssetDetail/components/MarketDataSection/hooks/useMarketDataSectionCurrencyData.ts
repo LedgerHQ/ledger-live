@@ -9,11 +9,13 @@ export type MarketDataSectionCurrencyData = Readonly<{
   showSkeleton: boolean;
   counterCurrency: string;
   locale: string;
+  ledgerCurrencyId?: string;
 }>;
 
 export function useMarketDataSectionCurrencyData(
   marketData: AssetMarketData,
   isDistributionLoading: boolean,
+  ledgerCurrencyId?: string,
 ): MarketDataSectionCurrencyData {
   const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
   const locale = useSelector(localeSelector);
@@ -28,5 +30,6 @@ export function useMarketDataSectionCurrencyData(
     ),
     counterCurrency,
     locale,
+    ledgerCurrencyId,
   };
 }

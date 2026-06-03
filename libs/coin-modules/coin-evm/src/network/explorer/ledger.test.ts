@@ -457,6 +457,84 @@ describe("EVM Family", () => {
           expect(response.lastNftOperations).toEqual([]);
         });
       });
+
+      describe("nativeContracts filter", () => {
+        // coinOperation1.transfer_events[0].contract — the only ERC20 event in the fixtures.
+        const FIXTURE_CONTRACT = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+
+        const withConfig = (info: Record<string, unknown>) =>
+          mockGetConfig.mockImplementation((): any => ({
+            info: {
+              explorer: { type: "ledger", explorerId: "eth" },
+              showNfts: true,
+              ...info,
+            },
+          }));
+
+        it("drops ERC20 transfer events whose contract is listed in nativeContracts", async () => {
+          withConfig({ nativeContracts: [FIXTURE_CONTRACT] });
+          jest.spyOn(axios, "request").mockImplementation(async () => ({
+            data: { data: [coinOperation1] },
+          }));
+
+          const response = await LEDGER_API.getOperations(
+            fakeCurrency,
+            "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            accountId,
+            0,
+          );
+
+          expect(response.lastTokenOperations).toEqual([]);
+        });
+
+        it("matches nativeContracts case-insensitively", async () => {
+          withConfig({ nativeContracts: [FIXTURE_CONTRACT.toUpperCase()] });
+          jest.spyOn(axios, "request").mockImplementation(async () => ({
+            data: { data: [coinOperation1] },
+          }));
+
+          const response = await LEDGER_API.getOperations(
+            fakeCurrency,
+            "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            accountId,
+            0,
+          );
+
+          expect(response.lastTokenOperations).toEqual([]);
+        });
+
+        it("keeps ops on contracts not listed in nativeContracts", async () => {
+          withConfig({ nativeContracts: ["0x0000000000000000000000000000000000000001"] });
+          jest.spyOn(axios, "request").mockImplementation(async () => ({
+            data: { data: [coinOperation1] },
+          }));
+
+          const response = await LEDGER_API.getOperations(
+            fakeCurrency,
+            "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            accountId,
+            0,
+          );
+
+          expect(response.lastTokenOperations).toHaveLength(1);
+        });
+
+        it("is a no-op when nativeContracts is undefined", async () => {
+          // default beforeEach config has no nativeContracts
+          jest.spyOn(axios, "request").mockImplementation(async () => ({
+            data: { data: [coinOperation1] },
+          }));
+
+          const response = await LEDGER_API.getOperations(
+            fakeCurrency,
+            "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            accountId,
+            0,
+          );
+
+          expect(response.lastTokenOperations).toHaveLength(1);
+        });
+      });
     });
   });
 });

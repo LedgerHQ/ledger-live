@@ -152,6 +152,7 @@ export type CountervaluesPayload =
 export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_MODAL_OPEN = "NOTIFICATIONS_SET_MODAL_OPEN",
   NOTIFICATIONS_SET_DRAWER_SOURCE = "NOTIFICATIONS_SET_DRAWER_SOURCE",
+  NOTIFICATIONS_SET_DRAWER_PROMPT_TARGET = "NOTIFICATIONS_SET_DRAWER_PROMPT_TARGET",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   NOTIFICATIONS_SET_PERMISSION_STATUS = "NOTIFICATIONS_SET_PERMISSION_STATUS",
@@ -161,6 +162,8 @@ export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotific
 
 export type NotificationsSetDrawerSourcePayload = NotificationsState["drawerSource"];
 
+export type NotificationsSetDrawerPromptTargetPayload = NotificationsState["drawerPromptTarget"];
+
 export type NotificationSetPermissionStatusPayload = NotificationsState["permissionStatus"];
 
 export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"];
@@ -168,6 +171,7 @@ export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"]
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
   | NotificationsSetDrawerSourcePayload
+  | NotificationsSetDrawerPromptTargetPayload
   | NotificationsSetDataOfUserPayload
   | NotificationSetPermissionStatusPayload;
 

@@ -14,6 +14,7 @@ function mockMarketData(overrides?: Partial<ReturnType<typeof useAssetMarketData
     marketCurrency: marketCurrencyData as any,
     marketId: "bitcoin",
     counterCurrency: "usd",
+    ledgerIds: ["bitcoin"],
     isLoading: false,
     isError: false,
     ...overrides,
@@ -28,7 +29,9 @@ describe("useMarketStatsViewModel", () => {
 
   describe("stats", () => {
     it("returns 5 stat rows with correct labels", () => {
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.stats).toHaveLength(5);
       expect(result.current.stats[0].label).toMatch(/market cap/i);
@@ -39,14 +42,18 @@ describe("useMarketStatsViewModel", () => {
     });
 
     it("formats market rank with # prefix", () => {
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       const rankStat = result.current.stats.find(s => s.key === "market_rank");
       expect(rankStat?.value).toBe("#1");
     });
 
     it("provides tooltip for every stat row except market rank", () => {
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       const withTooltip = result.current.stats.filter(s => s.tooltip);
       expect(withTooltip.map(s => s.key)).toEqual([
@@ -61,24 +68,53 @@ describe("useMarketStatsViewModel", () => {
     it("returns an empty array when no market data", () => {
       mockMarketData({ marketCurrency: undefined });
 
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.stats).toEqual([]);
     });
 
     it("returns '-' for missing values", () => {
       mockMarketData({
-        marketCurrency: { ...marketCurrencyData, marketcap: undefined, maxSupply: 0 } as any,
+        marketCurrency: { ...marketCurrencyData, marketcap: undefined } as any,
       });
 
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.stats.find(s => s.key === "market_cap")?.value).toBe("-");
+    });
+
+    it("returns the ∞ symbol for max supply when the coin is uncapped but has market data", () => {
+      mockMarketData({
+        marketCurrency: { ...marketCurrencyData, maxSupply: 0 } as any,
+      });
+
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
+
+      expect(result.current.stats.find(s => s.key === "max_supply")?.value).toBe("∞");
+    });
+
+    it("returns '-' for max supply when no supply data is available", () => {
+      mockMarketData({
+        marketCurrency: { ...marketCurrencyData, maxSupply: 0, circulatingSupply: 0 } as any,
+      });
+
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
+
       expect(result.current.stats.find(s => s.key === "max_supply")?.value).toBe("-");
     });
 
     it("formats supply rows with the ticker suffix from market data", () => {
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       const circulating = result.current.stats.find(s => s.key === "circulating_supply")?.value;
       const maxSupply = result.current.stats.find(s => s.key === "max_supply")?.value;
@@ -93,7 +129,9 @@ describe("useMarketStatsViewModel", () => {
         marketCurrency: { ...marketCurrencyData, ticker: "" } as any,
       });
 
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       const circulating = result.current.stats.find(s => s.key === "circulating_supply")?.value;
       expect(circulating).toMatch(/BTC$/);
@@ -104,7 +142,9 @@ describe("useMarketStatsViewModel", () => {
         marketCurrency: { ...marketCurrencyData, circulatingSupply: 124329543825 } as any,
       });
 
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       const circulating = result.current.stats.find(s => s.key === "circulating_supply")?.value;
       expect(circulating).not.toBe("124329543825");
@@ -116,7 +156,9 @@ describe("useMarketStatsViewModel", () => {
     it("reflects isFetching from the query", () => {
       mockMarketData({ marketCurrency: undefined, isLoading: true });
 
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.hasData).toBe(false);
@@ -127,27 +169,34 @@ describe("useMarketStatsViewModel", () => {
     it("reflects isError from the query", () => {
       mockMarketData({ marketCurrency: undefined, isError: true });
 
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.isError).toBe(true);
     });
   });
 
   describe("onTooltipOpen", () => {
-    it("tracks info_bubble_pressed when tooltip opens", () => {
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+    it("tracks button_clicked with market_stat_definition when tooltip opens", () => {
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       result.current.onTooltipOpen("circulating_supply", true);
 
-      expect(track).toHaveBeenCalledWith("info_bubble_pressed", {
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "market_stat_definition",
         currency: "bitcoin",
-        stat_name: "circulating_supply",
+        type: "circulating_supply",
         page: "Asset Detail",
       });
     });
 
     it("does not track when tooltip closes", () => {
-      const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       result.current.onTooltipOpen("circulating_supply", false);
 
@@ -156,10 +205,15 @@ describe("useMarketStatsViewModel", () => {
   });
 
   describe("skip query", () => {
-    it("passes undefined currency to useAssetMarketData", () => {
-      renderHook(() => useMarketStatsViewModel(undefined));
+    it("passes resolved ids through to useAssetMarketData when no overrides are provided", () => {
+      renderHook(() => useMarketStatsViewModel({ currency: undefined }));
 
-      expect(mockUseAssetMarketData).toHaveBeenCalledWith(undefined);
+      expect(mockUseAssetMarketData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          marketApiId: undefined,
+          knownLedgerIds: undefined,
+        }),
+      );
     });
   });
 });

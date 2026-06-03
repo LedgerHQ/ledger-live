@@ -4,12 +4,15 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
+import {
+  isSendTransactionIntent,
+  isStakingTransactionIntent,
+} from "@ledgerhq/coin-module-framework/utils";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { getNodeApi } from "../network/node";
-import { buildStakingTransactionParams } from "../staking";
+import { buildStakingTransactionParams, STAKING_CONTRACTS } from "../staking";
 import {
   ApiFeeData,
   ApiGasOptions,
@@ -131,8 +134,23 @@ export async function prepareUnsignedTxParams(
             { currency, freshAddress: sender },
             { amount: BigNumber(value.toString()), recipient: to, data },
           )
-          .catch(() => new BigNumber(0));
-
+          .catch(async () => {
+            if (isStakingTransactionIntent(transactionIntent)) {
+              // Staking precompiles may reject the initial amount (e.g. 0 or rounded value).
+              // Retry with the minimum meaningful calldata unit for this chain so the node
+              // can at least estimate the gas overhead of the contract call itself.
+              const minUnit = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
+              return node
+                .getGasEstimation(
+                  { currency, freshAddress: sender },
+                  { amount: new BigNumber(minUnit.toString()), recipient: to, data },
+                )
+                .catch(() => {
+                  return new BigNumber(0);
+                });
+            }
+            return new BigNumber(0);
+          });
   return {
     type: transactionType,
     to,

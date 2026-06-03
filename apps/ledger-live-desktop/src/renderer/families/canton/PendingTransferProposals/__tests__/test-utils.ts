@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import type { ProcessedProposal, RawTransferProposal } from "../types";
 export { createMockAccount } from "../../__tests__/testUtils";
 
 export const ACCOUNT_XPUB = "test-xpub";
+export const MOCK_UNIT: Unit = { name: "Amulet", code: "CC", magnitude: 10 };
 
 export const createRawProposal = (
   contractId: string,
@@ -36,6 +38,7 @@ export const createProcessedProposal = (
     receiver: ACCOUNT_XPUB,
     amount: new BigNumber("1000000"),
     instrumentId: "instrument-1",
+    unit: MOCK_UNIT,
     memo: "",
     expiresAtMicros: futureMicros,
     isExpired: false,

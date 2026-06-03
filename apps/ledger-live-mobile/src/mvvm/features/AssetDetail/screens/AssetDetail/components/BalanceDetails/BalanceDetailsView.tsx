@@ -2,12 +2,14 @@ import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
+import type { DistributionItem } from "@ledgerhq/types-live";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import type { BalanceDetailsViewModelResult } from "./useBalanceDetailsViewModel";
 import { TotalBalanceView } from "./TotalBalanceView";
 import { EarnBannerView } from "./EarnBannerView";
 import { EarnCardsView } from "./EarnCardsView";
 import { SectionSkeleton } from "../SectionSkeleton";
+import { PnLSection } from "../PnLSection";
 
 type EarnState = BalanceDetailsViewModelResult["earnState"];
 
@@ -21,7 +23,9 @@ type Props = Readonly<{
   onTransferPress: () => void;
   onEarnBannerPress: () => void;
   onEarnDepositPress: () => void;
+  onAvailableBalanceTooltipOpen: (open: boolean) => void;
   isLoading: boolean;
+  distributionItem: DistributionItem | undefined;
 }>;
 
 export function BalanceDetailsView({
@@ -34,7 +38,9 @@ export function BalanceDetailsView({
   onTransferPress,
   onEarnBannerPress,
   onEarnDepositPress,
+  onAvailableBalanceTooltipOpen,
   isLoading,
+  distributionItem,
 }: Props) {
   if (isLoading && !hasAccounts) {
     return <SectionSkeleton rows={1} rowHeight="s56" />;
@@ -43,14 +49,14 @@ export function BalanceDetailsView({
   if (!hasAccounts) {
     if (earnState.type !== "banner") return null;
     return (
-      <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails} lx={containerStyle}>
+      <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails}>
         <EarnBannerView label={earnState.label} onPress={onEarnBannerPress} />
       </Box>
     );
   }
 
   return (
-    <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails} lx={containerStyle}>
+    <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails}>
       <TotalBalanceView
         discreet={discreet}
         counterValue={counterValue}
@@ -59,21 +65,27 @@ export function BalanceDetailsView({
         onTransferPress={onTransferPress}
       />
 
-      {earnState.type === "banner" && (
-        <EarnBannerView label={earnState.label} onPress={onEarnBannerPress} />
-      )}
+      <Box lx={earnPnlGroupStyle}>
+        <PnLSection distributionItem={distributionItem} isLoading={isLoading} />
 
-      {earnState.type === "staked" && (
-        <EarnCardsView
-          formattedAvailable={earnState.formattedAvailable}
-          formattedDeposit={earnState.formattedDeposit}
-          onEarnDepositPress={onEarnDepositPress}
-        />
-      )}
+        {earnState.type === "banner" && (
+          <EarnBannerView label={earnState.label} onPress={onEarnBannerPress} />
+        )}
+
+        {earnState.type === "staked" && (
+          <EarnCardsView
+            formattedAvailable={earnState.formattedAvailable}
+            formattedDeposit={earnState.formattedDeposit}
+            onEarnDepositPress={onEarnDepositPress}
+            onAvailableBalanceTooltipOpen={onAvailableBalanceTooltipOpen}
+          />
+        )}
+      </Box>
     </Box>
   );
 }
 
-const containerStyle: LumenViewStyle = {
+const earnPnlGroupStyle: LumenViewStyle = {
+  marginTop: "s24",
   gap: "s12",
 };

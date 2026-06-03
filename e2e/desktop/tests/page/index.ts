@@ -34,6 +34,7 @@ import { SwapPage } from "./swap.page";
 import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
 import { MarketBannerPage } from "./marketBanner.page";
+import { MyWalletPage } from "./myWallet.page";
 import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
 import { NewSendModal } from "./modal/new.send.modal";
 import { PrivateBalanceModal } from "./modal/private.balance.modal";
@@ -77,6 +78,7 @@ export class Application extends PageHolder {
   public swap = new SwapPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
+  public myWallet = new MyWalletPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);

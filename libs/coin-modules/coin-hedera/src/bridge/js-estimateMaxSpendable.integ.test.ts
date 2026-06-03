@@ -18,7 +18,7 @@ describe("js-estimateMaxSpendable", () => {
 
     const mockedAccount = getMockedAccount();
     const crypto = await estimateFees({
-      currency: mockedAccount.currency,
+      currencyId: mockedAccount.currency.id,
       operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
     });
 

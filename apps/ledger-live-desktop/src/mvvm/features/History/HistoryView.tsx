@@ -5,6 +5,7 @@ import { HistoryList } from "./screens/HistoryList";
 import type { HistoryViewModel } from "./hooks/useHistoryViewModel";
 
 export function HistoryView({
+  showBackButton,
   navigateBack,
   table,
   parentRef,
@@ -25,7 +26,10 @@ export function HistoryView({
         operationsCount={operationsCountRef.current}
         has_pending_operations={hasPendingOperationsRef.current ? true : false}
       />
-      <HistoryPageHeader onBack={navigateBack} onExportClick={onExportClick} />
+      <HistoryPageHeader
+        onBack={showBackButton ? navigateBack : undefined}
+        onExportClick={onExportClick}
+      />
       <HistoryList
         table={table}
         parentRef={parentRef}

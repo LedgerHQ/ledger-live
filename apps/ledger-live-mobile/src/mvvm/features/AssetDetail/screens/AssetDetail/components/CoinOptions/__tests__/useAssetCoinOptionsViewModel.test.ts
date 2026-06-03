@@ -45,7 +45,7 @@ describe("useAssetCoinOptionsViewModel", () => {
     expect(track).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "asset_coin_options_favourite",
+        button: "favourite",
         is_favourite: true,
       }),
     );
@@ -55,7 +55,7 @@ describe("useAssetCoinOptionsViewModel", () => {
     expect(track).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "asset_coin_options_favourite",
+        button: "favourite",
         is_favourite: false,
       }),
     );
@@ -79,7 +79,7 @@ describe("useAssetCoinOptionsViewModel", () => {
     expect(track).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "asset_coin_options_hide_portfolio",
+        button: "hide_asset",
         is_hidden: true,
       }),
     );
@@ -89,7 +89,7 @@ describe("useAssetCoinOptionsViewModel", () => {
     expect(track).toHaveBeenLastCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "asset_coin_options_hide_portfolio",
+        button: "hide_asset",
         is_hidden: false,
       }),
     );

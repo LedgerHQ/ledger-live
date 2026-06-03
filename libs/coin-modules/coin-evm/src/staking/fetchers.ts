@@ -13,7 +13,7 @@ import type {
 } from "../types/staking";
 import { extractSeiDelegation, getCeloAmount, getSeiDelegationAmount } from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
-import { buildTransactionParams } from "./transactionData";
+import { buildTransactionParams } from "./operations";
 import { getValidators } from "./validators";
 
 /**
@@ -32,16 +32,18 @@ const createStakingFetcher = (
   ): Promise<Stake[]> => {
     const validators = await getValidatorsFn(config, currency);
     const validatorAddresses = validators.map(v => v.validatorAddress);
-    const logPrefix = currency.id === "sei_evm" ? "SEI" : "CELO";
-    return getStakesForValidators(address, config, currency, validatorAddresses, logPrefix);
+    return getStakesForValidators(address, config, currency, validatorAddresses);
   };
 };
 
 export const STAKING_CONFIG: Record<string, StakingStrategy> = {
   sei_evm: {
-    fetcher: createStakingFetcher(
-      async (config, currency) => await getValidators(currency.id, config.apiConfig),
-    ),
+    // Sei returns its whole validator set in a single page, so the first page's
+    // items are the complete list.
+    fetcher: createStakingFetcher(async (_config, currency) => {
+      const { items } = await getValidators(currency.id);
+      return items;
+    }),
   },
   celo: {
     fetcher: createStakingFetcher(async config => [
@@ -49,7 +51,7 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
         validatorAddress: config.contractAddress,
         name: "",
         commission: 0,
-        tokens: 0,
+        tokens: "0",
         votingPower: 0,
         estimatedYearlyRewardsRate: 0,
       },
@@ -110,14 +112,12 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
     currency,
     async rpcProvider => {
       const executeCall = async (): Promise<Stake | null> => {
-        const params = buildTransactionParams(
-          currencyId,
-          "getStakedBalance",
-          address,
-          0n,
-          validatorAddress,
-          address,
-        );
+        const params = buildTransactionParams(currencyId, "getStakedBalance", {
+          valAddress: address,
+          amount: 0n,
+          dstValAddress: validatorAddress,
+          delegator: address,
+        });
         const encodedData = encodeStakingData({
           currencyId,
           operation: "getStakedBalance",
@@ -194,10 +194,9 @@ const getStakesForValidators = async (
   config: StakingContractConfig,
   currency: CryptoCurrency,
   validators: string[],
-  logPrefix: string = "Staking",
 ): Promise<Stake[]> => {
   if (validators.length === 0) {
-    console.error(`No validators available for ${logPrefix}`, { currencyId: currency.id });
+    console.error("No validators available", { currencyId: currency.id });
     return [];
   }
 
@@ -217,7 +216,7 @@ const getStakesForValidators = async (
         currency,
         validatorAddress: validator,
       }).catch(error => {
-        console.error(`Failed to fetch ${logPrefix} stake for validator`, {
+        console.error("Failed to fetch stake for validator", {
           validator,
           currencyId: currency.id,
           address,

@@ -9,17 +9,12 @@ type TotalBalanceProps = Readonly<{
 }>;
 
 export function TotalBalance({ distributionItem }: TotalBalanceProps) {
-  const viewModel = useTotalBalanceViewModel(distributionItem);
+  const { amount, cryptoUnit, ...viewProps } = useTotalBalanceViewModel(distributionItem);
 
   return (
     <TotalBalanceView
-      totalBalanceLabel={viewModel.totalBalanceLabel}
-      fiatDisplayValue={viewModel.fiatDisplayValue}
-      fiatFormatter={viewModel.fiatFormatter}
-      hidden={viewModel.hidden}
-      cryptoBalance={
-        <CryptoBalanceText amount={viewModel.amount} cryptoUnit={viewModel.cryptoUnit} />
-      }
+      {...viewProps}
+      cryptoBalance={<CryptoBalanceText amount={amount} cryptoUnit={cryptoUnit} />}
     />
   );
 }

@@ -2,12 +2,25 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { TrackScreen } from "~/analytics";
 import {
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
   type DisplayedDevice,
 } from "@ledgerhq/live-dmk-mobile";
+import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DiscoveringState } from "./DiscoveringState";
+
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(() => null),
+  };
+});
+
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 type DiscoveringUIState = Extract<
   ConnectDeviceUIState,
@@ -39,10 +52,18 @@ function renderState(devices: DisplayedDevice[]) {
     devices,
   };
 
-  return render(<DiscoveringState state={state} />);
+  return render(
+    <SourceFlowProvider value="my_ledger">
+      <DiscoveringState state={state} />
+    </SourceFlowProvider>,
+  );
 }
 
 describe("DiscoveringState", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should render the discovering title", () => {
     renderState([]);
 
@@ -63,5 +84,23 @@ describe("DiscoveringState", () => {
 
     expect(screen.getByText("Available Ledger")).toBeVisible();
     expect(screen.getByText("Unavailable Ledger")).toBeVisible();
+  });
+
+  it("GIVEN the discovering state WHEN rendering THEN it tracks the Device UX V2 page event", () => {
+    // GIVEN
+    const devices: DisplayedDevice[] = [];
+
+    // WHEN
+    renderState(devices);
+
+    // THEN
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_CONNECT_DEVICE.Discovering,
+        sourceFlow: "my_ledger",
+        deviceUxV2: true,
+      }),
+      undefined,
+    );
   });
 });

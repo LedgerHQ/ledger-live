@@ -6,6 +6,7 @@ import {
   customImageMock,
   syncAccountsMock,
   recoverMock,
+  discoverWalletMock,
 } from "./mockActions";
 import {
   assetsTransferAction,
@@ -13,6 +14,7 @@ import {
   buyCryptoAction,
   syncAccountsAction,
   recoverAction,
+  discoverWalletAction,
 } from "./actions";
 
 /**
@@ -24,11 +26,13 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   customImageMock,
   syncAccountsMock,
   recoverMock,
+  discoverWalletMock,
   customImage: customImageAction,
   assetsTransfer: assetsTransferAction,
   buyCrypto: buyCryptoAction,
   syncAccounts: syncAccountsAction,
   recover: recoverAction,
+  discoverWallet: discoverWalletAction,
 };
 
 /**
@@ -37,6 +41,7 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
 const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   syncAccountsMock,
+  discoverWalletMock,
   customImageMock,
   recoverMock,
 ];
@@ -44,6 +49,7 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
 const staxPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
+  discoverWalletAction,
   customImageAction,
   recoverAction,
 ];
@@ -54,6 +60,7 @@ const staxPostOnboardingActions: PostOnboardingAction[] = [
 const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   syncAccountsMock,
+  discoverWalletMock,
   customImageMock,
   recoverMock,
 ];
@@ -61,6 +68,7 @@ const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
 const europaPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
+  discoverWalletAction,
   customImageAction,
   recoverAction,
 ];
@@ -71,6 +79,7 @@ const europaPostOnboardingActions: PostOnboardingAction[] = [
 const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   syncAccountsMock,
+  discoverWalletMock,
   customImageMock,
   recoverMock,
 ];
@@ -78,6 +87,7 @@ const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
 const apexPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
+  discoverWalletAction,
   customImageAction,
   recoverAction,
 ];
@@ -100,13 +110,13 @@ export function getPostOnboardingActionsForDevice(
   switch (deviceModelId) {
     case DeviceModelId.nanoS:
       // Post-onboarding actions for Nano S (no custom lock screen or sync step).
-      return [assetsTransferAction];
+      return [assetsTransferAction, discoverWalletAction];
     case DeviceModelId.nanoSP:
       // Post-onboarding actions for Nano S Plus (no custom lock screen step).
-      return [assetsTransferAction, syncAccountsAction];
+      return [assetsTransferAction, syncAccountsAction, discoverWalletAction];
     case DeviceModelId.nanoX:
       // Post-onboarding actions for Nano X (no custom lock screen step).
-      return [assetsTransferAction, syncAccountsAction];
+      return [assetsTransferAction, syncAccountsAction, discoverWalletAction];
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
       return staxPostOnboardingActions;

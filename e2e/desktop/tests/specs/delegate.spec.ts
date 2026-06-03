@@ -8,7 +8,6 @@ import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { isWallet40Enabled, LWD_WALLET_40_FF_DISABLED } from "tests/utils/featureFlagUtils";
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
@@ -431,60 +430,6 @@ for (const validator of validators) {
   });
 }
 
-test.describe("Staking flow from different entry point - legacy", () => {
-  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
-  test.use({
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: delegateAccount.account.currency.speculosApp,
-    featureFlags: LWD_WALLET_40_FF_DISABLED,
-    cliCommands: [liveDataCommand(delegateAccount.account)],
-  });
-
-  const family = getFamilyByCurrencyId(delegateAccount.account.currency.id);
-
-  test(
-    "Staking flow from portfolio entry point",
-    {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${delegateAccount.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2769, B2CQA-3281, B2CQA-3289",
-      },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      await app.layout.goToPortfolio();
-      await app.portfolio.startStakeFlow();
-
-      const selector = await getModularSelector(app, "ASSET");
-      if (selector) {
-        await selector.validateItems();
-        await selector.selectAsset(delegateAccount.account.currency);
-        await selector.selectNetwork(delegateAccount.account.currency);
-        await selector.selectAccountByName(delegateAccount.account);
-      } else {
-        await app.portfolio.expectChooseAssetToBeVisible();
-        await app.assetDrawer.selectAsset(delegateAccount.account.currency);
-        await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
-      }
-
-      await app.delegate.verifyFirstProviderName(delegateAccount.provider);
-      await app.delegate.continue();
-    },
-  );
-});
-
 test.describe("Staking flow from different entry point", () => {
   const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
   test.use({
@@ -516,13 +461,7 @@ test.describe("Staking flow from different entry point", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      if (await isWallet40Enabled(app.getPage())) {
-        await app.marketBanner.clickExploreMarketHeader();
-      } else {
-        await app.layout.goToMarket();
-      }
-
+      await app.marketBanner.clickExploreMarketHeader();
       await app.market.search(delegateAccount.account.currency.ticker);
       await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
 

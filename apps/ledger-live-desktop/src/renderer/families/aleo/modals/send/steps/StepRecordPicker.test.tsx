@@ -28,7 +28,10 @@ import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("~/renderer/hooks/useDateFormatter");
-jest.mock("@ledgerhq/live-common/currencies/index");
+jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
+}));
 jest.mock("../../../shared/utils", () => ({
   getAleoCurrencyConfig: jest.fn(),
 }));

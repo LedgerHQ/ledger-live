@@ -25,7 +25,7 @@ import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { CryptoScreen } from "LLM/features/Crypto";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { track } from "~/analytics";
 import {

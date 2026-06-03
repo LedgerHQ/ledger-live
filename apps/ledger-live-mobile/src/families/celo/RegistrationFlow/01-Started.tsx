@@ -13,6 +13,7 @@ import Button from "~/components/Button";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
+import SafeAreaView from "~/components/SafeAreaView";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRegistrationFlowParamList } from "./types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -54,7 +55,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
     status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <View
         style={styles.scroll}
         // FIXME: PROP DOESN'T EXIST ON View BUT DOES ON ScrollView
@@ -91,7 +92,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
           type="primary"
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

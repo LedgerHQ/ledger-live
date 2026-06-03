@@ -122,7 +122,7 @@ describe("coin-evm/staking/serialization", () => {
           votingPower: 0.12,
           commission: 0.05,
           estimatedYearlyRewardsRate: 0.08,
-          tokens: 1234567,
+          tokens: "1234567",
         },
       ];
       const back = fromStakingResourcesRaw(
@@ -166,7 +166,7 @@ describe("coin-evm/staking/serialization", () => {
           votingPower: 0.12,
           commission: 0.05,
           estimatedYearlyRewardsRate: 0.08,
-          tokens: 1234567,
+          tokens: "1234567",
         },
       ];
       const account = {

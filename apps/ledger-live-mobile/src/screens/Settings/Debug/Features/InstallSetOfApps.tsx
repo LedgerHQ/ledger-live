@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button, Flex, SelectableList, Switch, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";

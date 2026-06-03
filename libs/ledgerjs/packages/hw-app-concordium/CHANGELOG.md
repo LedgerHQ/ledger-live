@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-concordium
 
+## 0.8.0
+
+### Minor Changes
+
+- [#17511](https://github.com/LedgerHQ/ledger-live/pull/17511) [`67523b7`](https://github.com/LedgerHQ/ledger-live/commit/67523b7e2cad7dc0844c9b3d97ebb09d40f50c21) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Deprecate `@ledgerhq/hw-app-concordium` in favor of `@ledgerhq/device-signer-kit-concordium`. Ledger Live has migrated to the DMK signer; this package will be removed in a future release.
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#17511](https://github.com/LedgerHQ/ledger-live/pull/17511) [`67523b7`](https://github.com/LedgerHQ/ledger-live/commit/67523b7e2cad7dc0844c9b3d97ebb09d40f50c21) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Deprecate `@ledgerhq/hw-app-concordium` in favor of `@ledgerhq/device-signer-kit-concordium`. Ledger Live has migrated to the DMK signer; this package will be removed in a future release.
+
 ## 0.7.2
 
 ### Patch Changes

@@ -271,6 +271,7 @@ export default function DebugContentCards() {
           onCreateFeatureIntro={() =>
             openGenericAwarenessForm(GenericAwarenessModalLayout.FeatureIntro)
           }
+          onCreatePrompt={() => openGenericAwarenessForm(GenericAwarenessModalLayout.Prompt)}
         />
       </SettingsNavigationScrollView>
       <GenericAwarenessModalFormSheet

@@ -7,7 +7,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { track } from "~/analytics";

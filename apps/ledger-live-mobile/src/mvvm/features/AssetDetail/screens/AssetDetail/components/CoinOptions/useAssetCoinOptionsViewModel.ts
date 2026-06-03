@@ -44,7 +44,7 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
     const nextStarred = !isStarred;
 
     track("button_clicked", {
-      button: "asset_coin_options_favourite",
+      button: "favourite",
       currency: currency.id,
       page: "Asset Detail",
       is_favourite: nextStarred,
@@ -80,7 +80,7 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
     const nextHidden = !isHidden;
 
     track("button_clicked", {
-      button: "asset_coin_options_hide_portfolio",
+      button: "hide_asset",
       currency: currency.id,
       page: "Asset Detail",
       is_hidden: nextHidden,

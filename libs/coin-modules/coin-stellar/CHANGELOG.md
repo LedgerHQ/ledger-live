@@ -1,5 +1,27 @@
 # @ledgerhq/coin-stellar
 
+## 6.23.0
+
+### Minor Changes
+
+- [#17253](https://github.com/LedgerHQ/ledger-live/pull/17253) [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(ADR-025): rename `AlpacaApi` -> `CoinModuleApi`
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.2
+
+## 6.23.0-next.0
+
+### Minor Changes
+
+- [#17253](https://github.com/LedgerHQ/ledger-live/pull/17253) [`fe04e44`](https://github.com/LedgerHQ/ledger-live/commit/fe04e44e0cd41ea9dd896defcea18c010fe36490) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(ADR-025): rename `AlpacaApi` -> `CoinModuleApi`
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.2-next.0
+
 ## 6.22.1
 
 ### Patch Changes

@@ -163,14 +163,18 @@ describe("WEBVIEW_GUEST_CSP", () => {
     expect(WEBVIEW_GUEST_CSP).toContain("form-action");
   });
 
+  it("allows blob sources for SDK-loaded web workers or frames", () => {
+    expect(WEBVIEW_GUEST_CSP).toContain("frame-src 'self' http: https: blob:;");
+    expect(WEBVIEW_GUEST_CSP).toContain("child-src 'self' http: https: blob:;");
+  });
+
   it("does not allow the app-store / office external protocol schemes", () => {
     expect(WEBVIEW_GUEST_CSP).not.toContain("itms-apps");
     expect(WEBVIEW_GUEST_CSP).not.toContain("ms-word");
     expect(WEBVIEW_GUEST_CSP).not.toContain("file:");
   });
 
-  it("does not allow data or blob document sources", () => {
+  it("does not allow data document sources", () => {
     expect(WEBVIEW_GUEST_CSP).not.toContain("data:");
-    expect(WEBVIEW_GUEST_CSP).not.toContain("blob:");
   });
 });

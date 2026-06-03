@@ -303,7 +303,7 @@ describe("computeFeeEstimate — notEnoughBalance gating", () => {
 });
 
 describe("computeFeeEstimate — constants", () => {
-  it("uses 60_000 as the approval gas limit (matches swap-live-app legacy constant)", () => {
+  it("uses 60_000 as the default approval gas limit", () => {
     expect(APPROVAL_GAS_LIMIT).toBe(60_000);
   });
 });

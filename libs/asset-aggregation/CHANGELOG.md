@@ -1,5 +1,37 @@
 # @ledgerhq/asset-aggregation
 
+## 0.6.0
+
+### Minor Changes
+
+- [#17561](https://github.com/LedgerHQ/ledger-live/pull/17561) [`5d5a111`](https://github.com/LedgerHQ/ledger-live/commit/5d5a11111173aabd685a409e09c08dcb67ccb95b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Stellar USDC (and MultiversX tokens) not aggregating under their cross-network meta-currency in the portfolio asset distribution. Apply legacyIdToApiId when resolving DADA-keyed lookups so LL-format ids (mixed-case Stellar, multiversx prefix) match the API-format ids returned by DADA.
+
+- [#17503](https://github.com/LedgerHQ/ledger-live/pull/17503) [`f799d7f`](https://github.com/LedgerHQ/ledger-live/commit/f799d7f77de7af9d0a236c782b36cc4b629b41c7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Aggregate AssetDetail total balance and addresses across every network of an asset on mobile (W4.0), and extract `resolveDistributionItem` / `parentAccountLookup` from desktop into `@ledgerhq/asset-aggregation` so both apps share one source.
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46)]:
+  - @ledgerhq/cryptoassets@13.49.0
+  - @ledgerhq/types-cryptoassets@7.37.0
+  - @ledgerhq/types-live@6.109.0
+  - @ledgerhq/live-countervalues@0.18.5
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#17561](https://github.com/LedgerHQ/ledger-live/pull/17561) [`5d5a111`](https://github.com/LedgerHQ/ledger-live/commit/5d5a11111173aabd685a409e09c08dcb67ccb95b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Stellar USDC (and MultiversX tokens) not aggregating under their cross-network meta-currency in the portfolio asset distribution. Apply legacyIdToApiId when resolving DADA-keyed lookups so LL-format ids (mixed-case Stellar, multiversx prefix) match the API-format ids returned by DADA.
+
+- [#17503](https://github.com/LedgerHQ/ledger-live/pull/17503) [`f799d7f`](https://github.com/LedgerHQ/ledger-live/commit/f799d7f77de7af9d0a236c782b36cc4b629b41c7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Aggregate AssetDetail total balance and addresses across every network of an asset on mobile (W4.0), and extract `resolveDistributionItem` / `parentAccountLookup` from desktop into `@ledgerhq/asset-aggregation` so both apps share one source.
+
+### Patch Changes
+
+- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46)]:
+  - @ledgerhq/cryptoassets@13.49.0-next.0
+  - @ledgerhq/types-cryptoassets@7.37.0-next.0
+  - @ledgerhq/types-live@6.109.0-next.0
+  - @ledgerhq/live-countervalues@0.18.5-next.0
+
 ## 0.5.1
 
 ### Patch Changes

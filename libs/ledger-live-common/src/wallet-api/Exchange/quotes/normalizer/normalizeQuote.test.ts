@@ -1,6 +1,7 @@
 import type { FormatContext } from "../format/types";
 import type { ProviderData } from "../lookupProviderConfig";
 import type { RawQuote } from "../service/types";
+import { QuoteErrorCodes, QuoteWarningCodes } from "../types";
 import { normalizeQuote } from "./normalizeQuote";
 
 /** Minimal `RawQuote` factory; tests override only the fields they exercise. */
@@ -384,7 +385,7 @@ describe("normalizeQuote", () => {
     });
   });
 
-  describe("warning.unrealisticQuote — fiat gain detection", () => {
+  describe("warnings — fiat gain detection", () => {
     // Canonical "doubled in fiat" fixture: 1 unit from × 1.0 / 1 unit to × 2.0.
     // Keeps spot values symmetric and gainPercent expressible as an exact
     // integer (100%) so the tests assert on precise numeric output.
@@ -404,7 +405,7 @@ describe("normalizeQuote", () => {
           spotPrices: {},
         },
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("returns no warning when only the `from` spot price is available", () => {
@@ -417,7 +418,118 @@ describe("normalizeQuote", () => {
           spotPrices: { ethereum: 1 },
         },
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("emits `unknownReceiveFiatPrice` when the receive spot price is zero", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 10, amountTo: 100 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "bitcoin",
+          spotPrices: { ethereum: 1, bitcoin: 0 },
+        },
+      );
+
+      expect(quote.warnings).toEqual([{ code: QuoteWarningCodes.UNKNOWN_RECEIVE_FIAT_PRICE }]);
+    });
+
+    it("emits `highValueLoss` when the receive fiat value is below the configured threshold", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 10 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 1000, ethereum: 80 },
+          highValueLossThreshold: 0.9,
+        },
+      );
+
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.HIGH_VALUE_LOSS,
+          lossPercent: 20,
+        },
+      ]);
+    });
+
+    it("emits `highValueLoss` when the receive fiat value is exactly at the threshold", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 9 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 100, ethereum: 10 },
+          highValueLossThreshold: 0.9,
+        },
+      );
+
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.HIGH_VALUE_LOSS,
+          lossPercent: 10,
+        },
+      ]);
+    });
+
+    it("does not emit `highValueLoss` when the loss is below the configured threshold", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 1 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 1000, ethereum: 950 },
+          highValueLossThreshold: 0.9,
+        },
+      );
+
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("does not emit `highValueLoss` when the threshold is missing", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 10 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 1000, ethereum: 80 },
+        },
+      );
+
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("emits `nanoSProviderIncompatibility` for Nano S incompatible providers", () => {
+      const quote = normalizeQuote(makeRawQuote({ provider: "okx" }), emptyProviderData, {
+        sendCurrencyId: "ethereum",
+        receiveCurrencyId: "bitcoin",
+        deviceModelId: "nanoS",
+        spotPrices: {},
+      });
+
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.NANO_S_PROVIDER_INCOMPATIBILITY,
+          provider: "okx",
+        },
+      ]);
+    });
+
+    it("does not emit Nano S incompatibility warnings for other device models", () => {
+      const quote = normalizeQuote(makeRawQuote({ provider: "okx" }), emptyProviderData, {
+        sendCurrencyId: "ton",
+        receiveCurrencyId: "bitcoin",
+        sendParentCurrencyId: "solana",
+        deviceModelId: "nanoX",
+        spotPrices: {},
+      });
+
+      expect(quote.warnings).toEqual([]);
     });
 
     it("returns no warning when `amountFrom` is zero (division guard)", () => {
@@ -426,7 +538,7 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("returns no warning when `amountFrom` is missing", () => {
@@ -435,7 +547,7 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("returns no warning when the gain is non-positive (output fiat ≤ input fiat)", () => {
@@ -445,7 +557,7 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("emits `unrealisticQuote` with a positive `gainPercent` when output fiat exceeds input fiat", () => {
@@ -455,7 +567,9 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toEqual({ code: "unrealisticQuote", gainPercent: 100 });
+      expect(quote.warnings).toEqual([
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 },
+      ]);
     });
 
     it("preserves fractional `gainPercent` values", () => {
@@ -469,7 +583,9 @@ describe("normalizeQuote", () => {
           spotPrices: { ethereum: 1, bitcoin: 1 },
         },
       );
-      expect(quote.warning).toEqual({ code: "unrealisticQuote", gainPercent: 1.5 });
+      expect(quote.warnings).toEqual([
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 1.5 },
+      ]);
     });
   });
 
@@ -480,7 +596,7 @@ describe("normalizeQuote", () => {
       spotPrices: {},
     };
 
-    it("populates both fields and leaves error = null when approval is needed and balance is sufficient", () => {
+    it("populates both fields and leaves errors empty when approval is needed and balance is sufficient", () => {
       const quote = normalizeQuote(
         makeRawQuote({ tokenAllowanceData: { isApproved: false } }),
         emptyProviderData,
@@ -499,7 +615,7 @@ describe("normalizeQuote", () => {
         amount: "1500000000000000",
         currencyId: "ethereum",
       });
-      expect(quote.error).toBeNull();
+      expect(quote.errors).toEqual([]);
     });
 
     it("emits `notEnoughBalanceForFees` when the fee estimate reports insufficient balance", () => {
@@ -508,14 +624,36 @@ describe("normalizeQuote", () => {
         approvalNetworkFee: undefined,
         notEnoughBalance: true,
       });
-      expect(quote.error).toBe("notEnoughBalanceForFees");
+      expect(quote.errors).toEqual([{ code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES }]);
     });
 
-    it("omits both fields and leaves error = null when the fee estimate is undefined", () => {
+    it("leaves `errors`/`warnings` as empty arrays when no condition fires", () => {
+      const quote = normalizeQuote(makeRawQuote(), emptyProviderData, emptyUnrealisticInput);
+      expect(quote.errors).toEqual([]);
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("emits `unrealisticQuote` in `warnings[]` when the unrealistic-quote check fires", () => {
+      // amountFromFiat = 1 * 1 = 1, amountToFiat = 1 * 2 = 2 -> gain = 100%
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 1 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "bitcoin",
+          spotPrices: { ethereum: 1, bitcoin: 2 },
+        },
+      );
+      expect(quote.warnings).toEqual([
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 },
+      ]);
+    });
+
+    it("omits fee fields and leaves errors empty when the fee estimate is undefined", () => {
       const quote = normalizeQuote(makeRawQuote(), emptyProviderData, emptyUnrealisticInput);
       expect(quote.quoteDetails.estimatedNetworkFee).toBeUndefined();
       expect(quote.quoteDetails.approvalNetworkFee).toBeUndefined();
-      expect(quote.error).toBeNull();
+      expect(quote.errors).toEqual([]);
     });
 
     it("omits fields individually when the fee estimate marks them undefined", () => {
@@ -694,24 +832,22 @@ describe("normalizeQuote", () => {
       expect(quote.id).toBeUndefined();
     });
 
-    it("ignores empty-string customFields.quoteId (not a usable identifier)", () => {
+    it("ignores non-string customFields.quoteId", () => {
       const quote = normalizeQuote(
         makeRawQuote({
           quoteId: undefined,
-          customFields: { quoteId: "" },
+          customFields: { quoteId: 42 },
         }),
         emptyProviderData,
       );
       expect(quote.id).toBeUndefined();
     });
 
-    it("ignores non-string customFields.quoteId values defensively", () => {
+    it("ignores empty-string customFields.quoteId (not a usable identifier)", () => {
       const quote = normalizeQuote(
         makeRawQuote({
           quoteId: undefined,
-          // Aggregator could in theory send a number; the wallet contract
-          // only accepts strings. Anything else is treated as missing.
-          customFields: { quoteId: 42 as unknown as string },
+          customFields: { quoteId: "" },
         }),
         emptyProviderData,
       );

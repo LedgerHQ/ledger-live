@@ -100,7 +100,7 @@ describe("AccountHeaderManageActions (tezos)", () => {
       expect(store.getState().modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBe(true);
     });
 
-    it("opens MODAL_TEZOS_EARNING_CHOICE when delegated but not yet staked", () => {
+    it("opens MODAL_TEZOS_STAKE (skip delegation) when already delegated", () => {
       stakingInfoMock.mockReturnValue({
         ...defaultStakingInfo,
         isDelegated: true,
@@ -108,6 +108,64 @@ describe("AccountHeaderManageActions (tezos)", () => {
           address: "tz1baker",
         } as StakingInfo["delegation"],
         delegateAddress: "tz1baker",
+      });
+      const account = makeAccount();
+      const { result, store } = renderHook(
+        () => hook({ account, parentAccount: null, source: "Account Page" }),
+        { initialState },
+      );
+
+      act(() => {
+        result.current?.[0].onClick();
+      });
+
+      const modal = store.getState().modals.MODAL_TEZOS_STAKE;
+      expect(modal).toEqual(
+        expect.objectContaining({
+          isOpened: true,
+          data: expect.objectContaining({ skipDelegation: true }),
+        }),
+      );
+      expect(store.getState().modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBeFalsy();
+      expect(store.getState().modals.MODAL_DELEGATE?.isOpened).toBeFalsy();
+    });
+
+    it("opens MODAL_TEZOS_STAKE (skip delegation) when delegated AND staked", () => {
+      stakingInfoMock.mockReturnValue({
+        ...defaultStakingInfo,
+        isDelegated: true,
+        isStaked: true,
+        stakedBalance: new BigNumber(500),
+        delegation: {
+          address: "tz1baker",
+        } as StakingInfo["delegation"],
+        delegateAddress: "tz1baker",
+      });
+      const account = makeAccount();
+      const { result, store } = renderHook(
+        () => hook({ account, parentAccount: null, source: "Account Page" }),
+        { initialState },
+      );
+
+      act(() => {
+        result.current?.[0].onClick();
+      });
+
+      const modal = store.getState().modals.MODAL_TEZOS_STAKE;
+      expect(modal).toEqual(
+        expect.objectContaining({
+          isOpened: true,
+          data: expect.objectContaining({ skipDelegation: true }),
+        }),
+      );
+      expect(store.getState().modals.MODAL_DELEGATE?.isOpened).toBeFalsy();
+    });
+
+    it("opens MODAL_TEZOS_EARNING_CHOICE when not delegated, even if staked", () => {
+      stakingInfoMock.mockReturnValue({
+        ...defaultStakingInfo,
+        isStaked: true,
+        stakedBalance: new BigNumber(500),
       });
       const account = makeAccount();
       const { result, store } = renderHook(
@@ -120,58 +178,7 @@ describe("AccountHeaderManageActions (tezos)", () => {
       });
 
       expect(store.getState().modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBe(true);
-      expect(store.getState().modals.MODAL_TEZOS_STAKE?.isOpened).toBeFalsy();
       expect(store.getState().modals.MODAL_DELEGATE?.isOpened).toBeFalsy();
-    });
-
-    it("opens MODAL_DELEGATE in redelegate mode when account is delegated AND staked", () => {
-      stakingInfoMock.mockReturnValue({
-        ...defaultStakingInfo,
-        isDelegated: true,
-        isStaked: true,
-        stakedBalance: new BigNumber(500),
-        delegation: {
-          address: "tz1baker",
-        } as StakingInfo["delegation"],
-        delegateAddress: "tz1baker",
-      });
-      const account = makeAccount();
-      const { result, store } = renderHook(
-        () => hook({ account, parentAccount: null, source: "Account Page" }),
-        { initialState },
-      );
-
-      act(() => {
-        result.current?.[0].onClick();
-      });
-
-      const modal = store.getState().modals.MODAL_DELEGATE;
-      expect(modal).toEqual(
-        expect.objectContaining({
-          isOpened: true,
-          data: expect.objectContaining({ eventType: "redelegate" }),
-        }),
-      );
-    });
-
-    it("opens MODAL_DELEGATE (not earning choice) when staked but not delegated", () => {
-      stakingInfoMock.mockReturnValue({
-        ...defaultStakingInfo,
-        isStaked: true,
-        stakedBalance: new BigNumber(500),
-      });
-      const account = makeAccount();
-      const { result, store } = renderHook(
-        () => hook({ account, parentAccount: null, source: "Account Page" }),
-        { initialState },
-      );
-
-      act(() => {
-        result.current?.[0].onClick();
-      });
-
-      expect(store.getState().modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBeFalsy();
-      expect(store.getState().modals.MODAL_DELEGATE?.isOpened).toBe(true);
     });
   });
 

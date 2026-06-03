@@ -1,5 +1,9 @@
 import React from "react";
-import { renderWithReactQuery, withReadOnlyDisabled, withFlagOverrides } from "@tests/test-renderer";
+import {
+  renderWithReactQuery,
+  withReadOnlyDisabled,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 import { expectedNavigationParams } from "../const";
 import { TopBar } from "../index";
 import { track } from "~/analytics";
@@ -47,7 +51,7 @@ describe("TopBar navigation", () => {
       expectedNavigationParams.myLedger.params,
     );
 
-    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "MyLedger",
       page: ScreenName.Portfolio,
     });
@@ -63,7 +67,7 @@ describe("TopBar navigation", () => {
       expectedNavigationParams.discover.params,
     );
 
-    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Discover",
       page: ScreenName.Portfolio,
     });
@@ -79,7 +83,7 @@ describe("TopBar navigation", () => {
       expectedNavigationParams.notifications.params,
     );
 
-    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Notifications",
       page: ScreenName.Portfolio,
     });
@@ -92,7 +96,7 @@ describe("TopBar navigation", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.settings.name);
 
-    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Settings",
       page: ScreenName.Portfolio,
     });
@@ -100,7 +104,9 @@ describe("TopBar navigation", () => {
 
   it("should navigate to operations list with expected params when transaction history button is pressed", async () => {
     const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
-      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { operationsList: true } } }),
+      overrideInitialState: withFlagOverrides({
+        lwmWallet40: { enabled: true, params: { operationsList: true } },
+      }),
     });
 
     await user.press(getByTestId("topbar-transaction-history"));
@@ -109,7 +115,7 @@ describe("TopBar navigation", () => {
       screen: ScreenName.OperationsList,
     });
 
-    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "operation_list",
       page: ScreenName.Portfolio,
     });

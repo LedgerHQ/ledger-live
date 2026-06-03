@@ -283,8 +283,10 @@ type HandlersPayloads = {
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
   SET_DISMISSED_CONTENT_CARDS: {
-    [key: string]: number;
+    id: string;
+    timestamp: number;
   };
+  REMOVE_DISMISSED_CONTENT_CARDS: { ids: string[] };
   CLEAR_DISMISSED_CONTENT_CARDS: { now: Date };
   SET_ANONYMOUS_BRAZE_ID: string;
   SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
@@ -397,9 +399,9 @@ const handlers: SettingsHandlers = {
     ...state,
     lastSeenDevice: state.lastSeenDevice
       ? {
-          ...state.lastSeenDevice,
-          deviceInfo: payload.deviceInfo,
-        }
+        ...state.lastSeenDevice,
+        deviceInfo: payload.deviceInfo,
+      }
       : undefined,
   }),
 
@@ -461,6 +463,24 @@ const handlers: SettingsHandlers = {
       [payload.id]: payload.timestamp,
     },
   }),
+
+  REMOVE_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload: { ids } }) => {
+    if (ids.length === 0) {
+      return state;
+    }
+
+    const next = { ...state.dismissedContentCards };
+    let changed = false;
+
+    for (const id of ids) {
+      if (id in next) {
+        delete next[id];
+        changed = true;
+      }
+    }
+
+    return changed ? { ...state, dismissedContentCards: next } : state;
+  },
 
   CLEAR_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload: { now } }) => {
     const cutoff = getBrazeCampaignCutoff(now);
@@ -561,13 +581,13 @@ export type CurrencySettings = {
 
 type ConfirmationDefaults = {
   confirmationsNb:
-    | {
-        min: number;
-        def: number;
-        max: number;
-      }
-    | undefined
-    | null;
+  | {
+    min: number;
+    def: number;
+    max: number;
+  }
+  | undefined
+  | null;
 };
 
 type UnitDefaults = {

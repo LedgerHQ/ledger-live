@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { atom, useAtom } from "jotai";
-import { atomFamily } from "jotai-family";
+import { atom, PrimitiveAtom, useAtom } from "jotai";
+import { atomFamily, AtomFamily } from "jotai-family";
 import { AppManifest, DAppTrackingData, DiscoverDB, WalletAPITransaction } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
@@ -74,9 +74,8 @@ function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
 }
 
 // Atom family for manifest-scoped account state - each manifest gets its own isolated atom
-export const currentAccountAtomFamily = atomFamily((_manifestId: string) =>
-  atom<AccountLike | null>(null),
-);
+export const currentAccountAtomFamily: AtomFamily<string, PrimitiveAtom<AccountLike | null>> =
+  atomFamily((_manifestId: string) => atom<AccountLike | null>(null));
 
 export function useDappCurrentAccount(
   manifestId: string,

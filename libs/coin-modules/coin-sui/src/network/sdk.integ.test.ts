@@ -19,7 +19,6 @@ import {
   paymentInfo,
   getBlock,
   getBlockInfo,
-  getStakes,
   transactionToOperation,
   withApi,
 } from "./sdk";
@@ -404,31 +403,6 @@ describe("SUI SDK Integration tests", () => {
     });
   });
 
-  describe("getStakes", () => {
-    test("Account 0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73", async () => {
-      const stakes = await getStakes(
-        "0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73",
-      );
-      expect(stakes.length).toBeGreaterThan(0);
-      stakes.forEach(stake => {
-        expect(stake.uid).toMatch(/0x[0-9a-z]+/);
-        expect(stake.address).toMatch(/0x[0-9a-z]+/);
-        expect(stake.delegate).toMatch(/0x[0-9a-z]+/);
-        expect(stake.state).toMatch(/(activating|active|inactive)/);
-        expect(stake.asset).toEqual({ type: "native" });
-        expect(stake.amount).toBeGreaterThan(0);
-        expect(stake.amountDeposited).toBeGreaterThan(0);
-        expect(stake.amountRewarded).toBeGreaterThanOrEqual(0);
-        // @ts-expect-error properties are defined
-        expect(stake.amount).toEqual(stake.amountDeposited + stake.amountRewarded);
-        expect(stake.details).toMatchObject({
-          activeEpoch: expect.any(Number),
-          requestEpoch: expect.any(Number),
-        });
-      });
-    });
-  });
-
   describe("getListOperations (SIP-58 / coin-framework path)", () => {
     const account = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
@@ -562,6 +536,17 @@ describe("SUI SDK Integration tests", () => {
   // since the accumulator-event shape is testnet-only at the moment. Each
   // inner block sets its own RPC URL; afterAll restores the suite default.
   describe("Transfer flow comparison: legacy coin vs SIP-58 address balance", () => {
+    beforeAll(() => {
+      coinConfig.setCoinConfig(() => ({
+        status: { type: "active" },
+        node: {
+          url: getJsonRpcFullnodeUrl("testnet"),
+          graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+        },
+        features: { graphql: false },
+      }));
+    });
+
     afterAll(() => {
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },
@@ -588,7 +573,7 @@ describe("SUI SDK Integration tests", () => {
           status: { type: "active" },
           node: {
             url: getJsonRpcFullnodeUrl("mainnet"),
-            graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+            graphqlUrl: "https://sui.coin.ledger.com/graphql",
           },
           features: { graphql: false },
         }));

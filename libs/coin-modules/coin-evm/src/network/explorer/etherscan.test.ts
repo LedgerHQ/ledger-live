@@ -629,6 +629,90 @@ describe("EVM Family", () => {
         expect(resultAsc.boundBlock).toEqual(resultDesc.boundBlock);
       });
     });
+
+    describe("nativeContracts filter", () => {
+      // The contract used by all entries in etherscanTokenOperations.
+      const FIXTURE_CONTRACT = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+
+      const withConfig = (info: Record<string, unknown>) =>
+        mockGetConfig.mockImplementation((): any => ({
+          info: {
+            explorer: { type: "etherscan", uri: "mock" },
+            node: { type: "external", uri: "mock" },
+            showNfts: true,
+            ...info,
+          },
+        }));
+
+      it("drops ERC20 ops whose contract is listed in nativeContracts", async () => {
+        withConfig({ nativeContracts: [FIXTURE_CONTRACT] });
+        jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: { result: etherscanTokenOperations },
+        }));
+
+        const response = await ETHERSCAN_API.getTokenOperations({
+          currency,
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+          sort: "desc",
+        });
+
+        expect(response.operations).toHaveLength(0);
+      });
+
+      it("matches nativeContracts case-insensitively", async () => {
+        withConfig({ nativeContracts: [FIXTURE_CONTRACT.toUpperCase()] });
+        jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: { result: etherscanTokenOperations },
+        }));
+
+        const response = await ETHERSCAN_API.getTokenOperations({
+          currency,
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+          sort: "desc",
+        });
+
+        expect(response.operations).toHaveLength(0);
+      });
+
+      it("keeps ops on contracts not listed in nativeContracts", async () => {
+        withConfig({ nativeContracts: ["0x0000000000000000000000000000000000000001"] });
+        jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: { result: etherscanTokenOperations },
+        }));
+
+        const response = await ETHERSCAN_API.getTokenOperations({
+          currency,
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+          sort: "desc",
+        });
+
+        // 3 raw events => 4 processed ops (one event yields two ops via group/index logic)
+        expect(response.operations).toHaveLength(4);
+      });
+
+      it("is a no-op when nativeContracts is undefined", async () => {
+        // beforeEach already sets a config without nativeContracts
+        jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: { result: etherscanTokenOperations },
+        }));
+
+        const response = await ETHERSCAN_API.getTokenOperations({
+          currency,
+          address: account.freshAddress,
+          accountId: account.id,
+          fromBlock: 0,
+          sort: "desc",
+        });
+
+        expect(response.operations).toHaveLength(4);
+      });
+    });
   });
 
   describe("getERC721Operations", () => {

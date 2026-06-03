@@ -37,3 +37,15 @@ export function featureFlagsOverridesSelector(s: WithFeatureFlags): PartialFeatu
 export function featureFlagsBannerVisibleSelector(s: WithFeatureFlags) {
   return s.featureFlags.bannerVisible;
 }
+
+/**
+ * Selects whether the first remote feature-flag fetch has settled (resolved or
+ * rejected). Readiness signal that consumers can gate on while remote flags are
+ * still loading.
+ *
+ * @param s
+ * Any store state containing the `featureFlags` slice.
+ */
+export function selectRemoteFlagsReady(s: WithFeatureFlags): boolean {
+  return s.featureFlags.remoteFlagsReady;
+}
