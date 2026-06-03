@@ -133,10 +133,9 @@ export class SpeculosUtils {
         return;
       }
 
-      const tasks = Array.from(globalThis.speculosDevices.entries()).map(
-        async ([deviceId, port]) => {
+      for (const [deviceId, port] of globalThis.speculosDevices.entries()) {
           try {
-            console.info("E2E", `Stopping Speculos with device ${deviceId} and port ${port}}`);
+            console.info("E2E", `Stopping Speculos with device ${deviceId} and port ${port}`);
             await SpeculosUtils.deleteSpeculos(deviceId);
           } catch (error) {
             console.error(
@@ -144,9 +143,7 @@ export class SpeculosUtils {
               `Failed to stop Speculos with device ${deviceId} port ${port}}: ${sanitizeError(error)}`,
             );
           }
-        },
-      );
-      await Promise.all(tasks);
+        }
       return;
     }
 

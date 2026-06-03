@@ -57,7 +57,7 @@ export class ModularDrawerPage {
     const networkName = this.getNetworkNameForAccount(account);
     await this.selectNetworkIfAsked(networkName);
     await this.selectFirstAccount();
-    await this.modularFlowView.waitForDisplayed({ reverse: true, timeout: 30_000 });
+    await this.modularFlowView.waitForExist({ reverse: true });
   }
 
   // functions

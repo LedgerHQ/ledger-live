@@ -145,13 +145,13 @@ export const config: WebdriverIO.Config = {
   reporters: [
     "spec",
     ["allure", { outputDir: "artifacts" }],
-    [
-      "video",
-      {
-        saveAllVideos: true, // If true, also saves videos for successful test cases
-        videoSlowdownMultiplier: 5, // Higher to get slower videos, lower for faster videos [Value 1-100]
-      },
-    ],
+    // [
+    //   "video",
+    //   {
+    //     saveAllVideos: true, // If true, also saves videos for successful test cases
+    //     videoSlowdownMultiplier: 5, // Higher to get slower videos, lower for faster videos [Value 1-100]
+    //   },
+    // ],
   ],
 
   // Options to be passed to Mocha.
