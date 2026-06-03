@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { renderHook, act } from "@tests/test-renderer";
 import useQueuedDrawerBottomSheet from "../useQueuedDrawerBottomSheet";
 
@@ -450,6 +451,35 @@ describe("useQueuedDrawerBottomSheet", () => {
 
     signal(true);
     expect(mockPresent).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not reopen when the consumer's onClose-driven state change is batched with handleDismiss", () => {
+    // Reproduces the race condition: handleCloseAnimationStart triggers the consumer's onClose,
+    // which schedules a setState to clear isRequestingToBeOpened. If handleDismiss reads a ref
+    // before React has rendered that update, the old reopen guard would re-enqueue the drawer.
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() => {
+      const [isOpen, setIsOpen] = useState(true);
+      return useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: isOpen,
+        onClose: () => setIsOpen(false),
+      });
+    });
+
+    signal(true);
+    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+    expect(mockPresent).toHaveBeenCalledTimes(1);
+
+    // In production these fire from separate native callbacks separated by the close animation.
+    // Inside a single act() they are batched together, which is exactly the case the old code got
+    // wrong: at handleDismiss time, the ref still holds the pre-onClose value.
+    act(() => {
+      result.current.handleCloseAnimationStart(0, -1);
+      result.current.handleDismiss();
+    });
+
+    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
   });
 
   it("does not reopen after dismiss when it is no longer requested (normal close)", () => {
