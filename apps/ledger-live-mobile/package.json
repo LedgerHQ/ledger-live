@@ -192,6 +192,8 @@
     "node-libs-react-native": "1.2.1",
     "prop-types": "15.8.1",
     "react": "catalog:",
+    "@xstate/react": "catalog:",
+    "xstate": "catalog:",
     "react-i18next": "catalog:",
     "react-is": "19.0.0",
     "react-native": "catalog:",

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Platform } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
@@ -38,7 +38,13 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
   // to avoid complexifying the logic in the shared custom handlers.
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
-  const customSwapHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
+  const {
+    customHandlers: customSwapHandlers,
+    swapPocExecutorProps,
+    swapPocSuccessScreen,
+    swapPocEnabled,
+    swapPocOnUserCancel,
+  } = useSwapCustomHandlers(manifest, accounts, dispatch);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -121,5 +127,9 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
   return {
     customHandlers,
     inputs,
+    swapPocExecutorProps,
+    swapPocSuccessScreen,
+    swapPocEnabled,
+    swapPocOnUserCancel,
   };
 }

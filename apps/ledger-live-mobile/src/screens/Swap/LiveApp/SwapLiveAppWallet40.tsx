@@ -16,6 +16,7 @@ import { DefaultAccountSwapParamList } from "../types";
 import { useSwapWallet40HeaderStateUpdater } from "./navigationHandlers/wallet40/useSwapWallet40HeaderState";
 import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
+import { SwapDeviceIntentPocHost } from "LLM/features/SwapDeviceIntentPOC";
 
 type SwapWebviewContentProps = {
   manifest: LiveAppManifest;
@@ -30,16 +31,34 @@ function SwapWebviewContent({
   webviewRef,
   setWebviewState,
 }: Readonly<SwapWebviewContentProps>) {
-  const { customHandlers, inputs } = useSwapWebviewProps({ manifest, params });
+  const {
+    customHandlers,
+    inputs,
+    swapPocExecutorProps,
+    swapPocSuccessScreen,
+    swapPocEnabled,
+    swapPocOnUserCancel,
+  } = useSwapWebviewProps({
+    manifest,
+    params,
+  });
 
   return (
-    <Web3AppWebview
-      ref={webviewRef}
-      manifest={manifest}
-      customHandlers={customHandlers}
-      onStateChange={setWebviewState}
-      inputs={inputs}
-    />
+    <>
+      <Web3AppWebview
+        ref={webviewRef}
+        manifest={manifest}
+        customHandlers={customHandlers}
+        onStateChange={setWebviewState}
+        inputs={inputs}
+      />
+      <SwapDeviceIntentPocHost
+        executorProps={swapPocExecutorProps}
+        successScreen={swapPocSuccessScreen}
+        enabled={swapPocEnabled}
+        onUserCancel={swapPocOnUserCancel}
+      />
+    </>
   );
 }
 
