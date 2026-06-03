@@ -224,7 +224,7 @@ export const config: WebdriverIO.Config = {
       e2eBridgeServer: undefined,
     };
     await init();
-    ADBUtils.startLogcatStream(cid);
+    // ADBUtils.startLogcatStream(cid);
   },
   /**
    * Runs before a WebdriverIO command gets executed.
@@ -243,7 +243,7 @@ export const config: WebdriverIO.Config = {
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
   beforeTest: function (test) {
-    ADBUtils.markTestStart(test.title);
+    // ADBUtils.markTestStart(test.title);
   },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
@@ -278,17 +278,17 @@ export const config: WebdriverIO.Config = {
         console.warn(`Screenshot skipped (session may be dead): ${message}`);
       }
 
-      const logcatFile = ADBUtils.snapshotLogcatToArtifacts(test.title);
-      if (logcatFile) {
-        try {
-          allureReporter.addAttachment("logcat", readFileSync(logcatFile, "utf8"), "text/plain");
-        } catch (attachErr) {
-          const message = attachErr instanceof Error ? attachErr.message : String(attachErr);
-          console.warn(`Allure logcat attachment skipped: ${message}`);
-        }
-      }
+      // const logcatFile = ADBUtils.snapshotLogcatToArtifacts(test.title);
+      // if (logcatFile) {
+      //   try {
+      //     allureReporter.addAttachment("logcat", readFileSync(logcatFile, "utf8"), "text/plain");
+      //   } catch (attachErr) {
+      //     const message = attachErr instanceof Error ? attachErr.message : String(attachErr);
+      //     console.warn(`Allure logcat attachment skipped: ${message}`);
+      //   }
+      // }
 
-      await ADBUtils.dumpLogcatViaDriver(test.title);
+      // await ADBUtils.dumpLogcatViaDriver(test.title);
     }
   },
 
@@ -319,8 +319,8 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
-    ADBUtils.snapshotLogcatToArtifacts("session-end");
-    ADBUtils.stopLogcatStream();
+    // ADBUtils.snapshotLogcatToArtifacts("session-end");
+    // ADBUtils.stopLogcatStream();
     await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
   },
   /**
@@ -340,7 +340,7 @@ export const config: WebdriverIO.Config = {
    * @param {<Object>} results object containing test results
    */
   onComplete: function () {
-    ADBUtils.stopLogcatStream();
+    // ADBUtils.stopLogcatStream();
   },
   /**
    * Gets executed when a refresh happens.

@@ -17,7 +17,7 @@ export const config: WebdriverIO.Config = {
       "appium:automationName": "UiAutomator2",
       "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
       "appium:adbExecTimeout": 30_000,
-      "appium:skipLogcatCapture": false, // default; explicit is fine
+      "appium:skipLogcatCapture": true,
       "appium:clearDeviceLogsOnStart": true, // optional: clean buffer per run
       "appium:ensureWebviewsHavePages": false, // optional: stabilize webview context detection
       // react-native-launch-arguments reads intent extras (Appium path)
