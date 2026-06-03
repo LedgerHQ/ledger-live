@@ -221,11 +221,6 @@ async function validateRecipient({
   return null;
 }
 
-/**
- * Public transfer fees are paid from native transparent balance.
- * Token public transfers report insufficient native balance on errors.fees.
- * Native public transfers include fees in totalSpent and are validated via the amount balance check.
- */
 function validatePublicFees({
   account,
   transaction,
@@ -284,7 +279,7 @@ async function handleTransferTransaction({
     errors.recipient = recipientError;
   }
 
-  if (transaction.amount.eq(0) && !transaction.useAllAmount) {
+  if (transaction.amount.lte(0)) {
     errors.amount = new AmountRequired();
   }
 

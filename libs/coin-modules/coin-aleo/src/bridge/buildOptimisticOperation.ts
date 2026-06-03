@@ -18,15 +18,16 @@ export function buildOptimisticOperation({
   const fee = transaction.fees;
   const isTokenTx = isTokenTransaction(transaction);
   const value = isTokenTx ? fee : transaction.amount;
-  const type: OperationType = isTokenTx ? "FEES" : "OUT";
+  const mainOperationType: OperationType = isTokenTx ? "FEES" : "OUT";
   const subOperations: Operation[] = [];
   const tokenSubAccount = account.subAccounts?.find(s => s.id === transaction.subAccountId);
 
   if (isTokenTx && tokenSubAccount) {
+    const subOperationType: OperationType = "OUT";
     const tokenOp: Operation = {
-      id: encodeOperationId(tokenSubAccount.id, "", type),
+      id: encodeOperationId(tokenSubAccount.id, "", subOperationType),
       hash: "",
-      type,
+      type: subOperationType,
       value: transaction.amount,
       fee,
       blockHash: null,
@@ -42,9 +43,9 @@ export function buildOptimisticOperation({
   }
 
   const operation: AleoOperation = {
-    id: encodeOperationId(account.id, "", type),
+    id: encodeOperationId(account.id, "", mainOperationType),
     hash: "",
-    type,
+    type: mainOperationType,
     value,
     fee,
     blockHash: null,
