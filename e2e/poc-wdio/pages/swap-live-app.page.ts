@@ -1,7 +1,7 @@
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getByTestId } from "../components/appiumSelector.ts";
 
 export class SwapLiveAppPage {
@@ -57,7 +57,7 @@ export class SwapLiveAppPage {
 
   // reusable selectors
   private baseProviderCssSelector(provider: string) {
-    return `[data-testid^="quote-container-${Provider.getNameByUiName(provider)}"]`;
+    return `[data-testid^="quote-container-${SwapProvider.getNameByUiName(provider)}"]`;
   }
 
   // steps
@@ -215,12 +215,12 @@ export class SwapLiveAppPage {
     // TODO: optimise nested webview functions
     // await this.switchTo();
     const providers = await this.getProviderList();
-    const providersList = providers.filter(name => name !== Provider.LIFI.uiName);
+    const providersList = providers.filter(name => name !== SwapProvider.LIFI.uiName);
 
     const providersWithoutKYC = providersList.filter(providerName => {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
       // return provider && !provider.kyc; -> original
-      return provider && !provider.kyc && provider.name !== Provider.OKX.name;
+      return provider && !provider.kyc && provider.name !== SwapProvider.OKX.name;
     });
 
     let selectedProvider;
@@ -228,8 +228,8 @@ export class SwapLiveAppPage {
     // TODO: optimise nested webview functions
     // await this.switchTo();
     for (const providerName of providersWithoutKYC) {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (provider?.isNative) {
+      const provider = SwapProvider.getByUiName(providerName);
+      if (provider && !provider.kyc && !provider.app) {
         await this.getQuoteCardByProviderName(provider.name).tap();
         selectedProvider = provider;
         break;
