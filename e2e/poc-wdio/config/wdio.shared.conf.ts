@@ -142,7 +142,17 @@ export const config: WebdriverIO.Config = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: ["spec", ["allure", { outputDir: "artifacts" }]],
+  reporters: [
+    "spec",
+    ["allure", { outputDir: "artifacts" }],
+    [
+      "video",
+      {
+        saveAllVideos: true, // If true, also saves videos for successful test cases
+        videoSlowdownMultiplier: 5, // Higher to get slower videos, lower for faster videos [Value 1-100]
+      },
+    ],
+  ],
 
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
