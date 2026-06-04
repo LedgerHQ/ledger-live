@@ -19,7 +19,10 @@ export function LetterDivider({ letter }: Props) {
   return (
     <div
       role="presentation"
-      className="w-full px-8 py-2 rounded-xs bg-surface-transparent body-3-semi-bold text-muted"
+      // `shrink-0` so the divider keeps its intrinsic height inside the
+      // list pane's scrolling flex column — without it flexbox compresses
+      // dividers (and rows) when the contacts overflow the pane.
+      className="shrink-0 w-full px-8 py-2 rounded-xs bg-surface-transparent body-3-semi-bold text-muted"
     >
       {letter}
     </div>
