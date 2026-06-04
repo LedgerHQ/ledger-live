@@ -80,11 +80,10 @@ import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
   DatadogProvider,
-  AutoInstrumentationConfiguration,
   DdSdkReactNative,
   PropagatorType,
 } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import type { AutoInstrumentationConfiguration } from "@datadog/mobile-react-native";
 import {
   customActionEventMapper,
   customErrorEventMapper,
@@ -147,18 +146,22 @@ function App() {
   const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
-      trackErrors: datadogFF?.params?.trackErrors ?? false,
-      trackInteractions: datadogFF?.params?.trackInteractions ?? false,
-      trackResources: datadogFF?.params?.trackResources ?? false,
-      errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
-      actionEventMapper: customActionEventMapper,
-      logEventMapper: customLogEventMapper,
-      firstPartyHosts: [
-        {
-          match: FIRST_PARTY_MAIN_HOST_DOMAIN,
-          propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
-        },
-      ],
+      rumConfiguration: {
+        trackErrors: datadogFF?.params?.trackErrors ?? false,
+        trackInteractions: datadogFF?.params?.trackInteractions ?? false,
+        trackResources: datadogFF?.params?.trackResources ?? false,
+        errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+        actionEventMapper: customActionEventMapper,
+        firstPartyHosts: [
+          {
+            match: FIRST_PARTY_MAIN_HOST_DOMAIN,
+            propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
+          },
+        ],
+      },
+      logsConfiguration: {
+        logEventMapper: customLogEventMapper,
+      },
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
@@ -212,8 +215,7 @@ function App() {
     };
     initializeDatadogProvider(
       {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        ...(datadogFF?.params as PartialInitializationConfiguration),
+        ...datadogFF?.params,
         ...(Config.FORCE_DATADOG_SAMPLE_RATE_100 ? { sessionSamplingRate: 100 } : {}),
       },
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,

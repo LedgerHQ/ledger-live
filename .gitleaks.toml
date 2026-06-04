@@ -3,6 +3,16 @@ title = "Gitleaks Config"
 [extend]
 useDefault = true
 
+[allowlist]
+description = "CocoaPods Podfile.lock holds pod integrity checksums (SHA-1), not secrets; they match token rules by coincidence."
+condition = "AND"
+paths = [
+    '''apps/ledger-live-mobile/ios/Podfile\.lock''',
+]
+regexes = [
+    '''[0-9a-f]{40}''',
+]
+
 [[rules]]
 id = "seed-phrase"
 description = "Detected a BIP39 mnemonic seed phrase."

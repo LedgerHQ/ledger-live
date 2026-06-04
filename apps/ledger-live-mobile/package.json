@@ -83,8 +83,8 @@
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "1.0.2",
     "@braze/react-native-sdk": "18.0.0",
-    "@datadog/mobile-react-native": "2.8.2",
-    "@datadog/mobile-react-navigation": "2.8.2",
+    "@datadog/mobile-react-native": "3.5.2",
+    "@datadog/mobile-react-navigation": "3.5.2",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-currencies": "workspace:^",

@@ -1,14 +1,29 @@
 import Config from "react-native-config";
-import { TrackingConsent, DatadogProvider, DdLogs } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import {
+  TrackingConsent,
+  DatadogProvider,
+  DdLogs,
+  BatchSize,
+  BatchProcessingLevel,
+  UploadFrequency,
+  VitalsUpdateFrequency,
+} from "@datadog/mobile-react-native";
+import type {
+  PartialInitializationConfiguration,
+  RumConfigurationOptions,
+  LogsConfigurationOptions,
+} from "@datadog/mobile-react-native";
 import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
+import type { Features } from "@ledgerhq/types-live";
 import { ScreenName } from "./const";
-import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
-import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
+import type { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 import { buildFeatureFlagTags } from "./utils/datadogUtils";
-import { ActionEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/actionEventMapper";
-import { LogEventMapper } from "@datadog/mobile-react-native/lib/typescript/logs/types";
+
+type DatadogRemoteParams = Features["llmDatadog"]["params"];
+type ErrorEventMapper = NonNullable<RumConfigurationOptions["errorEventMapper"]>;
+type ActionEventMapper = NonNullable<RumConfigurationOptions["actionEventMapper"]>;
+type LogEventMapper = NonNullable<LogsConfigurationOptions["logEventMapper"]>;
 
 const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
 const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
@@ -18,37 +33,89 @@ const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicatio
 
 export const isDatadogEnabled = !!clientToken && !!applicationId && !(Config.MOCK || Config.DETOX);
 
-const baseConfig: PartialInitializationConfiguration = {
+const baseConfig = {
   clientToken,
-  applicationId,
   env: Config.DATADOG_ENV || "",
   site: Config.DATADOG_SITE || "",
-  serviceName: Config.APP_NAME || "",
+  service: Config.APP_NAME || "",
 };
 
 /**
  * Initializes the Datadog provider with the specified configuration and tracking consent.
  *
  * This function checks if Datadog is enabled via environment variables. If enabled,
- * it merges the base configuration with any remote configuration overrides and the provided
- * tracking consent, then initializes the Datadog provider.
+ * it remaps the remote feature-flag parameters (still expressed in the flat v2 shape) onto the
+ * SDK v3 nested configuration (rumConfiguration / logsConfiguration / traceConfiguration), merges
+ * them with the base configuration and the provided tracking consent, then initializes the provider.
  *
- * @param remoteConfig - Partial configuration object to override the base Datadog initialization settings.
+ * @param remoteParams - Remote feature-flag parameters (`llmDatadog.params`) overriding the base settings.
  * @param trackingConsent - The user's tracking consent status, used to configure Datadog tracking behavior.
  * @returns A promise that resolves when the Datadog provider has been initialized, or immediately if Datadog is not enabled.
  */
 export const initializeDatadogProvider = async (
-  remoteConfig: Partial<PartialInitializationConfiguration>,
+  remoteParams: DatadogRemoteParams,
   trackingConsent: TrackingConsent,
 ) => {
   if (!isDatadogEnabled) {
     return;
   }
-  await DatadogProvider.initialize({
+
+  const {
+    serviceName,
+    batchProcessingLevel,
+    batchSize,
+    uploadFrequency,
+    vitalsUpdateFrequency,
+    sessionSamplingRate,
+    resourceTracingSamplingRate,
+    longTaskThresholdMs,
+    nativeInteractionTracking,
+    nativeLongTaskThresholdMs,
+    nativeViewTracking,
+    trackBackgroundEvents,
+    trackFrustrations,
+    bundleLogsWithRum,
+    bundleLogsWithTraces,
+  } = remoteParams;
+
+  const config: PartialInitializationConfiguration = {
     ...baseConfig,
-    ...remoteConfig,
+    ...(serviceName ? { service: serviceName } : {}),
+    ...(batchProcessingLevel
+      ? { batchProcessingLevel: BatchProcessingLevel[batchProcessingLevel] }
+      : {}),
+    ...(batchSize ? { batchSize: BatchSize[batchSize] } : {}),
+    ...(uploadFrequency ? { uploadFrequency: UploadFrequency[uploadFrequency] } : {}),
     trackingConsent,
-  });
+    rumConfiguration: {
+      applicationId,
+      ...(sessionSamplingRate !== undefined ? { sessionSampleRate: sessionSamplingRate } : {}),
+      ...(resourceTracingSamplingRate !== undefined
+        ? { resourceTraceSampleRate: resourceTracingSamplingRate }
+        : {}),
+      ...(longTaskThresholdMs !== undefined ? { longTaskThresholdMs } : {}),
+      ...(nativeLongTaskThresholdMs !== undefined
+        ? {
+            nativeLongTaskThresholdMs:
+              nativeLongTaskThresholdMs === false ? 0 : nativeLongTaskThresholdMs,
+          }
+        : {}),
+      ...(nativeInteractionTracking !== undefined ? { nativeInteractionTracking } : {}),
+      ...(nativeViewTracking !== undefined ? { nativeViewTracking } : {}),
+      ...(vitalsUpdateFrequency
+        ? { vitalsUpdateFrequency: VitalsUpdateFrequency[vitalsUpdateFrequency] }
+        : {}),
+      ...(trackBackgroundEvents !== undefined ? { trackBackgroundEvents } : {}),
+      ...(trackFrustrations !== undefined ? { trackFrustrations } : {}),
+    },
+    logsConfiguration: {
+      ...(bundleLogsWithRum !== undefined ? { bundleLogsWithRum } : {}),
+      ...(bundleLogsWithTraces !== undefined ? { bundleLogsWithTraces } : {}),
+    },
+    traceConfiguration: {},
+  };
+
+  await DatadogProvider.initialize(config);
 };
 
 /**

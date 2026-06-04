@@ -69,24 +69,28 @@ PODS:
     - SwiftyRSA (~> 1.7)
     - Yoga
   - CocoaAsyncSocket (7.6.5)
-  - DatadogCore (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogCrashReporting (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - PLCrashReporter (~> 1.12.0)
-  - DatadogInternal (2.27.0)
-  - DatadogLogs (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogRUM (2.27.0):
-    - DatadogInternal (= 2.27.0)
-  - DatadogSDKReactNative (2.8.2):
+  - DatadogCore (3.11.0):
+    - DatadogInternal (= 3.11.0)
+  - DatadogCrashReporting (3.11.0):
+    - DatadogInternal (= 3.11.0)
+    - KSCrash/Filters (= 2.5.0)
+    - KSCrash/Recording (= 2.5.0)
+  - DatadogFlags (3.11.0):
+    - DatadogInternal (= 3.11.0)
+  - DatadogInternal (3.11.0)
+  - DatadogLogs (3.11.0):
+    - DatadogInternal (= 3.11.0)
+  - DatadogRUM (3.11.0):
+    - DatadogInternal (= 3.11.0)
+  - DatadogSDKReactNative (3.5.2):
     - boost
-    - DatadogCore (~> 2.27.0)
-    - DatadogCrashReporting (~> 2.27.0)
-    - DatadogLogs (~> 2.27.0)
-    - DatadogRUM (~> 2.27.0)
-    - DatadogTrace (~> 2.27.0)
-    - DatadogWebViewTracking (~> 2.27.0)
+    - DatadogCore (= 3.11.0)
+    - DatadogCrashReporting (= 3.11.0)
+    - DatadogFlags (= 3.11.0)
+    - DatadogLogs (= 3.11.0)
+    - DatadogRUM (= 3.11.0)
+    - DatadogTrace (= 3.11.0)
+    - DatadogWebViewTracking (= 3.11.0)
     - DoubleConversion
     - fast_float
     - fmt
@@ -113,11 +117,11 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - DatadogTrace (2.27.0):
-    - DatadogInternal (= 2.27.0)
-    - OpenTelemetrySwiftApi (= 1.13.1)
-  - DatadogWebViewTracking (2.27.0):
-    - DatadogInternal (= 2.27.0)
+  - DatadogTrace (3.11.0):
+    - DatadogInternal (= 3.11.0)
+    - OpenTelemetry-Swift-Api (~> 2.3.0)
+  - DatadogWebViewTracking (3.11.0):
+    - DatadogInternal (= 3.11.0)
   - DoubleConversion (1.1.6)
   - EXConstants (18.0.13):
     - ExpoModulesCore
@@ -249,34 +253,45 @@ PODS:
   - GoogleDataTransport (10.1.0):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
-  - GoogleUtilities/AppDelegateSwizzler (8.1.1):
+  - GoogleUtilities/AppDelegateSwizzler (8.1.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Environment (8.1.1):
+  - GoogleUtilities/Environment (8.1.2):
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Logger (8.1.1):
+  - GoogleUtilities/Logger (8.1.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Network (8.1.1):
+  - GoogleUtilities/Network (8.1.2):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Privacy
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (8.1.1)":
+  - "GoogleUtilities/NSData+zlib (8.1.2)":
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (8.1.1)
-  - GoogleUtilities/Reachability (8.1.1):
+  - GoogleUtilities/Privacy (8.1.2)
+  - GoogleUtilities/Reachability (8.1.2):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GoogleUtilities/UserDefaults (8.1.1):
+  - GoogleUtilities/UserDefaults (8.1.2):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - hermes-engine (0.81.6):
     - hermes-engine/Pre-built (= 0.81.6)
   - hermes-engine/Pre-built (0.81.6)
   - JWTDecode (3.0.1)
+  - KSCrash/Core (2.5.0)
+  - KSCrash/Filters (2.5.0):
+    - KSCrash/Recording
+    - KSCrash/RecordingCore
+    - KSCrash/ReportingCore
+  - KSCrash/Recording (2.5.0):
+    - KSCrash/RecordingCore
+  - KSCrash/RecordingCore (2.5.0):
+    - KSCrash/Core
+  - KSCrash/ReportingCore (2.5.0):
+    - KSCrash/Core
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
     - libwebp/mux (= 1.5.0)
@@ -386,8 +401,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - OpenTelemetrySwiftApi (1.13.1)
-  - PLCrashReporter (1.12.0)
+  - OpenTelemetry-Swift-Api (2.3.0)
   - PromisesObjC (2.4.1)
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -3587,7 +3601,7 @@ DEPENDENCIES:
   - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk`)"
   - "BVLinearGradient (from `../../../node_modules/.pnpm/react-native-linear-gradient@2.8.3_react-native_c0ed0e13938bd5be431a97f6c6df7852/node_modules/react-native-linear-gradient`)"
   - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_38ee29790d10ce342ce468b57fca2803/node_modules/@callstack/repack`)"
-  - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_dac9b2f3392a88191c9e162224291b30/node_modules/@datadog/mobile-react-native`)"
+  - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@3.5.2_react-native_f01feff9eb02f41eb604d8979030a79f/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_expo-modules-core@3.0.29_083180c0a5e10b2c5cb7be72cbb5cd78/node_modules/expo-constants/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo-modules-core@3.0.2_d94c477aaef3a58976a7f715a0d05556/node_modules/expo-image-loader/ios`)"
@@ -3728,6 +3742,7 @@ SPEC REPOS:
     - CocoaAsyncSocket
     - DatadogCore
     - DatadogCrashReporting
+    - DatadogFlags
     - DatadogInternal
     - DatadogLogs
     - DatadogRUM
@@ -3746,13 +3761,13 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - JWTDecode
+    - KSCrash
     - libwebp
     - lottie-ios
     - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
-    - OpenTelemetrySwiftApi
-    - PLCrashReporter
+    - OpenTelemetry-Swift-Api
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
@@ -3770,7 +3785,7 @@ EXTERNAL SOURCES:
   callstack-repack:
     :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_38ee29790d10ce342ce468b57fca2803/node_modules/@callstack/repack"
   DatadogSDKReactNative:
-    :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_dac9b2f3392a88191c9e162224291b30/node_modules/@datadog/mobile-react-native"
+    :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@3.5.2_react-native_f01feff9eb02f41eb604d8979030a79f/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
@@ -4040,14 +4055,15 @@ SPEC CHECKSUMS:
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   callstack-repack: 6de6a4d5a87bdf8f6b75e51fd32e557c9be85110
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84
-  DatadogCrashReporting: e6a83b143394e28c9c1cb48c5cfb18eff507b3be
-  DatadogInternal: 3c5cae6772295fd175a9de11e4747a9322aaa4e7
-  DatadogLogs: 09d6358dc7682f9d3eaea85dd418f82d2db3560c
-  DatadogRUM: 0f267df8c9c8579a291870c2bce4549587391a07
-  DatadogSDKReactNative: 8f8c7a3b52aa692af05c6c31f69f1b71a712422d
-  DatadogTrace: f46c8220c73463d09741013f385a6e27cd39185b
-  DatadogWebViewTracking: dc8376420c8686efd09d00752bc1034b639d180b
+  DatadogCore: 106d2aa8bef1a3dfb2a75723240f78cb5f8310fd
+  DatadogCrashReporting: eace5202ae63d92835718cf4a86489fdaef681a3
+  DatadogFlags: 0587c5b5db34874ce22264abc5e03102b53d3656
+  DatadogInternal: 00709affd9889ca9e8fd96e85e39ad865e651c32
+  DatadogLogs: ef98708261f8f7ba82d15360f9951d43f578163b
+  DatadogRUM: 67d130164f4a7663e05a3d02803be9e9dd1abbb7
+  DatadogSDKReactNative: 1d4b8cb88b5e37446cf96455e77625ca79d26401
+  DatadogTrace: 17f50647107755fba79fc2298bf4cb282e0efb1f
+  DatadogWebViewTracking: 1290fce6010bf65b5e0e0ffa9048b448782e469c
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: fce59a631a06c4151602843667f7cfe35f81e271
   EXImageLoader: 189e3476581efe3ad4d1d3fb4735b7179eb26f05
@@ -4075,9 +4091,10 @@ SPEC CHECKSUMS:
   fmt: ef0a98103bd75695e5734efe6b9016b2675ffcd5
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
-  GoogleUtilities: 4f2618a4a1e762a1ee134a1e2323bba9843e06da
+  GoogleUtilities: 766ace00c6b10d8148408f329d10c4f051931850
   hermes-engine: 7219f6e751ad6ec7f3d7ec121830ee34dae40749
   JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
+  KSCrash: 80e1e24eaefbe5134934ae11ca8d7746586bc2ed
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: 8f959969761e9c45d70353667d00af0e5b9cadb3
   lottie-react-native: e542fe4b6e8eddcf893d5a8cef9f8b5c6d2f7331
@@ -4086,8 +4103,7 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   NitroMmkv: 5d6c3a5cca0e47be9a4dd3f66262dbad0799c087
   NitroModules: d2d7b8a417d5f498ef5affa78d82113ad8c35c59
-  OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
-  PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
+  OpenTelemetry-Swift-Api: 3d77582ab6837a63b65bf7d2eacc57d8f2595edd
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: d4ef510f229cea15314176aee5e3ba10064a8496
