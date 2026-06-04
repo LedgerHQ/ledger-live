@@ -19,6 +19,8 @@ type PickedDocument = {
   convertibleToMimeTypes?: Array<{ mimeType: string }> | null;
 };
 
+const LOTTIE_EXTENSION_PATTERN = /\.lottie$/i;
+
 let stashedPick: PickedLottieFile | null = null;
 
 /** Survives screen remounts when the system document picker backgrounds the app. */
@@ -42,24 +44,45 @@ export class InvalidLottieExtensionError extends Error {
   }
 }
 
+function getUriBaseName(uri: string): string | undefined {
+  const uriPath = decodeURIComponent(uri.split("?")[0]?.split("#")[0] ?? "");
+  return uriPath.split("/").pop() || undefined;
+}
+
+function hasLottieExtension(value: string): boolean {
+  return LOTTIE_EXTENSION_PATTERN.test(value.trim());
+}
+
 function resolvePickedFileName(file: PickedDocument): string {
+  const uriBaseName = file.uri ? getUriBaseName(file.uri) : undefined;
   const name = file.name?.trim();
+
+  if (name && hasLottieExtension(name)) {
+    return name;
+  }
+
+  if (uriBaseName && hasLottieExtension(uriBaseName)) {
+    return uriBaseName;
+  }
+
   if (name) {
     return name;
   }
 
-  const uriPath = decodeURIComponent(file.uri.split("?")[0]?.split("#")[0] ?? "");
-  const baseName = uriPath.split("/").pop();
-  if (baseName) {
-    return baseName;
+  if (uriBaseName) {
+    return uriBaseName;
   }
 
   return "animation.lottie";
 }
 
 function isLottieFile(fileName: string, uri: string): boolean {
-  const normalized = `${fileName} ${uri}`.toLowerCase();
-  return normalized.includes(".lottie");
+  if (hasLottieExtension(fileName)) {
+    return true;
+  }
+
+  const uriBaseName = getUriBaseName(uri);
+  return uriBaseName ? hasLottieExtension(uriBaseName) : false;
 }
 
 function isDocumentPickerNativeModuleAvailable(): boolean {
@@ -88,7 +111,12 @@ function getPickErrorMessage(error: unknown): string {
 }
 
 function ensureDotLottieFileName(fileName: string): string {
-  return fileName.replace(/\.lottie$/i, ".lottie");
+  const trimmed = fileName.trim();
+  if (hasLottieExtension(trimmed)) {
+    return trimmed.replace(/\.lottie$/i, ".lottie");
+  }
+
+  return `${trimmed}.lottie`;
 }
 
 function normalizeLottieFileUri(uri: string): string {
@@ -100,9 +128,7 @@ function normalizeLottieFileUri(uri: string): string {
   return encodeURI(trimmed);
 }
 
-function getPickOptions(): DocumentPickerOptions {
-  const { types } = getDocumentPicker();
-
+function getPickOptions(types: { allFiles: string }): DocumentPickerOptions {
   if (Platform.OS === "android") {
     return {
       mode: "open",
@@ -221,10 +247,9 @@ export async function pickLocalLottieFile(): Promise<PickedLottieFile | null> {
     throw new Error(DOCUMENT_PICKER_REBUILD_MESSAGE);
   }
 
-  const { pick } = getDocumentPicker();
-
   try {
-    const results = normalizePickResults(await pick(getPickOptions()));
+    const { pick, types } = getDocumentPicker();
+    const results = normalizePickResults(await pick(getPickOptions(types)));
 
     if (!results.length) {
       throw new Error("The document picker closed without returning a file.");

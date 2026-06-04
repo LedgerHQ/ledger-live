@@ -12,14 +12,14 @@ const PREVIEW_VARIANTS = [
   { id: "dark", backgroundColor: "#121212", testID: "debug-lottie-local-dark" },
 ] as const;
 
-type DebugLottieLocalFileTabProps = {
+type DebugLottieLocalFileTabProps = Readonly<{
   selection: PickedLottieFile | null;
   replayKey: number;
   onReplay: () => void;
   onBrowsePress: () => void;
   isPicking: boolean;
   pickError: string | null;
-};
+}>;
 
 export function DebugLottieLocalFileTab({
   selection,

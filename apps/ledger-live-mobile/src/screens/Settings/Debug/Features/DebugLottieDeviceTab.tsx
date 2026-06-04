@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -14,13 +14,6 @@ import {
   getOnboardingDeviceAnimation,
   getAnimationKeysForDeviceModelId as getOnboardingAnimationKeysForDeviceModelId,
 } from "../../../Onboarding/shared/infoPagesData";
-
-function usePrevious<T>(val: T): T {
-  const ref = React.useRef<T>(val);
-  const prevVal = ref.current;
-  ref.current = val;
-  return prevVal;
-}
 
 type EnabledDeviceModelIds =
   | DeviceModelId.nanoS
@@ -60,21 +53,26 @@ function getAllAnimations(selectedModelId: DeviceModelId) {
 export function DebugLottieDeviceTab() {
   const { colors } = useTheme();
 
-  const [selectedModelId, setModelId] = useState<EnabledDeviceModelIds>(DeviceModelId.nanoS);
+  const [selectedModelId, setSelectedModelId] = useState<EnabledDeviceModelIds>(DeviceModelId.nanoS);
   const [animations, setAnimations] = useState(getAllAnimations(selectedModelId));
   const [selectedAnimationIndex, setSelectedAnimationIndex] = useState(0);
   const [keyModalVisible, setKeyModalVisible] = useState(false);
+  const selectedKeyRef = React.useRef<string | undefined>(undefined);
 
   const allKeys = animations.map(({ key }) => key);
   const selectedKey = allKeys[selectedAnimationIndex];
+  selectedKeyRef.current = selectedKey;
 
-  const previousSelectedModelId = usePrevious(selectedModelId);
-  if (previousSelectedModelId !== selectedModelId) {
+  useEffect(() => {
     const newAnimations = getAllAnimations(selectedModelId);
     setAnimations(newAnimations);
-    const newAnimationIndex = newAnimations.findIndex(({ key }) => key === selectedKey, 0);
+
+    const keyToKeep = selectedKeyRef.current;
+    const newAnimationIndex = keyToKeep
+      ? newAnimations.findIndex(({ key }) => key === keyToKeep)
+      : -1;
     setSelectedAnimationIndex(newAnimationIndex === -1 ? 0 : newAnimationIndex);
-  }
+  }, [selectedModelId]);
 
   const animationLight = animations[selectedAnimationIndex]?.light;
   const animationDark = animations[selectedAnimationIndex]?.dark;
@@ -84,7 +82,7 @@ export function DebugLottieDeviceTab() {
   return (
     <>
       <LText secondary semiBold style={styles.title}>
-        {!selectedKey ? "Select Animation" : `Showing '${selectedKey}'`}
+        {selectedKey ? `Showing '${selectedKey}'` : "Select Animation"}
       </LText>
       <Flex flex={1}>
         <ScrollView style={{ backgroundColor: "grey" }}>
@@ -120,7 +118,7 @@ export function DebugLottieDeviceTab() {
             outline={selectedModelId === modelId}
             title={modelId}
             onPress={() => {
-              setModelId(modelId);
+              setSelectedModelId(modelId);
             }}
           />
         ))}
@@ -148,7 +146,7 @@ export function DebugLottieDeviceTab() {
       </Flex>
       <QueuedDrawer
         isRequestingToBeOpened={keyModalVisible}
-        onClose={setKeyModalVisible as () => void}
+        onClose={() => setKeyModalVisible(false)}
       >
         <ScrollView style={styles.modal}>
           {animations.map(({ key }, i) => (

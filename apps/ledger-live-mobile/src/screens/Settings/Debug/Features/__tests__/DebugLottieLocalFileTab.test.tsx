@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { render, screen } from "@tests/test-renderer";
+import { fireEvent, render, screen } from "@tests/test-renderer";
 import { DebugLottieLocalFileTab } from "../DebugLottieLocalFileTab";
 import type { PickedLottieFile } from "../pickLocalLottieFile";
 
@@ -31,8 +31,8 @@ describe("DebugLottieLocalFileTab", () => {
   it("renders browse control with no preview initially", async () => {
     render(<LocalFileTabHarness onBrowsePress={jest.fn()} />);
 
-    expect(await screen.findByText("Browse .lottie file")).toBeTruthy();
-    expect(screen.getByText("No animation selected yet")).toBeTruthy();
+    expect(await screen.findByText("Browse .lottie file")).toBeVisible();
+    expect(screen.getByText("No animation selected yet")).toBeVisible();
     expect(screen.queryByTestId("debug-lottie-local-light")).toBeNull();
   });
 
@@ -57,9 +57,9 @@ describe("DebugLottieLocalFileTab", () => {
 
     render(<HarnessWithSelection />);
 
-    expect(await screen.findByText("Showing 'animation.lottie'")).toBeTruthy();
-    expect(screen.getByTestId("debug-lottie-local-light")).toBeTruthy();
-    expect(screen.getByTestId("debug-lottie-local-dark")).toBeTruthy();
+    expect(await screen.findByText("Showing 'animation.lottie'")).toBeVisible();
+    expect(screen.getByTestId("debug-lottie-local-light")).toBeVisible();
+    expect(screen.getByTestId("debug-lottie-local-dark")).toBeVisible();
   });
 
   it("shows pick errors from parent", async () => {
@@ -70,6 +70,49 @@ describe("DebugLottieLocalFileTab", () => {
       />,
     );
 
-    expect(screen.getByText("Failed to copy picked file locally")).toBeTruthy();
+    expect(screen.getByText("Failed to copy picked file locally")).toBeVisible();
+  });
+
+  it("shows the picking state and selected uri", async () => {
+    render(
+      <DebugLottieLocalFileTab
+        selection={{
+          name: "animation.lottie",
+          uri: "file:///picked/animation.lottie",
+        }}
+        replayKey={0}
+        onReplay={jest.fn()}
+        onBrowsePress={jest.fn()}
+        isPicking
+        pickError={null}
+      />,
+    );
+
+    expect(screen.getByText("Opening...")).toBeVisible();
+    expect(screen.getByText("file:///picked/animation.lottie")).toBeVisible();
+  });
+
+  it("toggles loop and triggers replay", async () => {
+    const onReplay = jest.fn();
+
+    render(
+      <DebugLottieLocalFileTab
+        selection={{
+          name: "animation.lottie",
+          uri: "file:///picked/animation.lottie",
+        }}
+        replayKey={0}
+        onReplay={onReplay}
+        onBrowsePress={jest.fn()}
+        isPicking={false}
+        pickError={null}
+      />,
+    );
+
+    fireEvent.press(screen.getByText("Loop: off"));
+    expect(screen.getByText("Loop: on")).toBeVisible();
+
+    fireEvent.press(screen.getByText("Replay"));
+    expect(onReplay).toHaveBeenCalledTimes(1);
   });
 });
