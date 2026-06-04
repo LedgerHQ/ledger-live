@@ -119,8 +119,12 @@ export default function NoFunds({ route }: Readonly<Props>) {
     navigateToSwapTab({
       navigation: navigation as unknown as NativeStackNavigationProp<BaseNavigatorStackParamList>,
       shouldDisplayWallet40MainNav,
+      params: {
+        defaultAccount: account,
+        defaultParentAccount: parentAccount,
+      },
     });
-  }, [navigation, page, shouldDisplayWallet40MainNav, track]);
+  }, [account, navigation, page, parentAccount, shouldDisplayWallet40MainNav, track]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {
