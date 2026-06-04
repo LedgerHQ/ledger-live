@@ -17,9 +17,17 @@ import BigNumber from "bignumber.js";
 import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
-import { CARDANO_MAX_SUPPLY, MEMO_LABEL } from "../constants";
-import { type DerivedUtxo, deriveUtxos, getTTL, isTestnet, mergeTokens } from "../logic";
-import { CardanoDelegation, ProtocolParams } from "../types";
+import { CARDANO_MAX_SUPPLY, MEMO_LABEL, STAKING_ADDRESS_INDEX } from "../constants";
+import {
+  type DerivedUtxo,
+  deriveUtxos,
+  getBipPath,
+  getBipPathFromString,
+  getTTL,
+  isTestnet,
+  mergeTokens,
+} from "../logic";
+import { CardanoDelegation, ProtocolParams, StakeChain } from "../types";
 import {
   EMPTY_CREDENTIAL_KEY,
   extractPaymentKeyFromAddress,
@@ -84,10 +92,16 @@ function parseTokenAssetReference(asset: AssetInfo): { policyId: string; assetNa
   return { policyId, assetName };
 }
 
-function stakeHashCredential(stakeKey: string): TyphonTypes.HashCredential {
+function stakeHashCredential(
+  stakeKey: string,
+  bipPath?: TyphonTypes.BipPath,
+): TyphonTypes.HashCredential {
   return {
     hash: Buffer.from(stakeKey, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
+    // bipPath is signing metadata only (not part of the tx body / hash); set it so the device-signing
+    // serializer can produce the stake-key witness for certs/withdrawals. Omitted for craft/preview.
+    ...(bipPath ? { bipPath } : {}),
   };
 }
 
@@ -102,11 +116,12 @@ function addAccountObligations(
   currency: CryptoCurrency,
   stakeKey: string,
   delegation: CardanoDelegation,
+  stakeBipPath?: TyphonTypes.BipPath,
 ): void {
   const rewards = delegation.rewards ?? new BigNumber(0);
   if (rewards.lte(0)) return;
 
-  const stakeCredential = stakeHashCredential(stakeKey);
+  const stakeCredential = stakeHashCredential(stakeKey, stakeBipPath);
   const networkId = isTestnet(currency)
     ? TyphonTypes.NetworkId.TESTNET
     : TyphonTypes.NetworkId.MAINNET;
@@ -131,8 +146,9 @@ function addStakingCertificates(
   protocolParams: ProtocolParams,
   stakeKey: string,
   delegation: CardanoDelegation | undefined,
+  stakeBipPath?: TyphonTypes.BipPath,
 ): void {
-  const stakeCredential = stakeHashCredential(stakeKey);
+  const stakeCredential = stakeHashCredential(stakeKey, stakeBipPath);
 
   if (intent.mode === "delegate") {
     if (!intent.valAddress) throw new Error("Missing pool id for delegation");
@@ -286,16 +302,86 @@ function applyCustomFee(
   typhonTx.setFee(customFee);
 }
 
+/** Account BIP paths attached to credentials for device signing (see buildUnsignedTransactionForSigning). */
+type SigningBipPaths = { payment: TyphonTypes.BipPath; stake: TyphonTypes.BipPath };
+
+/** Attach a string memo (if present) as transaction metadata. */
+function applyMemo(typhonTx: TyphonTransaction, intent: TransactionIntent<StringMemo>): void {
+  const memo = "memo" in intent && intent.memo?.type === "string" ? intent.memo.value : undefined;
+  if (memo) {
+    typhonTx.setAuxiliaryData({
+      metadata: [{ label: MEMO_LABEL, data: new Map([["msg", [memo]]]) }],
+    });
+  }
+}
+
+/**
+ * Attach the account's BIP paths to the sender credentials so the device recognises them as
+ * device-owned: payment path → inputs and change output (payment witness); stake path → the
+ * base address's stake credential (stake witness for certs/withdrawals). Signing metadata only.
+ */
+function applySigningPaths(
+  senderAddress: TyphonTypes.ShelleyAddress,
+  signing: SigningBipPaths,
+): void {
+  if (senderAddress.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
+    senderAddress.paymentCredential.bipPath = signing.payment;
+  }
+  if (
+    senderAddress instanceof TyphonAddress.BaseAddress &&
+    senderAddress.stakeCredential.type === TyphonTypes.HashType.ADDRESS
+  ) {
+    senderAddress.stakeCredential.bipPath = signing.stake;
+  }
+}
+
+/**
+ * Dispatch outputs/certificates by intent type and return the change address: staking adds the
+ * delegation/undelegation certificates (change → sender); a native send adds the recipient output
+ * (change → sender, or recipient for a send-all); a token send adds the token output (change → sender).
+ */
+function addOutputsAndCertificates(
+  typhonTx: TyphonTransaction,
+  intent: TransactionIntent<StringMemo>,
+  senderAddress: TyphonTypes.ShelleyAddress,
+  inputs: TyphonTypes.Input[],
+  protocolParams: ProtocolParams,
+  stakeKey: string | undefined,
+  delegation: CardanoDelegation | undefined,
+  signing?: SigningBipPaths,
+): TyphonTypes.CardanoAddress {
+  if (intent.intentType === "staking") {
+    if (!stakeKey) throw new Error("Sender address has no stake credential");
+    addStakingCertificates(
+      typhonTx,
+      intent as StakingTransactionIntent<StringMemo>,
+      protocolParams,
+      stakeKey,
+      delegation,
+      signing?.stake,
+    );
+    return senderAddress;
+  }
+  if (intent.asset.type === "native") {
+    return addNativeOutputs(typhonTx, intent, senderAddress, inputs, protocolParams);
+  }
+  addTokenOutput(typhonTx, intent, inputs, protocolParams);
+  return senderAddress;
+}
+
 /**
  * Build the unsigned Typhon transaction for a CoinModule intent (native ADA, token, or
  * staking delegate/undelegate). Inputs are the sender address's UTXOs and change returns to
- * the sender. Per-input BIP paths required by the device are signing metadata added
- * downstream, not part of this body — so no xpub/account sync is needed here.
+ * the sender. When `signing` is provided, the account's BIP paths are attached to the credentials
+ * (payment on the sender address → inputs + change, stake on certs/withdrawals) so the device can
+ * witness the tx; these paths are signing metadata only — they do not affect the body/hash, so the
+ * crafted body and fee are identical with or without them.
  */
 export async function buildUnsignedTransaction(
   currency: CryptoCurrency,
   intent: TransactionIntent<StringMemo>,
   customFees?: FeeEstimation,
+  signing?: SigningBipPaths,
 ): Promise<TyphonTransaction> {
   const paymentKey = extractPaymentKeyFromAddress(intent.sender);
   if (paymentKey === EMPTY_CREDENTIAL_KEY) {
@@ -317,16 +403,12 @@ export async function buildUnsignedTransaction(
   });
   typhonTx.setTTL(getTTL(currency.id));
 
-  const memo = "memo" in intent && intent.memo?.type === "string" ? intent.memo.value : undefined;
-  if (memo) {
-    typhonTx.setAuxiliaryData({
-      metadata: [{ label: MEMO_LABEL, data: new Map([["msg", [memo]]]) }],
-    });
-  }
+  applyMemo(typhonTx, intent);
 
   const senderAddress = TyphonUtils.getAddressFromString(
     intent.sender,
   ) as TyphonTypes.ShelleyAddress;
+  if (signing) applySigningPaths(senderAddress, signing);
   // Derived from confirmed history only — with just an address (no pending-operation state) two
   // craft calls before the first broadcast confirms may select the same UTXO. Same single-address
   // constraint as getBalance/listOperations.
@@ -338,27 +420,21 @@ export async function buildUnsignedTransaction(
   // Account-level reward/vote obligations (Conway) plus, for staking, the certificates;
   // both require the stake credential carried by the sender address.
   if (stakeKey && delegation) {
-    addAccountObligations(typhonTx, currency, stakeKey, delegation);
+    addAccountObligations(typhonTx, currency, stakeKey, delegation, signing?.stake);
   }
 
   // changeAddress is the sender for sends/staking; for a send-all it is the recipient, so the
   // entire balance (minus fee) lands there with no explicit recipient output.
-  let changeAddress: TyphonTypes.CardanoAddress = senderAddress;
-
-  if (intent.intentType === "staking") {
-    if (!stakeKey) throw new Error("Sender address has no stake credential");
-    addStakingCertificates(
-      typhonTx,
-      intent as StakingTransactionIntent<StringMemo>,
-      protocolParams,
-      stakeKey,
-      delegation,
-    );
-  } else if (intent.asset.type === "native") {
-    changeAddress = addNativeOutputs(typhonTx, intent, senderAddress, inputs, protocolParams);
-  } else {
-    addTokenOutput(typhonTx, intent, inputs, protocolParams);
-  }
+  const changeAddress = addOutputsAndCertificates(
+    typhonTx,
+    intent,
+    senderAddress,
+    inputs,
+    protocolParams,
+    stakeKey,
+    delegation,
+    signing,
+  );
 
   // Spend the largest UTXOs first so Typhon's coin selection covers the outputs with the fewest
   // inputs (smaller tx, lower fee) — mirrors the legacy builder's largest-first ordering.
@@ -386,6 +462,29 @@ export async function buildUnsignedTransaction(
   }
 
   return prepared;
+}
+
+/**
+ * Build the unsigned tx for the device-signing flow: identical body/fee to the public
+ * craftTransaction, but with the account's BIP paths attached to credentials so the device emits
+ * every required witness (payment for inputs/change + stake for certs/withdrawals). `derivationPath`
+ * is the account's single address path (CIP-1852); the stake path is that account's fixed `…'/2/0`.
+ * A staking/withdrawal tx needs both the payment-key and stake-key witnesses (cardano-ledger UTXOW
+ * rule), so both paths must be attached for the device to produce every required witness.
+ */
+export async function buildUnsignedTransactionForSigning(
+  currency: CryptoCurrency,
+  intent: TransactionIntent<StringMemo>,
+  derivationPath: string,
+  customFees?: FeeEstimation,
+): Promise<TyphonTransaction> {
+  const payment = getBipPathFromString(derivationPath);
+  const stake = getBipPath({
+    account: payment.account,
+    chain: StakeChain.stake,
+    index: STAKING_ADDRESS_INDEX,
+  });
+  return buildUnsignedTransaction(currency, intent, customFees, { payment, stake });
 }
 
 /**

@@ -11,8 +11,13 @@ import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
+import typhonSerializer from "../typhonSerializer";
 import { extractPaymentKeyFromAddress } from "../utils";
-import { buildUnsignedTransaction, craftTransaction } from "./craftTransaction";
+import {
+  buildUnsignedTransaction,
+  buildUnsignedTransactionForSigning,
+  craftTransaction,
+} from "./craftTransaction";
 
 jest.mock("../api/fetchTransactions");
 jest.mock("../api/getDelegationInfo");
@@ -407,5 +412,41 @@ describe("buildUnsignedTransaction — custom fees", () => {
     await expect(
       buildUnsignedTransaction(currency, sendIntent(), { value: 9_999_000_000n }),
     ).rejects.toThrow("Custom fee too high");
+  });
+});
+
+describe("buildUnsignedTransactionForSigning — device signing paths", () => {
+  const SIGNING_PATH = "1852'/1815'/0'/0/0";
+
+  it("attaches payment + stake bip paths so the serializer emits both witnesses for a delegation", async () => {
+    mockGetDelegation.mockResolvedValue(registeredDelegation()); // status: true → STAKE_DELEGATION only
+
+    const tx = await buildUnsignedTransactionForSigning(currency, stakeIntent(), SIGNING_PATH);
+    const signerTx = typhonSerializer(tx, 0);
+
+    // Payment witness path on the spent input.
+    expect(signerTx.inputs[0].path).toBe("1852'/1815'/0'/0/0");
+    // Stake witness path on the delegation certificate (fixed CIP-1852 …'/2/0).
+    const delegation = signerTx.certificates.find(c => c.type === "DELEGATION") as
+      | { params: { stakeCredential: { keyPath: string } } }
+      | undefined;
+    expect(delegation?.params.stakeCredential.keyPath).toBe("1852'/1815'/0'/2/0");
+  });
+
+  it("produces an identical tx body/fee to the path-less craft (paths are signing-only metadata)", async () => {
+    mockGetDelegation.mockResolvedValue(registeredDelegation());
+
+    const signed = await buildUnsignedTransactionForSigning(currency, stakeIntent(), SIGNING_PATH);
+    const plain = await buildUnsignedTransaction(currency, stakeIntent());
+
+    expect(signed.buildTransaction().payload).toBe(plain.buildTransaction().payload);
+    expect(signed.getFee().toFixed()).toBe(plain.getFee().toFixed());
+  });
+
+  it("without the signing paths the device serializer cannot emit the stake witness", async () => {
+    mockGetDelegation.mockResolvedValue(registeredDelegation());
+
+    const tx = await buildUnsignedTransaction(currency, stakeIntent()); // no signing paths
+    expect(() => typhonSerializer(tx, 0)).toThrow("Invalid stakeKey type");
   });
 });

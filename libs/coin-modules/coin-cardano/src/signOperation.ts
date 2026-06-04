@@ -1,15 +1,14 @@
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
-import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { Transaction as TyphonTransaction, types as TyphonTypes } from "@stricahq/typhonjs";
 import { Observable } from "rxjs";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { CardanoInvalidProtoParams } from "./errors";
+import { assembleWitnesses } from "./logic/assembleWitnesses";
 import { getExtendedPublicKeyFromHex } from "./logic";
 import { getNetworkParameters } from "./networks";
-import { CardanoSigner, Witness } from "./signer";
+import { CardanoSigner } from "./signer";
 import type { CardanoAccount, Transaction } from "./types";
 import typhonSerializer from "./typhonSerializer";
 
@@ -45,7 +44,7 @@ export const buildSignOperation =
         );
 
         const accountPubKey = getExtendedPublicKeyFromHex(account.xpub as string);
-        const signed = signTx(unsignedTransaction, accountPubKey, signedData.witnesses);
+        const signed = assembleWitnesses(unsignedTransaction, accountPubKey, signedData.witnesses);
 
         o.next({ type: "device-signature-granted" });
 
@@ -64,24 +63,3 @@ export const buildSignOperation =
         e => o.error(e),
       );
     });
-
-/**
- * Adds signatures to unsigned transaction
- */
-const signTx = (
-  unsignedTransaction: TyphonTransaction,
-  accountKey: Bip32PublicKey,
-  witnesses: Array<Witness>,
-) => {
-  witnesses.forEach(witness => {
-    const [, , , chainType, index] = witness.path;
-    const publicKey = accountKey.derive(chainType).derive(index).toPublicKey().toBytes();
-    const vKeyWitness: TyphonTypes.VKeyWitness = {
-      signature: Buffer.from(witness.witnessSignatureHex, "hex"),
-      publicKey: Buffer.from(publicKey),
-    };
-    unsignedTransaction.addWitness(vKeyWitness);
-  });
-
-  return unsignedTransaction.buildTransaction();
-};

@@ -102,6 +102,11 @@ export function getBipPathString({
   return `${CARDANO_PURPOSE}'/${CARDANO_COIN_TYPE}'/${account}'/${chain}/${index}`;
 }
 
+/** Account-level derivation path (`purpose'/coin'/account'`) — the path the device's getPublicKey expects. */
+export function getAccountPathString(account: number): string {
+  return `${CARDANO_PURPOSE}'/${CARDANO_COIN_TYPE}'/${account}'`;
+}
+
 export function getExtendedPublicKeyFromHex(keyHex: string): Bip32PublicKey {
   return Bip32PublicKey.fromBytes(Buffer.from(keyHex, "hex"));
 }

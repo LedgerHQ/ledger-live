@@ -24,6 +24,7 @@ import {
   findStakeRegistration,
   findWithdrawal,
   getAccountChange,
+  getAccountPathString,
   getAccountStakeCredential,
   getBaseAddress,
   getBipPathString,
@@ -47,17 +48,8 @@ import {
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>
   async (info, { blacklistedTokenIds }) => {
-    const {
-      currency,
-      index: accountIndex,
-      derivationPath,
-      derivationMode,
-      initialAccount,
-      deviceId,
-    } = info;
-    // In case we get a full derivation path
-    const rootPath = derivationPath.split("/", 2).join("/");
-    const accountPath = `${rootPath}/${accountIndex}'`;
+    const { currency, index: accountIndex, derivationMode, initialAccount, deviceId } = info;
+    const accountPath = getAccountPathString(accountIndex);
 
     const paramXpub = initialAccount?.xpub;
     let xpub;
