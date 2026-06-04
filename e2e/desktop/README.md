@@ -112,3 +112,7 @@ Notes:
 - Arrays, scalars, or invalid JSON are rejected.
 - `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
 - Per-test `featureFlags` fixture values still override env-provided values when both set the same key.
+
+### 7. CI: Playwright CLI options
+
+The CI workflow accepts an optional `playwright_cli_options` input. This lets you pass extra Playwright flags when triggering a manual or scheduled CI run — without changing workflow files or pushing a commit. Useful for running tests multiple times (`--repeat-each <N>`) when investigating intermittent failures and runtime stability.

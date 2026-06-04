@@ -16,6 +16,9 @@ inputs:
   shard_total:
     description: "Total number of shards (omit to run all tests)"
     required: false
+  playwright_cli_options:
+    description: "Additional Playwright CLI options appended to the test command"
+    required: false
 outputs:
   passed:
     description: "Number of passed tests"
@@ -85,12 +88,18 @@ runs:
           SHARD_ARG="--shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}"
         fi
 
+        PLAYWRIGHT_CLI_OPTIONS="${{ inputs.playwright_cli_options }}"
+        if [ -n "$PLAYWRIGHT_CLI_OPTIONS" ]; then
+          echo "Additional Playwright CLI options: $PLAYWRIGHT_CLI_OPTIONS"
+        fi
+
         set +e
         xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
           -- pnpm e2e:desktop test:playwright \
           --max-failures 50 \
           $grep_option "$grep_filter" \
-          $SHARD_ARG 2>&1 | tee /tmp/playwright-output.log
+          $SHARD_ARG \
+          $PLAYWRIGHT_CLI_OPTIONS 2>&1 | tee /tmp/playwright-output.log
         TEST_EXIT_CODE=${PIPESTATUS[0]}
         set -e
 

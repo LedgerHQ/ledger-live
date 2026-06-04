@@ -68,6 +68,11 @@ on:
         required: false
         type: string
         default: ""
+      playwright_cli_options:
+        description: "Additional Playwright CLI options appended to the test command (do not pass --grep, --grep-invert, or --shard here — use the dedicated workflow inputs instead)"
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -109,6 +114,11 @@ on:
         default: false
       feature_flags_json:
         description: "JSON to override feature flags"
+        required: false
+        type: string
+        default: ""
+      playwright_cli_options:
+        description: "Additional Playwright CLI options appended to the test command (do not pass --grep, --grep-invert, or --shard here — use the dedicated workflow inputs instead)"
         required: false
         type: string
         default: ""
@@ -271,12 +281,16 @@ jobs:
           TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
           BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
+          PLAYWRIGHT_CLI_OPTIONS="${{ inputs.playwright_cli_options || '' }}"
 
           if [ -z "$FILTER_PATTERN" ]; then
             FILTER_PATTERN="(none)"
           fi
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
+          fi
+          if [ -z "$PLAYWRIGHT_CLI_OPTIONS" ]; then
+            PLAYWRIGHT_CLI_OPTIONS="(none)"
           fi
           {
             echo "## Workflow Context"
@@ -290,6 +304,7 @@ jobs:
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
             echo "- **Extra feature flags:** $EXTRA_FEATURE_FLAGS"
+            echo "- **Playwright CLI options:** $PLAYWRIGHT_CLI_OPTIONS"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Validate feature flags JSON input
@@ -311,11 +326,12 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@feature/QAA-1155
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
+          playwright_cli_options: ${{ inputs.playwright_cli_options || '' }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ matrix.is_primary && inputs.export_to_xray || false }}
