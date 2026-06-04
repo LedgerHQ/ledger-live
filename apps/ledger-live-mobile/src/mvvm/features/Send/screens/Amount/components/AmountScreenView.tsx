@@ -21,16 +21,18 @@ export function AmountScreenView({ viewModel, pluginsSlot }: AmountScreenViewPro
     theme => ({
       container: {
         flex: 1,
+        justifyContent: "space-between",
       },
       upperSection: {
-        flex: 0,
+        flexShrink: 0,
       },
       middleSection: {
-        flex: 1,
-        justifyContent: "center",
+        flexShrink: 0,
       },
       bottomSection: {
-        paddingBottom: theme.spacings.s16,
+        flexShrink: 0,
+        paddingTop: theme.spacings.s24,
+        paddingBottom: theme.spacings.s24,
       },
     }),
     [],
