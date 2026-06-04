@@ -89,13 +89,9 @@ export function ContactList({
   const showEmptySearch = groups.length === 0 && trimmedQuery.length > 0;
 
   return (
-    // The outer panel is a NON-scrolling flex column: a fixed search-bar
-    // header on top, then a scrolling list region. The scroll lives on
-    // the inner wrapper (not here) so the search bar stays pinned and
-    // always visible on long lists.
     <div
       data-testid="contacts-management-list"
-      className="flex flex-col gap-8 h-full rounded-lg bg-surface p-16"
+      className="flex flex-col gap-8 h-full overflow-y-auto rounded-lg bg-surface p-16"
     >
       <SearchInput
         appearance="plain"
@@ -103,23 +99,16 @@ export function ContactList({
         placeholder={t("contactsManagement.searchPlaceholder")}
         onChange={e => onSearchQueryChange(e.target.value)}
         onClear={() => onSearchQueryChange("")}
-        // `shrink-0` so the (fixed-header) search bar keeps its height
-        // and never gets compressed by the list region below it.
+        // `shrink-0` so the search bar isn't compressed when the list
+        // overflows: now that the rows + dividers are `shrink-0`, the
+        // input would otherwise be the sole shrinkable flex child and
+        // absorb all the overflow compression.
         className="shrink-0"
         data-testid="contacts-management-search"
       />
-      {/*
-        Scrolling list region. `flex-1 min-h-0` lets it fill the height
-        left by the header AND shrink below its content so it actually
-        scrolls (the classic flexbox `min-height: 0` overflow fix).
-        `gap-8` keeps the 8px rhythm between dividers and rows, matching
-        the spacing the single-container layout had.
-      */}
-      <div className="flex flex-col gap-8 flex-1 min-h-0 overflow-y-auto">
-        {children}
-        {showEmptyContacts && <EmptyContactsState onAddContact={onAddContact} />}
-        {showEmptySearch && <EmptySearchState />}
-      </div>
+      {children}
+      {showEmptyContacts && <EmptyContactsState onAddContact={onAddContact} />}
+      {showEmptySearch && <EmptySearchState />}
     </div>
   );
 }
