@@ -50,6 +50,21 @@ describe("documentPickerBridge", () => {
     expect(() => getDocumentPicker()).toThrow(/Document picker module failed to load/i);
   });
 
+  it("throws when the native module is partially loaded", () => {
+    jest.doMock(
+      "@react-native-documents/picker",
+      () => ({
+        pick: jest.fn(),
+        keepLocalCopy: jest.fn(),
+      }),
+      { virtual: true },
+    );
+
+    const { getDocumentPicker } = require("../documentPickerBridge");
+
+    expect(() => getDocumentPicker()).toThrow(/Document picker module failed to load/i);
+  });
+
   it("detects cancelled picker operations", () => {
     jest.doMock("@react-native-documents/picker", () => mockPickerModule, { virtual: true });
 

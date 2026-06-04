@@ -390,7 +390,7 @@ describe("pickLocalLottieFile", () => {
     expect(mockFetch).toHaveBeenCalledWith("GET", "content://downloads/animation.lottie");
   });
 
-  it("wraps non-error rejections with a generic message", async () => {
+  it("uses a string rejection as the error message", async () => {
     mockPick.mockRejectedValue("network down");
 
     await expect(pickLocalLottieFile()).rejects.toThrow("network down");

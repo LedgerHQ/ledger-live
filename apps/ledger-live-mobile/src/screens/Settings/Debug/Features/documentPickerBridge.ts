@@ -12,8 +12,15 @@ function isDocumentPickerModule(value: unknown): value is DocumentPickerModule {
     return false;
   }
 
-  const candidate = value as DocumentPickerModule;
-  return typeof candidate.pick === "function" && typeof candidate.keepLocalCopy === "function";
+  const candidate = value as Partial<DocumentPickerModule>;
+  return (
+    typeof candidate.pick === "function" &&
+    typeof candidate.keepLocalCopy === "function" &&
+    typeof candidate.isErrorWithCode === "function" &&
+    typeof candidate.errorCodes === "object" &&
+    candidate.errorCodes !== null &&
+    "OPERATION_CANCELED" in candidate.errorCodes
+  );
 }
 
 function loadDocumentPickerModule(): DocumentPickerModule {
