@@ -99,6 +99,11 @@ export function ContactList({
         placeholder={t("contactsManagement.searchPlaceholder")}
         onChange={e => onSearchQueryChange(e.target.value)}
         onClear={() => onSearchQueryChange("")}
+        // `shrink-0` so the search bar isn't compressed when the list
+        // overflows: now that the rows + dividers are `shrink-0`, the
+        // input would otherwise be the sole shrinkable flex child and
+        // absorb all the overflow compression.
+        className="shrink-0"
         data-testid="contacts-management-search"
       />
       {children}

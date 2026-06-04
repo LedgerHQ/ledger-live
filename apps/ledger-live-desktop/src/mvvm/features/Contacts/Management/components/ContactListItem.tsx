@@ -45,10 +45,17 @@ export function ContactListItem({ contact, isSelected, onSelect }: Props) {
     <ListItem
       density="expanded"
       onClick={isSelected ? undefined : () => onSelect(contact.name)}
+      // `density="expanded"` already fixes the row at `h-64`, but the row
+      // is a flex child of the list pane's `flex flex-col overflow-y-auto`
+      // container. Flex children default to `flex-shrink: 1`, so once the
+      // contacts overflow the pane the rows get compressed below 64px
+      // instead of the list scrolling. `shrink-0` pins the 64px height and
+      // lets the container scroll.
+      //
       // Non-selected rows inherit Lumen's intrinsic `bg-base-transparent`
       // (matches the Figma's `--background-base-transparent` on inactive
       // rows). Only override for the selected state.
-      className={cn(isSelected && "bg-[rgba(213,161,255,0.12)]")}
+      className={cn("shrink-0", isSelected && "bg-[rgba(213,161,255,0.12)]")}
       aria-selected={isSelected}
       data-testid="contacts-management-list-item"
       data-selected={isSelected ? "true" : "false"}
