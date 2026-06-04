@@ -5,6 +5,7 @@ import {
   useGetCurrencyDataQuery,
   useGetGlobalMarketDataQuery,
 } from "../state-manager/api";
+import { DEFAULT_MARKET_SEARCH_MIN_LENGTH } from "../utils/constants";
 import { currencyFormatter } from "../utils/currencyFormatter";
 import { QUERY_KEY } from "../utils/queryKeys";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
@@ -49,7 +50,10 @@ export const useGlobalMarketData = ({ counterCurrency }: GlobalMarketDataRequest
   );
 
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
-  const search = props.search?.toLowerCase() ?? "";
+  const search = props.search?.trim().toLowerCase() ?? "";
+  const minSearchLength = props.minSearchLength ?? DEFAULT_MARKET_SEARCH_MIN_LENGTH;
+  const shouldSearch = search.length >= minSearchLength;
+
   return useQueries({
     queries: Array.from({ length: props.page ?? 1 }, (_, i) => i).map(page => ({
       queryKey: [
@@ -58,7 +62,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         props.order,
         {
           counterCurrency: props.counterCurrency,
-          ...(props.search && props.search?.length >= 2 && { search: search }),
+          ...(shouldSearch && { search }),
           ...(props.starred && props.starred?.length >= 1 && { starred: props.starred }),
           ...(props.liveCompatible && { liveCompatible: props.liveCompatible }),
           ...(props.order &&

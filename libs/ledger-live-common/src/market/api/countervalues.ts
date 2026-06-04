@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
+import { DEFAULT_MARKET_SEARCH_MIN_LENGTH } from "../utils/constants";
 import {
   MarketListRequestParams,
   MarketItemResponse,
@@ -18,10 +19,12 @@ export async function fetchList({
   page = 1,
   order = Order.MarketCapDesc,
   search = "",
+  minSearchLength = DEFAULT_MARKET_SEARCH_MIN_LENGTH,
   liveCompatible = false,
   starred = [],
   range = "24",
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
+  const normalizedSearch = search.trim().toLowerCase();
   const url = URL.format({
     pathname: `${baseURL()}/v3/markets`,
     query: {
@@ -29,7 +32,7 @@ export async function fetchList({
       pageSize: limit,
       to: counterCurrency,
       sort: getSortParam(order, range),
-      ...(search.length >= 2 && { filter: search }),
+      ...(normalizedSearch.length >= minSearchLength && { filter: normalizedSearch }),
       ...(starred.length > 0 && { ids: starred.sort().join(",") }),
       ...(liveCompatible && { supported: liveCompatible }),
       ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
