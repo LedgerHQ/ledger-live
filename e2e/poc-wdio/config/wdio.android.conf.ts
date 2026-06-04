@@ -17,7 +17,7 @@ export const config: WebdriverIO.Config = {
       "appium:automationName": "UiAutomator2",
       "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
       "appium:adbExecTimeout": 30_000,
-      "appium:skipLogcatCapture": true,
+      "appium:skipLogcatCapture": false, // optional: disable logcat capture
       "appium:clearDeviceLogsOnStart": true, // optional: clean buffer per run
       "appium:ensureWebviewsHavePages": true, // optional: stabilize webview context detection
       "appium:disableWindowAnimation": true, // optional: disable window animations to speed up tests

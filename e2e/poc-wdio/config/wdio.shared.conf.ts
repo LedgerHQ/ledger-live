@@ -225,7 +225,7 @@ export const config: WebdriverIO.Config = {
       e2eBridgeServer: undefined,
     };
     await init();
-    // ADBUtils.startLogcatStream(cid);
+    ADBUtils.startLogcatStream(cid);
   },
   /**
    * Runs before a WebdriverIO command gets executed.
@@ -320,8 +320,8 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
-    // ADBUtils.snapshotLogcatToArtifacts("session-end");
-    // ADBUtils.stopLogcatStream();
+    ADBUtils.snapshotLogcatToArtifacts("session-end");
+    ADBUtils.stopLogcatStream();
     await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
   },
   /**
@@ -341,7 +341,7 @@ export const config: WebdriverIO.Config = {
    * @param {<Object>} results object containing test results
    */
   onComplete: function () {
-    // ADBUtils.stopLogcatStream();
+    ADBUtils.stopLogcatStream();
   },
   /**
    * Gets executed when a refresh happens.
