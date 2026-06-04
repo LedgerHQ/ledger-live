@@ -67,7 +67,7 @@ export default function Features() {
       />
       <SettingsRow
         title="Lotties"
-        desc="See all lottie animations per device in one screen"
+        desc="Preview device lotties or browse a local .lottie file"
         iconLeft={<IconsLegacy.VideoMedium size={24} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugLottie)}
       />

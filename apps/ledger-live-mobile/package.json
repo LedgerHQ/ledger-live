@@ -86,6 +86,7 @@
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "1.0.2",
     "@braze/react-native-sdk": "18.0.0",
+    "@react-native-documents/picker": "11.0.4",
     "@datadog/mobile-react-native": "2.8.2",
     "@datadog/mobile-react-navigation": "2.8.2",
     "@features/platform-feature-flags": "workspace:^",

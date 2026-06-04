@@ -1659,6 +1659,30 @@ PODS:
     - react-native-config/App (= 1.5.3)
   - react-native-config/App (1.5.3):
     - React-Core
+  - react-native-document-picker (11.0.4):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-fast-crypto (3.0.0):
     - React-Core
   - react-native-fast-pbkdf2 (0.3.1):
@@ -2856,6 +2880,7 @@ DEPENDENCIES:
   - react-native-biometrics (from `../node_modules/react-native-biometrics`)
   - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
   - react-native-config (from `../node_modules/react-native-config`)
+  - "react-native-document-picker (from `../node_modules/@react-native-documents/picker`)"
   - react-native-fast-crypto (from `../node_modules/react-native-fast-crypto`)
   - react-native-fast-pbkdf2 (from `../node_modules/react-native-fast-pbkdf2`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
@@ -3087,6 +3112,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-ble-plx"
   react-native-config:
     :path: "../node_modules/react-native-config"
+  react-native-document-picker:
+    :path: "../node_modules/@react-native-documents/picker"
   react-native-fast-crypto:
     :path: "../node_modules/react-native-fast-crypto"
   react-native-fast-pbkdf2:
@@ -3327,6 +3354,7 @@ SPEC CHECKSUMS:
   react-native-biometrics: 43ed5b828646a7862dbc7945556446be00798e7d
   react-native-ble-plx: 3d662daa9daffc572bf42f044aa93b3ad5980470
   react-native-config: ea75335a7cca1d3326de1da384227e580a7c082e
+  react-native-document-picker: 0822e394245a2c3dfbbdb874115146a5da10f007
   react-native-fast-crypto: ad4845c4dd1314c9c6e7272b91c09ff60439c6aa
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
@@ -3344,7 +3372,7 @@ SPEC CHECKSUMS:
   react-native-splash-screen: a43276f9cf4b2e65d7ce30efe372ffc528064293
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
   react-native-tcp-socket: ae8abcfebc071216302a09d9ed1e375d4e877484
-  react-native-udp: 7e484efc89db2214f7501ac946781d3205b2c6a0
+  react-native-udp: 806f16ab890dd838bc073afcebd6a221d4965572
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
   react-native-video: f906920a39ad30208bb789bdda7404f510ab422a
   react-native-webview: f0d598682cbc88a97d66da4121873d3467f76635
@@ -3410,4 +3438,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 11b0543d8207874e261875d4864930a6c73fcd92
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2
