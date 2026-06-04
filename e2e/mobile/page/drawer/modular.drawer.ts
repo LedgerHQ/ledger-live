@@ -7,18 +7,13 @@ import { isIos } from "../../helpers/commonHelpers";
 export default class ModularDrawer {
   // TODO - once lumenBottomSheet is activated we can remove the `or` statements
   bottomSheetId = (component: string) => `bottom-sheet-${component}`;
+  headerTitleId = this.bottomSheetId("header-title");
 
   accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
   selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
-  networkBasedTitleIdMAD = new RegExp(
-    `${this.bottomSheetId("header-title")}|modular-drawer-Network-title`,
-    "i",
-  );
-  assetBasedTitleIdMAD = new RegExp(
-    `${this.bottomSheetId("header-title")}|modular-drawer-Asset-title`,
-    "i",
-  );
+  networkBasedTitleIdMAD = new RegExp(`${this.headerTitleId}|modular-drawer-Network-title`, "i");
+  assetBasedTitleIdMAD = new RegExp(`${this.headerTitleId}|modular-drawer-Asset-title`, "i");
   networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
   accountTitleIdMAD = "modular-drawer-Account-title";
   addNewOrExistingAccountButton = "add-new-account-button";
@@ -103,8 +98,6 @@ export default class ModularDrawer {
     const isPresent = await IsIdPresent(this.networkBasedTitleIdMAD);
     if (!isPresent) return;
     const networkBasedTitle = await getTextOfElement(this.networkBasedTitleIdMAD);
-    console.warn("flags", this.flags);
-    console.warn("networkBasedTitle", networkBasedTitle);
     if (networkBasedTitle.includes("Select network")) {
       await this.selectNetwork(networkName);
     }
@@ -163,7 +156,7 @@ export default class ModularDrawer {
 
   @Step("Validate account(s) present on account list")
   async validateAccountsScreen(accounts?: string[]): Promise<void> {
-    const accountBasedTitle = await getTextOfElement(this.accountTitleIdMAD);
+    const accountBasedTitle = await getTextOfElement(this.headerTitleId);
     jestExpect(accountBasedTitle).toMatch(/Select account.*/i);
     if (!accounts) {
       await detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
@@ -185,7 +178,7 @@ export default class ModularDrawer {
 
   @Step("Validate network(s) present on network list")
   async validateNetworksScreen(networks: string[]): Promise<void> {
-    const networkBasedTitle = await getTextOfElement(this.networkBasedTitleIdMAD);
+    const networkBasedTitle = await getTextOfElement(this.headerTitleId);
     jestExpect(networkBasedTitle).toMatch(/Select network.*/i);
     await getElementById(this.networkBasedTitleIdMAD).swipe("up");
     for (const network of networks) {
@@ -197,7 +190,7 @@ export default class ModularDrawer {
 
   @Step("Validate assets present on account list")
   async validateAssetsScreen(assets: string[]): Promise<void> {
-    const assetBasedTitle = await getTextOfElement(this.assetBasedTitleIdMAD);
+    const assetBasedTitle = await getTextOfElement(this.headerTitleId);
     jestExpect(assetBasedTitle).toMatch(/Select asset.*/i);
     for (const asset of assets) {
       const assetItemId = this.assetItemByTicker(asset);
@@ -212,8 +205,8 @@ export default class ModularDrawer {
 
   @Step("Expect (Select Asset) page")
   async checkSelectAssetPage() {
-    await waitForElement(getElementById(this.assetBasedTitleIdMAD));
-    await detoxExpect(getElementById(this.assetBasedTitleIdMAD)).toBeVisible();
+    await waitForElement(getElementById(this.headerTitleId));
+    await detoxExpect(getElementById(this.headerTitleId)).toBeVisible();
     await detoxExpect(this.searchBar()).toBeVisible();
   }
 
