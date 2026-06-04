@@ -1,45 +1,53 @@
 import React from "react";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { TrackScreen } from "~/analytics";
+import { useTranslation } from "~/context/Locale";
 import { MarketAssetsList } from "./components/MarketAssetsList";
 import { MarketHighlights } from "./components/MarketHighlights";
 import { MARKET_SCREEN_TEST_IDS } from "./testIds";
 import type { MarketScreenViewModel } from "./useMarketScreenViewModel";
 
-const SEARCH_BAR_HEIGHT = 48;
-
 type Props = Readonly<MarketScreenViewModel>;
 
 export function MarketScreenView({
-  cardWidth,
-  snapToInterval,
-  highlightCards,
-  assets,
-  assetsLoading,
-  assetsLoadingMore,
-  assetsError,
-  onAssetPress,
-  onEndReached,
+  search,
+  highlights,
+  assetsList,
+  isSearchActive,
 }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Box testID={MARKET_SCREEN_TEST_IDS.screen} lx={screenStyle}>
       <TrackScreen category="Page" name="Market" access />
-      <Box testID={MARKET_SCREEN_TEST_IDS.searchBar} lx={searchBarStyle} style={searchBarSize} />
+      <Box lx={searchBarStyle}>
+        <SearchInput
+          testID={MARKET_SCREEN_TEST_IDS.searchBar}
+          appearance="plain"
+          value={search.value}
+          onChangeText={search.onChangeText}
+          onClear={search.onClear}
+          placeholder={t("market.search.placeholder")}
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+      </Box>
       <MarketAssetsList
-        assets={assets}
-        loading={assetsLoading}
-        loadingMore={assetsLoadingMore}
-        error={assetsError}
-        onAssetPress={onAssetPress}
-        onEndReached={onEndReached}
-        header={
+        assets={assetsList.assets}
+        loading={assetsList.assetsLoading}
+        loadingMore={assetsList.assetsLoadingMore}
+        error={assetsList.assetsError}
+        onAssetPress={assetsList.onAssetPress}
+        onEndReached={assetsList.onEndReached}
+        showSubheader={!isSearchActive}
+        header={!isSearchActive ? (
           <MarketHighlights
-            cardWidth={cardWidth}
-            snapToInterval={snapToInterval}
-            highlightCards={highlightCards}
+            cardWidth={highlights.cardWidth}
+            snapToInterval={highlights.snapToInterval}
+            highlightCards={highlights.highlightCards}
           />
-        }
+        ) : undefined}
       />
     </Box>
   );
@@ -52,8 +60,4 @@ const screenStyle: LumenViewStyle = {
 const searchBarStyle: LumenViewStyle = {
   marginTop: "s16",
   marginHorizontal: "s16",
-  backgroundColor: "muted",
-  borderRadius: "md",
 };
-
-const searchBarSize = { height: SEARCH_BAR_HEIGHT };

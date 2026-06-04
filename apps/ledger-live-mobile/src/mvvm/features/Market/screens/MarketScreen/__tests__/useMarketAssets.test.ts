@@ -1,4 +1,4 @@
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { MarketListRequestResult } from "@ledgerhq/live-common/market/utils/types";
 import { createMarketCurrencyData } from "../../../__tests__/helpers";
@@ -58,5 +58,33 @@ describe("useMarketAssets", () => {
     const { result } = renderHook(() => useMarketAssets());
     act(() => result.current.onEndReached());
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }));
+  });
+
+  it("passes the trimmed search query", () => {
+    renderHook(() => useMarketAssets({ search: " b " }));
+
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+      expect.objectContaining({ search: "b" }),
+    );
+  });
+
+  it("resets the page when the search query changes", async () => {
+    let search = "";
+    const { result, rerender } = renderHook(() => useMarketAssets({ search }));
+
+    act(() => result.current.onEndReached());
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }));
+
+    search = "eth";
+    rerender(undefined);
+
+    await waitFor(() => {
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 1, search: "eth" }),
+      );
+    });
+    expect(mockedUseMarketData).not.toHaveBeenCalledWith(
+      expect.objectContaining({ page: 2, search: "eth" }),
+    );
   });
 });

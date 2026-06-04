@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { KeysPriceChange, Order } from "@ledgerhq/live-common/market/utils/types";
 import { useLocale, useTranslation } from "~/context/Locale";
@@ -10,6 +10,15 @@ import { mapMarketCurrencyToDisplayData } from "../../utils/marketAssetDisplay";
 const DEFAULT_RANGE = KeysPriceChange.day;
 const PAGE_SIZE = 20;
 
+export type MarketAssetsParams = {
+  search?: string;
+};
+
+type PaginationState = {
+  page: number;
+  search: string;
+};
+
 export interface MarketAssetsResult {
   assets: MarketAssetDisplayData[];
   loading: boolean;
@@ -18,13 +27,25 @@ export interface MarketAssetsResult {
   onEndReached: () => void;
 }
 
-export function useMarketAssets(): MarketAssetsResult {
+export function useMarketAssets({ search = "" }: MarketAssetsParams = {}): MarketAssetsResult {
   const { locale } = useLocale();
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const counterCurrency = counterValueCurrency.ticker.toLowerCase();
   const counterValueUnit = counterValueCurrency.units[0];
-  const [page, setPage] = useState(1);
+  const normalizedSearch = search.trim();
+  const [pagination, setPagination] = useState<PaginationState>(() => ({
+    page: 1,
+    search: normalizedSearch,
+  }));
+  const isPaginationSearchSynced = pagination.search === normalizedSearch;
+  const page = isPaginationSearchSynced ? pagination.page : 1;
+
+  useEffect(() => {
+    if (!isPaginationSearchSynced) {
+      setPagination({ page: 1, search: normalizedSearch });
+    }
+  }, [isPaginationSearchSynced, normalizedSearch]);
 
   const result = useMarketData({
     counterCurrency,
@@ -33,6 +54,7 @@ export function useMarketAssets(): MarketAssetsResult {
     limit: PAGE_SIZE,
     liveCompatible: true,
     page,
+    search: normalizedSearch,
   });
 
   const assets = useMemo(() => {
@@ -48,14 +70,26 @@ export function useMarketAssets(): MarketAssetsResult {
     );
   }, [result.data, counterCurrency, counterValueUnit, locale, t]);
 
-  const onEndReached = useCallback(() => setPage(current => current + 1), []);
-
   const hasData = assets.length > 0;
+  const loading = (result.isLoading || result.isPending) && !hasData;
+  const loadingMore = result.isFetching && hasData;
+
+  const onEndReached = useCallback(() => {
+    if (!hasData || loading || loadingMore || result.isError) return;
+
+    setPagination(current => {
+      if (current.search !== normalizedSearch) {
+        return { page: 1, search: normalizedSearch };
+      }
+
+      return { ...current, page: current.page + 1 };
+    });
+  }, [hasData, loading, loadingMore, normalizedSearch, result.isError]);
 
   return {
     assets,
-    loading: (result.isLoading || result.isPending) && !hasData,
-    loadingMore: result.isFetching && hasData,
+    loading,
+    loadingMore,
     isError: result.isError,
     onEndReached,
   };
