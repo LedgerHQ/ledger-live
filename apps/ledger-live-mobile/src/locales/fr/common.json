@@ -7699,6 +7699,17 @@
   },
   "market" : {
     "title" : "Marché",
+    "search" : {
+      "placeholder" : "Rechercher un actif"
+    },
+    "assets" : {
+      "title" : "Actifs",
+      "emptySearch" : "Aucun actif trouvé",
+      "error" : {
+        "title" : "Impossible de charger les actifs",
+        "description" : "Une erreur est survenue lors du chargement de la liste des actifs. Veuillez réessayer plus tard."
+      }
+    },
     "filters" : {
       "sort" : "Trier",
       "filter" : "Filtrer",

@@ -1,0 +1,1 @@
+export const DEFAULT_MARKET_SEARCH_MIN_LENGTH = 2;

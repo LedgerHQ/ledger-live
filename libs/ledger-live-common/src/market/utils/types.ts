@@ -19,6 +19,7 @@ export type MarketListRequestParams = {
   range?: string;
   order?: Order;
   search?: string;
+  minSearchLength?: number;
   liveCompatible?: boolean;
 };
 

@@ -8080,8 +8080,12 @@
   },
   "market": {
     "title": "Market",
+    "search": {
+      "placeholder": "Search asset"
+    },
     "assets": {
       "title": "Assets",
+      "emptySearch": "No assets found",
       "error": {
         "title": "Couldn't load assets",
         "description": "Something went wrong while loading the asset list. Please try again later."
