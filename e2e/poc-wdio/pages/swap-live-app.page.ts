@@ -64,6 +64,8 @@ export class SwapLiveAppPage {
   async switchTo() {
     console.log("Waiting for Swap Live App webview to be displayed...");
     await getByTestId("wallet-api-webview").waitForDisplayed();
+    console.log("Forced wait for webview stability...");
+    await driver.pause(15_000); // Forced wait for webview stability
     await driver.waitUntil(
       async () => {
         try {
