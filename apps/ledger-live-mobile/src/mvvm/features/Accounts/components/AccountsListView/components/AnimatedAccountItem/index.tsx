@@ -24,10 +24,12 @@ const AnimatedAccountItem = ({ item, index = 0, children, onPress }: AnimatedAcc
   }, [startAnimation]);
 
   return (
-    <Animated.View style={[animatedStyle]}>
+    <Animated.View style={[animatedStyle, { width: "100%" }]}>
       <Pressable
         onPress={onPress}
-        style={({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.5 : 1.0 }]}
+        style={({ pressed }: { pressed: boolean }) => [
+          { opacity: pressed ? 0.5 : 1.0, width: "100%" },
+        ]}
       >
         <Flex
           flexDirection="row"
