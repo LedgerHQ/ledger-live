@@ -40,8 +40,8 @@ catalogs:
       specifier: 1.15.1
       version: 1.15.1
     '@ledgerhq/device-signer-kit-hyperliquid':
-      specifier: 1.1.0
-      version: 1.1.0
+      specifier: 0.0.0-hyperliquid-chunk-20260603162854
+      version: 0.0.0-hyperliquid-chunk-20260603162854
     '@ledgerhq/device-signer-kit-solana':
       specifier: 1.8.0
       version: 1.8.0
@@ -11614,7 +11614,7 @@ importers:
         version: 1.5.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-hyperliquid':
         specifier: 'catalog:'
-        version: 1.1.0(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))
+        version: 0.0.0-hyperliquid-chunk-20260603162854(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -17338,10 +17338,10 @@ packages:
       '@ledgerhq/context-module': 1.17.1
       '@ledgerhq/device-management-kit': ^1.4.1
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.1.0':
-    resolution: {integrity: sha512-e1dlDG6SYnfVFNZnNts9SYWyXBw243tFV0GQeFlfvKBc9Z3+jY9wboLecYmgZtgZlLDIBpisehLkACL0+ug4Xg==}
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-chunk-20260603162854':
+    resolution: {integrity: sha512-zlJ/EdzRjwSl41fkEidevW3C9v350rWagMHpZb6efYTvd7hs2/EMVzFcghYUlW2m/XHFwSs+XJpLjUPOXKC/JA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.0
+      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-chunk-20260603162854
 
   '@ledgerhq/device-signer-kit-solana@1.8.0':
     resolution: {integrity: sha512-oe0GfnHMBQHcP8FrkCEWI0lA2skuVQCl2sMIrtwsHSRxocmLftgbyzUZlcyDZ5+7GOJAHJmi347Xt4p7oQWftw==}
@@ -17501,6 +17501,11 @@ packages:
     resolution: {integrity: sha512-jHWlRh7WE7rlv7uoiuWbEIUboyuP0Jaj4R6nW8NWhPkRKDsdFY+TYue3+vNWl4HIZyaIf1xf3xVFJPEjKrQJxw==}
     peerDependencies:
       react: 19.0.0
+
+  '@ledgerhq/signer-utils@0.0.0-hyperliquid-chunk-20260603162854':
+    resolution: {integrity: sha512-BLYfgWpgiIIwhTfJNy5q13JT+xBvWqsaVXiBOqXsZrOgI9ZkqPG+cFMgZ1w8hbYr+p4HJqfePAPtE7GVE2zxRg==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-chunk-20260603162854
 
   '@ledgerhq/signer-utils@1.1.3':
     resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
@@ -18643,6 +18648,7 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@oxlint/binding-linux-x64-musl@1.51.0':
     resolution: {integrity: sha512-wD8HGTWhYBKXvRDvoBVB1y+fEYV01samhWQSy1Zkxq2vpezvMnjaFKRuiP6tBNITLGuffbNDEXOwcAhJ3gI5Ug==}
@@ -41347,7 +41353,7 @@ snapshots:
       outdent: 0.5.0
       prettier: 2.8.8
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
 
   '@changesets/assemble-release-plan@6.0.3':
     dependencies:
@@ -41357,7 +41363,7 @@ snapshots:
       '@changesets/should-skip-package': 0.1.0
       '@changesets/types': 6.0.0
       '@manypkg/get-packages': 1.1.3
-      semver: 7.7.3
+      semver: 7.8.1
 
   '@changesets/changelog-git@0.2.0':
     dependencies:
@@ -41426,7 +41432,7 @@ snapshots:
       '@manypkg/get-packages': 1.1.3
       chalk: 2.4.2
       fs-extra: 7.0.1
-      semver: 7.7.3
+      semver: 7.8.1
 
   '@changesets/get-github-info@0.6.0(patch_hash=e4ccd9dc35d4ccf42e8e83fdf0dcd00efc4170407493e6e0a3d15e2991e7d2b9)':
     dependencies:
@@ -42249,7 +42255,7 @@ snapshots:
       node-api-version: 0.2.1
       ora: 5.4.1
       read-binary-file-arch: 1.0.6
-      semver: 7.7.3
+      semver: 7.8.1
       tar: 6.2.1
       yargs: 17.7.2
     transitivePeerDependencies:
@@ -42948,7 +42954,7 @@ snapshots:
       resolve: 1.22.11
       resolve-from: 5.0.0
       resolve.exports: 2.0.3
-      semver: 7.7.3
+      semver: 7.8.1
       send: 0.19.1
       slugify: 1.6.6
       source-map-support: 0.5.21
@@ -42981,7 +42987,7 @@ snapshots:
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       slash: 3.0.0
       slugify: 1.6.6
       xcode: 3.0.1
@@ -43000,7 +43006,7 @@ snapshots:
       getenv: 2.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       slash: 3.0.0
       slugify: 1.6.6
       xcode: 3.0.1
@@ -43019,7 +43025,7 @@ snapshots:
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       slash: 3.0.0
       slugify: 1.6.6
       xcode: 3.0.1
@@ -43043,7 +43049,7 @@ snapshots:
       require-from-string: 2.0.2
       resolve-from: 5.0.0
       resolve-workspace-root: 2.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       slugify: 1.6.6
       sucrase: 3.35.0
     transitivePeerDependencies:
@@ -43061,7 +43067,7 @@ snapshots:
       require-from-string: 2.0.2
       resolve-from: 5.0.0
       resolve-workspace-root: 2.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       slugify: 1.6.6
       sucrase: 3.35.0
     transitivePeerDependencies:
@@ -43079,7 +43085,7 @@ snapshots:
       require-from-string: 2.0.2
       resolve-from: 5.0.0
       resolve-workspace-root: 2.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       slugify: 1.6.6
       sucrase: 3.35.0
     transitivePeerDependencies:
@@ -43145,7 +43151,7 @@ snapshots:
       minimatch: 9.0.5
       p-limit: 3.1.0
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -43157,7 +43163,7 @@ snapshots:
       jimp-compact: 0.16.1
       parse-png: 2.1.0
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       temp-dir: 2.0.0
       unique-string: 2.0.0
 
@@ -43169,7 +43175,7 @@ snapshots:
       jimp-compact: 0.16.1
       parse-png: 2.1.0
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       temp-dir: 2.0.0
       unique-string: 2.0.0
 
@@ -43321,7 +43327,7 @@ snapshots:
       '@react-native/normalize-colors': 0.79.6
       debug: 4.4.3
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       xml2js: 0.6.0
     transitivePeerDependencies:
       - supports-color
@@ -43336,7 +43342,7 @@ snapshots:
       '@react-native/normalize-colors': 0.79.2
       debug: 4.4.3
       resolve-from: 5.0.0
-      semver: 7.7.3
+      semver: 7.8.1
       xml2js: 0.6.0
     transitivePeerDependencies:
       - supports-color
@@ -45443,11 +45449,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.1.0(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-chunk-20260603162854(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 1.17.1(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.5.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 0.0.0-hyperliquid-chunk-20260603162854(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45780,6 +45786,11 @@ snapshots:
       clsx: 2.1.1
       react: 19.0.0
       tailwind-merge: 2.6.0
+
+  '@ledgerhq/signer-utils@0.0.0-hyperliquid-chunk-20260603162854(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.5.0(rxjs@7.8.2)
+      semver: 7.7.2
 
   '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.5.0(rxjs@7.8.2))':
     dependencies:
@@ -46276,7 +46287,7 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.7.3
+      semver: 7.8.1
     optional: true
 
   '@npmcli/fs@2.1.2':
@@ -46302,7 +46313,7 @@ snapshots:
       enquirer: 2.3.6
       minimatch: 9.0.3
       nx: 22.5.1
-      semver: 7.7.3
+      semver: 7.8.1
       tslib: 2.6.2
       yargs-parser: 21.1.1
 
@@ -46545,7 +46556,7 @@ snapshots:
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.52.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.25.1
-      semver: 7.7.3
+      semver: 7.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -46639,7 +46650,7 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.4.2
       require-in-the-middle: 7.3.0
-      semver: 7.7.3
+      semver: 7.8.1
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -46652,7 +46663,7 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.10.0
       require-in-the-middle: 7.3.0
-      semver: 7.7.3
+      semver: 7.8.1
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -48115,7 +48126,7 @@ snapshots:
       execa: 5.1.1
       node-stream-zip: 1.15.0
       ora: 5.4.1
-      semver: 7.7.3
+      semver: 7.8.1
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
       yaml: 2.8.1
@@ -48246,7 +48257,7 @@ snapshots:
       open: 6.4.0
       ora: 5.4.1
       prompts: 2.4.2
-      semver: 7.7.3
+      semver: 7.8.1
       shell-quote: 1.8.3
       sudo-prompt: 9.2.1
 
@@ -48743,7 +48754,7 @@ snapshots:
       metro: 0.82.5
       metro-config: 0.82.5
       metro-core: 0.82.5
-      semver: 7.7.3
+      semver: 7.8.1
     optionalDependencies:
       '@react-native-community/cli': 15.1.0(typescript@6.0.2)
     transitivePeerDependencies:
@@ -48761,7 +48772,7 @@ snapshots:
       metro: 0.82.5
       metro-config: 0.82.5(metro-transform-worker@0.81.5)
       metro-core: 0.82.5
-      semver: 7.7.3
+      semver: 7.8.1
     optionalDependencies:
       '@react-native-community/cli': 15.1.0(typescript@6.0.2)
     transitivePeerDependencies:
@@ -48779,7 +48790,7 @@ snapshots:
       metro: 0.82.5
       metro-config: 0.82.5
       metro-core: 0.82.5
-      semver: 7.7.3
+      semver: 7.8.1
     optionalDependencies:
       '@react-native-community/cli': 18.0.1(typescript@6.0.2)
     transitivePeerDependencies:
@@ -53949,7 +53960,7 @@ snapshots:
       debug: 4.4.3
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.7.3
+      semver: 7.8.1
       tsutils: 3.21.0(typescript@4.9.5)
     optionalDependencies:
       typescript: 4.9.5
@@ -53963,7 +53974,7 @@ snapshots:
       debug: 4.4.3
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.7.3
+      semver: 7.8.1
       tsutils: 3.21.0(typescript@6.0.2)
     optionalDependencies:
       typescript: 6.0.2
@@ -53995,7 +54006,7 @@ snapshots:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@6.0.2)
       eslint: 8.57.0
       eslint-scope: 5.1.1
-      semver: 7.7.3
+      semver: 7.8.1
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -54469,7 +54480,7 @@ snapshots:
       open: 8.4.2
       ora: 5.4.1
       read-pkg: 5.2.0
-      semver: 7.7.3
+      semver: 7.8.1
       strip-ansi: 6.0.1
     transitivePeerDependencies:
       - encoding
@@ -57493,7 +57504,7 @@ snapshots:
       dot-prop: 8.0.2
       env-paths: 3.0.0
       json-schema-typed: 8.0.1
-      semver: 7.7.3
+      semver: 7.8.1
       uint8array-extras: 0.3.0
 
   config-file-ts@0.2.8-rc1:
@@ -57830,7 +57841,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
-      semver: 7.7.3
+      semver: 7.8.1
     optionalDependencies:
       webpack: 5.94.0(@swc/core@1.15.11)
 
@@ -60125,7 +60136,7 @@ snapshots:
       process-warning: 5.0.0
       rfdc: 1.3.1
       secure-json-parse: 4.1.0
-      semver: 7.7.3
+      semver: 7.8.1
       toad-cache: 3.7.0
 
   fastq@1.17.1:
@@ -60453,7 +60464,7 @@ snapshots:
       memfs: 3.5.3
       minimatch: 3.1.2
       schema-utils: 2.7.0
-      semver: 7.7.3
+      semver: 7.8.1
       tapable: 1.1.3
       typescript: 6.0.2
       webpack: 5.94.0(@swc/core@1.15.11)
@@ -60866,7 +60877,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.3
+      semver: 7.8.1
       serialize-error: 7.0.1
     optional: true
 
@@ -62952,7 +62963,7 @@ snapshots:
       jest-message-util: 30.2.0
       jest-util: 30.2.0
       pretty-format: 30.2.0
-      semver: 7.7.3
+      semver: 7.8.1
       synckit: 0.11.11
     transitivePeerDependencies:
       - metro
@@ -63426,7 +63437,7 @@ snapshots:
       lodash.isstring: 4.0.1
       lodash.once: 4.1.1
       ms: 2.1.3
-      semver: 7.7.3
+      semver: 7.8.1
 
   jsonwebtoken@9.0.3:
     dependencies:
@@ -63439,7 +63450,7 @@ snapshots:
       lodash.isstring: 4.0.1
       lodash.once: 4.1.1
       ms: 2.1.3
-      semver: 7.7.3
+      semver: 7.8.1
 
   jsprim@1.4.2:
     dependencies:
@@ -64331,7 +64342,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.3
+      semver: 7.8.1
 
   make-error@1.3.6: {}
 
@@ -65872,7 +65883,7 @@ snapshots:
 
   node-api-version@0.2.1:
     dependencies:
-      semver: 7.7.3
+      semver: 7.8.1
 
   node-domexception@1.0.0: {}
 
@@ -65909,7 +65920,7 @@ snapshots:
       nopt: 5.0.0
       npmlog: 6.0.2
       rimraf: 3.0.2
-      semver: 7.7.3
+      semver: 7.8.1
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -65999,7 +66010,7 @@ snapshots:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.16.1
-      semver: 7.7.3
+      semver: 7.8.1
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -66016,7 +66027,7 @@ snapshots:
     dependencies:
       hosted-git-info: 7.0.2
       proc-log: 4.2.0
-      semver: 7.7.3
+      semver: 7.8.1
       validate-npm-package-name: 5.0.1
 
   npm-run-path@2.0.2:
@@ -67072,7 +67083,7 @@ snapshots:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.5.6)
       postcss-normalize: 10.0.1(browserslist@4.28.2)(postcss@8.5.6)
       postcss-preset-env: 7.8.3(postcss@8.5.6)
-      semver: 7.7.3
+      semver: 7.8.1
       webpack: 5.94.0(@swc/core@1.15.11)
     transitivePeerDependencies:
       - browserslist
@@ -71334,7 +71345,7 @@ snapshots:
       chalk: 4.1.2
       enhanced-resolve: 5.18.4
       micromatch: 4.0.8
-      semver: 7.7.3
+      semver: 7.8.1
       source-map: 0.7.6
       typescript: 6.0.2
       webpack: 5.94.0(@swc/core@1.15.11)
