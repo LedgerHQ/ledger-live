@@ -62,6 +62,37 @@ export type UseContacts = {
    * found — keeps callers simple.
    */
   removeAddressFromContact: (args: RemoveAddressFromContactArgs) => Promise<void>;
+  /**
+   * Hard-delete a contact from the canonical wallet. Client-side only —
+   * DMK doesn't expose a "delete contact" verb yet, so the on-device
+   * group lingers until that ships. The local snapshot drops the
+   * `contactName` key (along with all its entries). No-op when the
+   * contact isn't in the wallet.
+   */
+  removeContact: (args: { contactName: string }) => Promise<void>;
+  /**
+   * Create an empty contact directly in the canonical wallet — no
+   * device flow. Used by the L4 "Add contact" dialog so a contact can
+   * exist (and be selected) before it has any address. The stub carries
+   * empty `groupHandleHex` / `hmacNameHex` (the device assigns those
+   * only at registration), so `groupHandleHex === ""` is the marker for
+   * "not yet device-registered". Idempotent: no-op when `name` already
+   * exists in the wallet.
+   */
+  upsertLocalContact: (args: { name: string }) => Promise<void>;
+  /**
+   * Rename a NOT-yet-registered contact locally — no device flow. Re-keys
+   * the wallet from `oldName` to `newName` (the map is keyed by name) and
+   * updates the entry's `name`. If `oldName` isn't present (e.g. the
+   * synthetic "me" placeholder that's never been materialized), it
+   * creates a fresh empty stub under `newName`. No-op when
+   * `oldName === newName`.
+   *
+   * Device-registered contacts must NOT use this — their rename goes
+   * through the DMK `renameContact` verb so the on-device HMAC name
+   * record stays consistent.
+   */
+  renameLocalContact: (args: { oldName: string; newName: string }) => Promise<void>;
   reset: () => Promise<void>;
 };
 
@@ -106,6 +137,16 @@ const finalize = async <Output>(returnType: {
   if (final.status === DeviceActionStatus.Completed) return final.output;
   if (final.status === DeviceActionStatus.Error) {
     const err = final.error as unknown;
+    // Dev-time diagnostic: dump the full DMK error object to the
+    // console so contributors can see the raw `errorCode` / `_tag` /
+    // intermediate state instead of just the user-facing copy. Helps
+    // debug "Device didn't approve the action" reports without
+    // having to wire a device.
+    // eslint-disable-next-line no-console
+    console.error("[contacts] DMK device action errored", {
+      finalState: final,
+      error: err,
+    });
     // Real Error → rethrow as-is so stacks survive.
     if (err instanceof Error) throw err;
     // DMK tagged-object errors (e.g. `EthAppCommandError`) aren't Error
@@ -173,6 +214,8 @@ export const useContacts = (): UseContacts => {
   const addContact = useCallback(
     (deviceId: string, args: AddContactArgs): Promise<Contact> =>
       withDmk(deviceId, async deps => {
+        // eslint-disable-next-line no-console
+        console.log("[contacts] addContact → DMK", { args });
         const result = await finalize(buildSigner(deps).registerExternalAddress(args));
         const next: Contact = {
           name: args.name,
@@ -201,6 +244,14 @@ export const useContacts = (): UseContacts => {
     (deviceId: string, args: AddAddressToContactArgs): Promise<Contact> =>
       withDmk(deviceId, async deps => {
         const existing = lookupContact(wallet, args.contactName);
+        // eslint-disable-next-line no-console
+        console.log("[contacts] addAddressToContact → DMK", {
+          args,
+          existingName: existing.name,
+          groupHandleHex: existing.groupHandleHex,
+          hmacNameHex: existing.hmacNameHex,
+          entryCount: existing.entries.length,
+        });
         const result = await finalize(
           buildSigner(deps).registerExternalAddress({
             name: args.name,
@@ -386,6 +437,67 @@ export const useContacts = (): UseContacts => {
     [commit, wallet],
   );
 
+  const removeContact = useCallback(
+    async ({ contactName }: { contactName: string }): Promise<void> => {
+      const walletContacts = wallet?.contacts ?? {};
+      if (!(contactName in walletContacts)) return;
+      const { [contactName]: _omit, ...rest } = walletContacts;
+      await commit({
+        contacts: rest,
+        accounts: wallet?.accounts ?? {},
+      });
+    },
+    [commit, wallet],
+  );
+
+  const upsertLocalContact = useCallback(
+    async ({ name }: { name: string }): Promise<void> => {
+      const walletContacts = wallet?.contacts ?? {};
+      // Idempotent: never clobber an existing entry (which may already
+      // carry device-issued HMAC fields + addresses).
+      if (name in walletContacts) return;
+      const next: Contact = {
+        name,
+        // Empty HMAC slots — these are populated only when the contact
+        // is registered on device (`addContact`). `groupHandleHex === ""`
+        // is the project-wide marker for "local-only, not yet on device".
+        groupHandleHex: "",
+        hmacNameHex: "",
+        entries: [],
+      };
+      await commit({
+        contacts: { ...walletContacts, [name]: next },
+        accounts: wallet?.accounts ?? {},
+      });
+    },
+    [commit, wallet],
+  );
+
+  const renameLocalContact = useCallback(
+    async ({ oldName, newName }: { oldName: string; newName: string }): Promise<void> => {
+      if (oldName === newName) return;
+      const walletContacts = wallet?.contacts ?? {};
+      const existing = walletContacts[oldName];
+      // The wallet map is keyed by name, so a rename re-keys: drop the
+      // old key and insert under the new one. When `oldName` is absent
+      // (the synthetic "me" placeholder that's never been materialized),
+      // fall back to a fresh empty stub so the rename effectively
+      // CREATES the contact under `newName`.
+      const base: Contact = existing ?? {
+        name: newName,
+        groupHandleHex: "",
+        hmacNameHex: "",
+        entries: [],
+      };
+      const { [oldName]: _omit, ...rest } = walletContacts;
+      await commit({
+        contacts: { ...rest, [newName]: { ...base, name: newName } },
+        accounts: wallet?.accounts ?? {},
+      });
+    },
+    [commit, wallet],
+  );
+
   return {
     hydrated,
     wallet,
@@ -396,6 +508,9 @@ export const useContacts = (): UseContacts => {
     renameContact,
     addLedgerAccount,
     removeAddressFromContact,
+    removeContact,
+    upsertLocalContact,
+    renameLocalContact,
     reset: async () => resetStore(),
   };
 };

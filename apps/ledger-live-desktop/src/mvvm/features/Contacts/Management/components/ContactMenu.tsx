@@ -32,9 +32,9 @@ import { cn } from "LLD/utils/cn";
  * TODO(contacts-L4.1):
  *   - "Edit contact"   → useContacts().renameContact(deviceId, …) via
  *                        a Lumen Dialog with a name input.
- *   - "Delete contact" → no DMK verb today; for sidecar contacts we
- *                        can call removeSidecarContact; for canonical
- *                        contacts, wait for the API surface.
+ *   - "Delete contact" → no DMK verb today; the local wallet entry is
+ *                        dropped via useContacts().removeContact, the
+ *                        on-device group lingers until the API ships.
  */
 
 type ActionId = "edit" | "delete";

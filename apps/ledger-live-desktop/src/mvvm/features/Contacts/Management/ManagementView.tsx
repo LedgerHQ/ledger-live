@@ -44,6 +44,16 @@ export type ManagementViewProps = {
     newScope: string,
   ) => (deviceId: string) => Promise<unknown>;
   /**
+   * Verb factory for the on-device address edit. Threaded through
+   * to `ContactDetails` and then to `EditAddressDialog`, which
+   * hands the returned closure to `RunDeviceAction.run`.
+   */
+  onEditAddressOnDevice: (
+    currentDisplayName: string,
+    entry: { addressHex: string; chainId: number; scope: string },
+    newAddressHex: string,
+  ) => (deviceId: string) => Promise<unknown>;
+  /**
    * Verb factory for renaming a canonical contact through the device.
    * The dialog passes the returned closure to `RunDeviceAction.run`.
    */
@@ -74,7 +84,11 @@ export type ManagementViewProps = {
 export function ManagementView({
   groups,
   searchQuery,
-  selectedContactName,
+  // `selectedContactName` (the raw selection state) is intentionally not
+  // destructured here — the list highlight is driven off the resolved
+  // `selectedContact.name` below so it stays in sync with the right pane
+  // even for the materialized Me row. It remains on the props type since
+  // the parent spreads the whole view-model.
   selectedContact,
   selectedContactIsMe,
   selectedContactRequiresDeviceConfirm,
@@ -87,6 +101,7 @@ export function ManagementView({
   onDeleteContact,
   onDeleteAddress,
   onRenameAddressLabelOnDevice,
+  onEditAddressOnDevice,
 }: ManagementViewProps) {
   const [addContactOpen, setAddContactOpen] = useState(false);
 
@@ -120,7 +135,15 @@ export function ManagementView({
         <ContactList
           groups={groups}
           searchQuery={searchQuery}
-          selectedContactName={selectedContactName}
+          // Drive the list highlight off the RESOLVED selected contact's
+          // name, not the raw `selectedContactName` state. On first load
+          // the state is the literal `"me"` placeholder key, but the
+          // pinned row may be a materialized Me (e.g. "Brian (Me)"). The
+          // view-model resolves that to `selectedContact` via
+          // `isMeIdentity`; matching the row against `selectedContact.name`
+          // keeps the left-list highlight in sync with the right pane.
+          // For every post-click selection the two are already identical.
+          selectedContactName={selectedContact.name}
           onSearchQueryChange={onSearchQueryChange}
           onSelectContact={onSelectContact}
           // Share the AddContact dialog opener with the empty-state
@@ -138,6 +161,7 @@ export function ManagementView({
           onDeleteContact={onDeleteContact}
           onDeleteAddress={onDeleteAddress}
           onRenameAddressLabelOnDevice={onRenameAddressLabelOnDevice}
+          onEditAddressOnDevice={onEditAddressOnDevice}
         />
       </div>
 

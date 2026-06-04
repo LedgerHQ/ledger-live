@@ -10,18 +10,6 @@ import {
   type ContactGroup,
   type DisplayContact,
 } from "../utils/groupContacts";
-import {
-  addSidecarContact,
-  useSidecarContacts,
-} from "../utils/sidecarContacts";
-import {
-  clearContactDeleted,
-  clearContactRename,
-  markContactDeleted,
-  setContactRename,
-  useContactRenames,
-  useDeletedContacts,
-} from "../utils/sidecarOverrides";
 
 // Re-export so existing import paths (`ContactDetails` reads this from
 // the viewmodel module) keep working. New code should pull the helper
@@ -34,18 +22,18 @@ export type ManagementViewModel = {
   selectedContactName: string;
   selectedContact: DisplayContact;
   /**
-   * True when the selected contact resolves (via the rename overlay)
-   * to the special "me" identity. Used by `ContactDetails` to hide
-   * the Delete affordance and strip the `(Me)` suffix in the edit
-   * dialog's pre-fill.
+   * True when the selected contact is the special "me" identity (the
+   * literal default `"me"` placeholder OR any name carrying the ` (Me)`
+   * suffix). Used by `ContactDetails` to hide the Delete affordance and
+   * strip the `(Me)` suffix in the edit dialog's pre-fill.
    */
   selectedContactIsMe: boolean;
   /**
-   * True when the selected contact has at least one address registered
-   * on device (i.e. a canonical entry exists in `wallet.contacts` under
-   * its underlying name). The Edit dialog uses this to gate renaming
-   * behind the on-device change-name flow — renaming a row that the
-   * device knows must keep the on-device label in sync.
+   * True when the selected contact is registered on device — detected
+   * via a non-empty `groupHandleHex` (the device assigns it at
+   * registration; a local-only stub carries `""`). The Edit dialog uses
+   * this to gate renaming behind the on-device change-name flow — a row
+   * the device knows must keep its on-device name record in sync.
    */
   selectedContactRequiresDeviceConfirm: boolean;
   /** Display names that are already taken — used by Add/Edit dialogs' duplicate checks. */
@@ -53,37 +41,42 @@ export type ManagementViewModel = {
   onSearchQueryChange: (next: string) => void;
   onSelectContact: (name: string) => void;
   /**
-   * Add a new (sidecar-backed) contact and auto-select it. Caller is
-   * expected to have already validated the name via the dialog (we
-   * still no-op on empties + duplicates here as a belt-and-braces).
+   * Create a new empty contact directly in the canonical wallet and
+   * auto-select it. Caller is expected to have already validated the
+   * name via the dialog (we still no-op on empties + duplicates here as
+   * a belt-and-braces).
    */
   onAddContact: (name: string) => void;
   /**
-   * Local-only rename. Adds a `sidecarOverrides` rename entry mapping
-   * the underlying name → display name and updates the selection.
-   * Used for rows that don't have an on-device entry yet (sidecar-only,
-   * synthesized "me", or renamed sidecar). The device-backed path lives
-   * in `onRenameContactOnDevice` — callers pick based on
+   * Local-only rename — re-keys the canonical wallet from the current
+   * display name to the new name (no device flow). Used for rows that
+   * aren't registered on device yet (a fresh empty stub or the
+   * synthesized "me", which gets materialized into the wallet on its
+   * first rename). The device-backed path lives in
+   * `onRenameContactOnDevice` — callers pick based on
    * `selectedContactRequiresDeviceConfirm`.
    */
   onRenameContact: (currentDisplayName: string, newName: string) => void;
   /**
-   * Build the device verb that renames a canonical contact through the
+   * Build the device verb that renames a registered contact through the
    * DMK change-name flow. Returns a closure that the caller hands to
    * `RunDeviceAction.run`. On success the canonical wallet is re-keyed
-   * to the new name (handled inside `useContacts.renameContact`), the
-   * selection follows, and any now-stale rename overlay entry is dropped.
+   * to the new name (handled inside `useContacts.renameContact`) and the
+   * selection follows.
    */
   onRenameContactOnDevice: (
     currentDisplayName: string,
     newName: string,
   ) => (deviceId: string) => Promise<void>;
   /**
-   * Delete a contact from the displayed list. Adds the underlying name
-   * to the `sidecarOverrides` deleted set. Selection snaps back to "me"
-   * (which always renders thanks to the synthesized placeholder).
+   * Hard-delete a contact and every trace of it:
+   *   - drops the canonical wallet entry (and every address entry on it),
+   *   - clears the cryptoMeta annotation keyed by each of those entries.
+   *
+   * Selection snaps back to "me" (always available via the synthesized
+   * placeholder).
    */
-  onDeleteContact: (displayName: string) => void;
+  onDeleteContact: (displayName: string) => Promise<void>;
   /**
    * Drop one address from a contact's entry list. Client-side only
    * — no DMK address-removal verb ships yet. Also clears the matching
@@ -110,79 +103,61 @@ export type ManagementViewModel = {
     entry: { addressHex: string; chainId: number; scope: string },
     newScope: string,
   ) => (deviceId: string) => Promise<void>;
+  /**
+   * Build the device verb that swaps one entry's `addressHex` via
+   * DMK's `editExternalAddress`. Returns a closure the caller hands
+   * to `RunDeviceAction.run`. The firmware re-HMACs against the new
+   * address, so a device prompt is mandatory. Also migrates the
+   * cryptoMeta annotation from the old address key to the new one
+   * so the entry stays in the same crypto bucket post-edit.
+   */
+  onEditAddressOnDevice: (
+    currentDisplayName: string,
+    entry: { addressHex: string; chainId: number; scope: string },
+    newAddressHex: string,
+  ) => (deviceId: string) => Promise<void>;
 };
 
 /**
  * Selection + search state for the Contacts management page.
  *
- * Reads:
- *   - `useContacts().wallet.contacts` — canonical DMK-backed map.
- *   - `useSidecarContacts()` — sidecar-only contacts created via the
- *     L4 "Add contact" Dialog.
- *   - `useContactRenames()` — `underlyingName → displayName` overlay.
- *   - `useDeletedContacts()` — names hidden from the view.
+ * Single source of truth: `useContacts().wallet.contacts` — the
+ * canonical DMK-backed map persisted to `lld-contacts.json`. Both
+ * device-registered contacts AND local-only stubs (created via the L4
+ * "Add contact" dialog, `groupHandleHex === ""`) live here; there is no
+ * separate sidecar / rename-overlay / tombstone storage.
  *
- * Merge order: canonical first, sidecar last → sidecar wins on name
- * collision. Rename overlay is then applied, so every consumer sees
- * the post-rename display name. Deleted set filters at the end.
- *
- * `selectedContactName` lives in DISPLAY space (post-rename). When a
- * rename fires, we update it to the new value so the right pane
- * doesn't visually unselect.
- *
- * Same caveats as the other sidecars: strictly violates the
- * `docs/contacts.md` "no second storage path" rule; demo-only.
+ * `selectedContactName` is the wallet key (== the contact's display
+ * `name`). When a rename fires it re-keys the wallet and we update the
+ * selection to the new name so the right pane doesn't visually unselect.
  */
 export function useManagementViewModel(): ManagementViewModel {
   const contacts = useContacts();
   const { wallet } = contacts;
-  const sidecar = useSidecarContacts();
-  const renames = useContactRenames();
-  const deleted = useDeletedContacts();
-
-  // Reverse the rename overlay: given a row's current display name,
-  // return the key it lives under in the canonical wallet / sidecar.
-  // Shared between the device-rename verb and the
-  // `requiresDeviceConfirm` check so both stay in lockstep.
-  const resolveUnderlying = useCallback(
-    (displayName: string): string =>
-      Object.entries(renames).find(([, dn]) => dn === displayName)?.[0] ??
-      displayName,
-    [renames],
-  );
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedContactName, setSelectedContactName] =
     useState<string>(ME_CONTACT_NAME);
 
-  // Canonical + sidecar merge. Apply renames → derive a final
-  // `Record<displayName, DisplayContact>` with each entry's `name`
-  // rewritten to the display name AND a `colorKey` field attached so
-  // the avatar's background stays pinned across renames. Filter out
-  // deleted names AFTER the rename (so deletion can target either the
-  // underlying or the display name — both work because renames are
-  // applied first).
+  // Derive a `Record<name, DisplayContact>` straight off the canonical
+  // wallet, attaching a `colorKey` so the avatar's background stays
+  // stable across renames (see below).
   //
-  // We also inject a synthetic Me placeholder into the source when
-  // no real Me-identity row exists yet (no `"me"` in wallet, no
-  // `"… (Me)"` post-promotion row). Without this, renaming the
-  // default Me row writes `renames["me"] = "brian (Me)"` to storage
-  // but the overlay never gets applied — there's no source entry
-  // keyed by `"me"` for the loop below to rewrite. `groupContacts`'s
-  // own synthesis kicks in too late: it sees the merge missing Me
-  // and rebuilds the default placeholder, throwing away the rename.
+  // We inject a synthetic Me placeholder when no real Me-identity row
+  // exists yet (no `"me"` key, no `"… (Me)"` post-rename row). The
+  // placeholder is display-only — it gets materialized into the wallet
+  // the first time the user renames Me (`renameLocalContact`).
   const mergedContacts = useMemo<Record<string, DisplayContact>>(() => {
     const out: Record<string, DisplayContact> = {};
     // `wallet` can be undefined for a tick under jsdom (the contacts
     // store hydrates asynchronously in an effect). Guard so the
     // viewmodel doesn't crash before hydration completes.
     const walletContacts = wallet?.contacts ?? {};
-    const baseSource = { ...walletContacts, ...sidecar };
-    const hasMeIdentity = Object.keys(baseSource).some(k => isMeIdentity(k));
+    const hasMeIdentity = Object.keys(walletContacts).some(k => isMeIdentity(k));
     const source = hasMeIdentity
-      ? baseSource
+      ? walletContacts
       : {
-          ...baseSource,
+          ...walletContacts,
           [ME_CONTACT_NAME]: {
             name: ME_CONTACT_NAME,
             groupHandleHex: "",
@@ -190,20 +165,23 @@ export function useManagementViewModel(): ManagementViewModel {
             entries: [],
           },
         };
-    for (const [underlying, contact] of Object.entries(source)) {
-      if (deleted[underlying]) continue;
-      const displayName = renames[underlying] ?? underlying;
-      if (deleted[displayName]) continue;
-      // Stable color seed. Priority: device-issued group handle (won't
-      // change for the lifetime of the contact), falling back to the
-      // underlying sidecar / Me key (stable across every L4 rename
-      // overlay). Either way the avatar's pastel survives every
-      // user-visible rename path.
-      const colorKey = contact.groupHandleHex || underlying;
-      out[displayName] = { ...contact, name: displayName, colorKey };
+    for (const [name, contact] of Object.entries(source)) {
+      // Stable color seed:
+      //   - Me identity → always the literal `"me"` key, so Me's pastel
+      //     never changes across renames / materialization.
+      //   - Registered contact → its device-issued `groupHandleHex`
+      //     (preserved through the on-device rename flow).
+      //   - Local-only stub → its `name`. A local rename re-keys the
+      //     wallet, so the seed follows the new name (and re-seeds again
+      //     to `groupHandleHex` once an address is registered). This is
+      //     the one place a not-yet-registered contact's color can shift.
+      const colorKey = isMeIdentity(name)
+        ? ME_CONTACT_NAME
+        : contact.groupHandleHex || name;
+      out[name] = { ...contact, name, colorKey };
     }
     return out;
-  }, [wallet?.contacts, sidecar, renames, deleted]);
+  }, [wallet?.contacts]);
 
   const groups = useMemo(
     () => groupContacts(mergedContacts, searchQuery),
@@ -251,14 +229,13 @@ export function useManagementViewModel(): ManagementViewModel {
     [selectedContact.name],
   );
 
-  // True iff the selected row has at least one address registered on
-  // device. The canonical wallet's keys are always the device-side
-  // names; reverse the rename overlay first so renamed rows resolve to
-  // their underlying key. Used by the Edit dialog to gate renaming
-  // behind the device change-name flow.
+  // True iff the selected row is registered on device — detected by a
+  // non-empty `groupHandleHex` (the device assigns it at registration; a
+  // local-only stub carries `""`). Used by the Edit dialog to gate
+  // renaming behind the device change-name flow.
   const selectedContactRequiresDeviceConfirm = useMemo(
-    () => resolveUnderlying(selectedContact.name) in (wallet?.contacts ?? {}),
-    [resolveUnderlying, selectedContact.name, wallet?.contacts],
+    () => selectedContact.groupHandleHex !== "",
+    [selectedContact.groupHandleHex],
   );
 
   const onAddContact = useCallback(
@@ -267,63 +244,65 @@ export function useManagementViewModel(): ManagementViewModel {
       if (!trimmed) return;
       // Defensive duplicate guard — the dialog already blocks this.
       if (Object.values(mergedContacts).some(c => c.name === trimmed)) return;
-      // Lift any deletion tombstone for this name before adding. The
-      // merge filters every entry against `deleted[name]`, so without
-      // this a contact previously deleted then recreated with the
-      // same label would be silently filtered out and the user would
-      // see nothing land in the list.
-      clearContactDeleted(trimmed);
-      addSidecarContact(trimmed);
+      // Write an empty contact straight into the canonical wallet so it
+      // persists in `lld-contacts.json`, ready to accept its first
+      // address. `commit` updates the in-memory snapshot synchronously,
+      // so the new row + selection land on the same tick (the floating
+      // promise just flushes to the IPC store).
+      void contacts.upsertLocalContact({ name: trimmed });
       setSelectedContactName(trimmed);
     },
-    [mergedContacts],
+    [contacts, mergedContacts],
   );
 
   const onRenameContact = useCallback(
     (currentDisplayName: string, newName: string) => {
       const trimmed = newName.trim();
       if (!trimmed) return;
-      const underlying = resolveUnderlying(currentDisplayName);
       // Protected Me identity: re-apply the ` (Me)` suffix so it
       // survives every rename. `applyMeSuffix` strips any pre-existing
       // suffix first so we never end up with `Benoit (Me) (Me)`.
-      const finalName = isMeIdentity(underlying) ? applyMeSuffix(trimmed) : trimmed;
+      const finalName = isMeIdentity(currentDisplayName)
+        ? applyMeSuffix(trimmed)
+        : trimmed;
       // No-op when the resulting name matches what's already displayed.
       if (finalName === currentDisplayName) return;
-      setContactRename(underlying, finalName);
-      // Snap selection to the new display name so the right pane
-      // doesn't unselect.
+      // Local re-key of the canonical wallet (no device). When the row
+      // is the synthetic Me (not yet in the wallet), this materializes
+      // it as an empty stub under the new name. `commit` updates the
+      // snapshot synchronously, so the rename + selection land together.
+      void contacts.renameLocalContact({ oldName: currentDisplayName, newName: finalName });
       setSelectedContactName(finalName);
     },
-    [resolveUnderlying],
+    [contacts],
   );
 
   // Device-backed rename. Returns a closure suitable for
   // `RunDeviceAction.run` — the EditContactDialog hands it to the
-  // runner once the user submits a new name on a canonical row.
+  // runner once the user submits a new name on a registered row.
   // `useContacts.renameContact` re-keys `wallet.contacts` from
-  // `oldName → newName` on commit, so the merged view picks up the
-  // new label without needing an overlay. We still snap the selection
-  // and drop any stale rename overlay entry as a defensive cleanup.
+  // `oldName → newName` on commit, so the merged view picks up the new
+  // label. The display name IS the wallet key, so we pass it straight
+  // through as `oldName`.
   const onRenameContactOnDevice = useCallback(
     (currentDisplayName: string, newName: string) =>
       async (deviceId: string): Promise<void> => {
         const trimmed = newName.trim();
         if (!trimmed) return;
-        const underlying = resolveUnderlying(currentDisplayName);
         // Mirror `onRenameContact`'s suffix logic so the device-side
-        // entry and the post-promotion wallet key both carry ` (Me)`.
-        // Without this, renaming a promoted Me row to "Bilson" used to
-        // commit "Bilson" on device, dropping the identity marker.
-        const finalName = isMeIdentity(underlying) ? applyMeSuffix(trimmed) : trimmed;
+        // entry and the wallet key both carry ` (Me)`. Without this,
+        // renaming a registered Me row to "Bilson" used to commit
+        // "Bilson" on device, dropping the identity marker.
+        const finalName = isMeIdentity(currentDisplayName)
+          ? applyMeSuffix(trimmed)
+          : trimmed;
         await contacts.renameContact(deviceId, {
-          oldName: underlying,
+          oldName: currentDisplayName,
           newName: finalName,
         });
         setSelectedContactName(finalName);
-        clearContactRename(underlying);
       },
-    [contacts, resolveUnderlying],
+    [contacts],
   );
 
   const onRenameAddressLabelOnDevice = useCallback(
@@ -335,7 +314,6 @@ export function useManagementViewModel(): ManagementViewModel {
       async (deviceId: string): Promise<void> => {
         const trimmed = newScope.trim();
         if (!trimmed || trimmed === entry.scope) return;
-        const underlying = resolveUnderlying(currentDisplayName);
         // Snapshot the existing cryptoMeta annotation BEFORE the
         // device call. The wallet entry's `scope` flips inside
         // `useContacts.editAddressLabel`'s commit on success, so a
@@ -346,7 +324,7 @@ export function useManagementViewModel(): ManagementViewModel {
           entry.scope,
         );
         await contacts.editAddressLabel(deviceId, {
-          contactName: underlying,
+          contactName: currentDisplayName,
           addressHex: entry.addressHex,
           oldLabel: entry.scope,
           newLabel: trimmed,
@@ -361,7 +339,41 @@ export function useManagementViewModel(): ManagementViewModel {
           setCryptoMeta(entry.addressHex, entry.chainId, trimmed, existingCrypto);
         }
       },
-    [contacts, resolveUnderlying],
+    [contacts],
+  );
+
+  const onEditAddressOnDevice = useCallback(
+    (
+      currentDisplayName: string,
+      entry: { addressHex: string; chainId: number; scope: string },
+      newAddressHex: string,
+    ) =>
+      async (deviceId: string): Promise<void> => {
+        const trimmed = newAddressHex.trim();
+        if (!trimmed || trimmed === entry.addressHex) return;
+        // Snapshot cryptoMeta BEFORE the device call — once the
+        // wallet entry's `addressHex` flips inside
+        // `useContacts.editAddress`'s commit, a read by the old key
+        // would return undefined.
+        const existingCrypto = readCryptoMeta(
+          entry.addressHex,
+          entry.chainId,
+          entry.scope,
+        );
+        await contacts.editAddress(deviceId, {
+          contactName: currentDisplayName,
+          oldAddressHex: entry.addressHex,
+          newAddressHex: trimmed,
+          chainId: entry.chainId,
+        });
+        // Migrate the cryptoMeta annotation to the new addressHex
+        // key (scope stays). Skipped when no annotation existed.
+        if (existingCrypto !== undefined) {
+          setCryptoMeta(entry.addressHex, entry.chainId, entry.scope, undefined);
+          setCryptoMeta(trimmed, entry.chainId, entry.scope, existingCrypto);
+        }
+      },
+    [contacts],
   );
 
   const onDeleteAddress = useCallback(
@@ -369,12 +381,10 @@ export function useManagementViewModel(): ManagementViewModel {
       currentDisplayName: string,
       entry: { addressHex: string; chainId: number; scope: string },
     ): Promise<void> => {
-      // The canonical wallet is keyed by the contact's device-side
-      // name. Reverse any L4 rename overlay so we look up the right
-      // bucket — same dance as `onRenameContactOnDevice`.
-      const underlying = resolveUnderlying(currentDisplayName);
+      // The canonical wallet is keyed by the contact's name, which is
+      // exactly the display name (no overlay indirection).
       await contacts.removeAddressFromContact({
-        contactName: underlying,
+        contactName: currentDisplayName,
         entry,
       });
       // Drop the cosmetic crypto-id annotation for this entry so the
@@ -383,27 +393,38 @@ export function useManagementViewModel(): ManagementViewModel {
       // bucket if it ever reappeared (it won't, but cleanliness).
       setCryptoMeta(entry.addressHex, entry.chainId, entry.scope, undefined);
     },
-    [contacts, resolveUnderlying],
+    [contacts],
   );
 
   const onDeleteContact = useCallback(
-    (displayName: string) => {
-      const underlying = resolveUnderlying(displayName);
+    async (displayName: string): Promise<void> => {
       // The Me identity is protected — it can be renamed but never
       // deleted. Routed through `isMeIdentity` so the guard fires for
-      // both the default `"me"` placeholder AND a promoted row whose
-      // canonical key carries the ` (Me)` suffix.
-      if (isMeIdentity(underlying)) return;
-      // Mark BOTH the underlying name and the current display name as
-      // deleted, so the filter catches it regardless of which side of
-      // the rename overlay the row is using.
-      markContactDeleted(underlying);
-      if (underlying !== displayName) markContactDeleted(displayName);
-      // Snap selection back to "me" (always available via the
-      // synthesized placeholder).
+      // both the default `"me"` placeholder AND a materialized row whose
+      // wallet key carries the ` (Me)` suffix.
+      if (isMeIdentity(displayName)) return;
+
+      // 1) Clear the cryptoMeta annotation for every entry on the
+      //    contact (the cosmetic crypto-id sidecar keyed by
+      //    `(addressHex, chainId, scope)`). Read the wallet entry
+      //    BEFORE we drop it.
+      const canonical = wallet?.contacts?.[displayName];
+      if (canonical) {
+        for (const e of canonical.entries) {
+          setCryptoMeta(e.addressHex, e.chainId, e.scope, undefined);
+        }
+      }
+
+      // 2) Drop the wallet entry (and every address on it). This is the
+      //    only contact store now, so the contact is fully gone — a
+      //    future re-add of the same name lands cleanly.
+      await contacts.removeContact({ contactName: displayName });
+
+      // 3) Snap selection back to "me" (always available via the
+      //    synthesized placeholder).
       setSelectedContactName(ME_CONTACT_NAME);
     },
-    [resolveUnderlying],
+    [contacts, wallet?.contacts],
   );
 
   return {
@@ -422,5 +443,6 @@ export function useManagementViewModel(): ManagementViewModel {
     onDeleteContact,
     onDeleteAddress,
     onRenameAddressLabelOnDevice,
+    onEditAddressOnDevice,
   };
 }

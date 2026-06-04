@@ -38,6 +38,7 @@ const baseProps = (overrides: Partial<React.ComponentProps<typeof ManagementView
     onDeleteContact: jest.fn(),
     onDeleteAddress: jest.fn().mockResolvedValue(undefined),
     onRenameAddressLabelOnDevice: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
+    onEditAddressOnDevice: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
     ...overrides,
   };
 };
@@ -67,6 +68,37 @@ describe("ManagementView", () => {
     const rows = screen.getAllByTestId("contacts-management-list-item");
     const selectedRows = rows.filter(r => r.getAttribute("data-selected") === "true");
     expect(selectedRows).toHaveLength(1);
+  });
+
+  it("highlights the materialized Me row on first load (raw selection state is still 'me')", () => {
+    // Reproduces the first-load case: the pinned row is a materialized
+    // Me (e.g. "Brian (Me)"), but the raw `selectedContactName` state is
+    // still the literal `"me"` placeholder. The highlight must track the
+    // RESOLVED `selectedContact`, so the "Brian (Me)" row is active.
+    const brianMe = stub("Brian (Me)", 0);
+    const alice = stub("Alice", 2);
+    const groups = groupContacts(
+      { [brianMe.name]: brianMe, [alice.name]: alice },
+      "",
+    );
+    render(
+      <ManagementView
+        {...baseProps({
+          groups,
+          // Raw state is still "me" (default initial value), but the
+          // resolved selected contact is the materialized Me row.
+          selectedContactName: ME_CONTACT_NAME,
+          selectedContact: brianMe,
+          selectedContactIsMe: true,
+          takenContactNames: [brianMe.name, alice.name],
+        })}
+      />,
+    );
+
+    const rows = screen.getAllByTestId("contacts-management-list-item");
+    const selected = rows.filter(r => r.getAttribute("data-selected") === "true");
+    expect(selected).toHaveLength(1);
+    expect(selected[0]).toHaveTextContent("Brian (Me)");
   });
 
   it("calls onSelectContact when a row is clicked", async () => {

@@ -37,6 +37,12 @@ type Props = {
    * don't expose the rename affordance yet.
    */
   onRenameAddress?: (entry: ContactEntry) => void;
+  /**
+   * Fired when the user picks "Edit address" from the trailing
+   * overflow menu. Optional so the row can be used in contexts that
+   * don't expose the edit affordance yet.
+   */
+  onEditAddress?: (entry: ContactEntry) => void;
 };
 
 /**
@@ -66,6 +72,7 @@ export function AddressRow({
   onSelect,
   onDeleteAddress,
   onRenameAddress,
+  onEditAddress,
 }: Props) {
   const chain = getChainInfo(entry.chainId);
 
@@ -138,6 +145,7 @@ export function AddressRow({
             onShowQrCode={() => onSelect(entry)}
             onDeleteAddress={onDeleteAddress ? () => onDeleteAddress(entry) : undefined}
             onRenameAddress={onRenameAddress ? () => onRenameAddress(entry) : undefined}
+            onEditAddress={onEditAddress ? () => onEditAddress(entry) : undefined}
           />
         </div>
       </ListItemTrailing>

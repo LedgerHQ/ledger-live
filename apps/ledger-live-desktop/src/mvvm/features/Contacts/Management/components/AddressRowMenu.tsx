@@ -97,6 +97,11 @@ type Props = {
    * `RenameAddressDialog` which prompts for the new per-entry label.
    */
   onRenameAddress?: () => void;
+  /**
+   * Fired when the user picks "Edit address". The host opens the
+   * `EditAddressDialog` which prompts for the new 0x hex.
+   */
+  onEditAddress?: () => void;
 };
 
 /**
@@ -116,7 +121,10 @@ export type AddressRowMenuHandle = {
 };
 
 export const AddressRowMenu = forwardRef<AddressRowMenuHandle, Props>(
-  function AddressRowMenu({ onShowQrCode, onDeleteAddress, onRenameAddress }, ref) {
+  function AddressRowMenu(
+    { onShowQrCode, onDeleteAddress, onRenameAddress, onEditAddress },
+    ref,
+  ) {
   const { t } = useTranslation();
   // Controlled state so the popover dismisses before any future
   // dialog (Rename / Edit / Delete address) renders its overlay.
@@ -162,7 +170,7 @@ export const AddressRowMenu = forwardRef<AddressRowMenuHandle, Props>(
     qr: onShowQrCode,
     send: undefined,
     rename: onRenameAddress,
-    edit: undefined,
+    edit: onEditAddress,
     delete: onDeleteAddress,
   };
   const handleAction = (id: ActionId) => () => {

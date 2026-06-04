@@ -86,3 +86,17 @@ export const useContactsStore = () => {
     reset,
   };
 };
+
+/**
+ * Test-only escape hatch. Resets the module-level snapshot to a clean,
+ * already-hydrated empty wallet and notifies subscribers, so consecutive
+ * tests in the same file don't leak committed contacts into one another.
+ * `hydrationStarted` stays latched so a freshly-rendered hook's
+ * `ensureHydration` effect no-ops (the snapshot is already pristine and
+ * we don't want the async IPC stub racing the test). Not for production
+ * callers.
+ */
+export const __resetForTests = (): void => {
+  hydrationStarted = true;
+  setSnapshot({ hydrated: true, persisted: emptyPersistedContacts() });
+};

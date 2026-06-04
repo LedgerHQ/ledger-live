@@ -36,8 +36,9 @@ export function NetworkStep({ crypto, onPick }: Props) {
     <div
       // No horizontal padding (DialogBody provides px-16). Description
       // text and list rows align with the title at 24px from the modal
-      // edge — same composition as AssetStep.
-      className="flex flex-col gap-24 pb-24"
+      // edge — same composition as AssetStep. Vertical padding is owned
+      // by the parent `DialogBody` (see AddAddressDialog).
+      className="flex flex-col gap-24"
       data-testid="contacts-management-add-address-network-step"
     >
       <p className="body-2 text-muted px-8">

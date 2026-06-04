@@ -9120,13 +9120,19 @@
       "placeholder": "Address name",
       "submit": "Change address name"
     },
+    "editAddressDialog": {
+      "title": "Edit address",
+      "placeholder": "Address",
+      "submit": "Confirm modification"
+    },
     "addContactDialog": {
       "title": "Add contact",
       "placeholder": "Contact name",
       "submit": "Add contact",
       "errorAscii": "Use ASCII characters only.",
       "errorDuplicate": "A contact with this name already exists.",
-      "errorMeSuffix": "The '(Me)' suffix is reserved for your own contact."
+      "errorMeSuffix": "The '(Me)' suffix is reserved for your own contact.",
+      "privacyBanner": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'"
     },
     "emptyAddresses": {
       "title": "No addresses for this contact",
@@ -9152,9 +9158,11 @@
       "enterAddress": "Enter address",
       "addressLabel": "Address",
       "addressNameLabel": "Address name",
+      "pasteAriaLabel": "Paste address from clipboard",
+      "paste": "Paste",
       "addressValid": "Valid address",
       "addressInvalid": "Enter a 40-character hex address (with or without 0x).",
-      "nameTooltip": "We recommend giving this address a name to easily find it when needed. It will only be visible to you.",
+      "nameTooltip": "We recommend giving this address a name\nto easily find it when needed.\nIt will only be visible to you.",
       "nameTooltipAriaLabel": "About the address name",
       "submit": "Register address"
     },
