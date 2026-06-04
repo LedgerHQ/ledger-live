@@ -7907,6 +7907,9 @@ importers:
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
+      '@ledgerhq/device-intent':
+        specifier: workspace:^
+        version: link:../device-intent
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.6.0(rxjs@7.8.2)
@@ -22034,7 +22037,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -24359,7 +24362,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
