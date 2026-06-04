@@ -3372,7 +3372,7 @@ SPEC CHECKSUMS:
   react-native-splash-screen: a43276f9cf4b2e65d7ce30efe372ffc528064293
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
   react-native-tcp-socket: ae8abcfebc071216302a09d9ed1e375d4e877484
-  react-native-udp: 806f16ab890dd838bc073afcebd6a221d4965572
+  react-native-udp: 7e484efc89db2214f7501ac946781d3205b2c6a0
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
   react-native-video: f906920a39ad30208bb789bdda7404f510ab422a
   react-native-webview: f0d598682cbc88a97d66da4121873d3467f76635
@@ -3438,4 +3438,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 11b0543d8207874e261875d4864930a6c73fcd92
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.14.3
