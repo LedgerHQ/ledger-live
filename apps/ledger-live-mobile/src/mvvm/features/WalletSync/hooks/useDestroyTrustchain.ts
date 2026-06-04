@@ -37,6 +37,7 @@ export function useDestroyTrustchain() {
       dispatch(walletSyncUpdate(null, 0));
       setCurrentStep(Steps.Activation);
     },
+    onError: () => setCurrentStep(Steps.SyncError),
   });
 
   return { deleteMutation };

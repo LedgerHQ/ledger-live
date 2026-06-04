@@ -6,12 +6,9 @@ import { trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { useStore } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { walletSyncStateSelector } from "@ledgerhq/live-wallet/store";
-import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useInstanceName } from "./useInstanceName";
-
-let sdkInstance: TrustchainSDK | null = null;
 
 export function useTrustchainSdk() {
   const featureWalletSync = useFeature("lldWalletSync");
@@ -36,9 +33,8 @@ export function useTrustchainSdk() {
     [cloudSyncApiBaseUrl, store],
   );
 
-  if (sdkInstance === null) {
-    sdkInstance = getSdk(isMockEnv, defaultContext, withDevice, lifecycle);
-  }
-
-  return sdkInstance;
+  return useMemo(
+    () => getSdk(isMockEnv, defaultContext, withDevice, lifecycle),
+    [isMockEnv, defaultContext, lifecycle],
+  );
 }
