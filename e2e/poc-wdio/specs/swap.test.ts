@@ -56,7 +56,7 @@ export const runSwapTest = async (swap: Swap) => {
   // go to swap
   await pages.portfolio.waitForPageToLoad();
   console.log("Portfolio page loaded, forced wait for app sync...");
-  await driver.pause(15_000)
+  await driver.pause(15_000);
   await swapSetup();
   console.log("Opening Swap Live App");
   await pages.swap.openDeeplink();
@@ -67,6 +67,7 @@ export const runSwapTest = async (swap: Swap) => {
     swap.accountToDebit,
     swap.accountToCredit,
   );
+
   const swapAmount =
     swap.accountToDebit.currency.name === Account.XRP_1.currency.name
       ? parseFloat(Number(minAmount).toFixed(6)).toString()
