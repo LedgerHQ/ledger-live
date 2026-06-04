@@ -249,6 +249,7 @@
     "src/hw/quitApp.ts",
     "src/hw/renameDevice.ts",
     "src/hw/signMessage/index.ts",
+    "src/intents/signTransactionIntent.ts",
     "src/hw/uninstallAllApps.ts",
     "src/hw/uninstallApp.ts",
     "src/hw/uninstallLanguage.ts",

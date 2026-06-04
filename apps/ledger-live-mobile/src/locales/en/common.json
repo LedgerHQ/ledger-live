@@ -4476,7 +4476,13 @@
       "processingTransaction": "Your transaction is being processed",
       "sign": {
         "title": "Continue on your Ledger {{wording}}",
-        "description": "Follow the instructions displayed on your Secure Touchscreen."
+        "description": "Follow the instructions displayed on your Secure Touchscreen.",
+        "cancelled": {
+          "title": "Transaction canceled",
+          "description": "You rejected the transaction. Your funds won't be affected.",
+          "close": "Close",
+          "retry": "Try again"
+        }
       },
       "gasOptionsSync": {
         "warningTitle": "Unable to refresh network fees",
