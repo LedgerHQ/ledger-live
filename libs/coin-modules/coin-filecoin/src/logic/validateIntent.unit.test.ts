@@ -69,4 +69,21 @@ describe("validateIntent", () => {
     const result = await validateIntent(tokenIntent, tokenBalances);
     expect(result.errors.amount).toBeInstanceOf(Error); // 5000 > 3000
   });
+
+  it("rejects erc20 intent when native balance is insufficient to cover fees", async () => {
+    const tokenIntent = {
+      ...baseIntent,
+      amount: 100n,
+      asset: {
+        type: "erc20" as const,
+        assetReference: "0xcontract",
+      },
+    };
+    const balancesWithLowNative = [
+      { value: 10n, asset: { type: "native" as const }, locked: 0n },
+      { value: 1_000n, asset: { type: "erc20" as const, assetReference: "0xcontract" } },
+    ];
+    const result = await validateIntent(tokenIntent, balancesWithLowNative, { value: 500n });
+    expect(result.errors.amount).toBeInstanceOf(Error); // fees 500 > native 10
+  });
 });

@@ -5,7 +5,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { Message } from "iso-filecoin/message";
 import { abiEncodeTransferParams, encodeTxnParams } from "../../erc20/tokenAccounts";
-import { validateAddress } from "../../network/addresses";
+import { convertAddressFilToEth, validateAddress } from "../../network/addresses";
 import { BroadcastBlockIncl } from "../../types";
 import { fetchEstimatedFees } from "../../network/api";
 import { getNextSequence } from "../account/getNextSequence";
@@ -25,13 +25,13 @@ export async function craftTransaction(
   intent: TransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const nonce = await getNextSequence(intent.sender);
-
   const senderValidation = validateAddress(intent.sender);
   if (!senderValidation.isValid) {
     throw new Error(`Invalid sender address: ${intent.sender}`);
   }
   const from = senderValidation.parsedAddress.toString();
+
+  const nonce = await getNextSequence(from);
 
   let to: string;
   let value: string;
@@ -63,9 +63,11 @@ export async function craftTransaction(
       intent.recipient && intent.recipient.startsWith("0x")
         ? intent.recipient
         : (() => {
-            const v = validateAddress(intent.recipient ?? "");
-            if (!v.isValid) throw new Error(`Invalid token recipient: ${intent.recipient}`);
-            return v.parsedAddress.toString();
+            try {
+              return convertAddressFilToEth(intent.recipient ?? "");
+            } catch {
+              throw new Error(`Invalid token recipient: ${intent.recipient}`);
+            }
           })();
 
     const abiEncoded = abiEncodeTransferParams(recipientEth, intent.amount.toString());

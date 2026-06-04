@@ -52,6 +52,13 @@ export async function validateIntent(
     } else if (amount > (tokenBalance?.value ?? 0n)) {
       errors.amount = new NotEnoughBalance();
     }
+
+    // Token transfers still require native FIL to cover gas fees
+    const nativeBal = balances.find(b => b.asset.type === "native");
+    const nativeAvailable = nativeBal?.value ?? 0n;
+    if (estimatedFees > 0n && estimatedFees > nativeAvailable) {
+      errors.amount = new NotEnoughBalance();
+    }
   } else {
     const nativeBalance = balances.find(b => b.asset.type === "native");
     const available = nativeBalance?.value ?? 0n;

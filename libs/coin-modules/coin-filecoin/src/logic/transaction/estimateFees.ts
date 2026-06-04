@@ -1,7 +1,7 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { abiEncodeTransferParams, encodeTxnParams } from "../../erc20/tokenAccounts";
-import { validateAddress } from "../../network/addresses";
+import { convertAddressFilToEth, validateAddress } from "../../network/addresses";
 import { BroadcastBlockIncl } from "../../types";
 import { fetchEstimatedFees } from "../../network/api";
 
@@ -57,9 +57,11 @@ export async function estimateFees(
       intent.recipient && intent.recipient.startsWith("0x")
         ? intent.recipient
         : (() => {
-            const v = validateAddress(intent.recipient ?? "");
-            if (!v.isValid) throw new Error(`Invalid token recipient: ${intent.recipient}`);
-            return v.parsedAddress.toString();
+            try {
+              return convertAddressFilToEth(intent.recipient ?? "");
+            } catch {
+              throw new Error(`Invalid token recipient: ${intent.recipient}`);
+            }
           })();
 
     try {

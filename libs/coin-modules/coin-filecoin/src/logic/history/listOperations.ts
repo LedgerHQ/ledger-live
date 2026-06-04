@@ -109,7 +109,7 @@ export async function listOperations(
   }
 
   // Map ERC-20 transactions
-  // operationIndex starts at nativeOpIndex + 1 to avoid collisions within the same call
+  // tokenOpIndex continues from nativeOpIndex to avoid ID collisions
   let tokenOpIndex = nativeOpIndex;
   for (const tx of tokenTxs) {
     const { to, from, tx_hash, tx_cid, amount, height, timestamp, status, contract_address } = tx;
