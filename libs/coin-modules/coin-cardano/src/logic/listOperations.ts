@@ -8,7 +8,7 @@ import {
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { OperationType } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
 import { APITransaction, HashType, StakeDelegationCertificate } from "../api/api-types";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
@@ -363,7 +363,14 @@ async function fetchTransactionsByPaymentKey(
 }> {
   const endpoint = isTestnet(currency) ? CARDANO_TESTNET_API_ENDPOINT : CARDANO_API_ENDPOINT;
 
-  const res = await network({
+  const res = await network<{
+    transactions?: APITransaction[];
+    pageNo?: number;
+    // Backend-dictated and may be missing/non-numeric; typed `unknown` to force the
+    // coercion below, so a bad value can't slip through as a trusted `number`.
+    limit?: unknown;
+    blockHeight?: number;
+  }>({
     method: "POST",
     url: `${endpoint}/v1/transaction`,
     data: {
@@ -376,9 +383,14 @@ async function fetchTransactionsByPaymentKey(
   const {
     transactions = [],
     pageNo: resPageNo = pageNo,
-    limit = 0,
+    limit: rawLimit,
     blockHeight: resBlockHeight = blockHeight,
   } = res.data;
+
+  // A bad value collapses to 0, which the caller reads as "no more pages" — rather than
+  // letting NaN in the `hasMore` check truncate pagination (mirrors getAllTransactionsByKeys).
+  const coercedLimit = Number(rawLimit);
+  const limit = Number.isFinite(coercedLimit) && coercedLimit > 0 ? coercedLimit : 0;
 
   return {
     transactions,

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import { isTestnet } from "../logic";
@@ -17,7 +17,12 @@ async function fetchTransactionsPage(
   blockHeight: number;
   transactions: Array<APITransaction>;
 }> {
-  const res = await network({
+  const res = await network<{
+    pageNo: number;
+    limit?: unknown;
+    blockHeight: number;
+    transactions: Array<APITransaction>;
+  }>({
     method: "POST",
     url: isTestnet(currency)
       ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/transaction`

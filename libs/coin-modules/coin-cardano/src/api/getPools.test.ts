@@ -1,8 +1,8 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchPoolDetails } from "./getPools";
 
-jest.mock("@ledgerhq/live-network/network");
+jest.mock("@ledgerhq/live-network");
 
 const poolIds = ["pool1", "pool2", "pool3"];
 const currency = {

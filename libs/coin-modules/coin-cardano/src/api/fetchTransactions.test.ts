@@ -1,8 +1,8 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getAllTransactionsByKeys } from "./fetchTransactions";
 
-jest.mock("@ledgerhq/live-network/network");
+jest.mock("@ledgerhq/live-network");
 const mockNetwork = jest.mocked(network);
 
 const currency = getCryptoCurrencyById("cardano");

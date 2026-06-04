@@ -1,9 +1,9 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isTestnet } from "../logic";
 import { fetchLatestBlock } from "./getLatestBlock";
 
-jest.mock("@ledgerhq/live-network/network");
+jest.mock("@ledgerhq/live-network");
 jest.mock("../logic", () => ({ isTestnet: jest.fn() }));
 
 const mockNetwork = jest.mocked(network);

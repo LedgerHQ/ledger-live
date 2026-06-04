@@ -1,11 +1,11 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { APITransaction, HashType, TransactionCertificates } from "../api/api-types";
 import { listOperations } from "./listOperations";
 
-jest.mock("@ledgerhq/live-network/network");
+jest.mock("@ledgerhq/live-network");
 
 const mockNetwork = network as jest.Mock;
 

@@ -14,7 +14,7 @@ import { listOperations } from "./listOperations";
  *
  * NOTE: these are `.integ.test.ts` and are excluded from the default `pnpm test`
  * run, so they do not gate correctness in CI. The mapping/pagination logic should
- * also be covered by deterministic unit tests that mock `@ledgerhq/live-network/network`
+ * also be covered by deterministic unit tests that mock `@ledgerhq/live-network`
  * (tracked as a follow-up) — those are what catch a mapping regression on every PR.
  */
 describe("listOperations", () => {

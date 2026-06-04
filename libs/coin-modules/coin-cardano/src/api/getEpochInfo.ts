@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { CARDANO_EPOCH_PARAMS_ENDPOINT, CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT } from "../constants";
 import { isTestnet } from "../logic";

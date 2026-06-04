@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
@@ -11,14 +11,14 @@ export async function fetchPoolList(
   pageNo: number,
   limit: number,
 ): Promise<APIGetPoolList> {
-  const res = await network({
+  const res = await network<APIGetPoolList>({
     method: "GET",
     url: isTestnet(currency)
       ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/list`
       : `${CARDANO_API_ENDPOINT}/v1/pool/list`,
     params: { search, pageNo, limit },
   });
-  return res && (res.data as APIGetPoolList);
+  return res.data;
 }
 
 export async function fetchPoolDetails(
