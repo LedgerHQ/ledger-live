@@ -26,6 +26,8 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-transform-dynamic-import": "7.27.1",
+    "@babel/plugin-transform-modules-commonjs": "7.27.1",
     "@jest/reporters": "catalog:",
     "@jest/types": "^30.2.0",
     "@ledgerhq/devices": "workspace:*",

@@ -30,10 +30,11 @@ class AmountCell extends PureComponent<Props> {
   render() {
     // eslint-disable-next-line no-unused-vars
     const { currency, unit, operation, isConfirmed } = this.props;
-    const amount = getOperationAmountNumber(operation);
-
     const cryptoCurrency = "family" in currency && currency.family ? currency : null;
     const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+    const amount =
+      specific?.operationDetails?.getAmount?.(operation) ?? getOperationAmountNumber(operation);
+
     const amountCellExtra = specific?.operationDetails?.amountCellExtra;
     const Element = amountCellExtra ? amountCellExtra[operation.type] : null;
     const amountCell = specific?.operationDetails?.amountCell;

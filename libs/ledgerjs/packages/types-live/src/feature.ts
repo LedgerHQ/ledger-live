@@ -517,29 +517,18 @@ export type Feature_NewsfeedPage = Feature<{
   whitelistedLocales: string[];
 }>;
 
-export type CompatibleDevice = {
-  available: boolean;
-  comingSoon: boolean;
-  name: string;
-};
-
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
-  ledgerliveStorageState: boolean;
   bannerSubscriptionNotification: boolean;
-  compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;
-      manualStepsURI: string;
       supportLinkURI: string;
     };
     postOnboardingURI: string;
   };
   managerStatesData: {
     NEW: {
-      learnMoreURI: string;
-      alreadySubscribedURI: string;
       quickAccessURI: string;
       alreadyOnboardedURI: string;
     };
@@ -553,24 +542,12 @@ export type Feature_ProtectServicesMobile = Feature<{
 export type Feature_ProtectServicesDesktop = Feature<{
   openWithDevTools: boolean;
   availableOnDesktop: boolean;
-  isNew: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
-  ledgerliveStorageState: boolean;
   bannerSubscriptionNotification: boolean;
-  compatibleDevices: CompatibleDevice[];
-  onboardingRestore: {
-    restoreInfoDrawer: {
-      enabled: boolean;
-      manualStepsURI: string;
-      supportLinkURI: string;
-    };
-    postOnboardingURI: string;
-  };
   onboardingCompleted: {
     upsellURI: string;
     restore24URI: string;
-    alreadySubscribedURI: string;
     alreadyDeviceSeededURI: string;
   };
   account: {

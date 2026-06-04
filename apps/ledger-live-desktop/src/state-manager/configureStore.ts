@@ -5,7 +5,7 @@ import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
-import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
+import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
 type Props = {
@@ -42,13 +42,14 @@ const customCreateStore = ({
           }),
         )
         .concat(
-          createFeatureFlagsMiddleware({
+          createFeatureFlagsMiddleware<State>({
             resolutionConfig: {
               platform: "desktop",
               appVersion: __APP_VERSION__,
               envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
             },
             fetchRemoteFlags: fetchRemoteFlags ?? undefined,
+            getAppLanguage: languageSelector,
           }),
         ),
     devTools: __DEV__,

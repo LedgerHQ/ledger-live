@@ -20,6 +20,8 @@ export const OP_RETURN = 0x6a;
 export const ZCASH_ACTIVATION_HEIGHTS = {
   // https://zcash.readthedocs.io/en/latest/rtd_pages/nu_dev_guide.html
   //
+  // https://z.cash/upgrade/nu6.2/
+  NU6_2: 3364600,
   // https://zips.z.cash/zip-0255
   // https://github.com/zcash/zcash/releases/tag/v6.10.0
   NU6_1: 3146400,

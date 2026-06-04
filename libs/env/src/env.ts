@@ -357,6 +357,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cardano API url",
   },
+  CARDANO_EPOCH_PARAMS_ENDPOINT: {
+    def: "https://ada.api.live.ledger.com/api/rest/params",
+    parser: stringParser,
+    desc: "Cardano current-epoch protocol params url (validator APY)",
+  },
+  CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT: {
+    def: "https://ada-testnet.api.live.ledger-test.com/api/rest/params",
+    parser: stringParser,
+    desc: "Cardano testnet current-epoch protocol params url (validator APY)",
+  },
   ICON_NODE_ENDPOINT: {
     parser: stringParser,
     def: "https://icon.coin.ledger.com/api/v3",

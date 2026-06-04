@@ -31,7 +31,6 @@ function featureFlagsWithRecover() {
         ...protectDesktopDefaultParams,
         protectId: PROTECT_ID,
         availableOnDesktop: true,
-        compatibleDevices: [{ name: DeviceModelId.nanoX, available: true, comingSoon: false }],
         onboardingCompleted: {
           ...protectDesktopDefaultParams.onboardingCompleted,
           upsellURI: RECOVER_UPSELL_URI,

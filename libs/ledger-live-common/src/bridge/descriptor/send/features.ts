@@ -45,6 +45,13 @@ export const sendFeatures = {
     return d?.fees.presets?.shouldEstimateWithBridge?.(transaction) ?? false;
   },
   getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), [] as readonly string[]),
+  getFeeCurrencyAccountId: (
+    currency: CryptoOrTokenCurrency | undefined,
+    transaction: unknown,
+  ): string | null => {
+    const d = getSendDescriptor(currency);
+    return d?.fees.getFeeCurrencyAccountId?.(transaction) ?? null;
+  },
   getMemoType: fromDescriptor(d => d.inputs.memo?.type, undefined),
   getMemoMaxLength: fromDescriptor(d => d.inputs.memo?.maxLength, undefined),
   getMemoMaxValue: fromDescriptor(d => d.inputs.memo?.maxValue, undefined),

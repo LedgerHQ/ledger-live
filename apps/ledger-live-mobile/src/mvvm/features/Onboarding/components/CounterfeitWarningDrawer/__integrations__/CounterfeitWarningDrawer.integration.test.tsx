@@ -5,9 +5,7 @@ import { render, screen, waitFor } from "@tests/test-renderer";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import CounterfeitWarningDrawer from "..";
-import { EVENT_CONCERN, EVENT_PROCEED, EVENT_SHOWN } from "../analytics";
-
-const analyticsPayload = { deviceModelId: DeviceModelId.nanoX, flow: "Onboarding" };
+import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "../analytics";
 
 const renderDrawer = (isOpen = true) => {
   const onProceed = jest.fn();
@@ -46,27 +44,30 @@ describe("CounterfeitWarningDrawer Integration", () => {
       });
     });
 
-    it("should not track shown when isOpen is false", () => {
+    it("should not track page_viewed when isOpen is false", () => {
       renderDrawer(false);
-      expect(track).not.toHaveBeenCalledWith(EVENT_SHOWN, expect.anything());
+      expect(track).not.toHaveBeenCalledWith("page_viewed", expect.anything());
     });
   });
 
   describe("user interactions", () => {
-    it("should track shown once and handle primary CTA", async () => {
+    it("should track page_viewed once and handle primary CTA", async () => {
       const { user, onProceed } = renderDrawer(true);
 
       await waitFor(() => {
         expect(screen.getByText("Continue setup")).toBeVisible();
       });
-      expect(track).toHaveBeenCalledWith(EVENT_SHOWN, analyticsPayload);
+      expect(track).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
 
       await user.press(screen.getByText("Continue setup"));
-      expect(track).toHaveBeenCalledWith(EVENT_PROCEED, analyticsPayload);
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+        page: COUNTERFEIT_WARNING_PAGE,
+      });
       expect(onProceed).toHaveBeenCalledTimes(1);
     });
 
-    it("should open the genuine check URL and track concern on secondary CTA", async () => {
+    it("should open the genuine check URL and track learn more on secondary CTA", async () => {
       const { user } = renderDrawer(true);
 
       await waitFor(() => {
@@ -74,7 +75,10 @@ describe("CounterfeitWarningDrawer Integration", () => {
       });
 
       await user.press(screen.getByText("Learn more"));
-      expect(track).toHaveBeenCalledWith(EVENT_CONCERN, analyticsPayload);
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+        page: COUNTERFEIT_WARNING_PAGE,
+      });
       expect(openURLSpy).toHaveBeenCalledWith(urls.genuineCheck.learnMore);
     });
   });

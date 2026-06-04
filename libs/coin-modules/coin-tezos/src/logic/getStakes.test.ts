@@ -259,7 +259,7 @@ describe("getStakes", () => {
           delegate: delegateAddress,
           state: "active",
           asset: { type: "native" },
-          amount: 100n,
+          amount: 90n,
           actions: [],
         },
         {
@@ -297,7 +297,7 @@ describe("getStakes", () => {
           delegate: delegateAddress,
           state: "active",
           asset: { type: "native" },
-          amount: 70n,
+          amount: 60n,
           actions: [],
         },
         {
@@ -320,6 +320,9 @@ describe("getStakes", () => {
           actions: [],
         },
       ]);
+
+      const total = result.items.reduce((sum, i) => sum + i.amount, 0n);
+      expect(total).toBe(100n);
     });
   });
 
@@ -377,7 +380,7 @@ describe("getStakes", () => {
           delegate: delegateAddress,
           state: "active",
           asset: { type: "native" },
-          amount: 1000n,
+          amount: 900n,
           actions: [],
         },
         {
@@ -459,6 +462,19 @@ describe("getStakes", () => {
       const result = await api.getStakes(address);
 
       expect(result.items.map(i => i.uid)).toEqual(["unstaking-2"]);
+    });
+
+    it("drops finalized requests (funds already returned to spendable)", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 1000, unstakedBalance: 30 }));
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({ id: 1, actualAmount: 480, status: "finalized" }),
+        makeRequest({ id: 2, actualAmount: 30, firstTime: "2026-05-04T00:00:00Z" }),
+      ]);
+
+      const result = await api.getStakes(address);
+
+      expect(result.items.map(i => i.uid)).toEqual(["unstaking-2"]);
+      expect(result.items.find(i => i.uid === "unstaking-2")?.amount).toBe(30n);
     });
 
     it("propagates rejection when getUnstakeRequests fails", async () => {

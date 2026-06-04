@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/asset-detail",
   "version": "0.3.0",
+  "private": true,
   "description": "Ledger Live asset-detail shared module – market data hook, types and utils",
   "keywords": [
     "Ledger"
@@ -13,9 +14,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/asset-detail",
-  "publishConfig": {
-    "access": "public"
-  },
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",

@@ -12,9 +12,10 @@ import { useTranslation } from "~/context/Locale";
 
 type AmountScreenViewProps = Readonly<{
   viewModel: Extract<AmountScreenViewModel, { ready: true }>;
+  pluginsSlot?: React.ReactNode;
 }>;
 
-export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
+export function AmountScreenView({ viewModel, pluginsSlot }: AmountScreenViewProps) {
   const { t } = useTranslation();
   const styles = useStyleSheet(
     theme => ({
@@ -68,6 +69,7 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
       </View>
 
       <View style={styles.middleSection}>
+        {pluginsSlot}
         <NetworkFeesRow viewModel={viewModel.networkFees} />
         <Divider />
 

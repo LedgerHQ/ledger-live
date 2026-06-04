@@ -1,35 +1,31 @@
-import { useMemo } from "react";
-import { useWindowDimensions } from "react-native";
+import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
+import { useMarketAssetPress } from "./useMarketAssetPress";
+import { useMarketAssets } from "./useMarketAssets";
+import { useMarketHighlights, type MarketHighlights } from "./useMarketHighlights";
 
-const HORIZONTAL_PADDING = 16;
-const CARD_GAP = 8;
-const HIGHLIGHT_CARD_COUNT = 4;
+export type { MarketHighlightCard } from "./useMarketHighlights";
 
-export type MarketScreenHighlightCard = {
-  key: string;
-};
-
-export type MarketScreenViewModel = {
-  cardWidth: number;
-  cardGap: number;
-  snapToInterval: number;
-  highlightCards: MarketScreenHighlightCard[];
+export type MarketScreenViewModel = MarketHighlights & {
+  assets: MarketAssetDisplayData[];
+  assetsLoading: boolean;
+  assetsLoadingMore: boolean;
+  assetsError: boolean;
+  onAssetPress: (asset: MarketAssetDisplayData) => void;
+  onEndReached: () => void;
 };
 
 export function useMarketScreenViewModel(): MarketScreenViewModel {
-  const { width } = useWindowDimensions();
+  const highlights = useMarketHighlights();
+  const { assets, loading, loadingMore, isError, onEndReached } = useMarketAssets();
+  const onAssetPress = useMarketAssetPress();
 
-  return useMemo(() => {
-    const availableWidth = width - HORIZONTAL_PADDING * 2;
-    const cardWidth = availableWidth / 2 - CARD_GAP;
-
-    return {
-      cardWidth,
-      cardGap: CARD_GAP,
-      snapToInterval: cardWidth + CARD_GAP,
-      highlightCards: Array.from({ length: HIGHLIGHT_CARD_COUNT }, (_, index) => ({
-        key: `market-highlight-${index}`,
-      })),
-    };
-  }, [width]);
+  return {
+    ...highlights,
+    assets,
+    assetsLoading: loading,
+    assetsLoadingMore: loadingMore,
+    assetsError: isError,
+    onAssetPress,
+    onEndReached,
+  };
 }

@@ -44,28 +44,24 @@ const eursToken: TokenCurrency = {
 
 const CHART_DATA_BY_RANGE: Record<RangeKey, Array<[number, number]>> = {
   "1d": [
-    [1, 100],
-    [2, 110],
-    [3, 120],
+    [Date.UTC(2024, 0, 2, 10, 0), 100],
+    [Date.UTC(2024, 0, 2, 11, 0), 110],
+    [Date.UTC(2024, 0, 2, 12, 0), 120],
   ],
   "1w": [
-    [1, 200],
-    [2, 210],
+    [Date.UTC(2024, 0, 2, 10, 0), 200],
+    [Date.UTC(2024, 0, 2, 11, 0), 210],
   ],
-  "1m": [[1, 300]],
-  "6m": [
-    [1, 350],
-    [2, 385],
-  ],
+  "1m": [[Date.UTC(2024, 0, 2, 10, 0), 300]],
   "1y": [
-    [1, 400],
-    [2, 410],
-    [3, 420],
-    [4, 430],
+    [Date.UTC(2024, 0, 2, 10, 0), 400],
+    [Date.UTC(2024, 0, 2, 11, 0), 410],
+    [Date.UTC(2024, 0, 2, 12, 0), 420],
+    [Date.UTC(2024, 0, 2, 13, 0), 430],
   ],
   all: [
-    [1, 100],
-    [2, 220],
+    [Date.UTC(2024, 0, 2, 10, 0), 100],
+    [Date.UTC(2024, 0, 2, 11, 0), 220],
   ],
 };
 
@@ -362,7 +358,7 @@ describe("useBalanceGraphViewModel", () => {
       const { result } = renderVM();
 
       const values = result.current.ranges.map(r => r.value);
-      expect(values).toEqual(["1d", "1w", "1m", "6m", "1y", "all"]);
+      expect(values).toEqual(["1d", "1w", "1m", "1y", "all"]);
     });
 
     it("exposes a runtime guard that accepts only known range keys", () => {
@@ -554,6 +550,36 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.isScrubbing).toBe(false);
       expect(result.current.price).toBe(50000);
+    });
+
+    it("formats 1w hover time label as time + date", () => {
+      const { result } = renderVM();
+
+      act(() => result.current.onRangeChange("1w"));
+      act(() => result.current.onScrubberPositionChange(0));
+
+      expect(result.current.timeLabel).toContain("2024");
+      expect(result.current.timeLabel).toContain(":");
+    });
+
+    it("formats 1d hover time label as time only", () => {
+      const { result } = renderVM();
+
+      act(() => result.current.onRangeChange("1d"));
+      act(() => result.current.onScrubberPositionChange(0));
+
+      expect(result.current.timeLabel).toContain(":");
+      expect(result.current.timeLabel).not.toContain("2024");
+    });
+
+    it("formats 1y hover time label as date only", () => {
+      const { result } = renderVM();
+
+      act(() => result.current.onRangeChange("1y"));
+      act(() => result.current.onScrubberPositionChange(0));
+
+      expect(result.current.timeLabel).toContain("2024");
+      expect(result.current.timeLabel).not.toContain(":");
     });
   });
 

@@ -28,12 +28,12 @@ const mockBakers = bakers as unknown as {
 const ADDRESS = "tz1abc";
 const DELEGATE = "tz1baker";
 
-const makeTezosAccount = (positions: StakingPosition[]): TezosAccount =>
+const makeTezosAccount = (positions: StakingPosition[], spendable = 1000): TezosAccount =>
   ({
     type: "Account",
     freshAddress: ADDRESS,
     balance: new BigNumber(1000),
-    spendableBalance: new BigNumber(1000),
+    spendableBalance: new BigNumber(spendable),
     currency: { family: "tezos" },
     tezosResources: { revealed: true, counter: 0 },
     stakingPositions: positions,
@@ -96,7 +96,7 @@ describe("useTezosStakingInfo", () => {
   });
 
   it("delegation only: isDelegated=true, availableBalance = delegation amount", () => {
-    const account = makeTezosAccount([delegationPos(800)]);
+    const account = makeTezosAccount([delegationPos(800)], 800);
     const { result } = renderHook(() => useTezosStakingInfo(account));
     expect(result.current.isDelegated).toBe(true);
     expect(result.current.isStaked).toBe(false);
@@ -107,7 +107,7 @@ describe("useTezosStakingInfo", () => {
   });
 
   it("delegation + stake: isStaked=true, stakedBalance set", () => {
-    const account = makeTezosAccount([delegationPos(700), stakePos(300)]);
+    const account = makeTezosAccount([delegationPos(700), stakePos(300)], 700);
     const { result } = renderHook(() => useTezosStakingInfo(account));
     expect(result.current.isDelegated).toBe(true);
     expect(result.current.isStaked).toBe(true);
@@ -117,12 +117,19 @@ describe("useTezosStakingInfo", () => {
   });
 
   it("non-delegated stake: availableBalance = balance - stakedBalance", () => {
-    const account = makeTezosAccount([stakePos(300)]);
+    const account = makeTezosAccount([stakePos(300)], 700);
     const { result } = renderHook(() => useTezosStakingInfo(account));
     expect(result.current.isDelegated).toBe(false);
     expect(result.current.isStaked).toBe(true);
     expect(result.current.stakedBalance).toEqual(new BigNumber(300));
     expect(result.current.availableBalance).toEqual(new BigNumber(700));
+  });
+
+  it("non-delegated with unstaking: availableBalance excludes staked and cooling-down funds", () => {
+    const account = makeTezosAccount([stakePos(300), unstakingPos(100)], 600);
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.isDelegated).toBe(false);
+    expect(result.current.availableBalance).toEqual(new BigNumber(600));
   });
 
   it("falls back to legacy useDelegation when stakingPositions is empty", () => {
@@ -160,12 +167,10 @@ describe("useTezosStakingInfo", () => {
   });
 
   it("all four positions: every flag true, every amount populated", () => {
-    const account = makeTezosAccount([
-      delegationPos(500),
-      stakePos(300),
-      unstakingPos(150),
-      finalizablePos(50),
-    ]);
+    const account = makeTezosAccount(
+      [delegationPos(500), stakePos(300), unstakingPos(150), finalizablePos(50)],
+      500,
+    );
     const { result } = renderHook(() => useTezosStakingInfo(account));
     expect(result.current).toMatchObject({
       isDelegated: true,
@@ -200,7 +205,7 @@ describe("useTezosStakingInfo", () => {
       type: "Account",
       freshAddress: ADDRESS,
       balance: new BigNumber(1000),
-      spendableBalance: new BigNumber(1000),
+      spendableBalance: new BigNumber(700),
       currency: { family: "tezos" },
       stakingPositions: [delegationPos(700), stakePos(300)],
     } as unknown as TezosAccount;

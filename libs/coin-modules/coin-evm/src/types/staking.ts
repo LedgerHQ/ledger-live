@@ -31,6 +31,26 @@ export type RedelegationStrategy =
     }
   | { type: "none" };
 
+/**
+ * Per-chain strategy for fetching pending delegation rewards.
+ *
+ * - `cosmos-rest`: Cosmos distribution REST endpoint; EVM address resolved
+ *   via `apiConfig.precompileAddress`. Reward coins matching `denom` summed
+ *   (integer base-unit only) and multiplied by `scale` to wei.
+ * - `none`: rewards unavailable off-chain.
+ */
+export type RewardsStrategy =
+  | {
+      type: "cosmos-rest";
+      /** REST endpoint template; `{address}` is replaced with the resolved Cosmos address. */
+      endpoint: string;
+      /** Cosmos denom carrying the reward amount (e.g. "usei"). */
+      denom: string;
+      /** Multiplier converting one base-denom unit to wei. */
+      scale: bigint;
+    }
+  | { type: "none" };
+
 export type StakingContractConfig = {
   contractAddress: string;
   specificContractAddressByOperation?: Partial<Record<StakingOperation, string>>;
@@ -76,6 +96,8 @@ export type StakingContractConfig = {
   };
   /** How to fetch active redelegations from an off-chain source. Defaults to `"none"` when absent. */
   redelegationStrategy?: RedelegationStrategy;
+  /** How to fetch pending delegation rewards from an off-chain source. Defaults to `"none"` when absent. */
+  rewardsStrategy?: RewardsStrategy;
   explorerConfig?: {
     validatorUrl: string;
   };

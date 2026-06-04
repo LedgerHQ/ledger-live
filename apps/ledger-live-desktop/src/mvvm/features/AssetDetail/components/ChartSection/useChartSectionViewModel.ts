@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useAssetChartData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { injectMarketExtrema } from "@ledgerhq/live-common/market/utils/injectMarketExtrema";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { track } from "~/renderer/analytics/segment";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
@@ -30,6 +31,7 @@ import {
   discreetModeSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
+import { hideTransactionsOnChartSelector } from "~/renderer/reducers/market";
 import { useHistoryOperationItemsForRootAccounts } from "LLD/features/History/hooks/useHistoryOperationItemsForRootAccounts";
 import {
   filterOperationTableItemsByAllowedAccountIds,
@@ -95,6 +97,7 @@ export type ChartSectionViewModelResult = Readonly<{
   xAxis: LineChartXAxisConfig;
   yAxis: LineChartYAxisConfig;
   points: LineChartPointMarker[];
+  currencyId?: string;
 }>;
 
 export function useChartSectionViewModel({
@@ -111,6 +114,7 @@ export function useChartSectionViewModel({
   const fiatUnit = counterValueCurrency.units[0];
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const hideTransactionsOnChart = useSelector(hideTransactionsOnChartSelector);
   const allAccounts = useSelector(accountsSelector);
   const countervaluesState = useCountervaluesState();
 
@@ -123,8 +127,23 @@ export function useChartSectionViewModel({
     isError,
   } = useAssetChartData({ id, counterCurrency, range: selectedRange }, { skip: !id });
 
+  // Extract the all-time extrema as stable primitives: marketCurrencyData is a
+  // new object on every market poll (athDate/atlDate are fresh Date instances),
+  // so depending on it would re-run the series pipeline on each price refresh.
+  const marketCurrencyData = marketData.marketCurrencyData;
+  const ath = marketCurrencyData?.ath;
+  const atl = marketCurrencyData?.atl;
+  const athTime = marketCurrencyData?.athDate?.getTime();
+  const atlTime = marketCurrencyData?.atlDate?.getTime();
+
   const { series, timestamps } = useMemo(() => {
-    const points = chartData?.[selectedRange] ?? [];
+    const rawPoints = chartData?.[selectedRange] ?? [];
+    // On the "all" range, anchor the graph's high/low markers to the market
+    // all-time high/low so they match the stats table (see LIVE-31732).
+    const points =
+      selectedRange === "all"
+        ? injectMarketExtrema(rawPoints, { ath, athDate: athTime, atl, atlDate: atlTime })
+        : rawPoints;
     const data: number[] = [];
     const tsList: number[] = [];
     points.forEach(([timestamp, value]) => {
@@ -143,7 +162,7 @@ export function useChartSectionViewModel({
       ] satisfies LineChartSeries[],
       timestamps: tsList,
     };
-  }, [chartData, selectedRange]);
+  }, [chartData, selectedRange, ath, atl, athTime, atlTime]);
 
   const priceChangeKey = getPriceChangeKeyForRange(selectedRange);
   const rangePercentage = marketData.marketCurrencyData?.priceChangePercentage?.[priceChangeKey];
@@ -193,6 +212,8 @@ export function useChartSectionViewModel({
   const points = useMemo<LineChartPointMarker[]>(() => {
     const extremaMarkers = getExtremaPointMarkers(series);
 
+    if (hideTransactionsOnChart) return extremaMarkers;
+
     const groups = groupTransactionsByChartIndex({
       timestamps,
       values: series[0]?.data ?? [],
@@ -204,7 +225,7 @@ export function useChartSectionViewModel({
     );
 
     return [...extremaMarkers, ...transactionMarkers];
-  }, [series, timestamps, transactions, formatFiat, t]);
+  }, [series, timestamps, transactions, formatFiat, t, hideTransactionsOnChart]);
 
   const formatValue = useCallback<LineChartValueFormatter>(
     value =>
@@ -300,10 +321,11 @@ export function useChartSectionViewModel({
     formatValue,
     tooltipTitle,
     onScrubberPositionChange,
-    showXAxis: true,
+    showXAxis: false,
     showYAxis: false,
     xAxis,
     yAxis,
     points,
+    currencyId,
   };
 }

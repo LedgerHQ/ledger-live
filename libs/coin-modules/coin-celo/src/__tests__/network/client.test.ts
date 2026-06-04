@@ -80,4 +80,81 @@ describe("network/client", () => {
       params: [],
     });
   });
+
+  describe("celoEstimateGas", () => {
+    const from = "0x1111111111111111111111111111111111111111" as `0x${string}`;
+    const to = "0x2222222222222222222222222222222222222222" as `0x${string}`;
+    const feeCurrency = "0x765DE816845861e75A25fCA122bb6898B8B1282a" as `0x${string}`;
+
+    const setupClient = (returnValue: string) => {
+      const requestMock = jest.fn(async () => returnValue);
+      createPublicClientMock.mockReturnValue({ request: requestMock });
+      getEnvMock.mockReturnValue("https://celo-rpc.ledger.com");
+      httpMock.mockReturnValue({ type: "http" });
+      return requestMock;
+    };
+
+    it("returns the gas estimate as a bigint", async () => {
+      const { celoEstimateGas } = loadClientModule();
+      const requestMock = setupClient("0x5208");
+
+      const gas = await celoEstimateGas({ from, to });
+
+      expect(gas).toBe(BigInt(0x5208));
+      expect(requestMock).toHaveBeenCalledWith({
+        method: "eth_estimateGas",
+        params: [{ from, to }],
+      });
+    });
+
+    it("threads feeCurrency to the RPC params when provided", async () => {
+      const { celoEstimateGas } = loadClientModule();
+      const requestMock = setupClient("0x1");
+
+      await celoEstimateGas({ from, to, feeCurrency });
+
+      expect(requestMock).toHaveBeenCalledWith({
+        method: "eth_estimateGas",
+        params: [{ from, to, feeCurrency }],
+      });
+    });
+
+    it("hex-encodes bigint value and gas price fields", async () => {
+      const { celoEstimateGas } = loadClientModule();
+      const requestMock = setupClient("0x1");
+
+      await celoEstimateGas({
+        from,
+        to,
+        value: BigInt(1000),
+        maxFeePerGas: BigInt(500),
+        maxPriorityFeePerGas: BigInt(2),
+      });
+
+      expect(requestMock).toHaveBeenCalledWith({
+        method: "eth_estimateGas",
+        params: [
+          {
+            from,
+            to,
+            value: "0x3e8",
+            maxFeePerGas: "0x1f4",
+            maxPriorityFeePerGas: "0x2",
+          },
+        ],
+      });
+    });
+
+    it("omits optional fields that are undefined", async () => {
+      const { celoEstimateGas } = loadClientModule();
+      const requestMock = setupClient("0x1");
+
+      await celoEstimateGas({ from });
+
+      expect(requestMock).toHaveBeenCalledWith({
+        method: "eth_estimateGas",
+        params: [{ from }],
+      });
+    });
+  });
 });

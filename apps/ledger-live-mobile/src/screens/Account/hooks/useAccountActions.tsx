@@ -47,6 +47,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
   const evmNativeStakingFeature = useFeature("evmNativeStaking");
+  const llmTezosStaking = useFeature("llmTezosStaking");
 
   const isPtxServiceCtaScreensDisabled = useMemo(
     () => !(ptxServiceCtaScreens?.enabled ?? true),
@@ -271,9 +272,20 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         colors,
         parentRoute: route,
         evmNativeStakingFeature,
+        llmTezosStaking,
         bridge,
       }) ?? [],
-    [walletState, account, parentAccount, colors, route, decorators, evmNativeStakingFeature, bridge],
+    [
+      walletState,
+      account,
+      parentAccount,
+      colors,
+      route,
+      decorators,
+      evmNativeStakingFeature,
+      llmTezosStaking,
+      bridge,
+    ],
   );
 
   const mainActions = useMemo(

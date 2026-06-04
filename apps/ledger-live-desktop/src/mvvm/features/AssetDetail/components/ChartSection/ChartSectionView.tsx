@@ -1,6 +1,7 @@
 import React from "react";
 import { LineChart } from "LLD/components/LineChart";
 import type { ChartSectionViewModelResult } from "./useChartSectionViewModel";
+import { ChartOptionsMenu } from "./ChartOptionsMenu";
 
 type ChartSectionViewProps = Readonly<ChartSectionViewModelResult>;
 
@@ -20,6 +21,7 @@ function ChartSectionViewComponent({
   xAxis,
   yAxis,
   points,
+  currencyId,
 }: ChartSectionViewProps) {
   return (
     <div className="w-full min-w-0" data-testid="asset-detail-chart-section">
@@ -41,6 +43,7 @@ function ChartSectionViewComponent({
         xAxis={xAxis}
         yAxis={yAxis}
         points={points}
+        rangeSelectorTrailing={<ChartOptionsMenu currencyId={currencyId} />}
       />
     </div>
   );

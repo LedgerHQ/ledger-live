@@ -60,6 +60,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "cryptoAssets",
   "identities",
   "featureFlags",
+  "coinConfigOverrides",
   "discover",
   "ptx",
   "history",

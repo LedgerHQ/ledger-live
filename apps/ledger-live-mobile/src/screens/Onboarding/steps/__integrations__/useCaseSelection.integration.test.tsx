@@ -37,7 +37,6 @@ const withRecoverForNanoX = withFlagOverrides({
   protectServicesMobile: {
     enabled: true,
     params: {
-      compatibleDevices: [{ name: DeviceModelId.nanoX, available: true, comingSoon: false }],
       deeplink: "ledgerrecover://subscribe",
     },
   },

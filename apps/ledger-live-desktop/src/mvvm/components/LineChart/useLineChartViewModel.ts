@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DEFAULT_LINE_CHART_HEIGHT,
@@ -44,6 +45,7 @@ export type LineChartViewModelResult = Readonly<{
   showYAxis: boolean;
   xAxis?: LineChartXAxisConfig;
   yAxis?: LineChartYAxisConfig;
+  rangeSelectorTrailing?: ReactNode;
 }>;
 
 export function useLineChartViewModel({
@@ -67,6 +69,7 @@ export function useLineChartViewModel({
   showYAxis = true,
   xAxis,
   yAxis,
+  rangeSelectorTrailing,
 }: LineChartProps): LineChartViewModelResult {
   const { t } = useTranslation();
   const stroke = LINE_CHART_COLOR_TO_STROKE[color];
@@ -128,5 +131,6 @@ export function useLineChartViewModel({
     showYAxis,
     xAxis,
     yAxis,
+    rangeSelectorTrailing,
   };
 }

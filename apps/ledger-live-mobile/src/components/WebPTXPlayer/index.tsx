@@ -161,7 +161,11 @@ export const WebPTXPlayer = ({
   }, [config, disableHeader, isInternalApp, manifest, navigation, webviewState?.url, softExit]);
 
   const accounts = useSelector(flattenAccountsSelector);
-  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customPTXHandlers = usePTXCustomHandlers(
+    manifest,
+    accounts,
+    config.returnToPreviousScreenOnClose,
+  );
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {

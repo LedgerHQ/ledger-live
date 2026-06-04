@@ -30,13 +30,15 @@ export function HistoryView({
         onBack={showBackButton ? navigateBack : undefined}
         onExportClick={onExportClick}
       />
-      <HistoryList
-        table={table}
-        parentRef={parentRef}
-        rowVirtualizer={rowVirtualizer}
-        flatItems={flatItems}
-        onRowClick={onRowClick}
-      />
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <HistoryList
+          table={table}
+          parentRef={parentRef}
+          rowVirtualizer={rowVirtualizer}
+          flatItems={flatItems}
+          onRowClick={onRowClick}
+        />
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import type { GenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal";
 
 const GENERIC_AWARENESS_MODAL_APP_START_ID_PREFIX = "app_start";
@@ -10,7 +11,6 @@ type GenericAwarenessModalLogicInput = Readonly<{
 
 type GenericAwarenessModalLogicContext = Readonly<{
   enabled: boolean;
-  isFocused: boolean;
   isOpen: boolean;
   open: (campaignId: string) => void;
 }>;
@@ -32,18 +32,20 @@ export function getGenericAwarenessModalCardToOpen({
 
 export function useGenericAwarenessModalLogic(
   { campaignId, cards }: GenericAwarenessModalLogicInput,
-  { enabled, isFocused, isOpen, open }: GenericAwarenessModalLogicContext,
+  { enabled, isOpen, open }: GenericAwarenessModalLogicContext,
 ) {
   const cardToOpen = useMemo(
     () => getGenericAwarenessModalCardToOpen({ campaignId, cards }),
     [campaignId, cards],
   );
 
-  useEffect(() => {
-    if (!enabled || !isFocused || isOpen || !cardToOpen) return;
+  useFocusEffect(
+    useCallback(() => {
+      if (!enabled || isOpen || !cardToOpen) return;
 
-    open(cardToOpen.id);
-  }, [cardToOpen, enabled, isFocused, isOpen, open]);
+      open(cardToOpen.id);
+    }, [cardToOpen, enabled, isOpen, open]),
+  );
 
   return {
     shouldMarkAsRead: cardToOpen ? isGenericAwarenessModalAppStartId(cardToOpen.id) : false,

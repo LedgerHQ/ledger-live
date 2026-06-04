@@ -4,4 +4,8 @@ export const MARKET_SCREEN_TEST_IDS = {
   highlights: "market-screen-highlights",
   highlightCard: "market-screen-highlight-card",
   list: "market-screen-list",
+  assetsSubHeader: "market-screen-assets-subheader",
+  assetsSkeleton: "market-screen-assets-skeleton",
+  assetsError: "market-screen-assets-error",
+  assetsFooterSpinner: "market-screen-assets-footer-spinner",
 } as const;

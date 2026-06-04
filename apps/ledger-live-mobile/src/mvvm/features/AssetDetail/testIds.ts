@@ -29,4 +29,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   coinOptionsSheet: "asset-detail-coin-options-sheet",
   coinOptionsFavouriteRow: "asset-detail-coin-options-favourite-row",
   coinOptionsHideRow: "asset-detail-coin-options-hide-row",
+  chartOptionsTrailing: "asset-detail-chart-options-trailing",
+  chartOptionsSheet: "asset-detail-chart-options-sheet",
+  chartOptionsToggleTransactionsRow: "asset-detail-chart-options-toggle-transactions-row",
 } as const;

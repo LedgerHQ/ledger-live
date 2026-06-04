@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { EvmGasOptionsSyncPlugin } from "./plugins/EvmGasOptionsSyncPlugin";
+import { CeloFeeCurrencyPlugin } from "./plugins/CeloFeeCurrencyPlugin";
 
 type AmountPluginProps = Readonly<{
   account: AccountLike;
@@ -20,6 +21,7 @@ type AmountPluginComponent = (props: AmountPluginProps) => React.ReactElement | 
 
 const pluginRegistry: Readonly<Record<string, AmountPluginComponent>> = {
   evmGasOptionsSync: EvmGasOptionsSyncPlugin,
+  celoFeeCurrency: CeloFeeCurrencyPlugin,
 };
 
 export function AmountPluginsHost(props: AmountPluginProps) {

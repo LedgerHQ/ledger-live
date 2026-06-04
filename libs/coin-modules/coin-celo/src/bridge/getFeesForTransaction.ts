@@ -10,7 +10,7 @@ import {
   ZERO_ADDRESS,
 } from "../constants";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { celoGasPrice, getCeloClient } from "../network/client";
+import { celoEstimateGas, celoGasPrice, getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
 import type { CeloAccount, Transaction } from "../types";
 import buildTransaction from "./buildTransaction";
@@ -210,12 +210,13 @@ const getFeesForTransaction = async ({
       args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed())],
     });
 
-    const estimatedGas = await client.estimateGas({
-      account: account.freshAddress as `0x${string}`,
+    const estimatedGas = await celoEstimateGas({
+      from: account.freshAddress as `0x${string}`,
       to: tokenAddress,
       data,
       maxFeePerGas: tokenMaxFeePerGas,
       maxPriorityFeePerGas,
+      ...(transaction.feeCurrency && { feeCurrency: transaction.feeCurrency }),
     });
 
     gas = Number(Math.ceil(Number(estimatedGas) * MAX_FEES_THRESHOLD_MULTIPLIER).toString());

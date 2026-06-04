@@ -4,6 +4,7 @@ import type { OperationExtra, OperationExtraRaw } from "./operation";
 
 export type StakingDelegationStatus =
   | "bonded" // in the active set, generates rewards
+  | "activating" // delegated but not yet in the active set, will start generating rewards next epoch
   | "unbonding" // validator removed from active set, voting power frozen for a network-specific unbonding period
   | "unbonded";
 

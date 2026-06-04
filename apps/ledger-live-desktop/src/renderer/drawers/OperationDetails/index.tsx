@@ -153,7 +153,10 @@ const OperationD = (props: Props) => {
   const mainCurrency = getAccountCurrency(mainAccount);
 
   const unit = useAccountUnit(account);
-  const amount = getOperationAmountNumber(operation);
+  const cryptoCurrency = mainAccount.currency;
+  const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+  const amount =
+    specific?.operationDetails?.getAmount?.(operation) ?? getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const marketColor = getMarketColor({
     isNegative,
@@ -161,8 +164,6 @@ const OperationD = (props: Props) => {
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
 
-  const cryptoCurrency = mainAccount.currency;
-  const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
   const confirmationCell = specific?.operationDetails?.confirmationCell;
   const IconElement = confirmationCell ? confirmationCell[operation.type] : null;
   const amountTooltip = specific?.operationDetails?.amountTooltip;

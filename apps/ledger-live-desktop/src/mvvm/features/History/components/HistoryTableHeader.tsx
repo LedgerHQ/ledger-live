@@ -6,7 +6,7 @@ function HistoryTableHeader() {
   const { t } = useTranslation();
   return (
     <TableHeader>
-      <TableHeaderRow className="z-10">
+      <TableHeaderRow stickyHeader={false} className="z-10">
         <TableHeaderCell data-testid="history-column-type">
           {t("history.columns.type")}
         </TableHeaderCell>

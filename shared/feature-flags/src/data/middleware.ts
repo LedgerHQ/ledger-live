@@ -10,8 +10,8 @@ export interface FeatureFlagsMeta {
 }
 
 /** Configuration for {@link createFeatureFlagsMiddleware}, bound at store creation. */
-export interface FeatureFlagsMiddlewareConfig {
-  /** Static context used by reducers to resolve flags (platform, version, language, env overrides). */
+export interface FeatureFlagsMiddlewareConfig<S = unknown> {
+  /** Static context used by reducers to resolve flags (platform, version, env overrides). */
   resolutionConfig: ResolutionConfig;
   /**
    * Optional async callback that returns the latest remote feature flags. When
@@ -22,6 +22,8 @@ export interface FeatureFlagsMiddlewareConfig {
   fetchRemoteFlags?: () => Promise<PartialFeatures>;
   /** Polling interval for `fetchRemoteFlags`. Defaults to {@link FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS}. */
   refreshInterval?: number;
+  /** Optional selector for the current app language, injected into resolution and re-resolved on change. */
+  getAppLanguage?: (state: S) => string;
 }
 
 /**
@@ -37,10 +39,14 @@ export interface FeatureFlagsMiddlewareConfig {
  * @param config
  * Resolution context plus optional fetcher + interval. Bound at store creation.
  */
-export function createFeatureFlagsMiddleware(config: FeatureFlagsMiddlewareConfig): Middleware {
+export function createFeatureFlagsMiddleware<S = unknown>(
+  config: FeatureFlagsMiddlewareConfig<S>,
+): Middleware<object, S> {
   const remoteFlagsRef: RemoteFlagsRef = { current: {} };
-  return ({ dispatch }) => {
-    const { resolutionConfig, fetchRemoteFlags, refreshInterval } = config;
+  return ({ dispatch, getState }) => {
+    const { resolutionConfig, fetchRemoteFlags, refreshInterval, getAppLanguage } = config;
+    const readLang = () => getAppLanguage?.(getState());
+    let lastLang = readLang();
     if (fetchRemoteFlags) {
       let readyDispatched = false;
       const dispatchSync = () => dispatch(syncRemoteConfig());
@@ -58,17 +64,31 @@ export function createFeatureFlagsMiddleware(config: FeatureFlagsMiddlewareConfi
       );
     }
     return next => action => {
-      if (isAction(action) && action.type.startsWith("featureFlags/")) {
+      if (!isAction(action)) return next(action);
+
+      if (action.type.startsWith("featureFlags/")) {
         return next({
           ...action,
           meta: {
             ...getMeta(action),
-            resolutionConfig,
+            resolutionConfig: getAppLanguage
+              ? { ...resolutionConfig, appLanguage: readLang() }
+              : resolutionConfig,
             remoteFlags: remoteFlagsRef.current,
           },
         });
       }
-      return next(action);
+
+      const result = next(action);
+      // Re-resolve when the language changes (resolution is event-driven).
+      if (getAppLanguage) {
+        const lang = readLang();
+        if (lang !== lastLang) {
+          lastLang = lang;
+          dispatch(syncRemoteConfig());
+        }
+      }
+      return result;
     };
   };
 }

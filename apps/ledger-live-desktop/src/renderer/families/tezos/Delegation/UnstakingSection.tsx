@@ -1,8 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  getTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
 import { isFinalizablePosition, useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import type { TezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import type { StakingPosition, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
@@ -60,6 +64,11 @@ const Base = styled.div`
   flex: 1;
 `;
 
+const TxId = styled(Tabbable)`
+  flex: 1;
+  cursor: pointer;
+`;
+
 type CountdownProps = {
   createdAt: Date | undefined;
   isFinalizable: boolean;
@@ -95,11 +104,24 @@ const UnstakingRow = ({ position, account }: RowProps) => {
   const baker = useBaker(position.delegate ?? "");
   const isFinalizable = isFinalizablePosition(position.uid);
 
+  const txHash = useMemo(() => {
+    const createdMs = position.createdAt?.getTime();
+    if (createdMs === undefined) return undefined;
+    return account.operations.find(op => op.type === "UNSTAKE" && op.date.getTime() === createdMs)
+      ?.hash;
+  }, [account.operations, position.createdAt]);
+
   const openBaker = useCallback(() => {
     if (!position.delegate) return;
     const url = getAddressExplorer(getDefaultExplorerView(account.currency), position.delegate);
     if (url) openURL(url);
   }, [position.delegate, account.currency]);
+
+  const openTx = useCallback(() => {
+    if (!txHash) return;
+    const url = getTransactionExplorer(getDefaultExplorerView(account.currency), txHash);
+    if (url) openURL(url);
+  }, [txHash, account.currency]);
 
   const bakerName = baker ? baker.name : shortAddressPreview(position.delegate ?? "");
 
@@ -111,6 +133,19 @@ const UnstakingRow = ({ position, account }: RowProps) => {
           {bakerName}
         </Ellipsis>
       </BakerCell>
+      {txHash ? (
+        <TxId onClick={openTx}>
+          <Text ff="Inter|Medium" color="primary.c80" fontSize={3}>
+            {shortAddressPreview(txHash)}
+          </Text>
+        </TxId>
+      ) : (
+        <Base>
+          <Text ff="Inter|Medium" color="neutral.c80" fontSize={3}>
+            —
+          </Text>
+        </Base>
+      )}
       <Base>
         <FormattedVal
           ff="Inter|SemiBold"
@@ -152,7 +187,7 @@ const UnstakingSection = ({ account, info }: Props) => {
     <TableContainer mb={6}>
       <TableHeader title={t("tezos.unstaking.header")} />
       <HeaderWrapper>
-        <SectionHeaderColumns trailingI18nKey="delegation.duration" />
+        <SectionHeaderColumns withTransactionId trailingI18nKey="delegation.duration" />
       </HeaderWrapper>
       {unstakingPositions.map(position => (
         <UnstakingRow key={position.uid} position={position} account={account} />

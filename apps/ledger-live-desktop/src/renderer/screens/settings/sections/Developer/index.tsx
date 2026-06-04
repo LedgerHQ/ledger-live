@@ -13,6 +13,7 @@ import CustomLockScreenToggle from "./CustomLockScreenToggle";
 import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
+import CoinConfigSettings from "./CoinConfigSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import EnableCountervaluesStagingToggle from "./EnableCountervaluesStagingToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
@@ -102,6 +103,7 @@ const Default = () => {
       <CustomLockScreenTester />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
+      <CoinConfigSettings />
       {__DEV__ && <EnvVariableOverride />}
       <Row
         title={t("settings.developer.enableLearnStagingUrl")}

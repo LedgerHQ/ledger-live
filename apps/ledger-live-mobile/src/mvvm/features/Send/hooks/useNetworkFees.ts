@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation, useLocale } from "~/context/Locale";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   SendFlowTransactionActions,
@@ -60,6 +60,20 @@ export function useNetworkFees({
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
   const fiatUnit = counterValueCurrency.units[0];
 
+  const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+
+  const feeCurrencySubAccount = useMemo<TokenAccount | null>(() => {
+    if (!feeCurrencyAccountId) return null;
+    const found = (mainAccount.subAccounts ?? []).find(
+      (sub): sub is TokenAccount =>
+        sub.id === feeCurrencyAccountId && sub.type === "TokenAccount",
+    );
+    return found ?? null;
+  }, [feeCurrencyAccountId, mainAccount.subAccounts]);
+
+  const displayUnit = feeCurrencySubAccount?.token.units[0] ?? accountUnit;
+  const displayCurrency = feeCurrencySubAccount?.token ?? accountCurrency;
+
   const feePresetOptions = useFeePresetOptions(accountCurrency, transaction);
   const hasFeePresets = uiConfig.hasFeePresets;
   const shouldEstimateFeePresetsWithBridge = sendFeatures.shouldEstimateFeePresetsWithBridge(
@@ -117,7 +131,7 @@ export function useNetworkFees({
   );
 
   const estimatedFeesCountervalue = useCalculate({
-    from: accountCurrency,
+    from: displayCurrency,
     to: counterValueCurrency,
     value: estimatedFees.toNumber(),
     disableRounding: true,
@@ -135,12 +149,12 @@ export function useNetworkFees({
       });
     }
 
-    return formatCurrencyUnit(accountUnit, estimatedFees, {
+    return formatCurrencyUnit(displayUnit, estimatedFees, {
       showCode: true,
       disableRounding: true,
       locale,
     });
-  }, [estimatedFees, estimatedFeesCountervalue, fiatUnit, accountUnit, locale]);
+  }, [estimatedFees, estimatedFeesCountervalue, fiatUnit, displayUnit, locale]);
 
   const feePresetOptionsMapped = useMemo(() => {
     return feePresetOptions.map(opt => ({

@@ -18,11 +18,12 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
       container: {
         position: "relative",
       },
-      button: {
+      overlay: {
         position: "absolute",
         top: 0,
         left: 0,
         right: 0,
+        bottom: 0,
       },
     }),
     [],
@@ -58,17 +59,14 @@ export const SlideFooterButton = ({ onClose }: SlideFooterButtonProps) => {
 
   return (
     <Animated.View style={styles.container}>
-      <Animated.View
-        style={[styles.button, continueStyle]}
-        pointerEvents={isLastSlide ? "none" : "box-none"}
-      >
+      <Animated.View style={continueStyle} pointerEvents={isLastSlide ? "none" : "box-none"}>
         <Button appearance="base" size="lg" onPress={goNext}>
           {t("walletV4Tour.cta.continue")}
         </Button>
       </Animated.View>
 
       <Animated.View
-        style={[styles.button, exploreStyle]}
+        style={[styles.overlay, exploreStyle]}
         pointerEvents={isLastSlide || isInTest ? "box-none" : "none"}
       >
         <Button appearance="base" size="lg" onPress={complete}>

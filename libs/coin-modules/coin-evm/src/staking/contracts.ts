@@ -32,6 +32,12 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       hrp: "sei",
       endpoint: "/cosmos/staking/v1beta1/delegators/{address}/redelegations",
     },
+    rewardsStrategy: {
+      type: "cosmos-rest",
+      endpoint: "/cosmos/distribution/v1beta1/delegators/{address}/rewards",
+      denom: "usei",
+      scale: USEI_TO_EVM_SCALE,
+    },
     explorerConfig: {
       validatorUrl: "https://seistream.app/validators/$address",
     },

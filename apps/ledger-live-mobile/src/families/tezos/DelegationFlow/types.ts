@@ -5,6 +5,11 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 
 export type TezosDelegationFlowParamList = {
+  [ScreenName.TezosEarnRewards]: {
+    accountId: string;
+    parentId?: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
   [ScreenName.DelegationStarted]: {
     accountId: string;
     parentId?: string;

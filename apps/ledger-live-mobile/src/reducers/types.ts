@@ -379,6 +379,21 @@ export type MarketState = {
   marketParams: MarketListRequestParams;
   marketFilterByStarredCurrencies: boolean;
   marketCurrentPage: number;
+  hideTransactionsOnChart: boolean;
+};
+
+// === ASSET LIST CONFIG STATE (V4) ===
+
+export type MarketListSorting = "marketCap" | "volume" | "gainers" | "losers";
+export type MarketListTimeframe = "1D" | "7D" | "30D" | "1Y" | "all";
+export type MarketListCategory = "all" | "starred" | "stocks";
+
+export type MarketListConfigState = {
+  sorting: MarketListSorting;
+  timeframe: MarketListTimeframe;
+  /** Selected network id, or `undefined` for all networks (consumed by LIVE-29972). */
+  network: string | undefined;
+  category: MarketListCategory;
 };
 
 // === WALLETSYNC STATE ===
@@ -422,6 +437,7 @@ export type State = LLMRTKApiState & {
   knownDevices: KnownDevicesState;
   largeMover: LargeMoverState;
   market: MarketState;
+  marketListConfig: MarketListConfigState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;

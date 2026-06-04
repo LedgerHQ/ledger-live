@@ -258,7 +258,7 @@ describe("getBlock", () => {
     });
   });
 
-  it("should handle failed transactions with empty operations but fees set", async () => {
+  it("should include operations for failed transactions so downstream can see transfer details", async () => {
     mockGetTransactionInfoByBlockNum.mockResolvedValue([{ id: "tx1", fee: 5000 }]);
 
     (getBlockWithTransactions as jest.Mock).mockResolvedValue({
@@ -289,8 +289,18 @@ describe("getBlock", () => {
     const result = await getBlock(100);
 
     expect(result.transactions[0].failed).toBe(true);
-    expect(result.transactions[0].operations).toHaveLength(0);
     expect(result.transactions[0].fees).toBe(BigInt(5000));
+    expect(result.transactions[0].operations).toHaveLength(2);
+    expect(result.transactions[0].operations[0]).toMatchObject({
+      type: "transfer",
+      asset: { type: "native" },
+      amount: BigInt(-1000000),
+    });
+    expect(result.transactions[0].operations[1]).toMatchObject({
+      type: "transfer",
+      asset: { type: "native" },
+      amount: BigInt(1000000),
+    });
   });
 
   it("should handle blocks with no transactions", async () => {

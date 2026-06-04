@@ -360,6 +360,34 @@ describe("estimateFees", () => {
     );
   });
 
+  it("useAllAmount stake excludes unstaked-frozen funds from maxStakable", async () => {
+    const suggestedFee = 700;
+    const balance = 1_000_000n;
+    const stakedBalance = 300_000n;
+    const unstakedBalance = 200_000n;
+    mockTezosToolkit.estimate.stake.mockResolvedValue({
+      suggestedFeeMutez: suggestedFee,
+      gasLimit: 1100,
+      storageLimit: 5,
+      burnFeeMutez: 0,
+      opSize: 100,
+    });
+
+    const result = await estimateFees({
+      account: { ...revealedAccount, balance, stakedBalance, unstakedBalance },
+      transaction: {
+        mode: "stake",
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      },
+    });
+
+    expect(result.amount).toBe(
+      balance - stakedBalance - unstakedBalance - BigInt(suggestedFee) - STAKE_USE_ALL_RESERVE_MUTEZ,
+    );
+  });
+
   it("useAllAmount unstake coerces amount to 1 for Taquito estimation", async () => {
     mockTezosToolkit.estimate.unstake.mockResolvedValue({
       suggestedFeeMutez: 710,
@@ -728,5 +756,35 @@ describe("estimateFees", () => {
     expect(result.fees).toBe(BigInt(minFees));
     expect(result.amount).not.toBeUndefined();
     expect(result.amount!).toBeLessThanOrEqual(BigInt(balance));
+  });
+
+  it("useAllAmount send excludes staked and unstaked funds from the max", async () => {
+    const balance = 10000n;
+    const stakedBalance = 3000n;
+    const unstakedBalance = 1000n;
+    mockTezosToolkit.estimate.transfer.mockResolvedValue({
+      suggestedFeeMutez: 100,
+      gasLimit: 1500,
+      storageLimit: 0,
+      burnFeeMutez: 0,
+      opSize: 200,
+    });
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+      fees: { ...defaultFeesConfig, minFees: 0 },
+    });
+
+    const result = await estimateFees({
+      account: { ...revealedAccount, balance, stakedBalance, unstakedBalance },
+      transaction: {
+        mode: "send",
+        recipient: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr",
+        amount: 0n,
+        useAllAmount: true,
+      },
+    });
+
+    expect(result.amount).not.toBeUndefined();
+    expect(result.amount!).toBeLessThanOrEqual(6000n);
+    expect(result.amount!).toBeGreaterThan(5000n);
   });
 });

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Linking } from "react-native";
-import { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
-import { EVENT_CONCERN, EVENT_DISMISSED, EVENT_PROCEED, EVENT_SHOWN } from "./analytics";
+import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "./analytics";
 
 type CloseSource = "external" | "internal";
 
@@ -27,14 +27,9 @@ export type CounterfeitWarningDrawerViewProps = Readonly<{
   onDismiss: () => void;
 }>;
 
-const analyticsPayload = (deviceModelId: DeviceModelId) => ({
-  deviceModelId,
-  flow: "Onboarding",
-});
-
 export const useCounterfeitWarningDrawerViewModel = ({
   isOpen,
-  deviceModelId,
+  deviceModelId: _deviceModelId,
   onProceed,
   onDismiss,
 }: CounterfeitWarningDrawerContainerProps): CounterfeitWarningDrawerViewProps => {
@@ -44,7 +39,7 @@ export const useCounterfeitWarningDrawerViewModel = ({
 
   useEffect(() => {
     if (isOpen && !hasTrackedShownRef.current) {
-      track(EVENT_SHOWN, analyticsPayload(deviceModelId));
+      track("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
       hasTrackedShownRef.current = true;
     }
 
@@ -52,19 +47,25 @@ export const useCounterfeitWarningDrawerViewModel = ({
       hasTrackedShownRef.current = false;
       closeSourceRef.current = "external";
     }
-  }, [deviceModelId, isOpen]);
+  }, [isOpen]);
 
   const handleProceed = useCallback(() => {
     closeSourceRef.current = "internal";
-    track(EVENT_PROCEED, analyticsPayload(deviceModelId));
+    track("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     onProceed();
-  }, [deviceModelId, onProceed]);
+  }, [onProceed]);
 
   const handleConcern = useCallback(() => {
     closeSourceRef.current = "internal";
-    track(EVENT_CONCERN, analyticsPayload(deviceModelId));
+    track("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     Linking.openURL(urls.genuineCheck.learnMore);
-  }, [deviceModelId]);
+  }, []);
 
   const handleLedgerComLink = useCallback(() => {
     Linking.openURL(urls.ledger);
@@ -76,11 +77,14 @@ export const useCounterfeitWarningDrawerViewModel = ({
 
   const handleDismiss = useCallback(() => {
     if (closeSourceRef.current === "external") {
-      track(EVENT_DISMISSED, analyticsPayload(deviceModelId));
+      track("button_clicked", {
+        button: COUNTERFEIT_WARNING_BUTTON.close,
+        page: COUNTERFEIT_WARNING_PAGE,
+      });
     }
     closeSourceRef.current = "external";
     onDismiss();
-  }, [deviceModelId, onDismiss]);
+  }, [onDismiss]);
 
   return {
     isOpen,

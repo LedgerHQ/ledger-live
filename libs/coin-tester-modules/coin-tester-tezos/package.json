@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/coin-tester-tezos",
   "version": "1.0.1",
+  "private": true,
   "description": "Ledger Tezos Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -17,9 +18,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-tezos",
-  "publishConfig": {
-    "access": "public"
-  },
   "typesVersions": {
     "*": {
       "lib/*": [

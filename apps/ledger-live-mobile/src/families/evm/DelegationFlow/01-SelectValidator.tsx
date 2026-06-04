@@ -13,15 +13,16 @@ import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import Config from "react-native-config";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import ValidatorHead from "~/families/cosmos/shared/ValidatorHead";
-import ValidatorRow from "~/families/cosmos/shared/ValidatorRow";
 import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { EvmDelegationFlowParamList } from "./types";
+import ValidatorRow from "./ValidatorRow";
 
 type Props = StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmDelegationValidator>;
 
@@ -41,7 +42,38 @@ export default function SelectValidator({ navigation, route }: Props) {
     evmNativeStakingFeature.params?.supportedCurrencyIds?.includes(account.currency.id) === true;
 
   const bridge = useAccountBridge<GenericTransaction>(account);
-  const { validators, loading, error } = useEvmStakingValidators(account.currency.id, searchQuery);
+  const {
+    validators: fetchedValidators,
+    loading,
+    error,
+  } = useEvmStakingValidators(account.currency.id);
+  const validators = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    const isDetox = Config.DETOX === "true" || Config.DETOX === "1";
+    const requiresValidatorId = account.currency.id === "monad";
+    const e2eValidators = isDetox
+      ? (account.stakingResources?.validators ?? []).filter(
+          validator => !requiresValidatorId || Boolean(validator.validatorId),
+        )
+      : [];
+    const source = e2eValidators.length > 0 ? e2eValidators : fetchedValidators;
+
+    return [...source]
+      .filter(validator => {
+        if (requiresValidatorId && !validator.validatorId) return false;
+        if (validator.commission === 1) return false;
+        if (!query) return true;
+        return (validator.name || validator.validatorAddress).toLowerCase().includes(query);
+      })
+      .sort((a, b) => {
+        const aTokens = BigInt(a.tokens);
+        const bTokens = BigInt(b.tokens);
+
+        if (bTokens > aTokens) return 1;
+        if (bTokens < aTokens) return -1;
+        return 0;
+      });
+  }, [account.currency.id, account.stakingResources?.validators, fetchedValidators, searchQuery]);
   const baseTransaction = useMemo(() => {
     const transaction = bridge.createTransaction(account);
     return bridge.updateTransaction(transaction, {
@@ -51,13 +83,15 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const onItemPress = useCallback(
     (validator: StakingValidatorItem) => {
+      const transaction = bridge.updateTransaction(baseTransaction, {
+        mode: "delegate",
+        valAddress: validator.validatorAddress,
+        valId: validator.validatorId,
+      }) as unknown as Transaction;
+
       navigation.navigate(ScreenName.EvmDelegationAmount, {
         ...route.params,
-        transaction: bridge.updateTransaction(baseTransaction, {
-          mode: "delegate",
-          valAddress: validator.validatorAddress,
-          valId: validator.validatorId,
-        }) as unknown as Transaction,
+        transaction,
         validator,
       });
     },
@@ -66,9 +100,9 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item }: { item: StakingValidatorItem }) => (
-      <ValidatorRow account={account} validator={item} onPress={onItemPress} />
+      <ValidatorRow validator={item} onPress={onItemPress} />
     ),
-    [account, onItemPress],
+    [onItemPress],
   );
 
   if (!isFeatureEnabled) {
@@ -92,7 +126,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         <View style={styles.center}>
           <InfiniteLoader size={32} />
         </View>
-      ) : error ? (
+      ) : error && validators.length === 0 ? (
         <View style={styles.center}>
           <Text color="error.c50" textAlign="center">
             {error.message}

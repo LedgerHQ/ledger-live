@@ -11,9 +11,10 @@ import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddre
 import bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
-import { APITransaction } from "./api/api-types";
+import { APITransaction, HashType } from "./api/api-types";
 import {
   CARDANO_COIN_TYPE,
+  CARDANO_MAX_SUPPLY,
   CARDANO_PURPOSE,
   MEMO_LABEL,
   STAKING_ADDRESS_INDEX,
@@ -201,6 +202,51 @@ export function mergeTokens(tokens: Array<TyphonTypes.Token>): Array<TyphonTypes
   }));
 }
 
+export type DerivedUtxo = {
+  txId: string;
+  index: number;
+  amount: BigNumber;
+  tokens: TyphonTypes.Token[];
+};
+
+/**
+ * Derive the unspent outputs held by a single payment credential from its transaction history:
+ * outputs paying that credential, minus those later consumed as inputs. Retains the outpoint
+ * (txId + index) needed to reference a UTXO as a transaction input — balance callers that only
+ * need the amounts can ignore it. Shared by getBalance and craftTransaction so the derivation
+ * can't drift between them.
+ *
+ * Per-address only — a Cardano account spreads funds across many payment credentials (derived
+ * from the xpub), but the single-address CoinModule path covers just the passed credential.
+ */
+export function deriveUtxos(transactions: APITransaction[], paymentKey: string): DerivedUtxo[] {
+  const spent = new Set<string>();
+  for (const tx of transactions) {
+    for (const input of tx.inputs) {
+      if (input.paymentKey === paymentKey) spent.add(`${input.txId}#${input.index}`);
+    }
+  }
+
+  const utxos: DerivedUtxo[] = [];
+  for (const tx of transactions) {
+    tx.outputs.forEach((output, index) => {
+      if (output.paymentKey !== paymentKey) return;
+      if (spent.has(`${tx.hash}#${index}`)) return;
+      utxos.push({
+        txId: tx.hash,
+        index,
+        amount: new BigNumber(output.value),
+        tokens: output.tokens.map(t => ({
+          policyId: t.policyId,
+          assetName: t.assetName,
+          amount: new BigNumber(t.value),
+        })),
+      });
+    });
+  }
+  return utxos;
+}
+
 /**
  * @param { Array<TyphonTypes.Token> } b
  * @param { Array<TyphonTypes.Token> } a
@@ -349,4 +395,136 @@ export function isProtocolParamsValid(pp: ProtocolParams): boolean {
     pp.utxoCostPerByte,
   ];
   return paramsRequiredCheck.every(isValidNumString);
+}
+
+export function getRewardAddress(stakeKey: string, networkId: number): TyphonAddress.RewardAddress {
+  return new TyphonAddress.RewardAddress(networkId, {
+    // Use Typhon's own HashType when constructing a Typhon address (don't rely on
+    // the api-types enum sharing the same numeric values).
+    type: TyphonTypes.HashType.ADDRESS,
+    hash: Buffer.from(stakeKey, "hex"),
+  });
+}
+
+export function findStakeRegistration(
+  tx: APITransaction,
+  stakeKey: string,
+  networkId: number,
+  stakeKeyDeposit: string,
+): string | undefined {
+  // Pre-Conway stake registrations use the protocol-level deposit; the amount is
+  // not carried on the certificate, so it's sourced from network protocol params.
+  if (tx.certificate.stakeRegistrations?.length) {
+    const match = tx.certificate.stakeRegistrations.find(
+      c => c.stakeCredential.type === HashType.ADDRESS && c.stakeCredential.key === stakeKey,
+    );
+    if (match) {
+      return stakeKeyDeposit;
+    }
+  }
+
+  // Conway era stake registrations
+  if (tx.certificate.stakeRegsConway?.length) {
+    const stakeAddress = getRewardAddress(stakeKey, networkId);
+    const match = tx.certificate.stakeRegsConway.find(w => stakeAddress.getHex() === w.stakeHex);
+    if (match) {
+      return match.deposit;
+    }
+  }
+
+  return undefined;
+}
+
+export function findStakeDeRegistration(
+  tx: APITransaction,
+  stakeKey: string,
+  networkId: number,
+  stakeKeyDeposit: string,
+): string | undefined {
+  // Pre-Conway de-registrations refund the protocol-level deposit (equal to the
+  // original registration deposit), sourced from network protocol params.
+  if (tx.certificate.stakeDeRegistrations?.length) {
+    const match = tx.certificate.stakeDeRegistrations.find(
+      c => c.stakeCredential.type === HashType.ADDRESS && c.stakeCredential.key === stakeKey,
+    );
+    if (match) {
+      return stakeKeyDeposit;
+    }
+  }
+
+  // Conway era stake de-registrations
+  if (tx.certificate.stakeDeRegsConway?.length) {
+    const stakeAddress = getRewardAddress(stakeKey, networkId);
+    const match = tx.certificate.stakeDeRegsConway.find(w => stakeAddress.getHex() === w.stakeHex);
+    if (match) {
+      return match.deposit;
+    }
+  }
+
+  return undefined;
+}
+
+export function findWithdrawal(tx: APITransaction, stakeKey: string): string | undefined {
+  if (!tx.withdrawals?.length) {
+    return undefined;
+  }
+
+  const match = tx.withdrawals.find(
+    w => w.stakeCredential.type === HashType.ADDRESS && w.stakeCredential.key === stakeKey,
+  );
+
+  return match?.amount;
+}
+
+/**
+ * Minimum ADA that must back a UTXO carrying the given token bundle (Babbage per-byte rule).
+ * Returns 0 when there are no tokens. `address` is only used to size the output; pass any
+ * address that will hold the bundle. Shared by account sync and the CoinModule balance path
+ * so the min-UTXO computation can't drift between them.
+ */
+export function calculateMinAdaForTokens(
+  address: string,
+  tokens: TyphonTypes.Token[],
+  utxoCostPerByte: string | number,
+): BigNumber {
+  if (!tokens.length) return new BigNumber(0);
+  return TyphonUtils.calculateMinUtxoAmountBabbage(
+    {
+      address: TyphonUtils.getAddressFromString(address),
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens,
+    },
+    new BigNumber(utxoCostPerByte),
+  );
+}
+
+/**
+ * Native ADA balance split, shared by account sync and the CoinModule balance path so the
+ * spendable math is defined in one place:
+ *
+ * - `total` = on-chain UTXO ADA plus accrued staking rewards (counted whether or not they
+ *   are currently withdrawable).
+ * - `spendable` = UTXO ADA minus the min-ADA locked behind held tokens, plus rewards **only**
+ *   when the stake key is delegated to a dRep (Conway rule: rewards aren't withdrawable
+ *   otherwise). Never negative.
+ *
+ * The non-spendable ("locked") portion is `total - spendable`.
+ */
+export function computeAdaBalance({
+  utxosSum,
+  minAdaForTokens,
+  rewards,
+  delegatedToDRep,
+}: {
+  utxosSum: BigNumber;
+  minAdaForTokens: BigNumber;
+  rewards: BigNumber;
+  delegatedToDRep: boolean;
+}): { total: BigNumber; spendable: BigNumber } {
+  const total = utxosSum.plus(rewards);
+  let spendable = BigNumber.max(0, utxosSum.minus(minAdaForTokens));
+  if (delegatedToDRep) {
+    spendable = spendable.plus(rewards);
+  }
+  return { total, spendable };
 }

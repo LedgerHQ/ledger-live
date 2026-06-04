@@ -1,10 +1,27 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { fireEvent, render, screen } from "@tests/test-renderer";
 import AssetListItem from "../index";
 import type { AssetListItemViewModelResult } from "../usePrecomputedAssetListData";
+import type { MarketAssetDisplayData } from "../types";
 import { createCryptoAsset, bitcoin } from "./shared";
 
 const mockAsset = createCryptoAsset(bitcoin, 100000);
+
+const mockMarket: MarketAssetDisplayData = {
+  id: "bitcoin",
+  name: "Bitcoin",
+  ticker: "btc",
+  ledgerIds: ["bitcoin"],
+  formattedMarketCap: "$1.7 T",
+  marketcapRank: 1,
+  formattedPrice: "$92,258.93",
+  priceChangePercentage: 7.87,
+};
+
+const renderMarketView = (overrides: Partial<MarketAssetDisplayData> = {}, onPress = jest.fn()) =>
+  render(
+    <AssetListItem variant="market" market={{ ...mockMarket, ...overrides }} onPress={onPress} />,
+  );
 
 const baseViewModelResult: AssetListItemViewModelResult = {
   formattedBalance: "0.001 BTC",
@@ -60,6 +77,33 @@ describe("AssetListItem", () => {
     it("should not render the delta when countervalueChange is null", () => {
       renderView({ countervalueChange: null });
       expect(screen.queryByText(/%/)).toBeNull();
+    });
+  });
+
+  describe("market variant", () => {
+    it("renders the name, market cap, rank tag and price", () => {
+      renderMarketView();
+      expect(screen.getByText("Bitcoin")).toBeVisible();
+      expect(screen.getByText("$1.7 T")).toBeVisible();
+      expect(screen.getByText("#1")).toBeVisible();
+      expect(screen.getByText("$92,258.93")).toBeVisible();
+    });
+
+    it("renders the price change trend", () => {
+      renderMarketView();
+      expect(screen.getByText(/7\.87%/)).toBeVisible();
+    });
+
+    it("hides the rank tag when rank is unknown", () => {
+      renderMarketView({ marketcapRank: 0 });
+      expect(screen.queryByText("#0")).toBeNull();
+    });
+
+    it("calls onPress with the market data when tapped", () => {
+      const onPress = jest.fn();
+      renderMarketView({}, onPress);
+      fireEvent.press(screen.getByTestId("marketItem-bitcoin"));
+      expect(onPress).toHaveBeenCalledWith(expect.objectContaining({ id: "bitcoin" }));
     });
   });
 });

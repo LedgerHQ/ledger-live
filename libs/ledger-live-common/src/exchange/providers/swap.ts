@@ -267,7 +267,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     name: "lifi",
     needsBearerToken: false,
     termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
-    supportUrl: "https://discord.gg/jumperexchange",
+    supportUrl: "https://scan.li.fi/",
     mainUrl: "https://li.fi/",
     needsKYC: false,
     version: 2,

@@ -50,6 +50,7 @@ import {
 import { getOnboardingStatusAttributes } from "./onboardingStatus";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
 
@@ -291,6 +292,10 @@ const extraProperties = (store: ReduxStore) => {
 
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
   const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
+  const onboardingCounterfeitWarningAttributes = getOnboardingCounterfeitWarningAttributes(
+    analyticsFeatureFlagMethod,
+    "lwd",
+  );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
 
   return {
@@ -334,6 +339,7 @@ const extraProperties = (store: ReduxStore) => {
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
+    ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
   };
 };

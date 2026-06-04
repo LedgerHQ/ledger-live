@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
@@ -6,6 +7,7 @@ import MarketCurrencySelect from "LLM/features/Market/screens/MarketCurrencySele
 import MarketDetail from "LLM/features/Market/screens//MarketDetail";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
 import MarketList from "LLM/features/Market/screens/MarketList";
 import MarketScreen from "LLM/features/Market/screens/MarketScreen";
 import {
@@ -28,7 +30,17 @@ interface NavigatorProps {
 
 export default function MarketNavigator({ Stack }: NavigatorProps) {
   const { t } = useTranslation();
+  const { theme } = useLumenTheme();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
+  const marketScreenOptions = useMemo(
+    () => ({
+      ...getStackNavigationConfigV4(theme),
+      title: t("market.title"),
+      headerLeft: undefined,
+      headerRight: () => null,
+    }),
+    [theme, t],
+  );
   return (
     <Stack.Group>
       <Stack.Screen
@@ -36,12 +48,7 @@ export default function MarketNavigator({ Stack }: NavigatorProps) {
         component={shouldDisplayAssetDiscoverability ? MarketScreen : MarketList}
         options={
           shouldDisplayAssetDiscoverability
-            ? {
-                title: t("market.exploreTitle"),
-                headerShown: true,
-                headerLeft: MarketListHeaderLeft,
-                headerRight: () => null,
-              }
+            ? marketScreenOptions
             : {
                 title: t("market.title"),
                 headerShown: true,

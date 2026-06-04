@@ -1,6 +1,8 @@
 import { act, renderHook } from "tests/testSetup";
 import { usePortfolioBalance } from "../usePortfolioBalance";
 import { BTC_ACCOUNT, ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+import { filterAccountsExcludingBlacklisted } from "@ledgerhq/live-common/account/filterAccountsExcludingBlacklisted";
+import { bitcoinCurrency } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { DEFAULT_PORTFOLIO_RANGE } from "LLD/utils/constants";
 import { SYNC_SETTLE_GUARD_MS } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
@@ -102,6 +104,31 @@ describe("usePortfolioBalance", () => {
 
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({ accounts: [BTC_ACCOUNT, ETH_ACCOUNT] }),
+      );
+    });
+
+    it("should exclude blacklisted accounts from portfolio hook", () => {
+      const spy = jest.spyOn(portfolioReact, "usePortfolioThrottled");
+
+      renderHook(() => usePortfolioBalance(), {
+        initialState: {
+          ...defaultInitialState,
+          accounts: [BTC_ACCOUNT, ETH_ACCOUNT],
+          settings: {
+            ...defaultInitialState.settings,
+            blacklistedTokenIds: [bitcoinCurrency.id],
+          },
+        },
+      });
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          accounts: filterAccountsExcludingBlacklisted(
+            [BTC_ACCOUNT, ETH_ACCOUNT],
+            [bitcoinCurrency.id],
+          ),
+          options: { flattenSourceAccounts: false },
+        }),
       );
     });
   });

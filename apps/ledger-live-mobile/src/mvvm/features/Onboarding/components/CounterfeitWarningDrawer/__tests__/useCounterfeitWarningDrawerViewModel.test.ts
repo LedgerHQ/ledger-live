@@ -8,7 +8,7 @@ import {
   useCounterfeitWarningDrawerViewModel,
   type CounterfeitWarningDrawerContainerProps,
 } from "../useCounterfeitWarningDrawerViewModel";
-import { EVENT_CONCERN, EVENT_DISMISSED, EVENT_PROCEED, EVENT_SHOWN } from "../analytics";
+import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "../analytics";
 
 const trackMock = jest.mocked(track);
 
@@ -18,8 +18,6 @@ const defaultProps: CounterfeitWarningDrawerContainerProps = {
   onProceed: jest.fn(),
   onDismiss: jest.fn(),
 };
-
-const analyticsPayload = { deviceModelId: DeviceModelId.nanoX, flow: "Onboarding" };
 
 describe("useCounterfeitWarningDrawerViewModel", () => {
   let openURLSpy: jest.SpiedFunction<typeof Linking.openURL>;
@@ -33,7 +31,7 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
     openURLSpy.mockRestore();
   });
 
-  it("should track shown once per open transition", () => {
+  it("should track page_viewed once per open transition", () => {
     const { rerender } = renderHook(
       ({ isOpen }: { isOpen: boolean }) =>
         useCounterfeitWarningDrawerViewModel({ ...defaultProps, isOpen }),
@@ -41,13 +39,13 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
     );
 
     expect(trackMock).toHaveBeenCalledTimes(1);
-    expect(trackMock).toHaveBeenCalledWith(EVENT_SHOWN, analyticsPayload);
+    expect(trackMock).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
 
     rerender({ isOpen: true });
     expect(trackMock).toHaveBeenCalledTimes(1);
   });
 
-  it("should reset shown tracking when the drawer closes and reopens", () => {
+  it("should reset page_viewed tracking when the drawer closes and reopens", () => {
     const { rerender } = renderHook(
       ({ isOpen }: { isOpen: boolean }) =>
         useCounterfeitWarningDrawerViewModel({ ...defaultProps, isOpen }),
@@ -62,10 +60,10 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
     expect(trackMock).toHaveBeenCalledTimes(2);
   });
 
-  it("should not track shown when closed", () => {
+  it("should not track page_viewed when closed", () => {
     renderHook(() => useCounterfeitWarningDrawerViewModel({ ...defaultProps, isOpen: false }));
 
-    expect(trackMock).not.toHaveBeenCalledWith(EVENT_SHOWN, expect.anything());
+    expect(trackMock).not.toHaveBeenCalledWith("page_viewed", expect.anything());
   });
 
   it("should resolve i18n labels from translation keys", () => {
@@ -80,7 +78,7 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
     );
   });
 
-  it("should track proceed and call onProceed", () => {
+  it("should track continue setup and call onProceed", () => {
     const onProceed = jest.fn();
     const { result } = renderHook(() =>
       useCounterfeitWarningDrawerViewModel({ ...defaultProps, onProceed }),
@@ -90,18 +88,24 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
       result.current.onProceed();
     });
 
-    expect(trackMock).toHaveBeenCalledWith(EVENT_PROCEED, analyticsPayload);
+    expect(trackMock).toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     expect(onProceed).toHaveBeenCalledTimes(1);
   });
 
-  it("should open the genuine check URL and track concern on secondary CTA", () => {
+  it("should open the genuine check URL and track learn more on secondary CTA", () => {
     const { result } = renderHook(() => useCounterfeitWarningDrawerViewModel(defaultProps));
 
     act(() => {
       result.current.onConcern();
     });
 
-    expect(trackMock).toHaveBeenCalledWith(EVENT_CONCERN, analyticsPayload);
+    expect(trackMock).toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     expect(openURLSpy).toHaveBeenCalledWith(urls.genuineCheck.learnMore);
   });
 
@@ -117,10 +121,13 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
       result.current.onResellerLink();
     });
     expect(openURLSpy).toHaveBeenCalledWith(urls.ledgerReseller);
-    expect(trackMock).not.toHaveBeenCalledWith(EVENT_CONCERN, expect.anything());
+    expect(trackMock).not.toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
   });
 
-  it("should track dismissed and call onDismiss", () => {
+  it("should track close and call onDismiss", () => {
     const onDismiss = jest.fn();
     const { result } = renderHook(() =>
       useCounterfeitWarningDrawerViewModel({ ...defaultProps, onDismiss }),
@@ -130,7 +137,10 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
       result.current.onDismiss();
     });
 
-    expect(trackMock).toHaveBeenCalledWith(EVENT_DISMISSED, analyticsPayload);
+    expect(trackMock).toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.close,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 });

@@ -9,7 +9,7 @@ import {
   ZERO_ADDRESS,
 } from "../constants";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { getCeloClient } from "../network/client";
+import { celoEstimateGas, getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
 import type { CeloAccount, CeloTransactionRequest, Transaction } from "../types";
 import { valueToHex, isSameTokenAsFee, normalizeAndSubtract, convertNumberDecimals } from "./utils";
@@ -324,13 +324,12 @@ const buildTransaction = async (
       break;
   }
 
-  const valueAsBigInt =
-    celoTransaction.value === undefined ? undefined : BigInt(celoTransaction.value);
-  const estimatedGas = await client.estimateGas({
-    account: celoTransaction.from,
-    to: celoTransaction.to,
-    data: celoTransaction.data,
-    value: valueAsBigInt,
+  const estimatedGas = await celoEstimateGas({
+    from: celoTransaction.from,
+    ...(celoTransaction.to !== undefined && { to: celoTransaction.to }),
+    ...(celoTransaction.data !== undefined && { data: celoTransaction.data }),
+    ...(celoTransaction.value !== undefined && { value: BigInt(celoTransaction.value) }),
+    ...(celoTransaction.feeCurrency && { feeCurrency: celoTransaction.feeCurrency }),
   });
 
   const gas = Math.ceil(Number(estimatedGas) * MAX_FEES_THRESHOLD_MULTIPLIER).toString();

@@ -18,6 +18,7 @@ import type {
 } from "LLM/components/LineChart";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import type { RangeKey } from "../../utils/rangeMapping";
+import { ChartOptions } from "./ChartOptions";
 
 /** Figma asset-detail chart height (343 × 208). Width follows the screen inset. */
 export const ASSET_DETAIL_CHART_HEIGHT = 208;
@@ -50,6 +51,7 @@ type Props = Readonly<{
   showYAxis: boolean;
   xAxis: LineChartXAxisConfig;
   yAxis: LineChartYAxisConfig;
+  currencyId?: string;
 }>;
 
 type ChartProps = Readonly<{
@@ -70,6 +72,7 @@ type ChartProps = Readonly<{
   xAxis: LineChartXAxisConfig;
   yAxis: LineChartYAxisConfig;
   accessibilityLabel: string;
+  currencyId?: string;
 }>;
 
 /**
@@ -95,6 +98,7 @@ const BalanceGraphChart = React.memo(function BalanceGraphChart({
   xAxis,
   yAxis,
   accessibilityLabel,
+  currencyId,
 }: ChartProps) {
   return (
     <LineChart<RangeKey>
@@ -119,6 +123,7 @@ const BalanceGraphChart = React.memo(function BalanceGraphChart({
       accessibilityLabel={accessibilityLabel}
       testID={ASSET_DETAIL_TEST_IDS.chart}
       height={ASSET_DETAIL_CHART_HEIGHT}
+      rangeSelectorTrailing={<ChartOptions currencyId={currencyId} />}
     />
   );
 });
@@ -149,6 +154,7 @@ export function BalanceGraphView({
   showYAxis,
   xAxis,
   yAxis,
+  currencyId,
 }: Props) {
   const { t } = useTranslation();
 
@@ -203,6 +209,7 @@ export function BalanceGraphView({
         xAxis={xAxis}
         yAxis={yAxis}
         accessibilityLabel={t("assetDetail.balanceGraph.timeframeSelector")}
+        currencyId={currencyId}
       />
 
       {showReceive && (

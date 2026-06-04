@@ -13,6 +13,7 @@ export const DEFAULT_SEND_UI_CONFIG: SendFlowUiConfig = {
   hasFeePresets: false,
   hasCustomFees: false,
   hasCoinControl: false,
+  hasAmountPlugins: false,
 };
 
 export function getSendUiConfig(currency: CryptoOrTokenCurrency | null): SendFlowUiConfig {
@@ -35,5 +36,6 @@ export function getSendUiConfig(currency: CryptoOrTokenCurrency | null): SendFlo
     hasFeePresets: sendFeatures.hasFeePresets(currency),
     hasCustomFees: sendFeatures.hasCustomFees(currency),
     hasCoinControl: sendFeatures.hasCoinControl(currency),
+    hasAmountPlugins: sendFeatures.getAmountPlugins(currency).length > 0,
   };
 }

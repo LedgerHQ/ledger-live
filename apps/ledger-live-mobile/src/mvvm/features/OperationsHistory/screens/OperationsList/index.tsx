@@ -13,10 +13,9 @@ import OperationsListItem from "./components/OperationsListItem";
 import OperationsSectionHeader from "./components/OperationsSectionHeader";
 import { OperationsEmptyState } from "./components/OperationsEmptyState";
 import { OperationsListFooter } from "./components/OperationsListFooter";
-import { BottomFadeGradient } from "./components/BottomFadeGradient";
 import { SectionSeparator } from "./components/SectionSeparator";
 import { useOperationsListViewModel } from "./useOperationsListViewModel";
-import { GRADIENT_HEIGHT } from "LLM/features/OperationsHistory/const";
+import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
 
 type Props = StackNavigatorProps<OperationsHistoryNavigatorParamsList, ScreenName.OperationsList>;
 

@@ -94,6 +94,102 @@ describe("useMarketPriceSectionViewModel", () => {
     expect(result.current.scrubbedDateLabel).toContain("2024");
   });
 
+  it("formats 1w scrubbed date as time + date", () => {
+    const { result } = renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          ledgerId: "bitcoin",
+          marketData,
+          isDistributionLoading: false,
+          selectedRange: "1w",
+        }),
+      {
+        initialState: { settings: { counterValue: "USD", locale: "en-US" } },
+        wrapper: makeScrubWrapper({
+          price: 250,
+          timestamp: Date.UTC(2024, 0, 2, 13, 45),
+          percentage: 1.5,
+          variationFiat: 150,
+        }),
+      },
+    );
+
+    expect(result.current.scrubbedDateLabel).toContain("2024");
+    expect(result.current.scrubbedDateLabel).toContain(":");
+  });
+
+  it("formats 6m scrubbed date as time + date", () => {
+    const { result } = renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          ledgerId: "bitcoin",
+          marketData,
+          isDistributionLoading: false,
+          selectedRange: "6m",
+        }),
+      {
+        initialState: { settings: { counterValue: "USD", locale: "en-US" } },
+        wrapper: makeScrubWrapper({
+          price: 250,
+          timestamp: Date.UTC(2024, 0, 2, 13, 45),
+          percentage: 1.5,
+          variationFiat: 150,
+        }),
+      },
+    );
+
+    expect(result.current.scrubbedDateLabel).toContain("2024");
+    expect(result.current.scrubbedDateLabel).toContain(":");
+  });
+
+  it("formats 1d scrubbed date as time only", () => {
+    const { result } = renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          ledgerId: "bitcoin",
+          marketData,
+          isDistributionLoading: false,
+          selectedRange: "1d",
+        }),
+      {
+        initialState: { settings: { counterValue: "USD", locale: "en-US" } },
+        wrapper: makeScrubWrapper({
+          price: 250,
+          timestamp: Date.UTC(2024, 0, 2, 13, 45),
+          percentage: 1.5,
+          variationFiat: 150,
+        }),
+      },
+    );
+
+    expect(result.current.scrubbedDateLabel).toContain(":");
+    expect(result.current.scrubbedDateLabel).not.toContain("2024");
+  });
+
+  it("formats 1y scrubbed date as date only", () => {
+    const { result } = renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          ledgerId: "bitcoin",
+          marketData,
+          isDistributionLoading: false,
+          selectedRange: "1y",
+        }),
+      {
+        initialState: { settings: { counterValue: "USD", locale: "en-US" } },
+        wrapper: makeScrubWrapper({
+          price: 250,
+          timestamp: Date.UTC(2024, 0, 2, 13, 45),
+          percentage: 1.5,
+          variationFiat: 150,
+        }),
+      },
+    );
+
+    expect(result.current.scrubbedDateLabel).toContain("2024");
+    expect(result.current.scrubbedDateLabel).not.toContain(":");
+  });
+
   it("treats a scrubbed price of 0 as scrubbing (not a missing value)", () => {
     const { result } = renderHook(
       () =>

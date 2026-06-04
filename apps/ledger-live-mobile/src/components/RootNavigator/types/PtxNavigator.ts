@@ -16,6 +16,7 @@ type ExchangeParams = CommonParams & {
   defaultCurrencyId?: string;
   defaultTicker?: string;
   mode?: "offRamp" | "onRamp";
+  returnToPreviousScreenOnClose?: boolean;
 };
 
 export type PtxNavigatorParamList = {

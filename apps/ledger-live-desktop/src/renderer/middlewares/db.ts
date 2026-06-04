@@ -150,6 +150,12 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     });
   }
 
+  if (oldState.coinConfigOverrides.overrides !== newState.coinConfigOverrides.overrides) {
+    setKey("app", "coinConfigOverrides", {
+      overrides: newState.coinConfigOverrides.overrides,
+    });
+  }
+
   return res;
 };
 

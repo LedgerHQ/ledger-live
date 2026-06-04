@@ -101,7 +101,12 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
 
   const mappedDelegations = mapDelegations(delegations, validators, unit);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
-  const onRowClaimRewards = useCallback((_validatorAddress: string) => {}, []);
+  const onRowClaimRewards = useCallback(
+    (validatorAddress: string) => {
+      dispatch(openModal("MODAL_EVM_CLAIM_REWARDS", { account, validatorAddress }));
+    },
+    [account, dispatch],
+  );
 
   const hasDelegations = delegations.length > 0;
   // Only surface the "Pending undelegation" section when the chain enforces an unbonding
@@ -172,7 +177,7 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
             <Header />
             {mappedDelegations.map(delegation => (
               <Row
-                key={delegation.validatorAddress}
+                key={`${delegation.validatorAddress}-${delegation.status}`}
                 account={account}
                 delegation={delegation}
                 onManageAction={onRedirect}

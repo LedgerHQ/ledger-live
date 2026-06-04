@@ -20,6 +20,7 @@ const ValidatorRow = ({
   return (
     <Touchable
       event="EvmDelegationFlowChoseValidator"
+      touchableTestID={`evm-validator-row-${validator.validatorAddress}`}
       eventProperties={{
         validatorName: validator.name || validator.validatorAddress,
       }}
@@ -36,8 +37,8 @@ const ValidatorRow = ({
             {validator.name || validator.validatorAddress}
           </Text>
           <Text fontWeight="semiBold" numberOfLines={1} style={styles.commission}>
-            <Trans i18nKey="evm.delegation.flow.steps.validator.commission" />{" "}
-            {(validator.commission * 100).toFixed(2)} %
+            <Trans i18nKey="evm.delegation.commission" /> {(validator.commission * 100).toFixed(2)}{" "}
+            %
           </Text>
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={styles.apr} color="smoke">

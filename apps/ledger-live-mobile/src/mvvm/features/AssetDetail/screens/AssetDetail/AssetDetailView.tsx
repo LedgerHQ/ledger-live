@@ -87,6 +87,7 @@ export function AssetDetailView({
             currency={currency}
             distributionItem={distributionItem}
             isLoading={isLoading}
+            ledgerIds={ledgerIds}
           />
           <MarketData
             currency={currency}

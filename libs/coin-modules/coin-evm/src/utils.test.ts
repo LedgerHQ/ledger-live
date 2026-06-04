@@ -1,4 +1,9 @@
-import { buildSmartContractDetails, isSmartContractInput, safeEncodeEIP55 } from "./utils";
+import {
+  buildSmartContractDetails,
+  isSmartContractInput,
+  parseDecimalIntegerPart,
+  safeEncodeEIP55,
+} from "./utils";
 
 describe("isSmartContractInput", () => {
   it.each([
@@ -55,5 +60,28 @@ describe("buildSmartContractDetails", () => {
       contractInteraction: "SmartContractDeployment",
       contractPayload: "0xabcdef",
     });
+  });
+});
+
+describe("parseDecimalIntegerPart", () => {
+  it.each([
+    ["100", 100n],
+    ["569.024692675122000000", 569n],
+    ["0.019211023787000000", 0n],
+    ["  42  ", 42n],
+    ["1.", 1n],
+    ["1000000000000000000", 1000000000000000000n],
+    ["-5.9", -5n],
+  ] as const)("parseDecimalIntegerPart(%p) === %s", (input, expected) => {
+    expect(parseDecimalIntegerPart(input)).toBe(expected);
+  });
+
+  it.each([
+    "",
+    ".",
+    "not-a-number",
+    "abc.123",
+  ])("returns 0n when the integer part is not parseable (%p)", input => {
+    expect(parseDecimalIntegerPart(input)).toBe(0n);
   });
 });

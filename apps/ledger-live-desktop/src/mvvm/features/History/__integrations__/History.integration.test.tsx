@@ -128,7 +128,7 @@ describe("History integration", () => {
     renderHistory();
 
     await waitFor(() => {
-      const table = screen.getByRole("table");
+      const table = screen.getByTestId("history-table-body");
       const operationRows = within(table).getAllByRole("button");
       expect(operationRows.length).toBeGreaterThan(0);
     });
@@ -138,11 +138,11 @@ describe("History integration", () => {
     const { user } = renderHistory();
 
     await waitFor(() => {
-      const table = screen.getByRole("table");
+      const table = screen.getByTestId("history-table-body");
       expect(within(table).getAllByRole("button").length).toBeGreaterThan(0);
     });
 
-    const table = screen.getByRole("table");
+    const table = screen.getByTestId("history-table-body");
     const operationRows = within(table).getAllByRole("button");
     await user.click(operationRows[0]);
 
@@ -285,17 +285,15 @@ describe("History export dialog integration", () => {
     mockExportShouldError = true;
     await selectAllAndExport(user, dialog);
 
-    await waitFor(
-      () => expect(screen.getByTestId("history-export-error-title")).toBeVisible(),
-      { timeout: 10000 },
-    );
+    await waitFor(() => expect(screen.getByTestId("history-export-error-title")).toBeVisible(), {
+      timeout: 10000,
+    });
 
     await user.click(screen.getByRole("button", { name: /try again/i }));
 
-    await waitFor(
-      () => expect(screen.getByTestId("history-export-dialog")).toBeVisible(),
-      { timeout: 10000 },
-    );
+    await waitFor(() => expect(screen.getByTestId("history-export-dialog")).toBeVisible(), {
+      timeout: 10000,
+    });
     expect(screen.queryByTestId("history-export-error-title")).not.toBeInTheDocument();
   }, 30000);
 });

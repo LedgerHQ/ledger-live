@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   accountsSelector,
   hasAccountsSelector,
   isUpToDateSelector,
 } from "~/renderer/reducers/accounts";
+import { filterAccountsExcludingBlacklisted } from "@ledgerhq/live-common/account/filterAccountsExcludingBlacklisted";
 import {
+  blacklistedTokenIdsSelector,
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
@@ -46,12 +48,27 @@ export function usePortfolioBalance(options: UsePortfolioBalanceOptions = {}) {
   const { legacyRange = false } = options;
 
   const accounts = useSelector(accountsSelector);
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const hasAccounts = useSelector(hasAccountsSelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const range = legacyRange ? selectedTimeRange : DEFAULT_PORTFOLIO_RANGE;
 
-  const portfolio = usePortfolioThrottled({ accounts, range, to: counterValue });
+  const hasBlacklistedAssets = (blacklistedTokenIds?.length ?? 0) > 0;
+  const visibleAccounts = useMemo(
+    () =>
+      hasBlacklistedAssets
+        ? filterAccountsExcludingBlacklisted(accounts, blacklistedTokenIds)
+        : accounts,
+    [accounts, blacklistedTokenIds, hasBlacklistedAssets],
+  );
+
+  const portfolio = usePortfolioThrottled({
+    accounts: visibleAccounts,
+    range,
+    to: counterValue,
+    options: hasBlacklistedAssets ? { flattenSourceAccounts: false } : undefined,
+  });
 
   const syncSources = useSyncSources();
   const lastUserSyncClickTimestamp = useSelector(selectLastUserSyncClickTimestamp);

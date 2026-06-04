@@ -11,6 +11,11 @@ export const setMarketCurrentPage = (payload: number) => ({
   payload,
 });
 
+export const setHideTransactionsOnChart = (payload: boolean) => ({
+  type: "MARKET_SET_HIDE_TRANSACTIONS_ON_CHART",
+  payload,
+});
+
 export const importMarketState = (payload: MarketState) => ({
   type: "MARKET_IMPORT_STATE",
   payload,

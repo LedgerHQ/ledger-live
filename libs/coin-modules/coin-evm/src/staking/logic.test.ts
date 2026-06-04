@@ -1,7 +1,17 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation, StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
-import { canRedelegate, getMaxEstimatedBalance, isSeiAccountUnassociated } from "./logic";
+import type {
+  Operation,
+  StakingAccount,
+  StakingDelegation,
+  StakingDelegationStatus,
+} from "@ledgerhq/types-live";
+import {
+  canRedelegate,
+  canUndelegate,
+  getMaxEstimatedBalance,
+  isSeiAccountUnassociated,
+} from "./logic";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -34,12 +44,15 @@ function makeOperation(senders: string[], blockHeight: number | null = 123): Ope
   return { senders, blockHeight } as unknown as Operation;
 }
 
-function makeDelegation(validatorAddress: string): StakingDelegation {
+function makeDelegation(
+  validatorAddress: string,
+  status: StakingDelegationStatus,
+): StakingDelegation {
   return {
     validatorAddress,
     amount: new BigNumber(0),
     pendingRewards: new BigNumber(0),
-    status: "bonded",
+    status,
   } as unknown as StakingDelegation;
 }
 
@@ -51,17 +64,17 @@ describe("evm staking logic", () => {
 
     it("returns false for a chain without a redelegate precompile function (celo)", () => {
       const account = makeAccount("celo");
-      expect(canRedelegate(account, makeDelegation("0xvalidator"))).toBe(false);
+      expect(canRedelegate(account, makeDelegation("0xvalidator", "bonded"))).toBe(false);
     });
 
     it("returns false for an unknown currency id", () => {
       const account = makeAccount("unknown_chain");
-      expect(canRedelegate(account, makeDelegation("0xvalidator"))).toBe(false);
+      expect(canRedelegate(account, makeDelegation("0xvalidator", "bonded"))).toBe(false);
     });
 
     it("returns true for sei_evm when no active redelegations exist", () => {
       const account = makeAccount("sei_evm");
-      expect(canRedelegate(account, makeDelegation("0xvalidator"))).toBe(true);
+      expect(canRedelegate(account, makeDelegation("0xvalidator", "bonded"))).toBe(true);
     });
 
     it("returns false when the delegation is the destination of an active redelegation (cooldown)", () => {
@@ -73,7 +86,7 @@ describe("evm staking logic", () => {
           amount: new BigNumber(0),
         },
       ]);
-      expect(canRedelegate(account, makeDelegation("0xvalidator"))).toBe(false);
+      expect(canRedelegate(account, makeDelegation("0xvalidator", "bonded"))).toBe(false);
     });
 
     it("returns false when the maxRedelegations cap is reached", () => {
@@ -84,7 +97,7 @@ describe("evm staking logic", () => {
         amount: new BigNumber(0),
       }));
       const account = makeAccount("sei_evm", activeRedelegations);
-      expect(canRedelegate(account, makeDelegation("0xother"))).toBe(false);
+      expect(canRedelegate(account, makeDelegation("0xother", "bonded"))).toBe(false);
     });
 
     it("ignores expired redelegations when checking the cooldown", () => {
@@ -97,7 +110,24 @@ describe("evm staking logic", () => {
           amount: new BigNumber(0),
         },
       ]);
-      expect(canRedelegate(account, makeDelegation("0xvalidator"))).toBe(true);
+      expect(canRedelegate(account, makeDelegation("0xvalidator", "bonded"))).toBe(true);
+    });
+  });
+
+  describe("canUndelegate", () => {
+    it("returns true for a bonded delegation", () => {
+      const account = makeAccount("monad");
+      expect(canUndelegate(account, makeDelegation("0xvalidator", "bonded"))).toBe(true);
+    });
+
+    it("returns false for an activating delegation", () => {
+      const account = makeAccount("monad");
+      expect(canUndelegate(account, makeDelegation("0xvalidator", "activating"))).toBe(false);
+    });
+
+    it("returns true when no delegation is provided", () => {
+      const account = makeAccount("monad");
+      expect(canUndelegate(account)).toBe(true);
     });
   });
 

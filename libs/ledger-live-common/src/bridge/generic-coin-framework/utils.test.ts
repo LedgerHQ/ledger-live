@@ -110,7 +110,7 @@ describe("coin-framework utils", () => {
         "stake",
         {},
         {
-          parentType: "DELEGATE",
+          parentType: "STAKE",
           subType: undefined,
           parentValue: new BigNumber(50),
           parentRecipient: "recipient-address",
@@ -132,7 +132,7 @@ describe("coin-framework utils", () => {
         "unstake",
         {},
         {
-          parentType: "UNDELEGATE",
+          parentType: "UNSTAKE",
           subType: undefined,
           parentValue: new BigNumber(50),
           parentRecipient: "recipient-address",
@@ -188,7 +188,7 @@ describe("coin-framework utils", () => {
         { subAccountId: "sub-account-id" },
         {
           parentType: "FEES",
-          subType: "DELEGATE",
+          subType: "STAKE",
           parentValue: new BigNumber(12),
           parentRecipient: "contract-address",
         },
@@ -210,7 +210,7 @@ describe("coin-framework utils", () => {
         { subAccountId: "sub-account-id" },
         {
           parentType: "FEES",
-          subType: "UNDELEGATE",
+          subType: "UNSTAKE",
           parentValue: new BigNumber(12),
           parentRecipient: "contract-address",
         },

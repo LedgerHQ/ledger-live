@@ -34,6 +34,7 @@ const createExchangeScreen =
       platform,
       referrer,
       mode,
+      returnToPreviousScreenOnClose,
     } = props.route.params || {};
     const resolvedCurrency = currency
       ? findCryptoCurrencyByKeyword(currency)?.id
@@ -44,6 +45,7 @@ const createExchangeScreen =
         config={{
           screen: screenName,
           btnText: t("common.quote"),
+          returnToPreviousScreenOnClose,
         }}
         route={{
           ...props.route,

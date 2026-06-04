@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import { BottomSheetProps, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import { useIsFocused } from "@react-navigation/native";
@@ -44,18 +44,14 @@ const useQueuedDrawerBottomSheet = ({
   const onModalHideRef = useRef(onModalHide);
   onModalHideRef.current = onModalHide;
 
-  // Mirror the latest props into refs so the stable callbacks below (handleDismiss must keep a
-  // stable identity) can read current values without being recreated on every render.
-  const isRequestingToBeOpenedRef = useRef(isRequestingToBeOpened);
-  isRequestingToBeOpenedRef.current = isRequestingToBeOpened;
-
-  const isForcingToBeOpenedRef = useRef(isForcingToBeOpened);
-  isForcingToBeOpenedRef.current = isForcingToBeOpened;
-
-  const isFocusedRef = useRef(isFocused);
-  isFocusedRef.current = isFocused;
-
   const stateRef = useRef<DrawerState>("idle");
+
+  // Bumped at the end of handleDismiss to re-trigger the open/close effect below. This defers
+  // the "should we reopen?" decision to a React commit, ensuring any state update scheduled by
+  // the consumer's onClose (from handleCloseAnimationStart) has been applied before we read
+  // isRequestingToBeOpened — otherwise a fast backdrop dismiss could see a stale `true` and
+  // re-enqueue the drawer.
+  const [reopenCheckSignal, setReopenCheckSignal] = useState(0);
 
   const cleanupQueue = useCallback(() => {
     if (drawerInQueueRef.current) {
@@ -89,8 +85,7 @@ const useQueuedDrawerBottomSheet = ({
   }, [bottomSheetRef, cleanupQueue]);
 
   // Adds this drawer to the queue. The queue decides when to actually open/close it via the
-  // onDrawerStateChanged callback. Kept stable so it can be reused both from the effect and from
-  // handleDismiss (to reopen a drawer that was re-requested while closing).
+  // onDrawerStateChanged callback.
   const enqueueDrawer = useCallback(() => {
     if (drawerInQueueRef.current) return;
 
@@ -102,16 +97,8 @@ const useQueuedDrawerBottomSheet = ({
       }
     };
 
-    drawerInQueueRef.current = addDrawerToQueue(
-      onDrawerStateChanged,
-      isForcingToBeOpenedRef.current,
-    );
-  }, [addDrawerToQueue, handleOpen, handleClose]);
-
-  // Held in a ref so handleDismiss can reopen via the latest enqueueDrawer while keeping a stable
-  // identity (it must not be recreated when other deps, e.g. onModalHide, change).
-  const enqueueDrawerRef = useRef(enqueueDrawer);
-  enqueueDrawerRef.current = enqueueDrawer;
+    drawerInQueueRef.current = addDrawerToQueue(onDrawerStateChanged, isForcingToBeOpened);
+  }, [addDrawerToQueue, handleOpen, handleClose, isForcingToBeOpened]);
 
   const handleUserClose = useCallback(() => {
     logDrawer("User initiated close");
@@ -148,16 +135,12 @@ const useQueuedDrawerBottomSheet = ({
     cleanupQueue();
     onModalHideRef.current?.();
 
-    // If the consumer re-requested this drawer while it was closing (e.g. the user tapped another
-    // trigger before the X-button close animation finished), reopen it now that the previous sheet
-    // has fully dismissed. Presenting only after onDismiss keeps the no-overlap guarantee.
-    if (
-      isFocusedRef.current &&
-      (isRequestingToBeOpenedRef.current || isForcingToBeOpenedRef.current)
-    ) {
-      logDrawer("Reopening drawer requested during close");
-      enqueueDrawerRef.current();
-    }
+    // Defer the "should we reopen?" decision to the open/close effect below. Bumping the signal
+    // forces a re-render; by the time the effect runs, React has committed any state update
+    // scheduled by the consumer's onClose (called from handleCloseAnimationStart), so reading
+    // isRequestingToBeOpened reflects the user's true intent — false for a normal backdrop close,
+    // true only if the consumer genuinely re-requested while the sheet was closing.
+    setReopenCheckSignal(s => s + 1);
   }, [cleanupQueue]);
 
   useEffect(() => {
@@ -175,7 +158,14 @@ const useQueuedDrawerBottomSheet = ({
         handleClose();
       };
     }
-  }, [isFocused, isForcingToBeOpened, isRequestingToBeOpened, handleClose, enqueueDrawer]);
+  }, [
+    isFocused,
+    isForcingToBeOpened,
+    isRequestingToBeOpened,
+    handleClose,
+    enqueueDrawer,
+    reopenCheckSignal,
+  ]);
 
   useEffect(() => {
     return () => {

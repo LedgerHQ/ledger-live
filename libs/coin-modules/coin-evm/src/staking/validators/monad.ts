@@ -2,6 +2,7 @@ import { ethers, type JsonRpcProvider } from "ethers";
 import network from "@ledgerhq/live-network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Cursor, Page } from "@ledgerhq/coin-module-framework/api/index";
+import type { AssetInfo, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -9,6 +10,7 @@ import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
+import type { StakingContractConfig } from "../../types/staking";
 import { getStakingABI } from "../abis";
 import { STAKING_CONTRACTS } from "../contracts";
 import type { ValidatorApi } from "./types";
@@ -107,6 +109,28 @@ function isValidatorRaw(value: unknown): value is ValidatorRaw {
     typeof value[2] === "bigint" &&
     typeof value[4] === "bigint" &&
     typeof value[10] === "string"
+  );
+}
+
+type DelegatorRaw = [bigint, bigint, bigint, bigint, bigint, bigint, bigint];
+type DelegationsRaw = [boolean, bigint, bigint[]];
+
+function isDelegatorRaw(value: unknown): value is DelegatorRaw {
+  return (
+    Array.isArray(value) &&
+    typeof value[0] === "bigint" &&
+    typeof value[3] === "bigint" &&
+    typeof value[4] === "bigint"
+  );
+}
+
+function isDelegationsRaw(value: unknown): value is DelegationsRaw {
+  return (
+    Array.isArray(value) &&
+    typeof value[0] === "boolean" &&
+    typeof value[1] === "bigint" &&
+    Array.isArray(value[2]) &&
+    value[2].every(item => typeof item === "bigint")
   );
 }
 
@@ -282,6 +306,143 @@ const fetchValidators = async (
       cursor,
     });
     return { items: [], next: undefined };
+  }
+};
+
+const MAX_DELEGATION_PAGES = 100;
+
+const fetchDelegatedValIds = async (
+  provider: JsonRpcProvider,
+  iface: ethers.Interface,
+  contractAddress: string,
+  delegator: string,
+): Promise<bigint[]> => {
+  const valIds: bigint[] = [];
+  let startValId = 0n;
+
+  for (let page = 0; page < MAX_DELEGATION_PAGES; page++) {
+    const data = iface.encodeFunctionData("getDelegations", [delegator, startValId]);
+    const raw = await provider.call({ to: contractAddress, data });
+    const decoded = iface.decodeFunctionResult("getDelegations", raw);
+    if (!isDelegationsRaw(decoded)) break;
+
+    const [isDone, nextValId, pageIds] = decoded;
+    valIds.push(...pageIds);
+
+    if (isDone || pageIds.length === 0 || nextValId <= startValId) break;
+    startValId = nextValId;
+  }
+
+  return valIds;
+};
+
+const fetchStakeForValId = async (
+  currency: CryptoCurrency,
+  provider: JsonRpcProvider,
+  iface: ethers.Interface,
+  contractAddress: string,
+  delegator: string,
+  valId: bigint,
+): Promise<Stake[]> => {
+  const data = iface.encodeFunctionData("getDelegator", [valId, delegator]);
+  const raw = await provider.call({ to: contractAddress, data });
+  const decoded = iface.decodeFunctionResult("getDelegator", raw);
+  if (!isDelegatorRaw(decoded)) return [];
+
+  const [activeStake, , , deltaStake, nextDeltaStake] = decoded;
+  const deltaStakes = deltaStake + nextDeltaStake;
+  if (activeStake === 0n && deltaStakes === 0n) return [];
+
+  const validator = await callGetValidator(provider, iface, contractAddress, valId).catch(
+    () => null,
+  );
+  let validatorAddress: string | undefined;
+  if (validator) {
+    const [, , , , , , , , , , secpPubkey] = validator;
+    validatorAddress = ethers.computeAddress(secpPubkey);
+  }
+
+  const asset: AssetInfo = {
+    type: "native",
+    name: currency.name,
+    unit: currency.units[0],
+  };
+  const details = {
+    contractAddress,
+    ...(validatorAddress ? { validator: validatorAddress } : {}),
+    validatorId: valId.toString(),
+  };
+  const makeStake = (state: Stake["state"], amount: bigint): Stake => ({
+    uid: `${contractAddress}-${valId.toString()}-${delegator}-${state}`,
+    address: delegator,
+    ...(validatorAddress ? { delegate: validatorAddress } : {}),
+    state,
+    asset,
+    amount,
+    actions: [],
+    details,
+  });
+
+  const stakes: Stake[] = [];
+  if (activeStake !== 0n) stakes.push(makeStake("active", activeStake));
+  if (deltaStakes !== 0n) stakes.push(makeStake("activating", deltaStakes));
+  return stakes;
+};
+
+export const fetchMonadStakes = async (
+  address: string,
+  _config: StakingContractConfig,
+  currency: CryptoCurrency,
+): Promise<Stake[]> => {
+  const ctx = resolveContext(currency.id);
+  if (!ctx) return [];
+
+  try {
+    return await withApi(
+      ctx.currency,
+      async provider => {
+        const iface = new ethers.Interface(ctx.abi);
+        const valIds = await fetchDelegatedValIds(provider, iface, ctx.contractAddress, address);
+        if (valIds.length === 0) return [];
+
+        const stakes: Stake[] = [];
+        for (let i = 0; i < valIds.length; i += DETAILS_BATCH_SIZE) {
+          const chunk = valIds.slice(i, i + DETAILS_BATCH_SIZE);
+          const settled = await Promise.allSettled(
+            chunk.map(valId =>
+              fetchStakeForValId(
+                ctx.currency,
+                provider,
+                iface,
+                ctx.contractAddress,
+                address,
+                valId,
+              ),
+            ),
+          );
+
+          settled.forEach((res, idx) => {
+            if (res.status === "rejected") {
+              log("coin-evm/staking", "fetchMonadStakes: getDelegator call failed", {
+                valId: chunk[idx].toString(),
+                error: res.reason instanceof Error ? res.reason.message : String(res.reason),
+              });
+              return;
+            }
+            if (res.value.length > 0) stakes.push(...res.value);
+          });
+        }
+
+        return stakes;
+      },
+      ctx.node,
+    );
+  } catch (error) {
+    log("coin-evm/staking", "fetchMonadStakes: delegations fetch failed", {
+      currencyId: currency.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return [];
   }
 };
 

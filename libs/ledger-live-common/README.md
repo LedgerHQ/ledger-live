@@ -23,7 +23,7 @@
 
 `````
 
-Ledger Live Common (`@ledgerhq/live-common`) is a JavaScript library available via a [NPM package](https://npmjs.com/@ledgerhq/live-common).
+Ledger Live Common (`@ledgerhq/live-common`) is a JavaScript library that powers the Ledger Live apps. It is an internal package of this monorepo (`"private": true`) and is no longer published to npm — consume it through the workspace.
 
 This library depends on a bunch of [ledgerjs packages](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) and put together the core business logic behind [Ledger Live Desktop](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop) and [Ledger Live Mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile).
 

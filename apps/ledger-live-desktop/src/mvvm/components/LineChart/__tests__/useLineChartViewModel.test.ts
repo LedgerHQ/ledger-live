@@ -68,6 +68,17 @@ describe("useLineChartViewModel", () => {
     expect(result.current.selectedRange).toBe("1y");
   });
 
+  it("forwards the rangeSelectorTrailing slot unchanged and defaults it to undefined", () => {
+    const { result: withoutTrailing } = renderHook(() => useLineChartViewModel(defaultProps));
+    expect(withoutTrailing.current.rangeSelectorTrailing).toBeUndefined();
+
+    const trailing = "trailing-node";
+    const { result: withTrailing } = renderHook(() =>
+      useLineChartViewModel({ ...defaultProps, rangeSelectorTrailing: trailing }),
+    );
+    expect(withTrailing.current.rangeSelectorTrailing).toBe(trailing);
+  });
+
   it("calls onRangeChange when handleSelectedChange is invoked", () => {
     const onRangeChange = jest.fn();
     const { result } = renderHook(() =>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, type ReactNode } from "react";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { DEFAULT_LINE_CHART_HEIGHT } from "./constants";
 import type {
@@ -41,6 +41,7 @@ export type LineChartViewModelResult<TRange extends string = string> = Readonly<
   showYAxis: boolean;
   xAxis?: LineChartXAxisConfig;
   yAxis?: LineChartYAxisConfig;
+  rangeSelectorTrailing?: ReactNode;
 }>;
 
 export function useLineChartViewModel<TRange extends string>({
@@ -67,6 +68,7 @@ export function useLineChartViewModel<TRange extends string>({
   showYAxis = true,
   xAxis,
   yAxis,
+  rangeSelectorTrailing,
 }: LineChartProps<TRange>): LineChartViewModelResult<TRange> {
   const { theme } = useTheme();
 
@@ -121,5 +123,6 @@ export function useLineChartViewModel<TRange extends string>({
     showYAxis,
     xAxis,
     yAxis,
+    rangeSelectorTrailing,
   };
 }

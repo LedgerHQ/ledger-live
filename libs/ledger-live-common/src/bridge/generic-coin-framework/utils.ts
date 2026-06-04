@@ -506,15 +506,22 @@ export const buildOptimisticOperation = (
       break;
     case "delegate":
     case "redelegate":
-    case "stake":
       type = "DELEGATE";
       break;
     case "undelegate":
-    case "unstake":
       type = "UNDELEGATE";
+      break;
+    case "stake":
+      type = "STAKE";
+      break;
+    case "unstake":
+      type = "UNSTAKE";
       break;
     case "finalize_unstake":
       type = "FINALIZE_UNSTAKE";
+      break;
+    case "claimReward":
+      type = "REWARD";
       break;
     default:
       type = "OUT";

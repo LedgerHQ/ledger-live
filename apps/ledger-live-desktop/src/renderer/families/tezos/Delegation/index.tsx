@@ -17,7 +17,7 @@ import Header from "./Header";
 import Row from "./Row";
 import StakingSection from "./StakingSection";
 import UnstakingSection from "./UnstakingSection";
-import { getTezosEarnFlow } from "../earnFlow";
+import { getTezosEarnFlow } from "@ledgerhq/live-common/families/tezos/earnFlow";
 import { StepId } from "../DelegateFlowModal/types";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import type { Delegation, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
@@ -96,6 +96,8 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
   return (
     <>
+      {stakingEnabled && info.isStaked && <StakingSection account={account} info={info} />}
+      {stakingEnabled && info.hasUnstaking && <UnstakingSection account={account} info={info} />}
       <TableContainer mb={6}>
         <TableHeader
           title={t("delegation.header")}
@@ -157,8 +159,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
           </Wrapper>
         )}
       </TableContainer>
-      {stakingEnabled && info.isStaked && <StakingSection account={account} info={info} />}
-      {stakingEnabled && info.hasUnstaking && <UnstakingSection account={account} info={info} />}
     </>
   );
 };

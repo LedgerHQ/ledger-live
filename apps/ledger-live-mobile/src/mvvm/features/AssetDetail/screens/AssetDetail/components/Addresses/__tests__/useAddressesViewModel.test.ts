@@ -11,15 +11,20 @@ import {
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
-import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import type { State } from "~/reducers/types";
 import { useAddressesViewModel } from "../useAddressesViewModel";
 
 const mockNavigate = jest.fn();
+const mockOpenDrawer = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
+}));
+
+jest.mock("LLM/features/ModularDrawer", () => ({
+  ...jest.requireActual("LLM/features/ModularDrawer"),
+  useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
 
 function withRawAccounts(accounts: Account[]) {
@@ -397,7 +402,7 @@ describe("useAddressesViewModel", () => {
   });
 
   describe("onAddAccount", () => {
-    it("navigates to device selection and fires analytics", () => {
+    it("opens the modular drawer for the add-account flow and fires analytics", () => {
       const btcAccounts = [
         genAccount("bitcoin-0", { currency: mockBtcCryptoCurrency, operationsSize: 0 }),
       ];
@@ -413,16 +418,54 @@ describe("useAddressesViewModel", () => {
 
       act(() => result.current.onAddAccount());
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.DeviceSelection, {
-        screen: ScreenName.SelectDevice,
-        params: {
-          currency: mockBtcCryptoCurrency,
-          context: AddAccountContexts.AddAccounts,
-        },
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        currencies: [mockBtcCryptoCurrency.id],
+        flow: "add_account",
+        source: "Asset Detail",
+        areCurrenciesFiltered: true,
+        enableAccountSelection: false,
       });
+      expect(mockNavigate).not.toHaveBeenCalled();
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "add_account",
         currency: "bitcoin",
+        page: "Asset Detail",
+      });
+    });
+
+    it("forwards the multi-network ledgerIds list so the network step can be shown", () => {
+      const ledgerIds = [usdtEthToken.id, usdtAlgoToken.id];
+
+      const { result } = renderHook(() =>
+        useAddressesViewModel(usdtEthToken, undefined, ledgerIds),
+      );
+
+      act(() => result.current.onAddAccount());
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        currencies: ledgerIds,
+        flow: "add_account",
+        source: "Asset Detail",
+        areCurrenciesFiltered: true,
+        enableAccountSelection: false,
+      });
+    });
+
+    it("falls back to the currency id when no ledgerIds are provided", () => {
+      const { result } = renderHook(() => useAddressesViewModel(usdcToken, undefined));
+
+      act(() => result.current.onAddAccount());
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        currencies: [usdcToken.id],
+        flow: "add_account",
+        source: "Asset Detail",
+        areCurrenciesFiltered: true,
+        enableAccountSelection: false,
+      });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "add_account",
+        currency: usdcToken.id,
         page: "Asset Detail",
       });
     });
@@ -432,27 +475,8 @@ describe("useAddressesViewModel", () => {
 
       act(() => result.current.onAddAccount());
 
-      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(mockOpenDrawer).not.toHaveBeenCalled();
       expect(track).not.toHaveBeenCalled();
-    });
-
-    it("navigates with parentCurrency when currency is a token", () => {
-      const { result } = renderHook(() => useAddressesViewModel(usdcToken, undefined));
-
-      act(() => result.current.onAddAccount());
-
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.DeviceSelection, {
-        screen: ScreenName.SelectDevice,
-        params: {
-          currency: mockEthCryptoCurrency,
-          context: AddAccountContexts.AddAccounts,
-        },
-      });
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "add_account",
-        currency: usdcToken.id,
-        page: "Asset Detail",
-      });
     });
   });
 });

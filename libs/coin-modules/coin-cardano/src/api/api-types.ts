@@ -139,3 +139,33 @@ export type APIGetPoolList = {
 export type APIGetPoolsDetail = {
   pools: Array<StakePool>;
 };
+
+// Current-epoch reward-formula params: pledge influence (a0), monetary expansion (rho), treasury
+// cut (tau).
+export type StakeRewardParams = {
+  a0: number;
+  rho: number;
+  tau: number;
+};
+
+// Current-epoch info used to compute validator APY (ADR-038). `reserves` and `activeStake` are
+// lovelace strings; both are required by computePoolApy but not yet served by the endpoint
+// (LIVE-18622), so they are optional and APY stays omitted until they appear.
+export type EpochInfo = {
+  number: number;
+  reserves: string | undefined;
+  activeStake: string | undefined;
+  params: StakeRewardParams;
+};
+
+// Shape of the Ledger node /api/rest/params response (a Hasura saved REST query).
+export type APIEpochParams = {
+  cardano: Array<{
+    currentEpoch: {
+      number: number;
+      reserves?: string;
+      activeStake?: string;
+      protocolParams: StakeRewardParams;
+    };
+  }>;
+};

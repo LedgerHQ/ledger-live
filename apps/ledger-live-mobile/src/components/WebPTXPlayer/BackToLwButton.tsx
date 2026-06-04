@@ -20,6 +20,7 @@ export type BackConfig = {
     | ScreenName.Card
     | NavigatorName.CardTab;
   btnText?: string;
+  returnToPreviousScreenOnClose?: boolean;
 };
 
 type BackToInternalDomainProps = {

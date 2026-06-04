@@ -58,6 +58,7 @@ import { SuiStakingFlowParamList } from "~/families/sui/StakingFlow/types";
 import { SuiUnstakingFlowParamList } from "~/families/sui/UnstakingFlow/types";
 import type { EvmDelegationFlowParamList } from "~/families/evm/DelegationFlow/types";
 import type { EvmUndelegationFlowParamList } from "~/families/evm/UndelegationFlow/types";
+import type { EvmClaimRewardsFlowParamList } from "~/families/evm/ClaimRewardsFlow/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
@@ -126,7 +127,8 @@ type Props =
   | StackNavigatorProps<HederaClaimRewardsFlowParamList, ScreenName.HederaClaimRewardsConnectDevice>
   | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmDelegationConnectDevice>
   | StackNavigatorProps<EvmUndelegationFlowParamList, ScreenName.EvmUndelegationConnectDevice>
-  | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmRedelegationConnectDevice>;
+  | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmRedelegationConnectDevice>
+  | StackNavigatorProps<EvmClaimRewardsFlowParamList, ScreenName.EvmClaimRewardsConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

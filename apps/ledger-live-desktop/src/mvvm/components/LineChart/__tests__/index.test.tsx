@@ -44,6 +44,16 @@ describe("LineChart", () => {
     expect(onRangeChange).toHaveBeenCalledWith("1y");
   });
 
+  it("renders rangeSelectorTrailing alongside the range selector without losing its a11y label", () => {
+    renderLineChart({
+      rangeSelectorTrailing: <button data-testid="chart-trailing-slot">options</button>,
+    });
+
+    expect(screen.getByTestId("chart-trailing-slot")).toBeVisible();
+    expect(screen.getByTestId("line-chart-range-selector")).toBeVisible();
+    expect(screen.getByTestId("line-chart-range-1d")).toHaveAttribute("aria-checked", "true");
+  });
+
   it("shows the loading skeleton when isLoading is true", () => {
     renderLineChart({ isLoading: true });
 

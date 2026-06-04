@@ -113,6 +113,9 @@ export const hasUnbondingPeriod = (currencyId: string): boolean => {
   return typeof days === "number" && days > 0;
 };
 
+export const hasRedelegation = (currencyId: string): boolean =>
+  typeof STAKING_CONTRACTS[currencyId]?.functions.redelegate === "string";
+
 const toValidatorBalance = (tokens: string): bigint => {
   try {
     const balance = BigInt(tokens);

@@ -14,7 +14,9 @@ import type {
 import { extractSeiDelegation, getCeloAmount, getSeiDelegationAmount } from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
 import { buildTransactionParams } from "./operations";
+import { fetchRewards } from "./rewards";
 import { getValidators } from "./validators";
+import { fetchMonadStakes } from "./validators/monad";
 
 /**
  * Generic staking fetcher that adapts to different blockchain requirements
@@ -56,6 +58,9 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
         estimatedYearlyRewardsRate: 0,
       },
     ]),
+  },
+  monad: {
+    fetcher: fetchMonadStakes,
   },
 };
 
@@ -200,6 +205,11 @@ const getStakesForValidators = async (
     return [];
   }
 
+  // Fired here so its latency overlaps the precompile batch loop below;
+  // awaited at the end. Any failure resolves to an empty map so the staking
+  // sync never blocks on the off-chain rewards call.
+  const rewardsPromise = fetchRewards(currency.id, address).catch(() => new Map<string, bigint>());
+
   const allResults: PromiseSettledResult<Stake | null>[] = [];
 
   // Process validators in batches to avoid overwhelming the RPC node.
@@ -236,6 +246,15 @@ const getStakesForValidators = async (
       stakes.push(result.value);
     }
   });
+
+  const rewards = await rewardsPromise;
+  for (const stake of stakes) {
+    if (!stake.delegate) continue;
+    const amountRewarded = rewards.get(stake.delegate);
+    if (amountRewarded !== undefined) {
+      stake.amountRewarded = amountRewarded;
+    }
+  }
 
   return stakes;
 };

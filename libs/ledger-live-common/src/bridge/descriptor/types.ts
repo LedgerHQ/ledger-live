@@ -204,6 +204,13 @@ export type FeeDescriptor = {
   customAssets?: FeeAssetsConfig;
   /** When `hasCoinControl` is true, describes rows and patches for the coin control step. */
   coinControl?: CoinControlConfig;
+  /**
+   * Optional accessor that exposes the sub-account id used to pay fees in a
+   * non-native currency, or `null` when fees are paid in the parent account's
+   * native currency. Lets the UI resolve the fee display unit without
+   * inspecting `transaction.family`.
+   */
+  getFeeCurrencyAccountId?: (transaction: unknown) => string | null;
 };
 
 export type SendAmountDescriptor = Readonly<{

@@ -7,6 +7,15 @@ export type NetworkInfoResponse = {
   version: string; // e.g. "290000"
   subversion: string; // e.g. "/Satoshi:29.0.0/"
 };
+export type UtxoTxOutput = {
+  output_index: number;
+  spent_at_height: number | null;
+} & Record<string, unknown>;
+
+export type UtxoTx = {
+  outputs: UtxoTxOutput[];
+} & Record<string, unknown>;
+
 // abstract explorer api used, abstract batching logic, pagination, and retries
 export interface IExplorer {
   baseUrl: string;
@@ -20,6 +29,7 @@ export interface IExplorer {
   getCurrentBlock(): Promise<Block | null>;
   getBlockByHeight(height: number): Promise<Block | null>;
   getPendings(address: Address, nbMax?: number): Promise<TX[]>;
+  fetchUtxoTx(hash: string): Promise<UtxoTx>;
   getTxBlockHeight(hash: string): Promise<number | null>;
   getTxsSinceBlockheight(
     batchSize: number,

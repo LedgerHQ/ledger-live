@@ -57,6 +57,11 @@ import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
 import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
+import {
+  setAllCoinConfigOverrides,
+  sanitizePersistedOverrides,
+} from "~/renderer/reducers/coinConfigOverrides";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { initHistory } from "~/renderer/reducers/history";
 
 const rootNode = document.getElementById("react-root");
@@ -214,6 +219,22 @@ async function init() {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
+
+  const persistedCoinConfigOverrides = await getKey("app", "coinConfigOverrides");
+  const safeOverrides = sanitizePersistedOverrides(persistedCoinConfigOverrides?.overrides);
+  if (safeOverrides) {
+    LiveConfig.setAllOverrides(safeOverrides);
+    store.dispatch(setAllCoinConfigOverrides(safeOverrides));
+  }
+
+  let lastCoinConfigOverrides = store.getState().coinConfigOverrides.overrides;
+  store.subscribe(() => {
+    const current = store.getState().coinConfigOverrides.overrides;
+    if (current !== lastCoinConfigOverrides) {
+      lastCoinConfigOverrides = current;
+      LiveConfig.setAllOverrides(current);
+    }
+  });
 
   const persistedFeatureFlags = await getKey("app", "featureFlags");
   if (persistedFeatureFlags) {

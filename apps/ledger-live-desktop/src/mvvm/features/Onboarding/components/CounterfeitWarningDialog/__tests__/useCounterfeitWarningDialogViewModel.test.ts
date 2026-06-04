@@ -5,12 +5,7 @@ import i18n from "~/renderer/i18n/init";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import useCounterfeitWarningDialogViewModel from "../useCounterfeitWarningDialogViewModel";
-import {
-  EVENT_DISMISSED,
-  EVENT_LEARN_MORE,
-  EVENT_PROCEED,
-  EVENT_SHOWN,
-} from "../analytics";
+import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "../analytics";
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
@@ -31,27 +26,25 @@ describe("useCounterfeitWarningDialogViewModel", () => {
     jest.clearAllMocks();
   });
 
-  it("should track shown once per open transition", () => {
+  it("should track page_viewed once per open transition", () => {
     const { rerender } = renderHook(({ open }) =>
       useCounterfeitWarningDialogViewModel({ ...defaultProps, open }),
     {
       initialProps: { open: false },
     });
 
-    expect(track).not.toHaveBeenCalledWith(EVENT_SHOWN, expect.anything());
+    expect(track).not.toHaveBeenCalledWith("page_viewed", expect.anything());
 
     rerender({ open: true });
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith(EVENT_SHOWN, {
-      deviceModelId: DeviceModelId.nanoX,
-    });
+    expect(track).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
 
     rerender({ open: false });
     rerender({ open: true });
     expect(track).toHaveBeenCalledTimes(2);
   });
 
-  it("should track proceed and call onProceed", () => {
+  it("should track continue setup and call onProceed", () => {
     const onProceed = jest.fn();
     const { result } = renderViewModel({ ...defaultProps, onProceed });
 
@@ -59,7 +52,10 @@ describe("useCounterfeitWarningDialogViewModel", () => {
       result.current.onProceed();
     });
 
-    expect(track).toHaveBeenCalledWith(EVENT_PROCEED, { deviceModelId: DeviceModelId.nanoX });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     expect(onProceed).toHaveBeenCalledTimes(1);
   });
 
@@ -69,7 +65,10 @@ describe("useCounterfeitWarningDialogViewModel", () => {
     act(() => {
       result.current.onLearnMore();
     });
-    expect(track).toHaveBeenCalledWith(EVENT_LEARN_MORE, { deviceModelId: DeviceModelId.nanoX });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     expect(openURL).toHaveBeenCalledWith(urls.genuineCheck);
   });
 
@@ -85,17 +84,23 @@ describe("useCounterfeitWarningDialogViewModel", () => {
       result.current.onResellerLink();
     });
     expect(openURL).toHaveBeenCalledWith(urls.ledgerReseller);
-    expect(track).not.toHaveBeenCalledWith(EVENT_LEARN_MORE, expect.anything());
+    expect(track).not.toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
   });
 
-  it("should track dismiss and call onDismiss", () => {
+  it("should track close and call onDismiss", () => {
     const onDismiss = jest.fn();
     const { result } = renderViewModel({ ...defaultProps, onDismiss });
 
     act(() => {
       result.current.onDismiss();
     });
-    expect(track).toHaveBeenCalledWith(EVENT_DISMISSED, { deviceModelId: DeviceModelId.nanoX });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.close,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 

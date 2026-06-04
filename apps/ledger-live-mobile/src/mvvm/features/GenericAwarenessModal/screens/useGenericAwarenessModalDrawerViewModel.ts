@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useIsFocused } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -273,7 +272,6 @@ function usePromptViewModel(
 
 export function useGenericAwarenessModalDrawerViewModel() {
   const dispatch = useDispatch();
-  const isPortfolioFocused = useIsFocused();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
   const isOpen = useSelector(selectIsGenericAwarenessModalOpen);
@@ -292,7 +290,6 @@ export function useGenericAwarenessModalDrawerViewModel() {
     { campaignId, cards },
     {
       enabled: genericAwarenessModalFlag?.enabled ?? false,
-      isFocused: isPortfolioFocused,
       isOpen,
       open,
     },

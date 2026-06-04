@@ -9,6 +9,7 @@
     "src/datasets/scanAccounts.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
+    "src/pools.ts",
     "src/specs.ts",
     "src/speculos-deviceActions.ts",
     "src/transaction.ts",

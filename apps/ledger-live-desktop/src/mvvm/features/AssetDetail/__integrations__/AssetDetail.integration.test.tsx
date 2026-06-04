@@ -443,7 +443,7 @@ describe("AssetDetail integration", () => {
         });
 
         expect(within(section).queryByTestId("y-axis")).not.toBeInTheDocument();
-        expect(within(section).getByTestId("x-axis")).toBeVisible();
+        expect(within(section).queryByTestId("x-axis")).not.toBeInTheDocument();
         expect(within(section).getAllByTestId("point-group")).toHaveLength(2);
       });
 
@@ -540,9 +540,9 @@ describe("AssetDetail integration", () => {
         await user.click(screen.getByTestId(TEST_ID.ADDRESSES_SEE_ALL));
 
         const dialog = await screen.findByRole("dialog");
-        expect(within(dialog).getByRole("heading", { name: "Addresses" })).toBeVisible();
+        expect(within(dialog).getByRole("heading", { name: "Accounts" })).toBeVisible();
         expect(
-          within(dialog).getAllByText(/all your addresses holding btc\./i).length,
+          within(dialog).getAllByText(/all your accounts holding btc\./i).length,
         ).toBeGreaterThan(0);
         expect(within(dialog).getAllByTestId(/asset-detail-address-row-/)).toHaveLength(
           MAX_ADDRESSES_PREVIEW + 1,

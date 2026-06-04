@@ -895,6 +895,9 @@
     "MustDelegateBeforeStaking": {
       "title": "Please delegate your account before staking"
     },
+    "TezosNotEnoughStaked": {
+      "title": "Insufficient staked balance"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -2973,6 +2976,7 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
+      "FINALIZE_UNSTAKE": "Withdrawn",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
       "UPDATE_ACCOUNT": "Updated account"
@@ -6609,6 +6613,35 @@
       "unstaking": "Unstaking",
       "available": "Available"
     },
+    "earnRewards": {
+      "title": "Earn Rewards",
+      "steps": {
+        "delegate": "Delegate",
+        "stake": "Stake"
+      },
+      "delegation": {
+        "step": "Step 1 · Delegation",
+        "title": "Earn risk-free rewards",
+        "subtitle": "No lock-up, no risk.",
+        "bullets": {
+          "0": "Your full balance will be delegated",
+          "1": "Delegated funds remain in your account",
+          "2": "Spend your tez at any time"
+        }
+      },
+      "staking": {
+        "step": "Step 2 · Staking",
+        "title": "Earn higher rewards",
+        "subtitle": "Requires active delegation first.",
+        "bullets": {
+          "0": "Stake however much you'd like",
+          "1": "Staked funds are locked in your account",
+          "2": "Unstake in just 4 days"
+        }
+      },
+      "learnMore": "Learn more about staking and delegation",
+      "cta": "Start Earning"
+    },
     "account": {
       "availableBalanceTooltip": "Funds you can use right now.",
       "delegatedAssetsTooltip": "XTZ delegated to a baker. Funds remain in your wallet and can be sent at any time.",
@@ -6787,30 +6820,22 @@
     "claimRewards": {
       "stepperHeader": {
         "validator": "Select reward to collect",
-        "method": "Claim rewards",
-        "summary": "Summary",
+        "claim": "Claim rewards",
         "selectDevice": "Select device",
         "connectDevice": "Connect device",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
         "steps": {
-          "method": {
+          "claim": {
             "youEarned": "You earned",
             "byDelegationAssetsTo": "by delegating assets to",
-            "claimReward": "Cash in",
-            "claimRewardCompound": "Compound",
-            "claimRewardInfo": "They will be claimed now and added to your available balance.",
-            "claimRewardCompoundInfo": "They will be claimed now and automatically delegated to the same validator.",
-            "compoundOrCashIn": "Compound or Cash in?",
-            "claimRewardTooltip": "Rewards will be added to the available balance",
-            "claimRewardCompoundTooltip": "Rewards will be added to the delegated amount",
+            "description": "Rewards will be claimed now and added to your available balance.",
             "cta": "Continue"
           },
           "verification": {
             "success": {
               "title": "You have successfully claimed your rewards. They were added to your available balance.",
-              "titleCompound": "Your rewards were delegated to the same validator.",
               "text": "Your account balance will be updated when the network confirms the transaction.",
               "cta": "View details"
             },
@@ -8055,7 +8080,13 @@
   },
   "market": {
     "title": "Market",
-    "exploreTitle": "Explore the market",
+    "assets": {
+      "title": "Assets",
+      "error": {
+        "title": "Couldn't load assets",
+        "description": "Something went wrong while loading the asset list. Please try again later."
+      }
+    },
     "filters": {
       "sort": "Sort",
       "filter": "Filter",
@@ -9202,6 +9233,11 @@
       "removeFavourite": "Remove from favourites",
       "hideFromPortfolio": "Hide from portfolio",
       "showInPortfolio": "Show in portfolio"
+    },
+    "chartOptions": {
+      "openMenuA11yLabel": "Chart options",
+      "hideTransactions": "Hide activity on price chart",
+      "showTransactions": "Show activity on price chart"
     }
   },
   "assetSelection": {
@@ -9606,6 +9642,16 @@
       "greedPlus": "Greed+"
     },
     "tileTitle": "Mood"
+  },
+  "altcoinSeason": {
+    "title": "Season",
+    "definitionTitle": "Altcoin index",
+    "description": "The Altcoin index shows how Bitcoin is performing compared to alternative cryptocurrencies. The higher the number, the better altcoins are doing compared to Bitcoin.",
+    "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
+    "levels": {
+      "bitcoin": "Bitcoin",
+      "altcoin": "Altcoin"
+    }
   },
   "analyticsAllocation": {
     "header": {

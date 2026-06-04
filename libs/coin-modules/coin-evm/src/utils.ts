@@ -246,6 +246,17 @@ export const extractSeiDelegation = (decoded: unknown): SeiDelegation | undefine
  */
 export const USEI_TO_EVM_SCALE = 10n ** 12n;
 
+// Truncate to the integer part to match what the chain actually pays out on
+// withdrawal (fractional sub-denom rewards are dropped on-chain).
+export function parseDecimalIntegerPart(amount: string): bigint {
+  const intPart = amount.trim().split(".")[0];
+  try {
+    return BigInt(intPart);
+  } catch {
+    return 0n;
+  }
+}
+
 function normalizeSeiDelegation(outer: unknown): SeiDelegation | undefined {
   if (!isRecord(outer)) return undefined;
 

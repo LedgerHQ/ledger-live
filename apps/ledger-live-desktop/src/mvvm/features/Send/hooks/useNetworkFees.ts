@@ -74,10 +74,13 @@ export function useNetworkFees({
     feePresetOptions,
   });
 
+  const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+
   const { feeSummary } = useFeeInfo({
     account,
     parentAccount,
     status,
+    feeCurrencyAccountId,
   });
 
   const bridge = useAccountBridge<Transaction>(account, parentAccount);

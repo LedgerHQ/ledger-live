@@ -16,8 +16,8 @@ describe("AllAddressesDialog", () => {
     render(
       <AllAddressesDialog
         open
-        title="Addresses"
-        description="All your addresses holding BTC."
+        title="Accounts"
+        description="All your accounts holding BTC."
         sortedAccounts={accounts}
         lookupParentAccount={() => null}
         onAccountClick={jest.fn()}
@@ -27,7 +27,7 @@ describe("AllAddressesDialog", () => {
 
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeVisible();
-    expect(within(dialog).getByRole("heading", { name: "Addresses" })).toBeVisible();
+    expect(within(dialog).getByRole("heading", { name: "Accounts" })).toBeVisible();
     expect(within(dialog).getByTestId("asset-detail-all-addresses-list")).toBeVisible();
     expect(within(dialog).getAllByTestId(/asset-detail-address-row-/)).toHaveLength(2);
   });
@@ -37,8 +37,8 @@ describe("AllAddressesDialog", () => {
     const { user } = render(
       <AllAddressesDialog
         open
-        title="Addresses"
-        description="All your addresses holding BTC."
+        title="Accounts"
+        description="All your accounts holding BTC."
         sortedAccounts={accounts}
         lookupParentAccount={() => null}
         onAccountClick={jest.fn()}

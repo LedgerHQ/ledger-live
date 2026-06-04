@@ -1,32 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  useDerivedValue,
   Easing,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import Svg, { Path, Defs, LinearGradient, Stop, Text as SvgText, Circle } from "react-native-svg";
+import Svg, { Circle, Defs, LinearGradient, Path, Stop, Text as SvgText } from "react-native-svg";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import type { FearAndGreedAppearance } from "../../types";
 
-const STROKE_WIDTH = 4;
-const CX = 21.5814;
-const CY = 21.5814;
-const R = 19.5814 - 0.5;
-const CURSOR_RADIUS = 3.5;
-const CURSOR_STROKE_WIDTH = 1;
-const WIDTH = 44;
-const HEIGHT = 32;
+// Geometry is authored once in an 88x64 design space (viewBox, path, gradient) and
+// rendered at a per-appearance scale. The "compact" scale of 0.5 reproduces the
+// historical portfolio gauge pixel-for-pixel (every constant was exactly half).
+const VIEWBOX_WIDTH = 88;
+const VIEWBOX_HEIGHT = 64;
+const STROKE_WIDTH = 8;
+const CX = 43.1628;
+const CY = 43.1628;
+const R = 38.1628;
+const CURSOR_RADIUS = 7;
+const CURSOR_STROKE_WIDTH = 2;
+const FONT_SIZE = 28;
 const ANIMATION_DURATION = 1200;
 
-interface FearAndGreedArcProps {
-  readonly value: number;
-}
+const ARC_PATH =
+  "M6.75144 57.6112C4.97598 53.1408 4 48.2658 4 43.1628C4 21.5338 21.5338 4 43.1628 4C64.792 4 82.3258 21.5338 82.3258 43.1628C82.3258 48.2646 81.3502 53.1386 79.5754 57.6082";
+const ARC_START = { x: 6.75144, y: 57.6112 };
+const ARC_END = { x: 79.5754, y: 57.6082 };
+const GRADIENT_START_COLOR = "#F87274";
+const GRADIENT_END_COLOR = "#6EC85C";
 
-export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
+const SCALE_BY_APPEARANCE: Record<FearAndGreedAppearance, number> = {
+  compact: 0.5,
+  expanded: 0.65,
+};
+
+type Props = Readonly<{
+  value: number;
+  appearance?: FearAndGreedAppearance;
+}>;
+
+export default function FearAndGreedArc({ value, appearance = "compact" }: Props) {
   const { theme } = useTheme();
+  const scale = SCALE_BY_APPEARANCE[appearance];
+  const width = VIEWBOX_WIDTH * scale;
+  const height = VIEWBOX_HEIGHT * scale;
+  const cursorRadius = CURSOR_RADIUS * scale;
+  const cursorStrokeWidth = CURSOR_STROKE_WIDTH * scale;
+  const cursorSize = (cursorRadius + cursorStrokeWidth) * 2;
+  const gradientId = `fearAndGreedGradient-${appearance}`;
+
   const animatedValue = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
   const lastDisplayValue = useSharedValue(0);
@@ -38,13 +64,8 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
     });
   }, [value, animatedValue]);
 
-  const startX = 3.37572;
-  const startY = 28.8056;
-  const endX = 39.7877;
-  const endY = 28.8041;
-
-  const startAngle = Math.atan2(startY - CY, startX - CX);
-  const endAngle = Math.atan2(endY - CY, endX - CX);
+  const startAngle = Math.atan2(ARC_START.y - CY, ARC_START.x - CX);
+  const endAngle = Math.atan2(ARC_END.y - CY, ARC_END.x - CX);
 
   let angleRange = endAngle - startAngle;
   if (angleRange < 0) {
@@ -73,32 +94,30 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
     "worklet";
     return {
       position: "absolute" as const,
-      left: cursorPosition.value.x - CURSOR_RADIUS - CURSOR_STROKE_WIDTH,
-      top: cursorPosition.value.y - CURSOR_RADIUS - CURSOR_STROKE_WIDTH,
+      left: cursorPosition.value.x * scale - cursorRadius - cursorStrokeWidth,
+      top: cursorPosition.value.y * scale - cursorRadius - cursorStrokeWidth,
     };
-  }, [cursorPosition]);
-
-  const cursorSize = (CURSOR_RADIUS + CURSOR_STROKE_WIDTH) * 2;
+  }, [cursorPosition, scale, cursorRadius, cursorStrokeWidth]);
 
   return (
-    <View style={{ width: WIDTH, height: HEIGHT, position: "relative" }}>
-      <Svg width={WIDTH} height={HEIGHT} viewBox={`0 0 ${WIDTH} ${HEIGHT}`}>
+    <View style={{ width, height, position: "relative" }}>
+      <Svg width={width} height={height} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}>
         <Defs>
           <LinearGradient
-            id="fearAndGreedGradient"
-            x1="2"
-            y1="15.4"
-            x2="41.16"
-            y2="15.4"
+            id={gradientId}
+            x1="4"
+            y1="30.8"
+            x2="82.32"
+            y2="30.8"
             gradientUnits="userSpaceOnUse"
           >
-            <Stop offset="0" stopColor="#F87274" />
-            <Stop offset="1" stopColor="#6EC85C" />
+            <Stop offset="0" stopColor={GRADIENT_START_COLOR} />
+            <Stop offset="1" stopColor={GRADIENT_END_COLOR} />
           </LinearGradient>
         </Defs>
         <Path
-          d="M3.37572 28.8056C2.48799 26.5704 2 24.1329 2 21.5814C2 10.7669 10.7669 2 21.5814 2C32.396 2 41.1629 10.7669 41.1629 21.5814C41.1629 24.1323 40.6751 26.5693 39.7877 28.8041"
-          stroke="url(#fearAndGreedGradient)"
+          d={ARC_PATH}
+          stroke={`url(#${gradientId})`}
           strokeWidth={STROKE_WIDTH}
           strokeLinecap="round"
           fill="none"
@@ -106,7 +125,7 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
         <SvgText
           transform={[{ translateX: CX }, { translateY: CY }]}
           fill={theme.colors.text.base}
-          fontSize={14}
+          fontSize={FONT_SIZE}
           fontWeight="600"
           textAnchor="middle"
           alignmentBaseline="middle"
@@ -118,12 +137,12 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
       <Animated.View style={cursorStyle}>
         <Svg width={cursorSize} height={cursorSize} viewBox={`0 0 ${cursorSize} ${cursorSize}`}>
           <Circle
-            cx={CURSOR_RADIUS + CURSOR_STROKE_WIDTH}
-            cy={CURSOR_RADIUS + CURSOR_STROKE_WIDTH}
-            r={CURSOR_RADIUS}
+            cx={cursorRadius + cursorStrokeWidth}
+            cy={cursorRadius + cursorStrokeWidth}
+            r={cursorRadius}
             fill="#FFF"
             stroke="#000"
-            strokeWidth={CURSOR_STROKE_WIDTH}
+            strokeWidth={cursorStrokeWidth}
           />
         </Svg>
       </Animated.View>

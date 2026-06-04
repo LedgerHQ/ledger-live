@@ -34,7 +34,7 @@ import { isExternalNodeConfig } from "../network/node/types";
  * Returns `null` when the address has not been associated yet or the RPC call
  * fails, allowing callers to fall back gracefully.
  */
-async function getCosmosAddr(
+export async function getCosmosAddr(
   evmRpcUrl: string,
   precompile: { address: string; abi: string },
   evmAddress: string,

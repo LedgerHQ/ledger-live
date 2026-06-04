@@ -4,6 +4,7 @@ import {
   MarketStateActionTypes,
   MarketSetCurrentPagePayload,
   MarketSetMarketFilterByStarredCurrenciesPayload,
+  MarketSetHideTransactionsOnChartPayload,
   MarketImportPayload,
 } from "./types";
 
@@ -18,6 +19,10 @@ export const setMarketFilterByStarredCurrencies =
 
 export const setMarketCurrentPage = createAction<MarketSetCurrentPagePayload>(
   MarketStateActionTypes.MARKET_SET_CURRENT_PAGE,
+);
+
+export const setHideTransactionsOnChart = createAction<MarketSetHideTransactionsOnChartPayload>(
+  MarketStateActionTypes.MARKET_SET_HIDE_TRANSACTIONS_ON_CHART,
 );
 
 export const importMarket = createAction<MarketImportPayload>(MarketStateActionTypes.MARKET_IMPORT);

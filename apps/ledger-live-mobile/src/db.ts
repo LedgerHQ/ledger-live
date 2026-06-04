@@ -11,6 +11,7 @@ import { useCallback } from "react";
 import storage from "LLM/storage";
 import type { User } from "./types/store";
 import type {
+  MarketListConfigState,
   BleState,
   LargeMoverState,
   MarketState,
@@ -278,6 +279,14 @@ export function getMarketState(): Promise<MarketState> {
 
 export async function saveMarketState(obj: MarketState): Promise<void> {
   await storage.save("market", obj);
+}
+
+export function getMarketListConfig(): Promise<MarketListConfigState | null> {
+  return storage.get("marketListConfig") as Promise<MarketListConfigState | null>;
+}
+
+export async function saveMarketListConfig(obj: MarketListConfigState): Promise<void> {
+  await storage.save("marketListConfig", obj);
 }
 
 export function getTrustchainState(): Promise<TrustchainStore> {

@@ -18,6 +18,7 @@ export {
   getUnbondingPeriodDays,
   getMaxRedelegations,
   hasUnbondingPeriod,
+  hasRedelegation,
   getValidators,
   prefetchValidators,
   isSeiAccountUnassociated,

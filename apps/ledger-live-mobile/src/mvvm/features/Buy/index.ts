@@ -11,6 +11,8 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
 
+const ASSET_DETAIL_SOURCE_SCREEN_NAME = "Asset Detail";
+
 type UseOpenBuySellProps = {
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
@@ -63,10 +65,13 @@ export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellPro
           defaultCurrencyId: currency?.id,
           ...(defaultAccountId && { defaultAccountId }),
           ...(parentId && { parentId }),
+          ...(sourceScreenName === ASSET_DETAIL_SOURCE_SCREEN_NAME && {
+            returnToPreviousScreenOnClose: true,
+          }),
         },
       });
     },
-    [currency, navigation],
+    [currency, navigation, sourceScreenName],
   );
 
   const openAccountSelectionDrawer = useCallback(

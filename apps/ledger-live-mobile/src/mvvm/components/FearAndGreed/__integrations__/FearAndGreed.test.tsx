@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, within } from "@tests/test-renderer";
 import { FearAndGreed } from "../index";
 import { server } from "@tests/server";
 import { http, HttpResponse } from "msw";
@@ -52,7 +52,19 @@ describe("FearAndGreed Integration", () => {
 
       expect(await screen.findByText(label)).toBeVisible();
     });
+
+    it("should render the expanded card with the full mood index title", async () => {
+      server.use(http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(70, "Greed"))));
+
+      render(<FearAndGreed appearance="expanded" width={276} />);
+
+      // Scope to the card: the definition drawer header also renders "Mood index".
+      const card = within(await screen.findByTestId("fear-and-greed-card"));
+      expect(card.getByText("Mood index")).toBeVisible();
+      expect(card.getByText("Greed")).toBeVisible();
+    });
   });
+
   describe("Drawer interaction", () => {
     it("should open definition drawer when card is pressed", async () => {
       server.use(

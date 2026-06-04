@@ -1,7 +1,7 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
@@ -79,6 +79,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     },
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["LIVE-31799"]);
 
       await app.portfolio.checkAddAccountButtonVisibility();
 

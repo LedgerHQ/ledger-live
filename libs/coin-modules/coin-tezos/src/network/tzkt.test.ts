@@ -681,7 +681,7 @@ describe("tzkt network API", () => {
           url: expect.stringContaining("/v1/staking/unstake_requests"),
           params: {
             "staker.eq": "tz1abc",
-            "status.in": "pending,finalizable",
+            "status.ne": "finalized",
             "sort.asc": "id",
             limit: 1000,
           },

@@ -1,71 +1,35 @@
 import React from "react";
-import { useTranslation } from "~/context/Locale";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { Text, BottomSheetView, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
-import FearAndGreedCard from "./components/FearAndGreedCard";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import QueuedDrawerGorhom, {
-  BottomSheetView as GorhomBottomSheetView,
-} from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
-import FearAndGreedTitle from "./components/FearAndGreedTitle";
 import type { FearAndGreedViewProps } from "./types";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import FearAndGreedCard from "./components/FearAndGreedCard";
+import FearAndGreedExpandedCard, {
+  FearAndGreedExpandedCardSkeleton,
+} from "./components/FearAndGreedExpandedCard";
+import FearAndGreedDefinitionSheet from "./components/FearAndGreedDefinitionSheet";
 
 export const FearAndGreedView = ({
   data,
+  isLoading,
   isError,
   isDrawerOpen,
   handleOpenDrawer,
   handleCloseDrawer,
+  appearance,
+  width,
 }: FearAndGreedViewProps) => {
-  const { t } = useTranslation();
-  const { bottom: bottomInset } = useSafeAreaInsets();
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
+  if (appearance === "expanded" && isLoading) {
+    return <FearAndGreedExpandedCardSkeleton width={width} testID="fear-and-greed-card-skeleton" />;
+  }
 
   if (!data || isError) return null;
 
-  if (isEnabled) {
-    return (
-      <>
-        <FearAndGreedCard data={data} onPress={handleOpenDrawer} />
-        <QueuedDrawerBottomSheet
-          isRequestingToBeOpened={isDrawerOpen}
-          onClose={handleCloseDrawer}
-          enableDynamicSizing
-        >
-          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-            <BottomSheetHeader />
-            <FearAndGreedTitle />
-            <Text typography="body1" lx={{ color: "base" }}>
-              {t("fearAndGreed.description")}
-            </Text>
-            <Text typography="body4" lx={{ color: "muted", marginTop: "s16" }}>
-              {t("fearAndGreed.disclaimer")}
-            </Text>
-          </BottomSheetView>
-        </QueuedDrawerBottomSheet>
-      </>
-    );
-  }
-
   return (
     <>
-      <FearAndGreedCard data={data} onPress={handleOpenDrawer} />
-      <QueuedDrawerGorhom
-        isRequestingToBeOpened={isDrawerOpen}
-        onClose={handleCloseDrawer}
-        enableDynamicSizing
-      >
-        <GorhomBottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 32 }}>
-          <FearAndGreedTitle />
-          <Text typography="body1" lx={{ color: "base" }}>
-            {t("fearAndGreed.description")}
-          </Text>
-          <Text typography="body4" lx={{ color: "muted", marginTop: "s20" }}>
-            {t("fearAndGreed.disclaimer")}
-          </Text>
-        </GorhomBottomSheetView>
-      </QueuedDrawerGorhom>
+      {appearance === "expanded" ? (
+        <FearAndGreedExpandedCard data={data} width={width} onPress={handleOpenDrawer} />
+      ) : (
+        <FearAndGreedCard data={data} onPress={handleOpenDrawer} />
+      )}
+      <FearAndGreedDefinitionSheet isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
     </>
   );
 };

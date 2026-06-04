@@ -380,4 +380,34 @@ describe("middleware behavior", () => {
     });
     expect(store.getState().featureFlags.resolved.ptxCard.enabled).toBe(true);
   });
+
+  it("injects the current language from getAppLanguage and re-resolves when it changes", async () => {
+    let lang = "en";
+    const store = createStore(undefined, {
+      fetchRemoteFlags: () =>
+        Promise.resolve({ mockFeature: { enabled: true, languages_whitelisted: ["en"] } }),
+      getAppLanguage: () => lang,
+    });
+    await flushPromises();
+    expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
+
+    // A non-feature-flags action triggers the language-change check.
+    lang = "de";
+    store.dispatch({ type: "settings/setLanguage" });
+    const resolved = store.getState().featureFlags.resolved.mockFeature;
+    expect(resolved.enabled).toBe(false);
+    expect(resolved.enabledOverriddenForCurrentLanguage).toBe(true);
+  });
+
+  it("does not re-resolve when an unrelated action leaves the language unchanged", async () => {
+    const getAppLanguage = jest.fn(() => "en");
+    const store = createStore(undefined, {
+      fetchRemoteFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
+      getAppLanguage,
+    });
+    await flushPromises();
+    const before = store.getState().featureFlags.resolved;
+    store.dispatch({ type: "settings/somethingElse" });
+    expect(store.getState().featureFlags.resolved).toBe(before);
+  });
 });

@@ -1,4 +1,7 @@
-export const EVENT_SHOWN = "Onboarding Counterfeit Warning - Shown";
-export const EVENT_PROCEED = "Onboarding Counterfeit Warning - Proceed";
-export const EVENT_CONCERN = "Onboarding Counterfeit Warning - Concern";
-export const EVENT_DISMISSED = "Onboarding Counterfeit Warning - Dismissed";
+export const COUNTERFEIT_WARNING_PAGE = "Warning message - tampered device";
+
+export const COUNTERFEIT_WARNING_BUTTON = {
+  continueSetup: "Continue setup",
+  learnMore: "Learn more",
+  close: "close",
+} as const;

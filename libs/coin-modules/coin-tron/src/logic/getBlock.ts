@@ -93,7 +93,7 @@ function toBlockTransaction(
     failed: txInfo.hasFailed,
     fees: BigInt(fee),
     feesPayer: txInfo.from,
-    operations: txInfo.hasFailed ? [] : toBlockOperations(txInfo),
+    operations: toBlockOperations(txInfo),
   };
 }
 

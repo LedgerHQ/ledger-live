@@ -24,7 +24,7 @@ export default function MarketWalletTabNavigator() {
   const { t } = useTranslation();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  const marketScreenOptions = useMemo(() => ({ ...options, title: t("market.exploreTitle") }), [t]);
+  const marketScreenOptions = useMemo(() => ({ ...options, title: t("market.title") }), [t]);
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig} initialRouteName={ScreenName.MarketList}>
       <Stack.Screen

@@ -7,7 +7,7 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { TezosFamily } from "./types";
 import { StepId } from "./DelegateFlowModal/types";
-import { getTezosEarnFlow } from "./earnFlow";
+import { getTezosEarnFlow } from "@ledgerhq/live-common/families/tezos/earnFlow";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({

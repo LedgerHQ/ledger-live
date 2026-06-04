@@ -66,20 +66,25 @@ export function AmountScreenInner({
     onReview();
   }, [onReview, viewModel.quickActions, viewModel.selectedFeeStrategy, sendFlowTrackingProperties]);
 
-  return (
-    <>
+  const pluginsSlot = useMemo(
+    () => (
       <AmountPluginsHost
         account={account}
         parentAccount={parentAccount}
         transaction={transaction}
         transactionActions={transactionActions}
       />
-      <AmountScreenView
-        {...viewModel}
-        onReview={handleReview}
-        onGetFunds={onGetFunds}
-        onSelectCoinControl={onSelectCoinControl}
-      />
-    </>
+    ),
+    [account, parentAccount, transaction, transactionActions],
+  );
+
+  return (
+    <AmountScreenView
+      {...viewModel}
+      onReview={handleReview}
+      onGetFunds={onGetFunds}
+      onSelectCoinControl={onSelectCoinControl}
+      pluginsSlot={pluginsSlot}
+    />
   );
 }

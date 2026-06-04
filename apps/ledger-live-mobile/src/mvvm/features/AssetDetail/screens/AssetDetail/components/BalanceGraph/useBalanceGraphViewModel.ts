@@ -17,6 +17,7 @@ import {
 import { useSelector } from "~/context/hooks";
 import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
+import { hideTransactionsOnChartSelector } from "~/reducers/market";
 import { useCountervaluesState } from "~/reducers/countervalues";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { track } from "~/analytics";
@@ -48,6 +49,7 @@ import {
 } from "./utils/getTransactionPointMarkers";
 import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker";
 import { downsampleChartPoints } from "./utils/downsampleChartPoints";
+import { injectMarketExtrema } from "@ledgerhq/live-common/market/utils/injectMarketExtrema";
 
 // Upper bound on operations pulled for the chart's transaction dots. The chart only
 // marks operations inside the visible window, so this just caps the lookback; raise it
@@ -56,6 +58,9 @@ const TRANSACTION_DOTS_MAX_OPERATIONS = 1000;
 
 const MIN_X_AXIS_TICKS = 5;
 const MIN_X_AXIS_TICKS_1D = 8;
+// Keep formatter mapping aligned with desktop. Mobile currently surfaces
+// 1d/1w/1m/1y/all, but we keep 6m in the formatter bucket for parity.
+const HOVER_RANGE_WITH_TIME_AND_DATE: ReadonlySet<string> = new Set(["1w", "1m", "6m"]);
 
 /**
  * Asymmetric padding added to the y-axis domain (as a ratio of the value range).
@@ -167,8 +172,23 @@ export function useBalanceGraphViewModel({
     [counterValueUnit, locale],
   );
 
+  // Extract the all-time extrema as stable primitives: marketCurrency is a new
+  // object on every market poll (athDate/atlDate are fresh Date instances), so
+  // depending on it would re-run the series pipeline on each price refresh.
+  const ath = marketCurrency?.ath;
+  const atl = marketCurrency?.atl;
+  const athTime = marketCurrency?.athDate?.getTime();
+  const atlTime = marketCurrency?.atlDate?.getTime();
+
   const { series, timestamps } = useMemo(() => {
-    const points = chartData?.[range] ?? [];
+    const rawPoints = chartData?.[range] ?? [];
+    // On the "all" range, anchor the graph's high/low markers to the market
+    // all-time high/low so they match the stats table (see LIVE-31732). Injected
+    // before downsampling, which preserves the series min/max.
+    const points =
+      range === "all"
+        ? injectMarketExtrema(rawPoints, { ath, athDate: athTime, atl, atlDate: atlTime })
+        : rawPoints;
     const rawValues: number[] = [];
     const rawTimestamps: number[] = [];
     points.forEach(([timestamp, value]) => {
@@ -193,7 +213,7 @@ export function useBalanceGraphViewModel({
       ] satisfies LineChartSeries[],
       timestamps: tsList,
     };
-  }, [chartData, range]);
+  }, [chartData, range, ath, atl, athTime, atlTime]);
   const prices = series[0].data;
 
   const priceChangePercentage = useMemo(() => {
@@ -290,8 +310,8 @@ export function useBalanceGraphViewModel({
     [counterValueUnit, locale],
   );
 
-  // Mirror desktop's `hourFormat` / `dayFormat`: intraday shows the time, longer
-  // ranges show the full numeric day/month/year (e.g. "5/29/2026").
+  // Keep chart axis/tooltip formatting compact: intraday shows time, longer
+  // ranges show date only. Header hover format has a separate formatter below.
   const dateFormatters = useMemo(
     () => ({
       hour: new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "numeric" }),
@@ -308,8 +328,32 @@ export function useBalanceGraphViewModel({
     [range, dateFormatters],
   );
 
+  const hoverDateFormatters = useMemo(
+    () => ({
+      time: dateFormatters.hour,
+      date: dateFormatters.day,
+      dateTime: new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "numeric",
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+      }),
+    }),
+    [dateFormatters.hour, dateFormatters.day, locale],
+  );
+  const formatHoverDate = useCallback(
+    (date: Date) => {
+      if (range === "1d") return hoverDateFormatters.time.format(date);
+      if (HOVER_RANGE_WITH_TIME_AND_DATE.has(range))
+        return hoverDateFormatters.dateTime.format(date);
+      return hoverDateFormatters.date.format(date);
+    },
+    [range, hoverDateFormatters],
+  );
+
   const scrubbedDateLabel =
-    selection != null ? formatDate(new Date(selection.timestamp)) : undefined;
+    selection != null ? formatHoverDate(new Date(selection.timestamp)) : undefined;
 
   // While scrubbing, the trend reflects the change from the start of the selected
   // range up to the scrubbed point (the line color stays tied to the range below).
@@ -376,6 +420,7 @@ export function useBalanceGraphViewModel({
   // transactions it represents, mirroring the Transactions section's scoping.
   const allAccounts = useSelector(accountsSelector);
   const discreet = useSelector(discreetModeSelector);
+  const hideTransactionsOnChart = useSelector(hideTransactionsOnChartSelector);
   // Read through a ref so countervalue polling (which swaps the state reference on
   // every tick) does not invalidate the `transactions` memo and force the memoized
   // chart to re-render. Historical fiat is treated as stable; if rates land after the
@@ -481,10 +526,12 @@ export function useBalanceGraphViewModel({
 
   const points = useMemo<LineChartPointMarker[]>(() => {
     const extrema = getExtremaPointMarkers(series);
-    if (transactions.length === 0 || timestamps.length < 2) return extrema;
+    // The user can hide transaction markers from the price chart (persisted setting).
+    if (hideTransactionsOnChart || transactions.length === 0 || timestamps.length < 2)
+      return extrema;
     const groups = groupTransactionsByChartIndex({ timestamps, values: prices, transactions });
     return [...extrema, ...groups.map(group => buildTransactionPointMarker(group, t, formatFiat))];
-  }, [series, transactions, timestamps, prices, t, formatFiat]);
+  }, [series, transactions, timestamps, prices, t, formatFiat, hideTransactionsOnChart]);
 
   return {
     price: displayedPrice,
@@ -512,5 +559,6 @@ export function useBalanceGraphViewModel({
     showYAxis: false,
     xAxis,
     yAxis,
+    currencyId: currency?.id,
   };
 }

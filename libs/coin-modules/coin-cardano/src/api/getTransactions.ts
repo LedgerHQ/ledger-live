@@ -1,65 +1,12 @@
 import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import chunk from "lodash/chunk";
 import range from "lodash/range";
-import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { getBipPath, getCredentialKey, getExtendedPublicKeyFromHex, isTestnet } from "../logic";
+import { getBipPath, getCredentialKey, getExtendedPublicKeyFromHex } from "../logic";
 import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
 import * as ApiTypes from "./api-types";
-import { APITransaction } from "./api-types";
-
-async function fetchTransactions(
-  paymentKeys: Array<string>,
-  pageNo: number,
-  blockHeight: number,
-  currency: CryptoCurrency,
-): Promise<{
-  pageNo: number;
-  limit: number;
-  blockHeight: number;
-  transactions: Array<APITransaction>;
-}> {
-  const res = await network({
-    method: "POST",
-    url: isTestnet(currency)
-      ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/transaction`
-      : `${CARDANO_API_ENDPOINT}/v1/transaction`,
-    data: {
-      paymentKeys,
-      pageNo,
-      blockHeight,
-    },
-  });
-  return res.data;
-}
-
-async function getAllTransactionsByKeys(
-  paymentKeys: Array<string>,
-  blockHeight: number,
-  currency: CryptoCurrency,
-): Promise<{
-  transactions: Array<ApiTypes.APITransaction>;
-  blockHeight: number;
-}> {
-  const transactions: Array<ApiTypes.APITransaction> = [];
-  let latestBlockHeight = 0;
-  let isAllTrxFetched = false;
-  let pageNo = 1;
-
-  while (!isAllTrxFetched) {
-    const res = await fetchTransactions(paymentKeys, pageNo, blockHeight, currency);
-    transactions.push(...res.transactions);
-    latestBlockHeight = Math.max(res.blockHeight, latestBlockHeight);
-    isAllTrxFetched = res.transactions.length < res.limit;
-    pageNo += 1;
-  }
-  return {
-    transactions,
-    blockHeight: latestBlockHeight,
-  };
-}
+import { getAllTransactionsByKeys } from "./fetchTransactions";
 
 async function getSyncedTransactionsByChain(
   accountPubKey: Bip32PublicKey,

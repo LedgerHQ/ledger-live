@@ -1,6 +1,8 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
+export { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBlacklisted";
+
 // TODO: remove this export and prefer import from root file.
 export {
   accountWithMandatoryTokens,

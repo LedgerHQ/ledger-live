@@ -44,7 +44,6 @@ const protectServicesFeature = ({
         ...protectDesktopDefaultParams,
         protectId: "protect-prod",
         bannerSubscriptionNotification,
-        compatibleDevices: [],
         onboardingCompleted: {
           ...protectDesktopDefaultParams.onboardingCompleted,
           upsellURI: onboardingUpsellUri,

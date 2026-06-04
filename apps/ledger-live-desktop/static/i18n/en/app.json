@@ -205,6 +205,7 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
+      "FINALIZE_UNSTAKE": "Withdrawn",
       "SENDING": "Sending",
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
@@ -4285,8 +4286,10 @@
         "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
         "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+        "undelegateActivatingTooltip": "You cannot undelegate a stake that is still activating",
         "reward": "Claim rewards",
         "activeTooltip": "Delegated amounts generate rewards",
+        "activatingTooltip": "Delegated amounts will start generating rewards next epoch",
         "inactiveTooltip": "Undelegated amounts do not generate rewards",
         "minSafeWarning": "Not enough funds",
         "commission": "Commission",
@@ -5189,6 +5192,16 @@
       "customLockScreen": "Custom lock-screen assets",
       "customLockScreenDesc": "Debug custom lock-screen graphical assets",
       "customLockScreenCTA": "Launch",
+      "coinConfig": {
+        "title": "Coin configs used in Ledger Wallet",
+        "desc": "Override per-currency config (rpc, explorer, gas…) for local debugging. Only valid JSON will be accepted. Overrides persist across relaunches; use \"Restore all\" to clear them.",
+        "search": "Search a config key (e.g. config_currency_ethereum)",
+        "hint": "Defaults show `config_currency_*` keys. Search to see every LiveConfig key. Overrides are deep-merged on top of the default + remote value for object configs.",
+        "restore": "Restore",
+        "override": "Override",
+        "restoreAll": "Restore all coin configs",
+        "overriddenLocally": "overridden locally"
+      },
       "featureFlagsTitle": "Defined feature flags used in Ledger Wallet",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
@@ -7225,6 +7238,9 @@
     "MustDelegateBeforeStaking": {
       "title": "Please delegate your account before staking"
     },
+    "TezosNotEnoughStaked": {
+      "title": "Insufficient staked balance"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -9064,16 +9080,21 @@
       "hideFromPortfolio": "Hide from portfolio",
       "showInPortfolio": "Show in portfolio"
     },
+    "chartOptions": {
+      "menu": "Chart options",
+      "hideTransactions": "Hide activity on price chart",
+      "showTransactions": "Show activity on price chart"
+    },
     "hiddenBanner": {
       "description": "This asset is hidden from your portfolio.",
       "showAsset": "Show asset"
     },
     "totalBalance": "Total balance",
     "marketPrice": "Market price",
-    "addresses": "Addresses",
+    "addresses": "Accounts",
     "addressesDialog": {
-      "title": "Addresses",
-      "description": "All your addresses holding {{ticker}}."
+      "title": "Accounts",
+      "description": "All your accounts holding {{ticker}}."
     },
     "add": "Add",
     "notFound": "Asset distribution item not found.",

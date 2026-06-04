@@ -1,7 +1,7 @@
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 
 // Range buckets surfaced in the BalanceGraph segmented control.
-export const BALANCE_GRAPH_RANGES = ["1d", "1w", "1m", "6m", "1y", "all"] as const;
+export const BALANCE_GRAPH_RANGES = ["1d", "1w", "1m", "1y", "all"] as const;
 
 export type RangeKey = (typeof BALANCE_GRAPH_RANGES)[number];
 
@@ -14,7 +14,7 @@ export const RANGE_TO_PRICE_CHANGE_KEY: Partial<Record<RangeKey, KeysPriceChange
   "1y": KeysPriceChange.year,
 };
 
-const CHART_DERIVED_PRICE_CHANGE_RANGES = new Set<RangeKey>(["6m", "all"]);
+const CHART_DERIVED_PRICE_CHANGE_RANGES = new Set<RangeKey>(["all"]);
 
 export function isChartDerivedPriceChangeRange(range: RangeKey): boolean {
   return CHART_DERIVED_PRICE_CHANGE_RANGES.has(range);

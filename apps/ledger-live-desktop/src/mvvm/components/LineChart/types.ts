@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   LineChartProps as LumenLineChartProps,
   Series,
@@ -76,4 +77,6 @@ export type LineChartProps = Readonly<{
   xAxis?: LineChartXAxisConfig;
   /** Passthrough y-axis configuration (ticks, tickLabelFormatter, domain, ...). */
   yAxis?: LineChartYAxisConfig;
+  /** Optional control rendered inline at the end of the range-selector row (e.g. a chart options menu). */
+  rangeSelectorTrailing?: ReactNode;
 }>;

@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import { LineChart } from "..";
 import type { LineChartProps, LineChartSeries } from "../types";
@@ -58,6 +59,17 @@ describe("LineChart", () => {
     renderLineChart({ accessibilityLabel: "Choose timeframe" });
 
     expect(screen.getByLabelText("Choose timeframe")).toBeOnTheScreen();
+  });
+
+  it("renders rangeSelectorTrailing next to the range selector while keeping its a11y label", () => {
+    renderLineChart({
+      accessibilityLabel: "Choose timeframe",
+      rangeSelectorTrailing: <Text>chart-options-slot</Text>,
+    });
+
+    expect(screen.getByText("chart-options-slot")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Choose timeframe")).toBeOnTheScreen();
+    expect(screen.getByText("1D")).toBeVisible();
   });
 
   it("renders the Skeleton while isLoading", () => {
