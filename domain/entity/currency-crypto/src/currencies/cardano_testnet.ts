@@ -5,7 +5,7 @@ export const cardano_testnet = currency({
   id: "cardano_testnet",
   coinType: 1815,
   name: "Cardano (Testnet)",
-  managerAppName: "Cardano ADA",
+  managerAppName: "Cardano",
   ticker: "tADA",
   scheme: "cardano_testnet",
   isTestnetFor: "cardano",

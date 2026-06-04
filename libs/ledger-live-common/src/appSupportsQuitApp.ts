@@ -27,7 +27,7 @@ export const minAppVersion = {
   "Bitcoin Private": "1.5.0",
   "Bitcoin Test": "1.5.0",
   Callisto: "1.4.0",
-  "Cardano ADA": "2.0.4",
+  Cardano: "2.0.4",
   Celo: "1.0.3",
   Cosmos: "2.16.3",
   "Crypto.com Chain": "0.0.0",

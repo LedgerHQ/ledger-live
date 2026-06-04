@@ -5,7 +5,7 @@ export const cardano = currency({
   id: "cardano",
   coinType: 1815,
   name: "Cardano",
-  managerAppName: "Cardano ADA",
+  managerAppName: "Cardano",
   ticker: "ADA",
   scheme: "cardano",
   color: "#0A1D2C",
