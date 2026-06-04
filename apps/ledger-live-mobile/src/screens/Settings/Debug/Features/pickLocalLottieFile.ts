@@ -4,6 +4,7 @@ import {
   getDocumentPicker,
   isDocumentPickerCancelled,
 } from "./documentPickerBridge";
+import type { DocumentPickerOptions } from "@react-native-documents/picker";
 
 export type PickedLottieFile = {
   uri: string;
@@ -99,15 +100,20 @@ function normalizeLottieFileUri(uri: string): string {
   return encodeURI(trimmed);
 }
 
-function getPickOptions(): {
-  mode: "import" | "open";
-  type: string[];
-  allowMultiSelection: false;
-} {
+function getPickOptions(): DocumentPickerOptions {
   const { types } = getDocumentPicker();
 
+  if (Platform.OS === "android") {
+    return {
+      mode: "open",
+      requestLongTermAccess: false,
+      type: [types.allFiles],
+      allowMultiSelection: false,
+    };
+  }
+
   return {
-    mode: Platform.OS === "android" ? "open" : "import",
+    mode: "import",
     type: [types.allFiles],
     allowMultiSelection: false,
   };
@@ -243,6 +249,8 @@ export async function pickLocalLottieFile(): Promise<PickedLottieFile | null> {
       throw error;
     }
 
-    throw new Error(getPickErrorMessage(error), { cause: error });
+    const wrappedError = new Error(getPickErrorMessage(error));
+    (wrappedError as Error & { cause?: unknown }).cause = error;
+    throw wrappedError;
   }
 }

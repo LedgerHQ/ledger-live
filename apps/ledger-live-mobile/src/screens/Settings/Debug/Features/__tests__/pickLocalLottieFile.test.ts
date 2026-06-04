@@ -164,6 +164,7 @@ describe("pickLocalLottieFile", () => {
     });
     expect(mockPick).toHaveBeenCalledWith({
       mode: "open",
+      requestLongTermAccess: false,
       type: ["*/*"],
       allowMultiSelection: false,
     });
