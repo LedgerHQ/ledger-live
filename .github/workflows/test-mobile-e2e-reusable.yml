@@ -469,7 +469,7 @@ jobs:
     name: "Setup Android AVD"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.outputs.avd_exists != 'true' }}
-    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    runs-on: [ledger-live-linux-16CPU-64RAM]
     steps:
       - name: Setup Android AVDs
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
