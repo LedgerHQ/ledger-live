@@ -74,9 +74,11 @@ export class SwapLiveAppPage {
           });
           // Proof: Chromedriver can query the live app DOM
           await this.fromSelector.waitForDisplayed({ timeout: 5_000 });
+          console.log("Switched to Swap Live App!")
           return true;
         } catch {
           await driver.switchAppiumContext("NATIVE_APP"); // reset before retry
+          console.log("Failed to switch to Swap Live App, retrying...");
           return false;
         }
       },
