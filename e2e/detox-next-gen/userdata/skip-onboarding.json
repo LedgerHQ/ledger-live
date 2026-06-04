@@ -1,0 +1,13 @@
+{
+  "data": {
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "language": "en",
+      "theme": "dark"
+    },
+    "accounts": [],
+    "featureFlags": {
+      "overrides": {}
+    }
+  }
+}

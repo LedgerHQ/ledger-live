@@ -1,0 +1,34 @@
+{
+  "name": "detox-next-gen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:detox": "pnpm detox test",
+    "test:ios": "pnpm test:detox --configuration ios.sim.release",
+    "test:android": "pnpm test:detox --configuration android.emu.release",
+    "build:ios": "nx run live-mobile:e2e:build -- --configuration ios.sim.release",
+    "build:android": "nx run live-mobile:e2e:build -- --configuration android.emu.release",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.24.0",
+  "devDependencies": {
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/ws": "^8.5.12",
+    "detox": "catalog:",
+    "jest": "^29.7.0",
+    "ts-jest": "29.4.11",
+    "typescript": "catalog:",
+    "ws": "^8.18.0"
+  },
+  "dependencies": {
+    "@jest/reporters": "^29.7.0",
+    "@jest/types": "^29.6.3",
+    "jest-environment-node": "^29.7.0",
+    "jest-util": "^29.7.0"
+  }
+}
