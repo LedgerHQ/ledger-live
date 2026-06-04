@@ -33,12 +33,15 @@ export function trustchainLifecycle({
           jwt => Promise.resolve(jwt),
           "refresh",
         );
-        // we then need to push back data to a new CloudSync id with the new encryption key
-        const { version, data } = getCurrentWSState();
+        // we then need to push back data to a new CloudSync id with the new encryption key.
+        // the rotated trustchain is a brand-new CloudSync store, so its first write must be
+        // version 1 — reusing the previous store's version makes the backend reject it as a
+        // version gap (HTTP 500).
+        const { data } = getCurrentWSState();
         if (!data) return;
         const cipher = makeCipher(trustchainSdk);
         const payload = await cipher.encrypt(newTrustchain, data);
-        await api.uploadData(newJwt, liveSlug, version, payload, newTrustchain);
+        await api.uploadData(newJwt, liveSlug, 1, payload, newTrustchain);
       };
     },
   };

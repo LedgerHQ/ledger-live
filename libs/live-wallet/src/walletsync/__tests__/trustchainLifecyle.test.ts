@@ -86,6 +86,8 @@ describe("trustchainLifecycle", () => {
 
     expect(removedCount).toBe(1);
     expect(storedData).not.toBe("");
-    expect(storedVersion).toBe(42);
+    // the rotated trustchain is a fresh store: the upload must reset to version 1,
+    // not reuse the previous store's version (42).
+    expect(storedVersion).toBe(1);
   });
 });
