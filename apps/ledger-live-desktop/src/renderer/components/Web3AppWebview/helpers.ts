@@ -56,6 +56,7 @@ type UseWebviewStateReturn = {
     src: string;
   };
   webviewRef: RefObject<WebviewTag | null>;
+  setWebviewRef: (node: WebviewTag) => () => void;
   webviewPartition: WebviewPartition;
   handleRefresh: () => void;
 };
@@ -137,10 +138,19 @@ export function useWebviewState(
     [manifest.domains, manifestDomainCheckEnabled, serverRef],
   );
 
-  const [isMounted, setMounted] = useState<boolean>(false);
-  useEffect(() => {
-    setMounted(true);
-  }, [isMounted]);
+  // Track the actual webview DOM node via a callback ref. Unlike a plain ref,
+  // a state update re-triggers the listener-attach effect exactly when the
+  // <webview> element mounts/unmounts, avoiding a race where the node appears
+  // after a one-shot "mounted" latch has already settled.
+  const [webviewNode, setWebviewNode] = useState<WebviewTag | null>(null);
+  const setWebviewRef = useCallback((node: WebviewTag) => {
+    webviewRef.current = node;
+    setWebviewNode(node);
+    return () => {
+      webviewRef.current = null;
+      setWebviewNode(null);
+    };
+  }, []);
 
   const handlePageTitleUpdated = useCallback((event: Electron.PageTitleUpdatedEvent) => {
     setState(oldState => ({
@@ -254,9 +264,9 @@ export function useWebviewState(
   }, [webviewRef]);
 
   useEffect(() => {
-    const webview = webviewRef.current;
+    const webview = webviewNode;
 
-    if (!isMounted || !webview) {
+    if (!webview) {
       return;
     }
 
@@ -288,8 +298,7 @@ export function useWebviewState(
     handleDomReady,
     handleFailLoad,
     handleCrashed,
-    webviewRef,
-    isMounted,
+    webviewNode,
   ]);
 
   const props = {
@@ -313,6 +322,7 @@ export function useWebviewState(
     webviewState: state,
     webviewProps: props,
     webviewRef,
+    setWebviewRef,
     webviewPartition,
     handleRefresh,
   };

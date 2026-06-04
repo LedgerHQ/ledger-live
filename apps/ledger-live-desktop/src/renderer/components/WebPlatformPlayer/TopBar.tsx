@@ -273,7 +273,7 @@ export const TopBar = ({
           </ItemContainer>
         </>
       ) : null}
-      {!!mobileView && (
+      {!!mobileView && enablePlatformDevTools && (
         <>
           <Separator />
           <ItemContainer

@@ -1,7 +1,8 @@
-import { renderHook } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import type { WebviewTag } from "./types";
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
@@ -124,6 +125,52 @@ describe("useWebviewState", () => {
       const { result } = renderHook(() => useWebviewState({ manifest: manifestWithCache }, null));
 
       expect(result.current.webviewPartition).toEqual({ partition: "persist:myapp-2" });
+    });
+  });
+
+  describe("setWebviewRef", () => {
+    const webviewEvents = [
+      "page-title-updated",
+      "did-navigate",
+      "did-navigate-in-page",
+      "did-start-loading",
+      "did-stop-loading",
+      "dom-ready",
+      "did-fail-load",
+      "render-process-gone",
+    ];
+
+    it("should attach listeners when the webview node is set and detach them on cleanup", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com/");
+      const addEventListener = jest.fn();
+      const removeEventListener = jest.fn();
+      const mockWebview = {
+        addEventListener,
+        removeEventListener,
+      } as unknown as WebviewTag;
+
+      const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
+
+      let cleanup: () => void = jest.fn();
+      act(() => {
+        cleanup = result.current.setWebviewRef(mockWebview);
+      });
+
+      expect(result.current.webviewRef.current).toBe(mockWebview);
+      expect(addEventListener).toHaveBeenCalledTimes(webviewEvents.length);
+      webviewEvents.forEach(eventName => {
+        expect(addEventListener).toHaveBeenCalledWith(eventName, expect.any(Function));
+      });
+
+      act(() => {
+        cleanup();
+      });
+
+      expect(result.current.webviewRef.current).toBeNull();
+      expect(removeEventListener).toHaveBeenCalledTimes(webviewEvents.length);
+      addEventListener.mock.calls.forEach(([eventName, handler]) => {
+        expect(removeEventListener).toHaveBeenCalledWith(eventName, handler);
+      });
     });
   });
 });

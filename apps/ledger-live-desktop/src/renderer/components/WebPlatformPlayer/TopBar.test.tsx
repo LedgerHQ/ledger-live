@@ -110,6 +110,7 @@ describe("Top Bar", () => {
     );
     expect(screen.getByText("Refresh")).toBeInTheDocument();
     expect(screen.queryByText("common.sync.devTools")).toBeNull();
+    expect(screen.queryByTestId("mobile-view-toggle")).toBeNull();
   });
 
   it("toggles mobile view when mobile view switch is clicked", () => {

@@ -29,9 +29,10 @@ export class LiveAppWebview {
   static async startLiveApp(
     liveAppDirectory: string,
     liveAppManifest: Partial<AppManifest> & Pick<AppManifest, "id">,
+    options: { csp?: string } = {},
   ) {
     try {
-      const port = await startDummyServer(`${liveAppDirectory}`);
+      const port = await startDummyServer(`${liveAppDirectory}`, 0, options);
 
       const url = `http://localhost:${port}`;
       const response = await fetch(url);

@@ -3,6 +3,7 @@ import { FlatList, ListRenderItemInfo } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { AltcoinSeason } from "LLM/components/AltcoinSeason";
 import { FearAndGreed } from "LLM/components/FearAndGreed";
+import { MarketCapCard } from "LLM/components/MarketCapCard";
 import type { MarketHighlightCard } from "../../useMarketHighlights";
 import { MARKET_SCREEN_TEST_IDS } from "../../testIds";
 
@@ -27,6 +28,7 @@ export function MarketHighlights({ cardWidth, snapToInterval, highlightCards }: 
           <FearAndGreed appearance="expanded" width={cardWidth} />
         ) : null}
         {item.type === "altcoinSeason" ? <AltcoinSeason width={cardWidth} /> : null}
+        {item.type === "marketCap" ? <MarketCapCard width={cardWidth} /> : null}
       </Box>
     ),
     [cardWidth],

@@ -10,7 +10,7 @@ import QueuedDrawerGorhom, {
 type Props = Readonly<{
   title: string;
   description: string;
-  disclaimer: string;
+  disclaimer?: string;
   isOpen: boolean;
   onClose: () => void;
 }>;
@@ -27,9 +27,11 @@ function MarketInsightDefinitionSheet({ title, description, disclaimer, isOpen, 
       <Text typography="body1" lx={{ color: "base" }}>
         {description}
       </Text>
-      <Text typography="body4" lx={{ color: "muted", marginTop: "s16" }}>
-        {disclaimer}
-      </Text>
+      {disclaimer ? (
+        <Text typography="body4" lx={{ color: "muted", marginTop: "s16" }}>
+          {disclaimer}
+        </Text>
+      ) : null}
     </>
   );
 

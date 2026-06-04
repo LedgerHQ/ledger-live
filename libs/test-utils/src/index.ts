@@ -5,9 +5,15 @@ import path from "path";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 let dummyAppPath: string;
+// Test-only Content-Security-Policy header for dummy Live Apps.
+let dummyAppCsp: string | undefined;
 
 export const dummyAppServer: http.Server = http.createServer(
   (request: http.IncomingMessage, response: http.ServerResponse) => {
+    if (dummyAppCsp) {
+      response.setHeader("Content-Security-Policy", dummyAppCsp);
+    }
+
     // You pass two more arguments for config and middleware
     // More details here: https://github.com/vercel/serve-handler#options
 
@@ -17,8 +23,13 @@ export const dummyAppServer: http.Server = http.createServer(
   },
 );
 
-export function startDummyServer(appPath: string, port = 0): Promise<number> {
+export function startDummyServer(
+  appPath: string,
+  port = 0,
+  options: { csp?: string } = {},
+): Promise<number> {
   dummyAppPath = appPath;
+  dummyAppCsp = options.csp;
 
   return new Promise((resolve, reject) => {
     dummyAppServer
@@ -83,6 +94,7 @@ export function getLiveAppManifest(
 }
 
 export function stopDummyServer(): Promise<void> {
+  dummyAppCsp = undefined;
   dummyAppServer.close();
   return new Promise(resolve => {
     dummyAppServer.on("close", () => {

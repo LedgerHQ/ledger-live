@@ -121,10 +121,14 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
 
     const options: ScenarioOptions = {
       withDevice,
-      sdkForName: name =>
+      sdkForName: (name, opts) =>
         getSdk(
           !!getEnv("MOCK"),
-          { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
+          {
+            applicationId: opts?.applicationId ?? 16,
+            name,
+            apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+          },
           withDevice,
         ),
       pauseRecorder: () => Promise.resolve(),

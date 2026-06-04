@@ -9653,6 +9653,10 @@
       "altcoin": "Altcoin"
     }
   },
+  "marketCapCard": {
+    "title": "Total market cap",
+    "description": "The total market cap represents the market capitalization of all cryptocurrencies combined."
+  },
   "analyticsAllocation": {
     "header": {
       "main": "Analytics"

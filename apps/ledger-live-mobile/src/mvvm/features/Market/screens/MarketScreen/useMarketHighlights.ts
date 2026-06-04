@@ -6,7 +6,7 @@ const CARD_GAP = 8;
 
 export type MarketHighlightCard = {
   key: string;
-  type: "fearAndGreed" | "altcoinSeason";
+  type: "marketCap" | "fearAndGreed" | "altcoinSeason";
 };
 
 export interface MarketHighlights {
@@ -27,6 +27,7 @@ export function useMarketHighlights(): MarketHighlights {
       cardGap: CARD_GAP,
       snapToInterval: cardWidth + CARD_GAP,
       highlightCards: [
+        { key: "market-highlight-market-cap", type: "marketCap" },
         { key: "market-highlight-fear-and-greed", type: "fearAndGreed" },
         { key: "market-highlight-altcoin-season", type: "altcoinSeason" },
       ],

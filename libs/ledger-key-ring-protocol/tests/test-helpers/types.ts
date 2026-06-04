@@ -4,9 +4,10 @@ import { TrustchainSDK, WithDevice } from "../../src/types";
 
 export type ScenarioOptions = {
   /**
-   * easily create a sdk for a given member name
+   * easily create a sdk for a given member name.
+   * `applicationId` defaults to 16 (Ledger Sync). Pass another value (e.g. 17 for wallet-cli ring) to exercise a different derivation app.
    */
-  sdkForName: (name: string) => TrustchainSDK;
+  sdkForName: (name: string, opts?: { applicationId?: number }) => TrustchainSDK;
   /**
    * pause the recorder (e2e) part for a given amount of time
    */
