@@ -16,6 +16,41 @@ describe("AddContactDialog", () => {
     expect(screen.queryByTestId("contacts-management-add-contact-dialog")).not.toBeInTheDocument();
   });
 
+  it("renders the privacy guidance banner above the submit button (Figma 14201:12756)", () => {
+    render(<AddContactDialog {...baseProps()} />);
+
+    const banner = screen.getByTestId(
+      "contacts-management-add-contact-privacy-banner",
+    );
+    expect(banner).toBeInTheDocument();
+    // The banner copy is wired to the i18n key
+    // `contactsManagement.addContactDialog.privacyBanner` — assert the
+    // visible text rather than the raw key so a future copy edit
+    // doesn't silently strip the surfaced guidance.
+    expect(banner).toHaveTextContent(/For your privacy, avoid full names/i);
+    expect(banner).toHaveTextContent(/John S\./);
+
+    // Layout contract: the banner sits between the input/counter group
+    // and the submit button. `compareDocumentPosition` returns the
+    // bitmask `Node.DOCUMENT_POSITION_FOLLOWING` (4) when the second
+    // argument follows the first — so the banner must follow the
+    // input AND precede the submit.
+    const input = screen.getByTestId("contacts-management-add-contact-name");
+    const submit = screen.getByTestId(
+      "contacts-management-add-contact-submit",
+    );
+    /* eslint-disable no-bitwise */
+    expect(
+      input.compareDocumentPosition(banner) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      banner.compareDocumentPosition(submit) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    /* eslint-enable no-bitwise */
+  });
+
   it("renders an empty name input and a disabled submit on first open", () => {
     render(<AddContactDialog {...baseProps()} />);
 

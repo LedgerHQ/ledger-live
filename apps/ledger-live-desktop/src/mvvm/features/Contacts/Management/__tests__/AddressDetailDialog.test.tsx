@@ -101,6 +101,22 @@ describe("AddressDetailDialog", () => {
     ]);
   });
 
+  it("fires onDelete when the Delete tile is clicked (mirrors the row menu's delete path)", async () => {
+    const onDelete = jest.fn();
+    const { user } = render(
+      <AddressDetailDialog
+        open
+        onOpenChange={jest.fn()}
+        contact={buildContact()}
+        entry={buildEntry()}
+        onDelete={onDelete}
+      />,
+    );
+
+    await user.click(screen.getByTestId("contacts-management-address-dialog-delete"));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
   it("does not throw when an action tile is clicked (inert in L4)", async () => {
     const { user } = render(
       <AddressDetailDialog

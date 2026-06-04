@@ -20,6 +20,7 @@ import { ContactMenu } from "./ContactMenu";
 import { DeleteAddressDialog } from "./DeleteAddressDialog";
 import { DeleteContactDialog } from "./DeleteContactDialog";
 import { EditContactDialog } from "./EditContactDialog";
+import { EditAddressDialog } from "./EditAddressDialog";
 import { EmptyAddressState } from "./EmptyAddressState";
 import { InitialsAvatar } from "./InitialsAvatar";
 import { RenameAddressDialog } from "./RenameAddressDialog";
@@ -63,6 +64,16 @@ type Props = {
     entry: { addressHex: string; chainId: number; scope: string },
     newScope: string,
   ) => (deviceId: string) => Promise<unknown>;
+  /**
+   * Verb factory for the on-device address edit. Used by
+   * `EditAddressDialog` to drive `RunDeviceAction` once the user
+   * submits a new hex.
+   */
+  onEditAddressOnDevice: (
+    currentDisplayName: string,
+    entry: { addressHex: string; chainId: number; scope: string },
+    newAddressHex: string,
+  ) => (deviceId: string) => Promise<unknown>;
 };
 
 /**
@@ -100,6 +111,7 @@ export function ContactDetails({
   onDeleteContact,
   onDeleteAddress,
   onRenameAddressLabelOnDevice,
+  onEditAddressOnDevice,
 }: Props) {
   const { t } = useTranslation();
   const count = contact.entries.length;
@@ -150,14 +162,53 @@ export function ContactDetails({
   // The single address entry currently in the Rename-address dialog.
   // Opens from either the per-row overflow menu or the AddressDetail
   // dialog's "Rename" tile (Figma frames `14182:12897` / `14151:11140`).
+  //
+  // `returnTo` remembers the AddressDetail selection AT THE MOMENT the
+  // user clicked Rename from inside it. Set only when the entry point
+  // is AddressDetail — used to render the back arrow on the header
+  // and to restore the source dialog on click. `null` for opens from
+  // the row's overflow menu / right-click (no surface to back into).
+  type PendingAddressEdit = {
+    entry: ContactEntry;
+    returnTo: ActiveSelection | null;
+  };
   const [pendingAddressRename, setPendingAddressRename] =
-    useState<ContactEntry | null>(null);
+    useState<PendingAddressEdit | null>(null);
   const openRenameAddress = (entry: ContactEntry) => {
-    // If the AddressDetail dialog is the trigger, close it first so
-    // the user sees the rename modal land cleanly on the canvas
-    // (avoids two stacked dialogs).
+    // Triggered from the row menu — no source dialog to restore.
+    setPendingAddressRename({ entry, returnTo: null });
+  };
+  const openRenameAddressFromDetail = (entry: ContactEntry) => {
+    // Triggered from AddressDetail's Rename tile. Snapshot the
+    // current `active` selection BEFORE we close it so the back
+    // handler can reopen exactly the same detail dialog. We close
+    // AddressDetail here as well so we don't render two stacked
+    // dialogs while the rename modal is on screen.
+    const snapshot = active;
     setActive(null);
-    setPendingAddressRename(entry);
+    setPendingAddressRename({ entry, returnTo: snapshot });
+  };
+
+  // Same shape for the Edit dialog (Figma frames `14187:12344` /
+  // `14074:12293`).
+  const [pendingAddressEdit, setPendingAddressEdit] =
+    useState<PendingAddressEdit | null>(null);
+  const openEditAddress = (entry: ContactEntry) => {
+    setPendingAddressEdit({ entry, returnTo: null });
+  };
+  const openEditAddressFromDetail = (entry: ContactEntry) => {
+    const snapshot = active;
+    setActive(null);
+    setPendingAddressEdit({ entry, returnTo: snapshot });
+  };
+  // Delete from AddressDetail's "Delete" tile — close the detail dialog
+  // and open the same confirmation modal the per-row overflow menu
+  // uses. We don't thread a `returnTo` here: confirming deletes the
+  // entry (so there's nothing to go back to) and cancelling simply
+  // dismisses, matching the menu-triggered flow.
+  const openDeleteAddressFromDetail = (entry: ContactEntry) => {
+    setActive(null);
+    setPendingAddressDelete(entry);
   };
 
   // Other display names — exclude the current contact so the dialog's
@@ -250,6 +301,7 @@ export function ContactDetails({
                         }
                         onDeleteAddress={selected => setPendingAddressDelete(selected)}
                         onRenameAddress={openRenameAddress}
+                        onEditAddress={openEditAddress}
                       />
                     ))}
                   </div>
@@ -267,8 +319,18 @@ export function ContactDetails({
         contact={contact}
         entry={activeEntry}
         crypto={active?.crypto}
+        // The detail dialog is the ONLY surface that should hand the
+        // user a "back" arrow on the rename/edit modals — use the
+        // *FromDetail helpers here so the snapshot of `active` is
+        // captured BEFORE we close it.
         onRename={() => {
-          if (activeEntry) openRenameAddress(activeEntry);
+          if (activeEntry) openRenameAddressFromDetail(activeEntry);
+        }}
+        onEdit={() => {
+          if (activeEntry) openEditAddressFromDetail(activeEntry);
+        }}
+        onDelete={() => {
+          if (activeEntry) openDeleteAddressFromDetail(activeEntry);
         }}
       />
 
@@ -305,16 +367,55 @@ export function ContactDetails({
         onOpenChange={open => {
           if (!open) setPendingAddressRename(null);
         }}
-        currentLabel={pendingAddressRename?.scope ?? ""}
+        currentLabel={pendingAddressRename?.entry.scope ?? ""}
         onDeviceRename={newLabel =>
           // We can safely assert the entry here — the dialog only
           // calls `onDeviceRename` while it's open, and the dialog is
           // only open when `pendingAddressRename` is non-null.
           onRenameAddressLabelOnDevice(
             contact.name,
-            pendingAddressRename ?? { addressHex: "", chainId: 0, scope: "" },
+            pendingAddressRename?.entry ?? { addressHex: "", chainId: 0, scope: "" },
             newLabel,
           )
+        }
+        // Back arrow wires only when the rename was opened from the
+        // AddressDetail dialog — `returnTo` carries the selection we
+        // closed when transitioning in, and clicking back closes the
+        // rename modal and re-opens AddressDetail on the same entry.
+        onBack={
+          pendingAddressRename?.returnTo
+            ? () => {
+                const restore = pendingAddressRename.returnTo;
+                setPendingAddressRename(null);
+                setActive(restore);
+              }
+            : undefined
+        }
+      />
+
+      <EditAddressDialog
+        open={pendingAddressEdit !== null}
+        onOpenChange={open => {
+          if (!open) setPendingAddressEdit(null);
+        }}
+        currentAddressHex={pendingAddressEdit?.entry.addressHex ?? ""}
+        onDeviceEdit={newAddressHex =>
+          onEditAddressOnDevice(
+            contact.name,
+            pendingAddressEdit?.entry ?? { addressHex: "", chainId: 0, scope: "" },
+            newAddressHex,
+          )
+        }
+        // Same back contract as RenameAddressDialog — only surfaces
+        // when the dialog was opened from AddressDetail.
+        onBack={
+          pendingAddressEdit?.returnTo
+            ? () => {
+                const restore = pendingAddressEdit.returnTo;
+                setPendingAddressEdit(null);
+                setActive(restore);
+              }
+            : undefined
         }
       />
 

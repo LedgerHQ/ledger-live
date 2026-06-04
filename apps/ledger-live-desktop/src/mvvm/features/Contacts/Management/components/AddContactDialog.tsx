@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Banner,
   Button,
   Dialog,
   DialogBody,
@@ -131,6 +132,21 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
             />
             <CharCounter used={name.length} limit={LIMITS.contactName} />
           </div>
+
+          {/*
+            Privacy guidance banner (Figma frame `14201:12756`).
+            Sits between the input group and the submit button, with the
+            DialogBody's `gap-24` providing the 24px breathing room on
+            both sides. `appearance="info"` (Lumen default) renders the
+            grey card with the info `i` glyph on the left exactly like
+            the Figma — no title, copy in `description` so the icon
+            anchors to the top of the multi-line text.
+          */}
+          <Banner
+            appearance="info"
+            description={t("contactsManagement.addContactDialog.privacyBanner")}
+            data-testid="contacts-management-add-contact-privacy-banner"
+          />
 
           <Button
             appearance="base"

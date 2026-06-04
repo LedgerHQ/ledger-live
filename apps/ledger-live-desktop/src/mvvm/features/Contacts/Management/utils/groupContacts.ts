@@ -24,7 +24,8 @@ export const ME_DISPLAY_SUFFIX = " (Me)";
  * `InitialsAvatar` hashes for its background colour. Computed once at
  * merge time so the colour stays stable across renames — see
  * `useManagementViewModel.mergedContacts` for the resolution order
- * (`groupHandleHex` → underlying key → name fallback).
+ * (Me → literal `"me"`, registered → `groupHandleHex`, local stub →
+ * `name`).
  *
  * Optional so existing call sites that build raw `Contact` stubs
  * (tests, the legacy L1 panel) keep type-checking; `InitialsAvatar`

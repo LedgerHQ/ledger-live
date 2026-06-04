@@ -49,9 +49,23 @@ type Props = {
   /**
    * Fired when the user clicks the "Rename" action tile. The parent
    * is expected to close this dialog and open `RenameAddressDialog`
-   * with the same entry. Other tiles stay inert until L4.1 wires them.
+   * with the same entry.
    */
   onRename?: () => void;
+  /**
+   * Fired when the user clicks the "Edit" action tile. The parent is
+   * expected to close this dialog and open `EditAddressDialog` with
+   * the same entry.
+   */
+  onEdit?: () => void;
+  /**
+   * Fired when the user clicks the "Delete" action tile. The parent is
+   * expected to close this dialog and open `DeleteAddressDialog` (the
+   * confirmation modal) with the same entry — mirroring the per-row
+   * overflow menu's "Delete address" path. The remaining tile (Send)
+   * stays inert until L4.1 wires it.
+   */
+  onDelete?: () => void;
 };
 
 type ActionId = "send" | "rename" | "edit" | "delete";
@@ -116,6 +130,8 @@ export function AddressDetailDialog({
   entry,
   crypto,
   onRename,
+  onEdit,
+  onDelete,
 }: Props) {
   const { t } = useTranslation();
 
@@ -160,8 +176,12 @@ export function AddressDetailDialog({
               data-testid="contacts-management-address-full"
               // `break-all` so the long 0x hex wraps mid-word instead of
               // overflowing — full address is the explicit requirement
-              // here (no truncation).
-              className="body-2 text-muted break-all"
+              // here (no truncation). Fixed 264px width (Figma) so the
+              // hex wraps to a consistent column regardless of the
+              // dialog's intrinsic width; `mx-auto` keeps it centered.
+              // Arbitrary `[264px]` because the Lumen spacing scale has
+              // no 264 step (it tops out around 256).
+              className="body-2 text-muted break-all w-[264px] mx-auto"
             >
               {stickyEntry.addressHex}
             </p>
@@ -169,9 +189,18 @@ export function AddressDetailDialog({
 
           <div className="flex w-full items-stretch gap-8">
             {ACTIONS.map(action => {
-              // Per-action dispatch. Only `rename` is wired today; the
-              // remaining tiles stay inert (see the TODO list above).
-              const handler = action.id === "rename" ? onRename : undefined;
+              // Per-action dispatch. Rename / Edit / Delete are wired
+              // through to the host's dialog state machinery (Delete
+              // opens the same confirmation modal as the per-row
+              // overflow menu); Send stays inert (see the TODO list).
+              const handler =
+                action.id === "rename"
+                  ? onRename
+                  : action.id === "edit"
+                    ? onEdit
+                    : action.id === "delete"
+                      ? onDelete
+                      : undefined;
               return (
               <TileButton
                 key={action.id}

@@ -16,11 +16,6 @@ import type { NetworkOption } from "~/mvvm/features/Contacts/constants/networks"
 import { getNetworksForCrypto } from "~/mvvm/features/Contacts/utils/getNetworksForCrypto";
 import RunDeviceAction from "~/mvvm/features/Contacts/components/RunDeviceAction";
 import { setCryptoMeta } from "../../utils/cryptoMeta";
-import { removeSidecarContact } from "../../utils/sidecarContacts";
-import {
-  clearContactRename,
-  useContactRenames,
-} from "../../utils/sidecarOverrides";
 import { AssetStep } from "./AssetStep";
 import { NetworkStep } from "./NetworkStep";
 import { AddressStep, type AddressStepSubmit } from "./AddressStep";
@@ -72,31 +67,27 @@ const HEADER_KEY: Record<Step["kind"], string> = {
  *      verb. On success the dialog closes and the L4 list updates
  *      from the wallet snapshot + cryptoMeta sidecar.
  *
- * Verb selection (routes on canonical wallet, not sidecar map):
- *   - If the displayed row resolves to a canonical entry on device,
- *     we use `addAddressToContact` to append. We pass the *underlying*
- *     name (pre-rename) because the device knows the group by the
- *     name it was registered with.
- *   - Otherwise the row only exists locally (sidecar-only, possibly
- *     renamed). We promote it with `addContact` — that DMK verb
- *     creates the contact AND its first address atomically — and
- *     drop any sidecar / rename-overlay traces so the merged view
- *     doesn't shadow the new canonical row with a stale ghost.
+ * Verb selection (routes on `groupHandleHex`, the device-registration
+ * marker):
+ *   - If the contact is already registered on device
+ *     (`groupHandleHex !== ""`), we use `addAddressToContact` to append
+ *     an address to the existing group.
+ *   - Otherwise it's a local-only stub (created empty via "Add contact",
+ *     `groupHandleHex === ""`). We register it with `addContact` — that
+ *     DMK verb creates the contact AND its first address atomically. Its
+ *     internal commit overwrites the empty stub in place (same name key),
+ *     so no extra cleanup is needed.
  *
- * Routing this way avoids the "Contact not found in local store"
- * error that the previous `isSidecarContact(displayName)` check hit
- * for any sidecar contact the user had renamed in L4 (the sidecar
- * map is keyed by the underlying name, so the display-name lookup
- * silently missed and sent us into the canonical branch).
+ * The contact lives at a single wallet key equal to its display `name`,
+ * so we pass `contact.name` straight through to the device verbs.
  *
- * Both paths also write the picked crypto into the `cryptoMeta`
- * sidecar so the L4 details pane's per-crypto grouping picks up the
- * new row immediately (the canonical schema has no `coinId` field).
+ * Both paths also write the picked crypto into the `cryptoMeta` store so
+ * the L4 details pane's per-crypto grouping picks up the new row
+ * immediately (the canonical schema has no `coinId` field).
  */
 export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
   const { t } = useTranslation();
   const contacts = useContacts();
-  const renames = useContactRenames();
 
   // Local step state. Reset to `asset` when the dialog re-opens.
   const [step, setStep] = useState<Step>({ kind: "asset" });
@@ -143,19 +134,16 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
       const addressForRegistration = addressHex.trim();
       const chainId = network.chainId;
 
-      // Resolve the underlying (pre-rename) name so we look up the
-      // right key in the canonical wallet — that map is keyed by the
-      // name the device registered the contact under, not the L4
-      // display name produced by the renames overlay.
-      const underlying =
-        Object.entries(renames).find(([, displayName]) => displayName === contact.name)?.[0] ??
-        contact.name;
-      const isCanonical = underlying in (contacts.wallet?.contacts ?? {});
+      // The contact lives at a single wallet key equal to its display
+      // name. A non-empty `groupHandleHex` marks it as already
+      // registered on device; an empty one means it's a local-only stub
+      // we still need to register.
+      const isRegistered = (contact.groupHandleHex ?? "") !== "";
 
       const verb = async (deviceId: string) => {
-        if (isCanonical) {
+        if (isRegistered) {
           await contacts.addAddressToContact(deviceId, {
-            contactName: underlying,
+            contactName: contact.name,
             // `name` must be the CONTACT name — it goes into the
             // device-side CONTACT_NAME TLV and is HMAC'd against
             // `extension.hmacProofHex` (the previous HMAC chain
@@ -163,17 +151,18 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
             // the firmware HMAC reconstruction fails and the device
             // rejects with SW 6982, which DMK then mislabels as
             // "Canceled by user". `scope` is the per-address label.
-            name: underlying,
+            name: contact.name,
             addressHex: addressForRegistration,
             scope: addressName,
             derivationPath: EXTERNAL_DERIVATION_PATH,
             chainId,
           });
         } else {
-          // No canonical entry yet — create it on device under the
-          // user's current display name so the on-device prompt
-          // matches what they see in L4. addContact registers the
-          // contact + first address atomically.
+          // Local-only stub — register it on device under its current
+          // name so the on-device prompt matches what the user sees in
+          // L4. `addContact` creates the contact + first address
+          // atomically; its commit overwrites the empty stub in place
+          // (same name key), so there's nothing to clean up afterward.
           await contacts.addContact(deviceId, {
             name: contact.name,
             addressHex: addressForRegistration,
@@ -181,10 +170,6 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
             derivationPath: EXTERNAL_DERIVATION_PATH,
             chainId,
           });
-          // Drop the local-only traces so the merged view doesn't
-          // shadow the freshly-registered canonical row.
-          removeSidecarContact(underlying);
-          clearContactRename(underlying);
         }
         // Sidecar cryptoMeta so the details pane groups under the
         // picked crypto's ticker rather than the chain-native gas
@@ -207,7 +192,7 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
         verb,
       });
     },
-    [step, contact.name, contacts, renames],
+    [step, contact.name, contact.groupHandleHex, contacts],
   );
 
   const handleDeviceDone = useCallback(
@@ -265,7 +250,16 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
           // and Lumen `ListItem` density="expanded" has its own px-8.
           // With px-16 here: title at 24px from modal edge, row
           // icons at 16+8=24px — everything aligns.
-          className="flex flex-col px-16"
+          //
+          // `pt-8 pb-24` matches the convention every other dialog in
+          // this feature uses (`AddContactDialog`, `RenameAddressDialog`,
+          // `EditAddressDialog`). Lumen's DialogBody already ships
+          // `pb-24` and we set the same value explicitly so the inner
+          // step wrappers stay free of vertical-padding responsibility
+          // — previously every step also set its own `pb-24`, which
+          // stacked on top of Lumen's intrinsic 24px and produced ~48px
+          // of empty space below the Register button.
+          className="flex flex-col px-16 pt-8 pb-24"
           data-testid="contacts-management-add-address-dialog"
         >
           {step.kind === "asset" && <AssetStep onPick={handlePickAsset} />}
@@ -273,7 +267,14 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
             <NetworkStep crypto={step.crypto} onPick={handlePickNetwork} />
           )}
           {step.kind === "address" && (
-            <AddressStep onSubmit={handleSubmitAddress} />
+            // Pre-fill the address-name field with the selected
+            // crypto's display name so the user lands on a sensible
+            // default ("Ethereum", "USD Coin", "BNB", …) instead of
+            // a blank field. They're free to overwrite it.
+            <AddressStep
+              onSubmit={handleSubmitAddress}
+              defaultAddressName={step.crypto.name}
+            />
           )}
           {step.kind === "device" && (
             <RunDeviceAction run={step.verb} onDone={handleDeviceDone} />

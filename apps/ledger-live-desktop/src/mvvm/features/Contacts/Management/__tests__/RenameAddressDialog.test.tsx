@@ -79,6 +79,30 @@ describe("RenameAddressDialog", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("hides the back arrow when `onBack` is not provided (opened from the row menu)", () => {
+    render(<RenameAddressDialog {...baseProps()} />);
+    // Lumen's `DialogHeader` renders the back affordance with
+    // `aria-label="components.dialogHeader.goBackAriaLabel"`. No
+    // `onBack` → no button.
+    expect(
+      screen.queryByRole("button", {
+        name: "components.dialogHeader.goBackAriaLabel",
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders a back arrow when `onBack` is provided, and calls it on click", async () => {
+    const onBack = jest.fn();
+    const { user } = render(<RenameAddressDialog {...baseProps({ onBack })} />);
+
+    const back = screen.getByRole("button", {
+      name: "components.dialogHeader.goBackAriaLabel",
+    });
+    expect(back).toBeInTheDocument();
+    await user.click(back);
+    expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
   it("re-primes the input + returns to the name step when reopened with a new label", () => {
     const { rerender } = render(<RenameAddressDialog {...baseProps()} />);
     expect(

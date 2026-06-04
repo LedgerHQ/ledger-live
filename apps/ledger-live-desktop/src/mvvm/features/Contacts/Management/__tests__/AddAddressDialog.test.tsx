@@ -112,20 +112,105 @@ describe("AddAddressDialog", () => {
     const submit = screen.getByTestId(
       "contacts-management-add-address-submit",
     ) as HTMLButtonElement;
+    // Even though the name field pre-fills with the crypto's display
+    // name (BNB), the address field is empty → submit stays disabled.
     expect(submit).toBeDisabled();
 
-    // Valid 40-char hex with 0x prefix.
+    // Clear the prefilled name so we can re-exercise the "name
+    // missing" gate explicitly.
+    await user.clear(screen.getByTestId("contacts-management-add-address-name"));
     await user.type(
       screen.getByTestId("contacts-management-add-address-hex"),
       "0x" + "a".repeat(40),
     );
-    expect(submit).toBeDisabled(); // name still missing
+    expect(submit).toBeDisabled(); // name now empty
 
     await user.type(
       screen.getByTestId("contacts-management-add-address-name"),
       "My BNB",
     );
     expect(submit).toBeEnabled();
+  });
+
+  it("renders the inline Paste tag only while the address input is empty", async () => {
+    const { user } = render(<AddAddressDialog {...baseProps()} />);
+
+    // Land on the address step (binancecoin auto-advances).
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-asset-binancecoin"),
+    );
+
+    // Paste tag is visible on initial empty input.
+    expect(
+      screen.getByTestId("contacts-management-add-address-paste"),
+    ).toBeInTheDocument();
+
+    // Type anything → tag disappears.
+    await user.type(
+      screen.getByTestId("contacts-management-add-address-hex"),
+      "0x",
+    );
+    expect(
+      screen.queryByTestId("contacts-management-add-address-paste"),
+    ).not.toBeInTheDocument();
+  });
+
+  // We don't exercise the clipboard fill in jsdom — `navigator.clipboard`
+  // is a non-configurable read-only property here, and even after
+  // `Object.defineProperty(..., { configurable: true })` the click
+  // doesn't reliably propagate through Lumen Tag's div + the input's
+  // suffix layout under user-event / fireEvent. The "renders only
+  // while the input is empty" test above pins the visible-state
+  // contract; the click → clipboard wiring is verified manually in
+  // the Electron build (where the real Clipboard API is available).
+
+  it("pre-fills the address-name input with the selected crypto's display name", async () => {
+    const { user } = render(<AddAddressDialog {...baseProps()} />);
+
+    // Pick BNB (single-network → auto-advances to address step).
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-asset-binancecoin"),
+    );
+
+    const nameInput = screen.getByTestId(
+      "contacts-management-add-address-name",
+    ) as HTMLInputElement;
+    expect(nameInput.value).toBe("BNB");
+  });
+
+  it("re-seeds the prefill when the user backs out and picks a different crypto", async () => {
+    const { user } = render(<AddAddressDialog {...baseProps()} />);
+
+    // First selection: BNB → "BNB".
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-asset-binancecoin"),
+    );
+    expect(
+      (
+        screen.getByTestId(
+          "contacts-management-add-address-name",
+        ) as HTMLInputElement
+      ).value,
+    ).toBe("BNB");
+
+    // Back → asset picker → pick USDC → network step → ethereum.
+    await user.click(
+      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
+    );
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-asset-usd-coin"),
+    );
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-network-ethereum"),
+    );
+
+    expect(
+      (
+        screen.getByTestId(
+          "contacts-management-add-address-name",
+        ) as HTMLInputElement
+      ).value,
+    ).toBe("USD Coin");
   });
 
   it("transitions to the device runner when Register is clicked with a valid payload", async () => {

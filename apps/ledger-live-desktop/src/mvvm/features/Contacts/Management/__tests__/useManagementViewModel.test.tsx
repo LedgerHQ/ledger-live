@@ -1,30 +1,16 @@
 import { act } from "@testing-library/react";
 import { renderHook } from "tests/testSetup";
 import { useManagementViewModel } from "../hooks/useManagementViewModel";
-import { __resetForTests as resetSidecar } from "../utils/sidecarContacts";
-import { __resetForTests as resetSidecarOverrides } from "../utils/sidecarOverrides";
+import { __resetForTests as resetContactsStore } from "~/renderer/contacts/hooks";
 
 /**
- * Storage keys that back the sidecar overrides. Cleared between tests
- * alongside the in-memory snapshot reset so consecutive cases start
- * pristine. (`localStorage.removeItem` alone is not enough — both
- * sidecar modules cache their state in module-level `let`s that
- * survive `beforeEach`.)
+ * The canonical contacts store is now the single source of truth — its
+ * snapshot lives in a module-level `let`, so a contact committed in one
+ * test would otherwise leak into the next. Reset it to a clean empty
+ * wallet before each case.
  */
-const STORAGE_KEYS = [
-  "LLD_CONTACTS_SIDECAR_V1",
-  "LLD_CONTACTS_RENAMES_V1",
-  "LLD_CONTACTS_DELETED_V1",
-];
-
-function resetSidecarState(): void {
-  for (const k of STORAGE_KEYS) window.localStorage.removeItem(k);
-  resetSidecar();
-  resetSidecarOverrides();
-}
-
 describe("useManagementViewModel — Me identity", () => {
-  beforeEach(resetSidecarState);
+  beforeEach(() => resetContactsStore());
 
   it("renames the default 'me' placeholder to '<typed> (Me)' via the local overlay path", () => {
     const { result } = renderHook(() => useManagementViewModel());
@@ -76,7 +62,7 @@ describe("useManagementViewModel — Me identity", () => {
 });
 
 describe("useManagementViewModel — stable avatar colorKey", () => {
-  beforeEach(resetSidecarState);
+  beforeEach(() => resetContactsStore());
 
   it("keeps the Me row's colorKey constant across renames", () => {
     const { result } = renderHook(() => useManagementViewModel());
@@ -160,10 +146,14 @@ describe("useManagementViewModel — stable avatar colorKey", () => {
     expect(typeof result.current.onDeleteAddress).toBe("function");
   });
 
-  it("allows recreating a contact with a name that was previously deleted", () => {
+  it("allows recreating a contact with a name that was previously deleted", async () => {
     const { result } = renderHook(() => useManagementViewModel());
 
-    // 1) Add "Joe", then delete it.
+    // 1) Add "Joe", then delete it. `onDeleteContact` is async (it
+    // hard-deletes through the canonical wallet via `commit`), so the
+    // delete step has to be awaited inside `act` — otherwise the
+    // subsequent re-add could race the wallet flush and re-introduce
+    // a still-tombstoned entry.
     act(() => result.current.onAddContact("Joe"));
     expect(
       result.current.groups.some(g =>
@@ -171,16 +161,19 @@ describe("useManagementViewModel — stable avatar colorKey", () => {
       ),
     ).toBe(true);
 
-    act(() => result.current.onDeleteContact("Joe"));
+    await act(async () => {
+      await result.current.onDeleteContact("Joe");
+    });
     expect(
       result.current.groups.some(g =>
         g.kind === "letter" && g.contacts.some(c => c.name === "Joe"),
       ),
     ).toBe(false);
 
-    // 2) Recreate with the same label. Without the deletion-tombstone
-    // cleanup the new entry would be filtered out by the merge guard
-    // and the row would never appear.
+    // 2) Recreate with the same label. With the new hard-delete path
+    // every trace of "Joe" is gone (canonical wallet, sidecar, rename
+    // overlay, deletion tombstone) so the re-add lands cleanly with
+    // no merge-guard / overlay leftovers to filter the row out.
     act(() => result.current.onAddContact("Joe"));
 
     expect(
@@ -191,15 +184,21 @@ describe("useManagementViewModel — stable avatar colorKey", () => {
     expect(result.current.selectedContact.name).toBe("Joe");
   });
 
-  it("keeps a sidecar contact's colorKey constant across renames", () => {
+  it("seeds a local-only contact's colorKey from its name (re-keys on local rename)", () => {
+    // With the single-source storage, a not-yet-registered contact is a
+    // wallet entry keyed by its name, and a local rename RE-KEYS the
+    // wallet. Its colorKey therefore follows the new name. (Stability is
+    // guaranteed for the Me identity — pinned to "me" — and for
+    // device-registered contacts, which seed from the immutable
+    // `groupHandleHex`; an un-registered contact re-seeds once an
+    // address is added and the device assigns a real handle.)
     const { result } = renderHook(() => useManagementViewModel());
 
     act(() => result.current.onAddContact("Joe"));
-    const initial = result.current.selectedContact.colorKey;
-    expect(initial).toBe("Joe");
+    expect(result.current.selectedContact.colorKey).toBe("Joe");
 
     act(() => result.current.onRenameContact("Joe", "Joe La frite"));
     expect(result.current.selectedContact.name).toBe("Joe La frite");
-    expect(result.current.selectedContact.colorKey).toBe("Joe");
+    expect(result.current.selectedContact.colorKey).toBe("Joe La frite");
   });
 });

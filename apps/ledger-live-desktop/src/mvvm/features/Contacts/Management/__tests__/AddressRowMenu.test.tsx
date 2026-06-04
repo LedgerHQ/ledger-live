@@ -58,6 +58,19 @@ describe("AddressRowMenu", () => {
     expect(screen.queryByText("See QR Code")).not.toBeInTheDocument();
   });
 
+  it("fires the onEditAddress callback when 'Edit address' is clicked", async () => {
+    const onEditAddress = jest.fn();
+    const { user } = render(<AddressRowMenu onEditAddress={onEditAddress} />);
+
+    await user.click(screen.getByTestId("contacts-management-address-actions"));
+    await user.click(screen.getByTestId("contacts-management-address-menu-edit"));
+
+    expect(onEditAddress).toHaveBeenCalledTimes(1);
+    // Popover dismisses synchronously so the edit dialog the host
+    // mounts in response doesn't render behind a stuck menu.
+    expect(screen.queryByText("Edit address")).not.toBeInTheDocument();
+  });
+
   it("fires the onRenameAddress callback when 'Rename address' is clicked", async () => {
     const onRenameAddress = jest.fn();
     const { user } = render(<AddressRowMenu onRenameAddress={onRenameAddress} />);

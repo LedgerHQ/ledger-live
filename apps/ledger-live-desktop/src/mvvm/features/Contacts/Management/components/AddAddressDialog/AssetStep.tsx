@@ -54,7 +54,11 @@ export function AssetStep({ onPick }: Props) {
       //   search input text   = 24px (+ the `px-8` wrapper below)
       // All aligned with the title (DialogHeader's px-24).
       // `gap-24` between search and list matches .asset-selector-content.
-      className="flex flex-col gap-24 pb-24"
+      // Vertical padding (`pt-8 pb-24`) is owned by the parent
+      // `DialogBody` — see the comment block on `AddAddressDialog`'s
+      // body className. Adding it here too would stack on top of
+      // Lumen's intrinsic body padding (~48px below the list / button).
+      className="flex flex-col gap-24"
       data-testid="contacts-management-add-address-asset-step"
     >
       <div className="px-8">

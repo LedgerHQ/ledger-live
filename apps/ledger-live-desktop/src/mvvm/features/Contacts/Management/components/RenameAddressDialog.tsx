@@ -37,6 +37,16 @@ type Props = {
    * shortcut that keeps the on-device record consistent.
    */
   onDeviceRename: (newLabel: string) => (deviceId: string) => Promise<unknown>;
+  /**
+   * Optional back handler. Set ONLY when the dialog was opened from
+   * the `AddressDetailDialog` (the QR + actions modal) — Lumen
+   * `DialogHeader` renders a back arrow on the left of the header
+   * when this is provided, and clicking it returns the user to the
+   * detail modal. Omitted when the dialog is reached directly from
+   * the per-row overflow menu / right-click, so there's no surface
+   * to navigate "back" to.
+   */
+  onBack?: () => void;
 };
 
 /**
@@ -61,6 +71,7 @@ export function RenameAddressDialog({
   onOpenChange,
   currentLabel,
   onDeviceRename,
+  onBack,
 }: Props) {
   const { t } = useTranslation();
   const [value, setValue] = useState(currentLabel);
@@ -105,6 +116,12 @@ export function RenameAddressDialog({
             density="expanded"
             title={t("contactsManagement.renameAddressDialog.title")}
             onClose={() => onOpenChange(false)}
+            // Render the back arrow ONLY when an `onBack` handler is
+            // wired (i.e. the dialog was opened from AddressDetail's
+            // Rename tile). When the user came in via the row's
+            // kebab/right-click menu `onBack` is undefined and Lumen
+            // hides the affordance.
+            onBack={onBack}
           />
         )}
         <DialogBody

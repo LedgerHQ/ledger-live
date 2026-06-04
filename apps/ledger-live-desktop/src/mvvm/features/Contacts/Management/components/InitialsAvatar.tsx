@@ -28,9 +28,10 @@ type Props = {
    * but caused the avatar to flicker on every rename.
    *
    * `useManagementViewModel` supplies this for every merged contact:
-   * `groupHandleHex || underlying-sidecar-key`, so the colour stays
-   * pinned to the contact's identity across L4 renames, device
-   * renames, and sidecar → canonical promotion.
+   * the Me identity is pinned to the literal `"me"` key, a registered
+   * contact uses its device-issued `groupHandleHex`, and a local-only
+   * stub uses its `name`. So the colour stays pinned across the Me
+   * rename path and the on-device rename path.
    */
   colorKey?: string;
 };
