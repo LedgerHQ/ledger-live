@@ -2,6 +2,7 @@ import { getFlags } from "../bridge/server";
 import { getByTestId, getByTestIdMatching } from "../components/appiumSelector.ts";
 import { Feature_ModularDrawer } from "@ledgerhq/types-live";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { step } from "@wdio/allure-reporter";
 
 export class ModularDrawerPage {
   private flags: Feature_ModularDrawer | null = null;
@@ -29,35 +30,47 @@ export class ModularDrawerPage {
 
   // steps
   async performSearchByTicker(ticker: string) {
-    await this.searchBar.setValue(ticker);
+    await step(`Perform search in modular drawer with ticker: ${ticker}`, async () => {
+      await this.searchBar.setValue(ticker);
+    });
   }
 
   async selectCurrencyByTicker(ticker: string): Promise<void> {
-    await this.getAssetItemByTicker(ticker).click();
+    await step(`Select currency with ticker ${ticker} in modular drawer`, async () => {
+      await this.getAssetItemByTicker(ticker).click();
+    });
   }
 
   async selectNetworkIfAsked(networkName: string): Promise<void> {
-    if (await this.modularFlowView.isExisting()) {
-      await this.selectNetwork(networkName);
-    }
+    await step(`Select network if asked: ${networkName}`, async () => {
+      if (await this.modularFlowView.isExisting()) {
+        await this.selectNetwork(networkName);
+      }
+    });
   }
 
   async selectNetwork(networkName: string): Promise<void> {
-    await this.getNetworkItemIdMAD(networkName).click();
+    await step(`Select network in modular drawer: ${networkName}`, async () => {
+      await this.getNetworkItemIdMAD(networkName).click();
+    });
   }
 
   async selectFirstAccount() {
-    // TODO: use $$ to get all and take first
-    await this.accountItem.click();
+    await step("Select first account in modular drawer", async () => {
+      // TODO: use $$ to get all and take first
+      await this.accountItem.click();
+    });
   }
 
   async selectAsset(account: Account): Promise<void> {
-    await this.performSearchByTicker(account.currency.ticker);
-    await this.selectCurrencyByTicker(account.currency.ticker);
-    const networkName = this.getNetworkNameForAccount(account);
-    await this.selectNetworkIfAsked(networkName);
-    await this.selectFirstAccount();
-    await this.modularFlowView.waitForExist({ reverse: true });
+    await step(`Select currency in modular drawer: ${account.currency.ticker}`, async () => {
+      await this.performSearchByTicker(account.currency.ticker);
+      await this.selectCurrencyByTicker(account.currency.ticker);
+      const networkName = this.getNetworkNameForAccount(account);
+      await this.selectNetworkIfAsked(networkName);
+      await this.selectFirstAccount();
+      await this.modularFlowView.waitForExist({ reverse: true });
+    });
   }
 
   // functions

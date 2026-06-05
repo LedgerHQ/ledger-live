@@ -65,7 +65,6 @@ export const runSwapTest = async (swap: Swap, tmsLinks: string[], tags: string[]
 
   // go to swap
   await pages.portfolio.waitForPageToLoad();
-  console.log("Portfolio page loaded, forced wait for app sync...");
   await swapSetup();
   await pages.swap.openDeeplink();
   await pages.swapLiveApp.expectLiveApp();

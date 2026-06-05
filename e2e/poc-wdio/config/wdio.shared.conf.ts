@@ -1,4 +1,3 @@
-import allureReporter from "@wdio/allure-reporter";
 import { setEnv } from "@ledgerhq/live-env";
 import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
 import { getEnvs, getFlags } from "../bridge/server.ts";
@@ -136,7 +135,7 @@ export const config: WebdriverIO.Config = {
 
   //
   // The number of times to retry the entire specfile when it fails as a whole
-  // specFileRetries: 1,
+  specFileRetries: process.env.CI ? 1 : 0,
   //
   // Delay in seconds between the spec file retry attempts
   // specFileRetriesDelay: 0,
@@ -333,7 +332,6 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
-    console.log(`Test run complete with result: ${result}!!`);
     const flagsData = formatFlagsData(JSON.parse(await getFlags()));
     const envsData = formatEnvData(JSON.parse(await getEnvs()));
     await appendFile(path.resolve("artifacts/environment.properties"), flagsData + envsData);

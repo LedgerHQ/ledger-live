@@ -1,5 +1,5 @@
 import { getByTestIdMatching } from "../components/appiumSelector.ts";
-
+import { step } from "@wdio/allure-reporter";
 export class PortfolioPage {
   // components
   public get screen() {
@@ -8,6 +8,8 @@ export class PortfolioPage {
 
   // steps
   async waitForPageToLoad() {
-    await this.screen.waitForDisplayed();
+    step("Wait for Portfolio page to load", async () => {
+      await this.screen.waitForDisplayed();
+    });
   }
 }

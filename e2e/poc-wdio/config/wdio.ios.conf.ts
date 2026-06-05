@@ -1,5 +1,4 @@
 import { config as baseConfig } from "./wdio.shared.conf.js";
-import { resolveIosPlatformVersion } from "./resolve-ios-platform-version.js";
 
 export const config: WebdriverIO.Config = {
   ...baseConfig,

@@ -19,12 +19,12 @@ describe("Allure reporting", () => {
   });
 
   it("should display custom steps", async () => {
-    await allureReporter.step("my first step", async s1 => {
+    allureReporter.step("my first step", async s1 => {
       await pages.onboarding.expectGetStartedButtonToBeDisplayed();
       await driver.takeScreenshot();
     });
 
-    await allureReporter.step("my second step", async s1 => {
+    allureReporter.step("my second step", async s1 => {
       await pages.onboarding.getStartedButton.click();
     });
   });

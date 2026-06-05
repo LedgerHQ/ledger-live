@@ -1,4 +1,5 @@
 import { getByTestId } from "../components/appiumSelector";
+import { step } from "@wdio/allure-reporter";
 
 export class CommonPage {
   // components
@@ -8,6 +9,8 @@ export class CommonPage {
 
   // steps
   async tapProceed() {
-    await this.proceedButton.tap();
+    await step("Tap proceed button", async () => {
+      await this.proceedButton.tap();
+    });
   }
 }
