@@ -1,6 +1,8 @@
 import React, { RefObject, useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
+import { Button, Box } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import GenericErrorView from "~/components/GenericErrorView";
@@ -55,10 +57,19 @@ export function SwapLiveAppWallet40({
 }: Readonly<StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapTab>>) {
   const { params } = route;
 
+  const { t } = useTranslation();
   const { theme: lumenTheme } = useLumenTheme();
 
-  const { manifest, error, isLoading, webviewRef, webviewState, setWebviewState, defaultParams } =
-    useSwapLiveAppState(params);
+  const {
+    manifest,
+    error,
+    isLoading,
+    webviewRef,
+    webviewState,
+    setWebviewState,
+    defaultParams,
+    retry,
+  } = useSwapLiveAppState(params);
 
   const updateWallet40HeaderState = useSwapWallet40HeaderStateUpdater(webviewRef);
 
@@ -83,7 +94,17 @@ export function SwapLiveAppWallet40({
   if (error) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
-        {isLoading ? <InfiniteLoader /> : <GenericErrorView error={error} />}
+        {isLoading ? (
+          <InfiniteLoader />
+        ) : (
+          <GenericErrorView error={error}>
+            <Box lx={{ width: "full", paddingLeft: "s16", paddingRight: "s16" }}>
+              <Button isFull onPress={retry} lx={{ marginTop: "s24" }}>
+                {t("common.tryAgain")}
+              </Button>
+            </Box>
+          </GenericErrorView>
+        )}
       </Flex>
     );
   }

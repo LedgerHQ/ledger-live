@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -68,7 +68,7 @@ export function useSwapLiveAppState(params: unknown) {
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(
     swapLiveAppManifestID || undefined,
   );
-  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
+  const { state: remoteLiveAppState, updateManifests } = useRemoteLiveAppContext();
 
   const manifest = useMemo<LiveAppManifest | undefined>(
     () => (!localManifest ? remoteManifest : localManifest),
@@ -97,6 +97,14 @@ export function useSwapLiveAppState(params: unknown) {
     return null;
   }, [manifest, isWebviewError, isConnected, t]);
 
+  // Mirrors the Desktop "Try again" action on the manifest/network error screen:
+  // re-fetch the remote manifest registry and clear any webview error state so the
+  // app can recover without restarting (see Swap2/App/App.tsx NetworkErrorScreen).
+  const retry = useCallback(() => {
+    setWebviewState(initialWebviewState);
+    return updateManifests();
+  }, [updateManifests]);
+
   return {
     manifest,
     error,
@@ -105,5 +113,6 @@ export function useSwapLiveAppState(params: unknown) {
     webviewState,
     setWebviewState,
     defaultParams,
+    retry,
   };
 }
