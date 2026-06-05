@@ -68,7 +68,6 @@ export const runSwapTest = async (swap: Swap, tmsLinks: string[], tags: string[]
   console.log("Portfolio page loaded, forced wait for app sync...");
   await swapSetup();
   await pages.swap.openDeeplink();
-  await pages.swapLiveApp.switchTo();
   await pages.swapLiveApp.expectLiveApp();
 
   const minAmount = await pages.swapLiveApp.getMinimumAmount(
@@ -88,7 +87,6 @@ export const runSwapTest = async (swap: Swap, tmsLinks: string[], tags: string[]
   await pages.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
   // await app.common.disableSynchronizationForiOS(); -> DETOX only
   await pages.swapLiveApp.tapExecuteSwap(provider.uiName);
-  await driver.switchAppiumContext("NATIVE_APP");
   // await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount); -> use direct function instead!
   await verifyAmountsAndAcceptSwap(swap, swapAmount);
   await pages.swap.waitForSuccess();

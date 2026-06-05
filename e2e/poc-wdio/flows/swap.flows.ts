@@ -15,7 +15,6 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
       await pages.swapLiveApp.tapToCurrency();
     }
     if (await pages.modularDrawer.isFlowEnabled("live_app")) {
-      await driver.switchAppiumContext("NATIVE_APP");
       await pages.modularDrawer.selectAsset(account);
     } else {
       // TODO: implement this
@@ -23,7 +22,6 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
       // await pages.stake.selectCurrency(account.currency.id);
       // await pages.common.selectFirstAccount();
     }
-    await pages.swapLiveApp.switchTo();
     await pages.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
   }
 }

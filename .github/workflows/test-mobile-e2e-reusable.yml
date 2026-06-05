@@ -841,8 +841,8 @@ jobs:
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
-          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
-          REMOTE_SPECULOS: "true"
+          # SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+          # REMOTE_SPECULOS: "true"
           # ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
