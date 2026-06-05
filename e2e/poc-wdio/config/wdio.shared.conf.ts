@@ -105,7 +105,7 @@ export const config: WebdriverIO.Config = {
   //
   // Default timeout in milliseconds for request
   // if browser driver or grid doesn't send response
-  connectionRetryTimeout: 120_000,
+  connectionRetryTimeout: 150_000,
   //
   // Default request retries count
   connectionRetryCount: 2,
@@ -156,7 +156,7 @@ export const config: WebdriverIO.Config = {
         tmsLinkTemplate: "https://ledgerhq.atlassian.net/browse/{}",
         issueLinkTemplate: "https://ledgerhq.atlassian.net/browse/{}",
         disableWebdriverStepsReporting: false,
-        disableWebdriverScreenshotsReporting: true,
+        disableWebdriverScreenshotsReporting: false,
       },
     ],
     // [
