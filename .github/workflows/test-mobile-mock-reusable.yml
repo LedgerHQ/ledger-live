@@ -342,7 +342,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
-          disable_cache: ${{ inputs.disable-nx-cache || false }}
+          disable_cache: true
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
