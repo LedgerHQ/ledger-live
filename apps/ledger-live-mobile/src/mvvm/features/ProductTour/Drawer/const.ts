@@ -55,8 +55,8 @@ export const PRODUCT_TOUR_SLIDES: readonly {
 export const PRODUCT_TOUR_TOTAL_SLIDES = PRODUCT_TOUR_SLIDES.length;
 export const PRODUCT_TOUR_LAST_SLIDE_INDEX = PRODUCT_TOUR_TOTAL_SLIDES - 1;
 
-/** Fixed height of the swipeable slides area (208×208 Lottie + 2-line title + subtitle). */
-export const PRODUCT_TOUR_SLIDES_LIST_HEIGHT = 380;
+/** Fixed height of the swipeable slides area (300×250 Lottie + 2-line title + subtitle). */
+export const PRODUCT_TOUR_SLIDES_LIST_HEIGHT = 422;
 
 /** Height of the page-dots progress indicator row, including its vertical margins. */
 const PRODUCT_TOUR_PROGRESS_HEIGHT = 56;
