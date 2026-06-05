@@ -15,28 +15,28 @@ export const PRODUCT_TOUR_SLIDES: readonly {
     subTitleKey: "productTour.slides.fund.subTitle",
   },
   {
-    primaryAction: "swap",
-    primaryLabelKey: "productTour.cta.discoverSwap",
-    titleKey: "productTour.slides.swap.title",
-    subTitleKey: "productTour.slides.swap.subTitle",
+    primaryAction: "portfolio",
+    primaryLabelKey: "productTour.cta.viewPortfolio",
+    titleKey: "productTour.slides.portfolio.title",
+    subTitleKey: "productTour.slides.portfolio.subTitle",
   },
   {
     primaryAction: "stake",
-    primaryLabelKey: "productTour.cta.growYourRewards",
+    primaryLabelKey: "productTour.cta.discoverEarn",
     titleKey: "productTour.slides.earn.title",
     subTitleKey: "productTour.slides.earn.subTitle",
   },
   {
     primaryAction: "card",
-    primaryLabelKey: "productTour.cta.spendYourCrypto",
+    primaryLabelKey: "productTour.cta.getCard",
     titleKey: "productTour.slides.card.title",
     subTitleKey: "productTour.slides.card.subTitle",
   },
   {
-    primaryAction: "portfolio",
-    primaryLabelKey: "productTour.cta.everythingAtAGlance",
-    titleKey: "productTour.slides.portfolio.title",
-    subTitleKey: "productTour.slides.portfolio.subTitle",
+    primaryAction: "swap",
+    primaryLabelKey: "productTour.cta.discoverSwap",
+    titleKey: "productTour.slides.swap.title",
+    subTitleKey: "productTour.slides.swap.subTitle",
   },
 ];
 
