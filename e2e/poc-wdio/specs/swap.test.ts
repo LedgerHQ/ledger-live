@@ -11,9 +11,19 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { verifyAmountsAndAcceptSwap } from "@ledgerhq/live-common/e2e/speculos";
 
+import allureReporter from "@wdio/allure-reporter";
+
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-export const runSwapTest = async (swap: Swap) => {
+export const runSwapTest = async (swap: Swap, tmsLinks: string[], tags: string[]) => {
+  // allure data
+  for (const tmsLink of tmsLinks) {
+    await allureReporter.addTestId(tmsLink);
+  }
+  for (const tag of tags) {
+    await allureReporter.addTag(tag);
+  }
+
   // init options
   const options = {
     speculosApp: AppInfos.EXCHANGE,

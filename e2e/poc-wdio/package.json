@@ -17,6 +17,7 @@
     "@wdio/logger": "9.18.0",
     "@wdio/mocha-framework": "9.27.1",
     "@wdio/spec-reporter": "9.27.1",
+    "allure-commandline": "2.28.0",
     "appium": "3.5.0",
     "appium-uiautomator2-driver": "7.5.2",
     "appium-xcuitest-driver": "11.3.0",
@@ -29,6 +30,9 @@
     "ws": "catalog:"
   },
   "scripts": {
+    "allure:generate": "allure generate ./artifacts --clean -o ./artifacts/allure-report",
+    "allure:open": "allure open ./artifacts/allure-report",
+    "allure": "pnpm run allure:generate && pnpm run allure:open",
     "android": "wdio run ./config/wdio.android.conf.ts",
     "ios": "wdio run ./config/wdio.ios.conf.ts",
     "typecheck": "tsc --noEmit --project tsconfig.json"

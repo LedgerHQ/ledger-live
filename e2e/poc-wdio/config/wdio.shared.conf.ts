@@ -1,6 +1,10 @@
 import allureReporter from "@wdio/allure-reporter";
 import { setEnv } from "@ledgerhq/live-env";
+import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
+import { getEnvs, getFlags } from "../bridge/server.ts";
 import { readFileSync } from "node:fs";
+import { appendFile } from "node:fs/promises";
+import path from "node:path";
 import { init } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 import { ADBUtils } from "../utils/ADBUtils.ts";
@@ -145,7 +149,14 @@ export const config: WebdriverIO.Config = {
   // see also: https://webdriver.io/docs/dot-reporter
   reporters: [
     "spec",
-    ["allure", { outputDir: "artifacts" }],
+    [
+      "allure",
+      {
+        outputDir: "artifacts",
+        tmsLinkTemplate: "https://ledgerhq.atlassian.net/browse/{}",
+        issueLinkTemplate: "https://ledgerhq.atlassian.net/browse/{}",
+      },
+    ],
     // [
     //   "video",
     //   {
@@ -320,6 +331,11 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
+    console.log(`Test run complete with result: ${result}!!`);
+    const flagsData = formatFlagsData(JSON.parse(await getFlags()));
+    const envsData = formatEnvData(JSON.parse(await getEnvs()));
+    await appendFile(path.resolve("artifacts/environment.properties"), flagsData + envsData);
+
     ADBUtils.snapshotLogcatToArtifacts("session-end");
     ADBUtils.stopLogcatStream();
     await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();

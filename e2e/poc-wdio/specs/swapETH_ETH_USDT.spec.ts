@@ -8,12 +8,16 @@ import { runSwapTest } from "./swap.test.ts";
 
 const swapToTest = new Swap(Account.ETH_1, TokenAccount.ETH_USDT_1, "65", undefined, Fee.MEDIUM);
 
-describe("Swap", async () => {
+describe("Swap - Accepted (without tx broadcast)", async () => {
   before(async () => {
     setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   });
 
   it(`${swapToTest.accountToDebit.currency.name} to ${swapToTest.accountToCredit.currency.name} (without broadcast)`, async () => {
-    await runSwapTest(swapToTest);
+    await runSwapTest(
+      swapToTest,
+      ["B2CQA-2749"],
+      ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+    );
   });
 });
