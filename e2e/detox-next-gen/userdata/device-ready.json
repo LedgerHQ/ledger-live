@@ -4488,6 +4488,12 @@
             "searchDebounceTime": 300,
             "backendEnvironment": "PROD"
           }
+        },
+        "ptxSwapLiveAppMobile": {
+          "enabled": true,
+          "params": {
+            "manifest_id": "swap-live-app-stg-aws"
+          }
         }
       },
       "bannerVisible": false

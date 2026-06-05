@@ -19,7 +19,8 @@ type Message =
   | { type: "navigate"; payload: string }
   | { type: "overrideFeatureFlag"; payload: { id: string; value: unknown } }
   | { type: "addKnownSpeculos"; payload: string } // JSON-stringified { address, model }
-  | { type: "removeKnownSpeculos"; payload: string };
+  | { type: "removeKnownSpeculos"; payload: string }
+  | { type: "swapSetup"; swapApiBase?: string };
 
 const state: { wss?: WebSocketServer; ws?: WebSocket } = {};
 let counter = 0;
@@ -82,4 +83,14 @@ export async function addKnownSpeculos(address: string, model: string): Promise<
 /** Inverse of addKnownSpeculos — wipes DEVICE_PROXY_URL + the speculos BLE entry. */
 export async function removeKnownSpeculos(address: string): Promise<void> {
   await send({ type: "removeKnownSpeculos", payload: address });
+}
+
+/**
+ * Tell the app to enable swap mode: sets SWAP_DISABLE_APPS_INSTALL=true
+ * and SWAP_API_BASE (defaults to staging). Required before opening the
+ * Swap Live App webview, otherwise the app may try to install coin apps
+ * during the swap which deadlocks against Speculos.
+ */
+export async function swapSetup(swapApiBase?: string): Promise<void> {
+  await send({ type: "swapSetup", swapApiBase });
 }
