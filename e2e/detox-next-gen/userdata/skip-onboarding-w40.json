@@ -1,0 +1,48 @@
+{
+  "data": {
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "language": "en",
+      "theme": "dark",
+      "readOnlyModeEnabled": false,
+      "hasOrderedNano": true
+    },
+    "accounts": [],
+    "featureFlags": {
+      "overrides": {
+        "lwmWallet40": {
+          "enabled": true,
+          "params": {
+            "mainNavigation": true,
+            "marketBanner": true,
+            "graphRework": true,
+            "quickActionCtas": true,
+            "tour": false,
+            "lazyOnboarding": true,
+            "balanceRefreshRework": true,
+            "assetSection": false,
+            "operationsList": false,
+            "aggregatedAssets": false,
+            "myWallet": true,
+            "pnl": false,
+            "assetDiscoverability": false
+          }
+        },
+        "llmModularDrawer": {
+          "enabled": true,
+          "params": {
+            "add_account": true,
+            "live_app": true,
+            "live_apps_allowlist": [],
+            "live_apps_blocklist": ["revoke-cash"],
+            "receive_flow": true,
+            "send_flow": false,
+            "enableModularization": true,
+            "searchDebounceTime": 300,
+            "backendEnvironment": "PROD"
+          }
+        }
+      }
+    }
+  }
+}

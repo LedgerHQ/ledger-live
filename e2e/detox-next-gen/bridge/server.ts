@@ -17,7 +17,9 @@ type Message =
   | { type: "importSettings"; payload: Record<string, unknown> }
   | { type: "importAccounts"; payload: unknown[] }
   | { type: "navigate"; payload: string }
-  | { type: "overrideFeatureFlag"; payload: { id: string; value: unknown } };
+  | { type: "overrideFeatureFlag"; payload: { id: string; value: unknown } }
+  | { type: "addKnownSpeculos"; payload: string } // JSON-stringified { address, model }
+  | { type: "removeKnownSpeculos"; payload: string };
 
 const state: { wss?: WebSocketServer; ws?: WebSocket } = {};
 let counter = 0;
@@ -66,4 +68,18 @@ async function waitForClient(timeoutMs = 15_000): Promise<void> {
 export async function send(message: Message): Promise<void> {
   await waitForClient();
   state.ws!.send(JSON.stringify({ id: String(++counter), ...message }));
+}
+
+/**
+ * Tell the app about a running Speculos instance so its DMK transport
+ * connects to the proxy URL instead of looking for real hardware.
+ * `model` matches the iOS app's expectation: "nanoSP", "nanoX", "stax", etc.
+ */
+export async function addKnownSpeculos(address: string, model: string): Promise<void> {
+  await send({ type: "addKnownSpeculos", payload: JSON.stringify({ address, model }) });
+}
+
+/** Inverse of addKnownSpeculos — wipes DEVICE_PROXY_URL + the speculos BLE entry. */
+export async function removeKnownSpeculos(address: string): Promise<void> {
+  await send({ type: "removeKnownSpeculos", payload: address });
 }

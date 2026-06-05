@@ -36,16 +36,18 @@ export async function loadConfig(name: string): Promise<void> {
     },
   });
 
-  // 3. Navigate to the wallet/base navigator before injecting accounts.
-  await bridge.send({ type: "navigate", payload: "Base" });
-
-  // 4. Accounts (optional).
-  if (data.accounts?.length) {
-    await bridge.send({ type: "importAccounts", payload: data.accounts });
-  }
-
-  // 5. Feature flag overrides (optional).
+  // 3. Feature flag overrides BEFORE navigate — flags like lwmWallet40
+  //    pick the active main navigator, so the Base route must mount the
+  //    Wallet 4.0 stack rather than the legacy one.
   for (const [id, value] of Object.entries(data.featureFlags?.overrides ?? {})) {
     await bridge.send({ type: "overrideFeatureFlag", payload: { id, value } });
+  }
+
+  // 4. Navigate to the wallet/base navigator.
+  await bridge.send({ type: "navigate", payload: "Base" });
+
+  // 5. Accounts (optional).
+  if (data.accounts?.length) {
+    await bridge.send({ type: "importAccounts", payload: data.accounts });
   }
 }

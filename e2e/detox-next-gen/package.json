@@ -16,18 +16,21 @@
   "license": "ISC",
   "packageManager": "pnpm@10.24.0",
   "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/ws": "^8.5.12",
     "detox": "catalog:",
     "jest": "^29.7.0",
-    "ts-jest": "29.4.11",
     "typescript": "catalog:",
     "ws": "^8.18.0"
   },
   "dependencies": {
     "@jest/reporters": "^29.7.0",
     "@jest/types": "^29.6.3",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "jest-environment-node": "^29.7.0",
     "jest-util": "^29.7.0"
   }
