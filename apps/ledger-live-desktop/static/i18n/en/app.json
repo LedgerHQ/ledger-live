@@ -8990,10 +8990,10 @@
       "continue": "Continue",
       "done": "Done",
       "fundYourWallet": "Fund your wallet",
-      "discoverSwap": "Discover swap",
-      "growYourRewards": "Grow your rewards",
-      "spendYourCrypto": "Spend your crypto",
-      "everythingAtAGlance": "Everything at a glance"
+      "discoverSwap": "Discover Swap",
+      "discoverEarn": "Discover Earn",
+      "getCard": "Get a card",
+      "viewPortfolio": "View your portfolio"
     },
     "slides": {
       "fund": {
