@@ -131,7 +131,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
         },
       },
       deviceDisconnected: {
-        entry: ({ context }) => {
+        entry: () => {
           log(LOG_TYPE, "state: deviceDisconnected");
         },
         on: {
@@ -327,6 +327,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
 // ---- Public interface ----
 
 export interface DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
+  start(): void;
   deviceConnected(result: DeviceConnectionResult): void;
   deviceContextInitialized(context: DeviceExtractedContext): void;
   deviceDisconnected(): void;
@@ -345,10 +346,13 @@ export type StateMachineConstructor<JobState, Input, ExtraProps> = new (params: 
 
 // ---- Default implementation ----
 
-export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>
-  implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>
-{
+export class DefaultDeviceIntentExecutorStateMachine<
+  JobState,
+  Input,
+  ExtraProps,
+> implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
   private readonly actor;
+  private hasStarted = false;
 
   constructor(params: {
     deviceConnectionParams: DeviceConnectionParams;
@@ -357,6 +361,14 @@ export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps
   }) {
     const machine = createExecutorMachine<JobState, Input, ExtraProps>();
     this.actor = createActor(machine, { input: params });
+  }
+
+  start(): void {
+    if (this.hasStarted) {
+      throw new Error("DeviceIntentExecutorStateMachine has already been started");
+    }
+    log(LOG_TYPE, "event: start");
+    this.hasStarted = true;
     this.actor.start();
   }
 
@@ -403,6 +415,8 @@ export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps
 
   stop(): void {
     log(LOG_TYPE, "event: stop");
-    this.actor.stop();
+    if (this.hasStarted) {
+      this.actor.stop();
+    }
   }
 }

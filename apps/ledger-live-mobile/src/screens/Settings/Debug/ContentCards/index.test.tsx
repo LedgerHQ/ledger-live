@@ -32,6 +32,7 @@ const withExistingBrazeCard = (state: State): State => ({
         id: "braze-card",
         layout: GenericAwarenessModalLayout.Carousel,
         data: [],
+        isReady: true,
       },
     ],
   },

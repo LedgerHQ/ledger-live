@@ -24,6 +24,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
     marketData,
     displayTicker,
     ledgerId,
+    ledgerIds,
     ledgerCurrency,
     isDistributionLoading,
     selectedRange,
@@ -73,6 +74,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
       <ActionBar
         distributionItem={distributionItem}
         ledgerCurrency={ledgerCurrency}
+        ledgerIds={ledgerIds}
         marketCurrencyData={marketCurrencyData}
         tickerHint={displayTicker}
         isDistributionLoading={isDistributionLoading}

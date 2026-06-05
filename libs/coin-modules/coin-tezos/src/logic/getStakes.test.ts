@@ -19,15 +19,17 @@ describe("getStakes", () => {
   const mockGetAccountByAddress = jest.spyOn(tzktApi, "getAccountByAddress");
   const mockGetUnstakeRequests = jest.spyOn(tzktApi, "getUnstakeRequests");
 
-  const makeRequest = (overrides: Partial<{
-    id: number;
-    cycle: number;
-    bakerAddress: string;
-    stakerAddress: string;
-    firstTime: string;
-    status: "pending" | "finalizable" | "finalized";
-    actualAmount: number;
-  }>) => ({
+  const makeRequest = (
+    overrides: Partial<{
+      id: number;
+      cycle: number;
+      bakerAddress: string;
+      stakerAddress: string;
+      firstTime: string;
+      status: "pending" | "finalizable" | "finalized";
+      actualAmount: number;
+    }>,
+  ) => ({
     id: overrides.id ?? 1,
     cycle: overrides.cycle ?? 100,
     baker: { address: overrides.bakerAddress ?? "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" },
@@ -465,7 +467,9 @@ describe("getStakes", () => {
     });
 
     it("drops finalized requests (funds already returned to spendable)", async () => {
-      mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 1000, unstakedBalance: 30 }));
+      mockGetAccountByAddress.mockResolvedValue(
+        makeAccount({ balance: 1000, unstakedBalance: 30 }),
+      );
       mockGetUnstakeRequests.mockResolvedValue([
         makeRequest({ id: 1, actualAmount: 480, status: "finalized" }),
         makeRequest({ id: 2, actualAmount: 30, firstTime: "2026-05-04T00:00:00Z" }),

@@ -4,11 +4,7 @@
 import { DmkSignerSol } from "../src/DmkSignerSol";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { PubKeyDisplayMode, UserInputType, Resolution } from "@ledgerhq/coin-solana/signer";
-import {
-  LockedDeviceError,
-  SolAppPleaseEnableContractData,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import bs58 from "bs58";
 import { of, throwError } from "rxjs";
 
@@ -352,7 +348,7 @@ describe("DmkSignerSol", () => {
     function makeDAError(errorCode: string) {
       return {
         _tag: "SomeDAError",
-        originalError: { errorCode },
+        errorCode,
       };
     }
 
@@ -370,21 +366,16 @@ describe("DmkSignerSol", () => {
       expect(result).toBeInstanceOf(UserRefusedOnDevice);
     });
 
-    it("maps error code 6808 to SolAppPleaseEnableContractData", () => {
-      const result = callMapError(makeDAError("6808"));
-      expect(result).toBeInstanceOf(SolAppPleaseEnableContractData);
-    });
-
     it("maps unknown error code to generic Error with _tag", () => {
       const result = callMapError(makeDAError("ffff"));
       expect(result).toBeInstanceOf(Error);
       expect(result.message).toBe("SomeDAError");
     });
 
-    it("maps error without originalError to generic Error with _tag", () => {
-      const result = callMapError({ _tag: "NoOriginal", originalError: null });
+    it("maps error without errorCode to generic Error with _tag", () => {
+      const result = callMapError({ _tag: "NoErrorCode" });
       expect(result).toBeInstanceOf(Error);
-      expect(result.message).toBe("NoOriginal");
+      expect(result.message).toBe("NoErrorCode");
     });
   });
 });

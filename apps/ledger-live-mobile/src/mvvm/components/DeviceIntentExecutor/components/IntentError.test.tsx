@@ -5,7 +5,7 @@ import {
   DeviceModelId as DMKDeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import { SourceFlowProvider } from "../utils/SourceFlowContext";
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { IntentError } from "./IntentError";
@@ -15,10 +15,12 @@ jest.mock("~/analytics", () => {
   return {
     ...actual,
     TrackScreen: jest.fn(() => null),
+    track: jest.fn(),
   };
 });
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
+const mockedTrack = jest.mocked(track);
 
 const device = {
   id: "device-id",
@@ -82,6 +84,13 @@ describe("IntentError", () => {
 
     await user.press(screen.getByText("Retry"));
 
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.stax,
+      transport: "ble",
+      button: "Retry",
+    });
     expect(onRetry).toHaveBeenCalledTimes(1);
     expect(onClose).not.toHaveBeenCalled();
   });
@@ -94,11 +103,18 @@ describe("IntentError", () => {
 
     await user.press(screen.getByText("Close"));
 
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.stax,
+      transport: "ble",
+      button: "Close",
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onRetry).not.toHaveBeenCalled();
   });
 
-  it("fires the Device Action - Unknown Intent Error page event with sourceFlow, deviceUxV2 and modelId", () => {
+  it("fires the Device Action - Unknown Intent Error page event with sourceFlow, deviceUxV2, modelId and transport", () => {
     renderState();
 
     expect(mockedTrackScreen).toHaveBeenCalledWith(
@@ -107,6 +123,7 @@ describe("IntentError", () => {
         sourceFlow: "my_ledger",
         deviceUxV2: true,
         modelId: DeviceModelId.stax,
+        transport: "ble",
       }),
       undefined,
     );

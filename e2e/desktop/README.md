@@ -1,13 +1,14 @@
 # E2E Tests - Desktop
 
-This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Desktop** app.  
+This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Desktop** app.
 Dev teams are responsible for **adding/updating tests** when implementing new features.
 
 ---
 
 ## Interactive Setup (Recommended)
 
-Use the Cursor command `/e2e-desktop-onboard` for a guided, interactive walkthrough that checks every prerequisite, validates your environment, builds the app, and runs a smoke test.
+Use the `/e2e-desktop-onboard` skill (from an agent tool that supports repo skills) for a guided walkthrough that checks every
+prerequisite, validates your environment, builds the app, and runs a smoke test.
 
 ---
 
@@ -17,7 +18,6 @@ All build and test commands below are run from the **repo root** (`ledger-live/`
 
 ### 1. Prerequisites
 
-- Ledger Live repository (as mentioned in the full wiki)
 - Read the e2e environment [guide](https://ledgerhq.atlassian.net/wiki/spaces/QA/pages/6945013939/Ledger+Wallet+E2E+Environment)❗
 - Docker Desktop installed and running (Speculos runs in Docker)
 - Pull the Speculos Docker image:
@@ -77,7 +77,7 @@ pnpm e2e:desktop test:playwright
 pnpm e2e:desktop test:playwright <testFileName>
 ```
 
-### 5. Full Documentation
+### 5. More Documentation
 
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)

@@ -12,9 +12,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     ...actual,
     BottomSheetView: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
     BottomSheetHeader: () => <RN.View testID="bottom-sheet-header" />,
-    Spot: ({ appearance }: { appearance: string }) => (
-      <RN.View testID={`spot-${appearance}`} />
-    ),
+    Spot: ({ appearance }: { appearance: string }) => <RN.View testID={`spot-${appearance}`} />,
   };
 });
 

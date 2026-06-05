@@ -1,5 +1,7 @@
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
 import snakeCase from "lodash/snakeCase";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
@@ -15,6 +17,14 @@ const FIREBASE_KEY_TO_FEATURE_ID: Record<string, FeatureId> = Object.fromEntries
 type Subscriber = (event: { fetchedAt: number }) => void;
 
 const rc = getRemoteConfig();
+
+// `LiveConfig` serves non-feature `config_*` keys (countervalues, app version) absent from
+// the Redux slice. Install at module init (store creation) so they resolve before first read.
+LiveConfig.setProvider(
+  new FirebaseRemoteConfigProvider({
+    getValue: (key: string) => rc.getValue(key),
+  }),
+);
 
 let setupPromise: Promise<void> | null = null;
 let lastFetchedAt: number | null = null;

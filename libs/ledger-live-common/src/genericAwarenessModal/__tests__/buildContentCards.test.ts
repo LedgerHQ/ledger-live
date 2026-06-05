@@ -2,6 +2,8 @@ import {
   FeatureIntroRole,
   GenericAwarenessModalLayout,
   type GenericAwarenessModalBrazeCard,
+  type GenericAwarenessModalCarousel,
+  type GenericAwarenessModalFeatureIntro,
   type GenericAwarenessModalInputExtras,
 } from "../types";
 import {
@@ -97,6 +99,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "1",
+      slideCount: "2",
       title: "Slide 2",
       subtitle: "Second",
       imageUrl: "https://example.com/2.png",
@@ -107,6 +110,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "0",
+      slideCount: "2",
       title: "Slide 1",
       subtitle: "First",
       imageUrl: "https://example.com/1.png",
@@ -121,6 +125,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       {
         layout: GenericAwarenessModalLayout.Carousel,
         id: "campaign-1",
+        isReady: true,
         data: [
           {
             title: "Slide 1",
@@ -146,6 +151,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "campaign-2",
       role: FeatureIntroRole.Main,
+      itemCount: "3",
       title: "Main title",
       subtitle: "Main subtitle",
       imageUrl: "https://example.com/hero.png",
@@ -159,6 +165,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       campaignId: "campaign-2",
       role: FeatureIntroRole.Item,
       index: "1",
+      itemCount: "3",
       icon: "icon-2",
       title: "Item 2",
       subtitle: "Item 2 subtitle",
@@ -168,6 +175,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       campaignId: "campaign-2",
       role: FeatureIntroRole.Item,
       index: "0",
+      itemCount: "3",
       icon: "icon-1",
       title: "Item 1",
       subtitle: "Item 1 subtitle",
@@ -180,6 +188,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       {
         layout: GenericAwarenessModalLayout.FeatureIntro,
         id: "campaign-2",
+        isReady: true,
         title: "Main title",
         subtitle: "Main subtitle",
         imageUrl: "https://example.com/hero.png",
@@ -302,6 +311,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "0",
+      slideCount: "1",
     });
     const groupedCards = makeGroupedCards("campaign-1", [cardWithoutSlideFields]);
 
@@ -311,6 +321,7 @@ describe("buildGenericAwarenessModalContentCards", () => {
       {
         layout: GenericAwarenessModalLayout.Carousel,
         id: "campaign-1",
+        isReady: true,
         data: [
           {
             title: "",
@@ -331,6 +342,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "0",
+      slideCount: "1",
       title: "Slide 1",
       subtitle: "First",
       imageUrl: "https://example.com/1.png",
@@ -367,6 +379,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       {
         layout: GenericAwarenessModalLayout.Carousel,
         id: "campaign-1",
+        isReady: true,
         data: [
           {
             title: "Slide 1",
@@ -385,6 +398,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-carousel",
       index: "0",
+      slideCount: "1",
       title: "Slide",
       subtitle: "Subtitle",
       imageUrl: "https://example.com/slide.png",
@@ -395,6 +409,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "campaign-feature-intro",
       role: FeatureIntroRole.Main,
+      itemCount: "1",
       title: "Main",
       subtitle: "Main subtitle",
       imageUrl: "https://example.com/hero.png",
@@ -433,9 +448,21 @@ describe("processGenericAwarenessModalBrazeCards", () => {
   });
 
   it("should group cards by campaignId case-insensitively and preserve the first card casing", () => {
-    const firstCampaignCard = makeCard("1", { campaignId: "Campaign-A", layout: "carousel", index: "0" });
-    const secondCampaignCard = makeCard("2", { campaignId: "campaign-a", layout: "CAROUSEL", index: "1" });
-    const otherCampaignCard = makeCard("3", { campaignId: "Other", layout: "carousel", index: "0" });
+    const firstCampaignCard = makeCard("1", {
+      campaignId: "Campaign-A",
+      layout: "carousel",
+      index: "0",
+    });
+    const secondCampaignCard = makeCard("2", {
+      campaignId: "campaign-a",
+      layout: "CAROUSEL",
+      index: "1",
+    });
+    const otherCampaignCard = makeCard("3", {
+      campaignId: "Other",
+      layout: "carousel",
+      index: "0",
+    });
 
     const groupedCards = groupByCampaignId([
       firstCampaignCard,
@@ -453,12 +480,14 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       campaignId: "Campaign-A",
       layout: "carousel",
       index: "0",
+      slideCount: "2",
       title: "Slide 1",
     });
     const secondCard = makeCard("2", {
       campaignId: "campaign-a",
       layout: "CAROUSEL",
       index: "1",
+      slideCount: "2",
       title: "Slide 2",
     });
 
@@ -468,6 +497,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
     expect(contentCards[0]).toEqual({
       layout: GenericAwarenessModalLayout.Carousel,
       id: "Campaign-A",
+      isReady: true,
       data: [
         expect.objectContaining({ title: "Slide 1" }),
         expect.objectContaining({ title: "Slide 2" }),
@@ -481,6 +511,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       campaignId: "campaign-carousel",
       location: "GENERIC_AWARENESS_MODAL",
       index: "0",
+      slideCount: "2",
       title: "Slide 1",
     });
     const carouselCardTwo = makeCard("carousel-2", {
@@ -488,6 +519,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       campaignId: "campaign-carousel",
       location: "generic_awareness_modal",
       index: "1",
+      slideCount: "2",
       title: "Slide 2",
     });
     const featureIntroMainCard = makeCard("feature-intro-main", {
@@ -495,6 +527,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       campaignId: "campaign-feature-intro",
       location: "Generic_Awareness_Modal",
       role: "MAIN",
+      itemCount: "2",
       title: "Main title",
       subtitle: "Main subtitle",
     });
@@ -504,6 +537,7 @@ describe("processGenericAwarenessModalBrazeCards", () => {
       location: "generic_awareness_modal",
       role: "item",
       index: "0",
+      itemCount: "2",
       icon: "icon",
       title: "Item title",
       subtitle: "Item subtitle",
@@ -537,6 +571,64 @@ describe("processGenericAwarenessModalBrazeCards", () => {
     const contentCards = processGenericAwarenessModalBrazeCards([carouselCard, promptCard]);
 
     expect(contentCards).toEqual([]);
+  });
+
+  it("should build carousel campaigns with isReady false until slideCount cards are received", () => {
+    const firstSlideCard = makeCard("1", {
+      layout: GenericAwarenessModalLayout.Carousel,
+      campaignId: "campaign-partial-carousel",
+      index: "0",
+      slideCount: "2",
+      title: "Slide 1",
+    });
+
+    const partialContentCards = processGenericAwarenessModalBrazeCards([firstSlideCard]);
+    const secondSlideCard = makeCard("2", {
+      layout: GenericAwarenessModalLayout.Carousel,
+      campaignId: "campaign-partial-carousel",
+      index: "1",
+      slideCount: "2",
+      title: "Slide 2",
+    });
+
+    const completeContentCards = processGenericAwarenessModalBrazeCards([
+      firstSlideCard,
+      secondSlideCard,
+    ]);
+
+    expect(partialContentCards).toHaveLength(1);
+    expect((partialContentCards[0] as GenericAwarenessModalCarousel).isReady).toBe(false);
+    expect(completeContentCards).toHaveLength(1);
+    expect(completeContentCards[0]?.id).toBe("campaign-partial-carousel");
+    expect((completeContentCards[0] as GenericAwarenessModalCarousel).isReady).toBe(true);
+  });
+
+  it("should build feature intro campaigns with isReady false until itemCount cards are received", () => {
+    const mainCard = makeCard("main", {
+      layout: GenericAwarenessModalLayout.FeatureIntro,
+      campaignId: "campaign-partial-feature-intro",
+      role: FeatureIntroRole.Main,
+      itemCount: "2",
+      title: "Main",
+    });
+
+    const partialContentCards = processGenericAwarenessModalBrazeCards([mainCard]);
+    const itemCard = makeCard("item", {
+      layout: GenericAwarenessModalLayout.FeatureIntro,
+      campaignId: "campaign-partial-feature-intro",
+      role: FeatureIntroRole.Item,
+      index: "0",
+      itemCount: "2",
+      title: "Item",
+    });
+
+    const completeContentCards = processGenericAwarenessModalBrazeCards([mainCard, itemCard]);
+
+    expect(partialContentCards).toHaveLength(1);
+    expect((partialContentCards[0] as GenericAwarenessModalFeatureIntro).isReady).toBe(false);
+    expect(completeContentCards).toHaveLength(1);
+    expect(completeContentCards[0]?.id).toBe("campaign-partial-feature-intro");
+    expect((completeContentCards[0] as GenericAwarenessModalFeatureIntro).isReady).toBe(true);
   });
 
   it("should trim whitespace from braze string fields when building content cards", () => {

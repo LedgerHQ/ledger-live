@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
-import { useFirebaseRemoteConfig } from "../hooks/useFirebaseRemoteConfig";
+import { useSelector } from "~/context/hooks";
+import { selectRemoteFlagsReady } from "@shared/feature-flags";
 
 export const InitialQueriesContext = React.createContext({
   ofacResult: { blocked: false, isLoading: true },
@@ -8,8 +9,7 @@ export const InitialQueriesContext = React.createContext({
 });
 
 export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
-  // Firebase Remote Config
-  const firebaseIsReady = useFirebaseRemoteConfig();
+  const firebaseIsReady = useSelector(selectRemoteFlagsReady);
 
   // OFAC Geo Blocking
   const ofacQueryResult = ofacGeoBlockApi.useCheckQuery();

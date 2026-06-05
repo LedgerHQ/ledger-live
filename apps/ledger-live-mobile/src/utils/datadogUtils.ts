@@ -1,9 +1,27 @@
 import { EnvName, getEnv } from "@ledgerhq/live-env";
+import {
+  FEATURE_FLAGS_DEFAULTS,
+  selectFeature,
+  type FeatureId,
+  type WithFeatureFlags,
+} from "@shared/feature-flags";
 import { Primitive } from "~/types/helpers";
 import { enabledExperimentalFeatures } from "../experimental";
-import { getAllDivergedFlags } from "../components/FirebaseFeatureFlags";
-import { languageSelector } from "../reducers/settings";
 import { store } from "~/state-manager/configureStore";
+
+// The slice's `resolved` already applies env, override, and version/language filtering,
+// so no language argument is needed here.
+function getAllDivergedFlags(state: WithFeatureFlags): Partial<Record<FeatureId, boolean>> {
+  const res: Partial<Record<FeatureId, boolean>> = {};
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  (Object.keys(FEATURE_FLAGS_DEFAULTS) as FeatureId[]).forEach(key => {
+    const value = selectFeature(state, key);
+    if (value && value.enabled !== FEATURE_FLAGS_DEFAULTS[key]?.enabled) {
+      res[key] = value.enabled;
+    }
+  });
+  return res;
+}
 
 const MAX_KEYLEN = 32;
 const parseSafeKey = (k: string): string => {
@@ -28,8 +46,7 @@ export const buildFeatureFlagTags = () => {
     }
   });
   // if there are features on, we will add them in tags
-  const appLanguage = languageSelector(store.getState());
-  const features = getAllDivergedFlags(appLanguage);
+  const features = getAllDivergedFlags(store.getState());
   Object.keys(features).forEach(key => {
     tags[parseSafeKey(`f_${key}`)] = features[key as keyof typeof features];
   });

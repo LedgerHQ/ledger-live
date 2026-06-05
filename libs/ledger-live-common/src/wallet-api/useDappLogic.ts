@@ -74,8 +74,10 @@ function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
 }
 
 // Atom family for manifest-scoped account state - each manifest gets its own isolated atom
-export const currentAccountAtomFamily: AtomFamily<string, PrimitiveAtom<AccountLike | null>> =
-  atomFamily((_manifestId: string) => atom<AccountLike | null>(null));
+export const currentAccountAtomFamily: AtomFamily<
+  string,
+  PrimitiveAtom<AccountLike | null>
+> = atomFamily((_manifestId: string) => atom<AccountLike | null>(null));
 
 export function useDappCurrentAccount(
   manifestId: string,

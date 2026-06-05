@@ -16,7 +16,7 @@ import {
   DeviceManagementKit,
   hexaStringToBuffer,
 } from "@ledgerhq/device-management-kit";
-import { ContextModuleBuilder } from "@ledgerhq/context-module";
+import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
 import { EIP712Message } from "@ledgerhq/types-live";
 import {
   EthAppPleaseEnableContractData,
@@ -44,12 +44,13 @@ export class DmkSignerEth implements EvmSigner {
   ) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
     liveBlindSigningReporter.setInner(
-      buildDefaultHttpBlindSigningReporter(originToken, "ledger-wallet"),
+      buildDefaultHttpBlindSigningReporter(originToken, ContextModuleChainID.Ethereum, "ledger-wallet"),
     );
     liveBlindSigningReporter.setContext({ sessionId });
     const contextModule = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
       .setBlindSigningReporter(liveBlindSigningReporter)
+      .setChain(ContextModuleChainID.Ethereum)
       .build();
     this.signer = new SignerEthBuilder({
       dmk,

@@ -2,6 +2,7 @@ import network from "@ledgerhq/live-network";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { STAKING_CONTRACTS } from "../contracts";
+import { seiBalanceAmountToNativeMinUnit } from "../../utils";
 import type { ValidatorApi } from "./types";
 
 type CosmosValidatorDescription = {
@@ -45,7 +46,7 @@ const seiValidatorApi: ValidatorApi = {
               validatorAddress: v.operator_address,
               name: v.description?.moniker ?? v.operator_address,
               commission: Number.parseFloat(v.commission?.commission_rates?.rate ?? "0"),
-              tokens: v.tokens ?? "0",
+              tokens: seiBalanceAmountToNativeMinUnit(v.tokens, "usei").toString(),
               votingPower: index,
               estimatedYearlyRewardsRate: 0,
             }))

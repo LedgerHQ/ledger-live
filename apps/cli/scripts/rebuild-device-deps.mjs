@@ -27,9 +27,7 @@ function findPackageDir(name) {
 function rebuild(name) {
   const dir = findPackageDir(name);
   if (!dir) {
-    console.warn(
-      `rebuild-device-deps: ${name} not found under node_modules/.pnpm, skipping.`,
-    );
+    console.warn(`rebuild-device-deps: ${name} not found under node_modules/.pnpm, skipping.`);
     return;
   }
   console.log(`Building ${name} in ${dir}...`);

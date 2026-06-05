@@ -24,7 +24,10 @@ import StepAsset, { StepAssetFooter } from "./steps/StepAsset";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { AlgorandAccount, Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
+import {
+  AlgorandAccount,
+  Transaction as AlgorandTransaction,
+} from "@ledgerhq/live-common/families/algorand/types";
 
 export type Data = {
   account: AlgorandAccount;

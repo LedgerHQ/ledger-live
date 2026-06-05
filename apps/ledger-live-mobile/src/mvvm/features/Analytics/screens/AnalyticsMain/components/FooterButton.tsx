@@ -1,26 +1,20 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
-import { NavigatorName } from "~/const";
 import { track } from "~/analytics";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { ANALYTICS_PAGE } from "../../../const";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const FooterButton: React.FC = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const redirectToSwap = useCallback(() => {
-    if (shouldDisplayWallet40MainNav) {
-      navigation.navigate(NavigatorName.Main, {
-        screen: NavigatorName.Swap,
-      });
-    } else {
-      navigation.navigate(NavigatorName.Swap);
-    }
-  }, [navigation, shouldDisplayWallet40MainNav]);
+    navigateToSwapTab({ navigation });
+  }, [navigation]);
 
   const onPress = useCallback(() => {
     track("button_clicked", {

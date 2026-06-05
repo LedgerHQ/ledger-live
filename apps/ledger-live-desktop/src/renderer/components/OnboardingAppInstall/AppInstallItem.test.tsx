@@ -50,9 +50,7 @@ describe("AppInstallItem", () => {
   });
 
   it("active with tiny positive progress: determinate (not treated as zero)", () => {
-    render(
-      <AppInstallItem {...baseProps} state={ItemState.Active} progress={Number.MIN_VALUE} />,
-    );
+    render(<AppInstallItem {...baseProps} state={ItemState.Active} progress={Number.MIN_VALUE} />);
     expect(screen.getByTestId("app-install-item-progress-loader")).toBeInTheDocument();
     expect(screen.queryByTestId("app-install-item-infinite-loader")).not.toBeInTheDocument();
   });

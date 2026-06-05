@@ -1,7 +1,6 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useUnsupportedFirmwareVersionViewModel } from "./useUnsupportedFirmwareVersionViewModel";
 import type { InitializerDevice } from "../../types";
@@ -18,7 +17,6 @@ jest.mock("../../hooks/useInitializerActions");
 
 const mockedTrack = jest.mocked(track);
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
-const TEST_SOURCE = "Portfolio";
 const SOURCE_FLOW = "my_ledger";
 const openMyLedgerFirmwareUpdate = jest.fn();
 const onCancel = jest.fn();
@@ -34,7 +32,6 @@ const device: InitializerDevice = {
 describe("useUnsupportedFirmwareVersionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    previousRouteNameRef.current = TEST_SOURCE;
     mockedUseInitializerActions.mockReturnValue({
       openMyLedger: jest.fn(),
       openMyLedgerFirmwareUpdate,
@@ -44,13 +41,12 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
   });
 
   it("GIVEN a device WHEN rendering THEN it exposes the view handlers", () => {
-    const { result } = renderHook(
-      () =>
-        useUnsupportedFirmwareVersionViewModel({
-          device,
-          sourceFlow: SOURCE_FLOW,
-          onCancel,
-        }),
+    const { result } = renderHook(() =>
+      useUnsupportedFirmwareVersionViewModel({
+        device,
+        sourceFlow: SOURCE_FLOW,
+        onCancel,
+      }),
     );
 
     expect(result.current).toEqual(
@@ -62,13 +58,12 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
   });
 
   it("GIVEN a device WHEN updating Ledger OS THEN it tracks Update Firmware and opens the firmware update", () => {
-    const { result } = renderHook(
-      () =>
-        useUnsupportedFirmwareVersionViewModel({
-          device,
-          sourceFlow: SOURCE_FLOW,
-          onCancel,
-        }),
+    const { result } = renderHook(() =>
+      useUnsupportedFirmwareVersionViewModel({
+        device,
+        sourceFlow: SOURCE_FLOW,
+        onCancel,
+      }),
     );
 
     act(() => {
@@ -77,7 +72,6 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       modelId: DeviceModelId.europa,
       button: "Update Firmware",
@@ -85,14 +79,13 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
     expect(openMyLedgerFirmwareUpdate).toHaveBeenCalledTimes(1);
   });
 
-  it("GIVEN a device WHEN cancelling THEN it tracks Cancel and forwards to onCancel", () => {
-    const { result } = renderHook(
-      () =>
-        useUnsupportedFirmwareVersionViewModel({
-          device,
-          sourceFlow: SOURCE_FLOW,
-          onCancel,
-        }),
+  it("GIVEN a device WHEN cancelling THEN it tracks Close and forwards to onCancel", () => {
+    const { result } = renderHook(() =>
+      useUnsupportedFirmwareVersionViewModel({
+        device,
+        sourceFlow: SOURCE_FLOW,
+        onCancel,
+      }),
     );
 
     act(() => {
@@ -101,10 +94,9 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       modelId: DeviceModelId.europa,
-      button: "Cancel",
+      button: "Close",
     });
     expect(onCancel).toHaveBeenCalledTimes(1);
   });

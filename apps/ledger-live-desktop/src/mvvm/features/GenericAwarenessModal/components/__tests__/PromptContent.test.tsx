@@ -21,9 +21,9 @@ describe("PromptContent", () => {
     render(<PromptContent {...baseProps} />);
 
     expect(screen.getByText("Test title")).toHaveClass("truncate");
-    expect(
-      screen.getByText("Test subtitle").style.getPropertyValue("-webkit-line-clamp"),
-    ).toBe(String(CAROUSEL_SLIDE_TEXT_LINE_LIMITS.subtitle));
+    expect(screen.getByText("Test subtitle").style.getPropertyValue("-webkit-line-clamp")).toBe(
+      String(CAROUSEL_SLIDE_TEXT_LINE_LIMITS.subtitle),
+    );
     expect(screen.getByRole("button", { name: "Primary" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Secondary" })).toBeVisible();
   });

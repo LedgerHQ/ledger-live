@@ -2,7 +2,7 @@ import React from "react";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import useCompanionSteps from "../hooks/useCompanionSteps";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { FirstStepCompanionStepKey } from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import { FirstStepCompanionStepKey } from "../types";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE } from "~/reducers/settings";

@@ -67,7 +67,7 @@ export function useBalanceDetailsViewModel(
 
   const counterValueUnit = counterValueCurrency.units[0];
 
-  const counterValue = hasAccounts ? distributionItem?.countervalue ?? 0 : undefined;
+  const counterValue = hasAccounts ? (distributionItem?.countervalue ?? 0) : undefined;
 
   const counterValueFormatter = useCallback(
     (value: number): FormattedValue =>

@@ -15,7 +15,10 @@ import type { SignMessage, Result } from "./types";
 import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
 import { decodeAccountId } from "../../account";
 
-export const prepareMessageToSign = async (account: Account, message: string): Promise<AnyMessage> => {
+export const prepareMessageToSign = async (
+  account: Account,
+  message: string,
+): Promise<AnyMessage> => {
   const utf8Message = Buffer.from(message, "hex").toString();
   const setup = await loadSetupForFamily(account.currency.family);
 

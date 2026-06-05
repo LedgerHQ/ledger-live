@@ -118,7 +118,7 @@
     "bignumber.js": "^9.1.2",
     "ethers": "catalog:",
     "invariant": "^2.2.2",
-    "iso-filecoin": "^4.1.0",
+    "iso-filecoin": "^7.4.7",
     "lodash": "^4.17.21",
     "rxjs": "catalog:"
   },

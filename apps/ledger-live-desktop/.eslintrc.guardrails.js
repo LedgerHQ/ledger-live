@@ -56,10 +56,11 @@ module.exports = {
     },
     {
       files: ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
-      // Sibling LIVE-31228 deletes these; the Provider drop and analytics rewire happen there.
+      // Sanctioned bridge (+ its test) between live-common's FeatureFlagsContext and the
+      // slice. Temporary — removed once live-common's internal hooks migrate off the Context.
       excludedFiles: [
-        "src/renderer/components/FirebaseFeatureFlags.tsx",
-        "src/renderer/components/FirebaseFeatureFlags.test.tsx",
+        "src/renderer/components/FeatureFlagsContextBridge.tsx",
+        "src/renderer/components/FeatureFlagsContextBridge.test.tsx",
       ],
       rules: {
         "no-restricted-imports": ["error", featureFlagsRestrictions],

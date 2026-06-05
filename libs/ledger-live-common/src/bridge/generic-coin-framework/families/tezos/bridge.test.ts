@@ -90,9 +90,7 @@ describe("generic-coin-framework Tezos token", () => {
     });
 
     it("throws when mode is a non-string value", () => {
-      expect(() => computeIntentType({ mode: 42 })).toThrow(
-        "Unsupported transaction mode: 42",
-      );
+      expect(() => computeIntentType({ mode: 42 })).toThrow("Unsupported transaction mode: 42");
     });
   });
 
@@ -122,5 +120,4 @@ describe("generic-coin-framework Tezos token", () => {
       });
     });
   });
-
 });

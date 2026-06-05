@@ -3,6 +3,7 @@ import {
   Menu,
   MenuTrigger,
   MenuContent,
+  MenuGroup,
   MenuLabel,
   TooltipTrigger,
   TooltipContent,
@@ -161,31 +162,35 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
         {informationIcon}
       </span>
       <Menu>
-        <MenuTrigger asChild>
-          <button
-            type="button"
-            className="flex items-center gap-8 transition-colors hover:opacity-70"
-            data-testid="send-network-fees-menu-trigger"
-          >
-            <span className="body-3 text-base">
-              {feesValue} • {feesStrategyLabel}
-            </span>
-            <ChevronUpDown size={16} className="text-muted" />
-          </button>
-        </MenuTrigger>
-        <MenuContent className="w-256" side="top">
-          <MenuLabel>{feesLabel}</MenuLabel>
-          <FeePresetMenuItems
-            hasPresets={hasPresets}
-            hasCustom={hasCustom}
-            hasCoinControl={showCoinControlMenuItem}
-            selectedStrategy={selectedStrategy}
-            onSelectStrategy={onSelectStrategy}
-            onSelectCustomFees={onSelectCustomFees}
-            onSelectCoinControl={onSelectCoinControl}
-            feeOptionsWithFiat={feeOptionsWithFiat}
-            shouldShowFeeRateLegend={shouldShowFeeRateLegend}
-          />
+        <MenuTrigger
+          render={
+            <button
+              type="button"
+              className="flex items-center gap-8 transition-colors hover:opacity-70  cursor-pointer"
+              data-testid="send-network-fees-menu-trigger"
+            >
+              <span className="body-3 text-base">
+                {feesValue} • {feesStrategyLabel}
+              </span>
+              <ChevronUpDown size={16} className="text-muted" />
+            </button>
+          }
+        />
+        <MenuContent className="pointer-events-auto w-256" side="top">
+          <MenuGroup>
+            <MenuLabel>{feesLabel}</MenuLabel>
+            <FeePresetMenuItems
+              hasPresets={hasPresets}
+              hasCustom={hasCustom}
+              hasCoinControl={showCoinControlMenuItem}
+              selectedStrategy={selectedStrategy}
+              onSelectStrategy={onSelectStrategy}
+              onSelectCustomFees={onSelectCustomFees}
+              onSelectCoinControl={onSelectCoinControl}
+              feeOptionsWithFiat={feeOptionsWithFiat}
+              shouldShowFeeRateLegend={shouldShowFeeRateLegend}
+            />
+          </MenuGroup>
         </MenuContent>
       </Menu>
     </div>

@@ -26,7 +26,7 @@ describe("Broadcast", () => {
     await expect(
       broadcast({
         signedOperation: {
-          signature: Buffer.from(sigBytes).toString("base64"),
+          signature: Buffer.from(sigBytes.data).toString("base64"),
           rawData: {
             version: 0,
             recipient: receiver.address.toString(),

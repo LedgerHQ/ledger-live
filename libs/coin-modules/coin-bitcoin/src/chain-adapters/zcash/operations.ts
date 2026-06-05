@@ -69,9 +69,7 @@ export function computeOutgoingFees(transactions: ShieldedTransaction[]): BigNum
  * Notes without `isSpent` are treated as unspent (conservative).
  * Sapling balance is not computed (Ledger is Orchard-only).
  */
-export function computeBalanceFromNotes(
-  transactions: ShieldedTransaction[],
-): BigNumber {
+export function computeBalanceFromNotes(transactions: ShieldedTransaction[]): BigNumber {
   return transactions
     .flatMap(tx => tx.decryptedData?.orchard_outputs ?? [])
     .filter(

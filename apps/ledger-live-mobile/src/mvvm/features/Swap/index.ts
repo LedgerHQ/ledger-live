@@ -11,7 +11,6 @@ import { DefaultAccountSwapParamList } from "~/screens/Swap/types";
 import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 
 type UseOpenSwapProps = {
@@ -51,7 +50,6 @@ export function useOpenSwap({
   defaultParentAccount,
 }: UseOpenSwapProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const { openDrawer } = useModularDrawerController();
@@ -74,7 +72,7 @@ export function useOpenSwap({
           ...(currency && isTokenCurrency(currency) && { toTokenId: currency.id }),
         };
 
-        navigateToSwapTab({ navigation, shouldDisplayWallet40MainNav, params: swapParams });
+        navigateToSwapTab({ navigation, params: swapParams });
         return;
       }
 
@@ -92,9 +90,9 @@ export function useOpenSwap({
         defaultParentAccount: parentAcc,
       };
 
-      navigateToSwapTab({ navigation, shouldDisplayWallet40MainNav, params: swapParams });
+      navigateToSwapTab({ navigation, params: swapParams });
     },
-    [currency, sourceScreenName, shallowAccounts, navigation, shouldDisplayWallet40MainNav],
+    [currency, sourceScreenName, shallowAccounts, navigation],
   );
 
   const openAccountSelectionDrawer = useCallback(() => {

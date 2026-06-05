@@ -12,18 +12,20 @@ export function ChartOptionsMenuView({ viewModel }: ChartOptionsMenuViewProps) {
 
   return (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton
-          appearance="no-background"
-          size="xs"
-          icon={SettingsAlt2}
-          aria-label={optionsAriaLabel}
-          data-testid="asset-detail-chart-options-trigger"
-        />
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton
+            appearance="no-background"
+            size="xs"
+            icon={SettingsAlt2}
+            aria-label={optionsAriaLabel}
+            data-testid="asset-detail-chart-options-trigger"
+          />
+        }
+      />
       <MenuContent className="w-full min-w-200" side="bottom" align="end">
         <MenuItem
-          onSelect={() => {
+          onClick={() => {
             onToggle();
           }}
           data-testid="asset-detail-chart-options-toggle-transactions"

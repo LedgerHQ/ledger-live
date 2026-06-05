@@ -6,10 +6,7 @@ import {
   getParentAccount,
 } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
-import {
-  getAccountSpendableBalance,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountSpendableBalance, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { ScreenName, NavigatorName } from "~/const";

@@ -29,9 +29,7 @@ const mockGetMinVersion = jest.fn();
 const mockGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 const mockGetAddress = jest.mocked(getAddress);
 
-function makeInput(
-  overrides: Partial<EnsureAppReadyInput> = {},
-): EnsureAppReadyInput {
+function makeInput(overrides: Partial<EnsureAppReadyInput> = {}): EnsureAppReadyInput {
   return {
     appName: "Ethereum",
     dependencies: ["1inch"],

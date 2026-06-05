@@ -22,11 +22,12 @@ type CommonLogEvent = {
 };
 
 type ErrorLogEvent = {
-  status: "failure"; error: Error; txPayload:
-  {
+  status: "failure";
+  error: Error;
+  txPayload: {
     signature: string;
     rawData?: Record<string, unknown>;
-  }
+  };
 } & CommonLogEvent;
 
 type SuccessLogEvent = { status: "success" } & CommonLogEvent;
@@ -100,7 +101,7 @@ export const useBroadcast = ({
               error,
               txPayload: {
                 signature: signedOperation.signature,
-                ...(signedOperation.rawData ? { rawData: signedOperation.rawData } : {})
+                ...(signedOperation.rawData ? { rawData: signedOperation.rawData } : {}),
               },
               ...commonLogEvent,
             });

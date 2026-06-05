@@ -108,7 +108,10 @@ const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
     // manifests (http://localhost) can be loaded; the dead branch is stripped
     // at build time by the bundler's NODE_ENV inlining.
     if (process.env.NODE_ENV === "production" && parsedUrl.protocol !== "https:") {
-      log("wallet-api/helpers", "isWhitelistedDomain: invalid URL: only https is allowed in production");
+      log(
+        "wallet-api/helpers",
+        "isWhitelistedDomain: invalid URL: only https is allowed in production",
+      );
       return false;
     }
 

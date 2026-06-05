@@ -10,10 +10,10 @@ describe("navigateToSwapTab", () => {
 
   const params = { toTokenId: "ethereum", fromPath: "Portfolio" };
 
-  it("targets the Main > Swap tab when Wallet 4.0 main navigation is enabled", () => {
+  it("targets the Main > Swap tab", () => {
     const { navigation, navigate } = createNavigation();
 
-    navigateToSwapTab({ navigation, shouldDisplayWallet40MainNav: true, params });
+    navigateToSwapTab({ navigation, params });
 
     expect(navigate).toHaveBeenCalledTimes(1);
     expect(navigate).toHaveBeenCalledWith(NavigatorName.Main, {
@@ -25,22 +25,10 @@ describe("navigateToSwapTab", () => {
     });
   });
 
-  it("targets the base-level Swap navigator when Wallet 4.0 main navigation is disabled", () => {
-    const { navigation, navigate } = createNavigation();
-
-    navigateToSwapTab({ navigation, shouldDisplayWallet40MainNav: false, params });
-
-    expect(navigate).toHaveBeenCalledTimes(1);
-    expect(navigate).toHaveBeenCalledWith(NavigatorName.Swap, {
-      screen: ScreenName.SwapTab,
-      params,
-    });
-  });
-
   it("defaults to empty params when none are provided (opens Swap with no preselection)", () => {
     const { navigation, navigate } = createNavigation();
 
-    navigateToSwapTab({ navigation, shouldDisplayWallet40MainNav: true });
+    navigateToSwapTab({ navigation });
 
     expect(navigate).toHaveBeenCalledWith(NavigatorName.Main, {
       screen: NavigatorName.Swap,

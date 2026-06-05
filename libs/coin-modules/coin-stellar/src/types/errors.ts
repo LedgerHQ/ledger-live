@@ -22,8 +22,9 @@ export type StellarBroadcastFailedFields = {
   envelopeXdr: string;
 };
 
-export const StellarBroadcastFailedError =
-  createCustomErrorClass<StellarBroadcastFailedFields>("StellarBroadcastFailedError");
+export const StellarBroadcastFailedError = createCustomErrorClass<StellarBroadcastFailedFields>(
+  "StellarBroadcastFailedError",
+);
 
 export const StellarBurnAddressError = createCustomErrorClass("StellarBurnAddressError");
 export const StellarAssetRequired = createCustomErrorClass("StellarAssetRequired");

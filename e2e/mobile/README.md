@@ -1,9 +1,9 @@
 # E2E Tests - Mobile
 
-This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Mobile** app.  
+This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Mobile** app.
 Dev teams are responsible for **adding/updating tests** for new features.
 
-> **Cursor users:** Run the `/e2e-mobile-onboard` command for an interactive setup wizard.
+> In an agent tool that supports repo skills, run the `/e2e-mobile-onboard` skill for an interactive setup wizard.
 > It checks every prerequisite on your machine, validates environment variables, and guides you through fixes step by step.
 
 ---
@@ -65,8 +65,6 @@ pnpm mobile e2e:build -c ios.sim.debug
 
 - iOS: Create a simulator named `iOS Simulator` in Xcode
 - Android: Create an emulator named `Android_Emulator` in Android Studio
-
-Follow the full wiki if you need setup details.
 
 ### 5. Run Tests
 

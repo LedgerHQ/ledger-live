@@ -10,8 +10,12 @@ function getLoader(family: string): CoinModuleLoader {
   return loader;
 }
 
-export function makeLoaderCache<T>(fn: (family: string) => Promise<T>): (family: string) => Promise<T>;
-export function makeLoaderCache<T>(fn: (family: string) => Promise<T> | undefined): (family: string) => Promise<T> | undefined;
+export function makeLoaderCache<T>(
+  fn: (family: string) => Promise<T>,
+): (family: string) => Promise<T>;
+export function makeLoaderCache<T>(
+  fn: (family: string) => Promise<T> | undefined,
+): (family: string) => Promise<T> | undefined;
 export function makeLoaderCache<T>(fn: (family: string) => Promise<T> | undefined) {
   const cache = new Map<string, Promise<T>>();
   return (family: string): Promise<T> | undefined => {
@@ -39,37 +43,35 @@ export function getRegisteredFamilies(): string[] {
   return [...loaders.keys()];
 }
 
-export const loadSetupForFamily = makeLoaderCache((family) =>
-  getLoader(family).loadSetup()
+export const loadSetupForFamily = makeLoaderCache(family => getLoader(family).loadSetup());
+
+export const loadTransactionForFamily = makeLoaderCache(family =>
+  getLoader(family).loadTransaction(),
 );
 
-export const loadTransactionForFamily = makeLoaderCache((family) =>
-  getLoader(family).loadTransaction()
+export const loadDeviceTxConfigForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadDeviceTxConfig?.(),
 );
 
-export const loadDeviceTxConfigForFamily = makeLoaderCache((family) =>
-  loaders.get(family)?.loadDeviceTxConfig?.()
+export const loadWalletApiAdapterForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadWalletApiAdapter?.(),
 );
 
-export const loadWalletApiAdapterForFamily = makeLoaderCache((family) =>
-  loaders.get(family)?.loadWalletApiAdapter?.()
+export const loadPlatformAdapterForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadPlatformAdapter?.(),
 );
 
-export const loadPlatformAdapterForFamily = makeLoaderCache((family) =>
-  loaders.get(family)?.loadPlatformAdapter?.()
+export const loadAccountModuleForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAccount?.(),
 );
 
-export const loadAccountModuleForFamily = makeLoaderCache((family) =>
-  loaders.get(family)?.loadAccount?.()
-);
-
-export const loadMockBridgeForFamily = makeLoaderCache((family) =>
-  loaders.get(family)?.loadMockBridge?.()
+export const loadMockBridgeForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadMockBridge?.(),
 );
 
 const resolvedMockAccounts = new Map<string, MockAccountModule>();
 
-export const loadMockAccountForFamily = makeLoaderCache((family) => {
+export const loadMockAccountForFamily = makeLoaderCache(family => {
   // Preserve makeLoaderCache contract: return undefined synchronously when
   // there's no loader or no loadMockAccount, so the function still returns
   // undefined (not Promise<undefined>) for unknown families.
@@ -96,16 +98,14 @@ export function getLoadedMockAccountForFamily(family: string): MockAccountModule
   return resolvedMockAccounts.get(family);
 }
 
-export const loadValidateAddressForFamily = makeLoaderCache((family) =>
-  loaders.get(family)?.loadValidateAddress?.()
+export const loadValidateAddressForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadValidateAddress?.(),
 );
 
-export const loadSignerForFamily = makeLoaderCache((family) =>
-  loaders.get(family)?.loadSigner?.()
-);
+export const loadSignerForFamily = makeLoaderCache(family => loaders.get(family)?.loadSigner?.());
 
-const cachedLoadBridgeExtensions = makeLoaderCache((family) =>
-  loaders.get(family)?.loadBridgeExtensions?.()
+const cachedLoadBridgeExtensions = makeLoaderCache(family =>
+  loaders.get(family)?.loadBridgeExtensions?.(),
 );
 
 export const loadBridgeExtensionsForFamily = async (

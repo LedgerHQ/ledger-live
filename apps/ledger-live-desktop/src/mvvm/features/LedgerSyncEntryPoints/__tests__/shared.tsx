@@ -43,16 +43,22 @@ export const INITIAL_STATE = {
 export const LedgerSyncEntryPointShared = ({
   entryPoint,
   needEligibleDevice,
+  variant,
 }: {
   entryPoint: EntryPoint;
   needEligibleDevice?: boolean;
+  variant?: "v4";
 }) => {
   const { closeDrawer } = useActivationDrawer();
 
   return (
     <>
       <div id="modals"></div>
-      <LedgerSyncEntryPoint entryPoint={entryPoint} needEligibleDevice={needEligibleDevice} />
+      <LedgerSyncEntryPoint
+        entryPoint={entryPoint}
+        needEligibleDevice={needEligibleDevice}
+        variant={variant}
+      />
       <WalletSyncDrawer currentPage={AnalyticsPage.SettingsGeneral} onClose={closeDrawer} />
     </>
   );

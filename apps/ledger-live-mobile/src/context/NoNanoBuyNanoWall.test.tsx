@@ -11,13 +11,12 @@ type TestStateOverrides = {
   lazyOnboarding?: boolean;
 };
 
-const overrideInitialState =
-  ({
-    hasCompletedOnboarding = true,
-    hasOrderedNano = false,
-    readOnlyModeEnabled = true,
-    lazyOnboarding = false,
-  }: TestStateOverrides = {}) =>
+const overrideInitialState = ({
+  hasCompletedOnboarding = true,
+  hasOrderedNano = false,
+  readOnlyModeEnabled = true,
+  lazyOnboarding = false,
+}: TestStateOverrides = {}) =>
   withFlagOverrides(
     {
       lwmWallet40: {

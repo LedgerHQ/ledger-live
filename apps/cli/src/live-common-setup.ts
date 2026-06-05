@@ -133,9 +133,7 @@ function isNodeHidNativeBindingBuilt(): boolean {
     // oxlint-disable-next-line typescript/no-require-imports
     const pkgDir = path.dirname(require.resolve("node-hid"));
     const releaseDir = path.join(pkgDir, "build", "Release");
-    return ["HID.node", "HID_hidraw.node"].some(c =>
-      fs.existsSync(path.join(releaseDir, c)),
-    );
+    return ["HID.node", "HID_hidraw.node"].some(c => fs.existsSync(path.join(releaseDir, c)));
   } catch {
     return false;
   }

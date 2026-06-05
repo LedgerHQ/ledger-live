@@ -33,16 +33,9 @@ const AppInstallItem = ({ appName, state, progress, productName, i }: Props) => 
       >
         {state === ItemState.Active ? (
           !progress || progress === 1 ? (
-            <InfiniteLoader
-              size={20}
-              data-testid="app-install-item-infinite-loader"
-            />
+            <InfiniteLoader size={20} data-testid="app-install-item-infinite-loader" />
           ) : (
-            <Flex
-              data-testid="app-install-item-progress-loader"
-              position="relative"
-              size={20}
-            >
+            <Flex data-testid="app-install-item-progress-loader" position="relative" size={20}>
               <ProgressLoader
                 progress={progress * 100}
                 showPercentage={false}

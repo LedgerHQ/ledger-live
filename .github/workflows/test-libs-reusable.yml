@@ -163,6 +163,13 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
         run: pnpm i
+      - name: Check formatting of affected libraries
+        id: format-check-libs
+        # TODO(LIVE-31553): remove continue-on-error once the release cycle has
+        # the format:check scripts on HEAD (~2 weeks). format:check does not yet
+        # exist on release branches, so keep this non-blocking to not break release.
+        continue-on-error: true
+        run: pnpm exec nx run-many -t format:check --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false
       - name: Lint affected libraries
         id: lint-libs
         run: pnpm exec nx run-many -t lint --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false -- --quiet

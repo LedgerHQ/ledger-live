@@ -51,8 +51,7 @@ async function waitForLoader() {
   });
 }
 
-const withWalletV4 = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { enabled } });
+const withWalletV4 = (enabled: boolean) => withFlagOverrides({ lwmWallet40: { enabled } });
 
 describe("Web3Hub integration test", () => {
   beforeEach(() => {

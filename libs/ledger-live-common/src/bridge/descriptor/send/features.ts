@@ -16,7 +16,7 @@ function fromDescriptor<T>(
 ): (currency: CryptoOrTokenCurrency | undefined) => T {
   return currency => {
     const d = getSendDescriptor(currency);
-    return d ? getter(d) ?? fallback : fallback;
+    return d ? (getter(d) ?? fallback) : fallback;
   };
 }
 

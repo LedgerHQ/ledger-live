@@ -24,7 +24,12 @@ export type CheckpointBySequenceResult = ResultOf<typeof CHECKPOINT_BY_SEQUENCE>
  * {@link TRANSACTIONS_BY_AFFECTED_ADDRESS} so the adapter is shared.
  */
 export const BLOCK_BY_SEQUENCE = graphql(`
-  query BlockBySequence($sequenceNumber: UInt53, $txFirst: Int!, $txAfter: String, $eventsFirst: Int!) {
+  query BlockBySequence(
+    $sequenceNumber: UInt53
+    $txFirst: Int!
+    $txAfter: String
+    $eventsFirst: Int!
+  ) {
     checkpoint(sequenceNumber: $sequenceNumber) {
       digest
       sequenceNumber
@@ -365,12 +370,7 @@ export type ExecuteTransactionResult = ResultOf<typeof EXECUTE_TRANSACTION>;
  * `$type` (e.g. `0x2::coin::Coin<0x2::sui::SUI>`).
  */
 export const LIST_COINS_BY_OWNER_AND_TYPE = graphql(`
-  query ListCoinsByOwnerAndType(
-    $owner: SuiAddress!
-    $type: String!
-    $first: Int
-    $after: String
-  ) {
+  query ListCoinsByOwnerAndType($owner: SuiAddress!, $type: String!, $first: Int, $after: String) {
     address(address: $owner) {
       objects(filter: { type: $type }, first: $first, after: $after) {
         pageInfo {
@@ -473,11 +473,7 @@ export type SystemStateForBuildResult = ResultOf<typeof SYSTEM_STATE_FOR_BUILD>;
  * which the adapter projects into the SDK's `OpenSignature[]` shape.
  */
 export const MOVE_FUNCTION_BY_NAME = graphql(`
-  query MoveFunctionByName(
-    $package: SuiAddress!
-    $module: String!
-    $function: String!
-  ) {
+  query MoveFunctionByName($package: SuiAddress!, $module: String!, $function: String!) {
     package(address: $package) {
       module(name: $module) {
         function(name: $function) {

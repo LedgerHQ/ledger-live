@@ -51,4 +51,15 @@ describe("MarketCapCard Integration", () => {
       ),
     ).toBeVisible();
   });
+
+  it("should render an isolated error placeholder when market data fails", async () => {
+    server.use(http.get(API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
+
+    render(<MarketCapCard width={276} />);
+
+    expect(await screen.findByTestId("market-cap-card-error")).toBeVisible();
+    expect(screen.getByTestId("market-cap-card-error-icon")).toBeVisible();
+    expect(screen.getByText("Total market cap")).toBeVisible();
+    expect(screen.getByText("Connection failed")).toBeVisible();
+  });
 });

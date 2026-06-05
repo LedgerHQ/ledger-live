@@ -13,7 +13,9 @@ jest.mock("@ledgerhq/live-common/families/evm/react", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
-  const bridge = { updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })) };
+  const bridge = {
+    updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })),
+  };
   const settledPromise = Object.assign(Promise.resolve(bridge), {
     status: "fulfilled",
     value: bridge,

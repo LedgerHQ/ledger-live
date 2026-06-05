@@ -1,14 +1,14 @@
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { useSelector } from "LLD/hooks/redux";
-import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { buildPortfolioReturnCards } from "LLD/features/PnL/builders/buildPortfolioReturnCards";
 import { usePnlViewModelBase } from "LLD/features/PnL/hooks/usePnlViewModelBase";
 import type { PnlViewModel } from "LLD/features/PnL/types";
 
 export function usePortfolioPnlViewModel(): PnlViewModel {
-  const accounts = useSelector(flattenAccountsSelector);
+  const accounts = useSelector(shallowAccountsSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const countervalues = useCountervaluesState();
 

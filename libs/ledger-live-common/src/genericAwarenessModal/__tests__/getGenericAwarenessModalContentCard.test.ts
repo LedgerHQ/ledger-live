@@ -6,10 +6,12 @@ const contentCards: GenericAwarenessModalContentCard[] = [
     layout: GenericAwarenessModalLayout.Carousel,
     id: "APP_START_carousel",
     data: [],
+    isReady: false,
   },
   {
     layout: GenericAwarenessModalLayout.FeatureIntro,
     id: "feature-intro",
+    isReady: false,
     title: "Feature intro",
     subtitle: "Feature intro subtitle",
     imageUrl: "https://example.com/image.png",

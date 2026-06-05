@@ -165,7 +165,9 @@ function createWrapper(store: ReturnType<typeof createStore>) {
 
 // ---- helpers ----
 
-async function renderWithAccount(uiHookOverrides: Partial<Parameters<typeof useDappLogic>[0]["uiHook"]> = {}) {
+async function renderWithAccount(
+  uiHookOverrides: Partial<Parameters<typeof useDappLogic>[0]["uiHook"]> = {},
+) {
   const store = createStore();
   const postMessage = jest.fn();
 
@@ -215,9 +217,11 @@ describe("useDappLogic — onDappMessage async paths", () => {
     const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
     prepareMessageToSign.mockResolvedValue(mockFormattedMessage);
 
-    const messageSignUiHook = jest.fn().mockImplementation(({ onSuccess }: { onSuccess: (sig: string) => void }) => {
-      onSuccess("0xsignature");
-    });
+    const messageSignUiHook = jest
+      .fn()
+      .mockImplementation(({ onSuccess }: { onSuccess: (sig: string) => void }) => {
+        onSuccess("0xsignature");
+      });
 
     const { result, postMessage } = await renderWithAccount({
       "message.sign": messageSignUiHook,
@@ -245,9 +249,11 @@ describe("useDappLogic — onDappMessage async paths", () => {
     const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
     prepareMessageToSign.mockResolvedValue(mockFormattedMessage);
 
-    const messageSignUiHook = jest.fn().mockImplementation(({ onSuccess }: { onSuccess: (sig: string) => void }) => {
-      onSuccess("0xtypedsig");
-    });
+    const messageSignUiHook = jest
+      .fn()
+      .mockImplementation(({ onSuccess }: { onSuccess: (sig: string) => void }) => {
+        onSuccess("0xtypedsig");
+      });
 
     const { result, postMessage } = await renderWithAccount({
       "message.sign": messageSignUiHook,
@@ -281,13 +287,31 @@ describe("useDappLogic — onDappMessage async paths", () => {
     });
 
     const mockSignedOperation = {
-      operation: { hash: "0xtxhash", id: "op1", recipients: [], senders: [], fee: new BigNumber(0), value: new BigNumber(0), blockHeight: null, blockHash: null, transactionSequenceNumber: 0, accountId: mockAccount.id, type: "OUT" as const, date: new Date(), extra: {} },
+      operation: {
+        hash: "0xtxhash",
+        id: "op1",
+        recipients: [],
+        senders: [],
+        fee: new BigNumber(0),
+        value: new BigNumber(0),
+        blockHeight: null,
+        blockHash: null,
+        transactionSequenceNumber: 0,
+        accountId: mockAccount.id,
+        type: "OUT" as const,
+        date: new Date(),
+        extra: {},
+      },
       signature: "0xsig",
     };
 
-    const txSignUiHook = jest.fn().mockImplementation(({ onSuccess }: { onSuccess: (op: typeof mockSignedOperation) => void }) => {
-      onSuccess(mockSignedOperation);
-    });
+    const txSignUiHook = jest
+      .fn()
+      .mockImplementation(
+        ({ onSuccess }: { onSuccess: (op: typeof mockSignedOperation) => void }) => {
+          onSuccess(mockSignedOperation);
+        },
+      );
 
     const { result, postMessage } = await renderWithAccount({
       "transaction.sign": txSignUiHook,

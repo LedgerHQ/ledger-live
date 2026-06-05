@@ -59,10 +59,9 @@ describe("assets token command", () => {
   });
 
   it("exits non-zero when the address arg is missing", async () => {
-    const { stdout, exitCode } = await runCli(
-      ["assets", "token", "ethereum", "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
-    );
+    const { stdout, exitCode } = await runCli(["assets", "token", "ethereum", "--output", "json"], {
+      WALLET_CLI_MOCK_PORT: String(server.port),
+    });
     expect(exitCode).toBe(1);
     const err = JSON.parse(stdout);
     expect(err.ok).toBe(false);

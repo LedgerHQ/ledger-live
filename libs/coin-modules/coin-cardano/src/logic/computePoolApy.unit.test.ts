@@ -33,7 +33,11 @@ describe("computePoolApy", () => {
     ["a retired pool", { ...basePool, retiredEpoch: 400 }, baseEpoch],
     ["a pool with zero stake", { ...basePool, liveStake: "0" }, baseEpoch],
     // Tiny pool, huge fixed cost → expected reward doesn't cover the cost → no delegator yield.
-    ["a pool whose reward < fixed cost", { ...basePool, liveStake: "1000000000", cost: "100000000000000" }, baseEpoch],
+    [
+      "a pool whose reward < fixed cost",
+      { ...basePool, liveStake: "1000000000", cost: "100000000000000" },
+      baseEpoch,
+    ],
     // Endpoint doesn't expose these yet (LIVE-18622) → APY stays omitted.
     ["an epoch missing reserves", basePool, { ...baseEpoch, reserves: undefined }],
     ["an epoch missing active stake", basePool, { ...baseEpoch, activeStake: undefined }],

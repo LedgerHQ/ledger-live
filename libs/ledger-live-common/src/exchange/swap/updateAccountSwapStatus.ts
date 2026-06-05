@@ -5,7 +5,13 @@ import type { TokenAccount, Account, SwapOperation, Operation } from "@ledgerhq/
 import type { SwapStatus, SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
 import { log } from "@ledgerhq/logs";
 
-const PROVIDERS_REQUIRING_OPERATION_ID = ["thorswap", "lifi", "nearintents", "swapsxyz", "moonpay_trade"];
+const PROVIDERS_REQUIRING_OPERATION_ID = [
+  "thorswap",
+  "lifi",
+  "nearintents",
+  "swapsxyz",
+  "moonpay_trade",
+];
 
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined,

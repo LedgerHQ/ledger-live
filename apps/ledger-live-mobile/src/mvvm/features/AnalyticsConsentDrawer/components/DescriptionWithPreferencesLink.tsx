@@ -7,7 +7,10 @@ type DescriptionWithPreferencesLinkProps = Readonly<{
   onSetPreferences: () => void;
 }>;
 
-export function DescriptionWithPreferencesLink({ text, onSetPreferences }: DescriptionWithPreferencesLinkProps) {
+export function DescriptionWithPreferencesLink({
+  text,
+  onSetPreferences,
+}: DescriptionWithPreferencesLinkProps) {
   const { t } = useTranslation();
   return (
     <Box lx={{ width: "full", alignItems: "center", gap: "s4" }}>

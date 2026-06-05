@@ -1,7 +1,6 @@
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -25,7 +24,6 @@ const Borrow = (props: NavigationProps) => {
   const paramAction = props.route.params?.action;
   const navigation: BorrowNavigation = props.navigation as unknown as BorrowNavigation;
   const baseNavigation = useNavigation<BaseNavigation>();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const triggerGoBackAction = useCallback(() => {
     navigation.navigate(NavigatorName.Borrow, {
@@ -64,9 +62,9 @@ const Borrow = (props: NavigationProps) => {
         fromPath: ScreenName.Borrow,
       };
 
-      navigateToSwapTab({ navigation: baseNavigation, shouldDisplayWallet40MainNav, params });
+      navigateToSwapTab({ navigation: baseNavigation, params });
     },
-    [baseNavigation, shouldDisplayWallet40MainNav],
+    [baseNavigation],
   );
 
   useEffect(() => {

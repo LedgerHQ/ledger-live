@@ -2,7 +2,11 @@ import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import {
+  flattenAccounts,
+  getAccountCurrency,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { buildBuyNavigationState, type BuyNavigationOnRampState } from "../utils/buyNavigation";
@@ -12,9 +16,14 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 type RampExchangeKind = "buy" | "sell";
 
+export type RampExchangeNavigationOptions = Readonly<{
+  currencyIds?: readonly string[];
+}>;
+
 type NavigateToRamp = (
   ledgerCurrency: CryptoOrTokenCurrency | null | undefined,
   ticker?: string,
+  options?: RampExchangeNavigationOptions,
 ) => void;
 
 type BuildRampStateParams = {
@@ -39,6 +48,10 @@ function emptyLedgerRampState(
   return { mode: "offRamp", defaultTicker: ticker?.toUpperCase(), returnTo };
 }
 
+function uniqueCurrencyIds(currencyIds: readonly string[] | undefined): string[] {
+  return [...new Set(currencyIds?.filter(Boolean) ?? [])];
+}
+
 export function useRampExchangeNavigation(kind: RampExchangeKind): NavigateToRamp {
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,10 +60,31 @@ export function useRampExchangeNavigation(kind: RampExchangeKind): NavigateToRam
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   return useCallback<NavigateToRamp>(
-    (ledgerCurrency, ticker) => {
+    (ledgerCurrency, ticker, options) => {
       if (!ledgerCurrency) {
         navigate("/exchange", {
           state: emptyLedgerRampState(kind, ticker, location.pathname),
+        });
+        return;
+      }
+
+      const currencyIds = uniqueCurrencyIds(options?.currencyIds);
+      if (currencyIds.length > 1) {
+        openAssetAndAccount({
+          currencies: currencyIds,
+          areCurrenciesFiltered: true,
+          useCase: kind,
+          drawerConfiguration: {},
+          onSuccess: (account, parentAccount) => {
+            navigate("/exchange", {
+              state: buildRampNavigationState(kind, {
+                ledgerCurrency: getAccountCurrency(account),
+                account,
+                parentAccount,
+                returnTo: location.pathname,
+              }),
+            });
+          },
         });
         return;
       }
@@ -93,7 +127,7 @@ export function useRampExchangeNavigation(kind: RampExchangeKind): NavigateToRam
         onSuccess: (account, parentAccount) => {
           navigate("/exchange", {
             state: buildRampNavigationState(kind, {
-              ledgerCurrency,
+              ledgerCurrency: getAccountCurrency(account),
               account,
               parentAccount,
               returnTo: location.pathname,

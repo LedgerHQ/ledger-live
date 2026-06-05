@@ -116,7 +116,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
         const swapAmount =
           swap.swap.amount === "USE_MIN_AMOUNT"
             ? await app.swap.getMinimumAmount(accountToDebit, accountToCredit)
-            : swap.swap.amount ?? "0";
+            : (swap.swap.amount ?? "0");
 
         await performSwapUntilQuoteSelectionStep(app, swap.swap, swapAmount);
         if (swap.quotesVisible) {

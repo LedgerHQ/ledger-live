@@ -99,7 +99,7 @@ export function useNetworkFees({
   const selectedFeeStrategy = transaction.feesStrategy ?? null;
   const selectedPresetFiatValue =
     selectedFeeStrategy && selectedFeeStrategy !== "custom"
-      ? fiatByPreset[selectedFeeStrategy] ?? null
+      ? (fiatByPreset[selectedFeeStrategy] ?? null)
       : null;
 
   const onSelectFeeStrategy = useCallback(

@@ -10,7 +10,7 @@
     "**/__snapshots__/**",
     "**/*.snap",
     "coverage/**",
-    "**/fixtures/**/*.json",
-    "**/*.fixture.json"
+    "**/*.json",
+    "**/*.md"
   ]
 }

@@ -195,7 +195,10 @@ const testSync = async (currencyId: string, xpubOrAddress: string) => {
   const currencyBridge = await getCurrencyBridge(currency);
   const data = await currencyBridge.preload(currency);
   currencyBridge.hydrate(data, currency);
-  const accountBridge = await getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
+  const accountBridge = await getAccountBridgeByFamily(
+    mockAccount.currency!.family,
+    mockAccount.id,
+  );
 
   const syncedAccount = await firstValueFrom(
     accountBridge

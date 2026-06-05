@@ -38,7 +38,9 @@ describe("RightPanel", () => {
 
     expect(mockUseRightPanelViewModel).not.toHaveBeenCalled();
     expect(screen.getByTestId("swap-webview-embedded")).toBeVisible();
-    expect(screen.getByTestId("swap-webview-embedded")).not.toHaveAttribute("data-default-account-id");
+    expect(screen.getByTestId("swap-webview-embedded")).not.toHaveAttribute(
+      "data-default-account-id",
+    );
   });
 
   it("calls the view model hook on asset routes", () => {

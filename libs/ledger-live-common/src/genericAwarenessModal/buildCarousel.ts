@@ -1,3 +1,4 @@
+import { hasReceivedAllCarouselSlides } from "./campaignCompleteness";
 import {
   GenericAwarenessModalCarouselInputSchema,
   GenericAwarenessModalCarouselSlideSchema,
@@ -35,5 +36,10 @@ export const buildCarousel = (
     return undefined;
   }
 
-  return { layout: GenericAwarenessModalLayout.Carousel, id: campaignId, data };
+  return {
+    layout: GenericAwarenessModalLayout.Carousel,
+    id: campaignId,
+    data,
+    isReady: hasReceivedAllCarouselSlides(cards) === true,
+  };
 };

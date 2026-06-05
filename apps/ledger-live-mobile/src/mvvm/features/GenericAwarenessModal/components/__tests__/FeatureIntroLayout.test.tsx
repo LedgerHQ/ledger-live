@@ -29,6 +29,7 @@ const content: GenericAwarenessModalFeatureIntro = {
       subtitle: "Verify transactions on a secure screen.",
     },
   ],
+  isReady: true,
 };
 
 describe("FeatureIntroLayout", () => {

@@ -1,5 +1,12 @@
 import React, { useCallback, useRef } from "react";
-import { BottomSheetView, BottomSheetHeader, Box, Button, Text, Spot } from "@ledgerhq/lumen-ui-rnative";
+import {
+  BottomSheetView,
+  BottomSheetHeader,
+  Box,
+  Button,
+  Text,
+  Spot,
+} from "@ledgerhq/lumen-ui-rnative";
 import { useSelector } from "~/context/hooks";
 import { earnActionDialogSelector } from "~/reducers/earn";
 import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
@@ -77,16 +84,10 @@ export function ActionConfirmationDialog() {
         <Box lx={{ alignItems: "center", padding: "s16", paddingBottom: "s24", gap: "s24" }}>
           <Spot appearance={spotAppearance} size={72} />
           <Box lx={{ alignItems: "center", gap: "s8" }}>
-            <Text
-              typography="heading4SemiBold"
-              lx={{ color: "base", textAlign: "center" }}
-            >
+            <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
               {title}
             </Text>
-            <Text
-              typography="body2"
-              lx={{ color: "muted", textAlign: "center" }}
-            >
+            <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
               {description}
             </Text>
           </Box>

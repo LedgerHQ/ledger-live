@@ -105,7 +105,7 @@ describe("useBroadcast", () => {
         await expect(
           result.current({
             signature: "signed-transaction",
-            rawData: { raw_hex: "raw-hex" }
+            rawData: { raw_hex: "raw-hex" },
           } as any),
         ).rejects.toThrow(new Error("Broadcast failed"));
       });

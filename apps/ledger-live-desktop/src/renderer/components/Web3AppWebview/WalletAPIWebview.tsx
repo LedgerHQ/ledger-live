@@ -492,16 +492,22 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const serverRef = useRef<WalletAPIServer>(undefined);
 
-    const { webviewState, webviewRef, setWebviewRef, webviewProps, handleRefresh, webviewPartition } =
-      useWebviewState(
-        {
-          manifest,
-          inputs,
-          manifestDomainCheckEnabled,
-        },
-        ref,
-        serverRef,
-      );
+    const {
+      webviewState,
+      webviewRef,
+      setWebviewRef,
+      webviewProps,
+      handleRefresh,
+      webviewPartition,
+    } = useWebviewState(
+      {
+        manifest,
+        inputs,
+        manifestDomainCheckEnabled,
+      },
+      ref,
+      serverRef,
+    );
     useEffect(() => {
       if (onStateChange) {
         onStateChange(webviewState);

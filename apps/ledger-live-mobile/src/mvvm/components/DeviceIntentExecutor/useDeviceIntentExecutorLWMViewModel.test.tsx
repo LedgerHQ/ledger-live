@@ -8,9 +8,10 @@ import type {
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
+import { PAGE_CONNECT_APP } from "./utils/trackDeviceIntent";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
 jest.mock("~/analytics", () => {
@@ -22,10 +23,8 @@ jest.mock("~/analytics", () => {
 });
 
 const mockedTrack = jest.mocked(track);
-const TEST_SOURCE = "Connect Device - Connecting";
 
 const layerABaseProperties = {
-  source: TEST_SOURCE,
   deviceUxV2: true,
 };
 
@@ -54,11 +53,16 @@ function makeProps(overrides: Partial<Props> = {}): Props {
 }
 
 function renderViewModel(initialProps?: Partial<Props>) {
-  const props = makeProps(initialProps);
+  let props = makeProps(initialProps);
   const { result, rerender, unmount } = renderHook(() =>
     useDeviceIntentExecutorLWMViewModel(props),
   );
-  return { result, rerender, unmount, props };
+  const rerenderWithProps = (overrides: Partial<Props>) => {
+    props = { ...props, ...overrides };
+    rerender(undefined);
+  };
+
+  return { result, rerender, rerenderWithProps, unmount, props };
 }
 
 // Builds the minimum DeviceConnectionResult shape that the VM reads from.
@@ -91,13 +95,57 @@ function executingIntentState(
 describe("useDeviceIntentExecutorLWMViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    previousRouteNameRef.current = TEST_SOURCE;
+    currentRouteNameRef.current = "Connect Device - Connecting";
+  });
+
+  describe("GIVEN the ViewModel mounts", () => {
+    it("WHEN the hook renders again THEN it fires deviceflow_started exactly once with the sourceFlow", () => {
+      // WHEN
+      const { rerender } = renderViewModel();
+      rerender(undefined);
+
+      // THEN
+      const startedCalls = mockedTrack.mock.calls.filter(
+        ([eventName]) => eventName === "deviceflow_started",
+      );
+      expect(startedCalls).toHaveLength(1);
+      expect(startedCalls[0]).toEqual([
+        "deviceflow_started",
+        { ...layerABaseProperties, sourceFlow: "swap" },
+      ]);
+    });
+
+    it("WHEN the executor is disabled THEN it does not fire deviceflow_started", () => {
+      // WHEN
+      renderViewModel({ enabled: false });
+
+      // THEN
+      expect(mockedTrack).not.toHaveBeenCalledWith("deviceflow_started", expect.anything());
+    });
+  });
+
+  describe("GIVEN a disabled ViewModel", () => {
+    it("WHEN the executor is enabled THEN it fires deviceflow_started", () => {
+      // GIVEN
+      const { rerenderWithProps } = renderViewModel({ enabled: false });
+      mockedTrack.mockClear();
+
+      // WHEN
+      rerenderWithProps({ enabled: true });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_started", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+    });
   });
 
   describe("GIVEN the executor reaches executingIntent for the first time", () => {
     it("WHEN the connection result is BLE THEN it fires app_ready THEN deviceflow_completed with the data carried by the state", () => {
       // GIVEN
       const { result } = renderViewModel();
+      mockedTrack.mockClear();
 
       // WHEN
       act(() => {
@@ -125,6 +173,7 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
     it("WHEN the connection result is USB THEN deviceflow_completed reports transport: usb", () => {
       // GIVEN
       const { result } = renderViewModel();
+      mockedTrack.mockClear();
 
       // WHEN
       act(() => {
@@ -184,6 +233,61 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
     });
   });
 
+  describe("GIVEN a completed flow is disabled and reenabled", () => {
+    it("WHEN the executor reaches executingIntent again THEN it tracks the new flow completion", () => {
+      // GIVEN
+      const { result, rerenderWithProps } = renderViewModel();
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged(executingIntentState());
+      });
+      rerenderWithProps({ enabled: false });
+      rerenderWithProps({ enabled: true });
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged(executingIntentState());
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenNthCalledWith(1, "app_ready", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.stax,
+      });
+      expect(mockedTrack).toHaveBeenNthCalledWith(2, "deviceflow_completed", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.stax,
+        transport: "ble",
+      });
+    });
+
+    it("WHEN the user cancels before executingIntent again THEN it tracks the new flow cancellation", () => {
+      // GIVEN
+      const onUserCancel = jest.fn();
+      const { result, rerenderWithProps } = renderViewModel({ onUserCancel });
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged(executingIntentState());
+      });
+      rerenderWithProps({ enabled: false });
+      rerenderWithProps({ enabled: true });
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+      expect(onUserCancel).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("GIVEN a non-completing executor state", () => {
     const nonCompleting: ExecutorState[] = [
       { type: "connectingDevice" },
@@ -192,9 +296,10 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
       { type: "idle" },
     ];
 
-    it.each(nonCompleting)("WHEN state is $type THEN no Layer A event fires", state => {
+    it.each(nonCompleting)("WHEN state is $type THEN no additional Layer A event fires", state => {
       // GIVEN
       const { result } = renderViewModel();
+      mockedTrack.mockClear();
 
       // WHEN
       act(() => {
@@ -207,7 +312,25 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
   });
 
   describe("GIVEN a ViewModel that has not yet completed", () => {
-    it("WHEN the user cancels THEN it fires deviceflow_aborted and forwards to the original onUserCancel", () => {
+    it("WHEN the user cancels THEN it tracks the Close button click", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenNthCalledWith(1, "button_clicked", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        button: "Close",
+      });
+    });
+
+    it("WHEN the user cancels from a non-blocking page THEN it fires deviceflow_aborted and forwards to the original onUserCancel", () => {
       // GIVEN
       const onUserCancel = jest.fn();
       const { result } = renderViewModel({ onUserCancel });
@@ -219,6 +342,25 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
 
       // THEN
       expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+      expect(onUserCancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("WHEN the user cancels from a blocking page THEN it fires deviceflow_failed and forwards to the original onUserCancel", () => {
+      // GIVEN
+      currentRouteNameRef.current = PAGE_CONNECT_APP.UnsupportedFirmware;
+      const onUserCancel = jest.fn();
+      const { result } = renderViewModel({ onUserCancel });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
         ...layerABaseProperties,
         sourceFlow: "swap",
       });

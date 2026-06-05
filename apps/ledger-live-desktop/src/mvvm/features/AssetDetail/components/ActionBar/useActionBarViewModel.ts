@@ -30,6 +30,7 @@ import { useSellNavigation } from "LLD/features/Market/hooks/useSellNavigation";
 type UseActionBarViewModelProps = Readonly<{
   distributionItem?: DistributionItem;
   ledgerCurrency?: CryptoOrTokenCurrency;
+  ledgerIds?: readonly string[];
   marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
   isDistributionLoading: boolean;
@@ -101,6 +102,7 @@ function resolvePrimaryAccount(
 export function useActionBarViewModel({
   distributionItem,
   ledgerCurrency,
+  ledgerIds,
   marketCurrencyData,
   tickerHint,
   isDistributionLoading,
@@ -116,6 +118,9 @@ export function useActionBarViewModel({
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
 
   const ledgerIdsForRamp = useMemo(() => {
+    if (ledgerIds?.length) {
+      return [...ledgerIds];
+    }
     if (marketCurrencyData?.ledgerIds?.length) {
       return marketCurrencyData.ledgerIds;
     }
@@ -127,7 +132,7 @@ export function useActionBarViewModel({
       return ledgerIdsFromLedgerCurrency(ledgerCurrency);
     }
     return [];
-  }, [marketCurrencyData, distributionItem, ledgerCurrency]);
+  }, [ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency]);
 
   const rampActiveLedgerIds = useMemo(
     () => ledgerIdsForRamp.filter(id => !deactivatedCurrencyIds.has(id)),
@@ -187,6 +192,8 @@ export function useActionBarViewModel({
 
   const trackingCurrencyId =
     ledgerCurrency?.id ?? distributionItem?.currency.id ?? rampActiveLedgerIds[0];
+  const rampNavigationCurrencyIds =
+    rampActiveLedgerIds.length > 1 ? rampActiveLedgerIds : undefined;
 
   const onBuy = useCallback(() => {
     track("button_clicked", {
@@ -195,8 +202,8 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToBuy(ledgerCurrency, tickerHint);
-  }, [ledgerCurrency, tickerHint, navigateToBuy, trackingCurrencyId]);
+    navigateToBuy(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
+  }, [ledgerCurrency, tickerHint, navigateToBuy, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSell = useCallback(() => {
     track("button_clicked", {
@@ -205,8 +212,8 @@ export function useActionBarViewModel({
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToSell(ledgerCurrency, tickerHint);
-  }, [ledgerCurrency, tickerHint, navigateToSell, trackingCurrencyId]);
+    navigateToSell(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
+  }, [ledgerCurrency, tickerHint, navigateToSell, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSend = useCallback(() => {
     track("button_clicked", {

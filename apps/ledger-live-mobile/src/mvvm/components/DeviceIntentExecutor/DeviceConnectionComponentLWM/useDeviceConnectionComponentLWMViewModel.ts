@@ -25,7 +25,6 @@ import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import {
   trackDeviceConnected,
   trackDeviceConnecting,
-  trackDeviceflowStarted,
   trackDevicePrompted,
 } from "../utils/trackDeviceIntent";
 import { useSourceFlow } from "../utils/SourceFlowContext";
@@ -67,19 +66,11 @@ export function useDeviceConnectionComponentLWMViewModel({
     throw new Error("Device Management Kit is not available");
   }
 
-  // Funnel-firing guards: each of `deviceflow_started`, `device_prompted`,
-  // `device_connecting` fires at most once per ViewModel lifetime.
-  const firedRef = useRef<{ started: boolean; prompted: boolean; connecting: boolean }>({
-    started: false,
+  // Funnel-firing guards: each event fires at most once per ViewModel lifetime.
+  const firedRef = useRef({
     prompted: false,
     connecting: false,
   });
-
-  useEffect(() => {
-    if (firedRef.current.started) return;
-    firedRef.current.started = true;
-    trackDeviceflowStarted({ sourceFlow });
-  }, [sourceFlow]);
 
   useEffect(() => {
     switch (state.type) {

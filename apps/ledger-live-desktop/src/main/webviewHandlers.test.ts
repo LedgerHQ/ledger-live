@@ -20,15 +20,8 @@ jest.mock("electron", () => ({
   },
 }));
 
-type DomReadyHandler = (
-  event: Electron.IpcMainEvent,
-  id: number,
-  domains?: string[],
-) => void;
-type WebContentsCreatedHandler = (
-  event: Electron.Event,
-  contents: Electron.WebContents,
-) => void;
+type DomReadyHandler = (event: Electron.IpcMainEvent, id: number, domains?: string[]) => void;
+type WebContentsCreatedHandler = (event: Electron.Event, contents: Electron.WebContents) => void;
 type SchemeGuard = (event: Electron.Event<{ url: string }>) => void;
 
 describe("setupWebviewHandlers", () => {

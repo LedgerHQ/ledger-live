@@ -384,7 +384,11 @@ describe("estimateFees", () => {
     });
 
     expect(result.amount).toBe(
-      balance - stakedBalance - unstakedBalance - BigInt(suggestedFee) - STAKE_USE_ALL_RESERVE_MUTEZ,
+      balance -
+        stakedBalance -
+        unstakedBalance -
+        BigInt(suggestedFee) -
+        STAKE_USE_ALL_RESERVE_MUTEZ,
     );
   });
 

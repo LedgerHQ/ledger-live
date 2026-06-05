@@ -61,7 +61,7 @@ export class CoinFrameworkAdapter {
       limit: options?.limit ?? 50,
     });
 
-    const coreOps: CoreOperation[] = Array.isArray(page) ? page : page.items ?? [];
+    const coreOps: CoreOperation[] = Array.isArray(page) ? page : (page.items ?? []);
     const nextCursor: string | undefined =
       !Array.isArray(page) && page.next != null ? String(page.next) : undefined;
 

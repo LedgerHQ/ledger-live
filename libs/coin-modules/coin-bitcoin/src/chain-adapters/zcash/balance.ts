@@ -11,7 +11,9 @@ type PrivateBalances = Pick<ZcashPrivateInfo, "orchardBalance" | "saplingBalance
  * transparent + private total) so the two syncs can recompute the total
  * without double-counting the shielded funds.
  */
-export function getTransparentBalance(utxos: Pick<BitcoinOutput, "value">[] | undefined): BigNumber {
+export function getTransparentBalance(
+  utxos: Pick<BitcoinOutput, "value">[] | undefined,
+): BigNumber {
   return (utxos ?? []).reduce((sum, utxo) => sum.plus(utxo.value), new BigNumber(0));
 }
 

@@ -79,9 +79,7 @@ describe("prepareTransaction", () => {
     const result = await prepareTransaction(account, transaction);
 
     expect(mockAccountNamesCache).toHaveBeenCalledWith(voteAddress);
-    expect(result.votes).toEqual([
-      { address: voteAddress, voteCount: 100, name: "SR name" },
-    ]);
+    expect(result.votes).toEqual([{ address: voteAddress, voteCount: 100, name: "SR name" }]);
   });
 
   it("should enrich multiple votes in parallel", async () => {
@@ -93,9 +91,7 @@ describe("prepareTransaction", () => {
         { address: "TB", voteCount: 2, name: undefined },
       ],
     });
-    mockAccountNamesCache.mockImplementation(async addr =>
-      addr === "TA" ? "Name A" : "Name B",
-    );
+    mockAccountNamesCache.mockImplementation(async addr => (addr === "TA" ? "Name A" : "Name B"));
 
     await prepareTransaction(account, transaction);
 

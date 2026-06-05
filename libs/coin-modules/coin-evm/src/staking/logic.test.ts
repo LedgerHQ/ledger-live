@@ -134,26 +134,34 @@ describe("evm staking logic", () => {
   describe("isSeiAccountUnassociated", () => {
     it("returns false for a non-sei_evm currency", () => {
       const account = makeAccount("ethereum");
-      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(false);
+      expect(
+        isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+      ).toBe(false);
     });
 
     it("returns true for sei_evm with no operations", () => {
       const account = makeAccount("sei_evm");
-      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(true);
+      expect(
+        isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+      ).toBe(true);
     });
 
     it("returns true for sei_evm when all operations are incoming (account never appeared as sender)", () => {
       const account = makeAccount("sei_evm", [], {
         operations: [makeOperation(["0xOtherAddress"]), makeOperation(["0xAnotherAddress"])],
       });
-      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(true);
+      expect(
+        isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+      ).toBe(true);
     });
 
     it("returns false for sei_evm when the account appears as sender in at least one confirmed operation", () => {
       const account = makeAccount("sei_evm", [], {
         operations: [makeOperation(["0xOtherAddress"]), makeOperation(["0xMyAddress"])],
       });
-      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(false);
+      expect(
+        isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+      ).toBe(false);
     });
 
     it("returns true for sei_evm when the account only appears as sender in an unconfirmed operation", () => {
@@ -163,13 +171,17 @@ describe("evm staking logic", () => {
           { senders: ["0xMyAddress"], blockHeight: undefined } as unknown as Operation,
         ],
       });
-      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(true);
+      expect(
+        isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+      ).toBe(true);
     });
     it("returns false for sei_evm when the account is one of multiple senders in an operation", () => {
       const account = makeAccount("sei_evm", [], {
         operations: [makeOperation(["0xOtherAddress", "0xMyAddress"])],
       });
-      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(false);
+      expect(
+        isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+      ).toBe(false);
     });
   });
 

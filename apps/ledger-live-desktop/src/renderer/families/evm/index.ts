@@ -25,7 +25,14 @@ const family: EvmFamily = {
   message: {
     getMessageProperties,
   },
-  handlesEditTransaction: ({ account, parentAccount, mainAccount, operation, bridge, featureFlags }) => {
+  handlesEditTransaction: ({
+    account,
+    parentAccount,
+    mainAccount,
+    operation,
+    bridge,
+    featureFlags,
+  }) => {
     if (!operation.transactionRaw) {
       return null;
     }

@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import {
   createNativeStackNavigator,
   type NativeStackHeaderRightProps,
+  type NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -27,6 +28,32 @@ type NavigationProps = BaseComposite<
 >;
 
 const Stack = createNativeStackNavigator();
+
+const bottomSheetScreenOptions: NativeStackNavigationOptions = {
+  presentation: "transparentModal",
+  animation: "none",
+  headerShown: false,
+  gestureEnabled: false,
+  contentStyle: {
+    backgroundColor: "transparent",
+  },
+};
+
+export function getFlowStackScreenOptions({
+  defaultOptions,
+  customOptions,
+  isBottomSheet,
+}: Readonly<{
+  defaultOptions: NativeStackNavigationOptions;
+  customOptions?: NativeStackNavigationOptions;
+  isBottomSheet?: boolean;
+}>): NativeStackNavigationOptions {
+  return {
+    ...defaultOptions,
+    ...customOptions,
+    ...(isBottomSheet === true ? bottomSheetScreenOptions : {}),
+  };
+}
 
 function FlowHeaderRightClose(props: Readonly<{ onClose: () => void }>) {
   return <CloseWithConfirmation onClose={props.onClose} />;
@@ -133,7 +160,11 @@ export function FlowStackNavigator<
 
         // Apply custom screen options
         const customOptions = getScreenOptions ? getScreenOptions(step, stepConfig) : {};
-        const stepScreenOptions = { ...defaultOptions, ...customOptions };
+        const stepScreenOptions = getFlowStackScreenOptions({
+          defaultOptions,
+          customOptions,
+          isBottomSheet: stepConfig?.bottomSheet,
+        });
 
         // Generate initial params
         const defaultInitialParams = {
@@ -146,7 +177,7 @@ export function FlowStackNavigator<
         return {
           step,
           name: screenName,
-          component: component as (props: Record<string, never>) => React.JSX.Element | null,
+          component,
           options: stepScreenOptions,
           initialParams,
           listeners: stepConfig?.listeners,

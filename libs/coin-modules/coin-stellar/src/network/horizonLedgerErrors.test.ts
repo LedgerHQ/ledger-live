@@ -1,6 +1,9 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { NetworkError, NotFoundError } from "@stellar/stellar-sdk";
-import { messageFromHorizonUnknown, throwHorizonLedgerOrOperationsError } from "./horizonLedgerErrors";
+import {
+  messageFromHorizonUnknown,
+  throwHorizonLedgerOrOperationsError,
+} from "./horizonLedgerErrors";
 
 describe("messageFromHorizonUnknown", () => {
   it("returns message for Error", () => {
@@ -45,14 +48,17 @@ describe("throwHorizonLedgerOrOperationsError", () => {
     ).toThrow(LedgerAPI4xx);
   });
 
-  test.each([
-    ["401"],
-    ["403"],
-  ])("throws LedgerAPI4xx when message contains status code %s", code => {
-    expect(() =>
-      throwHorizonLedgerOrOperationsError(new Error(`Request failed: status code ${code}`), notFound),
-    ).toThrow(LedgerAPI4xx);
-  });
+  test.each([["401"], ["403"]])(
+    "throws LedgerAPI4xx when message contains status code %s",
+    code => {
+      expect(() =>
+        throwHorizonLedgerOrOperationsError(
+          new Error(`Request failed: status code ${code}`),
+          notFound,
+        ),
+      ).toThrow(LedgerAPI4xx);
+    },
+  );
 
   it("throws LedgerAPI5xx for 5xx status in message", () => {
     expect(() =>
@@ -60,11 +66,14 @@ describe("throwHorizonLedgerOrOperationsError", () => {
     ).toThrow(LedgerAPI5xx);
   });
 
-  test.each([["502"], ["500"]])("throws LedgerAPI5xx when message contains status code %s", code => {
-    expect(() =>
-      throwHorizonLedgerOrOperationsError(new Error(`upstream status code ${code}`), notFound),
-    ).toThrow(LedgerAPI5xx);
-  });
+  test.each([["502"], ["500"]])(
+    "throws LedgerAPI5xx when message contains status code %s",
+    code => {
+      expect(() =>
+        throwHorizonLedgerOrOperationsError(new Error(`upstream status code ${code}`), notFound),
+      ).toThrow(LedgerAPI5xx);
+    },
+  );
 
   it("throws NetworkDown for NetworkError", () => {
     expect(() =>
@@ -79,7 +88,9 @@ describe("throwHorizonLedgerOrOperationsError", () => {
     ["EPIPE", "write EPIPE broken pipe"],
     ["ETIMEDOUT", "connect ETIMEDOUT 10.0.0.1:443"],
   ])("throws NetworkDown when message contains %s", (_label, message) => {
-    expect(() => throwHorizonLedgerOrOperationsError(new Error(message), notFound)).toThrow(NetworkDown);
+    expect(() => throwHorizonLedgerOrOperationsError(new Error(message), notFound)).toThrow(
+      NetworkDown,
+    );
   });
 
   it("throws NetworkDown for undefined is not an object in message", () => {

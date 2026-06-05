@@ -93,7 +93,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
 
     try {
       const coinConfig = cosmosCoinConfig.getCoinConfig(currencyId);
-      cosmosChainParams[currencyId] = coinConfig ? ({ ...chain, ...coinConfig } as CosmosBase) : chain;
+      cosmosChainParams[currencyId] = coinConfig
+        ? ({ ...chain, ...coinConfig } as CosmosBase)
+        : chain;
     } catch {
       // coinConfig not yet initialized (bridges not loaded) — return defaults without caching
       // so enrichment is retried on the next call once bridges are set up

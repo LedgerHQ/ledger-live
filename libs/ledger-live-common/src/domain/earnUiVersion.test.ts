@@ -14,17 +14,10 @@ describe("normalizeEarnUiVersionOrNull", () => {
     expect(normalizeEarnUiVersionOrNull(raw)).toBe(expected);
   });
 
-  it.each([
-    [null],
-    [undefined],
-    ["v0"],
-    ["0"],
-    [0],
-    [-1],
-    [1.5],
-    ["v1.5"],
-    ["garbage"],
-  ])("returns null for invalid value %p", raw => {
-    expect(normalizeEarnUiVersionOrNull(raw)).toBeNull();
-  });
+  it.each([[null], [undefined], ["v0"], ["0"], [0], [-1], [1.5], ["v1.5"], ["garbage"]])(
+    "returns null for invalid value %p",
+    raw => {
+      expect(normalizeEarnUiVersionOrNull(raw)).toBeNull();
+    },
+  );
 });

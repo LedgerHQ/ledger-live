@@ -18,6 +18,7 @@ export function DeviceNotOnboarded({ device, sourceFlow }: DeviceNotOnboardedPro
         category={PAGE_CONNECT_APP.DeviceNotOnboarded}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <DeviceNotOnboardedView {...viewModel} />

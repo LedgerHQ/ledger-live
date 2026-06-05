@@ -40,7 +40,11 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
-import { useFeature, FeatureToggle, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import {
+  useFeature,
+  FeatureToggle,
+  useWalletFeaturesConfig,
+} from "@features/platform-feature-flags";
 import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,

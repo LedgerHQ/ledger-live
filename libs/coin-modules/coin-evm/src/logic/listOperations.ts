@@ -210,7 +210,7 @@ export async function listOperations(
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
   const explorerApi = getExplorerApi(currency);
-  const explorerOrder = options.limit === undefined ? "desc" : options.order ?? "desc";
+  const explorerOrder = options.limit === undefined ? "desc" : (options.order ?? "desc");
   const {
     lastCoinOperations,
     lastTokenOperations,

@@ -2,7 +2,6 @@ import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { FinalStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import { track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useFinalErrorViewModel } from "./useFinalErrorViewModel";
 import type { InitializerDevice } from "../../types";
@@ -19,7 +18,6 @@ jest.mock("../../hooks/useInitializerActions");
 
 const mockedTrack = jest.mocked(track);
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
-const TEST_SOURCE = "Portfolio";
 const SOURCE_FLOW = "my_ledger";
 const openSupport = jest.fn();
 const onCancel = jest.fn();
@@ -41,7 +39,6 @@ const state = {
 describe("useFinalErrorViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    previousRouteNameRef.current = TEST_SOURCE;
     mockedUseInitializerActions.mockReturnValue({
       openMyLedger: jest.fn(),
       openMyLedgerFirmwareUpdate: jest.fn(),
@@ -73,7 +70,6 @@ describe("useFinalErrorViewModel", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       modelId: DeviceModelId.europa,
       button: "Contact Ledger Support",
@@ -92,7 +88,6 @@ describe("useFinalErrorViewModel", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       modelId: DeviceModelId.europa,
       button: "Close",

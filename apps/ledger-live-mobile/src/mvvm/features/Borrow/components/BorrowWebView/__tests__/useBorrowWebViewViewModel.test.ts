@@ -53,7 +53,10 @@ describe("useBorrowWebViewViewModel", () => {
       }),
     );
 
-    const mergedHandlers = result.current.mergedCustomHandlers as unknown as Record<string, unknown>;
+    const mergedHandlers = result.current.mergedCustomHandlers as unknown as Record<
+      string,
+      unknown
+    >;
 
     expect(mergedHandlers.openAccount).toBe(overridingHandler);
   });

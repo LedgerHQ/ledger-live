@@ -18,7 +18,6 @@ import {
   getAccountCurrency,
   isTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
@@ -78,7 +77,6 @@ export default function NoFunds({ route }: Readonly<Props>) {
   }, [currency, swapAvailableIds]);
 
   const { page, track } = useAnalytics();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const onNavigate = useCallback(
     (name: string, options?: object) => {
       (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
@@ -118,9 +116,8 @@ export default function NoFunds({ route }: Readonly<Props>) {
     });
     navigateToSwapTab({
       navigation: navigation as unknown as NativeStackNavigationProp<BaseNavigatorStackParamList>,
-      shouldDisplayWallet40MainNav,
     });
-  }, [navigation, page, shouldDisplayWallet40MainNav, track]);
+  }, [navigation, page, track]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {

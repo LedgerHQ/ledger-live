@@ -55,9 +55,7 @@ export function validateInfoDialogParams(
   if (linkHref) {
     validatedLinkHref = validateUrl(linkHref) || undefined;
     if (!validatedLinkHref) {
-      throw new Error(
-        `Invalid params for ${handlerName}: 'linkHref' is not an allowed URL.`,
-      );
+      throw new Error(`Invalid params for ${handlerName}: 'linkHref' is not an allowed URL.`);
     }
   }
 

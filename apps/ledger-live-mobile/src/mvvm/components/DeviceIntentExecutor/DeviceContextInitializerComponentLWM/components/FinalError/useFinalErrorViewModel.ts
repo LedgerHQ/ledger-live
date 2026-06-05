@@ -4,7 +4,10 @@ import type { FinalStateType, EnsureAppReadyState } from "@ledgerhq/live-dmk-sha
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import type { SourceFlow } from "../../../utils/SourceFlowContext";
-import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
+import {
+  CONNECT_APP_BUTTON,
+  trackConnectAppButtonClicked,
+} from "../../../utils/trackDeviceIntent";
 
 type FinalErrorState = Extract<EnsureAppReadyState, { type: FinalStateType.Error }>;
 
@@ -20,7 +23,11 @@ export function useFinalErrorViewModel({ state, device, sourceFlow, onCancel }: 
   const modelId = device.modelId;
 
   const onCancelWithTracking = useCallback(() => {
-    trackConnectAppButtonClicked({ sourceFlow, modelId, button: CONNECT_APP_BUTTON.Close });
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId,
+      button: CONNECT_APP_BUTTON.Close,
+    });
     onCancel();
   }, [onCancel, sourceFlow, modelId]);
 

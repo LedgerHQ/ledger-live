@@ -1,21 +1,14 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
-import { NavigatorName } from "~/const/navigation";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 import { track } from "~/analytics";
 import { useProductTourDrawerViewModel } from "../useProductTourDrawerViewModel";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../../const";
 import { productTourCompletedSelector } from "~/reducers/settings";
 import { setProductTourCompleted } from "~/actions/settings";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setOverride } from "@shared/feature-flags";
-import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/types";
 
 const mockNavigate = jest.fn();
-
-jest.mock("@features/platform-feature-flags", () => ({
-  ...jest.requireActual("@features/platform-feature-flags"),
-  useWalletFeaturesConfig: jest.fn(),
-}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -35,16 +28,9 @@ const withProductTourCompleted = (state: State): State => ({
   settings: { ...state.settings, productTourCompleted: true },
 });
 
-const mockUseWalletFeaturesConfig = useWalletFeaturesConfig as jest.MockedFunction<
-  typeof useWalletFeaturesConfig
->;
-
 describe("useProductTourDrawerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseWalletFeaturesConfig.mockReturnValue({
-      shouldDisplayWallet40MainNav: true,
-    } as WalletFeaturesConfig);
   });
 
   describe("initial drawer state", () => {
@@ -269,10 +255,7 @@ describe("useProductTourDrawerViewModel", () => {
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Card);
     });
 
-    it('should navigate to Swap via Main navigator when Wallet40 main nav is enabled for "swap" action', () => {
-      mockUseWalletFeaturesConfig.mockReturnValue({
-        shouldDisplayWallet40MainNav: true,
-      } as WalletFeaturesConfig);
+    it('should navigate to Swap via Main navigator for "swap" action', () => {
       const { result } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
@@ -282,21 +265,11 @@ describe("useProductTourDrawerViewModel", () => {
       expect(result.current.isDrawerOpen).toBe(false);
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
         screen: NavigatorName.Swap,
+        params: {
+          screen: ScreenName.SwapTab,
+          params: {},
+        },
       });
-    });
-
-    it('should navigate directly to Swap when Wallet40 main nav is disabled for "swap" action', () => {
-      mockUseWalletFeaturesConfig.mockReturnValue({
-        shouldDisplayWallet40MainNav: false,
-      } as WalletFeaturesConfig);
-      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
-        overrideInitialState: withFeatureEnabled,
-      });
-
-      act(() => result.current.onPrimaryAction("swap"));
-
-      expect(result.current.isDrawerOpen).toBe(false);
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Swap);
     });
 
     it('should navigate to Portfolio via Main navigator and close drawer for "portfolio" action', () => {
@@ -312,7 +285,6 @@ describe("useProductTourDrawerViewModel", () => {
         params: { screen: NavigatorName.WalletTab },
       });
     });
-
   });
 
   describe("feature flag changes while drawer is open", () => {

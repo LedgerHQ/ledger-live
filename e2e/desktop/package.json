@@ -5,6 +5,8 @@
   "scripts": {
     "lint": "oxlint .",
     "lint:fix": "oxfmt . && oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
     "typecheck": "tsc --noEmit --project tsconfig.json --customConditions node",
     "test:playwright": "playwright test --config=playwright.config.ts",
     "test:playwright:setup": "playwright install chromium",
@@ -19,6 +21,7 @@
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@playwright/test": "catalog:",

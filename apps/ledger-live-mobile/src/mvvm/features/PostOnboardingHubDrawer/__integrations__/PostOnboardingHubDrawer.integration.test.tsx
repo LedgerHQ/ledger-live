@@ -2,7 +2,11 @@ import React from "react";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { assetsTransferAction, recoverAction, syncAccountsAction } from "~/logic/postOnboarding/actions";
+import {
+  assetsTransferAction,
+  recoverAction,
+  syncAccountsAction,
+} from "~/logic/postOnboarding/actions";
 import type { State } from "~/reducers/types";
 import { PostOnboardingHubDrawerWrapper } from "../PostOnboardingHubDrawerWrapper";
 

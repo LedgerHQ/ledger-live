@@ -170,7 +170,13 @@ const sharedRpcMock = {
       const r = await sharedRpcMock.getCoins({ owner, coinType: _coinType, cursor });
       return {
         objects: (r.data ?? []).map(
-          (c: { coinObjectId: string; version: string; digest: string; balance: string; coinType: string }) => ({
+          (c: {
+            coinObjectId: string;
+            version: string;
+            digest: string;
+            balance: string;
+            coinType: string;
+          }) => ({
             objectId: c.coinObjectId,
             version: c.version,
             digest: c.digest,

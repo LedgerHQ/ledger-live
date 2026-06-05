@@ -3,6 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { Box, Pressable, Skeleton, Text, Trend } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme, type LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import MarketInsightDefinitionSheet from "LLM/components/MarketInsightDefinitionSheet";
+import MarketInsightErrorCard from "LLM/components/MarketInsightErrorCard";
 import type { MarketCapCardViewProps } from "./types";
 
 const MARKET_CAP_CARD_HEIGHT = 68;
@@ -30,7 +31,16 @@ export function MarketCapCardView({
     );
   }
 
-  if (isError) return null;
+  if (isError) {
+    return (
+      <MarketInsightErrorCard
+        title={t("marketCapCard.title")}
+        message={t("marketBanner.connectionFailed")}
+        width={width}
+        testID="market-cap-card-error"
+      />
+    );
+  }
 
   return (
     <>

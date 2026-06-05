@@ -54,31 +54,40 @@ function rawOp(
 describe("getBlock", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    fetchLedgerRecordMock.mockImplementation(async (seq: number) =>
-      ({
-        sequence: seq,
-        hash: `LEDGER-HASH-${seq}`,
-        closed_at: "2018-09-15T15:40:05Z",
-        ...(seq > 1 && { prev_hash: `LEDGER-HASH-${seq - 1}` }),
-      }) as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
+    fetchLedgerRecordMock.mockImplementation(
+      async (seq: number) =>
+        ({
+          sequence: seq,
+          hash: `LEDGER-HASH-${seq}`,
+          closed_at: "2018-09-15T15:40:05Z",
+          ...(seq > 1 && { prev_hash: `LEDGER-HASH-${seq - 1}` }),
+        }) as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
     );
   });
 
   describe("height validation", () => {
     it("rejects height 0", async () => {
-      await expect(getBlock(0)).rejects.toThrow("getBlock: height must be a positive integer, got 0");
+      await expect(getBlock(0)).rejects.toThrow(
+        "getBlock: height must be a positive integer, got 0",
+      );
     });
 
     it("rejects negative height", async () => {
-      await expect(getBlock(-1)).rejects.toThrow("getBlock: height must be a positive integer, got -1");
+      await expect(getBlock(-1)).rejects.toThrow(
+        "getBlock: height must be a positive integer, got -1",
+      );
     });
 
     it("rejects non-integer height", async () => {
-      await expect(getBlock(2.5)).rejects.toThrow("getBlock: height must be a positive integer, got 2.5");
+      await expect(getBlock(2.5)).rejects.toThrow(
+        "getBlock: height must be a positive integer, got 2.5",
+      );
     });
 
     it("rejects NaN", async () => {
-      await expect(getBlock(Number.NaN)).rejects.toThrow("getBlock: height must be a positive integer, got NaN");
+      await expect(getBlock(Number.NaN)).rejects.toThrow(
+        "getBlock: height must be a positive integer, got NaN",
+      );
     });
 
     it("rejects Infinity", async () => {
@@ -150,7 +159,9 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    expect(block.transactions[0].feesPayer).toBe("GFEEPAYERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    expect(block.transactions[0].feesPayer).toBe(
+      "GFEEPAYERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    );
   });
 
   it("marks failed transactions with empty operations but keeps fees", async () => {
@@ -224,7 +235,11 @@ describe("getBlock", () => {
     const block = await getBlock(10);
     const transfers = block.transactions[0].operations.filter(o => o.type === "transfer");
     expect(transfers[0]).toMatchObject({
-      asset: { type: "token", assetReference: "USD", assetOwner: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" },
+      asset: {
+        type: "token",
+        assetReference: "USD",
+        assetOwner: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      },
     });
   });
 
@@ -353,17 +368,20 @@ describe("getBlock", () => {
       asset: { type: "native" },
       amount: -expectedDebit,
     });
-    const wrongDebit = BigInt(parseAPIValue(sendMaxStr).integerValue(BigNumber.ROUND_FLOOR).toFixed(0));
+    const wrongDebit = BigInt(
+      parseAPIValue(sendMaxStr).integerValue(BigNumber.ROUND_FLOOR).toFixed(0),
+    );
     expect(ops[0].amount).not.toBe(-wrongDebit);
   });
 
   it("omits parent in block info for ledger height 1", async () => {
-    fetchLedgerRecordMock.mockImplementation(async (seq: number) =>
-      ({
-        sequence: seq,
-        hash: `LEDGER-HASH-${seq}`,
-        closed_at: "2018-09-15T15:40:05Z",
-      }) as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
+    fetchLedgerRecordMock.mockImplementation(
+      async (seq: number) =>
+        ({
+          sequence: seq,
+          hash: `LEDGER-HASH-${seq}`,
+          closed_at: "2018-09-15T15:40:05Z",
+        }) as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
     );
     fetchAllLedgerOperationsMock.mockResolvedValue([]);
 
@@ -424,7 +442,11 @@ describe("getBlock", () => {
 
     const block = await getBlock(10);
     const transfers = block.transactions[0].operations.filter(o => o.type === "transfer");
-    expect(transfers.some(o => "peer" in o && o.peer === "GTO_MUXEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")).toBe(true);
+    expect(
+      transfers.some(
+        o => "peer" in o && o.peer === "GTO_MUXEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      ),
+    ).toBe(true);
   });
 
   it("maps change_trust with zero limit as OPT_OUT", async () => {
@@ -468,7 +490,9 @@ describe("getBlock", () => {
 
   it("path_payment_strict_receive uses send_max when source_amount is absent", async () => {
     const sendMaxStr = "0.0200000";
-    const expected = BigInt(parseAPIValue(sendMaxStr).integerValue(BigNumber.ROUND_FLOOR).toFixed(0));
+    const expected = BigInt(
+      parseAPIValue(sendMaxStr).integerValue(BigNumber.ROUND_FLOOR).toFixed(0),
+    );
     fetchAllLedgerOperationsMock.mockResolvedValue([
       rawOp({
         type: "path_payment_strict_receive",
@@ -484,7 +508,10 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    const sender = block.transactions[0].operations.find(o => o.type === "transfer" && o.address === "GFROMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    const sender = block.transactions[0].operations.find(
+      o =>
+        o.type === "transfer" && o.address === "GFROMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    );
     expect(sender?.amount).toBe(-expected);
   });
 

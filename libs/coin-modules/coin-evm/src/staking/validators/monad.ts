@@ -357,9 +357,14 @@ const fetchStakeForValId = async (
     () => null,
   );
   let validatorAddress: string | undefined;
+  let validatorName: string | undefined;
   if (validator) {
     const [, , , , , , , , , , secpPubkey] = validator;
     validatorAddress = ethers.computeAddress(secpPubkey);
+    const secp = secpPubkey.toLowerCase().replace(/^0x/, "");
+    if (secp.length > 0) {
+      validatorName = (await validatorNameCache(currency.id, secp).catch(() => null)) ?? undefined;
+    }
   }
 
   const asset: AssetInfo = {
@@ -370,6 +375,7 @@ const fetchStakeForValId = async (
   const details = {
     contractAddress,
     ...(validatorAddress ? { validator: validatorAddress } : {}),
+    ...(validatorName ? { validatorName } : {}),
     validatorId: valId.toString(),
   };
   const makeStake = (state: Stake["state"], amount: bigint): Stake => ({

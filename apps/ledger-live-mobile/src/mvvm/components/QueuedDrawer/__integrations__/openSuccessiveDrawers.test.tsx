@@ -266,12 +266,7 @@ describe("QueuedDrawer", () => {
     await helpers.waitForMainScreenDisappear();
     expect(await findByText(drawerOnScreen1Text)).toBeVisible();
     await user.press(elements.closeButton());
-    await helpers.expectDrawersClosed(
-      drawerOnScreen1Text,
-      drawer1Text,
-      drawer2Text,
-      drawer4Text,
-    );
+    await helpers.expectDrawersClosed(drawerOnScreen1Text, drawer1Text, drawer2Text, drawer4Text);
     await user.press(elements.navigateBackButton());
     await helpers.expectBackOnMainScreen();
     await helpers.openDrawer1();

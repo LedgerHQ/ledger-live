@@ -526,9 +526,7 @@ describe("startSyncJob", () => {
 
     const tx1 = makeNativeTx({
       txid: "tx-receive",
-      orchardNotes: [
-        { amount: 100000n, memo: "", transferType: "incoming", nullifier: NF1 },
-      ],
+      orchardNotes: [{ amount: 100000n, memo: "", transferType: "incoming", nullifier: NF1 }],
       saplingNotes: [],
     });
 

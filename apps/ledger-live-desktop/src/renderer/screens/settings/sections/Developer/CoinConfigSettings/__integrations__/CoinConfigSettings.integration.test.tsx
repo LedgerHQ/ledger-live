@@ -72,10 +72,7 @@ describe("CoinConfigSettings integration", () => {
     const { user } = renderSettings();
 
     await user.click(screen.getByRole("button", { name: /Show/i }));
-    await user.type(
-      await screen.findByPlaceholderText(/Search a config key/i),
-      "solana",
-    );
+    await user.type(await screen.findByPlaceholderText(/Search a config key/i), "solana");
 
     expect(screen.getByText(SOLANA_KEY)).toBeVisible();
     expect(screen.queryByText(ETH_KEY)).not.toBeInTheDocument();
@@ -85,10 +82,7 @@ describe("CoinConfigSettings integration", () => {
     const { user } = renderSettings();
 
     await user.click(screen.getByRole("button", { name: /Show/i }));
-    await user.type(
-      await screen.findByPlaceholderText(/Search a config key/i),
-      "countervalues",
-    );
+    await user.type(await screen.findByPlaceholderText(/Search a config key/i), "countervalues");
 
     expect(screen.getByText(COUNTERVALUES_KEY)).toBeVisible();
   });

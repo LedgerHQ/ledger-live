@@ -3,7 +3,7 @@ import { Text, TouchableOpacity } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { render, screen } from "@tests/test-renderer";
-import { FlowStackNavigator } from "../FlowStackNavigator";
+import { FlowStackNavigator, getFlowStackScreenOptions } from "../FlowStackNavigator";
 import type { FlowStep, StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import type { ReactNativeFlowConfig } from "../types";
 
@@ -117,6 +117,31 @@ describe("FlowStackNavigator", () => {
     renderFlowNavigator(registryWithMissing, defaultFlowConfig);
     expect(screen.getByTestId("flow-step1")).toBeOnTheScreen();
     expect(screen.getByText("Step 1")).toBeOnTheScreen();
+  });
+
+  it("should apply transparent modal options to bottom sheet steps", () => {
+    const options = getFlowStackScreenOptions({
+      defaultOptions: {
+        title: "Default title",
+      },
+      customOptions: {
+        title: "Custom title",
+      },
+      isBottomSheet: true,
+    });
+
+    expect(options).toEqual(
+      expect.objectContaining({
+        animation: "none",
+        contentStyle: {
+          backgroundColor: "transparent",
+        },
+        gestureEnabled: false,
+        headerShown: false,
+        presentation: "transparentModal",
+        title: "Custom title",
+      }),
+    );
   });
 
   describe("navigation", () => {

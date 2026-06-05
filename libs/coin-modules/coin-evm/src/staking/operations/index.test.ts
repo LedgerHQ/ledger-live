@@ -15,78 +15,69 @@ describe("buildTransactionParams", () => {
     const currencyId = "sei_evm";
 
     it("should build params for delegate operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "delegate" as StakingOperation,
-        { valAddress: validatorAddress, amount },
-      );
+      const params = buildTransactionParams(currencyId, "delegate" as StakingOperation, {
+        valAddress: validatorAddress,
+        amount,
+      });
 
       expect(params).toEqual([validatorAddress]);
     });
 
     it("should build params for undelegate operation (amount converted from 18-dec EVM to 6-dec usei)", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "undelegate" as StakingOperation,
-        { valAddress: validatorAddress, amount },
-      );
+      const params = buildTransactionParams(currencyId, "undelegate" as StakingOperation, {
+        valAddress: validatorAddress,
+        amount,
+      });
 
       expect(params).toEqual([validatorAddress, amountInUsei]);
     });
 
     it("should build params for redelegate operation (amount converted from 18-dec EVM to 6-dec usei)", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "redelegate" as StakingOperation,
-        { valAddress: validatorAddress, amount, dstValAddress: dstValidatorAddress },
-      );
+      const params = buildTransactionParams(currencyId, "redelegate" as StakingOperation, {
+        valAddress: validatorAddress,
+        amount,
+        dstValAddress: dstValidatorAddress,
+      });
 
       expect(params).toEqual([validatorAddress, dstValidatorAddress, amountInUsei]);
     });
 
     it("should truncate sub-usei precision on undelegate (precompile has 6-decimal precision)", () => {
       // 1.234567891 SEI -> truncated to 1.234567 uSEI (9th and later decimals dropped)
-      const params = buildTransactionParams(
-        currencyId,
-        "undelegate" as StakingOperation,
-        { valAddress: validatorAddress, amount: 1234567891000000000n },
-      );
+      const params = buildTransactionParams(currencyId, "undelegate" as StakingOperation, {
+        valAddress: validatorAddress,
+        amount: 1234567891000000000n,
+      });
 
       expect(params).toEqual([validatorAddress, 1234567n]);
     });
 
     it("should throw error for redelegate without dstValAddress", () => {
       expect(() => {
-        buildTransactionParams(
-          currencyId,
-          "redelegate" as StakingOperation,
-          { valAddress: validatorAddress, amount },
-        );
+        buildTransactionParams(currencyId, "redelegate" as StakingOperation, {
+          valAddress: validatorAddress,
+          amount,
+        });
       }).toThrow("RedelegateDstValAddressRequired");
     });
 
     it("should build params for getStakedBalance operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "getStakedBalance" as StakingOperation,
-        {
-          valAddress: validatorAddress,
-          amount,
-          dstValAddress: validatorAddress,
-          delegator: delegatorAddress,
-        },
-      );
+      const params = buildTransactionParams(currencyId, "getStakedBalance" as StakingOperation, {
+        valAddress: validatorAddress,
+        amount,
+        dstValAddress: validatorAddress,
+        delegator: delegatorAddress,
+      });
 
       expect(params).toEqual([delegatorAddress, validatorAddress]);
     });
 
     it("should throw error for getStakedBalance without required params", () => {
       expect(() => {
-        buildTransactionParams(
-          currencyId,
-          "getStakedBalance" as StakingOperation,
-          { valAddress: validatorAddress, amount },
-        );
+        buildTransactionParams(currencyId, "getStakedBalance" as StakingOperation, {
+          valAddress: validatorAddress,
+          amount,
+        });
       }).toThrow("Sei getStakedBalance requires delegator and dstValAddress");
     });
 
@@ -125,51 +116,46 @@ describe("buildTransactionParams", () => {
     const celoValidatorAddress = "0x123456789abcdef";
 
     it("should build params for delegate operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "delegate" as StakingOperation,
-        { valAddress: celoValidatorAddress, amount },
-      );
+      const params = buildTransactionParams(currencyId, "delegate" as StakingOperation, {
+        valAddress: celoValidatorAddress,
+        amount,
+      });
 
       expect(params).toEqual([celoValidatorAddress, amount]);
     });
 
     it("should build params for undelegate operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "undelegate" as StakingOperation,
-        { valAddress: celoValidatorAddress, amount },
-      );
+      const params = buildTransactionParams(currencyId, "undelegate" as StakingOperation, {
+        valAddress: celoValidatorAddress,
+        amount,
+      });
 
       expect(params).toEqual([celoValidatorAddress, amount]);
     });
 
     it("should throw error for redelegate operation (not supported)", () => {
       expect(() => {
-        buildTransactionParams(
-          currencyId,
-          "redelegate" as StakingOperation,
-          { valAddress: celoValidatorAddress, amount },
-        );
+        buildTransactionParams(currencyId, "redelegate" as StakingOperation, {
+          valAddress: celoValidatorAddress,
+          amount,
+        });
       }).toThrow("Celo does not support redelegate");
     });
 
     it("should build params for getStakedBalance operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "getStakedBalance" as StakingOperation,
-        { valAddress: celoValidatorAddress, amount },
-      );
+      const params = buildTransactionParams(currencyId, "getStakedBalance" as StakingOperation, {
+        valAddress: celoValidatorAddress,
+        amount,
+      });
 
       expect(params).toEqual([celoValidatorAddress]);
     });
 
     it("should build params for getUnstakedBalance operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "getUnstakedBalance" as StakingOperation,
-        { valAddress: celoValidatorAddress, amount },
-      );
+      const params = buildTransactionParams(currencyId, "getUnstakedBalance" as StakingOperation, {
+        valAddress: celoValidatorAddress,
+        amount,
+      });
 
       expect(params).toEqual([celoValidatorAddress]);
     });
@@ -178,21 +164,19 @@ describe("buildTransactionParams", () => {
   describe("Error handling", () => {
     it("should throw error for unsupported currency", () => {
       expect(() => {
-        buildTransactionParams(
-          "unsupported_currency",
-          "delegate" as StakingOperation,
-          { valAddress: validatorAddress, amount },
-        );
+        buildTransactionParams("unsupported_currency", "delegate" as StakingOperation, {
+          valAddress: validatorAddress,
+          amount,
+        });
       }).toThrow("Unsupported staking currency: unsupported_currency");
     });
 
     it("should throw error for unsupported operation type", () => {
       expect(() => {
-        buildTransactionParams(
-          "sei_evm",
-          "invalidOperation" as StakingOperation,
-          { valAddress: validatorAddress, amount },
-        );
+        buildTransactionParams("sei_evm", "invalidOperation" as StakingOperation, {
+          valAddress: validatorAddress,
+          amount,
+        });
       }).toThrow("Unsupported transaction type for sei_evm: invalidOperation");
     });
 

@@ -59,7 +59,10 @@ const parentCurrency = {
   blockAvgTime: 9,
   units: [{ name: "TRX", code: "TRX", magnitude: 6 }],
   explorerViews: [
-    { tx: "https://tronscan.org/#/transaction/$hash", address: "https://tronscan.org/#/address/$address" },
+    {
+      tx: "https://tronscan.org/#/transaction/$hash",
+      address: "https://tronscan.org/#/address/$address",
+    },
   ],
   keywords: ["trx", "tron"],
 };

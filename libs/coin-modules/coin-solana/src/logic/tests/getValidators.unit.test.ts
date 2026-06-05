@@ -47,7 +47,11 @@ describe("getValidators", () => {
       .mockResolvedValueOnce({
         status: 200,
         data: [
-          { address: "VoteAccountA1111111111111111111111111111111", delegator_apy: 0.07, name: "A" },
+          {
+            address: "VoteAccountA1111111111111111111111111111111",
+            delegator_apy: 0.07,
+            name: "A",
+          },
         ],
       });
 

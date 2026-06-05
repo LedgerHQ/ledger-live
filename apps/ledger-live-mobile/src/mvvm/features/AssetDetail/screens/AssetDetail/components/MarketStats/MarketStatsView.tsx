@@ -70,10 +70,7 @@ export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipO
                         accessibilityLabel={stat.tooltip.title}
                       />
                     </TooltipTrigger>
-                    <TooltipContent
-                      title={stat.tooltip.title}
-                      content={stat.tooltip.content}
-                    />
+                    <TooltipContent title={stat.tooltip.title} content={stat.tooltip.content} />
                   </Tooltip>
                 )}
               </DescriptionItemLeading>

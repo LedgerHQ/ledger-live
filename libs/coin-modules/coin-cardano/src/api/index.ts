@@ -24,12 +24,14 @@ import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBal
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import coinConfig, { type CardanoConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { getValidators } from "../logic/getValidators";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
+import { validateIntent } from "../logic/validateIntent";
 
 export function createApi(config: CardanoConfig, currencyId: string): CoinModuleApi<StringMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -71,20 +73,18 @@ export function createApi(config: CardanoConfig, currencyId: string): CoinModule
       transactionIntent: TransactionIntent<StringMemo>,
       _customFeesParameters?: FeeEstimation["parameters"],
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
-    combine: (_tx: string, _signature: string, _pubkey?: string): string => {
-      throw new Error("combine is not supported");
-    },
+    combine,
     broadcast: (tx: string, broadcastConfig?: BroadcastConfig): Promise<string> =>
       broadcast(currency, { signature: tx, broadcastConfig }),
     validateIntent: (
-      _transactionIntent: TransactionIntent<StringMemo>,
-      _balances: Balance[],
-      _customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
+      transactionIntent: TransactionIntent<StringMemo>,
+      balances: Balance[],
+      customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> =>
+      validateIntent(currency, transactionIntent, balances, customFees),
+    // Cardano is UTXO-based: no per-account sequence/nonce to advance.
     getNextSequence: (_address: string): Promise<bigint> => {
-      throw new Error("getNextSequence is not supported");
+      throw new Error("getNextSequence is not applicable for Cardano");
     },
     validateAddress: (
       _address: string,

@@ -42,9 +42,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = useAccountBridge<BtcTransaction>(account, parentAccount);
 
-  const [transactionToEdit, setTransactionToEdit] = useState<BtcTransaction | undefined>(
-    undefined,
-  );
+  const [transactionToEdit, setTransactionToEdit] = useState<BtcTransaction | undefined>(undefined);
   useEffect(() => {
     let cancelled = false;
     const transactionRaw = {
@@ -99,7 +97,6 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   const [selectedMethod, setSelectedMethod] = useState<EditType | null>(null);
 
   const isOldestEditableOperation = isOldestBitcoinPendingOperation(mainAccount, operation.date);
-
 
   const onSelect = useCallback(
     async (option: EditType) => {

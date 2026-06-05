@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Platform } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
@@ -65,7 +65,6 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
 
   const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
 
-  const { isEnabled: isLwm40Enabled } = useWalletFeaturesConfig("mobile");
   const insets = useSafeAreaInsets();
 
   // Capture the initial source to prevent webview refreshes.
@@ -89,7 +88,7 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
       shareAnalytics,
       hasSeenAnalyticsOptInPrompt,
       isModularDrawer: isLlmModularDrawer ? "true" : "false",
-      lwm40enabled: isLwm40Enabled ? "true" : "false",
+      lwm40enabled: "true",
       safeAreaTop: insets.top.toString(),
       safeAreaBottom: insets.bottom.toString(),
       safeAreaLeft: insets.left.toString(),
@@ -109,7 +108,6 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
       shareAnalytics,
       hasSeenAnalyticsOptInPrompt,
       isLlmModularDrawer,
-      isLwm40Enabled,
       insets.top,
       insets.bottom,
       insets.left,

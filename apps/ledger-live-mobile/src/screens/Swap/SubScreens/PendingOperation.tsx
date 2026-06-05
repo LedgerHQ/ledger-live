@@ -15,12 +15,10 @@ import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
 import { SWAP_VERSION } from "../utils";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigation/navigateBackToSwapTab";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { isEmbeddedSwap, sponsored } = route.params;
   const syncAccounts = useSyncAllAccounts();
@@ -35,9 +33,8 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
 
     navigateBackToSwapTab({
       navigation,
-      shouldDisplayWallet40MainNav,
     });
-  }, [navigation, shouldDisplayWallet40MainNav]);
+  }, [navigation]);
 
   useEffect(() => {
     navigation.setOptions({

@@ -9,7 +9,13 @@ let originalGetCoinConfig: CoinConfig<StellarCoinConfig>;
 
 /** Minimal Horizon payment op shape for nock fixtures (embedded.records). */
 const MINIMAL_HORIZON_PAYMENT_OP = {
-  _links: { self: { href: "" }, transaction: { href: "" }, effects: { href: "" }, succeeds: { href: "" }, precedes: { href: "" } },
+  _links: {
+    self: { href: "" },
+    transaction: { href: "" },
+    effects: { href: "" },
+    succeeds: { href: "" },
+    precedes: { href: "" },
+  },
   id: "1",
   paging_token: "1",
   transaction_successful: true,
@@ -70,7 +76,9 @@ describe("fetchLedgerRecord / fetchAllLedgerOperations (nock)", () => {
       .get(uri => uri.startsWith("/ledgers/424243/operations"))
       .reply(404, { status: 404, type: "https://stellar.org/horizon-errors/not_found" });
 
-    await expect(fetchAllLedgerOperations(424243)).rejects.toThrow("Stellar ledger 424243 not found");
+    await expect(fetchAllLedgerOperations(424243)).rejects.toThrow(
+      "Stellar ledger 424243 not found",
+    );
   });
 
   it("fetchLedgerRecord returns ledger on 200", async () => {
@@ -111,7 +119,9 @@ describe("fetchLedgerRecord / fetchAllLedgerOperations (nock)", () => {
       _embedded: { records: [MINIMAL_HORIZON_PAYMENT_OP] },
     };
 
-    nock(HORIZON).get(uri => uri.includes("/ledgers/10/operations")).reply(200, page);
+    nock(HORIZON)
+      .get(uri => uri.includes("/ledgers/10/operations"))
+      .reply(200, page);
 
     const records = await fetchAllLedgerOperations(10);
     expect(records).toHaveLength(1);

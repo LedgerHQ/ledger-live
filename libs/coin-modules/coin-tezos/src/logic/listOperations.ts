@@ -478,7 +478,7 @@ function convertOperation(
   // For transactions, the initiator (if present) is the fee payer (internal/sub-operations triggered by contracts).
   // Otherwise, the sender is the fee payer. For delegation/reveal/staking there is no initiator; sender is the fee payer.
   const feesPayer = isAPITransactionType(operation)
-    ? operation.initiator?.address ?? sender?.address
+    ? (operation.initiator?.address ?? sender?.address)
     : sender?.address;
 
   const targetAddress = resolveTargetAddress(operation);

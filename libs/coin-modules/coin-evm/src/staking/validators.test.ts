@@ -60,7 +60,8 @@ describe("staking/validators", () => {
             validatorAddress: "seivaloper1abc",
             name: "John",
             commission: 0.05,
-            tokens: "100",
+            // REST returns usei (6 decimals); scaled to sei_evm's 18-decimal unit (×10^12).
+            tokens: "100000000000000",
             votingPower: 0,
             estimatedYearlyRewardsRate: 0,
           }),
@@ -68,7 +69,7 @@ describe("staking/validators", () => {
             validatorAddress: "seivaloper1def",
             name: "Doe",
             commission: 1,
-            tokens: "999",
+            tokens: "999000000000000",
             votingPower: 1,
             estimatedYearlyRewardsRate: 0,
           }),
@@ -271,7 +272,7 @@ describe("staking/validators", () => {
               operator_address: "seivaloper1x",
               description: { moniker: "X" },
               commission: { commission_rates: { rate: "0.1" } },
-              // Token amounts coming from Sei validator API are strings that represent integers
+              // Token amounts coming from Sei validator API are usei (6 decimals) integer strings
               tokens: "42",
             },
           ],
@@ -285,7 +286,8 @@ describe("staking/validators", () => {
         {
           address: "seivaloper1x",
           name: "X",
-          balance: 42n,
+          // 42 usei scaled to sei_evm's 18-decimal unit (×10^12).
+          balance: 42000000000000n,
           commissionRate: "0.1",
           apy: 0,
         },

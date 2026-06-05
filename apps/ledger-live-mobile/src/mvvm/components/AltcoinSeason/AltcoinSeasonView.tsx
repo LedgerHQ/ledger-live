@@ -3,6 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import MarketInsightDefinitionSheet from "LLM/components/MarketInsightDefinitionSheet";
+import MarketInsightErrorCard from "LLM/components/MarketInsightErrorCard";
 import type { AltcoinSeasonViewProps } from "./types";
 import { AltcoinSeasonArc } from "./AltcoinSeasonArc";
 
@@ -33,7 +34,16 @@ export function AltcoinSeasonView({
     );
   }
 
-  if (!data || isError) return null;
+  if (!data || isError) {
+    return (
+      <MarketInsightErrorCard
+        title={t("altcoinSeason.title")}
+        message={t("marketBanner.connectionFailed")}
+        width={width}
+        testID="altcoin-season-card-error"
+      />
+    );
+  }
 
   const { value } = data;
 

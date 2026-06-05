@@ -1,9 +1,6 @@
 import { renderHook, act, withFlagOverrides } from "@tests/test-renderer";
 import { useFirstStepSyncOnboardingViewModel } from "./useFirstStepSyncOnboardingViewModel";
-import {
-  FirstStepCompanionStepKey,
-  SEED_STATE,
-} from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import { FirstStepCompanionStepKey, SEED_STATE } from "../../types";
 import type { UseFirstStepSyncOnboardingViewModelProps } from "./types";
 import type { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import type { State } from "~/reducers/types";
@@ -100,14 +97,13 @@ jest.mock(
   }),
 );
 
-const withProtectServicesMobile =
-  (
-    enabled: boolean,
-    params: { protectId?: string } & Record<string, unknown> = {},
-  ): ((state: State) => State) =>
-    withFlagOverrides({
-      protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
-    });
+const withProtectServicesMobile = (
+  enabled: boolean,
+  params: { protectId?: string } & Record<string, unknown> = {},
+): ((state: State) => State) =>
+  withFlagOverrides({
+    protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
+  });
 
 describe("useFirstStepSyncOnboardingViewModel", () => {
   const device = {

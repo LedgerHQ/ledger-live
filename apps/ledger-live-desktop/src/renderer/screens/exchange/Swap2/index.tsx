@@ -8,7 +8,6 @@ import SwapNavbar from "./Navbar";
 import { SwapApp } from "./App";
 import { cn } from "LLD/utils/cn";
 import PageHeader from "LLD/components/PageHeader";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const Main = styled.main`
   display: flex;
@@ -36,7 +35,6 @@ const GlobalStyle = createGlobalStyle`
 
 const Swap2 = () => {
   const { t } = useTranslation();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
 
   const content = (
     <Box className={cn(["bg-canvas", "flex-1"])}>
@@ -51,16 +49,12 @@ const Swap2 = () => {
     </Box>
   );
 
-  if (shouldDisplayWallet40MainNav) {
-    return (
-      <div className="-mt-8 flex flex-1 flex-col gap-24 pl-16">
-        <PageHeader title={t("swap.title")} />
-        {content}
-      </div>
-    );
-  }
-
-  return content;
+  return (
+    <div className="-mt-8 flex flex-1 flex-col gap-24 pl-16">
+      <PageHeader title={t("swap.title")} />
+      {content}
+    </div>
+  );
 };
 
 export default Swap2;

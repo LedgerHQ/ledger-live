@@ -77,11 +77,15 @@ const getMainActions = ({
       ];
       break;
     case "earning-choice":
-    case "stake":
-      // TODO: route "stake" to the Tezos stake flow once it lands; for now both land on EarnRewards.
       navigationParams = [
         NavigatorName.TezosDelegationFlow,
         { screen: ScreenName.TezosEarnRewards, params: earnParams },
+      ];
+      break;
+    case "stake":
+      navigationParams = [
+        NavigatorName.TezosStakeFlow,
+        { screen: ScreenName.TezosStakeAmount, params: earnParams },
       ];
       break;
     case "delegate":

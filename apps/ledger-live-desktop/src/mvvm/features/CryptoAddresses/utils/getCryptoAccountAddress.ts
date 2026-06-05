@@ -7,5 +7,5 @@ export function getCryptoAccountAddress(
 ): string {
   return account.type === "Account"
     ? account.freshAddress
-    : lookupParentAccount(account.parentId)?.freshAddress ?? "";
+    : (lookupParentAccount(account.parentId)?.freshAddress ?? "");
 }

@@ -5,11 +5,22 @@ import type { StringMemo, TransactionIntent } from "@ledgerhq/coin-module-framew
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 
 describe("validateIntent", () => {
-  it("throws an unsupported error", () => {
+  it("delegates to the validateIntent logic (flags a missing recipient)", async () => {
     const api = createApi(config, "cardano");
 
-    expect(() => api.validateIntent({} as TransactionIntent<StringMemo>, [])).toThrow(
-      "validateIntent is not supported",
-    );
+    const intent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "addr1_sender",
+      recipient: "",
+      amount: 1_000_000n,
+      asset: { type: "native" },
+    } as TransactionIntent<StringMemo>;
+
+    const res = await api.validateIntent(intent, [
+      { asset: { type: "native" }, value: 10_000_000n },
+    ]);
+
+    expect(res.errors.recipient?.name).toBe("RecipientRequired");
   });
 });

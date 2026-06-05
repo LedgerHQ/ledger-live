@@ -2,7 +2,10 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import type { CantonAccount, Transaction as CantonTransaction } from "@ledgerhq/live-common/families/canton/types";
+import type {
+  CantonAccount,
+  Transaction as CantonTransaction,
+} from "@ledgerhq/live-common/families/canton/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import LText from "~/components/LText";

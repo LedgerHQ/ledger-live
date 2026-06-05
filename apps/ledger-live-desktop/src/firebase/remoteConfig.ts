@@ -1,11 +1,16 @@
-import { initializeApp, FirebaseApp } from "firebase/app";
+import { initializeApp, deleteApp, FirebaseApp } from "firebase/app";
 import {
   getRemoteConfig,
   fetchAndActivate,
   getAll,
+  getValue,
   RemoteConfig,
 } from "firebase/remote-config";
 import snakeCase from "lodash/snakeCase";
+import isMatch from "lodash/isMatch";
+import * as fs from "fs";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
@@ -123,4 +128,100 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
     resolveReady?.();
     resolveReady = null;
   }
+}
+
+const parseEnvFile = (fileContent: string) => {
+  const lines = fileContent.split("\n");
+  const envVariables: { [key: string]: string } = {};
+  lines.forEach(line => {
+    const [key, value] = line.split("=");
+    if (key && value) {
+      envVariables[key.trim()] = value.trim().replace(/^"(.*)"$/, "$1");
+    }
+  });
+  return envVariables;
+};
+
+// Spins up a parallel Firebase app per env, fetches its remote config, and warns when remote
+// `config_*` values diverge from the local defaults declared via LiveConfig. Dev-only.
+const warnOnConfigMismatch = async () => {
+  if (!__DEV__) {
+    return;
+  }
+  const envs = ["production", "staging", "testing", "development"];
+  envs.forEach(async (env: string) => {
+    const envFilePath = `./.env.${env}`;
+    let apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, envVars;
+    try {
+      const fileContent = await fs.promises.readFile(envFilePath, "utf8");
+      envVars = parseEnvFile(fileContent);
+      apiKey = envVars["FIREBASE_API_KEY"];
+      authDomain = envVars["FIREBASE_AUTH_DOMAIN"];
+      projectId = envVars["FIREBASE_PROJECT_ID"];
+      storageBucket = envVars["FIREBASE_STORAGE_BUCKET"];
+      messagingSenderId = envVars["FIREBASE_MESSAGING_SENDER_ID"];
+      appId = envVars["FIREBASE_APP_ID"];
+    } catch {
+      apiKey = undefined;
+    }
+
+    const firebaseOptions = apiKey
+      ? { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId }
+      : getFirebaseConfig();
+    const firebaseApp = initializeApp(firebaseOptions, env);
+    const envRemoteConfig = getRemoteConfig(firebaseApp);
+    envRemoteConfig.settings.minimumFetchIntervalMillis = 0;
+    await fetchAndActivate(envRemoteConfig);
+    const allConfigs = getAll(envRemoteConfig);
+    for (const key in allConfigs) {
+      if (key.startsWith("config_")) {
+        const value = allConfigs[key].asString();
+        const configType = LiveConfig.instance.config[key]?.type;
+        if (configType === "object" || configType === "array") {
+          if (!isMatch(LiveConfig.getDefaultValueByKey(key) as object, JSON.parse(value))) {
+            console.warn(
+              `Config mismatch for ${key} in ${env}, Remote: ${value}, Local: ${JSON.stringify(
+                LiveConfig.getDefaultValueByKey(key),
+              )}`,
+            );
+          }
+        } else {
+          if (LiveConfig.getDefaultValueByKey(key)?.toString() !== value) {
+            console.warn(
+              `Config mismatch for ${key} in ${env}, Remote: ${value}, Local: ${LiveConfig.getDefaultValueByKey(
+                key,
+              )?.toString()}`,
+            );
+          }
+        }
+      }
+    }
+    await deleteApp(firebaseApp);
+  });
+};
+
+/**
+ * Installs the `LiveConfig` provider backed by the Firebase RemoteConfig singleton so
+ * non-feature `config_*` keys (e.g. `config_ll_min_version`) resolve, and runs the dev-only
+ * config-mismatch check. Call once at renderer bootstrap — these live here (rather than at
+ * module init) so the test store, which imports this module via `configureStore`, doesn't
+ * trigger Firebase side effects.
+ */
+export function installLiveConfigProvider(): void {
+  try {
+    const rc = getRemoteConfigSingleton();
+    LiveConfig.setProvider(
+      new FirebaseRemoteConfigProvider({
+        getValue: (key: string) => getValue(rc, key),
+      }),
+    );
+  } catch (error) {
+    // Match the legacy provider: a Firebase init failure must not crash boot.
+    // `config_*` keys then fall back to their LiveConfig defaults.
+    console.error(`Failed to initialize Firebase SDK: ${error}`);
+    return;
+  }
+  warnOnConfigMismatch().catch(() => {
+    // The dev-only config check is best-effort.
+  });
 }

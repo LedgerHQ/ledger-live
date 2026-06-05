@@ -63,9 +63,7 @@ const GroupedFeatures: React.FC<Props> = ({ groupName, focused, setFocusedGroupN
   );
 
   const handleReset = useCallback(() => {
-    featureIds.forEach(featureId =>
-      dispatch(setOverride({ key: featureId, value: undefined })),
-    );
+    featureIds.forEach(featureId => dispatch(setOverride({ key: featureId, value: undefined })));
   }, [featureIds, dispatch]);
 
   return (

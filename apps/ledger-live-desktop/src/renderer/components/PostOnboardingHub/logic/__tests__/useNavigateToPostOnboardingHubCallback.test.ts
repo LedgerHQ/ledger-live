@@ -17,7 +17,8 @@ jest.mock("react-router", () => ({
 }));
 
 const PROTECT_ID = "protect-prod";
-const RECOVER_UPSELL_URI = "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24";
+const RECOVER_UPSELL_URI =
+  "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24";
 const RECOVER_LANDING_PATH = `/recover/${PROTECT_ID}?redirectTo=upsell&source=lld-post-onboarding-banner`;
 
 const protectDesktopDefaultParams = FEATURE_FLAGS_DEFAULTS.protectServicesDesktop.params!;
@@ -60,9 +61,7 @@ function postOnboardingState(deviceModelId = DeviceModelId.nanoX) {
   };
 }
 
-type NavigateHookInitialState = NonNullable<
-  Parameters<typeof renderHook>[1]
->["initialState"];
+type NavigateHookInitialState = NonNullable<Parameters<typeof renderHook>[1]>["initialState"];
 
 function renderNavigateHook(initialState: NavigateHookInitialState = {}) {
   const Wrapper = ({ children }: { children: React.ReactNode }) =>

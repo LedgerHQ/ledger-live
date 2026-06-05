@@ -50,9 +50,9 @@ export function useSendHeaderModel({
   const showRecipientInput = currentStepConfig?.addressInput ?? false;
   const showMemoControls = Boolean(
     showRecipientInput &&
-      uiConfig.hasMemo &&
-      recipientSearch.value.length > 0 &&
-      isRecipientAddressComplete,
+    uiConfig.hasMemo &&
+    recipientSearch.value.length > 0 &&
+    isRecipientAddressComplete,
   );
 
   const trackingProperties = useMemo(

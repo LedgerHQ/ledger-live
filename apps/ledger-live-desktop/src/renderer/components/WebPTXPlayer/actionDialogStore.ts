@@ -23,9 +23,7 @@ export function resolveActionDialog(confirmed: boolean) {
 }
 
 export function createOpenActionDialogHandler(dispatch: Dispatch) {
-  return async (request: {
-    params?: ActionDialogParams;
-  }): Promise<{ confirmed: boolean }> => {
+  return async (request: { params?: ActionDialogParams }): Promise<{ confirmed: boolean }> => {
     const validated = sanitizeActionDialogParams(request.params, "custom.dialog.confirmation");
 
     // If a previous dialog is still pending, resolve it as dismissed before opening the new one.

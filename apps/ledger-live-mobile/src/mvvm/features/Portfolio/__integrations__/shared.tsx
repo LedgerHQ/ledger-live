@@ -36,9 +36,13 @@ const mockAccount = {
   index: 0,
 };
 
-export const overrideInitialStateWithFeatureFlag = withFlagOverrides({ lwmWallet40: { enabled: true } });
+export const overrideInitialStateWithFeatureFlag = withFlagOverrides({
+  lwmWallet40: { enabled: true },
+});
 
-export const overrideInitialStateWithGraphReworkEnabled = withFlagOverrides({ lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true } } });
+export const overrideInitialStateWithGraphReworkEnabled = withFlagOverrides({
+  lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true } },
+});
 
 export const overrideInitialStateWithGraphReworkAndReadOnly = withFlagOverrides(
   { lwmWallet40: { enabled: true, params: { graphRework: true, quickActionCtas: true } } },
@@ -65,7 +69,10 @@ export const overrideInitialStateWithPerpsEntryPoint =
     )(state);
 
 export const overrideInitialStateWithPerpsAndAssetSection = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { assetSection: true } }, ptxPerpsLiveAppMobile: { enabled: true } },
+  {
+    lwmWallet40: { enabled: true, params: { assetSection: true } },
+    ptxPerpsLiveAppMobile: { enabled: true },
+  },
   state => ({
     ...state,
     accounts: {
@@ -77,15 +84,12 @@ export const overrideInitialStateWithPerpsAndAssetSection = withFlagOverrides(
 export const overrideInitialStateWithAssetSection =
   (assetSection: boolean, accounts: Account[] = [mockAccount]) =>
   (state: State): State =>
-    withFlagOverrides(
-      { lwmWallet40: { enabled: true, params: { assetSection } } },
-      s => ({
-        ...s,
-        accounts: {
-          active: accounts,
-        },
-      }),
-    )(state);
+    withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection } } }, s => ({
+      ...s,
+      accounts: {
+        active: accounts,
+      },
+    }))(state);
 
 export const overrideInitialStateWithNoAccountsAndAssetSection =
   (assetSection: boolean) =>

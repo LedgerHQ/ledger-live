@@ -46,7 +46,7 @@ const runSignOperation = async ({
   const isTokenTransaction = subAccount?.type === "TokenAccount";
 
   const to = isTokenTransaction ? subAccount.token.contractAddress : unsignedTransaction.to;
-  const value = isTokenTransaction ? "0x0" : unsignedTransaction.value ?? "0x0";
+  const value = isTokenTransaction ? "0x0" : (unsignedTransaction.value ?? "0x0");
 
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(
     feeCurrency ?? undefined,

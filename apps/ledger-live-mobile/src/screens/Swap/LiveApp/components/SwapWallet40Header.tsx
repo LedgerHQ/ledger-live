@@ -37,7 +37,9 @@ export function SwapWallet40Header() {
     <SwapOpaqueHeader
       onBackPress={onBackPress}
       onClosePress={headerState.isTransactionComplete ? onClosePress : undefined}
-      closeButtonTestID={headerState.isTransactionComplete ? "NavigationHeaderCloseButtonCompleted" : undefined}
+      closeButtonTestID={
+        headerState.isTransactionComplete ? "NavigationHeaderCloseButtonCompleted" : undefined
+      }
       showBackButton={!headerState.isTransactionComplete}
       titleKey={headerState.titleKey}
     />

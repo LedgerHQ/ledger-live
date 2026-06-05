@@ -54,11 +54,13 @@ export const sampleGenericAwarenessModalContentCards: GenericAwarenessModalConte
         subtitle: "Your private keys never leave your hardware — not even Ledger can access them.",
       },
     ],
+    isReady: true,
   },
   {
     layout: GenericAwarenessModalLayout.Carousel,
     id: DEV_CAMPAIGN_IDS.appStartCarousel,
     data: sampleCarouselSlides,
+    isReady: true,
   },
   {
     layout: GenericAwarenessModalLayout.FeatureIntro,
@@ -86,11 +88,13 @@ export const sampleGenericAwarenessModalContentCards: GenericAwarenessModalConte
           "If an exchange pauses withdrawals, assets on your signer remain under your control.",
       },
     ],
+    isReady: true,
   },
   {
     layout: GenericAwarenessModalLayout.Carousel,
     id: DEV_CAMPAIGN_IDS.bannerCarousel,
     data: sampleCarouselSlides,
+    isReady: true,
   },
   {
     layout: GenericAwarenessModalLayout.Prompt,

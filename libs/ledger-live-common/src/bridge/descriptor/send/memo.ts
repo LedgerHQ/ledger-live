@@ -52,7 +52,7 @@ export function applyMemoToTransaction(
 
   const transaction = isRecord(memoTypeOrTransaction)
     ? memoTypeOrTransaction
-    : currentTransaction ?? {};
+    : (currentTransaction ?? {});
 
   const applyFn = memoApplicationRegistry[family];
   if (!applyFn) {

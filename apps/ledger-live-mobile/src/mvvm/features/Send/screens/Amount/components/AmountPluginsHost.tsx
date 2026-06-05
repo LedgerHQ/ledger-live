@@ -2,10 +2,7 @@ import React, { useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { CeloFeeCurrencyPlugin } from "./plugins/CeloFeeCurrencyPlugin";
 

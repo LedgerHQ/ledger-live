@@ -19,9 +19,7 @@ export type BorrowNavigateHooks = {
   onGoToSwap?: (params: BorrowSwapNavigationParams) => void;
 };
 
-export type BorrowNavigateHandler = (
-  request: BorrowNavigateRequest,
-) => Promise<{ success: true }>;
+export type BorrowNavigateHandler = (request: BorrowNavigateRequest) => Promise<{ success: true }>;
 
 const pickSwapParams = (
   params: BorrowNavigateRequestParams | undefined,

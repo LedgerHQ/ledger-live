@@ -3,7 +3,7 @@ import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import type { Features } from "@shared/feature-flags";
 import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 import type { NotificationsState } from "~/reducers/types";
-import type { DataOfUser } from "../types";
+import type { DataOfUser, NotificationPromptTarget } from "../types";
 
 type BrazePushNotifications = Features["brazePushNotifications"];
 type LwmNewWordingOptInNotificationsDrawer = Features["lwmNewWordingOptInNotificationsDrawer"];
@@ -30,10 +30,12 @@ export type NotificationsPromptSkipReason =
   | "fully_opted_in"
   | "reprompt_delay_not_reached"
   | "action_event_disabled"
+  | "transactions_alerts_not_eligible"
   | "variant_a_only_onboarding"
   | "variant_a_inactivity_disabled"
   | "onboarding_incomplete"
-  | "user_not_inactive";
+  | "user_not_inactive"
+  | "globally_opted_in_no_inactivity_drawer";
 
 type NotificationsPromptDecisionBase<TSource extends NotificationsPromptSource> = {
   source: TSource;
@@ -46,6 +48,7 @@ export type NotificationsPromptShowDecision<TSource extends NotificationsPromptS
   NotificationsPromptDecisionBase<TSource> & {
     kind: "show";
     delayMs: number;
+    drawerPromptTarget: NotificationPromptTarget;
   };
 
 export type NotificationsPromptSkipDecision<TSource extends NotificationsPromptSource> =
@@ -62,14 +65,18 @@ export type InactivityTriggerDecision =
   | NotificationsPromptShowDecision<"inactivity">
   | NotificationsPromptSkipDecision<"inactivity">;
 
-type GetNextRepromptDelayInput = {
+type NotificationsPromptOptInStateInput = {
+  permissionStatus: PermissionStatus;
+  areNotificationsAllowed: boolean | undefined;
+  transactionsAlertsCategory: boolean | undefined;
+};
+
+type GetNextRepromptDelayInput = NotificationsPromptOptInStateInput & {
   repromptSchedule?: NotificationsPromptRepromptDelay[] | null;
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
 };
 
-type AfterActionEligibilityInput = {
-  permissionStatus: PermissionStatus;
-  areNotificationsAllowed: boolean | undefined;
+type AfterActionEligibilityInput = NotificationsPromptOptInStateInput & {
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
   repromptSchedule?: NotificationsPromptRepromptDelay[] | null;
   now?: number;
@@ -83,10 +90,8 @@ type NotificationsPromptEvaluationContext = {
   now?: number;
 };
 
-type EvaluateAfterActionTriggerParams = {
+type EvaluateAfterActionTriggerParams = NotificationsPromptOptInStateInput & {
   source: NotificationsPromptAfterActionSource;
-  permissionStatus: PermissionStatus;
-  areNotificationsAllowed: boolean | undefined;
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
 };
 
@@ -122,45 +127,204 @@ const AFTER_ACTION_SOURCE_TO_EVENT_KEY = {
 
 export const INACTIVITY_DRAWER_DELAY_MS = 1000;
 
+const TRANSACTIONS_ALERTS_PROMPT_TARGET =
+  "transactionsAlertsCategory" as const satisfies NotificationPromptTarget;
+
+type BrazeNotificationsCategoryConfig = NonNullable<
+  BrazePushNotifications["params"]
+>["notificationsCategories"][number];
+
 const getVariant = (wordingFeature: WordingFeature) =>
   wordingFeature?.enabled ? wordingFeature.params?.variant : undefined;
 
 const isVariantA = (wordingFeature: WordingFeature) =>
   getVariant(wordingFeature) === AB_TESTING_VARIANTS.A;
 
-const getDismissedCount = (pushNotificationsDataOfUser: DataOfUser | null | undefined) =>
-  pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0;
-
-const isFullyOptedIn = (
+const isGloballyOptedIn = (
   permissionStatus: PermissionStatus,
   areNotificationsAllowed: boolean | undefined,
 ) => permissionStatus === AuthorizationStatus.AUTHORIZED && areNotificationsAllowed === true;
 
+export const getNotificationPromptTarget = ({
+  permissionStatus,
+  areNotificationsAllowed,
+  transactionsAlertsCategory,
+}: NotificationsPromptOptInStateInput): NotificationPromptTarget | null => {
+  if (!isGloballyOptedIn(permissionStatus, areNotificationsAllowed)) {
+    return "globalPushNotifications";
+  }
+
+  if (transactionsAlertsCategory === true) {
+    return null;
+  }
+
+  return TRANSACTIONS_ALERTS_PROMPT_TARGET;
+};
+
+export const canPromptTransactionsAlertsForAction = (
+  source: NotificationsPromptAfterActionSource,
+  notificationsCategories: BrazeNotificationsCategoryConfig[] | undefined,
+): boolean => {
+  const transactionsAlertsCategoryConfig = notificationsCategories?.find(
+    category => category.category === TRANSACTIONS_ALERTS_PROMPT_TARGET,
+  );
+
+  if (!transactionsAlertsCategoryConfig?.drawerPromptEnabled) {
+    return false;
+  }
+
+  return transactionsAlertsCategoryConfig.drawerPromptActions?.includes(source) ?? false;
+};
+
+const getDismissedPromptAtList = (
+  pushNotificationsDataOfUser: DataOfUser | null | undefined,
+  promptTarget: NotificationPromptTarget,
+): number[] | undefined => {
+  const dismissedPromptAtListByTarget =
+    pushNotificationsDataOfUser?.dismissedPromptAtListByTarget ?? {};
+
+  if (promptTarget === "globalPushNotifications") {
+    return (
+      dismissedPromptAtListByTarget.globalPushNotifications ??
+      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList
+    );
+  }
+
+  return dismissedPromptAtListByTarget[promptTarget];
+};
+
+const hasRepromptDelayElapsed = ({
+  pushNotificationsDataOfUser,
+  promptTarget,
+  repromptSchedule,
+  now,
+}: {
+  pushNotificationsDataOfUser: DataOfUser | null | undefined;
+  promptTarget: NotificationPromptTarget;
+  repromptSchedule: NotificationsPromptRepromptDelay[] | null | undefined;
+  now: number;
+}): { canShow: boolean; nextRepromptDelay: NotificationsPromptRepromptDelay | null } => {
+  const dismissedPromptAtList = getDismissedPromptAtList(pushNotificationsDataOfUser, promptTarget);
+
+  if (!dismissedPromptAtList?.length) {
+    return { canShow: true, nextRepromptDelay: null };
+  }
+
+  const nextRepromptDelay = (() => {
+    if (!repromptSchedule?.length) {
+      return null;
+    }
+
+    const scheduleIndex = Math.min(dismissedPromptAtList.length - 1, repromptSchedule.length - 1);
+    return repromptSchedule[scheduleIndex];
+  })();
+
+  if (!nextRepromptDelay) {
+    return { canShow: false, nextRepromptDelay: null };
+  }
+
+  const lastDismissedAt = dismissedPromptAtList[dismissedPromptAtList.length - 1];
+  return {
+    canShow: add(lastDismissedAt, nextRepromptDelay).getTime() <= now,
+    nextRepromptDelay,
+  };
+};
+
+const getDismissedCount = (
+  pushNotificationsDataOfUser: DataOfUser | null | undefined,
+  promptTarget: NotificationPromptTarget | null,
+) => {
+  if (!promptTarget) {
+    return 0;
+  }
+
+  return getDismissedPromptAtList(pushNotificationsDataOfUser, promptTarget)?.length ?? 0;
+};
+
 const getDecisionBase = <TSource extends NotificationsPromptSource>(
   source: TSource,
   pushNotificationsDataOfUser: DataOfUser | null | undefined,
+  promptTarget: NotificationPromptTarget | null,
   nextRepromptDelay: NotificationsPromptRepromptDelay | null,
   wordingFeature: WordingFeature,
 ): NotificationsPromptDecisionBase<TSource> => ({
   source,
-  dismissedCount: getDismissedCount(pushNotificationsDataOfUser),
+  dismissedCount: getDismissedCount(pushNotificationsDataOfUser, promptTarget),
   nextRepromptDelay,
   variant: getVariant(wordingFeature),
 });
 
+type BuildAfterActionPromptDecisionInput = {
+  source: NotificationsPromptAfterActionSource;
+  pushNotificationsDataOfUser: DataOfUser | null | undefined;
+  promptTarget: NotificationPromptTarget;
+  repromptSchedule: NotificationsPromptRepromptDelay[] | null | undefined;
+  wordingFeature: WordingFeature;
+  now: number;
+  delayMs: number;
+};
+
+const buildAfterActionPromptDecision = ({
+  source,
+  pushNotificationsDataOfUser,
+  promptTarget,
+  repromptSchedule,
+  wordingFeature,
+  now,
+  delayMs,
+}: BuildAfterActionPromptDecisionInput): AfterActionTriggerDecision => {
+  const { canShow, nextRepromptDelay } = hasRepromptDelayElapsed({
+    pushNotificationsDataOfUser,
+    promptTarget,
+    repromptSchedule,
+    now,
+  });
+  const baseDecision = getDecisionBase(
+    source,
+    pushNotificationsDataOfUser,
+    promptTarget,
+    nextRepromptDelay,
+    wordingFeature,
+  );
+
+  if (!canShow) {
+    return {
+      ...baseDecision,
+      kind: "skip",
+      reason: nextRepromptDelay ? "reprompt_delay_not_reached" : "configuration_missing",
+    };
+  }
+
+  return {
+    ...baseDecision,
+    kind: "show",
+    delayMs,
+    drawerPromptTarget: promptTarget,
+  };
+};
+
 export const getNextRepromptDelay = ({
   repromptSchedule,
   pushNotificationsDataOfUser,
+  permissionStatus,
+  areNotificationsAllowed,
+  transactionsAlertsCategory,
 }: GetNextRepromptDelayInput): NotificationsPromptRepromptDelay | null => {
-  const dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
-  if (!repromptSchedule?.length || !dismissedOptInDrawerAtList?.length) {
+  const promptTarget = getNotificationPromptTarget({
+    permissionStatus,
+    areNotificationsAllowed,
+    transactionsAlertsCategory,
+  });
+  if (!promptTarget) {
     return null;
   }
 
-  const scheduleIndex = Math.min(
-    dismissedOptInDrawerAtList.length - 1,
-    repromptSchedule.length - 1,
-  );
+  const dismissedPromptAtList = getDismissedPromptAtList(pushNotificationsDataOfUser, promptTarget);
+  if (!repromptSchedule?.length || !dismissedPromptAtList?.length) {
+    return null;
+  }
+
+  const scheduleIndex = Math.min(dismissedPromptAtList.length - 1, repromptSchedule.length - 1);
   return repromptSchedule[scheduleIndex];
 };
 
@@ -171,25 +335,17 @@ export const shouldPromptOptInDrawerAfterAction = ({
   repromptSchedule,
   now = Date.now(),
 }: AfterActionEligibilityInput): boolean => {
-  if (isFullyOptedIn(permissionStatus, areNotificationsAllowed)) {
-    return false;
+  if (!isGloballyOptedIn(permissionStatus, areNotificationsAllowed)) {
+    return hasRepromptDelayElapsed({
+      pushNotificationsDataOfUser,
+      promptTarget: "globalPushNotifications",
+      repromptSchedule,
+      now,
+    }).canShow;
   }
 
-  const dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
-  if (!dismissedOptInDrawerAtList?.length) {
-    return true;
-  }
-
-  const nextRepromptDelay = getNextRepromptDelay({
-    repromptSchedule,
-    pushNotificationsDataOfUser,
-  });
-  if (!nextRepromptDelay) {
-    return false;
-  }
-
-  const lastDismissedAt = dismissedOptInDrawerAtList[dismissedOptInDrawerAtList.length - 1];
-  return add(lastDismissedAt, nextRepromptDelay).getTime() <= now;
+  // Global opt-in drawer only (legacy hook). Category prompts use evaluateAfterActionTrigger.
+  return false;
 };
 
 export const checkIsInactive = ({
@@ -210,6 +366,7 @@ export const evaluateAfterActionTrigger = (
     source,
     permissionStatus,
     areNotificationsAllowed,
+    transactionsAlertsCategory,
     pushNotificationsDataOfUser,
   }: EvaluateAfterActionTriggerParams,
   {
@@ -220,14 +377,18 @@ export const evaluateAfterActionTrigger = (
     now = Date.now(),
   }: NotificationsPromptEvaluationContext,
 ): AfterActionTriggerDecision => {
-  const nextRepromptDelay = getNextRepromptDelay({
-    repromptSchedule: brazePushNotifications?.params?.reprompt_schedule,
-    pushNotificationsDataOfUser,
+  const repromptSchedule = brazePushNotifications?.params?.reprompt_schedule;
+  const globallyOptedIn = isGloballyOptedIn(permissionStatus, areNotificationsAllowed);
+  const drawerPromptTarget = getNotificationPromptTarget({
+    permissionStatus,
+    areNotificationsAllowed,
+    transactionsAlertsCategory,
   });
   const baseDecision = getDecisionBase(
     source,
     pushNotificationsDataOfUser,
-    nextRepromptDelay,
+    drawerPromptTarget,
+    null,
     wordingFeature,
   );
 
@@ -247,22 +408,6 @@ export const evaluateAfterActionTrigger = (
     return { ...baseDecision, kind: "skip", reason: "drawer_already_pending" };
   }
 
-  if (isFullyOptedIn(permissionStatus, areNotificationsAllowed)) {
-    return { ...baseDecision, kind: "skip", reason: "fully_opted_in" };
-  }
-
-  const dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
-  if (dismissedOptInDrawerAtList?.length) {
-    if (!nextRepromptDelay) {
-      return { ...baseDecision, kind: "skip", reason: "configuration_missing" };
-    }
-
-    const lastDismissedAt = dismissedOptInDrawerAtList[dismissedOptInDrawerAtList.length - 1];
-    if (add(lastDismissedAt, nextRepromptDelay).getTime() > now) {
-      return { ...baseDecision, kind: "skip", reason: "reprompt_delay_not_reached" };
-    }
-  }
-
   if (source !== "onboarding" && isVariantA(wordingFeature)) {
     return { ...baseDecision, kind: "skip", reason: "variant_a_only_onboarding" };
   }
@@ -277,13 +422,42 @@ export const evaluateAfterActionTrigger = (
     return { ...baseDecision, kind: "skip", reason: "action_event_disabled" };
   }
 
-  return {
-    ...baseDecision,
-    kind: "show",
+  if (!globallyOptedIn) {
+    return buildAfterActionPromptDecision({
+      source,
+      pushNotificationsDataOfUser,
+      promptTarget: "globalPushNotifications",
+      repromptSchedule,
+      wordingFeature,
+      now,
+      delayMs: actionEvent.timer,
+    });
+  }
+
+  if (transactionsAlertsCategory === true) {
+    return { ...baseDecision, kind: "skip", reason: "fully_opted_in" };
+  }
+
+  const isTransactionsAlertsEligible = canPromptTransactionsAlertsForAction(
+    source,
+    brazePushNotifications.params.notificationsCategories,
+  );
+  if (!isTransactionsAlertsEligible) {
+    return { ...baseDecision, kind: "skip", reason: "transactions_alerts_not_eligible" };
+  }
+
+  return buildAfterActionPromptDecision({
+    source,
+    pushNotificationsDataOfUser,
+    promptTarget: TRANSACTIONS_ALERTS_PROMPT_TARGET,
+    repromptSchedule,
+    wordingFeature,
+    now,
     delayMs: actionEvent.timer,
-  };
+  });
 };
 
+/** Global push opt-in only. Transaction alerts are handled in {@link evaluateAfterActionTrigger}. */
 export const evaluateInactivityTrigger = (
   {
     permissionStatus,
@@ -299,9 +473,12 @@ export const evaluateInactivityTrigger = (
     now = Date.now(),
   }: NotificationsPromptEvaluationContext,
 ): InactivityTriggerDecision => {
+  const globallyOptedIn = isGloballyOptedIn(permissionStatus, areNotificationsAllowed);
+  const globalPromptTarget = "globalPushNotifications";
   const baseDecision = getDecisionBase(
     "inactivity",
     pushNotificationsDataOfUser,
+    globallyOptedIn ? null : globalPromptTarget,
     null,
     wordingFeature,
   );
@@ -334,8 +511,12 @@ export const evaluateInactivityTrigger = (
     return { ...baseDecision, kind: "skip", reason: "feature_disabled" };
   }
 
-  if (isFullyOptedIn(permissionStatus, areNotificationsAllowed)) {
-    return { ...baseDecision, kind: "skip", reason: "fully_opted_in" };
+  if (globallyOptedIn) {
+    return {
+      ...baseDecision,
+      kind: "skip",
+      reason: "globally_opted_in_no_inactivity_drawer",
+    };
   }
 
   const isInactive = checkIsInactive({
@@ -350,8 +531,15 @@ export const evaluateInactivityTrigger = (
   }
 
   return {
-    ...baseDecision,
+    ...getDecisionBase(
+      "inactivity",
+      pushNotificationsDataOfUser,
+      globalPromptTarget,
+      null,
+      wordingFeature,
+    ),
     kind: "show",
     delayMs: INACTIVITY_DRAWER_DELAY_MS,
+    drawerPromptTarget: globalPromptTarget,
   };
 };

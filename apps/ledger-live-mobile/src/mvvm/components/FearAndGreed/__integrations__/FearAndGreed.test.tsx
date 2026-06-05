@@ -34,6 +34,17 @@ describe("FearAndGreed Integration", () => {
 
       expect(queryByTestId("fear-and-greed-card")).toBeNull();
     });
+
+    it("should render an isolated error placeholder when expanded API fails", async () => {
+      server.use(http.get(API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
+
+      render(<FearAndGreed appearance="expanded" width={276} />);
+
+      expect(await screen.findByTestId("fear-and-greed-card-error")).toBeVisible();
+      expect(screen.getByTestId("fear-and-greed-card-error-icon")).toBeVisible();
+      expect(screen.getByText("Mood index")).toBeVisible();
+      expect(screen.getByText("Connection failed")).toBeVisible();
+    });
   });
 
   describe("Mood levels", () => {

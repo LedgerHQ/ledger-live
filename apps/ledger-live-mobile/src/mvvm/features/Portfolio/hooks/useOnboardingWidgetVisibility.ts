@@ -21,9 +21,8 @@ export const useOnboardingWidgetVisibility = () => {
   const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  const { isPortfolioWidgetBaseVisible } = usePostOnboardingPortfolioWidgetVisibility(
-    flattenAccountsSelector,
-  );
+  const { isPortfolioWidgetBaseVisible } =
+    usePostOnboardingPortfolioWidgetVisibility(flattenAccountsSelector);
 
   const { actionsState } = usePostOnboardingHubState();
   const { areAllActionsCompleted } = usePostOnboardingHubStepperDisplay(actionsState);
@@ -42,8 +41,7 @@ export const useOnboardingWidgetVisibility = () => {
     }
   }, [hasCompletedOnboarding, onboardingCompletionDate, dispatch]);
 
-  const areHubStepsDone =
-    actionsState.length > 0 && areAllActionsCompleted;
+  const areHubStepsDone = actionsState.length > 0 && areAllActionsCompleted;
 
   return (
     isPortfolioWidgetBaseVisible &&

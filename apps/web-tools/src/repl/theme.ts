@@ -10,7 +10,7 @@ const palette = {
   Magenta: "#c678dd",
   Cyan: "#56b6c2",
   GutterGrey: "#4b5263",
-  CommentGrey: "#5c6370"
+  CommentGrey: "#5c6370",
 };
 
 const theme = {
@@ -33,8 +33,8 @@ const theme = {
     apdu: palette.Blue,
     binary: palette.Green,
     verbose: palette.White,
-    announcement: palette.LightYellow
-  }
+    announcement: palette.LightYellow,
+  },
 };
 
 export default theme;

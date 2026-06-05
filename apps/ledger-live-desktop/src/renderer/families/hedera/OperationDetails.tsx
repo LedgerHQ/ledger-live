@@ -107,7 +107,11 @@ const OperationDetailsPostAlert = ({
       openModal(
         "MODAL_RECEIVE",
         tokenAccount
-          ? { account: tokenAccount, parentAccount: account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE }
+          ? {
+              account: tokenAccount,
+              parentAccount: account,
+              sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
+            }
           : { account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE },
       ),
     );

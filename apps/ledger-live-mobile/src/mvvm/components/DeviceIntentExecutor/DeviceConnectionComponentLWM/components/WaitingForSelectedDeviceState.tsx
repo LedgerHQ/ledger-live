@@ -34,6 +34,7 @@ export function WaitingForSelectedDeviceState({
         category={PAGE_CONNECT_DEVICE.WaitingForSelectedDevice}
         sourceFlow={sourceFlow}
         modelId={state.device.deviceModelId}
+        refreshSource
         deviceUxV2
       />
       <DeviceActionContent

@@ -17,12 +17,7 @@ export function useNewSendFlowFeature() {
 
   const isEnabledForFamily = (family?: string, currencyId?: string): boolean =>
     isValidConfig &&
-    isFamilyAllowedForNewSendFlow(
-      family,
-      allowedFamilies,
-      currencyId,
-      excludedCurrencyIds,
-    );
+    isFamilyAllowedForNewSendFlow(family, allowedFamilies, currencyId, excludedCurrencyIds);
 
   const getFamilyFromAccount = (
     account?: AccountLike,

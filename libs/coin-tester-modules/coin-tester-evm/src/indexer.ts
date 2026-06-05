@@ -155,10 +155,7 @@ const safeReadString = async (
  * Same rationale as {@link safeReadString}: some EVM precompiles don't expose this
  * selector and return `0x`, which `new BigNumber("0x")` doesn't handle gracefully.
  */
-const safeReadDecimals = async (
-  provider: ethers.JsonRpcProvider,
-  to: string,
-): Promise<string> => {
+const safeReadDecimals = async (provider: ethers.JsonRpcProvider, to: string): Promise<string> => {
   try {
     const res = await provider.call({
       to,
@@ -527,7 +524,8 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
       isError: receipt?.status === 1 ? "0" : "1",
       txreceipt_status: receipt?.status!.toString() || "0",
       input: tx?.data,
-      contractAddress: code === "0x" ? "" : tx?.to ?? "0x0000000000000000000000000000000000000000",
+      contractAddress:
+        code === "0x" ? "" : (tx?.to ?? "0x0000000000000000000000000000000000000000"),
       cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
       gasUsed: receipt?.gasUsed?.toString() || "0",
       confirmations: tx?.confirmations.toString() || "0",

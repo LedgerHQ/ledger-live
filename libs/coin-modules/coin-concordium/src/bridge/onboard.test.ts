@@ -299,11 +299,7 @@ describe("onboard", () => {
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(getPublicKey).toHaveBeenCalledWith(
-        signerContext,
-        "test-device",
-        "44'/1'/0'/0'/0'/5'",
-      );
+      expect(getPublicKey).toHaveBeenCalledWith(signerContext, "test-device", "44'/1'/0'/0'/0'/5'");
     });
 
     it("should call submitCredential with currency and credential data", async () => {

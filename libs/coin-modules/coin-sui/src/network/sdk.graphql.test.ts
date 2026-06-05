@@ -623,7 +623,6 @@ describe("getDelegatedStakes on GraphQL transport", () => {
       ).rejects.toThrow(/outside available range/);
     });
   });
-
 });
 
 describe("getValidators on GraphQL transport", () => {
@@ -968,11 +967,14 @@ describe("graphqlFetcher", () => {
 
   it("strips content-encoding/content-length when re-emitting (decompressed body)", async () => {
     mockFetch.mockResolvedValueOnce(
-      mockResponse({ data: {} }, {
-        "x-sui-rpc-request-id": "req-strip",
-        "content-encoding": "gzip",
-        "content-length": "99",
-      }),
+      mockResponse(
+        { data: {} },
+        {
+          "x-sui-rpc-request-id": "req-strip",
+          "content-encoding": "gzip",
+          "content-length": "99",
+        },
+      ),
     );
 
     const res = await graphqlFetcher("https://endpoint/graphql", { method: "POST" });
@@ -1039,7 +1041,8 @@ describe("getOperationExtra on GraphQL transport", () => {
 
 describe("simulateTransactionGraphQL", () => {
   /** Direct call bypasses the paymentInfo dispatcher (which would need full coin-selection mocks). */
-  const fakeApi = (query: jest.Mock): SuiGraphQLClient => ({ query }) as unknown as SuiGraphQLClient;
+  const fakeApi = (query: jest.Mock): SuiGraphQLClient =>
+    ({ query }) as unknown as SuiGraphQLClient;
 
   it("projects gasBudget + cost components from the SimulateTransaction response", async () => {
     const query = jest.fn().mockResolvedValueOnce({
@@ -1088,7 +1091,8 @@ describe("simulateTransactionGraphQL", () => {
 // ---- executeTransactionGraphQL ----
 
 describe("executeTransactionGraphQL", () => {
-  const fakeApi = (query: jest.Mock): SuiGraphQLClient => ({ query }) as unknown as SuiGraphQLClient;
+  const fakeApi = (query: jest.Mock): SuiGraphQLClient =>
+    ({ query }) as unknown as SuiGraphQLClient;
 
   it("returns digest + SUCCESS status with no error field on a successful broadcast", async () => {
     const query = jest.fn().mockResolvedValueOnce({
@@ -1144,7 +1148,8 @@ describe("executeTransactionGraphQL", () => {
 // ---- getBlockInfoFieldsGraphQL ----
 
 describe("getBlockInfoFieldsGraphQL", () => {
-  const fakeApi = (query: jest.Mock): SuiGraphQLClient => ({ query }) as unknown as SuiGraphQLClient;
+  const fakeApi = (query: jest.Mock): SuiGraphQLClient =>
+    ({ query }) as unknown as SuiGraphQLClient;
 
   it("projects digest/sequenceNumber/timestampMs/previousDigest", async () => {
     const query = jest.fn().mockResolvedValueOnce({
@@ -1174,7 +1179,14 @@ describe("getBlockInfoFieldsGraphQL", () => {
 
   it("falls back to '0' timestamp when the schema returns null", async () => {
     const query = jest.fn().mockResolvedValueOnce({
-      data: { checkpoint: { digest: "d", sequenceNumber: 1, timestamp: null, previousCheckpointDigest: null } },
+      data: {
+        checkpoint: {
+          digest: "d",
+          sequenceNumber: 1,
+          timestamp: null,
+          previousCheckpointDigest: null,
+        },
+      },
     });
     const out = await getBlockInfoFieldsGraphQL(fakeApi(query), 1);
     expect(out?.timestampMs).toBe("0");
@@ -1185,7 +1197,8 @@ describe("getBlockInfoFieldsGraphQL", () => {
 // ---- resolveCheckpointSequenceForDigestGraphQL ----
 
 describe("resolveCheckpointSequenceForDigestGraphQL", () => {
-  const fakeApi = (query: jest.Mock): SuiGraphQLClient => ({ query }) as unknown as SuiGraphQLClient;
+  const fakeApi = (query: jest.Mock): SuiGraphQLClient =>
+    ({ query }) as unknown as SuiGraphQLClient;
 
   it("returns the resolved sequence number as a JS number", async () => {
     const query = jest.fn().mockResolvedValueOnce({
@@ -1213,7 +1226,8 @@ describe("resolveCheckpointSequenceForDigestGraphQL", () => {
 // ---- getBlockGraphQL (paginated) ----
 
 describe("getBlockGraphQL", () => {
-  const fakeApi = (query: jest.Mock): SuiGraphQLClient => ({ query }) as unknown as SuiGraphQLClient;
+  const fakeApi = (query: jest.Mock): SuiGraphQLClient =>
+    ({ query }) as unknown as SuiGraphQLClient;
 
   const txNode = (digest: string) => ({
     digest,
@@ -1251,7 +1265,8 @@ describe("getBlockGraphQL", () => {
   });
 
   it("paginates with txAfter and accumulates transactions across pages; metadata is from page 1 only", async () => {
-    const query = jest.fn()
+    const query = jest
+      .fn()
       .mockResolvedValueOnce({
         data: {
           checkpoint: {
@@ -1329,8 +1344,6 @@ describe("getBlockGraphQL", () => {
       },
     };
     const query = jest.fn().mockResolvedValue(ALWAYS_MORE);
-    await expect(getBlockGraphQL(fakeApi(query), 1)).rejects.toThrow(
-      /pagination cap hit/,
-    );
+    await expect(getBlockGraphQL(fakeApi(query), 1)).rejects.toThrow(/pagination cap hit/);
   });
 });

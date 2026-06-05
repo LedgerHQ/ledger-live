@@ -34,11 +34,7 @@ export const MarketPriceIndicator = ({ percent, price }: { percent: number; pric
   const percentageDisplay = getPercentageDisplay(percent, tokens);
 
   return (
-    <Flex
-      data-testid="market-price-indicator"
-      flexDirection="column"
-      alignItems="flex-end"
-    >
+    <Flex data-testid="market-price-indicator" flexDirection="column" alignItems="flex-end">
       <Text variant="body" fontWeight="semiBold" mb="4px">
         {price}
       </Text>

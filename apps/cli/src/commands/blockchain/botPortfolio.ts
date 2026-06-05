@@ -45,9 +45,7 @@ export default {
       ),
       mergeAll(5),
       filter(e => e.type === "discovered"),
-      mergeMap(async e =>
-        (accountFormatters[opts.format] || accountFormatters.default)(e.account),
-      ),
+      mergeMap(async e => (accountFormatters[opts.format] || accountFormatters.default)(e.account)),
     );
   },
 };

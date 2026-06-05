@@ -4,7 +4,7 @@ import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { dmkToLedgerDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { ConnectionErrorTypes, DiscoveryErrorTypes } from "@ledgerhq/live-dmk-mobile";
 import { track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 import type { SourceFlow } from "./SourceFlowContext";
 
 export const PAGE_CONNECT_DEVICE = {
@@ -19,15 +19,18 @@ export const PAGE_CONNECT_DEVICE = {
 /**
  * Canonical, locale-independent `button` values for Connect Device `button_clicked`
  * events. The displayed CTA label stays localized; analytics receives these stable
- * strings so the property is not fragmented across languages. The error screen is
- * already disambiguated by the `subError` property, so primary retry/allow CTAs
- * collapse to a single `Retry` value.
+ * strings so the property is not fragmented across languages.
  */
 export const CONNECT_DEVICE_BUTTON = {
-  ConnectLedgerDevice: "Connect Ledger Device",
-  NoLedgerDevice: "I Don't Have A Ledger Device",
+  ConnectDevice: "Connect Device",
+  BuyDevice: "Buy Device",
   Retry: "Retry",
   ContinueWithUsb: "Continue with USB",
+  OpenSettings: "Open Settings",
+  AllowBluetooth: "Allow Bluetooth",
+  TurnOnBluetooth: "Turn On Bluetooth",
+  AllowLocation: "Allow Location",
+  TurnOnLocation: "Turn On Location",
   GetHelp: "Get Help",
 } as const;
 
@@ -71,8 +74,17 @@ export const CONNECT_APP_BUTTON = {
   SetUpDevice: "Set Up Device",
   UpdateFirmware: "Update Firmware",
   ContactLedgerSupport: "Contact Ledger Support",
+  LearnMore: "Learn More",
+  DiscoverUpgradeProgram: "Discover Upgrade Program",
   ManageApps: "Manage Apps",
 } as const;
+
+export const DEVICE_ACTION_BUTTON = {
+  Retry: CONNECT_APP_BUTTON.Retry,
+  Close: CONNECT_APP_BUTTON.Close,
+} as const;
+
+let isInTerminalConnectDeviceError = false;
 
 export type TrackingTransport = "ble" | "usb";
 type ConnectDeviceErrorType = ConnectionErrorTypes | DiscoveryErrorTypes;
@@ -98,11 +110,28 @@ const TRACKING_SUB_ERRORS: Record<ConnectDeviceErrorType, string> = {
   [ConnectionErrorTypes.BlePairingPeerRemovedPairing]: "BlePairingPeerRemovedPairing",
 };
 
+const DEVICEFLOW_FAILED_CLOSE_PAGES = new Set<string>([
+  PAGE_CONNECT_APP.DeviceNotOnboarded,
+  PAGE_CONNECT_APP.UnsupportedFirmware,
+  PAGE_CONNECT_APP.UnsupportedApplication,
+  PAGE_CONNECT_APP.UnsupportedFeature,
+  PAGE_CONNECT_APP.DeviceDeprecatedBlocking,
+  PAGE_CONNECT_APP.WrongDeviceForAccount,
+  PAGE_CONNECT_APP.OutOfStorage,
+  PAGE_CONNECT_APP.Error,
+  PAGE_DEVICE_ACTION.Disconnected,
+  PAGE_DEVICE_ACTION.UnknownIntentError,
+  PAGE_DEVICE_ACTION.InvalidState,
+]);
+
 export const getDeviceUxV2BaseProperties = (sourceFlow: SourceFlow) => ({
   sourceFlow,
-  source: previousRouteNameRef.current,
   deviceUxV2: true,
 });
+
+export const setIsInTerminalConnectDeviceError = (value: boolean): void => {
+  isInTerminalConnectDeviceError = value;
+};
 
 export const getTrackingTransport = (
   transportId: TransportIdentifier | undefined,
@@ -111,7 +140,9 @@ export const getTrackingTransport = (
   return transportId === rnHidTransportIdentifier ? "usb" : "ble";
 };
 
-export const getConnectedDeviceTrackingProperties = (device: ConnectedDevice) => ({
+export const getConnectedDeviceTrackingProperties = (
+  device: ConnectedDevice,
+): { modelId: DeviceModelId; transport: TrackingTransport } => ({
   modelId: dmkToLedgerDeviceIdMap[device.modelId],
   transport: device.type === "USB" ? "usb" : "ble",
 });
@@ -176,6 +207,27 @@ export const trackDeviceflowAborted = (params: { sourceFlow: SourceFlow }): void
   track("deviceflow_aborted", getDeviceUxV2BaseProperties(params.sourceFlow));
 };
 
+export const trackDeviceflowFailed = (params: { sourceFlow: SourceFlow }): void => {
+  track("deviceflow_failed", getDeviceUxV2BaseProperties(params.sourceFlow));
+};
+
+export const trackDeviceflowCanceled = (params: { sourceFlow: SourceFlow }): void => {
+  const currentPage = currentRouteNameRef.current;
+  const isTerminalConnectDeviceErrorPage =
+    currentPage === PAGE_CONNECT_DEVICE.DiscoveryError ||
+    currentPage === PAGE_CONNECT_DEVICE.ConnectionError;
+
+  if (
+    (isTerminalConnectDeviceErrorPage && isInTerminalConnectDeviceError) ||
+    (currentPage && DEVICEFLOW_FAILED_CLOSE_PAGES.has(currentPage))
+  ) {
+    trackDeviceflowFailed(params);
+    return;
+  }
+
+  trackDeviceflowAborted(params);
+};
+
 export const trackDeviceSelected = (params: {
   sourceFlow: SourceFlow;
   device: KnownDevice;
@@ -206,5 +258,26 @@ export const trackConnectAppButtonClicked = (params: {
     ...getDeviceUxV2BaseProperties(params.sourceFlow),
     modelId: params.modelId,
     button: params.button,
+  });
+};
+
+export const trackDeviceActionButtonClicked = (params: {
+  sourceFlow: SourceFlow;
+  button: string;
+  modelId?: DeviceModelId;
+  transport?: TrackingTransport;
+}): void => {
+  track("button_clicked", {
+    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    button: params.button,
+    ...(params.modelId ? { modelId: params.modelId } : {}),
+    ...(params.transport ? { transport: params.transport } : {}),
+  });
+};
+
+export const trackDrawerCloseButtonClicked = (params: { sourceFlow: SourceFlow }): void => {
+  track("button_clicked", {
+    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    button: DEVICE_ACTION_BUTTON.Close,
   });
 };

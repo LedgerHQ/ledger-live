@@ -8,7 +8,12 @@ import { setEnv } from "@ledgerhq/live-env";
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
-import { captureArtifacts, addTeamOwner, attachMergedFeatureFlags } from "tests/utils/allureUtils";
+import {
+  captureArtifacts,
+  addTeamOwner,
+  attachMergedFeatureFlags,
+  runCliStep,
+} from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
@@ -85,9 +90,11 @@ const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
 };
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
-  const promise = await cmd(`${userdataDestinationPath}/app.json`);
-  const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-  console.log("CLI result: ", result);
+  const label = cmd.name || "anonymous";
+  return runCliStep(label, async () => {
+    const promise = await cmd(`${userdataDestinationPath}/app.json`);
+    return promise instanceof Observable ? await lastValueFrom(promise) : await promise;
+  });
 }
 
 export const test = base.extend<TestFixtures>({

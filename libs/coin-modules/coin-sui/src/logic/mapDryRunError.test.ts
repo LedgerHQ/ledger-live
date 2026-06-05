@@ -34,7 +34,9 @@ describe("mapDryRunError", () => {
 
   describe("InsufficientCoinBalance pattern", () => {
     it("maps the tx.build() InsufficientCoinBalance message to NotEnoughBalance", () => {
-      const error = new Error("Transaction resolution failed: InsufficientCoinBalance in command 0");
+      const error = new Error(
+        "Transaction resolution failed: InsufficientCoinBalance in command 0",
+      );
       const result = mapDryRunError(error);
       expect(result).toBeInstanceOf(NotEnoughBalance);
       expect(result.cause).toBe(error);

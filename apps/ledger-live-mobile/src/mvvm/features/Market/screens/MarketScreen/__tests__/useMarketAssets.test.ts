@@ -1,4 +1,4 @@
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { MarketListRequestResult } from "@ledgerhq/live-common/market/utils/types";
 import { createMarketCurrencyData } from "../../../__tests__/helpers";
@@ -58,5 +58,72 @@ describe("useMarketAssets", () => {
     const { result } = renderHook(() => useMarketAssets());
     act(() => result.current.onEndReached());
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }));
+  });
+
+  it("passes the trimmed search query", () => {
+    renderHook(() => useMarketAssets({ search: " b " }));
+
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining({ search: "b" }));
+  });
+
+  it("resets the page when the search query changes", async () => {
+    let search = "";
+    const { result, rerender } = renderHook(() => useMarketAssets({ search }));
+
+    act(() => result.current.onEndReached());
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }));
+
+    search = "eth";
+    rerender(undefined);
+
+    await waitFor(() => {
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 1, search: "eth" }),
+      );
+    });
+    expect(mockedUseMarketData).not.toHaveBeenCalledWith(
+      expect.objectContaining({ page: 2, search: "eth" }),
+    );
+  });
+
+  it("requests favorite assets with the starred ids sorted", () => {
+    const { result } = renderHook(() =>
+      useMarketAssets({ category: "starred", starredMarketCoins: ["ethereum", "bitcoin"] }),
+    );
+
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 1, starred: ["bitcoin", "ethereum"] }),
+    );
+    expect(result.current.emptyState).toBeUndefined();
+  });
+
+  it("shows the favorites empty state without fetching the full asset list", () => {
+    const { result } = renderHook(() =>
+      useMarketAssets({ category: "starred", starredMarketCoins: [] }),
+    );
+
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, starred: [] }),
+    );
+    expect(result.current.assets).toEqual([]);
+    expect(result.current.loading).toBe(false);
+    expect(result.current.emptyState).toBe("favorites");
+
+    act(() => result.current.onEndReached());
+
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, starred: [] }),
+    );
+  });
+
+  it("searches all market assets while search is active", () => {
+    const { result } = renderHook(() =>
+      useMarketAssets({ search: " eth ", category: "starred", starredMarketCoins: [] }),
+    );
+
+    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 1, search: "eth", starred: undefined }),
+    );
+    expect(result.current.emptyState).toBeUndefined();
   });
 });

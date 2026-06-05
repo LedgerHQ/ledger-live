@@ -30,9 +30,7 @@ describe("useCompletionScreenViewModel", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockRedirectToPostOnboarding.mockClear();
-    jest
-      .mocked(useRedirectToPostOnboardingCallback)
-      .mockReturnValue(mockRedirectToPostOnboarding);
+    jest.mocked(useRedirectToPostOnboardingCallback).mockReturnValue(mockRedirectToPostOnboarding);
   });
 
   afterEach(() => {

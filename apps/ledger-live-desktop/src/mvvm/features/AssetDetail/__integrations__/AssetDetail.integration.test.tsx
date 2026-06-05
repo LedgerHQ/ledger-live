@@ -584,7 +584,7 @@ describe("AssetDetail integration", () => {
 
       await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
 
-      expect(screen.getByRole("menuitem", { name: /add to favorites/i })).toBeVisible();
+      expect(await screen.findByRole("menuitem", { name: /add to favorites/i })).toBeVisible();
       expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
     });
 
@@ -600,7 +600,7 @@ describe("AssetDetail integration", () => {
 
       await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
 
-      expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
+      expect(await screen.findByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
     });
 
     it("USDC - enables the favorite action and stores the coingecko id when toggled", async () => {
@@ -654,7 +654,7 @@ describe("AssetDetail integration", () => {
 
       await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
 
-      expect(screen.getByRole("menuitem", { name: /show in portfolio/i })).toBeVisible();
+      expect(await screen.findByRole("menuitem", { name: /show in portfolio/i })).toBeVisible();
     });
 
     it("renders the hidden banner when the asset is blacklisted and unhides it from the banner action", async () => {

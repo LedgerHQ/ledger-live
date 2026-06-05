@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  Spot,
-  Button,
-} from "@ledgerhq/lumen-ui-react";
+import { Dialog, DialogContent, DialogHeader, Spot, Button } from "@ledgerhq/lumen-ui-react";
 import type { ActionConfirmationDialogViewProps } from "./useActionConfirmationDialogViewModel";
 
 const SPOT_APPEARANCE = {

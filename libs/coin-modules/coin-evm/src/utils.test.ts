@@ -76,12 +76,10 @@ describe("parseDecimalIntegerPart", () => {
     expect(parseDecimalIntegerPart(input)).toBe(expected);
   });
 
-  it.each([
-    "",
-    ".",
-    "not-a-number",
-    "abc.123",
-  ])("returns 0n when the integer part is not parseable (%p)", input => {
-    expect(parseDecimalIntegerPart(input)).toBe(0n);
-  });
+  it.each(["", ".", "not-a-number", "abc.123"])(
+    "returns 0n when the integer part is not parseable (%p)",
+    input => {
+      expect(parseDecimalIntegerPart(input)).toBe(0n);
+    },
+  );
 });

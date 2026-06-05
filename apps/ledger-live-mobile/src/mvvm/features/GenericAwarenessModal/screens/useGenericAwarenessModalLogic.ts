@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import type { GenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal";
+import {
+  isGenericAwarenessModalContentCardReady,
+  type GenericAwarenessModalContentCard,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 
 const GENERIC_AWARENESS_MODAL_APP_START_ID_PREFIX = "app_start";
 
@@ -24,10 +27,14 @@ export function getGenericAwarenessModalCardToOpen({
   cards,
 }: GenericAwarenessModalLogicInput): GenericAwarenessModalContentCard | undefined {
   if (campaignId) {
-    return cards.find(card => card.id === campaignId);
+    return cards.find(
+      card => card.id === campaignId && isGenericAwarenessModalContentCardReady(card),
+    );
   }
 
-  return cards.find(card => isGenericAwarenessModalAppStartId(card.id));
+  return cards.find(
+    card => isGenericAwarenessModalAppStartId(card.id) && isGenericAwarenessModalContentCardReady(card),
+  );
 }
 
 export function useGenericAwarenessModalLogic(

@@ -7,7 +7,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { useFeature } from "@features/platform-feature-flags";
-import { COMPANION_STATE } from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import { COMPANION_STATE } from "../../types";
 import { UseSecondStepSyncOnboardingViewModelProps } from "./types";
 
 const ENTRY_TIMING = 300;

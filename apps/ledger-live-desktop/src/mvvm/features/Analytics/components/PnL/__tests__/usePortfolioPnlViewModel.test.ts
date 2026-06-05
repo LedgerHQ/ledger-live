@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
-import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { usePortfolioPnlViewModel } from "../usePortfolioPnlViewModel";
 
 jest.mock("@ledgerhq/wallet-pnl/hooks", () => ({
@@ -56,7 +56,7 @@ describe("usePortfolioPnlViewModel", () => {
     expect(result.current.shouldDisplayPnl).toBe(false);
   });
 
-  it("forwards the flattened accounts to usePortfolioPnL", () => {
+  it("forwards the top-level accounts to usePortfolioPnL", () => {
     renderPortfolioPnlViewModel({ initialState: { ...flagsOn, ...stateWithAccounts } });
 
     expect(mockedUsePortfolioPnL).toHaveBeenCalledWith(
@@ -64,6 +64,15 @@ describe("usePortfolioPnlViewModel", () => {
       expect.anything(),
       expect.anything(),
     );
+  });
+
+  it("forwards top-level (non-flattened) accounts so token sub-accounts are not double-counted", () => {
+    renderPortfolioPnlViewModel({
+      initialState: { ...flagsOn, accounts: [ETH_ACCOUNT_WITH_USDC] },
+    });
+
+    const [forwardedAccounts] = mockedUsePortfolioPnL.mock.calls[0];
+    expect(forwardedAccounts).toEqual([ETH_ACCOUNT_WITH_USDC]);
   });
 
   it("emits unrealisedReturn, realisedReturn, and totalReturn cards and a 3-bucket detail", () => {

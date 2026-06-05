@@ -5,6 +5,7 @@ import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCurrencyConfiguration } from "../../../../config";
 
 export function createLocalTezosApi(currencyId: string): CoinModuleApi<any> & BridgeApi {
-  return createTezosApi(getCurrencyConfiguration<TezosCoinConfig>(currencyId)) as CoinModuleApi<any> &
-    BridgeApi;
+  return createTezosApi(
+    getCurrencyConfiguration<TezosCoinConfig>(currencyId),
+  ) as CoinModuleApi<any> & BridgeApi;
 }

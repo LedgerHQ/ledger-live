@@ -20,7 +20,11 @@ import StepVote, { StepVoteFooter } from "./steps/StepVote";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { CeloAccount, CeloVote, Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloAccount,
+  CeloVote,
+  Transaction as CeloTransaction,
+} from "@ledgerhq/live-common/families/celo/types";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StepId, StepProps, St } from "./types";

@@ -146,6 +146,13 @@ export class LedgerSyncCliHelper {
     return output;
   }
 
+  static async pushLedgerSyncData() {
+    return CLI.ledgerSync({
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+      ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+    });
+  }
+
   static async deleteLedgerSyncData() {
     await CLI.ledgerSync({
       deleteData: true,

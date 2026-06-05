@@ -17,6 +17,8 @@ import type {
 function toStakingDelegationRaw(d: StakingDelegation): StakingDelegationRaw {
   return {
     validatorAddress: d.validatorAddress,
+    ...(d.validatorId !== undefined ? { validatorId: d.validatorId } : {}),
+    ...(d.validatorName !== undefined ? { validatorName: d.validatorName } : {}),
     amount: d.amount.toString(),
     pendingRewards: d.pendingRewards.toString(),
     status: d.status,
@@ -26,6 +28,8 @@ function toStakingDelegationRaw(d: StakingDelegation): StakingDelegationRaw {
 function fromStakingDelegationRaw(d: StakingDelegationRaw): StakingDelegation {
   return {
     validatorAddress: d.validatorAddress,
+    ...(typeof d.validatorId === "string" ? { validatorId: d.validatorId } : {}),
+    ...(typeof d.validatorName === "string" ? { validatorName: d.validatorName } : {}),
     amount: new BigNumber(d.amount),
     pendingRewards: new BigNumber(d.pendingRewards),
     status: d.status,
@@ -53,6 +57,7 @@ function fromStakingRedelegationRaw(r: StakingRedelegationRaw): StakingRedelegat
 function toStakingUnbondingRaw(u: StakingUnbonding): StakingUnbondingRaw {
   return {
     validatorAddress: u.validatorAddress,
+    ...(u.validatorName !== undefined ? { validatorName: u.validatorName } : {}),
     amount: u.amount.toString(),
     completionDate: u.completionDate.toISOString(),
   };
@@ -61,6 +66,7 @@ function toStakingUnbondingRaw(u: StakingUnbonding): StakingUnbondingRaw {
 function fromStakingUnbondingRaw(u: StakingUnbondingRaw): StakingUnbonding {
   return {
     validatorAddress: u.validatorAddress,
+    ...(typeof u.validatorName === "string" ? { validatorName: u.validatorName } : {}),
     amount: new BigNumber(u.amount),
     completionDate: new Date(u.completionDate),
   };

@@ -88,7 +88,6 @@ describe("EVM Api (Arc Testnet)", () => {
       ]);
       expect(operation!.recipients.map(r => r.toLowerCase())).toEqual([NATIVE_USDC_ADDRESS]);
     });
-
   });
 
   describe("getBalance", () => {

@@ -211,11 +211,7 @@ describe("DBMiddleware - coinConfigOverrides branch", () => {
     const state = baseState();
     runMiddleware([state, state], { type: "coinConfigOverrides/setCoinConfigOverride" });
 
-    expect(mockedSetKey).not.toHaveBeenCalledWith(
-      "app",
-      "coinConfigOverrides",
-      expect.anything(),
-    );
+    expect(mockedSetKey).not.toHaveBeenCalledWith("app", "coinConfigOverrides", expect.anything());
   });
 
   it("persists an empty overrides map (e.g. after Restore all)", () => {

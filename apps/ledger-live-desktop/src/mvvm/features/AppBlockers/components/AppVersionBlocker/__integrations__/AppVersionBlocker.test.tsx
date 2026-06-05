@@ -18,11 +18,11 @@ jest.mock("../../AppBlocker", () => ({
     blocked ? null : children,
 }));
 
-jest.mock("~/renderer/components/FirebaseRemoteConfig", () => ({
-  useFirebaseRemoteConfig: () => ({
-    config: {},
-    lastFetchTime: Date.now(),
-  }),
+jest.mock("~/firebase/remoteConfig", () => ({
+  subscribeToRemoteFlags: (cb: (e: { fetchedAt: number }) => void) => {
+    cb({ fetchedAt: Date.now() });
+    return () => {};
+  },
 }));
 
 jest.mock("@ledgerhq/live-config/LiveConfig", () => ({

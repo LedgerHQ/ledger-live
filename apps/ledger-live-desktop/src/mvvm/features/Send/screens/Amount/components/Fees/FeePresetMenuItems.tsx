@@ -47,6 +47,8 @@ export function FeePresetMenuItems({
                 <MenuRadioItem
                   key={option.id}
                   value={option.id}
+                  closeOnClick
+                  className="cursor-pointer"
                   data-testid={`send-fees-preset-${option.id}`}
                 >
                   <div className="flex flex-col">
@@ -62,8 +64,9 @@ export function FeePresetMenuItems({
       ) : null}
       {hasCustom ? (
         <MenuItem
+          className="cursor-pointer"
           data-testid="send-custom-fees-menu-item"
-          onSelect={() => {
+          onClick={() => {
             onSelectCustomFees?.();
           }}
         >
@@ -72,8 +75,9 @@ export function FeePresetMenuItems({
       ) : null}
       {hasCoinControl ? (
         <MenuItem
+          className="cursor-pointer"
           data-testid="send-coin-control-fees-menu-item"
-          onSelect={() => {
+          onClick={() => {
             onSelectCoinControl?.();
           }}
         >

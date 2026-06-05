@@ -95,8 +95,11 @@ export default function WebPlatformPlayer({
     props.onStateChange?.(state);
   };
 
-  const [currentAccountHistDb, setCurrentAccountHistDb, currentAccountHistDbLoaded]:
-    CurrentAccountHistDB = useCurrentAccountHistDB();
+  const [
+    currentAccountHistDb,
+    setCurrentAccountHistDb,
+    currentAccountHistDbLoaded,
+  ]: CurrentAccountHistDB = useCurrentAccountHistDB();
 
   return (
     <Container>

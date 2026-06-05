@@ -41,6 +41,7 @@ export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCa
       primaryButtonLink: "",
     },
   ],
+  isReady: true,
 };
 
 export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard = {
@@ -80,6 +81,7 @@ export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard 
       primaryButtonLink: "ledgerlive://earn",
     },
   ],
+  isReady: true,
 };
 
 export const carouselMockData: GenericAwarenessModalContentCard = {
@@ -119,6 +121,7 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
       primaryButtonLink: "",
     },
   ],
+  isReady: true,
 };
 
 export const featureIntroMockData: GenericAwarenessModalContentCard = {
@@ -148,6 +151,7 @@ export const featureIntroMockData: GenericAwarenessModalContentCard = {
       subtitle: "Manage thousands of assets in one place.",
     },
   ],
+  isReady: true,
 };
 
 export const promptMockData: GenericAwarenessModalPrompt = {

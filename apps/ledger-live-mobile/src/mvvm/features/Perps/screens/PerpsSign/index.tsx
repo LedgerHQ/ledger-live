@@ -29,9 +29,7 @@ function SigningConfirmation({
         source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
         style={getDeviceAnimationStyles(device.modelId)}
       />
-      {device.deviceName ? (
-        <Tag size="md" appearance="gray" label={device.deviceName} />
-      ) : null}
+      {device.deviceName ? <Tag size="md" appearance="gray" label={device.deviceName} /> : null}
       <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
         {t("send.newSendFlow.sign.title", { wording: getProductName(device.modelId) })}
       </Text>

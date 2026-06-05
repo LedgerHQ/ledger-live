@@ -6642,6 +6642,27 @@
       "learnMore": "Learn more about staking and delegation",
       "cta": "Start Earning"
     },
+    "stake": {
+      "flow": {
+        "amount": {
+          "disclaimer": "Staking locks your XTZ until you unstake it.",
+          "awaitingDelegation": "Confirming your delegation. This usually takes less than a minute…",
+          "cta": "Stake your Tezos"
+        },
+        "steps": {
+          "confirmation": {
+            "success": {
+              "title": "Staking sent",
+              "text": "Only a 4-day waiting period before staking rewards begin. After that, rewards are distributed daily and compound automatically."
+            }
+          }
+        },
+        "delegationSuccess": {
+          "cta": "Stake your TEZOS for more rewards",
+          "info": "Learn more about Tezos staking vs Delegation"
+        }
+      }
+    },
     "account": {
       "availableBalanceTooltip": "Funds you can use right now.",
       "delegatedAssetsTooltip": "XTZ delegated to a baker. Funds remain in your wallet and can be sent at any time.",
@@ -8082,6 +8103,13 @@
     "title": "Market",
     "assets": {
       "title": "Assets",
+      "emptyFavorites": "No favorites yet",
+      "categories": {
+        "accessibilityLabel": "Asset categories",
+        "all": "All",
+        "stocks": "Stocks",
+        "favorites": "Favorites"
+      },
       "error": {
         "title": "Couldn't load assets",
         "description": "Something went wrong while loading the asset list. Please try again later."

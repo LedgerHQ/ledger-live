@@ -54,6 +54,12 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
 
+      - name: format check wallet-cli
+        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
+        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
+        continue-on-error: true
+        run: pnpm exec nx run @ledgerhq/wallet-cli:format:check
+
       - name: Build, lint, typecheck and test wallet-cli
         run: |
           mkdir -p apps/wallet-cli/coverage

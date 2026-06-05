@@ -67,7 +67,7 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
   const manifest = useMemo<LiveAppManifest | undefined>(
-    () => (localManifest ?? remoteManifest),
+    () => localManifest ?? remoteManifest,
     [localManifest, remoteManifest],
   );
 

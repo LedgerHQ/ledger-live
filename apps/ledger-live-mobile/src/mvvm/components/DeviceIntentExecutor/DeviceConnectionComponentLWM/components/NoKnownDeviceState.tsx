@@ -24,12 +24,15 @@ export function NoKnownDeviceState({
   const handleConnectLedgerDevice = () => {
     trackConnectDeviceButtonClicked({
       sourceFlow,
-      button: CONNECT_DEVICE_BUTTON.ConnectLedgerDevice,
+      button: CONNECT_DEVICE_BUTTON.ConnectDevice,
     });
     onConnectLedgerDevice();
   };
   const handleBuyLedgerDevice = () => {
-    trackConnectDeviceButtonClicked({ sourceFlow, button: CONNECT_DEVICE_BUTTON.NoLedgerDevice });
+    trackConnectDeviceButtonClicked({
+      sourceFlow,
+      button: CONNECT_DEVICE_BUTTON.BuyDevice,
+    });
     onBuyLedgerDevice();
   };
 
@@ -38,6 +41,7 @@ export function NoKnownDeviceState({
       <TrackScreen
         category={PAGE_CONNECT_DEVICE.NoKnownDevice}
         sourceFlow={sourceFlow}
+        refreshSource
         deviceUxV2
       />
       <Box lx={{ width: "full", alignItems: "center", gap: "s24" }}>

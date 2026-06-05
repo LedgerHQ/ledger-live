@@ -6,7 +6,10 @@ import invariant from "invariant";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import type { Transaction as TezosTransaction, TezosOperationMode } from "@ledgerhq/live-common/families/tezos/types";
+import type {
+  Transaction as TezosTransaction,
+  TezosOperationMode,
+} from "@ledgerhq/live-common/families/tezos/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   useDelegation,
@@ -145,9 +148,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
     // when changes, we set again
     if (patch.mode !== transaction.mode || patch.recipient) {
-      setTransaction(
-        bridge.updateTransaction(transaction, patch),
-      );
+      setTransaction(bridge.updateTransaction(transaction, patch));
     }
   }, [account, bridge, defaultBaker, navigation, setTransaction, transaction, route.params]);
 

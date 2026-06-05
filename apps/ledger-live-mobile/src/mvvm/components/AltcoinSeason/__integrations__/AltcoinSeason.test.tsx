@@ -54,4 +54,15 @@ describe("AltcoinSeason Integration", () => {
       ),
     ).toBeVisible();
   });
+
+  it("should render an isolated error placeholder when API fails", async () => {
+    server.use(http.get(API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
+
+    render(<AltcoinSeason width={276} />);
+
+    expect(await screen.findByTestId("altcoin-season-card-error")).toBeVisible();
+    expect(screen.getByTestId("altcoin-season-card-error-icon")).toBeVisible();
+    expect(screen.getByText("Season")).toBeVisible();
+    expect(screen.getByText("Connection failed")).toBeVisible();
+  });
 });

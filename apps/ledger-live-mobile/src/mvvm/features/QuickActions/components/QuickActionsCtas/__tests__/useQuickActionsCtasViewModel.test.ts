@@ -8,9 +8,9 @@ import { useQuickActionsCtasViewModel } from "../useQuickActionsCtasViewModel";
 import { QUICK_ACTIONS_TEST_IDS } from "../../../testIds";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
-  const {
-    defaultIsAccountEmpty,
-  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  const { defaultIsAccountEmpty } = jest.requireActual(
+    "@ledgerhq/live-common/bridge/defaultBridgeExtensions",
+  );
   return {
     useAccountBridge: jest.fn(),
     useAccountBridgeOrNull: jest.fn(),

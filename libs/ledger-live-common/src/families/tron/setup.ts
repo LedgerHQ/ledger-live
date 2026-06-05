@@ -22,8 +22,7 @@ const createSigner: CreateSigner<TronSigner> = (transport: Transport) => {
   };
 };
 
-const getCurrencyConfig = (): TronCoinConfig =>
-  getCurrencyConfiguration<TronCoinConfig>("tron");
+const getCurrencyConfig = (): TronCoinConfig => getCurrencyConfiguration<TronCoinConfig>("tron");
 
 const bridge: Bridge<Transaction, TronAccount> = createBridges(
   executeWithSigner(createSigner),

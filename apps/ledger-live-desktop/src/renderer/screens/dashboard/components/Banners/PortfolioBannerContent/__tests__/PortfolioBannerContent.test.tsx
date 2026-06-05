@@ -60,7 +60,9 @@ jest.mock("../../hooks/useBannersVisibility", () => ({
 
 const mockUseBannersVisibility = jest.mocked(useBannersVisibility);
 const mockUseRecoverWidgetViewModel = jest.mocked(useRecoverWidgetViewModel);
-const mockUseEnsureRecoverPostOnboardingAction = jest.mocked(usePortfolioAddRecoverPostOnboardingAction);
+const mockUseEnsureRecoverPostOnboardingAction = jest.mocked(
+  usePortfolioAddRecoverPostOnboardingAction,
+);
 
 function defaultRecoverWidgetViewModelReturn() {
   return {

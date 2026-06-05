@@ -4,7 +4,7 @@ import type { LayoutChangeEvent } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { SeedOriginType } from "@ledgerhq/types-live";
 
-import { COMPANION_STATE, SEED_STATE } from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import { COMPANION_STATE, SEED_STATE } from "../../types";
 import { useSecondStepSyncOnboardingViewModel } from "./useSecondStepSyncOnboardingViewModel";
 
 const mockWithTiming = jest.fn((toValue: unknown, _config?: unknown) => toValue);
@@ -47,7 +47,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
+        overrideInitialState: withFlagOverrides({
+          deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
+        }),
       },
     );
 
@@ -64,7 +66,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: false, params: { apps: ["Bitcoin"] } } }),
+        overrideInitialState: withFlagOverrides({
+          deviceInitialApps: { enabled: false, params: { apps: ["Bitcoin"] } },
+        }),
       },
     );
 
@@ -82,7 +86,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: analyticsSeed,
         }),
       {
-        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
+        overrideInitialState: withFlagOverrides({
+          deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
+        }),
       },
     );
 
@@ -103,7 +109,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: analyticsSeed,
         }),
       {
-        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
+        overrideInitialState: withFlagOverrides({
+          deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
+        }),
       },
     );
 
@@ -130,7 +138,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
+        overrideInitialState: withFlagOverrides({
+          deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
+        }),
       },
     );
 
@@ -150,7 +160,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: false, params: {} } }),
+        overrideInitialState: withFlagOverrides({
+          deviceInitialApps: { enabled: false, params: {} },
+        }),
       },
     );
 
@@ -167,7 +179,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
 
   it("should animate opacity to 0 on setup/exit and to 100 otherwise", () => {
     const commonOptions = {
-      overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: false, params: {} } }),
+      overrideInitialState: withFlagOverrides({
+        deviceInitialApps: { enabled: false, params: {} },
+      }),
     };
 
     renderHook(
@@ -215,7 +229,9 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
+        overrideInitialState: withFlagOverrides({
+          deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
+        }),
       },
     );
 

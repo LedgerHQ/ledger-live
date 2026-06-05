@@ -163,7 +163,6 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
   });
 };
 
-
 export async function withGraphQLApi<T>(
   execute: AsyncGraphQLApiFunction<T>,
   currencyId?: string,
@@ -172,7 +171,6 @@ export async function withGraphQLApi<T>(
   const api = createSuiGraphQLClient({ url, fetch: graphqlFetcher });
   return execute(api);
 }
-
 
 /** Centralised so every caller exits with the same narrowed `stateJson` and the drift guard can't be skipped. */
 function unwrapAndValidateSystemState(
@@ -627,9 +625,7 @@ function applyValidatorApy(
  * Active validator set with client-side APY over {@link APY_LOOKBACK_EPOCHS} (Mysten's formula).
  * Young pools clamp the past epoch to activation; per-rate nulls degrade to apy=0.
  */
-export const getValidatorsGraphQL = async (
-  api: SuiGraphQLClient,
-): Promise<SuiValidator[]> => {
+export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiValidator[]> => {
   const res = await api.query({
     query: SUI_SYSTEM_STATE,
   });
@@ -819,7 +815,12 @@ export const getBlockGraphQL = async (
   transactions: SuiTransactionBlockResponse[];
 } | null> => {
   const transactions: SuiTransactionBlockResponse[] = [];
-  let info: { digest: string; sequenceNumber: string; timestampMs: string; previousDigest: string | null } | null = null;
+  let info: {
+    digest: string;
+    sequenceNumber: string;
+    timestampMs: string;
+    previousDigest: string | null;
+  } | null = null;
   let after: string | undefined;
 
   for (let page = 0; page < MAX_PAGES; page++) {

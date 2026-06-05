@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import type { GenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal";
+import {
+  isGenericAwarenessModalContentCardReady,
+  type GenericAwarenessModalContentCard,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 import type { State } from "~/renderer/reducers";
 import { openDialog } from "~/renderer/reducers/dialogs";
 import {
@@ -37,7 +40,12 @@ const useGenericAwarenessModalViewModel = (): GenericAwarenessModalViewProps => 
 
   // Deeplink may set campaignId before Braze content cards are in the store.
   useEffect(() => {
-    if (isOpen || campaignId === undefined || !contentCard) {
+    if (
+      isOpen ||
+      campaignId === undefined ||
+      !contentCard ||
+      !isGenericAwarenessModalContentCardReady(contentCard)
+    ) {
       return;
     }
     dispatch(openDialog(GENERIC_AWARENESS_MODAL_DIALOG_ID));
@@ -48,7 +56,7 @@ const useGenericAwarenessModalViewModel = (): GenericAwarenessModalViewProps => 
   }, [dispatch]);
 
   const displayedContentCard = isOpen
-    ? contentCard ?? lockedContentCardRef.current
+    ? (contentCard ?? lockedContentCardRef.current)
     : lockedContentCardRef.current;
 
   return {

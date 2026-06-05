@@ -20,11 +20,7 @@ import {
   SIMULATE_TRANSACTION,
   SYSTEM_STATE_FOR_BUILD,
 } from "./queries";
-import {
-  extractFailureError,
-  projectOpenMoveSignature,
-  unwrapGraphQL as unwrap,
-} from "./utils";
+import { extractFailureError, projectOpenMoveSignature, unwrapGraphQL as unwrap } from "./utils";
 
 // ----- Helpers -------------------------------------------------------------
 
@@ -105,9 +101,7 @@ export function makeSuiClientFromGraphQL(api: SuiGraphQLClient): ClientWithCoreA
       // `referenceGasPrice` is mandatory for build — no neutral default.
       // Throw on missing rather than ship silently-wrong gas pricing.
       if (epoch?.referenceGasPrice === null || epoch?.referenceGasPrice === undefined) {
-        throw new Error(
-          "GraphQL SystemStateForBuild: missing referenceGasPrice — schema drift?",
-        );
+        throw new Error("GraphQL SystemStateForBuild: missing referenceGasPrice — schema drift?");
       }
       // Resolver only reads `referenceGasPrice` and `epoch`. The rest of the
       // SDK contract (parameters/storageFund/stakeSubsidy/etc.) is type-only
@@ -242,7 +236,11 @@ export function makeSuiClientFromGraphQL(api: SuiGraphQLClient): ClientWithCoreA
               return new Error(`object ${id} not found`);
             }
             const ownerNode = obj.owner as
-              | { __typename?: string; address?: { address?: string }; initialSharedVersion?: string }
+              | {
+                  __typename?: string;
+                  address?: { address?: string };
+                  initialSharedVersion?: string;
+                }
               | null
               | undefined;
             // Discriminated union projection — `__typename` from the schema → `$kind`.
@@ -306,9 +304,7 @@ export function makeSuiClientFromGraphQL(api: SuiGraphQLClient): ClientWithCoreA
       return { objects: results };
     },
 
-    async simulateTransaction<
-      Include extends SuiClientTypes.SimulateTransactionInclude = {},
-    >(
+    async simulateTransaction<Include extends SuiClientTypes.SimulateTransactionInclude = {}>(
       options: SuiClientTypes.SimulateTransactionOptions<Include>,
     ): Promise<SuiClientTypes.SimulateTransactionResult<Include>> {
       const transactionBcs =
@@ -413,7 +409,6 @@ export function makeSuiClientFromGraphQL(api: SuiGraphQLClient): ClientWithCoreA
     resolveTransactionPlugin(): TransactionPlugin | undefined {
       return undefined;
     },
-
   };
 
   // Off-path methods (`getObject`, `listOwnedObjects`, `executeTransaction`, etc.) are

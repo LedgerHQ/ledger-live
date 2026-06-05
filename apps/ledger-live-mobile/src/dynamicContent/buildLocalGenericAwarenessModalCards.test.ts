@@ -45,6 +45,7 @@ describe("buildLocalGenericAwarenessModalCards", () => {
         id: "debug-carousel",
         isLocal: true,
         layout: GenericAwarenessModalLayout.Carousel,
+        isReady: true,
         data: [
           {
             title: "Second",
@@ -105,6 +106,7 @@ describe("buildLocalGenericAwarenessModalCards", () => {
         id: "debug-feature-intro",
         isLocal: true,
         layout: GenericAwarenessModalLayout.FeatureIntro,
+        isReady: true,
         title: "Feature intro",
         subtitle: "Feature intro subtitle",
         imageUrl: "https://example.com/main.png",

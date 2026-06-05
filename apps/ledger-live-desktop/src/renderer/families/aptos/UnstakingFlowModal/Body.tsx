@@ -21,7 +21,10 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { AptosAccount, Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
+import {
+  AptosAccount,
+  Transaction as AptosTransaction,
+} from "@ledgerhq/live-common/families/aptos/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 
 export type Data = {

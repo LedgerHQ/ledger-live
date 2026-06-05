@@ -188,9 +188,7 @@ export function reduceShieldedSyncResult(
   // freshly-scanned version (which carries the up-to-date `isSpent` flag).
   const newIds = new Set(newTransactions.map(tx => tx.id));
   const allShieldedTx: ShieldedTransaction[] = [
-    ...(accumulated.accountUpdate.privateInfo?.transactions ?? []).filter(
-      tx => !newIds.has(tx.id),
-    ),
+    ...(accumulated.accountUpdate.privateInfo?.transactions ?? []).filter(tx => !newIds.has(tx.id)),
     ...newTransactions,
   ];
 

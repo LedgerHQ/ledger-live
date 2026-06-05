@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  genAccount,
-  genTokenAccount,
-} from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
@@ -13,9 +10,9 @@ import LoadingFooter from "~/components/LoadingFooter";
 import { OperationsList } from "../OperationsList";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
-  const {
-    defaultIsAccountEmpty,
-  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  const { defaultIsAccountEmpty } = jest.requireActual(
+    "@ledgerhq/live-common/bridge/defaultBridgeExtensions",
+  );
   return {
     useAccountBridge: jest.fn(),
     useAccountBridgeOrNull: jest.fn(),
@@ -67,7 +64,7 @@ const FUNDED_PARENT_TOKEN: TokenAccount = genTokenAccount(0, FUNDED_PARENT, usdc
 
 function renderList(props: {
   accountsFiltered: AccountLike[];
-  allAccounts: typeof EMPTY_PARENT[];
+  allAccounts: (typeof EMPTY_PARENT)[];
 }) {
   return render(
     <OperationsList

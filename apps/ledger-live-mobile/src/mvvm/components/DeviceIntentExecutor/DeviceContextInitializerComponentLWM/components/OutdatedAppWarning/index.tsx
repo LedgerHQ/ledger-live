@@ -21,6 +21,7 @@ export function OutdatedAppWarning({ state, device, sourceFlow }: OutdatedAppWar
         category={PAGE_CONNECT_APP.OutdatedAppWarning}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <OutdatedAppWarningView {...viewModel} />

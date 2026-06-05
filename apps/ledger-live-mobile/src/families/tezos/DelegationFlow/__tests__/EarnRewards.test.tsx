@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import EarnRewards from "../EarnRewards";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();
 let mockIsDelegated = false;
@@ -68,13 +68,17 @@ describe("Tezos EarnRewards", () => {
     expect(mockNavigate).toHaveBeenCalledWith(ScreenName.DelegationSummary, {
       accountId: "tezos-acc-1",
       parentId: "parent-1",
+      stakeAfter: true,
     });
   });
 
-  it("does not navigate when already delegated (stake flow lands in a later story)", () => {
+  it("routes straight to the stake flow when the account is already delegated", () => {
     mockIsDelegated = true;
     render(<EarnRewards {...makeProps()} />);
     fireEvent.press(screen.getByTestId("tezos-earn-rewards-start-button"));
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.TezosStakeFlow, {
+      screen: ScreenName.TezosStakeAmount,
+      params: { accountId: "tezos-acc-1" },
+    });
   });
 });

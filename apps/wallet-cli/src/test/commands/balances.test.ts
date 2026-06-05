@@ -37,10 +37,10 @@ describe("balances command", () => {
   it("human output: prints ETH balance line", async () => {
     const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
     sessionCleanup = fixture.cleanup;
-    const { stdout, exitCode, stderr } = await runCli(
-      ["balances", "--account", "ethereum-1"],
-      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
-    );
+    const { stdout, exitCode, stderr } = await runCli(["balances", "--account", "ethereum-1"], {
+      WALLET_CLI_MOCK_PORT: String(server.port),
+      ...fixture.env,
+    });
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/ETH/i);
     expect(stdout).toMatch(/1\.5/);

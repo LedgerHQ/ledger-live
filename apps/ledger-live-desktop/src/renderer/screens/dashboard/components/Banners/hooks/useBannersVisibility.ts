@@ -1,6 +1,9 @@
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
-import { usePostOnboardingEntryPointVisibleOnWallet, usePostOnboardingPortfolioWidgetVisibility } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import {
+  usePostOnboardingEntryPointVisibleOnWallet,
+  usePostOnboardingPortfolioWidgetVisibility,
+} from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -43,9 +46,8 @@ export function useBannersVisibility(): BannerVisibilityState {
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
   // Finish onboarding widget
-  const { isPortfolioWidgetBaseVisible } = usePostOnboardingPortfolioWidgetVisibility(
-    flattenAccountsSelector,
-  );
+  const { isPortfolioWidgetBaseVisible } =
+    usePostOnboardingPortfolioWidgetVisibility(flattenAccountsSelector);
   const isFinishOnboardingWidgetVisible =
     isPortfolioWidgetBaseVisible && shouldDisplayFinishOnboardingWidget;
 

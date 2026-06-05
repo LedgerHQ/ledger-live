@@ -25,8 +25,9 @@ type Props = {
 export default function DelegationRow({ delegation, currency, onPress, isLast = false }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { validator, validatorAddress, formattedAmount, amount } = delegation;
+  const { validator, validatorAddress, validatorName, formattedAmount, amount } = delegation;
   const status = "status" in delegation ? delegation.status : undefined;
+  const displayName = validator?.name ?? validatorName ?? validatorAddress;
 
   return (
     <TouchableOpacity
@@ -38,22 +39,13 @@ export default function DelegationRow({ delegation, currency, onPress, isLast = 
       onPress={() => onPress(delegation)}
     >
       <View style={[styles.icon]}>
-        <ValidatorImage
-          size={42}
-          isLedger={false}
-          name={validator?.name ?? validatorAddress ?? ""}
-        />
+        <ValidatorImage size={42} isLedger={false} name={displayName} />
       </View>
 
       <View style={styles.nameWrapper}>
         <View style={styles.row}>
-          <Text
-            variant={"body"}
-            fontWeight={"semiBold"}
-            numberOfLines={1}
-            style={styles.name}
-          >
-            {validator?.name ?? validatorAddress}
+          <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1} style={styles.name}>
+            {displayName}
           </Text>
           {status === "bonded" ? (
             <CheckCircle size={12} color={colors.green} />

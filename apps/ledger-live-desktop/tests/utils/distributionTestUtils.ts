@@ -24,9 +24,7 @@ export function makeIntegrationTokenCurrency(
   };
 }
 
-export function buildDistributionItem(
-  overrides: Partial<DistributionItem> = {},
-): DistributionItem {
+export function buildDistributionItem(overrides: Partial<DistributionItem> = {}): DistributionItem {
   return {
     currency: getCryptoCurrencyById("bitcoin"),
     amount: 0,

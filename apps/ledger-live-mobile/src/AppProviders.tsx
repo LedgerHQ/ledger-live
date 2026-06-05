@@ -1,8 +1,4 @@
-import {
-  BottomSheetModalProvider,
-  GlobalSelectBottomSheet,
-  GlobalTooltipBottomSheet,
-} from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetModalProvider, GlobalTooltipBottomSheet } from "@ledgerhq/lumen-ui-rnative";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -40,7 +36,6 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                   </InViewProvider>
                 </NotificationsProvider>
               </PostOnboardingProviderWrapped>
-              <GlobalSelectBottomSheet />
               <GlobalTooltipBottomSheet />
             </BottomSheetModalProvider>
           </CountervaluesBridgedProvider>

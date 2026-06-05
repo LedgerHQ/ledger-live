@@ -23,7 +23,10 @@ import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { CardanoAccount, Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
+import {
+  CardanoAccount,
+  Transaction as CardanoTransaction,
+} from "@ledgerhq/live-common/families/cardano/types";
 import { TFunction } from "i18next";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 

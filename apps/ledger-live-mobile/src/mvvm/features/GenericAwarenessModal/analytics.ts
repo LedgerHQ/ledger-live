@@ -124,4 +124,3 @@ export const trackGenericAwarenessModalMalformedUrl = (
       : {}),
   });
 };
-

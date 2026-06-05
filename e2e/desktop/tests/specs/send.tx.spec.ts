@@ -467,7 +467,7 @@ test.describe("Send flows", () => {
           transaction.transaction.accountToCredit.address =
             transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
               ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
-              : transaction.transaction.accountToCredit.address ?? "";
+              : (transaction.transaction.accountToCredit.address ?? "");
 
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkContinueButtonEnable();

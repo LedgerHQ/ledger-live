@@ -51,7 +51,8 @@ export function clearBridgeCache(family?: string): void {
     for (const k of Object.keys(currencyBridgePromiseCache)) delete currencyBridgePromiseCache[k];
     for (const k of Object.keys(accountBridgePromiseCache)) delete accountBridgePromiseCache[k];
     for (const k of Object.keys(mockBridgePromiseCache)) delete mockBridgePromiseCache[k];
-    for (const k of Object.keys(unsupportedBridgePromiseCache)) delete unsupportedBridgePromiseCache[k];
+    for (const k of Object.keys(unsupportedBridgePromiseCache))
+      delete unsupportedBridgePromiseCache[k];
     return;
   }
   delete currencyBridgePromiseCache[family];

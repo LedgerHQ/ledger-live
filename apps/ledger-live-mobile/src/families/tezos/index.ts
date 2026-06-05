@@ -1,3 +1,2 @@
-import * as TezosDelegationFlow from "./DelegationFlow";
-
-export { TezosDelegationFlow };
+export * as TezosDelegationFlow from "./DelegationFlow";
+export * as TezosStakeFlow from "./StakeFlow";

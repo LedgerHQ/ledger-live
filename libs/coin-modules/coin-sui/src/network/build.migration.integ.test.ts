@@ -86,9 +86,7 @@ const assertShapeBothBuilt = (rpcBytes: Uint8Array, gqlBytes: Uint8Array, label:
   expect(Array.isArray(rpc.gasData.payment)).toBe(true);
   // The payment array is allowed to be empty (SIP-58 address-balance path)
   // OR populated with coin objects — but parity means same emptiness.
-  expect((gql.gasData.payment ?? []).length === 0).toBe(
-    (rpc.gasData.payment ?? []).length === 0,
-  );
+  expect((gql.gasData.payment ?? []).length === 0).toBe((rpc.gasData.payment ?? []).length === 0);
 
   // Gas price + budget must be string-typed (numeric strings); we don't
   // compare values — both are resolver-determined and drift between calls.
@@ -107,20 +105,8 @@ describe("createTransactionFor* parity (live mainnet)", () => {
       mode: "send" as const,
       recipient: ACTIVE_ACCOUNT,
     };
-    const rpc = await createTransaction(
-      ACTIVE_ACCOUNT,
-      transaction,
-      false,
-      undefined,
-      JSON_RPC_ID,
-    );
-    const gql = await createTransaction(
-      ACTIVE_ACCOUNT,
-      transaction,
-      false,
-      undefined,
-      GRAPHQL_ID,
-    );
+    const rpc = await createTransaction(ACTIVE_ACCOUNT, transaction, false, undefined, JSON_RPC_ID);
+    const gql = await createTransaction(ACTIVE_ACCOUNT, transaction, false, undefined, GRAPHQL_ID);
     assertShapeBothBuilt(rpc.unsigned, gql.unsigned, "transfer");
   }, 90_000);
 
@@ -131,20 +117,8 @@ describe("createTransactionFor* parity (live mainnet)", () => {
       mode: "delegate" as const,
       recipient: FIGMENT_SUI_VALIDATOR_ADDRESS,
     };
-    const rpc = await createTransaction(
-      ACTIVE_ACCOUNT,
-      transaction,
-      false,
-      undefined,
-      JSON_RPC_ID,
-    );
-    const gql = await createTransaction(
-      ACTIVE_ACCOUNT,
-      transaction,
-      false,
-      undefined,
-      GRAPHQL_ID,
-    );
+    const rpc = await createTransaction(ACTIVE_ACCOUNT, transaction, false, undefined, JSON_RPC_ID);
+    const gql = await createTransaction(ACTIVE_ACCOUNT, transaction, false, undefined, GRAPHQL_ID);
     assertShapeBothBuilt(rpc.unsigned, gql.unsigned, "delegate");
   }, 90_000);
 
@@ -159,20 +133,8 @@ describe("createTransactionFor* parity (live mainnet)", () => {
       stakedSuiId: "0x0",
       useAllAmount: true,
     };
-    const rpc = await createTransaction(
-      ACTIVE_ACCOUNT,
-      transaction,
-      false,
-      undefined,
-      JSON_RPC_ID,
-    );
-    const gql = await createTransaction(
-      ACTIVE_ACCOUNT,
-      transaction,
-      false,
-      undefined,
-      GRAPHQL_ID,
-    );
+    const rpc = await createTransaction(ACTIVE_ACCOUNT, transaction, false, undefined, JSON_RPC_ID);
+    const gql = await createTransaction(ACTIVE_ACCOUNT, transaction, false, undefined, GRAPHQL_ID);
     assertShapeBothBuilt(rpc.unsigned, gql.unsigned, "undelegate");
   }, 90_000);
 });

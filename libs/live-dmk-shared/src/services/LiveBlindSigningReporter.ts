@@ -4,6 +4,7 @@ import {
   type BlindSigningPlatform,
   type BlindSigningReporter,
   type BlindSigningReportParams,
+  type ContextModuleChainID,
   DEFAULT_CONFIG,
   DefaultBlindSigningReporter,
   HttpBlindSigningReporterDatasource,
@@ -78,6 +79,7 @@ export const liveBlindSigningReporter = LiveBlindSigningReporter.getInstance();
 
 export function buildDefaultHttpBlindSigningReporter(
   originToken: string,
+  chain: ContextModuleChainID,
   appSource = "ledger-wallet",
 ): BlindSigningReporter {
   return new DefaultBlindSigningReporter(
@@ -86,6 +88,7 @@ export function buildDefaultHttpBlindSigningReporter(
       appSource,
       originToken,
       loggerFactory: noopLoggerFactory,
+      chain,
     }),
   );
 }

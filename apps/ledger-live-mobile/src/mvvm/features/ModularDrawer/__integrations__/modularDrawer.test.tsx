@@ -1,5 +1,12 @@
 import React from "react";
-import { render, waitFor, act, screen, withReadOnlyDisabled, withFlagOverrides } from "@tests/test-renderer";
+import {
+  render,
+  waitFor,
+  act,
+  screen,
+  withReadOnlyDisabled,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 import {
   ModularDrawerSharedNavigator,
   WITHOUT_ACCOUNT_SELECTION,
@@ -93,7 +100,9 @@ const DRAWER_VARIANTS: DrawerVariant[] = [
     backButtonTestId: "bottom-sheet-header-back-button",
     renderOptions: {
       overrideInitialState: (state: State) =>
-        withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(withReadOnlyDisabled(state)),
+        withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(
+          withReadOnlyDisabled(state),
+        ),
     },
   },
 ];
@@ -300,7 +309,9 @@ describe.each(DRAWER_VARIANTS)(
 describe("ModularDrawer — Lumen BottomSheet specific", () => {
   const lumenOverride = {
     overrideInitialState: (state: State) =>
-      withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(withReadOnlyDisabled(state)),
+      withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(
+        withReadOnlyDisabled(state),
+      ),
   };
 
   beforeEach(() => {

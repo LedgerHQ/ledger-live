@@ -65,7 +65,7 @@ export function applyBalanceReconciliation(
   // (better than `latest` for tax-ish use cases, neutral otherwise).
   // Positive delta → synthetic acquisition; price it at the latest rate
   // because rebase / missed-IN gains accrue continuously up to "now".
-  const valuationDate = delta.isPositive() ? null : state.lastOperationDate ?? null;
+  const valuationDate = delta.isPositive() ? null : (state.lastOperationDate ?? null);
 
   const cvAtDelta = calculate(countervalues, {
     value: delta.absoluteValue().toNumber(),

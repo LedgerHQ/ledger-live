@@ -1,6 +1,9 @@
 import { useStake } from "LLM/hooks/useStake/useStake";
 import BigNumber from "bignumber.js";
-import { customRenderHookWithLiveAppProvider as renderHook, withFlagOverrides } from "@tests/test-renderer";
+import {
+  customRenderHookWithLiveAppProvider as renderHook,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";

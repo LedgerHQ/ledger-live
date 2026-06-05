@@ -57,12 +57,12 @@ describe("Tezos accountActions.getMainActions", () => {
     );
   });
 
-  it("routes the stake flow to the Tezos Earn Rewards screen until the stake flow lands", () => {
+  it("routes the stake flow straight to the Tezos stake amount screen", () => {
     mockFlow = { kind: "stake", skipDelegation: true };
     const [action] = callMainActions({ enabled: true });
-    expect(action.navigationParams?.[0]).toBe(NavigatorName.TezosDelegationFlow);
+    expect(action.navigationParams?.[0]).toBe(NavigatorName.TezosStakeFlow);
     expect((action.navigationParams?.[1] as { screen: string }).screen).toBe(
-      ScreenName.TezosEarnRewards,
+      ScreenName.TezosStakeAmount,
     );
   });
 

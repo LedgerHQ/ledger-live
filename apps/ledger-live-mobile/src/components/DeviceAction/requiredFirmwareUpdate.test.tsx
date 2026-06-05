@@ -44,10 +44,9 @@ describe("RequiredFirmwareUpdate", () => {
       shouldDisplayWallet40MainNav: false,
     } as WalletFeaturesConfig);
 
-    const { user } = render(
-      <RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />,
-      { overrideInitialState: stateWithLastSeenDevice },
-    );
+    const { user } = render(<RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
 
     await user.press(screen.getByText("Go to My Ledger"));
 
@@ -82,10 +81,9 @@ describe("RequiredFirmwareUpdate", () => {
       shouldDisplayWallet40MainNav: true,
     } as WalletFeaturesConfig);
 
-    const { user } = render(
-      <RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />,
-      { overrideInitialState: stateWithLastSeenDevice },
-    );
+    const { user } = render(<RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
 
     await user.press(screen.getByText("Go to My Ledger"));
 

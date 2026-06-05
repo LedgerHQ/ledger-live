@@ -6,7 +6,10 @@ import type {
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import type { SourceFlow } from "../../../utils/SourceFlowContext";
-import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
+import {
+  CONNECT_APP_BUTTON,
+  trackConnectAppButtonClicked,
+} from "../../../utils/trackDeviceIntent";
 
 type OutdatedAppWarningState = Extract<
   EnsureAppReadyState,
@@ -24,12 +27,20 @@ export function useOutdatedAppWarningViewModel({ state, device, sourceFlow }: Pa
   const modelId = device.modelId;
 
   const onOpenMyLedger = useCallback(() => {
-    trackConnectAppButtonClicked({ sourceFlow, modelId, button: CONNECT_APP_BUTTON.ManageApps });
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId,
+      button: CONNECT_APP_BUTTON.ManageApps,
+    });
     openMyLedger(state.appName);
   }, [openMyLedger, state.appName, sourceFlow, modelId]);
 
   const onContinue = useCallback(() => {
-    trackConnectAppButtonClicked({ sourceFlow, modelId, button: CONNECT_APP_BUTTON.Continue });
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId,
+      button: CONNECT_APP_BUTTON.Continue,
+    });
     state.onContinue();
   }, [state, sourceFlow, modelId]);
 

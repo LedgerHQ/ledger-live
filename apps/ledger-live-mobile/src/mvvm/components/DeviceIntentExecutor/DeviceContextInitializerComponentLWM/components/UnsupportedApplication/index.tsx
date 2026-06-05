@@ -18,6 +18,7 @@ export function UnsupportedApplication({ device, sourceFlow }: UnsupportedApplic
         category={PAGE_CONNECT_APP.UnsupportedApplication}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <UnsupportedApplicationView {...viewModel} />

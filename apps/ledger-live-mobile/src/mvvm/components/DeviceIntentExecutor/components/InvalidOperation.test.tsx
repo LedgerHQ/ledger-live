@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import { SourceFlowProvider } from "../utils/SourceFlowContext";
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { InvalidOperation } from "./InvalidOperation";
@@ -10,10 +10,12 @@ jest.mock("~/analytics", () => {
   return {
     ...actual,
     TrackScreen: jest.fn(() => null),
+    track: jest.fn(),
   };
 });
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
+const mockedTrack = jest.mocked(track);
 
 function renderState(props: Partial<React.ComponentProps<typeof InvalidOperation>> = {}) {
   return render(
@@ -48,6 +50,11 @@ describe("InvalidOperation", () => {
 
     await user.press(screen.getByText("Close"));
 
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      button: "Close",
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 

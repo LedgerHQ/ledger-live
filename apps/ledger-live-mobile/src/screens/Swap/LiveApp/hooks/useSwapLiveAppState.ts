@@ -49,8 +49,7 @@ const isDefaultAccountSwapParamsList = (
  * - Error computation
  * - Webview state management
  *
- * Does NOT include navigation hooks (useSwapHeaderNavigation,
- * useSwapNavigationHelper, useSwapAndroidHardwareBackPress).
+ * Does NOT include navigation hooks such as useSwapAndroidHardwareBackPress.
  */
 export function useSwapLiveAppState(params: unknown) {
   const { t } = useTranslation();

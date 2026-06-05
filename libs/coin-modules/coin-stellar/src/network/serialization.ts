@@ -353,10 +353,13 @@ function buildPathPaymentLeg(
   );
 
   const ledgerOpType = isNative ? direction : "NONE";
-  const { label, asset: opAsset, assetCode, assetIssuer, assetAmount } = describeLegAsset(
-    asset,
-    amount,
-  );
+  const {
+    label,
+    asset: opAsset,
+    assetCode,
+    assetIssuer,
+    assetAmount,
+  } = describeLegAsset(asset, amount);
   const legSuffix = isMultiLeg ? `-${direction}-${label}` : "";
 
   // Counterparties: for the OUT leg the recipient is whatever Horizon recorded

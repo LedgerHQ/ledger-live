@@ -216,7 +216,9 @@ describe("useEvmStakingValidators", () => {
     });
 
     mockedGetValidators.mockImplementation(currencyId =>
-      currencyId === "sei_evm" ? seiPromise : Promise.resolve({ items: celoValidators, next: undefined }),
+      currencyId === "sei_evm"
+        ? seiPromise
+        : Promise.resolve({ items: celoValidators, next: undefined }),
     );
 
     const { result, rerender } = renderHook(

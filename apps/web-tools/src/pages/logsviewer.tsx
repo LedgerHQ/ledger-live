@@ -597,12 +597,7 @@ class HeaderEmptyState extends Component<{
           <LumenButton asChild appearance="accent">
             <label>
               Load Logs
-              <input
-                type="file"
-                onChange={this.onChange}
-                accept=".json,.txt"
-                className="hidden"
-              />
+              <input type="file" onChange={this.onChange} accept=".json,.txt" className="hidden" />
             </label>
           </LumenButton>
         </p>

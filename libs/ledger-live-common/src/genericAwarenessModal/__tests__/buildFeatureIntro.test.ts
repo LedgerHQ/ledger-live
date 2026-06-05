@@ -21,6 +21,7 @@ describe("buildFeatureIntro", () => {
       campaignId: "campaign-1",
       role: FeatureIntroRole.Item,
       index: "1",
+      itemCount: "3",
       icon: "icon-2",
       title: "Item 2",
       subtitle: "Second item",
@@ -29,6 +30,7 @@ describe("buildFeatureIntro", () => {
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "campaign-1",
       role: FeatureIntroRole.Main,
+      itemCount: "3",
       title: "Main title",
       subtitle: "Main subtitle",
       imageUrl: "https://example.com/hero.png",
@@ -42,6 +44,7 @@ describe("buildFeatureIntro", () => {
       campaignId: "campaign-1",
       role: FeatureIntroRole.Item,
       index: "0",
+      itemCount: "3",
       icon: "icon-1",
       title: "Item 1",
       subtitle: "First item",
@@ -52,6 +55,7 @@ describe("buildFeatureIntro", () => {
     expect(featureIntro).toEqual({
       layout: GenericAwarenessModalLayout.FeatureIntro,
       id: "campaign-1",
+      isReady: true,
       title: "Main title",
       subtitle: "Main subtitle",
       imageUrl: "https://example.com/hero.png",
@@ -79,12 +83,14 @@ describe("buildFeatureIntro", () => {
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "campaign-1",
       role: FeatureIntroRole.Main,
+      itemCount: "2",
     });
     const itemCard = makeCard("item", {
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "campaign-1",
       role: FeatureIntroRole.Item,
       index: "0",
+      itemCount: "2",
     });
 
     const featureIntro = buildFeatureIntro("campaign-1", [mainCard, itemCard]);
@@ -92,6 +98,7 @@ describe("buildFeatureIntro", () => {
     expect(featureIntro).toEqual({
       layout: GenericAwarenessModalLayout.FeatureIntro,
       id: "campaign-1",
+      isReady: true,
       title: "",
       subtitle: "",
       imageUrl: "",
@@ -107,6 +114,44 @@ describe("buildFeatureIntro", () => {
         },
       ],
     });
+  });
+
+  it("should return feature intro with isReady false when itemCount is set but not all cards have arrived", () => {
+    const mainCard = makeCard("main", {
+      layout: GenericAwarenessModalLayout.FeatureIntro,
+      campaignId: "campaign-1",
+      role: FeatureIntroRole.Main,
+      itemCount: "2",
+      title: "Main",
+    });
+
+    const featureIntro = buildFeatureIntro("campaign-1", [mainCard]);
+
+    expect(featureIntro?.isReady).toBe(false);
+    expect(featureIntro?.items).toHaveLength(0);
+  });
+
+  it("should build feature intro when received cards match itemCount", () => {
+    const mainCard = makeCard("main", {
+      layout: GenericAwarenessModalLayout.FeatureIntro,
+      campaignId: "campaign-1",
+      role: FeatureIntroRole.Main,
+      itemCount: "2",
+      title: "Main",
+    });
+    const itemCard = makeCard("item", {
+      layout: GenericAwarenessModalLayout.FeatureIntro,
+      campaignId: "campaign-1",
+      role: FeatureIntroRole.Item,
+      index: "0",
+      itemCount: "2",
+      title: "Item",
+    });
+
+    const featureIntro = buildFeatureIntro("campaign-1", [mainCard, itemCard]);
+
+    expect(featureIntro?.items).toHaveLength(1);
+    expect(featureIntro?.isReady).toBe(true);
   });
 
   it("should return undefined when there is no valid main input", () => {
@@ -128,6 +173,7 @@ describe("buildFeatureIntro", () => {
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "campaign-1",
       role: FeatureIntroRole.Main,
+      itemCount: "5",
       title: "Main",
     });
     const itemCards = [0, 1, 2, 3].map(index =>
@@ -136,6 +182,7 @@ describe("buildFeatureIntro", () => {
         campaignId: "campaign-1",
         role: FeatureIntroRole.Item,
         index: String(index),
+        itemCount: "5",
         icon: `icon-${index}`,
         title: `Item ${index}`,
         subtitle: `Subtitle ${index}`,
@@ -157,6 +204,7 @@ describe("buildFeatureIntro", () => {
       layout: GenericAwarenessModalLayout.FeatureIntro,
       campaignId: "campaign-1",
       role: FeatureIntroRole.Main,
+      itemCount: "2",
       title: "Main",
     });
     const missingIndexCard = makeCard("missing-index", {
@@ -170,6 +218,7 @@ describe("buildFeatureIntro", () => {
       campaignId: "campaign-1",
       role: FeatureIntroRole.Item,
       index: "1",
+      itemCount: "2",
       title: "Valid",
     });
 

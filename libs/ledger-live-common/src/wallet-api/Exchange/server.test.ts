@@ -291,13 +291,11 @@ describe("handlers", () => {
       const { getAccountBridge } = jest.requireMock("../../bridge");
       getAccountBridge.mockResolvedValue({
         createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
-        updateTransaction: jest
-          .fn()
-          .mockImplementation((tx: object, upd: object) => ({
-            ...tx,
-            ...upd,
-            amount: new BigNumber("1000000"),
-          })),
+        updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({
+          ...tx,
+          ...upd,
+          amount: new BigNumber("1000000"),
+        })),
       });
 
       mockUiStartExchange.mockImplementation(({ onSuccess }) => {
@@ -372,20 +370,26 @@ describe("handlers", () => {
         params: null,
         id: "test",
       } as unknown as RpcRequest<string, ExchangeCompleteParams>;
-      const context = { config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" } };
+      const context = {
+        config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+      };
 
       const result = await handler["custom.exchange.complete"](request, context, {});
       expect(result).toEqual({ transactionHash: "" });
       expect(mockTracking.completeExchangeNoParams).toHaveBeenCalledWith(testAppManifest);
-
     });
 
     it("calls getWalletAPITransactionSignFlowInfos on SELL exchange", async () => {
       const accounts = [genAccount("accountId1")];
       const account = accounts[0];
 
-      const { getMainAccount } = jest.requireMock("@ledgerhq/ledger-wallet-framework/account/index");
-      getMainAccount.mockReturnValue({ ...account, currency: { ...account.currency, family: "bitcoin" } });
+      const { getMainAccount } = jest.requireMock(
+        "@ledgerhq/ledger-wallet-framework/account/index",
+      );
+      getMainAccount.mockReturnValue({
+        ...account,
+        currency: { ...account.currency, family: "bitcoin" },
+      });
 
       const { deserializeTransaction } = jest.requireMock("@ledgerhq/wallet-api-core");
       deserializeTransaction.mockReturnValue({ family: "bitcoin", recipient: "bc1test" });
@@ -400,12 +404,16 @@ describe("handlers", () => {
       const { getAccountBridge } = jest.requireMock("../../bridge");
       getAccountBridge.mockResolvedValue({
         createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
-        updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({ ...tx, ...upd })),
+        updateTransaction: jest
+          .fn()
+          .mockImplementation((tx: object, upd: object) => ({ ...tx, ...upd })),
       });
 
-      mockUiCompleteExchange.mockImplementation(({ onSuccess }: { onSuccess: (hash: string) => void }) => {
-        onSuccess("0xhash123");
-      });
+      mockUiCompleteExchange.mockImplementation(
+        ({ onSuccess }: { onSuccess: (hash: string) => void }) => {
+          onSuccess("0xhash123");
+        },
+      );
 
       const handler = handlers({
         accounts,
@@ -431,7 +439,9 @@ describe("handlers", () => {
         params,
         id: "test",
       } as RpcRequest<string, ExchangeCompleteParams>;
-      const context = { config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" } };
+      const context = {
+        config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+      };
 
       const result = await handler["custom.exchange.complete"](request, context, {});
       expect(result).toEqual({ transactionHash: "0xhash123" });

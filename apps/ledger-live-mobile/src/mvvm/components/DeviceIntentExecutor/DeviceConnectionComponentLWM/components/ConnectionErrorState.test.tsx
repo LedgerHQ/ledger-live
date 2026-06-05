@@ -9,10 +9,14 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { TrackScreen, track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { urls } from "~/utils/urls";
 import { SourceFlowProvider } from "../../utils/SourceFlowContext";
-import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
+import {
+  PAGE_CONNECT_DEVICE,
+  setIsInTerminalConnectDeviceError,
+  trackDeviceflowCanceled,
+} from "../../utils/trackDeviceIntent";
 import { ConnectionErrorState } from "./ConnectionErrorState";
 
 jest.mock("~/analytics", () => {
@@ -26,7 +30,6 @@ jest.mock("~/analytics", () => {
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);
-const TEST_SOURCE = "Connect Device - Connection Error";
 
 type ConnectionErrorUIState = Extract<
   ConnectDeviceUIState,
@@ -88,21 +91,34 @@ function renderState(errorType: ConnectionErrorTypes) {
 describe("ConnectionErrorState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    previousRouteNameRef.current = TEST_SOURCE;
+    setIsInTerminalConnectDeviceError(false);
+    currentRouteNameRef.current = PAGE_CONNECT_DEVICE.ConnectionError;
     jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
   it.each(errorCases)(
-    "should render the $type error content",
-    ({ type, title, description, cta }) => {
+    "should render the $type error title and CTA",
+    ({ type, title, cta }) => {
       renderState(type);
 
       expect(screen.getByText(title)).toBeVisible();
       expect(screen.getByText(cta)).toBeVisible();
+    },
+  );
 
-      if (description) {
-        expect(screen.getByText(description)).toBeVisible();
+  it.each(errorCases.filter(({ description }) => description))(
+    "GIVEN a $type error with a description WHEN rendering THEN it renders the error description",
+    ({ type, description }) => {
+      // GIVEN
+      if (!description) {
+        throw new Error("Expected error case to include a description");
       }
+
+      // WHEN
+      renderState(type);
+
+      // THEN
+      expect(screen.getByText(description)).toBeVisible();
     },
   );
 
@@ -119,7 +135,6 @@ describe("ConnectionErrorState", () => {
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       button: "Retry",
     });
@@ -133,7 +148,6 @@ describe("ConnectionErrorState", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       button: "Get Help",
     });
@@ -156,5 +170,36 @@ describe("ConnectionErrorState", () => {
       }),
       undefined,
     );
+  });
+
+  it("GIVEN an unknown connection error WHEN cancelling THEN it tracks deviceflow_failed", () => {
+    // GIVEN
+    renderState(ConnectionErrorTypes.Unknown);
+    mockedTrack.mockClear();
+
+    // WHEN
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+
+    // THEN
+    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+    });
+  });
+
+  it("GIVEN a previous terminal discovery error WHEN rendering a retryable connection error and cancelling THEN it tracks deviceflow_aborted", () => {
+    // GIVEN
+    setIsInTerminalConnectDeviceError(true);
+    renderState(ConnectionErrorTypes.BlePairingRefused);
+    mockedTrack.mockClear();
+
+    // WHEN
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+
+    // THEN
+    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+    });
   });
 });

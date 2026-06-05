@@ -1,13 +1,8 @@
-import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
-import {
-  createNativeStackNavigator,
-  NativeStackHeaderRightProps,
-} from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
 import SwapHistory from "~/screens/Swap/History";
-import Touchable from "../Touchable";
 
 import { useTheme } from "styled-components/native";
 import { useTrack } from "~/analytics";
@@ -15,7 +10,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/index";
-import { SwapLiveApp } from "~/screens/Swap/LiveApp";
 import { SwapLiveAppWallet40 } from "~/screens/Swap/LiveApp/SwapLiveAppWallet40";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
@@ -23,18 +17,15 @@ import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 import { isGoingToSwapHistory } from "~/screens/Swap/navigation/navigateBackToSwapTab";
 
-// Constants for tracking sources
 const TRACKING_SOURCES = {
   Accounts: "Account",
   Main: "Portfolio",
   MarketDetail: "Assets",
 };
 
-// Helper function to determine tracking source based on route name
 const getTrackingSource = (routeName: string) => {
   return Object.entries(TRACKING_SOURCES).find(([key]) => routeName.startsWith(key))?.[1];
 };
@@ -45,28 +36,6 @@ const NullHeader = () => null;
 
 function BackButton() {
   return <NavigationHeaderBackButton />;
-}
-
-function SwapHistoryHeaderRight({
-  onPress,
-}: Readonly<{
-  onPress: () => void;
-}>) {
-  return (
-    <Flex p={6}>
-      <Touchable touchableTestID="NavigationHeaderSwapHistory" onPress={onPress}>
-        <Icons.Clock color={"neutral.c100"} />
-      </Touchable>
-    </Flex>
-  );
-}
-
-function createSwapHistoryHeaderRight(onPress: () => void) {
-  return function SwapHistoryHeaderRightRenderer(
-    _props: Readonly<NativeStackHeaderRightProps>,
-  ): React.JSX.Element {
-    return <SwapHistoryHeaderRight onPress={onPress} />;
-  };
 }
 
 function getInitialSwapTabParams(
@@ -88,20 +57,7 @@ export default function SwapNavigator(
   const track = useTrack();
   const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
   const { notifyFlowCompleted } = useNotificationsContext();
-  const { isEnabled: isLwm40Enabled, shouldDisplayWallet40MainNav } =
-    useWalletFeaturesConfig("mobile");
 
-  const goToSwapHistory = useCallback(() => {
-    track("button_clicked", {
-      button: "SwapHistory",
-      page: ScreenName.SwapTab,
-      swapVersion: SWAP_VERSION,
-    });
-
-    navigation.navigate(ScreenName.SwapHistory);
-  }, [navigation, track]);
-
-  // Helper function to track button click
   const trackButtonClick = useCallback(
     (source: string) => {
       track("button_clicked", {
@@ -133,20 +89,6 @@ export default function SwapNavigator(
     }
   }, [trackButtonClick, navigation]);
 
-  // Old design header options
-  const oldDesignOptions = useMemo(
-    () => ({
-      ...("options" in noNanoBuyNanoWallScreenOptions
-        ? noNanoBuyNanoWallScreenOptions.options
-        : {}),
-      headerTitle: t("transfer.swap2.form.title"),
-      headerLeft: BackButton,
-      headerRight: createSwapHistoryHeaderRight(goToSwapHistory),
-    }),
-    [goToSwapHistory, noNanoBuyNanoWallScreenOptions, t],
-  );
-
-  const shouldDisplayHeader = !shouldDisplayWallet40MainNav;
   // Wallet 4.0 design: header is handled by MainNavigator tab, hide it here
   const wallet40Options = useMemo(
     () => ({
@@ -159,23 +101,13 @@ export default function SwapNavigator(
   );
 
   return (
-    <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: shouldDisplayHeader }}>
-      {isLwm40Enabled ? (
-        <Stack.Screen
-          name={ScreenName.SwapTab}
-          component={SwapLiveAppWallet40}
-          options={wallet40Options}
-          initialParams={initialSwapParams}
-        />
-      ) : (
-        <Stack.Screen
-          name={ScreenName.SwapTab}
-          component={SwapLiveApp}
-          {...noNanoBuyNanoWallScreenOptions}
-          options={oldDesignOptions}
-          initialParams={initialSwapParams}
-        />
-      )}
+    <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: false }}>
+      <Stack.Screen
+        name={ScreenName.SwapTab}
+        component={SwapLiveAppWallet40}
+        options={wallet40Options}
+        initialParams={initialSwapParams}
+      />
 
       <Stack.Screen
         name={ScreenName.SwapPendingOperation}

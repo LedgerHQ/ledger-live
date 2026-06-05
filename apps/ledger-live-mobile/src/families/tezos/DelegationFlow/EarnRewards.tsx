@@ -4,15 +4,17 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text, IconsLegacy, List } from "@ledgerhq/native-ui";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { urls } from "~/utils/urls";
 import Alert from "~/components/Alert";
 import Button from "~/components/wrappedUi/Button";
-import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { TezosDelegationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.TezosEarnRewards>;
+type Props = BaseComposite<
+  StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.TezosEarnRewards>
+>;
 
 const Check = <IconsLegacy.CheckAloneMedium size={18} color="success.c50" />;
 
@@ -67,10 +69,13 @@ export default function EarnRewards({ navigation, route }: Props) {
 
   const onStartEarning = useCallback(() => {
     if (isDelegated) {
-      // Staking entry — wired up when the Tezos stake flow lands (separate story).
+      navigation.navigate(NavigatorName.TezosStakeFlow, {
+        screen: ScreenName.TezosStakeAmount,
+        params: { ...route.params },
+      });
       return;
     }
-    navigation.navigate(ScreenName.DelegationSummary, { ...route.params });
+    navigation.navigate(ScreenName.DelegationSummary, { ...route.params, stakeAfter: true });
   }, [isDelegated, navigation, route.params]);
 
   const learnMore = useCallback(() => {

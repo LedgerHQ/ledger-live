@@ -19,10 +19,7 @@ const coinConfigOverridesSlice = createSlice({
   name: "coinConfigOverrides",
   initialState,
   reducers: {
-    setCoinConfigOverride(
-      state,
-      action: PayloadAction<{ key: string; value: unknown }>,
-    ) {
+    setCoinConfigOverride(state, action: PayloadAction<{ key: string; value: unknown }>) {
       const { key, value } = action.payload;
       if (UNSAFE_OVERRIDE_KEYS.has(key)) return;
       if (value === undefined) {
@@ -54,9 +51,7 @@ export const hasCoinConfigOverridesSelector = (state: StateWithCoinConfigOverrid
  * Map, etc.), prototype-pollution keys (`__proto__` / `constructor` /
  * `prototype`), and `undefined` values so we never feed garbage to LiveConfig.
  */
-export const sanitizePersistedOverrides = (
-  raw: unknown,
-): Record<string, unknown> | null =>
+export const sanitizePersistedOverrides = (raw: unknown): Record<string, unknown> | null =>
   isPlainObjectOverride(raw) ? cloneOverridesSafely(raw) : null;
 
 export default coinConfigOverridesSlice.reducer;

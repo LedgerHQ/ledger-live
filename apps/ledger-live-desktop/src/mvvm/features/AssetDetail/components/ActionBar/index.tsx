@@ -8,6 +8,7 @@ import { useActionBarViewModel } from "./useActionBarViewModel";
 type ActionBarProps = Readonly<{
   distributionItem?: DistributionItem;
   ledgerCurrency?: CryptoOrTokenCurrency;
+  ledgerIds?: readonly string[];
   marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
   isDistributionLoading: boolean;
@@ -17,6 +18,7 @@ type ActionBarProps = Readonly<{
 export function ActionBar({
   distributionItem,
   ledgerCurrency,
+  ledgerIds,
   marketCurrencyData,
   tickerHint,
   isDistributionLoading,
@@ -25,6 +27,7 @@ export function ActionBar({
   const viewModel = useActionBarViewModel({
     distributionItem,
     ledgerCurrency,
+    ledgerIds,
     marketCurrencyData,
     tickerHint,
     isDistributionLoading,

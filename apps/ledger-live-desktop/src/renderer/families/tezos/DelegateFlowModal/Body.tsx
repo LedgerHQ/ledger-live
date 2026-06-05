@@ -102,7 +102,10 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const openedFromAccount = !!params.account;
   const [defaultBaker] = useBakers(whitelist);
   const steps = createSteps(params);
-  const bridge = useAccountBridgeOrNull<Transaction>(params.account ?? null, params.parentAccount ?? null);
+  const bridge = useAccountBridgeOrNull<Transaction>(
+    params.account ?? null,
+    params.parentAccount ?? null,
+  );
 
   const {
     transaction,

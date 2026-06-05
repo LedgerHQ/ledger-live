@@ -10,7 +10,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import styled from "styled-components";
-import { useFirebaseRemoteConfig } from "~/renderer/components/FirebaseRemoteConfig";
+import { subscribeToRemoteFlags } from "~/firebase/remoteConfig";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
@@ -37,13 +37,16 @@ const Spacer = styled.div`
 `;
 
 export function AppVersionBlocker({ children }: { children: React.ReactNode }) {
-  const { config: remoteConfig, lastFetchTime } = useFirebaseRemoteConfig();
   const [configLlMinVersion, setConfigLLMinVersion] = useState(
     LiveConfig.getValueByKey("config_ll_min_version"),
   );
   useEffect(() => {
-    setConfigLLMinVersion(LiveConfig.getValueByKey("config_ll_min_version"));
-  }, [lastFetchTime, remoteConfig]);
+    // Re-read on every remote-flag fetch tick; the subscription replays the last fetch
+    // synchronously so the initial value is covered too.
+    return subscribeToRemoteFlags(() => {
+      setConfigLLMinVersion(LiveConfig.getValueByKey("config_ll_min_version"));
+    });
+  }, []);
   const { shouldUpdate } = useAppVersionBlockCheck({
     appKey: "lld",
     appVersion: LLD_VERSION,

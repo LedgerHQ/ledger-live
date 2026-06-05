@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { DeviceStatus, type DeviceSessionState } from "@ledgerhq/device-management-kit";
 import type { DeviceConnectionResult, DeviceExtractedContext } from "./core";
 import type { DeviceIntentExecutorProps, ExecutorState } from "./executor";
@@ -94,23 +94,13 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
   const prevInitializationInputRef = useRef(props.deviceInitializationInput);
   const prevIntentRef = useRef(props.intent);
 
-  useEffect(() => {
-    if (!props.enabled) {
-      smRef.current?.stop();
-      smRef.current = null;
-      setExecutorState({ type: "connectingDevice" });
-      setConnectionResult(null);
-      setLatestJobState(undefined);
-      lastIntentSnapshotRef.current = null;
-      return;
-    }
-
+  const createStateMachine = useCallback(() => {
     // Sync prev-value refs so the props->actions effect doesn't dispatch
     // events for props that were already used to create the SM.
     prevInitializationInputRef.current = deviceInitializationInputRef.current;
     prevIntentRef.current = intentRef.current;
 
-    const sm = new StateMachineClass({
+    return new StateMachineClass({
       deviceConnectionParams: deviceConnectionParamsRef.current,
       intent: intentRef.current,
       listeners: {
@@ -143,13 +133,33 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
         onIntentJobError: (_intent, error) => onIntentJobErrorRef.current(error),
       },
     });
-    smRef.current = sm;
+  }, [StateMachineClass]);
 
+  if (props.enabled && !smRef.current) {
+    smRef.current = createStateMachine();
+  }
+
+  useLayoutEffect(() => {
+    if (!props.enabled) {
+      smRef.current?.stop();
+      smRef.current = null;
+      setExecutorState({ type: "connectingDevice" });
+      setConnectionResult(null);
+      setLatestJobState(undefined);
+      lastIntentSnapshotRef.current = null;
+      return;
+    }
+
+    const sm = smRef.current ?? createStateMachine();
+    smRef.current = sm;
+    sm.start();
     return () => {
       sm.stop();
-      smRef.current = null;
+      if (smRef.current === sm) {
+        smRef.current = null;
+      }
     };
-  }, [props.enabled, StateMachineClass]);
+  }, [createStateMachine, props.enabled]);
 
   // ---- 5. Device disconnection monitoring effect ----
 

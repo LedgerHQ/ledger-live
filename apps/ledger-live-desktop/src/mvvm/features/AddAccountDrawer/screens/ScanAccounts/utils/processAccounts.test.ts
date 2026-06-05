@@ -90,12 +90,7 @@ describe("computeSelectedIdsFromScan", () => {
       { id: "2", balance: BigNumber("200"), operationsCount: 1 },
     ] as Account[];
 
-    const result = computeSelectedIdsFromScan(
-      scannedAccounts,
-      [],
-      ["1"],
-      defaultIsAccountEmpty,
-    );
+    const result = computeSelectedIdsFromScan(scannedAccounts, [], ["1"], defaultIsAccountEmpty);
     expect(result).toEqual(["1", "2"]);
   });
 });

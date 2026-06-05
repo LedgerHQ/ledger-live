@@ -137,8 +137,8 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
     // so the flow transitions directly to confirmation.
     const mockGetFullViewingKey = jest.fn(async () => ({
       viewKey: "uview1mocked",
-        path: account.freshAddressPath,
-      }));
+      path: account.freshAddressPath,
+    }));
     mockedUseAccountBridge.mockReturnValue({
       getFullViewingKey: mockGetFullViewingKey,
     } as unknown as ReturnType<typeof useAccountBridge>);

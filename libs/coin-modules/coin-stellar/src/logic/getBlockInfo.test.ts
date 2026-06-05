@@ -16,13 +16,14 @@ describe("getBlockInfo", () => {
   });
 
   it("returns block info with parent when height > 1 (uses ledger prev_hash)", async () => {
-    fetchLedgerRecordMock.mockImplementation(async (seq: number) =>
-      ({
-        sequence: seq,
-        hash: `hash-${seq}`,
-        closed_at: `2020-01-0${seq}T00:00:00Z`,
-        ...(seq > 1 && { prev_hash: `hash-${seq - 1}` }),
-      }) as unknown as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
+    fetchLedgerRecordMock.mockImplementation(
+      async (seq: number) =>
+        ({
+          sequence: seq,
+          hash: `hash-${seq}`,
+          closed_at: `2020-01-0${seq}T00:00:00Z`,
+          ...(seq > 1 && { prev_hash: `hash-${seq - 1}` }),
+        }) as unknown as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
     );
 
     const result = await getBlockInfo(5);
@@ -38,12 +39,13 @@ describe("getBlockInfo", () => {
   });
 
   it("falls back to fetching parent ledger when prev_hash is missing", async () => {
-    fetchLedgerRecordMock.mockImplementation(async (seq: number) =>
-      ({
-        sequence: seq,
-        hash: `hash-${seq}`,
-        closed_at: `2020-01-0${seq}T00:00:00Z`,
-      }) as unknown as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
+    fetchLedgerRecordMock.mockImplementation(
+      async (seq: number) =>
+        ({
+          sequence: seq,
+          hash: `hash-${seq}`,
+          closed_at: `2020-01-0${seq}T00:00:00Z`,
+        }) as unknown as Awaited<ReturnType<typeof network.fetchLedgerRecord>>,
     );
 
     const result = await getBlockInfo(5);

@@ -5,7 +5,6 @@ import {
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import { track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useOutdatedAppWarningViewModel } from "./useOutdatedAppWarningViewModel";
 import type { InitializerDevice } from "../../types";
@@ -22,7 +21,6 @@ jest.mock("../../hooks/useInitializerActions");
 
 const mockedTrack = jest.mocked(track);
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
-const TEST_SOURCE = "Portfolio";
 const SOURCE_FLOW = "my_ledger";
 const openMyLedger = jest.fn();
 const onContinue = jest.fn();
@@ -47,7 +45,6 @@ const state = {
 describe("useOutdatedAppWarningViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    previousRouteNameRef.current = TEST_SOURCE;
     mockedUseInitializerActions.mockReturnValue({
       openMyLedger,
       openMyLedgerFirmwareUpdate: jest.fn(),
@@ -79,7 +76,6 @@ describe("useOutdatedAppWarningViewModel", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       modelId: DeviceModelId.europa,
       button: "Manage Apps",
@@ -98,7 +94,6 @@ describe("useOutdatedAppWarningViewModel", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       modelId: DeviceModelId.europa,
       button: "Continue",

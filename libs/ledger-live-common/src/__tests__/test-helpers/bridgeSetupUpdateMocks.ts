@@ -11,7 +11,7 @@ function sha256(str: string) {
   return createHash("sha256").update(str).digest("hex");
 }
 
-/* 
+/*
 Maps objects returned by node:perf_hooks into our model StdRequest
 */
 function reqToStdRequest(

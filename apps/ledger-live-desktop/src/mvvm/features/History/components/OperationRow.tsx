@@ -62,7 +62,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
             <div className="inline-flex items-center gap-12">
               {typeLabel}
               {isUnread && (
-                <DotIndicator appearance="red" size="xs" data-testid="unread-indicator" />
+                <DotIndicator appearance="red" size="lg" data-testid="unread-indicator" />
               )}
             </div>
           }

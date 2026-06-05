@@ -7,7 +7,9 @@ import { AleoCustomModal } from "../constants";
 import { ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT } from "../__mocks__/account.mock";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: () => ({ isAccountEmpty: (a: { balance: { isZero: () => boolean } }) => a.balance.isZero() }),
+  useAccountBridge: () => ({
+    isAccountEmpty: (a: { balance: { isZero: () => boolean } }) => a.balance.isZero(),
+  }),
 }));
 
 describe("AccountHeaderManageActions", () => {

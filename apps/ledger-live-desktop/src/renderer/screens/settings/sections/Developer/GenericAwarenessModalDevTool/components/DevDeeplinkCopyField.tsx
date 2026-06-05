@@ -27,7 +27,7 @@ export const DevDeeplinkCopyField = ({ deeplink }: DevDeeplinkCopyFieldProps) =>
           label={COPY.campaignIdDeeplink}
           value={deeplink}
           readOnly
-          onChange={() => { }}
+          onChange={() => {}}
         />
       </div>
       <Button

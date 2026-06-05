@@ -108,7 +108,7 @@ export function selectNotes(
   // Should not happen — fee is monotonically bounded
   console.warn(
     `[zcash] selectNotes: fee iteration did not converge after ${MAX_ITERATIONS} rounds ` +
-    `(amount=${amount.toFixed()}, notes=${spendableNotes.length}, lastFee=${fee.toFixed()})`,
+      `(amount=${amount.toFixed()}, notes=${spendableNotes.length}, lastFee=${fee.toFixed()})`,
   );
   return undefined;
 }

@@ -32,9 +32,7 @@ describe("getOperationsPageSize", () => {
   });
 
   it("uses global operations when set", () => {
-    expect(
-      getOperationsPageSize("acc-1", { paginationConfig: { operations: 25 } }),
-    ).toBe(25);
+    expect(getOperationsPageSize("acc-1", { paginationConfig: { operations: 25 } })).toBe(25);
   });
 
   it("uses per-account value when account id is in the map", () => {
@@ -66,9 +64,7 @@ describe("getOperationsPageSize", () => {
   });
 
   it("does not treat global operations of 0 as a configured page size", () => {
-    expect(
-      getOperationsPageSize("acc-1", { paginationConfig: { operations: 0 } }),
-    ).toBe(Infinity);
+    expect(getOperationsPageSize("acc-1", { paginationConfig: { operations: 0 } })).toBe(Infinity);
     expect(
       getOperationsPageSize("acc-1", {
         paginationConfig: {

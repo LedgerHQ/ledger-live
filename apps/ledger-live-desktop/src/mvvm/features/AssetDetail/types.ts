@@ -11,6 +11,7 @@ export type AssetDetailReady = Readonly<{
   marketData: AssetMarketData;
   isDistributionLoading: boolean;
   ledgerCurrency?: CryptoOrTokenCurrency;
+  ledgerIds: string[];
   displayName: string;
   displayTicker: string;
   ledgerId?: string;

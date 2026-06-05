@@ -7,8 +7,10 @@ import TranslatedError from "~/components/TranslatedError";
 import { InfoState } from "LLM/components/InfoState";
 import { useSourceFlow } from "../utils/SourceFlowContext";
 import {
+  DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
   PAGE_DEVICE_ACTION,
+  trackDeviceActionButtonClicked,
 } from "../utils/trackDeviceIntent";
 
 // Dev-only hint surfaced in the banner slot. This screen means the running intent let
@@ -33,7 +35,25 @@ const devBanner = __DEV__
 export const IntentError: ErrorComponent = ({ device, onRetry, onClose, error }) => {
   const errorIsTranslatable = error && (isDmkError(error) || error instanceof Error);
   const sourceFlow = useSourceFlow();
-  const { modelId } = getConnectedDeviceTrackingProperties(device);
+  const { modelId, transport } = getConnectedDeviceTrackingProperties(device);
+  const handleRetry = () => {
+    trackDeviceActionButtonClicked({
+      sourceFlow,
+      button: DEVICE_ACTION_BUTTON.Retry,
+      modelId,
+      transport,
+    });
+    onRetry();
+  };
+  const handleClose = () => {
+    trackDeviceActionButtonClicked({
+      sourceFlow,
+      button: DEVICE_ACTION_BUTTON.Close,
+      modelId,
+      transport,
+    });
+    onClose();
+  };
 
   return (
     <>
@@ -41,6 +61,8 @@ export const IntentError: ErrorComponent = ({ device, onRetry, onClose, error })
         category={PAGE_DEVICE_ACTION.UnknownIntentError}
         sourceFlow={sourceFlow}
         modelId={modelId}
+        transport={transport}
+        refreshSource
         deviceUxV2
       />
       <InfoState
@@ -63,11 +85,11 @@ export const IntentError: ErrorComponent = ({ device, onRetry, onClose, error })
         banner={devBanner}
         primaryCta={{
           label: <Trans i18nKey="common.retry" />,
-          onPress: onRetry,
+          onPress: handleRetry,
         }}
         secondaryCta={{
           label: <Trans i18nKey="common.close" />,
-          onPress: onClose,
+          onPress: handleClose,
         }}
         testID="device-intent-executor-intent-error"
       />

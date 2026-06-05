@@ -11,6 +11,8 @@ export {
   evaluateAfterActionTrigger,
   evaluateInactivityTrigger,
   getNextRepromptDelay,
+  canPromptTransactionsAlertsForAction,
+  getNotificationPromptTarget,
   shouldPromptOptInDrawerAfterAction,
 } from "./utils/notificationsPromptEngine";
 export type {

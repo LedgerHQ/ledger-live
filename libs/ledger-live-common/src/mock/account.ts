@@ -9,10 +9,7 @@ import {
   ensureNoNegative,
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "../bridge";
-import {
-  getLoadedMockAccountForFamily,
-  loadMockAccountForFamily,
-} from "../coin-modules/registry";
+import { getLoadedMockAccountForFamily, loadMockAccountForFamily } from "../coin-modules/registry";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";

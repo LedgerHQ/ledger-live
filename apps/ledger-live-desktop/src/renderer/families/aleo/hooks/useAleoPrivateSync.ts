@@ -105,45 +105,33 @@ export const useAleoPrivateSync = ({
     const currentAccountId = acc.id;
     let receivedFinalResult = false;
     const sub = from(Promise.resolve(getAccountBridge(acc)))
-      .pipe(mergeMap(bridge => bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED })))
+      .pipe(
+        mergeMap(bridge =>
+          bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED }),
+        ),
+      )
       .subscribe({
-      next: updater => {
-        const currentAcc = accountRef.current;
-        if (currentAcc?.type !== "Account" || !isAleoAccount(currentAcc)) return;
-        dispatch(updateAccountWithUpdater(currentAcc.id, updater));
-        const updatedAccount = updater(currentAcc);
-        if (!isAleoAccount(updatedAccount)) return;
-        receivedFinalResult = true;
-        if (keepAliveOnUnmountRef.current) {
-          const entry = keepAliveRegistry.get(currentAccountId);
-          entry?.storeUnsubscribe?.();
-          keepAliveRegistry.delete(currentAccountId);
-        }
-        onAccountUpdatedRef.current?.(updatedAccount);
-        isSyncingRef.current = false;
-        if (isMountedRef.current) {
-          setIsSyncing(false);
-          setProgress(100);
-        }
-      },
-      error: (err: Error) => {
-        subscriptionRef.current = null;
-        if (keepAliveOnUnmountRef.current) {
-          const entry = keepAliveRegistry.get(currentAccountId);
-          entry?.storeUnsubscribe?.();
-          keepAliveRegistry.delete(currentAccountId);
-        }
-        isSyncingRef.current = false;
-        if (isMountedRef.current) {
-          setIsSyncing(false);
-          setError(err);
-        }
-      },
-      complete: () => {
-        subscriptionRef.current = null;
-        if (isSyncingRef.current && !receivedFinalResult) {
-          retryTimerRef.current = setTimeout(runSync, MANDATORY_SYNC_POLLING_DELAY);
-        } else if (isSyncingRef.current) {
+        next: updater => {
+          const currentAcc = accountRef.current;
+          if (currentAcc?.type !== "Account" || !isAleoAccount(currentAcc)) return;
+          dispatch(updateAccountWithUpdater(currentAcc.id, updater));
+          const updatedAccount = updater(currentAcc);
+          if (!isAleoAccount(updatedAccount)) return;
+          receivedFinalResult = true;
+          if (keepAliveOnUnmountRef.current) {
+            const entry = keepAliveRegistry.get(currentAccountId);
+            entry?.storeUnsubscribe?.();
+            keepAliveRegistry.delete(currentAccountId);
+          }
+          onAccountUpdatedRef.current?.(updatedAccount);
+          isSyncingRef.current = false;
+          if (isMountedRef.current) {
+            setIsSyncing(false);
+            setProgress(100);
+          }
+        },
+        error: (err: Error) => {
+          subscriptionRef.current = null;
           if (keepAliveOnUnmountRef.current) {
             const entry = keepAliveRegistry.get(currentAccountId);
             entry?.storeUnsubscribe?.();
@@ -152,10 +140,26 @@ export const useAleoPrivateSync = ({
           isSyncingRef.current = false;
           if (isMountedRef.current) {
             setIsSyncing(false);
+            setError(err);
           }
-        }
-      },
-    });
+        },
+        complete: () => {
+          subscriptionRef.current = null;
+          if (isSyncingRef.current && !receivedFinalResult) {
+            retryTimerRef.current = setTimeout(runSync, MANDATORY_SYNC_POLLING_DELAY);
+          } else if (isSyncingRef.current) {
+            if (keepAliveOnUnmountRef.current) {
+              const entry = keepAliveRegistry.get(currentAccountId);
+              entry?.storeUnsubscribe?.();
+              keepAliveRegistry.delete(currentAccountId);
+            }
+            isSyncingRef.current = false;
+            if (isMountedRef.current) {
+              setIsSyncing(false);
+            }
+          }
+        },
+      });
     if (!sub.closed) {
       subscriptionRef.current = sub;
       // Store the live subscription in the registry so stop() can cancel it

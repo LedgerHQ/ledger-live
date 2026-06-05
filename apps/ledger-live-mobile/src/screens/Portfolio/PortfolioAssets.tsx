@@ -139,7 +139,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   return (
     <>
-
       {!shouldDisplayQuickActionCtas && (
         <Box pt={24}>
           <PortfolioQuickActionsBar />

@@ -115,10 +115,7 @@ describe("getValidators", () => {
   });
 
   it("skips a pool with an unparseable liveStake instead of failing the whole list", async () => {
-    paginate(
-      [pool({ poolId: "good" }), pool({ poolId: "bad", liveStake: "not-a-number" })],
-      100,
-    );
+    paginate([pool({ poolId: "good" }), pool({ poolId: "bad", liveStake: "not-a-number" })], 100);
 
     const { items } = await getValidators(currency);
 

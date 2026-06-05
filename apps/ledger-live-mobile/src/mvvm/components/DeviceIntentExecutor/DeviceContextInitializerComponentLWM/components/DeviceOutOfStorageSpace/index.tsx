@@ -26,6 +26,7 @@ export function DeviceOutOfStorageSpace({
         category={PAGE_CONNECT_APP.OutOfStorage}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <DeviceOutOfStorageSpaceView {...viewModel} />

@@ -112,12 +112,14 @@ function buildCarouselBrazeCards({
   campaignId,
   items,
 }: GenericAwarenessModalDebugFormValues): GenericAwarenessModalDebugBrazeCard[] {
+  const slideCount = String(items.length);
   return items.map((item, index) => ({
     id: `${campaignId}-${index}`,
     extras: {
       campaignId,
       layout: GenericAwarenessModalLayout.Carousel,
       location: GENERIC_AWARENESS_LOCATION,
+      slideCount,
       index: String(index),
       title: item.title,
       subtitle: item.subtitle,
@@ -131,6 +133,7 @@ function buildCarouselBrazeCards({
 function buildFeatureIntroBrazeCards(
   values: GenericAwarenessModalDebugFormValues,
 ): GenericAwarenessModalDebugBrazeCard[] {
+  const itemCount = String(1 + values.items.length);
   const mainCard: GenericAwarenessModalDebugBrazeCard = {
     id: `${values.campaignId}-main`,
     extras: {
@@ -138,6 +141,7 @@ function buildFeatureIntroBrazeCards(
       layout: GenericAwarenessModalLayout.FeatureIntro,
       role: "main",
       location: GENERIC_AWARENESS_LOCATION,
+      itemCount,
       title: values.title,
       subtitle: values.subtitle,
       imageUrl: values.imageUrl,
@@ -155,6 +159,7 @@ function buildFeatureIntroBrazeCards(
       layout: GenericAwarenessModalLayout.FeatureIntro,
       role: "item",
       location: GENERIC_AWARENESS_LOCATION,
+      itemCount,
       index: String(index),
       icon: item.icon,
       title: item.title,

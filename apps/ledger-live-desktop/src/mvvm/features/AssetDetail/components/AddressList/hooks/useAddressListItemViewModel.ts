@@ -32,12 +32,12 @@ export function useAddressListItemViewModel(
     account.type === "TokenAccount" ? lookupParentAccount(account.parentId) : undefined;
   const networkCurrency =
     account.type === "TokenAccount"
-      ? parentAccount?.currency ?? account.token.parentCurrency
+      ? (parentAccount?.currency ?? account.token.parentCurrency)
       : currency;
 
   const accountForDisplayName =
     account.type === "TokenAccount"
-      ? parentAccount ?? lookupParentAccount(account.parentId)
+      ? (parentAccount ?? lookupParentAccount(account.parentId))
       : account;
   const displayName = useAccountName(accountForDisplayName ?? account);
   const rawAddress = getCryptoAccountAddress(account, lookupParentAccount);

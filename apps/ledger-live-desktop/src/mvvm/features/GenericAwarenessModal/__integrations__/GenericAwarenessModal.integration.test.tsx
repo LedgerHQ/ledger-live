@@ -166,7 +166,9 @@ describe("GenericAwarenessModal Integration", () => {
       ).toBeVisible();
       expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
       expect(screen.getByRole("button", { name: "Maybe later" })).toBeVisible();
-      expect(screen.queryByTestId("generic-awareness-modal-continue-button")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("generic-awareness-modal-continue-button"),
+      ).not.toBeInTheDocument();
       expect(screen.getByTestId("generic-awareness-modal").getAttribute("data-campaign-id")).toBe(
         PROMPT_CAMPAIGN_ID,
       );

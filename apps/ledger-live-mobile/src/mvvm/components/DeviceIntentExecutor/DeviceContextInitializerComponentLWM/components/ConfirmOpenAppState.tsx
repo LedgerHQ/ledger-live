@@ -16,6 +16,7 @@ export function ConfirmOpenAppState({ device, sourceFlow }: ConfirmOpenAppStateP
         category={PAGE_CONNECT_APP.ConfirmOpenApp}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <ContinueOnDevice

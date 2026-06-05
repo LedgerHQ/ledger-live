@@ -16,6 +16,7 @@ export function UnlockDeviceState({ device, sourceFlow }: UnlockDeviceStateProps
         category={PAGE_CONNECT_APP.UnlockDevice}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <UnlockDevice

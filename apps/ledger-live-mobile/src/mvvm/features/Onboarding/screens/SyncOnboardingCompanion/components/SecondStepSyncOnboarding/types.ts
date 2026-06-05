@@ -1,6 +1,6 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { SeedOriginType } from "@ledgerhq/types-live";
-import type { CompanionStep } from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import type { CompanionStep } from "../../types";
 import type { RefObject } from "react";
 
 export type SecondStepSyncOnboardingProps = {

@@ -4,7 +4,10 @@ import {
   DeviceStatus,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
-import { disconnect as disconnectTransport, open as openTransport } from "@ledgerhq/live-common/hw/index";
+import {
+  disconnect as disconnectTransport,
+  open as openTransport,
+} from "@ledgerhq/live-common/hw/index";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { of } from "rxjs";
 

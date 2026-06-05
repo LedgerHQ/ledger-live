@@ -30,6 +30,8 @@ export const DeviceDeprecationScreen = ({
   coinName,
   date,
   onContinue,
+  onLearnMore,
+  onUpgrade,
   productName,
   displayClearSigningWarning = false,
   screenName,
@@ -37,6 +39,8 @@ export const DeviceDeprecationScreen = ({
   coinName: string;
   date?: Date;
   onContinue?: () => void;
+  onLearnMore?: () => void;
+  onUpgrade?: () => void;
   productName: string;
   displayClearSigningWarning?: boolean;
   screenName: DeviceDeprecationScreens;
@@ -57,10 +61,12 @@ export const DeviceDeprecationScreen = ({
 
   const shopUrl = useLocalizedUrl(urls.deviceDeprecation.shop);
   const learnMoreUrl = useLocalizedUrl(urls.deviceDeprecation.learnMore);
-  const handleUgradeClick = () => {
+  const handleUpgradeClick = () => {
+    onUpgrade?.();
     openURL(shopUrl);
   };
   const handleLearnMoreClick = () => {
+    onLearnMore?.();
     openURL(learnMoreUrl);
   };
   const handleContinue = useCallback(() => {
@@ -154,7 +160,7 @@ export const DeviceDeprecationScreen = ({
         mt={8}
         style={{ width: "100%" }}
         alignSelf="stretch"
-        onPress={handleUgradeClick}
+        onPress={handleUpgradeClick}
         data-testid="update-button"
       >
         <Trans i18nKey="deviceDeprecation.update" />

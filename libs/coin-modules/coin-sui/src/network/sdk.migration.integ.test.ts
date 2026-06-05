@@ -487,20 +487,8 @@ describe("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
 
     it("returns the same op shape on both transports; digest sets overlap", async () => {
       const accountId = `js:2:sui:${ACTIVE_ACCOUNT}:sui`;
-      const rpc = await getOperations(
-        accountId,
-        ACTIVE_ACCOUNT,
-        undefined,
-        undefined,
-        JSON_RPC_ID,
-      );
-      const gql = await getOperations(
-        accountId,
-        ACTIVE_ACCOUNT,
-        undefined,
-        undefined,
-        GRAPHQL_ID,
-      );
+      const rpc = await getOperations(accountId, ACTIVE_ACCOUNT, undefined, undefined, JSON_RPC_ID);
+      const gql = await getOperations(accountId, ACTIVE_ACCOUNT, undefined, undefined, GRAPHQL_ID);
       assertShapeBoth(rpc, gql, { array: opItem, minLen: 1 }, "getOperations");
 
       const rpcByHash = new Map(rpc.map(o => [o.hash, o]));
@@ -532,13 +520,7 @@ describe("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
       // Pick the newest finalised digest for the fixture account. Whether it's a
       // staking event or a transfer, the handler is shape-stable across transports.
       const accountId = `js:2:sui:${ACTIVE_ACCOUNT}:sui`;
-      const ops = await getOperations(
-        accountId,
-        ACTIVE_ACCOUNT,
-        undefined,
-        undefined,
-        JSON_RPC_ID,
-      );
+      const ops = await getOperations(accountId, ACTIVE_ACCOUNT, undefined, undefined, JSON_RPC_ID);
       if (ops.length === 0) throw new Error("ACTIVE_ACCOUNT has no recent ops — refresh fixture");
       sampleDigest = ops[0].hash;
     });

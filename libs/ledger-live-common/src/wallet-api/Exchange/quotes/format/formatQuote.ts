@@ -188,13 +188,18 @@ export function formatQuote(input: FormatQuoteInput): FormattedQuoteValues {
   const rate = formatRateNumber(quote.exchangeRate, sendCurrency, receiveCurrency, locale);
 
   const sendAmountCountervalue = sendCurrency?.id
-    ? formatCountervalueNumber(quote.sendAmount, sendCurrency.id, spotPrices, fiat, locale) ??
-      EMPTY_FORMATTED_NUMBER
+    ? (formatCountervalueNumber(quote.sendAmount, sendCurrency.id, spotPrices, fiat, locale) ??
+      EMPTY_FORMATTED_NUMBER)
     : EMPTY_FORMATTED_NUMBER;
 
   const receiveAmountCountervalue = receiveCurrency?.id
-    ? formatCountervalueNumber(quote.receiveAmount, receiveCurrency.id, spotPrices, fiat, locale) ??
-      EMPTY_FORMATTED_NUMBER
+    ? (formatCountervalueNumber(
+        quote.receiveAmount,
+        receiveCurrency.id,
+        spotPrices,
+        fiat,
+        locale,
+      ) ?? EMPTY_FORMATTED_NUMBER)
     : EMPTY_FORMATTED_NUMBER;
 
   const feeCountervalueCurrencyId = quote.networkFeesCurrencyId || networkFeesCurrency?.id || "";

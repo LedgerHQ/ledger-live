@@ -18,6 +18,7 @@ export function InstallingAppState({ device, sourceFlow }: InstallingAppStatePro
         category={PAGE_CONNECT_APP.InstallingApp}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <LoadingContent

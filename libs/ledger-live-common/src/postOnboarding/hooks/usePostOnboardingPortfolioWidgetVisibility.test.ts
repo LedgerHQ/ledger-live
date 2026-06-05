@@ -44,10 +44,12 @@ function createAccountsReducer(initial: AccountLike[]) {
   };
 }
 
-function createTestStore(overrides: {
-  postOnboarding?: Partial<PostOnboardingState>;
-  accountsFlat?: AccountLike[];
-} = {}): PortfolioWidgetTestStore {
+function createTestStore(
+  overrides: {
+    postOnboarding?: Partial<PostOnboardingState>;
+    accountsFlat?: AccountLike[];
+  } = {},
+): PortfolioWidgetTestStore {
   const postOnboarding: PostOnboardingState = {
     ...postOnboardingInitialState,
     deviceModelId: DeviceModelId.nanoX,
@@ -72,10 +74,9 @@ function renderPortfolioWidgetHook(store: PortfolioWidgetTestStore) {
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(TestReduxProvider, { store }, children);
 
-  return renderHook(
-    () => usePostOnboardingPortfolioWidgetVisibility(flattenAccountsSelector),
-    { wrapper },
-  );
+  return renderHook(() => usePostOnboardingPortfolioWidgetVisibility(flattenAccountsSelector), {
+    wrapper,
+  });
 }
 
 describe("usePostOnboardingPortfolioWidgetVisibility", () => {

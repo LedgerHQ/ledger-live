@@ -31,10 +31,16 @@ const LedgerSyncEntryPoint = ({
   entryPoint,
   needEligibleDevice,
   onPress,
+  variant,
 }: {
   entryPoint: EntryPoint;
   needEligibleDevice?: boolean;
   onPress?: () => void;
-}) => <View {...useLedgerSyncEntryPointViewModel({ entryPoint, needEligibleDevice, onPress })} />;
+  variant?: "v4";
+}) => (
+  <View
+    {...useLedgerSyncEntryPointViewModel({ entryPoint, needEligibleDevice, onPress, variant })}
+  />
+);
 
 export default LedgerSyncEntryPoint;

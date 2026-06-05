@@ -54,7 +54,7 @@ export const toCBOR = async (account: Account, tx: Transaction): Promise<toCBORR
   });
 
   return {
-    txPayload: message.serialize(),
+    txPayload: Buffer.from(message.serialize()),
     recipientToBroadcast: finalRecipient,
     parsedSender: fromValidation.parsedAddress.toString(),
     encodedParams: params ?? "",

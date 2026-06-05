@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-api/Borrow/types";
 import { NavigatorName, ScreenName } from "~/const";
 import BorrowLiveAppNavigator from "../BorrowLiveAppNavigator";
@@ -59,27 +59,8 @@ describe("BorrowLiveAppNavigator", () => {
     expect(screen.getByTestId("borrow-live-app-wrapper")).toBeOnTheScreen();
   });
 
-  it("routes go-to-swap to the top-level Swap navigator when shouldDisplayWallet40MainNav is false", async () => {
-    const { user } = render(<BorrowLiveAppNavigator />, {
-      overrideInitialState: withFlagOverrides({
-        lwmWallet40: { enabled: true, params: { mainNavigation: false } },
-      }),
-    });
-
-    await user.press(screen.getByTestId("go-to-swap"));
-
-    expect(baseNavigate).toHaveBeenCalledWith(NavigatorName.Swap, {
-      screen: ScreenName.SwapTab,
-      params: expectedSwapParams,
-    });
-  });
-
-  it("routes go-to-swap through the Main navigator when shouldDisplayWallet40MainNav is true", async () => {
-    const { user } = render(<BorrowLiveAppNavigator />, {
-      overrideInitialState: withFlagOverrides({
-        lwmWallet40: { enabled: true, params: { mainNavigation: true } },
-      }),
-    });
+  it("routes go-to-swap through the Main navigator", async () => {
+    const { user } = render(<BorrowLiveAppNavigator />);
 
     await user.press(screen.getByTestId("go-to-swap"));
 

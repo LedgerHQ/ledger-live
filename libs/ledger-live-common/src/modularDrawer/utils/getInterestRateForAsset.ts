@@ -20,8 +20,8 @@ export function getInterestRateForAsset(
   const currencyId =
     asset.type === "TokenCurrency"
       ? asset.id
-      : networks.find(n => n.type === "TokenCurrency" && n.parentCurrency?.id === asset.id)?.id ??
-        asset.id;
+      : (networks.find(n => n.type === "TokenCurrency" && n.parentCurrency?.id === asset.id)?.id ??
+        asset.id);
 
   const interestRate = interestRates[currencyId] ?? undefined;
 

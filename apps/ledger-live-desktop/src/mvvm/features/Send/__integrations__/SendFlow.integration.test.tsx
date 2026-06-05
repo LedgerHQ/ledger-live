@@ -11,6 +11,7 @@ import {
   navigateToAmountScreen,
   openCoinControlScreen,
   openCustomFeesScreen,
+  openFeeMenu,
   renderSendFlow,
   resetSendFlowTestState,
   screen,
@@ -201,6 +202,24 @@ describe("Send Flow Integration", () => {
       await navigateToAmountScreen(user);
 
       expect(screen.getByTestId("send-network-fees-menu-trigger")).toBeVisible();
+    });
+
+    it("should update the selected strategy when picking a preset", async () => {
+      setMockTransaction(
+        createMinimalEvmTransaction({ amount: new BigNumber(0), recipient: VALID_EVM_RECIPIENT }),
+      );
+
+      const { user } = renderSendFlow(ethereumAccount);
+      await navigateToAmountScreen(user);
+
+      expect(screen.getByTestId("send-network-fees-menu-trigger")).toHaveTextContent(/medium/i);
+
+      await openFeeMenu(user);
+      await user.click(await screen.findByTestId("send-fees-preset-fast"));
+
+      await waitFor(() =>
+        expect(screen.getByTestId("send-network-fees-menu-trigger")).toHaveTextContent(/fast/i),
+      );
     });
   });
 

@@ -18,6 +18,7 @@ export function UnsupportedFeature({ device, sourceFlow }: UnsupportedFeaturePro
         category={PAGE_CONNECT_APP.UnsupportedFeature}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <UnsupportedFeatureView {...viewModel} />

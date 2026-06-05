@@ -69,10 +69,7 @@ type CustomExchangeHandlersHookType = {
   returnToPreviousScreenOnClose?: boolean;
 };
 
-type CloseNavigation = Pick<
-  NavigationProp<ParamListBase>,
-  "canGoBack" | "goBack" | "navigate"
->;
+type CloseNavigation = Pick<NavigationProp<ParamListBase>, "canGoBack" | "goBack" | "navigate">;
 
 export function handlePTXCustomClose(
   navigation: CloseNavigation | undefined,

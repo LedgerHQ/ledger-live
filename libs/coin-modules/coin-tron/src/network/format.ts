@@ -23,7 +23,8 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
     // token_info.address is missing for unindexed contracts (e.g. LP/DEX pool tokens not in TronGrid registry)
     // fall back to the contract_address from the raw transaction, which is always present
     const contractAddressHex = detail.raw_data?.contract?.[0]?.parameter?.value?.contract_address;
-    const tokenAddress = token_info.address ?? (contractAddressHex ? encode58Check(contractAddressHex) : undefined);
+    const tokenAddress =
+      token_info.address ?? (contractAddressHex ? encode58Check(contractAddressHex) : undefined);
 
     switch (type) {
       case "Approval":

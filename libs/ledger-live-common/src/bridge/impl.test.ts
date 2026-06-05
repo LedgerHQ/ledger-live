@@ -18,7 +18,9 @@ describe("wrapAccountBridge — extension routing", () => {
     // Mutate to simulate state that the family-specific clearAccount must wipe.
     account.bitcoinResources = {
       utxos: [{ hash: "deadbeef" } as unknown as BitcoinAccount["bitcoinResources"]["utxos"][0]],
-      walletAccount: { foo: "bar" } as unknown as BitcoinAccount["bitcoinResources"]["walletAccount"],
+      walletAccount: {
+        foo: "bar",
+      } as unknown as BitcoinAccount["bitcoinResources"]["walletAccount"],
     };
     account.operations = [{ id: "op1" } as unknown as BitcoinAccount["operations"][0]];
     account.blockHeight = 999;
@@ -63,7 +65,10 @@ describe("getAccountBridge — unsupported account rejection", () => {
 
   function makeUnsupportedDerivationAccount(id: string) {
     const account = genAccount(id, { currency: BTC });
-    return { ...account, derivationMode: "not-a-real-derivation-mode" as unknown as DerivationMode };
+    return {
+      ...account,
+      derivationMode: "not-a-real-derivation-mode" as unknown as DerivationMode,
+    };
   }
 
   test("rejected Promise is annotated with status='rejected' once the microtask runs", async () => {

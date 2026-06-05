@@ -29,7 +29,5 @@ export function DappAccountGate({
     return <Loader manifest={manifest} isLoading={true} />;
   }
 
-  return (
-    <NoAccountOverlay manifest={manifest} setCurrentAccountHistDb={setCurrentAccountHistDb} />
-  );
+  return <NoAccountOverlay manifest={manifest} setCurrentAccountHistDb={setCurrentAccountHistDb} />;
 }

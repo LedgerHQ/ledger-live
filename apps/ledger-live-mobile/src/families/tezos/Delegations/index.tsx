@@ -60,12 +60,12 @@ export default function TezosDelegation({ account }: Props) {
   const currentAddress = info.delegateAddress ?? "";
 
   const selectedUnstakingAddress =
-    selected?.kind === "unstaking" ? selected.position.delegate ?? "" : "";
+    selected?.kind === "unstaking" ? (selected.position.delegate ?? "") : "";
   const selectedUnstakingBaker = useBaker(selectedUnstakingAddress);
   const drawerBaker = selected?.kind === "unstaking" ? selectedUnstakingBaker : currentBaker;
   const drawerAddress = selected?.kind === "unstaking" ? selectedUnstakingAddress : currentAddress;
 
-  const ops = account.type === "Account" ? account.operations ?? [] : [];
+  const ops = account.type === "Account" ? (account.operations ?? []) : [];
   const stakeDays = daysSince(ops.find(o => o?.type === "STAKE")?.date);
   const delegationDays = daysSince(
     info.delegation?.operation.date ?? ops.find(o => o?.type === "DELEGATE")?.date,

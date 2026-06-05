@@ -1,10 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setOverride,
-  setAllOverrides,
-  featureFlagsOverridesSelector,
-} from "@shared/feature-flags";
+import { setOverride, setAllOverrides, featureFlagsOverridesSelector } from "@shared/feature-flags";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useFeatureFlags } from "@features/platform-feature-flags";

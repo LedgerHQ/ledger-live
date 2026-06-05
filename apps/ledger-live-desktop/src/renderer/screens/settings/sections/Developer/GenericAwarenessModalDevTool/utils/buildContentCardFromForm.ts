@@ -21,6 +21,7 @@ export const buildContentCardFromForm = (
         primaryButtonLabel: slide.primaryButtonLabel,
         primaryButtonLink: slide.primaryButtonLink,
       })),
+      isReady: true,
     };
   }
 
@@ -53,5 +54,6 @@ export const buildContentCardFromForm = (
       title: item.title,
       subtitle: item.subtitle,
     })),
+    isReady: true,
   };
 };

@@ -1,10 +1,7 @@
 import React from "react";
 
 import { render, screen } from "tests/testSetup";
-import {
-  CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL,
-  ContentBannerActionCard,
-} from "../index";
+import { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL, ContentBannerActionCard } from "../index";
 
 describe("ContentBannerActionCard", () => {
   const defaultHandlers = {
@@ -45,9 +42,7 @@ describe("ContentBannerActionCard", () => {
       <ContentBannerActionCard title="Tap me" description="Desc" {...defaultHandlers} />,
     );
 
-    await user.click(
-      screen.getByRole("button", { name: CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL }),
-    );
+    await user.click(screen.getByRole("button", { name: CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL }));
 
     expect(defaultHandlers.onClose).toHaveBeenCalledTimes(1);
   });
@@ -93,9 +88,7 @@ describe("ContentBannerActionCard", () => {
       />,
     );
 
-    await user.click(
-      screen.getByRole("button", { name: CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL }),
-    );
+    await user.click(screen.getByRole("button", { name: CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL }));
 
     expect(defaultHandlers.onClose).toHaveBeenCalledTimes(1);
     expect(defaultHandlers.onClick).not.toHaveBeenCalled();

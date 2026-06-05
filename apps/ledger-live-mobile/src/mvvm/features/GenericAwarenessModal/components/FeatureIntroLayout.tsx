@@ -47,7 +47,11 @@ export function FeatureIntroLayout({ onClose, viewModel }: FeatureIntroLayoutPro
   return (
     <Box lx={{ gap: "s16", marginTop: "s8" }}>
       <Box lx={{ borderRadius: "lg", overflow: "hidden" }}>
-        <Image source={{ uri: imageUrl }} style={{ width: "100%", height: 200 }} resizeMode="cover" />
+        <Image
+          source={{ uri: imageUrl }}
+          style={{ width: "100%", height: 200 }}
+          resizeMode="cover"
+        />
       </Box>
 
       <Text

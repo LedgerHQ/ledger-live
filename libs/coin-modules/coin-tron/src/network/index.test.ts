@@ -244,6 +244,25 @@ describe("craftTrc20Transaction", () => {
     );
   });
 
+  it("uses zero fee_limit when custom fees are 0", async () => {
+    const expirationInFuture = Date.now() + 10 * 60 * 1000;
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ transaction: { raw_data: { expiration: expirationInFuture } } }),
+    );
+    await craftTrc20Transaction(
+      "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+      recipientHex,
+      senderHex,
+      new BigNumber(100),
+      0,
+    );
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ fee_limit: 0 }),
+      }),
+    );
+  });
+
   it("uses DEFAULT_TRC20_FEES_LIMIT when no custom fees are provided", async () => {
     const expirationInFuture = Date.now() + 10 * 60 * 1000;
     mockedNetwork.mockResolvedValueOnce(
@@ -266,7 +285,9 @@ describe("craftTrc20Transaction", () => {
 describe("craftStandardTransaction", () => {
   it("uses /wallet/transferasset when isTransferAsset is true (and includes hex memo)", async () => {
     const expirationInFuture = Date.now() + 10 * 60 * 1000;
-    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: { expiration: expirationInFuture } }));
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ raw_data: { expiration: expirationInFuture } }),
+    );
     await craftStandardTransaction(
       "1002000",
       recipientHex,
@@ -288,7 +309,9 @@ describe("craftStandardTransaction", () => {
 
   it("uses /wallet/createtransaction when isTransferAsset is false", async () => {
     const expirationInFuture = Date.now() + 10 * 60 * 1000;
-    mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: { expiration: expirationInFuture } }));
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({ raw_data: { expiration: expirationInFuture } }),
+    );
     await craftStandardTransaction(undefined, recipientHex, senderHex, new BigNumber(50), false);
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringContaining("/wallet/createtransaction") }),
@@ -319,24 +342,27 @@ describe("createTronTransaction", () => {
       } as unknown as TokenAccount,
       expectedUrl: "/wallet/triggersmartcontract",
     },
-  ])("dispatches a $name transaction to the right endpoint", async ({ subAccount, expectedUrl }) => {
-    const expirationInFuture = Date.now() + 10 * 60 * 1000;
-    mockedNetwork.mockResolvedValueOnce(
-      mockResponse(
-        expectedUrl.includes("triggersmartcontract")
-          ? { transaction: { raw_data: { expiration: expirationInFuture } } }
-          : { raw_data: { expiration: expirationInFuture } },
-      ),
-    );
-    await createTronTransaction(
-      { freshAddress: senderBase58 } as Account,
-      { recipient: recipientBase58, amount: new BigNumber(1) } as never,
-      subAccount,
-    );
-    expect(mockedNetwork).toHaveBeenCalledWith(
-      expect.objectContaining({ url: expect.stringContaining(expectedUrl) }),
-    );
-  });
+  ])(
+    "dispatches a $name transaction to the right endpoint",
+    async ({ subAccount, expectedUrl }) => {
+      const expirationInFuture = Date.now() + 10 * 60 * 1000;
+      mockedNetwork.mockResolvedValueOnce(
+        mockResponse(
+          expectedUrl.includes("triggersmartcontract")
+            ? { transaction: { raw_data: { expiration: expirationInFuture } } }
+            : { raw_data: { expiration: expirationInFuture } },
+        ),
+      );
+      await createTronTransaction(
+        { freshAddress: senderBase58 } as Account,
+        { recipient: recipientBase58, amount: new BigNumber(1) } as never,
+        subAccount,
+      );
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({ url: expect.stringContaining(expectedUrl) }),
+      );
+    },
+  );
 
   it("throws InvalidTransactionError if the node returns an expired transaction", async () => {
     const pastExpiration = Date.now() - 60 * 60 * 1000;
@@ -354,9 +380,7 @@ describe("createTronTransaction", () => {
 describe("broadcastTron", () => {
   it("returns the txid on success", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ result: true, txid: "abc" }));
-    await expect(
-      broadcastTron({ signature: ["sig"] } as never),
-    ).resolves.toBe("abc");
+    await expect(broadcastTron({ signature: ["sig"] } as never)).resolves.toBe("abc");
   });
 
   it("throws TronTransactionExpired when code is TRANSACTION_EXPIRATION_ERROR", async () => {
@@ -464,9 +488,7 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
     mockedNetwork.mockResolvedValueOnce(mockResponse([{ id: "tx1" }]));
     const result = await getTransactionInfoByBlockNum(5);
     expect(result).toEqual([{ id: "tx1" }]);
-    expect(mockedNetwork).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { num: 5 } }),
-    );
+    expect(mockedNetwork).toHaveBeenCalledWith(expect.objectContaining({ data: { num: 5 } }));
   });
 });
 
@@ -646,7 +668,10 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
 
-    await fetchTronAccountTxs(senderBase58, () => true, { ...defaultFetchParams, hintGlobalLimit: 7 });
+    await fetchTronAccountTxs(senderBase58, () => true, {
+      ...defaultFetchParams,
+      hintGlobalLimit: 7,
+    });
 
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringMatching(/limit=7/) }),
@@ -674,9 +699,9 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
       .mockResolvedValue(mockResponse({ data: [trc20WithoutRet], meta: {} }));
 
-    await expect(
-      fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams),
-    ).rejects.toThrow(/couldn't fetch trc20/);
+    await expect(fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams)).rejects.toThrow(
+      /couldn't fetch trc20/,
+    );
   });
 });
 

@@ -487,10 +487,7 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
  * `StakedSui` objects + system-state (one extra dynamicField per Active
  * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
  */
-export const getDelegatedStakes = (
-  owner: string,
-  currencyId?: string,
-): Promise<DelegatedStake[]> =>
+export const getDelegatedStakes = (owner: string, currencyId?: string): Promise<DelegatedStake[]> =>
   withTransport(currencyId, {
     jsonRpc: api => api.getStakes({ owner }),
     graphql: api => getDelegatedStakesGraphQL(api, owner),
@@ -678,10 +675,7 @@ export function transactionToCoinFrameworkOperation(
  * the same mapper without an inline duplicate.
  */
 export function toBlockInfo(
-  checkpoint: Pick<
-    Checkpoint,
-    "digest" | "sequenceNumber" | "timestampMs" | "previousDigest"
-  >,
+  checkpoint: Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs" | "previousDigest">,
 ): BlockInfo {
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
@@ -1512,7 +1506,8 @@ const createTransactionForDelegate = (
 ) =>
   withTransport(currencyId, {
     jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
-    graphql: api => buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    graphql: api =>
+      buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
   });
 
 const buildUndelegateBody = async (
@@ -1559,7 +1554,8 @@ const createTransactionForUndelegate = (
 ) =>
   withTransport(currencyId, {
     jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
-    graphql: api => buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    graphql: api =>
+      buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
   });
 
 /**
@@ -1633,7 +1629,8 @@ const createTransactionForOthers = (
 ) =>
   withTransport(currencyId, {
     jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
-    graphql: api => buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    graphql: api =>
+      buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
   });
 
 /**

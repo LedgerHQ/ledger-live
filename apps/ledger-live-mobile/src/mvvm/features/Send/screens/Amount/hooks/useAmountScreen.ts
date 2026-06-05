@@ -44,7 +44,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   }, [close]);
 
   const onReview = useCallback(() => {
-    navigation.navigate(ScreenName.SendFlowConfirmation);
+    navigation.navigate(ScreenName.SendFlowSignature);
   }, [navigation]);
 
   const onSelectCoinControl = useCallback(() => {

@@ -61,10 +61,7 @@ describe("computeUnrealisticQuote", () => {
   it("returns null when output fiat does not exceed input fiat", () => {
     // 10 * 1 = 10 input fiat, 5 * 2 = 10 output fiat → gain = 0%
     expect(
-      computeUnrealisticQuote(
-        makeRawQuote({ amountFrom: 10, amountTo: 5 }),
-        ethToBtcDoubledFiat,
-      ),
+      computeUnrealisticQuote(makeRawQuote({ amountFrom: 10, amountTo: 5 }), ethToBtcDoubledFiat),
     ).toBeNull();
   });
 

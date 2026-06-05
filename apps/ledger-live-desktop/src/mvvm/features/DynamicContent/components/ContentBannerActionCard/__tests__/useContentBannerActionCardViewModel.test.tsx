@@ -39,9 +39,7 @@ describe("useContentBannerActionCardViewModel", () => {
     Object.defineProperty(ev, "target", { value: button, enumerable: true });
 
     act(() => {
-      result.current.handleMediaBannerClick(
-        ev as unknown as React.MouseEvent<HTMLDivElement>,
-      );
+      result.current.handleMediaBannerClick(ev as unknown as React.MouseEvent<HTMLDivElement>);
     });
 
     expect(baseProps.onClick).not.toHaveBeenCalled();
@@ -62,9 +60,7 @@ describe("useContentBannerActionCardViewModel", () => {
     Object.defineProperty(ev, "target", { value: span, enumerable: true });
 
     act(() => {
-      result.current.handleMediaBannerClick(
-        ev as unknown as React.MouseEvent<HTMLDivElement>,
-      );
+      result.current.handleMediaBannerClick(ev as unknown as React.MouseEvent<HTMLDivElement>);
     });
 
     expect(baseProps.onClick).toHaveBeenCalledTimes(1);

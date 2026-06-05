@@ -34,9 +34,9 @@ describe("createBorrowNavigateHandler", () => {
       affiliate: "borrow-app",
     };
 
-    await expect(
-      handler({ params: { action: "go-to-swap", ...swapParams } }),
-    ).resolves.toEqual({ success: true });
+    await expect(handler({ params: { action: "go-to-swap", ...swapParams } })).resolves.toEqual({
+      success: true,
+    });
 
     expect(hooks.onGoToSwap).toHaveBeenCalledTimes(1);
     expect(hooks.onGoToSwap).toHaveBeenCalledWith(swapParams);

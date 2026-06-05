@@ -26,6 +26,7 @@ export function WrongDeviceForAccount({
         category={PAGE_CONNECT_APP.WrongDeviceForAccount}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <WrongDeviceForAccountView {...viewModel} />

@@ -4,7 +4,11 @@ import { Trans } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { InfoState } from "LLM/components/InfoState";
 import { useSourceFlow } from "../utils/SourceFlowContext";
-import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
+import {
+  DEVICE_ACTION_BUTTON,
+  PAGE_DEVICE_ACTION,
+  trackDeviceActionButtonClicked,
+} from "../utils/trackDeviceIntent";
 
 // Dev-only hint surfaced in the banner slot. This screen means the caller drove the
 // executor into an invalid state (e.g. swapping intents while one is still running),
@@ -26,10 +30,22 @@ const devBanner = __DEV__
  */
 export const InvalidOperation: InvalidOperationComponent = ({ onClose }) => {
   const sourceFlow = useSourceFlow();
+  const handleClose = () => {
+    trackDeviceActionButtonClicked({
+      sourceFlow,
+      button: DEVICE_ACTION_BUTTON.Close,
+    });
+    onClose();
+  };
 
   return (
     <>
-      <TrackScreen category={PAGE_DEVICE_ACTION.InvalidState} sourceFlow={sourceFlow} deviceUxV2 />
+      <TrackScreen
+        category={PAGE_DEVICE_ACTION.InvalidState}
+        sourceFlow={sourceFlow}
+        refreshSource
+        deviceUxV2
+      />
       <InfoState
         preset="error"
         size="hug"
@@ -38,7 +54,7 @@ export const InvalidOperation: InvalidOperationComponent = ({ onClose }) => {
         banner={devBanner}
         primaryCta={{
           label: <Trans i18nKey="common.close" />,
-          onPress: onClose,
+          onPress: handleClose,
         }}
         testID="device-intent-executor-invalid-operation"
       />

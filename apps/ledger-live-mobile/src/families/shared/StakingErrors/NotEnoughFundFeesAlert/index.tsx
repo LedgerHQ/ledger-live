@@ -15,7 +15,6 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 
 type Props = {
@@ -29,7 +28,6 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
   const { t } = useTranslation();
   const { locale } = useSettings();
   const navigation = useNavigation<Navigation>();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const accounts = useSelector(shallowAccountsSelector);
 
   const unit = useAccountUnit(account);
@@ -87,8 +85,8 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     [onNavigate, renderTextLink],
   );
 
-  // Swap is reached via the Wallet 4.0-aware helper so it lands on the Main > Swap
-  // tab (with header + tab bar) instead of the legacy base-level Swap stack.
+  // Swap is reached via the shared helper so it lands on the Main > Swap tab (with
+  // header + tab bar).
   const goToSwap = useCallback(() => {
     track("button_clicked", {
       button: "swap",
@@ -97,13 +95,12 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
     });
     navigateToSwapTab({
       navigation,
-      shouldDisplayWallet40MainNav,
       params: {
         currency,
         accountId: account.id,
       },
     });
-  }, [account.id, currency, navigation, shouldDisplayWallet40MainNav]);
+  }, [account.id, currency, navigation]);
 
   const ctasSupported = useMemo(() => {
     const ctas = [];

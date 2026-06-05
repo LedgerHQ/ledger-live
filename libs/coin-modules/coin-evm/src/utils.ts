@@ -288,11 +288,10 @@ function normalizeSeiDelegation(outer: unknown): SeiDelegation | undefined {
 }
 
 /**
- * SEI staking precompile returns `balance.amount` in usei (6 decimals).
- * Native `sei_evm` currency uses magnitude 18 (wei-like); convert so balances match `getCoinBalance` / account totals.
- * @see https://docs.sei.io/evm/precompiles/staking (delegation query)
+ * Scales a SEI staking amount in usei (6 decimals) to the `sei_evm` native min unit (18 decimals).
+ * Non-usei denoms are returned unchanged.
  */
-function seiBalanceAmountToNativeMinUnit(amount: unknown, denom: string): bigint {
+export function seiBalanceAmountToNativeMinUnit(amount: unknown, denom: string): bigint {
   const n = toBigIntLoose(amount);
   if (n === null) {
     return 0n;

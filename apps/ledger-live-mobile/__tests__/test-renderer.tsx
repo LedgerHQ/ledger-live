@@ -18,7 +18,7 @@ import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
-import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
+import { FeatureFlagsContextBridge } from "~/components/FeatureFlagsContextBridge";
 import { i18n } from "~/context/Locale";
 import reducers from "~/reducers";
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
@@ -53,7 +53,6 @@ import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/fea
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
-import { getFeature } from "./featureFlags";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 
 const INITIAL_STATE: State = {
@@ -63,7 +62,8 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
-  featureFlags: FEATURE_FLAGS_INITIAL_STATE,
+  // Seed the boot-readiness gate as settled so tests mounting `WaitForAppReady` don't block.
+  featureFlags: { ...FEATURE_FLAGS_INITIAL_STATE, remoteFlagsReady: true },
   history: HISTORY_INITIAL_STATE,
   identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
@@ -290,11 +290,11 @@ function Providers({
   // General Providers needed for all render types
   let providers = (
     <Provider store={store}>
-      <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+      <FeatureFlagsContextBridge>
         <CountervaluesProviders store={store}>
           <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
         </CountervaluesProviders>
-      </FirebaseFeatureFlagsProvider>
+      </FeatureFlagsContextBridge>
     </Provider>
   );
 

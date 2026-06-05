@@ -46,7 +46,9 @@ const makeAccount = (lastSyncDate: Date) => ({
   lastSyncDate,
 });
 
-const withBalanceRefreshRework = withFlagOverrides({ lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } } });
+const withBalanceRefreshRework = withFlagOverrides({
+  lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
+});
 
 const withRefreshing = (): ((state: State) => State) => state => ({
   ...state,

@@ -10,10 +10,7 @@ import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
-import {
-  findSubAccountById,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { findSubAccountById, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   FEE_CURRENCY_BY_CONTRACT,
   FEE_CURRENCY_OPTIONS,
@@ -51,9 +48,7 @@ function CeloFeeCurrencyPluginInner({
     // when a token fee currency is selected, so the label stays correct even while
     // sub-accounts are still hydrating.
     if (transaction.feeCurrencyUnwrapped) {
-      const matched = FEE_CURRENCY_BY_CONTRACT.get(
-        transaction.feeCurrencyUnwrapped.toLowerCase(),
-      );
+      const matched = FEE_CURRENCY_BY_CONTRACT.get(transaction.feeCurrencyUnwrapped.toLowerCase());
       if (matched) return matched.name;
     }
     const sub = findSubAccountById(mainAccount, transaction.feeCurrencyAccountId);

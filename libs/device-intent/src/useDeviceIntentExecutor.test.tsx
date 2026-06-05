@@ -661,6 +661,7 @@ function renderWithMockSM(overrides: Partial<TestProps> = {}) {
     params: { listeners: StateMachineListeners<unknown, unknown, unknown> },
   ) {
     const mock: MockSM = {
+      start: jest.fn(),
       deviceConnected: jest.fn(),
       deviceContextInitialized: jest.fn(),
       deviceDisconnected: jest.fn(),
@@ -711,6 +712,14 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       );
     });
 
+    it("WHEN enabled is true THEN the SM is started", () => {
+      // WHEN
+      const { sm } = renderWithMockSM();
+
+      // THEN
+      expect(sm.start).toHaveBeenCalledTimes(1);
+    });
+
     it("WHEN enabled is false THEN no SM is constructed", () => {
       const { SMClass } = renderWithMockSM({ enabled: false });
 
@@ -734,6 +743,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
 
       rerender({ p: { ...props, enabled: true } });
       expect(SMClass).toHaveBeenCalledTimes(1);
+      expect(SMClass.lastInstance?.start).toHaveBeenCalledTimes(1);
     });
 
     it("WHEN the hook unmounts THEN sm.stop() is called", () => {

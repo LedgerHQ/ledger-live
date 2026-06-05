@@ -20,9 +20,10 @@ jest.mock("./serialization", () => {
   };
 });
 
-const rawOperationsToOperationsMock = serialization.rawOperationsToOperations as jest.MockedFunction<
-  typeof serialization.rawOperationsToOperations
->;
+const rawOperationsToOperationsMock =
+  serialization.rawOperationsToOperations as jest.MockedFunction<
+    typeof serialization.rawOperationsToOperations
+  >;
 
 const TEST_HORIZON_URL = "https://horizon-stellar-unit-test.invalid/";
 
@@ -39,7 +40,12 @@ function baseCoinConfig(overrides: Partial<StellarCoinConfig> = {}): StellarCoin
   } as StellarCoinConfig;
 }
 
-const HORIZON_SERVER_SPY_METHODS = ["ledgers", "operations", "feeStats", "submitTransaction"] as const;
+const HORIZON_SERVER_SPY_METHODS = [
+  "ledgers",
+  "operations",
+  "feeStats",
+  "submitTransaction",
+] as const;
 
 function restoreHorizonServerPrototypeSpies(): void {
   const proto = Horizon.Server.prototype as unknown as Record<string, unknown>;
@@ -81,7 +87,8 @@ describe("horizon.ts (unit, spies)", () => {
     restoreHorizonServerPrototypeSpies();
     rawOperationsToOperationsMock.mockReset();
     rawOperationsToOperationsMock.mockImplementation(
-      jest.requireActual<typeof import("./serialization")>("./serialization").rawOperationsToOperations,
+      jest.requireActual<typeof import("./serialization")>("./serialization")
+        .rawOperationsToOperations,
     );
   });
 
@@ -126,7 +133,9 @@ describe("horizon.ts (unit, spies)", () => {
     });
 
     it("paginates when first page is full then next page is empty", async () => {
-      coinConfig.setCoinConfig(() => baseCoinConfig({ explorer: { url: TEST_HORIZON_URL, fetchLimit: 2 } }));
+      coinConfig.setCoinConfig(() =>
+        baseCoinConfig({ explorer: { url: TEST_HORIZON_URL, fetchLimit: 2 } }),
+      );
       const op1 = opBuilder({ paging_token: "1", id: "a" });
       const op2 = opBuilder({ paging_token: "2", id: "b" });
       const secondPage = { records: [] as RawOperation[] };
@@ -227,7 +236,9 @@ describe("horizon.ts (unit, spies)", () => {
     });
 
     it("falls back to defaults when feeStats throws", async () => {
-      jest.spyOn(Horizon.Server.prototype, "feeStats").mockRejectedValue(new Error("network error"));
+      jest
+        .spyOn(Horizon.Server.prototype, "feeStats")
+        .mockRejectedValue(new Error("network error"));
 
       const fees = await fetchBaseFee();
       expect(fees.baseFee).toBeGreaterThan(0);
@@ -275,7 +286,10 @@ describe("horizon.ts (unit, spies)", () => {
         },
       };
       submitTransactionSpy.mockRejectedValue(
-        new BadResponseError("Transaction submission failed. Server responded: 400 Bad Request", body),
+        new BadResponseError(
+          "Transaction submission failed. Server responded: 400 Bad Request",
+          body,
+        ),
       );
 
       await expect(broadcastTransaction(signedTxFixture)).rejects.toMatchObject({
@@ -297,7 +311,10 @@ describe("horizon.ts (unit, spies)", () => {
         },
       };
       submitTransactionSpy.mockRejectedValue(
-        new BadResponseError("Transaction submission failed. Server responded: 400 Bad Request", body),
+        new BadResponseError(
+          "Transaction submission failed. Server responded: 400 Bad Request",
+          body,
+        ),
       );
 
       await expect(broadcastTransaction(signedTxFixture)).rejects.toMatchObject({

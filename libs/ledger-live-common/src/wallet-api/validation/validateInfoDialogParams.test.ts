@@ -60,10 +60,7 @@ describe("validateInfoDialogParams", () => {
   it("should pass through long strings without truncating", () => {
     const longTitle = "T".repeat(500);
     const longMessage = "M".repeat(2000);
-    const result = validateInfoDialogParams(
-      { title: longTitle, message: longMessage },
-      HANDLER,
-    );
+    const result = validateInfoDialogParams({ title: longTitle, message: longMessage }, HANDLER);
 
     expect(result.title).toBe(longTitle);
     expect(result.message).toBe(longMessage);
@@ -77,32 +74,26 @@ describe("validateInfoDialogParams", () => {
 
   it("should throw when title is not a string", () => {
     expect(() =>
-      validateInfoDialogParams(
-        { title: 42 as unknown as string, message: "ok" },
-        HANDLER,
-      ),
+      validateInfoDialogParams({ title: 42 as unknown as string, message: "ok" }, HANDLER),
     ).toThrow(`Invalid params for ${HANDLER}: expected non-empty string 'title' and 'message'.`);
   });
 
   it("should throw when message is not a string", () => {
     expect(() =>
-      validateInfoDialogParams(
-        { title: "ok", message: null as unknown as string },
-        HANDLER,
-      ),
+      validateInfoDialogParams({ title: "ok", message: null as unknown as string }, HANDLER),
     ).toThrow(`Invalid params for ${HANDLER}: expected non-empty string 'title' and 'message'.`);
   });
 
   it("should throw when title is empty after trim", () => {
-    expect(() =>
-      validateInfoDialogParams({ title: "   ", message: "ok" }, HANDLER),
-    ).toThrow(`Invalid params for ${HANDLER}: expected non-empty string 'title' and 'message'.`);
+    expect(() => validateInfoDialogParams({ title: "   ", message: "ok" }, HANDLER)).toThrow(
+      `Invalid params for ${HANDLER}: expected non-empty string 'title' and 'message'.`,
+    );
   });
 
   it("should throw when message is empty after trim", () => {
-    expect(() =>
-      validateInfoDialogParams({ title: "ok", message: "   " }, HANDLER),
-    ).toThrow(`Invalid params for ${HANDLER}: expected non-empty string 'title' and 'message'.`);
+    expect(() => validateInfoDialogParams({ title: "ok", message: "   " }, HANDLER)).toThrow(
+      `Invalid params for ${HANDLER}: expected non-empty string 'title' and 'message'.`,
+    );
   });
 
   it("should throw when linkText is provided but not a string", () => {
@@ -135,8 +126,6 @@ describe("validateInfoDialogParams", () => {
   it("should include handlerName in all error messages", () => {
     const custom = "custom.myHandler";
     expect(() => validateInfoDialogParams(undefined, custom)).toThrow(custom);
-    expect(() =>
-      validateInfoDialogParams({ title: "   ", message: "ok" }, custom),
-    ).toThrow(custom);
+    expect(() => validateInfoDialogParams({ title: "   ", message: "ok" }, custom)).toThrow(custom);
   });
 });

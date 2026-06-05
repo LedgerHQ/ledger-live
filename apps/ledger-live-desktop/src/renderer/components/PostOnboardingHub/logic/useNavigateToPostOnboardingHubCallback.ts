@@ -22,16 +22,14 @@ export function useNavigateToPostOnboardingHubCallback() {
   return useCallback(
     (resetNavigationStack?: boolean) => {
       const shouldNavigateToRecoverLanding =
-        isRecoverDisplayed(recoverServices, deviceModelId ?? undefined) &&
-        !!upsellPath;
+        isRecoverDisplayed(recoverServices, deviceModelId ?? undefined) && !!upsellPath;
 
       if (shouldDisplayFinishOnboardingWidget) {
         const replace = resetNavigationStack ?? true;
         if (shouldNavigateToRecoverLanding) {
-          navigate(
-            `/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`,
-            { replace },
-          );
+          navigate(`/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`, {
+            replace,
+          });
         } else {
           navigate("/", { replace: true });
         }

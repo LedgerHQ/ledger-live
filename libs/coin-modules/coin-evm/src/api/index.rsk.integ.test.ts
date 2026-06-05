@@ -16,7 +16,7 @@ describe("EVM RSK Network", () => {
     const config = {
       node: {
         type: "external",
-        uri: "https://public-node.rsk.co",
+        uri: "https://rsk.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",

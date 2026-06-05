@@ -24,7 +24,10 @@ const stubTxModule: TransactionModule = {
   formatTransaction: jest.fn(),
 };
 
-const makeLoader = (family: string, overrides: Partial<CoinModuleLoader> = {}): CoinModuleLoader => ({
+const makeLoader = (
+  family: string,
+  overrides: Partial<CoinModuleLoader> = {},
+): CoinModuleLoader => ({
   family,
   loadSetup: () => Promise.resolve(stubSetup),
   loadTransaction: () => Promise.resolve(stubTxModule),
@@ -34,7 +37,9 @@ const makeLoader = (family: string, overrides: Partial<CoinModuleLoader> = {}): 
 describe("registerCoinModules / getRegisteredFamilies", () => {
   it("registers loaders and returns their families", () => {
     registerCoinModules([makeLoader("__regtest_a__"), makeLoader("__regtest_b__")]);
-    expect(getRegisteredFamilies()).toEqual(expect.arrayContaining(["__regtest_a__", "__regtest_b__"]));
+    expect(getRegisteredFamilies()).toEqual(
+      expect.arrayContaining(["__regtest_a__", "__regtest_b__"]),
+    );
   });
 });
 

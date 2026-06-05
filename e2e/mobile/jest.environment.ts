@@ -226,9 +226,8 @@ export default class TestEnvironment extends DetoxEnvironment {
       }
 
       try {
-        const { DeviceManagementKitTransportSpeculos } = await import(
-          "@ledgerhq/live-dmk-speculos"
-        );
+        const { DeviceManagementKitTransportSpeculos } =
+          await import("@ledgerhq/live-dmk-speculos");
         await DeviceManagementKitTransportSpeculos.disconnectAll();
       } catch {
         // Ignore cleanup errors

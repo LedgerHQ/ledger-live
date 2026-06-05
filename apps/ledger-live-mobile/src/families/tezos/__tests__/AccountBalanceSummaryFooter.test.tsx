@@ -68,7 +68,10 @@ beforeEach(() => {
 
 describe("Tezos AccountBalanceSummaryFooter", () => {
   it("renders nothing for a token account", () => {
-    const tokenAccount = { type: "TokenAccount", balance: new BigNumber(10) } as unknown as TezosAccount;
+    const tokenAccount = {
+      type: "TokenAccount",
+      balance: new BigNumber(10),
+    } as unknown as TezosAccount;
     render(<AccountBalanceSummaryFooter account={tokenAccount} />);
     expect(screen.queryByText(titles.available)).toBeNull();
   });

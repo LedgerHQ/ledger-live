@@ -33,8 +33,28 @@ export function DeviceDeprecatedNonBlockingState({
   const displayClearSigningWarning = decision.screenSequence.includes("clearSigning");
 
   const handleContinue = () => {
-    trackConnectAppButtonClicked({ sourceFlow, modelId, button: CONNECT_APP_BUTTON.Continue });
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId,
+      button: CONNECT_APP_BUTTON.Continue,
+    });
     onContinue();
+  };
+
+  const handleUpgrade = () => {
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId,
+      button: CONNECT_APP_BUTTON.DiscoverUpgradeProgram,
+    });
+  };
+
+  const handleLearnMore = () => {
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId,
+      button: CONNECT_APP_BUTTON.LearnMore,
+    });
   };
 
   return (
@@ -43,12 +63,15 @@ export function DeviceDeprecatedNonBlockingState({
         category={PAGE_CONNECT_APP.DeviceDeprecatedWarning}
         sourceFlow={sourceFlow}
         modelId={modelId}
+        refreshSource
         deviceUxV2
       />
       <DeviceDeprecationScreen
         coinName={decision.currencyName}
         date={decision.supportEndDate}
         onContinue={handleContinue}
+        onUpgrade={handleUpgrade}
+        onLearnMore={handleLearnMore}
         productName={getDeviceModel(decision.deviceModelId).productName}
         screenName={
           decision.screenSequence.includes("warning")

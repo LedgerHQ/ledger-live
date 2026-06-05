@@ -53,9 +53,7 @@ describe("useGenericAwarenessModalPromptViewModel", () => {
     );
 
     expect(result.current.title).toBe("Stay in control");
-    expect(result.current.subtitle).toBe(
-      "Move assets to a hardware signer for true self-custody.",
-    );
+    expect(result.current.subtitle).toBe("Move assets to a hardware signer for true self-custody.");
     expect(result.current.primaryButtonLabel).toBe("Learn more");
     expect(result.current.secondaryButtonLabel).toBe("Maybe later");
     expect(result.current.imageUrl).toBe("https://example.com/prompt.png");

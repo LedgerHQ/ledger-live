@@ -19,7 +19,8 @@ export type FinishOnboardingWidgetViewProps = {
 export function useFinishOnboardingWidgetViewModel(): FinishOnboardingWidgetViewProps {
   const { handleOpen: openFinishOnboardingDialog } = useFinishOnboardingDialog();
   const { deviceModelId, actionsState, postOnboardingInProgress } = usePostOnboardingHubState();
-  const { completedActionsAmount, totalActionsAmount } = usePostOnboardingFinishProgress(actionsState);
+  const { completedActionsAmount, totalActionsAmount } =
+    usePostOnboardingFinishProgress(actionsState);
 
   const handleOpenFinishOnboardingDialog = useCallback(() => {
     track("button_clicked", {

@@ -9,8 +9,7 @@ export const INITIAL_STATE: PostOnboardingHubDrawerState = {
   isOpen: false,
 };
 
-export const postOnboardingHubDrawerSelector = (state: State) =>
-  state.postOnboardingHubDrawer;
+export const postOnboardingHubDrawerSelector = (state: State) => state.postOnboardingHubDrawer;
 
 const postOnboardingHubDrawerSlice = createSlice({
   name: "postOnboardingHubDrawer",

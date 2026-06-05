@@ -133,7 +133,6 @@ class OnboardModal extends PureComponent<Props, State> {
       stepId: StepId.ONBOARD,
       walletConnectUri: null,
     };
-
   }
 
   async componentDidMount() {

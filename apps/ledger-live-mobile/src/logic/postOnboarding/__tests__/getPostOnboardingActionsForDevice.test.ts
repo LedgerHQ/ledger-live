@@ -8,7 +8,9 @@ describe("getPostOnboardingActionsForDevice", () => {
     deviceModelId => {
       const actions = getPostOnboardingActionsForDevice(deviceModelId);
 
-      expect(actions.some(action => action.id === PostOnboardingActionId.discoverWallet)).toBe(true);
+      expect(actions.some(action => action.id === PostOnboardingActionId.discoverWallet)).toBe(
+        true,
+      );
     },
   );
 

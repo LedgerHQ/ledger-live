@@ -70,12 +70,7 @@ export function useNavigateToStakeForAccount() {
         return { outcome: "no_funds" };
       }
 
-      const platformAppRoute = getRouteToPlatformApp(
-        account,
-        walletState,
-        parentAccount,
-        returnTo,
-      );
+      const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount, returnTo);
 
       if (platformAppRoute) {
         navigateToEarnScreen(platformAppRoute.state);

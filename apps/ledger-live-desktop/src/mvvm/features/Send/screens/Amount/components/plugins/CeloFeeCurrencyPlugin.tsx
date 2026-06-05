@@ -89,9 +89,7 @@ function CeloFeeCurrencyPluginInner({
     // when a token fee currency is selected, so the label stays correct even while
     // sub-accounts are still hydrating.
     if (transaction.feeCurrencyUnwrapped) {
-      const matched = FEE_CURRENCY_BY_CONTRACT.get(
-        transaction.feeCurrencyUnwrapped.toLowerCase(),
-      );
+      const matched = FEE_CURRENCY_BY_CONTRACT.get(transaction.feeCurrencyUnwrapped.toLowerCase());
       if (matched) return matched.name;
     }
     const found = tokenOptions.find(t => t.id === transaction.feeCurrencyAccountId);
@@ -129,22 +127,26 @@ function CeloFeeCurrencyPluginInner({
     <div className="flex flex-col gap-4">
       <span className="body-3 text-muted">{t("send.steps.amount.feeCurrency")}</span>
       <Menu>
-        <MenuTrigger asChild>
-          <ListItem className="cursor-pointer" data-testid="send-celo-fee-currency-select">
-            <ListItemLeading>
-              <ListItemContent>
-                <ListItemTitle>{selectedLabel}</ListItemTitle>
-              </ListItemContent>
-            </ListItemLeading>
-            <ListItemTrailing>
-              <ChevronRight size={16} />
-            </ListItemTrailing>
-          </ListItem>
-        </MenuTrigger>
-        <MenuContent side="bottom" align="end">
+        <MenuTrigger
+          render={
+            <ListItem className="cursor-pointer" data-testid="send-celo-fee-currency-select">
+              <ListItemLeading>
+                <ListItemContent>
+                  <ListItemTitle>{selectedLabel}</ListItemTitle>
+                </ListItemContent>
+              </ListItemLeading>
+              <ListItemTrailing>
+                <ChevronRight size={16} />
+              </ListItemTrailing>
+            </ListItem>
+          }
+        />
+        <MenuContent className="pointer-events-auto" side="bottom" align="end">
           <MenuRadioGroup value={selectedId} onValueChange={onValueChange}>
             <MenuRadioItem
               value={NATIVE_CELO_ID}
+              closeOnClick
+              className="cursor-pointer"
               data-testid="send-celo-fee-currency-option-celo"
             >
               {FEE_CURRENCY_OPTIONS[0].name}
@@ -153,6 +155,8 @@ function CeloFeeCurrencyPluginInner({
               <MenuRadioItem
                 key={tokenAccount.id}
                 value={tokenAccount.id}
+                closeOnClick
+                className="cursor-pointer"
                 data-testid={`send-celo-fee-currency-option-${tokenAccount.feeCurrencyName.toLowerCase()}`}
               >
                 {tokenAccount.feeCurrencyName}

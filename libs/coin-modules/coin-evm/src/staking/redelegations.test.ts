@@ -316,7 +316,11 @@ describe("redelegations", () => {
           }),
         );
 
-        const result = await resolveStakingValidator({ id: "monad" } as CryptoCurrency, op, "delegate");
+        const result = await resolveStakingValidator(
+          { id: "monad" } as CryptoCurrency,
+          op,
+          "delegate",
+        );
 
         expect(result).toMatchObject({
           validatorAddress: ethers.computeAddress(

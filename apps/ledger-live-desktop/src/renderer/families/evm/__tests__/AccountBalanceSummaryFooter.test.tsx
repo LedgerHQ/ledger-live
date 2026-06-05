@@ -53,7 +53,9 @@ describe("EVM AccountBalanceSummaryFooter", () => {
         unbondings: [],
       },
     } as unknown as Account;
-    const { container } = render(<AccountBalanceSummaryFooter account={account} {...footerProps} />);
+    const { container } = render(
+      <AccountBalanceSummaryFooter account={account} {...footerProps} />,
+    );
     expect(container.firstChild).toBeNull();
   });
 

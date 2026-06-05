@@ -4,7 +4,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { DisplayedDevice } from "@ledgerhq/live-dmk-mobile";
 import { track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
 import { SourceFlowProvider } from "../../utils/SourceFlowContext";
 import { DeviceListItem } from "./DeviceListItem";
 
@@ -17,7 +16,6 @@ jest.mock("~/analytics", () => {
 });
 
 const mockedTrack = jest.mocked(track);
-const TEST_SOURCE = "Connect Device - Discovering";
 
 function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {
   return {
@@ -41,7 +39,6 @@ function makeDisplayedDevice(overrides: Partial<DisplayedDevice> = {}): Displaye
 describe("DeviceListItem", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    previousRouteNameRef.current = TEST_SOURCE;
   });
 
   function renderDeviceListItem(device: DisplayedDevice) {
@@ -117,7 +114,6 @@ describe("DeviceListItem", () => {
     // THEN
     expect(mockedTrack).toHaveBeenCalledWith("device_selected", {
       sourceFlow: "my_ledger",
-      source: TEST_SOURCE,
       deviceUxV2: true,
       modelId: DeviceModelId.stax,
       transport: "ble",

@@ -635,6 +635,7 @@
     "src/genericAwarenessModal/buildContentCards.ts",
     "src/genericAwarenessModal/buildFeatureIntro.ts",
     "src/genericAwarenessModal/buildPrompt.ts",
+    "src/genericAwarenessModal/campaignCompleteness.ts",
     "src/genericAwarenessModal/getGenericAwarenessModalContentCard.ts",
     "src/genericAwarenessModal/index.ts",
     "src/genericAwarenessModal/types.ts",

@@ -26,6 +26,7 @@ export function UnsupportedFirmwareVersion({
         category={PAGE_CONNECT_APP.UnsupportedFirmware}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <UnsupportedFirmwareVersionView {...viewModel} />

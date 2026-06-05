@@ -1,10 +1,7 @@
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-export async function getBridgeApi(
-  currency: CryptoCurrency,
-  network: string,
-): Promise<BridgeApi> {
+export async function getBridgeApi(currency: CryptoCurrency, network: string): Promise<BridgeApi> {
   switch (network) {
     case "evm":
       return (await import("./families/evm/bridge.js")).default(currency);

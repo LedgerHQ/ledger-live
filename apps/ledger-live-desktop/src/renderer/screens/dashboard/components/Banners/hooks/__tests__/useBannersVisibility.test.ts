@@ -8,9 +8,12 @@ import useActionCards from "~/renderer/hooks/useActionCards";
 import { useBannersVisibility } from "../useBannersVisibility";
 import { ActionContentCard, LocationContentCard } from "~/types/dynamicContent";
 
-jest.mock("@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet", () => ({
-  usePostOnboardingEntryPointVisibleOnWallet: jest.fn(),
-}));
+jest.mock(
+  "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet",
+  () => ({
+    usePostOnboardingEntryPointVisibleOnWallet: jest.fn(),
+  }),
+);
 jest.mock("LLD/features/LNSUpsell", () => ({
   ...jest.requireActual("LLD/features/LNSUpsell"),
   useLNSUpsellBannerState: jest.fn(),

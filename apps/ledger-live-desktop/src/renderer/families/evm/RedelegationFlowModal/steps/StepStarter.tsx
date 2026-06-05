@@ -13,7 +13,10 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { getUnbondingPeriodDays, getMaxRedelegations } from "@ledgerhq/live-common/families/evm/staking/logic";
+import {
+  getUnbondingPeriodDays,
+  getMaxRedelegations,
+} from "@ledgerhq/live-common/families/evm/staking/logic";
 
 const RewardImg = styled.img.attrs(() => ({
   src: Rewards,
@@ -53,7 +56,10 @@ export default function StepStarter({ account, transaction }: StepProps) {
           </Text>
         </Box>
         <Alert type="primary">
-          <Trans i18nKey="ethereum.evmStaking.redelegation.flow.steps.starter.warning" values={{ maxRedelegations: getMaxRedelegations(account.currency.id) }}>
+          <Trans
+            i18nKey="ethereum.evmStaking.redelegation.flow.steps.starter.warning"
+            values={{ maxRedelegations: getMaxRedelegations(account.currency.id) }}
+          >
             <b></b>
           </Trans>
         </Alert>

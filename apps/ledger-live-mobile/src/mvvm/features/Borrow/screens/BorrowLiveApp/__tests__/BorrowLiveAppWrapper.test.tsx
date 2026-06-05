@@ -1,6 +1,9 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
-import { useRemoteLiveAppContext, useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import {
+  useRemoteLiveAppContext,
+  useRemoteLiveAppManifest,
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { BorrowLiveAppWrapper } from "../BorrowLiveAppWrapper";
@@ -41,7 +44,10 @@ jest.mock("LLM/features/Borrow/components/BorrowWebView", () => ({
   }),
 }));
 
-const mockManifest = { id: "borrow", url: "https://borrow.example.com" } as unknown as LiveAppManifest;
+const mockManifest = {
+  id: "borrow",
+  url: "https://borrow.example.com",
+} as unknown as LiveAppManifest;
 
 describe("BorrowLiveAppWrapper", () => {
   beforeEach(() => {

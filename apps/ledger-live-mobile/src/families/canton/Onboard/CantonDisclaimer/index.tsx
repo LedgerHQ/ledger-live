@@ -77,12 +77,7 @@ export default function CantonDisclaimer({ onAgree, onCancel }: Props) {
           </Button>
         </Flex>
         <Flex flex={1} ml={2}>
-          <Button
-            type="main"
-            onPress={onAgree}
-            disabled={!agreed}
-            testID="canton-disclaimer-agree"
-          >
+          <Button type="main" onPress={onAgree} disabled={!agreed} testID="canton-disclaimer-agree">
             {t("canton.disclaimer.agree")}
           </Button>
         </Flex>

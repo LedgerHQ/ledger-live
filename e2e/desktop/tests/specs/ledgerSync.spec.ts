@@ -30,7 +30,7 @@ function initializeThenDeleteTrustchain() {
   return [
     LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
     LedgerSyncCliHelper.initializeLedgerSync,
-    async () => LedgerSyncCliHelper.deleteLedgerSyncData(),
+    LedgerSyncCliHelper.deleteLedgerSyncData,
   ];
 }
 
@@ -38,11 +38,7 @@ function initializeTrustchain() {
   return [
     LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
     LedgerSyncCliHelper.initializeLedgerSync,
-    async () =>
-      CLI.ledgerSync({
-        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-      }),
+    LedgerSyncCliHelper.pushLedgerSyncData,
   ];
 }
 test.describe(`[${app.name}] Sync Accounts`, () => {

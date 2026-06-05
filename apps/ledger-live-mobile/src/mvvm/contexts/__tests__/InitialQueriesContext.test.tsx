@@ -42,6 +42,26 @@ describe("InitialQueriesContext", () => {
     );
   });
 
+  it("reports firebaseIsReady=false while remote flags have not settled", async () => {
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}));
+    render(
+      <InitialQueriesProvider>
+        <ContextSpy />
+      </InitialQueriesProvider>,
+      {
+        overrideInitialState: state => ({
+          ...state,
+          featureFlags: { ...state.featureFlags, remoteFlagsReady: false },
+        }),
+      },
+    );
+    await waitFor(() =>
+      expect(contextSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({ firebaseIsReady: false }),
+      ),
+    );
+  });
+
   afterAll(() => {
     server.close();
   });

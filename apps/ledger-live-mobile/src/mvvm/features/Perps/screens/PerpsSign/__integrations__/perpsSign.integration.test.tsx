@@ -41,9 +41,7 @@ const mockRoute = {
 
 describe("PerpsSign integration", () => {
   it("should render the device selection screen", () => {
-    render(
-      <PerpsSignScreen navigation={mockNavigation as never} route={mockRoute as never} />,
-    );
+    render(<PerpsSignScreen navigation={mockNavigation as never} route={mockRoute as never} />);
 
     expect(screen.getByTestId("select-device")).toBeOnTheScreen();
   });

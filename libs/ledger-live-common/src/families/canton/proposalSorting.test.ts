@@ -39,7 +39,9 @@ describe("buildUnitResolver", () => {
 
   it("supports sub-accounts that have no pending proposals", () => {
     const resolve = buildUnitResolver(
-      makeParentAccount([{ type: "TokenAccount", token: { units: [CBTC_UNIT] }, cantonResources: {} }]),
+      makeParentAccount([
+        { type: "TokenAccount", token: { units: [CBTC_UNIT] }, cantonResources: {} },
+      ]),
     );
     expect(resolve("cbtc-instrument")).toBe(NATIVE_UNIT);
   });

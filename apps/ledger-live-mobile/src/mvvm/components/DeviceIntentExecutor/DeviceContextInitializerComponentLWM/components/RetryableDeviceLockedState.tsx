@@ -21,7 +21,11 @@ export function RetryableDeviceLockedState({
   const modelId = device.modelId;
 
   const handleRetry = () => {
-    trackConnectAppButtonClicked({ sourceFlow, modelId, button: CONNECT_APP_BUTTON.Retry });
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId,
+      button: CONNECT_APP_BUTTON.Retry,
+    });
     state.retry();
   };
 
@@ -31,6 +35,7 @@ export function RetryableDeviceLockedState({
         category={PAGE_CONNECT_APP.DeviceLocked}
         sourceFlow={sourceFlow}
         modelId={modelId}
+        refreshSource
         deviceUxV2
       />
       <RetryableDeviceLocked

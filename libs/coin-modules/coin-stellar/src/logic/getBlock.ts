@@ -222,7 +222,10 @@ function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation):
   return assertUnreachable(op);
 }
 
-async function blockTransactionForHash(hash: string, ops: RawOperation[]): Promise<BlockTransaction | null> {
+async function blockTransactionForHash(
+  hash: string,
+  ops: RawOperation[],
+): Promise<BlockTransaction | null> {
   if (ops.length === 0) return null;
   const failed = !ops[0].transaction_successful;
 

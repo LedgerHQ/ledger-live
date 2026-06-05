@@ -28,10 +28,7 @@ describe("useReplacedURI", () => {
 
   it("replaces protect-prod placeholder with the active protectId", () => {
     const { result } = renderHook(() =>
-      useReplacedURI(
-        "ledgerlive://recover/protect-prod?redirectTo=upsell",
-        "protect-staging",
-      ),
+      useReplacedURI("ledgerlive://recover/protect-prod?redirectTo=upsell", "protect-staging"),
     );
     expect(result.current).toBe("ledgerlive://recover/protect-staging?redirectTo=upsell");
   });
@@ -78,8 +75,7 @@ describe("URI hooks template through useReplacedURI", () => {
       params: {
         protectId: "protect-staging",
         onboardingCompleted: {
-          upsellURI:
-            "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24",
+          upsellURI: "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24",
         },
       },
     };

@@ -5,8 +5,6 @@ import CryptoAddressesErrorState from "../CryptoAddressesErrorState";
 describe("CryptoAddressesErrorState", () => {
   it("should render the error message", () => {
     render(<CryptoAddressesErrorState />);
-    expect(
-      screen.getByText("An error occurred while loading your accounts"),
-    ).toBeVisible();
+    expect(screen.getByText("An error occurred while loading your accounts")).toBeVisible();
   });
 });

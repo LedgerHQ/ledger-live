@@ -41,9 +41,9 @@ describe("fetchRemoteFlags", () => {
     mockGetAll.mockReturnValue({
       feature_counter_value: value(JSON.stringify({ enabled: true })),
       feature_lwm_wallet_40: value(JSON.stringify({ enabled: false, params: { mainNav: true } })),
-      config_unrelated: value("\"ignored\""),
-      stranger_key: value("\"ignored\""),
-      feature_unknown_flag: value("\"ignored\""),
+      config_unrelated: value('"ignored"'),
+      stranger_key: value('"ignored"'),
+      feature_unknown_flag: value('"ignored"'),
     });
 
     const { fetchRemoteFlags } = await loadModule();

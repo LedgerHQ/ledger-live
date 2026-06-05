@@ -7,9 +7,7 @@ import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
-import {
-  type ModularDrawerAddAccountStep,
-} from "LLD/features/AddAccountDrawer/domain";
+import { type ModularDrawerAddAccountStep } from "LLD/features/AddAccountDrawer/domain";
 import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import AnimatedScreenWrapper from "LLD/features/AddAccountDrawer/components/AnimatedScreenWrapper";
 import { BackButtonArrow } from "LLD/features/AddAccountDrawer/components/BackButton";

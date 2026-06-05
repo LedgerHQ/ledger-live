@@ -16,12 +16,9 @@ jest.mock("~/renderer/components/DeviceAction", () => ({
   ),
 }));
 
-jest.mock(
-  "LLD/features/Send/screens/Signature/components/SimplifiedTransactionConfirm",
-  () => ({
-    SimplifiedTransactionConfirm: () => <div data-testid="sign-confirm">SignConfirm</div>,
-  }),
-);
+jest.mock("LLD/features/Send/screens/Signature/components/SimplifiedTransactionConfirm", () => ({
+  SimplifiedTransactionConfirm: () => <div data-testid="sign-confirm">SignConfirm</div>,
+}));
 
 const perpsSignData = {
   appName: "Hyperliquid",

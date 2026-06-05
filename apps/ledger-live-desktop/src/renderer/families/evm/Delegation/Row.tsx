@@ -111,6 +111,7 @@ export function Row({
   account,
   delegation: {
     validatorAddress,
+    validatorName,
     formattedAmount,
     pendingRewards,
     formattedPendingRewards,
@@ -209,7 +210,7 @@ export function Row({
       status,
     ],
   );
-  const name = validator?.name ?? validatorAddress;
+  const name = validator?.name ?? validatorName ?? validatorAddress;
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorAddress),
     [onExternalLink, validatorAddress],
@@ -218,14 +219,7 @@ export function Row({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <EvmValidatorIcon
-            validator={
-              validator ?? {
-                validatorAddress,
-                name: validatorAddress,
-              }
-            }
-          />
+          <EvmValidatorIcon validator={validator ?? { validatorAddress, name }} />
         </Box>
         <Ellipsis>{name}</Ellipsis>
       </Column>
@@ -291,11 +285,11 @@ type UnbondingRowProps = Readonly<{
 }>;
 
 export function UnbondingRow({
-  delegation: { validator, formattedAmount, validatorAddress, completionDate },
+  delegation: { validator, formattedAmount, validatorAddress, validatorName, completionDate },
   onExternalLink,
 }: UnbondingRowProps) {
   const date = useDateFromNow(completionDate) || "N/A";
-  const name = validator?.name ?? validatorAddress;
+  const name = validator?.name ?? validatorName ?? validatorAddress;
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorAddress),
     [onExternalLink, validatorAddress],
@@ -304,14 +298,7 @@ export function UnbondingRow({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <EvmValidatorIcon
-            validator={
-              validator ?? {
-                validatorAddress,
-                name: validatorAddress,
-              }
-            }
-          />
+          <EvmValidatorIcon validator={validator ?? { validatorAddress, name }} />
         </Box>
         <Ellipsis>{name}</Ellipsis>
       </Column>

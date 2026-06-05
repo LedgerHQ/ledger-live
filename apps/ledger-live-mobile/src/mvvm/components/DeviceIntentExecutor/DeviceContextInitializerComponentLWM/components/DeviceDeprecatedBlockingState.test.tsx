@@ -1,14 +1,11 @@
 import React from "react";
-import { render } from "@tests/test-renderer";
+import { Linking } from "react-native";
+import { render, screen } from "@tests/test-renderer";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { BlockingStateType } from "@ledgerhq/live-dmk-shared";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import { DeviceDeprecatedBlockingState } from "./DeviceDeprecatedBlockingState";
-import {
-  DeviceDeprecationScreen,
-  DeviceDeprecationScreens,
-} from "~/components/DeviceAction/Screen/DeviceDeprecationScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";
 
@@ -17,19 +14,12 @@ jest.mock("~/analytics", () => {
   return {
     ...actual,
     TrackScreen: jest.fn(() => null),
-  };
-});
-
-jest.mock("~/components/DeviceAction/Screen/DeviceDeprecationScreen", () => {
-  const actual = jest.requireActual("~/components/DeviceAction/Screen/DeviceDeprecationScreen");
-  return {
-    ...actual,
-    DeviceDeprecationScreen: jest.fn(() => null),
+    track: jest.fn(),
   };
 });
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
-const mockedDeviceDeprecationScreen = jest.mocked(DeviceDeprecationScreen);
+const mockedTrack = jest.mocked(track);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -63,20 +53,22 @@ function renderState() {
 describe("DeviceDeprecatedBlockingState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
   it("GIVEN the blocking deprecation state WHEN rendering THEN it renders the error screen with the decision details", () => {
     renderState();
 
-    expect(mockedDeviceDeprecationScreen).toHaveBeenCalledTimes(1);
-    expect(mockedDeviceDeprecationScreen.mock.calls[0][0]).toEqual(
-      expect.objectContaining({
-        coinName: "Bitcoin",
-        date: supportEndDate,
-        productName: getDeviceModel(DeviceModelId.nanoS).productName,
-        screenName: DeviceDeprecationScreens.errorScreen,
-      }),
-    );
+    expect(
+      screen.getByText(
+        `${getDeviceModel(DeviceModelId.nanoS).productName}™ does not support this feature`,
+      ),
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features.",
+      ),
+    ).toBeVisible();
   });
 
   it("GIVEN the blocking deprecation state WHEN rendering THEN it fires the page event with sourceFlow and modelId", () => {
@@ -91,5 +83,37 @@ describe("DeviceDeprecatedBlockingState", () => {
       }),
       undefined,
     );
+  });
+
+  it("GIVEN the blocking deprecation state WHEN pressing Learn More THEN it tracks the canonical button value", async () => {
+    // GIVEN
+    const { user } = renderState();
+
+    // WHEN
+    await user.press(screen.getByText("Learn more"));
+
+    // THEN
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.europa,
+      button: "Learn More",
+    });
+  });
+
+  it("GIVEN the blocking deprecation state WHEN pressing the upgrade CTA THEN it tracks the canonical button value", async () => {
+    // GIVEN
+    const { user } = renderState();
+
+    // WHEN
+    await user.press(screen.getByText("Discover your Upgrade Program"));
+
+    // THEN
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.europa,
+      button: "Discover Upgrade Program",
+    });
   });
 });

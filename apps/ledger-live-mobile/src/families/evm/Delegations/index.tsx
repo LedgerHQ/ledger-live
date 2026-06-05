@@ -175,7 +175,8 @@ function Delegations({ account }: { account: StakingAccount }) {
     const selected = delegation || undelegation;
     const redelegation = delegation && getRedelegation(account, delegation);
     if (!selected) return [];
-    const validatorName = selected.validator?.name ?? selected.validatorAddress;
+    const validatorName =
+      selected.validator?.name ?? selected.validatorName ?? selected.validatorAddress;
 
     return [
       {
@@ -338,6 +339,9 @@ function Delegations({ account }: { account: StakingAccount }) {
 
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
   const selected = delegation || undelegation;
+  const selectedValidatorName =
+    selected &&
+    (selected.validator?.name ?? selected.validatorName ?? selected.validatorAddress);
 
   return (
     <View style={styles.root}>
@@ -348,9 +352,7 @@ function Delegations({ account }: { account: StakingAccount }) {
         ValidatorImage={({ size }) => (
           <ValidatorImage
             isLedger={false}
-            name={
-              selected?.validator?.name ?? selected?.validatorAddress ?? account.currency.ticker
-            }
+            name={selectedValidatorName ?? account.currency.ticker}
             size={size}
           />
         )}

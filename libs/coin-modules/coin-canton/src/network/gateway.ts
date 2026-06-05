@@ -251,7 +251,7 @@ export async function getBalance(currency: CryptoCurrency, partyId: string) {
     method: "GET",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/balance`,
   });
-  return Array.isArray(data) ? data : data.balances ?? [];
+  return Array.isArray(data) ? data : (data.balances ?? []);
 }
 
 export async function getOperations(

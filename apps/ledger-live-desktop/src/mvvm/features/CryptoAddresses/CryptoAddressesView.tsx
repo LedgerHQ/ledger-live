@@ -10,6 +10,8 @@ import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import PageHeader from "LLD/components/PageHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTranslation } from "react-i18next";
+import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import type { CryptoAddressesViewModel } from "./types";
 import { CryptoTable } from "./components/Table/CryptoTable";
 import { CryptoTableEmptyState } from "./components/Table/CryptoTableEmptyState";
@@ -59,6 +61,7 @@ export function CryptoAddressesView({
             </Button>
           </TableActionBarTrailing>
         </TableActionBar>
+        <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} variant="v4" />
         {rows.length === 0 ? (
           <CryptoTableEmptyState message={emptyTableMessage} />
         ) : (

@@ -93,8 +93,11 @@ export interface IntentDefinition<JobState, Input = undefined> {
  * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  * @typeParam ExtraProps - Additional props forwarded to the component by the caller.
  */
-export interface IntentPlatformDefinition<JobState, Input = undefined, ExtraProps = void>
-  extends IntentDefinition<JobState, Input> {
+export interface IntentPlatformDefinition<
+  JobState,
+  Input = undefined,
+  ExtraProps = void,
+> extends IntentDefinition<JobState, Input> {
   /** React component that renders the current {@link JobState}. */
   readonly component: React.ComponentType<{
     jobState: JobState | undefined;
@@ -133,8 +136,11 @@ export type IntentListeners<JobState> = {
  * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  * @typeParam ExtraProps - Additional props forwarded to the component by the caller.
  */
-export interface Intent<JobState, Input = undefined, ExtraProps = void>
-  extends IntentPlatformDefinition<JobState, Input, ExtraProps> {
+export interface Intent<
+  JobState,
+  Input = undefined,
+  ExtraProps = void,
+> extends IntentPlatformDefinition<JobState, Input, ExtraProps> {
   /** Unique identifier for this runtime instance, useful for logging and debugging. */
   readonly uuid: string;
   /** Concrete input passed to the job when the executor runs this intent. */

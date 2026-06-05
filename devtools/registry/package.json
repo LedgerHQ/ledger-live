@@ -7,7 +7,8 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "format": "prettier --write 'src/**/*.ts'",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "coverage": "echo \"no tests in @devtools/registry\""
   },

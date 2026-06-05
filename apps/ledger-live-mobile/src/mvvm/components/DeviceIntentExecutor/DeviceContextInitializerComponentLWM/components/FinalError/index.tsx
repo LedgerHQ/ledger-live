@@ -18,6 +18,7 @@ export function FinalError({ state, device, sourceFlow, onCancel }: FinalErrorPr
         category={PAGE_CONNECT_APP.Error}
         sourceFlow={sourceFlow}
         modelId={device.modelId}
+        refreshSource
         deviceUxV2
       />
       <FinalErrorView {...viewModel} />

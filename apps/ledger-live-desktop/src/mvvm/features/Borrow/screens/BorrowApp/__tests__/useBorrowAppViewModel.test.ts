@@ -52,7 +52,9 @@ describe("useBorrowAppViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.mocked(useTheme).mockReturnValue({ theme: "dark" } as unknown as ReturnType<typeof useTheme>);
+    jest
+      .mocked(useTheme)
+      .mockReturnValue({ theme: "dark" } as unknown as ReturnType<typeof useTheme>);
     jest.mocked(useRemoteLiveAppContext).mockReturnValue({
       updateManifests: jest.fn(),
     } as unknown as ReturnType<typeof useRemoteLiveAppContext>);

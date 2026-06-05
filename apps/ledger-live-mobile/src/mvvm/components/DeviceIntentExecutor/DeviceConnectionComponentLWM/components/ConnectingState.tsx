@@ -28,6 +28,7 @@ export function ConnectingState({ state }: Readonly<ConnectingStateProps>): Reac
         sourceFlow={sourceFlow}
         modelId={modelId}
         transport={transport}
+        refreshSource
         deviceUxV2
       />
       <Box lx={{ width: "full", alignItems: "center", gap: "s16" }}>

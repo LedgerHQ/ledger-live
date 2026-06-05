@@ -78,6 +78,16 @@ const ConnectionComponent: React.FC<{
   </div>
 );
 
+const AutoConnectingComponent: React.FC<{
+  onConnected: (r: DeviceConnectionResult) => void;
+}> = ({ onConnected }) => {
+  React.useEffect(() => {
+    onConnected(makeConnectionResult());
+  }, [onConnected]);
+
+  return <div data-testid="auto-connection" />;
+};
+
 const InitializerComponent: React.FC<{
   onContextInitialized: (ctx: DeviceExtractedContext) => void;
   onClose: () => void;
@@ -184,6 +194,22 @@ describe("DeviceIntentExecutor (integration)", () => {
     const props = makeProps();
     render(<DeviceIntentExecutor {...props} />);
     expect(screen.getByTestId("connection")).toBeTruthy();
+  });
+
+  it("GIVEN the connection component connects from its mount effect WHEN rendering THEN it reaches device initialization", async () => {
+    // GIVEN
+    const props = makeProps({
+      platformConfig: {
+        ...platformConfig,
+        DeviceConnectionComponent: AutoConnectingComponent,
+      },
+    });
+
+    // WHEN
+    render(<DeviceIntentExecutor {...props} />);
+
+    // THEN
+    expect(await screen.findByTestId("initializer")).toBeTruthy();
   });
 
   it("renders nothing when enabled is false", () => {

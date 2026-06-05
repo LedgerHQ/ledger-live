@@ -74,7 +74,10 @@ export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   });
 }
 
-export async function toAccountRaw(account: Account, userData?: AccountUserData): Promise<AccountRaw> {
+export async function toAccountRaw(
+  account: Account,
+  userData?: AccountUserData,
+): Promise<AccountRaw> {
   const bridge = await getAccountBridge(account);
 
   const commonAccountRaw = commonToAccountRaw(account, {

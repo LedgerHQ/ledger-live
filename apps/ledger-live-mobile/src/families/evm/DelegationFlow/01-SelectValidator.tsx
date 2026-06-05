@@ -100,9 +100,9 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item }: { item: StakingValidatorItem }) => (
-      <ValidatorRow validator={item} onPress={onItemPress} />
+      <ValidatorRow account={account} validator={item} onPress={onItemPress} />
     ),
-    [onItemPress],
+    [account, onItemPress],
   );
 
   if (!isFeatureEnabled) {

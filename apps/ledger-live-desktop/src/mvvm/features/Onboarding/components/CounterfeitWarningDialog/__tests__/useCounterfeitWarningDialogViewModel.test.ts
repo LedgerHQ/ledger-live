@@ -27,11 +27,12 @@ describe("useCounterfeitWarningDialogViewModel", () => {
   });
 
   it("should track page_viewed once per open transition", () => {
-    const { rerender } = renderHook(({ open }) =>
-      useCounterfeitWarningDialogViewModel({ ...defaultProps, open }),
-    {
-      initialProps: { open: false },
-    });
+    const { rerender } = renderHook(
+      ({ open }) => useCounterfeitWarningDialogViewModel({ ...defaultProps, open }),
+      {
+        initialProps: { open: false },
+      },
+    );
 
     expect(track).not.toHaveBeenCalledWith("page_viewed", expect.anything());
 

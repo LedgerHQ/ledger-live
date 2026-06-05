@@ -19,6 +19,7 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { DisplayName, IdentityManager } from "./IdentityManager";
 import { AppSetDeviceId } from "./AppSetDeviceId";
 import { AppSetSupportedCurrencies } from "./AppSetSupportedCurrencies";
+import { AppSetApplicationId } from "./AppSetApplicationId";
 import { AppQRCodeCandidate } from "./AppQRCodeCandidate";
 import { TrustchainSDKContext, defaultContext } from "../context";
 import { DeviceInteractionVisibleContext } from "../deviceInteractionContext";
@@ -47,9 +48,16 @@ const initialState: State = {
   walletState: walletInitialState,
 };
 
+// applicationPath is m/0'/<applicationId>'/<index>'
+const applicationIdOfPath = (applicationPath: string): number =>
+  parseInt(applicationPath.split("/")[2], 10);
+
 const App = () => {
   const [context, setContext] = useState(defaultContext);
   const [deviceId, setDeviceId] = useState<string>("webhid");
+  const [selectedApplicationId, setSelectedApplicationId] = useState<number>(
+    defaultContext.applicationId,
+  );
 
   const [trustchainState, setTrustchainState] = useState(getInitialStore);
   const { memberCredentials, trustchain } = trustchainState;
@@ -63,6 +71,20 @@ const App = () => {
   const setTrustchain = useCallback(
     (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
     [],
+  );
+
+  // A loaded trustchain owns its applicationId; the selection only applies when none is loaded.
+  const applicationId = trustchain
+    ? applicationIdOfPath(trustchain.applicationPath)
+    : selectedApplicationId;
+  const setApplicationId = useCallback(
+    (id: number) => {
+      setSelectedApplicationId(id);
+      if (trustchain && applicationIdOfPath(trustchain.applicationPath) !== id) {
+        setTrustchain(null);
+      }
+    },
+    [trustchain, setTrustchain],
   );
 
   const [state, setState] = useState<State>(initialState);
@@ -103,8 +125,8 @@ const App = () => {
   );
 
   const lkrpContext = useMemo(
-    () => ({ ...context, apiBaseUrl: lkrpApiBaseUrl }),
-    [context, lkrpApiBaseUrl],
+    () => ({ ...context, applicationId, apiBaseUrl: lkrpApiBaseUrl }),
+    [context, applicationId, lkrpApiBaseUrl],
   );
   const sdk = useMemo(
     () => getSdk(!!mockEnv, lkrpContext, withDevice, lifecycle),
@@ -119,6 +141,9 @@ const App = () => {
       : !envTrustchainApiIsStg && !envWalletSyncApiIsStg
         ? "PROD"
         : "MIXED";
+
+  // Cloud Sync and Accounts Sync are Ledger Sync-only; other apps (e.g. ring) use the Trustchain SDK only.
+  const isLedgerSync = applicationId === defaultContext.applicationId;
 
   const [deviceInteractionVisible, setDeviceInteractionVisible] = useState(false);
   const callbacks = useMemo(
@@ -167,7 +192,8 @@ const App = () => {
             <Expand
               title={
                 <>
-                  <span>Environment</span> <Tag size="sm" label={envSummary} />
+                  <span>Environment</span> <Tag size="sm" label={envSummary} />{" "}
+                  <Tag size="sm" label={`app ${applicationId}`} />
                 </>
               }
             >
@@ -175,6 +201,10 @@ const App = () => {
               <AppSetCloudSyncAPIEnv />
               <AppMockEnv />
               <AppSetSupportedCurrencies />
+              <AppSetApplicationId
+                applicationId={applicationId}
+                setApplicationId={setApplicationId}
+              />
               <AppSetDeviceId deviceId={deviceId} setDeviceId={setDeviceId} />
             </Expand>
 
@@ -254,48 +284,60 @@ const App = () => {
               </Expand>
             </Expand>
 
-            <Expand
-              title={
-                <>
-                  <span>Cloud Sync SDK</span>{" "}
-                  {version ? <code className="body-3 text-muted">Version: {version}</code> : null}
-                </>
-              }
-            >
-              {trustchain && memberCredentials ? (
-                <AppWalletSync
-                  trustchain={trustchain}
-                  setTrustchain={setTrustchain}
-                  memberCredentials={memberCredentials}
-                  version={version}
-                  data={data}
-                  setVersion={setWssdkHandledVersion}
-                  setData={setWssdkHandledData}
-                  forceReadOnlyData={state.walletState.walletSyncState.data}
-                  readOnly={accountsSync}
-                  takeControl={takeControl}
-                />
-              ) : (
-                <p className="body-2 text-muted">Please create a trustchain first</p>
-              )}
-            </Expand>
+            {isLedgerSync ? (
+              <>
+                <Expand
+                  title={
+                    <>
+                      <span>Cloud Sync SDK</span>{" "}
+                      {version ? (
+                        <code className="body-3 text-muted">Version: {version}</code>
+                      ) : null}
+                    </>
+                  }
+                >
+                  {trustchain && memberCredentials ? (
+                    <AppWalletSync
+                      trustchain={trustchain}
+                      setTrustchain={setTrustchain}
+                      memberCredentials={memberCredentials}
+                      version={version}
+                      data={data}
+                      setVersion={setWssdkHandledVersion}
+                      setData={setWssdkHandledData}
+                      forceReadOnlyData={state.walletState.walletSyncState.data}
+                      readOnly={accountsSync}
+                      takeControl={takeControl}
+                    />
+                  ) : (
+                    <p className="body-2 text-muted">Please create a trustchain first</p>
+                  )}
+                </Expand>
 
-            <Expand title="Accounts Sync" dynamicControl={accountsSyncControl}>
-              {trustchain && memberCredentials ? (
-                <Suspense fallback={<Loading />}>
-                  <AppAccountsSync
-                    deviceId={deviceId}
-                    trustchain={trustchain}
-                    memberCredentials={memberCredentials}
-                    state={state}
-                    setState={setState}
-                    setTrustchain={setTrustchain}
-                  />
-                </Suspense>
-              ) : (
-                <p className="body-2 text-muted">Please create a trustchain first</p>
-              )}
-            </Expand>
+                <Expand title="Accounts Sync" dynamicControl={accountsSyncControl}>
+                  {trustchain && memberCredentials ? (
+                    <Suspense fallback={<Loading />}>
+                      <AppAccountsSync
+                        deviceId={deviceId}
+                        trustchain={trustchain}
+                        memberCredentials={memberCredentials}
+                        state={state}
+                        setState={setState}
+                        setTrustchain={setTrustchain}
+                      />
+                    </Suspense>
+                  ) : (
+                    <p className="body-2 text-muted">Please create a trustchain first</p>
+                  )}
+                </Expand>
+              </>
+            ) : (
+              <p className="body-2 my-12 text-muted">
+                Cloud Sync SDK and Accounts Sync are Ledger Sync (application{" "}
+                {defaultContext.applicationId}) features. Switch the application back to{" "}
+                {defaultContext.applicationId} in the Environment section to use them.
+              </p>
+            )}
           </div>
         </DeviceInteractionVisibleContext.Provider>
       </TrustchainSDKContext.Provider>

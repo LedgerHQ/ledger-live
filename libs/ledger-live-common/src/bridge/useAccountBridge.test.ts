@@ -59,10 +59,7 @@ describe("useAccountBridge — unsupported account", () => {
     return { ...account, currency: getCryptoCurrencyById("tron") };
   }
 
-  class Boundary extends React.Component<
-    { children: React.ReactNode },
-    { error: Error | null }
-  > {
+  class Boundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
     state = { error: null as Error | null };
     static getDerivedStateFromError(error: Error) {
       return { error };

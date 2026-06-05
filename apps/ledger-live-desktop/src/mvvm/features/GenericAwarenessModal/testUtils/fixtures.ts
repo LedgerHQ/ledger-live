@@ -40,6 +40,7 @@ export const appStartFeatureIntroCard: GenericAwarenessModalFeatureIntro = {
       subtitle: "Your private keys never leave your hardware — not even Ledger can access them.",
     },
   ],
+  isReady: true,
 };
 
 export const featureIntroCampaignCard: GenericAwarenessModalFeatureIntro = {
@@ -67,6 +68,7 @@ export const featureIntroCampaignCard: GenericAwarenessModalFeatureIntro = {
         "If an exchange pauses withdrawals, assets on your signer remain under your control.",
     },
   ],
+  isReady: true,
 };
 
 export const carouselCampaignCard: GenericAwarenessModalCarousel = {
@@ -102,6 +104,7 @@ export const carouselCampaignCard: GenericAwarenessModalCarousel = {
       primaryButtonLink: "https://www.ledger.com/coin/wallet/ethereum",
     },
   ],
+  isReady: true,
 };
 
 export const promptCampaignCard: GenericAwarenessModalPrompt = {

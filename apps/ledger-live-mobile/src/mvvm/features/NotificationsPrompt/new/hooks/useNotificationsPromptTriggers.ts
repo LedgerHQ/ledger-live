@@ -29,6 +29,7 @@ export function useNotificationsPromptTriggers() {
   const { shouldPromptOptInDrawerAfterAction } = useNotificationsPrompt({
     permissionStatus,
     areNotificationsAllowed: notifications.areNotificationsAllowed,
+    transactionsAlertsCategory: notifications.transactionsAlertsCategory,
     pushNotificationsDataOfUser,
   });
   const { openDrawer, isDrawerPending } = useNotificationsPromptDrawerScheduler();
@@ -40,6 +41,7 @@ export function useNotificationsPromptTriggers() {
           source,
           permissionStatus,
           areNotificationsAllowed: notifications.areNotificationsAllowed,
+          transactionsAlertsCategory: notifications.transactionsAlertsCategory,
           pushNotificationsDataOfUser,
         },
         {
@@ -56,7 +58,7 @@ export function useNotificationsPromptTriggers() {
         return;
       }
 
-      openDrawer(decision.source, decision.delayMs);
+      openDrawer(decision.source, decision.delayMs, decision.drawerPromptTarget);
     },
     [
       featureBrazePushNotifications,
@@ -64,6 +66,7 @@ export function useNotificationsPromptTriggers() {
       isDrawerPending,
       isRatingsModalOpen,
       notifications.areNotificationsAllowed,
+      notifications.transactionsAlertsCategory,
       openDrawer,
       permissionStatus,
       pushNotificationsDataOfUser,
@@ -94,11 +97,14 @@ export function useNotificationsPromptTriggers() {
 
       trackInactivityDecision(decision);
 
-      if (decision.kind === "skip") {
+      if (
+        decision.kind !== "show" ||
+        decision.drawerPromptTarget !== "globalPushNotifications"
+      ) {
         return;
       }
 
-      openDrawer(decision.source, decision.delayMs);
+      openDrawer(decision.source, decision.delayMs, decision.drawerPromptTarget);
     },
     [
       featureBrazePushNotifications,

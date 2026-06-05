@@ -10,7 +10,9 @@ const handlers = [
     // When we perform a search
     if (searchParams.get("filter")) {
       const coins = searchParams.get("filter")?.toLowerCase().split(",") || [];
-      filteredData = marketsMock.filter(({ ticker }) => coins.includes(ticker));
+      filteredData = marketsMock.filter(({ name, ticker }) =>
+        coins.some(coin => ticker.toLowerCase().includes(coin) || name.toLowerCase().includes(coin)),
+      );
     }
     // When we perform starred
     else if (searchParams.get("ids")) {

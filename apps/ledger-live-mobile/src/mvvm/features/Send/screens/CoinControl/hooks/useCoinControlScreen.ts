@@ -34,7 +34,7 @@ export function useCoinControlScreen(): CoinControlScreenViewModel {
   const { bridgePending, status, transaction } = state.transaction;
 
   const onReview = useCallback(() => {
-    navigation.navigate(ScreenName.SendFlowConfirmation);
+    navigation.navigate(ScreenName.SendFlowSignature);
   }, [navigation]);
 
   const onGetFunds = useCallback(() => {

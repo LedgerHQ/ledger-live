@@ -174,7 +174,15 @@ function expectTrackPage(
   props: { flow?: string; reason?: string } = {},
   source = "MADSource",
 ) {
-  expect(trackPage).toHaveBeenNthCalledWith(n, page, undefined, { ...props, source }, true, true, false);
+  expect(trackPage).toHaveBeenNthCalledWith(
+    n,
+    page,
+    undefined,
+    { ...props, source },
+    true,
+    true,
+    false,
+  );
 }
 
 describe("ModularDrawerAddAccountFlowManager", () => {

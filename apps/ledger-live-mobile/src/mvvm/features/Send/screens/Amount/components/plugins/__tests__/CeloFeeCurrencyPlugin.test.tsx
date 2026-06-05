@@ -13,12 +13,29 @@ const transactionActions = {
   setAccount: jest.fn(),
 } as never;
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: (account: unknown, parentAccount: unknown) => parentAccount ?? account,
-  findSubAccountById: (account: { subAccounts?: { id: string }[] }, id: string | null) =>
-    account.subAccounts?.find(sub => sub.id === id) ?? null,
-}));
+jest.mock("@ledgerhq/live-common/account/index", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/account/index");
+  const mocked: Record<string, unknown> = { __esModule: true };
+  for (const key of Object.keys(actual)) {
+    let value: unknown;
+    let assigned = false;
+    Object.defineProperty(mocked, key, {
+      configurable: true,
+      enumerable: true,
+      get: () => (assigned ? value : actual[key]),
+      set: v => {
+        value = v;
+        assigned = true;
+      },
+    });
+  }
+
+  mocked.getMainAccount = (account: unknown, parentAccount: unknown) => parentAccount ?? account;
+  mocked.findSubAccountById = (account: { subAccounts?: { id: string }[] }, id: string | null) =>
+    account.subAccounts?.find(sub => sub.id === id) ?? null;
+
+  return mocked;
+});
 
 const usdcContractAddress = "0xceba9300f2b948710d2653dd7b07f33a8b32118c";
 const unknownContractAddress = "0x0000000000000000000000000000000000000001";
@@ -293,7 +310,9 @@ describe("CeloFeeCurrencyPlugin (mvvm)", () => {
       <CeloFeeCurrencyPlugin
         account={account as never}
         parentAccount={null}
-        transaction={{ ...baseTransaction, feeCurrencyAccountId: "unknown-sub-account-id" } as never}
+        transaction={
+          { ...baseTransaction, feeCurrencyAccountId: "unknown-sub-account-id" } as never
+        }
         transactionActions={transactionActions}
       />,
     );

@@ -32,6 +32,7 @@ export function LoadingState({ device, sourceFlow }: LoadingStateProps) {
           category={PAGE_CONNECT_APP.Loading}
           sourceFlow={sourceFlow}
           modelId={device.modelId}
+          refreshSource
           deviceUxV2
         />
       )}

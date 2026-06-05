@@ -198,9 +198,9 @@ describe("createOpenActionDialogHandler", () => {
     const dispatch = jest.fn();
     const handler = createOpenActionDialogHandler(dispatch);
 
-    await expect(
-      handler({ params: { title: "", description: "", ctaLabel: "" } }),
-    ).rejects.toThrow("Invalid params for custom.dialog.confirmation");
+    await expect(handler({ params: { title: "", description: "", ctaLabel: "" } })).rejects.toThrow(
+      "Invalid params for custom.dialog.confirmation",
+    );
     expect(dispatch).not.toHaveBeenCalled();
   });
 

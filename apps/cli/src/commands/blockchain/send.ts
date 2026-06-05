@@ -89,15 +89,12 @@ export default {
                           .pipe(
                             concatMap(toSignOperationEventRaw),
                             // @ts-expect-error more voodoo stuff
-                            ...(opts["disable-broadcast"] ||
-                            getEnv("DISABLE_TRANSACTION_BROADCAST")
+                            ...(opts["disable-broadcast"] || getEnv("DISABLE_TRANSACTION_BROADCAST")
                               ? []
                               : [
                                   concatMap((e: any) => {
                                     if (e.type === "signed") {
-                                      l(
-                                        `✔️ has been signed! ${JSON.stringify(e.signedOperation)}`,
-                                      );
+                                      l(`✔️ has been signed! ${JSON.stringify(e.signedOperation)}`);
                                       return from(
                                         bridge
                                           .broadcast({
@@ -118,8 +115,7 @@ export default {
                                               op.hash &&
                                               getMainAccount(account).currency.family === "evm"
                                             ) {
-                                              const timeoutMs =
-                                                opts["wait-confirmation-timeout"];
+                                              const timeoutMs = opts["wait-confirmation-timeout"];
                                               await waitForTransactionConfirmation(
                                                 getMainAccount(account),
                                                 op.hash,

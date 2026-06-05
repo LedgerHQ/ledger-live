@@ -88,7 +88,10 @@ export default function StellarFeeRow({
       setTransaction(
         bridge.updateTransaction(transaction, {
           fees: estimatedFees,
-          customFees: { value: BigInt(estimatedFees?.toFixed(0) ?? 0), parameters: { fees: estimatedFees } },
+          customFees: {
+            value: BigInt(estimatedFees?.toFixed(0) ?? 0),
+            parameters: { fees: estimatedFees },
+          },
         }),
       );
     }
