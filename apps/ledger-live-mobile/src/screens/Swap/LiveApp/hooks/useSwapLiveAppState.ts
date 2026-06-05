@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -11,7 +11,7 @@ import { useTranslation } from "~/context/Locale";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { DefaultAccountSwapParamList } from "../../types";
-import { useNetInfo } from "@react-native-community/netinfo";
+import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -68,7 +68,7 @@ export function useSwapLiveAppState(params: unknown) {
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(
     swapLiveAppManifestID || undefined,
   );
-  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
+  const { state: remoteLiveAppState, updateManifests } = useRemoteLiveAppContext();
 
   const manifest = useMemo<LiveAppManifest | undefined>(
     () => (!localManifest ? remoteManifest : localManifest),
@@ -97,6 +97,21 @@ export function useSwapLiveAppState(params: unknown) {
     return null;
   }, [manifest, isWebviewError, isConnected, t]);
 
+  // Mirrors the Desktop "Try again" action on the manifest/network error screen:
+  // re-fetch the remote manifest registry and clear any webview error state so the
+  // app can recover without restarting (see Swap2/App/App.tsx NetworkErrorScreen).
+  //
+  // Unlike Desktop, the mobile error screen is also gated on `isConnected` (checked
+  // first in the `error` memo above). `isConnected` comes from `useNetInfo`, which
+  // reads the NetInfo singleton and only changes on OS connectivity events — so a
+  // stale/spurious `isConnected === false` would keep the error screen up and make
+  // retry a no-op. Force a refresh so connectivity is re-evaluated on tap.
+  const retry = useCallback(() => {
+    setWebviewState(initialWebviewState);
+    NetInfo.refresh();
+    return updateManifests();
+  }, [setWebviewState, updateManifests]);
+
   return {
     manifest,
     error,
@@ -105,5 +120,6 @@ export function useSwapLiveAppState(params: unknown) {
     webviewState,
     setWebviewState,
     defaultParams,
+    retry,
   };
 }

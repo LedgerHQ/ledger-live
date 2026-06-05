@@ -151,6 +151,18 @@ export function RemoteLiveAppProvider({
       }));
     } else {
       const { allManifests, catalogManifests } = result.manifests;
+
+      // The api layer swallows network errors and resolves to [] (see ./api/index.ts),
+      // so an empty `allManifests` here is indistinguishable from a failed fetch. An empty
+      // catalog is never a valid state in practice, and overwriting `value` with empty maps
+      // would wipe a previously-loaded registry — surfacing as a spurious "manifest not
+      // found" and making a transient failure during a retry/refresh non-recoverable.
+      // Keep the last good value instead and just clear the loading state.
+      if (allManifests.length === 0) {
+        setState(currentState => ({ ...currentState, isLoading: false }));
+        return;
+      }
+
       setState(() => ({
         isLoading: false,
         value: {

@@ -1,6 +1,8 @@
 import React, { RefObject, useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
+import { Button, Box } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import GenericErrorView from "~/components/GenericErrorView";
@@ -13,7 +15,10 @@ import { ScreenName } from "~/const";
 import { useSwapLiveAppState } from "./hooks/useSwapLiveAppState";
 import { useSwapWebviewProps } from "./hooks/useSwapWebviewProps";
 import { DefaultAccountSwapParamList } from "../types";
-import { useSwapWallet40HeaderStateUpdater } from "./navigationHandlers/wallet40/useSwapWallet40HeaderState";
+import {
+  useSwapWallet40HeaderStateUpdater,
+  resetSwapWallet40HeaderState,
+} from "./navigationHandlers/wallet40/useSwapWallet40HeaderState";
 import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
 
@@ -55,10 +60,19 @@ export function SwapLiveAppWallet40({
 }: Readonly<StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapTab>>) {
   const { params } = route;
 
+  const { t } = useTranslation();
   const { theme: lumenTheme } = useLumenTheme();
 
-  const { manifest, error, isLoading, webviewRef, webviewState, setWebviewState, defaultParams } =
-    useSwapLiveAppState(params);
+  const {
+    manifest,
+    error,
+    isLoading,
+    webviewRef,
+    webviewState,
+    setWebviewState,
+    defaultParams,
+    retry,
+  } = useSwapLiveAppState(params);
 
   const updateWallet40HeaderState = useSwapWallet40HeaderStateUpdater(webviewRef);
 
@@ -75,6 +89,14 @@ export function SwapLiveAppWallet40({
     [setWebviewState, updateWallet40HeaderState],
   );
 
+  // The header/tab-bar store keeps the last webview route (e.g. /unknown-error with
+  // canGoBack=true) while the error screen is shown. Reset it alongside the webview
+  // state so retry starts from a clean header, mirroring the webview reset in `retry`.
+  const handleRetry = useCallback(() => {
+    resetSwapWallet40HeaderState();
+    retry();
+  }, [retry]);
+
   const containerStyle = useMemo(
     () => ({ flex: 1, backgroundColor: lumenTheme.colors.bg.base }),
     [lumenTheme.colors.bg.base],
@@ -83,7 +105,17 @@ export function SwapLiveAppWallet40({
   if (error) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
-        {isLoading ? <InfiniteLoader /> : <GenericErrorView error={error} />}
+        {isLoading ? (
+          <InfiniteLoader />
+        ) : (
+          <GenericErrorView error={error}>
+            <Box lx={{ width: "full", paddingHorizontal: "s16" }}>
+              <Button isFull onPress={handleRetry} lx={{ marginTop: "s24" }}>
+                {t("common.tryAgain")}
+              </Button>
+            </Box>
+          </GenericErrorView>
+        )}
       </Flex>
     );
   }
