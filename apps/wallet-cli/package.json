@@ -28,6 +28,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
     "coverage": "bun test src/ --coverage",
+    "mutate:device": "stryker run stryker.device.conf.mjs",
     "lint": "oxlint src bunli.config.ts",
     "lint:ci": "oxlint src bunli.config.ts --quiet",
     "lint:fix": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts && oxlint src bunli.config.ts --fix --quiet",
@@ -43,6 +44,8 @@
   "devDependencies": {
     "@bunli/core": "0.9.1",
     "@bunli/utils": "0.6.0",
+    "@hughescr/stryker-bun-runner": "1.2.2",
+    "@stryker-mutator/core": "9.6.1",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",

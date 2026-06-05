@@ -4,3 +4,8 @@ dist/
 .npm-package/
 npm/*/.npm-package/
 npm/*/bin/
+
+# Local-only mutation testing artifacts (stryker.device.conf.mjs)
+.stryker-tmp/
+.stryker-bun-runner-registry.json
+reports/

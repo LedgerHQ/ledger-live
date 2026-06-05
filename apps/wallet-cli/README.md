@@ -84,6 +84,38 @@ pnpm start -- <command> [args]
 - In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
 - From repo root: `pnpm build:wallet-cli`
 
+## Local Device Mutation Testing
+
+The device connection layer has a local-only Stryker setup for targeted mutation
+testing. It is intentionally not wired into CI, Nx targets, or the repository
+validation docs because it is slower and mainly useful while strengthening these
+device tests.
+
+Run the normal package tests first, then run the mutation pass from the repo
+root:
+
+```bash
+pnpm --filter @ledgerhq/wallet-cli test
+pnpm --filter @ledgerhq/wallet-cli mutate:device
+```
+
+The config lives in `stryker.device.conf.mjs` and mutates only:
+
+- `src/device/node-webusb/NodeWebUsbTransport.ts`
+- `src/device/node-webusb/NodeWebUsbApduSender.ts`
+- `src/device/connect-ledger-app.ts`
+
+It uses the Bun Stryker runner, `coverageAnalysis: "perTest"`, `inPlace: true`,
+and `concurrency: 1` so it works with this pnpm workspace layout. Because it
+mutates files in place, let the run finish normally; if it is force-killed, check
+`git status` before continuing.
+
+Current local baseline: `467` killed, `11` timeout, `212` survived, `5`
+no-coverage, `68.78%` total score. Remaining mutants are mostly debug/logging
+strings, default/factory shapes, near-equivalent branches, or async timeout
+mechanics. The HTML report is written to `reports/mutation/device.html` and is
+ignored by git.
+
 ## Environment
 
 If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
