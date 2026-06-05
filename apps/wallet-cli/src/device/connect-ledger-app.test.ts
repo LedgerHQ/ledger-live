@@ -4,6 +4,7 @@ import {
   UnknownDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
+import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { Observable } from "rxjs";
 import { connectLedgerApp } from "./connect-ledger-app";
 import type { DeviceState } from "./device-state";
@@ -84,6 +85,53 @@ describe("connectLedgerApp", () => {
     await expect(connectLedgerApp(dmk as never, "sess-1", "evm")).resolves.toBeUndefined();
   });
 
+  it("resolves when the completed device action has no output", async () => {
+    const dmk = makeDmk(() => ({
+      observable: new Observable(observer => {
+        observer.next({ status: DeviceActionStatus.Completed } as const);
+        observer.complete();
+      }),
+      cancel: (): void => {},
+    }));
+
+    await expect(connectLedgerApp(dmk as never, "sess-1", "evm")).resolves.toBeUndefined();
+  });
+
+  it("passes the expected input contract to ConnectAppDeviceAction", async () => {
+    let captured:
+      | {
+          sessionId: string;
+          deviceAction: ConnectAppDeviceAction;
+        }
+      | undefined;
+    const dmk = {
+      _unsafeBypassIntentQueue: (): void => {},
+      executeDeviceAction: (args: { sessionId: string; deviceAction: ConnectAppDeviceAction }) => {
+        captured = args;
+        return completedAction();
+      },
+    };
+
+    await expect(
+      connectLedgerApp(dmk as never, "sess-contract", "Custom App", {
+        deviceTimeoutMs: 12_345,
+      }),
+    ).resolves.toBeUndefined();
+
+    if (!captured) {
+      throw new Error("expected executeDeviceAction to be called");
+    }
+    expect(captured.sessionId).toBe("sess-contract");
+    expect(captured.deviceAction).toBeInstanceOf(ConnectAppDeviceAction);
+    expect(captured.deviceAction.input).toEqual({
+      application: { name: "Custom App" },
+      dependencies: [],
+      requireLatestFirmware: false,
+      allowMissingApplication: false,
+      unlockTimeout: 12_345,
+    });
+  });
+
   it("throws a WalletCliDeviceError when the device action ends with a tagged DMK error", async () => {
     const err = new UnknownDAError("test");
     const dmk = makeDmk(() => errorAction(err));
@@ -113,6 +161,35 @@ describe("connectLedgerApp", () => {
       expect(e).toBeInstanceOf(WalletCliDeviceError);
       expect((e as WalletCliDeviceError).state).toEqual({ code: "disconnected" });
     }
+  });
+
+  it("throws a WalletCliDeviceError when the final state is not completed", async () => {
+    const dmk = makeDmk(() => ({
+      observable: new Observable(observer => {
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.None,
+          },
+        });
+        observer.complete();
+      }),
+      cancel: (): void => {},
+    }));
+
+    const error = await connectLedgerApp(dmk as never, "sess-1", "bitcoin").then(
+      () => undefined,
+      e => e,
+    );
+
+    expect(error).toBeInstanceOf(WalletCliDeviceError);
+    const state = (error as WalletCliDeviceError).state;
+    expect(state.code).toBe("unknown");
+    if (state.code !== "unknown") return;
+    expect(state.cause).toBeInstanceOf(Error);
+    expect((state.cause as Error).message).toBe(
+      `Connect app ended with status: ${DeviceActionStatus.Pending}`,
+    );
   });
 
   it("throws unknown when the device action observable errors with an arbitrary Error", async () => {
@@ -163,6 +240,30 @@ describe("connectLedgerApp", () => {
       s => s.code === "awaiting_approval" && s.reason === "unlock",
     );
     expect(unlockStates).toHaveLength(1);
+  });
+
+  it("does not require onStateChange for unlock or open-app pending states", async () => {
+    const dmk = makeDmk(() => ({
+      observable: new Observable(observer => {
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.UnlockDevice,
+          },
+        });
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.ConfirmOpenApp,
+          },
+        });
+        observer.next({ status: DeviceActionStatus.Completed, output: {} } as const);
+        observer.complete();
+      }),
+      cancel: () => {},
+    }));
+
+    await expect(connectLedgerApp(dmk as never, "sess-1", "evm")).resolves.toBeUndefined();
   });
 
   it("does not emit state for pending None or missing interactions", async () => {
@@ -258,7 +359,100 @@ describe("connectLedgerApp", () => {
     ]);
   });
 
+  it("ignores non-pending and None interactions without resetting duplicate suppression", async () => {
+    const states: DeviceState[] = [];
+    const dmk = makeDmk(() => ({
+      observable: new Observable(observer => {
+        observer.next({
+          status: DeviceActionStatus.Completed,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.ConfirmOpenApp,
+          },
+        });
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.UnlockDevice,
+          },
+        });
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.None,
+          },
+        });
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.UnlockDevice,
+          },
+        });
+        observer.next({ status: DeviceActionStatus.Completed, output: {} } as const);
+        observer.complete();
+      }),
+      cancel: () => {},
+    }));
+
+    await connectLedgerApp(dmk as never, "sess-1", "evm", {
+      onStateChange: s => states.push(s),
+    });
+
+    expect(states).toEqual([{ code: "awaiting_approval", reason: "unlock" }]);
+  });
+
+  it("does not emit duplicate state changes for repeated required interactions", async () => {
+    const states: DeviceState[] = [];
+    const dmk = makeDmk(() => ({
+      observable: new Observable(observer => {
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.ConfirmOpenApp,
+          },
+        });
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.ConfirmOpenApp,
+          },
+        });
+        observer.next({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            requiredUserInteraction: UserInteractionRequired.ConfirmOpenApp,
+          },
+        });
+        observer.next({ status: DeviceActionStatus.Completed, output: {} } as const);
+        observer.complete();
+      }),
+      cancel: () => {},
+    }));
+
+    await connectLedgerApp(dmk as never, "sess-1", "evm", {
+      onStateChange: s => states.push(s),
+    });
+
+    expect(states).toEqual([{ code: "awaiting_approval", reason: "open_app" }]);
+  });
+
   describe("silence timeout", () => {
+    it("schedules the silence timeout after the device timeout plus buffer", async () => {
+      const timers = installControlledTimers();
+      try {
+        const dmk = makeDmk(() => completedAction());
+
+        await connectLedgerApp(dmk as never, "sess-1", "evm", {
+          deviceTimeoutMs: 12_345,
+        });
+
+        expect(timers.scheduled).toHaveLength(1);
+        expect(timers.scheduled[0].ms).toBe(72_345);
+        expect(timers.scheduled[0].cleared).toBe(true);
+      } finally {
+        timers.restore();
+      }
+    });
+
     it("cancels and rejects with timeout when no progress occurs", async () => {
       const timers = installControlledTimers();
       try {
@@ -287,6 +481,65 @@ describe("connectLedgerApp", () => {
         expect(result).toBeInstanceOf(WalletCliDeviceError);
         expect((result as WalletCliDeviceError).state).toEqual({ code: "timeout" });
         expect(cancelCalls).toBe(1);
+        expect(timers.scheduled[0].cleared).toBe(true);
+      } finally {
+        timers.restore();
+      }
+    });
+
+    it("keeps the timeout error when cancel throws during silence timeout cleanup", async () => {
+      const timers = installControlledTimers();
+      try {
+        const dmk = makeDmk(() => ({
+          observable: new Observable(() => undefined),
+          cancel: () => {
+            throw new Error("cancel failed");
+          },
+        }));
+
+        const promise = connectLedgerApp(dmk as never, "sess-1", "evm", {
+          deviceTimeoutMs: 1,
+        });
+        expect(timers.scheduled).toHaveLength(1);
+
+        timers.scheduled[0].run();
+        const result = await Promise.race([
+          promise.then(
+            () => "resolved",
+            e => e,
+          ),
+          timers.waitRealTick().then(() => "pending"),
+        ]);
+
+        expect(result).toBeInstanceOf(WalletCliDeviceError);
+        expect((result as WalletCliDeviceError).state).toEqual({ code: "timeout" });
+        expect(timers.scheduled[0].cleared).toBe(true);
+      } finally {
+        timers.restore();
+      }
+    });
+
+    it("throws disconnected and clears the silence timeout when the action completes without emission", async () => {
+      const timers = installControlledTimers();
+      try {
+        const dmk = makeDmk(() => ({
+          observable: new Observable(observer => {
+            observer.complete();
+          }),
+          cancel: (): void => {},
+        }));
+
+        try {
+          await connectLedgerApp(dmk as never, "sess-1", "bitcoin", {
+            deviceTimeoutMs: 1,
+          });
+          throw new Error("expected connectLedgerApp to throw");
+        } catch (e) {
+          expect(e).toBeInstanceOf(WalletCliDeviceError);
+          expect((e as WalletCliDeviceError).state).toEqual({ code: "disconnected" });
+        }
+
+        expect(timers.scheduled).toHaveLength(1);
         expect(timers.scheduled[0].cleared).toBe(true);
       } finally {
         timers.restore();
@@ -392,6 +645,23 @@ describe("connectLedgerApp", () => {
       expect(calls).toBe(1);
     });
 
+    it("does not retry null, non-object, or non-tagged errors", async () => {
+      const errors = [null, "ReceiverApduError", { message: "missing tag" }];
+
+      for (const error of errors) {
+        let calls = 0;
+        const dmk = makeDmk(() => {
+          calls++;
+          return errorAction(error);
+        });
+
+        await expect(connectLedgerApp(dmk as never, "sess-1", "ethereum")).rejects.toBeInstanceOf(
+          WalletCliDeviceError,
+        );
+        expect(calls).toBe(1);
+      }
+    });
+
     it("throws a WalletCliDeviceError (timeout) after exhausting retries on ReceiverApduError", async () => {
       let calls = 0;
       const dmk = makeDmk(() => {
@@ -407,6 +677,29 @@ describe("connectLedgerApp", () => {
         expect((e as WalletCliDeviceError).state.code).toBe("timeout");
       }
       expect(calls).toBe(6);
+    });
+
+    it("waits between the five allowed transport framing retries", async () => {
+      const retryDelays: Array<number | undefined> = [];
+      globalThis.setTimeout = ((fn: () => void, ms?: number) => {
+        if (ms === 3_000) {
+          retryDelays.push(ms);
+        }
+        return realSetTimeout(fn, 0);
+      }) as typeof globalThis.setTimeout;
+
+      let calls = 0;
+      const dmk = makeDmk(() => {
+        calls++;
+        return errorAction({ _tag: "UnknownDeviceExchangeError" as const });
+      });
+
+      await expect(connectLedgerApp(dmk as never, "sess-1", "ethereum")).rejects.toBeInstanceOf(
+        WalletCliDeviceError,
+      );
+
+      expect(calls).toBe(6);
+      expect(retryDelays).toEqual([3_000, 3_000, 3_000, 3_000, 3_000]);
     });
   });
 });
