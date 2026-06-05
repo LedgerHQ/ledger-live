@@ -191,29 +191,41 @@ export class LiveAppWebview {
     await webview.keyboard.type(currencies.join(","));
   }
 
-  async setAccountId(accountId: string) {
+  /**
+   * Fill a controlled input in the dummy live-app webview, retrying until the
+   * value sticks. The webview can be visible before React has wired up its
+   * onChange handlers (the same hydration race that hover() works around in
+   * clickByTestId). A bare fill() run during that window sets the DOM value, but
+   * React then resets the controlled input back to "", leaving the field empty.
+   * toPass() re-fills until the value is actually committed.
+   */
+  private async fillByTestId(testId: string, value: string) {
     const webview = await this.getWebView();
-    return webview.getByTestId("account-id-input").fill(accountId);
+    const input = webview.getByTestId(testId);
+    await expect(async () => {
+      await input.fill(value);
+      await expect(input).toHaveValue(value);
+    }).toPass();
+  }
+
+  async setAccountId(accountId: string) {
+    return this.fillByTestId("account-id-input", accountId);
   }
 
   async setRecipient(recipient: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("recipient-input").fill(recipient);
+    return this.fillByTestId("recipient-input", recipient);
   }
 
   async setAmount(amount: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("amount-input").fill(amount);
+    return this.fillByTestId("amount-input", amount);
   }
 
   async setData(data: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("data-input").fill(data);
+    return this.fillByTestId("data-input", data);
   }
 
   async setDeeplinkUrl(url: string) {
-    const webview = await this.getWebView();
-    return webview.getByTestId("deeplink-url-input").fill(url);
+    return this.fillByTestId("deeplink-url-input", url);
   }
 
   async accountRequest() {
