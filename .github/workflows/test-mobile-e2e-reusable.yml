@@ -165,7 +165,7 @@ env:
   AVD_PROFILE: pixel_9_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 2
+  AVD_CORES: 4
   AVD_RAM_SIZE: 8192
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu auto -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
@@ -364,6 +364,7 @@ jobs:
           aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          max_shards: 1
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native

@@ -67,7 +67,7 @@ const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq"].join("|");
 const config = {
   rootDir: ".",
   modulePaths: [compilerOptions.baseUrl ?? "."],
-  maxWorkers: process.env.CI ? 3 : 1,
+  maxWorkers: process.env.CI ? 1 : 1,
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
