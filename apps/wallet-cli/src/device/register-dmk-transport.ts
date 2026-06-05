@@ -26,6 +26,10 @@ const DISPOSE_DISCONNECT_TIMEOUT_MS = 1_000;
 const DISPOSE_DESTROY_TIMEOUT_MS = 1_000;
 
 const MODULE_ID = "wallet-cli-dmk-webusb";
+const NO_LEDGER_DEVICE_FOUND_MESSAGE = "No Ledger device found. Unlock the device and try again.";
+const INITIAL_SESSION_BUSY_MESSAGE =
+  "[wallet-cli] The Ledger device did not respond to the initial ping. " +
+  "Please run the command again — the retry usually succeeds.";
 
 type Singleton = {
   dmk: DeviceManagementKit;
@@ -36,14 +40,22 @@ type Singleton = {
 let singleton: Singleton | null = null;
 /** One DMK per CLI process: each `createDeviceManagementKit()` adds node-usb hotplug listeners; closing + recreating stacks listeners and breaks the 3rd+ in-process connect (same pattern as the former node-hid kit). */
 let persistentDmk: Promise<WalletCliDmk> | null = null;
+let pendingTransport: Promise<WalletCliDmkTransport> | null = null;
 let exitHooksRegistered = false;
 
 let _testTransport: WalletCliDmkTransport | null = null;
+
+class InitialSessionBusyError extends Error {
+  constructor() {
+    super(INITIAL_SESSION_BUSY_MESSAGE);
+  }
+}
 
 /** @internal Test seam — install before the CLI starts (e.g. from dmk-intercept.ts) to bypass USB discovery. */
 export function _setTestDmkTransport(t: WalletCliDmkTransport | null): void {
   _testTransport = t;
   singleton = null;
+  pendingTransport = null;
 }
 
 function closeDmkQuietly(dmk: DeviceManagementKit): void {
@@ -104,10 +116,19 @@ async function disconnectHeldDmk(held: Singleton | null, mode: "reset" | "dispos
   await awaitWithTimeout(disconnect, DISPOSE_DISCONNECT_TIMEOUT_MS);
 }
 
-async function destroyHeldDmk(held: Singleton | null): Promise<void> {
+async function destroyHeldDmk(held: Singleton | null, mode: "reset" | "dispose"): Promise<void> {
   if (!held) return;
 
-  await awaitWithTimeout(held.destroyTransport(), DISPOSE_DESTROY_TIMEOUT_MS);
+  // reset is followed by an immediate reconnect, so we wait for teardown to finish:
+  // the timeout only stops *waiting*, it can't abort a parked USB transferIn, and
+  // reconnecting while one is still in flight would race/corrupt the next session.
+  // dispose is process-exit, where a wedged transfer must not keep us alive, so it
+  // is bounded by DISPOSE_DESTROY_TIMEOUT_MS instead.
+  if (mode === "reset" || _testTransport) {
+    await held.destroyTransport().catch(() => {});
+  } else {
+    await awaitWithTimeout(held.destroyTransport(), DISPOSE_DESTROY_TIMEOUT_MS);
+  }
   closeDmkQuietly(held.dmk);
 }
 
@@ -151,10 +172,12 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
       filter((list: DiscoveredDevice[]) => list.length > 0),
       timeout(CONNECT_TIMEOUT_MS),
     ),
-  );
+  ).catch(() => {
+    throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
+  });
   const device = discovered[0];
   if (!device) {
-    throw new Error("No Ledger device found. Unlock the device and try again.");
+    throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
   }
   const sessionId = await dmk.connect({
     device,
@@ -172,12 +195,30 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
   const { DeviceStatus } = await import("@ledgerhq/device-management-kit");
   if (status === DeviceStatus.BUSY) {
     await dmk.disconnect({ sessionId }).catch(() => {});
-    throw new Error(
-      "[wallet-cli] The Ledger device did not respond to the initial ping. " +
-        "Please run the command again — the retry usually succeeds.",
-    );
+    throw new InitialSessionBusyError();
   }
   return sessionId;
+}
+
+async function resetPersistentDmkAfterFailedOpen(kit: WalletCliDmk): Promise<void> {
+  persistentDmk = null;
+  await destroyPersistentDmk(kit, "reset");
+}
+
+async function createWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
+  const kit = await getOrCreatePersistentDmk();
+  try {
+    const sessionId = await connectFirstUsbDevice(kit.dmk);
+    const transport = new WalletCliDmkTransport(kit.dmk, sessionId);
+    singleton = { dmk: kit.dmk, transport, destroyTransport: kit.destroyTransport };
+    return transport;
+  } catch (error) {
+    singleton = null;
+    if (!(error instanceof InitialSessionBusyError)) {
+      await resetPersistentDmkAfterFailedOpen(kit);
+    }
+    throw error;
+  }
 }
 
 /**
@@ -202,11 +243,10 @@ export function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
       return singleton.transport;
     }
 
-    const kit = await getOrCreatePersistentDmk();
-    const sessionId = await connectFirstUsbDevice(kit.dmk);
-    const transport = new WalletCliDmkTransport(kit.dmk, sessionId);
-    singleton = { dmk: kit.dmk, transport, destroyTransport: kit.destroyTransport };
-    return transport;
+    pendingTransport ??= createWalletCliDmkTransport().finally(() => {
+      pendingTransport = null;
+    });
+    return pendingTransport;
   });
 }
 
@@ -219,12 +259,13 @@ export function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
 async function teardownDmk(mode: "reset" | "dispose"): Promise<void> {
   const held = singleton;
   singleton = null;
+  pendingTransport = null;
 
   await disconnectHeldDmk(held, mode);
 
   if (_testTransport) return;
 
-  await destroyHeldDmk(held);
+  await destroyHeldDmk(held, mode);
   await teardownPersistentDmk(held, mode);
 }
 

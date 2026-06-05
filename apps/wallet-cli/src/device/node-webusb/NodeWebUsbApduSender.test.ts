@@ -10,7 +10,7 @@ import type {
   ApduSenderServiceFactory,
   LoggerPublisherService,
 } from "@ledgerhq/device-management-kit";
-import { Maybe } from "purify-ts";
+import { Left, Maybe } from "purify-ts";
 import { NodeWebUsbApduSender } from "./NodeWebUsbApduSender";
 import { FRAME_SIZE } from "./node-webusb-constants";
 
@@ -18,13 +18,14 @@ function flushTasks(): Promise<void> {
   return new Promise(resolve => queueMicrotask(resolve));
 }
 
-function createLogger(): LoggerPublisherService {
+function createLogger(overrides: Partial<LoggerPublisherService> = {}): LoggerPublisherService {
   return {
     subscribers: [],
     debug: () => {},
     info: () => {},
     warn: () => {},
     error: () => {},
+    ...overrides,
   } as unknown as LoggerPublisherService;
 }
 
@@ -342,6 +343,83 @@ describe("NodeWebUsbApduSender — sendApdu error paths", () => {
     });
   });
 
+  it("returns Left when transferIn throws", async () => {
+    const device = {
+      opened: true,
+      transferOut: async () => ({ status: "ok" }),
+      transferIn: async () => {
+        throw new Error("usb read boom");
+      },
+    };
+    const result = await buildSender(device).sendApdu(APDU);
+    expect(result.isLeft()).toBe(true);
+    result.ifLeft(error => {
+      expect(error).toBeInstanceOf(OpeningConnectionError);
+      expect(causeMessage(error)).toContain("usb read boom");
+    });
+  });
+
+  it("returns Left when a received frame is rejected by the APDU receiver", async () => {
+    const device = {
+      opened: true,
+      transferOut: async () => ({ status: "ok" }),
+      transferIn: async () => ({
+        status: "ok",
+        data: new DataView(new Uint8Array(FRAME_SIZE).buffer),
+      }),
+    };
+    const apduReceiverFactory = (() => ({
+      handleFrame: () => Left(new OpeningConnectionError("malformed APDU frame")),
+    })) as unknown as ApduReceiverServiceFactory;
+    const sender = new NodeWebUsbApduSender({
+      dependencies: { device: device as never, interfaceNumber: 1 },
+      apduSenderFactory: realSenderFactory,
+      apduReceiverFactory,
+      loggerFactory: () => createLogger(),
+    });
+
+    const result = await sender.sendApdu(APDU);
+
+    expect(result.isLeft()).toBe(true);
+    result.ifLeft(error => {
+      expect(error).toBeInstanceOf(OpeningConnectionError);
+      expect(causeMessage(error)).toContain("malformed APDU frame");
+    });
+  });
+
+  it("returns Left when a later transferOut fails after an earlier frame succeeds", async () => {
+    const transferOutStatuses = ["ok", "stall"] as const;
+    const transferredFrames: Uint8Array[] = [];
+    const device = {
+      opened: true,
+      transferOut: async (_endpoint: number, buffer: ArrayBuffer) => {
+        transferredFrames.push(new Uint8Array(buffer));
+        return { status: transferOutStatuses[transferredFrames.length - 1] };
+      },
+    };
+    const apduSenderFactory = (() => ({
+      getFrames: () => [
+        { getRawData: () => new Uint8Array([0xe0, 0x01, 0x00, 0x00]) },
+        { getRawData: () => new Uint8Array([0xe0, 0x02, 0x00, 0x00]) },
+      ],
+    })) as unknown as ApduSenderServiceFactory;
+    const sender = new NodeWebUsbApduSender({
+      dependencies: { device: device as never, interfaceNumber: 1 },
+      apduSenderFactory,
+      apduReceiverFactory: realReceiverFactory,
+      loggerFactory: () => createLogger(),
+    });
+
+    const result = await sender.sendApdu(APDU);
+
+    expect(transferredFrames).toHaveLength(2);
+    expect(result.isLeft()).toBe(true);
+    result.ifLeft(error => {
+      expect(error).toBeInstanceOf(OpeningConnectionError);
+      expect(causeMessage(error)).toContain("transferOut status: stall");
+    });
+  });
+
   it("resolves with SendApduTimeoutError when the abort timeout fires", async () => {
     const device = {
       opened: true,
@@ -393,6 +471,130 @@ describe("NodeWebUsbApduSender — setupConnection", () => {
     expect(calls.claimInterface).toBe(1);
   });
 
+  it("releases, resets, closes, reopens, and claims when the device is already opened", async () => {
+    const calls: string[] = [];
+    const device = {
+      opened: true,
+      configuration: null as unknown,
+      releaseInterface: async () => {
+        calls.push("releaseInterface");
+      },
+      reset: async () => {
+        calls.push("reset");
+      },
+      close: async () => {
+        calls.push("close");
+        device.opened = false;
+      },
+      open: async () => {
+        calls.push("open");
+        device.opened = true;
+      },
+      selectConfiguration: async () => {
+        calls.push("selectConfiguration");
+        device.configuration = { configurationValue: 1 };
+      },
+      claimInterface: async () => {
+        calls.push("claimInterface");
+      },
+    };
+
+    await buildSender(device).setupConnection();
+
+    expect(calls).toEqual(
+      process.platform === "win32"
+        ? ["releaseInterface", "close", "open", "selectConfiguration", "claimInterface"]
+        : [
+            "releaseInterface",
+            "reset",
+            "close",
+            "open",
+            "selectConfiguration",
+            "reset",
+            "claimInterface",
+          ],
+    );
+  });
+
+  it("does not select a configuration when one already exists", async () => {
+    const calls = { open: 0, selectConfiguration: 0, claimInterface: 0 };
+    const device = {
+      opened: false,
+      configuration: { configurationValue: 1 } as unknown,
+      open: async () => {
+        calls.open += 1;
+        device.opened = true;
+      },
+      selectConfiguration: async () => {
+        calls.selectConfiguration += 1;
+      },
+      reset: async () => {},
+      claimInterface: async () => {
+        calls.claimInterface += 1;
+      },
+      releaseInterface: async () => {},
+      close: async () => {},
+    };
+
+    await buildSender(device).setupConnection();
+
+    expect(calls.open).toBe(1);
+    expect(calls.selectConfiguration).toBe(0);
+    expect(calls.claimInterface).toBe(1);
+  });
+
+  it("waits for an in-flight close before reopening and reclaiming the device", async () => {
+    const calls: string[] = [];
+    let finishRelease: (() => void) | undefined;
+    let releaseStartedResolve: (() => void) | undefined;
+    const releaseStarted = new Promise<void>(resolve => {
+      releaseStartedResolve = resolve;
+    });
+    const device = {
+      opened: true,
+      configuration: { configurationValue: 1 } as unknown,
+      releaseInterface: async () => {
+        calls.push("releaseInterface");
+        releaseStartedResolve?.();
+        await new Promise<void>(releaseResolve => {
+          finishRelease = releaseResolve;
+        });
+      },
+      close: async () => {
+        calls.push("close");
+        device.opened = false;
+      },
+      reset: async () => {
+        calls.push("reset");
+      },
+      open: async () => {
+        calls.push("open");
+        device.opened = true;
+      },
+      selectConfiguration: async () => {
+        calls.push("selectConfiguration");
+      },
+      claimInterface: async () => {
+        calls.push("claimInterface");
+      },
+    };
+    const sender = buildSender(device);
+    const closePromise = sender.closeConnection();
+
+    await releaseStarted;
+    const setupPromise = sender.setupConnection();
+    await flushTasks();
+    expect(calls).toEqual(["releaseInterface"]);
+    finishRelease?.();
+    await closePromise;
+    await setupPromise;
+    expect(calls).toEqual(
+      process.platform === "win32"
+        ? ["releaseInterface", "close", "open", "claimInterface"]
+        : ["releaseInterface", "close", "open", "reset", "claimInterface"],
+    );
+  });
+
   it("closes the device and rethrows when claiming the interface fails", async () => {
     let closeCalls = 0;
     const device = {
@@ -414,5 +616,95 @@ describe("NodeWebUsbApduSender — setupConnection", () => {
 
     await expect(buildSender(device).setupConnection()).rejects.toThrow("claim failed");
     expect(closeCalls).toBe(1);
+  });
+});
+
+describe("NodeWebUsbApduSender — closeConnection", () => {
+  function buildSender(
+    device: unknown,
+    loggerFactory: (tag: string) => LoggerPublisherService = () => createLogger(),
+  ): NodeWebUsbApduSender {
+    return new NodeWebUsbApduSender({
+      dependencies: { device: device as never, interfaceNumber: 1 },
+      apduSenderFactory: realSenderFactory,
+      apduReceiverFactory: realReceiverFactory,
+      loggerFactory,
+      closeReadLoopTimeoutMs: 5,
+    });
+  }
+
+  it("is idempotent for concurrent close calls", async () => {
+    let releaseCalls = 0;
+    let closeCalls = 0;
+    let finishRelease: (() => void) | undefined;
+    let releaseStartedResolve: (() => void) | undefined;
+    const releaseStarted = new Promise<void>(resolve => {
+      releaseStartedResolve = resolve;
+    });
+    const device = {
+      opened: true,
+      releaseInterface: async () => {
+        releaseCalls += 1;
+        releaseStartedResolve?.();
+        await new Promise<void>(releaseResolve => {
+          finishRelease = releaseResolve;
+        });
+      },
+      close: async () => {
+        closeCalls += 1;
+        device.opened = false;
+      },
+    };
+    const sender = buildSender(device);
+    const firstClose = sender.closeConnection();
+    const secondClose = sender.closeConnection();
+
+    await releaseStarted;
+    await flushTasks();
+    expect(releaseCalls).toBe(1);
+    expect(closeCalls).toBe(0);
+    finishRelease?.();
+    await Promise.all([firstClose, secondClose]);
+    expect(releaseCalls).toBe(1);
+    expect(closeCalls).toBe(1);
+  });
+
+  it("resolves a pending APDU while swallowing release errors and logging close errors", async () => {
+    let closeErrors = 0;
+    let transferInStarted: (() => void) | undefined;
+    const transferInStartedPromise = new Promise<void>(resolve => {
+      transferInStarted = resolve;
+    });
+    const device = {
+      opened: true,
+      transferOut: async () => ({ status: "ok" }),
+      transferIn: () => {
+        transferInStarted?.();
+        return new Promise<never>(() => {});
+      },
+      releaseInterface: async () => {
+        throw new Error("release failed");
+      },
+      close: async () => {
+        throw new Error("close failed");
+      },
+    };
+    const sender = buildSender(device, () =>
+      createLogger({
+        error: () => {
+          closeErrors += 1;
+        },
+      }),
+    );
+
+    const sendPromise = sender.sendApdu(new Uint8Array([0xe0, 0x01, 0x00, 0x00]));
+    await transferInStartedPromise;
+    const closePromise = sender.closeConnection();
+    const sendResult = await sendPromise;
+    await closePromise;
+
+    expect(sendResult.isLeft()).toBe(true);
+    sendResult.ifLeft(error => expect(error).toBeInstanceOf(OpeningConnectionError));
+    expect(closeErrors).toBe(1);
   });
 });

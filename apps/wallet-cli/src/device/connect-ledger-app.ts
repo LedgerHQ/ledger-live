@@ -139,9 +139,18 @@ async function connectLedgerAppOnce(
 
   let finalState: ConnectAppState;
   const { observable, cancel } = dmk.executeDeviceAction({ sessionId, deviceAction });
-  const stallTimer = globalThis.setTimeout(() => {
-    cancel();
-  }, silenceTimeoutMs);
+  const silenceTimeoutError = { _tag: "SendApduTimeoutError" } as ConnectAppDAError;
+  let stallTimer: ReturnType<typeof globalThis.setTimeout> | undefined;
+  const silenceTimeoutPromise = new Promise<never>((_, reject) => {
+    stallTimer = globalThis.setTimeout(() => {
+      try {
+        cancel();
+      } catch (e) {
+        walletCliDebug("ConnectApp cancel after silence timeout failed: %o", e);
+      }
+      reject(silenceTimeoutError);
+    }, silenceTimeoutMs);
+  });
 
   let lastRequiredInteraction: ConnectAppDARequiredInteraction | undefined;
   const onIntermediateState = (state: ConnectAppState) => {
@@ -160,14 +169,19 @@ async function connectLedgerAppOnce(
     }
   };
   try {
-    finalState = await lastValueFrom(observable.pipe(tap(onIntermediateState)));
+    finalState = await Promise.race([
+      lastValueFrom(observable.pipe(tap(onIntermediateState))),
+      silenceTimeoutPromise,
+    ]);
   } catch (e) {
     if (e instanceof EmptyError) {
       throw new WalletCliDeviceError({ code: "disconnected" }, { cause: e });
     }
     throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
   } finally {
-    globalThis.clearTimeout(stallTimer);
+    if (stallTimer !== undefined) {
+      globalThis.clearTimeout(stallTimer);
+    }
   }
 
   walletCliDebug("ConnectApp finalState: status=%s app=%s", finalState.status, managerAppName);
