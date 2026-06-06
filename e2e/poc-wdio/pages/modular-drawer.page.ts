@@ -43,7 +43,8 @@ export class ModularDrawerPage {
 
   async selectNetworkIfAsked(networkName: string): Promise<void> {
     await step(`Select network if asked: ${networkName}`, async () => {
-      if (await this.modularFlowView.isExisting()) {
+      // TODO: review conditional
+      if ((await this.modularFlowView.isExisting()) && !(await this.accountItem.isDisplayed())) {
         await this.selectNetwork(networkName);
       }
     });
