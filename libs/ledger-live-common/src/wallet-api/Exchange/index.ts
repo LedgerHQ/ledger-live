@@ -26,3 +26,7 @@ export {
 // Swap quotes (Wallet API getQuotes; HTTP-only fetch stays internal to `quotes/getQuotes`)
 export { getQuotes } from "./quotes";
 export type * from "./quotes";
+
+// Swap transaction status (Wallet API getTransactionStatus)
+export { getTransactionStatus } from "./transactionStatus";
+export type * from "./transactionStatus";

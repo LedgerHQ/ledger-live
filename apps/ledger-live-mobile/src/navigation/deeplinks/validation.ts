@@ -8,8 +8,9 @@
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
+import { parseMarketListCategory } from "LLM/features/Market/utils/marketListCategory";
 import { isDatadogEnabled } from "../../datadog";
-import type { OptionMetadata } from "../../reducers/types";
+import type { MarketListCategory, OptionMetadata } from "../../reducers/types";
 
 // Maximum allowed lengths for string parameters
 const MAX_MESSAGE_LENGTH = 700;
@@ -258,6 +259,10 @@ export function validateMarketCurrencyId(currencyId: string | null): string | nu
   const currency = findCryptoCurrencyById(normalizedCurrencyId);
 
   return currency?.id ?? null;
+}
+
+export function validateMarketListCategory(category: string | null): MarketListCategory | undefined {
+  return parseMarketListCategory(category);
 }
 
 /**

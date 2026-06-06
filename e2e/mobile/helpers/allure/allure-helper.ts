@@ -1,5 +1,11 @@
 import { allure } from "jest-allure2-reporter/api";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { isWallet40 } from "../commonHelpers";
+
+export function setTeamOwner(team: Team): void {
+  $Owner(team);
+  $ParentSuite(team);
+}
 
 export function setAllureDescription(): void {
   const testPath = expect.getState().testPath ?? "";

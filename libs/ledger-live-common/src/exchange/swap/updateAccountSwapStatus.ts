@@ -4,14 +4,8 @@ import { getMultipleStatus } from "./getStatus";
 import type { TokenAccount, Account, SwapOperation, Operation } from "@ledgerhq/types-live";
 import type { SwapStatus, SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
 import { log } from "@ledgerhq/logs";
-
-const PROVIDERS_REQUIRING_OPERATION_ID = [
-  "thorswap",
-  "lifi",
-  "nearintents",
-  "swapsxyz",
-  "moonpay_trade",
-];
+import { swapProviderRequiresOperationId } from "./providersRequiringOperationId";
+import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined,
@@ -34,10 +28,12 @@ const maybeGetUpdatedSwapHistory = async (
           const operation = operations?.find(o => o.id.includes(operationId));
           if (operation) {
             let newStatus;
-            if (operation.blockHeight) {
-              newStatus = operation.hasFailed ? "refunded" : "finished";
+            if (operation.blockHeight != null) {
+              newStatus = operation.hasFailed
+                ? TransactionStatus.Refunded
+                : TransactionStatus.Finished;
             } else {
-              newStatus = "pending";
+              newStatus = TransactionStatus.Pending;
             }
             if (newStatus !== swap.status) {
               accountNeedsUpdating = true;
@@ -47,7 +43,7 @@ const maybeGetUpdatedSwapHistory = async (
           }
         } else {
           // Collect all others swaps that need status update via getMultipleStatus
-          const requiresOperationId = PROVIDERS_REQUIRING_OPERATION_ID.includes(provider);
+          const requiresOperationId = swapProviderRequiresOperationId(provider);
           const relatedTransactionId = requiresOperationId
             ? operations?.find(op => op.id.includes(operationId))?.hash
             : undefined;

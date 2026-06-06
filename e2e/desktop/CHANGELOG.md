@@ -1,5 +1,63 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.29.0
+
+### Minor Changes
+
+- [#17793](https://github.com/LedgerHQ/ledger-live/pull/17793) [`dbfed9e`](https://github.com/LedgerHQ/ledger-live/commit/dbfed9e0a34f2177adbc950a9cbd53240daf2821) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add E2E tests for Wallet 4.0 My Wallet popover navigation (Recover, Referral, Help, Settings)
+
+### Patch Changes
+
+- Updated dependencies [[`0725ee1`](https://github.com/LedgerHQ/ledger-live/commit/0725ee1dc568cf9624d7aea0ea5e06a31e8aa071), [`ddbb329`](https://github.com/LedgerHQ/ledger-live/commit/ddbb329dcacf46902dacd06091c655e1faf0a022), [`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2), [`3c9d788`](https://github.com/LedgerHQ/ledger-live/commit/3c9d78801a2d45ee19a70263ecf5be0937f2f158), [`c17272e`](https://github.com/LedgerHQ/ledger-live/commit/c17272e63b4036057022cfb28d7433a4a56201c9), [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`6f00871`](https://github.com/LedgerHQ/ledger-live/commit/6f00871f7bbef39a98fb32b7695576f83458d588), [`08c5655`](https://github.com/LedgerHQ/ledger-live/commit/08c5655c8bcd894eb69c28c81e00d892cfc7b621), [`212cea6`](https://github.com/LedgerHQ/ledger-live/commit/212cea6aa1eff575ea111d7b7f89831452fd18d2), [`76a8f10`](https://github.com/LedgerHQ/ledger-live/commit/76a8f101847811a642d440ef764d87a11dd02904), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708), [`72f3d72`](https://github.com/LedgerHQ/ledger-live/commit/72f3d729080e2aa5bffc7d71c26902c27ff89d17), [`cb41e42`](https://github.com/LedgerHQ/ledger-live/commit/cb41e42371a2de3ee42c80c88a83740ca8ae3bee), [`f67cdb9`](https://github.com/LedgerHQ/ledger-live/commit/f67cdb9ac250719be1b51dc0f60abe2241d3a812), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`a8d6945`](https://github.com/LedgerHQ/ledger-live/commit/a8d6945d4a259c544912396132870857a572bcf1), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`76e74f1`](https://github.com/LedgerHQ/ledger-live/commit/76e74f12f49cbbbcd2f0dfa239d99e4b3b199835), [`d61c27f`](https://github.com/LedgerHQ/ledger-live/commit/d61c27ffa89b7dc5d69278a38ebca3e9ea3aed6c), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f), [`4160842`](https://github.com/LedgerHQ/ledger-live/commit/4160842477cb55ee5df701b590c201e7c700685a)]:
+  - @ledgerhq/live-common@36.0.0
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/live-cli@24.43.0
+  - @ledgerhq/live-dmk-speculos@0.9.0
+  - @ledgerhq/ledger-key-ring-protocol@0.14.0
+  - @ledgerhq/live-wallet@0.27.1
+
+## 0.29.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-cli@24.43.0-next.1
+  - @ledgerhq/live-common@36.0.0-next.1
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#17793](https://github.com/LedgerHQ/ledger-live/pull/17793) [`dbfed9e`](https://github.com/LedgerHQ/ledger-live/commit/dbfed9e0a34f2177adbc950a9cbd53240daf2821) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add E2E tests for Wallet 4.0 My Wallet popover navigation (Recover, Referral, Help, Settings)
+
+### Patch Changes
+
+- Updated dependencies [[`0725ee1`](https://github.com/LedgerHQ/ledger-live/commit/0725ee1dc568cf9624d7aea0ea5e06a31e8aa071), [`ddbb329`](https://github.com/LedgerHQ/ledger-live/commit/ddbb329dcacf46902dacd06091c655e1faf0a022), [`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2), [`3c9d788`](https://github.com/LedgerHQ/ledger-live/commit/3c9d78801a2d45ee19a70263ecf5be0937f2f158), [`c17272e`](https://github.com/LedgerHQ/ledger-live/commit/c17272e63b4036057022cfb28d7433a4a56201c9), [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`6f00871`](https://github.com/LedgerHQ/ledger-live/commit/6f00871f7bbef39a98fb32b7695576f83458d588), [`08c5655`](https://github.com/LedgerHQ/ledger-live/commit/08c5655c8bcd894eb69c28c81e00d892cfc7b621), [`212cea6`](https://github.com/LedgerHQ/ledger-live/commit/212cea6aa1eff575ea111d7b7f89831452fd18d2), [`76a8f10`](https://github.com/LedgerHQ/ledger-live/commit/76a8f101847811a642d440ef764d87a11dd02904), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708), [`72f3d72`](https://github.com/LedgerHQ/ledger-live/commit/72f3d729080e2aa5bffc7d71c26902c27ff89d17), [`cb41e42`](https://github.com/LedgerHQ/ledger-live/commit/cb41e42371a2de3ee42c80c88a83740ca8ae3bee), [`f67cdb9`](https://github.com/LedgerHQ/ledger-live/commit/f67cdb9ac250719be1b51dc0f60abe2241d3a812), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`a8d6945`](https://github.com/LedgerHQ/ledger-live/commit/a8d6945d4a259c544912396132870857a572bcf1), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`76e74f1`](https://github.com/LedgerHQ/ledger-live/commit/76e74f12f49cbbbcd2f0dfa239d99e4b3b199835), [`d61c27f`](https://github.com/LedgerHQ/ledger-live/commit/d61c27ffa89b7dc5d69278a38ebca3e9ea3aed6c), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f), [`4160842`](https://github.com/LedgerHQ/ledger-live/commit/4160842477cb55ee5df701b590c201e7c700685a)]:
+  - @ledgerhq/live-common@36.0.0-next.0
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/live-cli@24.43.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.9.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.14.0-next.0
+  - @ledgerhq/live-wallet@0.27.1-next.0
+
+## 0.28.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-cli@24.42.1
+  - @ledgerhq/live-common@35.0.1
+
+## 0.28.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-cli@24.42.1-hotfix.0
+  - @ledgerhq/live-common@35.0.1-hotfix.0
+
 ## 0.28.1
 
 ### Patch Changes

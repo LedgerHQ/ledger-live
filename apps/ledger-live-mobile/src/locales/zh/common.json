@@ -1683,19 +1683,29 @@
   },
   "productTour" : {
     "swap" : {
-      "cta" : "探索互换"
+      "cta" : "探索互换",
+      "title" : "无需切换应用程序即可互换",
+      "subTitle" : "通过我们值得信赖的互换服务提供商，对数千种资产进行无限交易。"
     },
     "stake" : {
-      "cta" : "探索赚取功能"
+      "cta" : "探索赚取功能",
+      "title" : "享受您的加密货币奖励",
+      "subTitle" : "通过“赚取”让您的加密货币发挥功用。"
     },
     "card" : {
-      "cta" : "获取您的卡"
+      "cta" : "获取卡",
+      "title" : "在现实生活中使用加密货币",
+      "subTitle" : "使用加密货币卡付款，在线或店内赚取返现。"
     },
     "portfolio" : {
-      "cta" : "查看您的资产组合"
+      "cta" : "查看您的资产组合",
+      "title" : "抢占市场先机",
+      "subTitle" : "轻松追踪您的资产、奖励和市场趋势。"
     },
-    "done" : {
-      "cta" : "重新开始"
+    "fund" : {
+      "cta" : "为您的钱包注资",
+      "title" : "首先为您的钱包充值",
+      "subTitle" : "以您偏好的方式为 Ledger Wallet 注资——转账、买入或将现金转换为稳定币。"
     }
   },
   "discover" : {
@@ -3652,7 +3662,47 @@
         "addSampleWalletCarouselTag" : "添加底部钱包轮播（标签）",
         "addSampleWalletCarouselTagDesc" : "一个示例卡片组件，包含标签、标题、图片及链接不接入 Braze。",
         "dismissAll" : "关闭所有本地卡",
-        "dismissAllDesc" : "移除所有本地生成的内容卡。"
+        "dismissAllDesc" : "移除所有本地生成的内容卡。",
+        "genericAwareness" : {
+          "title" : "通用提示模态框",
+          "description" : "创建类似 Braze 的原始卡，通过通用认知模态框解析器进行处理，然后返回资产组合以查看抽屉栏。",
+          "carousel" : "轮播",
+          "featureIntro" : "功能介绍",
+          "appStart" : "应用程序启动",
+          "deeplink" : "深层链接",
+          "campaignId" : "活动 ID",
+          "titleField" : "标题",
+          "subtitle" : "副标题",
+          "imageUrl" : "图片网址",
+          "primaryButtonLabel" : "主按钮标签",
+          "primaryButtonLink" : "主按钮链接",
+          "secondaryButtonLabel" : "次要按钮标签",
+          "secondaryButtonLink" : "次要按钮链接",
+          "icon" : "图标",
+          "slide" : "滚动",
+          "item" : "项目",
+          "addItem" : "添加 {{item}}",
+          "removeItem" : "删除",
+          "create" : "创建通用提示模态框",
+          "createDesc" : "将表单解析为类似 Braze 的原始卡，并将其添加到现有的模态列表中。",
+          "createCarousel" : "创建通用轮播提示弹窗",
+          "createCarouselDesc" : "打开表单以创建轮播式通用提示模态框。",
+          "createFeatureIntro" : "创建功能简介通用提示弹窗",
+          "createFeatureIntroDesc" : "打开表单以创建功能介绍通用认知模态框。",
+          "openCurrent" : "打开当前活动",
+          "openCurrentDesc" : "设置此活动的抽屉状态。返回资产组合查看。",
+          "clear" : "清除通用提示弹窗",
+          "clearDesc" : "移除当前存储在应用内状态中的所有通用提示模态框。",
+          "existingTitle" : "现有的通用提示弹窗",
+          "existingDescription" : "点击一项活动，将其设置为要打开的抽屉，然后返回资产组合。",
+          "noExisting" : "当前应用程序状态中未存储任何通用提示模态框。",
+          "existingDesc" : "{{layout}} • {{count}} 个条目",
+          "layoutLabel" : "布局",
+          "idLabel" : "ID",
+          "triggerLabel" : "触发",
+          "entriesLabel" : "条目 ({{count}})",
+          "untitledEntry" : "未命名条目"
+        }
       }
     }
   },
@@ -3664,6 +3714,14 @@
       "descVariantB" : "获取有关新代币、收益机会和市场变动的实时提醒。您可随时决定退出。",
       "allow" : "允许通知",
       "later" : "以后再说"
+    },
+    "optInScreen" : {
+      "title" : "启用通知？",
+      "description" : "获取有关新代币、收益机会和市场变动的实时提醒。在设置中随时选择退出",
+      "emptyTitle" : "通知已启用",
+      "emptyDescription" : "您已准备就绪，可接收来自 Ledger Wallet 的实时提醒。",
+      "errorTitle" : "通知不可用",
+      "errorDescription" : "我们无法检查您的通知设置。您可以继续引导流程，稍后在设置中将其更新。"
     },
     "ptxServices" : {
       "toast" : {
@@ -4814,8 +4872,270 @@
     },
     "chooseAccountToFund" : "选择账户用于添加资金"
   },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "设备已锁定",
+        "description" : "解锁您的设备以继续。"
+      },
+      "unlockDevice" : {
+        "title" : "解锁您的 {{productName}}"
+      },
+      "continueOnDevice" : {
+        "title" : "继续在您的 {{productName}} 上操作",
+        "description" : "按照安全屏幕上的说明进行操作"
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "设备已断开",
+        "description" : "您的 Ledger 设备已断开连接。请确保设备已开机，并处于蓝牙连接范围内，或已通过数据线连接。"
+      },
+      "intentError" : {
+        "title" : "未知错误",
+        "description" : "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+      },
+      "invalidOperation" : {
+        "title" : "无效状态",
+        "description" : "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+      }
+    },
+    "initialization" : {
+      "loading" : {
+        "title" : "Loading（加载中）"
+      },
+      "installingApp" : {
+        "title" : "安装应用程序"
+      },
+      "outdatedAppWarning" : {
+        "title" : "应用程序版本过期",
+        "description" : "您设备上的 {{appName}} 应用程序有重要更新。请前往 My Ledger（我的 Ledger）更新。"
+      },
+      "retryable" : {
+        "userRefused" : {
+          "title" : "设备拒绝了操作"
+        },
+        "deviceBusy" : {
+          "title" : "您的 Ledger 设备上有待处理的操作",
+          "description" : "完成此操作，然后选择重试。"
+        }
+      },
+      "blocking" : {
+        "deviceNotOnboarded" : {
+          "title" : "您的 Ledger 设备尚未准备就绪",
+          "description" : "您需要先设置 {{productName}}。 我们将引导您完成设备设置流程"
+        },
+        "unsupportedFirmwareVersion" : {
+          "title" : "Ledger OS 需要更新"
+        },
+        "unsupportedApplication" : {
+          "title" : "功能不受支持",
+          "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+        },
+        "unsupportedFeature" : {
+          "title" : "功能不受支持",
+          "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+        },
+        "wrongDeviceForAccount" : {
+          "title" : "秘密恢复短语错误",
+          "description" : "此 Ledger 设备未设置与所选账户关联的恢复短语。检查您是否使用了正确的设备。"
+        },
+        "deviceOutOfStorageSpace" : {
+          "title" : "设备内存不足",
+          "description" : "您的设备内存不足。请卸载应用程序并重试。"
+        }
+      },
+      "cta" : {
+        "openMyLedger" : "打开“我的 Ledger”",
+        "goToMyLedger" : "前往 My Ledger（我的 Ledger）",
+        "setupDevice" : "设置设备",
+        "updateLedgerOs" : "更新 Ledger OS",
+        "cancelOperation" : "取消操作",
+        "contactLedgerSupport" : "联系 Ledger 客服"
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledger 设备",
+        "available" : "可用",
+        "notConnected" : "未连接"
+      },
+      "states" : {
+        "connecting" : {
+          "title" : "Loading（加载中）"
+        },
+        "connectionError" : {
+          "errors" : {
+            "blePairingRefused" : {
+              "title" : "配对被拒绝",
+              "cta" : {
+                "retry" : "重试配对"
+              }
+            },
+            "blePairingPeerRemovedPairing" : {
+              "title" : "请前往您手机的蓝牙设置，取消配对 {{productName}}",
+              "description" : "要修复配对问题，请从手机的蓝牙列表中移除 {{productName}}，然后返回此应用程序并重试。",
+              "cta" : {
+                "retry" : "我已取消配对，重新尝试",
+                "help" : "了解如何修复"
+              }
+            },
+            "unknown" : {
+              "title" : "配对不成功",
+              "description" : "请重试，或阅读下面的蓝牙故障排除文章。",
+              "tip" : "确保您的设备已解锁。",
+              "cta" : {
+                "retry" : "请重试",
+                "help" : "获得帮助"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "选择设备"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "bluetoothPermissionDeniedPromptable" : {
+              "title" : "允许蓝牙访问",
+              "description" : "允许蓝牙扫描附近的 Ledger 设备。",
+              "cta" : {
+                "retry" : "允许",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "bluetoothPermissionDeniedManualSettings" : {
+              "title" : "允许蓝牙访问",
+              "description" : "需要蓝牙权限。前往 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Permissions（权限）→ Nearby devices（附近设备），然后返回。",
+              "cta" : {
+                "retry" : "我已启用，重新尝试",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "bluetoothPermissionUnauthorizedManualSettings" : {
+              "title" : "允许蓝牙访问",
+              "description" : "Ledger Wallet 需要蓝牙权限来查找您的设备。在 Settings（设置）中将其启用。",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "我已启用，重新尝试"
+                  },
+                  "android" : {
+                    "retry" : "我已启用，重新尝试",
+                    "ignore" : "继续使用 USB"
+                  }
+                }
+              }
+            },
+            "bluetoothDisabledPromptable" : {
+              "title" : "启用蓝牙",
+              "description" : "蓝牙已关闭。启用蓝牙以查找您的 Ledger 设备。",
+              "cta" : {
+                "retry" : "启用蓝牙",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "bluetoothDisabledManualAction" : {
+              "title" : "启用蓝牙",
+              "description" : "蓝牙已关闭。在 Settings（设置） → Bluetooth（蓝牙）中将其开启，然后返回。",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "我启用了蓝牙，重新尝试"
+                  },
+                  "android" : {
+                    "retry" : "我启用了蓝牙，重新尝试",
+                    "ignore" : "继续使用 USB"
+                  }
+                }
+              }
+            },
+            "bluetoothStateUnknownCheckOnly" : {
+              "title" : "正在检查蓝牙……"
+            },
+            "bluetoothUnsupported" : {
+              "title" : "不支持蓝牙",
+              "description" : {
+                "platform" : {
+                  "android" : "此手机不支持蓝牙。您可以改为通过 USB 数据线连接您的 Ledger 设备。",
+                  "ios" : "此手机不支持蓝牙。请使用 Ledger Wallet 桌面版应用程序，或联系 Ledger 客服。"
+                }
+              },
+              "cta" : {
+                "platform" : {
+                  "android" : {
+                    "ignore" : "继续使用 USB"
+                  }
+                }
+              }
+            },
+            "locationPermissionDeniedPromptable" : {
+              "title" : "允许访问位置",
+              "description" : "Android 需要定位权限来扫描蓝牙设备。",
+              "cta" : {
+                "retry" : "允许",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "locationPermissionDeniedManualSettings" : {
+              "title" : "允许访问位置",
+              "description" : "扫描蓝牙设备需要定位权限。前往 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Permissions（权限）→ Location（定位），然后返回。",
+              "cta" : {
+                "retry" : "我已启用，重新尝试",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "locationDisabledPromptable" : {
+              "title" : "开启定位",
+              "description" : "定位服务已关闭。将其开启以扫描蓝牙设备。",
+              "cta" : {
+                "retry" : "开启定位",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "locationDisabledManualAction" : {
+              "title" : "开启定位",
+              "description" : "定位服务已关闭。在 Settings（设置）→ Location（定位）中将其开启，然后返回。",
+              "cta" : {
+                "retry" : "我已启用位置，重新尝试",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "locationServicePermissionMissing" : {
+              "title" : "允许访问位置",
+              "description" : "定位权限似乎缺失。点按下方重试。",
+              "cta" : {
+                "retry" : "请重试",
+                "ignore" : "继续使用 USB"
+              }
+            },
+            "unknown" : {
+              "title" : "出错了",
+              "description" : "无法启动蓝牙扫描。请重试或联系 Ledger 客服。",
+              "cta" : {
+                "retry" : "请重试"
+              }
+            }
+          }
+        },
+        "loading" : {
+          "title" : "Loading（加载中）"
+        },
+        "noKnownDevice" : {
+          "title" : "需要 Ledger 设备",
+          "description" : "要继续，请设置或连接您的签署设备。",
+          "connectLedgerDevice" : "连接 Ledger 设备",
+          "noLedgerDevice" : "我没有 Ledger 设备"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "将您的 {{productName}} 开机并解锁"
+        }
+      }
+    }
+  },
   "DeviceAction" : {
     "stayInTheAppPlz" : "停留在 Ledger Wallet 应用程序中并将 Ledger 设备一直放在附近。",
+    "stuckLoaderHint" : "确保您的设备已解锁，并且没有待处理的操作",
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
     "allowManagerPermission" : "允许与 Ledger 设备建立安全连接",
@@ -6269,8 +6589,16 @@
       "title" : "您可以通过将您的账户委托出去，从而赚取奖励",
       "btn" : "赚取奖励"
     },
+    "manage" : "管理",
     "delegation" : {
-      "addCustomValidator" : "+ 添加自定义验证者"
+      "addCustomValidator" : "+ 添加自定义验证者",
+      "sectionLabel" : "委托"
+    },
+    "staking" : {
+      "sectionLabel" : "质押",
+      "status" : "状态",
+      "unstaking" : "解除质押",
+      "available" : "可用"
     }
   },
   "evm" : {
@@ -7787,6 +8115,59 @@
       "title" : "交易历史"
     }
   },
+  "pnl" : {
+    "disclaimer" : "此数据仅供参考，不构成任何投资建议。不可用于税务目的。",
+    "asset" : {
+      "return" : {
+        "title" : "未实现收益"
+      },
+      "entry" : {
+        "title" : "平均持仓成本",
+        "tooltip" : "您通过 Ledger Wallet 持有该资产的平均买入价格，包括您买入的资产以及从其他钱包接收的资产。用于追踪您的盈亏情况。"
+      },
+      "drawer" : {
+        "title" : "资产盈亏",
+        "description" : "概览该资产在您资产组合中的表现。",
+        "estimatedReturn" : {
+          "title" : "预估收益",
+          "description" : "按当前价格卖出时的预估盈亏。"
+        },
+        "realisedReturn" : {
+          "title" : "已实现收益",
+          "description" : "此前出售、发送或互换资产后已确认的盈亏。"
+        },
+        "totalReturn" : {
+          "title" : "总收益",
+          "description" : "预估收益与已实现收益的总和。"
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "未实现收益"
+      },
+      "costBasis" : {
+        "title" : "成本基础",
+        "tooltip" : "为获得当前资产而支付的总金额，包括费用。"
+      },
+      "drawer" : {
+        "title" : "资产组合盈亏",
+        "description" : "资产组合表现分为预估和已实现收益。",
+        "estimatedReturn" : {
+          "title" : "预估收益",
+          "description" : "按当前价格卖出时的预估盈亏。"
+        },
+        "realisedReturn" : {
+          "title" : "已实现收益",
+          "description" : "此前出售、发送或互换资产后已确认的盈亏。"
+        },
+        "totalReturn" : {
+          "title" : "总收益",
+          "description" : "预估收益与已实现收益的总和。"
+        }
+      }
+    }
+  },
   "hedera" : {
     "name" : "hedera",
     "createHederaAccountHelp" : {
@@ -8081,6 +8462,10 @@
         "recover" : {
           "title" : "完成保护您的备份",
           "description" : "完成激活 Ledger Recover"
+        },
+        "discoverWallet" : {
+          "title" : "探索您的钱包",
+          "description" : "查看您的资产组合有哪些新变化，并了解如何使用各项功能。"
         }
       }
     },
@@ -8113,6 +8498,10 @@
       "syncAccounts" : {
         "titleCompleted" : "您的账户已同步",
         "popupLabel" : "账户已同步"
+      },
+      "discoverWallet" : {
+        "titleCompleted" : "钱包导览已完成",
+        "popupLabel" : "钱包导览已完成"
       }
     }
   },
@@ -8254,6 +8643,24 @@
         "daily" : "每日奖励",
         "eigenlayer_points" : "Eigenlayer 积分",
         "validator" : "验证者奖励"
+      },
+      "info" : {
+        "available" : {
+          "title" : "{{currencyTicker}} 可用",
+          "description" : "该数额可自由支配。"
+        },
+        "delegated" : {
+          "title" : "已委托资产",
+          "description" : "委托资产用于 {{currencyName}} 投票。这是您的总得票数。"
+        },
+        "undelegating" : {
+          "title" : "正在解除委托",
+          "description" : "取消委托的资产在 {{numberOfDays}} 天锁定期后才能使用。"
+        },
+        "delegationUnavailable" : {
+          "title" : "委托不可用",
+          "description" : "您的账户中没有足够的可用余额来开始新的委托。"
+        }
       }
     },
     "noFundsModal" : {
@@ -8278,6 +8685,29 @@
     "getFundsModal" : {
       "text" : "获取 {{coin}} 进行权益质押",
       "description" : "使用 Ledger Wallet 直接在您的 Ledger 设备上买入、互换或接收加密货币。"
+    },
+    "default" : {
+      "info" : {
+        "undelegating" : {
+          "description" : "这是目前正在退出质押的数额。提取完成后，就会出现在您的可用余额中。"
+        }
+      }
+    }
+  },
+  "analyticsConsent" : {
+    "title" : "帮助我们改进 Ledger",
+    "subTitle" : "征得您的同意后，我们将收集使用数据，以改进功能并修复漏洞。我们不会追踪您的资产或资产组合详情。",
+    "setPreferencesCTA" : "设置偏好",
+    "refuseCTA" : "全部拒绝",
+    "acceptCTA" : "全部接受",
+    "privacyPolicy" : "您可以随时在设置中撤回您的同意。",
+    "privacyPolicyCTA" : "隐私政策",
+    "setPreferences" : {
+      "title" : "设置偏好",
+      "performance" : "应用性能",
+      "performanceDesc" : "允许 Ledger 收集应用程序使用数据以优化用户体验",
+      "experience" : "个性化体验",
+      "experienceDesc" : "允许 Ledger 收集应用程序使用数据，以提供个性化内容"
     }
   },
   "analyticsOptIn" : {
@@ -8673,6 +9103,7 @@
     "addresses" : {
       "title" : "地址",
       "addAccount" : "添加",
+      "seeAll" : "显示全部",
       "empty" : "暂无地址点按“添加”开始。"
     },
     "marketStats" : {
@@ -8680,10 +9111,12 @@
       "marketCap" : "市值",
       "marketRank" : "市场排名",
       "circulatingSupply" : "流通供应量",
-      "circulatingSupplyTooltip" : "市场上目前可供交易和流通的加密货币数量。",
+      "circulatingSupplyTooltip" : "市场上目前可用且由公众持有的代币总数。它不包括已锁定、已预留或未铸造的代币。",
       "maxSupply" : "最大供应量",
-      "maxSupplyTooltip" : "该加密货币最终可存在的最大货币数量。",
+      "maxSupplyTooltip" : "最终可存在的最大代币数量。对于某些资产，这是固定的，以防止通货膨胀。",
+      "marketCapTooltip" : "流通中所有加密货币的总价值。可以将其视为加密货币的市场总价值。",
       "tradingVolume" : "24 小时交易量",
+      "tradingVolumeTooltip" : "过去 24 小时内交易的总数额。",
       "error" : "无法加载市场数据"
     },
     "pricePerformance" : {
@@ -8704,6 +9137,10 @@
     "fallbackBanner" : {
       "title" : "不支持对此资产的互换和买入。"
     },
+    "hiddenAssetBanner" : {
+      "title" : "此资产已从您的资产组合中隐藏。",
+      "showAsset" : "显示资产"
+    },
     "balanceDetails" : {
       "totalBalance" : "总余额",
       "transfer" : "转移",
@@ -8713,7 +9150,14 @@
       "earnBannerGeneric" : "通过此资产赚取收益",
       "earnBannerSubtitle" : "持有此资产并赚取收益",
       "earnBannerAction" : "前往“赚取”",
-      "availableBalanceTooltip" : "可立即使用的资金，不包括权益质押或委托的数额。"
+      "availableBalanceTooltip" : "您现在可以使用的持仓部分，可随时自由发送、互换或提取。"
+    },
+    "coinOptions" : {
+      "openMenuA11yLabel" : "加密货币选项",
+      "addFavourite" : "添加到收藏",
+      "removeFavourite" : "从收藏中删除",
+      "hideFromPortfolio" : "从资产组合中隐藏",
+      "showInPortfolio" : "显示在资产组合中"
     }
   },
   "assetSelection" : {

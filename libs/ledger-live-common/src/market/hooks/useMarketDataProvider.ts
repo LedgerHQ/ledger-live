@@ -58,6 +58,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         props.order,
         {
           counterCurrency: props.counterCurrency,
+          ...(props.filter && { filter: props.filter }),
           ...(props.search && props.search?.length >= 2 && { search: search }),
           ...(props.starred && props.starred?.length >= 1 && { starred: props.starred }),
           ...(props.liveCompatible && { liveCompatible: props.liveCompatible }),

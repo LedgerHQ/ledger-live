@@ -1,8 +1,10 @@
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../../utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
+import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
 export function runSwapTokenApprovalFlow(
   fromAccount: TokenAccount,
@@ -36,6 +38,7 @@ export function runSwapTokenApprovalFlow(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 

@@ -1,9 +1,12 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { swapSetup } from "../bridge/server";
 import { isWallet40 } from "../helpers/commonHelpers";
+import { setTeamOwner } from "../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
+setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-1837");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
@@ -88,6 +91,7 @@ describe("DeepLinks Tests", () => {
     await app.discover.expectApp("Kiln");
   });
 
+  setTeamOwner(Team.SWAP);
   (isSmokeTestRun ? it.skip : it)("should open Swap Form page", async () => {
     await swapSetup();
     await app.swap.openViaDeeplink();

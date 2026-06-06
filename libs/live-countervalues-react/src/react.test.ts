@@ -1,16 +1,29 @@
 import { useTrackingPairForAccounts } from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, act } from "@testing-library/react";
-import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { inferTrackingPairForAccounts } from "@ledgerhq/live-countervalues/logic";
 import { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import type { FiatCurrency } from "@ledgerhq/types-cryptoassets";
+
+const usd: FiatCurrency = {
+  type: "FiatCurrency",
+  name: "US Dollar",
+  ticker: "USD",
+  symbol: "$",
+  units: [{ name: "dollar", code: "USD", magnitude: 2, showAllDigits: true, prefixCode: true }],
+};
+const eur: FiatCurrency = {
+  type: "FiatCurrency",
+  name: "Euro",
+  ticker: "EUR",
+  symbol: "€",
+  units: [{ name: "euro", code: "EUR", magnitude: 2, showAllDigits: true, prefixCode: true }],
+};
 
 describe("useTrackingPairForAccounts", () => {
   const accounts = Array(20)
     .fill(null)
     .map((_, i) => genAccount("test" + i));
-  const usd = getFiatCurrencyByTicker("USD");
-  const eur = getFiatCurrencyByTicker("EUR");
   const trackingPairs = inferTrackingPairForAccounts(accounts, usd);
 
   test("it returns same tracking pairs as when using inferTrackingPairForAccounts", async () => {

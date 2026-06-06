@@ -1,5 +1,33 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.24.0
+
+### Minor Changes
+
+- [#17929](https://github.com/LedgerHQ/ledger-live/pull/17929) [`8c9b60b`](https://github.com/LedgerHQ/ledger-live/commit/8c9b60b13c2d9961965e34035ccad337b56fe53f) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Expose the selected `device` (`KnownDevice`) on the `Connecting` `ConnectDeviceUIState` emitted by `connectDeviceUseCase`.
+
+### Patch Changes
+
+- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/devices@8.15.0
+  - @ledgerhq/hw-transport@6.35.3
+  - @ledgerhq/live-dmk-shared@0.25.1
+
+## 0.24.0-next.0
+
+### Minor Changes
+
+- [#17929](https://github.com/LedgerHQ/ledger-live/pull/17929) [`8c9b60b`](https://github.com/LedgerHQ/ledger-live/commit/8c9b60b13c2d9961965e34035ccad337b56fe53f) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Expose the selected `device` (`KnownDevice`) on the `Connecting` `ConnectDeviceUIState` emitted by `connectDeviceUseCase`.
+
+### Patch Changes
+
+- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/devices@8.15.0-next.0
+  - @ledgerhq/hw-transport@6.35.3-next.0
+  - @ledgerhq/live-dmk-shared@0.25.1-next.0
+
 ## 0.23.0
 
 ### Minor Changes

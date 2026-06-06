@@ -1,5 +1,8 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
+setTeamOwner(Team.COIN_INTEGRATION);
 describe("Verify Address warnings", () => {
   const account = Account.TRX_3;
 

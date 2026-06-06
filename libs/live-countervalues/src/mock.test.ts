@@ -2,9 +2,8 @@ import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 import { initialState, loadCountervalues, calculate } from "./logic";
 import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
@@ -30,8 +29,6 @@ const mockStore: CryptoAssetsStore = {
   findTokenByAddressInCurrency: async () => undefined,
   getTokensSyncHash: async () => "",
 };
-
-setCryptoAssetsStore(mockStore);
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");

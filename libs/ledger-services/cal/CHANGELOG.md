@@ -1,5 +1,29 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.17.0
+
+### Minor Changes
+
+- [#17867](https://github.com/LedgerHQ/ledger-live/pull/17867) [`c17272e`](https://github.com/LedgerHQ/ledger-live/commit/c17272e63b4036057022cfb28d7433a4a56201c9) Thanks [@brit-ledger](https://github.com/brit-ledger)! - Add MoonPay Trade to swap partners (Swaps.xyz rebranding)
+
+### Patch Changes
+
+- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9)]:
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/live-network@2.6.3
+
+## 1.17.0-next.0
+
+### Minor Changes
+
+- [#17867](https://github.com/LedgerHQ/ledger-live/pull/17867) [`c17272e`](https://github.com/LedgerHQ/ledger-live/commit/c17272e63b4036057022cfb28d7433a4a56201c9) Thanks [@brit-ledger](https://github.com/brit-ledger)! - Add MoonPay Trade to swap partners (Swaps.xyz rebranding)
+
+### Patch Changes
+
+- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9)]:
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/live-network@2.6.3-next.0
+
 ## 1.16.3
 
 ### Patch Changes

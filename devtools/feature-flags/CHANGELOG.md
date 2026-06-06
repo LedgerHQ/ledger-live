@@ -1,5 +1,19 @@
 # @devtools/feature-flags
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`bff8280`](https://github.com/LedgerHQ/ledger-live/commit/bff8280159275bc7498e70f4e2a18962fb0ffbd0)]:
+  - @shared/feature-flags@0.9.0
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`bff8280`](https://github.com/LedgerHQ/ledger-live/commit/bff8280159275bc7498e70f4e2a18962fb0ffbd0)]:
+  - @shared/feature-flags@0.9.0-next.0
+
 ## 0.3.1
 
 ### Patch Changes

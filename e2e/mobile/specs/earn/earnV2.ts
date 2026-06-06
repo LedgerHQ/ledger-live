@@ -1,7 +1,9 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 import type { ApplicationOptions } from "page";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -40,6 +42,7 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("displays ice cold start page and CTA opens modular asset drawer", async () => {
@@ -62,6 +65,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`shows ${account.currency.ticker} ready to earn and clicking CTA initiates staking`, async () => {
@@ -86,6 +90,7 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} hot start: rewards summary, position row -> manage -> account page`, async () => {
@@ -114,6 +119,7 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} earn CTA initiates staking flow`, async () => {
@@ -135,6 +141,7 @@ export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags:
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} earn CTA initiates deposit flow`, async () => {
@@ -164,6 +171,7 @@ export function runPartnerDappCTATest(
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} earn CTA -> ${providerId} provider -> dapp`, async () => {
@@ -192,6 +200,7 @@ export function runPartnerDappPositionTest(
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} position row -> manage -> dapp`, async () => {
@@ -219,6 +228,7 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`${account.currency.ticker} position row -> withdraw all -> webview /redeem`, async () => {

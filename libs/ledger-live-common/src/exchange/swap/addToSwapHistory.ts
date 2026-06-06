@@ -2,6 +2,7 @@ import type { Transaction } from "../../coin-modules/transaction-types";
 import type { ExchangeSwap, ExchangeRate } from "./types";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import type { Account, Operation, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
+import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 
 export default ({
   account,
@@ -35,7 +36,7 @@ export default ({
   const toAmount = transaction.amount.times(exchangeRate.magnitudeAwareRate);
 
   const swapOperation: SwapOperation = {
-    status: "pending",
+    status: TransactionStatus.Pending,
     provider: exchangeRate.provider,
     operationId,
     swapId,

@@ -36,6 +36,7 @@ import {
 } from "LLM/components/LineChart";
 import {
   BALANCE_GRAPH_RANGES,
+  RANGE_TARGET_INTERVAL_MS,
   RANGE_TO_PRICE_CHANGE_KEY,
   computeChartRangeChangePercentage,
   isChartDerivedPriceChangeRange,
@@ -48,7 +49,7 @@ import {
   type TransactionInput,
 } from "./utils/getTransactionPointMarkers";
 import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker";
-import { downsampleChartPoints } from "./utils/downsampleChartPoints";
+import { resampleChartPointsByInterval } from "@ledgerhq/live-common/market/utils/resampleChartPoints";
 import { injectMarketExtrema } from "@ledgerhq/live-common/market/utils/injectMarketExtrema";
 
 // Upper bound on operations pulled for the chart's transaction dots. The chart only
@@ -183,23 +184,20 @@ export function useBalanceGraphViewModel({
   const { series, timestamps } = useMemo(() => {
     const rawPoints = chartData?.[range] ?? [];
     // On the "all" range, anchor the graph's high/low markers to the market
-    // all-time high/low so they match the stats table (see LIVE-31732). Injected
-    // before downsampling, which preserves the series min/max.
-    const points =
+    // all-time high/low so they match the stats table (see LIVE-31732).
+    const withExtrema =
       range === "all"
         ? injectMarketExtrema(rawPoints, { ath, athDate: athTime, atl, atlDate: atlTime })
         : rawPoints;
-    const rawValues: number[] = [];
-    const rawTimestamps: number[] = [];
+    // Resample to the per-range target granularity (LIVE-31777); also caps the
+    // points fed to the SVG path, which was the main source of render jank.
+    const points = resampleChartPointsByInterval(withExtrema, RANGE_TARGET_INTERVAL_MS[range]);
+    const data: number[] = [];
+    const tsList: number[] = [];
     points.forEach(([timestamp, value]) => {
-      rawValues.push(value);
-      rawTimestamps.push(timestamp);
+      data.push(value);
+      tsList.push(timestamp);
     });
-    // Cap the points fed to the SVG path: the market API returns ~350 points on
-    // some ranges, which is far more than the chart width can show and is the main
-    // source of render jank on mobile. Timestamps + values are reduced together so
-    // scrubber indices, x-axis ticks and markers stay aligned with the line.
-    const { timestamps: tsList, values: data } = downsampleChartPoints(rawTimestamps, rawValues);
     return {
       series: [
         {

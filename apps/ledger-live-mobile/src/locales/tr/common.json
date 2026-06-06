@@ -1683,19 +1683,29 @@
   },
   "productTour" : {
     "swap" : {
-      "cta" : "Takası keşfedin"
+      "cta" : "Takası keşfedin",
+      "title" : "Uygulama değiştirmeden takas yapın",
+      "subTitle" : "Güvenilir takas sağlayıcılarımız aracılığıyla binlerce varlık ile sınırsız işlem yapmanın keyfini çıkarın."
     },
     "stake" : {
-      "cta" : "Kazan bölümünü keşfet"
+      "cta" : "Kazan bölümünü keşfet",
+      "title" : "Kriptolarınızla ödüller kazanın",
+      "subTitle" : "Kripto varlıklarınızı Kazan bölümünde çalıştırın."
     },
     "card" : {
-      "cta" : "Karta eriş"
+      "cta" : "Kart alın",
+      "title" : "Kriptolarınızı gerçek hayatta harcayın",
+      "subTitle" : "Kripto kartınızla ister internette ister mağazada ödeme yapın ve para iadesi kazanın"
     },
     "portfolio" : {
-      "cta" : "Portföyü görüntüle"
+      "cta" : "Portföyü görüntüle",
+      "title" : "Piyasanın bir adım önünde olun",
+      "subTitle" : "Varlıklarınızı, ödüllerinizi ve piyasa trendlerinizi kolayca takip edin."
     },
-    "done" : {
-      "cta" : "Baştan başla"
+    "fund" : {
+      "cta" : "Cüzdanınıza fon aktarın",
+      "title" : "Cüzdanınıza fon aktararak başlayın.",
+      "subTitle" : "Ledger Wallet'ı dilediğiniz şekilde fonlayın: transfer edin, satın alın veya nakit paranızı stabil coinlere dönüştürün."
     }
   },
   "discover" : {
@@ -2770,7 +2780,7 @@
       "title" : "Sizin için"
     },
     "perpsEntry" : {
-      "title" : "Perpetuals",
+      "title" : "Perpetual işlemler",
       "description" : "Kaldıraçlı işlem yapın"
     },
     "borrowEntry" : {
@@ -3652,7 +3662,47 @@
         "addSampleWalletCarouselTag" : "Alt cüzdan kaydırmalı görseli ekle (etiket).",
         "addSampleWalletCarouselTagDesc" : "Etiket, başlık, görsel ve link içeren bir adet mock kart. Braze entegrasyonu kullanılmayacak.",
         "dismissAll" : "Tüm yerel kartları kaldır",
-        "dismissAllDesc" : "Yerel olarak oluşturulan tüm içerik kartlarını kaldırın."
+        "dismissAllDesc" : "Yerel olarak oluşturulan tüm içerik kartlarını kaldırın.",
+        "genericAwareness" : {
+          "title" : "Genel farkındalık modal'ı",
+          "description" : "Ham Braze benzeri kartlar oluşturun, bunları genel farkındalık modalı ayrıştırıcısından geçirin, ardından drawer'ı görüntülemek için Portföy'e dönün.",
+          "carousel" : "Galeri",
+          "featureIntro" : "Özellik tanıtımı",
+          "appStart" : "Uygulama başlangıcı",
+          "deeplink" : "Derin bağlantı (Deeplink)",
+          "campaignId" : "Kampanya Kimliği",
+          "titleField" : "Başlık",
+          "subtitle" : "Alt başlık",
+          "imageUrl" : "Resim URL'si",
+          "primaryButtonLabel" : "Birincil buton etiketi",
+          "primaryButtonLink" : "Birincil buton bağlantısı",
+          "secondaryButtonLabel" : "İkincil buton etiketi",
+          "secondaryButtonLink" : "İkincil buton bağlantısı",
+          "icon" : "Simge",
+          "slide" : "Slayt",
+          "item" : "Öge",
+          "addItem" : "{{item}} ekle",
+          "removeItem" : "Kaldır",
+          "create" : "Genel farkındalık modal'ı oluştur",
+          "createDesc" : "Formu ham Braze benzeri kartlar olarak ayrıştırın ve mevcut modal listesine ekleyin.",
+          "createCarousel" : "Karusel Genel Farkındalık Modalı Oluştur",
+          "createCarouselDesc" : "Karusel tipi genel farkındalık modalı oluşturmak için bir form açın.",
+          "createFeatureIntro" : "Özellik Tanıtımı Genel Farkındalık Modalı Oluştur",
+          "createFeatureIntroDesc" : "Özellik tanıtımı genel farkındalık modalı oluşturmak için bir form açın.",
+          "openCurrent" : "Mevcut kampanyayı aç",
+          "openCurrentDesc" : "Bu kampanya için drawer (çekmece) durumunu ayarlayın. Görüntülemek için Portföy'e dönün.",
+          "clear" : "Genel farkındalık modal'larını temizle",
+          "clearDesc" : "Şu anda uygulama durumunda kayıtlı olan tüm genel farkındalık modal'larını kaldırın.",
+          "existingTitle" : "Mevcut genel farkındalık modal'ları",
+          "existingDescription" : "Açılacak çekmece (drawer) olarak ayarlamak için bir kampanyaya dokunun, ardından Portföy'e dönün.",
+          "noExisting" : "Şu anda uygulama durumunda kayıtlı hiçbir genel farkındalık modalı bulunmuyor.",
+          "existingDesc" : "{{layout}} • {{count}} girdi",
+          "layoutLabel" : "Düzen",
+          "idLabel" : "Kimlik (ID)",
+          "triggerLabel" : "Tetikleyici",
+          "entriesLabel" : "Girdiler ({{count}})",
+          "untitledEntry" : "Adsız girdi"
+        }
       }
     }
   },
@@ -3664,6 +3714,14 @@
       "descVariantB" : "Yeni token’lar, kazanç fırsatları ve piyasa değişimleri hakkında gerçek zamanlı uyarılar alın. İstediğiniz zaman devre dışı bırakabilirsiniz.",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
+    },
+    "optInScreen" : {
+      "title" : "Bildirimler etkinleştirilsin mi?",
+      "description" : "Yeni token’lar, kazanç fırsatları ve piyasa değişimleri hakkında gerçek zamanlı uyarılar alın. Ayarlardan istediğiniz zaman iptal edebilirsiniz",
+      "emptyTitle" : "Bildirimler zaten etkin",
+      "emptyDescription" : "Ledger Wallet'tan gerçek zamanlı uyarılar almak için hazırsınız.",
+      "errorTitle" : "Bildirimler kullanılamıyor",
+      "errorDescription" : "Bildirim ayarlarınızı kontrol edemedik. Kuruluma devam edip bunları daha sonra ayarlardan değiştirebilirsiniz."
     },
     "ptxServices" : {
       "toast" : {
@@ -4814,8 +4872,270 @@
     },
     "chooseAccountToFund" : "Fonların ekleneceği bir hesap seçin"
   },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "Cihaz kilitli",
+        "description" : "Devam etmek için cihazınızın kilidini açın."
+      },
+      "unlockDevice" : {
+        "title" : "{{productName}} kilidini açın"
+      },
+      "continueOnDevice" : {
+        "title" : "{{productName}} üzerinde devam edin",
+        "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin."
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "Cihaz bağlantısı kesildi",
+        "description" : "Ledger cihazınız artık bağlı değil. Cihazınızın açık olduğundan ve Bluetooth kapsama alanı içinde olduğundan ya da prize takılı olduğundan emin olun."
+      },
+      "intentError" : {
+        "title" : "Bilinmeyen hata",
+        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+      },
+      "invalidOperation" : {
+        "title" : "Geçersiz durum",
+        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+      }
+    },
+    "initialization" : {
+      "loading" : {
+        "title" : "Yükleniyor"
+      },
+      "installingApp" : {
+        "title" : "Uygulama yükleniyor"
+      },
+      "outdatedAppWarning" : {
+        "title" : "Uygulama sürümü eski",
+        "description" : "Cihazınızdaki {{appName}} uygulaması için önemli bir güncelleme mevcut. Güncellemek için lütfen My Ledger'a gidin."
+      },
+      "retryable" : {
+        "userRefused" : {
+          "title" : "İşlem cihazda reddedildi"
+        },
+        "deviceBusy" : {
+          "title" : "Ledger cihazınızda eylem bekliyor",
+          "description" : "Tamamlayın ve ardından \"Tekrar Dene\" seçimini uygulayın."
+        }
+      },
+      "blocking" : {
+        "deviceNotOnboarded" : {
+          "title" : "Ledger'ınız henüz kullanılmaya hazır değil",
+          "description" : "Öncelikle {{productName}} cihazınızın kurulumunu yapmanız gerekiyor. Cihaz kurulum sürecinde size yardımcı olacağız"
+        },
+        "unsupportedFirmwareVersion" : {
+          "title" : "Ledger OS güncellemesi gerekli"
+        },
+        "unsupportedApplication" : {
+          "title" : "Desteklenmeyen özellik",
+          "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
+        },
+        "unsupportedFeature" : {
+          "title" : "Desteklenmeyen özellik",
+          "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
+        },
+        "wrongDeviceForAccount" : {
+          "title" : "Yanlış Gizli Kurtarma İfadesi",
+          "description" : "Bu Ledger, seçilen hesapla ilişkili kurtarma ifadesi ile ayarlanmadı. Doğru cihazı kullandığınızdan emin olun."
+        },
+        "deviceOutOfStorageSpace" : {
+          "title" : "Cihaz depolama alanı yetersiz",
+          "description" : "Cihazınızda yeterli bellek yok. Lütfen uygulamaları kaldırıp tekrar deneyin."
+        }
+      },
+      "cta" : {
+        "openMyLedger" : "My Ledger'ı Aç",
+        "goToMyLedger" : "My Ledger'a Git",
+        "setupDevice" : "Cihaz kurulumu",
+        "updateLedgerOs" : "Ledger OS'i güncelleyin",
+        "cancelOperation" : "İşlemi iptal et",
+        "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledger cihazı",
+        "available" : "Mevcut",
+        "notConnected" : "Bağlı değil"
+      },
+      "states" : {
+        "connecting" : {
+          "title" : "Yükleniyor"
+        },
+        "connectionError" : {
+          "errors" : {
+            "blePairingRefused" : {
+              "title" : "Eşleme reddedildi",
+              "cta" : {
+                "retry" : "Eşlemeyi tekrar deneyin"
+              }
+            },
+            "blePairingPeerRemovedPairing" : {
+              "title" : "{{productName}} cihazının eşlemesini kaldırmak için telefonunuzun Bluetooth ayarlarına gidin",
+              "description" : "Eşleme sorununu gidermek için telefonunuzun Bluetooth listesinden {{productName}} cihazını kaldırın ve bu uygulamaya geri dönüp tekrar deneyin.",
+              "cta" : {
+                "retry" : "Eşlemeyi kaldırdım, tekrar dene",
+                "help" : "Nasıl gidereceğinizi öğrenin"
+              }
+            },
+            "unknown" : {
+              "title" : "Eşleme başarısız",
+              "description" : "Lütfen tekrar deneyin veya aşağıdaki Bluetooth sorun giderme makalemizi okuyun.",
+              "tip" : "Cihazınızın kilidinin açık olduğundan emin olun.",
+              "cta" : {
+                "retry" : "Tekrar deneyin",
+                "help" : "Yardım alın"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "Cihaz seçin"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "bluetoothPermissionDeniedPromptable" : {
+              "title" : "Bluetooth erişimine izin verin",
+              "description" : "Bluetooth'un yakındaki Ledger cihazlarını taramasına izin verin.",
+              "cta" : {
+                "retry" : "İzin ver",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "bluetoothPermissionDeniedManualSettings" : {
+              "title" : "Bluetooth erişimine izin verin",
+              "description" : "Bluetooth izni gerekiyor. Ayarlar → Uygulamalar → Ledger Wallet → İzinler → Yakındaki cihazlar adımlarını izleyin ve geri dönün.",
+              "cta" : {
+                "retry" : "Etkinleştirdim, tekrar dene",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "bluetoothPermissionUnauthorizedManualSettings" : {
+              "title" : "Bluetooth erişimine izin verin",
+              "description" : "Ledger Wallet, cihazınızı bulmak için Bluetooth iznine ihtiyaç duyar. Ayarlardan etkinleştirin.",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "Etkinleştirdim, tekrar dene"
+                  },
+                  "android" : {
+                    "retry" : "Etkinleştirdim, tekrar dene",
+                    "ignore" : "USB ile devam et"
+                  }
+                }
+              }
+            },
+            "bluetoothDisabledPromptable" : {
+              "title" : "Bluetooth'u açın",
+              "description" : "Bluetooth kapalı. Ledger cihazınızı bulmak için açın.",
+              "cta" : {
+                "retry" : "Bluetooth'u aç",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "bluetoothDisabledManualAction" : {
+              "title" : "Bluetooth'u açın",
+              "description" : "Bluetooth kapalı. Ayarlar → Bluetooth adımlarını izleyerek Bluetooth'u açın ve ardından geri dönün.",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "Bluetooth'u etkinleştirdim, tekrar dene"
+                  },
+                  "android" : {
+                    "retry" : "Bluetooth'u etkinleştirdim, tekrar dene",
+                    "ignore" : "USB ile devam et"
+                  }
+                }
+              }
+            },
+            "bluetoothStateUnknownCheckOnly" : {
+              "title" : "Bluetooth kontrol ediliyor..."
+            },
+            "bluetoothUnsupported" : {
+              "title" : "Bluetooth desteklenmiyor",
+              "description" : {
+                "platform" : {
+                  "android" : "Bu telefon Bluetooth'u desteklemiyor. Bunun yerine Ledger cihazınızı USB üzerinden bağlayabilirsiniz.",
+                  "ios" : "Bu telefon Bluetooth'u desteklemiyor. Lütfen Ledger Wallet Masaüstü uygulamasını kullanın veya Ledger destek ekibi ile iletişime geçin."
+                }
+              },
+              "cta" : {
+                "platform" : {
+                  "android" : {
+                    "ignore" : "USB ile devam et"
+                  }
+                }
+              }
+            },
+            "locationPermissionDeniedPromptable" : {
+              "title" : "Konum erişimine izin verin",
+              "description" : "Android, Bluetooth cihazlarını taramak için konum izni gerektirir.",
+              "cta" : {
+                "retry" : "İzin ver",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "locationPermissionDeniedManualSettings" : {
+              "title" : "Konum erişimine izin verin",
+              "description" : "Bluetooth cihazlarını taramak için konum izni gereklidir. Ayarlar → Uygulamalar → Ledger Wallet → İzinler → Konum sekmesine gidin ve ardından geri dönün.",
+              "cta" : {
+                "retry" : "Etkinleştirdim, tekrar dene",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "locationDisabledPromptable" : {
+              "title" : "Konumu açın",
+              "description" : "Konum hizmetleri kapalı. Bluetooth cihazlarını taramak için konum hizmetlerini açın.",
+              "cta" : {
+                "retry" : "Konumu aç",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "locationDisabledManualAction" : {
+              "title" : "Konumu açın",
+              "description" : "Konum hizmetleri kapalı. Ayarlar → Konum adımlarını izleyerek açın ve geri dönün.",
+              "cta" : {
+                "retry" : "Konumu etkinleştirdim, tekrar dene",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "locationServicePermissionMissing" : {
+              "title" : "Konum erişimine izin verin",
+              "description" : "Konum izni eksik görünüyor. Tekrar denemek için aşağıya dokunun.",
+              "cta" : {
+                "retry" : "Tekrar deneyin",
+                "ignore" : "USB ile devam et"
+              }
+            },
+            "unknown" : {
+              "title" : "Bir hata oluştu",
+              "description" : "Bluetooth taramasını başlatamadık. Lütfen tekrar deneyin veya Ledger destek ekibiyle iletişime geçin.",
+              "cta" : {
+                "retry" : "Tekrar deneyin"
+              }
+            }
+          }
+        },
+        "loading" : {
+          "title" : "Yükleniyor"
+        },
+        "noKnownDevice" : {
+          "title" : "Ledger cihazı gerekli",
+          "description" : "Devam etmek için imzalayıcınızı kurun veya bağlayın.",
+          "connectLedgerDevice" : "Ledger cihazı bağlayın",
+          "noLedgerDevice" : "Ledger cihazım yok"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "{{productName}} cihazınızı çalıştırın ve kilidini açın"
+        }
+      }
+    }
+  },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Ledger Wallet uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
+    "stuckLoaderHint" : "Cihazınızın kilidinin açık olduğundan ve beklemede herhangi bir işlemin olmadığından emin olun",
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
     "allowManagerPermission" : "Ledger ile güvenli bağlantı kurulmasına izin verin",
@@ -6269,8 +6589,16 @@
       "title" : "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
       "btn" : "Ödüller kazanın"
     },
+    "manage" : "Yönet",
     "delegation" : {
-      "addCustomValidator" : "+ Özel doğrulayıcı ekle"
+      "addCustomValidator" : "+ Özel doğrulayıcı ekle",
+      "sectionLabel" : "Yetki Devri"
+    },
+    "staking" : {
+      "sectionLabel" : "Staking",
+      "status" : "Durum",
+      "unstaking" : "Staking durduruluyor",
+      "available" : "Mevcut"
     }
   },
   "evm" : {
@@ -7787,6 +8115,59 @@
       "title" : "İşlem geçmişi"
     }
   },
+  "pnl" : {
+    "disclaimer" : "Bu veriler sadece bilgilendirme amacıyla sunulmuştur ve finansal tavsiye niteliği taşımaz. Vergi amaçlı kullanılamaz.",
+    "asset" : {
+      "return" : {
+        "title" : "Gerçekleşmemiş getiri"
+      },
+      "entry" : {
+        "title" : "Ortalama giriş fiyatı",
+        "tooltip" : "Satın aldığınız veya diğer cüzdanlardan transfer aldığınız her şey dâhil olmak üzere, Ledger Wallet üzerinden bu varlık için ödediğiniz ortalama fiyat. Bu, kârınızı veya zararınızı izlemek için kullanılır."
+      },
+      "drawer" : {
+        "title" : "Varlık kâr ve zararı",
+        "description" : "Bu varlığın portföyünüzde nasıl bir performans sergilediğine dair bir özet.",
+        "estimatedReturn" : {
+          "title" : "Tahmini getiri",
+          "description" : "Mevcut fiyat üzerinden satılırsa tahmini kâr veya zarar."
+        },
+        "realisedReturn" : {
+          "title" : "Gerçekleşen getiri",
+          "description" : "Önceki satış, gönderim veya takas sonrası gerçekleşmiş kâr veya zarar."
+        },
+        "totalReturn" : {
+          "title" : "Toplam getiri",
+          "description" : "Tahmini ve gerçekleşmiş getirilerin toplamı."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "Gerçekleşmemiş getiri"
+      },
+      "costBasis" : {
+        "title" : "Maliyet tabanı",
+        "tooltip" : "Ücretler dâhil olmak üzere mevcut varlıklarınızı edinmek için ödediğiniz toplam tutar."
+      },
+      "drawer" : {
+        "title" : "Portföy kâr ve zararı",
+        "description" : "Portföy performansının, tahmini ve gerçekleşmiş getiriler olarak kırılımı.",
+        "estimatedReturn" : {
+          "title" : "Tahmini getiri",
+          "description" : "Mevcut fiyat üzerinden satılırsa tahmini kâr veya zarar."
+        },
+        "realisedReturn" : {
+          "title" : "Gerçekleşen getiri",
+          "description" : "Önceki satış, gönderim veya takas sonrası gerçekleşmiş kâr veya zarar."
+        },
+        "totalReturn" : {
+          "title" : "Toplam getiri",
+          "description" : "Tahmini ve gerçekleşmiş getirilerin toplamı."
+        }
+      }
+    }
+  },
   "hedera" : {
     "name" : "hedera",
     "createHederaAccountHelp" : {
@@ -8081,6 +8462,10 @@
         "recover" : {
           "title" : "Yedeklemenizi güvenceye alın",
           "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın"
+        },
+        "discoverWallet" : {
+          "title" : "Cüzdanınızı keşfedin",
+          "description" : "Portföyünüzdeki yenilikleri ve nasıl gezinebileceğinizi öğrenin."
         }
       }
     },
@@ -8113,6 +8498,10 @@
       "syncAccounts" : {
         "titleCompleted" : "Hesaplarınız senkronize edildi",
         "popupLabel" : "Hesaplar senkronize edildi"
+      },
+      "discoverWallet" : {
+        "titleCompleted" : "Cüzdan turu tamamlandı",
+        "popupLabel" : "Cüzdan turu tamamlandı"
       }
     }
   },
@@ -8254,6 +8643,24 @@
         "daily" : "Günlük ödüller",
         "eigenlayer_points" : "Eigenlayer puanları",
         "validator" : "Doğrulayıcı ödülleri"
+      },
+      "info" : {
+        "available" : {
+          "title" : "{{currencyTicker}} mevcut",
+          "description" : "Bu tutar, kullanabileceğiniz fondur."
+        },
+        "delegated" : {
+          "title" : "Yetkisi devredilen varlıklar",
+          "description" : "Yetkisi devredilen varlıklar {{currencyName}} oylaması için kullanılır. Bu, toplam oy sayınızdır."
+        },
+        "undelegating" : {
+          "title" : "Yetki devrinin iptali",
+          "description" : "Yetki devirleri iptal edilen varlıklar, kullanıma açılmadan önce {{numberOfDays}} gün boyunca zaman kilidinde tutulurlar."
+        },
+        "delegationUnavailable" : {
+          "title" : "Yetki devri yapılamıyor",
+          "description" : "Yeni bir yetkili seçmek için hesabınızda yeterli bakiye yok."
+        }
       }
     },
     "noFundsModal" : {
@@ -8278,6 +8685,29 @@
     "getFundsModal" : {
       "text" : "Stake etmek için {{coin}} edinin",
       "description" : "Ledger Wallet'ı kullanarak doğrudan Ledger'ınızda kripto satın alın, takas edin veya alın."
+    },
+    "default" : {
+      "info" : {
+        "undelegating" : {
+          "description" : "Bu, mevcut stake'ten ayrılmakta olan tutardır. Çekim işlemi tamamlandıktan sonra mevcut bakiyenizde görünecektir."
+        }
+      }
+    }
+  },
+  "analyticsConsent" : {
+    "title" : "Ledger'ın geliştirilmesine yardımcı olun",
+    "subTitle" : "Onayınızla, özellikleri geliştirmek ve hataları düzeltmek için kullanım verilerini toplayacağız. Varlık veya portföy bilgilerinizi takip etmeyeceğiz.",
+    "setPreferencesCTA" : "Tercihlerinizi belirleyin",
+    "refuseCTA" : "Tümünü reddet",
+    "acceptCTA" : "Tümünü kabul et",
+    "privacyPolicy" : "Onayınızı, dilediğiniz zaman ayarlardan iptal edebilirsiniz.",
+    "privacyPolicyCTA" : "Gizlilik Politikası",
+    "setPreferences" : {
+      "title" : "Tercihlerinizi belirleyin",
+      "performance" : "Uygulama performansı",
+      "performanceDesc" : "Deneyimi iyileştirmek için Ledger'ın uygulama kullanım verilerini toplamasına izin verin",
+      "experience" : "Kişiselleştirilmiş deneyim",
+      "experienceDesc" : "Kişiselleştirilmiş içerik sunmamız için Ledger'ın uygulama kullanım verilerini toplamasına izin verin"
     }
   },
   "analyticsOptIn" : {
@@ -8673,6 +9103,7 @@
     "addresses" : {
       "title" : "Adresler",
       "addAccount" : "Ekle",
+      "seeAll" : "Tümünü gör",
       "empty" : "Henüz adres yok. Başlamak için Ekle seçeneğine dokunun."
     },
     "marketStats" : {
@@ -8680,10 +9111,12 @@
       "marketCap" : "Piyasa değeri",
       "marketRank" : "Piyasa sıralaması",
       "circulatingSupply" : "Dolaşımdaki arz",
-      "circulatingSupplyTooltip" : "An itibarıyla piyasada alım satım için mevcut ve dolaşımda olan coin miktarı.",
+      "circulatingSupplyTooltip" : "An itibarıyla piyasada mevcut ve halkın elinde bulunan toplam token miktarı. Kilitli, ayrılmış veya basılmamış token'ları hariç tutar.",
       "maxSupply" : "Maksimum arz",
-      "maxSupplyTooltip" : "Bu kripto para için var olacak maksimum coin sayısı.",
+      "maxSupplyTooltip" : "Var olacak maksimum token sayısı. Bazı varlıklar için, enflasyonu önlemek amacıyla bu sabittir.",
+      "marketCapTooltip" : "Dolaşımdaki tüm coinlerin toplam değeri. Bunu kriptonun piyasadaki toplam değeri olarak düşünün.",
       "tradingVolume" : "24 saatlik işlem hacmi",
+      "tradingVolumeTooltip" : "Son 24 saatte işlem gören toplam tutar.",
       "error" : "Piyasa istatistikleri yüklenemiyor."
     },
     "pricePerformance" : {
@@ -8704,6 +9137,10 @@
     "fallbackBanner" : {
       "title" : "Takas ve Satın Alma bu varlıkta desteklenmemektedir."
     },
+    "hiddenAssetBanner" : {
+      "title" : "Bu varlık, portföyünüzden gizlenmiştir.",
+      "showAsset" : "Varlığı göster"
+    },
     "balanceDetails" : {
       "totalBalance" : "Toplam bakiye",
       "transfer" : "Transfer",
@@ -8713,7 +9150,14 @@
       "earnBannerGeneric" : "Bu varlıkla kazanın",
       "earnBannerSubtitle" : "Bu varlığı elinizde tutarak kazanın",
       "earnBannerAction" : "Kazan bölümüne gidin",
-      "availableBalanceTooltip" : "Stake edilen veya yetkisi devredilen tutarlar hariç olmak üzere, anında kullanıma hazır varlıklar."
+      "availableBalanceTooltip" : "Varlıklarınızın şu anda kullanabileceğiniz; dilediğiniz an gönderebileceğiniz, takas edebileceğiniz veya çekebileceğiniz kısmıdır."
+    },
+    "coinOptions" : {
+      "openMenuA11yLabel" : "Coin seçenekleri",
+      "addFavourite" : "Favorilere ekle",
+      "removeFavourite" : "Favorilerden kaldır",
+      "hideFromPortfolio" : "Portföyden gizle",
+      "showInPortfolio" : "Portföyde göster"
     }
   },
   "assetSelection" : {

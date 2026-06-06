@@ -25,6 +25,7 @@ const PRICE_CHANGE_ZERO: Record<KeysPriceChange, number> = {
   [KeysPriceChange.day]: 0,
   [KeysPriceChange.week]: 0,
   [KeysPriceChange.month]: 0,
+  [KeysPriceChange.sixMonths]: 0,
   [KeysPriceChange.year]: 0,
 };
 

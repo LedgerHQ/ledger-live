@@ -1,5 +1,39 @@
 # @ledgerhq/types-live
 
+## 6.110.0
+
+### Minor Changes
+
+- [#17897](https://github.com/LedgerHQ/ledger-live/pull/17897) [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwmWallet40` into a standalone `onboardingWidget` feature flag.
+
+- [#17648](https://github.com/LedgerHQ/ledger-live/pull/17648) [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Arc and Arc Testnet (Circle's USDC-native EVM L1, chainIds 5042 and 5042002)
+
+- [#17837](https://github.com/LedgerHQ/ledger-live/pull/17837) [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwm - lwd feature flag for counterfeit warning
+
+- [#17630](https://github.com/LedgerHQ/ledger-live/pull/17630) [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274) Thanks [@sarneijim](https://github.com/sarneijim)! - Add post-onboarding `discoverWallet` action that opens the LWM Product Tour (`tickProductTourDeeplink` + navigate to Portfolio), aligned with `ProductTourPortfolioMount` / `ledgerlive://product-tour`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.1
+
+## 6.110.0-next.0
+
+### Minor Changes
+
+- [#17897](https://github.com/LedgerHQ/ledger-live/pull/17897) [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwmWallet40` into a standalone `onboardingWidget` feature flag.
+
+- [#17648](https://github.com/LedgerHQ/ledger-live/pull/17648) [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Arc and Arc Testnet (Circle's USDC-native EVM L1, chainIds 5042 and 5042002)
+
+- [#17837](https://github.com/LedgerHQ/ledger-live/pull/17837) [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwm - lwd feature flag for counterfeit warning
+
+- [#17630](https://github.com/LedgerHQ/ledger-live/pull/17630) [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274) Thanks [@sarneijim](https://github.com/sarneijim)! - Add post-onboarding `discoverWallet` action that opens the LWM Product Tour (`tickProductTourDeeplink` + navigate to Portfolio), aligned with `ProductTourPortfolioMount` / `ledgerlive://product-tour`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.1-next.0
+
 ## 6.109.0
 
 ### Minor Changes

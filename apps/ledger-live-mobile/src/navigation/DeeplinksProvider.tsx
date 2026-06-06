@@ -45,6 +45,7 @@ import {
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
   validateMarketCurrencyId,
+  validateMarketListCategory,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
@@ -357,6 +358,7 @@ export const DeeplinksProvider = ({
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
@@ -707,10 +709,16 @@ export const DeeplinksProvider = ({
               url.pathname = `/${validatedCurrencyId}`;
               return getStateFromPath(url.href?.split("://")[1], config);
             }
+            const validatedCategory = shouldDisplayAssetDiscoverability
+              ? validateMarketListCategory(searchParams.get("category"))
+              : undefined;
             if (shouldDisplayMarketBanner) {
-              return handleMarketBannerDeeplink();
+              return handleMarketBannerDeeplink(validatedCategory);
             }
-            return getStateFromPath("market", config);
+            return getStateFromPath(
+              validatedCategory ? `market?category=${validatedCategory}` : "market",
+              config,
+            );
           }
 
           // Handle asset deeplink - validate currencyId before navigation
@@ -920,6 +928,7 @@ export const DeeplinksProvider = ({
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,
     web3hubFlag?.enabled,

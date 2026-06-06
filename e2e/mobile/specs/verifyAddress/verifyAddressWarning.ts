@@ -1,4 +1,6 @@
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 type VerifyAddressWarningOptions = {
   skip?: boolean;
@@ -22,6 +24,7 @@ export function runVerifyAddressWarningTest(
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
+    setTeamOwner(Team.COIN_INTEGRATION);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Verify address warning for ${account.currency.name}`, async () => {

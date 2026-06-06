@@ -265,6 +265,14 @@ const getNotificationsOptInAttributes = () => {
   };
 };
 
+const getBackupHubAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return { lwmBackupHub: false };
+  const flag = analyticsFeatureFlagMethod("lwmBackupHub");
+  return {
+    lwmBackupHub: !!flag?.enabled,
+  };
+};
+
 const getLdmkAndSyncFlags = () => ({
   ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? { enabled: false },
   ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? { enabled: false },
@@ -412,6 +420,7 @@ const extraProperties = async (store: AppStore) => {
 
   const optimiseOptInNotificationsNewWordingAttributes =
     getOptimiseOptInNotificationsNewWordingAttributes();
+  const backupHubAttributes = getBackupHubAttributes();
 
   return {
     ...mandatoryProperties,
@@ -448,6 +457,7 @@ const extraProperties = async (store: AppStore) => {
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
+    ...backupHubAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,

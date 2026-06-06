@@ -1,7 +1,9 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { isWallet40 } from "../../helpers/commonHelpers";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { ApplicationOptions } from "page";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -34,6 +36,7 @@ export async function runSelectCryptoNetworkTest(
       });
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${
@@ -72,6 +75,7 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
       });
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`should select crypto without network and account for ${account.currency.ticker}`, async () => {

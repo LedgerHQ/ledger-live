@@ -1,5 +1,21 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.40.3
+
+### Patch Changes
+
+- Updated dependencies [[`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/devices@8.15.0
+  - @ledgerhq/hw-transport@6.35.3
+
+## 6.40.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/devices@8.15.0-next.0
+  - @ledgerhq/hw-transport@6.35.3-next.0
+
 ## 6.40.2
 
 ### Patch Changes

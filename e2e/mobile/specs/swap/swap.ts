@@ -1,7 +1,9 @@
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "./swap.setup";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -29,6 +31,7 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
       await beforeAllFunction(swap);
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {

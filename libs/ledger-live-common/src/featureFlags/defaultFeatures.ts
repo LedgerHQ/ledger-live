@@ -636,6 +636,7 @@ export const DEFAULT_FEATURES: Features = {
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdProductTour: DEFAULT_FEATURE,
+  lwdBackupHub: DEFAULT_FEATURE,
   lwmNewWordingOptInNotificationsDrawer: {
     ...DEFAULT_FEATURE,
     params: { variant: ABTestingVariants.variantA },
@@ -810,6 +811,7 @@ export const DEFAULT_FEATURES: Features = {
   lwmOnboardingCounterfeitWarning: DEFAULT_FEATURE,
   lwmNotificationsOptIn: DEFAULT_FEATURE,
   lwmProductTour: DEFAULT_FEATURE,
+  lwmBackupHub: DEFAULT_FEATURE,
   lwmWallet40: {
     ...DEFAULT_FEATURE,
     params: {

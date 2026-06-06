@@ -125,6 +125,14 @@ jest.mock("../../exchange/swap/api/v5/actions", () => ({
   }),
 }));
 
+jest.mock("./transactionStatus", () => ({
+  getTransactionStatus: jest.fn().mockResolvedValue({
+    swapId: "swap-1",
+    provider: "lifi",
+    status: "pending",
+  }),
+}));
+
 jest.mock("../../exchange/swap/transactionStrategies", () => ({
   transactionStrategy: {
     bitcoin: jest.fn().mockResolvedValue({
@@ -345,6 +353,46 @@ describe("handlers", () => {
       );
       expect(networkCall).toBeDefined();
       expect((networkCall![0] as { url: string }).url).toContain("/swap/accepted");
+    });
+  });
+
+  describe("custom.exchange.getTransactionStatus", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("delegates to getTransactionStatus with wallet accounts context", async () => {
+      const accounts = [genAccount("accountId1")];
+      const handler = handlers({
+        accounts,
+        tracking: mockTracking,
+        manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
+        uiHooks: mockUiHooks,
+      });
+      const request = {
+        jsonrpc: "2.0",
+        method: "custom.exchange.getTransactionStatus",
+        params: { swapId: "swap-1", provider: "lifi" },
+        id: "test",
+      } as RpcRequest<string, { swapId: string; provider?: string }>;
+      const context = {
+        config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+      };
+
+      const result = await handler["custom.exchange.getTransactionStatus"](request, context, {});
+
+      const { getTransactionStatus } = jest.requireMock("./transactionStatus");
+      expect(result).toEqual({
+        swapId: "swap-1",
+        provider: "lifi",
+        status: "pending",
+      });
+      expect(getTransactionStatus).toHaveBeenCalledWith(
+        { swapId: "swap-1", provider: "lifi" },
+        { accounts },
+      );
     });
   });
 

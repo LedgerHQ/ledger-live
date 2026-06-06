@@ -14,9 +14,10 @@ import {
   MarketListHeaderLeft,
   MarketListHeaderTitle,
 } from "LLM/features/Market/components/MarketListHeader";
+import type { MarketListRouteParams } from "LLM/features/Market/types";
 
 export type MarketNavigatorStackParamList = {
-  [ScreenName.MarketList]: { top100?: boolean };
+  [ScreenName.MarketList]: MarketListRouteParams | undefined;
   [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.MarketDetail]: {
     currencyId: string;

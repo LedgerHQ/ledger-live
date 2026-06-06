@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-str
 
+## 7.7.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.3
+
+## 7.7.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.3-next.0
+
 ## 7.7.2
 
 ### Patch Changes

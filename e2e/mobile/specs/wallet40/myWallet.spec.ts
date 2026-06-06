@@ -1,10 +1,13 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const testConfig = {
   tmsLinks: ["B2CQA-5405", "B2CQA-5426", "B2CQA-5427"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
+setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - MyWallet", () => {
   beforeAll(async () => {
     await app.init({

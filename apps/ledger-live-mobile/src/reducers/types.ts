@@ -385,12 +385,12 @@ export type MarketState = {
 // === ASSET LIST CONFIG STATE (V4) ===
 
 export type MarketListSorting = "marketCap" | "volume" | "gainers" | "losers";
-export type MarketListTimeframe = "1D" | "7D" | "30D" | "1Y" | "all";
+export type MarketListFilterTimeframe = "1D" | "7D" | "30D" | "6M" | "1Y";
 export type MarketListCategory = "all" | "starred" | "stocks";
 
 export type MarketListConfigState = {
   sorting: MarketListSorting;
-  timeframe: MarketListTimeframe;
+  timeframe: MarketListFilterTimeframe;
   /** Selected network id, or `undefined` for all networks (consumed by LIVE-29972). */
   network: string | undefined;
   category: MarketListCategory;

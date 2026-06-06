@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-sui
 
+## 1.11.1
+
+### Patch Changes
+
+- Updated dependencies [[`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/devices@8.15.0
+
+## 1.11.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/devices@8.15.0-next.0
+
 ## 1.11.0
 
 ### Minor Changes

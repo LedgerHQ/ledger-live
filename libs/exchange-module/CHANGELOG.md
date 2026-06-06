@@ -1,5 +1,17 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.30.0
+
+### Minor Changes
+
+- [#17315](https://github.com/LedgerHQ/ledger-live/pull/17315) [`4160842`](https://github.com/LedgerHQ/ledger-live/commit/4160842477cb55ee5df701b590c201e7c700685a) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add wallet quote errors and warnings metadata for swap consumers.
+
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#17315](https://github.com/LedgerHQ/ledger-live/pull/17315) [`4160842`](https://github.com/LedgerHQ/ledger-live/commit/4160842477cb55ee5df701b590c201e7c700685a) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add wallet quote errors and warnings metadata for swap consumers.
+
 ## 0.29.0
 
 ### Minor Changes

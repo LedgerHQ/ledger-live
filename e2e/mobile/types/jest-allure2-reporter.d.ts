@@ -8,6 +8,10 @@ declare module "jest-allure2-reporter/api" {
 
   export function $Tag(...tags: string[]): void;
 
+  export function $Owner(owner: string): void;
+
+  export function $ParentSuite(parentSuite: string): void;
+
   export function $Severity(severity: string): void;
 
   export function $Epic(epic: string): void;

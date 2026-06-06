@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network";
+import { Order } from "../utils/types";
 import { fetchList } from "./countervalues";
 
 jest.mock("@ledgerhq/live-network", () => ({
@@ -39,5 +40,23 @@ describe("market countervalues API", () => {
     await fetchList({ counterCurrency: "usd", search: "bt" });
 
     expect(getLastRequestUrl().searchParams.get("filter")).toBe("bt");
+  });
+
+  it("sends an explicit filter independently from the search length", async () => {
+    await fetchList({ counterCurrency: "usd", search: "b", filter: "stock" });
+
+    expect(getLastRequestUrl().searchParams.get("filter")).toBe("stock");
+  });
+
+  it("keeps the top parameter for unfiltered top gainers", async () => {
+    await fetchList({ counterCurrency: "usd", order: Order.topGainers });
+
+    expect(getLastRequestUrl().searchParams.get("top")).toBe("100");
+  });
+
+  it("does not send the top parameter when top gainers use an explicit filter", async () => {
+    await fetchList({ counterCurrency: "usd", order: Order.topGainers, filter: "stock" });
+
+    expect(getLastRequestUrl().searchParams.get("top")).toBeNull();
   });
 });

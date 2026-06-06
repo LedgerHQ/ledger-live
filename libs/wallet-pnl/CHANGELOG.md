@@ -1,5 +1,33 @@
 # @ledgerhq/wallet-pnl
 
+## 0.4.0
+
+### Minor Changes
+
+- [#17909](https://github.com/LedgerHQ/ledger-live/pull/17909) [`93f9bc7`](https://github.com/LedgerHQ/ledger-live/commit/93f9bc770e28977ce1d6b4b920b565d43b645518) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add PnL section to the mobile Asset Detail screen (Unrealised return + Average entry price cards, opens a detail drawer). Extracts a shared `usePnlViewModelBase` + builders under `mvvm/features/Pnl` so the Analytics (portfolio) and Asset Detail (asset) consumers share the same logic, and exposes `trendFromSign` / `PnlTrend` from `@ledgerhq/wallet-pnl` so mobile and desktop derive trends from the same primitive.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274)]:
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/live-countervalues@0.18.6
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#17909](https://github.com/LedgerHQ/ledger-live/pull/17909) [`93f9bc7`](https://github.com/LedgerHQ/ledger-live/commit/93f9bc770e28977ce1d6b4b920b565d43b645518) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add PnL section to the mobile Asset Detail screen (Unrealised return + Average entry price cards, opens a detail drawer). Extracts a shared `usePnlViewModelBase` + builders under `mvvm/features/Pnl` so the Analytics (portfolio) and Asset Detail (asset) consumers share the same logic, and exposes `trendFromSign` / `PnlTrend` from `@ledgerhq/wallet-pnl` so mobile and desktop derive trends from the same primitive.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274)]:
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/live-countervalues@0.18.6-next.0
+
 ## 0.3.0
 
 ### Minor Changes

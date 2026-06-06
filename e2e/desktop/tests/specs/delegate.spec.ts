@@ -9,6 +9,9 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
+
+import type { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -87,10 +90,18 @@ const validators = [
   },
 ];
 
-const liveApps = [
+const liveApps: {
+  delegate: Delegate;
+  xrayTicket: string;
+  featureFlags?: OptionalFeatureMap;
+}[] = [
   {
     delegate: new Delegate(Account.ETH_1, "0.01", "lido"),
     xrayTicket: "B2CQA-3024",
+    // TODO: remove FF and update coverage accordingly
+    featureFlags: {
+      ...FF_STAKE_PROGRAMS_MODAL,
+    },
   },
   {
     delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
@@ -485,6 +496,7 @@ for (const currency of liveApps) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.delegate.account.currency.speculosApp,
       cliCommands: [liveDataCommand(currency.delegate.account)],
+      featureFlags: { ...currency.featureFlags },
     });
 
     const family = getFamilyByCurrencyId(currency.delegate.account.currency.id);

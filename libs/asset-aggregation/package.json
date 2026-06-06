@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-aggregation",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Ledger Live asset-aggregation module – asset aggregation & categorization",
   "keywords": [
     "Ledger"

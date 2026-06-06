@@ -136,6 +136,16 @@ const getAddAccountAttributes = () => {
     feature_add_account_desktop: isEnabled,
   };
 };
+
+const getBackupHubAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const backupHub = analyticsFeatureFlagMethod("lwdBackupHub");
+
+  return {
+    lwdBackupHub: !!backupHub?.enabled,
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
@@ -251,6 +261,7 @@ const extraProperties = (store: ReduxStore) => {
   const mevProtectionAttributes = getMEVAttributes(state);
   const madAttributes = getMADAttributes();
   const addAccountAttributes = getAddAccountAttributes();
+  const backupHubAttributes = getBackupHubAttributes();
 
   const deviceInfo = device
     ? {
@@ -320,6 +331,7 @@ const extraProperties = (store: ReduxStore) => {
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...addAccountAttributes,
+    ...backupHubAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,

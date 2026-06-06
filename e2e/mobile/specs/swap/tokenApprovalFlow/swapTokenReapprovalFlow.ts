@@ -5,7 +5,9 @@ import {
   revokeTokenApproval,
 } from "../../../utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { beforeAllFunctionSwap } from "../swap.setup";
+import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
 
 export function runSwapTokenReapprovalFlow(
@@ -41,6 +43,7 @@ export function runSwapTokenReapprovalFlow(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 

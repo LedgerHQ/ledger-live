@@ -10,6 +10,8 @@ import type {
   $TmsLink as $TmsLinkType,
   Step as StepType,
   $Tag as $TagType,
+  $Owner as $OwnerType,
+  $ParentSuite as $ParentSuiteType,
 } from "jest-allure2-reporter/api";
 import { NativeElementHelpers, WebElementHelpers } from "../helpers/elementHelpers";
 import { Currency as CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -43,6 +45,8 @@ declare global {
   var Step: typeof StepType;
   var $TmsLink: typeof $TmsLinkType;
   var $Tag: typeof $TagType;
+  var $Owner: typeof $OwnerType;
+  var $ParentSuite: typeof $ParentSuiteType;
   var CLI: typeof CLIType;
   var jestExpect: typeof expect;
   var Currency: typeof CurrencyType;

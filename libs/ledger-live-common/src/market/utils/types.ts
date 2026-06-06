@@ -19,6 +19,7 @@ export type MarketListRequestParams = {
   range?: string;
   order?: Order;
   search?: string;
+  filter?: string;
   liveCompatible?: boolean;
 };
 
@@ -67,6 +68,7 @@ export enum KeysPriceChange {
   day = "24h",
   week = "7d",
   month = "30d",
+  sixMonths = "6m",
   year = "1y",
 }
 
@@ -130,6 +132,7 @@ export type MarketItemResponse = {
   priceChangePercentage24h: number;
   priceChangePercentage30d: number;
   priceChangePercentage7d: number;
+  priceChangePercentage6m?: number;
   priceChangePercentage1y: number;
   sparkline: number[];
   ticker: string;

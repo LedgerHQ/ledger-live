@@ -8104,11 +8104,31 @@
     "assets": {
       "title": "Assets",
       "emptyFavorites": "No favorites yet",
+      "emptyStocks": "No stocks found",
       "categories": {
         "accessibilityLabel": "Asset categories",
         "all": "All",
         "stocks": "Stocks",
         "favorites": "Favorites"
+      },
+      "filters": {
+        "accessibilityLabel": "Open asset filters",
+        "title": "Filters",
+        "sorting": "Sorting",
+        "timeframe": "Timeframe",
+        "sortingOptions": {
+          "marketCap": "Market cap",
+          "volume": "Volume",
+          "gainers": "Gainers",
+          "losers": "Losers"
+        },
+        "timeframeOptions": {
+          "1D": "1 day",
+          "7D": "1 week",
+          "30D": "1 month",
+          "6M": "6 months",
+          "1Y": "1 year"
+        }
       },
       "error": {
         "title": "Couldn't load assets",
@@ -8926,7 +8946,8 @@
     "title": "Ledger Sync",
     "banner": {
       "title": "Your wallet isn't synced",
-      "description": "Keep your portfolio up to date"
+      "description": "Keep your portfolio up to date",
+      "cta": "Sync my wallet"
     },
     "entryPoints": {
       "simpleCta": {

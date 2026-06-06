@@ -10,6 +10,8 @@ export function useMarketAssetPress() {
 
   return useCallback(
     (asset: MarketAssetDisplayData) => {
+      if (!asset.ledgerIds.length) return;
+
       track("button_clicked", {
         button: "asset",
         currency: asset.ticker.toUpperCase(),

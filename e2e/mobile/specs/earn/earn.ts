@@ -1,8 +1,10 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
 import { isWallet40 } from "../../helpers/commonHelpers";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 import type { ApplicationOptions } from "page";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -57,6 +59,7 @@ export async function runInlineAddAccountTest(
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Inline Add Account [${account.currency.speculosApp.name}]`, async () => {
@@ -115,6 +118,7 @@ export async function runStartETHStakingFromEarnDashboardTest(
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`ETH staking flow - Earn Dashboard - Provider : ${provider.uiName}`, async () => {
@@ -149,6 +153,7 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
       });
     });
 
+    setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`, async () => {

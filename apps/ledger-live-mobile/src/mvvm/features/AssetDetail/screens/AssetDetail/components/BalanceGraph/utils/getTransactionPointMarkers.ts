@@ -3,10 +3,10 @@
  * two RECEIVE/SEND markers. Transactions closer than this to the current cluster's
  * anchor are merged into it, capping marker density to at most one every N points.
  *
- * This is applied to the indices of the *rendered* series, which the caller caps via
- * downsampling (see MAX_SERIES_POINTS). Spacing is therefore a fraction of the visible
- * width (≈ N / point-count) and stays roughly constant in pixels across ranges, rather
- * than a fixed wall-clock window. Tune here to taste.
+ * This is applied to the indices of the *rendered* series, which the caller resamples
+ * to a per-range target granularity (see RANGE_TARGET_INTERVAL_MS). Spacing is therefore
+ * a fraction of the visible width (≈ N / point-count) and stays roughly constant in
+ * pixels across ranges, rather than a fixed wall-clock window. Tune here to taste.
  */
 export const MIN_SERIES_POINTS_BETWEEN_TX_MARKERS = 20;
 

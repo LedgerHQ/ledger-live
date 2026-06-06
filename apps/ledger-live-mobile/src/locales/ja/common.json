@@ -1683,19 +1683,29 @@
   },
   "productTour" : {
     "swap" : {
-      "cta" : "スワップを見る"
+      "cta" : "スワップを見る",
+      "title" : "アプリを切り替えずにスワップする",
+      "subTitle" : "当社の信頼できるスワップパートナーを通じて、数千種類の資産で無限のトレードをお楽しみください。"
     },
     "stake" : {
-      "cta" : "報酬獲得を確認"
+      "cta" : "報酬獲得を確認",
+      "title" : "お持ちの暗号資産で報酬を獲得しましょう",
+      "subTitle" : "報酬獲得セクションを通じて暗号資産を運用しましょう。"
     },
     "card" : {
-      "cta" : "カードを入手"
+      "cta" : "カードを手に入れる",
+      "title" : "実生活で暗号資産を送付",
+      "subTitle" : "オンラインまたは店頭で、暗号資産カードで支払って、キャッシュバックを獲得"
     },
     "portfolio" : {
-      "cta" : "ポートフォリオを見る"
+      "cta" : "ポートフォリオを見る",
+      "title" : "常に市場の一歩先へ",
+      "subTitle" : "資産や報酬、市場動向を簡単にチェックできます。"
     },
-    "done" : {
-      "cta" : "もう一度やり直してください"
+    "fund" : {
+      "cta" : "ウォレットに資金を追加する",
+      "title" : "まずはウォレットへの入金から始めましょう",
+      "subTitle" : "お好きな方法でLedger Walletに入金—送金、購入または現金をステーブルコインに交換。"
     }
   },
   "discover" : {
@@ -3652,7 +3662,47 @@
         "addSampleWalletCarouselTag" : "下部にウォレットカルーセルを追加（タグ）",
         "addSampleWalletCarouselTagDesc" : "タグ、タイトル、画像、リンク付きのモックカード1枚。Brazeなし。",
         "dismissAll" : "すべてのローカルカードを削除",
-        "dismissAllDesc" : "ローカルで生成されたすべてのコンテンツカードを削除します。"
+        "dismissAllDesc" : "ローカルで生成されたすべてのコンテンツカードを削除します。",
+        "genericAwareness" : {
+          "title" : "汎用注意喚起モーダル",
+          "description" : "未加工のBraze風カードを作成し、汎用アウェアネスモーダルパーサーで処理した後、ポートフォリオに戻ってドロワーを表示します。",
+          "carousel" : "カルーセル",
+          "featureIntro" : "機能紹介",
+          "appStart" : "アプリスタート",
+          "deeplink" : "ディープリンク",
+          "campaignId" : "キャンペーンID",
+          "titleField" : "タイトル",
+          "subtitle" : "サブタイトル",
+          "imageUrl" : "画像URL",
+          "primaryButtonLabel" : "プライマリボタンのラベル",
+          "primaryButtonLink" : "プライマリボタンリンク",
+          "secondaryButtonLabel" : "セカンダリボタンラベル",
+          "secondaryButtonLink" : "セカンダリボタンリンク",
+          "icon" : "アイコン",
+          "slide" : "スライド",
+          "item" : "商品",
+          "addItem" : "{{item}}を追加",
+          "removeItem" : "削除",
+          "create" : "汎用注意喚起モーダルを作成",
+          "createDesc" : "フォームを生のBraze風カードとして解析し、既存のモーダルリストに追加します。",
+          "createCarousel" : "カルーセル汎用アウェアネスモーダルを作成",
+          "createCarouselDesc" : "カルーセル型の汎用アウェアネスモーダルを作成するフォームを開きます。",
+          "createFeatureIntro" : "機能紹介の汎用アウェアネスモーダルを作成",
+          "createFeatureIntroDesc" : "機能紹介の汎用アウェアネスモーダルを作成するフォームを開きます。",
+          "openCurrent" : "現在のキャンペーンを開く",
+          "openCurrentDesc" : "このキャンペーンのドロワーの都道府県を設定します。ポートフォリオに戻って確認してください。",
+          "clear" : "汎用的な通知モーダルをクリア",
+          "clearDesc" : "現在アプリ内の都道府県に保管されているすべての一般的な認識モーダルを削除してください。",
+          "existingTitle" : "既存の汎用的な注意喚起モーダル",
+          "existingDescription" : "キャンペーンをタップして開くドロワーとして設定し、ポートフォリオに戻ります。",
+          "noExisting" : "現在、一般的なアウェアネスモーダルはアプリ内の都道府県に保管されていません。",
+          "existingDesc" : "{{layout}} • {{count}}エントリー",
+          "layoutLabel" : "レイアウト",
+          "idLabel" : "ID",
+          "triggerLabel" : "トリガー",
+          "entriesLabel" : "エントリー（{{count}}）",
+          "untitledEntry" : "無題のエントリー"
+        }
       }
     }
   },
@@ -3664,6 +3714,14 @@
       "descVariantB" : "新規トークン、収益機会、市場変動をリアルタイムでお知らせします。通知はいつでも解除できます。",
       "allow" : "通知を許可",
       "later" : "後で"
+    },
+    "optInScreen" : {
+      "title" : "通知を有効にしますか？",
+      "description" : "新規トークン、収益機会、市場変動をリアルタイムでお知らせします。設定でいつでも解除できます。",
+      "emptyTitle" : "通知はすでに有効になっています",
+      "emptyDescription" : "Ledger Walletからのリアルタイムアラートを受け取る設定が完了しました。",
+      "errorTitle" : "通知は利用できません",
+      "errorDescription" : "通知設定を確認できませんでした。オンボーディングを続行し、後で設定から更新できます。"
     },
     "ptxServices" : {
       "toast" : {
@@ -4814,8 +4872,270 @@
     },
     "chooseAccountToFund" : "資金を追加するアカウントを選択"
   },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "デバイスがロック済みです",
+        "description" : "デバイスのロックを解除して続行する。"
+      },
+      "unlockDevice" : {
+        "title" : "{{productName}}のロックを解除"
+      },
+      "continueOnDevice" : {
+        "title" : "あなたの{{productName}}で続ける",
+        "description" : "画面に表示される手順に従ってください。"
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "デバイスが切断されました",
+        "description" : "Ledgerは接続されなくなりました。デバイスの電源が入っていて、Bluetoothの通信範囲内にあるか、接続されていることを確認してください。"
+      },
+      "intentError" : {
+        "title" : "不明なエラー",
+        "description" : "エラーが発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+      },
+      "invalidOperation" : {
+        "title" : "無効な状態",
+        "description" : "エラーが発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+      }
+    },
+    "initialization" : {
+      "loading" : {
+        "title" : "読み込み中"
+      },
+      "installingApp" : {
+        "title" : "アプリをインストール"
+      },
+      "outdatedAppWarning" : {
+        "title" : "アプリのバージョンが最新ではありません。",
+        "description" : "デバイスの{{appName}}アプリに重要なアップデートがあります。My Ledgerに移動してアップデートしてください。"
+      },
+      "retryable" : {
+        "userRefused" : {
+          "title" : "デバイス上で操作が却下されました。"
+        },
+        "deviceBusy" : {
+          "title" : "Ledgerデバイスで操作が保留されています",
+          "description" : "完了し、「Retry（再試行）」を選択する。"
+        }
+      },
+      "blocking" : {
+        "deviceNotOnboarded" : {
+          "title" : "お客様のLedgerはまだ使用する準備ができていません",
+          "description" : "最初に{{productName}}をセットアップする必要があります。 デバイスのセットアッププロセスをご案内します"
+        },
+        "unsupportedFirmwareVersion" : {
+          "title" : "Ledger OSアップデートが必要です"
+        },
+        "unsupportedApplication" : {
+          "title" : "サポートされていない機能",
+          "description" : "この操作に必要なアプリは、現在お使いのLedgerデバイスでは利用できません。詳細についてはLedgerサポートにお問い合わせください。"
+        },
+        "unsupportedFeature" : {
+          "title" : "サポートされていない機能",
+          "description" : "この操作に必要なアプリは、現在お使いのLedgerデバイスでは利用できません。詳細についてはLedgerサポートにお問い合わせください。"
+        },
+        "wrongDeviceForAccount" : {
+          "title" : "シークレットリカバリーフレーズに誤りがあります",
+          "description" : "このLedgerには、選択されたアカウントにリンクされたリカバリーフレーズが設定されていません。正しいデバイスを使用していることをご確認ください。"
+        },
+        "deviceOutOfStorageSpace" : {
+          "title" : "デバイスのメモリが不足しています",
+          "description" : "デバイスのメモリが不足しています。アプリをアンインストールしてもう一度お試しください。"
+        }
+      },
+      "cta" : {
+        "openMyLedger" : "My Ledgerを開く",
+        "goToMyLedger" : "My Ledgerに移動",
+        "setupDevice" : "デバイスをセットアップ",
+        "updateLedgerOs" : "Ledger OSを更新する",
+        "cancelOperation" : "操作をキャンセル",
+        "contactLedgerSupport" : "Ledgerサポートへ問い合わせ"
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledgerデバイス",
+        "available" : "利用可能",
+        "notConnected" : "接続されていません"
+      },
+      "states" : {
+        "connecting" : {
+          "title" : "読み込み中"
+        },
+        "connectionError" : {
+          "errors" : {
+            "blePairingRefused" : {
+              "title" : "ペアリングが拒否されました",
+              "cta" : {
+                "retry" : "ペアリングを再試行"
+              }
+            },
+            "blePairingPeerRemovedPairing" : {
+              "title" : "スマートフォンのBluetooth設定から{{productName}}を削除してください",
+              "description" : "ペアリングの問題を解決するには、スマートフォンのBluetoothリストから{{productName}}を削除し、本アプリに戻ってから再度お試しください。",
+              "cta" : {
+                "retry" : "ペアリング解除済み。再試行",
+                "help" : "詳しい手順を見る"
+              }
+            },
+            "unknown" : {
+              "title" : "ペアリングに失敗しました",
+              "description" : "もう一度お試しいただくか、以下のBluetoothのトラブルシューティング記事をお読みください。",
+              "tip" : "デバイスのロックが解除されていることを確認してください。",
+              "cta" : {
+                "retry" : "再試行",
+                "help" : "ヘルプ"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "デバイスを選択"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "bluetoothPermissionDeniedPromptable" : {
+              "title" : "Bluetoothアクセスを許可する",
+              "description" : "Bluetoothで近くのLedgerデバイスをスキャンするのを許可する。",
+              "cta" : {
+                "retry" : "許可する",
+                "ignore" : "USBで続行"
+              }
+            },
+            "bluetoothPermissionDeniedManualSettings" : {
+              "title" : "Bluetoothアクセスを許可する",
+              "description" : "Bluetooth許可が必要です。「設定」→「アプリ」→「Ledger Wallet」→「許可」→「近くのデバイス」に移動してから、戻ってください。",
+              "cta" : {
+                "retry" : "有効にしました。もう一度お試しください",
+                "ignore" : "USBで続行"
+              }
+            },
+            "bluetoothPermissionUnauthorizedManualSettings" : {
+              "title" : "Bluetoothアクセスを許可する",
+              "description" : "Ledger Walletでは、デバイスを見つけるためにBluetoothの許可が必要です。「設定」で有効にしてください。",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "有効にしました。もう一度お試しください"
+                  },
+                  "android" : {
+                    "retry" : "有効にしました。もう一度お試しください",
+                    "ignore" : "USBで続行"
+                  }
+                }
+              }
+            },
+            "bluetoothDisabledPromptable" : {
+              "title" : "Bluetoothをオンにする",
+              "description" : "Bluetoothがオフになっています。電源を入れて、Ledgerデバイスを見つけてください。",
+              "cta" : {
+                "retry" : "Bluetoothをオンにする",
+                "ignore" : "USBで続行"
+              }
+            },
+            "bluetoothDisabledManualAction" : {
+              "title" : "Bluetoothをオンにする",
+              "description" : "Bluetoothがオフになっています。Settings（設定）→ Bluetoothでオンにしてください。その後、戻ってきてください。",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "Bluetoothを有効にしました、もう一度お試しください"
+                  },
+                  "android" : {
+                    "retry" : "Bluetoothを有効にしました、もう一度お試しください",
+                    "ignore" : "USBで続行"
+                  }
+                }
+              }
+            },
+            "bluetoothStateUnknownCheckOnly" : {
+              "title" : "Bluetoothをチェックしています。"
+            },
+            "bluetoothUnsupported" : {
+              "title" : "Bluetoothがサポートされていません",
+              "description" : {
+                "platform" : {
+                  "android" : "このスマートフォンはBluetoothに対応していません。その代わり、USB経由でLedgerデバイスを接続することも可能です。",
+                  "ios" : "このスマートフォンはBluetoothに対応していません。Ledger Wallet Desktopをご使用いただくか、Ledgerサポートにご連絡ください。"
+                }
+              },
+              "cta" : {
+                "platform" : {
+                  "android" : {
+                    "ignore" : "USBで続行"
+                  }
+                }
+              }
+            },
+            "locationPermissionDeniedPromptable" : {
+              "title" : "位置情報へのアクセスを許可する",
+              "description" : "AndroidでBluetoothデバイスをスキャンするには、位置情報の許可が必要です。",
+              "cta" : {
+                "retry" : "許可する",
+                "ignore" : "USBで続行"
+              }
+            },
+            "locationPermissionDeniedManualSettings" : {
+              "title" : "位置情報へのアクセスを許可する",
+              "description" : "Bluetoothデバイスをスキャンするには、位置情報サービスへのアクセスが必要です。「設定」→「アプリ」→「Ledger Wallet」→「許可設定」→「位置情報」に移動してから戻ってください。",
+              "cta" : {
+                "retry" : "有効にしました、もう一度お試しください",
+                "ignore" : "USBで続行"
+              }
+            },
+            "locationDisabledPromptable" : {
+              "title" : "位置情報をオンにする",
+              "description" : "位置情報サービスはオフになっています。オンにして、Bluetoothデバイスをスキャンしてください。",
+              "cta" : {
+                "retry" : "位置情報をオンにする",
+                "ignore" : "USBで続行"
+              }
+            },
+            "locationDisabledManualAction" : {
+              "title" : "位置情報をオンにする",
+              "description" : "位置情報サービスはオフになっています。「設定」→「位置情報」からオンにしてから、戻ってきてください。",
+              "cta" : {
+                "retry" : "位置情報を有効にしました。もう一度お試しください",
+                "ignore" : "USBで続行"
+              }
+            },
+            "locationServicePermissionMissing" : {
+              "title" : "位置情報へのアクセスを許可する",
+              "description" : "位置情報の許可が不足しているようです。以下をタップして、もう一度お試しください。",
+              "cta" : {
+                "retry" : "再試行",
+                "ignore" : "USBで続行"
+              }
+            },
+            "unknown" : {
+              "title" : "問題が発生しました。",
+              "description" : "Bluetoothスキャンを開始できませんでした。もう一度お試しいただくか、Ledgerサポートにご連絡ください。",
+              "cta" : {
+                "retry" : "再試行"
+              }
+            }
+          }
+        },
+        "loading" : {
+          "title" : "読み込み中"
+        },
+        "noKnownDevice" : {
+          "title" : "Ledgerデバイスが必要です",
+          "description" : "続行するには、署名用デバイスをセットアップまたは接続してください。",
+          "connectLedgerDevice" : "Ledgerデバイスを接続",
+          "noLedgerDevice" : "Ledgerデバイスを持っていません"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "{{productName}}の電源を入れ、ロックを解除してください。"
+        }
+      }
+    }
+  },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Ledger Walletアプリを開いた状態で、Ledgerを近くに置いてください。",
+    "stuckLoaderHint" : "デバイスのロックが解除され、保留中の操作がないことを確認する",
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
     "allowManagerPermission" : "Ledgerとの安全な接続を許可する",
@@ -6269,8 +6589,16 @@
       "title" : "アカウントをデリゲートすることで報酬を得ることができます。",
       "btn" : "報酬を獲得する"
     },
+    "manage" : "管理",
     "delegation" : {
-      "addCustomValidator" : "+ カスタムバリデーターを追加"
+      "addCustomValidator" : "+ カスタムバリデーターを追加",
+      "sectionLabel" : "デリゲート"
+    },
+    "staking" : {
+      "sectionLabel" : "ステーキング",
+      "status" : "ステータス",
+      "unstaking" : "ステーキング解除",
+      "available" : "利用可能"
     }
   },
   "evm" : {
@@ -7787,6 +8115,59 @@
       "title" : "取引履歴"
     }
   },
+  "pnl" : {
+    "disclaimer" : "このデータは情報提供のみを目的としており、財務上のアドバイスではありません。税務目的には使用できません。",
+    "asset" : {
+      "return" : {
+        "title" : "未実現利益"
+      },
+      "entry" : {
+        "title" : "平均取得価格",
+        "tooltip" : "他のウォレットから購入したり、受け取ったすべてを含む、Ledger Walletを通じてこの資産に対して支払った平均価格。利益または損失をチェックするために使用されます。"
+      },
+      "drawer" : {
+        "title" : "資産の利益と損失",
+        "description" : "この資産がお客様のポートフォリオでどのように運用されたかをまとめたものです。",
+        "estimatedReturn" : {
+          "title" : "推定リターン",
+          "description" : "現在の価格で売却した場合の利益または損失の見積もり。"
+        },
+        "realisedReturn" : {
+          "title" : "リターンの実現",
+          "description" : "以前の売却、送金、またはスワップで確認された利益または損失。"
+        },
+        "totalReturn" : {
+          "title" : "総リターン",
+          "description" : "予想リターンと実現リターンの合計。"
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "未実現利益"
+      },
+      "costBasis" : {
+        "title" : "取得価格",
+        "tooltip" : "手数料を含む、現在の保有資産を取得するために支払った合計金額。"
+      },
+      "drawer" : {
+        "title" : "ポートフォリオの利益と損失",
+        "description" : "ポートフォリオのパフォーマンスを、推定収益と実現収益に分類しました。",
+        "estimatedReturn" : {
+          "title" : "推定リターン",
+          "description" : "現在の価格で売却した場合の利益または損失の見積もり。"
+        },
+        "realisedReturn" : {
+          "title" : "リターンの実現",
+          "description" : "以前の売却、送金、またはスワップで確認された利益または損失。"
+        },
+        "totalReturn" : {
+          "title" : "総リターン",
+          "description" : "推定リターンと実現リターンの合計。"
+        }
+      }
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -8081,6 +8462,10 @@
         "recover" : {
           "title" : "バックアップの保護を完了",
           "description" : "Ledger Recoverの有効化を完了してください"
+        },
+        "discoverWallet" : {
+          "title" : "ウォレットを見る",
+          "description" : "ポートフォリオの新機能と使い方を確認しましょう。"
         }
       }
     },
@@ -8113,6 +8498,10 @@
       "syncAccounts" : {
         "titleCompleted" : "アカウントの同期が完了しました",
         "popupLabel" : "アカウント同期済み"
+      },
+      "discoverWallet" : {
+        "titleCompleted" : "ウォレットツアー完了",
+        "popupLabel" : "ウォレットツアー完了"
       }
     }
   },
@@ -8254,6 +8643,24 @@
         "daily" : "毎日の報酬",
         "eigenlayer_points" : "Eigenlayerポイント",
         "validator" : "バリデーター報酬"
+      },
+      "info" : {
+        "available" : {
+          "title" : "{{currencyTicker}} がご利用可能です",
+          "description" : "これは利用可能額です。"
+        },
+        "delegated" : {
+          "title" : "デリゲートされた資産",
+          "description" : "デリゲートされた資産は、{{currencyName}}の投票に使われます。これがお客様の合計票数です。"
+        },
+        "undelegating" : {
+          "title" : "デリゲート解除中",
+          "description" : "デリゲートを解除した資産は、{{numberOfDays}}日間のロック期間後に再び利用可能になります。"
+        },
+        "delegationUnavailable" : {
+          "title" : "デリゲート不可",
+          "description" : "アカウントの利用可能残高が不足しているため、新たなデリゲートを開始できません。"
+        }
       }
     },
     "noFundsModal" : {
@@ -8278,6 +8685,29 @@
     "getFundsModal" : {
       "text" : "{{coin}}を入手してステーキング",
       "description" : "Ledger Walletを使用すると、Ledgerで暗号資産の直接購入、スワップ、受け取りができます。"
+    },
+    "default" : {
+      "info" : {
+        "undelegating" : {
+          "description" : "これは、現在ステーキングされていない数量です。出金が完了すると、利用可能残高に表示されます。"
+        }
+      }
+    }
+  },
+  "analyticsConsent" : {
+    "title" : "Ledgerの改善にご協力ください",
+    "subTitle" : "お客様の同意のもと、機能の改善とバグ修正のために使用状況データを収集します。当社は、お客様の資産やポートフォリオの詳細をチェックすることはありません。",
+    "setPreferencesCTA" : "設定を選択してください",
+    "refuseCTA" : "すべて拒否する",
+    "acceptCTA" : "すべて受け入れる",
+    "privacyPolicy" : "同意は設定からいつでも取り消すことができます。",
+    "privacyPolicyCTA" : "プライバシーポリシー",
+    "setPreferences" : {
+      "title" : "設定を選択してください",
+      "performance" : "アプリのパフォーマンス",
+      "performanceDesc" : "Ledgerがアプリの使用状況を収集できるようにし、ユーザー体験を向上させる",
+      "experience" : "好みに合わせてコンテンツをカスタマイズ",
+      "experienceDesc" : "Ledgerがアプリの使用状況を収集して、パーソナライズされたコンテンツを提供できるようにします。"
     }
   },
   "analyticsOptIn" : {
@@ -8673,6 +9103,7 @@
     "addresses" : {
       "title" : "アドレス",
       "addAccount" : "追加",
+      "seeAll" : "すべて表示",
       "empty" : "まだアドレスがありません「追加」ボタンをタップして開始します。"
     },
     "marketStats" : {
@@ -8680,10 +9111,12 @@
       "marketCap" : "マーケットキャップ",
       "marketRank" : "マーケットランキング",
       "circulatingSupply" : "循環供給",
-      "circulatingSupplyTooltip" : "現在、市場でトレード・流通可能なコインの数。",
+      "circulatingSupplyTooltip" : "現在、市場に流通し、一般に保有されているトークンの総数。ロック済み、予約済み、または未発行のトークンは除外されます。",
       "maxSupply" : "最大供給量",
-      "maxSupplyTooltip" : "この暗号資産で将来的に存在し得るコインの最大数。",
+      "maxSupplyTooltip" : "将来的に存在し得るトークンの最大数。一部の資産では、インフレーションを防ぐためにこれは固定されています。",
+      "marketCapTooltip" : "流通しているすべてのコインの総価値。市場における暗号資産の総価値とお考えください。",
       "tradingVolume" : "24時間取引量",
+      "tradingVolumeTooltip" : "過去24時間に取引された合計数量。",
       "error" : "マーケット統計を読み込めません"
     },
     "pricePerformance" : {
@@ -8704,6 +9137,10 @@
     "fallbackBanner" : {
       "title" : "この資産は、スワップと購入に対応していません。"
     },
+    "hiddenAssetBanner" : {
+      "title" : "この資産はポートフォリオで非表示です。",
+      "showAsset" : "資産を表示"
+    },
     "balanceDetails" : {
       "totalBalance" : "総資産",
       "transfer" : "送金",
@@ -8713,7 +9150,14 @@
       "earnBannerGeneric" : "この資産で報酬獲得",
       "earnBannerSubtitle" : "この資産を保有して稼ぐ",
       "earnBannerAction" : "報酬獲得へ移動",
-      "availableBalanceTooltip" : "ステーキングまたはデリゲートされた金額を除く、すぐにご利用可能な資金。"
+      "availableBalanceTooltip" : "今すぐ利用でき、いつでも自由に送金・スワップ・出金可能な保有資産の金額。"
+    },
+    "coinOptions" : {
+      "openMenuA11yLabel" : "コインのオプション",
+      "addFavourite" : "お気に入りに追加",
+      "removeFavourite" : "お気に入りから削除",
+      "hideFromPortfolio" : "ポートフォリオで非表示にする",
+      "showInPortfolio" : "ポートフォリオに表示する"
     }
   },
   "assetSelection" : {

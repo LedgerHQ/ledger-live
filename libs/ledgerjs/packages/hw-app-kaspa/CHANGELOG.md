@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-kaspa
 
+## 1.7.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.3
+
+## 1.7.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.3-next.0
+
 ## 1.7.2
 
 ### Patch Changes

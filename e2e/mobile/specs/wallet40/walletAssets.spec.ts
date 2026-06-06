@@ -1,7 +1,10 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
+setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () => {
   const tmsLinks = ["B2CQA-4839", "B2CQA-4840"];
   const currency = Account.INJ_1.currency;
@@ -33,6 +36,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
   });
 });
 
+setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than section minimum (padding)", () => {
   const tmsLinks = ["B2CQA-4841"];
 
@@ -55,6 +59,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than sectio
   });
 });
 
+setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", () => {
   const tmsLinks = ["B2CQA-4834", "B2CQA-4837", "B2CQA-4838"];
 

@@ -1,5 +1,21 @@
 # @shared/feature-flags
 
+## 0.9.0
+
+### Minor Changes
+
+- [#17837](https://github.com/LedgerHQ/ledger-live/pull/17837) [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwm - lwd feature flag for counterfeit warning
+
+- [#17765](https://github.com/LedgerHQ/ledger-live/pull/17765) [`bff8280`](https://github.com/LedgerHQ/ledger-live/commit/bff8280159275bc7498e70f4e2a18962fb0ffbd0) Thanks [@ysitbon](https://github.com/ysitbon)! - Tighten `flagWithRecord` so `Features[K].params` infers the record's value type instead of collapsing to `unknown`. Consumers indexing into a `flagWithRecord`-backed flag (e.g. `receiveStakingFlowConfigDesktop.params[currencyId]`) now get the proper schema-derived type without needing a cast.
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#17837](https://github.com/LedgerHQ/ledger-live/pull/17837) [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwm - lwd feature flag for counterfeit warning
+
+- [#17765](https://github.com/LedgerHQ/ledger-live/pull/17765) [`bff8280`](https://github.com/LedgerHQ/ledger-live/commit/bff8280159275bc7498e70f4e2a18962fb0ffbd0) Thanks [@ysitbon](https://github.com/ysitbon)! - Tighten `flagWithRecord` so `Features[K].params` infers the record's value type instead of collapsing to `unknown`. Consumers indexing into a `flagWithRecord`-backed flag (e.g. `receiveStakingFlowConfigDesktop.params[currencyId]`) now get the proper schema-derived type without needing a cast.
+
 ## 0.8.0
 
 ### Minor Changes
