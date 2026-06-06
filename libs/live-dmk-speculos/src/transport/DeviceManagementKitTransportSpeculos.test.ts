@@ -64,7 +64,7 @@ beforeAll(() => {
     listenToAvailableDevices: jest.fn().mockImplementation(() => listenSubject.asObservable()),
     connect: jest.fn().mockResolvedValue("session-1"),
     sendApdu: jest.fn(),
-    disconnect: jest.fn(),
+    disconnect: jest.fn().mockResolvedValue(undefined),
   };
 
   jest.spyOn(DeviceManagementKitBuilder.prototype, "addTransport").mockReturnThis();
@@ -130,6 +130,29 @@ describe("DeviceManagementKitTransportSpeculos", () => {
 
     // then
     expect(transport).toBeInstanceOf(DeviceManagementKitTransportSpeculos);
+  });
+
+  it("open() reuses a cached session within the idle window but reconnects once it is stale", async () => {
+    const baseUrl = "http://127.0.0.1:1234";
+
+    // first open → one fresh connect
+    await openTransport({ apiPort: "1234" });
+    expect(fakeDmk.connect).toHaveBeenCalledTimes(1);
+
+    // second open shortly after → reuse cached session, no reconnect, no disconnect
+    await DeviceManagementKitTransportSpeculos.open({ apiPort: "1234" });
+    expect(fakeDmk.connect).toHaveBeenCalledTimes(1);
+    expect(fakeDmk.disconnect).not.toHaveBeenCalled();
+
+    // simulate the session sitting idle past the proxy's socket timeout
+    const entry = DeviceManagementKitTransportSpeculos["byBase"].get(baseUrl)!;
+    entry.lastUsedAt =
+      Date.now() - (DeviceManagementKitTransportSpeculos.MAX_SESSION_IDLE_MS + 1_000);
+
+    // third open → stale session dropped + fresh reconnect
+    await openTransport({ apiPort: "1234" });
+    expect(fakeDmk.disconnect).toHaveBeenCalledWith({ sessionId: "session-1" });
+    expect(fakeDmk.connect).toHaveBeenCalledTimes(2);
   });
 
   it.each([

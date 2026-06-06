@@ -32,6 +32,8 @@ type DmkEntry = {
   sessionId?: string;
   connectPromise?: Promise<void>;
   timeout: number;
+  /** Epoch ms of the last successful device interaction on this session. */
+  lastUsedAt?: number;
 };
 
 type ControllerButton = "left" | "right" | "both";
@@ -47,6 +49,10 @@ type ButtonsController = {
 
 export default class SpeculosHttpTransport extends Transport {
   static readonly byBase = new Map<string, DmkEntry>();
+
+  // The pod gateway closes idle keep-alive sockets after ~60s; a session reused past that
+  // point fails its first APDU with ERR_NETWORK. Reconnect well under that window.
+  static readonly MAX_SESSION_IDLE_MS = 30_000;
   private readonly options: SpeculosHttpTransportOpts;
   private readonly baseUrl: string;
   private readonly buttonEnumToControllerInput: Record<SpeculosButton, ControllerButton> = {
@@ -159,7 +165,15 @@ export default class SpeculosHttpTransport extends Transport {
   }
 
   private static async ensureSession(deviceManagementEntry: DmkEntry) {
-    if (deviceManagementEntry.sessionId) return;
+    if (deviceManagementEntry.sessionId) {
+      const idleMs = Date.now() - (deviceManagementEntry.lastUsedAt ?? 0);
+      if (idleMs <= this.MAX_SESSION_IDLE_MS) return;
+
+      log("speculos-transport", `session idle ${idleMs}ms exceeds limit, reconnecting`);
+      const staleSessionId = deviceManagementEntry.sessionId;
+      deviceManagementEntry.sessionId = undefined;
+      await deviceManagementEntry.dmk.disconnect({ sessionId: staleSessionId }).catch(() => {});
+    }
     if (deviceManagementEntry.connectPromise) return deviceManagementEntry.connectPromise;
 
     deviceManagementEntry.connectPromise = (async () => {
@@ -176,6 +190,7 @@ export default class SpeculosHttpTransport extends Transport {
           sessionRefresherOptions: { isRefresherDisabled: true },
         }),
       );
+      deviceManagementEntry.lastUsedAt = Date.now();
     })();
 
     try {
@@ -183,6 +198,12 @@ export default class SpeculosHttpTransport extends Transport {
     } finally {
       deviceManagementEntry.connectPromise = undefined;
     }
+  }
+
+  /** Marks the cached session as freshly used so the idle-staleness check stays accurate. */
+  private static touch(baseUrl: string): void {
+    const entry = this.byBase.get(baseUrl);
+    if (entry) entry.lastUsedAt = Date.now();
   }
 
   static async disconnectAll(): Promise<void> {
@@ -244,6 +265,7 @@ export default class SpeculosHttpTransport extends Transport {
 
     try {
       const { data, statusCode } = await withTransientHttpRetries("speculos-send-apdu", sendOnce);
+      SpeculosHttpTransport.touch(this.baseUrl);
       return Buffer.from([...data, ...statusCode]);
     } catch {
       const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
@@ -261,6 +283,7 @@ export default class SpeculosHttpTransport extends Transport {
         "speculos-send-apdu-after-reconnect",
         sendOnce,
       );
+      SpeculosHttpTransport.touch(this.baseUrl);
       return Buffer.from([...data, ...statusCode]);
     }
   }
