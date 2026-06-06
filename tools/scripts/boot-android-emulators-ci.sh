@@ -12,7 +12,7 @@
 
 set -uo pipefail
 
-readonly _EXPECTED_EMULATOR_COUNT=3
+readonly _EXPECTED_EMULATOR_COUNT=1
 
 log() {
   echo "[$(date +%H:%M:%S)] $*"
@@ -46,7 +46,7 @@ if [[ "${#SERIALS[@]}" -ne "$_EXPECTED_EMULATOR_COUNT" ]]; then
   exit 1
 fi
 
-AVD_NAMES=("$AVD_NAME" "${AVD_NAME}_2" "${AVD_NAME}_3")
+AVD_NAMES=("$AVD_NAME")
 
 log "🛫 Starting emulators..."
 i=1
