@@ -165,10 +165,10 @@ env:
   AVD_PROFILE: pixel_9_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 2
+  AVD_CORES: 4
   AVD_RAM_SIZE: 8192
   AVD_HEAP_SIZE: 1024
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  AVD_OPTIONS: -no-window -gpu auto -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
   MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
