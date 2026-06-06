@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.14.2",
+  "version": "1.15.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -93,7 +93,6 @@
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.1.1",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",

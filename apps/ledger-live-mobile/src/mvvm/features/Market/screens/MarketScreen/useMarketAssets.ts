@@ -1,41 +1,57 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { KeysPriceChange, Order } from "@ledgerhq/live-common/market/utils/types";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import type { MarketListCategory } from "~/reducers/types";
+import type {
+  MarketListCategory,
+  MarketListFilterTimeframe,
+  MarketListSorting,
+} from "~/reducers/types";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
-import { mapMarketCurrencyToDisplayData } from "../../utils/marketAssetDisplay";
+import {
+  getMarketListDisplayRange,
+  getMarketListOrder,
+  getMarketListRequestRange,
+} from "./marketListFilters";
+import {
+  canReachEnd,
+  type EmptyState,
+  getEmptyState,
+  getMarketAssets,
+  getMarketDataForDisplay,
+  getMarketFilter,
+} from "./marketAssetsHelpers";
+import { useMarketAssetCategoryState } from "./useMarketAssetCategoryState";
+import {
+  getNextPaginationState,
+  type PaginationParams,
+  useMarketAssetPagination,
+} from "./useMarketAssetPagination";
 
-const DEFAULT_RANGE = KeysPriceChange.day;
 const PAGE_SIZE = 20;
 
 export type MarketAssetsParams = {
   search?: string;
   category?: MarketListCategory;
+  sorting?: MarketListSorting;
+  timeframe?: MarketListFilterTimeframe;
   starredMarketCoins?: string[];
-};
-
-type PaginationState = {
-  page: number;
-  search: string;
-  category: MarketListCategory;
-  favoriteIdsKey: string;
 };
 
 export interface MarketAssetsResult {
   assets: MarketAssetDisplayData[];
   loading: boolean;
-  loadingMore: boolean;
   isError: boolean;
-  emptyState: "favorites" | undefined;
+  emptyState: EmptyState;
   onEndReached: () => void;
 }
 
 export function useMarketAssets({
   search = "",
   category = "all",
+  sorting = "marketCap",
+  timeframe = "1D",
   starredMarketCoins = [],
 }: MarketAssetsParams = {}): MarketAssetsResult {
   const { locale } = useLocale();
@@ -44,97 +60,93 @@ export function useMarketAssets({
   const counterCurrency = counterValueCurrency.ticker.toLowerCase();
   const counterValueUnit = counterValueCurrency.units[0];
   const normalizedSearch = search.trim();
-  const hasSearch = normalizedSearch.length > 0;
-  const isFavoritesCategory = !hasSearch && category === "starred";
-  const sortedFavoriteIds = useMemo(
-    () =>
-      isFavoritesCategory
-        ? [...starredMarketCoins].sort((firstId, secondId) => firstId.localeCompare(secondId))
-        : undefined,
-    [isFavoritesCategory, starredMarketCoins],
-  );
-  const favoriteIdsKey = sortedFavoriteIds?.join(",") ?? "";
-  const hasFavoriteIds = Boolean(sortedFavoriteIds?.length);
-  const shouldFetchAssets = !isFavoritesCategory || hasFavoriteIds;
-  const [pagination, setPagination] = useState<PaginationState>(() => ({
-    page: 1,
-    search: normalizedSearch,
-    category,
+  const {
+    isFavoritesCategory,
+    isStocksCategory,
+    sortedFavoriteIds,
     favoriteIdsKey,
-  }));
-  const isPaginationSynced =
-    pagination.search === normalizedSearch &&
-    pagination.category === category &&
-    pagination.favoriteIdsKey === favoriteIdsKey;
-  const page = isPaginationSynced ? pagination.page : 1;
-  const requestedPage = shouldFetchAssets ? page : 0;
-
-  useEffect(() => {
-    if (!isPaginationSynced) {
-      setPagination({ page: 1, search: normalizedSearch, category, favoriteIdsKey });
-    }
-  }, [category, favoriteIdsKey, isPaginationSynced, normalizedSearch]);
+    hasFavoriteIds,
+    shouldFetchAssets,
+  } = useMarketAssetCategoryState({ category, normalizedSearch, starredMarketCoins });
+  const paginationParams = useMemo<PaginationParams>(
+    () => ({
+      search: normalizedSearch,
+      category,
+      favoriteIdsKey,
+      sorting,
+      timeframe,
+    }),
+    [category, favoriteIdsKey, normalizedSearch, sorting, timeframe],
+  );
+  const { page, requestedPage, setPagination } = useMarketAssetPagination({
+    params: paginationParams,
+    shouldFetchAssets,
+  });
+  const requestRange = getMarketListRequestRange(timeframe);
+  const displayRange = getMarketListDisplayRange(timeframe);
+  const order = getMarketListOrder(sorting);
 
   const result = useMarketData({
     counterCurrency,
-    range: DEFAULT_RANGE,
-    order: Order.MarketCapDesc,
+    range: requestRange,
+    order,
     limit: PAGE_SIZE,
     liveCompatible: true,
     page: requestedPage,
     search: normalizedSearch,
+    filter: getMarketFilter(isStocksCategory),
     starred: sortedFavoriteIds,
   });
+  const marketData = getMarketDataForDisplay(result.data, shouldFetchAssets);
 
-  const assets = useMemo(() => {
-    const marketData = shouldFetchAssets ? result.data : [];
-    const uniqueById = [...new Map(marketData.map(item => [item.id, item])).values()];
-    return uniqueById.map(item =>
-      mapMarketCurrencyToDisplayData(item, {
+  const assets = useMemo(
+    () =>
+      getMarketAssets({
+        marketData,
+        isStocksCategory,
         counterCurrency,
         counterValueUnit,
-        range: DEFAULT_RANGE,
+        displayRange,
         locale,
         t,
       }),
-    );
-  }, [shouldFetchAssets, result.data, counterCurrency, counterValueUnit, locale, t]);
+    [counterCurrency, counterValueUnit, displayRange, isStocksCategory, locale, marketData, t],
+  );
 
   const hasData = assets.length > 0;
+  const canLoadMore = shouldFetchAssets && marketData.length >= page * PAGE_SIZE;
   const loading = shouldFetchAssets && (result.isLoading || result.isPending) && !hasData;
-  const loadingMore = shouldFetchAssets && result.isFetching && hasData;
+  const isFetchingNextPage = shouldFetchAssets && page > 1 && result.isFetching && hasData;
 
   const onEndReached = useCallback(() => {
-    if (!shouldFetchAssets || !hasData || loading || loadingMore || result.isError) return;
+    if (
+      !canReachEnd({
+        shouldFetchAssets,
+        canLoadMore,
+        loading,
+        isFetchingNextPage,
+        isError: result.isError,
+      })
+    ) {
+      return;
+    }
 
-    setPagination(current => {
-      if (
-        current.search !== normalizedSearch ||
-        current.category !== category ||
-        current.favoriteIdsKey !== favoriteIdsKey
-      ) {
-        return { page: 1, search: normalizedSearch, category, favoriteIdsKey };
-      }
-
-      return { ...current, page: current.page + 1 };
-    });
+    setPagination(current => getNextPaginationState(current, paginationParams));
   }, [
-    category,
-    favoriteIdsKey,
-    hasData,
+    canLoadMore,
+    isFetchingNextPage,
     loading,
-    loadingMore,
-    normalizedSearch,
+    paginationParams,
     result.isError,
+    setPagination,
     shouldFetchAssets,
   ]);
 
   return {
     assets,
     loading,
-    loadingMore,
     isError: shouldFetchAssets && result.isError,
-    emptyState: isFavoritesCategory && !hasFavoriteIds ? "favorites" : undefined,
+    emptyState: getEmptyState({ isFavoritesCategory, hasFavoriteIds, isStocksCategory }),
     onEndReached,
   };
 }

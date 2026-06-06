@@ -1,5 +1,9 @@
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
+
 const tags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
+setTeamOwner(Team.WALLET_XP);
 describe("Wallet Page", () => {
   beforeAll(async () => {
     await app.init({

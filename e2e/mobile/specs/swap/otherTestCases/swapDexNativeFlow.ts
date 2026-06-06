@@ -1,9 +1,11 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
+import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -33,6 +35,7 @@ export function runSwapDexNativeFlow(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap test DEX provider native flow - (${provider.uiName})`, async () => {

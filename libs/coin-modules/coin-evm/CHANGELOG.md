@@ -1,5 +1,55 @@
 # @ledgerhq/coin-evm
 
+## 4.1.0
+
+### Minor Changes
+
+- [#17747](https://github.com/LedgerHQ/ledger-live/pull/17747) [`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2) Thanks [@qperrot](https://github.com/qperrot)! - Fix: evm staking delegation when using full balance
+
+- [#17648](https://github.com/LedgerHQ/ledger-live/pull/17648) [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Arc and Arc Testnet (Circle's USDC-native EVM L1, chainIds 5042 and 5042002)
+
+- [#17801](https://github.com/LedgerHQ/ledger-live/pull/17801) [`881cb3b`](https://github.com/LedgerHQ/ledger-live/commit/881cb3b59ac8d1aada4f3e8092ada951b716dfea) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(coin-evm): add monad staking precompile
+
+- [#17428](https://github.com/LedgerHQ/ledger-live/pull/17428) [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(desktop): claim reward flow for evm native staking
+
+- [#17753](https://github.com/LedgerHQ/ledger-live/pull/17753) [`9960460`](https://github.com/LedgerHQ/ledger-live/commit/9960460013f52482dd81d455ae5382acc28fee9b) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Send Summary “total spent” display with fee-currency accounts; restore EVM tx token fields (assetReference/assetOwner) during raw deserialization for edit flow.
+
+### Patch Changes
+
+- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/devices@8.15.0
+  - @ledgerhq/domain-service@1.8.5
+  - @ledgerhq/evm-tools@1.12.8
+  - @ledgerhq/live-network@2.6.3
+
+## 4.1.0-next.0
+
+### Minor Changes
+
+- [#17747](https://github.com/LedgerHQ/ledger-live/pull/17747) [`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2) Thanks [@qperrot](https://github.com/qperrot)! - Fix: evm staking delegation when using full balance
+
+- [#17648](https://github.com/LedgerHQ/ledger-live/pull/17648) [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Arc and Arc Testnet (Circle's USDC-native EVM L1, chainIds 5042 and 5042002)
+
+- [#17801](https://github.com/LedgerHQ/ledger-live/pull/17801) [`881cb3b`](https://github.com/LedgerHQ/ledger-live/commit/881cb3b59ac8d1aada4f3e8092ada951b716dfea) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(coin-evm): add monad staking precompile
+
+- [#17428](https://github.com/LedgerHQ/ledger-live/pull/17428) [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(desktop): claim reward flow for evm native staking
+
+- [#17753](https://github.com/LedgerHQ/ledger-live/pull/17753) [`9960460`](https://github.com/LedgerHQ/ledger-live/commit/9960460013f52482dd81d455ae5382acc28fee9b) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Send Summary “total spent” display with fee-currency accounts; restore EVM tx token fields (assetReference/assetOwner) during raw deserialization for edit flow.
+
+### Patch Changes
+
+- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/devices@8.15.0-next.0
+  - @ledgerhq/domain-service@1.8.5-next.0
+  - @ledgerhq/evm-tools@1.12.8-next.0
+  - @ledgerhq/live-network@2.6.3-next.0
+
 ## 4.0.0
 
 ### Major Changes

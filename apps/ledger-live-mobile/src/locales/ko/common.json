@@ -1683,19 +1683,29 @@
   },
   "productTour" : {
     "swap" : {
-      "cta" : "스왑 살펴보기"
+      "cta" : "스왑 살펴보기",
+      "title" : "앱 전환 없이 간편하게 스왑하기",
+      "subTitle" : "신뢰할 수 있는 스왑 업체를 통해 수천 가지 자산을 제약 없이 거래하세요."
     },
     "stake" : {
-      "cta" : "수익 창출 살펴보기"
+      "cta" : "수익 창출 살펴보기",
+      "title" : "보유한 암호화폐로 누리는 리워드 혜택",
+      "subTitle" : "수익 창출 섹션에서 암호화폐를 다양하게 활용해 보세요."
     },
     "card" : {
-      "cta" : "카드 신청하기"
+      "cta" : "카드 발급받기",
+      "title" : "암호화폐를 실생활에서도 자유롭게",
+      "subTitle" : "온·오프라인 어디서든 크립토 카드로 결제하고 캐시백 혜택을 누려보세요."
     },
     "portfolio" : {
-      "cta" : "포트폴리오 확인하기"
+      "cta" : "포트폴리오 확인하기",
+      "title" : "시장 트렌드 앞서가기",
+      "subTitle" : "내 자산과 보상 내역, 그리고 시장 트렌드를 한눈에 확인하세요."
     },
-    "done" : {
-      "cta" : "다시 시작하기"
+    "fund" : {
+      "cta" : "자산 입금하기",
+      "title" : "자산을 입금하고 시작하세요",
+      "subTitle" : "간편한 암호화폐 전송과 매수는 물론 Cash-to-Stablecoin 옵션까지, 원하는 방식으로 Ledger Wallet에 자산을 추가하세요."
     }
   },
   "discover" : {
@@ -3652,7 +3662,47 @@
         "addSampleWalletCarouselTag" : "하단 지갑 캐러셀(태그) 추가",
         "addSampleWalletCarouselTagDesc" : "태그, 제목, 이미지, 링크가 포함된 모의 카드 하나를 생성합니다. Braze 없음.",
         "dismissAll" : "모든 로컬 카드 거부",
-        "dismissAllDesc" : "로컬에서 생성된 콘텐츠 카드를 모두 제거합니다"
+        "dismissAllDesc" : "로컬에서 생성된 콘텐츠 카드를 모두 제거합니다",
+        "genericAwareness" : {
+          "title" : "일반 안내 모달",
+          "description" : "가공되지 않은 Braze 형태의 카드를 생성하고, 일반 인식 모달 파서로 처리한 다음, 포트폴리오로 돌아와 드로어를 확인하세요.",
+          "carousel" : "캐러셀",
+          "featureIntro" : "기능 소개",
+          "appStart" : "앱 실행",
+          "deeplink" : "딥링크",
+          "campaignId" : "캠페인 ID",
+          "titleField" : "제목",
+          "subtitle" : "부제",
+          "imageUrl" : "이미지 URL",
+          "primaryButtonLabel" : "기본 버튼 라벨",
+          "primaryButtonLink" : "기본 버튼 링크",
+          "secondaryButtonLabel" : "보조 버튼 라벨",
+          "secondaryButtonLink" : "보조 버튼 링크",
+          "icon" : "아잌콘",
+          "slide" : "슬라이드",
+          "item" : "항목",
+          "addItem" : "{{item}} 추가",
+          "removeItem" : "제거",
+          "create" : "일반 안내 모달 생성",
+          "createDesc" : "폼을 가공되지 않은 Braze 형태의 카드로 파싱하여 기존 모달 목록에 추가합니다.",
+          "createCarousel" : "캐러셀 일반 안내 모달 생성",
+          "createCarouselDesc" : "캐러셀 일반 안내 모달 생성 폼을 실행합니다.",
+          "createFeatureIntro" : "기능 소개 일반 안내 모달 생성",
+          "createFeatureIntroDesc" : "기능 소개 일반 안내 모달 생성 양식을 실행합니다.",
+          "openCurrent" : "현재 캠페인 열기",
+          "openCurrentDesc" : "해당 캠페인의 드로어 상태를 설정하고, 포트폴리오로 돌아가 설정을 확인합니다.",
+          "clear" : "일반 안내 모달 삭제",
+          "clearDesc" : "현재 앱 상태에 저장된 모든 일반 안내 모달을 제거합니다.",
+          "existingTitle" : "기존 일반 안내 모달",
+          "existingDescription" : "캠페인을 탭하여 실행할 드로어로 설정한 다음, 포트폴리오로 돌아갑니다.",
+          "noExisting" : "현재 앱 상태에 스토어된 일반 안내 모달이 없습니다.",
+          "existingDesc" : "{{layout}} • {{count}}개 항목",
+          "layoutLabel" : "레이아웃",
+          "idLabel" : "ID",
+          "triggerLabel" : "트리거",
+          "entriesLabel" : "항목({{count}})",
+          "untitledEntry" : "제목 없는 항목"
+        }
       }
     }
   },
@@ -3664,6 +3714,14 @@
       "descVariantB" : "새로운 토큰, 수익 창출 기회, 시장 변동성에 대한 실시간 알림을 받아보세요. 해제는 언제든지 가능합니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기"
+    },
+    "optInScreen" : {
+      "title" : "알림을 활성화하시겠습니까?",
+      "description" : "새로운 토큰, 수익 창출 기회, 시장 변동성에 대한 실시간 알림을 받아보세요. 알림 수신은 설정에서 언제든지 해제하실 수 있습니다.",
+      "emptyTitle" : "알림이 이미 활성화되어 있습니다",
+      "emptyDescription" : "Ledger Wallet에서 실시간 알림을 받기 위한 모든 설정이 완료되었습니다.",
+      "errorTitle" : "알림을 사용할 수 없습니다",
+      "errorDescription" : "알림 설정을 확인할 수 없습니다. 온보딩을 계속 진행해 주세요. 알림 설정은 추후 설정 메뉴에서 변경할 수 있습니다."
     },
     "ptxServices" : {
       "toast" : {
@@ -4814,8 +4872,270 @@
     },
     "chooseAccountToFund" : "자산을 추가할 계정을 선택하세요"
   },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "장치가 잠겨 있습니다",
+        "description" : "계속하려면 장치 잠금을 해제하세요."
+      },
+      "unlockDevice" : {
+        "title" : "{{productName}} 잠금 해제"
+      },
+      "continueOnDevice" : {
+        "title" : "{{productName}}에서 계속하기",
+        "description" : "보안 스크린에 표시된 안내를 따라주세요."
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "장치 연결 해제됨",
+        "description" : "Ledger 장치 연결이 해제되었습니다. 장치의 전원이 켜져 있는지, 블루투스 연결 범위 내에 있거나 케이블이 올바르게 연결되어 있는지 확인해 주세요."
+      },
+      "intentError" : {
+        "title" : "알 수 없는 오류",
+        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+      },
+      "invalidOperation" : {
+        "title" : "잘못된 상태",
+        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+      }
+    },
+    "initialization" : {
+      "loading" : {
+        "title" : "로딩중"
+      },
+      "installingApp" : {
+        "title" : "앱 설치 중"
+      },
+      "outdatedAppWarning" : {
+        "title" : "앱 버전이 오래됨",
+        "description" : "장치의 {{appName}} 앱에 중요한 업데이트가 있습니다. 내 Ledger로 이동하여 업데이트하세요."
+      },
+      "retryable" : {
+        "userRefused" : {
+          "title" : "장치에서 작업이 거부되었습니다."
+        },
+        "deviceBusy" : {
+          "title" : "Ledger 장치에서 작업 대기 중",
+          "description" : "작업을 완료한 다음 다시 시도를 선택하세요."
+        }
+      },
+      "blocking" : {
+        "deviceNotOnboarded" : {
+          "title" : "귀하의 Ledger 장치는 아직 사용 준비가 되지 않았습니다",
+          "description" : "먼저 {{productName}} 장치 설정이 필요합니다. 장치를 설정하는 과정을 안내해드리겠습니다."
+        },
+        "unsupportedFirmwareVersion" : {
+          "title" : "Ledger OS 업데이트 필요"
+        },
+        "unsupportedApplication" : {
+          "title" : "지원되지 않는 기능",
+          "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
+        },
+        "unsupportedFeature" : {
+          "title" : "지원되지 않는 기능",
+          "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
+        },
+        "wrongDeviceForAccount" : {
+          "title" : "잘못된 비밀 복구 문구",
+          "description" : "현재 Ledger 장치의 복구 문구가 선택한 계정과 일치하지 않습니다. 올바른 장치를 연결했는지 확인해 주세요."
+        },
+        "deviceOutOfStorageSpace" : {
+          "title" : "장치의 저장 공간이 부족합니다",
+          "description" : "장치에 사용 가능한 메모리가 부족합니다. 앱을 제거한 후 다시 시도해 주세요."
+        }
+      },
+      "cta" : {
+        "openMyLedger" : "My Ledger 열기",
+        "goToMyLedger" : "My Ledger로 이동",
+        "setupDevice" : "장치 설정",
+        "updateLedgerOs" : "Ledger OS 업데이트",
+        "cancelOperation" : "작업 취소",
+        "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledger 장치",
+        "available" : "이용 가능",
+        "notConnected" : "연결되지 않음"
+      },
+      "states" : {
+        "connecting" : {
+          "title" : "로딩중"
+        },
+        "connectionError" : {
+          "errors" : {
+            "blePairingRefused" : {
+              "title" : "페어링이 거부되었습니다",
+              "cta" : {
+                "retry" : "페어링 재시도"
+              }
+            },
+            "blePairingPeerRemovedPairing" : {
+              "title" : "휴대폰 블루투스 설정에서 {{productName}} 장치 페어링을 해제하세요",
+              "description" : "페어링 문제를 해결하려면 휴대폰의 블루투스 목록에서 {{productName}} 장치를 제거한 다음 이 앱으로 돌아와 다시 시도하세요.",
+              "cta" : {
+                "retry" : "페어링을 해제했습니다. 다시 시도하세요",
+                "help" : "해결 방법 알아보기"
+              }
+            },
+            "unknown" : {
+              "title" : "페어링 실패",
+              "description" : "다시 시도하거나 아래에 있는 블루투스 문제 해결 관련 글을 읽어보세요.",
+              "tip" : "장치가 잠금 해제되어 있는지 확인하세요.",
+              "cta" : {
+                "retry" : "다시 시도하세요",
+                "help" : "도움 받기"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "장치 선택"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "bluetoothPermissionDeniedPromptable" : {
+              "title" : "블루투스 액세스 허용",
+              "description" : "블루투스가 주변 Ledger 장치를 스캔하도록 허용합니다.",
+              "cta" : {
+                "retry" : "허용",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "bluetoothPermissionDeniedManualSettings" : {
+              "title" : "블루투스 액세스 허용",
+              "description" : "블루투스 권한이 필요합니다. 설정 -> 앱 -> Ledger Wallet -> 권한 -> 주변 장치로 이동한 다음 권한을 허용하고 다시 돌아와 주세요.",
+              "cta" : {
+                "retry" : "활성화 완료, 다시 시도하세요",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "bluetoothPermissionUnauthorizedManualSettings" : {
+              "title" : "블루투스 액세스 허용",
+              "description" : "Ledger Wallet에서 장치를 찾으려면 블루투스 권한이 필요합니다. 설정에서 활성화하세요.",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "활성화 완료, 다시 시도하세요"
+                  },
+                  "android" : {
+                    "retry" : "활성화 완료, 다시 시도하세요",
+                    "ignore" : "USB로 계속하기"
+                  }
+                }
+              }
+            },
+            "bluetoothDisabledPromptable" : {
+              "title" : "블루투스 활성화",
+              "description" : "블루투스가 꺼져 있습니다. Ledger 장치를 찾으려면 블루투스를 활성화하세요.",
+              "cta" : {
+                "retry" : "블루투스 활성화",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "bluetoothDisabledManualAction" : {
+              "title" : "블루투스 활성화",
+              "description" : "블루투스가 꺼져 있습니다. 설정 → 블루투스에서 기능을 활성화 후 다시 돌아오세요.",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "불루투스 활성화 완료, 다시 시도"
+                  },
+                  "android" : {
+                    "retry" : "불루투스 활성화 완료, 다시 시도",
+                    "ignore" : "USB로 계속하기"
+                  }
+                }
+              }
+            },
+            "bluetoothStateUnknownCheckOnly" : {
+              "title" : "블루투스 확인 중"
+            },
+            "bluetoothUnsupported" : {
+              "title" : "블루투스 미지원",
+              "description" : {
+                "platform" : {
+                  "android" : "블루투스가 지원되지 않는 휴대전화입니다. USB로 Ledger 장치를 연결하실 수 있습니다.",
+                  "ios" : "블루투스가 지원되지 않는 휴대전화입니다. Ledger Wallet 데스크탑을 사용하시거나 Ledger 지원팀으로 문의하세요."
+                }
+              },
+              "cta" : {
+                "platform" : {
+                  "android" : {
+                    "ignore" : "USB로 계속하기"
+                  }
+                }
+              }
+            },
+            "locationPermissionDeniedPromptable" : {
+              "title" : "위치 정보 액세스 허용",
+              "description" : "안드로이드에서 블루투스 장치를 검색하려면 위치 정보 액세스 권한이 필요합니다.",
+              "cta" : {
+                "retry" : "허용",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "locationPermissionDeniedManualSettings" : {
+              "title" : "위치 정보 액세스 허용",
+              "description" : "블루투스 장치를 스캔하려면 위치 액세스 권한이 필요합니다. 설정 → 앱 → Ledger Wallet → 권한 → 위치로 이동한 다음 돌아오세요.",
+              "cta" : {
+                "retry" : "활성화 완료, 다시 시도하세요",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "locationDisabledPromptable" : {
+              "title" : "위치 서비스 켜기",
+              "description" : "위치 서비스 기능이 꺼져 있습니다. 블루투스 장치를 검색하려면 전원을 켜주세요.",
+              "cta" : {
+                "retry" : "위치 서비스 켜기",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "locationDisabledManualAction" : {
+              "title" : "위치 서비스 켜기",
+              "description" : "위치 서비스 기능이 꺼져 있습니다. 설정 → 위치에서 켜고 다시 돌아오세요.",
+              "cta" : {
+                "retry" : "위치 서비스 활성화 완료, 다시 시도",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "locationServicePermissionMissing" : {
+              "title" : "위치 정보 액세스 허용",
+              "description" : "위치 정보 액세스 권한이 없습니다. 다시 시도하려면 아래를 탭하세요.",
+              "cta" : {
+                "retry" : "다시 시도하세요",
+                "ignore" : "USB로 계속하기"
+              }
+            },
+            "unknown" : {
+              "title" : "문제가 발생했습니다",
+              "description" : "블루투스 스캔을 시작할 수 없습니다. 다시 시도하거나 Ledger 지원 부서로 문의하세요.",
+              "cta" : {
+                "retry" : "다시 시도하세요"
+              }
+            }
+          }
+        },
+        "loading" : {
+          "title" : "로딩중"
+        },
+        "noKnownDevice" : {
+          "title" : "Ledger 장치가 필요합니다",
+          "description" : "계속하려면 사이너를 설정하거나 연결하세요.",
+          "connectLedgerDevice" : "Ledger 장치 연결하기",
+          "noLedgerDevice" : "Ledger 장치가 없습니다"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "{{productName}}의 전원을 켜고 잠금을 해제하세요"
+        }
+      }
+    }
+  },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Ledger Wallet 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
+    "stuckLoaderHint" : "장치가 잠금 해제되어 있고 대기 중인 작업이 없는지 확인하세요",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
     "allowManagerPermission" : "Ledger와 보안 연결을 허용",
@@ -6269,8 +6589,16 @@
       "title" : "계정을 위임하여 보상을 받을 수 있습니다.",
       "btn" : "보상 받기"
     },
+    "manage" : "관리",
     "delegation" : {
-      "addCustomValidator" : "+ 커스텀 검증인 추가"
+      "addCustomValidator" : "+ 커스텀 검증인 추가",
+      "sectionLabel" : "위임"
+    },
+    "staking" : {
+      "sectionLabel" : "스테이킹",
+      "status" : "상태",
+      "unstaking" : "언스테이킹",
+      "available" : "이용 가능"
     }
   },
   "evm" : {
@@ -7787,6 +8115,59 @@
       "title" : "거래 내역"
     }
   },
+  "pnl" : {
+    "disclaimer" : "본 데이터는 단순 정보 제공용이며, 투자 조언이 아닙니다. 세무 목적으로는 사용할 수 없습니다",
+    "asset" : {
+      "return" : {
+        "title" : "평가 손익"
+      },
+      "entry" : {
+        "title" : "평균 매수가",
+        "tooltip" : "Ledger Wallet을 통해 직접 매수하거나 다른 지갑에서 전송 받은 자산을 모두 합산한 평균 단가입니다. 이 가격을 기준으로 손익을 추적합니다."
+      },
+      "drawer" : {
+        "title" : "자산 손익",
+        "description" : "포트폴리오에서 해당 자산이 기록한 성과를 요약해서 보여줍니다.",
+        "estimatedReturn" : {
+          "title" : "예상 수익",
+          "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실."
+        },
+        "realisedReturn" : {
+          "title" : "실현 손익",
+          "description" : "과거 자산을 매도 또는 전송하거나 스왑하여 확정된 최종 손익."
+        },
+        "totalReturn" : {
+          "title" : "총 손익",
+          "description" : "예상 손익과 실현 손익을 합산한 금액."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "평가 손익"
+      },
+      "costBasis" : {
+        "title" : "취득 원가",
+        "tooltip" : "수수료를 포함하여 현재 보유 자산을 취득하기 위해 지불한 총 금액."
+      },
+      "drawer" : {
+        "title" : "포트폴리오 손익",
+        "description" : "예상 수익 및 실현 수익으로 나뉘어 표시된 포트폴리오 성과.",
+        "estimatedReturn" : {
+          "title" : "예상 수익",
+          "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실."
+        },
+        "realisedReturn" : {
+          "title" : "실현 손익",
+          "description" : "과거 자산을 매도 또는 전송하거나 스왑하여 확정된 최종 손익."
+        },
+        "totalReturn" : {
+          "title" : "총 손익",
+          "description" : "예상 손익과 실현 손익을 합산한 금액."
+        }
+      }
+    }
+  },
   "hedera" : {
     "name" : "헤데라",
     "createHederaAccountHelp" : {
@@ -8081,6 +8462,10 @@
         "recover" : {
           "title" : "백업 보안 설정 마무리",
           "description" : "Ledger Recover 활성화 완료"
+        },
+        "discoverWallet" : {
+          "title" : "내 지갑 살펴보기",
+          "description" : "내 지갑 둘러보기포트폴리오의 새로운 기능과 앱 사용 방법을 확인해 보세요."
         }
       }
     },
@@ -8113,6 +8498,10 @@
       "syncAccounts" : {
         "titleCompleted" : "사용자 계정이 동기화되었습니다",
         "popupLabel" : "계정 동기화 완료"
+      },
+      "discoverWallet" : {
+        "titleCompleted" : "지갑 둘러보기 완료",
+        "popupLabel" : "지갑 둘러보기 완료"
       }
     }
   },
@@ -8254,6 +8643,24 @@
         "daily" : "일일 보상",
         "eigenlayer_points" : "Eigenlayer 포인트",
         "validator" : "검증인 보상"
+      },
+      "info" : {
+        "available" : {
+          "title" : "{{currencyTicker}} 이용 가능",
+          "description" : "자유롭게 사용할 수 있는 수량입니다."
+        },
+        "delegated" : {
+          "title" : "위임된 자산",
+          "description" : "위임된 자산은 {{currencyName}} 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
+        },
+        "undelegating" : {
+          "title" : "위임 해제",
+          "description" : "위임 해제 자산은 {{numberOfDays}}일 후 타임락이 해제되면 사용 가능합니다."
+        },
+        "delegationUnavailable" : {
+          "title" : "위임할 수 없습니다",
+          "description" : "계정에 이용 가능 잔액이 부족하여 새로운 위임을 시작할 수 없습니다."
+        }
       }
     },
     "noFundsModal" : {
@@ -8278,6 +8685,29 @@
     "getFundsModal" : {
       "text" : "{{coin}} 코인을 스테이킹하세요",
       "description" : "Ledger Wallet을 사용해 Ledger로 직접 암호화폐를 구매, 스왑, 수령하세요."
+    },
+    "default" : {
+      "info" : {
+        "undelegating" : {
+          "description" : "현재 스테이킹 해제 진행 중인 수량입니다. 출금이 완료되면 이용 가능 잔액에 반영됩니다."
+        }
+      }
+    }
+  },
+  "analyticsConsent" : {
+    "title" : "Ledger 서비스 개선에 참여해 주세요",
+    "subTitle" : "동의해 주시면, 사용 데이터를 수집하여 기능을 개선하고 버그를 수정합니다. 당사는 사용자 자산이나 포트폴리오 상세 정보를 추적하지 않습니다.",
+    "setPreferencesCTA" : "설정 관리",
+    "refuseCTA" : "모두 거부",
+    "acceptCTA" : "모두 수락",
+    "privacyPolicy" : "설정에서 언제든지 동의를 철회하실 수 있습니다.",
+    "privacyPolicyCTA" : "개인 정보 보호 정책",
+    "setPreferences" : {
+      "title" : "설정 관리",
+      "performance" : "앱 성능",
+      "performanceDesc" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
+      "experience" : "사용자 맞춤 설정",
+      "experienceDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
     }
   },
   "analyticsOptIn" : {
@@ -8673,6 +9103,7 @@
     "addresses" : {
       "title" : "주소",
       "addAccount" : "추가",
+      "seeAll" : "모두 보기",
       "empty" : "아직 등록된 주소가 없습니다. 추가를 탭하여 시작하세요."
     },
     "marketStats" : {
@@ -8680,10 +9111,12 @@
       "marketCap" : "시가총액",
       "marketRank" : "시장 순위",
       "circulatingSupply" : "유통량",
-      "circulatingSupplyTooltip" : "현재 거래 가능하며 시장에서 유통 중인 코인의 수",
+      "circulatingSupplyTooltip" : "현재 시장에 유통되어 일반 대중이 보유하고 있는 토큰의 총 수량입니다. 락업(잠김) 또는 예치된 토큰이나 미발행 토큰은 제외됩니다.",
       "maxSupply" : "최대 공급량",
-      "maxSupplyTooltip" : "해당 암호화폐로 발행될 수 있는 최대 코인 수",
+      "maxSupplyTooltip" : "앞으로 발행될 수 있는 최대 토큰 수량을 의미합니다. 일부 자산의 경우, 인플레이션을 방지하기 위해 이 수치가 고정되어 있습니다.",
+      "marketCapTooltip" : "현재 유통 중인 모든 코인의 총 가치를 의미합니다. 해당 암호화폐의 시가 총액으로 이해할 수 있습니다.",
       "tradingVolume" : "24시간 거래량",
+      "tradingVolumeTooltip" : "최근 24시간 동안의 거래량을 의미합니다.",
       "error" : "시장 통계를 불러올 수 없습니다"
     },
     "pricePerformance" : {
@@ -8704,6 +9137,10 @@
     "fallbackBanner" : {
       "title" : "스왑 및 매수가 지원되지 않는 자산입니다."
     },
+    "hiddenAssetBanner" : {
+      "title" : "이 자산은 포트폴리오에서 숨김 처리되었습니다.",
+      "showAsset" : "자산 표시"
+    },
     "balanceDetails" : {
       "totalBalance" : "총 잔액",
       "transfer" : "전송",
@@ -8713,7 +9150,14 @@
       "earnBannerGeneric" : "이 자산으로 수익 창출",
       "earnBannerSubtitle" : "이 자산을 보유하고 추가 수익 창출하기",
       "earnBannerAction" : "수익 창출로 이동",
-      "availableBalanceTooltip" : "스테이킹되거나 위임된 금액을 제외한 즉시 사용 가능한 자산."
+      "availableBalanceTooltip" : "현재 즉시 사용할 수 있는 보유 자산으로, 언제든지 자유롭게 전송, 스왑, 출금할 수 있습니다."
+    },
+    "coinOptions" : {
+      "openMenuA11yLabel" : "코인 옵션",
+      "addFavourite" : "즐겨찾기에 추가",
+      "removeFavourite" : "즐겨찾기에서 제거",
+      "hideFromPortfolio" : "포트폴리오에서 숨기기",
+      "showInPortfolio" : "포트폴리오에 표시"
     }
   },
   "assetSelection" : {

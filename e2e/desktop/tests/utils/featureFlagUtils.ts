@@ -36,3 +36,23 @@ export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
   }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
 };
+
+export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["ethereum", "cosmos"],
+      redirects: {
+        "ethereum/erc20/usd__coin": {
+          platform: "earn",
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum/erc20/usd__coin",
+            intent: "deposit",
+            deposit: "stablecoin",
+          },
+        },
+      },
+    },
+  },
+};

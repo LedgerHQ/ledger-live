@@ -63,7 +63,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 -- --runInBand=1
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
@@ -101,10 +101,10 @@ jobs:
 
           if [ ${#nx_test_args[@]} -eq 0 ]; then
             echo "Running tests for libs without coverage (all non-ui libs)"
-            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=4
+            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=6
           else
-            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=4 ${nx_test_args[*]}"
-            pnpm exec nx run-many -t test --parallel=4 "${nx_test_args[@]}"
+            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=6 ${nx_test_args[*]}"
+            pnpm exec nx run-many -t test --parallel=6 "${nx_test_args[@]}"
           fi
         shell: bash
 

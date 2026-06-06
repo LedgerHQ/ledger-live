@@ -1,3 +1,6 @@
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../helpers/allure/allure-helper";
+
 const tags: string[] = [
   "@NanoSP",
   "@LNS",
@@ -29,6 +32,7 @@ describe("Market page for user with no device", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
+  setTeamOwner(Team.WALLET_XP);
   $TmsLink("B2CQA-1879");
   tags.forEach(tag => $Tag(tag));
   it("should filter starred asset in the list", async () => {

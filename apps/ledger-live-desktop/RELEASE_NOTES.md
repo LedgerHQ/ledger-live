@@ -1,3 +1,7 @@
+# 4.6.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 4.6.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

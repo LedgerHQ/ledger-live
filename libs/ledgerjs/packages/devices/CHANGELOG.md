@@ -1,5 +1,17 @@
 # @ledgerhq/devices
 
+## 8.15.0
+
+### Minor Changes
+
+- [#17738](https://github.com/LedgerHQ/ledger-live/pull/17738) [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - correct app memory prediction
+
+## 8.15.0-next.0
+
+### Minor Changes
+
+- [#17738](https://github.com/LedgerHQ/ledger-live/pull/17738) [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - correct app memory prediction
+
 ## 8.14.2
 
 ### Patch Changes

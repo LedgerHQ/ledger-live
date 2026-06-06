@@ -683,6 +683,7 @@
     "src/market/utils/index.ts",
     "src/market/utils/injectMarketExtrema.ts",
     "src/market/utils/queryKeys.ts",
+    "src/market/utils/resampleChartPoints.ts",
     "src/market/utils/timers.ts",
     "src/market/utils/types.ts",
     "src/modularDrawer/enums.ts",

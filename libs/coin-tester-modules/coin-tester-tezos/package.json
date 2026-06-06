@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tezos",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Ledger Tezos Coin Tester",
   "main": "src/scenarii.test.ts",

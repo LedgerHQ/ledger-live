@@ -1,5 +1,19 @@
 # @ledgerhq/device-react
 
+## 0.6.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.11.2
+
+## 0.6.5-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.11.2-next.0
+
 ## 0.6.4
 
 ### Patch Changes

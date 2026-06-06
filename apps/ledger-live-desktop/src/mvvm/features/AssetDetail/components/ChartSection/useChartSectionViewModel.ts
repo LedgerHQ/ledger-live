@@ -5,6 +5,7 @@ import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useAssetChartData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { injectMarketExtrema } from "@ledgerhq/live-common/market/utils/injectMarketExtrema";
+import { resampleChartPointsByInterval } from "@ledgerhq/live-common/market/utils/resampleChartPoints";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { track } from "~/renderer/analytics/segment";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
@@ -52,6 +53,22 @@ import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker
 
 const MIN_X_AXIS_TICKS = 5;
 const MIN_X_AXIS_TICKS_1D = 8;
+
+const MINUTE_MS = 60_000;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+
+// Target spacing between chart points per range (LIVE-31777). 6m is served
+// daily, so its 3h target falls back to the daily resolution.
+const RANGE_TARGET_INTERVAL_MS: Record<LineChartRange, number> = {
+  "1d": 5 * MINUTE_MS,
+  "1w": HOUR_MS,
+  "1m": 2 * HOUR_MS,
+  "6m": 3 * HOUR_MS,
+  "1y": DAY_MS,
+  "5y": 7 * DAY_MS,
+  all: 7 * DAY_MS,
+};
 
 const CHART_BASE_HEIGHT = 240;
 const Y_AXIS_OFFSET_BOTTOM_PX = 50;
@@ -140,10 +157,15 @@ export function useChartSectionViewModel({
     const rawPoints = chartData?.[selectedRange] ?? [];
     // On the "all" range, anchor the graph's high/low markers to the market
     // all-time high/low so they match the stats table (see LIVE-31732).
-    const points =
+    const withExtrema =
       selectedRange === "all"
         ? injectMarketExtrema(rawPoints, { ath, athDate: athTime, atl, atlDate: atlTime })
         : rawPoints;
+    // Resample to the per-range target granularity (LIVE-31777).
+    const points = resampleChartPointsByInterval(
+      withExtrema,
+      RANGE_TARGET_INTERVAL_MS[selectedRange],
+    );
     const data: number[] = [];
     const tsList: number[] = [];
     points.forEach(([timestamp, value]) => {

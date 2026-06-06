@@ -19,6 +19,7 @@ export function mapMarketCurrencyToDisplayData(
   { counterCurrency, counterValueUnit, range, locale, t }: MapOptions,
 ): MarketAssetDisplayData {
   const change = item.priceChangePercentage[range];
+  const priceChangePercentage = typeof change === "number" && Number.isFinite(change) ? change : 0;
   const priceAtoms = new BigNumber(item.price).times(
     new BigNumber(10).pow(counterValueUnit.magnitude),
   );
@@ -40,6 +41,6 @@ export function mapMarketCurrencyToDisplayData(
           }),
     marketcapRank: item.marketcapRank,
     formattedPrice: formatPrice(counterValueUnit, priceAtoms, { locale, showCode: true }),
-    priceChangePercentage: Number.isFinite(change) ? change : 0,
+    priceChangePercentage,
   };
 }

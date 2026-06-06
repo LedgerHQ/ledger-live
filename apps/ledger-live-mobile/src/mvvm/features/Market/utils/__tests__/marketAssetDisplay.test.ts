@@ -30,6 +30,7 @@ const item = (overrides = {}) =>
       [KeysPriceChange.day]: 7.87,
       [KeysPriceChange.week]: 0,
       [KeysPriceChange.month]: 0,
+      [KeysPriceChange.sixMonths]: 0,
       [KeysPriceChange.year]: 0,
     },
     ...overrides,
@@ -52,6 +53,24 @@ describe("mapMarketCurrencyToDisplayData", () => {
       mapMarketCurrencyToDisplayData(item(), { ...opts, range: KeysPriceChange.week })
         .priceChangePercentage,
     ).toBe(0);
+    expect(
+      mapMarketCurrencyToDisplayData(
+        item({
+          priceChangePercentage: {
+            [KeysPriceChange.hour]: 0,
+            [KeysPriceChange.day]: 7.87,
+            [KeysPriceChange.week]: 0,
+            [KeysPriceChange.month]: 0,
+            [KeysPriceChange.sixMonths]: 12.34,
+            [KeysPriceChange.year]: 0,
+          },
+        }),
+        {
+          ...opts,
+          range: KeysPriceChange.sixMonths,
+        },
+      ).priceChangePercentage,
+    ).toBe(12.34);
   });
 
   it("falls back to 0 when the range change is not a finite number", () => {
@@ -60,9 +79,10 @@ describe("mapMarketCurrencyToDisplayData", () => {
         item({
           priceChangePercentage: {
             [KeysPriceChange.hour]: 0,
-            [KeysPriceChange.day]: NaN,
+            [KeysPriceChange.day]: Number.NaN,
             [KeysPriceChange.week]: 0,
             [KeysPriceChange.month]: 0,
+            [KeysPriceChange.sixMonths]: 0,
             [KeysPriceChange.year]: 0,
           },
         }),

@@ -1,6 +1,8 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { ApplicationOptions } from "page";
 import { isWallet40 } from "../../helpers/commonHelpers";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 async function initApp(options: ApplicationOptions) {
   await app.init({
@@ -25,6 +27,7 @@ export function runUserClearApplicationCacheTest(
       });
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
@@ -49,6 +52,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
       await initApp({ userdata: "skip-onboarding" });
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
@@ -67,6 +71,7 @@ export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: stri
       await initApp({ userdata: "skip-onboarding" });
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test("Verify that user can access Ledger Support (Web Link)", async () => {
@@ -93,6 +98,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
         });
       });
 
+      setTeamOwner(Team.WALLET_XP);
       tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
       tags.forEach(tag => $Tag(tag));
       test("Verify that user can select counter value to display amount in Ledger Live", async () => {
@@ -141,6 +147,7 @@ export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
       await app.passwordEntry.expectLock();
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("should unlock with correct password", async () => {
@@ -164,6 +171,7 @@ export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
       await app.passwordEntry.expectLock();
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("should stay locked with incorrect password", async () => {

@@ -1,3 +1,7 @@
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../helpers/allure/allure-helper";
+
+setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-2344");
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");

@@ -1,5 +1,41 @@
 # @ledgerhq/coin-solana
 
+## 0.55.0
+
+### Minor Changes
+
+- [#17789](https://github.com/LedgerHQ/ledger-live/pull/17789) [`0c4eeeb`](https://github.com/LedgerHQ/ledger-live/commit/0c4eeebe1c6bb974a2c98fa911877e22e4d0b4eb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): include staking `actions` in stake related endpoints
+
+- [#17824](https://github.com/LedgerHQ/ledger-live/pull/17824) [`76e74f1`](https://github.com/LedgerHQ/ledger-live/commit/76e74f12f49cbbbcd2f0dfa239d99e4b3b199835) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): expose `getValidators` on the coin-module API
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/devices@8.15.0
+  - @ledgerhq/live-network@2.6.3
+
+## 0.55.0-next.0
+
+### Minor Changes
+
+- [#17789](https://github.com/LedgerHQ/ledger-live/pull/17789) [`0c4eeeb`](https://github.com/LedgerHQ/ledger-live/commit/0c4eeebe1c6bb974a2c98fa911877e22e4d0b4eb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): include staking `actions` in stake related endpoints
+
+- [#17824](https://github.com/LedgerHQ/ledger-live/pull/17824) [`76e74f1`](https://github.com/LedgerHQ/ledger-live/commit/76e74f12f49cbbbcd2f0dfa239d99e4b3b199835) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): expose `getValidators` on the coin-module API
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/devices@8.15.0-next.0
+  - @ledgerhq/live-network@2.6.3-next.0
+
 ## 0.54.0
 
 ### Minor Changes

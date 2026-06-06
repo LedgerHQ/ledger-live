@@ -1,5 +1,33 @@
 # @ledgerhq/coin-celo
 
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2), [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`881cb3b`](https://github.com/LedgerHQ/ledger-live/commit/881cb3b59ac8d1aada4f3e8092ada951b716dfea), [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708), [`9960460`](https://github.com/LedgerHQ/ledger-live/commit/9960460013f52482dd81d455ae5382acc28fee9b), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/coin-evm@4.1.0
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/devices@8.15.0
+  - @ledgerhq/hw-app-eth@7.8.5
+  - @ledgerhq/live-network@2.6.3
+
+## 2.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2), [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`881cb3b`](https://github.com/LedgerHQ/ledger-live/commit/881cb3b59ac8d1aada4f3e8092ada951b716dfea), [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708), [`9960460`](https://github.com/LedgerHQ/ledger-live/commit/9960460013f52482dd81d455ae5382acc28fee9b), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/coin-evm@4.1.0-next.0
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/devices@8.15.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.5-next.0
+  - @ledgerhq/live-network@2.6.3-next.0
+
 ## 2.4.0
 
 ### Minor Changes

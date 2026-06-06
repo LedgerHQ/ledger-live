@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { selectMarketListCategory, setMarketListCategory } from "~/reducers/market";
 import type { MarketListCategory } from "~/reducers/types";
 
-const SELECTABLE_MARKET_CATEGORIES = new Set<MarketListCategory>(["all", "starred"]);
+const SELECTABLE_MARKET_CATEGORIES = new Set<MarketListCategory>(["all", "stocks", "starred"]);
 
 export type MarketCategoryTab = {
   value: MarketListCategory;

@@ -1,6 +1,7 @@
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   ConcordiumAddressVerificationFailedError,
+  ConcordiumInvalidMaxFeeError,
   ConcordiumTrustedMetadataServiceError,
   LockedDeviceError,
   UserRefusedOnDevice,
@@ -191,6 +192,8 @@ describe("DmkSignerConcordium", () => {
       },
     };
 
+    const mockMaxFee = 1234n;
+
     it("should return signature and serialized transaction", async () => {
       const signatureBytes = new Uint8Array(64).fill(0xcc);
       mockSignerConcordium.signTransaction.mockReturnValue({
@@ -200,14 +203,14 @@ describe("DmkSignerConcordium", () => {
         }),
       });
 
-      const result = await signer.signTransaction(mockTx, mockPath);
+      const result = await signer.signTransaction(mockTx, mockPath, mockMaxFee);
 
       expect(result.signature).toBe("cc".repeat(64));
       expect(typeof result.serialized).toBe("string");
       expect(mockSignerConcordium.signTransaction).toHaveBeenCalledWith(
         mockPath,
         expect.any(Uint8Array),
-        mockTx.header.energyAmount,
+        mockMaxFee,
         { skipOpenApp: true },
       );
     });
@@ -220,7 +223,26 @@ describe("DmkSignerConcordium", () => {
         }),
       });
 
-      await expect(signer.signTransaction(mockTx, mockPath)).rejects.toThrow(UserRefusedOnDevice);
+      await expect(signer.signTransaction(mockTx, mockPath, mockMaxFee)).rejects.toThrow(
+        UserRefusedOnDevice,
+      );
+    });
+
+    it("should map invalid_max_fee error to ConcordiumInvalidMaxFeeError", async () => {
+      mockSignerConcordium.signTransaction.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: {
+            _tag: "InvalidMaxFeeError",
+            errorCode: "invalid_max_fee",
+            originalError: new Error("Invalid maxFee: must be non-negative"),
+          },
+        }),
+      });
+
+      await expect(signer.signTransaction(mockTx, mockPath, mockMaxFee)).rejects.toThrow(
+        ConcordiumInvalidMaxFeeError,
+      );
     });
   });
 

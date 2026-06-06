@@ -1,5 +1,43 @@
 # @ledgerhq/coin-tezos
 
+## 7.4.0
+
+### Minor Changes
+
+- [#17706](https://github.com/LedgerHQ/ledger-live/pull/17706) [`6f00871`](https://github.com/LedgerHQ/ledger-live/commit/6f00871f7bbef39a98fb32b7695576f83458d588) Thanks [@amaslakov](https://github.com/amaslakov)! - feat(tezos): per-request unstaking positions with dates, surfaced through useTezosStakingInfo.unstakingPositions; LWD account page gains Staking + Unstaking sections (with 4-day countdown) and a unified Earn entry point that opens the delegate/stake choice modal, all gated by lldTezosStaking. Also unblocks the dashboard for Paris-upgrade accounts that lack tezosResources, propagates TzKT unstake endpoint errors instead of dropping unstaking positions silently, and makes TezosAccount.stakingPositions and TezosAccountRaw.tezosResources optional to match runtime shape (LIVE-29544). LWD stake-flow modal switches to the shared AmountField (Switch toggle for max, matching Solana/Cosmos), skips AmountRequired in validateStakeConstraints when useAllAmount is true so the bridge can resolve the stake max, gates StepDeviceDelegation/StepDeviceStaking on transaction.fees to avoid FeeNotLoaded after Continue, and suppresses bridge errors while the new delegation propagates so the first step doesn't flash red. LWD unstake-flow modal also adopts the shared AmountField (crypto + fiat fields, Use Max Switch); validateUnstakeConstraints + calculateAmounts resolve unstake useAllAmount to the full stakedBalance and estimateFees coerces a min amount for unstake-max so Taquito estimation succeeds.
+
+- [#17888](https://github.com/LedgerHQ/ledger-live/pull/17888) [`b8494cf`](https://github.com/LedgerHQ/ledger-live/commit/b8494cff07e012cfd036c79d4a486b42c94922a2) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix Tezos stake "Use Max" to exclude already-staked funds (was offering the full balance).
+
+- [#17886](https://github.com/LedgerHQ/ledger-live/pull/17886) [`13060af`](https://github.com/LedgerHQ/ledger-live/commit/13060af9e6973aa6fd350a6257bea8544dc261be) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix the Tezos "Earn" flow for accounts that are already delegated. Pressing Earn (from the account header or the delegation panel) on a delegated account now opens the staking flow instead of a delegation, which the node rejects as `delegate.unchanged`. When the staking feature is disabled and a re-delegation to the current baker is attempted, the error is now shown as "Your account is already delegated to this validator" instead of a missing translation key.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/devices@8.15.0
+  - @ledgerhq/live-network@2.6.3
+
+## 7.4.0-next.0
+
+### Minor Changes
+
+- [#17706](https://github.com/LedgerHQ/ledger-live/pull/17706) [`6f00871`](https://github.com/LedgerHQ/ledger-live/commit/6f00871f7bbef39a98fb32b7695576f83458d588) Thanks [@amaslakov](https://github.com/amaslakov)! - feat(tezos): per-request unstaking positions with dates, surfaced through useTezosStakingInfo.unstakingPositions; LWD account page gains Staking + Unstaking sections (with 4-day countdown) and a unified Earn entry point that opens the delegate/stake choice modal, all gated by lldTezosStaking. Also unblocks the dashboard for Paris-upgrade accounts that lack tezosResources, propagates TzKT unstake endpoint errors instead of dropping unstaking positions silently, and makes TezosAccount.stakingPositions and TezosAccountRaw.tezosResources optional to match runtime shape (LIVE-29544). LWD stake-flow modal switches to the shared AmountField (Switch toggle for max, matching Solana/Cosmos), skips AmountRequired in validateStakeConstraints when useAllAmount is true so the bridge can resolve the stake max, gates StepDeviceDelegation/StepDeviceStaking on transaction.fees to avoid FeeNotLoaded after Continue, and suppresses bridge errors while the new delegation propagates so the first step doesn't flash red. LWD unstake-flow modal also adopts the shared AmountField (crypto + fiat fields, Use Max Switch); validateUnstakeConstraints + calculateAmounts resolve unstake useAllAmount to the full stakedBalance and estimateFees coerces a min amount for unstake-max so Taquito estimation succeeds.
+
+- [#17888](https://github.com/LedgerHQ/ledger-live/pull/17888) [`b8494cf`](https://github.com/LedgerHQ/ledger-live/commit/b8494cff07e012cfd036c79d4a486b42c94922a2) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix Tezos stake "Use Max" to exclude already-staked funds (was offering the full balance).
+
+- [#17886](https://github.com/LedgerHQ/ledger-live/pull/17886) [`13060af`](https://github.com/LedgerHQ/ledger-live/commit/13060af9e6973aa6fd350a6257bea8544dc261be) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix the Tezos "Earn" flow for accounts that are already delegated. Pressing Earn (from the account header or the delegation panel) on a delegated account now opens the staking flow instead of a delegation, which the node rejects as `delegate.unchanged`. When the staking feature is disabled and a re-delegation to the current baker is attempted, the error is now shown as "Your account is already delegated to this validator" instead of a missing translation key.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/devices@8.15.0-next.0
+  - @ledgerhq/live-network@2.6.3-next.0
+
 ## 7.3.0
 
 ### Minor Changes

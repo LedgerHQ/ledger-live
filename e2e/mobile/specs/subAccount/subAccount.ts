@@ -1,9 +1,11 @@
 import { verifyAppValidationSendInfo } from "../../models/send";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import invariant from "invariant";
 
 const beforeAllFunction = async (transaction: TransactionType, setAccountToCredit: boolean) => {
@@ -34,6 +36,7 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
 };
 
 export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send SPL tokens from 1 account to another", () => {
@@ -80,6 +83,7 @@ export function runSendSPLAddressValid(
   tmsLinks: string[],
   tags: string[],
 ) {
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send token - valid address input", () => {
@@ -105,6 +109,7 @@ export function runSendSPLAddressInvalid(
   tmsLinks: string[],
   tags: string[],
 ) {
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send token - invalid address input", () => {
@@ -139,6 +144,7 @@ export function runAddSubAccountTest(testConfig: {
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
+    setTeamOwner(Team.COIN_INTEGRATION);
     tmslinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker}`, async () => {

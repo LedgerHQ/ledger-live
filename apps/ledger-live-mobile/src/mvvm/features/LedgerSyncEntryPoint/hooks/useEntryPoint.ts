@@ -8,8 +8,9 @@ import { EntryPoint, EntryPointsData } from "../types";
 import CtaEntryPoint from "../components/CtaEntryPoint";
 import CardEntryPoint from "../components/CardEntryPoint";
 import OptimisedCardEntryPoint from "../components/CardEntryPoint/optimisedCardEntryPoint";
+import LedgerSyncBannerV4 from "../components/LedgerSyncBannerV4";
 
-export function useEntryPoint(entryPoint: EntryPoint) {
+export function useEntryPoint(entryPoint: EntryPoint, variant?: "v4") {
   const featureLedgerSyncEntryPoints = useFeature("llmLedgerSyncEntryPoints");
   const featureWalletSync = useFeature("llmWalletSync");
   const trustchain = useSelector(trustchainSelector);
@@ -42,6 +43,19 @@ export function useEntryPoint(entryPoint: EntryPoint) {
     },
     component: OptimisedCardEntryPoint,
   };
+  const bannerV4EntryPoint = {
+    onClick: ({ page }: { page: string }) => {
+      track("banner_clicked", { banner: "Ledger Sync Activation", page });
+    },
+    component: LedgerSyncBannerV4,
+  };
+
+  const accountsEntryPoint =
+    variant === "v4"
+      ? bannerV4EntryPoint
+      : lwmLedgerSyncOptimisation?.enabled
+        ? optimisedCardEntryPoint
+        : ctaEntryPoint;
 
   const entryPointsData: EntryPointsData = {
     [EntryPoint.manager]: {
@@ -50,7 +64,7 @@ export function useEntryPoint(entryPoint: EntryPoint) {
     },
     [EntryPoint.accounts]: {
       enabled: featureLedgerSyncEntryPoints?.params?.accounts ?? false,
-      ...(lwmLedgerSyncOptimisation?.enabled ? optimisedCardEntryPoint : ctaEntryPoint),
+      ...accountsEntryPoint,
     },
     [EntryPoint.settings]: {
       enabled: featureLedgerSyncEntryPoints?.params?.settings ?? false,

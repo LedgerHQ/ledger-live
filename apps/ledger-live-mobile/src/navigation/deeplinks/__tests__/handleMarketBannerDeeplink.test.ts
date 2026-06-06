@@ -25,4 +25,13 @@ describe("handleMarketBannerDeeplink", () => {
     expect(baseState?.index).toBe(1);
     expect(baseState?.routes[0]).toEqual({ name: NavigatorName.Main });
   });
+
+  it("should forward the category param to MarketList when provided", () => {
+    const result = handleMarketBannerDeeplink("stocks");
+
+    expect(result?.routes[0].state?.routes[1]).toEqual({
+      name: ScreenName.MarketList,
+      params: { category: "stocks" },
+    });
+  });
 });

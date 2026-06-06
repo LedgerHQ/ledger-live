@@ -253,6 +253,7 @@ export type Features = CurrencyFeatures & {
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwdProductTour: DefaultFeature;
+  lwdBackupHub: DefaultFeature;
   lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
@@ -328,6 +329,7 @@ export type Features = CurrencyFeatures & {
   lwmOnboardingCounterfeitWarning: DefaultFeature;
   lwmNotificationsOptIn: DefaultFeature;
   lwmProductTour: DefaultFeature;
+  lwmBackupHub: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;

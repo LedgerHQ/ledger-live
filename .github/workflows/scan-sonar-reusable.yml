@@ -55,19 +55,6 @@ jobs:
         run: |
           git fetch origin develop
 
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
       - name: Download desktop unit test coverage
         if: ${{ inputs.should_download_desktop_coverage == 'true' }}
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0

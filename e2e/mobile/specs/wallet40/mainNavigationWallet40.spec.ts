@@ -1,5 +1,8 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
+setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-4383");
 $TmsLink("B2CQA-4385");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -21,6 +24,7 @@ describe("Wallet 4.0 - Main Navigation", () => {
     await app.mainNavigation.expectLegacyTabsNotVisible();
   });
 
+  setTeamOwner(Team.SWAP);
   it("should navigate to Swap via bottom tab", async () => {
     await app.mainNavigation.tapWallet40Tab("swap");
     await app.mainNavigation.expectWallet40BottomTabsVisible();

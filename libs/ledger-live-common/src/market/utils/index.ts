@@ -74,6 +74,8 @@ export function getRange(range: PortfolioRange | string) {
     case "30d":
     case "month":
       return "1m";
+    case "6m":
+      return "6m";
     case "1y":
     case "year":
     case "all":

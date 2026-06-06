@@ -9,6 +9,8 @@ import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { CryptoAddressesNavigator } from "./types";
@@ -78,6 +80,15 @@ function CryptoAddressesView({
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: listPaddingBottom }}
+            ListHeaderComponent={
+              <Box lx={{ paddingHorizontal: "s8", width: "full" }}>
+                <LedgerSyncEntryPoint
+                  entryPoint={EntryPoint.accounts}
+                  page="CryptoAddresses"
+                  variant="v4"
+                />
+              </Box>
+            }
             ListEmptyComponent={ListEmpty}
           />
         )}

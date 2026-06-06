@@ -137,6 +137,47 @@ export type GetQuotesArgs = {
 
 export type GetQuotesWireArgs = Omit<GetQuotesArgs, "signal">;
 
+// Swap transaction status (`custom.exchange.getTransactionStatus`).
+
+export type TransactionStatusInput = {
+  swapId: string;
+  provider?: string;
+};
+
+export const TransactionStatus = {
+  Pending: "pending",
+  OnHold: "onhold",
+  Expired: "expired",
+  Finished: "finished",
+  Refunded: "refunded",
+  Unknown: "unknown",
+} as const;
+
+export type TransactionStatusValue = (typeof TransactionStatus)[keyof typeof TransactionStatus];
+
+export type GetTransactionStatusArgs = TransactionStatusInput & {
+  signal?: AbortSignal;
+};
+
+export type GetTransactionStatusWireArgs = Omit<GetTransactionStatusArgs, "signal">;
+
+export type GetTransactionStatusResponse = {
+  swapId: string;
+  provider?: string;
+  status?: TransactionStatusValue;
+  sendStatus?: TransactionStatusValue;
+  receiveStatus?: TransactionStatusValue;
+  finalAmount?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
+  sentAmount?: string;
+  receivedAmount?: string;
+  feesAmount?: string;
+  operationHash?: string;
+  createdAt?: number;
+  providerRequired?: boolean;
+};
+
 export type TradeMethod = "fixed" | "float";
 
 export type ProviderTypes = "DEX" | "CEX";

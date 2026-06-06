@@ -105,37 +105,14 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
           "blockHeight": 132858,
           "creationDate": 2018-03-11T18:09:49.798Z,
           "currency": {
-            "bitcoinLikeInfo": {
-              "P2PKH": 0,
-              "P2SH": 5,
-              "XPUBVersion": 76067358,
-            },
-            "blockAvgTime": 900,
             "coinType": 0,
             "color": "#ffae35",
-            "explorerId": "btc",
-            "explorerViews": [
-              {
-                "address": "https://blockstream.info/address/$address",
-                "tx": "https://blockstream.info/tx/$hash",
-              },
-              {
-                "address": "https://www.blockchain.com/btc/address/$address",
-                "tx": "https://blockchain.info/btc/tx/$hash",
-              },
-            ],
+            "explorerViews": [],
             "family": "bitcoin",
             "id": "bitcoin",
-            "keywords": [
-              "btc",
-              "bitcoin",
-            ],
             "managerAppName": "Bitcoin",
             "name": "Bitcoin",
             "scheme": "bitcoin",
-            "supportsNativeSegwit": true,
-            "supportsSegwit": true,
-            "symbol": "Ƀ",
             "ticker": "BTC",
             "type": "CryptoCurrency",
             "units": [
@@ -143,16 +120,6 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
                 "code": "BTC",
                 "magnitude": 8,
                 "name": "bitcoin",
-              },
-              {
-                "code": "mBTC",
-                "magnitude": 5,
-                "name": "mBTC",
-              },
-              {
-                "code": "bit",
-                "magnitude": 2,
-                "name": "bit",
               },
               {
                 "code": "sat",
@@ -632,37 +599,14 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
       "amount": 6196770,
       "countervalue": 16232,
       "currency": {
-        "bitcoinLikeInfo": {
-          "P2PKH": 0,
-          "P2SH": 5,
-          "XPUBVersion": 76067358,
-        },
-        "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
-        "explorerId": "btc",
-        "explorerViews": [
-          {
-            "address": "https://blockstream.info/address/$address",
-            "tx": "https://blockstream.info/tx/$hash",
-          },
-          {
-            "address": "https://www.blockchain.com/btc/address/$address",
-            "tx": "https://blockchain.info/btc/tx/$hash",
-          },
-        ],
+        "explorerViews": [],
         "family": "bitcoin",
         "id": "bitcoin",
-        "keywords": [
-          "btc",
-          "bitcoin",
-        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",
-        "supportsNativeSegwit": true,
-        "supportsSegwit": true,
-        "symbol": "Ƀ",
         "ticker": "BTC",
         "type": "CryptoCurrency",
         "units": [
@@ -670,16 +614,6 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
             "code": "BTC",
             "magnitude": 8,
             "name": "bitcoin",
-          },
-          {
-            "code": "mBTC",
-            "magnitude": 5,
-            "name": "mBTC",
-          },
-          {
-            "code": "bit",
-            "magnitude": 2,
-            "name": "bit",
           },
           {
             "code": "sat",
@@ -2405,37 +2339,14 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
       "blockHeight": 132858,
       "creationDate": 2018-03-11T18:09:49.798Z,
       "currency": {
-        "bitcoinLikeInfo": {
-          "P2PKH": 0,
-          "P2SH": 5,
-          "XPUBVersion": 76067358,
-        },
-        "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
-        "explorerId": "btc",
-        "explorerViews": [
-          {
-            "address": "https://blockstream.info/address/$address",
-            "tx": "https://blockstream.info/tx/$hash",
-          },
-          {
-            "address": "https://www.blockchain.com/btc/address/$address",
-            "tx": "https://blockchain.info/btc/tx/$hash",
-          },
-        ],
+        "explorerViews": [],
         "family": "bitcoin",
         "id": "bitcoin",
-        "keywords": [
-          "btc",
-          "bitcoin",
-        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",
-        "supportsNativeSegwit": true,
-        "supportsSegwit": true,
-        "symbol": "Ƀ",
         "ticker": "BTC",
         "type": "CryptoCurrency",
         "units": [
@@ -2443,16 +2354,6 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
             "code": "BTC",
             "magnitude": 8,
             "name": "bitcoin",
-          },
-          {
-            "code": "mBTC",
-            "magnitude": 5,
-            "name": "mBTC",
-          },
-          {
-            "code": "bit",
-            "magnitude": 2,
-            "name": "bit",
           },
           {
             "code": "sat",
@@ -4730,37 +4631,14 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "blockHeight": 132858,
       "creationDate": 2018-03-11T18:09:49.798Z,
       "currency": {
-        "bitcoinLikeInfo": {
-          "P2PKH": 0,
-          "P2SH": 5,
-          "XPUBVersion": 76067358,
-        },
-        "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
-        "explorerId": "btc",
-        "explorerViews": [
-          {
-            "address": "https://blockstream.info/address/$address",
-            "tx": "https://blockstream.info/tx/$hash",
-          },
-          {
-            "address": "https://www.blockchain.com/btc/address/$address",
-            "tx": "https://blockchain.info/btc/tx/$hash",
-          },
-        ],
+        "explorerViews": [],
         "family": "bitcoin",
         "id": "bitcoin",
-        "keywords": [
-          "btc",
-          "bitcoin",
-        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",
-        "supportsNativeSegwit": true,
-        "supportsSegwit": true,
-        "symbol": "Ƀ",
         "ticker": "BTC",
         "type": "CryptoCurrency",
         "units": [
@@ -4768,16 +4646,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
             "code": "BTC",
             "magnitude": 8,
             "name": "bitcoin",
-          },
-          {
-            "code": "mBTC",
-            "magnitude": 5,
-            "name": "mBTC",
-          },
-          {
-            "code": "bit",
-            "magnitude": 2,
-            "name": "bit",
           },
           {
             "code": "sat",
@@ -5354,37 +5222,14 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "blockHeight": 132858,
       "creationDate": 2018-03-11T18:09:49.798Z,
       "currency": {
-        "bitcoinLikeInfo": {
-          "P2PKH": 0,
-          "P2SH": 5,
-          "XPUBVersion": 76067358,
-        },
-        "blockAvgTime": 900,
         "coinType": 0,
         "color": "#ffae35",
-        "explorerId": "btc",
-        "explorerViews": [
-          {
-            "address": "https://blockstream.info/address/$address",
-            "tx": "https://blockstream.info/tx/$hash",
-          },
-          {
-            "address": "https://www.blockchain.com/btc/address/$address",
-            "tx": "https://blockchain.info/btc/tx/$hash",
-          },
-        ],
+        "explorerViews": [],
         "family": "bitcoin",
         "id": "bitcoin",
-        "keywords": [
-          "btc",
-          "bitcoin",
-        ],
         "managerAppName": "Bitcoin",
         "name": "Bitcoin",
         "scheme": "bitcoin",
-        "supportsNativeSegwit": true,
-        "supportsSegwit": true,
-        "symbol": "Ƀ",
         "ticker": "BTC",
         "type": "CryptoCurrency",
         "units": [
@@ -5392,16 +5237,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
             "code": "BTC",
             "magnitude": 8,
             "name": "bitcoin",
-          },
-          {
-            "code": "mBTC",
-            "magnitude": 5,
-            "name": "mBTC",
-          },
-          {
-            "code": "bit",
-            "magnitude": 2,
-            "name": "bit",
           },
           {
             "code": "sat",

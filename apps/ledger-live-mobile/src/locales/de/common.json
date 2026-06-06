@@ -1683,19 +1683,29 @@
   },
   "productTour" : {
     "swap" : {
-      "cta" : "Entdecke Swapping"
+      "cta" : "Entdecke Swapping",
+      "title" : "Swappe ohne Apps zu wechseln",
+      "subTitle" : "Genieße grenzenlosen Handel mit Tausenden von Assets über unsere vertrauenswürdigen Swap-Partner."
     },
     "stake" : {
-      "cta" : "Verdienen entdecken"
+      "cta" : "Verdienen entdecken",
+      "title" : "Genieße Prämien für deine Kryptos",
+      "subTitle" : "Lass dein Krypto über den Verdienen-Bereich arbeiten."
     },
     "card" : {
-      "cta" : "Karte bestellen"
+      "cta" : "Hol dir eine Karte",
+      "title" : "Gib Krypto im echten Leben aus",
+      "subTitle" : "Bezahle mit deiner Krypto-Karte und verdiene Cashback – online oder im Store"
     },
     "portfolio" : {
-      "cta" : "Dein Portfolio im Blick"
+      "cta" : "Dein Portfolio im Blick",
+      "title" : "Bleib dem Markt voraus",
+      "subTitle" : "Behalte den Überblick über deine Assets, Prämien und Markttrends."
     },
-    "done" : {
-      "cta" : "Nochmal starten"
+    "fund" : {
+      "cta" : "Lade deine Wallet auf",
+      "title" : "Beginne, indem du deine Wallet auflädst",
+      "subTitle" : "Lade dein Ledger Wallet auf wie du willst: transferiere, kaufe oder konvertiere Geld in Stablecoins."
     }
   },
   "discover" : {
@@ -3652,7 +3662,47 @@
         "addSampleWalletCarouselTag" : "Unteres Wallet-Karussell hinzufügen (Tag)",
         "addSampleWalletCarouselTagDesc" : "Eine Pseudokarte mit Tag, Titel, Bild, Link. Kein Braze.",
         "dismissAll" : "Alle lokalen Karten verwerfen",
-        "dismissAllDesc" : "Hiermit entfernst du alle lokal generierten Inhaltskarten."
+        "dismissAllDesc" : "Hiermit entfernst du alle lokal generierten Inhaltskarten.",
+        "genericAwareness" : {
+          "title" : "Allgemeines Hinweis-Modal",
+          "description" : "Erstelle rohe, Braze-ähnliche Karten, verarbeite diese durch den generischen Awareness-Modal-Parser und kehre dann zu Portfolio zurück, um den Drawer anzuzeigen.",
+          "carousel" : "Carousel",
+          "featureIntro" : "Funktionen-Intro",
+          "appStart" : "App-Start",
+          "deeplink" : "Deeplink",
+          "campaignId" : "Kampagnen-ID",
+          "titleField" : "Titel",
+          "subtitle" : "Untertitel",
+          "imageUrl" : "Bild-URL",
+          "primaryButtonLabel" : "Primäres Button-Label",
+          "primaryButtonLink" : "Primärer Button-Link",
+          "secondaryButtonLabel" : "Sekundäres Button-Label",
+          "secondaryButtonLink" : "Sekundärer Button-Link",
+          "icon" : "Icon",
+          "slide" : "Slide",
+          "item" : "Artikel",
+          "addItem" : "{{item}} hinzufügen",
+          "removeItem" : "Entfernen",
+          "create" : "Generisches Hinweis-Modal erstellen",
+          "createDesc" : "Parse das Formular als rohe Braze-ähnliche Karte und füge es der bestehenden Modal-Liste hinzu.",
+          "createCarousel" : "Karussell: generisches Awareness-Modal erstellen",
+          "createCarouselDesc" : "Formular öffnen, um ein generisches Karussell-Hinweis-Modal zu erstellen.",
+          "createFeatureIntro" : "Generisches Awareness-Modal zur Funktionen-Einführung erstellen",
+          "createFeatureIntroDesc" : "Formular öffnen, um ein allgemeines Hinweis-Modal zur Einführung von Funktionen zu erstellen.",
+          "openCurrent" : "Aktuelle Kampagne öffnen",
+          "openCurrentDesc" : "Drawer-Bundesland für diese Kampagne eingerichtet. Zurück zum Portfolio, um es anzusehen.",
+          "clear" : "Generische Hinweismodale löschen",
+          "clearDesc" : "Entferne jedes generische Awareness-Modal, das aktuell im App-Status gespeichert ist.",
+          "existingTitle" : "Bestehende generische Hinweis-Modals",
+          "existingDescription" : "Tippe auf eine Kampagne, damit sie als zu öffnender Drawer eingerichtet wird, und kehre dann zum Portfolio zurück.",
+          "noExisting" : "Derzeit ist kein generisches Awareness-Modal im Store im App-Status gespeichert",
+          "existingDesc" : "{{layout}} • {{count}} Einträge",
+          "layoutLabel" : "Layout",
+          "idLabel" : "ID",
+          "triggerLabel" : "Auslöser",
+          "entriesLabel" : "Einträge ({{count}})",
+          "untitledEntry" : "Unbenannter Eintrag"
+        }
       }
     }
   },
@@ -3664,6 +3714,14 @@
       "descVariantB" : "Erhalte Echtzeit-Benachrichtigungen zu neuen Token, Ertragschancen und Marktbewegungen. Abmeldung jederzeit möglich.",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später"
+    },
+    "optInScreen" : {
+      "title" : "Benachrichtigungen aktivieren?",
+      "description" : "Erhalte Echtzeit-Benachrichtigungen zu neuen Token, Ertragschancen und Marktbewegungen. Opt-out jederzeit in den Einstellungen",
+      "emptyTitle" : "Benachrichtigungen sind bereits aktiviert",
+      "emptyDescription" : "Alles ist eingerichtet, um Echtzeit-Benachrichtigungen von Ledger Wallet zu empfangen.",
+      "errorTitle" : "Benachrichtigungen nicht verfügbar",
+      "errorDescription" : "Wir konnten deine Benachrichtigungseinstellungen nicht überprüfen. Du kannst das Onboarding fortsetzen und sie später in den Einstellungen aktualisieren."
     },
     "ptxServices" : {
       "toast" : {
@@ -4814,8 +4872,270 @@
     },
     "chooseAccountToFund" : "Wähle ein Konto aus, um Guthaben hinzuzufügen"
   },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "Gerät ist gesperrt",
+        "description" : "Entsperre dein Gerät, um fortzufahren."
+      },
+      "unlockDevice" : {
+        "title" : "Entsperre deinen {{productName}}"
+      },
+      "continueOnDevice" : {
+        "title" : "Vorgang fortsetzen auf deinem {{productName}}",
+        "description" : "Befolge die Anweisungen, die auf deinem Secure Screen angezeigt werden."
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "Gerät nicht verbunden",
+        "description" : "Dein Ledger ist nicht mehr verbunden. Stelle sicher, dass das Gerät eingeschaltet ist und sich in Bluetooth-Reichweite befindet oder angeschlossen ist."
+      },
+      "intentError" : {
+        "title" : "Unbekannter Fehler",
+        "description" : "Ein Fehler ist aufgetreten Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+      },
+      "invalidOperation" : {
+        "title" : "Ungültiger Zustand",
+        "description" : "Ein Fehler ist aufgetreten Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+      }
+    },
+    "initialization" : {
+      "loading" : {
+        "title" : "Wird geladen"
+      },
+      "installingApp" : {
+        "title" : "App wird installiert"
+      },
+      "outdatedAppWarning" : {
+        "title" : "App-Version veraltet",
+        "description" : "Für die {{appName}}-App auf deinem Gerät ist ein wichtiges Update verfügbar. Gehe zu My Ledger, um sie zu aktualisieren."
+      },
+      "retryable" : {
+        "userRefused" : {
+          "title" : "Vorgang am Gerät abgelehnt"
+        },
+        "deviceBusy" : {
+          "title" : "Aktion ausstehend auf deinem Ledger-Gerät",
+          "description" : "Vervollständige sie und wähle dann Wiederholen aus."
+        }
+      },
+      "blocking" : {
+        "deviceNotOnboarded" : {
+          "title" : "Dein Ledger-Gerät ist noch nicht einsatzbereit",
+          "description" : "Du musst deine {{productName}} zuerst einrichten. Wir begleiten dich durch den Einrichtungsvorgang."
+        },
+        "unsupportedFirmwareVersion" : {
+          "title" : "Ledger OS-Update erforderlich"
+        },
+        "unsupportedApplication" : {
+          "title" : "Nicht unterstützte Funktion",
+          "description" : "Die für diesen Vorgang benötigte App ist derzeit auf deinem Ledger-Gerät nicht verfügbar. Bitte kontaktiere den Ledger-Kundenservice für weitere Details."
+        },
+        "unsupportedFeature" : {
+          "title" : "Nicht unterstützte Funktion",
+          "description" : "Die für diesen Vorgang benötigte App ist derzeit auf deinem Ledger-Gerät nicht verfügbar. Bitte kontaktiere den Ledger-Kundenservice für weitere Details."
+        },
+        "wrongDeviceForAccount" : {
+          "title" : "Falsche geheime Wiederherstellungsphrase",
+          "description" : "Dieser Ledger ist nicht mit der Wiederherstellungsphrase eingerichtet, die mit dem ausgewählten Konto verknüpft ist. Überprüfe, ob du das richtige Gerät verwendest."
+        },
+        "deviceOutOfStorageSpace" : {
+          "title" : "Nicht genug Gerätespeicher",
+          "description" : "Dein Gerät hat nicht genügend Speicherplatz. Bitte deinstalliere Apps und versuche es dann noch einmal."
+        }
+      },
+      "cta" : {
+        "openMyLedger" : "My Ledger öffnen",
+        "goToMyLedger" : "Zu My Ledger wechseln",
+        "setupDevice" : "Gerät einrichten",
+        "updateLedgerOs" : "Ledger OS aktualisieren",
+        "cancelOperation" : "Vorgang abbrechen",
+        "contactLedgerSupport" : "Ledger-Kundenservice kontaktieren"
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledger-Gerät",
+        "available" : "Verfügbar",
+        "notConnected" : "Nicht verbunden"
+      },
+      "states" : {
+        "connecting" : {
+          "title" : "Wird geladen"
+        },
+        "connectionError" : {
+          "errors" : {
+            "blePairingRefused" : {
+              "title" : "Die Kopplung wurde abgelehnt",
+              "cta" : {
+                "retry" : "Verbindungsversuch wiederholen"
+              }
+            },
+            "blePairingPeerRemovedPairing" : {
+              "title" : "Öffne die Bluetooth-Einstellungen deines Mobiltelefons, um die Kopplung mit {{productName}} aufzuheben",
+              "description" : "Zum Beheben des Kopplungsproblems lösche {{productName}} aus der Bluetooth-Liste deines Mobiltelefons. Dann rufst du diese App erneut auf und versuchst es noch einmal.",
+              "cta" : {
+                "retry" : "Kopplung aufgehoben, erneut versuchen",
+                "help" : "Informationen zur Fehlerbehebung"
+              }
+            },
+            "unknown" : {
+              "title" : "Kopplung fehlgeschlagen",
+              "description" : "Bitte versuche es erneut oder lies unseren Artikel zur Bluetooth-Fehlerbehebung unten.",
+              "tip" : "Stelle sicher, dass dein Gerät entsperrt ist.",
+              "cta" : {
+                "retry" : "Wiederholen",
+                "help" : "Hilfe erhalten"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "Gerät wählen"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "bluetoothPermissionDeniedPromptable" : {
+              "title" : "Erlaube den Bluetooth-Zugriff",
+              "description" : "Erlaube Bluetooth, nach Ledger-Geräten in der Nähe zu suchen.",
+              "cta" : {
+                "retry" : "Erlauben",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "bluetoothPermissionDeniedManualSettings" : {
+              "title" : "Erlaube den Bluetooth-Zugriff",
+              "description" : "Bluetooth-Berechtigung ist erforderlich. Gehe zu Einstellungen → Apps → Ledger Wallet → Berechtigungen → Geräte in der Nähe und kehre dann zurück.",
+              "cta" : {
+                "retry" : "Ich habe es aktiviert, erneut versuchenn",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "bluetoothPermissionUnauthorizedManualSettings" : {
+              "title" : "Erlaube den Bluetooth-Zugriff",
+              "description" : "Ledger Wallet benötigt die Bluetooth-Berechtigung, um dein Gerät zu finden. Aktiviere es in den Einstellungen.",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "Ich habe es aktiviert. Versuche es noch einmal"
+                  },
+                  "android" : {
+                    "retry" : "Ich habe es aktiviert. Versuche es noch einmal",
+                    "ignore" : "Mit USB fortfahren"
+                  }
+                }
+              }
+            },
+            "bluetoothDisabledPromptable" : {
+              "title" : "Bluetooth einschalten",
+              "description" : "Bluetooth ist aus. Schalte es ein, um dein Ledger-Gerät zu finden.",
+              "cta" : {
+                "retry" : "Bluetooth einschalten",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "bluetoothDisabledManualAction" : {
+              "title" : "Bluetooth einschalten",
+              "description" : "Bluetooth ist aus. Schalte es in den Einstellungen → Bluetooth ein und kehre dann zurück.",
+              "cta" : {
+                "platform" : {
+                  "ios" : {
+                    "retry" : "Ich habe Bluetooth aktiviert, erneut versuchen"
+                  },
+                  "android" : {
+                    "retry" : "Ich habe Bluetooth aktiviert, erneut versuchen",
+                    "ignore" : "Mit USB fortfahren"
+                  }
+                }
+              }
+            },
+            "bluetoothStateUnknownCheckOnly" : {
+              "title" : "Bluetooth wird geprüft..."
+            },
+            "bluetoothUnsupported" : {
+              "title" : "Bluetooth wird nicht unterstützt",
+              "description" : {
+                "platform" : {
+                  "android" : "Dieses Telefon unterstützt kein Bluetooth. Du kannst stattdessen dein Ledger-Gerät über USB anschließen.",
+                  "ios" : "Dieses Telefon unterstützt kein Bluetooth. Bitte verwende Ledger Wallet Desktop oder wende dich an den Ledger-Kundenservice."
+                }
+              },
+              "cta" : {
+                "platform" : {
+                  "android" : {
+                    "ignore" : "Mit USB fortfahren"
+                  }
+                }
+              }
+            },
+            "locationPermissionDeniedPromptable" : {
+              "title" : "Standortzugriff erlauben",
+              "description" : "Android benötigt die Standortberechtigung, um nach Bluetooth-Geräten zu scannen.",
+              "cta" : {
+                "retry" : "Erlauben",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "locationPermissionDeniedManualSettings" : {
+              "title" : "Standortzugriff erlauben",
+              "description" : "Die Standortfreigabe ist erforderlich, um nach Bluetooth-Geräten zu scannen. Gehe zu Settings (Einstellungen) > Apps (Apps) > Ledger Wallet > Permits (Berechtigungen) > Settings (Einstellungen) und dann zurück.",
+              "cta" : {
+                "retry" : "Ich habe es aktiviert, erneut versuchen",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "locationDisabledPromptable" : {
+              "title" : "Standort aktivieren",
+              "description" : "Standortdienste sind ausgeschaltet. Schalte sie ein, um nach Bluetooth-Geräten zu suchen.",
+              "cta" : {
+                "retry" : "Standort aktivieren",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "locationDisabledManualAction" : {
+              "title" : "Standort aktivieren",
+              "description" : "Standortdienste sind ausgeschaltet. Schalten sie über Einstellungen → Standort ein und komm dann zurück.",
+              "cta" : {
+                "retry" : "Ich habe Standort aktiviert, erneut versuchen",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "locationServicePermissionMissing" : {
+              "title" : "Standortzugriff erlauben",
+              "description" : "Standortfreigabe scheint zu fehlen. Tippe unten, um es noch einmal zu versuchen.",
+              "cta" : {
+                "retry" : "Wiederholen",
+                "ignore" : "Mit USB fortfahren"
+              }
+            },
+            "unknown" : {
+              "title" : "Etwas ist schief gelaufen",
+              "description" : "Wir konnten den Bluetooth-Scan nicht starten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice.",
+              "cta" : {
+                "retry" : "Wiederholen"
+              }
+            }
+          }
+        },
+        "loading" : {
+          "title" : "Wird geladen"
+        },
+        "noKnownDevice" : {
+          "title" : "Ledger-Gerät erforderlich",
+          "description" : "Zum Fortfahren musst du deinen Signer einrichten oder ihn verbinden.",
+          "connectLedgerDevice" : "Ledger-Gerät anschließen",
+          "noLedgerDevice" : "Ich habe kein Ledger-Gerät"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "{{productName}} einschalten und entsperren"
+        }
+      }
+    }
+  },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Bleib in der Ledger Wallet-App und halte dein Ledger-Gerät bereit.",
+    "stuckLoaderHint" : "Stelle sicher, dass dein Gerät entsperrt ist und kein Vorgang aussteht",
     "allowAppPermission" : "Öffne die {{wording}} App auf deinem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten deiner {{token}}-Token",
     "allowManagerPermission" : "Lass eine sichere Verbindung mit Ledger zu",
@@ -6269,8 +6589,16 @@
       "title" : "Du kannst Prämien verdienen, indem du dein Konto delegierst",
       "btn" : "Prämien verdienen"
     },
+    "manage" : "Verwalten",
     "delegation" : {
-      "addCustomValidator" : "+ Benutzerdefinierten Validator hinzufügen"
+      "addCustomValidator" : "+ Benutzerdefinierten Validator hinzufügen",
+      "sectionLabel" : "Delegierung"
+    },
+    "staking" : {
+      "sectionLabel" : "Staking",
+      "status" : "Status",
+      "unstaking" : "Unstaking",
+      "available" : "Verfügbar"
     }
   },
   "evm" : {
@@ -7787,6 +8115,59 @@
       "title" : "Transaktionsverlauf"
     }
   },
+  "pnl" : {
+    "disclaimer" : "Diese Daten dienen ausschließlich Informationszwecken und stellen keine Finanzberatung dar. Nicht für Steuerzwecke verwenden.",
+    "asset" : {
+      "return" : {
+        "title" : "Nicht realisierte Rendite"
+      },
+      "entry" : {
+        "title" : "Durchschnittlicher Einstiegspreis",
+        "tooltip" : "Der durchschnittliche Preis, den du für dieses Asset über die Ledger Wallet gezahlt hast, einschließlich aller Käufe oder Empfänge aus anderen Wallets. Dies wird verwendet, um deinen Gewinn oder Verlust zu verfolgen."
+      },
+      "drawer" : {
+        "title" : "Asset-Gewinn und Verlust",
+        "description" : "Eine Übersicht über die Entwicklung dieses Assets in deinem Portfolio.",
+        "estimatedReturn" : {
+          "title" : "Geschätzte Rendite",
+          "description" : "Der geschätzte Gewinn oder Verlust bei Verkauf zum aktuellen Kurs."
+        },
+        "realisedReturn" : {
+          "title" : "Realisierte Rendite",
+          "description" : "Bestätigter Gewinn oder Verlust aus früherem Verkaufen, Senden oder Swappen."
+        },
+        "totalReturn" : {
+          "title" : "Gesamtrendite",
+          "description" : "Die Summe der geschätzten und realisierten Renditen."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "Nicht realisierter Ertrag"
+      },
+      "costBasis" : {
+        "title" : "Kostenbasis",
+        "tooltip" : "Der Gesamtbetrag, den du für den Erwerb deiner aktuellen Bestände gezahlt hast, einschließlich Gebühren."
+      },
+      "drawer" : {
+        "title" : "Portfolio Gewinn und Verlust",
+        "description" : "Die Performance deines Portfolios, aufgeschlüsselt in geschätzte und realisierte Renditen.",
+        "estimatedReturn" : {
+          "title" : "Geschätzte Rendite",
+          "description" : "Der geschätzte Gewinn oder Verlust bei Verkauf zum aktuellen Kurs."
+        },
+        "realisedReturn" : {
+          "title" : "Realisierte Rendite",
+          "description" : "Bestätigter Gewinn oder Verlust aus früherem Verkaufen, Senden oder Swappen."
+        },
+        "totalReturn" : {
+          "title" : "Gesamtrendite",
+          "description" : "Die Summe der geschätzten und realisierten Renditen."
+        }
+      }
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -8081,6 +8462,10 @@
         "recover" : {
           "title" : "Schutz deines Backups vervollständigen",
           "description" : "Aktivierung von Ledger Recover vornehmen"
+        },
+        "discoverWallet" : {
+          "title" : "Entdecke deine Wallet",
+          "description" : "Erfahre, was es Neues in deinem Portfolio gibt und wie du dich zurechtfindest."
         }
       }
     },
@@ -8113,6 +8498,10 @@
       "syncAccounts" : {
         "titleCompleted" : "Deine Konten sind synchronisiert",
         "popupLabel" : "Konten synchronisiert"
+      },
+      "discoverWallet" : {
+        "titleCompleted" : "Wallet-Tour abgeschlossen",
+        "popupLabel" : "Wallet-Tour abgeschlossen"
       }
     }
   },
@@ -8254,6 +8643,24 @@
         "daily" : "Tägliche Belohnungen",
         "eigenlayer_points" : "Eigenlayer-Punkte",
         "validator" : "Validatorbelohnungen"
+      },
+      "info" : {
+        "available" : {
+          "title" : "{{currencyTicker}} verfügbar",
+          "description" : "Dieser Betrag ist verfügbar."
+        },
+        "delegated" : {
+          "title" : "Delegierte Assets",
+          "description" : "Delegierte Assets werden für das {{currencyName}}-Voting verwendet. Dies ist die Gesamtzahl deiner Votes."
+        },
+        "undelegating" : {
+          "title" : "Delegierung aufheben",
+          "description" : "Nicht delegierte Assets werden erst nach einer Sperrfrist von {{numberOfDays}} Tagen verfügbar."
+        },
+        "delegationUnavailable" : {
+          "title" : "Übertragung nicht verfügbar",
+          "description" : "Nicht genügend verfügbares Guthaben auf deinem Konto, um eine neue Delegierung zu starten."
+        }
       }
     },
     "noFundsModal" : {
@@ -8278,6 +8685,29 @@
     "getFundsModal" : {
       "text" : "Hol dir {{coin}} zum Staken",
       "description" : "Kaufe, tausche oder empfange Kryptowährungen mit Ledger Wallet direkt auf deinem Ledger-Gerät."
+    },
+    "default" : {
+      "info" : {
+        "undelegating" : {
+          "description" : "Dies ist der Betrag, der derzeit aus dem Staking entfernt wird. Er wird deinem verfügbaren Kontostand gutgeschrieben, sobald die Abhebung abgeschlossen ist."
+        }
+      }
+    }
+  },
+  "analyticsConsent" : {
+    "title" : "Hilf uns, Ledger zu verbessern",
+    "subTitle" : "Mit deiner Zustimmung erheben wir Nutzungsdaten, um Funktionen zu verbessern und Fehler zu beheben. Wir tracken deine Assets oder Portfoliodetails nicht.",
+    "setPreferencesCTA" : "Einstellungen festlegen",
+    "refuseCTA" : "Alle ablehnen",
+    "acceptCTA" : "Alle annehmen",
+    "privacyPolicy" : "Du kannst deine Einwilligung jederzeit in den Einstellungen widerrufen.",
+    "privacyPolicyCTA" : "Datenschutzrichtlinie",
+    "setPreferences" : {
+      "title" : "Einstellungen festlegen",
+      "performance" : "App-Leistung",
+      "performanceDesc" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um das Nutzungserlebnis zu optimieren.",
+      "experience" : "Personalisierte Nutzung",
+      "experienceDesc" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um personalisierte Inhalte bereitzustellen"
     }
   },
   "analyticsOptIn" : {
@@ -8673,6 +9103,7 @@
     "addresses" : {
       "title" : "Adressen",
       "addAccount" : "Hinzufügen",
+      "seeAll" : "Alles anzeigen",
       "empty" : "Noch keine Adressen Tippe auf Hinzufügen, um loszulegen."
     },
     "marketStats" : {
@@ -8680,10 +9111,12 @@
       "marketCap" : "Marktkapitalisierung",
       "marketRank" : "Marktrang",
       "circulatingSupply" : "Angebot im Umlauf",
-      "circulatingSupplyTooltip" : "Die Anzahl der Coins, die derzeit zum Handel verfügbar und auf dem Markt im Umlauf sind.",
+      "circulatingSupplyTooltip" : "Die Gesamtzahl der Token, die derzeit auf dem Markt verfügbar sind und von der Öffentlichkeit gehalten werden. Ausgenommen sind gesperrte, reservierte oder ungeprägte Token.",
       "maxSupply" : "Max. Angebot",
-      "maxSupplyTooltip" : "Die maximale Anzahl von Coins, die es jemals für diese Kryptowährung geben wird.",
+      "maxSupplyTooltip" : "Die maximale Anzahl von Token, die es jemals geben wird. Bei einigen Assets ist dies festgelegt, um Inflation zu verhindern.",
+      "marketCapTooltip" : "Der Gesamtwert aller Coins im Umlauf. Betrachte es als den Gesamtwert der Kryptos auf dem Markt.",
       "tradingVolume" : "24h Handelsvolumen",
+      "tradingVolumeTooltip" : "Der in den letzten 24 Stunden gehandelte Gesamtbetrag.",
       "error" : "Die Marktstatistiken können nicht geladen werden."
     },
     "pricePerformance" : {
@@ -8704,6 +9137,10 @@
     "fallbackBanner" : {
       "title" : "Swappen und Kaufen werden für dieses Asset nicht unterstützt."
     },
+    "hiddenAssetBanner" : {
+      "title" : "Dieses Assets ist in deinem Portfolio ausgeblendet.",
+      "showAsset" : "Asset anzeigen"
+    },
     "balanceDetails" : {
       "totalBalance" : "Gesamtsaldo",
       "transfer" : "Übertragen",
@@ -8713,7 +9150,14 @@
       "earnBannerGeneric" : "Verdiene mit diesem Asset",
       "earnBannerSubtitle" : "Halte dieses Asset und verdiene",
       "earnBannerAction" : "Gehe zu Verdienen",
-      "availableBalanceTooltip" : "Sofort verfügbare Guthaben, mit Ausnahme gestaketer oder delegierter Beträge."
+      "availableBalanceTooltip" : "Der Teil deines Guthabens, den du gerade nutzen kannst, um ihn jederzeit zu senden, zu swappen oder abzuheben."
+    },
+    "coinOptions" : {
+      "openMenuA11yLabel" : "Coin-Optionen",
+      "addFavourite" : "Zu Favoriten hinzufügen",
+      "removeFavourite" : "Aus Favoriten entfernen",
+      "hideFromPortfolio" : "Aus Portfolio ausblenden",
+      "showInPortfolio" : "Im Portfolio anzeigen"
     }
   },
   "assetSelection" : {

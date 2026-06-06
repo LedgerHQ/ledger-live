@@ -1,6 +1,8 @@
 import { ApplicationOptions } from "page";
 import { isWallet40 } from "../../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -25,6 +27,7 @@ export function runPortfolioTransactionsHistoryTest(
       });
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
     it(`[${account.currency.ticker}] Transaction history displayed when user added his accounts`, async () => {
@@ -43,6 +46,7 @@ export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string
       });
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
     it("Charts and assets section are displayed when user added his accounts", async () => {

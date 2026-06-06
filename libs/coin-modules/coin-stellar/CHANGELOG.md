@@ -1,5 +1,27 @@
 # @ledgerhq/coin-stellar
 
+## 6.24.0
+
+### Minor Changes
+
+- [#17764](https://github.com/LedgerHQ/ledger-live/pull/17764) [`e2a111d`](https://github.com/LedgerHQ/ledger-live/commit/e2a111df6c95335041a3ef5ecc37718e10f18738) Thanks [@semeano](https://github.com/semeano)! - Fix create account outgoing operations value
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.3
+
+## 6.24.0-next.0
+
+### Minor Changes
+
+- [#17764](https://github.com/LedgerHQ/ledger-live/pull/17764) [`e2a111d`](https://github.com/LedgerHQ/ledger-live/commit/e2a111df6c95335041a3ef5ecc37718e10f18738) Thanks [@semeano](https://github.com/semeano)! - Fix create account outgoing operations value
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.3-next.0
+
 ## 6.23.0
 
 ### Minor Changes

@@ -1,5 +1,6 @@
 import { ScreenName } from "~/const";
 import { LandingPageUseCase } from "~/dynamicContent/types";
+import type { MarketListRouteParams } from "LLM/features/Market/types";
 
 export enum InitialRange {
   Day = "day",
@@ -17,5 +18,5 @@ export type LargeMoverLandingPageParams = {
 export type LandingPagesNavigatorParamList = {
   [ScreenName.GenericLandingPage]: { useCase: LandingPageUseCase };
   [ScreenName.LargeMoverLandingPage]: LargeMoverLandingPageParams;
-  [ScreenName.MarketList]: undefined;
+  [ScreenName.MarketList]: MarketListRouteParams | undefined;
 };

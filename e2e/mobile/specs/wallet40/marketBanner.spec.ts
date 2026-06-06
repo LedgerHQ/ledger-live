@@ -1,4 +1,6 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const testConfig = {
   tmsLinks: [
@@ -16,6 +18,7 @@ const testConfig = {
 
 const TICKER = "BTC";
 
+setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - Market Banner", () => {
   testConfig.tmsLinks.forEach(link => $TmsLink(link));
   testConfig.tags.forEach(tag => $Tag(tag));

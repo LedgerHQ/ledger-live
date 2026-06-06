@@ -1,4 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
+import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import {
   AccessDeniedError,
   CurrencyDisabledAsInputError,
@@ -21,9 +22,9 @@ import { getIncompatibleCurrencyKeys } from "./getIncompatibleCurrencyKeys";
 
 export { getAvailableProviders } from "../providers";
 
-export const operationStatusList = {
-  finishedOK: ["finished"],
-  finishedKO: ["refunded"],
+export const operationStatusList: Record<"finishedOK" | "finishedKO", readonly string[]> = {
+  finishedOK: [TransactionStatus.Finished],
+  finishedKO: [TransactionStatus.Refunded],
 };
 
 // A swap operation is considered pending if it is not in a finishedOK or finishedKO state

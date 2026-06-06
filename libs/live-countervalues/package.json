@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues",
-  "version": "0.18.5",
+  "version": "0.18.6",
   "description": "Ledger Live countervalues module",
   "keywords": [
     "Ledger"
@@ -23,7 +23,6 @@
   "dependencies": {
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
-    "@ledgerhq/cryptoassets": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
@@ -49,7 +48,6 @@
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/live-countervalues",
     "test": "jest",
-    "test-integ": "jest --config=jest.integ.config.js",
     "coverage": "jest --coverage"
   },
   "typesVersions": {

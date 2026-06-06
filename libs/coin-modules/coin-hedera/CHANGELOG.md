@@ -1,5 +1,47 @@
 # @ledgerhq/coin-hedera
 
+## 1.33.0
+
+### Minor Changes
+
+- [#17718](https://github.com/LedgerHQ/ledger-live/pull/17718) [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(lwf): rename `Result` to `GetAddressResult`
+
+- [#17855](https://github.com/LedgerHQ/ledger-live/pull/17855) [`943b3b2`](https://github.com/LedgerHQ/ledger-live/commit/943b3b2f28d5b8aa8f4be623c3747362972e0fbd) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: clean up hedera utils
+
+- [#17877](https://github.com/LedgerHQ/ledger-live/pull/17877) [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: upgrade hedera utils with configOrCurrencyId param
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/devices@8.15.0
+  - @ledgerhq/live-countervalues@0.18.6
+  - @ledgerhq/live-network@2.6.3
+
+## 1.33.0-next.0
+
+### Minor Changes
+
+- [#17718](https://github.com/LedgerHQ/ledger-live/pull/17718) [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(lwf): rename `Result` to `GetAddressResult`
+
+- [#17855](https://github.com/LedgerHQ/ledger-live/pull/17855) [`943b3b2`](https://github.com/LedgerHQ/ledger-live/commit/943b3b2f28d5b8aa8f4be623c3747362972e0fbd) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: clean up hedera utils
+
+- [#17877](https://github.com/LedgerHQ/ledger-live/pull/17877) [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: upgrade hedera utils with configOrCurrencyId param
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/devices@8.15.0-next.0
+  - @ledgerhq/live-countervalues@0.18.6-next.0
+  - @ledgerhq/live-network@2.6.3-next.0
+
 ## 1.32.0
 
 ### Minor Changes

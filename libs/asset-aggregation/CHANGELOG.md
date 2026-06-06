@@ -1,5 +1,31 @@
 # @ledgerhq/asset-aggregation
 
+## 0.7.0
+
+### Minor Changes
+
+- [#17826](https://github.com/LedgerHQ/ledger-live/pull/17826) [`67e3f43`](https://github.com/LedgerHQ/ledger-live/commit/67e3f43f7608b56bc94b5c24444e806aebd78eaf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix cross-network amount aggregation when a meta-currency's network tokens have different magnitudes (e.g. USDT on Ethereum with magnitude 6 and on BSC with magnitude 18). Network balances are now normalized to the meta-currency's reference magnitude before being summed, preventing incorrect totals.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274)]:
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/live-countervalues@0.18.6
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#17826](https://github.com/LedgerHQ/ledger-live/pull/17826) [`67e3f43`](https://github.com/LedgerHQ/ledger-live/commit/67e3f43f7608b56bc94b5c24444e806aebd78eaf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix cross-network amount aggregation when a meta-currency's network tokens have different magnitudes (e.g. USDT on Ethereum with magnitude 6 and on BSC with magnitude 18). Network balances are now normalized to the meta-currency's reference magnitude before being summed, preventing incorrect totals.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274)]:
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/live-countervalues@0.18.6-next.0
+
 ## 0.6.0
 
 ### Minor Changes

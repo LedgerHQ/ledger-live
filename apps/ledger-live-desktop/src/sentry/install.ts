@@ -57,6 +57,7 @@ const ignoreErrors = [
   "HederaAddAccountError",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
+  "ERR_TIMED_OUT",
   "request timed out",
   "SolanaTxConfirmationTimeout",
   "timeout",

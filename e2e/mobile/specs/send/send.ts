@@ -4,8 +4,13 @@ import { verifyAppValidationSendInfo } from "../../models/send";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import type { InitOptions } from "../../utils/initUtil";
+
+const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);
+const BST_SEND_INVALID_ADDRESS_CURRENCIES = new Set(["hedera"]);
 
 export type SendTestOptions = {
   featureFlags?: InitOptions["featureFlags"];
@@ -95,6 +100,11 @@ export function runSendTest(
   tags: string[],
   options?: SendTestOptions,
 ) {
+  setTeamOwner(
+    BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
+      ? Team.BST
+      : Team.COIN_INTEGRATION,
+  );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send from 1 account to another", () => {
@@ -122,6 +132,11 @@ export function runSendInvalidAddressTest(
   tags: string[],
   accountName?: string,
 ) {
+  setTeamOwner(
+    BST_SEND_INVALID_ADDRESS_CURRENCIES.has(transaction.accountToDebit.currency.id)
+      ? Team.BST
+      : Team.COIN_INTEGRATION,
+  );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - invalid address input", () => {
@@ -146,6 +161,7 @@ export function runSendValidAddressTest(
   accountName?: string,
   expectedWarningMessage?: string,
 ) {
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - valid address & amount input", () => {
@@ -184,6 +200,7 @@ export function runSendInvalidAmountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Check invalid amount input error", () => {
@@ -209,6 +226,7 @@ export function runSendInvalidTokenAmountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send token (subAccount) - invalid amount input", () => {
@@ -241,6 +259,7 @@ export function runSendInvalidTokenAmountTest(
 export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Verify send max user flow", () => {
@@ -266,6 +285,7 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[],
 export function runSendENSTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
+  setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("User sends funds to ENS address", () => {

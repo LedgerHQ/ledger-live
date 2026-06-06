@@ -12,6 +12,8 @@ import {
   SwapLiveError,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
+  type GetTransactionStatusResponse,
+  type GetTransactionStatusWireArgs,
 } from "./types";
 
 export * from "./types";
@@ -185,6 +187,18 @@ export class ExchangeModule extends CustomModule {
    */
   async getQuotes(params: GetQuotesWireArgs): Promise<GetQuotesResponse> {
     return this.request<GetQuotesWireArgs, GetQuotesResponse>("custom.exchange.getQuotes", params);
+  }
+
+  /**
+   * Fetch swap transaction status from the Wallet API host.
+   */
+  async getTransactionStatus(
+    params: GetTransactionStatusWireArgs,
+  ): Promise<GetTransactionStatusResponse> {
+    return this.request<GetTransactionStatusWireArgs, GetTransactionStatusResponse>(
+      "custom.exchange.getTransactionStatus",
+      params,
+    );
   }
 
   /**

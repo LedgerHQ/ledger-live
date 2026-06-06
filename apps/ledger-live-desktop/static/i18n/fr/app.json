@@ -1019,6 +1019,7 @@
         "switchLabel" : "<1>J’ai lu et accepte les </1><0>Conditions d’utilisation</0><1>.</1>"
       },
       "steps" : {
+        "title" : "Étape <0>{{step}} / {{total}}</0>",
         "1" : {
           "subtitle" : "Approuver un compte pour permettre au protocole de",
           "subtitle2" : "traiter vos futurs prêts.",
@@ -1031,8 +1032,7 @@
         "3" : {
           "subtitle" : "Retirer des actifs à tout moment",
           "description" : "Vous pouvez retirer vos actifs et les récompenses perçues en partie ou totalité à tout moment depuis votre compte Ledger."
-        },
-        "title" : "Étape <0>{{step}} / {{total}}</0>"
+        }
       }
     },
     "supply" : {
@@ -1336,21 +1336,21 @@
   },
   "postOnboarding" : {
     "widget" : {
-      "title" : "Finalisez la configuration de votre wallet",
+      "title" : "Configurez votre wallet",
       "subtitle" : "Commencez par y déposer des actifs."
     },
     "dialog" : {
-      "title" : "Finalisez la configuration de votre wallet",
+      "title" : "Configurez votre wallet",
       "titleCompleted" : "Vous avez terminé !",
       "primaryLabel" : "Compris",
       "actionCompletedLabel" : "Terminé",
       "actions" : {
         "deviceOnboarded" : {
-          "title" : "Configurer votre Ledger"
+          "title" : "Configurez votre Ledger"
         },
         "assetsTransfer" : {
-          "title" : "Ajouter une crypto",
-          "description" : "Recevez ou achetez des cryptos pour approvisionner votre wallet."
+          "title" : "Ajoutez des cryptos",
+          "description" : "Recevez ou achetez des cryptos."
         },
         "syncAccounts" : {
           "title" : "Synchronisez votre wallet",
@@ -1358,15 +1358,15 @@
         },
         "customImage" : {
           "title" : "Personnalisez le fond d’écran",
-          "description" : "Affichez votre image préférée sur l’écran de verrouillage de votre appareil."
-        },
-        "recover" : {
-          "title" : "Finalisez votre sauvegarde",
-          "description" : "Terminez l’activation de Ledger Recover."
+          "description" : "Affichez-y votre image préférée."
         },
         "discoverWallet" : {
           "title" : "Explorez votre wallet",
           "description" : "Découvrez les fonctionnalités."
+        },
+        "recover" : {
+          "title" : "Finalisez votre sauvegarde",
+          "description" : "Terminez l’activation de Ledger Recover."
         }
       }
     },
@@ -1404,17 +1404,17 @@
         "description" : "Activez Ledger Sync pour synchroniser vos comptes crypto.",
         "actionCompletedPopupLabel" : "Comptes synchronisés"
       },
-      "recover" : {
-        "title" : "Vous abonner à Ledger Recover",
-        "description" : "Restaurez l’accès à vos actifs sans votre phrase de récupération secrète.",
-        "actionCompletedPopupLabel" : "Vous êtes abonné(e) à Ledger Recover",
-        "titleCompleted" : "Sauvegarde sécurisée"
-      },
       "discoverWallet" : {
         "title" : "Explorez votre wallet",
         "titleCompleted" : "Explorez votre wallet",
         "description" : "Découvrez les fonctionnalités.",
         "actionCompletedPopupLabel" : "Présentation terminée"
+      },
+      "recover" : {
+        "title" : "Finalisez votre sauvegarde",
+        "titleCompleted" : "Sauvegarde sécurisée",
+        "description" : "Terminez l’activation de Ledger Recover.",
+        "actionCompletedPopupLabel" : "Vous êtes abonné(e) à Ledger Recover"
       }
     }
   },
@@ -1792,6 +1792,8 @@
       "votesAddress" : "<0>{{votes}}</0> pour <2>{{name}}</2>",
       "validators" : "Validateurs",
       "redelegated" : "Redéléguée",
+      "delegatedTo" : "Délégué à",
+      "delegatedAmount" : "Montant délégué",
       "redelegatedFrom" : "Redéléguée de",
       "redelegatedTo" : "Redéléguée à",
       "redelegatedAmount" : "Montant redélégué",
@@ -1819,9 +1821,7 @@
       "gasConsumed" : "Gaz consommé",
       "gasUsed" : "Gaz utilisé",
       "gasLimit" : "Limite de gaz",
-      "functionId" : "Identifiant de la fonction",
-      "delegatedTo" : "Délégué à",
-      "delegatedAmount" : "Montant délégué"
+      "functionId" : "Identifiant de la fonction"
     }
   },
   "operationList" : {
@@ -2223,6 +2223,8 @@
     }
   },
   "buyDeviceModal" : {
+    "title" : "Connectez un appareil Ledger",
+    "subtitle" : "Libérez toute la puissance de Ledger Wallet en connectant un appareil Ledger.",
     "0" : {
       "title" : "Contrôle absolu",
       "desc" : "Vous contrôlez vos clés privées."
@@ -2235,8 +2237,6 @@
       "title" : "Wallet ultra-puissant",
       "desc" : "Gérez des milliers d’actifs au même endroit."
     },
-    "title" : "Connectez un appareil Ledger",
-    "subtitle" : "Libérez toute la puissance de Ledger Wallet en connectant un appareil Ledger.",
     "connectCTA" : "Connecter",
     "buyCTA" : "Acheter un appareil"
   },
@@ -2717,11 +2717,7 @@
           },
           "starter" : {
             "description" : "Vous pouvez gagner des récompenses en déléguant vos EGLD à un prestataire de service de staking.",
-            "bullet" : [
-              "Vous gardez la propriété de vos actifs délégués.",
-              "Déléguez avec votre appareil Ledger.",
-              "Les actifs seront disponibles 10 jours après avoir mis fin à la délégation."
-            ],
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles 10 jours après avoir mis fin à la délégation."],
             "warning" : {
               "description" : "Choisissez judicieusement votre prestataire de service de staking : actuellement, le seul risque est de ne pas obtenir de récompenses pour diverses raisons. Choisissez un prestataire sur des critères de fiabilité, communication et économie."
             }
@@ -2864,11 +2860,7 @@
         "steps" : {
           "starter" : {
             "description" : "Gagnez des récompenses en déléguant vos ADA à un pool.",
-            "bullet" : [
-              "Vous gardez la propriété de vos actifs délégués.",
-              "Déléguez avec votre appareil Ledger.",
-              "Redéléguez vos actifs à un autre pool ou interrompez la délégation à tout moment."
-            ]
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Redéléguez vos actifs à un autre pool ou interrompez la délégation à tout moment."]
           },
           "validator" : {
             "title" : "Pools"
@@ -2918,12 +2910,7 @@
         "title" : "Préparer l’interruption de délégation",
         "steps" : {
           "starter" : {
-            "description" : [
-              "Pour fermer votre compte de staking et récupérer vos ADA :",
-              "Conformément aux règles de Cardano, vous devez désormais définir votre statut de vote avant de mettre fin à la délégation.",
-              "Vous devez simplement enregistrer votre choix d’abstention de vote sur le réseau. Pour cela, une opération vers votre propre adresse Ledger est requise. Seuls les frais de réseau s’appliquent. Vos ADA restent dans votre wallet.",
-              "Une fois votre choix enregistré, vous pourrez arrêter la délégation comme d’habitude."
-            ]
+            "description" : ["Pour fermer votre compte de staking et récupérer vos ADA :", "Conformément aux règles de Cardano, vous devez désormais définir votre statut de vote avant de mettre fin à la délégation.", "Vous devez simplement enregistrer votre choix d’abstention de vote sur le réseau. Pour cela, une opération vers votre propre adresse Ledger est requise. Seuls les frais de réseau s’appliquent. Vos ADA restent dans votre wallet.", "Une fois votre choix enregistré, vous pourrez arrêter la délégation comme d’habitude."]
           }
         }
       }
@@ -3332,11 +3319,7 @@
         "steps" : {
           "starter" : {
             "description" : "Vous pouvez gagner des récompenses en déléguant vos {{currencyTicker}} à un validateur.",
-            "bullet" : [
-              "Vous gardez la propriété de vos actifs délégués.",
-              "Déléguez avec votre appareil Ledger.",
-              "Les actifs seront disponibles {{numberOfDays}} jours après avoir mis fin à la délégation."
-            ],
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles {{numberOfDays}} jours après avoir mis fin à la délégation."],
             "warning" : {
               "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             }
@@ -3652,11 +3635,7 @@
       "steps" : {
         "starter" : {
           "description" : "Vous pouvez gagner des récompenses en liant vos actifs, puis en nommant vos validateurs.",
-          "bullet" : [
-            "Vous gardez la propriété de vos actifs liés.",
-            "Nommez en utilisant votre appareil Ledger.",
-            "Vos actifs seront à nouveau disponibles 28 jours après avoir mis fin à la liaison."
-          ],
+          "bullet" : ["Vous gardez la propriété de vos actifs liés.", "Nommez en utilisant votre appareil Ledger.", "Vos actifs seront à nouveau disponibles 28 jours après avoir mis fin à la liaison."],
           "help" : "Fonctionnement des nominations",
           "warning" : "Choisissez votre validateur judicieusement : une partie de vos actifs liés peut être perdue si le validateur ne se comporte pas correctement."
         },
@@ -4053,11 +4032,7 @@
         "steps" : {
           "starter" : {
             "description" : "Vous pouvez gagner des récompenses en stakant vos Aptos auprès d’un validateur.",
-            "bullet" : [
-              "Vous gardez la propriété de vos actifs stakés.",
-              "Stakez avec votre appareil Ledger.",
-              "Les actifs seront disponibles entre 0 et 14 jours après avoir été déstakés."
-            ],
+            "bullet" : ["Vous gardez la propriété de vos actifs stakés.", "Stakez avec votre appareil Ledger.", "Les actifs seront disponibles entre 0 et 14 jours après avoir été déstakés."],
             "warning" : {
               "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
             }
@@ -4296,11 +4271,7 @@
           "steps" : {
             "starter" : {
               "description" : "Vous pouvez gagner des récompenses en déléguant vos {{currencyTicker}} à un validateur.",
-              "bullet" : [
-                "Vous gardez la propriété de vos actifs délégués.",
-                "Déléguez avec votre appareil Ledger.",
-                "Les actifs seront disponibles une fois la délégation arrêtée."
-              ],
+              "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles une fois la délégation arrêtée."],
               "warning" : {
                 "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
               }
@@ -4350,6 +4321,7 @@
               "title" : "Appareil"
             },
             "confirmation" : {
+              "title" : "Confirmation",
               "success" : {
                 "title" : "Vous avez redélégué vos actifs",
                 "text" : "La redélégation sera mise à jour une fois votre transaction confirmée sur le réseau.",
@@ -4396,6 +4368,19 @@
   },
   "graph" : {
     "noGraphWarning" : "Graphique non disponible pour ce token"
+  },
+  "lineChart" : {
+    "error" : "Échec du chargement du graphique",
+    "rangeSelectorLabel" : "Sélectionner la période",
+    "range" : {
+      "1D" : "1J",
+      "1W" : "1S",
+      "1M" : "1M",
+      "6M" : "6M",
+      "1Y" : "1A",
+      "5Y" : "5A",
+      "ALL" : "Tout"
+    }
   },
   "near" : {
     "account" : {
@@ -4447,11 +4432,7 @@
         "steps" : {
           "starter" : {
             "description" : "Vous pouvez gagner des récompenses en stakant vos NEAR auprès d’un validateur.",
-            "bullet" : [
-              "Vous gardez la propriété de vos actifs stakés.",
-              "Stakez avec votre appareil Ledger.",
-              "Vos actifs seront disponibles 52 à 65 heures après avoir été déstakés."
-            ],
+            "bullet" : ["Vous gardez la propriété de vos actifs stakés.", "Stakez avec votre appareil Ledger.", "Vos actifs seront disponibles 52 à 65 heures après avoir été déstakés."],
             "warning" : {
               "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
             }
@@ -4636,6 +4617,137 @@
           }
         }
       }
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "Gagner des récompenses Tezos : délégation ou staking",
+      "description" : "Gagnez des récompenses avec vos Tezos (XTZ) en les déléguant à un Baker, tout en gardant un contrôle absolu. Pour des récompenses plus importantes, stakez vos XTZ, avec un faible risque. Choisissez le meilleur moyen de faire fructifier vos actifs.",
+      "howItWorks" : "Fonctionnement",
+      "delegate" : {
+        "header" : "Délégation",
+        "bullet" : {
+          "0" : "Pas d’immobilisation",
+          "1" : "L’intégralité du solde est déléguée",
+          "2" : "Envoi/échange de XTZ libres",
+          "3" : "Sans risque"
+        },
+        "cta" : "Déléguer"
+      },
+      "stake" : {
+        "header" : "Staking",
+        "bullet" : {
+          "0" : "Récompenses boostées (x2-3)",
+          "1" : "XTZ immobilisés",
+          "2" : "Déstaking : 4 jours",
+          "3" : "Risque : faible (slashing)"
+        },
+        "cta" : "Staker"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "Déstaker des XTZ",
+        "steps" : {
+          "amount" : {
+            "title" : "Montant",
+            "amountLabel" : "Montant à déstaker",
+            "availableLabel" : "Staké",
+            "maxLabel" : "Max",
+            "unbondingNotice" : "Le déstaking prend 4 jours. Pendant cette période, vos XTZ restent délégués et ne vous rapportent plus de récompenses de staking."
+          },
+          "device" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "broadcastError" : "Votre transaction de déstaking n’a pas pu être envoyée au réseau. Veuillez réessayer.",
+            "success" : {
+              "title" : "Déstaking enregistré",
+              "text" : "Vos XTZ sont en cours de déstaking et seront disponibles au retrait dans environ 4 jours.",
+              "cta" : "Voir les détails"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "Staking",
+        "preparingTransaction" : "Préparation de la transaction…",
+        "amount" : {
+          "disclaimer" : "Le déstaking prendra 4 jours.",
+          "awaitingDelegation" : "Confirmation de votre délégation en cours. Cela prend généralement moins d’une minute."
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "Validateur",
+            "description" : "Choisissez un Baker pour déléguer. Vous pourrez staker vos XTZ une fois la délégation confirmée."
+          },
+          "deviceDelegation" : {
+            "title" : "Confirmer la délégation"
+          },
+          "amount" : {
+            "title" : "Montant"
+          },
+          "deviceStaking" : {
+            "title" : "Confirmer le staking"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Vous avez staké {{amount}}. Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
+              "cta" : "Ouvrir la section Gagner"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer.",
+            "howItWorks" : "Fonctionnement du staking"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Déstaking requis pour changer de Baker",
+        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant de les déléguer à un nouveau Baker."
+      },
+      "endDelegation" : {
+        "title" : "Déstaking requis pour arrêter une délégation",
+        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant d’arrêter votre délégation."
+      },
+      "steps" : {
+        "0" : "Ouvrez le menu Gagner et sélectionnez Déstaker.",
+        "1" : "Confirmez le montant et la transaction de déstaking sur votre appareil.",
+        "2" : "Patientez pendant la période de déstaking d’environ 4 jours.",
+        "3" : "Une fois vos actifs retirés, vous pouvez changer de Baker ou mettre fin à votre délégation."
+      },
+      "learnMore" : "En savoir plus sur le staking Tezos",
+      "close" : "Fermer"
+    },
+    "account" : {
+      "delegatedAssetsTooltip" : "XTZ délégués à un baker. Actifs restant dans votre portefeuille et pouvant être utilisés à tout moment.",
+      "stakedAssets" : "Actifs stakés",
+      "stakedAssetsTooltip" : "XTZ immobilisés auprès de votre Baker. Déstakez-les pour pouvoir les retirer après environ 4 jours.",
+      "pendingWithdrawable" : "En cours de déstaking",
+      "pendingWithdrawableTooltip" : "XTZ actuellement en cours de déstaking. Disponibles au retrait dans environ 4 jours.",
+      "withdrawableAssets" : "Actifs retirables",
+      "withdrawableAssetsTooltip" : "XTZ ayant terminé leur période de déstaking et prêts à être retirés."
+    },
+    "delegation" : {
+      "contextMenu" : {
+        "stake" : "Staker mes XTZ"
+      }
+    },
+    "staking" : {
+      "header" : "staker",
+      "contextMenu" : {
+        "stakeMore" : "Staker plus",
+        "unstake" : "Déstaker"
+      }
+    },
+    "unstaking" : {
+      "header" : "Déstaking",
+      "processing" : "Traitement"
     }
   },
   "delegation" : {
@@ -4960,6 +5072,7 @@
           "open" : "Ouvrir"
         },
         "recover" : {
+          "title" : "Recover",
           "description" : "Définissez l’état local d’un abonnement Ledger Recover pour tester le hub post-onboarding et la bannière Recover.",
           "noSubscription" : "Pas d’abonnement",
           "inProgress" : "En cours",
@@ -5332,8 +5445,8 @@
     "cta" : "Sauvegarder",
     "ctaSuccess" : "Terminé",
     "noAccounts" : "Aucun compte à exporter",
-    "selectedAccounts" : "Comptes à inclure",
-    "selectedAccounts_other" : "Comptes à inclure ({{count}})",
+    "selectedAccounts" : "Comptes",
+    "selectedAccounts_other" : "Comptes ({{count}})",
     "disclaimer" : "Les informations relatives aux devises de contrepartie mentionnées dans cet export de données sont purement indicatives. Il convient de ne pas se baser sur ces informations à des fins de comptabilité, fiscales, réglementaires ou juridiques. Ces informations ne représentent qu’une estimation de la valeur des actifs au moment des transactions et de l’export, sur la base des méthodes d’évaluation adoptées par le fournisseur du service Kaiko."
   },
   "language" : {
@@ -5443,6 +5556,14 @@
         "title" : "Vérifiez le contenu de votre coffret",
         "description" : "Si votre {{device}} est livré avec un code PIN ou une phrase de récupération secrète, il est dangereux de l’utiliser. Contactez l’Assistance Ledger.",
         "alert" : "Utilisez uniquement la phrase de récupération affichée sur votre appareil Ledger lors de sa configuration."
+      }
+    },
+    "counterfeitWarning" : {
+      "title" : "Avant de commencer",
+      "body" : "Nous vous recommandons d’acheter sur <ledgerCom>Ledger.com</ledgerCom> ou via notre <resellerLink>réseau officiel de revendeurs</resellerLink>. Cela vous aide à vous assurer que votre appareil est authentique.",
+      "cta" : {
+        "primary" : "Continuer",
+        "secondary" : "En savoir plus"
       }
     },
     "alerts" : {
@@ -5670,6 +5791,7 @@
             }
           },
           "recoverHowTo" : {
+            "title" : "Sélectionnez \"Restore using Ledger Recover\"",
             "1" : {
               "title" : "Sélectionnez \"Restore\"",
               "descr" : "Appuyez simultanément sur les deux boutons pour sélectionner."
@@ -5677,7 +5799,6 @@
             "2" : {
               "title" : "Sélectionnez \"Restore using Ledger Recover\""
             },
-            "title" : "Sélectionnez \"Restore using Ledger Recover\"",
             "help" : {
               "iDontSee" : "Je ne vois pas \"Restore using Ledger Recover\"",
               "modal" : {
@@ -5962,6 +6083,12 @@
     "connected" : "Connecté",
     "backToPortfolio" : "Retour au Portefeuille",
     "steps" : {
+      "entry" : {
+        "title" : "Réparer la connexion USB",
+        "desc" : "Votre appareil semble avoir du mal à se connecter. Vous pouvez essayer les solutions suivantes jusqu’à ce que votre appareil se connecte.",
+        "cta" : "Réparer",
+        "back" : "Retour"
+      },
       "1" : {
         "windows" : {
           "title" : "Exécuter Ledger Wallet en tant qu’administrateur",
@@ -6074,12 +6201,6 @@
           "updateInstructions" : "Follow device update instructions",
           "somethingElse" : "Autre"
         }
-      },
-      "entry" : {
-        "title" : "Réparer la connexion USB",
-        "desc" : "Votre appareil semble avoir du mal à se connecter. Vous pouvez essayer les solutions suivantes jusqu’à ce que votre appareil se connecte.",
-        "cta" : "Réparer",
-        "back" : "Retour"
       }
     }
   },
@@ -6099,7 +6220,8 @@
     "doubleCheck" : "Vérifiez attentivement les détails de la transaction sur votre appareil Ledger avant de signer.",
     "termsAndConditions" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0>.",
     "termsAndConditionsWithPrivacy" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0> et sa <1>Politique de confidentialité</1>.",
-    "warningWording" : {},
+    "warningWording" : {
+    },
     "titleWording" : {
       "send" : "Confirmez l’opération sur votre appareil pour la finaliser.",
       "claimReward" : "Confirmez l’opération sur votre appareil pour la finaliser.",
@@ -6164,11 +6286,7 @@
     "title" : "Mise à jour des Conditions d’utilisation",
     "body" : {
       "intro" : "Les Conditions d’utilisation de Ledger Wallet ont été mises à jour. Elles ont été simplifiées, et reflètent les nouveaux services et fonctionnalités disponibles via Ledger Wallet. Les mises à jour comprennent :",
-      "bulletPoints" : [
-        "Précisions supplémentaires sur les services disponibles et leur fonctionnement",
-        "Explications sur les frais applicables aux services",
-        "Améliorations du processus de notification, pour vous tenir à jour de toute nouvelle modification de nos Conditions d’utilisation"
-      ],
+      "bulletPoints" : ["Précisions supplémentaires sur les services disponibles et leur fonctionnement", "Explications sur les frais applicables aux services", "Améliorations du processus de notification, pour vous tenir à jour de toute nouvelle modification de nos Conditions d’utilisation"],
       "agreement" : "En cliquant sur Continuer, vous reconnaissez avoir lu et accepté les Conditions d’utilisation ci-dessous."
     },
     "link" : "Conditions d’utilisation",
@@ -6251,6 +6369,36 @@
       "topologyChangeError" : {
         "message" : "Changement de topologie détecté. Mise à jour du compte requise."
       },
+      "disclaimer" : {
+        "title" : "Configuration du réseau Canton",
+        "intro" : "Canton possède des propriétés uniques que vous devez connaître avant de continuer :",
+        "bullets" : {
+          "utxo" : {
+            "title" : "Soldes de type UTXO",
+            "body" : "Les soldes existent sous forme de contrats individuels, plafonnés à 100 par transfert. Les contrats inactifs perdent de la valeur au fil du temps et expirent si les frais dépassent leur solde."
+          },
+          "offers" : {
+            "title" : "Transferts reposant sur des offres",
+            "body" : "Aucun règlement n’est automatique. Les transferts envoyés peuvent être retirés. Les transferts reçus doivent être acceptés ou rejetés manuellement. Gérez vos offres sur votre tableau de bord Canton."
+          },
+          "dualValidator" : {
+            "title" : "Sécurité par double validateur",
+            "body" : "Les transactions nécessitent une co-signature par Ledger et Kiln. Aucun ne peut agir seul en votre nom."
+          },
+          "tokenLiability" : {
+            "title" : "Mentions légales : tokens standards ⚠️",
+            "body" : "La responsabilité de la récupération de tokens en cas de situation de sinistre incombe à l’émetteur du token, et non à Ledger."
+          }
+        },
+        "agreeLabel" : "J’accepte les <1>Conditions du réseau Canton et l’exclusion de responsabilité de Ledger</1>.",
+        "cancel" : "Annuler",
+        "agree" : "Accepter",
+        "terms" : {
+          "title" : "Conditions d’utilisation du réseau Canton",
+          "sectionTitle" : "Tokens standards : exclusion de responsabilité et récupération",
+          "body" : "Ledger prend uniquement en charge les tokens standards émis via le Digital Asset (DA) Registry. Ledger n’est pas l’émetteur de ces tokens et ne saurait être tenu responsable quant à leur valeur, à leur gestion ou à leurs contrats intelligents sous-jacents.\n\nEn cas d’interruption du service Ledger ou de défaillance de la « reprise après sinistre », Ledger ne peut pas récupérer vos actifs. Vous devez contacter directement l’émetteur du token concerné (« Asset Admin ») pour initier la récupération via leurs protocoles « Asset Freeze » (Gel des actifs) ou « Registry Recovery » (Récupération de registre). Votre recours s’exerce exclusivement auprès de l’émetteur du token, conformément à ses accords de niveau de service (SLA) en vigueur. En poursuivant, vous reconnaissez que Ledger et ses affiliés ne sauraient être tenus responsables de de la perte, de la récupération ou de l’incapacité de récupérer ces tokens."
+        }
+      },
       "tooManyUtxos" : {
         "title" : "Action requise : trop de UTXO",
         "description" : "Votre compte contient trop de petits UTXO pour effectuer ce transfert. Fusionnez-les afin d’éviter l’expiration liée aux frais de détention cumulés, et de permettre les transferts.",
@@ -6314,36 +6462,6 @@
               "description" : "L’offre de transfert a bien été retirée."
             }
           }
-        }
-      },
-      "disclaimer" : {
-        "title" : "Configuration du réseau Canton",
-        "intro" : "Canton possède des propriétés uniques que vous devez connaître avant de continuer :",
-        "bullets" : {
-          "utxo" : {
-            "title" : "Soldes de type UTXO",
-            "body" : "Les soldes existent sous forme de contrats individuels, plafonnés à 100 par transfert. Les contrats inactifs perdent de la valeur au fil du temps et expirent si les frais dépassent leur solde."
-          },
-          "offers" : {
-            "title" : "Transferts reposant sur des offres",
-            "body" : "Aucun règlement n’est automatique. Les transferts envoyés peuvent être retirés. Les transferts reçus doivent être acceptés ou rejetés manuellement. Gérez vos offres sur votre tableau de bord Canton."
-          },
-          "dualValidator" : {
-            "title" : "Sécurité par double validateur",
-            "body" : "Les transactions nécessitent une co-signature par Ledger et Kiln. Aucun ne peut agir seul en votre nom."
-          },
-          "tokenLiability" : {
-            "title" : "Mentions légales : tokens standards ⚠️",
-            "body" : "La responsabilité de la récupération de tokens en cas de situation de sinistre incombe à l’émetteur du token, et non à Ledger."
-          }
-        },
-        "agreeLabel" : "J’accepte les <1>Conditions du réseau Canton et l’exclusion de responsabilité de Ledger</1>.",
-        "cancel" : "Annuler",
-        "agree" : "Accepter",
-        "terms" : {
-          "title" : "Conditions d’utilisation du réseau Canton",
-          "sectionTitle" : "Tokens standards : exclusion de responsabilité et récupération",
-          "body" : "Ledger prend uniquement en charge les tokens standards émis via le Digital Asset (DA) Registry. Ledger n’est pas l’émetteur de ces tokens et ne saurait être tenu responsable quant à leur valeur, à leur gestion ou à leurs contrats intelligents sous-jacents.\n\nEn cas d’interruption du service Ledger ou de défaillance de la « reprise après sinistre », Ledger ne peut pas récupérer vos actifs. Vous devez contacter directement l’émetteur du token concerné (« Asset Admin ») pour initier la récupération via leurs protocoles « Asset Freeze » (Gel des actifs) ou « Registry Recovery » (Récupération de registre). Votre recours s’exerce exclusivement auprès de l’émetteur du token, conformément à ses accords de niveau de service (SLA) en vigueur. En poursuivant, vous reconnaissez que Ledger et ses affiliés ne sauraient être tenus responsables de de la perte, de la récupération ou de l’incapacité de récupérer ces tokens."
         }
       }
     },
@@ -7067,6 +7185,9 @@
     "RecommendUndelegation" : {
       "title" : "Arrêtez la délégation du compte avant de le vider."
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "Veuillez déléguer votre compte avant de staker"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Commencez par vider tous les sous-comptes."
     },
@@ -7528,6 +7649,14 @@
       "title" : "Sélectionnez une entrée privée valide pour le montant",
       "description" : "Choisissez l’une de vos entrées privées disponibles pour financer votre transfert."
     },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "Trop d’entrées privées sélectionnées",
+      "description" : "Vous pouvez utiliser {{count}} entrées privées maximum par transaction."
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "Montant trop élevé pour une seule transaction",
+      "description" : "Vos entrées privées ne peuvent pas couvrir ce montant en une seule transaction. Veuillez choisir un montant inférieur."
+    },
     "AleoFeeRecordRequired" : {
       "title" : "Une autre entrée privée est nécessaire pour couvrir les frais de réseau",
       "description" : "Approvisionnez votre compte si nécessaire. Une entrée privée est utilisée pour le montant du transfert, et vous devez avoir une seconde entrée pour les frais de réseau."
@@ -7718,17 +7847,6 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "Montant supérieur aux limites UTXO"
-    },
-    "MustDelegateBeforeStaking" : {
-      "title" : "Veuillez déléguer votre compte avant de staker"
-    },
-    "AleoTooManyRecordsSelected" : {
-      "title" : "Trop d’entrées privées sélectionnées",
-      "description" : "Vous pouvez utiliser {{count}} entrées privées maximum par transaction."
-    },
-    "AleoAmountTooLargeForTransaction" : {
-      "title" : "Montant trop élevé pour une seule transaction",
-      "description" : "Vos entrées privées ne peuvent pas couvrir ce montant en une seule transaction. Veuillez choisir un montant inférieur."
     }
   },
   "cryptoOrg" : {
@@ -8468,7 +8586,7 @@
       "title" : "Pour vous"
     },
     "addAccountCta" : "Ajouter un compte crypto",
-    "noBalanceTitle" : "Commencez par\ndéposer des actifs",
+    "noBalanceTitle" : "Commencez par déposer des actifs",
     "perpsEntry" : {
       "title" : "Perpétuels",
       "description" : "Tradez avec effet de levier",
@@ -8535,21 +8653,18 @@
     "title" : "Comptes",
     "tableActions" : {
       "searchAddress" : "Rechercher par nom ou adresse",
-      "addAddress" : "Ajouter une adresse",
       "addAccount" : "Ajouter un compte"
     },
     "table" : {
       "columns" : {
         "name" : "Nom",
         "address" : "Adresse",
+        "asset" : "Actif",
         "value" : "Valeur"
       },
       "editName" : "Modifier le nom",
       "emptyState" : "Pas encore d’adresse crypto",
-      "emptySearchState" : "Aucun compte ne correspond à votre recherche.",
-      "assetCount_zero" : "{{count}} actif",
-      "assetCount_one" : "{{count}} actif",
-      "assetCount_other" : "{{count}} actifs"
+      "emptySearchState" : "Aucun compte ne correspond à votre recherche."
     },
     "editName" : {
       "title" : "Modifier le nom de l’adresse",
@@ -8574,8 +8689,7 @@
   },
   "topBar" : {
     "history" : {
-      "cta" : "Historique",
-      "tooltip" : "Historique"
+      "cta" : "Transactions"
     },
     "activityIndicator" : {
       "errorToolTip" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\n Comptes concernés : {{accounts}} Cliquez pour réessayer",
@@ -8678,13 +8792,7 @@
       "stepViewKeyWarning" : {
         "title" : "Configurer le solde privé Aleo",
         "description" : "Ledger Wallet enregistre votre clé permettant d’afficher votre solde privé et utilise des services tiers pour traiter les transactions privées. <0>En savoir plus</0>.",
-        "bullets" : [
-          "Accès en lecture seule pour déchiffrer votre solde privé",
-          "Ledger ne peut ni envoyer ni dépenser vos actifs.",
-          "Vous seul(e) pouvez signer des transactions et dépenser vos actifs.",
-          "Pour un traitement plus rapide, la génération des preuves prise en charge par des services tiers spécialisés.",
-          "Ces prouveurs ne peuvent ni accéder à vos actifs ni les dépenser."
-        ],
+        "bullets" : ["Accès en lecture seule pour déchiffrer votre solde privé", "Ledger ne peut ni envoyer ni dépenser vos actifs.", "Vous seul(e) pouvez signer des transactions et dépenser vos actifs.", "Pour un traitement plus rapide, la génération des preuves prise en charge par des services tiers spécialisés.", "Ces prouveurs ne peuvent ni accéder à vos actifs ni les dépenser."],
         "cta" : {
           "allow" : "Autoriser",
           "cancel" : "Annuler"
@@ -8720,21 +8828,6 @@
       }
     },
     "shared" : {
-      "sponsoredByProvable" : "Sponsorisé par Provable",
-      "balanceSelector" : {
-        "private" : "Solde privé",
-        "public" : "Solde public",
-        "lastUpdate" : "Dernière mise à jour : {{label}}",
-        "recently" : "Récemment",
-        "switchBalance" : "Changer la source du solde"
-      },
-      "recordPicker" : {
-        "label" : "Historique disponible",
-        "noRecords" : "Aucun historique",
-        "noRecordsAlert" : "Votre historique est vide. Effectuez un transfert interne ou recevez des actifs privés pour commencer.",
-        "alert" : "Le plafond de dépense dépend de la valeur maximale de l’entrée sélectionnée (record). Les frais sont pris en charge par Provable pour les utilisateurs de Ledger.",
-        "recordsLimit" : "L’historique affiche {{max}} entrées maximum"
-      },
       "quickAmountSelector" : {
         "strategies" : {
           "fast" : "Rapide",
@@ -8749,6 +8842,21 @@
       "infoBanner" : {
         "descPartOne" : "L’émetteur, le montant et le bénéficiaire sont masqués sur la blockchain.",
         "descPartTwo" : "Jusqu’à {{max}} entrées par envoi."
+      },
+      "sponsoredByProvable" : "Sponsorisé par Provable",
+      "balanceSelector" : {
+        "private" : "Solde privé",
+        "public" : "Solde public",
+        "lastUpdate" : "Dernière mise à jour : {{label}}",
+        "recently" : "Récemment",
+        "switchBalance" : "Changer la source du solde"
+      },
+      "recordPicker" : {
+        "label" : "Historique disponible",
+        "noRecords" : "Aucun historique",
+        "noRecordsAlert" : "Votre historique est vide. Effectuez un transfert interne ou recevez des actifs privés pour commencer.",
+        "alert" : "Le plafond de dépense dépend de la valeur maximale de l’entrée sélectionnée (record). Les frais sont pris en charge par Provable pour les utilisateurs de Ledger.",
+        "recordsLimit" : "L’historique affiche {{max}} entrées maximum"
       }
     },
     "account" : {
@@ -8848,7 +8956,7 @@
     }
   },
   "history" : {
-    "title" : "Transactions",
+    "title" : "Historique des transactions",
     "pending" : "Transaction en attente",
     "pending_other" : "Transactions en attente",
     "columns" : {
@@ -8866,13 +8974,12 @@
       "description" : "Revenez plus tard pour voir vos transactions."
     },
     "actionsBar" : {
-      "csv" : "CSV"
+      "csv" : "Exporter"
     },
     "exportDialog" : {
-      "title" : "Historique des opérations",
-      "description" : "Choisir les comptes à inclure dans l’exportation",
-      "disclaimer" : "Ces valeurs sont uniquement estimées et sont fournies par Kaiko à titre d’information. N’utilisez pas ces données à des fins fiscales, juridiques ou comptables.",
-      "accountsToInclude" : "Comptes à inclure",
+      "title" : "Exporter l’historique des opérations",
+      "disclaimer" : "Ces valeurs sont uniquement estimées et fournies par Kaiko à titre d’information. N’utilisez pas ces données à des fins fiscales, juridiques ou comptables.",
+      "accountsToInclude" : "Comptes",
       "selectAll" : "Sélectionner tout ({{count}})",
       "deselectAll" : "Désélectionner tout ({{count}})",
       "export" : "Exporter l’historique",
@@ -8903,7 +9010,6 @@
     "explore" : "Découvrir tous les appareils Ledger"
   },
   "assetDetails" : {
-    "totalBalance" : "Solde total",
     "header" : {
       "optionsMenu" : "Options d’affichage",
       "addFavourite" : "Ajouter aux favoris",
@@ -8915,6 +9021,7 @@
       "description" : "Cet actif est masqué dans votre portefeuille",
       "showAsset" : "Afficher l’actif"
     },
+    "totalBalance" : "Solde total",
     "marketPrice" : "Cours du marché",
     "addresses" : "Adresses",
     "addressesDialog" : {
@@ -8939,108 +9046,6 @@
       "earnBannerAction" : "Démarrer"
     }
   },
-  "tezos" : {
-    "earnChoice" : {
-      "title" : "Gagner des récompenses Tezos : délégation ou staking",
-      "description" : "Gagnez des récompenses avec vos Tezos (XTZ) en les déléguant à un Baker, tout en gardant un contrôle absolu. Pour des récompenses plus importantes, stakez vos XTZ, avec un faible risque. Choisissez le meilleur moyen de faire fructifier vos actifs.",
-      "howItWorks" : "Fonctionnement",
-      "delegate" : {
-        "header" : "Délégation",
-        "bullet" : {
-          "0" : "Pas d’immobilisation",
-          "1" : "L’intégralité du solde est déléguée",
-          "2" : "Envoi/échange de XTZ libres",
-          "3" : "Sans risque"
-        },
-        "cta" : "Déléguer"
-      },
-      "stake" : {
-        "header" : "Staking",
-        "bullet" : {
-          "0" : "Récompenses boostées (x2-3)",
-          "1" : "XTZ immobilisés",
-          "2" : "Déstaking : 4 jours",
-          "3" : "Risque : faible (slashing)"
-        },
-        "cta" : "Staker"
-      }
-    },
-    "unstake" : {
-      "flow" : {
-        "title" : "Déstaker des XTZ",
-        "steps" : {
-          "amount" : {
-            "title" : "Montant",
-            "amountLabel" : "Montant à déstaker",
-            "availableLabel" : "Staké",
-            "unbondingNotice" : "Le déstaking prend 4 jours. Pendant cette période, vos XTZ restent délégués et ne vous rapportent plus de récompenses de staking."
-          },
-          "device" : {
-            "title" : "Appareil"
-          },
-          "confirmation" : {
-            "broadcastError" : "Votre transaction de déstaking n’a pas pu être envoyée au réseau. Veuillez réessayer.",
-            "success" : {
-              "title" : "Déstaking enregistré",
-              "text" : "Vos XTZ sont en cours de déstaking et seront disponibles au retrait dans environ 4 jours.",
-              "cta" : "Voir les détails"
-            }
-          }
-        }
-      }
-    },
-    "stake" : {
-      "flow" : {
-        "title" : "Staking",
-        "amount" : {
-          "disclaimer" : "Le déstaking prendra 4 jours.",
-          "awaitingDelegation" : "Confirmation de votre délégation en cours. Cela prend généralement moins d’une minute."
-        },
-        "steps" : {
-          "validator" : {
-            "title" : "Validateur",
-            "description" : "Choisissez un Baker pour déléguer. Vous pourrez staker vos XTZ une fois la délégation confirmée."
-          },
-          "deviceDelegation" : {
-            "title" : "Confirmer la délégation"
-          },
-          "amount" : {
-            "title" : "Montant"
-          },
-          "deviceStaking" : {
-            "title" : "Confirmer le staking"
-          },
-          "confirmation" : {
-            "success" : {
-              "title" : "Actifs bien stakés",
-              "text" : "Vous avez staké {{amount}}. Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
-              "cta" : "Ouvrir la section Gagner"
-            },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer.",
-            "howItWorks" : "Fonctionnement du staking"
-          }
-        }
-      }
-    },
-    "unstakeRequired" : {
-      "changeBaker" : {
-        "title" : "Déstaking requis pour changer de Baker",
-        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant de les déléguer à un nouveau Baker."
-      },
-      "endDelegation" : {
-        "title" : "Déstaking requis pour arrêter une délégation",
-        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant d’arrêter votre délégation."
-      },
-      "steps" : {
-        "0" : "Ouvrez le menu Gagner et sélectionnez Déstaker.",
-        "1" : "Confirmez le montant et la transaction de déstaking sur votre appareil.",
-        "2" : "Patientez pendant la période de déstaking d’environ 4 jours.",
-        "3" : "Une fois vos actifs retirés, vous pouvez changer de Baker ou mettre fin à votre délégation."
-      },
-      "learnMore" : "En savoir plus sur le staking Tezos",
-      "close" : "Fermer"
-    }
-  },
   "pnl" : {
     "asset" : {
       "entry" : {
@@ -9055,7 +9060,7 @@
         "description" : "Synthèse de la performance de cet actif au sein de votre portefeuille.",
         "totalReturn" : {
           "title" : "Performance totale",
-          "description" : "Somme des performances réalisées et non réalisées."
+          "description" : "Somme des performances latente et réalisée."
         },
         "unrealisedReturn" : {
           "title" : "Performance latente",

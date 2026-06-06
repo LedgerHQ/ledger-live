@@ -10,7 +10,7 @@ import {
   liveDataWithAddressCommand,
   liveDataCommand,
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { EARN_V1_DESKTOP_FLAGS } from "tests/utils/featureFlagUtils";
+import { EARN_V1_DESKTOP_FLAGS, FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -50,24 +50,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       cliCommands: [liveDataWithAddressCommand(account)],
       featureFlags: {
         ...EARN_V1_DESKTOP_FLAGS,
-        // TODO: sync Firebase environments and remove this override when final variant is chosen
-        stakePrograms: {
-          enabled: true,
-          params: {
-            list: ["ethereum"],
-            redirects: {
-              "ethereum/erc20/usd__coin": {
-                platform: "earn",
-                name: "Earn - Deposit",
-                queryParams: {
-                  cryptoAssetId: "ethereum/erc20/usd__coin",
-                  intent: "deposit",
-                  deposit: "stablecoin",
-                },
-              },
-            },
-          },
-        },
+        ...FF_STAKE_PROGRAMS_MODAL,
       },
     });
 

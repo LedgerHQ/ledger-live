@@ -1,5 +1,21 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.25.0
+
+### Minor Changes
+
+- [#17775](https://github.com/LedgerHQ/ledger-live/pull/17775) [`1d39f17`](https://github.com/LedgerHQ/ledger-live/commit/1d39f1747ce2004248e7df36901fccb6c5d79654) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Defer pending operation account updates until after broadcast success navigation transitions complete
+
+- [#17802](https://github.com/LedgerHQ/ledger-live/pull/17802) [`b61e421`](https://github.com/LedgerHQ/ledger-live/commit/b61e42102019c04ee5d7df1aca22e30ba4a69e7d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add `E2E_FEATURE_FLAGS_JSON` env override for Mobile E2E feature flags, exposed as a `feature_flags_json` input on the Mobile E2E workflow (parity with Desktop).
+
+## 0.25.0-next.0
+
+### Minor Changes
+
+- [#17775](https://github.com/LedgerHQ/ledger-live/pull/17775) [`1d39f17`](https://github.com/LedgerHQ/ledger-live/commit/1d39f1747ce2004248e7df36901fccb6c5d79654) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Defer pending operation account updates until after broadcast success navigation transitions complete
+
+- [#17802](https://github.com/LedgerHQ/ledger-live/pull/17802) [`b61e421`](https://github.com/LedgerHQ/ledger-live/commit/b61e42102019c04ee5d7df1aca22e30ba4a69e7d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add `E2E_FEATURE_FLAGS_JSON` env override for Mobile E2E feature flags, exposed as a `feature_flags_json` input on the Mobile E2E workflow (parity with Desktop).
+
 ## 0.24.0
 
 ### Minor Changes

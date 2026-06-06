@@ -1,5 +1,27 @@
 # @ledgerhq/device-intent
 
+## 3.1.0
+
+### Minor Changes
+
+- [#17929](https://github.com/LedgerHQ/ledger-live/pull/17929) [`583803d`](https://github.com/LedgerHQ/ledger-live/commit/583803d266ceef53aa97e0d678045326926031ad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Enrich `ExecutorState` with the data the state machine has accumulated up to each transition: `initializingDeviceContext` now carries `connectionResult`, while `executingIntent` and `executingIntentError` carry both `connectionResult` and `extractedContext`. This is purely additive and lets host apps drive analytics or post-connection logic without keeping their own out-of-band copy of the connection / extraction results.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.1
+
+## 3.1.0-next.0
+
+### Minor Changes
+
+- [#17929](https://github.com/LedgerHQ/ledger-live/pull/17929) [`583803d`](https://github.com/LedgerHQ/ledger-live/commit/583803d266ceef53aa97e0d678045326926031ad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Enrich `ExecutorState` with the data the state machine has accumulated up to each transition: `initializingDeviceContext` now carries `connectionResult`, while `executingIntent` and `executingIntentError` carry both `connectionResult` and `extractedContext`. This is purely additive and lets host apps drive analytics or post-connection logic without keeping their own out-of-band copy of the connection / extraction results.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.1-next.0
+
 ## 3.0.0
 
 ### Minor Changes

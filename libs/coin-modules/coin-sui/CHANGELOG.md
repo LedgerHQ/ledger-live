@@ -1,5 +1,37 @@
 # @ledgerhq/coin-sui
 
+## 0.36.0
+
+### Minor Changes
+
+- [#17301](https://github.com/LedgerHQ/ledger-live/pull/17301) [`aba3431`](https://github.com/LedgerHQ/ledger-live/commit/aba3431fb3af99015fc5a75dde839fa0ed57df0f) Thanks [@ishaba](https://github.com/ishaba)! - feat(coin-sui): GraphQL transport for the remaining read paths (operations, validators) and the write paths (fee dry-run via `simulateTransaction`, broadcast via `executeTransaction`). Builds on the `suiGraphqlTransport` feature-flag scaffolding landed in the first PR — flipping the flag now routes the full sync + execute pipeline through GraphQL.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274)]:
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/live-env@2.37.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/live-network@2.6.3
+  - @ledgerhq/hw-app-sui@1.11.1
+
+## 0.36.0-next.0
+
+### Minor Changes
+
+- [#17301](https://github.com/LedgerHQ/ledger-live/pull/17301) [`aba3431`](https://github.com/LedgerHQ/ledger-live/commit/aba3431fb3af99015fc5a75dde839fa0ed57df0f) Thanks [@ishaba](https://github.com/ishaba)! - feat(coin-sui): GraphQL transport for the remaining read paths (operations, validators) and the write paths (fee dry-run via `simulateTransaction`, broadcast via `executeTransaction`). Builds on the `suiGraphqlTransport` feature-flag scaffolding landed in the first PR — flipping the flag now routes the full sync + execute pipeline through GraphQL.
+
+### Patch Changes
+
+- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274)]:
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/live-env@2.37.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/live-network@2.6.3-next.0
+  - @ledgerhq/hw-app-sui@1.11.1-next.0
+
 ## 0.35.0
 
 ### Minor Changes

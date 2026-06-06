@@ -1,5 +1,8 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
+setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-5256");
 $TmsLink("B2CQA-5263");
 $TmsLink("B2CQA-5266");

@@ -3,8 +3,8 @@ import { Action, ReducerMap, handleActions } from "redux-actions";
 import {
   MarketListCategory,
   MarketListConfigState,
+  MarketListFilterTimeframe,
   MarketListSorting,
-  MarketListTimeframe,
   MarketState,
   State,
 } from "./types";
@@ -114,7 +114,7 @@ const marketListConfigSlice = createSlice({
     setMarketListSorting: (state, action: PayloadAction<MarketListSorting>) => {
       state.sorting = action.payload;
     },
-    setMarketListTimeframe: (state, action: PayloadAction<MarketListTimeframe>) => {
+    setMarketListTimeframe: (state, action: PayloadAction<MarketListFilterTimeframe>) => {
       state.timeframe = action.payload;
     },
     setMarketListNetwork: (state, action: PayloadAction<string | undefined>) => {
@@ -140,7 +140,7 @@ export const {
 
 export const selectMarketListSorting = (state: State): MarketListSorting =>
   state.marketListConfig.sorting;
-export const selectMarketListTimeframe = (state: State): MarketListTimeframe =>
+export const selectMarketListTimeframe = (state: State): MarketListFilterTimeframe =>
   state.marketListConfig.timeframe;
 export const selectMarketListNetwork = (state: State): string | undefined =>
   state.marketListConfig.network;

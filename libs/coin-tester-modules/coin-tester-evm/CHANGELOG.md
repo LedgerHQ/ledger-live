@@ -1,5 +1,58 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.26.0
+
+### Minor Changes
+
+- [#17648](https://github.com/LedgerHQ/ledger-live/pull/17648) [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Arc and Arc Testnet (Circle's USDC-native EVM L1, chainIds 5042 and 5042002)
+
+### Patch Changes
+
+- Updated dependencies [[`0725ee1`](https://github.com/LedgerHQ/ledger-live/commit/0725ee1dc568cf9624d7aea0ea5e06a31e8aa071), [`ddbb329`](https://github.com/LedgerHQ/ledger-live/commit/ddbb329dcacf46902dacd06091c655e1faf0a022), [`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2), [`3c9d788`](https://github.com/LedgerHQ/ledger-live/commit/3c9d78801a2d45ee19a70263ecf5be0937f2f158), [`c17272e`](https://github.com/LedgerHQ/ledger-live/commit/c17272e63b4036057022cfb28d7433a4a56201c9), [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`6f00871`](https://github.com/LedgerHQ/ledger-live/commit/6f00871f7bbef39a98fb32b7695576f83458d588), [`08c5655`](https://github.com/LedgerHQ/ledger-live/commit/08c5655c8bcd894eb69c28c81e00d892cfc7b621), [`212cea6`](https://github.com/LedgerHQ/ledger-live/commit/212cea6aa1eff575ea111d7b7f89831452fd18d2), [`76a8f10`](https://github.com/LedgerHQ/ledger-live/commit/76a8f101847811a642d440ef764d87a11dd02904), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`881cb3b`](https://github.com/LedgerHQ/ledger-live/commit/881cb3b59ac8d1aada4f3e8092ada951b716dfea), [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708), [`9960460`](https://github.com/LedgerHQ/ledger-live/commit/9960460013f52482dd81d455ae5382acc28fee9b), [`72f3d72`](https://github.com/LedgerHQ/ledger-live/commit/72f3d729080e2aa5bffc7d71c26902c27ff89d17), [`cb41e42`](https://github.com/LedgerHQ/ledger-live/commit/cb41e42371a2de3ee42c80c88a83740ca8ae3bee), [`f67cdb9`](https://github.com/LedgerHQ/ledger-live/commit/f67cdb9ac250719be1b51dc0f60abe2241d3a812), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`a8d6945`](https://github.com/LedgerHQ/ledger-live/commit/a8d6945d4a259c544912396132870857a572bcf1), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`76e74f1`](https://github.com/LedgerHQ/ledger-live/commit/76e74f12f49cbbbcd2f0dfa239d99e4b3b199835), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f), [`4160842`](https://github.com/LedgerHQ/ledger-live/commit/4160842477cb55ee5df701b590c201e7c700685a)]:
+  - @ledgerhq/live-common@36.0.0
+  - @ledgerhq/coin-evm@4.1.0
+  - @ledgerhq/types-live@6.110.0
+  - @ledgerhq/cryptoassets@13.50.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0
+  - @ledgerhq/coin-tester@0.20.0
+
+## 1.26.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.0.0-next.1
+
+## 1.26.0-next.0
+
+### Minor Changes
+
+- [#17648](https://github.com/LedgerHQ/ledger-live/pull/17648) [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Arc and Arc Testnet (Circle's USDC-native EVM L1, chainIds 5042 and 5042002)
+
+### Patch Changes
+
+- Updated dependencies [[`0725ee1`](https://github.com/LedgerHQ/ledger-live/commit/0725ee1dc568cf9624d7aea0ea5e06a31e8aa071), [`ddbb329`](https://github.com/LedgerHQ/ledger-live/commit/ddbb329dcacf46902dacd06091c655e1faf0a022), [`9a53131`](https://github.com/LedgerHQ/ledger-live/commit/9a53131488a40476f7a8c43a87e322b2610245f2), [`3c9d788`](https://github.com/LedgerHQ/ledger-live/commit/3c9d78801a2d45ee19a70263ecf5be0937f2f158), [`c17272e`](https://github.com/LedgerHQ/ledger-live/commit/c17272e63b4036057022cfb28d7433a4a56201c9), [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`6f00871`](https://github.com/LedgerHQ/ledger-live/commit/6f00871f7bbef39a98fb32b7695576f83458d588), [`08c5655`](https://github.com/LedgerHQ/ledger-live/commit/08c5655c8bcd894eb69c28c81e00d892cfc7b621), [`212cea6`](https://github.com/LedgerHQ/ledger-live/commit/212cea6aa1eff575ea111d7b7f89831452fd18d2), [`76a8f10`](https://github.com/LedgerHQ/ledger-live/commit/76a8f101847811a642d440ef764d87a11dd02904), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`881cb3b`](https://github.com/LedgerHQ/ledger-live/commit/881cb3b59ac8d1aada4f3e8092ada951b716dfea), [`d330d70`](https://github.com/LedgerHQ/ledger-live/commit/d330d707d0dabe55b00fdbc92b95bbb0f917d708), [`9960460`](https://github.com/LedgerHQ/ledger-live/commit/9960460013f52482dd81d455ae5382acc28fee9b), [`72f3d72`](https://github.com/LedgerHQ/ledger-live/commit/72f3d729080e2aa5bffc7d71c26902c27ff89d17), [`cb41e42`](https://github.com/LedgerHQ/ledger-live/commit/cb41e42371a2de3ee42c80c88a83740ca8ae3bee), [`f67cdb9`](https://github.com/LedgerHQ/ledger-live/commit/f67cdb9ac250719be1b51dc0f60abe2241d3a812), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`a8d6945`](https://github.com/LedgerHQ/ledger-live/commit/a8d6945d4a259c544912396132870857a572bcf1), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`76e74f1`](https://github.com/LedgerHQ/ledger-live/commit/76e74f12f49cbbbcd2f0dfa239d99e4b3b199835), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f), [`4160842`](https://github.com/LedgerHQ/ledger-live/commit/4160842477cb55ee5df701b590c201e7c700685a)]:
+  - @ledgerhq/live-common@36.0.0-next.0
+  - @ledgerhq/coin-evm@4.1.0-next.0
+  - @ledgerhq/types-live@6.110.0-next.0
+  - @ledgerhq/cryptoassets@13.50.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
+  - @ledgerhq/coin-tester@0.20.0
+
+## 1.25.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@35.0.1
+
+## 1.25.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@35.0.1-hotfix.0
+
 ## 1.25.0
 
 ### Minor Changes

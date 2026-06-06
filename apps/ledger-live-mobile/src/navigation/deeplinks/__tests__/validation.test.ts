@@ -2,6 +2,7 @@ import {
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
   validateMarketCurrencyId,
+  validateMarketListCategory,
 } from "../validation";
 
 describe("validateLargeMoverCurrencyIds", () => {
@@ -107,5 +108,25 @@ describe("validateMarketCurrencyId", () => {
   it("should normalize and return a valid currencyId", () => {
     const result = validateMarketCurrencyId("BiTcOiN");
     expect(result).toBe("bitcoin");
+  });
+});
+
+describe("validateMarketListCategory", () => {
+  it("should return undefined when category is null", () => {
+    expect(validateMarketListCategory(null)).toBeUndefined();
+  });
+
+  it("should return undefined when category is empty", () => {
+    expect(validateMarketListCategory("")).toBeUndefined();
+  });
+
+  it("should return undefined for an unknown category", () => {
+    expect(validateMarketListCategory("stable")).toBeUndefined();
+  });
+
+  it("should normalize and return a valid category", () => {
+    expect(validateMarketListCategory(" Stocks ")).toBe("stocks");
+    expect(validateMarketListCategory("STARRED")).toBe("starred");
+    expect(validateMarketListCategory("all")).toBe("all");
   });
 });
