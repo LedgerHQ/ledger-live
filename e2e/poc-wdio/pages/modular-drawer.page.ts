@@ -32,6 +32,17 @@ export class ModularDrawerPage {
   async performSearchByTicker(ticker: string) {
     await step(`Perform search in modular drawer with ticker: ${ticker}`, async () => {
       await this.searchBar.setValue(ticker);
+
+      // wait for search result to be displayed and stable
+      await driver.waitUntil(async () => {
+        let isDisplayed = false;
+        for (let count = 0; count < 3; count++) {
+          isDisplayed = await this.getAssetItemByTicker(ticker).isDisplayed();
+          if (!isDisplayed) break;
+          await driver.pause(500);
+        }
+        return isDisplayed;
+      });
     });
   }
 
