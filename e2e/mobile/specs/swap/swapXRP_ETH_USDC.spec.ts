@@ -16,5 +16,6 @@ runSwapTest(
     "@family-xrp",
     "@ethereum",
     "@family-evm",
+    "@compare",
   ],
 );

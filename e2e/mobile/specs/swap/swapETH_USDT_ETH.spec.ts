@@ -5,5 +5,15 @@ const swap = new Swap(TokenAccount.ETH_USDT_1, Account.ETH_1, "40", undefined, F
 runSwapTest(
   swap,
   ["B2CQA-2752", "B2CQA-2048"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+  [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@compare",
+  ],
 );

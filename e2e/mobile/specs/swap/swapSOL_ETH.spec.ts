@@ -16,5 +16,6 @@ runSwapTest(
     "@family-solana",
     "@ethereum",
     "@family-evm",
+    "@compare",
   ],
 );

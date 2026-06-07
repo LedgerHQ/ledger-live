@@ -16,5 +16,6 @@ runSwapTest(
     "@family-xrp",
     "@bitcoin",
     "@family-bitcoin",
+    "@compare",
   ],
 );

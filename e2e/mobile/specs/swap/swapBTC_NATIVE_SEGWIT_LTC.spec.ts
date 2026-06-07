@@ -16,5 +16,6 @@ runSwapTest(
     "@family-bitcoin",
     "@litecoin",
     "@family-litecoin",
+    "@compare",
   ],
 );

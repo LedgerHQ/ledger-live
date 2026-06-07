@@ -17,5 +17,6 @@ runSwapTest(
     "@family-evm",
     "@bitcoin",
     "@family-bitcoin",
+    "@compare",
   ],
 );

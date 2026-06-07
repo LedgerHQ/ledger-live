@@ -16,5 +16,6 @@ runSwapTest(
     "@family-evm",
     "@solana",
     "@family-solana",
+    "@compare",
   ],
 );
