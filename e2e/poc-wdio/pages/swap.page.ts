@@ -9,7 +9,7 @@ export class SwapPage {
 
   // steps
   async openDeeplink() {
-    step("Open swap via deeplink", async () => {
+    await step("Open swap via deeplink", async () => {
       await driver.deepLink(
         "ledgerlive://swap",
         // TODO: store app or bundle ID in a central reference

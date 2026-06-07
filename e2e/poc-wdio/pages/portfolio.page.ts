@@ -8,7 +8,7 @@ export class PortfolioPage {
 
   // steps
   async waitForPageToLoad() {
-    step("Wait for Portfolio page to load", async () => {
+    await step("Wait for Portfolio page to load", async () => {
       await this.screen.waitForDisplayed();
     });
   }
