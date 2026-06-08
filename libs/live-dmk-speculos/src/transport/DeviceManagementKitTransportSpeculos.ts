@@ -13,7 +13,11 @@ import {
 } from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { ButtonKey, deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
-import { withTransientHttpRetries } from "./speculosTransientHttpRetry";
+import {
+  describeSpeculosHttpError,
+  isRetryableSpeculosHttpError,
+  withTransientHttpRetries,
+} from "./speculosTransientHttpRetry";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
@@ -32,6 +36,8 @@ type DmkEntry = {
   sessionId?: string;
   connectPromise?: Promise<void>;
   timeout: number;
+  /** DEBUG ONLY: epoch ms of the last successful device interaction (for idle logging). */
+  lastUsedAt?: number;
 };
 
 type ControllerButton = "left" | "right" | "both";
@@ -159,9 +165,20 @@ export default class SpeculosHttpTransport extends Transport {
   }
 
   private static async ensureSession(deviceManagementEntry: DmkEntry) {
-    if (deviceManagementEntry.sessionId) return;
+    if (deviceManagementEntry.sessionId) {
+      // DEBUG: a cached session is reused across e2e tests via the static `byBase` map.
+      // Logging the idle gap here makes the "reused after long idle → next APDU fails"
+      // pattern obvious in the captured app logs.
+      const idleMs = Date.now() - (deviceManagementEntry.lastUsedAt ?? 0);
+      log(
+        "speculos-transport",
+        `ensureSession: reusing cached sessionId=${deviceManagementEntry.sessionId} (idle ${idleMs}ms)`,
+      );
+      return;
+    }
     if (deviceManagementEntry.connectPromise) return deviceManagementEntry.connectPromise;
 
+    log("speculos-transport", "ensureSession: no cached session, connecting fresh");
     deviceManagementEntry.connectPromise = (async () => {
       const discoveredDevices = await firstValueFrom<DiscoveredDevice[]>(
         deviceManagementEntry.dmk.listenToAvailableDevices({}).pipe(
@@ -175,6 +192,11 @@ export default class SpeculosHttpTransport extends Transport {
           device: discoveredDevices[0],
           sessionRefresherOptions: { isRefresherDisabled: true },
         }),
+      );
+      deviceManagementEntry.lastUsedAt = Date.now();
+      log(
+        "speculos-transport",
+        `ensureSession: connected fresh sessionId=${deviceManagementEntry.sessionId}`,
       );
     })();
 
@@ -228,9 +250,11 @@ export default class SpeculosHttpTransport extends Transport {
         : buttonInput;
 
     log("speculos-button", "press-and-release", resolved);
-    return await withTransientHttpRetries("speculos-button-press", () =>
+    await withTransientHttpRetries("speculos-button-press", () =>
       this.getButtonClient().press(resolved),
     );
+    const entry = SpeculosHttpTransport.byBase.get(this.baseUrl);
+    if (entry) entry.lastUsedAt = Date.now();
   }
 
   async exchange(apduCommand: Buffer): Promise<Buffer> {
@@ -244,23 +268,49 @@ export default class SpeculosHttpTransport extends Transport {
 
     try {
       const { data, statusCode } = await withTransientHttpRetries("speculos-send-apdu", sendOnce);
+      const entry = SpeculosHttpTransport.byBase.get(this.baseUrl);
+      if (entry) entry.lastUsedAt = Date.now();
       return Buffer.from([...data, ...statusCode]);
-    } catch {
+    } catch (firstError) {
+      // DEBUG: this is the failure we're hunting. Log the exact error shape, whether the
+      // retry layer classified it retryable, and how long the (reused) session was idle.
+      const staleEntry = SpeculosHttpTransport.byBase.get(this.baseUrl);
+      const idleMs = staleEntry ? Date.now() - (staleEntry.lastUsedAt ?? 0) : -1;
+      log("speculos-transport", "exchange: first sendApdu failed, resetting session + reconnect", {
+        base: this.baseUrl,
+        staleSessionId: this.sessionId,
+        idleMs,
+        retryableClassification: isRetryableSpeculosHttpError(firstError),
+        ...describeSpeculosHttpError(firstError),
+      });
+
       const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
         this.baseUrl,
         this.options.timeout ?? 10_000,
       );
       deviceManagementEntry.sessionId = undefined;
-      await SpeculosHttpTransport.ensureSession(deviceManagementEntry);
+      try {
+        await SpeculosHttpTransport.ensureSession(deviceManagementEntry);
+      } catch (reconnectError) {
+        log("speculos-transport", "exchange: reconnect (ensureSession) failed", {
+          base: this.baseUrl,
+          ...describeSpeculosHttpError(reconnectError),
+        });
+        throw reconnectError;
+      }
       if (!deviceManagementEntry.sessionId) {
         throw new Error("Failed to re-establish DMK session with Speculos");
       }
       this.sessionId = deviceManagementEntry.sessionId;
+      log("speculos-transport", `exchange: reconnected, retrying with sessionId=${this.sessionId}`);
 
       const { data, statusCode } = await withTransientHttpRetries(
         "speculos-send-apdu-after-reconnect",
         sendOnce,
       );
+      const entry = SpeculosHttpTransport.byBase.get(this.baseUrl);
+      if (entry) entry.lastUsedAt = Date.now();
+      log("speculos-transport", "exchange: sendApdu succeeded after reconnect");
       return Buffer.from([...data, ...statusCode]);
     }
   }
