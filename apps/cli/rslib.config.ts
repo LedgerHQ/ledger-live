@@ -17,7 +17,6 @@ export default defineConfig({
       "bigint-buffer",
       "usb",
       "node-hid",
-      "qrcode-terminal",
       /^readable-stream/,
       "winston",
       "winston-transport",
