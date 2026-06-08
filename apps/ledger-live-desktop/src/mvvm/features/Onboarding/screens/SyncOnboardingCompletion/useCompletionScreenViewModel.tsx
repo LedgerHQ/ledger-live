@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useLocation } from "react-router";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useLocation, useNavigate } from "react-router";
+import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   saveSettings,
   setHasBeenUpsoldRecover,
@@ -23,10 +24,16 @@ export interface ViewProps {
 
 export function useCompletionScreenViewModel(): ViewProps {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { seedConfiguration?: string } | null;
   const currentDevice = useSelector(getCurrentDevice);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+
+  const onboardingWidgetFeature = useFeature("onboardingWidget");
+  const shouldDisplayFinishOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
+
+  const hasPreparedPostOnboardingRedirect = useRef(false);
 
   const deviceModelId = useMemo(() => {
     const device = currentDevice || lastSeenDevice;

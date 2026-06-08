@@ -40,6 +40,7 @@ const moduleNameMapper = {
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/(lumen-ui-react|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
+  "@ledgerhq/react-ui/assets/fonts": "<rootDir>/fileMock.js",
   "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|lottie)$":
     "<rootDir>/fileMock.js",
   "@lottiefiles/dotlottie-react": "<rootDir>/tests/mocks/dotlottie-react.tsx",
