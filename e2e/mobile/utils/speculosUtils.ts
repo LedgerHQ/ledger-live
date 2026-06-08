@@ -71,6 +71,12 @@ export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.\d+\.json$/;
 // releases by deviceId reveals exactly which tests leak Speculos pods.
 export const SPECULOS_AUDIT_LOG_FILE = path.resolve("artifacts/speculos-audit.log");
 
+// Per-process running tally of acquire/release events. Counts the events
+// themselves (not the file writes), so it stays accurate even when an audit
+// write fails, and gives a quick balance check at teardown without re-parsing
+// the log. acquires - releases > 0 at the end means this worker leaked a pod.
+const speculosCounts = { acquire: 0, release: 0 };
+
 async function appendAuditEntry(entry: {
   action: "acquire" | "release";
   deviceId: string;
@@ -78,6 +84,7 @@ async function appendAuditEntry(entry: {
   appName?: string;
   error?: string;
 }) {
+  speculosCounts[entry.action]++;
   try {
     await fs.mkdir(path.dirname(SPECULOS_AUDIT_LOG_FILE), { recursive: true });
     await fs.appendFile(
@@ -161,6 +168,19 @@ export async function launchSpeculos(appName: string) {
     log.error("E2E Setup", "[E2E Setup] Speculos not started");
     throw new Error("[E2E Setup] Speculos not started");
   }
+  // Register and audit the acquisition as early as possible. Once startSpeculos
+  // returns a device the pod is already allocated remotely, even if it came back
+  // without a port. Recording it here — before the port guard below can throw —
+  // keeps a portless-but-allocated pod tracked for orphan cleanup and visible in
+  // the audit log instead of leaking silently.
+  await writeSpeculosInFile(device.id);
+  await appendAuditEntry({
+    action: "acquire",
+    deviceId: device.id,
+    testPath: currentTestPath(),
+    appName,
+  });
+
   if (!device.port) {
     const remoteHint = isSpeculosRemote()
       ? " Remote Speculos (Speculinho) did not return an API port — check logs above for POST /acquire errors, SPECULINHO_URL, and SEED."
@@ -175,13 +195,6 @@ export async function launchSpeculos(appName: string) {
   setEnv("SPECULOS_API_PORT", device.port);
   speculosDevices.set(device.id, device.port);
 
-  await writeSpeculosInFile(device.id);
-  await appendAuditEntry({
-    action: "acquire",
-    deviceId: device.id,
-    testPath: currentTestPath(),
-    appName,
-  });
   log.info("E2E Setup", "Device info before map set:", {
     port: device.port,
     deviceId: device.id,
@@ -298,25 +311,51 @@ export async function attachSpeculinhoLogsToAllure() {
   }
 }
 
+// Log this worker's acquire/release tally. A positive delta means a pod was
+// acquired but never released — a leak worth investigating. (It can be negative
+// when this worker cleans up orphans acquired by a previous crashed run.)
+function logSpeculosCounts() {
+  const { acquire, release } = speculosCounts;
+  const delta = acquire - release;
+  const summary = `Speculos tally — acquired: ${acquire}, released: ${release}, outstanding: ${delta}`;
+  if (delta > 0) {
+    log.warn("E2E", `⚠️ ${summary} (possible leak)`);
+  } else {
+    log.info("E2E", summary);
+  }
+}
+
 // Sweep every Speculos instance known to this process *and* any orphan
 // recorded in the tracking file (from a previous crashed run / sibling worker).
 export async function cleanupAllSpeculos(): Promise<void> {
   await deleteSpeculos();
 
   const orphans = await readInstances();
-  if (!orphans.length) return;
+  if (orphans.length) {
+    log.warn("E2E", `Releasing ${orphans.length} orphan Speculos instance(s) from tracking file`);
+    await Promise.all(
+      orphans.map(async ({ deviceId }) => {
+        let releaseError: unknown;
+        try {
+          await stopSpeculos(deviceId);
+        } catch (error) {
+          releaseError = error;
+          log.warn("E2E", `Orphan release failed for ${deviceId}: ${sanitizeError(error)}`);
+        }
+        // Audit the orphan release too, so the log and tally stay balanced for
+        // pods that never made it into the in-process map (e.g. portless ones).
+        await appendAuditEntry({
+          action: "release",
+          deviceId,
+          testPath: currentTestPath(),
+          ...(releaseError ? { error: String(sanitizeError(releaseError)) } : {}),
+        });
+      }),
+    );
+    await writeInstances([]);
+  }
 
-  log.warn("E2E", `Releasing ${orphans.length} orphan Speculos instance(s) from tracking file`);
-  await Promise.all(
-    orphans.map(async ({ deviceId }) => {
-      try {
-        await stopSpeculos(deviceId);
-      } catch (error) {
-        log.warn("E2E", `Orphan release failed for ${deviceId}: ${sanitizeError(error)}`);
-      }
-    }),
-  );
-  await writeInstances([]);
+  logSpeculosCounts();
 }
 
 export async function takeSpeculosScreenshot() {
