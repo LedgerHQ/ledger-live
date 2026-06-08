@@ -16,9 +16,24 @@ jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
   createQRCodeHostInstance: jest.fn(),
 }));
 
+// The flow starts in the LedgerSyncActivated (Manage) state, so opening the drawer mounts
+// the Manage screen, whose `useLedgerSyncInfo` fires `GET /_info` to the real trustchain and
+// cloud-sync staging backends. Mock it so the unit test stays offline.
+jest.mock("../hooks/useLedgerSyncInfo", () => ({
+  useLedgerSyncInfo: () => ({
+    statusQuery: { error: null, isLoading: false, isError: false },
+    trustchain: null,
+    walletState: null,
+  }),
+}));
+
 describe("Synchronize flow", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    // `doNotFake` keeps the microtask/immediate primitives real. Faking them (jest's default)
+    // starves the async draining of in-flight `fetch` response bodies (undici + Node web
+    // streams), so on Node 24 the byte-stream pull loop spins forever and leaks ~100MB/s until
+    // the Jest worker OOMs.
+    jest.useFakeTimers({ doNotFake: ["setImmediate", "queueMicrotask", "nextTick"] });
   });
   afterEach(() => {
     jest.useRealTimers();
