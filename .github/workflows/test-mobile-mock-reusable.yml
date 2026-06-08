@@ -138,8 +138,8 @@ jobs:
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-2" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}-2" >> $GITHUB_OUTPUT
           echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
