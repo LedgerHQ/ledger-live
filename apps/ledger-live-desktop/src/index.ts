@@ -9,3 +9,5 @@ if (getEnv("PLAYWRIGHT_RUN") && getEnv("MOCK")) {
 }
 
 require("./main");
+
+// CI perf experiment (LIVE-31963): desktop-only no-op to validate PR #18124 runner change. Do not merge.
