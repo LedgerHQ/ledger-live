@@ -1,32 +1,43 @@
 /**
  * ETH → ETH_USDT swap, end-to-end via Speculos.
  *
- * Mirrors `e2e/mobile/specs/swap/swapETH_ETH_USDT.spec.ts` (which calls
- * `runSwapTest(new Swap(Account.ETH_1, TokenAccount.ETH_USDT_1, ...))`)
- * with no page objects — drives the Swap Live App webview and Speculos
- * directly.
+ * Mirrors `e2e/mobile/specs/swap/swapETH_ETH_USDT.spec.ts`. Drives the
+ * Swap Live App webview, the swap-live-app step-approval, the native
+ * SendFunds Summary, and tries to hand off to Speculos for signing.
  *
  *   1. Configure the Exchange Speculos to bundle the Ethereum app.
- *   2. Boot the app device-ready (seeded ETH + USDT subaccount) with
+ *   2. Boot device-ready (seeded ETH + USDT subaccount) with
  *      lwmWallet40 + llmModularDrawer + ptxSwapLiveAppMobile flags;
  *      swapSetup pins SWAP_API_BASE to staging.
- *   3. Open the swap deeplink, wait for the webview's from-account
- *      selector, fill the form, request quotes.
- *   4. Pick the first quote, tap Execute — the app sends a swap APDU
- *      stream to Speculos. Disable Detox sync from there.
- *   5. verifyAmountsAndAcceptSwap from live-common drives Speculos to
- *      review + sign.
+ *   3. Open the swap deeplink, fill the form (ETH + Ethereum, USDT +
+ *      Ethereum), tap 25% percentage, request quotes.
+ *   4. Pick the first provider's quote-card, tap its Execute button.
+ *   5. Tap the step-approval button (swap-live-app "Sign to swap").
+ *   6. Tap Continue on the native SendFunds Summary (Step 1 of 3).
+ *   7. verifyAmountsAndAcceptSwap from live-common drives Speculos.
  *
  * Pre-reqs (env): SEED, COINAPPS (local) or REMOTE_SPECULOS=true +
- * SPECULINHO_URL, SWAP_DISABLE_TRANSACTION_BROADCAST (implicit via the
- * swapSetup bridge call which forces broadcast off).
+ * SPECULINHO_URL.
+ *
+ * KNOWN GAP: Step 2 of 3 (Connect device) currently fails with
+ * `GeneralDmkError`. e2e/mobile's setup also runs
+ * `liveDataWithAddressCommand` (from @ledgerhq/live-common/e2e/cliCommandsUtils)
+ * via `cliCommandsOnApp`, which spawns the live-cli against Speculos to
+ * (a) derive accounts on-device and (b) seed the Exchange app's
+ * swap-providers state. Our device-ready.json provides matching account
+ * addresses by SEED, but does NOT seed the Exchange-side state — so the
+ * actual swap APDU stream fails. Wiring the CLI commands into the
+ * bridge / a new helper is the next iteration.
  */
 import { device, element, by, expect, waitFor, web } from "detox";
 import { launchApp, closeApp } from "../helpers/launchApp";
 import { loadConfig } from "../helpers/loadConfig";
 import { launchSpeculos, shutdownSpeculos, SpeculosHandle } from "../helpers/speculos";
 import * as bridge from "../bridge/server";
-import { setExchangeDependencies, verifyAmountsAndAcceptSwap } from "@ledgerhq/live-common/e2e/speculos";
+import {
+  setExchangeDependencies,
+  verifyAmountsAndAcceptSwap,
+} from "@ledgerhq/live-common/e2e/speculos";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
@@ -113,7 +124,9 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
     await waitFor(element(by.id(/network-item-ethereum/i)))
       .toBeVisible()
       .withTimeout(10_000);
-    await element(by.id(/network-item-ethereum/i)).atIndex(0).tap();
+    await element(by.id(/network-item-ethereum/i))
+      .atIndex(0)
+      .tap();
     // First account auto-selected (only "Ethereum 1" is seeded).
     await waitFor(element(by.id("account-item-name-Ethereum 1")))
       .toBeVisible()
@@ -136,24 +149,28 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
     await waitFor(element(by.id(/network-item-ethereum/i)))
       .toBeVisible()
       .withTimeout(10_000);
-    await element(by.id(/network-item-ethereum/i)).atIndex(0).tap();
+    await element(by.id(/network-item-ethereum/i))
+      .atIndex(0)
+      .tap();
     // Token sub-account lives under "Ethereum 1" parent account.
     await waitFor(element(by.id("account-item-name-Ethereum 1")))
       .toBeVisible()
       .withTimeout(10_000);
     await element(by.id("account-item-name-Ethereum 1")).tap();
 
-    // 6. The amount input is a custom keypad, not a text field. Tap the
-    //    25% percentage toggle to populate it with a valid amount, then
-    //    request quotes. swap.amount is updated below from the displayed
-    //    value so verifyAmountsAndAcceptSwap matches what's on-device.
+    // 6. The amount input is a custom keypad. Tap the 25% percentage
+    //    toggle to populate it with a valid amount.
     const pct25 = webByTestId("mobile-keyboard-percentage-25%");
     await pollWeb(pct25, 15_000);
     await pct25.tap();
+
+    // 7. Tap "Get quotes". Then wait for `number-of-quotes` to appear —
+    //    that's the canonical "quotes are ready" indicator in
+    //    swap-live-app (matches e2e/mobile's waitForQuotes()).
     const getQuotes = webByTestId("mobile-get-quotes-button");
     await pollWeb(getQuotes, 15_000);
-    // Read the resulting from-amount from the DOM so the on-device
-    // assertion later has the exact string the app sent.
+    // Read the from-amount string so verifyAmountsAndAcceptSwap matches
+    // what's displayed on the device.
     const amountVal = await webByTestId("from-account-amount-input").runScript(
       "el => el.value || el.textContent || ''",
     );
@@ -162,25 +179,64 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
     }
     await getQuotes.tap();
 
-    // 7. After quotes load, the button relabels to "View quotes" —
-    //    same testID. Tap again to navigate to the quote selection page
-    //    where each provider's card has its own Execute button.
-    await new Promise(r => setTimeout(r, 4_000));
+    // 8. Wait for the provider quote cards to populate the DOM. The
+    //    current swap-live-app doesn't expose `number-of-quotes` —
+    //    e2e/mobile's waitForQuotes() targets an older build. The
+    //    canonical indicator here is `compact-quote-card-provider-name-*`.
+    const firstProviderNameEl = web.element(
+      by.web.cssSelector("[data-testid^='compact-quote-card-provider-name-']"),
+    );
+    await pollWeb(firstProviderNameEl, 60_000);
+    const providerTestId = await firstProviderNameEl.runScript(
+      "el => el.getAttribute('data-testid') || ''",
+    );
+    if (typeof providerTestId !== "string" || !providerTestId) {
+      throw new Error(`could not read provider testID, got: ${String(providerTestId)}`);
+    }
+    const providerName = providerTestId.replace("compact-quote-card-provider-name-", "");
+
+    // 9. The amount keypad overlays the bottom half of the screen — the
+    //    quote cards are below it. Tap "View quotes" (same testID as
+    //    Get quotes, just relabelled) to dismiss the keypad and bring
+    //    the cards into the viewport.
     await getQuotes.scrollToView();
     await getQuotes.tap();
 
-    // 8. Wait for at least one provider quote card to render. Each
-    //    card's data-testid starts with `compact-quote-card-provider-`.
-    const firstQuoteCard = web.element(
-      by.web.cssSelector("[data-testid^='compact-quote-card-provider-']"),
-    );
-    await pollWeb(firstQuoteCard, 60_000);
+    // 10. Select the provider then tap the Execute button scoped to its
+    //     quote container. e2e/mobile's tapExecuteSwap() matches the
+    //     CSS `[data-testid^="quote-container-${name}"] [data-testid="execute-button"]`.
+    await firstProviderNameEl.scrollToView();
+    await firstProviderNameEl.tap();
 
-    // 9. Tap the first provider's Execute button.
-    const executeBtn = webByTestId("execute-button").atIndex(0);
-    await pollWeb(executeBtn, 10_000);
+    const executeBtn = web.element(
+      by.web.cssSelector(
+        `[data-testid^="quote-container-${providerName}"] [data-testid="execute-button"]`,
+      ),
+    );
+    await pollWeb(executeBtn, 15_000);
     await executeBtn.scrollToView();
     await executeBtn.tap();
+
+    // 11. Quote selection completes and the app navigates to a
+    //     "Complete steps / Sign to swap" approval screen — matches
+    //     e2e/mobile's `expectExecuteSwapOnStepApproval`. Tap that
+    //     button to hand off to the native send flow.
+    const stepApprovalBtn = webByTestId("execute-swap-button-step-approval");
+    await pollWeb(stepApprovalBtn, 30_000);
+    await stepApprovalBtn.scrollToView();
+    await stepApprovalBtn.tap();
+
+    // 12. swap-live-app hands off to the native SendFunds Summary
+    //     screen (Step 1 of 3). Tap Continue to advance to the
+    //     Connect Device / Sign step which actually streams APDUs to
+    //     Speculos.
+    //     NOTE: SendFunds/04-Summary.tsx sets testID="summary-continue-button"
+    //     on a legacy ~/components/Button — same propagation gap as
+    //     add-accounts-continue-button. Match by text instead.
+    await waitFor(element(by.text("Continue")))
+      .toBeVisible()
+      .withTimeout(30_000);
+    await element(by.text("Continue")).tap();
 
     // 8. App now streams the swap APDUs to Speculos. Disable Detox
     //    sync — verifyAmountsAndAcceptSwap drives Speculos through
