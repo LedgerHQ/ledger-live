@@ -89,80 +89,10 @@ env:
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
 
 jobs:
-  build-android-native:
-    name: "Android Build Native"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
-    if: ${{ inputs.build-android-native == true }}
-    timeout-minutes: 40
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          persist-credentials: false
-
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "false"
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: setup JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: "17"
-          cache: "gradle"
-
-      - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.10
-
-        # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
-      - name: Enable KVM group perms
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-      - name: Fix emulator directory permissions
-        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
-
-      - name: Install dependencies
-        run: |
-          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="live-cli*..." --unsafe-perm
-
-      - name: Build Android app for Detox test run
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
-        env:
-          PRODUCTION: ${{ inputs.production_firebase }}
-          SKIP_JS_BUNDLING: true
-        with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
-          disable_cache: ${{ inputs.disable-nx-cache || false }}
-
-      - name: Upload Detox Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
-        with:
-          path: |
-            ${{ github.workspace }}/${{ env.ANDROID_APK_PATH }}
-            ${{ github.workspace }}/${{ env.ANDROID_TESTBINARY_PATH }}
-          key: ${{ inputs.android-native-cache-key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
 
   build-android-js:
     name: "Android Build JS"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-public]
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
     outputs:
@@ -209,7 +139,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle --bundle-size
-          disable_cache: ${{ inputs.disable-nx-cache || false }}
+          disable_cache: ${{ true }}
 
       - name: Output bundle size for analysis
         id: output-js-bundle-size
@@ -227,10 +157,3 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-
-  skip-android-js:
-    name: "Android Build JS - Skip"
-    if: ${{ inputs.build-android-js != true }}
-    runs-on: [ubuntu-22.04]
-    steps:
-      - run: echo "Skipping"
