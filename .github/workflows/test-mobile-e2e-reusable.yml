@@ -887,7 +887,7 @@ jobs:
       - name: Remove Detox simulator artifacts
         if: ${{ !cancelled() }}
         run: rm -rf ios-test-artifacts/ios.sim.release.*
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_1286
         if: ${{ !cancelled() }}
         id: upload
         with:
@@ -963,7 +963,7 @@ jobs:
       - name: Remove Detox emulator artifacts
         if: ${{ !cancelled() }}
         run: rm -rf android-test-artifacts/android.emu.release.*
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_1286
         id: upload
         if: ${{ !cancelled() }}
         with:
