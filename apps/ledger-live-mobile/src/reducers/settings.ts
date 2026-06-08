@@ -121,7 +121,7 @@ export const INITIAL_STATE: SettingsState = {
   customLockScreenType: null,
   lastSeenCustomImage: {
     size: 0,
-    hash: "",
+    hash: "TEST",
   },
   dismissedDynamicCards: [],
   discreetMode: false,

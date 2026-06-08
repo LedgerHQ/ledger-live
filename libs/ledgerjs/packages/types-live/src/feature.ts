@@ -856,7 +856,7 @@ export type Feature_OnboardingEnableSync = Feature<{
  */
 export type IgnoredOSUpdates = Array<string>;
 
-export type Platform = "ios" | "android" | "macos" | "windows" | "linux";
+export type Platform = "ios" | "android" | "macos" | "windows" | "linux" | "helloworld";
 
 export type IgnoredOSUpdatesByPlatform = { [M in DeviceModelId]?: IgnoredOSUpdates };
 

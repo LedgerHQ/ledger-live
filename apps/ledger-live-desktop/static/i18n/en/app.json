@@ -6578,7 +6578,7 @@
       }
     },
     "stellar": {
-      "memo": "Memo",
+      "memo": "Memo Test",
       "memoType": {
         "MEMO_TEXT": "Memo Text",
         "NO_MEMO": "No Memo",
