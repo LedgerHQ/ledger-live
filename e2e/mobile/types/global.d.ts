@@ -61,6 +61,7 @@ declare global {
   var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
   var countElements: typeof NativeElementHelpers.countElements;
   var countElementsById: typeof NativeElementHelpers.countElementsById;
+  var countExistingElementsById: typeof NativeElementHelpers.countExistingElementsById;
   var detoxExpect: typeof NativeElementHelpers.expect;
   var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
   var getElementById: typeof NativeElementHelpers.getElementById;
