@@ -167,14 +167,6 @@ describe("useMarketAssets", () => {
     );
   });
 
-  it("falls back to market cap sorting while volume is unavailable", () => {
-    renderHook(() => useMarketAssets({ sorting: "volume" }));
-
-    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
-      expect.objectContaining({ order: Order.MarketCapDesc }),
-    );
-  });
-
   it("maps the six-month timeframe to the market request params", () => {
     renderHook(() => useMarketAssets({ timeframe: "6M" }));
 

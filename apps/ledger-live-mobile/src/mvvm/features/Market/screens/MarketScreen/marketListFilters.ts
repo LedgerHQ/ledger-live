@@ -25,7 +25,6 @@ export function getMarketListOrder(sorting: MarketListSorting): Order {
     case "losers":
       return Order.topLosers;
     case "marketCap":
-    case "volume":
     default:
       return Order.MarketCapDesc;
   }
