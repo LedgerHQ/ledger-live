@@ -46,7 +46,7 @@
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "jest",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../.. -W libs/ethereum-provider"
   },
   "exports": {
     ".": {

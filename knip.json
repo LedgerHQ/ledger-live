@@ -17,7 +17,9 @@
     "unresolved": "off"
   },
   "ignoreExportsUsedInFile": true,
-  "project": ["src/**"],
+  "project": [
+    "src/**"
+  ],
   "ignore": [
     "**/__integrations__/*",
     "**/*.test.*",
@@ -62,7 +64,10 @@
       ]
     },
     "./apps/ledger-live-mobile": {
-      "entry": ["index.js", "src/families/**"],
+      "entry": [
+        "index.js",
+        "src/families/**"
+      ],
       "ignore": [
         "src/**/*.android.*",
         "src/**/*.ios.*",
@@ -89,19 +94,34 @@
       ]
     },
     "./libs/env": {
-      "entry": ["src/index.ts"]
+      "entry": [
+        "src/index.ts"
+      ]
     },
     "./libs/live-hooks": {
-      "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"]
+      "entry": [
+        "src/useDebounce.ts",
+        "src/useThrottledFunction.ts"
+      ]
     },
     "./libs/live-countervalues": {
-      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"]
+      "entry": [
+        "src/logic.ts",
+        "src/api/index.ts",
+        "src/types.ts",
+        "src/portfolio.ts"
+      ]
     },
     "./libs/live-countervalues-react": {
-      "entry": ["src/index.tsx", "src/portfolio.tsx"]
+      "entry": [
+        "src/index.tsx",
+        "src/portfolio.tsx"
+      ]
     },
     "./libs/live-dmk-mobile": {
-      "entry": ["src/index.ts"]
+      "entry": [
+        "src/index.ts"
+      ]
     },
     "./libs/live-wallet": {
       "entry": [
@@ -116,14 +136,25 @@
       ]
     },
     "./libs/ledger-key-ring-protocol": {
-      "entry": ["src/index.ts", "src/store.ts", "src/qrcode/index.ts"]
+      "entry": [
+        "src/index.ts",
+        "src/store.ts",
+        "src/qrcode/index.ts"
+      ]
     },
     "./libs/hw-ledger-key-ring-protocol": {
-      "entry": ["src/index.ts"],
-      "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
+      "entry": [
+        "src/index.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/logs",
+        "@ledgerhq/live-env"
+      ]
     },
     "./libs/promise": {
-      "entry": ["src/index.ts"]
+      "entry": [
+        "src/index.ts"
+      ]
     },
     "./libs/ui/packages/native": {
       "entry": [
@@ -140,8 +171,13 @@
         "src/pre-ldls/components/index.ts",
         "index.js"
       ],
-      "ignoreDependencies": ["stylis"],
-      "ignore": [".storybook*/*", "storybook/constants/*"]
+      "ignoreDependencies": [
+        "stylis"
+      ],
+      "ignore": [
+        ".storybook*/*",
+        "storybook/constants/*"
+      ]
     },
     "./libs/ui/packages/icons": {
       "entry": [
@@ -150,13 +186,805 @@
         "src/reactLegacy/index.ts",
         "src/nativeLegacy/index.ts"
       ],
-      "ignore": ["index.js"]
+      "ignore": [
+        "index.js"
+      ]
     },
     "./libs/ledgerjs/packages/react-native-hid": {
-      "entry": ["src/index.ts"]
+      "entry": [
+        "src/index.ts"
+      ]
     },
     "./libs/asset-aggregation": {
-      "entry": ["src/index.ts"]
+      "entry": [
+        "src/index.ts"
+      ]
+    },
+    "./libs/coin-modules/coin-aleo": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-aptos": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-canton": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-concordium": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-filecoin": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-hedera": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-kaspa": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-mina": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-module-boilerplate": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-polkadot": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-stacks": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-sui": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-tezos": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-tron": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-vechain": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-algorand": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-bitcoin": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-cardano": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-casper": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-celo": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-cosmos": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-evm": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-icon": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-internet_computer": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-multiversx": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-near": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-solana": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-stellar": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-modules/coin-ton": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-bitcoin": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-evm": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-polkadot": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-solana": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-tezos": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-tron": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/concordium-core": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/device-core": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/device-react": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/disable-network-setup": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/domain-service": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ethereum-provider": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/evm-tools": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledger-services/cal": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledger-services/trust": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/live-dmk-desktop": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/live-dmk-shared": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/live-dmk-speculos": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/live-network": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/speculos-transport": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/test-utils": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledger-live-common": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledger-wallet-framework": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/cryptoassets": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/devices": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/errors": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-btc": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-canton": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-exchange": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-bolos": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-mocker": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-vault": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/logs": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/types-cryptoassets": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/types-devices": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/types-live": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-algorand": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-aptos": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-celo": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-concordium": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-cosmos": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-eth": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-hedera": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-helium": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-multiversx": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-near": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-polkadot": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-solana": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-str": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-sui": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-tezos": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-trx": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-xrp": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-http": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-node-hid-noevents": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-node-hid-singleton": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-node-hid": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-node-speculos-http": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-node-speculos": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-web-ble": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-webhid": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport-webusb": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/react-native-hw-transport-ble": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/swift-bridge-hw-app-eth": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/swift-bridge-hw-app-solana": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ledgerjs/packages/swift-bridge-hw-transport-ble": {
+      "entry": [
+        "src/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ui/packages/react": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "./libs/ui/packages/shared": {
+      "entry": [
+        "index.ts"
+      ],
+      "project": [
+        "**/*.{ts,tsx}",
+        "!palettes/**",
+        "!scripts/**"
+      ]
     }
   }
 }

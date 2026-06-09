@@ -51,9 +51,6 @@ jobs:
         run: pnpm desktop lint:guardrails
       - name: typecheck
         run: pnpm desktop typecheck
-      - name: check for dead code
-        run: pnpm desktop unimported
-        shell: bash
 
   unit-tests:
     name: "Desktop Unit Tests (External)"

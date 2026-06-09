@@ -53,7 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-polkadot",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
   },
   "dependencies": {

@@ -88,6 +88,6 @@
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../.. -W libs/ledger-services/trust"
   }
 }

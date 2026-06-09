@@ -19,7 +19,7 @@
     "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../.. -W libs/concordium-core"
   },
   "dependencies": {
     "bs58check": "^3.0.1",

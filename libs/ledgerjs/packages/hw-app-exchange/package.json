@@ -59,7 +59,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest --config=jest.config.ts --runInBand",
     "test-integ": "jest --config=jest.integ.config.ts",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ledgerjs/packages/hw-app-exchange"
   },
   "exports": {
     ".": {

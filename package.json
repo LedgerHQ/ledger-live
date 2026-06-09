@@ -268,7 +268,6 @@
     "prettier": "3.2.5",
     "rimraf": "4.4.1",
     "typescript": "catalog:",
-    "unimported": "1.30.0",
     "zx": "8.8.5"
   },
   "pnpm": {

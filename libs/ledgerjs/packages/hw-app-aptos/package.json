@@ -55,7 +55,7 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ledgerjs/packages/hw-app-aptos"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "exports": {

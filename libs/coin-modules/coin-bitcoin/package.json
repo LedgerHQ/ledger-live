@@ -126,7 +126,7 @@
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-modules/coin-bitcoin",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

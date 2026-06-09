@@ -165,7 +165,7 @@
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-modules/coin-celo",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

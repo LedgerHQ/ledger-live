@@ -48,7 +48,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ledgerjs/packages/types-live"
   },
   "exports": {
     ".": {
