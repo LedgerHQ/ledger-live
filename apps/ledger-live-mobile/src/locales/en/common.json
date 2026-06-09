@@ -1337,6 +1337,28 @@
       "close": "Close"
     }
   },
+  "backupHub": {
+    "featureIntro": {
+      "title": "Create a backup you can't lose",
+      "subtitle": "An encrypted backup of your Secret Recovery Phrase helps you get back access, no matter what.",
+      "primaryCta": "Start 2 months free trial",
+      "secondaryCta": "Log in",
+      "items": {
+        "secure": {
+          "title": "Backup tied to your ID",
+          "subtitle": "Only you can authorize a wallet recovery."
+        },
+        "access": {
+          "title": "Advanced backup security",
+          "subtitle": "Encrypted, fragmented, and secured in hardware security modules."
+        },
+        "restore": {
+          "title": "Restore access anytime",
+          "subtitle": "All you need is your ID, Ledger Wallet, and a Ledger device."
+        }
+      }
+    }
+  },
   "earn": {
     "simulator": {
       "title": "Rewards simulator"
