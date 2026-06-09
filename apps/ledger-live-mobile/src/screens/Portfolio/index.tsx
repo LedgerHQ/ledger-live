@@ -56,6 +56,7 @@ import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
 import RecoverBanner from "LLM/features/Portfolio/components/RecoverBanner";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
+import { LedgerRecoverFeatureIntroPortfolioMount } from "LLM/features/BackupHub/components/LedgerRecoverFeatureIntroPortfolioMount";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -281,6 +282,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         />
       </Animated.View>
       <GenericAwarenessModalDrawer />
+      <LedgerRecoverFeatureIntroPortfolioMount />
     </>
   );
 }

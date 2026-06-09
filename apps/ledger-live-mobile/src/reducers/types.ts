@@ -41,6 +41,7 @@ import type { RecoverStateSliceState } from "./recoverState";
 import type { LiveAppModalState } from "./liveAppModal";
 import type { KnownDevicesState } from "./knownDevices";
 import type { GenericAwarenessModalState } from "./genericAwarenessModal";
+import type { BackupHubFeatureIntroState } from "./backupHubFeatureIntro";
 
 // === ACCOUNT STATE ===
 
@@ -431,6 +432,7 @@ export type State = LLMRTKApiState & {
   earn: EarnState;
   featureFlags: FeatureFlagsState;
   genericAwarenessModal: GenericAwarenessModalState;
+  backupHubFeatureIntro: BackupHubFeatureIntroState;
   history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;
