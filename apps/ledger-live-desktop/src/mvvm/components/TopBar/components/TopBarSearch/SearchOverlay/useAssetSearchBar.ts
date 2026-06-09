@@ -1,8 +1,11 @@
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { useStocksSectionViewModel } from "LLD/features/Stocks/hooks/useStocksSectionViewModel";
 import { AssetSuggestionSection, SearchMode, SearchResults, SearchSuggestions } from "./types";
 
 const EMPTY_SECTION: AssetSuggestionSection = { data: [], isLoading: false };
 const EMPTY_RESULTS: SearchResults = { data: [], isLoading: false };
+
+export const STOCKS_SUGGESTION_LIMIT = 20;
 
 export function useAssetSearchBar() {
   const [query, setQuery] = useState("");
@@ -19,9 +22,11 @@ export function useAssetSearchBar() {
     setQuery("");
   }, []);
 
+  const stocks = useStocksSectionViewModel({ limit: STOCKS_SUGGESTION_LIMIT });
+
   const suggestions: SearchSuggestions = useMemo(
-    () => ({ cryptos: EMPTY_SECTION, stablecoins: EMPTY_SECTION, stocks: EMPTY_SECTION }),
-    [],
+    () => ({ cryptos: EMPTY_SECTION, stablecoins: EMPTY_SECTION, stocks }),
+    [stocks],
   );
   const results = EMPTY_RESULTS;
 
