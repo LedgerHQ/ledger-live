@@ -139,7 +139,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle --bundle-size
-          disable_cache: ${{ true }}
+          disable_cache: ${{ false }}
 
       - name: Output bundle size for analysis
         id: output-js-bundle-size
