@@ -9,6 +9,7 @@ import {
   performSwapUntilQuoteSelectionStep,
   revokeTokenApproval,
   ensureTokenApproval,
+  isBroadcastEnabled,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
@@ -29,7 +30,7 @@ const provider = pickRotatingProvider(eligibleProviders);
 
 test.describe("Token reapproval - flow", () => {
   test.skip(
-    process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
+    !isBroadcastEnabled(),
     "Token re-approval (bigger amount) flow requires broadcast to be enabled — runs on Monday nightly only",
   );
 

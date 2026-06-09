@@ -7,6 +7,7 @@ import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   revokeTokenApproval,
+  isBroadcastEnabled,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
@@ -28,7 +29,7 @@ const provider = pickRotatingProvider(eligibleProviders);
 
 test.describe("Token approval - flow", () => {
   test.skip(
-    process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
+    !isBroadcastEnabled(),
     "Token approval flow requires broadcast to be enabled — runs on Monday nightly only",
   );
 

@@ -19,9 +19,14 @@ runs:
       run: |
         if [[ "${{ inputs.enable_broadcast }}" == "true" || ("${{ github.event_name }}" == "schedule" && "$(date +%u)" == "1") ]]; then
           echo "DISABLE_TRANSACTION_BROADCAST=0" >> $GITHUB_ENV
+          echo "E2E_BROADCAST_ENABLED=true" >> $GITHUB_ENV
         else
           echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
+          echo "E2E_BROADCAST_ENABLED=false" >> $GITHUB_ENV
         fi
+        # E2E_BROADCAST_ENABLED is an immutable gate for broadcast-only specs to skip on.
+        # DISABLE_TRANSACTION_BROADCAST is toggled per-test by setupEnv(), so reading it
+        # in a test.skip() guard races under fullyParallel and skips specs non-deterministically.
 
     - name: Set SWAP_API_BASE and LEDGER_SYNC_ENVIRONMENT
       id: set-envs
