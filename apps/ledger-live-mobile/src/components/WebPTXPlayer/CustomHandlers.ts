@@ -565,7 +565,9 @@ export function usePTXCustomHandlers(
 
 export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
   return async (request: { params?: InfoDialogParams }) => {
+    console.log("createOpenInfoBottomSheetHandler", request);
     const validated = validateInfoDialogParams(request.params, "custom.bottomSheet.info");
+    console.log("validated", validated);
     dispatch(makeSetEarnInfoBottomSheetAction(validated));
   };
 }

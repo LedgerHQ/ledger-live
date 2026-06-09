@@ -7,6 +7,7 @@ import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
 import ble from "./ble";
+import borrow from "./borrow";
 import countervalues from "./countervalues";
 import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
@@ -46,6 +47,7 @@ const appReducer = combineReducers({
   appstate,
   auth,
   ble,
+  borrow,
   countervalues,
   deeplinkInstallApp,
   dynamicContent,

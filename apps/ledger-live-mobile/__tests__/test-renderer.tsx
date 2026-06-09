@@ -24,6 +24,7 @@ import reducers from "~/reducers";
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
 import { INITIAL_STATE as APP_STATE_INITIAL_STATE } from "~/reducers/appstate";
 import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
+import { INITIAL_STATE as BORROW_INITIAL_STATE } from "~/reducers/borrow";
 import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynamicContent";
 import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
@@ -59,6 +60,7 @@ const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
   appstate: APP_STATE_INITIAL_STATE,
   ble: BLE_INITIAL_STATE,
+  borrow: BORROW_INITIAL_STATE,
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
