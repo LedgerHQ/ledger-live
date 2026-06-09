@@ -9,6 +9,7 @@ import { State } from "~/renderer/reducers";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompletionScreenViewModel } from "../useCompletionScreenViewModel";
 import { AFTER_ONBOARDING_STATE, SettingsState } from "~/renderer/reducers/settings";
+import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
 
 const mockRedirectToPostOnboarding = jest.fn();
 const mockOpenRecoverUpsell = jest.fn();
@@ -30,7 +31,7 @@ jest.mock("react-router", () => ({
 }));
 
 jest.mock("LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog", () => ({
-  default: jest.fn(() => ({ handleOpen: mockOpenFinishOnboardingDialog })),
+  default: jest.fn(),
 }));
 
 jest.mock("@features/platform-feature-flags", () => ({
@@ -55,6 +56,7 @@ describe("useCompletionScreenViewModel", () => {
     mockOpenRecoverUpsell.mockClear();
     jest.mocked(useRedirectToPostOnboardingCallback).mockReturnValue(mockRedirectToPostOnboarding);
     jest.mocked(useOpenRecoverCallback).mockReturnValue(mockOpenRecoverUpsell);
+    jest.mocked(useFinishOnboardingDialog).mockReturnValue({ handleOpen: mockOpenFinishOnboardingDialog });
     mockUseFeature.mockReturnValue({ enabled: false });
   });
 
