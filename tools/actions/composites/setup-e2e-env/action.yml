@@ -13,7 +13,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set DISABLE_TRANSACTION_BROADCAST
+    - name: Set DISABLE_TRANSACTION_BROADCAST and E2E_BROADCAST_ENABLED
       id: set-broadcast
       shell: bash
       run: |
@@ -24,9 +24,7 @@ runs:
           echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
           echo "E2E_BROADCAST_ENABLED=false" >> $GITHUB_ENV
         fi
-        # E2E_BROADCAST_ENABLED is an immutable gate for broadcast-only specs to skip on.
-        # DISABLE_TRANSACTION_BROADCAST is toggled per-test by setupEnv(), so reading it
-        # in a test.skip() guard races under fullyParallel and skips specs non-deterministically.
+      # Broadcast-only specs should use E2E_BROADCAST_ENABLED as an immutable gate.
 
     - name: Set SWAP_API_BASE and LEDGER_SYNC_ENVIRONMENT
       id: set-envs

@@ -20,13 +20,7 @@ import BigNumber from "bignumber.js";
 import { launchSpeculos, cleanSpeculos } from "./speculosUtils";
 
 /**
- * Whether the broadcast-only swap specs (real on-chain transactions) should run.
- *
- * Reads `E2E_BROADCAST_ENABLED`, an immutable gate exported once by CI (setup-e2e-env).
- * It deliberately does NOT read `DISABLE_TRANSACTION_BROADCAST`: `setupEnv()` toggles that
- * per-test, so under `fullyParallel` a `test.skip()` guard reading it observes a transient
- * "1" left by a neighbouring spec and skips non-deterministically. Falls back to the legacy
- * flag for local runs where the CI gate is unset.
+ * Broadcast-only swap specs gate: prefer E2E_BROADCAST_ENABLED (CI), fallback to DISABLE_TRANSACTION_BROADCAST (local).
  */
 export function isBroadcastEnabled(): boolean {
   if (process.env.E2E_BROADCAST_ENABLED !== undefined) {
