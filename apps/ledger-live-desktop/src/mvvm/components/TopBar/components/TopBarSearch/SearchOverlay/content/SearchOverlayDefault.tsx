@@ -1,15 +1,21 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { StocksSectionView } from "LLD/features/Stocks/StocksSectionView";
+import { useSearchOverlay } from "../SearchOverlayContext";
+import { STOCKS_SUGGESTION_LIMIT } from "../useAssetSearchBar";
 
 export function SearchOverlayDefault() {
-  const { t } = useTranslation();
+  const { suggestions, navigateToAsset, navigateToStocksMarket } = useSearchOverlay();
 
   return (
     <div className="flex flex-col gap-24" data-testid="search-overlay-default">
       {/* CryptoList section (LIVE-29945): cryptos + stablecoins */}
-      {/* Stocks section (LIVE-29946) */}
+      <StocksSectionView
+        {...suggestions.stocks}
+        limit={STOCKS_SUGGESTION_LIMIT}
+        navigateToAsset={navigateToAsset}
+        onSeeAll={navigateToStocksMarket}
+      />
       {/* Perps section (LIVE-29947) */}
-      <span className="body-2 text-muted">{t("topBar.searchEmptyState")}</span>
     </div>
   );
 }
