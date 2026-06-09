@@ -385,8 +385,5 @@
       "usb"
     ]
   },
-  "packageManager": "pnpm@10.24.0",
-  "dependencies": {
-    "@ledgerhq/lumen-ui-rnative": "https://github.com/LedgerHQ/lumen/releases/download/dev-pr-751/ledgerhq-lumen-ui-rnative-0.1.39-pr.751.a17f7d3.tgz"
-  }
+  "packageManager": "pnpm@10.24.0"
 }
