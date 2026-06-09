@@ -73,6 +73,7 @@ export function useCompletionScreenViewModel(): ViewProps {
   }, [
     currentDevice,
     dispatch,
+    lastSeenDevice,
     navigate,
     openFinishOnboardingDialog,
     openRecoverUpsell,
