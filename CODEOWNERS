@@ -408,11 +408,16 @@ apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarousel
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/hooks/**/useOnboardingWidgetVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WalletSync/screens/Synchronize/ChooseMethod.tsx      @ledgerhq/engagement
 apps/ledger-live-mobile/src/images/lns-upsell-banner.webp                                      @ledgerhq/engagement
+apps/ledger-live-mobile/src/images/backup-hub-feature-intro.png                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/actions/dynamicContent.ts                                          @ledgerhq/engagement
 apps/ledger-live-mobile/src/components/PostOnboarding/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/hooks/analyticsOptInPrompt/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/postOnboardingHubDrawer.ts                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/__tests__/postOnboardingHubDrawer.test.ts                 @ledgerhq/engagement
+apps/ledger-live-mobile/src/reducers/backupHubFeatureIntro.ts                                  @ledgerhq/engagement
+apps/ledger-live-mobile/src/reducers/__tests__/backupHubFeatureIntro.test.ts                   @ledgerhq/engagement
+apps/ledger-live-mobile/src/navigation/deeplinks/handleBackupHubDeeplink.ts                      @ledgerhq/engagement
+apps/ledger-live-mobile/src/navigation/deeplinks/__tests__/handleBackupHubDeeplink.test.ts     @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Settings/AnalyticsPreferencesSettings/                     @ledgerhq/engagement
