@@ -1,13 +1,14 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryMeta, retry } from "@reduxjs/toolkit/query/react";
-import type { ApiTokenResponse } from "../entities";
-import { ApiTokenResponseSchema } from "../entities";
-import { getEnv } from "@ledgerhq/live-env";
-import { GetTokensDataParams, PageParam, TokensDataTags, TokensDataWithPagination } from "./types";
-import { TOKEN_OUTPUT_FIELDS } from "./fields";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { convertApiToken } from "../../api-token-converter";
+import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { z } from "zod";
+
+import { convertApiToken } from "../../api-token-converter";
+import { type ApiTokenResponse, ApiTokenResponseSchema } from "../entities";
+import { GetTokensDataParams, PageParam, TokensDataTags, TokensDataWithPagination } from "./types";
+import { TOKEN_OUTPUT_FIELDS } from "./fields";
+import { mapNotNil } from "./utils/nil";
 
 /**
  * Zod schema for API response (array of tokens)
@@ -29,20 +30,20 @@ export interface TokenByAddressInCurrencyParams {
 }
 
 function transformTokensResponse(
-  response: ApiTokenResponse[],
+  response: unknown,
   meta?: FetchBaseQueryMeta,
 ): TokensDataWithPagination {
+  let tokens: TokenCurrency[] = [];
   const nextCursor = meta?.response?.headers.get("x-ledger-next") || undefined;
+  const { data, success, error } = ApiResponseSchema.safeParse(response);
 
-  return {
-    tokens: response.flatMap(token => {
-      const result = transformApiTokenToTokenCurrency(token);
-      return result ? [result] : [];
-    }),
-    pagination: {
-      nextCursor,
-    },
-  };
+  if (success) {
+    tokens = mapNotNil(data, transformApiTokenToTokenCurrency);
+  } else {
+    log("cal-client", "Invalid tokens response schema:", { errors: error.issues });
+  }
+
+  return { tokens, pagination: { nextCursor } };
 }
 
 function transformApiTokenToTokenCurrency(token: ApiTokenResponse): TokenCurrency | undefined {

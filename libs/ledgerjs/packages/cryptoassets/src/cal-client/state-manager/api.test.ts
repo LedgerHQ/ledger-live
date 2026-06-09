@@ -519,4 +519,71 @@ describe("api.ts", () => {
       expect(() => validateAndTransformSingleTokenResponse([invalidToken])).toThrow();
     });
   });
+
+  describe("transformTokensResponse — safeParse guard (LIVE-31803)", () => {
+    const mockApiTokenResponse: ApiTokenResponse = {
+      id: "ethereum/erc20/usd_coin",
+      contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      name: "USD Coin",
+      ticker: "USDC",
+      units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
+      standard: "erc20",
+      decimals: 6,
+      delisted: false,
+    };
+
+    const mockTokenCurrency: TokenCurrency = {
+      type: "TokenCurrency",
+      id: "ethereum/erc20/usd_coin",
+      contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      name: "USD Coin",
+      ticker: "USDC",
+      units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
+      tokenType: "erc20",
+      delisted: false,
+      disableCountervalue: false,
+      parentCurrency: {} as any,
+    };
+
+    beforeEach(() => {
+      (convertApiToken as jest.MockedFunction<typeof convertApiToken>).mockReturnValue(
+        mockTokenCurrency,
+      );
+    });
+
+    it("should transform a valid response", () => {
+      const result = transformTokensResponse([mockApiTokenResponse]);
+
+      expect(result.tokens).toHaveLength(1);
+      expect(result.tokens[0]).toEqual(mockTokenCurrency);
+    });
+
+    it("should return empty tokens and no cursor when the response is not a valid array", () => {
+      const result = transformTokensResponse("not-an-array" as any);
+
+      expect(result.tokens).toHaveLength(0);
+      expect(result.pagination.nextCursor).toBeUndefined();
+    });
+
+    it("should return empty tokens when the response contains items with missing required fields", () => {
+      const result = transformTokensResponse([{ id: "missing-everything" }] as any);
+
+      expect(result.tokens).toHaveLength(0);
+    });
+
+    it("should return empty tokens and preserve cursor from meta when response is invalid", () => {
+      const meta: Partial<FetchBaseQueryMeta> = {
+        response: {
+          headers: {
+            get: jest.fn((header: string) => (header === "x-ledger-next" ? "cursor-abc" : null)),
+          } as any,
+        } as any,
+      };
+
+      const result = transformTokensResponse(null as any, meta as FetchBaseQueryMeta);
+
+      expect(result.tokens).toHaveLength(0);
+      expect(result.pagination.nextCursor).toBe("cursor-abc");
+    });
+  });
 });
