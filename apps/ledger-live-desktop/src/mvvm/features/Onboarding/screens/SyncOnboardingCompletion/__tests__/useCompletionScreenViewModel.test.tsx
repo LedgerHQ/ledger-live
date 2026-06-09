@@ -31,6 +31,7 @@ jest.mock("react-router", () => ({
 }));
 
 jest.mock("LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog", () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 
