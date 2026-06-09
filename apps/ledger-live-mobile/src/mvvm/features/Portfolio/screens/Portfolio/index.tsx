@@ -26,7 +26,7 @@ import { useScrollToTop } from "./useScrollToTop";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
-import { LedgerRecoverFeatureIntroPortfolioMount } from "LLM/features/BackupHub/components/LedgerRecoverFeatureIntroPortfolioMount";
+import { LedgerRecoverFeatureIntroPortfolioMount } from "LLM/features/BackupHub";
 
 import {
   PortfolioAllocationsSection,

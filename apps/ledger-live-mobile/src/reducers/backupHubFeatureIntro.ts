@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { State } from "./types";
 
 export type BackupHubFeatureIntroState = {
   isOpen: boolean;
@@ -42,7 +41,5 @@ export const {
   selectIsBackupHubFeatureIntroOpen,
   selectBackupHubFeatureIntroDeeplinkNonce,
 } = backupHubFeatureIntroSlice.selectors;
-
-export const selectBackupHubFeatureIntroState = (state: State) => state.backupHubFeatureIntro;
 
 export default backupHubFeatureIntroSlice.reducer;

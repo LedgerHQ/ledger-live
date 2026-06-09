@@ -32,7 +32,7 @@ import Assets from "../Assets";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
-import { LedgerRecoverFeatureIntroPortfolioMount } from "LLM/features/BackupHub/components/LedgerRecoverFeatureIntroPortfolioMount";
+import { LedgerRecoverFeatureIntroPortfolioMount } from "LLM/features/BackupHub";
 
 const maxAssetsToDisplay = 5;
 

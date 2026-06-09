@@ -18,7 +18,7 @@ import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
-import { LedgerRecoverFeatureIntroPortfolioMount } from "LLM/features/BackupHub/components/LedgerRecoverFeatureIntroPortfolioMount";
+import { LedgerRecoverFeatureIntroPortfolioMount } from "LLM/features/BackupHub";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
