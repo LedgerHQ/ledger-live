@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import type { Device } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   saveSettings,

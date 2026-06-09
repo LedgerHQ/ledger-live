@@ -5,9 +5,10 @@ import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import { useOpenRecoverCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverCallback";
 import { State } from "~/renderer/reducers";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import type { Device } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompletionScreenViewModel } from "../useCompletionScreenViewModel";
-import { AFTER_ONBOARDING_STATE, SettingsState } from "~/renderer/reducers/settings";
+import { SettingsState } from "~/renderer/reducers/settings";
 import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
 
 const mockRedirectToPostOnboarding = jest.fn();
@@ -32,10 +33,6 @@ jest.mock("react-router", () => ({
 jest.mock("LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog", () => ({
   __esModule: true,
   default: jest.fn(),
-}));
-
-jest.mock("@features/platform-feature-flags", () => ({
-  useFeature: jest.fn().mockReturnValue({ enabled: false }),
 }));
 
 const getInitialState = (modelId: DeviceModelId = DeviceModelId.stax): Partial<State> => ({
