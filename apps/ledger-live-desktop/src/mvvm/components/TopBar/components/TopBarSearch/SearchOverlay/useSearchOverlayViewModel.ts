@@ -3,11 +3,14 @@ import { useNavigate } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import { setMarketCategory } from "~/renderer/actions/market";
 import { useAssetSearchBar } from "./useAssetSearchBar";
 import { SearchOverlayContextValue } from "./types";
+import { useDispatch } from "LLD/hooks/redux";
 
 export function useSearchOverlayViewModel() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { query, onChangeQuery, isOpen, open, close, mode, suggestions, results } =
     useAssetSearchBar();
@@ -20,6 +23,13 @@ export function useSearchOverlayViewModel() {
     },
     [navigate, shouldDisplayAggregatedAssets, close],
   );
+
+  const navigateToStocksMarket = useCallback(() => {
+    setTrackingSource("Global Search");
+    dispatch(setMarketCategory("stocks"));
+    navigate("/market");
+    close();
+  }, [dispatch, navigate, close]);
 
   const onOpenChange = useCallback(
     (next: boolean) => {
@@ -41,8 +51,8 @@ export function useSearchOverlayViewModel() {
   );
 
   const contextValue = useMemo<SearchOverlayContextValue>(
-    () => ({ close, navigateToAsset, suggestions, results, mode }),
-    [close, navigateToAsset, suggestions, results, mode],
+    () => ({ close, navigateToAsset, navigateToStocksMarket, suggestions, results, mode }),
+    [close, navigateToAsset, navigateToStocksMarket, suggestions, results, mode],
   );
 
   return { open: isOpen, onOpenChange, query, onChangeQuery, onKeyDown, mode, contextValue };
