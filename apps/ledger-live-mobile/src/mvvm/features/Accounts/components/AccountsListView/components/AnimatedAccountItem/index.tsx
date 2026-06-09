@@ -1,4 +1,4 @@
-import React, { memo, ReactNode, useEffect } from "react";
+import React, { memo, ReactNode } from "react";
 import { Pressable } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
@@ -17,14 +17,10 @@ type AnimatedAccountItemProps = {
 
 const AnimatedAccountItem = ({ item, index = 0, children, onPress }: AnimatedAccountItemProps) => {
   const { space } = useTheme();
-  const { animatedStyle, startAnimation } = useItemAnimation(index);
-
-  useEffect(() => {
-    startAnimation();
-  }, [startAnimation]);
+  const { entering } = useItemAnimation(index);
 
   return (
-    <Animated.View style={[animatedStyle, { width: "100%" }]}>
+    <Animated.View entering={entering} style={{ width: "100%" }}>
       <Pressable
         onPress={onPress}
         style={({ pressed }: { pressed: boolean }) => [
