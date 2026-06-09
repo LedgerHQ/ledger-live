@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import { FeatureIntroLayout } from "LLM/features/GenericAwarenessModal/components/FeatureIntroLayout";
+import { BackupHubFeatureIntroLayout } from "./BackupHubFeatureIntroLayout";
 import type { UseLedgerRecoverFeatureIntroViewModelResult } from "./useLedgerRecoverFeatureIntroViewModel";
 
 type LedgerRecoverFeatureIntroViewProps = UseLedgerRecoverFeatureIntroViewModelResult;
@@ -15,7 +15,6 @@ export function LedgerRecoverFeatureIntroView({
 }: LedgerRecoverFeatureIntroViewProps) {
   return (
     <QueuedDrawerBottomSheet
-      key="backup-hub-feature-intro"
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       testID="backup-hub-feature-intro-drawer"
@@ -23,7 +22,9 @@ export function LedgerRecoverFeatureIntroView({
     >
       <BottomSheetView style={[styles.container, { paddingBottom: bottomInset }]}>
         <BottomSheetHeader />
-        {isOpen ? <FeatureIntroLayout onClose={onClose} viewModel={featureIntroViewModel} /> : null}
+        {isOpen ? (
+          <BackupHubFeatureIntroLayout onClose={onClose} viewModel={featureIntroViewModel} />
+        ) : null}
       </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );

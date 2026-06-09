@@ -1,9 +1,8 @@
-import {
+import reducer, {
   closeBackupHubFeatureIntro,
   openBackupHubFeatureIntro,
   tickBackupHubFeatureIntroDeeplink,
 } from "../backupHubFeatureIntro";
-import reducer from "../backupHubFeatureIntro";
 
 const INITIAL_STATE = {
   isOpen: false,
