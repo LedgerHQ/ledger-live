@@ -139,10 +139,26 @@ export const NativeElementHelpers = {
     }
   },
 
+  /** Counts rows that are at least 75% on-screen (Detox visibility). Use when you specifically need *visible* rows. */
   async countElementsById(id: string | RegExp, index = 0): Promise<number> {
     try {
       await detoxExpect(element(by.id(id)).atIndex(index)).toBeVisible();
       return countElementsById(id, index + 1);
+    } catch {
+      return index;
+    }
+  },
+
+  /**
+   * Counts rows that *exist* in the native hierarchy, regardless of on-screen visibility.
+   * Prefer this over countElementsById when a row may be rendered but clipped by its
+   * container bounds (e.g. partially below a drawer/FlatList fold on iOS, which fails
+   * Detox's 75% visibility threshold and would otherwise be under-counted).
+   */
+  async countExistingElementsById(id: string | RegExp, index = 0): Promise<number> {
+    try {
+      await detoxExpect(element(by.id(id)).atIndex(index)).toExist();
+      return countExistingElementsById(id, index + 1);
     } catch {
       return index;
     }

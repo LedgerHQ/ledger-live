@@ -73,7 +73,7 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Add only discovered account at index")
   async addAccountAtIndex(currencyName: string, currencyId: string, index: number = 0) {
     await this.waitAccountsDiscovery();
-    const accountCount = await countElementsById(this.accountItemRegExp());
+    const accountCount = await countExistingElementsById(this.accountItemRegExp());
     if (accountCount > 1) {
       await tapById(this.deselectAllButtonId);
     }
