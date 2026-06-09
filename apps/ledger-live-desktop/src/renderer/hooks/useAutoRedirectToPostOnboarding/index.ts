@@ -32,7 +32,7 @@ export function useRedirectToPostOnboardingCallback() {
     (onDone: () => void = () => {}) => {
       if (shouldRedirectToRecoverUpsell && lastOnboardedDevice) {
         openPostOnboarding({ deviceModelId: lastOnboardedDevice.modelId, fallbackRedirection });
-        setImmediate(() => openRecoverUpsell({ fallbackRedirection }));
+        setImmediate(() => openRecoverUpsell({ fallbackRedirection: () => {} }));
         onDone();
         return true;
       }

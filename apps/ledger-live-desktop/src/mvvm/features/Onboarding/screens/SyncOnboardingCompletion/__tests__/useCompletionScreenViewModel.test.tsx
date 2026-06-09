@@ -4,7 +4,6 @@
 import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import { useOpenRecoverCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverCallback";
-import { useFeature } from "@features/platform-feature-flags";
 import { State } from "~/renderer/reducers";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompletionScreenViewModel } from "../useCompletionScreenViewModel";
@@ -39,8 +38,6 @@ jest.mock("@features/platform-feature-flags", () => ({
   useFeature: jest.fn().mockReturnValue({ enabled: false }),
 }));
 
-const mockUseFeature = jest.mocked(useFeature);
-
 const getInitialState = (modelId: DeviceModelId = DeviceModelId.stax): Partial<State> => ({
   devices: {
     devices: [],
@@ -58,7 +55,6 @@ describe("useCompletionScreenViewModel", () => {
     jest.mocked(useRedirectToPostOnboardingCallback).mockReturnValue(mockRedirectToPostOnboarding);
     jest.mocked(useOpenRecoverCallback).mockReturnValue(mockOpenRecoverUpsell);
     jest.mocked(useFinishOnboardingDialog).mockReturnValue({ handleOpen: mockOpenFinishOnboardingDialog });
-    mockUseFeature.mockReturnValue({ enabled: false });
   });
 
   afterEach(() => {
@@ -91,7 +87,6 @@ describe("useCompletionScreenViewModel", () => {
   );
 
   it("should navigate home and open recover upsell with finish-onboarding continuation when Wallet40 finish widget is enabled", () => {
-    mockUseFeature.mockReturnValue({ enabled: true });
     const deviceId = DeviceModelId.stax;
     const initialState = {
       ...getInitialState(deviceId),
@@ -114,5 +109,29 @@ describe("useCompletionScreenViewModel", () => {
       navigationState: { afterUpsell: "openFinishOnboardingDialog" },
     });
     expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
+  });
+
+  it("should fall back to lastSeenDevice and still redirect to post onboarding when currentDevice is null", () => {
+    const deviceId = DeviceModelId.stax;
+    const initialState: Partial<State> = {
+      devices: {
+        devices: [],
+        currentDevice: null,
+      },
+      settings: {
+        lastSeenDevice: { modelId: deviceId, deviceInfo: {} as never, apps: [] },
+      } as never,
+    };
+
+    const { result } = renderHook(() => useCompletionScreenViewModel(), { initialState });
+
+    expect(result.current.deviceModelId).toBe(deviceId);
+
+    act(() => {
+      jest.advanceTimersByTime(6000);
+    });
+
+    expect(mockRedirectToPostOnboarding).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

@@ -73,7 +73,7 @@ export default function RecoverPlayer() {
   const theme = useTheme().theme;
   const onClose = useCallback(() => {
     if (state?.afterUpsell === "openFinishOnboardingDialog") {
-      navigate("/");
+      navigate("/", { replace: true });
       dispatch(openFinishPostOnboarding());
     } else {
       navigate(-1);
