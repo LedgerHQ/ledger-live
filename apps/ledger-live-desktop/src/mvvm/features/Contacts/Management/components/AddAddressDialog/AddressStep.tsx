@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
-  Tag,
   TextInput,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import { Information, Paste } from "@ledgerhq/lumen-ui-react/symbols";
+import { Information } from "@ledgerhq/lumen-ui-react/symbols";
 import { LIMITS } from "~/mvvm/features/Contacts/constants";
 import {
   isInvalidAsciiLabel,
@@ -54,6 +53,9 @@ type Props = {
  * - `Register address` Button is disabled until BOTH inputs pass
  *   their validators (matches the disabled/enabled comparison in
  *   13957:8439 → 13957:8939).
+ *
+ * The address field has no inline Paste affordance — users paste with
+ * their native shortcut (Cmd/Ctrl+V).
  */
 export function AddressStep({ onSubmit, defaultAddressName = "" }: Props) {
   const { t } = useTranslation();
@@ -78,20 +80,6 @@ export function AddressStep({ onSubmit, defaultAddressName = "" }: Props) {
   const submit = () => {
     if (!canSubmit) return;
     onSubmit({ addressHex: trimmedAddress, addressName: addressName.trim() });
-  };
-
-  // One-shot clipboard read for the inline Paste affordance. Async +
-  // permission-gated in some browsers; Electron's renderer normally
-  // grants it but we still silently no-op on rejection so the input
-  // stays usable (users can still Cmd+V into the field).
-  const handlePaste = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      if (text) setAddressHex(text.trim());
-    } catch {
-      // Clipboard unavailable / permission denied — fall back to the
-      // user's native paste shortcut.
-    }
   };
 
   return (
@@ -123,33 +111,6 @@ export function AddressStep({ onSubmit, defaultAddressName = "" }: Props) {
         // Hide Lumen's intrinsic clear-button — the user can wipe the
         // input with their keyboard; the affordance is just noise.
         hideClearButton
-        // Inline Paste affordance (Figma frame `14197:12819`). Only
-        // rendered while the field is empty — once the user starts
-        // typing the tag would overlap their text. Lumen `Tag` is a
-        // `div` by default, so we tag it `role="button"` for a11y
-        // and wire the clipboard read via `onClick`.
-        suffix={
-          trimmedAddress.length === 0 ? (
-            <Tag
-              appearance="gray"
-              size="sm"
-              icon={Paste}
-              label={t("contactsManagement.addAddress.paste")}
-              role="button"
-              tabIndex={0}
-              aria-label={t("contactsManagement.addAddress.pasteAriaLabel")}
-              onClick={handlePaste}
-              onKeyDown={e => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  void handlePaste();
-                }
-              }}
-              className="cursor-pointer"
-              data-testid="contacts-management-add-address-paste"
-            />
-          ) : undefined
-        }
         data-testid="contacts-management-add-address-hex"
         autoFocus
       />
