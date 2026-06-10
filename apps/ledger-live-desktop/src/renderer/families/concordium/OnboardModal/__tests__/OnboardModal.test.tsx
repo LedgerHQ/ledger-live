@@ -45,16 +45,19 @@ const mockDevice = createMockDevice();
 function createMockPairObservable() {
   return {
     subscribe: jest.fn(({ next, complete }: SubscribeArgs) => {
+      let t2: ReturnType<typeof setTimeout>;
       const t1 = setTimeout(() => {
         next({ status: "PREPARE", walletConnectUri: "wc:mock-uri-for-testing" });
+        // Chain SUCCESS from inside the PREPARE callback so the gap is measured
+        // from the actual PREPARE emission, not from subscribe-time. This keeps
+        // the spacing deterministic even if the event loop is stalled on a busy
+        // CI runner; otherwise the PREPARE state-update setTimeout (T) could be
+        // cleared by setStateWithTimeout before it lands and the QR step skipped.
+        t2 = setTimeout(() => {
+          next({ status: "SUCCESS", sessionTopic: SESSION_TOPIC });
+          complete();
+        }, T + 800);
       }, 10);
-      // SUCCESS must fire well after the PREPARE state-update setTimeout (T) has
-      // landed; otherwise setStateWithTimeout clears the pending PREPARE update
-      // and the QR step is skipped — flaky on busy CI runners.
-      const t2 = setTimeout(() => {
-        next({ status: "SUCCESS", sessionTopic: SESSION_TOPIC });
-        complete();
-      }, T + 800);
 
       return {
         unsubscribe: jest.fn(() => {
@@ -69,13 +72,17 @@ function createMockPairObservable() {
 function createMockOnboardObservable(completedAccount: Account) {
   return {
     subscribe: jest.fn(({ next, complete }: SubscribeArgs) => {
+      let t2: ReturnType<typeof setTimeout>;
       const t1 = setTimeout(() => {
         next({ status: AccountOnboardStatus.SIGN });
+        // Chain the terminal emission from inside the SIGN callback so the gap is
+        // measured from the actual SIGN emission, keeping the timing deterministic
+        // even when the event loop is stalled on a busy CI runner (see pair mock).
+        t2 = setTimeout(() => {
+          next({ account: completedAccount });
+          complete();
+        }, T + 800);
       }, 10);
-      const t2 = setTimeout(() => {
-        next({ account: completedAccount });
-        complete();
-      }, T + 800);
 
       return {
         unsubscribe: jest.fn(() => {
