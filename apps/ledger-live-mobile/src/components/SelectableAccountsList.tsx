@@ -275,11 +275,15 @@ const SelectableAccount = ({
     <LeftActions translation={translation} />
   );
 
-  const { entering } = useItemAnimation();
+  const { animatedStyle, startAnimation } = useItemAnimation();
   const styles = getStyles(space);
 
+  useEffect(() => {
+    startAnimation();
+  }, [startAnimation]);
+
   const inner = (
-    <Animated.View entering={entering} testID={`account-${account.id}`}>
+    <Animated.View style={animatedStyle} testID={`account-${account.id}`}>
       <Flex
         {...styles.selectableAccount}
         flexDirection="row"
