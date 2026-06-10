@@ -35,6 +35,7 @@
     "format:check": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts --check"
   },
   "optionalDependencies": {
+    "@abandonware/noble": "^1.9.2-26",
     "@ledgerhq/wallet-cli-darwin-arm64": "workspace:*",
     "@ledgerhq/wallet-cli-linux-arm64": "workspace:*",
     "@ledgerhq/wallet-cli-linux-x64": "workspace:*",

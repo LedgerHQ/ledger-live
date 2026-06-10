@@ -6,13 +6,14 @@ import { firstValueFrom } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
 import { WalletCliDmkTransport } from "./wallet-cli-dmk-transport";
 import type { WalletCliDmk } from "./dmk";
+import { resolveWalletCliTransportKind } from "./transport-kind";
 import {
   hasWalletCliDeviceInterruptScope,
   withWalletCliDeviceInterruptScope,
 } from "./interrupt-scope";
 import { restoreTerminalCursor } from "../shared/ui";
 
-/** Device id passed to live-common `withDevice` / bridge methods for the first USB Ledger (DMK node WebUSB). */
+/** Device id passed to live-common `withDevice` / bridge methods for the first discovered Ledger (DMK node WebUSB or node BLE, per WALLET_CLI_TRANSPORT). */
 export const WALLET_CLI_DMK_DEVICE_ID = "wallet-cli-dmk";
 
 const CONNECT_TIMEOUT_MS = 60_000;
@@ -68,7 +69,9 @@ function terminateWalletCliFromSignal(code: number): void {
 
 function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
   return (persistentDmk ??= import("./dmk")
-    .then(({ createDeviceManagementKit }) => createDeviceManagementKit())
+    .then(({ createDeviceManagementKit }) =>
+      createDeviceManagementKit(resolveWalletCliTransportKind()),
+    )
     .catch(error => {
       persistentDmk = null;
       throw error;
@@ -145,7 +148,7 @@ async function teardownPersistentDmk(
   persistentDmk = null;
 }
 
-async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> {
+async function connectFirstDevice(dmk: DeviceManagementKit): Promise<string> {
   const discovered = await firstValueFrom(
     dmk.listenToAvailableDevices({}).pipe(
       filter((list: DiscoveredDevice[]) => list.length > 0),
@@ -203,7 +206,7 @@ export function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
     }
 
     const kit = await getOrCreatePersistentDmk();
-    const sessionId = await connectFirstUsbDevice(kit.dmk);
+    const sessionId = await connectFirstDevice(kit.dmk);
     const transport = new WalletCliDmkTransport(kit.dmk, sessionId);
     singleton = { dmk: kit.dmk, transport, destroyTransport: kit.destroyTransport };
     return transport;

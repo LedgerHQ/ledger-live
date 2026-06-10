@@ -11,6 +11,7 @@ import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { getCliProcessExitCode } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import { resolveWalletCliTransportKind, type WalletCliTransportKind } from "./device/transport-kind";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
 import SessionGroup from "./commands/session/index";
@@ -51,6 +52,17 @@ function normalizeNegatedFlags(argv: string[]): string[] {
 }
 
 if (import.meta.main) {
+  // Resolve (and validate) the transport once, up front: a bad
+  // WALLET_CLI_TRANSPORT fails fast here with a clear message, before any work,
+  // rather than throwing mid-shutdown after a command already ran.
+  let transportKind: WalletCliTransportKind;
+  try {
+    transportKind = resolveWalletCliTransportKind();
+  } catch (e) {
+    process.stderr.write(`${e instanceof Error ? e.message : String(e)}\n`);
+    process.exit(2);
+  }
+
   let exitCode = 0;
   try {
     exitCode = await runMain();
@@ -62,4 +74,12 @@ if (import.meta.main) {
     await disposeWalletCliDmkTransportFully();
   }
   process.exitCode = exitCode;
+  // The BLE transport's noble backend keeps a native handle on the libuv loop
+  // that it never unrefs, so the process would hang after a command completes
+  // (the USB transport unrefs its hotplug events and drains naturally). Teardown
+  // is done by this point and all output has been written, so exit explicitly on
+  // the BLE path. Kept out of the USB path to preserve its graceful drain.
+  if (transportKind === "ble") {
+    process.exit(exitCode);
+  }
 }
