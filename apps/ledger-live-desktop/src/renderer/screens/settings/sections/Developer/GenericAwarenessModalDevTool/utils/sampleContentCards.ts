@@ -17,6 +17,7 @@ const sampleCarouselSlides = [
     ...toThemedImage(getDevToolCarouselImageUrl(0)),
     primaryButtonLabel: "Discover Flex",
     primaryButtonLink: "https://www.ledger.com/products/ledger-flex",
+    navigationButtonLabel: "",
   },
   {
     title: "Ledger Wallet clarity",
@@ -24,6 +25,7 @@ const sampleCarouselSlides = [
     ...toThemedImage(getDevToolCarouselImageUrl(1)),
     primaryButtonLabel: "Explore the app",
     primaryButtonLink: "https://www.ledger.com/ledger-wallet",
+    navigationButtonLabel: "",
   },
   {
     title: "Bitcoin, secured",
@@ -31,6 +33,7 @@ const sampleCarouselSlides = [
     ...toThemedImage(getDevToolCarouselImageUrl(2)),
     primaryButtonLabel: "Bitcoin wallet",
     primaryButtonLink: "https://www.ledger.com/coin/wallet/bitcoin",
+    navigationButtonLabel: "",
   },
 ];
 

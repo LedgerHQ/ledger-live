@@ -85,5 +85,13 @@ describe("FeatureIntroContent", () => {
     const img = container.querySelector("img");
     expect(img).not.toBeNull();
     expect(img).toHaveAttribute("src", expectedSrc);
+    expect(img).toHaveClass("border", "border-solid", "border-icon");
+  });
+
+  it("should render the hero placeholder with the icon border when no image is provided", () => {
+    const { container } = render(<FeatureIntroContent {...baseProps} />);
+
+    const placeholder = container.querySelector("[aria-hidden]");
+    expect(placeholder).toHaveClass("border", "border-solid", "border-icon");
   });
 });

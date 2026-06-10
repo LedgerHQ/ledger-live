@@ -56,6 +56,7 @@ describe("buildLocalGenericAwarenessModalCards", () => {
             imageUrlDark: "",
             primaryButtonLabel: "Next",
             primaryButtonLink: "ledgerlive://portfolio",
+            navigationButtonLabel: "",
           },
           {
             title: "First",
@@ -64,6 +65,7 @@ describe("buildLocalGenericAwarenessModalCards", () => {
             imageUrlDark: "",
             primaryButtonLabel: "Start",
             primaryButtonLink: "ledgerlive://portfolio",
+            navigationButtonLabel: "",
           },
         ],
       },

@@ -16,6 +16,7 @@ export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCa
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -25,6 +26,7 @@ export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCa
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -34,6 +36,7 @@ export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCa
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -43,6 +46,7 @@ export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCa
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
   ],
   isReady: true,
@@ -60,6 +64,7 @@ export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard 
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "Learn more external",
       primaryButtonLink: "https://www.ledger.com",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -69,6 +74,7 @@ export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard 
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "Learn more internal",
       primaryButtonLink: "ledgerlive://earn",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -78,6 +84,7 @@ export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard 
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "Learn more external",
       primaryButtonLink: "https://www.ledger.com",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -87,6 +94,7 @@ export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard 
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "Learn more internal",
       primaryButtonLink: "ledgerlive://earn",
+      navigationButtonLabel: "",
     },
   ],
   isReady: true,
@@ -104,6 +112,7 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "Learn more external",
       primaryButtonLink: "https://www.ledger.com",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -113,6 +122,7 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "Learn more internal",
       primaryButtonLink: "ledgerlive://earn",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -122,6 +132,7 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
       imageUrlLight: "https://picsum.photos/480/640",
@@ -131,6 +142,7 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
   ],
   isReady: true,

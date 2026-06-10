@@ -20,6 +20,11 @@ export type FeatureIntroContentItem = {
   icon: LumenSymbolName;
 };
 
+const FEATURE_INTRO_HERO_IMAGE_CLASSNAME =
+  "pointer-events-none h-[200px] w-full select-none rounded-xl border border-solid border-icon object-cover";
+const FEATURE_INTRO_HERO_PLACEHOLDER_CLASSNAME =
+  "h-[200px] shrink-0 rounded-xl border border-solid border-icon bg-muted";
+
 type FeatureIntroContentProps = {
   title: string;
   subtitle: string;
@@ -68,12 +73,12 @@ export default function FeatureIntroContent({
           <img
             src={imageUrl}
             alt=""
-            className="pointer-events-none h-[200px] w-full select-none rounded-xl object-cover"
+            className={FEATURE_INTRO_HERO_IMAGE_CLASSNAME}
             draggable={false}
             decoding="async"
           />
         ) : (
-          <div className="h-[200px] shrink-0 rounded-xl bg-muted" aria-hidden />
+          <div className={FEATURE_INTRO_HERO_PLACEHOLDER_CLASSNAME} aria-hidden />
         )}
         <div className="relative right-auto flex w-full min-w-0 flex-col gap-[unset]">
           <AwarenessModalClampedText
