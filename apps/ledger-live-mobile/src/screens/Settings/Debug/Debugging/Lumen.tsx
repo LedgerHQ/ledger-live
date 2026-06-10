@@ -3,7 +3,6 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Banner, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { View } from "react-native";
-import { InlinedSwitch } from "./InlinedSwitch";
 
 export default function DebugLumen() {
   const styles = useStyleSheet(
@@ -24,7 +23,6 @@ export default function DebugLumen() {
     <NavigationScrollView>
       <View style={styles.root}>
         <Banner title="Lumen playground for testing Lumen components." />
-        <InlinedSwitch />
         <TextInput placeholder="Enter your name" value={name} onChangeText={setName} />
       </View>
     </NavigationScrollView>
