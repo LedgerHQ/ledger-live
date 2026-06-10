@@ -505,14 +505,14 @@ async function sendFilteringInfo(
  *
  * @param {String} path derivationPath
  * @param {Object} typedMessage message to sign
- * @param {Boolean} fullImplem use the legacy implementation
+ * @param {Boolean} legacyImplem use the legacy implementation
  * @returns {Promise}
  */
 export const signEIP712Message = async (
   transport: Transport,
   path: string,
   typedMessage: EIP712Message,
-  fullImplem = false,
+  legacyImplem = false,
   loadConfig: LoadConfig,
 ): Promise<{
   v: number;
@@ -637,7 +637,7 @@ export const signEIP712Message = async (
       APDU_FIELDS.CLA,
       APDU_FIELDS.INS,
       APDU_FIELDS.P1,
-      fullImplem ? APDU_FIELDS.P2_v0 : APDU_FIELDS.P2_full,
+      legacyImplem ? APDU_FIELDS.P2_v0 : APDU_FIELDS.P2_full,
       signatureBuffer,
     )
     .then(response => {
