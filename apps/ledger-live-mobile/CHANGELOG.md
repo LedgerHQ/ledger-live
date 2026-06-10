@@ -1,5 +1,17 @@
 # live-mobile
 
+## 4.7.1
+
+### Patch Changes
+
+- [#18374](https://github.com/LedgerHQ/ledger-live/pull/18374) [`b9cce0b`](https://github.com/LedgerHQ/ledger-live/commit/b9cce0baa14afe3c7e30279dc9caa59b31803491) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - added missing reference to MoonPay Trade explorer link on LWM
+
+## 4.7.1-hotfix.0
+
+### Patch Changes
+
+- [#18374](https://github.com/LedgerHQ/ledger-live/pull/18374) [`b9cce0b`](https://github.com/LedgerHQ/ledger-live/commit/b9cce0baa14afe3c7e30279dc9caa59b31803491) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - added missing reference to MoonPay Trade explorer link on LWM
+
 ## 4.7.0
 
 ### Minor Changes
