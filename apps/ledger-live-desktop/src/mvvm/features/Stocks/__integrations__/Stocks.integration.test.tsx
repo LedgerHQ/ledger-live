@@ -161,4 +161,36 @@ describe("Stocks section", () => {
     fireEvent.click(screen.getByTestId("stocks-see-all"));
     expect(onSeeAll).toHaveBeenCalledTimes(1);
   });
+
+  it("renders an Explore link instead of the show-more header", () => {
+    mockStocksData({ metas: [APPLE] });
+
+    render(
+      <Stocks
+        limit={2}
+        headerVariant="explore"
+        navigateToAsset={navigateToAsset}
+        onSeeAll={onSeeAll}
+      />,
+    );
+
+    expect(screen.getByTestId("stocks-explore")).toBeVisible();
+    expect(screen.queryByTestId("stocks-see-all")).not.toBeInTheDocument();
+  });
+
+  it("triggers the see-all handler from the Explore link", () => {
+    mockStocksData({ metas: [APPLE] });
+
+    render(
+      <Stocks
+        limit={2}
+        headerVariant="explore"
+        navigateToAsset={navigateToAsset}
+        onSeeAll={onSeeAll}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("stocks-explore"));
+    expect(onSeeAll).toHaveBeenCalledTimes(1);
+  });
 });

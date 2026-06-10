@@ -14,6 +14,9 @@ export type StocksSectionViewModelResult = {
   isLoading: boolean;
 };
 
+/** Header affordance: chevron "show more" (search) or "Explore" link (portfolio). */
+export type StocksHeaderVariant = "showMore" | "explore";
+
 export type StocksSectionViewProps = StocksSectionViewModelResult & {
   /** Number of skeleton rows rendered while loading. */
   limit: number;
@@ -21,4 +24,6 @@ export type StocksSectionViewProps = StocksSectionViewModelResult & {
   navigateToAsset: (currencyId: string) => void;
   /** Lands on the market list pre-filtered to the stocks category. */
   onSeeAll: () => void;
+  /** Header affordance to render. Defaults to "showMore". */
+  headerVariant?: StocksHeaderVariant;
 };
