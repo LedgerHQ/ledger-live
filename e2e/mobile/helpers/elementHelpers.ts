@@ -32,6 +32,8 @@ const scroller = new PageScroller();
 
 const DEFAULT_TIMEOUT = 60000;
 const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
+// Safety cap for the recursive visible-row counter: no screen legitimately renders this many matching rows.
+const MAX_COUNTED_ELEMENTS = 50;
 
 export type WaitForElementOptions = {
   errorCheckTimeout?: number;
@@ -141,6 +143,7 @@ export const NativeElementHelpers = {
 
   /** Counts rows that are at least 75% on-screen (Detox visibility). Use when you specifically need *visible* rows. */
   async countElementsById(id: string | RegExp, index = 0): Promise<number> {
+    if (index >= MAX_COUNTED_ELEMENTS) return index;
     try {
       await detoxExpect(element(by.id(id)).atIndex(index)).toBeVisible();
       return countElementsById(id, index + 1);
@@ -154,13 +157,18 @@ export const NativeElementHelpers = {
    * Prefer this over countElementsById when a row may be rendered but clipped by its
    * container bounds (e.g. partially below a drawer/FlatList fold on iOS, which fails
    * Detox's 75% visibility threshold and would otherwise be under-counted).
+   *
+   * Reads the matched set in a single getAttributes() call rather than walking
+   * atIndex(0..n) with toExist(): under the new architecture, atIndex no longer
+   * fails cleanly for out-of-range indices, so the recursive walk overshot into the
+   * thousands and hammered the runner. getAttributes returns the real match count.
    */
-  async countExistingElementsById(id: string | RegExp, index = 0): Promise<number> {
+  async countExistingElementsById(id: string | RegExp): Promise<number> {
     try {
-      await detoxExpect(element(by.id(id)).atIndex(index)).toExist();
-      return countExistingElementsById(id, index + 1);
+      const attributes = await element(by.id(id)).getAttributes();
+      return "elements" in attributes ? attributes.elements.length : 1;
     } catch {
-      return index;
+      return 0;
     }
   },
 
