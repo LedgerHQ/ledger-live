@@ -26,9 +26,14 @@ describe("useProductTourDrawerViewModel", () => {
       overrideInitialState: withNonce(0),
     });
 
+    // The tour auto-opens once per session on mount when the feature is enabled
+    // and the tour has not been completed yet.
+    expect(result.current.isDrawerOpen).toBe(true);
+
     act(() => {
       result.current.closeProductTour();
     });
+
     expect(result.current.isDrawerOpen).toBe(false);
 
     act(() => {
