@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Link,
   Subheader,
   SubheaderRow,
   SubheaderTitle,
@@ -8,7 +9,52 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { StockRow } from "./components/StockRow";
 import { StocksSkeleton } from "./components/StocksSkeleton";
-import { StocksSectionViewProps } from "./types";
+import { StocksHeaderVariant, StocksSectionViewProps } from "./types";
+
+function StocksHeader({
+  variant,
+  onSeeAll,
+}: {
+  variant: StocksHeaderVariant;
+  onSeeAll: () => void;
+}) {
+  const { t } = useTranslation();
+
+  if (variant === "explore") {
+    return (
+      <Subheader>
+        <div className="flex items-center gap-24">
+          <SubheaderRow className="min-w-0 flex-1">
+            <SubheaderTitle>{t("topBar.search.stocks")}</SubheaderTitle>
+          </SubheaderRow>
+          <Link
+            appearance="accent"
+            underline={false}
+            size="md"
+            onClick={onSeeAll}
+            className="cursor-pointer"
+            data-testid="stocks-explore"
+          >
+            {t("stocks.explore")}
+          </Link>
+        </div>
+      </Subheader>
+    );
+  }
+
+  return (
+    <Subheader>
+      <SubheaderRow
+        className="min-w-0 items-center gap-4"
+        onClick={onSeeAll}
+        data-testid="stocks-see-all"
+      >
+        <SubheaderTitle>{t("topBar.search.stocks")}</SubheaderTitle>
+        <SubheaderShowMore />
+      </SubheaderRow>
+    </Subheader>
+  );
+}
 
 export function StocksSectionView({
   data,
@@ -16,25 +62,15 @@ export function StocksSectionView({
   limit,
   navigateToAsset,
   onSeeAll,
+  headerVariant = "showMore",
 }: StocksSectionViewProps) {
-  const { t } = useTranslation();
-
   if (!isLoading && data.length === 0) {
     return null;
   }
 
   return (
     <div className="flex flex-col gap-8" data-testid="stocks-section">
-      <Subheader>
-        <SubheaderRow
-          className="min-w-0 items-center gap-4"
-          onClick={onSeeAll}
-          data-testid="stocks-see-all"
-        >
-          <SubheaderTitle>{t("topBar.search.stocks")}</SubheaderTitle>
-          <SubheaderShowMore />
-        </SubheaderRow>
-      </Subheader>
+      <StocksHeader variant={headerVariant} onSeeAll={onSeeAll} />
       {isLoading ? (
         <StocksSkeleton count={limit} />
       ) : (
