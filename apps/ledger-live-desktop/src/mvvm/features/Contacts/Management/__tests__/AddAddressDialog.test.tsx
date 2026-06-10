@@ -132,7 +132,7 @@ describe("AddAddressDialog", () => {
     expect(submit).toBeEnabled();
   });
 
-  it("renders the inline Paste tag only while the address input is empty", async () => {
+  it("does not render an inline Paste affordance on the address input", async () => {
     const { user } = render(<AddAddressDialog {...baseProps()} />);
 
     // Land on the address step (binancecoin auto-advances).
@@ -140,29 +140,11 @@ describe("AddAddressDialog", () => {
       screen.getByTestId("contacts-management-add-address-asset-binancecoin"),
     );
 
-    // Paste tag is visible on initial empty input.
-    expect(
-      screen.getByTestId("contacts-management-add-address-paste"),
-    ).toBeInTheDocument();
-
-    // Type anything → tag disappears.
-    await user.type(
-      screen.getByTestId("contacts-management-add-address-hex"),
-      "0x",
-    );
+    // No Paste tag — users paste with their native shortcut.
     expect(
       screen.queryByTestId("contacts-management-add-address-paste"),
     ).not.toBeInTheDocument();
   });
-
-  // We don't exercise the clipboard fill in jsdom — `navigator.clipboard`
-  // is a non-configurable read-only property here, and even after
-  // `Object.defineProperty(..., { configurable: true })` the click
-  // doesn't reliably propagate through Lumen Tag's div + the input's
-  // suffix layout under user-event / fireEvent. The "renders only
-  // while the input is empty" test above pins the visible-state
-  // contract; the click → clipboard wiring is verified manually in
-  // the Electron build (where the real Clipboard API is available).
 
   it("pre-fills the address-name input with the selected crypto's display name", async () => {
     const { user } = render(<AddAddressDialog {...baseProps()} />);
