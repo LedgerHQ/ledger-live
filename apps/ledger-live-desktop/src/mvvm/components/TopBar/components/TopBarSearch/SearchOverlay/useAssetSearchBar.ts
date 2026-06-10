@@ -1,11 +1,13 @@
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useStocksSectionViewModel } from "LLD/features/Stocks/hooks/useStocksSectionViewModel";
-import { AssetSuggestionSection, SearchMode, SearchResults, SearchSuggestions } from "./types";
+import { useAssetSuggestionsViewModel } from "LLD/features/SearchAssets/hooks/useAssetSuggestionsViewModel";
+import { SearchMode, SearchResults, SearchSuggestions } from "./types";
 
-const EMPTY_SECTION: AssetSuggestionSection = { data: [], isLoading: false };
 const EMPTY_RESULTS: SearchResults = { data: [], isLoading: false };
 
 export const STOCKS_SUGGESTION_LIMIT = 20;
+export const CRYPTOS_SUGGESTION_LIMIT = 3;
+export const STABLECOINS_SUGGESTION_LIMIT = 2;
 
 export function useAssetSearchBar() {
   const [query, setQuery] = useState("");
@@ -23,10 +25,14 @@ export function useAssetSearchBar() {
   }, []);
 
   const stocks = useStocksSectionViewModel({ limit: STOCKS_SUGGESTION_LIMIT });
+  const { cryptos, stablecoins } = useAssetSuggestionsViewModel({
+    cryptosLimit: CRYPTOS_SUGGESTION_LIMIT,
+    stablecoinsLimit: STABLECOINS_SUGGESTION_LIMIT,
+  });
 
   const suggestions: SearchSuggestions = useMemo(
-    () => ({ cryptos: EMPTY_SECTION, stablecoins: EMPTY_SECTION, stocks }),
-    [stocks],
+    () => ({ cryptos, stablecoins, stocks }),
+    [cryptos, stablecoins, stocks],
   );
   const results = EMPTY_RESULTS;
 

@@ -8830,6 +8830,8 @@
     "searchPlaceholder": "Search assets",
     "search": {
       "noResults": "No results for \"{{query}}\"",
+      "cryptos": "Cryptos",
+      "stablecoins": "Stablecoins",
       "stocks": "Stocks"
     },
     "history": {

@@ -27,6 +27,7 @@ export type SearchResults = {
 export type SearchOverlayContextValue = {
   close: () => void;
   navigateToAsset: (currencyId: string) => void;
+  navigateToMarket: () => void;
   navigateToStocksMarket: () => void;
   suggestions: SearchSuggestions;
   results: SearchResults;

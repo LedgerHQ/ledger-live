@@ -24,6 +24,13 @@ export function useSearchOverlayViewModel() {
     [navigate, shouldDisplayAggregatedAssets, close],
   );
 
+  const navigateToMarket = useCallback(() => {
+    setTrackingSource("Global Search");
+    dispatch(setMarketCategory("all"));
+    navigate("/market");
+    close();
+  }, [dispatch, navigate, close]);
+
   const navigateToStocksMarket = useCallback(() => {
     setTrackingSource("Global Search");
     dispatch(setMarketCategory("stocks"));
@@ -51,8 +58,16 @@ export function useSearchOverlayViewModel() {
   );
 
   const contextValue = useMemo<SearchOverlayContextValue>(
-    () => ({ close, navigateToAsset, navigateToStocksMarket, suggestions, results, mode }),
-    [close, navigateToAsset, navigateToStocksMarket, suggestions, results, mode],
+    () => ({
+      close,
+      navigateToAsset,
+      navigateToMarket,
+      navigateToStocksMarket,
+      suggestions,
+      results,
+      mode,
+    }),
+    [close, navigateToAsset, navigateToMarket, navigateToStocksMarket, suggestions, results, mode],
   );
 
   return { open: isOpen, onOpenChange, query, onChangeQuery, onKeyDown, mode, contextValue };
