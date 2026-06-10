@@ -1,5 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { useFeature } from "../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useMemo } from "react";
 
 type AddressPoisoningOperationsFilterArgs = {

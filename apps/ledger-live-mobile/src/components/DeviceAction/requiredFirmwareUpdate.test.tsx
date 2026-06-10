@@ -4,7 +4,7 @@ import { RequiredFirmwareUpdate } from "./rendering";
 import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import * as useWalletFeaturesConfigModule from "@features/platform-feature-flags";
-import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/types";
+import type { WalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { State } from "~/reducers/types";
 
 jest.mock("@features/platform-feature-flags");

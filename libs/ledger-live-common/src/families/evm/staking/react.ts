@@ -141,7 +141,7 @@ export function useEvmFamilyDelegationsQuerySelector(
   const options = useMemo<StakingMappedDelegation[]>(
     () =>
       mappedDelegations.filter(delegation =>
-        (delegation.validator?.name ?? delegation.validatorAddress)
+        (delegation.validator?.name ?? delegation.validatorName ?? delegation.validatorAddress)
           .toLowerCase()
           .includes(query.toLowerCase().trim()),
       ),

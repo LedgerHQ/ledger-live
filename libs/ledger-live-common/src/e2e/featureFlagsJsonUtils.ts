@@ -1,4 +1,4 @@
-import type { OptionalFeatureMap } from "@ledgerhq/types-live";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 
 function isOptionalFeatureMap(value: unknown): value is OptionalFeatureMap {
   return value !== null && typeof value === "object" && !Array.isArray(value);

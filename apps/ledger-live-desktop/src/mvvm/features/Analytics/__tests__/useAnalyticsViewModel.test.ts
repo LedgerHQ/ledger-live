@@ -45,12 +45,29 @@ describe("useAnalyticsViewModel", () => {
     expect(result.current.selectedTimeRange).toBe("day");
     expect(result.current.shouldDisplayGraphRework).toBe(true);
     expect(result.current.balanceInfo).toEqual(mockPortfolioBalanceInfo);
-    expect(mockUsePortfolioBalanceDisplayState).toHaveBeenCalledWith();
+    expect(mockUsePortfolioBalanceDisplayState).toHaveBeenCalledWith({ legacyRange: false });
 
     act(() => {
       result.current.navigateToDashboard();
     });
 
     expect(navigate).toHaveBeenCalledWith("/");
+  });
+
+  it("should use legacyRange for non-day time ranges", () => {
+    mockedUseNavigate.mockReturnValue(jest.fn());
+
+    renderHook(() => useAnalyticsViewModel(), {
+      initialState: {
+        ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { graphRework: true } } }),
+        settings: {
+          ...INITIAL_STATE,
+          counterValue: "USD",
+          selectedTimeRange: "week",
+        },
+      },
+    });
+
+    expect(mockUsePortfolioBalanceDisplayState).toHaveBeenCalledWith({ legacyRange: true });
   });
 });

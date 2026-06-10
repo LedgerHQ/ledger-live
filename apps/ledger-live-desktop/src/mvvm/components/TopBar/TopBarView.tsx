@@ -9,6 +9,7 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Updater from "LLD/features/Updater";
 import { MyWallet } from "LLD/features/MyWallet";
 import { InformationDrawer } from "~/renderer/components/TopBar/NotificationIndicator/InformationDrawer";
+import { TopBarSearch } from "./components/TopBarSearch";
 
 const TopBarView = ({
   slots,
@@ -16,7 +17,19 @@ const TopBarView = ({
   isInformationCenterOpen,
   onInformationCenterClose,
   shouldDisplayAggregatedAssets,
+  shouldDisplayAssetDiscoverability,
 }: TopBarViewProps) => {
+  const renderTitle = () => {
+    if (shouldDisplayAssetDiscoverability) return <TopBarSearch />;
+    if (shouldDisplayAggregatedAssets) return null;
+
+    return (
+      <NavBarTitle className="h-48">
+        <Breadcrumb />
+      </NavBarTitle>
+    );
+  };
+
   return (
     <>
       <InformationDrawer
@@ -24,11 +37,7 @@ const TopBarView = ({
         onRequestClose={onInformationCenterClose}
       />
       <NavBar className="w-full min-w-0 items-center px-32 pt-32 pb-24">
-        {shouldDisplayAggregatedAssets ? null : (
-          <NavBarTitle className="h-48">
-            <Breadcrumb />
-          </NavBarTitle>
-        )}
+        {renderTitle()}
         <NavBarTrailing className="h-48 gap-12">
           <LiveAppDrawer />
           {shouldShowFirmwareUpdateBanner && <FirmwareUpdateBanner />}

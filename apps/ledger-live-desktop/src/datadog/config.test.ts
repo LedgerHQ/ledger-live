@@ -1,4 +1,9 @@
-import { buildBeforeSend, getDatadogBuildConfig } from "./config";
+import {
+  buildBeforeSend,
+  getDatadogBuildConfig,
+  rewriteAsarUrls,
+  toDatadogStackFrames,
+} from "./config";
 
 jest.mock("~/sentry/anonymizer", () => ({
   __esModule: true,
@@ -67,6 +72,29 @@ describe("datadog config", () => {
       expect(event).not.toHaveProperty("server_name");
     });
 
+    it("should return true for an event with no message", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      expect(beforeSend({ foo: "bar" }, undefined)).toBe(true);
+    });
+
+    it("should return true when asar url rewrite throws (logs and continues)", () => {
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+      const beforeSend = buildBeforeSend(() => true);
+      const event: Record<string, unknown> = {};
+      Object.defineProperty(event, "boom", {
+        enumerable: true,
+        get() {
+          throw new Error("getter boom");
+        },
+      });
+      expect(beforeSend(event, undefined)).toBe(true);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Datadog beforeSend: asar url rewrite failed",
+        expect.any(Error),
+      );
+      consoleSpy.mockRestore();
+    });
+
     it("should call anonymizer and return true for sendable event", () => {
       const anonymizer = jest.requireMock("~/sentry/anonymizer").default;
       const shouldSend = jest.fn().mockReturnValue(true);
@@ -92,6 +120,139 @@ describe("datadog config", () => {
         expect.any(Error),
       );
       consoleSpy.mockRestore();
+    });
+
+    it("should rewrite asar file:// urls in the error stack", () => {
+      const shouldSend = jest.fn().mockReturnValue(true);
+      const beforeSend = buildBeforeSend(shouldSend);
+      const event: Record<string, unknown> = {
+        error: {
+          message: "CrashTestRendering",
+          stack: [
+            "Error: CrashTestRendering",
+            "    at E0 (file:///Applications/Ledger%20Wallet%20Beta.app/Contents/Resources/app.asar/.webpack/renderer.bundle.js:8166:265)",
+            "    at iV (file:///Applications/Ledger%20Wallet%20Beta.app/Contents/Resources/app.asar/.webpack/renderer.bundle.js:1447:337795)",
+          ].join("\n"),
+        },
+      };
+      expect(beforeSend(event, undefined)).toBe(true);
+      const stack = (event.error as Record<string, string>).stack;
+      expect(stack).toContain("https://app.asar/.webpack/renderer.bundle.js:8166:265");
+      expect(stack).toContain("https://app.asar/.webpack/renderer.bundle.js:1447:337795");
+      expect(stack).not.toContain("file://");
+    });
+  });
+
+  describe("rewriteAsarUrls", () => {
+    it("rewrites a parenthesized file:// asar frame into https://app.asar/", () => {
+      const input =
+        "at E0 (file:///Applications/Ledger%20Wallet%20Beta.app/Contents/Resources/app.asar/.webpack/renderer.bundle.js:8166:265)";
+      expect(rewriteAsarUrls(input)).toBe(
+        "at E0 (https://app.asar/.webpack/renderer.bundle.js:8166:265)",
+      );
+    });
+
+    it("rewrites the Datadog-normalized '@' frame shape", () => {
+      const input =
+        "at E0 @ file:///Applications/Ledger%20Wallet%20Beta.app/Contents/Resources/app.asar/.webpack/renderer.bundle.js:8166:265";
+      expect(rewriteAsarUrls(input)).toBe(
+        "at E0 @ https://app.asar/.webpack/renderer.bundle.js:8166:265",
+      );
+    });
+
+    it("rewrites windows-style file:// asar urls", () => {
+      const input =
+        "at fn (file:///C:/Users/me/AppData/Local/Programs/ledger-live-desktop/resources/app.asar/.webpack/main.bundle.js:42:7)";
+      expect(rewriteAsarUrls(input)).toBe("at fn (https://app.asar/.webpack/main.bundle.js:42:7)");
+    });
+
+    it("leaves non-asar urls untouched", () => {
+      const input = "at fn (webpack-internal:///./src/renderer/Default.tsx:253:11)";
+      expect(rewriteAsarUrls(input)).toBe(input);
+    });
+
+    it("does not match the .app bundle suffix", () => {
+      const input = "file:///Applications/Ledger%20Wallet%20Beta.app/Contents/Info.plist";
+      expect(rewriteAsarUrls(input)).toBe(input);
+    });
+
+    it("rewrites a raw main-process bundle path with literal spaces (parenthesized frame)", () => {
+      const input =
+        "    at IpcMainImpl.<anonymous> (/Applications/Ledger Wallet Beta.app/Contents/Resources/app.asar/.webpack/main.bundle.js:81:104232)";
+      expect(rewriteAsarUrls(input)).toBe(
+        "    at IpcMainImpl.<anonymous> (https://app.asar/.webpack/main.bundle.js:81:104232)",
+      );
+    });
+
+    it("rewrites a raw bare (anonymous) main-process bundle frame", () => {
+      const input =
+        "    at /Applications/Ledger Wallet Beta.app/Contents/Resources/app.asar/.webpack/main.bundle.js:1:2";
+      expect(rewriteAsarUrls(input)).toBe("    at https://app.asar/.webpack/main.bundle.js:1:2");
+    });
+
+    it("rewrites third-party asar frames (node_modules) too, dropping the local prefix", () => {
+      const input =
+        "    at /Applications/Ledger Wallet Beta.app/Contents/Resources/app.asar/node_modules/dd-trace/packages/datadog-instrumentations/src/electron.js:73:47";
+      expect(rewriteAsarUrls(input)).toBe(
+        "    at https://app.asar/node_modules/dd-trace/packages/datadog-instrumentations/src/electron.js:73:47",
+      );
+    });
+
+    it("leaves node: internal frames untouched", () => {
+      const input = "    at node:diagnostics_channel:374:23";
+      expect(rewriteAsarUrls(input)).toBe(input);
+    });
+
+    it("does not clobber the function name of a named frame", () => {
+      const input =
+        "    at IpcMainImpl.emit (/Applications/Ledger Wallet.app/Contents/Resources/app.asar/.webpack/main.bundle.js:1:2)";
+      expect(rewriteAsarUrls(input)).toContain("at IpcMainImpl.emit (https://app.asar/");
+    });
+  });
+
+  describe("toDatadogStackFrames", () => {
+    it("converts a named parenthesized frame to the @ shape", () => {
+      const input =
+        "    at IpcMainImpl.<anonymous> (https://app.asar/.webpack/main.bundle.js:82:104341)";
+      expect(toDatadogStackFrames(input)).toBe(
+        "    at IpcMainImpl.<anonymous> @ https://app.asar/.webpack/main.bundle.js:82:104341",
+      );
+    });
+
+    it("converts a bare anonymous frame to the @ shape with <anonymous>", () => {
+      const input = "    at node:diagnostics_channel:374:23";
+      expect(toDatadogStackFrames(input)).toBe(
+        "    at <anonymous> @ node:diagnostics_channel:374:23",
+      );
+    });
+
+    it("keeps the error header and other non-frame lines untouched", () => {
+      const input = "Error: CrashTestMain\n    at run (node:diagnostics_channel:168:14)";
+      expect(toDatadogStackFrames(input)).toBe(
+        "Error: CrashTestMain\n    at run @ node:diagnostics_channel:168:14",
+      );
+    });
+
+    it("is idempotent: leaves frames already in @ shape alone", () => {
+      const input = "    at E0 @ https://app.asar/.webpack/renderer.bundle.js:8166:265";
+      expect(toDatadogStackFrames(input)).toBe(input);
+    });
+
+    it("handles a full main-process stack", () => {
+      const input = [
+        "Error: CrashTestMain",
+        "    at IpcMainImpl.<anonymous> (https://app.asar/.webpack/main.bundle.js:82:104341)",
+        "    at run (node:diagnostics_channel:168:14)",
+        "    at node:diagnostics_channel:374:23",
+      ].join("\n");
+      expect(toDatadogStackFrames(input)).toBe(
+        [
+          "Error: CrashTestMain",
+          "    at IpcMainImpl.<anonymous> @ https://app.asar/.webpack/main.bundle.js:82:104341",
+          "    at run @ node:diagnostics_channel:168:14",
+          "    at <anonymous> @ node:diagnostics_channel:374:23",
+        ].join("\n"),
+      );
     });
   });
 });

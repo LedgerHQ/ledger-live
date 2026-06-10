@@ -6,7 +6,6 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
 import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
 
@@ -36,12 +35,15 @@ export const DeviceManagementKitContext = createContext<DeviceManagementKit | nu
 
 type Props = {
   children: React.ReactNode;
-  disabled?: boolean;
+  /** Whether the `ldmkTransport` feature flag is enabled, supplied by the consuming app. */
+  ldmkTransportEnabled: boolean;
 };
 
-export const DeviceManagementKitProvider: React.FC<Props> = ({ children, disabled }) => {
-  const ldmkTransportFeature = useFeature("ldmkTransport");
-  const ldmkTransportFlag = !disabled && !!ldmkTransportFeature?.enabled;
+export const DeviceManagementKitProvider: React.FC<Props> = ({
+  children,
+  ldmkTransportEnabled,
+}) => {
+  const ldmkTransportFlag = ldmkTransportEnabled;
 
   const deviceManagementKit = useMemo(() => {
     if (!ldmkTransportFlag) return null;

@@ -443,7 +443,7 @@ describe("getTransactionStatus", () => {
     expect(transactionStatus.feeCurrencyAccountId).toEqual(usdcTokenAccount.id);
   });
 
-  it("should return NotEnoughBalance error when fee token balance is insufficient", async () => {
+  it("should return NotEnoughBalanceFees error when fee token balance is insufficient", async () => {
     const amount = new BigNumber("100000"); // 0.1 USDT in 6 decimals
     const feeInWei = new BigNumber("2000000000000000000000"); // 2000 USDC in Wei (18 decimals)
 
@@ -458,8 +458,8 @@ describe("getTransactionStatus", () => {
       fees: feeInWei,
     });
 
-    // Should return NotEnoughBalance error for fees since USDC balance is 1000 USDC but fee requires 2000 USDC
-    expect(transactionStatus.errors["fees"].name).toEqual("NotEnoughBalance");
+    // Should return NotEnoughBalanceFees error since USDC balance is 1000 USDC but fee requires 2000 USDC
+    expect(transactionStatus.errors["fees"].name).toEqual("NotEnoughBalanceFees");
     expect(transactionStatus.errors).not.toHaveProperty("amount");
   });
 

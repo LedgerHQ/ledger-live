@@ -18,6 +18,7 @@ import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { SectionContentState } from "../SectionContentState";
 import { SectionSkeleton } from "../SectionSkeleton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type StatRow = {
   key: string;
@@ -36,7 +37,7 @@ type Props = Readonly<{
 
 export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipOpen }: Props) {
   const { t } = useTranslation();
-
+  const { bottom } = useSafeAreaInsets();
   if (isLoading && !hasData) {
     return (
       <Box testID={ASSET_DETAIL_TEST_IDS.marketStats}>
@@ -70,7 +71,16 @@ export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipO
                         accessibilityLabel={stat.tooltip.title}
                       />
                     </TooltipTrigger>
-                    <TooltipContent title={stat.tooltip.title} content={stat.tooltip.content} />
+                    <TooltipContent
+                      title={stat.tooltip.title}
+                      content={
+                        <Box style={{ paddingBottom: bottom + 24 }}>
+                          <Text typography="body1" lx={{ color: "base" }}>
+                            {stat.tooltip.content}
+                          </Text>
+                        </Box>
+                      }
+                    />
                   </Tooltip>
                 )}
               </DescriptionItemLeading>

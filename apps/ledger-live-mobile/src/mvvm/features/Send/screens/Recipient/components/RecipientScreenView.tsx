@@ -10,6 +10,7 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { MyAccountsSection } from "./MyAccountsSection";
+import { PasteFromClipboard } from "./PasteFromClipboard";
 import { RecentAddressBottomSheet } from "./RecentAddressBottomSheet";
 import { RecentAddressesSection } from "./RecentAddressesSection";
 import { ValidationBanner } from "./ValidationBanner";
@@ -54,6 +55,8 @@ export const RecipientScreenView = ({
     isAddressComplete,
     handleRemoveAddress,
     addressValidationErrorType,
+    clipboardAddress,
+    handlePasteFromClipboard,
   } = useRecipientScreenView({
     account,
     parentAccount,
@@ -92,6 +95,9 @@ export const RecipientScreenView = ({
 
           {showInitialState && (
             <>
+              {clipboardAddress && (
+                <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />
+              )}
               <RecentAddressesSection
                 recentAddresses={recentAddresses}
                 onSelect={handleRecentAddressSelect}

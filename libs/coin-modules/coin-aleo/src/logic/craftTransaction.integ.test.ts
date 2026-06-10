@@ -10,7 +10,7 @@ import {
   mockTxIntentTransferPrivate,
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
-import { TRANSACTION_TYPE } from "../constants";
+import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
 import type { FeeConfiguration, PreparedRequestResponse } from "../types";
 import { craftTransaction } from "./craftTransaction";
 import { fromHex } from "./utils";
@@ -36,12 +36,7 @@ describe("craftTransaction", () => {
         node: getEnv("ALEO_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
-      feeByTransactionType: {
-        [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
-        [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 2308,
-        [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 17972,
-        [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
-      },
+      feeByTransactionType: mockFeeByTransactionType,
       feeSafetyMultiplier: 1,
       isFeeSponsored: true,
       enableTokens: false,

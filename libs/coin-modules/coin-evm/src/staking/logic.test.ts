@@ -7,6 +7,7 @@ import type {
   StakingDelegationStatus,
 } from "@ledgerhq/types-live";
 import {
+  canCompound,
   canRedelegate,
   canUndelegate,
   getMaxEstimatedBalance,
@@ -111,6 +112,31 @@ describe("evm staking logic", () => {
         },
       ]);
       expect(canRedelegate(account, makeDelegation("0xvalidator", "bonded"))).toBe(true);
+    });
+  });
+
+  describe("canCompound", () => {
+    it("returns false for a chain without a compound precompile function (sei_evm)", () => {
+      const account = makeAccount("sei_evm");
+      const delegation = {
+        ...makeDelegation("0xvalidator", "bonded"),
+        pendingRewards: new BigNumber(100),
+      };
+      expect(canCompound(account, delegation)).toBe(false);
+    });
+
+    it("returns false for monad when there are no pending rewards", () => {
+      const account = makeAccount("monad");
+      expect(canCompound(account, makeDelegation("0xvalidator", "bonded"))).toBe(false);
+    });
+
+    it("returns true for monad when there are pending rewards", () => {
+      const account = makeAccount("monad");
+      const delegation = {
+        ...makeDelegation("0xvalidator", "bonded"),
+        pendingRewards: new BigNumber(100),
+      };
+      expect(canCompound(account, delegation)).toBe(true);
     });
   });
 

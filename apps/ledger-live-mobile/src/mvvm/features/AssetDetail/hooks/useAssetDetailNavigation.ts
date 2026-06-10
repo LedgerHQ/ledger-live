@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

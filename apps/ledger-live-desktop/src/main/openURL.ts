@@ -1,5 +1,5 @@
 import { shell } from "electron";
-import { isUrlSafe } from "~/helpers/urlSafety";
+import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 
 /**
  * Opens a URL in the default browser from the main process.

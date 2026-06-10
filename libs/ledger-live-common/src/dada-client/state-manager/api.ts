@@ -5,7 +5,7 @@ import {
   FetchBaseQueryMeta,
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
-import { convertApiAssets, legacyIdToApiId } from "@ledgerhq/cryptoassets";
+import { convertApiAssets } from "@ledgerhq/cryptoassets";
 import { RawApiResponse, AssetsData } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -78,8 +78,11 @@ export function buildAssetsQueryParams(
     ...(queryArg.useCase && { transaction: queryArg.useCase }),
     ...(queryArg.currencyIds &&
       queryArg.currencyIds.length > 0 && {
-        // FIXME: Transform legacy ID to API format before querying
-        currencyIds: queryArg.currencyIds.map(id => legacyIdToApiId(id)),
+        currencyIds: queryArg.currencyIds,
+      }),
+    ...(queryArg.categories &&
+      queryArg.categories.length > 0 && {
+        categories: queryArg.categories.join(","),
       }),
     ...(queryArg.search && { search: queryArg.search }),
     product: queryArg.product,

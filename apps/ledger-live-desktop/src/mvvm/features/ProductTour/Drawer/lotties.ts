@@ -6,8 +6,8 @@ import portfolioAnimation from "./animations/portfolio.lottie";
 
 export const SLIDE_LOTTIES = [
   depositAnimation,
-  swapAnimation,
+  portfolioAnimation,
   stakeAnimation,
   cardAnimation,
-  portfolioAnimation,
+  swapAnimation,
 ] as const;

@@ -507,27 +507,24 @@ export const getOperationDetailsExtraFields = (
  * - private balance, used for shielded transfers and for converting private funds back into public funds
  */
 export function getAvailableBalance(account: AleoAccount, transaction: Transaction): BigNumber {
-  switch (transaction.mode) {
-    // spending public balance
-    case TRANSACTION_TYPE.TRANSFER_PUBLIC:
-    case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
-      return account.aleoResources?.transparentBalance ?? new BigNumber(0);
-    // spending private balance
-    case TRANSACTION_TYPE.TRANSFER_PRIVATE:
-    case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
-      const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords ?? [];
-
-      return sumPrivateRecords(
-        selectPrivateRecordsForAmount({
-          unspentRecords: unspentPrivateRecords,
-          targetAmount: null,
-        }),
-      );
-    }
-    default:
-      // @ts-expect-error - runtime check to ensure all transaction types are handled
-      throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
+  if (isPublicTransaction(transaction)) {
+    return account.aleoResources?.transparentBalance ?? new BigNumber(0);
   }
+
+  if (isPrivateTransaction(transaction)) {
+    const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords ?? [];
+
+    return sumPrivateRecords(
+      selectPrivateRecordsForAmount({
+        unspentRecords: unspentPrivateRecords,
+        targetAmount: null,
+      }),
+    );
+  }
+
+  throw new Error(
+    `aleo: unsupported tx mode for balance calculation: ${(transaction as Transaction).mode}`,
+  );
 }
 
 export function createTransactionIntent({

@@ -8,8 +8,8 @@ export interface FeatureFlagsToolProps {
   clearAllOverrides: () => void;
   defaults?: PartialFeatures;
   remote?: PartialFeatures;
-  importOverrides?: (overrides: PartialFeatures) => void;
-  exportOverrides?: () => PartialFeatures;
+  importOverrides: (overrides: PartialFeatures) => void;
+  exportOverrides?: () => void;
 }
 
 export type FlagFilter = "all" | "enabled" | "disabled" | "overridden";

@@ -51,6 +51,7 @@ import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
 import { TezosStakeFlowParamList } from "~/families/tezos/StakeFlow/types";
+import { TezosUnstakeFlowParamList } from "~/families/tezos/UnstakeFlow/types";
 import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
@@ -118,6 +119,7 @@ type Props =
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<TezosStakeFlowParamList, ScreenName.TezosStakeConnectDevice>
+  | StackNavigatorProps<TezosUnstakeFlowParamList, ScreenName.TezosUnstakeConnectDevice>
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
   | StackNavigatorProps<
       HederaAssociateTokenFlowParamList,

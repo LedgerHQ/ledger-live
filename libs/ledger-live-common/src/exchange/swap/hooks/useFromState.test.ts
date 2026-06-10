@@ -15,6 +15,11 @@ import { useFromState } from "./useFromState";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setSupportedCurrencies } from "../../../currencies";
 
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeature: jest.fn(() => null),
+  useFeatureFlags: jest.fn(() => ({})),
+}));
+
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
 setSupportedCurrencies(["bitcoin", "ethereum"]);

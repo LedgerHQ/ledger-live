@@ -67,6 +67,16 @@ describe("LiveBlindSigningReporter", () => {
       });
     });
 
+    it("merges the live app context and supports clearing it with null", () => {
+      reporter.setContext({ liveAppContext: "earn" });
+
+      expect(reporter.getContext()).toEqual({ liveAppContext: "earn" });
+
+      reporter.setContext({ liveAppContext: null });
+
+      expect(reporter.getContext()).toEqual({ liveAppContext: null });
+    });
+
     it("clears the context", () => {
       reporter.setContext({ platform: "mobile", sessionId: "abc" });
       reporter.clearContext();
@@ -128,6 +138,7 @@ describe("LiveBlindSigningReporter", () => {
         platformOS: "ios",
         platformVersion: "18.0",
         sessionId: "session-42",
+        liveAppContext: "swap-live-app-demo-3",
       });
       reporter.setConsent(true);
 
@@ -142,6 +153,7 @@ describe("LiveBlindSigningReporter", () => {
         platformOS: "ios",
         platformVersion: "18.0",
         sessionId: "session-42",
+        liveAppContext: "swap-live-app-demo-3",
       });
     });
 

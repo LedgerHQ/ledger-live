@@ -1,9 +1,11 @@
 import { useMemo } from "react";
+import { getMarketCategoriesParam } from "@ledgerhq/live-common/market/utils/category";
 import type { MarketListCategory } from "~/reducers/types";
 
 export type MarketAssetCategoryState = {
   isFavoritesCategory: boolean;
   isStocksCategory: boolean;
+  marketCategoriesParam: string | undefined;
   sortedFavoriteIds: string[] | undefined;
   favoriteIdsKey: string;
   hasFavoriteIds: boolean;
@@ -22,6 +24,7 @@ export function useMarketAssetCategoryState({
   const hasSearch = normalizedSearch.length > 0;
   const isFavoritesCategory = !hasSearch && category === "starred";
   const isStocksCategory = !hasSearch && category === "stocks";
+  const marketCategoriesParam = hasSearch ? undefined : getMarketCategoriesParam(category);
   const sortedFavoriteIds = useMemo(
     () => getSortedFavoriteIds(isFavoritesCategory, starredMarketCoins),
     [isFavoritesCategory, starredMarketCoins],
@@ -33,6 +36,7 @@ export function useMarketAssetCategoryState({
   return {
     isFavoritesCategory,
     isStocksCategory,
+    marketCategoriesParam,
     sortedFavoriteIds,
     favoriteIdsKey,
     hasFavoriteIds,

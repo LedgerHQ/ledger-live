@@ -34,6 +34,10 @@ describe("getDeviceTransactionConfig", () => {
     ["Transfer Private", TRANSACTION_TYPE.TRANSFER_PRIVATE],
     ["Shield", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
     ["Unshield", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    ["Transfer Token Public", TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
+    ["Transfer Token Private", TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
+    ["Token Shield", TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
+    ["Token Unshield", TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
   ] as const)("should return method '%s' for mode '%s'", async (expectedMethod, mode) => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,

@@ -175,6 +175,7 @@ async function init() {
         type: e.type,
         id: e.device.path,
         name: e.device.deviceName || "",
+        deviceModel: e.deviceModel,
         wired: true,
       })),
     ),

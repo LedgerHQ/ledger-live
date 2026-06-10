@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
@@ -43,14 +44,16 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
 
-  const availableText = useAvailableBalance(state.account.account);
+  const accountName = useMaybeAccountName(state.account.account);
+  const spendableBalanceText = useAvailableBalance(state.account.account);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
 
   const currencyName = state.account.currency?.ticker ?? "";
   const showTitle = currentStepConfig?.showTitle !== false;
   const title = showTitle ? t("send.newSendFlow.title", { currency: currencyName }) : "";
-  const descriptionText =
-    showTitle && availableText ? t("send.newSendFlow.available", { amount: availableText }) : "";
+  const descriptionText = showTitle
+    ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
+    : "";
 
   const showHeaderRight = currentStepConfig?.showHeaderRight !== false;
   const canGoBack = Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());

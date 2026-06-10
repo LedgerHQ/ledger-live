@@ -26,7 +26,7 @@ export const FearAndGreedDialog = ({ children }: { children: React.ReactNode }) 
         />
         <DialogBody className="flex flex-col gap-24">
           <p className="body-1 text-base">{t("fearAndGreed.dialog.content")}</p>
-          <p className="body-1 text-base">{t("fearAndGreed.dialog.disclaimer")}</p>
+          <p className="body-4 text-muted">{t("fearAndGreed.dialog.disclaimer")}</p>
         </DialogBody>
         <DialogFooter className="justify-center">
           <Button

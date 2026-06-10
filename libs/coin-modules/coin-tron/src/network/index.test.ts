@@ -36,7 +36,6 @@ import {
   triggerConstantContract,
   unDelegateResourceTransaction,
   unfreezeTronTransaction,
-  validateAddress,
   voteTronSuperRepresentatives,
   withdrawExpireUnfreezeTronTransaction,
 } from ".";
@@ -764,23 +763,6 @@ describe("getTronAccountNetwork", () => {
     expect(ni.netLimit.toNumber()).toBe(0);
     expect(ni.energyUsed.toNumber()).toBe(0);
     expect(ni.energyLimit.toNumber()).toBe(0);
-  });
-});
-
-describe("validateAddress", () => {
-  it("returns true when the API confirms the address", async () => {
-    mockedNetwork.mockResolvedValueOnce(mockResponse({ result: true }));
-    await expect(validateAddress(senderBase58)).resolves.toBe(true);
-  });
-
-  it("returns false when result is missing", async () => {
-    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
-    await expect(validateAddress(senderBase58)).resolves.toBe(false);
-  });
-
-  it("returns false on error and logs the failure", async () => {
-    mockedNetwork.mockRejectedValueOnce(new Error("invalid"));
-    await expect(validateAddress(senderBase58)).resolves.toBe(false);
   });
 });
 

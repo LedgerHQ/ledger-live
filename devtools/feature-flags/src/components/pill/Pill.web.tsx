@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@ledgerhq/lumen-utils-shared";
 
-export type PillVariant = "success" | "muted" | "active";
+export type PillVariant = "success" | "muted" | "active" | "black";
 export type PillSize = 1 | 2 | 3 | 4;
 
 export interface PillProps {
@@ -14,6 +14,7 @@ const PALETTE: Record<PillVariant, string> = {
   success: "bg-success text-success",
   muted: "bg-muted text-muted",
   active: "bg-active-subtle text-active",
+  black: "bg-black text-white",
 };
 
 export function Pill({ variant, size = 3, children }: PillProps) {

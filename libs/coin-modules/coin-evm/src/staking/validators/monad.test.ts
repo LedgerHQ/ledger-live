@@ -82,6 +82,8 @@ const routeByName = (responses: {
   getValidator?: (valId: bigint) => string | Error;
   getDelegations?: (startValId: bigint) => string | Error;
   getDelegator?: (valId: bigint) => string | Error;
+  getWithdrawalRequest?: (valId: bigint, withdrawId: number) => string | Error;
+  getEpoch?: () => string | Error;
 }): CallHandler => {
   return async ({ data }) => {
     if (!data) throw new Error("missing data");
@@ -113,6 +115,24 @@ const routeByName = (responses: {
       const out = responses.getDelegator?.(valId);
       if (out instanceof Error) throw out;
       if (!out) throw new Error(`no response for getDelegator(${valId})`);
+      return out;
+    }
+    if (desc.name === "getWithdrawalRequest") {
+      const valId = desc.args[0] as bigint;
+      const withdrawId = Number(desc.args[2] as bigint);
+      // Default unhandled slots to "free" (all-zero) so tests that don't care about
+      // withdrawals aren't forced to stub all 256 slots.
+      const out =
+        responses.getWithdrawalRequest?.(valId, withdrawId) ??
+        monadIface.encodeFunctionResult("getWithdrawalRequest", [0n, 0n, 0n]);
+      if (out instanceof Error) throw out;
+      return out;
+    }
+    if (desc.name === "getEpoch") {
+      // Default to epoch 0 so withdrawals are "not yet withdrawable" unless a test opts in.
+      const out =
+        responses.getEpoch?.() ?? monadIface.encodeFunctionResult("getEpoch", [0n, false]);
+      if (out instanceof Error) throw out;
       return out;
     }
     throw new Error(`unexpected function: ${desc.name}`);
@@ -446,16 +466,28 @@ describe("staking/validators/monad", () => {
 
     const fetchStakes = () => fetchMonadStakes(DELEGATOR, {} as never, { id: "monad" } as never);
 
-    const encodeDelegator = (stake: bigint, deltaStake = 0n, nextDeltaStake = 0n): string =>
+    const encodeDelegator = (
+      stake: bigint,
+      deltaStake = 0n,
+      nextDeltaStake = 0n,
+      unclaimedRewards = 0n,
+    ): string =>
       monadIface.encodeFunctionResult("getDelegator", [
         stake,
         0n,
-        0n,
+        unclaimedRewards,
         deltaStake,
         nextDeltaStake,
         0n,
         0n,
       ]);
+
+    const encodeWithdrawalRequest = (withdrawalAmount: bigint, withdrawEpoch = 1n): string =>
+      monadIface.encodeFunctionResult("getWithdrawalRequest", [withdrawalAmount, 0n, withdrawEpoch]);
+
+    // getEpoch returns [epoch, inEpochDelayPeriod].
+    const encodeEpoch = (epoch: bigint): string =>
+      monadIface.encodeFunctionResult("getEpoch", [epoch, false]);
 
     const callNames = (callMock: ReturnType<typeof setupRpc>): (string | undefined)[] =>
       callMock.mock.calls.map(
@@ -580,6 +612,36 @@ describe("staking/validators/monad", () => {
       ]);
     });
 
+    it("surfaces unclaimed rewards as amountRewarded on the active stake", async () => {
+      setupRpc(
+        routeByName({
+          getDelegations: () => monadIface.encodeFunctionResult("getDelegations", [true, 0, [1n]]),
+          getDelegator: () => encodeDelegator(100n, 0n, 0n, 7n),
+          getValidator: () => encodeGetValidator({ stake: 0n, commission: 0n, secpPubkey: SECP }),
+        }),
+      );
+
+      const stakes = await fetchStakes();
+      expect(
+        stakes.map(s => ({ state: s.state, amount: s.amount, amountRewarded: s.amountRewarded })),
+      ).toStrictEqual([{ state: "active", amount: 100n, amountRewarded: 7n }]);
+    });
+
+    it("returns an active stake with only rewards when the stake is fully undelegated", async () => {
+      setupRpc(
+        routeByName({
+          getDelegations: () => monadIface.encodeFunctionResult("getDelegations", [true, 0, [1n]]),
+          getDelegator: () => encodeDelegator(0n, 0n, 0n, 5n),
+          getValidator: () => encodeGetValidator({ stake: 0n, commission: 0n, secpPubkey: SECP }),
+        }),
+      );
+
+      const stakes = await fetchStakes();
+      expect(
+        stakes.map(s => ({ state: s.state, amount: s.amount, amountRewarded: s.amountRewarded })),
+      ).toStrictEqual([{ state: "active", amount: 0n, amountRewarded: 5n }]);
+    });
+
     it("filters out delegations with a zero total amount", async () => {
       setupRpc(
         routeByName({
@@ -647,6 +709,111 @@ describe("staking/validators/monad", () => {
 
       expect(await fetchStakes()).toStrictEqual([]);
       expect(mockedWithApi).not.toHaveBeenCalled();
+    });
+
+    it("emits a deactivating stake per occupied withdrawId slot, dating its completion from the current epoch", async () => {
+      const EPOCH_DURATION_MS = 5.5 * 60 * 60 * 1000;
+      const NOW = Date.UTC(2026, 5, 4, 12, 0, 0);
+      jest.useFakeTimers().setSystemTime(NOW);
+
+      setupRpc(
+        routeByName({
+          getDelegations: () => monadIface.encodeFunctionResult("getDelegations", [true, 0, [7n]]),
+          getDelegator: () => encodeDelegator(100n),
+          getValidator: () => encodeGetValidator({ stake: 0n, commission: 0n, secpPubkey: SECP }),
+          getEpoch: () => encodeEpoch(5n),
+          getWithdrawalRequest: (_valId, withdrawId) => {
+            if (withdrawId === 2) return encodeWithdrawalRequest(40n, 3n);
+            if (withdrawId === 5) return encodeWithdrawalRequest(60n, 10n);
+            return encodeWithdrawalRequest(0n, 0n);
+          },
+        }),
+      );
+
+      try {
+        const stakes = await fetchStakes();
+
+        expect(stakes).toHaveLength(3);
+        expect(stakes[0]).toMatchObject({ state: "active", amount: 100n });
+
+        const deactivating = stakes.filter(s => s.state === "deactivating");
+        expect(deactivating).toStrictEqual([
+          {
+            uid: `${PRECOMPILE}-7-${DELEGATOR}-withdraw-2`,
+            address: DELEGATOR,
+            delegate: ethers.computeAddress(SECP),
+            state: "deactivating",
+            stateUpdatedAt: new Date(NOW - 2 * EPOCH_DURATION_MS),
+            asset: { type: "native", name: "Monad", unit: { name: "MON", code: "MON", magnitude: 18 } },
+            amount: 40n,
+            actions: [],
+            details: {
+              contractAddress: PRECOMPILE,
+              validator: ethers.computeAddress(SECP),
+              validatorId: "7",
+              withdrawId: 2,
+            },
+          },
+          {
+            uid: `${PRECOMPILE}-7-${DELEGATOR}-withdraw-5`,
+            address: DELEGATOR,
+            delegate: ethers.computeAddress(SECP),
+            state: "deactivating",
+            stateUpdatedAt: new Date(NOW + 5 * EPOCH_DURATION_MS),
+            asset: { type: "native", name: "Monad", unit: { name: "MON", code: "MON", magnitude: 18 } },
+            amount: 60n,
+            actions: [],
+            details: {
+              contractAddress: PRECOMPILE,
+              validator: ethers.computeAddress(SECP),
+              validatorId: "7",
+              withdrawId: 5,
+            },
+          },
+        ]);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it("emits a deactivating stake with no completion date when the current epoch can't be read", async () => {
+      setupRpc(
+        routeByName({
+          getDelegations: () => monadIface.encodeFunctionResult("getDelegations", [true, 0, [7n]]),
+          getDelegator: () => encodeDelegator(0n),
+          getValidator: () => encodeGetValidator({ stake: 0n, commission: 0n, secpPubkey: SECP }),
+          getEpoch: () => new Error("rpc timeout"),
+          getWithdrawalRequest: (_valId, withdrawId) =>
+            withdrawId === 1 ? encodeWithdrawalRequest(10n, 1n) : encodeWithdrawalRequest(0n, 0n),
+        }),
+      );
+
+      const stakes = await fetchStakes();
+
+      // epoch unknown ⇒ no completion date rather than a misleading one
+      expect(
+        stakes.map(s => ({ withdrawId: s.details?.withdrawId, stateUpdatedAt: s.stateUpdatedAt })),
+      ).toStrictEqual([{ withdrawId: 1, stateUpdatedAt: undefined }]);
+    });
+
+    it("skips a withdrawal slot whose read fails rather than treating it as occupied", async () => {
+      setupRpc(
+        routeByName({
+          getDelegations: () => monadIface.encodeFunctionResult("getDelegations", [true, 0, [7n]]),
+          getDelegator: () => encodeDelegator(0n), // no active stake, only withdrawals
+          getValidator: () => encodeGetValidator({ stake: 0n, commission: 0n, secpPubkey: SECP }),
+          getWithdrawalRequest: (_valId, withdrawId) => {
+            if (withdrawId === 1) return encodeWithdrawalRequest(10n);
+            if (withdrawId === 3) return new Error("rpc timeout");
+            return encodeWithdrawalRequest(0n, 0n);
+          },
+        }),
+      );
+
+      const stakes = await fetchStakes();
+
+      // slot 3's transient failure is skipped (not surfaced as an unbonding); only slot 1 remains
+      expect(stakes.map(s => s.details?.withdrawId)).toStrictEqual([1]);
     });
 
     it("stops paginating when nextValId does not advance", async () => {

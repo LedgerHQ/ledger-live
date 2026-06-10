@@ -43,6 +43,10 @@ runs:
     - name: Compress PNG files
       shell: bash
       run: ${{ github.action_path }}/compress-pngs.sh "${{ inputs.path }}"
+    - name: Prune AI-analysis attachments
+      id: prune
+      shell: bash
+      run: ${{ github.action_path }}/prune-ai-attachments.sh "${{ inputs.path }}" "${{ runner.temp }}/allure-upload"
     - name: Publish report on Allure Server
       id: publish-report
       uses: LedgerHQ/send-to-allure-server-action@2.1.2
@@ -53,7 +57,7 @@ runs:
         username: ${{ inputs.login }}
         password: ${{ inputs.password }}
         path: ${{ steps.report-path.outputs.path }}
-        allure-results: ${{ inputs.path }}
+        allure-results: ${{ steps.prune.outputs.path }}
     - name: Write Allure report in summary
       shell: bash
       run: echo "::notice title=${{ inputs.platform }} Allure report URL::${{ steps.publish-report.outputs.report-url }}"

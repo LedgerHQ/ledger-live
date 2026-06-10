@@ -2,11 +2,10 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { useFeature } from "../../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSwapLiveConfig } from "./useSwapLiveConfig";
 
-// Explicitly mock the featureFlags module
-jest.mock("../../../../featureFlags");
+jest.mock("@features/platform-feature-flags");
 
 // Setup mock for useFeature to be recognized as a jest.Mock
 const useMockFeature = useFeature as jest.Mock;

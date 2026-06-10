@@ -1,7 +1,8 @@
+import { device } from "detox";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { swapSetup } from "../bridge/server";
-import { isWallet40 } from "../helpers/commonHelpers";
+import { isWallet40, launchApp } from "../helpers/commonHelpers";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -86,9 +87,15 @@ describe("DeepLinks Tests", () => {
     },
   );
 
-  (isSmokeTestRun ? it.skip : it)("should open discovery to Kiln live App", async () => {
-    await app.discover.openViaDeeplink("Kiln");
-    await app.discover.expectApp("Kiln");
+  (isSmokeTestRun ? it.skip : it)("should open discovery to Kiln Widget live App", async () => {
+    await app.discover.openViaDeeplink("Kiln-Widget");
+    await app.discover.expectApp("Kiln-Widget");
+    // the Kiln widget opens the account drawer over the navigator; restart to reset UI state
+    await device.terminateApp();
+    await launchApp();
+    await device.disableSynchronization();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await device.enableSynchronization();
   });
 
   setTeamOwner(Team.SWAP);

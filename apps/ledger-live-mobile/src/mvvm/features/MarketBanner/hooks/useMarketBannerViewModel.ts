@@ -16,6 +16,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 import { MARKET_BANNER_TILE_COUNT, PAGE_NAME, BANNER_NAME } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
+import { useMarketBannerFilter } from "./useMarketBannerFilter";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   TIME_RANGE,
@@ -27,8 +28,10 @@ import {
 
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const baseNavigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayMarketBanner, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("mobile");
   const { openFromMarket } = useAssetDetailNavigation();
+  const bannerFilter = useMarketBannerFilter();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -104,6 +107,8 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     isLoading,
     isError,
     isEnabled: shouldDisplayMarketBanner,
+    showFilter: shouldDisplayAssetDiscoverability,
+    bannerFilter,
     range: TIME_RANGE,
     onTilePress,
     onViewAllPress,

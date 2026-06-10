@@ -10,6 +10,9 @@ import { useMarketListVirtualization } from "LLD/features/Market/hooks/useMarket
 import PageHeader from "LLD/components/PageHeader";
 import { useNavigate } from "react-router";
 import MarketList from "./screens/MarketList";
+import MarketTopCards from "./TopCards";
+import { MarketCategoryBar } from "./components/MarketCategoryBar";
+import { MarketRangeSelect } from "./components/MarketRangeSelect";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -42,8 +45,11 @@ export default function Market() {
     starFilterOn,
     starredMarketCoins,
     timeRanges,
+    timeRangeSelectOptions,
     refreshRate,
     marketCurrentPage,
+    categories,
+    shouldDisplayAssetDiscoverability,
     t,
   } = marketData;
 
@@ -85,50 +91,74 @@ export default function Market() {
       <PageHeader title={t("market.title")} onBack={() => navigate("/")} />
 
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
-        <SearchInputComponent search={search} updateSearch={updateSearch} />
-        <SelectBarContainer flexDirection="row" alignItems="center" justifyContent="flex-end">
-          <Flex data-testid="market-countervalue-select" justifyContent="flex-end" mx={4}>
-            <CounterValueSelect
-              counterCurrency={String(counterCurrency)}
-              setCounterCurrency={setCounterCurrency}
-              supportedCounterCurrencies={supportedCounterCurrencies}
-            />
-          </Flex>
-          <Flex data-testid="market-range-select" mx={2}>
-            <Dropdown
-              label={t("common.range")}
-              menuPortalTarget={document.body}
-              onChange={updateTimeRange}
-              options={timeRanges}
-              value={timeRangeValue}
-              styles={{
-                control: () => ({
-                  display: "flex",
-                  padding: 0,
-                  cursor: "pointer",
-                }),
-              }}
-            />
-          </Flex>
-          <Flex ml={4} mr={3}>
-            <SideDrawerFilter
-              refresh={refresh}
-              filters={{
-                starred: {
-                  toggle: toggleFilterByStarredAccounts,
-                  value: starFilterOn,
-                  disabled: !starredMarketCoins?.length,
-                },
-                liveCompatible: {
-                  toggle: toggleLiveCompatible,
-                  value: Boolean(liveCompatible),
-                },
-              }}
-              t={t}
-            />
-          </Flex>
+        {!shouldDisplayAssetDiscoverability && (
+          <SearchInputComponent search={search} updateSearch={updateSearch} />
+        )}
+        <SelectBarContainer
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="flex-end"
+          ml="auto"
+        >
+          {!shouldDisplayAssetDiscoverability && (
+            <Flex data-testid="market-countervalue-select" justifyContent="flex-end" mx={4}>
+              <CounterValueSelect
+                counterCurrency={String(counterCurrency)}
+                setCounterCurrency={setCounterCurrency}
+                supportedCounterCurrencies={supportedCounterCurrencies}
+              />
+            </Flex>
+          )}
+          {!shouldDisplayAssetDiscoverability && (
+            <Flex data-testid="market-range-select" mx={2}>
+              <Dropdown
+                label={t("common.range")}
+                menuPortalTarget={document.body}
+                onChange={updateTimeRange}
+                options={timeRanges}
+                value={timeRangeValue}
+                styles={{
+                  control: () => ({
+                    display: "flex",
+                    padding: 0,
+                    cursor: "pointer",
+                  }),
+                }}
+              />
+            </Flex>
+          )}
+          {!shouldDisplayAssetDiscoverability && (
+            <Flex ml={4} mr={3}>
+              <SideDrawerFilter
+                refresh={refresh}
+                filters={{
+                  starred: {
+                    toggle: toggleFilterByStarredAccounts,
+                    value: starFilterOn,
+                    disabled: !starredMarketCoins?.length,
+                  },
+                  liveCompatible: {
+                    toggle: toggleLiveCompatible,
+                    value: Boolean(liveCompatible),
+                  },
+                }}
+                t={t}
+              />
+            </Flex>
+          )}
         </SelectBarContainer>
       </Flex>
+      <MarketTopCards />
+      {shouldDisplayAssetDiscoverability && (
+        <Flex mb={3} alignItems="center" justifyContent="space-between">
+          <MarketCategoryBar categories={categories} t={t} />
+          <MarketRangeSelect
+            options={timeRangeSelectOptions}
+            value={timeRangeValue}
+            onChange={updateTimeRange}
+          />
+        </Flex>
+      )}
       <MarketList {...marketData} virtualization={virtualization} />
     </Container>
   );

@@ -1,9 +1,5 @@
 import { useMemo } from "react";
-import {
-  Feature,
-  Feature_ProtectServicesDesktop,
-  Feature_ProtectServicesMobile,
-} from "@ledgerhq/types-live";
+import type { Feature, Features } from "@shared/feature-flags";
 
 // Matches any `protect-<env>` segment so changing `protectId` re-templates every URI.
 const PROTECT_ID_SEGMENT_REGEX = /protect-[a-z0-9-]+/g;
@@ -21,7 +17,7 @@ function usePath(servicesConfig: Feature<unknown> | null, uri?: string) {
 }
 
 export function usePostOnboardingURI(
-  servicesConfig: Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesMobile"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.onboardingRestore?.postOnboardingURI;
   const id = servicesConfig?.params?.protectId;
@@ -30,7 +26,7 @@ export function usePostOnboardingURI(
 }
 
 export function useQuickAccessURI(
-  servicesConfig: Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesMobile"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.managerStatesData?.NEW?.quickAccessURI;
   const id = servicesConfig?.params?.protectId;
@@ -39,7 +35,7 @@ export function useQuickAccessURI(
 }
 
 export function useAlreadyOnboardedURI(
-  servicesConfig: Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesMobile"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.managerStatesData?.NEW?.alreadyOnboardedURI;
   const id = servicesConfig?.params?.protectId;
@@ -48,7 +44,7 @@ export function useAlreadyOnboardedURI(
 }
 
 export function useHomeURI(
-  servicesConfig: Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesMobile"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.account?.homeURI;
   const id = servicesConfig?.params?.protectId;
@@ -57,7 +53,7 @@ export function useHomeURI(
 }
 
 export function useUpsellURI(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.onboardingCompleted?.upsellURI;
   const id = servicesConfig?.params?.protectId;
@@ -66,7 +62,7 @@ export function useUpsellURI(
 }
 
 export function useUpsellPath(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = useUpsellURI(servicesConfig);
 
@@ -74,7 +70,7 @@ export function useUpsellPath(
 }
 
 export function useRestore24URI(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.onboardingCompleted?.restore24URI;
   const id = servicesConfig?.params?.protectId;
@@ -83,7 +79,7 @@ export function useRestore24URI(
 }
 
 export function useRestore24Path(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = useRestore24URI(servicesConfig);
 
@@ -91,7 +87,7 @@ export function useRestore24Path(
 }
 
 export function useAccountURI(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.account?.homeURI;
   const id = servicesConfig?.params?.protectId;
@@ -100,7 +96,7 @@ export function useAccountURI(
 }
 
 export function useAccountPath(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = useAccountURI(servicesConfig);
 
@@ -108,7 +104,7 @@ export function useAccountPath(
 }
 
 export function useAlreadySeededDeviceURI(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.onboardingCompleted?.alreadyDeviceSeededURI;
   const id = servicesConfig?.params?.protectId;
@@ -117,7 +113,7 @@ export function useAlreadySeededDeviceURI(
 }
 
 export function useAlreadySeededDevicePath(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Features["protectServicesDesktop"] | null,
 ): string | undefined {
   const uri = useAlreadySeededDeviceURI(servicesConfig);
 
@@ -125,7 +121,7 @@ export function useAlreadySeededDevicePath(
 }
 
 export function useCustomURI(
-  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesDesktop"] | Features["protectServicesMobile"] | null,
   page?: string,
   source?: string,
   deeplinkCampaign?: string,
@@ -151,7 +147,7 @@ export function useCustomURI(
 }
 
 export function useCustomPath(
-  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesDesktop"] | Features["protectServicesMobile"] | null,
   page?: string,
   source?: string,
   deeplinkCampaign?: string,
@@ -167,7 +163,7 @@ export enum Source {
 }
 
 export function useTouchScreenOnboardingUpsellURI(
-  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesDesktop"] | Features["protectServicesMobile"] | null,
   source: Source,
 ): string | undefined {
   const campaign = "touchscreen-onboarding";
@@ -175,7 +171,7 @@ export function useTouchScreenOnboardingUpsellURI(
 }
 
 export function useTouchScreenOnboardingUpsellPath(
-  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  servicesConfig: Features["protectServicesDesktop"] | Features["protectServicesMobile"] | null,
   source: Source,
 ): string | undefined {
   const uri = useTouchScreenOnboardingUpsellURI(servicesConfig, source);

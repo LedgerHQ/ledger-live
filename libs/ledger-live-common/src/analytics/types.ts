@@ -1,4 +1,4 @@
-import type { Feature, FeatureId, Features } from "@ledgerhq/types-live";
+import type { Feature, FeatureId, Features } from "@shared/feature-flags";
 
 export type AnalyticsFeatureFlagMethod =
   | (<T extends FeatureId>(key: T) => Features[T] | null)

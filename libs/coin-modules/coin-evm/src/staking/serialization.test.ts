@@ -44,6 +44,7 @@ const sampleResources: StakingResources = {
       validatorAddress: "seivaloper1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx01",
       amount: new BigNumber("250000000000000000"),
       completionDate,
+      withdrawId: 3,
     },
   ],
   delegatedBalance: new BigNumber("3000000000000000000"),
@@ -104,6 +105,28 @@ describe("coin-evm/staking/serialization", () => {
       expect([back.redelegations[0].completionDate, back.unbondings[0].completionDate]).toEqual(
         Array(2).fill(expect.any(Date)),
       );
+    });
+
+    it("roundtrips a Monad unbonding `withdrawId` (number ↔ string), omitting them when absent", () => {
+      const raw = toStakingResourcesRaw(sampleResources);
+      expect(raw.unbondings[0]).toHaveProperty("withdrawId", "3");
+
+      const back = fromStakingResourcesRaw(raw);
+      expect(back.unbondings[0].withdrawId).toBe(3);
+
+      const noId: StakingResources = {
+        ...sampleResources,
+        unbondings: [
+          {
+            validatorAddress: sampleResources.unbondings[0].validatorAddress,
+            amount: sampleResources.unbondings[0].amount,
+            completionDate: sampleResources.unbondings[0].completionDate,
+          },
+        ],
+      };
+      const rawNoId = toStakingResourcesRaw(noId);
+      expect(rawNoId.unbondings[0]).not.toHaveProperty("withdrawId");
+      expect(fromStakingResourcesRaw(rawNoId).unbondings[0]).not.toHaveProperty("withdrawId");
     });
 
     it("only propagates `validators` when defined", () => {

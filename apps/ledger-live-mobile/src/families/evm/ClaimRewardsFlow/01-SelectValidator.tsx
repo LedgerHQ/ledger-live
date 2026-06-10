@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { FlatList, ListRenderItem, StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import BigNumber from "bignumber.js";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -45,11 +46,23 @@ function ClaimRewardsSelectValidator() {
   );
 
   const onSelect = useCallback(
-    (validator: StakingValidatorItem, value: BigNumber) => {
+    (delegation: StakingMappedDelegation) => {
+      const matchedValidator: StakingValidatorItem = delegation.validator ?? {
+        validatorAddress: delegation.validatorAddress,
+        name: delegation.validatorName ?? delegation.validatorAddress,
+        votingPower: 0,
+        commission: 0,
+        estimatedYearlyRewardsRate: 0,
+        tokens: "0",
+      };
+      const validator: StakingValidatorItem = {
+        ...matchedValidator,
+        validatorId: delegation.validatorId ?? matchedValidator.validatorId,
+      };
       navigation.navigate(ScreenName.EvmClaimRewardsClaim, {
         ...route.params,
         validator,
-        value,
+        value: delegation.pendingRewards ?? new BigNumber(0),
       });
     },
     [navigation, route.params],
@@ -57,15 +70,14 @@ function ClaimRewardsSelectValidator() {
 
   const renderItem: ListRenderItem<StakingMappedDelegation> = useCallback(
     ({ item }) => {
-      const validator = item.validator;
-      if (!validator) return null;
+      const name = item.validator?.name ?? item.validatorName ?? item.validatorAddress;
       const pending = item.pendingRewards ?? new BigNumber(0);
       return (
-        <TouchableOpacity style={styles.row} onPress={() => onSelect(validator, pending)}>
-          <ValidatorImage isLedger={false} name={validator.name} size={32} />
+        <TouchableOpacity style={styles.row} onPress={() => onSelect(item)}>
+          <ValidatorImage isLedger={false} name={name} size={32} />
           <View style={styles.rowText}>
             <LText semiBold numberOfLines={1} style={styles.validatorName}>
-              {validator.name}
+              {name}
             </LText>
             <LText color="grey" style={styles.rewardValue}>
               <CurrencyUnitValue unit={unit} value={pending} showCode />
@@ -79,14 +91,14 @@ function ClaimRewardsSelectValidator() {
   );
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <FlatList
         style={styles.list}
         keyExtractor={d => d.validatorAddress}
         data={claimable}
         renderItem={renderItem}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

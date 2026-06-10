@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { Trans } from "~/context/Locale";
+import { Trans, useTranslation } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { getOperationAmountNumber, isConfirmedOperation } from "@ledgerhq/live-common/operation";
@@ -23,6 +23,7 @@ import { BaseNavigation } from "../RootNavigator/types/helpers";
 import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { getOperationTypeI18nKey } from "~/logic/operationTypeName";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -136,6 +137,7 @@ function OperationRow({
   }, [account, operation, parentAccount, unit]);
 
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const amount = getOperationAmountNumber(operation);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -153,7 +155,7 @@ function OperationRow({
       ? colors.success.c50
       : colors.warning.c50;
 
-  const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
+  const text = t(getOperationTypeI18nKey(operation.type, mainAccount.currency.family));
   const isOptimistic = operation.blockHeight === null;
   const isOperationStuck =
     bridge.isEditableOperation(mainAccount, operation) && bridge.isStuckOperation(operation);

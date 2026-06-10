@@ -4,6 +4,9 @@ import { MarketItemPerformer, Order } from "./types";
 // Export all types from types.ts
 export * from "./types";
 
+// Export market category helpers (shared by desktop & mobile)
+export * from "./category";
+
 // Export fixtures for testing
 export * from "./fixtures";
 

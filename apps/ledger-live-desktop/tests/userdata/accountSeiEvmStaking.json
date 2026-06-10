@@ -83,8 +83,23 @@
           "freshAddressPath": "44'/60'/0'/0/0",
           "blockHeight": 100000,
           "creationDate": "2024-01-01T00:00:00.000Z",
-          "operationsCount": 0,
-          "operations": [],
+          "operationsCount": 1,
+          "operations": [
+            {
+              "id": "mock_op_1_js:2:sei_evm:0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707:",
+              "hash": "0x18E9A4F2A5A2B01F35E7D086E75D7D01530A1A9F",
+              "type": "OUT",
+              "senders": ["0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707"],
+              "recipients": ["0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707"],
+              "blockHash": "0x18E9A4F2A5A2B01F35E7D086E75D7D01530A1A9F",
+              "blockHeight": 100000,
+              "accountId": "js:2:sei_evm:0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707:",
+              "extra": {},
+              "date": "2024-01-01T00:00:00.000Z",
+              "value": "10000000000000000000",
+              "fee": "1000000000000000000"
+            }
+          ],
           "pendingOperations": [],
           "currencyId": "sei_evm",
           "unitMagnitude": 18,

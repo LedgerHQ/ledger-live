@@ -20,8 +20,8 @@ import {
   getEmptyState,
   getMarketAssets,
   getMarketDataForDisplay,
-  getMarketFilter,
 } from "./marketAssetsHelpers";
+import { getMarketFilter } from "@ledgerhq/live-common/market/utils/category";
 import { useMarketAssetCategoryState } from "./useMarketAssetCategoryState";
 import {
   getNextPaginationState,
@@ -63,6 +63,7 @@ export function useMarketAssets({
   const {
     isFavoritesCategory,
     isStocksCategory,
+    marketCategoriesParam,
     sortedFavoriteIds,
     favoriteIdsKey,
     hasFavoriteIds,
@@ -95,6 +96,7 @@ export function useMarketAssets({
     page: requestedPage,
     search: normalizedSearch,
     filter: getMarketFilter(isStocksCategory),
+    categories: marketCategoriesParam,
     starred: sortedFavoriteIds,
   });
   const marketData = getMarketDataForDisplay(result.data, shouldFetchAssets);

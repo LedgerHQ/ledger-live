@@ -10,7 +10,6 @@ import {
   type InitPushNotificationsDataResult,
   type NotificationsPromptAfterActionSource,
   useNotificationsData,
-  useNotificationsPrompt,
 } from "LLM/features/NotificationsPrompt";
 import {
   trackAfterActionDecision,
@@ -26,12 +25,6 @@ export function useNotificationsPromptTriggers() {
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
   const { permissionStatus } = useNotificationsPermission();
   const { pushNotificationsDataOfUser } = useNotificationsData();
-  const { shouldPromptOptInDrawerAfterAction } = useNotificationsPrompt({
-    permissionStatus,
-    areNotificationsAllowed: notifications.areNotificationsAllowed,
-    transactionsAlertsCategory: notifications.transactionsAlertsCategory,
-    pushNotificationsDataOfUser,
-  });
   const { openDrawer, isDrawerPending } = useNotificationsPromptDrawerScheduler();
 
   const notifyFlowCompleted = useCallback(
@@ -52,7 +45,7 @@ export function useNotificationsPromptTriggers() {
         },
       );
 
-      trackAfterActionDecision(decision, shouldPromptOptInDrawerAfterAction);
+      trackAfterActionDecision(decision);
 
       if (decision.kind === "skip") {
         return;
@@ -70,7 +63,6 @@ export function useNotificationsPromptTriggers() {
       openDrawer,
       permissionStatus,
       pushNotificationsDataOfUser,
-      shouldPromptOptInDrawerAfterAction,
     ],
   );
 

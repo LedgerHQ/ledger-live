@@ -112,3 +112,14 @@ Notes:
 - Arrays, scalars, or invalid JSON are rejected.
 - `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
 - Per-test `featureFlags` fixture values still override env-provided values when both set the same key.
+
+### 7. Wallet 4.0 Asset Section
+
+The Wallet 4.0 Asset Section (`assetSection`) is ON by default for all desktop E2E tests.
+You can run the "Asset Section OFF" variant of the tests by setting the E2E environment variable:
+
+```bash
+export E2E_ENABLE_ASSET_SECTION=0
+```
+
+To run the Asset Section OFF variant on CI, untick the "Enable the Wallet 4.0 Asset Section" checkbox on the desktop E2E GitHub workflow.

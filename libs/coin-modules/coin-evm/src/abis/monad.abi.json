@@ -36,6 +36,13 @@
     },
     {
       "type": "function",
+      "name": "compound",
+      "inputs": [{ "name": "validatorId", "type": "uint64", "internalType": "uint64" }],
+      "outputs": [{ "name": "success", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "getDelegator",
       "inputs": [
         { "name": "validatorId", "type": "uint64", "internalType": "uint64" },
@@ -94,6 +101,16 @@
         { "name": "snapshotCommission", "type": "uint256", "internalType": "uint256" },
         { "name": "secpPubkey", "type": "bytes", "internalType": "bytes" },
         { "name": "blsPubkey", "type": "bytes", "internalType": "bytes" }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getEpoch",
+      "inputs": [],
+      "outputs": [
+        { "name": "epoch", "type": "uint64", "internalType": "uint64" },
+        { "name": "inEpochDelayPeriod", "type": "bool", "internalType": "bool" }
       ],
       "stateMutability": "nonpayable"
     },

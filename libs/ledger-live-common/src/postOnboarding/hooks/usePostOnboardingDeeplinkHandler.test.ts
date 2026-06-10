@@ -25,6 +25,10 @@ jest.mock("react-redux", () => ({
 jest.mock("../reducer");
 jest.mock("./useAllPostOnboardingActionsCompleted");
 jest.mock("./usePostOnboardingHubState");
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeature: jest.fn(() => null),
+  useFeatureFlags: jest.fn(() => ({})),
+}));
 
 const mockedUseAllCompleted = jest.mocked(useAllPostOnboardingActionsCompleted);
 const mockedDismissedSelector = jest.mocked(walletPostOnboardingEntryPointDismissedSelector);

@@ -12,6 +12,7 @@ import storage from "LLM/storage";
 import type { User } from "./types/store";
 import type {
   MarketListConfigState,
+  MarketBannerState,
   BleState,
   LargeMoverState,
   MarketState,
@@ -287,6 +288,14 @@ export function getMarketListConfig(): Promise<MarketListConfigState | null> {
 
 export async function saveMarketListConfig(obj: MarketListConfigState): Promise<void> {
   await storage.save("marketListConfig", obj);
+}
+
+export function getMarketBannerState(): Promise<MarketBannerState | null> {
+  return storage.get("marketBanner") as Promise<MarketBannerState | null>;
+}
+
+export async function saveMarketBannerState(obj: MarketBannerState): Promise<void> {
+  await storage.save("marketBanner", obj);
 }
 
 export function getTrustchainState(): Promise<TrustchainStore> {

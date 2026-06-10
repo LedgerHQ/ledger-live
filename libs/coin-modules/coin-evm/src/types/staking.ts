@@ -7,7 +7,8 @@ export type StakingOperation =
   | "redelegate"
   | "getStakedBalance"
   | "getUnstakedBalance"
-  | "claimReward";
+  | "claimReward"
+  | "compoundReward";
 
 /**
  * Per-chain strategy for fetching active redelegations from an off-chain source.

@@ -1,6 +1,5 @@
 import { EnvName } from "@ledgerhq/live-env";
-import { Feature, FeatureId } from "@ledgerhq/types-live";
-import { getFeature, DEFAULT_FEATURES } from "../featureFlags";
+import { FEATURE_FLAGS_DEFAULTS, type Feature, type FeatureId } from "@shared/feature-flags";
 import axios, { AxiosError } from "axios";
 
 export function sleep(ms: number): Promise<void> {
@@ -8,13 +7,11 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export const getAllFeatureFlags = (
-  appLanguage?: string,
-  localOverrides?: { [key in FeatureId]?: Feature | undefined },
+  getFeature: (key: FeatureId) => Feature | null,
 ): Partial<{ [key in FeatureId]: Feature }> => {
   const res: Partial<{ [key in FeatureId]: Feature }> = {};
-  Object.keys(DEFAULT_FEATURES).forEach(k => {
-    const key = k as keyof typeof DEFAULT_FEATURES;
-    const value = getFeature({ key, appLanguage, localOverrides });
+  (Object.keys(FEATURE_FLAGS_DEFAULTS) as FeatureId[]).forEach(key => {
+    const value = getFeature(key);
     if (value !== null) res[key] = value;
   });
   return res;

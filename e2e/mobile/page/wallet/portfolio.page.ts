@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
-import { Feature_Noah } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -76,7 +76,7 @@ export default class PortfolioPage {
       ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
       : getElementByIdWithDescendantTexts(this.operationRowBody, operationType);
 
-  private flags: Feature_Noah | null = null;
+  private flags: Features["noah"] | null = null;
 
   private async loadFlags(): Promise<void> {
     this.flags ??= JSON.parse(await getFlags()).noah;

@@ -1,5 +1,5 @@
 import { getSwapAPIBaseURL } from "../../index";
-import { useFeature } from "../../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useAPI } from "../../../../hooks/useAPI";
 import { fetchCurrencyFrom } from "../../api/v5/fetchCurrencyFrom";
 import { FETCH_CURRENCIES_TIMEOUT_MS } from "./constants";

@@ -552,8 +552,6 @@ test.describe("Send flows", () => {
     });
   }
 
-  const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
-
   test.describe("User sends funds to ENS address", () => {
     const transactionEnsAddress = new Transaction(
       Account.ETH_1,
@@ -562,15 +560,12 @@ test.describe("Send flows", () => {
       Fee.MEDIUM,
     );
 
-    test.beforeAll(async () => {
-      process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-    });
-
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionEnsAddress)],
+      env: { DISABLE_TRANSACTION_BROADCAST: "1" },
     });
 
     const family = getFamilyByCurrencyId(transactionEnsAddress.accountToDebit.currency.id);
@@ -614,14 +609,6 @@ test.describe("Send flows", () => {
         await app.drawer.closeDrawer();
       },
     );
-
-    test.afterAll(() => {
-      if (originalValue !== undefined) {
-        process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
-      } else {
-        delete process.env.DISABLE_TRANSACTION_BROADCAST;
-      }
-    });
   });
 
   // TODO: LIVE-30321 - Until app-concordium 5.6.0 is released, the test is skipped as it requires a specific app version

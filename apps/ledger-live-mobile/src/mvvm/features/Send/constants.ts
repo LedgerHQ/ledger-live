@@ -72,18 +72,11 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     showTitle: false,
     showHeaderRight: false,
     screenName: ScreenName.SendFlowSignature,
-    bottomSheet: true,
-    onBottomSheetClose: ({ navigation, close }) => {
-      if (navigation.canGoBack()) {
-        navigation.goBack();
-        return;
-      }
-      close?.();
-    },
+    screenPresentation: "transparentModal",
     screenOptions: {
       ...TransparentHeaderNavigationOptions,
-      title: "",
       gestureEnabled: false,
+      title: "",
     },
   },
   [SEND_FLOW_STEP.CONFIRMATION]: {

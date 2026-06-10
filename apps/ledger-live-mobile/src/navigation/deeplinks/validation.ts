@@ -8,7 +8,7 @@
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
-import { parseMarketListCategory } from "LLM/features/Market/utils/marketListCategory";
+import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { isDatadogEnabled } from "../../datadog";
 import type { MarketListCategory, OptionMetadata } from "../../reducers/types";
 
@@ -261,7 +261,9 @@ export function validateMarketCurrencyId(currencyId: string | null): string | nu
   return currency?.id ?? null;
 }
 
-export function validateMarketListCategory(category: string | null): MarketListCategory | undefined {
+export function validateMarketListCategory(
+  category: string | null,
+): MarketListCategory | undefined {
   return parseMarketListCategory(category);
 }
 

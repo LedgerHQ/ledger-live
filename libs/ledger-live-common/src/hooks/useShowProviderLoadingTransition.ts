@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { useFeature } from "../featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { INTERNAL_APP_IDS } from "../wallet-api/constants";
 import { useInternalAppIds } from "./useInternalAppIds";
 import { LiveAppManifest } from "../platform/types";

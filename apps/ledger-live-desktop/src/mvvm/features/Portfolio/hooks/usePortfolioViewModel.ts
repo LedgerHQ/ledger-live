@@ -21,6 +21,7 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayGraphRework: boolean;
   readonly shouldDisplayQuickActionCtas: boolean;
   readonly shouldDisplayAssetSection: boolean;
+  readonly shouldDisplayAssetDiscoverability: boolean;
   readonly shouldDisplayBorrowSection: boolean;
   readonly shouldDisplayOperationsList: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
@@ -39,6 +40,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
+    shouldDisplayAssetDiscoverability,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
     isEnabled: isWallet40Enabled,
@@ -87,6 +89,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
+    shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,

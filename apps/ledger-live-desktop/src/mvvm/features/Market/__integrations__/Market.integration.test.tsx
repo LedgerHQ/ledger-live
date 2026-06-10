@@ -108,10 +108,67 @@ const createSettingsState = (starredMarketCoins: string[] = []) => ({
 
 const marketFeatureFlagsState = withFlagOverrides({ lldRefreshMarketData: { enabled: false } });
 
+const marketWithTopCardsOn = withFlagOverrides({
+  lldRefreshMarketData: { enabled: false },
+  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
+});
+
+const marketWithTopCardsOff = withFlagOverrides({
+  lldRefreshMarketData: { enabled: false },
+  lwdWallet40: { enabled: false },
+});
+
 describe("Market Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     server.resetHandlers();
+  });
+
+  it("should render top cards section when assetDiscoverability is enabled", async () => {
+    server.use(
+      http.get(MARKET_API_ENDPOINT, () => {
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+        ...marketWithTopCardsOn,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: /market top cards/i })).toBeVisible();
+      expect(screen.getByTestId("market-top-card-1")).toBeVisible();
+      expect(screen.getByTestId("market-top-card-2")).toBeVisible();
+      expect(screen.getByTestId("market-top-card-3")).toBeVisible();
+    });
+  });
+
+  it("should not render top cards section when assetDiscoverability is disabled", async () => {
+    server.use(
+      http.get(MARKET_API_ENDPOINT, () => {
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+        ...marketWithTopCardsOff,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Market")).toBeVisible();
+    });
+
+    expect(screen.queryByRole("region", { name: /market top cards/i })).toBeNull();
   });
 
   it("should render market page with header", async () => {

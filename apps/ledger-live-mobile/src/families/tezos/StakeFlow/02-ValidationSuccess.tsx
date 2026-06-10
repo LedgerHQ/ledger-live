@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { TrackScreen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -19,7 +19,9 @@ type Props = BaseComposite<
   StackNavigatorProps<TezosStakeFlowParamList, ScreenName.TezosStakeValidationSuccess>
 >;
 
-export default function ValidationSuccess({ navigation, route }: Props) {
+export default function ValidationSuccess() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const transaction = route.params.transaction;

@@ -98,7 +98,8 @@ export default handleActions<MarketState, MarketPayload>(handlers, INITIAL_STATE
 
 /**
  * V4 asset list config — shared between MarketScreen and modularAssetDrawer.
- * Gated by llmAssetDiscoverability. Persisted as a user preference (never reset).
+ * Gated by llmAssetDiscoverability. Sorting/timeframe/network persist as user
+ * preferences; the selected category resets to the default on relaunch.
  */
 export const MARKET_LIST_CONFIG_INITIAL_STATE: MarketListConfigState = {
   sorting: "marketCap",
@@ -126,6 +127,9 @@ const marketListConfigSlice = createSlice({
     importMarketListConfig: (_state, action: PayloadAction<MarketListConfigState>) => ({
       ...MARKET_LIST_CONFIG_INITIAL_STATE,
       ...action.payload,
+      // The selected category is intentionally not persisted across launches:
+      // always start on the default category when the app relaunches.
+      category: MARKET_LIST_CONFIG_INITIAL_STATE.category,
     }),
   },
 });

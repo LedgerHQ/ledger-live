@@ -145,7 +145,12 @@ export const getInitialURL = (
       typeof inputs?.goToURL === "string" &&
       isWhitelistedDomain(inputs.goToURL, manifest.url.toString())
     ) {
-      return inputs?.goToURL;
+      if (manifest.params) {
+        const goToURL = new URL(inputs.goToURL);
+        goToURL.searchParams.set("params", JSON.stringify(manifest.params));
+        return goToURL.toString();
+      }
+      return inputs.goToURL;
     }
 
     const url = new URL(manifest.url.toString());

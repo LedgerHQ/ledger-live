@@ -10,6 +10,11 @@ import { genAccount } from "../../../mock/account";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeature: jest.fn(() => null),
+  useFeatureFlags: jest.fn(() => ({})),
+}));
+
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = {

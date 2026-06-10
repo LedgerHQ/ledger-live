@@ -2,6 +2,7 @@ import { renderHook } from "@testing-library/react-native";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { useSelector } from "~/context/hooks";
 import { useAddressValidation } from "../useAddressValidation";
+import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import {
   getRecentAddressesStore,
@@ -14,12 +15,14 @@ import { createMockAccount } from "./accounts";
 
 jest.mock("~/context/hooks");
 jest.mock("../useAddressValidation");
+jest.mock("../useClipboardRecipient");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
 const mockedUseSelector = jest.mocked(useSelector);
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
+const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetRecentAddressesStore = jest.mocked(getRecentAddressesStore);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
@@ -57,6 +60,7 @@ describe("useRecipientScreenView", () => {
       return account.type === "Account" ? account.currency : account.token;
     });
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
+    mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: null });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
       state: {} as never,
@@ -482,6 +486,42 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(result.current.mainAccount.id).toBe("account_1");
+  });
+
+  it("exposes the clipboard address and pastes it into the recipient search on demand", () => {
+    mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: "0xClipboardAddress" });
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.clipboardAddress).toBe("0xClipboardAddress");
+
+    result.current.handlePasteFromClipboard();
+
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0xClipboardAddress");
+  });
+
+  it("does not paste when there is no valid clipboard address", () => {
+    mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: null });
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    result.current.handlePasteFromClipboard();
+
+    expect(mockRecipientSearch.setValue).not.toHaveBeenCalled();
   });
 
   it("shows loading state when validation is in progress", () => {

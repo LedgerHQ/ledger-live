@@ -2,9 +2,17 @@ import type { Features } from "@shared/feature-flags";
 import { AB_TESTING_VARIANTS } from "./types/variants";
 
 type BrazePushNotificationsParams = NonNullable<Features["brazePushNotifications"]["params"]>;
+type BrazeNotificationsCategoryConfig = BrazePushNotificationsParams["notificationsCategories"][number];
 type WordingFeatureParams = NonNullable<
   Features["lwmNewWordingOptInNotificationsDrawer"]["params"]
 >;
+
+export const transactionsAlertsDrawerPromptCategoryConfig: BrazeNotificationsCategoryConfig = {
+  displayed: true,
+  category: "transactionsAlertsCategory",
+  drawerPromptEnabled: true,
+  drawerPromptActions: ["send", "receive"],
+};
 
 const defaultRepromptSchedule: BrazePushNotificationsParams["reprompt_schedule"] = [
   { months: 0, days: 7, hours: 0, minutes: 0, seconds: 0 },

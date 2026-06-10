@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { useFeature } from "../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { EnhancedModularDrawerConfiguration } from "../../../wallet-api/ModularDrawer/types";
 import { useModularDrawerConfiguration } from "../useModularDrawerConfiguration";
 
-jest.mock("../../../featureFlags", () => ({ useFeature: jest.fn() }));
+jest.mock("@features/platform-feature-flags", () => ({ useFeature: jest.fn() }));
 
 const mockUseFeature = jest.mocked(useFeature);
 

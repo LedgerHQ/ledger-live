@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "*": ["./*"],
-      "~/*": ["../../apps/ledger-live-desktop/src/*"]
+      "~/*": ["../../apps/ledger-live-desktop/src/*"],
+      "@shared/feature-flags": ["../../shared/feature-flags/src"]
     }
   },
   "include": ["./**/*.ts", "../../apps/ledger-live-desktop/index-types.d.ts"],

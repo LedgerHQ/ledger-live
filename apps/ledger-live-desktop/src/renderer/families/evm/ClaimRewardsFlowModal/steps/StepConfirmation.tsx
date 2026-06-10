@@ -71,7 +71,7 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
                 i18nKey={`cosmos.claimRewards.flow.steps.confirmation.success.text`}
                 values={{
                   amount,
-                  validator: validator && validator.name,
+                  validator: validator?.name ?? delegation?.validatorName ?? transaction.valAddress,
                 }}
               >
                 <b></b>

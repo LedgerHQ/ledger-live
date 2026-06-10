@@ -3,8 +3,14 @@ import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useFeature } from "@features/platform-feature-flags";
 import { AB_TESTING_VARIANTS } from "../types/variants";
+import type { NotificationPromptTarget } from "../types";
+import { getNotificationsPromptCopy } from "../utils/getNotificationsPromptCopy";
 
-export const NotificationsPromptContent = () => {
+type NotificationsPromptContentProps = {
+  promptTarget?: NotificationPromptTarget;
+};
+
+export const NotificationsPromptContent = ({ promptTarget }: NotificationsPromptContentProps) => {
   const { t } = useTranslation();
   const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
 
@@ -12,10 +18,12 @@ export const NotificationsPromptContent = () => {
     featureNewWordingNotificationsDrawer?.enabled === true &&
     featureNewWordingNotificationsDrawer?.params?.variant === AB_TESTING_VARIANTS.B;
 
+  const { titleKey, descriptionKey } = getNotificationsPromptCopy(promptTarget, isVariantB);
+
   return (
     <>
       <Text textAlign="center" variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
-        {isVariantB ? t("notifications.prompt.titleVariantB") : t("notifications.prompt.title")}
+        {t(titleKey)}
       </Text>
 
       <Text
@@ -25,7 +33,7 @@ export const NotificationsPromptContent = () => {
         textAlign="center"
         mt={3}
       >
-        {isVariantB ? t("notifications.prompt.descVariantB") : t("notifications.prompt.desc")}
+        {t(descriptionKey)}
       </Text>
     </>
   );

@@ -3,6 +3,7 @@ import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { sanitizeAssetNameForTestId } from "~/mvvm/features/Assets/utils/assetTableHelpers";
 import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
+import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -26,6 +27,9 @@ export class PortfolioPage extends AppPage {
     this.page
       .locator(`[data-testid^="w40-asset-row-value-${sanitizeAssetNameForTestId(asset)}-"]`)
       .first();
+  // Legacy portfolio (Asset Section OFF) AssetDistribution row, keyed by the lowercased currency name.
+  private readonly legacyAssetRow = (asset: string) =>
+    this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
   private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
 
   // Wallet 4.0 elements
@@ -122,7 +126,8 @@ export class PortfolioPage extends AppPage {
 
   @step("Click on asset row $0")
   async clickOnSelectedAssetRow(asset: string) {
-    await this.w40AssetRow(asset).click();
+    const assetRow = isAssetSectionEnabled ? this.w40AssetRow(asset) : this.legacyAssetRow(asset);
+    await assetRow.click();
   }
 
   @step("Click stake button")
@@ -181,10 +186,11 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect asset row $0 to have the correct counter value $1")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
-    const rowValue = this.w40AssetRowValue(asset);
+    // ON: dedicated W40 value cell. OFF: legacy AssetDistribution row (contains price + counter value).
+    const rowValue = isAssetSectionEnabled ? this.w40AssetRowValue(asset) : this.legacyAssetRow(asset);
     await expect(rowValue).toBeVisible();
 
-    // W40 countervalue cells can render symbol and/or code (e.g. "€" and/or "EUR").
+    // Countervalue cells can render symbol and/or code (e.g. "€" and/or "EUR").
     if (counterValue === "€" || counterValue === "$") {
       await expect(rowValue).toContainText(this.getExpectedCounterValuePattern(counterValue));
     } else {

@@ -14,8 +14,10 @@ import { createMockCategorizedAssets } from "@ledgerhq/asset-aggregation/mocks/c
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
+import { mockStocksResponse } from "@ledgerhq/live-common/dada-client/mocks/stocks.mock";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
+const DADA_API_ENDPOINT = "https://dada.api.ledger-test.com/v1/assets";
 
 const mockNavigate = jest.fn();
 
@@ -156,6 +158,7 @@ describe("PortfolioView", () => {
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
+    shouldDisplayAssetDiscoverability: false,
     shouldDisplayOperationsList: true,
     shouldDisplayBorrowSection: false,
     shouldDisplayBrazePlacement: false,
@@ -619,6 +622,27 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
 
       expect(screen.queryByTestId("crypto-addresses-banner")).toBeNull();
+    });
+  });
+
+  describe("AssetDiscoverability", () => {
+    it("should render Stocks section when shouldDisplayAssetDiscoverability is true", async () => {
+      server.use(http.get(DADA_API_ENDPOINT, () => HttpResponse.json(mockStocksResponse)));
+
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("stock-item-ticker-aaplx")).toBeVisible();
+      });
+
+      expect(screen.getByTestId("stocks-section")).toBeVisible();
+      expect(screen.getByTestId("stocks-explore")).toBeVisible();
+    });
+
+    it("should not render Stocks section when shouldDisplayAssetDiscoverability is false", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={false} />);
+
+      expect(screen.queryByTestId("stocks-section")).toBeNull();
     });
   });
 });

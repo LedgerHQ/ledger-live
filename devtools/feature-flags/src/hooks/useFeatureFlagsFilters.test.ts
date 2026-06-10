@@ -18,7 +18,7 @@ describe("useFeatureFlagsFilters", () => {
   describe("search", () => {
     it("returns all flags when search is empty", () => {
       const { result } = renderHook(() => useFeatureFlagsFilters(defaultInput));
-      expect(result.current.filteredFlagIds).toEqual([...ALL_FLAG_IDS].sort());
+      expect(result.current.filteredFlagIds).toEqual([...ALL_FLAG_IDS]);
     });
 
     it("filters flags by search query", () => {
@@ -79,6 +79,34 @@ describe("useFeatureFlagsFilters", () => {
       const { result } = renderHook(() => useFeatureFlagsFilters(defaultInput));
       act(() => result.current.setFilter("overridden"));
       expect(result.current.filteredFlagIds).toEqual([]);
+    });
+  });
+
+  describe("counts", () => {
+    it("'all' count equals the total number of flags", () => {
+      const { result } = renderHook(() => useFeatureFlagsFilters(defaultInput));
+      expect(result.current.counts.all).toBe(ALL_FLAG_IDS.length);
+    });
+
+    it("counts are independent of the selected filter", () => {
+      const overrides: PartialFeatures = { mockFeature: { enabled: true } };
+      const { result } = renderHook(() => useFeatureFlagsFilters({ ...defaultInput, overrides }));
+      const initialCounts = { ...result.current.counts };
+      act(() => result.current.setFilter("overridden"));
+      expect(result.current.counts).toEqual(initialCounts);
+    });
+
+    it("counts are independent of the search query", () => {
+      const { result } = renderHook(() => useFeatureFlagsFilters(defaultInput));
+      const initialCounts = { ...result.current.counts };
+      act(() => result.current.setSearch("zzz_no_match_xyz"));
+      expect(result.current.counts).toEqual(initialCounts);
+    });
+
+    it("'overridden' count reflects the number of overridden flags", () => {
+      const overrides: PartialFeatures = { mockFeature: { enabled: true } };
+      const { result } = renderHook(() => useFeatureFlagsFilters({ ...defaultInput, overrides }));
+      expect(result.current.counts.overridden).toBe(1);
     });
   });
 

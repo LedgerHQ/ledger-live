@@ -22,6 +22,7 @@ export async function fetchList({
   liveCompatible = false,
   starred = [],
   range = "24",
+  categories,
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
   const hasExplicitFilter = Boolean(filter);
   const url = URL.format({
@@ -34,6 +35,7 @@ export async function fetchList({
       ...(hasExplicitFilter ? { filter } : search.length >= 2 && { filter: search }),
       ...(starred.length > 0 && { ids: starred.sort().join(",") }),
       ...(liveCompatible && { supported: liveCompatible }),
+      ...(categories && { categories }),
       ...(!hasExplicitFilter &&
         [Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },

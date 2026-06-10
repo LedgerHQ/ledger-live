@@ -21,6 +21,7 @@ export type MarketListRequestParams = {
   search?: string;
   filter?: string;
   liveCompatible?: boolean;
+  categories?: string;
 };
 
 export type MarketListRequestResult = {

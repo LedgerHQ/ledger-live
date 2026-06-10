@@ -7,11 +7,7 @@ import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import {
-  addPendingOperation,
-  getMainAccount,
-  getRecentAddressesStore,
-} from "@ledgerhq/live-common/account/index";
+import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -272,14 +268,8 @@ const Body = ({
       );
       setOptimisticOperation(optimisticOperation);
       setTransactionError(null);
-      // Add address to recent addresses store after successful broadcast
-      if (transaction && mainAccount) {
-        const store = getRecentAddressesStore();
-        const ensName = transaction.recipientDomain?.domain;
-        store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
-      }
     },
-    [account, parentAccount, updateAccountWithUpdater, transaction],
+    [account, parentAccount, updateAccountWithUpdater],
   );
   const handleStepChange = useCallback(
     (e: { id: StepId }) => onChangeStepId(e.id),
@@ -293,7 +283,7 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : (title ?? t("send.title")),
+    title: stepId === "warning" ? t("common.information") : title ?? t("send.title"),
     modalName,
     stepId,
     steps,

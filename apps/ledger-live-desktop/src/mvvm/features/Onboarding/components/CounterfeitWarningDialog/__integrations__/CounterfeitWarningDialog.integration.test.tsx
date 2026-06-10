@@ -59,7 +59,10 @@ describe("CounterfeitWarningDialog Integration", () => {
       await waitFor(() => {
         expect(screen.getByTestId("counterfeit-warning-dialog")).toBeVisible();
       });
-      expect(track).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
+      expect(track).toHaveBeenCalledWith("page_viewed", {
+        page: COUNTERFEIT_WARNING_PAGE,
+        deviceModelId: DeviceModelId.nanoX,
+      });
 
       await user.click(
         screen.getByRole("button", { name: i18n.t("onboarding.counterfeitWarning.cta.primary") }),
@@ -67,6 +70,7 @@ describe("CounterfeitWarningDialog Integration", () => {
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
         page: COUNTERFEIT_WARNING_PAGE,
+        deviceModelId: DeviceModelId.nanoX,
       });
       expect(onProceed).toHaveBeenCalledTimes(1);
     });
@@ -84,6 +88,7 @@ describe("CounterfeitWarningDialog Integration", () => {
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: COUNTERFEIT_WARNING_BUTTON.learnMore,
         page: COUNTERFEIT_WARNING_PAGE,
+        deviceModelId: DeviceModelId.nanoX,
       });
       expect(openURL).toHaveBeenCalledWith(urls.genuineCheck);
     });
@@ -99,6 +104,7 @@ describe("CounterfeitWarningDialog Integration", () => {
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: COUNTERFEIT_WARNING_BUTTON.close,
         page: COUNTERFEIT_WARNING_PAGE,
+        deviceModelId: DeviceModelId.nanoX,
       });
       expect(onDismiss).toHaveBeenCalledTimes(1);
     });

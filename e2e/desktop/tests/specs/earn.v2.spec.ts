@@ -28,11 +28,8 @@ function getTags(account: Account) {
 }
 
 function setupEnv(disableBroadcast?: boolean) {
-  test.beforeAll(async () => {
-    if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-  });
-  test.afterAll(async () => {
-    delete process.env.DISABLE_TRANSACTION_BROADCAST;
+  test.use({
+    env: disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {},
   });
 }
 

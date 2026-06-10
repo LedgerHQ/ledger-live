@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
+import { BigNumber } from "bignumber.js";
 import type {
   StakingAccount,
   StakingMappedDelegation,
@@ -281,18 +282,35 @@ export function Row({
 
 type UnbondingRowProps = Readonly<{
   delegation: StakingMappedUnbonding;
+  onWithdraw: (validatorAddress: string, amount: BigNumber, withdrawId?: number) => void;
   onExternalLink: (address: string) => void;
 }>;
 
 export function UnbondingRow({
-  delegation: { validator, formattedAmount, validatorAddress, validatorName, completionDate },
+  delegation: {
+    validator,
+    formattedAmount,
+    validatorAddress,
+    validatorName,
+    completionDate,
+    amount,
+    withdrawId,
+  },
+  onWithdraw,
   onExternalLink,
 }: UnbondingRowProps) {
   const date = useDateFromNow(completionDate) || "N/A";
   const name = validator?.name ?? validatorName ?? validatorAddress;
+  // Withdraw only applies to chains with an explicit finalization slot (Monad carries a
+  // withdrawId); other EVM chains auto-return funds, so no CTA there.
+  const canWithdraw = typeof withdrawId === "number" && completionDate.getTime() <= Date.now();
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorAddress),
     [onExternalLink, validatorAddress],
+  );
+  const onWithdrawClick = useCallback(
+    () => onWithdraw(validatorAddress, amount, withdrawId),
+    [onWithdraw, validatorAddress, amount, withdrawId],
   );
   return (
     <Wrapper>
@@ -313,6 +331,9 @@ export function UnbondingRow({
         <Discreet>{formattedAmount}</Discreet>
       </Column>
       <Column>{date}</Column>
+      <Column clickable={canWithdraw} onClick={canWithdraw ? onWithdrawClick : undefined}>
+        {canWithdraw ? <Trans i18nKey="ethereum.evmStaking.withdraw.cta" /> : null}
+      </Column>
     </Wrapper>
   );
 }

@@ -2,12 +2,24 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { useFeature } from "@features/platform-feature-flags";
 import { useModularDrawerVisibility } from "../useModularDrawerVisibility";
 import { ModularDrawerLocation } from "../enums";
-import {
-  makeMockedFeatureFlagsProviderWrapper,
-  makeMockedContextValue,
-} from "../../featureFlags/mock";
+
+jest.mock("@features/platform-feature-flags", () => ({ useFeature: jest.fn() }));
+
+const mockedUseFeature = useFeature as jest.Mock;
+
+// Drive the slice-backed `useFeature` mock from a context-shaped feature map so the existing
+// per-test call sites stay unchanged: the "wrapper" is now a passthrough that seeds the mock.
+function makeMockedContextValue(features: Record<string, unknown>) {
+  return features;
+}
+function makeMockedFeatureFlagsProviderWrapper(features: Record<string, unknown>) {
+  mockedUseFeature.mockImplementation((key: string) => features[key] ?? null);
+  return ({ children }: { children: ReactNode }) => children;
+}
 
 describe("useModularDrawerVisibility", () => {
   describe("lldModularDrawer", () => {

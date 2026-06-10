@@ -50,6 +50,7 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TezosStakeFlowParamList } from "../../../families/tezos/StakeFlow/types";
+import type { TezosUnstakeFlowParamList } from "../../../families/tezos/UnstakeFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
@@ -309,6 +310,7 @@ export type BaseNavigatorStackParamList = {
   // Tezos
   [NavigatorName.TezosDelegationFlow]: NavigatorScreenParams<TezosDelegationFlowParamList>;
   [NavigatorName.TezosStakeFlow]: NavigatorScreenParams<TezosStakeFlowParamList>;
+  [NavigatorName.TezosUnstakeFlow]: NavigatorScreenParams<TezosUnstakeFlowParamList>;
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;

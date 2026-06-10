@@ -15,6 +15,11 @@ import {
 import { AppType, SortOptions } from "./filtering";
 import { calculateDependencies } from "./polyfill";
 
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeature: jest.fn(() => null),
+  useFeatureFlags: jest.fn(() => ({})),
+}));
+
 calculateDependencies();
 
 const mockedState = initState(

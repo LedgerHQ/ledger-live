@@ -18,6 +18,7 @@ import {
   StakingAccount,
   StakingMappedDelegation,
   StakingMappedUnbonding,
+  StakingValidatorItem,
 } from "@ledgerhq/live-common/families/evm/staking/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { Text } from "@ledgerhq/native-ui";
@@ -115,12 +116,23 @@ function Delegations({ account }: { account: StakingAccount }) {
   }, [onNavigate, route]);
 
   const onCollectRewards = useCallback(() => {
-    if (delegation?.validator && delegation.pendingRewards?.gt(0)) {
+    if (delegation && delegation.pendingRewards?.gt(0)) {
+      const matchedValidator: StakingValidatorItem = delegation.validator ?? {
+        validatorAddress: delegation.validatorAddress,
+        name: delegation.validatorName ?? delegation.validatorAddress,
+        votingPower: 0,
+        commission: 0,
+        estimatedYearlyRewardsRate: 0,
+        tokens: "0",
+      };
       onNavigate({
         navigator: NavigatorName.EvmClaimRewardsFlow,
         screen: ScreenName.EvmClaimRewardsClaim,
         params: {
-          validator: delegation.validator,
+          validator: {
+            ...matchedValidator,
+            validatorId: delegation.validatorId ?? matchedValidator.validatorId,
+          },
           value: delegation.pendingRewards,
         },
       });
@@ -340,8 +352,7 @@ function Delegations({ account }: { account: StakingAccount }) {
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
   const selected = delegation || undelegation;
   const selectedValidatorName =
-    selected &&
-    (selected.validator?.name ?? selected.validatorName ?? selected.validatorAddress);
+    selected && (selected.validator?.name ?? selected.validatorName ?? selected.validatorAddress);
 
   return (
     <View style={styles.root}>
@@ -418,7 +429,7 @@ function Delegations({ account }: { account: StakingAccount }) {
           <AccountSectionLabel name={t("account.undelegation.sectionLabel")} />
           {undelegations.map((d, i) => (
             <View
-              key={`${d.validatorAddress}-${d.completionDate.valueOf()}`}
+              key={`${d.validatorAddress}-${d.completionDate.valueOf()}-${d.withdrawId ?? i}`}
               style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
             >
               <DelegationRow

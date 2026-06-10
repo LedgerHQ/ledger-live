@@ -44,7 +44,7 @@ describe("marketListConfig slice", () => {
     expect(reset.network).toBeUndefined();
   });
 
-  it("rehydrates a persisted payload on top of the defaults", () => {
+  it("rehydrates persisted preferences but resets the category to the default", () => {
     const state = marketListConfigReducer(
       undefined,
       importMarketListConfig({
@@ -58,7 +58,8 @@ describe("marketListConfig slice", () => {
       sorting: "gainers",
       timeframe: "1Y",
       network: "bitcoin",
-      category: "stocks",
+      // category is not persisted across launches: always back to the default.
+      category: "all",
     });
   });
 });
