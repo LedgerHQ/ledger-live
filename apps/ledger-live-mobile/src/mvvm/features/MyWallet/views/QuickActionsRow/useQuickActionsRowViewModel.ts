@@ -40,6 +40,7 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   const hasClickedRecover = useSelector(hasClickedRecoverSelector);
   const recoverFeature = useFeature("protectServicesMobile");
   const protectId = recoverFeature?.params?.protectId ?? "protect-prod";
+  const isBackupHubEnabled = !!useFeature("lwmBackupHub")?.enabled;
 
   const hasDevice = lastConnectedDevice !== null;
   const recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
@@ -53,11 +54,15 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
       dispatch(setHasClickedRecover(true));
     }
     track("button_clicked", { button: "Recover", page: MY_WALLET_TRACKING_PAGE_NAME });
+    if (isBackupHubEnabled) {
+      navigation.navigate(NavigatorName.BackupHub, { screen: ScreenName.BackupHub });
+      return;
+    }
     navigation.navigate(ScreenName.Recover, {
       platform: protectId,
       device: lastConnectedDevice ?? undefined,
     });
-  }, [navigation, protectId, lastConnectedDevice, hasClickedRecover, dispatch]);
+  }, [navigation, protectId, lastConnectedDevice, hasClickedRecover, dispatch, isBackupHubEnabled]);
 
   const handleHelpPress = useCallback(() => {
     track("button_clicked", { button: "Help", page: MY_WALLET_TRACKING_PAGE_NAME });

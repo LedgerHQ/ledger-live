@@ -126,6 +126,7 @@ export enum ScreenName {
   MyLedgerDevice = "MyLedgerDevice",
   MyWallet = "MyWallet",
   MyWalletHelp = "MyWalletHelp",
+  BackupHub = "BackupHub",
   NotificationsSettings = "NotificationsSettings",
   OperationDetails = "OperationDetails",
   PasswordAdd = "PasswordAdd",
@@ -766,4 +767,5 @@ export enum NavigatorName {
   Assets = "Assets",
   Analytics = "Analytics",
   OperationsHistory = "OperationsHistory",
+  BackupHub = "BackupHubNavigator",
 }

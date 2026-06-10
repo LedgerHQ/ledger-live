@@ -1,0 +1,53 @@
+import React from "react";
+import {
+  Button,
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemTrailing,
+  Spot,
+} from "@ledgerhq/lumen-ui-rnative";
+import { ChevronRight, ShieldCheck } from "@ledgerhq/lumen-ui-rnative/symbols";
+
+export type LedgerRecoverRowProps = {
+  showCta: boolean;
+  isWarning: boolean;
+  title: string;
+  description: string;
+  ctaLabel: string;
+  onPress: () => void;
+};
+
+export function LedgerRecoverRow({
+  showCta,
+  isWarning,
+  title,
+  description,
+  ctaLabel,
+  onPress,
+}: LedgerRecoverRowProps) {
+  return (
+    <ListItem onPress={onPress} testID="backup-hub-recover-row">
+      <ListItemLeading>
+        <Spot appearance="icon" icon={ShieldCheck} size={48} />
+        <ListItemContent>
+          <ListItemTitle>{title}</ListItemTitle>
+          <ListItemDescription lx={isWarning ? { color: "warning" } : undefined}>
+            {description}
+          </ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+      <ListItemTrailing>
+        {showCta ? (
+          <Button appearance="base" size="sm" onPress={onPress} testID="backup-hub-recover-cta">
+            {ctaLabel}
+          </Button>
+        ) : (
+          <ChevronRight size={24} color="muted" />
+        )}
+      </ListItemTrailing>
+    </ListItem>
+  );
+}
