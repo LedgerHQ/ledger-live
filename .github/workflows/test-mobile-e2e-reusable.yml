@@ -165,7 +165,7 @@ env:
   AVD_PROFILE: pixel_9_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 4
+  AVD_CORES: 2
   AVD_RAM_SIZE: 8192
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu auto -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
