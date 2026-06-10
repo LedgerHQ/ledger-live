@@ -47,7 +47,7 @@ describe("AddressDetailDialog", () => {
     expect(screen.queryByTestId("contacts-management-address-full")).not.toBeInTheDocument();
   });
 
-  it("shows the contact name, network tag, scope label, full address, and 4 action tiles", () => {
+  it("shows the contact name, network tag, scope label, full address, and 3 action tiles", () => {
     const entry = buildEntry({ scope: "Ethereum Main" });
     render(
       <AddressDetailDialog
@@ -73,15 +73,18 @@ describe("AddressDetailDialog", () => {
     const fullAddress = screen.getByTestId("contacts-management-address-full");
     expect(fullAddress).toHaveTextContent(entry.addressHex);
 
-    // QR + 4 action tiles (Send / Rename / Edit / Delete).
+    // QR + 3 action tiles (Send / Edit / Delete) — Rename is merged into Edit.
     expect(screen.getByTestId("contacts-management-address-qr")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-send")).toBeInTheDocument();
-    expect(screen.getByTestId("contacts-management-address-dialog-rename")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-edit")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-delete")).toBeInTheDocument();
+    // The standalone Rename tile is gone (folded into Edit).
+    expect(
+      screen.queryByTestId("contacts-management-address-dialog-rename"),
+    ).not.toBeInTheDocument();
   });
 
-  it("renders the action tiles in Figma 13844:10015 order (Send / Rename / Edit / Delete)", () => {
+  it("renders the action tiles in order (Send / Edit / Delete)", () => {
     render(
       <AddressDetailDialog
         open
@@ -95,10 +98,25 @@ describe("AddressDetailDialog", () => {
     const ids = tiles.map(el => el.getAttribute("data-testid"));
     expect(ids).toEqual([
       "contacts-management-address-dialog-send",
-      "contacts-management-address-dialog-rename",
       "contacts-management-address-dialog-edit",
       "contacts-management-address-dialog-delete",
     ]);
+  });
+
+  it("fires onEdit when the Edit tile is clicked (opens the merged Edit dialog)", async () => {
+    const onEdit = jest.fn();
+    const { user } = render(
+      <AddressDetailDialog
+        open
+        onOpenChange={jest.fn()}
+        contact={buildContact()}
+        entry={buildEntry()}
+        onEdit={onEdit}
+      />,
+    );
+
+    await user.click(screen.getByTestId("contacts-management-address-dialog-edit"));
+    expect(onEdit).toHaveBeenCalledTimes(1);
   });
 
   it("fires onDelete when the Delete tile is clicked (mirrors the row menu's delete path)", async () => {
@@ -128,7 +146,6 @@ describe("AddressDetailDialog", () => {
     );
 
     await user.click(screen.getByTestId("contacts-management-address-dialog-send"));
-    await user.click(screen.getByTestId("contacts-management-address-dialog-rename"));
     await user.click(screen.getByTestId("contacts-management-address-dialog-edit"));
     await user.click(screen.getByTestId("contacts-management-address-dialog-delete"));
 

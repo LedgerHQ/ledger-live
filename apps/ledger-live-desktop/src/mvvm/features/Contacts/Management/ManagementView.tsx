@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { ContactEntry } from "~/renderer/contacts/types";
 import type { DisplayContact } from "./utils/groupContacts";
 import type { ContactGroup } from "./utils/groupContacts";
 import { AddContactDialog } from "./components/AddContactDialog";
@@ -33,25 +34,15 @@ export type ManagementViewProps = {
     entry: { addressHex: string; chainId: number; scope: string },
   ) => Promise<void>;
   /**
-   * Verb factory for the on-device rename of an address label.
-   * Threaded through to `ContactDetails` and then to
-   * `RenameAddressDialog`, which hands the returned closure to
-   * `RunDeviceAction.run`.
-   */
-  onRenameAddressLabelOnDevice: (
-    currentDisplayName: string,
-    entry: { addressHex: string; chainId: number; scope: string },
-    newScope: string,
-  ) => (deviceId: string) => Promise<unknown>;
-  /**
-   * Verb factory for the on-device address edit. Threaded through
-   * to `ContactDetails` and then to `EditAddressDialog`, which
-   * hands the returned closure to `RunDeviceAction.run`.
+   * Verb factory for the merged on-device "Edit address" flow. Threaded
+   * through to `ContactDetails` and then to `EditAddressDialog`, which
+   * hands the returned closure to `RunDeviceAction.run`. Routes to
+   * editAddress / editAddressLabel / register based on what changed.
    */
   onEditAddressOnDevice: (
     currentDisplayName: string,
-    entry: { addressHex: string; chainId: number; scope: string },
-    newAddressHex: string,
+    entry: ContactEntry,
+    changes: { newAddressHex: string; newScope: string },
   ) => (deviceId: string) => Promise<unknown>;
   /**
    * Verb factory for renaming a canonical contact through the device.
@@ -100,7 +91,6 @@ export function ManagementView({
   onRenameContactOnDevice,
   onDeleteContact,
   onDeleteAddress,
-  onRenameAddressLabelOnDevice,
   onEditAddressOnDevice,
 }: ManagementViewProps) {
   const [addContactOpen, setAddContactOpen] = useState(false);
@@ -160,7 +150,6 @@ export function ManagementView({
           onRenameContactOnDevice={onRenameContactOnDevice}
           onDeleteContact={onDeleteContact}
           onDeleteAddress={onDeleteAddress}
-          onRenameAddressLabelOnDevice={onRenameAddressLabelOnDevice}
           onEditAddressOnDevice={onEditAddressOnDevice}
         />
       </div>

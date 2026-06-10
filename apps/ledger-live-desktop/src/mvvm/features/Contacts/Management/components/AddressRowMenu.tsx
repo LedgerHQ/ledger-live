@@ -15,7 +15,6 @@ import {
   Trash,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { cn } from "LLD/utils/cn";
-import { RenameLettersIcon } from "./icons/RenameLettersIcon";
 
 /**
  * Per-row overflow menu in the contact details pane.
@@ -55,7 +54,7 @@ import { RenameLettersIcon } from "./icons/RenameLettersIcon";
  *                              surface ships
  */
 
-type ActionId = "qr" | "send" | "rename" | "edit" | "delete";
+type ActionId = "qr" | "send" | "edit" | "delete";
 
 type Action = {
   id: ActionId;
@@ -68,11 +67,6 @@ type Action = {
 const ACTIONS: Action[] = [
   { id: "qr", i18nKey: "contactsManagement.addressMenu.qrCode", icon: QrCode },
   { id: "send", i18nKey: "contactsManagement.addressMenu.send", icon: ArrowUp },
-  {
-    id: "rename",
-    i18nKey: "contactsManagement.addressMenu.renameAddress",
-    icon: RenameLettersIcon,
-  },
   { id: "edit", i18nKey: "contactsManagement.addressMenu.editAddress", icon: PenEdit },
   { id: "delete", i18nKey: "contactsManagement.addressMenu.delete", icon: Trash, destructive: true },
 ];
@@ -93,13 +87,9 @@ type Props = {
    */
   onDeleteAddress?: () => void;
   /**
-   * Fired when the user picks "Rename address". The host opens the
-   * `RenameAddressDialog` which prompts for the new per-entry label.
-   */
-  onRenameAddress?: () => void;
-  /**
-   * Fired when the user picks "Edit address". The host opens the
-   * `EditAddressDialog` which prompts for the new 0x hex.
+   * Fired when the user picks "Edit address". The host opens the merged
+   * `EditAddressDialog`, which edits the address hex AND/OR the per-entry
+   * name in one flow.
    */
   onEditAddress?: () => void;
 };
@@ -122,7 +112,7 @@ export type AddressRowMenuHandle = {
 
 export const AddressRowMenu = forwardRef<AddressRowMenuHandle, Props>(
   function AddressRowMenu(
-    { onShowQrCode, onDeleteAddress, onRenameAddress, onEditAddress },
+    { onShowQrCode, onDeleteAddress, onEditAddress },
     ref,
   ) {
   const { t } = useTranslation();
@@ -169,7 +159,6 @@ export const AddressRowMenu = forwardRef<AddressRowMenuHandle, Props>(
   const handlers: Record<ActionId, (() => void) | undefined> = {
     qr: onShowQrCode,
     send: undefined,
-    rename: onRenameAddress,
     edit: onEditAddress,
     delete: onDeleteAddress,
   };

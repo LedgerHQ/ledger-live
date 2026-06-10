@@ -63,6 +63,17 @@ export type UseContacts = {
    */
   removeAddressFromContact: (args: RemoveAddressFromContactArgs) => Promise<void>;
   /**
+   * Atomically replace one address entry: registers the new
+   * `(newAddressHex, newScope)` on device (one prompt) AND drops the old
+   * entry in a SINGLE commit. Used by the merged "Edit address" modal
+   * when BOTH the address and the name change — the device has no verb
+   * that edits both at once, and doing `addAddressToContact` followed by
+   * `removeAddressFromContact` as two separate commits clobbers itself
+   * (both callbacks capture the same pre-add `wallet` snapshot, so the
+   * removal's commit overwrites the add). Returns the updated contact.
+   */
+  replaceAddress: (deviceId: string, args: ReplaceAddressArgs) => Promise<Contact>;
+  /**
    * Hard-delete a contact from the canonical wallet. Client-side only —
    * DMK doesn't expose a "delete contact" verb yet, so the on-device
    * group lingers until that ships. The local snapshot drops the
@@ -115,6 +126,20 @@ export type RemoveAddressFromContactArgs = {
   contactName: string;
   /** Identifies the entry to drop. */
   entry: Pick<ContactEntry, "addressHex" | "chainId" | "scope">;
+};
+export type ReplaceAddressArgs = {
+  /** Canonical wallet key (the device-side name). */
+  contactName: string;
+  /** The existing entry being replaced (matched by address + chain + scope). */
+  oldEntry: Pick<ContactEntry, "addressHex" | "chainId" | "scope">;
+  /** The new address hex to register. */
+  newAddressHex: string;
+  /** The new per-entry label / scope. */
+  newScope: string;
+  /** Reused from the old entry (EVM external path). */
+  derivationPath: string;
+  /** Reused from the old entry. */
+  chainId: number;
 };
 
 
@@ -273,6 +298,60 @@ export const useContacts = (): UseContacts => {
             {
               scope: args.scope,
               addressHex: args.addressHex,
+              hmacRestHex: result.hmacRestHex,
+              derivationPath: args.derivationPath,
+              chainId: args.chainId,
+            },
+          ],
+        };
+        await commit({
+          contacts: { ...wallet.contacts, [existing.name]: next },
+          accounts: wallet.accounts,
+        });
+        return next;
+      }),
+    [commit, wallet],
+  );
+
+  const replaceAddress = useCallback(
+    (deviceId: string, args: ReplaceAddressArgs): Promise<Contact> =>
+      withDmk(deviceId, async deps => {
+        const existing = lookupContact(wallet, args.contactName);
+        // Register the new address on device (advances the HMAC chain),
+        // exactly like `addAddressToContact`.
+        const result = await finalize(
+          buildSigner(deps).registerExternalAddress({
+            name: args.contactName,
+            addressHex: args.newAddressHex,
+            scope: args.newScope,
+            derivationPath: args.derivationPath,
+            chainId: args.chainId,
+            extension: {
+              groupHandleHex: existing.groupHandleHex,
+              hmacProofHex: existing.hmacNameHex,
+            },
+          }),
+        );
+        // Single commit: drop the old entry AND append the new one. Doing
+        // both here (vs two sequential committing verbs) avoids the
+        // stale-`wallet` clobber where the second commit overwrites the
+        // first.
+        const withoutOld = existing.entries.filter(
+          e =>
+            !(
+              e.addressHex === args.oldEntry.addressHex &&
+              e.chainId === args.oldEntry.chainId &&
+              e.scope === args.oldEntry.scope
+            ),
+        );
+        const next: Contact = {
+          ...existing,
+          hmacNameHex: result.hmacNameHex,
+          entries: [
+            ...withoutOld,
+            {
+              scope: args.newScope,
+              addressHex: args.newAddressHex,
               hmacRestHex: result.hmacRestHex,
               derivationPath: args.derivationPath,
               chainId: args.chainId,
@@ -503,6 +582,7 @@ export const useContacts = (): UseContacts => {
     wallet,
     addContact,
     addAddressToContact,
+    replaceAddress,
     editAddressLabel,
     editAddress,
     renameContact,

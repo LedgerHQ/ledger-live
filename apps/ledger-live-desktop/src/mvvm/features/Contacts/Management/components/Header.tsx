@@ -6,7 +6,7 @@ import {
   NavBarTitle,
   NavBarTrailing,
 } from "@ledgerhq/lumen-ui-react";
-import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
+import { UserAdd } from "@ledgerhq/lumen-ui-react/symbols";
 
 /**
  * Page header for the Contacts management surface.
@@ -37,7 +37,11 @@ export function Header({ onAddContact }: Props) {
         <Button
           appearance="base"
           size="sm"
-          icon={Plus}
+          // Figma frame 14350:13060 — the leading glyph is the `user-add`
+          // icon (a person with a circled-plus badge), not the plain
+          // Plus, to read as "add a contact". Lumen's `UserAdd` matches
+          // it exactly (person + ⊕).
+          icon={UserAdd}
           onClick={onAddContact}
           data-testid="contacts-management-add-contact"
         >

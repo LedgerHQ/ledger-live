@@ -252,8 +252,8 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
           // icons at 16+8=24px — everything aligns.
           //
           // `pt-8 pb-24` matches the convention every other dialog in
-          // this feature uses (`AddContactDialog`, `RenameAddressDialog`,
-          // `EditAddressDialog`). Lumen's DialogBody already ships
+          // this feature uses (`AddContactDialog`, `EditAddressDialog`).
+          // Lumen's DialogBody already ships
           // `pb-24` and we set the same value explicitly so the inner
           // step wrappers stay free of vertical-padding responsibility
           // — previously every step also set its own `pb-24`, which

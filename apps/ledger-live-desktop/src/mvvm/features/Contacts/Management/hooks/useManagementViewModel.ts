@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useContacts } from "~/renderer/contacts/useContacts";
+import type { ContactEntry } from "~/renderer/contacts/types";
 import { readCryptoMeta, setCryptoMeta } from "../utils/cryptoMeta";
 import {
   applyMeSuffix,
@@ -88,33 +89,25 @@ export type ManagementViewModel = {
     entry: { addressHex: string; chainId: number; scope: string },
   ) => Promise<void>;
   /**
-   * Build the device verb that renames one address entry's per-entry
-   * label (`scope`) via DMK's `editAddressLabel`. Returns a closure
-   * the caller hands to `RunDeviceAction.run`. Renaming a label
-   * regenerates the on-device HMAC, so the prompt is mandatory.
-   *
-   * On the verb's success the wallet snapshot already carries the
-   * new `scope` (via `useContacts.editAddressLabel`'s internal
-   * commit); we ALSO migrate the cryptoMeta annotation under the
-   * new scope so the entry stays grouped under the same crypto.
-   */
-  onRenameAddressLabelOnDevice: (
-    currentDisplayName: string,
-    entry: { addressHex: string; chainId: number; scope: string },
-    newScope: string,
-  ) => (deviceId: string) => Promise<void>;
-  /**
-   * Build the device verb that swaps one entry's `addressHex` via
-   * DMK's `editExternalAddress`. Returns a closure the caller hands
-   * to `RunDeviceAction.run`. The firmware re-HMACs against the new
-   * address, so a device prompt is mandatory. Also migrates the
-   * cryptoMeta annotation from the old address key to the new one
-   * so the entry stays in the same crypto bucket post-edit.
+   * Build the device verb for the merged "Edit address" modal, which can
+   * change the address hex AND/OR the per-entry name (`scope`) in one
+   * flow. Returns a closure the caller hands to `RunDeviceAction.run`.
+   * The closure inspects what actually changed (vs `entry`) and routes:
+   *   - address only → DMK `editAddress`
+   *   - name only    → DMK `editAddressLabel`
+   *   - both         → DMK register (`addAddressToContact`) for the new
+   *                    (address, name), then drops the old entry locally
+   *                    so the contact shows ONE modified entry (the device
+   *                    has no single verb that edits both at once).
+   * Every branch re-HMACs on device, so a prompt is mandatory, and each
+   * migrates the cryptoMeta annotation from the old `(addr, chainId,
+   * scope)` key to the new one so the entry stays in the same crypto
+   * bucket post-edit.
    */
   onEditAddressOnDevice: (
     currentDisplayName: string,
-    entry: { addressHex: string; chainId: number; scope: string },
-    newAddressHex: string,
+    entry: ContactEntry,
+    changes: { newAddressHex: string; newScope: string },
   ) => (deviceId: string) => Promise<void>;
 };
 
@@ -305,72 +298,97 @@ export function useManagementViewModel(): ManagementViewModel {
     [contacts],
   );
 
-  const onRenameAddressLabelOnDevice = useCallback(
-    (
-      currentDisplayName: string,
-      entry: { addressHex: string; chainId: number; scope: string },
-      newScope: string,
-    ) =>
-      async (deviceId: string): Promise<void> => {
-        const trimmed = newScope.trim();
-        if (!trimmed || trimmed === entry.scope) return;
-        // Snapshot the existing cryptoMeta annotation BEFORE the
-        // device call. The wallet entry's `scope` flips inside
-        // `useContacts.editAddressLabel`'s commit on success, so a
-        // post-success read by the old scope would return undefined.
-        const existingCrypto = readCryptoMeta(
-          entry.addressHex,
-          entry.chainId,
-          entry.scope,
-        );
-        await contacts.editAddressLabel(deviceId, {
-          contactName: currentDisplayName,
-          addressHex: entry.addressHex,
-          oldLabel: entry.scope,
-          newLabel: trimmed,
-          chainId: entry.chainId,
-        });
-        // Migrate the cryptoMeta annotation under the new scope so
-        // the entry stays in the same crypto bucket after rename.
-        // Skipped when no annotation existed (fallback to chain-native
-        // still works).
-        if (existingCrypto !== undefined) {
-          setCryptoMeta(entry.addressHex, entry.chainId, entry.scope, undefined);
-          setCryptoMeta(entry.addressHex, entry.chainId, trimmed, existingCrypto);
-        }
-      },
-    [contacts],
-  );
-
   const onEditAddressOnDevice = useCallback(
     (
       currentDisplayName: string,
-      entry: { addressHex: string; chainId: number; scope: string },
-      newAddressHex: string,
+      entry: ContactEntry,
+      changes: { newAddressHex: string; newScope: string },
     ) =>
       async (deviceId: string): Promise<void> => {
-        const trimmed = newAddressHex.trim();
-        if (!trimmed || trimmed === entry.addressHex) return;
-        // Snapshot cryptoMeta BEFORE the device call — once the
-        // wallet entry's `addressHex` flips inside
-        // `useContacts.editAddress`'s commit, a read by the old key
-        // would return undefined.
-        const existingCrypto = readCryptoMeta(
-          entry.addressHex,
-          entry.chainId,
-          entry.scope,
-        );
-        await contacts.editAddress(deviceId, {
-          contactName: currentDisplayName,
-          oldAddressHex: entry.addressHex,
-          newAddressHex: trimmed,
-          chainId: entry.chainId,
-        });
-        // Migrate the cryptoMeta annotation to the new addressHex
-        // key (scope stays). Skipped when no annotation existed.
-        if (existingCrypto !== undefined) {
+        const newAddressHex = changes.newAddressHex.trim();
+        const newScope = changes.newScope.trim();
+        // Compare against the entry's current values to decide the flow.
+        // Both must be non-empty (the dialog already gates this, but the
+        // closure stays defensive).
+        const addressChanged = newAddressHex.length > 0 && newAddressHex !== entry.addressHex;
+        const scopeChanged = newScope.length > 0 && newScope !== entry.scope;
+        if (!addressChanged && !scopeChanged) return; // no-op
+
+        // cryptoMeta (cosmetic crypto-id) is keyed by `(address, chainId,
+        // scope)`, so editing the address and/or name moves the key. We
+        // migrate the annotation so the entry keeps its crypto icon.
+        const existingCrypto = readCryptoMeta(entry.addressHex, entry.chainId, entry.scope);
+        const finalAddress = addressChanged ? newAddressHex : entry.addressHex;
+        const finalScope = scopeChanged ? newScope : entry.scope;
+        const hasAnnotation = existingCrypto !== undefined;
+
+        // Pre-seed the NEW key BEFORE the device commit. Each device verb
+        // commits the wallet internally, which re-renders the details pane;
+        // if the new cryptoMeta key isn't in place yet, that render groups
+        // the now-edited entry under the chain-native crypto (e.g. ETH) and
+        // the icon flips. Writing the new key first means the entry already
+        // resolves to its crypto the instant the wallet flips — no flicker,
+        // no stuck fallback. The old key is left in place until success
+        // (the old entry still uses it during the device prompt).
+        if (hasAnnotation) {
+          setCryptoMeta(finalAddress, entry.chainId, finalScope, existingCrypto);
+        }
+
+        try {
+          if (addressChanged && !scopeChanged) {
+            // Address only → DMK editAddress (keeps the scope).
+            await contacts.editAddress(deviceId, {
+              contactName: currentDisplayName,
+              oldAddressHex: entry.addressHex,
+              newAddressHex,
+              chainId: entry.chainId,
+            });
+          } else if (!addressChanged && scopeChanged) {
+            // Name only → DMK editAddressLabel (keeps the address).
+            await contacts.editAddressLabel(deviceId, {
+              contactName: currentDisplayName,
+              addressHex: entry.addressHex,
+              oldLabel: entry.scope,
+              newLabel: newScope,
+              chainId: entry.chainId,
+            });
+          } else {
+            // Both changed → no single device verb edits address + name at
+            // once, so we register the new (address, name) and drop the old
+            // entry. This MUST be one atomic commit: doing
+            // `addAddressToContact` then `removeAddressFromContact` as two
+            // separate verbs clobbers itself (both capture the same pre-add
+            // `wallet` snapshot, so the removal's commit overwrites the add
+            // and the new address vanishes locally). `replaceAddress` does
+            // both in a single commit. One device confirmation (the register).
+            await contacts.replaceAddress(deviceId, {
+              contactName: currentDisplayName,
+              oldEntry: {
+                addressHex: entry.addressHex,
+                chainId: entry.chainId,
+                scope: entry.scope,
+              },
+              newAddressHex,
+              newScope,
+              derivationPath: entry.derivationPath,
+              chainId: entry.chainId,
+            });
+          }
+        } catch (err) {
+          // Device failed / user cancelled — the wallet entry didn't change,
+          // so revert the optimistic new-key write (unless it happens to be
+          // the same key as the still-valid old one). Re-throw so
+          // `RunDeviceAction` surfaces the error.
+          if (hasAnnotation && !(finalAddress === entry.addressHex && finalScope === entry.scope)) {
+            setCryptoMeta(finalAddress, entry.chainId, finalScope, undefined);
+          }
+          throw err;
+        }
+
+        // Success → the entry no longer uses the old key, so clear it
+        // (unless old and new keys coincide).
+        if (hasAnnotation && !(finalAddress === entry.addressHex && finalScope === entry.scope)) {
           setCryptoMeta(entry.addressHex, entry.chainId, entry.scope, undefined);
-          setCryptoMeta(trimmed, entry.chainId, entry.scope, existingCrypto);
         }
       },
     [contacts],
@@ -442,7 +460,6 @@ export function useManagementViewModel(): ManagementViewModel {
     onRenameContactOnDevice,
     onDeleteContact,
     onDeleteAddress,
-    onRenameAddressLabelOnDevice,
     onEditAddressOnDevice,
   };
 }

@@ -7,28 +7,30 @@ describe("AddressRowMenu", () => {
     render(<AddressRowMenu />);
 
     expect(screen.getByTestId("contacts-management-address-actions")).toBeInTheDocument();
-    // The five menu items only exist in the DOM once the popover opens.
+    // The menu items only exist in the DOM once the popover opens.
     expect(screen.queryByTestId("contacts-management-address-menu-qr")).not.toBeInTheDocument();
   });
 
-  it("opens the popover with the 5 action items when the trigger is clicked", async () => {
+  it("opens the popover with the 4 action items when the trigger is clicked", async () => {
     const { user } = render(<AddressRowMenu />);
 
     await user.click(screen.getByTestId("contacts-management-address-actions"));
 
     expect(screen.getByTestId("contacts-management-address-menu-qr")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-menu-send")).toBeInTheDocument();
-    expect(screen.getByTestId("contacts-management-address-menu-rename")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-menu-edit")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-menu-delete")).toBeInTheDocument();
     expect(screen.getByText("See QR Code")).toBeInTheDocument();
     expect(screen.getByText("Send to this address")).toBeInTheDocument();
-    expect(screen.getByText("Rename address")).toBeInTheDocument();
     expect(screen.getByText("Edit address")).toBeInTheDocument();
     expect(screen.getByText("Delete address")).toBeInTheDocument();
+    // Rename is folded into Edit — no standalone item.
+    expect(
+      screen.queryByTestId("contacts-management-address-menu-rename"),
+    ).not.toBeInTheDocument();
   });
 
-  it("renders Rename between Send and Edit (matches Figma 13909:3063 order)", async () => {
+  it("renders the items in order (QR / Send / Edit / Delete)", async () => {
     const { user } = render(<AddressRowMenu />);
 
     await user.click(screen.getByTestId("contacts-management-address-actions"));
@@ -38,7 +40,6 @@ describe("AddressRowMenu", () => {
     expect(ids).toEqual([
       "contacts-management-address-menu-qr",
       "contacts-management-address-menu-send",
-      "contacts-management-address-menu-rename",
       "contacts-management-address-menu-edit",
       "contacts-management-address-menu-delete",
     ]);
@@ -69,19 +70,6 @@ describe("AddressRowMenu", () => {
     // Popover dismisses synchronously so the edit dialog the host
     // mounts in response doesn't render behind a stuck menu.
     expect(screen.queryByText("Edit address")).not.toBeInTheDocument();
-  });
-
-  it("fires the onRenameAddress callback when 'Rename address' is clicked", async () => {
-    const onRenameAddress = jest.fn();
-    const { user } = render(<AddressRowMenu onRenameAddress={onRenameAddress} />);
-
-    await user.click(screen.getByTestId("contacts-management-address-actions"));
-    await user.click(screen.getByTestId("contacts-management-address-menu-rename"));
-
-    expect(onRenameAddress).toHaveBeenCalledTimes(1);
-    // Popover dismisses synchronously so the rename dialog the host
-    // mounts in response doesn't render behind a stuck menu.
-    expect(screen.queryByText("Rename address")).not.toBeInTheDocument();
   });
 
   it("fires the onDeleteAddress callback when 'Delete address' is clicked", async () => {
