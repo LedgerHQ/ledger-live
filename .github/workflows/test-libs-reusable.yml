@@ -34,7 +34,7 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-public]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -143,7 +143,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
 
-    runs-on: ledger-live-4xlarge
+    runs-on: ledger-wallet-16cpu-public
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -197,9 +197,10 @@ jobs:
             ${{ github.workspace }}/summary-typecheck.txt
             ${{ github.workspace }}/summary-lint.txt
 
+
   test-docs:
     name: "Libraries Documentation Check"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-public
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
     steps:
@@ -229,11 +230,12 @@ jobs:
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
 
+
   report:
     needs: [test-docs, test-libraries, codecheck-libraries]
     name: "Libraries Test > Report"
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-public
     steps:
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
