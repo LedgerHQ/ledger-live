@@ -100,7 +100,8 @@ function isStringArray(value: unknown): value is string[] {
 
 function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOperation {
   return (
-    mode === "delegate" || mode === "undelegate" || mode === "redelegate" || mode === "claimReward"
+    typeof mode === "string" &&
+    ["delegate", "undelegate", "redelegate", "claimReward", "compoundReward"].includes(mode)
   );
 }
 
@@ -114,6 +115,7 @@ type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
   mode?: StakingOperation;
   valAddress?: string;
   valId?: string;
+  withdrawId?: string;
   dstValAddress?: string;
 };
 
@@ -121,7 +123,10 @@ function getDelegationIntentFields(
   delegationMode: StakingOperation | undefined,
   transaction: GenericTransaction,
 ): Partial<
-  Pick<GenericCoinFrameworkTransactionIntent, "mode" | "valAddress" | "valId" | "dstValAddress">
+  Pick<
+    GenericCoinFrameworkTransactionIntent,
+    "mode" | "valAddress" | "valId" | "dstValAddress" | "withdrawId"
+  >
 > {
   return {
     ...(delegationMode !== undefined && transaction.valAddress
@@ -521,6 +526,7 @@ export const buildOptimisticOperation = (
       type = "FINALIZE_UNSTAKE";
       break;
     case "claimReward":
+    case "compoundReward":
       type = "REWARD";
       break;
     default:

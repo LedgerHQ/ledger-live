@@ -28,6 +28,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewards";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { St, StepId, StepProps } from "./types";
+import { findDelegationByValidator } from "./utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 
 export type Data = {
@@ -107,14 +108,17 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     const { account, validatorAddress: validatorAddressFromParams } = params;
     invariant(isStakingAccount(account), "account must have delegations");
 
-    const validatorAddress =
-      validatorAddressFromParams ??
-      getDelegationWithMaximumReward(account.stakingResources.delegations).validatorAddress;
+    const delegations = account.stakingResources.delegations;
+    const delegation =
+      (validatorAddressFromParams &&
+        findDelegationByValidator(validatorAddressFromParams, delegations)) ||
+      getDelegationWithMaximumReward(delegations);
 
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "claimReward",
-      valAddress: validatorAddress,
+      valAddress: delegation.validatorAddress,
+      valId: delegation.validatorId,
       recipient: account.freshAddress,
     }) as unknown as EvmTransaction;
     return {

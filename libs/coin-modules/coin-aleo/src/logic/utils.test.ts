@@ -76,6 +76,23 @@ const mockedAleoConfig = jest.mocked(aleoConfig);
 const mockCurrency = getMockedCurrency();
 const mockConfig = getMockedConfig("mainnet");
 
+const supportedPublicTransactionModes = [
+  TRANSACTION_TYPE.TRANSFER_PUBLIC,
+  TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
+] as const;
+
+const supportedPrivateTransactionModes = [
+  TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+] as const;
+
+const gatedTokenTransactionModes = [
+  TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+  TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
+  TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+  TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+] as const;
+
 describe("getNetworkConfig", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -1145,6 +1162,14 @@ describe("getAvailableBalance", () => {
     },
   );
 
+  it.each(gatedTokenTransactionModes)("should throw for gated token mode %s", mode => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(() => getAvailableBalance(mockAccount, transaction)).toThrow(
+      `aleo: unsupported tx mode for balance calculation: ${mode}`,
+    );
+  });
+
   it("should throw for an unsupported transaction mode", () => {
     const unsupportedMode = "unsupported_mode";
     // @ts-expect-error - testing unsupported mode
@@ -1172,8 +1197,10 @@ describe("isPublicTransaction", () => {
   it.each([
     [true, TRANSACTION_TYPE.TRANSFER_PUBLIC],
     [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    [false, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
+    [false, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
     [false, "other_type" as never],
-  ])("should return %s for mode '%s'", (expected, mode) => {
+  ] as const)("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPublicTransaction(transaction)).toBe(expected);
@@ -1184,8 +1211,10 @@ describe("isPrivateTransaction", () => {
   it.each([
     [true, TRANSACTION_TYPE.TRANSFER_PRIVATE],
     [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    [false, TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
+    [false, TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
     [false, "other_type" as never],
-  ])("should return %s for mode '%s'", (expected, mode) => {
+  ] as const)("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPrivateTransaction(transaction)).toBe(expected);
@@ -1200,26 +1229,29 @@ describe("createTransactionIntent", () => {
     },
   });
 
-  it("should create a public transaction intent with base fields", () => {
-    const transaction = getMockedTransaction({
-      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-      amount: new BigNumber(500000),
-      recipient: "aleo1recipient",
-    });
+  it.each(supportedPublicTransactionModes)(
+    "should create a public transaction intent with base fields for %s",
+    mode => {
+      const transaction = getMockedTransaction({
+        mode,
+        amount: new BigNumber(500000),
+        recipient: "aleo1recipient",
+      });
 
-    const result = createTransactionIntent({ account: mockAccount, transaction });
+      const result = createTransactionIntent({ account: mockAccount, transaction });
 
-    expect(result).toEqual({
-      intentType: "transaction",
-      asset: {
-        type: "native",
-      },
-      type: transaction.mode,
-      amount: BigInt(transaction.amount.toString()),
-      recipient: transaction.recipient,
-      sender: mockAccount.freshAddress,
-    });
-  });
+      expect(result).toEqual({
+        intentType: "transaction",
+        asset: {
+          type: "native",
+        },
+        type: transaction.mode,
+        amount: BigInt(transaction.amount.toString()),
+        recipient: transaction.recipient,
+        sender: mockAccount.freshAddress,
+      });
+    },
+  );
 
   it("should include useAllAmount when set to true", () => {
     const transaction = getMockedTransaction({
@@ -1232,9 +1264,35 @@ describe("createTransactionIntent", () => {
     expect(result.useAllAmount).toBe(true);
   });
 
-  it("should include data with record for a private transaction", () => {
+  it.each(supportedPrivateTransactionModes)(
+    "should include data with record for a private transaction (%s)",
+    mode => {
+      const transaction = getMockedTransaction({
+        mode,
+        properties: {
+          amountRecordCommitments: [mockUnspentRecord1.commitment],
+          feeRecordCommitment: null,
+        },
+      });
+
+      const result = createTransactionIntent({ account: mockAccount, transaction });
+
+      expect(result).toMatchObject({
+        type: transaction.mode,
+        data: {
+          type: transaction.mode,
+          records: [mockUnspentRecord1.decryptedData],
+        },
+      });
+    },
+  );
+
+  it.each([
+    TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  ])("should not include private intent data for gated token mode %s", mode => {
     const transaction = getMockedTransaction({
-      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      mode,
       properties: {
         amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
@@ -1243,13 +1301,8 @@ describe("createTransactionIntent", () => {
 
     const result = createTransactionIntent({ account: mockAccount, transaction });
 
-    expect(result).toMatchObject({
-      type: transaction.mode,
-      data: {
-        type: transaction.mode,
-        records: [mockUnspentRecord1.decryptedData],
-      },
-    });
+    expect(result.type).toBe(mode);
+    expect("data" in result).toBe(false);
   });
 
   it("should throw when amountRecordCommitments is empty for a private transaction", () => {
@@ -1326,38 +1379,83 @@ describe("createFeeTransactionIntent", () => {
   const baseFee = new BigNumber(1000);
   const priorityFee = new BigNumber(0);
 
-  it("should create a fee_public intent for a public transaction", () => {
-    const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.TRANSFER_PUBLIC });
+  it.each(supportedPublicTransactionModes)(
+    "should create a fee_public intent for a public transaction (%s)",
+    mode => {
+      const transaction = getMockedTransaction({ mode });
 
-    const result = createFeeTransactionIntent({
-      account: mockPublicAccount,
-      transaction,
-      executionId,
-      baseFee,
-      priorityFee,
-      isFeeSponsored: false,
-    });
-
-    expect(result).toEqual({
-      intentType: "transaction",
-      asset: {
-        type: "native",
-      },
-      type: "fee_public",
-      amount: BigInt(1000),
-      recipient: transaction.recipient,
-      sender: mockPublicAccount.freshAddress,
-      data: {
-        type: "fee_public",
-        priorityFee: BigInt(0),
+      const result = createFeeTransactionIntent({
+        account: mockPublicAccount,
+        transaction,
         executionId,
-      },
-    });
-  });
+        baseFee,
+        priorityFee,
+        isFeeSponsored: false,
+      });
 
-  it("should create a fee_private intent for a private transaction with a feeRecordCommitment", () => {
+      expect(result).toEqual({
+        intentType: "transaction",
+        asset: {
+          type: "native",
+        },
+        type: "fee_public",
+        amount: BigInt(1000),
+        recipient: transaction.recipient,
+        sender: mockPublicAccount.freshAddress,
+        data: {
+          type: "fee_public",
+          priorityFee: BigInt(0),
+          executionId,
+        },
+      });
+    },
+  );
+
+  it.each(supportedPrivateTransactionModes)(
+    "should create a fee_private intent for a private transaction with a feeRecordCommitment (%s)",
+    mode => {
+      const transaction = getMockedTransaction({
+        mode,
+        properties: {
+          amountRecordCommitments: [],
+          feeRecordCommitment: mockUnspentRecord2.commitment,
+        },
+      });
+
+      const result = createFeeTransactionIntent({
+        account: mockPrivateAccount,
+        transaction,
+        executionId,
+        baseFee,
+        priorityFee,
+        isFeeSponsored: false,
+      });
+
+      expect(result).toEqual({
+        intentType: "transaction",
+        asset: {
+          type: "native",
+        },
+        type: "fee_private",
+        amount: BigInt(1000),
+        recipient: transaction.recipient,
+        sender: mockPrivateAccount.freshAddress,
+        data: {
+          type: "fee_private",
+          priorityFee: BigInt(0),
+          executionId,
+          record: mockUnspentRecord2.decryptedData,
+        },
+      });
+    },
+  );
+
+  it.each([
+    TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  ])("should create a fee_public intent for gated token private mode %s", mode => {
     const transaction = getMockedTransaction({
-      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      mode,
       properties: {
         amountRecordCommitments: [],
         feeRecordCommitment: mockUnspentRecord2.commitment,
@@ -1373,20 +1471,12 @@ describe("createFeeTransactionIntent", () => {
       isFeeSponsored: false,
     });
 
-    expect(result).toEqual({
-      intentType: "transaction",
-      asset: {
-        type: "native",
-      },
-      type: "fee_private",
-      amount: BigInt(1000),
-      recipient: transaction.recipient,
-      sender: mockPrivateAccount.freshAddress,
+    expect(result.type).toBe("fee_public");
+    expect(result).toMatchObject({
       data: {
-        type: "fee_private",
+        type: "fee_public",
         priorityFee: BigInt(0),
         executionId,
-        record: mockUnspentRecord2.decryptedData,
       },
     });
   });

@@ -1,54 +1,34 @@
 import React from "react";
-import { ScrollView } from "react-native";
-
 import { Flex, Text } from "@ledgerhq/native-ui";
-
+import { ScrollView } from "react-native";
+import { useTranslation } from "~/context/Locale";
+import { TrackScreen } from "~/analytics";
+import DesyncOverlay from "~/screens/SyncOnboarding/DesyncOverlay";
 import FirstStepSyncOnboarding from "../FirstStepSyncOnboarding";
 import SecondStepSyncOnboarding from "../SecondStepSyncOnboarding";
-
-import { TrackScreen } from "~/analytics";
-import { useTranslation } from "~/context/Locale";
-import DesyncOverlay from "~/screens/SyncOnboarding/DesyncOverlay";
-
 import { SEED_STATE } from "../../types";
+import {
+  useTwoStepSyncOnboardingCompanionViewModel,
+  type TwoStepSyncOnboardingCompanionViewProps,
+} from "./useTwoStepSyncOnboardingCompanionViewModel";
 import type { TwoStepSyncOnboardingCompanionProps } from "./types";
-import { useTwoStepSyncOnboardingCompanionViewModel } from "./useTwoStepSyncOnboardingCompanionViewModel";
 
-/**
- * Component representing the synchronous companion step, which polls the current device state
- * to display correctly information about the onboarding to the user
- *
- * The desync alert message overlay is rendered from this component to better handle relative position
- * with the vertical timeline.
- */
-
-const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompanionProps> = ({
-  navigation,
+const View = ({
   device,
-  updateHeaderOverlayDelay,
-  onShouldHeaderBeOverlaid,
-  onLostDevice,
+  navigation,
+  productName,
+  companionStep,
+  isPollingOn,
+  setIsPollingOn,
+  scrollViewRef,
+  analyticsSeedConfiguration,
   notifyEarlySecurityCheckShouldReset,
-}) => {
+  onLostDevice,
+  twoStepDesync,
+  handleFinishFirstStep,
+  handleSecondStepFinish,
+}: TwoStepSyncOnboardingCompanionViewProps) => {
   const { t } = useTranslation();
-
-  const {
-    productName,
-    scrollViewRef,
-    analyticsSeedConfiguration,
-    companionStep,
-    setCompanionStep,
-    isPollingOn,
-    setIsPollingOn,
-    twoStepDesync,
-    handleSecondStepFinish,
-  } = useTwoStepSyncOnboardingCompanionViewModel({
-    navigation,
-    device,
-    updateHeaderOverlayDelay,
-    onShouldHeaderBeOverlaid,
-    onLostDevice,
-  });
 
   return (
     <Flex position="relative" flex={1} px={6}>
@@ -70,7 +50,7 @@ const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompanionPro
             handleSeedGenerationDelay={twoStepDesync.handleSeedGenerationDelay}
             notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
             handlePollingError={twoStepDesync.handlePollingError}
-            handleFinishStep={(nextStep: SEED_STATE) => setCompanionStep(nextStep)}
+            handleFinishStep={handleFinishFirstStep}
             isPollingOn={isPollingOn}
             setIsPollingOn={setIsPollingOn}
             parentRef={scrollViewRef}
@@ -94,5 +74,9 @@ const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompanionPro
     </Flex>
   );
 };
+
+const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompanionProps> = props => (
+  <View {...useTwoStepSyncOnboardingCompanionViewModel(props)} />
+);
 
 export default TwoStepSyncOnboardingCompanion;

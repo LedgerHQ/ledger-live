@@ -39,6 +39,8 @@ type UseAddressValidationProps = Readonly<{
   parentAccount?: Account | null;
   currentAccountId?: string;
   recipientSupportsDomain?: boolean;
+  /** Debounce before bridge validation. Pass 0 for one-shot values (e.g. clipboard). */
+  debounceMs?: number;
 }>;
 
 type UseAddressValidationResult = {
@@ -54,6 +56,7 @@ export function useAddressValidation({
   parentAccount,
   currentAccountId,
   recipientSupportsDomain = false,
+  debounceMs,
 }: UseAddressValidationProps): UseAddressValidationResult {
   const [validationState, setValidationState] = useState<{
     status: AddressValidationStatus;
@@ -98,9 +101,10 @@ export function useAddressValidation({
     parentAccount: parentAccount ?? null,
     enabled: Boolean(
       addressForBridgeValidation &&
-      account &&
-      (!recipientSupportsDomain || ensResolution || !domainIsLoading),
+        account &&
+        (!recipientSupportsDomain || ensResolution || !domainIsLoading),
     ),
+    debounceMs,
   });
 
   const userAccountsForCurrency = useMemo(() => {

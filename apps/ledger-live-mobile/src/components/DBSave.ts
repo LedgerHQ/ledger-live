@@ -19,6 +19,7 @@ import {
   saveLargeMoverState,
   saveMarketState,
   saveMarketListConfig,
+  saveMarketBannerState,
   savePostOnboardingState,
   saveSettings,
   saveTrustchainState,
@@ -30,6 +31,7 @@ import { exportSelector as bleSelector } from "~/reducers/ble";
 import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDevices";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector, exportMarketListConfigSelector } from "~/reducers/market";
+import { marketBannerStoreSelector } from "~/reducers/marketBanner";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
@@ -176,6 +178,7 @@ const getPostOnboardingStateChanged = (a: State, b: State) =>
 
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
+const marketBannerNotEquals = (a: State, b: State) => a.marketBanner !== b.marketBanner;
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
 const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
@@ -267,6 +270,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: marketListConfigNotEquals,
     lense: exportMarketListConfigSelector,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.marketBanner,
+    save: saveMarketBannerState,
+    throttle: 500,
+    getChangesStats: marketBannerNotEquals,
+    lense: marketBannerStoreSelector,
   });
 
   useDBSaveEffect({

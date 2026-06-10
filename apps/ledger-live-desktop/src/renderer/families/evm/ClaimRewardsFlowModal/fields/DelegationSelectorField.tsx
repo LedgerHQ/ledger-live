@@ -18,7 +18,7 @@ import DelegateIcon from "~/renderer/icons/Delegate";
 import { findDelegationByValidator } from "../utils";
 
 function renderItem({ data }: { data: StakingMappedDelegation }) {
-  const name = data.validator?.name ?? data.validatorAddress;
+  const name = data.validator?.name ?? data.validatorName ?? data.validatorAddress;
   return (
     <Box key={name} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">

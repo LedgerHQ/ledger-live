@@ -52,5 +52,6 @@ export const UnbondingHeader = () => (
     <TableLine>
       <Trans i18nKey="delegation.completionDate" />
     </TableLine>
+    <TableLine />
   </HeaderWrapper>
 );

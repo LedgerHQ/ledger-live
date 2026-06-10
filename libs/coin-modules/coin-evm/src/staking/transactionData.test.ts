@@ -39,6 +39,22 @@ describe("buildStakingTransactionParams", () => {
     expect(value).toEqual(1000000000000000000n);
   });
 
+  it("encodes a Monad compoundReward by valId with a zero msg.value (nonpayable)", () => {
+    const intent = delegateIntent({
+      mode: "compoundReward",
+      amount: 0n,
+      valId: "42",
+      valAddress: "0xDisplayAddressIgnoredByEncoder",
+    });
+
+    const { to, data, value } = buildStakingTransactionParams(asCurrency("monad"), intent);
+
+    const iface = new ethers.Interface(getStakingABI("monad") as ethers.InterfaceAbi);
+    expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("compound", [42n]));
+    expect(to).toEqual("0x0000000000000000000000000000000000001000");
+    expect(value).toEqual(0n);
+  });
+
   it("throws when a Monad delegate intent has no valId", () => {
     expect(() => {
       buildStakingTransactionParams(asCurrency("monad"), delegateIntent({}));

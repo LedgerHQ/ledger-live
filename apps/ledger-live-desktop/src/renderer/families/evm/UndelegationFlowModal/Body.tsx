@@ -106,6 +106,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
       recipient: account.freshAddress,
       amount: delegation?.amount,
       useAllAmount: false,
+      valId: delegation?.validatorId,
     } as unknown as Partial<EvmTransaction>);
     return {
       account,

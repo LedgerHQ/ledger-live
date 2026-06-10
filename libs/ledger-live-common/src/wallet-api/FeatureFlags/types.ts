@@ -1,4 +1,4 @@
-import { Feature } from "@ledgerhq/types-live";
+import type { Feature } from "@shared/feature-flags";
 
 export type FeatureFlagsGetParams = {
   featureFlagIds: string[];

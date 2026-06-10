@@ -21,6 +21,7 @@ type Props<Name extends keyof ModalData> = {
   additional: React.ReactNode;
   footerLeft?: React.ReactNode;
   currency: string;
+  nextDisabled?: boolean;
 };
 
 export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
@@ -32,6 +33,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
   additional,
   footerLeft,
   currency,
+  nextDisabled,
 }: Props<Name>) {
   const dispatch = useDispatch();
   const onNextFn = useCallback(() => {
@@ -106,6 +108,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
                 ml={2}
                 primary
                 onClick={onNextFn}
+                disabled={nextDisabled}
                 data-testid="modal-continue-button"
                 name="continue"
               >

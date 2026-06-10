@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { Feature } from "@ledgerhq/types-live";
-import { useFeature } from "../../featureFlags";
+import type { Feature } from "@shared/feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import useEnv from "../../hooks/useEnv";
 
 export function useCurrenciesUnderFeatureFlag() {

@@ -36,7 +36,7 @@ export const SignatureScreen = () => {
     onDeviceConfirmationShown,
   } = useSignatureViewModel();
 
-  if (!account || !transaction) {
+  if (!account || !transaction || !request) {
     return null;
   }
 
@@ -45,7 +45,6 @@ export const SignatureScreen = () => {
       <div className="-mt-12 mb-24" data-testid="send-signature-step">
         <DeviceAction
           action={action}
-          // @ts-expect-error This type is not compatible with the one expected by the action
           request={request}
           Result={Result}
           onResult={onDeviceActionResult}

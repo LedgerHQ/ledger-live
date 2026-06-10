@@ -14,6 +14,10 @@ export const TRANSACTION_TYPE = {
   TRANSFER_PRIVATE: "transfer_private",
   CONVERT_PUBLIC_TO_PRIVATE: "convert_public_to_private",
   CONVERT_PRIVATE_TO_PUBLIC: "convert_private_to_public",
+  TRANSFER_TOKEN_PUBLIC: "transfer_token_public",
+  TRANSFER_TOKEN_PRIVATE: "transfer_token_private",
+  CONVERT_TOKEN_PRIVATE_TO_PUBLIC: "convert_token_private_to_public",
+  CONVERT_TOKEN_PUBLIC_TO_PRIVATE: "convert_token_public_to_private",
 } as const;
 
 // Indexes based on aleo credits program args

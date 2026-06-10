@@ -1,0 +1,73 @@
+import React from "react";
+import { Trans } from "react-i18next";
+import Box from "~/renderer/components/Box";
+import ToggleButton from "~/renderer/components/ToggleButton";
+import InfoCircle from "~/renderer/icons/InfoCircle";
+import Text from "~/renderer/components/Text";
+import Popover from "~/renderer/components/Popover";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+
+const options = [
+  {
+    value: "compoundReward",
+    label: <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.compound" />,
+  },
+  {
+    value: "claimReward",
+    label: <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.claim" />,
+  },
+];
+
+export default function ModeSelectorField({
+  mode,
+  onChange,
+}: {
+  mode: GenericTransaction["mode"];
+  onChange: (r: string) => void;
+}) {
+  return (
+    <Box
+      style={{
+        width: 300,
+      }}
+      alignSelf="center"
+    >
+      <ToggleButton value={mode ?? "claimReward"} options={options} onChange={onChange} />
+      <Box horizontal alignItems="center" justifyContent="center" color="neutral.c70">
+        <Popover
+          position="right"
+          content={
+            <Box px={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
+                <Text ff="Inter|SemiBold" fontSize={4} color="primary.c80">
+                  <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.compound" />
+                </Text>
+                <Text fontSize={3} textAlign="left" color="neutral.c80">
+                  <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.compoundDescription" />
+                </Text>
+              </Box>
+
+              <Box alignItems="start" justifyContent="start" my={2}>
+                <Text ff="Inter|SemiBold" fontSize={4} color="primary.c80">
+                  <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.claim" />
+                </Text>
+                <Text fontSize={3} textAlign="left" color="neutral.c80">
+                  <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.claimDescription" />
+                </Text>
+              </Box>
+            </Box>
+          }
+        >
+          <Box horizontal alignItems="center" p={2} justifyContent="center">
+            <Text ff="Inter|SemiBold" fontSize={4}>
+              <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.compoundOrClaim" />
+            </Text>
+            <Box ml={1}>
+              <InfoCircle size={16} />
+            </Box>
+          </Box>
+        </Popover>
+      </Box>
+    </Box>
+  );
+}

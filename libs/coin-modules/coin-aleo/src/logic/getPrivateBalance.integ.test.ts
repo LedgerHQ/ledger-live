@@ -3,8 +3,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
+import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
 import { testnetViewKey, testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
-import { TRANSACTION_TYPE } from "../constants";
 import { getPrivateBalance } from "./getPrivateBalance";
 
 setupCalClientStore();
@@ -20,12 +20,7 @@ describe("getPrivateBalance", () => {
         node: getEnv("ALEO_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
-      feeByTransactionType: {
-        [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
-        [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 2308,
-        [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 17972,
-        [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
-      },
+      feeByTransactionType: mockFeeByTransactionType,
       feeSafetyMultiplier: 1,
       isFeeSponsored: true,
       enableTokens: false,

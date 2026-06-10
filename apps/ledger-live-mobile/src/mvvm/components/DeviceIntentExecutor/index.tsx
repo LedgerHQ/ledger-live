@@ -10,11 +10,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
+import { OverrideDeviceIntentExecutorHeader } from "./components/OverrideDeviceIntentExecutorHeader";
 import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM, {
   InitializerConfig,
 } from "./DeviceContextInitializerComponentLWM";
 import { SourceFlowProvider, type SourceFlow } from "./utils/SourceFlowContext";
+import { DeviceIntentExecutorHeaderContext } from "./utils/DeviceIntentExecutorHeaderContext";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
@@ -24,6 +26,7 @@ export {
 } from "./DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
 export type { SourceFlow } from "./utils/SourceFlowContext";
+export { OverrideDeviceIntentExecutorHeader };
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,
@@ -53,7 +56,8 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { sourceFlow, wrappedProps } = useDeviceIntentExecutorLWMViewModel(props);
+  const { sourceFlow, wrappedProps, hasHeaderOverride, headerContextValue } =
+    useDeviceIntentExecutorLWMViewModel(props);
 
   return (
     <QueuedDrawerBottomSheet
@@ -64,14 +68,18 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
       enableDynamicSizing
     >
       <SourceFlowProvider value={sourceFlow}>
-        <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
-          {wrappedProps.cancellableUI && <BottomSheetHeader density="expanded" />}
-          <DeviceIntentExecutor
-            {...wrappedProps}
-            platformConfig={platformConfig}
-            initializerConfig={wrappedProps.initializerConfig}
-          />
-        </BottomSheetView>
+        <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
+          <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
+            {wrappedProps.cancellableUI && !hasHeaderOverride && (
+              <BottomSheetHeader density="expanded" />
+            )}
+            <DeviceIntentExecutor
+              {...wrappedProps}
+              platformConfig={platformConfig}
+              initializerConfig={wrappedProps.initializerConfig}
+            />
+          </BottomSheetView>
+        </DeviceIntentExecutorHeaderContext.Provider>
       </SourceFlowProvider>
     </QueuedDrawerBottomSheet>
   );

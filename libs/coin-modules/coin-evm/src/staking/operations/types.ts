@@ -4,14 +4,16 @@ export type OperationParams = {
   valId?: string | undefined;
   dstValAddress?: string | undefined;
   delegator?: string | undefined;
+  withdrawId?: string | undefined;
 };
 
 export type OperationParamsWithValAddress = OperationParams & {
   valAddress: string;
 };
 
-export type OperationParamsWithValId = OperationParams & {
+export type OperationParamsMonad = OperationParams & {
   valId: string;
+  withdrawId?: string | undefined;
 };
 
 export type OperationFn<P extends OperationParams = OperationParams> = (

@@ -1,6 +1,7 @@
 import React from "react";
 import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
+import { track } from "~/analytics";
 import { MarketBannerTest, MOCK_MARKET_PERFORMERS } from "./shared";
 
 const mockNavigate = jest.fn();
@@ -93,6 +94,51 @@ describe("MarketBanner Integration Tests", () => {
       });
 
       expect(await screen.findByTestId("market-banner-container")).toBeVisible();
+    });
+  });
+
+  describe("Filter trigger", () => {
+    const renderWithAssetDiscoverability = (assetDiscoverability: boolean) => {
+      server.use(
+        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
+          HttpResponse.json(MOCK_MARKET_PERFORMERS),
+        ),
+      );
+
+      return renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { marketBanner: true, assetDiscoverability } },
+        }),
+      });
+    };
+
+    it("should not render the filter button when assetDiscoverability is disabled", async () => {
+      renderWithAssetDiscoverability(false);
+
+      expect(await screen.findByTestId("market-banner-container")).toBeVisible();
+      expect(screen.queryByTestId("market-banner-filter-button")).toBeNull();
+    });
+
+    it("should render the filter button with the default 'Trending' label", async () => {
+      renderWithAssetDiscoverability(true);
+
+      expect(await screen.findByTestId("market-banner-filter-button")).toBeVisible();
+      expect(screen.getByText("Trending")).toBeVisible();
+    });
+
+    it("should track the filter button when pressed", async () => {
+      const { user } = renderWithAssetDiscoverability(true);
+
+      const filterButton = await screen.findByTestId("market-banner-filter-button");
+      await user.press(filterButton);
+
+      await waitFor(() => {
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "Market Banner Filter",
+          page: "Wallet",
+          banner: "Market Banner",
+        });
+      });
     });
   });
 
@@ -198,7 +244,7 @@ describe("MarketBanner Integration Tests", () => {
         }),
       });
 
-      expect(await screen.findByText(/Explore the market/i)).toBeVisible();
+      expect(await screen.findByText("Market")).toBeVisible();
     });
   });
 
@@ -268,7 +314,7 @@ describe("MarketBanner Integration Tests", () => {
         }),
       });
 
-      const sectionTitle = await screen.findByText(/Explore the market/i);
+      const sectionTitle = await screen.findByText("Market");
       await user.press(sectionTitle);
 
       await waitFor(() => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useTheme, type LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import MarketInsightDefinitionSheet from "LLM/components/MarketInsightDefinitionSheet";
 import MarketInsightErrorCard from "LLM/components/MarketInsightErrorCard";
 import type { AltcoinSeasonViewProps } from "./types";
@@ -23,6 +23,7 @@ export function AltcoinSeasonView({
   width,
 }: AltcoinSeasonViewProps) {
   const { t } = useTranslation();
+  const { theme } = useTheme();
 
   if (isLoading) {
     return (
@@ -54,7 +55,11 @@ export function AltcoinSeasonView({
         onPress={handleOpenDrawer}
         testID="altcoin-season-card"
         lx={cardStyle}
-        style={{ width, height: ALTCOIN_SEASON_CARD_HEIGHT }}
+        style={({ pressed }) => ({
+          width,
+          height: ALTCOIN_SEASON_CARD_HEIGHT,
+          backgroundColor: pressed ? theme.colors.bg.mutedPressed : theme.colors.bg.muted,
+        })}
       >
         <Box lx={contentStyle}>
           <Box lx={{ flexShrink: 1 }}>
@@ -82,7 +87,6 @@ export function AltcoinSeasonView({
 }
 
 const cardStyle: LumenViewStyle = {
-  backgroundColor: "muted",
   borderRadius: "md",
   padding: "s12",
   justifyContent: "center",

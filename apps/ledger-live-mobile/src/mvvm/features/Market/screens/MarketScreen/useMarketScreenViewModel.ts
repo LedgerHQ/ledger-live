@@ -3,7 +3,7 @@ import { useRoute, type RouteProp } from "@react-navigation/native";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import type { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
-import { parseMarketListCategory } from "LLM/features/Market/utils/marketListCategory";
+import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { useMarketAssetPress } from "./useMarketAssetPress";
 import { useMarketAssets } from "./useMarketAssets";
 import { type MarketCategories, useMarketCategories } from "./useMarketCategories";

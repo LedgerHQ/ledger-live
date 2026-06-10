@@ -5,12 +5,12 @@
 import { renderHook } from "@testing-library/react";
 import { LiveAppManifest } from "../platform/types";
 import { INTERNAL_APP_IDS } from "../wallet-api/constants";
-import { useFeature } from "../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useInternalAppIds } from "./useInternalAppIds";
 
 import { useShowProviderLoadingTransition } from "./useShowProviderLoadingTransition";
 
-jest.mock("../featureFlags", () => ({
+jest.mock("@features/platform-feature-flags", () => ({
   useFeature: jest.fn(),
 }));
 jest.mock("../wallet-api/constants", () => ({

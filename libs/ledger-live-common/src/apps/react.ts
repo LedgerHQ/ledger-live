@@ -1,4 +1,4 @@
-import { useState, useReducer, useEffect, useMemo } from "react";
+import { useState, useReducer, useEffect, useMemo, useCallback } from "react";
 import type { Exec, State, Action, ListAppsResult } from "./types";
 import type { AppType, FilterOptions, SortOptions } from "./filtering";
 import { useSortedFilteredApps } from "./filtering";
@@ -11,7 +11,8 @@ import {
 } from "./logic";
 import { runAppOp } from "./runner";
 import { App } from "@ledgerhq/types-live";
-import { useFeatureFlags } from "../featureFlags";
+import { useFeatureFlags } from "@features/platform-feature-flags";
+import { isValidFeatureId, type Feature, type FeatureId } from "@shared/feature-flags";
 
 type UseAppsRunnerResult = [State, (arg0: Action) => void];
 // use for React apps. support dynamic change of the state.
@@ -86,7 +87,9 @@ export function useAppsSections(state: State, opts: AppsSectionsOpts): AppsSecti
     () => apps.filter(({ name }) => installed.some(i => i.name === name && !i.updated)),
     [apps, installed],
   );
-  const { getFeature, isFeature } = useFeatureFlags();
+  const flags = useFeatureFlags();
+  const getFeature = useCallback((id: FeatureId): Feature | null => flags[id] ?? null, [flags]);
+  const isFeature = isValidFeatureId;
   const update = appsUpdating.length > 0 ? appsUpdating : updatableAppList;
   const filterParam: FilterOptions = useMemo(
     () => ({

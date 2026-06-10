@@ -33,5 +33,13 @@ export const buildTransactionParams = (
     throw new Error(`${currencyId} staking requires valId`);
   }
 
+  if (
+    params.withdrawId === undefined &&
+    currencyId === "monad" &&
+    transactionType === "undelegate"
+  ) {
+    throw new Error(`${currencyId} undelegate requires withdrawId`);
+  }
+
   return operation(params);
 };

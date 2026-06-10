@@ -18,7 +18,8 @@ import type {
 } from "@ledgerhq/cryptoassets/cal-client/state-manager/types";
 import { Subject } from "rxjs";
 import { StateDB } from "../hooks/useDBRaw";
-import { useFeatureFlags } from "../featureFlags/FeatureFlagsContext";
+import { useFeatureFlags } from "@features/platform-feature-flags";
+import type { Feature, FeatureId } from "@shared/feature-flags";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
@@ -313,7 +314,8 @@ export function useWalletAPIServer({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<ThunkDispatch<any, any, UnknownAction>>();
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
-  const { getFeature } = useFeatureFlags();
+  const flags = useFeatureFlags();
+  const getFeature = useCallback((id: FeatureId): Feature | null => flags[id] ?? null, [flags]);
   const permission = usePermission(manifest);
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);

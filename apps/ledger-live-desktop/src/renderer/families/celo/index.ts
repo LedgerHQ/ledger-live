@@ -6,6 +6,7 @@ import AccountSubHeader from "./AccountSubHeader";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountFooter from "./AccountFooter";
 import sendRecipientFields from "./SendRecipientFields";
+import SendStepAmount from "./SendStepAmount";
 import { CeloFamily } from "./types";
 
 const family: CeloFamily = {
@@ -16,6 +17,7 @@ const family: CeloFamily = {
   AccountSubHeader,
   AccountBalanceSummaryFooter,
   sendRecipientFields,
+  SendStepAmount,
   AccountFooter,
 };
 

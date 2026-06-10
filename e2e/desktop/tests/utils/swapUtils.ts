@@ -20,19 +20,11 @@ import BigNumber from "bignumber.js";
 import { launchSpeculos, cleanSpeculos } from "./speculosUtils";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
-  let originalBroadcastValue: string | undefined;
-  test.beforeAll(async () => {
-    originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
-    process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-    if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-  });
-  test.afterAll(async () => {
-    delete process.env.SWAP_DISABLE_APPS_INSTALL;
-    if (originalBroadcastValue !== undefined) {
-      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
-    } else {
-      delete process.env.DISABLE_TRANSACTION_BROADCAST;
-    }
+  test.use({
+    env: {
+      SWAP_DISABLE_APPS_INSTALL: "true",
+      ...(disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {}),
+    },
   });
 }
 

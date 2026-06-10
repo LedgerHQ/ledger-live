@@ -4,6 +4,7 @@ import { Drawer } from "tests/component/drawer.component";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
+import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
@@ -57,7 +58,8 @@ export class MainNavigationPage extends AppPage {
       },
       accounts: {
         expectActive: true,
-        expectedPath: /^\/cryptos(?:\/|$|\?)/,
+        // Asset Section ON routes to /cryptos; OFF redirects to the legacy /accounts page.
+        expectedPath: isAssetSectionEnabled ? /^\/cryptos(?:\/|$|\?)/ : /^\/accounts(?:\/|$|\?)/,
         selector: this.accountsSideBarButton,
       },
       swap: {

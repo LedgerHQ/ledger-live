@@ -78,24 +78,6 @@
         "eslint/no-console": "off",
         "typescript/no-explicit-any": "warn"
       }
-    },
-    {
-      "files": ["**/bot-specs.ts"],
-      "rules": {
-        "unicorn/no-empty-file": "off"
-      }
-    },
-    {
-      "files": [
-        "coin-stellar/src/globals.d.ts",
-        "**/coin-stellar/src/globals.d.ts",
-        "src/globals.d.ts"
-      ],
-      "rules": {
-        "eslint/no-var": "off",
-        "unicorn/require-module-specifiers": "off",
-        "typescript/no-explicit-any": "off"
-      }
     }
   ]
 }

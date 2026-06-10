@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useFeature } from "../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { ModularDrawerLocation } from "./enums";
 
 type ModularDrawerFeatureFlagKey = "lldModularDrawer" | "llmModularDrawer";

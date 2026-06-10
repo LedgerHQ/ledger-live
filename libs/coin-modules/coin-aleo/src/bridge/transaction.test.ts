@@ -25,6 +25,18 @@ describe("transaction", () => {
     amountRecordCommitments: [],
     feeRecordCommitment: null,
   };
+  const privateModesWithProperties = [
+    TRANSACTION_TYPE.TRANSFER_PRIVATE,
+    TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+    TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  ] as const;
+  const publicModesWithoutProperties = [
+    TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
+    TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+    TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
+  ] as const;
 
   it("should format transaction as a human-readable send summary", () => {
     const result = formatTransaction(mockedTransaction, mockedAccount);
@@ -46,7 +58,7 @@ describe("transaction", () => {
     expect(result).toEqual(mockedTransactionRaw);
   });
 
-  it.each([TRANSACTION_TYPE.TRANSFER_PRIVATE, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC])(
+  it.each(privateModesWithProperties)(
     "should preserve properties when deserializing %s from raw",
     mode => {
       const raw = getMockedTransactionRaw({ mode, properties: fullPrivateProperties });
@@ -57,7 +69,7 @@ describe("transaction", () => {
     },
   );
 
-  it.each([TRANSACTION_TYPE.TRANSFER_PRIVATE, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC])(
+  it.each(privateModesWithProperties)(
     "should preserve null commitments when deserializing %s from raw",
     mode => {
       const raw = getMockedTransactionRaw({ mode, properties: emptyPrivateProperties });
@@ -67,7 +79,7 @@ describe("transaction", () => {
     },
   );
 
-  it.each([TRANSACTION_TYPE.TRANSFER_PRIVATE, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC])(
+  it.each(privateModesWithProperties)(
     "should preserve properties when serializing %s to raw",
     mode => {
       const transaction = getMockedTransaction({ mode, properties: fullPrivateProperties });
@@ -78,7 +90,7 @@ describe("transaction", () => {
     },
   );
 
-  it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE])(
+  it.each(publicModesWithoutProperties)(
     "should not include properties when deserializing %s from raw",
     mode => {
       const raw = getMockedTransactionRaw({ mode });
@@ -88,7 +100,7 @@ describe("transaction", () => {
     },
   );
 
-  it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE])(
+  it.each(publicModesWithoutProperties)(
     "should not include properties when serializing %s to raw",
     mode => {
       const transaction = getMockedTransaction({ mode });

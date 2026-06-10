@@ -11,6 +11,12 @@ export interface HederaConfig {
    */
   useNetworkTimestamp: boolean;
   networkType: "mainnet" | "testnet";
+  sdkClientOptions?: {
+    maxAttempts?: number;
+    requestTimeout?: number;
+    minBackoff?: number;
+    maxBackoff?: number;
+  };
   apiUrls: {
     mirrorNode: string;
     hgraph: string;

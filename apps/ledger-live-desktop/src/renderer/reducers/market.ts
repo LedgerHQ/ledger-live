@@ -2,10 +2,13 @@ import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 
+export type MarketListCategory = "all" | "starred" | "stocks";
+
 export type MarketState = {
   marketParams: MarketListRequestParams;
   currentPage: number;
   hideTransactionsOnChart: boolean;
+  category: MarketListCategory;
 };
 
 const initialState: MarketState = {
@@ -21,6 +24,7 @@ const initialState: MarketState = {
   },
   currentPage: 1,
   hideTransactionsOnChart: false,
+  category: "all",
 };
 
 type HandlersPayloads = {
@@ -29,6 +33,7 @@ type HandlersPayloads = {
   MARKET_SET_VALUES: MarketListRequestParams;
   MARKET_SET_CURRENT_PAGE: number;
   MARKET_SET_HIDE_TRANSACTIONS_ON_CHART: boolean;
+  MARKET_SET_CATEGORY: MarketListCategory;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<MarketState, HandlersPayloads, PreciseKey>;
@@ -52,10 +57,15 @@ const handlers: MarketHandlers = {
     ...state,
     hideTransactionsOnChart: payload,
   }),
+  MARKET_SET_CATEGORY: (state: MarketState, { payload }: { payload: MarketListCategory }) => ({
+    ...state,
+    category: payload,
+  }),
 
   MARKET_IMPORT_STATE: (state, { payload }: { payload: MarketState }) => ({
     ...state,
     hideTransactionsOnChart: payload.hideTransactionsOnChart ?? state.hideTransactionsOnChart,
+    category: payload.category ?? state.category,
     marketParams: {
       ...state.marketParams,
       range: payload.marketParams.range,
@@ -70,6 +80,7 @@ const handlers: MarketHandlers = {
 export const marketParamsSelector = (state: { market: MarketState }) => state.market.marketParams;
 export const marketCurrentPageSelector = (state: { market: MarketState }) =>
   state.market.currentPage;
+export const marketCategorySelector = (state: { market: MarketState }) => state.market.category;
 
 export const marketStoreSelector = (state: { market: MarketState }) => state.market;
 

@@ -1,4 +1,4 @@
-import { useFeature } from "../../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 
 /**
  * This hook is used to retrieve the configuration for the Swap Live App.

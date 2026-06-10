@@ -1,7 +1,7 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
@@ -18,14 +18,30 @@ type ExtraProps = Readonly<{
   operation: Operation;
 }>;
 
-// The default operation amount resolves to the fee for STAKE ops, not the staked principal.
+// getOperationAmountNumber drives the Operation Details header amount, but it returns the fee for
+// stake-family ops (STAKE/UNSTAKE) and 0 for the uncategorized FINALIZE_UNSTAKE — so the principal
+// never reaches the header. Surface it here as an extra section, matching what the list row's
+// amountCell shows.
+const stakingAmountLabel: Partial<Record<OperationType, { i18nKey: string; testID: string }>> = {
+  STAKE: { i18nKey: "operationDetails.extra.stakedAmount", testID: "operationDetails-stakedAmount" },
+  UNSTAKE: {
+    i18nKey: "operationDetails.extra.unstakedAmount",
+    testID: "operationDetails-unstakedAmount",
+  },
+  FINALIZE_UNSTAKE: {
+    i18nKey: "operationDetails.extra.withdrawnAmount",
+    testID: "operationDetails-withdrawnAmount",
+  },
+};
+
 function OperationDetailsExtra({ account, operation }: ExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
   const unit = useAccountUnit(account);
 
-  if (operation.type !== "STAKE") {
+  const label = stakingAmountLabel[operation.type];
+  if (!label) {
     return null;
   }
 
@@ -37,13 +53,7 @@ function OperationDetailsExtra({ account, operation }: ExtraProps) {
     locale,
   });
 
-  return (
-    <Section
-      title={t("operationDetails.extra.stakedAmount")}
-      value={formattedAmount}
-      testID="operationDetails-stakedAmount"
-    />
-  );
+  return <Section title={t(label.i18nKey)} value={formattedAmount} testID={label.testID} />;
 }
 
 type AmountCellProps = Readonly<{
@@ -52,29 +62,36 @@ type AmountCellProps = Readonly<{
   unit: Unit;
 }>;
 
-const StakeAmountCell = ({ operation, currency, unit }: AmountCellProps) => {
-  const amount = new BigNumber(operation.value);
-  return amount.isZero() ? null : (
-    <>
-      <Text numberOfLines={1} color="neutral.c100" variant="body" fontWeight="semiBold">
-        <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign={false} />
-      </Text>
-      <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
-        <CounterValue
-          showCode
-          date={operation.date}
-          currency={currency}
-          value={amount}
-          alwaysShowSign={false}
-          withPlaceholder
-        />
-      </Text>
-    </>
-  );
+// STAKE/UNSTAKE show the principal with no sign (the row renders the fee separately);
+// FINALIZE_UNSTAKE returns funds to the spendable balance, so it shows a signed "+amount".
+const makeStakingAmountCell = (alwaysShowSign: boolean) => {
+  const StakingAmountCell = ({ operation, currency, unit }: AmountCellProps) => {
+    const amount = new BigNumber(operation.value);
+    return amount.isZero() ? null : (
+      <>
+        <Text numberOfLines={1} color="neutral.c100" variant="body" fontWeight="semiBold">
+          <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign={alwaysShowSign} />
+        </Text>
+        <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
+          <CounterValue
+            showCode
+            date={operation.date}
+            currency={currency}
+            value={amount}
+            alwaysShowSign={alwaysShowSign}
+            withPlaceholder
+          />
+        </Text>
+      </>
+    );
+  };
+  return StakingAmountCell;
 };
 
 const amountCell = {
-  STAKE: StakeAmountCell,
+  STAKE: makeStakingAmountCell(false),
+  UNSTAKE: makeStakingAmountCell(false),
+  FINALIZE_UNSTAKE: makeStakingAmountCell(true),
 };
 
 export default {

@@ -62,7 +62,7 @@ const detoxAllure2AdapterOptions = {
   onError: "warn",
 };
 
-const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq"].join("|");
+const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq", "@shared", "@features", "@domain"].join("|");
 
 const config = {
   rootDir: ".",

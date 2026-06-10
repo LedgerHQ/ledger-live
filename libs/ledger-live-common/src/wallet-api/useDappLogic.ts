@@ -19,6 +19,7 @@ import { getTxType } from "./utils/txTrackingHelper";
 import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { withLiveAppContext } from "./blindSigningContext";
 
 type MessageId = number | string | null;
 
@@ -518,19 +519,23 @@ export function useDappLogic({
                 : undefined;
               tracking.dappSendTransactionRequested(manifest, trackingData);
 
-              const signedTransaction = await new Promise<SignedOperation>((resolve, reject) =>
-                uiHook["transaction.sign"]({
-                  account: currentAccount,
-                  parentAccount: undefined,
-                  signFlowInfos,
-                  options,
-                  onSuccess: signedOperation => {
-                    resolve(signedOperation);
-                  },
-                  onError: error => {
-                    reject(error);
-                  },
-                }),
+              const signedTransaction = await withLiveAppContext(
+                manifest,
+                () =>
+                  new Promise<SignedOperation>((resolve, reject) =>
+                    uiHook["transaction.sign"]({
+                      account: currentAccount,
+                      parentAccount: undefined,
+                      signFlowInfos,
+                      options,
+                      onSuccess: signedOperation => {
+                        resolve(signedOperation);
+                      },
+                      onError: error => {
+                        reject(error);
+                      },
+                    }),
+                  ),
               );
 
               const bridge = await getAccountBridge(currentAccount, undefined);
@@ -608,17 +613,21 @@ export function useDappLogic({
             );
 
             const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
-            const signedMessage = await new Promise<string>((resolve, reject) =>
-              uiHook["message.sign"]({
-                account: currentAccount,
-                message: formattedMessage,
-                options,
-                onSuccess: resolve,
-                onError: reject,
-                onCancel: () => {
-                  reject("Canceled by user");
-                },
-              }),
+            const signedMessage = await withLiveAppContext(
+              manifest,
+              () =>
+                new Promise<string>((resolve, reject) =>
+                  uiHook["message.sign"]({
+                    account: currentAccount,
+                    message: formattedMessage,
+                    options,
+                    onSuccess: resolve,
+                    onError: reject,
+                    onCancel: () => {
+                      reject("Canceled by user");
+                    },
+                  }),
+                ),
             );
 
             tracking.dappPersonalSignSuccess(manifest);
@@ -655,17 +664,21 @@ export function useDappLogic({
             );
 
             const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
-            const signedMessage = await new Promise<string>((resolve, reject) =>
-              uiHook["message.sign"]({
-                account: currentAccount,
-                message: formattedMessage,
-                options,
-                onSuccess: resolve,
-                onError: reject,
-                onCancel: () => {
-                  reject("Canceled by user");
-                },
-              }),
+            const signedMessage = await withLiveAppContext(
+              manifest,
+              () =>
+                new Promise<string>((resolve, reject) =>
+                  uiHook["message.sign"]({
+                    account: currentAccount,
+                    message: formattedMessage,
+                    options,
+                    onSuccess: resolve,
+                    onError: reject,
+                    onCancel: () => {
+                      reject("Canceled by user");
+                    },
+                  }),
+                ),
             );
 
             tracking.dappSignTypedDataSuccess(manifest);

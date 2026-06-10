@@ -45,6 +45,14 @@ export type AleoTransactionIntentData =
       records: AleoDecryptedRecordResponse[];
     }
   | {
+      type: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
+      records: AleoDecryptedRecordResponse[];
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
+      records: AleoDecryptedRecordResponse[];
+    }
+  | {
       type: "fee_public";
       priorityFee?: bigint;
       executionId: string;

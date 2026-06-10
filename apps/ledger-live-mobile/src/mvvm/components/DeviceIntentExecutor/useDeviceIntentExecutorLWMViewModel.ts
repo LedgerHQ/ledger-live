@@ -15,6 +15,8 @@ import {
 } from "./utils/trackDeviceIntent";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
+import { useDeviceIntentExecutorHeaderOverrideRequests } from "./hooks/useDeviceIntentExecutorHeaderOverrideRequests";
+import type { DeviceIntentExecutorHeaderContextValue } from "./utils/DeviceIntentExecutorHeaderContext";
 import type { SourceFlow } from "./utils/SourceFlowContext";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
@@ -30,6 +32,8 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 export type DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> = {
   sourceFlow: SourceFlow;
   wrappedProps: Props<JobState, Input, ExtraProps>;
+  hasHeaderOverride: boolean;
+  headerContextValue: DeviceIntentExecutorHeaderContextValue;
 };
 
 type ConnectionTrackingInfo = {
@@ -52,6 +56,7 @@ export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>
   const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);
   const closeTrackedRef = useRef(false);
+  const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
 
   useEffect(() => {
     if (!enabled) {
@@ -93,6 +98,8 @@ export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>
 
   return {
     sourceFlow,
+    hasHeaderOverride,
+    headerContextValue,
     wrappedProps: {
       ...props,
       onExecutorStateChanged: wrappedOnExecutorStateChanged,

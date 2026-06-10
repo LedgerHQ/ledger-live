@@ -1,8 +1,5 @@
-import type {
-  Feature_OnboardingIgnoredOSUpdates,
-  Platform,
-  IgnoredOSUpdates,
-} from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
+import type { Platform, IgnoredOSUpdates } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 
 /**
@@ -14,7 +11,7 @@ import type { DeviceModelId } from "@ledgerhq/types-devices";
  * @returns Array of firmware versions that should be ignored for the given device model and platform
  */
 export const getIgnoredOSUpdatesForDeviceModelAndPlatform = (
-  ignoredOSUpdatesConfig: Feature_OnboardingIgnoredOSUpdates["params"] | undefined,
+  ignoredOSUpdatesConfig: Features["onboardingIgnoredOsUpdates"]["params"] | undefined,
   deviceModelId: DeviceModelId,
   platform: Platform,
 ): IgnoredOSUpdates => {

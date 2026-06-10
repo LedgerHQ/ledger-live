@@ -1,39 +1,13 @@
 import Tezos, { TezosCurves, type Curve } from "@ledgerhq/hw-app-tezos";
 import Transport from "@ledgerhq/hw-transport";
-import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
+import { convertSecp256k1DERToRaw, normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CoinFrameworkSigner } from "../../types";
 import { CreateSigner, executeWithSigner } from "../../../setup";
 
-/**
- * Converts a DER-encoded secp256k1 ECDSA signature (returned by the Tezos Ledger app)
- * to the raw 64-byte r||s format expected by the Tezos protocol.
- * Format: 0x30/0x31 <totalLen> 0x02 <rLen> <r_bytes> 0x02 <sLen> <s_bytes>
- */
-export function convertSecp256k1DERToRaw(derHex: string): string {
-  const buf = Buffer.from(derHex, "hex");
-  if (buf.length === 64) return derHex; // already raw 64-byte format
-  const rLen = buf[3];
-  const rStart = 4;
-  const sLenIdx = rStart + rLen + 1;
-  const sLen = buf[sLenIdx];
-  const sStart = sLenIdx + 1;
-  return Buffer.concat([
-    normalizeTo32Bytes(buf.slice(rStart, rStart + rLen)),
-    normalizeTo32Bytes(buf.slice(sStart, sStart + sLen)),
-  ]).toString("hex");
-}
-
-export function normalizeTo32Bytes(bytes: Buffer): Buffer {
-  if (bytes.length === 33 && bytes[0] === 0x00) return bytes.slice(1);
-  if (bytes.length < 32) {
-    const padded = Buffer.alloc(32, 0);
-    bytes.copy(padded, 32 - bytes.length);
-    return padded;
-  }
-  return bytes;
-}
+// Re-exported from coin-tezos (single source of truth) so existing importers keep working.
+export { convertSecp256k1DERToRaw, normalizeTo32Bytes } from "@ledgerhq/coin-tezos/utils";
 
 function curveForDerivationMode(derivationMode?: string): Curve {
   return derivationMode === "tezosSecp256k1" ? TezosCurves.SECP256K1 : TezosCurves.ED25519;

@@ -1,4 +1,4 @@
-import { Feature, FeatureId } from "@ledgerhq/types-live";
+import type { Feature, FeatureId } from "@shared/feature-flags";
 import { LiveAppManifest } from "../../platform/types";
 
 export type GetFeatureFn = (featureId: FeatureId) => Feature | null;

@@ -8,6 +8,7 @@ import {
 } from "../errors";
 import { isHexString } from "../logic";
 import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
+import { isRecoverableBuildError } from "./buildErrors";
 
 export async function getDelegateTransactionStatus(
   account: CardanoAccount,
@@ -27,11 +28,8 @@ export async function getDelegateTransactionStatus(
   } else {
     try {
       await buildTransaction(account, transaction);
-    } catch (e: any) {
-      if (
-        e.message.toLowerCase() === "not enough ada" ||
-        e.message.toLowerCase() === "not enough tokens"
-      ) {
+    } catch (e: unknown) {
+      if (isRecoverableBuildError(e)) {
         errors.amount = new CardanoNotEnoughFunds();
       } else {
         throw e;

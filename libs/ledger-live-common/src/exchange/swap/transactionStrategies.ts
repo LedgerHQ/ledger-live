@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Transaction } from "../../coin-modules/transaction-types";
 import { TransactionCommon } from "@ledgerhq/types-live";
 import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Exchange";
-import { getFeature } from "../../featureFlags";
+import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
 
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -181,14 +181,17 @@ export function bitcoinTransaction({
   return baseTransaction;
 }
 
-export function solanaTransaction({
-  amount,
-  recipient,
-  customFeeConfig: _customFeeConfig,
-  extraTransactionParameters,
-}: TransactionWithCustomFee): Extract<Transaction, { family: "solana" }> {
+export function solanaTransaction(
+  {
+    amount,
+    recipient,
+    customFeeConfig: _customFeeConfig,
+    extraTransactionParameters,
+  }: TransactionWithCustomFee,
+  getFeature?: GetFeatureFn,
+): Extract<Transaction, { family: "solana" }> {
   let templateId: string | undefined = undefined;
-  const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
+  const lifiSolanaFeature = getFeature?.("lifiSolana");
 
   if (lifiSolanaFeature?.enabled && extraTransactionParameters) {
     try {
@@ -289,6 +292,7 @@ export type TransactionWithCustomFee = TransactionCommon & {
 // Define a specific type for the strategy functions, assuming they might need parameters
 export type TransactionStrategyFunction = (
   params: TransactionWithCustomFee,
+  getFeature?: GetFeatureFn,
 ) => Partial<Transaction>;
 
 export const transactionStrategy: {

@@ -5,7 +5,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { GetTokensDataParams, PageParam, TokensDataTags, TokensDataWithPagination } from "./types";
 import { TOKEN_OUTPUT_FIELDS } from "./fields";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { convertApiToken, legacyIdToApiId } from "../../api-token-converter";
+import { convertApiToken } from "../../api-token-converter";
 import { log } from "@ledgerhq/logs";
 import { z } from "zod";
 
@@ -105,12 +105,10 @@ const cryptoAssetsApiInstance = createApi({
     findTokenById: build.query<TokenCurrency | undefined, TokenByIdParams>({
       query: params => {
         const baseUrl = getEnv("CAL_SERVICE_URL");
-        // Transform legacy ID to API format before querying
-        const apiId = legacyIdToApiId(params.id);
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
-            id: apiId,
+            id: params.id,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
           },

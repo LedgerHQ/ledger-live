@@ -54,7 +54,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install dependencies
-        run: pnpm i --filter="./libs/**"
+        run: pnpm i --filter="{./libs/**}..."
 
       - name: Run coverage on appropriate libraries
         run: |

@@ -15,7 +15,6 @@ export const lwmWallet40 = flagWith(
     operationsList: z.boolean(),
     aggregatedAssets: z.boolean(),
     myWallet: z.boolean(),
-    quickActionsCtasVariant: z.boolean().optional(),
     brazePlacement: z.boolean().optional(),
     pnl: z.boolean(),
     assetDiscoverability: z.boolean(),

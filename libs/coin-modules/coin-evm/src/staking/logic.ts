@@ -176,6 +176,16 @@ export function canRedelegate(
   return !activeRedelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress);
 }
 
+export function canCompound(account: StakingAccount, delegation: StakingDelegation): boolean {
+  // The chain must expose a compound precompile function; without it the
+  // transaction will always fail, so the UI option should be hidden entirely.
+  if (!STAKING_CONTRACTS[account.currency.id]?.functions.compoundReward) return false;
+
+  // Compounding restakes accrued rewards, so it only makes sense when there is
+  // something to restake.
+  return delegation.pendingRewards.gt(0);
+}
+
 export function getRedelegation(
   account: StakingAccount,
   delegation: StakingMappedDelegation,

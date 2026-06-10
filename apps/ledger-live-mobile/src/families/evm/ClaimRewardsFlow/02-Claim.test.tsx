@@ -19,6 +19,20 @@ const account = {
   freshAddress: "0x0000000000000000000000000000000000000001",
 } as unknown as Account;
 
+const monadAccount = {
+  id: "evm-monad-1",
+  type: "Account",
+  currency: {
+    family: "evm",
+    id: "monad",
+    ticker: "MON",
+    units: [{ code: "MON", magnitude: 18 }],
+  },
+  freshAddress: "0x0000000000000000000000000000000000000002",
+} as unknown as Account;
+
+let mockAccount = account;
+
 const validator: StakingValidatorItem = {
   validatorAddress: "seivaloper1xyz",
   name: "Test Validator",
@@ -34,18 +48,19 @@ const mockStatus: { errors: object; warnings: object; estimatedFees: BigNumber }
   warnings: {},
   estimatedFees: new BigNumber(0),
 };
-const fakeTx = {};
+let fakeTx: { mode?: string } = {};
+const mockUpdateTransaction = jest.fn();
 
 jest.mock("LLM/hooks/useAccountScreen", () => ({
-  useAccountScreen: () => ({ account, parentAccount: undefined }),
+  useAccountScreen: () => ({ account: mockAccount, parentAccount: undefined }),
 }));
 jest.mock("LLM/hooks/useAccountUnit", () => ({
-  useAccountUnit: () => ({ code: "SEI", magnitude: 18 }),
+  useAccountUnit: () => ({ code: mockAccount.currency.ticker, magnitude: 18 }),
 }));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({
     createTransaction: () => ({}),
-    updateTransaction: (t: object) => t,
+    updateTransaction: (t: object, patch: object) => ({ ...t, ...patch }),
   }),
 }));
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
@@ -55,14 +70,18 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
     status: mockStatus,
     bridgePending: false,
     bridgeError: null,
+    updateTransaction: mockUpdateTransaction,
   }),
 }));
 
 describe("EVM ClaimRewardsClaim screen", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
+    mockUpdateTransaction.mockClear();
     mockStatus.errors = {};
     mockStatus.warnings = {};
+    mockAccount = account;
+    fakeTx = {};
   });
 
   it("renders the rewards amount and validator name", () => {
@@ -106,6 +125,39 @@ describe("EVM ClaimRewardsClaim screen", () => {
       />,
     );
     expect(screen.getByText("Continue")).toBeDisabled();
+  });
+
+  it("hides the Claim/Compound toggle for a chain without compound support (sei_evm)", () => {
+    render(
+      <ClaimRewardsClaim
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        route={{ params: { accountId: account.id, validator, value: new BigNumber(100) } } as any}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        navigation={{ navigate: mockNavigate } as any}
+      />,
+    );
+    expect(screen.queryByText("Compound")).toBeNull();
+  });
+
+  it("shows the toggle and switches the transaction mode to compoundReward for Monad", () => {
+    mockAccount = monadAccount;
+    render(
+      <ClaimRewardsClaim
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        route={
+          { params: { accountId: monadAccount.id, validator, value: new BigNumber(100) } } as any
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        navigation={{ navigate: mockNavigate } as any}
+      />,
+    );
+    expect(screen.getByText("Compound")).toBeOnTheScreen();
+    expect(screen.getByText("Cash in")).toBeOnTheScreen();
+
+    fireEvent.press(screen.getByText("Compound"));
+
+    const updater = mockUpdateTransaction.mock.calls[0][0];
+    expect(updater({ mode: "claimReward" })).toMatchObject({ mode: "compoundReward" });
   });
 
   it("navigates to SelectDevice on Continue", () => {

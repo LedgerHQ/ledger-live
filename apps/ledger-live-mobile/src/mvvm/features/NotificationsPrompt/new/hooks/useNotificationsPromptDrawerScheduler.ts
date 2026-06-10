@@ -32,17 +32,18 @@ export function useNotificationsPromptDrawerScheduler() {
         const resolvedPromptTarget =
           source === "inactivity" ? "globalPushNotifications" : drawerPromptTarget;
 
-        dispatch(setNotificationsModalOpen(true));
         dispatch(setNotificationsDrawerSource(source));
         dispatch(setNotificationsDrawerPromptTarget(resolvedPromptTarget));
+        dispatch(setNotificationsModalOpen(true));
       }, timer);
     },
     [dispatch],
   );
 
-  const isDrawerPending = useCallback(() => {
-    return isPushNotificationsModalOpen || eventTimeoutRef.current !== null;
-  }, [isPushNotificationsModalOpen]);
+  const isDrawerPending = useCallback(
+    () => isPushNotificationsModalOpen || eventTimeoutRef.current !== null,
+    [isPushNotificationsModalOpen],
+  );
 
   useEffect(() => {
     return () => {

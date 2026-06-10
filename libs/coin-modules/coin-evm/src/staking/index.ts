@@ -12,9 +12,11 @@ export {
   getMaxRedelegations,
   hasUnbondingPeriod,
   hasRedelegation,
+  hasCompound,
   prefetchValidators,
   clearValidatorsCache,
 } from "./validators";
+export { prepareStakingIntent } from "./prepareIntents";
 export {
   mapDelegations,
   mapUnbondings,
@@ -24,6 +26,7 @@ export {
   canUndelegate,
   canDelegate,
   canRedelegate,
+  canCompound,
   getRedelegation,
   getRedelegationCompletionDate,
   parseAmountStringToNumber,

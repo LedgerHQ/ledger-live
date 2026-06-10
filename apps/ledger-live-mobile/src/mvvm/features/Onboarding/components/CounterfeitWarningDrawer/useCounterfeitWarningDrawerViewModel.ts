@@ -27,9 +27,15 @@ export type CounterfeitWarningDrawerViewProps = Readonly<{
   onDismiss: () => void;
 }>;
 
+const eventProperties = (deviceModelId: DeviceModelId, properties: Record<string, unknown>) => ({
+  deviceModelId,
+  flow: "Onboarding",
+  ...properties,
+});
+
 export const useCounterfeitWarningDrawerViewModel = ({
   isOpen,
-  deviceModelId: _deviceModelId,
+  deviceModelId,
   onProceed,
   onDismiss,
 }: CounterfeitWarningDrawerContainerProps): CounterfeitWarningDrawerViewProps => {
@@ -39,7 +45,10 @@ export const useCounterfeitWarningDrawerViewModel = ({
 
   useEffect(() => {
     if (isOpen && !hasTrackedShownRef.current) {
-      track("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
+      track(
+        "page_viewed",
+        eventProperties(deviceModelId, { page: COUNTERFEIT_WARNING_PAGE }),
+      );
       hasTrackedShownRef.current = true;
     }
 
@@ -47,25 +56,31 @@ export const useCounterfeitWarningDrawerViewModel = ({
       hasTrackedShownRef.current = false;
       closeSourceRef.current = "external";
     }
-  }, [isOpen]);
+  }, [deviceModelId, isOpen]);
 
   const handleProceed = useCallback(() => {
     closeSourceRef.current = "internal";
-    track("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    track(
+      "button_clicked",
+      eventProperties(deviceModelId, {
+        button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     onProceed();
-  }, [onProceed]);
+  }, [deviceModelId, onProceed]);
 
   const handleConcern = useCallback(() => {
     closeSourceRef.current = "internal";
-    track("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    track(
+      "button_clicked",
+      eventProperties(deviceModelId, {
+        button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     Linking.openURL(urls.genuineCheck.learnMore);
-  }, []);
+  }, [deviceModelId]);
 
   const handleLedgerComLink = useCallback(() => {
     Linking.openURL(urls.ledger);
@@ -77,14 +92,17 @@ export const useCounterfeitWarningDrawerViewModel = ({
 
   const handleDismiss = useCallback(() => {
     if (closeSourceRef.current === "external") {
-      track("button_clicked", {
-        button: COUNTERFEIT_WARNING_BUTTON.close,
-        page: COUNTERFEIT_WARNING_PAGE,
-      });
+      track(
+        "button_clicked",
+        eventProperties(deviceModelId, {
+          button: COUNTERFEIT_WARNING_BUTTON.close,
+          page: COUNTERFEIT_WARNING_PAGE,
+        }),
+      );
     }
     closeSourceRef.current = "external";
     onDismiss();
-  }, [onDismiss]);
+  }, [deviceModelId, onDismiss]);
 
   return {
     isOpen,

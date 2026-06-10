@@ -1,9 +1,9 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSwapTest } from "./swap";
 
-const swap = new Swap(Account.HEDERA_1, Account.XRP_1, "15", undefined, Fee.MEDIUM);
 runSwapTest(
-  swap,
+  Account.HEDERA_1,
+  Account.XRP_1,
   ["B2CQA-3753"],
   [
     "@NanoSP",

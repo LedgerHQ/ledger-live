@@ -17,19 +17,19 @@ export async function getCoinModuleApi(
     const currency = findCryptoCurrencyByNetwork(network);
     switch (currency?.family) {
       case "xrp":
-        return (await import("./local/xrp.js")).createLocalXrpApi(currency.id);
+        return (await import("./local/xrp")).createLocalXrpApi(currency.id);
       case "stellar":
-        return (await import("./local/stellar.js")).createLocalStellarApi(currency.id);
+        return (await import("./local/stellar")).createLocalStellarApi(currency.id);
       case "canton":
-        return (await import("./local/canton.js")).createLocalCantonApi(currency.id);
+        return (await import("./local/canton")).createLocalCantonApi(currency.id);
       case "tron":
-        return (await import("./local/tron.js")).createLocalTronApi(currency.id);
+        return (await import("./local/tron")).createLocalTronApi(currency.id);
       case "evm":
-        return (await import("./local/evm.js")).createLocalEvmApi(currency.id);
+        return (await import("./local/evm")).createLocalEvmApi(currency.id);
       case "tezos":
-        return (await import("./local/tezos.js")).createLocalTezosApi(currency.id);
+        return (await import("./local/tezos")).createLocalTezosApi(currency.id);
       case "solana":
-        return (await import("./local/solana.js")).createLocalSolanaApi(currency.id);
+        return (await import("./local/solana")).createLocalSolanaApi(currency.id);
     }
   }
   return getNetworkCoinModuleApi(network) satisfies Partial<CoinModuleApi<any> & BridgeApi>;

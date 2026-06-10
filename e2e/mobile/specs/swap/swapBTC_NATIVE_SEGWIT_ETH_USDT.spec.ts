@@ -1,15 +1,9 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSwapTest } from "./swap";
 
-const swap = new Swap(
+runSwapTest(
   Account.BTC_NATIVE_SEGWIT_1,
   TokenAccount.ETH_USDT_1,
-  "0.0006",
-  undefined,
-  Fee.MEDIUM,
-);
-runSwapTest(
-  swap,
   ["B2CQA-2746"],
   [
     "@NanoSP",

@@ -1,5 +1,6 @@
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
+import type { MarketBannerFilterController } from "./hooks/useMarketBannerFilter";
 
 export interface MarketBannerProps {
   testID?: string;
@@ -25,6 +26,8 @@ export interface UseMarketBannerViewModelResult {
   isLoading: boolean;
   isError: boolean;
   isEnabled: boolean;
+  showFilter: boolean;
+  bannerFilter: MarketBannerFilterController;
   range: PortfolioRange;
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;

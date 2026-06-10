@@ -37,6 +37,50 @@ const makeDelegation = (name: string, pendingRewards: BigNumber): StakingMappedD
     },
   }) as unknown as StakingMappedDelegation;
 
+const makeUnresolvedDelegation = (
+  name: string,
+  pendingRewards: BigNumber,
+): StakingMappedDelegation =>
+  ({
+    validatorAddress: `seivaloper1${name.toLowerCase()}`,
+    validatorId: "7",
+    validatorName: name,
+    pendingRewards,
+    amount: new BigNumber("1e18"),
+    formattedAmount: "1 SEI",
+    formattedPendingRewards: pendingRewards.toString(),
+    rank: -1,
+    validator: undefined,
+  }) as unknown as StakingMappedDelegation;
+
+// A delegation whose validator IS matched in the loaded list, but that matched
+// validator carries no validatorId (the loaded validator list is paginated and
+// does not always populate it). The delegation itself holds the authoritative
+// validatorId from sync.
+const makeMatchedDelegationWithoutValidatorIdOnValidator = (
+  name: string,
+  validatorId: string,
+  pendingRewards: BigNumber,
+): StakingMappedDelegation =>
+  ({
+    validatorAddress: `seivaloper1${name.toLowerCase()}`,
+    validatorId,
+    validatorName: name,
+    pendingRewards,
+    amount: new BigNumber("1e18"),
+    formattedAmount: "1 SEI",
+    formattedPendingRewards: pendingRewards.toString(),
+    rank: 0,
+    validator: {
+      validatorAddress: `seivaloper1${name.toLowerCase()}`,
+      name,
+      votingPower: 0,
+      commission: 0.05,
+      estimatedYearlyRewardsRate: 0.1,
+      tokens: "0",
+    },
+  }) as unknown as StakingMappedDelegation;
+
 const mockNavigate = jest.fn();
 const mockDelegations: StakingMappedDelegation[] = [];
 
@@ -83,6 +127,42 @@ describe("EVM ClaimRewardsSelectValidator screen", () => {
     expect(mockNavigate).toHaveBeenCalledWith(
       expect.stringMatching(/Claim$/),
       expect.objectContaining({ validator: expect.objectContaining({ name: "Alpha" }) }),
+    );
+  });
+
+  it("renders delegations whose validator has not resolved using their validatorName", () => {
+    mockDelegations.push(makeUnresolvedDelegation("Delta", new BigNumber("0.2e18")));
+    render(<ClaimRewardsSelectValidator />);
+    expect(screen.getByText("Delta")).toBeOnTheScreen();
+  });
+
+  it("navigates with a validator built from the delegation when the validator is unresolved", () => {
+    mockDelegations.push(makeUnresolvedDelegation("Delta", new BigNumber("0.2e18")));
+    render(<ClaimRewardsSelectValidator />);
+    fireEvent.press(screen.getByText("Delta"));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringMatching(/Claim$/),
+      expect.objectContaining({
+        validator: expect.objectContaining({
+          validatorAddress: "seivaloper1delta",
+          validatorId: "7",
+          name: "Delta",
+        }),
+      }),
+    );
+  });
+
+  it("carries the delegation's validatorId even when the matched validator lacks one", () => {
+    mockDelegations.push(
+      makeMatchedDelegationWithoutValidatorIdOnValidator("Epsilon", "23", new BigNumber("0.4e18")),
+    );
+    render(<ClaimRewardsSelectValidator />);
+    fireEvent.press(screen.getByText("Epsilon"));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringMatching(/Claim$/),
+      expect.objectContaining({
+        validator: expect.objectContaining({ name: "Epsilon", validatorId: "23" }),
+      }),
     );
   });
 });

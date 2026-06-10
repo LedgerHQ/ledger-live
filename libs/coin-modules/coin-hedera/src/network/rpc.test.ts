@@ -6,19 +6,20 @@ import { rpcClient } from "./rpc";
 
 const mockCurrency = getMockedCurrency();
 
-const mockClient = {
-  close: jest.fn(),
-  setMaxNodesPerTransaction: jest.fn().mockReturnThis(),
-  setNetwork: jest.fn().mockReturnThis(),
-  updateNetwork: jest.fn(),
-} as unknown as Client;
+const createMockClient = (): Client =>
+  ({
+    close: jest.fn(),
+    setMaxAttempts: jest.fn(),
+    setMaxBackoff: jest.fn(),
+    setMaxNodesPerTransaction: jest.fn(),
+    setMinBackoff: jest.fn(),
+    setNetwork: jest.fn(),
+    setRequestTimeout: jest.fn(),
+    updateNetwork: jest.fn(),
+  }) as unknown as Client;
 
-const mockTestnetClient = {
-  close: jest.fn(),
-  setMaxNodesPerTransaction: jest.fn().mockReturnThis(),
-  setNetwork: jest.fn().mockReturnThis(),
-  updateNetwork: jest.fn(),
-} as unknown as Client;
+const mockClient = createMockClient();
+const mockTestnetClient = createMockClient();
 
 jest.mock("@hashgraph/sdk", () => {
   return {
@@ -75,6 +76,56 @@ describe("rpcClient", () => {
       expect(testnetClient).toBe(mockTestnetClient);
       expect(mainnetClient2).toBe(mainnetClient);
       expect(testnetClient2).toBe(testnetClient);
+    });
+
+    it("applies sdkClient options from config", async () => {
+      const configWithSdkOptions = {
+        ...mockConfig,
+        sdkClientOptions: {
+          maxAttempts: 0,
+          requestTimeout: 5_000,
+          minBackoff: 100,
+          maxBackoff: 500,
+        },
+      };
+
+      await rpcClient.getInstance(configWithSdkOptions);
+
+      expect(mockClient.setMaxNodesPerTransaction).toHaveBeenCalledWith(1);
+      expect(mockClient.setMaxAttempts).toHaveBeenCalledWith(0);
+      expect(mockClient.setRequestTimeout).toHaveBeenCalledWith(5_000);
+      expect(mockClient.setMinBackoff).toHaveBeenCalledWith(100);
+      expect(mockClient.setMaxBackoff).toHaveBeenCalledWith(500);
+    });
+
+    it("does not apply sdk retry options when sdkClientOptions is omitted", async () => {
+      await rpcClient.getInstance(mockConfig);
+
+      expect(mockClient.setMaxNodesPerTransaction).toHaveBeenCalledWith(1);
+      expect(mockClient.setMaxAttempts).not.toHaveBeenCalled();
+      expect(mockClient.setRequestTimeout).not.toHaveBeenCalled();
+      expect(mockClient.setMinBackoff).not.toHaveBeenCalled();
+      expect(mockClient.setMaxBackoff).not.toHaveBeenCalled();
+    });
+
+    it("creates separate cached clients for different sdkClientOptions settings on the same network", async () => {
+      const defaultSdkClient = createMockClient();
+      jest
+        .mocked(Client.forMainnetAsync)
+        .mockResolvedValueOnce(mockClient)
+        .mockResolvedValueOnce(defaultSdkClient);
+
+      const noRetryConfig = { ...mockConfig, sdkClientOptions: { maxAttempts: 0 } };
+      const defaultRetryConfig = { ...mockConfig };
+
+      const noRetryClient = await rpcClient.getInstance(noRetryConfig);
+      const defaultRetryClient = await rpcClient.getInstance(defaultRetryConfig);
+
+      expect(Client.forMainnetAsync).toHaveBeenCalledTimes(2);
+      expect(noRetryClient).toBe(mockClient);
+      expect(defaultRetryClient).toBe(defaultSdkClient);
+      expect(mockClient.setMaxAttempts).toHaveBeenCalledWith(0);
+      expect(defaultSdkClient.setMaxAttempts).not.toHaveBeenCalled();
     });
   });
 

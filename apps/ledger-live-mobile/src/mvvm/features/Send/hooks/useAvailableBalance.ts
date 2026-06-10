@@ -22,13 +22,13 @@ export function useAvailableBalance(account?: AccountLike | null) {
   const counterValue = useCalculate({
     from: accountCurrency ?? counterValueCurrency,
     to: counterValueCurrency,
-    value: account?.balance.toNumber() ?? 0,
+    value: account?.spendableBalance.toNumber() ?? 0,
     disableRounding: true,
   });
 
   const availableBalanceFormatted = useMemo(() => {
     if (!account || !unit) return "";
-    return formatCurrencyUnit(unit, account.balance, {
+    return formatCurrencyUnit(unit, account.spendableBalance, {
       showCode: true,
       locale,
     });

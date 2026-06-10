@@ -39,6 +39,8 @@ export const ProductTourDrawer = () => {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
+    // Outer ForceTheme: the BottomSheet computes its background/handle styles via useTheme at this
+    // declaration site (passed in as resolved styles), so it must be wrapped here to render dark.
     <ForceTheme selectedPalette={"dark"}>
       <QueuedDrawerBottomSheet
         isRequestingToBeOpened={isDrawerOpen}
@@ -51,48 +53,56 @@ export const ProductTourDrawer = () => {
             modal dismiss cleanly instead of being unmounted mid-present, which would leave a stale
             entry in the BottomSheetModalProvider and block every subsequent drawer. */}
         {isDrawerOpen ? (
-          <BottomSheetView style={{ paddingBottom: bottomInset + 8 }}>
-            <Box lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}>
-              <IconButton
-                icon={Close}
-                appearance="transparent"
-                size="xs"
-                onPress={onCloseButtonPress}
-                accessibilityLabel={t("common.close")}
-                testID="product-tour-close-button"
-              />
-            </Box>
-            <TrackScreen page={PAGE_TRACKING_PRODUCT_TOUR} />
-            <Slides
-              bounces={false}
-              as={AnimatedGestureHandlerFlatList}
-              testID="product-tour-slides-container"
-              initialNumToRender={1}
-              maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
-              onSlideChange={onSlideChange}
-              style={styles.slidesContainer}
-              contentContainerStyle={{ height: PRODUCT_TOUR_SLIDES_LIST_HEIGHT }}
-            >
-              <Slides.Content>
-                {Array.from({ length: PRODUCT_TOUR_TOTAL_SLIDES }, (_, index) => (
-                  <Slides.Content.Item key={index}>
-                    <SlideItem index={index} />
-                  </Slides.Content.Item>
-                ))}
-              </Slides.Content>
-
-              <Slides.ProgressIndicator style={styles.progressIndicator}>
-                <ProgressIndicator />
-              </Slides.ProgressIndicator>
-
-              <Slides.Footer>
-                <SlideFooterButton
-                  onPrimaryAction={onPrimaryAction}
-                  onComplete={completeProductTour}
+          // Inner ForceTheme: the BottomSheet portals its children to a PortalHost at the app root,
+          // which breaks React context propagation. The outer ForceTheme never reaches the portaled
+          // content, so without this wrapper the slides' Lumen tokens (e.g. `base`) would resolve
+          // against the app palette instead of dark.
+          <ForceTheme selectedPalette={"dark"}>
+            <BottomSheetView style={{ paddingBottom: bottomInset + 8 }}>
+              <Box
+                lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}
+              >
+                <IconButton
+                  icon={Close}
+                  appearance="transparent"
+                  size="xs"
+                  onPress={onCloseButtonPress}
+                  accessibilityLabel={t("common.close")}
+                  testID="product-tour-close-button"
                 />
-              </Slides.Footer>
-            </Slides>
-          </BottomSheetView>
+              </Box>
+              <TrackScreen page={PAGE_TRACKING_PRODUCT_TOUR} />
+              <Slides
+                bounces={false}
+                as={AnimatedGestureHandlerFlatList}
+                testID="product-tour-slides-container"
+                initialNumToRender={1}
+                maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
+                onSlideChange={onSlideChange}
+                style={styles.slidesContainer}
+                contentContainerStyle={{ height: PRODUCT_TOUR_SLIDES_LIST_HEIGHT }}
+              >
+                <Slides.Content>
+                  {Array.from({ length: PRODUCT_TOUR_TOTAL_SLIDES }, (_, index) => (
+                    <Slides.Content.Item key={index}>
+                      <SlideItem index={index} />
+                    </Slides.Content.Item>
+                  ))}
+                </Slides.Content>
+
+                <Slides.ProgressIndicator style={styles.progressIndicator}>
+                  <ProgressIndicator />
+                </Slides.ProgressIndicator>
+
+                <Slides.Footer>
+                  <SlideFooterButton
+                    onPrimaryAction={onPrimaryAction}
+                    onComplete={completeProductTour}
+                  />
+                </Slides.Footer>
+              </Slides>
+            </BottomSheetView>
+          </ForceTheme>
         ) : null}
       </QueuedDrawerBottomSheet>
     </ForceTheme>

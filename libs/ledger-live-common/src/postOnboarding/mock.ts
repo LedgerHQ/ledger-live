@@ -1,6 +1,7 @@
 /** mocks for unit tests */
 
-import { FeatureId, PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
+import type { FeatureId } from "@shared/feature-flags";
+import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 
 const MockIcon = () => null;
 

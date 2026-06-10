@@ -9,7 +9,6 @@ export const WALLET_40_PARAMS = [
   { key: "marketBanner", label: "Market Banner" },
   { key: "graphRework", label: "Graph & Balance Rework" },
   { key: "quickActionCtas", label: "Quick Action CTAs" },
-  { key: "quickActionsCtasVariant", label: "Quick Action CTAs Variant" },
   { key: "tour", label: "Tour" },
   { key: "mainNavigation", label: "Main Navigation" },
   { key: "lazyOnboarding", label: "Lazy Onboarding" },

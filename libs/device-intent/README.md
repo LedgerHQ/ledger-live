@@ -38,6 +38,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
 - [Usage Guide](#usage-guide)
   - [Intent implementation checklist](#intent-implementation-checklist)
   - [Mounting the executor](#mounting-the-executor)
+  - [Custom LWM headers from intent components](#custom-lwm-headers-from-intent-components)
   - [Building the `deviceInitializationInput`](#building-the-deviceinitializationinput)
   - [Defining intents](#defining-intents)
   - [Structuring intents (single vs. multiple)](#structuring-intents-single-vs-multiple)
@@ -384,6 +385,41 @@ function MyFlowScreen({ enabled, onDone }: Props) {
   );
 }
 ```
+
+### Custom LWM headers from intent components
+
+`DeviceIntentExecutorLWM` owns the bottom sheet chrome and renders a default
+`BottomSheetHeader` for cancellable device flows. When a specific intent needs a
+more explicit title, description, or header density, its platform component can
+replace that default header by rendering `OverrideDeviceIntentExecutorHeader`.
+
+The intent component should place the override where the header should appear,
+usually at the top of its render tree. Consumers do not call the internal
+context hook directly; the override component registers itself with the LWM
+wrapper, hides the default header while it is mounted, and renders its children
+as the active header:
+
+```tsx
+import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
+import { OverrideDeviceIntentExecutorHeader } from "LLM/components/DeviceIntentExecutor";
+
+function MyIntentComponent({ jobState }: Props) {
+  return (
+    <>
+      <OverrideDeviceIntentExecutorHeader>
+        <BottomSheetHeader title="Review transaction" density="compact" />
+      </OverrideDeviceIntentExecutorHeader>
+      {/* intent content */}
+    </>
+  );
+}
+```
+
+Use the normal Lumen `BottomSheetHeader` props for the desired UX
+(`density="compact"` for short orchestration steps, `density="expanded"` for
+larger standalone flows). The component is a no-op outside
+`DeviceIntentExecutorLWM`, so intent components stay reusable in tests and
+non-bottom-sheet previews.
 
 ### Building the `deviceInitializationInput`
 

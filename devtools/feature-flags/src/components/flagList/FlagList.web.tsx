@@ -1,35 +1,61 @@
-import type { FeatureId } from "@shared/feature-flags";
+import { Fragment } from "react";
 import type { FeatureFlagsToolProps } from "../../types";
 import { FlagRow } from "../flagRow/FlagRow.web";
-import { ALL_FLAG_IDS } from "../../constants";
-import { FlagListHeader } from "../flagListHeader/FlagListHeader";
-import { useFeatureFlagsState } from "../../hooks/useFeatureFlagsState";
+import { FlagListSummary } from "../flagListSummary/FlagListSummary";
 import { Divider } from "@ledgerhq/lumen-ui-react";
+import { Sidebar } from "../sidebar/Sidebar";
+import { ToolBar } from "../toolBar/ToolBar";
+import { useFlagListViewModel, type FlagListViewProps } from "./useFlagListViewModel.web";
 
-export const FlagList = (props: FeatureFlagsToolProps) => {
-  const { overrides, setOverride } = props;
-  const { getFlagDisplayState } = useFeatureFlagsState(props);
-  const featureIds: FeatureId[] = ALL_FLAG_IDS;
+function FlagListView({
+  toolBarProps,
+  overrideCount,
+  numberOfFlags,
+  numberOfFilteredFlags,
+  sortedFlagIds,
+  getFlagDisplayState,
+  setOverride,
+  onSelectFlag,
+  selectedFlagId,
+  onCloseSidebar,
+  clearSelectedOverride,
+}: FlagListViewProps) {
   return (
-    <>
-      <FlagListHeader
-        overrideCount={Object.keys(overrides).length}
-        numberOfFlags={featureIds.length}
-        numberOfFilteredFlags={featureIds.length} // no filter implemented yet
-      />
-      <Divider className="bg-canvas-muted" />
+    <div>
+      <div className="sticky top-0 z-10 bg-canvas">
+        <ToolBar {...toolBarProps} />
+        <Divider />
+        <FlagListSummary
+          overrideCount={overrideCount}
+          numberOfFlags={numberOfFlags}
+          numberOfFilteredFlags={numberOfFilteredFlags}
+        />
+        <Divider className="bg-canvas-muted" />
+      </div>
+      {selectedFlagId && (
+        <Sidebar
+          setOverride={setOverride}
+          display={getFlagDisplayState(selectedFlagId)}
+          onClose={onCloseSidebar}
+          clearOverride={clearSelectedOverride}
+        />
+      )}
       <div>
-        {featureIds.map(featureId => (
-          <div key={featureId}>
+        {sortedFlagIds.map(featureId => (
+          <Fragment key={featureId}>
             <FlagRow
-              key={featureId}
               display={getFlagDisplayState(featureId)}
               setOverride={setOverride}
+              onSelect={() => onSelectFlag(featureId)}
             />
-            <Divider key={`${featureId}-divider`} className="bg-canvas-muted" />
-          </div>
+            <Divider className="bg-canvas-muted" />
+          </Fragment>
         ))}
       </div>
-    </>
+    </div>
   );
-};
+}
+
+export const FlagList = (props: FeatureFlagsToolProps) => (
+  <FlagListView {...useFlagListViewModel(props)} />
+);

@@ -92,12 +92,6 @@ export enum ScreenName {
   DelegationSummary = "DelegationSummary",
   DelegationValidationError = "DelegationValidationError",
   DelegationValidationSuccess = "DelegationValidationSuccess",
-  TezosEarnRewards = "TezosEarnRewards",
-  TezosStakeAmount = "TezosStakeAmount",
-  TezosStakeSelectDevice = "TezosStakeSelectDevice",
-  TezosStakeConnectDevice = "TezosStakeConnectDevice",
-  TezosStakeValidationSuccess = "TezosStakeValidationSuccess",
-  TezosStakeValidationError = "TezosStakeValidationError",
   DeeplinkInstallAppDeviceSelection = "DeeplinkInstallAppDeviceSelection",
   DeveloperCustomManifest = "DeveloperCustomManifest",
   DeveloperSettings = "DeveloperSettings",
@@ -195,6 +189,19 @@ export enum ScreenName {
   VoteValidationSuccess = "VoteValidationSuccess",
   FeeHomePage = "FeeHomePage",
   FeeCustomFeePage = "FeeCustomFeePage",
+
+  // tezos
+  TezosEarnRewards = "TezosEarnRewards",
+  TezosStakeAmount = "TezosStakeAmount",
+  TezosStakeSelectDevice = "TezosStakeSelectDevice",
+  TezosStakeConnectDevice = "TezosStakeConnectDevice",
+  TezosStakeValidationSuccess = "TezosStakeValidationSuccess",
+  TezosStakeValidationError = "TezosStakeValidationError",
+  TezosUnstakeAmount = "TezosUnstakeAmount",
+  TezosUnstakeSelectDevice = "TezosUnstakeSelectDevice",
+  TezosUnstakeConnectDevice = "TezosUnstakeConnectDevice",
+  TezosUnstakeValidationSuccess = "TezosUnstakeValidationSuccess",
+  TezosUnstakeValidationError = "TezosUnstakeValidationError",
 
   // celo
   CeloRegistrationValidationSuccess = "CeloRegistrationValidationSuccess",
@@ -675,8 +682,6 @@ export enum NavigatorName {
   Earn = "EarnNavigator",
   Borrow = "BorrowNavigator",
   Fees = "FeesNavigator",
-  TezosDelegationFlow = "TezosDelegationFlow",
-  TezosStakeFlow = "TezosStakeFlow",
   TronVoteFlow = "TronVoteFlow",
   Unfreeze = "Unfreeze",
   NoFundsFlow = "NoFundsFlow",
@@ -687,6 +692,11 @@ export enum NavigatorName {
   SignRawTransaction = "SignRawTransaction",
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
+
+  // Tezos
+  TezosDelegationFlow = "TezosDelegationFlow",
+  TezosStakeFlow = "TezosStakeFlow",
+  TezosUnstakeFlow = "TezosUnstakeFlow",
 
   // Evm
   EvmEditTransaction = "EvmEditTransaction",

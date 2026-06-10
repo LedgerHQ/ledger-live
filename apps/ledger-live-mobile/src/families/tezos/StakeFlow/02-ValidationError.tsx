@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
 import { ScreenName } from "~/const";
@@ -13,7 +13,9 @@ import type { TezosStakeFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<TezosStakeFlowParamList, ScreenName.TezosStakeValidationError>;
 
-export default function ValidationError({ navigation, route }: Props) {
+export default function ValidationError() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();

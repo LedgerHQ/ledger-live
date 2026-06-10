@@ -15,10 +15,10 @@ export const SlideFooterButton = ({ onPrimaryAction, onComplete }: SlideFooterBu
 
   return (
     <Box lx={{ width: "full" }}>
-      <Button appearance="gray" size="lg" onPress={handleCTA}>
+      <Button appearance="base" size="lg" onPress={handleCTA}>
         {primaryLabel}
       </Button>
-      <Button appearance="base" size="lg" onPress={handleContinue} lx={{ marginTop: "s16" }}>
+      <Button appearance="gray" size="lg" onPress={handleContinue} lx={{ marginTop: "s16" }}>
         {secondaryLabel}
       </Button>
     </Box>

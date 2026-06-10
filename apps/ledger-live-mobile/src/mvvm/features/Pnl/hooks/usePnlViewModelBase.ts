@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";

@@ -1,6 +1,6 @@
 import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import LegacyAccountBodyHeader from "./LegacyAccountBodyHeader";
 import TezosDelegation from "./Delegations";
 

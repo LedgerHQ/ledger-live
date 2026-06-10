@@ -171,6 +171,7 @@
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
+    "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
@@ -261,6 +262,7 @@
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/feature-flags": "workspace:^",
     "@stellar/stellar-sdk": "^14.0.0",
     "@stricahq/typhonjs": "^3.0.0",
     "@ton-community/ton-ledger": "^7.3.0",

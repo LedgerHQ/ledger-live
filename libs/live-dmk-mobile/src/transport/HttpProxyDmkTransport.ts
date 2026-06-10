@@ -1,5 +1,5 @@
-import { BehaviorSubject, EMPTY, Observable, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { BehaviorSubject, EMPTY, from, Observable, of } from "rxjs";
+import { map, switchMap } from "rxjs/operators";
 import { Either, Left, Right } from "purify-ts";
 import {
   ApduResponse,
@@ -15,9 +15,13 @@ import {
   type TransportDiscoveredDevice,
   type TransportFactory,
 } from "@ledgerhq/device-management-kit";
+import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 
 export const HTTP_PROXY_TRANSPORT_IDENTIFIER = "HTTP_PROXY_TRANSPORT";
 const SYNTHETIC_DEVICE_ID = "http-proxy-device";
+
+export const DEFAULT_HTTP_PROXY_DEVICE_MODEL_ID = DeviceModelId.NANO_X;
 
 export const httpProxyUrlSubject = new BehaviorSubject<string | null>(null);
 
@@ -28,6 +32,13 @@ const stringifyError = (err: unknown): string => {
   return JSON.stringify(err);
 };
 
+const ledgerDeviceModelIds = new Set<string>(Object.values(LedgerDeviceModelId));
+
+const isLedgerDeviceModelId = (value: unknown): value is LedgerDeviceModelId =>
+  typeof value === "string" && ledgerDeviceModelIds.has(value);
+
+const metadataUrl = (url: string): string => `${url.replace(/\/$/, "")}/metadata`;
+
 export class HttpProxyDmkTransport implements DmkTransport {
   private readonly urlSubject: BehaviorSubject<string | null>;
   private readonly deviceModelId: DeviceModelId;
@@ -36,7 +47,7 @@ export class HttpProxyDmkTransport implements DmkTransport {
   constructor(
     args: TransportArgs,
     urlSubject: BehaviorSubject<string | null>,
-    deviceModelId: DeviceModelId = DeviceModelId.NANO_X,
+    deviceModelId: DeviceModelId = DEFAULT_HTTP_PROXY_DEVICE_MODEL_ID,
   ) {
     this.args = args;
     this.urlSubject = urlSubject;
@@ -52,12 +63,16 @@ export class HttpProxyDmkTransport implements DmkTransport {
   }
 
   listenToAvailableDevices(): Observable<TransportDiscoveredDevice[]> {
-    return this.urlSubject.pipe(map(url => (url ? [this.syntheticDevice(url)] : [])));
+    return this.urlSubject.pipe(
+      switchMap(url =>
+        url ? from(this.syntheticDevice(url)).pipe(map(device => [device])) : of([]),
+      ),
+    );
   }
 
   startDiscovering(): Observable<TransportDiscoveredDevice> {
     const url = this.urlSubject.getValue();
-    return url ? of(this.syntheticDevice(url)) : EMPTY;
+    return url ? from(this.syntheticDevice(url)) : EMPTY;
   }
 
   stopDiscovering(): void {
@@ -76,6 +91,7 @@ export class HttpProxyDmkTransport implements DmkTransport {
     if (!url) {
       return Left(new UnknownDeviceError("HTTP proxy URL not set"));
     }
+    const deviceModelId = await this.resolveDeviceModelId(url);
 
     const sendApdu = async (apdu: Uint8Array): Promise<Either<DmkError, ApduResponse>> => {
       try {
@@ -91,19 +107,24 @@ export class HttpProxyDmkTransport implements DmkTransport {
         if (!resp.ok) {
           return Left(new UnknownDeviceError(`HTTP ${resp.status}`));
         }
-        const body = (await resp.json()) as { data?: string; error?: unknown };
-        if (body.error) {
-          return Left(new UnknownDeviceError(stringifyError(body.error)));
+        const body: unknown = await resp.json();
+        if (typeof body !== "object" || body === null) {
+          return Left(new UnknownDeviceError("invalid response from proxy"));
         }
-        if (!body.data) {
+        const error = "error" in body ? body.error : undefined;
+        if (error) {
+          return Left(new UnknownDeviceError(stringifyError(error)));
+        }
+        const data = "data" in body ? body.data : undefined;
+        if (typeof data !== "string" || !data) {
           return Left(new UnknownDeviceError("empty response from proxy"));
         }
-        const bytes = hexaStringToBuffer(body.data);
+        const bytes = hexaStringToBuffer(data);
         if (!bytes) {
-          return Left(new UnknownDeviceError(`invalid hex in proxy response: ${body.data}`));
+          return Left(new UnknownDeviceError(`invalid hex in proxy response: ${data}`));
         }
         if (bytes.length < 2) {
-          return Left(new UnknownDeviceError(`malformed proxy response: ${body.data}`));
+          return Left(new UnknownDeviceError(`malformed proxy response: ${data}`));
         }
         return Right(
           new ApduResponse({
@@ -121,7 +142,7 @@ export class HttpProxyDmkTransport implements DmkTransport {
 
     const connectedDevice = new TransportConnectedDevice({
       id: deviceId,
-      deviceModel: this.args.deviceModelDataSource.getDeviceModel({ id: this.deviceModelId }),
+      deviceModel: this.args.deviceModelDataSource.getDeviceModel({ id: deviceModelId }),
       type: "USB",
       transport: HTTP_PROXY_TRANSPORT_IDENTIFIER,
       sendApdu,
@@ -134,10 +155,39 @@ export class HttpProxyDmkTransport implements DmkTransport {
     return Right(undefined);
   }
 
-  private syntheticDevice(url: string): TransportDiscoveredDevice {
+  private async resolveDeviceModelId(url: string): Promise<DeviceModelId> {
+    try {
+      const response = await fetch(metadataUrl(url), {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const body: unknown = await response.json();
+        const deviceModelId =
+          typeof body === "object" && body !== null && "deviceModelId" in body
+            ? body.deviceModelId
+            : null;
+
+        if (isLedgerDeviceModelId(deviceModelId)) {
+          return ledgerToDmkDeviceIdMap[deviceModelId];
+        }
+      }
+    } catch {
+      // Older proxies do not expose metadata. Keep the previous fallback.
+    }
+
+    return this.deviceModelId;
+  }
+
+  private async syntheticDevice(url: string): Promise<TransportDiscoveredDevice> {
+    const deviceModelId = await this.resolveDeviceModelId(url);
+
     return {
       id: SYNTHETIC_DEVICE_ID,
-      deviceModel: this.args.deviceModelDataSource.getDeviceModel({ id: this.deviceModelId }),
+      deviceModel: this.args.deviceModelDataSource.getDeviceModel({ id: deviceModelId }),
       transport: HTTP_PROXY_TRANSPORT_IDENTIFIER,
       name: `HTTP Proxy (${url})`,
     };

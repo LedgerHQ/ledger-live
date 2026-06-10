@@ -9,6 +9,7 @@ const TopBar = () => {
     isInformationCenterOpen,
     onInformationCenterClose,
     shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
   } = useTopBarViewModel();
 
   return (
@@ -18,6 +19,7 @@ const TopBar = () => {
       isInformationCenterOpen={isInformationCenterOpen}
       onInformationCenterClose={onInformationCenterClose}
       shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
+      shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
     />
   );
 };

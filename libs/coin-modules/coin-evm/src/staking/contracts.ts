@@ -84,6 +84,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       getStakedBalance: "getDelegator",
       // claimRewards(uint64 validatorId).
       claimReward: "claimRewards",
+      // compound(uint64 validatorId) — restakes accrued rewards in a single call.
+      compoundReward: "compound",
     },
     // Human-readable names overlay. The precompile exposes no names, so we enrich
     // the on-chain set with the governed `monad-developers/validator-info` repo

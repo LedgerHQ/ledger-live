@@ -24,7 +24,6 @@ jest.mock("@ledgerhq/live-env", () => ({
 // Mock api-token-converter
 jest.mock("../../api-token-converter", () => ({
   convertApiToken: jest.fn(),
-  legacyIdToApiId: jest.fn((id: string) => id),
 }));
 
 import { convertApiToken } from "../../api-token-converter";

@@ -1609,6 +1609,23 @@
   },
   "market": {
     "title": "Market",
+    "topCards": {
+      "error": "Something went wrong",
+      "moodIndex": {
+        "title": "Mood index"
+      },
+      "globalMarketCap": {
+        "title": "Total market cap",
+        "period": "Today"
+      },
+      "altSeason": {
+        "title": "Season",
+        "levels": {
+          "bitcoin": "Bitcoin",
+          "altcoin": "Altcoin"
+        }
+      }
+    },
     "currency": "Currency",
     "rangeLabel": "Time",
     "goBack": "Go back",
@@ -1628,6 +1645,15 @@
       "change": "Change",
       "marketCap": "Market cap",
       "last7d": "Last 7 days"
+    },
+    "assets": {
+      "categories": {
+        "accessibilityLabel": "Asset categories",
+        "all": "All",
+        "stocks": "Stocks",
+        "favorites": "Favorites"
+      },
+      "emptyFavorites": "No favorites yet"
     },
     "detailsPage": {
       "priceStatistics": "Price stats",
@@ -1651,6 +1677,11 @@
       "1W_label": "1W",
       "1M_label": "1M",
       "1Y_label": "1Y",
+      "1H_fullLabel": "1 hour",
+      "1D_fullLabel": "1 day",
+      "1W_fullLabel": "1 week",
+      "1M_fullLabel": "1 month",
+      "1Y_fullLabel": "1 year",
       "1h": "1h",
       "24h": "24h",
       "7d": "7d",
@@ -4305,9 +4336,12 @@
                 "Assets will be available after undelegation"
               ],
               "warning": {
-                "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
-              },
-              "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
+                "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately.",
+                "seiAssociationWarning": {
+                  "description": "To delegate, you need to activate your account by sending any amount to any address, including your own. This is a Sei network requirement.",
+                  "learnMore": "Learn more"
+                }
+              }
             },
             "amount": {
               "title": "Amount"
@@ -4390,6 +4424,33 @@
               "success": {
                 "title": "You have successfully undelegated your assets.",
                 "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
+      },
+      "withdraw": {
+        "cta": "Withdraw",
+        "flow": {
+          "title": "Withdraw",
+          "steps": {
+            "withdraw": {
+              "title": "Withdraw",
+              "warning": "The undelegated amount has completed its timelock and will be sent back to your available balance.",
+              "fields": {
+                "validator": "Validator"
+              }
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully withdrawn your assets.",
+                "description": "<0>{{amount}}</0> were withdrawn from <0>{{validator}}</0>",
                 "cta": "View details"
               },
               "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -8662,6 +8723,12 @@
     "cta": "View all",
     "scrollLeft": "Scroll left",
     "scrollRight": "Scroll right",
+    "ranking": {
+      "trending": "Trending",
+      "gainers": "Gainers",
+      "losers": "Losers",
+      "favorites": "Favorites"
+    },
     "fearAndGreed": {
       "title": "Mood"
     }
@@ -8678,6 +8745,21 @@
       "title": "Mood index",
       "content": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
       "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
+      "cta": "Got it"
+    }
+  },
+  "marketCapCard": {
+    "dialog": {
+      "title": "Total market cap",
+      "content": "The total market cap represents the market capitalization of all cryptocurrencies combined.",
+      "cta": "Got it"
+    }
+  },
+  "altSeasonCard": {
+    "dialog": {
+      "title": "Altcoin index",
+      "content": "The Altcoin index shows how Bitcoin is performing compared to alternative cryptocurrencies. The higher the number, the better altcoins are doing compared to Bitcoin.",
+      "disclaimer": "Data is sourced from CoinMarketCap's Altcoin Season Index and provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -8737,6 +8819,9 @@
   "cryptoAssets": {
     "title": "Crypto assets"
   },
+  "stocks": {
+    "explore": "Explore"
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {
@@ -8745,6 +8830,13 @@
     }
   },
   "topBar": {
+    "searchPlaceholder": "Search assets",
+    "search": {
+      "noResults": "No results for \"{{query}}\"",
+      "cryptos": "Cryptos",
+      "stablecoins": "Stablecoins",
+      "stocks": "Stocks"
+    },
     "history": {
       "cta": "Transactions"
     },
@@ -8990,10 +9082,10 @@
       "continue": "Continue",
       "done": "Done",
       "fundYourWallet": "Fund your wallet",
-      "discoverSwap": "Discover swap",
-      "growYourRewards": "Grow your rewards",
-      "spendYourCrypto": "Spend your crypto",
-      "everythingAtAGlance": "Everything at a glance"
+      "discoverSwap": "Discover Swap",
+      "discoverEarn": "Discover Earn",
+      "getCard": "Get a card",
+      "viewPortfolio": "View your portfolio"
     },
     "slides": {
       "fund": {
