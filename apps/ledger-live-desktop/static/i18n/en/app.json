@@ -9325,13 +9325,11 @@
     "addressMenu": {
       "qrCode": "See QR Code",
       "send": "Send to this address",
-      "renameAddress": "Rename address",
       "editAddress": "Edit address",
       "delete": "Delete address"
     },
     "addressDialog": {
       "send": "Send",
-      "rename": "Rename",
       "edit": "Edit",
       "delete": "Delete"
     },
@@ -9356,15 +9354,10 @@
       "cancel": "Cancel",
       "confirm": "Delete"
     },
-    "renameAddressDialog": {
-      "title": "Rename address",
-      "placeholder": "Address name",
-      "submit": "Change address name"
-    },
     "editAddressDialog": {
       "title": "Edit address",
       "placeholder": "Address",
-      "submit": "Confirm modification"
+      "submit": "Apply changes"
     },
     "addContactDialog": {
       "title": "Add contact",

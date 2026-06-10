@@ -15,7 +15,6 @@ import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import type { CryptoOption } from "~/mvvm/features/Contacts/constants/topCryptos";
 import { getChainInfo } from "../utils/getChainInfo";
 import { QrCodeWithIcon } from "./QrCodeWithIcon";
-import { RenameLettersIcon } from "./icons/RenameLettersIcon";
 
 /**
  * Wrap the destructive `Trash` symbol with an inline `color` style so
@@ -47,15 +46,9 @@ type Props = {
    */
   crypto?: CryptoOption;
   /**
-   * Fired when the user clicks the "Rename" action tile. The parent
-   * is expected to close this dialog and open `RenameAddressDialog`
-   * with the same entry.
-   */
-  onRename?: () => void;
-  /**
    * Fired when the user clicks the "Edit" action tile. The parent is
-   * expected to close this dialog and open `EditAddressDialog` with
-   * the same entry.
+   * expected to close this dialog and open the merged `EditAddressDialog`
+   * (address + name) with the same entry.
    */
   onEdit?: () => void;
   /**
@@ -68,7 +61,7 @@ type Props = {
   onDelete?: () => void;
 };
 
-type ActionId = "send" | "rename" | "edit" | "delete";
+type ActionId = "send" | "edit" | "delete";
 
 type Action = {
   id: ActionId;
@@ -77,13 +70,11 @@ type Action = {
   destructive?: boolean;
 };
 
-// Figma frame `13844:10015` — order is Send / Rename / Edit / Delete.
-// Rename targets the per-address label (entry.scope) only; Edit targets
-// the on-chain address itself. Both eventually call into useContacts —
-// see the TODO list above.
+// Order is Send / Edit / Delete. "Edit" (pen) opens the merged
+// EditAddressDialog, which changes the address hex AND/OR the per-entry
+// name in one flow (the former separate "Rename" tile is folded in).
 const ACTIONS: Action[] = [
   { id: "send", i18nKey: "contactsManagement.addressDialog.send", icon: ArrowUp },
-  { id: "rename", i18nKey: "contactsManagement.addressDialog.rename", icon: RenameLettersIcon },
   { id: "edit", i18nKey: "contactsManagement.addressDialog.edit", icon: PenEdit },
   { id: "delete", i18nKey: "contactsManagement.addressDialog.delete", icon: DestructiveTrash, destructive: true },
 ];
@@ -102,12 +93,11 @@ const noop = () => {};
  *     2. A small `Tag` carrying the network label (e.g. "Base Network").
  *     3. The user's `scope` label in `heading-3-semi-bold`.
  *     4. The FULL (non-truncated) address in `body-2`.
- *     5. Four Lumen `TileButton`s — Send / Rename / Edit / Delete
+ *     5. Three Lumen `TileButton`s — Send / Edit / Delete
  *        (destructive `text-error` tint on the last one).
  *
- * Action tiles are inert in L4 — they carry hover/pressed/focus states
- * from Lumen's TileButton tokens but don't fire any side-effect.
- * Wiring lands in L4.1 alongside the AddressRowMenu wiring.
+ * Edit and Delete are wired to the host's dialog state; Send stays inert
+ * in L4 (carries hover/pressed/focus chrome but fires no side-effect).
  *
  * Close-animation handling: we keep the most recently seen `entry` in
  * a local `stickyEntry` state so the dialog body has content to render
@@ -118,10 +108,6 @@ const noop = () => {};
  *
  * TODO(contacts-L4.1):
  *   - "Send"   → route to /send with recipient pre-filled.
- *   - "Rename" → useContacts().editAddressLabel(...) — updates only the
- *                local `scope` label, no on-device prompt.
- *   - "Edit"   → useContacts().editAddress(...)
- *   - "Delete" → no DMK verb yet; flag when the API surface ships.
  */
 export function AddressDetailDialog({
   open,
@@ -129,7 +115,6 @@ export function AddressDetailDialog({
   contact,
   entry,
   crypto,
-  onRename,
   onEdit,
   onDelete,
 }: Props) {
@@ -189,18 +174,16 @@ export function AddressDetailDialog({
 
           <div className="flex w-full items-stretch gap-8">
             {ACTIONS.map(action => {
-              // Per-action dispatch. Rename / Edit / Delete are wired
-              // through to the host's dialog state machinery (Delete
-              // opens the same confirmation modal as the per-row
-              // overflow menu); Send stays inert (see the TODO list).
+              // Per-action dispatch. Edit / Delete are wired through to
+              // the host's dialog state machinery (Edit opens the merged
+              // EditAddressDialog; Delete opens the same confirmation
+              // modal as the per-row overflow menu); Send stays inert.
               const handler =
-                action.id === "rename"
-                  ? onRename
-                  : action.id === "edit"
-                    ? onEdit
-                    : action.id === "delete"
-                      ? onDelete
-                      : undefined;
+                action.id === "edit"
+                  ? onEdit
+                  : action.id === "delete"
+                    ? onDelete
+                    : undefined;
               return (
               <TileButton
                 key={action.id}

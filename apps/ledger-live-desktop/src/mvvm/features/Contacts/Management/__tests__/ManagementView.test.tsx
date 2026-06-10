@@ -37,7 +37,6 @@ const baseProps = (overrides: Partial<React.ComponentProps<typeof ManagementView
     onRenameContactOnDevice: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
     onDeleteContact: jest.fn(),
     onDeleteAddress: jest.fn().mockResolvedValue(undefined),
-    onRenameAddressLabelOnDevice: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
     onEditAddressOnDevice: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
     ...overrides,
   };

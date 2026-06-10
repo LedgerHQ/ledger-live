@@ -2,8 +2,9 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { EditAddressDialog } from "../components/EditAddressDialog";
 
-// Stub the device runner so the tests don't try to spin up the real
-// DMK connect flow. Same pattern as RenameAddressDialog's test.
+// Stub the device runner so the tests don't spin up the real DMK connect
+// flow. We only care that the merged dialog hands `onSubmit` the right
+// (newAddressHex, newScope) and transitions to the device step.
 jest.mock(
   "~/mvvm/features/Contacts/components/RunDeviceAction",
   () => ({
@@ -16,6 +17,7 @@ jest.mock(
 
 const VALID_HEX = "0x" + "a".repeat(40);
 const ANOTHER_VALID_HEX = "0x" + "b".repeat(40);
+const CURRENT_NAME = "Ethereum";
 
 const baseProps = (
   overrides: Partial<React.ComponentProps<typeof EditAddressDialog>> = {},
@@ -23,71 +25,89 @@ const baseProps = (
   open: true,
   onOpenChange: jest.fn(),
   currentAddressHex: VALID_HEX,
-  onDeviceEdit: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
+  currentLabel: CURRENT_NAME,
+  onSubmit: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
   ...overrides,
 });
 
-describe("EditAddressDialog", () => {
-  it("pre-fills the input with the current address", () => {
+const addressInput = () =>
+  screen.getByTestId("contacts-management-edit-address-input") as HTMLInputElement;
+const nameInput = () =>
+  screen.getByTestId("contacts-management-edit-address-name") as HTMLInputElement;
+const submitBtn = () =>
+  screen.getByTestId("contacts-management-edit-address-submit") as HTMLButtonElement;
+
+describe("EditAddressDialog (merged Edit + Rename)", () => {
+  it("pre-fills BOTH inputs with the current address and name", () => {
     render(<EditAddressDialog {...baseProps()} />);
 
-    const input = screen.getByTestId(
-      "contacts-management-edit-address-input",
-    ) as HTMLInputElement;
-    expect(input.value).toBe(VALID_HEX);
+    expect(addressInput().value).toBe(VALID_HEX);
+    expect(nameInput().value).toBe(CURRENT_NAME);
   });
 
-  it("disables submit on initial open (value still equals the current address — Figma 14187:12344)", () => {
+  it("disables 'Apply changes' on initial open (nothing changed yet)", () => {
     render(<EditAddressDialog {...baseProps()} />);
-    expect(
-      screen.getByTestId("contacts-management-edit-address-submit"),
-    ).toBeDisabled();
+    expect(submitBtn()).toBeDisabled();
   });
 
-  it("keeps submit disabled while the new value is partial / invalid hex", async () => {
+  it("keeps submit disabled while the new address is invalid hex", async () => {
     const { user } = render(<EditAddressDialog {...baseProps()} />);
 
-    const input = screen.getByTestId("contacts-management-edit-address-input");
-    await user.clear(input);
-    await user.type(input, "0xnot-a-valid-hex");
+    await user.clear(addressInput());
+    await user.type(addressInput(), "0xnot-a-valid-hex");
 
-    expect(
-      screen.getByTestId("contacts-management-edit-address-submit"),
-    ).toBeDisabled();
+    expect(submitBtn()).toBeDisabled();
   });
 
-  it("enables submit once the user enters a valid, different address (Figma 14074:12293)", async () => {
+  it("keeps submit disabled when the name is cleared (empty name is invalid)", async () => {
     const { user } = render(<EditAddressDialog {...baseProps()} />);
 
-    const input = screen.getByTestId("contacts-management-edit-address-input");
-    await user.clear(input);
-    await user.type(input, ANOTHER_VALID_HEX);
+    await user.clear(nameInput());
 
-    expect(
-      screen.getByTestId("contacts-management-edit-address-submit"),
-    ).toBeEnabled();
+    expect(submitBtn()).toBeDisabled();
   });
 
-  it("switches to the device step on submit, asking the host for the verb with the trimmed value", async () => {
+  it("submits an ADDRESS-ONLY change with the new address + unchanged name", async () => {
     const verb = jest.fn().mockResolvedValue(undefined);
-    const onDeviceEdit = jest.fn(() => verb);
-    const { user } = render(<EditAddressDialog {...baseProps({ onDeviceEdit })} />);
+    const onSubmit = jest.fn(() => verb);
+    const { user } = render(<EditAddressDialog {...baseProps({ onSubmit })} />);
 
-    const input = screen.getByTestId("contacts-management-edit-address-input");
-    await user.clear(input);
-    await user.type(input, `  ${ANOTHER_VALID_HEX}  `);
-    await user.click(
-      screen.getByTestId("contacts-management-edit-address-submit"),
-    );
+    await user.clear(addressInput());
+    await user.type(addressInput(), `  ${ANOTHER_VALID_HEX}  `);
+    expect(submitBtn()).toBeEnabled();
+    await user.click(submitBtn());
 
-    expect(onDeviceEdit).toHaveBeenCalledWith(ANOTHER_VALID_HEX);
+    // Trimmed new address, current (unchanged) name.
+    expect(onSubmit).toHaveBeenCalledWith(ANOTHER_VALID_HEX, CURRENT_NAME);
     expect(
       screen.getByTestId("contacts-management-edit-address-device-stub"),
     ).toBeInTheDocument();
-    // The input is unmounted while the runner owns the body.
-    expect(
-      screen.queryByTestId("contacts-management-edit-address-input"),
-    ).not.toBeInTheDocument();
+  });
+
+  it("submits a NAME-ONLY change with the unchanged address + new name", async () => {
+    const onSubmit = jest.fn(() => jest.fn().mockResolvedValue(undefined));
+    const { user } = render(<EditAddressDialog {...baseProps({ onSubmit })} />);
+
+    await user.clear(nameInput());
+    await user.type(nameInput(), "Cold storage");
+    expect(submitBtn()).toBeEnabled();
+    await user.click(submitBtn());
+
+    expect(onSubmit).toHaveBeenCalledWith(VALID_HEX, "Cold storage");
+  });
+
+  it("submits a BOTH-CHANGED edit with the new address AND new name", async () => {
+    const onSubmit = jest.fn(() => jest.fn().mockResolvedValue(undefined));
+    const { user } = render(<EditAddressDialog {...baseProps({ onSubmit })} />);
+
+    await user.clear(addressInput());
+    await user.type(addressInput(), ANOTHER_VALID_HEX);
+    await user.clear(nameInput());
+    await user.type(nameInput(), "USDC bag");
+    expect(submitBtn()).toBeEnabled();
+    await user.click(submitBtn());
+
+    expect(onSubmit).toHaveBeenCalledWith(ANOTHER_VALID_HEX, "USDC bag");
   });
 
   it("hides the back arrow when `onBack` is not provided (opened from the row menu)", () => {
@@ -111,29 +131,23 @@ describe("EditAddressDialog", () => {
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
-  it("re-primes the input + returns to the address step when reopened with a new entry", () => {
+  it("re-primes both inputs + returns to the form step when reopened with a new entry", () => {
     const { rerender } = render(<EditAddressDialog {...baseProps()} />);
-    expect(
-      (
-        screen.getByTestId(
-          "contacts-management-edit-address-input",
-        ) as HTMLInputElement
-      ).value,
-    ).toBe(VALID_HEX);
+    expect(addressInput().value).toBe(VALID_HEX);
+    expect(nameInput().value).toBe(CURRENT_NAME);
 
     rerender(<EditAddressDialog {...baseProps({ open: false })} />);
     rerender(
       <EditAddressDialog
-        {...baseProps({ open: true, currentAddressHex: ANOTHER_VALID_HEX })}
+        {...baseProps({
+          open: true,
+          currentAddressHex: ANOTHER_VALID_HEX,
+          currentLabel: "Savings",
+        })}
       />,
     );
 
-    expect(
-      (
-        screen.getByTestId(
-          "contacts-management-edit-address-input",
-        ) as HTMLInputElement
-      ).value,
-    ).toBe(ANOTHER_VALID_HEX);
+    expect(addressInput().value).toBe(ANOTHER_VALID_HEX);
+    expect(nameInput().value).toBe("Savings");
   });
 });

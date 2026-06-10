@@ -32,15 +32,10 @@ type Props = {
    */
   onDeleteAddress?: (entry: ContactEntry) => void;
   /**
-   * Fired when the user picks "Rename address" from the trailing
-   * overflow menu. Optional so the row can be used in contexts that
-   * don't expose the rename affordance yet.
-   */
-  onRenameAddress?: (entry: ContactEntry) => void;
-  /**
-   * Fired when the user picks "Edit address" from the trailing
-   * overflow menu. Optional so the row can be used in contexts that
-   * don't expose the edit affordance yet.
+   * Fired when the user picks "Edit address" from the trailing overflow
+   * menu. Opens the merged `EditAddressDialog` (address + name).
+   * Optional so the row can be used in contexts that don't expose the
+   * edit affordance yet.
    */
   onEditAddress?: (entry: ContactEntry) => void;
 };
@@ -71,7 +66,6 @@ export function AddressRow({
   crypto,
   onSelect,
   onDeleteAddress,
-  onRenameAddress,
   onEditAddress,
 }: Props) {
   const chain = getChainInfo(entry.chainId);
@@ -144,7 +138,6 @@ export function AddressRow({
             ref={menuRef}
             onShowQrCode={() => onSelect(entry)}
             onDeleteAddress={onDeleteAddress ? () => onDeleteAddress(entry) : undefined}
-            onRenameAddress={onRenameAddress ? () => onRenameAddress(entry) : undefined}
             onEditAddress={onEditAddress ? () => onEditAddress(entry) : undefined}
           />
         </div>
