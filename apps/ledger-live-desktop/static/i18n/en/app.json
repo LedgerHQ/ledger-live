@@ -8819,6 +8819,9 @@
   "cryptoAssets": {
     "title": "Crypto assets"
   },
+  "stocks": {
+    "explore": "Explore"
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {

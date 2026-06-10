@@ -16,6 +16,7 @@ import { Divider } from "@ledgerhq/lumen-ui-react";
 import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
 import { PortfolioBannerContent } from "~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent";
 import Assets from "LLD/features/Assets";
+import { StocksSection } from "./components/StocksSection";
 import { CryptoAddressesBanner } from "LLD/features/CryptoAddresses/components/Banner";
 import { BottomCarouselContentCards } from "LLD/features/DynamicContent/components/BottomCarouselContentCards";
 
@@ -28,6 +29,7 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayGraphRework,
   shouldDisplayQuickActionCtas,
   shouldDisplayAssetSection,
+  shouldDisplayAssetDiscoverability,
   shouldDisplayBorrowSection,
   shouldDisplayOperationsList,
   shouldDisplayBrazePlacement,
@@ -71,6 +73,7 @@ export const PortfolioView = memo(function PortfolioView({
           <PerpsEntryPoint />
 
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
+          {shouldDisplayAssetDiscoverability && <StocksSection />}
           {shouldDisplayBorrowSection && <BorrowEntryPoint />}
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
