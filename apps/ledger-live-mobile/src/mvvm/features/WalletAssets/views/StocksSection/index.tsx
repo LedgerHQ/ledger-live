@@ -28,7 +28,7 @@ const PortfolioStocksSectionComponent: React.FC = () => {
         <SubheaderRow
           onPress={hasMore ? onPressShowAll : undefined}
           accessibilityRole={hasMore ? "button" : undefined}
-          lx={{ marginBottom: "s12" }}
+          lx={{ marginBottom: "s4" }}
           testID="portfolio-stocks-section-header"
         >
           <SubheaderTitle>{t("wallet.tabs.stocks")}</SubheaderTitle>
