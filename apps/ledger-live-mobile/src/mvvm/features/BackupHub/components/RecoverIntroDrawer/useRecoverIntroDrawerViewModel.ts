@@ -49,15 +49,15 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
 
   const primaryButtonLink = useCustomURI(
     recoverServices,
-    "upsell",
-    "llm-backup-hub-feature-intro",
-    "backup-hub-launch",
+    "resumeActivate",
+    "llm-bottom-sheet",
+    "llm-bottom-sheet-native",
   );
   const secondaryButtonLink = useCustomURI(
     recoverServices,
     "login",
-    "llm-backup-hub-feature-intro",
-    "backup-hub-launch",
+    "llm-bottom-sheet",
+    "native-llm-bottom-sheet-native",
   );
 
   const content = useMemo(
