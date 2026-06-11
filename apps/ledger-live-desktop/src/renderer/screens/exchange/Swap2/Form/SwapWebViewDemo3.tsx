@@ -98,6 +98,8 @@ export type SwapProps = {
   status?: string;
 };
 
+type SwapEntryPoint = "main_page" | "portfolio_embed" | "asset_embed";
+
 export type SwapWebProps = {
   manifest: LiveAppManifest;
   isEmbedded?: boolean;
@@ -124,6 +126,12 @@ type SwapLocationState = {
 
 const isSwapLocationState = (value: unknown): value is SwapLocationState =>
   typeof value === "object" && value !== null;
+
+const deriveSwapEntryPoint = (pathname: string): SwapEntryPoint => {
+  if (pathname === "/") return "portfolio_embed";
+  if (pathname.startsWith("/asset/")) return "asset_embed";
+  return "main_page";
+};
 
 const SwapWebAppWrapper = styled.div`
   display: flex;
@@ -183,6 +191,7 @@ const SwapWebView = ({
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
+  const ptxSwapLiveAppOnAsset = useFeature("ptxSwapLiveAppOnAsset")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
@@ -568,6 +577,9 @@ const SwapWebView = ({
     return currentRouteNameRef.current || "";
   }, []);
 
+  const { pathname } = location;
+  const swapEntryPoint = deriveSwapEntryPoint(pathname);
+
   return (
     <>
       {enablePlatformDevTools && (
@@ -596,10 +608,12 @@ const SwapWebView = ({
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
+            ptxSwapLiveAppOnAsset: ptxSwapLiveAppOnAsset ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
             isEmbedded: isEmbedded ? "true" : "false",
             discreetMode: discreetMode ? "true" : "false",
             lwd40enabled: "true",
+            swapEntryPoint,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
