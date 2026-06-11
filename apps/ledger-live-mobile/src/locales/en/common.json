@@ -8711,6 +8711,9 @@
       "stocks": "Stocks",
       "market": "Market"
     },
+    "stocks": {
+      "exploreAll": "Explore All"
+    },
     "referralProgram": "$20"
   },
   "servicesWidget": {

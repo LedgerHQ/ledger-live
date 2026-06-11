@@ -7,3 +7,4 @@ export const EMPTY_STATE_MAX_STABLECOINS = 2;
 
 export const MAX_STOCKS_TO_DISPLAY = 5;
 export const EMPTY_STATE_MAX_STOCKS = 3;
+export const MAX_DISCOVERY_STOCKS = 20;
