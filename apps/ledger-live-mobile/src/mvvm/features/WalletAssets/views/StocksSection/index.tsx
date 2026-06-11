@@ -11,6 +11,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
 import { SectionListContent } from "../../components/SectionListContent";
 import usePortfolioStocksSectionViewModel from "./usePortfolioStocksSectionViewModel";
+import { StocksDiscoverySection } from "./StocksDiscoverySection";
 import { EMPTY_STATE_MAX_STOCKS } from "LLM/features/WalletAssets/constants";
 
 const PortfolioStocksSectionComponent: React.FC = () => {
@@ -18,7 +19,8 @@ const PortfolioStocksSectionComponent: React.FC = () => {
   const { stocksCount, hasMore, stocksToDisplay, isLoading, isError, onPressShowAll, onItemPress } =
     usePortfolioStocksSectionViewModel();
 
-  if (!isLoading && !isError && stocksCount === 0) return null;
+  // No holdings → discovery grid (top stocks); holdings → vertical list.
+  if (!isLoading && !isError && stocksCount === 0) return <StocksDiscoverySection />;
 
   return (
     <Box>
@@ -26,7 +28,7 @@ const PortfolioStocksSectionComponent: React.FC = () => {
         <SubheaderRow
           onPress={hasMore ? onPressShowAll : undefined}
           accessibilityRole={hasMore ? "button" : undefined}
-          lx={{ marginBottom: "s4" }}
+          lx={{ marginBottom: "s12" }}
           testID="portfolio-stocks-section-header"
         >
           <SubheaderTitle>{t("wallet.tabs.stocks")}</SubheaderTitle>
