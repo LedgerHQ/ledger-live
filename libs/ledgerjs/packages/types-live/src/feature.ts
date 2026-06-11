@@ -229,6 +229,7 @@ export type Features = CurrencyFeatures & {
   ptxPerpsLiveApp: Feature_PtxPerpsLiveApp;
   ptxPerpsLiveAppMobile: Feature_PtxPerpsLiveApp;
   ptxSwapLiveAppOnPortfolio: DefaultFeature;
+  ptxSwapLiveAppOnAsset: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxBorrowLiveApp: Feature_PtxBorrowLiveApp;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
