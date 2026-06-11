@@ -11,6 +11,7 @@ import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
   getMockedAccount,
+  getMockedTokenAccount,
   mockAleoResources,
   mockUnspentRecord1,
   mockUnspentRecord2,
@@ -43,6 +44,7 @@ import {
   toPrivateBridgeOperation,
   resolveConfig,
   getTransactionType,
+  getAleoSubAccount,
   calculateAmount,
   isProvableApiConfigured,
   isRecordScannerReady,
@@ -84,13 +86,6 @@ const supportedPublicTransactionModes = [
 const supportedPrivateTransactionModes = [
   TRANSACTION_TYPE.TRANSFER_PRIVATE,
   TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-] as const;
-
-const gatedTokenTransactionModes = [
-  TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
-  TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
-  TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
-  TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
 ] as const;
 
 describe("getNetworkConfig", () => {
@@ -459,6 +454,34 @@ describe("getTransactionType", () => {
   });
 });
 
+describe("getAleoSubAccount", () => {
+  const tokenSubAccount = getMockedTokenAccount();
+
+  it("should return the token sub-account when subAccountId matches", () => {
+    const account = getMockedAccount({ subAccounts: [tokenSubAccount] });
+
+    expect(getAleoSubAccount(account, tokenSubAccount.id)).toEqual(tokenSubAccount);
+  });
+
+  it("should return undefined when subAccountId does not match", () => {
+    const account = getMockedAccount({ subAccounts: [tokenSubAccount] });
+
+    expect(getAleoSubAccount(account, "unknown-sub-account-id")).toBeUndefined();
+  });
+
+  it.each([null, undefined])("should return undefined when subAccountId is %s", subAccountId => {
+    const account = getMockedAccount({ subAccounts: [tokenSubAccount] });
+
+    expect(getAleoSubAccount(account, subAccountId)).toBeUndefined();
+  });
+
+  it("should return undefined when account has no subAccounts", () => {
+    const account = getMockedAccount({ subAccounts: [] });
+
+    expect(getAleoSubAccount(account, tokenSubAccount.id)).toBeUndefined();
+  });
+});
+
 describe("calculateAmount", () => {
   it("should return transaction amount when useAllAmount is false", () => {
     const estimatedFees = new BigNumber(5000);
@@ -643,8 +666,12 @@ describe("getOperationTransactionType", () => {
   it.each([
     ["private", TRANSACTION_TYPE.TRANSFER_PRIVATE],
     ["private", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    ["private", TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
+    ["private", TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
     ["public", TRANSACTION_TYPE.TRANSFER_PUBLIC],
     ["public", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    ["public", TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
+    ["public", TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
     ["public", "unknown_type" as any],
   ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
     expect(getOperationTransactionType(transactionType)).toBe(expected);
@@ -1162,14 +1189,6 @@ describe("getAvailableBalance", () => {
     },
   );
 
-  it.each(gatedTokenTransactionModes)("should throw for gated token mode %s", mode => {
-    const transaction = getMockedTransaction({ mode });
-
-    expect(() => getAvailableBalance(mockAccount, transaction)).toThrow(
-      `aleo: unsupported tx mode for balance calculation: ${mode}`,
-    );
-  });
-
   it("should throw for an unsupported transaction mode", () => {
     const unsupportedMode = "unsupported_mode";
     // @ts-expect-error - testing unsupported mode
@@ -1185,6 +1204,8 @@ describe("isSelfTransferTransaction", () => {
   it.each([
     [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
     [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    [true, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
     [false, "other_type" as never],
   ])("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
@@ -1197,8 +1218,8 @@ describe("isPublicTransaction", () => {
   it.each([
     [true, TRANSACTION_TYPE.TRANSFER_PUBLIC],
     [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
-    [false, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
-    [false, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
+    [true, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
+    [true, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
     [false, "other_type" as never],
   ] as const)("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
@@ -1211,8 +1232,8 @@ describe("isPrivateTransaction", () => {
   it.each([
     [true, TRANSACTION_TYPE.TRANSFER_PRIVATE],
     [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
-    [false, TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
-    [false, TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
+    [true, TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
     [false, "other_type" as never],
   ] as const)("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
@@ -1287,24 +1308,6 @@ describe("createTransactionIntent", () => {
     },
   );
 
-  it.each([
-    TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
-    TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
-  ])("should not include private intent data for gated token mode %s", mode => {
-    const transaction = getMockedTransaction({
-      mode,
-      properties: {
-        amountRecordCommitments: [mockUnspentRecord1.commitment],
-        feeRecordCommitment: null,
-      },
-    });
-
-    const result = createTransactionIntent({ account: mockAccount, transaction });
-
-    expect(result.type).toBe(mode);
-    expect("data" in result).toBe(false);
-  });
-
   it("should throw when amountRecordCommitments is empty for a private transaction", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
@@ -1329,7 +1332,7 @@ describe("createTransactionIntent", () => {
     });
 
     expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
-      "aleo: no amount records found for given commitments: non-existent-commitment",
+      "aleo: missing amount records",
     );
   });
 
@@ -1362,7 +1365,7 @@ describe("createTransactionIntent", () => {
     });
 
     expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
-      `aleo: too many amount record commitments selected (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
+      `aleo: too many amount records selected (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
     );
   });
 });
@@ -1449,37 +1452,6 @@ describe("createFeeTransactionIntent", () => {
       });
     },
   );
-
-  it.each([
-    TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
-    TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
-  ])("should create a fee_public intent for gated token private mode %s", mode => {
-    const transaction = getMockedTransaction({
-      mode,
-      properties: {
-        amountRecordCommitments: [],
-        feeRecordCommitment: mockUnspentRecord2.commitment,
-      },
-    });
-
-    const result = createFeeTransactionIntent({
-      account: mockPrivateAccount,
-      transaction,
-      executionId,
-      baseFee,
-      priorityFee,
-      isFeeSponsored: false,
-    });
-
-    expect(result.type).toBe("fee_public");
-    expect(result).toMatchObject({
-      data: {
-        type: "fee_public",
-        priorityFee: BigInt(0),
-        executionId,
-      },
-    });
-  });
 
   it("should throw when feeRecord is missing for a sponsored private transaction", () => {
     const transaction = getMockedTransaction({

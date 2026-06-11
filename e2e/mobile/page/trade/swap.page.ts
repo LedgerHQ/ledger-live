@@ -6,7 +6,7 @@ import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
-import { getParentAccountName, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -195,17 +195,6 @@ export default class SwapPage extends CommonPage {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await tapById(app.common.proceedButtonId);
-  }
-
-  @Step("Ensure token approval has been revoked")
-  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: SwapProvider) {
-    if (!provider.contractAddress) {
-      throw new Error(
-        `Provider "${provider.name}" has no contractAddress — revoke requires an EVM token provider`,
-      );
-    }
-    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
-    jestExpect(remaining).toBe("0");
   }
 
   @Step("Selected provider: $0")

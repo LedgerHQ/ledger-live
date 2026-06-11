@@ -48,8 +48,12 @@ export const useGlobalMarketData = ({ counterCurrency }: GlobalMarketDataRequest
     },
   );
 
-export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
+export function useMarketData(
+  props: MarketListRequestParams,
+  options?: { enabled?: boolean },
+): MarketListRequestResult {
   const search = props.search?.toLowerCase() ?? "";
+  const enabled = options?.enabled ?? true;
   return useQueries({
     queries: Array.from({ length: props.page ?? 1 }, (_, i) => i).map(page => ({
       queryKey: [
@@ -72,6 +76,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         formattedData: currencyFormatter(data),
         page,
       }),
+      enabled,
       refetchOnMount: false,
       refetchOnReconnect: true,
       refetchOnWindowFocus: false,

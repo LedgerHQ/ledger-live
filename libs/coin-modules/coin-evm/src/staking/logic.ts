@@ -31,12 +31,12 @@ export function mapDelegations(
     return {
       ...d,
       formattedAmount: formatCurrencyUnit(unit, d.amount, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
       formattedPendingRewards: formatCurrencyUnit(unit, d.pendingRewards, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
@@ -59,7 +59,7 @@ export function mapUnbondings(
     return {
       ...u,
       formattedAmount: formatCurrencyUnit(unit, u.amount, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
@@ -79,7 +79,7 @@ export function mapRedelegations(
     return {
       ...r,
       formattedAmount: formatCurrencyUnit(unit, r.amount, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
@@ -99,7 +99,7 @@ export const mapDelegationInfo = (
     ...d,
     validator: validators.find(v => v.validatorAddress === d.address),
     formattedAmount: formatCurrencyUnit(unit, transaction ? transaction.amount : d.amount, {
-      disableRounding: true,
+      disableRounding: false,
       alwaysShowSign: false,
       showCode: true,
     }),

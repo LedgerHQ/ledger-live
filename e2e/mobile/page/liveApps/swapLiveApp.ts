@@ -5,6 +5,10 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 
+// Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
+// before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
+const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -464,7 +468,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap Give Authorization button")
   async tapGiveAuthorizationButton() {
-    await waitWebElementByTestId(this.signPermitButton);
+    await waitWebElementByTestId(this.signPermitButton, { timeout: APPROVAL_PROCESSING_TIMEOUT });
     await waitForWebElementToBeEnabled(this.signPermitButton);
     await tapWebElementByTestId(this.signPermitButton);
   }

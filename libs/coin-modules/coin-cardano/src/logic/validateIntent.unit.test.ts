@@ -4,7 +4,13 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { validateIntent } from "./validateIntent";
+
+// Stub the network fetch validateIntent uses for the min-UTXO floor (keeps these tests offline).
+jest.mock("../api/getNetworkInfo", () => ({
+  fetchNetworkInfo: jest.fn().mockResolvedValue({ protocolParams: { utxoCostPerByte: "4310" } }),
+}));
 
 const currency = getCryptoCurrencyById("cardano");
 const SENDER =
@@ -50,11 +56,22 @@ describe("validateIntent", () => {
 
   it.each([
     ["", "RecipientRequired"],
-    [SENDER, "InvalidAddressBecauseDestinationIsAlsoSource"],
     ["not-an-address", "InvalidAddress"],
   ])("flags recipient %p", async (recipient, name) => {
     const res = await validateIntent(currency, intent({ recipient }), balances(10_000_000n));
     expect(res.errors.recipient?.name).toBe(name);
+  });
+
+  it("allows a self-send (sender === recipient)", async () => {
+    const res = await validateIntent(
+      currency,
+      intent({ recipient: SENDER }),
+      balances(10_000_000n),
+      {
+        value: 200_000n,
+      },
+    );
+    expect(res.errors.recipient).toBeUndefined();
   });
 
   it("flags a zero amount", async () => {
@@ -135,7 +152,7 @@ describe("validateIntent", () => {
   it("warns feeTooHigh on a native transfer whose fee exceeds 10% of the amount", async () => {
     const res = await validateIntent(
       currency,
-      intent({ amount: 500_000n }),
+      intent({ amount: 5_000_000n }),
       balances(10_000_000n),
       {
         value: 1_000_000n,
@@ -143,6 +160,27 @@ describe("validateIntent", () => {
     );
     expect(res.errors).toEqual({});
     expect(res.warnings.feeTooHigh?.name).toBe("FeeTooHigh");
+  });
+
+  it("flags a native amount below the min-UTXO floor", async () => {
+    const res = await validateIntent(
+      currency,
+      intent({ amount: 100_000n }),
+      balances(10_000_000n),
+      {
+        value: 200_000n,
+      },
+    );
+    expect(res.errors.amount?.name).toBe("CardanoMinAmountError");
+  });
+
+  it("stays resilient when network info is unavailable (skips the min-UTXO pre-check)", async () => {
+    (fetchNetworkInfo as jest.Mock).mockRejectedValueOnce(new Error("network down"));
+    // Below the floor, but the params fetch failed → skip the best-effort check (craft still enforces it).
+    const res = await validateIntent(currency, intent({ amount: 100_000n }), balances(10_000_000n), {
+      value: 200_000n,
+    });
+    expect(res.errors.amount).toBeUndefined();
   });
 
   it("flags a memo longer than the Cardano metadata limit", async () => {

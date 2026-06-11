@@ -2,7 +2,9 @@ import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 
-export type MarketListCategory = "all" | "starred" | "stocks";
+import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
+
+export type { MarketListCategory };
 
 export type MarketState = {
   marketParams: MarketListRequestParams;

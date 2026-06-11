@@ -4,7 +4,7 @@ import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
-import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
+import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/currencyUtils";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);

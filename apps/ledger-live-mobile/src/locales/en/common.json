@@ -1458,6 +1458,14 @@
     "button": "Reset",
     "warning": "Resetting Ledger Wallet will erase your swap transaction history for all your accounts."
   },
+  "globalSearch": {
+    "searchPlaceholder": "Search assets",
+    "sections": {
+      "cryptos": "Cryptos",
+      "stablecoins": "Stablecoins",
+      "stocks": "Stocks"
+    }
+  },
   "graph": {
     "week": "1W",
     "month": "1M",
@@ -6926,6 +6934,30 @@
           }
         }
       }
+    },
+    "withdraw": {
+      "stepperHeader": {
+        "title": "Withdraw",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "withdraw": {
+            "warning": "The undelegated amount has completed its timelock and will be sent back to your available balance.",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully withdrawn your assets.",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
     }
   },
   "tron": {
@@ -9337,8 +9369,8 @@
     },
     "coinOptions": {
       "openMenuA11yLabel": "Coin options",
-      "addFavourite": "Add to favourites",
-      "removeFavourite": "Remove from favourites",
+      "addFavourite": "Add to favorites",
+      "removeFavourite": "Remove from favorites",
       "hideFromPortfolio": "Hide from portfolio",
       "showInPortfolio": "Show in portfolio"
     },
@@ -9392,6 +9424,7 @@
       "accessibilityLabel": "Change market banner filter",
       "accessibilityHint": "Double tap to choose which assets are shown",
       "title": "Sort by",
+      "noFavorites": "No favorite yet",
       "options": {
         "trending": "Trending",
         "gainers": "Gainers",

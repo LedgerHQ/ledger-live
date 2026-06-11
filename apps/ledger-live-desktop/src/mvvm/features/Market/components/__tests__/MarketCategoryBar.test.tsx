@@ -35,4 +35,17 @@ describe("MarketCategoryBar", () => {
 
     expect(onSelectCategory).toHaveBeenCalledWith("stocks");
   });
+
+  it("renders a trending tab's raw label as-is (no translation)", () => {
+    const categories = buildCategories({
+      tabs: [
+        { value: "all", labelKey: "market.assets.categories.all" },
+        { value: "infrastructure", label: "Infrastructure" },
+      ],
+    });
+    render(<MarketCategoryBar categories={categories} t={t} />);
+
+    const trendingTab = screen.getByTestId("market-category-switcher-infrastructure");
+    expect(trendingTab).toHaveTextContent("Infrastructure");
+  });
 });

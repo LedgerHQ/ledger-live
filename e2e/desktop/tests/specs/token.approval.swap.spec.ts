@@ -66,10 +66,11 @@ test.describe("Token approval - flow", () => {
       ],
     },
     async ({ app }) => {
+      // Uniswap's Permit2 approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
+      test.setTimeout(480_000);
       await app.swap.logSelectedProvider(provider.uiName);
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await revokeTokenApproval(fromAccount, provider);
-      await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(app, swap, minAmount);

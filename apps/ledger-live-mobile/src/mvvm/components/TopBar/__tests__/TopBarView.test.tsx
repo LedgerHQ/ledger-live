@@ -13,6 +13,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
     Settings: makeIcon("icon-settings"),
     Warning: makeIcon("icon-warning"),
     Clock: makeIcon("icon-clock"),
+    Search: makeIcon("icon-search"),
     Nano: makeIcon("device-icon-nano"),
     Flex: makeIcon("device-icon-flex"),
     Apex: makeIcon("device-icon-apex"),
@@ -29,6 +30,7 @@ describe("TopBarView", () => {
   const onMyLedgerPress = jest.fn();
   const onMyWalletPress = jest.fn();
   const onDiscoverPress = jest.fn();
+  const onSearchPress = jest.fn();
   const onNotificationsPress = jest.fn();
   const onSettingsPress = jest.fn();
   const onTransactionHistoryPress = jest.fn();
@@ -42,6 +44,8 @@ describe("TopBarView", () => {
     onMyWalletPress,
     shouldDisplayMyWallet: false,
     shouldDisplayOperationsList: false,
+    shouldDisplayAssetDiscoverability: false,
+    onSearchPress,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
@@ -79,6 +83,25 @@ describe("TopBarView", () => {
     expect(onNotificationsPress).toHaveBeenCalledTimes(1);
     expect(onSettingsPress).toHaveBeenCalledTimes(1);
     expect(onTransactionHistoryPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not render the search icon when asset discoverability is disabled", () => {
+    const { queryByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayAssetDiscoverability={false} />,
+    );
+    expect(queryByTestId("topbar-search")).toBeNull();
+  });
+
+  it("should render the search icon and call onSearchPress when asset discoverability is enabled", async () => {
+    const { user, getByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayAssetDiscoverability />,
+    );
+
+    const searchIcon = getByTestId("topbar-search");
+    expect(searchIcon).toBeVisible();
+
+    await user.press(searchIcon);
+    expect(onSearchPress).toHaveBeenCalledTimes(1);
   });
 
   it("should not render transaction history icon when operations list is disabled", () => {

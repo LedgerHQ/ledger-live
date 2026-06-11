@@ -6,6 +6,7 @@ import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { isWallet40 } from "../../helpers/commonHelpers";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { getMinimumSellAmount } from "@ledgerhq/live-common/e2e/buySell";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -141,7 +142,7 @@ export async function runNavigateToBuyFromAssetPageTest(
 }
 
 export async function runSellFlowTest(
-  buySell: BuySell,
+  buySell: Omit<BuySell, "amount">,
   provider: BuySellProvider,
   paymentMethod: string,
   tmsLinks: string[],
@@ -160,8 +161,9 @@ export async function runSellFlowTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Sell [${buySell.crypto.currency.name}] flow via deeplink`, async () => {
+      const amount = await getMinimumSellAmount(buySell.crypto.currency.id);
       await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleSellFlow(buySell, paymentMethod, provider);
+      await app.buySell.handleSellFlow({ ...buySell, amount }, paymentMethod, provider);
     });
   });
 }

@@ -9,7 +9,11 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
-import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  localeSelector,
+  starredMarketCoinsSelector,
+} from "~/renderer/reducers/settings";
 import {
   BASIC_REFETCH,
   REFETCH_TIME_ONE_MINUTE,
@@ -19,7 +23,9 @@ import {
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { useMarketCategories } from "LLD/features/Market/hooks/useMarketCategories";
 import {
+  getMarketCategoriesParam,
   getMarketFilter,
+  isBuiltInMarketListCategory,
   isStockMarketCurrency,
 } from "@ledgerhq/live-common/market/utils/category";
 
@@ -31,6 +37,7 @@ export function useMarket() {
   const marketCurrentPage = useSelector(marketCurrentPageSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
+  const settingsCounterValue = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
 
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
@@ -54,16 +61,29 @@ export function useMarket() {
     shouldDisplayAssetDiscoverability && categories.selectedCategory === "starred";
   const isStocksCategory =
     shouldDisplayAssetDiscoverability && categories.selectedCategory === "stocks";
+  const isTrendingCategory =
+    shouldDisplayAssetDiscoverability && !isBuiltInMarketListCategory(categories.selectedCategory);
 
   const starFilterOn = isStarredCategory || starred.length > 0;
 
   const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
 
+  const effectiveCounterCurrency = shouldDisplayAssetDiscoverability
+    ? supportedCounterCurrencies?.includes(settingsCounterValue)
+      ? settingsCounterValue
+      : "usd"
+    : marketParams.counterCurrency;
+
+  const resolvedMarketParams = { ...marketParams, counterCurrency: effectiveCounterCurrency };
+
   const marketResult = useMarketDataHook({
-    ...marketParams,
+    ...resolvedMarketParams,
     starred: starFilterOn ? starredMarketCoins : starred,
     liveCompatible: shouldDisplayLiveCompatible,
     filter: getMarketFilter(isStocksCategory) ?? marketParams.filter,
+    categories: isTrendingCategory
+      ? getMarketCategoriesParam(categories.selectedCategory)
+      : undefined,
   });
 
   const timeRanges = useMemo(
@@ -105,7 +125,9 @@ export function useMarket() {
   const freshLoading = loading && !currenciesLength;
   // The extra row is the "show all" affordance, only relevant for the unfiltered list.
   const itemCount =
-    starFilterOn || isStocksCategory || search.length > 0 ? currenciesLength : currenciesLength + 1;
+    starFilterOn || isStocksCategory || isTrendingCategory || search.length > 0
+      ? currenciesLength
+      : currenciesLength + 1;
 
   const setCounterCurrency = useCallback(
     (ticker: string) => {
@@ -256,7 +278,7 @@ export function useMarket() {
     starredMarketCoins,
     timeRanges,
     timeRangeSelectOptions,
-    marketParams,
+    marketParams: resolvedMarketParams,
     marketCurrentPage,
     timeRangeValue,
     itemCount,
