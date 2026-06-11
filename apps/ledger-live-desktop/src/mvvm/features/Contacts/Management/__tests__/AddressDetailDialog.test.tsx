@@ -73,8 +73,9 @@ describe("AddressDetailDialog", () => {
     const fullAddress = screen.getByTestId("contacts-management-address-full");
     expect(fullAddress).toHaveTextContent(entry.addressHex);
 
-    // QR + 3 action tiles (Send / Edit / Delete) — Rename is merged into Edit.
-    expect(screen.getByTestId("contacts-management-address-qr")).toBeInTheDocument();
+    // Coin+network icon + 3 action tiles (Send / Edit / Delete) —
+    // Rename is merged into Edit.
+    expect(screen.getByTestId("contacts-management-address-coin")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-send")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-edit")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-delete")).toBeInTheDocument();

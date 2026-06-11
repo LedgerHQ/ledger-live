@@ -17,7 +17,7 @@ import { getContactInitials } from "../utils/getContactInitials";
  * policy + adoption channel).
  */
 
-type Size = "sm" | "lg";
+type Size = "sm" | "md" | "lg";
 
 type Props = {
   name: string;
@@ -38,12 +38,18 @@ type Props = {
 
 const SIZE_PX: Record<Size, number> = {
   sm: 40,
+  // 48px — the condensed sticky header on the details pane (Figma
+  // frame 14397:13884).
+  md: 48,
   lg: 72,
 };
 
 // Typography token for the centered initials.
 const TEXT_CLASS: Record<Size, string> = {
   sm: "body-2-semi-bold",
+  // Figma scales the condensed avatar's initials to ~18.7px —
+  // `heading/5-semi-bold` (18px) is the closest token.
+  md: "heading-5-semi-bold",
   // `heading/2-semi-bold` matches the Figma spec for the details-pane
   // avatar at 72px. (Previously 96px / `heading/1-semi-bold` — both
   // bumped down a step.)

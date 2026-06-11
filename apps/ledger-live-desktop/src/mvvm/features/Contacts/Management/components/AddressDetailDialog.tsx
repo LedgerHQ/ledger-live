@@ -14,7 +14,7 @@ import { cn } from "LLD/utils/cn";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import type { CryptoOption } from "~/mvvm/features/Contacts/constants/topCryptos";
 import { getChainInfo } from "../utils/getChainInfo";
-import { QrCodeWithIcon } from "./QrCodeWithIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 /**
  * Wrap the destructive `Trash` symbol with an inline `color` style so
@@ -39,9 +39,9 @@ type Props = {
   /**
    * The crypto this address is grouped under (USDC, ETH, …) — resolved
    * by the parent `ContactDetails` via `groupAddressesByCrypto`. Drives
-   * the QR-centre icon + chain badge so the dialog stays in sync with
+   * the centre coin icon + chain badge so the dialog stays in sync with
    * the source row. Optional for safety in tests / legacy callers; when
-   * omitted the QR falls back to the chain's native gas token with no
+   * omitted the icon falls back to the chain's native gas token with no
    * network badge.
    */
   crypto?: CryptoOption;
@@ -88,9 +88,9 @@ const noop = () => {};
  * - Lumen `Dialog` shell (header + body, no global footer).
  * - Header title = contact name.
  * - Body, centered:
- *     1. QR code of the address with the resolved crypto's icon (and
- *        chain badge) punched into the centre.
- *     2. A small `Tag` carrying the network label (e.g. "Base Network").
+ *     1. The resolved crypto's coin icon (64px) with the chain badge
+ *        in the corner — the row's "double icon" scaled up.
+ *     2. A `Tag` (md) carrying the network label (e.g. "Base Network").
  *     3. The user's `scope` label in `heading-3-semi-bold`.
  *     4. The FULL (non-truncated) address in `body-2`.
  *     5. Three Lumen `TileButton`s — Send / Edit / Delete
@@ -135,41 +135,60 @@ export function AddressDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange} height="fit">
       <DialogContent>
         <DialogHeader title={contact.name} onClose={() => onOpenChange(false)} />
-        <DialogBody scrollbarWidth="auto" className="flex flex-col items-center gap-24 px-24 pb-24">
-          <QrCodeWithIcon
-            data={stickyEntry.addressHex}
-            chainId={stickyEntry.chainId}
-            crypto={crypto}
-          />
-
-          <div className="flex w-full flex-col items-center gap-8 text-center">
+        <DialogBody
+          scrollbarWidth="auto"
+          // Figma 13844:10015 rhythm: 24px top inset, then the
+          // icon+text group, then a 40px gap down to the action tiles.
+          className="flex flex-col items-center gap-40 px-24 pt-24 pb-24"
+        >
+          <div className="flex w-full flex-col items-center gap-32">
             {/*
-              Network tag — replaces the chain label that used to sit
-              under the address. Figma frame 13844:10015 anchors it
-              above the scope name with an 8 px gap to the heading.
+              Coin + network double icon (64px) — replaces the QR code
+              (Figma 13844:10015). Same resolution rule as AddressRow:
+              prefer the crypto resolved by the grouping layer with the
+              chain badge in the corner; fall back to the chain's native
+              gas token (no badge — it would just stack the same glyph
+              on itself) when the caller didn't carry the crypto.
             */}
-            <Tag
-              size="sm"
-              appearance="gray"
-              label={chain.label}
-              data-testid="contacts-management-address-network-tag"
-            />
-            {/* Account name — Figma calls for heading/3-semi-bold. */}
-            <p className="heading-3-semi-bold text-base">{stickyEntry.scope}</p>
-            {/* Full untruncated address — Figma calls for body/2. */}
-            <p
-              data-testid="contacts-management-address-full"
-              // `break-all` so the long 0x hex wraps mid-word instead of
-              // overflowing — full address is the explicit requirement
-              // here (no truncation). Fixed 264px width (Figma) so the
-              // hex wraps to a consistent column regardless of the
-              // dialog's intrinsic width; `mx-auto` keeps it centered.
-              // Arbitrary `[264px]` because the Lumen spacing scale has
-              // no 264 step (it tops out around 256).
-              className="body-2 text-muted break-all w-[264px] mx-auto"
-            >
-              {stickyEntry.addressHex}
-            </p>
+            <div data-testid="contacts-management-address-coin">
+              <CryptoIcon
+                ticker={crypto?.ticker ?? chain.ticker}
+                ledgerId={crypto?.ledgerId ?? chain.ledgerId}
+                network={crypto ? chain.ledgerId : undefined}
+                size={64}
+                alt={crypto?.name ?? chain.shortLabel}
+              />
+            </div>
+
+            <div className="flex w-full flex-col items-center gap-8 text-center">
+              {/*
+                Network tag — `md` (px-8 py-4, body-3) matches the 24px
+                tag in the Figma frame, anchored above the scope name
+                with an 8 px gap to the heading.
+              */}
+              <Tag
+                size="md"
+                appearance="gray"
+                label={chain.label}
+                data-testid="contacts-management-address-network-tag"
+              />
+              {/* Account name — Figma calls for heading/3-semi-bold. */}
+              <p className="heading-3-semi-bold text-base">{stickyEntry.scope}</p>
+              {/* Full untruncated address — Figma calls for body/2. */}
+              <p
+                data-testid="contacts-management-address-full"
+                // `break-all` so the long 0x hex wraps mid-word instead of
+                // overflowing — full address is the explicit requirement
+                // here (no truncation). Fixed 264px width (Figma) so the
+                // hex wraps to a consistent column regardless of the
+                // dialog's intrinsic width; `mx-auto` keeps it centered.
+                // Arbitrary `[264px]` because the Lumen spacing scale has
+                // no 264 step (it tops out around 256).
+                className="body-2 text-muted break-all w-[264px] mx-auto"
+              >
+                {stickyEntry.addressHex}
+              </p>
+            </div>
           </div>
 
           <div className="flex w-full items-stretch gap-8">

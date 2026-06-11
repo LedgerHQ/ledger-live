@@ -9369,11 +9369,11 @@
       "privacyBanner": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'"
     },
     "emptyAddresses": {
-      "title": "No addresses for this contact",
-      "cta": "Add address"
+      "title": "No address yet",
+      "body": "Save wallet address to send to {{name}}"
     },
     "emptyAddressesMe": {
-      "title": "No addresses",
+      "title": "No address yet",
       "body": "Save addresses you own on other exchanges and wallets, so you can send to yourself quickly and safely."
     },
     "emptyContacts": {
