@@ -26,14 +26,14 @@ const backupHubFeatureIntroImageUri = Image.resolveAssetSource(
   require("~/images/backup-hub-feature-intro.webp"),
 ).uri;
 
-export type UseLedgerRecoverFeatureIntroViewModelResult = Readonly<{
+export type UseRecoverIntroDrawerViewModelResult = Readonly<{
   isOpen: boolean;
   bottomInset: number;
   featureIntroViewModel: FeatureIntroViewModel;
   onClose: () => void;
 }>;
 
-export function useLedgerRecoverFeatureIntroViewModel(): UseLedgerRecoverFeatureIntroViewModelResult | null {
+export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModelResult | null {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { bottom: bottomInset } = useSafeAreaInsets();

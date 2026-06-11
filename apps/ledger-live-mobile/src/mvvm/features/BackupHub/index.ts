@@ -1,1 +1,1 @@
-export { LedgerRecoverFeatureIntroPortfolioMount } from "./components/LedgerRecoverFeatureIntroPortfolioMount";
+export { RecoverIntroPortfolioMount } from "./components/RecoverIntroPortfolioMount";
