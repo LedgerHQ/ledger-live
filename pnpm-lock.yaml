@@ -316,8 +316,8 @@ catalogs:
       specifier: 20.51.1
       version: 20.51.1
     electron:
-      specifier: 40.6.0
-      version: 40.6.0
+      specifier: 42.4.0
+      version: 42.4.0
     eslint-plugin-better-tailwindcss:
       specifier: 4.0.0-beta.3
       version: 4.0.0-beta.3
@@ -930,7 +930,7 @@ importers:
         version: 6.30.1(@datadog/browser-logs@6.30.1)
       '@datadog/electron-sdk':
         specifier: 0.3.0
-        version: 0.3.0(electron@40.6.0)
+        version: 0.3.0(electron@42.4.0)
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -1477,7 +1477,7 @@ importers:
         version: 26.0.1(lodash@4.17.21)
       electron:
         specifier: 'catalog:'
-        version: 40.6.0
+        version: 42.4.0
       electron-builder:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
@@ -3238,7 +3238,7 @@ importers:
         version: 4.17.16
       electron:
         specifier: 'catalog:'
-        version: 40.6.0
+        version: 42.4.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.36.0
@@ -15465,6 +15465,10 @@ packages:
     resolution: {integrity: sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==}
     engines: {node: '>=0.8.0'}
 
+  '@electron-internal/extract-zip@1.0.2':
+    resolution: {integrity: sha512-VJuNETNPEhrmQEZezeTZO5TZMV+dobBRyJ7zHjGJWIhMS7m7W1UeClt69u4hkUxv9ZZVxuli/E9Yvc4gDNHGsg==}
+    engines: {node: '>=22.12.0'}
+
   '@electron/asar@3.2.18':
     resolution: {integrity: sha512-2XyvMe3N3Nrs8cV39IKELRHTYUWFKrmqqSY1U+GMlc0jvqjIVnoxhNd2H4JolWQncbJi1DCvb5TNxZuI2fEjWg==}
     engines: {node: '>=10.12.0'}
@@ -15487,6 +15491,10 @@ packages:
   '@electron/get@2.0.3':
     resolution: {integrity: sha512-Qkzpg2s9GnVV2I2BjRksUi43U5e6+zaQMcjoJy0C+C5oxaKl+fmckGDQFtRpZpZV0NQekuZZ+tGz7EA9TVnQtQ==}
     engines: {node: '>=12'}
+
+  '@electron/get@5.0.0':
+    resolution: {integrity: sha512-pjoBpru1KdEtcExBnuHAP1cAc/5faoedw0hzJkL3o4/IJp7HNF1+fbrdxT3gMYRX2oJfvnA/WXeCTVQpYYxyJA==}
+    engines: {node: '>=22.12.0'}
 
   '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
     resolution: {tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
@@ -27162,9 +27170,9 @@ packages:
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
-  electron@40.6.0:
-    resolution: {integrity: sha512-ett8W+yOFGDuM0vhJMamYSkrbV3LoaffzJd9GfjI96zRAxyrNqUSKqBpf/WGbQCweDxX2pkUCUfrv4wwKpsFZA==}
-    engines: {node: '>= 12.20.55'}
+  electron@42.4.0:
+    resolution: {integrity: sha512-OXXqh9LD9KxXPv2Fe25EfU9N9AvWTuV6V81sfhQaNvTAXCd9ONA+Q4OWvMe+CmYD6xIwjFxGGtG/ZphDYYC5OQ==}
+    engines: {node: '>= 22.12.0'}
     hasBin: true
 
   elegant-spinner@1.0.1:
@@ -36575,6 +36583,10 @@ packages:
     resolution: {integrity: sha512-y+8YjDFzWdQlSE9N5nzKMT3g4a5UBX1HKowfdXh0uvAnTaqqwqB92Jt4UXBAeKekDs5IaDKyJFR4X1gYVCgXcw==}
     engines: {node: '>=20.18.1'}
 
+  undici@7.27.2:
+    resolution: {integrity: sha512-uZsKNuzQxDMUY6M3pIMvy5tvlGmtq8XJ2oLAkfRKGNu+1VQAIvLy2xIVG5ATZl5wDXl/tddByAWCizRbOme+TA==}
+    engines: {node: '>=20.18.1'}
+
   unfetch@3.1.2:
     resolution: {integrity: sha512-L0qrK7ZeAudGiKYw6nzFjnJ2D5WHblUBwmHIqtPS6oKUd+Hcpk7/hKsSmcHsTlpd1TbTNsiRBUKRq3bHLNIqIw==}
 
@@ -42261,10 +42273,10 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@datadog/electron-sdk@0.3.0(electron@40.6.0)':
+  '@datadog/electron-sdk@0.3.0(electron@42.4.0)':
     dependencies:
       dd-trace: 5.103.0
-      electron: 40.6.0
+      electron: 42.4.0
     transitivePeerDependencies:
       - '@openfeature/server-sdk'
 
@@ -42427,6 +42439,8 @@ snapshots:
     dependencies:
       '@types/hammerjs': 2.0.45
 
+  '@electron-internal/extract-zip@1.0.2': {}
+
   '@electron/asar@3.2.18':
     dependencies:
       commander: 5.1.0
@@ -42458,6 +42472,19 @@ snapshots:
       sumchecker: 3.0.1
     optionalDependencies:
       global-agent: 3.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@electron/get@5.0.0':
+    dependencies:
+      debug: 4.4.3
+      env-paths: 3.0.0
+      graceful-fs: 4.2.11
+      progress: 2.0.3
+      semver: 7.8.1
+      sumchecker: 3.0.1
+    optionalDependencies:
+      undici: 7.27.2
     transitivePeerDependencies:
       - supports-color
 
@@ -59265,11 +59292,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@40.6.0:
+  electron@42.4.0:
     dependencies:
-      '@electron/get': 2.0.3
+      '@electron-internal/extract-zip': 1.0.2
+      '@electron/get': 5.0.0
       '@types/node': 24.12.0
-      extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
 
@@ -72073,6 +72100,9 @@ snapshots:
   undici@6.19.2: {}
 
   undici@7.18.2: {}
+
+  undici@7.27.2:
+    optional: true
 
   unfetch@3.1.2: {}
 
