@@ -268,7 +268,11 @@ class OnboardModal extends PureComponent<Props, State> {
         next: (data: ConcordiumPairingProgress) => {
           const stateUpdate = handlePairingProgress(data);
           if (stateUpdate) {
-            this.setStateWithTimeout(stateUpdate);
+            if (stateUpdate.onboardingStatus === AccountOnboardStatus.PREPARE) {
+              if (this.mounted) this.setState(prev => ({ ...prev, ...stateUpdate }));
+            } else {
+              this.setStateWithTimeout(stateUpdate);
+            }
           }
         },
         complete: this.clearPairingSubscription,
