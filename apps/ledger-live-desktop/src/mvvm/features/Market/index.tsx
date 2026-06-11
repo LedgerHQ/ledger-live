@@ -6,10 +6,10 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import SearchInputComponent from "./components/SearchInputComponent";
 import SideDrawerFilter from "~/renderer/screens/market/components/SideDrawerFilter";
 import CounterValueSelect from "~/renderer/screens/market/components/CountervalueSelect";
-import { useMarketListVirtualization } from "LLD/features/Market/hooks/useMarketListVirtualization";
 import PageHeader from "LLD/components/PageHeader";
 import { useNavigate } from "react-router";
-import MarketList from "./screens/MarketList";
+import MarketListLegacy from "./components/MarketListLegacy";
+import MarketTable from "./components/MarketTable";
 import MarketTopCards from "./TopCards";
 import { MarketCategoryBar } from "./components/MarketCategoryBar";
 import { MarketRangeSelect } from "./components/MarketRangeSelect";
@@ -70,15 +70,6 @@ export default function Market() {
   }, [marketCurrentPage, refetchData, refreshRate]);
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
-
-  const virtualization = useMarketListVirtualization({
-    itemCount: marketData.itemCount,
-    marketData: marketData.marketData,
-    loading: marketData.loading,
-    currenciesLength: marketData.currenciesLength,
-    onLoadNextPage: marketData.onLoadNextPage,
-    checkIfDataIsStaleAndRefetch: marketData.checkIfDataIsStaleAndRefetch,
-  });
 
   return (
     <Container>
@@ -159,7 +150,11 @@ export default function Market() {
           />
         </Flex>
       )}
-      <MarketList {...marketData} virtualization={virtualization} />
+      {shouldDisplayAssetDiscoverability ? (
+        <MarketTable {...marketData} />
+      ) : (
+        <MarketListLegacy {...marketData} />
+      )}
     </Container>
   );
 }
