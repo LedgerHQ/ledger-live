@@ -88,9 +88,11 @@ const Layout = ({ category, cards }: LayoutProps) => {
     : contentCardsType.contentCardComponent;
 
   const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
+    const page = category.location ?? card.location ?? card.extras?.location;
     await trackContentCardEvent("contentcard_clicked", {
       ...sanitizeExtras(card.extras),
-      page: card.location,
+      page,
+      location: page,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -108,9 +110,11 @@ const Layout = ({ category, cards }: LayoutProps) => {
   };
 
   const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
+    const page = category.location ?? card.location ?? card.extras?.location;
     trackContentCardEvent("contentcard_dismissed", {
       ...sanitizeExtras(card.extras),
-      page: card.location,
+      page,
+      location: page,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -121,7 +125,11 @@ const Layout = ({ category, cards }: LayoutProps) => {
   };
 
   const cardsMapped = cards
-    .map(card => contentCardsType.mappingFunction(card))
+    .map(card => {
+      const mapped = contentCardsType.mappingFunction(card);
+      if (!mapped) return null;
+      return { ...mapped, location: mapped.location ?? category.location };
+    })
     .filter(card => card);
 
   const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
