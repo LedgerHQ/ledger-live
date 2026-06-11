@@ -15,8 +15,10 @@ import {
 } from "../session/bridge-device-session";
 import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
+import { setDeviceSelectorOverride } from "../device/device-selector";
 import {
   accountOption,
+  deviceOption,
   deviceTimeoutOption,
   outputOption,
   resolveAccountArg,
@@ -36,9 +38,11 @@ export default defineCommand({
       argumentKind: "flag",
     }),
     output: outputOption,
+    device: deviceOption,
     "device-timeout": deviceTimeoutOption,
   },
   handler: async ({ flags, positional }) => {
+    setDeviceSelectorOverride(flags.device);
     const ctx = { command: "receive", network: "", account: "" };
     const output = resolveOutputFormat(flags.output);
     const wallet = new WalletAdapter();

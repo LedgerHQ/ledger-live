@@ -8,7 +8,8 @@ import { createCommandOutput } from "../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
-import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "./inputs";
+import { setDeviceSelectorOverride } from "../device/device-selector";
+import { deviceOption, deviceTimeoutOption, outputOption, resolveOutputFormat } from "./inputs";
 import { runObservable } from "./run-observable";
 
 const SOCKET_EVENT_PAYLOAD_GENUINE = "0000";
@@ -49,9 +50,11 @@ export default defineCommand({
   description: "Check whether the connected Ledger device is genuine",
   options: {
     output: outputOption,
+    device: deviceOption,
     "device-timeout": deviceTimeoutOption,
   },
   handler: async ({ flags }) => {
+    setDeviceSelectorOverride(flags.device);
     const ctx = { command: "genuine-check", network: "device" };
     const out = createCommandOutput(resolveOutputFormat(flags.output), ctx);
 

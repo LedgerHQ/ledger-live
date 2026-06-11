@@ -11,7 +11,8 @@ import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { getCliProcessExitCode } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
-import { resolveWalletCliTransportKind, type WalletCliTransportKind } from "./device/transport-kind";
+import { explicitTransportKind, wasBleInitialized } from "./device/transport-kind";
+import { restoreTerminalCursor } from "./shared/ui";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
 import SessionGroup from "./commands/session/index";
@@ -21,6 +22,7 @@ import ReceiveCommand from "./commands/receive";
 import SendCommand from "./commands/send";
 import SwapGroup from "./commands/swap/index";
 import GenuineCheckCommand from "./commands/genuine-check";
+import DevicesCommand from "./commands/devices";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -42,6 +44,7 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(SendCommand);
   cli.command(SwapGroup);
   cli.command(GenuineCheckCommand);
+  cli.command(DevicesCommand);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
 }
@@ -52,12 +55,10 @@ function normalizeNegatedFlags(argv: string[]): string[] {
 }
 
 if (import.meta.main) {
-  // Resolve (and validate) the transport once, up front: a bad
-  // WALLET_CLI_TRANSPORT fails fast here with a clear message, before any work,
-  // rather than throwing mid-shutdown after a command already ran.
-  let transportKind: WalletCliTransportKind;
+  // Validate WALLET_CLI_TRANSPORT up front if set, so a typo fails fast with a
+  // clear message before any work (the transport is otherwise inferred per device).
   try {
-    transportKind = resolveWalletCliTransportKind();
+    explicitTransportKind();
   } catch (e) {
     process.stderr.write(`${e instanceof Error ? e.message : String(e)}\n`);
     process.exit(2);
@@ -77,9 +78,14 @@ if (import.meta.main) {
   // The BLE transport's noble backend keeps a native handle on the libuv loop
   // that it never unrefs, so the process would hang after a command completes
   // (the USB transport unrefs its hotplug events and drains naturally). Teardown
-  // is done by this point and all output has been written, so exit explicitly on
-  // the BLE path. Kept out of the USB path to preserve its graceful drain.
-  if (transportKind === "ble") {
+  // is done by this point and all output has been written, so exit explicitly
+  // whenever BLE was initialized — as the active transport, or because a command
+  // (e.g. `devices`, or transport inference) scanned BLE. Pure-USB keeps its drain.
+  if (wasBleInitialized()) {
+    // yocto-spinner hides the cursor; restore it before the hard exit, and let the
+    // already-written output flush (TTY writes are synchronous) so the shell prompt
+    // starts cleanly on its own line.
+    restoreTerminalCursor();
     process.exit(exitCode);
   }
 }

@@ -8,8 +8,10 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { getCurrencyForAccount, type AccountLike } from "@ledgerhq/types-live";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { createCommandOutput } from "../../output";
+import { setDeviceSelectorOverride } from "../../device/device-selector";
 import {
   accountOption,
+  deviceOption,
   outputOption,
   resolveAccountArg,
   resolveAccountDescriptor,
@@ -206,8 +208,10 @@ export default defineCommand({
       description: "Fee strategy for the refund-chain transaction (full pipeline)",
     }),
     output: outputOption,
+    device: deviceOption,
   },
   handler: async ({ flags, positional }) => {
+    setDeviceSelectorOverride(flags.device);
     await executeSwapCommand({
       flags,
       positional,

@@ -36,6 +36,15 @@ export const accountOption = option(z.string().min(1).optional(), {
   short: "a",
 });
 
+/**
+ * Shared --device option for commands that talk to the device. Selects which
+ * Ledger to use (by name or transport id) when several are reachable; takes
+ * precedence over WALLET_CLI_DEVICE. Run `devices` to list candidates.
+ */
+export const deviceOption = option(z.string().min(1).optional(), {
+  description: "Target Ledger by name or id when several are reachable (run `devices` to list).",
+});
+
 export function resolveAccountArg(
   account: string | undefined,
   positional: readonly string[],

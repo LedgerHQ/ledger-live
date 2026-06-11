@@ -25,6 +25,7 @@ import {
 import { formatSwapStatusHuman, type SwapStatusLine } from "./commands/swap/status-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
 import type { SessionEntry } from "./session/session-store";
+import type { ListedDevice } from "./device/register-dmk-transport";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 
 // ---------------------------------------------------------------------------
@@ -91,6 +92,9 @@ export interface CommandOutput {
   sessionReset(count: number): void;
   /** Output session accounts (human: table or empty message; json: envelope with accounts array). */
   sessionView(accounts: readonly SessionEntry[]): void;
+
+  /** Output reachable devices across transports (human: table or empty message; json: envelope). */
+  devices(items: readonly ListedDevice[]): void;
 
   /** Output a dry-run prepared transaction (human: formatted lines; json: envelope). */
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void;
@@ -284,6 +288,27 @@ class HumanCommandOutput implements CommandOutput {
     for (const entry of accounts) {
       writeStdout(`${colors.bold(entry.label.padEnd(maxLabel))}  ${colors.dim(entry.descriptor)}`);
     }
+  }
+
+  devices(items: readonly ListedDevice[]): void {
+    if (items.length === 0) {
+      writeStdout(
+        colors.dim(
+          "No Ledger devices found. Unlock the device (and open Bluetooth on Flex/Stax), then try again.",
+        ),
+      );
+      return;
+    }
+    const maxName = Math.max(...items.map(d => (d.name || "(unnamed)").length));
+    const maxTransport = Math.max(...items.map(d => d.transport.length));
+    for (const device of items) {
+      const name = (device.name || "(unnamed)").padEnd(maxName);
+      const transport = device.transport.padEnd(maxTransport);
+      const model = device.model ? colors.dim(` ${device.model}`) : "";
+      writeStdout(`${colors.bold(name)}  ${colors.dim(transport)}  ${colors.dim(device.id)}${model}`);
+    }
+    // writeStderr does not append a newline; add one so the shell prompt starts on its own line.
+    writeStderr(colors.dim("Missing a device? Unlock it (and open Bluetooth on Flex/Stax), then run again.\n"));
   }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
@@ -601,6 +626,10 @@ class JsonCommandOutput implements CommandOutput {
 
   sessionView(accounts: readonly SessionEntry[]): void {
     this._writeNdjson(this._envelope({ accounts }));
+  }
+
+  devices(items: readonly ListedDevice[]): void {
+    this._writeNdjson(this._envelope({ devices: items }));
   }
 
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {

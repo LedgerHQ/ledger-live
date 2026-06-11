@@ -17,8 +17,10 @@ import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
 import { runObservable } from "./run-observable";
+import { setDeviceSelectorOverride } from "../device/device-selector";
 import {
   accountOption,
+  deviceOption,
   deviceTimeoutOption,
   outputOption,
   resolveAccountArg,
@@ -195,9 +197,11 @@ export default defineCommand({
       argumentKind: "flag",
     }),
     output: outputOption,
+    device: deviceOption,
     "device-timeout": deviceTimeoutOption,
   },
   handler: async ({ flags, positional }) => {
+    setDeviceSelectorOverride(flags.device);
     const ctx = { command: "send", network: "", account: "" };
     const output = resolveOutputFormat(flags.output);
     const wallet = new WalletAdapter();

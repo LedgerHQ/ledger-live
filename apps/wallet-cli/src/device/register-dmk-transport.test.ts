@@ -72,6 +72,9 @@ function makeTestTransport(sessionState?: unknown) {
 }
 
 beforeEach(async () => {
+  // Pin the transport so these connect-mechanics tests skip transport inference
+  // (which would scan real transports for ~4s); inference is its own concern.
+  process.env.WALLET_CLI_TRANSPORT = "usb";
   _setTestDmkTransport(null);
   await disposeWalletCliDmkTransportFully();
 });
@@ -79,6 +82,7 @@ beforeEach(async () => {
 afterEach(async () => {
   await disposeWalletCliDmkTransportFully();
   _setTestDmkTransport(null);
+  delete process.env.WALLET_CLI_TRANSPORT;
 });
 
 describe("ensureWalletCliDmkTransport", () => {

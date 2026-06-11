@@ -13,7 +13,8 @@ import { parseNetworkArg, currencyIdFromNetwork } from "../../shared/accountDesc
 import { createCommandOutput } from "../../output";
 import { Session } from "../../session/session-store";
 import { runObservable } from "../run-observable";
-import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "../inputs";
+import { setDeviceSelectorOverride } from "../../device/device-selector";
+import { deviceOption, deviceTimeoutOption, outputOption, resolveOutputFormat } from "../inputs";
 
 type DiscoverAccountsParams = {
   wallet: WalletAdapter;
@@ -65,9 +66,11 @@ export default defineCommand({
       short: "n",
     }),
     output: outputOption,
+    device: deviceOption,
     "device-timeout": deviceTimeoutOption,
   },
   handler: async ({ flags, positional }) => {
+    setDeviceSelectorOverride(flags.device);
     const output = resolveOutputFormat(flags.output);
     const networkArg = flags.network ?? positional[0];
     if (!networkArg) {

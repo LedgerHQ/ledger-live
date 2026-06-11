@@ -6,7 +6,16 @@ import { firstValueFrom } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
 import { WalletCliDmkTransport } from "./wallet-cli-dmk-transport";
 import type { WalletCliDmk } from "./dmk";
-import { resolveWalletCliTransportKind } from "./transport-kind";
+import {
+  explicitTransportKind,
+  markBleInitialized,
+  type WalletCliTransportKind,
+} from "./transport-kind";
+import {
+  deviceMatchesSelector,
+  resolveDeviceSelector,
+  selectDiscoveredDevice,
+} from "./device-selector";
 import {
   hasWalletCliDeviceInterruptScope,
   withWalletCliDeviceInterruptScope,
@@ -67,11 +76,9 @@ function terminateWalletCliFromSignal(code: number): void {
   process.exit(code);
 }
 
-function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
+function getOrCreatePersistentDmk(kind: WalletCliTransportKind): Promise<WalletCliDmk> {
   return (persistentDmk ??= import("./dmk")
-    .then(({ createDeviceManagementKit }) =>
-      createDeviceManagementKit(resolveWalletCliTransportKind()),
-    )
+    .then(({ createDeviceManagementKit }) => createDeviceManagementKit(kind))
     .catch(error => {
       persistentDmk = null;
       throw error;
@@ -148,17 +155,161 @@ async function teardownPersistentDmk(
   persistentDmk = null;
 }
 
-async function connectFirstDevice(dmk: DeviceManagementKit): Promise<string> {
+/** How long `devices` scans before reporting what it found (BLE advertises over time). */
+const DEVICE_SCAN_MS = 4_000;
+
+export type ListedDevice = {
+  readonly id: string;
+  readonly name: string;
+  readonly model: string;
+  readonly transport: string;
+};
+
+/** Transports the `devices` command sweeps to show every reachable Ledger at once. */
+const LISTABLE_TRANSPORTS: WalletCliTransportKind[] = ["usb", "ble"];
+
+/** Scan one transport with a throwaway kit; return [] if that transport is unavailable. */
+async function scanTransportForDevices(
+  kind: WalletCliTransportKind,
+  scanMs: number,
+): Promise<ListedDevice[]> {
+  const { createDeviceManagementKit } = await import("./dmk");
+  let kit: WalletCliDmk;
+  try {
+    // BLE pulls in the optional noble native binding; USB the usb addon. If a
+    // transport can't initialize on this host, skip it rather than failing the
+    // whole listing.
+    kit = await createDeviceManagementKit(kind);
+  } catch {
+    return [];
+  }
+  if (kind === "ble") {
+    // noble is now loaded; the process must exit explicitly at the end (see cli.ts).
+    markBleInitialized();
+  }
+  const byId = new Map<string, DiscoveredDevice>();
+  const subscription = kit.dmk.listenToAvailableDevices({}).subscribe({
+    next: (list: DiscoveredDevice[]) => {
+      for (const device of list) {
+        byId.set(device.id, device);
+      }
+    },
+    error: () => {},
+  });
+  try {
+    await new Promise<void>(resolve => setTimeout(resolve, scanMs));
+  } finally {
+    subscription.unsubscribe();
+    try {
+      await kit.destroyTransport();
+    } catch {
+      // best-effort teardown of the throwaway kit
+    }
+    closeDmkQuietly(kit.dmk);
+  }
+  return [...byId.values()].map(device => ({
+    id: device.id,
+    // DiscoveredDevice.name is typed as required but can be empty/missing in
+    // practice; default to "" so ListedDevice.name stays a string.
+    name: device.name ?? "",
+    // DeviceModel.model is the model enum ("flex"/"stax"/…); .id is the runtime
+    // device id (same value as device.id), so use .model for a human label.
+    model: String((device.deviceModel as { model?: unknown } | undefined)?.model ?? ""),
+    transport: kind,
+  }));
+}
+
+/**
+ * Scan all transports (USB and BLE) for reachable Ledger devices and return them,
+ * without connecting or signing. Read-only: backs the `devices` command so the
+ * user can see every reachable Ledger — with its transport — and the names/ids to
+ * pass to --device. Transports that can't initialize on this host are skipped.
+ */
+export async function listWalletCliDevices(scanMs: number = DEVICE_SCAN_MS): Promise<ListedDevice[]> {
+  return withWalletCliDeviceInterruptScope(async () => {
+    const perTransport = await Promise.all(
+      LISTABLE_TRANSPORTS.map(kind => scanTransportForDevices(kind, scanMs)),
+    );
+    return perTransport.flat();
+  });
+}
+
+function describeListed(devices: readonly ListedDevice[]): string {
+  return devices.map(d => `${d.name || "(unnamed)"} [${d.transport} ${d.id}]`).join(", ");
+}
+
+/**
+ * Pure decision: pick the transport to connect over from the scanned devices.
+ * Exported for tests — `resolveTransportForConnect` wraps it with the live scan.
+ * - With a selector: require it to match devices on exactly one transport.
+ * - Without one: use the only reachable device, else refuse and list candidates.
+ */
+export function chooseConnectTransport(
+  found: readonly ListedDevice[],
+  selector: string | null,
+): WalletCliTransportKind {
+  if (selector) {
+    const matches = found.filter(device => deviceMatchesSelector(device, selector));
+    if (matches.length === 0) {
+      throw new Error(
+        `No Ledger device matching "${selector}". Discovered: ${describeListed(found) || "none"}. ` +
+          "Run `devices` to list reachable Ledgers.",
+      );
+    }
+    const transports = new Set(matches.map(match => match.transport));
+    if (transports.size > 1) {
+      throw new Error(
+        `"${selector}" matches devices on multiple transports: ${describeListed(matches)}. ` +
+          "Use a more specific id.",
+      );
+    }
+    return [...transports][0] as WalletCliTransportKind;
+  }
+  if (found.length === 0) {
+    throw new Error("No Ledger device found. Unlock the device and try again.");
+  }
+  if (found.length === 1) {
+    return found[0]!.transport as WalletCliTransportKind;
+  }
+  throw new Error(
+    `Multiple Ledger devices found: ${describeListed(found)}. ` +
+      "Choose one with --device <name|id> (or WALLET_CLI_TRANSPORT).",
+  );
+}
+
+/**
+ * Decide which transport to connect over, WITHOUT requiring WALLET_CLI_TRANSPORT:
+ * honor it if set, else infer from the chosen device by scanning all transports
+ * (so `--device <id|name>` works without naming the transport — the scan already
+ * knows which device is on USB vs BLE). The connect step re-applies the selector
+ * on the chosen transport, so a per-session USB id never has to survive across
+ * the scan→connect boundary (name / BLE id do).
+ */
+async function resolveTransportForConnect(selector: string | null): Promise<WalletCliTransportKind> {
+  const explicit = explicitTransportKind();
+  if (explicit) {
+    return explicit;
+  }
+  return chooseConnectTransport(await listWalletCliDevices(), selector);
+}
+
+async function connectSelectedDevice(dmk: DeviceManagementKit): Promise<string> {
+  const selector = resolveDeviceSelector();
+  // With a selector, wait until a device matching WALLET_CLI_DEVICE shows up
+  // (a target device may advertise after others over BLE). Without one, take the
+  // first non-empty discovery snapshot. selectDiscoveredDevice then enforces a
+  // single unambiguous choice, so we never silently connect to the wrong wallet.
   const discovered = await firstValueFrom(
     dmk.listenToAvailableDevices({}).pipe(
-      filter((list: DiscoveredDevice[]) => list.length > 0),
+      filter((list: DiscoveredDevice[]) =>
+        selector
+          ? list.some(device => deviceMatchesSelector(device, selector))
+          : list.length > 0,
+      ),
       timeout(CONNECT_TIMEOUT_MS),
     ),
   );
-  const device = discovered[0];
-  if (!device) {
-    throw new Error("No Ledger device found. Unlock the device and try again.");
-  }
+  const device = selectDiscoveredDevice(discovered, selector);
   const sessionId = await dmk.connect({
     device,
     sessionRefresherOptions: { isRefresherDisabled: true },
@@ -205,8 +356,13 @@ export function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
       return singleton.transport;
     }
 
-    const kit = await getOrCreatePersistentDmk();
-    const sessionId = await connectFirstDevice(kit.dmk);
+    const selector = resolveDeviceSelector();
+    const kind = await resolveTransportForConnect(selector);
+    if (kind === "ble") {
+      markBleInitialized();
+    }
+    const kit = await getOrCreatePersistentDmk(kind);
+    const sessionId = await connectSelectedDevice(kit.dmk);
     const transport = new WalletCliDmkTransport(kit.dmk, sessionId);
     singleton = { dmk: kit.dmk, transport, destroyTransport: kit.destroyTransport };
     return transport;
