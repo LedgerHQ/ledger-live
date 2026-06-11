@@ -1,12 +1,8 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  IconButton,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@ledgerhq/lumen-ui-react";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
+import { cn } from "LLD/utils/cn";
 import type { ContactEntry } from "~/renderer/contacts/types";
 import type { CryptoOption } from "~/mvvm/features/Contacts/constants/topCryptos";
 import type { DisplayContact } from "../utils/groupContacts";
@@ -35,6 +31,101 @@ const EMPTY_ENTRY: ContactEntry = {
   hmacRestHex: "",
   derivationPath: "",
 };
+
+/**
+ * Condensed sticky header (Figma frame `14397:13884`) — surfaces at the
+ * top of the details pane once the full header (avatar + name + count +
+ * actions) has scrolled out of view. 48px avatar, name in
+ * `heading-5-semi-bold`, count in `body-2` muted, then the same
+ * "Add address" pill + `…` contact menu as the full header.
+ *
+ * Entrance: mounted with `-translate-y-full`, then flipped to
+ * `translate-y-0` on the next animation frame so the bar slides down
+ * from the top with `ease-out` over 300ms (per spec). The flip must
+ * happen AFTER the initial style is committed or the browser would
+ * coalesce both states and skip the transition.
+ *
+ * Exit (reverse): when `visible` flips false the bar slides back up
+ * with the same 300ms ease-out, then reports `onExited` so the parent
+ * unmounts it once the animation has finished.
+ */
+function CondensedHeader({
+  visible,
+  onExited,
+  contact,
+  countLabel,
+  onAddAddress,
+  onEditContact,
+  onDeleteContact,
+  canDelete,
+  addAddressLabel,
+}: {
+  visible: boolean;
+  onExited: () => void;
+  contact: DisplayContact;
+  countLabel: string;
+  onAddAddress: () => void;
+  onEditContact: () => void;
+  onDeleteContact: () => void;
+  canDelete: boolean;
+  addAddressLabel: string;
+}) {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    if (visible) {
+      const raf = requestAnimationFrame(() => setShown(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    // Reverse animation: slide back up, then let the parent unmount us
+    // once the 300ms transition has played out. If the user scrolls
+    // back down mid-exit, `visible` flips true again and the cleanup
+    // cancels the pending unmount — the bar just slides back in.
+    setShown(false);
+    const timer = setTimeout(onExited, 300);
+    return () => clearTimeout(timer);
+  }, [visible, onExited]);
+
+  return (
+    <div
+      data-testid="contacts-management-condensed-header"
+      className={cn(
+        // Pinned over the scroll region; the panel's `overflow-hidden`
+        // clips the bar while it sits above the top edge.
+        //
+        // `z-[30]`: the Lumen Tailwind preset REPLACES the default
+        // numeric z-index scale with named tokens (`z-menu`, …), so a
+        // plain `z-10` emits no CSS — leaving the bar at `z-index:
+        // auto`, where the rows' absolutely-positioned network badges
+        // (later in DOM order) painted on top of it. An arbitrary
+        // value sits above those (auto) and below `z-dialog-overlay`
+        // (90).
+        "absolute top-0 inset-x-0 z-[30] flex items-center gap-16 p-16 bg-surface",
+        // Figma `box-shadow/lg` lifting the bar off the scrolling rows.
+        // Lumen's registered `.shadow-lg` utility IS that token:
+        // `0 4px 6px -4px rgba(0,0,0,0.10), 0 10px 15px -3px rgba(0,0,0,0.10)`.
+        "shadow-lg",
+        "transition-transform duration-300 ease-out",
+        shown ? "translate-y-0" : "-translate-y-full",
+      )}
+    >
+      <InitialsAvatar name={contact.name} size="md" colorKey={contact.colorKey} />
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <p className="heading-5-semi-bold text-base truncate">{contact.name}</p>
+        <p className="body-2 text-muted truncate">{countLabel}</p>
+      </div>
+      <Button
+        appearance="gray"
+        size="sm"
+        icon={Plus}
+        onClick={onAddAddress}
+        data-testid="contacts-management-add-address-condensed"
+      >
+        {addAddressLabel}
+      </Button>
+      <ContactMenu onEdit={onEditContact} onDelete={onDeleteContact} canDelete={canDelete} />
+    </div>
+  );
+}
 
 type Props = {
   contact: DisplayContact;
@@ -81,14 +172,13 @@ type Props = {
 /**
  * Right pane of the Contacts management page.
  *
- * Layout (matches Figma frame 13802:2833):
+ * Layout (header per Figma frame 14391:12543):
  * - Outer container: rounded `bg-surface` panel with vertical stack,
  *   gap 32, padding 16/32.
  * - Header block (centered): large `InitialsAvatar` (72px) + name in
- *   `heading-3-semi-bold` + pluralized address-count in `body-2` text-muted.
- * - Top-right corner: two `IconButton`s (Plus + MoreHorizontal). Both
- *   intentionally non-wired in L4 — Lumen's hover/press states still
- *   render because we omit `disabled` and `onClick`. Wiring lands in L4.1.
+ *   `heading-3-semi-bold` + pluralized address-count in `body-2`
+ *   text-muted, then an actions row below it — a gray "Add address"
+ *   pill (Plus icon + label) and the `…` ContactMenu.
  * - Address sections: grouped by CRYPTO (USDC, ETH, …) via
  *   `groupAddressesByCrypto`, which reads the sidecar `cryptoMeta`
  *   store (DEMO-only — see `utils/cryptoMeta.ts`) and falls back to
@@ -125,6 +215,39 @@ export function ContactDetails({
     [contact.entries, cryptoMeta],
   );
 
+  // Condensed sticky header (Figma 14397:13884). An IntersectionObserver
+  // rooted on the scroll region watches the full header block: once it
+  // has fully scrolled out of view, the condensed bar mounts (and slides
+  // in from the top — see `CondensedHeader`); when the header comes back,
+  // the bar unmounts. Guarded for jsdom, which doesn't implement
+  // IntersectionObserver — tests simply never see the condensed bar.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [condensed, setCondensed] = useState(false);
+  // The bar stays MOUNTED while its exit animation plays: `condensed`
+  // is the observer's target state, `condensedMounted` lags it on the
+  // way out (cleared by the bar's `onExited` once the reverse slide
+  // has finished).
+  const [condensedMounted, setCondensedMounted] = useState(false);
+  useEffect(() => {
+    if (condensed) setCondensedMounted(true);
+  }, [condensed]);
+  const handleCondensedExited = useCallback(() => setCondensedMounted(false), []);
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const root = scrollRef.current;
+    const target = headerRef.current;
+    if (!root || !target) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setCondensed(!entry.isIntersecting),
+      // `threshold: 0` + no margin → flips exactly when the LAST pixel
+      // of the header block leaves the scroll viewport.
+      { root, threshold: 0 },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
   // `null` = closed; otherwise carries the entry whose detail dialog
   // is showing AND the crypto it was grouped under (so the dialog can
   // render the matching centre icon + network badge without having to
@@ -137,8 +260,8 @@ export function ContactDetails({
   const activeEntry = active?.entry ?? null;
 
   // Open state for the Add-Address Dialog flow — triggered by either
-  // the `+` IconButton (top-right) or the empty-state CTA. The dialog
-  // itself owns the step machine; we just toggle visibility.
+  // the header's "Add address" button or the empty-state CTA. The
+  // dialog itself owns the step machine; we just toggle visibility.
   const [addAddressOpen, setAddAddressOpen] = useState(false);
   const openAddAddress = () => setAddAddressOpen(true);
 
@@ -208,55 +331,78 @@ export function ContactDetails({
   );
 
   return (
+    // Outer panel: a NON-scrolling clip box (`relative overflow-hidden
+    // min-h-0` — the grid item needs the min-height clamp, and the
+    // overflow clip both contains the scroll region and hides the
+    // condensed bar while it sits translated above the top edge). The
+    // scroll lives on the inner region so the condensed bar can pin
+    // over it.
     <div
       data-testid="contacts-management-details"
-      className="relative flex flex-col gap-32 h-full overflow-y-auto rounded-lg bg-surface px-16 py-32"
+      className="relative flex flex-col h-full min-h-0 overflow-hidden rounded-lg bg-surface"
     >
-      {/* Top-right icon buttons (absolute so they don't push the header). */}
-      <div className="absolute top-16 right-16 flex items-center gap-8">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <IconButton
-              appearance="gray"
-              size="sm"
-              aria-label={t("contactsManagement.addAddressLabel")}
-              icon={Plus}
-              onClick={openAddAddress}
-              data-testid="contacts-management-add-address"
-            />
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            {t("contactsManagement.addAddressLabel")}
-          </TooltipContent>
-        </Tooltip>
-        <ContactMenu
-          onEdit={() => setEditContactOpen(true)}
-          // Open the confirmation dialog instead of firing the delete
-          // directly — the actual `onDeleteContact` call only runs once
-          // the user confirms inside `DeleteContactDialog`.
-          onDelete={() => setDeleteContactOpen(true)}
-          // Protect the "me" contact from deletion. The menu hides the
-          // Delete row entirely when this is false — `me` can be
-          // renamed but never removed.
+      {condensedMounted && (
+        <CondensedHeader
+          visible={condensed}
+          onExited={handleCondensedExited}
+          contact={contact}
+          countLabel={t("contactsManagement.addresses", { count })}
+          onAddAddress={openAddAddress}
+          onEditContact={() => setEditContactOpen(true)}
+          onDeleteContact={() => setDeleteContactOpen(true)}
           canDelete={!isMe}
+          addAddressLabel={t("contactsManagement.addAddressLabel")}
         />
-      </div>
+      )}
 
-      {/* Centered identity block. */}
-      <div className="flex flex-col items-center gap-16 w-full">
-        <InitialsAvatar name={contact.name} size="lg" colorKey={contact.colorKey} />
-        <div className="flex flex-col items-center gap-4 w-full text-center">
-          <h2 className="heading-3-semi-bold text-base">{contact.name}</h2>
-          <p className="body-2 text-muted">
-            {t("contactsManagement.addresses", { count })}
-          </p>
+      <div
+        ref={scrollRef}
+        className="flex flex-col gap-32 flex-1 min-h-0 overflow-y-auto px-16 py-32"
+      >
+      {/* Header (Figma 14391:12543) — centered identity block with the
+          actions row BELOW it (gap-24): a labeled gray "Add address"
+          pill + the `…` contact menu. Replaces the previous absolute
+          top-right `+`/`…` icon buttons; the visible label also retires
+          the tooltip the bare `+` needed. The ref feeds the
+          IntersectionObserver driving the condensed sticky header. */}
+      <div ref={headerRef} className="flex flex-col items-center gap-24 w-full">
+        <div className="flex flex-col items-center gap-16 w-full">
+          <InitialsAvatar name={contact.name} size="lg" colorKey={contact.colorKey} />
+          <div className="flex flex-col items-center gap-4 w-full text-center">
+            <h2 className="heading-3-semi-bold text-base">{contact.name}</h2>
+            <p className="body-2 text-muted">
+              {t("contactsManagement.addresses", { count })}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-start gap-8">
+          <Button
+            appearance="gray"
+            size="sm"
+            icon={Plus}
+            onClick={openAddAddress}
+            data-testid="contacts-management-add-address"
+          >
+            {t("contactsManagement.addAddressLabel")}
+          </Button>
+          <ContactMenu
+            onEdit={() => setEditContactOpen(true)}
+            // Open the confirmation dialog instead of firing the delete
+            // directly — the actual `onDeleteContact` call only runs once
+            // the user confirms inside `DeleteContactDialog`.
+            onDelete={() => setDeleteContactOpen(true)}
+            // Protect the "me" contact from deletion. The menu hides the
+            // Delete row entirely when this is false — `me` can be
+            // renamed but never removed.
+            canDelete={!isMe}
+          />
         </div>
       </div>
 
       {/* Empty state — surfaced when the selected contact has no
           addresses (a freshly-added sidecar contact, or the synthetic
           "me" placeholder). Figma frame 13922:11258. */}
-      {count === 0 && <EmptyAddressState onAddAddress={openAddAddress} isMe={isMe} />}
+      {count === 0 && <EmptyAddressState contactName={contact.name} isMe={isMe} />}
 
       {/* Address sections grouped by crypto.
           `unknown` entries (entries with no sidecar metadata AND no
@@ -297,6 +443,7 @@ export function ContactDetails({
             })}
         </div>
       )}
+      </div>
 
       <AddressDetailDialog
         open={active !== null}

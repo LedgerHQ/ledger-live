@@ -23,7 +23,7 @@ import { cn } from "LLD/utils/cn";
  * - Trigger: `IconButton` (`appearance="no-background"`) wrapping the
  *   `MoreHorizontal` symbol — Lumen attaches hover, pressed, and
  *   focus-visible states automatically.
- * - Container: `bg-muted` (`--background-muted`), `border-muted-subtle`,
+ * - Container: `bg-muted` (`--background-muted`), no stroke,
  *   `rounded-sm` (8px), `p-8`, with a drop shadow matching the
  *   `box-shadow/sm` token (two layered shadows).
  * - Items: hand-rolled 44px-tall buttons so the height matches the
@@ -216,7 +216,10 @@ export const AddressRowMenu = forwardRef<AddressRowMenuHandle, Props>(
           width="fit"
           className={cn(
             "flex flex-col gap-0 min-w-208",
-            "bg-muted border border-muted-subtle rounded-sm p-8",
+            // No stroke — matches the Lumen menu master (Figma
+            // `14382:19427`), which draws the panel with background +
+            // shadow only.
+            "bg-muted rounded-sm p-8",
             // Two-layer drop shadow matching the Figma `box-shadow/sm`:
             //   (0,1) blur 3 + (0,1) blur 2 with -1 spread, both at 10% black.
             "shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)]",

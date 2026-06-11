@@ -134,8 +134,12 @@ export function ContactList({
           left), and `-mr-16` extends the region to the panel's right edge
           so the floating scrollbar sits over the empty 16px gutter to the
           right of the rows rather than on top of them.
+
+        `pb-16` lives INSIDE the scroll region (not on the panel): rows
+        still cut flush at the panel's bottom edge mid-scroll, but the
+        last row gets 16px of breathing room once scrolled to the end.
       */}
-      <div className="flex flex-col gap-8 flex-1 min-h-0 overflow-y-auto scrollbar-custom -mr-16 pr-16">
+      <div className="flex flex-col gap-8 flex-1 min-h-0 overflow-y-auto scrollbar-custom -mr-16 pr-16 pb-16">
         {children}
         {showEmptyContacts && <EmptyContactsState onAddContact={onAddContact} />}
         {showEmptySearch && <EmptySearchState />}

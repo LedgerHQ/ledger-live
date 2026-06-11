@@ -3,9 +3,10 @@ import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 import {
   IconButton,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import {
   MoreHorizontal,
@@ -15,26 +16,26 @@ import {
 import { cn } from "LLD/utils/cn";
 
 /**
- * Top-right overflow menu on the contact details pane.
+ * Overflow menu on the contact details pane header.
  *
- * Matches Figma frame 13980:9313:
- * - Trigger: `IconButton` (`appearance="gray"`) wrapping the
- *   `MoreHorizontal` symbol. We use `appearance="gray"` (not
- *   `no-background` like the per-row menu) so the button keeps its
- *   visible chip-style chrome matching the sibling `+` IconButton.
- * - Container, items, shadow: same layout primitives as
- *   `AddressRowMenu` — see that file for the shared rationale.
+ * Built on Lumen's `Menu` component (Figma master `14382:19427`) —
+ * `MenuContent` ships the container chrome (rounded-sm, p-8, shadow-sm,
+ * fade animations) and `MenuItem` the 44px row spec (px-8, gap-12,
+ * `body-2-semi-bold`, hover/pressed transparent states), so the only
+ * local additions are the Figma master's sheet background (no stroke)
+ * and the destructive tint.
  *
- * Actions (both inert in L4 — `noop` keeps hover/pressed states on):
+ * Trigger: `IconButton` (`appearance="gray"`) wrapping the
+ * `MoreHorizontal` symbol — the visible chip-style chrome matching the
+ * sibling "Add address" pill.
+ *
+ * The content opens `side="bottom" align="start"` so the menu drops to
+ * the RIGHT of the `…` trigger (left edges aligned, panel extending
+ * rightward) instead of extending leftward over the header.
+ *
+ * Actions:
  *   1. Edit contact   — PenEdit
  *   2. Delete contact — Trash, text-error (destructive)
- *
- * TODO(contacts-L4.1):
- *   - "Edit contact"   → useContacts().renameContact(deviceId, …) via
- *                        a Lumen Dialog with a name input.
- *   - "Delete contact" → no DMK verb today; the local wallet entry is
- *                        dropped via useContacts().removeContact, the
- *                        on-device group lingers until the API ships.
  */
 
 type ActionId = "edit" | "delete";
@@ -65,12 +66,10 @@ type Props = {
 
 export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) {
   const { t } = useTranslation();
-  // Controlled state so we can close the popover BEFORE the parent
-  // handler opens a dialog. With an uncontrolled popover the menu
-  // outlived the click and rendered on top of the dialog's overlay —
-  // looked broken because the overlay is supposed to dim everything
-  // behind it. See the previous bug report (Edit-contact dialog with
-  // a stuck "Edit / Delete" menu in front of the backdrop).
+  // Controlled state so we can close the menu BEFORE the parent
+  // handler opens a dialog. With an uncontrolled menu it outlived the
+  // click and rendered on top of the dialog's overlay — looked broken
+  // because the overlay is supposed to dim everything behind it.
   const [open, setOpen] = useState(false);
 
   const handlers: Record<ActionId, (() => void) | undefined> = {
@@ -97,53 +96,44 @@ export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) 
   const visibleActions = canDelete ? ACTIONS : ACTIONS.filter(a => a.id !== "delete");
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={
-          <IconButton
-            appearance="gray"
-            size="sm"
-            icon={MoreHorizontal}
-            aria-label={t("contactsManagement.contactActions")}
-            data-testid="contacts-management-overflow"
-          />
-        }
-      />
-      <PopoverContent
+    <Menu open={open} onOpenChange={setOpen}>
+      <MenuTrigger asChild>
+        <IconButton
+          appearance="gray"
+          size="sm"
+          icon={MoreHorizontal}
+          aria-label={t("contactsManagement.contactActions")}
+          data-testid="contacts-management-overflow"
+        />
+      </MenuTrigger>
+      <MenuContent
         side="bottom"
-        align="end"
-        width="fit"
+        align="start"
         className={cn(
-          "flex flex-col gap-0 min-w-208",
-          "bg-muted border border-muted-subtle rounded-sm p-8",
-          // Two-layer drop shadow matching the Figma `box-shadow/sm`,
-          // same as `AddressRowMenu` so the two menus visually match.
-          "shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)]",
+          "min-w-208",
+          // Figma master `14382:19427` uses a `canvas/sheet` background
+          // (no stroke) on top of MenuContent's intrinsic `bg-muted`
+          // chrome — tailwind-merge resolves the override.
+          "bg-canvas-sheet",
         )}
       >
         {visibleActions.map(action => {
           const Icon = action.icon;
           return (
-            <button
+            <MenuItem
               key={action.id}
-              type="button"
-              onClick={handleAction(action.id)}
+              onSelect={handleAction(action.id)}
               data-testid={`contacts-management-contact-menu-${action.id}`}
-              className={cn(
-                "flex h-44 w-full items-center gap-12 rounded-sm px-8",
-                "bg-base-transparent transition-colors",
-                "hover:bg-base-transparent-hover active:bg-base-transparent-pressed",
-                "focus-visible:outline-2 focus-visible:outline-focus",
-                "body-2-semi-bold text-start cursor-pointer",
-                action.destructive ? "text-error" : "text-base",
-              )}
+              // MenuItem ships `text-base cursor-default`; flip to the
+              // destructive tint + pointer cursor where needed.
+              className={cn("cursor-pointer", action.destructive && "text-error")}
             >
               <Icon size={20} className={action.destructive ? "text-error" : "text-base"} />
               <span className="min-w-0 flex-1 truncate">{t(action.i18nKey)}</span>
-            </button>
+            </MenuItem>
           );
         })}
-      </PopoverContent>
-    </Popover>
+      </MenuContent>
+    </Menu>
   );
 }

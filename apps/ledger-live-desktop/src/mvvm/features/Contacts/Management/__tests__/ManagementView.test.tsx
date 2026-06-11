@@ -140,11 +140,11 @@ describe("ManagementView", () => {
     );
 
     // Dialog content is not in the DOM until the row is clicked.
-    expect(screen.queryByTestId("contacts-management-address-qr")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-management-address-coin")).not.toBeInTheDocument();
 
     await user.click(screen.getByTestId("contacts-management-address-row"));
 
-    expect(screen.getByTestId("contacts-management-address-qr")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-management-address-coin")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-full")).toHaveTextContent(
       alice.entries[0].addressHex,
     );
