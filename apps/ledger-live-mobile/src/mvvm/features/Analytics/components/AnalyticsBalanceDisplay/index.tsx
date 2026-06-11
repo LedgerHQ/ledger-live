@@ -25,6 +25,7 @@ export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
     isLoading,
     isBalanceAvailable,
     shouldDisplayBalanceRefreshRework,
+    remountKey,
   } = useAnalyticsBalanceDisplayViewModel({ hoveredValue });
 
   if (!isBalanceAvailable) {
@@ -33,6 +34,7 @@ export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
 
   return (
     <AmountDisplay
+      key={remountKey}
       value={value}
       formatter={formatter}
       hidden={discreet}

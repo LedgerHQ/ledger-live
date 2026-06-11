@@ -7,6 +7,7 @@ import { useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioBalanceForDisplay } from "LLM/hooks/usePortfolioBalanceForDisplay";
+import { useRemountKeyOnFocus } from "~/hooks/useRemountKeyOnFocus";
 
 type Params = {
   hoveredValue?: number | null;
@@ -20,6 +21,8 @@ export type AnalyticsBalanceDisplayViewModel = {
   isLoading: boolean;
   isBalanceAvailable: boolean;
   shouldDisplayBalanceRefreshRework: boolean;
+  /** Remounts AmountDisplay on screen re-focus to recover a frozen animation (LIVE-32169). */
+  remountKey: number;
 };
 
 export function useAnalyticsBalanceDisplayViewModel({
@@ -29,6 +32,7 @@ export function useAnalyticsBalanceDisplayViewModel({
   const { displayedBalance, isLoading, isBalanceAvailable, unit } = usePortfolioBalanceForDisplay();
   const discreet = useSelector(discreetModeSelector);
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
+  const remountKey = useRemountKeyOnFocus();
 
   const formatter = useCallback(
     (val: number): FormattedValue =>
@@ -50,5 +54,6 @@ export function useAnalyticsBalanceDisplayViewModel({
     isLoading,
     isBalanceAvailable,
     shouldDisplayBalanceRefreshRework,
+    remountKey,
   };
 }
