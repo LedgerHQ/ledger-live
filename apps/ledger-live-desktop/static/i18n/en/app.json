@@ -1639,6 +1639,20 @@
       "applyFilters": "Apply filters",
       "clearAll": "Clear all"
     },
+    "marketTable": {
+      "crypto": "Name",
+      "price": "Market price",
+      "volume": "Volume",
+      "change": "Change",
+      "marketCap": "Market cap",
+      "actions": "Actions",
+      "menu": {
+        "more": "More",
+        "buySell": "Buy/Sell",
+        "addToFavourites": "Add to favorites",
+        "removeFromFavourites": "Remove from favorites"
+      }
+    },
     "marketList": {
       "crypto": "Crypto",
       "price": "Price",
