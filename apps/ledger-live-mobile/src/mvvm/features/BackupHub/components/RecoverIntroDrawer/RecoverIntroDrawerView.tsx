@@ -15,19 +15,20 @@ export function RecoverIntroDrawerView({
   isOpen,
   bottomInset,
   featureIntroViewModel,
-  onClose,
+  onDismiss,
+  onCloseFromCta,
 }: RecoverIntroDrawerViewProps) {
   return (
     <QueuedDrawerBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={onClose}
+      onClose={onDismiss}
       testID="backup-hub-feature-intro-drawer"
       enableDynamicSizing
     >
       <BottomSheetView style={{ paddingBottom: bottomInset }}>
         <Box lx={containerStyle}>
           <BottomSheetHeader />
-          <FeatureIntroLayout onClose={onClose} viewModel={featureIntroViewModel} />
+          <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
         </Box>
       </BottomSheetView>
     </QueuedDrawerBottomSheet>
