@@ -112,12 +112,10 @@ runs:
         TEST_EXIT_CODE=${PIPESTATUS[0]}
         set -e
 
-        # Multiple reporters (list + github) each print a summary, so take the
-        # last match to keep these single-valued for $GITHUB_OUTPUT.
-        PASSED=$(grep -oP '\d+ passed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || true); PASSED=${PASSED:-0}
-        FAILED=$(grep -oP '\d+ failed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || true); FAILED=${FAILED:-0}
-        SKIPPED=$(grep -oP '\d+ skipped' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || true); SKIPPED=${SKIPPED:-0}
-        FLAKY=$(grep -oP '\d+ flaky' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || true); FLAKY=${FLAKY:-0}
+        PASSED=$(grep -oP '\d+ passed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
+        FAILED=$(grep -oP '\d+ failed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
+        SKIPPED=$(grep -oP '\d+ skipped' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
+        FLAKY=$(grep -oP '\d+ flaky' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
         TOTAL=$((PASSED + FAILED + SKIPPED + FLAKY))
 
         echo "passed=${PASSED}" >> $GITHUB_OUTPUT
