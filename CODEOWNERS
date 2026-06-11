@@ -401,13 +401,14 @@ apps/ledger-live-mobile/src/mvvm/features/BackupHub/                            
 apps/ledger-live-mobile/src/mvvm/features/LNSUpsell/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                               @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/components/FeatureIntroLayout/                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/OnboardingWidget/               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBannersSection/        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarouselSection/       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/hooks/**/useOnboardingWidgetVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WalletSync/screens/Synchronize/ChooseMethod.tsx      @ledgerhq/engagement
 apps/ledger-live-mobile/src/images/lns-upsell-banner.webp                                      @ledgerhq/engagement
-apps/ledger-live-mobile/src/images/backup-hub-feature-intro.png                                @ledgerhq/engagement
+apps/ledger-live-mobile/src/images/backup-hub-feature-intro.webp                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/actions/dynamicContent.ts                                          @ledgerhq/engagement
 apps/ledger-live-mobile/src/components/PostOnboarding/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/hooks/analyticsOptInPrompt/                                        @ledgerhq/engagement

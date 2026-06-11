@@ -23,7 +23,7 @@ const BACKUP_HUB_FEATURE_INTRO_ID = "backup-hub-feature-intro";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const backupHubFeatureIntroImageUri = Image.resolveAssetSource(
-  require("~/images/backup-hub-feature-intro.png"),
+  require("~/images/backup-hub-feature-intro.webp"),
 ).uri;
 
 export type UseLedgerRecoverFeatureIntroViewModelResult = Readonly<{

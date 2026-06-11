@@ -1,6 +1,6 @@
 import React from "react";
 import { Linking } from "react-native";
-import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { screen as analyticsScreen, track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { openBackupHubFeatureIntro, tickBackupHubFeatureIntroDeeplink } from "~/reducers/backupHubFeatureIntro";
@@ -99,7 +99,6 @@ describe("LedgerRecoverFeatureIntro", () => {
 
     const closeButton = await screen.findByTestId("bottom-sheet-header-close-button");
     await user.press(closeButton);
-    fireEvent(closeButton, "dismiss");
     act(() => jest.runOnlyPendingTimers());
 
     await waitFor(() => {
