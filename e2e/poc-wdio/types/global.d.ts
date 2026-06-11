@@ -16,6 +16,9 @@ declare global {
     interface Capabilities {
       /** Set by Appium UiAutomator2 in returned session caps */
       deviceUDID?: string;
+      "custom:capa": {
+        websocketPort: number;
+      };
     }
   }
 }

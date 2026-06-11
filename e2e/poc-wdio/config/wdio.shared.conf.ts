@@ -19,7 +19,6 @@ export const config: WebdriverIO.Config = {
   runner: "local",
   tsConfigPath: "../tsconfig.json",
 
-  port: 4723,
   //
   // ==================
   // Specify Test Files
@@ -56,7 +55,7 @@ export const config: WebdriverIO.Config = {
   // and 30 processes will get spawned. The property handles how many capabilities
   // from the same test should run tests.
   //
-  maxInstances: 1,
+  maxInstances: 2,
   //
   // If you have trouble getting all important capabilities together, check out the
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -121,6 +120,18 @@ export const config: WebdriverIO.Config = {
           // Required for UiAutomator2 to download a Chromedriver matching the emulator WebView.
           // Appium 3 requires "driverName:feature" (colon).
           allowInsecure: "uiautomator2:chromedriver_autodownload",
+          port: 4723,
+        },
+      },
+    ],
+    [
+      "appium",
+      {
+        args: {
+          // Required for UiAutomator2 to download a Chromedriver matching the emulator WebView.
+          // Appium 3 requires "driverName:feature" (colon).
+          allowInsecure: "uiautomator2:chromedriver_autodownload",
+          port: 4724,
         },
       },
     ],
@@ -187,7 +198,7 @@ export const config: WebdriverIO.Config = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: async function (config, capabilities) {
+  // onPrepare: async function (config, capabilities: WebdriverIO.Capabilities) {
   // },
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
@@ -198,7 +209,7 @@ export const config: WebdriverIO.Config = {
    * @param  {object} args     object that will be merged with the main configuration once worker is initialized
    * @param  {object} execArgv list of string arguments passed to the worker process
    */
-  // onWorkerStart: function (cid, caps, specs, args, execArgv) {
+  // onWorkerStart: async function (cid, caps, specs, args, execArgv) {
   // },
   /**
    * Gets executed just after a worker process has exited.
@@ -217,7 +228,7 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    * @param {string} cid worker id (e.g. 0-0)
    */
-  beforeSession: async function (config, capabilities, specs, cid) {
+  beforeSession: async function (config, capabilities: WebdriverIO.Capabilities, specs, cid) {
     setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
     setEnv("MOCK", "");
     process.env.MOCK = "";
@@ -236,7 +247,7 @@ export const config: WebdriverIO.Config = {
       messages: {},
       e2eBridgeServer: undefined,
     };
-    await init();
+    await init(capabilities["custom:capa"].websocketPort);
     // ADBUtils.startLogcatStream(cid);
   },
   /**
