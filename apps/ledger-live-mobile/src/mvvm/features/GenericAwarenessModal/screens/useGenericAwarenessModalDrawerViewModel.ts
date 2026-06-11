@@ -5,7 +5,6 @@ import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalCarousel,
   type GenericAwarenessModalContentCard,
-  type GenericAwarenessModalFeatureIntro,
   type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -20,6 +19,7 @@ import {
   selectIsGenericAwarenessModalOpen,
 } from "~/reducers/genericAwarenessModal";
 import { useGenericAwarenessModalLogic } from "./useGenericAwarenessModalLogic";
+import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import {
   trackGenericAwarenessModalButtonClicked,
   trackGenericAwarenessModalCarouselStepViewed,
@@ -29,12 +29,6 @@ import {
   trackGenericAwarenessModalPromptViewed,
   trackGenericAwarenessModalTourCompleted,
 } from "../analytics";
-
-export type FeatureIntroViewModel = Readonly<{
-  content: GenericAwarenessModalFeatureIntro;
-  onPrimaryPress: () => void;
-  onSecondaryPress: () => void;
-}>;
 
 export type CarouselViewModel = Readonly<{
   content: GenericAwarenessModalCarousel;

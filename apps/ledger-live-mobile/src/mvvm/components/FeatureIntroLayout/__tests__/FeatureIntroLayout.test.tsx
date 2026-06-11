@@ -1,11 +1,11 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { FeatureIntroLayout } from "../FeatureIntroLayout";
+import { FeatureIntroLayout } from "..";
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalFeatureIntro,
 } from "@ledgerhq/live-common/genericAwarenessModal";
-import type { FeatureIntroViewModel } from "../../screens/useGenericAwarenessModalDrawerViewModel";
+import type { FeatureIntroViewModel } from "../types";
 
 const content: GenericAwarenessModalFeatureIntro = {
   id: "featureIntro",

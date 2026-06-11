@@ -2,13 +2,8 @@ import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Image, Linking, StyleSheet } from "react-native";
-import { useThemedAwarenessModalImage } from "../hooks/useThemedAwarenessModalImage";
-import type { FeatureIntroViewModel } from "../screens/useGenericAwarenessModalDrawerViewModel";
-
-type FeatureIntroLayoutProps = Readonly<{
-  onClose: () => void;
-  viewModel: FeatureIntroViewModel;
-}>;
+import { useThemedAwarenessModalImage } from "LLM/features/GenericAwarenessModal/hooks/useThemedAwarenessModalImage";
+import type { FeatureIntroLayoutProps } from "./types";
 
 const TITLE_NUMBER_OF_LINES = 2;
 const SUBTITLE_NUMBER_OF_LINES = 3;
@@ -21,6 +16,10 @@ const FEATURE_INTRO_HERO_CONTAINER_LX = {
   overflow: "hidden",
 } as const;
 
+/**
+ * Shared mobile layout for feature intro bottom sheets:
+ * hero image, title, subtitle, icon items, and primary/secondary CTAs.
+ */
 export function FeatureIntroLayout({ onClose, viewModel }: FeatureIntroLayoutProps) {
   const { content } = viewModel;
   const {
