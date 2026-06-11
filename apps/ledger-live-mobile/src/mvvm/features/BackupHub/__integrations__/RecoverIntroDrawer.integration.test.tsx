@@ -73,6 +73,7 @@ describe("RecoverIntroDrawer", () => {
       link: "ledgerlive://recover/protect-prod?redirectTo=upsell",
     });
     expect(openURL).toHaveBeenCalledWith("ledgerlive://recover/protect-prod?redirectTo=upsell");
+    expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
   });
 
   it("should open Recover login when secondary CTA is pressed", async () => {
@@ -90,6 +91,7 @@ describe("RecoverIntroDrawer", () => {
       link: "ledgerlive://recover/protect-prod?redirectTo=login",
     });
     expect(openURL).toHaveBeenCalledWith("ledgerlive://recover/protect-prod?redirectTo=login");
+    expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
   });
 
   it("should dismiss the bottom-sheet when closed", async () => {

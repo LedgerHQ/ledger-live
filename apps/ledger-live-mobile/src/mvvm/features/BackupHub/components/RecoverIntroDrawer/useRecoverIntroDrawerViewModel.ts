@@ -30,7 +30,8 @@ export type UseRecoverIntroDrawerViewModelResult = Readonly<{
   isOpen: boolean;
   bottomInset: number;
   featureIntroViewModel: FeatureIntroViewModel;
-  onClose: () => void;
+  onDismiss: () => void;
+  onCloseFromCta: () => void;
 }>;
 
 export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModelResult | null {
@@ -43,6 +44,7 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
   const isOpen = useSelector(selectIsBackupHubFeatureIntroOpen);
   const deeplinkNonce = useSelector(selectBackupHubFeatureIntroDeeplinkNonce);
   const hasTrackedViewRef = useRef(false);
+  const hasClosedRef = useRef(false);
   const lastHandledDeeplinkNonceRef = useRef(0);
 
   const primaryButtonLink = useCustomURI(
@@ -105,10 +107,25 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
     });
   }, [content.secondaryButtonLabel, content.secondaryButtonLink]);
 
-  const onClose = useCallback(() => {
-    trackBackupHubFeatureIntroDismissed();
+  const closeDrawer = useCallback(() => {
+    if (hasClosedRef.current) {
+      return;
+    }
+    hasClosedRef.current = true;
     dispatch(closeBackupHubFeatureIntro());
   }, [dispatch]);
+
+  const onDismiss = useCallback(() => {
+    if (hasClosedRef.current) {
+      return;
+    }
+    trackBackupHubFeatureIntroDismissed();
+    closeDrawer();
+  }, [closeDrawer]);
+
+  const onCloseFromCta = useCallback(() => {
+    closeDrawer();
+  }, [closeDrawer]);
 
   const featureIntroViewModel = useMemo(
     () => ({
@@ -122,6 +139,7 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
   useEffect(() => {
     if (!isOpen) {
       hasTrackedViewRef.current = false;
+      hasClosedRef.current = false;
       return;
     }
 
@@ -133,9 +151,9 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
 
   useEffect(() => {
     if (isOpen && !isLwmBackupHubEnabled) {
-      dispatch(closeBackupHubFeatureIntro());
+      closeDrawer();
     }
-  }, [dispatch, isLwmBackupHubEnabled, isOpen]);
+  }, [closeDrawer, isLwmBackupHubEnabled, isOpen]);
 
   useEffect(() => {
     if (deeplinkNonce === 0) {
@@ -160,6 +178,7 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
     isOpen,
     bottomInset: bottomInset + 20,
     featureIntroViewModel,
-    onClose,
+    onDismiss,
+    onCloseFromCta,
   };
 }
