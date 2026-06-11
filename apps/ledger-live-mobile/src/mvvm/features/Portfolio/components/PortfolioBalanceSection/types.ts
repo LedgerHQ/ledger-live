@@ -17,6 +17,8 @@ export interface PortfolioBalanceSectionViewProps {
   readonly isAnalyticPillVisible: boolean;
   readonly isLoading: boolean;
   readonly shouldDisplayBalanceRefreshRework: boolean;
+  /** Remounts AmountDisplay on screen re-focus to recover a frozen animation (LIVE-32169). */
+  readonly remountKey: number;
   readonly onToggleDiscreetMode: () => void;
 }
 
