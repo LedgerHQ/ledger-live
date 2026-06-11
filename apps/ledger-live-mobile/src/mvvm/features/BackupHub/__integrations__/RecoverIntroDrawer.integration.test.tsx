@@ -5,14 +5,14 @@ import { screen as analyticsScreen, track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { openBackupHubFeatureIntro, tickBackupHubFeatureIntroDeeplink } from "~/reducers/backupHubFeatureIntro";
 import { handleBackupHubDeeplink } from "~/navigation/deeplinks/handleBackupHubDeeplink";
-import { LedgerRecoverFeatureIntro } from "../components/LedgerRecoverFeatureIntro";
+import { RecoverIntroDrawer } from "../components/RecoverIntroDrawer";
 import { BACKUP_HUB_FEATURE_INTRO_PAGE } from "../analytics";
 
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useCustomURI: jest.fn((_, redirectTo: string) => `ledgerlive://recover/protect-prod?redirectTo=${redirectTo}`),
 }));
 
-describe("LedgerRecoverFeatureIntro", () => {
+describe("RecoverIntroDrawer", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -36,7 +36,7 @@ describe("LedgerRecoverFeatureIntro", () => {
   const renderFeatureIntro = (
     backupHubFeatureIntro: Partial<State["backupHubFeatureIntro"]> = { isOpen: true },
   ) =>
-    render(<LedgerRecoverFeatureIntro />, {
+    render(<RecoverIntroDrawer />, {
       overrideInitialState: withFlagOverrides(
         {
           lwmBackupHub: { enabled: true },
