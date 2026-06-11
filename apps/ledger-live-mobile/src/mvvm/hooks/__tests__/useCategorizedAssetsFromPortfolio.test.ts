@@ -5,6 +5,7 @@ import { State } from "~/reducers/types";
 const mockUseCategorizedAssets = jest.fn();
 const mockUseDistribution = jest.fn();
 const mockUseStablecoinTickers = jest.fn();
+const mockUseStockAssetIds = jest.fn();
 
 jest.mock("@ledgerhq/asset-aggregation/assetCategorization/index", () => ({
   useCategorizedAssets: (...args: unknown[]) => mockUseCategorizedAssets(...args),
@@ -17,6 +18,16 @@ jest.mock("~/actions/general", () => ({
 
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers", () => ({
   useStablecoinTickers: (...args: unknown[]) => mockUseStablecoinTickers(...args),
+}));
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useStockAssetIds", () => ({
+  useStockAssetIds: (...args: unknown[]) => mockUseStockAssetIds(...args),
+}));
+
+const mockUseWalletFeaturesConfig = jest.fn();
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
+  useWalletFeaturesConfig: () => mockUseWalletFeaturesConfig(),
 }));
 
 const withBlacklistedTokens =
@@ -42,6 +53,15 @@ describe("useCategorizedAssetsFromPortfolio", () => {
       tickers: new Set<string>(),
       isLoading: false,
       isError: false,
+    });
+    mockUseStockAssetIds.mockReturnValue({
+      ids: new Set<string>(),
+      isLoading: false,
+      isError: false,
+    });
+    mockUseWalletFeaturesConfig.mockReturnValue({
+      shouldDisplayAggregatedAssets: false,
+      shouldDisplayAssetDiscoverability: true,
     });
     mockUseCategorizedAssets.mockReturnValue({ cryptos: [], stablecoins: [] });
   });
@@ -73,15 +93,85 @@ describe("useCategorizedAssetsFromPortfolio", () => {
       expect(result.current.categorizedAssets.stablecoins[0].currency.id).toBe("usdt-token");
     });
 
-    it("returns the original list unchanged when no token is blacklisted", () => {
+    it("keeps cryptos and stablecoins when no token is blacklisted", () => {
       const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
       const usdc = makeItem("USDC", "usdc-token", "TokenCurrency");
-      const source = { cryptos: [btc], stablecoins: [usdc] };
-      mockUseCategorizedAssets.mockReturnValue(source);
+      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc], stablecoins: [usdc] });
 
       const { result } = renderHook(() => useCategorizedAssetsFromPortfolio());
 
-      expect(result.current.categorizedAssets).toBe(source);
+      expect(result.current.categorizedAssets.cryptos.map(a => a.currency.id)).toEqual(["bitcoin"]);
+      expect(result.current.categorizedAssets.stablecoins.map(a => a.currency.id)).toEqual([
+        "usdc-token",
+      ]);
+      expect(result.current.categorizedAssets.stocks).toEqual([]);
+    });
+  });
+
+  describe("stocks bucketing", () => {
+    it("moves held stocks out of cryptos by DADA currency id", () => {
+      const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
+      const aapl = makeItem("Apple xStock", "aapl-x", "TokenCurrency");
+      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc, aapl], stablecoins: [] });
+      mockUseStockAssetIds.mockReturnValue({
+        ids: new Set(["aapl-x"]),
+        isLoading: false,
+        isError: false,
+      });
+
+      const { result } = renderHook(() => useCategorizedAssetsFromPortfolio());
+
+      expect(result.current.categorizedAssets.cryptos.map(a => a.currency.id)).toEqual(["bitcoin"]);
+      expect(result.current.categorizedAssets.stocks.map(a => a.currency.id)).toEqual(["aapl-x"]);
+    });
+
+    it("does not miscategorize a crypto whose ticker collides with a stock symbol", () => {
+      // TON (crypto) must not become a stock just because a stock shares the ticker.
+      const ton = makeItem("Toncoin", "ton", "CryptoCurrency");
+      mockUseCategorizedAssets.mockReturnValue({ cryptos: [ton], stablecoins: [] });
+      mockUseStockAssetIds.mockReturnValue({
+        ids: new Set(["some-tokenized-stock"]),
+        isLoading: false,
+        isError: false,
+      });
+
+      const { result } = renderHook(() => useCategorizedAssetsFromPortfolio());
+
+      expect(result.current.categorizedAssets.cryptos.map(a => a.currency.id)).toEqual(["ton"]);
+      expect(result.current.categorizedAssets.stocks).toEqual([]);
+    });
+
+    it("leaves cryptos untouched and stocks empty when no id matches", () => {
+      const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
+      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc], stablecoins: [] });
+
+      const { result } = renderHook(() => useCategorizedAssetsFromPortfolio());
+
+      expect(result.current.categorizedAssets.cryptos).toHaveLength(1);
+      expect(result.current.categorizedAssets.stocks).toEqual([]);
+    });
+
+    it("keeps stocks under cryptos when assetDiscoverability is off", () => {
+      mockUseWalletFeaturesConfig.mockReturnValue({
+        shouldDisplayAggregatedAssets: false,
+        shouldDisplayAssetDiscoverability: false,
+      });
+      const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
+      const aapl = makeItem("Apple xStock", "aapl-x", "TokenCurrency");
+      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc, aapl], stablecoins: [] });
+      mockUseStockAssetIds.mockReturnValue({
+        ids: new Set(["aapl-x"]),
+        isLoading: false,
+        isError: false,
+      });
+
+      const { result } = renderHook(() => useCategorizedAssetsFromPortfolio());
+
+      expect(result.current.categorizedAssets.stocks).toEqual([]);
+      expect(result.current.categorizedAssets.cryptos.map(a => a.currency.id)).toEqual([
+        "bitcoin",
+        "aapl-x",
+      ]);
     });
   });
 
