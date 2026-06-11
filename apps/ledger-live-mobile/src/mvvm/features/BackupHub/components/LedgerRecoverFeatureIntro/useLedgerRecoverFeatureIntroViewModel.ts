@@ -12,7 +12,7 @@ import {
   selectBackupHubFeatureIntroDeeplinkNonce,
   selectIsBackupHubFeatureIntroOpen,
 } from "~/reducers/backupHubFeatureIntro";
-import type { FeatureIntroViewModel } from "LLM/features/GenericAwarenessModal/screens/useGenericAwarenessModalDrawerViewModel";
+import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import {
   trackBackupHubFeatureIntroButtonClicked,
   trackBackupHubFeatureIntroDismissed,

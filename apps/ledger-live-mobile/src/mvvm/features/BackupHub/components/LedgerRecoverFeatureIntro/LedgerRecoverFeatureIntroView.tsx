@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import { FeatureIntroLayout } from "LLM/features/GenericAwarenessModal/components/FeatureIntroLayout";
+import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
 import type { UseLedgerRecoverFeatureIntroViewModelResult } from "./useLedgerRecoverFeatureIntroViewModel";
 
 type LedgerRecoverFeatureIntroViewProps = UseLedgerRecoverFeatureIntroViewModelResult;
