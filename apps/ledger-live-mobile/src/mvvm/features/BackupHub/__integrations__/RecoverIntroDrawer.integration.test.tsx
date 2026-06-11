@@ -58,21 +58,21 @@ describe("RecoverIntroDrawer", () => {
     });
   });
 
-  it("should open Recover upsell when primary CTA is pressed", async () => {
+  it("should open Recover resume activate when primary CTA is pressed", async () => {
     const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
     const { user } = renderFeatureIntro();
 
     act(() => jest.runOnlyPendingTimers());
 
-    await user.press(await screen.findByText("Start 2 months free trial"));
+    await user.press(await screen.findByText("Try 1 month free"));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Start 2 months free trial",
+      button: "Try 1 month free",
       page: BACKUP_HUB_FEATURE_INTRO_PAGE,
       source: "backup-hub-feature-intro",
-      link: "ledgerlive://recover/protect-prod?redirectTo=upsell",
+      link: "ledgerlive://recover/protect-prod?redirectTo=resumeActivate",
     });
-    expect(openURL).toHaveBeenCalledWith("ledgerlive://recover/protect-prod?redirectTo=upsell");
+    expect(openURL).toHaveBeenCalledWith("ledgerlive://recover/protect-prod?redirectTo=resumeActivate");
     expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
   });
 
