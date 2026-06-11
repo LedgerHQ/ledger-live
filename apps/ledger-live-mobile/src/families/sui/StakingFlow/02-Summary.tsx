@@ -3,7 +3,10 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useLedgerFirstShuffledValidatorsSui } from "@ledgerhq/live-common/families/sui/react";
-import { SuiValidator, Transaction as SuiTransaction } from "@ledgerhq/live-common/families/sui/types";
+import {
+  SuiValidator,
+  Transaction as SuiTransaction,
+} from "@ledgerhq/live-common/families/sui/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";

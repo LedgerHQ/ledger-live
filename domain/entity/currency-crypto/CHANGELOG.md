@@ -1,5 +1,17 @@
 # @domain/entity-currency-crypto
 
+## 0.4.0
+
+### Minor Changes
+
+- [#18012](https://github.com/LedgerHQ/ledger-live/pull/18012) [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: add hedera_testnet
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#18012](https://github.com/LedgerHQ/ledger-live/pull/18012) [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: add hedera_testnet
+
 ## 0.3.0
 
 ### Minor Changes

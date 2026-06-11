@@ -1,10 +1,57 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
+import {
+  type ConnectedDevice,
+  DeviceModelId as DMKDeviceModelId,
+} from "@ledgerhq/device-management-kit";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { TrackScreen, track } from "~/analytics";
+import { SourceFlowProvider } from "../utils/SourceFlowContext";
+import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { IntentError } from "./IntentError";
 
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(() => null),
+    track: jest.fn(),
+  };
+});
+
+const mockedTrackScreen = jest.mocked(TrackScreen);
+const mockedTrack = jest.mocked(track);
+
+const device = {
+  id: "device-id",
+  name: "Ledger Stax",
+  modelId: DMKDeviceModelId.STAX,
+  sessionId: "session-id",
+  type: "BLE",
+  transport: "ble",
+} as ConnectedDevice;
+
+function renderState(props: Partial<React.ComponentProps<typeof IntentError>> = {}) {
+  return render(
+    <SourceFlowProvider value="my_ledger">
+      <IntentError
+        device={device}
+        error={new Error("job failed")}
+        onRetry={jest.fn()}
+        onClose={jest.fn()}
+        {...props}
+      />
+    </SourceFlowProvider>,
+  );
+}
+
 describe("IntentError", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("renders title, description and the primary Retry / secondary Close CTAs", () => {
-    render(<IntentError error={new Error("job failed")} onRetry={jest.fn()} onClose={jest.fn()} />);
+    renderState();
 
     expect(screen.getByTestId("device-intent-executor-intent-error")).toBeVisible();
     expect(screen.getByText("job failed")).toBeVisible();
@@ -18,13 +65,7 @@ describe("IntentError", () => {
   });
 
   it("falls back to the generic i18n title/description when the error is not translatable", () => {
-    render(
-      <IntentError
-        error={"not-an-error" as unknown as Error}
-        onRetry={jest.fn()}
-        onClose={jest.fn()}
-      />,
-    );
+    renderState({ error: "not-an-error" });
 
     expect(screen.getByTestId("device-intent-executor-intent-error")).toBeVisible();
     expect(screen.getByText("Unknown error")).toBeVisible();
@@ -39,12 +80,17 @@ describe("IntentError", () => {
     const onRetry = jest.fn();
     const onClose = jest.fn();
 
-    const { user } = render(
-      <IntentError error={new Error("job failed")} onRetry={onRetry} onClose={onClose} />,
-    );
+    const { user } = renderState({ onRetry, onClose });
 
     await user.press(screen.getByText("Retry"));
 
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.stax,
+      transport: "ble",
+      button: "Retry",
+    });
     expect(onRetry).toHaveBeenCalledTimes(1);
     expect(onClose).not.toHaveBeenCalled();
   });
@@ -53,13 +99,33 @@ describe("IntentError", () => {
     const onRetry = jest.fn();
     const onClose = jest.fn();
 
-    const { user } = render(
-      <IntentError error={new Error("job failed")} onRetry={onRetry} onClose={onClose} />,
-    );
+    const { user } = renderState({ onRetry, onClose });
 
     await user.press(screen.getByText("Close"));
 
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.stax,
+      transport: "ble",
+      button: "Close",
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onRetry).not.toHaveBeenCalled();
+  });
+
+  it("fires the Device Action - Unknown Intent Error page event with sourceFlow, deviceUxV2, modelId and transport", () => {
+    renderState();
+
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_DEVICE_ACTION.UnknownIntentError,
+        sourceFlow: "my_ledger",
+        deviceUxV2: true,
+        modelId: DeviceModelId.stax,
+        transport: "ble",
+      }),
+      undefined,
+    );
   });
 });

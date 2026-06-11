@@ -9,11 +9,6 @@ const mockFindCryptoCurrencyById = jest.fn();
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
   findCryptoCurrencyById: (...args: unknown[]) => mockFindCryptoCurrencyById(...args),
-  legacyIdToApiId: (id: string) => {
-    if (id.startsWith("stellar/asset/")) return id.toLowerCase();
-    if (id.startsWith("multiversx/esdt/")) return id.replace("multiversx/esdt/", "elrond/esdt/");
-    return id;
-  },
 }));
 
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
@@ -260,69 +255,5 @@ describe("buildAssetDistribution", () => {
     expect(result.list).toHaveLength(1);
     expect(result.list[0].metaCurrencyId).toBe("urn:crypto:meta-currency:tether");
     expect(result.list[0].amount).toBe(1_001_000);
-  });
-
-  describe("DADA id format normalization (LIVE-22557 / LIVE-22558)", () => {
-    const ethereumUsdc = makeCurrency("ethereum/erc20/usd__coin", "USD Coin");
-    const stellarUsdcMixedCase = makeCurrency(
-      "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-      "USDC",
-    );
-    const multiversxUsdc = makeCurrency("multiversx/esdt/USDC-c76f1f", "USD Coin");
-
-    const usdCoinAssetsData: AssetsDataLike = {
-      cryptoAssets: {
-        "urn:crypto:meta-currency:usd_coin": {
-          id: "urn:crypto:meta-currency:usd_coin",
-          assetsIds: {
-            ethereum: "ethereum/erc20/usd__coin",
-            stellar: "stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
-            elrond: "elrond/esdt/USDC-c76f1f",
-          },
-        },
-      },
-      markets: {},
-    };
-
-    it("should aggregate mixed-case Stellar USDC under usd_coin meta-currency", () => {
-      const result = distribute(
-        [
-          makeAccount("eth-usdc-1", ethereumUsdc, 1000),
-          makeAccount("xlm-usdc-1", stellarUsdcMixedCase, 200),
-        ],
-        undefined,
-        usdCoinAssetsData,
-      );
-
-      expect(result.list).toHaveLength(1);
-      expect(result.list[0].metaCurrencyId).toBe("urn:crypto:meta-currency:usd_coin");
-      expect(result.list[0].networks).toHaveLength(2);
-      const networkIds = result.list[0].networks!.map(n => n.currency.id).sort();
-      expect(networkIds).toEqual(
-        [
-          "ethereum/erc20/usd__coin",
-          "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        ].sort(),
-      );
-    });
-
-    it("should aggregate MultiversX USDC under usd_coin meta-currency (multiversx -> elrond)", () => {
-      const result = distribute(
-        [
-          makeAccount("eth-usdc-1", ethereumUsdc, 1000),
-          makeAccount("egld-usdc-1", multiversxUsdc, 500),
-        ],
-        undefined,
-        usdCoinAssetsData,
-      );
-
-      expect(result.list).toHaveLength(1);
-      expect(result.list[0].metaCurrencyId).toBe("urn:crypto:meta-currency:usd_coin");
-      expect(result.list[0].networks).toHaveLength(2);
-      const networkIds = result.list[0].networks!.map(n => n.currency.id).sort();
-      expect(networkIds).toEqual(
-        ["ethereum/erc20/usd__coin", "multiversx/esdt/USDC-c76f1f"].sort(),
-      );
-    });
   });
 });

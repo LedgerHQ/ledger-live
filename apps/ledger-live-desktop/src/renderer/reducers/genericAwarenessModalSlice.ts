@@ -41,10 +41,7 @@ const genericAwarenessModalSlice = createSlice({
     ) => {
       state.contentCards = action.payload;
     },
-    setGenericAwarenessModalCampaignId: (
-      state,
-      action: PayloadAction<string | undefined>,
-    ) => {
+    setGenericAwarenessModalCampaignId: (state, action: PayloadAction<string | undefined>) => {
       state.campaignId = action.payload;
     },
   },

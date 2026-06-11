@@ -21,7 +21,7 @@ export function getSendFlowBlockchain(
   if (!account) return "";
 
   if (account.type === "TokenAccount") {
-    return parentAccount?.currency.id ?? account.token?.parentCurrency.id ?? "";
+    return parentAccount?.currency?.id ?? account.token?.parentCurrency?.id ?? "";
   }
 
   return account.currency?.id ?? "";

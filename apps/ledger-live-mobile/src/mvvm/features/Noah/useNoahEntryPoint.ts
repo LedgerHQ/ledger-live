@@ -1,5 +1,5 @@
 import { shouldShowNoahMenu, NoahParams } from "./shouldShowNoahMenu";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 /**
  * Check if the noah menu should be shown based on the feature flag and the route

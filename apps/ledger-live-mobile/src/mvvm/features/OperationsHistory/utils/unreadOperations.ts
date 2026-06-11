@@ -1,4 +1,5 @@
-import type { Account, AccountLike, Features, Operation } from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import {
   flattenOperationWithInternalsAndNfts,

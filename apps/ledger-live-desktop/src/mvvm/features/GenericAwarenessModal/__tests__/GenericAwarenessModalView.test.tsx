@@ -6,12 +6,15 @@ import GenericAwarenessModalView from "../GenericAwarenessModalView";
 import {
   PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
   PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO,
+  PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
 } from "../analytics/const";
 import {
   APP_START_CAMPAIGN_ID,
   CAROUSEL_CAMPAIGN_ID,
+  PROMPT_CAMPAIGN_ID,
   appStartFeatureIntroCard,
   carouselCampaignCard,
+  promptCampaignCard,
 } from "../testUtils/fixtures";
 import {
   createGenericAwarenessModalTestState,
@@ -99,6 +102,24 @@ describe("GenericAwarenessModalView", () => {
     );
   });
 
+  it("should render prompt, track the page, and hide carousel controls", () => {
+    renderOpenAwarenessModalView(promptCampaignCard);
+
+    expect(screen.getByTestId("generic-awareness-modal")).toHaveAttribute(
+      "data-campaign-id",
+      PROMPT_CAMPAIGN_ID,
+    );
+    expect(screen.getByText("Stay in control")).toBeVisible();
+    expect(screen.queryByTestId("generic-awareness-modal-continue-button")).not.toBeInTheDocument();
+    expect(trackPage).toHaveBeenCalledWith(
+      PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
+      undefined,
+      expect.objectContaining({ contentId: PROMPT_CAMPAIGN_ID }),
+      true,
+      false,
+    );
+  });
+
   it("should track dismiss and close the dialog on escape", () => {
     renderOpenAwarenessModalView(carouselCampaignCard);
 
@@ -113,6 +134,21 @@ describe("GenericAwarenessModalView", () => {
         contentId: CAROUSEL_CAMPAIGN_ID,
         stepName: "Ledger Flex",
       }),
+    );
+    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
+  });
+
+  it("should track prompt dismiss and close the dialog on escape", () => {
+    renderOpenAwarenessModalView(promptCampaignCard);
+
+    fireEvent.keyDown(screen.getByTestId("generic-awareness-modal"), {
+      key: "Escape",
+      code: "Escape",
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "drawer_dismissed",
+      expect.objectContaining({ contentId: PROMPT_CAMPAIGN_ID }),
     );
     expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
   });

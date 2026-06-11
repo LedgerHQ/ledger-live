@@ -36,8 +36,14 @@ function View({
   );
 }
 
-const LedgerSyncEntryPoint = ({ entryPoint, page }: { entryPoint: EntryPoint; page: string }) => (
-  <View {...useLedgerSyncEntryPointViewModel({ entryPoint, page })} />
-);
+const LedgerSyncEntryPoint = ({
+  entryPoint,
+  page,
+  variant,
+}: {
+  entryPoint: EntryPoint;
+  page: string;
+  variant?: "v4";
+}) => <View {...useLedgerSyncEntryPointViewModel({ entryPoint, page, variant })} />;
 
 export default LedgerSyncEntryPoint;

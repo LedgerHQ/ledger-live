@@ -26,8 +26,9 @@ export function defaultClearAccount<T extends AccountLike>(
     operations: [],
     pendingOperations: [],
     subAccounts:
-      (account as unknown as Account).subAccounts?.map(acc => defaultClearAccount(acc, familyClean)) ||
-      [],
+      (account as unknown as Account).subAccounts?.map(acc =>
+        defaultClearAccount(acc, familyClean),
+      ) || [],
   };
   familyClean?.(copy);
   delete copy.nfts;

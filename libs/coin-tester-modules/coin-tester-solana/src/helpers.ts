@@ -147,7 +147,8 @@ export async function getBridges(
     };
   }
 
-  const coinframeworkSignerContext: SignerContext<CoinFrameworkSolanaSigner> = (_, fn) => fn(signers.coinframework);
+  const coinframeworkSignerContext: SignerContext<CoinFrameworkSolanaSigner> = (_, fn) =>
+    fn(signers.coinframework);
   const coinframeworkGetAddress = solanaGetAddress(coinframeworkSignerContext);
 
   return {

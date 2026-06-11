@@ -1,7 +1,8 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import { TrackScreen } from "~/analytics";
@@ -45,7 +46,7 @@ export default function SelectPool({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <SelectPoolSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>

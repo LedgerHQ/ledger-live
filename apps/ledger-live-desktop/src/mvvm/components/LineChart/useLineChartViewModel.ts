@@ -1,17 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useCallback, useMemo } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  LINE_CHART_RANGES,
   DEFAULT_LINE_CHART_HEIGHT,
-  CHART_OVERFLOW_BUFFER,
   LINE_CHART_COLOR_TO_STROKE,
+  LINE_CHART_RANGES,
 } from "./constants";
-import type { LineChartProps, LineChartRange, LineChartSeries } from "./types";
+import type {
+  LineChartPointMarker,
+  LineChartPointTooltip,
+  LineChartProps,
+  LineChartRange,
+  LineChartScrubberPositionChange,
+  LineChartSeries,
+  LineChartTooltipTitle,
+  LineChartValueFormatter,
+  LineChartXAxisConfig,
+  LineChartYAxisConfig,
+} from "./types";
+import { getExtremaPointMarkers } from "./utils/getExtremaPointMarkers";
+
+const defaultFormatValue: LineChartValueFormatter = value => String(value);
 
 export type LineChartViewModelResult = Readonly<{
-  chartWrapperRef: RefObject<HTMLDivElement | null>;
   chartSeries: LineChartSeries[];
-  chartWidth: number | null;
   height: number;
   isLoading: boolean;
   isError: boolean;
@@ -20,6 +32,20 @@ export type LineChartViewModelResult = Readonly<{
   handleSelectedChange: (value: string) => void;
   rangeSelectorLabel: string;
   rangeButtons: ReadonlyArray<{ value: LineChartRange; label: string }>;
+  points: LineChartPointMarker[];
+  pointTooltips: ReadonlyMap<number, LineChartPointTooltip>;
+  enableScrubber: boolean;
+  formatValue: LineChartValueFormatter;
+  tooltipTitle?: LineChartTooltipTitle;
+  showScrubberTooltip: boolean;
+  pointTooltipsOnly: boolean;
+  onScrubberPositionChange?: LineChartScrubberPositionChange;
+  showArea: boolean;
+  showXAxis: boolean;
+  showYAxis: boolean;
+  xAxis?: LineChartXAxisConfig;
+  yAxis?: LineChartYAxisConfig;
+  rangeSelectorTrailing?: ReactNode;
 }>;
 
 export function useLineChartViewModel({
@@ -31,24 +57,22 @@ export function useLineChartViewModel({
   isError = false,
   errorMessage,
   height = DEFAULT_LINE_CHART_HEIGHT,
+  points,
+  enableScrubber = true,
+  formatValue = defaultFormatValue,
+  tooltipTitle,
+  showScrubberTooltip = true,
+  pointTooltipsOnly = false,
+  onScrubberPositionChange,
+  showArea = true,
+  showXAxis = true,
+  showYAxis = true,
+  xAxis,
+  yAxis,
+  rangeSelectorTrailing,
 }: LineChartProps): LineChartViewModelResult {
   const { t } = useTranslation();
   const stroke = LINE_CHART_COLOR_TO_STROKE[color];
-
-  const chartWrapperRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState<number | null>(null);
-
-  useEffect(() => {
-    const element = chartWrapperRef.current;
-    if (element && typeof ResizeObserver !== "undefined") {
-      const observer = new ResizeObserver(entries => {
-        const entry = entries[0];
-        if (entry) setContainerWidth(entry.contentRect.width);
-      });
-      observer.observe(element);
-      return () => observer.disconnect();
-    }
-  }, []);
 
   const handleSelectedChange = useCallback(
     (value: string) => {
@@ -66,7 +90,18 @@ export function useLineChartViewModel({
     [series, stroke],
   );
 
-  const chartWidth = containerWidth != null ? containerWidth + CHART_OVERFLOW_BUFFER * 2 : null;
+  const resolvedPoints = useMemo(
+    () => points ?? getExtremaPointMarkers(chartSeries),
+    [points, chartSeries],
+  );
+
+  const pointTooltips = useMemo(() => {
+    const map = new Map<number, LineChartPointTooltip>();
+    for (const marker of resolvedPoints) {
+      if (marker.tooltip) map.set(marker.index, marker.tooltip);
+    }
+    return map;
+  }, [resolvedPoints]);
 
   const rangeButtons = useMemo(
     () => LINE_CHART_RANGES.map(range => ({ value: range, label: t(`lineChart.range.${range}`) })),
@@ -74,9 +109,7 @@ export function useLineChartViewModel({
   );
 
   return {
-    chartWrapperRef,
     chartSeries,
-    chartWidth,
     height,
     isLoading,
     isError,
@@ -85,5 +118,19 @@ export function useLineChartViewModel({
     handleSelectedChange,
     rangeSelectorLabel: t("lineChart.rangeSelectorLabel"),
     rangeButtons,
+    points: resolvedPoints,
+    pointTooltips,
+    enableScrubber,
+    formatValue,
+    tooltipTitle,
+    showScrubberTooltip,
+    pointTooltipsOnly,
+    onScrubberPositionChange,
+    showArea,
+    showXAxis,
+    showYAxis,
+    xAxis,
+    yAxis,
+    rangeSelectorTrailing,
   };
 }

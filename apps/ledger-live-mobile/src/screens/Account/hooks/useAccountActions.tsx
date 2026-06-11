@@ -11,7 +11,7 @@ import { useTranslation } from "~/context/Locale";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -47,6 +47,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
   const evmNativeStakingFeature = useFeature("evmNativeStaking");
+  const llmTezosStaking = useFeature("llmTezosStaking");
 
   const isPtxServiceCtaScreensDisabled = useMemo(
     () => !(ptxServiceCtaScreens?.enabled ?? true),
@@ -271,9 +272,20 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         colors,
         parentRoute: route,
         evmNativeStakingFeature,
+        llmTezosStaking,
         bridge,
       }) ?? [],
-    [walletState, account, parentAccount, colors, route, decorators, evmNativeStakingFeature, bridge],
+    [
+      walletState,
+      account,
+      parentAccount,
+      colors,
+      route,
+      decorators,
+      evmNativeStakingFeature,
+      llmTezosStaking,
+      bridge,
+    ],
   );
 
   const mainActions = useMemo(

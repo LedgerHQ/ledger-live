@@ -5,7 +5,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
+import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 /**
  * Suite: Wallet 4.0 - Portfolio-Asset/Address
@@ -16,6 +16,14 @@ import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
  */
 
 test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
+  // This suite only covers the Wallet 4.0 Assets section UI (cryptos/stablecoins sections and
+  // category pages), which does not exist when the Asset Section is OFF (the portfolio renders the
+  // legacy AssetDistribution instead). Skip the whole suite in the "Asset Section OFF" variant.
+  test.skip(
+    !isAssetSectionEnabled,
+    "Asset Section disabled (E2E_ENABLE_ASSET_SECTION=0): no Assets section UI to test",
+  );
+
   /**
    * Scenario 1a: Open the app without accounts
    *
@@ -29,7 +37,6 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: Currency.BTC.speculosApp,
-      featureFlags: LWD_WALLET_40_FF_ENABLED,
     });
 
     test(
@@ -105,7 +112,6 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_FF_ENABLED,
     });
 
     test(
@@ -145,7 +151,6 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "portfolioWithManyStablecoins",
-      featureFlags: LWD_WALLET_40_FF_ENABLED,
     });
 
     test(

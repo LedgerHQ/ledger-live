@@ -1,6 +1,7 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
+  fireEvent,
   render,
   renderWithMockedCounterValuesProvider,
   screen,
@@ -14,6 +15,7 @@ import {
   makeIntegrationTokenCurrency,
   setupDistributionRouteMocks,
 } from "tests/utils/distributionTestUtils";
+import { hoverChartSvg, mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
 import { mockDada, mockMarket } from "tests/utils/assetDetailMocks";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
@@ -40,8 +42,8 @@ const TEST_ID = {
   MARKET_PRICE_FIAT_VARIATION: "asset-detail-market-price-fiat-variation",
   MARKET_DATA_SECTION: "asset-detail-market-data-section",
   CHART_SECTION: "asset-detail-chart-section",
-  LINE_CHART_RANGE_DEFAULT: "line-chart-range-1D",
-  LINE_CHART_RANGE_ONE_YEAR: "line-chart-range-1Y",
+  LINE_CHART_RANGE_DEFAULT: "line-chart-range-1d",
+  LINE_CHART_RANGE_ONE_YEAR: "line-chart-range-1y",
   TRANSACTIONS_SECTION: "asset-detail-transactions-section",
   ACTION_BAR: "asset-detail-action-bar",
   ACTION_BUY: "asset-detail-action-buy",
@@ -59,10 +61,13 @@ const TEST_ID = {
 
 const mockGetCanStakeCurrency = jest.fn().mockReturnValue(false);
 const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
+const mockStartStakeFlow = jest.fn();
 
 jest.mock("LLD/hooks/useStake", () => ({
   useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
 }));
+
+jest.mock("~/renderer/screens/stake", () => () => mockStartStakeFlow);
 
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
   useInterestRatesByCurrencies: (...args: unknown[]) => mockUseInterestRatesByCurrencies(...args),
@@ -361,6 +366,16 @@ describe("AssetDetail integration", () => {
     });
 
     describe("chart section", () => {
+      const originalResizeObserver = global.ResizeObserver;
+
+      beforeEach(() => {
+        mockLumenChartResizeObserver();
+      });
+
+      afterEach(() => {
+        global.ResizeObserver = originalResizeObserver;
+      });
+
       it("renders with the 1D range selected by default and switches range on click", async () => {
         mockMarket.withData(MarketMockedResponse.bitcoinDetail);
         setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
@@ -369,6 +384,7 @@ describe("AssetDetail integration", () => {
 
         await waitFor(() => {
           expect(screen.getByTestId(TEST_ID.CHART_SECTION)).toBeVisible();
+          expect(screen.getByTestId(TEST_ID.LINE_CHART_RANGE_DEFAULT)).toBeVisible();
         });
 
         const defaultRange = screen.getByTestId(TEST_ID.LINE_CHART_RANGE_DEFAULT);
@@ -389,6 +405,113 @@ describe("AssetDetail integration", () => {
           "aria-checked",
           "false",
         );
+      });
+
+      it("updates the market price section variation when the chart range changes", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+        const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+        await waitForMarketPriceSectionShowsQuote();
+
+        const section = screen.getByTestId(TEST_ID.MARKET_PRICE_SECTION);
+        expect(within(section).getByText("1 day")).toBeVisible();
+        // BTC fixture has a negative 24h change.
+        expect(screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT)).toHaveTextContent(/^-/);
+
+        const oneYearRange = await screen.findByTestId(TEST_ID.LINE_CHART_RANGE_ONE_YEAR);
+        await user.click(oneYearRange);
+
+        await waitFor(() => {
+          expect(within(section).getByText("1 year")).toBeVisible();
+        });
+        // BTC fixture has a +118.89% 1y change.
+        expect(screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT)).toHaveTextContent(/^\+/);
+      });
+
+      it("renders the price chart with min/max markers and x-axis only", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+        renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+        const section = await screen.findByTestId(TEST_ID.CHART_SECTION);
+
+        await waitFor(() => {
+          expect(within(section).getByTestId("chart-svg")).toBeVisible();
+        });
+
+        expect(within(section).queryByTestId("y-axis")).not.toBeInTheDocument();
+        expect(within(section).queryByTestId("x-axis")).not.toBeInTheDocument();
+        expect(within(section).getAllByTestId("point-group")).toHaveLength(2);
+      });
+
+      it("shows the scrubber without a tooltip when hovering the chart", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+        renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+        const section = await screen.findByTestId(TEST_ID.CHART_SECTION);
+        const chart = await waitFor(() => within(section).getByTestId("chart-svg"));
+
+        hoverChartSvg(chart);
+
+        await waitFor(() => {
+          expect(within(section).getByTestId("scrubber")).toBeVisible();
+        });
+        // The scrubbed price/date is surfaced in the market price section instead.
+        expect(within(section).queryByTestId("chart-tooltip")).not.toBeInTheDocument();
+      });
+
+      it("drives the market price section from the scrubbed point and reverts on leave", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+        renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+        await waitForMarketPriceSectionShowsQuote();
+
+        const priceSection = screen.getByTestId(TEST_ID.MARKET_PRICE_SECTION);
+        const livePrice = screen.getByTestId(TEST_ID.MARKET_PRICE).textContent;
+        const livePercent = screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT).textContent;
+        const liveFiatVariation = screen.getByTestId(
+          TEST_ID.MARKET_PRICE_FIAT_VARIATION,
+        ).textContent;
+        expect(within(priceSection).getByText("1 day")).toBeVisible();
+
+        const chartSection = screen.getByTestId(TEST_ID.CHART_SECTION);
+        const chart = await waitFor(() => within(chartSection).getByTestId("chart-svg"));
+
+        hoverChartSvg(chart);
+
+        // While scrubbing, the trailing range label is replaced by the hovered
+        // point's date, the displayed price tracks the scrubbed value, and the
+        // % / fiat variation reflect the change from the range start.
+        await waitFor(() => {
+          expect(within(priceSection).queryByText("1 day")).not.toBeInTheDocument();
+          expect(screen.getByTestId(TEST_ID.MARKET_PRICE).textContent).not.toBe(livePrice);
+        });
+        expect(screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT)).toBeVisible();
+        expect(screen.getByTestId(TEST_ID.MARKET_PRICE_FIAT_VARIATION)).toBeVisible();
+        expect(screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT).textContent).not.toBe(livePercent);
+        expect(screen.getByTestId(TEST_ID.MARKET_PRICE_FIAT_VARIATION).textContent).not.toBe(
+          liveFiatVariation,
+        );
+
+        fireEvent.mouseLeave(chart);
+
+        // Leaving the chart reverts to the live price, range label and variation.
+        // The amount re-enables its animation on revert, so wait for it to settle.
+        await waitFor(() => {
+          expect(within(priceSection).getByText("1 day")).toBeVisible();
+          expect(screen.getByTestId(TEST_ID.MARKET_PRICE).textContent).toBe(livePrice);
+          expect(screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT).textContent).toBe(livePercent);
+          expect(screen.getByTestId(TEST_ID.MARKET_PRICE_FIAT_VARIATION).textContent).toBe(
+            liveFiatVariation,
+          );
+        });
       });
     });
 
@@ -417,9 +540,9 @@ describe("AssetDetail integration", () => {
         await user.click(screen.getByTestId(TEST_ID.ADDRESSES_SEE_ALL));
 
         const dialog = await screen.findByRole("dialog");
-        expect(within(dialog).getByRole("heading", { name: "Addresses" })).toBeVisible();
+        expect(within(dialog).getByRole("heading", { name: "Accounts" })).toBeVisible();
         expect(
-          within(dialog).getAllByText(/all your addresses holding btc\./i).length,
+          within(dialog).getAllByText(/all your accounts holding btc\./i).length,
         ).toBeGreaterThan(0);
         expect(within(dialog).getAllByTestId(/asset-detail-address-row-/)).toHaveLength(
           MAX_ADDRESSES_PREVIEW + 1,
@@ -461,7 +584,7 @@ describe("AssetDetail integration", () => {
 
       await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
 
-      expect(screen.getByRole("menuitem", { name: /add to favorites/i })).toBeVisible();
+      expect(await screen.findByRole("menuitem", { name: /add to favorites/i })).toBeVisible();
       expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
     });
 
@@ -477,7 +600,7 @@ describe("AssetDetail integration", () => {
 
       await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
 
-      expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
+      expect(await screen.findByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
     });
 
     it("USDC - enables the favorite action and stores the coingecko id when toggled", async () => {
@@ -531,7 +654,7 @@ describe("AssetDetail integration", () => {
 
       await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
 
-      expect(screen.getByRole("menuitem", { name: /show in portfolio/i })).toBeVisible();
+      expect(await screen.findByRole("menuitem", { name: /show in portfolio/i })).toBeVisible();
     });
 
     it("renders the hidden banner when the asset is blacklisted and unhides it from the banner action", async () => {

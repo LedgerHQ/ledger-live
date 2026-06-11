@@ -1,97 +1,6 @@
-import { convertApiToken, legacyIdToApiId, type ApiTokenData } from "./api-token-converter";
-
-describe("legacyIdToApiId", () => {
-  it("should transform MultiversX to elrond format", () => {
-    expect(legacyIdToApiId("multiversx/esdt/USDC-c76f1f")).toBe("elrond/esdt/USDC-c76f1f");
-  });
-
-  it("should transform Stellar to lowercase", () => {
-    expect(
-      legacyIdToApiId(
-        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-      ),
-    ).toBe("stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn");
-  });
-
-  it("should not transform other IDs", () => {
-    expect(legacyIdToApiId("ethereum/erc20/usdc")).toBe("ethereum/erc20/usdc");
-    expect(legacyIdToApiId("ton/jetton/test")).toBe("ton/jetton/test");
-  });
-});
+import { convertApiToken, type ApiTokenData } from "./api-token-converter";
 
 describe("convertApiToken", () => {
-  describe("MultiversX transformation", () => {
-    it("should transform elrond ID to multiversx", () => {
-      const apiToken: ApiTokenData = {
-        id: "elrond/esdt/USDC-c76f1f",
-        contractAddress: "USDC-c76f1f",
-        name: "USD Coin",
-        ticker: "USDC",
-        units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
-        standard: "esdt",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result?.id).toBe("multiversx/esdt/USDC-c76f1f");
-      expect(result?.parentCurrency?.id).toBe("elrond");
-      expect(result?.tokenType).toBe("esdt");
-    });
-  });
-
-  describe("Stellar transformation", () => {
-    it("should transform lowercase stellar to mixed-case format", () => {
-      const apiToken: ApiTokenData = {
-        id: "stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
-        contractAddress: "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        name: "USD Coin",
-        ticker: "USDC",
-        units: [{ code: "USDC", name: "USD Coin", magnitude: 7 }],
-        standard: "asset",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result?.id).toBe(
-        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-      );
-      expect(result?.tokenType).toBe("stellar");
-    });
-
-    it("should keep already uppercase stellar suffix", () => {
-      const apiToken: ApiTokenData = {
-        id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        contractAddress: "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        name: "USD Coin",
-        ticker: "USDC",
-        units: [{ code: "USDC", name: "USD Coin", magnitude: 7 }],
-        standard: "asset",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result?.id).toBe(
-        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-      );
-      expect(result?.tokenType).toBe("stellar");
-    });
-
-    it("should handle stellar standard without transformation", () => {
-      const apiToken: ApiTokenData = {
-        id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        contractAddress: "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        name: "USD Coin",
-        ticker: "USDC",
-        units: [{ code: "USDC", name: "USD Coin", magnitude: 7 }],
-        standard: "stellar",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result?.tokenType).toBe("stellar");
-    });
-  });
-
   describe("Cardano transformation", () => {
     it("should reconstruct contractAddress from policyId + tokenIdentifier", () => {
       const apiToken: ApiTokenData = {
@@ -155,23 +64,6 @@ describe("convertApiToken", () => {
       const result = convertApiToken(apiToken);
 
       expect(result?.tokenType).toBe("coin");
-    });
-  });
-
-  describe("TON Jetton transformation", () => {
-    it("should not transform jetton ID", () => {
-      const apiToken: ApiTokenData = {
-        id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
-        contractAddress: "eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
-        name: "Test",
-        ticker: "TEST",
-        units: [{ code: "TEST", name: "Test", magnitude: 9 }],
-        standard: "jetton",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result?.id).toBe("ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not");
     });
   });
 

@@ -1,4 +1,5 @@
 import fsPromises from "fs/promises";
+import zlib from "zlib";
 import { setupServer } from "msw/node";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-transport";
@@ -66,9 +67,25 @@ export async function recordTestTrustchainSdk(
 
   // listen to network with msw to be able to replay in our future tests
   const transactions: Transaction[] = [];
+  const bodyReads: Array<Promise<void>> = [];
+  // The request body is consumed by the time `response:bypass` fires, so we
+  // snapshot it from a clone at `request:start` and merge it back by requestId.
+  const requestBodies = new Map<string, string>();
   const server = setupServer();
-  server.events.on("response:bypass", ({ response, request }) => {
-    if (request.url.startsWith("http://localhost")) return; // ignore speculos requests
+  server.events.on("request:start", ({ request, requestId }) => {
+    if (isSpeculosRequest(request.url)) return; // ignore speculos requests
+    if (!request.body) return;
+    bodyReads.push(
+      request
+        .clone()
+        .text()
+        .then(body => {
+          requestBodies.set(requestId, body);
+        }),
+    );
+  });
+  server.events.on("response:bypass", ({ response, request, requestId }) => {
+    if (isSpeculosRequest(request.url)) return; // ignore speculos requests
     const transaction: Transaction = {
       request: {
         url: request.url,
@@ -77,19 +94,30 @@ export async function recordTestTrustchainSdk(
       },
       response: {
         status: response.status,
-        headers: headersToJson(response.headers),
+        // We store the decoded body (`response.text()`), so drop the headers
+        // that describe the wire encoding/length: replaying them would make the
+        // client try to gunzip plaintext (`incorrect header check`) or truncate.
+        headers: headersToJson(response.headers, DECODED_BODY_HEADERS),
       },
     };
     transactions.push(transaction);
-    if (request.body) {
-      request.text().then(body => {
-        transaction.request.body = body;
-      });
+    const requestBody = requestBodies.get(requestId);
+    if (requestBody !== undefined) {
+      transaction.request.body = requestBody;
+      requestBodies.delete(requestId);
     }
     if (response.body) {
-      response.text().then(body => {
-        transaction.response.body = body;
-      });
+      // `response.text()` on a bypassed response yields the still-encoded bytes
+      // (the server's content-encoding), so decode by hand and store plaintext.
+      const encoding = response.headers.get("content-encoding")?.toLowerCase();
+      bodyReads.push(
+        response
+          .clone()
+          .arrayBuffer()
+          .then(buffer => {
+            transaction.response.body = decodeBody(Buffer.from(buffer), encoding).toString("utf8");
+          }),
+      );
     }
   });
 
@@ -115,10 +143,14 @@ export async function recordTestTrustchainSdk(
   const withDevice: WithDevice = () => fn => fn(device.transport);
   const options: ScenarioOptions = {
     withDevice,
-    sdkForName: name =>
+    sdkForName: (name, opts) =>
       getSdk(
         !!getEnv("MOCK"),
-        { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
+        {
+          applicationId: opts?.applicationId ?? 16,
+          name,
+          apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+        },
         withDevice,
       ),
     pauseRecorder: async (milliseconds: number) => {
@@ -142,8 +174,11 @@ export async function recordTestTrustchainSdk(
     sub.unsubscribe();
     await Promise.all(buttonClicksPromises);
     await releaseSpeculosDevice(device.id);
+    server.close();
   }
-  server.close();
+
+  // Ensure every request/response body has been captured before serializing.
+  await Promise.all(bodyReads);
 
   if (file) {
     const json = {
@@ -151,15 +186,42 @@ export async function recordTestTrustchainSdk(
       crypto: { randomBytesOutputs, randomKeypairOutputs },
       http: { transactions },
     };
-
-    // Write the transactions to the disk.
     await fsPromises.writeFile(file, JSON.stringify(json, null, 2));
   }
 }
 
-function headersToJson(headers) {
+// Speculos runs locally over HTTP (localhost or 127.0.0.1, on a random port).
+// Only trustchain backend traffic is kept in the snapshot, the device APDU
+// exchanges are replayed from the recorded APDU store instead.
+function isSpeculosRequest(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return hostname === "localhost" || hostname === "127.0.0.1";
+  } catch {
+    return false;
+  }
+}
+
+// Headers invalidated by storing the decoded response body in the snapshot.
+const DECODED_BODY_HEADERS = new Set(["content-encoding", "content-length"]);
+
+function decodeBody(buffer: Buffer, encoding?: string): Buffer {
+  switch (encoding) {
+    case "gzip":
+      return zlib.gunzipSync(buffer);
+    case "br":
+      return zlib.brotliDecompressSync(buffer);
+    case "deflate":
+      return zlib.inflateSync(buffer);
+    default:
+      return buffer;
+  }
+}
+
+function headersToJson(headers, exclude?: Set<string>) {
   const obj: Record<string, string> = {};
   for (const [key, value] of headers.entries()) {
+    if (exclude?.has(key.toLowerCase())) continue;
     obj[key] = value;
   }
   return obj;

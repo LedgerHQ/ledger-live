@@ -32,6 +32,12 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       hrp: "sei",
       endpoint: "/cosmos/staking/v1beta1/delegators/{address}/redelegations",
     },
+    rewardsStrategy: {
+      type: "cosmos-rest",
+      endpoint: "/cosmos/distribution/v1beta1/delegators/{address}/rewards",
+      denom: "usei",
+      scale: USEI_TO_EVM_SCALE,
+    },
     explorerConfig: {
       validatorUrl: "https://seistream.app/validators/$address",
     },
@@ -79,10 +85,18 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       // claimRewards(uint64 validatorId).
       claimReward: "claimRewards",
     },
+    // Human-readable names overlay. The precompile exposes no names, so we enrich
+    // the on-chain set with the governed `monad-developers/validator-info` repo
+    // (each validator PRs its own `<secpPubkey>.json`), keyed by compressed secp
+    // pubkey hex. Names are display-only; if unreachable we fall back to
+    // `Validator {id}`. Source: https://github.com/monad-developers/validator-info
+    validatorNameSource: {
+      baseUrl: "https://raw.githubusercontent.com/monad-developers/validator-info/main/mainnet/",
+    },
     explorerConfig: {
-      // Validators are identified by their authAddress on MonadScan.
-      // Source: https://monadscan.com
-      validatorUrl: "https://monadscan.com/address/$address",
+      // Validator address derived from the secp pubkey (ethers.computeAddress); this is the
+      // key for the explorer's per-validator page (not the operator's authAddress account).
+      validatorUrl: "https://monadvision.com/validator/$address",
     },
     // Monad uses epoch-based unbonding: WITHDRAWAL_DELAY = 1 epoch (~5.5 h).
     // Including the delegation-queue delay (1–2 epochs), the maximum wait is ~3 epochs ≈ 17 h.

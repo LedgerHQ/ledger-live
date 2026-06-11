@@ -3,10 +3,12 @@ import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { isWallet40 } from "../../../helpers/commonHelpers";
+import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -64,6 +66,7 @@ export function runSwapWithoutAccountTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`${testTitle}`, async () => {
@@ -97,6 +100,7 @@ export function runSwapWithDifferentSeedTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
@@ -150,6 +154,7 @@ export function runSwapLandingPageTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("Swap landing page", async () => {
@@ -199,7 +204,7 @@ async function setupSwapAccounts(
 export function runSwapLnsNotSupportedBannerTest(
   fromAccount: Account,
   toAccount: Account,
-  unsupportedProvider: Provider,
+  unsupportedProvider: SwapProvider,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -210,6 +215,7 @@ export function runSwapLnsNotSupportedBannerTest(
         await setupSwapAccounts(fromAccount, toAccount, "skip-onboarding-with-last-seen-device");
       });
 
+      setTeamOwner(Team.SWAP);
       tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
       tags.forEach(tag => $Tag(tag));
       it(`Shows LNS not supported banner for ${unsupportedProvider.uiName}`, async () => {
@@ -252,6 +258,7 @@ export function runTooLowAmountForQuoteSwapsTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - ${errorMessage}`, async () => {
@@ -305,6 +312,7 @@ export function runUserRefusesTransactionTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`User refuses transaction - ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
@@ -327,7 +335,7 @@ export function runUserRefusesTransactionTest(
 
 export function runSwapHistoryOperationsTest(
   swap: SwapType,
-  provider: Provider,
+  provider: SwapProvider,
   swapId: string,
   tmsLinks: string[],
   tags: string[],
@@ -341,6 +349,7 @@ export function runSwapHistoryOperationsTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
@@ -354,7 +363,7 @@ export function runSwapHistoryOperationsTest(
 
 export function runExportSwapHistoryOperationsTest(
   swap: SwapType,
-  provider: Provider,
+  provider: SwapProvider,
   swapId: string,
   addressFrom: string,
   addressTo: string,
@@ -370,6 +379,7 @@ export function runExportSwapHistoryOperationsTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
@@ -393,6 +403,7 @@ export function runSwapHistoryFeedbackTest(tmsLinks: string[], tags: string[]) {
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("Check feedback form URL from swap history", async () => {
@@ -427,6 +438,7 @@ export function runSwapWithSendMaxTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
@@ -491,6 +503,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("Switch You send and You receive currency", async () => {
@@ -532,6 +545,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("Access Swap from different entry points", async () => {
@@ -576,6 +590,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 

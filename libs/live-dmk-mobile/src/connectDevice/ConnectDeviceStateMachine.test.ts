@@ -950,6 +950,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectionErrorError).toEqual({
         type: ConnectionErrorTypes.BlePairingRefused,
       });
+      expect(connectionErrorState).toEqual(expect.objectContaining({ device: knownDeviceA }));
     });
 
     it("emits a BLE peer-removed-pairing ConnectionError when connection fails", async () => {
@@ -982,6 +983,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectionErrorError).toEqual({
         type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
       });
+      expect(connectionErrorState).toEqual(expect.objectContaining({ device: knownDeviceA }));
     });
 
     it("retries the connection when the ConnectionError retry action is used", async () => {

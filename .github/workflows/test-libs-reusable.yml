@@ -63,7 +63,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 -- --runInBand=1
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
@@ -101,10 +101,10 @@ jobs:
 
           if [ ${#nx_test_args[@]} -eq 0 ]; then
             echo "Running tests for libs without coverage (all non-ui libs)"
-            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=4
+            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=6
           else
-            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=4 ${nx_test_args[*]}"
-            pnpm exec nx run-many -t test --parallel=4 "${nx_test_args[@]}"
+            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=6 ${nx_test_args[*]}"
+            pnpm exec nx run-many -t test --parallel=6 "${nx_test_args[@]}"
           fi
         shell: bash
 
@@ -163,6 +163,13 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
         run: pnpm i
+      - name: Check formatting of affected libraries
+        id: format-check-libs
+        # TODO(LIVE-31553): remove continue-on-error once the release cycle has
+        # the format:check scripts on HEAD (~2 weeks). format:check does not yet
+        # exist on release branches, so keep this non-blocking to not break release.
+        continue-on-error: true
+        run: pnpm exec nx run-many -t format:check --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false
       - name: Lint affected libraries
         id: lint-libs
         run: pnpm exec nx run-many -t lint --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false -- --quiet

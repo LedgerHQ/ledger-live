@@ -1,14 +1,15 @@
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalCarousel,
-  type GenericAwarenessModalCarouselSlide,
   type GenericAwarenessModalContentCard,
   type GenericAwarenessModalFeatureIntro,
+  type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 import { screen, track } from "~/analytics";
 
 export const GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE = "Awareness Modal Feature Intro";
 export const GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE = "Awareness Modal Carousel";
+export const GENERIC_AWARENESS_MODAL_PROMPT_PAGE = "Awareness Modal Prompt";
 
 type CtaPosition = "primary" | "secondary";
 
@@ -18,10 +19,16 @@ type ButtonClickedProperties = Readonly<{
   link?: string;
 }>;
 
-const getGenericAwarenessModalPage = (content: GenericAwarenessModalContentCard): string =>
-  content.layout === GenericAwarenessModalLayout.Carousel
-    ? GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE
-    : GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE;
+const getGenericAwarenessModalPage = (content: GenericAwarenessModalContentCard): string => {
+  switch (content.layout) {
+    case GenericAwarenessModalLayout.Carousel:
+      return GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE;
+    case GenericAwarenessModalLayout.Prompt:
+      return GENERIC_AWARENESS_MODAL_PROMPT_PAGE;
+    case GenericAwarenessModalLayout.FeatureIntro:
+      return GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE;
+  }
+};
 
 const getCarouselStepProperties = (
   carousel: GenericAwarenessModalCarousel,
@@ -38,6 +45,13 @@ export const trackGenericAwarenessModalFeatureIntroViewed = (
   screen(GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE, undefined, {
     name: GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE,
     contentId: featureIntro.id,
+  });
+};
+
+export const trackGenericAwarenessModalPromptViewed = (prompt: GenericAwarenessModalPrompt) => {
+  screen(GENERIC_AWARENESS_MODAL_PROMPT_PAGE, undefined, {
+    name: GENERIC_AWARENESS_MODAL_PROMPT_PAGE,
+    contentId: prompt.id,
   });
 };
 
@@ -97,16 +111,16 @@ export const trackGenericAwarenessModalTourCompleted = (
 };
 
 export const trackGenericAwarenessModalMalformedUrl = (
-  carousel: GenericAwarenessModalCarousel,
-  slideIndex: number,
+  content: GenericAwarenessModalContentCard,
+  slideIndex?: number,
 ) => {
+  const page = getGenericAwarenessModalPage(content);
+
   track("malformed_url", {
-    page: GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE,
-    contentId: carousel.id,
-    ...getCarouselStepProperties(carousel, slideIndex),
+    page,
+    contentId: content.id,
+    ...(content.layout === GenericAwarenessModalLayout.Carousel && slideIndex !== undefined
+      ? getCarouselStepProperties(content, slideIndex)
+      : {}),
   });
 };
-
-export const isGenericAwarenessModalExternalLink = (
-  slide: GenericAwarenessModalCarouselSlide,
-): boolean => slide.primaryButtonLink.startsWith("http");

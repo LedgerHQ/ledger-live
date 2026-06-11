@@ -6,7 +6,7 @@ import {
   LedgerRecoverSubscriptionStateEnum,
   LedgerRecoverSubscriptionStateInProgressEnum,
 } from "~/types/recoverSubscriptionState";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 const checkCanShow = async (protectId: string) => {
   try {

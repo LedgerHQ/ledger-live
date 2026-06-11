@@ -3,14 +3,21 @@ import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/inde
 import type { AccountLike } from "@ledgerhq/types-live";
 
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
-import { getAccountIdFromWalletAccountId } from "../../converters";
+import { getAccountIdFromWalletAccountId, getWalletApiIdFromAccountId } from "../../converters";
+import { computeLedgerLiveVersionCompatibilityError } from "./computeLedgerLiveVersionCompatibilityError";
 import { computeQuotesErrors } from "./computeQuotesErrors";
+import { computeQuotesWarnings } from "./computeQuotesWarnings";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { fetchQuotes } from "./service/fetchQuotes";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import { buildFormatContext } from "./normalizer/buildFormatContext";
 import { normalizeQuote } from "./normalizer";
-import { QuotesErrorCodes, type GetQuotesArgs, type GetQuotesResponse } from "./types";
+import {
+  QuotesErrorCodes,
+  type GetQuotesArgs,
+  type GetQuotesResponse,
+  type QuotesAppPlatform,
+} from "./types";
 import { isUnsupportedPair } from "./unsupportedPairs";
 import { resolveQuotesInput } from "./resolveQuotesInput";
 
@@ -45,6 +52,8 @@ import { resolveQuotesInput } from "./resolveQuotesInput";
  *     wallet's counter-value setting.
  *   - `deviceModelId`: optional last-seen device model id. When present,
  *     quote warnings can include device-specific incompatibility signals.
+ *   - `appVersion`: optional caller platform/version. When present, quote
+ *     errors can include Ledger Live version incompatibility signals.
  *   - `highValueLossThreshold`: optional ratio used to flag quotes whose
  *     receive-side fiat value is below the configured send-side threshold.
  */
@@ -54,32 +63,21 @@ export type GetQuotesContext = {
   locale: string;
   counterValueCurrency: string;
   deviceModelId?: string;
+  appVersion?: {
+    platform: QuotesAppPlatform;
+    version: string | null;
+  };
   highValueLossThreshold?: number;
 };
 
 function getParentCurrencyId(accounts: AccountLike[], walletAccountId: string): string | undefined {
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
-  const account = accountId ? accounts.find(acc => acc.id === accountId) : undefined;
+  const account =
+    (accountId ? accounts.find(acc => acc.id === accountId) : undefined) ??
+    accounts.find(acc => getWalletApiIdFromAccountId(acc.id) === walletAccountId);
   return account ? getParentAccount(account, accounts)?.currency.id : undefined;
 }
 
-/**
- * Fetch + normalize swap quotes for a single wallet-api `getQuotes`
- * invocation. Fans out to the aggregator, joins provider / fee /
- * formatting context, and returns the wire-shaped response ready for
- * the handler to forward to the caller.
- *
- * @param args - Wire-level `getQuotes` arguments (providers, quotes
- *   input, headers, abort signal).
- * @param context - Handler-side dependencies — see
- *   {@link GetQuotesContext}. `locale` + `counterValueCurrency` come
- *   from the wallet's Redux store and drive both the aggregator call
- *   and the `Quote.formatted` strings on each returned quote.
- * @returns The response emitted back to the caller: normalized quotes
- *   (filtered for unsupported pairs), the raw per-provider rejection rows
- *   on `providerErrors`, and the digested global error list on `errors`
- *   (`noQuotes` / `amountTooLow` / `amountTooHigh`).
- */
 export async function getQuotes(
   args: GetQuotesArgs,
   context: GetQuotesContext,
@@ -89,11 +87,38 @@ export async function getQuotes(
     return {
       quotes: [],
       providerErrors: [],
+      warnings: [],
       errors: [{ code: QuotesErrorCodes.QUOTE_INPUT_RESOLUTION_FAILED }],
     };
   }
 
   const resolvedArgs = { ...args, data: quotesInput };
+  const sendParentCurrencyId = getParentCurrencyId(context.accounts, args.data.sendAccountId);
+  const receiveParentCurrencyId = getParentCurrencyId(context.accounts, args.data.receiveAccountId);
+  const deviceModelId = context.deviceModelId;
+
+  const ledgerLiveVersionCompatibilityError = computeLedgerLiveVersionCompatibilityError({
+    sendCurrencyId: quotesInput.sendCurrencyId,
+    receiveCurrencyId: quotesInput.receiveCurrencyId,
+    appVersion: context.appVersion,
+  });
+  if (ledgerLiveVersionCompatibilityError) {
+    return {
+      quotes: [],
+      providerErrors: [],
+      warnings: [],
+      errors: [ledgerLiveVersionCompatibilityError],
+    };
+  }
+
+  const warnings = computeQuotesWarnings({
+    deviceModelId,
+    sendCurrencyId: quotesInput.sendCurrencyId,
+    receiveCurrencyId: quotesInput.receiveCurrencyId,
+    sendParentCurrencyId,
+    receiveParentCurrencyId,
+  });
+
   const { rawQuotes, providerErrors } = await fetchQuotes(
     resolvedArgs,
     context.counterValueCurrency,
@@ -108,6 +133,7 @@ export async function getQuotes(
     return {
       quotes: [],
       providerErrors,
+      warnings,
       errors: computeQuotesErrors({
         successfulQuotesCount: 0,
         providerErrors,
@@ -116,15 +142,11 @@ export async function getQuotes(
     };
   }
 
-  // Skip the provider-data fetch (CAL + CDN) and the bridge-side fee-context
-  // build (sync + prepareTransaction + getTransactionStatus) when the
-  // aggregator returned only error rows — neither result would be consumed
-  // by `normalizeQuote`/`computeFeeEstimate`. The digested errors still need
-  // to be emitted so consumers can surface `noQuotes` / `amountTooLow` etc.
   if (rawQuotes.length === 0) {
     return {
       quotes: [],
       providerErrors,
+      warnings,
       errors: computeQuotesErrors({
         successfulQuotesCount: 0,
         providerErrors,
@@ -148,15 +170,13 @@ export async function getQuotes(
   const normalizationContext = {
     sendCurrencyId: quotesInput.sendCurrencyId,
     receiveCurrencyId: quotesInput.receiveCurrencyId,
-    sendParentCurrencyId: getParentCurrencyId(context.accounts, args.data.sendAccountId),
-    receiveParentCurrencyId: getParentCurrencyId(context.accounts, args.data.receiveAccountId),
-    deviceModelId: context.deviceModelId,
+    sendParentCurrencyId,
+    receiveParentCurrencyId,
+    deviceModelId,
     highValueLossThreshold: context.highValueLossThreshold,
     spotPrices: context.spotPrices,
   };
 
-  // Resolve once per request: send / receive / fee currency metadata +
-  // counter-value fiat do not vary across quotes in a single response.
   const formatContext = buildFormatContext({
     args: resolvedArgs,
     accounts: context.accounts,
@@ -174,6 +194,7 @@ export async function getQuotes(
   return {
     quotes,
     providerErrors,
+    warnings,
     errors: computeQuotesErrors({
       successfulQuotesCount: quotes.length,
       providerErrors,

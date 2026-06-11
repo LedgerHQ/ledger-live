@@ -3,13 +3,11 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { expect } from "@playwright/test";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 test.describe("Market Banner", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "speculos-tests-app",
-    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
@@ -23,39 +21,25 @@ test.describe("Market Banner", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
-
       await app.marketBanner.expectMarketBannerToBeVisible();
-
       await app.marketBanner.expectFearAndGreedCardToBeVisible();
-
       await app.marketBanner.expectTrendingAssetsListToBeVisible();
-
       await app.marketBanner.clickFearAndGreedCard();
-
       await app.fearAndGreedDialog.validateFearAndGreedDialogItems();
-
       await app.fearAndGreedDialog.validateFearAndGreedDialogContent();
-
       await app.fearAndGreedDialog.closeFearAndGreedDialogWithCta();
 
       const assetId = await app.marketBanner.clickFirstAssetTile();
 
       await expect(app.layout.getPage()).toHaveURL(new RegExp(`/market/${assetId}`));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
-
       await app.marketBanner.clickExploreMarketHeader();
-
       await expect(app.layout.getPage()).toHaveURL(/\/market$/);
       await app.market.openCoinPage("BTC");
       await expect(app.layout.getPage()).toHaveURL(new RegExp(`/market/bitcoin`));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
-
       await app.marketBanner.scrollToAndClickViewAllTile();
-
       await expect(app.layout.getPage()).toHaveURL(/\/market$/);
       await app.market.openCoinPage("BTC");
       await expect(app.layout.getPage()).toHaveURL(new RegExp(`/market/bitcoin`));

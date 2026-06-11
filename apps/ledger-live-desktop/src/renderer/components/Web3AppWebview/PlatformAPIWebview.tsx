@@ -51,14 +51,15 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const manifestDomainCheckEnabled = useFeature("lldWebviewManifestDomainCheck")?.enabled;
-    const { webviewState, webviewRef, webviewProps, webviewPartition } = useWebviewState(
-      {
-        manifest,
-        inputs,
-        manifestDomainCheckEnabled,
-      },
-      ref,
-    );
+    const { webviewState, webviewRef, setWebviewRef, webviewProps, webviewPartition } =
+      useWebviewState(
+        {
+          manifest,
+          inputs,
+          manifestDomainCheckEnabled,
+        },
+        ref,
+      );
 
     const tracking = useMemo(
       () =>
@@ -460,7 +461,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <>
         <webview
-          ref={webviewRef}
+          ref={setWebviewRef}
           /**
            * There seems to be an issue between Electron webview and styled-components
            * (and React more broadly, cf. comment below).

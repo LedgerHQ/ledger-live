@@ -43,7 +43,9 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value } as Partial<T>));
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, { recipient: value } as Partial<T>),
+      );
       resetInitValue?.();
     }
   }, [account]); // oxlint-disable-line react-hooks/exhaustive-deps

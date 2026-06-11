@@ -74,10 +74,13 @@ export function useNetworkFees({
     feePresetOptions,
   });
 
+  const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+
   const { feeSummary } = useFeeInfo({
     account,
     parentAccount,
     status,
+    feeCurrencyAccountId,
   });
 
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
@@ -96,7 +99,7 @@ export function useNetworkFees({
   const selectedFeeStrategy = transaction.feesStrategy ?? null;
   const selectedPresetFiatValue =
     selectedFeeStrategy && selectedFeeStrategy !== "custom"
-      ? fiatByPreset[selectedFeeStrategy] ?? null
+      ? (fiatByPreset[selectedFeeStrategy] ?? null)
       : null;
 
   const onSelectFeeStrategy = useCallback(

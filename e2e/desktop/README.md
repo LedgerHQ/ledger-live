@@ -1,13 +1,14 @@
 # E2E Tests - Desktop
 
-This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Desktop** app.  
+This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Desktop** app.
 Dev teams are responsible for **adding/updating tests** when implementing new features.
 
 ---
 
 ## Interactive Setup (Recommended)
 
-Use the Cursor command `/e2e-desktop-onboard` for a guided, interactive walkthrough that checks every prerequisite, validates your environment, builds the app, and runs a smoke test.
+Use the `/e2e-desktop-onboard` skill (from an agent tool that supports repo skills) for a guided walkthrough that checks every
+prerequisite, validates your environment, builds the app, and runs a smoke test.
 
 ---
 
@@ -17,7 +18,6 @@ All build and test commands below are run from the **repo root** (`ledger-live/`
 
 ### 1. Prerequisites
 
-- Ledger Live repository (as mentioned in the full wiki)
 - Read the e2e environment [guide](https://ledgerhq.atlassian.net/wiki/spaces/QA/pages/6945013939/Ledger+Wallet+E2E+Environment)❗
 - Docker Desktop installed and running (Speculos runs in Docker)
 - Pull the Speculos Docker image:
@@ -77,25 +77,12 @@ pnpm e2e:desktop test:playwright
 pnpm e2e:desktop test:playwright <testFileName>
 ```
 
-### 5. Full Documentation
+### 5. More Documentation
 
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
-### 6. Wallet 4.0
-
-The Wallet 4.0 feature is ON by default (regardless of Firebase).
-You can force Wallet 4.0 OFF (legacy) by setting the E2E environment variable:
-
-```bash
-export E2E_ENABLE_WALLET40=0
-```
-
-Individual tests can still switch Wallet 4.0 OFF by explicitly passing the `LWD_WALLET_40_FF_DISABLED` FF.
-
-To switch Wallet 4.0 OFF on CI please untick the checkbox on the Github Workflow.
-
-### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON
 
 You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.
 
@@ -125,3 +112,14 @@ Notes:
 - Arrays, scalars, or invalid JSON are rejected.
 - `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
 - Per-test `featureFlags` fixture values still override env-provided values when both set the same key.
+
+### 7. Wallet 4.0 Asset Section
+
+The Wallet 4.0 Asset Section (`assetSection`) is ON by default for all desktop E2E tests.
+You can run the "Asset Section OFF" variant of the tests by setting the E2E environment variable:
+
+```bash
+export E2E_ENABLE_ASSET_SECTION=0
+```
+
+To run the Asset Section OFF variant on CI, untick the "Enable the Wallet 4.0 Asset Section" checkbox on the desktop E2E GitHub workflow.

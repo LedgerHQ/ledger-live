@@ -15,6 +15,7 @@ import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types"
 import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import type { MarketListRouteParams } from "LLM/features/Market/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import type { Web3HubStackParamList, Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
@@ -38,6 +39,7 @@ import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/U
 import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
 import type { EvmDelegationFlowParamList } from "../../../families/evm/DelegationFlow/types";
 import type { EvmUndelegationFlowParamList } from "../../../families/evm/UndelegationFlow/types";
+import type { EvmClaimRewardsFlowParamList } from "../../../families/evm/ClaimRewardsFlow/types";
 import type { BitcoinEditTransactionParamList } from "../../../families/bitcoin/EditTransactionFlow/EditTransactionParamList";
 import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
@@ -47,6 +49,7 @@ import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/Unb
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
+import type { TezosStakeFlowParamList } from "../../../families/tezos/StakeFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
@@ -172,7 +175,7 @@ export type BaseNavigatorStackParamList = {
     onNameChange(name: string): void;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
-  [ScreenName.MarketList]: undefined;
+  [ScreenName.MarketList]: MarketListRouteParams | undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
   [ScreenName.Account]: {
     account?: AccountLike;
@@ -291,6 +294,7 @@ export type BaseNavigatorStackParamList = {
   // EVM
   [NavigatorName.EvmDelegationFlow]: NavigatorScreenParams<EvmDelegationFlowParamList>;
   [NavigatorName.EvmUndelegationFlow]: NavigatorScreenParams<EvmUndelegationFlowParamList>;
+  [NavigatorName.EvmClaimRewardsFlow]: NavigatorScreenParams<EvmClaimRewardsFlowParamList>;
   [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
   // Bitcoin edit transaction (RBF)
@@ -304,6 +308,7 @@ export type BaseNavigatorStackParamList = {
 
   // Tezos
   [NavigatorName.TezosDelegationFlow]: NavigatorScreenParams<TezosDelegationFlowParamList>;
+  [NavigatorName.TezosStakeFlow]: NavigatorScreenParams<TezosStakeFlowParamList>;
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;

@@ -99,6 +99,7 @@ export const mocks: AppManifest[] = [
       "ethereum_goerli/**",
       "ethereum_sepolia/**",
       "hedera",
+      "hedera_testnet",
       "cardano/**",
       "filecoin",
       "osmo",

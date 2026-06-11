@@ -228,6 +228,64 @@ describe("BitcoinApi", () => {
     });
   });
 
+  describe("fetchUtxoTx unit test", () => {
+    const txHash = "8bae12b5f4c088d940733dcd1455efc6a3a69cf9340e17a981286d3778615684";
+
+    beforeEach(() => {
+      // @ts-expect-error method is mocked
+      network.mockResolvedValue({
+        data: {
+          id: txHash,
+          outputs: [
+            {
+              output_index: 0,
+              value: "25451",
+              address: "15nxZ8k9UJy9q7vhE21JdA54UfNrnFE9Hn",
+              spent_at_height: 949644,
+            },
+            {
+              output_index: 1,
+              value: "74974941",
+              address: "bc1q237wagrhxka9d3h6f5c8kjjq8g86nnuzqfy0xq",
+              spent_at_height: null,
+            },
+          ],
+        },
+      });
+    });
+
+    it("should return the transaction with its outputs", async () => {
+      const tx = await explorer.fetchUtxoTx(txHash);
+
+      expect(tx.outputs).toEqual([
+        {
+          address: "15nxZ8k9UJy9q7vhE21JdA54UfNrnFE9Hn",
+          output_index: 0,
+          spent_at_height: 949644,
+          value: "25451",
+        },
+        {
+          address: "bc1q237wagrhxka9d3h6f5c8kjjq8g86nnuzqfy0xq",
+          output_index: 1,
+          spent_at_height: null,
+          value: "74974941",
+        },
+      ]);
+    });
+
+    it("should call the correct endpoint with verbosity=Minimal", async () => {
+      const mockNetwork = network as jest.MockedFunction<typeof network>;
+      await explorer.fetchUtxoTx(txHash);
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: expect.stringContaining(`/tx/${txHash}`),
+          params: { verbosity: "Minimal" },
+        }),
+      );
+    });
+  });
+
   describe("hydrateTx unit test rbf", () => {
     let mockAddress: { account: number; index: number; address: string };
     beforeEach(() => {

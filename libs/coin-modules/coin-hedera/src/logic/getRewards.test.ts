@@ -32,6 +32,7 @@ describe("getRewards", () => {
     expect(result.items).toEqual([]);
     expect(mockGetAccountTransactions).toHaveBeenCalledTimes(1);
     expect(mockGetAccountTransactions).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
       address: mockAddress,
       fetchAllPages: false,
       pagingToken: null,
@@ -181,6 +182,7 @@ describe("getRewards", () => {
     expect(result.next).toBe(nextCursor);
     expect(mockGetAccountTransactions).toHaveBeenCalledTimes(1);
     expect(mockGetAccountTransactions).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
       address: mockAddress,
       fetchAllPages: false,
       pagingToken: cursor,

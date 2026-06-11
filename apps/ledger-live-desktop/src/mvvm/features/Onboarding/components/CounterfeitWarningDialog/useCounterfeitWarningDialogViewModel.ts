@@ -1,15 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
-import {
-  EVENT_DISMISSED,
-  EVENT_LEARN_MORE,
-  EVENT_PROCEED,
-  EVENT_SHOWN,
-} from "./analytics";
+import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "./analytics";
 
 export type CounterfeitWarningDialogContainerProps = Readonly<{
   open: boolean;
@@ -32,7 +27,7 @@ export type CounterfeitWarningDialogViewProps = Readonly<{
 
 const useCounterfeitWarningDialogViewModel = ({
   open,
-  deviceModelId,
+  deviceModelId: _deviceModelId,
   onProceed,
   onDismiss,
 }: CounterfeitWarningDialogContainerProps): CounterfeitWarningDialogViewProps => {
@@ -41,24 +36,30 @@ const useCounterfeitWarningDialogViewModel = ({
 
   useEffect(() => {
     if (open && !hasTrackedShownRef.current) {
-      track(EVENT_SHOWN, { deviceModelId });
+      track("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
       hasTrackedShownRef.current = true;
     }
 
     if (!open) {
       hasTrackedShownRef.current = false;
     }
-  }, [deviceModelId, open]);
+  }, [open]);
 
   const handleProceed = useCallback(() => {
-    track(EVENT_PROCEED, { deviceModelId });
+    track("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     onProceed();
-  }, [deviceModelId, onProceed]);
+  }, [onProceed]);
 
   const handleLearnMore = useCallback(() => {
-    track(EVENT_LEARN_MORE, { deviceModelId });
+    track("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     openURL(urls.genuineCheck);
-  }, [deviceModelId]);
+  }, []);
 
   const handleLedgerComLink = useCallback(() => {
     openURL(urls.ledger);
@@ -69,9 +70,12 @@ const useCounterfeitWarningDialogViewModel = ({
   }, []);
 
   const handleDismiss = useCallback(() => {
-    track(EVENT_DISMISSED, { deviceModelId });
+    track("button_clicked", {
+      button: COUNTERFEIT_WARNING_BUTTON.close,
+      page: COUNTERFEIT_WARNING_PAGE,
+    });
     onDismiss();
-  }, [deviceModelId, onDismiss]);
+  }, [onDismiss]);
 
   return {
     open,

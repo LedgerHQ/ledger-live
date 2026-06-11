@@ -1,4 +1,7 @@
+import { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBlacklisted";
 import { loadBlacklistedTokenSections } from "./helpers";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -98,6 +101,30 @@ const mockMaticUsdtToken: TokenCurrency = {
     },
   ],
 };
+
+describe("filterAccountsExcludingBlacklisted", () => {
+  const ethAccount = genAccount("eth", { currency: mockEthereumCurrency });
+  const btcAccount = genAccount("btc", {
+    currency: {
+      ...mockEthereumCurrency,
+      id: "bitcoin",
+      name: "Bitcoin",
+      ticker: "BTC",
+      type: "CryptoCurrency",
+    },
+  });
+
+  it("returns the same reference when the blacklist is empty", () => {
+    const accounts = [ethAccount, btcAccount];
+    expect(filterAccountsExcludingBlacklisted(accounts, [])).toBe(accounts);
+  });
+
+  it("removes accounts whose currency id is blacklisted", () => {
+    const filtered = filterAccountsExcludingBlacklisted([ethAccount, btcAccount], ["bitcoin"]);
+    expect(filtered).toHaveLength(1);
+    expect(getAccountCurrency(filtered[0]).id).toBe("ethereum");
+  });
+});
 
 describe("loadBlacklistedTokenSections", () => {
   let mockFindTokenById: jest.Mock;

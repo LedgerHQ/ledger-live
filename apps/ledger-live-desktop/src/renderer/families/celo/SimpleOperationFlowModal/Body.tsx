@@ -24,7 +24,11 @@ import logger from "~/renderer/logger";
 import { StepId, StepProps, St, Mode } from "./types";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CeloAccount, Transaction as CeloTransaction, TransactionStatus } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloAccount,
+  Transaction as CeloTransaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/celo/types";
 
 export type Data = {
   account: CeloAccount | TokenAccount;

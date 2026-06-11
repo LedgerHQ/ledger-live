@@ -30,6 +30,7 @@ import { useSellNavigation } from "LLD/features/Market/hooks/useSellNavigation";
 type UseActionBarViewModelProps = Readonly<{
   distributionItem?: DistributionItem;
   ledgerCurrency?: CryptoOrTokenCurrency;
+  ledgerIds?: readonly string[];
   marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
   isDistributionLoading: boolean;
@@ -101,6 +102,7 @@ function resolvePrimaryAccount(
 export function useActionBarViewModel({
   distributionItem,
   ledgerCurrency,
+  ledgerIds,
   marketCurrencyData,
   tickerHint,
   isDistributionLoading,
@@ -116,6 +118,9 @@ export function useActionBarViewModel({
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
 
   const ledgerIdsForRamp = useMemo(() => {
+    if (ledgerIds?.length) {
+      return [...ledgerIds];
+    }
     if (marketCurrencyData?.ledgerIds?.length) {
       return marketCurrencyData.ledgerIds;
     }
@@ -127,7 +132,7 @@ export function useActionBarViewModel({
       return ledgerIdsFromLedgerCurrency(ledgerCurrency);
     }
     return [];
-  }, [marketCurrencyData, distributionItem, ledgerCurrency]);
+  }, [ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency]);
 
   const rampActiveLedgerIds = useMemo(
     () => ledgerIdsForRamp.filter(id => !deactivatedCurrencyIds.has(id)),
@@ -185,29 +190,37 @@ export function useActionBarViewModel({
     [canBuyOnRamp, canSellOnRamp, walletAllowsSellSend],
   );
 
+  const trackingCurrencyId =
+    ledgerCurrency?.id ?? distributionItem?.currency.id ?? rampActiveLedgerIds[0];
+  const rampNavigationCurrencyIds =
+    rampActiveLedgerIds.length > 1 ? rampActiveLedgerIds : undefined;
+
   const onBuy = useCallback(() => {
-    track("button_clicked2", {
+    track("button_clicked", {
       button: "buy",
-      currency: ledgerCurrency?.ticker ?? tickerHint,
+      currency: trackingCurrencyId,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
-      flow: "buy",
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToBuy(ledgerCurrency, tickerHint);
-  }, [ledgerCurrency, tickerHint, navigateToBuy]);
+    navigateToBuy(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
+  }, [ledgerCurrency, tickerHint, navigateToBuy, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSell = useCallback(() => {
-    track("button_clicked2", {
+    track("button_clicked", {
       button: "sell",
-      currency: ledgerCurrency?.ticker ?? tickerHint,
+      currency: trackingCurrencyId,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
-      flow: "sell",
     });
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
-    navigateToSell(ledgerCurrency, tickerHint);
-  }, [ledgerCurrency, tickerHint, navigateToSell]);
+    navigateToSell(ledgerCurrency, tickerHint, { currencyIds: rampNavigationCurrencyIds });
+  }, [ledgerCurrency, tickerHint, navigateToSell, trackingCurrencyId, rampNavigationCurrencyIds]);
 
   const onSend = useCallback(() => {
+    track("button_clicked", {
+      button: "send",
+      currency: trackingCurrencyId,
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+    });
     if (primaryAccount) {
       openSendFlow({
         source: ASSET_DETAIL_TRACKING_PAGE_NAME,
@@ -217,14 +230,13 @@ export function useActionBarViewModel({
     } else {
       openSendFlow({ source: ASSET_DETAIL_TRACKING_PAGE_NAME });
     }
-  }, [openSendFlow, primaryAccount, primaryParentAccount]);
+  }, [openSendFlow, primaryAccount, primaryParentAccount, trackingCurrencyId]);
 
   const onReceive = useCallback(() => {
-    track("button_clicked2", {
+    track("button_clicked", {
       button: "receive",
-      currency: ledgerCurrency?.ticker ?? tickerHint,
+      currency: trackingCurrencyId,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
-      flow: "receive",
     });
     dispatch(
       openModal("MODAL_RECEIVE", {
@@ -232,7 +244,7 @@ export function useActionBarViewModel({
         ...(primaryAccount ? { account: primaryAccount, parentAccount: primaryParentAccount } : {}),
       }),
     );
-  }, [dispatch, primaryAccount, primaryParentAccount, ledgerCurrency?.ticker, tickerHint]);
+  }, [dispatch, primaryAccount, primaryParentAccount, trackingCurrencyId]);
 
   return {
     showSkeleton: isPageLoading,

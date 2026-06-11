@@ -8,12 +8,5 @@ interface ToolRowItemProps {
 }
 
 export function ToolRowItem({ tool, isActive, onSelect }: ToolRowItemProps) {
-  return (
-    <ToolRow
-      title={tool.label}
-      isActive={isActive}
-      onClick={onSelect}
-      owner={tool.owner}
-    />
-  );
+  return <ToolRow title={tool.label} isActive={isActive} onClick={onSelect} owner={tool.owner} />;
 }

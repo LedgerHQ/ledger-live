@@ -4,7 +4,10 @@ import { SYNC_SETTLE_GUARD_MS } from "@ledgerhq/live-common/bridge/react/useSync
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { mockPoll, mockOnUserRefresh, mockBridgeSync } from "./fixtures";
-import { setLastUserSyncClickTimestamp, setHasCompletedInitialSync } from "~/renderer/reducers/syncRefresh";
+import {
+  setLastUserSyncClickTimestamp,
+  setHasCompletedInitialSync,
+} from "~/renderer/reducers/syncRefresh";
 
 const mockTriggerRefresh = jest.fn(() => {
   mockOnUserRefresh();

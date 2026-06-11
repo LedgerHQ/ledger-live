@@ -14,7 +14,6 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { track } from "~/analytics";
-import { previousRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
 import type { DeviceLike, State } from "~/reducers/types";
 import { urls } from "~/utils/urls";
@@ -110,10 +109,8 @@ function withViewModelState({
 }
 
 const sourceFlow: SourceFlow = "my_ledger";
-const TEST_SOURCE = "Portfolio";
 
 const layerABaseProperties = {
-  source: TEST_SOURCE,
   deviceUxV2: true,
 };
 
@@ -173,7 +170,6 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     jest.clearAllMocks();
     connectDeviceObserver = undefined;
     mockUnsubscribe = jest.fn();
-    previousRouteNameRef.current = TEST_SOURCE;
     mockedUseDeviceManagementKit.mockReturnValue(mockDmk);
     mockConnectDeviceSubscription();
   });
@@ -396,21 +392,15 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
   });
 
   describe("Layer A funnel events", () => {
-    describe("GIVEN the ViewModel mounts", () => {
-      it("WHEN the hook initializes THEN it fires deviceflow_started exactly once with the sourceFlow", () => {
-        // WHEN
-        renderViewModel();
+    it("GIVEN the ViewModel mounts WHEN the hook initializes THEN it does not fire deviceflow_started", () => {
+      // WHEN
+      renderViewModel();
 
-        // THEN
-        const startedCalls = mockedTrack.mock.calls.filter(
-          ([eventName]) => eventName === "deviceflow_started",
-        );
-        expect(startedCalls).toHaveLength(1);
-        expect(startedCalls[0]).toEqual([
-          "deviceflow_started",
-          { ...layerABaseProperties, sourceFlow: "my_ledger" },
-        ]);
-      });
+      // THEN
+      const startedCalls = mockedTrack.mock.calls.filter(
+        ([eventName]) => eventName === "deviceflow_started",
+      );
+      expect(startedCalls).toHaveLength(0);
     });
 
     describe("GIVEN the connect-device SM transitions to Discovering", () => {

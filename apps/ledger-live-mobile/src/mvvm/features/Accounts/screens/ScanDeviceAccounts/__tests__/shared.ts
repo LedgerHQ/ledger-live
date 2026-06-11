@@ -51,16 +51,26 @@ jest.mock("@react-navigation/core", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: jest.fn(() => ({
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const currencyBridge = {
     scanAccounts: jest.fn(() => scanAccountsObservable),
     preload: jest.fn(() => Promise.resolve(undefined)),
     hydrate: jest.fn(),
-  })),
-  getAccountBridge: jest.fn(() => ({
-    isAccountEmpty: jest.fn(() => false),
-  })),
-}));
+  };
+  const currencyBridgePromise = Object.assign(Promise.resolve(currencyBridge), {
+    status: "fulfilled" as const,
+    value: currencyBridge,
+  });
+  const accountBridge = { isAccountEmpty: jest.fn(() => false) };
+  const accountBridgePromise = Object.assign(Promise.resolve(accountBridge), {
+    status: "fulfilled" as const,
+    value: accountBridge,
+  });
+  return {
+    getCurrencyBridge: jest.fn(() => currencyBridgePromise),
+    getAccountBridge: jest.fn(() => accountBridgePromise),
+  };
+});
 
 jest.mock("~/bridge/cache", () => ({
   prepareCurrency: jest.fn().mockResolvedValue(undefined),

@@ -1,4 +1,6 @@
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { createBorrowNavigateHandler } from "@ledgerhq/live-common/wallet-api/Borrow/navigate";
+import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-api/Borrow/types";
 import React, { useEffect, useMemo } from "react";
 import { BorrowLiveAppView } from ".";
 import { useBorrowLiveAppViewModel } from "LLM/features/Borrow/screens/BorrowLiveApp/useBorrowLiveAppViewModel";
@@ -8,6 +10,7 @@ type BorrowLiveAppWrapperProps = Readonly<{
   onNativeGoBack?: () => void;
   onActionHandled?: () => void;
   onWalletApiGoBack?: () => void;
+  onWalletApiGoToSwap?: (params: BorrowSwapNavigationParams) => void;
 }>;
 
 export function BorrowLiveAppWrapper({
@@ -15,25 +18,27 @@ export function BorrowLiveAppWrapper({
   onNativeGoBack,
   onActionHandled,
   onWalletApiGoBack,
+  onWalletApiGoToSwap,
 }: BorrowLiveAppWrapperProps) {
-  const { manifest, error, isLoading, webviewRef, webviewState, onWebviewStateChange, webviewInputs } =
-    useBorrowLiveAppViewModel();
+  const {
+    manifest,
+    error,
+    isLoading,
+    webviewRef,
+    webviewState,
+    onWebviewStateChange,
+    webviewInputs,
+  } = useBorrowLiveAppViewModel();
   const isSetupAmountStep = webviewState.url.includes("/loan");
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(
     () => ({
-      "custom.borrow.navigate": async (request: { params?: { action?: string } }) => {
-        const requestAction = request.params?.action;
-
-        if (requestAction !== "go-back") {
-          throw new Error("Unknown borrow navigation action");
-        }
-
-        onWalletApiGoBack?.();
-        return { success: true };
-      },
+      "custom.navigate": createBorrowNavigateHandler({
+        onGoBack: onWalletApiGoBack,
+        onGoToSwap: onWalletApiGoToSwap,
+      }),
     }),
-    [onWalletApiGoBack],
+    [onWalletApiGoBack, onWalletApiGoToSwap],
   );
 
   useEffect(() => {

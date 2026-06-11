@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -11,7 +11,8 @@ import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboa
 export function useNavigateToPostOnboardingHubCallback() {
   const navigate = useNavigate();
   const hasBeenRedirectedToPostOnboarding = useSelector(hasBeenRedirectedToPostOnboardingSelector);
-  const { shouldDisplayFinishOnboardingWidget = false } = useWalletFeaturesConfig("desktop");
+  const onboardingWidgetFeature = useFeature("onboardingWidget");
+  const shouldDisplayFinishOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
   const { handleOpen: openFinishOnboardingDialog } = useFinishOnboardingDialog();
   const { deviceModelId } = usePostOnboardingHubState();
   const recoverServices = useFeature("protectServicesDesktop");
@@ -21,16 +22,14 @@ export function useNavigateToPostOnboardingHubCallback() {
   return useCallback(
     (resetNavigationStack?: boolean) => {
       const shouldNavigateToRecoverLanding =
-        isRecoverDisplayed(recoverServices, deviceModelId ?? undefined) &&
-        !!upsellPath;
+        isRecoverDisplayed(recoverServices, deviceModelId ?? undefined) && !!upsellPath;
 
       if (shouldDisplayFinishOnboardingWidget) {
         const replace = resetNavigationStack ?? true;
         if (shouldNavigateToRecoverLanding) {
-          navigate(
-            `/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`,
-            { replace },
-          );
+          navigate(`/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`, {
+            replace,
+          });
         } else {
           navigate("/", { replace: true });
         }

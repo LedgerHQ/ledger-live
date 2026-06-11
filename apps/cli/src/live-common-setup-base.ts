@@ -53,6 +53,7 @@ setSupportedCurrencies([
   "crypto_org_croeseid",
   "celo",
   "hedera",
+  "hedera_testnet",
   "cardano",
   "solana",
   "solana_testnet",

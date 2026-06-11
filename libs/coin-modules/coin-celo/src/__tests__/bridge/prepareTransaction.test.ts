@@ -11,6 +11,7 @@ import prepareTransaction from "../../bridge/prepareTransaction";
 
 jest.mock("../../network/client", () => ({
   celoGasPrice: jest.fn(async () => BigInt(2)),
+  celoEstimateGas: jest.fn(async () => BigInt(3)),
   getCeloClient: jest.fn(() => ({
     estimateGas: jest.fn(async () => BigInt(3)),
     estimateMaxPriorityFeePerGas: jest.fn(async () => BigInt(1)),

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";

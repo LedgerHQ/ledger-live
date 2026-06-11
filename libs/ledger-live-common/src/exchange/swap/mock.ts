@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
@@ -188,7 +189,7 @@ export const mockGetProviders: GetProviders = async () => {
 export const mockGetStatus: GetMultipleStatus = async statusList => {
   //Fake delay to show loading UI
   await new Promise(r => setTimeout(r, 800));
-  return statusList.map(s => ({ ...s, status: "finished", finalAmount: undefined }));
+  return statusList.map(s => ({ ...s, status: TransactionStatus.Finished, finalAmount: undefined }));
 };
 
 export const mockPostSwapAccepted: PostSwapAccepted = async ({

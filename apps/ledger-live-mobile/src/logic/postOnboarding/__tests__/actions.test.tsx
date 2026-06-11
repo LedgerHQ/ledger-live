@@ -33,9 +33,8 @@ describe("discoverWalletAction", () => {
     expect(discoverWalletAction.id).toBe(PostOnboardingActionId.discoverWallet);
     expect(discoverWalletAction.featureFlagId).toBe("lwmProductTour");
     expect(discoverWalletAction.shouldCompleteOnStart).toBe(false);
-    const startAction = (
-      discoverWalletAction as { startAction?: (args: StartActionArgs) => void }
-    ).startAction;
+    const startAction = (discoverWalletAction as { startAction?: (args: StartActionArgs) => void })
+      .startAction;
     expect(() => startAction?.({})).not.toThrow();
   });
 });

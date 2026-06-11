@@ -143,8 +143,7 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
 
   const isProcessing = isStatusProcessing(onboardingStatus);
 
-  const showDeviceModal =
-    onboardingStatus === OnboardStatus.SIGN && !!device && !!cryptoCurrency;
+  const showDeviceModal = onboardingStatus === OnboardStatus.SIGN && !!device && !!cryptoCurrency;
 
   const isNetworkProcessing = onboardingStatus === OnboardStatus.SUBMIT;
 

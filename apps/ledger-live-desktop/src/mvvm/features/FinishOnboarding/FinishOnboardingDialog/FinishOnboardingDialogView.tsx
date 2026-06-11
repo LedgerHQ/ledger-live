@@ -67,7 +67,7 @@ const FinishOnboardingDialogView = ({
             lumenSymbol={LedgerDevices}
             postOnboardingActionId={PostOnboardingActionId.deviceOnboarded}
             shouldCompleteOnStart={false}
-            startAction={() => { }}
+            startAction={() => {}}
             title="postOnboarding.dialog.actions.deviceOnboarded.title"
           />
           {actions.map(action => (

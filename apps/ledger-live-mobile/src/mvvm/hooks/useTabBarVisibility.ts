@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 /**
  * Hook to control tab bar visibility in Wallet 4.0.

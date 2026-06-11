@@ -66,6 +66,7 @@ export const format = (currency: MarketItemResponse): MarketCurrencyData => {
       [KeysPriceChange.day]: currency.priceChangePercentage24h,
       [KeysPriceChange.week]: currency.priceChangePercentage7d,
       [KeysPriceChange.month]: currency.priceChangePercentage30d,
+      [KeysPriceChange.sixMonths]: currency.priceChangePercentage6m ?? 0,
       [KeysPriceChange.year]: currency.priceChangePercentage1y,
     },
     marketCapChangePercentage24h: currency.marketCapChangePercentage24h,

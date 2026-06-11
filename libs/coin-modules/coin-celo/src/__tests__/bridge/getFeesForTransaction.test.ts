@@ -29,6 +29,7 @@ const readContractMock = jest.fn(async ({ functionName }: { functionName: string
 
 jest.mock("../../network/client", () => ({
   celoGasPrice: (...args: unknown[]) => celoGasPriceMock(...args),
+  celoEstimateGas: (...args: unknown[]) => estimateGasMock(...args),
   getCeloClient: jest.fn(() => ({
     estimateGas: (...args: unknown[]) => estimateGasMock(...args),
     estimateMaxPriorityFeePerGas: (...args: unknown[]) => estimateMaxPriorityFeePerGasMock(...args),

@@ -138,6 +138,11 @@ export type LLDCoinFamily<
     amountCell?: Partial<Record<OperationType, React.ComponentType<AmountCellProps<O>>>>;
 
     /**
+     * Override the displayed operation amount (list + details drawer)
+     */
+    getAmount?: (operation: O) => BigNumber;
+
+    /**
      * Change operation first cell (mostly icons)
      */
     confirmationCell?: Partial<

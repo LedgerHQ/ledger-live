@@ -1,5 +1,35 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.25.0
+
+### Minor Changes
+
+- [#17946](https://github.com/LedgerHQ/ledger-live/pull/17946) [`b2e3154`](https://github.com/LedgerHQ/ledger-live/commit/b2e315426c8ced9815ccef10e758bd9908f8f36a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add Connect Device Layer B analytics events on mobile and expose the selected device on connection-error UI states.
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/live-env@2.38.0
+  - @ledgerhq/live-dmk-shared@0.26.0
+  - @ledgerhq/errors@6.36.0
+  - @ledgerhq/devices@8.15.1
+  - @ledgerhq/hw-transport@6.35.4
+
+## 0.25.0-next.0
+
+### Minor Changes
+
+- [#17946](https://github.com/LedgerHQ/ledger-live/pull/17946) [`b2e3154`](https://github.com/LedgerHQ/ledger-live/commit/b2e315426c8ced9815ccef10e758bd9908f8f36a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add Connect Device Layer B analytics events on mobile and expose the selected device on connection-error UI states.
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/live-env@2.38.0-next.0
+  - @ledgerhq/live-dmk-shared@0.26.0-next.0
+  - @ledgerhq/errors@6.36.0-next.0
+  - @ledgerhq/devices@8.15.1-next.0
+  - @ledgerhq/hw-transport@6.35.4-next.0
+
 ## 0.24.0
 
 ### Minor Changes

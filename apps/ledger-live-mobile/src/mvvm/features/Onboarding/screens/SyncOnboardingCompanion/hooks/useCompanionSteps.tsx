@@ -4,18 +4,15 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { TrackScreen } from "~/analytics";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import BackgroundBlue from "../assets/BackgroundBlue";
 import BackgroundRed from "../assets/BackgroundRed";
-import ContinueOnDeviceWithAnim from "~/screens/SyncOnboarding/TwoStepStepper/ContinueOnDeviceWithAnim";
-import SeedCompanionStep from "~/screens/SyncOnboarding/TwoStepStepper/SeedCompanionStep";
-import {
-  SeedPathStatus,
-  FirstStepCompanionStepKey,
-} from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import ContinueOnDeviceWithAnim from "../components/ContinueOnDeviceWithAnim";
+import SeedCompanionStep from "../components/SeedCompanionStep";
+import { SeedPathStatus, FirstStepCompanionStepKey } from "../types";
 import LedgerSyncActivationStep from "~/screens/SyncOnboarding/TwoStepStepper/LedgerSyncActivationStep";
 
 const { BodyText } = VerticalTimeline;

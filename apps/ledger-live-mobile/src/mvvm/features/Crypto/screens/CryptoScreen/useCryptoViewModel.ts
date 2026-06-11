@@ -1,23 +1,15 @@
 import { useCallback, useMemo } from "react";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
-import {
-  BaseNavigationComposite,
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 import { toAsset } from "LLM/utils/assetUtils";
 import { CryptoScreenViewData, CryptoVariant } from "./types";
 import { selectAssetList } from "./utils";
-
-type NavigationProp = BaseNavigationComposite<
-  StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.Crypto>
->;
 
 interface UseCryptoViewModelParams {
   sourceScreenName?: ScreenName;
@@ -35,7 +27,7 @@ const useCryptoViewModel = ({
   variant,
 }: UseCryptoViewModelParams): CryptoScreenViewData => {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp>();
+  const { openFromAsset } = useAssetDetailNavigation();
 
   const { categorizedAssets, isLoadingStablecoinTickers, isStablecoinTickersError } =
     useCategorizedAssetsFromPortfolio();
@@ -57,14 +49,14 @@ const useCryptoViewModel = ({
         page: TRACKING_TYPE_BY_VARIANT[resolvedVariant],
       });
 
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: {
-          currency: asset.currency,
-        },
+      openFromAsset({
+        currency: asset.currency,
+        source: `crypto_${resolvedVariant}_list`,
+        isPlaceholder: asset.isPlaceholder,
+        marketId: asset.marketId,
       });
     },
-    [navigation, resolvedVariant],
+    [openFromAsset, resolvedVariant],
   );
 
   const trackingType = TRACKING_TYPE_BY_VARIANT[resolvedVariant];

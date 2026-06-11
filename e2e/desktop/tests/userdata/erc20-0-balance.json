@@ -5,6 +5,7 @@
     },
     "settings": {
       "hasCompletedOnboarding": true,
+      "hasSeenWalletV4Tour": true,
       "counterValue": "USD",
       "language": "en",
       "theme": null,

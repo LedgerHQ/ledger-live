@@ -31,8 +31,12 @@ export interface ConcordiumSigner {
    * Sign a transaction (Transfer or TransferWithMemo).
    * Routes to the appropriate signing method based on transaction type.
    * Returns both signature and serialized transaction.
+   *
+   * @param maxFee Maximum fee in µCCD (uint64). Forwarded to the device for
+   * display only when the firmware supports it; not part of the canonical
+   * signed bytes.
    */
-  signTransaction(tx: Transaction, path: string): Promise<SigningResult>;
+  signTransaction(tx: Transaction, path: string, maxFee: bigint): Promise<SigningResult>;
 
   /**
    * Sign a credential deployment transaction (hw-app format).

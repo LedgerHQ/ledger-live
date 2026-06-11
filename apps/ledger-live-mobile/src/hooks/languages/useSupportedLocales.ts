@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useMemo } from "react";
 import { LocaleKeys, supportedLocales } from "~/languages";
 

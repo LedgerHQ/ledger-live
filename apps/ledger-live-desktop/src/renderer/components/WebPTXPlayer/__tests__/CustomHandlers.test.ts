@@ -1,8 +1,5 @@
 import { createDialogInfoHandler } from "../CustomHandlers";
-import {
-  resolveActionDialog,
-  createOpenActionDialogHandler,
-} from "../actionDialogStore";
+import { resolveActionDialog, createOpenActionDialogHandler } from "../actionDialogStore";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import { setActionDialog } from "~/renderer/reducers/actionDialog";
 

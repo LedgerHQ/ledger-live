@@ -96,7 +96,7 @@ export function applyLanguageFilter(feature: Feature, appLanguage?: string): Fea
  * User-defined local overrides map.
  *
  * @param remoteFlags
- * Remote feature flag values from Firebase/LiveConfig.
+ * Remote feature flag values (the latest fetched remote map).
  *
  * @param config
  * Platform, version, language, and env flags for resolution.
@@ -141,7 +141,7 @@ export function resolveFeature(
  * User-defined local overrides map.
  *
  * @param remoteFlags
- * Remote feature flag values from Firebase/LiveConfig.
+ * Remote feature flag values (the latest fetched remote map).
  *
  * @param config
  * Platform, version, language, and env flags for resolution.

@@ -1,8 +1,12 @@
 import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { EARN_V2_DESKTOP_FLAGS, useLocalEarnManifest } from "tests/utils/featureFlagUtils";
+import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import {
+  EARN_V2_DESKTOP_FLAGS,
+  FF_STAKE_PROGRAMS_MODAL,
+  useLocalEarnManifest,
+} from "tests/utils/featureFlagUtils";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -13,32 +17,10 @@ import {
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import type { Application } from "tests/page";
-import type { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 const EARN_LOCAL_MANIFEST: LiveAppManifest = earnLocalManifestJson as LiveAppManifest;
 
 const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-
-// TODO: sync Firebase environments and remove this override when final variant is chosen
-const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
-  stakePrograms: {
-    enabled: true,
-    params: {
-      list: ["ethereum", "cosmos"],
-      redirects: {
-        "ethereum/erc20/usd__coin": {
-          platform: "earn",
-          name: "Earn - Deposit",
-          queryParams: {
-            cryptoAssetId: "ethereum/erc20/usd__coin",
-            intent: "deposit",
-            deposit: "stablecoin",
-          },
-        },
-      },
-    },
-  },
-};
 
 function getTags(account: Account) {
   const family = getFamilyByCurrencyId(account.currency.id);
@@ -266,8 +248,8 @@ test.describe("Earn [v2]", () => {
   // --- Navigation: ETH Provider Staking Flows ---
 
   const ethProviders = [
-    { provider: Provider.LIDO, xrayTickets: ["B2CQA-4722", "B2CQA-4644"] },
-    { provider: Provider.KILN, xrayTickets: ["B2CQA-4724"] },
+    { provider: EarnProvider.LIDO, xrayTickets: ["B2CQA-4722", "B2CQA-4644"] },
+    { provider: EarnProvider.KILN, xrayTickets: ["B2CQA-4724"] },
   ];
 
   for (const { provider, xrayTickets } of ethProviders) {

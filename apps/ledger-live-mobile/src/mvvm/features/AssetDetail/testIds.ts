@@ -2,7 +2,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   screen: "asset-detail-screen",
   balanceGraph: "asset-detail-balance-graph",
   marketPrice: "asset-detail-market-price",
-  chartPlaceholder: "asset-detail-chart-placeholder",
+  chart: "asset-detail-chart",
   receiveButton: "asset-detail-receive-button",
   balanceDetails: "asset-detail-balance-details",
   totalBalance: "asset-detail-total-balance",
@@ -29,4 +29,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   coinOptionsSheet: "asset-detail-coin-options-sheet",
   coinOptionsFavouriteRow: "asset-detail-coin-options-favourite-row",
   coinOptionsHideRow: "asset-detail-coin-options-hide-row",
+  chartOptionsTrailing: "asset-detail-chart-options-trailing",
+  chartOptionsSheet: "asset-detail-chart-options-sheet",
+  chartOptionsToggleTransactionsRow: "asset-detail-chart-options-toggle-transactions-row",
 } as const;

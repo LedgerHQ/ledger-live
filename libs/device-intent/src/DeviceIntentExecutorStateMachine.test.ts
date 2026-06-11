@@ -64,6 +64,7 @@ function createSM(
     intent,
     listeners,
   });
+  sm.start();
   return { sm, listeners };
 }
 
@@ -83,11 +84,50 @@ function lastExecutorState(listeners: ReturnType<typeof makeListeners>): Executo
 // ---- Tests ----
 
 describe("DeviceIntentExecutorStateMachine", () => {
-  describe("GIVEN the machine just started", () => {
-    it("THEN it emits connectingDevice", () => {
-      const { sm, listeners } = createSM();
+  describe("SM lifecycle", () => {
+    it("GIVEN the machine is constructed WHEN start is called THEN it emits connectingDevice", () => {
+      // GIVEN
+      const listeners = makeListeners();
+      const sm = new DefaultDeviceIntentExecutorStateMachine({
+        deviceConnectionParams: { acceptedDeviceModelIds: [] },
+        intent: makeIntent(),
+        listeners,
+      });
+
+      // WHEN
+      sm.start();
+
+      // THEN
       expect(listeners.onExecutorStateChanged).toHaveBeenCalledWith({ type: "connectingDevice" });
       expect(lastExecutorState(listeners)).toEqual({ type: "connectingDevice" });
+      sm.stop();
+    });
+
+    it("GIVEN the machine is constructed WHEN start has not been called THEN it does not emit connectingDevice", () => {
+      // GIVEN
+      const listeners = makeListeners();
+
+      // WHEN
+      const sm = new DefaultDeviceIntentExecutorStateMachine({
+        deviceConnectionParams: { acceptedDeviceModelIds: [] },
+        intent: makeIntent(),
+        listeners,
+      });
+
+      // THEN
+      expect(listeners.onExecutorStateChanged).not.toHaveBeenCalled();
+      sm.stop();
+    });
+
+    it("GIVEN the machine has already started WHEN start is called again THEN it throws", () => {
+      // GIVEN
+      const { sm } = createSM();
+
+      // WHEN
+      const startAgain = () => sm.start();
+
+      // THEN
+      expect(startAgain).toThrow("DeviceIntentExecutorStateMachine has already been started");
       sm.stop();
     });
   });
@@ -146,9 +186,13 @@ describe("DeviceIntentExecutorStateMachine", () => {
   describe("GIVEN the machine is in deviceDisconnected state", () => {
     it("WHEN RETRY is received THEN it transitions back to connectingDevice", () => {
       const { sm, listeners } = createSM();
-      sm.deviceConnected(makeConnectionResult());
+      const connectionResult = makeConnectionResult();
+      sm.deviceConnected(connectionResult);
       sm.deviceDisconnected();
-      expect(lastExecutorState(listeners)).toEqual({ type: "deviceDisconnected" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
 
       sm.retry();
       expect(lastExecutorState(listeners)).toEqual({ type: "connectingDevice" });
@@ -167,9 +211,13 @@ describe("DeviceIntentExecutorStateMachine", () => {
 
     it("WHEN DEVICE_DISCONNECTED is received THEN it transitions to deviceDisconnected", () => {
       const { sm, listeners } = createSM();
-      sm.deviceConnected(makeConnectionResult());
+      const connectionResult = makeConnectionResult();
+      sm.deviceConnected(connectionResult);
       sm.deviceDisconnected();
-      expect(lastExecutorState(listeners)).toEqual({ type: "deviceDisconnected" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
       sm.stop();
     });
 
@@ -266,9 +314,13 @@ describe("DeviceIntentExecutorStateMachine", () => {
 
     it("WHEN DEVICE_DISCONNECTED is received THEN it transitions to deviceDisconnected", () => {
       const { sm, listeners } = createSM({ job: () => NEVER });
-      driveToExecution(sm);
+      const connectionResult = makeConnectionResult();
+      driveToExecution(sm, connectionResult);
       sm.deviceDisconnected();
-      expect(lastExecutorState(listeners)).toEqual({ type: "deviceDisconnected" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
       sm.stop();
     });
 
@@ -465,11 +517,15 @@ describe("DeviceIntentExecutorStateMachine", () => {
 
     it("WHEN DEVICE_DISCONNECTED is received THEN it transitions to deviceDisconnected", () => {
       const { sm, listeners } = createSM({ job: () => of({ step: "done" as const }) });
-      driveToExecution(sm);
+      const connectionResult = makeConnectionResult();
+      driveToExecution(sm, connectionResult);
       expect(lastExecutorState(listeners)).toEqual({ type: "idle" });
 
       sm.deviceDisconnected();
-      expect(lastExecutorState(listeners)).toEqual({ type: "deviceDisconnected" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
       sm.stop();
     });
   });
@@ -578,11 +634,15 @@ describe("DeviceIntentExecutorStateMachine", () => {
       };
       const { sm, listeners } = createSM({ job: jobFn });
 
-      driveToExecution(sm);
+      const connectionResult = makeConnectionResult();
+      driveToExecution(sm, connectionResult);
       expect(lastExecutorState(listeners)).toMatchObject({ type: "executingIntent" });
 
       sm.deviceDisconnected();
-      expect(lastExecutorState(listeners)).toEqual({ type: "deviceDisconnected" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
 
       sm.retry();
       expect(lastExecutorState(listeners)).toEqual({ type: "connectingDevice" });

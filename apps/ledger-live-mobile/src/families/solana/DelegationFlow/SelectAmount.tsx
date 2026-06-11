@@ -51,9 +51,8 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const bridge = useAccountBridge<SolanaTransaction>(account);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction<SolanaTransaction>(
-    bridge,
-    () => ({
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction<SolanaTransaction>(bridge, () => ({
       account,
       transaction: {
         ...bridge.createTransaction(account),
@@ -66,8 +65,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
           },
         },
       } as SolanaTransaction,
-    }),
-  );
+    }));
 
   invariant(transaction, "transaction must be defined");
 

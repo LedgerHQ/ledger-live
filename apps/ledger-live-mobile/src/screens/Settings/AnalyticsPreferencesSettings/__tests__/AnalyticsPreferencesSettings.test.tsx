@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { InitialState } from "@react-navigation/native";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import * as analytics from "~/analytics";
 import { ScreenName } from "~/const";
@@ -66,7 +66,7 @@ function renderAnalyticsPreferencesSettings(options: RenderOptions = {}) {
 }
 
 const { policyVersion: expectedPrivacyPolicyVersion } = resolveAnalyticsOptInParams(
-  DEFAULT_FEATURES.analyticsOptIn,
+  FEATURE_FLAGS_DEFAULTS.analyticsOptIn,
 );
 
 describe("AnalyticsPreferencesSettings", () => {

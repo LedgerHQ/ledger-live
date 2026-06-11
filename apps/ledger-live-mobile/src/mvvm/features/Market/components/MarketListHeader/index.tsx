@@ -1,5 +1,5 @@
 import React from "react";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import HeaderTitle from "LLM/components/Navigation/HeaderTitle";
 import HeaderBackButton from "LLM/components/Navigation/HeaderBackButton";
 

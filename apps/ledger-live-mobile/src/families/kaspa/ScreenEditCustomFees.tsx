@@ -66,15 +66,7 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
         }),
       },
     });
-  }, [
-    setSompiPerByte,
-    ownSompiPerByte,
-    account,
-    bridge,
-    route.params,
-    navigation,
-    transaction,
-  ]);
+  }, [setSompiPerByte, ownSompiPerByte, account, bridge, route.params, navigation, transaction]);
   return (
     <SafeAreaView
       style={{

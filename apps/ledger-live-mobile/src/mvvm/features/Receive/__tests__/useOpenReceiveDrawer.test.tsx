@@ -121,6 +121,67 @@ describe("useOpenReceiveDrawer", () => {
         onAccountSelected: expect.any(Function),
       });
     });
+
+    it("should pre-filter on currencyIds when provided (multi-network asset)", () => {
+      const ledgerIds = [
+        "ethereum/erc20/usd_coin",
+        "polygon/erc20/usd_coin",
+        "base/erc20/usd_coin",
+      ];
+
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(createTestProps({ currencyIds: ledgerIds })),
+      );
+
+      act(() => {
+        result.current.handleOpenReceiveDrawer();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        currencies: ledgerIds,
+        flow: "receive_flow",
+        source: "test_screen",
+        areCurrenciesFiltered: true,
+        enableAccountSelection: true,
+        onAccountSelected: expect.any(Function),
+      });
+    });
+
+    it("should give currencyIds priority over currency when both are provided", () => {
+      const ledgerIds = ["ethereum/erc20/usd_coin", "polygon/erc20/usd_coin"];
+
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(createTestProps({ currencyIds: ledgerIds })),
+      );
+
+      act(() => {
+        result.current.handleOpenReceiveDrawer();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: ledgerIds,
+          areCurrenciesFiltered: true,
+        }),
+      );
+    });
+
+    it("should fall back to [currency.id] when currencyIds is an empty array", () => {
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(createTestProps({ currencyIds: [] })),
+      );
+
+      act(() => {
+        result.current.handleOpenReceiveDrawer();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: [mockEthCryptoCurrency.id],
+          areCurrenciesFiltered: true,
+        }),
+      );
+    });
   });
 
   describe("when Noah menu is enabled", () => {
@@ -137,6 +198,7 @@ describe("useOpenReceiveDrawer", () => {
 
       expect(mockOpenReceiveOptionsDrawer).toHaveBeenCalledWith({
         currency: mockEthCryptoCurrency,
+        currencyIds: undefined,
         sourceScreenName: "test_screen",
         fromMenu: undefined,
       });
@@ -154,8 +216,28 @@ describe("useOpenReceiveDrawer", () => {
 
       expect(mockOpenReceiveOptionsDrawer).toHaveBeenCalledWith({
         currency: mockEthCryptoCurrency,
+        currencyIds: undefined,
         sourceScreenName: "test_screen",
         fromMenu: true,
+      });
+    });
+
+    it("should forward currencyIds to the receive options drawer (multi-network pre-selection)", () => {
+      const ledgerIds = ["ethereum", "optimism", "arbitrum", "base"];
+
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(createTestProps({ currencyIds: ledgerIds })),
+      );
+
+      act(() => {
+        result.current.handleOpenReceiveDrawer();
+      });
+
+      expect(mockOpenReceiveOptionsDrawer).toHaveBeenCalledWith({
+        currency: mockEthCryptoCurrency,
+        currencyIds: ledgerIds,
+        sourceScreenName: "test_screen",
+        fromMenu: undefined,
       });
     });
 

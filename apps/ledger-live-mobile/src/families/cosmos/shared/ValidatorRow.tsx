@@ -1,8 +1,9 @@
+import { BigNumber } from "bignumber.js";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -23,6 +24,7 @@ const ValidatorRow = ({
     onPress(validator);
   }, [validator, onPress]);
   const unit = useAccountUnit(account);
+  const tokens = useMemo(() => new BigNumber(validator.tokens), [validator.tokens]);
 
   return (
     <Touchable
@@ -50,7 +52,7 @@ const ValidatorRow = ({
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue showCode unit={unit} value={validator.tokens} />
+            <CurrencyUnitValue showCode unit={unit} value={tokens} />
           </Text>
         </Text>
       </View>

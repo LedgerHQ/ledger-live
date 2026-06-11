@@ -2,8 +2,22 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { RetryableStateType } from "@ledgerhq/live-dmk-shared";
+import { TrackScreen, track } from "~/analytics";
+import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { UserRefusedOnDeviceState } from "./UserRefusedOnDeviceState";
 import type { InitializerDevice } from "../types";
+
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(() => null),
+    track: jest.fn(),
+  };
+});
+
+const mockedTrackScreen = jest.mocked(TrackScreen);
+const mockedTrack = jest.mocked(track);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -22,6 +36,7 @@ function renderState() {
       <UserRefusedOnDeviceState
         state={{ type: RetryableStateType.UserRefusedOnDevice, retry }}
         device={device}
+        sourceFlow="my_ledger"
         onCancel={onCancel}
       />,
     ),
@@ -31,7 +46,11 @@ function renderState() {
 }
 
 describe("UserRefusedOnDeviceState", () => {
-  it("should render the user refused title and action buttons", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("GIVEN the user refused state WHEN rendering THEN it renders the title and action buttons", () => {
     renderState();
 
     expect(screen.getByText("Operation rejected on device")).toBeVisible();
@@ -39,7 +58,7 @@ describe("UserRefusedOnDeviceState", () => {
     expect(screen.getByText("Retry")).toBeVisible();
   });
 
-  it("should call onCancel and retry when buttons are pressed", async () => {
+  it("GIVEN the user refused state WHEN pressing the action buttons THEN it calls onCancel and retry", async () => {
     const { user, onCancel, retry } = renderState();
 
     await user.press(screen.getByText("Close"));
@@ -47,5 +66,45 @@ describe("UserRefusedOnDeviceState", () => {
 
     expect(onCancel).toHaveBeenCalledTimes(1);
     expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN the user refused state WHEN rendering THEN it fires the page event with sourceFlow and modelId", () => {
+    renderState();
+
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_CONNECT_APP.UserRefused,
+        sourceFlow: "my_ledger",
+        modelId: DeviceModelId.europa,
+        deviceUxV2: true,
+      }),
+      undefined,
+    );
+  });
+
+  it("GIVEN the user refused state WHEN pressing Close THEN it tracks the canonical button value", async () => {
+    const { user } = renderState();
+
+    await user.press(screen.getByText("Close"));
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.europa,
+      button: "Close",
+    });
+  });
+
+  it("GIVEN the user refused state WHEN pressing Retry THEN it tracks the canonical button value", async () => {
+    const { user } = renderState();
+
+    await user.press(screen.getByText("Retry"));
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.europa,
+      button: "Retry",
+    });
   });
 });

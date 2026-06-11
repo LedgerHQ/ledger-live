@@ -23,7 +23,13 @@ describe("useSwapDefaultAccounts", () => {
   const toParentAccount = account("to-parent");
   const toTokenAccount = tokenAccount("to-token", toParentAccount.id);
   const standaloneToAccount = account("to-account");
-  const accounts = [fromParentAccount, fromTokenAccount, toParentAccount, toTokenAccount, standaloneToAccount];
+  const accounts = [
+    fromParentAccount,
+    fromTokenAccount,
+    toParentAccount,
+    toTokenAccount,
+    standaloneToAccount,
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();

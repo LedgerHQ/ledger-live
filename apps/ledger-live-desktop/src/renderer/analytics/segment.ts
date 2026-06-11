@@ -50,6 +50,7 @@ import {
 import { getOnboardingStatusAttributes } from "./onboardingStatus";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
 
@@ -135,6 +136,16 @@ const getAddAccountAttributes = () => {
     feature_add_account_desktop: isEnabled,
   };
 };
+
+const getBackupHubAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const backupHub = analyticsFeatureFlagMethod("lwdBackupHub");
+
+  return {
+    lwdBackupHub: !!backupHub?.enabled,
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
@@ -250,6 +261,7 @@ const extraProperties = (store: ReduxStore) => {
   const mevProtectionAttributes = getMEVAttributes(state);
   const madAttributes = getMADAttributes();
   const addAccountAttributes = getAddAccountAttributes();
+  const backupHubAttributes = getBackupHubAttributes();
 
   const deviceInfo = device
     ? {
@@ -290,6 +302,11 @@ const extraProperties = (store: ReduxStore) => {
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
+  const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
+  const onboardingCounterfeitWarningAttributes = getOnboardingCounterfeitWarningAttributes(
+    analyticsFeatureFlagMethod,
+    "lwd",
+  );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
 
   return {
@@ -314,6 +331,7 @@ const extraProperties = (store: ReduxStore) => {
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...addAccountAttributes,
+    ...backupHubAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
@@ -332,6 +350,8 @@ const extraProperties = (store: ReduxStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    finishOnboardingWidget: onboardingWidgetFlag?.enabled,
+    ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
   };
 };

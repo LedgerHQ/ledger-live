@@ -127,6 +127,51 @@ describe("Testing craftTransaction function", () => {
     );
   });
 
+  it("should use zero custom fees when user provides 0 for a TRC20 transaction", async () => {
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    const { transaction: result } = await craftTransaction(
+      {
+        intentType: "transaction",
+        type: "send",
+        asset: {
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        },
+        sender,
+        recipient,
+        amount,
+      },
+      { value: 0n },
+    );
+
+    const decodeResult = await decodeTransaction(result);
+    expect(decodeResult).toEqual(
+      expect.objectContaining({
+        raw_data: expect.objectContaining({
+          contract: [
+            expect.objectContaining({
+              type: "TriggerSmartContract",
+              parameter: expect.objectContaining({
+                value: expect.objectContaining({
+                  data: expect.any(String),
+                  owner_address: decode58Check(sender),
+                  contract_address: decode58Check("TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"),
+                }),
+                type_url: "type.googleapis.com/protocol.TriggerSmartContract",
+              }),
+            }),
+          ],
+        }),
+      }),
+    );
+    // Protobuf omits default-valued fields: fee_limit 0 is not present on the wire,
+    // unlike DEFAULT_TRC20_FEES_LIMIT which decodeTransaction surfaces explicitly.
+    expect(decodeResult.raw_data.fee_limit).toBeUndefined();
+  });
+
   it("should use custom user fees when user provides it for a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";

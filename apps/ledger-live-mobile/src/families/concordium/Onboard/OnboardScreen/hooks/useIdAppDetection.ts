@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 const ID_APP_SCHEME = "concordiumidapp://";
 

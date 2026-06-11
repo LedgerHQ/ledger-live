@@ -15,9 +15,7 @@ export function AppMockEnv() {
       action={action}
       value={mockEnv}
       setValue={v => setEnv("MOCK", v || "")}
-      valueDisplay={v => (
-        <Tag size="sm" label={v ? "MOCK ON" : "MOCK OFF"} />
-      )}
+      valueDisplay={v => <Tag size="sm" label={v ? "MOCK ON" : "MOCK OFF"} />}
     />
   );
 }

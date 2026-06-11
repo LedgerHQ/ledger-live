@@ -25,7 +25,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   AppWithDependencies,
   AppWithDependents,

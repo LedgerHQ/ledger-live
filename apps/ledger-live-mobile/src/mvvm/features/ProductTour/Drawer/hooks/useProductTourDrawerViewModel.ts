@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setProductTourCompleted } from "~/actions/settings";
@@ -11,6 +11,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { ProductTourDrawerViewModel } from "../types";
 import { track } from "~/analytics";
 import { NavigatorName } from "~/const/navigation";
+import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
@@ -24,7 +25,6 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   const lastHandledDeeplinkNonceRef = useRef(0);
   const lwmProductTour = useFeature("lwmProductTour");
   const isLWMProductTourEnabled = !!lwmProductTour?.enabled;
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -78,11 +78,7 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
           });
           break;
         case "swap":
-          if (shouldDisplayWallet40MainNav) {
-            navigation.navigate(NavigatorName.Main, { screen: NavigatorName.Swap });
-          } else {
-            navigation.navigate(NavigatorName.Swap);
-          }
+          navigateToSwapTab({ navigation });
           break;
         case "stake":
           navigation.navigate(NavigatorName.Main, { screen: NavigatorName.Earn });
@@ -98,7 +94,7 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
           break;
       }
     },
-    [handleCloseDrawer, navigation, openModularDrawer, shouldDisplayWallet40MainNav],
+    [handleCloseDrawer, navigation, openModularDrawer],
   );
 
   const onSlideChange = useCallback(

@@ -46,7 +46,10 @@ describe("broadcastTransaction", () => {
   it("maps BadResponseError with Horizon body on error.response to StellarBroadcastFailedError", async () => {
     const body = horizonTransactionFailedExtras();
     submitTransactionSpy.mockRejectedValue(
-      new BadResponseError("Transaction submission failed. Server responded: 400 Bad Request", body),
+      new BadResponseError(
+        "Transaction submission failed. Server responded: 400 Bad Request",
+        body,
+      ),
     );
 
     await expect(broadcastTransaction(tx)).rejects.toMatchObject({
@@ -82,7 +85,11 @@ describe("broadcastTransaction", () => {
   it("rethrows an axios-like error when response.data is not a Horizon transaction failure body", async () => {
     const original = Object.assign(new Error("Request failed with status code 500"), {
       name: "AxiosError",
-      response: { status: 500, statusText: "Internal Server Error", data: { title: "Internal Server Error" } },
+      response: {
+        status: 500,
+        statusText: "Internal Server Error",
+        data: { title: "Internal Server Error" },
+      },
     });
     submitTransactionSpy.mockRejectedValue(original);
 

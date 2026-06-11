@@ -121,10 +121,11 @@ export async function formatReportForConsole<T extends Transaction>({
       recoveredFromTransactionStatus.status,
       account,
     );
-    str += `\n⚠️ recovered from transaction ${recoveredTxStr}\nof status ${recoveredStatusStr}\n\n`.replace(
-      /\n/g,
-      "\n  ",
-    );
+    str +=
+      `\n⚠️ recovered from transaction ${recoveredTxStr}\nof status ${recoveredStatusStr}\n\n`.replace(
+        /\n/g,
+        "\n  ",
+      );
   }
 
   if (signedOperation) {

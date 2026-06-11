@@ -14,6 +14,8 @@ import {
   blacklistedTokenIdsSelector,
   starredMarketCoinsSelector,
 } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
+import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 
 export type UseOptionsMenuViewModelProps = Readonly<{
   distributionItem?: DistributionItem;
@@ -67,16 +69,35 @@ export function useOptionsMenuViewModel({
 
   const onToggleStar = useCallback(() => {
     if (!starMarketId) return;
+    const nextStarred = !isStarred;
+    track("button_clicked", {
+      button: "favourite",
+      currency: portfolioCurrencyId,
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+      is_favourite: nextStarred,
+    });
     dispatch(
       isStarred ? removeStarredMarketCoins(starMarketId) : addStarredMarketCoins(starMarketId),
     );
-  }, [dispatch, isStarred, starMarketId]);
+  }, [dispatch, isStarred, portfolioCurrencyId, starMarketId]);
 
   const onHideFromPortfolio = useCallback(() => {
+    track("button_clicked", {
+      button: "hide_asset",
+      currency: portfolioCurrencyId,
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+      is_hidden: true,
+    });
     dispatch(blacklistToken(portfolioCurrencyId));
   }, [dispatch, portfolioCurrencyId]);
 
   const onShowInPortfolio = useCallback(() => {
+    track("button_clicked", {
+      button: "hide_asset",
+      currency: portfolioCurrencyId,
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+      is_hidden: false,
+    });
     dispatch(showToken(portfolioCurrencyId));
   }, [dispatch, portfolioCurrencyId]);
 

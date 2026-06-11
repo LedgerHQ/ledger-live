@@ -153,6 +153,11 @@ describe("getSeedIdentifierDerivation", () => {
       expectedSeedPath: `44/3030`,
     },
     {
+      currencyId: "hedera_testnet",
+      mode: asDerivationMode("hederaBip44"),
+      expectedSeedPath: `44/3030`,
+    },
+    {
       currencyId: "casper",
       mode: asDerivationMode("casper_wallet"),
       expectedSeedPath: `44'/506'/0'/0/0`,

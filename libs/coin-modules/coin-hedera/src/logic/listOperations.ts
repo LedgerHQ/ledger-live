@@ -273,6 +273,7 @@ export async function listOperations({
   const coinOperations: Operation<HederaOperationExtra>[] = [];
   const tokenOperations: Operation<HederaOperationExtra>[] = [];
   const mirrorResult = await apiClient.getAccountTransactions({
+    configOrCurrencyId: config ?? currencyId,
     address,
     pagingToken: cursor ?? null,
     order: order,

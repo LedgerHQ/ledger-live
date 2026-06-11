@@ -8,9 +8,12 @@ import useActionCards from "~/renderer/hooks/useActionCards";
 import { useBannersVisibility } from "../useBannersVisibility";
 import { ActionContentCard, LocationContentCard } from "~/types/dynamicContent";
 
-jest.mock("@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet", () => ({
-  usePostOnboardingEntryPointVisibleOnWallet: jest.fn(),
-}));
+jest.mock(
+  "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet",
+  () => ({
+    usePostOnboardingEntryPointVisibleOnWallet: jest.fn(),
+  }),
+);
 jest.mock("LLD/features/LNSUpsell", () => ({
   ...jest.requireActual("LLD/features/LNSUpsell"),
   useLNSUpsellBannerState: jest.fn(),
@@ -46,7 +49,7 @@ const basePostOnboarding = {
 
 const wallet40WithFinishWidget = withFlagOverrides({
   lldActionCarousel: { enabled: false },
-  lwdWallet40: { enabled: true, params: { finishOnboardingWidget: true } },
+  onboardingWidget: { enabled: true },
 });
 
 const defaultInitialState = {
@@ -120,7 +123,7 @@ describe("useBannersVisibility", () => {
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
-  it("should hide finish onboarding widget when finishOnboardingWidget param is off", () => {
+  it("should hide finish onboarding widget when onboardingWidget flag is off", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
 
     const { result } = renderHook(() => useBannersVisibility(), {
@@ -128,7 +131,7 @@ describe("useBannersVisibility", () => {
         ...defaultInitialState,
         ...withFlagOverrides({
           lldActionCarousel: { enabled: false },
-          lwdWallet40: { enabled: true, params: { finishOnboardingWidget: false } },
+          onboardingWidget: { enabled: false },
         }),
       },
     });

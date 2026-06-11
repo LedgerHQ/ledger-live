@@ -81,7 +81,7 @@ import {
 } from "./Screen/DeviceDeprecationScreen";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FlowName, getCurrencyName, getFlowName } from "./utils";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;

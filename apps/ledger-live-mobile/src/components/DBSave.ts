@@ -18,6 +18,7 @@ import {
   saveKnownDevices,
   saveLargeMoverState,
   saveMarketState,
+  saveMarketListConfig,
   savePostOnboardingState,
   saveSettings,
   saveTrustchainState,
@@ -28,7 +29,7 @@ import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { exportSelector as bleSelector } from "~/reducers/ble";
 import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDevices";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
-import { exportMarketSelector } from "~/reducers/market";
+import { exportMarketSelector, exportMarketListConfigSelector } from "~/reducers/market";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
@@ -174,6 +175,7 @@ const getPostOnboardingStateChanged = (a: State, b: State) =>
   !isEqual(a.postOnboarding, b.postOnboarding);
 
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
+const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
 const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
@@ -184,7 +186,7 @@ const cryptoAssetsNotEquals = (a: State, b: State) =>
 const featureFlagsNotEquals = (a: State, b: State) =>
   a.featureFlags.overrides !== b.featureFlags.overrides ||
   a.featureFlags.bannerVisible !== b.featureFlags.bannerVisible;
-const featureFlagsLense = (state: State) => ({
+export const featureFlagsLense = (state: State) => ({
   overrides: state.featureFlags.overrides,
   bannerVisible: state.featureFlags.bannerVisible,
 });
@@ -257,6 +259,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: marketNotEquals,
     lense: exportMarketSelector,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.marketListConfig,
+    save: saveMarketListConfig,
+    throttle: 500,
+    getChangesStats: marketListConfigNotEquals,
+    lense: exportMarketListConfigSelector,
   });
 
   useDBSaveEffect({

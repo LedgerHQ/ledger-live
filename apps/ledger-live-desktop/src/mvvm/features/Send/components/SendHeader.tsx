@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
+import { track } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SEND_FLOW_STEP,
@@ -26,6 +28,11 @@ export function SendHeader() {
 
   const { navigation, currentStep } = wizard;
   const currencyId = state.account.currency?.id;
+
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+    [state.account.account, state.account.parentAccount],
+  );
 
   const memoDefaultOption = useMemo(() => {
     return sendFeatures.getMemoDefaultOption(state.account.currency ?? undefined);
@@ -57,6 +64,11 @@ export function SendHeader() {
       transaction.setRecipient({ ...state.recipient, address, memo });
     },
     onMemoSkip: () => {
+      track("button_clicked", {
+        button: "skip memo",
+        page: "step recipient",
+        ...sendFlowTrackingProperties,
+      });
       navigation.goToNextStep();
     },
     resetKey: `${state.account.account?.id ?? ""}|${currencyId ?? ""}|${

@@ -61,15 +61,15 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => ({
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const bridge = {
     createTransaction: jest.fn(() => ({
       family: "cardano",
       mode: "undelegate",
       poolId: undefined,
     })),
-    updateTransaction: jest.fn((t, patch) => ({ ...t, ...patch })),
-    prepareTransaction: jest.fn(t => Promise.resolve(t)),
+    updateTransaction: jest.fn((t: object, patch: object) => ({ ...t, ...patch })),
+    prepareTransaction: jest.fn((t: unknown) => Promise.resolve(t)),
     getTransactionStatus: jest.fn(() =>
       Promise.resolve({
         errors: {},
@@ -77,8 +77,15 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
         estimatedFees: new BigNumber("200000"),
       }),
     ),
-  })),
-}));
+  };
+  const settledPromise = Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled",
+    value: bridge,
+  });
+  return {
+    getAccountBridge: jest.fn().mockReturnValue(settledPromise),
+  };
+});
 
 type RootStackParamList = {
   Delegations: undefined;

@@ -1,4 +1,6 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const testConfig = {
   tmsLinks: [
@@ -18,6 +20,7 @@ const ACCOUNT = Account.INJ_1;
 const CURRENCY = ACCOUNT.currency;
 const TICKER = CURRENCY.ticker;
 
+setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - Portfolio", () => {
   beforeAll(async () => {
     await app.init({
@@ -26,9 +29,6 @@ describe("Wallet 4.0 - Portfolio", () => {
       // to-do remove when wallet 4.0 is default
       featureFlags: {
         ...WALLET_40_FEATURE_FLAGS,
-        llmAccountListUI: {
-          enabled: true,
-        },
       },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -74,6 +74,7 @@ describe("Wallet 4.0 - Portfolio", () => {
     await app.buySell.expectBuyScreenToBeVisible();
   });
 
+  setTeamOwner(Team.SWAP);
   it("navigates to the swap screen", async () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.waitForPortfolioPageToLoad();

@@ -7,7 +7,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { useIsFocused } from "@react-navigation/core";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   OnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
@@ -21,12 +21,9 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import {
-  FirstStepCompanionStepKey,
-  SEED_STATE,
-} from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import { FirstStepCompanionStepKey, SEED_STATE } from "../../types";
 import useFirstStepCompanionState from "~/screens/SyncOnboarding/TwoStepStepper/useFirstStepCompanionState";
-import useCompanionSteps from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
+import useCompanionSteps from "../../hooks/useCompanionSteps";
 import { screen } from "~/analytics";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";

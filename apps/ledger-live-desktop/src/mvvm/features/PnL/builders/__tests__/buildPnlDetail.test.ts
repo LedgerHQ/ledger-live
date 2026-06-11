@@ -30,6 +30,7 @@ describe("buildPnlDetail", () => {
     const detail = buildPnlDetail(makeInput({ namespace: "pnl.portfolio" }));
 
     expect(detail.title).toBe("pnl.portfolio.dialog.title");
+    expect(detail.disclaimer).toBe("pnl.disclaimer");
     expect(detail.items.map(i => i.title)).toEqual([
       "pnl.portfolio.dialog.unrealisedReturn.title",
       "pnl.portfolio.dialog.realisedReturn.title",

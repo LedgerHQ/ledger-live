@@ -12,6 +12,8 @@ import { BorrowLoader } from "LLD/features/Borrow/components/BorrowLoader";
 import type { BorrowWebviewInputs } from "../BorrowApp/useBorrowAppViewModel";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { createBorrowNavigateHandler } from "@ledgerhq/live-common/wallet-api/Borrow/navigate";
+import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-api/Borrow/types";
 
 export type BorrowWebProps = {
   manifest: LiveAppManifest;
@@ -20,6 +22,8 @@ export type BorrowWebProps = {
   webviewState: WebviewState;
   onStateChange: WebviewProps["onStateChange"];
   enablePlatformDevTools: boolean;
+  onWalletApiGoBack?: () => void;
+  onWalletApiGoToSwap?: (params: BorrowSwapNavigationParams) => void;
   Loader?: WebviewLoader;
 };
 
@@ -30,12 +34,20 @@ export const BorrowWebView = ({
   webviewState,
   onStateChange,
   enablePlatformDevTools,
+  onWalletApiGoBack,
+  onWalletApiGoToSwap,
   Loader = BorrowLoader,
 }: BorrowWebProps) => {
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo<WalletAPICustomHandlers>(
-    () => ({ ...customDeeplinkHandlers }),
-    [customDeeplinkHandlers],
+    () => ({
+      ...customDeeplinkHandlers,
+      "custom.navigate": createBorrowNavigateHandler({
+        onGoBack: onWalletApiGoBack,
+        onGoToSwap: onWalletApiGoToSwap,
+      }),
+    }),
+    [customDeeplinkHandlers, onWalletApiGoBack, onWalletApiGoToSwap],
   );
 
   return (

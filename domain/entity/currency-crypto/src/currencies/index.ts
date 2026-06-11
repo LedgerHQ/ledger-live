@@ -85,6 +85,7 @@ export * from "./gochain";
 export * from "./groestcoin";
 export * from "./hcash";
 export * from "./hedera";
+export * from "./hedera_testnet";
 export * from "./helium";
 export * from "./hpb";
 export * from "./hycon";

@@ -13,10 +13,11 @@ import SettingsEntryPoint from "../components/SettingsEntryPoint";
 import { AnalyticsPage } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
 import PostOnboardingEntryPoint from "../components/PostOnboardingEntryPoint";
 import { LedgerSyncBanner } from "../components/LedgerSyncBanner/LedgerSyncBanner";
+import { LedgerSyncBannerV4 } from "../components/LedgerSyncBannerV4/LedgerSyncBannerV4";
 
 const isEligibleModelId = (id?: DeviceModelId) => id != null && id !== DeviceModelId.nanoS;
 
-export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true) {
+export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true, variant?: "v4") {
   const navigate = useNavigate();
   const featureLedgerSyncEntryPoints = useFeature("lldLedgerSyncEntryPoints");
   const featureWalletSync = useFeature("lldWalletSync");
@@ -30,6 +31,13 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
   const isDeviceEligible =
     isEligibleModelId(lastSeenDevice?.modelId) || isEligibleModelId(lastOnboardedDevice?.modelId);
   const isOptimisationEnabled = useFeature("lwdLedgerSyncOptimisation");
+
+  const accountsComponent =
+    variant === "v4"
+      ? LedgerSyncBannerV4
+      : isOptimisationEnabled?.enabled
+        ? LedgerSyncBanner
+        : AccountsEntryPoint;
 
   const entryPointsData: EntryPointsData = {
     [EntryPoint.onboarding]: {
@@ -59,7 +67,7 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
         track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Accounts });
         navigate("/settings");
       },
-      component: isOptimisationEnabled?.enabled ? LedgerSyncBanner : AccountsEntryPoint,
+      component: accountsComponent,
     },
     [EntryPoint.settings]: {
       enabled: featureLedgerSyncEntryPoints?.params?.settings ?? false,

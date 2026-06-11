@@ -1,18 +1,18 @@
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], tags: string[]) {
   describe("Delete account", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
-        featureFlags: {
-          llmAccountListUI: { enabled: true },
-        },
         cliCommands: [liveDataCommand(account)],
       });
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
+    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Perform a delete account - ${account.accountName}`, async () => {

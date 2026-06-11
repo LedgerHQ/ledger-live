@@ -1,8 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
-import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
-import type { PnLCardProps } from "LLD/features/PnL/components/PnLCard/types";
+import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { usePortfolioPnlViewModel } from "../usePortfolioPnlViewModel";
 
 jest.mock("@ledgerhq/wallet-pnl/hooks", () => ({
@@ -24,12 +23,6 @@ type RenderOptions = Parameters<
 
 const renderPortfolioPnlViewModel = (options: RenderOptions = {}) =>
   renderHook(() => usePortfolioPnlViewModel(), options);
-
-function assertInteractive(
-  card: PnLCardProps,
-): asserts card is PnLCardProps & { type: "interactive" } {
-  if (card.type !== "interactive") throw new Error("expected interactive card");
-}
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -63,7 +56,7 @@ describe("usePortfolioPnlViewModel", () => {
     expect(result.current.shouldDisplayPnl).toBe(false);
   });
 
-  it("forwards the flattened accounts to usePortfolioPnL", () => {
+  it("forwards the top-level accounts to usePortfolioPnL", () => {
     renderPortfolioPnlViewModel({ initialState: { ...flagsOn, ...stateWithAccounts } });
 
     expect(mockedUsePortfolioPnL).toHaveBeenCalledWith(
@@ -73,24 +66,35 @@ describe("usePortfolioPnlViewModel", () => {
     );
   });
 
-  it("emits unrealisedReturn + costBasis cards and a 3-bucket detail", () => {
+  it("forwards top-level (non-flattened) accounts so token sub-accounts are not double-counted", () => {
+    renderPortfolioPnlViewModel({
+      initialState: { ...flagsOn, accounts: [ETH_ACCOUNT_WITH_USDC] },
+    });
+
+    const [forwardedAccounts] = mockedUsePortfolioPnL.mock.calls[0];
+    expect(forwardedAccounts).toEqual([ETH_ACCOUNT_WITH_USDC]);
+  });
+
+  it("emits unrealisedReturn, realisedReturn, and totalReturn cards and a 3-bucket detail", () => {
     const { result } = renderPortfolioPnlViewModel({
       initialState: { ...flagsOn, ...stateWithAccounts },
     });
 
-    expect(result.current.items.map(i => i.id)).toEqual(["unrealisedReturn", "costBasis"]);
+    expect(result.current.items.map(i => i.id)).toEqual([
+      "unrealisedReturn",
+      "realisedReturn",
+      "totalReturn",
+    ]);
     expect(result.current.detail.items).toHaveLength(3);
   });
 
-  it("opens the detail dialog when the unrealisedReturn card is clicked", () => {
+  it("opens the detail dialog when onOpen is called", () => {
     const { result } = renderPortfolioPnlViewModel({
       initialState: { ...flagsOn, ...stateWithAccounts },
     });
     expect(result.current.dialog.isOpen).toBe(false);
 
-    const [card] = result.current.items;
-    assertInteractive(card);
-    act(() => card.onClick());
+    act(() => result.current.dialog.onOpen());
 
     expect(result.current.dialog.isOpen).toBe(true);
   });

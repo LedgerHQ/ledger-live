@@ -5,9 +5,12 @@ import {
   Feature_ProtectServicesMobile,
 } from "@ledgerhq/types-live";
 
+// Matches any `protect-<env>` segment so changing `protectId` re-templates every URI.
+const PROTECT_ID_SEGMENT_REGEX = /protect-[a-z0-9-]+/g;
+
 export function useReplacedURI(uri?: string, id?: string): string | undefined {
   return useMemo(() => {
-    return uri && id ? uri.replace(/protect-(simu|local-dev|staging)/, id) : undefined;
+    return uri && id ? uri.replace(PROTECT_ID_SEGMENT_REGEX, id) : undefined;
   }, [id, uri]);
 }
 
@@ -18,7 +21,7 @@ function usePath(servicesConfig: Feature<unknown> | null, uri?: string) {
 }
 
 export function usePostOnboardingURI(
-  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  servicesConfig: Feature_ProtectServicesMobile | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.onboardingRestore?.postOnboardingURI;
   const id = servicesConfig?.params?.protectId;

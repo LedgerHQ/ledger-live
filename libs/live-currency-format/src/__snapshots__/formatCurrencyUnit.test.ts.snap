@@ -172,6 +172,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Helium unit (HNT) 1`] = `"123.456.789,00000000- -HNT"`;
@@ -585,6 +587,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
@@ -1000,6 +1004,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Helium unit (HNT) 1`] = `"123.456.789,00000000- -HNT"`;
@@ -1413,6 +1419,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hcash unit (hcash) 1`] = `"123 456 789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hedera unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
@@ -1828,6 +1836,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Helium unit (HNT) 1`] = `"123,456,789.00000000- -HNT"`;
@@ -2241,6 +2251,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
@@ -2656,6 +2668,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Helium unit (HNT) 1`] = `"123.456.789,00000000- -HNT"`;
@@ -3069,6 +3083,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hcash unit (hcash) 1`] = `"123 456 789,00000000- -HSR"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hedera unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
@@ -3484,6 +3500,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hcash unit (hcash) 1`] = `"123.456.789,00000000- -HSR"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Helium unit (HNT) 1`] = `"123.456.789,00000000- -HNT"`;
@@ -3898,6 +3916,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hcash unit (hcash) 1`] = `"123,456,789.00000000- -HSR"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Helium unit (HNT) 1`] = `"123,456,789.00000000- -HNT"`;
@@ -4311,6 +4331,8 @@ exports[`formatCurrencyUnit with default options should correctly format Groestl
 exports[`formatCurrencyUnit with default options should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Hcash unit (hcash) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Hedera unit (HBAR) 1`] = `"123,456,789"`;
 

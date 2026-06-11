@@ -1,8 +1,8 @@
 import React from "react";
 import type { ComponentType } from "react";
 import { View } from "react-native";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { AB_TESTING_VARIANTS } from "./types/variants";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import * as TezosReact from "@ledgerhq/live-common/families/tezos/react";
@@ -22,6 +22,11 @@ import GlobalDrawers from "~/GlobalDrawers";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { createNotificationsPromptFeatureFlags } from "./testUtils";
+
+jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/families/tezos/react"),
+}));
 
 const featureFlagsForStakePrompt = createNotificationsPromptFeatureFlags();
 
@@ -330,6 +335,17 @@ const stakePromptCases: StakePromptCase[] = [
     accountKey: "ethereum",
     operationType: "UNDELEGATE",
     transaction: { family: "evm", mode: "undelegate" },
+  },
+  {
+    label: "EVM claim rewards",
+    bucket: "revoke/claim/lifecycle",
+    flowName: NavigatorName.EvmClaimRewardsFlow,
+    familyExportKey: "EvmClaimRewardsFlow",
+    successScreenName: ScreenName.EvmClaimRewardsValidationSuccess,
+    errorScreenName: ScreenName.EvmClaimRewardsValidationError,
+    accountKey: "ethereum",
+    operationType: "REWARD",
+    transaction: { family: "evm", mode: "claimReward" },
   },
   {
     label: "Hedera claim rewards",
@@ -776,7 +792,7 @@ describe("NotificationsPrompt stake flow", () => {
           {
             action: "stake",
             shouldPrompt: true,
-            variant: ABTestingVariants.variantB,
+            variant: AB_TESTING_VARIANTS.B,
             repromptDelay: null,
             dismissedCount: 0,
             skipReason: undefined,
@@ -791,7 +807,7 @@ describe("NotificationsPrompt stake flow", () => {
           source: "stake",
           repromptDelay: null,
           dismissedCount: 0,
-          variant: ABTestingVariants.variantB,
+          variant: AB_TESTING_VARIANTS.B,
         });
       },
     );

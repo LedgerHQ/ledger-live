@@ -264,11 +264,7 @@ export const StepOnboardFooter = ({
     switch (onboardingStatus) {
       case OnboardStatus.SUCCESS:
         return (
-          <Button
-            primary
-            disabled={isProcessing}
-            onClick={() => transitionTo(StepId.FINISH)}
-          >
+          <Button primary disabled={isProcessing} onClick={() => transitionTo(StepId.FINISH)}>
             <Trans i18nKey="common.continue" />
           </Button>
         );

@@ -7,7 +7,7 @@ import { DefaultTheme, useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import chunk from "lodash/chunk";
 import { ensureContrast } from "../../colors";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useDistribution } from "~/actions/general";
 import RingChart, { ColorableDistributionItem } from "../Analytics/RingChart";
 import { track } from "~/analytics";

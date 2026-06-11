@@ -1,4 +1,5 @@
 import type { CustomFeeInputDescriptor, FeeDescriptor } from "../../../bridge/descriptor/types";
+import type { Transaction as CeloTransaction } from "../types";
 import { BigNumber } from "bignumber.js";
 
 const GWEI_DIVISOR = new BigNumber(10).pow(9);
@@ -62,7 +63,7 @@ const celoCustomInputs: readonly CustomFeeInputDescriptor[] = [
 export const fees: FeeDescriptor = {
   hasPresets: false,
   hasCustom: true,
-  hasCustomAssets: true,
+  hasCustomAssets: false,
   custom: {
     inputs: celoCustomInputs,
     getInitialValues: (transaction): Record<string, string> => {
@@ -84,14 +85,6 @@ export const fees: FeeDescriptor = {
       return patch;
     },
   },
-  customAssets: {
-    options: [
-      { id: "eth", ticker: "ETH", label: "Ethereum", unitLabel: "Gwei" },
-      { id: "btc", ticker: "BTC", label: "Bitcoin", unitLabel: "sat" },
-      { id: "usdc", ticker: "USDC", label: "USD Coin", unitLabel: "USDC" },
-      { id: "usdt", ticker: "USDT", label: "Tether", unitLabel: "USDT" },
-      { id: "celo", ticker: "Celo", label: "Celo", unitLabel: "Gwei" },
-    ],
-    defaultId: "eth",
-  },
+  getFeeCurrencyAccountId: transaction =>
+    (transaction as CeloTransaction).feeCurrencyAccountId ?? null,
 };

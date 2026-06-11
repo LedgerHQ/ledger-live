@@ -73,7 +73,8 @@ function OperationComponent({
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   const specific = getLLDCoinFamily(cryptoCurrency.family);
   const CustomMetadataCell = specific ? specific.operationDetails?.customMetadataCell : null;
-  const editable = mainAccount.type === "Account" && bridge.isEditableOperation(mainAccount, operation);
+  const editable =
+    mainAccount.type === "Account" && bridge.isEditableOperation(mainAccount, operation);
 
   return (
     <OperationRow

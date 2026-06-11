@@ -10,14 +10,13 @@ import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -102,13 +101,7 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      if (await isWallet40Enabled(app.getPage())) {
-        await app.marketBanner.clickExploreMarketHeader();
-      } else {
-        await app.layout.goToMarket();
-      }
-
+      await app.marketBanner.clickExploreMarketHeader();
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
@@ -139,13 +132,7 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      if (await isWallet40Enabled(app.getPage())) {
-        await app.marketBanner.clickExploreMarketHeader();
-      } else {
-        await app.layout.goToMarket();
-      }
-
+      await app.marketBanner.clickExploreMarketHeader();
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
       await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
@@ -328,7 +315,7 @@ test.describe("Swap history", () => {
   const swapHistory = {
     swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
     xrayTicket: "B2CQA-604",
-    provider: Provider.EXODUS,
+    provider: SwapProvider.EXODUS,
     swapId: "wQ90NrWdvJz5dA4",
     addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
     addressTo: Addresses.SWAP_HISTORY_ETH_TO,

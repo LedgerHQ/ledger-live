@@ -5,9 +5,12 @@ import MemoField from "../MemoField";
 import { createMockAccount, createMockConcordiumCurrency } from "../../../__tests__/testUtils";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => ({
-    updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
-  })),
+  getAccountBridge: jest.fn(() => {
+    const bridge = {
+      updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
+    };
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
 }));
 
 describe("MemoField", () => {

@@ -25,7 +25,7 @@ jest.mock("../../cache", () => ({
 
 jest.mock("../../buildTransaction", () => ({
   buildTransaction: jest.fn().mockResolvedValue({
-    // shape not relevant for test, passed through to wallet.signAccountTx
+    inputs: [],
   }),
 }));
 

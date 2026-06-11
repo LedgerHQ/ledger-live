@@ -11,7 +11,7 @@ import { track } from "~/analytics";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountsList from "LLM/features/Accounts/components/AccountsListView";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
 
 const NB_MAX_ACCOUNTS_TO_DISPLAY = 3;

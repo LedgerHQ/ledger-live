@@ -10,7 +10,7 @@ import { accountsSelector } from "~/reducers/accounts";
 import { useSortAccountsComparator } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { useOpenAddAccountDrawer } from "LLM/features/Accounts/hooks/useOpenAddAccountDrawer";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
 export const MAX_PREVIEW_ADDRESSES = 5;
@@ -26,11 +26,18 @@ export type AddressAccountData = Readonly<{
 export function useAddressesViewModel(
   currency: AssetDetailCurrencyProps,
   distributionItem: DistributionItem | undefined,
+  ledgerIds?: string[],
 ) {
   const navigation = useNavigation();
   const walletState = useSelector(walletSelector);
   const allAccounts = useSelector(accountsSelector);
   const comparator = useSortAccountsComparator();
+
+  const { handleOpenAddAccountDrawer } = useOpenAddAccountDrawer({
+    currency: currency ?? undefined,
+    currencyIds: ledgerIds,
+    sourceScreenName: "Asset Detail",
+  });
 
   const mainAccountById = useMemo(() => buildMainAccountByIdMap(allAccounts), [allAccounts]);
 
@@ -80,15 +87,8 @@ export function useAddressesViewModel(
       currency: currency.id,
       page: "Asset Detail",
     });
-    const cryptoCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-    navigation.navigate(NavigatorName.DeviceSelection, {
-      screen: ScreenName.SelectDevice,
-      params: {
-        currency: cryptoCurrency,
-        context: AddAccountContexts.AddAccounts,
-      },
-    });
-  }, [navigation, currency]);
+    handleOpenAddAccountDrawer();
+  }, [currency, handleOpenAddAccountDrawer]);
 
   const onSeeAll = useCallback(() => {
     if (!currency) return;
@@ -105,7 +105,7 @@ export function useAddressesViewModel(
       if (!currency) return;
       const { account, balanceAccount } = data;
       track("button_clicked", {
-        button: "address",
+        button: "Account",
         currency: currency.id,
         chain: account.currency.id,
         page: "Asset Detail",

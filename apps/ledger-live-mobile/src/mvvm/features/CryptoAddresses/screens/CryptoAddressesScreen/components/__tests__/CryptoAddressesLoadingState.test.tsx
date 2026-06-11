@@ -7,9 +7,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   const { View } = jest.requireActual("react-native");
   return {
     ...actual,
-    Skeleton: ({ component }: { component: string }) => (
-      <View testID={`skeleton-${component}`} />
-    ),
+    Skeleton: ({ component }: { component: string }) => <View testID={`skeleton-${component}`} />,
   };
 });
 

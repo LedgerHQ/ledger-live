@@ -2,7 +2,8 @@ import { ElectronApplication, Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-common/e2e/speculos";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { listen } from "@ledgerhq/logs";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
@@ -22,6 +23,89 @@ async function attachIfExists(
   } catch {
     // File does not exist → silently ignore
   }
+}
+
+export async function runCliStep<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  return allure.step(`CLI: ${label}`, async () => {
+    const start = Date.now();
+    const httpTrace: string[] = [];
+    const prevNetworkLogs = getEnv("ENABLE_NETWORK_LOGS");
+    setEnv("ENABLE_NETWORK_LOGS", true);
+    // log `message` only — `data` may carry JWTs/secrets
+    const unsubscribe = listen(({ type, message, date }) => {
+      if (type.startsWith("network")) {
+        httpTrace.push(`${date.toISOString()} [${type}] ${message ?? ""}`);
+      }
+    });
+    try {
+      const result = await fn();
+      await reportCliOutcome(label, "result", start, () => redactSecrets(result), httpTrace);
+      return result;
+    } catch (error) {
+      await reportCliOutcome(label, "FAILED", start, () => serializeCliError(error), httpTrace);
+      throw error;
+    } finally {
+      try {
+        unsubscribe();
+      } catch {
+        // ignore
+      }
+      setEnv("ENABLE_NETWORK_LOGS", prevNetworkLogs);
+    }
+  });
+}
+
+const SECRET_KEYS = new Set(["privatekey", "privateKey", "walletSyncEncryptionKey"]);
+
+function redactSecrets(value: unknown): unknown {
+  if (typeof value === "string") {
+    try {
+      return JSON.stringify(redactSecrets(JSON.parse(value)), null, 2);
+    } catch {
+      return value;
+    }
+  }
+  if (Array.isArray(value)) return value.map(redactSecrets);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, SECRET_KEYS.has(k) ? "[REDACTED]" : redactSecrets(v)]),
+    );
+  }
+  return value;
+}
+
+// reporting must never flip the command's pass/fail outcome, so payload building runs here too
+async function reportCliOutcome(
+  label: string,
+  status: string,
+  start: number,
+  buildPayload: () => unknown,
+  httpTrace: string[],
+) {
+  try {
+    const payload = buildPayload();
+    console.log(`CLI ${label} — ${status}: `, payload);
+    const title = `CLI ${label} — ${status} (${Date.now() - start}ms)`;
+    if (typeof payload === "string") {
+      await allure.attachment(title, payload, "text/plain");
+    } else {
+      await allure.attachment(title, JSON.stringify(payload ?? null, null, 2), "application/json");
+    }
+    if (httpTrace.length) {
+      await allure.attachment(`CLI ${label} — HTTP trace`, httpTrace.join("\n"), "text/plain");
+    }
+  } catch {
+    // ignore
+  }
+}
+
+function serializeCliError(error: unknown) {
+  // status/url/method are own-enumerable on LedgerAPI5xx; message is not
+  const fields = error && typeof error === "object" ? { ...error } : {};
+  return {
+    message: error instanceof Error ? error.message : String(error),
+    ...fields,
+  };
 }
 
 export async function addTmsLink(ids: string[]) {

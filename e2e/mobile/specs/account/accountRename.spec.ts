@@ -1,8 +1,11 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { launchApp } from "../../helpers/commonHelpers";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { loadConfig } from "../../bridge/server";
 import { device } from "detox";
 
+setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-2996");
 
 const tags: string[] = [

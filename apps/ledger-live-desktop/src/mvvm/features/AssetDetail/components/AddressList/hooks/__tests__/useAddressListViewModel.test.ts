@@ -14,6 +14,7 @@ const mockNavigate = jest.fn();
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
+  useLocation: () => ({ pathname: "/asset/bitcoin" }),
 }));
 
 /** Stubs the add-account flow so this suite does not load the full drawer/modal dependency graph. */
@@ -36,7 +37,7 @@ describe("useAddressListViewModel", () => {
       useAddressListViewModel(buildDistributionItem({ currency: btc, accounts: [] })),
     );
 
-    expect(result.current.sectionTitle).toBe("Addresses");
+    expect(result.current.sectionTitle).toBe("Accounts");
     expect(result.current.sectionActionLabel).toBe("Add");
     expect(result.current.shouldShowSeeAll).toBe(false);
     expect(result.current.previewAccounts).toEqual([]);
@@ -56,7 +57,7 @@ describe("useAddressListViewModel", () => {
     expect(result.current.previewAccounts).toHaveLength(MAX_ADDRESSES_PREVIEW);
     expect(result.current.allAddressesDialog.open).toBe(false);
     expect(result.current.allAddressesDialog.description).toBe(
-      `All your addresses holding ${btc.ticker}.`,
+      `All your accounts holding ${btc.ticker}.`,
     );
 
     act(() => {
@@ -81,7 +82,10 @@ describe("useAddressListViewModel", () => {
       result.current.onAccountClick(tokenAccount, ETH_ACCOUNT);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(getAccountUrl(tokenAccount.id, ETH_ACCOUNT.id));
+    expect(mockNavigate).toHaveBeenCalledWith(
+      getAccountUrl(tokenAccount.id, ETH_ACCOUNT.id),
+      expect.objectContaining({ state: { accountBackPath: "/asset/bitcoin" } }),
+    );
   });
 
   it.each([false, true] as const)(

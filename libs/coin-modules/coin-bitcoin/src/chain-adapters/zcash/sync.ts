@@ -12,7 +12,8 @@ import type { ZCashClient } from "./types";
 import type { BtcOperation } from "../../types";
 import { removeReplaced } from "../../synchronisation";
 import type { ZcashAccount } from "./types";
-import { convertShieldedTransactionsToOperations, computeProtocolDeltas } from "./operations";
+import { convertShieldedTransactionsToOperations, computeBalanceFromNotes } from "./operations";
+import { computeZcashBalance, getTransparentBalance } from "./balance";
 
 // ─── Zcash native sync (formerly familyConfig.ts) ───────────────────────────
 
@@ -63,7 +64,24 @@ export const zcashSyncShielded = (
     if (!viewingKey) {
       throw new Error("Missing unified full viewing key (ufvk) for ZCash shielded sync");
     }
-    const { lastProcessedBlock, birthday } = acc.initialAccount?.privateInfo ?? {};
+    const { lastProcessedBlock, birthday, transactions } = acc.initialAccount?.privateInfo ?? {};
+
+    // Collect nullifiers of unspent notes from previous syncs so the engine
+    // can detect when previously-received notes are spent in this scan range.
+    const knownNullifiers: string[] = [
+      ...new Set(
+        (transactions ?? []).flatMap(tx =>
+          (tx.decryptedData?.orchard_outputs ?? [])
+            .filter(
+              n =>
+                n.isSpent !== true &&
+                n.nullifier !== undefined &&
+                (n.transfer_type === "incoming" || n.transfer_type === "internal"),
+            )
+            .map(n => n.nullifier!),
+        ),
+      ),
+    ];
 
     return from(getNativeModule()).pipe(
       mergeMap(({ createZCashClient }) => {
@@ -78,6 +96,7 @@ export const zcashSyncShielded = (
               startBlockHeight,
               viewingKey,
               maxBatchSize: ZCASH_NATIVE_CHUNK_SIZE,
+              ...(knownNullifiers.length > 0 && { knownNullifiers }),
             }),
           ),
         );
@@ -106,12 +125,43 @@ export function reduceShieldedSyncResult(
   const processedIds = new Set(accumulated.processedOperations.map(tx => tx.id));
   const newTransactions = result.transactions.filter(tx => !processedIds.has(tx.id));
 
+  // Transparent balance comes from the transparent sync's UTXOs (stable source),
+  // so we can recompute the transparent + private total here without double-counting.
+  const transparentBalance = getTransparentBalance(info.initialAccount?.bitcoinResources?.utxos);
+
   if (newTransactions.length === 0) {
     const totalBlocks = result.processedBlocks + result.remainingBlocks;
+    // Even without new transactions, spentKnownNullifiers may mark existing notes as spent.
+    const spentNfs = result.spentKnownNullifiers ?? [];
+    let updatedTransactions = existingPrivateInfo.transactions;
+    if (spentNfs.length > 0) {
+      const spentSet = new Set(spentNfs);
+      updatedTransactions = updatedTransactions.map(tx => {
+        const outputs = tx.decryptedData?.orchard_outputs;
+        if (!outputs?.some(n => n.nullifier && spentSet.has(n.nullifier))) return tx;
+        return {
+          ...tx,
+          decryptedData: {
+            orchard_outputs: outputs.map(n =>
+              n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
+            ),
+            sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
+          },
+        };
+      });
+    }
+    const orchardBalance =
+      spentNfs.length > 0
+        ? computeBalanceFromNotes(updatedTransactions)
+        : existingPrivateInfo.orchardBalance;
     return {
       ...accumulated,
       accountUpdate: {
         ...accumulated.accountUpdate,
+        balance: computeZcashBalance(transparentBalance, {
+          orchardBalance,
+          saplingBalance: existingPrivateInfo.saplingBalance,
+        }),
         blockHeight: result.lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
         privateInfo: {
           ...existingPrivateInfo,
@@ -120,6 +170,8 @@ export function reduceShieldedSyncResult(
             totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
           lastProcessedBlock: result.lastProcessedBlock ?? null,
           lastSyncTimestamp: Date.now(),
+          transactions: updatedTransactions,
+          orchardBalance,
         },
       },
     };
@@ -131,17 +183,40 @@ export function reduceShieldedSyncResult(
   const mergedOperations = mergeOps(currentOperations, newOperations);
   const operations = removeReplaced(mergedOperations as BtcOperation[]);
 
+  // Deduplicate: when a block range is re-scanned (e.g. after a state reset),
+  // the same transaction may already exist in the persisted list. Keep only the
+  // freshly-scanned version (which carries the up-to-date `isSpent` flag).
+  const newIds = new Set(newTransactions.map(tx => tx.id));
   const allShieldedTx: ShieldedTransaction[] = [
-    ...(accumulated.accountUpdate.privateInfo?.transactions ?? []),
+    ...(accumulated.accountUpdate.privateInfo?.transactions ?? []).filter(tx => !newIds.has(tx.id)),
     ...newTransactions,
   ];
 
-  const prevSapling = accumulated.accountUpdate.privateInfo?.saplingBalance ?? new BigNumber(0);
-  const prevOrchard = accumulated.accountUpdate.privateInfo?.orchardBalance ?? new BigNumber(0);
+  // Mark previously-stored notes as spent using Rust's cross-scan detection.
+  // Clone transactions that need mutation to preserve immutability of the
+  // accumulated state (allShieldedTx contains refs to existing objects).
+  const spentNfs = result.spentKnownNullifiers ?? [];
+  if (spentNfs.length > 0) {
+    const spentSet = new Set(spentNfs);
+    for (let i = 0; i < allShieldedTx.length; i++) {
+      const tx = allShieldedTx[i];
+      const outputs = tx.decryptedData?.orchard_outputs;
+      if (!outputs?.some(n => n.nullifier && spentSet.has(n.nullifier))) continue;
+      // Clone only txs that need mutation
+      allShieldedTx[i] = {
+        ...tx,
+        decryptedData: {
+          orchard_outputs: outputs.map(n =>
+            n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
+          ),
+          sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
+        },
+      };
+    }
+  }
 
-  const { deltaSapling, deltaOrchard } = computeProtocolDeltas(newTransactions);
-  const saplingBalance = prevSapling.plus(deltaSapling);
-  const orchardBalance = prevOrchard.plus(deltaOrchard);
+  const orchardBalance = computeBalanceFromNotes(allShieldedTx);
+  const saplingBalance = accumulated.accountUpdate.privateInfo?.saplingBalance ?? new BigNumber(0);
 
   const totalBlocks = result.processedBlocks + result.remainingBlocks;
   const privateInfo: ZcashPrivateInfo = {
@@ -178,6 +253,7 @@ export function reduceShieldedSyncResult(
     processedOperations: [...result.transactions],
     accountUpdate: {
       ...accumulated.accountUpdate,
+      balance: computeZcashBalance(transparentBalance, { orchardBalance, saplingBalance }),
       operations,
       operationsCount: missingOpsCount + operations.length,
       blockHeight: result.lastProcessedBlock ?? info.initialAccount?.blockHeight ?? 0,

@@ -17,6 +17,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
+  ASSETS_PRICE_REFRESH_INTERVAL_MS,
   EMPTY_STATE_CRYPTOS,
   EMPTY_STATE_STABLECOINS,
   MAX_ITEM_DISPLAYED,
@@ -49,6 +50,8 @@ export function useAssetsViewModel(): AssetsViewProps {
     product: "lld",
     version: __APP_VERSION__,
     skip: !needsPadding,
+    pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
+    skipPollingIfUnfocused: true,
   });
 
   const navigate = useNavigate();

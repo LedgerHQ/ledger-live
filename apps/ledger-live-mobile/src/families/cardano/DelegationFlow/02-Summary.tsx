@@ -3,7 +3,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
-import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -166,7 +167,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [status]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen
         category="DelegationFlow"
         name={route.params.skipStartedStep ? "Step Starter" : "Summary"}

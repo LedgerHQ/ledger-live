@@ -1,6 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { AssetDetailView } from "./AssetDetailView";
+import { ScrubbedPriceProvider } from "./context/ScrubbedPriceContext";
 import { useAssetDetailViewModel } from "./hooks/useAssetDetailViewModel";
 
 const AssetDetail = () => {
@@ -15,7 +18,16 @@ const AssetDetail = () => {
     );
   }
 
-  return <AssetDetailView viewModel={viewModel} />;
+  const currencyId = viewModel.distributionItem?.currency.id ?? viewModel.ledgerId;
+
+  return (
+    <>
+      <TrackPage category={ASSET_DETAIL_TRACKING_PAGE_NAME} currency={currencyId} />
+      <ScrubbedPriceProvider>
+        <AssetDetailView viewModel={viewModel} />
+      </ScrubbedPriceProvider>
+    </>
+  );
 };
 
 export default AssetDetail;

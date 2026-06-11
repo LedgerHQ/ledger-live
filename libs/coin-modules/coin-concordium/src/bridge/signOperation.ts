@@ -49,7 +49,11 @@ export const buildSignOperation =
             },
           );
 
-          const result = await signer.signTransaction(structuredTransaction, derivationPath);
+          const result = await signer.signTransaction(
+            structuredTransaction,
+            derivationPath,
+            estimation.cost,
+          );
 
           return combine(result.serialized, result.signature);
         });

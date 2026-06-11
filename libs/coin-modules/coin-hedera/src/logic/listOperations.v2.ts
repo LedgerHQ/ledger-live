@@ -514,6 +514,7 @@ export async function listOperationsV2({
   const [mirrorTransactions, enrichedERC20Transfers, latestHgraphIndexedTimestampNs] =
     await Promise.all([
       apiClient.getAccountTransactions({
+        configOrCurrencyId: config ?? currencyId,
         address,
         order,
         limit,
@@ -522,6 +523,7 @@ export async function listOperationsV2({
       }),
       hgraphClient
         .getERC20Transfers({
+          configOrCurrencyId: config ?? currencyId,
           address,
           order,
           limit,
@@ -532,7 +534,7 @@ export async function listOperationsV2({
         .then(erc20Transfers =>
           enrichERC20Transfers({ configOrCurrencyId: config ?? currencyId, erc20Transfers }),
         ),
-      hgraphClient.getLatestIndexedConsensusTimestamp(),
+      hgraphClient.getLatestIndexedConsensusTimestamp({ configOrCurrencyId: config ?? currencyId }),
     ]);
 
   // merge transactions, ensuring no duplicates, correct ordering and pagination handling

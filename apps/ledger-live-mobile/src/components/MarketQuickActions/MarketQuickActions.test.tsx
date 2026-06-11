@@ -122,16 +122,13 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={kaspaCurrency} accounts={[kaspaAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: withFlagOverrides(
-          { currencyKaspa: { enabled: false } },
-          state => ({
-            ...state,
-            accounts: {
-              ...state.accounts,
-              active: [kaspaAccount],
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides({ currencyKaspa: { enabled: false } }, state => ({
+          ...state,
+          accounts: {
+            ...state.accounts,
+            active: [kaspaAccount],
+          },
+        })),
       },
     );
     expect(queryByText(/buy/i)).toBeNull();
@@ -147,16 +144,13 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={kaspaCurrency} accounts={[kaspaAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: withFlagOverrides(
-          { currencyKaspa: { enabled: true } },
-          state => ({
-            ...state,
-            accounts: {
-              ...state.accounts,
-              active: [kaspaAccount],
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides({ currencyKaspa: { enabled: true } }, state => ({
+          ...state,
+          accounts: {
+            ...state.accounts,
+            active: [kaspaAccount],
+          },
+        })),
       },
     );
     expect(queryByText(/buy/i)).toBeNull();
@@ -172,16 +166,13 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={kaspaCurrency} accounts={[kaspaAccount]} />
       </TestNavigator>,
       {
-        overrideInitialState: withFlagOverrides(
-          { currencyKaspa: { enabled: false } },
-          state => ({
-            ...state,
-            accounts: {
-              ...state.accounts,
-              active: [kaspaAccount],
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides({ currencyKaspa: { enabled: false } }, state => ({
+          ...state,
+          accounts: {
+            ...state.accounts,
+            active: [kaspaAccount],
+          },
+        })),
       },
     );
     expect(queryByText(/buy/i)).toBeNull();

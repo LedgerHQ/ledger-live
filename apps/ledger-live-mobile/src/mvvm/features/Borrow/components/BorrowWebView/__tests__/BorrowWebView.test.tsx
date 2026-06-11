@@ -18,7 +18,10 @@ jest.mock("~/components/WebPlatformPlayer/CustomHandlers", () => ({
   useDeeplinkCustomHandlers: jest.fn().mockReturnValue({}),
 }));
 
-const mockManifest = { id: "borrow", url: "https://borrow.example.com" } as unknown as LiveAppManifest;
+const mockManifest = {
+  id: "borrow",
+  url: "https://borrow.example.com",
+} as unknown as LiveAppManifest;
 
 const defaultInputs: BorrowWebviewInputs = {
   devMode: "false",

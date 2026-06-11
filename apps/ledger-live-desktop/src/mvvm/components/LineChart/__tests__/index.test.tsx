@@ -14,7 +14,7 @@ const MOCK_SERIES: LineChartSeries[] = [
 
 const defaultProps: LineChartProps = {
   series: MOCK_SERIES,
-  selectedRange: "1D",
+  selectedRange: "1d",
   onRangeChange: jest.fn(),
 };
 
@@ -31,17 +31,27 @@ describe("LineChart", () => {
     renderLineChart();
 
     expect(screen.getByTestId("line-chart")).toBeVisible();
-    expect(screen.getByTestId("line-chart-range-1D")).toHaveAttribute("aria-checked", "true");
-    expect(screen.getByTestId("line-chart-range-1Y")).toHaveAttribute("aria-checked", "false");
+    expect(screen.getByTestId("line-chart-range-1d")).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByTestId("line-chart-range-1y")).toHaveAttribute("aria-checked", "false");
   });
 
   it("calls onRangeChange when a different range is selected", async () => {
     const onRangeChange = jest.fn();
     const { user } = renderLineChart({ onRangeChange });
 
-    await user.click(screen.getByTestId("line-chart-range-1Y"));
+    await user.click(screen.getByTestId("line-chart-range-1y"));
 
-    expect(onRangeChange).toHaveBeenCalledWith("1Y");
+    expect(onRangeChange).toHaveBeenCalledWith("1y");
+  });
+
+  it("renders rangeSelectorTrailing alongside the range selector without losing its a11y label", () => {
+    renderLineChart({
+      rangeSelectorTrailing: <button data-testid="chart-trailing-slot">options</button>,
+    });
+
+    expect(screen.getByTestId("chart-trailing-slot")).toBeVisible();
+    expect(screen.getByTestId("line-chart-range-selector")).toBeVisible();
+    expect(screen.getByTestId("line-chart-range-1d")).toHaveAttribute("aria-checked", "true");
   });
 
   it("shows the loading skeleton when isLoading is true", () => {

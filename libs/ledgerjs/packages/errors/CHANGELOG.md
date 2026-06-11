@@ -1,5 +1,17 @@
 # @ledgerhq/errors
 
+## 6.36.0
+
+### Minor Changes
+
+- [#18245](https://github.com/LedgerHQ/ledger-live/pull/18245) [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add max-fee display for Concordium app 5.6.0+. `ConcordiumSigner.signTransaction` takes a required `maxFee: bigint` (µCCD) forwarded to the device for on-screen rendering. New `ConcordiumInvalidMaxFeeError` typed error for invalid input.
+
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#18245](https://github.com/LedgerHQ/ledger-live/pull/18245) [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add max-fee display for Concordium app 5.6.0+. `ConcordiumSigner.signTransaction` takes a required `maxFee: bigint` (µCCD) forwarded to the device for on-screen rendering. New `ConcordiumInvalidMaxFeeError` typed error for invalid input.
+
 ## 6.35.0
 
 ### Minor Changes

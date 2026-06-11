@@ -88,7 +88,10 @@ export function useBridgeFeeEstimation({
       try {
         const bridge = await getAccountBridge(account, parentAccount ?? undefined);
         const patch = customFeeConfig.buildTransactionPatch(values);
-        const nextTransaction = bridge.updateTransaction(transaction, patch as Partial<Transaction>);
+        const nextTransaction = bridge.updateTransaction(
+          transaction,
+          patch as Partial<Transaction>,
+        );
         const preparedTx = await bridge.prepareTransaction(mainAccount, nextTransaction);
         const nextStatus = await bridge.getTransactionStatus(mainAccount, preparedTx);
         if (bridgeEstimationRequestIdRef.current !== requestId) return;

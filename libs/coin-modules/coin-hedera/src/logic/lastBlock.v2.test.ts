@@ -50,7 +50,8 @@ describe("lastBlockV2", () => {
     const expectedBefore = now - FINALITY_MS - BLOCK_WINDOW_MS;
 
     expect(apiClient.getLatestTransaction).toHaveBeenCalledTimes(1);
-    const calledWithDate = (apiClient.getLatestTransaction as jest.Mock).mock.calls[0][0] as Date;
+    const calledWithDate = (apiClient.getLatestTransaction as jest.Mock).mock.calls[0][0]
+      .before as Date;
     expect(calledWithDate.getTime()).toBeGreaterThanOrEqual(expectedBefore - 500);
     expect(calledWithDate.getTime()).toBeLessThanOrEqual(expectedBefore + 500);
   });

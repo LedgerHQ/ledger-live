@@ -1,20 +1,16 @@
 import React from "react";
-import { TriangleUp, TriangleDown } from "@ledgerhq/lumen-ui-react/symbols";
 import { render, screen, waitFor } from "tests/testSetup";
 import { PnLCard } from "../index";
 
 type PnLCardProps = React.ComponentProps<typeof PnLCard>;
 type InteractiveProps = Extract<PnLCardProps, { type: "interactive" }>;
+type DisplayProps = Extract<PnLCardProps, { type: "display" }>;
 type InfoProps = Extract<PnLCardProps, { type: "info" }>;
 
 const ID = "unrealisedReturn";
 const TITLE = "Unrealised return";
 const VALUE = "243.32";
 const TOOLTIP = "This is a tooltip";
-
-const UP_ICON = { Icon: TriangleUp, className: "text-success" } as const;
-const DOWN_ICON = { Icon: TriangleDown, className: "text-error" } as const;
-const NEUTRAL_ICON = { Icon: TriangleUp, className: "text-disabled" } as const;
 
 const makeInteractiveProps = (
   overrides: Partial<Omit<InteractiveProps, "type">> = {},
@@ -23,8 +19,17 @@ const makeInteractiveProps = (
   id: ID,
   title: TITLE,
   value: VALUE,
-  trendIcon: UP_ICON,
+  trend: "up",
   onClick: jest.fn(),
+  ...overrides,
+});
+
+const makeDisplayProps = (overrides: Partial<Omit<DisplayProps, "type">> = {}): DisplayProps => ({
+  type: "display",
+  id: ID,
+  title: TITLE,
+  value: VALUE,
+  trend: "up",
   ...overrides,
 });
 
@@ -66,11 +71,11 @@ describe("PnLCard", () => {
     });
 
     it.each([
-      [UP_ICON, ".text-success", [".text-error", ".text-disabled"]],
-      [DOWN_ICON, ".text-error", [".text-success", ".text-disabled"]],
-      [NEUTRAL_ICON, ".text-disabled", [".text-success", ".text-error"]],
-    ] as const)("renders the trend icon with %o", (trendIcon, expectedClass, otherClasses) => {
-      const { container } = render(<PnLCard {...makeInteractiveProps({ trendIcon })} />);
+      ["up", ".text-success", [".text-error", ".text-disabled"]],
+      ["down", ".text-error", [".text-success", ".text-disabled"]],
+      ["neutral", ".text-disabled", [".text-success", ".text-error"]],
+    ] as const)("renders the trend icon for %s", (trend, expectedClass, otherClasses) => {
+      const { container } = render(<PnLCard {...makeInteractiveProps({ trend })} />);
 
       expect(container.querySelector(expectedClass)).toBeInTheDocument();
       otherClasses.forEach(cls => {
@@ -82,6 +87,34 @@ describe("PnLCard", () => {
       render(<PnLCard {...makeInteractiveProps()} />);
 
       expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("when type is 'display'", () => {
+    it("should render the title and the value", () => {
+      render(<PnLCard {...makeDisplayProps()} />);
+
+      expect(screen.getByText(TITLE)).toBeVisible();
+      expect(screen.getByText(VALUE)).toBeVisible();
+    });
+
+    it("should not render the card as a clickable button", () => {
+      render(<PnLCard {...makeDisplayProps()} />);
+
+      expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    });
+
+    it.each([
+      ["up", ".text-success", [".text-error", ".text-disabled"]],
+      ["down", ".text-error", [".text-success", ".text-disabled"]],
+      ["neutral", ".text-disabled", [".text-success", ".text-error"]],
+    ] as const)("renders the trend icon for %s", (trend, expectedClass, otherClasses) => {
+      const { container } = render(<PnLCard {...makeDisplayProps({ trend })} />);
+
+      expect(container.querySelector(expectedClass)).toBeInTheDocument();
+      otherClasses.forEach(cls => {
+        expect(container.querySelector(cls)).not.toBeInTheDocument();
+      });
     });
   });
 

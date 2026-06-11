@@ -50,6 +50,7 @@ import type { HederaClaimRewardsFlowParamList } from "~/families/hedera/ClaimRew
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
+import { TezosStakeFlowParamList } from "~/families/tezos/StakeFlow/types";
 import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
@@ -58,6 +59,7 @@ import { SuiStakingFlowParamList } from "~/families/sui/StakingFlow/types";
 import { SuiUnstakingFlowParamList } from "~/families/sui/UnstakingFlow/types";
 import type { EvmDelegationFlowParamList } from "~/families/evm/DelegationFlow/types";
 import type { EvmUndelegationFlowParamList } from "~/families/evm/UndelegationFlow/types";
+import type { EvmClaimRewardsFlowParamList } from "~/families/evm/ClaimRewardsFlow/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
@@ -115,6 +117,7 @@ type Props =
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
+  | StackNavigatorProps<TezosStakeFlowParamList, ScreenName.TezosStakeConnectDevice>
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
   | StackNavigatorProps<
       HederaAssociateTokenFlowParamList,
@@ -126,7 +129,8 @@ type Props =
   | StackNavigatorProps<HederaClaimRewardsFlowParamList, ScreenName.HederaClaimRewardsConnectDevice>
   | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmDelegationConnectDevice>
   | StackNavigatorProps<EvmUndelegationFlowParamList, ScreenName.EvmUndelegationConnectDevice>
-  | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmRedelegationConnectDevice>;
+  | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmRedelegationConnectDevice>
+  | StackNavigatorProps<EvmClaimRewardsFlowParamList, ScreenName.EvmClaimRewardsConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

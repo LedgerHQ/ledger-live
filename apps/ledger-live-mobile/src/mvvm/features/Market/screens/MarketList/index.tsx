@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";

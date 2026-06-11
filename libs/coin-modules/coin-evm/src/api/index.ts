@@ -96,7 +96,8 @@ export function createApi(
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators: (): Promise<Page<Validator>> => getValidatorsPage(currency.id),
+    getValidators: (cursor?: Cursor): Promise<Page<Validator>> =>
+      getValidatorsPage(currency.id, cursor),
     getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
     validateAddress,
     validateIntent: (

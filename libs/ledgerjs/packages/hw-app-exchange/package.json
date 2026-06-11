@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.22.3",
+  "version": "0.22.4",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",

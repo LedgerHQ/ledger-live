@@ -1,10 +1,13 @@
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { isWallet40 } from "../../helpers/commonHelpers";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
+setTeamOwner(Team.WALLET_XP);
 describe("Receive Flow", () => {
   const account = Account.ETH_1;
 

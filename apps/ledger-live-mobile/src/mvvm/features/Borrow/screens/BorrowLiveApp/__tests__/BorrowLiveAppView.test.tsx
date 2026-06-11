@@ -15,7 +15,10 @@ jest.mock("LLM/features/Borrow/components/BorrowWebView", () => ({
   }),
 }));
 
-const mockManifest = { id: "borrow", url: "https://borrow.example.com" } as unknown as LiveAppManifest;
+const mockManifest = {
+  id: "borrow",
+  url: "https://borrow.example.com",
+} as unknown as LiveAppManifest;
 
 const defaultInputs: BorrowWebviewInputs = {
   devMode: "false",
@@ -60,9 +63,7 @@ describe("BorrowLiveAppView", () => {
   });
 
   it("should render empty borrow screen when manifest is undefined", () => {
-    const { getByTestId } = render(
-      <BorrowLiveAppView {...defaultProps} manifest={undefined} />,
-    );
+    const { getByTestId } = render(<BorrowLiveAppView {...defaultProps} manifest={undefined} />);
     expect(getByTestId("borrow-screen")).toBeVisible();
   });
 });

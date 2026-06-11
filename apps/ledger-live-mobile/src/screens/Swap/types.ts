@@ -4,7 +4,6 @@ import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cr
 import type { Account, AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import type { SwapWebviewAllowedPageNames } from "~/components/Web3AppWebview/types";
 import type { ScreenName } from "~/const";
 
 export type PendingOperationParamList = NativeStackScreenProps<
@@ -23,7 +22,7 @@ export type SwapCustomErrorProps = NativeStackScreenProps<
 
 export type Target = "from" | "to";
 
-export interface DetailsSwapParamList extends SwapLiveAppNavigationParams {
+export interface DetailsSwapParamList {
   accountId?: string;
   currency?: CryptoCurrency | TokenCurrency;
   rate?: ExchangeRate;
@@ -47,7 +46,7 @@ export type SwapPendingOperation = {
   sponsored?: boolean;
 };
 
-export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams {
+export interface DefaultAccountSwapParamList {
   defaultAccount?: AccountLike;
   defaultParentAccount?: Account;
   defaultCurrency?: CryptoCurrency | TokenCurrency;
@@ -61,12 +60,3 @@ export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams
   toAccountId?: string;
   fromAccountId?: string;
 }
-
-export type SwapLiveAppNavigationParams = {
-  swapNavigationParams?: {
-    tab?: "ACCOUNTS_SELECTION" | "QUOTES_LIST" | null;
-    page?: SwapWebviewAllowedPageNames;
-    canGoBack?: boolean;
-    isTransactionComplete?: boolean;
-  };
-};

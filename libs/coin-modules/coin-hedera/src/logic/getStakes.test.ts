@@ -27,7 +27,10 @@ describe("getStakes", () => {
 
     expect(result.items).toEqual([]);
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
-    expect(mockGetAccount).toHaveBeenCalledWith(mockAddress);
+    expect(mockGetAccount).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
+      address: mockAddress,
+    });
     // when there's no staked_node_id we must not hit the nodes endpoint at all
     expect(mockGetNode).not.toHaveBeenCalled();
     expect(mockGetNodes).not.toHaveBeenCalled();
@@ -87,7 +90,10 @@ describe("getStakes", () => {
     const result = await getStakes({ configOrCurrencyId: mockCurrency.id, address: mockAddress });
 
     expect(mockGetNode).toHaveBeenCalledTimes(1);
-    expect(mockGetNode).toHaveBeenCalledWith(stakedNodeId);
+    expect(mockGetNode).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
+      nodeId: stakedNodeId,
+    });
     expect(result.items).toEqual([
       {
         uid: mockAddress,
@@ -134,7 +140,10 @@ describe("getStakes", () => {
 
     const result = await getStakes({ configOrCurrencyId: mockCurrency.id, address: mockAddress });
 
-    expect(mockGetNode).toHaveBeenCalledWith(nodeId);
+    expect(mockGetNode).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
+      nodeId,
+    });
     expect(result.items).toEqual([
       {
         uid: mockAddress,

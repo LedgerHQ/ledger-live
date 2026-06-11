@@ -3,7 +3,11 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useLedgerFirstShuffledValidatorsNear } from "@ledgerhq/live-common/families/near/react";
-import { NearValidatorItem, NearAccount, Transaction as NearTransaction } from "@ledgerhq/live-common/families/near/types";
+import {
+  NearValidatorItem,
+  NearAccount,
+  Transaction as NearTransaction,
+} from "@ledgerhq/live-common/families/near/types";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { AccountLike } from "@ledgerhq/types-live";

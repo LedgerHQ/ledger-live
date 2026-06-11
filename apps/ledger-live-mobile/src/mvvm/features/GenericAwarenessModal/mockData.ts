@@ -1,6 +1,7 @@
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalContentCard,
+  type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 
 export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCard = {
@@ -40,6 +41,7 @@ export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCa
       primaryButtonLink: "",
     },
   ],
+  isReady: true,
 };
 
 export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard = {
@@ -79,6 +81,7 @@ export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard 
       primaryButtonLink: "ledgerlive://earn",
     },
   ],
+  isReady: true,
 };
 
 export const carouselMockData: GenericAwarenessModalContentCard = {
@@ -118,6 +121,7 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
       primaryButtonLink: "",
     },
   ],
+  isReady: true,
 };
 
 export const featureIntroMockData: GenericAwarenessModalContentCard = {
@@ -147,4 +151,17 @@ export const featureIntroMockData: GenericAwarenessModalContentCard = {
       subtitle: "Manage thousands of assets in one place.",
     },
   ],
+  isReady: true,
+};
+
+export const promptMockData: GenericAwarenessModalPrompt = {
+  id: "prompt",
+  layout: GenericAwarenessModalLayout.Prompt,
+  imageUrl: "https://picsum.photos/480/640",
+  title: "Try Ledger Wallet when you are ready",
+  subtitle: "Open the feature from Ledger Wallet whenever you need it.",
+  primaryButtonLabel: "Learn more",
+  primaryButtonLink: "https://www.ledger.com",
+  secondaryButtonLabel: "Buy your Ledger device",
+  secondaryButtonLink: "ledgerlive://buy",
 };

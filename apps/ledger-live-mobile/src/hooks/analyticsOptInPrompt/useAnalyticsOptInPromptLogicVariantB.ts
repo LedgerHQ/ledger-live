@@ -8,7 +8,7 @@ import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 
 type Props = {

@@ -1,14 +1,11 @@
 import React from "react";
 import { LineChartPlotContent, type LineChartPlotContentProps } from "./LineChartPlotContent";
 
-type LineChartPlotProps = LineChartPlotContentProps &
-  Readonly<{
-    chartWrapperRef: React.RefObject<HTMLDivElement | null>;
-  }>;
+export type LineChartPlotProps = LineChartPlotContentProps;
 
-export function LineChartPlot({ chartWrapperRef, ...contentProps }: LineChartPlotProps) {
+export function LineChartPlot(contentProps: LineChartPlotProps) {
   return (
-    <div ref={chartWrapperRef} className="w-full min-w-0">
+    <div className="w-full min-w-0">
       <LineChartPlotContent {...contentProps} />
     </div>
   );

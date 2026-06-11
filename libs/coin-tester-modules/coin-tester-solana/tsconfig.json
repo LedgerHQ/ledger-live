@@ -1,6 +1,8 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "lib": ["es2020", "dom"],
     "outDir": "lib",
     "rootDir": "src",

@@ -9,7 +9,6 @@ import SwapHistory from "~/screens/Swap/History";
 import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/index";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import { SwapSubScreensNavigatorParamList } from "./types/SwapSubScreensNavigator";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import {
   isGoingToSwapHistory,
   navigateBackToSwapTab,
@@ -24,17 +23,12 @@ function BackButton() {
   return <NavigationHeaderBackButton />;
 }
 
-function SwapHistoryBackButton({
-  shouldDisplayWallet40MainNav,
-}: {
-  shouldDisplayWallet40MainNav: boolean;
-}) {
+function SwapHistoryBackButton() {
   return (
     <NavigationHeaderBackButton
       onPress={navigation =>
         navigateBackToSwapTab({
           navigation,
-          shouldDisplayWallet40MainNav,
         })
       }
     />
@@ -43,16 +37,12 @@ function SwapHistoryBackButton({
 
 function getSwapHistoryScreenOptions({
   headerTitle,
-  shouldDisplayWallet40MainNav,
 }: {
   headerTitle: string;
-  shouldDisplayWallet40MainNav: boolean;
 }) {
   return {
     headerTitle,
-    headerLeft: () => (
-      <SwapHistoryBackButton shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
-    ),
+    headerLeft: () => <SwapHistoryBackButton />,
     headerRight: NullHeader,
   };
 }
@@ -68,7 +58,6 @@ function getSwapHistoryScreenOptions({
 export default function SwapSubScreensNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const { notifyFlowCompleted } = useNotificationsContext();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
@@ -95,7 +84,6 @@ export default function SwapSubScreensNavigator() {
         component={SwapHistory}
         options={getSwapHistoryScreenOptions({
           headerTitle: t("transfer.swap2.history.title"),
-          shouldDisplayWallet40MainNav,
         })}
         listeners={{
           beforeRemove: () => {

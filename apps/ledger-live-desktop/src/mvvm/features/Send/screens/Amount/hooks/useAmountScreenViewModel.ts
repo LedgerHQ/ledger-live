@@ -16,6 +16,8 @@ import { useQuickActions } from "./useQuickActions";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useAmountScreenMessage } from "./useAmountScreenMessage";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
+import { track } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -40,6 +42,11 @@ export function useAmountScreenViewModel({
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard();
+
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount),
+    [account, parentAccount],
+  );
 
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,
@@ -135,13 +142,48 @@ export function useAmountScreenViewModel({
     transactionActions,
   });
 
+  const onSelectFeeStrategyWithTracking = useCallback(
+    (strategy: string) => {
+      track("button_clicked", {
+        button: `fee ${strategy}`,
+        page: "step amount",
+        ...sendFlowTrackingProperties,
+      });
+      networkFees.onSelectFeeStrategy(strategy);
+    },
+    [networkFees, sendFlowTrackingProperties],
+  );
+
   const onOpenCustomFees = useCallback(() => {
+    track("button_clicked", {
+      button: "fee custom",
+      page: "step amount",
+      ...sendFlowTrackingProperties,
+    });
     navigation.goToStep(SEND_FLOW_STEP.CUSTOM_FEES);
-  }, [navigation]);
+  }, [navigation, sendFlowTrackingProperties]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);
   }, [navigation]);
+
+  const trackedQuickActions = useMemo(
+    () =>
+      quickActions.map(action => ({
+        ...action,
+        onClick: () => {
+          if (!action.active) {
+            track("button_clicked", {
+              button: action.id,
+              page: "step amount",
+              ...sendFlowTrackingProperties,
+            });
+          }
+          action.onClick();
+        },
+      })),
+    [quickActions, sendFlowTrackingProperties],
+  );
 
   return {
     amountValue: amountInput.amountValue,
@@ -153,7 +195,7 @@ export function useAmountScreenViewModel({
     onToggleInputMode: amountInput.onToggleInputMode,
     toggleLabel: t("newSendFlow.switchInputMode"),
     secondaryValue: amountInput.secondaryValue,
-    quickActions,
+    quickActions: trackedQuickActions,
     showQuickActions: quickActionsAvailableBalance.gt(0),
     amountMessage,
     reviewLabel,
@@ -163,5 +205,6 @@ export function useAmountScreenViewModel({
     onOpenCustomFees,
     onSelectCoinControl,
     ...networkFees,
+    onSelectFeeStrategy: onSelectFeeStrategyWithTracking,
   };
 }

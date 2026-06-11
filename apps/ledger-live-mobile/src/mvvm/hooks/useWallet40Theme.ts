@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { useWalletFeaturesConfig, WalletPlatform } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig, type WalletPlatform } from "@features/platform-feature-flags";
 
 export interface Wallet40ThemeResult {
   readonly isDarkMode: boolean;

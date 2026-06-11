@@ -11,7 +11,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
       name: "Certus One",
-      tokens: 2366240079223,
+      tokens: "2366240079223",
       votingPower: 0,
       commission: 0.125,
       estimatedYearlyRewardsRate: 0,
@@ -19,7 +19,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1qs8tnw2t8l6amtzvdemnnsq9dzk0ag0z52uzay",
       name: "Castlenode",
-      tokens: 92043936577,
+      tokens: "92043936577",
       votingPower: 0,
       commission: 0.09,
       estimatedYearlyRewardsRate: 0,
@@ -27,7 +27,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1q6d3d089hg59x6gcx92uumx70s5y5wadklue8s",
       name: "Ubik Capital 0%Fee",
-      tokens: 473891678039,
+      tokens: "473891678039",
       votingPower: 0,
       commission: 0,
       estimatedYearlyRewardsRate: 0,
@@ -35,7 +35,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1qaa9zej9a0ge3ugpx3pxyx602lxh3ztqgfnp42",
       name: "GAME",
-      tokens: 6650119750152,
+      tokens: "6650119750152",
       votingPower: 0,
       commission: 0.02,
       estimatedYearlyRewardsRate: 0,
@@ -43,7 +43,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5",
       name: "WeStaking",
-      tokens: 516205416254,
+      tokens: "516205416254",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -51,7 +51,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1pjmngrwcsatsuyy8m3qrunaun67sr9x7z5r2qs",
       name: "Cypher Core",
-      tokens: 422318772421,
+      tokens: "422318772421",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -59,7 +59,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1zqgheeawp7cmqk27dgyctd80rd8ryhqs6la9wc",
       name: "NO! Fee to 2025 💸 | melea.xyz",
-      tokens: 3818145093031,
+      tokens: "3818145093031",
       votingPower: 0,
       commission: 0,
       estimatedYearlyRewardsRate: 0,
@@ -67,7 +67,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1z8zjv3lntpwxua0rtpvgrcwl0nm0tltgpgs6l7",
       name: "Kraken",
-      tokens: 4058339434984,
+      tokens: "4058339434984",
       votingPower: 0,
       commission: 1,
       estimatedYearlyRewardsRate: 0,
@@ -75,7 +75,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1zc0z44e42qhzltqc8qpj5qrzn836d3lftnqmgw",
       name: "Virtual Hive",
-      tokens: 114032300705,
+      tokens: "114032300705",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -83,7 +83,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1z66j0z75a9flwnez7sa8jxx46cqu4rfhd9q82w",
       name: "debo-validator",
-      tokens: 109836581370,
+      tokens: "109836581370",
       votingPower: 0,
       commission: 0.2,
       estimatedYearlyRewardsRate: 0,
@@ -91,7 +91,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1rpgtz9pskr5geavkjz02caqmeep7cwwpv73axj",
       name: "Blockpower",
-      tokens: 1568493633483,
+      tokens: "1568493633483",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -99,7 +99,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1r2dthxctqzhwg299e7aaeqwfkgcc9hg8k3yd7m",
       name: " 0% Fee 🌻 Sunflower",
-      tokens: 629936356911,
+      tokens: "629936356911",
       votingPower: 0,
       commission: 0,
       estimatedYearlyRewardsRate: 0,
@@ -107,7 +107,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1rwh0cxa72d3yle3r4l8gd7vyphrmjy2kpe4x72",
       name: "pe4x72",
-      tokens: 241429222763,
+      tokens: "241429222763",
       votingPower: 0,
       commission: 0.2,
       estimatedYearlyRewardsRate: 0,
@@ -115,7 +115,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1rj6324uq904z5zr96zg6ew9qjyau9u6h5nflg6",
       name: "Don Cryptonium",
-      tokens: 82593677494,
+      tokens: "82593677494",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -123,7 +123,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
       name: "in3s.com",
-      tokens: 152636184646,
+      tokens: "152636184646",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -131,7 +131,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1yfnaup5wa3vdzx3wx9auhvzl85saqj37tqxqnu",
       name: "\bMoonlet",
-      tokens: 84781248304,
+      tokens: "84781248304",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -139,7 +139,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1yw5s259jkcg0jzmh7sce29uk0lqqw2ump7578p",
       name: "CEX.IO ❤️🇺🇦",
-      tokens: 134566485728,
+      tokens: "134566485728",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -147,7 +147,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1y0us8xvsvfvqkk9c6nt5cfyu5au5tww2ztve7q",
       name: "Swiss Staking",
-      tokens: 1892339743010,
+      tokens: "1892339743010",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -155,7 +155,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1yh089p0cre4nhpdqw35uzde5amg3qzexkeggdn",
       name: "High Stakes 🇨🇭",
-      tokens: 79996206173,
+      tokens: "79996206173",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -163,7 +163,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper19rmlxkqjt950fxl849l49x0me56u9tkd5n5j62",
       name: "Post Road",
-      tokens: 1006285498547,
+      tokens: "1006285498547",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -171,7 +171,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper19yy989ka5usws6gsd8vl94y7l6ssgdwsrnscjc",
       name: "OKEx Pool",
-      tokens: 703536442718,
+      tokens: "703536442718",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -179,7 +179,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper199mlc7fr6ll5t54w7tts7f4s0cvnqgc59nmuxf",
       name: "ShapeShift DAO",
-      tokens: 1282273036847,
+      tokens: "1282273036847",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -187,7 +187,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper19j2hd230c3hw6ds843yu8akc0xgvdvyuz9v02v",
       name: "syncnode",
-      tokens: 76419572461,
+      tokens: "76419572461",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -195,7 +195,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper19ecn7ljwp6el2pc5lldyauwv05ufwut9mm38r5",
       name: " WhisperNode🤐",
-      tokens: 241145150027,
+      tokens: "241145150027",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -203,7 +203,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcvrj90c",
       name: "SG-1",
-      tokens: 9860979613964,
+      tokens: "9860979613964",
       votingPower: 0,
       commission: 0.019,
       estimatedYearlyRewardsRate: 0,
@@ -211,7 +211,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1xym2qygmr9vanpa0m7ndk3n0qxgey3ffzcyd5c",
       name: "🐡grant.fish",
-      tokens: 199441594007,
+      tokens: "199441594007",
       votingPower: 0,
       commission: 1,
       estimatedYearlyRewardsRate: 0,
@@ -219,7 +219,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1x8rr4hcf54nz6hfckyy2n05sxss54h8wz9puzg",
       name: "cosmosgbt",
-      tokens: 280033535817,
+      tokens: "280033535817",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -227,7 +227,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1x88j7vp2xnw3zec8ur3g4waxycyz7m0mahdv3p",
       name: "Staking Facilities",
-      tokens: 1368195322562,
+      tokens: "1368195322562",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -235,7 +235,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1x8efhljzvs52u5xa6m7crcwes7v9u0nlwdgw30",
       name: "Upbit Staking",
-      tokens: 744323149689,
+      tokens: "744323149689",
       votingPower: 0,
       commission: 1,
       estimatedYearlyRewardsRate: 0,
@@ -243,7 +243,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1xwazl8ftks4gn00y5x3c47auquc62ssuqlj02r",
       name: "jabbey",
-      tokens: 151666804947,
+      tokens: "151666804947",
       votingPower: 0,
       commission: 0.04,
       estimatedYearlyRewardsRate: 0,
@@ -251,7 +251,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1x3mkgqpshvpq87d33ndsleu7gd7w47dl4ve0yy",
       name: "CrowdControl",
-      tokens: 97304821100,
+      tokens: "97304821100",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -259,7 +259,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1xnrth5rku3z3msm9prxe3l0p2yec3d9mzxz9ka",
       name: "coinhall.org 📈🔄",
-      tokens: 63532067873,
+      tokens: "63532067873",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -267,7 +267,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper18ruzecmqj9pv8ac0gvkgryuc7u004te9rh7w5s",
       name: "Binance Node",
-      tokens: 8672624964671,
+      tokens: "8672624964671",
       votingPower: 0,
       commission: 0.025,
       estimatedYearlyRewardsRate: 0,
@@ -275,7 +275,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper18extdhzzl5c8tr6453e5hzaj3exrdlea90fj3y",
       name: "Smart Stake",
-      tokens: 184229567352,
+      tokens: "184229567352",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -283,7 +283,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1gp957czryfgyvxwn3tfnyy2f0t9g2p4pqeemx8",
       name: " polkachu.com",
-      tokens: 415880323049,
+      tokens: "415880323049",
       votingPower: 0,
       commission: 0.02,
       estimatedYearlyRewardsRate: 0,
@@ -291,7 +291,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1gpx52r9h3zeul45amvcy2pysgvcwddxrgx6cnv",
       name: "StakeLab",
-      tokens: 2708514389080,
+      tokens: "2708514389080",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -299,7 +299,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
       name: "iqlusion",
-      tokens: 1821457272838,
+      tokens: "1821457272838",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -307,7 +307,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1gxju9ky3hwxvqqagrl3dxtl49kjpxq6wlqe6m5",
       name: "🇨🇭 Vortex.live 🟢",
-      tokens: 491172015448,
+      tokens: "491172015448",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -315,7 +315,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
       name: "Blockapsis",
-      tokens: 81501653332,
+      tokens: "81501653332",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -323,7 +323,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1gf4wlkutql95j7wwsxz490s6fahlvk2s9xpwax",
       name: "Stakewolle.com | Turkey donate 🇹🇷",
-      tokens: 315736909899,
+      tokens: "315736909899",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -331,7 +331,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1gdg6qqe5a3u483unqlqsnullja23g0xvqkxtk0",
       name: "zugerselfdelegation",
-      tokens: 2404554688017,
+      tokens: "2404554688017",
       votingPower: 0,
       commission: 1,
       estimatedYearlyRewardsRate: 0,
@@ -339,7 +339,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1gjtvly9lel6zskvwtvlg5vhwpu9c9waw7sxzwx",
       name: "\tEZStaking.io",
-      tokens: 462402642984,
+      tokens: "462402642984",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -347,7 +347,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1g48268mu5vfp4wk7dk89r0wdrakm9p5xk0q50k",
       name: "Provalidator",
-      tokens: 3259051076132,
+      tokens: "3259051076132",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -355,7 +355,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1fqzqejwkk898fcslw4z4eeqjzesynvrdfr5hte",
       name: "commercio.network",
-      tokens: 155298603658,
+      tokens: "155298603658",
       votingPower: 0,
       commission: 0.09,
       estimatedYearlyRewardsRate: 0,
@@ -363,7 +363,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ff0dw8kawsnxkrgj7p65kvw7jxxakyf8n583gx",
       name: "Compass",
-      tokens: 96568326917,
+      tokens: "96568326917",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -371,7 +371,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1fsg635n5vgc7jazz9sx5725wnc3xqgr7awxaag",
       name: "cros-nest",
-      tokens: 168864940907,
+      tokens: "168864940907",
       votingPower: 0,
       commission: 0.02,
       estimatedYearlyRewardsRate: 0,
@@ -379,7 +379,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1fhr7e04ct0zslmkzqt9smakg3sxrdve6ulclj2",
       name: "Stakin",
-      tokens: 231546845732,
+      tokens: "231546845732",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -387,7 +387,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1fun809ksxh87nzf88yashp9ynjz6xkscrtvzvw",
       name: "Tessellated",
-      tokens: 89008522451,
+      tokens: "89008522451",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -395,7 +395,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper122j3zmqdl6d2g64qmjuqzj65gfejsvjp07yljn",
       name: "COS_Validator",
-      tokens: 204755716213,
+      tokens: "204755716213",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -403,7 +403,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
       name: "Huobi-1",
-      tokens: 70102011008,
+      tokens: "70102011008",
       votingPower: 0,
       commission: 0.08,
       estimatedYearlyRewardsRate: 0,
@@ -411,7 +411,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper125umsz3fws7gepn5ccsh0sv4gre9r6a3tccz4r",
       name: "Moonstake",
-      tokens: 133955467483,
+      tokens: "133955467483",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -419,7 +419,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper124maqmcqv8tquy764ktz7cu0gxnzfw54n3vww8",
       name: "Simply Staking",
-      tokens: 596727662512,
+      tokens: "596727662512",
       votingPower: 0,
       commission: 0.07,
       estimatedYearlyRewardsRate: 0,
@@ -427,7 +427,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper12lfqufkk2h3w2ycp50czme6nj3ln5tdv7nj3hx",
       name: "Fanfury | fury.fan | Stake to Win",
-      tokens: 126945902275,
+      tokens: "126945902275",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -435,7 +435,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1tflk30mq5vgqjdly92kkhhq3raev2hnz6eete3",
       name: "Everstake",
-      tokens: 7764047708973,
+      tokens: "7764047708973",
       votingPower: 0,
       commission: 0.06,
       estimatedYearlyRewardsRate: 0,
@@ -443,7 +443,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1thl5syhmscgnj7whdyrydw3w6vy80044hjpnxh",
       name: "RockawayX Infra",
-      tokens: 306999088099,
+      tokens: "306999088099",
       votingPower: 0,
       commission: 0.08,
       estimatedYearlyRewardsRate: 0,
@@ -451,7 +451,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
       name: "CoinoneNode",
-      tokens: 1561930615975,
+      tokens: "1561930615975",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -459,7 +459,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1vygmh344ldv9qefss9ek7ggsnxparljlmj56q5",
       name: "PUPMØS",
-      tokens: 182164051345,
+      tokens: "182164051345",
       votingPower: 0,
       commission: 0.01629,
       estimatedYearlyRewardsRate: 0,
@@ -467,7 +467,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1vf44d85es37hwl9f4h9gv0e064m0lla60j9luj",
       name: "MultiChain ventures",
-      tokens: 2707513998862,
+      tokens: "2707513998862",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -475,7 +475,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1vvwtk805lxehwle9l4yudmq6mn0g32px9xtkhc",
       name: "Imperator.co",
-      tokens: 2453172840371,
+      tokens: "2453172840371",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -483,7 +483,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1v0g7guekttkdmerz5z8hjj8u8j68c6p00zqgf5",
       name: "🔥 LUNC DAO 🔥",
-      tokens: 87056580504,
+      tokens: "87056580504",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -491,7 +491,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1v5y0tg0jllvxf5c3afml8s3awue0ymju89frut",
       name: "Zero Knowledge Validator (ZKV)",
-      tokens: 9443072461637,
+      tokens: "9443072461637",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -499,7 +499,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1v69lzl909kje64k8vae24uytpxcnpxgullz2dx",
       name: "Terra Nodes",
-      tokens: 149692264531,
+      tokens: "149692264531",
       votingPower: 0,
       commission: 0.04,
       estimatedYearlyRewardsRate: 0,
@@ -507,7 +507,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1v78emy9d2xe3tj974l7tmn2whca2nh9zp7s0u9",
       name: "a41",
-      tokens: 131258952898,
+      tokens: "131258952898",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -515,7 +515,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1dqp325was50l7ut2lnx6s8xhmtwj3wrtx06gzu",
       name: "Nocturnal Labs",
-      tokens: 590112513753,
+      tokens: "590112513753",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -523,7 +523,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1dt93l3qgmhhlp97srjyqyendrgu9nx0suxtwe8",
       name: "天照☀",
-      tokens: 562540468242,
+      tokens: "562540468242",
       votingPower: 0,
       commission: 0.0099,
       estimatedYearlyRewardsRate: 0,
@@ -531,7 +531,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ddle9tczl87gsvmeva3c48nenyng4n56nghmjk",
       name: "Witval",
-      tokens: 280885033148,
+      tokens: "280885033148",
       votingPower: 0,
       commission: 0.04,
       estimatedYearlyRewardsRate: 0,
@@ -539,7 +539,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1d0aup392g3enru7eash83sedqclaxvp7fzh6gk",
       name: "Stir",
-      tokens: 84359534976,
+      tokens: "84359534976",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -547,7 +547,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1de7qx00pz2j6gn9k88ntxxylelkazfk3g8fgh9",
       name: "Cosmic Validator | Auto-compound",
-      tokens: 75828599705,
+      tokens: "75828599705",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -555,7 +555,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1wqy2s6nwnxj57l0l5rdjxxr646p3al6y70435m",
       name: "Klub Staking",
-      tokens: 213867104268,
+      tokens: "213867104268",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -563,7 +563,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1wrx0x9m9ykdhw9sg04v7uljme53wuj03aa5d4f",
       name: "Meria",
-      tokens: 224905713367,
+      tokens: "224905713367",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -571,7 +571,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1wtv0kp6ydt03edd8kyr5arr4f3yc52vp3u2x3u",
       name: "kytzu",
-      tokens: 65633141207,
+      tokens: "65633141207",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -579,7 +579,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1wdrypwex63geqswmcy5qynv4w3z3dyef2qmyna",
       name: "Genesis Lab",
-      tokens: 98188333619,
+      tokens: "98188333619",
       votingPower: 0,
       commission: 0.07,
       estimatedYearlyRewardsRate: 0,
@@ -587,7 +587,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1we6knm8qartmmh2r0qfpsz6pq0s7emv3e0meuw",
       name: "Staked",
-      tokens: 1040171720731,
+      tokens: "1040171720731",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -595,7 +595,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1wlpz5hau2ezu0gmuxav63m53d8s77az9wfzlt6",
       name: "🙏 uGaenn ⛅",
-      tokens: 81235659168,
+      tokens: "81235659168",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -603,7 +603,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1wlagucxdxvsmvj6330864x8q3vxz4x02rmvmsu",
       name: "DSRV",
-      tokens: 36475936711,
+      tokens: "36475936711",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -611,7 +611,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1083svrca4t350mphfv9x45wq9asrs60cdmrflj",
       name: "Notional",
-      tokens: 384687081690,
+      tokens: "384687081690",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -619,7 +619,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper10f9wkd6vdspac05djyfwfx0uxcqxapnqhnkcg8",
       name: "Tavis Digital",
-      tokens: 85723167733,
+      tokens: "85723167733",
       votingPower: 0,
       commission: 0.08,
       estimatedYearlyRewardsRate: 0,
@@ -627,7 +627,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper102ruvpv2srmunfffxavttxnhezln6fnc54at8c",
       name: "Ztake.org",
-      tokens: 208970486618,
+      tokens: "208970486618",
       votingPower: 0,
       commission: 0.07,
       estimatedYearlyRewardsRate: 0,
@@ -635,7 +635,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: LEDGER_VALIDATOR_ADDRESS as string,
       name: "Ledger",
-      tokens: 1465639218435,
+      tokens: "1465639218435",
       votingPower: 0,
       commission: 0.075,
       estimatedYearlyRewardsRate: 0,
@@ -643,7 +643,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
       name: "Staking Fund",
-      tokens: 71945739741,
+      tokens: "71945739741",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -651,7 +651,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper10jzj3jjd3frna0ay08sh4zu4fpy957s49jkk7m",
       name: "Onbloc Node",
-      tokens: 489762576227,
+      tokens: "489762576227",
       votingPower: 0,
       commission: 0.09,
       estimatedYearlyRewardsRate: 0,
@@ -659,7 +659,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper10nzaaeh2kq28t3nqsh5m8kmyv90vx7ym5mpakx",
       name: "Blockdaemon",
-      tokens: 960938774996,
+      tokens: "960938774996",
       votingPower: 0,
       commission: 0.06,
       estimatedYearlyRewardsRate: 0,
@@ -667,7 +667,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper10e4vsut6suau8tk9m6dnrm0slgd6npe3jx5xpv",
       name: "B-Harvest",
-      tokens: 1122655348780,
+      tokens: "1122655348780",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -675,7 +675,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper106yp7zw35wftheyyv9f9pe69t8rteumjrx52jg",
       name: "Bro_n_Bro",
-      tokens: 125171888480,
+      tokens: "125171888480",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -683,7 +683,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper10unx6s0cdqntvrumd5hs07rgd5ytcztqh8etw6",
       name: "GATA DAO",
-      tokens: 158897322681,
+      tokens: "158897322681",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -691,7 +691,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1symf474wnypes2d3mecllqk6l26rwz8mfjqdus",
       name: "BlockHunters 🎯",
-      tokens: 390892687133,
+      tokens: "390892687133",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -699,7 +699,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1sxx9mszve0gaedz5ld7qdkjkfv8z992ax69k08",
       name: "e-Money.com // validator.network",
-      tokens: 426455997037,
+      tokens: "426455997037",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -707,7 +707,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1svwt2mr4x2mx0hcmty0mxsa4rmlfau4lwx2l69",
       name: "Twinstake-Validator",
-      tokens: 896161295879,
+      tokens: "896161295879",
       votingPower: 0,
       commission: 0.08,
       estimatedYearlyRewardsRate: 0,
@@ -715,7 +715,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1sdz4rc95vnzh2f54sacec50vjxnmwdakfym4vh",
       name: "Chill Validation",
-      tokens: 120712547209,
+      tokens: "120712547209",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -723,7 +723,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
       name: "InfStones",
-      tokens: 579956264171,
+      tokens: "579956264171",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -731,7 +731,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1s05va5d09xlq3et8mapsesqh6r5lqy7mkhwshm",
       name: "Wetez",
-      tokens: 75512858317,
+      tokens: "75512858317",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -739,7 +739,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ssm0d433seakyak8kcf93yefhknjleeds4y3em",
       name: "IRISnet-Bianjie",
-      tokens: 780311804550,
+      tokens: "780311804550",
       votingPower: 0,
       commission: 0.09,
       estimatedYearlyRewardsRate: 0,
@@ -747,7 +747,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
       name: "🐠stake.fish",
-      tokens: 12465854427617,
+      tokens: "12465854427617",
       votingPower: 0,
       commission: 0.04,
       estimatedYearlyRewardsRate: 0,
@@ -755,7 +755,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper13ql36flc4cdjhx08hke5vpr4dyv03aafnmvtnc",
       name: "TienThuatToan Capital",
-      tokens: 93377117231,
+      tokens: "93377117231",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -763,7 +763,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper13x77yexvf6qexfjg9czp6jhpv7vpjdwwkyhe4p",
       name: "blockscape",
-      tokens: 162572828346,
+      tokens: "162572828346",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -771,7 +771,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper132juzk0gdmwuxvx4phug7m3ymyatxlh9734g4w",
       name: "P2P.ORG - P2P Validator",
-      tokens: 3985809908630,
+      tokens: "3985809908630",
       votingPower: 0,
       commission: 0.08,
       estimatedYearlyRewardsRate: 0,
@@ -779,7 +779,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper130mdu9a0etmeuw52qfxk73pn0ga6gawkxsrlwf",
       name: "strangelove-ventures",
-      tokens: 1337634064725,
+      tokens: "1337634064725",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -787,7 +787,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper13sduv92y3xdhy3rpmhakrc3v7t37e7ps9l0kpv",
       name: "nylira.net",
-      tokens: 336165915476,
+      tokens: "336165915476",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -795,7 +795,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper13nvnv6q8d3yg7tjeahjzljkqu0y27s8y9e7as9",
       name: "Latent Iron",
-      tokens: 618500852628,
+      tokens: "618500852628",
       votingPower: 0,
       commission: 1,
       estimatedYearlyRewardsRate: 0,
@@ -803,7 +803,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper13maqgtlklmereflvg3lq3e8zrp0jsqhr8ef3kk",
       name: "ChainUp",
-      tokens: 234367283757,
+      tokens: "234367283757",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -811,7 +811,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1jxv0u20scum4trha72c7ltfgfqef6nsch7q6cu",
       name: "Ping",
-      tokens: 145704343768,
+      tokens: "145704343768",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -819,7 +819,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1j0vaeh27t4rll7zhmarwcuq8xtrmvqhudrgcky",
       name: "Chainflow",
-      tokens: 125084103037,
+      tokens: "125084103037",
       votingPower: 0,
       commission: 0.08,
       estimatedYearlyRewardsRate: 0,
@@ -827,7 +827,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1jst8q8flpn94u9uvkpae8mrkk3a5pjhxx529z2",
       name: "Node Guardians",
-      tokens: 1263321100142,
+      tokens: "1263321100142",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -835,7 +835,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1jmykcq8gylmy5tgqtel4xj4q62fdt49sl584xd",
       name: "Blocks United | blocksunited.com",
-      tokens: 147360978162,
+      tokens: "147360978162",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -843,7 +843,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1jlr62guqwrwkdt4m3y00zh2rrsamhjf9num5xr",
       name: "StakeWithUs",
-      tokens: 222182847477,
+      tokens: "222182847477",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -851,7 +851,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1nz3c4q40j8jyvg2hcljkwhe69872mnllf7v9xh",
       name: "Interstellar Lounge 🥃 🍸 🍹",
-      tokens: 150613490975,
+      tokens: "150613490975",
       votingPower: 0,
       commission: 0,
       estimatedYearlyRewardsRate: 0,
@@ -859,7 +859,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1nxe3gnztx8wvayj260dp6yw7jg797m8up02h7z",
       name: "Synclub",
-      tokens: 81012394362,
+      tokens: "81012394362",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -867,7 +867,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
       name: "Allnodes.com ⚡️ 0% fee",
-      tokens: 3663045573759,
+      tokens: "3663045573759",
       votingPower: 0,
       commission: 0,
       estimatedYearlyRewardsRate: 0,
@@ -875,7 +875,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1n3nll7yl3lcv932s2r7l6jzvkjtjk0qppp3rls",
       name: "RoundTable21 by WildSage Labs",
-      tokens: 117691056176,
+      tokens: "117691056176",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -883,7 +883,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1n3mhyp9fvcmuu8l0q8qvjy07x0rql8q46fe2xk",
       name: "0base.vc",
-      tokens: 595901675754,
+      tokens: "595901675754",
       votingPower: 0,
       commission: 0.04,
       estimatedYearlyRewardsRate: 0,
@@ -891,7 +891,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1nuhls0wyf8slhmuasha5pz0u89jrf9nnugq8ak",
       name: "Golden Ratio Staking",
-      tokens: 338659126520,
+      tokens: "338659126520",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -899,7 +899,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper15r4tc0m6hc7z8drq3dzlrtcs6rq2q9l2nvwher",
       name: "DragonStake",
-      tokens: 73598583742,
+      tokens: "73598583742",
       votingPower: 0,
       commission: 0.09,
       estimatedYearlyRewardsRate: 0,
@@ -907,7 +907,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
       name: "Binance Staking",
-      tokens: 3504159918432,
+      tokens: "3504159918432",
       votingPower: 0,
       commission: 0.025,
       estimatedYearlyRewardsRate: 0,
@@ -915,7 +915,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper15urq2dtp9qce4fyc85m6upwm9xul3049e02707",
       name: "Chorus One",
-      tokens: 3571665368308,
+      tokens: "3571665368308",
       votingPower: 0,
       commission: 0.075,
       estimatedYearlyRewardsRate: 0,
@@ -923,7 +923,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper157v7tczs40axfgejp2m43kwuzqe0wsy0rv8puv",
       name: "POSTHUMAN ꝏ DVS",
-      tokens: 716451671578,
+      tokens: "716451671578",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -931,7 +931,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper14qazscc80zgzx3m0m0aa30ths0p9hg8vdglqrc",
       name: "✅ CryptoCrew Validators 🏆 Winner #GameOfChains",
-      tokens: 178974466615,
+      tokens: "178974466615",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -939,7 +939,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper140e7u946a2nqqkvcnjpjm83d0ynsqem8dnp684",
       name: "danku_zone w/ DAIC",
-      tokens: 129885139553,
+      tokens: "129885139553",
       votingPower: 0,
       commission: 0.04,
       estimatedYearlyRewardsRate: 0,
@@ -947,7 +947,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper140l6y2gp3gxvay6qtn70re7z2s0gn57zfd832j",
       name: " Lavender.Five Nodes 🐝",
-      tokens: 316057676979,
+      tokens: "316057676979",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -955,7 +955,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper14kn0kk33szpwus9nh8n87fjel8djx0y070ymmj",
       name: "Forbole",
-      tokens: 1597944680203,
+      tokens: "1597944680203",
       votingPower: 0,
       commission: 0.095,
       estimatedYearlyRewardsRate: 0,
@@ -963,7 +963,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper14k4pzckkre6uxxyd2lnhnpp8sngys9m6hl6ml7",
       name: "Polychain",
-      tokens: 7212245981918,
+      tokens: "7212245981918",
       votingPower: 0,
       commission: 0.2,
       estimatedYearlyRewardsRate: 0,
@@ -971,7 +971,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper146kwpzhmleafmhtaxulfptyhnvwxzlvm87hwnm",
       name: "🌐 KysenPool Sky ☁️ ",
-      tokens: 596392537524,
+      tokens: "596392537524",
       votingPower: 0,
       commission: 0.079,
       estimatedYearlyRewardsRate: 0,
@@ -979,7 +979,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper14upntdx8lf0f49t987mj99zksxnluanvu6x4lu",
       name: "Republic Crypto",
-      tokens: 88041301862,
+      tokens: "88041301862",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -987,7 +987,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper14l0fp639yudfl46zauvv8rkzjgd4u0zk2aseys",
       name: "ATEAM",
-      tokens: 627256512496,
+      tokens: "627256512496",
       votingPower: 0,
       commission: 0.099,
       estimatedYearlyRewardsRate: 0,
@@ -995,7 +995,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper14lultfckehtszvzw4ehu0apvsr77afvyju5zzy",
       name: "DokiaCapital",
-      tokens: 10486040529759,
+      tokens: "10486040529759",
       votingPower: 0,
       commission: 0.15,
       estimatedYearlyRewardsRate: 0,
@@ -1003,7 +1003,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1kyfce0nvluyhgfsdzz8hwrsf5336gsc95pyy4u",
       name: "0% Fee StakeSeeker by BTCS",
-      tokens: 138452226746,
+      tokens: "138452226746",
       votingPower: 0,
       commission: 0,
       estimatedYearlyRewardsRate: 0,
@@ -1011,7 +1011,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1kgddca7qj96z0qcxr2c45z73cfl0c75p7f3s2e",
       name: "ChainLayer",
-      tokens: 1127571873220,
+      tokens: "1127571873220",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1019,7 +1019,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1k2d9ed9vgfuk2m58a2d80q9u6qljkh4vfaqjfq",
       name: "Stakecito",
-      tokens: 1049635261667,
+      tokens: "1049635261667",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1027,7 +1027,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1kn3wugetjuy4zetlq6wadchfhvu3x740ae6z6x",
       name: "Huobi",
-      tokens: 184948608203,
+      tokens: "184948608203",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1035,7 +1035,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1keltez56g3zm9w8wr8gcmmulze48g2q3usuw8c",
       name: "DeFi Wallet",
-      tokens: 310340547767,
+      tokens: "310340547767",
       votingPower: 0,
       commission: 0.07,
       estimatedYearlyRewardsRate: 0,
@@ -1043,7 +1043,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1hdrlqvyjfy5sdrseecjrutyws9khtxxaux62l7",
       name: "SmartNodes",
-      tokens: 360125159893,
+      tokens: "360125159893",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1051,7 +1051,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpfdn6m9d",
       name: "Figment",
-      tokens: 4083033780453,
+      tokens: "4083033780453",
       votingPower: 0,
       commission: 0.09,
       estimatedYearlyRewardsRate: 0,
@@ -1059,7 +1059,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1hjadhj9nqzpye2vkmkz4thahhd0z8dh3udhq74",
       name: "Atomic Nodes",
-      tokens: 778361716112,
+      tokens: "778361716112",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1067,7 +1067,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1hmd535f69t3x262m6s9wc6jd0dmel2zevhyuhm",
       name: "Prism Protocol | Delegate for airdrop",
-      tokens: 783898275979,
+      tokens: "783898275979",
       votingPower: 0,
       commission: 0.075,
       estimatedYearlyRewardsRate: 0,
@@ -1075,7 +1075,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ha8d55747h8hsaluvz8ld88n24nfaw68rx4x92",
       name: "Lightning Capital",
-      tokens: 130452980687,
+      tokens: "130452980687",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -1083,7 +1083,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1hlwku8r5h34zayle405tlesvrg5svu7ugkld20",
       name: "New Huo Staking",
-      tokens: 63481886013,
+      tokens: "63481886013",
       votingPower: 0,
       commission: 0.025,
       estimatedYearlyRewardsRate: 0,
@@ -1091,7 +1091,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1crqm3598z6qmyn2kkcl9dz7uqs4qdqnr6s8jdn",
       name: "Coinbase Cloud",
-      tokens: 1451276222171,
+      tokens: "1451276222171",
       votingPower: 0,
       commission: 0.08,
       estimatedYearlyRewardsRate: 0,
@@ -1099,7 +1099,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1cgh5ksjwy2sd407lyre4l3uj2fdrqhpkzp06e6",
       name: "HashQuark",
-      tokens: 310615592099,
+      tokens: "310615592099",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1107,7 +1107,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1c4k24jzduc365kywrsvf5ujz4ya6mwympnc4en",
       name: "Coinbase Custody",
-      tokens: 4371659767586,
+      tokens: "4371659767586",
       votingPower: 0,
       commission: 0.2,
       estimatedYearlyRewardsRate: 0,
@@ -1115,7 +1115,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1cc99d3xcukhedg4wcw53j7a9q68uza707vpfe7",
       name: "dForce",
-      tokens: 1155265326240,
+      tokens: "1155265326240",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -1123,7 +1123,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1clpqr4nrk4khgkxj78fcwwh6dl3uw4epsluffn",
       name: "Cosmostation",
-      tokens: 3739171463365,
+      tokens: "3739171463365",
       votingPower: 0,
       commission: 0.089,
       estimatedYearlyRewardsRate: 0,
@@ -1131,7 +1131,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
       name: "Sikka",
-      tokens: 5494217904016,
+      tokens: "5494217904016",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -1139,7 +1139,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1e859xaue4k2jzqw20cv6l7p3tmc378pc3k8g2u",
       name: "Citizen Cosmos",
-      tokens: 174188251877,
+      tokens: "174188251877",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1147,7 +1147,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1et77usu8q2hargvyusl4qzryev8x8t9wwqkxfs",
       name: "Stargaze",
-      tokens: 159923131389,
+      tokens: "159923131389",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1155,7 +1155,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ed5a27kfyu0yljmna00vtr8mgzp6rwh9zn77zz",
       name: "CROSSTECH",
-      tokens: 101455365046,
+      tokens: "101455365046",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -1163,7 +1163,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1e0plfg475phrsvrlzw8gwppeva0zk5yg9fgg8c",
       name: "Easy 2 Stake",
-      tokens: 158504922404,
+      tokens: "158504922404",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1171,7 +1171,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5wxxp9gd",
       name: "Frens (🤝,🤝)",
-      tokens: 446786117387,
+      tokens: "446786117387",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1179,7 +1179,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1e4vye322gkjx8n85jgcclnc7nvdvu82axnr5ll",
       name: "Binary Holdings",
-      tokens: 217239911461,
+      tokens: "217239911461",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -1187,7 +1187,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1eh5mwu044gd5ntkkc2xgfg8247mgc56fz4sdg3",
       name: "BouBouNode",
-      tokens: 1983332807820,
+      tokens: "1983332807820",
       votingPower: 0,
       commission: 0.061,
       estimatedYearlyRewardsRate: 0,
@@ -1195,7 +1195,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ehkfl7palwrh6w2hhr2yfrgrq8jetgucudztfe",
       name: "KalpaTech",
-      tokens: 736065150140,
+      tokens: "736065150140",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1203,7 +1203,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ec3p6a75mqwkv33zt543n6cnxqwun37rr5xlqv",
       name: "lunamint",
-      tokens: 78225269490,
+      tokens: "78225269490",
       votingPower: 0,
       commission: 0.15,
       estimatedYearlyRewardsRate: 0,
@@ -1211,7 +1211,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper16qme5yxucnaj6snx35nmwze0wyxr8wfgqxsqfw",
       name: "KIRA",
-      tokens: 145560331861,
+      tokens: "145560331861",
       votingPower: 0,
       commission: 0.09,
       estimatedYearlyRewardsRate: 0,
@@ -1219,7 +1219,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper16yupepagywvlk7uhpfchtwa0stu5f8cyhh54f2",
       name: "Stakely.io",
-      tokens: 280089299516,
+      tokens: "280089299516",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -1227,7 +1227,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper16fnz0v4cnv5dpnj0p3gaft2q2kzx8z5hfrx6v5",
       name: "DACM",
-      tokens: 1149513699372,
+      tokens: "1149513699372",
       votingPower: 0,
       commission: 0.035,
       estimatedYearlyRewardsRate: 0,
@@ -1235,7 +1235,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper16s96n9k9zztdgjy8q4qcxp4hn7ww98qkrka4zk",
       name: "Oni ⛩️",
-      tokens: 236130975282,
+      tokens: "236130975282",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -1243,7 +1243,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper16k579jk6yt2cwmqx9dz5xvq9fug2tekvlu9qdv",
       name: "Informal Systems",
-      tokens: 3228198751067,
+      tokens: "3228198751067",
       votingPower: 0,
       commission: 0.0811,
       estimatedYearlyRewardsRate: 0,
@@ -1251,7 +1251,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1m902jrk0pn4yc47zfvauqwvtq0e03nen5xgzte",
       name: "Luganodes",
-      tokens: 340199198218,
+      tokens: "340199198218",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1259,7 +1259,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ma02nlc7lchu7caufyrrqt4r6v2mpsj90y9wzd",
       name: "hashtower",
-      tokens: 2170244716502,
+      tokens: "2170244716502",
       votingPower: 0,
       commission: 0.03,
       estimatedYearlyRewardsRate: 0,
@@ -1267,7 +1267,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1m73mgwn3cm2e8x9a9axa0kw8nqz8a492ms63vn",
       name: "#decentralizehk - DHK dao",
-      tokens: 367141412421,
+      tokens: "367141412421",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1275,7 +1275,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1udpsgkgyutgsglauk9vk9rs03a3skc62gup9ny",
       name: "AUDIT.one",
-      tokens: 359036510260,
+      tokens: "359036510260",
       votingPower: 0,
       commission: 0.07,
       estimatedYearlyRewardsRate: 0,
@@ -1283,7 +1283,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1usvshtypjw57edkwxq3tagme665398f0hf4wuc",
       name: "Made In Block",
-      tokens: 79998199286,
+      tokens: "79998199286",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1291,7 +1291,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ukpah0340rx7k3x2njnavwyjv6pfpvn632df9q",
       name: "IcyCRO 🧊",
-      tokens: 218302143152,
+      tokens: "218302143152",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -1299,7 +1299,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1uhnsxv6m83jj3328mhrql7yax3nge5svrv6t6c",
       name: "S16 Research Ventures",
-      tokens: 569606427018,
+      tokens: "569606427018",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1307,7 +1307,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1u6ddcsjueax884l3tfrs66497c7g86skn7pa0u",
       name: "Sentinel",
-      tokens: 77202681478,
+      tokens: "77202681478",
       votingPower: 0,
       commission: 0.15,
       estimatedYearlyRewardsRate: 0,
@@ -1315,7 +1315,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1uutuwrwt3z2a5z8z3uasml3rftlpmu25aga5c6",
       name: "DelegaNetworks ∞",
-      tokens: 602329319415,
+      tokens: "602329319415",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1323,7 +1323,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ualhu3fjgg77g485gmyswkq3w0dp7gys6qzwrv",
       name: "stake.systems",
-      tokens: 137777981139,
+      tokens: "137777981139",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -1331,7 +1331,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1ul2me6vukg2vac2p6ltxmqlaa7jywdgt8q76ag",
       name: "HyperblocksPro",
-      tokens: 464106281837,
+      tokens: "464106281837",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1339,7 +1339,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1awguwfrm22sh7yewkywrjujukc75a3r3tpwfyp",
       name: "Foundry USA",
-      tokens: 35676506381,
+      tokens: "35676506381",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1347,7 +1347,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1a4qlael79p76my9pml6thwhnnzsxyy4ajrvd9s",
       name: "Multiplex",
-      tokens: 98408416444,
+      tokens: "98408416444",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1355,7 +1355,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1aewyh4gtvayx6v7w592jdfylawk4rsu9tfvfgm",
       name: "Silk Nodes",
-      tokens: 187413023722,
+      tokens: "187413023722",
       votingPower: 0,
       commission: 0.01,
       estimatedYearlyRewardsRate: 0,
@@ -1363,7 +1363,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper17h2x3j7u44qkrq0sk8ul0r2qr440rwgjkfg0gh",
       name: "FreshATOMS.com",
-      tokens: 336924857351,
+      tokens: "336924857351",
       votingPower: 0,
       commission: 0.0299,
       estimatedYearlyRewardsRate: 0,
@@ -1371,7 +1371,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper17mggn4znyeyg25wd7498qxl7r2jhgue8u4qjcq",
       name: "01node",
-      tokens: 470311918496,
+      tokens: "470311918496",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1379,7 +1379,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1lzhlnpahvznwfv4jmay2tgaha5kmz5qxerarrl",
       name: "Citadel.one SuperApp",
-      tokens: 2579744084301,
+      tokens: "2579744084301",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1387,7 +1387,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1lktjhnzkpkz3ehrg8psvmwhafg56kfss3q3t8m",
       name: "Umbrella ☔",
-      tokens: 568112593564,
+      tokens: "568112593564",
       votingPower: 0,
       commission: 0.1,
       estimatedYearlyRewardsRate: 0,
@@ -1395,7 +1395,7 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1lkujuk2004p3w42tgvuvqnsdmsq8u6jqkwf9wj",
       name: "BitValidator",
-      tokens: 133109114153,
+      tokens: "133109114153",
       votingPower: 0,
       commission: 0.05,
       estimatedYearlyRewardsRate: 0,
@@ -1403,14 +1403,14 @@ const data: CosmosPreloadData = {
     {
       validatorAddress: "cosmosvaloper1lcwxu50rvvgf9v6jy6q5mrzyhlszwtjxhtscmp",
       name: "stakezone",
-      tokens: 448761484035,
+      tokens: "448761484035",
       votingPower: 0,
       commission: 0,
       estimatedYearlyRewardsRate: 0,
     },
     {
       validatorAddress: "cosmosvaloper1mykn77lkynl8fkwvl9tqg369u0zajzzcdhkptq",
-      tokens: 90061196918,
+      tokens: "90061196918",
       votingPower: 90061196918 / (0.7202 * 254624972017526),
       name: "Nodeasy.com",
       commission: 0.1,

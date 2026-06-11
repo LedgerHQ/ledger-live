@@ -50,9 +50,7 @@ export default {
             break;
         }
 
-        return from(
-          prepareMessageToSign(account, Buffer.from(opts.message).toString("hex")),
-        ).pipe(
+        return from(prepareMessageToSign(account, Buffer.from(opts.message).toString("hex"))).pipe(
           switchMap(preparedMessage =>
             withDevice(opts.device || "")(t => from(signMessage(t, account, preparedMessage))),
           ),

@@ -11,9 +11,9 @@ import { renderHook, withFlagOverrides } from "tests/testSetup";
 import AccountHeaderActions from "../AccountHeaderManageActions";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
-  const {
-    defaultIsAccountEmpty,
-  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  const { defaultIsAccountEmpty } = jest.requireActual(
+    "@ledgerhq/live-common/bridge/defaultBridgeExtensions",
+  );
   return {
     useAccountBridge: jest.fn(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
     useAccountBridgeOrNull: jest.fn(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
@@ -90,7 +90,6 @@ describe("EVM AccountHeaderManageActions", () => {
 
       expect(result.current).toEqual([]);
     });
-
   });
 
   describe("when sei_evm account has zero spendable balance", () => {

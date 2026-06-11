@@ -18,10 +18,12 @@ export async function fetchList({
   page = 1,
   order = Order.MarketCapDesc,
   search = "",
+  filter,
   liveCompatible = false,
   starred = [],
   range = "24",
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
+  const hasExplicitFilter = Boolean(filter);
   const url = URL.format({
     pathname: `${baseURL()}/v3/markets`,
     query: {
@@ -29,10 +31,11 @@ export async function fetchList({
       pageSize: limit,
       to: counterCurrency,
       sort: getSortParam(order, range),
-      ...(search.length >= 2 && { filter: search }),
+      ...(hasExplicitFilter ? { filter } : search.length >= 2 && { filter: search }),
       ...(starred.length > 0 && { ids: starred.sort().join(",") }),
       ...(liveCompatible && { supported: liveCompatible }),
-      ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
+      ...(!hasExplicitFilter &&
+        [Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
   });
 

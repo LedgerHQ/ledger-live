@@ -6,10 +6,7 @@ import {
   getParentAccount,
 } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
-import {
-  getAccountSpendableBalance,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountSpendableBalance, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { ScreenName, NavigatorName } from "~/const";
@@ -32,6 +29,7 @@ function ReceiveFunds({ navigation, route }: Props) {
   const {
     selectedCurrency,
     currency: initialCurrencySelected,
+    currencyIds,
     next,
     category,
     notEmptyAccounts,
@@ -42,6 +40,15 @@ function ReceiveFunds({ navigation, route }: Props) {
 
   const accounts = useSelector(accountsSelector);
   const enhancedAccounts = useMemo(() => {
+    // Filter by an explicit list of ledger currency ids: keeps every account
+    // (token sub-accounts included) holding one of the asset's networks, so a
+    // multi-network asset (e.g. USDT on Ethereum + Tron) shows all its accounts.
+    if (currencyIds?.length) {
+      const idSet = new Set(currencyIds);
+      return flattenAccounts(accounts).filter(acc =>
+        idSet.has(acc.type === "TokenAccount" ? acc.token.id : acc.currency.id),
+      );
+    }
     if (selectedCurrency) {
       const filteredAccounts = accounts.filter(
         acc =>
@@ -63,8 +70,14 @@ function ReceiveFunds({ navigation, route }: Props) {
       return flattenAccounts(filteredAccounts);
     }
     return flattenAccounts(accounts);
-  }, [accounts, selectedCurrency]);
-  const mainAccounts = enhancedAccounts.filter((a): a is Account => a.type === "Account");
+  }, [accounts, selectedCurrency, currencyIds]);
+  // Resolve the parent (main) accounts of everything displayed — including token
+  // sub-accounts whose parent is not itself in the list (the `currencyIds` case)
+  // — so the `notEmptyAccounts` filter below can read each account's bridge.
+  const parentAccountIds = new Set(
+    enhancedAccounts.map(a => (a.type === "Account" ? a.id : a.parentId)),
+  );
+  const mainAccounts = accounts.filter((a): a is Account => parentAccountIds.has(a.id));
   const bridges = useAccountBridgeMany(mainAccounts);
   const bridgeById = new Map(mainAccounts.map((a, i) => [a.id, bridges[i]]));
   const allAccounts = notEmptyAccounts

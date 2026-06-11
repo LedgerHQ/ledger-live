@@ -7,7 +7,12 @@ import casperResolver from "@ledgerhq/coin-casper/signer";
 import { signMessage } from "@ledgerhq/coin-casper/hw-signMessage";
 import type { Account, Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-casper/test/cli";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import {
+  CreateSigner,
+  createMessageSigner,
+  createResolver,
+  executeWithSigner,
+} from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { TransactionStatus, Transaction } from "@ledgerhq/coin-casper/types";
 import { CasperGetAddrResponse, CasperSignature, CasperSigner } from "./types";
@@ -48,7 +53,7 @@ const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
 );
 
 const messageSigner = {
-  signMessage,
+  signMessage: createMessageSigner(createSigner, signMessage),
 };
 
 const resolver: Resolver = createResolver(createSigner, casperResolver);

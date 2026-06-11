@@ -61,7 +61,7 @@ import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { SwapLoader } from "./SwapLoader";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -187,7 +187,6 @@ const SwapWebView = ({
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
-  const { isEnabled: isLwd40Enabled } = useWalletFeaturesConfig("desktop");
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
@@ -606,7 +605,7 @@ const SwapWebView = ({
             isModularDrawer: isLldModularDrawer ? "true" : "false",
             isEmbedded: isEmbedded ? "true" : "false",
             discreetMode: discreetMode ? "true" : "false",
-            lwd40enabled: isLwd40Enabled ? "true" : "false",
+            lwd40enabled: "true",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

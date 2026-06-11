@@ -89,7 +89,7 @@ export function useTransactionsViewModel(
 
   const onHeaderPress = useCallback(() => {
     track("button_clicked", {
-      button: "transactions_header",
+      button: "Transactions",
       currency: currency?.id,
       page: "Asset Detail",
     });

@@ -5,7 +5,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockNavigate = jest.fn();
 const mockOpenAssetAndAccount = jest.fn();
@@ -21,10 +21,18 @@ jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () 
 }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
+const base = getCryptoCurrencyById("base");
+const arbitrum = getCryptoCurrencyById("arbitrum");
+const multiNetworkCurrencyIds = [ethereum.id, base.id, arbitrum.id];
+
+function createCryptoAccount(id: string, currency: CryptoCurrency): Account {
+  const account = genAccount(id, { currency });
+  return { ...account, id };
+}
 
 function createBitcoinAccount(id: string): Account {
-  const account = genAccount(id, { currency: bitcoin });
-  return { ...account, id };
+  return createCryptoAccount(id, bitcoin);
 }
 
 const cases = [
@@ -163,6 +171,31 @@ describe.each(cases)(
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
+    test("should open drawer with all provided currency ids when asset detail has multiple networks", () => {
+      const ethAccount = createCryptoAccount("eth-1", ethereum);
+      const baseAccount = createCryptoAccount("base-1", base);
+      const arbitrumAccount = createCryptoAccount("arbitrum-1", arbitrum);
+      const { result } = renderHook(() => useHook(), {
+        initialState: { accounts: [ethAccount, baseAccount, arbitrumAccount] },
+      });
+
+      act(() => {
+        getNavigate(result.current as never)(ethereum, "eth", {
+          currencyIds: multiNetworkCurrencyIds,
+        });
+      });
+
+      expect(mockOpenAssetAndAccount).toHaveBeenCalledTimes(1);
+      expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: multiNetworkCurrencyIds,
+          areCurrenciesFiltered: true,
+          useCase,
+        }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
     test("should navigate to exchange when drawer onSuccess is called with selected account", () => {
       const account1 = createBitcoinAccount("btc-1");
       const account2 = createBitcoinAccount("btc-2");
@@ -192,6 +225,40 @@ describe.each(cases)(
       expect(mockNavigate).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
         state: { currency: bitcoin.id, account: account1.id, mode, returnTo: "/market" },
+      });
+    });
+
+    test("should navigate with selected network currency when multi-network drawer succeeds", () => {
+      const ethAccount = createCryptoAccount("eth-1", ethereum);
+      const baseAccount = createCryptoAccount("base-1", base);
+      let onSuccessCallback: ((account: Account, parentAccount?: Account) => void) | undefined;
+
+      mockOpenAssetAndAccount.mockImplementation(
+        ({ onSuccess }: { onSuccess?: (a: Account, p?: Account) => void }) => {
+          onSuccessCallback = onSuccess;
+        },
+      );
+
+      const { result } = renderHook(() => useHook(), {
+        initialState: { accounts: [ethAccount, baseAccount] },
+      });
+
+      act(() => {
+        getNavigate(result.current as never)(ethereum, "eth", {
+          currencyIds: multiNetworkCurrencyIds,
+        });
+      });
+
+      expect(mockOpenAssetAndAccount).toHaveBeenCalled();
+      expect(onSuccessCallback).toBeDefined();
+
+      act(() => {
+        onSuccessCallback?.(baseAccount);
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
+        state: { currency: base.id, account: baseAccount.id, mode, returnTo: "/market" },
       });
     });
   },

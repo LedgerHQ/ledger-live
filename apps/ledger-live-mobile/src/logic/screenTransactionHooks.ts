@@ -164,10 +164,7 @@ export const useSignWithDevice = ({
     });
     setSigning(true);
     formatAccount(mainAccount, "basic").then(str => log("transaction-summary", `→ FROM ${str}`));
-    log(
-      "transaction-summary",
-      `✔️ transaction ${formatTransaction(transaction, mainAccount)}`,
-    );
+    log("transaction-summary", `✔️ transaction ${formatTransaction(transaction, mainAccount)}`);
     subscription.current = bridge
       .signOperation({
         account: mainAccount,

@@ -1,35 +1,46 @@
 import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
   ReactNode,
-  useRef,
+  useCallback,
+  useEffect,
   useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import { Image, Linking } from "react-native";
-import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/native-ui";
+import { ShadowedView } from "react-native-fast-shadow";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
+import { useIsFocused } from "@react-navigation/native";
+
+import { useFeature } from "@features/platform-feature-flags";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   CharonStatus,
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { useTranslation } from "~/context/Locale";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSelector, useDispatch } from "~/context/hooks";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
-
-import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
+import { ContinueOnDevice, Flex, Link, Text, VerticalTimeline } from "@ledgerhq/native-ui";
+import {
+  ExternalLinkMedium,
+  Note,
+  RecoveryKey,
+  ShieldCheck,
+} from "@ledgerhq/native-ui/assets/icons";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
+
+import BackgroundBlue from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundBlue";
+import BackgroundRed from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundRed";
+import ContinueOnApex from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/ContinueOnApex";
+import ContinueOnEuropa from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/ContinueOnEuropa";
+import ContinueOnStax from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/ContinueOnStax";
+import SecretRecoveryPhraseImage from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/srp.png";
+
 import { addKnownBleDevice } from "~/actions/ble";
-import { addKnownDevice, mapDeviceToKnownDevice } from "~/reducers/knownDevices";
-import { NavigatorName, ScreenName } from "~/const";
-import HelpDrawer from "./HelpDrawer";
-import DesyncOverlay from "./DesyncOverlay";
 import {
   completeOnboarding,
   setHasOrderedNano,
@@ -38,30 +49,21 @@ import {
   setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
-import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { TrackScreen, screen, useTrack } from "~/analytics";
-import ContinueOnStax from "./assets/ContinueOnStax";
-import ContinueOnEuropa from "./assets/ContinueOnEuropa";
-import ContinueOnApex from "./assets/ContinueOnApex";
-import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
-import { useIsFocused } from "@react-navigation/native";
-import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import {
-  ExternalLinkMedium,
-  RecoveryKey,
-  Note,
-  ShieldCheck,
-} from "@ledgerhq/native-ui/assets/icons";
-import SecretRecoveryPhraseImage from "./assets/srp.png";
-import BackgroundBlue from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundBlue";
-import BackgroundRed from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundRed";
-import Animation from "~/components/Animation";
 import CHARON from "~/animations/device/charon/charon.json";
-import { ShadowedView } from "react-native-fast-shadow";
-import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import Animation from "~/components/Animation";
+import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
+import { NavigatorName, ScreenName } from "~/const";
+import { useTranslation } from "~/context/Locale";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import { addKnownDevice, mapDeviceToKnownDevice } from "~/reducers/knownDevices";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+
+import DesyncOverlay from "./DesyncOverlay";
+import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -226,7 +228,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const desyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
 
   const {
@@ -941,38 +942,29 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const safeAreaInsets = useSafeAreaInsets();
 
   return (
-    <>
-      <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
-      <Flex position="relative" flex={1} px={6}>
-        <DesyncOverlay
-          isOpen={isDesyncOverlayOpen}
-          delay={desyncOverlayDisplayDelayMs}
-          productName={productName}
+    <Flex position="relative" flex={1} px={6}>
+      <DesyncOverlay
+        isOpen={isDesyncOverlayOpen}
+        delay={desyncOverlayDisplayDelayMs}
+        productName={productName}
+      />
+      <Flex>
+        <VerticalTimeline
+          steps={companionSteps}
+          formatEstimatedTime={formatEstimatedTime}
+          contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
+          header={
+            <Flex mb={8} flexDirection="row" alignItems="center">
+              <Text variant="h4" fontWeight="semiBold">
+                {t("syncOnboarding.title", { productName })}
+              </Text>
+            </Flex>
+          }
         />
-        <Flex>
-          <VerticalTimeline
-            steps={companionSteps}
-            formatEstimatedTime={formatEstimatedTime}
-            contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
-            header={
-              <Flex mb={8} flexDirection="row" alignItems="center">
-                <Text variant="h4" fontWeight="semiBold">
-                  {t("syncOnboarding.title", { productName })}
-                </Text>
-                {/* TODO: disabled for now but will be used in the future */}
-                {/* <Button
-                    ml={2}
-                    Icon={Question}
-                    onPress={() => setHelpDrawerOpen(true)}
-                  /> */}
-              </Flex>
-            }
-          />
-          {companionStepKey === CompanionStepKey.Exit ? (
-            <TrackScreen category="Set up device: Final Step Your device is ready" />
-          ) : null}
-        </Flex>
+        {companionStepKey === CompanionStepKey.Exit ? (
+          <TrackScreen category="Set up device: Final Step Your device is ready" />
+        ) : null}
       </Flex>
-    </>
+    </Flex>
   );
 };

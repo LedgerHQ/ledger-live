@@ -1,8 +1,5 @@
 import * as registry from "./registry";
-import {
-  LiveAppModalAlreadyOpenError,
-  LiveAppModalUnknownRequestIdError,
-} from "./types";
+import { LiveAppModalAlreadyOpenError, LiveAppModalUnknownRequestIdError } from "./types";
 
 describe("LiveAppModal registry", () => {
   beforeEach(() => {

@@ -1,3 +1,4 @@
+require("./scripts/register-lib-es-cjs");
 const { compilerOptions } = require("./tsconfig.json");
 const {
   getDeviceFirmwareVersion,
@@ -61,7 +62,7 @@ const detoxAllure2AdapterOptions = {
   onError: "warn",
 };
 
-const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
+const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq"].join("|");
 
 const config = {
   rootDir: ".",

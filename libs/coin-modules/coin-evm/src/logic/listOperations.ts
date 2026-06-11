@@ -60,6 +60,7 @@ const SEMANTIC_OP_TYPES: Set<OperationType> = new Set([
   "DELEGATE",
   "UNDELEGATE",
   "REDELEGATE",
+  "REWARD",
   "NFT_IN",
   "NFT_OUT",
 ]);
@@ -209,7 +210,7 @@ export async function listOperations(
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
   const explorerApi = getExplorerApi(currency);
-  const explorerOrder = options.limit === undefined ? "desc" : options.order ?? "desc";
+  const explorerOrder = options.limit === undefined ? "desc" : (options.order ?? "desc");
   const {
     lastCoinOperations,
     lastTokenOperations,
@@ -309,6 +310,7 @@ export async function listOperations(
       "DELEGATE",
       "UNDELEGATE",
       "REDELEGATE",
+      "REWARD",
       "NFT_IN",
       "NFT_OUT",
     ].includes(operation.type);

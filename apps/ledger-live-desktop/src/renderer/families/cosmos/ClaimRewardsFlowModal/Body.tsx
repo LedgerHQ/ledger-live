@@ -24,7 +24,10 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import type { CosmosAccount, Transaction as CosmosTransaction } from "@ledgerhq/coin-cosmos/types/index";
+import type {
+  CosmosAccount,
+  Transaction as CosmosTransaction,
+} from "@ledgerhq/coin-cosmos/types/index";
 
 export type Data = {
   account: CosmosAccount;

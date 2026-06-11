@@ -21,7 +21,10 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { PolkadotAccount, Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
+import {
+  PolkadotAccount,
+  Transaction as PolkadotTransaction,
+} from "@ledgerhq/live-common/families/polkadot/types";
 
 export type Data = {
   account: PolkadotAccount;

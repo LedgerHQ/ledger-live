@@ -17,7 +17,7 @@ const ACCOUNTS_ADDRESS = "0x000000000000000000000000000000000000aa10";
 const STABLE_TOKEN_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a";
 const VALID_RECIPIENT = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
 
-const estimateGasMock = jest.fn(async () => BigInt(3));
+const estimateGasMock = jest.fn(async (..._args: unknown[]) => BigInt(3));
 const getChainIdMock = jest.fn(async () => 42220);
 const getTransactionCountMock = jest.fn(async () => 1);
 const readContractMock = jest.fn<Promise<unknown>, [{ functionName: string }]>(
@@ -35,6 +35,7 @@ jest.mock("../../network/client", () => ({
     getTransactionCount: getTransactionCountMock,
     readContract: readContractMock,
   })),
+  celoEstimateGas: (...args: unknown[]) => estimateGasMock(...args),
 }));
 
 jest.mock("../../network/registry", () => ({

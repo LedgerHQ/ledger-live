@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import coinConfig from "@ledgerhq/coin-canton/config";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import OnboardModal from "../index";
@@ -106,7 +107,7 @@ describe("OnboardModal Integration", () => {
   const mockDevice = createMockDevice();
   let previousCantonNodeIdOverride: string;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     previousCantonNodeIdOverride = getEnv("CANTON_NODE_ID_OVERRIDE") ?? "";
     setEnv("CANTON_NODE_ID_OVERRIDE", "");
 
@@ -119,6 +120,8 @@ describe("OnboardModal Integration", () => {
       useGateway: true,
       nativeInstrumentId: "Amulet",
     }));
+
+    await getCurrencyBridge(getCryptoCurrencyById("canton_network_devnet"));
   });
 
   afterAll(() => {

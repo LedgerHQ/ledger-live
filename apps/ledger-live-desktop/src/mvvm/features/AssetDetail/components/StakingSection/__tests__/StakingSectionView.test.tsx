@@ -13,6 +13,7 @@ const baseViewModel: StakingSectionViewModelResult = {
   earnBannerActionLabel: "Go to Earn",
   onEarnBannerPress: jest.fn(),
   onEarnDepositPress: jest.fn(),
+  onAvailableBalanceTooltipOpen: jest.fn(),
 };
 
 describe("StakingSectionView", () => {
@@ -60,8 +61,14 @@ describe("StakingSectionView", () => {
   });
 
   it("keeps earn banner width aligned with other cards", () => {
-    render(<StakingSectionView {...baseViewModel} state={{ type: "banner", label: "Earn up to 12.0% APY" }} />);
+    render(
+      <StakingSectionView
+        {...baseViewModel}
+        state={{ type: "banner", label: "Earn up to 12.0% APY" }}
+      />,
+    );
 
+    expect(screen.getByTestId("asset-detail-earn-banner")).toHaveClass("min-w-[12rem]");
     expect(screen.getByTestId("asset-detail-earn-banner")).toHaveClass("flex-1");
   });
 });

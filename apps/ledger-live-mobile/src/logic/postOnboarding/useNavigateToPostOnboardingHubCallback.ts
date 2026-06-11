@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";

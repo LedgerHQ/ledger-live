@@ -6,6 +6,7 @@ import { useCountervaluesState } from "~/reducers/countervalues";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { usePnlViewModelBase } from "LLM/features/Pnl/hooks/usePnlViewModelBase";
 import type { PnlViewModel } from "LLM/features/Pnl/types";
+import { ASSET_DETAIL_PAGE } from "LLM/features/AssetDetail/const";
 
 const ZERO = new BigNumber(0);
 const EMPTY_ACCOUNTS: Parameters<typeof useAssetGroupPnL>[0] = [];
@@ -34,5 +35,6 @@ export function useAssetPnlViewModel({ distributionItem, enabled }: Props): PnlV
       value: averageEntryPrice,
     },
     accountsCount: distributionItem.accounts.length,
+    source: ASSET_DETAIL_PAGE,
   });
 }

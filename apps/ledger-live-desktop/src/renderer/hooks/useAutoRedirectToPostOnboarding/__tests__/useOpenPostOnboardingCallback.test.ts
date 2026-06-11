@@ -28,7 +28,6 @@ const recoverFeature = {
   enabled: true,
   params: {
     protectId: PROTECT_ID,
-    compatibleDevices: [{ name: DeviceModelId.stax, available: true }],
   },
 };
 

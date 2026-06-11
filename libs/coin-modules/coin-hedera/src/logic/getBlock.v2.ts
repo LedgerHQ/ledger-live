@@ -151,7 +151,9 @@ export async function getBlockV2({
     throw new Error(`Block ${height} is not available yet`);
   }
 
-  const latestHgraphIndexedTimestampNs = await hgraphClient.getLatestIndexedConsensusTimestamp();
+  const latestHgraphIndexedTimestampNs = await hgraphClient.getLatestIndexedConsensusTimestamp({
+    configOrCurrencyId,
+  });
   const startSeconds = millisToSeconds(start.getTime());
   const endSeconds = millisToSeconds(end.getTime());
   const endNanos = secondsToNanos(endSeconds);
@@ -166,6 +168,7 @@ export async function getBlockV2({
   const [blockInfo, mirrorTransactions, enrichedERC20Transfers] = await Promise.all([
     getBlockInfo(height),
     apiClient.getTransactionsByTimestampRange({
+      configOrCurrencyId,
       startTimestamp: `gte:${startSeconds}`,
       endTimestamp: `lt:${endSeconds}`,
       limit,
@@ -173,6 +176,7 @@ export async function getBlockV2({
     }),
     hgraphClient
       .getERC20TransfersByTimestampRange({
+        configOrCurrencyId,
         startTimestamp: startSeconds.toFixed(9),
         endTimestamp: endSeconds.toFixed(9),
         limit,

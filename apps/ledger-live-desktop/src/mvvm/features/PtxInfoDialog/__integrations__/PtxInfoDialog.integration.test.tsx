@@ -1,10 +1,7 @@
 import React from "react";
 import { render, screen, waitFor, act } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
-import {
-  setPtxInfoDialog,
-  clearPtxInfoDialog,
-} from "~/renderer/reducers/ptxInfoDialog";
+import { setPtxInfoDialog, clearPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import PtxInfoDialog from "..";
 
 jest.mock("~/renderer/linking", () => ({
@@ -109,9 +106,7 @@ describe("PtxInfoDialog Integration", () => {
       const { store } = render(<PtxInfoDialog />);
 
       act(() => {
-        store.dispatch(
-          setPtxInfoDialog({ title: "Closing test", message: "Will close soon." }),
-        );
+        store.dispatch(setPtxInfoDialog({ title: "Closing test", message: "Will close soon." }));
       });
 
       await waitFor(() => {

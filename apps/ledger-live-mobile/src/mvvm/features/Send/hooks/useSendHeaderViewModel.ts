@@ -1,12 +1,13 @@
 import { useCallback, useMemo } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
-import { SEND_FLOW_CONFIG } from "../constants";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import { useAvailableBalance } from "./useAvailableBalance";
+import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
 import {
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
@@ -38,32 +39,21 @@ export type SendHeaderViewModel = {
 
 export function useSendHeaderViewModel(): SendHeaderViewModel {
   const navigation = useNavigation();
-  const route = useRoute();
   const { t } = useTranslation();
   const { uiConfig, recipientSearch, state } = useSendFlowData();
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
 
-  const availableText = useAvailableBalance(state.account.account);
-
-  const [currentStep, currentStepConfig] = useMemo<
-    readonly [
-      SendFlowStep | undefined,
-      (typeof SEND_FLOW_CONFIG.stepConfigs)[SendFlowStep] | undefined,
-    ]
-  >(() => {
-    const step = SEND_FLOW_CONFIG.stepOrder.find(
-      step => SEND_FLOW_CONFIG.stepConfigs[step].screenName === route.name,
-    );
-    if (!step) return [undefined, undefined];
-    return [step, SEND_FLOW_CONFIG.stepConfigs[step]];
-  }, [route.name]);
+  const accountName = useMaybeAccountName(state.account.account);
+  const spendableBalanceText = useAvailableBalance(state.account.account);
+  const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
 
   const currencyName = state.account.currency?.ticker ?? "";
   const showTitle = currentStepConfig?.showTitle !== false;
   const title = showTitle ? t("send.newSendFlow.title", { currency: currencyName }) : "";
-  const descriptionText =
-    showTitle && availableText ? t("send.newSendFlow.available", { amount: availableText }) : "";
+  const descriptionText = showTitle
+    ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
+    : "";
 
   const showHeaderRight = currentStepConfig?.showHeaderRight !== false;
   const canGoBack = Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());

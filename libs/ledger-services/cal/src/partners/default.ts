@@ -148,7 +148,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     displayName: "LI.FI",
     mainUrl: "https://li.fi/",
     needsKYC: false,
-    supportUrl: "https://discord.gg/jumperexchange",
+    supportUrl: "https://scan.li.fi/",
     termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
     type: "CEX",
   },

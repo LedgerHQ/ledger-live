@@ -11,7 +11,12 @@ import {
   getNextAppOp,
 } from "./logic";
 import { /*runAll,*/ runOneAppOp } from "./runner";
-import { deviceInfo155, deviceInfo222, mockListAppsResult, mockExecWithInstalledContext } from "./mock";
+import {
+  deviceInfo155,
+  deviceInfo222,
+  mockListAppsResult,
+  mockExecWithInstalledContext,
+} from "./mock";
 // import { prettyActionPlan, prettyInstalled } from "./formatting";
 import { setEnv } from "@ledgerhq/live-env";
 import { Action } from "./types";

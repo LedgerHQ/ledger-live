@@ -47,7 +47,11 @@ describe("getValidators", () => {
 
     const result = await getValidators({ configOrCurrencyId: mockCurrency.id, cursor: "100" });
 
-    expect(apiClient.getNodes).toHaveBeenCalledWith({ cursor: "100", fetchAllPages: false });
+    expect(apiClient.getNodes).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
+      cursor: "100",
+      fetchAllPages: false,
+    });
     expect(result.next).toBe("123");
   });
 });

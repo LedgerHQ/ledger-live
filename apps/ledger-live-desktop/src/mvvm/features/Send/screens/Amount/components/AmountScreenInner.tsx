@@ -43,15 +43,6 @@ export function AmountScreenInner({
     [account, parentAccount],
   );
 
-  const handleReview = useCallback(() => {
-    track("button_clicked", {
-      button: "review",
-      page: "step amount",
-      ...sendFlowTrackingProperties,
-    });
-    onReview();
-  }, [onReview, sendFlowTrackingProperties]);
-
   const viewModel = useAmountScreenViewModel({
     account,
     parentAccount,
@@ -63,20 +54,37 @@ export function AmountScreenInner({
     transactionActions,
   });
 
-  return (
-    <>
+  const handleReview = useCallback(() => {
+    const activeQuickAction = viewModel.quickActions?.find(a => a.active)?.id ?? null;
+    track("button_clicked", {
+      button: "review",
+      page: "step amount",
+      quick_amount: activeQuickAction,
+      fee_strategy: viewModel.selectedFeeStrategy ?? null,
+      ...sendFlowTrackingProperties,
+    });
+    onReview();
+  }, [onReview, viewModel.quickActions, viewModel.selectedFeeStrategy, sendFlowTrackingProperties]);
+
+  const pluginsSlot = useMemo(
+    () => (
       <AmountPluginsHost
         account={account}
         parentAccount={parentAccount}
         transaction={transaction}
         transactionActions={transactionActions}
       />
-      <AmountScreenView
-        {...viewModel}
-        onReview={handleReview}
-        onGetFunds={onGetFunds}
-        onSelectCoinControl={onSelectCoinControl}
-      />
-    </>
+    ),
+    [account, parentAccount, transaction, transactionActions],
+  );
+
+  return (
+    <AmountScreenView
+      {...viewModel}
+      onReview={handleReview}
+      onGetFunds={onGetFunds}
+      onSelectCoinControl={onSelectCoinControl}
+      pluginsSlot={pluginsSlot}
+    />
   );
 }

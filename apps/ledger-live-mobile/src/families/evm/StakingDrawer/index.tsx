@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import React, { useEffect, useMemo, useState } from "react";

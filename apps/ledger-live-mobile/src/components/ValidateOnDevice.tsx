@@ -71,10 +71,9 @@ function FeesField({ account, parentAccount, status, field }: FieldComponentProp
   // Default: derive the unit from account.feesCurrency so that chains like
   // VeChain (fees paid in VTHO) are displayed correctly. Only override with
   // the sub-account unit when status.feeCurrencyAccountId points to one.
-  const feesUnit =
-    feeCurrencyAccount
-      ? feeCurrencyAccountUnit
-      : getFeesUnit(getFeesCurrency(mainAccount));
+  const feesUnit = feeCurrencyAccount
+    ? feeCurrencyAccountUnit
+    : getFeesUnit(getFeesCurrency(mainAccount));
   return <DataRowUnitValue label={field.label} unit={feesUnit} value={estimatedFees} />;
 }
 

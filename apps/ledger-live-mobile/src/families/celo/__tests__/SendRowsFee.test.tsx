@@ -34,23 +34,6 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: (_account: unknown) => _account,
-  getAccountCurrency: jest.fn().mockReturnValue({ id: "celo", name: "Celo", units: [] }),
-  findSubAccountById: (_account: unknown, id: string | null) =>
-    id === "usdc-sub-account-id"
-      ? {
-          type: "TokenAccount",
-          id: "usdc-sub-account-id",
-          token: {
-            contractAddress: "0xceba9300f2b948710d2653dd7b07f33a8b32118c",
-            units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
-          },
-        }
-      : null,
-}));
-
 const mockCeloAccount: CeloAccount = {
   type: "Account",
   id: "celo-account-id",

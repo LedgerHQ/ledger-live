@@ -7,7 +7,9 @@ jest.mock("../usePostOnboardingHubCompletionContext", () => ({
   usePostOnboardingHubCompletionContext: jest.fn(),
 }));
 
-const mockUsePostOnboardingHubCompletionContext = jest.mocked(usePostOnboardingHubCompletionContext);
+const mockUsePostOnboardingHubCompletionContext = jest.mocked(
+  usePostOnboardingHubCompletionContext,
+);
 
 const makeAction = (completed: boolean, overrides: Partial<Record<string, unknown>> = {}) =>
   ({

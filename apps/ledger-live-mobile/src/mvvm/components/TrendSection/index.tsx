@@ -10,7 +10,10 @@ type Props = Readonly<{
 }>;
 
 export function TrendSection({ percentage, formattedChange, timeLabel, testID }: Props) {
-  if (Number.isNaN(percentage) || percentage === 0) {
+  // NaN signals missing data → neutral dash. A real 0 is rendered as a neutral
+  // (grey) trend so the row (and its time label) stays visible, e.g. while
+  // scrubbing back to the start of the range.
+  if (Number.isNaN(percentage)) {
     return (
       <Text typography="body2" lx={{ color: "muted" }} testID={testID}>
         &minus;

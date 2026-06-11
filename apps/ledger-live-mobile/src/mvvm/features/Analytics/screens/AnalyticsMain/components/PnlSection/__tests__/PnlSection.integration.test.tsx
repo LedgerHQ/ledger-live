@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { Pressable, Text } from "react-native";
+import React from "react";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
-import { PnlDetailDrawer } from "LLM/features/Pnl/components/PnlDetailDrawer";
 import PnlSection, { PNL_SECTION_TEST_IDS } from "..";
 
 const btcAccount = genAccount("btc-1", {
@@ -28,54 +26,24 @@ const withPnl = (enabled: boolean) =>
     withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } }),
   );
 
-const OPEN_BUTTON_TEST_ID = "open-drawer-button";
-
-type Variant = "pnl" | "costBasis";
-
-function DrawerOpener({ variant }: { variant: Variant }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <Pressable testID={OPEN_BUTTON_TEST_ID} onPress={() => setOpen(true)}>
-        <Text>Open</Text>
-      </Pressable>
-      {open ? (
-        variant === "pnl" ? (
-          <PnlDetailDrawer
-            isOpen
-            onClose={() => setOpen(false)}
-            title="Portfolio profit and loss"
-            description="Your portfolio performance broken down into estimated and realised returns."
-            items={[
-              {
-                title: "Estimated return",
-                value: "+ $243.32",
-                definition: "The estimated profit or loss if sold at current price.",
-              },
-            ]}
-            footer="This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes."
-          />
-        ) : (
-          <PnlDetailDrawer
-            isOpen
-            onClose={() => setOpen(false)}
-            title="Cost basis"
-            bodyText="The total amount you paid to acquire your current holdings, including fees."
-          />
-        )
-      ) : null}
-    </>
-  );
-}
+const DRAWER_DESCRIPTION =
+  "Your portfolio performance broken down into estimated unrealised and realised return.";
+const DISCLAIMER =
+  "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes.";
 
 describe("PnlSection integration", () => {
   describe("feature flag gating", () => {
-    it("renders both PnL cards when shouldDisplayPnl is true and there are accounts", () => {
+    it("renders the title, both return cards and the detail drawer copy when shouldDisplayPnl is true and there are accounts", () => {
       render(<PnlSection />, { overrideInitialState: withPnl(true) });
 
       expect(screen.getByTestId(PNL_SECTION_TEST_IDS.root)).toBeVisible();
+      expect(screen.getByTestId(PNL_SECTION_TEST_IDS.title)).toBeVisible();
       expect(screen.getByTestId(PNL_SECTION_TEST_IDS.unrealisedCard)).toBeVisible();
-      expect(screen.getByTestId(PNL_SECTION_TEST_IDS.costBasisCard)).toBeVisible();
+      expect(screen.getByTestId(PNL_SECTION_TEST_IDS.realisedCard)).toBeVisible();
+      // The detail drawer copy is wired through the view model.
+      expect(screen.getByText(DRAWER_DESCRIPTION)).toBeVisible();
+      expect(screen.getByText("Total return")).toBeVisible();
+      expect(screen.getByText(DISCLAIMER)).toBeVisible();
     });
 
     it("renders nothing when shouldDisplayPnl is false", () => {
@@ -96,37 +64,12 @@ describe("PnlSection integration", () => {
   });
 
   describe("drawer opening", () => {
-    it("renders the PnL detail drawer with header, items and disclaimer when its open button is pressed", async () => {
-      const { user } = render(<DrawerOpener variant="pnl" />);
+    it("keeps the section mounted when the title is pressed to open the detail drawer", async () => {
+      const { user } = render(<PnlSection />, { overrideInitialState: withPnl(true) });
 
-      expect(screen.queryByText("Portfolio profit and loss")).toBeNull();
+      await user.press(screen.getByTestId(PNL_SECTION_TEST_IDS.title));
 
-      await user.press(screen.getByTestId(OPEN_BUTTON_TEST_ID));
-
-      expect(screen.getByText("Portfolio profit and loss")).toBeVisible();
-      expect(
-        screen.getByText(
-          "Your portfolio performance broken down into estimated and realised returns.",
-        ),
-      ).toBeVisible();
-      expect(screen.getByText("Estimated return")).toBeVisible();
-      expect(
-        screen.getByText(
-          "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes.",
-        ),
-      ).toBeVisible();
-    });
-
-    it("renders the cost basis drawer when its open button is pressed", async () => {
-      const { user } = render(<DrawerOpener variant="costBasis" />);
-      const body = "The total amount you paid to acquire your current holdings, including fees.";
-
-      expect(screen.queryByText(body)).toBeNull();
-
-      await user.press(screen.getByTestId(OPEN_BUTTON_TEST_ID));
-
-      expect(screen.getByText("Cost basis")).toBeVisible();
-      expect(screen.getByText(body)).toBeVisible();
+      expect(screen.getByTestId(PNL_SECTION_TEST_IDS.root)).toBeVisible();
     });
   });
 });

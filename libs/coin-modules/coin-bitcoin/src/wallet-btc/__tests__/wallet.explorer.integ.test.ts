@@ -38,5 +38,24 @@ describe("Integration tests for bitcoin v4 explorer api", () => {
     expect(hex).toEqual(
       "0100000001c858ba5f607d762fe5be1dfe97ddc121827895c2562c4348d69d02b91dbb408e010000008b4830450220446df4e6b875af246800c8c976de7cd6d7d95016c4a8f7bcdbba81679cbda242022100c1ccfacfeb5e83087894aa8d9e37b11f5c054a75d030d5bfd94d17c5bc953d4a0141045901f6367ea950a5665335065342b952c5d5d60607b3cdc6c69a03df1a6b915aa02eb5e07095a2548a98dcdd84d875c6a3e130bafadfd45e694a3474e71405a4ffffffff020000000000000000156a13636861726c6579206c6f766573206865696469400d0300000000001976a914b8268ce4d481413c4e848ff353cd16104291c45b88ac00000000",
     );
+
+    const tx = await explorer.fetchUtxoTx(
+      "1a7df85fd5afdb6ed9630f23b49379bcff840d570ab80ad4dc3ce02a53c3ca9b",
+    );
+    expect(tx.outputs).toBeInstanceOf(Array);
+    expect(tx.outputs).toEqual([
+      {
+        address: "15nxZ8k9UJy9q7vhE21JdA54UfNrnFE9Hn",
+        output_index: 0,
+        spent_at_height: 949644,
+        value: "25451",
+      },
+      {
+        address: "bc1q237wagrhxka9d3h6f5c8kjjq8g86nnuzqfy0xq",
+        output_index: 1,
+        spent_at_height: 952097,
+        value: "74974941",
+      },
+    ]);
   }, 60000);
 });

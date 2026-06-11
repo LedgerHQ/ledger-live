@@ -18,7 +18,7 @@ import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";

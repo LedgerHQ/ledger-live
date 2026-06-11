@@ -32,9 +32,7 @@ describe("genericAwarenessModalHandler", () => {
     genericAwarenessModalHandler({ type: "generic-awareness-modal" }, context);
 
     const inner = runDispatchedThunk(context);
-    expect(inner.mock.calls).toEqual([
-      [setGenericAwarenessModalCampaignId(undefined)],
-    ]);
+    expect(inner.mock.calls).toEqual([[setGenericAwarenessModalCampaignId(undefined)]]);
   });
 
   it("passes route id through open thunk", () => {
@@ -43,10 +41,7 @@ describe("genericAwarenessModalHandler", () => {
       isGenericAwarenessModalEnabled: true,
     });
 
-    genericAwarenessModalHandler(
-      { type: "generic-awareness-modal", id: "braze-intro" },
-      context,
-    );
+    genericAwarenessModalHandler({ type: "generic-awareness-modal", id: "braze-intro" }, context);
 
     const inner = runDispatchedThunk(context);
     expect(inner.mock.calls).toEqual([[setGenericAwarenessModalCampaignId("braze-intro")]]);

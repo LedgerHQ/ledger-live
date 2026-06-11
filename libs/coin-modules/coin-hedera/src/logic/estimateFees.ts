@@ -40,13 +40,14 @@ const estimateContractCallFees = async ({
 
   try {
     const [networkFees, gasLimit] = await Promise.all([
-      apiClient.getNetworkFees(),
-      apiClient.estimateContractCallGas(
+      apiClient.getNetworkFees({ configOrCurrencyId }),
+      apiClient.estimateContractCallGas({
+        configOrCurrencyId,
         senderEvmAddress,
         recipientEvmAddress,
-        tokenEvmAddress,
-        txIntent.amount,
-      ),
+        contractEvmAddress: tokenEvmAddress,
+        amount: txIntent.amount,
+      }),
     ]);
 
     const contractCallFees = networkFees.fees.find(

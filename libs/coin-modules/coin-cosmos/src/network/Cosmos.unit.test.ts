@@ -128,6 +128,33 @@ describe("CosmosApi", () => {
     });
   });
 
+  describe("getValidators", () => {
+    it("returns validator tokens as a string, preserving uint256 precision", async () => {
+      // Value larger than Number.MAX_SAFE_INTEGER — parseFloat would have lost precision here.
+      mockAxiosResponse({
+        validators: [
+          {
+            operator_address: "cosmosvaloper1abc",
+            description: { moniker: "Big Validator" },
+            tokens: "123456789012345678901234567890",
+            commission: { commission_rates: { rate: "0.05" } },
+          },
+        ],
+      });
+
+      const [validator] = await cosmosApi.getValidators();
+
+      expect(validator).toEqual({
+        validatorAddress: "cosmosvaloper1abc",
+        name: "Big Validator",
+        tokens: "123456789012345678901234567890",
+        votingPower: 0,
+        commission: 0.05,
+        estimatedYearlyRewardsRate: 0,
+      });
+    });
+  });
+
   describe("getRedelegations", () => {
     it("should return redelegations correctly (sdk v0.41/0.42/0.44/0.45)", async () => {
       const getApiResponseSinceSdk041 = {

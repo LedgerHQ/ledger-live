@@ -132,16 +132,12 @@ function buildSampleActionCarouselCard(
       description: item.description,
       link: item.link,
       order: String(itemIndex),
-      ...(variant === "imageBackground"
-        ? { image_background: SAMPLE_IMAGE }
-        : { icon: item.icon }),
+      ...(variant === "imageBackground" ? { image_background: SAMPLE_IMAGE } : { icon: item.icon }),
     },
   );
 }
 
-export function buildSampleActionCarouselInitial(
-  variant: SampleActionBannerVariant = "icon",
-): {
+export function buildSampleActionCarouselInitial(variant: SampleActionBannerVariant = "icon"): {
   category: CategoryContentCard;
   cards: BrazeContentCard[];
 } {

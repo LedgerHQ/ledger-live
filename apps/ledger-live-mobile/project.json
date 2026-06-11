@@ -58,6 +58,12 @@
     "build": {
       "executor": "nx:noop"
     },
+    "build-lib-deps": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "android:apk": {
       "outputs": [
         "{projectRoot}/android/app/build/generated/**",

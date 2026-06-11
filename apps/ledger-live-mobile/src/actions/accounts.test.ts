@@ -3,8 +3,9 @@ import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
 import accountModel from "../logic/accountModel";
 import { importStore } from "./accounts";
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+jest.mock("@ledgerhq/ledger-wallet-framework/account/support", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/support"),
   checkAccountSupported: jest.fn(),
 }));
 

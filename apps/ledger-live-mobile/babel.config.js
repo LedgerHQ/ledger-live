@@ -33,6 +33,7 @@ module.exports = {
     process.env.DETOX === "1" || process.env.DETOX === "true"
       ? "./babel-plugin-inject-collapsable.js"
       : null,
+    process.env.NODE_ENV === "test" ? "@babel/plugin-transform-dynamic-import" : null,
     // react-native-worklets/plugin has to be listed last
     "react-native-worklets/plugin",
   ].filter(Boolean),

@@ -498,7 +498,12 @@ describe("SUI SDK Integration tests", () => {
       const raw = await withApi(api =>
         api.getTransactionBlock({
           digest: UNDELEGATE_TX_DIGEST,
-          options: { showInput: true, showBalanceChanges: true, showEffects: true, showEvents: true },
+          options: {
+            showInput: true,
+            showBalanceChanges: true,
+            showEffects: true,
+            showEvents: true,
+          },
         }),
       );
       const op = transactionToCoinFrameworkOperation(STAKING_ADDRESS, raw, undefined);
@@ -514,7 +519,12 @@ describe("SUI SDK Integration tests", () => {
       const raw = await withApi(api =>
         api.getTransactionBlock({
           digest: DELEGATE_TX_DIGEST,
-          options: { showInput: true, showBalanceChanges: true, showEffects: true, showEvents: true },
+          options: {
+            showInput: true,
+            showBalanceChanges: true,
+            showEffects: true,
+            showEvents: true,
+          },
         }),
       );
       const op = transactionToCoinFrameworkOperation(STAKING_ADDRESS, raw, undefined);

@@ -13,6 +13,7 @@ function mockMarketData(overrides?: Partial<ReturnType<typeof useAssetMarketData
     marketCurrency: marketCurrencyData as any,
     marketId: "bitcoin",
     counterCurrency: "usd",
+    ledgerIds: ["bitcoin"],
     isLoading: false,
     isError: false,
     ...overrides,
@@ -27,7 +28,9 @@ describe("usePricePerformanceViewModel", () => {
 
   describe("records", () => {
     it("returns ATH and ATL records with correct labels", () => {
-      const { result } = renderHook(() => usePricePerformanceViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        usePricePerformanceViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.records).toHaveLength(2);
       expect(result.current.records[0].label).toMatch(/all.time high/i);
@@ -35,7 +38,9 @@ describe("usePricePerformanceViewModel", () => {
     });
 
     it("computes negative ATH change and positive ATL change", () => {
-      const { result } = renderHook(() => usePricePerformanceViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        usePricePerformanceViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.records[0].changePercentage).toMatch(/^-/);
       expect(result.current.records[1].changePercentage).toMatch(/^\+/);
@@ -44,7 +49,9 @@ describe("usePricePerformanceViewModel", () => {
     it("returns an empty array when no market data", () => {
       mockMarketData({ marketCurrency: undefined });
 
-      const { result } = renderHook(() => usePricePerformanceViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        usePricePerformanceViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.records).toEqual([]);
     });
@@ -54,7 +61,9 @@ describe("usePricePerformanceViewModel", () => {
     it("reflects isFetching from the query", () => {
       mockMarketData({ marketCurrency: undefined, isLoading: true });
 
-      const { result } = renderHook(() => usePricePerformanceViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        usePricePerformanceViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.hasData).toBe(false);
@@ -65,17 +74,24 @@ describe("usePricePerformanceViewModel", () => {
     it("reflects isError from the query", () => {
       mockMarketData({ marketCurrency: undefined, isError: true });
 
-      const { result } = renderHook(() => usePricePerformanceViewModel(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        usePricePerformanceViewModel({ currency: mockBtcCryptoCurrency }),
+      );
 
       expect(result.current.isError).toBe(true);
     });
   });
 
   describe("skip query", () => {
-    it("passes undefined currency to useAssetMarketData", () => {
-      renderHook(() => usePricePerformanceViewModel(undefined));
+    it("passes resolved ids through to useAssetMarketData when no overrides are provided", () => {
+      renderHook(() => usePricePerformanceViewModel({ currency: undefined }));
 
-      expect(mockUseAssetMarketData).toHaveBeenCalledWith(undefined);
+      expect(mockUseAssetMarketData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          marketApiId: undefined,
+          knownLedgerIds: undefined,
+        }),
+      );
     });
   });
 });

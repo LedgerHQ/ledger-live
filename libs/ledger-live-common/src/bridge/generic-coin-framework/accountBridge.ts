@@ -20,13 +20,14 @@ import { getValidateAddress } from "./validateAddress";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
 import type { GenericTransaction, CoinFrameworkSigner } from "./types";
 
-export function getCoinFrameworkAccountBridge(
+export async function getCoinFrameworkAccountBridge(
   network: string,
   kind: string,
   customSigner?: CoinFrameworkSigner,
-): AccountBridge<GenericTransaction> {
-  const signer = customSigner ?? getSigner(network);
+): Promise<AccountBridge<GenericTransaction>> {
+  const signer = customSigner ?? (await getSigner(network));
   const { assignFromAccountRaw, assignToAccountRaw } = getAccountRawAssignHooks(network);
+  const validateAddress = await getValidateAddress(network);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
@@ -41,6 +42,6 @@ export function getCoinFrameworkAccountBridge(
     assignFromAccountRaw,
     assignToAccountRaw,
     getSerializedAddressParameters, // NOTE: check whether it should be exposed by coin-module's api instead?
-    validateAddress: getValidateAddress(network),
+    validateAddress,
   } satisfies Partial<AccountBridge<GenericTransaction>>;
 }

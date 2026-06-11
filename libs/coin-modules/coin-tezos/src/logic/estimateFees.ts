@@ -12,6 +12,7 @@ import {
   MIN_SUGGESTED_FEE_SMALL_TRANSFER,
   OP_SIZE_XTZ_TRANSFER,
   normalizePublicKeyForAddress,
+  partitionNativeBalance,
 } from "../utils";
 import { getTezosToolkit } from "./tezosToolkit";
 
@@ -19,6 +20,7 @@ export type CoreAccountInfo = {
   address: string;
   balance: bigint;
   stakedBalance?: bigint;
+  unstakedBalance?: bigint;
   revealed: boolean;
   xpub?: string;
 };
@@ -79,6 +81,14 @@ export async function estimateFees({
   if (account.balance === 0n) {
     return transaction.useAllAmount ? { ...estimation, amount: 0n } : estimation;
   }
+
+  const spendableForMax = Number(
+    partitionNativeBalance(
+      account.balance,
+      account.stakedBalance ?? 0n,
+      account.unstakedBalance ?? 0n,
+    ).spendable,
+  );
 
   let amount = transaction.amount;
   const coerceMinAmountForEstimation =
@@ -178,7 +188,7 @@ export async function estimateFees({
         estimate.burnFeeMutez > 0
           ? estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE // 20 is storage buffer
           : estimate.suggestedFeeMutez;
-      const maxAmount = parseInt(account.balance.toString()) - (totalFees + Number(revealFee));
+      const maxAmount = spendableForMax - (totalFees + Number(revealFee));
       // NOTE: from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
@@ -190,6 +200,7 @@ export async function estimateFees({
       estimation.amount = computeMaxStakeAmount(
         BigInt(account.balance),
         account.stakedBalance ?? 0n,
+        account.unstakedBalance ?? 0n,
         BigInt(mainOpFee) + revealFee,
       );
     } else {
@@ -250,7 +261,7 @@ export async function estimateFees({
             suggestedFee + (burnFeeMutez > 0 ? burnFeeMutez - 20 * COST_PER_BYTE : 0);
 
           const revealFee = account.revealed ? 0 : getRevealFeeForEstimation(account.address);
-          const maxAmount = Number.parseInt(account.balance.toString()) - (totalFees + revealFee);
+          const maxAmount = spendableForMax - (totalFees + revealFee);
 
           const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
           const incr = OP_SIZE_XTZ_TRANSFER + DUST_MARGIN_MUTEZ * MINIMAL_FEE_PER_GAS_MUTEZ;
@@ -297,7 +308,7 @@ export async function estimateFees({
           const totalFees =
             suggestedFee + (burnFeeMutez > 0 ? burnFeeMutez - 20 * COST_PER_BYTE : 0);
           const revealFee = account.revealed ? 0 : getRevealFeeForEstimation(account.address);
-          const maxAmount = Number.parseInt(account.balance.toString()) - (totalFees + revealFee);
+          const maxAmount = spendableForMax - (totalFees + revealFee);
           const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
           const incr = OP_SIZE_XTZ_TRANSFER + DUST_MARGIN_MUTEZ * MINIMAL_FEE_PER_GAS_MUTEZ;
           const maxMinusBuff = maxAmount - (DUST_MARGIN_MUTEZ - incr);

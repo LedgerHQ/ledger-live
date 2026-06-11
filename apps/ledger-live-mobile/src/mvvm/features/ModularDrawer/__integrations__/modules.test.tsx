@@ -36,15 +36,12 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: withFlagOverrides(
-          mockedFF,
-          state => ({
-            ...state,
-            accounts: {
-              active: mockedAccounts,
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides(mockedFF, state => ({
+          ...state,
+          accounts: {
+            active: mockedAccounts,
+          },
+        })),
       },
     );
 
@@ -140,15 +137,12 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: withFlagOverrides(
-          mockedFF,
-          state => ({
-            ...state,
-            accounts: {
-              active: mockedAccounts,
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides(mockedFF, state => ({
+          ...state,
+          accounts: {
+            active: mockedAccounts,
+          },
+        })),
       },
     );
 
@@ -170,15 +164,12 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: withFlagOverrides(
-          mockedFF,
-          state => ({
-            ...state,
-            accounts: {
-              active: mockedAccounts,
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides(mockedFF, state => ({
+          ...state,
+          accounts: {
+            active: mockedAccounts,
+          },
+        })),
       },
     );
 
@@ -197,15 +188,12 @@ describe("ModularDrawer modules integration", () => {
       />,
       {
         ...INITIAL_STATE,
-        overrideInitialState: withFlagOverrides(
-          mockedFF,
-          state => ({
-            ...state,
-            accounts: {
-              active: mockedAccounts,
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides(mockedFF, state => ({
+          ...state,
+          accounts: {
+            active: mockedAccounts,
+          },
+        })),
       },
     );
 

@@ -145,8 +145,16 @@ function useSyncQueue({
       }
 
       // FIXME if we want to stop syncs for specific currency (e.g. api down) we would do it here
-      try {
-        const bridge = getAccountBridge(account);
+      const onSyncFatalError = (error: Error) => {
+        setAccountSyncState(accountId, {
+          pending: false,
+          error,
+        });
+        sessionManager.onAccountSyncDone(accountId, accounts, true);
+        next();
+      };
+
+      getAccountBridge(account).then(bridge => {
         setAccountSyncState(accountId, {
           pending: true,
           error: null,
@@ -235,14 +243,7 @@ function useSyncQueue({
             next();
           },
         });
-      } catch (error: any) {
-        setAccountSyncState(accountId, {
-          pending: false,
-          error,
-        });
-        sessionManager.onAccountSyncDone(accountId, accounts, true);
-        next();
-      }
+      }, onSyncFatalError);
     },
     [
       accounts,

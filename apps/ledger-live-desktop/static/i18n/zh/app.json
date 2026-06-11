@@ -205,6 +205,7 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
+      "FINALIZE_UNSTAKE" : "已提取",
       "SENDING" : "发送",
       "BURN" : "已销毁",
       "ASSOCIATE_TOKEN" : "关联代币",
@@ -4260,8 +4261,10 @@
         "redelegateDisabledTooltip" : "您可以再次重新委托 <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip" : "每次重新委托的验证者不能多于 <0>7</0> 个",
         "undelegateDisabledTooltip" : "每次取消委托的验证者不能多于 <0>7</0> 个",
+        "undelegateActivatingTooltip" : "您无法解除委托仍在激活中的质押",
         "reward" : "申领奖励",
         "activeTooltip" : "已委托的数额会生成奖励",
+        "activatingTooltip" : "已委托的数额将在下一个周期开始生成奖励",
         "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
         "minSafeWarning" : "资金不足",
         "commission" : "佣金",
@@ -4274,7 +4277,8 @@
               "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在解除委托后可用"],
               "warning" : {
                 "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
-              }
+              },
+              "seiAssociationWarning" : "您的 Sei 账户尚未在链上关联。在您的账户的第一笔转出交易获得链上确认之前，委托将会失败。先向任意地址发送小数额的 SEI，等待确认，然后再返回进行委托。"
             },
             "amount" : {
               "title" : "数额"
@@ -4373,13 +4377,13 @@
     "error" : "无法加载图表",
     "rangeSelectorLabel" : "选择时间范围",
     "range" : {
-      "1D" : "1 天",
-      "1W" : "1 周",
-      "1M" : "1 月",
-      "6M" : "6 个月",
-      "1Y" : "1 年",
-      "5Y" : "5 年",
-      "ALL" : "全部"
+      "1d" : "1 天",
+      "1w" : "1 周",
+      "1m" : "1 月",
+      "6m" : "6 个月",
+      "1y" : "1 年",
+      "5y" : "5 年",
+      "all" : "全部"
     }
   },
   "near" : {
@@ -5155,6 +5159,16 @@
       "customLockScreen" : "自定义锁屏素材资源",
       "customLockScreenDesc" : "调试自定义锁屏图形素材资源",
       "customLockScreenCTA" : "启动",
+      "coinConfig" : {
+        "title" : "Ledger Wallet 中使用的加密货币配置",
+        "desc" : "为本地调试覆盖每种货币的配置（RPC、浏览器、Gas……）。仅接受有效的 JSON。覆盖设置在重启后依然保留；使用\"全部恢复\"将其清除。",
+        "search" : "搜索配置键（例如：config_currency_ethereum)",
+        "hint" : "默认显示 `config_currency_*` 键。搜索以查看每个 LiveConfig 键。对于对象配置，覆盖项会在默认+远程值之上进行深度合并。",
+        "restore" : "重置",
+        "override" : "覆盖",
+        "restoreAll" : "恢复所有加密货币配置",
+        "overriddenLocally" : "本地覆盖"
+      },
       "featureFlagsTitle" : "Ledger Wallet 中使用的已定义功能标帜",
       "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
       "featureFlagsEdit" : "编辑",
@@ -7188,6 +7202,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "请先委托您的账户，然后再进行质押"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "质押余额不足"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
     },
@@ -8283,6 +8300,9 @@
         "value" : "价值",
         "allocation" : "配置"
       }
+    },
+    "pnl" : {
+      "title" : "盈亏"
     }
   },
   "walletSync" : {
@@ -8612,15 +8632,16 @@
   },
   "fearAndGreed" : {
     "levels" : {
+      "fearPlus" : "恐惧+",
       "fear" : "恐惧",
-      "cautious" : "谨慎",
       "neutral" : "中立",
-      "optimistic" : "乐观",
-      "greedy" : "贪婪"
+      "greed" : "贪婪",
+      "greedPlus" : "贪婪+"
     },
     "dialog" : {
       "title" : "情绪指数",
-      "content" : "根据趋势和活动显示整体市场情绪（从 0 到 100）。以此了解市场表现：数值较低表示恐惧，数值较高表示贪婪。",
+      "content" : "主要根据波动性、市场动能和社交趋势显示整体市场情绪（从 0 到 100）。数值较低表示恐惧，数值较高表示贪婪。",
+      "disclaimer" : "数据来源于 CoinMarketCap 的恐惧与贪婪指数，仅供参考。",
       "cta" : "知道了"
     }
   },
@@ -8928,9 +8949,9 @@
       "done" : "完成",
       "fundYourWallet" : "为您的钱包注资",
       "discoverSwap" : "探索互换",
-      "growYourRewards" : "提升收益",
-      "spendYourCrypto" : "使用加密货币消费",
-      "everythingAtAGlance" : "一目了然"
+      "discoverEarn" : "探索赚取功能",
+      "getCard" : "获取卡",
+      "viewPortfolio" : "查看您的资产组合"
     },
     "slides" : {
       "fund" : {
@@ -9017,25 +9038,46 @@
       "hideFromPortfolio" : "从资产组合中隐藏",
       "showInPortfolio" : "显示在资产组合中"
     },
+    "chartOptions" : {
+      "menu" : "图表选项",
+      "hideTransactions" : "隐藏价格图表上的活动",
+      "showTransactions" : "显示价格图表上的活动"
+    },
     "hiddenBanner" : {
       "description" : "此资产已从您的资产组合中隐藏。",
       "showAsset" : "显示资产"
     },
     "totalBalance" : "总余额",
     "marketPrice" : "市场价格",
-    "addresses" : "地址",
+    "addresses" : "账户",
     "addressesDialog" : {
-      "title" : "地址",
-      "description" : "持有 {{ticker}} 的所有地址。"
+      "title" : "账户",
+      "description" : "持有 {{ticker}} 的所有账户。"
     },
     "add" : "添加",
     "notFound" : "未找到资产分配项目。",
     "marketStats" : "市场数据",
     "marketStatsTooltip" : "该资产的市场指标。",
+    "marketCapTooltip" : "流通中所有加密货币的总价值。可以将其视为加密货币的市场总价值。",
+    "circulatingSupplyTooltip" : "市场上目前可用且由公众持有的代币总数。它不包括已锁定、已预留或未铸造的代币。",
+    "maxSupplyTooltip" : "最终可存在的最大代币数量。对于某些资产，这是固定的，以防止通货膨胀。",
     "pricePerformance" : "价格表现",
     "marketRank" : "市场排名",
     "tradingVolume24h" : "24 小时交易量",
+    "tradingVolume24hTooltip" : "过去 24 小时内交易的总数额。",
+    "marketStatsDisclaimer" : "市场统计数据源自 CoinGecko",
     "day" : "1 天",
+    "week" : "1 周",
+    "month" : "1 个月",
+    "sixMonths" : "6 个月",
+    "year" : "1 年",
+    "fiveYears" : "5 年",
+    "allTime" : "所有时间",
+    "chart" : {
+      "received" : "已接收",
+      "sent" : "已发送",
+      "transactionsCount" : "{{count}} 笔交易"
+    },
     "staking" : {
       "availableBalance" : "可用余额",
       "availableBalanceTooltip" : "您现在可以使用的持仓部分，可随时自由发送、互换或提取。",
@@ -9050,7 +9092,7 @@
     "asset" : {
       "entry" : {
         "title" : "平均持仓成本",
-        "tooltip" : "您在此钱包中持有该资产的平均买入价格，包括您购买的资产以及从其他钱包转入的资产。用于追踪您的盈亏情况。"
+        "tooltip" : "您通过 Ledger Wallet 持有该资产的平均买入价格，包括您买入的资产以及从其他钱包接收的资产。用于追踪您的盈亏情况。"
       },
       "return" : {
         "title" : "未实现收益"
@@ -9060,7 +9102,7 @@
         "description" : "概览该资产在您资产组合中的表现。",
         "totalReturn" : {
           "title" : "总收益",
-          "description" : "未实现收益与已实现收益的总和。"
+          "description" : "预估未实现收益与已实现收益的总和。"
         },
         "unrealisedReturn" : {
           "title" : "未实现收益",
@@ -9068,34 +9110,38 @@
         },
         "realisedReturn" : {
           "title" : "已实现收益",
-          "description" : "此前出售或转出资产后已确认的盈亏。"
+          "description" : "此前出售、发送或互换资产后预估的盈亏。"
         }
       }
     },
     "portfolio" : {
-      "return" : {
-        "title" : "未实现收益"
+      "cards" : {
+        "totalReturn" : "总收益",
+        "unrealisedReturn" : "未实现收益",
+        "realisedReturn" : "已实现收益"
       },
       "costBasis" : {
         "title" : "成本基础",
         "tooltip" : "为获得当前资产而支付的总金额，包括费用。"
       },
+      "detail" : "详情",
       "dialog" : {
         "title" : "盈亏",
-        "description" : "资产组合表现分为已实现和未实现收益。",
+        "description" : "资产组合表现分为预估已实现和未实现收益。",
         "totalReturn" : {
           "title" : "总收益",
-          "description" : "已实现和未实现收益之和，反映您的整体仓位。"
+          "description" : "预估未实现收益与已实现收益的总和。"
         },
         "unrealisedReturn" : {
           "title" : "未实现收益",
-          "description" : "您当前持有资产的预估盈亏。"
+          "description" : "按当前价格卖出时的预估盈亏。"
         },
         "realisedReturn" : {
           "title" : "已实现收益",
-          "description" : "此前出售或转出资产后已确认的盈亏。"
+          "description" : "此前出售、发送或互换资产后预估的盈亏。"
         }
       }
-    }
+    },
+    "disclaimer" : "此数据仅供参考，不构成任何投资建议。不可用于税务目的。"
   }
 }

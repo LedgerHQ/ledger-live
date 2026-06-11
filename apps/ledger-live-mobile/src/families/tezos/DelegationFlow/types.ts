@@ -5,6 +5,11 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 
 export type TezosDelegationFlowParamList = {
+  [ScreenName.TezosEarnRewards]: {
+    accountId: string;
+    parentId?: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
   [ScreenName.DelegationStarted]: {
     accountId: string;
     parentId?: string;
@@ -12,6 +17,7 @@ export type TezosDelegationFlowParamList = {
   };
   [ScreenName.DelegationSummary]: {
     mode?: "delegate" | "undelegate";
+    stakeAfter?: boolean;
     accountId: string;
     parentId?: string;
     transaction?: Transaction;
@@ -33,6 +39,7 @@ export type TezosDelegationFlowParamList = {
     status?: TransactionStatus;
     appName?: string;
     selectDeviceLink?: boolean;
+    stakeAfter?: boolean;
     onSuccess?: (payload: unknown) => void;
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
@@ -42,6 +49,7 @@ export type TezosDelegationFlowParamList = {
     device?: Device;
     parentId?: string;
     accountId: string;
+    stakeAfter?: boolean;
     transaction: Transaction;
     status: TransactionStatus;
     source?: RouteProp<ParamListBase, ScreenName>;
@@ -52,6 +60,7 @@ export type TezosDelegationFlowParamList = {
     deviceId: string;
     transaction: Transaction;
     result: Operation;
+    stakeAfter?: boolean;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationValidationError]: {

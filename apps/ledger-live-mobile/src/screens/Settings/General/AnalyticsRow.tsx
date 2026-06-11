@@ -9,7 +9,7 @@ import { setAnalytics } from "~/actions/settings";
 import { analyticsEnabledSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { track, updateIdentify } from "~/analytics";
 
 const AnalyticsRow = () => {

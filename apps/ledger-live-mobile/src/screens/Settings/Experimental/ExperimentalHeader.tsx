@@ -11,7 +11,7 @@ import { Trans } from "~/context/Locale";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Config from "react-native-config";
-import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-common/featureFlags/useHasOverriddenFeatureFlags";
+import { useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "~/context/hooks";
 import { useExperimental } from "../../../experimental";

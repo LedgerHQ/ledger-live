@@ -140,7 +140,7 @@ export const useWithdrawableBalance = (account: AccountLike, accounts: Account[]
     // For token accounts, use parent account's xpub; for main accounts, use account's xpub
     const parentAccount = getParentAccount(account, accounts);
     const mainAccount = parentAccount ?? account;
-    const accountXpub = "xpub" in mainAccount ? (mainAccount.xpub as string) ?? "" : "";
+    const accountXpub = "xpub" in mainAccount ? ((mainAccount.xpub as string) ?? "") : "";
     const currentTime = Date.now();
 
     // Restrict to the instrument this account renders amounts in: native for the

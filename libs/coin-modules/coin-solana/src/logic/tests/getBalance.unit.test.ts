@@ -325,7 +325,11 @@ describe("getBalance", () => {
       expect(result[1]).toMatchObject({
         stake: { actions: ["claim_reward", "undelegate"] },
       });
-      expect(mockComputeFrameworkStakeActions).toHaveBeenCalledWith(stakeAccount, TEST_ADDRESS, 400);
+      expect(mockComputeFrameworkStakeActions).toHaveBeenCalledWith(
+        stakeAccount,
+        TEST_ADDRESS,
+        400,
+      );
     });
 
     it("should sum lamports across multiple stake accounts", async () => {

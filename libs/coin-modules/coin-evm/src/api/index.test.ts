@@ -91,5 +91,9 @@ describe("staking support capability", () => {
     const api = createApi({ explorer: { type: "ledger" } } as EvmConfig, "sei_evm");
 
     await expect(api.getValidators()).resolves.toEqual(expectedPage);
+    expect(mockGetValidatorsPage).toHaveBeenCalledWith("sei_evm", undefined);
+
+    await expect(api.getValidators("42")).resolves.toEqual(expectedPage);
+    expect(mockGetValidatorsPage).toHaveBeenCalledWith("sei_evm", "42");
   });
 });

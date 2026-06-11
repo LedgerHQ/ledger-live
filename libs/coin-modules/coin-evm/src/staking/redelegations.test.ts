@@ -284,6 +284,52 @@ describe("redelegations", () => {
       ).toBeNull();
     });
 
+    describe("delegate (Monad, id-keyed validatorId)", () => {
+      it("resolves the validator address from the uint64 validatorId via getValidator", async () => {
+        const monadIface = new ethers.Interface(getStakingABI("monad")!);
+        const op = makeOperation({
+          type: "DELEGATE",
+          extra: { contractPayload: monadIface.encodeFunctionData("delegate", [110n]) },
+        });
+
+        mockIsExternalNodeConfig.mockReturnValue(true);
+        mockGetCoinConfig.mockReturnValue({
+          info: { node: { type: "external", uri: "https://monad.rpc" } },
+        });
+        mockWithApi.mockImplementation((_currency: unknown, fn: (p: unknown) => unknown) =>
+          fn({
+            call: async () =>
+              monadIface.encodeFunctionResult("getValidator", [
+                "0x0000000000000000000000000000000000000000",
+                0n,
+                0n,
+                0n,
+                0n,
+                0n,
+                0n,
+                0n,
+                0n,
+                0n,
+                "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+                "0x",
+              ]),
+          }),
+        );
+
+        const result = await resolveStakingValidator(
+          { id: "monad" } as CryptoCurrency,
+          op,
+          "delegate",
+        );
+
+        expect(result).toMatchObject({
+          validatorAddress: ethers.computeAddress(
+            "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+          ),
+        });
+      });
+    });
+
     describe("delegate", () => {
       it("should decode validator from cached contractPayload", async () => {
         const op = makeOperation({

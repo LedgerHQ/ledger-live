@@ -9,10 +9,7 @@ type StakingSectionProps = Readonly<{
   isLoading: boolean;
 }>;
 
-export function StakingSection({
-  distributionItem,
-  isLoading,
-}: StakingSectionProps) {
+export function StakingSection({ distributionItem, isLoading }: StakingSectionProps) {
   if (shouldShowAssetDetailSectionSkeleton(isLoading, distributionItem != null)) {
     return (
       <AssetDetailSectionSkeleton

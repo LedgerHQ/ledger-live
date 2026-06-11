@@ -1,7 +1,7 @@
 export const PNL_SECTION_TEST_IDS = {
   root: "analytics-pnl-section",
+  title: "analytics-pnl-title",
   unrealisedCard: "analytics-pnl-unrealised-card",
-  costBasisCard: "analytics-pnl-cost-basis-card",
+  realisedCard: "analytics-pnl-realised-card",
   detailDrawer: "analytics-pnl-detail-drawer",
-  costBasisDrawer: "analytics-pnl-cost-basis-drawer",
 } as const;

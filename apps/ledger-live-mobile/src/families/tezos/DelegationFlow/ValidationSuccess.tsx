@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { TrackScreen, track } from "~/analytics";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
+import { urls } from "~/utils/urls";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
+import Button from "~/components/Button";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
@@ -31,6 +33,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const validator = baker?.name || transaction.recipient || "unknown";
   const source = route.params.source?.name ?? "unknown";
   const delegation = transaction.mode;
+  // After a fresh delegation, invite the user to chain straight into the stake flow.
+  const stakeAfter = !!route.params.stakeAfter && transaction.mode === "delegate";
 
   useEffect(() => {
     track("staking_completed", {
@@ -53,6 +57,20 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params, navigation]);
 
+  const learnMore = useCallback(() => Linking.openURL(urls.delegation), []);
+
+  const goToStake = useCallback(() => {
+    onClose();
+    navigation.navigate(NavigatorName.TezosStakeFlow, {
+      screen: ScreenName.TezosStakeAmount,
+      params: {
+        accountId: route.params.accountId,
+        parentId: route.params.parentId,
+        source: route.params.source,
+      },
+    });
+  }, [onClose, navigation, route.params]);
+
   if (transaction.family !== "tezos") return null;
   return (
     <View
@@ -73,10 +91,34 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
-        onViewDetails={goToOperationDetails}
+        onViewDetails={stakeAfter ? undefined : goToOperationDetails}
         title={<Trans i18nKey={"delegation.broadcastSuccessTitle." + transaction.mode} />}
         description={
           <Trans i18nKey={"delegation.broadcastSuccessDescription." + transaction.mode} />
+        }
+        info={stakeAfter ? <Trans i18nKey="tezos.stake.flow.delegationSuccess.info" /> : undefined}
+        onLearnMore={stakeAfter ? learnMore : undefined}
+        primaryButton={
+          stakeAfter ? (
+            <Button
+              event="TezosDelegationSuccessStake"
+              type="main"
+              title={<Trans i18nKey="tezos.stake.flow.delegationSuccess.cta" />}
+              onPress={goToStake}
+              containerStyle={styles.button}
+            />
+          ) : undefined
+        }
+        secondaryButton={
+          stakeAfter ? (
+            <Button
+              event="TezosDelegationSuccessStakeLater"
+              type="default"
+              title={<Trans i18nKey="common.close" />}
+              onPress={onClose}
+              containerStyle={styles.button}
+            />
+          ) : undefined
         }
       />
     </View>
@@ -88,6 +130,6 @@ const styles = StyleSheet.create({
   },
   button: {
     alignSelf: "stretch",
-    marginTop: 24,
+    marginTop: 16,
   },
 });

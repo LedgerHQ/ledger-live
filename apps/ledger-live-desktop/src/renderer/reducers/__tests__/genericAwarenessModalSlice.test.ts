@@ -14,11 +14,13 @@ const cards: GenericAwarenessModalContentCard[] = [
     secondaryButtonLabel: "",
     secondaryButtonLink: "",
     items: [],
+    isReady: true,
   },
   {
     layout: GenericAwarenessModalLayout.Carousel,
     id: "2",
     data: [],
+    isReady: true,
   },
 ];
 
@@ -28,9 +30,7 @@ describe("filterDismissedGenericAwarenessModalContentCards", () => {
   });
 
   it("should exclude dismissed campaign ids", () => {
-    const result = filterDismissedGenericAwarenessModalContentCards(cards, [
-      "APP_START_intro",
-    ]);
+    const result = filterDismissedGenericAwarenessModalContentCards(cards, ["APP_START_intro"]);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.id).toBe("2");

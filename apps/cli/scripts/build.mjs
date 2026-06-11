@@ -23,7 +23,7 @@ if (fs.existsSync(cliJsPath)) {
   // Replace import.meta (but not import.meta.url which is already shimmed)
   // Only replace standalone import.meta references
   content = content.replace(/\bimport\.meta\b(?!\.url)/g, "__rslib_import_meta_url__");
-  
+
   // Fix: Add window polyfill at the top for browser-specific code (from @dfinity packages)
   // This allows browser code to run in Node.js
   if (content.includes("window") && !content.includes("globalThis.window")) {
@@ -35,7 +35,7 @@ if (fs.existsSync(cliJsPath)) {
 `;
     content = windowPolyfill + content;
   }
-  
+
   fs.writeFileSync(cliJsPath, content, "utf8");
 }
 

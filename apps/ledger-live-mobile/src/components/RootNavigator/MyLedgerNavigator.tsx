@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import MyLedgerChooseDeviceScreen, { headerOptions } from "~/screens/MyLedgerChooseDevice";

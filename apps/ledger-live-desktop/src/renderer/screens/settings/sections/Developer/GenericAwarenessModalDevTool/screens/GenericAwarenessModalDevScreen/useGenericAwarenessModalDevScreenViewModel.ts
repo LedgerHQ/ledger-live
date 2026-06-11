@@ -36,7 +36,9 @@ import type {
 export const useGenericAwarenessModalDevScreenViewModel = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [form, setForm] = useState<GenericAwarenessModalDevFormState>(() => createInitialFormState());
+  const [form, setForm] = useState<GenericAwarenessModalDevFormState>(() =>
+    createInitialFormState(),
+  );
   const [slideKeys, setSlideKeys] = useState(() =>
     createDevFormListKeys(createInitialFormState().slides.length),
   );

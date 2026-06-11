@@ -20,8 +20,13 @@ jobs:
     secrets: inherit
 
   test-desktop:
-    name: "Test Desktop"
+    name: "Desktop E2E & Mock Tests"
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    secrets: inherit
+
+  codecheck-desktop:
+    name: "Desktop Lint & Unit Tests"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
     secrets: inherit
 
   test-mobile:
@@ -78,6 +83,7 @@ jobs:
     needs:
       - build-desktop
       - test-desktop
+      - codecheck-desktop
       - test-mobile
       - build-test-mobile
       - test-libraries

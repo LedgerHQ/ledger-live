@@ -44,9 +44,12 @@ describe("getBalance", () => {
     const result = await getBalance({ currencyId: mockCurrency.id, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ configOrCurrencyId: mockConfig, address });
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledWith({
+      configOrCurrencyId: mockConfig,
+      address,
+    });
     // non-staking account: no node lookup should happen
     expect(apiClient.getNode).not.toHaveBeenCalled();
     expect(apiClient.getNodes).not.toHaveBeenCalled();
@@ -95,12 +98,15 @@ describe("getBalance", () => {
     const result = await getBalance({ currencyId: mockCurrency.id, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ configOrCurrencyId: mockConfig, address });
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledWith({
+      configOrCurrencyId: mockConfig,
+      address,
+    });
     expect(networkUtils.getERC20BalancesForAccountV2).toHaveBeenCalledTimes(1);
     expect(networkUtils.getERC20BalancesForAccountV2).toHaveBeenCalledWith({
-      configOrCurrencyId: mockCurrency.id,
+      configOrCurrencyId: mockConfig,
       address,
     });
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(2);
@@ -161,9 +167,12 @@ describe("getBalance", () => {
     const result = await getBalance({ currencyId: mockCurrency.id, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ configOrCurrencyId: mockConfig, address });
     expect(apiClient.getNode).toHaveBeenCalledTimes(1);
-    expect(apiClient.getNode).toHaveBeenCalledWith(mockMirrorAccount.staked_node_id);
+    expect(apiClient.getNode).toHaveBeenCalledWith({
+      configOrCurrencyId: mockConfig,
+      nodeId: mockMirrorAccount.staked_node_id,
+    });
     expect(apiClient.getNodes).not.toHaveBeenCalled();
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -327,7 +336,7 @@ describe("getBalance", () => {
     const result = await getBalance({ currencyId: mockCurrency.id, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ configOrCurrencyId: mockConfig, address });
     expect(result).toEqual([]);
   });
 });

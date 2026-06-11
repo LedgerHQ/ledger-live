@@ -1,6 +1,7 @@
 import {
   createOpenInfoBottomSheetHandler,
   createOpenMenuBottomSheetHandler,
+  handlePTXCustomClose,
 } from "../CustomHandlers";
 import { createOpenActionDialogHandler, resolveActionDialog } from "../actionDialogStore";
 import {
@@ -8,6 +9,83 @@ import {
   makeSetEarnMenuBottomSheetAction,
   makeSetEarnActionDialogAction,
 } from "~/actions/earn";
+import { NavigatorName, ScreenName } from "~/const";
+
+describe("handlePTXCustomClose", () => {
+  it("should go back when closing an exchange screen with navigation history", () => {
+    const navigation = {
+      canGoBack: jest.fn(() => true),
+      goBack: jest.fn(),
+      navigate: jest.fn(),
+    };
+
+    handlePTXCustomClose(navigation, {
+      screenName: ScreenName.ExchangeBuy,
+      returnToPreviousScreenOnClose: true,
+    });
+
+    expect(navigation.canGoBack).toHaveBeenCalledTimes(1);
+    expect(navigation.goBack).toHaveBeenCalledTimes(1);
+    expect(navigation.navigate).not.toHaveBeenCalled();
+  });
+
+  it("should navigate to main when closing an exchange screen without navigation history", () => {
+    const navigation = {
+      canGoBack: jest.fn(() => false),
+      goBack: jest.fn(),
+      navigate: jest.fn(),
+    };
+
+    handlePTXCustomClose(navigation, {
+      screenName: ScreenName.ExchangeBuy,
+      returnToPreviousScreenOnClose: true,
+    });
+
+    expect(navigation.canGoBack).toHaveBeenCalledTimes(1);
+    expect(navigation.goBack).not.toHaveBeenCalled();
+    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  });
+
+  it("should navigate to main when closing a non-exchange screen", () => {
+    const navigation = {
+      canGoBack: jest.fn(() => true),
+      goBack: jest.fn(),
+      navigate: jest.fn(),
+    };
+
+    handlePTXCustomClose(navigation, {
+      screenName: ScreenName.Card,
+      returnToPreviousScreenOnClose: true,
+    });
+
+    expect(navigation.canGoBack).not.toHaveBeenCalled();
+    expect(navigation.goBack).not.toHaveBeenCalled();
+    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  });
+
+  it("should navigate to main when closing an exchange screen without the previous-screen flag", () => {
+    const navigation = {
+      canGoBack: jest.fn(() => true),
+      goBack: jest.fn(),
+      navigate: jest.fn(),
+    };
+
+    handlePTXCustomClose(navigation, {
+      screenName: ScreenName.ExchangeBuy,
+      returnToPreviousScreenOnClose: false,
+    });
+
+    expect(navigation.canGoBack).not.toHaveBeenCalled();
+    expect(navigation.goBack).not.toHaveBeenCalled();
+    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  });
+});
 
 describe("createOpenInfoBottomSheetHandler", () => {
   it("should dispatch with validated params", async () => {
@@ -120,9 +198,9 @@ describe("createOpenActionDialogHandler", () => {
     const dispatch = jest.fn();
     const handler = createOpenActionDialogHandler(dispatch);
 
-    await expect(
-      handler({ params: { title: "", description: "", ctaLabel: "" } }),
-    ).rejects.toThrow("Invalid params for custom.dialog.confirmation");
+    await expect(handler({ params: { title: "", description: "", ctaLabel: "" } })).rejects.toThrow(
+      "Invalid params for custom.dialog.confirmation",
+    );
     expect(dispatch).not.toHaveBeenCalled();
   });
 

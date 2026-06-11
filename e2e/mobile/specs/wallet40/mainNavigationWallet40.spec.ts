@@ -1,5 +1,8 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
+setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-4383");
 $TmsLink("B2CQA-4385");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -21,6 +24,7 @@ describe("Wallet 4.0 - Main Navigation", () => {
     await app.mainNavigation.expectLegacyTabsNotVisible();
   });
 
+  setTeamOwner(Team.SWAP);
   it("should navigate to Swap via bottom tab", async () => {
     await app.mainNavigation.tapWallet40Tab("swap");
     await app.mainNavigation.expectWallet40BottomTabsVisible();
@@ -51,22 +55,24 @@ describe("Wallet 4.0 - Main Navigation", () => {
     await app.mainNavigation.expectDiscoverPageVisible();
   });
 
-  it("should navigate to My Ledger via top bar and show Manager page", async () => {
+  it("should open My Wallet via top bar avatar", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.mainNavigation.tapTopBarMyLedger();
-    await app.mainNavigation.expectMyLedgerPageVisible();
-    await app.mainNavigation.tapHeaderBackButton();
+    await app.mainNavigation.tapTopBarMyWallet();
+    await app.myWallet.expectScreenVisible();
+    await app.myWallet.tapHeaderBack();
   });
 
-  it("should navigate to Notifications via top bar and show Notifications page", async () => {
+  it("should navigate to Notifications from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.mainNavigation.tapTopBarNotifications();
+    await app.mainNavigation.tapTopBarMyWallet();
+    await app.myWallet.tapHeaderNotifications();
     await app.mainNavigation.expectNotificationsPageVisible();
   });
 
-  it("should navigate to Settings via top bar and show Settings page", async () => {
+  it("should navigate to Settings from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.mainNavigation.tapTopBarSettings();
-    await app.mainNavigation.expectSettingsPageVisible();
+    await app.mainNavigation.tapTopBarMyWallet();
+    await app.myWallet.tapHeaderSettings();
+    await app.myWallet.expectSettingsScreenVisible();
   });
 });

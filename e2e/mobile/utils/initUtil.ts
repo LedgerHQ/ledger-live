@@ -336,6 +336,7 @@ export class InitializationManager {
           aggregatedAssets: false,
           myWallet: isWallet40,
           pnl: false,
+          assetDiscoverability: false,
         },
       },
       onboardingWidget: {

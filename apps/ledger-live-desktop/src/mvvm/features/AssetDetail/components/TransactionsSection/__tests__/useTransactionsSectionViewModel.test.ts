@@ -6,6 +6,7 @@ import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { track } from "~/renderer/analytics/segment";
+import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { useTransactionsSectionViewModel } from "../useTransactionsSectionViewModel";
 
 const mockNavigate = jest.fn();
@@ -69,6 +70,8 @@ describe("useTransactionsSectionViewModel", () => {
 
     expect(track).toHaveBeenCalledWith("transaction_clicked", {
       transaction: operation.type,
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+      currency: "bitcoin",
     });
     expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
       operationId: operation.id,
@@ -118,6 +121,11 @@ describe("useTransactionsSectionViewModel", () => {
       result.current.onSeeAll();
     });
 
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Transactions",
+      currency: "bitcoin",
+      page: ASSET_DETAIL_TRACKING_PAGE_NAME,
+    });
     expect(mockNavigate).toHaveBeenCalledWith(
       `/history?accountIds=${encodeURIComponent(`${account1.id},${account2.id}`)}`,
       { state: { historyBackPath: "/asset/bitcoin" } },

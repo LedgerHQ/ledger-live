@@ -63,6 +63,7 @@ describe("listOperations", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
       address,
       fetchAllPages: true,
       pagingToken: null,
@@ -333,6 +334,7 @@ describe("listOperations", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
       address,
       fetchAllPages: true,
       pagingToken: "1625097500.000000000",

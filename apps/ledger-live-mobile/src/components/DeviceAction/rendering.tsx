@@ -39,7 +39,7 @@ import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { SettingsState } from "~/reducers/types";
 import { urls } from "~/utils/urls";

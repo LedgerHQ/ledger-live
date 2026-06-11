@@ -39,6 +39,7 @@ import { recoverStateReducer, RecoverStateSliceState } from "./recoverState";
 import genericAwarenessModal, {
   GenericAwarenessModalSliceState,
 } from "./genericAwarenessModalSlice";
+import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverrides";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -69,6 +70,7 @@ export type State = LLDRTKApiState & {
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
   recoverState: RecoverStateSliceState;
   genericAwarenessModal: GenericAwarenessModalSliceState;
+  coinConfigOverrides: CoinConfigOverridesState;
 };
 
 const appReducer = combineReducers({
@@ -100,6 +102,7 @@ const appReducer = combineReducers({
   countervaluesExtraTracking,
   recoverState: recoverStateReducer,
   genericAwarenessModal,
+  coinConfigOverrides,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

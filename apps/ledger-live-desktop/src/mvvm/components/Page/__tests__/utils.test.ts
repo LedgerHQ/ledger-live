@@ -77,15 +77,15 @@ describe("Page utils", () => {
         expect(shouldDisplayRightPanel("/asset", { shouldDisplayAggregatedAssets: true })).toBe(
           true,
         );
-        expect(
-          shouldDisplayRightPanel("/asset/btc", { shouldDisplayAggregatedAssets: true }),
-        ).toBe(true);
+        expect(shouldDisplayRightPanel("/asset/btc", { shouldDisplayAggregatedAssets: true })).toBe(
+          true,
+        );
       });
 
       it("does not treat /assets as an aggregated asset detail route", () => {
-        expect(
-          shouldDisplayRightPanel("/assets", { shouldDisplayAggregatedAssets: true }),
-        ).toBe(false);
+        expect(shouldDisplayRightPanel("/assets", { shouldDisplayAggregatedAssets: true })).toBe(
+          false,
+        );
       });
     });
   });

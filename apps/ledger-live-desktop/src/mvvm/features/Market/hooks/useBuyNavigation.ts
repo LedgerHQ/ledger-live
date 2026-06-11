@@ -1,9 +1,13 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useRampExchangeNavigation } from "./useRampExchangeNavigation";
+import {
+  type RampExchangeNavigationOptions,
+  useRampExchangeNavigation,
+} from "./useRampExchangeNavigation";
 
 type NavigateToBuy = (
   ledgerCurrency: CryptoOrTokenCurrency | null | undefined,
   ticker?: string,
+  options?: RampExchangeNavigationOptions,
 ) => void;
 
 interface UseBuyNavigationResult {

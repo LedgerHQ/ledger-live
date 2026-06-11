@@ -1,4 +1,5 @@
 import type React from "react";
+import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
 import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
@@ -27,6 +28,7 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps, InitInpu
     }
   | {
       phase: "deviceDisconnected";
+      device: ConnectedDevice;
       onRetry: () => void;
       onClose: () => void;
     }
@@ -51,6 +53,7 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps, InitInpu
   | {
       phase: "intentError";
       error: unknown;
+      device: ConnectedDevice;
       onRetry: () => void;
       onClose: () => void;
     }
@@ -98,6 +101,7 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
     case "deviceDisconnected":
       return {
         phase: "deviceDisconnected",
+        device: executorState.device,
         onRetry: params.onRetry,
         onClose: params.onUserCancel,
       };
@@ -121,6 +125,7 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
       return {
         phase: "intentError",
         error: executorState.error,
+        device: executorState.connectionResult.connectedDevice,
         onRetry: params.onRetry,
         onClose: params.onUserCancel,
       };

@@ -138,6 +138,7 @@ describe("signOperation", () => {
           payload: expect.any(Object),
         }),
         derivationPath,
+        expect.any(BigInt),
       );
     });
 

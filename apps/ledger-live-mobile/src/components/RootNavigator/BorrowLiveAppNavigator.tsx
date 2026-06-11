@@ -1,4 +1,5 @@
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTheme } from "styled-components/native";
@@ -6,7 +7,10 @@ import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { BorrowLiveAppNavigatorParamList } from "./types/BorrowLiveAppNavigator";
 import { BorrowLiveAppWrapper } from "LLM/features/Borrow";
-import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
+import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-api/Borrow/types";
+import type { DefaultAccountSwapParamList } from "~/screens/Swap/types";
+import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
+import type { BaseComposite, BaseNavigation, StackNavigatorProps } from "./types/helpers";
 
 const Stack = createNativeStackNavigator<BorrowLiveAppNavigatorParamList>();
 
@@ -19,6 +23,7 @@ type BorrowNavigation = NavigationProp<ParamListBase>;
 const Borrow = (props: NavigationProps) => {
   const paramAction = props.route.params?.action;
   const navigation: BorrowNavigation = props.navigation as unknown as BorrowNavigation;
+  const baseNavigation = useNavigation<BaseNavigation>();
 
   const triggerGoBackAction = useCallback(() => {
     navigation.navigate(NavigatorName.Borrow, {
@@ -50,6 +55,18 @@ const Borrow = (props: NavigationProps) => {
     });
   }, [navigation, props.route.params]);
 
+  const goToSwap = useCallback(
+    (swapParams: BorrowSwapNavigationParams) => {
+      const params: DefaultAccountSwapParamList = {
+        ...swapParams,
+        fromPath: ScreenName.Borrow,
+      };
+
+      navigateToSwapTab({ navigation: baseNavigation, params });
+    },
+    [baseNavigation],
+  );
+
   useEffect(() => {
     if (!paramAction || paramAction === "go-back") {
       return;
@@ -65,6 +82,7 @@ const Borrow = (props: NavigationProps) => {
       onNativeGoBack={goBackNative}
       onActionHandled={clearDeepLink}
       onWalletApiGoBack={triggerGoBackAction}
+      onWalletApiGoToSwap={goToSwap}
     />
   );
 };
@@ -75,11 +93,7 @@ export default function BorrowLiveAppNavigator() {
 
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig }}>
-      <Stack.Screen
-        name={ScreenName.Borrow}
-        component={Borrow}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name={ScreenName.Borrow} component={Borrow} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

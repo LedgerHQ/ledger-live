@@ -50,7 +50,10 @@ export function useAssetMarketData({
       version,
       isStaging,
     },
-    { skip: !effectiveLedgerIds?.length },
+    {
+      skip: !effectiveLedgerIds?.length,
+      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    },
   );
 
   const dadaMarket = effectiveLedgerIds?.[0]
@@ -77,10 +80,20 @@ export function useAssetMarketData({
     [assetData],
   );
 
+  // CoinGecko's response carries the full multi-network list. `marketCurrencyData`
+  // can lose it when the DADA branch wins (its `ledgerIds` is scoped to a single
+  // id), so prefer `marketFromHook?.ledgerIds` and fall back to whatever's left.
+  const ledgerIds = useMemo<string[]>(() => {
+    if (marketFromHook?.ledgerIds?.length) return marketFromHook.ledgerIds;
+    if (marketCurrencyData?.ledgerIds?.length) return marketCurrencyData.ledgerIds;
+    return knownLedgerIds ? [...knownLedgerIds] : [];
+  }, [marketFromHook?.ledgerIds, marketCurrencyData?.ledgerIds, knownLedgerIds]);
+
   return {
     marketCurrencyData,
     marketId: marketFromHook?.id ?? knownMarketId,
     ledgerCurrencyFromDada,
+    ledgerIds,
     isLoading: isLoadingMarket || isLoadingDada || (!!dadaMarket && rateStatus === "loading"),
     isError: isErrorMarket || isErrorDada || (!!dadaMarket && rateStatus === "error"),
   };

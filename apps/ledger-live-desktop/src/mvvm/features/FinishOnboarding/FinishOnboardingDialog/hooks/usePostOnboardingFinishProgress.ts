@@ -65,9 +65,7 @@ export function usePostOnboardingFinishProgress(
   }, [actionList, context]);
 
   return useMemo(() => {
-    const completedInList = actionList.filter(
-      a => a.completed || !!completionById[a.id],
-    ).length;
+    const completedInList = actionList.filter(a => a.completed || !!completionById[a.id]).length;
     const totalInList = actionList.length;
 
     const allActionsCompleted = totalInList === 0 || completedInList === totalInList;

@@ -17,7 +17,7 @@ function trackDefinitionPressed() {
 export const useFearAndGreedViewModel = (): FearAndGreedViewModel => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { data, isError } = useGetFearAndGreedLatestQuery(undefined, {
+  const { data, isLoading, isError } = useGetFearAndGreedLatestQuery(undefined, {
     pollingInterval: FIFTEEN_MINUTES_IN_MS,
   });
 
@@ -32,6 +32,7 @@ export const useFearAndGreedViewModel = (): FearAndGreedViewModel => {
 
   return {
     data,
+    isLoading,
     isError,
     isDrawerOpen,
     handleOpenDrawer,

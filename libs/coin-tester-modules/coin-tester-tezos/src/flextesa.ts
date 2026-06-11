@@ -74,7 +74,7 @@ export async function fundAccount(
         `octez-client --wait none transfer ${amountTez} from alice to ${address} --burn-cap 0.5`,
         {
           ...composeOptions,
-          callback: (chunk) => {
+          callback: chunk => {
             const text = chunk.toString();
             operationHash ??= /Operation hash is '([a-zA-Z0-9]+)'/.exec(text)?.[1];
             branch ??= /branch ([a-zA-Z0-9]+)/.exec(text)?.[1];
@@ -116,7 +116,7 @@ export async function waitForOperationInclusion(operationHash: string): Promise<
     });
 }
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map((e) =>
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
     await killFlextesa();
   }),

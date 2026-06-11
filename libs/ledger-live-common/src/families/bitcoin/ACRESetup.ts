@@ -23,7 +23,7 @@ const createSigner = (transport: Transport, currency: CryptoCurrency) => {
   return new Acre({ transport, currency: currency.id });
 };
 
-const signerContext: SignerContext = <T,>(
+const signerContext: SignerContext = <T>(
   deviceId: string,
   crypto: CryptoCurrency,
   fn: (signer: Acre) => Promise<T>,

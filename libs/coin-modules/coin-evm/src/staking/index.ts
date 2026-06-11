@@ -1,6 +1,7 @@
 export { STAKING_CONTRACTS } from "./contracts";
 export { STAKING_CONFIG } from "./fetchers";
-export { buildTransactionParams, buildStakingTransactionParams } from "./transactionData";
+export { buildTransactionParams } from "./operations";
+export { buildStakingTransactionParams } from "./transactionData";
 export { isStakingOperation, detectEvmStakingOperationType } from "./detectOperationType";
 export type { StakingFetcher, StakingStrategy } from "../types/staking";
 export { encodeStakingData } from "./encoder";
@@ -10,7 +11,7 @@ export {
   getUnbondingPeriodDays,
   getMaxRedelegations,
   hasUnbondingPeriod,
-  getCachedValidators,
+  hasRedelegation,
   prefetchValidators,
   clearValidatorsCache,
 } from "./validators";
@@ -27,6 +28,7 @@ export {
   getRedelegationCompletionDate,
   parseAmountStringToNumber,
   decodeRedelegatePayload,
+  isSeiAccountUnassociated,
 } from "./logic";
 export {
   assignFromAccountRaw,

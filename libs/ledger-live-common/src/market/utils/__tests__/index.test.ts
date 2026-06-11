@@ -1,12 +1,20 @@
 import {
   getChangePercentage,
   getChartRangeSegment,
+  getRange,
+  getSortParam,
   isAvailableForTrading,
   filterMarketPerformersByAvailability,
   dadaIdToMarketId,
   IsCurrencyAvailable,
 } from "../index";
 import { createMockMarketPerformer, MOCK_MARKET_PERFORMERS } from "../fixtures";
+import { Order } from "../types";
+
+const createIsCurrencyAvailable =
+  (availableCurrencies: Record<string, string[]>): IsCurrencyAvailable =>
+  (currencyId: string, mode: "onRamp" | "offRamp") =>
+    availableCurrencies[mode]?.includes(currencyId) ?? false;
 
 describe("dadaIdToMarketId", () => {
   it("returns the id unchanged when it has no colon", () => {
@@ -70,12 +78,26 @@ describe("getChangePercentage", () => {
   });
 });
 
-describe("isAvailableForTrading", () => {
-  const createIsCurrencyAvailable =
-    (availableCurrencies: Record<string, string[]>): IsCurrencyAvailable =>
-    (currencyId: string, mode: "onRamp" | "offRamp") =>
-      availableCurrencies[mode]?.includes(currencyId) ?? false;
+describe("getRange", () => {
+  it.each([
+    ["24h", "1d"],
+    ["7d", "1w"],
+    ["30d", "1m"],
+    ["6m", "6m"],
+    ["1y", "1y"],
+  ])("maps market range '%s' to sort segment '%s'", (input, expected) => {
+    expect(getRange(input)).toBe(expected);
+  });
+});
 
+describe("getSortParam", () => {
+  it("uses the 6m range segment for top gainers and losers", () => {
+    expect(getSortParam(Order.topGainers, "6m")).toBe("positive-price-change-6m");
+    expect(getSortParam(Order.topLosers, "6m")).toBe("negative-price-change-6m");
+  });
+});
+
+describe("isAvailableForTrading", () => {
   it("should return true if currency is available for buy (onRamp)", () => {
     const isCurrencyAvailable = createIsCurrencyAvailable({
       onRamp: ["bitcoin"],
@@ -142,11 +164,6 @@ describe("isAvailableForTrading", () => {
 });
 
 describe("filterMarketPerformersByAvailability", () => {
-  const createIsCurrencyAvailable =
-    (availableCurrencies: Record<string, string[]>): IsCurrencyAvailable =>
-    (currencyId: string, mode: "onRamp" | "offRamp") =>
-      availableCurrencies[mode]?.includes(currencyId) ?? false;
-
   // Use first 4 performers from shared fixtures
   const mockPerformers = [
     ...MOCK_MARKET_PERFORMERS.slice(0, 3),
@@ -272,12 +289,17 @@ describe("getChartRangeSegment", () => {
     ["1h", "1h"],
     ["24h", "1d"],
     ["day", "1d"],
+    ["1d", "1d"],
     ["7d", "1w"],
     ["week", "1w"],
+    ["1w", "1w"],
     ["30d", "1m"],
     ["month", "1m"],
+    ["1m", "1m"],
+    ["6m", "6m"],
     ["1y", "1y"],
     ["year", "1y"],
+    ["5y", "5y"],
     ["all", "all"],
   ])("maps UI range '%s' to URL segment '%s'", (input, expected) => {
     expect(getChartRangeSegment(input)).toBe(expected);

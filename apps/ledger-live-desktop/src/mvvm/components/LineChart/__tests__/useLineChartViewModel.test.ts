@@ -5,7 +5,7 @@ import {
   LINE_CHART_COLOR_TO_STROKE,
 } from "../constants";
 import { useLineChartViewModel } from "../useLineChartViewModel";
-import type { LineChartProps, LineChartSeries } from "../types";
+import type { LineChartPointMarker, LineChartProps, LineChartSeries } from "../types";
 
 const MOCK_SERIES: LineChartSeries[] = [
   {
@@ -18,7 +18,7 @@ const MOCK_SERIES: LineChartSeries[] = [
 
 const defaultProps: LineChartProps = {
   series: MOCK_SERIES,
-  selectedRange: "1D",
+  selectedRange: "1d",
   onRangeChange: jest.fn(),
 };
 
@@ -57,7 +57,7 @@ describe("useLineChartViewModel", () => {
         isError: true,
         errorMessage: "Custom error",
         height: 180,
-        selectedRange: "1Y",
+        selectedRange: "1y",
       }),
     );
 
@@ -65,7 +65,18 @@ describe("useLineChartViewModel", () => {
     expect(result.current.isError).toBe(true);
     expect(result.current.errorMessage).toBe("Custom error");
     expect(result.current.height).toBe(180);
-    expect(result.current.selectedRange).toBe("1Y");
+    expect(result.current.selectedRange).toBe("1y");
+  });
+
+  it("forwards the rangeSelectorTrailing slot unchanged and defaults it to undefined", () => {
+    const { result: withoutTrailing } = renderHook(() => useLineChartViewModel(defaultProps));
+    expect(withoutTrailing.current.rangeSelectorTrailing).toBeUndefined();
+
+    const trailing = "trailing-node";
+    const { result: withTrailing } = renderHook(() =>
+      useLineChartViewModel({ ...defaultProps, rangeSelectorTrailing: trailing }),
+    );
+    expect(withTrailing.current.rangeSelectorTrailing).toBe(trailing);
   });
 
   it("calls onRangeChange when handleSelectedChange is invoked", () => {
@@ -78,10 +89,10 @@ describe("useLineChartViewModel", () => {
     );
 
     act(() => {
-      result.current.handleSelectedChange("1Y");
+      result.current.handleSelectedChange("1y");
     });
 
-    expect(onRangeChange).toHaveBeenCalledWith("1Y");
+    expect(onRangeChange).toHaveBeenCalledWith("1y");
   });
 
   it("builds translated range buttons for every supported range", () => {
@@ -89,7 +100,10 @@ describe("useLineChartViewModel", () => {
 
     expect(result.current.rangeButtons).toHaveLength(LINE_CHART_RANGES.length);
     expect(result.current.rangeButtons.map(button => button.value)).toEqual([...LINE_CHART_RANGES]);
-    expect(result.current.rangeButtons.find(button => button.value === "ALL")?.label).toBe("All");
+    expect(result.current.rangeButtons.find(button => button.value === "all")?.label).toBe("ALL");
+    expect(result.current.rangeButtons.find(button => button.value === "1d")?.label).toBe("1D");
+    expect(result.current.rangeButtons.find(button => button.value === "6m")?.label).toBe("6M");
+    expect(result.current.rangeButtons.find(button => button.value === "5y")?.label).toBe("5Y");
     expect(result.current.rangeSelectorLabel).toBe("Select time range");
   });
 
@@ -99,9 +113,16 @@ describe("useLineChartViewModel", () => {
     expect(result.current.height).toBe(DEFAULT_LINE_CHART_HEIGHT);
   });
 
-  it("keeps chartWidth null until the container is measured", () => {
-    const { result } = renderHook(() => useLineChartViewModel(defaultProps));
+  it("derives a pointTooltips map keyed by index for markers that carry a tooltip", () => {
+    const points: LineChartPointMarker[] = [
+      { index: 0, value: 1, tooltip: { rows: [{ label: "Received", value: "$1" }] } },
+      { index: 2, value: 3 },
+    ];
 
-    expect(result.current.chartWidth).toBeNull();
+    const { result } = renderHook(() => useLineChartViewModel({ ...defaultProps, points }));
+
+    expect(result.current.pointTooltips.size).toBe(1);
+    expect(result.current.pointTooltips.get(0)?.rows).toEqual([{ label: "Received", value: "$1" }]);
+    expect(result.current.pointTooltips.has(2)).toBe(false);
   });
 });

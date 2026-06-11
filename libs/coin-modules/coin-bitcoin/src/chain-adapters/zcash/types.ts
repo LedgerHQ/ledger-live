@@ -6,6 +6,8 @@ export type SyncShieldedArgs = {
   startBlockHeight: number;
   viewingKey: string;
   maxBatchSize: number;
+  /** Hex-encoded nullifiers of unspent notes from previous syncs. */
+  knownNullifiers?: string[];
 };
 
 /**
@@ -37,16 +39,35 @@ export type ZCashClientArgs = {
 
 export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
 
-export type DecryptedOutputRaw = {
+/** Orchard spending fields shared across note types. */
+type SpendingFields = {
+  nullifier?: string; // 64-char hex (32 bytes)
+  rho?: string; // 64-char hex (32 bytes)
+  rseed?: string; // 64-char hex (32 bytes)
+  cmx?: string; // 64-char hex (32 bytes)
+  position?: string; // decimal string (avoids f64 precision loss)
+  recipient?: string; // 86-char hex (43 bytes)
+};
+
+export type DecryptedOutputRaw = SpendingFields & {
   memo: string;
   transfer_type: string;
   amount: string; // zatoshis
+  is_spent?: boolean;
 };
 
-export type DecryptedOutput = {
+export type DecryptedOutput = SpendingFields & {
   memo: string;
   transfer_type: string;
   amount: BigNumber; // zatoshis
+  isSpent?: boolean;
+};
+
+/** An unspent Orchard note eligible for spending (all spending fields required). */
+export type SpendableNote = Required<SpendingFields> & {
+  txid: string;
+  outputIndex: number;
+  amount: BigNumber;
 };
 
 export type DecryptedTransaction = {
@@ -108,6 +129,8 @@ export type ShieldedSyncResult = {
   remainingBlocks: number;
   lastProcessedBlock?: number;
   transactions: ShieldedTransaction[];
+  /** Nullifiers from previous syncs that were spent in this range (for incremental sync). */
+  spentKnownNullifiers?: string[];
 };
 
 /**
@@ -123,6 +146,7 @@ export type ShieldedSyncResultRaw = {
   remainingBlocks: number;
   lastProcessedBlock?: number;
   transactions: ShieldedTransactionRaw[];
+  spentKnownNullifiers?: string[];
 };
 
 export type SyncEstimatedTime = {
@@ -164,6 +188,10 @@ export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
   /** Optional 512-byte memo field for shielded outputs. */
   memo?: string;
+  // Coin selection results (populated by prepareTransaction)
+  selectedNotes?: SpendableNote[];
+  zcashFee?: BigNumber; // ZIP-317 computed fee
+  changeAmount?: BigNumber; // Change returning to self
 };
 
 export function isZcashTransaction(tx: Transaction): tx is ZcashTransaction {

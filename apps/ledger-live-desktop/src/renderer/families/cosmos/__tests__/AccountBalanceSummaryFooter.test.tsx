@@ -10,6 +10,10 @@ import * as currencies from "@ledgerhq/live-common/currencies/index";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("@ledgerhq/live-common/currencies/index");
+jest.mock("@ledgerhq/live-common/config/index", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/config/index"),
+}));
 
 describe("AccountBalanceSummaryFooter", () => {
   describe("Testing disableDelegation in currency config", () => {

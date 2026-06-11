@@ -39,7 +39,8 @@ describe("RecoverBanner", () => {
   describe("subscribe-done state (STARGATE_SUBSCRIBE)", () => {
     it("renders secondary dismiss link when i18n includes secondaryCta", async () => {
       mockGetStoreValue.mockImplementation((key: string) => {
-        if (key === "SUBSCRIPTION_STATE") return LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE;
+        if (key === "SUBSCRIPTION_STATE")
+          return LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE;
         if (key === "DISPLAY_BANNER") return "true";
         return undefined;
       });
@@ -66,7 +67,8 @@ describe("RecoverBanner", () => {
       });
 
       mockGetStoreValue.mockImplementation((key: string) => {
-        if (key === "SUBSCRIPTION_STATE") return LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE;
+        if (key === "SUBSCRIPTION_STATE")
+          return LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE;
         if (key === "DISPLAY_BANNER") return "true";
         return undefined;
       });

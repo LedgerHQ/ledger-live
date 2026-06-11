@@ -62,7 +62,6 @@ describe("ConnectingState", () => {
         category: PAGE_CONNECT_DEVICE.Connecting,
         sourceFlow: "my_ledger",
         modelId: DeviceModelId.nanoX,
-        matchedDevice: DeviceModelId.nanoX,
         transport: "ble",
         deviceUxV2: true,
       }),

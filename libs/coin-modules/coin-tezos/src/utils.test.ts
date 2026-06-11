@@ -3,6 +3,7 @@ import {
   computeMaxStakeAmount,
   normalizePublicKeyForAddress,
   parseTezosTokenAsset,
+  partitionNativeBalance,
   resolveTezosOperationMode,
   STAKE_USE_ALL_RESERVE_MUTEZ,
 } from "./utils";
@@ -142,23 +143,52 @@ describe("normalizePublicKeyForAddress", () => {
 
 describe("computeMaxStakeAmount", () => {
   it("subtracts already-staked funds, fees and the reserve", () => {
-    expect(computeMaxStakeAmount(1_000_000n, 300_000n, 1000n)).toBe(
+    expect(computeMaxStakeAmount(1_000_000n, 300_000n, 0n, 1000n)).toBe(
       700_000n - 1000n - STAKE_USE_ALL_RESERVE_MUTEZ,
     );
   });
 
   it("uses the full balance when nothing is staked", () => {
-    expect(computeMaxStakeAmount(1_000_000n, 0n, 1000n)).toBe(
+    expect(computeMaxStakeAmount(1_000_000n, 0n, 0n, 1000n)).toBe(
       1_000_000n - 1000n - STAKE_USE_ALL_RESERVE_MUTEZ,
     );
   });
 
+  it("also subtracts unstaked-frozen funds (not re-stakeable until finalized)", () => {
+    expect(computeMaxStakeAmount(1_000_000n, 300_000n, 200_000n, 1000n)).toBe(
+      500_000n - 1000n - STAKE_USE_ALL_RESERVE_MUTEZ,
+    );
+  });
+
   it("clamps to 0 when staked balance covers the whole balance", () => {
-    expect(computeMaxStakeAmount(300_000n, 300_000n, 1000n)).toBe(0n);
-    expect(computeMaxStakeAmount(200_000n, 300_000n, 1000n)).toBe(0n);
+    expect(computeMaxStakeAmount(300_000n, 300_000n, 0n, 1000n)).toBe(0n);
+    expect(computeMaxStakeAmount(200_000n, 300_000n, 0n, 1000n)).toBe(0n);
   });
 
   it("clamps to 0 when the liquid balance cannot cover fees and reserve", () => {
-    expect(computeMaxStakeAmount(305_000n, 300_000n, 1000n)).toBe(0n);
+    expect(computeMaxStakeAmount(305_000n, 300_000n, 0n, 1000n)).toBe(0n);
+  });
+});
+
+describe("partitionNativeBalance", () => {
+  it("splits total into spendable and locked (staked + unstaked)", () => {
+    expect(partitionNativeBalance(100n, 30n, 10n)).toEqual({ spendable: 60n, locked: 40n });
+  });
+
+  it("treats the whole balance as spendable when nothing is frozen", () => {
+    expect(partitionNativeBalance(100n, 0n, 0n)).toEqual({ spendable: 100n, locked: 0n });
+  });
+
+  it("clamps locked to total (spendable to 0) when frozen funds exceed balance", () => {
+    expect(partitionNativeBalance(50n, 80n, 10n)).toEqual({ spendable: 0n, locked: 50n });
+  });
+
+  it("returns zero spendable when frozen funds exactly equal the balance", () => {
+    expect(partitionNativeBalance(100n, 70n, 30n)).toEqual({ spendable: 0n, locked: 100n });
+  });
+
+  it("locks staked-only and unstaked-only amounts", () => {
+    expect(partitionNativeBalance(100n, 40n, 0n)).toEqual({ spendable: 60n, locked: 40n });
+    expect(partitionNativeBalance(100n, 0n, 25n)).toEqual({ spendable: 75n, locked: 25n });
   });
 });

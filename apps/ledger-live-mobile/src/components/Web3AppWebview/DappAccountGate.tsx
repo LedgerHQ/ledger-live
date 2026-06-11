@@ -33,9 +33,7 @@ export function DappAccountGate({
     );
   }
 
-  return (
-    <NoAccountScreen manifest={manifest} setCurrentAccountHistDb={setCurrentAccountHistDb} />
-  );
+  return <NoAccountScreen manifest={manifest} setCurrentAccountHistDb={setCurrentAccountHistDb} />;
 }
 
 const styles = StyleSheet.create({

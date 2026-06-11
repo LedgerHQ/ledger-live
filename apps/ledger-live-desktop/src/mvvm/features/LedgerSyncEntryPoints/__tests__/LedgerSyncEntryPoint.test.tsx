@@ -160,7 +160,10 @@ describe("LedgerSyncEntryPoint", () => {
         initialState: {
           ...INITIAL_STATE,
           ...withFlagOverrides({
-            lldWalletSync: { enabled: true, params: { environment: "STAGING" as const, watchConfig: {} } },
+            lldWalletSync: {
+              enabled: true,
+              params: { environment: "STAGING" as const, watchConfig: {} },
+            },
             lldLedgerSyncEntryPoints: { enabled: true, params: { postOnboarding: false } },
           }),
         },
@@ -194,10 +197,19 @@ describe("LedgerSyncEntryPoint", () => {
     const OPTIMISATION_ENABLED_STATE = {
       ...INITIAL_STATE,
       ...withFlagOverrides({
-        lldWalletSync: { enabled: true, params: { environment: "STAGING" as const, watchConfig: {} } },
+        lldWalletSync: {
+          enabled: true,
+          params: { environment: "STAGING" as const, watchConfig: {} },
+        },
         lldLedgerSyncEntryPoints: {
           enabled: true,
-          params: { onboarding: true, manager: true, accounts: true, settings: true, postOnboarding: true },
+          params: {
+            onboarding: true,
+            manager: true,
+            accounts: true,
+            settings: true,
+            postOnboarding: true,
+          },
         },
         lwdLedgerSyncOptimisation: { enabled: true },
       }),
@@ -276,6 +288,50 @@ describe("LedgerSyncEntryPoint", () => {
         banner: "Ledger Sync Activation",
         page: "Settings",
       });
+    });
+  });
+
+  describe("when the consumer passes variant='v4'", () => {
+    it("should render the Wallet v4 Lumen banner on the Accounts entry point", async () => {
+      const { user } = render(
+        <LedgerSyncEntryPointShared entryPoint={EntryPoint.accounts} variant="v4" />,
+        { initialState: INITIAL_STATE },
+      );
+
+      const bannerTitle = screen.getByText(/Your wallet isn't synced/);
+      expect(bannerTitle).toBeVisible();
+
+      const bannerDescription = screen.getByText(
+        /Keep your portfolio up to date when switching computers or using a phone/,
+      );
+      expect(bannerDescription).toBeVisible();
+
+      const syncButton = screen.getByRole("button", { name: "Sync my wallet" });
+      expect(syncButton).toBeVisible();
+
+      await user.click(syncButton);
+
+      expect(track).toHaveBeenCalledWith("banner_clicked", {
+        banner: "Ledger Sync Activation",
+        page: "Accounts",
+      });
+
+      const activateLedgerSyncDrawer = screen.getByText(/Turn on Ledger Sync for this computer?/);
+      expect(activateLedgerSyncDrawer).toBeVisible();
+    });
+
+    it("should not render the Wallet v4 banner once Ledger Sync is activated", () => {
+      render(<LedgerSyncEntryPointShared entryPoint={EntryPoint.accounts} variant="v4" />, {
+        initialState: {
+          ...INITIAL_STATE,
+          trustchain: {
+            trustchain: { rootId: "fake-root-id", applicationPath: "0/0", walletSyncEncryptionKey: "" },
+            memberCredentials: null,
+          },
+        },
+      });
+
+      expect(screen.queryByText(/Your wallet isn't synced/)).toBe(null);
     });
   });
 });

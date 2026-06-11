@@ -75,6 +75,8 @@ export function useOperationsListViewModel(accountIds?: string[]) {
 
   const isEmpty = completed && sections.length === 0;
 
+  const hasPendingOperations = useMemo(() => sections.some(s => s.isPending), [sections]);
+
   return {
     accounts,
     flattenedAccounts,
@@ -83,6 +85,7 @@ export function useOperationsListViewModel(accountIds?: string[]) {
     sections,
     completed,
     isEmpty,
+    hasPendingOperations,
     onEndReached,
   };
 }

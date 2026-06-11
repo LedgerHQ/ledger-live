@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { AB_TESTING_VARIANTS } from "./types/variants";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
@@ -233,7 +233,7 @@ describe("NotificationsPrompt dApp complete flow", () => {
     expect(track).toHaveBeenCalledWith("attempt_to_trigger_push_notification_drawer_after_action", {
       action: "dapp_complete",
       shouldPrompt: true,
-      variant: ABTestingVariants.variantB,
+      variant: AB_TESTING_VARIANTS.B,
       repromptDelay: null,
       dismissedCount: 0,
       skipReason: undefined,

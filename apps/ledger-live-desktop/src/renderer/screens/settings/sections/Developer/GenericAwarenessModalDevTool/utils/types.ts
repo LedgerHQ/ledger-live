@@ -1,4 +1,4 @@
-export type DevLayoutMode = "carousel" | "featureIntro";
+export type DevLayoutMode = "carousel" | "featureIntro" | "prompt";
 export type DevTriggerMode = "appStart" | "bannerClick";
 
 export type CarouselSlideForm = {

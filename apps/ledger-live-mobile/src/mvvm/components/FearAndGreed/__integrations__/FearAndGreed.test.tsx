@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, within } from "@tests/test-renderer";
 import { FearAndGreed } from "../index";
 import { server } from "@tests/server";
 import { http, HttpResponse } from "msw";
@@ -34,15 +34,26 @@ describe("FearAndGreed Integration", () => {
 
       expect(queryByTestId("fear-and-greed-card")).toBeNull();
     });
+
+    it("should render an isolated error placeholder when expanded API fails", async () => {
+      server.use(http.get(API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
+
+      render(<FearAndGreed appearance="expanded" width={276} />);
+
+      expect(await screen.findByTestId("fear-and-greed-card-error")).toBeVisible();
+      expect(screen.getByTestId("fear-and-greed-card-error-icon")).toBeVisible();
+      expect(screen.getByText("Mood index")).toBeVisible();
+      expect(screen.getByText("Connection failed")).toBeVisible();
+    });
   });
 
   describe("Mood levels", () => {
     it.each([
-      { value: 15, label: "Fear", classification: "Extreme Fear" },
-      { value: 40, label: "Cautious", classification: "Fear" },
+      { value: 15, label: "Fear+", classification: "Extreme Fear" },
+      { value: 40, label: "Fear", classification: "Fear" },
       { value: 50, label: "Neutral", classification: "Neutral" },
-      { value: 70, label: "Optimistic", classification: "Greed" },
-      { value: 90, label: "Greedy", classification: "Extreme Greed" },
+      { value: 70, label: "Greed", classification: "Greed" },
+      { value: 90, label: "Greed+", classification: "Extreme Greed" },
     ])("should render $label when value is $value", async ({ value, label, classification }) => {
       server.use(
         http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(value, classification))),
@@ -52,7 +63,19 @@ describe("FearAndGreed Integration", () => {
 
       expect(await screen.findByText(label)).toBeVisible();
     });
+
+    it("should render the expanded card with the full mood index title", async () => {
+      server.use(http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(70, "Greed"))));
+
+      render(<FearAndGreed appearance="expanded" width={276} />);
+
+      // Scope to the card: the definition drawer header also renders "Mood index".
+      const card = within(await screen.findByTestId("fear-and-greed-card"));
+      expect(card.getByText("Mood index")).toBeVisible();
+      expect(card.getByText("Greed")).toBeVisible();
+    });
   });
+
   describe("Drawer interaction", () => {
     it("should open definition drawer when card is pressed", async () => {
       server.use(
@@ -66,7 +89,13 @@ describe("FearAndGreed Integration", () => {
 
       expect(
         screen.getByText(
-          /Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed./i,
+          /Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed./i,
+        ),
+      ).toBeVisible();
+
+      expect(
+        screen.getByText(
+          /Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only./i,
         ),
       ).toBeVisible();
     });

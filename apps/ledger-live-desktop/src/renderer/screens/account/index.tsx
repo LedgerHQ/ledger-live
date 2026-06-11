@@ -21,9 +21,9 @@ import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
 import BalanceSummary from "./BalanceSummary";
-import AccountHeader from "./AccountHeader";
 import { AccountWarningBanner, AccountWarningCustomBanner } from "./AccountWarningBanner";
-import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
+import AccountHeaderActions from "./AccountHeaderActions";
+import AccountHeaderRow from "./AccountHeaderRow";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
@@ -34,6 +34,7 @@ import NftEntryPoint from "LLD/features/NftEntryPoint";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { useAccountBackNavigation } from "./hooks/useAccountBackNavigation";
 
 type Params = {
   id?: string;
@@ -85,6 +86,7 @@ const AccountPage = ({
   setCountervalueFirst,
 }: Props) => {
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
+  const { showBackButton, navigateBack } = useAccountBackNavigation();
   const fallbackPath = getAccountsSidebarPath(shouldDisplayAssetSection);
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const bridge = useAccountBridgeOrNull(account ?? null, parentAccount);
@@ -129,18 +131,12 @@ const AccountPage = ({
         operationsLength={account.operations.length}
       />
       <SyncOneAccountOnMount reason="view-account" priority={10} accountId={mainAccount.id} />
-      <Box
-        horizontal
-        mb={1}
-        flow={4}
-        style={{
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <AccountHeader account={account} parentAccount={parentAccount} />
-        <AccountHeaderSettingsButton account={account} parentAccount={parentAccount} />
-      </Box>
+      <AccountHeaderRow
+        account={account}
+        parentAccount={parentAccount}
+        showBackButton={showBackButton}
+        onBack={navigateBack}
+      />
       <Box
         horizontal
         pb={3}

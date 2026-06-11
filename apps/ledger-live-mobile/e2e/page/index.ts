@@ -30,15 +30,25 @@ import { DeviceLike } from "~/reducers/types";
 import { loadAccounts, loadBleState, loadConfig, setFeatureFlags } from "../bridge/server";
 import { initTestAccounts } from "../models/currencies";
 import { setupEnvironment } from "../helpers/commonHelpers";
-import type { PartialFeatures } from "@shared/feature-flags";
+import type { FeatureId, Features, PartialFeatures } from "@shared/feature-flags";
 
 setupEnvironment();
+
+// The slice keeps overrides as-is (see `resolveFeature` in @shared/feature-flags) — we
+// deliberately don't merge with FEATURE_FLAGS_DEFAULTS here. Merging would activate
+// unrelated default params and shift UI paths the page objects don't target.
+type LooseFlagOverrides = {
+  [K in FeatureId]?: {
+    enabled?: boolean;
+    params?: Features[K] extends { params?: infer P } ? Partial<NonNullable<P>> : never;
+  };
+};
 
 type ApplicationOptions = {
   userdata?: string;
   knownDevices?: DeviceLike[];
   testedCurrencies?: string[];
-  featureFlags?: PartialFeatures;
+  featureFlags?: LooseFlagOverrides;
 };
 
 const lazyInit = <T>(PageClass: new () => T) => {
@@ -88,7 +98,7 @@ export class Application {
 
     knownDevices && (await loadBleState({ knownDevices }));
     if (testedCurrencies) {
-      this.testAccounts = initTestAccounts(testedCurrencies);
+      this.testAccounts = await initTestAccounts(testedCurrencies);
       await loadAccounts(this.testAccounts);
     }
 
@@ -96,7 +106,7 @@ export class Application {
     await setFeatureFlags({
       lwmWallet40: { enabled: false },
       ...featureFlags,
-    });
+    } as PartialFeatures);
   }
 
   public get assetAccountsPage() {

@@ -24,5 +24,6 @@ export type PnlViewModel = {
   dialog: {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
+    onOpen: () => void;
   };
 };

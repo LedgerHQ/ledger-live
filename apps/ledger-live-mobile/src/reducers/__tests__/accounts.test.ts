@@ -12,9 +12,9 @@ import {
 import type { State } from "../types";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
-  const {
-    defaultIsAccountEmpty,
-  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  const { defaultIsAccountEmpty } = jest.requireActual(
+    "@ledgerhq/live-common/bridge/defaultBridgeExtensions",
+  );
   return {
     useAccountBridge: jest.fn(),
     useAccountBridgeOrNull: jest.fn(),

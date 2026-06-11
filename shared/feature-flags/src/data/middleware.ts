@@ -1,7 +1,7 @@
 import { type Action, type Middleware, isAction } from "@reduxjs/toolkit";
 import type { PartialFeatures, ResolutionConfig } from "./schema";
 import { FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS } from "../constants";
-import { syncRemoteConfig } from "./slice";
+import { syncRemoteConfig, setRemoteFlagsReady } from "./slice";
 
 /** Feature-flags metadata that the middleware injects into every `featureFlags/*` action. */
 export interface FeatureFlagsMeta {
@@ -10,8 +10,8 @@ export interface FeatureFlagsMeta {
 }
 
 /** Configuration for {@link createFeatureFlagsMiddleware}, bound at store creation. */
-export interface FeatureFlagsMiddlewareConfig {
-  /** Static context used by reducers to resolve flags (platform, version, language, env overrides). */
+export interface FeatureFlagsMiddlewareConfig<S = unknown> {
+  /** Static context used by reducers to resolve flags (platform, version, env overrides). */
   resolutionConfig: ResolutionConfig;
   /**
    * Optional async callback that returns the latest remote feature flags. When
@@ -22,6 +22,8 @@ export interface FeatureFlagsMiddlewareConfig {
   fetchRemoteFlags?: () => Promise<PartialFeatures>;
   /** Polling interval for `fetchRemoteFlags`. Defaults to {@link FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS}. */
   refreshInterval?: number;
+  /** Optional selector for the current app language, injected into resolution and re-resolved on change. */
+  getAppLanguage?: (state: S) => string;
 }
 
 /**
@@ -37,26 +39,56 @@ export interface FeatureFlagsMiddlewareConfig {
  * @param config
  * Resolution context plus optional fetcher + interval. Bound at store creation.
  */
-export function createFeatureFlagsMiddleware(config: FeatureFlagsMiddlewareConfig): Middleware {
+export function createFeatureFlagsMiddleware<S = unknown>(
+  config: FeatureFlagsMiddlewareConfig<S>,
+): Middleware<object, S> {
   const remoteFlagsRef: RemoteFlagsRef = { current: {} };
-  return ({ dispatch }) => {
-    const { resolutionConfig, fetchRemoteFlags, refreshInterval } = config;
+  return ({ dispatch, getState }) => {
+    const { resolutionConfig, fetchRemoteFlags, refreshInterval, getAppLanguage } = config;
+    const readLang = () => getAppLanguage?.(getState());
+    let lastLang = readLang();
     if (fetchRemoteFlags) {
-      const dispatchRemoteFlags = () => dispatch(syncRemoteConfig());
-      void pollRemoteFlags(fetchRemoteFlags, remoteFlagsRef, dispatchRemoteFlags, refreshInterval);
+      let readyDispatched = false;
+      const dispatchSync = () => dispatch(syncRemoteConfig());
+      const dispatchReady = () => {
+        if (readyDispatched) return;
+        readyDispatched = true;
+        dispatch(setRemoteFlagsReady());
+      };
+      void pollRemoteFlags(
+        fetchRemoteFlags,
+        remoteFlagsRef,
+        dispatchSync,
+        dispatchReady,
+        refreshInterval,
+      );
     }
     return next => action => {
-      if (isAction(action) && action.type.startsWith("featureFlags/")) {
+      if (!isAction(action)) return next(action);
+
+      if (action.type.startsWith("featureFlags/")) {
         return next({
           ...action,
           meta: {
             ...getMeta(action),
-            resolutionConfig,
+            resolutionConfig: getAppLanguage
+              ? { ...resolutionConfig, appLanguage: readLang() }
+              : resolutionConfig,
             remoteFlags: remoteFlagsRef.current,
           },
         });
       }
-      return next(action);
+
+      const result = next(action);
+      // Re-resolve when the language changes (resolution is event-driven).
+      if (getAppLanguage) {
+        const lang = readLang();
+        if (lang !== lastLang) {
+          lastLang = lang;
+          dispatch(syncRemoteConfig());
+        }
+      }
+      return result;
     };
   };
 }
@@ -80,9 +112,9 @@ function getMeta(action: Action<string>) {
 
 /**
  * Self-rescheduling poll loop: fetches remote flags, writes them to the ref on
- * success, dispatches the update, then schedules the next iteration. A failed
- * fetch resolves to `null` (via `.catch`), leaves the ref untouched, and still
- * re-schedules so transient errors don't kill the loop.
+ * success, dispatches the update, signals readiness, then schedules the next
+ * iteration. A failed fetch resolves to `null` (via `.catch`), leaves the ref
+ * untouched, and still re-schedules so transient errors don't kill the loop.
  *
  * @param fetch
  * Async callback that returns the latest remote flags map.
@@ -91,9 +123,14 @@ function getMeta(action: Action<string>) {
  * Mutable container that receives each successful fetch result. Read by the
  * middleware when injecting `action.meta.remoteFlags`.
  *
- * @param dispatch
- * Callback fired after each successful fetch — used to dispatch
+ * @param dispatchSync
+ * Callback fired after each *successful* fetch — used to dispatch
  * `syncRemoteConfig()` so reducers re-resolve.
+ *
+ * @param dispatchReady
+ * Callback fired after each *settled* fetch (resolved or rejected) — used to
+ * dispatch `setRemoteFlagsReady()`. The caller guards it so only the first
+ * settle propagates; idempotent on the reducer side regardless.
  *
  * @param ms
  * Delay between iterations, in milliseconds. Defaults to
@@ -102,15 +139,17 @@ function getMeta(action: Action<string>) {
 async function pollRemoteFlags(
   fetch: () => Promise<PartialFeatures>,
   ref: RemoteFlagsRef,
-  dispatch: () => void,
+  dispatchSync: () => void,
+  dispatchReady: () => void,
   ms: number = FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS,
 ) {
   const remote = await fetch().catch(() => null);
   if (remote !== null) {
     ref.current = remote;
-    dispatch();
+    dispatchSync();
   }
-  setTimeout(pollRemoteFlags, ms, fetch, ref, dispatch, ms);
+  dispatchReady();
+  setTimeout(pollRemoteFlags, ms, fetch, ref, dispatchSync, dispatchReady, ms);
 }
 
 /**

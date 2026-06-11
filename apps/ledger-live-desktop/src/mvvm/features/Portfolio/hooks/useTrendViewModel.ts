@@ -33,7 +33,9 @@ export const useTrendViewModel = ({
 
     const sign = percentage > 0 ? "+" : "";
     const shouldMaskPercentage = useDiscreetMasking && discreet;
-    const percentageText = shouldMaskPercentage ? "***" : `${sign}${(percentage * 100).toFixed(2)}%`;
+    const percentageText = shouldMaskPercentage
+      ? "***"
+      : `${sign}${(percentage * 100).toFixed(2)}%`;
 
     return {
       percentageText,

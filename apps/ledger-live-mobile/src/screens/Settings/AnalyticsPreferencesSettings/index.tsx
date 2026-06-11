@@ -16,7 +16,7 @@ import {
 } from "~/actions/settings";
 import { ScreenName } from "~/const";
 import { TrackScreen, track, updateIdentify } from "~/analytics";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";

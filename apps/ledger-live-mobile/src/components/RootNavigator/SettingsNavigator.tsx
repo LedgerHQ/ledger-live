@@ -143,7 +143,7 @@ export default function SettingsNavigator() {
           title: "",
           headerStyle: {
             backgroundColor: colors.neutral.c00,
-          }
+          },
         }}
       />
       <Stack.Screen

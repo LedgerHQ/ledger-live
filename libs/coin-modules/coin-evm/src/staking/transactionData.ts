@@ -3,72 +3,12 @@ import type {
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { RedelegateDstValAddressRequired } from "@ledgerhq/errors";
-import type { StakingOperation } from "../types/staking";
-import { isStakingIntent, seiEvmAmountToUsei } from "../utils";
+import { isStakingIntent } from "../utils";
 import { isPayable } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
 import { isStakingOperation } from "./detectOperationType";
 import { encodeStakingData } from "./encoder";
-
-type OperationFn = (
-  valAddress: string,
-  amount: bigint,
-  dstValAddress?: string,
-  delegator?: string,
-) => unknown[];
-
-const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
-  sei_evm: {
-    // `delegate` is payable: the amount is carried by msg.value (wei, 18 decimals)
-    // and converted by the precompile, so no amount goes into the calldata.
-    delegate: valAddress => [valAddress],
-    // `undelegate` and `redelegate` take the amount in usei (6 decimals) in the
-    // calldata. The intent's `amount` is expressed in the 18-decimal EVM unit,
-    // so we scale it down here. See `seiEvmAmountToUsei` for details.
-    undelegate: (valAddress, amount) => [valAddress, seiEvmAmountToUsei(amount)],
-    redelegate: (valAddress, amount, dstValAddress) => {
-      if (!dstValAddress) throw new RedelegateDstValAddressRequired();
-      return [valAddress, dstValAddress, seiEvmAmountToUsei(amount)];
-    },
-    getStakedBalance: (_recipient, _amount, dstValAddress, delegator) => {
-      if (!delegator || !dstValAddress) {
-        throw new Error("SEI getStakedBalance requires delegator and dstValAddress");
-      }
-      return [delegator, dstValAddress];
-    },
-    claimReward: valAddress => [valAddress],
-  },
-  celo: {
-    delegate: (valAddress, amount) => [valAddress, amount],
-    undelegate: (valAddress, amount) => [valAddress, amount],
-    redelegate: () => {
-      throw new Error("Celo does not support redelegate");
-    },
-    getStakedBalance: valAddress => [valAddress],
-    getUnstakedBalance: valAddress => [valAddress],
-  },
-};
-
-export const buildTransactionParams = (
-  currencyId: string,
-  transactionType: StakingOperation,
-  valAddress: string,
-  amount: bigint,
-  dstValAddress?: string,
-  delegator?: string,
-): unknown[] => {
-  const protocol = STAKING_PROTOCOLS[currencyId];
-  if (!protocol) {
-    throw new Error(`Unsupported staking currency: ${currencyId}`);
-  }
-
-  const operation = protocol[transactionType];
-  if (!operation) {
-    throw new Error(`Unsupported transaction type for ${currencyId}: ${transactionType}`);
-  }
-  return operation(valAddress, amount, dstValAddress, delegator);
-};
+import { buildTransactionParams } from "./operations";
 
 /**
  * Builds transaction parameters for staking transactions
@@ -85,7 +25,7 @@ export function buildStakingTransactionParams(
     throw new Error("Intent must be a staking intent");
   }
 
-  const { amount, sender, mode, valAddress, dstValAddress } = intent;
+  const { amount, sender, mode, valAddress, valId, dstValAddress } = intent;
 
   const config = STAKING_CONTRACTS[currency.id];
   if (!config) {
@@ -96,14 +36,13 @@ export function buildStakingTransactionParams(
     throw new Error(`Invalid staking operation: ${mode}`);
   }
 
-  const stakingParams = buildTransactionParams(
-    currency.id,
-    mode,
+  const stakingParams = buildTransactionParams(currency.id, mode, {
     valAddress,
+    valId,
     amount,
-    dstValAddress, // dstValAddress for redelegate
-    sender, // delegator address
-  );
+    dstValAddress,
+    delegator: sender,
+  });
 
   const to = config.specificContractAddressByOperation?.[mode] ?? config.contractAddress;
   const data = Buffer.from(

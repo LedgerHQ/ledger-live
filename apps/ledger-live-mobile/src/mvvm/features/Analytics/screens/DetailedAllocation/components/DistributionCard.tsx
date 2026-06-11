@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -9,12 +8,11 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProgressBar from "~/components/ProgressBar";
-import { NavigatorName, ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { track } from "~/analytics";
 import { DETAILED_ALLOCATION_PAGE } from "../../../const";
 import type { DistributionItem } from "../../../types/distribution";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 type Props = Readonly<{
   item: DistributionItem;
@@ -59,8 +57,7 @@ const DistributionRow = styled(Flex).attrs({
 
 function DistributionCard({ item: { currency, amount, distribution } }: Props) {
   const { colors } = useTheme();
-  const navigation = useNavigation();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("mobile");
+  const { openFromAsset, hideNetwork } = useAssetDetailNavigation();
 
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.background.main),
@@ -74,19 +71,14 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
       page: DETAILED_ALLOCATION_PAGE,
     });
 
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Asset,
-      params: {
-        currency,
-      },
-    });
-  }, [currency, navigation]);
+    openFromAsset({ currency, source: "detailed_allocation" });
+  }, [currency, openFromAsset]);
 
   return (
     <Container onPress={navigateToAccounts}>
       <Flex flexDirection="row">
         <IconContainer>
-          <CurrencyIcon currency={currency} size={35} hideNetwork={shouldDisplayAggregatedAssets} />
+          <CurrencyIcon currency={currency} size={35} hideNetwork={hideNetwork} />
         </IconContainer>
         <CoinInfoContainer>
           <CurrencyRow>

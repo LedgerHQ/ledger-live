@@ -4,11 +4,10 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigate, useLocation } from "react-router";
 import { stakeDefaultTrack } from "./constants";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { useDispatch } from "LLD/hooks/redux";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useStake } from "LLD/hooks/useStake";
-import { walletSelector } from "~/renderer/reducers/wallet";
+import { useNavigateToStakeForAccount } from "LLD/hooks/useNavigateToStakeForAccount";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
@@ -34,8 +33,8 @@ const useStakeFlow = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const walletState = useSelector(walletSelector);
-  const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
+  const { navigateToStakeForAccount } = useNavigateToStakeForAccount();
+  const { enabledCurrencies, partnerSupportedAssets } = useStake();
   const list = useMemo(() => {
     return enabledCurrencies.concat(partnerSupportedAssets);
   }, [enabledCurrencies, partnerSupportedAssets]);
@@ -71,41 +70,28 @@ const useStakeFlow = () => {
       });
       setDrawer();
 
-      const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount);
+      const outcome = navigateToStakeForAccount(account, parentAccount, {
+        returnTo,
+        alwaysShowNoFunds,
+        entryPoint,
+        source,
+      });
 
-      if (alwaysShowNoFunds || account.spendableBalance.isZero()) {
-        dispatch(
-          openModal("MODAL_NO_FUNDS_STAKE", {
-            account,
-            parentAccount,
-            entryPoint,
-          }),
-        );
-      } else if (platformAppRoute) {
+      if (outcome.outcome === "platform_earn") {
         track("button_clicked2", {
           ...stakeDefaultTrack,
           button: "delegate",
           page: location.pathname,
-          provider: platformAppRoute.state.appId,
+          provider: outcome.provider,
           currency: account.type === "Account" ? account.currency.ticker : account.token.ticker,
         });
-        navigate(platformAppRoute.pathname.toString(), {
-          state: {
-            ...platformAppRoute.state,
-            returnTo,
-          },
-        });
-      } else {
-        dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
       }
 
-      const isNoFundsFlow = account.spendableBalance.isZero();
-
-      if (shouldRedirect && !platformAppRoute && !isNoFundsFlow) {
+      if (shouldRedirect && outcome.outcome === "native_stake") {
         navigate(returnTo ?? `/account/${account.id}`);
       }
     },
-    [dispatch, navigate, location, getRouteToPlatformApp, walletState],
+    [navigate, location, navigateToStakeForAccount],
   );
 
   const handleRequestClose = useCallback(() => {

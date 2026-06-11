@@ -25,6 +25,7 @@ const useNotifications = () => {
     useNotificationsPrompt({
       permissionStatus,
       areNotificationsAllowed: notifications.areNotificationsAllowed,
+      transactionsAlertsCategory: notifications.transactionsAlertsCategory,
       pushNotificationsDataOfUser,
     });
 

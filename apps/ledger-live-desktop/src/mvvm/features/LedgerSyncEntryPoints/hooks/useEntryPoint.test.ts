@@ -44,7 +44,13 @@ describe("useEntryPoint", () => {
         ...withFlagOverrides({
           lldLedgerSyncEntryPoints: {
             enabled: true,
-            params: { onboarding: true, manager: false, accounts: true, settings: true, postOnboarding: true },
+            params: {
+              onboarding: true,
+              manager: false,
+              accounts: true,
+              settings: true,
+              postOnboarding: true,
+            },
           },
         }),
       },

@@ -97,15 +97,9 @@ describe("ContentSection", () => {
 
 describe("getStatusTranslationKey", () => {
   it("should return correct translation keys for onboarding statuses", () => {
-    expect(getStatusTranslationKey(OnboardStatus.PREPARE)).toBe(
-      "canton.onboard.status.prepare",
-    );
-    expect(getStatusTranslationKey(OnboardStatus.SUBMIT)).toBe(
-      "canton.onboard.status.submit",
-    );
-    expect(getStatusTranslationKey(OnboardStatus.INIT)).toBe(
-      "canton.onboard.status.default",
-    );
+    expect(getStatusTranslationKey(OnboardStatus.PREPARE)).toBe("canton.onboard.status.prepare");
+    expect(getStatusTranslationKey(OnboardStatus.SUBMIT)).toBe("canton.onboard.status.submit");
+    expect(getStatusTranslationKey(OnboardStatus.INIT)).toBe("canton.onboard.status.default");
   });
 });
 

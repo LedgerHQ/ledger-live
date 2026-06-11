@@ -47,7 +47,9 @@ const mockGetFeeMarketGasParams = getFeeMarketGasParams as jest.MockedFunction<
   typeof getFeeMarketGasParams
 >;
 const mockRecoverAddress = recoverAddress as jest.MockedFunction<typeof recoverAddress>;
-const mockSerializeTransaction = serializeTransaction as jest.MockedFunction<typeof serializeTransaction>;
+const mockSerializeTransaction = serializeTransaction as jest.MockedFunction<
+  typeof serializeTransaction
+>;
 
 const BASE_UNSIGNED_TRANSACTION = {
   from: "0x1111111111111111111111111111111111111111" as `0x${string}`,
@@ -157,7 +159,8 @@ describe("signOperation", () => {
 
     expect(mockSerializeTransaction).toHaveBeenCalled();
     const hasCip64Call = mockSerializeTransaction.mock.calls.some(
-      call => call[0] && typeof call[0] === "object" && (call[0] as { type?: string }).type === "cip64",
+      call =>
+        call[0] && typeof call[0] === "object" && (call[0] as { type?: string }).type === "cip64",
     );
     expect(hasCip64Call).toBe(true);
   });

@@ -6,10 +6,10 @@ import { useProductTourDialogViewModel } from "../hooks/useProductTourDialogView
 const CONTINUE_LABEL = "Continue";
 const DONE_LABEL = "Done";
 const FUND_LABEL = "Fund your wallet";
-const SWAP_LABEL = "Discover swap";
-const STAKE_LABEL = "Grow your rewards";
-const CARD_LABEL = "Spend your crypto";
-const PORTFOLIO_LABEL = "Everything at a glance";
+const PORTFOLIO_LABEL = "View your portfolio";
+const STAKE_LABEL = "Discover Earn";
+const CARD_LABEL = "Get a card";
+const SWAP_LABEL = "Discover Swap";
 
 const mockNavigate = jest.fn();
 const mockOpenAssetFlow = jest.fn();
@@ -109,7 +109,7 @@ describe("ProductTourDialog", () => {
     await goToNextSlide(user, 3);
 
     expect(await screen.findByTestId("product-tour-slide-4")).toBeVisible();
-    expect(screen.getByRole("button", { name: PORTFOLIO_LABEL })).toBeVisible();
+    expect(screen.getByRole("button", { name: SWAP_LABEL })).toBeVisible();
     expect(screen.getByRole("button", { name: DONE_LABEL })).toBeVisible();
   });
 
@@ -157,7 +157,7 @@ describe("ProductTour dialog from debug (view model)", () => {
     await user.click(screen.getByRole("button", { name: /open/i }));
     await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
 
-    expect(await screen.findByRole("button", { name: SWAP_LABEL })).toBeVisible();
+    expect(await screen.findByRole("button", { name: PORTFOLIO_LABEL })).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: /close/i }));
 
@@ -239,19 +239,19 @@ describe("ProductTour dialog from debug (view model)", () => {
     expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
   });
 
-  it("should navigate to swap when clicking the second primary cta", async () => {
+  it("should navigate to portfolio when clicking the second primary cta", async () => {
     const { user } = render(<TestHarness />, {
       initialState: getProductTourTestInitialState(),
     });
 
     await user.click(screen.getByRole("button", { name: /open/i }));
     await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(await screen.findByRole("button", { name: SWAP_LABEL }));
+    await user.click(await screen.findByRole("button", { name: PORTFOLIO_LABEL }));
 
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
-    expect(mockNavigate).toHaveBeenCalledWith("/swap");
+    expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 
   it("should navigate to earn page when clicking the stake primary cta", async () => {
@@ -287,7 +287,7 @@ describe("ProductTour dialog from debug (view model)", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/card");
   });
 
-  it("should navigate to portfolio when clicking the last primary cta", async () => {
+  it("should navigate to swap when clicking the last primary cta", async () => {
     const { user } = render(<TestHarness />, {
       initialState: getProductTourTestInitialState(),
     });
@@ -297,12 +297,12 @@ describe("ProductTour dialog from debug (view model)", () => {
     await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
     await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
     await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(await screen.findByRole("button", { name: PORTFOLIO_LABEL }));
+    await user.click(await screen.findByRole("button", { name: SWAP_LABEL }));
 
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
-    expect(mockNavigate).toHaveBeenCalledWith("/");
+    expect(mockNavigate).toHaveBeenCalledWith("/swap");
   });
 
   it("should not clear productTourCompleted when dismissing after opening from debug", async () => {

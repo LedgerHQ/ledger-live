@@ -344,6 +344,7 @@ export type ConnectDeviceUIState =
   | {
       type: ConnectDeviceUIStateTypes.ConnectionError;
       error: ConnectionError;
+      device: KnownDevice;
       retry: () => void;
       ignore: () => void;
     }

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aleo",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "description": "Ledger Aleo Coin integration",
   "license": "Apache-2.0",
   "keywords": [

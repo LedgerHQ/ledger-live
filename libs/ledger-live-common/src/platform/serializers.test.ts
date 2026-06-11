@@ -67,7 +67,8 @@ test("should deserialize a raw platform signed transaction", async () => {
 
 describe("Serialize -> Deserialize flow", () => {
   test("should not alter signedTransaction", async () => {
-    const serializedSignedTransaction = await serializePlatformSignedTransaction(SIGNED_TRANSACTION);
+    const serializedSignedTransaction =
+      await serializePlatformSignedTransaction(SIGNED_TRANSACTION);
 
     const stringifiedSignedTransaction = JSON.stringify(serializedSignedTransaction);
 

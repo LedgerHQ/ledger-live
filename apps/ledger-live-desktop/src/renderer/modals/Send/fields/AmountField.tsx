@@ -42,7 +42,9 @@ const AmountField = <T extends TransactionCommon>({
 
   useEffect(() => {
     if (initValue && !initValue.eq(transaction.amount || new BigNumber(0))) {
-      onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue } as Partial<T>));
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, { amount: initValue } as Partial<T>),
+      );
       resetInitValue?.();
     }
   }, []); // oxlint-disable-line react-hooks/exhaustive-deps

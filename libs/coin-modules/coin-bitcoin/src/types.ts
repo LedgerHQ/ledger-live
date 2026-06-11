@@ -182,8 +182,17 @@ export type BitcoinAccountRaw = AccountRaw & {
   bitcoinResources: BitcoinResourcesRaw;
 };
 
+export type BtcInputRef = {
+  hash: string;
+  outputIndex: number;
+  address: string;
+};
+
 export type BtcOperationExtra = {
+  /** Input outpoints in "txid-index" format. Used by RBF/conflict-dedup logic. */
   inputs?: string[];
+  /** Structured input references with address metadata. Parallel to `inputs`. */
+  inputRefs?: BtcInputRef[];
 };
 
 export type BtcOperation = Operation<BtcOperationExtra>;

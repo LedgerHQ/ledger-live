@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { StackActions, useNavigation } from "@react-navigation/native";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {

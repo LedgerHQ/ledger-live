@@ -22,7 +22,7 @@ describe("Broadcast", () => {
     const senderKey = PrivateKey.generateED25519();
     const senderAccountId = AccountId.fromString("0.0.999999999");
     const recipient = AccountId.fromString("0.0.2");
-    const client = await rpcClient.getInstance();
+    const client = await rpcClient.getInstance(coinConfig);
 
     const tx = new TransferTransaction()
       .addHbarTransfer(senderAccountId, Hbar.fromTinybars(-1))

@@ -6,7 +6,7 @@ import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRed
 import { State } from "~/renderer/reducers";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompletionScreenViewModel } from "../useCompletionScreenViewModel";
-import { SettingsState } from "~/renderer/reducers/settings";
+import { AFTER_ONBOARDING_STATE, SettingsState } from "~/renderer/reducers/settings";
 
 const mockRedirectToPostOnboarding = jest.fn();
 
@@ -30,9 +30,7 @@ describe("useCompletionScreenViewModel", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockRedirectToPostOnboarding.mockClear();
-    jest
-      .mocked(useRedirectToPostOnboardingCallback)
-      .mockReturnValue(mockRedirectToPostOnboarding);
+    jest.mocked(useRedirectToPostOnboardingCallback).mockReturnValue(mockRedirectToPostOnboarding);
   });
 
   afterEach(() => {
@@ -61,15 +59,12 @@ describe("useCompletionScreenViewModel", () => {
     }),
   );
 
-  it("should redirect via useRedirectToPostOnboardingCallback when Wallet40 finish widget is enabled", () => {
+  it("should redirect via useRedirectToPostOnboardingCallback when onboarding widget is enabled", () => {
     const deviceId = DeviceModelId.stax;
     const initialState = {
       ...getInitialState(deviceId),
       ...withFlagOverrides({
-        lwdWallet40: {
-          enabled: true,
-          params: { finishOnboardingWidget: true },
-        },
+        onboardingWidget: { enabled: true },
       }),
     };
 
@@ -80,5 +75,28 @@ describe("useCompletionScreenViewModel", () => {
     });
 
     expect(mockRedirectToPostOnboarding).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to lastSeenDevice when currentDevice is null (disconnected)", () => {
+    const deviceId = DeviceModelId.stax;
+    const initialState: Partial<State> = {
+      devices: {
+        devices: [],
+        currentDevice: null,
+      },
+      settings: {
+        ...AFTER_ONBOARDING_STATE,
+        lastSeenDevice: {
+          modelId: deviceId,
+          deviceInfo: {} as never,
+          apps: [],
+        },
+      },
+    };
+
+    const { store } = renderHook(() => useCompletionScreenViewModel(), { initialState });
+
+    const { settings } = store.getState() as { settings: SettingsState };
+    expect(settings.lastOnboardedDevice).toHaveProperty("modelId", deviceId);
   });
 });

@@ -31,6 +31,7 @@ const baseViewModel: BorrowAppViewModel = {
   webviewState: {} as BorrowAppViewModel["webviewState"],
   onStateChange: jest.fn(),
   onBack: jest.fn(),
+  onGoToSwap: jest.fn(),
 };
 
 const mockViewModel = (overrides: Partial<BorrowAppViewModel> = {}) => {
@@ -45,27 +46,14 @@ describe("BorrowApp", () => {
 
     expect(screen.getByText("network error")).toBeVisible();
     expect(screen.queryByTestId("borrow-webview")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("page-header")).not.toBeInTheDocument();
   });
 
-  it("renders borrow webview and page header when manifest is available", () => {
+  it("renders borrow webview when manifest is available", () => {
     mockViewModel();
 
     render(<BorrowApp />);
 
     expect(screen.getByTestId("borrow-webview")).toBeVisible();
-    expect(screen.getByTestId("page-header")).toBeVisible();
     expect(screen.queryByText("network error")).not.toBeInTheDocument();
-  });
-
-  it("invokes onBack from view model when the back button is clicked", async () => {
-    const onBack = jest.fn();
-    mockViewModel({ onBack });
-
-    const { user } = render(<BorrowApp />);
-
-    await user.click(screen.getByRole("button", { name: /back/i }));
-
-    expect(onBack).toHaveBeenCalledTimes(1);
   });
 });

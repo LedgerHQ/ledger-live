@@ -20,9 +20,10 @@ jest.mock("./serialization", () => {
   };
 });
 
-const rawOperationsToOperationsMock = serialization.rawOperationsToOperations as jest.MockedFunction<
-  typeof serialization.rawOperationsToOperations
->;
+const rawOperationsToOperationsMock =
+  serialization.rawOperationsToOperations as jest.MockedFunction<
+    typeof serialization.rawOperationsToOperations
+  >;
 
 const TEST_HORIZON_URL = "https://horizon-stellar-unit-test.invalid/";
 
@@ -39,7 +40,12 @@ function baseCoinConfig(overrides: Partial<StellarCoinConfig> = {}): StellarCoin
   } as StellarCoinConfig;
 }
 
-const HORIZON_SERVER_SPY_METHODS = ["ledgers", "operations", "feeStats", "submitTransaction"] as const;
+const HORIZON_SERVER_SPY_METHODS = [
+  "ledgers",
+  "operations",
+  "feeStats",
+  "submitTransaction",
+] as const;
 
 function restoreHorizonServerPrototypeSpies(): void {
   const proto = Horizon.Server.prototype as unknown as Record<string, unknown>;
@@ -81,7 +87,8 @@ describe("horizon.ts (unit, spies)", () => {
     restoreHorizonServerPrototypeSpies();
     rawOperationsToOperationsMock.mockReset();
     rawOperationsToOperationsMock.mockImplementation(
-      jest.requireActual<typeof import("./serialization")>("./serialization").rawOperationsToOperations,
+      jest.requireActual<typeof import("./serialization")>("./serialization")
+        .rawOperationsToOperations,
     );
   });
 
@@ -125,28 +132,39 @@ describe("horizon.ts (unit, spies)", () => {
       await expect(fetchAllLedgerOperations(4242)).rejects.toThrow("Stellar ledger 4242 not found");
     });
 
-    it("paginates when first page is full then next page is empty", async () => {
-      coinConfig.setCoinConfig(() => baseCoinConfig({ explorer: { url: TEST_HORIZON_URL, fetchLimit: 2 } }));
-      const op1 = opBuilder({ paging_token: "1", id: "a" });
-      const op2 = opBuilder({ paging_token: "2", id: "b" });
-      const secondPage = { records: [] as RawOperation[] };
-      const firstPage = {
-        records: [op1, op2],
-        next: jest.fn().mockResolvedValue(secondPage),
-      };
-      jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
-        forLedger: jest.fn().mockReturnThis(),
-        includeFailed: jest.fn().mockReturnThis(),
-        join: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnValue({
-          call: jest.fn().mockResolvedValue(firstPage),
-        }),
-      } as unknown as ReturnType<Horizon.Server["operations"]>);
+    describe("with fetchLimit=2", () => {
+      beforeEach(() => {
+        coinConfig.setCoinConfig(() =>
+          baseCoinConfig({ explorer: { url: TEST_HORIZON_URL, fetchLimit: 2 } }),
+        );
+      });
 
-      const out = await fetchAllLedgerOperations(10);
-      expect(out).toHaveLength(2);
-      expect(firstPage.next).toHaveBeenCalledTimes(1);
+      afterEach(() => {
+        coinConfig.setCoinConfig(() => baseCoinConfig());
+      });
+
+      it("paginates when first page is full then next page is empty", async () => {
+        const op1 = opBuilder({ paging_token: "1", id: "a" });
+        const op2 = opBuilder({ paging_token: "2", id: "b" });
+        const secondPage = { records: [] as RawOperation[] };
+        const firstPage = {
+          records: [op1, op2],
+          next: jest.fn().mockResolvedValue(secondPage),
+        };
+        jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
+          forLedger: jest.fn().mockReturnThis(),
+          includeFailed: jest.fn().mockReturnThis(),
+          join: jest.fn().mockReturnThis(),
+          order: jest.fn().mockReturnThis(),
+          limit: jest.fn().mockReturnValue({
+            call: jest.fn().mockResolvedValue(firstPage),
+          }),
+        } as unknown as ReturnType<Horizon.Server["operations"]>);
+
+        const out = await fetchAllLedgerOperations(10);
+        expect(out).toHaveLength(2);
+        expect(firstPage.next).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
@@ -174,7 +192,7 @@ describe("horizon.ts (unit, spies)", () => {
       ).rejects.toEqual(expect.objectContaining({ name: "LedgerAPI4xx", status: 429 }));
     });
 
-    it("sets next cursor to empty when filtered operations are fewer than raw page", async () => {
+    it("sets next cursor to empty when Horizon returns fewer records than the fetch limit", async () => {
       const rawA = opBuilder({ paging_token: "pt-a", id: "1" });
       const rawB = opBuilder({ paging_token: "pt-b", id: "2" });
       rawOperationsToOperationsMock.mockResolvedValue([{ type: "mock-op" } as never]);
@@ -190,6 +208,7 @@ describe("horizon.ts (unit, spies)", () => {
         }),
       } as unknown as ReturnType<Horizon.Server["operations"]>);
 
+      // fetchLimit defaults to 100, Horizon returned 2 records → incomplete page → no next cursor
       const page = await fetchOperations({
         accountId: "aid",
         addr: "GADDRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -199,6 +218,145 @@ describe("horizon.ts (unit, spies)", () => {
       });
       expect(page.next).toBe("");
       expect(page.items).toHaveLength(1);
+    });
+
+    describe("with fetchLimit=2", () => {
+      beforeEach(() => {
+        coinConfig.setCoinConfig(() =>
+          baseCoinConfig({ explorer: { url: TEST_HORIZON_URL, fetchLimit: 2 } }),
+        );
+      });
+
+      afterEach(() => {
+        coinConfig.setCoinConfig(() => baseCoinConfig());
+      });
+
+      it("continues pagination when unsupported ops are filtered from a full page", async () => {
+        const rawA = opBuilder({ paging_token: "pt-a", id: "1" });
+        const rawB = opBuilder({ paging_token: "pt-b", id: "2" });
+        // Only 1 op survives filtering (e.g. the other was an unsupported type)
+        rawOperationsToOperationsMock.mockResolvedValue([{ type: "mock-op" } as never]);
+
+        jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
+          forAccount: jest.fn().mockReturnThis(),
+          limit: jest.fn().mockReturnThis(),
+          order: jest.fn().mockReturnThis(),
+          cursor: jest.fn().mockReturnThis(),
+          includeFailed: jest.fn().mockReturnThis(),
+          join: jest.fn().mockReturnValue({
+            call: jest.fn().mockResolvedValue({ records: [rawA, rawB] }),
+          }),
+        } as unknown as ReturnType<Horizon.Server["operations"]>);
+
+        const page = await fetchOperations({
+          accountId: "aid",
+          addr: "GADDRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          minHeight: 0,
+          order: "desc",
+          cursor: undefined,
+        });
+        expect(page.next).toBe("pt-b");
+        expect(page.items).toHaveLength(1);
+      });
+
+      it("stops pagination when Horizon returns fewer records than fetchLimit", async () => {
+        const rawA = opBuilder({ paging_token: "pt-a", id: "1" });
+        // 1 record < fetchLimit of 2 → last page
+        rawOperationsToOperationsMock.mockResolvedValue([{ type: "mock-op" } as never]);
+
+        jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
+          forAccount: jest.fn().mockReturnThis(),
+          limit: jest.fn().mockReturnThis(),
+          order: jest.fn().mockReturnThis(),
+          cursor: jest.fn().mockReturnThis(),
+          includeFailed: jest.fn().mockReturnThis(),
+          join: jest.fn().mockReturnValue({
+            call: jest.fn().mockResolvedValue({ records: [rawA] }),
+          }),
+        } as unknown as ReturnType<Horizon.Server["operations"]>);
+
+        const page = await fetchOperations({
+          accountId: "aid",
+          addr: "GADDRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          minHeight: 0,
+          order: "desc",
+          cursor: undefined,
+        });
+        expect(page.next).toBe("");
+        expect(page.items).toHaveLength(1);
+      });
+
+      it("skips to next page when all ops on a full page are filtered out", async () => {
+        const rawA = opBuilder({ paging_token: "pt-a", id: "1" });
+        const rawB = opBuilder({ paging_token: "pt-b", id: "2" });
+        const rawC = opBuilder({ paging_token: "pt-c", id: "3" });
+
+        // First call: full page (2 ops), all filtered → recurse
+        // Second call: partial page (1 op), 1 survives → return
+        rawOperationsToOperationsMock
+          .mockResolvedValueOnce([])
+          .mockResolvedValueOnce([{ type: "mock-op" } as never]);
+
+        const callMock = jest
+          .fn()
+          .mockResolvedValueOnce({ records: [rawA, rawB] })
+          .mockResolvedValueOnce({ records: [rawC] });
+
+        jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
+          forAccount: jest.fn().mockReturnThis(),
+          limit: jest.fn().mockReturnThis(),
+          order: jest.fn().mockReturnThis(),
+          cursor: jest.fn().mockReturnThis(),
+          includeFailed: jest.fn().mockReturnThis(),
+          join: jest.fn().mockReturnValue({ call: callMock }),
+        } as unknown as ReturnType<Horizon.Server["operations"]>);
+
+        const page = await fetchOperations({
+          accountId: "aid",
+          addr: "GADDRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          minHeight: 999999,
+          order: "desc",
+          cursor: undefined,
+        });
+        // Skipped the empty first page, returned the second page's result
+        expect(page.items).toHaveLength(1);
+        expect(page.next).toBe("");
+        expect(callMock).toHaveBeenCalledTimes(2);
+      });
+
+      it("bails out after MAX_SKIP_PAGES consecutive empty pages", async () => {
+        const rawA = opBuilder({ paging_token: "pt-a", id: "1" });
+        const rawB = opBuilder({ paging_token: "pt-b", id: "2" });
+
+        // Every page returns zero filtered ops
+        rawOperationsToOperationsMock.mockResolvedValue([]);
+
+        const callMock = jest
+          .fn()
+          .mockResolvedValue({ records: [rawA, rawB] });
+
+        jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
+          forAccount: jest.fn().mockReturnThis(),
+          limit: jest.fn().mockReturnThis(),
+          order: jest.fn().mockReturnThis(),
+          cursor: jest.fn().mockReturnThis(),
+          includeFailed: jest.fn().mockReturnThis(),
+          join: jest.fn().mockReturnValue({ call: callMock }),
+        } as unknown as ReturnType<Horizon.Server["operations"]>);
+
+        const page = await fetchOperations({
+          accountId: "aid",
+          addr: "GADDRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          minHeight: 999999,
+          order: "desc",
+          cursor: undefined,
+        });
+        // Exhausted skip budget: returns empty items with cursor for caller to resume
+        expect(page.items).toHaveLength(0);
+        expect(page.next).toBe("pt-b");
+        // MAX_SKIP_PAGES = 50 iterations
+        expect(callMock).toHaveBeenCalledTimes(50);
+      });
     });
   });
 
@@ -227,7 +385,9 @@ describe("horizon.ts (unit, spies)", () => {
     });
 
     it("falls back to defaults when feeStats throws", async () => {
-      jest.spyOn(Horizon.Server.prototype, "feeStats").mockRejectedValue(new Error("network error"));
+      jest
+        .spyOn(Horizon.Server.prototype, "feeStats")
+        .mockRejectedValue(new Error("network error"));
 
       const fees = await fetchBaseFee();
       expect(fees.baseFee).toBeGreaterThan(0);
@@ -275,7 +435,10 @@ describe("horizon.ts (unit, spies)", () => {
         },
       };
       submitTransactionSpy.mockRejectedValue(
-        new BadResponseError("Transaction submission failed. Server responded: 400 Bad Request", body),
+        new BadResponseError(
+          "Transaction submission failed. Server responded: 400 Bad Request",
+          body,
+        ),
       );
 
       await expect(broadcastTransaction(signedTxFixture)).rejects.toMatchObject({
@@ -297,7 +460,10 @@ describe("horizon.ts (unit, spies)", () => {
         },
       };
       submitTransactionSpy.mockRejectedValue(
-        new BadResponseError("Transaction submission failed. Server responded: 400 Bad Request", body),
+        new BadResponseError(
+          "Transaction submission failed. Server responded: 400 Bad Request",
+          body,
+        ),
       );
 
       await expect(broadcastTransaction(signedTxFixture)).rejects.toMatchObject({

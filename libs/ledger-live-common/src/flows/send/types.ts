@@ -34,6 +34,7 @@ export type SendFlowUiConfig = Readonly<{
   hasFeePresets: boolean;
   hasCustomFees: boolean;
   hasCoinControl: boolean;
+  hasAmountPlugins: boolean;
 }>;
 
 export type Memo = { value: string; type?: string };

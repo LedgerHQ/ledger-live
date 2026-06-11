@@ -5,8 +5,9 @@ import * as animationModule from "./getDeviceActionAnimation";
 import { DeviceActionContent } from ".";
 
 jest.mock("./getDeviceActionAnimation", () => {
-  const actual =
-    jest.requireActual<typeof import("./getDeviceActionAnimation")>("./getDeviceActionAnimation");
+  const actual = jest.requireActual<typeof import("./getDeviceActionAnimation")>(
+    "./getDeviceActionAnimation",
+  );
   return {
     ...actual,
     getDeviceActionAnimation: jest.fn(actual.getDeviceActionAnimation),

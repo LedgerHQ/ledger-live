@@ -53,7 +53,7 @@ export default function BleDeviceNotAvailableDrawer({
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen && Boolean(device)} onClose={onClose}>
       <TrackScreen name="Drawer: Power on and unlock" {...trackingProps} />
-      <Box lx={{ paddingBottom: "s32"}}>
+      <Box lx={{ paddingBottom: "s32" }}>
         <ConnectYourDevice device={device} fullScreen={false} />
       </Box>
       {showHelp && (
@@ -61,25 +61,26 @@ export default function BleDeviceNotAvailableDrawer({
           appearance="info"
           title={t("SelectDevice.bleDeviceNotAvailableDrawer.bannerHintTitle")}
           primaryAction={
-            <Button 
-              appearance="gray" 
-              size="sm" 
-              onPress={handleRedirectToScan}               
-              lx={{ flexShrink: 1}}
+            <Button
+              appearance="gray"
+              size="sm"
+              onPress={handleRedirectToScan}
+              lx={{ flexShrink: 1 }}
             >
               {t("SelectDevice.bleDeviceNotAvailableDrawer.scanSignersCta")}
             </Button>
           }
-          secondaryAction={ 
+          secondaryAction={
             <Button
               appearance="no-background"
               size="sm"
               icon={ExternalLink}
               onPress={handleOpenHelpCenter}
-              lx={{ flexShrink: 1}}
+              lx={{ flexShrink: 1 }}
             >
               {t("SelectDevice.bleDeviceNotAvailableDrawer.helpCenterCta")}
-            </Button>}
+            </Button>
+          }
         />
       )}
     </QueuedDrawer>

@@ -51,6 +51,12 @@ export type SendFundsNavigatorStackParamList = {
     | {
         currency?: string;
         selectedCurrency?: CryptoCurrency | TokenCurrency;
+        /**
+         * Ledger currency ids to filter the account list by. Covers every network
+         * of a multi-network asset (e.g. all USDT networks), unlike the single
+         * `selectedCurrency`. When set, takes precedence over `selectedCurrency`.
+         */
+        currencyIds?: string[];
         next?: string;
         category?: string;
         notEmptyAccounts?: boolean;

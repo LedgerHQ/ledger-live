@@ -1,6 +1,6 @@
 import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { initialState, loadCountervalues, inferTrackingPairForAccounts } from "./logic";
 import {
   getPortfolioCount,

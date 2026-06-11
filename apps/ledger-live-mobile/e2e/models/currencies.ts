@@ -6,7 +6,7 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
@@ -32,7 +32,9 @@ export const getAccountName = (account: AccountLike) => getDefaultAccountName(ac
 
 export function initTestAccounts(currencyIds: string[]) {
   setSupportedCurrencies(currencyIds as CryptoCurrencyId[]);
-  return currencyIds.map((currencyId: string) =>
-    genAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
+  return Promise.all(
+    currencyIds.map((currencyId: string) =>
+      genMockAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
+    ),
   );
 }

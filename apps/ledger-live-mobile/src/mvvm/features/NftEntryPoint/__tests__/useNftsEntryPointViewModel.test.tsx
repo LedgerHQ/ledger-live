@@ -9,15 +9,12 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        overrideInitialState: withFlagOverrides(
-          { llNftEntryPoint: { enabled: false } },
-          state => ({
-            ...state,
-            settings: {
-              ...INITIAL_STATE,
-            },
-          }),
-        ),
+        overrideInitialState: withFlagOverrides({ llNftEntryPoint: { enabled: false } }, state => ({
+          ...state,
+          settings: {
+            ...INITIAL_STATE,
+          },
+        })),
       },
     );
 

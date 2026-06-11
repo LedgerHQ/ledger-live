@@ -35,7 +35,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    await getWalletAPITransactionSignFlowInfos({ walletApiTransaction: tx, account: {} as Account });
+    await getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: tx,
+      account: {} as Account,
+    });
 
     // Then
     expect(bitcoinBridge).toHaveBeenCalledTimes(1);
@@ -51,7 +54,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    await getWalletAPITransactionSignFlowInfos({ walletApiTransaction: tx, account: {} as Account });
+    await getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: tx,
+      account: {} as Account,
+    });
 
     // Then
     expect(evmBridge).toHaveBeenCalledTimes(1);

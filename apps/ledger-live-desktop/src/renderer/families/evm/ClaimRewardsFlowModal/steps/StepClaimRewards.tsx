@@ -65,6 +65,7 @@ export default function StepClaimRewards({
         bridge.updateTransaction(transaction, {
           ...transaction,
           valAddress: delegation.validatorAddress,
+          valId: delegation.validatorId,
         }),
       );
     },

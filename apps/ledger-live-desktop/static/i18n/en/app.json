@@ -205,6 +205,7 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
+      "FINALIZE_UNSTAKE": "Withdrawn",
       "SENDING": "Sending",
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
@@ -4285,8 +4286,10 @@
         "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
         "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+        "undelegateActivatingTooltip": "You cannot undelegate a stake that is still activating",
         "reward": "Claim rewards",
         "activeTooltip": "Delegated amounts generate rewards",
+        "activatingTooltip": "Delegated amounts will start generating rewards next epoch",
         "inactiveTooltip": "Undelegated amounts do not generate rewards",
         "minSafeWarning": "Not enough funds",
         "commission": "Commission",
@@ -4303,7 +4306,8 @@
               ],
               "warning": {
                 "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
-              }
+              },
+              "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
             },
             "amount": {
               "title": "Amount"
@@ -4402,13 +4406,13 @@
     "error": "Unable to load chart",
     "rangeSelectorLabel": "Select time range",
     "range": {
-      "1D": "1D",
-      "1W": "1W",
-      "1M": "1M",
-      "6M": "6M",
-      "1Y": "1Y",
-      "5Y": "5Y",
-      "ALL": "All"
+      "1d": "1D",
+      "1w": "1W",
+      "1m": "1M",
+      "6m": "6M",
+      "1y": "1Y",
+      "5y": "5Y",
+      "all": "ALL"
     }
   },
   "near": {
@@ -5188,6 +5192,16 @@
       "customLockScreen": "Custom lock-screen assets",
       "customLockScreenDesc": "Debug custom lock-screen graphical assets",
       "customLockScreenCTA": "Launch",
+      "coinConfig": {
+        "title": "Coin configs used in Ledger Wallet",
+        "desc": "Override per-currency config (rpc, explorer, gas…) for local debugging. Only valid JSON will be accepted. Overrides persist across relaunches; use \"Restore all\" to clear them.",
+        "search": "Search a config key (e.g. config_currency_ethereum)",
+        "hint": "Defaults show `config_currency_*` keys. Search to see every LiveConfig key. Overrides are deep-merged on top of the default + remote value for object configs.",
+        "restore": "Restore",
+        "override": "Override",
+        "restoreAll": "Restore all coin configs",
+        "overriddenLocally": "overridden locally"
+      },
       "featureFlagsTitle": "Defined feature flags used in Ledger Wallet",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
@@ -7224,6 +7238,9 @@
     "MustDelegateBeforeStaking": {
       "title": "Please delegate your account before staking"
     },
+    "TezosNotEnoughStaked": {
+      "title": "Insufficient staked balance"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -8319,6 +8336,9 @@
         "value": "Value",
         "allocation": "Allocation"
       }
+    },
+    "pnl": {
+      "title": "Profit and loss"
     }
   },
   "walletSync": {
@@ -8648,15 +8668,16 @@
   },
   "fearAndGreed": {
     "levels": {
+      "fearPlus": "Fear+",
       "fear": "Fear",
-      "cautious": "Cautious",
       "neutral": "Neutral",
-      "optimistic": "Optimistic",
-      "greedy": "Greedy"
+      "greed": "Greed",
+      "greedPlus": "Greed+"
     },
     "dialog": {
       "title": "Mood index",
-      "content": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
+      "content": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
+      "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -8969,10 +8990,10 @@
       "continue": "Continue",
       "done": "Done",
       "fundYourWallet": "Fund your wallet",
-      "discoverSwap": "Discover swap",
-      "growYourRewards": "Grow your rewards",
-      "spendYourCrypto": "Spend your crypto",
-      "everythingAtAGlance": "Everything at a glance"
+      "discoverSwap": "Discover Swap",
+      "discoverEarn": "Discover Earn",
+      "getCard": "Get a card",
+      "viewPortfolio": "View your portfolio"
     },
     "slides": {
       "fund": {
@@ -9059,25 +9080,46 @@
       "hideFromPortfolio": "Hide from portfolio",
       "showInPortfolio": "Show in portfolio"
     },
+    "chartOptions": {
+      "menu": "Chart options",
+      "hideTransactions": "Hide activity on price chart",
+      "showTransactions": "Show activity on price chart"
+    },
     "hiddenBanner": {
       "description": "This asset is hidden from your portfolio.",
       "showAsset": "Show asset"
     },
     "totalBalance": "Total balance",
     "marketPrice": "Market price",
-    "addresses": "Addresses",
+    "addresses": "Accounts",
     "addressesDialog": {
-      "title": "Addresses",
-      "description": "All your addresses holding {{ticker}}."
+      "title": "Accounts",
+      "description": "All your accounts holding {{ticker}}."
     },
     "add": "Add",
     "notFound": "Asset distribution item not found.",
     "marketStats": "Market stats",
     "marketStatsTooltip": "Market metrics for this asset.",
+    "marketCapTooltip": "The total value of all coins in circulation. Think of it as the crypto's total worth on the market.",
+    "circulatingSupplyTooltip": "The total number of tokens currently available in the market and held by the public. It excludes locked, reserved, or unminted tokens.",
+    "maxSupplyTooltip": "The maximum number of tokens that will ever exist. For some assets, this is fixed to prevent inflation.",
     "pricePerformance": "Price performance",
     "marketRank": "Market rank",
     "tradingVolume24h": "24h trading volume",
+    "tradingVolume24hTooltip": "The total amount traded in the last 24 hours.",
+    "marketStatsDisclaimer": "Market stats sourced from CoinGecko",
     "day": "1 day",
+    "week": "1 week",
+    "month": "1 month",
+    "sixMonths": "6 months",
+    "year": "1 year",
+    "fiveYears": "5 years",
+    "allTime": "All time",
+    "chart": {
+      "received": "Received",
+      "sent": "Sent",
+      "transactionsCount": "{{count}} transactions"
+    },
     "staking": {
       "availableBalance": "Available balance",
       "availableBalanceTooltip": "The portion of your holdings you can use right now, free to send, swap, or withdraw at any time.",
@@ -9092,7 +9134,7 @@
     "asset": {
       "entry": {
         "title": "Average entry price",
-        "tooltip": "The average price you paid for this asset in this wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
+        "tooltip": "The average price you paid for this asset through Ledger Wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
       },
       "return": {
         "title": "Unrealised return"
@@ -9102,42 +9144,46 @@
         "description": "A summary of how this asset has performed in your portfolio.",
         "totalReturn": {
           "title": "Total return",
-          "description": "The sum of unrealised and realised returns."
+          "description": "The sum of estimated unrealised and realised returns."
         },
         "unrealisedReturn": {
           "title": "Unrealised return",
-          "description": "The estimated gain or loss if sold at today's price."
+          "description": "The estimated profit or loss if sold at current price."
         },
         "realisedReturn": {
           "title": "Realised return",
-          "description": "Profit or loss confirmed from previous sales or transfers."
+          "description": "Profit or loss estimated from previous sale, send or swap."
         }
       }
     },
     "portfolio": {
-      "return": {
-        "title": "Unrealised return"
+      "cards": {
+        "totalReturn": "Total return",
+        "unrealisedReturn": "Unrealised return",
+        "realisedReturn": "Realised return"
       },
       "costBasis": {
         "title": "Cost basis",
         "tooltip": "The total amount you paid to acquire your current holdings, including fees."
       },
+      "detail": "Details",
       "dialog": {
         "title": "Profit and loss",
-        "description": "Your portfolio performance broken down into realised and unrealised returns.",
+        "description": "Your portfolio performance broken down into estimated realised and unrealised returns.",
         "totalReturn": {
           "title": "Total return",
-          "description": "Realised and unrealised returns combined, reflecting your overall position."
+          "description": "The sum of estimated unrealised and realised returns."
         },
         "unrealisedReturn": {
           "title": "Unrealised return",
-          "description": "Estimated gain or loss on your current holdings."
+          "description": "The estimated profit or loss if sold at current price."
         },
         "realisedReturn": {
           "title": "Realised return",
-          "description": "Profit or loss confirmed from previous sales or outgoing transfers."
+          "description": "Profit or loss estimated from previous sale, send or swap."
         }
       }
-    }
+    },
+    "disclaimer": "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes."
   }
 }

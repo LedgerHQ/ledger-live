@@ -115,9 +115,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
       if (accountId.includes("+")) {
         const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
 
-        const parentAccount = accounts.find(
-          acc => isAccount(acc) && acc.id === parentAccountId,
-        );
+        const parentAccount = accounts.find(acc => isAccount(acc) && acc.id === parentAccountId);
 
         const { token } = await decodeTokenAccountId(accountId);
 
@@ -422,4 +420,3 @@ export function createDialogInfoHandler(dispatch: Dispatch) {
     dispatch(setPtxInfoDialog(validated));
   };
 }
-

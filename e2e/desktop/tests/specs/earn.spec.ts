@@ -3,14 +3,14 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
   liveDataWithAddressCommand,
   liveDataCommand,
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { EARN_V1_DESKTOP_FLAGS } from "tests/utils/featureFlagUtils";
+import { EARN_V1_DESKTOP_FLAGS, FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -29,12 +29,12 @@ function setupEnv(disableBroadcast?: boolean) {
 const ethEarn = [
   {
     account: Account.ETH_1,
-    provider: Provider.LIDO,
+    provider: EarnProvider.LIDO,
     xrayTicket: "B2CQA-3676, B2CQA-1713",
   },
   {
     account: Account.ETH_1,
-    provider: Provider.KILN,
+    provider: EarnProvider.KILN,
     xrayTicket: "B2CQA-3678",
   },
 ];
@@ -50,24 +50,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       cliCommands: [liveDataWithAddressCommand(account)],
       featureFlags: {
         ...EARN_V1_DESKTOP_FLAGS,
-        // TODO: sync Firebase environments and remove this override when final variant is chosen
-        stakePrograms: {
-          enabled: true,
-          params: {
-            list: ["ethereum"],
-            redirects: {
-              "ethereum/erc20/usd__coin": {
-                platform: "earn",
-                name: "Earn - Deposit",
-                queryParams: {
-                  cryptoAssetId: "ethereum/erc20/usd__coin",
-                  intent: "deposit",
-                  deposit: "stablecoin",
-                },
-              },
-            },
-          },
-        },
+        ...FF_STAKE_PROGRAMS_MODAL,
       },
     });
 

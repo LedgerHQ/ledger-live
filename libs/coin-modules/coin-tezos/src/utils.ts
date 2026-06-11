@@ -16,15 +16,30 @@ export const DUST_MARGIN_MUTEZ = 500;
 // Tezos rejects `empty_implicit_delegated_contract`; stake-max leaves this buffer.
 export const STAKE_USE_ALL_RESERVE_MUTEZ = 10_000n;
 
-/** Stake "Use Max": already-staked funds count toward `balance` but aren't re-stakeable, so subtract them. */
+/** Stake "Use Max": staked and unstaked-frozen funds count toward `balance` but aren't (re-)stakeable until finalized, so subtract both. */
 export function computeMaxStakeAmount(
   balance: bigint,
   stakedBalance: bigint,
+  unstakedBalance: bigint,
   fees: bigint,
 ): bigint {
-  const liquid = balance > stakedBalance ? balance - stakedBalance : 0n;
+  const { spendable: liquid } = partitionNativeBalance(balance, stakedBalance, unstakedBalance);
   const reserved = fees + STAKE_USE_ALL_RESERVE_MUTEZ;
   return liquid > reserved ? liquid - reserved : 0n;
+}
+
+/**
+ * Splits a Tezos native balance (which includes frozen funds) into spendable and locked
+ * (staked + unstaked). `locked` is clamped to `total` so spendable stays >= 0 across TzKT reorgs.
+ */
+export function partitionNativeBalance(
+  total: bigint,
+  staked: bigint,
+  unstaked: bigint,
+): { spendable: bigint; locked: bigint } {
+  const frozen = staked + unstaked;
+  const locked = frozen > total ? total : frozen;
+  return { spendable: total - locked, locked };
 }
 
 /**

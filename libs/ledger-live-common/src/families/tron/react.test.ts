@@ -20,7 +20,23 @@ import {
   createMockAccountNoVote,
   createMockAccountV2,
 } from "./data.mock";
-import superRepresentatives from "@ledgerhq/coin-tron/network/superRepresentativesData.mock";
+
+const superRepresentatives = [
+  {
+    address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+    voteCount: 13540171796,
+    isJobs: true,
+    name: "Binance Staking",
+    brokerage: 20,
+  },
+  {
+    address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+    voteCount: 982530100,
+    isJobs: true,
+    name: "Skypeople",
+    brokerage: 0,
+  },
+];
 
 jest.mock("@ledgerhq/coin-tron/network", () => {
   return {

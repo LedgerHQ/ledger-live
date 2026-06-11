@@ -13,10 +13,9 @@ import OperationsListItem from "./components/OperationsListItem";
 import OperationsSectionHeader from "./components/OperationsSectionHeader";
 import { OperationsEmptyState } from "./components/OperationsEmptyState";
 import { OperationsListFooter } from "./components/OperationsListFooter";
-import { BottomFadeGradient } from "./components/BottomFadeGradient";
 import { SectionSeparator } from "./components/SectionSeparator";
 import { useOperationsListViewModel } from "./useOperationsListViewModel";
-import { GRADIENT_HEIGHT } from "LLM/features/OperationsHistory/const";
+import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
 
 type Props = StackNavigatorProps<OperationsHistoryNavigatorParamsList, ScreenName.OperationsList>;
 
@@ -35,6 +34,7 @@ export default function OperationsList({ route }: Props) {
     sections,
     completed,
     isEmpty,
+    hasPendingOperations,
     onEndReached,
   } = useOperationsListViewModel(accountIds);
 
@@ -89,7 +89,7 @@ export default function OperationsList({ route }: Props) {
 
   return (
     <Box lx={rootStyle}>
-      <TrackScreen name="OperationsList" />
+      <TrackScreen name="OperationsList" has_pending_operations={hasPendingOperations} />
       <SectionList
         sections={sections}
         testID="operations-list-section-list"

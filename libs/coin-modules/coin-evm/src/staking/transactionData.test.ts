@@ -1,189 +1,59 @@
-import { StakingOperation } from "../types/staking";
-import { buildTransactionParams } from "./transactionData";
+import { ethers } from "ethers";
+import { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
+import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getStakingABI } from "./abis";
+import { buildStakingTransactionParams } from "./transactionData";
 
-describe("buildTransactionParams", () => {
-  const validatorAddress = "seivaloper1abc123";
-  // 1 SEI expressed in the EVM-native unit (18 decimals). The precompile
-  // expects `undelegate` / `redelegate` amounts in usei (6 decimals), so the
-  // calldata should carry 10^6 for the same 1 SEI.
-  const amount = 1000000000000000000n;
-  const amountInUsei = 1000000n;
-  const dstValidatorAddress = "seivaloper1def456";
-  const delegatorAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
+const asCurrency = (id: string): CryptoCurrency =>
+  ({ id, family: "evm", ethereumLikeInfo: { chainId: 1 } }) as CryptoCurrency;
 
-  describe("SEI Network", () => {
-    const currencyId = "sei_evm";
+const delegateIntent = (
+  fields: Partial<Record<string, unknown>>,
+): TransactionIntent<MemoNotSupported, BufferTxData> =>
+  ({
+    intentType: "staking",
+    type: "staking-legacy",
+    mode: "delegate",
+    amount: 1000000000000000000n,
+    asset: { type: "native" },
+    recipient: "0xRecipient",
+    sender: "0xSender",
+    feesStrategy: "medium",
+    data: { type: "buffer", value: Buffer.from([]) },
+    ...fields,
+  }) as unknown as TransactionIntent<MemoNotSupported, BufferTxData>;
 
-    it("should build params for delegate operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "delegate" as StakingOperation,
-        validatorAddress,
-        amount,
-      );
-
-      expect(params).toEqual([validatorAddress]);
+describe("buildStakingTransactionParams", () => {
+  it("encodes a Monad delegate by valId with the amount carried as msg.value", () => {
+    const intent = delegateIntent({
+      valId: "42",
+      valAddress: "0xDisplayAddressIgnoredByEncoder",
     });
 
-    it("should build params for undelegate operation (amount converted from 18-dec EVM to 6-dec usei)", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "undelegate" as StakingOperation,
-        validatorAddress,
-        amount,
-      );
+    const { to, data, value } = buildStakingTransactionParams(asCurrency("monad"), intent);
 
-      expect(params).toEqual([validatorAddress, amountInUsei]);
-    });
-
-    it("should build params for redelegate operation (amount converted from 18-dec EVM to 6-dec usei)", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "redelegate" as StakingOperation,
-        validatorAddress,
-        amount,
-        dstValidatorAddress,
-      );
-
-      expect(params).toEqual([validatorAddress, dstValidatorAddress, amountInUsei]);
-    });
-
-    it("should truncate sub-usei precision on undelegate (precompile has 6-decimal precision)", () => {
-      // 1.234567891 SEI -> truncated to 1.234567 uSEI (9th and later decimals dropped)
-      const params = buildTransactionParams(
-        currencyId,
-        "undelegate" as StakingOperation,
-        validatorAddress,
-        1234567891000000000n,
-      );
-
-      expect(params).toEqual([validatorAddress, 1234567n]);
-    });
-
-    it("should throw error for redelegate without dstValAddress", () => {
-      expect(() => {
-        buildTransactionParams(
-          currencyId,
-          "redelegate" as StakingOperation,
-          validatorAddress,
-          amount,
-        );
-      }).toThrow("RedelegateDstValAddressRequired");
-    });
-
-    it("should build params for getStakedBalance operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "getStakedBalance" as StakingOperation,
-        validatorAddress,
-        amount,
-        validatorAddress,
-        delegatorAddress,
-      );
-
-      expect(params).toEqual([delegatorAddress, validatorAddress]);
-    });
-
-    it("should throw error for getStakedBalance without required params", () => {
-      expect(() => {
-        buildTransactionParams(
-          currencyId,
-          "getStakedBalance" as StakingOperation,
-          validatorAddress,
-          amount,
-        );
-      }).toThrow("SEI getStakedBalance requires delegator and dstValAddress");
-    });
-
-    it("should return the correct params for a claim rewards", () => {
-      const transactionType: StakingOperation = "claimReward";
-      const params = buildTransactionParams(currencyId, transactionType, validatorAddress, amount);
-
-      expect(params).toEqual([validatorAddress]);
-    });
+    const iface = new ethers.Interface(getStakingABI("monad") as ethers.InterfaceAbi);
+    expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("delegate", [42n]));
+    expect(to).toEqual("0x0000000000000000000000000000000000001000");
+    expect(value).toEqual(1000000000000000000n);
   });
 
-  describe("CELO", () => {
-    const currencyId = "celo";
-    const celoValidatorAddress = "0x123456789abcdef";
-
-    it("should build params for delegate operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "delegate" as StakingOperation,
-        celoValidatorAddress,
-        amount,
-      );
-
-      expect(params).toEqual([celoValidatorAddress, amount]);
-    });
-
-    it("should build params for undelegate operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "undelegate" as StakingOperation,
-        celoValidatorAddress,
-        amount,
-      );
-
-      expect(params).toEqual([celoValidatorAddress, amount]);
-    });
-
-    it("should throw error for redelegate operation (not supported)", () => {
-      expect(() => {
-        buildTransactionParams(
-          currencyId,
-          "redelegate" as StakingOperation,
-          celoValidatorAddress,
-          amount,
-        );
-      }).toThrow("Celo does not support redelegate");
-    });
-
-    it("should build params for getStakedBalance operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "getStakedBalance" as StakingOperation,
-        celoValidatorAddress,
-        amount,
-      );
-
-      expect(params).toEqual([celoValidatorAddress]);
-    });
-
-    it("should build params for getUnstakedBalance operation", () => {
-      const params = buildTransactionParams(
-        currencyId,
-        "getUnstakedBalance" as StakingOperation,
-        celoValidatorAddress,
-        amount,
-      );
-
-      expect(params).toEqual([celoValidatorAddress]);
-    });
+  it("throws when a Monad delegate intent has no valId", () => {
+    expect(() => {
+      buildStakingTransactionParams(asCurrency("monad"), delegateIntent({}));
+    }).toThrow("monad staking requires valId");
   });
 
-  describe("Error handling", () => {
-    it("should throw error for unsupported currency", () => {
-      expect(() => {
-        buildTransactionParams(
-          "unsupported_currency",
-          "delegate" as StakingOperation,
-          validatorAddress,
-          amount,
-        );
-      }).toThrow("Unsupported staking currency: unsupported_currency");
-    });
+  it("still encodes a Sei delegate by valAddress (valId ignored)", () => {
+    const valAddress = "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn";
+    const intent = delegateIntent({ valAddress });
 
-    it("should throw error for unsupported operation type", () => {
-      expect(() => {
-        buildTransactionParams(
-          "sei_evm",
-          "invalidOperation" as StakingOperation,
-          validatorAddress,
-          amount,
-        );
-      }).toThrow("Unsupported transaction type for sei_evm: invalidOperation");
-    });
+    const { to, data, value } = buildStakingTransactionParams(asCurrency("sei_evm"), intent);
+
+    const iface = new ethers.Interface(getStakingABI("sei_evm") as ethers.InterfaceAbi);
+    expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("delegate", [valAddress]));
+    expect(to).toEqual("0x0000000000000000000000000000000000001005");
+    expect(value).toEqual(1000000000000000000n);
   });
 });

@@ -3,7 +3,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useInstanceName } from "./useInstanceName";
 

@@ -40,7 +40,11 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
-import { useFeature, FeatureToggle, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import {
+  useFeature,
+  FeatureToggle,
+  useWalletFeaturesConfig,
+} from "@features/platform-feature-flags";
 import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
@@ -224,11 +228,13 @@ const MainAppContent = ({
   shouldDisplayWallet40MainNav,
   shouldDisplayAssetSection,
   shouldDisplayAggregatedAssets,
+  shouldDisplayAssetDiscoverability,
 }: {
   shouldDisplayMarketBanner: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAggregatedAssets: boolean;
+  shouldDisplayAssetDiscoverability: boolean;
 }) => (
   <>
     <Routes>
@@ -315,6 +321,7 @@ export const MainAppLayout = () => {
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
@@ -363,6 +370,7 @@ export const MainAppLayout = () => {
           shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
           shouldDisplayAssetSection={shouldDisplayAssetSection}
           shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
+          shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
         />
       </div>
 

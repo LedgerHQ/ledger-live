@@ -22,7 +22,7 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Stepper from "~/renderer/components/Stepper";
-import StepValidator from "./steps/StepValidator";
+import StepValidator, { StepValidatorFooter } from "./steps/StepValidator";
 import StepDeviceDelegation from "./steps/StepDeviceDelegation";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepDeviceStaking from "./steps/StepDeviceStaking";
@@ -48,6 +48,7 @@ const fullSteps: Array<Step> = [
     id: "validator",
     label: <Trans i18nKey="tezos.stake.flow.steps.validator.title" />,
     component: StepValidator,
+    footer: StepValidatorFooter,
     noScroll: true,
   },
   {

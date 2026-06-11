@@ -346,3 +346,7 @@ export type GetValidatorItem = {
   tokens: string;
   commission: { commission_rates: { rate: string } };
 };
+
+export type GetValidatorsSDK = {
+  validators: GetValidatorItem[];
+};

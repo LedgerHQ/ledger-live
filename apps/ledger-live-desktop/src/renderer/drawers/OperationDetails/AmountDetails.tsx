@@ -9,6 +9,7 @@ import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { getLLDCoinFamily } from "~/renderer/families";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import { OpDetailsData, OpDetailsSection, OpDetailsTitle } from "./styledComponents";
@@ -42,7 +43,10 @@ export default function AmountDetails({ operation, account }: Props) {
   const { date } = operation;
   const compareDate = useMemo(() => new Date(), []);
   const currency = getAccountCurrency(account);
-  const amount = getOperationAmountNumber(operation);
+  const cryptoCurrency = "family" in currency && currency.family ? currency : null;
+  const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+  const amount =
+    specific?.operationDetails?.getAmount?.(operation) ?? getOperationAmountNumber(operation);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const unit = counterValueCurrency.units[0];
   const valueNumber = amount.toNumber();

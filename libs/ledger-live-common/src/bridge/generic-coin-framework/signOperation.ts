@@ -33,7 +33,7 @@ export const genericSignOperation =
     new Observable(o => {
       async function main() {
         const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
-        const bridgeApi = getBridgeApi(account.currency, network);
+        const bridgeApi = await getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),
@@ -63,6 +63,7 @@ export const genericSignOperation =
             type: transaction.type,
             sponsored: transaction.sponsored,
             valAddress: transaction?.valAddress || "",
+            valId: transaction?.valId,
             dstValAddress: transaction?.dstValAddress || "",
           };
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227

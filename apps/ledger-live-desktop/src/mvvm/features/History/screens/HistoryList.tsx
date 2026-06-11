@@ -26,16 +26,29 @@ function HistoryList({
   }
 
   return (
-    <TableRoot ref={parentRef} appearance="plain" className="min-h-0 flex-1 overflow-auto mb-32">
-      <Table>
-        <HistoryTableHeader />
-        <HistoryTableBody
-          rowVirtualizer={rowVirtualizer}
-          flatItems={flatItems}
-          columnCount={table.getVisibleFlatColumns().length}
-          onRowClick={onRowClick}
-        />
-      </Table>
+    <TableRoot
+      appearance="plain"
+      className="mb-32 flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg"
+      data-testid="history-table"
+    >
+      <div className="shrink-0 overflow-x-auto overflow-y-hidden">
+        <Table>
+          <HistoryTableHeader />
+        </Table>
+      </div>
+      <div
+        ref={parentRef}
+        className="min-h-0 flex-1 overflow-auto scrollbar-custom [scrollbar-gutter:auto]"
+      >
+        <Table data-testid="history-table-body">
+          <HistoryTableBody
+            rowVirtualizer={rowVirtualizer}
+            flatItems={flatItems}
+            columnCount={table.getVisibleFlatColumns().length}
+            onRowClick={onRowClick}
+          />
+        </Table>
+      </div>
     </TableRoot>
   );
 }

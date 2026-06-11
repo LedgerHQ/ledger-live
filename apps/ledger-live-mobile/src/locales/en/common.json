@@ -895,6 +895,9 @@
     "MustDelegateBeforeStaking": {
       "title": "Please delegate your account before staking"
     },
+    "TezosNotEnoughStaked": {
+      "title": "Insufficient staked balance"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -1907,6 +1910,14 @@
           "buyNanoX": "Buy a Ledger Nano X",
           "discoverBenefits": "Discover the benefits"
         }
+      }
+    },
+    "counterfeitWarning": {
+      "title": "Before you start",
+      "body": "We recommend buying from <ledgerCom>Ledger.com</ledgerCom> or our <resellerLink>official reseller network</resellerLink>. This helps ensure your device is genuine and ready to use.",
+      "cta": {
+        "primary": "Continue setup",
+        "secondary": "Learn more"
       }
     },
     "stepNewDevice": {
@@ -2965,6 +2976,7 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
+      "FINALIZE_UNSTAKE": "Withdrawn",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
       "UPDATE_ACCOUNT": "Updated account"
@@ -3199,7 +3211,6 @@
     },
     "availableBalance": "Available balance",
     "availableBalanceTooltip": "Funds you can use right now.",
-
     "claimableRewards": "Claimable rewards",
     "totalSupplied": "Amount deposited",
     "tronFrozen": "Frozen",
@@ -3669,6 +3680,7 @@
           "description": "Create raw Braze-like cards, process them through the generic awareness modal parser, then return to Portfolio to view the drawer.",
           "carousel": "Carousel",
           "featureIntro": "Feature intro",
+          "prompt": "Prompt",
           "appStart": "App start",
           "deeplink": "Deeplink",
           "campaignId": "Campaign ID",
@@ -3690,6 +3702,8 @@
           "createCarouselDesc": "Open a form to create a carousel generic awareness modal.",
           "createFeatureIntro": "Create Feature Intro Generic Awareness Modal",
           "createFeatureIntroDesc": "Open a form to create a feature intro generic awareness modal.",
+          "createPrompt": "Create Prompt Generic Awareness Modal",
+          "createPromptDesc": "Open a form to create a prompt generic awareness modal.",
           "openCurrent": "Open current campaign",
           "openCurrentDesc": "Set the drawer state for this campaign. Return to Portfolio to view it.",
           "clear": "Clear generic awareness modals",
@@ -6598,6 +6612,66 @@
       "status": "Status",
       "unstaking": "Unstaking",
       "available": "Available"
+    },
+    "earnRewards": {
+      "title": "Earn Rewards",
+      "steps": {
+        "delegate": "Delegate",
+        "stake": "Stake"
+      },
+      "delegation": {
+        "step": "Step 1 · Delegation",
+        "title": "Earn risk-free rewards",
+        "subtitle": "No lock-up, no risk.",
+        "bullets": {
+          "0": "Your full balance will be delegated",
+          "1": "Delegated funds remain in your account",
+          "2": "Spend your tez at any time"
+        }
+      },
+      "staking": {
+        "step": "Step 2 · Staking",
+        "title": "Earn higher rewards",
+        "subtitle": "Requires active delegation first.",
+        "bullets": {
+          "0": "Stake however much you'd like",
+          "1": "Staked funds are locked in your account",
+          "2": "Unstake in just 4 days"
+        }
+      },
+      "learnMore": "Learn more about staking and delegation",
+      "cta": "Start Earning"
+    },
+    "stake": {
+      "flow": {
+        "amount": {
+          "disclaimer": "Staking locks your XTZ until you unstake it.",
+          "awaitingDelegation": "Confirming your delegation. This usually takes less than a minute…",
+          "cta": "Stake your Tezos"
+        },
+        "steps": {
+          "confirmation": {
+            "success": {
+              "title": "Staking sent",
+              "text": "Only a 4-day waiting period before staking rewards begin. After that, rewards are distributed daily and compound automatically."
+            }
+          }
+        },
+        "delegationSuccess": {
+          "cta": "Stake your TEZOS for more rewards",
+          "info": "Learn more about Tezos staking vs Delegation"
+        }
+      }
+    },
+    "account": {
+      "availableBalanceTooltip": "Funds you can use right now.",
+      "delegatedAssetsTooltip": "XTZ delegated to a baker. Funds remain in your wallet and can be sent at any time.",
+      "stakedAssets": "Staked assets",
+      "stakedAssetsTooltip": "XTZ locked under your baker. Unstake to make them withdrawable after ~4 days.",
+      "pendingWithdrawable": "Pending withdrawable",
+      "pendingWithdrawableTooltip": "XTZ currently unstaking. Available for withdrawal in ~4 days.",
+      "withdrawableAssets": "Withdrawable assets",
+      "withdrawableAssetsTooltip": "XTZ that finished the unstaking period and is ready to be withdrawn."
     }
   },
   "evm": {
@@ -6655,7 +6729,8 @@
             "warning": {
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
-            "cta": "Continue"
+            "cta": "Continue",
+            "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
           },
           "validator": {
             "validators": "Validators",
@@ -6766,30 +6841,22 @@
     "claimRewards": {
       "stepperHeader": {
         "validator": "Select reward to collect",
-        "method": "Claim rewards",
-        "summary": "Summary",
+        "claim": "Claim rewards",
         "selectDevice": "Select device",
         "connectDevice": "Connect device",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
         "steps": {
-          "method": {
+          "claim": {
             "youEarned": "You earned",
             "byDelegationAssetsTo": "by delegating assets to",
-            "claimReward": "Cash in",
-            "claimRewardCompound": "Compound",
-            "claimRewardInfo": "They will be claimed now and added to your available balance.",
-            "claimRewardCompoundInfo": "They will be claimed now and automatically delegated to the same validator.",
-            "compoundOrCashIn": "Compound or Cash in?",
-            "claimRewardTooltip": "Rewards will be added to the available balance",
-            "claimRewardCompoundTooltip": "Rewards will be added to the delegated amount",
+            "description": "Rewards will be claimed now and added to your available balance.",
             "cta": "Continue"
           },
           "verification": {
             "success": {
               "title": "You have successfully claimed your rewards. They were added to your available balance.",
-              "titleCompound": "Your rewards were delegated to the same validator.",
               "text": "Your account balance will be updated when the network confirms the transaction.",
               "cta": "View details"
             },
@@ -8034,6 +8101,40 @@
   },
   "market": {
     "title": "Market",
+    "assets": {
+      "title": "Assets",
+      "emptyFavorites": "No favorites yet",
+      "emptyStocks": "No stocks found",
+      "categories": {
+        "accessibilityLabel": "Asset categories",
+        "all": "All",
+        "stocks": "Stocks",
+        "favorites": "Favorites"
+      },
+      "filters": {
+        "accessibilityLabel": "Open asset filters",
+        "title": "Filters",
+        "sorting": "Sorting",
+        "timeframe": "Timeframe",
+        "sortingOptions": {
+          "marketCap": "Market cap",
+          "volume": "Volume",
+          "gainers": "Gainers",
+          "losers": "Losers"
+        },
+        "timeframeOptions": {
+          "1D": "1 day",
+          "7D": "1 week",
+          "30D": "1 month",
+          "6M": "6 months",
+          "1Y": "1 year"
+        }
+      },
+      "error": {
+        "title": "Couldn't load assets",
+        "description": "Something went wrong while loading the asset list. Please try again later."
+      }
+    },
     "filters": {
       "sort": "Sort",
       "filter": "Filter",
@@ -8133,44 +8234,44 @@
         "tooltip": "The average price you paid for this asset through Ledger Wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
       },
       "drawer": {
-        "title": "Asset profit and loss",
-        "description": "A summary of how this asset has performed in your portfolio.",
+        "title": "Profit and loss",
+        "description": "Your asset performance broken down into estimated unrealised and realised returns.",
         "estimatedReturn": {
-          "title": "Estimated return",
+          "title": "Unrealised return",
           "description": "The estimated profit or loss if sold at current price."
         },
         "realisedReturn": {
           "title": "Realised return",
-          "description": "Profit or loss confirmed from previous sale, send, or swap."
+          "description": "Profit or loss estimated from previous sale, send or swap."
         },
         "totalReturn": {
           "title": "Total return",
-          "description": "The sum of estimated and realised returns."
+          "description": "The sum of estimated unrealised and realised returns."
         }
       }
     },
     "portfolio": {
+      "title": "Profit and loss",
       "return": {
         "title": "Unrealised return"
       },
-      "costBasis": {
-        "title": "Cost basis",
-        "tooltip": "The total amount you paid to acquire your current holdings, including fees."
+      "realised": {
+        "title": "Realised return"
       },
       "drawer": {
-        "title": "Portfolio profit and loss",
-        "description": "Your portfolio performance broken down into estimated and realised returns.",
+        "title": "Profit and loss",
+        "description": "Your portfolio performance broken down into estimated unrealised and realised return.",
         "estimatedReturn": {
-          "title": "Estimated return",
+          "title": "Unrealised return",
           "description": "The estimated profit or loss if sold at current price."
         },
         "realisedReturn": {
           "title": "Realised return",
-          "description": "Profit or loss confirmed from previous sale, send, or swap."
+          "description": "Profit or loss estimated from previous sale, send or swap."
         },
         "totalReturn": {
           "title": "Total return",
-          "description": "The sum of estimated and realised returns."
+          "description": "The sum of estimated unrealised and realised returns."
         }
       }
     }
@@ -8845,7 +8946,8 @@
     "title": "Ledger Sync",
     "banner": {
       "title": "Your wallet isn't synced",
-      "description": "Keep your portfolio up to date"
+      "description": "Keep your portfolio up to date",
+      "cta": "Sync my wallet"
     },
     "entryPoints": {
       "simpleCta": {
@@ -9100,18 +9202,32 @@
       "marketPrice": "Market price",
       "timeframeSelector": "Timeframe",
       "timeLabel": {
-        "24h": "1 day",
-        "7d": "1 week",
-        "30d": "1 month",
-        "1y": "1 year"
+        "1d": "24 hours",
+        "1w": "1 week",
+        "1m": "1 month",
+        "6m": "6 months",
+        "1y": "1 year",
+        "all": "All time"
       },
-      "chartPlaceholder": "Graphic"
+      "range": {
+        "1d": "1D",
+        "1w": "1W",
+        "1m": "1M",
+        "6m": "6M",
+        "1y": "1Y",
+        "all": "ALL"
+      },
+      "chart": {
+        "received": "Received",
+        "sent": "Sent",
+        "transactionsCount": "{{count}} transactions"
+      }
     },
     "addresses": {
-      "title": "Addresses",
+      "title": "Accounts",
       "addAccount": "Add",
       "seeAll": "See all",
-      "empty": "No addresses yet. Tap Add to get started."
+      "empty": "No accounts yet. Tap Add to get started."
     },
     "marketStats": {
       "title": "Market stats",
@@ -9124,7 +9240,8 @@
       "marketCapTooltip": "The total value of all coins in circulation. Think of it as the crypto's total worth on the market.",
       "tradingVolume": "24h trading volume",
       "tradingVolumeTooltip": "The total amount traded in the last 24 hours.",
-      "error": "Unable to load market stats"
+      "error": "Unable to load market stats",
+      "disclaimer": "Market stats sourced from CoinGecko"
     },
     "pricePerformance": {
       "title": "Price performance",
@@ -9165,6 +9282,11 @@
       "removeFavourite": "Remove from favourites",
       "hideFromPortfolio": "Hide from portfolio",
       "showInPortfolio": "Show in portfolio"
+    },
+    "chartOptions": {
+      "openMenuA11yLabel": "Chart options",
+      "hideTransactions": "Hide activity on price chart",
+      "showTransactions": "Show activity on price chart"
     }
   },
   "assetSelection": {
@@ -9559,15 +9681,30 @@
   },
   "fearAndGreed": {
     "title": "Mood index",
-    "description": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
+    "description": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
+    "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
     "levels": {
+      "fearPlus": "Fear+",
       "fear": "Fear",
-      "cautious": "Cautious",
       "neutral": "Neutral",
-      "optimistic": "Optimistic",
-      "greedy": "Greedy"
+      "greed": "Greed",
+      "greedPlus": "Greed+"
     },
     "tileTitle": "Mood"
+  },
+  "altcoinSeason": {
+    "title": "Season",
+    "definitionTitle": "Altcoin index",
+    "description": "The Altcoin index shows how Bitcoin is performing compared to alternative cryptocurrencies. The higher the number, the better altcoins are doing compared to Bitcoin.",
+    "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
+    "levels": {
+      "bitcoin": "Bitcoin",
+      "altcoin": "Altcoin"
+    }
+  },
+  "marketCapCard": {
+    "title": "Total market cap",
+    "description": "The total market cap represents the market capitalization of all cryptocurrencies combined."
   },
   "analyticsAllocation": {
     "header": {

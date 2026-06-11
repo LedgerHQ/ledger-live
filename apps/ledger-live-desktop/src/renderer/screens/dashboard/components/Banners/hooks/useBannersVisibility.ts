@@ -1,6 +1,9 @@
 import { useSelector } from "LLD/hooks/redux";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { usePostOnboardingEntryPointVisibleOnWallet, usePostOnboardingPortfolioWidgetVisibility } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { useFeature } from "@features/platform-feature-flags";
+import {
+  usePostOnboardingEntryPointVisibleOnWallet,
+  usePostOnboardingPortfolioWidgetVisibility,
+} from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -14,7 +17,7 @@ interface BannerVisibilityState {
   isPostOnboardingBannerVisible: boolean;
   /** True if the Finish Onboarding widget (post-onboarding entry) should show on Portfolio */
   isFinishOnboardingWidgetVisible: boolean;
-  /** Wallet40 config: finish-onboarding portfolio block is enabled (same source as `isFinishOnboardingWidgetVisible` base flag) */
+  /** Whether the `onboardingWidget` feature flag is enabled (gates finish-onboarding portfolio layout; combined with post-onboarding eligibility for `isFinishOnboardingWidgetVisible`) */
   shouldDisplayFinishOnboardingWidget: boolean;
   /** True if the action cards carousel is visible */
   isActionCardsVisible: boolean;
@@ -33,7 +36,8 @@ interface BannerVisibilityState {
  */
 export function useBannersVisibility(): BannerVisibilityState {
   const lldActionCarousel = useFeature("lldActionCarousel");
-  const { shouldDisplayFinishOnboardingWidget = false } = useWalletFeaturesConfig("desktop");
+  const onboardingWidgetFeature = useFeature("onboardingWidget");
+  const shouldDisplayFinishOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
 
   // Clear cache banner
   const isClearCacheBannerVisible: boolean = useSelector(showClearCacheBannerSelector);
@@ -42,9 +46,8 @@ export function useBannersVisibility(): BannerVisibilityState {
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
   // Finish onboarding widget
-  const { isPortfolioWidgetBaseVisible } = usePostOnboardingPortfolioWidgetVisibility(
-    flattenAccountsSelector,
-  );
+  const { isPortfolioWidgetBaseVisible } =
+    usePostOnboardingPortfolioWidgetVisibility(flattenAccountsSelector);
   const isFinishOnboardingWidgetVisible =
     isPortfolioWidgetBaseVisible && shouldDisplayFinishOnboardingWidget;
 

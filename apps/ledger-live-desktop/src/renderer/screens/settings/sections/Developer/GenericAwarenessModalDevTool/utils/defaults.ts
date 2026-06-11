@@ -1,4 +1,4 @@
-import { getPicsumImageUrl } from "./placeholderImages";
+import { getDevToolCarouselImageUrl, getDevToolPlaceholderImageUrl } from "./placeholderImages";
 import type {
   CarouselSlideForm,
   DevLayoutMode,
@@ -15,7 +15,7 @@ const CAROUSEL_PRIMARY_BUTTON_LABELS = ["Learn more", "Discover", "Explore"] as 
 const defaultCarouselSlide = (index: number): CarouselSlideForm => ({
   title: `Slide ${index + 1} title`,
   subtitle: `Slide ${index + 1} subtitle`,
-  imageUrl: getPicsumImageUrl(),
+  imageUrl: getDevToolCarouselImageUrl(index),
   primaryButtonLabel: CAROUSEL_PRIMARY_BUTTON_LABELS[index % CAROUSEL_PRIMARY_BUTTON_LABELS.length],
   primaryButtonLink: "https://www.ledger.com",
 });
@@ -48,6 +48,23 @@ const featureIntroDefaults = {
   secondaryButtonLink: "https://www.ledger.com",
 };
 
+const promptDefaults = {
+  title: "Stay in control",
+  subtitle: "Move assets to a hardware signer for true self-custody.",
+  primaryButtonLabel: "Learn more",
+  primaryButtonLink: "https://www.ledger.com/academy",
+  secondaryButtonLabel: "Maybe later",
+  secondaryButtonLink: "https://www.ledger.com",
+};
+
+const layoutContentDefaults: Record<
+  Exclude<DevLayoutMode, "carousel">,
+  typeof featureIntroDefaults
+> = {
+  featureIntro: featureIntroDefaults,
+  prompt: promptDefaults,
+};
+
 export const createInitialFormState = (
   layout: DevLayoutMode = "carousel",
   trigger: DevTriggerMode = "appStart",
@@ -56,8 +73,8 @@ export const createInitialFormState = (
   trigger,
   slides: createDefaultCarouselSlides(),
   items: createDefaultFeatureIntroItems(),
-  ...featureIntroDefaults,
-  imageUrl: getPicsumImageUrl(),
+  ...(layout === "carousel" ? featureIntroDefaults : layoutContentDefaults[layout]),
+  imageUrl: getDevToolPlaceholderImageUrl(),
 });
 
 export const createDefaultCarouselSlideAt = (index: number): CarouselSlideForm =>

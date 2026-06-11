@@ -200,7 +200,7 @@ describe("getBalance", () => {
       mockAccount({ balance: 100, stakedBalance: 30 });
 
       expect(await getBalance(address)).toEqual([
-        { value: 100n, asset: { type: "native" } },
+        { value: 100n, asset: { type: "native" }, locked: 30n },
         {
           value: 30n,
           asset: {
@@ -228,7 +228,7 @@ describe("getBalance", () => {
       });
 
       expect(await getBalance(address)).toEqual([
-        { value: 100n, asset: { type: "native" } },
+        { value: 100n, asset: { type: "native" }, locked: 30n },
         {
           value: 70n,
           asset: {
@@ -296,7 +296,7 @@ describe("getBalance", () => {
       const result = await getBalance(address);
 
       expect(result).toHaveLength(4);
-      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" } });
+      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" }, locked: 40n });
       expect(result[3]).toEqual({
         value: 10n,
         asset: { type: "native" },
@@ -350,6 +350,8 @@ describe("getBalance", () => {
 
       const result = await getBalance(address);
 
+      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" }, locked: 50n });
+
       const stakes = result.filter(b => b.stake).map(b => b.stake);
       expect(stakes).toEqual([
         {
@@ -358,7 +360,7 @@ describe("getBalance", () => {
           delegate: delegateAddress,
           state: "active",
           asset: { type: "native" },
-          amount: 100n,
+          amount: 50n,
           actions: [],
         },
         {
@@ -390,7 +392,7 @@ describe("getBalance", () => {
       expect(await getBalance(address)).toEqual([{ value: 50n, asset: { type: "native" } }]);
     });
 
-    it("degrades stake breakdown but keeps balance sync when unstake_requests endpoint fails", async () => {
+    it("still excludes unstaked-frozen funds from spendable when the unstake_requests endpoint fails", async () => {
       mockServer.use(
         http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
           HttpResponse.json({
@@ -408,10 +410,11 @@ describe("getBalance", () => {
 
       const result = await getBalance(address);
 
+      // Breakdown rows are lost, but locked/delegated still derive from the account-level unstakedBalance.
       expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" } });
+      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" }, locked: 10n });
       expect(result[1]).toEqual({
-        value: 100n,
+        value: 90n,
         asset: { type: "native" },
         stake: {
           uid: `delegation-${address}`,
@@ -419,7 +422,7 @@ describe("getBalance", () => {
           delegate: delegateAddress,
           state: "active",
           asset: { type: "native" },
-          amount: 100n,
+          amount: 90n,
           actions: [],
         },
       });

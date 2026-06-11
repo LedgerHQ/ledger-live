@@ -3,11 +3,11 @@ import { render, screen } from "@tests/test-renderer";
 import { RequiredFirmwareUpdate } from "./rendering";
 import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import * as useWalletFeaturesConfigModule from "@ledgerhq/live-common/featureFlags/index";
+import * as useWalletFeaturesConfigModule from "@features/platform-feature-flags";
 import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/types";
 import type { State } from "~/reducers/types";
 
-jest.mock("@ledgerhq/live-common/featureFlags/index");
+jest.mock("@features/platform-feature-flags");
 
 jest.mock("~/analytics", () => ({
   TrackScreen: () => null,
@@ -44,10 +44,9 @@ describe("RequiredFirmwareUpdate", () => {
       shouldDisplayWallet40MainNav: false,
     } as WalletFeaturesConfig);
 
-    const { user } = render(
-      <RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />,
-      { overrideInitialState: stateWithLastSeenDevice },
-    );
+    const { user } = render(<RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
 
     await user.press(screen.getByText("Go to My Ledger"));
 
@@ -82,10 +81,9 @@ describe("RequiredFirmwareUpdate", () => {
       shouldDisplayWallet40MainNav: true,
     } as WalletFeaturesConfig);
 
-    const { user } = render(
-      <RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />,
-      { overrideInitialState: stateWithLastSeenDevice },
-    );
+    const { user } = render(<RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
 
     await user.press(screen.getByText("Go to My Ledger"));
 

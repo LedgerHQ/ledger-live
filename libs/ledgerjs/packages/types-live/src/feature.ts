@@ -253,6 +253,7 @@ export type Features = CurrencyFeatures & {
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwdProductTour: DefaultFeature;
+  lwdBackupHub: DefaultFeature;
   lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
@@ -328,6 +329,7 @@ export type Features = CurrencyFeatures & {
   lwmOnboardingCounterfeitWarning: DefaultFeature;
   lwmNotificationsOptIn: DefaultFeature;
   lwmProductTour: DefaultFeature;
+  lwmBackupHub: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
@@ -389,6 +391,22 @@ export type Feature_TransactionsAlerts = Feature<{
   chainwatchBaseUrl: string;
   networks: ChainwatchNetwork[];
 }>;
+
+export type NotificationsPromptAfterActionSource =
+  | "onboarding"
+  | "send"
+  | "dapp_complete"
+  | "receive"
+  | "swap"
+  | "stake"
+  | "add_favorite_coin";
+
+export type NotificationsCategoryConfig = {
+  displayed: boolean;
+  category: string;
+  drawerPromptEnabled?: boolean;
+  drawerPromptActions?: NotificationsPromptAfterActionSource[];
+};
 
 export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
@@ -479,10 +497,7 @@ export type Feature_BrazePushNotifications = Feature<{
     minutes: number;
     seconds: number;
   };
-  notificationsCategories: {
-    displayed: boolean;
-    category: string;
-  }[];
+  notificationsCategories: NotificationsCategoryConfig[];
 }>;
 
 export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
@@ -504,29 +519,18 @@ export type Feature_NewsfeedPage = Feature<{
   whitelistedLocales: string[];
 }>;
 
-export type CompatibleDevice = {
-  available: boolean;
-  comingSoon: boolean;
-  name: string;
-};
-
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
-  ledgerliveStorageState: boolean;
   bannerSubscriptionNotification: boolean;
-  compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;
-      manualStepsURI: string;
       supportLinkURI: string;
     };
     postOnboardingURI: string;
   };
   managerStatesData: {
     NEW: {
-      learnMoreURI: string;
-      alreadySubscribedURI: string;
       quickAccessURI: string;
       alreadyOnboardedURI: string;
     };
@@ -540,24 +544,12 @@ export type Feature_ProtectServicesMobile = Feature<{
 export type Feature_ProtectServicesDesktop = Feature<{
   openWithDevTools: boolean;
   availableOnDesktop: boolean;
-  isNew: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
-  ledgerliveStorageState: boolean;
   bannerSubscriptionNotification: boolean;
-  compatibleDevices: CompatibleDevice[];
-  onboardingRestore: {
-    restoreInfoDrawer: {
-      enabled: boolean;
-      manualStepsURI: string;
-      supportLinkURI: string;
-    };
-    postOnboardingURI: string;
-  };
   onboardingCompleted: {
     upsellURI: string;
     restore24URI: string;
-    alreadySubscribedURI: string;
     alreadyDeviceSeededURI: string;
   };
   account: {
@@ -886,17 +878,18 @@ type Feature_Wallet40_Params = {
   aggregatedAssets: boolean;
   myWallet: boolean;
   pnl: boolean;
+  assetDiscoverability: boolean;
   // Specifics
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;
-  finishOnboardingWidget?: boolean;
+  earnUpselling?: boolean;
+  earnSimulator?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;
-    finishOnboardingWidget?: boolean;
   } & Feature_Wallet40_Params
 >;
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{

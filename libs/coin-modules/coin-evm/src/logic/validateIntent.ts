@@ -10,6 +10,7 @@ import type {
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
+  ClaimRewardsFeesWarning,
   ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
@@ -280,6 +281,14 @@ function validateStaking(
     return { errors: {}, warnings: {} };
   }
 
+  // A gasLimit of 0 means the fee estimation failed (treated as FeeNotLoaded).
+  // On Sei EVM this typically happens when the account's EVM key is not yet
+  // associated on-chain; the staking precompile rejects calls until the first
+  // outbound transaction is confirmed.
+  if (estimatedFees.parameters?.gasLimit === 0n) {
+    errors.gasLimit = new FeeNotLoaded();
+  }
+
   if (!intent.valAddress) {
     errors.valAddress = new ValAddressRequired();
   }
@@ -293,6 +302,15 @@ function validateStaking(
   }
   if (intent.mode === "delegate" && intent.amount + totalFees > spendable) {
     errors.amount = new NotEnoughBalance();
+  }
+  // Only compare fees vs rewards when both are in the same native unit.
+  if (
+    intent.mode === "claimReward" &&
+    isNative(intent.asset) &&
+    intent.amount > 0n &&
+    totalFees > intent.amount
+  ) {
+    warnings.claimRewardsFee = new ClaimRewardsFeesWarning();
   }
   return { errors, warnings };
 }

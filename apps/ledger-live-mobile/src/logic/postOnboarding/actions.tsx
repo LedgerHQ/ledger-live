@@ -10,9 +10,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { getStoreValue } from "~/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
-const discoverWalletIcon: PostOnboardingAction["Icon"] = () => (
-  <Lightbulb size={24} color="base" />
-);
+const discoverWalletIcon: PostOnboardingAction["Icon"] = () => <Lightbulb size={24} color="base" />;
 
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -128,6 +126,5 @@ export const discoverWalletAction: PostOnboardingAction = {
   buttonLabelForAnalyticsEvent: "Discover wallet",
   shouldCompleteOnStart: false,
   startAction: () => {},
-  getIsAlreadyCompletedByState: ({ productTourCompleted }) =>
-    Boolean(productTourCompleted),
+  getIsAlreadyCompletedByState: ({ productTourCompleted }) => Boolean(productTourCompleted),
 };

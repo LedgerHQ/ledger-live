@@ -7,6 +7,7 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import { screen, render, waitFor } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
 import coinConfig from "@ledgerhq/coin-canton/config";
@@ -75,7 +76,7 @@ function overrideInitialStateWithDevice(state: State): State {
 }
 
 describe("CantonReonboardDrawer integration", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     previousCurrencyIds = listSupportedCurrencies().map(c => c.id);
     if (!previousCurrencyIds.includes("canton_network_devnet")) {
       setSupportedCurrencies([...previousCurrencyIds, "canton_network_devnet"]);
@@ -92,6 +93,8 @@ describe("CantonReonboardDrawer integration", () => {
       useGateway: true,
       nativeInstrumentId: "Amulet",
     }));
+
+    await getCurrencyBridge(currency);
   });
 
   afterAll(() => {

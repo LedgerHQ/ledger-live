@@ -1,95 +1,113 @@
 import { AppInfos } from "./AppInfos";
 
-export class Provider {
+export abstract class BaseProvider {
   constructor(
     public readonly name: string,
     public readonly uiName: string,
+  ) {}
+
+  static getByUiName<T extends BaseProvider>(
+    this: abstract new (...args: never[]) => T,
+    uiName: string,
+  ): T | undefined {
+    return Object.values(this).find(
+      (p): p is T => p instanceof BaseProvider && p.uiName === uiName,
+    );
+  }
+
+  static getNameByUiName<T extends BaseProvider>(
+    this: (abstract new (...args: never[]) => T) & { getByUiName(uiName: string): T | undefined },
+    uiName: string,
+  ): string {
+    return this.getByUiName(uiName)?.name ?? "";
+  }
+}
+
+export class SwapProvider extends BaseProvider {
+  constructor(
+    name: string,
+    uiName: string,
     public readonly kyc: boolean,
-    public readonly isNative: boolean,
     public readonly availableOnLns: boolean,
     public readonly contractAddress?: string,
     public readonly app?: AppInfos,
-  ) {}
-  // Swap providers
-  static readonly CHANGELLY = new Provider("changelly_v2", "Changelly", false, true, true);
-  static readonly EXODUS = new Provider("exodus", "Exodus", false, true, true);
-  static readonly MOONPAY = new Provider("moonpay", "MoonPay", true, false, true);
-  static readonly CIC = new Provider("cic_v2", "CIC", false, true, true);
-  static readonly NEAR_INTENTS = new Provider("nearintents", "NEAR Intents", false, true, true);
-  static readonly SWAPSXYZ = new Provider("swapsxyz", "Swaps.xyz", false, true, true);
-  static readonly MOONPAY_TRADE = new Provider("moonpay_trade", "MoonPay Trade", false, true, true);
+  ) {
+    super(name, uiName);
+  }
 
-  static readonly THORCHAIN = new Provider(
+  static readonly CHANGELLY = new SwapProvider("changelly_v2", "Changelly", false, true);
+  static readonly EXODUS = new SwapProvider("exodus", "Exodus", false, true);
+  static readonly MOONPAY = new SwapProvider("moonpay", "MoonPay", true, true);
+  static readonly CIC = new SwapProvider("cic_v2", "CIC", false, true);
+  static readonly NEAR_INTENTS = new SwapProvider("nearintents", "NEAR Intents", false, true);
+  static readonly SWAPSXYZ = new SwapProvider("swapsxyz", "Swaps.xyz", false, true);
+  static readonly MOONPAY_TRADE = new SwapProvider("moonpay_trade", "MoonPay Trade", false, true);
+
+  static readonly THORCHAIN = new SwapProvider(
     "thorswap",
     "THORChain",
     false,
-    true,
     false,
     "0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146",
   );
-  static readonly LIFI = new Provider(
+  static readonly LIFI = new SwapProvider(
     "lifi",
     "LI.FI",
     false,
-    true,
     false,
     "0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE",
   );
 
-  static readonly UNISWAP = new Provider(
+  static readonly UNISWAP = new SwapProvider(
     "uniswap",
     "Uniswap",
     false,
     false,
-    false,
     "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    AppInfos.ETHEREUM,
   );
 
-  static readonly ONE_INCH = new Provider(
+  static readonly ONE_INCH = new SwapProvider(
     "oneinch",
     "1inch",
-    false,
     false,
     true,
     "0x111111125421cA6dc452d289314280a0f8842A65",
     AppInfos.ONE_INCH,
   );
-  static readonly VELORA = new Provider(
+  static readonly VELORA = new SwapProvider(
     "velora",
     "Velora",
-    false,
     false,
     true,
     "0x6A000F20005980200259B80c5102003040001068",
     AppInfos.VELORA,
   );
-  static readonly OKX = new Provider(
+  static readonly OKX = new SwapProvider(
     "okx",
     "OKX",
     false,
-    true,
     false,
     "0x40aA958dd87FC8305b97f2BA922CDdCa374bcD7f",
     AppInfos.ETHEREUM,
   );
-
-  // Earn providers
-  static readonly KILN = new Provider("kiln_pooling", "Kiln staking Pool", true, true, true);
-  static readonly STADER_LABS = new Provider("stader-eth", "Stader Labs", true, true, true);
-  static readonly LIDO = new Provider("lido", "Lido", true, true, true);
-
-  static getNameByUiName(uiName: string): string {
-    const provider = Object.values(Provider).find(p => p.uiName === uiName);
-    return provider?.name ?? "";
-  }
 }
 
-export class BuySellProvider {
+export class EarnProvider extends BaseProvider {
+  static readonly KILN = new EarnProvider("kiln_pooling", "Kiln staking Pool");
+  static readonly STADER_LABS = new EarnProvider("stader-eth", "Stader Labs");
+  static readonly LIDO = new EarnProvider("lido", "Lido");
+}
+
+export class BuySellProvider extends BaseProvider {
   constructor(
-    public readonly name: string,
-    public readonly uiName: string,
+    name: string,
+    uiName: string,
     public readonly isTested: boolean,
-  ) {}
+  ) {
+    super(name, uiName);
+  }
+
   static readonly MOONPAY = new BuySellProvider("moonpay", "MoonPay", true);
   static readonly REVOLUT = new BuySellProvider("revolut", "Revolut", true);
   static readonly MERCURYO = new BuySellProvider("mercuryo", "Mercuryo", true);
@@ -106,14 +124,6 @@ export class BuySellProvider {
   static readonly ALCHEMY_PAY = new BuySellProvider("alchemypay", "Alchemy Pay", true);
   static readonly CRYPTO_COM = new BuySellProvider("cryptocom", "Crypto.com", true);
   static readonly PAYPAL = new BuySellProvider("paypal", "PayPal", false);
-
-  static getByUiName(uiName: string): BuySellProvider {
-    return Object.values(BuySellProvider).find(p => p.uiName === uiName);
-  }
-
-  static getNameByUiName(uiName: string): string {
-    return BuySellProvider.getByUiName(uiName).name;
-  }
 }
 
 export enum Rate {

@@ -65,6 +65,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/featureFlags/remoteABTesting/remoteABTestingAnalytics";
 import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
@@ -264,6 +265,14 @@ const getNotificationsOptInAttributes = () => {
   };
 };
 
+const getBackupHubAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return { lwmBackupHub: false };
+  const flag = analyticsFeatureFlagMethod("lwmBackupHub");
+  return {
+    lwmBackupHub: !!flag?.enabled,
+  };
+};
+
 const getLdmkAndSyncFlags = () => ({
   ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? { enabled: false },
   ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? { enabled: false },
@@ -391,6 +400,10 @@ const extraProperties = async (store: AppStore) => {
   const migrationToMMKV = getMigrationUserProps();
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
   const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
+  const onboardingCounterfeitWarningAttributes = getOnboardingCounterfeitWarningAttributes(
+    analyticsFeatureFlagMethod,
+    "lwm",
+  );
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
@@ -407,6 +420,7 @@ const extraProperties = async (store: AppStore) => {
 
   const optimiseOptInNotificationsNewWordingAttributes =
     getOptimiseOptInNotificationsNewWordingAttributes();
+  const backupHubAttributes = getBackupHubAttributes();
 
   return {
     ...mandatoryProperties,
@@ -443,6 +457,7 @@ const extraProperties = async (store: AppStore) => {
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
+    ...backupHubAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
@@ -457,6 +472,7 @@ const extraProperties = async (store: AppStore) => {
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
+    ...onboardingCounterfeitWarningAttributes,
     ...optimiseOptInNotificationsNewWordingAttributes,
     ...remoteABTestingAttributes,
   };

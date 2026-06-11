@@ -960,18 +960,12 @@ describe("graphql query availability", () => {
 // ----- projectOpenMoveBody / projectOpenMoveSignature ---------------------
 
 describe("projectOpenMoveBody", () => {
-  it.each([
-    ["address"],
-    ["bool"],
-    ["u8"],
-    ["u16"],
-    ["u32"],
-    ["u64"],
-    ["u128"],
-    ["u256"],
-  ])("maps primitive kind %s to { $kind: %s }", kind => {
-    expect(projectOpenMoveBody(kind)).toEqual({ $kind: kind });
-  });
+  it.each([["address"], ["bool"], ["u8"], ["u16"], ["u32"], ["u64"], ["u128"], ["u256"]])(
+    "maps primitive kind %s to { $kind: %s }",
+    kind => {
+      expect(projectOpenMoveBody(kind)).toEqual({ $kind: kind });
+    },
+  );
 
   it("maps an unrecognised string to unknown", () => {
     expect(projectOpenMoveBody("string")).toEqual({ $kind: "unknown" });

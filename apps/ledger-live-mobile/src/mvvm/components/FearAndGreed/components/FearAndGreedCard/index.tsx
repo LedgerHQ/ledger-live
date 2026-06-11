@@ -24,7 +24,7 @@ function FearAndGreedCard({ data, onPress }: FearAndGreedCardProps) {
       testID="fear-and-greed-card"
     >
       <Box lx={{ height: "s40", justifyContent: "center", alignItems: "center" }}>
-        <FearAndGreedArc value={value} />
+        <FearAndGreedArc value={value} appearance="compact" />
       </Box>
       <TileContent>
         <TileTitle>{t("fearAndGreed.tileTitle")}</TileTitle>

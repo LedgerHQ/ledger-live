@@ -17,7 +17,7 @@ import type { UpdateStep } from "../FirmwareUpdate";
 import { urls } from "~/utils/urls";
 import EarlySecurityCheckBody from "./EarlySecurityCheckBody";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getIgnoredOSUpdatesForDeviceModelAndPlatform } from "@ledgerhq/live-common/deviceSDK/hooks/getIgnoredOSUpdatesForDeviceModelAndPlatform";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 

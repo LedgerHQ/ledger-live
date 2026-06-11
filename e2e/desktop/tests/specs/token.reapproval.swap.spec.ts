@@ -2,7 +2,7 @@ import test from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import {
   setupEnv,
@@ -19,11 +19,11 @@ import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
 const fromAccount = TokenAccount.ETH_USDC_1;
 const toAccount = Account.ETH_1;
 const eligibleProviders = [
-  Provider.THORCHAIN,
-  Provider.LIFI,
-  Provider.OKX,
-  Provider.ONE_INCH,
-  Provider.VELORA,
+  SwapProvider.THORCHAIN,
+  SwapProvider.LIFI,
+  SwapProvider.OKX,
+  SwapProvider.ONE_INCH,
+  SwapProvider.VELORA,
 ];
 const provider = pickRotatingProvider(eligibleProviders);
 

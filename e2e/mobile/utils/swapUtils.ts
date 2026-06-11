@@ -1,5 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { allure } from "jest-allure2-reporter/api";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 import { getEnv } from "@ledgerhq/live-env";
@@ -48,7 +48,7 @@ export async function performSwapUntilQuoteSelectionStep(
 }
 export async function ensureTokenApproval(
   fromAccount: Account | TokenAccount,
-  provider: Provider,
+  provider: SwapProvider,
   minAmount: string,
 ) {
   if (!provider.contractAddress || !fromAccount.parentAccount) return;
@@ -79,7 +79,7 @@ export async function ensureTokenApproval(
   }
 }
 
-export async function revokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
+export async function revokeTokenApproval(fromAccount: TokenAccount, provider: SwapProvider) {
   if (!provider.contractAddress) return;
 
   const allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);

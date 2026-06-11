@@ -1,23 +1,29 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import {
-  AmountDisplay,
-  Box,
-  Button,
-  SegmentedControl,
-  SegmentedControlButton,
-  Skeleton,
-  Text,
-} from "@ledgerhq/lumen-ui-rnative";
+import { AmountDisplay, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ArrowDown } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { TrendSection } from "LLM/components/TrendSection";
+import { LineChart } from "LLM/components/LineChart";
+import type {
+  LineChartColor,
+  LineChartPointMarker,
+  LineChartScrubberPositionChange,
+  LineChartSeries,
+  LineChartTooltipTitle,
+  LineChartValueFormatter,
+  LineChartXAxisConfig,
+  LineChartYAxisConfig,
+} from "LLM/components/LineChart";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
+import type { RangeKey } from "../../utils/rangeMapping";
+import { ChartOptions } from "./ChartOptions";
 
-type Range = Readonly<{ label: string; value: string }>;
+/** Figma asset-detail chart height (343 × 208). Width follows the screen inset. */
+export const ASSET_DETAIL_CHART_HEIGHT = 208;
+
+type Range = Readonly<{ label: string; value: RangeKey }>;
 
 type Props = Readonly<{
   price: number;
@@ -25,14 +31,102 @@ type Props = Readonly<{
   hasMarketData: boolean;
   priceChangePercentage: number;
   formattedPriceChange: string | undefined;
-  rangeTimeLabel: string;
+  timeLabel: string | undefined;
   ranges: Range[];
-  selectedRange: string;
-  onRangeChange: (value: string) => void;
+  selectedRange: RangeKey;
+  onRangeChange: (value: RangeKey) => void;
+  isRangeValue: (value: string) => value is RangeKey;
   showReceive: boolean;
   onReceivePress: () => void;
   isLoading: boolean;
+  series: LineChartSeries[];
+  chartColor: LineChartColor;
+  points: LineChartPointMarker[];
+  pointTooltipsOnly: boolean;
+  formatValue: LineChartValueFormatter;
+  tooltipTitle: LineChartTooltipTitle;
+  onScrubberPositionChange: LineChartScrubberPositionChange;
+  isScrubbing: boolean;
+  showXAxis: boolean;
+  showYAxis: boolean;
+  xAxis: LineChartXAxisConfig;
+  yAxis: LineChartYAxisConfig;
+  currencyId?: string;
 }>;
+
+type ChartProps = Readonly<{
+  series: LineChartSeries[];
+  selectedRange: RangeKey;
+  onRangeChange: (value: RangeKey) => void;
+  ranges: Range[];
+  isRangeValue: (value: string) => value is RangeKey;
+  chartColor: LineChartColor;
+  isLoading: boolean;
+  points: LineChartPointMarker[];
+  pointTooltipsOnly: boolean;
+  formatValue: LineChartValueFormatter;
+  tooltipTitle: LineChartTooltipTitle;
+  onScrubberPositionChange: LineChartScrubberPositionChange;
+  showXAxis: boolean;
+  showYAxis: boolean;
+  xAxis: LineChartXAxisConfig;
+  yAxis: LineChartYAxisConfig;
+  accessibilityLabel: string;
+  currencyId?: string;
+}>;
+
+/**
+ * Memoized chart subtree. The market-price header re-renders on every scrub
+ * frame; wrapping the chart keeps its (already memoized) props stable so the
+ * Lumen chart + scrubber are not re-rendered mid-gesture.
+ */
+const BalanceGraphChart = React.memo(function BalanceGraphChart({
+  series,
+  selectedRange,
+  onRangeChange,
+  ranges,
+  isRangeValue,
+  chartColor,
+  isLoading,
+  points,
+  pointTooltipsOnly,
+  formatValue,
+  tooltipTitle,
+  onScrubberPositionChange,
+  showXAxis,
+  showYAxis,
+  xAxis,
+  yAxis,
+  accessibilityLabel,
+  currencyId,
+}: ChartProps) {
+  return (
+    <LineChart<RangeKey>
+      series={series}
+      selectedRange={selectedRange}
+      onRangeChange={onRangeChange}
+      ranges={ranges}
+      isRangeValue={isRangeValue}
+      color={chartColor}
+      isLoading={isLoading}
+      points={points}
+      formatValue={formatValue}
+      tooltipTitle={tooltipTitle}
+      onScrubberPositionChange={onScrubberPositionChange}
+      showScrubberTooltip
+      showScrubberBeacons={false}
+      pointTooltipsOnly={pointTooltipsOnly}
+      showXAxis={showXAxis}
+      showYAxis={showYAxis}
+      xAxis={xAxis}
+      yAxis={yAxis}
+      accessibilityLabel={accessibilityLabel}
+      testID={ASSET_DETAIL_TEST_IDS.chart}
+      height={ASSET_DETAIL_CHART_HEIGHT}
+      rangeSelectorTrailing={<ChartOptions currencyId={currencyId} />}
+    />
+  );
+});
 
 export function BalanceGraphView({
   price,
@@ -40,79 +134,83 @@ export function BalanceGraphView({
   hasMarketData,
   priceChangePercentage,
   formattedPriceChange,
-  rangeTimeLabel,
+  timeLabel,
   ranges,
   selectedRange,
   onRangeChange,
+  isRangeValue,
   showReceive,
   onReceivePress,
   isLoading,
+  series,
+  chartColor,
+  points,
+  pointTooltipsOnly,
+  formatValue,
+  tooltipTitle,
+  onScrubberPositionChange,
+  isScrubbing,
+  showXAxis,
+  showYAxis,
+  xAxis,
+  yAxis,
+  currencyId,
 }: Props) {
   const { t } = useTranslation();
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.balanceGraph} lx={containerStyle}>
-      {/* Box 1 — Header: label + price + trend */}
       {isLoading && !hasMarketData ? (
-        <Skeleton lx={{ height: "s56", width: "s256", borderRadius: "md" }} />
+        <Box lx={{ gap: "s16" }}>
+          <Skeleton lx={{ height: "s12", width: "s128", borderRadius: "full" }} />
+          <Skeleton lx={{ height: "s80", width: "s224", borderRadius: "md" }} />
+        </Box>
       ) : (
         <Box lx={headerStyle}>
           <Text typography="body2" lx={{ color: "muted" }}>
             {t("assetDetail.balanceGraph.marketPrice")}
           </Text>
 
-          {hasMarketData && (
+          {(hasMarketData || isScrubbing) && (
             <>
               <AmountDisplay
                 value={price}
                 formatter={priceFormatter}
+                animate={!isScrubbing}
+                size="md"
                 testID={ASSET_DETAIL_TEST_IDS.marketPrice}
               />
 
               <TrendSection
                 percentage={priceChangePercentage}
                 formattedChange={formattedPriceChange}
-                timeLabel={rangeTimeLabel}
+                timeLabel={timeLabel}
               />
             </>
           )}
         </Box>
       )}
 
-      {/* Box 2 — Chart placeholder */}
-      <Box
-        lx={chartPlaceholderLx}
-        style={chartPlaceholderRaw}
-        testID={ASSET_DETAIL_TEST_IDS.chartPlaceholder}
-      >
-        <Svg style={StyleSheet.absoluteFill}>
-          <Defs>
-            <LinearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#898FBC" stopOpacity="0.35" />
-              <Stop offset="1" stopColor="#3F4156" stopOpacity="0.35" />
-            </LinearGradient>
-          </Defs>
-          <Rect x="0" y="0" width="100%" height="100%" fill="url(#chartGradient)" />
-        </Svg>
-        <Text typography="body3" lx={{ color: "muted" }}>
-          {t("assetDetail.balanceGraph.chartPlaceholder")}
-        </Text>
-      </Box>
-
-      {/* Box 3 — Timeframe selector */}
-      <SegmentedControl
-        selectedValue={selectedRange}
-        onSelectedChange={onRangeChange}
-        appearance="background"
-        tabLayout="fixed"
+      <BalanceGraphChart
+        series={series}
+        selectedRange={selectedRange}
+        onRangeChange={onRangeChange}
+        ranges={ranges}
+        isRangeValue={isRangeValue}
+        chartColor={chartColor}
+        isLoading={isLoading}
+        points={points}
+        pointTooltipsOnly={pointTooltipsOnly}
+        formatValue={formatValue}
+        tooltipTitle={tooltipTitle}
+        onScrubberPositionChange={onScrubberPositionChange}
+        showXAxis={showXAxis}
+        showYAxis={showYAxis}
+        xAxis={xAxis}
+        yAxis={yAxis}
         accessibilityLabel={t("assetDetail.balanceGraph.timeframeSelector")}
-      >
-        {ranges.map(({ label, value }) => (
-          <SegmentedControlButton key={value} value={value}>
-            {label}
-          </SegmentedControlButton>
-        ))}
-      </SegmentedControl>
+        currencyId={currencyId}
+      />
 
       {showReceive && (
         <Box lx={receiveContainerStyle}>
@@ -133,21 +231,12 @@ export function BalanceGraphView({
 }
 
 const containerStyle: LumenViewStyle = {
-  gap: "s16",
+  gap: "s24",
 };
 
 const headerStyle: LumenViewStyle = {
   gap: "s8",
 };
-
-const chartPlaceholderLx: LumenViewStyle = {
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  borderRadius: "md",
-};
-
-const chartPlaceholderRaw = { height: 203 } as const;
 
 const receiveContainerStyle: LumenViewStyle = {
   marginTop: "s8",

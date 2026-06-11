@@ -50,9 +50,10 @@ describe("useSendFlowTransaction", () => {
       setAccount: mockSetAccount,
     });
 
-    (bridgeModule.getAccountBridge as jest.Mock).mockReturnValue({
-      updateTransaction: mockUpdateTransaction,
-    });
+    const bridgeObj = { updateTransaction: mockUpdateTransaction };
+    (bridgeModule.getAccountBridge as jest.Mock).mockReturnValue(
+      Object.assign(Promise.resolve(bridgeObj), { status: "fulfilled", value: bridgeObj }),
+    );
   });
 
   describe("setRecipient", () => {

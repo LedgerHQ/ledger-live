@@ -5,7 +5,8 @@
   "arrowParens": "avoid",
   "sortPackageJson": false,
   "ignorePatterns": [
-    "package.json",
+    "**/*.json",
+    "**/*.md",
     "src/load/tokens/**",
     "src/crypto/sha256.js",
     "src/data/icons/**",

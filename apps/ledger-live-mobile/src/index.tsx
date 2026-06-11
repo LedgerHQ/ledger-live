@@ -45,7 +45,7 @@ import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
-import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
+import { FeatureFlagsContextBridge } from "~/components/FeatureFlagsContextBridge";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
@@ -55,11 +55,7 @@ import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 
-import {
-  setOsTheme,
-  setIsOnboardingFlow,
-  setIsPostOnboardingFlow,
-} from "~/actions/settings";
+import { setOsTheme, setIsOnboardingFlow, setIsPostOnboardingFlow } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
   useFetchCurrencyAll,
@@ -67,7 +63,9 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
+import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -113,6 +111,16 @@ checkLibs({
   log,
   Transport,
 });
+
+// Analytics resolves feature flags from the Redux slice at event time. Analytics still consumes the
+// legacy `@ledgerhq/types-live` registry, so the cast bridges the slice's `Feature` to that registry
+// until analytics migrates to `@shared/feature-flags`.
+setAnalyticsFeatureFlagMethod(
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  ((key: FeatureId) => selectFeature(store.getState(), key) ?? null) as Parameters<
+    typeof setAnalyticsFeatureFlagMethod
+  >[0],
+);
 
 const styles = StyleSheet.create({
   root: {
@@ -346,7 +354,7 @@ export default class Root extends Component {
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
-                <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                <FeatureFlagsContextBridge>
                   <I18nextProvider i18n={i18n}>
                     <LocaleProvider>
                       <PlatformAppProviderWrapper>
@@ -375,7 +383,7 @@ export default class Root extends Component {
                       </PlatformAppProviderWrapper>
                     </LocaleProvider>
                   </I18nextProvider>
-                </FirebaseFeatureFlagsProvider>
+                </FeatureFlagsContextBridge>
               </QueuedDrawersContextProvider>
             </RebootProvider>
           ) : (

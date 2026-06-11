@@ -1,3 +1,4 @@
+import { hasReceivedAllFeatureIntroCards } from "./campaignCompleteness";
 import {
   GenericAwarenessModalFeatureIntroItemInputSchema,
   GenericAwarenessModalFeatureIntroMainInputSchema,
@@ -66,5 +67,6 @@ export const buildFeatureIntro = (
     secondaryButtonLabel: main.secondaryButtonLabel,
     secondaryButtonLink: main.secondaryButtonLink,
     items,
+    isReady: hasReceivedAllFeatureIntroCards(cards) === true,
   };
 };

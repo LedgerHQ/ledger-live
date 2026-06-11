@@ -247,8 +247,6 @@ These packages are deployed to the official npm repository under the `@ledgerhq`
 
 | Name                                                                                                                                                         | Alias                          | Umbrella                                                                       | Package                                                                                                                                                       |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [**@ledgerhq/ledger-live-common**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)                                             | `pnpm common`                  | -----                                                                          |
-| ----                                                                                                                                                         | -----                          | -----                                                                          | -------                                                                                                                                                       |
 | [**@ledgerhq/cryptoassets**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/cryptoassets)                                       | `pnpm ljs:cryoptoassets`       | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/cryptoassets.svg)](https://www.npmjs.com/package/@ledgerhq/cryptoassets)                                       |
 | [**@ledgerhq/devices**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/devices)                                                 | `pnpm ljs:devices`             | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/devices.svg)](https://www.npmjs.com/package/@ledgerhq/devices)                                                 |
 | [**@ledgerhq/errors**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/errors)                                                   | `pnpm ljs:errors`              | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/errors.svg)](https://www.npmjs.com/package/@ledgerhq/errors)                                                   |
@@ -330,7 +328,7 @@ Nightly versions of library packages are pushed every night to npm.
 To install a nightly library use the `@nightly` dist-tag.
 
 ```sh
-npm i @ledgerhq/live-common@nightly
+npm i @ledgerhq/hw-app-eth@nightly
 ```
 
 ## License

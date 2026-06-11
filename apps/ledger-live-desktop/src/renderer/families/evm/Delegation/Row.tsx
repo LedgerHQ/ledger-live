@@ -11,12 +11,14 @@ import {
   canRedelegate,
   canUndelegate,
   getRedelegationCompletionDate,
+  hasRedelegation,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { TableLine } from "./Header";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import CheckCircle from "~/renderer/icons/CheckCircle";
+import Clock from "~/renderer/icons/Clock";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import EvmValidatorIcon from "~/renderer/families/evm/shared/components/EvmValidatorIcon";
@@ -109,6 +111,7 @@ export function Row({
   account,
   delegation: {
     validatorAddress,
+    validatorName,
     formattedAmount,
     pendingRewards,
     formattedPendingRewards,
@@ -130,7 +133,8 @@ export function Row({
     },
     [onManageAction, onClaimRewards, validatorAddress],
   );
-  const _canUndelegate = canUndelegate(account);
+  const _canUndelegate = canUndelegate(account, delegation);
+  const _supportsRedelegation = hasRedelegation(account.currency.id);
   const _canRedelegate = canRedelegate(account, delegation);
   const redelegationDate = _canRedelegate
     ? undefined
@@ -162,18 +166,28 @@ export function Row({
   };
   const dropDownItems = useMemo<DropDownItem[]>(
     () => [
-      {
-        key: "MODAL_EVM_REDELEGATE",
-        label: <Trans i18nKey="ethereum.evmStaking.delegation.redelegate" />,
-        disabled: !_canRedelegate,
-        tooltip: redelegateDisabledTooltip,
-      },
+      ...(_supportsRedelegation
+        ? ([
+            {
+              key: "MODAL_EVM_REDELEGATE",
+              label: <Trans i18nKey="ethereum.evmStaking.delegation.redelegate" />,
+              disabled: !_canRedelegate,
+              tooltip: redelegateDisabledTooltip,
+            },
+          ] satisfies DropDownItem[])
+        : []),
       {
         key: "MODAL_EVM_UNDELEGATE",
         label: <Trans i18nKey="ethereum.evmStaking.delegation.undelegate" />,
         disabled: !_canUndelegate,
         tooltip: _canUndelegate ? null : (
-          <Trans i18nKey="ethereum.evmStaking.delegation.undelegateDisabledTooltip">
+          <Trans
+            i18nKey={
+              status === "activating"
+                ? "ethereum.evmStaking.delegation.undelegateActivatingTooltip"
+                : "ethereum.evmStaking.delegation.undelegateDisabledTooltip"
+            }
+          >
             <b></b>
           </Trans>
         ),
@@ -187,9 +201,16 @@ export function Row({
           ] satisfies DropDownItem[])
         : []),
     ],
-    [pendingRewards, _canRedelegate, _canUndelegate, redelegateDisabledTooltip],
+    [
+      pendingRewards,
+      _supportsRedelegation,
+      _canRedelegate,
+      _canUndelegate,
+      redelegateDisabledTooltip,
+      status,
+    ],
   );
-  const name = validator?.name ?? validatorAddress;
+  const name = validator?.name ?? validatorName ?? validatorAddress;
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorAddress),
     [onExternalLink, validatorAddress],
@@ -198,14 +219,7 @@ export function Row({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <EvmValidatorIcon
-            validator={
-              validator ?? {
-                validatorAddress,
-                name: validatorAddress,
-              }
-            }
-          />
+          <EvmValidatorIcon validator={validator ?? { validatorAddress, name }} />
         </Box>
         <Ellipsis>{name}</Ellipsis>
       </Column>
@@ -214,6 +228,12 @@ export function Row({
           <Box color="positiveGreen" pl={2}>
             <ToolTip content={<Trans i18nKey="ethereum.evmStaking.delegation.activeTooltip" />}>
               <CheckCircle size={14} />
+            </ToolTip>
+          </Box>
+        ) : status === "activating" ? (
+          <Box color="orange" pl={2}>
+            <ToolTip content={<Trans i18nKey="ethereum.evmStaking.delegation.activatingTooltip" />}>
+              <Clock size={14} />
             </ToolTip>
           </Box>
         ) : (
@@ -265,11 +285,11 @@ type UnbondingRowProps = Readonly<{
 }>;
 
 export function UnbondingRow({
-  delegation: { validator, formattedAmount, validatorAddress, completionDate },
+  delegation: { validator, formattedAmount, validatorAddress, validatorName, completionDate },
   onExternalLink,
 }: UnbondingRowProps) {
   const date = useDateFromNow(completionDate) || "N/A";
-  const name = validator?.name ?? validatorAddress;
+  const name = validator?.name ?? validatorName ?? validatorAddress;
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorAddress),
     [onExternalLink, validatorAddress],
@@ -278,14 +298,7 @@ export function UnbondingRow({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <EvmValidatorIcon
-            validator={
-              validator ?? {
-                validatorAddress,
-                name: validatorAddress,
-              }
-            }
-          />
+          <EvmValidatorIcon validator={validator ?? { validatorAddress, name }} />
         </Box>
         <Ellipsis>{name}</Ellipsis>
       </Column>

@@ -895,6 +895,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "ステーキングする前に、アカウントをデリゲートしてください"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "ステーキング残高不足"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
     },
@@ -1907,6 +1910,14 @@
           "buyNanoX" : "Ledger Nano Xを購入する",
           "discoverBenefits" : "メリットをチェック"
         }
+      }
+    },
+    "counterfeitWarning" : {
+      "title" : "事前準備",
+      "body" : "<ledgerCom>Ledger.com</ledgerCom>または<resellerLink>公式販売代理店ネットワーク</resellerLink>からの購入をお勧めします。これにより、デバイスが正規のものであり、使用可能な状態であることが確認できます。",
+      "cta" : {
+        "primary" : "設定を続行する",
+        "secondary" : "詳細はこちら"
       }
     },
     "stepNewDevice" : {
@@ -2965,6 +2976,7 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
+      "FINALIZE_UNSTAKE" : "引き出し済み",
       "ASSOCIATE_TOKEN" : "トークンの関連付け",
       "CONTRACT_CALL" : "コントラクトコール",
       "UPDATE_ACCOUNT" : "アカウント更新"
@@ -3668,6 +3680,7 @@
           "description" : "未加工のBraze風カードを作成し、汎用アウェアネスモーダルパーサーで処理した後、ポートフォリオに戻ってドロワーを表示します。",
           "carousel" : "カルーセル",
           "featureIntro" : "機能紹介",
+          "prompt" : "プロンプト",
           "appStart" : "アプリスタート",
           "deeplink" : "ディープリンク",
           "campaignId" : "キャンペーンID",
@@ -3689,6 +3702,8 @@
           "createCarouselDesc" : "カルーセル型の汎用アウェアネスモーダルを作成するフォームを開きます。",
           "createFeatureIntro" : "機能紹介の汎用アウェアネスモーダルを作成",
           "createFeatureIntroDesc" : "機能紹介の汎用アウェアネスモーダルを作成するフォームを開きます。",
+          "createPrompt" : "プロンプト汎用アウェアネスモーダルを作成",
+          "createPromptDesc" : "プロンプト型の汎用アウェアネスモーダルを作成するフォームを開きます。",
           "openCurrent" : "現在のキャンペーンを開く",
           "openCurrentDesc" : "このキャンペーンのドロワーの都道府県を設定します。ポートフォリオに戻って確認してください。",
           "clear" : "汎用的な通知モーダルをクリア",
@@ -6599,6 +6614,66 @@
       "status" : "ステータス",
       "unstaking" : "ステーキング解除",
       "available" : "利用可能"
+    },
+    "earnRewards" : {
+      "title" : "報酬を獲得する",
+      "steps" : {
+        "delegate" : "デリゲート",
+        "stake" : "ステーキング"
+      },
+      "delegation" : {
+        "step" : "ステップ1 · デリゲーション",
+        "title" : "リスクなしで報酬を獲得する",
+        "subtitle" : "ロックアップなし、リスクなし。",
+        "bullets" : {
+          "0" : "残高のすべてがデリゲートされます",
+          "1" : "デリゲートした資金はアカウントに残ります",
+          "2" : "いつでもtezを送付"
+        }
+      },
+      "staking" : {
+        "step" : "ステップ2 · ステーキング",
+        "title" : "より高い報酬を獲得する",
+        "subtitle" : "最初に有効なデリゲートが必要です。",
+        "bullets" : {
+          "0" : "お好きな数量をステーキングできます",
+          "1" : "ステーキングされた資金はアカウントにロックされます",
+          "2" : "わずか4日でステーキング解除"
+        }
+      },
+      "learnMore" : "ステーキングとデリゲーションの詳細を知る",
+      "cta" : "運用を開始する"
+    },
+    "stake" : {
+      "flow" : {
+        "amount" : {
+          "disclaimer" : "ステーキングにより、ステーキング解除するまでXTZはロックされます。",
+          "awaitingDelegation" : "デリゲートを確定します。通常、1分以内で終了します。",
+          "cta" : "Tezosをステーキング"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "ステーキング送信済み",
+              "text" : "ステーキング報酬開始までの待機期間はわずか4日間です。その後、報酬は毎日分配され、自動的にCompoundされます。"
+            }
+          }
+        },
+        "delegationSuccess" : {
+          "cta" : "TEZOSをステーキングしてより多くの報酬を獲得",
+          "info" : "Tezosのステーキングとデリゲーションの比較の詳細を知る"
+        }
+      }
+    },
+    "account" : {
+      "availableBalanceTooltip" : "今すぐ利用可能な資金です。",
+      "delegatedAssetsTooltip" : "XTZをベーカーにデリゲート。資金はウォレットに保持され、いつでも送付することができます。",
+      "stakedAssets" : "ステーキングされた資産",
+      "stakedAssetsTooltip" : "XTZはベーカーの下にロックされています。ステーキング解除すると、約4日後に引き出し可能になります。",
+      "pendingWithdrawable" : "保留中の引き出し可能額",
+      "pendingWithdrawableTooltip" : "XTZは現在ステーキングしていません。4日以内に出金可能。",
+      "withdrawableAssets" : "引き出し可能な資産",
+      "withdrawableAssetsTooltip" : "ステーキング解除期間を終了し、引き出す準備ができたXTZ。"
     }
   },
   "evm" : {
@@ -6656,7 +6731,8 @@
             "warning" : {
               "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
             },
-            "cta" : "続行"
+            "cta" : "続行",
+            "seiAssociationWarning" : "Seiアカウントはまだオンチェーンでリンクされていません。アカウントの最初の送信トランザクションがオンチェーンで承認されるまで、デリゲートは失敗します。まずは任意のアドレスに少額のSEIを送付し、承認を待ってから、その後戻ってデリゲートしてください。"
           },
           "validator" : {
             "validators" : "バリデーター",
@@ -6767,30 +6843,22 @@
     "claimRewards" : {
       "stepperHeader" : {
         "validator" : "受け取る報酬を選択",
-        "method" : "報酬獲得を申請",
-        "summary" : "概要",
+        "claim" : "報酬獲得を申請",
         "selectDevice" : "デバイスを選択",
         "connectDevice" : "デバイスを接続",
         "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
       },
       "flow" : {
         "steps" : {
-          "method" : {
+          "claim" : {
             "youEarned" : "獲得額",
             "byDelegationAssetsTo" : "資産のデリゲート先：",
-            "claimReward" : "キャッシュイン",
-            "claimRewardCompound" : "Compound",
-            "claimRewardInfo" : "報酬獲得を申請し、報酬は利用可能残高に加算されます。",
-            "claimRewardCompoundInfo" : "報酬獲得を申請し、自動的に同じバリデーターにデリゲートされます。",
-            "compoundOrCashIn" : "コンパウンドとキャッシュイン？",
-            "claimRewardTooltip" : "報酬は利用可能残高に加算されます。",
-            "claimRewardCompoundTooltip" : "報酬はデリゲート額に加算されます。",
+            "description" : "報酬獲得を申請し、報酬は利用可能残高に加算されます。",
             "cta" : "続行"
           },
           "verification" : {
             "success" : {
               "title" : "報酬を正常に獲得しました。報酬は利用可能残高に加算されました。",
-              "titleCompound" : "報酬が同じバリデータにデリゲートされました。",
               "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
               "cta" : "詳細を表示"
             },
@@ -8027,6 +8095,40 @@
   },
   "market" : {
     "title" : "マーケット",
+    "assets" : {
+      "title" : "資産",
+      "emptyFavorites" : "まだお気に入りがありません",
+      "emptyStocks" : "株式が見つかりません",
+      "categories" : {
+        "accessibilityLabel" : "資産カテゴリー",
+        "all" : "全て",
+        "stocks" : "株",
+        "favorites" : "お気に入り"
+      },
+      "filters" : {
+        "accessibilityLabel" : "資産フィルターを開く",
+        "title" : "フィルター",
+        "sorting" : "並び替え",
+        "timeframe" : "期間",
+        "sortingOptions" : {
+          "marketCap" : "マーケットキャップ",
+          "volume" : "ボリューム",
+          "gainers" : "上昇",
+          "losers" : "下降"
+        },
+        "timeframeOptions" : {
+          "1D" : "1日間",
+          "7D" : "1週間",
+          "30D" : "1か月",
+          "6M" : "6か月",
+          "1Y" : "1年"
+        }
+      },
+      "error" : {
+        "title" : "資産を読み込めませんでした。",
+        "description" : "資産リストの読み込み中に問題が発生しました。しばらくしてから、もう一度お試しください。"
+      }
+    },
     "filters" : {
       "sort" : "並び替え",
       "filter" : "フィルター",
@@ -8126,44 +8228,44 @@
         "tooltip" : "他のウォレットから購入したり、受け取ったすべてを含む、Ledger Walletを通じてこの資産に対して支払った平均価格。利益または損失をチェックするために使用されます。"
       },
       "drawer" : {
-        "title" : "資産の利益と損失",
-        "description" : "この資産がお客様のポートフォリオでどのように運用されたかをまとめたものです。",
+        "title" : "利益と損失",
+        "description" : "資産のパフォーマンスを、推定未実現利益と実現利益に分類しました。",
         "estimatedReturn" : {
-          "title" : "推定リターン",
+          "title" : "未実現利益",
           "description" : "現在の価格で売却した場合の利益または損失の見積もり。"
         },
         "realisedReturn" : {
           "title" : "リターンの実現",
-          "description" : "以前の売却、送金、またはスワップで確認された利益または損失。"
+          "description" : "以前の売却、送金、またはスワップで推定された利益または損失。"
         },
         "totalReturn" : {
           "title" : "総リターン",
-          "description" : "予想リターンと実現リターンの合計。"
+          "description" : "推定未実現利益と実現利益の合計。"
         }
       }
     },
     "portfolio" : {
+      "title" : "利益と損失",
       "return" : {
         "title" : "未実現利益"
       },
-      "costBasis" : {
-        "title" : "取得価格",
-        "tooltip" : "手数料を含む、現在の保有資産を取得するために支払った合計金額。"
+      "realised" : {
+        "title" : "リターンの実現"
       },
       "drawer" : {
-        "title" : "ポートフォリオの利益と損失",
-        "description" : "ポートフォリオのパフォーマンスを、推定収益と実現収益に分類しました。",
+        "title" : "利益と損失",
+        "description" : "ポートフォリオのパフォーマンスを、推定未実現利益と実現利益に分類しました。",
         "estimatedReturn" : {
-          "title" : "推定リターン",
+          "title" : "未実現利益",
           "description" : "現在の価格で売却した場合の利益または損失の見積もり。"
         },
         "realisedReturn" : {
           "title" : "リターンの実現",
-          "description" : "以前の売却、送金、またはスワップで確認された利益または損失。"
+          "description" : "以前の売却、送金、またはスワップで推定された利益または損失。"
         },
         "totalReturn" : {
           "title" : "総リターン",
-          "description" : "推定リターンと実現リターンの合計。"
+          "description" : "推定未実現利益と実現利益の合計。"
         }
       }
     }
@@ -8838,7 +8940,8 @@
     "title" : "Ledger Sync",
     "banner" : {
       "title" : "ウォレットが同期されていません",
-      "description" : "ポートフォリオを最新の状態に保つ"
+      "description" : "ポートフォリオを最新の状態に保つ",
+      "cta" : "ウォレットを同期する"
     },
     "entryPoints" : {
       "simpleCta" : {
@@ -9093,18 +9196,32 @@
       "marketPrice" : "市場価格",
       "timeframeSelector" : "期間",
       "timeLabel" : {
-        "24h" : "1日間",
-        "7d" : "1週間",
-        "30d" : "1か月",
-        "1y" : "1年"
+        "1d" : "24時間",
+        "1w" : "1週間",
+        "1m" : "1か月",
+        "6m" : "6か月",
+        "1y" : "1年",
+        "all" : "全期間"
       },
-      "chartPlaceholder" : "グラフィック"
+      "range" : {
+        "1d" : "1日",
+        "1w" : "1週",
+        "1m" : "1月",
+        "6m" : "6ヶ月",
+        "1y" : "1年",
+        "all" : "ALL"
+      },
+      "chart" : {
+        "received" : "受取済み",
+        "sent" : "送付済み",
+        "transactionsCount" : "{{count}}件のトランザクション"
+      }
     },
     "addresses" : {
-      "title" : "アドレス",
+      "title" : "アカウント",
       "addAccount" : "追加",
       "seeAll" : "すべて表示",
-      "empty" : "まだアドレスがありません「追加」ボタンをタップして開始します。"
+      "empty" : "まだアカウントがありません「追加」ボタンをタップして開始します。"
     },
     "marketStats" : {
       "title" : "マーケット統計",
@@ -9117,7 +9234,8 @@
       "marketCapTooltip" : "流通しているすべてのコインの総価値。市場における暗号資産の総価値とお考えください。",
       "tradingVolume" : "24時間取引量",
       "tradingVolumeTooltip" : "過去24時間に取引された合計数量。",
-      "error" : "マーケット統計を読み込めません"
+      "error" : "マーケット統計を読み込めません",
+      "disclaimer" : "市場統計はCoinGeckoから取得しています"
     },
     "pricePerformance" : {
       "title" : "価格パフォーマンス",
@@ -9158,6 +9276,11 @@
       "removeFavourite" : "お気に入りから削除",
       "hideFromPortfolio" : "ポートフォリオで非表示にする",
       "showInPortfolio" : "ポートフォリオに表示する"
+    },
+    "chartOptions" : {
+      "openMenuA11yLabel" : "チャートオプション",
+      "hideTransactions" : "価格チャート上のアクティビティを非表示にする",
+      "showTransactions" : "価格チャートにアクティビティを表示"
     }
   },
   "assetSelection" : {
@@ -9552,15 +9675,30 @@
   },
   "fearAndGreed" : {
     "title" : "市場ムード指数",
-    "description" : "トレンドとアクティビティに基づいて、全体的な市場心理を0から100まで表示します。これを使って、市場がどのように動作しているかを理解してください。低い価値は恐怖を示し、高い価値は貪欲を示します。",
+    "description" : "特にボラティリティ、市場のモメンタム、ソーシャルトレンドに基づいて、全体的な市場心理を0から100まで表示します。低い価値は恐怖を示し、高い価値は貪欲を示します。",
+    "disclaimer" : "データはCoinMarketCapの恐怖と強欲指数から取得されたものであり、情報提供のみを目的としています。",
     "levels" : {
+      "fearPlus" : "極度の恐怖",
       "fear" : "恐怖",
-      "cautious" : "慎重",
       "neutral" : "中立",
-      "optimistic" : "楽観",
-      "greedy" : "貪欲"
+      "greed" : "貪欲",
+      "greedPlus" : "極度の貪欲"
     },
     "tileTitle" : "市場ムード"
+  },
+  "altcoinSeason" : {
+    "title" : "シーズン",
+    "definitionTitle" : "アルトコイン指数",
+    "description" : "アルトコイン指数は、他の暗号資産と比較したビットコインのパフォーマンスを示しています。数値が高いほど、アルトコインがビットコインよりも好調であることを示します。",
+    "disclaimer" : "データはCoinMarketCapの恐怖と強欲指数から取得されたものであり、情報提供のみを目的としています。",
+    "levels" : {
+      "bitcoin" : "ビットコイン",
+      "altcoin" : "アルトコイン"
+    }
+  },
+  "marketCapCard" : {
+    "title" : "マーケットキャップ総額",
+    "description" : "総マーケットキャップは、すべての暗号資産の時価総額の合計を表します。"
   },
   "analyticsAllocation" : {
     "header" : {

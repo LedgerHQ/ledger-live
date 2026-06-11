@@ -29,8 +29,7 @@ export async function signTransaction(
     };
   } else {
     // PrepareTransferResponse / PrepareTransactionResponse (.json) or raw JSON from craftTransaction
-    const rawTransactionData =
-      "json" in transactionData ? transactionData.json : transactionData;
+    const rawTransactionData = "json" in transactionData ? transactionData.json : transactionData;
 
     signPayload = splitTransaction(rawTransactionData);
   }

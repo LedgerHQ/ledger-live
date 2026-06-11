@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Text, Button } from "@ledgerhq/lumen-ui-rnative";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { setOverride } from "@shared/feature-flags";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setProductTourCompleted } from "~/actions/settings";
 import { productTourCompletedSelector } from "~/reducers/settings";
@@ -14,10 +15,8 @@ const LWM_PRODUCT_TOUR_FLAG = "lwmProductTour";
 
 function ProductTourScreenDebug() {
   const dispatch = useDispatch();
-  const { getFeature, overrideFeature } = useFeatureFlags();
-
   const productTourCompleted = useSelector(productTourCompletedSelector);
-  const lwmProductTourFeature = getFeature(LWM_PRODUCT_TOUR_FLAG);
+  const lwmProductTourFeature = useFeature(LWM_PRODUCT_TOUR_FLAG);
   const isLwmProductTourEnabled = lwmProductTourFeature?.enabled ?? false;
   const {
     isDrawerOpen,
@@ -34,11 +33,13 @@ function ProductTourScreenDebug() {
   }, [dispatch, productTourCompleted]);
 
   const handleToggleLwmProductTourEnabled = useCallback(() => {
-    overrideFeature(LWM_PRODUCT_TOUR_FLAG, {
-      ...lwmProductTourFeature,
-      enabled: !isLwmProductTourEnabled,
-    });
-  }, [lwmProductTourFeature, isLwmProductTourEnabled, overrideFeature]);
+    dispatch(
+      setOverride({
+        key: LWM_PRODUCT_TOUR_FLAG,
+        value: { ...lwmProductTourFeature, enabled: !isLwmProductTourEnabled },
+      }),
+    );
+  }, [lwmProductTourFeature, isLwmProductTourEnabled, dispatch]);
 
   return (
     <View style={styles.root}>

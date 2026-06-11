@@ -14,15 +14,32 @@ type GenericAwarenessModalsSectionProps = Readonly<{
   onClearLocalCards: () => void;
   onCreateCarousel: () => void;
   onCreateFeatureIntro: () => void;
+  onCreatePrompt: () => void;
 }>;
 
-const getItemCount = (card: GenericAwarenessModalMobileContentCard) =>
-  card.layout === GenericAwarenessModalLayout.Carousel ? card.data.length : card.items.length;
+const getItemCount = (card: GenericAwarenessModalMobileContentCard) => {
+  if (card.layout === GenericAwarenessModalLayout.Carousel) {
+    return card.data.length;
+  }
 
-const getEntryTitles = (card: GenericAwarenessModalMobileContentCard) =>
-  card.layout === GenericAwarenessModalLayout.Carousel
-    ? card.data.map(slide => slide.title)
-    : [card.title, ...card.items.map(item => item.title)];
+  if (card.layout === GenericAwarenessModalLayout.FeatureIntro) {
+    return card.items.length;
+  }
+
+  return 1;
+};
+
+const getEntryTitles = (card: GenericAwarenessModalMobileContentCard) => {
+  if (card.layout === GenericAwarenessModalLayout.Carousel) {
+    return card.data.map(slide => slide.title);
+  }
+
+  if (card.layout === GenericAwarenessModalLayout.FeatureIntro) {
+    return [card.title, ...card.items.map(item => item.title)];
+  }
+
+  return [card.title];
+};
 
 const getTrigger = (card: GenericAwarenessModalMobileContentCard) =>
   card.id.toLowerCase().startsWith("app_start") ? "appStart" : "deeplink";
@@ -38,6 +55,7 @@ export function GenericAwarenessModalsSection({
   onClearLocalCards,
   onCreateCarousel,
   onCreateFeatureIntro,
+  onCreatePrompt,
 }: GenericAwarenessModalsSectionProps) {
   const { t } = useTranslation();
   const { pushToast } = useToastsActions();
@@ -142,6 +160,13 @@ export function GenericAwarenessModalsSection({
         iconLeft={<Information size={24} color="base" />}
         onPress={onCreateFeatureIntro}
         testID="debug-generic-awareness-create-feature-intro"
+      />
+      <SettingsRow
+        title={t("settings.debug.contentCards.genericAwareness.createPrompt")}
+        desc={t("settings.debug.contentCards.genericAwareness.createPromptDesc")}
+        iconLeft={<Information size={24} color="base" />}
+        onPress={onCreatePrompt}
+        testID="debug-generic-awareness-create-prompt"
       />
     </>
   );

@@ -25,19 +25,10 @@ export async function isAddressSanctioned(
     return false;
   }
 
-  // Only for testing, should be deleted after
-  const temporarySanctionedAddress: string[] | undefined = LiveConfig.getValueByKey(
-    "tmp_sanctioned_addresses",
-  );
-
   const data: Record<string, string[]> = getEnv("MOCK")
     ? await fetchSanctionedAddresses()
     : await cache();
   const addresses = data["bannedAddresses"] || [];
-
-  if (temporarySanctionedAddress) {
-    return addresses.concat(temporarySanctionedAddress).includes(address);
-  }
 
   return addresses.includes(address);
 }

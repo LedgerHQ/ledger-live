@@ -1,11 +1,9 @@
 import React, { memo, useCallback } from "react";
 import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { useNavigation } from "@react-navigation/native";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { ScreenName } from "~/const";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
@@ -13,6 +11,7 @@ import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/marke
 import { useTimeRange } from "~/actions/settings";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import { resolveMarketId } from "LLM/features/Market/utils/marketIdResolver";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -23,15 +22,17 @@ type Props = {
 const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => {
   const { t } = useTranslation();
   const { locale } = useSettings();
-  const navigation = useNavigation();
+  const { openFromMarket } = useAssetDetailNavigation();
 
   const [range] = useTimeRange();
 
   const goToMarketPage = useCallback(() => {
-    navigation.navigate(ScreenName.MarketDetail, {
-      currencyId: resolveMarketId(currency.id),
+    openFromMarket({
+      marketCurrencyId: resolveMarketId(currency.id),
+      ledgerCurrencyIds: [currency.id],
+      source: "wallet_centric_market_price",
     });
-  }, [currency, navigation]);
+  }, [currency, openFromMarket]);
 
   const getPrice = (selectedCoinData: MarketCurrencyData, range: PortfolioRange) => {
     const key: KeysPriceChange = range === "all" ? KeysPriceChange.year : KeysPriceChange[range];

@@ -95,6 +95,15 @@ For any component with non-trivial interaction logic, extract a `useXxxViewModel
 
 The shell calls `React.lazy(metadata.loader)` for each enabled tool and renders it inside a `<Suspense fallback={<Loading />}>` boundary. The tool package is fetched on first activation, not on shell mount.
 
+## Styling
+
+DevTools packages do **not** run Tailwind themselves — they rely on the host app's Tailwind build. Two requirements on the host:
+
+1. Its `tailwind.config` `content` array must include `devtools/**/src/**/*.{ts,tsx}` so classes used inside any devtool are emitted.
+2. Its Tailwind config must extend the Lumen `ledgerLivePreset` (`@ledgerhq/lumen-design-core`). DevTools styles use Lumen CSS variables (`bg-canvas-muted`, `text-base`, …) which only resolve under that preset.
+
+If a class doesn't render, check those two points first.
+
 ## Packages
 
 - `@devtools/shell` — `<DevTools />`, navigation, layout, lazy-load runtime, `DevToolsProvider` / `useToolProps`

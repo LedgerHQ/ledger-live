@@ -993,6 +993,52 @@ describe("genericGetAccountShape", () => {
       expect((result as any).stakingResources?.delegations[0]?.amount).toEqual(new BigNumber(80));
     });
 
+    test("maps an activating stake to a delegation with status 'activating'", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 100n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 100n },
+        {
+          asset: { type: "native" },
+          value: 75n,
+          stake: {
+            uid: "s1",
+            address: "0xabc",
+            delegate: "0xvalidator",
+            state: "activating",
+            asset: { type: "native" },
+            amount: 75n,
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "monad");
+      const result = await getShape(
+        {
+          address: "0xtest",
+          initialAccount: undefined,
+          currency: { id: "monad", name: "Monad", family: "evm" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect((result as any).stakingResources?.delegations).toStrictEqual([
+        expect.objectContaining({
+          validatorAddress: "0xvalidator",
+          amount: new BigNumber(75),
+          status: "activating",
+        }),
+      ]);
+    });
+
     test("usesStakingPositions: surfaces raw Stake[] preserving uid prefixes; no stakingResources", async () => {
       getSyncHashMock.mockReturnValue("sync-hash");
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });

@@ -2,6 +2,7 @@ import { createAction } from "redux-actions";
 import type {
   NotificationsSetDataOfUserPayload,
   NotificationsSetModalOpenPayload,
+  NotificationsSetDrawerPromptTargetPayload,
   NotificationsSetDrawerSourcePayload,
   NotificationSetPermissionStatusPayload,
 } from "./types";
@@ -13,6 +14,10 @@ export const setNotificationsModalOpen = createAction<NotificationsSetModalOpenP
 export const setNotificationsDrawerSource = createAction<NotificationsSetDrawerSourcePayload>(
   NotificationsActionTypes.NOTIFICATIONS_SET_DRAWER_SOURCE,
 );
+export const setNotificationsDrawerPromptTarget =
+  createAction<NotificationsSetDrawerPromptTargetPayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_DRAWER_PROMPT_TARGET,
+  );
 export const setNotificationsDataOfUser = createAction<NotificationsSetDataOfUserPayload>(
   NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER,
 );

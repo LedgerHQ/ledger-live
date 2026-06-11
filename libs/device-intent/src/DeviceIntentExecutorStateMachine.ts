@@ -92,6 +92,12 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       ),
     },
     actions: {
+      notifyDeviceDisconnected: ({ context }) => {
+        context.listeners.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: context.deviceConnectionResult!.connectedDevice,
+        });
+      },
       resetConnection: assign({
         deviceConnectionResult: () => null,
         deviceExtractedContext: () => null,
@@ -125,9 +131,8 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
         },
       },
       deviceDisconnected: {
-        entry: ({ context }) => {
+        entry: () => {
           log(LOG_TYPE, "state: deviceDisconnected");
-          context.listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
         },
         on: {
           RETRY: {
@@ -156,7 +161,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           },
           DEVICE_DISCONNECTED: {
             target: "deviceDisconnected",
-            actions: "resetConnection",
+            actions: ["notifyDeviceDisconnected", "resetConnection"],
           },
           REINITIALIZE: {
             target: "deviceInitialization",
@@ -217,7 +222,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
         on: {
           DEVICE_DISCONNECTED: {
             target: "deviceDisconnected",
-            actions: "resetConnection",
+            actions: ["notifyDeviceDisconnected", "resetConnection"],
           },
           SET_INTENT: {
             target: "invalidOperation",
@@ -287,7 +292,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           },
           DEVICE_DISCONNECTED: {
             target: "deviceDisconnected",
-            actions: "resetConnection",
+            actions: ["notifyDeviceDisconnected", "resetConnection"],
           },
           REINITIALIZE: {
             target: "deviceInitialization",
@@ -322,6 +327,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
 // ---- Public interface ----
 
 export interface DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
+  start(): void;
   deviceConnected(result: DeviceConnectionResult): void;
   deviceContextInitialized(context: DeviceExtractedContext): void;
   deviceDisconnected(): void;
@@ -340,10 +346,13 @@ export type StateMachineConstructor<JobState, Input, ExtraProps> = new (params: 
 
 // ---- Default implementation ----
 
-export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>
-  implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>
-{
+export class DefaultDeviceIntentExecutorStateMachine<
+  JobState,
+  Input,
+  ExtraProps,
+> implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
   private readonly actor;
+  private hasStarted = false;
 
   constructor(params: {
     deviceConnectionParams: DeviceConnectionParams;
@@ -352,6 +361,14 @@ export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps
   }) {
     const machine = createExecutorMachine<JobState, Input, ExtraProps>();
     this.actor = createActor(machine, { input: params });
+  }
+
+  start(): void {
+    if (this.hasStarted) {
+      throw new Error("DeviceIntentExecutorStateMachine has already been started");
+    }
+    log(LOG_TYPE, "event: start");
+    this.hasStarted = true;
     this.actor.start();
   }
 
@@ -398,6 +415,8 @@ export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps
 
   stop(): void {
     log(LOG_TYPE, "event: stop");
-    this.actor.stop();
+    if (this.hasStarted) {
+      this.actor.stop();
+    }
   }
 }

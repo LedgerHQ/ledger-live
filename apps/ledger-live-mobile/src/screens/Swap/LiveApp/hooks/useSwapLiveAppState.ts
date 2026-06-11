@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -17,7 +17,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 // in case the FF is failing to load the manifest ID
 // "swap-live-app-demo-3" points to production vercel URL for the swap live app
 const DEFAULT_MANIFEST_ID =
-  process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
+  process.env.DEFAULT_SWAP_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxSwapLiveApp.params?.manifest_id;
 
 const SWAP_PARAM_KEYS: string[] = [
   "defaultAccount",
@@ -49,8 +49,7 @@ const isDefaultAccountSwapParamsList = (
  * - Error computation
  * - Webview state management
  *
- * Does NOT include navigation hooks (useSwapHeaderNavigation,
- * useSwapNavigationHelper, useSwapAndroidHardwareBackPress).
+ * Does NOT include navigation hooks such as useSwapAndroidHardwareBackPress.
  */
 export function useSwapLiveAppState(params: unknown) {
   const { t } = useTranslation();

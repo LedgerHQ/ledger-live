@@ -47,7 +47,7 @@ import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWalle
 import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 import NotificationsOptIn from "LLM/features/NotificationsOptIn";
 

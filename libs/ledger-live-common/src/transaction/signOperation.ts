@@ -60,7 +60,9 @@ export const fromSignOperationEventRaw = async (
       return e;
   }
 };
-export const toSignOperationEventRaw = async (e: SignOperationEvent): Promise<SignOperationEventRaw> => {
+export const toSignOperationEventRaw = async (
+  e: SignOperationEvent,
+): Promise<SignOperationEventRaw> => {
   switch (e.type) {
     case "signed":
       return {

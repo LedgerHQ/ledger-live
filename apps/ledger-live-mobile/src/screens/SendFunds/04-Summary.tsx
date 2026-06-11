@@ -58,11 +58,14 @@ function SendSummary({ navigation, route }: Props) {
 
   const bridge = useAccountBridge(account, parentAccount);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(bridge, () => ({
-    transaction: route.params.transaction,
-    account,
-    parentAccount,
-  }));
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(
+    bridge,
+    () => ({
+      transaction: route.params.transaction,
+      account,
+      parentAccount,
+    }),
+  );
   invariant(transaction, "transaction is missing");
 
   // handle any edit screen changes like fees changes

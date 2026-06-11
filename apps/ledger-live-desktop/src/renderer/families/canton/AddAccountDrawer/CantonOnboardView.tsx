@@ -220,9 +220,7 @@ function CantonOnboardView({
       {onboardingStatus === OnboardStatus.PREPARE && (
         <LoadingOverlay theme={currentTheme || "dark"} />
       )}
-      <ScrollContainer position="relative">
-        {renderOnboardContent()}
-      </ScrollContainer>
+      <ScrollContainer position="relative">{renderOnboardContent()}</ScrollContainer>
       <Box
         paddingBottom={FOOTER_PADDING_BOTTOM_PX}
         paddingTop={FOOTER_PADDING_TOP_PX}

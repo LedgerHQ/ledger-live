@@ -11,6 +11,7 @@ const noop = () => {};
 
 const defaultConnectionResult = makeConnectionResult();
 const defaultExtractedContext = makeExtractedContext();
+const defaultDevice = defaultConnectionResult.connectedDevice;
 
 const DummyComponent = () => null;
 
@@ -55,16 +56,17 @@ describe("deriveHookState", () => {
     });
   });
 
-  it("maps deviceDisconnected to deviceDisconnected phase with onRetry and onClose", () => {
+  it("maps deviceDisconnected to deviceDisconnected phase with device, onRetry and onClose", () => {
     const onRetry = jest.fn();
     const onUserCancel = jest.fn();
     const params = makeParams({ onRetry, onUserCancel });
-    const state: ExecutorState = { type: "deviceDisconnected" };
+    const state: ExecutorState = { type: "deviceDisconnected", device: defaultDevice };
 
     const result = deriveHookState(state, params);
 
     expect(result).toEqual({
       phase: "deviceDisconnected",
+      device: defaultDevice,
       onRetry,
       onClose: onUserCancel,
     });
@@ -155,6 +157,7 @@ describe("deriveHookState", () => {
     expect(result).toEqual({
       phase: "intentError",
       error,
+      device: defaultDevice,
       onRetry,
       onClose: onUserCancel,
     });
@@ -214,7 +217,7 @@ describe("deriveHookState", () => {
 
     const phases: ExecutorState[] = [
       { type: "connectingDevice" },
-      { type: "deviceDisconnected" },
+      { type: "deviceDisconnected", device: defaultDevice },
       {
         type: "initializingDeviceContext",
         connectionResult: defaultConnectionResult,

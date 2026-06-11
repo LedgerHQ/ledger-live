@@ -1,5 +1,5 @@
 import { isMinEarnUiVersion } from "@ledgerhq/live-common/domain/isMinEarnUiVersion";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
@@ -12,7 +12,6 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 
 type Props = {

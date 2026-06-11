@@ -34,15 +34,18 @@ export function useCompleteLazyOnboarding() {
       dispatch(setReadOnlyMode(true));
       dispatch(setIsReborn(true));
 
-      navigation.navigate(NavigatorName.Base, initialBaseScreen ?? {
-        screen: NavigatorName.Main,
-        params: {
-          screen: NavigatorName.Portfolio,
+      navigation.navigate(
+        NavigatorName.Base,
+        initialBaseScreen ?? {
+          screen: NavigatorName.Main,
           params: {
-            screen: NavigatorName.WalletTab,
+            screen: NavigatorName.Portfolio,
+            params: {
+              screen: NavigatorName.WalletTab,
+            },
           },
         },
-      });
+      );
 
       triggerNotificationsPrompt?.();
     },

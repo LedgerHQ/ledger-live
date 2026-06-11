@@ -32,6 +32,11 @@ describe("useOperationsListViewModel", () => {
     expect(result.current.isEmpty).toBe(false);
   });
 
+  it("hasPendingOperations is false when there are no pending sections", () => {
+    const { result } = renderHook(() => useOperationsListViewModel());
+    expect(result.current.hasPendingOperations).toBe(false);
+  });
+
   it("onEndReached increments the operation count when not completed", () => {
     mockUseOperationsV1.mockReturnValue({ sections: [], completed: false });
     const { result } = renderHook(() => useOperationsListViewModel());

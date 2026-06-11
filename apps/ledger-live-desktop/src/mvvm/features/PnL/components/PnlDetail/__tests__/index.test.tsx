@@ -4,6 +4,8 @@ import { PnlDetail, type PnlDetailProps } from "../index";
 
 const TITLE = "Profit and loss";
 const DESCRIPTION = "Your portfolio performance broken down into realised and unrealised returns.";
+const DISCLAIMER =
+  "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes.";
 const ITEMS = [
   { title: "Realised return", description: "Profits taken from sold positions.", value: "$120.00" },
   {
@@ -16,6 +18,7 @@ const ITEMS = [
 const makeProps = (overrides: Partial<PnlDetailProps> = {}): PnlDetailProps => ({
   title: TITLE,
   description: DESCRIPTION,
+  disclaimer: DISCLAIMER,
   items: [...ITEMS],
   open: true,
   onOpenChange: jest.fn(),
@@ -29,12 +32,13 @@ describe("PnlDetail", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("renders title, description, and every item when open", () => {
+  it("renders title, description, disclaimer, and every item when open", () => {
     render(<PnlDetail {...makeProps()} />);
 
     expect(screen.getByRole("dialog")).toBeVisible();
     expect(screen.getByText(TITLE, { selector: "div" })).toBeVisible();
     expect(screen.getByText(DESCRIPTION, { selector: "div" })).toBeVisible();
+    expect(screen.getByText(DISCLAIMER)).toBeVisible();
     for (const { title, description, value } of ITEMS) {
       expect(screen.getByText(title)).toBeVisible();
       expect(screen.getByText(description)).toBeVisible();

@@ -86,6 +86,7 @@ const makeConnectionResult = (
 // the SM, so the values just need to exist to satisfy the union.
 const TEST_CONNECTION_RESULT = makeBaseConnectionResult();
 const TEST_EXTRACTED_CONTEXT = makeExtractedContext();
+const TEST_DEVICE = TEST_CONNECTION_RESULT.connectedDevice;
 
 type TestProps = DeviceIntentExecutorProps<
   unknown,
@@ -619,7 +620,10 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       });
 
       // The second (latest) callback should be called, not the first
-      expect(secondCallback).toHaveBeenCalledWith({ type: "deviceDisconnected" });
+      expect(secondCallback).toHaveBeenCalledWith({
+        type: "deviceDisconnected",
+        device: connectionResult.connectedDevice,
+      });
     });
 
     it("WHEN onUserCancel prop changes between renders THEN onClose forwards to the latest callback", () => {
@@ -657,6 +661,7 @@ function renderWithMockSM(overrides: Partial<TestProps> = {}) {
     params: { listeners: StateMachineListeners<unknown, unknown, unknown> },
   ) {
     const mock: MockSM = {
+      start: jest.fn(),
       deviceConnected: jest.fn(),
       deviceContextInitialized: jest.fn(),
       deviceDisconnected: jest.fn(),
@@ -707,6 +712,14 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       );
     });
 
+    it("WHEN enabled is true THEN the SM is started", () => {
+      // WHEN
+      const { sm } = renderWithMockSM();
+
+      // THEN
+      expect(sm.start).toHaveBeenCalledTimes(1);
+    });
+
     it("WHEN enabled is false THEN no SM is constructed", () => {
       const { SMClass } = renderWithMockSM({ enabled: false });
 
@@ -730,6 +743,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
 
       rerender({ p: { ...props, enabled: true } });
       expect(SMClass).toHaveBeenCalledTimes(1);
+      expect(SMClass.lastInstance?.start).toHaveBeenCalledTimes(1);
     });
 
     it("WHEN the hook unmounts THEN sm.stop() is called", () => {
@@ -779,7 +793,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       const { result, sm, listeners } = renderWithMockSM();
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
 
       act(() => {
@@ -869,7 +883,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
 
       inPhase(result.current, "deviceDisconnected");
@@ -959,11 +973,17 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       rerender({ p: { ...props, onExecutorStateChanged: secondCallback } });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
 
-      expect(secondCallback).toHaveBeenCalledWith({ type: "deviceDisconnected" });
-      expect(firstCallback).not.toHaveBeenCalledWith({ type: "deviceDisconnected" });
+      expect(secondCallback).toHaveBeenCalledWith({
+        type: "deviceDisconnected",
+        device: TEST_DEVICE,
+      });
+      expect(firstCallback).not.toHaveBeenCalledWith({
+        type: "deviceDisconnected",
+        device: TEST_DEVICE,
+      });
     });
   });
 
@@ -1107,7 +1127,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       expect(onUserCancel).toHaveBeenCalledTimes(1);
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected", device: TEST_DEVICE });
       });
       inPhase(result.current, "deviceDisconnected").onClose();
       expect(onUserCancel).toHaveBeenCalledTimes(2);

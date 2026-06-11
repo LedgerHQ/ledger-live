@@ -12,7 +12,10 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { HederaAccount, Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaAccount,
+  Transaction as HederaTransaction,
+} from "@ledgerhq/live-common/families/hedera/types";
 import type { Device } from "@ledgerhq/types-devices";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";

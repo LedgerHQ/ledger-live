@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
@@ -25,7 +25,7 @@ const swapUiTags = [
 
 const kycFromAccount = Account.BTC_NATIVE_SEGWIT_1;
 const kycToAccount = Account.ETH_1;
-const kycProvider = Provider.CHANGELLY;
+const kycProvider = SwapProvider.CHANGELLY;
 const accPair: string[] = [kycFromAccount, kycToAccount].map(acc =>
   acc.currency.speculosApp.name.replaceAll(" ", "_"),
 );

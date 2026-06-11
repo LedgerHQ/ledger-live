@@ -113,16 +113,22 @@ type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
   data?: GenericCoinFrameworkTxData;
   mode?: StakingOperation;
   valAddress?: string;
+  valId?: string;
   dstValAddress?: string;
 };
 
 function getDelegationIntentFields(
   delegationMode: StakingOperation | undefined,
   transaction: GenericTransaction,
-): Partial<Pick<GenericCoinFrameworkTransactionIntent, "mode" | "valAddress" | "dstValAddress">> {
+): Partial<
+  Pick<GenericCoinFrameworkTransactionIntent, "mode" | "valAddress" | "valId" | "dstValAddress">
+> {
   return {
     ...(delegationMode !== undefined && transaction.valAddress
       ? { mode: delegationMode, valAddress: transaction.valAddress }
+      : {}),
+    ...(delegationMode !== undefined && transaction.valId
+      ? { mode: delegationMode, valId: transaction.valId }
       : {}),
     ...(delegationMode !== undefined && transaction.dstValAddress
       ? { dstValAddress: transaction.dstValAddress }
@@ -478,6 +484,9 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
   if (transaction.valAddress) {
     raw.valAddress = transaction.valAddress;
   }
+  if (transaction.valId) {
+    raw.valId = transaction.valId;
+  }
   if (transaction.dstValAddress) {
     raw.dstValAddress = transaction.dstValAddress;
   }
@@ -497,15 +506,22 @@ export const buildOptimisticOperation = (
       break;
     case "delegate":
     case "redelegate":
-    case "stake":
       type = "DELEGATE";
       break;
     case "undelegate":
-    case "unstake":
       type = "UNDELEGATE";
+      break;
+    case "stake":
+      type = "STAKE";
+      break;
+    case "unstake":
+      type = "UNSTAKE";
       break;
     case "finalize_unstake":
       type = "FINALIZE_UNSTAKE";
+      break;
+    case "claimReward":
+      type = "REWARD";
       break;
     default:
       type = "OUT";

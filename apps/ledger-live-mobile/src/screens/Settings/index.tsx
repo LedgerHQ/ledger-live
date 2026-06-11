@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import Config from "react-native-config";
 import { ScreenName } from "~/const";
 import { hasNoAccountsSelector } from "~/reducers/accounts";

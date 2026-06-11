@@ -568,10 +568,7 @@ describe("normalizeQuote", () => {
         doubledInFiat,
       );
       expect(quote.warnings).toEqual([
-        {
-          code: QuoteWarningCodes.UNREALISTIC_QUOTE,
-          gainPercent: 100,
-        },
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 },
       ]);
     });
 
@@ -587,10 +584,7 @@ describe("normalizeQuote", () => {
         },
       );
       expect(quote.warnings).toEqual([
-        {
-          code: QuoteWarningCodes.UNREALISTIC_QUOTE,
-          gainPercent: 1.5,
-        },
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 1.5 },
       ]);
     });
   });
@@ -639,7 +633,7 @@ describe("normalizeQuote", () => {
       expect(quote.warnings).toEqual([]);
     });
 
-    it("populates `warnings[]` when the unrealistic-quote check fires", () => {
+    it("emits `unrealisticQuote` in `warnings[]` when the unrealistic-quote check fires", () => {
       // amountFromFiat = 1 * 1 = 1, amountToFiat = 1 * 2 = 2 -> gain = 100%
       const quote = normalizeQuote(
         makeRawQuote({ amountFrom: 1, amountTo: 1 }),
@@ -655,7 +649,7 @@ describe("normalizeQuote", () => {
       ]);
     });
 
-    it("omits both fields and leaves errors empty when the fee estimate is undefined", () => {
+    it("omits fee fields and leaves errors empty when the fee estimate is undefined", () => {
       const quote = normalizeQuote(makeRawQuote(), emptyProviderData, emptyUnrealisticInput);
       expect(quote.quoteDetails.estimatedNetworkFee).toBeUndefined();
       expect(quote.quoteDetails.approvalNetworkFee).toBeUndefined();

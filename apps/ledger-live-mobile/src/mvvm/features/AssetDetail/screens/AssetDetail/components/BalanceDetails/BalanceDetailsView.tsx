@@ -23,6 +23,7 @@ type Props = Readonly<{
   onTransferPress: () => void;
   onEarnBannerPress: () => void;
   onEarnDepositPress: () => void;
+  onAvailableBalanceTooltipOpen: (open: boolean) => void;
   isLoading: boolean;
   distributionItem: DistributionItem | undefined;
 }>;
@@ -37,6 +38,7 @@ export function BalanceDetailsView({
   onTransferPress,
   onEarnBannerPress,
   onEarnDepositPress,
+  onAvailableBalanceTooltipOpen,
   isLoading,
   distributionItem,
 }: Props) {
@@ -75,6 +77,7 @@ export function BalanceDetailsView({
             formattedAvailable={earnState.formattedAvailable}
             formattedDeposit={earnState.formattedDeposit}
             onEarnDepositPress={onEarnDepositPress}
+            onAvailableBalanceTooltipOpen={onAvailableBalanceTooltipOpen}
           />
         )}
       </Box>

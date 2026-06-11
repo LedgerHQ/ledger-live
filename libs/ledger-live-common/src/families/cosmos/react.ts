@@ -30,9 +30,9 @@ export function useCosmosFamilyPreloadData(currencyId?: string): CosmosPreloadDa
     return () => sub.unsubscribe();
   }, [getCurrent, getUpdates]);
   return currencyId
-    ? state[currencyId] ?? {
+    ? (state[currencyId] ?? {
         validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
-      }
+      })
     : {
         validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
       };
@@ -152,7 +152,14 @@ function reorderValidators(
     .filter(validator =>
       searchInput ? validator.name.toLowerCase().includes(searchInput.toLowerCase()) : true,
     )
-    .sort((a, b) => b.tokens - a.tokens);
+    .sort((a, b) => {
+      const aTokens = BigInt(a.tokens);
+      const bTokens = BigInt(b.tokens);
+
+      if (bTokens > aTokens) return 1;
+      if (bTokens < aTokens) return -1;
+      return 0;
+    });
 
   // move Ledger validator to the first position
   if (ledgerValidatorAddress) {

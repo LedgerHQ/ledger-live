@@ -1,8 +1,15 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { setNotificationsDrawerSource, setNotificationsModalOpen } from "~/actions/notifications";
+import {
+  setNotificationsDrawerPromptTarget,
+  setNotificationsDrawerSource,
+  setNotificationsModalOpen,
+} from "~/actions/notifications";
 import { notificationsModalOpenSelector } from "~/reducers/notifications";
-import { type NotificationsPromptSource } from "LLM/features/NotificationsPrompt";
+import {
+  type NotificationPromptTarget,
+  type NotificationsPromptSource,
+} from "LLM/features/NotificationsPrompt";
 
 export function useNotificationsPromptDrawerScheduler() {
   const dispatch = useDispatch();
@@ -10,7 +17,11 @@ export function useNotificationsPromptDrawerScheduler() {
   const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const openDrawer = useCallback(
-    (source: NotificationsPromptSource, timer = 0) => {
+    (
+      source: NotificationsPromptSource,
+      timer = 0,
+      drawerPromptTarget?: NotificationPromptTarget,
+    ) => {
       if (eventTimeoutRef.current) {
         clearTimeout(eventTimeoutRef.current);
         eventTimeoutRef.current = null;
@@ -18,8 +29,12 @@ export function useNotificationsPromptDrawerScheduler() {
 
       eventTimeoutRef.current = setTimeout(() => {
         eventTimeoutRef.current = null;
+        const resolvedPromptTarget =
+          source === "inactivity" ? "globalPushNotifications" : drawerPromptTarget;
+
         dispatch(setNotificationsModalOpen(true));
         dispatch(setNotificationsDrawerSource(source));
+        dispatch(setNotificationsDrawerPromptTarget(resolvedPromptTarget));
       }, timer);
     },
     [dispatch],

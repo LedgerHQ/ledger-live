@@ -41,7 +41,7 @@ function useValidatorLink(account: Account) {
 
 function useValidatorName(account: Account) {
   const validators = useMemo(
-    () => (isStakingAccount(account) ? account.stakingResources.validators ?? [] : []),
+    () => (isStakingAccount(account) ? (account.stakingResources.validators ?? []) : []),
     [account],
   );
   return (address: string) => validators.find(v => v.validatorAddress === address)?.name ?? address;

@@ -1,6 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
-import * as useWalletFeaturesConfigModule from "@ledgerhq/live-common/featureFlags/index";
+import * as useWalletFeaturesConfigModule from "@features/platform-feature-flags";
 import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/types";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 import {
@@ -9,7 +9,7 @@ import {
 } from "../usePortfolioRefreshStatusViewModel";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
-jest.mock("@ledgerhq/live-common/featureFlags/index");
+jest.mock("@features/platform-feature-flags");
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
 const mockUseWalletFeaturesConfig = jest.mocked(

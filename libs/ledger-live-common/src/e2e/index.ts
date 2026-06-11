@@ -76,6 +76,10 @@ export const sanitizeError = (error: unknown): Error => {
       if (error.stack) {
         sanitized.stack = error.stack;
       }
+      const runId = (error as { runId?: unknown }).runId;
+      if (typeof runId === "string") {
+        Object.assign(sanitized, { runId });
+      }
       return sanitized;
     }
     return new Error(String(error ?? "Unknown error"));

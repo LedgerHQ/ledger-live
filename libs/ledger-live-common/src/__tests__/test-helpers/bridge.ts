@@ -745,7 +745,10 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                     }
 
                     expect(
-                      await toTransactionStatusRaw(s as TransactionStatusCommon, account.currency.family),
+                      await toTransactionStatusRaw(
+                        s as TransactionStatusCommon,
+                        account.currency.family,
+                      ),
                     ).toMatchObject(restRaw);
                   }
 

@@ -2,7 +2,7 @@ import CommonPage from "../common.page";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
@@ -101,7 +101,7 @@ export default class SwapPage extends CommonPage {
   }
 
   @Step("Verify swap operation details")
-  async expectSwapDrawerInfos(swapId: string, swap: SwapType, provider: Provider) {
+  async expectSwapDrawerInfos(swapId: string, swap: SwapType, provider: SwapProvider) {
     jestExpect(normalizeText(await getTextOfElement(this.swapStatus))).toMatch(/Pending|Finished/);
     await detoxExpect(getElementByText("Swap ID")).toBeVisible();
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.swapId))).toEqual(swapId);
@@ -155,7 +155,7 @@ export default class SwapPage extends CommonPage {
   }
 
   @Step("Check contents of exported operations file")
-  async checkExportedFileContents(swap: SwapType, provider: Provider, id: string) {
+  async checkExportedFileContents(swap: SwapType, provider: SwapProvider, id: string) {
     const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
@@ -198,7 +198,7 @@ export default class SwapPage extends CommonPage {
   }
 
   @Step("Ensure token approval has been revoked")
-  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
+  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: SwapProvider) {
     if (!provider.contractAddress) {
       throw new Error(
         `Provider "${provider.name}" has no contractAddress — revoke requires an EVM token provider`,

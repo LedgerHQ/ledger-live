@@ -7,10 +7,6 @@ import { makeStepProps } from "../../../__mocks__/stepProps.mock";
 import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
 import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: jest.fn((account: unknown) => account),
-}));
 jest.mock("../../../shared/utils", () => ({
   ...jest.requireActual("../../../shared/utils"),
   getAleoCurrencyConfig: jest.fn(),

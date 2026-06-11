@@ -1,10 +1,7 @@
-name: "[Desktop] - Test - Called"
+name: "[Desktop] - E2E & Mock Tests - Called"
 
 on:
   workflow_call:
-    outputs:
-      coverage_generated:
-        value: ${{ jobs.unit-tests.outputs.coverage_generated }}
 
   workflow_dispatch:
     inputs:
@@ -37,118 +34,6 @@ env:
   SMOKE_SPECULOS_FIRMWARE_VERSION: 1.6.0
 
 jobs:
-  codechecks:
-    name: "Desktop Code Check"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
-    timeout-minutes: 40
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
-        id: setup-test-desktop
-        with:
-          skip_builds: true
-
-      - name: lint
-        run: pnpm desktop lint:ci
-
-      - name: lint (guardrails)
-        run: pnpm desktop lint:guardrails
-
-      - name: typecheck
-        run: pnpm desktop typecheck
-
-      - name: check for dead code
-        run: pnpm desktop knip-check
-
-  unit-tests:
-    name: "Desktop Unit Tests"
-    timeout-minutes: 40
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
-      FORCE_COLOR: 3
-      CI_OS: ubuntu-22.04
-      JEST_MAX_WORKERS: "75%"
-    runs-on: ubuntu-22.04
-    outputs:
-      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live"
-
-      - name: Build dependencies
-        run: pnpm exec nx run ledger-live-desktop:build-lib-deps
-
-      - name: Run unit tests
-        shell: bash
-        run: |
-          set -euo pipefail
-          CPUS="$(nproc 2>/dev/null || echo "?")"
-          echo "::group::Jest CI metrics (desktop coverage)"
-          echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
-          node -e '
-            const os = require("os");
-            const n = os.cpus().length;
-            const w = process.env.JEST_MAX_WORKERS || "50%";
-            let m;
-            if (String(w).endsWith("%")) {
-              m = Math.max(1, Math.floor((n * parseFloat(String(w))) / 100));
-            } else if (/^\d+$/.test(String(w))) {
-              m = Math.max(1, parseInt(w, 10));
-            } else {
-              m = w;
-            }
-            console.log("effective_max_workers_estimate=" + m);
-          '
-          echo "::endgroup::"
-          START_TS=$(date +%s)
-          pnpm desktop test:jest:coverage
-          END_TS=$(date +%s)
-          echo "::notice::jest_ci_metrics app=ledger-live-desktop jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
-
-      - name: Upload unit test coverage
-        id: generate_coverage
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: coverage-desktop
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
-
   speculos-e2e-tests-linux:
     name: "UI e2e smoke tests NanoSP"
     outputs:
@@ -206,7 +91,6 @@ jobs:
           invert_filter: false
           shard_index: 1
           shard_total: 1
-          enable_wallet40: true
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: false
@@ -332,19 +216,22 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/*.log
 
   report:
-    name: "Test Desktop > Report"
-    needs: [codechecks, unit-tests, e2e-tests-linux, speculos-e2e-tests-linux]
+    name: "Desktop E2E & Mock > Report"
+    needs: [e2e-tests-linux, speculos-e2e-tests-linux]
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
     steps:
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
+
       - name: download images artifacts
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         continue-on-error: true
         with:
           name: images
+
       - name: parse images
         uses: actions/github-script@v7
         with:
@@ -362,12 +249,14 @@ jobs:
               }
             }
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
+
       - name: prepare comment with screenshots
         id: comment
         uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
           no-actor: true
+
       - uses: actions/github-script@v7
         name: prepare status
         id: status
@@ -398,16 +287,6 @@ jobs:
               },
             };
 
-            const typecheck = {
-              pass: ${{ needs.codechecks.result == 'success' }},
-              status: "${{ needs.codechecks.result }}",
-            };
-
-            const unitTests = {
-              pass: ${{ needs.unit-tests.result == 'success' }},
-              status: "${{ needs.unit-tests.result }}",
-            };
-
             const speculosAllureUrl = "${{ needs.speculos-e2e-tests-linux.outputs.allure_url }}";
 
             const report = {
@@ -421,17 +300,7 @@ jobs:
               },
             };
 
-
-            let summary = `### TypeCheck
-
-            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
-              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
-
-            ### Unit Tests (Jest)
-            ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
-              - ${unitTests.pass ? "✅" : "❌"} **Unit tests** ended with status \`${unitTests.status}\`
-
-            ### Screenshot Tests (Playwright)
+            let summary = `### Screenshot Tests (Playwright)
             `
 
             summary += `|`
@@ -498,20 +367,6 @@ jobs:
                     "emoji": true
                   }
                 },
-              {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `Code Checks: ${typecheck.pass ? "✅" : "❌"}\n`
-                  }
-                },
-              {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `Unit Tests: ${unitTests.pass ? "✅" : "❌"}\n`
-                  }
-                },
                 {
                   "type": "section",
                   "text": {
@@ -540,6 +395,7 @@ jobs:
             };
 
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
@@ -549,6 +405,7 @@ jobs:
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: upload summary
         with:

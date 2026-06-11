@@ -1,7 +1,7 @@
 import { Account } from "./enum/Account";
 import { sanitizeError } from "./index";
 import axios, { AxiosRequestConfig } from "axios";
-import { Provider } from "./enum/Provider";
+import { SwapProvider } from "./enum/Provider";
 
 // Target a sensible USD amount that works for most pairs
 const FALLBACK_TARGET_USD = 50;
@@ -13,7 +13,8 @@ const SWAP_QUOTE_URL = "https://swap-stg.ledger-test.com/v5/quote";
 const PROBE_AMOUNT = 0.0001;
 const PROBE_NETWORK_FEES = 0.001;
 
-const PROVIDERS_WHITELIST = "changelly_v2,exodus,thorswap,uniswap,cic_v2,nearintents,swapsxyz,moonpay_trade";
+const PROVIDERS_WHITELIST =
+  "changelly_v2,exodus,thorswap,uniswap,cic_v2,nearintents,swapsxyz,moonpay_trade";
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const ONE_WEEK_MS = ONE_DAY_MS * 7;
@@ -125,7 +126,7 @@ export async function getMinimumSwapAmount(
   }
 }
 
-export function pickRotatingProvider(eligibleProviders: Provider[]): Provider {
+export function pickRotatingProvider(eligibleProviders: SwapProvider[]): SwapProvider {
   if (eligibleProviders.length === 0) {
     throw new Error("[pickRotatingProvider] - eligibleProviders is empty");
   }

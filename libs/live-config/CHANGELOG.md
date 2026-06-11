@@ -1,5 +1,17 @@
 # @ledgerhq/live-config
 
+## 3.8.0
+
+### Minor Changes
+
+- [#18016](https://github.com/LedgerHQ/ledger-live/pull/18016) [`4e8ba32`](https://github.com/LedgerHQ/ledger-live/commit/4e8ba3283c1e15b113799fc7f2648e38c0f113e9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Feat: coin config override tool in developer settings
+
+## 3.8.0-next.0
+
+### Minor Changes
+
+- [#18016](https://github.com/LedgerHQ/ledger-live/pull/18016) [`4e8ba32`](https://github.com/LedgerHQ/ledger-live/commit/4e8ba3283c1e15b113799fc7f2648e38c0f113e9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Feat: coin config override tool in developer settings
+
 ## 3.7.0
 
 ### Minor Changes

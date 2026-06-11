@@ -23,11 +23,12 @@ export default function StepDelegation({
 
   const bridge = useAccountBridge<GenericTransaction>(account, parentAccount);
   const updateValidator = useCallback(
-    (address: string) => {
+    (address: string, valId?: string) => {
       onUpdateTransaction(_tx =>
         bridge.updateTransaction(transaction, {
           mode: "delegate",
           valAddress: address,
+          valId,
         }),
       );
     },
@@ -48,6 +49,7 @@ export default function StepDelegation({
       />
       {error && <ErrorBanner error={error} />}
       {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
+      {status.errors.gasLimit && <ErrorBanner error={status.errors.gasLimit} />}
       <ValidatorField
         account={account}
         status={status}
@@ -71,6 +73,7 @@ export function StepDelegationFooter({
   const canNext =
     !bridgePending &&
     !errors.valAddress &&
+    !errors.gasLimit &&
     transaction &&
     !!transaction.valAddress &&
     !errors.sender;

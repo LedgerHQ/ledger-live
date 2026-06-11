@@ -92,8 +92,7 @@ export default defineCommand({
       description: "Source account session label (used to resolve fresh address)",
     }),
     "to-account": option(z.string().min(1).optional(), {
-      description:
-        "Destination account session label (used to resolve fresh address)",
+      description: "Destination account session label (used to resolve fresh address)",
     }),
     amount: option(z.string().min(1, "Amount is required"), {
       description: "Amount to swap in source currency",

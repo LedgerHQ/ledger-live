@@ -1,7 +1,7 @@
 import React from "react";
 import { AmountDisplay, Skeleton } from "@ledgerhq/lumen-ui-react";
-import { trendPercentageBody2Styles } from "LLD/shared/trendPercentageStyles";
 import { MarketDataSectionTitleSkeleton } from "../MarketDataSection/components/MarketDataSectionTitleSkeleton";
+import { MarketPriceMetadata } from "./components/MarketPriceMetadata";
 import type { MarketPriceSectionViewModelResult } from "./useMarketPriceSectionViewModel";
 
 type MarketPriceSectionViewProps = Readonly<MarketPriceSectionViewModelResult>;
@@ -18,10 +18,11 @@ export function MarketPriceSectionView(viewModel: MarketPriceSectionViewProps) {
         <>
           <span className="body-2 text-muted">{viewModel.title}</span>
           <div className="flex flex-wrap items-baseline gap-8">
-            {viewModel.hasPriceData && viewModel.priceValue != null ? (
+            {(viewModel.hasPriceData || viewModel.isScrubbing) && viewModel.priceValue != null ? (
               <AmountDisplay
                 value={viewModel.priceValue}
                 formatter={viewModel.priceFormatter}
+                animate={!viewModel.isScrubbing}
                 data-testid="asset-detail-market-price"
               />
             ) : (
@@ -29,29 +30,15 @@ export function MarketPriceSectionView(viewModel: MarketPriceSectionViewProps) {
                 -----
               </span>
             )}
-            {viewModel.hasPriceData ? (
-              <div className="flex flex-row items-center gap-4">
-                <span
-                  data-testid="asset-detail-market-price-percent"
-                  className={trendPercentageBody2Styles({ variant: viewModel.variationVariant })}
-                >
-                  {viewModel.percentageText}
-                </span>
-                <span
-                  className="body-2 tabular-nums text-muted"
-                  data-testid="asset-detail-market-price-fiat-variation"
-                >
-                  {viewModel.variationText}
-                </span>
-                <span className="body-2 text-muted">
-                  <span aria-hidden>&middot;</span> {viewModel.dayLabel}
-                </span>
-              </div>
-            ) : (
-              <span className="body-2 text-muted">
-                <span aria-hidden>&middot;</span> {viewModel.dayLabel}
-              </span>
-            )}
+            <MarketPriceMetadata
+              hasPriceData={viewModel.hasPriceData}
+              isScrubbing={viewModel.isScrubbing}
+              percentageText={viewModel.percentageText}
+              variationText={viewModel.variationText}
+              variationVariant={viewModel.variationVariant}
+              scrubbedDateLabel={viewModel.scrubbedDateLabel}
+              rangeLabel={viewModel.rangeLabel}
+            />
           </div>
         </>
       )}

@@ -8,9 +8,10 @@ import {
 } from "LLM/features/NotificationsPrompt";
 
 import storage from "LLM/storage";
+import { notificationsDataOfUserSelector } from "~/reducers/notifications";
 import { add, sub, type Duration } from "date-fns";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 import { NotificationsState } from "~/reducers/types";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
@@ -82,7 +83,8 @@ describe("NotificationsPrompt Integration", () => {
     lastActionAt,
     dateOfNextAllowedRequest,
     alreadyDelayedToLater,
-    variant = ABTestingVariants.variantB,
+    dismissedOptInDrawerAtList,
+    variant = AB_TESTING_VARIANTS.B,
     skipStorageSetup = false,
   }: {
     actionSource?: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">;
@@ -91,6 +93,7 @@ describe("NotificationsPrompt Integration", () => {
     lastActionAt?: number;
     dateOfNextAllowedRequest?: Date;
     alreadyDelayedToLater?: boolean;
+    dismissedOptInDrawerAtList?: number[];
     variant?: ABTestingVariants;
     skipStorageSetup?: boolean;
   }) {
@@ -101,6 +104,7 @@ describe("NotificationsPrompt Integration", () => {
         lastActionAt,
         dateOfNextAllowedRequest,
         alreadyDelayedToLater,
+        dismissedOptInDrawerAtList,
       });
     }
 
@@ -232,6 +236,52 @@ describe("NotificationsPrompt Integration", () => {
     jest.setSystemTime(newTime);
     act(() => jest.advanceTimersByTime(newTime.getTime() - now));
   };
+
+  describe("legacy stored user data migration", () => {
+    it("should backfill globalPushNotifications dismissals when loading legacy storage on init", async () => {
+      const legacyDismissals = [sub(new Date(), { days: 1 }).getTime()];
+      const lastActionAt = Date.now();
+
+      await storage.save("pushNotificationsDataOfUser", {
+        dismissedOptInDrawerAtList: legacyDismissals,
+        lastActionAt,
+      });
+
+      const { store } = await setup({
+        skipStorageSetup: true,
+        osPermission: AuthorizationStatus.DENIED,
+        appNotifications: false,
+      });
+
+      const expectedUserData = {
+        dismissedOptInDrawerAtList: legacyDismissals,
+        dismissedPromptAtListByTarget: { globalPushNotifications: legacyDismissals },
+        lastActionAt,
+      };
+
+      await expect(storage.get("pushNotificationsDataOfUser")).resolves.toEqual(expectedUserData);
+      expect(notificationsDataOfUserSelector(store.getState())).toEqual(expectedUserData);
+    });
+
+    it("should keep reprompt behavior for legacy users after dismissals are backfilled", async () => {
+      const legacyDismissals = [sub(new Date(), { days: 8 }).getTime()];
+      const lastActionAt = Date.now();
+
+      await storage.save("pushNotificationsDataOfUser", {
+        dismissedOptInDrawerAtList: legacyDismissals,
+        lastActionAt,
+      });
+
+      const { tryTriggerDrawer } = await setup({
+        skipStorageSetup: true,
+        osPermission: AuthorizationStatus.DENIED,
+        appNotifications: false,
+      });
+
+      await tryTriggerDrawer();
+      expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+    });
+  });
 
   describe("after an action", () => {
     describe("backward compatibility for legacy users", () => {
@@ -855,7 +905,7 @@ describe("NotificationsPrompt Integration", () => {
         const { tryTriggerDrawer } = await setup({
           osPermission: AuthorizationStatus.NOT_DETERMINED,
           appNotifications: false,
-          variant: ABTestingVariants.variantA,
+          variant: AB_TESTING_VARIANTS.A,
         });
 
         await tryTriggerDrawer();
@@ -867,7 +917,7 @@ describe("NotificationsPrompt Integration", () => {
           actionSource: "add_favorite_coin",
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
-          variant: ABTestingVariants.variantA,
+          variant: AB_TESTING_VARIANTS.A,
         });
 
         await tryTriggerDrawer();
@@ -879,7 +929,7 @@ describe("NotificationsPrompt Integration", () => {
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
           lastActionAt: sub(Date.now(), INACTIVITY_REPROMPT).getTime(),
-          variant: ABTestingVariants.variantA,
+          variant: AB_TESTING_VARIANTS.A,
         });
 
         act(() => jest.runOnlyPendingTimers());

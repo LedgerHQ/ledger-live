@@ -24,8 +24,11 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
     marketData,
     displayTicker,
     ledgerId,
+    ledgerIds,
     ledgerCurrency,
     isDistributionLoading,
+    selectedRange,
+    onRangeChange,
   } = viewModel;
 
   const { isLoading: isMarketLoading, marketCurrencyData } = marketData;
@@ -65,11 +68,13 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         ledgerId={ledgerId}
         marketData={marketData}
         isDistributionLoading={isDistributionLoading}
+        selectedRange={selectedRange}
       />
 
       <ActionBar
         distributionItem={distributionItem}
         ledgerCurrency={ledgerCurrency}
+        ledgerIds={ledgerIds}
         marketCurrencyData={marketCurrencyData}
         tickerHint={displayTicker}
         isDistributionLoading={isDistributionLoading}
@@ -79,7 +84,11 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
       <ChartSection
         marketData={marketData}
         ledgerId={ledgerId}
+        currencyId={ledgerCurrency?.id}
         isDistributionLoading={isDistributionLoading}
+        selectedRange={selectedRange}
+        onRangeChange={onRangeChange}
+        distributionItem={distributionItem}
       />
 
       <div className="flex flex-col gap-32">
@@ -105,6 +114,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
           <MarketDataSection
             marketData={marketData}
             isDistributionLoading={isDistributionLoading}
+            ledgerCurrencyId={ledgerCurrency?.id ?? ledgerId}
           />
         )}
 

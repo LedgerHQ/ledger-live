@@ -5,7 +5,7 @@ description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wall
 
 # wallet-cli
 
-USB-based CLI for Ledger wallet flows. Networks: **bitcoin**, **ethereum**, **base**, **solana** (mainnet + testnets). Base uses the Ethereum app.
+USB-based CLI for Ledger wallet flows. Networks: **bitcoin**, **ethereum**, **solana** (mainnet + testnets).
 
 Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
@@ -47,7 +47,7 @@ If the user asks for any of the following, surface that wallet-cli does not supp
 
 - NFTs (mint, transfer, view).
 - Encryption / OpenPGP / key-share operations.
-- `send`, `receive`, `operations`, or `swap execute` on testnets.
+- `send`, `receive`, `operations`, or `swap execute` on testnets and layer 2s (e.g. Base).
 - Custom chains not listed in the Networks line above.
 
 ---
@@ -95,7 +95,7 @@ pnpm --silent wallet-cli start account discover bitcoin
 pnpm --silent wallet-cli start account discover ethereum:sepolia
 ```
 
-Networks: `bitcoin` (mainnet), `base`, `ethereum:sepolia`, `bitcoin:testnet`, `solana:devnet`.
+Networks: `bitcoin` (mainnet), `ethereum`, `solana`, `ethereum:sepolia`, `bitcoin:testnet`, `solana:devnet`.
 
 ### receive
 

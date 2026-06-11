@@ -86,10 +86,11 @@ function applyOperation(
     date: op.date,
     disableRounding: true,
   });
-  if (typeof cvAtDate !== "number") return acc;
-
-  const cvBN = new BigNumber(cvAtDate);
-  return flow === "inflow" ? applyInflow(acc, op.value, cvBN) : applyOutflow(acc, op.value, cvBN);
+  if (cvAtDate != null && Number.isFinite(cvAtDate)) {
+    const cvBN = new BigNumber(cvAtDate);
+    return flow === "inflow" ? applyInflow(acc, op.value, cvBN) : applyOutflow(acc, op.value, cvBN);
+  }
+  return acc;
 }
 
 /**

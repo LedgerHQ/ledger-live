@@ -3,7 +3,19 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { DisplayedDevice } from "@ledgerhq/live-dmk-mobile";
+import { track } from "~/analytics";
+import { SourceFlowProvider } from "../../utils/SourceFlowContext";
 import { DeviceListItem } from "./DeviceListItem";
+
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
+  return {
+    ...actual,
+    track: jest.fn(),
+  };
+});
+
+const mockedTrack = jest.mocked(track);
 
 function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {
   return {
@@ -25,13 +37,25 @@ function makeDisplayedDevice(overrides: Partial<DisplayedDevice> = {}): Displaye
 }
 
 describe("DeviceListItem", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function renderDeviceListItem(device: DisplayedDevice) {
+    return render(
+      <SourceFlowProvider value="my_ledger">
+        <DeviceListItem device={device} />
+      </SourceFlowProvider>,
+    );
+  }
+
   it("should render an available device with its status", () => {
     const device = makeDisplayedDevice({
       type: "available",
       knownDevice: makeKnownDevice({ name: "Available Ledger" }),
     });
 
-    render(<DeviceListItem device={device} />);
+    renderDeviceListItem(device);
 
     expect(screen.getByText("Available Ledger")).toBeVisible();
     expect(screen.getByText("Available")).toBeVisible();
@@ -43,7 +67,7 @@ describe("DeviceListItem", () => {
       knownDevice: makeKnownDevice({ name: "Unavailable Ledger" }),
     });
 
-    render(<DeviceListItem device={device} />);
+    renderDeviceListItem(device);
 
     expect(screen.getByText("Unavailable Ledger")).toBeVisible();
     expect(screen.getByText("Not connected")).toBeVisible();
@@ -54,7 +78,7 @@ describe("DeviceListItem", () => {
       knownDevice: makeKnownDevice({ name: null }),
     });
 
-    render(<DeviceListItem device={device} />);
+    renderDeviceListItem(device);
 
     expect(screen.getByText("Ledger device")).toBeVisible();
   });
@@ -65,10 +89,35 @@ describe("DeviceListItem", () => {
       knownDevice: makeKnownDevice({ name: "Available Ledger" }),
       onSelect,
     });
-    const { user } = render(<DeviceListItem device={device} />);
+    const { user } = renderDeviceListItem(device);
 
     await user.press(screen.getByText("Available Ledger"));
 
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a device row WHEN it is pressed THEN it tracks device_selected", async () => {
+    // GIVEN
+    const onSelect = jest.fn();
+    const device = makeDisplayedDevice({
+      knownDevice: makeKnownDevice({
+        name: "Ledger Stax",
+        deviceModelId: DeviceModelId.stax,
+      }),
+      onSelect,
+    });
+    const { user } = renderDeviceListItem(device);
+
+    // WHEN
+    await user.press(screen.getByText("Ledger Stax"));
+
+    // THEN
+    expect(mockedTrack).toHaveBeenCalledWith("device_selected", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.stax,
+      transport: "ble",
+    });
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 });

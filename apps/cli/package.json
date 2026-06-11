@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.43.0",
+  "version": "24.44.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -24,6 +24,8 @@
     "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
     "lint": "oxlint .",
     "lint:fix": "oxfmt . && oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
     "test": "zx ./scripts/test.mjs"
   },
   "dependencies": {

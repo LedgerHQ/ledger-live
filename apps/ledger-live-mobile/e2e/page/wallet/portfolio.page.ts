@@ -72,9 +72,7 @@ export default class PortfolioPage {
   }
 
   async expectLastTransactionAmount(amount: string) {
-    await waitFor(this.transactionByAmount(amount))
-      .toBeVisible()
-      .withTimeout(60000);
+    await waitFor(this.transactionByAmount(amount)).toBeVisible().withTimeout(60000);
   }
 
   async openLastTransaction(amount: string) {

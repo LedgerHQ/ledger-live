@@ -39,33 +39,7 @@ function getResetToSwapTabAction() {
   });
 }
 
-function getResetToLegacySwapAction() {
-  // Legacy Swap lives outside Main in the base stack, but we still need Main
-  // underneath it so the Swap form back button returns to home instead of
-  // leaving Swap as a dead-end root route.
-  return CommonActions.reset({
-    index: 1,
-    routes: [
-      {
-        name: NavigatorName.Main,
-      },
-      {
-        name: NavigatorName.Swap,
-        params: {
-          screen: ScreenName.SwapTab,
-        },
-      },
-    ],
-  });
-}
-
-export function navigateBackToSwapTab({
-  navigation,
-  shouldDisplayWallet40MainNav,
-}: {
-  navigation: NavigationWithState;
-  shouldDisplayWallet40MainNav: boolean;
-}) {
+export function navigateBackToSwapTab({ navigation }: { navigation: NavigationWithState }) {
   if (hasSwapTabRoute(navigation.getState())) {
     navigation.dispatch(
       CommonActions.reset({
@@ -80,11 +54,6 @@ export function navigateBackToSwapTab({
 
   if (!parentNavigation) {
     navigation.goBack();
-    return;
-  }
-
-  if (!shouldDisplayWallet40MainNav) {
-    parentNavigation.dispatch(getResetToLegacySwapAction());
     return;
   }
 

@@ -6,6 +6,7 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
 import type { TezosAccount, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import type { StepProps } from "../types";
 
@@ -49,7 +50,7 @@ jest.mock("~/renderer/components/Modal/ModalContent", () => ({
 }));
 jest.mock("../../BakerImage", () => ({ __esModule: true, default: () => null }));
 
-import StepValidator from "../steps/StepValidator";
+import StepValidator, { StepValidatorFooter } from "../steps/StepValidator";
 
 setSupportedCurrencies(["tezos"]);
 const currency = getCryptoCurrencyById("tezos");
@@ -114,7 +115,7 @@ describe("StakeFlowModal/StepValidator", () => {
     expect(screen.getByText("Baker B")).toBeInTheDocument();
   });
 
-  it("clicking a baker sets the recipient and transitions to device-delegation", () => {
+  it("clicking a baker sets the recipient without advancing (the gate lives in the footer)", () => {
     const props = makeProps();
     act(() => {
       render(<StepValidator {...props} />);
@@ -128,7 +129,7 @@ describe("StakeFlowModal/StepValidator", () => {
       recipient: "tz1baker-a",
     });
     expect(props.onChangeTransaction).toHaveBeenCalledTimes(1);
-    expect(props.transitionTo).toHaveBeenCalledWith("device-delegation");
+    expect(props.transitionTo).not.toHaveBeenCalled();
   });
 
   it("does nothing when transaction is missing", () => {
@@ -144,5 +145,89 @@ describe("StakeFlowModal/StepValidator", () => {
     expect(updateTransactionMock).not.toHaveBeenCalled();
     expect(props.onChangeTransaction).not.toHaveBeenCalled();
     expect(props.transitionTo).not.toHaveBeenCalled();
+  });
+});
+
+describe("StakeFlowModal/StepValidatorFooter", () => {
+  const withRecipient = (overrides: Partial<StepProps> = {}) =>
+    makeProps({
+      transaction: {
+        family: "tezos",
+        mode: "delegate",
+        amount: new BigNumber(0),
+        fees: new BigNumber(0),
+        recipient: "tz1baker-a",
+        useAllAmount: false,
+      } as unknown as Transaction,
+      ...overrides,
+    });
+
+  it("disables Continue until a baker (recipient) is selected", () => {
+    const props = makeProps(); // recipient is ""
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByRole("button")).toBeDisabled();
+  });
+
+  it("disables Continue while the status is still being checked", () => {
+    const props = withRecipient({ bridgePending: true });
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByRole("button")).toBeDisabled();
+  });
+
+  it("disables Continue when the checked status has a blocking error", () => {
+    const props = withRecipient({
+      status: {
+        errors: { amount: new NotEnoughBalance() },
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      } as unknown as StepProps["status"],
+    });
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByRole("button")).toBeDisabled();
+    act(() => {
+      fireEvent.click(screen.getByRole("button"));
+    });
+    expect(props.transitionTo).not.toHaveBeenCalled();
+  });
+
+  it("disables Continue when the only blocking error is not an amount error", () => {
+    const props = withRecipient({
+      status: {
+        errors: { recipient: new InvalidAddress() },
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      } as unknown as StepProps["status"],
+    });
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    expect(screen.getByRole("button")).toBeDisabled();
+    act(() => {
+      fireEvent.click(screen.getByRole("button"));
+    });
+    expect(props.transitionTo).not.toHaveBeenCalled();
+  });
+
+  it("enables Continue and advances to device-delegation once the status is checked and clean", () => {
+    const props = withRecipient();
+    act(() => {
+      render(<StepValidatorFooter {...props} />);
+    });
+    const button = screen.getByRole("button");
+    expect(button).not.toBeDisabled();
+    act(() => {
+      fireEvent.click(button);
+    });
+    expect(props.transitionTo).toHaveBeenCalledWith("device-delegation");
   });
 });

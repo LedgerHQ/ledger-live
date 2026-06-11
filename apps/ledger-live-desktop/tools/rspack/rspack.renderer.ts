@@ -1,6 +1,6 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
-import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
+import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
 import { commonConfig, rootFolder } from "./rspack.common";
 import {
   buildRendererEnv,
@@ -296,7 +296,7 @@ export function createRendererConfig(
         scriptLoading: "defer",
       }),
       // React Fast Refresh for development
-      ...(useDevServer ? [new ReactRefreshPlugin()] : []),
+      ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
     ],
     optimization: {
       minimize: !isDev,

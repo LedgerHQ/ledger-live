@@ -3,7 +3,7 @@ import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import VersionNumber from "react-native-version-number";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";

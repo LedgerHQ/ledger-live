@@ -46,8 +46,8 @@ export function SendRecipientFields({
     : null;
 
   const selectedName = feeCurrencyAccount
-    ? FEE_CURRENCY_BY_CONTRACT.get(feeCurrencyAccount.token.contractAddress.toLowerCase())?.name ??
-      FEE_CURRENCY_OPTIONS[0].name
+    ? (FEE_CURRENCY_BY_CONTRACT.get(feeCurrencyAccount.token.contractAddress.toLowerCase())?.name ??
+      FEE_CURRENCY_OPTIONS[0].name)
     : FEE_CURRENCY_OPTIONS[0].name;
 
   // Only supported token sub-accounts

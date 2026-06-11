@@ -1,5 +1,5 @@
 import { useSelector } from "~/context/hooks";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import type { LlmNanoSUpsellBannersConfig } from "@ledgerhq/types-live/lnsUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import {

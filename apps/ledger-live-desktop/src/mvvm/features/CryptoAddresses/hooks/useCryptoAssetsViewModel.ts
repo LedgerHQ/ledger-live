@@ -20,6 +20,7 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
+  ASSETS_PRICE_REFRESH_INTERVAL_MS,
   EMPTY_STATE_CRYPTOS,
   EMPTY_STATE_STABLECOINS,
 } from "LLD/features/Assets/constants";
@@ -54,6 +55,8 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     product: "lld",
     version: __APP_VERSION__,
     skip: !needsCryptoPlaceholders && !needsStablecoinPlaceholders,
+    pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
+    skipPollingIfUnfocused: true,
   });
 
   const resolvedDefaults = useMemo(

@@ -60,6 +60,7 @@ describe("getBlock", () => {
     expect(getBlockInfo).toHaveBeenCalledWith(42);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
+      configOrCurrencyId: "hedera",
       startTimestamp: `gte:1704067200.123`,
       endTimestamp: `lt:1704067260.456`,
     });

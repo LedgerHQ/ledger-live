@@ -1,5 +1,31 @@
 # @ledgerhq/device-intent
 
+## 3.2.0
+
+### Minor Changes
+
+- [#18226](https://github.com/LedgerHQ/ledger-live/pull/18226) [`1b89031`](https://github.com/LedgerHQ/ledger-live/commit/1b89031653104c70b563dc0a11d4586e1dafd82f) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix Device Intent Executor state machine startup race.
+
+- [#18046](https://github.com/LedgerHQ/ledger-live/pull/18046) [`473d990`](https://github.com/LedgerHQ/ledger-live/commit/473d990664a3fbd0082e2c00a737eecccd9822b7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add generic Device UX V2 error page tracking and surface disconnected device data from the device intent executor.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.2
+
+## 3.2.0-next.0
+
+### Minor Changes
+
+- [#18226](https://github.com/LedgerHQ/ledger-live/pull/18226) [`1b89031`](https://github.com/LedgerHQ/ledger-live/commit/1b89031653104c70b563dc0a11d4586e1dafd82f) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix Device Intent Executor state machine startup race.
+
+- [#18046](https://github.com/LedgerHQ/ledger-live/pull/18046) [`473d990`](https://github.com/LedgerHQ/ledger-live/commit/473d990664a3fbd0082e2c00a737eecccd9822b7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add generic Device UX V2 error page tracking and surface disconnected device data from the device intent executor.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.2-next.0
+
 ## 3.1.0
 
 ### Minor Changes

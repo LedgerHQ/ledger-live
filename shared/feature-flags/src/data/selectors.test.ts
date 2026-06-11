@@ -3,6 +3,7 @@ import {
   selectFeature,
   featureFlagsOverridesSelector,
   featureFlagsBannerVisibleSelector,
+  selectRemoteFlagsReady,
 } from "./selectors";
 import type { FeatureFlagsState } from "./schema";
 import { FEATURE_FLAGS_DEFAULTS } from "../constants";
@@ -17,6 +18,7 @@ const state: { featureFlags: FeatureFlagsState } = {
       mockFeature: { enabled: true, params: { color: "blue" } },
     } as FeatureFlagsState["resolved"],
     bannerVisible: false,
+    remoteFlagsReady: false,
   },
 };
 
@@ -38,5 +40,12 @@ describe("feature-flags selectors", () => {
 
   it("featureFlagsBannerVisibleSelector returns bannerVisible", () => {
     expect(featureFlagsBannerVisibleSelector(state)).toBe(false);
+  });
+
+  it("selectRemoteFlagsReady returns remoteFlagsReady", () => {
+    expect(selectRemoteFlagsReady(state)).toBe(false);
+    expect(selectRemoteFlagsReady({ featureFlags: { ...state.featureFlags, remoteFlagsReady: true } })).toBe(
+      true,
+    );
   });
 });

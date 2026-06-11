@@ -13,10 +13,10 @@ const Button = styled.button<{
     props.secondary
       ? "transparent"
       : props.disabled
-      ? props.theme.buttonDisabled
-      : props.red
-      ? props.theme.buttonRed
-      : props.theme.button};
+        ? props.theme.buttonDisabled
+        : props.red
+          ? props.theme.buttonRed
+          : props.theme.button};
   border-radius: 4px;
   cursor: ${props => (props.disabled ? "default" : "pointer")};
   text-align: center;

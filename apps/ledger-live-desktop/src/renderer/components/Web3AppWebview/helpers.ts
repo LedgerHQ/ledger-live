@@ -56,6 +56,7 @@ type UseWebviewStateReturn = {
     src: string;
   };
   webviewRef: RefObject<WebviewTag | null>;
+  setWebviewRef: (node: WebviewTag) => () => void;
   webviewPartition: WebviewPartition;
   handleRefresh: () => void;
 };
@@ -88,59 +89,64 @@ export function useWebviewState(
 
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
-  useImperativeHandle(
-    webviewAPIRef,
-    () => {
-      return {
-        reload: () => {
-          const webview = safeGetRefValue(webviewRef);
+  useImperativeHandle(webviewAPIRef, () => {
+    return {
+      reload: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.reload();
-        },
-        goBack: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.reload();
+      },
+      goBack: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.goBack();
-        },
-        goForward: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.goBack();
+      },
+      goForward: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.goForward();
-        },
-        openDevTools: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.goForward();
+      },
+      openDevTools: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.openDevTools();
-        },
-        loadURL: (url: string): Promise<void> => {
-          if (
-            manifestDomainCheckEnabled &&
-            !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
-          ) {
-            return Promise.reject(new Error("URL not allowed by manifest domains"));
-          }
-          const webview = safeGetRefValue(webviewRef);
+        webview.openDevTools();
+      },
+      loadURL: (url: string): Promise<void> => {
+        if (
+          manifestDomainCheckEnabled &&
+          !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
+        ) {
+          return Promise.reject(new Error("URL not allowed by manifest domains"));
+        }
+        const webview = safeGetRefValue(webviewRef);
 
-          return webview.loadURL(url);
-        },
-        clearHistory: () => {
-          const webview = safeGetRefValue(webviewRef);
+        return webview.loadURL(url);
+      },
+      clearHistory: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.clearHistory();
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        notify: (method: `event.${string}`, params: any) => {
-          serverRef?.current?.sendMessage(method, params);
-        },
-      };
-    },
-    [manifest.domains, manifestDomainCheckEnabled, serverRef],
-  );
+        webview.clearHistory();
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      notify: (method: `event.${string}`, params: any) => {
+        serverRef?.current?.sendMessage(method, params);
+      },
+    };
+  }, [manifest.domains, manifestDomainCheckEnabled, serverRef]);
 
-  const [isMounted, setMounted] = useState<boolean>(false);
-  useEffect(() => {
-    setMounted(true);
-  }, [isMounted]);
+  // Track the actual webview DOM node via a callback ref. Unlike a plain ref,
+  // a state update re-triggers the listener-attach effect exactly when the
+  // <webview> element mounts/unmounts, avoiding a race where the node appears
+  // after a one-shot "mounted" latch has already settled.
+  const [webviewNode, setWebviewNode] = useState<WebviewTag | null>(null);
+  const setWebviewRef = useCallback((node: WebviewTag) => {
+    webviewRef.current = node;
+    setWebviewNode(node);
+    return () => {
+      webviewRef.current = null;
+      setWebviewNode(null);
+    };
+  }, []);
 
   const handlePageTitleUpdated = useCallback((event: Electron.PageTitleUpdatedEvent) => {
     setState(oldState => ({
@@ -254,9 +260,9 @@ export function useWebviewState(
   }, [webviewRef]);
 
   useEffect(() => {
-    const webview = webviewRef.current;
+    const webview = webviewNode;
 
-    if (!isMounted || !webview) {
+    if (!webview) {
       return;
     }
 
@@ -288,8 +294,7 @@ export function useWebviewState(
     handleDomReady,
     handleFailLoad,
     handleCrashed,
-    webviewRef,
-    isMounted,
+    webviewNode,
   ]);
 
   const props = {
@@ -313,6 +318,7 @@ export function useWebviewState(
     webviewState: state,
     webviewProps: props,
     webviewRef,
+    setWebviewRef,
     webviewPartition,
     handleRefresh,
   };
@@ -363,7 +369,7 @@ export function useSelectAccount({
     const source =
       currentRouteNameRef.current === "Platform Catalog"
         ? "Discover"
-        : currentRouteNameRef.current ?? "Unknown";
+        : (currentRouteNameRef.current ?? "Unknown");
 
     if (modularDrawerVisible) {
       dispatch(setFlowValue(flow));

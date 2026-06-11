@@ -10,18 +10,20 @@ import { openURL } from "~/renderer/linking";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
+import Button from "~/renderer/components/Button";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import ModalContent from "~/renderer/components/Modal/ModalContent";
 import BakerImage from "../../BakerImage";
 import { StepProps } from "../types";
 
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
-}))`
+}))<{ $selected?: boolean }>`
   cursor: pointer;
   padding: 8px;
   margin-bottom: 8px;
   border-radius: 4px;
-  border: 1px solid ${p => p.theme.colors.neutral.c40};
+  border: 1px solid ${p => (p.$selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c40)};
   justify-content: space-between;
   align-items: center;
   transition: box-shadow 250ms ease-out;
@@ -36,8 +38,16 @@ const Row = styled(Box).attrs(() => ({
   }
 `;
 
-const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => void }) => (
-  <Row onClick={() => onClick(baker)}>
+const BakerRow = ({
+  baker,
+  selected,
+  onClick,
+}: {
+  baker: Baker;
+  selected: boolean;
+  onClick: (a: Baker) => void;
+}) => (
+  <Row $selected={selected} onClick={() => onClick(baker)}>
     <Box horizontal alignItems="center">
       <BakerImage baker={baker} size={24} />
       <Text ff="Inter|SemiBold" fontSize={3} color="neutral.c100" style={{ marginLeft: 8 }}>
@@ -60,13 +70,7 @@ const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => voi
   </Row>
 );
 
-const StepValidator = ({
-  account,
-  parentAccount,
-  transaction,
-  transitionTo,
-  onChangeTransaction,
-}: StepProps) => {
+const StepValidator = ({ account, parentAccount, transaction, onChangeTransaction }: StepProps) => {
   invariant(account, "account is required");
   const contentRef = useRef(null);
   const bakers = useBakers(bakersWhitelistDefault);
@@ -75,12 +79,9 @@ const StepValidator = ({
   const onBakerClick = useCallback(
     (baker: Baker) => {
       if (!transaction) return;
-      onChangeTransaction(
-        bridge.updateTransaction(transaction, { recipient: baker.address }),
-      );
-      transitionTo("device-delegation");
+      onChangeTransaction(bridge.updateTransaction(transaction, { recipient: baker.address }));
     },
-    [bridge, onChangeTransaction, transaction, transitionTo],
+    [bridge, onChangeTransaction, transaction],
   );
 
   const openPartner = useCallback(() => {
@@ -113,7 +114,12 @@ const StepValidator = ({
         <Box style={{ maxHeight: 255, margin: -20, marginTop: 0 }}>
           <ModalContent ref={contentRef}>
             {bakers.map(baker => (
-              <BakerRow baker={baker} key={baker.address} onClick={onBakerClick} />
+              <BakerRow
+                baker={baker}
+                key={baker.address}
+                selected={transaction?.recipient === baker.address}
+                onClick={onBakerClick}
+              />
             ))}
           </ModalContent>
         </Box>
@@ -136,6 +142,38 @@ const StepValidator = ({
           </Text>
         </Box>
       </Box>
+    </Box>
+  );
+};
+
+export const StepValidatorFooter = ({
+  account,
+  status,
+  bridgePending,
+  transaction,
+  transitionTo,
+}: StepProps) => {
+  if (!account) return null;
+  const blockingError = status.errors.amount ?? Object.values(status.errors)[0];
+  const canNext = !bridgePending && !blockingError && !!transaction?.recipient;
+  return (
+    <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} grow>
+      {blockingError ? (
+        <Box grow>
+          <Text fontSize={13} color="alertRed">
+            <TranslatedError error={blockingError} field="title" />
+          </Text>
+        </Box>
+      ) : null}
+      <Button
+        id="tezos-stake-validator-continue-button"
+        primary
+        isLoading={bridgePending}
+        disabled={!canNext}
+        onClick={() => transitionTo("device-delegation")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
     </Box>
   );
 };

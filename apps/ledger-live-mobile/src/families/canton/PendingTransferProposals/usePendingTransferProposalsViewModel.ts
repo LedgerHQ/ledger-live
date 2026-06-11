@@ -1,7 +1,7 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
 import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   buildUnitResolver,
   byTokenAndDate,

@@ -4,6 +4,7 @@ import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@le
 import { BigNumber } from "bignumber.js";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 import { Transaction } from "../../coin-modules/transaction-types";
+import type { TransactionStatusValue } from "@ledgerhq/wallet-api-exchange-module";
 
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -165,7 +166,7 @@ export type GetExchangeRates = (
   exchangeObject: ExchangeObject,
 ) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
 
-type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";
+type ValidSwapStatus = TransactionStatusValue;
 
 export type SwapStatusRequest = {
   provider: string;

@@ -19,7 +19,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type Props = Readonly<{
   account: StakingAccount;
   status: TransactionStatusCommon;
-  onChangeValidator: (address: string) => void;
+  onChangeValidator: (address: string, valId?: string) => void;
   chosenVoteAccAddr: string;
 }>;
 
@@ -37,8 +37,9 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr, status 
   );
 
   const onChange = useCallback(
-    ({ address }: { address: string }) => onChangeValidator(address),
-    [onChangeValidator],
+    ({ address }: { address: string }) =>
+      onChangeValidator(address, validators.find(v => v.validatorAddress === address)?.validatorId),
+    [onChangeValidator, validators],
   );
 
   const chosenValidator = useMemo(() => {
@@ -51,8 +52,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr, status 
   // (StrictMode warnings, possible flicker / inconsistent state).
   useEffect(() => {
     if (chosenVoteAccAddr !== "" || validators.length === 0) return;
-    const firstAddress = validators[0].validatorAddress;
-    onChangeValidator(firstAddress);
+    onChangeValidator(validators[0].validatorAddress, validators[0].validatorId);
   }, [chosenVoteAccAddr, onChangeValidator, validators]);
 
   const valAddressError = status.errors.valAddress;

@@ -19,6 +19,7 @@ describe("buildCarousel", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "1",
+      slideCount: "2",
       title: "Slide 2",
       subtitle: "Second",
       imageUrl: "https://example.com/2.png",
@@ -29,6 +30,7 @@ describe("buildCarousel", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "0",
+      slideCount: "2",
       title: "Slide 1",
       subtitle: "First",
       imageUrl: "https://example.com/1.png",
@@ -41,6 +43,7 @@ describe("buildCarousel", () => {
     expect(carousel).toEqual({
       layout: GenericAwarenessModalLayout.Carousel,
       id: "campaign-1",
+      isReady: true,
       data: [
         {
           title: "Slide 1",
@@ -65,6 +68,7 @@ describe("buildCarousel", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "0",
+      slideCount: "1",
     });
 
     const carousel = buildCarousel("campaign-1", [cardWithoutSlideFields]);
@@ -79,6 +83,42 @@ describe("buildCarousel", () => {
         primaryButtonLink: "",
       },
     ]);
+  });
+
+  it("should return carousel with isReady false when slideCount is set but not all slides have arrived", () => {
+    const firstSlideCard = makeCard("1", {
+      layout: GenericAwarenessModalLayout.Carousel,
+      campaignId: "campaign-1",
+      index: "0",
+      slideCount: "2",
+      title: "Slide 1",
+    });
+
+    const carousel = buildCarousel("campaign-1", [firstSlideCard]);
+
+    expect(carousel?.isReady).toBe(false);
+    expect(carousel?.data).toHaveLength(1);
+  });
+
+  it("should build carousel when received slides match slideCount", () => {
+    const firstSlideCard = makeCard("1", {
+      layout: GenericAwarenessModalLayout.Carousel,
+      campaignId: "campaign-1",
+      index: "0",
+      slideCount: "2",
+      title: "Slide 1",
+    });
+    const secondSlideCard = makeCard("2", {
+      layout: GenericAwarenessModalLayout.Carousel,
+      campaignId: "campaign-1",
+      index: "1",
+      slideCount: "2",
+      title: "Slide 2",
+    });
+
+    const carousel = buildCarousel("campaign-1", [firstSlideCard, secondSlideCard]);
+
+    expect(carousel?.data).toHaveLength(2);
   });
 
   it("should skip invalid carousel inputs", () => {
@@ -97,6 +137,7 @@ describe("buildCarousel", () => {
       layout: GenericAwarenessModalLayout.Carousel,
       campaignId: "campaign-1",
       index: "1",
+      slideCount: "1",
       title: "Valid",
     });
 

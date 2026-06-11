@@ -11,7 +11,7 @@ import mmkvStorage from "LLM/storage/mmkvStorageWrapper";
 import asyncStorage, { CHUNKED_KEY } from "LLM/storage/asyncStorageWrapper";
 import { MigrationStatus, RollbackStatus } from "./types";
 import { trackStorageMigration } from "./analytics";
-import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 
 export const migrator = {
   /**
@@ -32,7 +32,7 @@ export const migrator = {
    */
   async handleMigration(
     state: StorageState,
-    featureFag: Feature_LlmMmkvMigration,
+    featureFag: Features["llmMmkvMigration"],
   ): Promise<boolean> {
     try {
       if (!featureFag?.enabled) return false;

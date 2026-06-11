@@ -271,12 +271,8 @@ jest.mock("@react-native-firebase/remote-config", () => {
   return { getRemoteConfig: jest.fn().mockReturnValue(rc) };
 });
 
-// Default mock for the new remote-config bridge module. Tests that need finer
-// control (e.g. delayed whenReady to assert boot-gate behavior) override this
-// per-file via their own `jest.mock("~/firebase/remoteConfig", ...)`. By default
-// whenReady resolves immediately so any test exercising the existing
-// `useFirebaseRemoteConfig` / `WaitForAppReady` boot path sees firebaseIsReady=true
-// without the feature-flags middleware being wired in.
+// Inert mock — avoids the real module's `getRemoteConfig()` + `LiveConfig` import side
+// effects. Boot readiness comes from the Redux `remoteFlagsReady` flag instead.
 jest.mock("~/firebase/remoteConfig", () => ({
   fetchRemoteFlags: jest.fn().mockResolvedValue({}),
   subscribeToRemoteFlags: jest.fn(() => () => {}),

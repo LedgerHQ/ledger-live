@@ -2,6 +2,7 @@ import React from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { PnLCard } from "LLD/features/PnL/components/PnLCard";
 import { PnlDetail } from "LLD/features/PnL/components/PnlDetail";
+import { METRICS_ROW_CARD_CLASS_NAME } from "../MetricsRowSection/constants";
 import { useAssetPnlViewModel } from "./useAssetPnlViewModel";
 
 type PnLSectionProps = Readonly<{
@@ -16,7 +17,7 @@ export function PnLSection({ distributionItem }: PnLSectionProps) {
   return (
     <>
       {viewModel.items.map(item => (
-        <div key={item.id} className="min-w-0 flex-1">
+        <div key={item.id} className={METRICS_ROW_CARD_CLASS_NAME}>
           <PnLCard {...item} />
         </div>
       ))}

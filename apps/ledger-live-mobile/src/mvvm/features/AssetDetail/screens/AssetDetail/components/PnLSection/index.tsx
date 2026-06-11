@@ -69,6 +69,8 @@ function PnLSectionContent({
         description={pnlDrawer.description}
         items={pnlDrawer.items}
         footer={pnlDrawer.footer}
+        pageName={pnlDrawer.pageName}
+        source={pnlDrawer.source}
         testID={ASSET_DETAIL_PNL_TEST_IDS.detailDrawer}
       />
       <PnlDetailDrawer
@@ -76,6 +78,8 @@ function PnLSectionContent({
         onClose={secondaryDrawer.onClose}
         title={secondaryDrawer.title}
         bodyText={secondaryDrawer.bodyText}
+        pageName={secondaryDrawer.pageName}
+        source={secondaryDrawer.source}
         testID={ASSET_DETAIL_PNL_TEST_IDS.secondaryDrawer}
       />
     </>

@@ -44,8 +44,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
 
   const accountBalances = await getAccountBalances(address, currency.id);
   const balance =
-    accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ??
-    BigNumber(0);
+    accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ?? BigNumber(0);
 
   // `buildSubAccounts` batches `findTokenByAddressInCurrency` lookups internally
   // (concurrency 3); pre-filtering here would only serialise the same work.

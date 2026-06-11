@@ -5,6 +5,7 @@ import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCurrencyConfiguration } from "../../../../config";
 
 export function createLocalCantonApi(currencyId: string): CoinModuleApi<any> & BridgeApi {
-  return createCantonApi(getCurrencyConfiguration<CantonCoinConfig>(currencyId)) as CoinModuleApi<any> &
-    BridgeApi;
+  return createCantonApi(
+    getCurrencyConfiguration<CantonCoinConfig>(currencyId),
+  ) as CoinModuleApi<any> & BridgeApi;
 }

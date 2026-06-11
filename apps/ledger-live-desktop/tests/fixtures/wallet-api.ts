@@ -611,6 +611,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "hedera_testnet",
+    ticker: "HBAR",
+    name: "Hedera (Testnet)",
+    family: "hedera",
+    color: "#000",
+    decimals: 8,
+  },
+  {
+    type: "CryptoCurrency",
     id: "cardano",
     ticker: "ADA",
     name: "Cardano",

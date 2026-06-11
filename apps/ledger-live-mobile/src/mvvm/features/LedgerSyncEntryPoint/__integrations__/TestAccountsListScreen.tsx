@@ -11,9 +11,14 @@ const Stack = createNativeStackNavigator<AccountsListNavigator>();
 type TestAccountsListScreenProps = {
   entryPoint: EntryPoint;
   page: string;
+  variant?: "v4";
 };
 
-export const TestAccountsListScreen = ({ entryPoint, page }: TestAccountsListScreenProps) => (
+export const TestAccountsListScreen = ({
+  entryPoint,
+  page,
+  variant,
+}: TestAccountsListScreenProps) => (
   <Stack.Navigator>
     <Stack.Screen
       name={ScreenName.AccountsList}
@@ -21,7 +26,9 @@ export const TestAccountsListScreen = ({ entryPoint, page }: TestAccountsListScr
       initialParams={{ sourceScreenName: ScreenName.AccountsList, canAddAccount: true }}
       options={{
         headerTitle: "",
-        headerRight: () => <LedgerSyncEntryPoint entryPoint={entryPoint} page={page} />,
+        headerRight: () => (
+          <LedgerSyncEntryPoint entryPoint={entryPoint} page={page} variant={variant} />
+        ),
       }}
     />
   </Stack.Navigator>

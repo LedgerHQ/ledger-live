@@ -148,7 +148,7 @@ export const NativeElementHelpers = {
     }
   },
 
-    async countElements(element: NativeElement): Promise<number> {
+  async countElements(element: NativeElement): Promise<number> {
     try {
       const attributes = await element.getAttributes();
       return "elements" in attributes ? attributes.elements.length : 1;

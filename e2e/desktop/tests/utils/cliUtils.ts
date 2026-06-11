@@ -112,24 +112,20 @@ export const CLI = {
       slug: liveSlug,
       schema: walletsync.schema,
       trustchainSdk: ledgerKeyRingProtocolSDK,
-      getCurrentVersion: () => version || 1,
+      getCurrentVersion: () => version ?? 0,
       saveNewUpdate: async (event: UpdateEvent<LiveData>) => {
         latestUpdateEvent = event;
       },
     });
 
-    //@todo: Split into it's own function
-    if (push) {
-      return cloudSyncSDK
-        .push(
-          { rootId, walletSyncEncryptionKey, applicationPath },
-          { pubkey: pubKey, privatekey: privateKey },
-          JSON.parse(data!) as LiveData,
-        )
-        .then((result: void) => JSON.stringify(result, null, 2));
+    // check deleteData/pull before push: callers reuse args that carry push: true
+    if (deleteData) {
+      return cloudSyncSDK.destroy(
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      );
     }
 
-    //@todo: Split into it's own function
     if (pull) {
       return cloudSyncSDK
         .pull(
@@ -141,12 +137,14 @@ export const CLI = {
         );
     }
 
-    //@todo: Split into it's own function
-    if (deleteData) {
-      return cloudSyncSDK.destroy(
-        { rootId, walletSyncEncryptionKey, applicationPath },
-        { pubkey: pubKey, privatekey: privateKey },
-      );
+    if (push) {
+      return cloudSyncSDK
+        .push(
+          { rootId, walletSyncEncryptionKey, applicationPath },
+          { pubkey: pubKey, privatekey: privateKey },
+          JSON.parse(data!) as LiveData,
+        )
+        .then((result: void) => JSON.stringify(result, null, 2));
     }
   },
   liveData: function (opts: LiveDataOpts) {

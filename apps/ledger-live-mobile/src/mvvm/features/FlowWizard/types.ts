@@ -1,4 +1,5 @@
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import type {
   FlowStep,
   FlowStepConfig,
@@ -8,9 +9,16 @@ import type {
 
 type ScreenComponentFunction = (props: Record<string, never>) => React.JSX.Element | null;
 
+export type ReactNativeFlowBottomSheetCloseParams = Readonly<{
+  navigation: NavigationProp<ParamListBase>;
+  close?: () => void;
+}>;
+
 export type ReactNativeFlowStepConfig<TStep extends FlowStep = FlowStep> = FlowStepConfig<TStep> &
   Readonly<{
     screenName?: string;
+    bottomSheet?: boolean;
+    onBottomSheetClose?: (params: ReactNativeFlowBottomSheetCloseParams) => void;
     screenOptions?: NativeStackNavigationOptions;
     initialParams?: Record<string, unknown>;
     listeners?: Record<string, unknown>;

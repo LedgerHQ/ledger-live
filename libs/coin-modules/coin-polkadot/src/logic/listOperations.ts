@@ -11,7 +11,7 @@ export async function listOperations(
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
   const operations = await network.getOperations(fakeAccountId, addr, currency, startAt, limit);
-  const blockHeight = operations.length > 0 ? operations.slice(-1)[0].blockHeight ?? 0 : 0;
+  const blockHeight = operations.length > 0 ? (operations.slice(-1)[0].blockHeight ?? 0) : 0;
   return [operations.map(convertToCoreOperation), blockHeight];
 }
 

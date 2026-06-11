@@ -78,9 +78,7 @@ describe("findCategoryForToolId", () => {
   });
 
   it("returns the correct category for a known tool id", () => {
-    expect(findCategoryForToolId(categories, "network-inspector")).toBe(
-      Category.CONNECTIVITY,
-    );
+    expect(findCategoryForToolId(categories, "network-inspector")).toBe(Category.CONNECTIVITY);
     expect(findCategoryForToolId(categories, "feature-flags")).toBe(Category.CONFIGURATION);
   });
 

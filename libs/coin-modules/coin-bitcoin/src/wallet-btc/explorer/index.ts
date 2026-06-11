@@ -1,7 +1,7 @@
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { Address, Block, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
-import { IExplorer, NetworkInfoResponse } from "./types";
+import type { IExplorer, NetworkInfoResponse, UtxoTx } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../explorer";
 
@@ -129,6 +129,15 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs/pending`,
       params: { verbosity: "Minimal", ...params },
+    });
+    return data;
+  }
+
+  async fetchUtxoTx(hash: string): Promise<UtxoTx> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/tx/${hash}`,
+      params: { verbosity: "Minimal" },
     });
     return data;
   }

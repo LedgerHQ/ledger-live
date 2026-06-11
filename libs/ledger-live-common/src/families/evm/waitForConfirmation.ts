@@ -43,7 +43,5 @@ export async function waitForTransactionConfirmation(
     await delay(pollIntervalMs);
   }
 
-  throw new Error(
-    `Transaction ${hash} was not confirmed within ${timeoutMs}ms.`,
-  );
+  throw new Error(`Transaction ${hash} was not confirmed within ${timeoutMs}ms.`);
 }

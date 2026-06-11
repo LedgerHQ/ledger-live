@@ -11,6 +11,7 @@ const buildCarouselCard = (id: string): GenericAwarenessModalContentCard => ({
   id,
   layout: GenericAwarenessModalLayout.Carousel,
   data: [],
+  isReady: true,
 });
 
 const buildLocalCarouselCard = (id: string): GenericAwarenessModalMobileContentCard => ({

@@ -71,4 +71,3 @@ export const deleteAccount = createAction<AccountsDeleteAccountPayload>(
 export const replaceAccounts = createAction<AccountsReplacePayload>(
   AccountsActionTypes.SET_ACCOUNTS,
 );
-

@@ -12,6 +12,7 @@ type DevSavedCardRowProps = {
 const LAYOUT_LABEL: Record<GenericAwarenessModalLayout, string> = {
   [GenericAwarenessModalLayout.Carousel]: COPY.layoutCarousel,
   [GenericAwarenessModalLayout.FeatureIntro]: COPY.layoutFeatureIntro,
+  [GenericAwarenessModalLayout.Prompt]: COPY.layoutPrompt,
 };
 
 export const DevSavedCardRow = ({ id, layout, onRemove }: DevSavedCardRowProps) => (

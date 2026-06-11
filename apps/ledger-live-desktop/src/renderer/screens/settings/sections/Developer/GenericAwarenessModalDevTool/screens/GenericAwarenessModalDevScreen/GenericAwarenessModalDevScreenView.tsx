@@ -22,6 +22,7 @@ import type { GenericAwarenessModalDevScreenViewModel } from "./useGenericAwaren
 const LAYOUT_OPTIONS: SelectOption<DevLayoutMode>[] = [
   { value: "carousel", label: COPY.layoutCarousel },
   { value: "featureIntro", label: COPY.layoutFeatureIntro },
+  { value: "prompt", label: COPY.layoutPrompt },
 ];
 
 const TRIGGER_OPTIONS: SelectOption<DevTriggerMode>[] = [
@@ -154,7 +155,9 @@ export function GenericAwarenessModalDevScreenView({
           </section>
         ) : (
           <section className="flex flex-col gap-8">
-            <DevSectionHeader title={COPY.featureIntroMain} />
+            <DevSectionHeader
+              title={form.layout === "prompt" ? COPY.promptMain : COPY.featureIntroMain}
+            />
             <DevLabeledInput
               label={COPY.fields.title}
               value={form.title}
@@ -191,51 +194,55 @@ export function GenericAwarenessModalDevScreenView({
               onChange={secondaryButtonLink => updateForm({ secondaryButtonLink })}
             />
 
-            <DevSectionHeader
-              title={COPY.featureIntroItems}
-              action={
-                <Button
-                  size="sm"
-                  appearance="accent"
-                  disabled={form.items.length >= MAX_FEATURE_INTRO_ITEMS}
-                  onClick={addItem}
-                >
-                  {COPY.addItem}
-                </Button>
-              }
-            />
-            {form.items.map((item, index) => (
-              <DevFormCard key={itemKeys[index]}>
+            {form.layout === "featureIntro" ? (
+              <>
                 <DevSectionHeader
-                  title={COPY.itemLabel(index)}
+                  title={COPY.featureIntroItems}
                   action={
                     <Button
                       size="sm"
-                      appearance="red"
-                      disabled={form.items.length <= MIN_FEATURE_INTRO_ITEMS}
-                      onClick={() => removeItem(index)}
+                      appearance="accent"
+                      disabled={form.items.length >= MAX_FEATURE_INTRO_ITEMS}
+                      onClick={addItem}
                     >
-                      {COPY.removeItem}
+                      {COPY.addItem}
                     </Button>
                   }
                 />
-                <DevLabeledInput
-                  label={COPY.fields.icon}
-                  value={item.icon}
-                  onChange={icon => updateItem(index, { icon })}
-                />
-                <DevLabeledInput
-                  label={COPY.fields.title}
-                  value={item.title}
-                  onChange={title => updateItem(index, { title })}
-                />
-                <DevLabeledInput
-                  label={COPY.fields.subtitle}
-                  value={item.subtitle}
-                  onChange={subtitle => updateItem(index, { subtitle })}
-                />
-              </DevFormCard>
-            ))}
+                {form.items.map((item, index) => (
+                  <DevFormCard key={itemKeys[index]}>
+                    <DevSectionHeader
+                      title={COPY.itemLabel(index)}
+                      action={
+                        <Button
+                          size="sm"
+                          appearance="red"
+                          disabled={form.items.length <= MIN_FEATURE_INTRO_ITEMS}
+                          onClick={() => removeItem(index)}
+                        >
+                          {COPY.removeItem}
+                        </Button>
+                      }
+                    />
+                    <DevLabeledInput
+                      label={COPY.fields.icon}
+                      value={item.icon}
+                      onChange={icon => updateItem(index, { icon })}
+                    />
+                    <DevLabeledInput
+                      label={COPY.fields.title}
+                      value={item.title}
+                      onChange={title => updateItem(index, { title })}
+                    />
+                    <DevLabeledInput
+                      label={COPY.fields.subtitle}
+                      value={item.subtitle}
+                      onChange={subtitle => updateItem(index, { subtitle })}
+                    />
+                  </DevFormCard>
+                ))}
+              </>
+            ) : null}
           </section>
         )}
 

@@ -18,7 +18,8 @@ export {
   getUnbondingPeriodDays,
   getMaxRedelegations,
   hasUnbondingPeriod,
+  hasRedelegation,
   getValidators,
-  getCachedValidators,
   prefetchValidators,
+  isSeiAccountUnassociated,
 } from "@ledgerhq/coin-evm/staking/index";

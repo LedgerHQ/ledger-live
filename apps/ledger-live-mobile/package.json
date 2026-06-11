@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.7.1",
+  "version": "4.8.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -67,6 +67,7 @@
     "lint:ci": "oxlint src e2e --quiet",
     "lint:fix": "oxfmt src e2e && oxlint src e2e --fix --quiet",
     "lint:i18n": "eslint --no-eslintrc -c .eslintrc.i18n.js --ext .ts,.tsx,.js,.jsx src e2e --quiet",
+    "lint:guardrails": "eslint --no-eslintrc -c .eslintrc.guardrails.js src __tests__ --quiet",
     "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 node scripts/typecheck.js",
     "test:env": "node ./scripts/mobile-env-md.mjs",
     "test": "pnpm test:jest:coverage && pnpm test:env",
@@ -87,6 +88,7 @@
     "@braze/react-native-sdk": "18.0.0",
     "@datadog/mobile-react-native": "2.8.2",
     "@datadog/mobile-react-navigation": "2.8.2",
+    "@features/platform-feature-flags": "workspace:^",
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",
     "@formatjs/intl-relativetimeformat": "11.2.12",
@@ -251,6 +253,7 @@
     "@babel/plugin-transform-arrow-functions": "7.27.1",
     "@babel/plugin-transform-class-properties": "7.27.1",
     "@babel/plugin-transform-class-static-block": "7.28.3",
+    "@babel/plugin-transform-dynamic-import": "7.27.1",
     "@babel/plugin-transform-export-namespace-from": "7.27.1",
     "@babel/plugin-transform-named-capturing-groups-regex": "7.27.1",
     "@babel/plugin-transform-nullish-coalescing-operator": "7.27.1",

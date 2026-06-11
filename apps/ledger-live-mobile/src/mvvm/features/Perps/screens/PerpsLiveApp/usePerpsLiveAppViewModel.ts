@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState, type RefObject } from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -54,7 +54,7 @@ type PerpsLiveAppViewModel = {
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_PERPS_MANIFEST_ID ||
-  DEFAULT_FEATURES.ptxPerpsLiveAppMobile.params?.manifest_id;
+  FEATURE_FLAGS_DEFAULTS.ptxPerpsLiveAppMobile.params?.manifest_id;
 
 export function usePerpsLiveAppViewModel(): PerpsLiveAppViewModel {
   const { t } = useTranslation();

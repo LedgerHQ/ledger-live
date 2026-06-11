@@ -14,6 +14,9 @@ describe("datadog ignoreErrors", () => {
       expect(shouldIgnoreErrorMessage("Failed to fetch")).toBe(true);
       expect(shouldIgnoreErrorMessage("request timed out")).toBe(true);
       expect(shouldIgnoreErrorMessage("UserRefusedOnDevice")).toBe(true);
+      expect(
+        shouldIgnoreErrorMessage("ErrorSimpleURLLoaderWrapper.?(browser_init)net::ERR_TIMED_OUT"),
+      ).toBe(true);
     });
 
     it("should return true when message matches RegExp pattern", () => {

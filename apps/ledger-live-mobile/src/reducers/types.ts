@@ -6,7 +6,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import type { DataOfUser } from "LLM/features/NotificationsPrompt/types";
+import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {
@@ -133,6 +133,7 @@ export type NotificationsState = {
     | "stake"
     | "add_favorite_coin"
     | "inactivity";
+  drawerPromptTarget?: NotificationPromptTarget;
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
 };
@@ -378,6 +379,21 @@ export type MarketState = {
   marketParams: MarketListRequestParams;
   marketFilterByStarredCurrencies: boolean;
   marketCurrentPage: number;
+  hideTransactionsOnChart: boolean;
+};
+
+// === ASSET LIST CONFIG STATE (V4) ===
+
+export type MarketListSorting = "marketCap" | "volume" | "gainers" | "losers";
+export type MarketListFilterTimeframe = "1D" | "7D" | "30D" | "6M" | "1Y";
+export type MarketListCategory = "all" | "starred" | "stocks";
+
+export type MarketListConfigState = {
+  sorting: MarketListSorting;
+  timeframe: MarketListFilterTimeframe;
+  /** Selected network id, or `undefined` for all networks (consumed by LIVE-29972). */
+  network: string | undefined;
+  category: MarketListCategory;
 };
 
 // === WALLETSYNC STATE ===
@@ -421,6 +437,7 @@ export type State = LLMRTKApiState & {
   knownDevices: KnownDevicesState;
   largeMover: LargeMoverState;
   market: MarketState;
+  marketListConfig: MarketListConfigState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;

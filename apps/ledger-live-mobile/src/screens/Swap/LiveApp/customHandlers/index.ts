@@ -7,7 +7,6 @@ import { useCallback } from "react";
 import { Dispatch } from "redux";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { WebviewProps } from "~/components/Web3AppWebview/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { sendSwapLiveAppReady } from "../../../../../e2e/bridge/client";
@@ -16,7 +15,6 @@ import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -27,11 +25,7 @@ export function useSwapCustomHandlers(
   accounts: AccountLike[],
   dispatch: Dispatch,
 ) {
-  const navigation = useNavigation<
-    StackNavigatorNavigation<BaseNavigatorStackParamList> &
-      StackNavigatorNavigation<SwapNavigatorParamList>
-  >();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const navigateToSwapPendingOperation = useCallback(
     (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => {
@@ -51,55 +45,35 @@ export function useSwapCustomHandlers(
         sponsored: exchangeParams.sponsored,
       };
 
-      if (shouldDisplayWallet40MainNav) {
-        navigation.navigate(NavigatorName.SwapSubScreens, {
-          screen: ScreenName.SwapPendingOperation,
-          params,
-        });
-        return;
-      }
-
-      navigation.navigate(ScreenName.SwapPendingOperation, params);
+      navigation.navigate(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapPendingOperation,
+        params,
+      });
     },
-    [navigation, shouldDisplayWallet40MainNav],
+    [navigation],
   );
 
   const navigateToSwapCustomError = useCallback(
     (error: Error) => {
-      if (shouldDisplayWallet40MainNav) {
-        navigation.navigate(NavigatorName.SwapSubScreens, {
-          screen: ScreenName.SwapCustomError,
-          params: { error },
-        });
-        return;
-      }
-
-      navigation.navigate(ScreenName.SwapCustomError, { error });
+      navigation.navigate(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapCustomError,
+        params: { error },
+      });
     },
-    [navigation, shouldDisplayWallet40MainNav],
+    [navigation],
   );
 
   const handleShowLoadingDrawer = useCallback(() => {
-    if (shouldDisplayWallet40MainNav) {
-      navigation.navigate(NavigatorName.SwapSubScreens, {
-        screen: ScreenName.SwapLoading,
-      });
-      return;
-    }
-
-    navigation.navigate(ScreenName.SwapLoading);
-  }, [navigation, shouldDisplayWallet40MainNav]);
+    navigation.navigate(NavigatorName.SwapSubScreens, {
+      screen: ScreenName.SwapLoading,
+    });
+  }, [navigation]);
 
   const navigateToSwapHistory = useCallback(() => {
-    if (shouldDisplayWallet40MainNav) {
-      navigation.navigate(NavigatorName.SwapSubScreens, {
-        screen: ScreenName.SwapHistory,
-      });
-      return;
-    }
-
-    navigation.navigate(ScreenName.SwapHistory);
-  }, [navigation, shouldDisplayWallet40MainNav]);
+    navigation.navigate(NavigatorName.SwapSubScreens, {
+      screen: ScreenName.SwapHistory,
+    });
+  }, [navigation]);
 
   const walletAPISwapHandlers = useCustomExchangeHandlers({
     manifest,

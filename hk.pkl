@@ -3,6 +3,12 @@ amends "package://github.com/jdx/hk/releases/download/v1.40.0/hk@1.40.0#/Config.
 hooks {
     ["pre-commit"] {
         steps {
+            ["oxfmt"] {
+                glob = List("*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs", "*.cjs")
+                stage = List("*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs", "*.cjs")
+                check = "oxfmt --check {{ files }}"
+                fix = "oxfmt {{ files }}"
+            }
             ["gitleaks"] {
                 check = "gitleaks git --pre-commit --staged --redact --no-banner --verbose --config .gitleaks.toml"
             }

@@ -60,6 +60,30 @@ describe("useOpenBuySell (Market / QuickActions origin)", () => {
     expect(mockOpenDrawer).not.toHaveBeenCalled();
   });
 
+  test("should request previous-screen close behavior when opening buy from Asset Detail", () => {
+    const account = createBitcoinAccount("account-1");
+    const { result } = renderHook(
+      () => useOpenBuySell({ currency: bitcoin, sourceScreenName: "Asset Detail" }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          accounts: { ...state.accounts, active: [account] },
+        }),
+      },
+    );
+
+    act(() => {
+      result.current.handleOpenBuySell("buy");
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeBuy,
+      params: expect.objectContaining({
+        returnToPreviousScreenOnClose: true,
+      }),
+    });
+  });
+
   test("should navigate to exchange sell with defaultAccountId when account for currency exists", () => {
     const account = createBitcoinAccount("account-1");
     const { result } = renderHook(

@@ -170,7 +170,7 @@ export default class BuySellPage {
     const uiNamesFromQuotes = await this.getAvailableProviders();
     const testedProviders = uiNamesFromQuotes
       .map(uiName => BuySellProvider.getByUiName(uiName))
-      .filter(p => p?.isTested);
+      .filter((p): p is BuySellProvider => Boolean(p?.isTested));
 
     if (testedProviders.length === 0) {
       throw new Error(

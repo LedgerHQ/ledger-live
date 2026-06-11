@@ -184,6 +184,7 @@ const createConnectDeviceStateMachine = () =>
         context.observer.next({
           type: ConnectDeviceUIStateTypes.ConnectionError,
           error: context.connectionError!,
+          device: context.selectedMatchedDevice!.knownDevice,
           retry: () =>
             self.send({ type: ConnectDeviceStateMachineEventTypes.UserTapsConnectionRetry }),
           ignore: () =>

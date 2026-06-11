@@ -67,7 +67,7 @@ interface BuilderUpdateAccountTransaction extends BuilderCommonTransactionFields
 }
 
 async function buildUnsignedCoinTransaction({
-  config: _,
+  config,
   account,
   transaction,
 }: {
@@ -89,11 +89,11 @@ async function buildUnsignedCoinTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(await rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance(config));
 }
 
 async function buildUnsignedHTSTokenTransaction({
-  config: _,
+  config,
   account,
   transaction,
 }: {
@@ -115,7 +115,7 @@ async function buildUnsignedHTSTokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(await rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance(config));
 }
 
 async function buildUnsignedERC20TokenTransaction({
@@ -151,11 +151,11 @@ async function buildUnsignedERC20TokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(await rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance(config));
 }
 
 async function buildTokenAssociateTransaction({
-  config: _,
+  config,
   account,
   transaction,
 }: {
@@ -176,11 +176,11 @@ async function buildTokenAssociateTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(await rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance(config));
 }
 
 async function buildUnsignedUpdateAccountTransaction({
-  config: _,
+  config,
   account,
   transaction,
 }: {
@@ -208,7 +208,7 @@ async function buildUnsignedUpdateAccountTransaction({
     tx.clearStakedNodeId();
   }
 
-  return tx.freezeWith(await rpcClient.getInstance());
+  return tx.freezeWith(await rpcClient.getInstance(config));
 }
 
 function isStakingMode(type: string): type is BuilderUpdateAccountTransaction["type"] {

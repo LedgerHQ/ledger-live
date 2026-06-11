@@ -2,6 +2,7 @@ import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalCarousel,
   type GenericAwarenessModalFeatureIntro,
+  type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 
 /** APP_START campaign — default when opening the modal without a campaign id. */
@@ -12,6 +13,9 @@ export const FEATURE_INTRO_CAMPAIGN_ID = "1";
 
 /** Carousel campaign — open via deeplink with this campaign id. */
 export const CAROUSEL_CAMPAIGN_ID = "2";
+
+/** Prompt campaign — open via deeplink with this campaign id. */
+export const PROMPT_CAMPAIGN_ID = "3";
 
 export const appStartFeatureIntroCard: GenericAwarenessModalFeatureIntro = {
   layout: GenericAwarenessModalLayout.FeatureIntro,
@@ -36,6 +40,7 @@ export const appStartFeatureIntroCard: GenericAwarenessModalFeatureIntro = {
       subtitle: "Your private keys never leave your hardware — not even Ledger can access them.",
     },
   ],
+  isReady: true,
 };
 
 export const featureIntroCampaignCard: GenericAwarenessModalFeatureIntro = {
@@ -63,6 +68,7 @@ export const featureIntroCampaignCard: GenericAwarenessModalFeatureIntro = {
         "If an exchange pauses withdrawals, assets on your signer remain under your control.",
     },
   ],
+  isReady: true,
 };
 
 export const carouselCampaignCard: GenericAwarenessModalCarousel = {
@@ -98,10 +104,24 @@ export const carouselCampaignCard: GenericAwarenessModalCarousel = {
       primaryButtonLink: "https://www.ledger.com/coin/wallet/ethereum",
     },
   ],
+  isReady: true,
+};
+
+export const promptCampaignCard: GenericAwarenessModalPrompt = {
+  layout: GenericAwarenessModalLayout.Prompt,
+  id: PROMPT_CAMPAIGN_ID,
+  title: "Stay in control",
+  subtitle: "Move assets to a hardware signer for true self-custody.",
+  imageUrl: "https://example.com/prompt.png",
+  primaryButtonLabel: "Learn more",
+  primaryButtonLink: "https://www.ledger.com/academy",
+  secondaryButtonLabel: "Maybe later",
+  secondaryButtonLink: "https://www.ledger.com",
 };
 
 export const genericAwarenessModalTestContentCards = [
   appStartFeatureIntroCard,
   featureIntroCampaignCard,
   carouselCampaignCard,
+  promptCampaignCard,
 ];

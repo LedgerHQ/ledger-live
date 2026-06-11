@@ -1,5 +1,21 @@
 # @ledgerhq/live-network
 
+## 2.6.4
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/live-env@2.38.0
+  - @ledgerhq/errors@6.36.0
+
+## 2.6.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/live-env@2.38.0-next.0
+  - @ledgerhq/errors@6.36.0-next.0
+
 ## 2.6.3
 
 ### Patch Changes

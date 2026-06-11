@@ -78,15 +78,13 @@ export const updateAccount: UpdateAccount = payload => ({
   },
 });
 
-export const cleanAccountsCache =
-  (): ThunkResult<Promise<void>> =>
-  async (dispatch, getState) => {
-    const accounts = accountsSelector(getState());
-    const cleared = await Promise.all(
-      accounts.map(async account => {
-        const bridge = await getAccountBridge(account);
-        return bridge.clearAccount(account);
-      }),
-    );
-    dispatch(replaceAccounts(cleared));
-  };
+export const cleanAccountsCache = (): ThunkResult<Promise<void>> => async (dispatch, getState) => {
+  const accounts = accountsSelector(getState());
+  const cleared = await Promise.all(
+    accounts.map(async account => {
+      const bridge = await getAccountBridge(account);
+      return bridge.clearAccount(account);
+    }),
+  );
+  dispatch(replaceAccounts(cleared));
+};

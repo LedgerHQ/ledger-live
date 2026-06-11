@@ -8,6 +8,7 @@ export type SendStepConfig = ReactNativeFlowStepConfig<SendFlowStep> &
     addressInput?: boolean;
     showTitle?: boolean;
     showHeaderRight?: boolean;
+    floating?: boolean;
   }>;
 
 export type SendFlowConfig = ReactNativeFlowConfig<SendFlowStep, SendStepConfig>;

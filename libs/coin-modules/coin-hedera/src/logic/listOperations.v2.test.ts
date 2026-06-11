@@ -105,6 +105,7 @@ describe("listOperationsV2", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       pagingToken: null,
@@ -113,6 +114,7 @@ describe("listOperationsV2", () => {
     });
     expect(hgraphClient.getERC20Transfers).toHaveBeenCalledTimes(1);
     expect(hgraphClient.getERC20Transfers).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       order: mockOrder,
@@ -636,6 +638,7 @@ describe("listOperationsV2", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       pagingToken: lastPagingToken,

@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron"
 
 jobs:
   is-affected:
@@ -65,7 +65,7 @@ jobs:
           else
             # Otherwise, only add coins that appear individually
             for coin in $COIN_TESTER_CURRENCIES; do
-              if echo "${{ steps.affected.outputs.paths }}" | grep -q "$coin"; then
+              if echo "${{ steps.affected.outputs.paths }}" | grep -qw "$coin"; then
                 CHAINS+=("$coin")
               fi
             done

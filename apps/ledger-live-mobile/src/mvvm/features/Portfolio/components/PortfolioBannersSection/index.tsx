@@ -21,9 +21,7 @@ function OnboardingRecoverBannerSeparator() {
   return <Box style={{ width: 12 }} />;
 }
 
-function OnboardingRecoverBannerRow({
-  item,
-}: ListRenderItemInfo<(typeof CAROUSEL_ITEMS)[number]>) {
+function OnboardingRecoverBannerRow({ item }: ListRenderItemInfo<(typeof CAROUSEL_ITEMS)[number]>) {
   return (
     <Box style={{ width: WIDTH }}>
       {item.slide === "onboarding" ? (
@@ -46,15 +44,10 @@ export const PortfolioBannersSection = ({
   isLNSUpsellBannerShown,
   showAssets,
 }: PortfolioBannersSectionProps) => {
-  const {
-    shouldShowOnboardingWidget,
-    hasAssets,
-    shouldDisplayRecover,
-    onScroll,
-    carouselIndex,
-  } = usePortfolioBannersSectionViewModel({
-    showAssets,
-  });
+  const { shouldShowOnboardingWidget, hasAssets, shouldDisplayRecover, onScroll, carouselIndex } =
+    usePortfolioBannersSectionViewModel({
+      showAssets,
+    });
 
   if (isLNSUpsellBannerShown) {
     return (

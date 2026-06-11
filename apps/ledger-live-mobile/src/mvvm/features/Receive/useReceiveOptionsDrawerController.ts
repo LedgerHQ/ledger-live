@@ -16,19 +16,21 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 export const useReceiveOptionsDrawerController = () => {
   const dispatch = useDispatch();
 
-  const { isOpen, currency, sourceScreenName, fromMenu } = useSelector(
+  const { isOpen, currency, currencyIds, sourceScreenName, fromMenu } = useSelector(
     receiveOptionsDrawerStateSelector,
   );
 
   const openDrawer = useCallback(
     (params?: {
       currency?: CryptoOrTokenCurrency;
+      currencyIds?: string[];
       sourceScreenName: string;
       fromMenu?: boolean;
     }) => {
       dispatch(
         openReceiveOptionsDrawer({
           currency: params?.currency,
+          currencyIds: params?.currencyIds,
           sourceScreenName: params?.sourceScreenName ?? "",
           fromMenu: params?.fromMenu,
         }),
@@ -44,6 +46,7 @@ export const useReceiveOptionsDrawerController = () => {
   return {
     isOpen,
     currency,
+    currencyIds,
     sourceScreenName,
     fromMenu,
     openDrawer,

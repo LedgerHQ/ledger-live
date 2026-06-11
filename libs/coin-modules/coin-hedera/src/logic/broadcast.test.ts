@@ -26,7 +26,10 @@ describe("broadcast", () => {
     expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
     expect(rpcClient.broadcastTransaction).toHaveBeenCalledTimes(1);
-    expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
+    expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
+      transaction: mockDeserializedTx,
+    });
     expect(result).toBe(mockResponse);
   });
 
@@ -60,6 +63,9 @@ describe("broadcast", () => {
     expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
     expect(rpcClient.broadcastTransaction).toHaveBeenCalledTimes(1);
-    expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
+    expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith({
+      configOrCurrencyId: mockCurrency.id,
+      transaction: mockDeserializedTx,
+    });
   });
 });

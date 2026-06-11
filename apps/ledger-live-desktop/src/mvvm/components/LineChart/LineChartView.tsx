@@ -6,9 +6,7 @@ import type { LineChartViewModelResult } from "./useLineChartViewModel";
 type LineChartViewProps = Readonly<LineChartViewModelResult>;
 
 export function LineChartView({
-  chartWrapperRef,
   chartSeries,
-  chartWidth,
   height,
   isLoading,
   isError,
@@ -17,37 +15,65 @@ export function LineChartView({
   handleSelectedChange,
   rangeSelectorLabel,
   rangeButtons,
+  points,
+  pointTooltips,
+  enableScrubber,
+  formatValue,
+  tooltipTitle,
+  showScrubberTooltip,
+  pointTooltipsOnly,
+  onScrubberPositionChange,
+  showArea,
+  showXAxis,
+  showYAxis,
+  xAxis,
+  yAxis,
+  rangeSelectorTrailing,
 }: LineChartViewProps) {
   return (
     <div className="flex w-full min-w-0 flex-col gap-24" data-testid="line-chart">
       <LineChartPlot
-        chartWrapperRef={chartWrapperRef}
         height={height}
         isLoading={isLoading}
         isError={isError}
         errorMessage={errorMessage}
-        chartWidth={chartWidth}
         chartSeries={chartSeries}
+        points={points}
+        pointTooltips={pointTooltips}
+        enableScrubber={enableScrubber}
+        formatValue={formatValue}
+        tooltipTitle={tooltipTitle}
+        showScrubberTooltip={showScrubberTooltip}
+        pointTooltipsOnly={pointTooltipsOnly}
+        onScrubberPositionChange={onScrubberPositionChange}
+        showArea={showArea}
+        showXAxis={showXAxis}
+        showYAxis={showYAxis}
+        xAxis={xAxis}
+        yAxis={yAxis}
       />
 
-      <SegmentedControl
-        selectedValue={selectedRange}
-        onSelectedChange={handleSelectedChange}
-        tabLayout="fixed"
-        aria-label={rangeSelectorLabel}
-        data-testid="line-chart-range-selector"
-        className="w-full"
-      >
-        {rangeButtons.map(({ value, label }) => (
-          <SegmentedControlButton
-            key={value}
-            value={value}
-            data-testid={`line-chart-range-${value}`}
-          >
-            {label}
-          </SegmentedControlButton>
-        ))}
-      </SegmentedControl>
+      <div className="flex w-full min-w-0 items-center gap-8">
+        <SegmentedControl
+          selectedValue={selectedRange}
+          onSelectedChange={handleSelectedChange}
+          tabLayout="fixed"
+          aria-label={rangeSelectorLabel}
+          data-testid="line-chart-range-selector"
+          className="min-w-0 flex-1"
+        >
+          {rangeButtons.map(({ value, label }) => (
+            <SegmentedControlButton
+              key={value}
+              value={value}
+              data-testid={`line-chart-range-${value}`}
+            >
+              {label}
+            </SegmentedControlButton>
+          ))}
+        </SegmentedControl>
+        {rangeSelectorTrailing}
+      </div>
     </div>
   );
 }

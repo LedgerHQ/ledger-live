@@ -108,6 +108,7 @@ function buildParams(overrides?: {
     hasFeePresets: false,
     hasCustomFees: false,
     hasCoinControl: false,
+    hasAmountPlugins: false,
     ...overrides?.uiConfig,
   };
   const transactionActions: SendFlowTransactionActions = {
@@ -152,6 +153,10 @@ describe("useNetworkFees", () => {
       })),
     });
     sendFeatures.shouldEstimateFeePresetsWithBridge = jest.fn(() => false);
+    sendFeatures.getFeeCurrencyAccountId = jest.fn(
+      (_currency: unknown, transaction: { feeCurrencyAccountId?: string | null }) =>
+        transaction?.feeCurrencyAccountId ?? null,
+    );
     mockUseFeePresetOptions.mockReturnValue(defaultPresetOptions);
     mockUseFeePresetFiatValues.mockReturnValue(defaultFiatValues);
     useCalculate.mockReturnValue(undefined);
@@ -344,6 +349,94 @@ describe("useNetworkFees", () => {
         fiatValue: "$3.00",
         legendValue: null,
       });
+    });
+  });
+
+  describe("Celo fee currency", () => {
+    const usdcUnit = { name: "USD Coin", code: "USDC", magnitude: 6 };
+    const usdcToken = {
+      type: "TokenCurrency",
+      id: "celo/erc20/usdc",
+      contractAddress: "0xceba9300f2b948710d2653dd7b07f33a8b32118c",
+      name: "USD Coin",
+      ticker: "USDC",
+      disableCountervalue: false,
+      units: [usdcUnit],
+    };
+    const usdcSubAccount = {
+      type: "TokenAccount",
+      id: "usdc-sub-account-id",
+      token: usdcToken,
+      balance: new BigNumber(100000),
+    };
+
+    it("formats fee with token unit when feeCurrencyAccountId is set", () => {
+      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
+      formatCurrencyUnit.mockReturnValue("0.5 USDC");
+      useCalculate.mockReturnValue(undefined);
+
+      const params = buildParams({
+        account: { subAccounts: [usdcSubAccount] } as Partial<Account>,
+        transaction: {
+          family: "celo",
+          feeCurrencyAccountId: "usdc-sub-account-id",
+        } as Partial<Transaction>,
+        status: { estimatedFees: new BigNumber(500000) },
+      });
+      const { result } = renderHook(() => useNetworkFees(params));
+
+      expect(result.current.value).toBe("0.5 USDC");
+      expect(formatCurrencyUnit).toHaveBeenCalledWith(
+        expect.objectContaining({ code: "USDC", magnitude: 6 }),
+        expect.any(BigNumber),
+        expect.anything(),
+      );
+      expect(useCalculate).toHaveBeenCalledWith(
+        expect.objectContaining({ from: expect.objectContaining({ ticker: "USDC" }) }),
+      );
+    });
+
+    it("falls back to account unit when feeCurrencyAccountId is null", () => {
+      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
+      formatCurrencyUnit.mockReturnValue("0.5 BTC");
+      useCalculate.mockReturnValue(undefined);
+
+      const params = buildParams({
+        transaction: {
+          family: "celo",
+          feeCurrencyAccountId: null,
+        } as Partial<Transaction>,
+        status: { estimatedFees: new BigNumber(500000) },
+      });
+      renderHook(() => useNetworkFees(params));
+
+      expect(formatCurrencyUnit).toHaveBeenCalledWith(
+        expect.objectContaining({ code: "BTC", magnitude: 8 }),
+        expect.any(BigNumber),
+        expect.anything(),
+      );
+    });
+
+    it("falls back to account unit when feeCurrencyAccountId references a missing sub-account", () => {
+      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
+      formatCurrencyUnit.mockReturnValue("0.5 BTC");
+      useCalculate.mockReturnValue(undefined);
+
+      const params = buildParams({
+        account: { subAccounts: [] } as Partial<Account>,
+        transaction: {
+          family: "celo",
+          feeCurrencyAccountId: "missing-id",
+        } as Partial<Transaction>,
+        status: { estimatedFees: new BigNumber(500000) },
+      });
+      renderHook(() => useNetworkFees(params));
+
+      expect(formatCurrencyUnit).toHaveBeenCalledWith(
+        expect.objectContaining({ code: "BTC", magnitude: 8 }),
+        expect.any(BigNumber),
+        expect.anything(),
+      );
     });
   });
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, View } from "react-native";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import type { FeatureId } from "@ledgerhq/types-live";
+import { useFeature } from "@features/platform-feature-flags";
+import type { FeatureId } from "@shared/feature-flags";
 
 import { Flex, Divider, Tag } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
@@ -31,8 +31,7 @@ type Props = {
 const FeatureFlagDetails: React.FC<Props> = props => {
   const { flagName, focused, setFocusedName, isLast } = props;
 
-  const { getFeature } = useFeatureFlags();
-  const flagValue = getFeature(flagName as FeatureId);
+  const flagValue = useFeature(flagName);
 
   if (!flagValue) return null;
 

@@ -1,9 +1,10 @@
 import { computeQuotesErrors } from "./computeQuotesErrors";
 import type { RawQuoteError } from "./service/types";
+import { ProviderErrorCodes, QuotesErrorCodes } from "./types";
 
 function makeProviderError(overrides: Partial<RawQuoteError> = {}): RawQuoteError {
   return {
-    code: "amount_off_limits",
+    code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
     type: "float",
     provider: "lifi",
     message: "amount out of range",
@@ -33,7 +34,7 @@ describe("computeQuotesErrors", () => {
       amountFrom: "5",
     });
 
-    expect(result).toEqual([{ code: "noQuotes" }]);
+    expect(result).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 
   it("stacks `amountTooLow` on top of `noQuotes` when a min-bound row brackets amountFrom", () => {
@@ -44,8 +45,8 @@ describe("computeQuotesErrors", () => {
     });
 
     expect(result).toEqual([
-      { code: "noQuotes" },
-      { code: "amountTooLow", minAmount: "10" },
+      { code: QuotesErrorCodes.NO_QUOTES },
+      { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "10" },
     ]);
   });
 
@@ -57,8 +58,8 @@ describe("computeQuotesErrors", () => {
     });
 
     expect(result).toEqual([
-      { code: "noQuotes" },
-      { code: "amountTooHigh", maxAmount: "100" },
+      { code: QuotesErrorCodes.NO_QUOTES },
+      { code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "100" },
     ]);
   });
 
@@ -73,9 +74,9 @@ describe("computeQuotesErrors", () => {
     });
 
     expect(result).toEqual([
-      { code: "noQuotes" },
-      { code: "amountTooLow", minAmount: "10" },
-      { code: "amountTooHigh", maxAmount: "1" },
+      { code: QuotesErrorCodes.NO_QUOTES },
+      { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "10" },
+      { code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "1" },
     ]);
   });
 
@@ -91,8 +92,8 @@ describe("computeQuotesErrors", () => {
     });
 
     expect(result).toEqual([
-      { code: "noQuotes" },
-      { code: "amountTooLow", minAmount: "12" },
+      { code: QuotesErrorCodes.NO_QUOTES },
+      { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "12" },
     ]);
   });
 
@@ -108,8 +109,8 @@ describe("computeQuotesErrors", () => {
     });
 
     expect(result).toEqual([
-      { code: "noQuotes" },
-      { code: "amountTooHigh", maxAmount: "150" },
+      { code: QuotesErrorCodes.NO_QUOTES },
+      { code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "150" },
     ]);
   });
 
@@ -125,7 +126,7 @@ describe("computeQuotesErrors", () => {
       amountFrom: "5",
     });
 
-    expect(result).toEqual([{ code: "noQuotes" }]);
+    expect(result).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 
   it("treats edge case `minAmount === amountFrom` as below the limit (legacy `gte`)", () => {
@@ -137,8 +138,8 @@ describe("computeQuotesErrors", () => {
     });
 
     expect(result).toEqual([
-      { code: "noQuotes" },
-      { code: "amountTooLow", minAmount: "5" },
+      { code: QuotesErrorCodes.NO_QUOTES },
+      { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "5" },
     ]);
   });
 
@@ -153,7 +154,7 @@ describe("computeQuotesErrors", () => {
       amountFrom: "5",
     });
 
-    expect(result).toEqual([{ code: "noQuotes" }]);
+    expect(result).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 
   it("ignores `amount_off_limits` rows missing both bound parameters", () => {
@@ -163,6 +164,19 @@ describe("computeQuotesErrors", () => {
       amountFrom: "5",
     });
 
-    expect(result).toEqual([{ code: "noQuotes" }]);
+    expect(result).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
+  });
+
+  it("ignores `amount_off_limits` rows with non-numeric bounds", () => {
+    const result = computeQuotesErrors({
+      successfulQuotesCount: 0,
+      providerErrors: [
+        makeProviderError({ parameter: { minAmount: "not-a-number" } }),
+        makeProviderError({ parameter: { maxAmount: "not-a-number" }, provider: "okx" }),
+      ],
+      amountFrom: "5",
+    });
+
+    expect(result).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 });

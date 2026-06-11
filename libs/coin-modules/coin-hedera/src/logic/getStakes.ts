@@ -6,13 +6,13 @@ import { apiClient } from "../network/api";
  * Fetch stakes for a given Hedera account.
  */
 export async function getStakes({
-  configOrCurrencyId: _,
+  configOrCurrencyId,
   address,
 }: {
   configOrCurrencyId: HederaCoinConfig | string;
   address: string;
 }): Promise<Page<Stake>> {
-  const mirrorAccount = await apiClient.getAccount(address);
+  const mirrorAccount = await apiClient.getAccount({ configOrCurrencyId, address });
   const stakedNodeId = mirrorAccount.staked_node_id;
 
   if (typeof stakedNodeId !== "number") {
@@ -21,7 +21,10 @@ export async function getStakes({
 
   // -1 is used by the mirror node to indicate the account is no longer delegated
   // to any node (e.g. after an undelegation). In that case we skip the node lookup.
-  const delegatedNode = stakedNodeId >= 0 ? await apiClient.getNode(stakedNodeId) : null;
+  const delegatedNode =
+    stakedNodeId >= 0
+      ? await apiClient.getNode({ configOrCurrencyId, nodeId: stakedNodeId })
+      : null;
   const balance = BigInt(mirrorAccount.balance.balance);
   const pendingReward = BigInt(mirrorAccount.pending_reward);
 

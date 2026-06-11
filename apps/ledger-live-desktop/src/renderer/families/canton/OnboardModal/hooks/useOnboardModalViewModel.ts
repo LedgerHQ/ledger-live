@@ -53,7 +53,13 @@ export function useOnboardModalViewModel({
   );
 
   const accountName = useMemo(
-    () => resolveCreatableAccountName(creatableAccount, currency, editedNames, importableAccounts.length),
+    () =>
+      resolveCreatableAccountName(
+        creatableAccount,
+        currency,
+        editedNames,
+        importableAccounts.length,
+      ),
     [creatableAccount, currency, editedNames, importableAccounts.length],
   );
 

@@ -3,7 +3,6 @@ import { Provider } from "react-redux";
 import { useSelector } from "LLD/hooks/redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
@@ -15,8 +14,7 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
-import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
-import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import { FeatureFlagsContextBridge } from "~/renderer/components/FeatureFlagsContextBridge";
 import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
@@ -28,6 +26,7 @@ import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
+import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -52,6 +51,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
   useBraze();
+  useResetTimeRangeOnGraphRework();
 
   useEffect(() => {
     const reload = (e: KeyboardEvent) => {
@@ -75,36 +75,34 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             }
           }}
         >
-          <FirebaseRemoteConfigProvider>
-            <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-              <ConnectEnvsToSentry />
-              <ConnectEnvsToDatadog />
-              <UpdaterProvider>
-                <AppDataStorageProvider>
-                  <DeviceManagementKitProvider>
-                    <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                      <ToastProvider>
-                        <ServiceStatusProviderWrapper>
-                          <Router>
-                            <PostOnboardingProviderWrapped>
-                              <PlatformAppProviderWrapper>
-                                <DrawerProvider>
-                                  <QueryClientProvider client={queryClient}>
-                                    <Default />
-                                    <ReactQueryDevtoolsProvider />
-                                  </QueryClientProvider>
-                                </DrawerProvider>
-                              </PlatformAppProviderWrapper>
-                            </PostOnboardingProviderWrapped>
-                          </Router>
-                        </ServiceStatusProviderWrapper>
-                      </ToastProvider>
-                    </CountervaluesBridgedProvider>
-                  </DeviceManagementKitProvider>
-                </AppDataStorageProvider>
-              </UpdaterProvider>
-            </FirebaseFeatureFlagsProvider>
-          </FirebaseRemoteConfigProvider>
+          <FeatureFlagsContextBridge>
+            <ConnectEnvsToSentry />
+            <ConnectEnvsToDatadog />
+            <UpdaterProvider>
+              <AppDataStorageProvider>
+                <DeviceManagementKitProvider>
+                  <CountervaluesBridgedProvider initialState={initialCountervalues}>
+                    <ToastProvider>
+                      <ServiceStatusProviderWrapper>
+                        <Router>
+                          <PostOnboardingProviderWrapped>
+                            <PlatformAppProviderWrapper>
+                              <DrawerProvider>
+                                <QueryClientProvider client={queryClient}>
+                                  <Default />
+                                  <ReactQueryDevtoolsProvider />
+                                </QueryClientProvider>
+                              </DrawerProvider>
+                            </PlatformAppProviderWrapper>
+                          </PostOnboardingProviderWrapped>
+                        </Router>
+                      </ServiceStatusProviderWrapper>
+                    </ToastProvider>
+                  </CountervaluesBridgedProvider>
+                </DeviceManagementKitProvider>
+              </AppDataStorageProvider>
+            </UpdaterProvider>
+          </FeatureFlagsContextBridge>
         </ThrowBlock>
       </ThemeProvider>
     </StyleProvider>

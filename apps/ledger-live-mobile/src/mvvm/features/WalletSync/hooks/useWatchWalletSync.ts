@@ -36,7 +36,7 @@ import {
 import { State } from "~/reducers/types";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { TrustchainNotAllowed, TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 

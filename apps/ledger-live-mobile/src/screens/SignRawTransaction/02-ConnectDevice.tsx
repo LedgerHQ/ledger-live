@@ -82,7 +82,15 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
       dependencies: connectAppDependencies,
       requireLatestFirmware: !swapSpeculosBypass,
     }),
-    [account, appName, broadcast, connectAppDependencies, parentAccount, swapSpeculosBypass, transaction],
+    [
+      account,
+      appName,
+      broadcast,
+      connectAppDependencies,
+      parentAccount,
+      swapSpeculosBypass,
+      transaction,
+    ],
   );
 
   const onSelectDeviceLink = useCallback(() => {

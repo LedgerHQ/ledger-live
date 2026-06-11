@@ -16,10 +16,7 @@ import {
   useContentSectionViewModel,
   useOnboardingState,
 } from "../../hooks/onboarding";
-import {
-  restoreNavigationSnapshot,
-  type NavigationSnapshot,
-} from "../../utils/navigationSnapshot";
+import { restoreNavigationSnapshot, type NavigationSnapshot } from "../../utils/navigationSnapshot";
 
 interface UseCantonReonboardDrawerViewModelParams {
   currency: CryptoCurrency;

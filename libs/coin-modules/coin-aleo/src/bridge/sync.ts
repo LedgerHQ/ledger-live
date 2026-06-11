@@ -71,12 +71,12 @@ export async function performPublicSync(
   const transparentBalance = new BigNumber(nativeBalance.toString());
 
   const shouldSyncFromScratch = !initialAccount;
-  const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const allOldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
   const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
-  const lastBlockHeight = shouldSyncFromScratch ? 0 : oldPublicOps[0]?.blockHeight ?? 0;
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
 
   const latestAccountPublicOperations = await listOperations({
     currency,

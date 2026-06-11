@@ -185,23 +185,35 @@ const mockPrepareTransaction = jest.fn((_account: unknown, tx: Transaction) => P
 const mockGetTransactionStatus = jest.fn(() => Promise.resolve(mockStatus));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => ({
-    updateTransaction: mockBridgeUpdateTransaction,
-    prepareTransaction: mockPrepareTransaction,
-    getTransactionStatus: mockGetTransactionStatus,
-    estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
-  })),
-  getCurrencyBridge: jest.fn(() => ({})),
+  getAccountBridge: jest.fn(() => {
+    const bridge = {
+      updateTransaction: mockBridgeUpdateTransaction,
+      prepareTransaction: mockPrepareTransaction,
+      getTransactionStatus: mockGetTransactionStatus,
+      estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
+    };
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
+  getCurrencyBridge: jest.fn(() => {
+    const bridge = {};
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
-  getAccountBridge: jest.fn(() => ({
-    updateTransaction: mockBridgeUpdateTransaction,
-    prepareTransaction: mockPrepareTransaction,
-    getTransactionStatus: mockGetTransactionStatus,
-    estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
-  })),
-  getCurrencyBridge: jest.fn(() => ({})),
+  getAccountBridge: jest.fn(() => {
+    const bridge = {
+      updateTransaction: mockBridgeUpdateTransaction,
+      prepareTransaction: mockPrepareTransaction,
+      getTransactionStatus: mockGetTransactionStatus,
+      estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber("1000000000000000000"))),
+    };
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
+  getCurrencyBridge: jest.fn(() => {
+    const bridge = {};
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
 }));
 
 jest.mock("@ledgerhq/domain-service/hooks/index", () => ({

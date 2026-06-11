@@ -42,6 +42,7 @@ describe("DeviceContextInitializerComponentLWM", () => {
     jest.clearAllMocks();
     mockedUseViewModel.mockReturnValue({
       state: { type: LoadingStateType.Loading },
+      sourceFlow: "my_ledger",
       device: {
         id: "device-id",
         modelId: DeviceModelId.nanoX,

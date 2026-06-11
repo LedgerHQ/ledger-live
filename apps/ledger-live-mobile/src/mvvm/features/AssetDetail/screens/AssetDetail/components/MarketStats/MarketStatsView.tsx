@@ -14,11 +14,11 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { SectionContentState } from "../SectionContentState";
 import { SectionSkeleton } from "../SectionSkeleton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type StatRow = {
   key: string;
@@ -38,7 +38,6 @@ type Props = Readonly<{
 export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipOpen }: Props) {
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
-
   if (isLoading && !hasData) {
     return (
       <Box testID={ASSET_DETAIL_TEST_IDS.marketStats}>

@@ -36,11 +36,7 @@ const ActionCard = ({ img, leftContent, title, description, actions }: Props) =>
       </Body>
       <Actions>
         {dismiss && dismiss.label ? (
-          <Link
-            size="small"
-            onClick={() => dismiss.action()}
-            data-testid={dismiss.dataTestId}
-          >
+          <Link size="small" onClick={() => dismiss.action()} data-testid={dismiss.dataTestId}>
             {dismiss.label}
           </Link>
         ) : null}

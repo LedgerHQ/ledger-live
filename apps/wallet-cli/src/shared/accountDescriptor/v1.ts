@@ -36,9 +36,12 @@ export const UtxoAccountDescriptorV1Schema = z.object({
   type: z.literal("utxo"),
   network: NetworkSchema,
   /** Extended public key: mainnet xpub/ypub/zpub or testnet tpub/upub/vpub. */
-  xpub: z.string().min(1).refine(v => !/^[xyztuv]prv/.test(v), {
-    message: "xpub field must not contain a private extended key (xprv/yprv/zprv/tprv/uprv/vprv)",
-  }),
+  xpub: z
+    .string()
+    .min(1)
+    .refine(v => !/^[xyztuv]prv/.test(v), {
+      message: "xpub field must not contain a private extended key (xprv/yprv/zprv/tprv/uprv/vprv)",
+    }),
   /**
    * Hardened-only BIP32 path, e.g. "m/84h/0h/0h" (or legacy "m/84'/0'/0'").
    * All segments must be hardened. "h" is preferred (shell-safe); "'" is also accepted.

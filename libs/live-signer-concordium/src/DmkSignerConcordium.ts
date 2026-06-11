@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import {
   ConcordiumAddressVerificationFailedError,
+  ConcordiumInvalidMaxFeeError,
   ConcordiumTrustedMetadataServiceError,
   LockedDeviceError,
   UserRefusedOnDevice,
@@ -70,10 +71,10 @@ export class DmkSignerConcordium implements ConcordiumSigner {
     return { address: publicKey, publicKey };
   }
 
-  async signTransaction(tx: Transaction, path: string): Promise<SigningResult> {
+  async signTransaction(tx: Transaction, path: string, maxFee: bigint): Promise<SigningResult> {
     const serialized = serializeTransaction(tx);
 
-    const { observable } = this.signer.signTransaction(path, new Uint8Array(serialized), {
+    const { observable } = this.signer.signTransaction(path, new Uint8Array(serialized), maxFee, {
       skipOpenApp: true,
     });
 
@@ -148,6 +149,8 @@ export class DmkSignerConcordium implements ConcordiumSigner {
         return new ConcordiumTrustedMetadataServiceError(originalMessage);
       case "address_verification_failed":
         return new ConcordiumAddressVerificationFailedError(originalMessage);
+      case "invalid_max_fee":
+        return new ConcordiumInvalidMaxFeeError(originalMessage);
       default:
         return new Error(this.formatGenericMessage(error._tag, originalMessage));
     }

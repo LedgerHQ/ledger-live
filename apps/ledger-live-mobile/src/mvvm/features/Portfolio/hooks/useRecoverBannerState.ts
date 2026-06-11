@@ -27,7 +27,10 @@ function useRecoverBannerState(protectId: string): {
     const rehydrate = async () => {
       try {
         const [storedSubscriptionState, storedDisplayBanner] = await Promise.all([
-          getStoreValue<LedgerRecoverSubscriptionStateEnum>(SUBSCRIPTION_STATE_STORAGE_KEY, protectId),
+          getStoreValue<LedgerRecoverSubscriptionStateEnum>(
+            SUBSCRIPTION_STATE_STORAGE_KEY,
+            protectId,
+          ),
           getStoreValue<string>(DISPLAY_BANNER_STORAGE_KEY, protectId),
         ]);
 

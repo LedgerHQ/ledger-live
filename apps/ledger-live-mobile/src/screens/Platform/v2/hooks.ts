@@ -21,7 +21,7 @@ import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types"
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useDB } from "../../../db";
 import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";

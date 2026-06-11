@@ -18,6 +18,8 @@ import {
   getAccountCurrency,
   isTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
+import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -112,10 +114,10 @@ export default function NoFunds({ route }: Readonly<Props>) {
       button: "swap",
       page,
     });
-    onNavigate(NavigatorName.Swap, {
-      screen: ScreenName.SwapForm,
+    navigateToSwapTab({
+      navigation: navigation as unknown as NativeStackNavigationProp<BaseNavigatorStackParamList>,
     });
-  }, [onNavigate, page, track]);
+  }, [navigation, page, track]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {

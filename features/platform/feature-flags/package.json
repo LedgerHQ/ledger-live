@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-feature-flags",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "description": "Redux-backed React hooks for resolved feature flags (drop-in replacement for live-common's Context-based hooks)",
   "main": "src/index.ts",

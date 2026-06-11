@@ -31,13 +31,7 @@ function View({
 
   if (shouldUseLumenMediaBanner) {
     return (
-      <Flex
-        width="50%"
-        maxWidth="50%"
-        minWidth={0}
-        alignSelf="flex-start"
-        {...boxProps}
-      >
+      <Flex width="50%" maxWidth="50%" minWidth={0} alignSelf="flex-start" {...boxProps}>
         <LNSUpsellMediaBanner
           title={t(`lnsUpsellMediaBanner.${tracking}.title`)}
           description={t(`lnsUpsellMediaBanner.${tracking}.description`)}

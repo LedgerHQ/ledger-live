@@ -72,5 +72,5 @@ export const MODULAR_DIALOG_PAGE_NAME = {
 export const MAD_SOURCE_PAGES = {
   ACCOUNTS_PAGE: "Accounts",
   CRYPTOS_PAGE: "Cryptos",
-  ASSET_DETAIL: "Asset detail",
+  ASSET_DETAIL: "Asset",
 };

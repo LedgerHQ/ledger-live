@@ -1,9 +1,12 @@
 import { device } from "detox";
 import { describeIfNotNanoS } from "../../helpers/commonHelpers";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
+setTeamOwner(Team.WALLET_XP);
 describeIfNotNanoS(`Ledger Sync Accounts`, () => {
   beforeAll(async () => {
     await app.init({
@@ -18,10 +21,6 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
             ...app.ledgerSync.ledgerSyncPushDataArgs,
           }),
       ],
-      //TODO: Remove line when LIVE-24337 is fixed
-      featureFlags: {
-        llmAccountListUI: { enabled: true },
-      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

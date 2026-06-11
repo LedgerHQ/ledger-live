@@ -83,6 +83,7 @@ export type GenericTransaction = TransactionCommon & {
   gasOptions?: GasOptions;
   sponsored?: boolean;
   valAddress?: string;
+  valId?: string;
   dstValAddress?: string;
 };
 
@@ -113,6 +114,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   gasOptions?: GasOptionsRaw;
   sponsored?: boolean;
   valAddress?: string;
+  valId?: string;
   dstValAddress?: string;
 };
 

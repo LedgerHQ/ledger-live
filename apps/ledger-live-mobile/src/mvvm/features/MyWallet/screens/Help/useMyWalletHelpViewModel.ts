@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Linking } from "react-native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useCleanCache } from "~/actions/general";
 import { reboot } from "~/actions/appstate";

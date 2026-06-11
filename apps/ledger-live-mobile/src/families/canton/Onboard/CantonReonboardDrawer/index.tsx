@@ -72,9 +72,7 @@ export default function CantonReonboardDrawer({
     return (
       <Flex flexDirection="column" alignItems="stretch">
         <Text variant="body" color="neutral.c80" textAlign="center" mb={4}>
-          {hasStarted
-            ? t(statusTranslationKey)
-            : t("canton.onboard.reonboard.description")}
+          {hasStarted ? t(statusTranslationKey) : t("canton.onboard.reonboard.description")}
         </Text>
 
         {isSuccess && (
@@ -135,10 +133,7 @@ export default function CantonReonboardDrawer({
             {renderFooter()}
           </Flex>
         ) : (
-          <CantonDisclaimer
-            onAgree={() => setHasAgreedDisclaimer(true)}
-            onCancel={onClose}
-          />
+          <CantonDisclaimer onAgree={() => setHasAgreedDisclaimer(true)} onCancel={onClose} />
         )}
       </QueuedDrawer>
 

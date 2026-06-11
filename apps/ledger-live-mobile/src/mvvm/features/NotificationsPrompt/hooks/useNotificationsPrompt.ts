@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { type DataOfUser } from "../types";
 import {
   checkIsInactive,
@@ -14,12 +14,14 @@ type UseNotificationsPromptParams = {
     | null
     | undefined;
   areNotificationsAllowed: boolean | undefined;
+  transactionsAlertsCategory: boolean | undefined;
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
 };
 
 export const useNotificationsPrompt = ({
   permissionStatus,
   areNotificationsAllowed,
+  transactionsAlertsCategory,
   pushNotificationsDataOfUser,
 }: UseNotificationsPromptParams) => {
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
@@ -29,17 +31,33 @@ export const useNotificationsPrompt = ({
     return getNextRepromptDelay({
       repromptSchedule,
       pushNotificationsDataOfUser,
+      permissionStatus,
+      areNotificationsAllowed,
+      transactionsAlertsCategory,
     });
-  }, [repromptSchedule, pushNotificationsDataOfUser]);
+  }, [
+    repromptSchedule,
+    pushNotificationsDataOfUser,
+    permissionStatus,
+    areNotificationsAllowed,
+    transactionsAlertsCategory,
+  ]);
 
   const shouldPrompt = useCallback(() => {
     return shouldPromptOptInDrawerAfterAction({
       permissionStatus,
       areNotificationsAllowed,
+      transactionsAlertsCategory,
       pushNotificationsDataOfUser,
       repromptSchedule,
     });
-  }, [permissionStatus, areNotificationsAllowed, pushNotificationsDataOfUser, repromptSchedule]);
+  }, [
+    permissionStatus,
+    areNotificationsAllowed,
+    transactionsAlertsCategory,
+    pushNotificationsDataOfUser,
+    repromptSchedule,
+  ]);
 
   const inactivityEnabled = featureBrazePushNotifications?.params?.inactivity_enabled;
   const inactivityReprompt = featureBrazePushNotifications?.params?.inactivity_reprompt;

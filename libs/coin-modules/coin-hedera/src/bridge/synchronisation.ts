@@ -53,8 +53,8 @@ const getAccountShapeV2 = async ({
   // tokens are fetched with separate requests to get "created_timestamp" for each token
   // based on this, ASSOCIATE_TOKEN operations can be connected with tokens
   const [mirrorAccount, mirrorTokens, erc20Tokens] = await Promise.all([
-    apiClient.getAccount(address),
-    apiClient.getAccountTokens(address),
+    apiClient.getAccount({ configOrCurrencyId: config, address }),
+    apiClient.getAccountTokens({ configOrCurrencyId: config, address }),
     getERC20BalancesForAccountV2({ configOrCurrencyId: config, address }),
   ]);
 
@@ -172,8 +172,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   // tokens are fetched with separate requests to get "created_timestamp" for each token
   // based on this, ASSOCIATE_TOKEN operations can be connected with tokens
   const [mirrorAccount, mirrorTokens, erc20TokenBalances] = await Promise.all([
-    apiClient.getAccount(address),
-    apiClient.getAccountTokens(address),
+    apiClient.getAccount({ configOrCurrencyId: config, address }),
+    apiClient.getAccountTokens({ configOrCurrencyId: config, address }),
     getERC20BalancesForAccount({ configOrCurrencyId: config, evmAccountId: evmAddress }),
   ]);
 
@@ -299,17 +299,15 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 };
 
 export const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
-  const mirrorAccounts = await apiClient.getAccountsForPublicKey(rootResult.publicKey);
-  const addresses = mirrorAccounts.map(a => a.account);
-
   return async ({ currency, derivationMode, index }) => {
-    const derivationScheme = getDerivationScheme({
-      derivationMode,
-      currency,
+    const mirrorAccounts = await apiClient.getAccountsForPublicKey({
+      configOrCurrencyId: currency.id,
+      publicKey: rootResult.publicKey,
     });
-    const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
-      account: index,
-    });
+
+    const addresses = mirrorAccounts.map(a => a.account);
+    const derivationScheme = getDerivationScheme({ derivationMode, currency });
+    const freshAddressPath = runDerivationScheme(derivationScheme, currency, { account: index });
 
     return addresses[index]
       ? ({

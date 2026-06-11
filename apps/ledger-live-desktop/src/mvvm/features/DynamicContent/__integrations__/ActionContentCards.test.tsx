@@ -5,7 +5,9 @@ import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards"
 import { ActionContentCard, LocationContentCard } from "~/types/dynamicContent";
 
 jest.mock("@braze/web-sdk", () =>
-  jest.requireActual<typeof import("tests/mocks/brazeWebSdk")>("tests/mocks/brazeWebSdk").getBrazeWebSdkJestMock(),
+  jest
+    .requireActual<typeof import("tests/mocks/brazeWebSdk")>("tests/mocks/brazeWebSdk")
+    .getBrazeWebSdkJestMock(),
 );
 
 const trackingSettings = {

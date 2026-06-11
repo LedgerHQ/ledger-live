@@ -8,24 +8,21 @@ export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> =
   return featureFlags;
 };
 
-export const isWallet40Enabled = async (page: Page): Promise<boolean> => {
-  const featureFlags = await getFeatureFlags(page);
-  return featureFlags.lwdWallet40?.enabled === true;
-};
+export const isAssetSectionEnabled = process.env.E2E_ENABLE_ASSET_SECTION !== "0";
 
 const lwdWallet40BaseParams = {
   marketBanner: true,
   graphRework: true,
   quickActionCtas: true,
   mainNavigation: true,
-  assetSection: true,
 } as const;
 
-// TODO: remove when wallet 4.0 is default
+// The Wallet 4.0 "Asset Section" is ON by default for all desktop E2E tests.
+// Force it OFF (the "assetSection OFF" test variant) by setting E2E_ENABLE_ASSET_SECTION=0 (used by CI).
 export const LWD_WALLET_40_FF_ENABLED: OptionalFeatureMap = {
   lwdWallet40: {
     enabled: true,
-    params: { ...lwdWallet40BaseParams },
+    params: { ...lwdWallet40BaseParams, assetSection: isAssetSectionEnabled },
   },
 };
 
@@ -35,22 +32,17 @@ export const LWD_WALLET_40_Q2_FF_ENABLED: OptionalFeatureMap = {
     enabled: true,
     params: {
       ...lwdWallet40BaseParams,
+      assetSection: true,
       operationsList: true,
       myWallet: true,
     },
   },
 };
 
-// TODO: remove when wallet 4.0 is default
-export const LWD_WALLET_40_FF_DISABLED: OptionalFeatureMap = {
-  lwdWallet40: { enabled: false },
-};
-
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
 export const EARN_V1_DESKTOP_FLAGS: OptionalFeatureMap = {
   ptxEarnUi: { enabled: false, params: { value: "v1" } },
-  ...LWD_WALLET_40_FF_DISABLED,
 };
 
 export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
@@ -58,5 +50,24 @@ export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
     ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } },
   }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
-  ...LWD_WALLET_40_FF_ENABLED,
+};
+
+export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["ethereum", "cosmos"],
+      redirects: {
+        "ethereum/erc20/usd__coin": {
+          platform: "earn",
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum/erc20/usd__coin",
+            intent: "deposit",
+            deposit: "stablecoin",
+          },
+        },
+      },
+    },
+  },
 };

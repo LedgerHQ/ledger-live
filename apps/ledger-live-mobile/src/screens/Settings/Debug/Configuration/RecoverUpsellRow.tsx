@@ -1,11 +1,12 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import SettingsRow from "~/components/SettingsRow";
 import Switch from "~/components/Switch";
-import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { setOverride } from "@shared/feature-flags";
 
 export function RecoverUpsellRow() {
-  const { overrideFeature, resetFeature } = useFeatureFlags();
-
+  const dispatch = useDispatch();
   const protectFeature = useFeature("protectServicesMobile");
 
   if (protectFeature === null || protectFeature === undefined) return null;
@@ -14,12 +15,17 @@ export function RecoverUpsellRow() {
 
   const onChange = (enabled: boolean) => {
     if (enabled) {
-      overrideFeature("protectServicesMobile", {
-        ...protectFeature,
-        params: { ...protectFeature?.params, protectId: "protect-prod" },
-      });
+      dispatch(
+        setOverride({
+          key: "protectServicesMobile",
+          value: {
+            ...protectFeature,
+            params: { ...protectFeature?.params, protectId: "protect-prod" },
+          },
+        }),
+      );
     } else {
-      resetFeature("protectServicesMobile");
+      dispatch(setOverride({ key: "protectServicesMobile", value: undefined }));
     }
   };
 

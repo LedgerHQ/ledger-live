@@ -1,5 +1,5 @@
 import React from "react";
-import { Spinner } from '@ledgerhq/lumen-ui-react';
+import { Spinner } from "@ledgerhq/lumen-ui-react";
 
 interface BorrowLoaderProps {
   isLoading: boolean;

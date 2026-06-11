@@ -16,7 +16,12 @@ const withCounterValue =
 describe("useAssetMarketData", () => {
   describe("data forwarding", () => {
     it("returns marketCurrency from the market API", async () => {
-      const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useAssetMarketData({
+          marketApiId: mockBtcCryptoCurrency.id,
+          knownLedgerIds: [mockBtcCryptoCurrency.id],
+        }),
+      );
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -28,7 +33,12 @@ describe("useAssetMarketData", () => {
     });
 
     it("defaults counterCurrency to the USD settings value", () => {
-      const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useAssetMarketData({
+          marketApiId: mockBtcCryptoCurrency.id,
+          knownLedgerIds: [mockBtcCryptoCurrency.id],
+        }),
+      );
 
       expect(result.current.counterCurrency).toBe("usd");
     });
@@ -36,9 +46,14 @@ describe("useAssetMarketData", () => {
 
   describe("settings counter-value reactivity", () => {
     it("derives counterCurrency from the user's settings counter-value (not market screen state)", () => {
-      const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency), {
-        overrideInitialState: withCounterValue("EUR"),
-      });
+      const { result } = renderHook(
+        () =>
+          useAssetMarketData({
+            marketApiId: mockBtcCryptoCurrency.id,
+            knownLedgerIds: [mockBtcCryptoCurrency.id],
+          }),
+        { overrideInitialState: withCounterValue("EUR") },
+      );
 
       expect(result.current.counterCurrency).toBe("eur");
     });
@@ -53,9 +68,14 @@ describe("useAssetMarketData", () => {
         }),
       );
 
-      renderHook(() => useAssetMarketData(mockBtcCryptoCurrency), {
-        overrideInitialState: withCounterValue("GBP"),
-      });
+      renderHook(
+        () =>
+          useAssetMarketData({
+            marketApiId: mockBtcCryptoCurrency.id,
+            knownLedgerIds: [mockBtcCryptoCurrency.id],
+          }),
+        { overrideInitialState: withCounterValue("GBP") },
+      );
 
       await waitFor(() => {
         expect(requestedToValues).toContain("gbp");
@@ -65,7 +85,12 @@ describe("useAssetMarketData", () => {
 
   describe("loading state", () => {
     it("starts with isLoading true before data resolves", () => {
-      const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useAssetMarketData({
+          marketApiId: mockBtcCryptoCurrency.id,
+          knownLedgerIds: [mockBtcCryptoCurrency.id],
+        }),
+      );
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.marketCurrency).toBeUndefined();
@@ -78,7 +103,12 @@ describe("useAssetMarketData", () => {
         http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json(null, { status: 500 })),
       );
 
-      const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
+      const { result } = renderHook(() =>
+        useAssetMarketData({
+          marketApiId: mockBtcCryptoCurrency.id,
+          knownLedgerIds: [mockBtcCryptoCurrency.id],
+        }),
+      );
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -89,11 +119,31 @@ describe("useAssetMarketData", () => {
   });
 
   describe("skip query", () => {
-    it("does not fetch when currency is undefined", () => {
-      const { result } = renderHook(() => useAssetMarketData(undefined));
+    it("does not fetch when no marketApiId is provided", () => {
+      const { result } = renderHook(() => useAssetMarketData({}));
 
       expect(result.current.marketCurrency).toBeUndefined();
       expect(result.current.isLoading).toBe(false);
+    });
+  });
+
+  describe("ledgerIds", () => {
+    it("returns [] when no known ledger ids are provided", () => {
+      const { result } = renderHook(() => useAssetMarketData({}));
+
+      expect(result.current.ledgerIds).toEqual([]);
+    });
+
+    it("falls back to knownLedgerIds while market data has not resolved yet", () => {
+      const { result } = renderHook(() =>
+        useAssetMarketData({
+          marketApiId: mockBtcCryptoCurrency.id,
+          knownLedgerIds: [mockBtcCryptoCurrency.id],
+        }),
+      );
+
+      expect(result.current.marketCurrency).toBeUndefined();
+      expect(result.current.ledgerIds).toEqual([mockBtcCryptoCurrency.id]);
     });
   });
 });

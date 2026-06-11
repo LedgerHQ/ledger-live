@@ -11,7 +11,7 @@ import Illustration from "~/images/illustration/Illustration";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./steps/setupDevice/scenes/BaseStepperView";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
 
 const scenes = [QuizzFinal, QuizzFinal] as Step[];

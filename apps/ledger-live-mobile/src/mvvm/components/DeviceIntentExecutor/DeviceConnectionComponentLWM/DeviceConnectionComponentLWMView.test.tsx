@@ -119,6 +119,7 @@ describe("DeviceConnectionComponentLWMView", () => {
     renderView({
       type: ConnectDeviceUIStateTypes.ConnectionError,
       error: { type: ConnectionErrorTypes.Unknown },
+      device: makeKnownDevice(),
       retry: jest.fn(),
       ignore: jest.fn(),
     });

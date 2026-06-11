@@ -18,7 +18,6 @@ export const RightPanelView = memo(function RightPanelView({ viewModel }: RightP
       <SwapWebViewEmbedded
         key={webviewKey}
         height="100%"
-        isWallet40
         initialSwapState={initialSwapState}
       />
     </div>

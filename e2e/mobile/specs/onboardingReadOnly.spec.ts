@@ -1,3 +1,7 @@
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { setTeamOwner } from "../helpers/allure/allure-helper";
+
+setTeamOwner(Team.WALLET_XP);
 describe("Onboarding - Read Only", () => {
   $TmsLink("B2CQA-370");
   $TmsLink("B2CQA-1753");

@@ -5,6 +5,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 export interface ReceiveOptionsDrawerState {
   isOpen: boolean;
   currency?: CryptoOrTokenCurrency;
+  currencyIds?: string[];
   sourceScreenName: string;
   fromMenu?: boolean;
 }
@@ -12,6 +13,7 @@ export interface ReceiveOptionsDrawerState {
 export const INITIAL_STATE: ReceiveOptionsDrawerState = {
   isOpen: false,
   currency: undefined,
+  currencyIds: undefined,
   sourceScreenName: "",
   fromMenu: false,
 };
@@ -27,16 +29,18 @@ const receiveOptionsDrawerSlice = createSlice({
       state,
       action: PayloadAction<{
         currency?: CryptoOrTokenCurrency;
+        currencyIds?: string[];
         sourceScreenName: string;
         fromMenu?: boolean;
       }>,
     ) => {
       state.isOpen = true;
-      const { currency, sourceScreenName, fromMenu } = action.payload;
+      const { currency, currencyIds, sourceScreenName, fromMenu } = action.payload;
 
       if (currency !== undefined) {
         state.currency = currency;
       }
+      state.currencyIds = currencyIds;
       if (sourceScreenName !== undefined) {
         state.sourceScreenName = sourceScreenName;
       }
@@ -47,6 +51,7 @@ const receiveOptionsDrawerSlice = createSlice({
     closeReceiveOptionsDrawer: state => {
       state.isOpen = false;
       state.currency = undefined;
+      state.currencyIds = undefined;
       state.sourceScreenName = "";
       state.fromMenu = false;
     },

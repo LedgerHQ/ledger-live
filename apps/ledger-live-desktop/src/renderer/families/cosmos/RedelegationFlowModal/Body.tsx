@@ -26,7 +26,10 @@ import StepDestinationValidators from "./steps/StepDestinationValidators";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { CosmosAccount, Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosAccount,
+  Transaction as CosmosTransaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 export type Data = {
   account: CosmosAccount;
   validatorAddress: string | undefined | null;

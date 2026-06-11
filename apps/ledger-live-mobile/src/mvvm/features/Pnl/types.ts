@@ -26,10 +26,19 @@ export type PnlCardViewModel = {
   onPress: () => void;
 };
 
+/** A display-only return card: a label, a formatted amount and its trend. */
+export type PnlReturnCard = {
+  title: string;
+  value: string;
+  trend: PnlTrend;
+};
+
 export type PnlDrawerViewModel = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  pageName?: string;
+  source?: string;
 };
 
 export type PnlViewModel = {

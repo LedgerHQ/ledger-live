@@ -167,9 +167,7 @@ describe("graphqlTxToJsonRpcResponse", () => {
           effects: { balanceChangesJson: [{ owner: "0x1", amount: "100" }] },
         } as unknown as Partial<GraphQLTransactionNode>),
       );
-      expect(out.balanceChanges).toEqual([
-        { owner: { AddressOwner: "0x1" }, amount: "100" },
-      ]);
+      expect(out.balanceChanges).toEqual([{ owner: { AddressOwner: "0x1" }, amount: "100" }]);
     });
 
     it("falls back to `address` when owner is missing", () => {

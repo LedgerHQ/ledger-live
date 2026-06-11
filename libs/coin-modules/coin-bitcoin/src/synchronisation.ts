@@ -345,13 +345,24 @@ export async function performTransparentSync(
       ? utxos.filter(utxo => finalOperationHashes.has(utxo.hash))
       : utxos;
 
-  const balance = finalUtxos.reduce((total, utxo) => total.plus(utxo.value), new BigNumber(0));
+  const transparentBalance = finalUtxos.reduce(
+    (total, utxo) => total.plus(utxo.value),
+    new BigNumber(0),
+  );
+
+  // Chains with off-transparent funds (e.g. Zcash shielded notes) combine them
+  // into `account.balance` via their chain adapter; others use the transparent
+  // balance as-is.
+  const adapter = getChainAdapter(currency.id);
+  const balance = adapter.computeAccountBalance
+    ? adapter.computeAccountBalance(initialAccount, transparentBalance)
+    : transparentBalance;
 
   return {
     id: accountId,
     xpub,
     balance,
-    spendableBalance: balance,
+    spendableBalance: transparentBalance,
     operations,
     operationsCount: operations.length,
     freshAddress: walletAccount.xpub.freshAddress,

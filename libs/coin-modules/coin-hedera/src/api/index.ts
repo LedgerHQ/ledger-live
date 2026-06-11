@@ -131,7 +131,7 @@ export function createApi(
         });
         invariant(evmAddress, `hedera: evm address is missing for ${address}`);
         const [mirrorTokens, erc20TokenBalances] = await Promise.all([
-          apiClient.getAccountTokens(address),
+          apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
           getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
         ]);
 
@@ -151,7 +151,10 @@ export function createApi(
           useSyntheticBlocks: true,
         });
       } else {
-        const mirrorTokens = await apiClient.getAccountTokens(address);
+        const mirrorTokens = await apiClient.getAccountTokens({
+          configOrCurrencyId: coinConfig,
+          address,
+        });
 
         latestAccountOperations = await logicListOperations({
           config: coinConfig,

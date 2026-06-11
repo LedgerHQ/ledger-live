@@ -5,6 +5,7 @@ export enum MarketDataTags {
   Performers = "Performers",
   CurrencyData = "CurrencyData",
   ChartData = "ChartData",
+  GlobalData = "GlobalData",
 }
 
 export interface MarketPerformersQueryParams {
@@ -21,3 +22,23 @@ export const MarketChartApiResponseSchema = z.object({
 });
 
 export type MarketChartApiResponse = z.infer<typeof MarketChartApiResponseSchema>;
+
+// Raw /v3/markets/global response: percentageChanges values are ratios (e.g. -0.0171 = -1.71%).
+export const GlobalMarketDataResponseSchema = z.object({
+  marketCap: z.number(),
+  percentageChanges: z.object({
+    "1d": z.number(),
+  }),
+});
+
+export type GlobalMarketDataResponse = z.infer<typeof GlobalMarketDataResponseSchema>;
+
+export interface GlobalMarketDataRequestParams {
+  counterCurrency: string;
+}
+
+export interface GlobalMarketData {
+  marketCap: number;
+  // 24h change expressed as a percentage (e.g. -1.71), ready for display.
+  changePercentage24h: number;
+}

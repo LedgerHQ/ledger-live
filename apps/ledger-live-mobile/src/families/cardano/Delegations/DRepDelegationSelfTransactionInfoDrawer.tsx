@@ -1,6 +1,9 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import type { CardanoAccount, Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
+import type {
+  CardanoAccount,
+  Transaction as CardanoTransaction,
+} from "@ledgerhq/live-common/families/cardano/types";
 import { StyleSheet } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "~/const";

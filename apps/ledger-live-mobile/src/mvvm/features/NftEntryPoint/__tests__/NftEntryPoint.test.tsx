@@ -30,19 +30,14 @@ const mockNavigate = jest.fn();
 describe("NftEntryPoint", () => {
   it("should render nothing if isFeatureNftEntryPointEnabled is false", () => {
     const { store } = render(<NftEntryPoint account={mockAccount} />, {
-      overrideInitialState: withFlagOverrides(
-        { llNftEntryPoint: { enabled: false } },
-        state => ({
-          ...state,
-          settings: {
-            ...INITIAL_STATE,
-          },
-        }),
-      ),
+      overrideInitialState: withFlagOverrides({ llNftEntryPoint: { enabled: false } }, state => ({
+        ...state,
+        settings: {
+          ...INITIAL_STATE,
+        },
+      })),
     });
-    expect(
-      store.getState().featureFlags.overrides.llNftEntryPoint?.enabled ?? false,
-    ).toBeFalsy();
+    expect(store.getState().featureFlags.overrides.llNftEntryPoint?.enabled ?? false).toBeFalsy();
   });
 
   it("should render enabled entry points if enabled", () => {

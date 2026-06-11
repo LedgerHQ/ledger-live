@@ -11,9 +11,15 @@ import { counterValueFormatter } from "LLM/features/Market/utils";
 import { getColors } from "../utils";
 import { BigNumber } from "bignumber.js";
 
+type PriceChangePercentageByRange = Record<
+  Exclude<KeysPriceChange, KeysPriceChange.sixMonths>,
+  number
+> &
+  Partial<Record<KeysPriceChange.sixMonths, number>>;
+
 type PriceAndVariationProps = {
   price: number;
-  priceChangePercentage: Record<KeysPriceChange, number>;
+  priceChangePercentage: PriceChangePercentageByRange;
   range: KeysPriceChange;
   chartData?: MarketCoinDataChart;
 };
@@ -27,7 +33,8 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const { textColor, bgColor } = getColors(priceChangePercentage[range]);
+  const selectedPriceChangePercentage = priceChangePercentage[range] ?? 0;
+  const { textColor, bgColor } = getColors(selectedPriceChangePercentage);
 
   const baseFromChart = chartData?.[range]?.[0]?.[1] ?? 0;
   const absoluteChangeValue = Math.abs(price - baseFromChart);
@@ -50,8 +57,8 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
           <Delta
             unit={{ ...counterValueCurrency.units[0], code: "" }}
             valueChange={{
-              value: priceChangePercentage[range],
-              percentage: priceChangePercentage[range],
+              value: selectedPriceChangePercentage,
+              percentage: selectedPriceChangePercentage,
             }}
             isPercentSignDisplayed={true}
           />

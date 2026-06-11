@@ -8,7 +8,12 @@ import { setEnv } from "@ledgerhq/live-env";
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
-import { captureArtifacts, addTeamOwner, attachMergedFeatureFlags } from "tests/utils/allureUtils";
+import {
+  captureArtifacts,
+  addTeamOwner,
+  attachMergedFeatureFlags,
+  runCliStep,
+} from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
@@ -18,10 +23,10 @@ import { lastValueFrom, Observable } from "rxjs";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
 import { attachNetworkLogging } from "../utils/networkLogging";
-import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -83,15 +88,14 @@ const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
       live_apps_blocklist: [],
     },
   },
-  ...(process.env.E2E_ENABLE_WALLET40 === "0"
-    ? LWD_WALLET_40_FF_DISABLED
-    : LWD_WALLET_40_FF_ENABLED),
 };
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
-  const promise = await cmd(`${userdataDestinationPath}/app.json`);
-  const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-  console.log("CLI result: ", result);
+  const label = cmd.name || "anonymous";
+  return runCliStep(label, async () => {
+    const promise = await cmd(`${userdataDestinationPath}/app.json`);
+    return promise instanceof Observable ? await lastValueFrom(promise) : await promise;
+  });
 }
 
 export const test = base.extend<TestFixtures>({
@@ -219,7 +223,13 @@ export const test = base.extend<TestFixtures>({
     use,
     testInfo,
   ) => {
-    const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, EXTRA_FEATURE_FLAGS, featureFlags);
+    const mergedFeatureFlags = merge(
+      {},
+      DEFAULT_FEATURE_FLAGS,
+      EXTRA_FEATURE_FLAGS,
+      LWD_WALLET_40_FF_ENABLED, //Todo: Remove when Testing Firebase is sync with prod firebase
+      featureFlags,
+    );
     await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
 
     // default environment variables

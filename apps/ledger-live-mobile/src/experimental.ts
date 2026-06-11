@@ -5,7 +5,7 @@ import { concatMap } from "rxjs/operators";
 import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
 import type { EnvName } from "@ledgerhq/live-env";
 
-import { FeatureId } from "@ledgerhq/types-live";
+import type { FeatureId } from "@shared/feature-flags";
 
 import logger from "./logger";
 

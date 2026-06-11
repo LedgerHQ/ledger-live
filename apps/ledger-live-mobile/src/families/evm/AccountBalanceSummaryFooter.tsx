@@ -4,7 +4,7 @@ import {
   isStakingAccount,
   type StakingAccount,
 } from "@ledgerhq/live-common/families/evm/staking/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useState } from "react";
@@ -80,7 +80,8 @@ export default function AccountBalanceFooter({ account }: Props) {
 
   if (account.type !== "Account") return null;
 
-  const isSupported = params?.supportedCurrencyIds?.some(id => id === account.currency.id) ?? false;
+  const isSupported =
+    params?.supportedCurrencyIds?.some((id: string) => id === account.currency.id) ?? false;
   if (!enabled || !isSupported) return null;
   if (!isStakingAccount(account) || account.balance.lte(0)) return null;
 

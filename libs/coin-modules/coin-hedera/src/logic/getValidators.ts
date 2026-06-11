@@ -4,13 +4,14 @@ import { apiClient } from "../network/api";
 import { calculateAPY, extractCompanyFromNodeDescription } from "./utils";
 
 export async function getValidators({
-  configOrCurrencyId: _,
+  configOrCurrencyId,
   cursor,
 }: {
   configOrCurrencyId: HederaCoinConfig | string;
   cursor: Cursor | undefined;
 }): Promise<Page<Validator>> {
   const res = await apiClient.getNodes({
+    configOrCurrencyId,
     fetchAllPages: false,
     ...(cursor && { cursor }),
   });

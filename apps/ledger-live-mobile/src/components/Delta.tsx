@@ -7,7 +7,7 @@ import { ArrowEvolutionUpMedium, ArrowEvolutionDownMedium } from "@ledgerhq/nati
 import { useTranslation } from "~/context/Locale";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type Props = {
   valueChange: ValueChange;

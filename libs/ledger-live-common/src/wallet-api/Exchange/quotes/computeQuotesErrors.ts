@@ -1,14 +1,7 @@
 import BigNumber from "bignumber.js";
 
 import type { RawQuoteError } from "./service/types";
-import { QuotesErrorCodes, type QuotesError } from "./types";
-
-/**
- * Aggregator rejection rows carry a free-form `code` string. Only this
- * one is consumed by `computeQuotesErrors`; everything else is left in
- * `providerErrors` for the consumer to inspect directly.
- */
-const AMOUNT_OFF_LIMITS = "amount_off_limits";
+import { ProviderErrorCodes, QuotesErrorCodes, type QuotesError } from "./types";
 
 /**
  * Inputs the producer reads. `amountFrom` is the user-input atomic amount
@@ -51,7 +44,9 @@ export function computeQuotesErrors(args: ComputeQuotesErrorsArgs): QuotesError[
   const errors: QuotesError[] = [{ code: QuotesErrorCodes.NO_QUOTES }];
 
   const amountFromBn = new BigNumber(args.amountFrom);
-  const amountOffLimits = args.providerErrors.filter(row => row.code === AMOUNT_OFF_LIMITS);
+  const amountOffLimits = args.providerErrors.filter(
+    row => row.code === ProviderErrorCodes.AMOUNT_OFF_LIMITS,
+  );
 
   const tooLowCandidates = amountOffLimits
     .map(row => ({ minAmount: row.parameter?.minAmount }))

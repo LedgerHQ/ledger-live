@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ledger Live Local Test Dapp</title>
+    <style>
+      body {
+        color: #f5f5f5;
+        background: #161616;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        margin: 0;
+        padding: 32px;
+      }
+
+      button {
+        cursor: pointer;
+        margin: 8px 8px 8px 0;
+        padding: 8px 12px;
+      }
+
+      #output {
+        line-height: 1.5;
+        margin-top: 16px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ledger Live Local Test Dapp</h1>
+    <div id="provider">
+      <button type="button">Connect Ledger Live provider</button>
+    </div>
+    <button id="getAccounts" type="button">Get accounts</button>
+    <button id="personalSign" type="button">Personal sign</button>
+    <div id="output" aria-live="polite"></div>
+
+    <!-- Keep dapp logic external so strict CSP tests can use script-src 'self'. -->
+    <script src="dapp.js"></script>
+  </body>
+</html>

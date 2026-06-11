@@ -9,7 +9,6 @@ import React from "react";
 import styled from "styled-components";
 import SwapWebView from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
 import { SwapLoader } from "~/renderer/screens/exchange/Swap2/Form/SwapLoader";
-import Card from "~/renderer/components/Box/Card";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import type { SwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
@@ -28,14 +27,12 @@ interface SwapCardProps {
   height: string;
   children: React.ReactNode;
   testId?: string;
-  isWallet40?: boolean;
 }
 
 function SwapCard({
   height,
   children,
   testId = "embedded-swap-container",
-  isWallet40,
 }: Readonly<SwapCardProps>) {
   const style = {
     overflow: "hidden" as const,
@@ -45,34 +42,24 @@ function SwapCard({
     position: "relative" as const,
   };
 
-  if (isWallet40) {
-    return (
-      <div
-        style={style}
-        data-testid={testId}
-        className="overflow-hidden rounded-xl border border-muted-subtle"
-      >
-        {children}
-      </div>
-    );
-  }
-
   return (
-    <Card grow style={style} data-testid={testId}>
+    <div
+      style={style}
+      data-testid={testId}
+      className="overflow-hidden rounded-xl border border-muted-subtle"
+    >
       {children}
-    </Card>
+    </div>
   );
 }
 
 interface SwapWebViewEmbeddedProps {
   height?: string;
-  isWallet40?: boolean;
   initialSwapState?: SwapNavigationState;
 }
 
 export default function SwapWebViewEmbedded({
   height = "550px",
-  isWallet40,
   initialSwapState,
 }: Readonly<SwapWebViewEmbeddedProps>) {
   const swapLiveEnabledFlag = useSwapLiveConfig();
@@ -87,7 +74,7 @@ export default function SwapWebViewEmbedded({
 
   if (!manifest && state.isLoading) {
     return (
-      <SwapCard height={height} testId="embedded-swap-container-loader" isWallet40={isWallet40}>
+      <SwapCard height={height} testId="embedded-swap-container-loader">
         <SwapLoader isLoading />
       </SwapCard>
     );
@@ -95,14 +82,14 @@ export default function SwapWebViewEmbedded({
 
   if (!manifest) {
     return (
-      <SwapCard height={height} testId="embedded-swap-container-warning" isWallet40={isWallet40}>
+      <SwapCard height={height} testId="embedded-swap-container-warning">
         <NetworkErrorScreen refresh={updateManifests} type="warning" />
       </SwapCard>
     );
   }
 
   return (
-    <SwapCard height={height} isWallet40={isWallet40}>
+    <SwapCard height={height}>
       <EmbeddedContainer>
         <SwapWebView
           manifest={manifest}

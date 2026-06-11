@@ -217,11 +217,56 @@ describe("useConfirmationViewModel", () => {
       currency_id: "",
       newSendFlow: true,
     });
-    expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
-      operationId: "child1",
-      accountId: "acc1",
-      parentId: "parent1",
+    expect(trackPage).toHaveBeenCalledWith("Modal send - transaction details", null, {
+      flow: "send",
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+      newSendFlow: true,
     });
+    expect(setDrawer).toHaveBeenCalledWith(
+      OperationDetails,
+      { operationId: "child1", accountId: "acc1", parentId: "parent1" },
+      expect.objectContaining({ onRequestClose: expect.any(Function) }),
+    );
+  });
+
+  test("onViewDetails drawer onRequestClose tracks close and clears drawer", () => {
+    mockActions();
+    mockNavigation();
+    (sendFeatures.isUserRefusedTransactionError as jest.Mock).mockReturnValue(false);
+    mockData({
+      account: {
+        account: { id: "acc1" },
+        parentAccount: { id: "parent1" },
+        currency: {},
+      },
+      operation: {
+        signed: true,
+        optimisticOperation: { id: "opRoot", subOperations: [{ id: "child1" }] },
+        transactionError: null,
+      },
+    });
+
+    act(() => {
+      root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
+    });
+    latestVM?.onViewDetails();
+
+    const drawerOptions = (setDrawer as jest.Mock).mock.calls[0][2];
+    (setDrawer as jest.Mock).mockClear();
+    drawerOptions.onRequestClose();
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "close transaction details",
+      page: "transaction details",
+      flow: "send",
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+      newSendFlow: true,
+    });
+    expect(setDrawer).toHaveBeenCalledWith();
   });
 
   test("onViewDetails opens drawer with optimisticOperation when no subOperations", () => {
@@ -246,11 +291,11 @@ describe("useConfirmationViewModel", () => {
     });
     latestVM?.onViewDetails();
 
-    expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
-      operationId: "opSingle",
-      accountId: "acc1",
-      parentId: undefined,
-    });
+    expect(setDrawer).toHaveBeenCalledWith(
+      OperationDetails,
+      { operationId: "opSingle", accountId: "acc1", parentId: undefined },
+      expect.objectContaining({ onRequestClose: expect.any(Function) }),
+    );
   });
 
   test("onViewDetails does nothing if no account or no concernedOperation", () => {

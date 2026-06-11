@@ -14,15 +14,15 @@ import EvmValidatorIcon from "~/renderer/families/evm/shared/components/EvmValid
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const renderItem = ({
-  data: { validatorAddress, validator, formattedAmount },
+  data: { validatorAddress, validator, validatorName, formattedAmount },
 }: {
   data: StakingMappedDelegation;
 }) => {
-  const name = validator?.name ?? validatorAddress;
+  const name = validator?.name ?? validatorName ?? validatorAddress;
   return (
     <Box key={validatorAddress} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <EvmValidatorIcon validator={validator ?? { validatorAddress, name: validatorAddress }} />
+        <EvmValidatorIcon validator={validator ?? { validatorAddress, name }} />
         <Text ml={2} ff="Inter|Medium">
           {name}
         </Text>

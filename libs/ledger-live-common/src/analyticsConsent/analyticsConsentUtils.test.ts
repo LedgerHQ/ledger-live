@@ -71,33 +71,23 @@ describe("analyticsConsentUtils", () => {
 
   describe("resolveAnalyticsConsentPhase", () => {
     it("returns current phase when not closed", () => {
-      expect(
-        resolveAnalyticsConsentPhase("privacy", true, true, false),
-      ).toBe("privacy");
+      expect(resolveAnalyticsConsentPhase("privacy", true, true, false)).toBe("privacy");
     });
 
     it("returns consentReconfirm when renewal needed and sharing was on", () => {
-      expect(
-        resolveAnalyticsConsentPhase("closed", true, false, true),
-      ).toBe("consentReconfirm");
+      expect(resolveAnalyticsConsentPhase("closed", true, false, true)).toBe("consentReconfirm");
     });
 
     it("returns consentFresh when renewal needed and sharing was off", () => {
-      expect(
-        resolveAnalyticsConsentPhase("closed", true, false, false),
-      ).toBe("consentFresh");
+      expect(resolveAnalyticsConsentPhase("closed", true, false, false)).toBe("consentFresh");
     });
 
     it("returns privacy when only policy update needed", () => {
-      expect(
-        resolveAnalyticsConsentPhase("closed", false, true, true),
-      ).toBe("privacy");
+      expect(resolveAnalyticsConsentPhase("closed", false, true, true)).toBe("privacy");
     });
 
     it("returns consentFresh when nothing special is needed", () => {
-      expect(
-        resolveAnalyticsConsentPhase("closed", false, false, true),
-      ).toBe("consentFresh");
+      expect(resolveAnalyticsConsentPhase("closed", false, false, true)).toBe("consentFresh");
     });
   });
 });

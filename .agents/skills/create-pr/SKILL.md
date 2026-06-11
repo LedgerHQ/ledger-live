@@ -40,7 +40,7 @@ $HAS_UI_CHANGES
 
 ## Instructions
 
-**IMPORTANT**: Before any git commit, read and follow the `.agents/skills/git-workflow/SKILL.md` skill. All commit messages MUST use the gitmoji shortcode format defined there (`:gitmoji: type(scope): description`). Analyze the staged diff to pick the correct gitmoji and scope.
+**IMPORTANT**: Before any git commit, read and follow the `.agents/skills/git-workflow/SKILL.md` skill. All commit messages MUST use the Conventional Commits format defined there (`type(scope): description`). Analyze the staged diff to pick the correct type and scope.
 
 ### Step 1: Analyze the changes
 

@@ -6,6 +6,7 @@ import { useFooterViewModel } from "../useFooterViewModel";
 const mockHandleOpenBuySell = jest.fn();
 const mockHandleOpenSwap = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
+const mockUseOpenReceiveDrawer = jest.fn();
 const mockIsCurrencyAvailable = jest.fn();
 const mockIsAcceptedCurrency = jest.fn().mockReturnValue(true);
 
@@ -26,7 +27,10 @@ jest.mock("LLM/features/Swap", () => ({
 }));
 
 jest.mock("LLM/features/Receive", () => ({
-  useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer }),
+  useOpenReceiveDrawer: (params: unknown) => {
+    mockUseOpenReceiveDrawer(params);
+    return { handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer };
+  },
 }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -98,6 +102,23 @@ describe("useFooterViewModel", () => {
         page: "Asset Detail",
       });
       expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
+    });
+
+    it("forwards the multi-network ledgerIds list to useOpenReceiveDrawer", () => {
+      const ledgerIds = ["ethereum", "optimism", "arbitrum", "base"];
+      renderHook(() => useFooterViewModel(bitcoin, ledgerIds));
+
+      expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({ currency: bitcoin, currencyIds: ledgerIds }),
+      );
+    });
+
+    it("forwards currencyIds: undefined when no ledgerIds are provided", () => {
+      renderHook(() => useFooterViewModel(bitcoin));
+
+      expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({ currency: bitcoin, currencyIds: undefined }),
+      );
     });
 
     it.each(["onBuyPress", "onSwapPress", "onReceivePress"] as const)(

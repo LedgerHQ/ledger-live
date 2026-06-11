@@ -26,7 +26,7 @@ export function ToolShell({ tool, onBack }: ToolShellProps) {
         </div>
         {tool.owner && <Tag label={tool.owner} appearance="gray" size="sm" className="shrink-0" />}
       </div>
-      <div className="flex-1 p-24 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         <Component {...toolProps} />
       </div>
     </>

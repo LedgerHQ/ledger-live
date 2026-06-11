@@ -85,6 +85,7 @@ describe("getBlockV2", () => {
     expect(getBlockInfo).toHaveBeenCalledWith(42);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
+      configOrCurrencyId,
       startTimestamp: `gte:1704067200.123`,
       endTimestamp: `lt:1704067260.456`,
       limit: 100,
@@ -92,6 +93,7 @@ describe("getBlockV2", () => {
     });
     expect(hgraphClient.getERC20TransfersByTimestampRange).toHaveBeenCalledTimes(1);
     expect(hgraphClient.getERC20TransfersByTimestampRange).toHaveBeenCalledWith({
+      configOrCurrencyId,
       startTimestamp: "1704067200.123000000",
       endTimestamp: "1704067260.456000000",
       limit: 100,

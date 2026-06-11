@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
 import { log } from "@ledgerhq/logs";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   connectDeviceUseCase,
   type ConnectDeviceUIState,
@@ -25,7 +25,6 @@ import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import {
   trackDeviceConnected,
   trackDeviceConnecting,
-  trackDeviceflowStarted,
   trackDevicePrompted,
 } from "../utils/trackDeviceIntent";
 import { useSourceFlow } from "../utils/SourceFlowContext";
@@ -67,19 +66,11 @@ export function useDeviceConnectionComponentLWMViewModel({
     throw new Error("Device Management Kit is not available");
   }
 
-  // Funnel-firing guards: each of `deviceflow_started`, `device_prompted`,
-  // `device_connecting` fires at most once per ViewModel lifetime.
-  const firedRef = useRef<{ started: boolean; prompted: boolean; connecting: boolean }>({
-    started: false,
+  // Funnel-firing guards: each event fires at most once per ViewModel lifetime.
+  const firedRef = useRef({
     prompted: false,
     connecting: false,
   });
-
-  useEffect(() => {
-    if (firedRef.current.started) return;
-    firedRef.current.started = true;
-    trackDeviceflowStarted({ sourceFlow });
-  }, [sourceFlow]);
 
   useEffect(() => {
     switch (state.type) {

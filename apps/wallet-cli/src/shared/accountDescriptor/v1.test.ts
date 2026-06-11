@@ -104,9 +104,12 @@ describe("parseV1", () => {
     expect(() => parseV1(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0`)).toThrow();
   });
 
-  it.each(["xprv", "yprv", "zprv", "tprv", "uprv", "vprv"])("throws when xpub field contains a %s private extended key", prefix => {
-    expect(() => parseV1(`account:1:utxo:bitcoin:main:${prefix}SomeKey:m/84h/0h/0h`)).toThrow(
-      /private extended key/,
-    );
-  });
+  it.each(["xprv", "yprv", "zprv", "tprv", "uprv", "vprv"])(
+    "throws when xpub field contains a %s private extended key",
+    prefix => {
+      expect(() => parseV1(`account:1:utxo:bitcoin:main:${prefix}SomeKey:m/84h/0h/0h`)).toThrow(
+        /private extended key/,
+      );
+    },
+  );
 });

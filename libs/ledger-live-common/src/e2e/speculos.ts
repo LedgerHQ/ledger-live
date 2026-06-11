@@ -2,11 +2,12 @@ import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import {
   createSpeculosDevice,
-  findLatestAppCandidate,
-  listAppCandidates,
+  conventionalAppSubpath,
   releaseSpeculosDevice,
   SpeculosTransport,
 } from "../load/speculos";
+import { existsSync } from "fs";
+import path from "path";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -42,7 +43,12 @@ import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui } from "./families/sui";
 import { sendConcordium } from "./families/concordium";
-import { getNanoAppCatalogVersionMap, getSpeculosModel, isTouchDevice } from "./speculosAppVersion";
+import {
+  getDeviceFirmwareVersion,
+  getNanoAppCatalogVersionMap,
+  getSpeculosModel,
+  isTouchDevice,
+} from "./speculosAppVersion";
 import {
   pressAndRelease,
   longPressAndRelease,
@@ -338,6 +344,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Hedera_Testnet: {
+    currency: getCryptoCurrencyById("hedera_testnet"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Hedera",
+    },
+    dependencies: [],
+  },
   Sui: {
     currency: getCryptoCurrencyById("sui"),
     appQuery: {
@@ -418,6 +432,10 @@ export const specs: Specs = {
   },
 };
 
+// Resolves DeviceParams from the Provider 1 catalog (app version + firmware) and
+// the spec's model. The app binary path is deterministic via conventionalAppSubpath,
+// so we no longer scan COINAPPS — for local Docker we only verify the expected
+// .elf is present on disk (COINAPPS is still mounted into the container).
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
@@ -426,88 +444,60 @@ export async function startSpeculos(
   log("engine", `test ${testName}`);
 
   const { SEED, COINAPPS } = process.env;
-
-  const seed = SEED;
-  invariant(seed, "SEED is not set");
-  const coinapps = COINAPPS;
-  invariant(coinapps, "COINAPPS is not set");
-  const appCandidates = await listAppCandidates(coinapps);
-
-  const nanoAppCatalogPath = getEnv("E2E_NANO_APP_VERSION_PATH");
-  const catalogVersions = await getNanoAppCatalogVersionMap(nanoAppCatalogPath);
+  invariant(SEED, "SEED is not set");
 
   const { appQuery, onSpeculosDeviceCreated } = spec;
-  try {
-    const displayName = spec.currency?.managerAppName || appQuery.appName;
-    const catalogVersion = catalogVersions.get(displayName);
-    if (catalogVersion) {
-      appQuery.appVersion = catalogVersion;
-    }
-  } catch (e) {
-    console.warn("[speculos] Unable to fetch app version from catalog", e);
-  }
-
-  const appCandidate = findLatestAppCandidate(appCandidates, appQuery);
-  if (!appCandidate) {
-    console.warn("no app found for " + testName);
-    console.warn(appQuery);
-  }
-  invariant(
-    appCandidate,
-    "%s: no app found. Are you sure your COINAPPS is up to date?",
-    testName,
-    coinapps,
-  );
-
   const { model } = appQuery;
-  const { dependencies } = spec;
-  dependencies?.forEach(dependency => {
-    const catalogVersion = catalogVersions.get(dependency.name);
-    const dependencyCandidate = findLatestAppCandidate(appCandidates, {
-      model,
-      appName: dependency.name,
-      appVersion: catalogVersion,
-      firmware: appCandidate.firmware,
-    });
+  const firmware = await getDeviceFirmwareVersion(model);
 
-    invariant(
-      dependencyCandidate,
-      "%s: no dependency app found for %s %s on %s %s. Are you sure your COINAPPS is up to date?",
-      testName,
-      dependency.name,
-      catalogVersion ?? "latest local version",
-      model,
-      appCandidate.firmware,
-    );
+  const catalogVersions = await getNanoAppCatalogVersionMap(getEnv("E2E_NANO_APP_VERSION_PATH"));
 
-    dependency.appVersion = dependencyCandidate.appVersion;
+  const displayName = spec.currency?.managerAppName || appQuery.appName;
+  const appVersion = appQuery.appVersion ?? catalogVersions.get(displayName);
+  invariant(appVersion, "%s: no app version found in catalog for %s", testName, displayName);
+
+  const appName = spec.currency ? spec.currency.managerAppName : appQuery.appName;
+  const dependencies = spec.dependencies?.map(dep => {
+    const appVersion = dep.appVersion ?? catalogVersions.get(dep.name);
+    invariant(appVersion, "%s: no dependency version found in catalog for %s", testName, dep.name);
+    return { name: dep.name, appVersion };
   });
+  if (!isSpeculosRemote) {
+    invariant(COINAPPS, "COINAPPS is not set");
+    const assertElfExists = (n: string, v: string) => {
+      const fullPath = path.join(COINAPPS, conventionalAppSubpath(model, firmware, n, v));
+      invariant(existsSync(fullPath), "%s: app binary not found at %s", testName, fullPath);
+    };
+    assertElfExists(appName, appVersion);
+    dependencies?.forEach(dep => {
+      assertElfExists(dep.name, dep.appVersion);
+    });
+  }
 
-  log(
-    "engine",
-    `test ${testName} will use ${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`,
-  );
   const deviceParams = {
-    ...appCandidate,
-    appName: spec.currency ? spec.currency.managerAppName : spec.appQuery.appName,
-    seed,
+    model,
+    firmware,
+    appName,
+    appVersion: appVersion,
+    seed: SEED,
+    coinapps: COINAPPS ?? "",
     dependencies,
-    coinapps,
     onSpeculosDeviceCreated,
   };
+
+  log("engine", `test ${testName} will use ${appName} ${appVersion} on ${model} ${firmware}`);
+
   try {
-    return isSpeculosRemote
-      ? await createSpeculosDeviceCI(deviceParams)
-      : await createSpeculosDevice(deviceParams, 3, wantedApiPort).then(device => {
-          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
-          return {
-            id: device.id,
-            port: device.ports.apiPort,
-            appName: deviceParams.appName,
-            appVersion: deviceParams.appVersion,
-            dependencies: deviceParams.dependencies,
-          };
-        });
+    if (isSpeculosRemote) return await createSpeculosDeviceCI(deviceParams);
+    const device = await createSpeculosDevice(deviceParams, 3, wantedApiPort);
+    invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+    return {
+      id: device.id,
+      port: device.ports.apiPort,
+      appName,
+      appVersion: appVersion!,
+      dependencies,
+    };
   } catch (e: unknown) {
     console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);

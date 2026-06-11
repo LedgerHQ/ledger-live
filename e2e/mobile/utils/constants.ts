@@ -15,8 +15,9 @@ export const WALLET_40_FEATURE_FLAGS = {
       assetSection: true,
       operationsList: true,
       aggregatedAssets: false,
-      myWallet: false,
+      myWallet: true,
       pnl: false,
+      assetDiscoverability: false,
     },
   },
 } as const;

@@ -136,8 +136,6 @@ describe("useCounterValueCellViewModel", () => {
       initialState,
     });
 
-    expect(mockedUseCalculate).toHaveBeenCalledWith(
-      expect.objectContaining({ value: 150000000 }),
-    );
+    expect(mockedUseCalculate).toHaveBeenCalledWith(expect.objectContaining({ value: 150000000 }));
   });
 });

@@ -4,12 +4,12 @@ import { rpcClient } from "../network/rpc";
 import { deserializeTransaction } from "./utils";
 
 export const broadcast = async ({
-  configOrCurrencyId: _,
+  configOrCurrencyId,
   txWithSignature,
 }: {
   configOrCurrencyId: HederaCoinConfig | string;
   txWithSignature: string;
 }): Promise<TransactionResponse> => {
   const transaction = deserializeTransaction(txWithSignature);
-  return await rpcClient.broadcastTransaction(transaction);
+  return await rpcClient.broadcastTransaction({ configOrCurrencyId, transaction });
 };

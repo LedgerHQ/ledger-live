@@ -211,7 +211,8 @@ export async function completeExchangeLogic(
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
   const platformTransaction = deserializePlatformTransaction(transaction);
-  const { liveTx: liveTransaction } = await getPlatformTransactionSignFlowInfos(platformTransaction);
+  const { liveTx: liveTransaction } =
+    await getPlatformTransactionSignFlowInfos(platformTransaction);
 
   if (liveTransaction.family !== mainFromAccountFamily) {
     return Promise.reject(

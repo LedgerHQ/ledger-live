@@ -166,3 +166,25 @@ describe("Ledger Sync Entry Point with lwmLedgerSyncOptimisation enabled", () =>
     expect(await findByRole("button", { name: "Continue" })).toBeVisible();
   });
 });
+
+describe("Ledger Sync Entry Point with variant='v4'", () => {
+  it("accounts entry point should display the Lumen V4 banner and open activation flow", async () => {
+    const { findByRole, user } = renderWithReactQuery(
+      <TestAccountsListScreen
+        entryPoint={EntryPoint.accounts}
+        page="CryptoAddresses"
+        variant="v4"
+      />,
+      {
+        overrideInitialState: getInitialState,
+      },
+    );
+
+    const syncButton = await findByRole("button", { name: "Sync my wallet" });
+    expect(syncButton).toBeVisible();
+
+    await user.press(syncButton);
+
+    expect(await findByRole("button", { name: "Turn on Ledger Sync" })).toBeVisible();
+  });
+});

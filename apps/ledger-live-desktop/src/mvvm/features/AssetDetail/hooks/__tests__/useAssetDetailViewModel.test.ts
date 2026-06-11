@@ -106,6 +106,25 @@ describe("useAssetDetailViewModel", () => {
     });
   });
 
+  describe("distribution options", () => {
+    it("requests empty accounts so zero-balance addresses are listed", async () => {
+      route("bitcoin", { bySlug: { bitcoin: buildDistributionItem({ currency: btc }) } });
+
+      const { result } = renderHook(() => useAssetDetailViewModel(), {
+        initialState: { settings: { counterValue: "USD", hideEmptyTokenAccounts: true } },
+      });
+      await waitFor(() => expect(result.current.mode).toBe("ready"));
+
+      expect(useDistribution).toHaveBeenCalledWith(
+        expect.objectContaining({
+          groupBy: "asset",
+          showEmptyAccounts: true,
+          hideEmptyTokenAccount: true,
+        }),
+      );
+    });
+  });
+
   describe("market data source priority", () => {
     beforeEach(() => {
       route("bitcoin", { bySlug: { bitcoin: buildDistributionItem({ currency: btc }) } });
@@ -161,6 +180,7 @@ describe("useAssetDetailViewModel", () => {
       expect(vm.displayTicker).toBe(btc.ticker);
       expect(vm.ledgerCurrency).toBe(btc);
       expect(vm.ledgerId).toBe(btc.id);
+      expect(vm.ledgerIds).toEqual([btc.id]);
     });
 
     it("falls back to marketCurrencyData for name/ticker in discovery mode", async () => {

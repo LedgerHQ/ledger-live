@@ -19,8 +19,8 @@ type Props = Readonly<{
  */
 export default function ValidatorField({ delegation }: Props) {
   const { t } = useTranslation();
-  const { validator, validatorAddress, formattedAmount } = delegation;
-  const name = validator?.name ?? validatorAddress;
+  const { validator, validatorAddress, validatorName, formattedAmount } = delegation;
+  const name = validator?.name ?? validatorName ?? validatorAddress;
   return (
     <Box mb={4}>
       <Label>{t("ethereum.evmStaking.undelegation.flow.steps.amount.fields.validator")}</Label>
@@ -30,7 +30,7 @@ export default function ValidatorField({ delegation }: Props) {
             validator={
               validator ?? {
                 validatorAddress,
-                name: validatorAddress,
+                name,
               }
             }
           />

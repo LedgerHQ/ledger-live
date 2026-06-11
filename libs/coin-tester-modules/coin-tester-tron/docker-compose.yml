@@ -1,0 +1,15 @@
+services:
+  tron:
+    image: tronbox/tre:1.0.3
+    container_name: coin-tester-tron
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sf http://127.0.0.1:9090/wallet/getnowblock | grep -q blockID",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+    ports:
+      - "9090:9090"

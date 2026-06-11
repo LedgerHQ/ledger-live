@@ -31,7 +31,7 @@ const EMPTY_CONTEXT: NormalizationContext = {
  * @param feeEstimate - Wallet-side default-strategy fee estimate from
  *   {@link computeFeeEstimate}. When absent, `estimatedNetworkFee` /
  *   `approvalNetworkFee` stay undefined and `notEnoughBalanceForFees` is
- *   not emitted.
+ *   not included in `errors`.
  * @param formatContext - Locale / counter-value fiat / resolved currency
  *   metadata needed to produce `Quote.formatted`. When absent, the
  *   returned quote omits `formatted` and consumers fall back to their

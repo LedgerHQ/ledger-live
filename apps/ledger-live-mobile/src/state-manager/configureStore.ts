@@ -12,7 +12,7 @@ import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { State } from "~/reducers/types";
-import { canPushDeviceIdsSelector } from "~/reducers/settings";
+import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
 import { getEnv } from "@ledgerhq/live-env";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
@@ -32,13 +32,14 @@ export const store = configureStore({
         }),
       )
       .concat(
-        createFeatureFlagsMiddleware({
+        createFeatureFlagsMiddleware<State>({
           resolutionConfig: {
             platform: Platform.OS === "ios" ? "ios" : "android",
             appVersion: VersionNumber.appVersion ?? undefined,
             envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
           },
           fetchRemoteFlags,
+          getAppLanguage: languageSelector,
         }),
       ),
 

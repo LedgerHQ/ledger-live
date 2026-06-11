@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getEditTransactionPatch } from "@ledgerhq/coin-evm/editTransaction/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
@@ -23,21 +23,21 @@ jest.mock("@ledgerhq/coin-evm/editTransaction/index", () => ({
   getEditTransactionPatch: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/bridge/index"),
-  getAccountBridge: jest.fn(),
-}));
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const actual = jest.requireActual<Record<PropertyKey, unknown>>(
+    "@ledgerhq/live-common/bridge/index",
+  );
+  const overrides: Record<PropertyKey, unknown> = { __esModule: true, getAccountBridge: jest.fn() };
+  return new Proxy(overrides, { get: (o, k) => (k in o ? o[k] : actual[k]) });
+});
 
 jest.mock("../components/TransactionErrorBanner", () => ({
   TransactionErrorBanner: () => null,
 }));
 
-const account = genAccount("evm-step-method-account");
+const account = genAccount("evm-step-method-account", {
+  currency: getCryptoCurrencyById("ethereum"),
+});
 
 const createProps = (overrides: Partial<StepProps> = {}): StepProps =>
   ({
@@ -74,10 +74,6 @@ const createProps = (overrides: Partial<StepProps> = {}): StepProps =>
 describe("EVM EditTransaction StepMethod", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (getMainAccount as jest.Mock).mockReturnValue({
-      ...account,
-      currency: { ...account.currency, ticker: "ETH", family: "evm" },
-    });
   });
 
   it("opens EVM learn more link", async () => {
@@ -98,9 +94,10 @@ describe("EVM EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { gasPrice: new BigNumber(10) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
-      updateTransaction: bridgeUpdateTransaction,
-    });
+    const bridge = { updateTransaction: bridgeUpdateTransaction };
+    (getAccountBridge as jest.Mock).mockReturnValue(
+      Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }),
+    );
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
 
     const props = createProps({ updateTransaction, transitionTo, editType: "cancel" });
@@ -128,9 +125,10 @@ describe("EVM EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { gasPrice: new BigNumber(10) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
-      updateTransaction: bridgeUpdateTransaction,
-    });
+    const bridge2 = { updateTransaction: bridgeUpdateTransaction };
+    (getAccountBridge as jest.Mock).mockReturnValue(
+      Object.assign(Promise.resolve(bridge2), { status: "fulfilled", value: bridge2 }),
+    );
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
 
     const props = createProps({ updateTransaction, transitionTo, editType: "speedup" });

@@ -10,7 +10,12 @@ import { TonAccount, Transaction } from "@ledgerhq/coin-ton/types";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { TonTransport as Ton } from "@ton-community/ton-ledger";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import {
+  CreateSigner,
+  createMessageSigner,
+  createResolver,
+  executeWithSigner,
+} from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
 
@@ -25,7 +30,7 @@ const bridge: Bridge<Transaction, TonAccount> = createBridges(
 );
 
 const messageSigner = {
-  signMessage,
+  signMessage: createMessageSigner(createSigner, signMessage),
 };
 
 const resolver: Resolver = createResolver(createSigner, tonResolver);

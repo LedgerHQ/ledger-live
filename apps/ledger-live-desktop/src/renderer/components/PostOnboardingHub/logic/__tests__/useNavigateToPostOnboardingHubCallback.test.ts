@@ -17,24 +17,21 @@ jest.mock("react-router", () => ({
 }));
 
 const PROTECT_ID = "protect-prod";
-const RECOVER_UPSELL_URI = "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24";
+const RECOVER_UPSELL_URI =
+  "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24";
 const RECOVER_LANDING_PATH = `/recover/${PROTECT_ID}?redirectTo=upsell&source=lld-post-onboarding-banner`;
 
 const protectDesktopDefaultParams = FEATURE_FLAGS_DEFAULTS.protectServicesDesktop.params!;
 
 function featureFlagsWithRecover() {
   return withFlagOverrides({
-    lwdWallet40: {
-      enabled: true,
-      params: { finishOnboardingWidget: true },
-    },
+    onboardingWidget: { enabled: true },
     protectServicesDesktop: {
       enabled: true,
       params: {
         ...protectDesktopDefaultParams,
         protectId: PROTECT_ID,
         availableOnDesktop: true,
-        compatibleDevices: [{ name: DeviceModelId.nanoX, available: true, comingSoon: false }],
         onboardingCompleted: {
           ...protectDesktopDefaultParams.onboardingCompleted,
           upsellURI: RECOVER_UPSELL_URI,
@@ -46,10 +43,7 @@ function featureFlagsWithRecover() {
 
 function featureFlagsWithWallet40WithoutRecover() {
   return withFlagOverrides({
-    lwdWallet40: {
-      enabled: true,
-      params: { finishOnboardingWidget: true },
-    },
+    onboardingWidget: { enabled: true },
     protectServicesDesktop: { enabled: false },
   });
 }
@@ -67,9 +61,7 @@ function postOnboardingState(deviceModelId = DeviceModelId.nanoX) {
   };
 }
 
-type NavigateHookInitialState = NonNullable<
-  Parameters<typeof renderHook>[1]
->["initialState"];
+type NavigateHookInitialState = NonNullable<Parameters<typeof renderHook>[1]>["initialState"];
 
 function renderNavigateHook(initialState: NavigateHookInitialState = {}) {
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
@@ -160,7 +152,7 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
   it("should navigate to post-onboarding hub when finish widget is disabled", () => {
     const { result, store } = renderNavigateHook({
       ...withFlagOverrides({
-        lwdWallet40: { enabled: false },
+        onboardingWidget: { enabled: false },
         protectServicesDesktop: { enabled: true },
       }),
       postOnboarding: postOnboardingState(),
@@ -176,7 +168,7 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
 
   it("should replace history when navigating to post-onboarding hub with resetNavigationStack", () => {
     const { result } = renderNavigateHook({
-      ...withFlagOverrides({ lwdWallet40: { enabled: false } }),
+      ...withFlagOverrides({ onboardingWidget: { enabled: false } }),
       postOnboarding: postOnboardingState(),
     });
 

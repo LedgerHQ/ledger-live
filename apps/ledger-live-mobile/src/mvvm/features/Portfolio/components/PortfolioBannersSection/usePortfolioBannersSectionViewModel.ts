@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useTopWalletHasDisplayableContentCards } from "~/dynamicContent/useTopWalletHasDisplayableContentCards";
 import { useOnboardingWidgetVisibility } from "../../hooks/useOnboardingWidgetVisibility";
 import useShouldDisplayRecoverBanner from "../RecoverBanner/useShouldDisplayRecoverBanner";

@@ -17,7 +17,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
-import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -162,7 +163,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
       <TrackScreen
         category="DelegationFlow"
         name={route.params.skipStartedStep ? "Step Starter" : "Summary"}

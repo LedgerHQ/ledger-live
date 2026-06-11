@@ -4,7 +4,10 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
-import { AptosMappedStakingPosition, Transaction } from "@ledgerhq/live-common/families/aptos/types";
+import {
+  AptosMappedStakingPosition,
+  Transaction,
+} from "@ledgerhq/live-common/families/aptos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

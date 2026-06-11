@@ -69,7 +69,7 @@ export function getErrorDetails(error: unknown): ErrorDetails {
       : undefined;
 
   // Prefer a specific name; fall back to cause.name when top-level is generic "Error"
-  const effectiveName = name && name !== "Error" ? name : causeName ?? name;
+  const effectiveName = name && name !== "Error" ? name : (causeName ?? name);
 
   return {
     ...(effectiveName ? { name: effectiveName } : {}),

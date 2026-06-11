@@ -47,6 +47,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   [SEND_FLOW_STEP.CUSTOM_FEES]: {
     id: SEND_FLOW_STEP.CUSTOM_FEES,
     canGoBack: true,
+    floating: true,
     screenName: ScreenName.SendFlowCustomFees,
     showHeaderRight: false,
     screenOptions: {
@@ -57,6 +58,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   [SEND_FLOW_STEP.COIN_CONTROL]: {
     id: SEND_FLOW_STEP.COIN_CONTROL,
     canGoBack: true,
+    floating: true,
     screenName: ScreenName.SendFlowCoinControl,
     showHeaderRight: false,
     screenOptions: {
@@ -70,6 +72,14 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     showTitle: false,
     showHeaderRight: false,
     screenName: ScreenName.SendFlowSignature,
+    bottomSheet: true,
+    onBottomSheetClose: ({ navigation, close }) => {
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+        return;
+      }
+      close?.();
+    },
     screenOptions: {
       ...TransparentHeaderNavigationOptions,
       title: "",
@@ -78,7 +88,8 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   },
   [SEND_FLOW_STEP.CONFIRMATION]: {
     id: SEND_FLOW_STEP.CONFIRMATION,
-    canGoBack: true,
+    canGoBack: false,
+    showHeaderRight: false,
     showTitle: false,
     screenName: ScreenName.SendFlowConfirmation,
     screenOptions: {

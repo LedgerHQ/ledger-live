@@ -7,7 +7,12 @@ import icpResolver from "@ledgerhq/coin-internet_computer/signer/index";
 import { signMessage } from "@ledgerhq/coin-internet_computer/hw-signMessage";
 import type { Account, Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-internet_computer/test/cli";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import {
+  CreateSigner,
+  createMessageSigner,
+  createResolver,
+  executeWithSigner,
+} from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { TransactionStatus, Transaction } from "@ledgerhq/coin-internet_computer/types/index";
 import { ICPGetAddrResponse, ICPSignature, ICPSigner } from "./types";
@@ -42,7 +47,7 @@ const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
 );
 
 const messageSigner = {
-  signMessage,
+  signMessage: createMessageSigner(createSigner, signMessage),
 };
 
 const resolver: Resolver = createResolver(createSigner, icpResolver);

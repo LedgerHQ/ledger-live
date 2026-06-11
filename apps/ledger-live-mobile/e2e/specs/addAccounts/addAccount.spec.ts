@@ -14,6 +14,8 @@ describe("Add account from modal", () => {
         noah: {
           enabled: false,
         },
+        // `assetItem-${name}` testIDs only render under Wallet 4.0 + assetSection.
+        lwmWallet40: { enabled: true, params: { assetSection: true } },
       },
       knownDevices: [knownDevice],
     });

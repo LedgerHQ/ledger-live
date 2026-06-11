@@ -1,0 +1,63 @@
+import React, { useCallback } from "react";
+import { View, StyleSheet } from "react-native";
+import { Trans } from "~/context/Locale";
+import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
+import type {
+  BaseComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
+import type { EvmClaimRewardsFlowParamList } from "./types";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+
+type Props = BaseComposite<
+  StackNavigatorProps<EvmClaimRewardsFlowParamList, ScreenName.EvmClaimRewardsValidationSuccess>
+>;
+
+export default function ValidationSuccess({ navigation, route }: Props) {
+  const { colors } = useTheme();
+  const { account } = useAccountScreen(route);
+  const { ticker } = getAccountCurrency(account);
+  const onClose = useCallback(() => {
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
+  }, [navigation]);
+  const goToOperationDetails = useCallback(() => {
+    if (!account) return;
+    const result = route.params?.result;
+    if (!result) return;
+    navigation.navigate(ScreenName.OperationDetails, {
+      accountId: account.id,
+      operation: result,
+    });
+  }, [account, route.params, navigation]);
+  return (
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <TrackScreen
+        category="EvmClaimRewards"
+        name="ValidationSuccess"
+        flow="stake"
+        action="claim_rewards"
+        currency={ticker}
+      />
+      <PreventNativeBack />
+      <ValidateSuccess
+        onClose={onClose}
+        onViewDetails={goToOperationDetails}
+        title={<Trans i18nKey="evm.claimRewards.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="evm.claimRewards.flow.steps.verification.success.text" />}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});

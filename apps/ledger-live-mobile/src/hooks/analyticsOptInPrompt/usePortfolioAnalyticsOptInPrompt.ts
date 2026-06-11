@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useNavigation } from "@react-navigation/core";
 import { useEffect } from "react";
 import { useSelector } from "~/context/hooks";

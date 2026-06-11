@@ -44,7 +44,6 @@ const protectServicesFeature = ({
         ...protectDesktopDefaultParams,
         protectId: "protect-prod",
         bannerSubscriptionNotification,
-        compatibleDevices: [],
         onboardingCompleted: {
           ...protectDesktopDefaultParams.onboardingCompleted,
           upsellURI: onboardingUpsellUri,
@@ -122,10 +121,7 @@ describe("RecoverWidget integration", () => {
   });
 
   it("renders nothing when the upsellURI configuration is not available (prevents broken click)", async () => {
-    renderWithProvider(
-      postOnboardingActive(),
-      protectServicesFeature({ onboardingUpsellUri: "" }),
-    );
+    renderWithProvider(postOnboardingActive(), protectServicesFeature({ onboardingUpsellUri: "" }));
 
     await waitFor(() => {
       expect(screen.queryByTestId("recover-finish-onboarding-widget")).not.toBeInTheDocument();

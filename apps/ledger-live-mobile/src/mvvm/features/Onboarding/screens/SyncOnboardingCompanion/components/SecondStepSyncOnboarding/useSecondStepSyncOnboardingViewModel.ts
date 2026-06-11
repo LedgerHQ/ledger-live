@@ -6,8 +6,8 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { COMPANION_STATE } from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import { useFeature } from "@features/platform-feature-flags";
+import { COMPANION_STATE } from "../../types";
 import { UseSecondStepSyncOnboardingViewModelProps } from "./types";
 
 const ENTRY_TIMING = 300;

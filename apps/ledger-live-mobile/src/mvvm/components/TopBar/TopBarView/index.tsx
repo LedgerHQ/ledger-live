@@ -83,7 +83,7 @@ export function TopBarView({
     () =>
       hasUnreadOperations
         ? (children: React.ReactElement) => (
-            <DotIndicator appearance="red" testID="unread-indicator">
+            <DotIndicator appearance="red" size="xl" testID="unread-indicator">
               {children}
             </DotIndicator>
           )

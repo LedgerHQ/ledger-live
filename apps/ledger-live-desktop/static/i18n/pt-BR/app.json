@@ -205,6 +205,7 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
+      "FINALIZE_UNSTAKE" : "Sacado",
       "SENDING" : "Enviando",
       "BURN" : "Queimado",
       "ASSOCIATE_TOKEN" : "Associar token",
@@ -4260,8 +4261,10 @@
         "redelegateDisabledTooltip" : "Você pode delegar novamente em <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip" : "Você não pode redelegar a mais de <0>7</0> validadores por vez",
         "undelegateDisabledTooltip" : "Você não pode desdelegar mais de <0>7</0> validadores por vez",
+        "undelegateActivatingTooltip" : "Você não pode desdelegar uma aplicação ainda em ativação.",
         "reward" : "Resgatar Recompensas",
         "activeTooltip" : "Quantias delegadas geram recompensas",
+        "activatingTooltip" : "Quantias delegadas começarão a gerar recompensas na próxima epoch",
         "inactiveTooltip" : "Quantias removidas de delegação não geram recompensas",
         "minSafeWarning" : "Fundos Insuficientes",
         "commission" : "Comissão",
@@ -4274,7 +4277,8 @@
               "bullet" : ["Você continua tendo posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos estarão disponíveis após parar delegação"],
               "warning" : {
                 "description" : "Escolha seu validador com sabedoria: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
-              }
+              },
+              "seiAssociationWarning" : "Sua conta Sei ainda não foi vinculada on-chain. A delegação falhará até que sua conta tenha a primeira transação de saída confirmada on-chain. Envie primeiro uma pequena quantia de SEI para qualquer endereço, aguarde as confirmações e volte para delegar."
             },
             "amount" : {
               "title" : "Quantia"
@@ -4373,13 +4377,13 @@
     "error" : "Não foi possível carregar o gráfico",
     "rangeSelectorLabel" : "Selecione o período",
     "range" : {
-      "1D" : "1D",
-      "1W" : "1S",
-      "1M" : "1M",
-      "6M" : "6M",
-      "1Y" : "1A",
-      "5Y" : "5A",
-      "ALL" : "Todos"
+      "1d" : "1D",
+      "1w" : "1S",
+      "1m" : "1M",
+      "6m" : "6M",
+      "1y" : "1A",
+      "5y" : "5A",
+      "all" : "TUDO"
     }
   },
   "near" : {
@@ -5155,6 +5159,16 @@
       "customLockScreen" : "Ativos personalizados da tela de bloqueio",
       "customLockScreenDesc" : "Faça o debug de gráficos da tela de bloqueio",
       "customLockScreenCTA" : "Iniciar",
+      "coinConfig" : {
+        "title" : "Configurações de moedas usadas na Ledger Wallet",
+        "desc" : "Sobrescrever a configuração por moeda (RPC, explorador, gas...) para depuração local. Apenas JSON válido será aceito. As substituições persistem entre reinicializações; use “Restaurar tudo” para limpá-las.",
+        "search" : "Buscar chave de configuração (ex. config_currency_ethereum)",
+        "hint" : "Os padrões mostram as chaves `config_currency_*`. Pesquise para ver cada chave LiveConfig. Substituições são mescladas profundamente sobre o valor padrão + remoto para configurações de objeto.",
+        "restore" : "Restaurar",
+        "override" : "Sobrepor",
+        "restoreAll" : "Restaurar todas as configurações de moeda",
+        "overriddenLocally" : "sobrepostos localmente"
+      },
       "featureFlagsTitle" : "Marcadores de recursos definidos usados na Ledger Wallet",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
@@ -7188,6 +7202,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "Delegue sua conta antes de fazer staking"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "Saldo em staking insuficiente"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Esvazie todas as subcontas primeiro"
     },
@@ -8283,6 +8300,9 @@
         "value" : "Valor",
         "allocation" : "Alocação"
       }
+    },
+    "pnl" : {
+      "title" : "Ganhos e perdas"
     }
   },
   "walletSync" : {
@@ -8612,15 +8632,16 @@
   },
   "fearAndGreed" : {
     "levels" : {
+      "fearPlus" : "Medo+",
       "fear" : "Medo",
-      "cautious" : "Cauteloso",
       "neutral" : "Neutro",
-      "optimistic" : "Otimista",
-      "greedy" : "Ganancioso"
+      "greed" : "Ganância",
+      "greedPlus" : "Ganância+"
     },
     "dialog" : {
       "title" : "Índice de Sentimento",
-      "content" : "Mostra o sentimento geral do mercado de 0 a 100, com base em tendências e atividades. Use-a para entender como o mercado está se comportando: valores mais baixos indicam medo, valores mais altos indicam ganância.",
+      "content" : "Mostra o sentimento geral do mercado de 0 a 100, principalmente com base em volatilidade, momento no mercado e tendências sociais. Valores mais baixos indicam medo, valores mais altos indicam ganância.",
+      "disclaimer" : "Os dados são obtidos do índice Fear and Greed da CoinMarketCap e fornecidos apenas para fins informativos.",
       "cta" : "Entendi"
     }
   },
@@ -8928,9 +8949,9 @@
       "done" : "Feito",
       "fundYourWallet" : "Deposite fundos na sua carteira",
       "discoverSwap" : "Explorar as trocas",
-      "growYourRewards" : "Multiplique suas recompensas",
-      "spendYourCrypto" : "Gaste sua cripto",
-      "everythingAtAGlance" : "Tudo em um piscar de olhos"
+      "discoverEarn" : "Explorar rentabilidade",
+      "getCard" : "Obter um cartão",
+      "viewPortfolio" : "Ver seu portfólio"
     },
     "slides" : {
       "fund" : {
@@ -9017,25 +9038,46 @@
       "hideFromPortfolio" : "Ocultar do portfólio",
       "showInPortfolio" : "Mostrar no portfólio"
     },
+    "chartOptions" : {
+      "menu" : "Opções do gráfico",
+      "hideTransactions" : "Ocultar atividade no gráfico de preços",
+      "showTransactions" : "Mostrar atividade no gráfico de preços"
+    },
     "hiddenBanner" : {
       "description" : "Este ativo está oculto em seu portfolio.",
       "showAsset" : "Mostrar ativo"
     },
     "totalBalance" : "Saldo Total",
     "marketPrice" : "Preço de mercado",
-    "addresses" : "Endereços",
+    "addresses" : "Contas",
     "addressesDialog" : {
-      "title" : "Endereços",
-      "description" : "Todos os seus endereços que possuem {{ticker}}."
+      "title" : "Contas",
+      "description" : "Todas as suas contas que possuem {{ticker}}."
     },
     "add" : "Adicionar",
     "notFound" : "Item de distribuição de ativos não encontrado.",
     "marketStats" : "Estatísticas de mercado",
     "marketStatsTooltip" : "Métricas de mercado para este ativo.",
+    "marketCapTooltip" : "O valor total de todas as moedas em circulação. Pense nisso como o valor total da cripto no mercado.",
+    "circulatingSupplyTooltip" : "O número total de tokens atualmente disponíveis no mercado e detidos pelo público. Isso exclui tokens bloqueados, reservados ou não cunhados.",
+    "maxSupplyTooltip" : "O número máximo de tokens que poderão existir. Para alguns ativos, isso é fixo para evitar a inflação.",
     "pricePerformance" : "Desempenho de preço",
     "marketRank" : "Posição no mercado",
     "tradingVolume24h" : "Volume de negociação 24h",
+    "tradingVolume24hTooltip" : "A quantia total negociada nas últimas 24 horas.",
+    "marketStatsDisclaimer" : "Métricas do mercado obtidas do CoinGecko",
     "day" : "1 dia",
+    "week" : "1 semana",
+    "month" : "1 mês",
+    "sixMonths" : "6 meses",
+    "year" : "1 ano",
+    "fiveYears" : "5 anos",
+    "allTime" : "Todo o tempo",
+    "chart" : {
+      "received" : "Recebido",
+      "sent" : "Enviado",
+      "transactionsCount" : "{{count}} transações"
+    },
     "staking" : {
       "availableBalance" : "Saldo disponível",
       "availableBalanceTooltip" : "A parte de seus ativos que você pode usar agora, livre para enviar, trocar ou sacar a qualquer momento.",
@@ -9050,7 +9092,7 @@
     "asset" : {
       "entry" : {
         "title" : "Preço médio de entrada",
-        "tooltip" : "O preço médio que você pagou por este ativo nesta carteira, incluindo tudo o que você comprou ou recebeu de outras carteiras. Isto é usado para rastrear seu lucro ou prejuízo."
+        "tooltip" : "O preço médio que você pagou por este ativo através da Ledger Wallet, incluindo tudo o que você comprou ou recebeu de outras carteiras. Isto é usado para rastrear seu lucro ou prejuízo."
       },
       "return" : {
         "title" : "Retorno não realizado"
@@ -9060,42 +9102,46 @@
         "description" : "Um resumo do desempenho desse ativo em seu portfólio.",
         "totalReturn" : {
           "title" : "Retorno total",
-          "description" : "A soma dos retornos não realizados e realizados."
+          "description" : "A soma dos retornos estimados não realizados e realizados."
         },
         "unrealisedReturn" : {
           "title" : "Retorno não realizado",
-          "description" : "O ganho ou perda estimados se for vendido ao preço de hoje."
+          "description" : "O lucro ou prejuízo estimado se for vendido ao preço atual."
         },
         "realisedReturn" : {
           "title" : "Retorno realizado",
-          "description" : "Lucro ou prejuízo confirmado a partir de vendas ou transferências anteriores."
+          "description" : "Lucro ou prejuízo estimado a partir de venda, envio ou troca anterior."
         }
       }
     },
     "portfolio" : {
-      "return" : {
-        "title" : "Retorno não realizado"
+      "cards" : {
+        "totalReturn" : "Retorno total",
+        "unrealisedReturn" : "Retorno não realizado",
+        "realisedReturn" : "Retorno realizado"
       },
       "costBasis" : {
         "title" : "Base de custo",
         "tooltip" : "A quantia total que você pagou para adquirir suas participações atuais, incluindo taxas."
       },
+      "detail" : "Detalhes",
       "dialog" : {
         "title" : "Ganhos e perdas",
-        "description" : "O desempenho do seu portfólio está detalhado em retornos realizados e não realizados.",
+        "description" : "O desempenho do seu portfolio está detalhado em retornos estimados realizados e não realizados.",
         "totalReturn" : {
           "title" : "Retorno total",
-          "description" : "Retornos realizados e não realizados combinados, refletindo a sua posição geral."
+          "description" : "A soma dos retornos estimados não realizados e realizados."
         },
         "unrealisedReturn" : {
           "title" : "Retorno não realizado",
-          "description" : "Ganho ou perda estimada de seus investimentos atuais."
+          "description" : "O lucro ou prejuízo estimado se for vendido ao preço atual."
         },
         "realisedReturn" : {
           "title" : "Retorno realizado",
-          "description" : "Lucro ou prejuízo confirmado a partir de vendas ou transferências de saída anteriores."
+          "description" : "Lucro ou prejuízo estimado a partir de venda, envio ou troca anterior."
         }
       }
-    }
+    },
+    "disclaimer" : "Estes dados são fornecidos apenas para fins informativos e não constituem aconselhamento financeiro. Não deve ser usado para fins fiscais."
   }
 }

@@ -6,7 +6,13 @@ import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import type { RawQuote, RawQuoteError } from "./service/types";
-import { QuoteErrorCodes, type GetQuotesArgs } from "./types";
+import {
+  ProviderErrorCodes,
+  QuoteErrorCodes,
+  QuotesErrorCodes,
+  QuotesWarningCodes,
+  type GetQuotesArgs,
+} from "./types";
 
 jest.mock("./service/fetchQuotes", () => ({
   fetchQuotes: jest.fn(),
@@ -119,11 +125,79 @@ describe("getQuotes", () => {
     expect(response).toEqual({
       quotes: [],
       providerErrors: [],
-      errors: [{ code: "quoteInputResolutionFailed" }],
+      warnings: [],
+      errors: [{ code: QuotesErrorCodes.QUOTE_INPUT_RESOLUTION_FAILED }],
     });
     expect(fetchQuotesMock).not.toHaveBeenCalled();
     expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
     expect(fetchNetworkFeeContextMock).not.toHaveBeenCalled();
+  });
+
+  it("returns a Ledger Live version incompatibility error before fetching quotes", async () => {
+    const response = await getQuotes(makeArgs("aptos", "bitcoin"), {
+      ...emptyContext,
+      appVersion: { platform: "lld", version: "2.81.0" },
+    });
+
+    expect(response).toEqual({
+      quotes: [],
+      providerErrors: [],
+      warnings: [],
+      errors: [
+        {
+          code: QuotesErrorCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
+          currencyId: "aptos",
+          platform: "lld",
+          currentVersion: "2.81.0",
+          requiredVersion: "2.82.0",
+        },
+      ],
+    });
+    expect(fetchQuotesMock).not.toHaveBeenCalled();
+    expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
+    expect(fetchNetworkFeeContextMock).not.toHaveBeenCalled();
+  });
+
+  it("matches Ledger Live version incompatibility against token-only rules", async () => {
+    const response = await getQuotes(makeArgs("ethereum", "solana/spl/usdc"), {
+      ...emptyContext,
+      appVersion: { platform: "llm-ios", version: "3.75.0" },
+    });
+
+    expect(response.errors).toEqual([
+      {
+        code: QuotesErrorCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
+        currencyId: "solana/spl/usdc",
+        platform: "llm-ios",
+        currentVersion: "3.75.0",
+        requiredVersion: "3.76.0",
+      },
+    ]);
+    expect(fetchQuotesMock).not.toHaveBeenCalled();
+  });
+
+  it("skips Ledger Live version compatibility for unknown app platforms", async () => {
+    fetchQuotesMock.mockResolvedValue({ rawQuotes: [], providerErrors: [] });
+
+    const response = await getQuotes(makeArgs("aptos", "bitcoin"), {
+      ...emptyContext,
+      appVersion: { platform: "unknown", version: "2.81.0" },
+    });
+
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
+    expect(fetchQuotesMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("skips Ledger Live version compatibility when the current version cannot be parsed", async () => {
+    fetchQuotesMock.mockResolvedValue({ rawQuotes: [], providerErrors: [] });
+
+    const response = await getQuotes(makeArgs("aptos", "bitcoin"), {
+      ...emptyContext,
+      appVersion: { platform: "lld", version: "dev-build" },
+    });
+
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
+    expect(fetchQuotesMock).toHaveBeenCalledTimes(1);
   });
 
   it("drops every successful quote for an unsupported pair while forwarding providerErrors", async () => {
@@ -138,7 +212,7 @@ describe("getQuotes", () => {
     expect(response.providerErrors).toEqual([aggregatorError]);
     // Unsupported pair drops every successful quote -> the digested
     // error list is non-empty (`noQuotes` from the producer).
-    expect(response.errors).toEqual([{ code: "noQuotes" }]);
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 
   it("blocks the unsupported pair in the reverse direction as well", async () => {
@@ -151,13 +225,10 @@ describe("getQuotes", () => {
 
     expect(response.quotes).toEqual([]);
     expect(response.providerErrors).toEqual([]);
-    expect(response.errors).toEqual([{ code: "noQuotes" }]);
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 
   it("skips the provider-data fetch when the pair is unsupported", async () => {
-    // The CAL + CDN round-trip inside `fetchAndMergeProviderData` is a cold
-    // cache miss on first call; asserting the mock was not touched protects
-    // the short-circuit path from regressions.
     fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
 
     await getQuotes(makeArgs("near", "stellar"), emptyContext);
@@ -166,19 +237,13 @@ describe("getQuotes", () => {
   });
 
   it("forwards providerErrors and skips the provider-data + fee-context fetches when no rawQuotes are returned", async () => {
-    // Common error-only response: every provider rejected the request
-    // (amount-too-small, KYC required, slippage too high, etc.). Both
-    // fetchAndMergeProviderData (CAL + CDN) and fetchNetworkFeeContext
-    // (bridge.sync + prepareTransaction + getTransactionStatus) are
-    // pure waste in this case — their results would never be consumed
-    // by normalizeQuote/computeFeeEstimate.
     fetchQuotesMock.mockResolvedValue({ rawQuotes: [], providerErrors: [aggregatorError] });
 
     const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
     expect(response.quotes).toEqual([]);
     expect(response.providerErrors).toEqual([aggregatorError]);
-    expect(response.errors).toEqual([{ code: "noQuotes" }]);
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
     expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
     expect(fetchNetworkFeeContextMock).not.toHaveBeenCalled();
   });
@@ -194,10 +259,33 @@ describe("getQuotes", () => {
     expect(response.quotes).toHaveLength(1);
     expect(response.quotes[0].quoteDetails.exchangeRate).toBe(0.999);
     expect(response.providerErrors).toEqual([aggregatorError]);
+    expect(response.warnings).toEqual([]);
     // Successful quotes were returned -> the producer emits no globals,
     // even when the response carries provider-level rejection rows.
     expect(response.errors).toEqual([]);
     expect(fetchAndMergeProviderDataMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns Nano S currency incompatibility as a global warning while still fetching quotes", async () => {
+    fetchQuotesMock.mockResolvedValue({
+      rawQuotes: [makeRawQuote({ provider: "changelly_v2" })],
+      providerErrors: [],
+    });
+
+    const response = await getQuotes(makeArgs("ton", "bitcoin"), {
+      ...emptyContext,
+      deviceModelId: "nanoS",
+    });
+
+    expect(response.quotes).toHaveLength(1);
+    expect(response.warnings).toEqual([
+      {
+        code: QuotesWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
+        currencyId: "ton",
+      },
+    ]);
+    expect(response.quotes[0].warnings).toEqual([]);
+    expect(fetchQuotesMock).toHaveBeenCalledTimes(1);
   });
 
   describe("digested global errors (computeQuotesErrors integration)", () => {
@@ -207,14 +295,14 @@ describe("getQuotes", () => {
         rawQuotes: [],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "lifi",
             message: "min",
             parameter: { minAmount: "10" },
           },
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "okx",
             message: "min",
@@ -229,8 +317,8 @@ describe("getQuotes", () => {
       );
 
       expect(response.errors).toEqual([
-        { code: "noQuotes" },
-        { code: "amountTooLow", minAmount: "10" },
+        { code: QuotesErrorCodes.NO_QUOTES },
+        { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "10" },
       ]);
     });
 
@@ -239,14 +327,14 @@ describe("getQuotes", () => {
         rawQuotes: [],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "lifi",
             message: "max",
             parameter: { maxAmount: "100" },
           },
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "okx",
             message: "max",
@@ -261,8 +349,8 @@ describe("getQuotes", () => {
       );
 
       expect(response.errors).toEqual([
-        { code: "noQuotes" },
-        { code: "amountTooHigh", maxAmount: "150" },
+        { code: QuotesErrorCodes.NO_QUOTES },
+        { code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "150" },
       ]);
     });
 
@@ -271,7 +359,7 @@ describe("getQuotes", () => {
         rawQuotes: [makeRawQuote()],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "okx",
             message: "min",
@@ -293,7 +381,7 @@ describe("getQuotes", () => {
         rawQuotes: [makeRawQuote()],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "lifi",
             message: "min",
@@ -307,8 +395,8 @@ describe("getQuotes", () => {
       // Unsupported-pair short-circuit forces successful quotes to 0. The
       // providerErrors still flow through, so amount_off_limits can stack too.
       expect(response.errors).toEqual([
-        { code: "noQuotes" },
-        { code: "amountTooLow", minAmount: "10" },
+        { code: QuotesErrorCodes.NO_QUOTES },
+        { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "10" },
       ]);
     });
   });

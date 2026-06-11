@@ -52,7 +52,6 @@ describe("useGenericAwarenessModalLogic", () => {
         { cards: [appStartContentCard] },
         {
           enabled: true,
-          isFocused: true,
           isOpen: false,
           open,
         },
@@ -73,7 +72,6 @@ describe("useGenericAwarenessModalLogic", () => {
         { campaignId: deeplinkContentCard.id, cards: [deeplinkContentCard] },
         {
           enabled: true,
-          isFocused: true,
           isOpen: true,
           open,
         },
@@ -91,25 +89,6 @@ describe("useGenericAwarenessModalLogic", () => {
         { cards: [appStartContentCard] },
         {
           enabled: false,
-          isFocused: true,
-          isOpen: false,
-          open,
-        },
-      ),
-    );
-
-    expect(open).not.toHaveBeenCalled();
-  });
-
-  it("should not open when portfolio is not focused", () => {
-    const open = jest.fn();
-
-    renderHook(() =>
-      useGenericAwarenessModalLogic(
-        { cards: [appStartContentCard] },
-        {
-          enabled: true,
-          isFocused: false,
           isOpen: false,
           open,
         },

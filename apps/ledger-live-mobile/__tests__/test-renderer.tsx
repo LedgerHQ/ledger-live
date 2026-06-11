@@ -18,7 +18,7 @@ import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
-import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
+import { FeatureFlagsContextBridge } from "~/components/FeatureFlagsContextBridge";
 import { i18n } from "~/context/Locale";
 import reducers from "~/reducers";
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
@@ -53,7 +53,6 @@ import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/fea
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
-import { getFeature } from "./featureFlags";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 
 const INITIAL_STATE: State = {
@@ -63,7 +62,8 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
-  featureFlags: FEATURE_FLAGS_INITIAL_STATE,
+  // Seed the boot-readiness gate as settled so tests mounting `WaitForAppReady` don't block.
+  featureFlags: { ...FEATURE_FLAGS_INITIAL_STATE, remoteFlagsReady: true },
   history: HISTORY_INITIAL_STATE,
   identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
@@ -108,7 +108,24 @@ type CountervaluesChildren = React.ComponentProps<typeof CountervaluesProvider>[
 type WrapperProps = { children?: NavigationChildren };
 
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
-  const state = overrideInitialState(INITIAL_STATE);
+  const transformed = overrideInitialState(INITIAL_STATE);
+  // Mirror the slice's resolution chain (override > default) so tests that mutate
+  // `featureFlags.overrides` directly (custom helpers, ad-hoc state shaping) get a
+  // `resolved` consistent with their overrides — the Redux-backed `useFeature` reads
+  // from `resolved`, not `overrides`. `withFlagOverrides` already does this; this
+  // safety net covers everything else.
+  const state: State = {
+    ...transformed,
+    featureFlags: {
+      ...transformed.featureFlags,
+      resolved: {
+        ...FEATURE_FLAGS_DEFAULTS,
+        ...Object.fromEntries(
+          Object.entries(transformed.featureFlags.overrides).filter(([, v]) => v !== undefined),
+        ),
+      } as Features,
+    },
+  };
 
   return configureStore({
     reducer: reducers,
@@ -175,6 +192,12 @@ function withFlagOverrides(
           ...base.featureFlags.overrides,
           ...(merged as unknown as PartialFeatures),
         },
+        // Mirror the slice's resolution chain (override > default) so hooks reading
+        // from `resolved` see the override immediately, without needing an action dispatch.
+        resolved: {
+          ...base.featureFlags.resolved,
+          ...merged,
+        } as Features,
       },
     };
   };
@@ -267,11 +290,11 @@ function Providers({
   // General Providers needed for all render types
   let providers = (
     <Provider store={store}>
-      <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+      <FeatureFlagsContextBridge>
         <CountervaluesProviders store={store}>
           <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
         </CountervaluesProviders>
-      </FirebaseFeatureFlagsProvider>
+      </FeatureFlagsContextBridge>
     </Provider>
   );
 

@@ -18,11 +18,7 @@ import {
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
-import {
-  LockedDeviceError,
-  SolAppPleaseEnableContractData,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 
 export type DAError =
   | GetAddressDAError
@@ -53,33 +49,16 @@ export class DmkSignerSol implements SolanaSigner {
   }
 
   private _mapError<E extends DAError>(error: E): Error {
-    if (
-      typeof error.originalError !== "object" ||
-      error.originalError === null ||
-      !("errorCode" in error.originalError)
-    ) {
+    if (!("errorCode" in error) || typeof error.errorCode !== "string") {
       return new Error(error._tag);
     }
-    if (
-      typeof error.originalError === "object" &&
-      error.originalError !== null &&
-      "errorCode" in error.originalError &&
-      typeof error.originalError.errorCode === "string"
-    ) {
-      switch (error.originalError.errorCode) {
-        case "5515":
-          return new LockedDeviceError();
-        case "6985":
-          return new UserRefusedOnDevice();
-        case "6808":
-          return new SolAppPleaseEnableContractData(
-            "Please enable Blind signing in the Solana app Settings",
-          );
-        default:
-          return new Error(error._tag);
-      }
-    } else {
-      return new Error(error._tag);
+    switch (error.errorCode) {
+      case "5515":
+        return new LockedDeviceError();
+      case "6985":
+        return new UserRefusedOnDevice();
+      default:
+        return new Error(error._tag);
     }
   }
 

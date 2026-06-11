@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Linking } from "react-native";
 import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";

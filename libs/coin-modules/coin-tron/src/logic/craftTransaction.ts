@@ -22,7 +22,7 @@ export async function craftTransaction(
 
   if (asset.type === "trc20" && asset.assetReference) {
     const fees = customFees?.value;
-    if (fees !== undefined && (fees <= 0 || fees > Number.MAX_SAFE_INTEGER)) {
+    if (fees !== undefined && (fees < 0n || fees > BigInt(Number.MAX_SAFE_INTEGER))) {
       throw new Error(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
       );

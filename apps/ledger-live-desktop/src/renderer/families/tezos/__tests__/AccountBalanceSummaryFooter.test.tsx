@@ -10,6 +10,11 @@ import type { TokenAccount } from "@ledgerhq/types-live";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 
+jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
+}));
+
 jest.mock("~/renderer/hooks/useAccountUnit");
 
 type StakingInfo = ReturnType<

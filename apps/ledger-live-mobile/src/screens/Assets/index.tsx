@@ -1,20 +1,20 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { FlatList, FlatListProps } from "react-native";
+import { FlatList, FlatListProps, type ListRenderItem } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
 import { isUpToDateSelector } from "~/reducers/accounts";
 import TrackScreen from "~/analytics/TrackScreen";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
+import AssetRow from "../WalletCentricAsset/AssetRow";
 
 import Spinning from "~/components/Spinning";
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
@@ -26,7 +26,6 @@ import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
 function Assets() {
-  const navigation = useNavigation<NavigationProp>();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -67,9 +66,9 @@ function Assets() {
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: Asset }) => <AssetRow asset={item} navigation={navigation} />,
-    [navigation],
+  const renderItem = useCallback<ListRenderItem<Asset>>(
+    ({ item }) => <AssetRow asset={item} />,
+    [],
   );
 
   return (

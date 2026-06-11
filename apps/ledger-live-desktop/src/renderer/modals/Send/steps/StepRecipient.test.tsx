@@ -8,7 +8,9 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import StepRecipient from "./StepRecipient";
 
 jest.mock("~/renderer/families");
-const mockUseAccountBridgeOrNull = jest.fn(() => ({ getStuckAccountAndOperation: () => undefined }));
+const mockUseAccountBridgeOrNull = jest.fn(() => ({
+  getStuckAccountAndOperation: () => undefined,
+}));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridgeOrNull: () => mockUseAccountBridgeOrNull(),
 }));

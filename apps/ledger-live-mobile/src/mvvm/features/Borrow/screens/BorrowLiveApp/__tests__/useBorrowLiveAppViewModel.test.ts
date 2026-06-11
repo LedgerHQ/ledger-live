@@ -1,7 +1,10 @@
 import { renderHook } from "@tests/test-renderer";
 import { useNetInfo } from "@react-native-community/netinfo";
 import type { NetInfoState } from "@react-native-community/netinfo";
-import { useRemoteLiveAppContext, useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import {
+  useRemoteLiveAppContext,
+  useRemoteLiveAppManifest,
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
@@ -40,19 +43,16 @@ jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
   getCountryLocale: jest.fn(),
 }));
 
-const mockManifest = { id: "borrow", url: "https://borrow.example.com" } as unknown as LiveAppManifest;
+const mockManifest = {
+  id: "borrow",
+  url: "https://borrow.example.com",
+} as unknown as LiveAppManifest;
 
 const setNetInfoState = (state: { isConnected: boolean | null }) => {
   jest.mocked(useNetInfo).mockReturnValue(state as NetInfoState);
 };
 
-const setManifests = ({
-  local,
-  remote,
-}: {
-  local?: LiveAppManifest;
-  remote?: LiveAppManifest;
-}) => {
+const setManifests = ({ local, remote }: { local?: LiveAppManifest; remote?: LiveAppManifest }) => {
   jest.mocked(useLocalLiveAppManifest).mockReturnValue(local);
   jest.mocked(useRemoteLiveAppManifest).mockReturnValue(remote);
 };
@@ -80,7 +80,10 @@ describe("useBorrowLiveAppViewModel", () => {
   });
 
   it("should prefer local manifest over remote", () => {
-    const localManifest = { id: "borrow-local", url: "https://local.example.com" } as unknown as LiveAppManifest;
+    const localManifest = {
+      id: "borrow-local",
+      url: "https://local.example.com",
+    } as unknown as LiveAppManifest;
     setManifests({ local: localManifest, remote: mockManifest });
 
     const { result } = renderHook(() => useBorrowLiveAppViewModel());

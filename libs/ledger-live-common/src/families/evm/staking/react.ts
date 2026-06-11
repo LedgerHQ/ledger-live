@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  getValidators,
-  getCachedValidators,
-  mapDelegations,
-} from "@ledgerhq/coin-evm/staking/index";
+import { getValidators, mapDelegations } from "@ledgerhq/coin-evm/staking/index";
+import type { Cursor } from "@ledgerhq/coin-module-framework/api/index";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import type { StakingAccount, StakingMappedDelegation } from "./types";
 import { getAccountCurrency } from "../../../account";
@@ -34,36 +31,45 @@ export function useEvmStakingValidators(
   currencyId: string,
   searchInput?: string,
 ): EvmStakingValidatorsState {
-  // Seed from the in-memory cache (populated by a previous mount or prefetch).
-  // Single read avoids redundant work and inconsistent TTL boundary at init.
-  const [fetchState, setFetchState] = useState<FetchState>(() => {
-    const cached = getCachedValidators(currencyId);
-    return { items: cached ?? [], loading: !cached, error: null };
+  const [fetchState, setFetchState] = useState<FetchState>({
+    items: [],
+    loading: true,
+    error: null,
   });
 
   useEffect(() => {
     // guards against stale resolutions when currencyId changes
     let cancelled = false;
 
-    const cached = getCachedValidators(currencyId);
-    setFetchState({ items: cached ?? [], loading: !cached, error: null });
+    setFetchState({ items: [], loading: true, error: null });
 
-    getValidators(currencyId)
-      .then(items => {
-        if (cancelled) return;
-        setFetchState(s => ({ ...s, items }));
-      })
-      .catch(err => {
+    // Walk every page: keep fetching while the API hands back a cursor. Items are
+    // appended progressively so the list grows as pages arrive (a warm LRU entry
+    // resolves on the next microtask, so for single-page chains this is momentary).
+    const getAllValidators = async () => {
+      try {
+        const items: StakingValidatorItem[] = [];
+        let cursor: Cursor | undefined;
+
+        do {
+          const result = await getValidators(currencyId, cursor);
+          if (cancelled) return;
+
+          items.push(...result.items);
+          cursor = result.next;
+          setFetchState({ items: [...items], loading: typeof cursor === "string", error: null });
+        } while (typeof cursor === "string");
+      } catch (err) {
         if (cancelled) return;
         setFetchState(s => ({
           ...s,
+          loading: false,
           error: err instanceof Error ? err : new Error(String(err)),
         }));
-      })
-      .finally(() => {
-        if (cancelled) return;
-        setFetchState(s => ({ ...s, loading: false }));
-      });
+      }
+    };
+
+    void getAllValidators();
 
     return () => {
       cancelled = true;
@@ -78,7 +84,14 @@ export function useEvmStakingValidators(
         if (!query) return true;
         return v.name.toLowerCase().includes(query);
       })
-      .sort((a, b) => b.tokens - a.tokens);
+      .sort((a, b) => {
+        const aTokens = BigInt(a.tokens);
+        const bTokens = BigInt(b.tokens);
+
+        if (bTokens > aTokens) return 1;
+        if (bTokens < aTokens) return -1;
+        return 0;
+      });
   }, [fetchState.items, searchInput]);
 
   return {
@@ -128,7 +141,7 @@ export function useEvmFamilyDelegationsQuerySelector(
   const options = useMemo<StakingMappedDelegation[]>(
     () =>
       mappedDelegations.filter(delegation =>
-        (delegation.validator?.name ?? delegation.validatorAddress)
+        (delegation.validator?.name ?? delegation.validatorName ?? delegation.validatorAddress)
           .toLowerCase()
           .includes(query.toLowerCase().trim()),
       ),

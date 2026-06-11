@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   analyticsConsentInfoSelector,
   analyticsEnabledSelector,

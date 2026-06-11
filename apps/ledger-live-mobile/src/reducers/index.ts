@@ -16,7 +16,7 @@ import history from "./history";
 import inView from "./inView";
 import knownDevices from "./knownDevices";
 import largeMover from "./largeMover";
-import market from "./market";
+import market, { marketListConfigReducer } from "./market";
 import modularDrawer from "./modularDrawer";
 import receiveOptionsDrawer from "./receiveOptionsDrawer";
 import rebornBuyDeviceDrawer from "./rebornBuyDeviceDrawer";
@@ -58,6 +58,7 @@ const appReducer = combineReducers({
   knownDevices,
   largeMover,
   market,
+  marketListConfig: marketListConfigReducer,
   modularDrawer,
   receiveOptionsDrawer,
   rebornBuyDeviceDrawer,

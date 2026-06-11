@@ -150,5 +150,4 @@ describe("LiveAppModal integration", () => {
 
     expect(screen.queryByTestId("web3-app-webview")).toBeNull();
   });
-
 });

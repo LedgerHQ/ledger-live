@@ -4,14 +4,13 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import styled, { useTheme } from "styled-components/native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProgressBar from "~/components/ProgressBar";
 import CounterValue from "~/components/CounterValue";
 import { ensureContrast } from "../../colors";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { NavigatorName, ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;
@@ -63,7 +62,7 @@ const DistributionRow = styled(Flex).attrs({
 
 function DistributionCard({ item: { currency, amount, distribution } }: Props) {
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const { openFromAsset } = useAssetDetailNavigation();
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.background.main),
     [colors, currency],
@@ -71,13 +70,8 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
   const percentage = Math.round(distribution * 1e4) / 1e2;
 
   const navigateToAccounts = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Asset,
-      params: {
-        currency,
-      },
-    });
-  }, [currency, navigation]);
+    openFromAsset({ currency, source: "analytics_distribution" });
+  }, [currency, openFromAsset]);
 
   return (
     <Container onPress={navigateToAccounts}>

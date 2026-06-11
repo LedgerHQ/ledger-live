@@ -343,6 +343,13 @@
     "lint:fix": {
       "cache": false
     },
+    "format:check": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default"
+      ]
+    },
     "check-export-rules": {
       "cache": false
     },

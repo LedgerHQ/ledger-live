@@ -49,7 +49,7 @@ export function genericPrepareTransaction(
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
     const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
-    const bridgeApi = getBridgeApi(account.currency, network);
+    const bridgeApi = await getBridgeApi(account.currency, network);
 
     const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
     const { assetReference, assetOwner } = getAssetFromTokenForCurrency

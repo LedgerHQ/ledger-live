@@ -22,7 +22,10 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { NearAccount, Transaction as NearTransaction } from "@ledgerhq/live-common/families/near/types";
+import {
+  NearAccount,
+  Transaction as NearTransaction,
+} from "@ledgerhq/live-common/families/near/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 
 export type Data = {

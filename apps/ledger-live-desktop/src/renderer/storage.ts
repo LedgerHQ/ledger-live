@@ -52,6 +52,7 @@ type DatabaseValues = {
   market: Market;
   cryptoAssets: PersistedCAL;
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
+  coinConfigOverrides: { overrides: Record<string, unknown> };
   identities: PersistedIdentities;
   history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {

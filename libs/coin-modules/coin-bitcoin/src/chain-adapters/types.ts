@@ -33,6 +33,16 @@ export interface ChainAdapter {
     syncConfig: SyncConfig,
   ): Observable<Partial<BitcoinAccount>> | undefined;
 
+  /**
+   * Combine the freshly-synced transparent balance with any chain-specific
+   * off-transparent funds (e.g. Zcash shielded notes) to produce the account
+   * balance. Omit to use the transparent balance unchanged.
+   */
+  computeAccountBalance?(
+    account: BitcoinAccount | undefined,
+    transparentBalance: BigNumber,
+  ): BigNumber;
+
   /** Serialize chain-specific account fields into their raw form. */
   assignToAccountRaw?(account: Account, accountRaw: AccountRaw): void;
 

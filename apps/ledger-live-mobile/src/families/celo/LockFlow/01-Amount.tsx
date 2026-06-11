@@ -1,13 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Switch,
-  Keyboard,
-} from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback, Switch, Keyboard } from "react-native";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -44,15 +38,18 @@ export default function LockAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(bridge, () => {
-    const t = bridge.createTransaction(mainAccount);
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(
+    bridge,
+    () => {
+      const t = bridge.createTransaction(mainAccount);
 
-    const transaction = bridge.updateTransaction(t, {
-      mode: "lock",
-    });
+      const transaction = bridge.updateTransaction(t, {
+        mode: "lock",
+      });
 
-    return { account: mainAccount, transaction };
-  });
+      return { account: mainAccount, transaction };
+    },
+  );
 
   const debouncedTransaction = useDebounce(transaction, 500);
 
@@ -120,7 +117,10 @@ export default function LockAmount({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="LockFlow" name="Amount" flow="stake" action="lock" currency="celo" />
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+        edges={["bottom"]}
+      >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={[styles.root, { backgroundColor: colors.background }]}>

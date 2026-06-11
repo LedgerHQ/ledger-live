@@ -46,12 +46,6 @@ jest.mock("~/reducers/wallet", () => ({
   useAccountName: () => "My Tezos Account",
 }));
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getAccountCurrency: (a: { currency?: unknown }) =>
-    a.currency ?? { id: "tezos", ticker: "XTZ", units: [] },
-}));
-
 jest.mock("../../BakerImage", () => () => null);
 jest.mock("~/icons/images/Rewards", () => () => null);
 

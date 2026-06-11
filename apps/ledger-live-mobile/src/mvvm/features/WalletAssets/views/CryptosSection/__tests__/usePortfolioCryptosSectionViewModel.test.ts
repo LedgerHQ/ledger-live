@@ -139,7 +139,9 @@ describe("usePortfolioCryptosSectionViewModel", () => {
   describe("onPressShowAll", () => {
     it("should navigate to Crypto screen when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
-        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection: true } } }),
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { assetSection: true } },
+        }),
       });
 
       act(() => {
@@ -157,7 +159,9 @@ describe("usePortfolioCryptosSectionViewModel", () => {
 
     it("should navigate to legacy Assets screen when assetSection is disabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
-        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection: false } } }),
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { assetSection: false } },
+        }),
       });
 
       act(() => {

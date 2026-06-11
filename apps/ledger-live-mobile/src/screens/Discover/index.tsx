@@ -3,7 +3,7 @@ import { Linking, Platform, ScrollView } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import Illustration from "~/images/illustration/Illustration";

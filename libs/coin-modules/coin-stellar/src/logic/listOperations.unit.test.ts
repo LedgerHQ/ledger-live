@@ -174,7 +174,7 @@ describe("listOperations", () => {
           value: 505000000n,
         },
       ],
-      next: "token3",
+      next: "",
     });
   });
 
@@ -355,7 +355,7 @@ describe("listOperations", () => {
           },
         },
       ],
-      next: "token1",
+      next: "",
     });
   });
 

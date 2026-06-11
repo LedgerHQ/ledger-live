@@ -1,27 +1,27 @@
 import React from "react";
-import { render } from "@tests/test-renderer";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { Linking } from "react-native";
+import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   AppInteractionRequiredStateType,
   type DeprecationScreenKind,
 } from "@ledgerhq/live-dmk-shared";
+import { TrackScreen, track } from "~/analytics";
 import { DeviceDeprecatedNonBlockingState } from "./DeviceDeprecatedNonBlockingState";
-import {
-  DeviceDeprecationScreen,
-  DeviceDeprecationScreens,
-} from "~/components/DeviceAction/Screen/DeviceDeprecationScreen";
+import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";
 
-jest.mock("~/components/DeviceAction/Screen/DeviceDeprecationScreen", () => {
-  const actual = jest.requireActual("~/components/DeviceAction/Screen/DeviceDeprecationScreen");
+jest.mock("~/analytics", () => {
+  const actual = jest.requireActual("~/analytics");
   return {
     ...actual,
-    DeviceDeprecationScreen: jest.fn(() => null),
+    TrackScreen: jest.fn(() => null),
+    track: jest.fn(),
   };
 });
 
-const mockedDeviceDeprecationScreen = jest.mocked(DeviceDeprecationScreen);
+const mockedTrackScreen = jest.mocked(TrackScreen);
+const mockedTrack = jest.mocked(track);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -49,6 +49,7 @@ function renderState(screenSequence: DeprecationScreenKind[]) {
         onContinue,
       }}
       device={device}
+      sourceFlow="my_ledger"
       onCancel={jest.fn()}
     />,
   );
@@ -58,56 +59,83 @@ function renderState(screenSequence: DeprecationScreenKind[]) {
 const screenSequenceCases: {
   name: string;
   screenSequence: DeprecationScreenKind[];
-  expectedScreenName: DeviceDeprecationScreens;
-  expectedDisplayClearSigningWarning: boolean;
+  expectedTitle: RegExp;
 }[] = [
   {
     name: "warning + clearSigning",
     screenSequence: ["warning", "clearSigning"],
-    expectedScreenName: DeviceDeprecationScreens.warningScreen,
-    expectedDisplayClearSigningWarning: true,
+    expectedTitle: /Bitcoin support on Ledger Nano S™ via Ledger Live™ will end/,
   },
   {
     name: "warning only",
     screenSequence: ["warning"],
-    expectedScreenName: DeviceDeprecationScreens.warningScreen,
-    expectedDisplayClearSigningWarning: false,
+    expectedTitle: /Bitcoin support on Ledger Nano S™ via Ledger Live™ will end/,
   },
   {
     name: "clearSigning only",
     screenSequence: ["clearSigning"],
-    expectedScreenName: DeviceDeprecationScreens.clearSigningScreen,
-    expectedDisplayClearSigningWarning: true,
+    expectedTitle: /Ledger Nano S™ can not Clear Sign this transaction/,
   },
   {
     name: "empty sequence",
     screenSequence: [],
-    expectedScreenName: DeviceDeprecationScreens.clearSigningScreen,
-    expectedDisplayClearSigningWarning: false,
+    expectedTitle: /Ledger Nano S™ can not Clear Sign this transaction/,
   },
 ];
 
 describe("DeviceDeprecatedNonBlockingState", () => {
   beforeEach(() => {
-    mockedDeviceDeprecationScreen.mockClear();
+    jest.clearAllMocks();
+    jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
   it.each(screenSequenceCases)(
-    "should render the deprecation screen for sequence: $name",
-    ({ screenSequence, expectedScreenName, expectedDisplayClearSigningWarning }) => {
-      const { onContinue } = renderState(screenSequence);
+    "GIVEN the $name screen sequence WHEN rendering THEN it renders the matching deprecation screen",
+    ({ screenSequence, expectedTitle }) => {
+      renderState(screenSequence);
 
-      expect(mockedDeviceDeprecationScreen).toHaveBeenCalledTimes(1);
-      expect(mockedDeviceDeprecationScreen.mock.calls[0][0]).toEqual(
-        expect.objectContaining({
-          coinName: "Bitcoin",
-          date: supportEndDate,
-          onContinue,
-          productName: getDeviceModel(DeviceModelId.nanoS).productName,
-          screenName: expectedScreenName,
-          displayClearSigningWarning: expectedDisplayClearSigningWarning,
-        }),
-      );
+      expect(screen.getByText(expectedTitle)).toBeVisible();
     },
   );
+
+  it("GIVEN the non-blocking deprecation state WHEN rendering THEN it fires the page event with sourceFlow and modelId", () => {
+    renderState(["warning"]);
+
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: PAGE_CONNECT_APP.DeviceDeprecatedWarning,
+        sourceFlow: "my_ledger",
+        modelId: DeviceModelId.europa,
+        deviceUxV2: true,
+      }),
+      undefined,
+    );
+  });
+
+  it("GIVEN the non-blocking deprecation state WHEN pressing Continue THEN it tracks Continue and forwards to onContinue", async () => {
+    const { onContinue, user } = renderState(["warning"]);
+
+    await user.press(screen.getByTestId("enabled-warning-deprecation-continue"));
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.europa,
+      button: "Continue",
+    });
+    expect(onContinue).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN the non-blocking deprecation state WHEN pressing the upgrade CTA THEN it tracks the canonical button value", async () => {
+    const { user } = renderState(["warning"]);
+
+    await user.press(screen.getByText("Discover your Upgrade Program"));
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      sourceFlow: "my_ledger",
+      deviceUxV2: true,
+      modelId: DeviceModelId.europa,
+      button: "Discover Upgrade Program",
+    });
+  });
 });

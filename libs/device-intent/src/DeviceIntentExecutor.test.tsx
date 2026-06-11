@@ -78,6 +78,16 @@ const ConnectionComponent: React.FC<{
   </div>
 );
 
+const AutoConnectingComponent: React.FC<{
+  onConnected: (r: DeviceConnectionResult) => void;
+}> = ({ onConnected }) => {
+  React.useEffect(() => {
+    onConnected(makeConnectionResult());
+  }, [onConnected]);
+
+  return <div data-testid="auto-connection" />;
+};
+
 const InitializerComponent: React.FC<{
   onContextInitialized: (ctx: DeviceExtractedContext) => void;
   onClose: () => void;
@@ -103,6 +113,7 @@ const InitializerComponent: React.FC<{
 );
 
 const DeviceDisconnectedComponent: React.FC<{
+  device: DeviceConnectionResult["connectedDevice"];
   onRetry: () => void;
   onClose: () => void;
 }> = ({ onRetry, onClose }) => (
@@ -118,6 +129,7 @@ const DeviceDisconnectedComponent: React.FC<{
 
 const IntentErrorComponent: React.FC<{
   error: unknown;
+  device: DeviceConnectionResult["connectedDevice"];
   onRetry: () => void;
   onClose: () => void;
 }> = ({ onRetry, onClose }) => (
@@ -182,6 +194,22 @@ describe("DeviceIntentExecutor (integration)", () => {
     const props = makeProps();
     render(<DeviceIntentExecutor {...props} />);
     expect(screen.getByTestId("connection")).toBeTruthy();
+  });
+
+  it("GIVEN the connection component connects from its mount effect WHEN rendering THEN it reaches device initialization", async () => {
+    // GIVEN
+    const props = makeProps({
+      platformConfig: {
+        ...platformConfig,
+        DeviceConnectionComponent: AutoConnectingComponent,
+      },
+    });
+
+    // WHEN
+    render(<DeviceIntentExecutor {...props} />);
+
+    // THEN
+    expect(await screen.findByTestId("initializer")).toBeTruthy();
   });
 
   it("renders nothing when enabled is false", () => {
@@ -343,15 +371,16 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const onRetry = jest.fn();
       const onClose = jest.fn();
+      const device = makeConnectionResult().connectedDevice;
       const props = makeUnitProps(
-        { phase: "deviceDisconnected", onRetry, onClose },
+        { phase: "deviceDisconnected", device, onRetry, onClose },
         { platformConfig: mockConfig },
       );
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("device-disconnected")).toBeTruthy();
       expect(mockConfig.DeviceDisconnectedComponent).toHaveBeenCalledWith(
-        { onRetry, onClose },
+        { device, onRetry, onClose },
         undefined,
       );
     });
@@ -419,15 +448,16 @@ describe("DeviceIntentExecutor (unit)", () => {
       const error = new Error("job fail");
       const onRetry = jest.fn();
       const onClose = jest.fn();
+      const device = makeConnectionResult().connectedDevice;
       const props = makeUnitProps(
-        { phase: "intentError", error, onRetry, onClose },
+        { phase: "intentError", error, device, onRetry, onClose },
         { platformConfig: mockConfig },
       );
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("intent-error")).toBeTruthy();
       expect(mockConfig.IntentErrorComponent).toHaveBeenCalledWith(
-        { error, onRetry, onClose },
+        { error, device, onRetry, onClose },
         undefined,
       );
     });

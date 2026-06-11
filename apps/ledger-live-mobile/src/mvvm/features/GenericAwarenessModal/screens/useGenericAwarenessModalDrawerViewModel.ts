@@ -1,8 +1,13 @@
-import { useCallback, useEffect, useRef } from "react";
-import { useIsFocused } from "@react-navigation/native";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { GenericAwarenessModalLayout } from "@ledgerhq/live-common/genericAwarenessModal";
+import { useFeature } from "@features/platform-feature-flags";
+import {
+  GenericAwarenessModalLayout,
+  type GenericAwarenessModalCarousel,
+  type GenericAwarenessModalContentCard,
+  type GenericAwarenessModalFeatureIntro,
+  type GenericAwarenessModalPrompt,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setDismissedContentCard } from "~/actions/settings";
 import {
@@ -21,42 +26,41 @@ import {
   trackGenericAwarenessModalDismissed,
   trackGenericAwarenessModalFeatureIntroViewed,
   trackGenericAwarenessModalMalformedUrl,
+  trackGenericAwarenessModalPromptViewed,
   trackGenericAwarenessModalTourCompleted,
 } from "../analytics";
 
-export function useGenericAwarenessModalDrawerViewModel() {
-  const dispatch = useDispatch();
-  const currentCarouselSlideIndexRef = useRef(0);
+export type FeatureIntroViewModel = Readonly<{
+  content: GenericAwarenessModalFeatureIntro;
+  onPrimaryPress: () => void;
+  onSecondaryPress: () => void;
+}>;
+
+export type CarouselViewModel = Readonly<{
+  content: GenericAwarenessModalCarousel;
+  getCurrentSlideIndex: () => number;
+  onSlideViewed: (slideIndex: number, isLastSlide: boolean) => void;
+  onNavigationPress: (slideIndex: number, button: string, isLastSlide: boolean) => void;
+  onPrimaryPress: (slideIndex: number) => void;
+  onMalformedUrl: (slideIndex: number) => void;
+}>;
+
+export type PromptViewModel = Readonly<{
+  content: GenericAwarenessModalPrompt;
+  onClosePress: () => void;
+  onPrimaryPress: () => void;
+  onMalformedUrl: () => void;
+}>;
+
+function useFeatureIntroViewModel(
+  data: GenericAwarenessModalContentCard | undefined,
+  isOpen: boolean,
+): FeatureIntroViewModel | undefined {
   const displayedFeatureIntroIdRef = useRef<string | undefined>(undefined);
-  const isPortfolioFocused = useIsFocused();
-  const { bottom: bottomInset } = useSafeAreaInsets();
-  const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
-  const isOpen = useSelector(selectIsGenericAwarenessModalOpen);
-  const campaignId = useSelector(selectGenericAwarenessModalCampaignId);
-  const cards = useSelector(selectGenericAwarenessModalContentCards);
-  const data = useSelector(selectCurrentGenericAwarenessModalContentCard);
-
-  const open = useCallback(
-    (campaignId: string) => {
-      dispatch(openGenericAwarenessModalDrawer({ campaignId }));
-    },
-    [dispatch],
-  );
-
-  const { shouldMarkAsRead } = useGenericAwarenessModalLogic(
-    { campaignId, cards },
-    {
-      enabled: genericAwarenessModalFlag?.enabled ?? false,
-      isFocused: isPortfolioFocused,
-      isOpen,
-      open,
-    },
-  );
 
   useEffect(() => {
     if (!isOpen) {
       displayedFeatureIntroIdRef.current = undefined;
-      currentCarouselSlideIndexRef.current = 0;
       return;
     }
 
@@ -69,7 +73,7 @@ export function useGenericAwarenessModalDrawerViewModel() {
     }
   }, [data, isOpen]);
 
-  const onFeatureIntroPrimaryPress = useCallback(() => {
+  const onPrimaryPress = useCallback(() => {
     if (data?.layout !== GenericAwarenessModalLayout.FeatureIntro) {
       return;
     }
@@ -80,7 +84,7 @@ export function useGenericAwarenessModalDrawerViewModel() {
     });
   }, [data]);
 
-  const onFeatureIntroSecondaryPress = useCallback(() => {
+  const onSecondaryPress = useCallback(() => {
     if (data?.layout !== GenericAwarenessModalLayout.FeatureIntro) {
       return;
     }
@@ -91,13 +95,40 @@ export function useGenericAwarenessModalDrawerViewModel() {
     });
   }, [data]);
 
-  const onCarouselSlideViewed = useCallback(
+  return useMemo(() => {
+    if (data?.layout !== GenericAwarenessModalLayout.FeatureIntro) {
+      return undefined;
+    }
+
+    return {
+      content: data,
+      onPrimaryPress,
+      onSecondaryPress,
+    };
+  }, [data, onPrimaryPress, onSecondaryPress]);
+}
+
+function useCarouselViewModel(
+  data: GenericAwarenessModalContentCard | undefined,
+  isOpen: boolean,
+): CarouselViewModel | undefined {
+  const currentSlideIndexRef = useRef(0);
+
+  useEffect(() => {
+    if (!isOpen) {
+      currentSlideIndexRef.current = 0;
+    }
+  }, [isOpen]);
+
+  const getCurrentSlideIndex = useCallback(() => currentSlideIndexRef.current, []);
+
+  const onSlideViewed = useCallback(
     (slideIndex: number, isLastSlide: boolean) => {
       if (data?.layout !== GenericAwarenessModalLayout.Carousel) {
         return;
       }
 
-      currentCarouselSlideIndexRef.current = slideIndex;
+      currentSlideIndexRef.current = slideIndex;
       trackGenericAwarenessModalCarouselStepViewed(data, slideIndex);
 
       if (isLastSlide) {
@@ -107,7 +138,7 @@ export function useGenericAwarenessModalDrawerViewModel() {
     [data],
   );
 
-  const onCarouselNavigationPress = useCallback(
+  const onNavigationPress = useCallback(
     (slideIndex: number, button: string) => {
       if (data?.layout !== GenericAwarenessModalLayout.Carousel) {
         return;
@@ -121,7 +152,7 @@ export function useGenericAwarenessModalDrawerViewModel() {
     [data],
   );
 
-  const onCarouselPrimaryPress = useCallback(
+  const onPrimaryPress = useCallback(
     (slideIndex: number) => {
       if (data?.layout !== GenericAwarenessModalLayout.Carousel) {
         return;
@@ -141,7 +172,7 @@ export function useGenericAwarenessModalDrawerViewModel() {
     [data],
   );
 
-  const onCarouselMalformedUrl = useCallback(
+  const onMalformedUrl = useCallback(
     (slideIndex: number) => {
       if (data?.layout !== GenericAwarenessModalLayout.Carousel) {
         return;
@@ -152,9 +183,125 @@ export function useGenericAwarenessModalDrawerViewModel() {
     [data],
   );
 
+  return useMemo(() => {
+    if (data?.layout !== GenericAwarenessModalLayout.Carousel) {
+      return undefined;
+    }
+
+    return {
+      content: data,
+      getCurrentSlideIndex,
+      onSlideViewed,
+      onNavigationPress,
+      onPrimaryPress,
+      onMalformedUrl,
+    };
+  }, [
+    data,
+    getCurrentSlideIndex,
+    onMalformedUrl,
+    onNavigationPress,
+    onPrimaryPress,
+    onSlideViewed,
+  ]);
+}
+
+function usePromptViewModel(
+  data: GenericAwarenessModalContentCard | undefined,
+  isOpen: boolean,
+): PromptViewModel | undefined {
+  const displayedPromptIdRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isOpen) {
+      displayedPromptIdRef.current = undefined;
+      return;
+    }
+
+    if (
+      data?.layout === GenericAwarenessModalLayout.Prompt &&
+      displayedPromptIdRef.current !== data.id
+    ) {
+      displayedPromptIdRef.current = data.id;
+      trackGenericAwarenessModalPromptViewed(data);
+    }
+  }, [data, isOpen]);
+
+  const onClosePress = useCallback(() => {
+    if (data?.layout !== GenericAwarenessModalLayout.Prompt) {
+      return;
+    }
+
+    trackGenericAwarenessModalButtonClicked(data, "Close", {
+      ctaPosition: "primary",
+    });
+  }, [data]);
+
+  const onPrimaryPress = useCallback(() => {
+    if (data?.layout !== GenericAwarenessModalLayout.Prompt) {
+      return;
+    }
+
+    trackGenericAwarenessModalButtonClicked(data, data.primaryButtonLabel, {
+      ctaPosition: "secondary",
+      link: data.primaryButtonLink,
+    });
+  }, [data]);
+
+  const onMalformedUrl = useCallback(() => {
+    if (data?.layout !== GenericAwarenessModalLayout.Prompt) {
+      return;
+    }
+
+    trackGenericAwarenessModalMalformedUrl(data);
+  }, [data]);
+
+  return useMemo(() => {
+    if (data?.layout !== GenericAwarenessModalLayout.Prompt) {
+      return undefined;
+    }
+
+    return {
+      content: data,
+      onClosePress,
+      onPrimaryPress,
+      onMalformedUrl,
+    };
+  }, [data, onClosePress, onMalformedUrl, onPrimaryPress]);
+}
+
+export function useGenericAwarenessModalDrawerViewModel() {
+  const dispatch = useDispatch();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
+  const isOpen = useSelector(selectIsGenericAwarenessModalOpen);
+  const campaignId = useSelector(selectGenericAwarenessModalCampaignId);
+  const cards = useSelector(selectGenericAwarenessModalContentCards);
+  const data = useSelector(selectCurrentGenericAwarenessModalContentCard);
+
+  const open = useCallback(
+    (campaignId: string) => {
+      dispatch(openGenericAwarenessModalDrawer({ campaignId }));
+    },
+    [dispatch],
+  );
+
+  const { shouldMarkAsRead } = useGenericAwarenessModalLogic(
+    { campaignId, cards },
+    {
+      enabled: genericAwarenessModalFlag?.enabled ?? false,
+      isOpen,
+      open,
+    },
+  );
+
+  const featureIntroViewModel = useFeatureIntroViewModel(data, isOpen);
+  const carouselViewModel = useCarouselViewModel(data, isOpen);
+  const promptViewModel = usePromptViewModel(data, isOpen);
+
   const onClose = useCallback(() => {
     if (data) {
-      trackGenericAwarenessModalDismissed(data, currentCarouselSlideIndexRef.current);
+      trackGenericAwarenessModalDismissed(data, carouselViewModel?.getCurrentSlideIndex());
     }
 
     if (data && shouldMarkAsRead) {
@@ -163,18 +310,15 @@ export function useGenericAwarenessModalDrawerViewModel() {
     }
 
     dispatch(closeGenericAwarenessModalDrawer());
-  }, [data, dispatch, shouldMarkAsRead]);
+  }, [carouselViewModel, data, dispatch, shouldMarkAsRead]);
 
   return {
     isOpen,
     data,
     bottomInset: bottomInset + 20,
     onClose,
-    onFeatureIntroPrimaryPress,
-    onFeatureIntroSecondaryPress,
-    onCarouselSlideViewed,
-    onCarouselNavigationPress,
-    onCarouselPrimaryPress,
-    onCarouselMalformedUrl,
+    featureIntroViewModel,
+    carouselViewModel,
+    promptViewModel,
   };
 }

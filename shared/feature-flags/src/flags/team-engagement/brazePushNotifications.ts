@@ -33,9 +33,21 @@ const inactivityRepromptSchema = z.object({
   seconds: z.number(),
 });
 
+const notificationsPromptAfterActionSourceSchema = z.enum([
+  "onboarding",
+  "send",
+  "dapp_complete",
+  "receive",
+  "swap",
+  "stake",
+  "add_favorite_coin",
+]);
+
 const notificationsCategorySchema = z.object({
   displayed: z.boolean(),
   category: z.string(),
+  drawerPromptEnabled: z.boolean().optional(),
+  drawerPromptActions: z.array(notificationsPromptAfterActionSourceSchema).optional(),
 });
 
 export const brazePushNotifications = flagWith({

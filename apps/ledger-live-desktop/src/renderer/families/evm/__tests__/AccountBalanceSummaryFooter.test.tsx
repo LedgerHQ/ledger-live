@@ -13,7 +13,10 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
     magnitude: 18,
   })),
 }));
-jest.mock("@ledgerhq/live-common/currencies/index");
+jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
+}));
 
 const footerProps = {
   counterValue: { ticker: "USD", units: [{ code: "USD", magnitude: 2 }] } as unknown as Currency,
@@ -50,7 +53,9 @@ describe("EVM AccountBalanceSummaryFooter", () => {
         unbondings: [],
       },
     } as unknown as Account;
-    const { container } = render(<AccountBalanceSummaryFooter account={account} {...footerProps} />);
+    const { container } = render(
+      <AccountBalanceSummaryFooter account={account} {...footerProps} />,
+    );
     expect(container.firstChild).toBeNull();
   });
 

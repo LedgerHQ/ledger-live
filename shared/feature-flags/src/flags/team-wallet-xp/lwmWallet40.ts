@@ -18,6 +18,7 @@ export const lwmWallet40 = flagWith(
     quickActionsCtasVariant: z.boolean().optional(),
     brazePlacement: z.boolean().optional(),
     pnl: z.boolean(),
+    assetDiscoverability: z.boolean(),
     earnUpselling: z.boolean().optional(),
     earnSimulator: z.boolean().optional(),
   },
@@ -36,6 +37,9 @@ export const lwmWallet40 = flagWith(
       aggregatedAssets: false,
       myWallet: false,
       pnl: false,
+      assetDiscoverability: false,
+      earnUpselling: false,
+      earnSimulator: false,
     },
   },
 );

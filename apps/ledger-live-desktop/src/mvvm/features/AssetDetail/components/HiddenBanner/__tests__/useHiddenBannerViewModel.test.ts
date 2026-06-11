@@ -47,7 +47,7 @@ describe("useHiddenBannerViewModel", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "show_in_portfolio",
       currency: "bitcoin",
-      page: "Asset detail",
+      page: "Asset",
     });
   });
 

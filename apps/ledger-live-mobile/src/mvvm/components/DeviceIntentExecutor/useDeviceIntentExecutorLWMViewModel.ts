@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type {
   DeviceConnectionResult,
   DeviceIntentExecutorProps,
@@ -8,11 +8,15 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   trackAppReady,
-  trackDeviceflowAborted,
+  trackDeviceflowCanceled,
   trackDeviceflowCompleted,
+  trackDeviceflowStarted,
+  trackDrawerCloseButtonClicked,
 } from "./utils/trackDeviceIntent";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
+import { useDeviceIntentExecutorHeaderOverrideRequests } from "./hooks/useDeviceIntentExecutorHeaderOverrideRequests";
+import type { DeviceIntentExecutorHeaderContextValue } from "./utils/DeviceIntentExecutorHeaderContext";
 import type { SourceFlow } from "./utils/SourceFlowContext";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
@@ -28,6 +32,8 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 export type DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> = {
   sourceFlow: SourceFlow;
   wrappedProps: Props<JobState, Input, ExtraProps>;
+  hasHeaderOverride: boolean;
+  headerContextValue: DeviceIntentExecutorHeaderContextValue;
 };
 
 type ConnectionTrackingInfo = {
@@ -45,13 +51,30 @@ function mapConnectionResult(result: DeviceConnectionResult): ConnectionTracking
 export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> {
-  const { sourceFlow, onExecutorStateChanged, onUserCancel } = props;
+  const { enabled, sourceFlow, onExecutorStateChanged, onUserCancel } = props;
 
+  const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);
+  const closeTrackedRef = useRef(false);
+  const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
+
+  useEffect(() => {
+    if (!enabled) {
+      flowStartedRef.current = false;
+      initializationCompletedRef.current = false;
+      closeTrackedRef.current = false;
+      return;
+    }
+
+    if (flowStartedRef.current) return;
+    flowStartedRef.current = true;
+    initializationCompletedRef.current = false;
+    trackDeviceflowStarted({ sourceFlow });
+  }, [enabled, sourceFlow]);
 
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
-      if (state.type === "executingIntent" && !initializationCompletedRef.current) {
+      if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);
         trackAppReady({ sourceFlow, modelId });
@@ -59,18 +82,24 @@ export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>
       }
       onExecutorStateChanged(state);
     },
-    [onExecutorStateChanged, sourceFlow],
+    [enabled, onExecutorStateChanged, sourceFlow],
   );
 
   const wrappedOnUserCancel = useCallback(() => {
-    if (!initializationCompletedRef.current) {
-      trackDeviceflowAborted({ sourceFlow });
+    if (!closeTrackedRef.current) {
+      closeTrackedRef.current = true;
+      trackDrawerCloseButtonClicked({ sourceFlow });
+      if (!initializationCompletedRef.current) {
+        trackDeviceflowCanceled({ sourceFlow });
+      }
     }
     onUserCancel();
   }, [onUserCancel, sourceFlow]);
 
   return {
     sourceFlow,
+    hasHeaderOverride,
+    headerContextValue,
     wrappedProps: {
       ...props,
       onExecutorStateChanged: wrappedOnExecutorStateChanged,

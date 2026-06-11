@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
@@ -14,11 +14,6 @@ import evmFamily from "../../index";
 jest.mock("@ledgerhq/coin-evm/editTransaction/index", () => ({
   ...jest.requireActual("@ledgerhq/coin-evm/editTransaction/index"),
   getFormattedFeeFields: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
@@ -103,7 +98,9 @@ jest.mock("~/renderer/components/SpeedUpCancel/SharedEditStuckTransactionPanelBo
   ),
 }));
 
-const account = genAccount("evm-edit-components-account");
+const account = genAccount("evm-edit-components-account", {
+  currency: getCryptoCurrencyById("ethereum"),
+});
 
 const createStepProps = (overrides: Partial<StepProps> = {}): StepProps =>
   ({
@@ -148,10 +145,6 @@ const createStepProps = (overrides: Partial<StepProps> = {}): StepProps =>
 describe("EVM EditTransaction components", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (getMainAccount as jest.Mock).mockReturnValue({
-      ...account,
-      currency: { ...account.currency, family: "evm", id: "ethereum", ticker: "ETH" },
-    });
   });
 
   it("StepFees renders EVM specific fee details for type 2 tx", () => {
@@ -200,26 +193,45 @@ describe("EVM EditTransaction components", () => {
     });
 
     render(<EditStuckTransactionPanelBodyHeader account={account} parentAccount={undefined} />, {
-      initialState: withFlagOverrides({ editEvmTx: { enabled: true, params: { supportedCurrencyIds: ["ethereum"] } } }),
+      initialState: withFlagOverrides({
+        editEvmTx: { enabled: true, params: { supportedCurrencyIds: ["ethereum"] } },
+      }),
     });
 
     expect(screen.getByTestId("shared-stuck-header")).toHaveTextContent("true-true-true");
   });
 
   describe("family.handlesEditTransaction", () => {
-    const mainAccount = { ...account, currency: { ...account.currency, family: "evm", id: "ethereum" } };
+    const mainAccount = {
+      ...account,
+      currency: { ...account.currency, family: "evm", id: "ethereum" },
+    };
     const operation = { transactionRaw: { type: 2 } } as never;
     const featureFlags = { evm: { enabled: true, supportedCurrencyIds: ["ethereum"] } };
 
     it("returns null when the bridge marks the operation as non-editable", () => {
       const bridge = { isEditableOperation: jest.fn().mockReturnValue(false) } as never;
-      const result = evmFamily.handlesEditTransaction!({ account, parentAccount: undefined, mainAccount, operation, bridge, featureFlags });
+      const result = evmFamily.handlesEditTransaction!({
+        account,
+        parentAccount: undefined,
+        mainAccount,
+        operation,
+        bridge,
+        featureFlags,
+      });
       expect(result).toBeNull();
     });
 
     it("returns modal config when the bridge marks the operation as editable", () => {
       const bridge = { isEditableOperation: jest.fn().mockReturnValue(true) } as never;
-      const result = evmFamily.handlesEditTransaction!({ account, parentAccount: undefined, mainAccount, operation, bridge, featureFlags });
+      const result = evmFamily.handlesEditTransaction!({
+        account,
+        parentAccount: undefined,
+        mainAccount,
+        operation,
+        bridge,
+        featureFlags,
+      });
       expect(result).toEqual(expect.objectContaining({ modalName: "MODAL_EVM_EDIT_TRANSACTION" }));
     });
   });

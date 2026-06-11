@@ -1,0 +1,230 @@
+name: "[Desktop] - Lint & Unit Tests - Called"
+
+on:
+  workflow_call:
+    outputs:
+      coverage_generated:
+        value: ${{ jobs.unit-tests.outputs.coverage_generated }}
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first version for PRs).
+        type: string
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        type: string
+        required: false
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+        type: string
+        required: false
+      prNumber:
+        description: PR number
+        type: string
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  SMOKE_SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
+  SMOKE_SPECULOS_FIRMWARE_VERSION: 1.6.0
+
+jobs:
+  codechecks:
+    name: "Desktop Code Check"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-22.04
+    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+        id: setup-test-desktop
+        with:
+          skip_builds: true
+
+      - name: format check
+        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
+        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
+        continue-on-error: true
+        run: pnpm desktop format:check
+
+      - name: lint
+        run: pnpm desktop lint:ci
+
+      - name: lint (guardrails)
+        run: pnpm desktop lint:guardrails
+
+      - name: typecheck
+        run: pnpm desktop typecheck
+
+      - name: check for dead code
+        run: pnpm desktop knip-check
+
+  unit-tests:
+    name: "Desktop Unit Tests"
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
+      FORCE_COLOR: 3
+      CI_OS: ledger-live-linux-16CPU-64RAM
+      JEST_MAX_WORKERS: "95%"
+    runs-on: [ledger-live-linux-16CPU-64RAM]
+    outputs:
+      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live"
+
+      - name: Build dependencies
+        run: pnpm exec nx run ledger-live-desktop:build-lib-deps
+
+      - name: Run unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          CPUS="$(nproc 2>/dev/null || echo "?")"
+          echo "::group::Jest CI metrics (desktop coverage)"
+          echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          node -e '
+            const os = require("os");
+            const n = os.cpus().length;
+            const w = process.env.JEST_MAX_WORKERS || "50%";
+            let m;
+            if (String(w).endsWith("%")) {
+              m = Math.max(1, Math.floor((n * parseFloat(String(w))) / 100));
+            } else if (/^\d+$/.test(String(w))) {
+              m = Math.max(1, parseInt(w, 10));
+            } else {
+              m = w;
+            }
+            console.log("effective_max_workers_estimate=" + m);
+          '
+          echo "::endgroup::"
+          START_TS=$(date +%s)
+          pnpm desktop test:jest:coverage
+          END_TS=$(date +%s)
+          echo "::notice::jest_ci_metrics app=ledger-live-desktop jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+
+      - name: Upload unit test coverage
+        id: generate_coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: coverage-desktop
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
+
+  report:
+    name: "Desktop Lint & Unit Tests > Report"
+    needs: [codechecks, unit-tests]
+    runs-on: ubuntu-22.04
+    # Only report on push events (e.g. develop, main, release, hotfix).
+    if: ${{ !cancelled() && github.event_name == 'push' }}
+    steps:
+      - uses: actions/github-script@v7
+        name: prepare status
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+
+            const typecheck = {
+              pass: ${{ needs.codechecks.result == 'success' }},
+              status: "${{ needs.codechecks.result }}",
+            };
+
+            const unitTests = {
+              pass: ${{ needs.unit-tests.result == 'success' }},
+              status: "${{ needs.unit-tests.result }}",
+            };
+
+            const slackPayload = {
+              "text": "[Alert] Ledger Live Desktop lint & unit tests failed on ${{ github.ref_name }}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":warning: [Alert] Ledger Live Desktop lint & unit tests failed on ${{ github.ref_name }}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `Code Checks: ${typecheck.pass ? "✅" : "❌"} (${typecheck.status})\n`
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `Unit Tests: ${unitTests.pass ? "✅" : "❌"} (${unitTests.status})\n`
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            };
+
+            fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        if: ${{ !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure') }}
+        with:
+          channel-id: "C05FKJ7DFAP"
+          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}

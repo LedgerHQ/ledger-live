@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { HistoryExportDialog } from "./HistoryExportDialog";
 
 type Props = Readonly<{
-  onBack: () => void;
+  onBack?: () => void;
   onExportClick: () => void;
 }>;
 

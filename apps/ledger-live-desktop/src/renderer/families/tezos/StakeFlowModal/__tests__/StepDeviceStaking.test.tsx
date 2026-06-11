@@ -36,35 +36,36 @@ const makeTx = (overrides: Partial<Transaction> = {}): Transaction =>
     ...overrides,
   }) as unknown as Transaction;
 
-const makeProps = (overrides: Partial<StepProps> = {}): StepProps => ({
-  t: (key: string) => key,
-  transitionTo: jest.fn(),
-  device: null,
-  account: makeAccount(),
-  parentAccount: null,
-  transaction: makeTx(),
-  status: {
-    errors: {},
-    warnings: {},
-    estimatedFees: new BigNumber(300),
-    amount: new BigNumber(1_000_000),
-    totalSpent: new BigNumber(1_000_300),
-  },
-  bridgePending: false,
-  error: null,
-  optimisticOperation: null,
-  signed: false,
-  failedStep: null,
-  onClose: jest.fn(),
-  openModal: jest.fn(),
-  onChangeTransaction: jest.fn(),
-  onUpdateTransaction: jest.fn(),
-  onTransactionError: jest.fn(),
-  onOperationBroadcasted: jest.fn(),
-  onRetry: jest.fn(),
-  setSigned: jest.fn(),
-  ...overrides,
-}) as unknown as StepProps;
+const makeProps = (overrides: Partial<StepProps> = {}): StepProps =>
+  ({
+    t: (key: string) => key,
+    transitionTo: jest.fn(),
+    device: null,
+    account: makeAccount(),
+    parentAccount: null,
+    transaction: makeTx(),
+    status: {
+      errors: {},
+      warnings: {},
+      estimatedFees: new BigNumber(300),
+      amount: new BigNumber(1_000_000),
+      totalSpent: new BigNumber(1_000_300),
+    },
+    bridgePending: false,
+    error: null,
+    optimisticOperation: null,
+    signed: false,
+    failedStep: null,
+    onClose: jest.fn(),
+    openModal: jest.fn(),
+    onChangeTransaction: jest.fn(),
+    onUpdateTransaction: jest.fn(),
+    onTransactionError: jest.fn(),
+    onOperationBroadcasted: jest.fn(),
+    onRetry: jest.fn(),
+    setSigned: jest.fn(),
+    ...overrides,
+  }) as unknown as StepProps;
 
 describe("StakeFlowModal/StepDeviceStaking", () => {
   beforeEach(() => {

@@ -3,7 +3,9 @@ import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { ApplicationOptions } from "page";
 import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { isWallet40 } from "../../helpers/commonHelpers";
+import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -32,6 +34,7 @@ export async function runNavigateToBuyFromPortfolioPageTest(
       });
     });
 
+    setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Buy / Sell [${buySell.crypto.currency.name}] asset from portfolio page`, async () => {
@@ -59,12 +62,10 @@ export async function runNavigateToBuyFromAccountPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto)],
-        featureFlags: {
-          llmAccountListUI: { enabled: true },
-        },
       });
     });
 
+    setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from account page`, async () => {
@@ -94,6 +95,7 @@ export async function runNavigateToBuyFromMarketPageTest(
       });
     });
 
+    setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from market page`, async () => {
@@ -126,6 +128,7 @@ export async function runNavigateToBuyFromAssetPageTest(
       });
     });
 
+    setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from asset page`, async () => {
@@ -153,6 +156,7 @@ export async function runSellFlowTest(
       });
     });
 
+    setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Sell [${buySell.crypto.currency.name}] flow via deeplink`, async () => {
@@ -177,6 +181,7 @@ export async function runQueryParametersTest(
       });
     });
 
+    setTeamOwner(Team.BUY_AND_SELL);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Buy / Sell [${buySell.crypto.currency.name}] asset - query parameters`, async () => {

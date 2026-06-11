@@ -15,10 +15,6 @@ import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 
 jest.mock("@ledgerhq/live-common/families/aleo/utils");
 jest.mock("./utils");
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: jest.fn((account: unknown) => account),
-}));
 jest.mock("../../../shared/utils", () => ({
   ...jest.requireActual("../../../shared/utils"),
   getAleoCurrencyConfig: jest.fn(),

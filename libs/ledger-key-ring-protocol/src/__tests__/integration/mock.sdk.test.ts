@@ -14,6 +14,7 @@ const nonMockableScenarios = [
   "tokenExpires", // can't simulate token expiration
   "userRefusesAuth", // can't simulate device interaction at the moment
   "userRefusesRemoveMember", // can't simulate device interaction at the moment
+  "ringInitPreservesLedgerSyncMember", // mock SDK does not model per-app member eviction
 ];
 
 const scenarioFolder = path.join(__dirname, "../../../tests/scenarios");
@@ -31,10 +32,14 @@ fs.readdirSync(scenarioFolder).forEach(file => {
       const withDevice: WithDevice = () => fn => fn(device.transport);
       const options: ScenarioOptions = {
         withDevice,
-        sdkForName: name =>
+        sdkForName: (name, opts) =>
           getSdk(
             !!getEnv("MOCK"),
-            { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
+            {
+              applicationId: opts?.applicationId ?? 16,
+              name,
+              apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+            },
             withDevice,
           ),
         pauseRecorder: () => Promise.resolve(), // replayer don't need to pause

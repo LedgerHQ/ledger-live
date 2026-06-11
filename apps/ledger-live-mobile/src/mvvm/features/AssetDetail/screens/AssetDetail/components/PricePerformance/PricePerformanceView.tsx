@@ -84,6 +84,7 @@ const containerStyle: LumenViewStyle = {
 
 const listStyle: LumenViewStyle = {
   gap: "s16",
+  marginBottom: "s12",
 };
 
 const leadingColumnStyle: LumenViewStyle = {

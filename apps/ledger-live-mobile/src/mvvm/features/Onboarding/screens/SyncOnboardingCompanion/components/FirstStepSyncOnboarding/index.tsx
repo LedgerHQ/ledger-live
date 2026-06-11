@@ -4,12 +4,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
 import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
-import { FirstStepCompanionStepKey } from "~/screens/SyncOnboarding/TwoStepStepper/types";
-import CollapsibleStep from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/CollapsibleStep";
+import { FirstStepCompanionStepKey } from "../../types";
+import CollapsibleStep from "../CollapsibleStep";
 import { useFirstStepSyncOnboardingViewModel } from "./useFirstStepSyncOnboardingViewModel";
 import { FirstStepSyncOnboardingProps } from "./types";
 import DeviceSeededSuccessPanel from "../DeviceSeededSuccessPanel";
-import BackgroundGreen from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundGreen";
+import BackgroundGreen from "../../assets/BackgroundGreen";
 
 const FirstStepSyncOnboarding = ({
   device,

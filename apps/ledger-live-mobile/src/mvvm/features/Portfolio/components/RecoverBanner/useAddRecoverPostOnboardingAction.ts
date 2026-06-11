@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";

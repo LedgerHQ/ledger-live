@@ -23,7 +23,7 @@ import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
-import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import { FeatureFlagsContextBridge } from "~/renderer/components/FeatureFlagsContextBridge";
 import type { ReduxStore } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -34,7 +34,6 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import StyleProvider from "~/renderer/styles/StyleProvider";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
-import { getFeature } from "./featureFlags";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
 
 config.disabled = true;
@@ -175,7 +174,7 @@ function Providers({
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+        <FeatureFlagsContextBridge>
           {skipRouter ? (
             routerContent
           ) : (
@@ -183,7 +182,7 @@ function Providers({
               {routerContent}
             </MemoryRouter>
           )}
-        </FirebaseFeatureFlagsProvider>
+        </FeatureFlagsContextBridge>
       </Provider>
     </QueryClientProvider>
   );
@@ -220,7 +219,7 @@ function renderWithMockedCounterValuesProvider(
   const {
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
     userEventOptions = {},
     skipRouter = false,
     withRampCatalog = false,
@@ -230,7 +229,7 @@ function renderWithMockedCounterValuesProvider(
   return {
     store,
     i18n,
-    user: userEvent.setup(userEventOptions),
+    user: userEvent.setup({ pointerEventsCheck: 0, ...userEventOptions }),
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
         <Providers
@@ -259,7 +258,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
   const {
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
     userEventOptions = {},
     skipRouter = false,
     initialRoute,
@@ -270,7 +269,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
   return {
     store,
     i18n,
-    user: userEvent.setup(userEventOptions),
+    user: userEvent.setup({ pointerEventsCheck: 0, ...userEventOptions }),
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
         <Providers
@@ -320,7 +319,7 @@ function renderHook<Result, Props>(
     initialProps,
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
     minimal = true,
     skipRouter = false,
     initialRoute,
@@ -357,7 +356,7 @@ function renderHookWithLiveAppProvider<Result, Props>(
     initialProps,
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware }),
+    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
   } = options;
 
   return {

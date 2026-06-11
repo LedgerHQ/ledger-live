@@ -1059,6 +1059,43 @@ describe("listOperations", () => {
     expect(items[0].recipients[0]).toBe(stakingContract);
   });
 
+  it("preserves REWARD type for outbound claim-reward tx (not downgraded to OUT/FEES)", async () => {
+    const address = "0xdelegator";
+    const distributionPrecompile = "0x0000000000000000000000000000000000001007";
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "reward-op",
+          accountId: "",
+          type: "REWARD",
+          senders: [address],
+          recipients: [distributionPrecompile],
+          value: new BigNumber(0),
+          hash: "0xreward-tx",
+          blockHeight: 100,
+          blockHash: "0xblock",
+          fee: new BigNumber(1),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          hasFailed: false,
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations({} as CryptoCurrency, address, {
+      minHeight: 0,
+      order: "asc",
+    });
+    expect(items).toHaveLength(1);
+    expect(items[0].type).toBe("REWARD");
+  });
+
   it("copies smart contract fields from explorer extra into operation details", async () => {
     setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
     const contractAddr = "0x1111111111111111111111111111111111111111";

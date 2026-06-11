@@ -6,7 +6,7 @@ import { apiClient } from "../network/api";
  * Fetch staking rewards for a given Hedera account.
  */
 export async function getRewards({
-  configOrCurrencyId: _,
+  configOrCurrencyId,
   address,
   cursor,
 }: {
@@ -15,6 +15,7 @@ export async function getRewards({
   cursor: string | undefined;
 }): Promise<Page<Reward>> {
   const mirrorTransactions = await apiClient.getAccountTransactions({
+    configOrCurrencyId,
     address,
     fetchAllPages: false,
     pagingToken: cursor ?? null,

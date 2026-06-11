@@ -122,13 +122,55 @@ describe("coin-evm/staking/serialization", () => {
           votingPower: 0.12,
           commission: 0.05,
           estimatedYearlyRewardsRate: 0.08,
-          tokens: 1234567,
+          tokens: "1234567",
         },
       ];
       const back = fromStakingResourcesRaw(
         toStakingResourcesRaw({ ...sampleResources, validators }),
       );
       expect(back.validators).toEqual(validators);
+    });
+
+    it("roundtrips validatorId and validatorName on delegations and unbondings", () => {
+      const resources: StakingResources = {
+        ...sampleResources,
+        delegations: [
+          {
+            validatorAddress: "0xValidator",
+            validatorId: "7",
+            validatorName: "GalaxyDigital",
+            amount: new BigNumber("100"),
+            pendingRewards: new BigNumber("0"),
+            status: "bonded",
+          },
+        ],
+        unbondings: [
+          {
+            validatorAddress: "0xValidator",
+            validatorName: "GalaxyDigital",
+            amount: new BigNumber("50"),
+            completionDate,
+          },
+        ],
+      };
+
+      const raw = toStakingResourcesRaw(resources);
+      expect(raw.delegations[0]).toMatchObject({ validatorId: "7", validatorName: "GalaxyDigital" });
+      expect(raw.unbondings[0]).toMatchObject({ validatorName: "GalaxyDigital" });
+
+      const back = fromStakingResourcesRaw(raw);
+      expect(back.delegations[0]).toMatchObject({
+        validatorId: "7",
+        validatorName: "GalaxyDigital",
+      });
+      expect(back.unbondings[0]).toMatchObject({ validatorName: "GalaxyDigital" });
+    });
+
+    it("omits validatorId and validatorName when absent", () => {
+      const raw = toStakingResourcesRaw(sampleResources);
+      expect(raw.delegations[0]).not.toHaveProperty("validatorId");
+      expect(raw.delegations[0]).not.toHaveProperty("validatorName");
+      expect(raw.unbondings[0]).not.toHaveProperty("validatorName");
     });
   });
 
@@ -166,7 +208,7 @@ describe("coin-evm/staking/serialization", () => {
           votingPower: 0.12,
           commission: 0.05,
           estimatedYearlyRewardsRate: 0.08,
-          tokens: 1234567,
+          tokens: "1234567",
         },
       ];
       const account = {

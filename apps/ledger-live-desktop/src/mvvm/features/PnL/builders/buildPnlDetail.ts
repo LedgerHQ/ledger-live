@@ -16,6 +16,7 @@ export type PnlDetailData = {
   title: string;
   description: string;
   items: PnlDetailItem[];
+  disclaimer: string;
 };
 
 export function buildPnlDetail({
@@ -30,6 +31,7 @@ export function buildPnlDetail({
   return {
     title: t(key("title")),
     description: t(key("description")),
+    disclaimer: t("pnl.disclaimer"),
     items: [
       {
         title: t(key("unrealisedReturn.title")),

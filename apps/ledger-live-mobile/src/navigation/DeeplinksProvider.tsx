@@ -10,7 +10,7 @@ import {
 } from "@react-navigation/native";
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -45,6 +45,7 @@ import {
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
   validateMarketCurrencyId,
+  validateMarketListCategory,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
@@ -357,6 +358,7 @@ export const DeeplinksProvider = ({
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
@@ -419,18 +421,6 @@ export const DeeplinksProvider = ({
                         },
                       }),
                       /**
-                       * ie: "ledgerlive://swap" -> will redirect to the main swap page
-                       * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string, ?fromCurrency: string, ?toCurrency: string
-                       * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
-                       */
-                      ...(!shouldDisplayWallet40MainNav && {
-                        [NavigatorName.Swap]: {
-                          screens: {
-                            [ScreenName.SwapTab]: "swap",
-                          },
-                        },
-                      }),
-                      /**
                        * ie: "ledgerlive://perps" -> will redirect to the perps page
                        */
                       [NavigatorName.Perps]: {
@@ -478,13 +468,11 @@ export const DeeplinksProvider = ({
                            * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string, ?fromCurrency: string, ?toCurrency: string
                            * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
                            */
-                          ...(shouldDisplayWallet40MainNav && {
-                            [NavigatorName.Swap]: {
-                              screens: {
-                                [ScreenName.SwapTab]: "swap",
-                              },
+                          [NavigatorName.Swap]: {
+                            screens: {
+                              [ScreenName.SwapTab]: "swap",
                             },
-                          }),
+                          },
                           [NavigatorName.Earn]: {
                             screens: {
                               /**
@@ -721,10 +709,16 @@ export const DeeplinksProvider = ({
               url.pathname = `/${validatedCurrencyId}`;
               return getStateFromPath(url.href?.split("://")[1], config);
             }
+            const validatedCategory = shouldDisplayAssetDiscoverability
+              ? validateMarketListCategory(searchParams.get("category"))
+              : undefined;
             if (shouldDisplayMarketBanner) {
-              return handleMarketBannerDeeplink();
+              return handleMarketBannerDeeplink(validatedCategory);
             }
-            return getStateFromPath("market", config);
+            return getStateFromPath(
+              validatedCategory ? `market?category=${validatedCategory}` : "market",
+              config,
+            );
           }
 
           // Handle asset deeplink - validate currencyId before navigation
@@ -934,6 +928,7 @@ export const DeeplinksProvider = ({
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,
     web3hubFlag?.enabled,

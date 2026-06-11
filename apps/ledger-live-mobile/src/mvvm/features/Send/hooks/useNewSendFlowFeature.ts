@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
@@ -17,12 +17,7 @@ export function useNewSendFlowFeature() {
 
   const isEnabledForFamily = (family?: string, currencyId?: string): boolean =>
     isValidConfig &&
-    isFamilyAllowedForNewSendFlow(
-      family,
-      allowedFamilies,
-      currencyId,
-      excludedCurrencyIds,
-    );
+    isFamilyAllowedForNewSendFlow(family, allowedFamilies, currencyId, excludedCurrencyIds);
 
   const getFamilyFromAccount = (
     account?: AccountLike,

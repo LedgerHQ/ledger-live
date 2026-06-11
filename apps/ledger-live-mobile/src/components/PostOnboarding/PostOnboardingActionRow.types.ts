@@ -1,4 +1,8 @@
-import type { PostOnboardingAction, PostOnboardingActionState, Account } from "@ledgerhq/types-live";
+import type {
+  PostOnboardingAction,
+  PostOnboardingActionState,
+  Account,
+} from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type PostOnboardingActionRowProps = PostOnboardingAction &

@@ -137,7 +137,7 @@ describe("getERC20TransactionsForAccount", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (apiClient.getAccount as jest.Mock).mockImplementation(address => ({
+    (apiClient.getAccount as jest.Mock).mockImplementation(({ address }) => ({
       address,
       evm_address: "0x0000000000000000000000000000000000012345",
     }));

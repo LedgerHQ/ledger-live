@@ -2,6 +2,7 @@ import { Left, Right } from "purify-ts";
 import {
   type BlindSigningReporter,
   type BlindSigningReportParams,
+  ContextModuleChainID,
 } from "@ledgerhq/context-module";
 import {
   LiveBlindSigningReporter,
@@ -168,14 +169,21 @@ describe("LiveBlindSigningReporter", () => {
 
 describe("buildDefaultHttpBlindSigningReporter", () => {
   it("returns an object implementing BlindSigningReporter", () => {
-    const built = buildDefaultHttpBlindSigningReporter("origin-token");
+    const built = buildDefaultHttpBlindSigningReporter(
+      "origin-token",
+      ContextModuleChainID.Ethereum,
+    );
     expect(built).toBeTruthy();
     expect(typeof built.report).toBe("function");
   });
 
   it("accepts a custom appSource without throwing", () => {
     expect(() =>
-      buildDefaultHttpBlindSigningReporter("origin-token", "custom-source"),
+      buildDefaultHttpBlindSigningReporter(
+        "origin-token",
+        ContextModuleChainID.Ethereum,
+        "custom-source",
+      ),
     ).not.toThrow();
   });
 });

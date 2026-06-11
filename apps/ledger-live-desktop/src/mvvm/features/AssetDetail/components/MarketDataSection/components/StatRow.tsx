@@ -1,15 +1,42 @@
 import React from "react";
+import {
+  DescriptionItem,
+  DescriptionItemLeading,
+  DescriptionItemLabel,
+  DescriptionItemTrailing,
+  DescriptionItemValue,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@ledgerhq/lumen-ui-react";
+import { Information } from "@ledgerhq/lumen-ui-react/symbols";
 
 export type StatRowProps = Readonly<{
   label: string;
   value: string;
+  tooltip?: string;
+  onTooltipOpenChange?: (open: boolean) => void;
 }>;
 
-export function StatRow({ label, value }: StatRowProps) {
+export function StatRow({ label, value, tooltip, onTooltipOpenChange }: StatRowProps) {
   return (
-    <div className="flex flex-row items-start justify-between gap-16">
-      <span className="body-2 text-muted">{label}</span>
-      <span className="body-2-semi-bold text-base text-right">{value}</span>
-    </div>
+    <DescriptionItem size="md">
+      <DescriptionItemLeading>
+        <DescriptionItemLabel>{label}</DescriptionItemLabel>
+        {tooltip && (
+          <Tooltip onOpenChange={onTooltipOpenChange}>
+            <TooltipTrigger asChild>
+              <span className="inline-flex cursor-help text-muted" aria-label={label}>
+                <Information size={16} />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>{tooltip}</TooltipContent>
+          </Tooltip>
+        )}
+      </DescriptionItemLeading>
+      <DescriptionItemTrailing>
+        <DescriptionItemValue>{value}</DescriptionItemValue>
+      </DescriptionItemTrailing>
+    </DescriptionItem>
   );
 }

@@ -22,7 +22,10 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { CosmosAccount, Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosAccount,
+  Transaction as CosmosTransaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
   account: CosmosAccount;

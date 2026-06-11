@@ -39,7 +39,10 @@ import {
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
 import { mapRawOperationToApiOperation } from "./utils";
 
-export function createApi(config: ConcordiumConfig, currencyId: string): CoinModuleApi<ConcordiumMemo> {
+export function createApi(
+  config: ConcordiumConfig,
+  currencyId: string,
+): CoinModuleApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

@@ -76,6 +76,7 @@ export async function getBlock({
 
   const blockInfo = await getBlockInfo(height);
   const transactions = await apiClient.getTransactionsByTimestampRange({
+    configOrCurrencyId,
     startTimestamp: `gte:${start.getTime() / 1000}`,
     endTimestamp: `lt:${end.getTime() / 1000}`,
   });

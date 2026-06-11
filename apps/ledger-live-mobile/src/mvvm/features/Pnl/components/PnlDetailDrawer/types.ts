@@ -16,4 +16,6 @@ export type PnlDetailDrawerProps = {
   /** Optional muted footer (body4, muted) rendered below the items. */
   footer?: string;
   testID?: string;
+  pageName?: string;
+  source?: string;
 };

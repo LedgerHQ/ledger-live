@@ -21,7 +21,7 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Item } from "./Graph/types";
 import { GestureResponderEvent } from "react-native";
 import GraphSection from "./GraphSection";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { AnalyticsBalanceDisplay } from "LLM/features/Analytics/components/AnalyticsBalanceDisplay";
 
 type Props = {

@@ -23,6 +23,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     hasFeePresets: jest.fn(() => false),
     shouldEstimateFeePresetsWithBridge: jest.fn(() => false),
     getFeePresetOptions: jest.fn(() => []),
+    getFeeCurrencyAccountId: jest.fn(() => null),
   },
 }));
 
@@ -84,12 +85,15 @@ describe("useNetworkFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockedGetAccountBridge.mockReturnValue({
+    const bridge = {
       updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
         ...tx,
         ...patch,
       }),
-    } as never);
+    };
+    mockedGetAccountBridge.mockReturnValue(
+      Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }) as never,
+    );
   });
 
   it("returns showNetworkFees true and showFeePresets from uiConfig", () => {

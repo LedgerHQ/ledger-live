@@ -58,7 +58,8 @@ type FakeState = {
   accounts: unknown[];
   identities: unknown;
   history: unknown;
-  featureFlags: { overrides: unknown; bannerVisible: unknown };
+  featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
+  coinConfigOverrides: { overrides: Record<string, unknown> };
   trustchain?: unknown;
 };
 
@@ -71,6 +72,7 @@ const baseState = (): FakeState => ({
   identities: {},
   history: {},
   featureFlags: { overrides: {}, bannerVisible: false },
+  coinConfigOverrides: { overrides: {} },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -153,5 +155,81 @@ describe("DBMiddleware - MARKET branch", () => {
 
     expect(mockedSetKey).toHaveBeenCalledTimes(0);
     expect(mockedSetKey).not.toHaveBeenCalledWith("app", "settings", expect.anything());
+  });
+});
+
+describe("DBMiddleware - featureFlags branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists only { overrides, bannerVisible } — never the transient remoteFlagsReady gate", () => {
+    const before = baseState();
+    const after: FakeState = {
+      ...before,
+      featureFlags: {
+        overrides: { mockFeature: { enabled: true } },
+        bannerVisible: false,
+        remoteFlagsReady: true,
+      },
+    };
+
+    runMiddleware([before, after], { type: "FEATURE_FLAGS_SET_OVERRIDE" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "featureFlags", {
+      overrides: after.featureFlags.overrides,
+      bannerVisible: false,
+    });
+
+    const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
+    expect(persisted).not.toHaveProperty("remoteFlagsReady");
+  });
+});
+
+describe("DBMiddleware - coinConfigOverrides branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists coinConfigOverrides under app/coinConfigOverrides when the slice reference changes", () => {
+    const before = baseState();
+    const newOverrides = { config_currency_solana: { token2022Enabled: true } };
+    const after: FakeState = {
+      ...before,
+      coinConfigOverrides: { overrides: newOverrides },
+    };
+
+    runMiddleware([before, after], { type: "coinConfigOverrides/setCoinConfigOverride" });
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "coinConfigOverrides", {
+      overrides: newOverrides,
+    });
+  });
+
+  it("does not persist when the coinConfigOverrides reference is unchanged", () => {
+    const state = baseState();
+    runMiddleware([state, state], { type: "coinConfigOverrides/setCoinConfigOverride" });
+
+    expect(mockedSetKey).not.toHaveBeenCalledWith("app", "coinConfigOverrides", expect.anything());
+  });
+
+  it("persists an empty overrides map (e.g. after Restore all)", () => {
+    const before: FakeState = {
+      ...baseState(),
+      coinConfigOverrides: {
+        overrides: { config_currency_solana: { token2022Enabled: true } },
+      },
+    };
+    const after: FakeState = {
+      ...before,
+      coinConfigOverrides: { overrides: {} },
+    };
+
+    runMiddleware([before, after], {
+      type: "coinConfigOverrides/setAllCoinConfigOverrides",
+    });
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "coinConfigOverrides", { overrides: {} });
   });
 });

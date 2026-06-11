@@ -1,9 +1,6 @@
 import { renderHook, act, withFlagOverrides } from "@tests/test-renderer";
 import { useFirstStepSyncOnboardingViewModel } from "./useFirstStepSyncOnboardingViewModel";
-import {
-  FirstStepCompanionStepKey,
-  SEED_STATE,
-} from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import { FirstStepCompanionStepKey, SEED_STATE } from "../../types";
 import type { UseFirstStepSyncOnboardingViewModelProps } from "./types";
 import type { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import type { State } from "~/reducers/types";
@@ -38,8 +35,8 @@ jest.mock("@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling", ()
 }));
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({
-  rnBleTransportIdentifier: "react-native-ble",
-  rnHidTransportIdentifier: "react-native-hid",
+  rnBleTransportIdentifier: "RN_BLE",
+  rnHidTransportIdentifier: "RN_HID",
   isAllowedOnboardingStatePollingErrorDmk: () => true,
 }));
 
@@ -100,14 +97,13 @@ jest.mock(
   }),
 );
 
-const withProtectServicesMobile =
-  (
-    enabled: boolean,
-    params: { protectId?: string } & Record<string, unknown> = {},
-  ): ((state: State) => State) =>
-    withFlagOverrides({
-      protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
-    });
+const withProtectServicesMobile = (
+  enabled: boolean,
+  params: { protectId?: string } & Record<string, unknown> = {},
+): ((state: State) => State) =>
+  withFlagOverrides({
+    protectServicesMobile: enabled ? { enabled: true, params } : { enabled: false, params: {} },
+  });
 
 describe("useFirstStepSyncOnboardingViewModel", () => {
   const device = {
@@ -254,7 +250,7 @@ describe("useFirstStepSyncOnboardingViewModel", () => {
           id: "device-1",
           name: "My Ledger",
           deviceModelId: "Europa",
-          transport: "react-native-ble",
+          transport: "RN_BLE",
         }),
       }),
     );

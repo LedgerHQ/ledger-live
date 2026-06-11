@@ -6,12 +6,7 @@ import i18n from "~/renderer/i18n/init";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import CounterfeitWarningDialog from "..";
-import {
-  EVENT_DISMISSED,
-  EVENT_LEARN_MORE,
-  EVENT_PROCEED,
-  EVENT_SHOWN,
-} from "../analytics";
+import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "../analytics";
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
@@ -53,23 +48,26 @@ describe("CounterfeitWarningDialog Integration", () => {
     it("should not render when open is false", () => {
       renderDialog(false);
       expect(screen.queryByTestId("counterfeit-warning-dialog")).not.toBeInTheDocument();
-      expect(track).not.toHaveBeenCalledWith(EVENT_SHOWN, expect.anything());
+      expect(track).not.toHaveBeenCalledWith("page_viewed", expect.anything());
     });
   });
 
   describe("user interactions", () => {
-    it("should track shown once and handle primary CTA", async () => {
+    it("should track page_viewed once and handle primary CTA", async () => {
       const { user, onProceed } = renderDialog(true);
 
       await waitFor(() => {
         expect(screen.getByTestId("counterfeit-warning-dialog")).toBeVisible();
       });
-      expect(track).toHaveBeenCalledWith(EVENT_SHOWN, { deviceModelId: DeviceModelId.nanoX });
+      expect(track).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
 
       await user.click(
         screen.getByRole("button", { name: i18n.t("onboarding.counterfeitWarning.cta.primary") }),
       );
-      expect(track).toHaveBeenCalledWith(EVENT_PROCEED, { deviceModelId: DeviceModelId.nanoX });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+        page: COUNTERFEIT_WARNING_PAGE,
+      });
       expect(onProceed).toHaveBeenCalledTimes(1);
     });
 
@@ -83,11 +81,14 @@ describe("CounterfeitWarningDialog Integration", () => {
       await user.click(
         screen.getByRole("button", { name: i18n.t("onboarding.counterfeitWarning.cta.secondary") }),
       );
-      expect(track).toHaveBeenCalledWith(EVENT_LEARN_MORE, { deviceModelId: DeviceModelId.nanoX });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+        page: COUNTERFEIT_WARNING_PAGE,
+      });
       expect(openURL).toHaveBeenCalledWith(urls.genuineCheck);
     });
 
-    it("should track dismissed and call onDismiss when closed", async () => {
+    it("should track close and call onDismiss when closed", async () => {
       const { user, onDismiss } = renderDialog(true);
 
       await waitFor(() => {
@@ -95,7 +96,10 @@ describe("CounterfeitWarningDialog Integration", () => {
       });
 
       await user.keyboard("{Escape}");
-      expect(track).toHaveBeenCalledWith(EVENT_DISMISSED, { deviceModelId: DeviceModelId.nanoX });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: COUNTERFEIT_WARNING_BUTTON.close,
+        page: COUNTERFEIT_WARNING_PAGE,
+      });
       expect(onDismiss).toHaveBeenCalledTimes(1);
     });
   });

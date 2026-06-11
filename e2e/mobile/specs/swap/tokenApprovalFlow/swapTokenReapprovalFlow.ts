@@ -4,14 +4,16 @@ import {
   performSwapUntilQuoteSelectionStep,
   revokeTokenApproval,
 } from "../../../utils/swapUtils";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { beforeAllFunctionSwap } from "../swap.setup";
+import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
 
 export function runSwapTokenReapprovalFlow(
   fromAccount: TokenAccount,
   toAccount: Account,
-  provider: Provider,
+  swapProvider: SwapProvider,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -41,25 +43,26 @@ export function runSwapTokenReapprovalFlow(
       });
     });
 
+    setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
     it("Swap - token reapproval flow", async () => {
-      await app.swap.logSelectedProvider(provider.uiName);
-      await revokeTokenApproval(fromAccount, provider);
-      await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
+      await app.swap.logSelectedProvider(swapProvider.uiName);
+      await revokeTokenApproval(fromAccount, swapProvider);
+      await app.swap.ensureRevokeTokenApproval(fromAccount, swapProvider);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
-      await ensureTokenApproval(fromAccount, provider, smallAmount);
-      const swap = new Swap(fromAccount, toAccount, minAmount, provider);
+      await ensureTokenApproval(fromAccount, swapProvider, smallAmount);
+      const swap = new Swap(fromAccount, toAccount, minAmount, swapProvider);
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
         minAmount,
         true,
       );
-      await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+      await app.swapLiveApp.selectSpecificProvider(swapProvider.uiName);
+      await app.swapLiveApp.tapExecuteSwap(swapProvider.uiName);
       await app.swapLiveApp.expectTwoStepApprovalScreen();
       await app.swapLiveApp.tapGiveApprovalButton();
       await app.send.summaryContinue();

@@ -81,6 +81,7 @@ describe("WaitingForSelectedDeviceState", () => {
       expect.objectContaining({
         category: PAGE_CONNECT_DEVICE.WaitingForSelectedDevice,
         sourceFlow: "my_ledger",
+        modelId: DeviceModelId.nanoX,
         deviceUxV2: true,
       }),
       undefined,

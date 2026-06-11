@@ -11,7 +11,10 @@ import {
 } from "react-native";
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
-import type { NearAccount, Transaction as NearTransaction } from "@ledgerhq/live-common/families/near/types";
+import type {
+  NearAccount,
+  Transaction as NearTransaction,
+} from "@ledgerhq/live-common/families/near/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";

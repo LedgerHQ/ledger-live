@@ -6,6 +6,7 @@ import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
 import {
   hasUnbondingPeriod,
+  isSeiAccountUnassociated,
   prefetchValidators,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
@@ -30,6 +31,11 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   }, [account, dispatch]);
 
   const showLockupWarning = hasUnbondingPeriod(currencyId);
+  const showSeiAssociationWarning = isSeiAccountUnassociated(
+    account.currency.id,
+    account.freshAddress,
+    account.operations,
+  );
 
   return (
     <EarnRewardsInfoModal
@@ -44,11 +50,18 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
         t("ethereum.evmStaking.delegation.flow.steps.starter.bullet.2"),
       ]}
       additional={
-        showLockupWarning && (
-          <WarnBox>
-            {t("ethereum.evmStaking.delegation.flow.steps.starter.warning.description")}
-          </WarnBox>
-        )
+        <>
+          {showSeiAssociationWarning && (
+            <WarnBox>
+              {t("ethereum.evmStaking.delegation.flow.steps.starter.seiAssociationWarning")}
+            </WarnBox>
+          )}
+          {showLockupWarning && (
+            <WarnBox>
+              {t("ethereum.evmStaking.delegation.flow.steps.starter.warning.description")}
+            </WarnBox>
+          )}
+        </>
       }
       currency={account.currency.id}
     />

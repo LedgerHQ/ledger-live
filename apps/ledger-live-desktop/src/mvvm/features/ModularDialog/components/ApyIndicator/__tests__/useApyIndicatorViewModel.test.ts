@@ -3,6 +3,11 @@ import * as systemLocale from "~/helpers/systemLocale";
 import * as getApyAppearanceModule from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
 import { useApyIndicatorViewModel } from "../useApyIndicatorViewModel";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/utils/getApyAppearance", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/modularDrawer/utils/getApyAppearance"),
+}));
+
 jest.mock("~/helpers/systemLocale");
 
 const mockGetParsedSystemDeviceLocale = jest.spyOn(systemLocale, "getParsedSystemDeviceLocale");

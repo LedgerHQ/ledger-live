@@ -27,7 +27,7 @@
     "release": "changeset publish",
     "build:libs": "nx run-many -t build -p \"@ledgerhq/*\" --exclude \"@ledgerhq/dummy-*-app,@ledgerhq/live-cli,@ledgerhq/web-tools,@ledgerhq/wallet-cli\" --parallel=20",
     "build:libs:force": "pnpm run build:libs --skip-nx-cache",
-    "build:tests": "nx run-many -t build --include \"@ledgerhq/dummy-*-app\"",
+    "build:tests": "nx run-many -t build -p \"@ledgerhq/dummy-*-app\"",
     "build:dummy-apps": "nx run-many -t build -p \"@ledgerhq/dummy-*-app\"",
     "build:dummy-wallet-app": "nx run-many -t build -p @ledgerhq/dummy-wallet-app",
     "build:dummy-live-app": "nx run-many -t build -p @ledgerhq/dummy-live-app",
@@ -80,6 +80,8 @@
     "run:cli": "./apps/cli/bin/index.js",
     "lint": "nx run-many -t lint",
     "lint:fix": "nx run-many -t lint:fix",
+    "format": "nx run-many -t format",
+    "format:check": "nx run-many -t format:check",
     "typecheck": "nx run-many -t typecheck",
     "validate:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "knip-check": "nx run-many -t knip-check",
@@ -132,6 +134,7 @@
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
     "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",
     "coin:tester:tezos": "pnpm --filter coin-tester-tezos",
+    "coin:tester:tron": "pnpm --filter coin-tester-tron",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -301,7 +304,8 @@
       "ethers": "6.15.0",
       "bignumber.js": "9.1.2",
       "@radix-ui/react-slot": "^1.2.4",
-      "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3"
+      "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3",
+      "@ton/ton>zod": "catalog:"
     },
     "patchedDependencies": {
       "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch",

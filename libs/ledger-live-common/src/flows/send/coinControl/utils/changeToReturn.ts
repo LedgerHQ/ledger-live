@@ -11,7 +11,7 @@ export function hasTxOutputs(status: TransactionStatus): status is StatusWithTxO
 
 /** Bitcoin status includes txOutputs with change; generic status may not. */
 export function getChangeToReturn(status: TransactionStatus): BigNumber {
-  const outputs = hasTxOutputs(status) ? status.txOutputs ?? [] : [];
+  const outputs = hasTxOutputs(status) ? (status.txOutputs ?? []) : [];
   return outputs
     .filter((o): o is { isChange: true; value: BigNumber } => o.isChange)
     .reduce((sum, o) => sum.plus(o.value), new BigNumber(0));

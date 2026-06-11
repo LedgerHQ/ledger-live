@@ -21,27 +21,27 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 1.17.1
-  "@ledgerhq/crypto-icons": "2.0.3"
-  "@ledgerhq/device-management-kit": 1.5.0
+  "@ledgerhq/context-module": 2.1.0
+  "@ledgerhq/crypto-icons": "2.0.4"
+  "@ledgerhq/device-management-kit": 1.5.1
   "@ledgerhq/device-signer-kit-aleo": 0.3.0
-  "@ledgerhq/device-signer-kit-concordium": 0.3.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.15.1
+  "@ledgerhq/device-signer-kit-concordium": 0.4.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.16.0
   "@ledgerhq/device-signer-kit-hyperliquid": 1.1.0
-  "@ledgerhq/device-signer-kit-solana": 1.8.0
-  "@ledgerhq/device-signer-kit-cosmos": 1.0.0
+  "@ledgerhq/device-signer-kit-solana": 1.9.1
+  "@ledgerhq/device-signer-kit-cosmos": 1.0.1
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.3
   "@ledgerhq/device-transport-kit-speculos": 1.2.0
   "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.3.0
-  "@ledgerhq/lumen-design-core": 0.1.14
-  "@ledgerhq/lumen-ui-react": 0.1.35
-  "@ledgerhq/lumen-ui-rnative": 0.1.36
-  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.12
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.13
-  "@ledgerhq/zcash-utils": 0.2.0
+  "@ledgerhq/lumen-design-core": 0.1.16
+  "@ledgerhq/lumen-ui-react": 0.1.38
+  "@ledgerhq/lumen-ui-rnative": 0.1.39
+  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.16
+  "@ledgerhq/lumen-ui-react-visualization": 0.1.17
+  "@ledgerhq/zcash-utils": 0.3.1
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7
@@ -70,32 +70,32 @@ catalog:
   expo-modules-core: 2.5.0
   "@jest/reporters": 30.2.0
   "@reduxjs/toolkit": 2.11.2
-  "@rsbuild/core": 1.7.2
-  "@rsbuild/plugin-node-polyfill": 1.4.3
-  "@rsbuild/plugin-react": 1.4.3
-  "@rsbuild/plugin-styled-components": 1.6.1
-  "@rsdoctor/rspack-plugin": "1.5.2"
-  "@rspack/cli": 1.7.3
-  "@rspack/core": 1.7.3
-  "@rspack/dev-server": 1.1.5
-  "@rspack/plugin-react-refresh": 1.6.0
-  "@rslib/core": 0.19.3
+  "@rsbuild/core": 2.0.9
+  "@rsbuild/plugin-node-polyfill": 1.4.5
+  "@rsbuild/plugin-react": 2.0.1
+  "@rsbuild/plugin-styled-components": 1.6.2
+  "@rsdoctor/rspack-plugin": "2.0.0-alpha.0"
+  "@rspack/cli": 2.0.5
+  "@rspack/core": 2.0.5
+  "@rspack/dev-server": 2.0.3
+  "@rspack/plugin-react-refresh": 2.0.1
+  "@rslib/core": 0.22.0
   react-refresh: 0.18.0
-  storybook: 10.2.0
-  "@storybook/react": 10.2.0
-  "@storybook/react-native": 10.1.11
-  "@storybook/react-webpack5": 10.1.11
+  storybook: 10.4.1
+  "@storybook/react": 10.4.1
+  "@storybook/react-native": 10.4.4
+  "@storybook/react-webpack5": 10.4.1
   "@storybook/core": 8.6.14
   "@storybook/addon-essentials": 8.6.14
   "@storybook/addon-interactions": 8.6.14
   "@storybook/addon-actions": 9.0.8
-  "@storybook/addon-docs": 10.2.0
-  "@storybook/addon-links": 10.2.0
+  "@storybook/addon-docs": 10.4.1
+  "@storybook/addon-links": 10.4.1
   "@storybook/addon-controls": 9.0.8
-  "@storybook/addon-ondevice-actions": 10.1.11
-  "@storybook/addon-ondevice-backgrounds": 10.1.11
-  "@storybook/addon-ondevice-controls": 10.1.11
-  "@storybook/addon-ondevice-notes": 10.1.11
+  "@storybook/addon-ondevice-actions": 10.4.4
+  "@storybook/addon-ondevice-backgrounds": 10.4.4
+  "@storybook/addon-ondevice-controls": 10.4.4
+  "@storybook/addon-ondevice-notes": 10.4.4
   "@storybook/addon-react-native-web": 0.0.29
   "@storybook/blocks": 8.6.14
   "@storybook/docs-tools": 8.6.14
@@ -106,9 +106,9 @@ catalog:
   "@storybook/testing-library": 0.2.2
   "@storybook/theming": 8.6.14
   storybook-dark-mode: 4.0.2
-  storybook-react-rsbuild: 3.2.2
+  storybook-react-rsbuild: 3.3.4
   "@swc/core": 1.15.11
-  "@swc/helpers": 0.5.17
+  "@swc/helpers": 0.5.23
   "@swc/jest": 0.2.39
   "@testing-library/dom": 10.4.1
   "@testing-library/jest-dom": 6.9.1
@@ -190,15 +190,15 @@ catalog:
   "@radix-ui/react-switch": 1.2.6
   "@radix-ui/react-tooltip": 1.2.8
   "@tanstack/react-table": 8.5.11
-  "@playwright/test": 1.53.0
-  playwright: 1.53.0
-  allure-playwright: 3.2.1
-  allure-js-commons: 3.2.1
+  "@playwright/test": 1.60.0
+  playwright: 1.60.0
+  allure-playwright: 3.9.0
+  allure-js-commons: 3.9.0
   oxlint: 1.51.0
   oxfmt: 0.36.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-module-framework": 3.1.0
-  "@ledgerhq/coin-xrp": 7.21.5
+  "@ledgerhq/coin-module-framework": 3.2.0
+  "@ledgerhq/coin-xrp": 7.21.7
   detox: 20.51.1
 
 overrides:
@@ -207,13 +207,3 @@ overrides:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
-  # Renovate security update: zx@8.8.5
-  - zx@8.8.5
-  # Oxc toolchain (ledger-live-desktop)
-  - oxlint
-  - oxfmt
-  # TypeScript / Node types: new releases are often younger than minimumReleaseAge
-  - typescript
-  - "@types/node"
-  # hw-app-sui 0.8.0 fixes the mega-bundle issue (published same day)
-  - "@mysten/ledgerjs-hw-app-sui"

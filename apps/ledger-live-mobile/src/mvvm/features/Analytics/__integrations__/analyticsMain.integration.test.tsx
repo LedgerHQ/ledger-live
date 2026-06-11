@@ -30,11 +30,15 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 describe("AnalyticsMain Integration Tests", () => {
-  const mockState = (
-    state: State,
-    isExchangeEnabled: boolean = true,
-    isWallet40MainNavigation: boolean = true,
-  ): State => {
+  const swapTabRoute = {
+    screen: NavigatorName.Swap,
+    params: {
+      screen: ScreenName.SwapTab,
+      params: {},
+    },
+  };
+
+  const mockState = (state: State, isExchangeEnabled: boolean = true): State => {
     const btcAccount = createMockAccount(mockBitcoinCurrency, "btc-1");
     const ethAccount = createMockAccount(mockEthereumCurrency, "eth-1");
     const adaAccount = createMockAccount(mockCardanoCurrency, "ada-1");
@@ -43,7 +47,7 @@ describe("AnalyticsMain Integration Tests", () => {
       ptxServiceCtaExchangeDrawer: { enabled: isExchangeEnabled },
       lwmWallet40: {
         enabled: true,
-        params: { mainNavigation: isWallet40MainNavigation, aggregatedAssets: false },
+        params: { mainNavigation: true, aggregatedAssets: false },
       },
     })({
       ...state,
@@ -82,9 +86,9 @@ describe("AnalyticsMain Integration Tests", () => {
     expect(screen.queryByText(/swap/i)).toBeNull();
   });
 
-  it("should track and navigate to swap when swap button is pressed", async () => {
+  it("should track and navigate to swap tab when swap button is pressed", async () => {
     const { user } = render(<TestNavigatorWrapper />, {
-      overrideInitialState: state => mockState(state, true, false),
+      overrideInitialState: mockState,
     });
 
     await user.press(screen.getByText(/swap/i));
@@ -94,19 +98,7 @@ describe("AnalyticsMain Integration Tests", () => {
       page: "Analytics",
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Swap);
-  });
-
-  it("should navigate to swap tab bar screen when swap button is pressed and Wallet40 main navigation is enabled", async () => {
-    const { user } = render(<TestNavigatorWrapper />, {
-      overrideInitialState: state => mockState(state, true),
-    });
-
-    await user.press(screen.getByText(/swap/i));
-
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
-      screen: NavigatorName.Swap,
-    });
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, swapTabRoute);
   });
 
   it("should track and navigate to detailed allocation when allocation component is pressed", async () => {

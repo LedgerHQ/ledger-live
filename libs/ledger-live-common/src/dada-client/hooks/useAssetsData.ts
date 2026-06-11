@@ -27,9 +27,13 @@ export function useAssetsData({
   isStaging,
   includeTestNetworks,
   skip,
+  pollingInterval,
+  skipPollingIfUnfocused,
 }: GetAssetsDataParams & {
   areCurrenciesFiltered?: boolean;
   skip?: boolean;
+  pollingInterval?: number;
+  skipPollingIfUnfocused?: boolean;
 }) {
   const {
     data,
@@ -51,7 +55,7 @@ export function useAssetsData({
       isStaging,
       includeTestNetworks,
     },
-    { skip },
+    { skip, pollingInterval, skipPollingIfUnfocused },
   );
 
   const joinedPages = useMemo(() => {

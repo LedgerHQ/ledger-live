@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "~/analytics";
@@ -37,6 +37,7 @@ export default function ValidationError({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
+      edges={["bottom"]}
     >
       <TrackScreen
         category="CosmosDelegation"

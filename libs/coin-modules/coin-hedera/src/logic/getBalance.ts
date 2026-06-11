@@ -25,17 +25,17 @@ export async function getBalance({
     // accounts) instead of paginating the full /network/nodes list. The
     // validator lookup is chained on the account promise so it still runs
     // concurrently with the token fetches.
-    const mirrorAccountPromise = apiClient.getAccount(address);
+    const mirrorAccountPromise = apiClient.getAccount({ configOrCurrencyId: coinConfig, address });
     const validatorPromise = mirrorAccountPromise.then(account =>
       typeof account.staked_node_id === "number" && account.staked_node_id >= 0
-        ? apiClient.getNode(account.staked_node_id)
+        ? apiClient.getNode({ configOrCurrencyId: coinConfig, nodeId: account.staked_node_id })
         : null,
     );
     const [mirrorAccount, mirrorTokens, erc20TokenBalances, validator] = await Promise.all([
       mirrorAccountPromise,
-      apiClient.getAccountTokens(address),
+      apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
       coinConfig.useHgraphForErc20
-        ? getERC20BalancesForAccountV2({ configOrCurrencyId: config ?? currencyId, address })
+        ? getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address })
         : Promise.resolve([]),
       validatorPromise,
     ]);

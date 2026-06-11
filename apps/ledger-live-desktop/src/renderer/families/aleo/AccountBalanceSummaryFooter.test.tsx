@@ -10,7 +10,10 @@ import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 import { ALEO_ACCOUNT_1 } from "./__mocks__/account.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
-jest.mock("@ledgerhq/live-common/currencies/index");
+jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
+}));
 jest.mock("./hooks/useAleoPrivateSync");
 
 const mockUseAccountUnit = jest.mocked(useAccountUnit);

@@ -3,7 +3,9 @@ import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { MarketListHeaderLeft, MarketListHeaderTitle } from "../index";
 
 const withMarketBanner = (enabled: boolean) => ({
-  overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { marketBanner: enabled } } }),
+  overrideInitialState: withFlagOverrides({
+    lwmWallet40: { enabled: true, params: { marketBanner: enabled } },
+  }),
 });
 
 const components = [

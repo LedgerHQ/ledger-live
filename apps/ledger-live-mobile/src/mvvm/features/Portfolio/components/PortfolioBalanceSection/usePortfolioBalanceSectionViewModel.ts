@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";

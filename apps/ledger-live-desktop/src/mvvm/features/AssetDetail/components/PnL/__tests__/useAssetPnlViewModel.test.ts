@@ -5,7 +5,10 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import type { PnLCardProps } from "LLD/features/PnL/components/PnLCard/types";
+import { track } from "~/renderer/analytics/segment";
 import { useAssetPnlViewModel } from "../useAssetPnlViewModel";
+
+const mockedTrack = jest.mocked(track);
 
 jest.mock("@ledgerhq/wallet-pnl/hooks", () => ({
   useAssetGroupPnL: jest.fn(),
@@ -93,5 +96,22 @@ describe("useAssetPnlViewModel", () => {
     act(() => card.onClick());
 
     expect(result.current.dialog.isOpen).toBe(true);
+  });
+
+  it("tracks market_stat_definition when the average entry price tooltip opens", () => {
+    const { result } = renderAssetPnlViewModel({ initialState: flagsOn });
+    const averageEntryCard = result.current.items.find(item => item.id === "averageEntryPrice");
+
+    expect(averageEntryCard?.type).toBe("info");
+    if (averageEntryCard?.type !== "info") throw new Error("expected info card");
+
+    act(() => averageEntryCard.onTooltipOpenChange?.(true));
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "market_stat_definition",
+      currency: "bitcoin",
+      type: "average_entry_price",
+      page: "Asset",
+    });
   });
 });

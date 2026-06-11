@@ -2,13 +2,8 @@ import React from "react";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
 
-const COLUMN_I18N_KEYS = [
-  "delegation.validator",
-  "delegation.amount",
-  "delegation.value",
-] as const;
-
 type Props = {
+  withTransactionId?: boolean;
   trailingI18nKey?: string;
 };
 
@@ -18,11 +13,12 @@ const HeaderText = ({ i18nKey }: { i18nKey: string }) => (
   </Text>
 );
 
-const SectionHeaderColumns = ({ trailingI18nKey }: Props) => (
+const SectionHeaderColumns = ({ withTransactionId, trailingI18nKey }: Props) => (
   <>
-    {COLUMN_I18N_KEYS.map(key => (
-      <HeaderText key={key} i18nKey={key} />
-    ))}
+    <HeaderText i18nKey="delegation.validator" />
+    {withTransactionId ? <HeaderText i18nKey="delegation.transactionID" /> : null}
+    <HeaderText i18nKey="delegation.amount" />
+    <HeaderText i18nKey="delegation.value" />
     {trailingI18nKey ? <HeaderText i18nKey={trailingI18nKey} /> : <Text />}
   </>
 );

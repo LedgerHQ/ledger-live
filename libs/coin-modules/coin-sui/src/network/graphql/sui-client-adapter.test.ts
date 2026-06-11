@@ -84,7 +84,11 @@ describe("makeSuiClientFromGraphQL", () => {
             address: {
               balances: {
                 nodes: [
-                  { coinType: { repr: "0x9::usdc::USDC" }, totalBalance: "500", addressBalance: "0" },
+                  {
+                    coinType: { repr: "0x9::usdc::USDC" },
+                    totalBalance: "500",
+                    addressBalance: "0",
+                  },
                 ],
                 pageInfo: { hasNextPage: true, endCursor: "cursor-1" },
               },
@@ -140,9 +144,7 @@ describe("makeSuiClientFromGraphQL", () => {
         data: {
           address: {
             balances: {
-              nodes: [
-                { coinType: { repr: canonical }, totalBalance: "9000", addressBalance: "0" },
-              ],
+              nodes: [{ coinType: { repr: canonical }, totalBalance: "9000", addressBalance: "0" }],
               pageInfo: { hasNextPage: false, endCursor: null },
             },
           },
@@ -196,7 +198,13 @@ describe("makeSuiClientFromGraphQL", () => {
         data: {
           package: {
             module: {
-              function: { visibility, isEntry: false, typeParameters: [], parameters: [], return: [] },
+              function: {
+                visibility,
+                isEntry: false,
+                typeParameters: [],
+                parameters: [],
+                return: [],
+              },
             },
           },
         },
@@ -304,16 +312,24 @@ describe("makeSuiClientFromGraphQL", () => {
 
     it("clamps a caller-supplied limit above 50 to the server cap", async () => {
       const { api, query } = stubApi({
-        data: { address: { objects: { nodes: [], pageInfo: { hasNextPage: false, endCursor: null } } } },
+        data: {
+          address: { objects: { nodes: [], pageInfo: { hasNextPage: false, endCursor: null } } },
+        },
       });
       const client = makeSuiClientFromGraphQL(api);
-      await client.core.listCoins({ owner: "0xowner", coinType: "0x2::sui::SUI", limit: 999 } as never);
+      await client.core.listCoins({
+        owner: "0xowner",
+        coinType: "0x2::sui::SUI",
+        limit: 999,
+      } as never);
       expect(query.mock.calls[0][0].variables.first).toBe(50);
     });
 
     it("falls back to DEFAULT_SUI_COIN_TYPE when coinType is omitted", async () => {
       const { api, query } = stubApi({
-        data: { address: { objects: { nodes: [], pageInfo: { hasNextPage: false, endCursor: null } } } },
+        data: {
+          address: { objects: { nodes: [], pageInfo: { hasNextPage: false, endCursor: null } } },
+        },
       });
       const client = makeSuiClientFromGraphQL(api);
       await client.core.listCoins({ owner: "0xowner" } as never);
@@ -378,7 +394,9 @@ describe("makeSuiClientFromGraphQL", () => {
       });
       const client = makeSuiClientFromGraphQL(api);
       const out = await client.core.getObjects({ objectIds: ["0xobj"] } as never);
-      const owner = (out.objects[0] as { owner: { $kind: string; Shared: { initialSharedVersion: string } } }).owner;
+      const owner = (
+        out.objects[0] as { owner: { $kind: string; Shared: { initialSharedVersion: string } } }
+      ).owner;
       expect(owner.$kind).toBe("Shared");
       expect(owner.Shared.initialSharedVersion).toBe("42");
     });
@@ -425,9 +443,9 @@ describe("makeSuiClientFromGraphQL", () => {
     });
 
     it("wraps a thrown error per-id without aborting the whole batch", async () => {
-      const { api } = stubApi(
-        { data: { object: baseObj({ owner: { __typename: "Immutable" } }) } },
-      );
+      const { api } = stubApi({
+        data: { object: baseObj({ owner: { __typename: "Immutable" } }) },
+      });
       const client = makeSuiClientFromGraphQL(api);
       // Override the second .query() call to reject.
       (api.query as jest.Mock).mockRejectedValueOnce(new Error("network down"));
@@ -479,7 +497,8 @@ describe("makeSuiClientFromGraphQL", () => {
         transaction: new Uint8Array([0, 1, 2]),
       } as never);
       expect((out as { $kind: string }).$kind).toBe("Transaction");
-      const tx = (out as { Transaction: { effects: { gasUsed: Record<string, string> } } }).Transaction;
+      const tx = (out as { Transaction: { effects: { gasUsed: Record<string, string> } } })
+        .Transaction;
       expect(tx.effects.gasUsed).toEqual({
         computationCost: "100",
         storageCost: "200",
@@ -504,9 +523,11 @@ describe("makeSuiClientFromGraphQL", () => {
         transaction: new Uint8Array([0]),
       } as never);
       expect((out as { $kind: string }).$kind).toBe("FailedTransaction");
-      const status = (out as {
-        FailedTransaction: { status: { Failure: { error: { message: string } } } };
-      }).FailedTransaction.status;
+      const status = (
+        out as {
+          FailedTransaction: { status: { Failure: { error: { message: string } } } };
+        }
+      ).FailedTransaction.status;
       expect(status.Failure.error.message).toBe("InsufficientGas");
     });
 
@@ -517,9 +538,11 @@ describe("makeSuiClientFromGraphQL", () => {
         transaction: new Uint8Array([0]),
       } as never);
       expect((out as { $kind: string }).$kind).toBe("FailedTransaction");
-      const status = (out as {
-        FailedTransaction: { status: { Failure: { error: { message: string } } } };
-      }).FailedTransaction.status;
+      const status = (
+        out as {
+          FailedTransaction: { status: { Failure: { error: { message: string } } } };
+        }
+      ).FailedTransaction.status;
       expect(status.Failure.error.message).toMatch(/no effects/);
     });
 
@@ -539,7 +562,9 @@ describe("makeSuiClientFromGraphQL", () => {
     it("returns undefined so the SDK falls back to coreClientResolveTransactionPlugin", () => {
       const { api } = stubApi();
       const client = makeSuiClientFromGraphQL(api);
-      const plugin = (client.core as unknown as { resolveTransactionPlugin: () => unknown }).resolveTransactionPlugin();
+      const plugin = (
+        client.core as unknown as { resolveTransactionPlugin: () => unknown }
+      ).resolveTransactionPlugin();
       expect(plugin).toBeUndefined();
     });
   });

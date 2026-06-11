@@ -3,17 +3,20 @@ import type {
   AccountBridge,
   AccountBridgeExtensions,
   AccountLike,
+  AccountRaw,
   AnyMessage,
   AddressValidationCurrencyParameters,
   CurrencyBridge,
+  Operation,
   TransactionCommon,
+  TransactionCommonRaw,
   TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import type Prando from "prando";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
-import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
 import type { CoinFrameworkSigner } from "../bridge/generic-coin-framework/types";
 export type { CoinFrameworkSigner };
 
@@ -22,27 +25,47 @@ export type MessageSignerModule = {
   prepareMessageToSign?: (opts: { account: Account; message: string }) => AnyMessage;
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// Parameters are `any` because each family uses its own transaction/raw types at the loader boundary.
-// Method syntax enables bivariant param checking so family-specific implementations are assignable.
-export type TransactionModule = {
-  fromTransactionRaw(raw: any): TransactionCommon;
-  toTransactionRaw(tx: any): Record<string, unknown>;
-  formatTransaction(tx: any, account: Account): string;
-  fromTransactionStatusRaw?(raw: any): TransactionStatusCommon;
-  toTransactionStatusRaw?(status: any): Record<string, unknown>;
-  formatTransactionStatus?(tx: any, status: any, mainAccount?: Account): string;
+export type TransactionModule<
+  T extends TransactionCommon = any,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  A extends Account = any,
+  TRaw extends TransactionCommonRaw = any,
+  URaw extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
+> = {
+  fromTransactionRaw(raw: TRaw): T;
+  toTransactionRaw(tx: T): TRaw;
+  formatTransaction(tx: T, account: A): string | Promise<string>;
+  fromTransactionStatusRaw?(raw: URaw): U;
+  toTransactionStatusRaw?(status: U): URaw;
+  formatTransactionStatus?(tx: T, status: U, mainAccount?: A): string;
 };
 
-export type DeviceTransactionConfigFn = (arg: {
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  transaction: any;
-  status: any;
-}) => Promise<CommonDeviceTransactionField[]>;
+export type DeviceTransactionFieldBase = { type: string; label: string };
 
-export type WalletApiAdapterModule = {
-  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<WalletAPITransaction, any>;
+export type DeviceTransactionConfigFn<
+  T extends TransactionCommon = any,
+  U extends TransactionStatusCommon = any,
+  A extends Account = any,
+  P extends DeviceTransactionFieldBase = DeviceTransactionFieldBase,
+> = (arg: {
+  account: AccountLike<A>;
+  parentAccount: A | null | undefined;
+  transaction: T;
+  status: U;
+}) => Promise<P[]>;
+
+export type WalletApiAdapterModule<
+  W extends WalletAPITransaction = WalletAPITransaction,
+  A extends Account = Account,
+> = {
+  getWalletAPITransactionSignFlowInfos(input: {
+    walletApiTransaction: W;
+    account: AccountLike<A>;
+  }): {
+    canEditFees: boolean;
+    hasFeesProvided: boolean;
+    liveTx: Partial<TransactionCommon>;
+  };
 };
 
 export type PlatformAdapterModule = {
@@ -52,31 +75,43 @@ export type PlatformAdapterModule = {
     liveTx: Partial<TransactionCommon>;
   };
 };
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
-export type AccountModule = {
-  injectGetAddressParams?: (account: Account) => Record<string, unknown>;
+export type AccountModule<A extends Account = Account> = {
+  injectGetAddressParams?(account: A): Record<string, unknown>;
+  [key: string]: unknown;
 };
 
-export type MockBridgeModule = {
+export type MockBridgeModule<
+  T extends TransactionCommon = any,
+  A extends Account = any,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = any,
+  R extends AccountRaw = AccountRaw,
+> = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<TransactionCommon>;
+  accountBridge: AccountBridge<T, A, U, O, R>;
   loadCoinConfig?: () => void;
 };
 
-export type MockAccountModule = {
-  postSyncAccount?: (account: Account) => Account;
-  postScanAccount?: (account: Account, opts?: { isEmpty?: boolean }) => Account;
+export type MockAccountModule<A extends Account = Account> = {
+  genAccountEnhanceOperations?(account: A, rng: Prando): A;
+  postSyncAccount?(account: A): A;
+  postScanAccount?(account: A, opts?: { isEmpty?: boolean }): A;
 };
 
-export type FamilySetup = {
+export type FamilySetup<
+  T extends TransactionCommon = any,
+  A extends Account = any,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = any,
+  R extends AccountRaw = AccountRaw,
+> = {
   bridge?: {
     currencyBridge: CurrencyBridge;
-    accountBridge: AccountBridge<TransactionCommon>;
+    accountBridge: AccountBridge<T, A, U, O, R>;
   };
   resolver?: Resolver;
   messageSigner?: MessageSignerModule;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cliTools?: any;
 };
 
@@ -85,17 +120,26 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
-export type CoinModuleLoader = {
+export type CoinModuleLoader<
+  T extends TransactionCommon = any,
+  A extends Account = any,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = any,
+  R extends AccountRaw = AccountRaw,
+  W extends WalletAPITransaction = WalletAPITransaction,
+  TRaw extends TransactionCommonRaw = any,
+  URaw extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
+> = {
   family: string;
-  loadSetup: () => FamilySetup;
-  loadTransaction: () => TransactionModule;
-  loadDeviceTxConfig?: () => DeviceTransactionConfigFn;
-  loadWalletApiAdapter?: () => WalletApiAdapterModule;
-  loadPlatformAdapter?: () => PlatformAdapterModule;
-  loadAccount?: () => AccountModule;
-  loadMockBridge?: () => MockBridgeModule;
-  loadMockAccount?: () => MockAccountModule;
-  loadValidateAddress?: () => ValidateAddressFn;
-  loadSigner?: () => CoinFrameworkSigner;
-  loadBridgeExtensions?: () => AccountBridgeExtensions;
+  loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
+  loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
+  loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
+  loadWalletApiAdapter?: () => Promise<WalletApiAdapterModule<W, A>>;
+  loadPlatformAdapter?: () => Promise<PlatformAdapterModule>;
+  loadAccount?: () => Promise<AccountModule<A>>;
+  loadMockBridge?: () => Promise<MockBridgeModule<T, A, U, O, R>>;
+  loadMockAccount?: () => Promise<MockAccountModule<A>>;
+  loadValidateAddress?: () => Promise<ValidateAddressFn>;
+  loadSigner?: () => Promise<CoinFrameworkSigner>;
+  loadBridgeExtensions?: () => Promise<AccountBridgeExtensions>;
 };

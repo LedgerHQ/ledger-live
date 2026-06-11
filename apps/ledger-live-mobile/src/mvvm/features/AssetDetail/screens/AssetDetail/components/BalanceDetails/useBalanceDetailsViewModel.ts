@@ -67,7 +67,7 @@ export function useBalanceDetailsViewModel(
 
   const counterValueUnit = counterValueCurrency.units[0];
 
-  const counterValue = hasAccounts ? distributionItem?.countervalue ?? 0 : undefined;
+  const counterValue = hasAccounts ? (distributionItem?.countervalue ?? 0) : undefined;
 
   const counterValueFormatter = useCallback(
     (value: number): FormattedValue =>
@@ -164,6 +164,20 @@ export function useBalanceDetailsViewModel(
     handleOpenStakeDrawer();
   }, [currency?.id, handleOpenStakeDrawer]);
 
+  const onAvailableBalanceTooltipOpen = useCallback(
+    (open: boolean) => {
+      if (open) {
+        track("button_clicked", {
+          button: "market_stat_definition",
+          currency: currency?.id,
+          type: "available_balance",
+          page: "Asset Detail",
+        });
+      }
+    },
+    [currency?.id],
+  );
+
   return {
     hasAccounts,
     discreet,
@@ -174,6 +188,7 @@ export function useBalanceDetailsViewModel(
     onTransferPress,
     onEarnBannerPress,
     onEarnDepositPress,
+    onAvailableBalanceTooltipOpen,
   };
 }
 

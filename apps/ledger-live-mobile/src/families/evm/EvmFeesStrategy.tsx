@@ -164,7 +164,6 @@ export default function EvmFeesStrategy({
 
   const onFeesSelected = useCallback(
     ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
-
       const patch: Partial<Transaction> =
         feesStrategy === "custom" && customStrategyTransactionPatch
           ? customStrategyTransactionPatch
@@ -174,13 +173,7 @@ export default function EvmFeesStrategy({
 
       setTransaction(bridge.updateTransaction(transaction, { ...patch, gasOptions }));
     },
-    [
-      setTransaction,
-      bridge,
-      transaction,
-      customStrategyTransactionPatch,
-      gasOptions,
-    ],
+    [setTransaction, bridge, transaction, customStrategyTransactionPatch, gasOptions],
   );
 
   const openCustomFees = useCallback(() => {

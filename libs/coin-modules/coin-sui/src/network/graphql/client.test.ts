@@ -13,7 +13,10 @@ const okResponse = (body: unknown): Response =>
 describe("createSuiGraphQLClient", () => {
   it("POSTs the printed query + variables and returns the parsed JSON body", async () => {
     const fetchMock = jest.fn(async () => okResponse({ data: { chainIdentifier: "abcdef01" } }));
-    const client = createSuiGraphQLClient({ url: URL, fetch: fetchMock as unknown as typeof fetch });
+    const client = createSuiGraphQLClient({
+      url: URL,
+      fetch: fetchMock as unknown as typeof fetch,
+    });
     const out = await client.query({ query: CHAIN_IDENTIFIER });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
@@ -44,7 +47,10 @@ describe("createSuiGraphQLClient", () => {
     const fetchMock = jest.fn(
       async () => new Response("oops", { status: 503, statusText: "Service Unavailable" }),
     );
-    const client = createSuiGraphQLClient({ url: URL, fetch: fetchMock as unknown as typeof fetch });
+    const client = createSuiGraphQLClient({
+      url: URL,
+      fetch: fetchMock as unknown as typeof fetch,
+    });
     await expect(client.query({ query: CHAIN_IDENTIFIER })).rejects.toThrow(
       /Sui GraphQL HTTP 503 Service Unavailable/,
     );
@@ -54,7 +60,10 @@ describe("createSuiGraphQLClient", () => {
     const fetchMock = jest.fn(async () =>
       okResponse({ data: null, errors: [{ message: "deprecated field" }] }),
     );
-    const client = createSuiGraphQLClient({ url: URL, fetch: fetchMock as unknown as typeof fetch });
+    const client = createSuiGraphQLClient({
+      url: URL,
+      fetch: fetchMock as unknown as typeof fetch,
+    });
     const out = await client.query({ query: CHAIN_IDENTIFIER });
     expect((out as { data: unknown }).data).toBeNull();
     expect((out as { errors: { message: string }[] }).errors[0].message).toBe("deprecated field");

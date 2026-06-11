@@ -5,6 +5,7 @@ import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/uti
 export type MarketState = {
   marketParams: MarketListRequestParams;
   currentPage: number;
+  hideTransactionsOnChart: boolean;
 };
 
 const initialState: MarketState = {
@@ -19,6 +20,7 @@ const initialState: MarketState = {
     counterCurrency: "USD",
   },
   currentPage: 1,
+  hideTransactionsOnChart: false,
 };
 
 type HandlersPayloads = {
@@ -26,6 +28,7 @@ type HandlersPayloads = {
 
   MARKET_SET_VALUES: MarketListRequestParams;
   MARKET_SET_CURRENT_PAGE: number;
+  MARKET_SET_HIDE_TRANSACTIONS_ON_CHART: boolean;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<MarketState, HandlersPayloads, PreciseKey>;
@@ -42,9 +45,17 @@ const handlers: MarketHandlers = {
     ...state,
     currentPage: payload,
   }),
+  MARKET_SET_HIDE_TRANSACTIONS_ON_CHART: (
+    state: MarketState,
+    { payload }: { payload: boolean },
+  ) => ({
+    ...state,
+    hideTransactionsOnChart: payload,
+  }),
 
   MARKET_IMPORT_STATE: (state, { payload }: { payload: MarketState }) => ({
     ...state,
+    hideTransactionsOnChart: payload.hideTransactionsOnChart ?? state.hideTransactionsOnChart,
     marketParams: {
       ...state.marketParams,
       range: payload.marketParams.range,
@@ -61,6 +72,9 @@ export const marketCurrentPageSelector = (state: { market: MarketState }) =>
   state.market.currentPage;
 
 export const marketStoreSelector = (state: { market: MarketState }) => state.market;
+
+export const hideTransactionsOnChartSelector = (state: { market: MarketState }) =>
+  state.market.hideTransactionsOnChart === true;
 
 // Exporting reducer
 

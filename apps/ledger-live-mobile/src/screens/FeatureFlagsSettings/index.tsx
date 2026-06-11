@@ -1,13 +1,15 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
+import { useFeature, useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import {
-  DEFAULT_FEATURES,
+  FEATURE_FLAGS_DEFAULTS,
+  FeatureIdSchema,
+  featureFlagsBannerVisibleSelector,
   groupedFeatures,
-  useFeature,
-  useFeatureFlags,
-  useHasLocallyOverriddenFeatureFlags,
-} from "@ledgerhq/live-common/featureFlags/index";
-import type { FeatureId } from "@ledgerhq/types-live";
+  setAllOverrides,
+  setBannerVisible,
+} from "@shared/feature-flags";
+import type { FeatureId } from "@shared/feature-flags";
 
 import {
   Text,
@@ -30,7 +32,6 @@ import KeyboardView from "~/components/KeyboardView";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
 import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
-import { featureFlagsBannerVisibleSelector, setBannerVisible } from "@shared/feature-flags";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 const addFlagHint = `\
@@ -45,13 +46,13 @@ export default function DebugFeatureFlags() {
   const [searchInput, setSearchInput] = useState<string>("");
   const searchInputTrimmed = trim(searchInput);
   const [activeTab, setActiveTab] = useState(0);
-  const { resetFeatures, isFeature } = useFeatureFlags();
+  const dispatch = useDispatch();
 
   const featureFlags = useMemo(() => {
-    const featureKeys = Object.keys(DEFAULT_FEATURES);
+    const featureKeys = Object.keys(FEATURE_FLAGS_DEFAULTS);
 
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
-      const isHiddenFeature = isFeature(searchInputTrimmed);
+      const isHiddenFeature = FeatureIdSchema.safeParse(searchInputTrimmed).success;
 
       // Only adds the search input value to the featureKeys if it is an existing hidden feature
       if (isHiddenFeature) {
@@ -60,7 +61,7 @@ export default function DebugFeatureFlags() {
     }
 
     return featureKeys;
-  }, [isFeature, searchInputTrimmed]);
+  }, [searchInputTrimmed]);
 
   const handleSearch = useCallback((value: string) => {
     setSearchInput(value);
@@ -125,7 +126,6 @@ export default function DebugFeatureFlags() {
 
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
   const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
-  const dispatch = useDispatch();
   const setFeatureFlagBannerVisible = useCallback(
     (newVal: boolean) => {
       dispatch(setBannerVisible(newVal));
@@ -177,7 +177,7 @@ export default function DebugFeatureFlags() {
               size="small"
               type="main"
               outline
-              onPress={resetFeatures}
+              onPress={() => dispatch(setAllOverrides({}))}
               disabled={!hasLocallyOverriddenFlags}
             >
               {t("settings.debug.featureFlagsRestoreAll")}
