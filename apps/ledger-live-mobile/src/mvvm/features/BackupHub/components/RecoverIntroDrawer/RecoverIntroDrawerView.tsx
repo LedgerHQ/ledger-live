@@ -28,7 +28,9 @@ export function RecoverIntroDrawerView({
       <BottomSheetView style={{ paddingBottom: bottomInset }}>
         <Box lx={containerStyle}>
           <BottomSheetHeader />
-          <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
+          {isOpen ? (
+            <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
+          ) : null}
         </Box>
       </BottomSheetView>
     </QueuedDrawerBottomSheet>
