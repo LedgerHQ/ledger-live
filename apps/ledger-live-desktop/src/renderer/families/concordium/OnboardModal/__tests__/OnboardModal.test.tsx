@@ -51,7 +51,7 @@ function createMockPairObservable() {
       const t2 = setTimeout(() => {
         next({ status: "SUCCESS", sessionTopic: SESSION_TOPIC });
         complete();
-      }, T + 200);
+      }, 2 * T + 200);
 
       return {
         unsubscribe: jest.fn(() => {
