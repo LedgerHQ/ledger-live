@@ -16,11 +16,13 @@ interface UseCryptoViewModelParams {
   variant?: CryptoVariant;
 }
 
-const TRACKING_TYPE_BY_VARIANT: Record<CryptoVariant, "crypto" | "stable" | undefined> = {
-  stablecoin: "stable",
-  crypto: "crypto",
-  all: undefined,
-};
+const TRACKING_TYPE_BY_VARIANT: Record<CryptoVariant, "crypto" | "stable" | "stocks" | undefined> =
+  {
+    stablecoin: "stable",
+    crypto: "crypto",
+    stocks: "stocks",
+    all: undefined,
+  };
 
 const useCryptoViewModel = ({
   sourceScreenName,

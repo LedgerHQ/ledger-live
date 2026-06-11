@@ -15,7 +15,7 @@ interface PortfolioSectionActions {
 
 export function usePortfolioSectionActions(
   isReadOnly: boolean,
-  variant: "crypto" | "stablecoin" | "all",
+  variant: "crypto" | "stablecoin" | "stocks" | "all",
 ): PortfolioSectionActions {
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -25,7 +25,7 @@ export function usePortfolioSectionActions(
   const onPressShowAll = useCallback(() => {
     track("button_clicked", {
       button: "asset_list",
-      type: variant === "stablecoin" ? "stable" : "crypto",
+      type: variant === "stablecoin" ? "stable" : variant === "stocks" ? "stocks" : "crypto",
       page: "Wallet",
     });
     if (!isReadOnly && shouldDisplayAssetSection) {

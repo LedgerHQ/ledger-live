@@ -1,7 +1,7 @@
 import { ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 
-export type CryptoVariant = "crypto" | "stablecoin" | "all";
+export type CryptoVariant = "crypto" | "stablecoin" | "stocks" | "all";
 
 export type CryptoScreenNavigator = {
   [ScreenName.Crypto]: {
@@ -17,5 +17,5 @@ export interface CryptoScreenViewData {
   error: Error | null;
   sourceScreenName: ScreenName | undefined;
   variant: CryptoVariant;
-  trackingType: "crypto" | "stable" | undefined;
+  trackingType: "crypto" | "stable" | "stocks" | undefined;
 }

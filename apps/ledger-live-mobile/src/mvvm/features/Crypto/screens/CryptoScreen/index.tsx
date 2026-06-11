@@ -13,6 +13,7 @@ type Props = BaseComposite<StackNavigatorProps<CryptoScreenNavigator, ScreenName
 const LIST_TEST_ID_BY_VARIANT: Record<CryptoVariant, string> = {
   stablecoin: "StablecoinList",
   crypto: "CryptoList",
+  stocks: "StocksList",
   all: "CryptoList",
 };
 
