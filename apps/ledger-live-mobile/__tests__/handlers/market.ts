@@ -74,6 +74,12 @@ const handlers = [
 
     return HttpResponse.json(paginatedData);
   }),
+  http.get("https://countervalues.live.ledger.com/v3/categories/trending", () => {
+    return HttpResponse.json([
+      { id: "infrastructure", name: "Infrastructure" },
+      { id: "yield-farming", name: "Yield Farming" },
+    ]);
+  }),
   http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () => {
     return HttpResponse.json(["usd", "eur", "gbp"]);
   }),

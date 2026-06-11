@@ -1,7 +1,7 @@
 import { renderHook, act } from "@tests/test-renderer";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import * as useWalletFeaturesConfigModule from "@features/platform-feature-flags";
-import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/types";
+import type { WalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 import {
   usePortfolioRefreshStatusViewModel,

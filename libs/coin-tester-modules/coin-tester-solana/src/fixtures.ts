@@ -54,6 +54,19 @@ export const SOLANA_VIRTUAL: TokenCurrency = {
   disableCountervalue: false,
 };
 
+export const SOLANA_TSLAX: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/tesla_xstock_xsdovfqebukxuzhwhdvwhbhgehjgnst4mlodqsjhzob",
+  contractAddress: "XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+  name: "Tesla xStock",
+  ticker: "TSLAx",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "TSLAx", code: "TSLAx", magnitude: 8 }],
+};
+
 setupMockCryptoAssetsStore({
   findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
     if (currencyId !== "solana") return undefined;
@@ -67,12 +80,16 @@ setupMockCryptoAssetsStore({
     if (normalizedAddress === SOLANA_VIRTUAL.contractAddress.toLowerCase()) {
       return SOLANA_VIRTUAL;
     }
+    if (normalizedAddress === SOLANA_TSLAX.contractAddress.toLowerCase()) {
+      return SOLANA_TSLAX;
+    }
     return undefined;
   },
   findTokenById: async (id: string) => {
     if (id === SOLANA_USDC.id) return SOLANA_USDC;
     if (id === SOLANA_CWIF.id) return SOLANA_CWIF;
     if (id === SOLANA_VIRTUAL.id) return SOLANA_VIRTUAL;
+    if (id === SOLANA_TSLAX.id) return SOLANA_TSLAX;
     return undefined;
   },
 });
@@ -256,6 +273,19 @@ export function initMSW(): () => void {
         });
       },
     ),
+    http.get(
+      "https://nft.api.live.ledger.com/v2/solana/computed-token-account/Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp/XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB",
+      ({ request }) => {
+        const url = new URL(request.url);
+        const signedDescriptor =
+          url.searchParams.get("challenge") === "0x5c9dd1f4"
+            ? "010103020102700106710106202c4a4475766d3171597355635a6a74734d524b66553763776b3737586338374d3274717763474d4b70624a6262230165222c486a363977527a6b72467566314e627934797a5045464864736d51644d6f56596a76444b5a534c6a5a464570732b5873446f5666716542756b78755a4857686476574842686745486a474e7374344d4c6f6471734a487a6f4212045c9dd1f41301071401011546304402204c86824e88d844b1c7b76bc683e5322da9e4d174c51cfd31aa3d2d634f426919022014608c69f883a86597f70017dc8ba0eef571d915f62108e03347bb5c1309f6fe"
+            : "invalid challenge";
+        return HttpResponse.json({
+          signedDescriptor,
+        });
+      },
+    ),
     http.get("https://earn.api.live.ledger.com/v0/network/solana/validator-details", () =>
       HttpResponse.json([]),
     ),
@@ -296,6 +326,18 @@ export function initMSW(): () => void {
                 data: "0101900201010304800001f50406536f6c616e6105075649525455414c0601090733100100112c3369514c38424653327645376d7777346568417151484173626d524e43725078697a574154325a66797239791200",
                 signatures: {
                   prod: "304402205e5ab58e4ad414c7641effdab231e30d4e6aab5a7d99f7d87ef4932612f0bf56022014c71b9049022ed020107b86d6d0efe06e157e30d8487dd71970fa7e42d6a1bf",
+                },
+              },
+              descriptor_exchange_app: { signatures: {} },
+            },
+          ]);
+        case "solana/spl/tesla_xstock_xsdovfqebukxuzhwhdvwhbhgehjgnst4mlodqsjhzob": // TSLAx
+          return HttpResponse.json([
+            {
+              descriptor: {
+                data: "0101900201010304800001f50406536f6c616e61050554534c4178060108073a100101112b5873446f5666716542756b78755a4857686476574842686745486a474e7374344d4c6f6471734a487a6f4212080b08021819160a0c",
+                signatures: {
+                  prod: "30440220414e5c0aee703c64301a8fa54508e7b0ffc4f77bffeffd590c61215b36043aab02201f85a2d7ff0f7ec7e731545051f5a76097c7599f982e2e9f6e743487ef6a5cd5",
                 },
               },
               descriptor_exchange_app: { signatures: {} },

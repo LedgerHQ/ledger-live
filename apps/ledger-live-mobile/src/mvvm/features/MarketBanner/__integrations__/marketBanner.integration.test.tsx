@@ -1,6 +1,13 @@
 import React from "react";
-import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import {
+  renderWithReactQuery,
+  screen,
+  waitFor,
+  withFlagOverrides,
+  within,
+} from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
+import { track } from "~/analytics";
 import { MarketBannerTest, MOCK_MARKET_PERFORMERS } from "./shared";
 
 const mockNavigate = jest.fn();
@@ -93,6 +100,103 @@ describe("MarketBanner Integration Tests", () => {
       });
 
       expect(await screen.findByTestId("market-banner-container")).toBeVisible();
+    });
+  });
+
+  describe("Filter trigger", () => {
+    const renderWithAssetDiscoverability = (assetDiscoverability: boolean) => {
+      server.use(
+        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
+          HttpResponse.json(MOCK_MARKET_PERFORMERS),
+        ),
+      );
+
+      return renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { marketBanner: true, assetDiscoverability } },
+        }),
+      });
+    };
+
+    it("should not render the filter button when assetDiscoverability is disabled", async () => {
+      renderWithAssetDiscoverability(false);
+
+      expect(await screen.findByTestId("market-banner-container")).toBeVisible();
+      expect(screen.queryByTestId("market-banner-filter-button")).toBeNull();
+    });
+
+    it("should render the filter button with the default 'Trending' label", async () => {
+      renderWithAssetDiscoverability(true);
+
+      const filterButton = await screen.findByTestId("market-banner-filter-button");
+      expect(filterButton).toBeVisible();
+      expect(within(filterButton).getByText("Trending")).toBeVisible();
+    });
+
+    it("should track the filter button when pressed", async () => {
+      const { user } = renderWithAssetDiscoverability(true);
+
+      const filterButton = await screen.findByTestId("market-banner-filter-button");
+      await user.press(filterButton);
+
+      await waitFor(() => {
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "Market Banner Filter",
+          page: "Wallet",
+          banner: "Market Banner",
+        });
+      });
+    });
+
+    it("should render the four filter options in the drawer", async () => {
+      const { user } = renderWithAssetDiscoverability(true);
+
+      await user.press(await screen.findByTestId("market-banner-filter-button"));
+
+      expect(await screen.findByTestId("market-banner-filter-drawer-trending")).toBeVisible();
+      expect(screen.getByTestId("market-banner-filter-drawer-gainers")).toBeVisible();
+      expect(screen.getByTestId("market-banner-filter-drawer-losers")).toBeVisible();
+      expect(screen.getByTestId("market-banner-filter-drawer-favorites")).toBeVisible();
+    });
+
+    it("should persist the selected filter and track the change", async () => {
+      const { user, store } = renderWithAssetDiscoverability(true);
+
+      await user.press(await screen.findByTestId("market-banner-filter-button"));
+      await user.press(await screen.findByTestId("market-banner-filter-drawer-losers"));
+
+      await waitFor(() => {
+        expect(store.getState().marketBanner.ranking).toBe("losers");
+      });
+      expect(track).toHaveBeenCalledWith("change_sort_market_banner", { sort: "losers" });
+    });
+
+    it("should fall back to trending when favorites is active but no asset is starred", async () => {
+      server.use(
+        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
+          HttpResponse.json(MOCK_MARKET_PERFORMERS),
+        ),
+      );
+
+      const { store } = renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: state => {
+          const flagged = withFlagOverrides({
+            lwmWallet40: {
+              enabled: true,
+              params: { marketBanner: true, assetDiscoverability: true },
+            },
+          })(state);
+          return {
+            ...flagged,
+            marketBanner: { ...flagged.marketBanner, ranking: "favorites" },
+            settings: { ...flagged.settings, starredMarketCoins: [] },
+          };
+        },
+      });
+
+      await waitFor(() => {
+        expect(store.getState().marketBanner.ranking).toBe("trending");
+      });
     });
   });
 
@@ -198,7 +302,7 @@ describe("MarketBanner Integration Tests", () => {
         }),
       });
 
-      expect(await screen.findByText(/Explore the market/i)).toBeVisible();
+      expect(await screen.findByText("Market")).toBeVisible();
     });
   });
 
@@ -268,7 +372,7 @@ describe("MarketBanner Integration Tests", () => {
         }),
       });
 
-      const sectionTitle = await screen.findByText(/Explore the market/i);
+      const sectionTitle = await screen.findByText("Market");
       await user.press(sectionTitle);
 
       await waitFor(() => {

@@ -58,9 +58,7 @@ function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: s
     {
       ...marketsMock[0],
       id: "tesla-xstock",
-      ledgerIds: [
-        "ethereum/erc20/tesla_xstock_0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
-      ],
+      ledgerIds: ["ethereum/erc20/tesla_xstock_0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0"],
       ticker: "tslax",
       name: "Tesla xStock",
       marketCapRank: 528,
@@ -88,8 +86,9 @@ function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: s
       if (filter === "stock") {
         filteredData = stockMarketsMock;
       } else if (filter) {
-        filteredData = marketsMock.filter(({ name, ticker }) =>
-          ticker.toLowerCase().includes(filter) || name.toLowerCase().includes(filter),
+        filteredData = marketsMock.filter(
+          ({ name, ticker }) =>
+            ticker.toLowerCase().includes(filter) || name.toLowerCase().includes(filter),
         );
       } else if (ids.length > 0) {
         filteredData = marketsMock.filter(({ id }) => ids.includes(id));
@@ -225,9 +224,7 @@ describe("MarketScreen assets list (Block 3)", () => {
       { timeout: 5000 },
     );
 
-    fireEvent.press(
-      screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-stocks`),
-    );
+    fireEvent.press(screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-stocks`));
 
     await waitFor(
       () => {
@@ -250,6 +247,55 @@ describe("MarketScreen assets list (Block 3)", () => {
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher)).toBeVisible();
     expect(screen.queryByTestId("marketItem-bitcoin")).toBeNull();
     expect(screen.queryByTestId("marketItem-rif-token")).toBeNull();
+  });
+
+  it("renders trending categories and filters the list by the selected one", async () => {
+    const marketRequests: string[] = [];
+
+    server.use(
+      http.get("https://countervalues.live.ledger.com/v3/categories/trending", () =>
+        HttpResponse.json([{ id: "infrastructure", name: "Infrastructure" }]),
+      ),
+      http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
+        marketRequests.push(request.url);
+        const searchParams = new URL(request.url).searchParams;
+        const category = searchParams.get("categories");
+        const page = parseInt(searchParams.get("page") || "0");
+        const pageSize = 10;
+
+        const data =
+          category === "infrastructure"
+            ? [{ ...marketsMock[0], id: "rif-token", ticker: "rif", name: "Rootstock Infra" }]
+            : marketsMock;
+
+        return HttpResponse.json(data.slice(page * pageSize, (page + 1) * pageSize));
+      }),
+    );
+
+    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: enableAssetDiscoverability,
+    });
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    const trendingTab = await screen.findByTestId(
+      `${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-infrastructure`,
+    );
+    expect(screen.getByText("Infrastructure")).toBeVisible();
+
+    await user.press(trendingTab);
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-rif-token")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    const categoryRequest = marketRequests.find(
+      url => new URL(url).searchParams.get("categories") === "infrastructure",
+    );
+    expect(categoryRequest).toBeDefined();
+    expect(screen.queryByTestId("marketItem-bitcoin")).toBeNull();
   });
 
   it("renders CVS stock rows when the Stocks category is persisted", async () => {

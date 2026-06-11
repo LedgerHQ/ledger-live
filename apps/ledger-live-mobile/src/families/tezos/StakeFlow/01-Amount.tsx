@@ -3,7 +3,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { isAwaitingDelegation, useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
@@ -25,8 +25,10 @@ import CancelButton from "~/components/CancelButton";
 import RetryButton from "~/components/RetryButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import LText from "~/components/LText";
 import KeyboardView from "~/components/KeyboardView";
 import AmountInput from "~/screens/SendFunds/AmountInput";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import { ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -41,7 +43,9 @@ import {
 
 type Props = StackNavigatorProps<TezosStakeFlowParamList, ScreenName.TezosStakeAmount>;
 
-export default function StakeAmount({ navigation, route }: Props) {
+export default function StakeAmount() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useAccountScreen(route);
@@ -206,6 +210,11 @@ export default function StakeAmount({ navigation, route }: Props) {
               testID="tezos-stake-amount-input"
             />
             <View style={styles.bottomWrapper}>
+              <SummaryRow title={<Trans i18nKey="send.fees.title" />}>
+                <LText semiBold style={styles.feeValue}>
+                  <CurrencyUnitValue showCode unit={unit} value={status.estimatedFees} />
+                </LText>
+              </SummaryRow>
               <View style={styles.available}>
                 <View style={styles.availableLeft}>
                   <Text color="neutral.c70">
@@ -308,6 +317,10 @@ const styles = StyleSheet.create({
   },
   switch: {
     opacity: 0.99,
+  },
+  // 14 matches SummaryRow's title size so the label and amount share a baseline.
+  feeValue: {
+    fontSize: 14,
   },
   button: {
     flex: 1,

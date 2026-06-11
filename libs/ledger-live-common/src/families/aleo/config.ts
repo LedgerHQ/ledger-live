@@ -5,11 +5,16 @@ import { getEnv } from "@ledgerhq/live-env";
 
 // API for fee estimation is not available yet, so for MVP we are using static fee configuration.
 // source of hardcoded values: https://ledgerhq.atlassian.net/wiki/spaces/BI/pages/6218678344/ARCH+-+Aleo+integration+HLD
+// should be removed once https://ledgerhq.atlassian.net/browse/LIVE-30580 is completed
 const DEFAULT_FEE_BY_TRANSACTION_TYPE: Record<TransactionType, number> = {
   [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
   [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 2308,
   [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 17972,
   [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
+  [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC]: 34060,
+  [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE]: 2308,
+  [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC]: 18494,
+  [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE]: 17972,
 };
 
 const DEFAULT_FEE_SAFETY_MULTIPLIER = 1;

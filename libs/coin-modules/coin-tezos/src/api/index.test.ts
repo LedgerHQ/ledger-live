@@ -16,12 +16,14 @@ const logicCraftTransactionMock = jest.fn(
     return { type: undefined, contents: undefined };
   },
 );
+const logicCraftRawOperationsMock = jest.fn();
 
 jest.mock("../logic", () => ({
   listOperations: async () => logicGetTransactions(),
   estimateFees: (...args: unknown[]) => logicEstimateFees(...args),
   craftTransaction: (account: unknown, transaction: { fee: { fees: string } }) =>
     logicCraftTransactionMock(account, transaction),
+  craftRawOperations: (...args: unknown[]) => logicCraftRawOperationsMock(...args),
   rawEncode: () => Promise.resolve("tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"),
 }));
 
@@ -61,6 +63,27 @@ const api = createApi({
     minFees: 1,
     minEstimatedFees: 2,
   },
+});
+
+describe("craftRawTransaction", () => {
+  afterEach(() => {
+    logicCraftRawOperationsMock.mockClear();
+  });
+
+  it("delegates to craftRawOperations and wraps the result", async () => {
+    logicCraftRawOperationsMock.mockResolvedValue("03deadbeef");
+    const rawTransaction = '[{"kind":"transaction","destination":"tz1recipient","amount":"1000"}]';
+
+    const result = await api.craftRawTransaction(rawTransaction, "tz1sender", "edpkpublickey", 5n);
+
+    expect(logicCraftRawOperationsMock).toHaveBeenCalledWith(
+      rawTransaction,
+      "tz1sender",
+      "edpkpublickey",
+      5n,
+    );
+    expect(result).toEqual({ transaction: "03deadbeef" });
+  });
 });
 
 describe("get operations", () => {

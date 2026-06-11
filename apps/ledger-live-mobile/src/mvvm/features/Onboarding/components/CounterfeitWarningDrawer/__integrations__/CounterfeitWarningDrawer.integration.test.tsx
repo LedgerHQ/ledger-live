@@ -7,6 +7,11 @@ import { urls } from "~/utils/urls";
 import CounterfeitWarningDrawer from "..";
 import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "../analytics";
 
+const analyticsPayload = {
+  deviceModelId: DeviceModelId.nanoX,
+  flow: "Onboarding",
+};
+
 const renderDrawer = (isOpen = true) => {
   const onProceed = jest.fn();
   const onDismiss = jest.fn();
@@ -57,10 +62,14 @@ describe("CounterfeitWarningDrawer Integration", () => {
       await waitFor(() => {
         expect(screen.getByText("Continue setup")).toBeVisible();
       });
-      expect(track).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
+      expect(track).toHaveBeenCalledWith("page_viewed", {
+        ...analyticsPayload,
+        page: COUNTERFEIT_WARNING_PAGE,
+      });
 
       await user.press(screen.getByText("Continue setup"));
       expect(track).toHaveBeenCalledWith("button_clicked", {
+        ...analyticsPayload,
         button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
         page: COUNTERFEIT_WARNING_PAGE,
       });
@@ -76,6 +85,7 @@ describe("CounterfeitWarningDrawer Integration", () => {
 
       await user.press(screen.getByText("Learn more"));
       expect(track).toHaveBeenCalledWith("button_clicked", {
+        ...analyticsPayload,
         button: COUNTERFEIT_WARNING_BUTTON.learnMore,
         page: COUNTERFEIT_WARNING_PAGE,
       });

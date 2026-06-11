@@ -46,6 +46,25 @@ describe("Tezos operationDetails", () => {
     expect(screen.getByText(/10 XTZ/)).toBeTruthy();
   });
 
+  it("surfaces the unstaked principal for an UNSTAKE operation", () => {
+    render(
+      <OperationDetailsExtra account={account} operation={makeOp("UNSTAKE", new BigNumber(1e7))} />,
+    );
+    expect(screen.getByTestId("operationDetails-unstakedAmount")).toBeTruthy();
+    expect(screen.getByText(/10 XTZ/)).toBeTruthy();
+  });
+
+  it("surfaces the withdrawn principal for a FINALIZE_UNSTAKE operation", () => {
+    render(
+      <OperationDetailsExtra
+        account={account}
+        operation={makeOp("FINALIZE_UNSTAKE", new BigNumber(1e7))}
+      />,
+    );
+    expect(screen.getByTestId("operationDetails-withdrawnAmount")).toBeTruthy();
+    expect(screen.getByText(/10 XTZ/)).toBeTruthy();
+  });
+
   it("renders nothing for a non-stake operation", () => {
     render(
       <OperationDetailsExtra

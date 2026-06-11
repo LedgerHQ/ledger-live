@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import {
   stakeProgramsToEarnParam,
   getEthDepositScreenSetting,
-} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+} from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import type { ExtraInputs } from "./useLiveAppModalContentViewModel";

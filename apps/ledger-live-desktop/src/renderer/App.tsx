@@ -4,6 +4,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
+import { useFeature } from "@features/platform-feature-flags";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -14,7 +15,6 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
-import { FeatureFlagsContextBridge } from "~/renderer/components/FeatureFlagsContextBridge";
 import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
@@ -64,6 +64,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   }, [reloadEnabled]);
 
   const selectedPalette = useSelector(themeSelector) || "light";
+  const ldmkTransport = useFeature("ldmkTransport");
 
   return (
     <StyleProvider selectedPalette={selectedPalette}>
@@ -75,34 +76,32 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             }
           }}
         >
-          <FeatureFlagsContextBridge>
-            <ConnectEnvsToSentry />
-            <ConnectEnvsToDatadog />
-            <UpdaterProvider>
-              <AppDataStorageProvider>
-                <DeviceManagementKitProvider>
-                  <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                    <ToastProvider>
-                      <ServiceStatusProviderWrapper>
-                        <Router>
-                          <PostOnboardingProviderWrapped>
-                            <PlatformAppProviderWrapper>
-                              <DrawerProvider>
-                                <QueryClientProvider client={queryClient}>
-                                  <Default />
-                                  <ReactQueryDevtoolsProvider />
-                                </QueryClientProvider>
-                              </DrawerProvider>
-                            </PlatformAppProviderWrapper>
-                          </PostOnboardingProviderWrapped>
-                        </Router>
-                      </ServiceStatusProviderWrapper>
-                    </ToastProvider>
-                  </CountervaluesBridgedProvider>
-                </DeviceManagementKitProvider>
-              </AppDataStorageProvider>
-            </UpdaterProvider>
-          </FeatureFlagsContextBridge>
+          <ConnectEnvsToSentry />
+          <ConnectEnvsToDatadog />
+          <UpdaterProvider>
+            <AppDataStorageProvider>
+              <DeviceManagementKitProvider ldmkTransportEnabled={ldmkTransport?.enabled ?? false}>
+                <CountervaluesBridgedProvider initialState={initialCountervalues}>
+                  <ToastProvider>
+                    <ServiceStatusProviderWrapper>
+                      <Router>
+                        <PostOnboardingProviderWrapped>
+                          <PlatformAppProviderWrapper>
+                            <DrawerProvider>
+                              <QueryClientProvider client={queryClient}>
+                                <Default />
+                                <ReactQueryDevtoolsProvider />
+                              </QueryClientProvider>
+                            </DrawerProvider>
+                          </PlatformAppProviderWrapper>
+                        </PostOnboardingProviderWrapped>
+                      </Router>
+                    </ServiceStatusProviderWrapper>
+                  </ToastProvider>
+                </CountervaluesBridgedProvider>
+              </DeviceManagementKitProvider>
+            </AppDataStorageProvider>
+          </UpdaterProvider>
         </ThrowBlock>
       </ThemeProvider>
     </StyleProvider>

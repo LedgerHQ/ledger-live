@@ -3,6 +3,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import {
   mapDelegations,
   mapUnbondings,
@@ -104,6 +105,12 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
   const onRowClaimRewards = useCallback(
     (validatorAddress: string) => {
       dispatch(openModal("MODAL_EVM_CLAIM_REWARDS", { account, validatorAddress }));
+    },
+    [account, dispatch],
+  );
+  const onWithdraw = useCallback(
+    (validatorAddress: string, amount: BigNumber, withdrawId?: number) => {
+      dispatch(openModal("MODAL_EVM_WITHDRAW", { account, validatorAddress, amount, withdrawId }));
     },
     [account, dispatch],
   );
@@ -243,6 +250,7 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
             <UnbondingRow
               key={`${unbonding.validatorAddress}-${unbonding.completionDate.valueOf()}${unbonding.withdrawId !== undefined ? `-${unbonding.withdrawId}` : ""}`}
               delegation={unbonding}
+              onWithdraw={onWithdraw}
               onExternalLink={onExternalLink}
             />
           ))}

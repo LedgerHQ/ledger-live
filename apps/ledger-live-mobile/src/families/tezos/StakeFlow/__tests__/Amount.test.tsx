@@ -18,11 +18,17 @@ let mockStatus: {
   errors: Record<string, Error>;
   warnings: Record<string, Error>;
   amount: BigNumber;
+  estimatedFees?: BigNumber;
 };
 let mockAwaiting = false;
 const mockSyncDispatch = jest.fn();
 let mockBridgeError: Error | null = null;
 
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({ navigate: mockNavigate }),
+  useRoute: () => ({ params: { accountId: "tezos-acc-1" } }),
+}));
 jest.mock("LLM/hooks/useAccountScreen", () => ({
   useAccountScreen: () => ({
     account: { id: "tezos-acc-1", type: "Account" },
@@ -100,12 +106,6 @@ jest.mock("~/components/Button", () => {
   );
 });
 
-const makeProps = () =>
-  ({
-    navigation: { navigate: mockNavigate },
-    route: { params: { accountId: "tezos-acc-1" } },
-  }) as unknown as React.ComponentProps<typeof StakeAmount>;
-
 describe("Tezos StakeFlow Amount", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -113,7 +113,12 @@ describe("Tezos StakeFlow Amount", () => {
     mockSyncDispatch.mockClear();
     mockAwaiting = false;
     mockBridgeError = null;
-    mockStatus = { errors: {}, warnings: {}, amount: new BigNumber(0) };
+    mockStatus = {
+      errors: {},
+      warnings: {},
+      amount: new BigNumber(0),
+      estimatedFees: new BigNumber(1000),
+    };
   });
 
   afterEach(() => {
@@ -122,13 +127,13 @@ describe("Tezos StakeFlow Amount", () => {
 
   it("shows the awaiting-delegation state instead of the amount form while the delegation propagates", async () => {
     mockAwaiting = true;
-    render(<StakeAmount {...makeProps()} />);
+    render(<StakeAmount />);
     expect(await screen.findByText("tezos.stake.flow.amount.awaitingDelegation")).toBeTruthy();
     expect(screen.queryByTestId("tezos-stake-amount-continue")).toBeNull();
   });
 
   it("continues to the device step once the amount is ready", async () => {
-    render(<StakeAmount {...makeProps()} />);
+    render(<StakeAmount />);
     fireEvent.press(await screen.findByTestId("tezos-stake-amount-continue"));
     expect(mockNavigate).toHaveBeenCalledWith(
       ScreenName.TezosStakeSelectDevice,
@@ -143,7 +148,7 @@ describe("Tezos StakeFlow Amount", () => {
   it("polls then stops and reveals the amount form after the await-delegation timeout", async () => {
     jest.useFakeTimers();
     mockAwaiting = true;
-    render(<StakeAmount {...makeProps()} />);
+    render(<StakeAmount />);
 
     expect(mockSyncDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -165,14 +170,14 @@ describe("Tezos StakeFlow Amount", () => {
 
   it("surfaces a bridge error once the delegation is no longer awaited", async () => {
     mockBridgeError = new Error("prepare failed");
-    render(<StakeAmount {...makeProps()} />);
+    render(<StakeAmount />);
     expect(await screen.findByTestId("bridge-error-modal")).toBeTruthy();
   });
 
   it("hides bridge errors while the delegation is still propagating", () => {
     mockAwaiting = true;
     mockBridgeError = new Error("prepare failed");
-    render(<StakeAmount {...makeProps()} />);
+    render(<StakeAmount />);
     expect(screen.queryByTestId("bridge-error-modal")).toBeNull();
   });
 
@@ -182,7 +187,7 @@ describe("Tezos StakeFlow Amount", () => {
       warnings: {},
       amount: new BigNumber(100),
     };
-    render(<StakeAmount {...makeProps()} />);
+    render(<StakeAmount />);
     expect(await screen.findByTestId("amount-input-error")).toBeTruthy();
   });
 
@@ -192,8 +197,13 @@ describe("Tezos StakeFlow Amount", () => {
       warnings: {},
       amount: new BigNumber(0),
     };
-    render(<StakeAmount {...makeProps()} />);
+    render(<StakeAmount />);
     await screen.findByTestId("amount-input");
     expect(screen.queryByTestId("amount-input-error")).toBeNull();
+  });
+
+  it("shows the estimated network fee once loaded", async () => {
+    render(<StakeAmount />);
+    expect(await screen.findByText("send.fees.title")).toBeTruthy();
   });
 });

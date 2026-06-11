@@ -50,12 +50,11 @@ export const makeGetAccountShape =
     const {
       currency,
       index: accountIndex,
-      derivationPath,
       derivationMode,
       initialAccount,
       deviceId,
+      derivationPath,
     } = info;
-    // In case we get a full derivation path
     const rootPath = derivationPath.split("/", 2).join("/");
     const accountPath = `${rootPath}/${accountIndex}'`;
 

@@ -1,5 +1,5 @@
 import React, { useCallback, type ReactNode } from "react";
-import { FlatList, ListRenderItemInfo } from "react-native";
+import { FlatList, ListRenderItemInfo, ScrollView, type ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Banner,
@@ -30,6 +30,7 @@ import { MarketFiltersDrawer } from "../MarketFiltersDrawer";
 const HORIZONTAL_PADDING = 16;
 const TOP_PADDING = 24;
 const SKELETON_COUNT = 3;
+const CATEGORY_SWITCHER_BOTTOM_SPACING = 12;
 
 function MarketAssetsEmptyState({
   loading,
@@ -135,23 +136,30 @@ function MarketCategorySwitcher({
   );
 
   return (
-    <SegmentedControl
-      selectedValue={selectedCategory}
-      onSelectedChange={onSelectedChange}
-      accessibilityLabel={t("market.assets.categories.accessibilityLabel")}
-      testID={MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}
-      lx={categorySwitcherStyle}
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={categorySwitcherScrollStyle}
+      contentContainerStyle={categorySwitcherContentStyle}
     >
-      {tabs.map(tab => (
-        <SegmentedControlButton
-          key={tab.value}
-          value={tab.value}
-          testID={`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-${tab.value}`}
-        >
-          {t(tab.labelKey)}
-        </SegmentedControlButton>
-      ))}
-    </SegmentedControl>
+      <SegmentedControl
+        selectedValue={selectedCategory}
+        onSelectedChange={onSelectedChange}
+        accessibilityLabel={t("market.assets.categories.accessibilityLabel")}
+        testID={MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}
+        tabLayout="fit"
+      >
+        {tabs.map(tab => (
+          <SegmentedControlButton
+            key={tab.value}
+            value={tab.value}
+            testID={`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-${tab.value}`}
+          >
+            {tab.label ?? (tab.labelKey ? t(tab.labelKey) : tab.value)}
+          </SegmentedControlButton>
+        ))}
+      </SegmentedControl>
+    </ScrollView>
   );
 }
 
@@ -273,9 +281,12 @@ const subHeaderRowStyle: LumenViewStyle = {
   justifyContent: "space-between",
 };
 
-const categorySwitcherStyle: LumenViewStyle = {
-  marginHorizontal: "s16",
-  marginBottom: "s12",
+const categorySwitcherScrollStyle: ViewStyle = {
+  marginBottom: CATEGORY_SWITCHER_BOTTOM_SPACING,
+};
+
+const categorySwitcherContentStyle: ViewStyle = {
+  paddingHorizontal: HORIZONTAL_PADDING,
 };
 
 const rowStyle: LumenViewStyle = {

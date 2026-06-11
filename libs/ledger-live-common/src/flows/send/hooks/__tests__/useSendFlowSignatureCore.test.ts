@@ -141,6 +141,21 @@ describe("useSendFlowSignatureCore", () => {
     });
   });
 
+  it("should return no signature request when account or transaction is missing", () => {
+    const missingAccountParams = createParams({ account: null });
+    const missingTransactionParams = createParams({ transaction: null });
+
+    const { result: missingAccountResult } = renderHook(() =>
+      useSendFlowSignatureCore(missingAccountParams),
+    );
+    const { result: missingTransactionResult } = renderHook(() =>
+      useSendFlowSignatureCore(missingTransactionParams),
+    );
+
+    expect(missingAccountResult.current.request).toBeNull();
+    expect(missingTransactionResult.current.request).toBeNull();
+  });
+
   it("should register the pending operation when finishing with success", () => {
     const account = createAccount();
     const operation = createOperation();

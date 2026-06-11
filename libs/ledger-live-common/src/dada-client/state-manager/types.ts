@@ -11,11 +11,13 @@ export enum AssetsAdditionalData {
 
 export enum AssetCategory {
   Stablecoins = "stablecoins",
+  Stocks = "stocks",
 }
 
 export interface GetAssetsDataParams {
   search?: string;
   currencyIds?: string[];
+  categories?: AssetCategory[];
   useCase?: string;
   product: "llm" | "lld";
   version: string;

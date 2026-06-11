@@ -12,6 +12,7 @@ export {
   getMaxRedelegations,
   hasUnbondingPeriod,
   hasRedelegation,
+  hasCompound,
   prefetchValidators,
   clearValidatorsCache,
 } from "./validators";
@@ -25,6 +26,7 @@ export {
   canUndelegate,
   canDelegate,
   canRedelegate,
+  canCompound,
   getRedelegation,
   getRedelegationCompletionDate,
   parseAmountStringToNumber,

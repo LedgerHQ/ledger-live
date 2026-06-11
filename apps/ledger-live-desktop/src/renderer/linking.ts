@@ -1,6 +1,6 @@
 import { track } from "~/renderer/analytics/segment";
 import electron from "electron";
-import { isUrlSafe } from "~/helpers/urlSafety";
+import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 
 let shell: Electron.Shell | undefined;
 if (!process.env.STORYBOOK_ENV) {

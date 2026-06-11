@@ -80,6 +80,10 @@ export function buildAssetsQueryParams(
       queryArg.currencyIds.length > 0 && {
         currencyIds: queryArg.currencyIds,
       }),
+    ...(queryArg.categories &&
+      queryArg.categories.length > 0 && {
+        categories: queryArg.categories.join(","),
+      }),
     ...(queryArg.search && { search: queryArg.search }),
     product: queryArg.product,
     minVersion: queryArg.version,

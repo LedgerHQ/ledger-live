@@ -95,7 +95,7 @@ apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/WalletSync/   @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/LedgerSyncEntryPoints/ @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeatureFlagsSettings/ @ledgerhq/platform
-apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/wallet-xp
 
 # Coin integration team
 .github/**/bot-*.yml                                                @ledgerhq/coin-integration

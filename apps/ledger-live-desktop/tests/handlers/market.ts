@@ -21,6 +21,15 @@ const handlers = [
       ],
     });
   }),
+  http.get("https://countervalues.live.ledger.com/v3/markets/global", () => {
+    return HttpResponse.json({
+      marketCap: 2_500_000_000_000,
+      percentageChanges: { "1d": 0.0214 },
+    });
+  }),
+  http.get("https://countervalues.live.ledger.com/v3/categories/trending", () => {
+    return HttpResponse.json([]);
+  }),
 ];
 
 export default handlers;

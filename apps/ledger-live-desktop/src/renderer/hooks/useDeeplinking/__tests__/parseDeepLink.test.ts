@@ -281,6 +281,17 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates market route with a category param", () => {
+      const parsed = parseDeepLink("ledgerwallet://market?category=stocks");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "market",
+        path: "",
+        category: "stocks",
+      });
+    });
+
     it("creates asset route", () => {
       const parsed = parseDeepLink("ledgerwallet://asset/ethereum");
       const route = createRoute(parsed);

@@ -14,6 +14,7 @@ import { accountsSelector } from "~/reducers/accounts";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import { useAddressValidation } from "./useAddressValidation";
+import { useClipboardRecipient } from "./useClipboardRecipient";
 
 type UseRecipientScreenViewProps = Readonly<{
   account: AccountLike;
@@ -98,6 +99,21 @@ export function useRecipientScreenView({
   const hasSearchValue = recipientSearch.value.length > 0;
   const showInitialState = !hasSearchValue;
 
+  const { clipboardAddress } = useClipboardRecipient({
+    enabled: showInitialState,
+    currency,
+    account,
+    parentAccount,
+    currentAccountId: mainAccount.id,
+    recipientSupportsDomain,
+  });
+
+  const handlePasteFromClipboard = useCallback(() => {
+    if (clipboardAddress) {
+      recipientSearch.setValue(clipboardAddress);
+    }
+  }, [clipboardAddress, recipientSearch]);
+
   const hasRecentAddresses = recentAddresses.length > 0;
   const hasUserAccounts = userAccountsForCurrency.length > 0;
   const showInitialEmptyState = showInitialState && !hasRecentAddresses && !hasUserAccounts;
@@ -146,6 +162,8 @@ export function useRecipientScreenView({
     mainAccount,
     showInitialState,
     showInitialEmptyState,
+    clipboardAddress,
+    handlePasteFromClipboard,
     handleRecentAddressSelect,
     handleAccountSelect,
     handleAddressSelect,

@@ -9,6 +9,7 @@ const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
   undelegate: "UNDELEGATE",
   redelegate: "REDELEGATE",
   claimReward: "REWARD",
+  compoundReward: "REWARD",
 };
 
 /**
@@ -22,6 +23,7 @@ export function isStakingOperation(value: string): value is StakingOperation {
     "getStakedBalance",
     "getUnstakedBalance",
     "claimReward",
+    "compoundReward",
   ];
   return stakingOperations.includes(value as StakingOperation);
 }

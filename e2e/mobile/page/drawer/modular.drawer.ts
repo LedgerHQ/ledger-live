@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { Feature_ModularDrawer } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import { getFlags } from "../../bridge/server";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { isIos } from "../../helpers/commonHelpers";
@@ -38,7 +38,7 @@ export default class ModularDrawer {
   assetItemByTicker = (ticker: string) => new RegExp(`asset-item-${ticker}`, "i");
   networkItemIdMAD = (networkId: string) => new RegExp(`network-item-${networkId}`, "i");
 
-  private flags: Feature_ModularDrawer | null = null;
+  private flags: Features["llmModularDrawer"] | null = null;
 
   resetFlags(): void {
     this.flags = null;
@@ -48,7 +48,7 @@ export default class ModularDrawer {
     this.flags ??= JSON.parse(await getFlags()).llmModularDrawer;
   }
 
-  async isFlowEnabled<K extends keyof NonNullable<Feature_ModularDrawer["params"]>>(
+  async isFlowEnabled<K extends keyof NonNullable<Features["llmModularDrawer"]["params"]>>(
     flow: K,
   ): Promise<boolean> {
     await this.loadFlags();

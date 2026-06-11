@@ -102,6 +102,29 @@ describe("TopBar navigation", () => {
     });
   });
 
+  it("should not render the search icon when asset discoverability is disabled", () => {
+    const { queryByTestId } = renderWithReactQuery(<TopBar />);
+
+    expect(queryByTestId("topbar-search")).toBeNull();
+  });
+
+  it("should navigate to GlobalSearch when the search icon is pressed and asset discoverability is enabled", async () => {
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
+      overrideInitialState: withFlagOverrides({
+        lwmWallet40: { enabled: true, params: { assetDiscoverability: true } },
+      }),
+    });
+
+    await user.press(getByTestId("topbar-search"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.search.name);
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Search",
+      page: ScreenName.Portfolio,
+    });
+  });
+
   it("should navigate to operations list with expected params when transaction history button is pressed", async () => {
     const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
       overrideInitialState: withFlagOverrides({

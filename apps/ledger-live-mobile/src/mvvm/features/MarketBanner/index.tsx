@@ -1,27 +1,81 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/index";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { selectMarketBannerRanking, setMarketBannerRanking } from "~/reducers/marketBanner";
+import { starredMarketCoinsSelector } from "~/reducers/settings";
 import useMarketBannerViewModel from "./hooks/useMarketBannerViewModel";
+import { usePerformersBannerItems, useFavoritesBannerItems } from "./hooks/useMarketBannerData";
 import MarketBannerView from "./components/MarketBannerView";
 import { MarketBannerProps } from "./types";
+import type { MarketBannerRanking } from "~/reducers/types";
 
-const MarketBanner = ({ testID }: MarketBannerProps) => {
-  const { items, isError, isEnabled, range, onTilePress, onViewAllPress, onSectionTitlePress } =
+type MarketBannerSurfaceProps = MarketBannerProps & {
+  items: MarketItemPerformer[];
+  isError: boolean;
+};
+
+const MarketBannerSurface = ({ items, isError, testID }: MarketBannerSurfaceProps) => {
+  const { range, showFilter, bannerFilter, onTilePress, onViewAllPress, onSectionTitlePress } =
     useMarketBannerViewModel();
-
-  if (!isEnabled) {
-    return null;
-  }
 
   return (
     <MarketBannerView
-      isError={isError}
       items={items}
+      isError={isError}
       range={range}
+      showFilter={showFilter}
+      bannerFilter={bannerFilter}
       onTilePress={onTilePress}
       onViewAllPress={onViewAllPress}
       onSectionTitlePress={onSectionTitlePress}
       testID={testID}
     />
   );
+};
+
+const PerformersBanner = ({
+  ranking,
+  testID,
+}: { ranking: MarketBannerRanking } & MarketBannerProps) => {
+  const { items, isError } = usePerformersBannerItems(ranking);
+  return <MarketBannerSurface items={items} isError={isError} testID={testID} />;
+};
+
+const FavoritesBanner = ({ testID }: MarketBannerProps) => {
+  const { items, isError } = useFavoritesBannerItems();
+  return <MarketBannerSurface items={items} isError={isError} testID={testID} />;
+};
+
+const MarketBannerContent = ({ testID }: MarketBannerProps) => {
+  const dispatch = useDispatch();
+  const ranking = useSelector(selectMarketBannerRanking);
+  const hasStarred = useSelector(starredMarketCoinsSelector).length > 0;
+
+  // Favorites with no starred asset left → fall back to trending and reset the ranking.
+  useEffect(() => {
+    if (ranking === "favorites" && !hasStarred) {
+      dispatch(setMarketBannerRanking("trending"));
+    }
+  }, [dispatch, ranking, hasStarred]);
+
+  // Only mount the React Query-backed favorites fetch when favorites is actually active.
+  return ranking === "favorites" && hasStarred ? (
+    <FavoritesBanner testID={testID} />
+  ) : (
+    <PerformersBanner ranking={ranking} testID={testID} />
+  );
+};
+
+const MarketBanner = ({ testID }: MarketBannerProps) => {
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
+
+  // Gate before any data hook so a disabled banner does no work.
+  if (!shouldDisplayMarketBanner) {
+    return null;
+  }
+
+  return <MarketBannerContent testID={testID} />;
 };
 
 export default React.memo(MarketBanner);

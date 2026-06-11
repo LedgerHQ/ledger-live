@@ -19,10 +19,6 @@ import modularDialogReducer, { openDialog } from "~/renderer/reducers/modularDia
 import { useDispatch } from "LLD/hooks/redux";
 import { setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
-import {
-  makeMockedFeatureFlagsProviderWrapper,
-  makeMockedContextValue,
-} from "@ledgerhq/live-common/featureFlags/mock";
 
 setEnv("MOCK", "true");
 
@@ -31,10 +27,6 @@ setSupportedCurrencies(["ethereum", "arbitrum", "bitcoin"]);
 const mockedFeatureFlags = {
   lldModularDrawer: { enabled: true, params: { enableModularization: true } },
 };
-
-const FeatureFlagsProvider = makeMockedFeatureFlagsProviderWrapper(
-  makeMockedContextValue(mockedFeatureFlags),
-);
 
 const onAccountSelected = fn();
 
@@ -85,6 +77,7 @@ const store = configureStore({
     modularDialog: modularDialogReducer,
     countervalues: (state = initialMockState.countervalues) => state,
     assetsDataApi: assetsDataApi.reducer,
+    featureFlags: (state = { resolved: mockedFeatureFlags, overrides: {} }) => state,
   },
   preloadedState: {
     modularDialog: initialMockState.modularDialog,
@@ -145,12 +138,10 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     Story => (
       <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
-        <FeatureFlagsProvider>
-          <Provider store={store}>
-            <OpenDialogButton />
-            <Story />
-          </Provider>
-        </FeatureFlagsProvider>
+        <Provider store={store}>
+          <OpenDialogButton />
+          <Story />
+        </Provider>
       </div>
     ),
   ],

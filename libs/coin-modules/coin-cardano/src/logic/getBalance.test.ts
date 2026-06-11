@@ -148,14 +148,15 @@ describe("getBalance", () => {
         amount: 3500000n,
         amountDeposited: 2000000n,
         amountRewarded: 1500000n,
-        // No dRep -> rewards can't be withdrawn yet, so no claim_reward action.
-        actions: [],
+        // Delegated (poolId set): delegate (change pool) + undelegate (deregister). No claim_reward —
+        // Cardano stakes never expose a standalone claim action (shared with getStakes).
+        actions: ["delegate", "undelegate"],
         details: { ticker: "LDG", name: "Ledger" },
       },
     });
   });
 
-  it("advertises claim_reward and unlocks rewards once delegated to a dRep", async () => {
+  it("unlocks rewards once delegated to a dRep", async () => {
     mockFetchTxs.mockResolvedValue(
       paged([makeTx({ hash: "a", outputs: [output(PAYMENT_KEY, "5000000")] })]),
     );
@@ -173,7 +174,8 @@ describe("getBalance", () => {
     const stakeBalance = balances.find(b => b.stake !== undefined);
 
     expect(balances[0].locked).toBe(0n); // rewards spendable when delegated to a dRep
-    expect(stakeBalance?.stake?.actions).toEqual(["claim_reward"]);
+    // dRep doesn't add a claim action — Cardano rewards are withdrawn implicitly within a tx.
+    expect(stakeBalance?.stake?.actions).toEqual(["delegate", "undelegate"]);
     expect(stakeBalance?.stake?.details).toMatchObject({ dRepHex: "drep1abc" });
   });
 

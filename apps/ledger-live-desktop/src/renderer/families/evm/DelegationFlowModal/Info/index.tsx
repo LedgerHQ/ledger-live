@@ -4,6 +4,10 @@ import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 import {
   hasUnbondingPeriod,
   isSeiAccountUnassociated,
@@ -20,6 +24,10 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   const dispatch = useDispatch();
   const currencyId = account.currency.id;
 
+  const seiAssociationWarningUrl = useLocalizedUrl(urls.seiAssociationWarning);
+  const onLearnMore = () => {
+    openURL(seiAssociationWarningUrl);
+  };
   // Warm the validators cache while the user is reading the info screen so
   // the validator list in the next step appears instantly instead of empty.
   useEffect(() => {
@@ -53,7 +61,15 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
         <>
           {showSeiAssociationWarning && (
             <WarnBox>
-              {t("ethereum.evmStaking.delegation.flow.steps.starter.seiAssociationWarning")}
+              {t(
+                "ethereum.evmStaking.delegation.flow.steps.starter.warning.seiAssociationWarning.description",
+              )}
+              <LinkWithExternalIcon
+                label={t(
+                  "ethereum.evmStaking.delegation.flow.steps.starter.warning.seiAssociationWarning.learnMore",
+                )}
+                onClick={onLearnMore}
+              />
             </WarnBox>
           )}
           {showLockupWarning && (
@@ -64,6 +80,7 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
         </>
       }
       currency={account.currency.id}
+      nextDisabled={showSeiAssociationWarning}
     />
   );
 }

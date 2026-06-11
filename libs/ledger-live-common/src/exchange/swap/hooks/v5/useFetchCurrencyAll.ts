@@ -1,4 +1,4 @@
-import { useFeature } from "../../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useAPI } from "../../../../hooks/useAPI";
 import { fetchCurrencyAll } from "../../api/v5";
 import { FETCH_CURRENCIES_TIMEOUT_MS } from "./constants";

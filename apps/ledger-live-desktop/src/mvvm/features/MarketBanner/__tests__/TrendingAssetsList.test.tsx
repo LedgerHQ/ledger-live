@@ -42,7 +42,9 @@ describe("TrendingAssetsList", () => {
   });
 
   it("should render assets, hide left arrow, show right arrow and handle scroll right at start position", async () => {
-    const { user } = render(<TrendingAssetsList items={MOCK_MARKET_PERFORMERS} />);
+    const { user } = render(
+      <TrendingAssetsList items={MOCK_MARKET_PERFORMERS} isLoading={false} isError={false} />,
+    );
 
     expect(screen.getByTestId("trending-assets-list")).toBeVisible();
     expect(screen.getByText("BTC")).toBeVisible();
@@ -55,7 +57,9 @@ describe("TrendingAssetsList", () => {
   });
 
   it("should navigate to asset detail page when asset is clicked", async () => {
-    const { user } = render(<TrendingAssetsList items={MOCK_MARKET_PERFORMERS} />);
+    const { user } = render(
+      <TrendingAssetsList items={MOCK_MARKET_PERFORMERS} isLoading={false} isError={false} />,
+    );
 
     await user.click(screen.getByTestId("market-banner-asset-bitcoin"));
     expect(mockSetTrackingSource).toHaveBeenCalledWith(MARKET_BANNER_TRACKING_SOURCE);
@@ -68,7 +72,9 @@ describe("TrendingAssetsList", () => {
       isAtStart: false,
     });
 
-    const { user } = render(<TrendingAssetsList items={MOCK_MARKET_PERFORMERS} />);
+    const { user } = render(
+      <TrendingAssetsList items={MOCK_MARKET_PERFORMERS} isLoading={false} isError={false} />,
+    );
 
     expect(screen.getByTestId("scroll-arrow-left")).toBeVisible();
 
@@ -82,7 +88,7 @@ describe("TrendingAssetsList", () => {
       isAtEnd: true,
     });
 
-    render(<TrendingAssetsList items={MOCK_MARKET_PERFORMERS} />);
+    render(<TrendingAssetsList items={MOCK_MARKET_PERFORMERS} isLoading={false} isError={false} />);
 
     expect(screen.queryByTestId("scroll-arrow-right")).not.toBeInTheDocument();
   });

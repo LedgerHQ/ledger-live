@@ -38,7 +38,10 @@ describe("useCounterfeitWarningDialogViewModel", () => {
 
     rerender({ open: true });
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
+    expect(track).toHaveBeenCalledWith("page_viewed", {
+      page: COUNTERFEIT_WARNING_PAGE,
+      deviceModelId: DeviceModelId.nanoX,
+    });
 
     rerender({ open: false });
     rerender({ open: true });
@@ -56,6 +59,7 @@ describe("useCounterfeitWarningDialogViewModel", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
       page: COUNTERFEIT_WARNING_PAGE,
+      deviceModelId: DeviceModelId.nanoX,
     });
     expect(onProceed).toHaveBeenCalledTimes(1);
   });
@@ -69,6 +73,7 @@ describe("useCounterfeitWarningDialogViewModel", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: COUNTERFEIT_WARNING_BUTTON.learnMore,
       page: COUNTERFEIT_WARNING_PAGE,
+      deviceModelId: DeviceModelId.nanoX,
     });
     expect(openURL).toHaveBeenCalledWith(urls.genuineCheck);
   });
@@ -101,6 +106,7 @@ describe("useCounterfeitWarningDialogViewModel", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: COUNTERFEIT_WARNING_BUTTON.close,
       page: COUNTERFEIT_WARNING_PAGE,
+      deviceModelId: DeviceModelId.nanoX,
     });
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });

@@ -1,4 +1,4 @@
-import { Feature_LldNanoSUpsellBanners } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 
 export type LNSBannerState = {
   isShown: boolean;
@@ -12,4 +12,4 @@ export type LNSBannerLocation = Extract<
 >;
 
 type Tracking = "opted_in" | "opted_out";
-type FFParams = Required<Feature_LldNanoSUpsellBanners>["params"];
+type FFParams = Required<Features["lldNanoSUpsellBanners"]>["params"];

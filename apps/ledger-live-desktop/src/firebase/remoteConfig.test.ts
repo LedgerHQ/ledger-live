@@ -17,7 +17,7 @@ jest.mock("firebase/remote-config", () => ({
 jest.mock("~/firebase-setup", () => ({
   getFirebaseConfig: () => ({ projectId: "test" }),
 }));
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+jest.mock("@features/platform-feature-flags", () => ({
   DEFAULT_FEATURES: { mockFeature: { enabled: false } },
   formatDefaultFeatures: () => ({ feature_mock_feature: JSON.stringify({ enabled: false }) }),
 }));

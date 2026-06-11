@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { useFeature } from "../../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useIsSwapLiveApp } from "./useIsSwapLiveApp";
 
 // Mock dependencies.
-jest.mock("../../../../featureFlags");
+jest.mock("@features/platform-feature-flags");
 
 const useMockFeature = useFeature as jest.Mock;
 

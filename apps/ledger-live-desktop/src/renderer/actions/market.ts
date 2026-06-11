@@ -1,8 +1,13 @@
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
-import { MarketState } from "../reducers/market";
+import { MarketListCategory, MarketState } from "../reducers/market";
 
 export const setMarketOptions = (payload: MarketListRequestParams) => ({
   type: "MARKET_SET_VALUES",
+  payload,
+});
+
+export const setMarketCategory = (payload: MarketListCategory) => ({
+  type: "MARKET_SET_CATEGORY",
   payload,
 });
 

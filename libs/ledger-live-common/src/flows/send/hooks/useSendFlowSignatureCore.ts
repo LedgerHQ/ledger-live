@@ -10,11 +10,11 @@ export type SignatureDeviceActionResult =
   | { transactionSignError: Error };
 
 export type SignatureRequest = Readonly<{
-  tokenCurrency: TokenCurrency | undefined;
-  parentAccount: Account | null;
-  account: AccountLike | null;
-  transaction: Transaction | null;
-  status: TransactionStatus;
+  tokenCurrency?: TokenCurrency | null | undefined;
+  parentAccount: Account | null | undefined;
+  account: AccountLike;
+  transaction: Transaction;
+  status?: TransactionStatus;
 }>;
 
 export type UseSendFlowSignatureCoreParams = Readonly<{
@@ -42,7 +42,7 @@ export type UseSendFlowSignatureCoreParams = Readonly<{
 }>;
 
 export type UseSendFlowSignatureCoreResult = Readonly<{
-  request: SignatureRequest;
+  request: SignatureRequest | null;
   finishWithError: (error: Error) => void;
   finishWithSuccess: (operation: Operation) => void;
   onDeviceActionResult: (result: SignatureDeviceActionResult) => void;
@@ -85,7 +85,11 @@ export function useSendFlowSignatureCore({
     depsRef.current = { account, parentAccount, transaction, status };
   }
 
-  const request = useMemo<SignatureRequest>(() => {
+  const request = useMemo<SignatureRequest | null>(() => {
+    if (!account || !transaction) {
+      return null;
+    }
+
     const tokenCurrency =
       (account && account.type === "TokenAccount" && account.token) || undefined;
 

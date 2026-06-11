@@ -1,6 +1,6 @@
 import { getFeatureFlagsForLiveApp } from "./resolver";
 import { LiveAppManifest } from "../../platform/types";
-import { Feature, FeatureId } from "@ledgerhq/types-live";
+import type { Feature, FeatureId } from "@shared/feature-flags";
 
 describe("getFeatureFlagsForLiveApp", () => {
   const createMockManifest = (featureFlags?: string[] | "*"): LiveAppManifest => {

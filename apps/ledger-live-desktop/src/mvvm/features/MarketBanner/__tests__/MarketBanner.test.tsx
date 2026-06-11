@@ -1,8 +1,9 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { MarketBannerView } from "..";
 import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtures";
 import { useNavigate } from "react-router";
+import { MARKET_BANNER_RANKING_SELECT_TESTID } from "../utils/constants";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -11,6 +12,12 @@ jest.mock("react-router", () => ({
 
 const mockNavigate = jest.fn();
 (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+const assetDiscoverabilityOn = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
+});
+
+const RANKING_TRIGGER = MARKET_BANNER_RANKING_SELECT_TESTID;
 
 describe("MarketBannerView", () => {
   beforeEach(() => {
@@ -36,6 +43,20 @@ describe("MarketBannerView", () => {
     await user.click(marketButton);
 
     expect(mockNavigate).toHaveBeenCalledWith("/market");
+  });
+
+  it("should hide the ranking select when assetDiscoverability is off", () => {
+    render(<MarketBannerView isLoading={false} isError={false} data={undefined} />);
+    expect(screen.getByText("Explore the market")).toBeVisible();
+    expect(screen.queryByTestId(RANKING_TRIGGER)).toBeNull();
+  });
+
+  it("should show the ranking select when assetDiscoverability is on", () => {
+    render(<MarketBannerView isLoading={false} isError={false} data={undefined} />, {
+      initialState: assetDiscoverabilityOn,
+    });
+    expect(screen.getByText("Explore the market")).toBeVisible();
+    expect(screen.getByTestId(RANKING_TRIGGER)).toBeVisible();
   });
 
   it("should render error state when there is an error", () => {

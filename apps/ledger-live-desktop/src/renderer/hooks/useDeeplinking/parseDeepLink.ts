@@ -253,6 +253,7 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
       const route: MarketRoute = {
         type: "market",
         path,
+        category: query.category,
       };
       return route;
     }

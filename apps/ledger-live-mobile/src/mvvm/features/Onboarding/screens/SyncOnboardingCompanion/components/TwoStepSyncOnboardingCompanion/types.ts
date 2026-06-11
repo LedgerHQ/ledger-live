@@ -15,25 +15,17 @@ export type TwoStepSyncOnboardingCompanionProps = {
    * Called when the polling from the companion component has definitely lost/is desync with the device
    */
   onLostDevice: () => void;
-
   /**
    * Called when the companion is displaying an alert message that should overlay
    * all the screen, including the header
    */
   onShouldHeaderBeOverlaid: (shouldBeOverlaid: boolean) => void;
-
   /**
    * Updates any existing delay before displaying the hiding the header below an overlay
    */
   updateHeaderOverlayDelay: (delayMs: number) => void;
-
   /**
    * Called by the companion component to force a reset of the entire sync onboarding because the device is not in a correct state anymore
    */
   notifyEarlySecurityCheckShouldReset: () => void;
 };
-
-export type UseTwoStepSyncOnboardingCompanionViewModelProps = Pick<
-  TwoStepSyncOnboardingCompanionProps,
-  "device" | "navigation" | "onLostDevice" | "onShouldHeaderBeOverlaid" | "updateHeaderOverlayDelay"
->;

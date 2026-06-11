@@ -13,7 +13,8 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@shared/feature-flags": "workspace:^"
+    "@shared/feature-flags": "workspace:^",
+    "lodash": "^4.17.21"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -27,6 +28,7 @@
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
+    "@types/lodash": "^4.14.179",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",

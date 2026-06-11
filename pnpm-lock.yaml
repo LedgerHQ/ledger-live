@@ -16,8 +16,8 @@ catalogs:
       specifier: 30.2.0
       version: 30.2.0
     '@ledgerhq/coin-module-framework':
-      specifier: 3.2.0
-      version: 3.2.0
+      specifier: 3.3.0
+      version: 3.3.0
     '@ledgerhq/coin-xrp':
       specifier: 7.21.7
       version: 7.21.7
@@ -25,8 +25,8 @@ catalogs:
       specifier: 2.0.4
       version: 2.0.4
     '@ledgerhq/device-management-kit':
-      specifier: 1.5.1
-      version: 1.5.1
+      specifier: 1.6.0
+      version: 1.6.0
     '@ledgerhq/device-signer-kit-aleo':
       specifier: 0.3.0
       version: 0.3.0
@@ -52,8 +52,8 @@ catalogs:
       specifier: 1.0.3
       version: 1.0.3
     '@ledgerhq/device-transport-kit-speculos':
-      specifier: 1.2.0
-      version: 1.2.0
+      specifier: 1.2.1
+      version: 1.2.1
     '@ledgerhq/device-transport-kit-web-hid':
       specifier: 1.2.3
       version: 1.2.3
@@ -702,7 +702,7 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
@@ -975,7 +975,7 @@ importers:
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.16)(@ledgerhq/lumen-ui-react@0.1.38(@ledgerhq/lumen-design-core@0.1.16)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.0.0))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@tanstack/react-table@8.5.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1628,7 +1628,7 @@ importers:
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-multiversx
@@ -1637,7 +1637,7 @@ importers:
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/context-module':
         specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.16)(@ledgerhq/lumen-ui-rnative@0.1.39(ceaf05d6712be870d78aa56eadc54145))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -1649,13 +1649,13 @@ importers:
         version: link:../../libs/device-intent
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)
+        version: 1.0.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -2358,7 +2358,7 @@ importers:
         version: link:../../libs/coin-modules/coin-evm
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -2367,7 +2367,7 @@ importers:
         version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
@@ -2508,7 +2508,7 @@ importers:
         version: link:../../features/platform/feature-flags
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.16)(@ledgerhq/lumen-ui-react@0.1.38(@ledgerhq/lumen-design-core@0.1.16)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.0.0))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@tanstack/react-table@8.5.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -3196,12 +3196,12 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-live
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.60.0
+      '@shared/feature-flags':
+        specifier: workspace:*
+        version: link:../../shared/feature-flags
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -3553,6 +3553,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
@@ -3575,6 +3578,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/lodash':
+        specifier: ^4.14.179
+        version: 4.17.21
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
@@ -3758,7 +3764,7 @@ importers:
     devDependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0
+        version: 3.3.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
@@ -3800,7 +3806,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -3882,7 +3888,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -3973,7 +3979,7 @@ importers:
         version: 3.1.3(got@11.8.5)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4070,7 +4076,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4242,7 +4248,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4327,7 +4333,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4418,7 +4424,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4509,7 +4515,7 @@ importers:
         version: link:../coin-evm
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4609,7 +4615,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
@@ -4709,7 +4715,7 @@ importers:
         version: 0.12.306
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4812,7 +4818,7 @@ importers:
         version: 5.7.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -4936,7 +4942,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5030,7 +5036,7 @@ importers:
         version: 2.78.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5118,7 +5124,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5206,7 +5212,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5297,7 +5303,7 @@ importers:
         version: 1.2.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -5400,7 +5406,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5488,7 +5494,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5564,7 +5570,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5658,7 +5664,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5740,7 +5746,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5858,7 +5864,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -5970,7 +5976,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -6079,7 +6085,7 @@ importers:
         version: 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6140,7 +6146,7 @@ importers:
         version: 1.0.11(graphql@16.13.2)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -6234,7 +6240,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -6334,7 +6340,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -6425,7 +6431,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -6519,7 +6525,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -6814,7 +6820,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0
+        version: 3.3.0
       '@ledgerhq/coin-polkadot':
         specifier: workspace:^
         version: link:../../coin-modules/coin-polkadot
@@ -7266,7 +7272,7 @@ importers:
         version: link:../client-ids
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
@@ -7747,6 +7753,9 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../asset-aggregation
@@ -7806,7 +7815,7 @@ importers:
         version: link:../coin-modules/coin-mina
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../coin-modules/coin-multiversx
@@ -7851,7 +7860,7 @@ importers:
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -7989,7 +7998,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 0.3.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -8017,6 +8026,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      '@shared/feature-flags':
+        specifier: workspace:^
+        version: link:../../shared/feature-flags
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
         version: 14.0.0
@@ -8419,7 +8431,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
@@ -9160,7 +9172,7 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1
+        version: 1.6.0
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -10947,10 +10959,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
-        version: 1.2.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 1.2.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -11014,10 +11026,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 'catalog:'
-        version: 1.3.2(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
+        version: 1.3.2(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -11048,7 +11060,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
+        version: 1.0.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -11099,7 +11111,7 @@ importers:
     dependencies:
       '@ledgerhq/context-module':
         specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -11127,7 +11139,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -11172,10 +11184,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
-        version: 1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 1.2.1(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -11187,7 +11199,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 0.3.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -11309,13 +11321,13 @@ importers:
         version: link:../coin-modules/coin-aleo
       '@ledgerhq/context-module':
         specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-aleo':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 0.3.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -11453,13 +11465,13 @@ importers:
         version: link:../concordium-core
       '@ledgerhq/context-module':
         specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-concordium':
         specifier: 'catalog:'
-        version: 0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -11496,10 +11508,10 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-cosmos':
         specifier: 'catalog:'
-        version: 1.0.1(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 1.0.1(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -11554,13 +11566,13 @@ importers:
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
         specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -11606,10 +11618,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-hyperliquid':
         specifier: 'catalog:'
-        version: 1.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 1.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -11655,10 +11667,10 @@ importers:
         version: link:../coin-modules/coin-solana
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.9.1(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(typescript@6.0.2)
+        version: 1.9.1(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(typescript@6.0.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -11728,10 +11740,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.5.1(rxjs@7.8.2)
+        version: 1.6.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
         specifier: 0.2.0
-        version: 0.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+        version: 0.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -13173,7 +13185,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -17293,8 +17305,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/coin-module-framework@3.2.0':
-    resolution: {integrity: sha512-SNSjvLqF7GUU0F+Wa2haqhV/7YQWH/Sj4r32SWlP/DLHU9ei7CjsqOWdziUvAaqgy7pmD5hvD5jepepgPEKmRw==}
+  '@ledgerhq/coin-module-framework@3.3.0':
+    resolution: {integrity: sha512-RrraRhfhCfPw59P9e/jXw+GjBNAfQgiK7l5GXLZNkMV2GIf3gk0td1NevIo4VrM2A3u5HyZOBbHOGz1//Eja2Q==}
     peerDependencies:
       '@ledgerhq/errors': ^6.33.0
 
@@ -17331,8 +17343,8 @@ packages:
       react-native:
         optional: true
 
-  '@ledgerhq/device-management-kit@1.5.1':
-    resolution: {integrity: sha512-SYO2NRMcDH8UpQyU17jwRMaXQLnJgwtuvuF5SwTSLNTiRUNX//MVZCrhi7yvPf7/iCCWTmJ/vgqIME8SmCw2Pw==}
+  '@ledgerhq/device-management-kit@1.6.0':
+    resolution: {integrity: sha512-WVWALWxEALhBkRetk46bFpnfQjhY1wspORCjB9SxBLvNg0C4lf9cHf/EzFRTdz2UnYMQsWTjaeZLvtA7furQHQ==}
     peerDependencies:
       rxjs: 7.8.2
 
@@ -17389,10 +17401,10 @@ packages:
       react-native: '>0.74.1'
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-speculos@1.2.0':
-    resolution: {integrity: sha512-ox+VyOYYhGMHfHisglvy7Fmo8uCSOLrTTCJ71mj1RK6RU2ivqcY5IL5IexJJFOv1m+jGZldi0/aSEnYLXNmeCA==}
+  '@ledgerhq/device-transport-kit-speculos@1.2.1':
+    resolution: {integrity: sha512-lowqaGWtum+KrLgayz5Fu35Ep0AgtBMKo9FJoQ82ilNGli/PxSa4RqLLeWh/+L3CQtpyW8/89pBqSURQyldaYw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.2.0
+      '@ledgerhq/device-management-kit': ^1.5.1
       rxjs: 7.8.2
 
   '@ledgerhq/device-transport-kit-web-hid@1.2.3':
@@ -21973,7 +21985,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -24298,7 +24310,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -45543,18 +45555,18 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-module-framework@3.2.0':
+  '@ledgerhq/coin-module-framework@3.3.0':
     dependencies:
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-module-framework@3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)':
+  '@ledgerhq/coin-module-framework@3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)':
     dependencies:
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       bignumber.js: 9.1.2
 
   '@ledgerhq/coin-xrp@7.21.7(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 3.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+      '@ledgerhq/coin-module-framework': 3.3.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
@@ -45566,9 +45578,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       bs58: 6.0.0
       crypto-js: 4.2.0
       ethers: 6.15.0
@@ -45604,7 +45616,7 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0)
 
-  '@ledgerhq/device-management-kit@1.5.1':
+  '@ledgerhq/device-management-kit@1.6.0':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -45621,7 +45633,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)':
+  '@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -45639,40 +45651,40 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-aleo@0.3.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-aleo@0.3.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-concordium@0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-concordium@0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-cosmos@1.0.1(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-cosmos@1.0.1(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -45683,11 +45695,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-hyperliquid@1.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45696,11 +45708,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@1.9.1(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(typescript@6.0.2)':
+  '@ledgerhq/device-signer-kit-solana@1.9.1(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(typescript@6.0.2)':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@6.0.2))(typescript@6.0.2)
       '@solana/web3.js': 1.98.4(typescript@6.0.2)
       bs58: 6.0.0
@@ -45717,18 +45729,18 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-zcash@0.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-zcash@0.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.8
       purify-ts: 2.1.0
@@ -45737,35 +45749,34 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-speculos@1.2.1(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
-      axios: 1.13.5
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-web-hid@1.2.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
@@ -46018,19 +46029,19 @@ snapshots:
       react: 19.0.0
       tailwind-merge: 2.6.0
 
-  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/signer-utils@1.2.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.2.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/speculos-device-controller@0.3.0(@ledgerhq/device-management-kit@1.5.1(rxjs@7.8.2))':
+  '@ledgerhq/speculos-device-controller@0.3.0(@ledgerhq/device-management-kit@1.6.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.5.1(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 1.6.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
 
   '@ledgerhq/wallet-api-client-react@1.4.25(@ton/crypto@3.3.0)(react@19.0.0)':

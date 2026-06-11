@@ -3,12 +3,12 @@
  */
 
 import { renderHook } from "@testing-library/react";
-import * as featureFlags from "../../featureFlags";
+import * as featureFlags from "@features/platform-feature-flags";
 import { MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD } from "../smallValueOperationsThreshold";
 import { useHideSmallValueTokenOperationsEnabled } from "./useHideSmallValueTokenOperationsEnabled";
 
-jest.mock("../../featureFlags", () => ({
-  ...jest.requireActual("../../featureFlags"),
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
   useFeature: jest.fn(),
 }));
 

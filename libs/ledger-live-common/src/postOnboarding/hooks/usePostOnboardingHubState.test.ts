@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { useFeatureFlags } from "../../featureFlags";
+import { useFeatureFlags } from "@features/platform-feature-flags";
+import type { Features } from "@shared/feature-flags";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import {
@@ -17,28 +18,21 @@ import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 jest.mock("react-redux", () => ({
   useSelector: val => val(),
 }));
-jest.mock("../../featureFlags");
+jest.mock("@features/platform-feature-flags");
 jest.mock("./usePostOnboardingContext");
 jest.mock("../reducer");
 
 const mockedUseFeatureFlags = jest.mocked(useFeatureFlags);
 
-const mockedGetFeatureWithMockFeatureEnabled = (enabled, paramEnabled = true) => ({
-  isFeature: () => true,
-  getFeature: id => {
-    if (id === mockedFeatureIdToTest)
-      return {
-        enabled,
-        params: {
-          [mockedFeatureParamIdToTest]: paramEnabled,
-        },
-      };
-    return { enabled: true };
-  },
-  overrideFeature: () => {},
-  resetFeature: () => {},
-  resetFeatures: () => {},
-});
+const mockedFlagsWithMockFeatureEnabled = (enabled: boolean, paramEnabled = true) =>
+  ({
+    [mockedFeatureIdToTest]: {
+      enabled,
+      params: {
+        [mockedFeatureParamIdToTest]: paramEnabled,
+      },
+    },
+  }) as unknown as Features;
 
 const mockedUsePostOnboardingContext = jest.mocked(usePostOnboardingContext);
 
@@ -86,7 +80,7 @@ const stateAllNotCompleted = {
 
 describe("usePostOnboardingHubState", () => {
   beforeEach(() => {
-    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
+    mockedUseFeatureFlags.mockReturnValue(mockedFlagsWithMockFeatureEnabled(true));
     mockedUsePostOnboardingContext.mockReturnValue({
       getPostOnboardingActionsForDevice: () => [],
       navigateToPostOnboardingHub: () => {},
@@ -130,7 +124,7 @@ describe("usePostOnboardingHubState", () => {
   it("should not return actions that have a disabled feature flag", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(false));
+    mockedUseFeatureFlags.mockReturnValue(mockedFlagsWithMockFeatureEnabled(false));
 
     const {
       result: {
@@ -147,7 +141,7 @@ describe("usePostOnboardingHubState", () => {
   it("should not return actions that have a disabled feature param flag", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true, false));
+    mockedUseFeatureFlags.mockReturnValue(mockedFlagsWithMockFeatureEnabled(true, false));
 
     const {
       result: {
@@ -164,7 +158,7 @@ describe("usePostOnboardingHubState", () => {
   it("should return actions that have a feature flag enabled", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
+    mockedUseFeatureFlags.mockReturnValue(mockedFlagsWithMockFeatureEnabled(true));
 
     const {
       result: {
@@ -181,7 +175,7 @@ describe("usePostOnboardingHubState", () => {
   it("should return actions in their correct state (all actions completed)", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
+    mockedUseFeatureFlags.mockReturnValue(mockedFlagsWithMockFeatureEnabled(true));
 
     const {
       result: {
@@ -195,7 +189,7 @@ describe("usePostOnboardingHubState", () => {
   it("should return actions in their correct state (no actions completed)", () => {
     const state = stateAllNotCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
+    mockedUseFeatureFlags.mockReturnValue(mockedFlagsWithMockFeatureEnabled(true));
 
     const {
       result: {

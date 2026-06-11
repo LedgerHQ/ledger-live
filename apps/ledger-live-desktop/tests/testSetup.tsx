@@ -23,7 +23,6 @@ import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
-import { FeatureFlagsContextBridge } from "~/renderer/components/FeatureFlagsContextBridge";
 import type { ReduxStore } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -174,15 +173,13 @@ function Providers({
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <FeatureFlagsContextBridge>
-          {skipRouter ? (
-            routerContent
-          ) : (
-            <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
-              {routerContent}
-            </MemoryRouter>
-          )}
-        </FeatureFlagsContextBridge>
+        {skipRouter ? (
+          routerContent
+        ) : (
+          <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+            {routerContent}
+          </MemoryRouter>
+        )}
       </Provider>
     </QueryClientProvider>
   );

@@ -1,3 +1,6 @@
+// Legacy Ledger Live feature-flag types. The registry now lives in `@shared/feature-flags`
+// (each export below points to its replacement). Retained as published surface only; slated
+// for removal in a future `@ledgerhq/types-live` major.
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
@@ -9,6 +12,7 @@ import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
  * Feature type.
  *
  * @dev We use objects instead of direct booleans for potential future improvements.
+ * @deprecated Moved to `@shared/feature-flags`. Use `Feature` from `@shared/feature-flags` instead.
  */
 export type Feature<T = unknown> = {
   /**
@@ -69,11 +73,13 @@ export type Feature<T = unknown> = {
 
 /**
  * Default Feature type.
+ * @deprecated Moved to `@shared/feature-flags`. Use `Feature` from `@shared/feature-flags` instead.
  */
 export type DefaultFeature = Feature<unknown>;
 
 /**
  * Currency Features type.
+ * @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`.
  */
 export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
@@ -173,6 +179,7 @@ export type CurrencyFeatures = {
  * Features type.
  *
  * @dev Add features here.
+ * @deprecated Moved to `@shared/feature-flags`. Use `Features` from `@shared/feature-flags` instead.
  */
 export type Features = CurrencyFeatures & {
   nanoOnboardingFundWallet: DefaultFeature;
@@ -261,6 +268,8 @@ export type Features = CurrencyFeatures & {
   lldThai: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
+  lwdDeeplinkOpenHardening: DefaultFeature;
+  lwmDeeplinkOpenHardening: DefaultFeature;
   lldWebviewManifestDomainCheck: DefaultFeature;
   llmWebviewManifestDomainCheck: DefaultFeature;
   llmModularDrawer: Feature_ModularDrawer;
@@ -331,6 +340,7 @@ export type Features = CurrencyFeatures & {
   lwmProductTour: DefaultFeature;
   lwmBackupHub: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
+  lwmQuickActionsCtasVariant: DefaultFeature;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   concordiumIdAppLinks: Feature_ConcordiumIdAppLinks;
@@ -343,16 +353,19 @@ export type Features = CurrencyFeatures & {
 
 /**
  * FeatureId type.
+ * @deprecated Moved to `@shared/feature-flags`. Use `FeatureId` from `@shared/feature-flags` instead.
  */
 export type FeatureId = keyof Features;
 
 /**
  * EthStakingProvider category type.
+ * @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`.
  */
 export type EthStakingProviderCategory = "liquid" | "pooling" | "protocol" | "restaking";
 
 /**
  * EthStakingProvider rewards strategy.
+ * @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`.
  */
 export type EthStakingProviderRewardsStrategy =
   | "basic"
@@ -363,6 +376,7 @@ export type EthStakingProviderRewardsStrategy =
 
 /**
  * EthStakingProvider.
+ * @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`.
  */
 export interface EthStakingProvider {
   id: string;
@@ -382,16 +396,19 @@ export interface EthStakingProvider {
 
 /**
  * Features types.
+ * @deprecated Moved to `@shared/feature-flags`. Use `Features["ethStakingProviders"]` from `@shared/feature-flags` instead.
  */
 export type Feature_EthStakingProviders = Feature<{
   listProvider: EthStakingProvider[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["transactionsAlerts"]` from `@shared/feature-flags` instead. */
 export type Feature_TransactionsAlerts = Feature<{
   chainwatchBaseUrl: string;
   networks: ChainwatchNetwork[];
 }>;
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type NotificationsPromptAfterActionSource =
   | "onboarding"
   | "send"
@@ -401,6 +418,7 @@ export type NotificationsPromptAfterActionSource =
   | "stake"
   | "add_favorite_coin";
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type NotificationsCategoryConfig = {
   displayed: boolean;
   category: string;
@@ -408,30 +426,36 @@ export type NotificationsCategoryConfig = {
   drawerPromptActions?: NotificationsPromptAfterActionSource[];
 };
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["swapWalletApiPartnerList"]` from `@shared/feature-flags` instead. */
 export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
 }>;
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
   ? {
       yieldId: string;
     }
   : unknown;
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type Redirect<M extends PlatformManifestId> = {
   platform: PlatformManifestId;
   name: string;
   queryParams?: Record<string, string> & RedirectQueryParam<M>;
 };
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type VersionedRedirect = {
   desktop_version?: string;
   mobile_version?: string;
   redirects: Record<string, Redirect<PlatformManifestId>>;
 };
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["stakePrograms"]` from `@shared/feature-flags` instead. */
 export type Feature_StakePrograms = Feature<{
   list: string[];
   /** redirects is a dictionary of crypto asset ids to partner app params for overriding flows for specific tokens. */
@@ -439,14 +463,17 @@ export type Feature_StakePrograms = Feature<{
   versions?: VersionedRedirect[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["stakeAccountBanner"]` from `@shared/feature-flags` instead. */
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["referralProgramDesktopSidebar"]` from `@shared/feature-flags` instead. */
 export type Feature_ReferralProgramDesktopSidebar = Feature<{
   path: string;
   isNew: boolean;
   amount: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["brazePushNotifications"]` from `@shared/feature-flags` instead. */
 export type Feature_BrazePushNotifications = Feature<{
   reprompt_schedule: Array<{
     months: number;
@@ -500,6 +527,7 @@ export type Feature_BrazePushNotifications = Feature<{
   notificationsCategories: NotificationsCategoryConfig[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["receiveStakingFlowConfigDesktop"]` from `@shared/feature-flags` instead. */
 export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
   [blockchainName: string]: {
     enabled: boolean;
@@ -508,17 +536,20 @@ export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
   };
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["storyly"]` from `@shared/feature-flags` instead. */
 export type Feature_Storyly = Feature<{
   stories: {
     [key in StorylyInstanceID]: StorylyInstanceType;
   };
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["newsfeedPage"]` from `@shared/feature-flags` instead. */
 export type Feature_NewsfeedPage = Feature<{
   cryptopanicApiKey: string;
   whitelistedLocales: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["protectServicesMobile"]` from `@shared/feature-flags` instead. */
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
   bannerSubscriptionNotification: boolean;
@@ -541,6 +572,7 @@ export type Feature_ProtectServicesMobile = Feature<{
   protectId: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["protectServicesDesktop"]` from `@shared/feature-flags` instead. */
 export type Feature_ProtectServicesDesktop = Feature<{
   openWithDevTools: boolean;
   availableOnDesktop: boolean;
@@ -558,53 +590,65 @@ export type Feature_ProtectServicesDesktop = Feature<{
   protectId: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["recoverUpsellPostOnboarding"]` from `@shared/feature-flags` instead. */
 export type Feature_RecoverUpsellPostOnboarding = Feature<{
   deviceIds: DeviceModelId[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["deviceInitialApps"]` from `@shared/feature-flags` instead. */
 export type Feature_DeviceInitialApps = Feature<{
   apps: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["buyDeviceFromLive"]` from `@shared/feature-flags` instead. */
 export type Feature_BuyDeviceFromLive = Feature<{
   debug: boolean;
   url: string | null;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["concordiumIdAppLinks"]` from `@shared/feature-flags` instead. */
 export type Feature_ConcordiumIdAppLinks = Feature<{
   appStore: string;
   playStore: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["discover"]` from `@shared/feature-flags` instead. */
 export type Feature_Discover = Feature<{
   version: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["domainInputResolution"]` from `@shared/feature-flags` instead. */
 export type Feature_DomainInputResolution = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["editEvmTx"]` from `@shared/feature-flags` instead. */
 export type Feature_EditEvmTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["evmNativeStaking"]` from `@shared/feature-flags` instead. */
 export type Feature_EvmNativeStaking = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["editBitcoinTx"]` from `@shared/feature-flags` instead. */
 export type Feature_EditBitcoinTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["firebaseEnvironmentReadOnly"]` from `@shared/feature-flags` instead. */
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ldmkTransport"]` from `@shared/feature-flags` instead. */
 export type Feature_LdmkTransport = Feature<{
   warningVisible: boolean;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["npsRatingsPrompt"]` from `@shared/feature-flags` instead. */
 export type Feature_NpsRatingsPrompt = Feature<{
   conditions: {
     disappointed_delay: {
@@ -632,6 +676,7 @@ export type Feature_NpsRatingsPrompt = Feature<{
   typeform_url: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ratingsPrompt"]` from `@shared/feature-flags` instead. */
 export type Feature_RatingsPrompt = Feature<{
   conditions: {
     disappointed_delay: {
@@ -659,68 +704,83 @@ export type Feature_RatingsPrompt = Feature<{
   typeform_url: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapLiveApp"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapLiveApp = Feature<{
   manifest_id: string;
   currencies?: string[];
   families?: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxPerpsLiveAppMobile"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxPerpsLiveApp = Feature<{
   manifest_id: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxBorrowLiveApp"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxBorrowLiveApp = Feature<{
   manifest_id: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxEarnLiveApp"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxEarnLiveApp = Feature<{
   manifest_id: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["fetchAdditionalCoins"]` from `@shared/feature-flags` instead. */
 export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
   entryPoints: Array<string>;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
 export type Feature_LldAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
   entryPoints: Array<string>;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldActionCarousel"]` from `@shared/feature-flags` instead. */
 export type Feature_lldActionCarousel = Feature<{
   variant: ABTestingVariants;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldRefreshMarketData"]` from `@shared/feature-flags` instead. */
 export type Feature_LldRefreshMarketData = Feature<{
   refreshTime: number;
 }>;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmRefreshMarketData"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmRefreshMarketData = Feature<{
   refreshTime: number;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["buySellUi"]` from `@shared/feature-flags` instead. */
 export type Feature_BuySellUiManifest = Feature<{
   manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "buy-sell-ui"
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["buySellLoader"]` from `@shared/feature-flags` instead. */
 export type Feature_BuySellLoader = Feature<{
   durationMs: number;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldWalletSync"]` from `@shared/feature-flags` instead. */
 export type Feature_LldWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
   learnMoreLink: string;
 }>;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmWalletSync"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
   learnMoreLink: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmLedgerSyncEntryPoints"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
@@ -728,6 +788,7 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   onboarding: boolean;
   postOnboarding: boolean;
 }>;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldLedgerSyncEntryPoints"]` from `@shared/feature-flags` instead. */
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
@@ -736,21 +797,25 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   postOnboarding: boolean;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llNftEntryPoint"]` from `@shared/feature-flags` instead. */
 export type Feature_LlNftEntryPoint = Feature<{
   magiceden: boolean;
   opensea: boolean;
   chains: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llCounterValueGranularitiesRates"]` from `@shared/feature-flags` instead. */
 export type Feature_LlCounterValueGranularitiesRates = Feature<{
   daily: number;
   hourly: number;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmMmkvMigration"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmModularDrawer"]` from `@shared/feature-flags` instead. */
 export type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   live_app: boolean;
@@ -764,40 +829,61 @@ export type Feature_ModularDrawer = Feature<{
   enableDialogDesktop?: boolean;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["noah"]` from `@shared/feature-flags` instead. */
 export type Feature_Noah = Feature<{
   activeCurrencyIds: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["newSendFlow"]` from `@shared/feature-flags` instead. */
 export type Feature_NewSendFlow = Feature<{
   families?: string[];
   excludedCurrencyIds?: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["addressPoisoningOperationsFilter"]` from `@shared/feature-flags` instead. */
 export type Feature_AddressPoisoningOperationsFilter = Feature<{
   families: string[];
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldHideSmallValueTokenOperations"]` from `@shared/feature-flags` instead. */
 export type Feature_LldHideSmallValueTokenOperations = Feature<{
   /** USD threshold below which incoming token operations are hidden. Defaults to $0.5. */
   thresholdUsd: number;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["counterValue"]` from `@shared/feature-flags` instead. */
 export type Feature_CounterValue = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["mockFeature"]` from `@shared/feature-flags` instead. */
 export type Feature_MockFeature = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["disableNftSend"]` from `@shared/feature-flags` instead. */
 export type Feature_DisableNftSend = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["disableNftLedgerMarket"]` from `@shared/feature-flags` instead. */
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["disableNftRaribleOpensea"]` from `@shared/feature-flags` instead. */
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxServiceCtaExchangeDrawer"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxServiceCtaScreens"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["portfolioExchangeBanner"]` from `@shared/feature-flags` instead. */
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapReceiveTRC20WithoutTrx"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["flexibleContentCards"]` from `@shared/feature-flags` instead. */
 export type Feature_FlexibleContentCards = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["myLedgerDisplayAppDeveloperName"]` from `@shared/feature-flags` instead. */
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldChatbotSupport"]` from `@shared/feature-flags` instead. */
 export type Feature_LldChatbotSupport = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmChatbotSupport"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmChatbotSupport = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["enableAppsBackup"]` from `@shared/feature-flags` instead. */
 export type Feature_EnableAppsBackup = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["web3hub"]` from `@shared/feature-flags` instead. */
 export type Feature_web3hub = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldMemoTag"]` from `@shared/feature-flags` instead. */
 export type Feature_MemoTag = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxEarnDrawerConfiguration"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxEarnDrawerConfiguration = Feature<{
   assets?: {
     filter?: "topNetworks" | "undefined";
@@ -809,30 +895,38 @@ export type Feature_PtxEarnDrawerConfiguration = Feature<{
     rightElement?: "balance" | "undefined";
   };
 }>;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxEarnUi"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxEarnUi = Feature<{
   value: string;
 }>;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapMoonpayProvider"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapExodusProvider"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapDetailedView"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapDetailedView = Feature<{
   variant: ABTestingVariants;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmRebornLP"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldNanoSUpsellBanners"]` from `@shared/feature-flags` instead. */
 export type Feature_LldNanoSUpsellBanners = Feature<{
   opted_in: LldNanoSUpsellBannersConfig;
   opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmNanoSUpsellBanners"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmTransferButtonCopyVariant"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmTransferButtonCopyVariant = Feature<{
   variantId: string;
   buttonLabel?: string;
@@ -843,9 +937,12 @@ export type Feature_LlmTransferButtonCopyVariant = Feature<{
   rowCashToStableDescription?: string;
 }>;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmHomescreen"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmHomescreen = DefaultFeature;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["supportDeviceApex"]` from `@shared/feature-flags` instead. */
 export type Feature_SupportDeviceApex = DefaultFeature;
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldOnboardingEnableSync"]` from `@shared/feature-flags` instead. */
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
   touchscreens: boolean;
@@ -853,13 +950,17 @@ export type Feature_OnboardingEnableSync = Feature<{
 
 /**
  * Array of firmware versions that are ignored for the given device model
+ * @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`.
  */
 export type IgnoredOSUpdates = Array<string>;
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type Platform = "ios" | "android" | "macos" | "windows" | "linux";
 
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type IgnoredOSUpdatesByPlatform = { [M in DeviceModelId]?: IgnoredOSUpdates };
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["onboardingIgnoredOsUpdates"]` from `@shared/feature-flags` instead. */
 export type Feature_OnboardingIgnoredOSUpdates = Feature<{
   [P in Platform]?: IgnoredOSUpdatesByPlatform;
 }>;
@@ -868,7 +969,6 @@ type Feature_Wallet40_Params = {
   marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
-  quickActionsCtasVariant: boolean;
   mainNavigation: boolean;
   tour: boolean;
   lazyOnboarding: boolean;
@@ -886,19 +986,25 @@ type Feature_Wallet40_Params = {
   earnSimulator?: boolean;
 };
 
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwdWallet40"]` from `@shared/feature-flags` instead. */
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;
   } & Feature_Wallet40_Params
 >;
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmNewWordingOptInNotificationsDrawer"]` from `@shared/feature-flags` instead. */
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
   variant: ABTestingVariants;
 }>;
 
 /**
  * Utils types.
+ * @deprecated Moved to `@shared/feature-flags`. Use `FeatureMap` from `@shared/feature-flags` instead.
  */
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
+/** @deprecated Moved to `@shared/feature-flags`. Use `OptionalFeatureMap` from `@shared/feature-flags` instead. */
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
+/** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];

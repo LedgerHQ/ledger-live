@@ -30,15 +30,15 @@ describe("MoodIndexCard", () => {
     expect(await screen.findByTestId("fear-and-greed-dialog-content")).toBeVisible();
   });
 
-  it("renders nothing on a scoped query error so the row stays intact", async () => {
+  it("renders an error card on a scoped query error so the row stays intact", async () => {
     server.use(http.get(FEAR_AND_GREED_URL, () => new HttpResponse(null, { status: 500 })));
 
-    const { container } = render(<MoodIndexCard />);
+    render(<MoodIndexCard />);
 
     await waitFor(() => {
-      expect(screen.queryByTestId("market-top-card-2")).not.toBeInTheDocument();
+      expect(screen.getByText("Something went wrong")).toBeVisible();
+      expect(screen.queryByTestId("skeleton")).toBeNull();
     });
-    expect(screen.queryByTestId("mood-index-card")).not.toBeInTheDocument();
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByTestId("mood-index-card")).toBeNull();
   });
 });

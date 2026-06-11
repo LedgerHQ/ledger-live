@@ -85,7 +85,7 @@ import {
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
+import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
 import {
   needsConsentRenewal,
   resolveAnalyticsOptInParams,

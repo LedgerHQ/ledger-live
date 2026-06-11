@@ -18,7 +18,6 @@ import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
-import { FeatureFlagsContextBridge } from "~/components/FeatureFlagsContextBridge";
 import { i18n } from "~/context/Locale";
 import reducers from "~/reducers";
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
@@ -290,11 +289,9 @@ function Providers({
   // General Providers needed for all render types
   let providers = (
     <Provider store={store}>
-      <FeatureFlagsContextBridge>
-        <CountervaluesProviders store={store}>
-          <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
-        </CountervaluesProviders>
-      </FeatureFlagsContextBridge>
+      <CountervaluesProviders store={store}>
+        <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
+      </CountervaluesProviders>
     </Provider>
   );
 

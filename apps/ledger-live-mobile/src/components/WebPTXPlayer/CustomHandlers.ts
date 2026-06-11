@@ -53,7 +53,8 @@ import {
   localeSelector,
 } from "~/reducers/settings";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useWalletFeaturesConfig, useFeatureFlags } from "@features/platform-feature-flags";
+import type { Feature, FeatureId } from "@shared/feature-flags";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
@@ -108,6 +109,11 @@ export function useCustomExchangeHandlers({
   const dispatch = useDispatch();
   const { isEnabled } = useWalletFeaturesConfig("mobile");
   const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
+  const featureFlagsMap = useFeatureFlags();
+  const getFeature = useCallback(
+    (id: FeatureId): Feature | null => featureFlagsMap[id] ?? null,
+    [featureFlagsMap],
+  );
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
@@ -336,6 +342,7 @@ export function useCustomExchangeHandlers({
         tracking,
         manifest,
         flags,
+        getFeature,
         locale,
         counterValueCurrency: counterValueCurrency.ticker,
         deviceModelId: lastSeenDevice?.modelId,
@@ -531,6 +538,7 @@ export function useCustomExchangeHandlers({
     onCompleteResult,
     handleLoaderDrawer,
     flags,
+    getFeature,
     locale,
     counterValueCurrency,
     lastSeenDevice,

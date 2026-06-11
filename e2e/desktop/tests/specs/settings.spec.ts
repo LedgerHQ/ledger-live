@@ -59,6 +59,7 @@ test.describe("Password", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.expectCryptoAccountRowVisible(account.accountName);
       const countBeforeLock = await app.accounts.countAccounts();
       await app.mainNavigation.openSettings();
       await app.password.toggle();
@@ -69,9 +70,9 @@ test.describe("Password", () => {
       await app.LockscreenPage.checkInputErrorVisibility("visible");
       await app.LockscreenPage.login("SpeculosPassword");
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.expectCryptoAccountRowVisible(account.accountName);
       const countAfterLock = await app.accounts.countAccounts();
       await app.accounts.compareAccountsCountFromJson(countBeforeLock, countAfterLock);
-      await app.accounts.expectCryptoAccountRowVisible(account.accountName);
       await app.accounts.navigateToAccountByName(account.accountName);
     },
   );

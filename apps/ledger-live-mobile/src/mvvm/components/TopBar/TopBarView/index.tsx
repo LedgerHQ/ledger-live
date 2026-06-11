@@ -8,6 +8,7 @@ import {
   Settings,
   Warning,
   Clock,
+  Search,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import {
   CustomTopBar,
@@ -33,6 +34,8 @@ export function TopBarView({
   onMyWalletPress,
   shouldDisplayMyWallet,
   shouldDisplayOperationsList,
+  shouldDisplayAssetDiscoverability,
+  onSearchPress,
   onDiscoverPress,
   onNotificationsPress,
   onSettingsPress,
@@ -69,6 +72,14 @@ export function TopBarView({
     callback: onDiscoverPress,
     testID: "topbar-discover",
     accessibilityLabel: "Discover",
+  };
+
+  const searchIcon: TopBarActionIcon = {
+    id: "search",
+    icon: Search,
+    callback: onSearchPress,
+    testID: "topbar-search",
+    accessibilityLabel: "Search",
   };
 
   const notificationsIcon: TopBarActionIcon = {
@@ -124,6 +135,7 @@ export function TopBarView({
     filterIcons([
       displayMyLedgerIconLeading && myLedgerAction,
       displayDiscoverIconLeading && discoverIcon,
+      shouldDisplayAssetDiscoverability && searchIcon,
     ]);
 
   const displaySyncStatusIcon = hasAccounts && isSyncError;

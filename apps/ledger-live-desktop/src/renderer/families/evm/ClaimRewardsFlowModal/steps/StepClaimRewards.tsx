@@ -1,6 +1,10 @@
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import type {
+  GenericTransaction,
+  GenericTransactionMode,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { hasCompound } from "@ledgerhq/live-common/families/evm/staking/logic";
 import {
   isStakingAccount,
   StakingDelegation,
@@ -18,6 +22,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { localeSelector } from "~/renderer/reducers/settings";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
+import ModeSelectorField from "../fields/ModeSelectorField";
 import { StepProps } from "../types";
 import { findDelegationByValidator } from "../utils";
 
@@ -55,6 +60,8 @@ export default function StepClaimRewards({
   });
   const bridge = useAccountBridge<GenericTransaction>(account, parentAccount);
 
+  const compoundSupported = hasCompound(account.currency.id);
+
   const onDelegationChange = useCallback(
     (delegation: StakingDelegation | null | undefined) => {
       if (!delegation) {
@@ -72,6 +79,15 @@ export default function StepClaimRewards({
     [bridge, onUpdateTransaction, transaction],
   );
 
+  const onModeChange = useCallback(
+    (mode: string) => {
+      onUpdateTransaction(transaction =>
+        bridge.updateTransaction(transaction, { mode: mode as GenericTransactionMode }),
+      );
+    },
+    [bridge, onUpdateTransaction],
+  );
+
   return (
     <Box flow={1}>
       <TrackPage
@@ -83,10 +99,15 @@ export default function StepClaimRewards({
       />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
+      {compoundSupported ? (
+        <ModeSelectorField mode={transaction.mode} onChange={onModeChange} />
+      ) : null}
       {amount && (
         <Text fontSize={4} ff="Inter|Medium" textAlign="center">
           <Trans
-            i18nKey={`cosmos.claimRewards.flow.steps.claimRewards.claimInfo`}
+            i18nKey={`cosmos.claimRewards.flow.steps.claimRewards.${
+              transaction.mode === "compoundReward" ? "compoundInfo" : "claimInfo"
+            }`}
             values={{
               amount,
             }}

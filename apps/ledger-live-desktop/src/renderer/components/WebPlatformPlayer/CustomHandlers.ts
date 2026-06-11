@@ -18,8 +18,36 @@ import { replaceAccounts, updateAccountWithUpdater } from "~/renderer/actions/ac
 import { WebviewProps } from "../Web3AppWebview/types";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
+import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
 import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
+import { useFeature } from "@features/platform-feature-flags";
+
+type DeeplinkOpenHandlerParams = { url: string };
+
+type CreateDeeplinkOpenHandlerParams = {
+  isDeeplinkOpenHardeningEnabled: boolean;
+  openDeepLink?: (url: string) => void;
+};
+
+export function createDeeplinkOpenHandler({
+  isDeeplinkOpenHardeningEnabled,
+  openDeepLink = url => ipcRenderer.send("deep-linking", url),
+}: CreateDeeplinkOpenHandlerParams) {
+  return (params?: DeeplinkOpenHandlerParams) => {
+    if (!params) {
+      return;
+    }
+
+    if (isDeeplinkOpenHardeningEnabled && !isUrlSafe(params.url)) {
+      console.warn("Blocked unsafe custom.deeplink.open URL");
+      track("custom.deeplink.open blocked", { reason: "scheme" });
+      return;
+    }
+
+    openDeepLink(params.url);
+  };
+}
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const { pushToast } = useToasts();
@@ -155,19 +183,19 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
 }
 
 export function useDeeplinkCustomHandlers() {
+  const isDeeplinkOpenHardeningEnabled = useFeature("lwdDeeplinkOpenHardening")?.enabled === true;
+
   return useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...deeplinkHandlers({
         uiHooks: {
-          "custom.deeplink.open": params => {
-            if (params) {
-              ipcRenderer.send("deep-linking", params.url);
-            }
-          },
+          "custom.deeplink.open": createDeeplinkOpenHandler({
+            isDeeplinkOpenHardeningEnabled,
+          }),
         },
       }),
     };
-  }, []);
+  }, [isDeeplinkOpenHardeningEnabled]);
 }
 
 export function useLiveAppModalCustomHandlers(manifest: WebviewProps["manifest"]) {

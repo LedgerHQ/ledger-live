@@ -19,6 +19,12 @@ const defaultProps: CounterfeitWarningDrawerContainerProps = {
   onDismiss: jest.fn(),
 };
 
+const analyticsPayload = (properties: Record<string, unknown>) => ({
+  deviceModelId: DeviceModelId.nanoX,
+  flow: "Onboarding",
+  ...properties,
+});
+
 describe("useCounterfeitWarningDrawerViewModel", () => {
   let openURLSpy: jest.SpiedFunction<typeof Linking.openURL>;
 
@@ -39,7 +45,10 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
     );
 
     expect(trackMock).toHaveBeenCalledTimes(1);
-    expect(trackMock).toHaveBeenCalledWith("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
+    expect(trackMock).toHaveBeenCalledWith(
+      "page_viewed",
+      analyticsPayload({ page: COUNTERFEIT_WARNING_PAGE }),
+    );
 
     rerender({ isOpen: true });
     expect(trackMock).toHaveBeenCalledTimes(1);
@@ -88,10 +97,13 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
       result.current.onProceed();
     });
 
-    expect(trackMock).toHaveBeenCalledWith("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    expect(trackMock).toHaveBeenCalledWith(
+      "button_clicked",
+      analyticsPayload({
+        button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     expect(onProceed).toHaveBeenCalledTimes(1);
   });
 
@@ -102,10 +114,13 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
       result.current.onConcern();
     });
 
-    expect(trackMock).toHaveBeenCalledWith("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    expect(trackMock).toHaveBeenCalledWith(
+      "button_clicked",
+      analyticsPayload({
+        button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     expect(openURLSpy).toHaveBeenCalledWith(urls.genuineCheck.learnMore);
   });
 
@@ -137,10 +152,13 @@ describe("useCounterfeitWarningDrawerViewModel", () => {
       result.current.onDismiss();
     });
 
-    expect(trackMock).toHaveBeenCalledWith("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.close,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    expect(trackMock).toHaveBeenCalledWith(
+      "button_clicked",
+      analyticsPayload({
+        button: COUNTERFEIT_WARNING_BUTTON.close,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 });

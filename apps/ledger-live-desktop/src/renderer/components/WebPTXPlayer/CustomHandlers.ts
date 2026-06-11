@@ -44,7 +44,8 @@ import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helper
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useWalletFeaturesConfig, useFeatureFlags } from "@features/platform-feature-flags";
+import type { Feature, FeatureId } from "@shared/feature-flags";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
@@ -56,6 +57,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const { getRouteToPlatformApp } = useStake();
   const navigate = useNavigate();
   const { isEnabled } = useWalletFeaturesConfig("desktop");
+  const featureFlagsMap = useFeatureFlags();
+  const getFeature = useCallback(
+    (id: FeatureId): Feature | null => featureFlagsMap[id] ?? null,
+    [featureFlagsMap],
+  );
   const walletState = useSelector(walletSelector);
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -177,6 +183,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         tracking,
         manifest,
         flags,
+        getFeature,
         locale,
         counterValueCurrency: counterValueCurrency.ticker,
         deviceModelId: lastSeenDevice?.modelId,
@@ -401,6 +408,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     tracking,
     manifest,
     flags,
+    getFeature,
     locale,
     counterValueCurrency,
     lastSeenDevice,

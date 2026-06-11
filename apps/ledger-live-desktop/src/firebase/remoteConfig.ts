@@ -11,12 +11,13 @@ import isMatch from "lodash/isMatch";
 import * as fs from "fs";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
-import { formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import { formatDefaultFeatures } from "@features/platform-feature-flags";
 import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
 
-// Precomputed inverse of live-common's `formatToFirebaseFeatureId` (`feature_${snakeCase(id)}`).
+// Precomputed inverse of @features/platform-feature-flags' `formatToFirebaseFeatureId`
+// (`feature_${snakeCase(id)}`).
 // `lodash.camelCase(snakeCase(id))` is not a clean round-trip for FeatureIds with digits
 // or consecutive uppercase letters (e.g. `web3hub` → `web_3_hub` → `web3Hub`,
 // `ptxSwapReceiveTRC20WithoutTrx` → `..._trc_20_..._trx` → `ptxSwapReceiveTrc20WithoutTrx`),

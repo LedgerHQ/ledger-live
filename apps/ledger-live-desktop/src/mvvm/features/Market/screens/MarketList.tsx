@@ -11,6 +11,7 @@ import { ScrollContainer } from "LLD/components/ScrollContainer";
 import { ListHeader } from "../components/ListHeader";
 import { ListSkeleton } from "../components/ListSkeleton";
 import { ListData } from "../components/ListData";
+import { MarketFavoritesEmptyState } from "../components/MarketFavoritesEmptyState";
 
 type MarketListVirtualization = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -25,6 +26,7 @@ type MarketListProps = {
   marketParams: MarketListRequestParams;
   locale: string;
   marketData: MarketCurrencyData[];
+  emptyState?: "favorites";
   resetSearch: () => void;
   toggleFilterByStarredAccounts: () => void;
   toggleSortBy: () => void;
@@ -41,6 +43,7 @@ function MarketList({
   currenciesLength,
   locale,
   marketData,
+  emptyState,
   resetSearch,
   toggleFilterByStarredAccounts,
   toggleSortBy,
@@ -50,6 +53,10 @@ function MarketList({
 }: Readonly<MarketListProps>) {
   const { order, search, starred, range, counterCurrency } = marketParams;
   const { parentRef, rowVirtualizer } = virtualization;
+
+  if (emptyState === "favorites") {
+    return <MarketFavoritesEmptyState t={t} />;
+  }
 
   // Only show skeleton on initial load or error, not during background refetches
   const showSkeleton = freshLoading || isError;

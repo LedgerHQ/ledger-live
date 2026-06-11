@@ -41,6 +41,7 @@ import ClaimRewardIcon from "~/icons/ClaimReward";
 import IlluRewards from "~/icons/images/Rewards";
 import RedelegateIcon from "~/icons/Redelegate";
 import UndelegateIcon from "~/icons/Undelegate";
+import WithdrawIcon from "~/icons/Withdraw";
 import { urls } from "~/utils/urls";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
@@ -166,6 +167,17 @@ function Delegations({ account }: { account: StakingAccount }) {
       },
     });
   }, [delegation, onNavigate]);
+
+  const onWithdraw = useCallback(() => {
+    if (!undelegation) return;
+    onNavigate({
+      navigator: NavigatorName.EvmWithdrawFlow,
+      screen: ScreenName.EvmWithdrawConfirmation,
+      params: {
+        unbonding: undelegation,
+      },
+    });
+  }, [undelegation, onNavigate]);
 
   const onCloseDrawer = useCallback(() => {
     setDelegation(undefined);
@@ -295,45 +307,65 @@ function Delegations({ account }: { account: StakingAccount }) {
   }, [account, accountName, delegation, onOpenExplorer, t, undelegation]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
-    if (!delegation) return [];
     const result: DelegationDrawerActions = [];
 
-    if (canUndelegate(account, delegation)) {
-      result.push({
-        label: t("delegation.actions.undelegate"),
-        Icon: (props: IconProps) => (
-          <Circle {...props} bg={colors.fog}>
-            <UndelegateIcon />
-          </Circle>
-        ),
-        onPress: onUndelegate,
-        event: "DelegationActionUndelegate",
-      });
+    if (delegation) {
+      if (canUndelegate(account, delegation)) {
+        result.push({
+          label: t("delegation.actions.undelegate"),
+          Icon: (props: IconProps) => (
+            <Circle {...props} bg={colors.fog}>
+              <UndelegateIcon />
+            </Circle>
+          ),
+          onPress: onUndelegate,
+          event: "DelegationActionUndelegate",
+        });
+      }
+
+      if (canRedelegate(account, delegation)) {
+        result.push({
+          label: t("delegation.actions.redelegate"),
+          Icon: (props: IconProps) => (
+            <Circle {...props} bg={colors.fog}>
+              <RedelegateIcon />
+            </Circle>
+          ),
+          onPress: onRedelegate,
+          event: "DelegationActionRedelegate",
+        });
+      }
+
+      if (delegation.pendingRewards?.gt(0)) {
+        result.push({
+          label: t("delegation.actions.collectRewards"),
+          Icon: (props: IconProps) => (
+            <Circle {...props} bg={rgba(colors.yellow, 0.2)}>
+              <ClaimRewardIcon />
+            </Circle>
+          ),
+          onPress: onCollectRewards,
+          event: "DelegationActionCollectRewards",
+        });
+      }
     }
 
-    if (canRedelegate(account, delegation)) {
+    // Withdraw only applies to chains with an explicit finalization slot (Monad carries a
+    // withdrawId); other EVM chains auto-return funds once the timelock completes.
+    const canWithdraw =
+      !delegation &&
+      undelegation?.withdrawId !== undefined &&
+      new Date(undelegation.completionDate).getTime() <= Date.now();
+    if (canWithdraw) {
       result.push({
-        label: t("delegation.actions.redelegate"),
+        label: t("delegation.actions.withdraw"),
         Icon: (props: IconProps) => (
-          <Circle {...props} bg={colors.fog}>
-            <RedelegateIcon />
+          <Circle {...props} bg={rgba(colors.green, 0.2)}>
+            <WithdrawIcon size={24} color={colors.green} />
           </Circle>
         ),
-        onPress: onRedelegate,
-        event: "DelegationActionRedelegate",
-      });
-    }
-
-    if (delegation.pendingRewards?.gt(0)) {
-      result.push({
-        label: t("delegation.actions.collectRewards"),
-        Icon: (props: IconProps) => (
-          <Circle {...props} bg={rgba(colors.yellow, 0.2)}>
-            <ClaimRewardIcon />
-          </Circle>
-        ),
-        onPress: onCollectRewards,
-        event: "DelegationActionCollectRewards",
+        onPress: onWithdraw,
+        event: "DelegationActionWithdraw",
       });
     }
 
@@ -341,11 +373,14 @@ function Delegations({ account }: { account: StakingAccount }) {
   }, [
     account,
     colors.fog,
+    colors.green,
     colors.yellow,
     delegation,
+    undelegation,
     onCollectRewards,
     onRedelegate,
     onUndelegate,
+    onWithdraw,
     t,
   ]);
 
@@ -425,12 +460,12 @@ function Delegations({ account }: { account: StakingAccount }) {
         </View>
       )}
       {undelegations.length > 0 ? (
-        <View style={styles.wrapper}>
+        <View style={styles.undelegationsWrapper}>
           <AccountSectionLabel name={t("account.undelegation.sectionLabel")} />
           {undelegations.map((d, i) => (
             <View
-              key={`${d.validatorAddress}-${d.completionDate.valueOf()}`}
-              style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
+              key={`${d.validatorAddress}-${d.completionDate.valueOf()}-${d.withdrawId ?? i}`}
+              style={styles.delegationsWrapper}
             >
               <DelegationRow
                 delegation={d}
@@ -468,6 +503,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   wrapper: {},
+  undelegationsWrapper: {
+    marginTop: 24,
+  },
   delegationsWrapper: {
     borderRadius: 4,
   },

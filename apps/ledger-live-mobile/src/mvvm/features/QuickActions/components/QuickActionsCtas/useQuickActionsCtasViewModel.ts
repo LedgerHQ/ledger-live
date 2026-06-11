@@ -18,8 +18,8 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsCountSelector, useAreAccountsEmpty } from "~/reducers/accounts";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { resolveRemoteCopy } from "@ledgerhq/live-common/featureFlags/remoteABTesting/resolveRemoteCopy";
+import { useFeature } from "@features/platform-feature-flags";
+import { resolveRemoteCopy } from "@ledgerhq/live-common/analytics/remoteABTesting/resolveRemoteCopy";
 import { track } from "~/analytics";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
 import { QuickActionCta, UserQuickActionsState } from "../../types";
@@ -60,7 +60,8 @@ export const useQuickActionsCtasViewModel = ({
   const language = useSelector(languageSelector);
   const isEN = language === "en";
 
-  const { shouldDisplayQuickActionsCtasVariant } = useWalletFeaturesConfig("mobile");
+  const shouldDisplayQuickActionsCtasVariant =
+    useFeature("lwmQuickActionsCtasVariant")?.enabled ?? false;
 
   const { openDrawer: openTransferDrawer } = useTransferDrawerController();
   const handleBuyDeviceAction = useBuyDeviceAction();

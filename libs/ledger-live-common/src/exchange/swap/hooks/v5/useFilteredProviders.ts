@@ -1,7 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { fetchAndMergeProviderData, getDefaultSwapProviderKeys } from "../../../providers/swap";
-import { useFeature } from "../../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 
 const filterProvidersByFeatureFlags = (
   providers: string[],

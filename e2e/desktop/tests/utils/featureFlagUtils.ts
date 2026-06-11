@@ -1,4 +1,4 @@
-import { OptionalFeatureMap } from "@ledgerhq/types-live";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 import { Page } from "@playwright/test";
 
 export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
@@ -8,15 +8,30 @@ export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> =
   return featureFlags;
 };
 
+export const isAssetSectionEnabled = process.env.E2E_ENABLE_ASSET_SECTION !== "0";
+
+const lwdWallet40BaseParams = {
+  marketBanner: true,
+  graphRework: true,
+  quickActionCtas: true,
+  mainNavigation: true,
+} as const;
+
+// The Wallet 4.0 "Asset Section" is ON by default for all desktop E2E tests.
+// Force it OFF (the "assetSection OFF" test variant) by setting E2E_ENABLE_ASSET_SECTION=0 (used by CI).
+export const LWD_WALLET_40_FF_ENABLED: OptionalFeatureMap = {
+  lwdWallet40: {
+    enabled: true,
+    params: { ...lwdWallet40BaseParams, assetSection: isAssetSectionEnabled },
+  },
+};
+
 // TODO: remove when wallet 4.0 Q2 is default
 export const LWD_WALLET_40_Q2_FF_ENABLED: OptionalFeatureMap = {
   lwdWallet40: {
     enabled: true,
     params: {
-      marketBanner: true,
-      graphRework: true,
-      quickActionCtas: true,
-      mainNavigation: true,
+      ...lwdWallet40BaseParams,
       assetSection: true,
       operationsList: true,
       myWallet: true,

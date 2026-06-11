@@ -6,7 +6,11 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  getTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
 import {
   isFinalizablePosition,
   useBaker,
@@ -17,16 +21,23 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
-import DelegationDrawer, { type FieldType } from "~/components/DelegationDrawer";
+import { Icons } from "@ledgerhq/native-ui";
+import DelegationDrawer, {
+  type FieldType,
+  type Action,
+  type IconProps,
+} from "~/components/DelegationDrawer";
+import Circle from "~/components/Circle";
 import LText from "~/components/LText";
 import Touchable from "~/components/Touchable";
 import IlluRewards from "~/icons/images/Rewards";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { useAccountName } from "~/reducers/wallet";
+import { rgba } from "~/colors";
+import UnstakeRequiredDrawer, { type UnstakeRequiredReason } from "../UnstakeRequiredDrawer";
 import BakerImage from "../BakerImage";
 import DelegationRow from "./Row";
-import LabelRight from "./LabelRight";
 import UnstakingRow from "./UnstakingRow";
 
 type Props = Readonly<{
@@ -43,6 +54,21 @@ type Selected =
 const daysSince = (d: Date | string | undefined | null) =>
   d ? differenceInCalendarDays(Date.now(), new Date(d)) : 0;
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+// Unstaked tez finalize ~4 days after the request, then become withdrawable.
+const UNSTAKE_DELAY_MS = 4 * DAY_MS;
+
+const makeActionIcon =
+  (
+    Icon: React.ComponentType<{ size?: "XS" | "S" | "M" | "L" | "XL" | "XXL"; color?: string }>,
+    color: string,
+  ) =>
+  (props: IconProps) => (
+    <Circle {...props} bg={rgba(color, 0.2)}>
+      <Icon size="S" color={color} />
+    </Circle>
+  );
+
 export default function TezosDelegation({ account }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -55,17 +81,21 @@ export default function TezosDelegation({ account }: Props) {
 
   const [selected, setSelected] = useState<Selected | undefined>();
   const onCloseDrawer = useCallback(() => setSelected(undefined), []);
+  const [unstakeRequired, setUnstakeRequired] = useState<UnstakeRequiredReason | null>(null);
 
   const currentBaker = info.delegation?.baker ?? fallbackBaker;
   const currentAddress = info.delegateAddress ?? "";
 
   const selectedUnstakingAddress =
-    selected?.kind === "unstaking" ? (selected.position.delegate ?? "") : "";
+    selected?.kind === "unstaking" ? selected.position.delegate ?? "" : "";
   const selectedUnstakingBaker = useBaker(selectedUnstakingAddress);
   const drawerBaker = selected?.kind === "unstaking" ? selectedUnstakingBaker : currentBaker;
   const drawerAddress = selected?.kind === "unstaking" ? selectedUnstakingAddress : currentAddress;
 
-  const ops = account.type === "Account" ? (account.operations ?? []) : [];
+  const ops = useMemo(
+    () => (account.type === "Account" ? account.operations ?? [] : []),
+    [account],
+  );
   const stakeDays = daysSince(ops.find(o => o?.type === "STAKE")?.date);
   const delegationDays = daysSince(
     info.delegation?.operation.date ?? ops.find(o => o?.type === "DELEGATE")?.date,
@@ -79,14 +109,60 @@ export default function TezosDelegation({ account }: Props) {
     });
   }, [account, navigation]);
 
-  // Section "manage" CTAs are visible but inert until the stake / unstake flows land.
-  const onManageStub = useCallback(() => undefined, []);
+  const onStakeMore = useCallback(() => {
+    setSelected(undefined);
+    navigation.navigate(NavigatorName.TezosStakeFlow, {
+      screen: ScreenName.TezosStakeAmount,
+      params: { accountId: account.id },
+    });
+  }, [navigation, account.id]);
+
+  const onUnstake = useCallback(() => {
+    setSelected(undefined);
+    navigation.navigate(NavigatorName.TezosUnstakeFlow, {
+      screen: ScreenName.TezosUnstakeAmount,
+      params: { accountId: account.id },
+    });
+  }, [navigation, account.id]);
+
+  const onChangeBaker = useCallback(() => {
+    setSelected(undefined);
+    if (info.isStaked) {
+      setUnstakeRequired("changeBaker");
+      return;
+    }
+    navigation.navigate(NavigatorName.TezosDelegationFlow, {
+      screen: ScreenName.DelegationSummary,
+      params: { accountId: account.id },
+    });
+  }, [info.isStaked, navigation, account.id]);
+
+  const onEndDelegation = useCallback(() => {
+    setSelected(undefined);
+    if (info.isStaked) {
+      setUnstakeRequired("endDelegation");
+      return;
+    }
+    navigation.navigate(NavigatorName.TezosDelegationFlow, {
+      screen: ScreenName.DelegationSummary,
+      params: { accountId: account.id, mode: "undelegate" },
+    });
+  }, [info.isStaked, navigation, account.id]);
 
   const onOpenExplorer = useCallback(() => {
     if (account.type !== "Account" || !drawerAddress) return;
     const url = getAddressExplorer(getDefaultExplorerView(account.currency), drawerAddress);
     if (url) Linking.openURL(url);
   }, [account, drawerAddress]);
+
+  const openTxExplorer = useCallback(
+    (hash: string) => {
+      if (account.type !== "Account") return;
+      const url = getTransactionExplorer(getDefaultExplorerView(account.currency), hash);
+      if (url) Linking.openURL(url);
+    },
+    [account],
+  );
 
   const validatorField: FieldType = useMemo(
     () => ({
@@ -116,13 +192,34 @@ export default function TezosDelegation({ account }: Props) {
     [t],
   );
 
-  const drawerData = useMemo<FieldType[]>(() => {
-    if (!selected) return [];
+  const transactionIdField = useCallback(
+    (hash: string): FieldType => ({
+      label: t("delegation.transactionID"),
+      Component: (
+        <Touchable event="TezosOpenTransactionExplorer" onPress={() => openTxExplorer(hash)}>
+          <LText
+            numberOfLines={1}
+            semiBold
+            ellipsizeMode="middle"
+            style={styles.fieldValue}
+            color="live"
+          >
+            {shortAddressPreview(hash)}
+          </LText>
+        </Touchable>
+      ),
+    }),
+    [t, openTxExplorer],
+  );
 
-    if (selected.kind === "unstaking") {
-      const pos = selected.position;
+  const buildUnstakingFields = useCallback(
+    (pos: StakingPosition): FieldType[] => {
       const finalizable = isFinalizablePosition(pos.uid);
-      return [
+      const createdMs = pos.createdAt ? new Date(pos.createdAt).getTime() : undefined;
+      const msLeft = createdMs === undefined ? 0 : createdMs + UNSTAKE_DELAY_MS - Date.now();
+      const daysLeft = Math.ceil(msLeft / DAY_MS);
+
+      const fields: FieldType[] = [
         validatorField,
         {
           label: t("tezos.staking.status"),
@@ -132,11 +229,45 @@ export default function TezosDelegation({ account }: Props) {
             </LText>
           ),
         },
-        durationField(daysSince(pos.createdAt)),
       ];
-    }
 
-    return [
+      if (createdMs !== undefined) {
+        const txHash = ops.find(
+          o => o?.type === "UNSTAKE" && new Date(o.date).getTime() === createdMs,
+        )?.hash;
+        if (txHash) fields.push(transactionIdField(txHash));
+      }
+
+      if (!finalizable && msLeft > 0) {
+        fields.push({
+          label: t("tezos.staking.availableIn"),
+          Component: (
+            <LText semiBold style={styles.fieldValue}>
+              {msLeft >= DAY_MS ? (
+                <Trans
+                  i18nKey="delegation.durationDays"
+                  count={daysLeft}
+                  values={{ count: daysLeft }}
+                />
+              ) : (
+                t("tezos.staking.lessThanADay")
+              )}
+            </LText>
+          ),
+        });
+      }
+
+      return fields;
+    },
+    [ops, validatorField, transactionIdField, t],
+  );
+
+  const drawerData = useMemo<FieldType[]>(() => {
+    if (!selected) return [];
+    if (selected.kind === "unstaking") return buildUnstakingFields(selected.position);
+
+    const delegationHash = info.delegation?.operation.hash;
+    const fields: FieldType[] = [
       validatorField,
       {
         label: t("delegation.validatorAddress"),
@@ -154,6 +285,13 @@ export default function TezosDelegation({ account }: Props) {
           </Touchable>
         ),
       },
+    ];
+
+    if (selected.kind === "delegation" && delegationHash) {
+      fields.push(transactionIdField(delegationHash));
+    }
+
+    fields.push(
       {
         label: t("delegation.delegatedAccount"),
         Component: (
@@ -163,17 +301,67 @@ export default function TezosDelegation({ account }: Props) {
         ),
       },
       durationField(selected.kind === "stake" ? stakeDays : delegationDays),
-    ];
+    );
+
+    return fields;
   }, [
     selected,
     t,
     validatorField,
     durationField,
+    transactionIdField,
     onOpenExplorer,
     drawerAddress,
     accountName,
     stakeDays,
     delegationDays,
+    info.delegation,
+    buildUnstakingFields,
+  ]);
+
+  const drawerActions = useMemo<Action[]>(() => {
+    if (selected?.kind === "stake") {
+      return [
+        {
+          label: t("tezos.staking.stakeMore"),
+          Icon: makeActionIcon(Icons.Plus, colors.live),
+          event: "TezosStakeMore",
+          onPress: onStakeMore,
+        },
+        {
+          label: t("tezos.staking.unstake"),
+          Icon: makeActionIcon(Icons.ArrowDown, colors.live),
+          event: "TezosUnstake",
+          onPress: onUnstake,
+        },
+      ];
+    }
+    if (selected?.kind === "delegation") {
+      return [
+        {
+          label: t("delegation.changeValidator"),
+          Icon: makeActionIcon(Icons.PenEdit, colors.live),
+          event: "TezosChangeBaker",
+          onPress: onChangeBaker,
+        },
+        {
+          label: t("delegation.endDelegation"),
+          Icon: makeActionIcon(Icons.Trash, colors.alert),
+          event: "TezosEndDelegation",
+          onPress: onEndDelegation,
+        },
+      ];
+    }
+    return [];
+  }, [
+    selected?.kind,
+    t,
+    colors.live,
+    colors.alert,
+    onStakeMore,
+    onUnstake,
+    onChangeBaker,
+    onEndDelegation,
   ]);
 
   if (account.type !== "Account") return null;
@@ -206,12 +394,7 @@ export default function TezosDelegation({ account }: Props) {
     <View style={styles.root}>
       {showStaking && (
         <View>
-          <AccountSectionLabel
-            name={t("tezos.staking.sectionLabel")}
-            RightComponent={
-              <LabelRight disabled onPress={onManageStub} label={t("tezos.manage")} />
-            }
-          />
+          <AccountSectionLabel name={t("tezos.staking.sectionLabel")} />
           <View style={[styles.card, { backgroundColor: colors.card }]}>
             {info.isStaked && (
               <DelegationRow
@@ -240,12 +423,7 @@ export default function TezosDelegation({ account }: Props) {
 
       {info.isDelegated && (
         <View style={showStaking ? styles.spacedTop : undefined}>
-          <AccountSectionLabel
-            name={t("tezos.delegation.sectionLabel")}
-            RightComponent={
-              <LabelRight disabled onPress={onManageStub} label={t("tezos.manage")} />
-            }
-          />
+          <AccountSectionLabel name={t("tezos.delegation.sectionLabel")} />
           <View style={[styles.card, { backgroundColor: colors.card }]}>
             <DelegationRow
               baker={currentBaker}
@@ -267,7 +445,13 @@ export default function TezosDelegation({ account }: Props) {
         ValidatorImage={({ size }) => <BakerImage size={size} baker={drawerBaker} />}
         amount={drawerAmount}
         data={drawerData}
-        actions={[]}
+        actions={drawerActions}
+      />
+
+      <UnstakeRequiredDrawer
+        isOpen={unstakeRequired !== null}
+        reason={unstakeRequired ?? "changeBaker"}
+        onClose={() => setUnstakeRequired(null)}
       />
     </View>
   );

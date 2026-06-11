@@ -15,6 +15,7 @@ import {
 } from "./utils/trackDeviceIntent";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { useDeviceIntentExecutorHeaderOverrideRequests } from "./hooks/useDeviceIntentExecutorHeaderOverrideRequests";
 import type { DeviceIntentExecutorHeaderContextValue } from "./utils/DeviceIntentExecutorHeaderContext";
 import type { SourceFlow } from "./utils/SourceFlowContext";
@@ -57,6 +58,8 @@ export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>
   const initializationCompletedRef = useRef(false);
   const closeTrackedRef = useRef(false);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
+
+  useKeepScreenAwake(enabled);
 
   useEffect(() => {
     if (!enabled) {

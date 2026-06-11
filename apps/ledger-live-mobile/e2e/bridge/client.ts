@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
 import { importSettings, setLastConnectedDevice } from "~/actions/settings";
-import { setOverride, setAllOverrides, featureFlagsOverridesSelector } from "@shared/feature-flags";
+import { setOverride, setAllOverrides, selectFeature } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
@@ -143,8 +143,9 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "getFlags": {
-        const localOverrides = featureFlagsOverridesSelector(store.getState());
-        const payload = JSON.stringify(getAllFeatureFlags("en", localOverrides));
+        const payload = JSON.stringify(
+          getAllFeatureFlags(key => selectFeature(store.getState(), key) ?? null),
+        );
         postMessage({
           type: "appFlags",
           payload,

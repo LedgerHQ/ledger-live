@@ -14,6 +14,10 @@ export const TRANSACTION_TYPE = {
   TRANSFER_PRIVATE: "transfer_private",
   CONVERT_PUBLIC_TO_PRIVATE: "convert_public_to_private",
   CONVERT_PRIVATE_TO_PUBLIC: "convert_private_to_public",
+  TRANSFER_TOKEN_PUBLIC: "transfer_token_public",
+  TRANSFER_TOKEN_PRIVATE: "transfer_token_private",
+  CONVERT_TOKEN_PRIVATE_TO_PUBLIC: "convert_token_private_to_public",
+  CONVERT_TOKEN_PUBLIC_TO_PRIVATE: "convert_token_public_to_private",
 } as const;
 
 // Indexes based on aleo credits program args
@@ -41,6 +45,9 @@ export const PROGRESS_THROTTLE_MIN_STEP = 5;
 
 // The maximum number of private records that can be included in a single transaction.
 export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
+
+// Token batcher programs only support up to 13 records (no _14 variant exists).
+export const MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION = 13;
 
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;

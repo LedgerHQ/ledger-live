@@ -1,9 +1,37 @@
 import { marketHandler } from "../market.handler";
+import { setMarketCategory } from "~/renderer/actions/market";
 import { createMockContext } from "./test-utils";
 
 describe("marketHandler", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("category param", () => {
+    it("pre-selects a known category before navigating to the market list", () => {
+      const context = createMockContext();
+
+      marketHandler({ type: "market", path: "", category: "stocks" }, context);
+
+      expect(context.dispatch).toHaveBeenCalledWith(setMarketCategory("stocks"));
+      expect(context.navigate).toHaveBeenCalledWith("/market");
+    });
+
+    it("falls back to 'all' for an unknown category", () => {
+      const context = createMockContext();
+
+      marketHandler({ type: "market", path: "", category: "trending" }, context);
+
+      expect(context.dispatch).toHaveBeenCalledWith(setMarketCategory("all"));
+    });
+
+    it("does not touch the category when no category param is provided", () => {
+      const context = createMockContext();
+
+      marketHandler({ type: "market", path: "" }, context);
+
+      expect(context.dispatch).not.toHaveBeenCalled();
+    });
   });
 
   it("navigates to market list when no path", () => {

@@ -10,8 +10,12 @@ import { useSettings } from "./useSettings";
 import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
-  const { shouldDisplayOperationsList, shouldDisplayMyWallet, shouldDisplayAggregatedAssets } =
-    useWalletFeaturesConfig("desktop");
+  const {
+    shouldDisplayOperationsList,
+    shouldDisplayMyWallet,
+    shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
+  } = useWalletFeaturesConfig("desktop");
   const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
     useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
@@ -132,6 +136,7 @@ const useTopBarViewModel = () => {
     isInformationCenterOpen,
     onInformationCenterClose,
     shouldDisplayAggregatedAssets,
+    shouldDisplayAssetDiscoverability,
   };
 };
 

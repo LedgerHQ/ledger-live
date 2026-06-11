@@ -20,19 +20,11 @@ import BigNumber from "bignumber.js";
 import { launchSpeculos, cleanSpeculos } from "./speculosUtils";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
-  let originalBroadcastValue: string | undefined;
-  test.beforeAll(async () => {
-    originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
-    process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-    if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-  });
-  test.afterAll(async () => {
-    delete process.env.SWAP_DISABLE_APPS_INSTALL;
-    if (originalBroadcastValue !== undefined) {
-      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
-    } else {
-      delete process.env.DISABLE_TRANSACTION_BROADCAST;
-    }
+  test.use({
+    env: {
+      SWAP_DISABLE_APPS_INSTALL: "true",
+      ...(disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {}),
+    },
   });
 }
 
@@ -148,18 +140,27 @@ export async function ensureTokenApproval(
   }
 }
 
-export async function revokeTokenApproval(fromAccount: TokenAccount, provider: SwapProvider) {
-  if (!provider.contractAddress) return;
+export async function revokeTokenApproval(
+  fromAccount: Account | TokenAccount,
+  provider: SwapProvider,
+) {
+  if (!provider.contractAddress || !fromAccount.parentAccount) return;
 
-  const allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
-  if (allowance === "0") return;
-
-  const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
-  const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
-  try {
-    const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
-    await allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
-  } finally {
-    await cleanSpeculos(speculos, previousSpeculosPort);
+  let allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
+  if (allowance !== "0") {
+    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
+    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
+    try {
+      const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
+      await allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
+    } finally {
+      await cleanSpeculos(speculos, previousSpeculosPort);
+    }
+    allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
+  }
+  if (allowance !== "0") {
+    throw new Error(
+      `Token allowance revoke did not settle for ${provider.uiName}: expected "0", got "${allowance}"`,
+    );
   }
 }

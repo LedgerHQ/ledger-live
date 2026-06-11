@@ -119,7 +119,7 @@ describe("FlowStackNavigator", () => {
     expect(screen.getByText("Step 1")).toBeOnTheScreen();
   });
 
-  it("should apply transparent modal options to bottom sheet steps", () => {
+  it("should apply transparent modal options when requested by the step config", () => {
     const options = getFlowStackScreenOptions({
       defaultOptions: {
         title: "Default title",
@@ -127,7 +127,7 @@ describe("FlowStackNavigator", () => {
       customOptions: {
         title: "Custom title",
       },
-      isBottomSheet: true,
+      screenPresentation: "transparentModal",
     });
 
     expect(options).toEqual(

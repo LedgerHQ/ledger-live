@@ -107,6 +107,8 @@ const StepConfirmation = ({
 };
 
 export const StepConfirmationFooter = ({
+  account,
+  parentAccount,
   transitionTo,
   onRetry,
   optimisticOperation,
@@ -117,11 +119,16 @@ export const StepConfirmationFooter = ({
   const navigate = useNavigate();
   const stakingUrl = useLocalizedUrl(urls.stakingTezos);
 
-  const onVisitEarnDashboard = useCallback(() => {
+  const onVisitAccountDashboard = useCallback(() => {
     onClose();
     setTrackingSource("stake flow");
-    navigate("/earn");
-  }, [navigate, onClose]);
+    const accountId = account
+      ? getMainAccount(account, parentAccount).id
+      : optimisticOperation?.accountId;
+    if (accountId) {
+      navigate(`/account/${accountId}`);
+    }
+  }, [account, parentAccount, optimisticOperation, navigate, onClose]);
 
   const onRetryClick = useCallback(() => {
     onRetry();
@@ -133,9 +140,9 @@ export const StepConfirmationFooter = ({
     action = (
       <Button
         ml={2}
-        id="tezos-stake-confirmation-visit-earn-button"
+        id="tezos-stake-confirmation-visit-account-button"
         primary
-        onClick={onVisitEarnDashboard}
+        onClick={onVisitAccountDashboard}
       >
         <Trans i18nKey="tezos.stake.flow.steps.confirmation.success.cta" />
       </Button>

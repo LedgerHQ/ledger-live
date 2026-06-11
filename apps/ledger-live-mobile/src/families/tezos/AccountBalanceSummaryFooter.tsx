@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import type BigNumber from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import type { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";

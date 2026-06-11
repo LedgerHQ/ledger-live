@@ -1,6 +1,6 @@
 import type { Transaction as HederaTransaction, TransactionResponse } from "@hashgraph/sdk";
 import { Client } from "@hashgraph/sdk";
-import { type HederaCoinConfig } from "../config";
+import type { HederaCoinConfig } from "../config";
 import { resolveConfig } from "../logic/utils";
 
 async function broadcastTransaction({
@@ -15,29 +15,56 @@ async function broadcastTransaction({
 
 const _hederaClients: Map<string, Promise<Client>> = new Map();
 
-async function createClient(networkType: string): Promise<Client> {
+function getClientCacheKey(config: HederaCoinConfig): string {
+  if (config.sdkClientOptions) {
+    return `${config.networkType}:${JSON.stringify(config.sdkClientOptions)}`;
+  }
+
+  return config.networkType;
+}
+
+function applySdkClientOptions(client: Client, config: HederaCoinConfig): void {
+  if (typeof config.sdkClientOptions?.maxAttempts === "number") {
+    client.setMaxAttempts(config.sdkClientOptions.maxAttempts);
+  }
+  if (typeof config.sdkClientOptions?.requestTimeout === "number") {
+    client.setRequestTimeout(config.sdkClientOptions.requestTimeout);
+  }
+  if (typeof config.sdkClientOptions?.minBackoff === "number") {
+    client.setMinBackoff(config.sdkClientOptions.minBackoff);
+  }
+  if (typeof config.sdkClientOptions?.maxBackoff === "number") {
+    client.setMaxBackoff(config.sdkClientOptions.maxBackoff);
+  }
+}
+
+async function createClient(config: HederaCoinConfig): Promise<Client> {
   const client =
-    networkType === "mainnet" ? await Client.forMainnetAsync() : await Client.forTestnetAsync();
+    config.networkType === "mainnet"
+      ? await Client.forMainnetAsync()
+      : await Client.forTestnetAsync();
 
   // limit max nodes per transaction to 1 to avoid multiple signatures
   client.setMaxNodesPerTransaction(1);
+  applySdkClientOptions(client, config);
 
   return client;
 }
 
 async function getInstance(configOrCurrencyId: HederaCoinConfig | string): Promise<Client> {
-  const { networkType } = resolveConfig(configOrCurrencyId);
+  const config = resolveConfig(configOrCurrencyId);
+  const cacheKey = getClientCacheKey(config);
 
-  if (!_hederaClients.has(networkType)) {
-    const promise = createClient(networkType).catch(error => {
-      _hederaClients.delete(networkType);
+  if (!_hederaClients.has(cacheKey)) {
+    const promise = createClient(config).catch(error => {
+      _hederaClients.delete(cacheKey);
       throw error;
     });
 
-    _hederaClients.set(networkType, promise);
+    _hederaClients.set(cacheKey, promise);
   }
 
-  return _hederaClients.get(networkType)!;
+  return _hederaClients.get(cacheKey)!;
 }
 
 // for testing purposes only, used to reset singleton client instances

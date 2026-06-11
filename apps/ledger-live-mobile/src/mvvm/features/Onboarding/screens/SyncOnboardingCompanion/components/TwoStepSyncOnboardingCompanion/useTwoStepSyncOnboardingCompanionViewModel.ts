@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-
 import { getDeviceModel } from "@ledgerhq/devices";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { SeedOriginType } from "@ledgerhq/types-live";
-
-import { useOpenReceiveDrawer } from "LLM/features/Receive";
-
+import { useSelector, useDispatch } from "~/context/hooks";
+import { NavigatorName, ScreenName } from "~/const";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import useTwoStepDesync from "../../hooks/useTwoStepDesync";
 import {
   completeOnboarding,
   setHasOrderedNano,
@@ -15,18 +15,10 @@ import {
   setReadOnlyMode,
 } from "~/actions/settings";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "~/const";
-import { useSelector, useDispatch } from "~/context/hooks";
-import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
-import { isOnboardingFlowReceiveSuccessSelector } from "~/reducers/settings";
-import useTwoStepDesync from "../../hooks/useTwoStepDesync";
-
 import { COMPANION_STATE, CompanionStep, SEED_STATE } from "../../types";
-import type { UseTwoStepSyncOnboardingCompanionViewModelProps } from "./types";
-
-/*
- * Constants
- */
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { isOnboardingFlowReceiveSuccessSelector } from "~/reducers/settings";
+import type { TwoStepSyncOnboardingCompanionProps } from "./types";
 
 const READY_REDIRECT_DELAY_MS = 2500;
 
@@ -36,31 +28,21 @@ export const useTwoStepSyncOnboardingCompanionViewModel = ({
   updateHeaderOverlayDelay,
   onShouldHeaderBeOverlaid,
   onLostDevice,
-}: UseTwoStepSyncOnboardingCompanionViewModelProps) => {
+  notifyEarlySecurityCheckShouldReset,
+}: TwoStepSyncOnboardingCompanionProps) => {
   const baseNavigation = useNavigation<RootNavigation>();
-  /*
-   * Local State
-   */
+  const dispatchRedux = useDispatch();
+  const isOnboardingFlowReceiveSuccess = useSelector(isOnboardingFlowReceiveSuccessSelector);
+
   const [companionStep, setCompanionStep] = useState<CompanionStep>(COMPANION_STATE.SETUP);
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
   const [isInitialised, setIsInitialised] = useState<boolean>(false);
-  /*
-   * Refs
-   */
+
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preventNavigation = useRef(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const analyticsSeedConfiguration = useRef<SeedOriginType | undefined>(undefined);
 
-  /*
-   * Redux State
-   */
-  const dispatchRedux = useDispatch();
-  const isOnboardingFlowReceiveSuccess = useSelector(isOnboardingFlowReceiveSuccessSelector);
-
-  /*
-   * Custom hooks/state
-   */
   const isFocused = useIsFocused();
   useKeepScreenAwake(isFocused);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
@@ -78,17 +60,12 @@ export const useTwoStepSyncOnboardingCompanionViewModel = ({
     setIsPollingOn,
   });
 
-  /*
-   * Callbacks
-   */
   const handleOnboardingDoneState = useCallback(() => {
     dispatchRedux(setReadOnlyMode(false));
     dispatchRedux(setHasOrderedNano(false));
     dispatchRedux(completeOnboarding());
   }, [dispatchRedux]);
-  /**
-   * Triggers the end of the onboarding
-   */
+
   const handleOnboardingDone = useCallback(() => {
     handleOnboardingDoneState();
     navigation.navigate(ScreenName.SyncOnboardingCompletion, {
@@ -134,17 +111,17 @@ export const useTwoStepSyncOnboardingCompanionViewModel = ({
         handleOnboardingDone();
       } else if (companionStep === SEED_STATE.NEW_SEED) {
         dispatchRedux(setIsOnboardingFlow(true));
-
         handleOpenReceiveDrawer();
       } else {
         setCompanionStep(COMPANION_STATE.EXIT);
       }
     },
-    [companionStep, setCompanionStep, handleOnboardingDone, dispatchRedux, handleOpenReceiveDrawer],
+    [companionStep, handleOnboardingDone, dispatchRedux, handleOpenReceiveDrawer],
   );
-  /*
-   * useEffects
-   */
+
+  const handleFinishFirstStep = useCallback((nextStep: SEED_STATE) => {
+    setCompanionStep(nextStep);
+  }, []);
 
   useEffect(() => {
     navigation.addListener("beforeRemove", e => {
@@ -152,7 +129,6 @@ export const useTwoStepSyncOnboardingCompanionViewModel = ({
     });
   }, [navigation]);
 
-  // Handle exit status
   useEffect(() => {
     if (companionStep === COMPANION_STATE.EXIT) {
       preventNavigation.current = true;
@@ -181,14 +157,22 @@ export const useTwoStepSyncOnboardingCompanionViewModel = ({
   }, [isOnboardingFlowReceiveSuccess, handleReceiveFlowSuccess, dispatchRedux, isInitialised]);
 
   return {
+    device,
+    navigation,
     productName,
-    scrollViewRef,
-    analyticsSeedConfiguration,
     companionStep,
-    setCompanionStep,
     isPollingOn,
     setIsPollingOn,
+    scrollViewRef,
+    analyticsSeedConfiguration,
+    notifyEarlySecurityCheckShouldReset,
+    onLostDevice,
     twoStepDesync,
+    handleFinishFirstStep,
     handleSecondStepFinish,
   };
 };
+
+export type TwoStepSyncOnboardingCompanionViewProps = ReturnType<
+  typeof useTwoStepSyncOnboardingCompanionViewModel
+>;

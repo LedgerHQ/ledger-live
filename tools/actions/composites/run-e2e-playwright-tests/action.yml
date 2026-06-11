@@ -16,6 +16,11 @@ inputs:
   shard_total:
     description: "Total number of shards (omit to run all tests)"
     required: false
+  repeat_each:
+    description: "Repeat each test N times (omit to run tests once)"
+  enable_asset_section:
+    description: "Enable the Wallet 4.0 Asset Section"
+    required: false
 outputs:
   passed:
     description: "Number of passed tests"
@@ -85,12 +90,25 @@ runs:
           SHARD_ARG="--shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}"
         fi
 
+        REPEAT_ARG=""
+        if [ -n "${{ inputs.repeat_each }}" ]; then
+          REPEAT_ARG="--repeat-each=${{ inputs.repeat_each }}"
+        fi
+        if [[ "${{ inputs.enable_asset_section }}" = "false" ]]; then
+          export E2E_ENABLE_ASSET_SECTION=0
+          echo "Asset Section disabled!"
+        else
+          export E2E_ENABLE_ASSET_SECTION=1
+          echo "Asset Section enabled!"
+        fi
+
         set +e
         xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
           -- pnpm e2e:desktop test:playwright \
           --max-failures 50 \
           $grep_option "$grep_filter" \
-          $SHARD_ARG 2>&1 | tee /tmp/playwright-output.log
+          $SHARD_ARG \
+          $REPEAT_ARG 2>&1 | tee /tmp/playwright-output.log
         TEST_EXIT_CODE=${PIPESTATUS[0]}
         set -e
 

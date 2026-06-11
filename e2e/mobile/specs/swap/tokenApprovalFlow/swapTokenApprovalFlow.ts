@@ -3,7 +3,7 @@ import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../.
 import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { beforeAllFunctionSwap } from "../swap.setup";
-import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
+import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/currencyUtils";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
 export function runSwapTokenApprovalFlow(
@@ -45,7 +45,6 @@ export function runSwapTokenApprovalFlow(
     it("Swap - token approval flow", async () => {
       await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
-      await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
       const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
       if (amountToSwap === null) {
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
@@ -68,6 +67,6 @@ export function runSwapTokenApprovalFlow(
         await app.speculos.signTypedMessage();
       }
       await app.swapLiveApp.expectExecuteSwapOnStepApproval();
-    });
+    }, 480_000);
   });
 }

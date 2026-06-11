@@ -74,6 +74,23 @@ describe("buildAssetsQueryParams", () => {
     ).toBeUndefined();
     expect(buildAssetsQueryParams(baseQueryArg).currencyIds).toBeUndefined();
   });
+
+  it("should serialize categories as a comma-separated string", () => {
+    expect(
+      buildAssetsQueryParams({ ...baseQueryArg, categories: [AssetCategory.Stocks] }).categories,
+    ).toBe("stocks");
+    expect(
+      buildAssetsQueryParams({
+        ...baseQueryArg,
+        categories: [AssetCategory.Stocks, AssetCategory.Stablecoins],
+      }).categories,
+    ).toBe("stocks,stablecoins");
+  });
+
+  it("should omit categories when empty or not provided", () => {
+    expect(buildAssetsQueryParams({ ...baseQueryArg, categories: [] }).categories).toBeUndefined();
+    expect(buildAssetsQueryParams(baseQueryArg).categories).toBeUndefined();
+  });
 });
 
 describe("fetchAllAssetsByCategory", () => {

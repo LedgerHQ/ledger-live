@@ -1,4 +1,4 @@
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { DistributionItem } from "@ledgerhq/types-live";
 
 export function useShouldDisplayAssetPnl(distributionItem: DistributionItem | undefined): boolean {

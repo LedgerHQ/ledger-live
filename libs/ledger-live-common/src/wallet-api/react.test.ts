@@ -33,14 +33,8 @@ jest.mock("react-redux", () => ({
   useDispatch: jest.fn().mockReturnValue(jest.fn()),
 }));
 
-jest.mock("../featureFlags/FeatureFlagsContext", () => ({
-  useFeatureFlags: jest.fn().mockReturnValue({
-    isFeature: () => true,
-    getFeature: () => null,
-    overrideFeature: jest.fn(),
-    resetFeature: jest.fn(),
-    resetFeatures: jest.fn(),
-  }),
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeatureFlags: jest.fn().mockReturnValue({}),
 }));
 
 jest.mock("../modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({

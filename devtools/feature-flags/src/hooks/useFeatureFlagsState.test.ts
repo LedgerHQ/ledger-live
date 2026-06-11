@@ -12,6 +12,7 @@ const defaultProps: FeatureFlagsToolProps = {
   setOverride: jest.fn(),
   clearOverride: jest.fn(),
   clearAllOverrides: jest.fn(),
+  importOverrides: jest.fn(),
 };
 
 const testFlagId: FeatureId = "mockFeature";

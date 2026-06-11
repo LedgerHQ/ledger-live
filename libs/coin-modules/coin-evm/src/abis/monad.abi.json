@@ -36,6 +36,13 @@
     },
     {
       "type": "function",
+      "name": "compound",
+      "inputs": [{ "name": "validatorId", "type": "uint64", "internalType": "uint64" }],
+      "outputs": [{ "name": "success", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "getDelegator",
       "inputs": [
         { "name": "validatorId", "type": "uint64", "internalType": "uint64" },

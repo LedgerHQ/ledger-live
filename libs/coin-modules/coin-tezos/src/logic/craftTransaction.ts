@@ -1,9 +1,8 @@
-import { log } from "@ledgerhq/logs";
 import { type OperationContents, OpKind } from "@taquito/rpc";
-import { getRevealFee, getRevealGasLimit } from "@taquito/taquito";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { createMockSigner } from "../utils";
+import { estimateRevealLimits } from "./estimateRevealLimits";
 import { getTezosToolkit } from "./tezosToolkit";
 
 export type TransactionFee = {
@@ -68,42 +67,13 @@ export async function craftTransaction(
 
   if (publicKey !== undefined) {
     const feesConfig = coinConfig.getCoinConfig().fees;
-
-    type RevealEstimate = { gasLimit?: number; storageLimit?: number; suggestedFeeMutez?: number };
-    let revealEstimate: RevealEstimate | undefined;
-    try {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      revealEstimate = (await tezosToolkit.estimate.reveal()) as RevealEstimate;
-    } catch (error) {
-      // for some unknown reason, on some addresses the estimation fails with "inconsistent_hash" error, we fall back to
-      // another method from the SDK
-      log("estimate-error", "error estimating reveal fees, trying using getRevealGasLimit", {
-        error,
-      });
-      revealEstimate = {
-        gasLimit: getRevealGasLimit(address),
-        suggestedFeeMutez: getRevealFee(address),
-      };
-    }
-
-    const revealFee = Math.max(
-      feesConfig.minFees ?? 0,
-      revealEstimate?.suggestedFeeMutez ?? getRevealFee(address) ?? 0,
-    );
-    const revealGasLimit = Math.max(
-      feesConfig.minRevealGasLimit ?? 0,
-      revealEstimate?.gasLimit ?? 0,
-    );
-    const revealStorageLimit = Math.max(
-      feesConfig.minStorageLimit ?? 0,
-      revealEstimate?.storageLimit ?? 0,
-    );
+    const reveal = await estimateRevealLimits(tezosToolkit, address, feesConfig);
 
     contents.push({
       kind: OpKind.REVEAL,
-      fee: revealFee.toString(),
-      gas_limit: revealGasLimit.toString(),
-      storage_limit: revealStorageLimit.toString(),
+      fee: reveal.fee.toString(),
+      gas_limit: reveal.gasLimit.toString(),
+      storage_limit: reveal.storageLimit.toString(),
       source: publicKey.publicKeyHash,
       counter: (counter + 1 + contents.length).toString(),
       public_key: publicKey.publicKey,

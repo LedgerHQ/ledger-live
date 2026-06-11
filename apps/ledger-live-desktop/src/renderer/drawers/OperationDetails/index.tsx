@@ -51,6 +51,7 @@ import OperationComponent from "~/renderer/components/OperationsList/Operation";
 import Text, { TextProps } from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
@@ -426,7 +427,9 @@ const OperationD = (props: Props) => {
         mb={1}
         data-testid="transaction-type"
       >
-        <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
+        {editable
+          ? t("operation.type.SENDING")
+          : t(getOperationTypeI18nKey(operation.type, cryptoCurrency.family))}
       </Text>
 
       <Box alignItems="center" mt={0}>
@@ -586,7 +589,7 @@ const OperationD = (props: Props) => {
             fontSize={4}
             color="neutral.c70"
           >
-            <Trans i18nKey={`operation.type.${operation.type}`} />
+            {t(getOperationTypeI18nKey(operation.type, cryptoCurrency.family))}
           </Text>
         </OpDetailsData>
       </OpDetailsSection>

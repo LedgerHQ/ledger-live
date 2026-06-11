@@ -166,6 +166,59 @@ export function normalizePublicKeyForAddress(
 }
 
 /**
+ * Converts a DER-encoded secp256k1/P-256 ECDSA signature (returned by the Tezos Ledger
+ * app for tz2/tz3 accounts) to the raw 64-byte r||s format the Tezos protocol expects.
+ * Format: 0x30 <totalLen> 0x02 <rLen> <r_bytes> 0x02 <sLen> <s_bytes>
+ */
+export function convertSecp256k1DERToRaw(derHex: string): string {
+  if (!/^[0-9a-fA-F]+$/.test(derHex) || derHex.length % 2 !== 0) {
+    throw new Error("Tezos: device returned an invalid signature");
+  }
+  const buf = Buffer.from(derHex, "hex");
+  if (buf.length === 64) return derHex; // already raw r||s
+
+  const rStart = 4;
+  const rLen = buf[3];
+  const sLenIdx = rStart + rLen + 1;
+  const sLen = buf[sLenIdx];
+  const sStart = sLenIdx + 1;
+  const malformed =
+    buf.length < 8 ||
+    buf[0] !== 0x30 ||
+    buf[2] !== 0x02 ||
+    buf[sLenIdx - 1] !== 0x02 ||
+    rLen === 0 ||
+    sLen === 0 ||
+    rLen > 33 ||
+    sLen > 33 ||
+    sStart + sLen !== buf.length;
+  if (malformed) {
+    throw new Error("Tezos: device returned an invalid signature");
+  }
+
+  const raw = Buffer.concat([
+    normalizeTo32Bytes(buf.slice(rStart, rStart + rLen)),
+    normalizeTo32Bytes(buf.slice(sStart, sStart + sLen)),
+  ]).toString("hex");
+  // A 33-byte r/s is only valid DER when left-padded with 0x00; anything else normalises
+  // to a non-64-byte result and is not a usable signature.
+  if (raw.length !== 128) {
+    throw new Error("Tezos: device returned an invalid signature");
+  }
+  return raw;
+}
+
+export function normalizeTo32Bytes(bytes: Buffer): Buffer {
+  if (bytes.length === 33 && bytes[0] === 0x00) return bytes.slice(1);
+  if (bytes.length < 32) {
+    const padded = Buffer.alloc(32, 0);
+    bytes.copy(padded, 32 - bytes.length);
+    return padded;
+  }
+  return bytes;
+}
+
+/**
  * Creates default fallback estimation values
  */
 export function createFallbackEstimation() {
