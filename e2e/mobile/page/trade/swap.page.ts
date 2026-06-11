@@ -40,8 +40,9 @@ export default class SwapPage extends CommonPage {
   specificOperationAmountToId = (swapId: string) => `${this.operationRow.baseToAmount}${swapId}`;
 
   @Step("Open swap via deeplink")
-  async openViaDeeplink() {
-    await openDeeplink(this.baseLink);
+  async openViaDeeplink(params?: string) {
+    const path = params ? `${this.baseLink}?${params}` : this.baseLink;
+    await openDeeplink(path);
     await waitForElementById(app.common.walletApiWebview);
   }
 

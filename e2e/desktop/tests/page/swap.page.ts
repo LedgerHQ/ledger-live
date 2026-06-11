@@ -2,6 +2,7 @@ import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
 import { expect, Page } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { sendDeepLink } from "tests/utils/deeplink";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
@@ -533,6 +534,11 @@ export class SwapPage extends WebViewAppPage {
       surface === "embedded" ? this.embeddedSwapContainer : this.fullSwapContainer;
     await swapContainer.waitFor();
     await this.getWebView();
+  }
+
+  @step("Open swap via deeplink: $0")
+  async openViaDeeplink(url: string) {
+    await this.goAndWaitForSwapToBeReady(() => sendDeepLink(this.page, url));
   }
 
   @step("Go to swap history")
