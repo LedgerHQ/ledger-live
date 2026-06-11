@@ -16,24 +16,27 @@ beforeAll(
     await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
     setAllureDescription();
   },
-  process.env.CI ? 150000 : 120000,
+  process.env.CI ? 150_000 : 120_000,
 );
 
-afterAll(async () => {
-  if (process.env.CI) {
-    try {
-      await app.portfolio.openViaDeeplink(5000);
-      await device.terminateApp();
-    } catch (e) {
-      log.warn(`setup afterAll terminateApp failed: ${sanitizeError(e)}`);
+afterAll(
+  async () => {
+    if (process.env.CI) {
+      try {
+        await app.portfolio.openViaDeeplink(5_000);
+        await device.terminateApp();
+      } catch (e) {
+        log.warn(`setup afterAll terminateApp failed: ${sanitizeError(e)}`);
+      }
     }
-  }
 
-  setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
-  closeBridge();
-  try {
-    await app.common.removeSpeculos();
-  } catch (e) {
-    log.warn(`setup afterAll removeSpeculos failed: ${sanitizeError(e)}`);
-  }
-});
+    setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
+    closeBridge();
+    try {
+      await app.common.removeSpeculos();
+    } catch (e) {
+      log.warn(`setup afterAll removeSpeculos failed: ${sanitizeError(e)}`);
+    }
+  },
+  process.env.CI ? 60_000 : 30_000,
+);

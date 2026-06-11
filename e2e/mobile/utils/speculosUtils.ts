@@ -61,7 +61,10 @@ function attachSpeculosOutputToAllure(message: string): Promise<void> {
 export { setExchangeDependencies };
 
 type SpeculosId = { deviceId: string };
-export const SPECULOS_TRACKING_FILE = path.resolve("artifacts/speculos-instances.json");
+
+export const ARTIFACTS_DIR = path.resolve("artifacts");
+const SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, `speculos-instances.${process.pid}.json`);
+export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.\d+\.json$/;
 
 // Register in tracking file for cross-process cleanup
 async function writeSpeculosInFile(deviceId: string) {
@@ -209,14 +212,21 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
   }
 
   const port = await findPortByDeviceId(deviceId);
-
-  await stopSpeculos(deviceId);
-  speculosDevices.delete(deviceId);
-  await removeSpeculosFromFile(deviceId);
-
-  log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
-  setEnv("SPECULOS_API_PORT", 0);
-  delete process.env.SPECULOS_API_PORT;
+  let stopped = false;
+  try {
+    await stopSpeculos(deviceId);
+    log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
+    stopped = true;
+  } catch (error) {
+    log.error("E2E", `Failed to stop Speculos ${deviceId}: ${sanitizeError(error)}`);
+  } finally {
+    if (stopped) {
+      speculosDevices.delete(deviceId);
+      await removeSpeculosFromFile(deviceId);
+    }
+    setEnv("SPECULOS_API_PORT", 0);
+    delete process.env.SPECULOS_API_PORT;
+  }
 
   return port;
 }
@@ -244,6 +254,26 @@ export async function attachSpeculinhoLogsToAllure() {
       log.warn("E2E", `attachSpeculinhoLogsToAllure: ${sanitizeError(error)}`);
     }
   }
+}
+
+// Sweep every Speculos instance known to this process and any orphan still recorded in this process tracking file.
+export async function cleanupAllSpeculos(): Promise<void> {
+  await deleteSpeculos();
+
+  const orphans = await readInstances();
+  if (!orphans.length) return;
+
+  log.warn("E2E", `Releasing ${orphans.length} orphan Speculos instance(s) from tracking file`);
+  await Promise.all(
+    orphans.map(async ({ deviceId }) => {
+      try {
+        await stopSpeculos(deviceId);
+      } catch (error) {
+        log.warn("E2E", `Orphan release failed for ${deviceId}: ${sanitizeError(error)}`);
+      }
+    }),
+  );
+  await writeInstances([]);
 }
 
 export async function takeSpeculosScreenshot() {

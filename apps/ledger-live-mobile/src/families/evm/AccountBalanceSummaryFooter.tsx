@@ -56,7 +56,7 @@ function AccountBalanceSummaryFooter({ account }: { account: StakingAccount }) {
               <InfoItem
                 title={t("account.delegatedAssets")}
                 onPress={onPressInfoCreator("delegated")}
-                value={<CurrencyUnitValue unit={unit} value={delegatedBalance} disableRounding />}
+                value={<CurrencyUnitValue unit={unit} value={delegatedBalance} />}
                 isLast={unbondingBalance.lte(0)}
               />
             )}
@@ -64,7 +64,7 @@ function AccountBalanceSummaryFooter({ account }: { account: StakingAccount }) {
               <InfoItem
                 title={t("account.undelegating")}
                 onPress={onPressInfoCreator("undelegating")}
-                value={<CurrencyUnitValue unit={unit} value={unbondingBalance} disableRounding />}
+                value={<CurrencyUnitValue unit={unit} value={unbondingBalance} />}
                 isLast={true}
               />
             )}

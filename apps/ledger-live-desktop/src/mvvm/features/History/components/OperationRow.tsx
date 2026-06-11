@@ -6,6 +6,7 @@ import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
 import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
+import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -23,16 +24,17 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
   const item = row.original;
   const { operation, currency, amount, address, type, isUnread } = item;
 
-  const typeLabel = operation.hasFailed
-    ? t("operationDetails.failed")
-    : t(`operation.type.${operation.type}`);
-
-  const direction = getAddressDirection(type);
-  const addressPrefix = address ? t(`history.address.${direction}`) : undefined;
-
   const cryptoCurrency: CryptoCurrency | TokenCurrency | undefined =
     currency.type === "FiatCurrency" ? undefined : currency;
   const isToken = cryptoCurrency?.type === "TokenCurrency";
+  const family = isToken ? cryptoCurrency.parentCurrency.family : cryptoCurrency?.family;
+
+  const typeLabel = operation.hasFailed
+    ? t("operationDetails.failed")
+    : t(getOperationTypeI18nKey(operation.type, family));
+
+  const direction = getAddressDirection(type);
+  const addressPrefix = address ? t(`history.address.${direction}`) : undefined;
   const iconCurrency =
     isToken && shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrency : cryptoCurrency;
   const iconNetwork =

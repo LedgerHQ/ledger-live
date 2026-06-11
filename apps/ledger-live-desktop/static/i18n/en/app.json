@@ -4718,6 +4718,10 @@
     }
   },
   "tezos": {
+    "operationTypes": {
+      "UNSTAKE": "Unstaking",
+      "FINALIZE_UNSTAKE": "Unstaked"
+    },
     "earnChoice": {
       "title": "Earn Tezos Rewards: Delegate or Stake",
       "description": "Earn rewards on your Tezos (XTZ) by delegating to a Baker, keeping full control. For higher returns, stake your XTZ, understanding the low associated risk. Choose the best way to grow your assets.",
@@ -4796,7 +4800,7 @@
             "success": {
               "title": "You have successfully staked your assets",
               "text": "You staked {{amount}}. Your account balance will be updated when the blockchain confirms the transaction.",
-              "cta": "Visit Earn Dashboard"
+              "cta": "Visit Account Dashboard"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
             "howItWorks": "How staking works"
@@ -4807,15 +4811,15 @@
     "unstakeRequired": {
       "changeBaker": {
         "title": "Unstake before changing baker",
-        "description": "You have staked XTZ with your current baker. Unstake your funds before delegating to a new baker."
+        "description": "You have staked XTZ with your current baker. Unstake all your funds before delegating to a new baker."
       },
       "endDelegation": {
         "title": "Unstake before ending delegation",
-        "description": "You have staked XTZ with your current baker. Unstake your funds before ending the delegation."
+        "description": "You have staked XTZ with your current baker. Unstake all your funds before ending the delegation."
       },
       "steps": {
-        "0": "Open the Earn menu and select Unstake.",
-        "1": "Confirm the amount and submit the unstake transaction on your device.",
+        "0": "Open the Tezos Account dashboard and select the Unstake option in your staking section.",
+        "1": "Unstake the MAX amount and submit the unstake transaction on your device.",
         "2": "Wait ~4 days for the unstake period to complete.",
         "3": "Once withdrawn, you can change baker or end delegation."
       },
@@ -6356,6 +6360,10 @@
       "transfer_private": "private recipient",
       "convert_public_to_private": "private recipient",
       "convert_private_to_public": "public recipient",
+      "transfer_token_public": "public recipient",
+      "transfer_token_private": "private recipient",
+      "convert_token_public_to_private": "private recipient",
+      "convert_token_private_to_public": "public recipient",
       "delegate": "validator",
       "redelegate": "validator",
       "undelegate": "validator",

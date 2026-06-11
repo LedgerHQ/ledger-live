@@ -33,6 +33,7 @@ import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
+import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -353,6 +354,11 @@ export default function BaseNavigator() {
           name={NavigatorName.Perps}
           component={PerpsNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.GlobalSearch}
+          component={GlobalSearchNavigator}
+          options={{ headerShown: false, animation: "fade" }}
         />
         <Stack.Screen
           name={NavigatorName.Freeze}

@@ -27,6 +27,9 @@ const handlers = [
       percentageChanges: { "1d": 0.0214 },
     });
   }),
+  http.get("https://countervalues.live.ledger.com/v3/categories/trending", () => {
+    return HttpResponse.json([]);
+  }),
 ];
 
 export default handlers;

@@ -64,9 +64,14 @@ export const mockUnspentRecord2: AleoUnspentRecord = {
   },
 };
 
-export const mockTokenRecord1: AleoUnspentRecord = {
+export const mockUnspentTokenRecord1: AleoUnspentRecord = {
   ...mockUnspentRecord1,
-  commitment: "token-amount-record-1",
+  commitment: "token-record-1-commitment",
+};
+
+export const mockUnspentTokenRecord2: AleoUnspentRecord = {
+  ...mockUnspentRecord2,
+  commitment: "token-record-2-commitment",
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {

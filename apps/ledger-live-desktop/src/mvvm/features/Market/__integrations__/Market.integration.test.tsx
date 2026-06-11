@@ -6,6 +6,7 @@ import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
+const TRENDING_CATEGORIES_ENDPOINT = "https://countervalues.live.ledger.com/v3/categories/trending";
 
 const mockNavigate = jest.fn();
 
@@ -363,6 +364,43 @@ describe("Market Integration", () => {
     const sellButton = screen.getByTestId("market-BTC-sell-button");
     expect(sellButton).toBeInTheDocument();
     expect(sellButton).toBeVisible();
+  });
+
+  it("should append trending categories after the built-in tabs and filter the list when selected", async () => {
+    const marketRequests: URL[] = [];
+
+    server.use(
+      http.get(TRENDING_CATEGORIES_ENDPOINT, () => {
+        return HttpResponse.json([{ id: "infrastructure", name: "Infrastructure" }]);
+      }),
+      http.get(MARKET_API_ENDPOINT, ({ request }) => {
+        marketRequests.push(new URL(request.url));
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    const { user } = render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+        ...marketWithTopCardsOn,
+      },
+    });
+
+    const trendingChip = await screen.findByTestId("market-category-switcher-infrastructure");
+    expect(trendingChip).toHaveTextContent("Infrastructure");
+    expect(screen.getByTestId("market-category-switcher-all")).toBeVisible();
+    expect(screen.getByTestId("market-category-switcher-stocks")).toBeVisible();
+    expect(screen.getByTestId("market-category-switcher-starred")).toBeVisible();
+
+    await user.click(trendingChip);
+
+    await waitFor(() => {
+      expect(
+        marketRequests.some(url => url.searchParams.get("categories") === "infrastructure"),
+      ).toBe(true);
+    });
   });
 
   it("should navigate to exchange with sell state when sell button is clicked", async () => {

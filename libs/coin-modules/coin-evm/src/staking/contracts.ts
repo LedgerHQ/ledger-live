@@ -38,6 +38,17 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       denom: "usei",
       scale: USEI_TO_EVM_SCALE,
     },
+    // Distribution precompile 0x1007 emits one reward log per validator on claim.
+    // Verified sig keccak256("<event>") with topics: [sig, delegator]; data layout
+    // (string validator, uint256 amount) → amount is the 2nd word (after the string
+    // offset), in usei → scale 10^12 to wei.
+    rewardsEventDecoder: {
+      contractAddress: "0x0000000000000000000000000000000000001007",
+      topic0: "0xe9a2d1cd042608da4ebdf1fafb4a4658dfc6954ce121138e784b3f9372505d11",
+      delegatorTopicIndex: 1,
+      amountWordIndex: 1,
+      scale: USEI_TO_EVM_SCALE,
+    },
     explorerConfig: {
       validatorUrl: "https://seistream.app/validators/$address",
     },
@@ -99,6 +110,17 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       // Validator address derived from the secp pubkey (ethers.computeAddress); this is the
       // key for the explorer's per-validator page (not the operator's authAddress account).
       validatorUrl: "https://monadvision.com/validator/$address",
+    },
+    // Both claimRewards and compound emit ClaimRewards(uint64 indexed validatorId,
+    // address indexed delegator, uint256 amount, uint256 epoch) on 0x1000 carrying the
+    // reward amount in MON wei (18 dec). compound additionally emits Delegate(...) with the
+    // same amount (the restake); filtering on this topic0 ignores it (no double-count).
+    rewardsEventDecoder: {
+      contractAddress: "0x0000000000000000000000000000000000001000",
+      topic0: "0xcb607e6b63c89c95f6ae24ece9fe0e38a7971aa5ed956254f1df47490921727b",
+      delegatorTopicIndex: 2,
+      amountWordIndex: 0,
+      scale: 1n,
     },
     // Monad uses epoch-based unbonding: WITHDRAWAL_DELAY = 1 epoch (~5.5 h).
     // Including the delegation-queue delay (1–2 epochs), the maximum wait is ~3 epochs ≈ 17 h.

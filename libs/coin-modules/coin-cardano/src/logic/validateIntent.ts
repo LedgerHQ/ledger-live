@@ -11,12 +11,15 @@ import {
   AmountRequired,
   FeeTooHigh,
   InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { CardanoMemoExceededSizeError } from "../errors";
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
+import { fetchNetworkInfo } from "../api/getNetworkInfo";
+import { CARDANO_MAX_SUPPLY } from "../constants";
+import { CardanoMemoExceededSizeError, CardanoMinAmountError } from "../errors";
 import { isTestnet, isValidAddress } from "../logic";
 import { validateMemo } from "./validateMemo";
 
@@ -30,9 +33,9 @@ const FEE_TOO_HIGH_RATIO = 10n;
  * spent. Fees come from the framework via customFees (it calls estimateFees first); the 0n
  * fallback is display-only, as a non-zero fee (minFeeB) is always charged on-chain.
  *
- * Minimum-UTXO (dust) is intentionally not checked here: it is enforced at craft time by typhon's
- * calculateMinUtxoAmountBabbage — a per-output (160 + |serialized_output|) × coinsPerUTxOByte
- * (CIP-55) that depends on protocol params not available here, so a check in this function would drift.
+ * A native output must clear the Babbage min-UTXO floor (per-output (160 + |serialized_output|) ×
+ * coinsPerUTxOByte, CIP-55); that needs coinsPerUTxOByte, so this fetches network info — the one place
+ * validateIntent hits the network. Craft re-checks it (calculateMinUtxoAmountBabbage) as a backstop.
  */
 export async function validateIntent(
   currency: CryptoCurrency,
@@ -51,6 +54,16 @@ export async function validateIntent(
 
   const amount = computeAmount(intent, balances, estimatedFees, isTokenTransfer);
   validateAmount(intent, amount, balances, estimatedFees, isTokenTransfer, errors);
+
+  // A native output must clear the Babbage min-UTXO floor. Legacy precedence: this outranks
+  // NotEnoughBalance (so it overrides) but not AmountRequired (hence the amount > 0n guard).
+  // Best-effort: a network blip fetching params must not fail validation — craft re-checks the floor.
+  if (!isTokenTransfer && !errors.recipient && amount > 0n) {
+    const minAda = await computeMinUtxo(currency, intent.recipient).catch(() => undefined);
+    if (minAda && new BigNumber(amount.toString()).lt(minAda)) {
+      errors.amount = new CardanoMinAmountError("", { amount: minAda.div(1e6).toString() });
+    }
+  }
 
   // feeTooHigh compares the ADA fee to the ADA amount sent, so it only makes sense for native
   // transfers; a token `amount` is in token base units and is not comparable to a lovelace fee.
@@ -74,11 +87,23 @@ function validateRecipient(
   const networkId = isTestnet(currency) ? 0 : 1;
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired("");
-  } else if (intent.sender === intent.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidAddress(intent.recipient, networkId)) {
     errors.recipient = new InvalidAddress("", { currencyName: currency.name });
   }
+}
+
+// Babbage min-UTXO for a plain ADA output to `recipient`. CARDANO_MAX_SUPPLY is a worst-case amount so
+// the serialized-size estimate (and thus the floor) is an upper bound; mirrors legacy getTransactionStatus.
+async function computeMinUtxo(currency: CryptoCurrency, recipient: string): Promise<BigNumber> {
+  const { protocolParams } = await fetchNetworkInfo(currency);
+  return TyphonUtils.calculateMinUtxoAmountBabbage(
+    {
+      address: TyphonUtils.getAddressFromString(recipient),
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens: [],
+    },
+    new BigNumber(protocolParams.utxoCostPerByte),
+  );
 }
 
 function validateMemoSize(intent: Intent, errors: Record<string, Error>): void {

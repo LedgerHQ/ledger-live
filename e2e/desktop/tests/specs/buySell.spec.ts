@@ -13,6 +13,7 @@ import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { getMinimumSellAmount } from "@ledgerhq/live-common/e2e/buySell";
 
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellProvider }> = [
   {
@@ -189,11 +190,14 @@ for (const asset of assets) {
   });
 }
 
-const sellAsset: { buySell: BuySell; xrayTicket: string; provider: BuySellProvider } = {
+const sellAsset: {
+  buySell: Omit<BuySell, "amount">;
+  xrayTicket: string;
+  provider: BuySellProvider;
+} = {
   buySell: {
     crypto: Account.BTC_NATIVE_SEGWIT_1,
     fiat: { locale: "fr-FR", currencyTicker: "EUR" },
-    amount: "0.0003",
     operation: OperationType.Sell,
   },
   xrayTicket: "B2CQA-3524",
@@ -203,7 +207,7 @@ const sellAsset: { buySell: BuySell; xrayTicket: string; provider: BuySellProvid
 test.describe("Sell flow - ", () => {
   setupEnv(true);
 
-  const { crypto, fiat, amount, operation } = sellAsset.buySell;
+  const { crypto, fiat, operation } = sellAsset.buySell;
 
   test.use({
     teamOwner: Team.BUY_AND_SELL,
@@ -241,12 +245,14 @@ test.describe("Sell flow - ", () => {
       await app.buyAndSell.verifyProviderInfoIsNotVisible();
       await app.buyAndSell.changeRegionAndCurrency(fiat);
       await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
+      const amount = await getMinimumSellAmount(crypto.currency.id);
+      const buySell = { ...sellAsset.buySell, amount };
       await app.buyAndSell.setAmountToPay(amount, operation);
       await app.buyAndSell.selectProviderQuote(operation, sellAsset.provider.uiName);
       await app.buyAndSell.selectQuote();
       await app.buyAndSell.verifyProviderUrl(
         sellAsset.provider.uiName,
-        sellAsset.buySell,
+        buySell,
         userdataDestinationPath,
       );
     },

@@ -52,6 +52,31 @@ export type RewardsStrategy =
     }
   | { type: "none" };
 
+/**
+ * Per-chain descriptor for recovering a REWARD operation's amount from the tx
+ * receipt logs. Claim/compound txs are nonpayable (native value 0), so the
+ * reward amount is not in `Operation.value`; it lives in an event the staking
+ * precompile emits. This is the EVM analog of how Cosmos reads the amount from
+ * tx events. Sum `data` word `amountWordIndex` of every log whose `address`
+ * matches `contractAddress`, `topics[0]` matches `topic0`, and the indexed
+ * delegator at `topics[delegatorTopicIndex]` matches the account, then scale.
+ *
+ * Compound emits both this reward event and a restake event with the same
+ * amount; filtering strictly on `topic0` ignores the restake (no double-count).
+ */
+export type RewardsEventDecoder = {
+  /** Address emitting the reward event (the staking/distribution precompile). */
+  contractAddress: string;
+  /** keccak256 of the reward event signature (the log's `topics[0]`). */
+  topic0: string;
+  /** Index in `topics` of the indexed delegator address. */
+  delegatorTopicIndex: number;
+  /** Index of the 32-byte word in `data` carrying the reward amount. */
+  amountWordIndex: number;
+  /** Multiplier converting the on-chain amount unit to wei (1n when already wei). */
+  scale: bigint;
+};
+
 export type StakingContractConfig = {
   contractAddress: string;
   specificContractAddressByOperation?: Partial<Record<StakingOperation, string>>;
@@ -99,6 +124,8 @@ export type StakingContractConfig = {
   redelegationStrategy?: RedelegationStrategy;
   /** How to fetch pending delegation rewards from an off-chain source. Defaults to `"none"` when absent. */
   rewardsStrategy?: RewardsStrategy;
+  /** How to recover a REWARD op's amount from its tx receipt logs. Absent → REWARD ops keep their native value. */
+  rewardsEventDecoder?: RewardsEventDecoder;
   explorerConfig?: {
     validatorUrl: string;
   };

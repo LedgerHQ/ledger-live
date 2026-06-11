@@ -7,7 +7,6 @@ const testConfig = {
   buySell: {
     crypto: Account.BTC_NATIVE_SEGWIT_1,
     fiat: { locale: "en-US", currencyTicker: "USD" },
-    amount: "0",
     operation: OperationType.Sell,
   },
   tmsLinks: ["B2CQA-3524"],

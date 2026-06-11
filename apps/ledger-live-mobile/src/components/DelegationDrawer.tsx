@@ -98,7 +98,12 @@ export default function DelegationDrawer({
         </ScrollView>
 
         <View
-          style={[styles.row, styles.actionsRow, { paddingBottom: Math.max(16, insets.bottom) }]}
+          style={[
+            styles.row,
+            styles.actionsRow,
+            actions.length === 1 && styles.actionsRowSingle,
+            { paddingBottom: Math.max(16, insets.bottom) },
+          ]}
         >
           {actions.map((props, i) => (
             <ActionButton key={`actions-${i}`} {...props} />
@@ -223,6 +228,9 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "flex-start",
     justifyContent: "space-between",
+  },
+  actionsRowSingle: {
+    justifyContent: "center",
   },
   actionWrapper: {
     width: 80,

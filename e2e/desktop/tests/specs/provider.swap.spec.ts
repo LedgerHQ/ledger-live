@@ -11,6 +11,7 @@ import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
+  revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
@@ -81,6 +82,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await addBugLink(bugTickets);
 
+        await revokeTokenApproval(fromAccount, provider);
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);

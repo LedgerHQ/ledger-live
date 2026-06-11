@@ -1,12 +1,6 @@
-export type StockSuggestion = {
-  /** DADA meta-currency id — stable React key. */
-  id: string;
-  name: string;
-  ticker: string;
-  navigationId: string;
-  /** Underlying ledger currency id (first network), for the crypto icon. */
-  ledgerId?: string;
-};
+import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+
+export type { StockSuggestion };
 
 export type StocksSectionViewModelResult = {
   /** Stocks ranked by market cap, already capped to the requested limit. */

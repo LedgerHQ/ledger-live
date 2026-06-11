@@ -95,6 +95,7 @@ function OperationComponent({
         editable={editable}
         isStuck={bridge.isStuckOperation(operation)}
         t={t}
+        family={cryptoCurrency.family}
       />
       {withAccount && <AccountCell accountName={accountName} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} currency={currency} /> : <Box flex="1" />}

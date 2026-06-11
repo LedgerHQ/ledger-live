@@ -30,6 +30,8 @@ describe("useSwapTopBarHeaderViewModel", () => {
     mockedUseTopBarViewModel.mockImplementation(() => ({
       onMyLedgerPress: mockOnMyLedgerPress,
       onMyWalletPress: mockOnMyWalletPress,
+      shouldDisplayAssetDiscoverability: false,
+      onSearchPress: noop,
       shouldDisplayMyWallet: false,
       shouldDisplayOperationsList: false,
       onDiscoverPress: noop,
@@ -60,6 +62,8 @@ describe("useSwapTopBarHeaderViewModel", () => {
     mockedUseTopBarViewModel.mockImplementation(() => ({
       onMyLedgerPress: mockOnMyLedgerPress,
       onMyWalletPress: mockOnMyWalletPress,
+      shouldDisplayAssetDiscoverability: false,
+      onSearchPress: noop,
       shouldDisplayMyWallet: true,
       shouldDisplayOperationsList: false,
       onDiscoverPress: noop,
