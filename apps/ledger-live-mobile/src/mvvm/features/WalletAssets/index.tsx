@@ -15,8 +15,13 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
   variant = "normal",
   noPaddingHorizontal = false,
 }) => {
-  const { hasMore, onPressShowAll, shouldAddBottomPadding, shouldDisplayAssetSection } =
-    useWalletAssetsViewModel();
+  const {
+    hasMore,
+    onPressShowAll,
+    shouldAddBottomPadding,
+    shouldDisplayAssetSection,
+    shouldDisplayAssetDiscoverability,
+  } = useWalletAssetsViewModel();
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -28,7 +33,11 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
           : undefined
       }
     >
-      <AssetsSections variant={variant} shouldDisplayAssetSection={shouldDisplayAssetSection} />
+      <AssetsSections
+        variant={variant}
+        shouldDisplayAssetSection={shouldDisplayAssetSection}
+        shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
+      />
       <AssetsButtonSection
         variant={variant}
         shouldDisplayAssetSection={shouldDisplayAssetSection}
