@@ -334,7 +334,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@test/e2e-output-fix-trigger
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
