@@ -4494,7 +4494,8 @@
         "networkFeesInFiat": "Network fees in {{currency}}",
         "invalidValue": "Enter a valid number",
         "belowMinimum": "Minimum is {{min}}",
-        "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+        "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee",
+        "payFeesIn": "Pay fees in"
       },
       "coinControl": {
         "title": "Coin control",
