@@ -60,6 +60,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:*",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
+    "@ledgerhq/ledger-auth": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/logs": "workspace:*",

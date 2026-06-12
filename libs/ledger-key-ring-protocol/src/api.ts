@@ -1,5 +1,11 @@
 import network from "@ledgerhq/live-network";
 import { JWT } from "./types";
+import {
+  type KeycloakToken,
+  type KeycloakTokenResponse,
+  WalletAuthInvalidAuthorizationError,
+  WalletAuthInvalidTokenError,
+} from "@ledgerhq/ledger-auth";
 
 export type StatusAPIResponse = {
   name: string;
@@ -65,6 +71,10 @@ export type PutCommandsRequest = {
 };
 
 const getApi = (apiBaseURL: string) => {
+  /**
+   * Authentication flow:
+   */
+
   async function getAuthenticationChallenge(): Promise<{ json: Challenge; tlv: string }> {
     const { data } = await network<{ json: Challenge; tlv: string }>({
       url: `${apiBaseURL}/v1/challenge`,
@@ -101,6 +111,76 @@ const getApi = (apiBaseURL: string) => {
       permissions: data.permissions,
     };
   }
+
+  async function oidcPostChallengeResponse(request: {
+    challenge: Challenge;
+    signature: ChallengeSignature;
+  }): Promise<string> {
+    const { data } = await network<string>({
+      url: `${apiBaseURL}/openid/v1/authenticate`,
+      method: "POST",
+      data: request,
+    });
+
+    if (!data) {
+      throw new WalletAuthInvalidAuthorizationError();
+    }
+    return data;
+  }
+
+  async function oidcExchangeAuthCode(
+    authCode: string,
+    client_id: string,
+    redirect_uri: string,
+    codeVerifier?: string,
+  ): Promise<string> {
+    const formBody = new URLSearchParams({
+      grant_type: "authorization_code",
+      code: authCode,
+      client_id,
+      redirect_uri,
+    });
+    if (codeVerifier) {
+      formBody.set("code_verifier", codeVerifier);
+    }
+
+    const { data } = await network<APIJWT>({
+      url: `${apiBaseURL}/openid/v1/token`,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: formBody.toString(),
+    });
+    if (!data.access_token) {
+      throw new WalletAuthInvalidTokenError();
+    }
+
+    return data.access_token;
+  }
+
+  async function oidcExchangeToken(idpToken: string, client_id: string): Promise<KeycloakToken> {
+    const { data } = await network<KeycloakTokenResponse>({
+      url: `${apiBaseURL}/openid/v1/exchange`,
+      method: "POST",
+      data: { client_id },
+      headers: {
+        Authorization: `Bearer ${idpToken}`,
+      },
+    });
+    return {
+      scope: data.scope,
+      tokenType: data.token_type,
+      accessToken: data.access_token,
+      expiresIn: data.expires_in,
+      refreshToken: data.refresh_token,
+      refreshExpiresIn: data.refresh_expires_in,
+    };
+  }
+
+  /**
+   * Trustchain management:
+   */
 
   async function getTrustchains(jwt: JWT): Promise<TrustchainsResponse> {
     const { data } = await network<TrustchainsResponse>({
@@ -189,6 +269,9 @@ const getApi = (apiBaseURL: string) => {
     getAuthenticationChallenge,
     postChallengeResponse,
     refreshAuth,
+    oidcPostChallengeResponse,
+    oidcExchangeAuthCode,
+    oidcExchangeToken,
     getTrustchains,
     getTrustchain,
     postDerivation,

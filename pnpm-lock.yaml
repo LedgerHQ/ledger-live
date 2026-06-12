@@ -7924,6 +7924,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/ledger-auth':
+        specifier: workspace:*
+        version: link:../ledger-auth
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../env
