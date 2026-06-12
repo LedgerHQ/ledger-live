@@ -1,3 +1,5 @@
+import { WalletCliError } from "../shared/wallet-cli-error";
+
 /**
  * Minimal shape needed to choose a device: a stable id and a display name. The
  * name is optional because DMK discovery can report devices without one (BLE
@@ -6,6 +8,9 @@
 export interface SelectableDevice {
   readonly id: string;
   readonly name?: string;
+  /** Optional metadata included in machine-readable candidate lists when known. */
+  readonly model?: string;
+  readonly transport?: string;
 }
 
 let selectorOverride: string | null = null;
@@ -57,6 +62,29 @@ function describeDevices(devices: readonly SelectableDevice[]): string {
 }
 
 /**
+ * Machine-readable candidate list carried as `details.candidates` in error envelopes,
+ * so a programmatic consumer can feed an id straight back as `--device <id>` instead
+ * of parsing the prose message.
+ */
+export function describeCandidates(
+  devices: readonly SelectableDevice[],
+): Array<Record<string, unknown>> {
+  return devices.map(device => ({
+    id: device.id,
+    name: device.name ?? "",
+    ...(device.model == null ? {} : { model: device.model }),
+    ...(device.transport == null ? {} : { transport: device.transport }),
+  }));
+}
+
+/** Canonical device_not_found error for an empty discovery result. */
+export function deviceNotFoundError(): WalletCliError {
+  return new WalletCliError("device_not_found", "No Ledger device found.", {
+    hint: "Unlock the device (and enable Bluetooth on Flex/Stax), then try again.",
+  });
+}
+
+/**
  * Pick the device to connect to from the discovered list.
  *
  * - With a selector (`WALLET_CLI_DEVICE`): require exactly one match, else throw
@@ -72,21 +100,29 @@ export function selectDiscoveredDevice<T extends SelectableDevice>(
   selector: string | null,
 ): T {
   if (discovered.length === 0) {
-    throw new Error("No Ledger device found. Unlock the device and try again.");
+    throw deviceNotFoundError();
   }
 
   if (selector) {
     const matches = discovered.filter(device => deviceMatchesSelector(device, selector));
     if (matches.length === 0) {
-      throw new Error(
-        `No Ledger device matching "${selector}". Discovered: ${describeDevices(discovered)}. ` +
-          "Run `devices` to list reachable Ledgers.",
+      throw new WalletCliError(
+        "device_not_found",
+        `No Ledger device matching "${selector}". Discovered: ${describeDevices(discovered)}.`,
+        {
+          hint: "Run `devices` to list reachable Ledgers.",
+          details: { selector, candidates: describeCandidates(discovered) },
+        },
       );
     }
     if (matches.length > 1) {
-      throw new Error(
-        `"${selector}" matches multiple devices: ${describeDevices(matches)}. ` +
-          "Use a more specific id (run `devices` to see them).",
+      throw new WalletCliError(
+        "device_ambiguous",
+        `"${selector}" matches multiple devices: ${describeDevices(matches)}.`,
+        {
+          hint: "Pass --device <id|name> with a more specific id (run `devices` to see them).",
+          details: { selector, candidates: describeCandidates(matches) },
+        },
       );
     }
     return matches[0]!;
@@ -96,8 +132,12 @@ export function selectDiscoveredDevice<T extends SelectableDevice>(
     return discovered[0]!;
   }
 
-  throw new Error(
-    `Multiple Ledger devices found: ${describeDevices(discovered)}. ` +
-      "Choose one with --device <name|id> (or WALLET_CLI_DEVICE).",
+  throw new WalletCliError(
+    "device_ambiguous",
+    `Multiple Ledger devices found: ${describeDevices(discovered)}.`,
+    {
+      hint: "Pass --device <id|name> to choose one (or set WALLET_CLI_DEVICE).",
+      details: { candidates: describeCandidates(discovered) },
+    },
   );
 }

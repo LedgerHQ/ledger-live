@@ -10,6 +10,7 @@ import {
 import { walletCliDebug } from "../../shared/log";
 import { colors } from "../../shared/ui";
 import { parseNetworkArg, currencyIdFromNetwork } from "../../shared/accountDescriptor";
+import { WalletCliError } from "../../shared/wallet-cli-error";
 import { createCommandOutput } from "../../output";
 import { Session } from "../../session/session-store";
 import { runObservable } from "../run-observable";
@@ -73,13 +74,28 @@ export default defineCommand({
     setDeviceSelectorOverride(flags.device);
     const output = resolveOutputFormat(flags.output);
     const networkArg = flags.network ?? positional[0];
-    if (!networkArg) {
-      throw new Error(
-        'Missing network: use --network <name> or -n <name>, e.g. "bitcoin", "ethereum:goerli".',
-      );
-    }
 
-    const network = parseNetworkArg(networkArg);
+    // Network resolution runs before the envelope's network is known. Route failures
+    // through a provisional CommandOutput so JSON mode still emits the canonical
+    // wallet-cli error envelope (with the full command name) instead of leaking the
+    // framework's error shape.
+    const network = ((): ReturnType<typeof parseNetworkArg> => {
+      try {
+        if (!networkArg) {
+          throw new WalletCliError(
+            "missing_required_flag",
+            'Missing network: use --network <name> or -n <name>, e.g. "bitcoin", "ethereum:goerli".',
+          );
+        }
+        return parseNetworkArg(networkArg);
+      } catch (e) {
+        return createCommandOutput(output, {
+          command: "account discover",
+          network: networkArg ?? "unknown",
+        }).fail(e);
+      }
+    })();
+
     const currencyId = currencyIdFromNetwork(network);
     const managerAppName = getManagerAppNameForCurrencyId(currencyId);
     const networkStr = `${network.name}:${network.env}`;

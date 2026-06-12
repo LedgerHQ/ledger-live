@@ -5,6 +5,7 @@ import { chmodSync, mkdirSync, writeFileSync } from "node:fs";
 import { z } from "zod";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { serializeV1 } from "../shared/accountDescriptor";
+import { WalletCliError } from "../shared/wallet-cli-error";
 
 export const APP_NAME = "ledger-wallet-cli";
 const SESSION_FILE = "session.yaml";
@@ -30,10 +31,12 @@ export function getSessionPath(): string {
 function parseSessionData(raw: string): SessionEntry[] {
   try {
     return SessionDataSchema.parse(YAML.parse(raw) ?? {}).accounts;
-  } catch {
-    throw new Error(
-      `Invalid session file at ${getSessionPath()}. Run \`wallet-cli session reset\` to clear it.`,
-    );
+  } catch (err) {
+    throw new WalletCliError("session_corrupt", `Invalid session file at ${getSessionPath()}.`, {
+      hint: "Run `wallet-cli session reset` to clear it.",
+      details: { path: getSessionPath() },
+      cause: err,
+    });
   }
 }
 

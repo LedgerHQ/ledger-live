@@ -18,7 +18,9 @@ import {
   resolveOutputFormat,
 } from "../inputs";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
+import { WalletCliError } from "../../shared/wallet-cli-error";
 import { OutputFormatSchema } from "../../wallet/models";
+import type { AccountDescriptor } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
@@ -86,18 +88,19 @@ export type SwapExecuteDependencies = {
   makeBridgeCacheSystem?: typeof makeBridgeCacheSystem;
 };
 
-export async function executeSwapCommand({
-  flags,
-  positional,
-  runFullSwapPipeline,
-  resolveAccountDescriptor: resolveDescriptor = resolveAccountDescriptor,
-  integrateNewAccountDescriptor: integrateDescriptor = integrateNewAccountDescriptor,
-  getAccountBridge: getBridge = getAccountBridge,
-  makeBridgeCacheSystem: makeCacheSystem = makeBridgeCacheSystem,
-}: {
-  flags: SwapExecuteFlags;
-  positional: readonly string[];
-} & SwapExecuteDependencies): Promise<void> {
+type SwapExecuteInputs = {
+  fromDescriptor: AccountDescriptor;
+  fromCurrency: CryptoOrTokenCurrency;
+  toCurrency: CryptoOrTokenCurrency;
+  provider: string;
+  network: string;
+};
+
+async function resolveSwapExecuteInputs(
+  flags: SwapExecuteFlags,
+  positional: readonly string[],
+  resolveDescriptor: typeof resolveAccountDescriptor,
+): Promise<SwapExecuteInputs> {
   const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
   const fromCurrency =
     findCryptoCurrencyById(flags.from) ?? (await getCryptoAssetsStore().findTokenById(flags.from));
@@ -115,9 +118,39 @@ export async function executeSwapCommand({
   const provider = resolveSwapProvider(flags.provider);
   const networkCurrencyId =
     fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrency.id : fromCurrency.id;
-  const network = networkStringFromCurrencyId(networkCurrencyId);
+  return {
+    fromDescriptor,
+    fromCurrency,
+    toCurrency,
+    provider,
+    network: networkStringFromCurrencyId(networkCurrencyId),
+  };
+}
 
-  const out = createCommandOutput(resolveOutputFormat(flags.output), {
+export async function executeSwapCommand({
+  flags,
+  positional,
+  runFullSwapPipeline,
+  resolveAccountDescriptor: resolveDescriptor = resolveAccountDescriptor,
+  integrateNewAccountDescriptor: integrateDescriptor = integrateNewAccountDescriptor,
+  getAccountBridge: getBridge = getAccountBridge,
+  makeBridgeCacheSystem: makeCacheSystem = makeBridgeCacheSystem,
+}: {
+  flags: SwapExecuteFlags;
+  positional: readonly string[];
+} & SwapExecuteDependencies): Promise<void> {
+  const format = resolveOutputFormat(flags.output);
+
+  // Account and currency resolution runs before the envelope's network is known. Route
+  // failures through a provisional CommandOutput so JSON mode still emits the canonical
+  // wallet-cli error envelope (with the full command name) instead of leaking the
+  // framework's error shape with the command truncated to "execute".
+  const { fromDescriptor, fromCurrency, toCurrency, provider, network } =
+    await resolveSwapExecuteInputs(flags, positional, resolveDescriptor).catch((e: unknown) =>
+      createCommandOutput(format, { command: "swap execute", network: "unknown" }).fail(e),
+    );
+
+  const out = createCommandOutput(format, {
     command: "swap execute",
     network,
   });
@@ -130,7 +163,10 @@ export async function executeSwapCommand({
 
     const toAccountArg = flags["to-account"];
     if (typeof toAccountArg !== "string" || toAccountArg.trim().length === 0) {
-      throw new Error("Swap execute requires --to-account <session-label>.");
+      throw new WalletCliError(
+        "missing_required_flag",
+        "Swap execute requires --to-account <session-label>.",
+      );
     }
     const toDescriptor = await resolveDescriptor(toAccountArg);
 

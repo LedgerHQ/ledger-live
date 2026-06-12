@@ -12,10 +12,13 @@ import {
   type WalletCliTransportKind,
 } from "./transport-kind";
 import {
+  describeCandidates,
   deviceMatchesSelector,
+  deviceNotFoundError,
   resolveDeviceSelector,
   selectDiscoveredDevice,
 } from "./device-selector";
+import { WalletCliError } from "../shared/wallet-cli-error";
 import {
   hasWalletCliDeviceInterruptScope,
   withWalletCliDeviceInterruptScope,
@@ -225,7 +228,9 @@ async function scanTransportForDevices(
  * user can see every reachable Ledger — with its transport — and the names/ids to
  * pass to --device. Transports that can't initialize on this host are skipped.
  */
-export async function listWalletCliDevices(scanMs: number = DEVICE_SCAN_MS): Promise<ListedDevice[]> {
+export async function listWalletCliDevices(
+  scanMs: number = DEVICE_SCAN_MS,
+): Promise<ListedDevice[]> {
   return withWalletCliDeviceInterruptScope(async () => {
     const perTransport = await Promise.all(
       LISTABLE_TRANSPORTS.map(kind => scanTransportForDevices(kind, scanMs)),
@@ -251,29 +256,41 @@ export function chooseConnectTransport(
   if (selector) {
     const matches = found.filter(device => deviceMatchesSelector(device, selector));
     if (matches.length === 0) {
-      throw new Error(
-        `No Ledger device matching "${selector}". Discovered: ${describeListed(found) || "none"}. ` +
-          "Run `devices` to list reachable Ledgers.",
+      throw new WalletCliError(
+        "device_not_found",
+        `No Ledger device matching "${selector}". Discovered: ${describeListed(found) || "none"}.`,
+        {
+          hint: "Run `devices` to list reachable Ledgers.",
+          details: { selector, candidates: describeCandidates(found) },
+        },
       );
     }
     const transports = new Set(matches.map(match => match.transport));
     if (transports.size > 1) {
-      throw new Error(
-        `"${selector}" matches devices on multiple transports: ${describeListed(matches)}. ` +
-          "Use a more specific id.",
+      throw new WalletCliError(
+        "device_ambiguous",
+        `"${selector}" matches devices on multiple transports: ${describeListed(matches)}.`,
+        {
+          hint: "Pass --device <id|name> with a more specific id.",
+          details: { selector, candidates: describeCandidates(matches) },
+        },
       );
     }
     return [...transports][0] as WalletCliTransportKind;
   }
   if (found.length === 0) {
-    throw new Error("No Ledger device found. Unlock the device and try again.");
+    throw deviceNotFoundError();
   }
   if (found.length === 1) {
     return found[0]!.transport as WalletCliTransportKind;
   }
-  throw new Error(
-    `Multiple Ledger devices found: ${describeListed(found)}. ` +
-      "Choose one with --device <name|id> (or WALLET_CLI_TRANSPORT).",
+  throw new WalletCliError(
+    "device_ambiguous",
+    `Multiple Ledger devices found: ${describeListed(found)}.`,
+    {
+      hint: "Pass --device <id|name> to choose one (or set WALLET_CLI_TRANSPORT).",
+      details: { candidates: describeCandidates(found) },
+    },
   );
 }
 
@@ -285,7 +302,9 @@ export function chooseConnectTransport(
  * on the chosen transport, so a per-session USB id never has to survive across
  * the scan→connect boundary (name / BLE id do).
  */
-async function resolveTransportForConnect(selector: string | null): Promise<WalletCliTransportKind> {
+async function resolveTransportForConnect(
+  selector: string | null,
+): Promise<WalletCliTransportKind> {
   const explicit = explicitTransportKind();
   if (explicit) {
     return explicit;
@@ -302,9 +321,7 @@ async function connectSelectedDevice(dmk: DeviceManagementKit): Promise<string> 
   const discovered = await firstValueFrom(
     dmk.listenToAvailableDevices({}).pipe(
       filter((list: DiscoveredDevice[]) =>
-        selector
-          ? list.some(device => deviceMatchesSelector(device, selector))
-          : list.length > 0,
+        selector ? list.some(device => deviceMatchesSelector(device, selector)) : list.length > 0,
       ),
       timeout(CONNECT_TIMEOUT_MS),
     ),

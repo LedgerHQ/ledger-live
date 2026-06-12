@@ -56,6 +56,16 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: ledger-live
 
+      - name: Verify Claude skill mirror
+        working-directory: ledger-live
+        run: |
+          set -euo pipefail
+
+          if ! diff -r .agents/skills/ledger-wallet-cli .claude/skills/ledger-wallet-cli; then
+            echo "::error::.agents/skills/ledger-wallet-cli and .claude/skills/ledger-wallet-cli have diverged. The .claude copy must stay byte-identical to the canonical .agents copy — sync them in the same commit."
+            exit 1
+          fi
+
       - name: Checkout agent-skills
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:

@@ -11,8 +11,14 @@
 import type { Spinner } from "yocto-spinner";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets";
 import { CliProcessExitError } from "./cli-process-exit-error";
-import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
+import {
+  DEVICE_STATE_RETRYABLE,
+  type DeviceState,
+  isTerminalDeviceState,
+  renderDeviceState,
+} from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { WALLET_CLI_ERROR_DEFAULTS, WalletCliError } from "./shared/wallet-cli-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
@@ -147,6 +153,39 @@ export interface CommandOutput {
 }
 
 // ---------------------------------------------------------------------------
+// Error helpers shared by both implementations
+// ---------------------------------------------------------------------------
+
+/**
+ * Device error boundaries wrap any unrecognized throw as an `unknown` WalletCliDeviceError.
+ * When the original error was an already-classified WalletCliError (e.g. device_not_found
+ * from the device selector), restore it so its code / exit code / hint survive to the
+ * envelope instead of degrading to code "unknown" with exit 1.
+ */
+function unwrapWalletCliError(e: unknown): unknown {
+  if (
+    e instanceof WalletCliDeviceError &&
+    e.state.code === "unknown" &&
+    e.state.cause instanceof WalletCliError
+  ) {
+    return e.state.cause;
+  }
+  return e;
+}
+
+/** Structured `details` for terminal device errors so JSON consumers don't parse prose. */
+function deviceStateDetails(state: DeviceState): Record<string, unknown> | undefined {
+  switch (state.code) {
+    case "wrong_app":
+      return { expected: state.expected, ...(state.found == null ? {} : { found: state.found }) };
+    case "app_not_installed":
+      return { appName: state.appName };
+    default:
+      return undefined;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // HumanCommandOutput
 // ---------------------------------------------------------------------------
 
@@ -180,9 +219,13 @@ class HumanCommandOutput implements CommandOutput {
   async run(fn: () => Promise<void>): Promise<void> {
     try {
       await fn();
-    } catch (err) {
+    } catch (e) {
+      const err = unwrapWalletCliError(e);
       if (err instanceof WalletCliDeviceError) {
         this._exitWithDeviceError(err);
+      }
+      if (err instanceof WalletCliError) {
+        this._exitWithCliError(err);
       }
       const displayText = HumanCommandOutput._formatErrorForSpinner(err);
       this._activeSpin?.error(displayText);
@@ -192,10 +235,14 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   fail(e: unknown): never {
-    if (e instanceof WalletCliDeviceError) {
-      this._exitWithDeviceError(e);
+    const err = unwrapWalletCliError(e);
+    if (err instanceof WalletCliDeviceError) {
+      this._exitWithDeviceError(err);
     }
-    throw e;
+    if (err instanceof WalletCliError) {
+      this._exitWithCliError(err);
+    }
+    throw err;
   }
 
   private static _formatErrorForSpinner(err: unknown): string {
@@ -208,6 +255,18 @@ class HumanCommandOutput implements CommandOutput {
 
   private _exitWithDeviceError(err: WalletCliDeviceError): never {
     const displayText = HumanCommandOutput._formatErrorForSpinner(err);
+    if (isInteractive() && this._activeSpin) {
+      this._activeSpin.error(displayText);
+    } else {
+      writeStderr(displayText + "\n");
+    }
+    this._activeSpin = null;
+    throw new CliProcessExitError(err.exitCode);
+  }
+
+  /** Classified non-device errors exit with their own code, like device errors do. */
+  private _exitWithCliError(err: WalletCliError): never {
+    const displayText = err.hint ? `${err.message}\n${colors.dim(err.hint)}` : err.message;
     if (isInteractive() && this._activeSpin) {
       this._activeSpin.error(displayText);
     } else {
@@ -305,10 +364,16 @@ class HumanCommandOutput implements CommandOutput {
       const name = (device.name || "(unnamed)").padEnd(maxName);
       const transport = device.transport.padEnd(maxTransport);
       const model = device.model ? colors.dim(` ${device.model}`) : "";
-      writeStdout(`${colors.bold(name)}  ${colors.dim(transport)}  ${colors.dim(device.id)}${model}`);
+      writeStdout(
+        `${colors.bold(name)}  ${colors.dim(transport)}  ${colors.dim(device.id)}${model}`,
+      );
     }
     // writeStderr does not append a newline; add one so the shell prompt starts on its own line.
-    writeStderr(colors.dim("Missing a device? Unlock it (and open Bluetooth on Flex/Stax), then run again.\n"));
+    writeStderr(
+      colors.dim(
+        "Missing a device? Unlock it (and open Bluetooth on Flex/Stax), then run again.\n",
+      ),
+    );
   }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
@@ -496,18 +561,39 @@ class JsonCommandOutput implements CommandOutput {
   private _errorEnvelope(e: unknown): Record<string, unknown> {
     if (e instanceof WalletCliDeviceError) {
       const { message } = renderDeviceState(e.state);
+      const details = deviceStateDetails(e.state);
       return {
         ok: false,
         error: {
           command: this._ctx.command,
           code: e.state.code,
           message,
+          retryable: DEVICE_STATE_RETRYABLE[e.state.code],
+          ...(details == null ? {} : { details }),
+        },
+      };
+    }
+    if (e instanceof WalletCliError) {
+      return {
+        ok: false,
+        error: {
+          command: this._ctx.command,
+          code: e.code,
+          message: e.message,
+          retryable: e.retryable,
+          ...(e.hint == null ? {} : { hint: e.hint }),
+          ...(e.details == null ? {} : { details: e.details }),
         },
       };
     }
     return {
       ok: false,
-      error: { command: this._ctx.command, message: HumanFormatter.formatError(e) },
+      error: {
+        command: this._ctx.command,
+        code: "unknown",
+        message: HumanFormatter.formatError(e),
+        retryable: WALLET_CLI_ERROR_DEFAULTS.unknown.retryable,
+      },
     };
   }
 
@@ -521,13 +607,16 @@ class JsonCommandOutput implements CommandOutput {
         command: this._ctx.command,
         code: "swap_quotes_unavailable",
         message,
+        retryable: WALLET_CLI_ERROR_DEFAULTS.swap_quotes_unavailable.retryable,
         provider_errors: errors,
       },
     };
   }
 
   private _exitCode(e: unknown): number {
-    return e instanceof WalletCliDeviceError ? e.exitCode : 1;
+    if (e instanceof WalletCliDeviceError) return e.exitCode;
+    if (e instanceof WalletCliError) return e.exitCode;
+    return 1;
   }
 
   private _writeNdjson(value: unknown): void {
@@ -559,14 +648,14 @@ class JsonCommandOutput implements CommandOutput {
       await fn();
     } catch (e) {
       if (e instanceof CliProcessExitError) throw e;
-      this._writeNdjson(this._errorEnvelope(e));
-      throw new CliProcessExitError(this._exitCode(e));
+      this.fail(e);
     }
   }
 
   fail(e: unknown): never {
-    this._writeNdjson(this._errorEnvelope(e));
-    throw new CliProcessExitError(this._exitCode(e));
+    const err = unwrapWalletCliError(e);
+    this._writeNdjson(this._errorEnvelope(err));
+    throw new CliProcessExitError(this._exitCode(err));
   }
 
   async balances(items: Balance[]): Promise<void> {

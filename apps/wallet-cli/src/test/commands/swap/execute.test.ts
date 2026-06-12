@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { installOutputCapture } from "../../../shared/ui";
+import { getCliProcessExitCode } from "../../../cli-process-exit-error";
 import type { AccountDescriptor } from "../../../wallet/models";
 import { MOCK_ETH_DESCRIPTOR } from "../../../test/helpers/constants";
 import { executeSwapCommand, type SwapExecuteFlags } from "../../../commands/swap/execute";
@@ -116,6 +117,36 @@ async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
   return JSON.parse(writes.join("").trim());
 }
 
+/**
+ * In JSON mode, pre-pipeline resolution failures emit a wallet-cli error envelope on
+ * stdout and exit via CliProcessExitError instead of leaking the raw throw to the
+ * framework. Returns the parsed envelope and the captured exit code.
+ */
+async function runExecuteSwapCommandExpectingFailure(flags: SwapExecuteFlags) {
+  const writes: string[] = [];
+  const restoreCapture = installOutputCapture({
+    stdout: chunk => writes.push(chunk),
+  });
+
+  let exitCode: number | null = null;
+  try {
+    await executeSwapCommand({
+      flags,
+      positional: [],
+      resolveAccountDescriptor: resolveAccountDescriptorMock,
+      integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+      getAccountBridge: getAccountBridgeMock,
+      runFullSwapPipeline: runFullSwapPipelineMock,
+    });
+  } catch (e) {
+    exitCode = getCliProcessExitCode(e);
+  } finally {
+    restoreCapture();
+  }
+
+  return { envelope: JSON.parse(writes.join("").trim()), exitCode };
+}
+
 describe("swap execute command", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
 
@@ -159,9 +190,20 @@ describe("swap execute command", () => {
   });
 
   it("rejects an unsupported --provider before running the pipeline", async () => {
-    await expect(
-      runExecuteSwapCommand({ ...baseFlags, provider: "unknown_provider" }),
-    ).rejects.toThrow(/Unsupported swap provider/);
+    const { envelope, exitCode } = await runExecuteSwapCommandExpectingFailure({
+      ...baseFlags,
+      provider: "unknown_provider",
+    });
+    expect(exitCode).toBe(1);
+    expect(envelope).toMatchObject({
+      ok: false,
+      error: {
+        command: "swap execute",
+        code: "unknown",
+        retryable: false,
+      },
+    });
+    expect(envelope.error.message).toMatch(/Unsupported swap provider/);
     expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
   });
 
@@ -170,30 +212,38 @@ describe("swap execute command", () => {
     const pipelineInput = runFullSwapPipelineMock.mock.calls[0][0];
     expect(pipelineInput.provider).toBe("changelly_v2");
   });
-  it("should reject an unknown --from currency id", async () => {
-    await expect(
-      executeSwapCommand({
-        flags: { ...baseFlags, from: "test" },
-        positional: [],
-        resolveAccountDescriptor: resolveAccountDescriptorMock,
-        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
-        getAccountBridge: getAccountBridgeMock,
-        runFullSwapPipeline: runFullSwapPipelineMock,
-      }),
-    ).rejects.toThrow("Unknown source currency (--from): test");
+  it("should reject an unknown --from currency id with the full command name in the envelope", async () => {
+    const { envelope, exitCode } = await runExecuteSwapCommandExpectingFailure({
+      ...baseFlags,
+      from: "test",
+    });
+    expect(exitCode).toBe(1);
+    expect(envelope).toEqual({
+      ok: false,
+      error: {
+        command: "swap execute",
+        code: "unknown",
+        message: "Unknown source currency (--from): test",
+        retryable: false,
+      },
+    });
   });
 
-  it("should reject an unknown --to currency id", async () => {
-    await expect(
-      executeSwapCommand({
-        flags: { ...baseFlags, to: "test" },
-        positional: [],
-        resolveAccountDescriptor: resolveAccountDescriptorMock,
-        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
-        getAccountBridge: getAccountBridgeMock,
-        runFullSwapPipeline: runFullSwapPipelineMock,
-      }),
-    ).rejects.toThrow("Unknown destination currency (--to): test");
+  it("should reject an unknown --to currency id with the full command name in the envelope", async () => {
+    const { envelope, exitCode } = await runExecuteSwapCommandExpectingFailure({
+      ...baseFlags,
+      to: "test",
+    });
+    expect(exitCode).toBe(1);
+    expect(envelope).toEqual({
+      ok: false,
+      error: {
+        command: "swap execute",
+        code: "unknown",
+        message: "Unknown destination currency (--to): test",
+        retryable: false,
+      },
+    });
   });
 
   it("should reject when --from does not match the source account chain", async () => {

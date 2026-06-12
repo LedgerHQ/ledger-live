@@ -7,9 +7,20 @@ import {
   type SelectableDevice,
 } from "./device-selector";
 import { chooseConnectTransport } from "./register-dmk-transport";
+import { WalletCliError } from "../shared/wallet-cli-error";
 
 function device(id: string, name = ""): SelectableDevice {
   return { id, name };
+}
+
+function captureCliError(fn: () => unknown): WalletCliError {
+  try {
+    fn();
+  } catch (e) {
+    expect(e).toBeInstanceOf(WalletCliError);
+    return e as WalletCliError;
+  }
+  throw new Error("expected the call to throw");
 }
 
 const flex = device("ble-aaa", "Solmaria");
@@ -77,18 +88,32 @@ describe("deviceMatchesSelector", () => {
 });
 
 describe("selectDiscoveredDevice", () => {
-  it("throws when nothing was discovered", () => {
-    expect(() => selectDiscoveredDevice([], null)).toThrow("No Ledger device found");
+  it("throws device_not_found (retryable, exit 3) when nothing was discovered", () => {
+    const err = captureCliError(() => selectDiscoveredDevice([], null));
+    expect(err.message).toContain("No Ledger device found");
+    expect(err.code).toBe("device_not_found");
+    expect(err.exitCode).toBe(3);
+    expect(err.retryable).toBe(true);
+    expect(err.hint).toMatch(/Unlock.*Bluetooth/);
   });
 
   it("returns the only device when there is no selector", () => {
     expect(selectDiscoveredDevice([flex], null)).toBe(flex);
   });
 
-  it("refuses to guess between multiple devices without a selector", () => {
-    expect(() => selectDiscoveredDevice([flex, stax], null)).toThrow(
-      /Multiple Ledger devices found.*Solmaria.*Stax.*--device/s,
-    );
+  it("refuses to guess between multiple devices without a selector (device_ambiguous)", () => {
+    const err = captureCliError(() => selectDiscoveredDevice([flex, stax], null));
+    expect(err.message).toMatch(/Multiple Ledger devices found.*Solmaria.*Stax/s);
+    expect(err.code).toBe("device_ambiguous");
+    expect(err.exitCode).toBe(64);
+    expect(err.retryable).toBe(false);
+    expect(err.hint).toContain("--device");
+    expect(err.details).toEqual({
+      candidates: [
+        { id: "ble-aaa", name: "Solmaria" },
+        { id: "ble-bbb", name: "Pavel's Stax" },
+      ],
+    });
   });
 
   it("selects the matching device by name", () => {
@@ -99,15 +124,31 @@ describe("selectDiscoveredDevice", () => {
     expect(selectDiscoveredDevice([flex, stax], "ble-bbb")).toBe(stax);
   });
 
-  it("throws with the candidate list when the selector matches nothing", () => {
-    expect(() => selectDiscoveredDevice([flex, stax], "Nano")).toThrow(
-      /No Ledger device matching "Nano".*Solmaria.*Stax/s,
-    );
+  it("throws device_not_found with the candidate list when the selector matches nothing", () => {
+    const err = captureCliError(() => selectDiscoveredDevice([flex, stax], "Nano"));
+    expect(err.message).toMatch(/No Ledger device matching "Nano".*Solmaria.*Stax/s);
+    expect(err.code).toBe("device_not_found");
+    expect(err.details).toEqual({
+      selector: "Nano",
+      candidates: [
+        { id: "ble-aaa", name: "Solmaria" },
+        { id: "ble-bbb", name: "Pavel's Stax" },
+      ],
+    });
   });
 
-  it("throws when the selector is ambiguous across devices", () => {
+  it("throws device_ambiguous when the selector is ambiguous across devices", () => {
     const twins = [device("id-1", "Ledger"), device("id-2", "Ledger")];
-    expect(() => selectDiscoveredDevice(twins, "Ledger")).toThrow(/matches multiple devices/);
+    const err = captureCliError(() => selectDiscoveredDevice(twins, "Ledger"));
+    expect(err.message).toMatch(/matches multiple devices/);
+    expect(err.code).toBe("device_ambiguous");
+    expect(err.details).toEqual({
+      selector: "Ledger",
+      candidates: [
+        { id: "id-1", name: "Ledger" },
+        { id: "id-2", name: "Ledger" },
+      ],
+    });
   });
 });
 
@@ -125,22 +166,28 @@ describe("chooseConnectTransport", () => {
     expect(chooseConnectTransport([bleFlex], null)).toBe("ble");
   });
 
-  it("refuses to guess between several devices without a selector", () => {
-    expect(() => chooseConnectTransport([usbNano, bleFlex], null)).toThrow(
-      /Multiple Ledger devices found.*--device/s,
-    );
+  it("refuses to guess between several devices without a selector (device_ambiguous)", () => {
+    const err = captureCliError(() => chooseConnectTransport([usbNano, bleFlex], null));
+    expect(err.message).toMatch(/Multiple Ledger devices found/);
+    expect(err.code).toBe("device_ambiguous");
+    expect(err.exitCode).toBe(64);
+    expect(err.hint).toContain("--device");
+    expect(err.details).toEqual({ candidates: [usbNano, bleFlex] });
   });
 
-  it("throws when the selector matches nothing, listing candidates", () => {
-    expect(() => chooseConnectTransport([usbNano, bleFlex], "zzz")).toThrow(
-      /No Ledger device matching "zzz".*Nano.*Solmaria/s,
-    );
+  it("throws device_not_found when the selector matches nothing, listing candidates", () => {
+    const err = captureCliError(() => chooseConnectTransport([usbNano, bleFlex], "zzz"));
+    expect(err.message).toMatch(/No Ledger device matching "zzz".*Nano.*Solmaria/s);
+    expect(err.code).toBe("device_not_found");
+    expect(err.retryable).toBe(true);
+    expect(err.details).toEqual({ selector: "zzz", candidates: [usbNano, bleFlex] });
   });
 
-  it("throws when the selector matches devices on multiple transports", () => {
+  it("throws device_ambiguous when the selector matches devices on multiple transports", () => {
     const dup = { id: "usb-9", name: "Solmaria", model: "nanoSP", transport: "usb" };
-    expect(() => chooseConnectTransport([bleFlex, dup], "Solmaria")).toThrow(
-      /multiple transports/,
-    );
+    const err = captureCliError(() => chooseConnectTransport([bleFlex, dup], "Solmaria"));
+    expect(err.message).toMatch(/multiple transports/);
+    expect(err.code).toBe("device_ambiguous");
+    expect(err.details).toEqual({ selector: "Solmaria", candidates: [bleFlex, dup] });
   });
 });

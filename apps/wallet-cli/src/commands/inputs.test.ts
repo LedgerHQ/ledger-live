@@ -3,6 +3,7 @@ import { resolveAccountArg, resolveAccountInput, resolveOutputFormat } from "./i
 import { makeSessionDir } from "../test/helpers/session-fixture";
 import { ETH_DESCRIPTOR } from "../test/helpers/constants";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
+import { WalletCliError } from "../shared/wallet-cli-error";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
 
@@ -15,8 +16,20 @@ describe("resolveAccountArg", () => {
     expect(resolveAccountArg(undefined, [SHORT])).toBe(SHORT);
   });
 
-  it("throws when both are missing", () => {
-    expect(() => resolveAccountArg(undefined, [])).toThrow(/Missing account/);
+  it("throws missing_required_flag when both are missing", () => {
+    let caught: unknown;
+    try {
+      resolveAccountArg(undefined, []);
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught).toBeInstanceOf(WalletCliError);
+    const err = caught as WalletCliError;
+    expect(err.message).toMatch(/Missing account/);
+    expect(err.code).toBe("missing_required_flag");
+    expect(err.exitCode).toBe(64);
+    expect(err.retryable).toBe(false);
+    expect(err.hint).toMatch(/account discover/);
   });
 });
 
@@ -43,13 +56,24 @@ describe("resolveAccountInput", () => {
     expect(result).toBe(ETH_DESCRIPTOR);
   });
 
-  it("throws when the label is not found in session", async () => {
+  it("throws account_not_found when the label is not in session", async () => {
     const fixture = makeSessionDir([]);
     sessionCleanup = fixture.cleanup;
     process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
-    await expect(resolveAccountInput("unknown-label")).rejects.toThrow(
-      /No account labeled "unknown-label"/,
-    );
+    let caught: unknown;
+    try {
+      await resolveAccountInput("unknown-label");
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught).toBeInstanceOf(WalletCliError);
+    const err = caught as WalletCliError;
+    expect(err.message).toMatch(/No account labeled "unknown-label"/);
+    expect(err.code).toBe("account_not_found");
+    expect(err.exitCode).toBe(1);
+    expect(err.retryable).toBe(false);
+    expect(err.hint).toMatch(/account discover/);
+    expect(err.details).toEqual({ label: "unknown-label" });
   });
 
   it("rejects a raw descriptor passed directly (contains ':')", async () => {
@@ -62,9 +86,12 @@ describe("resolveAccountInput", () => {
     } catch (e) {
       caught = e as Error;
     }
+    expect(caught).toBeInstanceOf(WalletCliError);
     expect(caught?.message).toMatch(/Raw descriptors are not accepted/);
+    expect((caught as WalletCliError).code).toBe("raw_descriptor_rejected");
     // Must not echo the descriptor back (would leak xpub/path into logs).
     expect(caught?.message).not.toContain(ETH_DESCRIPTOR);
+    expect((caught as WalletCliError).hint).not.toContain(ETH_DESCRIPTOR);
   });
 });
 

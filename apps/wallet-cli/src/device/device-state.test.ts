@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
   DEVICE_EXIT_CODES,
+  DEVICE_STATE_RETRYABLE,
   type DeviceState,
   isTerminalDeviceState,
   renderDeviceState,
@@ -85,11 +86,13 @@ describe("renderDeviceState", () => {
     expect(exitCode).toBe(DEVICE_EXIT_CODES.success);
   });
 
-  it("renders locked with [✖] and exit 6", () => {
+  it("renders locked with [✖] and its own exit code 7 (distinct from timeout)", () => {
     const { glyph, message, exitCode } = renderDeviceState({ code: "locked" });
     expect(glyph).toBe("[✖]");
     expect(message).toMatch(/locked/i);
-    expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
+    expect(exitCode).toBe(DEVICE_EXIT_CODES.locked);
+    expect(DEVICE_EXIT_CODES.locked).toBe(7);
+    expect(DEVICE_EXIT_CODES.locked).not.toBe(DEVICE_EXIT_CODES.timeout);
   });
 
   it("renders app_not_installed with the app name and exit 5", () => {
@@ -149,5 +152,18 @@ describe("isTerminalDeviceState", () => {
 
   it.each(intermediateCodes)("is non-terminal for %s", (_, state) => {
     expect(isTerminalDeviceState(state)).toBe(false);
+  });
+});
+
+describe("DEVICE_STATE_RETRYABLE", () => {
+  it("marks transient conditions retryable and final outcomes not", () => {
+    expect(DEVICE_STATE_RETRYABLE.disconnected).toBe(true);
+    expect(DEVICE_STATE_RETRYABLE.locked).toBe(true);
+    expect(DEVICE_STATE_RETRYABLE.timeout).toBe(true);
+    expect(DEVICE_STATE_RETRYABLE.awaiting_approval).toBe(true);
+    expect(DEVICE_STATE_RETRYABLE.rejected).toBe(false);
+    expect(DEVICE_STATE_RETRYABLE.wrong_app).toBe(false);
+    expect(DEVICE_STATE_RETRYABLE.app_not_installed).toBe(false);
+    expect(DEVICE_STATE_RETRYABLE.unknown).toBe(false);
   });
 });

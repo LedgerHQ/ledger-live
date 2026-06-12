@@ -47,9 +47,28 @@ export const DEVICE_EXIT_CODES = {
   wrong_app: 4,
   app_not_installed: 5,
   timeout: 6,
+  locked: 7,
 } as const;
 
 export type DeviceExitCode = (typeof DEVICE_EXIT_CODES)[keyof typeof DEVICE_EXIT_CODES];
+
+/**
+ * Whether retrying the same command can succeed once the underlying condition clears
+ * (device replugged, unlocked, no longer busy). Surfaced as `retryable` in JSON error
+ * envelopes so programmatic consumers know when a retry is worthwhile — and that a
+ * `rejected` must never be retried back onto the user's device.
+ */
+export const DEVICE_STATE_RETRYABLE: Record<DeviceStateCode, boolean> = {
+  disconnected: true,
+  wrong_app: false,
+  awaiting_approval: true,
+  rejected: false,
+  exchange_app_needed: true,
+  locked: true,
+  app_not_installed: false,
+  timeout: true,
+  unknown: false,
+};
 
 /**
  * A terminal state causes the process to exit non-zero once rendered.
@@ -111,7 +130,7 @@ export function renderDeviceState(state: DeviceState): {
       return {
         glyph: "[✖]",
         message: "Ledger is locked. Unlock your device with your PIN and retry.",
-        exitCode: DEVICE_EXIT_CODES.timeout,
+        exitCode: DEVICE_EXIT_CODES.locked,
       };
     case "app_not_installed":
       return {

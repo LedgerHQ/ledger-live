@@ -5,6 +5,7 @@ import { OutputFormatSchema, parseAccountDescriptor } from "../wallet/models";
 import type { AccountDescriptor } from "../wallet/models";
 import { parseV1 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { WalletCliError } from "../shared/wallet-cli-error";
 import { Session } from "../session/session-store";
 
 /**
@@ -51,8 +52,10 @@ export function resolveAccountArg(
 ): string {
   const arg = account ?? positional[0];
   if (!arg) {
-    throw new Error(
-      "Missing account: use --account <session-label> or pass the label as the first positional argument. Run `account discover` first to populate the session.",
+    throw new WalletCliError(
+      "missing_required_flag",
+      "Missing account: use --account <session-label> or pass the label as the first positional argument.",
+      { hint: "Run `account discover` first to populate the session." },
     );
   }
   return arg;
@@ -61,16 +64,21 @@ export function resolveAccountArg(
 // Session label lookup only — raw descriptors are not accepted as CLI arguments.
 export async function resolveAccountInput(input: string): Promise<string> {
   if (input.includes(":")) {
-    throw new Error(
-      "Raw descriptors are not accepted as CLI arguments. Run `account discover` first, then reference the account by its session label (e.g. `--account ethereum-1`).",
+    throw new WalletCliError(
+      "raw_descriptor_rejected",
+      "Raw descriptors are not accepted as CLI arguments.",
+      {
+        hint: "Run `account discover` first, then reference the account by its session label (e.g. `--account ethereum-1`).",
+      },
     );
   }
   const session = await Session.read();
   const entry = session.accounts.find(e => e.label === input);
   if (!entry) {
-    throw new Error(
-      `No account labeled "${input}" in session. Run \`account discover\` first to populate the session.`,
-    );
+    throw new WalletCliError("account_not_found", `No account labeled "${input}" in session.`, {
+      hint: "Run `account discover` first to populate the session.",
+      details: { label: input },
+    });
   }
   return entry.descriptor;
 }

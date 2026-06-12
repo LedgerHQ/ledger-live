@@ -1,7 +1,9 @@
 import "./live-common-setup";
 import { beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "./shared/ui";
-import { CliProcessExitError } from "./cli-process-exit-error";
+import { CliProcessExitError, getCliProcessExitCode } from "./cli-process-exit-error";
+import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { WalletCliError } from "./shared/wallet-cli-error";
 import { USDT_TOKEN_INFO } from "./test/helpers/cal-fixtures";
 
 const { createCommandOutput } = await import("./output");
@@ -263,7 +265,212 @@ describe("JsonCommandOutput", () => {
         command: "swap quote",
         code: "swap_quotes_unavailable",
         message: "No quotes available",
+        retryable: false,
         provider_errors: [providerError],
+      },
+    });
+  });
+
+  /** Run `fn` inside out.run, returning the parsed NDJSON lines and the captured exit code. */
+  async function runToFailure(
+    ctx: { command: string; network: string; account?: string },
+    error: unknown,
+  ): Promise<{ lines: Array<Record<string, unknown>>; exitCode: number | null }> {
+    let exitCode: number | null = null;
+    try {
+      const out = createCommandOutput("json", ctx);
+      await out.run(async () => {
+        throw error;
+      });
+    } catch (e) {
+      exitCode = getCliProcessExitCode(e);
+    } finally {
+      restore();
+    }
+    const lines = writes
+      .join("")
+      .trim()
+      .split("\n")
+      .map(line => JSON.parse(line));
+    return { lines, exitCode };
+  }
+
+  it("envelopes unclassified errors with code 'unknown' and retryable:false", async () => {
+    const { lines, exitCode } = await runToFailure(
+      { command: "balances", network: "ethereum:main" },
+      new Error("something went sideways"),
+    );
+    expect(exitCode).toBe(1);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toEqual({
+      ok: false,
+      error: {
+        command: "balances",
+        code: "unknown",
+        message: "something went sideways",
+        retryable: false,
+      },
+    });
+  });
+
+  it("envelopes wrong_app device errors with expected/found details", async () => {
+    const { lines, exitCode } = await runToFailure(
+      { command: "send", network: "ethereum:main" },
+      new WalletCliDeviceError({ code: "wrong_app", expected: "Ethereum", found: "Bitcoin" }),
+    );
+    expect(exitCode).toBe(4);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toEqual({
+      ok: false,
+      error: {
+        command: "send",
+        code: "wrong_app",
+        message: "Wrong app (found: Bitcoin). Open Ethereum.",
+        retryable: false,
+        details: { expected: "Ethereum", found: "Bitcoin" },
+      },
+    });
+  });
+
+  it("envelopes app_not_installed device errors with the app name as details", async () => {
+    const { lines, exitCode } = await runToFailure(
+      { command: "account discover", network: "ethereum:main" },
+      new WalletCliDeviceError({ code: "app_not_installed", appName: "Ethereum" }),
+    );
+    expect(exitCode).toBe(5);
+    expect(lines[0]).toMatchObject({
+      ok: false,
+      error: {
+        code: "app_not_installed",
+        retryable: false,
+        details: { appName: "Ethereum" },
+      },
+    });
+  });
+
+  it("envelopes locked device errors as retryable and exits 7", async () => {
+    const { lines, exitCode } = await runToFailure(
+      { command: "send", network: "ethereum:main" },
+      new WalletCliDeviceError({ code: "locked" }),
+    );
+    expect(exitCode).toBe(7);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toEqual({
+      ok: false,
+      error: {
+        command: "send",
+        code: "locked",
+        message: "Ledger is locked. Unlock your device with your PIN and retry.",
+        retryable: true,
+      },
+    });
+  });
+
+  it("envelopes device_ambiguous with machine-readable candidates and exits 64", async () => {
+    const candidates = [
+      { id: "usb-1", name: "Ledger Nano S Plus", model: "nanoSP", transport: "usb" },
+      { id: "17cb-aaa", name: "Solmaria", model: "flex", transport: "ble" },
+    ];
+    const { lines, exitCode } = await runToFailure(
+      { command: "receive", network: "ethereum:main" },
+      new WalletCliError("device_ambiguous", "Multiple Ledger devices found.", {
+        hint: "Pass --device <id|name> to choose one (or set WALLET_CLI_DEVICE).",
+        details: { candidates },
+      }),
+    );
+    expect(exitCode).toBe(64);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toEqual({
+      ok: false,
+      error: {
+        command: "receive",
+        code: "device_ambiguous",
+        message: "Multiple Ledger devices found.",
+        retryable: false,
+        hint: "Pass --device <id|name> to choose one (or set WALLET_CLI_DEVICE).",
+        details: { candidates },
+      },
+    });
+  });
+
+  it("envelopes device_not_found as retryable with exit 3 (same as disconnected)", async () => {
+    const { lines, exitCode } = await runToFailure(
+      { command: "send", network: "ethereum:main" },
+      new WalletCliError("device_not_found", "No Ledger device found.", {
+        hint: "Unlock the device (and enable Bluetooth on Flex/Stax), then try again.",
+      }),
+    );
+    expect(exitCode).toBe(3);
+    expect(lines[0]).toEqual({
+      ok: false,
+      error: {
+        command: "send",
+        code: "device_not_found",
+        message: "No Ledger device found.",
+        retryable: true,
+        hint: "Unlock the device (and enable Bluetooth on Flex/Stax), then try again.",
+      },
+    });
+  });
+
+  it("envelopes account_not_found with its hint and exits 1", async () => {
+    const { lines, exitCode } = await runToFailure(
+      { command: "balances", network: "ethereum:main" },
+      new WalletCliError("account_not_found", 'No account labeled "ethereum-9" in session.', {
+        hint: "Run `account discover` first to populate the session.",
+        details: { label: "ethereum-9" },
+      }),
+    );
+    expect(exitCode).toBe(1);
+    expect(lines[0]).toEqual({
+      ok: false,
+      error: {
+        command: "balances",
+        code: "account_not_found",
+        message: 'No account labeled "ethereum-9" in session.',
+        retryable: false,
+        hint: "Run `account discover` first to populate the session.",
+        details: { label: "ethereum-9" },
+      },
+    });
+  });
+
+  it("envelopes session_corrupt with the file path as details", async () => {
+    const { lines, exitCode } = await runToFailure(
+      { command: "session view", network: "all" },
+      new WalletCliError("session_corrupt", "Invalid session file at /tmp/session.yaml.", {
+        hint: "Run `wallet-cli session reset` to clear it.",
+        details: { path: "/tmp/session.yaml" },
+      }),
+    );
+    expect(exitCode).toBe(1);
+    expect(lines[0]).toMatchObject({
+      ok: false,
+      error: {
+        code: "session_corrupt",
+        retryable: false,
+        hint: "Run `wallet-cli session reset` to clear it.",
+        details: { path: "/tmp/session.yaml" },
+      },
+    });
+  });
+
+  it("unwraps a WalletCliError that a device boundary wrapped as an unknown device error", async () => {
+    const inner = new WalletCliError("device_not_found", "No Ledger device found.", {
+      hint: "Unlock the device (and enable Bluetooth on Flex/Stax), then try again.",
+    });
+    const wrapped = WalletCliDeviceError.fromUnknown(inner);
+    const { lines, exitCode } = await runToFailure(
+      { command: "account discover", network: "ethereum:main" },
+      wrapped,
+    );
+    expect(exitCode).toBe(3);
+    expect(lines[0]).toMatchObject({
+      ok: false,
+      error: {
+        code: "device_not_found",
+        message: "No Ledger device found.",
+        retryable: true,
       },
     });
   });

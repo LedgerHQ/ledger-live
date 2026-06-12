@@ -46,6 +46,48 @@ From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (sa
 
 Most commands support `--output human` (default) or `--output json`.
 
+## Exit codes & error envelope
+
+With `--output json`, stdout is NDJSON: zero or more intermediate events (`{"type":"device-state",...}`, `{"type":"pre-verify-address",...}`) followed by exactly one final envelope.
+
+Success:
+
+```json
+{ "status": "success", "command": "send", "network": "ethereum", "account": "ethereum-1", "...": "...", "timestamp": "..." }
+```
+
+Error:
+
+```json
+{
+  "ok": false,
+  "error": {
+    "command": "send",
+    "code": "rejected",
+    "message": "Rejected on device. No action taken.",
+    "retryable": false,
+    "hint": "...",
+    "details": {}
+  }
+}
+```
+
+`error.code` is always present (`unknown` is the fallback). `retryable` says whether the identical invocation may be retried once the transient condition clears. `details` carries structured fields for some codes (`wrong_app`: `{expected, found}`; `app_not_installed`: `{appName}`; `device_ambiguous`: `{candidates: [{id, name, model, transport}]}`).
+
+| Exit code | Meaning                                                | Error codes                                                                                                                |
+| --------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 0         | success                                                | —                                                                                                                          |
+| 1         | generic / unclassified                                 | `unknown`, `account_not_found`, `raw_descriptor_rejected`, `session_corrupt`, `swap_quotes_unavailable`                    |
+| 2         | rejected on device (only a human refusal maps here)    | `rejected`                                                                                                                 |
+| 3         | device unreachable                                     | `disconnected`, `device_not_found`                                                                                         |
+| 4         | wrong app open on the device                           | `wrong_app`                                                                                                                |
+| 5         | required app not installed                             | `app_not_installed`                                                                                                        |
+| 6         | device timeout (`--device-timeout`, default 60000 ms)  | `timeout`                                                                                                                  |
+| 7         | device locked                                          | `locked`                                                                                                                   |
+| 64        | usage error (fix the invocation)                       | `unknown_flag`, `invalid_flag_value`, `missing_required_flag`, `unknown_command`, `invalid_transport`, `device_ambiguous` |
+
+Unknown flags are rejected with exit 64 rather than silently ignored.
+
 ## Prerequisites
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)

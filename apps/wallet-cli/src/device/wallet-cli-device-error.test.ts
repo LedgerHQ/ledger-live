@@ -6,11 +6,11 @@ import { DEVICE_EXIT_CODES } from "./device-state";
 import { toWalletCliDeviceError, WalletCliDeviceError } from "./wallet-cli-device-error";
 
 describe("WalletCliDeviceError / toWalletCliDeviceError", () => {
-  it("LOCKED_DEVICE / LockedDeviceError → state.code=locked, exitCode=6", () => {
+  it("LOCKED_DEVICE / LockedDeviceError → state.code=locked, exitCode=7", () => {
     const fromSw = toWalletCliDeviceError(new TransportStatusError(StatusCodes.LOCKED_DEVICE));
     expect(fromSw).toBeInstanceOf(WalletCliDeviceError);
     expect(fromSw.state.code).toBe("locked");
-    expect(fromSw.exitCode).toBe(DEVICE_EXIT_CODES.timeout);
+    expect(fromSw.exitCode).toBe(DEVICE_EXIT_CODES.locked);
     expect(fromSw.message).toMatch(/locked/i);
     expect(fromSw.cause).toBeInstanceOf(TransportStatusError);
 

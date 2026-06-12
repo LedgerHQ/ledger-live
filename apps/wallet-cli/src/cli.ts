@@ -12,7 +12,9 @@ import bunliConfig from "../bunli.config";
 import { getCliProcessExitCode } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 import { explicitTransportKind, wasBleInitialized } from "./device/transport-kind";
-import { restoreTerminalCursor } from "./shared/ui";
+import { assertKnownFlags, resolveCommandPath } from "./shared/strict-flags";
+import { colors, restoreTerminalCursor, writeStderr, writeStdout } from "./shared/ui";
+import { WalletCliError } from "./shared/wallet-cli-error";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
 import SessionGroup from "./commands/session/index";
@@ -34,6 +36,16 @@ emitTestingBuildBannerIfNeeded();
  * is caught here so the caller gets a clean numeric code back.
  */
 export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
+  // bunli silently drops flags it does not recognize, so a typo'd `send --dryrun`
+  // would proceed to a live sign-and-broadcast; reject unknown flags up front.
+  try {
+    assertKnownFlags(argv);
+  } catch (e) {
+    if (e instanceof WalletCliError) {
+      return renderUsageError(e, argv);
+    }
+    throw e;
+  }
   const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
   cli.command(AccountGroup);
   cli.command(AssetsGroup);
@@ -54,14 +66,55 @@ function normalizeNegatedFlags(argv: string[]): string[] {
   return argv.map(arg => (arg.startsWith("--no-") ? `--${arg.slice(5)}=false` : arg));
 }
 
+/** True when argv explicitly selects JSON output (`--output json` / `--output=json`) before `--`. */
+function argvRequestsJsonOutput(argv: string[]): boolean {
+  const separatorIndex = argv.indexOf("--");
+  const args = separatorIndex >= 0 ? argv.slice(0, separatorIndex) : argv;
+  return args.some(
+    (arg, i) => arg === "--output=json" || (arg === "--output" && args[i + 1] === "json"),
+  );
+}
+
+/**
+ * Render a classified usage error raised before bunli (and thus before any
+ * CommandOutput) exists: the canonical JSON error envelope on stdout when the
+ * invocation asked for `--output json`, else the message (plus dim hint) on
+ * stderr, mirroring output.ts. Returns the error's exit code (64 for usage errors).
+ */
+function renderUsageError(err: WalletCliError, argv: string[]): number {
+  if (argvRequestsJsonOutput(argv)) {
+    const command =
+      typeof err.details?.command === "string"
+        ? err.details.command
+        : (resolveCommandPath(argv) ?? "");
+    writeStdout(
+      JSON.stringify({
+        ok: false,
+        error: {
+          command,
+          code: err.code,
+          message: err.message,
+          retryable: err.retryable,
+          ...(err.hint == null ? {} : { hint: err.hint }),
+          ...(err.details == null ? {} : { details: err.details }),
+        },
+      }),
+    );
+  } else {
+    const displayText = err.hint ? `${err.message}\n${colors.dim(err.hint)}` : err.message;
+    writeStderr(displayText + "\n");
+  }
+  return err.exitCode;
+}
+
 if (import.meta.main) {
   // Validate WALLET_CLI_TRANSPORT up front if set, so a typo fails fast with a
   // clear message before any work (the transport is otherwise inferred per device).
   try {
     explicitTransportKind();
   } catch (e) {
-    process.stderr.write(`${e instanceof Error ? e.message : String(e)}\n`);
-    process.exit(2);
+    if (!(e instanceof WalletCliError)) throw e;
+    process.exit(renderUsageError(e, process.argv.slice(2)));
   }
 
   let exitCode = 0;

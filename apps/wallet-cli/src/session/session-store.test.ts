@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { generateLabel, getSessionPath, Session } from "./session-store";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { WalletCliError } from "../shared/wallet-cli-error";
 
 const btcNative: AccountDescriptorV1 = {
   purpose: "account",
@@ -183,6 +184,41 @@ describe("YAML round-trip", () => {
     const yaml = YAML.stringify({ accounts: entries });
     const parsed = YAML.parse(yaml);
     expect(parsed).toEqual({ accounts: entries });
+  });
+});
+
+describe("Session.read() with a corrupt file", () => {
+  let tmpDir: string | undefined;
+  let savedEnv: string | undefined;
+
+  afterEach(() => {
+    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
+    else process.env.XDG_STATE_HOME = savedEnv;
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("throws session_corrupt with the file path and a reset hint", async () => {
+    savedEnv = process.env.XDG_STATE_HOME;
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-corrupt-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+
+    mkdirSync(dirname(getSessionPath()), { recursive: true });
+    writeFileSync(getSessionPath(), "accounts: [not, {valid", { mode: 0o600 });
+
+    let caught: unknown;
+    try {
+      await Session.read();
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught).toBeInstanceOf(WalletCliError);
+    const err = caught as WalletCliError;
+    expect(err.code).toBe("session_corrupt");
+    expect(err.exitCode).toBe(1);
+    expect(err.retryable).toBe(false);
+    expect(err.message).toContain(getSessionPath());
+    expect(err.hint).toMatch(/session reset/);
+    expect(err.details).toEqual({ path: getSessionPath() });
   });
 });
 
