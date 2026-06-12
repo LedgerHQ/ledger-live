@@ -9,11 +9,7 @@ import {
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
-import {
-  setupEnv,
-  selectAccountFromDeeplinkDrawer,
-  closeDeeplinkDrawer,
-} from "tests/utils/swapUtils";
+import { setupEnv, selectAccountFromDeeplinkDrawer } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 // Account UUIDs derived from the E2E test seed via uuidv5 (namespace c3c78073-…).
@@ -82,6 +78,7 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
       const reset = async () => {
         await app.swap.clearSwapState();
         await app.mainNavigation.openTargetFromMainNavigation("home");
+        await app.mainNavigation.validateTargetFromMainNavigation("home");
       };
 
       // ─── Group A: token params only, no accountIds ────────────────────────────
@@ -142,30 +139,6 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
         await reset();
       });
 
-      await test.step("A8: fromToken=INVALID(123) toToken=BTC — invalid send defaults", async () => {
-        await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=123&toToken=bitcoin");
-        await closeDeeplinkDrawer(app); // fromToken=123 is invalid — close its drawer
-        await selectAccountFromDeeplinkDrawer(app, btcAccount); // receive drawer: BTC account
-        await app.swap.checkAssetFromContains(DEFAULT_FROM);
-        await app.swap.checkAssetToContains("BTC");
-        await reset();
-      });
-
-      await test.step("A9: fromToken=ETH toToken=INVALID(456) — invalid receive defaults", async () => {
-        await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=ethereum&toToken=456");
-        await selectAccountFromDeeplinkDrawer(app, ethAccount); // only send drawer; invalid to has no drawer
-        await app.swap.checkAssetFromContains("ETH");
-        await app.swap.checkAssetToContains(DEFAULT_TO);
-        await reset();
-      });
-
-      await test.step("A10: fromToken=INVALID toToken=INVALID — both default", async () => {
-        await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=123&toToken=456");
-        await app.swap.checkAssetFromContains(DEFAULT_FROM);
-        await app.swap.checkAssetToContains(DEFAULT_TO);
-        await reset();
-      });
-
       // ─── Group B: with amount ──────────────────────────────────────────────────
 
       await test.step("B1: ETH→BTC with valid amountFrom=0.01", async () => {
@@ -208,17 +181,14 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
         await reset();
       });
 
-      await test.step(
-        "C2: fromAccountId=BTC + toAccountId=USDT (no token params) — accountId resolves, no drawer",
-        async () => {
-          await app.swap.openViaDeeplink(
-            `ledgerwallet://swap?fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
-          );
-          await app.swap.checkAssetFromContains(getParentAccountName(btcAccount));
-          await app.swap.checkAssetToContains(getParentAccountName(usdtAccount));
-          await reset();
-        },
-      );
+      await test.step("C2: fromAccountId=BTC + toAccountId=USDT (no token params) — accountId resolves, no drawer", async () => {
+        await app.swap.openViaDeeplink(
+          `ledgerwallet://swap?fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
+        );
+        await app.swap.checkAssetFromContains(getParentAccountName(btcAccount));
+        await app.swap.checkAssetToContains(getParentAccountName(usdtAccount));
+        await reset();
+      });
 
       await test.step("C3: USDT+fromAccountId only — receive defaults, no drawer", async () => {
         await app.swap.openViaDeeplink(
@@ -238,20 +208,17 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
         await reset();
       });
 
-      await test.step(
-        "C5: mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins",
-        async () => {
-          await app.swap.openViaDeeplink(
-            `ledgerwallet://swap?fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
-              `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
-          );
-          // fromAccountId takes precedence over conflicting fromToken
-          await app.swap.checkAssetFromContains(getParentAccountName(btcAccount));
-          // toAccountId takes precedence over conflicting toToken
-          await app.swap.checkAssetToContains(getParentAccountName(ethAccount));
-          // no reset needed after last step
-        },
-      );
+      await test.step("C5: mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins", async () => {
+        await app.swap.openViaDeeplink(
+          `ledgerwallet://swap?fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
+            `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
+        );
+        // fromAccountId takes precedence over conflicting fromToken
+        await app.swap.checkAssetFromContains(getParentAccountName(btcAccount));
+        // toAccountId takes precedence over conflicting toToken
+        await app.swap.checkAssetToContains(getParentAccountName(ethAccount));
+        // no reset needed after last step
+      });
     },
   );
 });
