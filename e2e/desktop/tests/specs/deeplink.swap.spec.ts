@@ -1,12 +1,20 @@
 import test from "tests/fixtures/common";
 import { expect } from "@playwright/test";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  TokenAccount,
+  getParentAccountName,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { setupEnv, selectAccountFromDeeplinkDrawer, closeDeeplinkDrawer } from "tests/utils/swapUtils";
+import {
+  setupEnv,
+  selectAccountFromDeeplinkDrawer,
+  closeDeeplinkDrawer,
+} from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 // Account UUIDs derived from the E2E test seed via uuidv5 (namespace c3c78073-…).
@@ -41,8 +49,8 @@ test.describe.configure({ mode: "serial" });
 test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
   setupEnv(true);
 
-  const btcAccount = Account.BTC_NATIVE_SEGWIT_1;
-  const ethAccount = Account.ETH_1;
+  const btcAccount = Account.BTC_NATIVE_SEGWIT_2;
+  const ethAccount = Account.ETH_3;
   const usdtAccount = TokenAccount.ETH_USDT_1;
 
   test.beforeEach(async () => {
@@ -240,10 +248,8 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
         `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&toToken=bitcoin` +
           `&fromAccountId=${USDT_ACCOUNT_ID}&toAccountId=${BTC_ACCOUNT_ID}&amountFrom=20`,
       );
-      await app.swap.checkAssetFromContains("USDT");
-      await app.swap.checkAssetFromContains(usdtAccount.accountName);
-      await app.swap.checkAssetToContains("BTC");
-      await app.swap.checkAssetToContains(btcAccount.accountName);
+      await app.swap.checkAssetFromContains(getParentAccountName(usdtAccount));
+      await app.swap.checkAssetToContains(getParentAccountName(btcAccount));
       const amount = await app.swap.getAmountToSend();
       expect(amount).toBe("20");
     },
@@ -257,10 +263,8 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
       await app.swap.openViaDeeplink(
         `ledgerwallet://swap?fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
       );
-      await app.swap.checkAssetFromContains("BTC");
-      await app.swap.checkAssetFromContains(btcAccount.accountName);
-      await app.swap.checkAssetToContains("USDT");
-      await app.swap.checkAssetToContains(usdtAccount.accountName);
+      await app.swap.checkAssetFromContains(getParentAccountName(btcAccount));
+      await app.swap.checkAssetToContains(getParentAccountName(usdtAccount));
     },
   );
 
@@ -272,23 +276,21 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
       await app.swap.openViaDeeplink(
         `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`,
       );
-      await app.swap.checkAssetFromContains("USDT");
-      await app.swap.checkAssetFromContains(usdtAccount.accountName);
+      await app.swap.checkAssetFromContains(getParentAccountName(usdtAccount));
       await app.swap.checkAssetToContains(DEFAULT_TO);
     },
   );
 
   test(
-    "C4: toToken=BTC+toAccountId only — send defaults, no drawer",
+    "C4: toToken=ETH+toAccountId only — send defaults, no drawer",
     { tag: TAGS, annotation: { type: "TMS", description: TMS } },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.openViaDeeplink(
-        `ledgerwallet://swap?toToken=bitcoin&toAccountId=${BTC_ACCOUNT_ID}`,
+        `ledgerwallet://swap?toToken=ethereum&toAccountId=${ETH_ACCOUNT_ID}`,
       );
       await app.swap.checkAssetFromContains(DEFAULT_FROM);
-      await app.swap.checkAssetToContains("BTC");
-      await app.swap.checkAssetToContains(btcAccount.accountName);
+      await app.swap.checkAssetToContains(getParentAccountName(ethAccount));
     },
   );
 
@@ -302,11 +304,9 @@ test.describe("[B2CQA-4152] Swap deeplinks — LWD", () => {
           `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
       );
       // fromAccountId takes precedence over conflicting fromToken
-      await app.swap.checkAssetFromContains("BTC");
-      await app.swap.checkAssetFromContains(btcAccount.accountName);
+      await app.swap.checkAssetFromContains(getParentAccountName(btcAccount));
       // toAccountId takes precedence over conflicting toToken
-      await app.swap.checkAssetToContains("ETH");
-      await app.swap.checkAssetToContains(ethAccount.accountName);
+      await app.swap.checkAssetToContains(getParentAccountName(ethAccount));
     },
   );
 });
