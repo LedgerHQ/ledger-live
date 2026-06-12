@@ -15,7 +15,6 @@ const baseProps: PortfolioBalanceSectionViewProps = {
   isAnalyticPillVisible: true,
   isLoading: false,
   shouldDisplayBalanceRefreshRework: false,
-  remountKey: 0,
   onToggleDiscreetMode: jest.fn(),
 };
 
