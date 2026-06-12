@@ -17,7 +17,7 @@ import {
 import BigNumber from "bignumber.js";
 import { useContactsStore } from "~/renderer/contacts/hooks";
 import { resolveContact } from "~/renderer/contacts/useDisplayAddress";
-import { ContactBadge } from "~/renderer/contacts/ContactBadge";
+import { SignedNameBadge } from "LLD/components/SignedNameBadge";
 
 type AccountSelectorContentProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -47,7 +47,9 @@ export const AccountSelectorContent = ({
       if (!contactsAlpha || !hydrated || chainId === undefined || !account.address) return null;
       const resolution = resolveContact(wallet, account.address, chainId);
       if (resolution?.kind !== "ledgerAccount") return null;
-      return <ContactBadge kind="ledgerAccount" label={resolution.name} />;
+      // Shield-check (not the green name pill) — same signed-with-Ledger
+      // affordance as the CryptoAddresses table and the send-flow rows.
+      return <SignedNameBadge data-testid="account-selector-signed-name-badge" />;
     },
     [contactsAlpha, hydrated, wallet, chainId],
   );

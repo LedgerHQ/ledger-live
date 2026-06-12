@@ -5,6 +5,7 @@ import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipi
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useMatchedContactEntry } from "../../../hooks/useMatchedContactEntry";
 import { useAddressValidation } from "./useAddressValidation";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
@@ -82,7 +83,21 @@ export function useRecipientAddressModalViewModel({
     recipientSupportsDomain,
   });
 
+  // Address-book match (Figma 14437:40510): resolve the entered (or
+  // ENS-resolved) address against external contacts on the selected chain
+  // so the matched section can render the contact-styled row.
+  const recipientChainId =
+    currency.type === "CryptoCurrency"
+      ? currency.ethereumLikeInfo?.chainId
+      : currency.parentCurrency.ethereumLikeInfo?.chainId;
+  const matchedContact = useMatchedContactEntry(
+    result.resolvedAddress ?? recipientSearch.value,
+    recipientChainId,
+    currency.ticker,
+  );
+
   return {
+    matchedContact,
     searchValue: recipientSearch.value,
     isLoading,
     result,

@@ -18,7 +18,7 @@ import { getContactPhoto, useContactPhotos } from "../utils/contactPhoto";
  * policy + adoption channel).
  */
 
-type Size = "sm" | "md" | "lg";
+type Size = "xs" | "sm" | "md" | "lg";
 
 type Props = {
   name: string;
@@ -38,6 +38,9 @@ type Props = {
 };
 
 const SIZE_PX: Record<Size, number> = {
+  // 24px — inline avatar inside the Send flow's "To:" input (Figma
+  // frame 14442:16458).
+  xs: 24,
   sm: 40,
   // 48px — the condensed sticky header on the details pane (Figma
   // frame 14397:13884).
@@ -47,6 +50,8 @@ const SIZE_PX: Record<Size, number> = {
 
 // Typography token for the centered initials.
 const TEXT_CLASS: Record<Size, string> = {
+  // Smallest token on the scale — 1–2 initials inside a 24px disc.
+  xs: "body-3-semi-bold",
   sm: "body-2-semi-bold",
   // Figma scales the condensed avatar's initials to ~18.7px —
   // `heading/5-semi-bold` (18px) is the closest token.

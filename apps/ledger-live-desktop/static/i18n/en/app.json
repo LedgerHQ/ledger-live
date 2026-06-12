@@ -2441,8 +2441,15 @@
     "available": "Available {{amount}}",
     "placeholder": "Enter address or ENS",
     "placeholderNoENS": "Enter address",
+    "toPrefix": "To:",
     "recent": "Recent",
     "myAccounts": "My accounts",
+    "picker": {
+      "contacts": "Contacts",
+      "myAccounts": "My accounts",
+      "searchContact": "Search contact",
+      "searchAccount": "Search account"
+    },
     "sendTo": "Send to {{address}}",
     "addressMatched": "Address matched",
     "addressNotFound": "Address not found",

@@ -2,8 +2,13 @@ import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { contactsAlphaSelector } from "~/renderer/reducers/settings";
 import { useContactsStore } from "~/renderer/contacts/hooks";
-import type { ContactsWallet } from "~/renderer/contacts/types";
+import type { ContactEntry, ContactsWallet } from "~/renderer/contacts/types";
 import type { ContactBadgeKind } from "~/renderer/contacts/ContactBadge";
+import { getCryptoMeta, useCryptoMeta } from "~/mvvm/features/Contacts/Management/utils/cryptoMeta";
+import {
+  getCryptoById,
+  getNativeCryptoIdForChain,
+} from "~/mvvm/features/Contacts/Management/utils/getCryptoById";
 
 const ADDRESS_HEX_LENGTH = 40;
 
@@ -46,11 +51,45 @@ const EMPTY_GROUPS: RecipientSuggestionGroups = {
   hasQuery: false,
 };
 
-const matchesQuery = (
-  query: string,
-  addressKey: string,
-  name: string,
+export type CryptoCompatibilityFilter = Readonly<{
+  /**
+   * Selected crypto's ticker (e.g. "ETH"). Entries whose resolved crypto
+   * is a different asset on the same chain (e.g. a QNT address while
+   * sending ETH) are dropped.
+   */
+  selectedTicker: string;
+  /**
+   * `cryptoMeta` sidecar snapshot — the per-entry crypto annotation set
+   * when the address was registered. Pass `useCryptoMeta()`'s value so
+   * updates re-trigger the filtering.
+   */
+  cryptoMeta: Readonly<Record<string, string>>;
+}>;
+
+/**
+ * Does this entry's crypto match the selected one? Resolution mirrors the
+ * Contacts details pane (`groupAddressesByCrypto`): sidecar annotation
+ * first, then the chain's native gas token for legacy un-annotated
+ * entries. Comparison is by TICKER, not ledger id — the chainId filter
+ * already pins the network, and multichain tokens (USDT on Polygon vs
+ * Ethereum) share a ticker but not a ledger id. Entries we can't resolve
+ * to a known crypto are dropped (strict compatibility).
+ */
+const entryMatchesSelectedCrypto = (
+  entry: ContactEntry,
+  filter: CryptoCompatibilityFilter | undefined,
 ): boolean => {
+  if (!filter) return true;
+  const cryptoId =
+    getCryptoMeta(filter.cryptoMeta, entry.addressHex, entry.chainId, entry.scope) ??
+    getNativeCryptoIdForChain(entry.chainId);
+  if (cryptoId === undefined) return false;
+  const crypto = getCryptoById(cryptoId);
+  if (!crypto) return false;
+  return crypto.ticker.toUpperCase() === filter.selectedTicker.toUpperCase();
+};
+
+const matchesQuery = (query: string, addressKey: string, name: string): boolean => {
   if (query.length === 0) return true;
   const nameNeedle = query.toLowerCase();
   const addressNeedle = stripHexPrefix(query);
@@ -77,6 +116,8 @@ export const buildRecipientSuggestionGroups = (
   wallet: ContactsWallet,
   query: string,
   chainId: number,
+  /** When set, external entries must also match the selected crypto (same chain ≠ same asset). */
+  cryptoFilter?: CryptoCompatibilityFilter,
 ): RecipientSuggestionGroups => {
   const trimmed = query.trim();
   const hasQuery = trimmed.length > 0;
@@ -122,6 +163,7 @@ export const buildRecipientSuggestionGroups = (
   for (const contact of Object.values(wallet.contacts)) {
     for (const entry of contact.entries) {
       if (entry.chainId !== chainId) continue;
+      if (!entryMatchesSelectedCrypto(entry, cryptoFilter)) continue;
       const addressKey = normalizeAddress(entry.addressHex);
       if (seenAddresses.has(addressKey)) continue;
       if (!matchesQuery(trimmed, addressKey, contact.name)) continue;
@@ -143,12 +185,20 @@ export const buildRecipientSuggestionGroups = (
 export const useRecipientSuggestions = (
   query: string,
   chainId: number | undefined,
+  /** Selected crypto's ticker — entries on the chain holding a DIFFERENT asset are dropped. */
+  selectedTicker?: string,
 ): RecipientSuggestionGroups => {
   const contactsAlpha = useSelector(contactsAlphaSelector);
   const { wallet, hydrated } = useContactsStore();
+  const cryptoMeta = useCryptoMeta();
 
   return useMemo(() => {
     if (!contactsAlpha || !hydrated || chainId === undefined) return EMPTY_GROUPS;
-    return buildRecipientSuggestionGroups(wallet, query, chainId);
-  }, [contactsAlpha, hydrated, wallet, query, chainId]);
+    return buildRecipientSuggestionGroups(
+      wallet,
+      query,
+      chainId,
+      selectedTicker ? { selectedTicker, cryptoMeta } : undefined,
+    );
+  }, [contactsAlpha, hydrated, wallet, query, chainId, selectedTicker, cryptoMeta]);
 };
