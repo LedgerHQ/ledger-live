@@ -180,7 +180,7 @@ jobs:
       - name: Upload mitmproxy logs
         continue-on-error: true
         if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mitmproxy-logs
           path: ${{ steps.stop-mitmproxy.outputs.mitmproxy_logs_archive }}

@@ -105,7 +105,7 @@ runs:
       run: echo "NX_KEY=${{ inputs.nx-key }}" >> "$GITHUB_ENV"
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v5
+      uses: aws-actions/configure-aws-credentials@v6
       if: steps.nx-remote-cache.conclusion == 'success'
       id: aws
       with:
