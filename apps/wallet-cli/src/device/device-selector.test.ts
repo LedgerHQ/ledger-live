@@ -66,6 +66,14 @@ describe("deviceMatchesSelector", () => {
     expect(deviceMatchesSelector(unnamed, "anything")).toBe(false);
     expect(deviceMatchesSelector(unnamed, "usb-ccc")).toBe(true);
   });
+
+  it("tolerates a device whose name is undefined (raw DMK discovery)", () => {
+    const nameless: SelectableDevice = { id: "ble-ddd" };
+    expect(deviceMatchesSelector(nameless, "anything")).toBe(false);
+    expect(deviceMatchesSelector(nameless, "ble-ddd")).toBe(true);
+    expect(selectDiscoveredDevice([nameless], "ble-ddd")).toBe(nameless);
+    expect(() => selectDiscoveredDevice([nameless, flex], null)).toThrow(/\(unnamed\)/);
+  });
 });
 
 describe("selectDiscoveredDevice", () => {

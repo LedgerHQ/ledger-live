@@ -1,7 +1,11 @@
-/** Minimal shape needed to choose a device: a stable id and a display name. */
+/**
+ * Minimal shape needed to choose a device: a stable id and a display name. The
+ * name is optional because DMK discovery can report devices without one (BLE
+ * advertisements in particular); matching must tolerate that instead of throwing.
+ */
 export interface SelectableDevice {
   readonly id: string;
-  readonly name: string;
+  readonly name?: string;
 }
 
 let selectorOverride: string | null = null;
@@ -44,7 +48,8 @@ export function deviceMatchesSelector(device: SelectableDevice, selector: string
   if (id === needle || id.startsWith(needle)) {
     return true;
   }
-  return device.name.length > 0 && device.name.toLowerCase().includes(needle);
+  const name = device.name ?? "";
+  return name.length > 0 && name.toLowerCase().includes(needle);
 }
 
 function describeDevices(devices: readonly SelectableDevice[]): string {
