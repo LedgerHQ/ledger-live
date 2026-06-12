@@ -16,27 +16,27 @@ jobs:
   # LLD
   build-desktop:
     name: "Build Desktop"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   test-desktop:
     name: "Desktop E2E & Mock Tests"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   codecheck-desktop:
     name: "Desktop Lint & Unit Tests"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   build-test-mobile:
     name: "Build & Test Mobile"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
     with:
       macos-specificity-runner-label: "general-pool"
@@ -47,34 +47,34 @@ jobs:
   # Tests
   test-libraries:
     name: "Test Libraries"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   test-features:
     name: "Test Features"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   test-design-system:
     name: "Test UI Libs"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
     with:
       vercel-production: ${{ github.ref_name == 'develop' && 'true' || 'false' }}
 
   test-cli:
     name: "Test CLI"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   build-wallet-cli:
     name: "Build Wallet CLI"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@support/qaa_improve_workflow_test
     secrets: inherit
 
   # Final Check required

@@ -144,7 +144,7 @@ jobs:
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/qaa_improve_workflow_test
         id: setup-caches
         with:
           use-mise: true
@@ -162,7 +162,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@support/qaa_improve_workflow_test
         with:
           test_directory: apps/ledger-live-mobile/e2e
           test_filter: ${{ inputs.test_filter || '' }}
@@ -180,7 +180,7 @@ jobs:
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ steps.generate-shards.outputs.matrix_android != '[]' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/qaa_improve_workflow_test
         with:
           key: ${{ steps.cache-keys.outputs.avd_cache_key }}
           accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -257,7 +257,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/qaa_improve_workflow_test
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -271,7 +271,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/qaa_improve_workflow_test
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-nx-cache: ${{ inputs.disable-nx-cache || false }}
@@ -288,7 +288,7 @@ jobs:
     runs-on: [ledger-live-linux-8CPU-32RAM]
     steps:
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@support/qaa_improve_workflow_test
         with:
           ref: ${{ inputs.ref || github.sha }}
           avd_api: ${{ env.AVD_API }}
@@ -333,7 +333,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/qaa_improve_workflow_test
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
@@ -364,7 +364,7 @@ jobs:
 
       # Warm simulators before Detox; worker_count matches JEST_MAX_WORKERS (and iOS Simulator … N names in detox.config.js).
       - name: Boot iOS Simulators in Background
-        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@support/qaa_improve_workflow_test
         with:
           worker_count: ${{ env.JEST_MAX_WORKERS }}
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
@@ -373,7 +373,7 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/qaa_improve_workflow_test
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -384,7 +384,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/qaa_improve_workflow_test
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -402,7 +402,7 @@ jobs:
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/qaa_improve_workflow_test
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
           disable_cache: ${{ inputs.disable-nx-cache || false }}
@@ -477,7 +477,7 @@ jobs:
           packages: "tools platform-tools"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/qaa_improve_workflow_test
         id: setup-caches
         with:
           use-mise: true
@@ -491,7 +491,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/qaa_improve_workflow_test
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -501,7 +501,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/qaa_improve_workflow_test
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -546,7 +546,7 @@ jobs:
 
       - name: Download android emulator
         timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/qaa_improve_workflow_test
         id: detox-avd
         with:
           key: ${{ needs.determine-builds.outputs.avd_cache_key }}
@@ -558,7 +558,7 @@ jobs:
           destination: /
 
       - name: Duplicate AVDs for parallel testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/qaa_improve_workflow_test
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2"
@@ -566,7 +566,7 @@ jobs:
 
       - name: Run Android Tests
         id: detox
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/qaa_improve_workflow_test
         timeout-minutes: ${{ 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
@@ -619,7 +619,7 @@ jobs:
               \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
               \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
           }" > mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@support/qaa_improve_workflow_test
         if: ${{ !inputs.skip-bundle-size-reporting }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -639,7 +639,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/qaa_improve_workflow_test
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
@@ -662,7 +662,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/qaa_improve_workflow_test
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
@@ -694,7 +694,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/qaa_improve_workflow_test
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
@@ -719,7 +719,7 @@ jobs:
           echo "pod-lockfile-validated=true" > pod-lockfile-cache.txt
 
       - name: Write cache
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/qaa_improve_workflow_test
         with:
           path: pod-lockfile-cache.txt
           key: ${{ needs.determine-builds.outputs.pod_check_key }}
