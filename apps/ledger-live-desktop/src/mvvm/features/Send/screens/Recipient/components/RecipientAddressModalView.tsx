@@ -5,6 +5,7 @@ import type {
   AddressSearchResult,
   AddressValidationError as AddressValidationErrorType,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { MatchedContactEntry } from "../../../hooks/useMatchedContactEntry";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import EmptyList from "./EmptyList";
@@ -34,6 +35,8 @@ type RecipientAddressModalViewProps = Readonly<{
   hasMemo: boolean;
   hasMemoValidationError: boolean;
   hasFilledMemo: boolean;
+  /** Address-book contact resolved from the entered address, if any. */
+  matchedContact: MatchedContactEntry | null;
 }>;
 
 export function RecipientAddressModalView({
@@ -58,6 +61,7 @@ export function RecipientAddressModalView({
   hasMemo,
   hasMemoValidationError,
   hasFilledMemo,
+  matchedContact,
 }: RecipientAddressModalViewProps) {
   const shouldShowErrorBanner =
     !isLoading &&
@@ -86,6 +90,7 @@ export function RecipientAddressModalView({
           isSanctioned={isSanctioned}
           isAddressComplete={isAddressComplete}
           hasBridgeError={showBridgeRecipientError}
+          matchedContact={matchedContact}
         />
       )}
 

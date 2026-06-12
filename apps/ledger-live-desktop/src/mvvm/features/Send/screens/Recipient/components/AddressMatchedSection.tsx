@@ -4,6 +4,8 @@ import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-reac
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
+import type { MatchedContactEntry } from "../../../hooks/useMatchedContactEntry";
+import { ContactMatchedRow } from "../../../components/RecipientRows";
 import { AddressListItem } from "./AddressListItem";
 import { RecentHistoryWarningCard } from "./RecentHistoryWarningCard";
 
@@ -14,6 +16,8 @@ type AddressMatchedSectionProps = Readonly<{
   isSanctioned?: boolean;
   isAddressComplete?: boolean;
   hasBridgeError?: boolean;
+  /** Address-book contact resolved from the entered address, if any. */
+  matchedContact?: MatchedContactEntry | null;
 }>;
 
 export function AddressMatchedSection({
@@ -23,6 +27,7 @@ export function AddressMatchedSection({
   isSanctioned = false,
   isAddressComplete = false,
   hasBridgeError = false,
+  matchedContact = null,
 }: AddressMatchedSectionProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
@@ -39,6 +44,27 @@ export function AddressMatchedSection({
     isAddressComplete && !hasMatch && !isSanctioned && !hasBridgeError && status === "valid";
 
   const shouldShowDisabledAddress = (isSanctioned || hasBridgeError) && isAddressComplete;
+
+  // Address-book contact match (Figma 14437:40510): the contact-styled row
+  // replaces this section entirely — no "Address matched" subheader, no
+  // first-interaction warning (the user explicitly saved this address).
+  // Own Ledger accounts and ENS keep their existing precedence; a
+  // sanctioned/bridge-blocked address falls through to the disabled row.
+  const showContactRow =
+    !!matchedContact && !hasENS && !hasMatchedAccounts && !isSanctioned && !hasBridgeError;
+
+  if (showContactRow) {
+    return (
+      <div className="-mx-8 flex w-full min-w-0 flex-col" data-testid="send-matched-contact">
+        <ContactMatchedRow
+          name={matchedContact.name}
+          scope={matchedContact.scope}
+          address={resolvedAddress ?? searchValue}
+          onSelect={() => onSelect(resolvedAddress ?? searchValue)}
+        />
+      </div>
+    );
+  }
 
   if (!hasMatch && !shouldShowDisabledAddress && !isValidAddressWithoutMatch) {
     return null;

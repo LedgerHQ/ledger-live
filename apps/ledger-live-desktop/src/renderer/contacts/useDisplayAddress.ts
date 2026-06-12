@@ -27,11 +27,17 @@ export const resolveContact = (
   chainId: number,
 ): ContactResolution | null => {
   const target = normalize(address);
+  // Last matching registered account wins — a rename re-registers the same
+  // address under a new name, and historical wallets may still hold the
+  // stale record alongside it (newer registrations sit later in insertion
+  // order). Mirrors `findLedgerAccount` in `contactsDataSource`.
+  let registered: ContactResolution | null = null;
   for (const account of Object.values(wallet.accounts)) {
     if (account.chainId === chainId && normalize(account.addressHex) === target) {
-      return { name: account.name, kind: "ledgerAccount" };
+      registered = { name: account.name, kind: "ledgerAccount" };
     }
   }
+  if (registered) return registered;
   for (const contact of Object.values(wallet.contacts)) {
     for (const entry of contact.entries) {
       if (entry.chainId === chainId && normalize(entry.addressHex) === target) {

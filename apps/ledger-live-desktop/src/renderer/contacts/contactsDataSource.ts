@@ -16,17 +16,23 @@ const findLedgerAccount = (
   key: ContactsLookupKey,
 ): ContactLedgerAccountDecoration | null => {
   const target = normalize(key.address);
+  // Keep the LAST matching record: a rename re-registers the same address
+  // under a new name, and historical wallets (written before
+  // `addLedgerAccount` started pruning the stale record) may still hold
+  // both. Insertion order makes the most recent registration the last
+  // match, so the device's From decoration shows the freshly signed name.
+  let match: ContactLedgerAccountDecoration | null = null;
   for (const account of Object.values(wallet.accounts)) {
     if (account.chainId !== key.chainId) continue;
     if (normalize(account.addressHex) !== target) continue;
-    return {
+    match = {
       accountName: account.name,
       hmacProofHex: account.hmacProofHex,
       derivationPath: account.derivationPath,
       chainId: account.chainId,
     };
   }
-  return null;
+  return match;
 };
 
 const findExternalContact = (

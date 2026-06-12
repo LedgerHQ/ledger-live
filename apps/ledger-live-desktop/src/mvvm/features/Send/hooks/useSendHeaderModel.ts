@@ -13,11 +13,24 @@ import {
 } from "../context/SendFlowContext";
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
+import { useSelector } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { useContactResolution } from "~/renderer/contacts/useDisplayAddress";
 import type { ContactBadgeKind } from "~/renderer/contacts/ContactBadge";
+
+/**
+ * What to render as the inline avatar inside the read-only "To:" input on
+ * the Amount step (Figma 14442:16458): the contact's photo/initials when
+ * the recipient is an address-book contact, the crypto icon when it's one
+ * of the user's own accounts, nothing for a raw address.
+ */
+export type RecipientVisual =
+  | { type: "contact"; name: string }
+  | { type: "account"; currencyId: string; ticker: string }
+  | null;
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -37,6 +50,7 @@ type UseSendHeaderModelResult = Readonly<{
   recipientContactKind: ContactBadgeKind | undefined;
   fromContactKind: ContactBadgeKind | undefined;
   recipientChainId: number | undefined;
+  recipientVisual: RecipientVisual;
 }>;
 
 export function useSendHeaderModel({
@@ -106,12 +120,50 @@ export function useSendHeaderModel({
       : undefined;
   const fromResolution = useContactResolution(fromAddress, recipientChainId);
 
-  // The decorated recipient shown on later steps: contact name if we resolved
-  // one, otherwise the truncated address as before. This is the only place we
-  // replace text content with a contacts-storage value — the From account
-  // name stays as whatever Ledger Live has on file, and the on-device-registered
-  // identity is signalled by the `fromContactKind` badge alone.
-  const decoratedRecipient = recipientResolution?.name ?? recipientDisplayAddress;
+  // The recipient resolved to one of the user's own Ledger Live accounts —
+  // drives both the crypto-icon avatar and the displayed account name on
+  // the Amount step.
+  const allAccounts = useSelector(accountsSelector);
+  const matchedOwnAccount = useMemo(() => {
+    if (!fullRecipientAddress) return undefined;
+    const target = fullRecipientAddress.toLowerCase();
+    return allAccounts.find(acc => acc.freshAddress.toLowerCase() === target);
+  }, [allAccounts, fullRecipientAddress]);
+  const matchedOwnAccountName = useMaybeAccountName(matchedOwnAccount);
+
+  // The decorated recipient shown on later steps: the OWN account's name
+  // when sending to one of the user's accounts, otherwise the contact name
+  // if we resolved one, otherwise the truncated address as before. The
+  // From account name stays as whatever Ledger Live has on file, and the
+  // on-device-registered identity is signalled by the `fromContactKind`
+  // badge alone.
+  const decoratedRecipient =
+    (matchedOwnAccount && matchedOwnAccountName) ||
+    recipientResolution?.name ||
+    recipientDisplayAddress;
+
+  // Inline avatar for the Amount step's "To:" input. Own accounts win over
+  // contacts (same precedence as `resolveContact`): an app account match
+  // carries its own currency for the icon; a device-registered name with no
+  // app account falls back to the selected chain's main currency.
+  const recipientVisual: RecipientVisual = useMemo(() => {
+    if (!fullRecipientAddress) return null;
+    if (matchedOwnAccount) {
+      return {
+        type: "account",
+        currencyId: matchedOwnAccount.currency.id,
+        ticker: matchedOwnAccount.currency.ticker,
+      };
+    }
+    if (recipientResolution?.kind === "ledgerAccount" && currency) {
+      const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
+      return { type: "account", currencyId: mainCurrency.id, ticker: mainCurrency.ticker };
+    }
+    if (recipientResolution?.kind === "external") {
+      return { type: "contact", name: recipientResolution.name };
+    }
+    return null;
+  }, [fullRecipientAddress, matchedOwnAccount, recipientResolution, currency]);
 
   const accountSummary = useMemo(() => {
     if (accountName && availableText) return `${accountName} · ${availableText}`;
@@ -190,5 +242,6 @@ export function useSendHeaderModel({
     recipientContactKind: recipientResolution?.kind,
     fromContactKind: fromResolution?.kind === "ledgerAccount" ? "ledgerAccount" : undefined,
     recipientChainId,
+    recipientVisual,
   };
 }

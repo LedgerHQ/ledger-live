@@ -40,17 +40,11 @@ export type UseContacts = {
   wallet: ContactsWallet;
 
   addContact: (deviceId: string, args: AddContactArgs) => Promise<Contact>;
-  addAddressToContact: (
-    deviceId: string,
-    args: AddAddressToContactArgs,
-  ) => Promise<Contact>;
+  addAddressToContact: (deviceId: string, args: AddAddressToContactArgs) => Promise<Contact>;
   editAddressLabel: (deviceId: string, args: EditAddressLabelInput) => Promise<void>;
   editAddress: (deviceId: string, args: EditAddressInput) => Promise<void>;
   renameContact: (deviceId: string, args: RenameContactInput) => Promise<Contact>;
-  addLedgerAccount: (
-    deviceId: string,
-    args: AddLedgerAccountArgs,
-  ) => Promise<LedgerAccount>;
+  addLedgerAccount: (deviceId: string, args: AddLedgerAccountArgs) => Promise<LedgerAccount>;
   /**
    * Remove one address entry from a contact. Client-side only — there
    * is no DMK address-removal verb yet, so this purely rewrites the
@@ -142,7 +136,6 @@ export type ReplaceAddressArgs = {
   chainId: number;
 };
 
-
 /**
  * Wait for the observable to complete, then resolve on the *final* state.
  *
@@ -182,7 +175,8 @@ const finalize = async <Output>(returnType: {
     const enriched = new Error(extractErrorMessage(err));
     if (err && typeof err === "object") {
       const rec = err as Record<string, unknown>;
-      if ("errorCode" in rec) (enriched as Error & { errorCode?: unknown }).errorCode = rec.errorCode;
+      if ("errorCode" in rec)
+        (enriched as Error & { errorCode?: unknown }).errorCode = rec.errorCode;
       if ("_tag" in rec) (enriched as Error & { _tag?: unknown })._tag = rec._tag;
     }
     throw enriched;
@@ -215,9 +209,7 @@ const withDmk = <T>(
 const lookupContact = (wallet: ContactsWallet, name: string): Contact => {
   const contact = wallet.contacts[name];
   if (!contact)
-    throw new Error(
-      `Contact "${name}" is not registered on device — use addContact first`,
-    );
+    throw new Error(`Contact "${name}" is not registered on device — use addContact first`);
   return contact;
 };
 
@@ -438,8 +430,7 @@ export const useContacts = (): UseContacts => {
       withDmk(deviceId, async deps => {
         const contact = lookupContact(wallet, args.oldName);
         const path = contact.entries[0]?.derivationPath;
-        if (!path)
-          throw new Error(`Contact "${contact.name}" has no entries — cannot derive path`);
+        if (!path) throw new Error(`Contact "${contact.name}" has no entries — cannot derive path`);
         const result = await finalize(
           buildContactsService(deps).renameContact({
             oldName: args.oldName,
@@ -475,10 +466,27 @@ export const useContacts = (): UseContacts => {
           addressHex: result.addressHex,
           hmacProofHex: result.hmacProofHex,
         };
-        await commit({
-          contacts: wallet.contacts,
-          accounts: { ...wallet.accounts, [next.name]: next },
-        });
+        // A rename re-registers the SAME account under a new name, but the
+        // map is keyed by name — without cleanup the stale record lingers
+        // and signing-time lookups (`findLedgerAccount`) kept resolving
+        // the From decoration to the OLD name on the device screen. Drop
+        // every record pointing at the same registration (same chain +
+        // derivation path, or same chain + address) before adding.
+        const normalizeAddress = (addressHex: string): string => {
+          const trimmed = addressHex.trim().toLowerCase();
+          return trimmed.startsWith("0x") ? trimmed.slice(2) : trimmed;
+        };
+        const accounts: Record<string, LedgerAccount> = {};
+        for (const [key, record] of Object.entries(wallet.accounts)) {
+          const sameRegistration =
+            record.chainId === next.chainId &&
+            (record.derivationPath === next.derivationPath ||
+              normalizeAddress(record.addressHex) === normalizeAddress(next.addressHex));
+          if (sameRegistration) continue;
+          accounts[key] = record;
+        }
+        accounts[next.name] = next;
+        await commit({ contacts: wallet.contacts, accounts });
         return next;
       }),
     [commit, wallet],

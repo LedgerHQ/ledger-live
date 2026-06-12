@@ -1,10 +1,14 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { AddressInput, BaseInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
+import { InitialsAvatar } from "~/mvvm/features/Contacts/Management/components/InitialsAvatar";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { useRecipientView } from "../context/RecipientViewContext";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SEND_FLOW_STEP,
@@ -29,6 +33,32 @@ export function SendHeader() {
 
   const { navigation, currentStep } = wizard;
   const currencyId = state.account.currency?.id;
+  const { view: recipientView, setView: setRecipientView } = useRecipientView();
+
+  // Main (sending) account id — "My accounts" must not list the source.
+  const currentMainAccountId = state.account.account
+    ? getMainAccount(state.account.account, state.account.parentAccount ?? undefined).id
+    : undefined;
+
+  // Picking a contact / own account is an explicit choice — commit the
+  // recipient and jump straight to the Amount step, no matched-row
+  // confirmation click. The search input is CLEARED (the committed
+  // recipient drives the Amount step's display), so going back from
+  // Amount lands on the clean selection state, not the matched-address
+  // verification. Memo currencies are the exception: the inline memo
+  // controls live on this step, so there we only fill the input.
+  const handlePickRecipient = React.useCallback(
+    (address: string) => {
+      if (uiConfig.hasMemo) {
+        recipientSearch.setValue(address);
+        return;
+      }
+      recipientSearch.clear();
+      transaction.setRecipient({ ...state.recipient, address });
+      navigation.goToNextStep();
+    },
+    [recipientSearch, uiConfig.hasMemo, transaction, state.recipient, navigation],
+  );
 
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
@@ -89,6 +119,7 @@ export function SendHeader() {
     transactionErrorName,
     transactionError,
     recipientChainId,
+    recipientVisual,
   } = useSendHeaderModel({ availableText, resetViewState });
 
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
@@ -97,10 +128,39 @@ export function SendHeader() {
     if (!showRecipientInput) return null;
 
     if (isAmountStep) {
+      // Inline avatar before the recipient name (Figma 14442:16458) —
+      // contact photo/initials, or the crypto icon for an own account.
+      const recipientAvatar =
+        recipientVisual?.type === "contact" ? (
+          <InitialsAvatar name={recipientVisual.name} size="xs" />
+        ) : recipientVisual?.type === "account" ? (
+          <SquaredCryptoIcon
+            size={24}
+            ledgerId={recipientVisual.currencyId}
+            ticker={recipientVisual.ticker}
+          />
+        ) : null;
+
       return (
         <div className="-mt-12 mb-24 px-24">
           <div className="relative flex items-center gap-8">
-            <AddressInput className="w-full" value={addressInputValue} hideClearButton />
+            {/* `AddressInput` only accepts a string prefix, so to slot the
+                avatar between "To:" and the name we use the underlying
+                `BaseInput` directly with a composite prefix node — the
+                "To:" span carries AddressInput's exact classes. */}
+            <BaseInput
+              className="w-full"
+              value={addressInputValue}
+              hideClearButton
+              prefix={
+                <span className="flex items-center gap-8">
+                  <span aria-hidden="true" className="body-1 text-nowrap text-base">
+                    {t("newSendFlow.toPrefix")}
+                  </span>
+                  {recipientAvatar}
+                </span>
+              }
+            />
             <button
               type="button"
               className="absolute inset-0"
@@ -134,7 +194,12 @@ export function SendHeader() {
         <RecipientPicker
           query={recipientSearch.value}
           chainId={recipientChainId}
-          onSelect={s => recipientSearch.setValue(s.addressHex)}
+          currency={state.account.currency}
+          currentMainAccountId={currentMainAccountId}
+          onSelect={s => handlePickRecipient(s.addressHex)}
+          onSelectAccount={s => handlePickRecipient(s.address)}
+          onShowAllContacts={() => setRecipientView("contacts")}
+          onShowAllAccounts={() => setRecipientView("accounts")}
         />
         {showMemoControls && currencyId ? (
           <div className="px-24">
@@ -203,7 +268,34 @@ export function SendHeader() {
     onSkipMemoConfirm,
     handleRecipientInputClick,
     recipientChainId,
+    state.account.currency,
+    currentMainAccountId,
+    setRecipientView,
+    handlePickRecipient,
+    recipientVisual,
   ]);
+
+  // Full-list sub-views (Figma 14437:40767 / 43129): the header collapses to
+  // back-arrow + "Contacts" / "My accounts" + close, and the address input /
+  // previews give way to the list body rendered by RecipientScreen.
+  if (currentStep === SEND_FLOW_STEP.RECIPIENT && recipientView !== "default") {
+    return (
+      <div className="flex flex-col">
+        <div data-testid="send-dialog-header">
+          <DialogHeader
+            density="compact"
+            title={
+              recipientView === "contacts"
+                ? t("newSendFlow.picker.contacts")
+                : t("newSendFlow.picker.myAccounts")
+            }
+            onBack={() => setRecipientView("default")}
+            onClose={close}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">

@@ -153,4 +153,98 @@ describe("AddressMatchedSection", () => {
     expect(screen.getByText("Send to Ethereum 2")).toBeInTheDocument();
     expect(screen.getByText("0x95f...15e36")).toBeInTheDocument();
   });
+
+  describe("contact match (Figma 14437:40510)", () => {
+    const baseResult = (address: string): AddressSearchResult => ({
+      status: "valid",
+      error: null,
+      resolvedAddress: address,
+      ensName: undefined,
+      isLedgerAccount: false,
+      accountName: undefined,
+      accountBalance: undefined,
+      accountBalanceFormatted: undefined,
+      isFirstInteraction: true,
+      matchedRecentAddress: undefined,
+      matchedAccounts: [],
+      bridgeErrors: undefined,
+      bridgeWarnings: undefined,
+    });
+
+    it("renders the contact row (name + scope - address) without the Address matched subheader", async () => {
+      const address = "0x95f98055ag77xe7csuz15e36";
+      mockedFormatAddress.mockReturnValue("0x95f...15e36");
+      const onSelect = jest.fn();
+
+      const { user } = render(
+        <AddressMatchedSection
+          searchResult={baseResult(address)}
+          searchValue={address}
+          onSelect={onSelect}
+          isAddressComplete
+          matchedContact={{ name: "Benoit L", scope: "Ethereum" }}
+        />,
+      );
+
+      expect(screen.getByText("Benoit L")).toBeInTheDocument();
+      expect(screen.getByText("Ethereum - 0x95f...15e36")).toBeInTheDocument();
+      // No subheader, no first-interaction warning, no "Send to" row.
+      expect(screen.queryByText("Address matched")).not.toBeInTheDocument();
+      expect(screen.queryByText(/Send to/)).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("send-matched-contact-row"));
+      expect(onSelect).toHaveBeenCalledWith(address);
+    });
+
+    it("prefers the own-account match over the contact row", () => {
+      const address = "0x95f98055ag77xe7csuz15e36";
+      mockedFormatAddress.mockReturnValue("0x95f...15e36");
+
+      render(
+        <AddressMatchedSection
+          searchResult={{
+            ...baseResult(address),
+            // Not first interaction — the RecentHistoryWarningCard needs the
+            // FlowWizard context this section-level suite doesn't mount.
+            isFirstInteraction: false,
+            isLedgerAccount: true,
+            accountName: "Ethereum 2",
+            matchedAccounts: [
+              {
+                account: createMockAccount({ id: "account_2", freshAddress: address }),
+                accountName: undefined,
+                accountBalance: undefined,
+                accountBalanceFormatted: undefined,
+              },
+            ],
+          }}
+          searchValue={address}
+          onSelect={jest.fn()}
+          isAddressComplete
+          matchedContact={{ name: "Benoit L", scope: "Ethereum" }}
+        />,
+      );
+
+      expect(screen.queryByTestId("send-matched-contact-row")).not.toBeInTheDocument();
+      expect(screen.getByText("Send to Ethereum 2")).toBeInTheDocument();
+    });
+
+    it("falls back to the disabled generic row when the address is sanctioned", () => {
+      const address = "0x95f98055ag77xe7csuz15e36";
+      mockedFormatAddress.mockReturnValue("0x95f...15e36");
+
+      render(
+        <AddressMatchedSection
+          searchResult={baseResult(address)}
+          searchValue={address}
+          onSelect={jest.fn()}
+          isAddressComplete
+          isSanctioned
+          matchedContact={{ name: "Benoit L", scope: "Ethereum" }}
+        />,
+      );
+
+      expect(screen.queryByTestId("send-matched-contact-row")).not.toBeInTheDocument();
+    });
+  });
 });

@@ -203,4 +203,68 @@ describe("buildRecipientSuggestionGroups", () => {
     const out = buildRecipientSuggestionGroups(w, "", 1);
     expect(out.external[0].addressHex).toBe("0xaaaabbbbccccddddeeee0011223344556677889900");
   });
+
+  describe("crypto compatibility filter", () => {
+    const QNT_ADDR = "11".repeat(20);
+    const ETH_ADDR = "22".repeat(20);
+    const w = wallet({
+      contacts: {
+        Benoit: {
+          name: "Benoit",
+          groupHandleHex: "gh",
+          hmacNameHex: "hn",
+          entries: [
+            // Annotated as Quant via the cryptoMeta sidecar.
+            {
+              scope: "Quant",
+              addressHex: QNT_ADDR,
+              hmacRestHex: "h",
+              derivationPath: "x",
+              chainId: 1,
+            },
+            // No annotation → resolves to the chain-native token (ETH).
+            {
+              scope: "Ethereum 2",
+              addressHex: ETH_ADDR,
+              hmacRestHex: "h",
+              derivationPath: "x",
+              chainId: 1,
+            },
+          ],
+        },
+      },
+    });
+    // 3-part cryptoMeta key: `${chainId}:${address}:${scope}` → CoinGecko id.
+    const meta = { [`1:${QNT_ADDR}:Quant`]: "quant-network" };
+
+    it("drops entries holding a different asset on the same chain", () => {
+      const out = buildRecipientSuggestionGroups(w, "", 1, {
+        selectedTicker: "ETH",
+        cryptoMeta: meta,
+      });
+      expect(out.external.map(s => s.scope)).toEqual(["Ethereum 2"]);
+    });
+
+    it("keeps only the matching asset when sending the token", () => {
+      const out = buildRecipientSuggestionGroups(w, "", 1, {
+        selectedTicker: "QNT",
+        cryptoMeta: meta,
+      });
+      expect(out.external.map(s => s.scope)).toEqual(["Quant"]);
+    });
+
+    it("treats un-annotated entries as the chain-native token", () => {
+      const out = buildRecipientSuggestionGroups(w, "", 1, {
+        selectedTicker: "ETH",
+        cryptoMeta: {},
+      });
+      // Without annotations both entries fall back to ETH.
+      expect(out.external).toHaveLength(2);
+    });
+
+    it("applies no crypto filter when the option is omitted (back-compat)", () => {
+      const out = buildRecipientSuggestionGroups(w, "", 1);
+      expect(out.external).toHaveLength(2);
+    });
+  });
 });

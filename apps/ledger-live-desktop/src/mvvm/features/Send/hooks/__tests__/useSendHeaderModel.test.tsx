@@ -17,6 +17,12 @@ jest.mock("~/renderer/contacts/useDisplayAddress", () => ({
   useDisplayAddress: jest.fn((address: string | undefined) => address),
   useContactResolution: jest.fn(() => null),
 }));
+// The hook reads `accountsSelector` (for the recipient's inline avatar) via
+// LLD's useSelector — no redux Provider in this hook-level suite, so stub
+// it with an empty account list.
+jest.mock("LLD/hooks/redux", () => ({
+  useSelector: jest.fn(() => []),
+}));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";

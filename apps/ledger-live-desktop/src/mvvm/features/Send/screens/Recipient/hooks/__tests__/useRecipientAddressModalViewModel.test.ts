@@ -19,6 +19,11 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   useBatchMaybeAccountName: jest.fn(() => []),
   walletSelector: jest.fn((state: { wallet?: unknown }) => state.wallet || {}),
 }));
+// The address-book resolution needs redux + the contacts IPC store —
+// neither is mounted by this hook-level suite.
+jest.mock("../../../../hooks/useMatchedContactEntry", () => ({
+  useMatchedContactEntry: jest.fn(() => null),
+}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);

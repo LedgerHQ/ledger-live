@@ -44,9 +44,7 @@ describe("buildContactsDataSource", () => {
 
   it("lookupFrom returns null when no Ledger account matches", async () => {
     const ds = buildContactsDataSource(walletWithExternal())!;
-    expect(
-      await ds.lookupFrom({ address: "0xunknown", chainId: ETH_CHAIN_ID }),
-    ).toBeNull();
+    expect(await ds.lookupFrom({ address: "0xunknown", chainId: ETH_CHAIN_ID })).toBeNull();
   });
 
   it("lookupFrom returns the Ledger account decoration on a case-insensitive address match", async () => {
@@ -253,6 +251,57 @@ describe("buildContactsDataSource", () => {
       expect(result).toMatchObject({
         kind: "ledgerAccount",
         accountName: "Account 1",
+      });
+    });
+  });
+
+  describe("stale rename duplicates", () => {
+    // Historical wallets (written before `addLedgerAccount` pruned the
+    // re-registered record) can hold the OLD and NEW name for the same
+    // address. The newest registration sits later in insertion order and
+    // must win — otherwise the device's From decoration shows the old
+    // name during signing.
+    const walletWithRenamedAccount = (): ContactsWallet => ({
+      contacts: {},
+      accounts: {
+        "Ethereum 1": {
+          name: "Ethereum 1",
+          derivationPath: "44'/60'/0'/0/0",
+          chainId: ETH_CHAIN_ID,
+          addressHex: "0xDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDd",
+          hmacProofHex: "0xhmacProofOld",
+        },
+        "Ethereum m": {
+          name: "Ethereum m",
+          derivationPath: "44'/60'/0'/0/0",
+          chainId: ETH_CHAIN_ID,
+          addressHex: "0xDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDdDd",
+          hmacProofHex: "0xhmacProofNew",
+        },
+      },
+    });
+
+    it("lookupFrom resolves to the most recently registered name", async () => {
+      const ds = buildContactsDataSource(walletWithRenamedAccount())!;
+      const result = await ds.lookupFrom({
+        address: "0xdddddddddddddddddddddddddddddddddddddddd",
+        chainId: ETH_CHAIN_ID,
+      });
+      expect(result).toMatchObject({
+        accountName: "Ethereum m",
+        hmacProofHex: "0xhmacProofNew",
+      });
+    });
+
+    it("lookupTo resolves to the most recently registered name", async () => {
+      const ds = buildContactsDataSource(walletWithRenamedAccount())!;
+      const result = await ds.lookupTo({
+        address: "0xdddddddddddddddddddddddddddddddddddddddd",
+        chainId: ETH_CHAIN_ID,
+      });
+      expect(result).toMatchObject({
+        kind: "ledgerAccount",
+        accountName: "Ethereum m",
       });
     });
   });

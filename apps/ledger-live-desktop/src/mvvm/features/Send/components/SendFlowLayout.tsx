@@ -10,6 +10,7 @@ import {
   type SendFlowBusinessContext,
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
+import { RecipientViewProvider } from "../context/RecipientViewContext";
 import { SendHeader } from "./SendHeader";
 import { AnimatedHeight } from "./AnimatedHeight";
 import { track } from "~/renderer/analytics/segment";
@@ -57,38 +58,42 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="text-base">
-        {shouldShowStatusGradient && (
-          <div
-            className={cn("pointer-events-none absolute inset-x-0 top-0 h-full", {
-              "bg-gradient-error": state.flowStatus === FLOW_STATUS.ERROR,
-              "bg-gradient-success": state.flowStatus === FLOW_STATUS.SUCCESS,
-            })}
-          />
-        )}
-        {shouldAnimateHeight ? (
-          <AnimatedHeight>
-            <div className="flex flex-col">
+        {/* Recipient sub-view (default / contacts / accounts) is shared by
+            SendHeader and the step body; any step change snaps it back. */}
+        <RecipientViewProvider resetKey={wizard.currentStep}>
+          {shouldShowStatusGradient && (
+            <div
+              className={cn("pointer-events-none absolute inset-x-0 top-0 h-full", {
+                "bg-gradient-error": state.flowStatus === FLOW_STATUS.ERROR,
+                "bg-gradient-success": state.flowStatus === FLOW_STATUS.SUCCESS,
+              })}
+            />
+          )}
+          {shouldAnimateHeight ? (
+            <AnimatedHeight>
+              <div className="flex flex-col">
+                <SendHeader />
+                {StepComponent && (
+                  <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
+                    <StepComponent />
+                  </div>
+                )}
+              </div>
+            </AnimatedHeight>
+          ) : (
+            <>
               <SendHeader />
               {StepComponent && (
-                <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
+                <div
+                  key={wizard.currentStep}
+                  className="flex min-h-0 flex-1 animate-fade-in flex-col"
+                >
                   <StepComponent />
                 </div>
               )}
-            </div>
-          </AnimatedHeight>
-        ) : (
-          <>
-            <SendHeader />
-            {StepComponent && (
-              <div
-                key={wizard.currentStep}
-                className="flex min-h-0 flex-1 animate-fade-in flex-col"
-              >
-                <StepComponent />
-              </div>
-            )}
-          </>
-        )}
+            </>
+          )}
+        </RecipientViewProvider>
       </DialogContent>
     </Dialog>
   );
