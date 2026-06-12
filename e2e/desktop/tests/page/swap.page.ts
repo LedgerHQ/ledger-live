@@ -541,6 +541,15 @@ export class SwapPage extends WebViewAppPage {
     await this.goAndWaitForSwapToBeReady(() => sendDeepLink(this.page, url));
   }
 
+  @step("Clear swap account selection from localStorage")
+  async clearSwapState() {
+    const webview = await this.getWebView();
+    await webview.evaluate(() => {
+      localStorage.removeItem("from-account");
+      localStorage.removeItem("to-account");
+    });
+  }
+
   @step("Go to swap history")
   async goToSwapHistory() {
     await this.historyButton.click();
