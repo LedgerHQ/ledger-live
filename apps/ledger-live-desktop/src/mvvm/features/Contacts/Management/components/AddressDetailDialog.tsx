@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -9,8 +9,9 @@ import {
   Tag,
   TileButton,
 } from "@ledgerhq/lumen-ui-react";
-import { ArrowUp, PenEdit, Trash } from "@ledgerhq/lumen-ui-react/symbols";
+import { ArrowUp, Check, Copy, PenEdit, Trash } from "@ledgerhq/lumen-ui-react/symbols";
 import { cn } from "LLD/utils/cn";
+import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import type { CryptoOption } from "~/mvvm/features/Contacts/constants/topCryptos";
 import { getChainInfo } from "../utils/getChainInfo";
@@ -30,6 +31,17 @@ const DestructiveTrash = (props: {
   className?: string;
   size?: 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56;
 }) => <Trash {...props} style={{ color: "var(--text-error)" }} />;
+
+/**
+ * Green checkmark for the transient "Copied" confirmation state of the
+ * Copy tile (Figma 14421:13626). Same inline-style workaround as
+ * `DestructiveTrash` above — TileButton bakes `text-base` onto the icon,
+ * so the success tint must come through `style` to win the cascade.
+ */
+const SuccessCheck = (props: {
+  className?: string;
+  size?: 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56;
+}) => <Check {...props} style={{ color: "var(--text-success)" }} />;
 
 type Props = {
   open: boolean;
@@ -61,7 +73,7 @@ type Props = {
   onDelete?: () => void;
 };
 
-type ActionId = "send" | "edit" | "delete";
+type ActionId = "send" | "copy" | "edit" | "delete";
 
 type Action = {
   id: ActionId;
@@ -70,14 +82,19 @@ type Action = {
   destructive?: boolean;
 };
 
-// Order is Send / Edit / Delete. "Edit" (pen) opens the merged
+// Order is Send / Copy / Edit / Delete. "Copy" (Figma 14421:13622) puts
+// the full address hex on the clipboard. "Edit" (pen) opens the merged
 // EditAddressDialog, which changes the address hex AND/OR the per-entry
 // name in one flow (the former separate "Rename" tile is folded in).
 const ACTIONS: Action[] = [
   { id: "send", i18nKey: "contactsManagement.addressDialog.send", icon: ArrowUp },
+  { id: "copy", i18nKey: "contactsManagement.addressDialog.copy", icon: Copy },
   { id: "edit", i18nKey: "contactsManagement.addressDialog.edit", icon: PenEdit },
   { id: "delete", i18nKey: "contactsManagement.addressDialog.delete", icon: DestructiveTrash, destructive: true },
 ];
+
+/** How long the Copy tile shows its green "Copied" confirmation. */
+const COPIED_FEEDBACK_MS = 3000;
 
 const noop = () => {};
 
@@ -93,11 +110,13 @@ const noop = () => {};
  *     2. A `Tag` (md) carrying the network label (e.g. "Base Network").
  *     3. The user's `scope` label in `heading-3-semi-bold`.
  *     4. The FULL (non-truncated) address in `body-2`.
- *     5. Three Lumen `TileButton`s — Send / Edit / Delete
+ *     5. Four Lumen `TileButton`s — Send / Copy / Edit / Delete
  *        (destructive `text-error` tint on the last one).
  *
- * Edit and Delete are wired to the host's dialog state; Send stays inert
- * in L4 (carries hover/pressed/focus chrome but fires no side-effect).
+ * Copy writes the address to the clipboard and shows a transient green
+ * "Copied" confirmation; Edit and Delete are wired to the host's dialog
+ * state; Send stays inert in L4 (carries hover/pressed/focus chrome but
+ * fires no side-effect).
  *
  * Close-animation handling: we keep the most recently seen `entry` in
  * a local `stickyEntry` state so the dialog body has content to render
@@ -128,6 +147,27 @@ export function AddressDetailDialog({
     if (entry) setStickyEntry(entry);
   }, [entry]);
 
+  // Transient "Copied" confirmation on the Copy tile: green check +
+  // relabel for COPIED_FEEDBACK_MS after a successful clipboard write,
+  // then back to the idle "Copy" state.
+  const [copied, setCopied] = useState(false);
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const copyToClipboard = useCopyToClipboard(() => {
+    setCopied(true);
+    clearTimeout(copiedTimerRef.current);
+    copiedTimerRef.current = setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
+  });
+  useEffect(() => () => clearTimeout(copiedTimerRef.current), []);
+
+  // Reset the confirmation on (re)open rather than on close, so the
+  // tile doesn't visibly flip back to "Copy" mid close-animation.
+  useEffect(() => {
+    if (open) {
+      setCopied(false);
+      clearTimeout(copiedTimerRef.current);
+    }
+  }, [open]);
+
   if (!stickyEntry) return null;
   const chain = getChainInfo(stickyEntry.chainId);
 
@@ -150,7 +190,20 @@ export function AddressDetailDialog({
               gas token (no badge — it would just stack the same glyph
               on itself) when the caller didn't carry the crypto.
             */}
-            <div data-testid="contacts-management-address-coin">
+            {/*
+              Squarish network badge (Lumen `coin-network` master, Figma
+              `7375:593`): `dot-symbol-radius-square` is 8px at the 24px
+              badge that pairs with a 64px coin. CryptoIcon hardcodes its
+              internal DotSymbol to `circle` with no shape passthrough,
+              so we restyle the badge (the only `.absolute.rounded-full`
+              node in its DOM) from the wrapper. Same workaround as
+              AddressRow — TODO(crypto-icons): drop once CryptoIcon
+              exposes badge shape.
+            */}
+            <div
+              data-testid="contacts-management-address-coin"
+              className="[&_.absolute.rounded-full]:!rounded-[8px]"
+            >
               <CryptoIcon
                 ticker={crypto?.ticker ?? chain.ticker}
                 ledgerId={crypto?.ledgerId ?? chain.ledgerId}
@@ -193,30 +246,39 @@ export function AddressDetailDialog({
 
           <div className="flex w-full items-stretch gap-8">
             {ACTIONS.map(action => {
-              // Per-action dispatch. Edit / Delete are wired through to
-              // the host's dialog state machinery (Edit opens the merged
+              // Per-action dispatch. Copy writes the full address hex to
+              // the clipboard; Edit / Delete are wired through to the
+              // host's dialog state machinery (Edit opens the merged
               // EditAddressDialog; Delete opens the same confirmation
               // modal as the per-row overflow menu); Send stays inert.
               const handler =
-                action.id === "edit"
-                  ? onEdit
-                  : action.id === "delete"
-                    ? onDelete
-                    : undefined;
+                action.id === "copy"
+                  ? () => copyToClipboard(stickyEntry.addressHex)
+                  : action.id === "edit"
+                    ? onEdit
+                    : action.id === "delete"
+                      ? onDelete
+                      : undefined;
+              // The Copy tile flips to a green check + "Copied" while the
+              // confirmation window is live (Figma 14421:13626).
+              const isCopiedState = action.id === "copy" && copied;
+              const label = isCopiedState
+                ? t("contactsManagement.addressDialog.copied")
+                : t(action.i18nKey);
               return (
               <TileButton
                 key={action.id}
-                icon={action.icon}
+                icon={isCopiedState ? SuccessCheck : action.icon}
                 onClick={handler ?? noop}
                 isFull
-                aria-label={t(action.i18nKey)}
+                aria-label={label}
                 data-testid={`contacts-management-address-dialog-${action.id}`}
                 // TileButton has no destructive variant at the pinned
                 // Lumen version — apply `text-error` via className for
                 // both the icon (via currentColor) and the label.
                 className={cn(action.destructive && "text-error")}
               >
-                {t(action.i18nKey)}
+                {label}
               </TileButton>
               );
             })}

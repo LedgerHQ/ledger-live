@@ -8,6 +8,7 @@ import type { CryptoOption } from "~/mvvm/features/Contacts/constants/topCryptos
 import type { DisplayContact } from "../utils/groupContacts";
 import { groupAddressesByCrypto } from "../utils/groupAddressesByCrypto";
 import { useCryptoMeta } from "../utils/cryptoMeta";
+import { getContactPhoto, setContactPhoto, useContactPhotos } from "../utils/contactPhoto";
 import { stripMeSuffix } from "../hooks/useManagementViewModel";
 import { AddAddressDialog } from "./AddAddressDialog";
 import { AddressDetailDialog } from "./AddressDetailDialog";
@@ -214,6 +215,12 @@ export function ContactDetails({
     () => groupAddressesByCrypto(contact.entries, cryptoMeta),
     [contact.entries, cryptoMeta],
   );
+  // Current picture from the cosmetic photo sidecar, keyed by the
+  // contact's wallet key (= the FULL display name — for Me that's the
+  // suffixed form, unlike the stripped `currentName` the Edit dialog
+  // shows). Pre-fills the Edit dialog's picker; saves write back here.
+  const photos = useContactPhotos();
+  const contactPhoto = getContactPhoto(photos, contact.name);
 
   // Condensed sticky header (Figma 14397:13884). An IntersectionObserver
   // rooted on the scroll region watches the full header block: once it
@@ -485,6 +492,10 @@ export function ContactDetails({
           onRenameContact(contact.name, newName);
         }}
         onDeviceRename={newName => onRenameContactOnDevice(contact.name, newName)}
+        currentPhoto={contactPhoto}
+        // Write under `contact.name` (the wallet key), NOT the dialog's
+        // possibly-stripped `currentName` — see the Me-suffix note above.
+        onPhotoSave={photo => setContactPhoto(contact.name, photo)}
       />
 
       <DeleteContactDialog

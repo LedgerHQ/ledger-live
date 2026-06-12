@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { act, render, screen } from "tests/testSetup";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import { AddressDetailDialog } from "../components/AddressDetailDialog";
 
@@ -47,7 +47,7 @@ describe("AddressDetailDialog", () => {
     expect(screen.queryByTestId("contacts-management-address-full")).not.toBeInTheDocument();
   });
 
-  it("shows the contact name, network tag, scope label, full address, and 3 action tiles", () => {
+  it("shows the contact name, network tag, scope label, full address, and 4 action tiles", () => {
     const entry = buildEntry({ scope: "Ethereum Main" });
     render(
       <AddressDetailDialog
@@ -73,10 +73,11 @@ describe("AddressDetailDialog", () => {
     const fullAddress = screen.getByTestId("contacts-management-address-full");
     expect(fullAddress).toHaveTextContent(entry.addressHex);
 
-    // Coin+network icon + 3 action tiles (Send / Edit / Delete) —
+    // Coin+network icon + 4 action tiles (Send / Copy / Edit / Delete) —
     // Rename is merged into Edit.
     expect(screen.getByTestId("contacts-management-address-coin")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-send")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-management-address-dialog-copy")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-edit")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-delete")).toBeInTheDocument();
     // The standalone Rename tile is gone (folded into Edit).
@@ -85,7 +86,7 @@ describe("AddressDetailDialog", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders the action tiles in order (Send / Edit / Delete)", () => {
+  it("renders the action tiles in order (Send / Copy / Edit / Delete)", () => {
     render(
       <AddressDetailDialog
         open
@@ -99,6 +100,7 @@ describe("AddressDetailDialog", () => {
     const ids = tiles.map(el => el.getAttribute("data-testid"));
     expect(ids).toEqual([
       "contacts-management-address-dialog-send",
+      "contacts-management-address-dialog-copy",
       "contacts-management-address-dialog-edit",
       "contacts-management-address-dialog-delete",
     ]);
@@ -134,6 +136,50 @@ describe("AddressDetailDialog", () => {
 
     await user.click(screen.getByTestId("contacts-management-address-dialog-delete"));
     expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it("copies the address to the clipboard and shows a 3s 'Copied' confirmation", async () => {
+    jest.useFakeTimers();
+    try {
+      const entry = buildEntry();
+      const { user } = render(
+        <AddressDetailDialog
+          open
+          onOpenChange={jest.fn()}
+          contact={buildContact()}
+          entry={entry}
+        />,
+        // user-event must drive jest's fake clock, otherwise its internal
+        // waits deadlock under useFakeTimers.
+        { userEventOptions: { advanceTimers: jest.advanceTimersByTime } },
+      );
+
+      const copyTile = screen.getByTestId("contacts-management-address-dialog-copy");
+      expect(copyTile).toHaveTextContent(/^Copy$/);
+
+      // user-event stubs navigator.clipboard on setup; spy on the stub's
+      // writeText to observe what the dialog put on the clipboard (the
+      // stub's readText is broken under jsdom's partial Blob support).
+      const writeText = jest.spyOn(window.navigator.clipboard, "writeText");
+      await user.click(copyTile);
+
+      expect(writeText).toHaveBeenCalledWith(entry.addressHex);
+      expect(copyTile).toHaveTextContent(/^Copied$/);
+
+      // Still confirming just before the 3s window closes…
+      act(() => {
+        jest.advanceTimersByTime(2999);
+      });
+      expect(copyTile).toHaveTextContent(/^Copied$/);
+
+      // …and back to the idle "Copy" state once it elapses.
+      act(() => {
+        jest.advanceTimersByTime(1);
+      });
+      expect(copyTile).toHaveTextContent(/^Copy$/);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("does not throw when an action tile is clicked (inert in L4)", async () => {

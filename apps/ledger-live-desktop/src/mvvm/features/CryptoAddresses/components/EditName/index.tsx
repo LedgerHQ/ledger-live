@@ -5,12 +5,10 @@ import { useEditNameViewModel } from "./useEditNameViewModel";
 
 export const EditName = ({
   account,
-  asset,
   children,
 }: {
   account: AccountLike;
-  asset: string;
   children: React.ReactNode;
 }) => {
-  return <EditNameView {...useEditNameViewModel({ account, asset })}>{children}</EditNameView>;
+  return <EditNameView {...useEditNameViewModel({ account })}>{children}</EditNameView>;
 };

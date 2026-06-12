@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useContacts } from "~/renderer/contacts/useContacts";
 import type { ContactEntry } from "~/renderer/contacts/types";
 import { readCryptoMeta, setCryptoMeta } from "../utils/cryptoMeta";
+import { renameContactPhoto, setContactPhoto } from "../utils/contactPhoto";
 import {
   applyMeSuffix,
   groupContacts,
@@ -47,7 +48,7 @@ export type ManagementViewModel = {
    * name via the dialog (we still no-op on empties + duplicates here as
    * a belt-and-braces).
    */
-  onAddContact: (name: string) => void;
+  onAddContact: (name: string, photoDataUrl?: string) => void;
   /**
    * Local-only rename — re-keys the canonical wallet from the current
    * display name to the new name (no device flow). Used for rows that
@@ -232,7 +233,7 @@ export function useManagementViewModel(): ManagementViewModel {
   );
 
   const onAddContact = useCallback(
-    (name: string) => {
+    (name: string, photoDataUrl?: string) => {
       const trimmed = name.trim();
       if (!trimmed) return;
       // Defensive duplicate guard — the dialog already blocks this.
@@ -243,6 +244,10 @@ export function useManagementViewModel(): ManagementViewModel {
       // so the new row + selection land on the same tick (the floating
       // promise just flushes to the IPC store).
       void contacts.upsertLocalContact({ name: trimmed });
+      // The optional picture lives in the cosmetic `contactPhoto`
+      // sidecar (the DMK-shaped wallet has no avatar slot), keyed by
+      // the contact's wallet key = its name.
+      if (photoDataUrl) setContactPhoto(trimmed, photoDataUrl);
       setSelectedContactName(trimmed);
     },
     [contacts, mergedContacts],
@@ -265,6 +270,9 @@ export function useManagementViewModel(): ManagementViewModel {
       // it as an empty stub under the new name. `commit` updates the
       // snapshot synchronously, so the rename + selection land together.
       void contacts.renameLocalContact({ oldName: currentDisplayName, newName: finalName });
+      // The photo sidecar is keyed by name — follow the re-key so the
+      // picture stays attached.
+      renameContactPhoto(currentDisplayName, finalName);
       setSelectedContactName(finalName);
     },
     [contacts],
@@ -293,6 +301,9 @@ export function useManagementViewModel(): ManagementViewModel {
           oldName: currentDisplayName,
           newName: finalName,
         });
+        // Only after the device verb succeeds — a cancelled prompt
+        // must leave the photo on the old key.
+        renameContactPhoto(currentDisplayName, finalName);
         setSelectedContactName(finalName);
       },
     [contacts],
@@ -433,12 +444,16 @@ export function useManagementViewModel(): ManagementViewModel {
         }
       }
 
-      // 2) Drop the wallet entry (and every address on it). This is the
+      // 2) Drop the cosmetic photo sidecar entry so a future re-add of
+      //    the same name doesn't inherit the old picture.
+      setContactPhoto(displayName, undefined);
+
+      // 3) Drop the wallet entry (and every address on it). This is the
       //    only contact store now, so the contact is fully gone — a
       //    future re-add of the same name lands cleanly.
       await contacts.removeContact({ contactName: displayName });
 
-      // 3) Snap selection back to "me" (always available via the
+      // 4) Snap selection back to "me" (always available via the
       //    synthesized placeholder).
       setSelectedContactName(ME_CONTACT_NAME);
     },

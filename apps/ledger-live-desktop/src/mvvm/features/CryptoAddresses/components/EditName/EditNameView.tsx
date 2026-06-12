@@ -3,16 +3,16 @@ import type { EditNameViewProps } from "./useEditNameViewModel";
 import { EditCryptoAddressNameDialog } from "./components/EditCryptoAddressNameDialog";
 
 export const EditNameView = ({
-  suggestions,
   initialValue,
   onConfirm,
+  makeDeviceVerb,
   children,
 }: EditNameViewProps & { children: React.ReactNode }) => {
   return (
     <EditCryptoAddressNameDialog
       onConfirm={onConfirm}
       initialValue={initialValue}
-      suggestions={suggestions}
+      makeDeviceVerb={makeDeviceVerb}
     >
       {children}
     </EditCryptoAddressNameDialog>
