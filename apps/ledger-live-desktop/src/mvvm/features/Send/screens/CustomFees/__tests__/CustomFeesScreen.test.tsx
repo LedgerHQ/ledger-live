@@ -27,7 +27,7 @@ jest.mock("../../../context/SendFlowContext", () => ({
   useSendFlowActions: jest.fn(() => ({ transaction: mockTransactionActions })),
 }));
 
-jest.mock("../hooks/useStableGasOptions", () => ({
+jest.mock("@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions", () => ({
   useStableGasOptions: jest.fn(tx => tx),
 }));
 

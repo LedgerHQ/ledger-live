@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CustomFeeInputDescriptor } from "@ledgerhq/live-common/bridge/descriptor/types";
+import { BigNumber } from "bignumber.js";
+import type { Transaction } from "../../../../coin-modules/transaction-types";
+import type { CustomFeeInputDescriptor } from "../../../../bridge/descriptor/types";
 
 export function isValidNumberForInput(inputKey: string, value: string): boolean {
   if (!value.trim()) return false;
@@ -16,7 +16,11 @@ export function isValidNumberForInput(inputKey: string, value: string): boolean 
   return num.gt(0);
 }
 
-export function getCustomFeeLabelKeyLwd(inputKey: string): string {
+/**
+ * Maps a custom fee input key to its translation key suffix.
+ * The app layer prepends its own namespace prefix if needed.
+ */
+export function getCustomFeeLabelKey(inputKey: string): string {
   switch (inputKey) {
     case "maxFeePerGas":
       return "newSendFlow.customFees.maxFee";
@@ -33,7 +37,11 @@ export function getCustomFeeLabelKeyLwd(inputKey: string): string {
   }
 }
 
-export function getCustomFeeHelperLabelKeyLwd(inputKey: string): string | null {
+/**
+ * Maps a custom fee input key to its helper translation key suffix, when any.
+ * The app layer prepends its own namespace prefix if needed.
+ */
+export function getCustomFeeHelperLabelKey(inputKey: string): string | null {
   if (inputKey === "maxFeePerGas") return "newSendFlow.customFees.nextBlock";
   return null;
 }

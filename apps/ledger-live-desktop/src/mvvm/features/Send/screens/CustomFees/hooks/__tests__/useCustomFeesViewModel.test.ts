@@ -49,7 +49,7 @@ jest.mock("LLD/hooks/redux", () => {
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
-  useCalculate: () => 100,
+  useCalculateCountervalueCallback: () => () => new BigNumber(100),
 }));
 
 const mockCustomFeeConfigs: Record<string, ReturnType<() => unknown>> = {

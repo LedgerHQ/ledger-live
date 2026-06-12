@@ -1,10 +1,10 @@
 import { useState, useRef, useMemo } from "react";
+import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CustomFeeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import BigNumber from "bignumber.js";
+import type { Transaction } from "../../../../coin-modules/transaction-types";
+import type { CustomFeeConfig } from "../../../../bridge/descriptor/types";
+import { getAccountBridge } from "../../../../bridge/impl";
 import { hasInsufficientBalanceErrorName } from "../utils/customFeeUtils";
 
 type UseBridgeFeeEstimationParams = Readonly<{
