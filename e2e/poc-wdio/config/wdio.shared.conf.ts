@@ -7,6 +7,7 @@ import path from "node:path";
 import { init } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 import { ADBUtils } from "../utils/ADBUtils.ts";
+import { ConfigParser } from "@wdio/config/node";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
 
@@ -198,8 +199,17 @@ export const config: WebdriverIO.Config = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: async function (config, capabilities: WebdriverIO.Capabilities) {
-  // },
+  onPrepare: async function (config, capabilities: WebdriverIO.Capabilities[]) {
+    const parser = new ConfigParser(__filename);
+    await parser.initialize();
+    const allSpecs = parser.getSpecs().map(spec => spec.toString());
+    console.log("All specs:", allSpecs);
+    const mid = Math.ceil(allSpecs.length / 2);
+    if (Array.isArray(capabilities) && capabilities.length >= 2) {
+      capabilities[0]["wdio:specs"] = allSpecs.slice(0, mid);
+      capabilities[1]["wdio:specs"] = allSpecs.slice(mid);
+    }
+  },
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
    * for that worker as well as modify runtime environments in an async fashion.
@@ -266,9 +276,9 @@ export const config: WebdriverIO.Config = {
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
-  beforeTest: function (test) {
-    // ADBUtils.markTestStart(test.title);
-  },
+  // beforeTest: function (test) {
+  // ADBUtils.markTestStart(test.title);
+  // },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
    * beforeEach in Mocha)
