@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { EARN_V2_STAKE_PROGRAMS, WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 import type { ApplicationOptions } from "page";
@@ -12,6 +12,7 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const EARN_V2_FLAGS: PartialFeatures = {
   ...WALLET_40_FEATURE_FLAGS,
+  ...EARN_V2_STAKE_PROGRAMS,
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
 };
 
@@ -74,7 +75,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
       await app.earnV2Dashboard.verifyColdStartPage();
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
+      await app.earnV2Dashboard.verifyEarnCtaFlowOpened(account.currency.ticker);
     });
   });
 }
@@ -125,7 +126,7 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
     it(`${account.currency.ticker} earn CTA initiates staking flow`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
+      await app.earnV2Dashboard.verifyEarnCtaFlowOpened(account.currency.ticker);
     });
   });
 }
@@ -177,8 +178,12 @@ export function runPartnerDappCTATest(
     it(`${account.currency.ticker} earn CTA -> ${providerId} provider -> dapp`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
-      await app.earnV2Dashboard.tapStakingProvider(providerId);
+      if (account.currency.ticker === "ETH") {
+        await app.earnV2Dashboard.navigateEthDepositToPartnerDapp(providerId);
+      } else {
+        await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
+        await app.earnV2Dashboard.tapStakingProvider(providerId);
+      }
       await app.earnV2Dashboard.verifyPartnerDappLoaded(dappUrlSubstring);
     });
   });

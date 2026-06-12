@@ -13,15 +13,30 @@ export default class EarnV2DashboardPage {
   depositRowXPath = (identifier: string) =>
     `//*[starts-with(@data-testid, "deposit-row-") and .//*[contains(text(), "${identifier}")]]`;
 
+  // ETH deposit flow locators (earn v2 webview)
+  ethProviderPanel = "eth-provider-panel";
+  ethProviderCard = (providerId: string) => `eth-provider-card-${providerId}`;
+  ethDepositAmountInput = "amount-input-section-input";
+  ethDepositAmountContinueCta = "amount-continue-cta";
+  ethDepositProviderContinueCta = "text-button-cta";
+
   // Native locators
   stakingProvider = (providerId: string) => `staking-provider-${providerId}-title`;
   earnMenuOption = (label: string) =>
     `earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`;
   private static readonly stakingFlowTestIds: Record<string, string | RegExp> = {
-    ETH: "staking-provider-modal-title",
     ATOM: /^(enabled-|disabled-)?cosmos-delegation-start-button$/,
     SOL: /^(enabled-|disabled-)?solana-delegation-start-button$/,
   };
+
+  // Maps legacy staking-provider modal IDs to earn deposit screen provider card IDs
+  private static readonly ethDepositProviderCardIds: Record<string, string> = {
+    kiln_pooling: "kiln-ethereum-pooling",
+    lido: "lido",
+    "stader-eth": "stader-eth",
+  };
+
+  private static readonly ethDepositAmount = "0.01";
 
   // --- Ice Cold Start ---
 
@@ -94,6 +109,54 @@ export default class EarnV2DashboardPage {
   async verifyWithdrawalFlowVisible() {
     const url = await waitForCurrentWebviewUrlToContain("/redeem");
     jestExpect(url.toLowerCase()).toContain("/redeem");
+  }
+
+  // --- Earn CTA flow verification ---
+
+  @Step("Verify earn CTA flow opened for $0")
+  async verifyEarnCtaFlowOpened(ticker: string) {
+    if (ticker === "ETH") {
+      await this.verifyEthDepositFlowOpened();
+      return;
+    }
+    await this.verifyStakingFlowOpened(ticker);
+  }
+
+  @Step("Verify ETH deposit flow opened in earn webview")
+  async verifyEthDepositFlowOpened() {
+    await this.verifyDepositFlowVisible();
+    await waitWebElementByTestId(this.ethDepositAmountContinueCta);
+  }
+
+  @Step("Complete ETH deposit amount step")
+  async completeEthDepositAmountStep(amount: string = EarnV2DashboardPage.ethDepositAmount) {
+    await typeTextByWebTestId(this.ethDepositAmountInput, amount);
+    await tapWebElementByTestId(this.ethDepositAmountContinueCta);
+  }
+
+  @Step("Verify ETH provider panel is visible")
+  async verifyEthProviderPanelVisible() {
+    await waitWebElementByTestId(this.ethProviderPanel);
+  }
+
+  @Step("Tap ETH deposit provider card: $0")
+  async tapEthDepositProvider(providerId: string) {
+    const cardId = EarnV2DashboardPage.ethDepositProviderCardIds[providerId] ?? providerId;
+    await tapWebElementByTestId(this.ethProviderCard(cardId));
+  }
+
+  @Step("Tap ETH deposit provider continue CTA")
+  async tapEthDepositProviderContinue() {
+    await tapWebElementByTestId(this.ethDepositProviderContinueCta);
+  }
+
+  @Step("Navigate ETH deposit flow to partner dapp via provider: $0")
+  async navigateEthDepositToPartnerDapp(providerId: string) {
+    await this.verifyEthDepositFlowOpened();
+    await this.completeEthDepositAmountStep();
+    await this.verifyEthProviderPanelVisible();
+    await this.tapEthDepositProvider(providerId);
+    await this.tapEthDepositProviderContinue();
   }
 
   // --- Staking Flow Verification (native) ---
