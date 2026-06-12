@@ -203,9 +203,9 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
             ledger-live
@@ -532,7 +532,7 @@ jobs:
     needs: [prepare-devices, report-to-allure, report-to-allure-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         name: Prepare Slack payload
         id: status
         env:

@@ -22,16 +22,16 @@ runs:
   steps:
     - name: generate token
       id: generate-token
-      uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
       with:
-        app-id: ${{ inputs.bot_id }}
+        client-id: ${{ inputs.bot_id }}
         private-key: ${{ inputs.bot_key }}
         repositories: |
           coin-apps
           ledger-live
 
     - name: Retrieving coin apps
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         ref: master
         repository: LedgerHQ/coin-apps

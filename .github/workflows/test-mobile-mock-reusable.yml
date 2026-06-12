@@ -191,7 +191,7 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           key: ${{ steps.cache-keys.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -204,7 +204,7 @@ jobs:
 
       - name: Check if Android Native Build exists already
         id: check-android-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           key: ${{ steps.cache-keys.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -217,7 +217,7 @@ jobs:
 
       - name: Check if iOS JS Build exists already
         id: check-ios-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           key: ${{ steps.cache-keys.outputs.ios_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -230,7 +230,7 @@ jobs:
 
       - name: Check if Android JS Build exists already
         id: check-android-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           key: ${{ steps.cache-keys.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -243,7 +243,7 @@ jobs:
 
       - name: Check if pod lockfile has been validated
         id: check-lockfile-status
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           key: ${{ steps.cache-keys.outputs.pod_check_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -353,7 +353,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
-      - uses: nick-fields/retry@v3
+      - uses: nick-fields/retry@v4
         name: install dependencies
         id: install-dependencies
         with:
@@ -609,9 +609,9 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Create mobile metafile
         run: |

@@ -201,9 +201,9 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
             coin-apps
@@ -367,7 +367,7 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ steps.cache-keys.outputs.ios_native_key }}
@@ -381,7 +381,7 @@ jobs:
 
       - name: Check if Android Native Build exists already
         id: check-android-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
           key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -395,7 +395,7 @@ jobs:
 
       - name: Check if iOS JS Build exists already
         id: check-ios-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.ios_js_key }}
@@ -409,7 +409,7 @@ jobs:
 
       - name: Check if Android JS Build exists already
         id: check-android-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.android_js_key }}
@@ -547,7 +547,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
-      - uses: nick-fields/retry@v3
+      - uses: nick-fields/retry@v4
         name: install dependencies
         id: install-dependencies
         with:
@@ -807,7 +807,7 @@ jobs:
         timeout-minutes: 20
         with:
           coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build CLI
@@ -1148,7 +1148,7 @@ jobs:
       TESTS_TYPE: ${{ inputs.tests_type }}
     steps:
       - name: format message
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         id: message
         with:
           script: |
@@ -1287,7 +1287,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -1316,7 +1316,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
