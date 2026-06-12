@@ -7,7 +7,6 @@ import path from "node:path";
 import { init } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 import { ADBUtils } from "../utils/ADBUtils.ts";
-import { ConfigParser } from "@wdio/config/node";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
 
@@ -200,6 +199,7 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: async function (config, capabilities: WebdriverIO.Capabilities[]) {
+    const { ConfigParser } = await import("@wdio/config/node");
     const parser = new ConfigParser(__filename);
     await parser.initialize();
     const allSpecs = parser.getSpecs().map(spec => spec.toString());
