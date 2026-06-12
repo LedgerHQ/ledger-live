@@ -3,12 +3,12 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { MediaButton } from "@ledgerhq/lumen-ui-react";
 import { StockSuggestion } from "../types";
 
-type StockRowProps = {
+type StockPillProps = {
   stock: StockSuggestion;
   onClick: (currencyId: string) => void;
 };
 
-export function StockRow({ stock, onClick }: Readonly<StockRowProps>) {
+export function StockPill({ stock, onClick }: Readonly<StockPillProps>) {
   const { name, ticker, ledgerId, navigationId } = stock;
 
   if (!ledgerId) return null;

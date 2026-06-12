@@ -8796,6 +8796,7 @@
   "assets": {
     "cryptos": "Crypto",
     "stablecoins": "Stablecoins",
+    "stocks": "Stocks",
     "cryptoAccounts": "Crypto accounts",
     "accountsCount_one": "{{count}} account",
     "accountsCount_other": "{{count}} accounts",

@@ -7,7 +7,7 @@ import {
   SubheaderTitle,
   SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-react";
-import { StockRow } from "./components/StockRow";
+import { StockPill } from "./components/StockPill";
 import { StocksSkeleton } from "./components/StocksSkeleton";
 import { splitIntoTwoRows } from "./utils/splitIntoTwoRows";
 import { StocksHeaderVariant, StocksSectionViewProps } from "./types";
@@ -82,7 +82,7 @@ export function StocksSectionView({
             {rows.map((rowStocks, rowIndex) => (
               <div key={`${rowStocks.join("-")}-${rowIndex}`} className="flex gap-8">
                 {rowStocks.map(stock => (
-                  <StockRow key={stock.id} stock={stock} onClick={navigateToAsset} />
+                  <StockPill key={stock.id} stock={stock} onClick={navigateToAsset} />
                 ))}
               </div>
             ))}

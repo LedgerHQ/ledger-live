@@ -20,14 +20,28 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
+  ASSETS_PAGE_CATEGORY_STOCKS,
   ASSETS_PRICE_REFRESH_INTERVAL_MS,
   EMPTY_STATE_CRYPTOS,
   EMPTY_STATE_STABLECOINS,
+  type AssetsPageCategory,
 } from "LLD/features/Assets/constants";
 import type { AssetTableItem } from "LLD/features/Assets/types";
 import type { CryptoAssetsViewModel } from "../types";
 import { track } from "~/renderer/analytics/segment";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
+
+const TITLE_I18N_KEY_BY_CATEGORY: Record<AssetsPageCategory, string> = {
+  [ASSETS_PAGE_CATEGORY_CRYPTOS]: "assets.cryptos",
+  [ASSETS_PAGE_CATEGORY_STABLECOINS]: "assets.stablecoins",
+  [ASSETS_PAGE_CATEGORY_STOCKS]: "assets.stocks",
+};
+
+const TRACKING_TYPE_BY_CATEGORY: Record<AssetsPageCategory, "crypto" | "stable" | "stocks"> = {
+  [ASSETS_PAGE_CATEGORY_CRYPTOS]: "crypto",
+  [ASSETS_PAGE_CATEGORY_STABLECOINS]: "stable",
+  [ASSETS_PAGE_CATEGORY_STOCKS]: "stocks",
+};
 
 export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
@@ -40,7 +54,7 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
   const { hasAccount } = useAccountStatus();
   const isEmptyState = !hasOnboardedDevice || !hasAccount;
 
-  const { categorizedAssets, isLoadingStablecoinTickers, stablecoinTickers } =
+  const { categorizedAssets, isLoadingStablecoinTickers, isLoadingStocks, stablecoinTickers } =
     useCategorizedAssetsFromPortfolio();
 
   const needsCryptoPlaceholders =
@@ -68,6 +82,9 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
   );
 
   const items = useMemo((): AssetTableItem[] => {
+    if (category === ASSETS_PAGE_CATEGORY_STOCKS) {
+      return categorizedAssets.stocks.map(item => ({ ...item, isPlaceholder: false }));
+    }
     if (category === ASSETS_PAGE_CATEGORY_CRYPTOS) {
       if (isEmptyState) {
         return padItems([], resolvedDefaults.cryptos, EMPTY_STATE_CRYPTOS);
@@ -85,6 +102,7 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     isEmptyState,
     categorizedAssets.cryptos,
     categorizedAssets.stablecoins,
+    categorizedAssets.stocks,
     resolvedDefaults.cryptos,
     resolvedDefaults.stablecoins,
   ]);
@@ -107,12 +125,12 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
       ? needsCryptoPlaceholders
       : needsStablecoinPlaceholders;
 
-  const isLoading = needsPaddingForCategory
-    ? isLoadingAssetsData || isLoadingStablecoinTickers
-    : isLoadingStablecoinTickers;
+  const isLoading =
+    category === ASSETS_PAGE_CATEGORY_STOCKS
+      ? isLoadingStocks
+      : isLoadingStablecoinTickers || (needsPaddingForCategory && isLoadingAssetsData);
 
-  const title =
-    category === ASSETS_PAGE_CATEGORY_CRYPTOS ? t("assets.cryptos") : t("assets.stablecoins");
+  const title = t(TITLE_I18N_KEY_BY_CATEGORY[category]);
 
   const onBack = useCallback(() => {
     navigate("/");
@@ -143,6 +161,6 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
     items: itemsWithTrend,
     isLoading,
     onAssetRowClick,
-    trackingType: category === ASSETS_PAGE_CATEGORY_CRYPTOS ? "crypto" : "stable",
+    trackingType: TRACKING_TYPE_BY_CATEGORY[category],
   };
 }
