@@ -21,6 +21,7 @@ type AmountScreenInnerProps = Readonly<{
   onReview: () => void;
   onGetFunds: () => void;
   onSelectCoinControl: () => void;
+  onSelectCustomFees: () => void;
 }>;
 
 export function AmountScreenInner(props: AmountScreenInnerProps) {

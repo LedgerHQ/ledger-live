@@ -41,6 +41,7 @@ export type NetworkFeesViewModel = Readonly<{
   feePresetLabelsOptions: FeePresetLabelOption[];
   onSelectFeeStrategy: (strategy: string) => void;
   onSelectCoinControl?: () => void;
+  onSelectCustomFees?: () => void;
   uiConfig?: Readonly<{
     hasCustomFees: boolean;
     hasCoinControl: boolean;

@@ -29,6 +29,7 @@ type UseAmountScreenViewModelParams = Readonly<{
   onReview: () => void;
   onGetFunds: () => void;
   onSelectCoinControl?: () => void;
+  onSelectCustomFees?: () => void;
 }>;
 
 export function useAmountScreenViewModel({
@@ -43,6 +44,7 @@ export function useAmountScreenViewModel({
   onReview,
   onGetFunds,
   onSelectCoinControl,
+  onSelectCustomFees,
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
 
@@ -86,6 +88,7 @@ export function useAmountScreenViewModel({
     uiConfig,
     transactionActions,
     onSelectCoinControl,
+    onSelectCustomFees,
   });
 
   const amountInput = useAmountInputController({

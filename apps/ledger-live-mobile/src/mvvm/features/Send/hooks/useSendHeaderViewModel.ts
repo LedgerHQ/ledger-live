@@ -50,10 +50,16 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const currencyName = state.account.currency?.ticker ?? "";
   const showTitle = currentStepConfig?.showTitle !== false;
-  const title = showTitle ? t("send.newSendFlow.title", { currency: currencyName }) : "";
-  const descriptionText = showTitle
-    ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
-    : "";
+  const isCustomFeesStep = currentStep === SEND_FLOW_STEP.CUSTOM_FEES;
+  const title = !showTitle
+    ? ""
+    : isCustomFeesStep
+      ? t("send.newSendFlow.customFees.title")
+      : t("send.newSendFlow.title", { currency: currencyName });
+  const descriptionText =
+    showTitle && !isCustomFeesStep
+      ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
+      : "";
 
   const showHeaderRight = currentStepConfig?.showHeaderRight !== false;
   const canGoBack = Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());
