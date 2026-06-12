@@ -1,6 +1,8 @@
-import type { MemberCredentials } from "./types";
+import type { MemberCredentials } from "../../src/types";
 
-export async function readMemberCredentials(): Promise<MemberCredentials> {
+type Credentials = MemberCredentials & { trustchainId: string };
+
+export async function readMemberCredentials(): Promise<Credentials> {
   const credentials = await readObjectFromStdin(
     'Paste JSON credentials (multi-line ok) { "trustchainId": "...", "pubkey": "...", "privatekey": "..." }:\n> ',
   );
@@ -8,7 +10,7 @@ export async function readMemberCredentials(): Promise<MemberCredentials> {
   return credentials;
 }
 
-function validateMemberCredentials(credentials: unknown): asserts credentials is MemberCredentials {
+function validateMemberCredentials(credentials: unknown): asserts credentials is Credentials {
   if (typeof credentials !== "object" || credentials === null) {
     throw new TypeError("Credentials must be a JSON object");
   }

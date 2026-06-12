@@ -1,18 +1,11 @@
 /* oxlint-disable eslint/no-console */
 import makeFetchCookie from "fetch-cookie";
-import { AuthSDK } from "../src/authSDK";
-import { NobleKeyPair } from "./utils/NobleKeyPair";
-import { LkrpIdentityProvider } from "./utils/LkrpIdentityProvider";
+import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { LkrpIdentityProvider } from "../src/LKRPIdentityProvider";
 import { readMemberCredentials } from "./utils/readMemberCredentials";
 
 /**
  * Real network smoke check (no mocked endpoints).
- *
- * Unlike `src/__tests__/authSDK.integration.test.ts` (which mocks every endpoint
- * with MSW), this script runs the full `AuthSDK.authenticate()` flow against a
- * live Keycloak realm and identity provider. It is a manual developer tool, not a
- * test: it is never wired into CI and is run on demand with
- * `pnpm --filter @ledgerhq/ledger-auth check-flow`.
  *
  * Credentials are entered either by piping a MemberCredentials object or writing it interactively.
  * The target environment defaults to the Ledger staging Keycloak and can be overridden with:
@@ -33,7 +26,11 @@ main()
   });
 
 async function main(): Promise<void> {
+  const provider = new LkrpIdentityProvider();
+
   const credentials = await readMemberCredentials();
+  provider.setKeypair(credentials);
+  provider.setTrustchainId(credentials.trustchainId);
 
   console.log("[CHECK] keycloak base url:", KEYCLOAK_BASE_URL);
   console.log("[CHECK] keycloak realm:", KEYCLOAK_REALM);
@@ -46,10 +43,7 @@ async function main(): Promise<void> {
       keycloakRealm: KEYCLOAK_REALM,
     },
     {
-      provider: new LkrpIdentityProvider(
-        NobleKeyPair.fromMemberCredentials(credentials),
-        credentials.trustchainId,
-      ),
+      provider,
       fetch: makeFetchCookie(fetch),
     },
   ).authenticate();
