@@ -109,7 +109,7 @@ jobs:
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -128,6 +128,7 @@ jobs:
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"
           use-mise: "true"
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -193,7 +194,7 @@ jobs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}

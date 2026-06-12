@@ -1287,7 +1287,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -1316,7 +1316,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
