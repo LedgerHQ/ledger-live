@@ -3,7 +3,6 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
-import { useRemountKeyOnFocus } from "~/hooks/useRemountKeyOnFocus";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 import { usePersistedPortfolioBalance } from "./usePersistedPortfolioBalance";
@@ -20,7 +19,6 @@ export const usePortfolioBalanceSectionViewModel = ({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
-  const remountKey = useRemountKeyOnFocus();
 
   const {
     portfolio,
@@ -79,7 +77,6 @@ export const usePortfolioBalanceSectionViewModel = ({
     isAnalyticPillVisible,
     isLoading: effectiveIsLoading,
     shouldDisplayBalanceRefreshRework,
-    remountKey,
     onToggleDiscreetMode: toggleDiscreetMode,
   };
 };

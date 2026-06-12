@@ -25,7 +25,6 @@ export const PortfolioBalanceSectionView = ({
   isAnalyticPillVisible,
   isLoading,
   shouldDisplayBalanceRefreshRework,
-  remountKey,
   onToggleDiscreetMode,
 }: PortfolioBalanceSectionViewProps) => {
   const { t } = useTranslation();
@@ -77,7 +76,7 @@ export const PortfolioBalanceSectionView = ({
           <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
             {isBalanceAvailable ? (
               <AmountDisplay
-                key={`${unit.code}-${remountKey}`}
+                key={unit.code}
                 value={balance}
                 formatter={formatter}
                 hidden={discreet}
