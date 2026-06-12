@@ -61,6 +61,9 @@
         "embla-carousel-react",
         "events",
         "@ledgerhq/zcash-utils"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./apps/ledger-live-mobile": {
@@ -91,17 +94,26 @@
         "react-native-randombytes",
         "react-native-udp",
         "stylis"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/env": {
       "entry": [
         "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/live-hooks": {
       "entry": [
         "src/useDebounce.ts",
         "src/useThrottledFunction.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/live-countervalues": {
@@ -110,17 +122,26 @@
         "src/api/index.ts",
         "src/types.ts",
         "src/portfolio.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/live-countervalues-react": {
       "entry": [
         "src/index.tsx",
         "src/portfolio.tsx"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/live-dmk-mobile": {
       "entry": [
         "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/live-wallet": {
@@ -133,6 +154,9 @@
         "src/addAccounts.ts",
         "src/store.ts",
         "src/accountName.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/ledger-key-ring-protocol": {
@@ -140,6 +164,13 @@
         "src/index.ts",
         "src/store.ts",
         "src/qrcode/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/speculos-transport",
+        "@ledgerhq/types-devices"
       ]
     },
     "./libs/hw-ledger-key-ring-protocol": {
@@ -149,11 +180,17 @@
       "ignoreDependencies": [
         "@ledgerhq/logs",
         "@ledgerhq/live-env"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/promise": {
       "entry": [
         "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/ui/packages/native": {
@@ -177,6 +214,9 @@
       "ignore": [
         ".storybook*/*",
         "storybook/constants/*"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/ui/packages/icons": {
@@ -193,11 +233,20 @@
     "./libs/ledgerjs/packages/react-native-hid": {
       "entry": [
         "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     },
     "./libs/asset-aggregation": {
       "entry": [
         "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ],
+      "ignore": [
+        "**/*.mock.*"
       ]
     },
     "./libs/coin-modules/coin-aleo": {
@@ -526,6 +575,9 @@
       ],
       "project": [
         "src/**/*.{ts,tsx}"
+      ],
+      "ignoreDependencies": [
+        "events"
       ]
     },
     "./libs/evm-tools": {
@@ -606,6 +658,13 @@
       ],
       "project": [
         "src/**/*.{ts,tsx}"
+      ],
+      "ignoreDependencies": [
+        "@ton/crypto",
+        "@types/bchaddrjs",
+        "bech32",
+        "bip32",
+        "bip39"
       ]
     },
     "./libs/ledger-wallet-framework": {
@@ -984,6 +1043,14 @@
         "**/*.{ts,tsx}",
         "!palettes/**",
         "!scripts/**"
+      ]
+    },
+    "./libs/live-currency-format": {
+      "entry": [
+        "src/index.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
       ]
     }
   }
