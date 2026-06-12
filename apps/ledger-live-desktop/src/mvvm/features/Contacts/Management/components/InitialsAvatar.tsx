@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "LLD/utils/cn";
 import { getAvatarColor } from "../utils/getAvatarColor";
 import { getContactInitials } from "../utils/getContactInitials";
+import { getContactPhoto, useContactPhotos } from "../utils/contactPhoto";
 
 /**
  * Circular avatar showing 1–2 uppercase initials derived from the contact
@@ -63,6 +64,24 @@ export function InitialsAvatar({ name, size, colorKey }: Props) {
   // don't have an enrichment step (tests, the L1 panel).
   const bg = getAvatarColor(colorKey ?? name);
   const px = SIZE_PX[size];
+
+  // A picture uploaded via the Add-contact dialog (cosmetic
+  // `contactPhoto` sidecar, keyed by contact name) takes precedence
+  // over the initials. The lookup simply misses for non-contact
+  // callers, so they keep the initials rendering.
+  const photos = useContactPhotos();
+  const photo = getContactPhoto(photos, name);
+  if (photo !== undefined) {
+    return (
+      <img
+        src={photo}
+        alt={name}
+        data-testid="contacts-management-photo-avatar"
+        style={{ width: px, height: px }}
+        className="shrink-0 rounded-full object-cover select-none border border-[rgba(255,255,255,0.1)]"
+      />
+    );
+  }
 
   return (
     <div

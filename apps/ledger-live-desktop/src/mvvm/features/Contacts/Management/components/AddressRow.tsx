@@ -93,23 +93,35 @@ export function AddressRow({
       data-testid="contacts-management-address-row"
     >
       <ListItemLeading>
-        <CryptoIcon
-          ticker={crypto.ticker}
-          // `crypto.ledgerId` is the canonical Ledger Live id resolved
-          // against both icon registries (primary `crypto-icons.ledger.
-          // com/index.json` and the CoinGecko fallback). For natives
-          // it's a simple slug (`bitcoin`, `ethereum`, `bsc`); for
-          // tokens it's the CAL format (`ethereum/erc20/usd__coin`).
-          // See `constants/topCryptos.ts` for the resolution notes.
-          ledgerId={crypto.ledgerId}
-          // Always render the network badge — including the visually
-          // redundant ETH-on-Ethereum case — so the icon shape stays
-          // consistent across the row stack and the network is always
-          // legible at a glance.
-          network={chain.ledgerId}
-          size={48}
-          alt={crypto.name}
-        />
+        {/*
+          Squarish network badge (Lumen `coin-network` master, Figma
+          `7375:593`): the dot is a rounded SQUARE — `dot-symbol-radius-
+          square` is 6px at the 20px badge that pairs with a 48px coin.
+          `CryptoIcon` hardcodes its internal DotSymbol to the `circle`
+          default with no shape passthrough, so we restyle it from the
+          wrapper: the badge is the only `.absolute.rounded-full` node
+          in CryptoIcon's DOM (the coin's own circle is not absolute).
+          TODO(crypto-icons): drop once CryptoIcon exposes badge shape.
+        */}
+        <div className="shrink-0 [&_.absolute.rounded-full]:!rounded-[6px]">
+          <CryptoIcon
+            ticker={crypto.ticker}
+            // `crypto.ledgerId` is the canonical Ledger Live id resolved
+            // against both icon registries (primary `crypto-icons.ledger.
+            // com/index.json` and the CoinGecko fallback). For natives
+            // it's a simple slug (`bitcoin`, `ethereum`, `bsc`); for
+            // tokens it's the CAL format (`ethereum/erc20/usd__coin`).
+            // See `constants/topCryptos.ts` for the resolution notes.
+            ledgerId={crypto.ledgerId}
+            // Always render the network badge — including the visually
+            // redundant ETH-on-Ethereum case — so the icon shape stays
+            // consistent across the row stack and the network is always
+            // legible at a glance.
+            network={chain.ledgerId}
+            size={48}
+            alt={crypto.name}
+          />
+        </div>
         <ListItemContent>
           <ListItemContentRow>
             <ListItemTitle>{entry.scope}</ListItemTitle>

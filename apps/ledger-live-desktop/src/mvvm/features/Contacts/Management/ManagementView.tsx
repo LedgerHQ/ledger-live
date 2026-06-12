@@ -22,7 +22,12 @@ export type ManagementViewProps = {
   takenContactNames: string[];
   onSearchQueryChange: (next: string) => void;
   onSelectContact: (name: string) => void;
-  onAddContact: (name: string) => void;
+  /**
+   * `photoDataUrl` is the optional picture from the Add-contact dialog
+   * (validated JPG/PNG ≤2MB, as a `data:` URL) — stored in the cosmetic
+   * `contactPhoto` sidecar by the view model.
+   */
+  onAddContact: (name: string, photoDataUrl?: string) => void;
   onRenameContact: (currentDisplayName: string, newName: string) => void;
   /**
    * Drop one address entry from a contact. Threaded through to
@@ -95,14 +100,14 @@ export function ManagementView({
 }: ManagementViewProps) {
   const [addContactOpen, setAddContactOpen] = useState(false);
 
-  const handleSubmitNewContact = (name: string) => {
+  const handleSubmitNewContact = (name: string, photoDataUrl?: string) => {
     // Order matters: close the dialog first so its close transition
     // plays in parallel with the list re-render. The viewModel's
     // `onAddContact` writes to the sidecar AND auto-selects the new
     // contact, so the right pane shifts to the empty state on the
     // next commit.
     setAddContactOpen(false);
-    onAddContact(name);
+    onAddContact(name, photoDataUrl);
   };
 
   return (

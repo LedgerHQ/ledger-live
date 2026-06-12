@@ -16,6 +16,7 @@ import {
 } from "~/mvvm/features/Contacts/validation";
 import CharCounter from "~/mvvm/features/Contacts/components/CharCounter";
 import { ME_DISPLAY_SUFFIX } from "../utils/groupContacts";
+import { ContactPhotoField } from "./ContactPhotoField";
 
 type Props = {
   open: boolean;
@@ -23,9 +24,11 @@ type Props = {
   /**
    * Called when the user confirms a valid name. The parent is responsible
    * for the actual contact creation + selection — the dialog only knows
-   * about the input.
+   * about the input. `photoDataUrl` carries the (optional) picture the
+   * user uploaded, already validated (JPG/JPEG/PNG, ≤2MB) and encoded
+   * as a `data:` URL; `undefined` when none was selected.
    */
-  onSubmit: (name: string) => void;
+  onSubmit: (name: string, photoDataUrl?: string) => void;
   /**
    * Names that should be rejected as duplicates. Includes canonical
    * `useContacts().wallet.contacts` keys plus any sidecar names. Matched
@@ -35,9 +38,14 @@ type Props = {
 };
 
 /**
- * "Add contact" dialog (Figma frames 13932:5015 / 13932:7803).
+ * "Add contact" dialog (Figma frames 13932:5015 / 13932:7803, picture
+ * row added in 14369:13296).
  *
- * Single text input + char counter + submit button. Validation rules:
+ * Optional picture upload (`ContactPhotoField` — shared with the
+ * Edit-contact dialog) + single text input + char counter + submit
+ * button.
+ *
+ * The picture is optional — it never gates `canSubmit`. Name rules:
  *   - 1..32 characters (`LIMITS.contactName`).
  *   - Printable ASCII only (mirrors the L1 form's
  *     `isInvalidAsciiLabel`).
@@ -55,11 +63,17 @@ type Props = {
 export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState("");
+  // The accepted upload as a data URL (`undefined` = no picture).
+  const [photo, setPhoto] = useState<string | undefined>(undefined);
 
-  // Reset the input whenever the dialog transitions from closed → open
-  // so each open starts with a blank field.
+  // Reset the inputs whenever the dialog transitions from closed → open
+  // so each open starts blank. (The photo field's internal error state
+  // resets through its `key` below.)
   useEffect(() => {
-    if (open) setName("");
+    if (open) {
+      setName("");
+      setPhoto(undefined);
+    }
   }, [open]);
 
   const trimmed = name.trim();
@@ -78,7 +92,7 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
 
   const submit = () => {
     if (!canSubmit) return;
-    onSubmit(trimmed);
+    onSubmit(trimmed, photo);
   };
 
   return (
@@ -104,6 +118,14 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
           className="flex flex-col gap-24 px-24 pt-8 pb-24"
           data-testid="contacts-management-add-contact-dialog"
         >
+          {/*
+            Picture upload row (Figma 14369:13296). The picture is
+            optional — the row never blocks submission. `key={open}`
+            remounts the field on each open/close transition so its
+            internal rejection error resets alongside the photo state.
+          */}
+          <ContactPhotoField key={String(open)} photo={photo} onPhotoChange={setPhoto} />
+
           {/* `gap-8` per the Figma spec — 8px between the input and the
               char counter. */}
           <div className="flex flex-col gap-8 w-full">

@@ -8625,6 +8625,7 @@
         "value": "Value"
       },
       "editName": "Edit name",
+      "nameSignedTooltip": "Name signed with your Ledger",
       "emptyState": "No crypto address yet",
       "emptySearchState": "No accounts match your search",
       "assetCount_zero": "{{count}} asset",
@@ -8634,11 +8635,8 @@
     "editName": {
       "title": "Edit address name",
       "input": "Address name",
-      "suggestions": {
-        "trading": "{{asset}} trading",
-        "savings": "{{asset}} savings"
-      },
       "cta": "Confirm",
+      "tooltip": "Edit account name",
       "syncingTooltip": "Sync in progress, please wait"
     }
   },
@@ -9089,6 +9087,8 @@
     },
     "addressDialog": {
       "send": "Send",
+      "copy": "Copy",
+      "copied": "Copied",
       "edit": "Edit",
       "delete": "Delete"
     },
@@ -9122,6 +9122,12 @@
       "title": "Add contact",
       "placeholder": "Contact name",
       "submit": "Add contact",
+      "uploadPicture": "Upload picture",
+      "removePicture": "Remove picture",
+      "photoHint": "File: JPG, JPEG, PNG - Max size: 2MB",
+      "photoPreviewAlt": "Contact picture preview",
+      "errorPhotoFormat": "Unsupported file — use a JPG, JPEG or PNG image.",
+      "errorPhotoSize": "This image is too large — max size is 2MB.",
       "errorAscii": "Use ASCII characters only.",
       "errorDuplicate": "A contact with this name already exists.",
       "errorMeSuffix": "The '(Me)' suffix is reserved for your own contact.",

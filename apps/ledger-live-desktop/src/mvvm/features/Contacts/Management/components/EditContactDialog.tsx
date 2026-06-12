@@ -15,6 +15,7 @@ import {
 } from "~/mvvm/features/Contacts/validation";
 import CharCounter from "~/mvvm/features/Contacts/components/CharCounter";
 import RunDeviceAction from "~/mvvm/features/Contacts/components/RunDeviceAction";
+import { ContactPhotoField } from "./ContactPhotoField";
 
 type Step =
   | { kind: "name" }
@@ -53,14 +54,30 @@ type Props = {
    * is true.
    */
   onDeviceRename?: (newName: string) => (deviceId: string) => Promise<unknown>;
+  /**
+   * The contact's current picture (data URL from the `contactPhoto`
+   * sidecar), pre-filling the picker on open. `undefined` = none.
+   */
+  currentPhoto?: string;
+  /**
+   * Commits a staged picture change (new data URL, or `undefined` to
+   * delete). Called at submit time, BEFORE any rename — the parent
+   * writes the sidecar under the contact's real wallet key (which may
+   * differ from `currentName`, e.g. the stripped Me name), and the
+   * rename paths re-key the photo afterwards. Photo changes are local
+   * cosmetics, so they apply even if a device rename is then cancelled.
+   */
+  onPhotoSave?: (photo: string | undefined) => void;
 };
 
 /**
  * "Edit contact" Dialog (Figma frame 13981:10017).
  *
  * Layout identical to `AddContactDialog` — same Lumen Dialog shell,
- * `density="expanded"` header, autofocused `TextInput` pre-filled with
- * the contact's current name, char counter, full-width submit Button.
+ * `density="expanded"` header, the shared `ContactPhotoField` picture
+ * picker (add / replace / delete, same rules as Add-contact),
+ * autofocused `TextInput` pre-filled with the contact's current name,
+ * char counter, full-width submit Button.
  *
  * Submit button copy is `Save changes` rather than the Figma's
  * "Add contact" label — the Figma copy is a clear paste-over from the
@@ -70,18 +87,24 @@ type Props = {
  * Validation rules mirror AddContactDialog:
  *   - 1..32 ASCII characters.
  *   - Not a duplicate of any other visible contact name (case-insensitive).
- * Plus: submit is also disabled if the trimmed input equals the current
- * name (no-op rename — caller already handles this defensively).
+ * Plus: submit is disabled when NOTHING changed — i.e. the trimmed
+ * input equals the current name AND the staged picture matches
+ * `currentPhoto`. A photo-only edit keeps the same name and is a valid
+ * save.
  *
- * Two submit paths, picked by `requiresDeviceConfirm`:
- *   - false → call `onSubmit(newName)` and close. The parent applies the
- *     local rename overlay. Used for sidecar-only contacts and the
+ * Submit paths:
+ *   - Photo change (if any) commits first via `onPhotoSave` — it's a
+ *     local cosmetic write, no device involved.
+ *   - Name unchanged → close. Done (photo-only save).
+ *   - Name changed, `requiresDeviceConfirm` false → call
+ *     `onSubmit(newName)` and close. The parent applies the local
+ *     rename overlay. Used for sidecar-only contacts and the
  *     synthesized "me" placeholder — neither has an on-device label.
- *   - true  → switch to the device step. `RunDeviceAction` runs the
- *     `onDeviceRename(newName)` verb against the user's hardware (DMK
- *     change-name flow). On success the dialog closes; on
- *     failure/back, the dialog returns to the name step so the user
- *     can edit and retry.
+ *   - Name changed, `requiresDeviceConfirm` true → switch to the device
+ *     step. `RunDeviceAction` runs the `onDeviceRename(newName)` verb
+ *     against the user's hardware (DMK change-name flow). On success
+ *     the dialog closes; on failure/back, the dialog returns to the
+ *     name step so the user can edit and retry.
  */
 export function EditContactDialog({
   open,
@@ -91,21 +114,27 @@ export function EditContactDialog({
   takenNames,
   requiresDeviceConfirm = false,
   onDeviceRename,
+  currentPhoto,
+  onPhotoSave,
 }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState(currentName);
+  // Staged picture — committed via `onPhotoSave` only on submit, so
+  // closing the dialog discards in-flight photo edits.
+  const [photo, setPhoto] = useState<string | undefined>(currentPhoto);
   const [step, setStep] = useState<Step>({ kind: "name" });
 
-  // Re-prime the input each time the dialog opens, in case the
-  // currentName changed since the previous open (e.g. user opened →
-  // closed → selected another contact → opened). Reset step too so the
-  // device runner doesn't linger after a back/close.
+  // Re-prime the inputs each time the dialog opens, in case the
+  // currentName/currentPhoto changed since the previous open (e.g. user
+  // opened → closed → selected another contact → opened). Reset step
+  // too so the device runner doesn't linger after a back/close.
   useEffect(() => {
     if (open) {
       setName(currentName);
+      setPhoto(currentPhoto);
       setStep({ kind: "name" });
     }
-  }, [open, currentName]);
+  }, [open, currentName, currentPhoto]);
 
   const trimmed = name.trim();
   const tooLongOrNonAscii = isInvalidAsciiLabel(name, LIMITS.contactName);
@@ -115,10 +144,28 @@ export function EditContactDialog({
     trimmed.length > 0 &&
     takenNames.some(taken => taken.toLowerCase() === lowerTrimmed);
   const sameAsCurrent = trimmed.toLowerCase() === currentName.trim().toLowerCase();
-  const canSubmit = trimmed.length > 0 && !tooLongOrNonAscii && !duplicate && !sameAsCurrent;
+  const photoChanged = photo !== currentPhoto;
+  // A photo-only edit (same name, different picture) is a valid save —
+  // the name checks still gate, but `sameAsCurrent` alone no longer
+  // disables submit when the picture changed.
+  const canSubmit =
+    trimmed.length > 0 &&
+    !tooLongOrNonAscii &&
+    !duplicate &&
+    (!sameAsCurrent || photoChanged);
 
   const submit = () => {
     if (!canSubmit) return;
+    // Commit the picture first — a local cosmetic write, independent of
+    // the rename. The view model's rename paths re-key the sidecar, so
+    // writing under the current name here stays correct even when a
+    // rename follows.
+    if (photoChanged) onPhotoSave?.(photo);
+    if (sameAsCurrent) {
+      // Photo-only save — nothing to rename, no device round-trip.
+      onOpenChange(false);
+      return;
+    }
     if (requiresDeviceConfirm && onDeviceRename) {
       setStep({ kind: "device", newName: trimmed, verb: onDeviceRename(trimmed) });
     } else {
@@ -154,6 +201,14 @@ export function EditContactDialog({
         >
           {step.kind === "name" && (
             <>
+              {/*
+                Same picture picker as the Add-contact dialog (Figma
+                14369:13296) — add, replace, or delete the contact's
+                photo. `key={open}` remounts the field per open so its
+                internal rejection error resets with the staged state.
+              */}
+              <ContactPhotoField key={String(open)} photo={photo} onPhotoChange={setPhoto} />
+
               <div className="flex flex-col gap-8 w-full">
                 <TextInput
                   label={t("contactsManagement.editContactDialog.placeholder")}
