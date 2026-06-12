@@ -7,6 +7,7 @@ import path from "node:path";
 import { init } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 import { ADBUtils } from "../utils/ADBUtils.ts";
+import allureReporter from "@wdio/allure-reporter";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
 
@@ -261,6 +262,15 @@ export const config: WebdriverIO.Config = {
     // ADBUtils.startLogcatStream(cid);
   },
   /**
+   * Gets executed before test execution begins. At this point you can access to all global
+   * variables like `browser`. It is the perfect place to define custom commands.
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<String>} specs        List of spec file paths that are to be run
+   * @param {object}         browser      instance of created browser/device session
+   */
+  // before: function (capabilities, specs, browser) {
+  // },
+  /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name
    * @param {Array} args arguments that command would receive
@@ -276,9 +286,15 @@ export const config: WebdriverIO.Config = {
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
-  // beforeTest: function (test) {
-  // ADBUtils.markTestStart(test.title);
-  // },
+  beforeTest: async function (test) {
+    const options = {
+      timeLimit: "300",
+      ...(driver.isAndroid ? { bugReport: true } : {}),
+      ...(driver.isIOS ? { videoType: "mpeg4" } : {}),
+    };
+    await driver.startRecordingScreen(options);
+    // ADBUtils.markTestStart(test.title);
+  },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
    * beforeEach in Mocha)
@@ -303,6 +319,15 @@ export const config: WebdriverIO.Config = {
    */
   // @ts-expect-error: keep unused params for de-structuring
   afterTest: async function (test, context, { error, result, duration, passed, retries }) {
+    const recording = await driver.stopRecordingScreen();
+    const recordingBuffer = Buffer.from(recording, "base64");
+    const videoTitle = test.title.replace(/\s+/g, "_");
+    const platformSuffix = driver.isAndroid ? "android" : "ios";
+    const recordingFileName = `${videoTitle}_${platformSuffix}.mp4`;
+    const recordingFilePath = path.resolve("artifacts", recordingFileName);
+    await appendFile(recordingFilePath, recordingBuffer);
+    await allureReporter.addAttachment("recording", recordingBuffer, "video/mp4");
+
     if (!passed) {
       try {
         await driver.takeScreenshot();

@@ -17,8 +17,9 @@ export const config: WebdriverIO.Config = {
       // For W3C the appium capabilities need to have an extension prefix
       // This is `appium:` for all Appium Capabilities
       "appium:avd": "Android_Emulator",
-      "appium:systemPort": 8202,
+      "appium:systemPort": 8201,
       "appium:chromedriverPort": 8210,
+      "appium:mjpegServerPort": 7810,
       "appium:platformVersion": "16.0",
       "appium:automationName": "UiAutomator2",
       "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
@@ -45,8 +46,9 @@ export const config: WebdriverIO.Config = {
       // For W3C the appium capabilities need to have an extension prefix
       // This is `appium:` for all Appium Capabilities
       "appium:avd": "Android_Emulator_2",
-      "appium:systemPort": 8201,
+      "appium:systemPort": 8202,
       "appium:chromedriverPort": 8211,
+      "appium:mjpegServerPort": 7811,
       "appium:platformVersion": "16.0",
       "appium:automationName": "UiAutomator2",
       "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
