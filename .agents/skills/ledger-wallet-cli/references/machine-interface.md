@@ -120,6 +120,7 @@ Emitted by `receive` before on-device confirmation, so the agent can show the hu
 | `session_corrupt`         | 1    | false     | `{path}`                                         | `session.yaml` failed to parse. Run `session reset`, then re-discover.             |
 | `device_not_found`        | 3    | true      | `{selector, candidates}` when a selector matched nothing | No reachable Ledger. Plug in / power on, unlock, enable Bluetooth on Flex/Stax.    |
 | `device_ambiguous`        | 64   | false     | `{candidates: [{id, name, model, transport}]}`  | Several devices match (or none was selected). Re-run with `--device <id>` from `details.candidates`. |
+| `ble_dependency_missing`  | 64   | false     | —                                                | BLE requested but the optional `@abandonware/noble` dependency is not installed. Install it or use USB (`WALLET_CLI_TRANSPORT=usb`). |
 | `swap_quotes_unavailable` | 1    | false     | — (`provider_errors[]` on the error object)      | No provider returned a quote. Inspect `provider_errors`; retry later or change the pair. |
 
 ---
@@ -136,7 +137,7 @@ Emitted by `receive` before on-device confirmation, so the agent can show the hu
 | 5         | app not installed             | `app_not_installed`                                                                                                        |
 | 6         | device timeout                | `timeout`                                                                                                                  |
 | 7         | device locked                 | `locked` (changed from 6, which it previously shared with `timeout`)                                                       |
-| 64        | usage error                   | `unknown_flag`, `invalid_flag_value`, `missing_required_flag`, `unknown_command`, `invalid_transport`, `device_ambiguous`  |
+| 64        | usage error                   | `unknown_flag`, `invalid_flag_value`, `missing_required_flag`, `unknown_command`, `invalid_transport`, `device_ambiguous`, `ble_dependency_missing` |
 | 130 / 143 | SIGINT / SIGTERM              | —                                                                                                                          |
 
 Dispatch on `error.code` when stdout is available; the exit code is the lossy fallback.

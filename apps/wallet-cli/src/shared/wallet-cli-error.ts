@@ -35,6 +35,7 @@ export type WalletCliErrorCode =
   | "session_corrupt"
   | "device_not_found"
   | "device_ambiguous"
+  | "ble_dependency_missing"
   | "swap_quotes_unavailable";
 
 /**
@@ -85,6 +86,9 @@ export const WALLET_CLI_ERROR_DEFAULTS: Record<
   device_not_found: { exitCode: DEVICE_EXIT_CODES.disconnected, retryable: true },
   // Several candidates: the fix is a more specific invocation (--device <id|name>).
   device_ambiguous: { exitCode: USAGE_EXIT_CODE, retryable: false },
+  // BLE was requested but the optional '@abandonware/noble' dependency is not installed;
+  // the fix is an environment change (install it or drop to USB), not a retry.
+  ble_dependency_missing: { exitCode: USAGE_EXIT_CODE, retryable: false },
   swap_quotes_unavailable: { exitCode: DEVICE_EXIT_CODES.generic, retryable: false },
 };
 

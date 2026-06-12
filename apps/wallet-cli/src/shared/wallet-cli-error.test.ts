@@ -16,6 +16,7 @@ describe("WALLET_CLI_ERROR_DEFAULTS", () => {
       "unknown_command",
       "invalid_transport",
       "device_ambiguous",
+      "ble_dependency_missing",
     ];
     for (const code of usageCodes) {
       expect(WALLET_CLI_ERROR_DEFAULTS[code]).toEqual({

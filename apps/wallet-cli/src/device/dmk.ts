@@ -10,6 +10,7 @@ import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared/services/LedgerLiveL
 import { UserHashService } from "@ledgerhq/live-dmk-shared/services/UserHashService";
 import { getEnv } from "@ledgerhq/live-env";
 import type { WalletCliTransportKind } from "./transport-kind";
+import { WalletCliError } from "../shared/wallet-cli-error";
 
 export type WalletCliDmk = {
   dmk: DeviceManagementKit;
@@ -54,11 +55,14 @@ async function setupNodeBleTransport(): Promise<TransportSetup> {
   try {
     nobleModule = await import("@abandonware/noble");
   } catch (cause) {
-    throw new Error(
+    throw new WalletCliError(
+      "ble_dependency_missing",
       "WALLET_CLI_TRANSPORT=ble requires the optional '@abandonware/noble' dependency, " +
-        "which is not installed. Install it to use the BLE transport, or use USB " +
-        "(WALLET_CLI_TRANSPORT=usb, the default).",
-      { cause },
+        "which is not installed.",
+      {
+        hint: "Install '@abandonware/noble' to use BLE, or use USB (WALLET_CLI_TRANSPORT=usb, the default).",
+        cause,
+      },
     );
   }
   const { nodeBleTransportFactory } = await import("./node-ble");
