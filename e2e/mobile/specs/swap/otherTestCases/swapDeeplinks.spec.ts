@@ -63,118 +63,115 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
     await swapSetup();
   });
 
-  // Navigate to portfolio before each test so the swap live app is unmounted,
-  // ensuring no prior-selection state bleeds into the next test.
-  beforeEach(async () => {
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
-  });
+  it("[B2CQA-4152] Swap deeplinks — all scenarios", async () => {
+    const reset = async () => {
+      await app.portfolio.openViaDeeplink();
+      await app.portfolio.waitForPortfolioPageToLoad();
+    };
 
-  // ─── Group A: token params only, no accountIds ──────────────────────────────
+    // ─── Group A: token params only, no accountIds ──────────────────────────────
 
-  it("A1: no params — both fields default to highest-cap asset", async () => {
+    // A1: no params — both fields default to highest-cap asset
     await app.swap.openViaDeeplink();
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
-  });
+    await reset();
 
-  it("A2: fromToken=ETH toToken=BTC", async () => {
+    // A2: fromToken=ETH toToken=BTC
     await app.swap.openViaDeeplink("fromToken=ethereum&toToken=bitcoin");
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("ETH");
     await app.swapLiveApp.checkAssetToContains("BTC");
-  });
+    await reset();
 
-  it("A3: fromToken=USDT(ERC20) toToken=ETH", async () => {
+    // A3: fromToken=USDT(ERC20) toToken=ETH
     await app.swap.openViaDeeplink(`fromToken=${USDT_TOKEN_ID}&toToken=ethereum`);
     await app.modularDrawer.selectFirstAccount(); // send drawer: USDT/ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: ETH account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("USDT");
     await app.swapLiveApp.checkAssetToContains("ETH");
-  });
+    await reset();
 
-  it("A4: fromToken=ETH toToken=USDT(ERC20)", async () => {
+    // A4: fromToken=ETH toToken=USDT(ERC20)
     await app.swap.openViaDeeplink(`fromToken=ethereum&toToken=${USDT_TOKEN_ID}`);
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: USDT/ETH account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("ETH");
     await app.swapLiveApp.checkAssetToContains("USDT");
-  });
+    await reset();
 
-  // A5 (FDUSD/BSC) is manual-only — no E2E account available.
+    // A5 (FDUSD/BSC) is manual-only — no E2E account available.
 
-  it("A6: fromToken=BTC only — receive defaults to highest-cap asset", async () => {
+    // A6: fromToken=BTC only — receive defaults to highest-cap asset
     await app.swap.openViaDeeplink("fromToken=bitcoin");
     await app.modularDrawer.selectFirstAccount(); // send drawer: BTC account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("BTC");
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
-  });
+    await reset();
 
-  it("A7: toToken=ETH only — send defaults to highest-cap asset", async () => {
+    // A7: toToken=ETH only — send defaults to highest-cap asset
     await app.swap.openViaDeeplink("toToken=ethereum");
     await app.modularDrawer.selectFirstAccount(); // receive drawer: ETH account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
     await app.swapLiveApp.checkAssetToContains("ETH");
-  });
+    await reset();
 
-  it("A8: fromToken=INVALID(123) toToken=BTC — invalid send defaults", async () => {
+    // A8: fromToken=INVALID(123) toToken=BTC — invalid send defaults
     await app.swap.openViaDeeplink("fromToken=123&toToken=bitcoin");
     await app.modularDrawer.tapDrawerCloseButton(); // fromToken=123 is invalid — close its drawer
     await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
     await app.swapLiveApp.checkAssetToContains("BTC");
-  });
+    await reset();
 
-  it("A9: fromToken=ETH toToken=INVALID(456) — invalid receive defaults", async () => {
+    // A9: fromToken=ETH toToken=INVALID(456) — invalid receive defaults
     await app.swap.openViaDeeplink("fromToken=ethereum&toToken=456");
     await app.modularDrawer.selectFirstAccount(); // send drawer only: ETH account; invalid to has no drawer
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("ETH");
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
-  });
+    await reset();
 
-  it("A10: fromToken=INVALID toToken=INVALID — both default", async () => {
+    // A10: fromToken=INVALID toToken=INVALID — both default
     await app.swap.openViaDeeplink("fromToken=123&toToken=456");
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
-  });
+    await reset();
 
-  // ─── Group B: with amount ────────────────────────────────────────────────────
+    // ─── Group B: with amount ────────────────────────────────────────────────────
 
-  it("B1: ETH→BTC with valid amountFrom=0.01", async () => {
+    // B1: ETH→BTC with valid amountFrom=0.01
     await app.swap.openViaDeeplink("fromToken=ethereum&toToken=bitcoin&amountFrom=0.01");
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("ETH");
     await app.swapLiveApp.checkAssetToContains("BTC");
-    const amount = await app.swapLiveApp.getAmountToSend();
-    jestExpect(amount).toBe("0.01");
-  });
+    jestExpect(await app.swapLiveApp.getAmountToSend()).toBe("0.01");
+    await reset();
 
-  it("B2: ETH→BTC with invalid amountFrom=abc — amount field empty or zero", async () => {
+    // B2: ETH→BTC with invalid amountFrom=abc — amount field empty or zero
     await app.swap.openViaDeeplink("fromToken=ethereum&toToken=bitcoin&amountFrom=abc");
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains("ETH");
     await app.swapLiveApp.checkAssetToContains("BTC");
-    const amount = await app.swapLiveApp.getAmountToSend();
-    jestExpect(amount).toMatch(/^(0\.?0*|)$/);
-  });
+    jestExpect(await app.swapLiveApp.getAmountToSend()).toMatch(/^(0\.?0*|)$/);
+    await reset();
 
-  // ─── Group C: with accountIds — no drawer expected ──────────────────────────
+    // ─── Group C: with accountIds — no drawer expected ──────────────────────────
 
-  it("C1: USDT+fromAccountId → BTC+toAccountId + amount=20, no drawer", async () => {
+    // C1: USDT+fromAccountId → BTC+toAccountId + amount=20, no drawer
     await app.swap.openViaDeeplink(
       `fromToken=${USDT_TOKEN_ID}&toToken=bitcoin` +
         `&fromAccountId=${USDT_ACCOUNT_ID}&toAccountId=${BTC_ACCOUNT_ID}&amountFrom=20`,
@@ -182,36 +179,35 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromMatchesAccount(usdtAccount);
     await app.swapLiveApp.checkAssetToMatchesAccount(btcAccount);
-    const amount = await app.swapLiveApp.getAmountToSend();
-    jestExpect(amount).toBe("20");
-  });
+    jestExpect(await app.swapLiveApp.getAmountToSend()).toBe("20");
+    await reset();
 
-  it("C2: fromAccountId=BTC + toAccountId=USDT (no token params) — accountId resolves, no drawer", async () => {
+    // C2: fromAccountId=BTC + toAccountId=USDT (no token params) — accountId resolves, no drawer
     await app.swap.openViaDeeplink(
       `fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
     );
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromMatchesAccount(btcAccount);
     await app.swapLiveApp.checkAssetToMatchesAccount(usdtAccount);
-  });
+    await reset();
 
-  it("C3: USDT+fromAccountId only — receive defaults, no drawer", async () => {
+    // C3: USDT+fromAccountId only — receive defaults, no drawer
     await app.swap.openViaDeeplink(
       `fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`,
     );
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromMatchesAccount(usdtAccount);
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
-  });
+    await reset();
 
-  it("C4: toToken=BTC+toAccountId only — send defaults, no drawer", async () => {
+    // C4: toToken=BTC+toAccountId only — send defaults, no drawer
     await app.swap.openViaDeeplink(`toToken=bitcoin&toAccountId=${BTC_ACCOUNT_ID}`);
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
     await app.swapLiveApp.checkAssetToMatchesAccount(btcAccount);
-  });
+    await reset();
 
-  it("C5: mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins", async () => {
+    // C5: mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins
     await app.swap.openViaDeeplink(
       `fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
         `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
@@ -221,5 +217,6 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
     await app.swapLiveApp.checkAssetFromMatchesAccount(btcAccount);
     // toAccountId takes precedence over conflicting toToken
     await app.swapLiveApp.checkAssetToMatchesAccount(ethAccount);
+    // no reset needed after last scenario
   });
 });
