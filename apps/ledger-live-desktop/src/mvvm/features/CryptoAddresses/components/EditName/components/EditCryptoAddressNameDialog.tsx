@@ -9,6 +9,7 @@ import {
   Button,
   TextInput,
 } from "@ledgerhq/lumen-ui-react";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
 import RunDeviceAction from "~/mvvm/features/Contacts/components/RunDeviceAction";
@@ -54,6 +55,11 @@ export const EditCryptoAddressNameDialog = ({
 
   const normalizedValue = normalizeName(value);
   const isConfirmDisabled = normalizedValue.length === 0 || normalizedValue === initialValue.trim();
+  // Whether confirming will re-register the account on device (EVM main
+  // account w/ derivation path) vs. a local-only rename (token / non-EVM).
+  // Device-eligibility is name-independent, so a `null` verb here means the
+  // CTA stays logo-free — mirrors the send flow's device-action button.
+  const requiresDevice = makeDeviceVerb(normalizedValue) !== null;
 
   const handleOpenChange = (newOpen: boolean) => {
     if (newOpen) {
@@ -137,6 +143,7 @@ export const EditCryptoAddressNameDialog = ({
               className="w-full"
               appearance="base"
               size="lg"
+              icon={requiresDevice ? LedgerLogo : undefined}
               onClick={handleConfirm}
               disabled={isConfirmDisabled}
               data-testid="edit-crypto-address-name-dialog-cta"

@@ -11,7 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import { Information } from "@ledgerhq/lumen-ui-react/symbols";
+import { Information, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { LIMITS } from "~/mvvm/features/Contacts/constants";
 import {
   isInvalidAsciiLabel,
@@ -232,6 +232,7 @@ export function EditAddressDialog({
                 appearance="base"
                 size="md"
                 isFull
+                icon={LedgerLogo}
                 onClick={submit}
                 disabled={!canSubmit}
                 data-testid="contacts-management-edit-address-submit"

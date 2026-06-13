@@ -8,6 +8,7 @@ import {
   DialogHeader,
   TextInput,
 } from "@ledgerhq/lumen-ui-react";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { LIMITS } from "~/mvvm/features/Contacts/constants";
 import {
   isInvalidAsciiLabel,
@@ -239,6 +240,12 @@ export function EditContactDialog({
                 appearance="base"
                 size="md"
                 isFull
+                // Heads-up that this save forwards to the device: shown only
+                // when the contact is registered on device AND the name
+                // actually changed. A photo-only edit (name unchanged) is a
+                // local cosmetic write, so it stays logo-free — mirrors the
+                // send flow's `reviewShowIcon ? LedgerLogo : undefined`.
+                icon={requiresDeviceConfirm && !sameAsCurrent ? LedgerLogo : undefined}
                 onClick={submit}
                 disabled={!canSubmit}
                 data-testid="contacts-management-edit-contact-submit"

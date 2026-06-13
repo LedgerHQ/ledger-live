@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import { Devices } from "@ledgerhq/lumen-ui-react/symbols";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 
 type Props = {
   label: string;
@@ -13,7 +13,7 @@ const DeviceActionButton = ({ label, onClick, disabled, loading }: Props) => (
   <Button
     appearance="base"
     size="sm"
-    icon={Devices}
+    icon={LedgerLogo}
     isFull
     disabled={disabled}
     loading={loading}
