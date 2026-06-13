@@ -60,4 +60,6 @@ runs:
         allure-results: ${{ steps.prune.outputs.path }}
     - name: Write Allure report in summary
       shell: bash
-      run: echo "::notice title=${{ inputs.platform }} Allure report URL::${{ steps.publish-report.outputs.report-url }}"
+      env:
+        REPORT_URL: ${{ steps.publish-report.outputs.report-url }}
+      run: echo "[Open report](${REPORT_URL})" >> "$GITHUB_STEP_SUMMARY"

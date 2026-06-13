@@ -522,7 +522,9 @@ jobs:
 
       - name: Write Xray report in summary
         shell: bash
-        run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
+        env:
+          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
+        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
 
   notify-to-slack:
     name: "Notify to Slack"

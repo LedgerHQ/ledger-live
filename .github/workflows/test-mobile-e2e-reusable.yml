@@ -1127,7 +1127,9 @@ jobs:
           echo "xray_key=$key" >> $GITHUB_OUTPUT
       - name: Write Xray report link in summary
         shell: bash
-        run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
+        env:
+          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
+        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
 
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
