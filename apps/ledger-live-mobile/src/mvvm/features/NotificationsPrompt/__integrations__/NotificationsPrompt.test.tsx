@@ -5,6 +5,7 @@ import {
   NotificationsPromptWrapper,
   setPushNotificationsDataOfUserInStorage,
   useNotifications,
+  useNotificationsContext,
 } from "LLM/features/NotificationsPrompt";
 
 import storage from "LLM/storage";
@@ -112,11 +113,9 @@ describe("NotificationsPrompt Integration", () => {
       const [isReady, setIsReady] = useState(false);
       const [reloadCount, reload] = useReducer(x => x + 1, 0);
 
-      const {
-        tryTriggerPushNotificationDrawerAfterAction,
-        initPushNotificationsData,
-        tryTriggerPushNotificationDrawerAfterInactivity,
-      } = useNotifications();
+      const { initPushNotificationsData } = useNotifications();
+      const { notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity } =
+        useNotificationsContext();
 
       useEffect(() => {
         initPushNotificationsData()
@@ -133,76 +132,84 @@ describe("NotificationsPrompt Integration", () => {
 
       return (
         <>
-          <Button onPress={() => tryTriggerPushNotificationDrawerAfterAction(actionSource)}>
-            Trigger drawer
-          </Button>
+          <Button onPress={() => notifyFlowCompleted(actionSource)}>Trigger drawer</Button>
           <Button onPress={reload}>Reload app</Button>
         </>
       );
     }
 
-    const rendered = render(
+    const ui = (
       <NotificationsPromptProvider>
         <SetupComponent />
         <NotificationsPromptWrapper />
-      </NotificationsPromptProvider>,
-      {
-        overrideInitialState: withFlagOverrides(
-          createNotificationsPromptFeatureFlags({
-            variant,
-            repromptSchedule: REPROMPT_SCHEDULE.map(s => ({
-              months: 0,
-              hours: 0,
-              minutes: 0,
-              seconds: 0,
-              days: "days" in s ? s.days : 0,
-            })),
-            notificationsCategories: [
-              {
-                displayed: true,
-                category: "announcementsCategory",
-              },
-              {
-                displayed: true,
-                category: "recommendationsCategory",
-              },
-              {
-                displayed: true,
-                category: "largeMoverCategory",
-              },
-              {
-                displayed: true,
-                category: "transactionsAlertsCategory",
-              },
-              {
-                displayed: true,
-                category: "totalMarketCap",
-              },
-              {
-                displayed: true,
-                category: "topGainersLosers",
-              },
-            ],
-            inactivityEnabled: true,
-          }),
-          state => ({
-            ...state,
-            settings: {
-              ...state.settings,
-              notifications: {
-                ...state.settings.notifications,
-                areNotificationsAllowed: appNotifications,
-              },
-            },
-          }),
-        ),
-      },
+      </NotificationsPromptProvider>
     );
+
+    const rendered = render(ui, {
+      overrideInitialState: withFlagOverrides(
+        createNotificationsPromptFeatureFlags({
+          variant,
+          repromptSchedule: REPROMPT_SCHEDULE.map(s => ({
+            months: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            days: "days" in s ? s.days : 0,
+          })),
+          notificationsCategories: [
+            {
+              displayed: true,
+              category: "announcementsCategory",
+            },
+            {
+              displayed: true,
+              category: "recommendationsCategory",
+            },
+            {
+              displayed: true,
+              category: "largeMoverCategory",
+            },
+            {
+              displayed: true,
+              category: "transactionsAlertsCategory",
+            },
+            {
+              displayed: true,
+              category: "totalMarketCap",
+            },
+            {
+              displayed: true,
+              category: "topGainersLosers",
+            },
+          ],
+          inactivityEnabled: true,
+        }),
+        state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            hasCompletedOnboarding: true,
+            notifications: {
+              ...state.settings.notifications,
+              areNotificationsAllowed: appNotifications,
+            },
+          },
+        }),
+      ),
+    });
 
     const tryTriggerDrawer = async () => {
       const triggerDrawerButton = await screen.findByRole("button", { name: /trigger drawer/i });
       await rendered.user.press(triggerDrawerButton);
-      act(() => jest.runOnlyPendingTimers());
+      await act(async () => {
+        jest.runAllTimers();
+      });
+      if (rendered.store.getState().notifications.isPushNotificationsModalOpen) {
+        rendered.rerender(ui);
+        await waitFor(() =>
+          expect(screen.getByTestId("notifications-prompt-allow")).toBeOnTheScreen(),
+        );
+      }
     };
 
     await waitFor(() => {

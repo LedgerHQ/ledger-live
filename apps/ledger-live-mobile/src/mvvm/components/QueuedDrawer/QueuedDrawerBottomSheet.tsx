@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Platform } from "react-native";
-import { BottomSheet, BottomSheetProps } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheet, BottomSheetProps, Box } from "@ledgerhq/lumen-ui-rnative";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box } from "@ledgerhq/native-ui";
 import { BottomSheetBackgroundContext } from "LLM/contexts/BottomSheetBackgroundContext";
 import useQueuedDrawerBottomSheet from "./useQueuedDrawerBottomSheet";
 
@@ -22,6 +21,8 @@ export type QueuedDrawerBottomSheetProps = {
   onBack?: () => void;
   /** Callback when the drawer is closed. */
   onClose?: () => void;
+  /** Callback when the backdrop is pressed. */
+  onBackdropPress?: () => void;
   /** Callback after the drawer is fully hidden. */
   onModalHide?: () => void;
   /** Prevent closing via backdrop press. */
@@ -48,6 +49,7 @@ const QueuedDrawerBottomSheet = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
+  onBackdropPress,
   onBack,
   hasBackButton,
   onModalHide,
@@ -82,6 +84,11 @@ const QueuedDrawerBottomSheet = ({
     preventBackdropClick,
   });
 
+  const handleBackdropPress = useCallback(() => {
+    onBackdropPress?.();
+    handleUserClose();
+  }, [handleUserClose, onBackdropPress]);
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -98,7 +105,7 @@ const QueuedDrawerBottomSheet = ({
       onAnimate={handleCloseAnimationStart}
       onDismiss={handleDismiss}
       backdropPressBehavior={preventBackdropClick || areDrawersLocked ? "none" : "close"}
-      onBackdropPress={handleUserClose}
+      onBackdropPress={handleBackdropPress}
       backgroundComponent={backgroundComponent}
     >
       <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
@@ -111,7 +118,7 @@ const QueuedDrawerBottomSheet = ({
 
 const OnscreenNavigationSafeArea = () => {
   const insets = useSafeAreaInsets();
-  return <Box height={Platform.OS === "android" ? insets.bottom : 0} />;
+  return <Box style={{ height: Platform.OS === "android" ? insets.bottom : 0 }} />;
 };
 
 export default React.memo(QueuedDrawerBottomSheet);

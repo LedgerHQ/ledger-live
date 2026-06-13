@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 import { useNotificationsData } from "./useNotificationsData";
@@ -21,32 +21,27 @@ const useNotifications = () => {
     updateUserLastInactiveTime,
   } = useNotificationsData();
 
-  const { nextRepromptDelay, shouldPromptOptInDrawerAfterAction, checkIsInactive } =
-    useNotificationsPrompt({
-      permissionStatus,
-      areNotificationsAllowed: notifications.areNotificationsAllowed,
-      transactionsAlertsCategory: notifications.transactionsAlertsCategory,
-      pushNotificationsDataOfUser,
-    });
+  const { nextRepromptDelay } = useNotificationsPrompt({
+    permissionStatus,
+    areNotificationsAllowed: notifications.areNotificationsAllowed,
+    transactionsAlertsCategory: notifications.transactionsAlertsCategory,
+    pushNotificationsDataOfUser,
+  });
 
   const {
     isPushNotificationsModalOpen,
     drawerSource,
     drawerPromptTarget,
-    eventTimeoutRef,
-    tryTriggerPushNotificationDrawerAfterAction,
-    tryTriggerPushNotificationDrawerAfterInactivity,
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
+    handleModalHide,
   } = useNotificationsDrawer({
     permissionStatus,
     areNotificationsAllowed: notifications.areNotificationsAllowed,
     pushNotificationsDataOfUser,
     nextRepromptDelay,
-    shouldPromptOptInDrawerAfterAction,
     updateUserLastInactiveTime,
-    checkIsInactive,
     markUserAsOptOut,
     markUserAsOptIn,
     requestPushNotificationsPermission,
@@ -120,15 +115,6 @@ const useNotifications = () => {
     updatePushNotificationsDataOfUserInStateAndStore,
   ]);
 
-  useEffect(() => {
-    return () => {
-      if (eventTimeoutRef.current) {
-        clearTimeout(eventTimeoutRef.current);
-        eventTimeoutRef.current = null;
-      }
-    };
-  }, [eventTimeoutRef]);
-
   const permission = {
     permissionStatus,
     requestPushNotificationsPermission,
@@ -141,15 +127,12 @@ const useNotifications = () => {
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
+    handleModalHide,
   };
 
   const prompt = {
     nextRepromptDelay,
     pushNotificationsDataOfUser,
-    shouldPromptOptInDrawerAfterAction,
-    tryTriggerPushNotificationDrawerAfterAction,
-    // Call only on stack navigators where onboarding is already complete.
-    tryTriggerPushNotificationDrawerAfterInactivity,
   };
 
   const userState = {

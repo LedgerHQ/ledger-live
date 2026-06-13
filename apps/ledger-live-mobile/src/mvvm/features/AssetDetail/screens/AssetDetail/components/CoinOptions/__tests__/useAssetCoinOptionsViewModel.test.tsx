@@ -1,16 +1,19 @@
-import { act, renderHook } from "@tests/test-renderer";
+import React from "react";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
+import { createNotificationsPromptFeatureFlags } from "LLM/features/NotificationsPrompt/testUtils";
 import { useAssetCoinOptionsViewModel } from "../useAssetCoinOptionsViewModel";
-
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotifications: () => ({ tryTriggerPushNotificationDrawerAfterAction: jest.fn() }),
-}));
 
 jest.mock("~/analytics", () => ({ track: jest.fn() }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
+
+const innerWrapper = ({ children }: { children?: React.ReactNode }) => (
+  <NotificationsPromptProvider>{children}</NotificationsPromptProvider>
+);
 
 function renderViewModel({
   blacklistedTokenIds = [],
@@ -24,10 +27,18 @@ function renderViewModel({
   return renderHook(
     () => useAssetCoinOptionsViewModel({ currency: bitcoin, currencyId: bitcoin.id, marketId }),
     {
-      overrideInitialState: (state: State): State => ({
-        ...state,
-        settings: { ...state.settings, blacklistedTokenIds, starredMarketCoins },
-      }),
+      innerWrapper,
+      overrideInitialState: withFlagOverrides(
+        createNotificationsPromptFeatureFlags(),
+        (state: State): State => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            blacklistedTokenIds,
+            starredMarketCoins,
+          },
+        }),
+      ),
     },
   );
 }
@@ -42,11 +53,19 @@ describe("useAssetCoinOptionsViewModel", () => {
 
     act(() => result.current.onToggleFavourite());
     expect(store.getState().settings.starredMarketCoins).toContain(bitcoin.id);
-    expect(track).toHaveBeenLastCalledWith(
+    expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
         button: "favourite",
         is_favourite: true,
+      }),
+    );
+    act(() => jest.runOnlyPendingTimers());
+    expect(store.getState().notifications).toEqual(
+      expect.objectContaining({
+        drawerSource: "add_favorite_coin",
+        drawerPromptTarget: "globalPushNotifications",
+        isPushNotificationsModalOpen: true,
       }),
     );
 

@@ -4,6 +4,7 @@ import type { Features } from "@shared/feature-flags";
 import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 import type { NotificationsState } from "~/reducers/types";
 import type { DataOfUser, NotificationPromptTarget } from "../types";
+import { resolveDismissedPromptAtList, resolveDismissedPromptCount } from "./dismissedPrompts";
 
 type BrazePushNotifications = Features["brazePushNotifications"];
 type LwmNewWordingOptInNotificationsDrawer = Features["lwmNewWordingOptInNotificationsDrawer"];
@@ -176,23 +177,6 @@ export const canPromptTransactionsAlertsForAction = (
   return transactionsAlertsCategoryConfig.drawerPromptActions?.includes(source) ?? false;
 };
 
-const getDismissedPromptAtList = (
-  pushNotificationsDataOfUser: DataOfUser | null | undefined,
-  promptTarget: NotificationPromptTarget,
-): number[] | undefined => {
-  const dismissedPromptAtListByTarget =
-    pushNotificationsDataOfUser?.dismissedPromptAtListByTarget ?? {};
-
-  if (promptTarget === "globalPushNotifications") {
-    return (
-      dismissedPromptAtListByTarget.globalPushNotifications ??
-      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList
-    );
-  }
-
-  return dismissedPromptAtListByTarget[promptTarget];
-};
-
 const hasRepromptDelayElapsed = ({
   pushNotificationsDataOfUser,
   promptTarget,
@@ -204,7 +188,10 @@ const hasRepromptDelayElapsed = ({
   repromptSchedule: NotificationsPromptRepromptDelay[] | null | undefined;
   now: number;
 }): { canShow: boolean; nextRepromptDelay: NotificationsPromptRepromptDelay | null } => {
-  const dismissedPromptAtList = getDismissedPromptAtList(pushNotificationsDataOfUser, promptTarget);
+  const dismissedPromptAtList = resolveDismissedPromptAtList(
+    pushNotificationsDataOfUser,
+    promptTarget,
+  );
 
   if (!dismissedPromptAtList?.length) {
     return { canShow: true, nextRepromptDelay: null };
@@ -230,17 +217,6 @@ const hasRepromptDelayElapsed = ({
   };
 };
 
-const getDismissedCount = (
-  pushNotificationsDataOfUser: DataOfUser | null | undefined,
-  promptTarget: NotificationPromptTarget | null,
-) => {
-  if (!promptTarget) {
-    return 0;
-  }
-
-  return getDismissedPromptAtList(pushNotificationsDataOfUser, promptTarget)?.length ?? 0;
-};
-
 const getDecisionBase = <TSource extends NotificationsPromptSource>(
   source: TSource,
   pushNotificationsDataOfUser: DataOfUser | null | undefined,
@@ -249,7 +225,7 @@ const getDecisionBase = <TSource extends NotificationsPromptSource>(
   wordingFeature: WordingFeature,
 ): NotificationsPromptDecisionBase<TSource> => ({
   source,
-  dismissedCount: getDismissedCount(pushNotificationsDataOfUser, promptTarget),
+  dismissedCount: resolveDismissedPromptCount(pushNotificationsDataOfUser, promptTarget),
   nextRepromptDelay,
   variant: getVariant(wordingFeature),
 });
@@ -319,7 +295,10 @@ export const getNextRepromptDelay = ({
     return null;
   }
 
-  const dismissedPromptAtList = getDismissedPromptAtList(pushNotificationsDataOfUser, promptTarget);
+  const dismissedPromptAtList = resolveDismissedPromptAtList(
+    pushNotificationsDataOfUser,
+    promptTarget,
+  );
   if (!repromptSchedule?.length || !dismissedPromptAtList?.length) {
     return null;
   }
