@@ -16,9 +16,31 @@ and DMK verb cheat sheet. This file tracks the L0–L4 rollout state.
 - [x] L3.3 — Recipient autocomplete from Contacts on Send → To:
 - [x] L3.4 — Sectioned recipient picker + green hardware-bound badge
 - [x] L3.5 — Picker polish: drop sender pill, swap section order, contact label
-- [ ] L4.0 — Designer-handoff context (docs only)
-- [ ] L4 — Designer-led Contacts management UX
-- [ ] L5 — Send recipient picker
+- [x] L4.0 — Designer-handoff context (docs only)
+- [x] L4 — Designer-led Contacts management UX
+- [x] L5 — Send recipient picker
+
+## Current state (2026-06-13 — internal beta)
+
+L0–L5 are all in. The beta branch is `feat/contacts-beta` (rebased onto a
+recent `develop`); device-smoked (Add contact + Send-to-contact decoration
+confirmed on hardware). Run with `pnpm dev:lld`, enable via Settings →
+Developer → Contacts alpha. No PR yet — the merge gate is DMK on a
+stable/post-promotion version (we still consume a `0.0.0-contacts-*` snapshot,
+see *Pinned dependencies*).
+
+**Lumen `0.1.38` (Base UI) API notes for new UI** — the rebase moved this app
+to `@ledgerhq/lumen-ui-react` 0.1.38 (Radix→Base UI). When writing new Contacts
+UI, use the current API, not the older one:
+
+- `BaseInput`/`TextInput`/`AddressInput`: no `errorMessage` — use `helperText`
+  (the copy) + `status="error" | "success"` (the styling).
+- `MenuTrigger`: pass the trigger via the `render={<IconButton … />}` prop,
+  not `asChild` + a child.
+- `MenuItem`: activates on `onClick`, not Radix's `onSelect` (`onSelect` is a
+  dead DOM event here — items wired with it never fire).
+- The Base UI menu popup mounts in a portal **asynchronously**; in tests query
+  items with `findBy*` (await), not synchronous `getBy*`.
 
 ## Milestones
 

@@ -11,10 +11,13 @@ for icons. Do not introduce `styled-components` or `@ledgerhq/react-ui`
 components in new Contacts code. If Lumen is missing a primitive you need,
 raise it through the usual Lumen-adoption channel for this repo.
 
-## What's working today (after L3.5)
+## What's working today (after L4 / L5)
 
 - A local Contacts store (separate from LWD's main persistence —
   `lld-contacts.json`).
+- The full **Contacts management page** (browse / add / edit / delete) under
+  `mvvm/features/Contacts/Management/`, reached from the MyWallet user-menu
+  popover — the L4 designer surface.
 - A top-bar icon (rightmost, after "My Ledger") gated on
   `settings.contactsAlpha`. Toggle the flag in Developer settings →
   "Enable Contacts alpha". Clicking the icon opens a Lumen Dialog containing
@@ -47,22 +50,24 @@ raise it through the usual Lumen-adoption channel for this repo.
     `recipientSearch.setValue(addressHex)` and the standard
     validation pipeline takes over.
 
-## What you're building (L4, L5)
+## L4 / L5 — shipped (where to iterate)
 
-- **L4 — Designer-led Contacts management UX**: a real user-facing surface
-  for browsing / creating / editing contacts, in the designer's
-  Figma-driven shape. Consumes `useContacts()` only — hook contract is
-  frozen, no DMK or signer churn. Pure Lumen UI work. Lives in a new
-  subtree under `mvvm/features/Contacts/<new-surface>/`; the existing L1
-  validation panel stays mounted as a hidden dev tool alongside it.
-- **L5 — Send recipient picker**: in the EVM Send flow, replace the
-  paste/ENS field with a Contacts-driven dropdown. Most of the picker UI
-  already shipped in L3.3–L3.5 (see `RecipientPicker` below); L5 is the
-  swap of the address input itself and the resolution of the Contact vs.
-  `provideTrustedName` precedence question. Device-side decoration on the
-  review screen is already handled by the DMK ContextModule's
-  `ContactsDataSource` — you no longer call `provideContact` /
-  `provideLedgerAccount` manually before signing.
+Both shipped and are device-validated in the `feat/contacts-beta` internal
+beta. This section is now an iterate-here map, not a build-from-scratch brief.
+
+- **L4 — Contacts management UX** (shipped): the full browse / create / edit
+  surface lives under `mvvm/features/Contacts/Management/`
+  (`ManagementView.tsx`, `components/`). Consumes `useContacts()` only — the
+  hook contract is frozen, no DMK or signer churn. Pure Lumen UI. The L1
+  validation panel stays mounted in parallel as a hidden dev tool.
+- **L5 — Send recipient picker** (shipped): the EVM Send recipient step uses a
+  Contacts-driven picker — `Send/screens/Recipient/components/`
+  (`RecipientContactsList.tsx`, `RecipientAccountsList.tsx`) + the
+  `RecipientViewContext`. Device-side decoration on the review screen is
+  handled by the DMK ContextModule's `ContactsDataSource` — you do NOT call
+  `provideContact` / `provideLedgerAccount` manually before signing.
+- **Still open for L5:** the Contact vs. `provideTrustedName` (ENS) precedence
+  question — emit only one per Send until firmware decides (upstream-asks #6).
 
 ## Surface inventory (for L4 / L5 work)
 
