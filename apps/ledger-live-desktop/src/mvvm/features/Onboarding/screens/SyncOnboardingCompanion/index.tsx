@@ -8,6 +8,13 @@ import useSyncOnboardingCompanionViewModel, {
   SyncOnboardingCompanionProps,
 } from "./useSyncOnboardingCompanionViewModel";
 
+type SyncOnboardingCompanionViewModel = ReturnType<typeof useSyncOnboardingCompanionViewModel>;
+type SyncOnboardingCompanionContainerProps = SyncOnboardingCompanionProps & {
+  renderHeader?: (
+    companionHeaderStep: SyncOnboardingCompanionViewModel["companionHeaderStep"],
+  ) => React.ReactNode;
+};
+
 const View = ({
   isDesyncOverlayOpen,
   desyncOverlayDelay,
@@ -18,8 +25,8 @@ const View = ({
   stepKey,
   companionSteps,
   isNewSeed,
-  analyticsSeedConfiguration,
-}: ReturnType<typeof useSyncOnboardingCompanionViewModel>) => {
+  seedConfiguration,
+}: SyncOnboardingCompanionViewModel) => {
   const { t } = useTranslation();
 
   return (
@@ -52,7 +59,7 @@ const View = ({
               installStep={companionSteps.installStep}
               isNewSeed={isNewSeed}
               handleComplete={companionSteps.handleAppStepComplete}
-              seedConfiguration={analyticsSeedConfiguration.current}
+              seedConfiguration={seedConfiguration}
               hasSyncStep={companionSteps.hasSyncStep}
             />
           ) : (
@@ -67,8 +74,18 @@ const View = ({
 /**
  * Component rendering the synchronous onboarding companion
  */
-const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = props => (
-  <View {...useSyncOnboardingCompanionViewModel(props)} />
-);
+const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionContainerProps> = ({
+  renderHeader,
+  ...props
+}) => {
+  const viewModel = useSyncOnboardingCompanionViewModel(props);
+
+  return (
+    <>
+      {renderHeader?.(viewModel.companionHeaderStep)}
+      <View {...viewModel} />
+    </>
+  );
+};
 
 export default SyncOnboardingCompanion;

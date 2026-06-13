@@ -1,11 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "LLD/hooks/redux";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
-import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import type { ToggleOnboardingEarlyCheckActionState } from "@ledgerhq/live-common/deviceSDK/actions/toggleOnboardingEarlyCheck";
+import {
+  OnboardingStep,
+  type OnboardingState,
+} from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
@@ -28,6 +32,9 @@ import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
 
+type CurrentStep = "loading" | "early-security-check" | "companion";
+type ToggleOnboardingEarlyCheckType = null | "enter" | "exit";
+
 export type SyncOnboardingScreenProps = {
   /**
    * A device model used to render the animation and text.
@@ -36,6 +43,203 @@ export type SyncOnboardingScreenProps = {
    * Should be DeviceModelId. react-router 5 seems to only handle [K in keyof Params]?: string props
    */
   deviceModelId: string;
+};
+
+type SyncOnboardingScreenState = {
+  currentStep: CurrentStep;
+  isPollingOn: boolean;
+  toggleOnboardingEarlyCheckType: ToggleOnboardingEarlyCheckType;
+  deviceDetectedOnboarded: boolean;
+  mustRecoverIfBootloader: boolean;
+  isBootloader: boolean;
+  isTroubleshootingDrawerOpen: boolean;
+  lastSeenDevice: Device | null;
+};
+
+type SyncOnboardingTransition = Partial<SyncOnboardingScreenState>;
+
+type SyncOnboardingScreenAction =
+  | {
+      type: "pollingSnapshot";
+      device: Device | null;
+      onboardingState: OnboardingState | null;
+      fatalError: Error | null;
+      shouldApplyOnboardingState: boolean;
+      shouldApplyFatalError: boolean;
+    }
+  | { type: "applyTransition"; transition: SyncOnboardingTransition | null }
+  | { type: "earlySecurityCheckEnded" }
+  | { type: "resetChecks" }
+  | { type: "openTroubleshootingDrawer" }
+  | { type: "setBootloader"; isBootloader: boolean };
+
+const WELCOME_ONBOARDING_STEPS = new Set<OnboardingStep>([
+  OnboardingStep.WelcomeScreen1,
+  OnboardingStep.WelcomeScreen2,
+  OnboardingStep.WelcomeScreen3,
+  OnboardingStep.WelcomeScreen4,
+  OnboardingStep.WelcomeScreenReminder,
+]);
+
+const createInitialSyncOnboardingState = (device: Device | null): SyncOnboardingScreenState => ({
+  currentStep: "loading",
+  isPollingOn: true,
+  toggleOnboardingEarlyCheckType: null,
+  deviceDetectedOnboarded: false,
+  mustRecoverIfBootloader: true,
+  isBootloader: false,
+  isTroubleshootingDrawerOpen: false,
+  lastSeenDevice: device,
+});
+
+const getTransitionFromOnboardingState = (
+  onboardingState: OnboardingState | null,
+): SyncOnboardingTransition | null => {
+  if (!onboardingState) {
+    return null;
+  }
+
+  const { currentOnboardingStep, isOnboarded } = onboardingState;
+
+  if (!isOnboarded && WELCOME_ONBOARDING_STEPS.has(currentOnboardingStep)) {
+    return {
+      isPollingOn: false,
+      toggleOnboardingEarlyCheckType: "enter",
+    };
+  }
+
+  if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
+    return {
+      isPollingOn: false,
+      // Reset the toggle hook result before showing ESC.
+      toggleOnboardingEarlyCheckType: null,
+      currentStep: "early-security-check",
+      mustRecoverIfBootloader: false,
+    };
+  }
+
+  if (isOnboarded) {
+    // Force ESC so the genuine check runs, without sending the toggle APDU.
+    return {
+      isPollingOn: false,
+      toggleOnboardingEarlyCheckType: null,
+      deviceDetectedOnboarded: true,
+      currentStep: "early-security-check",
+      mustRecoverIfBootloader: false,
+    };
+  }
+
+  return {
+    isPollingOn: false,
+    currentStep: "companion",
+  };
+};
+
+const getTransitionFromToggleResult = (
+  toggleState: ToggleOnboardingEarlyCheckActionState,
+  toggleType: ToggleOnboardingEarlyCheckType,
+): SyncOnboardingTransition | null => {
+  if (toggleState.toggleStatus === "none") {
+    return null;
+  }
+
+  if (toggleState.toggleStatus === "failure") {
+    // Older firmware may not support toggling ESC; companion is the safe fallback.
+    return {
+      toggleOnboardingEarlyCheckType: null,
+      currentStep: "companion",
+    };
+  }
+
+  if (toggleType !== null && toggleState.toggleStatus === "success") {
+    // Restart polling without forcing loading, to avoid a UI flash.
+    return {
+      toggleOnboardingEarlyCheckType: null,
+      isPollingOn: true,
+    };
+  }
+
+  return null;
+};
+
+const getTransitionFromFatalError = (fatalError: Error | null): SyncOnboardingTransition | null => {
+  if (fatalError instanceof UnexpectedBootloader) {
+    return {
+      isBootloader: true,
+    };
+  }
+
+  if (fatalError) {
+    return {
+      isPollingOn: false,
+      isTroubleshootingDrawerOpen: true,
+    };
+  }
+
+  return null;
+};
+
+const syncOnboardingScreenReducer = (
+  state: SyncOnboardingScreenState,
+  action: SyncOnboardingScreenAction,
+): SyncOnboardingScreenState => {
+  switch (action.type) {
+    case "pollingSnapshot": {
+      let nextState =
+        action.device && state.lastSeenDevice !== action.device
+          ? { ...state, lastSeenDevice: action.device }
+          : state;
+
+      if (action.shouldApplyOnboardingState) {
+        const transition = getTransitionFromOnboardingState(action.onboardingState);
+        nextState = transition ? { ...nextState, ...transition } : nextState;
+      }
+
+      if (action.shouldApplyFatalError) {
+        const transition = getTransitionFromFatalError(action.fatalError);
+        nextState = transition ? { ...nextState, ...transition } : nextState;
+      }
+
+      return nextState;
+    }
+
+    case "applyTransition":
+      return action.transition ? { ...state, ...action.transition } : state;
+
+    case "earlySecurityCheckEnded":
+      if (state.deviceDetectedOnboarded) {
+        // The device was never put into ESC mode via toggle, so there is nothing to exit.
+        return {
+          ...state,
+          currentStep: "companion",
+        };
+      }
+
+      return {
+        ...state,
+        toggleOnboardingEarlyCheckType: "exit",
+      };
+
+    case "resetChecks":
+      return {
+        ...state,
+        isPollingOn: true,
+        currentStep: "loading",
+        mustRecoverIfBootloader: true,
+      };
+
+    case "openTroubleshootingDrawer":
+      return {
+        ...state,
+        isTroubleshootingDrawerOpen: true,
+      };
+
+    case "setBootloader":
+      return {
+        ...state,
+        isBootloader: action.isBootloader,
+      };
+  }
 };
 
 /**
@@ -55,31 +259,21 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const device = useSelector(getCurrentDevice);
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
-  const [mustRecoverIfBootloader, setMustRecoverIfBootloader] = useState(true);
-  const [isBootloader, setIsBootloader] = useState(false);
-  // Needed because `device` object can be null or changed if disconnected/reconnected
-  const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
-  useEffect(() => {
-    if (device) {
-      setLastSeenDevice(device);
-    }
-  }, [device]);
-
-  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
-
-  const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
-    "loading",
+  const [syncOnboardingScreenState, dispatchSyncOnboardingScreenAction] = useReducer(
+    syncOnboardingScreenReducer,
+    device ?? null,
+    createInitialSyncOnboardingState,
   );
-  const [companionStep, setCompanionStep] = useState<"first-step" | "second-step">("first-step");
-  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
-  const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] = useState<
-    null | "enter" | "exit"
-  >(null);
+  const {
+    currentStep,
+    isPollingOn,
+    toggleOnboardingEarlyCheckType,
+    mustRecoverIfBootloader,
+    isBootloader,
+    isTroubleshootingDrawerOpen,
+    lastSeenDevice,
+  } = syncOnboardingScreenState;
   const [fwUpdateInterrupted, setFwUpdateInterrupted] = useState<FinalFirmware | null>(null);
-
-  // True when the device reported isOnboarded=true during polling. Used to bypass
-  // the exit toggle after ESC (the device was never put into ESC mode via toggle).
-  const [deviceDetectedOnboarded, setDeviceDetectedOnboarded] = useState<boolean>(false);
 
   /* The early security checks are run again after a firmware update. */
   const [isInitialRunOfSecurityChecks, setIsInitialRunOfSecurityChecks] = useState(true);
@@ -102,23 +296,18 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
+  const previousOnboardingStateRef = useRef(onboardingState);
+  const previousFatalErrorRef = useRef(fatalError);
+
   // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
-    if (deviceDetectedOnboarded) {
-      // The device was not put into ESC mode via the toggle APDU, so there is
-      // nothing to exit. Go directly to the companion step.
-      setCurrentStep("companion");
-    } else {
-      setToggleOnboardingEarlyCheckType("exit");
-    }
-  }, [deviceDetectedOnboarded]);
+    dispatchSyncOnboardingScreenAction({ type: "earlySecurityCheckEnded" });
+  }, []);
 
   // Called when the companion component thinks the device is not in a correct state anymore
   const notifyOnboardingEarlyCheckShouldReset = useCallback(() => {
-    setIsPollingOn(true);
-    setCurrentStep("loading");
+    dispatchSyncOnboardingScreenAction({ type: "resetChecks" });
     resetPollingStates();
-    setMustRecoverIfBootloader(true);
   }, [resetPollingStates]);
 
   const restartChecksAfterUpdate = useCallback(() => {
@@ -159,55 +348,19 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     return () => setDrawer();
   }, [deviceModelId, navigate, isTroubleshootingDrawerOpen, lockedDevice]);
 
-  // Handles current step and toggling onboarding early check logics
+  // Keep the latest non-null device because the current device can become null on disconnect/reconnect.
   useEffect(() => {
-    if (!onboardingState) {
-      return;
-    }
-    const { currentOnboardingStep, isOnboarded } = onboardingState;
-
-    if (
-      !isOnboarded &&
-      [
-        OnboardingStep.WelcomeScreen1,
-        OnboardingStep.WelcomeScreen2,
-        OnboardingStep.WelcomeScreen3,
-        OnboardingStep.WelcomeScreen4,
-        OnboardingStep.WelcomeScreenReminder,
-      ].includes(currentOnboardingStep)
-    ) {
-      setIsPollingOn(false);
-      setToggleOnboardingEarlyCheckType("enter");
-    } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
-      setIsPollingOn(false);
-      // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
-      // check type == "exit" and toggle status still being == "success" from the previous toggle
-      setToggleOnboardingEarlyCheckType(null);
-      setCurrentStep("early-security-check");
-      setMustRecoverIfBootloader(false);
-    } else if (isOnboarded) {
-      // Device reports itself as already onboarded, force the ESC so the genuine check always
-      // runs. We skip the toggle APDU because the device is not in its onboarding state machine.
-      setIsPollingOn(false);
-      setToggleOnboardingEarlyCheckType(null);
-      setDeviceDetectedOnboarded(true);
-      setCurrentStep("early-security-check");
-      setMustRecoverIfBootloader(false);
-    } else {
-      setIsPollingOn(false);
-      setCurrentStep("companion");
-    }
-  }, [onboardingState]);
-
-  // A fatal error during polling triggers directly an error message
-  useEffect(() => {
-    if ((fatalError as unknown) instanceof UnexpectedBootloader) {
-      setIsBootloader(true);
-    } else if (fatalError) {
-      setIsPollingOn(false);
-      setTroubleshootingDrawerOpen(true);
-    }
-  }, [fatalError]);
+    dispatchSyncOnboardingScreenAction({
+      type: "pollingSnapshot",
+      device: device ?? null,
+      onboardingState,
+      fatalError,
+      shouldApplyOnboardingState: previousOnboardingStateRef.current !== onboardingState,
+      shouldApplyFatalError: previousFatalErrorRef.current !== fatalError,
+    });
+    previousOnboardingStateRef.current = onboardingState;
+    previousFatalErrorRef.current = fatalError;
+  }, [device, fatalError, onboardingState]);
 
   // An allowed error during polling (which makes the polling retry) only triggers an error message after a timeout
   useEffect(() => {
@@ -215,8 +368,13 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
     if (allowedError && !(allowedError instanceof LockedDeviceError)) {
       timeout = setTimeout(() => {
-        setIsPollingOn(false);
-        setTroubleshootingDrawerOpen(true);
+        dispatchSyncOnboardingScreenAction({
+          type: "applyTransition",
+          transition: {
+            isPollingOn: false,
+            isTroubleshootingDrawerOpen: true,
+          },
+        });
       }, DESYNC_TIMEOUT_MS);
     }
 
@@ -229,25 +387,13 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   // Handles onboarding early check toggle result
   useEffect(() => {
-    if (toggleOnboardingEarlyCheckState.toggleStatus === "none") return;
-
-    if (toggleOnboardingEarlyCheckState.toggleStatus === "failure") {
-      // If an error occurred during the toggling the safe backup is to bring the device to the "companion" step
-      // This will happen for older firmware that does not handle this new action.
-      setToggleOnboardingEarlyCheckType(null);
-      setCurrentStep("companion");
-    }
-
-    // After a successful "enter" or "exit", the polling is restarted to know the device state
-    if (
-      toggleOnboardingEarlyCheckType !== null &&
-      toggleOnboardingEarlyCheckState.toggleStatus === "success"
-    ) {
-      // Resets the toggle hook
-      setToggleOnboardingEarlyCheckType(null);
-      setIsPollingOn(true);
-      // Not setting the `currentStep` to "loading" here to avoid UI flash
-    }
+    dispatchSyncOnboardingScreenAction({
+      type: "applyTransition",
+      transition: getTransitionFromToggleResult(
+        toggleOnboardingEarlyCheckState,
+        toggleOnboardingEarlyCheckType,
+      ),
+    });
   }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
 
   useChangeLanguagePrompt({
@@ -255,7 +401,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   });
 
   const onLostDevice = useCallback(() => {
-    setTroubleshootingDrawerOpen(true);
+    dispatchSyncOnboardingScreenAction({ type: "openTroubleshootingDrawer" });
   }, []);
 
   const isEarlySecurityChecks = currentStep === "early-security-check" && lastSeenDevice;
@@ -289,6 +435,18 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
       setContentScroll(scrollTop);
     }
   };
+
+  const renderCompanionHeader = useCallback(
+    (companionStep: "first-step" | "second-step") => (
+      <Header
+        device={lastSeenDevice}
+        onClose={handleClose}
+        displayTitle={currentStep === "companion" && lastSeenDevice && contentScroll > 30}
+        companionStep={companionStep}
+      />
+    ),
+    [contentScroll, currentStep, handleClose, lastSeenDevice],
+  );
 
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
@@ -327,13 +485,13 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         notifySyncOnboardingShouldReset={notifyOnboardingEarlyCheckShouldReset}
         onLostDevice={onLostDevice}
         parentRef={ref}
-        setCompanionStep={setCompanionStep}
+        renderHeader={renderCompanionHeader}
       />
     );
   }
 
   const onDeviceActionResult = useCallback(({ deviceInfo: { isBootloader } }: Result) => {
-    setIsBootloader(isBootloader);
+    dispatchSyncOnboardingScreenAction({ type: "setBootloader", isBootloader });
   }, []);
 
   return (
@@ -353,13 +511,15 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
          * user to finish the update.
          * */
         <DeviceAction onResult={onDeviceActionResult} action={action} request={null} />
+      ) : currentStep === "companion" && lastSeenDevice ? (
+        stepContent
       ) : (
         <>
           <Header
             device={lastSeenDevice}
             onClose={handleClose}
             displayTitle={currentStep === "companion" && lastSeenDevice && contentScroll > 30}
-            companionStep={companionStep}
+            companionStep="first-step"
           />
           {stepContent}
         </>

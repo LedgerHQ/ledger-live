@@ -132,7 +132,6 @@ describe("useSyncOnboardingCompanionViewModel", () => {
           onLostDevice: jest.fn(),
           notifySyncOnboardingShouldReset: jest.fn(),
           parentRef: createRef(),
-          setCompanionStep: jest.fn(),
         }),
       {
         minimal: false,
@@ -146,7 +145,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
     expect(result.current.deviceName).toBe("Ledger Stax");
     expect(result.current.steps).toHaveLength(5);
     expect(result.current.stepKey).toBe(StepKey.Paired);
-    expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+    expect(result.current.seedConfiguration).toBeUndefined();
     expect(result.current.isNewSeed).toBe(false);
   });
 
@@ -176,7 +175,6 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
@@ -188,7 +186,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
       expect(result.current.deviceName).toBe("Ledger Stax");
       expect(result.current.steps).toHaveLength(3);
       expect(result.current.stepKey).toBe(StepKey.Paired);
-      expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+      expect(result.current.seedConfiguration).toBeUndefined();
       expect(result.current.isNewSeed).toBe(false);
     });
 
@@ -217,7 +215,6 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
@@ -253,14 +250,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Pin);
       expect(result.current.isNewSeed).toBe(false);
-      expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+      expect(result.current.seedConfiguration).toBeUndefined();
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(1);
     });
 
@@ -293,14 +289,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Seed);
       expect(result.current.isNewSeed).toBe(false);
-      expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+      expect(result.current.seedConfiguration).toBeUndefined();
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(2);
     });
 
@@ -333,14 +328,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Seed);
       expect(result.current.isNewSeed).toBe(true);
-      expect(result.current.analyticsSeedConfiguration.current).toBe("new_seed");
+      expect(result.current.seedConfiguration).toBe("new_seed");
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(2);
     });
 
@@ -373,14 +367,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Seed);
       expect(result.current.isNewSeed).toBe(false);
-      expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+      expect(result.current.seedConfiguration).toBeUndefined();
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(2);
     });
 
@@ -413,14 +406,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Seed);
       expect(result.current.isNewSeed).toBe(false);
-      expect(result.current.analyticsSeedConfiguration.current).toBe("restore_seed");
+      expect(result.current.seedConfiguration).toBe("restore_seed");
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(2);
     });
 
@@ -453,14 +445,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Seed);
       expect(result.current.isNewSeed).toBe(false);
-      expect(result.current.analyticsSeedConfiguration.current).toBe("recover_seed");
+      expect(result.current.seedConfiguration).toBe("recover_seed");
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(2);
     });
 
@@ -493,14 +484,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Seed);
       expect(result.current.isNewSeed).toBe(false);
-      expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+      expect(result.current.seedConfiguration).toBeUndefined();
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(2);
     });
 
@@ -533,14 +523,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             onLostDevice: jest.fn(),
             notifySyncOnboardingShouldReset: jest.fn(),
             parentRef: createRef(),
-            setCompanionStep: jest.fn(),
           }),
         hookState,
       );
 
       expect(result.current.stepKey).toBe(StepKey.Seed);
       expect(result.current.isNewSeed).toBe(false);
-      expect(result.current.analyticsSeedConfiguration.current).toBe("restore_charon");
+      expect(result.current.seedConfiguration).toBe("restore_charon");
       expect(result.current.steps.findIndex(step => step.status === "active")).toBe(2);
     });
 
@@ -574,14 +563,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
               onLostDevice: jest.fn(),
               notifySyncOnboardingShouldReset: jest.fn(),
               parentRef: createRef(),
-              setCompanionStep: jest.fn(),
             }),
           hookState,
         );
 
         expect(result.current.stepKey).toBe(StepKey.Sync);
         expect(result.current.isNewSeed).toBe(false);
-        expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+        expect(result.current.seedConfiguration).toBeUndefined();
         expect(result.current.steps.findIndex(step => step.status === "active")).toBe(3);
       });
 
@@ -614,14 +602,13 @@ describe("useSyncOnboardingCompanionViewModel", () => {
               onLostDevice: jest.fn(),
               notifySyncOnboardingShouldReset: jest.fn(),
               parentRef: createRef(),
-              setCompanionStep: jest.fn(),
             }),
           hookState,
         );
 
         expect(result.current.stepKey).toBe(StepKey.Success);
         expect(result.current.isNewSeed).toBe(false);
-        expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+        expect(result.current.seedConfiguration).toBeUndefined();
         expect(result.current.steps.findIndex(step => step.status === "active")).toBe(-1);
       });
 
@@ -658,7 +645,6 @@ describe("useSyncOnboardingCompanionViewModel", () => {
                 onLostDevice: jest.fn(),
                 notifySyncOnboardingShouldReset: jest.fn(),
                 parentRef: createRef(),
-                setCompanionStep: jest.fn(),
               }),
             hookState,
           );
@@ -669,7 +655,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
 
           expect(result.current.stepKey).toBe(StepKey.Apps);
           expect(result.current.isNewSeed).toBe(false);
-          expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+          expect(result.current.seedConfiguration).toBeUndefined();
           expect(result.current.steps.findIndex(step => step.status === "active")).toBe(-1);
         } finally {
           jest.useRealTimers();

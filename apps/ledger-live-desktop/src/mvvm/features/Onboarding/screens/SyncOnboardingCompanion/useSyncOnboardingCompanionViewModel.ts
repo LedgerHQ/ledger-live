@@ -1,10 +1,19 @@
-import { type RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import {
+  type OnboardingState,
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -23,11 +32,7 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import useCompanionSteps, {
-  READY_REDIRECT_DELAY_MS,
-  Step,
-  StepKey,
-} from "./hooks/useCompanionSteps";
+import useCompanionSteps, { READY_REDIRECT_DELAY_MS, StepKey } from "./hooks/useCompanionSteps";
 import { analyticsFlowName } from "./utils/constants/analytics";
 
 const POLLING_PERIOD_MS = 1000;
@@ -43,6 +48,229 @@ const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, stri
   [SeedPhraseType.Eighteen, "Eighteen"],
   [SeedPhraseType.Twelve, "Twelve"],
 ]);
+
+type CompanionTransition = {
+  stepKey?: StepKey;
+  shouldRestoreApps?: boolean;
+  seedPathStatus?: SeedPathStatus;
+  isNewSeed?: boolean;
+  seedConfiguration?: SeedOriginType;
+  shouldNotifyReset?: boolean;
+  shouldMarkSeededDeviceHandled?: boolean;
+};
+
+type CompanionState = {
+  stepKey: StepKey;
+  shouldRestoreApps: boolean;
+  seedPathStatus: SeedPathStatus;
+  isNewSeed: boolean;
+  deviceInitiallyOnboarded: boolean | undefined;
+  seedPhraseType: SeedPhraseType | undefined;
+  seedConfiguration: SeedOriginType | undefined;
+  seededDeviceHandled: boolean;
+  isPollingOn: boolean;
+  desyncOverlayDelay: number;
+  isDesyncOverlayOpen: boolean;
+  desyncTimeout: number;
+};
+
+type CompanionAction =
+  | {
+      type: "DEVICE_ONBOARDING_STATE_CHANGED";
+      deviceOnboardingState: OnboardingState;
+      transition: CompanionTransition | null;
+      shouldExtendDesyncTiming: boolean;
+    }
+  | { type: "GO_TO_STEP"; stepKey: StepKey }
+  | { type: "COMPLETE_SUCCESS_STEP" }
+  | { type: "STOP_POLLING" }
+  | { type: "START_DESYNC_WARNING" }
+  | { type: "CLEAR_DESYNC_WARNING" };
+
+const initialCompanionState: CompanionState = {
+  stepKey: StepKey.Paired,
+  shouldRestoreApps: false,
+  seedPathStatus: "choice_new_or_restore",
+  isNewSeed: false,
+  deviceInitiallyOnboarded: undefined,
+  seedPhraseType: undefined,
+  seedConfiguration: undefined,
+  seededDeviceHandled: false,
+  isPollingOn: true,
+  desyncOverlayDelay: DESYNC_OVERLAY_DELAY_MS,
+  isDesyncOverlayOpen: false,
+  desyncTimeout: DESYNC_TIMEOUT_MS,
+};
+
+function getCompanionHeaderStep(stepKey: StepKey): "first-step" | "second-step" {
+  return stepKey > StepKey.Seed ? "second-step" : "first-step";
+}
+
+function companionReducer(state: CompanionState, action: CompanionAction): CompanionState {
+  switch (action.type) {
+    case "DEVICE_ONBOARDING_STATE_CHANGED": {
+      const { deviceOnboardingState, shouldExtendDesyncTiming, transition } = action;
+      const nextDeviceInitiallyOnboarded =
+        state.deviceInitiallyOnboarded ?? deviceOnboardingState.isOnboarded;
+      const nextSeedPhraseType =
+        !deviceOnboardingState.isOnboarded && deviceOnboardingState.seedPhraseType
+          ? deviceOnboardingState.seedPhraseType
+          : state.seedPhraseType;
+      const nextSeedConfiguration = transition?.seedConfiguration ?? state.seedConfiguration;
+      const nextDesyncOverlayDelay = shouldExtendDesyncTiming
+        ? LONG_DESYNC_OVERLAY_DELAY_MS
+        : state.desyncOverlayDelay;
+      const nextDesyncTimeout = shouldExtendDesyncTiming
+        ? LONG_DESYNC_TIMEOUT_MS
+        : state.desyncTimeout;
+      const nextStepKey = transition?.stepKey ?? state.stepKey;
+      const nextShouldRestoreApps = transition?.shouldRestoreApps ?? state.shouldRestoreApps;
+      const nextSeedPathStatus = transition?.seedPathStatus ?? state.seedPathStatus;
+      const nextIsNewSeed = transition?.isNewSeed ?? state.isNewSeed;
+      const nextSeededDeviceHandled =
+        state.seededDeviceHandled || transition?.shouldMarkSeededDeviceHandled === true;
+
+      if (
+        nextDeviceInitiallyOnboarded === state.deviceInitiallyOnboarded &&
+        nextSeedPhraseType === state.seedPhraseType &&
+        nextSeedConfiguration === state.seedConfiguration &&
+        nextDesyncOverlayDelay === state.desyncOverlayDelay &&
+        nextDesyncTimeout === state.desyncTimeout &&
+        nextStepKey === state.stepKey &&
+        nextShouldRestoreApps === state.shouldRestoreApps &&
+        nextSeedPathStatus === state.seedPathStatus &&
+        nextIsNewSeed === state.isNewSeed &&
+        nextSeededDeviceHandled === state.seededDeviceHandled
+      ) {
+        return state;
+      }
+
+      return {
+        ...state,
+        stepKey: nextStepKey,
+        shouldRestoreApps: nextShouldRestoreApps,
+        seedPathStatus: nextSeedPathStatus,
+        isNewSeed: nextIsNewSeed,
+        deviceInitiallyOnboarded: nextDeviceInitiallyOnboarded,
+        seedPhraseType: nextSeedPhraseType,
+        seedConfiguration: nextSeedConfiguration,
+        seededDeviceHandled: nextSeededDeviceHandled,
+        desyncOverlayDelay: nextDesyncOverlayDelay,
+        desyncTimeout: nextDesyncTimeout,
+      };
+    }
+    case "GO_TO_STEP":
+      return { ...state, stepKey: action.stepKey };
+    case "COMPLETE_SUCCESS_STEP":
+      return { ...state, stepKey: StepKey.Apps };
+    case "STOP_POLLING":
+      return { ...state, isPollingOn: false };
+    case "START_DESYNC_WARNING":
+      return { ...state, isDesyncOverlayOpen: true };
+    case "CLEAR_DESYNC_WARNING":
+      return { ...state, isDesyncOverlayOpen: false };
+    default:
+      return state;
+  }
+}
+
+function getCompanionTransitionFromOnboardingState({
+  deviceOnboardingState,
+  isSyncIncr1Enabled,
+  hasSyncStep,
+  seededDeviceAlreadyHandled,
+}: {
+  deviceOnboardingState?: OnboardingState | null;
+  isSyncIncr1Enabled: boolean;
+  hasSyncStep: boolean;
+  seededDeviceAlreadyHandled: boolean;
+}): CompanionTransition | null {
+  if (
+    deviceOnboardingState?.isOnboarded &&
+    !seededDeviceAlreadyHandled &&
+    [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
+      deviceOnboardingState.currentOnboardingStep,
+    )
+  ) {
+    return {
+      stepKey: isSyncIncr1Enabled ? (hasSyncStep ? StepKey.Sync : StepKey.Success) : StepKey.Apps,
+      shouldMarkSeededDeviceHandled: true,
+    };
+  }
+
+  switch (deviceOnboardingState?.currentOnboardingStep) {
+    // Those cases could happen if the device restarted
+    case DeviceOnboardingStep.WelcomeScreen1:
+    case DeviceOnboardingStep.WelcomeScreen2:
+    case DeviceOnboardingStep.WelcomeScreen3:
+    case DeviceOnboardingStep.WelcomeScreen4:
+    case DeviceOnboardingStep.WelcomeScreenReminder:
+    case DeviceOnboardingStep.OnboardingEarlyCheck:
+      return { shouldNotifyReset: true };
+
+    case DeviceOnboardingStep.ChooseName:
+      return { stepKey: StepKey.Paired };
+    case DeviceOnboardingStep.SetupChoice:
+      return { stepKey: StepKey.Seed, seedPathStatus: "choice_new_or_restore" };
+    case DeviceOnboardingStep.NewDevice:
+    case DeviceOnboardingStep.NewDeviceConfirming:
+      return {
+        shouldRestoreApps: false,
+        stepKey: StepKey.Seed,
+        seedPathStatus: "new_seed",
+        isNewSeed: true,
+        seedConfiguration: "new_seed",
+      };
+    case DeviceOnboardingStep.SetupChoiceRestore:
+      return { stepKey: StepKey.Seed, seedPathStatus: "choice_restore_direct_or_recover" };
+    case DeviceOnboardingStep.RestoreSeed:
+      return {
+        shouldRestoreApps: true,
+        stepKey: StepKey.Seed,
+        seedPathStatus: "restore_seed",
+        isNewSeed: false,
+        seedConfiguration: "restore_seed",
+      };
+    case DeviceOnboardingStep.RecoverRestore:
+      return {
+        shouldRestoreApps: true,
+        stepKey: StepKey.Seed,
+        seedPathStatus: "recover_seed",
+        isNewSeed: false,
+        seedConfiguration: "recover_seed",
+      };
+    case DeviceOnboardingStep.BackupCharon:
+      return { stepKey: StepKey.Seed, seedPathStatus: "backup_charon" };
+    case DeviceOnboardingStep.RestoreCharon:
+      return {
+        stepKey: StepKey.Seed,
+        seedPathStatus: "restore_charon",
+        isNewSeed: false,
+        seedConfiguration: "restore_charon",
+      };
+    case DeviceOnboardingStep.Pin:
+      return { stepKey: StepKey.Pin };
+    default:
+      return null;
+  }
+}
+
+function shouldExtendDesyncTimingForSeedGeneration(
+  deviceOnboardingState: OnboardingState,
+): boolean {
+  if (
+    !deviceOnboardingState.seedPhraseType ||
+    ![DeviceOnboardingStep.NewDeviceConfirming, DeviceOnboardingStep.RestoreSeed].includes(
+      deviceOnboardingState.currentOnboardingStep,
+    )
+  ) {
+    return false;
+  }
+
+  const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(deviceOnboardingState.seedPhraseType);
+
+  return !!nbOfSeedWords && deviceOnboardingState.currentSeedWordIndex >= nbOfSeedWords - 2;
+}
 
 export type SyncOnboardingCompanionProps = {
   /**
@@ -64,11 +292,6 @@ export type SyncOnboardingCompanionProps = {
    * The ref of parent container so we can scroll components into view
    */
   parentRef: RefObject<HTMLDivElement | null>;
-
-  /**
-   * Set state to control header
-   */
-  setCompanionStep: (currentStep: "first-step" | "second-step") => void;
 };
 
 /**
@@ -79,19 +302,31 @@ const useSyncOnboardingCompanionViewModel = ({
   onLostDevice,
   notifySyncOnboardingShouldReset,
   parentRef,
-  setCompanionStep,
 }: SyncOnboardingCompanionProps) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const isSyncIncr1Enabled = useFeature("lldSyncOnboardingIncr1")?.enabled || false;
   const servicesConfig = useFeature("protectServicesDesktop");
   const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
 
-  const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
-  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
+  const [state, companionDispatch] = useReducer(companionReducer, initialCompanionState);
+  const {
+    stepKey,
+    shouldRestoreApps,
+    seedPathStatus,
+    isNewSeed,
+    isPollingOn,
+    desyncOverlayDelay,
+    isDesyncOverlayOpen,
+    desyncTimeout,
+    deviceInitiallyOnboarded,
+    seedPhraseType,
+    seedConfiguration,
+    seededDeviceHandled,
+  } = state;
   const lastCompanionStepKey = useRef<StepKey>(undefined);
-  const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
-  const [isNewSeed, setIsNewSeed] = useState<boolean>(false);
+  const setStepKey = useCallback((nextStepKey: StepKey) => {
+    companionDispatch({ type: "GO_TO_STEP", stepKey: nextStepKey });
+  }, []);
 
   useTrackOnboardingFlow({
     location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
@@ -104,29 +339,6 @@ const useSyncOnboardingCompanionViewModel = ({
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
-
-  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
-
-  const [desyncOverlayDelay, setDesyncOverlayDelay] = useState<number>(DESYNC_OVERLAY_DELAY_MS);
-  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
-  const [desyncTimeout, setDesyncTimeout] = useState<number>(DESYNC_TIMEOUT_MS);
-
-  /**
-   * True if the device was initially onboarded/seeded when this component got
-   * mounted. False otherwise.
-   * Value is undefined until the onboarding state polling returns a first
-   * result.
-   * */
-  const deviceInitiallyOnboarded = useRef<boolean>(undefined);
-  /**
-   * Variable holding the seed phrase type (number of words) until we are
-   * ready to track the event (when the seeding step finishes).
-   * Should only be maintained if the device is not onboarded/not seeded as the
-   * onboarding flags can only be trusted for a non-onboarded device.
-   */
-  const analyticsSeedPhraseType = useRef<SeedPhraseType>(undefined);
-
-  const analyticsSeedConfiguration = useRef<SeedOriginType>(undefined);
 
   const {
     onboardingState: deviceOnboardingState,
@@ -151,43 +363,42 @@ const useSyncOnboardingCompanionViewModel = ({
     charonStatus: deviceOnboardingState?.charonStatus,
     charonSupported: deviceOnboardingState?.charonSupported,
     isTwoStep: isSyncIncr1Enabled,
-    seedConfiguration: analyticsSeedConfiguration.current,
+    seedConfiguration,
   });
 
-  const [steps, setSteps] = useState<Step[]>(companionSteps.defaultSteps);
+  const steps = useMemo(
+    () =>
+      companionSteps.defaultSteps.map(step => {
+        let stepStatus = step.status;
+
+        if (stepStatus !== "completed") {
+          stepStatus =
+            step.key > stepKey ? "inactive" : step.key < stepKey ? "completed" : "active";
+        }
+        const title = (stepStatus === "completed" && step.titleCompleted) || step.title;
+
+        return {
+          ...step,
+          title,
+          status: stepStatus,
+        };
+      }),
+    [companionSteps.defaultSteps, stepKey],
+  );
 
   const handleDeviceReady = useCallback(() => {
     navigate("/onboarding/sync/completion", {
       state: {
-        seedConfiguration: analyticsSeedConfiguration.current,
+        seedConfiguration,
       },
     });
-  }, [navigate]);
+  }, [navigate, seedConfiguration]);
 
   const handleDesyncTimerRunsOut = useCallback(() => {
-    setIsDesyncOverlayOpen(false);
+    companionDispatch({ type: "CLEAR_DESYNC_WARNING" });
     onLostDevice();
-    setIsPollingOn(false);
+    companionDispatch({ type: "STOP_POLLING" });
   }, [onLostDevice]);
-
-  useEffect(() => {
-    if (stepKey > StepKey.Seed) {
-      setCompanionStep("second-step");
-    } else {
-      setCompanionStep("first-step");
-    }
-  }, [stepKey, setCompanionStep]);
-
-  useEffect(() => {
-    if (!deviceOnboardingState) return;
-    if (deviceInitiallyOnboarded.current === undefined)
-      deviceInitiallyOnboarded.current = deviceOnboardingState.isOnboarded;
-    if (
-      !deviceOnboardingState.isOnboarded && // onboarding state flags can only be trusted for a non-onboarded/non-seeded device
-      deviceOnboardingState.seedPhraseType
-    )
-      analyticsSeedPhraseType.current = deviceOnboardingState.seedPhraseType;
-  }, [deviceOnboardingState]);
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -197,7 +408,7 @@ const useSyncOnboardingCompanionViewModel = ({
    */
   useLayoutEffect(() => {
     if (
-      deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
+      deviceInitiallyOnboarded === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
       lastCompanionStepKey.current <= StepKey.Seed &&
       stepKey === StepKey.Seed &&
@@ -218,10 +429,10 @@ const useSyncOnboardingCompanionViewModel = ({
         `Set up ${productName}: Step 3 Seed Success`,
         undefined,
         {
-          seedPhraseType: analyticsSeedPhraseType.current
-            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
+          seedPhraseType: seedPhraseType
+            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(seedPhraseType)
             : undefined,
-          seedConfiguration: analyticsSeedConfiguration.current,
+          seedConfiguration,
         },
         true,
         true,
@@ -230,7 +441,15 @@ const useSyncOnboardingCompanionViewModel = ({
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = stepKey;
-  }, [deviceOnboardingState?.isOnboarded, productName, seedPathStatus, stepKey]);
+  }, [
+    deviceInitiallyOnboarded,
+    deviceOnboardingState?.isOnboarded,
+    productName,
+    seedConfiguration,
+    seedPathStatus,
+    seedPhraseType,
+    stepKey,
+  ]);
 
   useEffect(() => {
     if (lockedDevice) {
@@ -248,121 +467,50 @@ const useSyncOnboardingCompanionViewModel = ({
     return () => setDrawer();
   }, [device.modelId, navigate, lockedDevice]);
 
-  const seededDeviceHandled = useRef(false);
+  const lastProcessedDeviceOnboardingState = useRef<OnboardingState | null>(null);
 
   useEffect(() => {
+    if (
+      !deviceOnboardingState ||
+      lastProcessedDeviceOnboardingState.current === deviceOnboardingState
+    ) {
+      return;
+    }
+    lastProcessedDeviceOnboardingState.current = deviceOnboardingState;
+
     // When the device is seeded, there are 2 cases before triggering the application install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
-    if (
-      deviceOnboardingState?.isOnboarded &&
-      !seededDeviceHandled.current &&
-      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
-        deviceOnboardingState.currentOnboardingStep,
-      )
-    ) {
-      let nextStepKey = StepKey.Apps;
-      if (isSyncIncr1Enabled) {
-        nextStepKey = companionSteps.hasSyncStep ? StepKey.Sync : StepKey.Success;
-      }
-      setStepKey(nextStepKey);
-      seededDeviceHandled.current = true;
-      return;
-    }
-
     // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
-    switch (deviceOnboardingState?.currentOnboardingStep) {
-      // Those cases could happen if the device restarted
-      case DeviceOnboardingStep.WelcomeScreen1:
-      case DeviceOnboardingStep.WelcomeScreen2:
-      case DeviceOnboardingStep.WelcomeScreen3:
-      case DeviceOnboardingStep.WelcomeScreen4:
-      case DeviceOnboardingStep.WelcomeScreenReminder:
-      case DeviceOnboardingStep.OnboardingEarlyCheck:
-        notifySyncOnboardingShouldReset();
-        break;
+    const transition = getCompanionTransitionFromOnboardingState({
+      deviceOnboardingState,
+      isSyncIncr1Enabled,
+      hasSyncStep: companionSteps.hasSyncStep,
+      seededDeviceAlreadyHandled: seededDeviceHandled,
+    });
 
-      case DeviceOnboardingStep.ChooseName:
-        setStepKey(StepKey.Paired);
-        break;
-      case DeviceOnboardingStep.SetupChoice:
-        setStepKey(StepKey.Seed);
-        setSeedPathStatus("choice_new_or_restore");
-        break;
-      case DeviceOnboardingStep.NewDevice:
-      case DeviceOnboardingStep.NewDeviceConfirming:
-        setShouldRestoreApps(false);
-        setStepKey(StepKey.Seed);
-        setSeedPathStatus("new_seed");
-        setIsNewSeed(true);
-        analyticsSeedConfiguration.current = "new_seed";
-        break;
-      case DeviceOnboardingStep.SetupChoiceRestore:
-        setStepKey(StepKey.Seed);
-        setSeedPathStatus("choice_restore_direct_or_recover");
-        break;
-      case DeviceOnboardingStep.RestoreSeed:
-        setShouldRestoreApps(true);
-        setStepKey(StepKey.Seed);
-        setSeedPathStatus("restore_seed");
-        setIsNewSeed(false);
-        analyticsSeedConfiguration.current = "restore_seed";
-        break;
-      case DeviceOnboardingStep.RecoverRestore:
-        setShouldRestoreApps(true);
-        setStepKey(StepKey.Seed);
-        setSeedPathStatus("recover_seed");
-        setIsNewSeed(false);
-        analyticsSeedConfiguration.current = "recover_seed";
-        break;
-      case DeviceOnboardingStep.BackupCharon:
-        setStepKey(StepKey.Seed);
-        setSeedPathStatus("backup_charon");
-        break;
-      case DeviceOnboardingStep.RestoreCharon:
-        setStepKey(StepKey.Seed);
-        setSeedPathStatus("restore_charon");
-        setIsNewSeed(false);
-        analyticsSeedConfiguration.current = "restore_charon";
-        break;
-      case DeviceOnboardingStep.Pin:
-        setStepKey(StepKey.Pin);
-        break;
-      default:
-        break;
+    if (transition?.shouldNotifyReset) {
+      notifySyncOnboardingShouldReset();
     }
+
+    companionDispatch({
+      type: "DEVICE_ONBOARDING_STATE_CHANGED",
+      deviceOnboardingState,
+      transition,
+      shouldExtendDesyncTiming: shouldExtendDesyncTimingForSeedGeneration(deviceOnboardingState),
+    });
   }, [
     deviceOnboardingState,
     notifySyncOnboardingShouldReset,
     isSyncIncr1Enabled,
     companionSteps.hasSyncStep,
+    seededDeviceHandled,
   ]);
-
-  // When the user gets close to the seed generation step, sets the lost synchronization delay
-  // and timers to a higher value. It avoids having a warning message while the connection is lost
-  // because the device is generating the seed.
-  useEffect(() => {
-    if (
-      deviceOnboardingState?.seedPhraseType &&
-      [DeviceOnboardingStep.NewDeviceConfirming, DeviceOnboardingStep.RestoreSeed].includes(
-        deviceOnboardingState?.currentOnboardingStep,
-      )
-    ) {
-      const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
-        deviceOnboardingState.seedPhraseType,
-      );
-
-      if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
-        setDesyncOverlayDelay(LONG_DESYNC_OVERLAY_DELAY_MS);
-        setDesyncTimeout(LONG_DESYNC_TIMEOUT_MS);
-      }
-    }
-  }, [deviceOnboardingState]);
 
   useEffect(() => {
     const properties = {
       flow: analyticsFlowName,
-      seedConfiguration: analyticsSeedConfiguration.current,
+      seedConfiguration,
     };
 
     if (isSyncIncr1Enabled ? stepKey === StepKey.Success : stepKey === StepKey.Exit) {
@@ -376,48 +524,40 @@ const useSyncOnboardingCompanionViewModel = ({
     } else if (isSyncIncr1Enabled && stepKey === StepKey.Apps) {
       trackPage(`Set up ${productName}: Secure your crypto`, undefined, properties, true, true);
     }
-  }, [stepKey, productName, isSyncIncr1Enabled]);
+  }, [stepKey, productName, isSyncIncr1Enabled, seedConfiguration]);
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
     if (stepKey >= StepKey.Sync) {
-      setIsPollingOn(false);
+      companionDispatch({ type: "STOP_POLLING" });
     }
 
-    if (stepKey === StepKey.Ready) {
-      // Only app install route will go to this step
+    if (stepKey === StepKey.Success) {
+      timer = setTimeout(() => {
+        companionDispatch({ type: "COMPLETE_SUCCESS_STEP" });
+      }, 2000);
+    } else if (stepKey === StepKey.Ready) {
+      // Only app install route will go to this step.
       if (isSyncIncr1Enabled) {
-        setTimeout(() => setStepKey(StepKey.Exit), READY_REDIRECT_DELAY_MS);
+        timer = setTimeout(() => setStepKey(StepKey.Exit), READY_REDIRECT_DELAY_MS);
       } else {
         setStepKey(StepKey.Exit);
       }
-    }
-
-    if (stepKey === StepKey.Exit) {
+    } else if (stepKey === StepKey.Exit) {
       if (isSyncIncr1Enabled) {
         handleDeviceReady();
       } else {
-        setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS);
+        timer = setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS);
       }
     }
 
-    setSteps(
-      companionSteps.defaultSteps.map(step => {
-        let stepStatus = step.status;
-
-        if (stepStatus !== "completed") {
-          stepStatus =
-            step.key > stepKey ? "inactive" : step.key < stepKey ? "completed" : "active";
-        }
-        const title = (stepStatus === "completed" && step.titleCompleted) || step.title;
-
-        return {
-          ...step,
-          title,
-          status: stepStatus,
-        };
-      }),
-    );
-  }, [stepKey, companionSteps.defaultSteps, handleDeviceReady, productName, isSyncIncr1Enabled]);
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [stepKey, handleDeviceReady, isSyncIncr1Enabled, setStepKey]);
 
   // Fatal error from the polling is not recoverable automatically
   useEffect(() => {
@@ -425,18 +565,18 @@ const useSyncOnboardingCompanionViewModel = ({
       return;
     }
     onLostDevice();
-    setIsPollingOn(false);
+    companionDispatch({ type: "STOP_POLLING" });
   }, [fatalError, onLostDevice]);
 
   useEffect(() => {
     let desyncTimer: NodeJS.Timeout | null = null;
 
     if (allowedError && !(allowedError instanceof LockedDeviceError)) {
-      setIsDesyncOverlayOpen(true);
+      companionDispatch({ type: "START_DESYNC_WARNING" });
       desyncTimer = setTimeout(handleDesyncTimerRunsOut, desyncTimeout);
     } else {
       // desyncTimer is cleared in the useEffect cleanup function
-      setIsDesyncOverlayOpen(false);
+      companionDispatch({ type: "CLEAR_DESYNC_WARNING" });
     }
 
     return () => {
@@ -457,7 +597,7 @@ const useSyncOnboardingCompanionViewModel = ({
         state: { fromOnboarding: true },
       });
     }
-  }, [dispatch, navigate, recoverRestoreStaxPath, seedPathStatus]);
+  }, [navigate, recoverRestoreStaxPath, seedPathStatus]);
 
   useEffect(() => {
     if (stepKey === StepKey.Success) {
@@ -467,20 +607,6 @@ const useSyncOnboardingCompanionViewModel = ({
     }
   }, [seedPathStatus, stepKey, parentRef]);
 
-  useEffect(() => {
-    if (stepKey === StepKey.Success) {
-      const timer = setTimeout(() => {
-        setStepKey(StepKey.Apps);
-      }, 2000);
-
-      return () => {
-        if (timer) {
-          clearTimeout(timer);
-        }
-      };
-    }
-  }, [stepKey]);
-
   return {
     isDesyncOverlayOpen,
     desyncOverlayDelay,
@@ -489,8 +615,9 @@ const useSyncOnboardingCompanionViewModel = ({
     deviceName,
     steps,
     stepKey,
+    companionHeaderStep: getCompanionHeaderStep(stepKey),
     companionSteps,
-    analyticsSeedConfiguration,
+    seedConfiguration,
     isNewSeed,
   };
 };
