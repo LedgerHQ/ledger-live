@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { contactsAlphaSelector } from "~/renderer/reducers/settings";
 import { useContactsStore } from "~/renderer/contacts/hooks";
 import { getCryptoMeta, useCryptoMeta } from "~/mvvm/features/Contacts/Management/utils/cryptoMeta";
 import {
@@ -38,12 +36,11 @@ export const useMatchedContactEntry = (
   chainId: number | undefined,
   selectedTicker?: string,
 ): MatchedContactEntry | null => {
-  const contactsAlpha = useSelector(contactsAlphaSelector);
   const { wallet, hydrated } = useContactsStore();
   const cryptoMeta = useCryptoMeta();
 
   return useMemo(() => {
-    if (!contactsAlpha || !hydrated || !address || chainId === undefined) return null;
+    if (!hydrated || !address || chainId === undefined) return null;
     const target = normalize(address);
     if (target.length === 0) return null;
     for (const contact of Object.values(wallet.contacts)) {
@@ -60,5 +57,5 @@ export const useMatchedContactEntry = (
       }
     }
     return null;
-  }, [contactsAlpha, hydrated, wallet, address, chainId, selectedTicker, cryptoMeta]);
+  }, [hydrated, wallet, address, chainId, selectedTicker, cryptoMeta]);
 };

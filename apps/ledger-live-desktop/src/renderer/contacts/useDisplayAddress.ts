@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { contactsAlphaSelector } from "~/renderer/reducers/settings";
 import { useContactsStore } from "./hooks";
 import type { ContactsWallet } from "./types";
 import type { ContactBadgeKind } from "./ContactBadge";
@@ -52,12 +50,11 @@ export const useContactResolution = (
   address: string | undefined,
   chainId: number | undefined,
 ): ContactResolution | null => {
-  const contactsAlpha = useSelector(contactsAlphaSelector);
   const { wallet, hydrated } = useContactsStore();
   return useMemo(() => {
-    if (!contactsAlpha || !hydrated || !address || chainId === undefined) return null;
+    if (!hydrated || !address || chainId === undefined) return null;
     return resolveContact(wallet, address, chainId);
-  }, [contactsAlpha, hydrated, wallet, address, chainId]);
+  }, [hydrated, wallet, address, chainId]);
 };
 
 export const useDisplayAddress = (

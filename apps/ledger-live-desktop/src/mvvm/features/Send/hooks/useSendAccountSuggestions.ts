@@ -5,7 +5,6 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { Account } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { contactsAlphaSelector } from "~/renderer/reducers/settings";
 import { useContactsStore } from "~/renderer/contacts/hooks";
 import type { ContactsWallet } from "~/renderer/contacts/types";
 
@@ -149,7 +148,6 @@ export const useSendAccountSuggestions = (
 ): SendAccountSuggestion[] => {
   const accounts = useSelector(accountsSelector);
   const walletState = useSelector(walletSelector);
-  const contactsAlpha = useSelector(contactsAlphaSelector);
   const { wallet, hydrated } = useContactsStore();
 
   return useMemo(
@@ -160,7 +158,7 @@ export const useSendAccountSuggestions = (
         currency,
         currentMainAccountId,
         query,
-        contactsAlpha && hydrated && chainId !== undefined ? { wallet, chainId } : undefined,
+        hydrated && chainId !== undefined ? { wallet, chainId } : undefined,
       ),
     [
       accounts,
@@ -168,7 +166,6 @@ export const useSendAccountSuggestions = (
       currency,
       currentMainAccountId,
       query,
-      contactsAlpha,
       hydrated,
       wallet,
       chainId,

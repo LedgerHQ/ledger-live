@@ -112,7 +112,7 @@ export type SettingsState = {
   allowDebugApps: boolean;
   allowReactQueryDebug: boolean;
   allowExperimentalApps: boolean;
-  contactsAlpha: boolean;
+  showContactsTestPanel: boolean;
   enablePlatformDevTools: boolean;
   catalogProvider: string;
   USBTroubleshootingIndex?: number;
@@ -214,7 +214,7 @@ export const INITIAL_STATE: SettingsState = {
   allowDebugApps: false,
   allowReactQueryDebug: false,
   allowExperimentalApps: false,
-  contactsAlpha: false,
+  showContactsTestPanel: false,
   enablePlatformDevTools: false,
   catalogProvider: "production",
   enableLearnPageStagingUrl: false,
@@ -822,7 +822,8 @@ export const USBTroubleshootingIndexSelector = (state: State) =>
 export const allowDebugAppsSelector = (state: State) => state.settings.allowDebugApps;
 export const allowDebugReactQuerySelector = (state: State) => state.settings.allowReactQueryDebug;
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
-export const contactsAlphaSelector = (state: State) => state.settings.contactsAlpha;
+export const showContactsTestPanelSelector = (state: State) =>
+  state.settings.showContactsTestPanel;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
 export const catalogProviderSelector = (state: State) => state.settings.catalogProvider;

@@ -126,9 +126,9 @@ export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
   saveSettings({
     allowExperimentalApps,
   });
-export const setContactsAlpha = (contactsAlpha: boolean) =>
+export const setShowContactsTestPanel = (showContactsTestPanel: boolean) =>
   saveSettings({
-    contactsAlpha,
+    showContactsTestPanel,
   });
 
 export const setEnablePlatformDevTools = (enablePlatformDevTools: boolean) =>

@@ -12,7 +12,6 @@ import {
   localeSelector,
   discreetModeSelector,
   counterValueCurrencySelector,
-  contactsAlphaSelector,
 } from "~/renderer/reducers/settings";
 import BigNumber from "bignumber.js";
 import { useContactsStore } from "~/renderer/contacts/hooks";
@@ -39,19 +38,18 @@ export const AccountSelectorContent = ({
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const contactsAlpha = useSelector(contactsAlphaSelector);
   const { wallet, hydrated } = useContactsStore();
 
   const getTitleDecoration = useCallback(
     (account: AccountRow): React.ReactNode => {
-      if (!contactsAlpha || !hydrated || chainId === undefined || !account.address) return null;
+      if (!hydrated || chainId === undefined || !account.address) return null;
       const resolution = resolveContact(wallet, account.address, chainId);
       if (resolution?.kind !== "ledgerAccount") return null;
       // Shield-check (not the green name pill) — same signed-with-Ledger
       // affordance as the CryptoAddresses table and the send-flow rows.
       return <SignedNameBadge data-testid="account-selector-signed-name-badge" />;
     },
-    [contactsAlpha, hydrated, wallet, chainId],
+    [hydrated, wallet, chainId],
   );
 
   const formattedAccounts = useMemo(() => {

@@ -19,27 +19,15 @@ describe("Contacts (user-menu row)", () => {
     });
   });
 
-  it("renders the contacts row when the alpha flag is on", () => {
-    render(<Contacts />, {
-      initialState: { settings: { contactsAlpha: true } },
-    });
+  it("renders the contacts row", () => {
+    render(<Contacts />);
 
     expect(screen.getByText("Contacts")).toBeVisible();
     expect(screen.getByText("Manage your contacts")).toBeVisible();
   });
 
-  it("renders nothing when the alpha flag is off", () => {
-    const { container } = render(<Contacts />, {
-      initialState: { settings: { contactsAlpha: false } },
-    });
-
-    expect(container).toBeEmptyDOMElement();
-  });
-
   it("calls handleClick when the row is clicked", async () => {
-    const { user } = render(<Contacts />, {
-      initialState: { settings: { contactsAlpha: true } },
-    });
+    const { user } = render(<Contacts />);
 
     await user.click(screen.getByText("Contacts"));
 

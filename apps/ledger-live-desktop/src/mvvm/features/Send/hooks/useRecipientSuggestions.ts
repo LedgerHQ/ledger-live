@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { contactsAlphaSelector } from "~/renderer/reducers/settings";
 import { useContactsStore } from "~/renderer/contacts/hooks";
 import type { ContactEntry, ContactsWallet } from "~/renderer/contacts/types";
 import type { ContactBadgeKind } from "~/renderer/contacts/ContactBadge";
@@ -188,17 +186,16 @@ export const useRecipientSuggestions = (
   /** Selected crypto's ticker — entries on the chain holding a DIFFERENT asset are dropped. */
   selectedTicker?: string,
 ): RecipientSuggestionGroups => {
-  const contactsAlpha = useSelector(contactsAlphaSelector);
   const { wallet, hydrated } = useContactsStore();
   const cryptoMeta = useCryptoMeta();
 
   return useMemo(() => {
-    if (!contactsAlpha || !hydrated || chainId === undefined) return EMPTY_GROUPS;
+    if (!hydrated || chainId === undefined) return EMPTY_GROUPS;
     return buildRecipientSuggestionGroups(
       wallet,
       query,
       chainId,
       selectedTicker ? { selectedTicker, cryptoMeta } : undefined,
     );
-  }, [contactsAlpha, hydrated, wallet, query, chainId, selectedTicker, cryptoMeta]);
+  }, [hydrated, wallet, query, chainId, selectedTicker, cryptoMeta]);
 };
