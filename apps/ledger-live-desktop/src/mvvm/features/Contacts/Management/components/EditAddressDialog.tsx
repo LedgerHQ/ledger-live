@@ -189,7 +189,8 @@ export function EditAddressDialog({
                       }
                     }}
                     aria-invalid={nameTooLongOrNonAscii}
-                    errorMessage={
+                    status={nameNonAsciiOnly ? "error" : undefined}
+                    helperText={
                       nameNonAsciiOnly
                         ? t("contactsManagement.addContactDialog.errorAscii")
                         : undefined

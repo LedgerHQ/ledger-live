@@ -140,7 +140,8 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
                 }
               }}
               aria-invalid={tooLongOrNonAscii || duplicate || meSuffixCollision}
-              errorMessage={
+              status={duplicate || meSuffixCollision || nonAsciiOnly ? "error" : undefined}
+              helperText={
                 duplicate
                   ? t("contactsManagement.addContactDialog.errorDuplicate")
                   : meSuffixCollision

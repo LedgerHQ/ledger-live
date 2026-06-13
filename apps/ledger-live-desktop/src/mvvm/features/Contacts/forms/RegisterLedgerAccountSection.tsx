@@ -136,7 +136,8 @@ const RegisterLedgerAccountSection = ({ contacts, run }: Props) => {
           }}
           disabled={!network}
           aria-invalid={nameInvalid || duplicateName}
-          errorMessage={duplicateName ? t("contacts.errors.duplicateAccount") : undefined}
+          status={duplicateName ? "error" : undefined}
+          helperText={duplicateName ? t("contacts.errors.duplicateAccount") : undefined}
         />
         <CharCounter used={name.length} limit={LIMITS.accountName} />
       </div>

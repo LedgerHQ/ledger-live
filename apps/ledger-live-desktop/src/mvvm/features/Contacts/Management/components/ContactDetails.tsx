@@ -421,7 +421,10 @@ export function ContactDetails({
           {sections
             .filter(section => section.cryptoId !== "unknown")
             .map(section => {
-              if (section.cryptoId === "unknown") return null; // narrow
+              // `cryptoId` is `string` on CryptoAddressGroup, so comparing it to
+              // "unknown" can't discriminate the union — narrow on the `crypto`
+              // field, which only CryptoAddressGroup carries.
+              if (!("crypto" in section)) return null;
               return (
                 <div key={section.cryptoId} className="flex flex-col gap-8 w-full">
                   <p className="body-3 text-muted">{section.crypto.ticker}</p>

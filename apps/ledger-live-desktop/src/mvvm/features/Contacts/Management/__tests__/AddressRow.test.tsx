@@ -17,6 +17,7 @@ const crypto: CryptoOption = {
   name: "Ethereum",
   ticker: "ETH",
   ledgerId: "ethereum",
+  networkIds: ["ethereum"],
 };
 
 describe("AddressRow", () => {

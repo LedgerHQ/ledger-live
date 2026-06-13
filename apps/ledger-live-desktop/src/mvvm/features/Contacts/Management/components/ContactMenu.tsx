@@ -97,15 +97,17 @@ export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) 
 
   return (
     <Menu open={open} onOpenChange={setOpen}>
-      <MenuTrigger asChild>
-        <IconButton
-          appearance="gray"
-          size="sm"
-          icon={MoreHorizontal}
-          aria-label={t("contactsManagement.contactActions")}
-          data-testid="contacts-management-overflow"
-        />
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton
+            appearance="gray"
+            size="sm"
+            icon={MoreHorizontal}
+            aria-label={t("contactsManagement.contactActions")}
+            data-testid="contacts-management-overflow"
+          />
+        }
+      />
       <MenuContent
         side="bottom"
         align="start"
@@ -122,7 +124,7 @@ export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) 
           return (
             <MenuItem
               key={action.id}
-              onSelect={handleAction(action.id)}
+              onClick={handleAction(action.id)}
               data-testid={`contacts-management-contact-menu-${action.id}`}
               // MenuItem ships `text-base cursor-default`; flip to the
               // destructive tint + pointer cursor where needed.

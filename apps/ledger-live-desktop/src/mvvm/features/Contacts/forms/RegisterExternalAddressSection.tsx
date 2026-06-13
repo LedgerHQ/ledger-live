@@ -111,6 +111,9 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
     // number here. The double-check keeps TypeScript narrowing happy
     // without a non-null assertion.
     if (!network || typeof network.chainId !== "number") return;
+    // Capture the narrowed value: TS drops the `number` narrowing on
+    // `network.chainId` inside the `run(...)` closures below.
+    const chainId = network.chainId;
     const normAddress = normalizeAddressHex(addressHex);
     const ok =
       pick.mode === "existing"
@@ -121,7 +124,7 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
               addressHex: normAddress,
               scope: label,
               derivationPath: EXTERNAL_DERIVATION_PATH,
-              chainId: network.chainId,
+              chainId,
             }),
           )
         : await run(deviceId =>
@@ -130,7 +133,7 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
               addressHex: normAddress,
               scope: label,
               derivationPath: EXTERNAL_DERIVATION_PATH,
-              chainId: network.chainId,
+              chainId,
             }),
           );
     if (ok) {

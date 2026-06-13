@@ -30,7 +30,8 @@ const AddressInputWithRandom = ({
       onChange={e => onChange(e.target.value)}
       disabled={disabled}
       aria-invalid={invalid}
-      errorMessage={errorMessage}
+      status={errorMessage ? "error" : undefined}
+      helperText={errorMessage}
       placeholder={placeholder}
       hideClearButton
       suffix={

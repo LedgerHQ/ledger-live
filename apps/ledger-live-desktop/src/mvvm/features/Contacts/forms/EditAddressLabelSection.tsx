@@ -112,7 +112,8 @@ const EditAddressLabelSection = ({ contacts, run }: Props) => {
           onChange={e => setNewLabel(e.target.value)}
           disabled={!selectedEntry}
           aria-invalid={newLabelInvalid || duplicateLabel}
-          errorMessage={duplicateLabel ? t("contacts.errors.duplicateLabel") : undefined}
+          status={duplicateLabel ? "error" : undefined}
+          helperText={duplicateLabel ? t("contacts.errors.duplicateLabel") : undefined}
         />
         <CharCounter used={newLabel.length} limit={LIMITS.addressLabel} />
       </div>

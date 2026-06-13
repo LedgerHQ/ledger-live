@@ -89,7 +89,8 @@ const RenameContactSection = ({ contacts, run }: Props) => {
           onChange={e => setNewName(e.target.value)}
           disabled={oldName === null}
           aria-invalid={newNameInvalid || duplicate}
-          errorMessage={duplicate ? t("contacts.errors.duplicateContact") : undefined}
+          status={duplicate ? "error" : undefined}
+          helperText={duplicate ? t("contacts.errors.duplicateContact") : undefined}
         />
         <CharCounter used={newName.length} limit={LIMITS.contactName} />
       </div>

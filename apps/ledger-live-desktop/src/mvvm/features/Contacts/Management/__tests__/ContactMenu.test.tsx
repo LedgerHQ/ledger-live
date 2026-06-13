@@ -1,6 +1,11 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import { ContactMenu } from "../components/ContactMenu";
+
+// Lumen 0.1.38's Menu is built on Base UI, which mounts the menu popup in a
+// portal *asynchronously* after the trigger is clicked (Radix mounted it
+// synchronously). Query the items with `findBy*` so the assertion waits for
+// the popup to appear.
 
 describe("ContactMenu", () => {
   it("renders the trigger and keeps the menu closed by default", () => {
@@ -19,7 +24,7 @@ describe("ContactMenu", () => {
 
     await user.click(screen.getByTestId("contacts-management-overflow"));
 
-    expect(screen.getByTestId("contacts-management-contact-menu-edit")).toBeInTheDocument();
+    expect(await screen.findByTestId("contacts-management-contact-menu-edit")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-contact-menu-delete")).toBeInTheDocument();
     expect(screen.getByText("Edit contact")).toBeInTheDocument();
     expect(screen.getByText("Delete contact")).toBeInTheDocument();
@@ -31,7 +36,7 @@ describe("ContactMenu", () => {
     const { user } = render(<ContactMenu onEdit={onEdit} onDelete={onDelete} />);
 
     await user.click(screen.getByTestId("contacts-management-overflow"));
-    await user.click(screen.getByTestId("contacts-management-contact-menu-edit"));
+    await user.click(await screen.findByTestId("contacts-management-contact-menu-edit"));
 
     expect(onEdit).toHaveBeenCalledTimes(1);
     expect(onDelete).not.toHaveBeenCalled();
@@ -43,7 +48,7 @@ describe("ContactMenu", () => {
     const { user } = render(<ContactMenu onEdit={onEdit} onDelete={onDelete} />);
 
     await user.click(screen.getByTestId("contacts-management-overflow"));
-    await user.click(screen.getByTestId("contacts-management-contact-menu-delete"));
+    await user.click(await screen.findByTestId("contacts-management-contact-menu-delete"));
 
     expect(onDelete).toHaveBeenCalledTimes(1);
     expect(onEdit).not.toHaveBeenCalled();
@@ -58,12 +63,14 @@ describe("ContactMenu", () => {
     const { user } = render(<ContactMenu onEdit={onEdit} />);
 
     await user.click(screen.getByTestId("contacts-management-overflow"));
-    await user.click(screen.getByTestId("contacts-management-contact-menu-edit"));
+    await user.click(await screen.findByTestId("contacts-management-contact-menu-edit"));
 
     expect(onEdit).toHaveBeenCalledTimes(1);
-    expect(
-      screen.queryByTestId("contacts-management-contact-menu-edit"),
-    ).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("contacts-management-contact-menu-edit"),
+      ).not.toBeInTheDocument();
+    });
     expect(
       screen.queryByTestId("contacts-management-contact-menu-delete"),
     ).not.toBeInTheDocument();
@@ -79,7 +86,7 @@ describe("ContactMenu", () => {
     await user.click(screen.getByTestId("contacts-management-overflow"));
 
     expect(
-      screen.getByTestId("contacts-management-contact-menu-edit"),
+      await screen.findByTestId("contacts-management-contact-menu-edit"),
     ).toBeInTheDocument();
     expect(
       screen.queryByTestId("contacts-management-contact-menu-delete"),

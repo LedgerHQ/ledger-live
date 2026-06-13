@@ -221,7 +221,8 @@ export function EditContactDialog({
                     }
                   }}
                   aria-invalid={tooLongOrNonAscii || duplicate}
-                  errorMessage={
+                  status={duplicate || nonAsciiOnly ? "error" : undefined}
+                  helperText={
                     duplicate
                       ? t("contactsManagement.addContactDialog.errorDuplicate")
                       : nonAsciiOnly
