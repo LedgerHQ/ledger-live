@@ -11,13 +11,15 @@ import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { themeSelector } from "~/renderer/actions/general";
 import {
   extractErrorMessage,
+  isSeedMismatchError,
   prettyDeviceErrorMessage,
 } from "~/renderer/contacts/deviceErrors";
 
 type Phase =
   | { kind: "connect" }
   | { kind: "in-app"; device: Device }
-  | { kind: "error"; message: string };
+  | { kind: "error"; message: string }
+  | { kind: "seed-mismatch" };
 
 type Props = {
   /**
@@ -28,6 +30,14 @@ type Props = {
   run: (deviceId: string) => Promise<unknown>;
   /** Called when the runner is dismissed — `ok=true` on success, `ok=false` on user-driven back. */
   onDone: (ok: boolean) => void;
+  /**
+   * Optional: lets the caller take over the seed-mismatch terminal instead of
+   * rendering the built-in fullscreen screen. The polished L4 dialogs pass this
+   * to swap to a Lumen info dialog; the L1 debug panel omits it and keeps the
+   * built-in screen. The callback owns teardown (it closes/advances its own
+   * surface), so the runner simply hands off and stops here.
+   */
+  onSeedMismatch?: () => void;
 };
 
 /**
@@ -42,7 +52,7 @@ type Props = {
  * + `StepReceiveFunds.tsx:159-162` — same component, same idioms, no custom
  * session machinery.
  */
-const RunDeviceAction = ({ run, onDone }: Props) => {
+const RunDeviceAction = ({ run, onDone, onSeedMismatch }: Props) => {
   const { t } = useTranslation();
   const theme = useSelector(themeSelector);
   const [phase, setPhase] = useState<Phase>({ kind: "connect" });
@@ -60,6 +70,20 @@ const RunDeviceAction = ({ run, onDone }: Props) => {
         await run(result.device.deviceId);
         onDone(true);
       } catch (e) {
+        // The contact/address is seed-bound: editing it with a device
+        // holding a different seed fails the on-device HMAC check (SW
+        // 0x6982). That's not a generic failure — guide the user to the
+        // device that registered it instead of a vague error.
+        if (isSeedMismatchError(e)) {
+          // L4 hands this to a polished Lumen info dialog; L1 (no handler)
+          // falls back to the built-in seed-mismatch screen below.
+          if (onSeedMismatch) {
+            onSeedMismatch();
+            return;
+          }
+          setPhase({ kind: "seed-mismatch" });
+          return;
+        }
         // Always show feedback — silently bouncing back to the previous
         // step would make the dialog look broken. We surface a single
         // neutral "Something went wrong" screen with the extracted
@@ -69,7 +93,7 @@ const RunDeviceAction = ({ run, onDone }: Props) => {
         setPhase({ kind: "error", message: extractErrorMessage(e) });
       }
     },
-    [run, onDone],
+    [run, onDone, onSeedMismatch],
   );
 
   const handleError = useCallback((e: Error) => {
@@ -96,6 +120,32 @@ const RunDeviceAction = ({ run, onDone }: Props) => {
         <p className="body-2-semi-bold text-base text-center">
           {t("contacts.runner.confirming")}
         </p>
+      </div>
+    );
+  }
+
+  if (phase.kind === "seed-mismatch") {
+    return (
+      <div className="flex flex-1 min-h-0 flex-col items-center justify-center gap-16 px-16">
+        <p className="body-2-semi-bold text-base text-center">
+          {t("contacts.runner.seedMismatchTitle")}
+        </p>
+        <p className="body-3 text-muted text-center select-text">
+          {t("contacts.runner.seedMismatchDescription")}
+        </p>
+        <div className="flex flex-col gap-8 w-full">
+          <Button
+            appearance="base"
+            size="sm"
+            isFull
+            onClick={() => setPhase({ kind: "connect" })}
+          >
+            {t("contacts.runner.seedMismatchRetry")}
+          </Button>
+          <Button appearance="gray" size="sm" isFull onClick={() => onDone(false)}>
+            {t("contacts.runner.back")}
+          </Button>
+        </div>
       </div>
     );
   }

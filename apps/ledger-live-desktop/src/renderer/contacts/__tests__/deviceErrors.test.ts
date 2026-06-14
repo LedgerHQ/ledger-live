@@ -1,4 +1,8 @@
-import { extractErrorMessage, prettyDeviceErrorMessage } from "../deviceErrors";
+import {
+  extractErrorMessage,
+  isSeedMismatchError,
+  prettyDeviceErrorMessage,
+} from "../deviceErrors";
 
 describe("extractErrorMessage", () => {
   it("returns Error.message for real Error instances", () => {
@@ -82,5 +86,60 @@ describe("prettyDeviceErrorMessage", () => {
     expect(prettyDeviceErrorMessage("Outer ((nested))")).toBe(
       "Outer ((nested))",
     );
+  });
+});
+
+describe("isSeedMismatchError", () => {
+  it("is true for the DMK ContactsCommandError with SW-6982", () => {
+    const err = {
+      _tag: "ContactsCommandError",
+      errorCode: "6982",
+      message:
+        "This address-book entry was registered with a different seed. Connect the Ledger device that registered it to modify this contact.",
+    };
+
+    expect(isSeedMismatchError(err)).toBe(true);
+  });
+
+  it("is true for a flattened Error carrying the 6982 errorCode", () => {
+    // `useContacts.finalize()` turns DMK tagged-objects into real Errors,
+    // copying `errorCode` / `_tag` across — detection must survive that.
+    const err = Object.assign(new Error("seed mismatch"), {
+      _tag: "ContactsCommandError",
+      errorCode: "6982",
+    });
+
+    expect(isSeedMismatchError(err)).toBe(true);
+  });
+
+  it("is false for other ContactsCommandError codes (e.g. 6a80 rejection)", () => {
+    // Every address-book command error shares the `ContactsCommandError`
+    // tag, so the tag alone must NOT be treated as seed-mismatch.
+    const err = {
+      _tag: "ContactsCommandError",
+      errorCode: "6a80",
+      message: "Invalid contact data, or operation refused on device",
+    };
+
+    expect(isSeedMismatchError(err)).toBe(false);
+  });
+
+  it("is false for a legacy EthAppCommandError with 6982 (wrong tag)", () => {
+    // Pre-snapshot shape — not a typed contacts error, so even with the
+    // matching status word we don't claim a seed mismatch.
+    const err = {
+      _tag: "EthAppCommandError",
+      errorCode: "6982",
+      message: "Security status not satisfied (Canceled by user)",
+    };
+
+    expect(isSeedMismatchError(err)).toBe(false);
+  });
+
+  it("is false for plain Errors and non-objects", () => {
+    expect(isSeedMismatchError(new Error("boom"))).toBe(false);
+    expect(isSeedMismatchError("6982")).toBe(false);
+    expect(isSeedMismatchError(null)).toBe(false);
+    expect(isSeedMismatchError(undefined)).toBe(false);
   });
 });

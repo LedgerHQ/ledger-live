@@ -53,6 +53,12 @@ type Props = {
    * modal. Omitted when reached via the per-row overflow menu / right-click.
    */
   onBack?: () => void;
+  /**
+   * Called when the device reports the contact was registered under a
+   * different seed (`SW 0x6982`). The host closes this dialog and surfaces
+   * the shared `SeedMismatchInfoDialog`. Forwarded to `RunDeviceAction`.
+   */
+  onSeedMismatch?: () => void;
 };
 
 /**
@@ -83,6 +89,7 @@ export function EditAddressDialog({
   currentLabel,
   onSubmit,
   onBack,
+  onSeedMismatch,
 }: Props) {
   const { t } = useTranslation();
   const [address, setAddress] = useState(currentAddressHex);
@@ -243,7 +250,11 @@ export function EditAddressDialog({
           )}
 
           {step.kind === "device" && (
-            <RunDeviceAction run={step.verb} onDone={handleDeviceDone} />
+            <RunDeviceAction
+              run={step.verb}
+              onDone={handleDeviceDone}
+              onSeedMismatch={onSeedMismatch}
+            />
           )}
         </DialogBody>
       </DialogContent>

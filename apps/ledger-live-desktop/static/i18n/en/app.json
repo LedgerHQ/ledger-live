@@ -8979,7 +8979,10 @@
       "confirming": "Confirm on your device",
       "error": "Something went wrong",
       "retry": "Try again",
-      "back": "Back"
+      "back": "Back",
+      "seedMismatchTitle": "This contact belongs to another Ledger",
+      "seedMismatchDescription": "This entry was saved with a different device or recovery phrase. Connect the Ledger that originally registered it to make changes.",
+      "seedMismatchRetry": "Connect the right device"
     }
   },
   "geoBlocking": {
@@ -9360,6 +9363,11 @@
       "body": "This address will be removed from this contact.",
       "cancel": "Cancel",
       "confirm": "Delete"
+    },
+    "seedMismatchDialog": {
+      "title": "This contact belongs to another signer",
+      "body": "This contact entry was saved with a different Secret Recovery Phrase. Connect the Ledger device that originally registered it to make the change.",
+      "dismiss": "Back"
     },
     "editAddressDialog": {
       "title": "Edit address",

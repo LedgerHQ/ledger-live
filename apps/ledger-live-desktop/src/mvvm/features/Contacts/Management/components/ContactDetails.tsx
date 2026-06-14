@@ -20,6 +20,7 @@ import { EditContactDialog } from "./EditContactDialog";
 import { EditAddressDialog } from "./EditAddressDialog";
 import { EmptyAddressState } from "./EmptyAddressState";
 import { InitialsAvatar } from "./InitialsAvatar";
+import { SeedMismatchInfoDialog } from "./SeedMismatchInfoDialog";
 
 // Defensive fallback for the `onEditAddressOnDevice` call — never used in
 // practice (the dialog only fires `onSubmit` while open, i.e. when
@@ -329,6 +330,19 @@ export function ContactDetails({
     setPendingAddressDelete(entry);
   };
 
+  // Seed-mismatch info dialog (device returned SW 0x6982 — the contact was
+  // registered under a different seed). Any of the device-backed editing
+  // dialogs can trigger it; we close whichever is open and surface this
+  // shared dialog. Hosted here (not inside the editing dialogs) so it
+  // survives the editing dialog unmounting on close.
+  const [seedMismatchOpen, setSeedMismatchOpen] = useState(false);
+  const handleSeedMismatch = useCallback(() => {
+    setAddAddressOpen(false);
+    setEditContactOpen(false);
+    setPendingAddressEdit(null);
+    setSeedMismatchOpen(true);
+  }, []);
+
   // Other display names — exclude the current contact so the dialog's
   // duplicate check treats "rename to same name" as a no-op rather
   // than a duplicate.
@@ -479,6 +493,7 @@ export function ContactDetails({
         open={addAddressOpen}
         onOpenChange={setAddAddressOpen}
         contact={contact}
+        onSeedMismatch={handleSeedMismatch}
       />
 
       <EditContactDialog
@@ -499,6 +514,7 @@ export function ContactDetails({
         // Write under `contact.name` (the wallet key), NOT the dialog's
         // possibly-stripped `currentName` — see the Me-suffix note above.
         onPhotoSave={photo => setContactPhoto(contact.name, photo)}
+        onSeedMismatch={handleSeedMismatch}
       />
 
       <DeleteContactDialog
@@ -539,6 +555,7 @@ export function ContactDetails({
               }
             : undefined
         }
+        onSeedMismatch={handleSeedMismatch}
       />
 
       <DeleteAddressDialog
@@ -556,6 +573,11 @@ export function ContactDetails({
           // local writes.
           void onDeleteAddress(contact.name, pendingAddressDelete);
         }}
+      />
+
+      <SeedMismatchInfoDialog
+        open={seedMismatchOpen}
+        onOpenChange={setSeedMismatchOpen}
       />
     </div>
   );

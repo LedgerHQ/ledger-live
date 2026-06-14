@@ -69,6 +69,12 @@ type Props = {
    * cosmetics, so they apply even if a device rename is then cancelled.
    */
   onPhotoSave?: (photo: string | undefined) => void;
+  /**
+   * Called when the device reports the contact was registered under a
+   * different seed (`SW 0x6982`). The host closes this dialog and surfaces
+   * the shared `SeedMismatchInfoDialog`. Forwarded to `RunDeviceAction`.
+   */
+  onSeedMismatch?: () => void;
 };
 
 /**
@@ -117,6 +123,7 @@ export function EditContactDialog({
   onDeviceRename,
   currentPhoto,
   onPhotoSave,
+  onSeedMismatch,
 }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState(currentName);
@@ -256,7 +263,11 @@ export function EditContactDialog({
           )}
 
           {step.kind === "device" && (
-            <RunDeviceAction run={step.verb} onDone={handleDeviceDone} />
+            <RunDeviceAction
+              run={step.verb}
+              onDone={handleDeviceDone}
+              onSeedMismatch={onSeedMismatch}
+            />
           )}
         </DialogBody>
       </DialogContent>

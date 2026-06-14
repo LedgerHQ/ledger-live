@@ -9,8 +9,16 @@ jest.mock(
   "~/mvvm/features/Contacts/components/RunDeviceAction",
   () => ({
     __esModule: true,
-    default: () => (
-      <div data-testid="contacts-management-edit-address-device-stub" />
+    // Expose a button that fires `onSeedMismatch` so we can assert the
+    // dialog forwards the seed-mismatch terminal up to its host.
+    default: ({ onSeedMismatch }: { onSeedMismatch?: () => void }) => (
+      <div data-testid="contacts-management-edit-address-device-stub">
+        <button
+          type="button"
+          data-testid="run-device-action-seed-mismatch"
+          onClick={() => onSeedMismatch?.()}
+        />
+      </div>
     ),
   }),
 );
@@ -108,6 +116,21 @@ describe("EditAddressDialog (merged Edit + Rename)", () => {
     await user.click(submitBtn());
 
     expect(onSubmit).toHaveBeenCalledWith(ANOTHER_VALID_HEX, "USDC bag");
+  });
+
+  it("forwards the device runner's seed-mismatch to `onSeedMismatch`", async () => {
+    const onSeedMismatch = jest.fn();
+    const { user } = render(
+      <EditAddressDialog {...baseProps({ onSeedMismatch })} />,
+    );
+
+    // Reach the device step with an address-only change.
+    await user.clear(addressInput());
+    await user.type(addressInput(), ANOTHER_VALID_HEX);
+    await user.click(submitBtn());
+
+    await user.click(screen.getByTestId("run-device-action-seed-mismatch"));
+    expect(onSeedMismatch).toHaveBeenCalledTimes(1);
   });
 
   it("hides the back arrow when `onBack` is not provided (opened from the row menu)", () => {

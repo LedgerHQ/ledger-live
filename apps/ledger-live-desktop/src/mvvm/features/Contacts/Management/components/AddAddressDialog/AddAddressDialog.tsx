@@ -43,6 +43,12 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   contact: Contact;
+  /**
+   * Called when the device reports the contact was registered under a
+   * different seed (`SW 0x6982`). The host closes this dialog and surfaces
+   * the shared `SeedMismatchInfoDialog`. Forwarded to `RunDeviceAction`.
+   */
+  onSeedMismatch?: () => void;
 };
 
 const HEADER_KEY: Record<Step["kind"], string> = {
@@ -85,7 +91,7 @@ const HEADER_KEY: Record<Step["kind"], string> = {
  * the L4 details pane's per-crypto grouping picks up the new row
  * immediately (the canonical schema has no `coinId` field).
  */
-export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
+export function AddAddressDialog({ open, onOpenChange, contact, onSeedMismatch }: Props) {
   const { t } = useTranslation();
   const contacts = useContacts();
 
@@ -277,7 +283,11 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
             />
           )}
           {step.kind === "device" && (
-            <RunDeviceAction run={step.verb} onDone={handleDeviceDone} />
+            <RunDeviceAction
+              run={step.verb}
+              onDone={handleDeviceDone}
+              onSeedMismatch={onSeedMismatch}
+            />
           )}
         </DialogBody>
       </DialogContent>
