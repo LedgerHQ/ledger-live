@@ -36,6 +36,8 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-utils-shared": "0.1.4",
+    "expo-file-system": "catalog:",
+    "expo-document-picker": "catalog:",
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-slot": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",

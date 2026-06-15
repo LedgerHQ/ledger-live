@@ -36,14 +36,14 @@ export function FeatureFlagsToolProvider({
     defaults,
     remote,
     setOverride,
+    setAllOverrides,
     clearOverride,
     clearAllOverrides,
-    importOverrides,
-    exportOverrides,
   } = props;
   const actions = useMemo(
     () => ({
       setOverride,
+      setAllOverrides,
       clearOverride,
       clearAllOverrides,
     }),
