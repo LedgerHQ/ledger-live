@@ -304,15 +304,15 @@ export const config: WebdriverIO.Config = {
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
-  beforeTest: async function (test) {
-    const options = {
-      timeLimit: "300",
-      ...(driver.isAndroid ? { bugReport: true } : {}),
-      ...(driver.isIOS ? { videoType: "mpeg4" } : {}),
-    };
-    await driver.startRecordingScreen(options);
-    // ADBUtils.markTestStart(test.title);
-  },
+  // beforeTest: async function (test) {
+  //   const options = {
+  //     timeLimit: "300",
+  //     ...(driver.isAndroid ? { bugReport: true } : {}),
+  //     ...(driver.isIOS ? { videoType: "mpeg4" } : {}),
+  //   };
+  // await driver.startRecordingScreen(options);
+  // ADBUtils.markTestStart(test.title);
+  // },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
    * beforeEach in Mocha)
@@ -337,14 +337,14 @@ export const config: WebdriverIO.Config = {
    */
   // @ts-expect-error: keep unused params for de-structuring
   afterTest: async function (test, context, { error, result, duration, passed, retries }) {
-    const recording = await driver.stopRecordingScreen();
-    const recordingBuffer = Buffer.from(recording, "base64");
-    const videoTitle = test.title.replace(/\s+/g, "_");
-    const platformSuffix = driver.isAndroid ? "android" : "ios";
-    const recordingFileName = `${videoTitle}_${platformSuffix}.mp4`;
-    const recordingFilePath = path.resolve("artifacts", recordingFileName);
-    await appendFile(recordingFilePath, recordingBuffer);
-    await allureReporter.addAttachment("recording", recordingBuffer, "video/mp4");
+    // const recording = await driver.stopRecordingScreen();
+    // const recordingBuffer = Buffer.from(recording, "base64");
+    // const videoTitle = test.title.replace(/\s+/g, "_");
+    // const platformSuffix = driver.isAndroid ? "android" : "ios";
+    // const recordingFileName = `${videoTitle}_${platformSuffix}.mp4`;
+    // const recordingFilePath = path.resolve("artifacts", recordingFileName);
+    // await appendFile(recordingFilePath, recordingBuffer);
+    // await allureReporter.addAttachment("recording", recordingBuffer, "video/mp4");
 
     if (!passed) {
       try {
