@@ -18,6 +18,7 @@ type TransactionBroadcastedContentProps = {
   sourceCurrency: Currency;
   targetCurrency?: Currency;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
   sponsored?: boolean;
   onViewDetails: (id: string) => void;
 };
@@ -32,6 +33,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
     sponsored,
     onViewDetails,
     mode,
+    swapEntryPoint,
   } = props;
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
@@ -51,6 +53,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
         provider={provider}
         isEmbeddedSwap={isEmbeddedSwap !== undefined ? String(isEmbeddedSwap) : undefined}
         sponsored={sponsored !== undefined ? String(sponsored) : undefined}
+        swapEntryPoint={swapEntryPoint !== undefined ? swapEntryPoint : undefined}
         {...(mode === ExchangeModeEnum.Swap && swapId && swapDefaultTrack)}
       />
       {mode === ExchangeModeEnum.Swap && swapId && targetCurrency && (

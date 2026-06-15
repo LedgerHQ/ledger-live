@@ -41,6 +41,7 @@ export type BodyContentProps = {
     sourceCurrency: Currency;
     targetCurrency?: Currency;
     isEmbeddedSwap?: boolean;
+    swapEntryPoint?: string;
     sponsored?: boolean;
   };
   onOperationSigned: (value: SignedOperation) => void;
