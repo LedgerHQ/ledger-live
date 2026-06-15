@@ -12,7 +12,7 @@
 
 set -uo pipefail
 
-readonly _EXPECTED_EMULATOR_COUNT=1
+readonly _EXPECTED_EMULATOR_COUNT=3
 
 log() {
   echo "[$(date +%H:%M:%S)] $*"
@@ -40,13 +40,13 @@ disable_ui_animations() {
 : "${AVD_NAME:?AVD_NAME is required}"
 : "${ANDROID_HOME:?ANDROID_HOME is required}"
 
-IFS=' ' read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554}"
+IFS=' ' read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}"
 if [[ "${#SERIALS[@]}" -ne "$_EXPECTED_EMULATOR_COUNT" ]]; then
   log "ERROR: expected $_EXPECTED_EMULATOR_COUNT serials in EMULATOR_SERIALS, got ${#SERIALS[@]}"
   exit 1
 fi
 
-AVD_NAMES=("$AVD_NAME")
+AVD_NAMES=("$AVD_NAME" "${AVD_NAME}_2" "${AVD_NAME}_3")
 
 log "🛫 Starting emulators..."
 i=1
