@@ -30,7 +30,10 @@ export const usePageViewModel = (): PageViewModelResult => {
     shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
   const isRightPanelEnabled = useRightPanelVisibility();
+<<<<<<< HEAD
   const isSwapAvailableForRoute = useRightPanelSwapAvailability(pathname);
+=======
+>>>>>>> c2172f8cfc1 (refactor: undo change)
 
   const shouldRenderRightPanel =
     isRightPanelPage(pathname, { shouldDisplayAggregatedAssets }) &&
