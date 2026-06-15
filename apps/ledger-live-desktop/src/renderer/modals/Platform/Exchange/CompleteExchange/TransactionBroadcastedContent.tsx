@@ -53,7 +53,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
         provider={provider}
         isEmbeddedSwap={isEmbeddedSwap !== undefined ? String(isEmbeddedSwap) : undefined}
         sponsored={sponsored !== undefined ? String(sponsored) : undefined}
-        swapEntryPoint={swapEntryPoint !== undefined ? swapEntryPoint : undefined}
+        swapEntryPoint={swapEntryPoint}
         {...(mode === ExchangeModeEnum.Swap && swapId && swapDefaultTrack)}
       />
       {mode === ExchangeModeEnum.Swap && swapId && targetCurrency && (
