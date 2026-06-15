@@ -1,6 +1,7 @@
 import {
   extractErrorMessage,
   isSeedMismatchError,
+  isUserRejectionError,
   prettyDeviceErrorMessage,
 } from "../deviceErrors";
 
@@ -141,5 +142,47 @@ describe("isSeedMismatchError", () => {
     expect(isSeedMismatchError("6982")).toBe(false);
     expect(isSeedMismatchError(null)).toBe(false);
     expect(isSeedMismatchError(undefined)).toBe(false);
+  });
+});
+
+describe("isUserRejectionError", () => {
+  it("is true for a ContactsCommandError with SW-6a80 (Identity/Contacts ops)", () => {
+    const err = {
+      _tag: "ContactsCommandError",
+      errorCode: "6a80",
+      message: "Invalid contact data, or operation refused on device",
+    };
+
+    expect(isUserRejectionError(err)).toBe(true);
+  });
+
+  it("is true for an EthAppCommandError with SW-6a80 (register-ledger-account)", () => {
+    // register-ledger-account uses the legacy ETH error family — we key off
+    // the code, not the tag, so a refusal there is still caught.
+    const err = {
+      _tag: "EthAppCommandError",
+      errorCode: "6a80",
+      message: "Invalid data",
+    };
+
+    expect(isUserRejectionError(err)).toBe(true);
+  });
+
+  it("is true for a flattened Error carrying the 6a80 errorCode", () => {
+    const err = Object.assign(new Error("Invalid data"), { errorCode: "6a80" });
+
+    expect(isUserRejectionError(err)).toBe(true);
+  });
+
+  it("is false for the seed-mismatch code (6982) and other codes", () => {
+    expect(isUserRejectionError({ _tag: "ContactsCommandError", errorCode: "6982" })).toBe(false);
+    expect(isUserRejectionError({ _tag: "ContactsCommandError", errorCode: "6a84" })).toBe(false);
+  });
+
+  it("is false for plain Errors and non-objects", () => {
+    expect(isUserRejectionError(new Error("boom"))).toBe(false);
+    expect(isUserRejectionError("6a80")).toBe(false);
+    expect(isUserRejectionError(null)).toBe(false);
+    expect(isUserRejectionError(undefined)).toBe(false);
   });
 });

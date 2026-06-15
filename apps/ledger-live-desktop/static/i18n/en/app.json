@@ -8980,6 +8980,7 @@
       "error": "Something went wrong",
       "retry": "Try again",
       "back": "Back",
+      "cancel": "Cancel",
       "seedMismatchTitle": "This contact belongs to another Ledger",
       "seedMismatchDescription": "This entry was saved with a different device or recovery phrase. Connect the Ledger that originally registered it to make changes.",
       "seedMismatchRetry": "Connect the right device"
@@ -9367,6 +9368,8 @@
     "seedMismatchDialog": {
       "title": "This contact belongs to another signer",
       "body": "This contact entry was saved with a different Secret Recovery Phrase. Connect the Ledger device that originally registered it to make the change.",
+      "accountTitle": "This account belongs to another signer",
+      "accountBody": "This account was named with a different Secret Recovery Phrase. Connect the Ledger device that originally registered it to rename it.",
       "dismiss": "Back"
     },
     "editAddressDialog": {

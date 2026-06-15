@@ -144,14 +144,49 @@ Figma MCP server to pull design context. Two rules to lean on:
 | Edit address label              | `editAddressLabel({contactName, oldLabel, newLabel, addressHex, chainId})` |
 | Edit address (rotate bytes)     | `editAddress({contactName, oldAddressHex, newAddressHex, chainId})` |
 | Rename contact                  | `renameContact({oldName, newName})`        |
-| Add Ledger account              | `addLedgerAccount({name, derivationPath, chainId})` |
+| Register / name a Ledger account (first time) | `addLedgerAccount({name, derivationPath, chainId})` |
+| Rename a registered Ledger account | `editLedgerAccount({name, oldName, derivationPath, chainId, hmacProofHex})` |
+| Look up a stored Ledger account | `findLedgerAccount({chainId, derivationPath?, addressHex?})` → `LedgerAccount \| undefined` |
 | Reset local data                | `reset()`                                  |
 
 You do NOT import from `@ledgerhq/device-management-kit` or
 `@ledgerhq/device-signer-kit-ethereum` directly. The hook is the contract.
 Cryptographic proof fields (`groupHandleHex`, `hmacNameHex`, `hmacRestHex`,
 `hmacProofHex`) are looked up from the local store and rotated automatically
-on each successful device action — never pass them yourself.
+on each successful device action — never pass them yourself. The one
+exception is `editLedgerAccount`: it needs the account's `hmacProofHex` to
+prove seed ownership on device, so the caller first resolves the stored
+record via `findLedgerAccount(...)` and passes its `hmacProofHex` + `name`
+(as `oldName`). See the rename routing in
+`mvvm/features/CryptoAddresses/components/EditName/useEditNameViewModel.tsx`:
+when a registered account matches it drives the seed-bound EDIT, otherwise it
+falls back to a first-time `addLedgerAccount`.
+
+## Device-error UX (rejection & seed mismatch)
+
+Every device-backed verb runs through
+`mvvm/features/Contacts/components/RunDeviceAction.tsx`, which classifies the
+DMK error and renders the right terminal instead of a raw message. Detection
+helpers live in `renderer/contacts/deviceErrors.ts`:
+
+- **On-device rejection** (`isUserRejectionError`, SW `0x6a80`): the user
+  declined on the device. Renders a Lumen `Spot appearance="info"` + the
+  app-standard `errors.UserRefusedOnDevice.*` copy ("Action rejected") with
+  **Try again / Cancel** — the same look the Send flow uses. Note: the
+  Ethereum app returns `0x6a80` for both a genuine refusal and malformed TLV;
+  since the hook always builds valid payloads, in practice it means refusal.
+- **Seed mismatch** (`isSeedMismatchError`, SW `0x6982`): the entry/account
+  was registered under a different Secret Recovery Phrase, so the device
+  rejects the edit before showing any review. Surfaced via `SeedMismatchInfoDialog`,
+  which takes a `variant` prop — `"contact"` ("This contact belongs to another
+  signer") or `"account"` ("This account belongs to another signer"). The L4
+  management dialogs and the CryptoAddresses "Edit name" flow both pass
+  `onSeedMismatch` into `RunDeviceAction` to open it.
+
+This is why renaming a registered Ledger account uses `editLedgerAccount`
+(seed-bound) rather than a fresh `registerLedgerAccount`: only the EDIT APDU
+carries the `hmacProofHex`, so a wrong-seed device is rejected with `0x6982`
+instead of silently creating a duplicate registration.
 
 ## Storage contract
 

@@ -12,7 +12,8 @@ import {
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
-import RunDeviceAction from "~/mvvm/features/Contacts/components/RunDeviceAction";
+import RunDeviceAction from "LLD/features/Contacts/components/RunDeviceAction";
+import { SeedMismatchInfoDialog } from "LLD/features/Contacts/Management/components/SeedMismatchInfoDialog";
 import { track } from "~/renderer/analytics/segment";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 
@@ -49,6 +50,7 @@ export const EditCryptoAddressNameDialog = ({
 }: EditCryptoAddressNameDialogProps) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [seedMismatchOpen, setSeedMismatchOpen] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [step, setStep] = useState<Step>({ kind: "form" });
   const openedAtRef = useRef(0);
@@ -80,12 +82,23 @@ export const EditCryptoAddressNameDialog = ({
     }
   };
 
+  /**
+   * The account was registered under a different seed — the device rejected
+   * the rename (SW 0x6982). Close the edit dialog and surface the
+   * account-worded "belongs to another signer" info dialog.
+   */
+  const handleSeedMismatch = () => {
+    setOpen(false);
+    setStep({ kind: "form" });
+    setSeedMismatchOpen(true);
+  };
+
   const handleConfirm = () => {
-    // Renaming a Ledger account re-registers it on the device under the
-    // new name (DMK registerLedgerAccount) — the local rename only
-    // commits once the user approves on the device. Accounts the DMK
-    // verb can't address (token rows, non-EVM) keep the legacy
-    // local-only path.
+    // Renaming a Ledger account runs the on-device rename (seed-bound EDIT
+    // when already registered, else a first-time register) — the local
+    // rename only commits once the user approves on the device. Accounts the
+    // DMK verb can't address (token rows, non-EVM) keep the legacy local-only
+    // path.
     const verb = makeDeviceVerb(normalizedValue);
     if (!verb) {
       onConfirm(normalizedValue);
@@ -107,52 +120,64 @@ export const EditCryptoAddressNameDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent
-        data-testid="edit-crypto-address-name-dialog-content"
-        onPointerDownOutside={handlePointerDownOutside}
-      >
-        {/* Header hides while the device runner owns the body — same
-            pattern as the Contacts device-confirmed dialogs. */}
-        {step.kind === "form" && (
-          <DialogHeader
-            density="expanded"
-            title={t("cryptoAddresses.editName.title")}
-            onClose={() => handleOpenChange(false)}
-          />
-        )}
-        <DialogBody className="flex flex-col gap-16">
+        <DialogContent
+          data-testid="edit-crypto-address-name-dialog-content"
+          onPointerDownOutside={handlePointerDownOutside}
+        >
+          {/* Header hides while the device runner owns the body — same
+              pattern as the Contacts device-confirmed dialogs. */}
           {step.kind === "form" && (
-            <TextInput
-              className="pt-2"
-              label={t("cryptoAddresses.editName.input")}
-              value={value}
-              onChange={e => setValue(e.target.value)}
-              maxLength={MAX_ACCOUNT_NAME_LENGTH}
+            <DialogHeader
+              density="expanded"
+              title={t("cryptoAddresses.editName.title")}
+              onClose={() => handleOpenChange(false)}
             />
           )}
-          {step.kind === "device" && (
-            <RunDeviceAction run={step.verb} onDone={handleDeviceDone} />
+          <DialogBody className="flex flex-col gap-16">
+            {step.kind === "form" && (
+              <TextInput
+                className="pt-2"
+                label={t("cryptoAddresses.editName.input")}
+                value={value}
+                onChange={e => setValue(e.target.value)}
+                maxLength={MAX_ACCOUNT_NAME_LENGTH}
+              />
+            )}
+            {step.kind === "device" && (
+              <RunDeviceAction
+                run={step.verb}
+                onDone={handleDeviceDone}
+                onSeedMismatch={handleSeedMismatch}
+              />
+            )}
+          </DialogBody>
+          {step.kind === "form" && (
+            <DialogFooter className="justify-center">
+              <Button
+                className="w-full"
+                appearance="base"
+                size="lg"
+                icon={requiresDevice ? LedgerLogo : undefined}
+                onClick={handleConfirm}
+                disabled={isConfirmDisabled}
+                data-testid="edit-crypto-address-name-dialog-cta"
+              >
+                {t("cryptoAddresses.editName.cta")}
+              </Button>
+            </DialogFooter>
           )}
-        </DialogBody>
-        {step.kind === "form" && (
-          <DialogFooter className="justify-center">
-            <Button
-              className="w-full"
-              appearance="base"
-              size="lg"
-              icon={requiresDevice ? LedgerLogo : undefined}
-              onClick={handleConfirm}
-              disabled={isConfirmDisabled}
-              data-testid="edit-crypto-address-name-dialog-cta"
-            >
-              {t("cryptoAddresses.editName.cta")}
-            </Button>
-          </DialogFooter>
-        )}
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <SeedMismatchInfoDialog
+        variant="account"
+        open={seedMismatchOpen}
+        onOpenChange={setSeedMismatchOpen}
+      />
+    </>
   );
 };

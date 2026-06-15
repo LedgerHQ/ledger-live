@@ -14,6 +14,7 @@ import {
 import {
   SignerEthBuilder,
   type EditExternalAddressArgs,
+  type EditLedgerAccountArgs,
   type RegisterExternalAddressArgs,
   type RegisterLedgerAccountArgs,
 } from "@ledgerhq/device-signer-kit-ethereum";
@@ -45,6 +46,31 @@ export type UseContacts = {
   editAddress: (deviceId: string, args: EditAddressInput) => Promise<void>;
   renameContact: (deviceId: string, args: RenameContactInput) => Promise<Contact>;
   addLedgerAccount: (deviceId: string, args: AddLedgerAccountArgs) => Promise<LedgerAccount>;
+  /**
+   * Rename a Ledger account that was already registered on device. Unlike
+   * `addLedgerAccount` (a *fresh* registration with no seed proof, which any
+   * seed can sign), this drives the dedicated on-device EDIT flow: the args
+   * carry the `hmacProofHex` minted at the original registration, so the
+   * device re-derives the seed-bound key and rejects with `SW 0x6982` —
+   * surfaced as `isSeedMismatchError` — when a *different* seed is connected.
+   * On approval it stores the rotated proof and re-keys the account map from
+   * `oldName` → `name`.
+   */
+  editLedgerAccount: (deviceId: string, args: EditLedgerAccountArgs) => Promise<LedgerAccount>;
+  /**
+   * Pure (no device) lookup of a registered Ledger account by its
+   * registration coordinates. Returns the stored record — carrying the
+   * `hmacProofHex` needed to drive `editLedgerAccount` — or `undefined` when
+   * the account was never registered through Contacts (so the caller falls
+   * back to a first-time `addLedgerAccount`). Matches on `chainId` AND
+   * (`derivationPath` OR `addressHex`), the same coordinates `addLedgerAccount`
+   * dedupes on.
+   */
+  findLedgerAccount: (key: {
+    chainId: number;
+    derivationPath?: string;
+    addressHex?: string;
+  }) => LedgerAccount | undefined;
   /**
    * Remove one address entry from a contact. Client-side only — there
    * is no DMK address-removal verb yet, so this purely rewrites the
@@ -217,6 +243,35 @@ const lookupEntry = (contact: Contact, addressHex: string): ContactEntry => {
   const entry = contact.entries.find(e => e.addressHex === addressHex);
   if (!entry) throw new Error(`Address ${addressHex} not found on contact "${contact.name}"`);
   return entry;
+};
+
+/** Lowercase, strip any `0x` prefix — for case-insensitive address compares. */
+const normalizeAddressHex = (addressHex: string): string => {
+  const trimmed = addressHex.trim().toLowerCase();
+  return trimmed.startsWith("0x") ? trimmed.slice(2) : trimmed;
+};
+
+/**
+ * Drop every account record that points at the same on-device registration as
+ * `next` — same chain + derivation path, or same chain + address. A
+ * register/rename re-keys the `accounts` map by name, so without this prune a
+ * stale record lingers and signing-time `findLedgerAccount` lookups resolve the
+ * decoration to the OLD name on the device screen.
+ */
+const pruneSameRegistration = (
+  accounts: Record<string, LedgerAccount>,
+  next: Pick<LedgerAccount, "chainId" | "derivationPath" | "addressHex">,
+): Record<string, LedgerAccount> => {
+  const kept: Record<string, LedgerAccount> = {};
+  for (const [key, record] of Object.entries(accounts)) {
+    const sameRegistration =
+      record.chainId === next.chainId &&
+      (record.derivationPath === next.derivationPath ||
+        normalizeAddressHex(record.addressHex) === normalizeAddressHex(next.addressHex));
+    if (sameRegistration) continue;
+    kept[key] = record;
+  }
+  return kept;
 };
 
 const buildSigner = (deps: { dmk: DeviceManagementKit; sessionId: string }) =>
@@ -466,30 +521,66 @@ export const useContacts = (): UseContacts => {
           addressHex: result.addressHex,
           hmacProofHex: result.hmacProofHex,
         };
-        // A rename re-registers the SAME account under a new name, but the
-        // map is keyed by name — without cleanup the stale record lingers
-        // and signing-time lookups (`findLedgerAccount`) kept resolving
-        // the From decoration to the OLD name on the device screen. Drop
-        // every record pointing at the same registration (same chain +
-        // derivation path, or same chain + address) before adding.
-        const normalizeAddress = (addressHex: string): string => {
-          const trimmed = addressHex.trim().toLowerCase();
-          return trimmed.startsWith("0x") ? trimmed.slice(2) : trimmed;
-        };
-        const accounts: Record<string, LedgerAccount> = {};
-        for (const [key, record] of Object.entries(wallet.accounts)) {
-          const sameRegistration =
-            record.chainId === next.chainId &&
-            (record.derivationPath === next.derivationPath ||
-              normalizeAddress(record.addressHex) === normalizeAddress(next.addressHex));
-          if (sameRegistration) continue;
-          accounts[key] = record;
-        }
+        const accounts = pruneSameRegistration(wallet.accounts, next);
         accounts[next.name] = next;
         await commit({ contacts: wallet.contacts, accounts });
         return next;
       }),
     [commit, wallet],
+  );
+
+  const editLedgerAccount = useCallback(
+    (deviceId: string, args: EditLedgerAccountArgs): Promise<LedgerAccount> =>
+      withDmk(deviceId, async deps => {
+        // Drives the on-device EDIT flow (carries `hmacProofHex`): the device
+        // verifies the seed binding and rejects with SW 0x6982 on a wrong
+        // seed — `finalize` rethrows that as a `ContactsCommandError` the UI
+        // catches via `isSeedMismatchError`.
+        const result = await finalize(buildSigner(deps).editLedgerAccount(args));
+        // The address is seed-derived from the path, which the device just
+        // confirmed matches the original registration — so reuse the stored
+        // record's address rather than re-deriving it here.
+        const previous = wallet.accounts[args.oldName];
+        const next: LedgerAccount = {
+          name: args.name,
+          derivationPath: args.derivationPath,
+          chainId: args.chainId,
+          addressHex: previous?.addressHex ?? "",
+          hmacProofHex: result.hmacProofHex,
+        };
+        // Re-key oldName → name and drop the stale record (same registration).
+        const accounts = pruneSameRegistration(wallet.accounts, next);
+        delete accounts[args.oldName];
+        accounts[next.name] = next;
+        await commit({ contacts: wallet.contacts, accounts });
+        return next;
+      }),
+    [commit, wallet],
+  );
+
+  const findLedgerAccount = useCallback(
+    ({
+      chainId,
+      derivationPath,
+      addressHex,
+    }: {
+      chainId: number;
+      derivationPath?: string;
+      addressHex?: string;
+    }): LedgerAccount | undefined => {
+      const target = addressHex ? normalizeAddressHex(addressHex) : undefined;
+      // Last match wins — a rename re-keys the map, so the most recent
+      // registration is the freshest record (mirrors contactsDataSource).
+      let found: LedgerAccount | undefined;
+      for (const record of Object.values(wallet?.accounts ?? {})) {
+        if (record.chainId !== chainId) continue;
+        const pathMatch = derivationPath !== undefined && record.derivationPath === derivationPath;
+        const addressMatch = target !== undefined && normalizeAddressHex(record.addressHex) === target;
+        if (pathMatch || addressMatch) found = record;
+      }
+      return found;
+    },
+    [wallet],
   );
 
   const removeAddressFromContact = useCallback(
@@ -595,6 +686,8 @@ export const useContacts = (): UseContacts => {
     editAddress,
     renameContact,
     addLedgerAccount,
+    editLedgerAccount,
+    findLedgerAccount,
     removeAddressFromContact,
     removeContact,
     upsertLocalContact,

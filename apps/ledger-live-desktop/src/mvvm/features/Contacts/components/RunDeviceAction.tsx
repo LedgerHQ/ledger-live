@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Button, Spot } from "@ledgerhq/lumen-ui-react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
@@ -12,6 +12,7 @@ import { themeSelector } from "~/renderer/actions/general";
 import {
   extractErrorMessage,
   isSeedMismatchError,
+  isUserRejectionError,
   prettyDeviceErrorMessage,
 } from "~/renderer/contacts/deviceErrors";
 
@@ -19,6 +20,7 @@ type Phase =
   | { kind: "connect" }
   | { kind: "in-app"; device: Device }
   | { kind: "error"; message: string }
+  | { kind: "rejected" }
   | { kind: "seed-mismatch" };
 
 type Props = {
@@ -84,6 +86,13 @@ const RunDeviceAction = ({ run, onDone, onSeedMismatch }: Props) => {
           setPhase({ kind: "seed-mismatch" });
           return;
         }
+        // The user declined the operation on the device (SW 0x6a80). Show
+        // the same Lumen "Action rejected" terminal the Send flow uses, with
+        // a retry — rather than the alarming generic error screen.
+        if (isUserRejectionError(e)) {
+          setPhase({ kind: "rejected" });
+          return;
+        }
         // Always show feedback — silently bouncing back to the previous
         // step would make the dialog look broken. We surface a single
         // neutral "Something went wrong" screen with the extracted
@@ -120,6 +129,33 @@ const RunDeviceAction = ({ run, onDone, onSeedMismatch }: Props) => {
         <p className="body-2-semi-bold text-base text-center">
           {t("contacts.runner.confirming")}
         </p>
+      </div>
+    );
+  }
+
+  if (phase.kind === "rejected") {
+    return (
+      <div className="flex flex-1 min-h-0 flex-col items-center justify-center gap-24 px-16">
+        <Spot appearance="info" size={72} />
+        <div className="flex flex-col items-center gap-8 text-center">
+          <p className="heading-3-semi-bold text-base">
+            {t("errors.UserRefusedOnDevice.title")}
+          </p>
+          <p className="body-2 text-muted">{t("errors.UserRefusedOnDevice.description")}</p>
+        </div>
+        <div className="flex flex-col gap-8 w-full">
+          <Button
+            appearance="base"
+            size="sm"
+            isFull
+            onClick={() => setPhase({ kind: "connect" })}
+          >
+            {t("contacts.runner.retry")}
+          </Button>
+          <Button appearance="gray" size="sm" isFull onClick={() => onDone(false)}>
+            {t("contacts.runner.cancel")}
+          </Button>
+        </div>
       </div>
     );
   }

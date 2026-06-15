@@ -4,22 +4,34 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { EditName } from "LLD/features/CryptoAddresses/components/EditName";
 
-// Stub the device runner — renaming an account now re-registers it on
-// the Ledger device (DMK registerLedgerAccount), and the local rename
-// only commits once the runner reports success. The stub exposes a
-// button that simulates the user approving on the device.
+// Stub the device runner — renaming an account runs the on-device rename
+// (seed-bound EDIT when already registered, else a first-time register), and
+// the local rename only commits once the runner reports success. The stub
+// exposes one button that simulates the user approving on the device, and a
+// second that simulates a seed-mismatch rejection (SW 0x6982).
 jest.mock(
   "~/mvvm/features/Contacts/components/RunDeviceAction",
   () => ({
     __esModule: true,
-    default: ({ onDone }: { onDone: (ok: boolean) => void }) => (
-      <button
-        type="button"
-        data-testid="run-device-action-stub"
-        onClick={() => onDone(true)}
-      >
-        run-device-action-stub
-      </button>
+    default: ({
+      onDone,
+      onSeedMismatch,
+    }: {
+      onDone: (ok: boolean) => void;
+      onSeedMismatch?: () => void;
+    }) => (
+      <>
+        <button type="button" data-testid="run-device-action-stub" onClick={() => onDone(true)}>
+          run-device-action-stub
+        </button>
+        <button
+          type="button"
+          data-testid="run-device-action-seed-mismatch"
+          onClick={() => onSeedMismatch?.()}
+        >
+          run-device-action-seed-mismatch
+        </button>
+      </>
     ),
   }),
 );
@@ -138,5 +150,33 @@ describe("EditName", () => {
         screen.queryByTestId("edit-crypto-address-name-dialog-content"),
       ).not.toBeInTheDocument();
     });
+  });
+
+  it("on seed mismatch: closes the edit dialog, shows the account-worded info dialog, and does not commit", async () => {
+    const { user, store } = renderEditName();
+
+    await user.click(screen.getByTestId("edit-name-trigger"));
+    await waitFor(() => {
+      expect(screen.getByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
+    });
+
+    const input = screen.getByLabelText("Address name");
+    await user.clear(input);
+    await user.type(input, "Other seed name");
+    await user.click(screen.getByTestId("edit-crypto-address-name-dialog-cta"));
+
+    // Device rejects with a seed mismatch (SW 0x6982).
+    await user.click(screen.getByTestId("run-device-action-seed-mismatch"));
+
+    // The edit dialog closes and the account-worded info dialog appears.
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("edit-crypto-address-name-dialog-content"),
+      ).not.toBeInTheDocument();
+    });
+    expect(screen.getByText(/this account belongs to another signer/i)).toBeInTheDocument();
+
+    // The local name was NOT changed.
+    expect(store.getState().wallet.accountNames.get(ETH_ACCOUNT.id)).not.toBe("Other seed name");
   });
 });

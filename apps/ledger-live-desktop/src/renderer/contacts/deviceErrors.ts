@@ -101,3 +101,30 @@ export const isSeedMismatchError = (err: unknown): boolean => {
     rec.errorCode === CONTACT_SEED_MISMATCH_ERROR_CODE
   );
 };
+
+/**
+ * Status word the Ethereum app returns when the user declines an address-book
+ * write on the device review screen. Unlike transaction signing (`0x6985`),
+ * the address-book commands surface a genuine on-device rejection as `0x6a80`
+ * — a code the firmware *also* uses for malformed TLV. Since Ledger Wallet
+ * always builds well-formed payloads, in practice `0x6a80` means "the user
+ * refused", which is why we present it as such.
+ */
+const CONTACT_USER_REJECTION_ERROR_CODE = "6a80";
+
+/**
+ * True when a thrown value is the device's on-device rejection signal for an
+ * address-book operation (`SW 0x6a80`). Mirrors {@link isSeedMismatchError}:
+ * we match on the `errorCode` copied onto the flattened `Error` by
+ * `useContacts`' `finalize()`.
+ *
+ * We match the code on *either* DMK error family: the Identity/Contacts
+ * commands (register/edit external address, rename, edit label) raise a
+ * `ContactsCommandError`, while register-Ledger-account raises an
+ * `EthAppCommandError` — both carry `errorCode === "6a80"` on a refusal, so we
+ * key off the code rather than the tag.
+ */
+export const isUserRejectionError = (err: unknown): boolean => {
+  const rec = asRecord(err);
+  return !!rec && rec.errorCode === CONTACT_USER_REJECTION_ERROR_CODE;
+};

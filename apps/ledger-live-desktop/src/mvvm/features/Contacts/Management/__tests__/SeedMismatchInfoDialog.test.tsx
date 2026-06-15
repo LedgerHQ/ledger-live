@@ -27,4 +27,16 @@ describe("SeedMismatchInfoDialog", () => {
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
+
+  it('defaults to the "contact" wording', () => {
+    render(<SeedMismatchInfoDialog open onOpenChange={jest.fn()} />);
+
+    expect(screen.getByText(/this contact belongs to another signer/i)).toBeInTheDocument();
+  });
+
+  it('uses the "account" wording for the account variant', () => {
+    render(<SeedMismatchInfoDialog open variant="account" onOpenChange={jest.fn()} />);
+
+    expect(screen.getByText(/this account belongs to another signer/i)).toBeInTheDocument();
+  });
 });
