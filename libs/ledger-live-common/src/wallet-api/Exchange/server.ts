@@ -227,6 +227,10 @@ export const handlers = ({
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
+          ...(params.exchangeType === "SWAP" && {
+            isEmbeddedSwap: params.isEmbedded,
+            swapEntryPoint: params.swapEntryPoint,
+          }),
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -263,10 +267,16 @@ export const handlers = ({
           tracking.completeExchangeNoParams(manifest);
           return { transactionHash: "" };
         }
+
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
+          ...(params.exchangeType === "SWAP" && {
+            isEmbeddedSwap: params.isEmbedded,
+            swapEntryPoint: params.swapEntryPoint,
+          }),
         };
+
         tracking.completeExchangeRequested(trackingParams);
 
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
@@ -407,6 +417,10 @@ export const handlers = ({
               magnitudeAwareRate,
               refundAddress,
               payoutAddress,
+              ...(params.exchangeType === "SWAP" && {
+                isEmbeddedSwap: params.isEmbedded,
+                swapEntryPoint: params.swapEntryPoint,
+              }),
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess({

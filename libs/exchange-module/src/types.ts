@@ -80,6 +80,8 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
 };
 
 export type ExchangeCompleteParams =
