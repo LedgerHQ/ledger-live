@@ -6,11 +6,14 @@ import {
   type IdPAuthParams,
   type KeycloakToken,
 } from "@ledgerhq/ledger-auth";
-import getApi, { type ChallengeSignature, type Challenge as ChallengeJson } from "./api";
+import getApi, {
+  type ChallengeSignature,
+  type Challenge as ChallengeJson,
+  type LKRPChallenge,
+  LKRPChallengeSchema,
+} from "./api";
 import type { MemberCredentials } from "./types";
 import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
-
-type LKRPChallenge = { json: ChallengeJson; tlv: string };
 
 export class LkrpIdentityProvider implements IdentityProvider {
   readonly brokerId = "lkrp";
@@ -18,14 +21,11 @@ export class LkrpIdentityProvider implements IdentityProvider {
   private trustchainId?: string;
 
   async authenticate(request: IdPAuthParams): Promise<KeycloakToken> {
-    LkrpIdentityProvider.checkChallenge(request.challenge);
-
-    const host = request.challenge.json.host;
+    const challenge = LkrpIdentityProvider.checkChallenge(request.challenge);
+    const host = challenge.json.host;
     const api = getApi(`https://${host}`);
 
-    const authorizationCode = await api.oidcPostChallengeResponse(
-      this.signChallenge(request.challenge),
-    );
+    const authorizationCode = await api.oidcPostChallengeResponse(this.signChallenge(challenge));
 
     const idPToken = await api.oidcExchangeAuthCode(
       authorizationCode,
@@ -67,9 +67,10 @@ export class LkrpIdentityProvider implements IdentityProvider {
     };
   }
 
-  private static checkChallenge(challenge: unknown): asserts challenge is LKRPChallenge {
-    // TODO: use zod for proper validation
-    if (typeof challenge !== "object" || challenge === null) {
+  private static checkChallenge(challenge: unknown): LKRPChallenge {
+    try {
+      return LKRPChallengeSchema.parse(challenge);
+    } catch {
       throw new WalletAuthInvalidChallengeError();
     }
   }

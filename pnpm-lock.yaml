@@ -7945,6 +7945,9 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'

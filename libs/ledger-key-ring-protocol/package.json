@@ -69,7 +69,8 @@
     "base64-js": "1",
     "isomorphic-ws": "catalog:",
     "rxjs": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/jest": "catalog:",

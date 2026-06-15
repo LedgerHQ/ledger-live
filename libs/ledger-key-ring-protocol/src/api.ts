@@ -1,8 +1,9 @@
+import { z } from "zod";
 import network from "@ledgerhq/live-network";
 import { JWT } from "./types";
 import {
   type KeycloakToken,
-  type KeycloakTokenResponse,
+  KeycloakTokenResponseSchema,
   WalletAuthInvalidAuthorizationError,
   WalletAuthInvalidTokenError,
 } from "@ledgerhq/ledger-auth";
@@ -12,37 +13,44 @@ export type StatusAPIResponse = {
   version: string;
 };
 
-export type APIJWT = {
-  access_token: string;
-  permissions: {
-    [trustchainId: string]: {
-      [path: string]: string;
-    };
-  };
-};
+export const APIJWTSchema = z.object({
+  access_token: z.jwt(),
+  // permissions: { [trustchainId]: { [path]: string } }
+  permissions: z.record(z.string(), z.record(z.string(), z.string())),
+});
+export type APIJWT = z.infer<typeof APIJWTSchema>;
 
-export type Challenge = {
-  version: number;
-  challenge: {
-    data: string;
-    expiry: string;
-  };
-  host: string;
-  rp: {
-    credential: {
-      version: number;
-      curveId: number;
-      signAlgorithm: number;
-      publicKey: string;
-    };
-    signature: string;
-  }[];
-  protocolVersion: {
-    major: number;
-    minor: number;
-    patch: number;
-  };
-};
+export const ChallengeJsonSchema = z.object({
+  version: z.number().int(),
+  challenge: z.object({
+    data: z.hex().min(1),
+    expiry: z.iso.datetime(),
+  }),
+  host: z.hostname(),
+  rp: z.array(
+    z.object({
+      credential: z.object({
+        version: z.number().int(),
+        curveId: z.number().int(),
+        signAlgorithm: z.number().int(),
+        publicKey: z.hex().length(66),
+      }),
+      signature: z.string().min(1),
+    }),
+  ),
+  protocolVersion: z.object({
+    major: z.number().int(),
+    minor: z.number().int(),
+    patch: z.number().int(),
+  }),
+});
+export type Challenge = z.infer<typeof ChallengeJsonSchema>;
+
+export const LKRPChallengeSchema = z.object({
+  json: ChallengeJsonSchema,
+  tlv: z.hex().min(1),
+});
+export type LKRPChallenge = z.infer<typeof LKRPChallengeSchema>;
 
 export type ChallengeSignature = {
   credential: {
@@ -116,16 +124,17 @@ const getApi = (apiBaseURL: string) => {
     challenge: Challenge;
     signature: ChallengeSignature;
   }): Promise<string> {
-    const { data } = await network<string>({
+    const { data } = await network<unknown>({
       url: `${apiBaseURL}/openid/v1/authenticate`,
       method: "POST",
       data: request,
     });
 
-    if (!data) {
+    try {
+      return z.string().parse(data);
+    } catch {
       throw new WalletAuthInvalidAuthorizationError();
     }
-    return data;
   }
 
   async function oidcExchangeAuthCode(
@@ -144,7 +153,7 @@ const getApi = (apiBaseURL: string) => {
       formBody.set("code_verifier", codeVerifier);
     }
 
-    const { data } = await network<APIJWT>({
+    const { data } = await network<unknown>({
       url: `${apiBaseURL}/openid/v1/token`,
       method: "POST",
       headers: {
@@ -152,15 +161,16 @@ const getApi = (apiBaseURL: string) => {
       },
       data: formBody.toString(),
     });
-    if (!data.access_token) {
+
+    try {
+      return APIJWTSchema.parse(data).access_token;
+    } catch {
       throw new WalletAuthInvalidTokenError();
     }
-
-    return data.access_token;
   }
 
   async function oidcExchangeToken(idpToken: string, client_id: string): Promise<KeycloakToken> {
-    const { data } = await network<KeycloakTokenResponse>({
+    const { data } = await network<unknown>({
       url: `${apiBaseURL}/openid/v1/exchange`,
       method: "POST",
       data: { client_id },
@@ -168,14 +178,20 @@ const getApi = (apiBaseURL: string) => {
         Authorization: `Bearer ${idpToken}`,
       },
     });
-    return {
-      scope: data.scope,
-      tokenType: data.token_type,
-      accessToken: data.access_token,
-      expiresIn: data.expires_in,
-      refreshToken: data.refresh_token,
-      refreshExpiresIn: data.refresh_expires_in,
-    };
+
+    try {
+      const token = KeycloakTokenResponseSchema.parse(data);
+      return {
+        scope: token.scope,
+        tokenType: token.token_type,
+        accessToken: token.access_token,
+        expiresIn: token.expires_in,
+        refreshToken: token.refresh_token,
+        refreshExpiresIn: token.refresh_expires_in,
+      };
+    } catch {
+      throw new WalletAuthInvalidTokenError();
+    }
   }
 
   /**
