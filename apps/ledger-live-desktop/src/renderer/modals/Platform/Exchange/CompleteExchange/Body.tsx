@@ -44,6 +44,7 @@ export type Data = {
   payoutAddress?: string;
   sponsored?: boolean;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
 };
 
 type ResultsState = {
@@ -126,6 +127,7 @@ const Body = ({
     refundAddress,
     payoutAddress,
     isEmbeddedSwap,
+    swapEntryPoint,
     ...exchangeParams
   } = data;
   const { exchange, provider, transaction: transactionParams, sponsored } = exchangeParams;
@@ -260,6 +262,7 @@ const Body = ({
           targetCurrency: targetCurrency as Currency,
           isEmbeddedSwap,
           sponsored,
+          swapEntryPoint,
         }
       : {
           provider,
