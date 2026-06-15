@@ -109,7 +109,17 @@ const MarketRow = memo(({ market, onPress, lx }: MarketRowProps) => {
           >
             {market.formattedPrice}
           </Text>
-          <Trend value={market.priceChangePercentage} size="sm" />
+          {Math.abs(market.priceChangePercentage) < 0.005 ? (
+            <Text
+              typography="body3"
+              lx={{ color: "muted" }}
+              testID={`marketItem-${market.id}-change-neutral`}
+            >
+              0.00%
+            </Text>
+          ) : (
+            <Trend value={market.priceChangePercentage} size="sm" />
+          )}
         </Box>
       </ListItemTrailing>
     </LumenListItem>

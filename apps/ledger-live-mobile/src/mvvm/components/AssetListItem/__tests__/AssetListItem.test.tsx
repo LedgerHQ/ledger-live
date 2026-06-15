@@ -94,6 +94,18 @@ describe("AssetListItem", () => {
       expect(screen.getByText(/7\.87%/)).toBeVisible();
     });
 
+    it("renders a neutral 0.00% without a trend icon when the change is zero", () => {
+      renderMarketView({ priceChangePercentage: 0 });
+      expect(screen.getByTestId("marketItem-bitcoin-change-neutral")).toHaveTextContent("0.00%");
+      expect(screen.queryByLabelText("No change, 0.00%")).toBeNull();
+    });
+
+    it("renders a neutral 0.00% for tiny negative changes that round to zero", () => {
+      renderMarketView({ priceChangePercentage: -0.003 });
+      expect(screen.getByTestId("marketItem-bitcoin-change-neutral")).toHaveTextContent("0.00%");
+      expect(screen.queryByText("-0.00%")).toBeNull();
+    });
+
     it("hides the rank tag when rank is unknown", () => {
       renderMarketView({ marketcapRank: 0 });
       expect(screen.queryByText("#0")).toBeNull();
