@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
 import { Props } from "../react/BridgeSync";
+import { createSuspensionDetector } from "./suspensionDetector";
 
 type Session = {
   reason: string;
@@ -15,9 +16,35 @@ export function createSyncSessionManager(trackAnalytics: Props["trackAnalytics"]
   let current: Session | null = null;
 
   let hasTrackedInitial = false;
+  const suspensionDetector = createSuspensionDetector();
+
+  const finishSession = (accounts: Account[]) => {
+    if (!current) return;
+
+    const session = current;
+    const duration = (Date.now() - session.startTime) / 1000;
+
+    suspensionDetector.stop();
+
+    if (suspensionDetector.wasSuspended()) {
+      logSyncSession("skipped", {
+        reason: session.reason,
+        duration: `${duration}s`,
+        skipReason: "suspension",
+      });
+    } else {
+      trackSessionAnalytics(trackAnalytics, session, accounts, duration);
+    }
+
+    if (session.reason === "initial") {
+      hasTrackedInitial = true;
+    }
+    current = null;
+  };
 
   const start = (ids: string[], reason: string) => {
     if (reason === "initial" && hasTrackedInitial) return;
+    suspensionDetector.start();
     current = {
       reason,
       startTime: Date.now(),
@@ -44,16 +71,15 @@ export function createSyncSessionManager(trackAnalytics: Props["trackAnalytics"]
     }
 
     if (current.remaining.size === 0) {
-      trackSessionAnalytics(trackAnalytics, current, accounts);
-
-      if (current.reason === "initial") {
-        hasTrackedInitial = true;
-      }
-      current = null;
+      finishSession(accounts);
     }
   };
 
-  return { start, onAccountSyncDone } as const;
+  const markSuspended = () => {
+    suspensionDetector.markSuspended();
+  };
+
+  return { start, onAccountSyncDone, markSuspended } as const;
 }
 
 export function getTotalOperations(accounts: Account[]): number {
@@ -68,13 +94,13 @@ export function trackSessionAnalytics(
   trackAnalytics: Props["trackAnalytics"],
   session: Session,
   accounts: Account[],
+  durationSeconds: number,
 ) {
-  const duration = (Date.now() - session.startTime) / 1000;
   const totalOps = getTotalOperations(accounts);
   const chains = getUniqueChains(accounts);
 
   trackAnalytics("SyncSuccessAllAccounts", {
-    duration,
+    duration: durationSeconds,
     accountsCount: accounts.length,
     operationsCount: totalOps,
     chains,
@@ -82,10 +108,13 @@ export function trackSessionAnalytics(
     syncWithErrors: session.errorsCount,
   });
 
-  logSyncSession("finished", { reason: session.reason, duration: `${duration}s` });
+  logSyncSession("finished", { reason: session.reason, duration: `${durationSeconds}s` });
 }
 
-function logSyncSession(event: "started" | "finished", data: Record<string, string | number>) {
+function logSyncSession(
+  event: "started" | "finished" | "skipped",
+  data: Record<string, string | number>,
+) {
   const serialized = Object.entries(data)
     .map(([key, value]) => `${key}=${value}`)
     .join(", ");

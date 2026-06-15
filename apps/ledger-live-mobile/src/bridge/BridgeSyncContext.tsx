@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { AppState, type AppStateStatus } from "react-native";
 import { BridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector, useDispatch } from "~/context/hooks";
 import logger from "../logger";
@@ -21,6 +22,16 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
   const recoverError = useCallback((error: Error) => {
     logger.critical(error);
   }, []);
+
+  const registerSuspensionListeners = useCallback((markSuspended: () => void) => {
+    const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
+      if (nextState === "background" || nextState === "inactive") {
+        markSuspended();
+      }
+    });
+    return () => subscription.remove();
+  }, []);
+
   return (
     <BridgeSync
       accounts={accounts}
@@ -30,6 +41,7 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
       prepareCurrency={prepareCurrency}
       hydrateCurrency={hydrateCurrency}
       blacklistedTokenIds={blacklistedTokenIds}
+      registerSuspensionListeners={registerSuspensionListeners}
     >
       {children}
     </BridgeSync>

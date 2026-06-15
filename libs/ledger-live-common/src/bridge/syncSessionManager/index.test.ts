@@ -1,3 +1,4 @@
+import { log } from "@ledgerhq/logs";
 import { createSyncSessionManager } from ".";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "../../mock/account";
@@ -6,10 +7,13 @@ jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),
 }));
 
+const mockedLog = jest.mocked(log);
+
 describe("syncSessionManager", () => {
   afterEach(() => {
     jest.clearAllMocks();
     jest.useRealTimers();
+    jest.restoreAllMocks();
   });
 
   test("tracks SyncSuccessAllAccounts with correct aggregates when all accounts complete", () => {
@@ -144,5 +148,85 @@ describe("syncSessionManager", () => {
     );
 
     nowSpy.mockRestore();
+  });
+
+  test("skips SyncSuccessAllAccounts when suspension is detected", () => {
+    const trackAnalytics = jest.fn();
+    const session = createSyncSessionManager(trackAnalytics);
+
+    const BTC = getCryptoCurrencyById("bitcoin");
+    const a1 = genAccount("a1", { currency: BTC, operationsSize: 3 });
+    const accounts = [a1];
+
+    const nowSpy = jest
+      .spyOn(Date, "now")
+      .mockReturnValueOnce(1_000)
+      .mockReturnValueOnce(5_000);
+
+    session.start(["a1"], "initial");
+    session.markSuspended();
+    session.onAccountSyncDone("a1", accounts);
+
+    expect(trackAnalytics).not.toHaveBeenCalled();
+    expect(mockedLog).toHaveBeenCalledWith(
+      "bridge",
+      expect.stringContaining("SyncSession skipped"),
+    );
+    expect(mockedLog.mock.calls.some(([, message]) => String(message).includes("skipReason=suspension"))).toBe(
+      true,
+    );
+
+    nowSpy.mockRestore();
+  });
+
+  test("still marks initial session as tracked after skipping due to suspension", () => {
+    const trackAnalytics = jest.fn();
+    const session = createSyncSessionManager(trackAnalytics);
+
+    const BTC = getCryptoCurrencyById("bitcoin");
+    const a1 = genAccount("a1", { currency: BTC });
+    const a2 = genAccount("a2", { currency: BTC });
+    const accounts = [a1, a2];
+
+    jest.spyOn(Date, "now").mockReturnValue(1_000);
+
+    session.start(["a1"], "initial");
+    session.markSuspended();
+    session.onAccountSyncDone("a1", accounts);
+    expect(trackAnalytics).not.toHaveBeenCalled();
+
+    session.start(["a1", "a2"], "initial");
+    session.onAccountSyncDone("a1", accounts);
+    session.onAccountSyncDone("a2", accounts);
+    expect(trackAnalytics).not.toHaveBeenCalled();
+  });
+
+  test("skips SyncSuccessAllAccounts on large clock gap during session", () => {
+    jest.useFakeTimers();
+    let mockNow = 0;
+    jest.spyOn(performance, "now").mockImplementation(() => mockNow);
+    jest.spyOn(Date, "now").mockImplementation(() => mockNow);
+
+    const trackAnalytics = jest.fn();
+    const session = createSyncSessionManager(trackAnalytics);
+
+    const BTC = getCryptoCurrencyById("bitcoin");
+    const a1 = genAccount("a1", { currency: BTC, operationsSize: 1 });
+    const accounts = [a1];
+
+    session.start(["a1"], "initial");
+
+    mockNow += 5_000;
+    jest.advanceTimersByTime(5_000);
+    mockNow += 40_000;
+    jest.advanceTimersByTime(5_000);
+
+    session.onAccountSyncDone("a1", accounts);
+
+    expect(trackAnalytics).not.toHaveBeenCalled();
+    expect(mockedLog).toHaveBeenCalledWith(
+      "bridge",
+      expect.stringContaining("SyncSession skipped"),
+    );
   });
 });

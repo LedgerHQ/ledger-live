@@ -31,6 +31,8 @@ export type Props = {
   hydrateCurrency: (currency: CryptoCurrency) => Promise<any>;
   // an array of token ids to blacklist from the account sync
   blacklistedTokenIds?: string[];
+  // optional platform hook to mark suspension (e.g. React Native AppState background)
+  registerSuspensionListeners?: (markSuspended: () => void) => () => void;
 };
 
 type SyncJob = {
@@ -47,12 +49,14 @@ export const BridgeSync = ({
   prepareCurrency,
   hydrateCurrency,
   blacklistedTokenIds,
+  registerSuspensionListeners,
 }: Props): React.JSX.Element => {
   useHydrate({
     accounts,
     hydrateCurrency,
   });
   const sessionManager = useRef(createSyncSessionManager(trackAnalytics)).current;
+  useSuspensionPlatformListeners(sessionManager.markSuspended, registerSuspensionListeners);
   const [syncQueue, syncState] = useSyncQueue({
     accounts,
     prepareCurrency,
@@ -112,6 +116,37 @@ export function resetStates() {
     pending: false,
     error: null,
   };
+}
+
+function useSuspensionPlatformListeners(
+  markSuspended: () => void,
+  registerSuspensionListeners?: (markSuspended: () => void) => () => void,
+) {
+  const markSuspendedRef = useRef(markSuspended);
+  useEffect(() => {
+    markSuspendedRef.current = markSuspended;
+  }, [markSuspended]);
+
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (typeof document !== "undefined" && document.hidden) {
+        markSuspendedRef.current();
+      }
+    };
+
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", onVisibilityChange);
+    }
+
+    const unregisterPlatform = registerSuspensionListeners?.(() => markSuspendedRef.current());
+
+    return () => {
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", onVisibilityChange);
+      }
+      unregisterPlatform?.();
+    };
+  }, [registerSuspensionListeners]);
 }
 
 // useHydrate: returns a sync queue and bridge sync state

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AppState, type AppStateStatus } from "react-native";
+import { createDriftWatchdog } from "@ledgerhq/live-promise";
 
 const TICK_INTERVAL_MS = 100;
 const WINDOW_SIZE = 100; // 100 ticks * 100ms = 10s rolling window
@@ -18,7 +19,7 @@ interface JsThreadMetrics {
  * "Drift" = actualElapsed - expectedInterval. If drift > STALL_THRESHOLD_MS (50ms),
  * that tick is counted as a "stall" of that duration.
  *
- * Uses recursive setTimeout instead of setInterval to avoid catch-up ticks
+ * Uses createDriftWatchdog instead of setInterval to avoid catch-up ticks
  * that would flood the sample buffer with zero-drift entries after a long stall.
  *
  * Returns rolling-window metrics: stall percentage and worst single stall.
@@ -29,48 +30,41 @@ export function useJsThreadMonitor(): JsThreadMetrics {
     maxStall: null,
   });
 
-  const samplesRef = useRef<number[]>([]); // Array of the drifts. I.e how late the ticks arrived (in ms)
-  const lastTickRef = useRef(0);
+  const samplesRef = useRef<number[]>([]);
   const justResumedRef = useRef(false);
 
   useEffect(() => {
-    lastTickRef.current = performance.now();
     samplesRef.current = [];
 
-    let timeoutId = setTimeout(tick, TICK_INTERVAL_MS);
-    const appStateSubscription = AppState.addEventListener("change", handleAppStateChange);
+    const watchdog = createDriftWatchdog({
+      tickIntervalMs: TICK_INTERVAL_MS,
+      onTick: (elapsedMs: number) => {
+        // After returning from background, discard this tick:
+        // its drift reflects background pause duration, not JS thread blocking.
+        if (justResumedRef.current) {
+          justResumedRef.current = false;
+          return;
+        }
 
-    return () => {
-      clearTimeout(timeoutId);
-      appStateSubscription.remove();
-    };
-
-    function tick() {
-      const now = performance.now();
-
-      // After returning from background, discard this tick:
-      // its drift reflects background pause duration, not JS thread blocking.
-      if (justResumedRef.current) {
-        justResumedRef.current = false;
-        lastTickRef.current = now;
-      } else {
-        const elapsed = now - lastTickRef.current;
-        const drift = elapsed - TICK_INTERVAL_MS;
-        lastTickRef.current = now;
-
+        const drift = elapsedMs - TICK_INTERVAL_MS;
         const samples = samplesRef.current;
         samples.push(drift);
 
-        // Keep only the last WINDOW_SIZE samples
         if (samples.length > WINDOW_SIZE) {
           samples.splice(0, samples.length - WINDOW_SIZE);
         }
 
         setMetrics(computeMetrics(samples));
-      }
+      },
+    });
 
-      timeoutId = setTimeout(tick, TICK_INTERVAL_MS);
-    }
+    watchdog.start();
+    const appStateSubscription = AppState.addEventListener("change", handleAppStateChange);
+
+    return () => {
+      watchdog.stop();
+      appStateSubscription.remove();
+    };
 
     function handleAppStateChange(nextState: AppStateStatus) {
       if (nextState === "active") justResumedRef.current = true;
