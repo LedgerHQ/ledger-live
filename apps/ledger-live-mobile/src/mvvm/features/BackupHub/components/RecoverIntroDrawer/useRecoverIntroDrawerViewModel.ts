@@ -64,7 +64,8 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
     () => ({
       layout: GenericAwarenessModalLayout.FeatureIntro as const,
       id: BACKUP_HUB_FEATURE_INTRO_ID,
-      imageUrl: backupHubFeatureIntroImageUri,
+      imageUrlLight: backupHubFeatureIntroImageUri,
+      imageUrlDark: "",
       title: t("backupHub.featureIntro.title"),
       subtitle: t("backupHub.featureIntro.subtitle"),
       primaryButtonLabel: t("backupHub.featureIntro.primaryCta"),
