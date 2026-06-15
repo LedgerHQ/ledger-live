@@ -1,7 +1,6 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
 import { getEnvs, getFlags } from "../bridge/server.ts";
-import { readFileSync } from "node:fs";
 import { appendFile } from "node:fs/promises";
 import path from "node:path";
 import { init, close } from "../bridge/server";
@@ -228,16 +227,17 @@ export const config: WebdriverIO.Config = {
       offset += size;
     });
   },
-  /**
-   * Gets executed before a worker process is spawned and can be used to initialize specific service
-   * for that worker as well as modify runtime environments in an async fashion.
-   * @param  {string} cid      capability id (e.g 0-0)
-   * @param  {object} caps     object containing capabilities for session that will be spawn in the worker
-   * @param  {object} specs    specs to be run in the worker process
-   * @param  {object} args     object that will be merged with the main configuration once worker is initialized
-   * @param  {object} execArgv list of string arguments passed to the worker process
-   */
+  // /**
+  //  * Gets executed before a worker process is spawned and can be used to initialize specific service
+  //  * for that worker as well as modify runtime environments in an async fashion.
+  //  * @param  {string} cid      capability id (e.g 0-0)
+  //  * @param  {object} caps     object containing capabilities for session that will be spawn in the worker
+  //  * @param  {object} specs    specs to be run in the worker process
+  //  * @param  {object} args     object that will be merged with the main configuration once worker is initialized
+  //  * @param  {object} execArgv list of string arguments passed to the worker process
+  //  */
   // onWorkerStart: async function (cid, caps, specs, args, execArgv) {
+  //   caps["custom:capa"].websocketPort = await findFreePort();
   // },
   /**
    * Gets executed just after a worker process has exited.

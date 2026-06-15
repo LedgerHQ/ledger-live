@@ -1,4 +1,5 @@
 import { Server } from "ws";
+import net from "net";
 import { v4 as uuid } from "uuid";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -269,3 +270,28 @@ export const swapSetup = () => {
   }
   return fetchData({ type: "swapSetup", id: uuid(), swapApiBase: process.env.SWAP_API_BASE });
 };
+
+export async function findFreePort(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer({ allowHalfOpen: false });
+
+    server.on("listening", () => {
+      const address = server.address();
+      if (address && typeof address !== "string") {
+        const port: number = address.port;
+        server.close(() => {
+          resolve(port);
+        });
+      } else {
+        log("Unable to determine port. Selecting default");
+        resolve(8099);
+      }
+    });
+
+    server.on("error", err => {
+      reject(err);
+    });
+
+    server.listen(0);
+  });
+}

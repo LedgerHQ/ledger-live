@@ -1,4 +1,5 @@
-import { config as baseConfig } from "./wdio.shared.conf.js";
+import { config as baseConfig } from "./wdio.shared.conf.ts";
+import { findFreePort } from "../bridge/server.ts";
 
 const WS_PORT_1 = 8098;
 const WS_PORT_2 = 8099;
@@ -27,16 +28,7 @@ export const config: WebdriverIO.Config = {
       // react-native-launch-arguments reads intent extras (Appium path)
       "appium:processArguments": {
         // TODO: find free port dynamically
-        args: [
-          "-mock",
-          "0",
-          "-disable_broadcast",
-          "1",
-          "-IS_TEST",
-          "true",
-          `-wsPort`,
-          `${WS_PORT_1}`,
-        ],
+        args: ["-mock", "0", "-disable_broadcast", "1", "-IS_TEST", "true"],
       },
       "custom:capa": {
         websocketPort: WS_PORT_1,
@@ -57,16 +49,7 @@ export const config: WebdriverIO.Config = {
       // react-native-launch-arguments reads intent extras (Appium path)
       "appium:processArguments": {
         // TODO: find free port dynamically
-        args: [
-          "-mock",
-          "0",
-          "-disable_broadcast",
-          "1",
-          "-IS_TEST",
-          "true",
-          `-wsPort`,
-          `${WS_PORT_2}`,
-        ],
+        args: ["-mock", "0", "-disable_broadcast", "1", "-IS_TEST", "true"],
       },
       "custom:capa": {
         websocketPort: WS_PORT_2,
@@ -87,20 +70,26 @@ export const config: WebdriverIO.Config = {
       // react-native-launch-arguments reads intent extras (Appium path)
       "appium:processArguments": {
         // TODO: find free port dynamically
-        args: [
-          "-mock",
-          "0",
-          "-disable_broadcast",
-          "1",
-          "-IS_TEST",
-          "true",
-          `-wsPort`,
-          `${WS_PORT_3}`,
-        ],
+        args: ["-mock", "0", "-disable_broadcast", "1", "-IS_TEST", "true"],
       },
       "custom:capa": {
         websocketPort: WS_PORT_3,
       },
     },
   ],
+  /**
+   * Gets executed before a worker process is spawned and can be used to initialize specific service
+   * for that worker as well as modify runtime environments in an async fashion.
+   * @param  {string} cid      capability id (e.g 0-0)
+   * @param  {object} caps     object containing capabilities for session that will be spawn in the worker
+   * @param  {object} specs    specs to be run in the worker process
+   * @param  {object} args     object that will be merged with the main configuration once worker is initialized
+   * @param  {object} execArgv list of string arguments passed to the worker process
+   */
+  onWorkerStart: async function (cid, caps, specs, args, execArgv) {
+    // find free port to reduce port clash
+    const freePort = await findFreePort();
+    caps["custom:capa"].websocketPort = freePort;
+    caps["appium:processArguments"].args.push(`-wsPort`, `${freePort}`);
+  },
 };
