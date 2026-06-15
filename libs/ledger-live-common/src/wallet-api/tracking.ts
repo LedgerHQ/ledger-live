@@ -60,31 +60,45 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       manifest: AppManifest,
       isEmbeddedSwap?: boolean,
       partner?: string,
+      swapEntryPoint?: string,
     ) => {
       const properties = {
         ...getEventData(manifest),
         ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
         ...(partner !== undefined && { partner }),
+        ...(swapEntryPoint !== undefined && { swapEntryPoint }),
       };
       track("WalletAPI SignTransaction", properties);
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+    signTransactionFail: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+      swapEntryPoint?: string,
+    ) => {
       const properties = {
         ...getEventData(manifest),
         ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
         ...(partner !== undefined && { partner }),
+        ...(swapEntryPoint !== undefined && { swapEntryPoint }),
       };
       track("WalletAPI SignTransaction Fail", properties);
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+    signTransactionSuccess: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+      swapEntryPoint?: string,
+    ) => {
       const properties = {
         ...getEventData(manifest),
         ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
         ...(partner !== undefined && { partner }),
+        ...(swapEntryPoint !== undefined && { swapEntryPoint }),
       };
       track("WalletAPI SignTransaction Success", properties);
     },
@@ -139,6 +153,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
       if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
@@ -151,6 +166,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
       if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;

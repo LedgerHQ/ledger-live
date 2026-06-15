@@ -15,6 +15,7 @@ interface TrackEventPayload {
   exchangeType: "SELL" | "FUND" | "SWAP";
   provider: string;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
 }
 
 /**
@@ -52,29 +53,47 @@ export default function trackingWrapper(trackCall: TrackExchange) {
 
   return {
     // Generate Exchange nonce modal open
-    startExchangeRequested: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+    startExchangeRequested: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Starts Exchange ${exchangeType} Nonce request`, {
         provider,
         exchangeType,
         isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
     // Successfully generated an Exchange app nonce
-    startExchangeSuccess: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+    startExchangeSuccess: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Starts Exchange ${exchangeType} Nonce success`, {
         provider,
         exchangeType,
         isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
     // Failed to generate an Exchange app nonce
-    startExchangeFail: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+    startExchangeFail: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Starts Exchange ${exchangeType} Nonce fail`, {
         provider,
         exchangeType,
         isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
@@ -83,11 +102,17 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       track("Starts Exchange no params", getEventData(manifest));
     },
 
-    completeExchangeRequested: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+    completeExchangeRequested: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Completes Exchange ${exchangeType} requested`, {
         provider,
         exchangeType,
         isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
@@ -97,21 +122,29 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       exchangeType,
       currency,
       isEmbeddedSwap,
+      swapEntryPoint,
     }: TrackEventPayload & { currency: string }) => {
       track(`Completes Exchange ${exchangeType} success`, {
         provider,
         exchangeType,
         currency,
         isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
     // Failed to complete an Exchange
-    completeExchangeFail: ({ provider, exchangeType, isEmbeddedSwap }: TrackEventPayload) => {
+    completeExchangeFail: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Completes Exchange ${exchangeType} Nonce fail`, {
         provider,
         exchangeType,
         isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
