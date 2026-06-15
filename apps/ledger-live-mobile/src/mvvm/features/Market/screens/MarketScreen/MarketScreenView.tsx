@@ -23,7 +23,7 @@ export function MarketScreenView({ search, highlights, assetsList, isSearchActiv
           value={search.value}
           onChangeText={search.onChangeText}
           onClear={search.onClear}
-          placeholder={t("modularDrawer.searchPlaceholder")}
+          placeholder={t("market.searchPlaceholder")}
           autoCorrect={false}
           autoCapitalize="none"
         />

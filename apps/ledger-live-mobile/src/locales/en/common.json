@@ -8209,6 +8209,7 @@
   },
   "market": {
     "title": "Market",
+    "searchPlaceholder": "Search asset",
     "assets": {
       "title": "Assets",
       "emptyFavorites": "No favorites yet",
