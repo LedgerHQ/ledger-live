@@ -14,12 +14,20 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 - Decompose large UI into smaller reusable elements.
 - Use composition for extensibility.
 
+## Rules of Hooks
+
+- Never call hooks conditionally — all hooks must be called in the same order on every render.
+- Never call hooks inside loops, conditions, or nested functions.
+- Never invoke side effects (state updates, callbacks) during render — use `useEffect` instead.
+- Never update state during the render phase — this triggers "Cannot update a component while rendering" warnings.
+
 ## State Management
 
 - Prioritize local state for UI-only concerns.
 - Use RTK Query (with slices) only when necessary for app-wide state. See [`rtk-query-api`](../rtk-query-api/SKILL.md).
 - Apply optimized selectors to limit re-rendering.
 - Connect Redux at the lowest component level when possible.
+- Never reset state by calling `setState` during render — use an effect keyed by the reset trigger instead.
 
 ## Styling
 
@@ -30,14 +38,16 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 ## Performance
 
 - Memoize expensive operations with `useMemo`.
-- Stabilize callbacks with `useCallback`.
+- Stabilize callbacks with `useCallback` — especially callbacks passed to child components or used in effect dependencies.
+- Never create inline functions passed to callbacks in render — wrap with `useCallback`.
 - Wrap costly components in `React.memo`.
 - Apply list virtualization where needed.
 - Use lazy loading for large screens or modules.
+- Never create inline arrays for constant membership checks — hoist to module scope.
 
 ## Navigation
 
-- **Mobile**: use React Navigation; ensure correct deep-link support; keep navigation types strict.
+- **Mobile**: use React Navigation; prefer `useNavigation` and `useRoute` hooks over prop drilling `navigation` and `route`.
 - **Desktop**: use React Router; implement route guards when necessary; maintain clear history logic.
 
 ## Data Fetching
@@ -46,11 +56,13 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 - Use consistent loading, retry, and error states.
 - Prefer optimistic UI when appropriate.
 - Apply caching and stale-time strategies.
+- Add `skip` or `enabled` parameters to hooks to control when queries run based on UI state.
 
 ## Accessibility
 
 - **Mobile**: provide accessible labels for all interactive elements; support screen reader flows; ensure proper focus transitions.
 - **Desktop**: use semantic HTML tags; implement full keyboard navigation; apply meaningful ARIA attributes when required.
+- Never render two separate interactive controls for the same action — consolidate into one accessible control.
 
 ## Error Boundaries
 
@@ -66,6 +78,7 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 ## Animations
 
 - **Mobile**: use the native driver whenever feasible; prefer `Animated` and layout animations for performance.
+- Store animated values in refs to avoid stale closure issues in effects.
 - **Desktop**: use CSS transitions for lightweight animations; use Framer Motion for complex animations; respect reduced-motion system preferences.
 
 ## Internationalization (i18n)
@@ -74,3 +87,4 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 - Keep translation keys descriptive and structured.
 - Support pluralization, gender, and variable interpolation.
 - Validate components across multiple locales.
+- Name i18n key props clearly (e.g., `labelKey` or `translationKey`) — never name them `label` if they hold a key rather than user-facing text.

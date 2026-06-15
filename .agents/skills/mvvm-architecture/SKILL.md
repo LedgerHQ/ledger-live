@@ -15,7 +15,6 @@ description: Plan, review, and develop desktop and mobile app features following
 
 ## Folder Structure
 
-```
 src/mvvm/
 ├── features/
 │   └── FeatureName/
@@ -27,8 +26,6 @@ src/mvvm/
 ├── components/                  ← global shared UI
 ├── hooks/
 └── utils/
-```
-
 ### Feature Folder Responsibilities
 
 - `components/` gathers reusable UI elements across multiple screens.
@@ -65,20 +62,26 @@ Components needing external logic use **Container → ViewModel → View**:
 - Calls any RTK Query hook (`useGet*Query`, `use*Mutation`)
 - Has no corresponding `use<Name>ViewModel.ts` in the same directory
 
-```
 ❌ screens/UserProfileScreen/
      index.tsx   ← imports useSelector, useNavigation directly
 
 ✅ screens/UserProfileScreen/
      index.tsx                         ← props only
      useUserProfileScreenViewModel.ts  ← useSelector, useNavigation, RTK Query
-```
+## Strict Separation Rules
+
+- Never import `useSelector` or `useDispatch` directly in View components under `src/mvvm/`.
+- Never call navigation hooks (`useNavigation`, `useRoute`) directly in View components.
+- Never call RTK Query hooks directly in View components.
+- Always use typed redux hooks from `LLD/hooks/redux` or `LLM/hooks/redux` instead of raw `react-redux` imports.
+- Views must receive all data and callbacks via props from their ViewModel.
 
 ## Import Rules
 
 - Keep relative imports shallow (within one directory level).
 - Use TypeScript path aliases for broader access.
 - Never import `index.tsx` explicitly — use folder alias exports.
+- Prefer app root alias (`~/...` or `LLD/...`) over deep relative imports (`../../...`) for cross-folder imports.
 
 ## Data Fetching
 

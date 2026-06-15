@@ -17,6 +17,14 @@ globs: ["**/*.ts", "**/*.tsx"]
 - Avoid `any`; use `unknown` when necessary.
 - Prefer discriminated unions for state machines.
 
+## Type Safety
+
+- Never use double casts (`as unknown as T`) to work around type mismatches — fix the underlying type contract instead.
+- Never use `as` casts to hide signer/context shape mismatches — implement proper type narrowing or update the interface.
+- Prefer exhaustive `switch` statements with `assertNever` for discriminated unions to catch missing cases at compile time.
+- Make optional fields required when omission would cause silent misconfiguration or surprising defaults.
+- Type guards should accept the generic union type at call sites, not the already-narrowed type.
+
 ## Hooks
 
 - Extract logic into custom hooks.
@@ -37,11 +45,15 @@ globs: ["**/*.ts", "**/*.tsx"]
   2. Internal modules
   3. Types
 - Avoid default exports.
+- Import from package entrypoints, not hardcoded `node_modules` paths.
+- Consolidate multiple imports from the same module into a single import statement.
 
 ## Error Handling
 
 - Use custom error classes with `code` and optional context.
 - Prefer `Result<T, E>` patterns for recoverable failures.
+- Add `instanceof Error` guards before accessing `.name` or spreading error objects.
+- Add `typeof error === "object"` guards before using the `in` operator on error values.
 
 ## Async Patterns
 
