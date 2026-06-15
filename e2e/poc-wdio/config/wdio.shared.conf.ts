@@ -4,7 +4,7 @@ import { getEnvs, getFlags } from "../bridge/server.ts";
 import { readFileSync } from "node:fs";
 import { appendFile } from "node:fs/promises";
 import path from "node:path";
-import { init } from "../bridge/server";
+import { init, close } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 import { ADBUtils } from "../utils/ADBUtils.ts";
 import allureReporter from "@wdio/allure-reporter";
@@ -56,7 +56,7 @@ export const config: WebdriverIO.Config = {
   // and 30 processes will get spawned. The property handles how many capabilities
   // from the same test should run tests.
   //
-  maxInstances: 2,
+  maxInstances: 3,
   //
   // If you have trouble getting all important capabilities together, check out the
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -136,6 +136,17 @@ export const config: WebdriverIO.Config = {
         },
       },
     ],
+    [
+      "appium",
+      {
+        args: {
+          // Required for UiAutomator2 to download a Chromedriver matching the emulator WebView.
+          // Appium 3 requires "driverName:feature" (colon).
+          allowInsecure: "uiautomator2:chromedriver_autodownload",
+          port: 4725,
+        },
+      },
+    ],
   ],
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
@@ -200,16 +211,22 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: async function (config, capabilities: WebdriverIO.Capabilities[]) {
+    // get the list of specs
     const { ConfigParser } = await import("@wdio/config/node");
     const parser = new ConfigParser(__filename);
     await parser.initialize();
     const allSpecs = parser.getSpecs().map(spec => spec.toString());
-    console.log("All specs:", allSpecs);
-    const mid = Math.ceil(allSpecs.length / 2);
-    if (Array.isArray(capabilities) && capabilities.length >= 2) {
-      capabilities[0]["wdio:specs"] = allSpecs.slice(0, mid);
-      capabilities[1]["wdio:specs"] = allSpecs.slice(mid);
-    }
+
+    // allocate the specs to the cpabilities
+    const capaCount = capabilities.length;
+    let offset = 0;
+
+    capabilities.forEach((cap, i) => {
+      const size =
+        Math.floor(allSpecs.length / capaCount) + (i < allSpecs.length % capaCount ? 1 : 0);
+      cap["wdio:specs"] = allSpecs.slice(offset, offset + size);
+      offset += size;
+    });
   },
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
@@ -258,6 +275,7 @@ export const config: WebdriverIO.Config = {
       messages: {},
       e2eBridgeServer: undefined,
     };
+    await close();
     await init(capabilities["custom:capa"].websocketPort);
     // ADBUtils.startLogcatStream(cid);
   },
