@@ -5,6 +5,7 @@ import type {
   CustomFeeConfig,
   FeeAssetsConfig,
   FeePresetOption,
+  FlowEffect,
   SelfTransferPolicy,
   SendDescriptor,
 } from "../types";
@@ -16,7 +17,7 @@ function fromDescriptor<T>(
 ): (currency: CryptoOrTokenCurrency | undefined) => T {
   return currency => {
     const d = getSendDescriptor(currency);
-    return d ? (getter(d) ?? fallback) : fallback;
+    return d ? getter(d) ?? fallback : fallback;
   };
 }
 
@@ -45,6 +46,7 @@ export const sendFeatures = {
     return d?.fees.presets?.shouldEstimateWithBridge?.(transaction) ?? false;
   },
   getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), [] as readonly string[]),
+  getAmountEffects: fromDescriptor(d => d.amount?.effects, [] as readonly FlowEffect[]),
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,
