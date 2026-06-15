@@ -39,7 +39,7 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 
 - Memoize expensive operations with `useMemo`.
 - Stabilize callbacks with `useCallback` — especially callbacks passed to child components or used in effect dependencies.
-- Never create inline functions passed to callbacks in render — wrap with `useCallback`.
+- Avoid passing inline functions as props or callbacks — use `useCallback` to stabilise references and prevent unnecessary re-renders.
 - Wrap costly components in `React.memo`.
 - Apply list virtualization where needed.
 - Use lazy loading for large screens or modules.
@@ -47,7 +47,7 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 
 ## Navigation
 
-- **Mobile**: use React Navigation; prefer `useNavigation` and `useRoute` hooks over prop drilling `navigation` and `route`.
+- **Mobile**: use React Navigation; prefer `useNavigation` and `useRoute` hooks over prop drilling `navigation` and `route`. In MVVM components, navigation hooks (`useNavigation`, `useRoute`) must be called in the ViewModel, not the View.
 - **Desktop**: use React Router; implement route guards when necessary; maintain clear history logic.
 
 ## Data Fetching
@@ -56,7 +56,7 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 - Use consistent loading, retry, and error states.
 - Prefer optimistic UI when appropriate.
 - Apply caching and stale-time strategies.
-- Add `skip` or `enabled` parameters to hooks to control when queries run based on UI state.
+- Add `skip` or `skipToken` parameters to hooks to control when queries run based on UI state.
 
 ## Accessibility
 

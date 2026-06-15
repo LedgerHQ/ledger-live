@@ -15,6 +15,7 @@ description: Plan, review, and develop desktop and mobile app features following
 
 ## Folder Structure
 
+```
 src/mvvm/
 ├── features/
 │   └── FeatureName/
@@ -26,6 +27,8 @@ src/mvvm/
 ├── components/                  ← global shared UI
 ├── hooks/
 └── utils/
+```
+
 ### Feature Folder Responsibilities
 
 - `components/` gathers reusable UI elements across multiple screens.
@@ -62,12 +65,15 @@ Components needing external logic use **Container → ViewModel → View**:
 - Calls any RTK Query hook (`useGet*Query`, `use*Mutation`)
 - Has no corresponding `use<Name>ViewModel.ts` in the same directory
 
+```tsx
 ❌ screens/UserProfileScreen/
      index.tsx   ← imports useSelector, useNavigation directly
 
 ✅ screens/UserProfileScreen/
      index.tsx                         ← props only
      useUserProfileScreenViewModel.ts  ← useSelector, useNavigation, RTK Query
+```
+
 ## Strict Separation Rules
 
 - Never import `useSelector` or `useDispatch` directly in View components under `src/mvvm/`.

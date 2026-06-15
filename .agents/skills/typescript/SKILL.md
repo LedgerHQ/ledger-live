@@ -23,7 +23,7 @@ globs: ["**/*.ts", "**/*.tsx"]
 - Never use `as` casts to hide signer/context shape mismatches — implement proper type narrowing or update the interface.
 - Prefer exhaustive `switch` statements with `assertNever` for discriminated unions to catch missing cases at compile time.
 - Make optional fields required when omission would cause silent misconfiguration or surprising defaults.
-- Type guards should accept the generic union type at call sites, not the already-narrowed type.
+- Type guards should accept the widest practical input (`unknown` or a union type) so they can be reused for narrowing at call sites, rather than accepting an already-narrowed subtype.
 
 ## Hooks
 
@@ -50,10 +50,7 @@ globs: ["**/*.ts", "**/*.tsx"]
 
 ## Error Handling
 
-- Use custom error classes with `code` and optional context.
-- Prefer `Result<T, E>` patterns for recoverable failures.
-- Add `instanceof Error` guards before accessing `.name` or spreading error objects.
-- Add `typeof error === "object"` guards before using the `in` operator on error values.
+For error handling patterns, see the [`error-handling` skill](./../error-handling/SKILL.md).
 
 ## Async Patterns
 
