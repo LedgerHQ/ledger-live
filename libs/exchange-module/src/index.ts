@@ -70,6 +70,8 @@ export class ExchangeModule extends CustomModule {
     fromAccountId,
     toAccountId,
     tokenCurrency,
+    swapEntryPoint,
+    isEmbedded,
   }: ExchangeStartSwapParams) {
     const result = await this.request<ExchangeStartSwapParams, ExchangeStartResult>(
       "custom.exchange.start",
@@ -79,6 +81,8 @@ export class ExchangeModule extends CustomModule {
         fromAccountId,
         toAccountId,
         tokenCurrency,
+        swapEntryPoint,
+        isEmbedded,
       },
     );
 
@@ -158,6 +162,7 @@ export class ExchangeModule extends CustomModule {
     sponsored,
     isEmbedded,
     correlationId,
+    swapEntryPoint,
   }: ExchangeSwapParams) {
     const { operationHash, swapId } = await this.request<ExchangeSwapParams, SwapResult>(
       "custom.exchange.swap",
@@ -176,6 +181,7 @@ export class ExchangeModule extends CustomModule {
         sponsored,
         isEmbedded,
         correlationId,
+        swapEntryPoint,
       },
     );
 
