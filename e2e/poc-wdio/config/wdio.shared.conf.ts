@@ -9,6 +9,17 @@ import { ADBUtils } from "../utils/ADBUtils.ts";
 import allureReporter from "@wdio/allure-reporter";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
+const INSTANCES = Number(process.env.WDIO_INSTANCES) ?? 1;
+
+const appiumServices: WebdriverIO.Config["services"] = Array.from({ length: INSTANCES }, (_, i) => [
+  "appium",
+  {
+    args: {
+      allowInsecure: "uiautomator2:chromedriver_autodownload",
+      port: 4723 + i,
+    },
+  },
+]);
 
 export const config: WebdriverIO.Config = {
   //
@@ -55,7 +66,7 @@ export const config: WebdriverIO.Config = {
   // and 30 processes will get spawned. The property handles how many capabilities
   // from the same test should run tests.
   //
-  maxInstances: 3,
+  maxInstances: INSTANCES,
   //
   // If you have trouble getting all important capabilities together, check out the
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -112,41 +123,7 @@ export const config: WebdriverIO.Config = {
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: [
-    [
-      "appium",
-      {
-        args: {
-          // Required for UiAutomator2 to download a Chromedriver matching the emulator WebView.
-          // Appium 3 requires "driverName:feature" (colon).
-          allowInsecure: "uiautomator2:chromedriver_autodownload",
-          port: 4723,
-        },
-      },
-    ],
-    [
-      "appium",
-      {
-        args: {
-          // Required for UiAutomator2 to download a Chromedriver matching the emulator WebView.
-          // Appium 3 requires "driverName:feature" (colon).
-          allowInsecure: "uiautomator2:chromedriver_autodownload",
-          port: 4724,
-        },
-      },
-    ],
-    [
-      "appium",
-      {
-        args: {
-          // Required for UiAutomator2 to download a Chromedriver matching the emulator WebView.
-          // Appium 3 requires "driverName:feature" (colon).
-          allowInsecure: "uiautomator2:chromedriver_autodownload",
-          port: 4725,
-        },
-      },
-    ],
-  ],
+  services: appiumServices,
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
   // see also: https://webdriver.io/docs/frameworks
@@ -209,24 +186,8 @@ export const config: WebdriverIO.Config = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  onPrepare: async function (config, capabilities: WebdriverIO.Capabilities[]) {
-    // get the list of specs
-    const { ConfigParser } = await import("@wdio/config/node");
-    const parser = new ConfigParser(__filename);
-    await parser.initialize();
-    const allSpecs = parser.getSpecs().map(spec => spec.toString());
-
-    // allocate the specs to the cpabilities
-    const capaCount = capabilities.length;
-    let offset = 0;
-
-    capabilities.forEach((cap, i) => {
-      const size =
-        Math.floor(allSpecs.length / capaCount) + (i < allSpecs.length % capaCount ? 1 : 0);
-      cap["wdio:specs"] = allSpecs.slice(offset, offset + size);
-      offset += size;
-    });
-  },
+  // onPrepare: async function (config, capabilities: WebdriverIO.Capabilities[]) {
+  // },
   // /**
   //  * Gets executed before a worker process is spawned and can be used to initialize specific service
   //  * for that worker as well as modify runtime environments in an async fashion.
@@ -382,12 +343,12 @@ export const config: WebdriverIO.Config = {
    * @param {number} result 0 - command success, 1 - command error
    * @param {object} error error object if any
    */
-  afterCommand: async function (commandName, args, result, error) {
-    // await driver.pause(2_000);
-    // if (result === 1) {
-    //   console.log(`Command ${commandName} with args ${args} failed with error: ${error}`);
-    // }
-  },
+  // afterCommand: async function (commandName, args, result, error) {
+  // await driver.pause(2_000);
+  // if (result === 1) {
+  //   console.log(`Command ${commandName} with args ${args} failed with error: ${error}`);
+  // }
+  // },
   /**
    * Gets executed after all tests are done. You still have access to all global variables from
    * the test.
