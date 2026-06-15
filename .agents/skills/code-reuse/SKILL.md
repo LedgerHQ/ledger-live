@@ -5,6 +5,8 @@ description: Avoid code duplication by extracting shared logic, components, and 
 
 # Code Reuse Patterns
 
+> **Note:** This skill is complementary to the `/code-review` skill. Where `/code-review` covers general review quality, this skill focuses specifically on identifying and preventing code duplication — search discipline, extraction placement, and module boundaries.
+
 ## Search Before You Create
 
 - Before creating any new helper, mock, fixture, or utility, search the codebase with `rg` for existing implementations.
