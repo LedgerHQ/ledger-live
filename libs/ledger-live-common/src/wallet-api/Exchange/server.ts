@@ -135,6 +135,7 @@ export type SwapUiRequest = CompleteExchangeUiRequest & {
   toAccountId?: string;
   tokenCurrency?: string;
   correlationId?: string;
+  swapEntryPoint?: string;
 };
 
 type ExchangeUiHooks = {
@@ -453,12 +454,14 @@ export const handlers = ({
           sponsored,
           isEmbedded,
           correlationId,
+          swapEntryPoint,
         } = params;
 
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
           isEmbeddedSwap: isEmbedded,
+          swapEntryPoint,
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -574,13 +577,7 @@ export const handlers = ({
           extraTransactionParameters,
         });
 
-        // Complete Swap
-        const trackingCompleteParams = {
-          provider: params.provider,
-          exchangeType: params.exchangeType,
-          isEmbeddedSwap: isEmbedded,
-        };
-        tracking.completeExchangeRequested(trackingCompleteParams);
+        tracking.completeExchangeRequested(trackingParams);
 
         const strategyData = {
           recipient: payinAddress,
@@ -665,6 +662,7 @@ export const handlers = ({
               payoutAddress,
               sponsored,
               isEmbeddedSwap: isEmbedded,
+              swapEntryPoint,
               ...(correlationId && { correlationId }),
             },
             onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
