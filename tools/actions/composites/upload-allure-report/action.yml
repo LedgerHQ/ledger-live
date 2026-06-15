@@ -16,6 +16,9 @@ inputs:
   report_path_suffix:
     required: false
     description: "Suffix for allure report path (defaults to platform)"
+  summary_message:
+    required: false
+    description: "Formatted Allure test summary written to GitHub Step Summary before the report link"
 outputs:
   report-url:
     description: "Allure report URL"
@@ -62,4 +65,9 @@ runs:
       shell: bash
       env:
         REPORT_URL: ${{ steps.publish-report.outputs.report-url }}
-      run: echo "[Open report](${REPORT_URL})" >> "$GITHUB_STEP_SUMMARY"
+        SUMMARY_MESSAGE: ${{ inputs.summary_message }}
+      run: |
+        if [ -n "$SUMMARY_MESSAGE" ]; then
+          echo "$SUMMARY_MESSAGE" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        echo "[Open report](${REPORT_URL})" >> "$GITHUB_STEP_SUMMARY"

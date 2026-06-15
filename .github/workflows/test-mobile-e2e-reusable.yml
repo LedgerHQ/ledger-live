@@ -874,7 +874,7 @@ jobs:
     needs: [determine-builds, detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
-      result: ${{ steps.summary.outputs.test_result }}
+      summary_message: ${{ steps.summary.outputs.summary_message }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
       missingShards: ${{ steps.aggregate.outputs.missingShards }}
     steps:
@@ -887,6 +887,13 @@ jobs:
       - name: Remove Detox simulator artifacts
         if: ${{ !cancelled() }}
         run: rm -rf ios-test-artifacts/ios.sim.release.*
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ios-test-artifacts
+          platform: iOS
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}
         id: upload
@@ -896,13 +903,7 @@ jobs:
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
-      - name: Get summary
-        id: summary
-        if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-        with:
-          allure-results-path: ios-test-artifacts
-          platform: iOS
+          summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -949,7 +950,7 @@ jobs:
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
-      result: ${{ steps.summary.outputs.test_result }}
+      summary_message: ${{ steps.summary.outputs.summary_message }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
       missingShards: ${{ steps.aggregate.outputs.missingShards }}
     needs: [determine-builds, detox-tests-android]
@@ -963,6 +964,13 @@ jobs:
       - name: Remove Detox emulator artifacts
         if: ${{ !cancelled() }}
         run: rm -rf android-test-artifacts/android.emu.release.*
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: android-test-artifacts
+          platform: android
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         if: ${{ !cancelled() }}
@@ -972,13 +980,7 @@ jobs:
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
-      - name: Get summary
-        id: summary
-        if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-        with:
-          allure-results-path: android-test-artifacts
-          platform: android
+          summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -1171,7 +1173,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🍏 iOS - ${{ needs.determine-builds.outputs.ios_device }}: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
+                  "text": `- 🍏 iOS - ${{ needs.determine-builds.outputs.ios_device }}: ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];
@@ -1181,7 +1183,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android - ${{ needs.determine-builds.outputs.android_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                  "text": `- 🤖 Android - ${{ needs.determine-builds.outputs.android_device }}: ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];
@@ -1249,11 +1251,13 @@ jobs:
               .concat(infoBlock);
 
             const result = {
+                text: " ",
                 attachments: [
                   {
                     color: process.env.ANDROID_STATUS !== 'success' || (process.env.IOS_STATUS !== 'success' && process.env.ANDROID_ONLY == 'false')
                       ? "#FF333C"
                       : "#33FF39",
+                    fallback: text,
                     blocks,
                   },
                 ],

@@ -8,15 +8,12 @@ inputs:
     description: "Path to allure files"
     required: true
 outputs:
-  test_result:
-    value: ${{ steps.get-summary.outputs.test_result }}
-    description: "Test result summary"
   status_color:
     value: ${{ steps.get-summary.outputs.status_color }}
     description: "Slack Status color"
-  status_emoji:
-    value: ${{ steps.get-summary.outputs.status_emoji }}
-    description: "Slack Status emoji"
+  summary_message:
+    value: ${{ steps.get-summary.outputs.summary_message }}
+    description: "Formatted summary line, e.g. '❌ 19 passed, 7 failed, 0 broken, 12 skipped, 38 total'"
 runs:
   using: composite
   steps:
@@ -31,14 +28,12 @@ runs:
         brokenTests=$(jq '.statistic.broken' summary.json)
         skippedTests=$(jq '.statistic.skipped' summary.json)
         totalTests=$(jq '.statistic.total' summary.json)
-        echo "test_result=$passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> "$GITHUB_OUTPUT"
-
         if [ "$failedTests" -gt 0 ] || [ "$brokenTests" -gt 0 ]; then
           echo "status_color=#FF333C" >> "$GITHUB_OUTPUT";
-          echo "status_emoji=❌" >> "$GITHUB_OUTPUT";
+          echo "summary_message=❌ $passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> "$GITHUB_OUTPUT";
         else
           echo "status_color=#33FF39" >> "$GITHUB_OUTPUT";
-          echo "status_emoji=✅" >> "$GITHUB_OUTPUT";
+          echo "summary_message=✅ $passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> "$GITHUB_OUTPUT";
         fi
       shell: bash
     - name: Generate single file Allure report
