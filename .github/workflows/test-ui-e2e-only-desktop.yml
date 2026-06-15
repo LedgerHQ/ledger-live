@@ -650,13 +650,12 @@ jobs:
                 }
               ]
             };
-            fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+            fs.writeFileSync("payload-slack-content.json", JSON.stringify({ ...slackPayload, channel: "C05FKJ7DFAP" }), "utf-8");
 
       - name: Post to Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
-          channel-id: "C05FKJ7DFAP"
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}

@@ -1263,23 +1263,22 @@ jobs:
                 ],
               };
 
-            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify({ ...result, channel: "CTMQ0S5SB" }, null, 2));
+            fs.writeFileSync(`./payload-slack-content-alt.json`, JSON.stringify({ ...result, channel: "C05FKJ7DFAP" }, null, 2));
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
-          channel-id: "CTMQ0S5SB"
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       - name: post to a Slack channel
         if: ${{ contains(fromJson('["release"]'), github.ref_name) || contains(fromJson('["release, develop"]'), inputs.ref) || github.event_name == 'schedule' }}
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
-          channel-id: "C05FKJ7DFAP"
-          payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          payload-file-path: "./payload-slack-content-alt.json"
 
   merge-ios-timings:
     name: Merge iOS Timing Files
