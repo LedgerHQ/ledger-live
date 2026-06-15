@@ -1,7 +1,10 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { createMockMarketCurrencyData } from "@ledgerhq/live-common/market/utils/fixtures";
+import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
+import { useLocation, type Location } from "react-router";
 import {
   buildDistributionItem,
   makeIntegrationTokenCurrency,
@@ -17,9 +20,28 @@ jest.mock("~/renderer/actions/general", () => ({
   useDistribution: jest.fn(() => ({ bySlug: {}, list: [] })),
 }));
 
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useLocation: jest.fn(),
+}));
+
+const mockUseLocation = jest.mocked(useLocation);
+
+const createMockLocation = (
+  pathname: string,
+  state: MarketCurrencyData | null = null,
+): Location => ({
+  pathname,
+  state,
+  search: "",
+  hash: "",
+  key: "default",
+});
+
 const { useDistribution } = jest.requireMock("~/renderer/actions/general");
 
 const btc = getCryptoCurrencyById("bitcoin");
+const cardano = getCryptoCurrencyById("cardano");
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdcToken = makeIntegrationTokenCurrency("ethereum/erc20/usd__coin", "USDC", "USD Coin");
 
@@ -38,6 +60,7 @@ describe("getRightPanelRouteAssetId", () => {
 describe("useRightPanelViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseLocation.mockReturnValue(createMockLocation("/asset/bitcoin"));
     useDistribution.mockReturnValue({ bySlug: {}, list: [] });
   });
 
@@ -49,6 +72,41 @@ describe("useRightPanelViewModel", () => {
 
       expect(result.current.initialSwapState).toBeUndefined();
       expect(result.current.webviewKey).toBe("none::none");
+    });
+
+    it("builds swap state from search market state when route id differs from distribution slug", () => {
+      const marketRouteId = "cardano-market-id";
+      const distributionItem = buildDistributionItem({ currency: cardano, accounts: [] });
+
+      mockUseLocation.mockReturnValue(
+        createMockLocation(
+          `/asset/${marketRouteId}`,
+          createMockMarketCurrencyData({
+            id: marketRouteId,
+            ledgerIds: ["cardano"],
+            name: "Cardano",
+            ticker: "ADA",
+          }),
+        ),
+      );
+      useDistribution.mockReturnValue({
+        bySlug: { cardano: distributionItem },
+        list: [distributionItem],
+      });
+
+      const { result } = renderHook(() =>
+        useRightPanelViewModel({
+          pathname: `/asset/${marketRouteId}`,
+          routeAssetId: marketRouteId,
+        }),
+      );
+
+      expect(result.current.initialSwapState).toEqual({
+        defaultAmountFrom: "0",
+        from: `/asset/${marketRouteId}`,
+        defaultCurrency: { toCurrencyId: "cardano" },
+      });
+      expect(result.current.webviewKey).toBe("cardano::none");
     });
 
     it("builds swap state without account when distribution matches but no account exists", () => {

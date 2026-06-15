@@ -1,5 +1,7 @@
 import { useMemo } from "react";
+import { useLocation } from "react-router";
 import { resolveDistributionItem } from "@ledgerhq/asset-aggregation/assetDistribution/index";
+import { isMarketCurrencyData } from "@ledgerhq/asset-detail";
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useSelector } from "LLD/hooks/redux";
@@ -37,13 +39,18 @@ export const useRightPanelViewModel = ({
   pathname,
   routeAssetId,
 }: UseRightPanelViewModelParams): RightPanelViewModel => {
+  const { state: locationState } = useLocation();
+  const marketState = isMarketCurrencyData(locationState) ? locationState : undefined;
   const distribution = useDistribution({ groupBy: "asset" });
   const allAccounts = useSelector(accountsSelector);
+  const decodedAssetId = useMemo(() => decodeRouteParam(routeAssetId), [routeAssetId]);
 
-  const currency = useMemo(() => {
-    const decodedAssetId = decodeRouteParam(routeAssetId);
-    return resolveDistributionItem({ routeAssetId, decodedAssetId, distribution })?.currency;
-  }, [routeAssetId, distribution]);
+  const currency = useMemo(
+    () =>
+      resolveDistributionItem({ routeAssetId, decodedAssetId, marketState, distribution })
+        ?.currency,
+    [routeAssetId, decodedAssetId, marketState, distribution],
+  );
 
   const initialSwapState = useMemo(() => {
     if (!currency) return undefined;
