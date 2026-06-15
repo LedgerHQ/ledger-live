@@ -580,6 +580,8 @@ export type CompleteExchangeUiRequest = {
   rate?: number;
   amountExpectedTo?: number;
   tokenCurrency?: string;
+  isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
 };
 
 export async function completeExchangeLogic(
