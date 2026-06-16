@@ -77,14 +77,10 @@ jobs:
             echo "::endgroup::"
           done < warm-chunks.txt
 
-      # live-common emits ~8k cached files. This results in an EMFILE in windows. Skip NX for this step on windows
-      - name: Build (Windows — bypass nx cache write)
-        if: matrix.os == 'windows-2022'
-        shell: bash
-        run: pnpm --filter @ledgerhq/live-common run build
-
+      # live-common is source-consumed (noop build) and emits nothing, so the former
+      # Windows EMFILE workaround is unnecessary. This step builds its dependencies (^build).
       - name: Build
-        if: matrix.os != 'windows-2022'
+        shell: bash
         run: pnpm exec nx run @ledgerhq/live-common:build
       - name: Test
         shell: bash

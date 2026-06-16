@@ -17,10 +17,6 @@ This module helps the Ledger team monitor and optimize the performance of crypto
 # Install dependencies
 pnpm install
 
-# Build Ledger Live Common
-# (You need to be at the root of the LedgerLive project to run this command)
-pnpm build:llc
-
 # Build the project
 pnpm build
 ```

@@ -11,110 +11,44 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common",
-  "main": "lib-es/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib-es/index.d.ts",
   "typesVersions": {
     "*": {
       "*.json": [
         "*.json"
       ],
       "*": [
-        "lib-es/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
+        "src/*"
       ],
       "test-helpers/*": [
-        "lib-es/test-helpers/*"
+        "src/test-helpers/*"
       ]
     }
   },
   "exports": {
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./*": {
-      "@ledgerhq/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "@ledgerhq/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
-      "default": "./lib-es/*.js"
-    },
-    ".": {
-      "default": "./lib-es/index.js"
-    },
-    "./genericAwarenessModal": {
-      "@ledgerhq/source": "./src/genericAwarenessModal/index.ts",
-      "default": "./lib-es/genericAwarenessModal/index.js"
-    },
-    "./currencies/*": {
-      "@ledgerhq/source": "./src/currencies/*.ts",
-      "default": "./lib-es/currencies/*.js"
-    },
-    "./device-action/*": {
-      "@ledgerhq/source": "./src/device-action/*.ts",
-      "default": "./lib-es/device-action/*.js"
-    },
-    "./hooks": {
-      "default": "./lib-es/hooks/index.js"
-    },
-    "./e2e": {
-      "@ledgerhq/source": "./src/e2e/index.ts",
-      "default": "./lib-es/e2e/index.js"
-    },
-    "./featureFlags": {
-      "@ledgerhq/source": "./src/featureFlags/*.ts",
-      "default": "./lib-es/featureFlags/*.js"
-    },
-    "./bridge/descriptor/registry": {
-      "@ledgerhq/source": "./src/bridge/descriptor/registry.ts",
-      "default": "./lib-es/bridge/descriptor/registry.js"
-    },
-    "./bridge/descriptor/types": {
-      "@ledgerhq/source": "./src/bridge/descriptor/types.ts",
-      "default": "./lib-es/bridge/descriptor/types.js"
-    },
-    "./bridge/descriptor/send/features": {
-      "@ledgerhq/source": "./src/bridge/descriptor/send/features.ts",
-      "default": "./lib-es/bridge/descriptor/send/features.js"
-    },
-    "./bridge/descriptor/send/memo": {
-      "@ledgerhq/source": "./src/bridge/descriptor/send/memo.ts",
-      "default": "./lib-es/bridge/descriptor/send/memo.js"
-    },
-    "./test-helpers/cryptoAssetsStore": {
-      "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
-      "types": "./lib-es/test-helpers/cryptoAssetsStore.d.ts",
-      "default": "./lib-es/test-helpers/cryptoAssetsStore.js"
-    },
-    "./test-helpers/*": {
-      "@ledgerhq/source": "./src/test-helpers/*.ts",
-      "types": "./lib-es/test-helpers/*.d.ts",
-      "default": "./lib-es/test-helpers/*.js"
-    },
-    "./modularDrawer/__mocks__/*": {
-      "@ledgerhq/source": "./src/modularDrawer/__mocks__/*.ts",
-      "types": "./lib-es/modularDrawer/__mocks__/*.d.ts",
-      "default": "./lib-es/modularDrawer/__mocks__/*.js"
-    },
-    "./cmc-client/__mocks__/*": {
-      "@ledgerhq/source": "./src/cmc-client/__mocks__/*.ts",
-      "types": "./lib-es/cmc-client/__mocks__/*.d.ts",
-      "default": "./lib-es/cmc-client/__mocks__/*.js"
-    },
+    "./*": [
+      "./src/*.ts",
+      "./src/*.tsx"
+    ],
+    "./*.js": [
+      "./src/*.ts",
+      "./src/*.tsx"
+    ],
+    "./genericAwarenessModal": "./src/genericAwarenessModal/index.ts",
+    "./currencies/*": "./src/currencies/*.ts",
+    "./device-action/*": "./src/device-action/*.ts",
+    "./e2e": "./src/e2e/index.ts",
+    "./bridge/descriptor/registry": "./src/bridge/descriptor/registry.ts",
+    "./bridge/descriptor/types": "./src/bridge/descriptor/types.ts",
+    "./bridge/descriptor/send/features": "./src/bridge/descriptor/send/features.ts",
+    "./bridge/descriptor/send/memo": "./src/bridge/descriptor/send/memo.ts",
+    "./test-helpers/cryptoAssetsStore": "./src/test-helpers/cryptoAssetsStore.ts",
+    "./test-helpers/*": "./src/test-helpers/*.ts",
+    "./modularDrawer/__mocks__/*": "./src/modularDrawer/__mocks__/*.ts",
+    "./cmc-client/__mocks__/*": "./src/cmc-client/__mocks__/*.ts",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "rimraf lib lib-es && tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "watch": "tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es --watch",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s'",
     "lint": "oxlint src",
@@ -137,7 +71,6 @@
     "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci"
   },
   "files": [
-    "lib-es",
     "src"
   ],
   "peerDependencies": {

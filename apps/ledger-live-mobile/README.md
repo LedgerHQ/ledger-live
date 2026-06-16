@@ -93,9 +93,6 @@ Produces a development .apk that can be installed on Android phones. Not eligibl
 In another terminal and in parallel to `pnpm dev:llm`, you can watch different libs from the monorepo
 
 ```bash
-# watch common
-pnpm watch:common
-
 # watch ljs
 pnpm watch:ljs
 

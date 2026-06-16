@@ -181,6 +181,8 @@ export function createRendererConfig(
             path.resolve(lldRoot, "tools"),
             path.resolve(lldRoot, "..", "..", "features"),
             path.resolve(lldRoot, "..", "..", "shared"),
+            // live-common is source-consumed (no lib-es build); transpile its TS source
+            path.resolve(lldRoot, "..", "..", "libs", "ledger-live-common", "src"),
           ],
           exclude: /node_modules/,
           loader: "builtin:swc-loader",

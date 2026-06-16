@@ -64,9 +64,6 @@ In another terminal and in parallel to `pnpm dev:lld`, you can watch different l
 LLD is using vite and will import in priority the esm libs so we need to watch and build for esm in some libs
 
 ```bash
-# watch common
-pnpm watch:es:common
-
 # watch ljs
 pnpm watch:es:ljs
 

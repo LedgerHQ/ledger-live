@@ -3,8 +3,7 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
-    "declaration": true,
-    "declarationMap": true,
+    "noEmit": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
     "isolatedModules": false,
@@ -13,16 +12,11 @@
     "types": ["node", "jest"],
     "typeRoots": ["./../node_modules/@types", "./../../../node_modules/@types"],
     "rootDir": ".",
-    "outDir": "../lib/",
     "paths": {
       "*": ["./*"],
       "react": ["./../../../node_modules/@types/react"],
       "@types/react": ["./../../../node_modules/@types/react"],
       "@tests/*": ["./__tests__/*"]
     }
-  },
-  "references": [
-    // this is how we declare a dependency from
-    { "path": "../" } // this project to the one at the root dir`
-  ]
+  }
 }
