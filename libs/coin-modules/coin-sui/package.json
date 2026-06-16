@@ -146,7 +146,7 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-modules/coin-sui",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "graphql:codegen": "node scripts/generate-graphql-types.mjs && oxfmt src/network/graphql/graphql-env.d.ts",

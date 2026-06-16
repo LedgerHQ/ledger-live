@@ -133,7 +133,7 @@
     "test:debug": "node --inspect-wait ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-modules/coin-polkadot",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   },

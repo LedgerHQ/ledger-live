@@ -1,4 +1,0 @@
-{
-  "entry": ["src/Polkadot.ts"],
-  "ignoreUnused": ["jest-sonar"]
-}

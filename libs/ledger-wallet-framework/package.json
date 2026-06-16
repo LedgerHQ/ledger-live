@@ -144,6 +144,6 @@
     "test": "cross-env TZ=America/Paris jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "test:debug": "cross-env TZ=America/Paris node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../.. -W libs/ledger-wallet-framework"
   }
 }

@@ -697,9 +697,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
-      unimported:
-        specifier: 1.30.0
-        version: 1.30.0(eslint@8.57.0)
       zx:
         specifier: 8.8.5
         version: 8.8.5
@@ -23521,16 +23518,6 @@ packages:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
 
-  '@typescript-eslint/parser@5.62.0':
-    resolution: {integrity: sha512-VlJEV0fOQ7BExOsHYAGrgbEiZoi8D+Bl2+f6V2RrXerRSylnp+ZBHmPvaIa8cz0Ajx7WO7Z5RqfgYg7ED1nRhA==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   '@typescript-eslint/parser@8.48.1':
     resolution: {integrity: sha512-PC0PDZfJg8sP7cmKe6L3QIL8GZwU5aRvUFedqSIpw3B+QjRSUZeeITC2M5XKeMXEzL6wccN196iy3JLwKNvDVA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -28350,11 +28337,6 @@ packages:
   flow-parser@0.156.0:
     resolution: {integrity: sha512-OCE3oIixhOttaV4ahIGtxf9XfaDdxujiTnXuHu+0dvDVVDiSDJlQpgCWdDKqP0OHfFnxQKrjMamArDAXtrBtZw==}
     engines: {node: '>=0.4.0'}
-
-  flow-remove-types@2.156.0:
-    resolution: {integrity: sha512-ivU28S1ycaVo5anxlXdIVlrmqLD81JWFADa6oUjyoQg0va4zSyZCp5OYco74VZi7nm42O/yTNv1Y5Byc7bJF1Q==}
-    engines: {node: '>=4'}
-    hasBin: true
 
   flow-remove-types@2.301.0:
     resolution: {integrity: sha512-AOAXpycfy5pBcXmKF7iogvKiWZe2Y9byWH2pF2GYj9grhZdb2I/jXTG05xmNaGlfw4FRjtnYLNAsY3V8yGcV7g==}
@@ -35267,9 +35249,6 @@ packages:
   simple-git@3.16.0:
     resolution: {integrity: sha512-zuWYsOLEhbJRWVxpjdiXl6eyAyGo/KzVW+KFhhw9MqEEJttcq+32jTWSGyxTdf9e/YCohxRE+9xpWFj9FdiJNw==}
 
-  simple-git@3.24.0:
-    resolution: {integrity: sha512-QqAKee9Twv+3k8IFOFfPB2hnk6as6Y6ACUpwCtQvRYBAes23Wv3SZlHVobAzqcE8gfsisCvPw3HGW3HYM+VYYw==}
-
   simple-markdown@0.4.4:
     resolution: {integrity: sha512-ZmlNUGR1KI12sPHeQ7dQY1qM5KfOgFqClNNVO8zQ9Pg6u7gHLCPFGD+VC7MCwpGDMd1uw3Bb2TfFfR8d6bB34A==}
 
@@ -36561,11 +36540,6 @@ packages:
   typeforce@1.18.0:
     resolution: {integrity: sha512-7uc1O8h1M1g0rArakJdf0uLRSSgFcYexrVoKo+bzJd32gd4gDy2L/Z+8/FjPnU9ydY3pEnVPtr9FyscYY60K1g==}
 
-  typescript@4.9.5:
-    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
-    engines: {node: '>=4.2.0'}
-    hasBin: true
-
   typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
     engines: {node: '>=14.17'}
@@ -36709,11 +36683,6 @@ packages:
 
   unified@6.2.0:
     resolution: {integrity: sha512-1k+KPhlVtqmG99RaTbAv/usu85fcSRu3wY8X+vnsEhIxNP5VbVIDiXnLqyKIG+UMdyTg0ZX9EI6k2AfjJkHPtA==}
-
-  unimported@1.30.0:
-    resolution: {integrity: sha512-4/NKy/a8kEFu6tDbY/CTiaqtIBR1LeI5RWDzfLlKX2ipMfNMbTyEVjxiGCWq8EByI8rvH+Y2+IEaPU8n7U141g==}
-    engines: {node: '>=14.0.0'}
-    hasBin: true
 
   union@0.5.0:
     resolution: {integrity: sha512-N6uOhuW6zO95P3Mel2I2zMsbsanvvtgn6jVqJv4vbVcz/JN0OkL9suomjQGmWtxJQXOCqUJvquc1sMeNz/IwlA==}
@@ -54428,18 +54397,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5)':
-    dependencies:
-      '@typescript-eslint/scope-manager': 5.62.0
-      '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@4.9.5)
-      debug: 4.4.3
-      eslint: 8.57.0
-    optionalDependencies:
-      typescript: 4.9.5
-    transitivePeerDependencies:
-      - supports-color
-
   '@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.48.1
@@ -54490,20 +54447,6 @@ snapshots:
   '@typescript-eslint/types@5.62.0': {}
 
   '@typescript-eslint/types@8.48.1': {}
-
-  '@typescript-eslint/typescript-estree@5.62.0(typescript@4.9.5)':
-    dependencies:
-      '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.4.3
-      globby: 11.1.0
-      is-glob: 4.0.3
-      semver: 7.8.1
-      tsutils: 3.21.0(typescript@4.9.5)
-    optionalDependencies:
-      typescript: 4.9.5
-    transitivePeerDependencies:
-      - supports-color
 
   '@typescript-eslint/typescript-estree@5.62.0(typescript@6.0.2)':
     dependencies:
@@ -58194,15 +58137,6 @@ snapshots:
       path-type: 4.0.0
       yaml: 1.10.2
 
-  cosmiconfig@8.3.6(typescript@4.9.5):
-    dependencies:
-      import-fresh: 3.3.0
-      js-yaml: 4.1.0
-      parse-json: 5.2.0
-      path-type: 4.0.0
-    optionalDependencies:
-      typescript: 4.9.5
-
   cosmiconfig@8.3.6(typescript@5.8.3):
     dependencies:
       import-fresh: 3.3.0
@@ -60979,12 +60913,6 @@ snapshots:
   flow-enums-runtime@0.0.6: {}
 
   flow-parser@0.156.0: {}
-
-  flow-remove-types@2.156.0:
-    dependencies:
-      flow-parser: 0.156.0
-      pirates: 3.0.2
-      vlq: 0.2.3
 
   flow-remove-types@2.301.0:
     dependencies:
@@ -70427,14 +70355,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  simple-git@3.24.0:
-    dependencies:
-      '@kwsites/file-exists': 1.1.1
-      '@kwsites/promise-deferred': 1.1.1
-      debug: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
-
   simple-markdown@0.4.4: {}
 
   simple-plist@1.3.1:
@@ -72108,11 +72028,6 @@ snapshots:
 
   tsscmp@1.0.6: {}
 
-  tsutils@3.21.0(typescript@4.9.5):
-    dependencies:
-      tslib: 2.6.2
-      typescript: 4.9.5
-
   tsutils@3.21.0(typescript@6.0.2):
     dependencies:
       tslib: 2.6.2
@@ -72241,8 +72156,6 @@ snapshots:
 
   typeforce@1.18.0: {}
 
-  typescript@4.9.5: {}
-
   typescript@5.8.3: {}
 
   typescript@5.9.3: {}
@@ -72357,28 +72270,6 @@ snapshots:
       trough: 1.0.5
       vfile: 2.3.0
       x-is-string: 0.1.0
-
-  unimported@1.30.0(eslint@8.57.0):
-    dependencies:
-      '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@4.9.5)
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@4.9.5)
-      chalk: 4.1.2
-      cosmiconfig: 8.3.6(typescript@4.9.5)
-      debug: 4.4.3
-      file-entry-cache: 6.0.1
-      flow-remove-types: 2.156.0
-      glob: 7.2.3
-      json5: 2.2.3
-      ora: 5.4.1
-      read-pkg-up: 7.0.1
-      resolve: 1.22.8
-      simple-git: 3.24.0
-      term-size: 2.2.1
-      typescript: 4.9.5
-      yargs: 16.2.0
-    transitivePeerDependencies:
-      - eslint
-      - supports-color
 
   union@0.5.0:
     dependencies:

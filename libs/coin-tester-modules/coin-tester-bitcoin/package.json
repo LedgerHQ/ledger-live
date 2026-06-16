@@ -57,7 +57,7 @@
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-bitcoin"
   },
   "dependencies": {
     "@ledgerhq/coin-bitcoin": "workspace:^",

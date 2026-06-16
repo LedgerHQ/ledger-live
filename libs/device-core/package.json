@@ -52,7 +52,7 @@
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../.. -W libs/device-core",
     "test": "jest",
     "coverage": "jest --coverage"
   },

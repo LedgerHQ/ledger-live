@@ -85,7 +85,7 @@
     "test": "pnpm -w -F ui build-and-test",
     "test:jest": "jest --maxWorkers=50%",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/react"
   },
   "dependencies": {
     "@ledgerhq/crypto-icons": "catalog:",

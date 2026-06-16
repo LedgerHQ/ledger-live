@@ -43,7 +43,7 @@
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../.. -W libs/live-dmk-speculos",
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",

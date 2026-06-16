@@ -6,7 +6,7 @@
     "dependencies": "error",
     "devDependencies": "off",
     "optionalPeerDependencies": "off",
-    "duplicates": "error",
+    "duplicates": "warn",
     "enumMembers": "warn",
     "exports": "warn",
     "files": "error",
@@ -17,7 +17,6 @@
     "unresolved": "off"
   },
   "ignoreExportsUsedInFile": true,
-  "project": ["src/**"],
   "ignore": [
     "**/__integrations__/*",
     "**/*.test.*",
@@ -34,6 +33,468 @@
     "**/.eslintrc.i18n.js"
   ],
   "workspaces": {
+    "./libs/coin-modules/coin-*": {
+      "entry": ["src/test/**", "src/datasets/**"]
+    },
+    "./libs/coin-modules/coin-algorand": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/live-env"
+      ]
+    },
+    "./libs/coin-modules/coin-aptos": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignore": [
+        "src/types/assets.ts"
+      ],
+      "ignoreDependencies": [
+        "got"
+      ]
+    },
+    "./libs/coin-modules/coin-bitcoin": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignore": [
+        "src/editTransaction/getFormattedFeeFields.ts",
+        "src/editTransaction/index.ts",
+        "types/coininfo/index.d.ts",
+        "types/bs58check/base.d.ts",
+        "src/chain-adapters/zcash/ipc/main-host.ts",
+        "src/chain-adapters/zcash/ipc/one-shot-router.ts",
+        "src/chain-adapters/zcash/ipc/utility-entry.ts"
+      ]
+    },
+    "./libs/coin-modules/coin-canton": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignore": [
+        "src/network/mock-network.ts",
+        "src/network/types.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/devices"
+      ]
+    },
+    "./libs/coin-modules/coin-cosmos": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/bridge/index.ts"
+      ]
+    },
+    "./libs/coin-modules/coin-evm": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/editTransaction/index.ts",
+        "src/network/node/rpc.native.ts",
+        "src/network/nft/index.ts"
+      ],
+      "ignore": [
+        "src/abis/index.ts",
+        "src/fixtures/synchronization.fixtures.ts"
+      ],
+      "ignoreDependencies": [
+        "@ethersproject/shims",
+        "react-native-get-random-values"
+      ]
+    },
+    "./libs/coin-modules/coin-icon": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignore": [
+        "src/bridge/index.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/live-env",
+        "@ledgerhq/live-promise",
+        "prando"
+      ]
+    },
+    "./libs/coin-modules/coin-internet_computer": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/bridge/buildOptimisticOperation.ts",
+        "src/bridge/createTransaction.ts",
+        "src/bridge/estimateMaxSpendable.ts",
+        "src/bridge/index.ts",
+        "src/bridge/prepareTransaction.ts",
+        "src/bridge/signOperation.ts",
+        "src/bridge/bridgeHelpers/account.ts"
+      ],
+      "ignoreDependencies": [
+        "rxjs"
+      ]
+    },
+    "./libs/coin-modules/coin-kaspa": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignore": [
+        "jest-global-setup.js"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/devices",
+        "@ledgerhq/logs",
+        "bip32-path",
+        "eip55",
+        "invariant",
+        "lru-cache",
+        "prando"
+      ]
+    },
+    "./libs/coin-modules/coin-module-boilerplate": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignore": [
+        "src/network/mock-network.ts",
+        "src/types/assets.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/devices"
+      ]
+    },
+    "./libs/coin-modules/coin-multiversx": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/bridge/js.ts"
+      ],
+      "ignore": [
+        "src/helpers/denominate.ts",
+        "src/helpers/handleTransactionStatus.ts",
+        "src/helpers/hasMinimumDelegableBalance.ts",
+        "src/helpers/randomizeProviders.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/live-promise",
+        "axios"
+      ]
+    },
+    "./libs/coin-modules/coin-near": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/bridge/js.ts"
+      ]
+    },
+    "./libs/coin-modules/coin-polkadot": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignoreDependencies": [
+        "@polkadot/api-derive"
+      ]
+    },
+    "./libs/coin-modules/coin-solana": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/bridge/js.ts"
+      ]
+    },
+    "./libs/coin-modules/coin-stacks": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignoreDependencies": [
+        "ripple-address-codec",
+        "ripple-binary-codec"
+      ]
+    },
+    "./libs/coin-modules/coin-stellar": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**"
+      ],
+      "ignoreDependencies": [
+        "invariant"
+      ]
+    },
+    "./libs/coin-modules/coin-sui": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/api/chain/index.ts"
+      ],
+      "ignore": [
+        "src/supportedFeatures.ts"
+      ]
+    },
+    "./libs/coin-modules/coin-tezos": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/types/bridge.fixture.ts"
+      ]
+    },
+    "./libs/coin-modules/coin-ton": {
+      "entry": [
+        "src/test/**",
+        "src/datasets/**",
+        "src/bridge/js.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/live-env"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-polkadot": {
+      "ignoreDependencies": [
+        "expect"
+      ]
+    },
+    "./libs/coin-tester-modules/coin-tester-xrp": {
+      "ignoreDependencies": [
+        "@ledgerhq/errors",
+        "@ledgerhq/live-network",
+        "@ledgerhq/logs"
+      ]
+    },
+    "./libs/ethereum-provider": {
+      "ignoreDependencies": [
+        "events"
+      ]
+    },
+    "./libs/ledger-live-common": {
+      "entry": [
+        "src/analyticsConsent/index.ts",
+        "src/bot/cli.ts",
+        "src/bridge/useCurrencyBridge.ts",
+        "src/cmc-client/index.ts",
+        "src/customImage/errors.ts",
+        "src/deposit/api.ts",
+        "src/deposit/type.ts",
+        "src/errors/transactionBroadcastErrors.ts",
+        "src/exchange/index.ts",
+        "src/firebase/featureFlags.ts",
+        "src/generated/types.ts",
+        "src/hoc/withRemountableWrapper.tsx",
+        "src/hooks/useDebounce.ts",
+        "src/hooks/useIsMounted.ts",
+        "src/hooks/useSearch.ts",
+        "src/hooks/useTimer.ts",
+        "src/hw/connectManager.ts",
+        "src/hw/connectManagerEventMapper.ts",
+        "src/hw/customLockScreenFetch.ts",
+        "src/hw/editDeviceName.ts",
+        "src/hw/firmwareUpdate-main.ts",
+        "src/hw/firmwareUpdate-prepare.ts",
+        "src/hw/firmwareUpdate-repair.ts",
+        "src/hw/flash.ts",
+        "src/hw/hasFinalFirmware.ts",
+        "src/hw/installLanguage.ts",
+        "src/hw/installOsuFirmware.ts",
+        "src/hw/renameDevice.ts",
+        "src/hw/uninstallLanguage.ts",
+        "src/logs/simple.ts",
+        "src/manager/useAvailableLanguagesForDevice.ts",
+        "src/manager/useDeviceHasUpdatesAvailable.ts",
+        "src/market/constants.ts",
+        "src/mock/helpers.ts",
+        "src/modularDrawer/index.ts",
+        "src/platform/JSONRPCServer.ts",
+        "src/platform/helpers.ts",
+        "src/platform/react.ts",
+        "src/portfolio/index.ts",
+        "src/recover/isRecoverDisplayed.ts",
+        "src/transactionsAlerts/ChainwatchAccountManager.ts",
+        "src/transactionsAlerts/index.ts",
+        "src/wallet-api/useLiveAppManifest.ts",
+        "src/walletConnect/index.ts",
+        "src/analytics/featureFlagHelpers/newSendFlow.ts",
+        "src/analytics/featureFlagHelpers/onboardingCounterfeitWarning.ts",
+        "src/analytics/featureFlagHelpers/wallet40.ts",
+        "src/bot/portfolio/audits.ts",
+        "src/bot/portfolio/process-main.ts",
+        "src/bot/portfolio/process-sync.ts",
+        "src/cmc-client/state-manager/api.ts",
+        "src/cmc-client/state-manager/transforms.ts",
+        "src/deviceSDK/actions/getDeviceInfo.ts",
+        "src/deviceSDK/actions/updateFirmware.ts",
+        "src/deviceSDK/hooks/useGetDeviceInfo.ts",
+        "src/deviceSDK/hooks/useGetLatestAvailableFirmware.ts",
+        "src/deviceSDK/hooks/useUpdateFirmware.ts",
+        "src/exchange/platform/completeExchange.ts",
+        "src/exchange/platform/startExchange.ts",
+        "src/exchange/swap/addToSwapHistory.ts",
+        "src/exchange/swap/completeExchange.ts",
+        "src/exchange/swap/csvExport.ts",
+        "src/exchange/swap/getUpdateAccountWithUpdaterParams.ts",
+        "src/exchange/swap/updateAccountSwapStatus.ts",
+        "src/families/**",
+        "src/flows/send/amount/SendAmountDisplayModeContext.tsx",
+        "src/hw/actions/completeExchange.ts",
+        "src/hw/actions/customLockScreenFetch.ts",
+        "src/hw/actions/customLockScreenLoad.ts",
+        "src/hw/actions/customLockScreenRemove.ts",
+        "src/hw/actions/installLanguage.ts",
+        "src/hw/actions/manager.ts",
+        "src/hw/actions/rawTransaction.ts",
+        "src/hw/actions/renameDevice.ts",
+        "src/hw/actions/startExchange.ts",
+        "src/hw/actions/transaction.ts",
+        "src/icons/consts/urls.ts",
+        "src/icons/providers/providers.ts",
+        "src/icons/providers/sizes.ts",
+        "src/modularDrawer/types/apy.ts",
+        "src/notifications/ToastProvider/index.tsx",
+        "src/notifications/ToastProvider/types.ts",
+        "src/postOnboarding/hooks/index.ts",
+        "src/wallet-api/CustomDeeplink/index.ts",
+        "src/wallet-api/CustomDeeplink/server.ts",
+        "src/wallet-api/CustomLogger/client.ts",
+        "src/wallet-api/CustomLogger/server.ts",
+        "src/wallet-api/CustomLogger/types.ts",
+        "src/wallet-api/LiveAppModal/slice.ts",
+        "src/wallet-api/LocalLiveAppProvider/index.tsx",
+        "src/wallet-api/LocalLiveAppProvider/types.ts",
+        "src/wallet-api/ModularDrawer/utils.ts",
+        "src/wallet-api/utils/deriveAccountIdForManifest.ts",
+        "src/exchange/platform/transfer/completeExchange.ts",
+        "src/exchange/swap/webApp/index.ts",
+        "src/exchange/swap/webApp/utils.ts",
+        "src/platform/providers/RampCatalogProvider/index.tsx",
+        "src/platform/providers/RampCatalogProvider/useRampCatalog.ts",
+        "src/platform/providers/RemoteLiveAppProvider/index.tsx",
+        "src/platform/providers/RemoteLiveAppProvider/types.ts",
+        "src/platform/providers/RemoteLiveAppProvider/api/index.ts"
+      ],
+      "ignore": [
+        "src/account/typeGuards.ts",
+        "src/api/ofacGeoBlockApi.ts",
+        "src/bot/specs.ts",
+        "src/cg-client/index.ts",
+        "src/coin-modules/non-regression-entry.ts",
+        "src/dada-client/index.ts",
+        "src/cg-client/api/index.ts",
+        "src/cg-client/utils/rangeDataTable.ts",
+        "src/dada-client/hooks/useAssetData.ts",
+        "src/dada-client/hooks/useDrawerConfiguration.ts",
+        "src/dada-client/hooks/useStockAssetIds.ts",
+        "src/dada-client/mocks/stablecoins.mock.ts",
+        "src/dada-client/mocks/stocks.mock.ts",
+        "src/device/hooks/useLatestFirmware.ts",
+        "src/deviceSDK/commands/genuineCheck.ts",
+        "src/device/use-cases/getDeviceHasBattery.ts",
+        "src/device/use-cases/isDeviceLocalizationSupported.ts",
+        "src/device/use-cases/isEditDeviceNameSupported.ts",
+        "src/device/use-cases/isSyncOnboardingSupported.ts",
+        "src/device/use-cases/shouldForceFirmwareUpdate.ts",
+        "src/deviceSDK/tasks/genuineCheck.ts",
+        "src/hw/actions/uninstallAllApps.ts",
+        "src/market/hooks/useLargeMoverChartData.ts",
+        "src/market/hooks/useLargeMoverCurrencies.ts",
+        "src/market/hooks/useMarketPerformers.ts",
+        "src/modularDrawer/hooks/index.ts",
+        "src/modularDrawer/hooks/useSearch.ts",
+        "src/modularDrawer/types/index.ts",
+        "src/modularDrawer/utils/getLoadingStatus.ts",
+        "src/rxjs/operators/throwIf.ts",
+        "src/bridge/descriptor/stake/features.ts",
+        "src/exchange/swap/const/blockchain.ts",
+        "src/flows/send/coinControl/index.ts",
+        "src/flows/send/hooks/useSendFlowBusinessLogic.ts",
+        "src/flows/send/hooks/useSendFlowOperationState.ts",
+        "src/notifications/ServiceStatusProvider/mocks/ledgerStatus.ts",
+        "src/flows/send/customFees/hooks/useBridgeFeeEstimation.ts",
+        "src/flows/send/customFees/hooks/useCustomFeeValidation.ts",
+        "src/flows/send/customFees/hooks/useCustomFeesViewModelCore.ts",
+        "src/flows/send/customFees/hooks/useStableGasOptions.ts",
+        "src/flows/send/customFees/utils/customFeeUtils.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/hw-bolos",
+        "@ledgerhq/ledger-trust-service",
+        "@ledgerhq/live-hooks",
+        "@ledgerhq/speculos-device-controller",
+        "@ledgerhq/wallet-api-client",
+        "@noble/curves",
+        "@ton/crypto",
+        "@types/bchaddrjs",
+        "@types/qs",
+        "bech32",
+        "bip32",
+        "bip39",
+        "json-rpc-2.0",
+        "qs",
+        "rlp",
+        "triple-beam"
+      ]
+    },
+    "./libs/ledger-wallet-framework": {
+      "entry": [
+        "src/api/index.ts",
+        "src/bot/specs.ts",
+        "src/sanction/errors.ts"
+      ],
+      "ignore": [
+        "src/api/types.ts",
+        "src/currencies/localeUtility.ts",
+        "src/bot/types.ts",
+        "src/test-helpers/bridge-integration-suite.ts"
+      ],
+      "ignoreDependencies": [
+        "@ledgerhq/devices",
+        "expect",
+        "uuid"
+      ]
+    },
+    "./libs/ledgerjs/packages/cryptoassets": {
+      "ignore": [
+        "src/cal-client/hooks/index.ts"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-celo": {
+      "ignoreDependencies": [
+        "@ledgerhq/errors",
+        "@ledgerhq/hw-transport",
+        "bip32-path",
+        "semver"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-eth": {
+      "entry": [
+        "erc20.js"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-app-multiversx": {
+      "ignoreDependencies": [
+        "axios"
+      ]
+    },
+    "./libs/ledgerjs/packages/hw-transport": {
+      "ignoreDependencies": [
+        "events"
+      ]
+    },
+    "./libs/live-dmk-desktop": {
+      "ignoreDependencies": [
+        "@ledgerhq/live-common"
+      ]
+    },
+    "./libs/ui/packages/react": {
+      "entry": [
+        "src/assets/fonts.ts"
+      ]
+    },
     "./apps/ledger-live-desktop": {
       "entry": [
         "src/index.ts",
@@ -156,7 +617,7 @@
       "entry": ["src/index.ts"]
     },
     "./libs/asset-aggregation": {
-      "entry": ["src/index.ts"]
+      "entry": ["src/index.ts", "src/mocks/categorizedAssets.mock.ts"]
     }
   }
 }

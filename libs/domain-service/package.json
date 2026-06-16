@@ -69,7 +69,7 @@
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "cross-env TZ=America/New_York jest",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../.. -W libs/domain-service",
     "coverage": "jest --coverage"
   },
   "dependencies": {

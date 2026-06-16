@@ -1,3 +1,0 @@
-{
-  "entry": ["src/HttpTransport.ts", "src/WebSocketTransport.ts", "src/withStaticURLs.ts"]
-}

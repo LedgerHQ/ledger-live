@@ -1,4 +1,0 @@
-{
-  "entry": ["src/Canton.ts", "src/index.ts"],
-  "ignoreUnused": ["jest-sonar"]
-}

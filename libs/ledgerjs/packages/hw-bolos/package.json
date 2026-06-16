@@ -38,7 +38,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "test-integ": "jest --config=jest.integ.config.ts --runInBand",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ledgerjs/packages/hw-bolos"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:*",

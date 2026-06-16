@@ -57,7 +57,8 @@
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -W libs/asset-aggregation"
   },
   "typesVersions": {
     "*": {

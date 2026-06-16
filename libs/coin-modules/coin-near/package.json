@@ -86,7 +86,7 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-modules/coin-near",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

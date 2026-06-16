@@ -98,7 +98,7 @@
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest --passWithNoTests",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../.. -W libs/coin-modules/coin-vechain",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   },

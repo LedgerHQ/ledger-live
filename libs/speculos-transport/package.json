@@ -42,7 +42,7 @@
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../.. -W libs/speculos-transport",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts"
   },
   "typesVersions": {

@@ -29,7 +29,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",
-    "unimported": "unimported",
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ledgerjs/packages/cryptoassets",
     "test:importer": "jest ./src/crypto-assets-importer/",
     "import:cal-tokens": "ts-node ./src/crypto-assets-importer/index.ts"
   },
