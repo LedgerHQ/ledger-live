@@ -1,4 +1,9 @@
-import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "../utils";
+import type { Operation } from "@ledgerhq/types-live";
+import {
+  getConcernedOperation,
+  getRecipientDisplayValue,
+  getRecipientSearchPrefillValue,
+} from "../utils";
 
 describe("getRecipientDisplayValue", () => {
   it("should return empty for null recipient", () => {
@@ -31,6 +36,25 @@ describe("getRecipientDisplayValue", () => {
         { prefixLength: 4, suffixLength: 4 },
       ),
     ).toBe("0x12...cdef");
+  });
+});
+
+describe("getConcernedOperation", () => {
+  const mainOperation = { id: "main-op" } as Operation;
+  const subOperation = { id: "sub-op" } as Operation;
+
+  it("should return null when there is no optimistic operation", () => {
+    expect(getConcernedOperation(null)).toBeNull();
+  });
+
+  it("should return the operation itself when it has no sub-operations", () => {
+    expect(getConcernedOperation(mainOperation)).toBe(mainOperation);
+  });
+
+  it("should prefer the first sub-operation when present", () => {
+    expect(
+      getConcernedOperation({ ...mainOperation, subOperations: [subOperation] } as Operation),
+    ).toBe(subOperation);
   });
 });
 
