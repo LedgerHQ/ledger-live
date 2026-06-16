@@ -63,6 +63,7 @@ import type {
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
+  SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -169,6 +170,7 @@ export const INITIAL_STATE: SettingsState = {
   userNps: null,
   supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
+  debugOsUpdateBannerMode: "off",
   dismissedContentCards: {},
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
@@ -605,6 +607,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
   }),
+  [SettingsActionTypes.SET_DEBUG_OS_UPDATE_BANNER_MODE]: (state, action) => ({
+    ...state,
+    debugOsUpdateBannerMode: (action as Action<SettingsSetDebugOsUpdateBannerMode>).payload,
+  }),
   [SettingsActionTypes.SET_DISMISSED_CONTENT_CARD]: (state, action) => ({
     ...state,
     dismissedContentCards: {
@@ -924,6 +930,8 @@ export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
+export const debugOsUpdateBannerModeSelector = (state: State) =>
+  state.settings.debugOsUpdateBannerMode;
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const isFromLedgerSyncOnboardingSelector = (state: State) =>
   state.settings.fromLedgerSyncOnboarding;
