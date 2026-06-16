@@ -1,4 +1,5 @@
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
+import { celoFeeCurrencyField } from "./extraFields";
 import { fees } from "./fees";
 
 export const descriptor: CoinDescriptor = {
@@ -6,7 +7,7 @@ export const descriptor: CoinDescriptor = {
     inputs: {},
     fees,
     amount: {
-      getPlugins: () => ["celoFeeCurrency"],
+      extraFields: [celoFeeCurrencyField],
     },
   },
 };

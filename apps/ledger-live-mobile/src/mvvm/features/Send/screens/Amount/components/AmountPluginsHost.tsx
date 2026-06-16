@@ -5,7 +5,7 @@ import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/sen
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
-import { CeloFeeCurrencyPlugin } from "./plugins/CeloFeeCurrencyPlugin";
+import { AmountExtraFields } from "./AmountExtraFields";
 
 type AmountPluginProps = Readonly<{
   account: AccountLike;
@@ -14,20 +14,12 @@ type AmountPluginProps = Readonly<{
   transactionActions: SendFlowTransactionActions;
 }>;
 
-type AmountPluginComponent = (props: AmountPluginProps) => React.ReactElement | null;
-
-const pluginRegistry: Readonly<Record<string, AmountPluginComponent>> = {
-  celoFeeCurrency: CeloFeeCurrencyPlugin,
-};
-
 export function AmountPluginsHost(props: AmountPluginProps) {
   const mainAccount = useMemo(
     () => getMainAccount(props.account, props.parentAccount ?? undefined),
     [props.account, props.parentAccount],
   );
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
-
-  const pluginIds = useMemo(() => sendFeatures.getAmountPlugins(currency), [currency]);
 
   useFlowEffects({
     account: props.account,
@@ -37,13 +29,16 @@ export function AmountPluginsHost(props: AmountPluginProps) {
     updateTransaction: props.transactionActions.updateTransaction,
   });
 
+  // Generic, family agnostic declarative visual fields driven by the descriptor.
+  const extraFields = useMemo(() => sendFeatures.getAmountExtraFields(currency), [currency]);
+
   return (
-    <>
-      {pluginIds.map(id => {
-        const Plugin = pluginRegistry[id];
-        if (!Plugin) return null;
-        return <Plugin key={id} {...props} />;
-      })}
-    </>
+    <AmountExtraFields
+      account={props.account}
+      parentAccount={props.parentAccount}
+      transaction={props.transaction}
+      transactionActions={props.transactionActions}
+      fields={extraFields}
+    />
   );
 }

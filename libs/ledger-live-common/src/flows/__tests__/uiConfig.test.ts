@@ -16,7 +16,7 @@ jest.mock("../../bridge/descriptor/send/features", () => ({
     hasFeePresets: jest.fn(),
     hasCustomFees: jest.fn(),
     hasCoinControl: jest.fn(),
-    getAmountPlugins: jest.fn(() => []),
+    getAmountExtraFields: jest.fn(() => []),
   },
 }));
 
@@ -104,7 +104,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: true,
         hasCustomFees: true,
         hasCoinControl: true,
-        hasAmountPlugins: false,
+        hasAmountExtraFields: false,
       });
     });
   });
@@ -136,7 +136,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: true,
         hasCustomFees: true,
         hasCoinControl: false,
-        hasAmountPlugins: false,
+        hasAmountExtraFields: false,
       });
     });
   });
@@ -170,13 +170,13 @@ describe("getSendUiConfig", () => {
         hasFeePresets: false,
         hasCustomFees: true,
         hasCoinControl: false,
-        hasAmountPlugins: false,
+        hasAmountExtraFields: false,
       });
     });
   });
 
-  describe("for a coin with Amount plugins (e.g. Celo)", () => {
-    it("returns hasAmountPlugins: true when the descriptor advertises plugins", () => {
+  describe("for a coin with Amount extra fields (e.g. Celo)", () => {
+    it("returns hasAmountExtraFields: true when the descriptor advertises extra fields", () => {
       mockedGetSendDescriptor.mockReturnValue({
         inputs: {},
         fees: { hasPresets: false, hasCustom: true },
@@ -189,15 +189,17 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasFeePresets.mockReturnValue(false);
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(false);
-      mockedSendFeatures.getAmountPlugins.mockReturnValue(["celoFeeCurrency"]);
+      mockedSendFeatures.getAmountExtraFields.mockReturnValue([
+        { id: "celoFeeCurrency" } as never,
+      ]);
 
       const result = getSendUiConfig(mockCeloCurrency);
 
-      expect(result.hasAmountPlugins).toBe(true);
-      expect(mockedSendFeatures.getAmountPlugins).toHaveBeenCalledWith(mockCeloCurrency);
+      expect(result.hasAmountExtraFields).toBe(true);
+      expect(mockedSendFeatures.getAmountExtraFields).toHaveBeenCalledWith(mockCeloCurrency);
     });
 
-    it("returns hasAmountPlugins: false when the descriptor advertises no plugins", () => {
+    it("returns hasAmountExtraFields: false when the descriptor advertises no extra fields", () => {
       mockedGetSendDescriptor.mockReturnValue({
         inputs: {},
         fees: { hasPresets: false, hasCustom: true },
@@ -210,11 +212,11 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasFeePresets.mockReturnValue(false);
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(false);
-      mockedSendFeatures.getAmountPlugins.mockReturnValue([]);
+      mockedSendFeatures.getAmountExtraFields.mockReturnValue([]);
 
       const result = getSendUiConfig(mockCeloCurrency);
 
-      expect(result.hasAmountPlugins).toBe(false);
+      expect(result.hasAmountExtraFields).toBe(false);
     });
   });
 
@@ -230,7 +232,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: false,
         hasCustomFees: false,
         hasCoinControl: false,
-        hasAmountPlugins: false,
+        hasAmountExtraFields: false,
       });
     });
   });
