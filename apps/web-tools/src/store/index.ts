@@ -1,7 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { getEnv } from "@ledgerhq/live-env";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
-import { cvsApi } from "@domain/api-currencies";
+import { cvsApi, setCvsBaseUrl } from "@domain/api-currencies";
 import supportedFiatsReducer from "@features/platform-currencies";
+
+setCvsBaseUrl(getEnv("LEDGER_COUNTERVALUES_API"));
 
 export const store = configureStore({
   reducer: {

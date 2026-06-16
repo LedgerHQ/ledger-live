@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@domain/entity-currency-fiat": "workspace:*",
-    "@ledgerhq/live-env": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
   },

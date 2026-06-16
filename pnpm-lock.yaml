@@ -3066,9 +3066,6 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../../entity/currency-fiat
-      '@ledgerhq/live-env':
-        specifier: workspace:*
-        version: link:../../../libs/env
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.0.0))(react@19.0.0)
