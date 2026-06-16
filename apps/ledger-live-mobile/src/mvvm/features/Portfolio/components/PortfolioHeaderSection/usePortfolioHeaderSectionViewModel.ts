@@ -1,28 +1,45 @@
 import { useState, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { CONTENT_AREA_HEIGHT } from "LLM/components/ScreenHeroSection/constants";
+import {
+  CONTENT_AREA_HEIGHT,
+  MIN_CONTENT_AREA_HEIGHT,
+  OS_UPDATE_BANNER_TOP_GAP,
+} from "LLM/components/ScreenHeroSection/constants";
 
 interface PortfolioHeaderSectionViewModel {
   readonly safeAreaTop: number;
   readonly shouldDisplayBalanceRefreshRework: boolean;
   readonly onBannerHeightChange: (height: number) => void;
   readonly minContentHeight: number | undefined;
+  readonly bannerTopInset: number;
 }
 
 export function usePortfolioHeaderSectionViewModel(): PortfolioHeaderSectionViewModel {
   const { top: safeAreaTop } = useSafeAreaInsets();
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayBalanceRefreshRework, shouldDisplayWallet40MainNav } =
+    useWalletFeaturesConfig("mobile");
 
   const [bannerHeight, setBannerHeight] = useState(0);
   const onBannerHeightChange = useCallback((height: number) => {
     setBannerHeight(height);
   }, []);
 
-  // When the OS update banner is visible, shrink the hero section by the banner's actual height
-  // so the total portfolio header height (banner + hero) stays constant at CONTENT_AREA_HEIGHT.
-  const minContentHeight =
-    bannerHeight > 0 ? Math.max(0, CONTENT_AREA_HEIGHT - bannerHeight) : undefined;
+  // Clear the floating Wallet 4.0 TopBar when a banner is shown.
+  const bannerTopInset =
+    shouldDisplayWallet40MainNav && bannerHeight > 0 ? OS_UPDATE_BANNER_TOP_GAP : 0;
 
-  return { safeAreaTop, shouldDisplayBalanceRefreshRework, onBannerHeightChange, minContentHeight };
+  // Shrink the hero by the banner height (floored) so total header height stays ~constant.
+  const minContentHeight =
+    bannerHeight > 0
+      ? Math.max(MIN_CONTENT_AREA_HEIGHT, CONTENT_AREA_HEIGHT - bannerHeight)
+      : undefined;
+
+  return {
+    safeAreaTop,
+    shouldDisplayBalanceRefreshRework,
+    onBannerHeightChange,
+    minContentHeight,
+    bannerTopInset,
+  };
 }
