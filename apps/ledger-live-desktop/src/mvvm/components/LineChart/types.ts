@@ -44,8 +44,8 @@ export type LineChartProps = Readonly<{
   onRangeChange: (range: LineChartRange) => void;
   color?: LineChartColor;
   isLoading?: boolean;
-  isError?: boolean;
-  errorMessage?: string;
+  /** Label rendered by the chart when there is no data and it is not loading. @default t("lineChart.error") */
+  emptyLabel?: string;
   height?: number;
   /**
    * Markers to render on top of the chart. When omitted, defaults to the

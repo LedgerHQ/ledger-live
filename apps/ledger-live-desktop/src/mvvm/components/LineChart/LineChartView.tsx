@@ -1,6 +1,6 @@
 import React from "react";
 import { SegmentedControl, SegmentedControlButton } from "@ledgerhq/lumen-ui-react";
-import { LineChartPlot } from "./LineChartPlot";
+import { LineChartPlotContent } from "./LineChartPlotContent";
 import type { LineChartViewModelResult } from "./useLineChartViewModel";
 
 type LineChartViewProps = Readonly<LineChartViewModelResult>;
@@ -9,8 +9,7 @@ export function LineChartView({
   chartSeries,
   height,
   isLoading,
-  isError,
-  errorMessage,
+  emptyLabel,
   selectedRange,
   handleSelectedChange,
   rangeSelectorLabel,
@@ -32,11 +31,10 @@ export function LineChartView({
 }: LineChartViewProps) {
   return (
     <div className="flex w-full min-w-0 flex-col gap-24" data-testid="line-chart">
-      <LineChartPlot
+      <LineChartPlotContent
         height={height}
         isLoading={isLoading}
-        isError={isError}
-        errorMessage={errorMessage}
+        emptyLabel={emptyLabel}
         chartSeries={chartSeries}
         points={points}
         pointTooltips={pointTooltips}
@@ -52,7 +50,6 @@ export function LineChartView({
         xAxis={xAxis}
         yAxis={yAxis}
       />
-
       <div className="flex w-full min-w-0 items-center gap-8">
         <SegmentedControl
           selectedValue={selectedRange}

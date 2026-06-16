@@ -77,9 +77,11 @@ const mockCurrency = (result: { data: unknown; isFetching?: boolean }) =>
     ...result,
   } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
 
-const mockChart = (result: { data: unknown; isLoading?: boolean }) =>
+const mockChart = (result: { data: unknown; isLoading?: boolean; isFetching?: boolean }) =>
   mockUseGetAssetChartDataQuery.mockReturnValue({
     isLoading: false,
+    isFetching: false,
+    currentData: result.data,
     ...result,
   } as unknown as ReturnType<typeof useGetAssetChartDataQuery>);
 
@@ -620,6 +622,72 @@ describe("useBalanceGraphViewModel", () => {
 
       const { result } = renderVM();
 
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it("is true while fetching a new timeframe that has no data yet", () => {
+      mockChart({ data: undefined, isFetching: true });
+
+      const { result } = renderVM();
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it("stays false while refetching in the background with existing data", () => {
+      mockChart({ data: CHART_DATA_BY_RANGE, isFetching: true });
+
+      const { result } = renderVM();
+
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
+  describe("timeframe transition", () => {
+    it("keeps the previous timeframe series while the next one is loading", () => {
+      mockChart({ data: { "1d": CHART_DATA_BY_RANGE["1d"] }, isFetching: true });
+
+      const { result } = renderVM();
+      const seriesBeforeChange = result.current.series;
+      expect(result.current.isLoading).toBe(false);
+      expect(seriesBeforeChange[0].data.length).toBeGreaterThan(0);
+
+      act(() => {
+        result.current.onRangeChange("1w");
+      });
+
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.series).toBe(seriesBeforeChange);
+    });
+
+    it("drops the previous series once the new timeframe settles with no data", () => {
+      mockChart({ data: { "1d": CHART_DATA_BY_RANGE["1d"] }, isFetching: true });
+
+      const { result, rerender } = renderVM();
+
+      act(() => {
+        result.current.onRangeChange("1w");
+      });
+      expect(result.current.series[0].data.length).toBeGreaterThan(0);
+
+      mockChart({ data: { "1d": CHART_DATA_BY_RANGE["1d"] }, isFetching: false });
+      rerender(undefined);
+
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.series[0].data).toHaveLength(0);
+    });
+
+    it("does not show the previous asset's series when switching to an asset with no data", () => {
+      mockChart({ data: CHART_DATA_BY_RANGE });
+      const params: VMParams = { currency: mockBtcCryptoCurrency, knownLedgerIds: ["btc"] };
+      const { result, rerender } = renderHook(() => useBalanceGraphViewModel(params));
+      expect(result.current.series[0].data.length).toBeGreaterThan(0);
+
+      // Switch to a different asset whose chart has no data yet (still fetching).
+      params.knownLedgerIds = ["other-asset"];
+      mockChart({ data: undefined, isFetching: true });
+      rerender(undefined);
+
+      expect(result.current.series[0].data).toHaveLength(0);
       expect(result.current.isLoading).toBe(true);
     });
   });

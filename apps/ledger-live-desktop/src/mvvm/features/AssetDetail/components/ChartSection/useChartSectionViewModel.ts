@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
@@ -85,7 +85,6 @@ export type ChartSectionViewModelResult = Readonly<{
   onRangeChange: (range: LineChartRange) => void;
   color: LineChartColor;
   isLoading: boolean;
-  isError: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle: LineChartTooltipTitle;
   onScrubberPositionChange: LineChartScrubberPositionChange;
@@ -127,7 +126,12 @@ export function useChartSectionViewModel({
   const athTime = marketCurrencyData?.athDate?.getTime();
   const atlTime = marketCurrencyData?.atlDate?.getTime();
 
-  const { prices, timestamps, isLoading, isError } = useAssetDetailChartSeries({
+  const {
+    prices: currentPrices,
+    timestamps: currentTimestamps,
+    isLoading: isChartLoading,
+    isFetching: isChartFetching,
+  } = useAssetDetailChartSeries({
     id,
     counterCurrency,
     selectedRange,
@@ -136,6 +140,24 @@ export function useChartSectionViewModel({
     athTime,
     atlTime,
   });
+
+  // While the next timeframe loads, keep rendering the previous (non-empty)
+  // series so the chart morphs from the old shape (Lumen transition-loading)
+  // instead of flashing the empty placeholder. Scoped to `id`: morphing only
+  // applies within the same asset (a timeframe switch), never across an asset
+  // switch — otherwise we'd grey out the previous asset's shape instead of
+  // showing the new asset's loading/empty state.
+  const hasData = currentPrices.length > 0;
+  const lastRenderedRef = useRef({ id, prices: currentPrices, timestamps: currentTimestamps });
+  if (hasData) {
+    lastRenderedRef.current = { id, prices: currentPrices, timestamps: currentTimestamps };
+  }
+  const isLoading = isChartLoading || (isChartFetching && !hasData);
+  const canReusePrevious = lastRenderedRef.current.id === id;
+  const { prices, timestamps } =
+    !hasData && isLoading && canReusePrevious
+      ? lastRenderedRef.current
+      : { prices: currentPrices, timestamps: currentTimestamps };
 
   const series = useMemo<LineChartSeries[]>(
     () => [
@@ -307,7 +329,6 @@ export function useChartSectionViewModel({
     onRangeChange: handleRangeChange,
     color,
     isLoading,
-    isError,
     formatValue,
     tooltipTitle,
     onScrubberPositionChange,
