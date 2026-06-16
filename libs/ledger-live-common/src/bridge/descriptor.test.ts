@@ -412,14 +412,21 @@ describe("sendFeatures", () => {
     expect(sendFeatures.canEstimateFeePresetsWithZeroAmount(ethereum, {})).toBe(true);
   });
 
-  it("should return empty plugins when not specified", () => {
+  it("should return empty amount extra fields when not specified", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
-    expect(sendFeatures.getAmountPlugins(bitcoin)).toEqual([]);
+    expect(sendFeatures.getAmountExtraFields(bitcoin)).toEqual([]);
   });
 
-  it("should not expose legacy amount plugins for evm", () => {
+  it("should not expose amount extra fields for evm", () => {
     const ethereum = getCryptoCurrencyById("ethereum");
-    expect(sendFeatures.getAmountPlugins(ethereum)).toEqual([]);
+    expect(sendFeatures.getAmountExtraFields(ethereum)).toEqual([]);
+  });
+
+  it("should expose the fee currency extra field for celo", () => {
+    const celo = getCryptoCurrencyById("celo");
+    expect(sendFeatures.getAmountExtraFields(celo).map(field => field.id)).toEqual([
+      "celoFeeCurrency",
+    ]);
   });
 
   it("should expose the gas options sync effect for evm", () => {

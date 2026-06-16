@@ -1,6 +1,7 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getSendDescriptor } from "../registry";
 import type {
+  AmountExtraField,
   CoinControlConfig,
   CustomFeeConfig,
   FeeAssetsConfig,
@@ -36,8 +37,8 @@ function fromDescriptor<T>(
 const noCustomFeeConfig: CustomFeeConfig | null = null;
 const noFeeAssetsConfig: FeeAssetsConfig | null = null;
 const noCoinControlConfig: CoinControlConfig | null = null;
-const noAmountPlugins: readonly string[] = [];
 const noAmountEffects: readonly FlowEffect[] = [];
+const noAmountExtraFields: readonly AmountExtraField[] = [];
 const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 
 export const sendFeatures = {
@@ -84,8 +85,8 @@ export const sendFeatures = {
 
     return allowZeroAmount ?? false;
   },
-  getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), noAmountPlugins),
   getAmountEffects: fromDescriptor(d => d.amount?.effects, noAmountEffects),
+  getAmountExtraFields: fromDescriptor(d => d.amount?.extraFields, noAmountExtraFields),
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,

@@ -265,12 +265,59 @@ export type FlowEffect = Readonly<{
   run: (context: FlowEffectContext) => Promise<TransactionPatch | null>;
 }>;
 
-export type SendAmountDescriptor = Readonly<{
+/**
+ * Context handed to an amount extra field. It exposes the resolved main account
+ * (so a field can read sub-accounts, balances, ...) and the current transaction.
+ * `transaction` is intentionally `unknown`: the owning coin-module narrows it,
+ * the generic UI never reads it.
+ */
+export type AmountExtraFieldContext = Readonly<{
+  mainAccount: Account;
+  transaction: unknown;
+}>;
+
+/**
+ * A single selectable option of an amount extra field.
+ * `label` is a literal display string provided by the coin-module (e.g. a token
+ * ticker), not an i18n key.
+ */
+export type AmountExtraFieldOption = Readonly<{
+  id: string;
+  label: string;
+}>;
+
+/**
+ * A declarative, family agnostic visual field rendered on the Amount step by a
+ * generic UI slot. The coin-module owns the options and the resulting opaque
+ * patch; the UI only renders a control and forwards the user's choice.
+ *
+ * Replaces family-specific Amount plugins: no coin component, no plugin registry.
+ */
+export type AmountSelectField = Readonly<{
+  type: "select";
+  /** Stable identifier. */
+  id: string;
+  /** i18n key for the field label, resolved by the platform UI. */
+  labelKey: string;
+  /** Optional base test id for the rendered control. */
+  testId?: string;
+  /** Computes the selectable options from the current account/transaction. */
+  getOptions: (context: AmountExtraFieldContext) => readonly AmountExtraFieldOption[];
+  /** Resolves the currently-selected option id from the transaction. */
+  getSelectedOptionId: (context: AmountExtraFieldContext) => string;
+  /** Builds an opaque transaction patch for the chosen option, or `null`. */
+  buildPatch: (optionId: string, context: AmountExtraFieldContext) => TransactionPatch | null;
   /**
-   * Optional list of plugins that should run on the Amount step.
-   * These are executed by the UI layer through a plugin registry.
+   * Optional reconciliation run by the generic UI when the account/transaction
+   * change. Returns a patch to apply when the current selection became invalid
+   * (e.g. the selected sub-account disappeared), or `null` to leave it as-is.
    */
-  getPlugins?: () => readonly string[];
+  reconcile?: (context: AmountExtraFieldContext) => TransactionPatch | null;
+}>;
+
+export type AmountExtraField = AmountSelectField;
+
+export type SendAmountDescriptor = Readonly<{
   canSendMax?: boolean;
   /**
    * Generic and family agnostic effects executed by the `useFlowEffects` runner
@@ -278,6 +325,11 @@ export type SendAmountDescriptor = Readonly<{
    * patch applied through the `bridge.updateTransaction`
    */
   effects?: readonly FlowEffect[];
+  /**
+   * Generic and family agnostic visual fields rendered on the Amount step by a
+   * generic UI slot. Replaces family-specific Amount plugins.
+   */
+  extraFields?: readonly AmountExtraField[];
 }>;
 
 /**

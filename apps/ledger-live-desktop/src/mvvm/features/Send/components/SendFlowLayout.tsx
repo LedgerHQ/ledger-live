@@ -45,10 +45,10 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
     [onClose, wizard.currentStep, sendFlowTrackingProperties],
   );
 
-  const hasAmountPlugins =
-    wizard.currentStep === SEND_FLOW_STEP.AMOUNT && uiConfig.hasAmountPlugins;
+  const hasAmountExtraFields =
+    wizard.currentStep === SEND_FLOW_STEP.AMOUNT && uiConfig.hasAmountExtraFields;
 
-  const dialogHeight = hasAmountPlugins ? "fixed" : (currentStepConfig?.height ?? "fixed");
+  const dialogHeight = hasAmountExtraFields ? "fixed" : currentStepConfig?.height ?? "fixed";
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
