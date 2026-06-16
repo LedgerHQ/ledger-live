@@ -1,12 +1,15 @@
 {
+  "pluginsConfig": {
+    "@nx/js": {
+      "projectsAffectedByDependencyUpdates": "auto"
+    }
+  },
   "namedInputs": {
     "sharedGlobals": [
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/nx.workspace.json",
       "{workspaceRoot}/nx.s3.defaults.json",
-      "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
-      "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/pnpm-workspace.yaml"
     ],

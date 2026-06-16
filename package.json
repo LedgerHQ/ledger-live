@@ -241,6 +241,7 @@
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
+    "@nx/js": "22.5.1",
     "@nx/s3-cache": "5.0.2",
     "@react-native-community/cli": "15.1.0",
     "@react-native-community/cli-platform-android": "15.1.0",
