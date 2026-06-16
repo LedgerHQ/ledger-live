@@ -117,7 +117,7 @@ export const config: WebdriverIO.Config = {
   connectionRetryTimeout: 180_000,
   //
   // Default request retries count
-  connectionRetryCount: 3,
+  connectionRetryCount: 4,
   //
   // Test runner services
   // Services take over a specific job you don't want to take care of. They enhance
