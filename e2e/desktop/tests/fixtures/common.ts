@@ -28,11 +28,14 @@ import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
 import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
-type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
+type CliCommand = ((userdataPath?: string) => Observable<unknown> | Promise<unknown> | string) & {
+  canUseGeneratedUserdata?: () => boolean;
+};
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 export type SpeculosFixtureHandle = {
   get current(): SpeculosDevice;
+  get device(): SpeculosDevice | undefined;
   relaunch: (appName: string) => Promise<SpeculosDevice>;
 };
 
@@ -60,6 +63,7 @@ type TestFixtures = {
   localManifestOverride?: LiveAppManifest[];
   teamOwner?: Team;
   speculos: SpeculosFixtureHandle;
+  speculosForSetupOnly?: boolean;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -98,6 +102,21 @@ async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: stri
   });
 }
 
+function logPhase(label: string, startedAt: number) {
+  if (!process.env.E2E_PHASE_TIMING) return;
+  console.warn(`[phase-timing] ${label}: ${Date.now() - startedAt}ms`);
+}
+
+async function timePhase<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  if (!process.env.E2E_PHASE_TIMING) return fn();
+  const startedAt = Date.now();
+  try {
+    return await fn();
+  } finally {
+    logPhase(label, startedAt);
+  }
+}
+
 export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
@@ -112,6 +131,7 @@ export const test = base.extend<TestFixtures>({
   extraUserdataFiles: undefined,
   localManifestOverride: undefined,
   teamOwner: undefined,
+  speculosForSetupOnly: false,
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -155,7 +175,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   speculos: async (
-    { speculosApp, cliCommands, userdataDestinationPath, cliCommandsOnApp },
+    { speculosApp, cliCommands, userdataDestinationPath, cliCommandsOnApp, speculosForSetupOnly },
     use,
     testInfo,
   ) => {
@@ -166,6 +186,9 @@ export const test = base.extend<TestFixtures>({
         if (!currentDevice) {
           throw new Error("[E2E] speculos fixture: no device (missing speculosApp?)");
         }
+        return currentDevice;
+      },
+      get device() {
         return currentDevice;
       },
       relaunch: async (appName: string) => {
@@ -185,19 +208,32 @@ export const test = base.extend<TestFixtures>({
 
       if (cliCommandsOnApp?.length) {
         for (const { app, cmd } of cliCommandsOnApp) {
-          currentDevice = await launchSpeculos(app.name, testInfo.title);
+          currentDevice = await timePhase(`${testInfo.title} :: speculos-boot (${app.name})`, () =>
+            launchSpeculos(app.name, testInfo.title),
+          );
           await executeCliCommand(cmd, userdataDestinationPath);
           await cleanSpeculos(currentDevice);
         }
       }
 
       if (speculosApp) {
-        currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
+        const skipSpeculos =
+          !!speculosForSetupOnly &&
+          !!cliCommands?.length &&
+          cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
+
+        if (!skipSpeculos) {
+          currentDevice = await timePhase(`${testInfo.title} :: speculos-boot`, () =>
+            launchSpeculos(speculosApp.name, testInfo.title),
+          );
+        }
 
         if (cliCommands?.length) {
-          for (const cmd of cliCommands) {
-            await executeCliCommand(cmd, userdataDestinationPath);
-          }
+          await timePhase(`${testInfo.title} :: cli-setup`, async () => {
+            for (const cmd of cliCommands) {
+              await executeCliCommand(cmd, userdataDestinationPath);
+            }
+          });
         }
       }
 
@@ -210,16 +246,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   electronApp: async (
-    {
-      lang,
-      theme,
-      userdataDestinationPath,
-      env,
-      featureFlags,
-      simulateCamera,
-      speculos,
-      speculosApp,
-    },
+    { lang, theme, userdataDestinationPath, env, featureFlags, simulateCamera, speculos },
     use,
     testInfo,
   ) => {
@@ -248,8 +275,8 @@ export const test = base.extend<TestFixtures>({
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
         MANAGER_DEV_MODE: true,
-        SPECULOS_API_PORT: speculosApp ? String(speculos.current.port) : undefined,
-        SPECULOS_ADDRESS: speculosApp ? getSpeculosAddress() : undefined,
+        SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
+        SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
         DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
       },
       env,
@@ -258,15 +285,19 @@ export const test = base.extend<TestFixtures>({
     // launch app
     const windowSize = { width: 1024, height: 768 };
 
-    const electronApp: ElectronApplication = await launchApp({
-      env,
-      lang,
-      theme,
-      userdataDestinationPath,
-      simulateCamera,
-      windowSize,
-      recordVideo: isLastRetry(testInfo),
-    });
+    const electronApp: ElectronApplication = await timePhase(
+      `${testInfo.title} :: app-launch`,
+      () =>
+        launchApp({
+          env,
+          lang,
+          theme,
+          userdataDestinationPath,
+          simulateCamera,
+          windowSize,
+          recordVideo: isLastRetry(testInfo),
+        }),
+    );
 
     await use(electronApp);
 
@@ -276,8 +307,9 @@ export const test = base.extend<TestFixtures>({
       // App may already be closed when capturing failure video
     }
   },
-  page: async ({ electronApp, speculosApp, cliCommandsOnApp, teamOwner }, use, testInfo) => {
+  page: async ({ electronApp, speculos, cliCommandsOnApp, teamOwner }, use, testInfo) => {
     // app is ready
+    const pageReadyStart = Date.now();
     const page = await electronApp.firstWindow();
 
     if (teamOwner !== undefined) {
@@ -316,13 +348,22 @@ export const test = base.extend<TestFixtures>({
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
+    logPhase(`${testInfo.title} :: app-ready`, pageReadyStart);
+    const appReadyAt = Date.now();
 
     // use page in the test
     await use(page);
+    if (process.env.E2E_PHASE_TIMING) {
+      console.warn(
+        `[phase-timing] ${testInfo.title} :: body+sign: ${Date.now() - appReadyAt}ms (test total so far: ${testInfo.duration}ms)`,
+      );
+    }
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      const takeSpeculosScreenshot = Boolean(speculosApp || (cliCommandsOnApp?.length ?? 0) > 0);
+      const takeSpeculosScreenshot = Boolean(
+        speculos.device || (cliCommandsOnApp?.length ?? 0) > 0,
+      );
       await captureArtifacts(page, testInfo, electronApp, takeSpeculosScreenshot, webviewCollector);
     }
 

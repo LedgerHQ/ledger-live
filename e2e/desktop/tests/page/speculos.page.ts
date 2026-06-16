@@ -40,7 +40,16 @@ export class SpeculosPage extends AppPage {
 
   @step("Sign Send Transaction")
   async signSendTransaction(tx: Transaction) {
-    await signSendTransaction(tx);
+    const startedAt = Date.now();
+    try {
+      await signSendTransaction(tx);
+    } finally {
+      if (process.env.E2E_PHASE_TIMING) {
+        console.warn(
+          `[phase-timing] ${tx.accountToDebit.currency.name} :: sign: ${Date.now() - startedAt}ms`,
+        );
+      }
+    }
   }
 
   @step("Sign Delegation Transaction")

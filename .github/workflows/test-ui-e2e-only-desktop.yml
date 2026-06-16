@@ -76,6 +76,16 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      generate_userdata:
+        description: "Experimental: pre-generate app.json userdata with Speculos and reuse it in the tests"
+        required: false
+        type: boolean
+        default: false
+      generate_userdata_coins:
+        description: "Limit userdata generation to these coin ids (space-separated, e.g. 'ethereum bitcoin'); blank = all"
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -129,6 +139,16 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      generate_userdata:
+        description: "Experimental: pre-generate app.json userdata with Speculos and reuse it in the tests"
+        required: false
+        type: boolean
+        default: false
+      generate_userdata_coins:
+        description: "Limit userdata generation to these coin ids (space-separated, e.g. 'ethereum bitcoin'); blank = all"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   id-token: write
@@ -195,6 +215,7 @@ jobs:
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+      E2E_GENERATED_USERDATA_DIR: ${{ inputs.generate_userdata && format('{0}/e2e/desktop/tests/userdata/generated', github.workspace) || '' }}
     outputs:
       test_passed: ${{ steps.run-playwright.outputs.passed }}
       test_failed: ${{ steps.run-playwright.outputs.failed }}
@@ -331,6 +352,30 @@ jobs:
               process.exit(1);
             }
           ' "$raw"
+
+      - name: Build Ledger Live CLI (for userdata generation)
+        if: ${{ inputs.generate_userdata }}
+        run: pnpm exec nx run @ledgerhq/live-cli:build
+        shell: bash
+
+      - name: Pre-generate E2E userdata app.json (Speculos)
+        if: ${{ inputs.generate_userdata }}
+        shell: bash
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          GEN_COINS: ${{ inputs.generate_userdata_coins }}
+        run: |
+          set -euo pipefail
+          echo "Generating app.json userdata into: $E2E_GENERATED_USERDATA_DIR"
+          if [ -n "${GEN_COINS:-}" ]; then
+            echo "Scoped to coins: $GEN_COINS"
+            pnpm run:cli generateAppJson --coin $GEN_COINS
+          else
+            echo "Generating for all coins"
+            pnpm run:cli generateAppJson
+          fi
+          echo "Generated userdata files:"
+          ls -la "$E2E_GENERATED_USERDATA_DIR"
 
       - name: Run Playwright E2E tests
         id: run-playwright

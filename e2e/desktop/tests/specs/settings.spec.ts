@@ -44,6 +44,7 @@ test.describe("Password", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
+    speculosForSetupOnly: true,
   });
 
   test(
@@ -85,6 +86,7 @@ test.describe("counter value selection", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
+    speculosForSetupOnly: true,
   });
 
   test(
