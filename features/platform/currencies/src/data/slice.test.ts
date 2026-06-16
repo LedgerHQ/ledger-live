@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { configureStore } from "@reduxjs/toolkit";
 import { cvsApi } from "@domain/api-currencies";
 import { supportedFiatsReducer } from "./slice";
@@ -20,21 +23,22 @@ describe("supportedFiatsSlice", () => {
     expect(selectSupportedFiats(store.getState() as WithSupportedFiats)).toEqual([]);
   });
 
-  it("resolves and OFAC-filters fiats on getSupportedFiats fulfilled", () => {
+  it("resolves and OFAC-filters fiats when getSupportedFiats fulfills", async () => {
+    const fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(["USD", "EUR", "RUB", "XXX"]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
     const store = makeStore();
-    store.dispatch({
-      type: `${cvsApi.reducerPath}/executeQuery/fulfilled`,
-      payload: ["USD", "EUR", "RUB", "XXX"],
-      meta: {
-        arg: { type: "query", endpointName: "getSupportedFiats" },
-        requestId: "test",
-        requestStatus: "fulfilled",
-      },
-    });
+    await store.dispatch(cvsApi.endpoints.getSupportedFiats.initiate());
 
     expect(selectSupportedFiats(store.getState() as WithSupportedFiats).map(c => c.id)).toEqual([
       "usd",
       "eur",
     ]);
+
+    fetchSpy.mockRestore();
   });
 });

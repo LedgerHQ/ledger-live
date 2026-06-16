@@ -18,6 +18,7 @@
     "zod": "catalog:"
   },
   "peerDependencies": {
+    "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {

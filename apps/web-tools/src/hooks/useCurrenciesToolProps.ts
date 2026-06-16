@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { SerializedError } from "@reduxjs/toolkit";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
@@ -19,10 +20,13 @@ export function useCurrenciesToolProps(): CurrenciesToolProps {
   const { isFetching, error, refetch } = useGetSupportedFiatsQuery();
   const supportedFiats = useSelector(selectSupportedFiats);
 
-  return {
-    supportedFiats,
-    isFetching,
-    error: formatQueryError(error),
-    refetch,
-  };
+  return useMemo(
+    () => ({
+      supportedFiats,
+      isFetching,
+      error: formatQueryError(error),
+      refetch,
+    }),
+    [supportedFiats, isFetching, error, refetch],
+  );
 }
