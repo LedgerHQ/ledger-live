@@ -23,8 +23,13 @@ export const PortfolioHeaderSection = ({
   isReadOnlyMode = false,
   ctas,
 }: PortfolioHeaderSectionProps) => {
-  const { safeAreaTop, shouldDisplayBalanceRefreshRework, onBannerHeightChange, minContentHeight } =
-    usePortfolioHeaderSectionViewModel();
+  const {
+    safeAreaTop,
+    shouldDisplayBalanceRefreshRework,
+    onBannerHeightChange,
+    minContentHeight,
+    bannerTopInset,
+  } = usePortfolioHeaderSectionViewModel();
 
   const onBannerLayout = useCallback(
     (e: LayoutChangeEvent) => {
@@ -37,9 +42,11 @@ export const PortfolioHeaderSection = ({
     return (
       <View key="portfolioHeaderElements" style={{ paddingTop: safeAreaTop }}>
         {shouldDisplayBalanceRefreshRework && <PortfolioRefreshStatus />}
-        <Box onLayout={onBannerLayout} lx={{ paddingHorizontal: "s16" }} key="FirmwareUpdateBanner">
-          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-        </Box>
+        <View key="FirmwareUpdateBanner" style={{ marginTop: bannerTopInset }}>
+          <Box onLayout={onBannerLayout} lx={{ paddingHorizontal: "s16" }}>
+            <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+          </Box>
+        </View>
         <ScreenHeroSectionView ctas={ctas} minContentHeight={minContentHeight}>
           <PortfolioBalanceSection showAssets={showAssets} isReadOnlyMode={isReadOnlyMode} />
         </ScreenHeroSectionView>
