@@ -6,13 +6,21 @@ import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtu
 import { useNetInfo, type NetInfoState } from "@react-native-community/netinfo";
 import MarketList from "../index";
 import { ScreenName } from "~/const";
+import type { State } from "~/reducers/types";
 
 // Use global netinfo mock from jest-setup - do not replace to avoid mock cannibalization
 
-const setNetInfoState = (state: { isConnected: boolean }) => {
+const setNetInfoState = (state: { isConnected: boolean | null }) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   jest.mocked(useNetInfo).mockReturnValue(state as NetInfoState);
 };
+
+// Star filter on, no favorited coins (LIVE-32173).
+const withEmptyStarredFilter = (state: State): State => ({
+  ...state,
+  market: { ...state.market, marketFilterByStarredCurrencies: true },
+  settings: { ...state.settings, starredMarketCoins: [] },
+});
 
 const COUNTERVALUES_API = "https://countervalues.live.ledger.com";
 
@@ -132,6 +140,44 @@ describe("MarketList Layout based on Feature Flag", () => {
       });
 
       expect(screen.getByText(/Please check your internet connection\./i)).toBeVisible();
+    });
+  });
+
+  describe("When the star filter is active with no favorites (LIVE-32173)", () => {
+    it("shows the 'no favorites' empty state, not the network-down message, while connected", async () => {
+      setNetInfoState({ isConnected: true });
+      server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
+
+      renderWithReactQuery(<MarketListTest />, {
+        overrideInitialState: withFlagOverrides(
+          { lwmWallet40: { enabled: true, params: { marketBanner: true } } },
+          withEmptyStarredFilter,
+        ),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/Track your favorite assets!/i)).toBeVisible();
+      });
+
+      expect(screen.queryByText(/Sorry, internet seems to be down/i)).toBeNull();
+    });
+
+    it("shows the 'no favorites' empty state even when connectivity is unknown (isConnected null)", async () => {
+      setNetInfoState({ isConnected: null });
+      server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
+
+      renderWithReactQuery(<MarketListTest />, {
+        overrideInitialState: withFlagOverrides(
+          { lwmWallet40: { enabled: true, params: { marketBanner: true } } },
+          withEmptyStarredFilter,
+        ),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/Track your favorite assets!/i)).toBeVisible();
+      });
+
+      expect(screen.queryByText(/Sorry, internet seems to be down/i)).toBeNull();
     });
   });
 });
