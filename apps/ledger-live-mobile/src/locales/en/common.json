@@ -4541,6 +4541,9 @@
           "retry": "Try again"
         }
       },
+      "confirmation": {
+        "viewTransaction": "View transaction"
+      },
       "gasOptionsSync": {
         "warningTitle": "Unable to refresh network fees",
         "warningDescription": "Fee presets may be outdated."
