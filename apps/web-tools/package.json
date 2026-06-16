@@ -20,6 +20,9 @@
   },
   "dependencies": {
     "@devtools/shell": "workspace:*",
+    "@devtools/currencies": "workspace:*",
+    "@domain/api-currencies": "workspace:*",
+    "@features/platform-currencies": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",

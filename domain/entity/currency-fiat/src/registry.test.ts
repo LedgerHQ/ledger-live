@@ -1,5 +1,10 @@
 import * as currencies from "./currencies";
-import { FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS } from "./registry";
+import {
+  FIAT_CURRENCIES_REGISTRY,
+  FIAT_CURRENCIES_IDS,
+  FIAT_CURRENCIES_BY_TICKER,
+  getFiatCurrencyByTicker,
+} from "./registry";
 
 describe("FIAT_CURRENCIES_REGISTRY", () => {
   it("is non-empty", () => {
@@ -32,5 +37,23 @@ describe("FIAT_CURRENCIES_REGISTRY", () => {
 describe("FIAT_CURRENCIES_IDS", () => {
   it("length matches registry", () => {
     expect(FIAT_CURRENCIES_IDS.length).toBe(Object.keys(FIAT_CURRENCIES_REGISTRY).length);
+  });
+});
+
+describe("FIAT_CURRENCIES_BY_TICKER", () => {
+  it("is keyed by ticker and resolves to the matching entry", () => {
+    for (const currency of Object.values(FIAT_CURRENCIES_REGISTRY)) {
+      expect(FIAT_CURRENCIES_BY_TICKER[currency.ticker]).toBe(currency);
+    }
+  });
+});
+
+describe("getFiatCurrencyByTicker", () => {
+  it("resolves a known ticker", () => {
+    expect(getFiatCurrencyByTicker("USD")?.id).toBe("usd");
+  });
+
+  it("returns undefined for an unknown ticker", () => {
+    expect(getFiatCurrencyByTicker("XXX")).toBeUndefined();
   });
 });

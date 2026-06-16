@@ -2476,9 +2476,18 @@ importers:
       '@codemirror/view':
         specifier: ^6.39.5
         version: 6.39.5
+      '@devtools/currencies':
+        specifier: workspace:*
+        version: link:../../devtools/currencies
       '@devtools/shell':
         specifier: workspace:*
         version: link:../../devtools/shell
+      '@domain/api-currencies':
+        specifier: workspace:*
+        version: link:../../domain/api/currencies
+      '@features/platform-currencies':
+        specifier: workspace:*
+        version: link:../../features/platform/currencies
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
@@ -2754,6 +2763,52 @@ importers:
         specifier: 'catalog:'
         version: 4.1.18
 
+  devtools/currencies:
+    dependencies:
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-fiat
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: 19.0.0
+        version: 19.0.0(react@19.0.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   devtools/feature-flags:
     dependencies:
       '@shared/feature-flags':
@@ -2844,6 +2899,9 @@ importers:
 
   devtools/registry:
     dependencies:
+      '@devtools/currencies':
+        specifier: workspace:*
+        version: link:../currencies
       '@devtools/feature-flags':
         specifier: workspace:*
         version: link:../feature-flags
@@ -2999,6 +3057,49 @@ importers:
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.4.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
+  domain/api/currencies:
+    dependencies:
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../entity/currency-fiat
+      '@ledgerhq/live-env':
+        specifier: workspace:*
+        version: link:../../../libs/env
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.0.0))(react@19.0.0)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.0.0)
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -3532,6 +3633,58 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+
+  features/platform/currencies:
+    dependencies:
+      '@domain/api-currencies':
+        specifier: workspace:*
+        version: link:../../../domain/api/currencies
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-fiat
+    devDependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: 19.0.0
+        version: 19.0.0(react@19.0.0)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.0.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
 
   features/platform/feature-flags:
     dependencies:
@@ -49760,6 +49913,18 @@ snapshots:
       react: 19.0.0
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.0.0)
 
+  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@standard-schema/utils': 0.3.0
+      immer: 11.1.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 19.0.0
+      react-redux: 9.2.0(react@19.0.0)
+
   '@remix-run/router@1.23.2': {}
 
   '@rjsf/core@5.24.13(@rjsf/utils@5.24.13(react@19.0.0))(react@19.0.0)':
@@ -68874,6 +69039,12 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
       redux: 5.0.1
+
+  react-redux@9.2.0(react@19.0.0):
+    dependencies:
+      '@types/use-sync-external-store': 0.0.6
+      react: 19.0.0
+      use-sync-external-store: 1.6.0(react@19.0.0)
 
   react-refresh@0.14.2: {}
 

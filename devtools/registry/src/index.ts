@@ -1,9 +1,11 @@
 import { featureFlags, type FeatureFlagsToolProps } from "./metadata/team-platform/feature-flags";
+import { currencies, type CurrenciesToolProps } from "./metadata/team-platform/currencies";
 
 export * from "./types";
 
 export const tools = {
   "feature-flags": featureFlags,
+  currencies,
 } as const;
 
 /**
@@ -21,4 +23,6 @@ export type DevToolsConfig = Array<DevToolConfig>;
  *
  * For propless tools, `config` must be `undefined` — e.g. `{ id: "dummy", config: undefined }`.
  */
-export type DevToolConfig = { id: "feature-flags"; config: FeatureFlagsToolProps };
+export type DevToolConfig =
+  | { id: "feature-flags"; config: FeatureFlagsToolProps }
+  | { id: "currencies"; config: CurrenciesToolProps };

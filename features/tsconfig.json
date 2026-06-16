@@ -1,4 +1,8 @@
 {
   "files": [],
-  "references": [{ "path": "./flow/market-banner" }, { "path": "./platform/feature-flags" }],
+  "references": [
+    { "path": "./flow/market-banner" },
+    { "path": "./platform/feature-flags" },
+    { "path": "./platform/currencies" },
+  ],
 }

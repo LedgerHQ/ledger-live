@@ -1,0 +1,8 @@
+{
+  "name": "@devtools/currencies",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

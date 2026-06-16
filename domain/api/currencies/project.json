@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-currencies",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

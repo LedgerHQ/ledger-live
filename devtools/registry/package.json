@@ -13,6 +13,7 @@
     "coverage": "echo \"no tests in @devtools/registry\""
   },
   "dependencies": {
+    "@devtools/currencies": "workspace:*",
     "@devtools/feature-flags": "workspace:*",
     "zod": "catalog:"
   },
