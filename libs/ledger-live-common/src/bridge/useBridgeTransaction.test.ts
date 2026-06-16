@@ -12,13 +12,11 @@ import useBridgeTransaction, {
   getGlobalOnBridgeError,
   shouldSyncBeforeTx,
 } from "./useBridgeTransaction";
-import { setSupportedCurrencies } from "../currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv } from "@ledgerhq/live-env";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 
-setSupportedCurrencies(["bitcoin"]);
 setEnv("MOCK", "1");
 
 LiveConfig.setConfig({

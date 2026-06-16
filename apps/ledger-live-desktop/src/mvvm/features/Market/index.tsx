@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
 import { Flex, Dropdown } from "@ledgerhq/react-ui";
+import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import styled from "styled-components";
 import { useMarket } from "LLD/features/Market/hooks/useMarket";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import SearchInputComponent from "./components/SearchInputComponent";
 import SideDrawerFilter from "~/renderer/screens/market/components/SideDrawerFilter";
 import CounterValueSelect from "~/renderer/screens/market/components/CountervalueSelect";
-import { useMarketListVirtualization } from "LLD/features/Market/hooks/useMarketListVirtualization";
 import PageHeader from "LLD/components/PageHeader";
 import { useNavigate } from "react-router";
-import MarketList from "./screens/MarketList";
+import MarketListLegacy from "./components/MarketListLegacy";
+import MarketTable from "./components/MarketTable";
 import MarketTopCards from "./TopCards";
 import { MarketCategoryBar } from "./components/MarketCategoryBar";
 import { MarketRangeSelect } from "./components/MarketRangeSelect";
@@ -70,15 +71,6 @@ export default function Market() {
   }, [marketCurrentPage, refetchData, refreshRate]);
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
-
-  const virtualization = useMarketListVirtualization({
-    itemCount: marketData.itemCount,
-    marketData: marketData.marketData,
-    loading: marketData.loading,
-    currenciesLength: marketData.currenciesLength,
-    onLoadNextPage: marketData.onLoadNextPage,
-    checkIfDataIsStaleAndRefetch: marketData.checkIfDataIsStaleAndRefetch,
-  });
 
   return (
     <Container>
@@ -150,16 +142,27 @@ export default function Market() {
       </Flex>
       <MarketTopCards />
       {shouldDisplayAssetDiscoverability && (
-        <Flex mb={3} alignItems="center" justifyContent="space-between">
-          <MarketCategoryBar categories={categories} t={t} />
-          <MarketRangeSelect
-            options={timeRangeSelectOptions}
-            value={timeRangeValue}
-            onChange={updateTimeRange}
-          />
-        </Flex>
+        <div className="flex flex-col gap-12 mb-16">
+          <Subheader>
+            <SubheaderRow>
+              <SubheaderTitle>{t("market.assetsTitle")}</SubheaderTitle>
+            </SubheaderRow>
+          </Subheader>
+          <div className="flex items-center justify-between">
+            <MarketCategoryBar categories={categories} t={t} />
+            <MarketRangeSelect
+              options={timeRangeSelectOptions}
+              value={timeRangeValue}
+              onChange={updateTimeRange}
+            />
+          </div>
+        </div>
       )}
-      <MarketList {...marketData} virtualization={virtualization} />
+      {shouldDisplayAssetDiscoverability ? (
+        <MarketTable {...marketData} />
+      ) : (
+        <MarketListLegacy {...marketData} />
+      )}
     </Container>
   );
 }

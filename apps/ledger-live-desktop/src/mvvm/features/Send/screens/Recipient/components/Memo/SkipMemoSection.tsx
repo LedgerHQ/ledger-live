@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import type { SkipMemoState } from "../../hooks/useRecipientMemo";
+import type { SkipMemoState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientMemoCore";
 
 type SkipMemoSectionProps = Readonly<{
   currencyId: string;

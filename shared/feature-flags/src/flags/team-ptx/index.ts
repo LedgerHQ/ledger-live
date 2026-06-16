@@ -26,4 +26,5 @@ export * from "./ptxSwapReceiveTRC20WithoutTrx";
 export * from "./receiveStakingFlowConfigDesktop";
 export * from "./stakeAccountBanner";
 export * from "./stakePrograms";
+export * from "./swapToEarn";
 export * from "./swapWalletApiPartnerList";

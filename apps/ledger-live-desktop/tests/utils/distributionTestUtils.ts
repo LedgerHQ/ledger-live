@@ -11,12 +11,11 @@ export function makeIntegrationTokenCurrency(
   ticker: string,
   name: string,
 ): TokenCurrency {
-  const parentCurrency = getCryptoCurrencyById("ethereum");
   return {
     type: "TokenCurrency",
     id,
     contractAddress: `0x${id.replace(/\//g, "")}`,
-    parentCurrency,
+    parentCurrencyId: "ethereum",
     tokenType: "erc20",
     name,
     ticker,

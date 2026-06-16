@@ -1,5 +1,27 @@
 # @ledgerhq/live-dmk
 
+## 0.26.0
+
+### Minor Changes
+
+- [#17834](https://github.com/LedgerHQ/ledger-live/pull/17834) [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Applied new Context-Module breaking changes
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.4
+
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#17834](https://github.com/LedgerHQ/ledger-live/pull/17834) [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Applied new Context-Module breaking changes
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.4-next.0
+
 ## 0.25.1
 
 ### Patch Changes

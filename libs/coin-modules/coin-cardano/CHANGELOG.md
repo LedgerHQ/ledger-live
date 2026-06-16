@@ -1,5 +1,75 @@
 # @ledgerhq/coin-cardano
 
+## 0.26.0
+
+### Minor Changes
+
+- [#18061](https://github.com/LedgerHQ/ledger-live/pull/18061) [`49c599f`](https://github.com/LedgerHQ/ledger-live/commit/49c599ff382525a7089cf4bb0f2405b29f6b482b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add craftTransaction method to Coin Cardano CoinModule API
+
+- [#17968](https://github.com/LedgerHQ/ledger-live/pull/17968) [`bd056a5`](https://github.com/LedgerHQ/ledger-live/commit/bd056a5cfd9178f7bbc0d09f7e494f6ddb540e64) Thanks [@shazzzam](https://github.com/shazzzam)! - Add broadcast method to Coin Cardano CoinModule API
+
+- [#18059](https://github.com/LedgerHQ/ledger-live/pull/18059) [`ae28a66`](https://github.com/LedgerHQ/ledger-live/commit/ae28a667af34cedd5eb1ae6d88e07e0b7e5faa6e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add getBalance method to Coin Cardano CoinModule API
+
+- [#18055](https://github.com/LedgerHQ/ledger-live/pull/18055) [`de7dc8c`](https://github.com/LedgerHQ/ledger-live/commit/de7dc8c79fd5ea141657075bdbb19e455a3e88c1) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add lastBlock method to Coin Cardano CoinModule API
+
+- [#18122](https://github.com/LedgerHQ/ledger-live/pull/18122) [`0fbbd02`](https://github.com/LedgerHQ/ledger-live/commit/0fbbd02eae8597e2e5efa13536f44397905a3b93) Thanks [@ishaba](https://github.com/ishaba)! - feat: add validateIntent method to Coin Cardano CoinModule API
+
+- [#17778](https://github.com/LedgerHQ/ledger-live/pull/17778) [`4d9b8f5`](https://github.com/LedgerHQ/ledger-live/commit/4d9b8f59185f8f054963249403aa5f3bd8a87b5a) Thanks [@shazzzam](https://github.com/shazzzam)! - Add listOperations method to Coin Cardano CoinModule API
+
+- [#18105](https://github.com/LedgerHQ/ledger-live/pull/18105) [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc) Thanks [@ishaba](https://github.com/ishaba)! - feat: cardano coin module api getValidators
+
+- [#18063](https://github.com/LedgerHQ/ledger-live/pull/18063) [`966a3a6`](https://github.com/LedgerHQ/ledger-live/commit/966a3a6990eb734b95bfd3dbebdff38aa797abcc) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add estimateFees method to Coin Cardano CoinModule API
+
+- [#17899](https://github.com/LedgerHQ/ledger-live/pull/17899) [`55b1991`](https://github.com/LedgerHQ/ledger-live/commit/55b19918621c660f388fba89205d58f007b4de90) Thanks [@shazzzam](https://github.com/shazzzam)! - Add Coin Cardano API initialization
+
+- [#18066](https://github.com/LedgerHQ/ledger-live/pull/18066) [`e9e6438`](https://github.com/LedgerHQ/ledger-live/commit/e9e6438d821dc860af22550417cd35bd21331b3c) Thanks [@ishaba](https://github.com/ishaba)! - Add combine method to Coin Cardano CoinModule API
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b), [`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b), [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94), [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2), [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024)]:
+  - @ledgerhq/types-live@6.111.0
+  - @ledgerhq/cryptoassets@13.51.0
+  - @ledgerhq/ledger-wallet-framework@2.1.0
+  - @ledgerhq/live-env@2.38.0
+  - @ledgerhq/errors@6.36.0
+  - @ledgerhq/live-network@2.6.4
+  - @ledgerhq/devices@8.15.1
+
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#18061](https://github.com/LedgerHQ/ledger-live/pull/18061) [`49c599f`](https://github.com/LedgerHQ/ledger-live/commit/49c599ff382525a7089cf4bb0f2405b29f6b482b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add craftTransaction method to Coin Cardano CoinModule API
+
+- [#17968](https://github.com/LedgerHQ/ledger-live/pull/17968) [`bd056a5`](https://github.com/LedgerHQ/ledger-live/commit/bd056a5cfd9178f7bbc0d09f7e494f6ddb540e64) Thanks [@shazzzam](https://github.com/shazzzam)! - Add broadcast method to Coin Cardano CoinModule API
+
+- [#18059](https://github.com/LedgerHQ/ledger-live/pull/18059) [`ae28a66`](https://github.com/LedgerHQ/ledger-live/commit/ae28a667af34cedd5eb1ae6d88e07e0b7e5faa6e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add getBalance method to Coin Cardano CoinModule API
+
+- [#18055](https://github.com/LedgerHQ/ledger-live/pull/18055) [`de7dc8c`](https://github.com/LedgerHQ/ledger-live/commit/de7dc8c79fd5ea141657075bdbb19e455a3e88c1) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add lastBlock method to Coin Cardano CoinModule API
+
+- [#18122](https://github.com/LedgerHQ/ledger-live/pull/18122) [`0fbbd02`](https://github.com/LedgerHQ/ledger-live/commit/0fbbd02eae8597e2e5efa13536f44397905a3b93) Thanks [@ishaba](https://github.com/ishaba)! - feat: add validateIntent method to Coin Cardano CoinModule API
+
+- [#17778](https://github.com/LedgerHQ/ledger-live/pull/17778) [`4d9b8f5`](https://github.com/LedgerHQ/ledger-live/commit/4d9b8f59185f8f054963249403aa5f3bd8a87b5a) Thanks [@shazzzam](https://github.com/shazzzam)! - Add listOperations method to Coin Cardano CoinModule API
+
+- [#18105](https://github.com/LedgerHQ/ledger-live/pull/18105) [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc) Thanks [@ishaba](https://github.com/ishaba)! - feat: cardano coin module api getValidators
+
+- [#18063](https://github.com/LedgerHQ/ledger-live/pull/18063) [`966a3a6`](https://github.com/LedgerHQ/ledger-live/commit/966a3a6990eb734b95bfd3dbebdff38aa797abcc) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add estimateFees method to Coin Cardano CoinModule API
+
+- [#17899](https://github.com/LedgerHQ/ledger-live/pull/17899) [`55b1991`](https://github.com/LedgerHQ/ledger-live/commit/55b19918621c660f388fba89205d58f007b4de90) Thanks [@shazzzam](https://github.com/shazzzam)! - Add Coin Cardano API initialization
+
+- [#18066](https://github.com/LedgerHQ/ledger-live/pull/18066) [`e9e6438`](https://github.com/LedgerHQ/ledger-live/commit/e9e6438d821dc860af22550417cd35bd21331b3c) Thanks [@ishaba](https://github.com/ishaba)! - Add combine method to Coin Cardano CoinModule API
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b), [`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b), [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94), [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2), [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024)]:
+  - @ledgerhq/types-live@6.111.0-next.0
+  - @ledgerhq/cryptoassets@13.51.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.1.0-next.0
+  - @ledgerhq/live-env@2.38.0-next.0
+  - @ledgerhq/errors@6.36.0-next.0
+  - @ledgerhq/live-network@2.6.4-next.0
+  - @ledgerhq/devices@8.15.1-next.0
+
 ## 0.25.5
 
 ### Patch Changes

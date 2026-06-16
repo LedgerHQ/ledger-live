@@ -1,4 +1,8 @@
-import { fetchAllAssetsByCategory, buildAssetsQueryParams } from "../api";
+import {
+  fetchAllAssetsByCategory,
+  fetchAllAssetCurrencyIdsByCategory,
+  buildAssetsQueryParams,
+} from "../api";
 import { AssetCategory } from "../types";
 import type { RawApiResponse } from "../../entities";
 import { getEnv } from "@ledgerhq/live-env";
@@ -151,5 +155,85 @@ describe("fetchAllAssetsByCategory", () => {
       },
     });
     expect(spy).not.toHaveBeenCalled();
+  });
+});
+
+function makePageWithIds(
+  assets: { key: string; assetsIds: Record<string, string> }[],
+): RawApiResponse {
+  const cryptoAssets: RawApiResponse["cryptoAssets"] = {};
+  for (const { key, assetsIds } of assets) {
+    cryptoAssets[key] = { id: key, ticker: key.toUpperCase(), name: key, assetsIds };
+  }
+  return {
+    cryptoAssets,
+    networks: {},
+    cryptoOrTokenCurrencies: {},
+    interestRates: {},
+    markets: {},
+    currenciesOrder: { key: "marketCap", order: "desc", metaCurrencyIds: [] },
+  };
+}
+
+const stocksArgs = { ...defaultArgs, category: AssetCategory.Stocks };
+
+describe("fetchAllAssetCurrencyIdsByCategory", () => {
+  beforeEach(() => {
+    getEnvMock.mockReturnValue("https://dada.api.ledger.com/v1");
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should aggregate and flatten currency ids across pages", async () => {
+    const spy = jest.spyOn(globalThis, "fetch");
+    spy.mockResolvedValueOnce(
+      okResponse(
+        makePageWithIds([{ key: "aapl", assetsIds: { ethereum: "eth/aapl", solana: "sol/aapl" } }]),
+        "cursor-2",
+      ),
+    );
+    spy.mockResolvedValueOnce(
+      okResponse(makePageWithIds([{ key: "tsla", assetsIds: { ethereum: "eth/tsla" } }])),
+    );
+
+    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs);
+
+    expect(result).toEqual({ data: ["eth/aapl", "sol/aapl", "eth/tsla"] });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should skip assets that have no assetsIds", async () => {
+    jest.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      okResponse(
+        makePageWithIds([
+          { key: "aapl", assetsIds: {} },
+          { key: "tsla", assetsIds: { ethereum: "eth/tsla" } },
+        ]),
+      ),
+    );
+
+    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs);
+
+    expect(result).toEqual({ data: ["eth/tsla"] });
+  });
+
+  it("should return error and stop when a page fails", async () => {
+    const spy = jest.spyOn(globalThis, "fetch");
+    spy.mockResolvedValueOnce(
+      okResponse(
+        makePageWithIds([{ key: "aapl", assetsIds: { ethereum: "eth/aapl" } }]),
+        "cursor-2",
+      ),
+    );
+    spy.mockResolvedValueOnce(errorResponse(502, "Bad Gateway"));
+
+    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs);
+
+    expect(result).toEqual({
+      error: { status: 502, data: "Failed to fetch assets by category: Bad Gateway" },
+    });
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });

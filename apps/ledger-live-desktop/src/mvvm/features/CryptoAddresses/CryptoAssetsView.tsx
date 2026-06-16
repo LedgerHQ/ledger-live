@@ -13,7 +13,7 @@ export type CryptoAssetsViewProps = {
   readonly isLoading: boolean;
   readonly table: Table<AssetTableItem>;
   readonly onRowClick: (row: Row<AssetTableItem>) => void;
-  readonly trackingType: "crypto" | "stable";
+  readonly trackingType: "crypto" | "stable" | "stocks";
 };
 
 export function CryptoAssetsView({

@@ -1,5 +1,21 @@
 # @ledgerhq/live-env
 
+## 2.38.0
+
+### Minor Changes
+
+- [#18030](https://github.com/LedgerHQ/ledger-live/pull/18030) [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: unify aleo node endpoint env
+
+- [#18105](https://github.com/LedgerHQ/ledger-live/pull/18105) [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc) Thanks [@ishaba](https://github.com/ishaba)! - feat: cardano coin module api getValidators
+
+## 2.38.0-next.0
+
+### Minor Changes
+
+- [#18030](https://github.com/LedgerHQ/ledger-live/pull/18030) [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: unify aleo node endpoint env
+
+- [#18105](https://github.com/LedgerHQ/ledger-live/pull/18105) [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc) Thanks [@ishaba](https://github.com/ishaba)! - feat: cardano coin module api getValidators
+
 ## 2.37.0
 
 ### Minor Changes

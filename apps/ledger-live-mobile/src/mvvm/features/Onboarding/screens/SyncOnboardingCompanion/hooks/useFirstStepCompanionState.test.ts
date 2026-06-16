@@ -21,7 +21,9 @@ describe("useFirstStepCompanionState", () => {
   const notifyEarlySecurityCheckShouldReset = jest.fn();
   const analyticsSeedConfiguration = { current: undefined };
 
-  const defaultProps = (overrides: Partial<Parameters<typeof useFirstStepCompanionState>[0]> = {}) => ({
+  const defaultProps = (
+    overrides: Partial<Parameters<typeof useFirstStepCompanionState>[0]> = {},
+  ) => ({
     deviceOnboardingState: null,
     activeStep: FirstStepCompanionStepKey.Pin,
     setCompanionStep,

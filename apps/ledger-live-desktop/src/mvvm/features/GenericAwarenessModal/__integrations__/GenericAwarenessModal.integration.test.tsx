@@ -93,6 +93,10 @@ describe("GenericAwarenessModal Integration", () => {
         expect(screen.queryByTestId("generic-awareness-modal")).not.toBeInTheDocument();
       });
       expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(false);
+      expect(store.getState().settings.dismissedContentCards).toHaveProperty(APP_START_CAMPAIGN_ID);
+      expect(store.getState().genericAwarenessModal.contentCards).not.toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: APP_START_CAMPAIGN_ID })]),
+      );
     });
 
     it("should open a deeplinked feature intro campaign", async () => {
@@ -142,7 +146,7 @@ describe("GenericAwarenessModal Integration", () => {
       await waitFor(() => {
         expect(screen.queryByTestId("generic-awareness-modal")).not.toBeInTheDocument();
       });
-      expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(false);
+      expect(store.getState().settings.dismissedContentCards).toHaveProperty(APP_START_CAMPAIGN_ID);
     });
   });
 

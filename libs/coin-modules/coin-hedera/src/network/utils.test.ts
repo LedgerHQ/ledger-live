@@ -754,7 +754,7 @@ describe("network utils", () => {
       await checkAccountTokenAssociationStatus(addressWithChecksum, htsToken);
       expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
       expect(apiClient.getAccount).toHaveBeenCalledWith({
-        configOrCurrencyId: htsToken.parentCurrency.id,
+        configOrCurrencyId: htsToken.parentCurrencyId,
         address: "0.0.9124531",
       });
     });

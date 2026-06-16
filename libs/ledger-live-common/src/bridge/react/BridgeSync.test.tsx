@@ -11,7 +11,6 @@ import type { Observer } from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "../../mock/account";
 import { BridgeSync, resetStates } from "./BridgeSync";
-import { setSupportedCurrencies } from "../../currencies";
 import * as Bridge from "..";
 import { useBridgeSync, useBridgeSyncState } from "./context";
 import type { Sync, BridgeSyncState } from "./types";
@@ -33,8 +32,6 @@ const defaultsBridgeSyncOpts = {
   hydrateCurrency: () => Promise.resolve(),
   blacklistedTokenIds: [],
 };
-
-setSupportedCurrencies(["bitcoin", "ethereum"]);
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");

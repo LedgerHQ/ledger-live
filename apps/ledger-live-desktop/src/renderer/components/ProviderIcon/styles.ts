@@ -3,10 +3,11 @@ import { ProviderIconSize, ProviderIconSizes } from "@ledgerhq/live-common/icons
 
 type StyledIconProps = {
   size: ProviderIconSize;
+  $borderRadius?: number;
 };
 
 export const Icon = styled.img<StyledIconProps>`
-  border-radius: 8px;
+  border-radius: ${({ $borderRadius = 8 }) => `${$borderRadius}px`};
   width: ${({ size }) => ProviderIconSizes[size]}px;
   height: ${({ size }) => ProviderIconSizes[size]}px;
 `;

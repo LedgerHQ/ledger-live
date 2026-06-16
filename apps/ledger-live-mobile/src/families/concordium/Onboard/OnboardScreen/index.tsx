@@ -4,6 +4,7 @@ import type { RouteProp } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import {
@@ -49,7 +50,9 @@ export default function OnboardScreen() {
   const route = useRoute<OnboardRouteProps>();
   const dispatch = useDispatch();
   const { accountsToAdd, currency } = route.params;
-  const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
+  const cryptoCurrency = isTokenCurrency(currency)
+    ? getCryptoCurrencyById(currency.parentCurrencyId)
+    : currency;
   const device = useSelector(lastConnectedDeviceSelector);
   const existingAccounts = useSelector(accountsSelector);
 

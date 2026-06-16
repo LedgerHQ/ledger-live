@@ -13,9 +13,9 @@ import { useAmountInputController } from "./useAmountInputController";
 import { useQuickActions } from "./useQuickActions";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import {
-  getStatusError,
-  pickBlockingError,
-} from "@ledgerhq/live-common/flows/send/amount/utils/errors";
+  getAmountScreenRawMessage,
+  isAmountInputDisabledByRecipientError,
+} from "@ledgerhq/live-common/flows/send/amount/utils/messages";
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -29,6 +29,7 @@ type UseAmountScreenViewModelParams = Readonly<{
   onReview: () => void;
   onGetFunds: () => void;
   onSelectCoinControl?: () => void;
+  onSelectCustomFees?: () => void;
 }>;
 
 export function useAmountScreenViewModel({
@@ -43,6 +44,7 @@ export function useAmountScreenViewModel({
   onReview,
   onGetFunds,
   onSelectCoinControl,
+  onSelectCustomFees,
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
 
@@ -61,7 +63,6 @@ export function useAmountScreenViewModel({
 
   const {
     mainAccount,
-    accountCurrency,
     updateTransactionWithPatch,
     maxAvailable,
     reviewLabel,
@@ -86,6 +87,7 @@ export function useAmountScreenViewModel({
     uiConfig,
     transactionActions,
     onSelectCoinControl,
+    onSelectCustomFees,
   });
 
   const amountInput = useAmountInputController({
@@ -127,41 +129,14 @@ export function useAmountScreenViewModel({
     onSelectMax: handleSelectMax,
   });
 
-  const amountError = status.errors?.amount;
-  const amountWarningRaw = status.warnings?.amount ?? status.warnings?.feeTooHigh;
-  const recipientErrorRaw = getStatusError(status.errors, "recipient");
-  const otherBlockingErrorRaw = useMemo(() => {
-    const candidate = pickBlockingError(status.errors);
-    return candidate?.name === "AmountRequired" ? undefined : candidate;
-  }, [status.errors]);
-
-  const isAmountRequiredError = status.errors?.amount?.name === "AmountRequired";
-
-  const isFeeTooHigh =
-    status.warnings?.amount?.name === "FeeTooHigh" ||
-    status.warnings?.feeTooHigh?.name === "FeeTooHigh";
-
-  const cryptoCurrency =
-    accountCurrency.type === "TokenCurrency" ? accountCurrency.parentCurrency : accountCurrency;
-
-  const isStellarMultisignBlocked =
-    cryptoCurrency?.family === "stellar" && recipientErrorRaw?.name === "StellarSourceHasMultiSign";
-
-  const amountMessage: AmountScreenMessage | null = (() => {
-    if (isStellarMultisignBlocked && recipientErrorRaw) {
-      return { type: "error", error: recipientErrorRaw };
-    }
-    if (amountError && !isAmountRequiredError && hasRawAmount) {
-      return { type: "error", error: amountError };
-    }
-    if (otherBlockingErrorRaw && hasRawAmount) {
-      return { type: "error", error: otherBlockingErrorRaw };
-    }
-    if (amountWarningRaw && hasRawAmount) {
-      return { type: isFeeTooHigh ? "info" : "warning", error: amountWarningRaw };
-    }
-    return null;
-  })();
+  const amountMessage: AmountScreenMessage | null = useMemo(
+    () => getAmountScreenRawMessage({ status, hasRawAmount }),
+    [hasRawAmount, status],
+  );
+  const isAmountInputDisabled = useMemo(
+    () => isAmountInputDisabledByRecipientError(status),
+    [status],
+  );
 
   const reviewDisabled = coreReviewDisabled || amountInput.isTyping;
 
@@ -174,7 +149,7 @@ export function useAmountScreenViewModel({
         currencyPosition: amountInput.currencyPosition,
         secondaryValue: amountInput.secondaryValue,
         maxDecimalLength: amountInput.maxDecimalLength,
-        isDisabled: isStellarMultisignBlocked,
+        isDisabled: isAmountInputDisabled,
         isTyping: amountInput.isTyping,
         onChangeText: amountInput.onChangeText,
         onToggleMode: amountInput.onToggleMode,
@@ -195,7 +170,7 @@ export function useAmountScreenViewModel({
     }),
     [
       amountInput,
-      isStellarMultisignBlocked,
+      isAmountInputDisabled,
       networkFees,
       quickActions,
       mainAccount.balance,

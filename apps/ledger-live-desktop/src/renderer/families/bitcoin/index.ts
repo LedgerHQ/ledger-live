@@ -50,6 +50,7 @@ const family: BitcoinFamily = {
       },
     };
   },
+  modalsToPreload: ["MODAL_ZCASH_EXPORT_KEY", "MODAL_BITCOIN_EDIT_TRANSACTION"],
 };
 
 export default family;

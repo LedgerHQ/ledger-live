@@ -1,23 +1,3 @@
-const mockSolanaCurrency = {
-  type: "CryptoCurrency" as const,
-  id: "solana",
-  name: "Solana",
-  ticker: "SOL",
-  units: [
-    {
-      name: "SOL",
-      code: "SOL",
-      magnitude: 9,
-    },
-  ],
-  family: "solana",
-  managerAppName: "Solana",
-  coinType: 501,
-  scheme: "solana",
-  color: "#000000",
-  explorerViews: [],
-};
-
 export const mockStocksResponse = {
   cryptoAssets: {
     "urn:crypto:meta-currency:applex": {
@@ -47,7 +27,7 @@ export const mockStocksResponse = {
       name: "Apple xStock",
       ticker: "AAPLX",
       contractAddress: "XsAAPL000000000000000000000000000000000000",
-      parentCurrency: mockSolanaCurrency,
+      parentCurrencyId: "solana",
       tokenType: "spl",
       units: [
         {
@@ -63,7 +43,7 @@ export const mockStocksResponse = {
       name: "Tesla xStock",
       ticker: "TSLAX",
       contractAddress: "XsTSLA000000000000000000000000000000000000",
-      parentCurrency: mockSolanaCurrency,
+      parentCurrencyId: "solana",
       tokenType: "spl",
       units: [
         {

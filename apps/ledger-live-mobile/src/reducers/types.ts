@@ -300,6 +300,7 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   productTourCompleted: boolean;
+  doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   analyticsConsentInfo: AnalyticsConsentInfo;
   hasClickedRecover: boolean;
@@ -350,6 +351,17 @@ export type EarnState = {
   actionDialog?: ActionDialogParams;
 };
 
+// === BORROW STATE ===
+
+export type BorrowState = {
+  infoBottomSheet?: {
+    message: string;
+    title: string;
+    linkText?: string;
+    linkHref?: string;
+  };
+};
+
 // === PROTECT STATE ===
 
 export type ProtectData = {
@@ -394,7 +406,6 @@ export type MarketListConfigState = {
   timeframe: MarketListFilterTimeframe;
   /** Selected network id, or `undefined` for all networks (consumed by LIVE-29972). */
   network: string | undefined;
-  category: MarketListCategory;
 };
 
 // === MARKET BANNER STATE (V4) ===
@@ -434,6 +445,7 @@ export type State = LLMRTKApiState & {
   appstate: AppState;
   auth: AuthState;
   ble: BleState;
+  borrow: BorrowState;
   countervalues: CountervaluesState;
   deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;

@@ -26,7 +26,7 @@ import EvmValidatorIcon from "~/renderer/families/evm/shared/components/EvmValid
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
-import type { DelegationActionsModalName } from "../modals";
+type DelegationActionsModalName = "MODAL_EVM_REDELEGATE" | "MODAL_EVM_UNDELEGATE";
 
 export const Wrapper = styled.div`
   display: flex;

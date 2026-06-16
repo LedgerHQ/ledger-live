@@ -74,6 +74,8 @@ describe("buildTransaction", () => {
 
     // Decode and extract coinType
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
-    expect(resultCoinTypes).toEqual(expect.arrayContaining([expect.stringContaining("sui")]));
+    expect(resultCoinTypes).toEqual(
+      expect.arrayContaining([expect.stringContaining("0x2::sui::SUI")]),
+    );
   });
 });

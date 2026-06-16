@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
+import { getCryptoCurrencyById } from "../currencies";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { toAccountRaw, fromAccountRaw } from "./serialization";
 import { setWalletAPIVersion } from "../wallet-api/version";
@@ -10,7 +10,6 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 
-setSupportedCurrencies(["solana"]);
 const Solana = getCryptoCurrencyById("solana");
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

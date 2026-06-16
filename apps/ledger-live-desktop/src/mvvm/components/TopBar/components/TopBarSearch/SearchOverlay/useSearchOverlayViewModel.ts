@@ -1,6 +1,7 @@
-import { KeyboardEvent, useCallback, useMemo } from "react";
+import { KeyboardEvent, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { setMarketCategory } from "~/renderer/actions/market";
@@ -15,10 +16,19 @@ export function useSearchOverlayViewModel() {
   const { query, onChangeQuery, isOpen, open, close, mode, suggestions, results } =
     useAssetSearchBar();
 
+  // Keep the last mode while open so the popover fades out with its current content instead of
+  // flickering the default asset list when closing clears the query.
+  const [displayedMode, setDisplayedMode] = useState(mode);
+  if (isOpen && displayedMode !== mode) {
+    setDisplayedMode(mode);
+  }
+
   const navigateToAsset = useCallback(
-    (currencyId: string) => {
+    (currencyId: string, marketState?: MarketCurrencyData) => {
       setTrackingSource("Global Search");
-      navigate(getMarketOrAssetDetailPath(currencyId, shouldDisplayAggregatedAssets));
+      navigate(getMarketOrAssetDetailPath(currencyId, shouldDisplayAggregatedAssets), {
+        state: marketState,
+      });
       close();
     },
     [navigate, shouldDisplayAggregatedAssets, close],
@@ -65,10 +75,26 @@ export function useSearchOverlayViewModel() {
       navigateToStocksMarket,
       suggestions,
       results,
-      mode,
+      mode: displayedMode,
     }),
-    [close, navigateToAsset, navigateToMarket, navigateToStocksMarket, suggestions, results, mode],
+    [
+      close,
+      navigateToAsset,
+      navigateToMarket,
+      navigateToStocksMarket,
+      suggestions,
+      results,
+      displayedMode,
+    ],
   );
 
-  return { open: isOpen, onOpenChange, query, onChangeQuery, onKeyDown, mode, contextValue };
+  return {
+    open: isOpen,
+    onOpenChange,
+    query,
+    onChangeQuery,
+    onKeyDown,
+    mode: displayedMode,
+    contextValue,
+  };
 }

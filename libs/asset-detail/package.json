@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-detail",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Ledger Live asset-detail shared module – market data hook, types and utils",
   "keywords": [

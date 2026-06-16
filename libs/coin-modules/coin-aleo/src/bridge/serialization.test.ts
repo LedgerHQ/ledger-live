@@ -1,13 +1,19 @@
+import BigNumber from "bignumber.js";
 import {
   getMockedAccount,
   getMockedAccountRaw,
+  getMockedTokenAccount,
+  getMockedTokenAccountRaw,
   mockAleoResources,
   mockAleoResourcesRaw,
 } from "../__tests__/fixtures/account.fixture";
+import { getMockedTokenCurrency } from "../__tests__/fixtures/currency.fixture";
 import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../types";
 import {
   assignFromAccountRaw,
+  assignFromTokenAccountRaw,
   assignToAccountRaw,
+  assignToTokenAccountRaw,
   toAleoResourcesRaw,
   fromAleoResourcesRaw,
 } from "./serialization";
@@ -44,6 +50,15 @@ describe("serialization", () => {
       expect(result.lastPrivateSyncDate).toBeNull();
       expect(result.unspentPrivateRecords).toBeNull();
     });
+
+    it("should serialize hasMigratedPublicTokens when present", () => {
+      const result = toAleoResourcesRaw({
+        ...mockAleoResources,
+        hasMigratedPublicTokens: true,
+      });
+
+      expect(result.hasMigratedPublicTokens).toBe(true);
+    });
   });
 
   describe("fromAleoResourcesRaw", () => {
@@ -68,6 +83,15 @@ describe("serialization", () => {
       expect(result.provableApi).toBeNull();
       expect(result.lastPrivateSyncDate).toBeNull();
       expect(result.unspentPrivateRecords).toBeNull();
+    });
+
+    it("should deserialize hasMigratedPublicTokens when present", () => {
+      const result = fromAleoResourcesRaw({
+        ...mockAleoResourcesRaw,
+        hasMigratedPublicTokens: true,
+      });
+
+      expect(result.hasMigratedPublicTokens).toBe(true);
     });
   });
 
@@ -111,6 +135,24 @@ describe("serialization", () => {
       assignFromAccountRaw(accountRawWithoutResources, mockedAccount);
 
       expect(mockedAccount.aleoResources).toEqual(accountBefore.aleoResources);
+    });
+  });
+
+  describe("token account serialization", () => {
+    it("should round-trip transparentBalance on token sub-accounts", () => {
+      const tokenAccount = getMockedTokenAccount(getMockedTokenCurrency(), {
+        transparentBalance: new BigNumber(123456),
+        balance: new BigNumber(123456),
+        spendableBalance: new BigNumber(123456),
+      });
+      const tokenAccountRaw = getMockedTokenAccountRaw(tokenAccount);
+
+      assignToTokenAccountRaw(tokenAccount, tokenAccountRaw);
+      expect(tokenAccountRaw.transparentBalance).toBe("123456");
+
+      const restoredTokenAccount = getMockedTokenAccount();
+      assignFromTokenAccountRaw(tokenAccountRaw, restoredTokenAccount);
+      expect(restoredTokenAccount.transparentBalance).toEqual(new BigNumber(123456));
     });
   });
 });

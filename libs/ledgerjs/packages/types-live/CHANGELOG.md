@@ -1,5 +1,71 @@
 # @ledgerhq/types-live
 
+## 6.111.0
+
+### Minor Changes
+
+- [#18027](https://github.com/LedgerHQ/ledger-live/pull/18027) [`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add notification drawer prompt target contracts
+
+- [#17907](https://github.com/LedgerHQ/ledger-live/pull/17907) [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b) Thanks [@deepyjr](https://github.com/deepyjr)! - Add assetDiscoverability param to lwmWallet40 and expose shouldDisplayAssetDiscoverability in usePortfolioViewModel and MainAppLayout
+
+- [#18204](https://github.com/LedgerHQ/ledger-live/pull/18204) [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add `lwmBackupHub` / `lwdBackupHub` Engagement feature flags (default disabled) for the Recover Backup Hub initiative, and reserve CODEOWNERS ownership of the upcoming BackupHub MVVM folders.
+
+- [#17990](https://github.com/LedgerHQ/ledger-live/pull/17990) [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwdWallet40` into a standalone `onboardingWidget` feature flag.
+
+- [#17927](https://github.com/LedgerHQ/ledger-live/pull/17927) [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): represent validator token as string
+
+- [#18163](https://github.com/LedgerHQ/ledger-live/pull/18163) [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Make Recover URI templating actually replace `protectId`, drop unused `protectServicesDesktop` / `protectServicesMobile` params, and replace `compatibleDevices` with a hardcoded Nano S exclusion in `isRecoverDisplayed`.
+
+  `useReplacedURI` previously only rewrote the placeholders `protect-simu`, `protect-local-dev` and `protect-staging`, so any URI hard-coded with `protect-prod` (e.g. the values shipped to PROD via Firebase Remote Config) was never re-templated when `protectId` changed. Switching the active Recover environment therefore required a manual find-and-replace across every URI in the feature flag. The regex now matches any `protect-<env>` segment, which is a no-op when `protectId` already equals that segment and a true substitution otherwise.
+
+  `compatibleDevices` is replaced by a hardcoded check in `isRecoverDisplayed` — Nano S is the only device that does not support Recover and the rule is not expected to change. Dropping the array from the schema keeps the FF lean and removes the need to update Remote Config when a new device is supported.
+
+  Also remove keys that have no consumer in either app — `isNew`, `ledgerliveStorageState`, `onboardingCompleted.alreadySubscribedURI`, and the entire `onboardingRestore` block on desktop; `ledgerliveStorageState`, `restoreInfoDrawer.manualStepsURI`, `managerStatesData.NEW.learnMoreURI` and `managerStatesData.NEW.alreadySubscribedURI` on mobile. `usePostOnboardingURI` is narrowed to `Feature_ProtectServicesMobile` since it is only called from the mobile app. Unknown keys still in Firebase are silently stripped by Zod, so this is forward-compatible with existing Remote Config payloads.
+
+- [#18064](https://github.com/LedgerHQ/ledger-live/pull/18064) [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Split EVM staking operations into per-chain modules and thread an optional validator id (`valId`) through the staking transaction/intent so chains that key operations by a numeric id (e.g. Monad) are supported alongside address-keyed chains (Sei, Celo)
+
+- [#18229](https://github.com/LedgerHQ/ledger-live/pull/18229) [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): fetch missing validator names
+
+- [#17932](https://github.com/LedgerHQ/ledger-live/pull/17932) [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add `earnUpselling` and `earnSimulator` as Wallet 4.0 feature flag params, expose them in the Wallet 4.0 analytics attributes, and surface them in the desktop and mobile developer settings toggles.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.2
+
+## 6.111.0-next.0
+
+### Minor Changes
+
+- [#18027](https://github.com/LedgerHQ/ledger-live/pull/18027) [`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add notification drawer prompt target contracts
+
+- [#17907](https://github.com/LedgerHQ/ledger-live/pull/17907) [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b) Thanks [@deepyjr](https://github.com/deepyjr)! - Add assetDiscoverability param to lwmWallet40 and expose shouldDisplayAssetDiscoverability in usePortfolioViewModel and MainAppLayout
+
+- [#18204](https://github.com/LedgerHQ/ledger-live/pull/18204) [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add `lwmBackupHub` / `lwdBackupHub` Engagement feature flags (default disabled) for the Recover Backup Hub initiative, and reserve CODEOWNERS ownership of the upcoming BackupHub MVVM folders.
+
+- [#17990](https://github.com/LedgerHQ/ledger-live/pull/17990) [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwdWallet40` into a standalone `onboardingWidget` feature flag.
+
+- [#17927](https://github.com/LedgerHQ/ledger-live/pull/17927) [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): represent validator token as string
+
+- [#18163](https://github.com/LedgerHQ/ledger-live/pull/18163) [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Make Recover URI templating actually replace `protectId`, drop unused `protectServicesDesktop` / `protectServicesMobile` params, and replace `compatibleDevices` with a hardcoded Nano S exclusion in `isRecoverDisplayed`.
+
+  `useReplacedURI` previously only rewrote the placeholders `protect-simu`, `protect-local-dev` and `protect-staging`, so any URI hard-coded with `protect-prod` (e.g. the values shipped to PROD via Firebase Remote Config) was never re-templated when `protectId` changed. Switching the active Recover environment therefore required a manual find-and-replace across every URI in the feature flag. The regex now matches any `protect-<env>` segment, which is a no-op when `protectId` already equals that segment and a true substitution otherwise.
+
+  `compatibleDevices` is replaced by a hardcoded check in `isRecoverDisplayed` — Nano S is the only device that does not support Recover and the rule is not expected to change. Dropping the array from the schema keeps the FF lean and removes the need to update Remote Config when a new device is supported.
+
+  Also remove keys that have no consumer in either app — `isNew`, `ledgerliveStorageState`, `onboardingCompleted.alreadySubscribedURI`, and the entire `onboardingRestore` block on desktop; `ledgerliveStorageState`, `restoreInfoDrawer.manualStepsURI`, `managerStatesData.NEW.learnMoreURI` and `managerStatesData.NEW.alreadySubscribedURI` on mobile. `usePostOnboardingURI` is narrowed to `Feature_ProtectServicesMobile` since it is only called from the mobile app. Unknown keys still in Firebase are silently stripped by Zod, so this is forward-compatible with existing Remote Config payloads.
+
+- [#18064](https://github.com/LedgerHQ/ledger-live/pull/18064) [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Split EVM staking operations into per-chain modules and thread an optional validator id (`valId`) through the staking transaction/intent so chains that key operations by a numeric id (e.g. Monad) are supported alongside address-keyed chains (Sei, Celo)
+
+- [#18229](https://github.com/LedgerHQ/ledger-live/pull/18229) [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): fetch missing validator names
+
+- [#17932](https://github.com/LedgerHQ/ledger-live/pull/17932) [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add `earnUpselling` and `earnSimulator` as Wallet 4.0 feature flag params, expose them in the Wallet 4.0 analytics attributes, and surface them in the desktop and mobile developer settings toggles.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.2-next.0
+
 ## 6.110.0
 
 ### Minor Changes

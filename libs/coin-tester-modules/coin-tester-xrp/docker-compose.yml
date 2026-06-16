@@ -1,0 +1,29 @@
+services:
+  rippled:
+    image: xrpllabsofficial/xrpld:2.5.0
+    container_name: coin-tester-xrp
+    # The image's entrypoint copies /config/rippled.cfg into /etc/opt/ripple/rippled.cfg
+    # then execs `rippled --conf /etc/opt/ripple/rippled.cfg` with any args appended here.
+    # Pass only the standalone-mode flags.
+    command:
+      - --standalone
+      - --start
+    volumes:
+      - ./rippled.cfg:/config/rippled.cfg:ro
+    ports:
+      - "5005:5005"
+      - "6006:6006"
+    # The image ships no curl/wget, so the healthcheck uses the rippled CLI
+    # itself. The grep enforces a ready `server_state` (not just RPC up),
+    # so by the time `docker compose up --wait` returns rippled is fully
+    # primed and no additional in-code readiness loop is needed.
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/ripple/bin/rippled --conf /etc/opt/ripple/rippled.cfg server_info 2>/dev/null | grep -qE '\"server_state\" : \"(full|proposing|validating)\"'",
+        ]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 5s

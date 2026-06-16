@@ -12,7 +12,7 @@ export function getAccountTuplesForCurrency(
   allAccounts: Account[],
 ): AccountTuple[] {
   const isToken = currency.type === "TokenCurrency";
-  const targetCurrencyId = isToken ? currency.parentCurrency.id : currency.id;
+  const targetCurrencyId = isToken ? currency.parentCurrencyId : currency.id;
 
   return allAccounts
     .filter(account => account.currency.id === targetCurrencyId)

@@ -9,7 +9,6 @@ import { BuyAndSellPage } from "./buyAndSell.page";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
 import { DelegateModal } from "./modal/delegate.modal";
 import { Drawer } from "tests/component/drawer.component";
-import { EarnPage } from "./earn.dashboard.page";
 import { EarnV2Page } from "./earn.v2.dashboard.page";
 import { Layout } from "tests/component/layout.component";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
@@ -52,7 +51,6 @@ export class Application extends PageHolder {
   public delegate = new DelegateModal(this.page);
   public delegateDrawer = new DelegateDrawer(this.page);
   public drawer = new Drawer(this.page);
-  public earnDashboard = new EarnPage(this.page, this.electronApp);
   public earnV2Dashboard = new EarnV2Page(this.page, this.electronApp);
   public layout = new Layout(this.page);
   public ledgerSync = new LedgerSyncDrawer(this.page);

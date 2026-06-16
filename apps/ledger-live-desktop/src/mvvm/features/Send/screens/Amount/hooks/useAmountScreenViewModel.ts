@@ -63,7 +63,6 @@ export function useAmountScreenViewModel({
 
   const {
     mainAccount,
-    accountCurrency,
     updateTransactionWithPatch,
     maxAvailable,
     reviewLabel,
@@ -126,10 +125,8 @@ export function useAmountScreenViewModel({
     onSelectMax: handleSelectMax,
   });
 
-  const { amountMessage, isStellarMultisignBlocked } = useAmountScreenMessage({
+  const { amountMessage, isAmountInputDisabled } = useAmountScreenMessage({
     status,
-    accountCurrency,
-    amountComputationPending,
     hasRawAmount: amountReviewCore.hasRawAmount,
   });
 
@@ -190,7 +187,7 @@ export function useAmountScreenViewModel({
     amountInputMaxDecimalLength: amountInput.amountInputMaxDecimalLength,
     currencyText: amountInput.currencyText,
     currencyPosition: amountInput.currencyPosition,
-    isInputDisabled: isStellarMultisignBlocked,
+    isInputDisabled: isAmountInputDisabled,
     onAmountChange: amountInput.onAmountChange,
     onToggleInputMode: amountInput.onToggleInputMode,
     toggleLabel: t("newSendFlow.switchInputMode"),

@@ -9,7 +9,7 @@ const makeTokenCurrency = (overrides: Partial<TokenCurrency> = {}): TokenCurrenc
     type: "TokenCurrency",
     id: overrides.id ?? "canton_network/cip56/TOKEN_A",
     contractAddress: overrides.contractAddress ?? "admin-TOKEN_A",
-    parentCurrency: overrides.parentCurrency as any,
+    parentCurrencyId: overrides.parentCurrencyId ?? "canton_network",
     tokenType: "canton",
     name: overrides.name ?? "Token A",
     ticker: overrides.ticker ?? "TOKA",

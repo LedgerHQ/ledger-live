@@ -4,6 +4,7 @@ import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
 import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
+import semver from "semver";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "./types";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
 import { listCryptoCurrencies, currenciesByMarketcap, findCryptoCurrencyById } from "../currencies";
@@ -19,10 +20,31 @@ import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
-const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
+const appsWithDynamicHashes = new Set(["Fido U2F", "Security Key"]);
 
 // Empty hash data means we won't have information on the app.
 const emptyHashData = "0".repeat(64);
+
+const isUpdateAvailable = ({
+  installedVersion,
+  availableVersion,
+  installedHash,
+  availableHash,
+}: {
+  installedVersion?: string;
+  availableVersion?: string;
+  installedHash: string;
+  availableHash?: string;
+}): boolean => {
+  const installedSemver = semver.valid(installedVersion);
+  const availableSemver = semver.valid(availableVersion);
+
+  if (installedSemver && availableSemver) {
+    return semver.gt(availableSemver, installedSemver);
+  }
+
+  return availableHash !== installedHash;
+};
 
 type ListAppsParams = {
   transport: Transport;
@@ -247,8 +269,13 @@ export const listApps = ({
       const installed = installedList.map(({ name, hash, bytes, version }) => {
         installedAppNames[name] = true;
         const appInCatalog = appByName[name];
-        const updateAvailable = appInCatalog?.hash !== hash;
-        const ignoreUpdate = appsWithDynamicHashes.includes(name);
+        const updateAvailable = isUpdateAvailable({
+          installedVersion: version,
+          availableVersion: appInCatalog?.version,
+          installedHash: hash,
+          availableHash: appInCatalog?.hash,
+        });
+        const ignoreUpdate = appsWithDynamicHashes.has(name);
         const updated = ignoreUpdate || !updateAvailable;
         const availableVersion = appInCatalog?.version || "";
 

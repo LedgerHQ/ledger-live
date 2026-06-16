@@ -20,15 +20,16 @@ export const useHistory = (): {
 
   const handleHistory = useCallback(() => {
     const url = "/history";
-    if (location.pathname !== url) {
-      setTrackingSource("topbar");
-      track("button_clicked", {
-        button: "operation_list",
-        page: location.pathname,
-      });
-      navigate(url);
-    }
-  }, [navigate, location.pathname]);
+    const isOnUnfilteredHistory = location.pathname === url && location.search === "";
+    if (isOnUnfilteredHistory) return;
+
+    setTrackingSource("topbar");
+    track("button_clicked", {
+      button: "operation_list",
+      page: location.pathname,
+    });
+    navigate(url, { replace: location.pathname === url });
+  }, [navigate, location.pathname, location.search]);
 
   return {
     handleHistory,

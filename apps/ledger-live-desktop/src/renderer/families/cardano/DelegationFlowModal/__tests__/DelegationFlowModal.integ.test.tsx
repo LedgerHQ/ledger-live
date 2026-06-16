@@ -1,14 +1,11 @@
 import React from "react";
 import { render, screen, waitFor, cleanup } from "tests/testSetup";
 import BigNumber from "bignumber.js";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { server } from "tests/server";
 import DelegationFlowModal from "../index";
 import { http, HttpResponse } from "msw";
 import { getCardanoAccountFixture } from "@ledgerhq/coin-cardano/fixtures/accounts";
-
-setSupportedCurrencies(["cardano"]);
 
 const mockPools = [
   {
@@ -95,7 +92,8 @@ jest.mock("@ledgerhq/live-common/families/cardano/react", () => ({
 }));
 
 jest.mock("~/renderer/families", () => ({
-  getLLDCoinFamily: jest.fn(() => ({})),
+  useLLDCoinFamily: jest.fn(() => ({})),
+  importLLDCoinFamily: jest.fn(() => Promise.resolve({})),
 }));
 
 jest.mock("~/renderer/modals/Send/AccountFooter", () => ({

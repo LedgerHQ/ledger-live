@@ -3,10 +3,7 @@ import {
   OnboardingStep as DeviceOnboardingStep,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useEffect, useRef } from "react";
-import {
-  FirstStepCompanionStepKey,
-  SeedPathStatus,
-} from "../types";
+import { FirstStepCompanionStepKey, SeedPathStatus } from "../types";
 import { SeedOriginType } from "@ledgerhq/types-live";
 
 interface UseFirstStepCompanionStateProps {

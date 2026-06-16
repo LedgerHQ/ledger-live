@@ -45,7 +45,7 @@ const defaultERC20USDTToken: TokenCurrency = {
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrency: defaultEthCryptoFamily,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
 };
 

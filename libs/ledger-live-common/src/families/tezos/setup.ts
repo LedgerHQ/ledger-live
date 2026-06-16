@@ -1,9 +1,9 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import type { TezosSigner } from "@ledgerhq/coin-tezos/types/index";
-import { signMessage } from "@ledgerhq/coin-tezos/hw-signMessage";
-import makeCliTools from "@ledgerhq/coin-tezos/test/cli";
-import type { CliTools } from "@ledgerhq/coin-tezos/test/cli";
+import makeCliTools from "./cli";
+import type { CliTools } from "./cli";
+import type { TezosSigner } from "./types";
+import { signMessage } from "./hw-signMessage";
 import tezosResolver from "./getAddress";
 import Xtz, { Curve } from "@ledgerhq/hw-app-tezos";
 import Transport from "@ledgerhq/hw-transport";

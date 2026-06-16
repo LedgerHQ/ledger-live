@@ -8,7 +8,7 @@ import { trackPage } from "~/renderer/analytics/segment";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { SelfTransferStepRecipient } from "./SelfTransferStepRecipient";
-import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, ALEO_MAIN_ACCOUNT, ALEO_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
 import { makeAleoTransaction } from "../__mocks__/transaction.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
@@ -131,6 +131,58 @@ describe("SelfTransferStepRecipient", () => {
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(convertPrivateToPublicTransaction);
     expect(result.mode).toBe(TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE);
+    expect(result).not.toHaveProperty("properties");
+  });
+
+  it("should call updateTransaction with CONVERT_TOKEN_PRIVATE_TO_PUBLIC when token balance selector switches to private", async () => {
+    const tokenTransaction = makeAleoTransaction({
+      mode: TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
+      subAccountId: ALEO_TOKEN_ACCOUNT.id,
+    });
+    const updateTransaction = jest.fn();
+    const { user } = render(
+      <SelfTransferStepRecipient
+        {...defaultProps}
+        account={ALEO_TOKEN_ACCOUNT}
+        parentAccount={ALEO_MAIN_ACCOUNT}
+        transaction={tokenTransaction}
+        updateTransaction={updateTransaction}
+      />,
+    );
+
+    const switchButton = screen.getByRole("button", { name: /switch balance source/i });
+    await user.click(switchButton);
+
+    expect(updateTransaction).toHaveBeenCalledTimes(1);
+    const updaterFn = updateTransaction.mock.calls[0][0];
+    const result = updaterFn(tokenTransaction);
+    expect(result.mode).toBe(TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC);
+    expect(result.properties).toEqual({ amountRecordCommitments: [], feeRecordCommitment: null });
+  });
+
+  it("should call updateTransaction with CONVERT_TOKEN_PUBLIC_TO_PRIVATE when token balance selector switches to public", async () => {
+    const tokenTransaction = makeAleoTransaction({
+      mode: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+      subAccountId: ALEO_TOKEN_ACCOUNT.id,
+    });
+    const updateTransaction = jest.fn();
+    const { user } = render(
+      <SelfTransferStepRecipient
+        {...defaultProps}
+        account={ALEO_TOKEN_ACCOUNT}
+        parentAccount={ALEO_MAIN_ACCOUNT}
+        transaction={tokenTransaction}
+        updateTransaction={updateTransaction}
+      />,
+    );
+
+    const switchButton = screen.getByRole("button", { name: /switch balance source/i });
+    await user.click(switchButton);
+
+    expect(updateTransaction).toHaveBeenCalledTimes(1);
+    const updaterFn = updateTransaction.mock.calls[0][0];
+    const result = updaterFn(tokenTransaction);
+    expect(result.mode).toBe(TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE);
     expect(result).not.toHaveProperty("properties");
   });
 });

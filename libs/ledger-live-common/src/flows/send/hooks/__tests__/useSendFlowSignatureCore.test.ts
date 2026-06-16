@@ -40,7 +40,7 @@ const currency = {
 const tokenCurrency = {
   type: "TokenCurrency",
   id: "ethereum/erc20/usdt",
-  parentCurrency: currency,
+  parentCurrencyId: "ethereum",
 } as TokenCurrency;
 
 const createAccount = (): Account =>

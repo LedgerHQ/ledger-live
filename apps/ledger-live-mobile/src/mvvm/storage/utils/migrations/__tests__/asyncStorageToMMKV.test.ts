@@ -7,9 +7,7 @@ import { MigrationStatus } from "../types";
 
 afterEach(() => jest.restoreAllMocks());
 jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => {
-  const originalModule = jest.requireActual(
-    "@ledgerhq/live-common/firebase/featureFlags",
-  );
+  const originalModule = jest.requireActual("@ledgerhq/live-common/firebase/featureFlags");
 
   // Mock the default export and named export 'foo'
   return {

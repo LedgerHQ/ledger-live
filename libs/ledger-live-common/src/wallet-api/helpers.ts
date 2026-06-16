@@ -1,4 +1,5 @@
 import { log } from "@ledgerhq/logs";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import type {
@@ -20,7 +21,7 @@ export function isWalletAPISupportedCurrency(
   }
 
   if (isTokenCurrency(currency)) {
-    return includes(WALLET_API_FAMILIES, currency.parentCurrency.family);
+    return includes(WALLET_API_FAMILIES, getCryptoCurrencyById(currency.parentCurrencyId).family);
   }
   return false;
 }

@@ -8,6 +8,7 @@ type UseMarketListVirtualizationParams = {
   marketData: MarketCurrencyData[];
   loading: boolean;
   currenciesLength: number;
+  listKey: string;
   onLoadNextPage: () => void;
   checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
 };
@@ -17,11 +18,22 @@ export const useMarketListVirtualization = ({
   marketData,
   loading,
   currenciesLength,
+  listKey,
   onLoadNextPage,
   checkIfDataIsStaleAndRefetch,
 }: UseMarketListVirtualizationParams) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const lastFetchedIndexRef = useRef<number>(-1);
+
+  // When the list identity changes (category/search/sort…) jump back to the top and re-arm the
+  // pagination guard below — which is absolute and would otherwise stay stuck at the previous
+  // list's scroll depth, both blocking loading more and leaving the new list scrolled off-screen.
+  useEffect(() => {
+    lastFetchedIndexRef.current = -1;
+    if (parentRef.current) {
+      parentRef.current.scrollTop = 0;
+    }
+  }, [listKey]);
 
   const rowVirtualizer = useVirtualizer({
     count: itemCount,
@@ -37,9 +49,11 @@ export const useMarketListVirtualization = ({
   useEffect(() => {
     if (lastVirtualItemIndex === -1 || loading) return;
 
-    const hasMoreData = itemCount > marketData.length;
-    if (!hasMoreData || currenciesLength === 0) return;
+    if (currenciesLength === 0) return;
 
+    // Re-fetch only when the bottom is reached AND new rows have arrived since the last fetch.
+    // This is the actual end-detector: when a page adds nothing, the list stops growing and so
+    // does pagination. It works for every list (all, categories, stocks) regardless of itemCount.
     const shouldFetch =
       lastVirtualItemIndex >= marketData.length - 1 &&
       lastFetchedIndexRef.current < marketData.length;
@@ -48,14 +62,7 @@ export const useMarketListVirtualization = ({
       lastFetchedIndexRef.current = marketData.length;
       onLoadNextPage();
     }
-  }, [
-    itemCount,
-    marketData.length,
-    currenciesLength,
-    onLoadNextPage,
-    loading,
-    lastVirtualItemIndex,
-  ]);
+  }, [marketData.length, currenciesLength, onLoadNextPage, loading, lastVirtualItemIndex]);
 
   useEffect(() => {
     const scrollElement = parentRef.current;
@@ -72,5 +79,7 @@ export const useMarketListVirtualization = ({
   return {
     parentRef,
     rowVirtualizer,
+    virtualItems,
+    totalSize: rowVirtualizer.getTotalSize(),
   };
 };

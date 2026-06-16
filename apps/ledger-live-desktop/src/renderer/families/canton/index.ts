@@ -17,6 +17,11 @@ const family: CantonFamily = {
   AccountBalanceSummaryFooter,
   StepSummaryAdditionalRows,
   ModularDrawerAddAccountFlowManager,
+  modalsToPreload: [
+    "MODAL_CANTON_ONBOARD_ACCOUNT",
+    "MODAL_CANTON_TOO_MANY_UTXOS",
+    "MODAL_CANTON_TERMS",
+  ],
 };
 
 export default family;

@@ -42,9 +42,9 @@ export async function getEvmTokenAllowance(
     throw new Error(`No token found for id "${tokenId}".`);
   }
 
-  if (tokenCurrency.parentCurrency.id !== account.currency.id) {
+  if (tokenCurrency.parentCurrencyId !== account.currency.id) {
     throw new Error(
-      `Token "${tokenId}" is on chain "${tokenCurrency.parentCurrency.id}", but the account currency is "${account.currency.id}"; they must match.`,
+      `Token "${tokenId}" is on chain "${tokenCurrency.parentCurrencyId}", but the account currency is "${account.currency.id}"; they must match.`,
     );
   }
 

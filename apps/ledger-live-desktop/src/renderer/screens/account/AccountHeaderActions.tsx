@@ -33,7 +33,7 @@ import {
 } from "./AccountActionsDefault";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
@@ -193,7 +193,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const navigate = useNavigate();
   const location = useLocation();
-  const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const specific = useLLDCoinFamily(mainAccount.currency.family);
   const openSendFlow = useOpenSendFlow();
   const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
     useNewSendFlowFeature();

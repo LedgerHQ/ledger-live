@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { TextInput, Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-react";
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
+import { sanitizeMemoValue } from "@ledgerhq/live-common/flows/send/recipient/utils/memoValue";
 import { useTranslation } from "react-i18next";
 import { useTranslatedBridgeError } from "../../hooks/useTranslatedBridgeError";
 
@@ -40,17 +41,9 @@ function MemoValueInputComponent({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      let next = e.target.value;
-      if (isTagType) {
-        next = next.replace(/\D/g, "");
-        if (memoMaxValue != null && next !== "") {
-          const num = Number(next);
-          if (num > memoMaxValue) next = String(memoMaxValue);
-        }
-      }
-      onChange(next);
+      onChange(sanitizeMemoValue({ value: e.target.value, memoType, memoMaxValue }));
     },
-    [isTagType, memoMaxValue, onChange],
+    [memoType, memoMaxValue, onChange],
   );
 
   return (

@@ -105,13 +105,21 @@ const defaultPollingMock = {
   stop: jest.fn(),
   wipe: jest.fn(),
 };
+
+const mockUseCategorizedAssetsFromPortfolio = jest.fn();
+
 jest.mock("LLD/hooks/useCategorizedAssets", () => ({
-  useCategorizedAssetsFromPortfolio: () => ({
-    categorizedAssets: createMockCategorizedAssets(),
-    isLoadingStablecoinTickers: false,
-    stablecoinTickers: new Set<string>(),
-  }),
+  useCategorizedAssetsFromPortfolio: (...args: unknown[]) =>
+    mockUseCategorizedAssetsFromPortfolio(...args),
 }));
+
+const defaultCategorizedAssetsMock = () => ({
+  categorizedAssets: createMockCategorizedAssets({ stocks: [] }),
+  isLoadingStablecoinTickers: false,
+  stablecoinTickers: new Set<string>(),
+  isLoadingStocks: false,
+  isStocksError: false,
+});
 
 jest.mock("~/renderer/hooks/usePrice", () => {
   const { getFiatCurrencyByTicker } = jest.requireActual("@ledgerhq/live-common/currencies/index");
@@ -175,6 +183,7 @@ describe("PortfolioView", () => {
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
     mockedUseNavigate.mockReturnValue(mockNavigate);
+    mockUseCategorizedAssetsFromPortfolio.mockReturnValue(defaultCategorizedAssetsMock());
   });
 
   afterEach(() => {
@@ -429,7 +438,7 @@ describe("PortfolioView", () => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
       });
 
-      expect(screen.getByText("Explore the market")).toBeVisible();
+      expect(screen.getByText("Market")).toBeVisible();
     });
 
     it("should render MarketBanner skeleton while loading", () => {
@@ -461,7 +470,7 @@ describe("PortfolioView", () => {
 
     it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Explore the market")).toBeNull();
+      expect(screen.queryByText("Market")).toBeNull();
     });
   });
 
@@ -626,7 +635,7 @@ describe("PortfolioView", () => {
   });
 
   describe("AssetDiscoverability", () => {
-    it("should render Stocks section when shouldDisplayAssetDiscoverability is true", async () => {
+    it("should render Stocks discovery section when shouldDisplayAssetDiscoverability is true and user holds no stocks", async () => {
       server.use(http.get(DADA_API_ENDPOINT, () => HttpResponse.json(mockStocksResponse)));
 
       render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
@@ -637,6 +646,33 @@ describe("PortfolioView", () => {
 
       expect(screen.getByTestId("stocks-section")).toBeVisible();
       expect(screen.getByTestId("stocks-explore")).toBeVisible();
+    });
+
+    it("should render owned stocks as an asset table when user holds stocks", async () => {
+      const aaplx = mockStocksResponse.cryptoOrTokenCurrencies["solana/spl/applex"];
+      mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+        ...defaultCategorizedAssetsMock(),
+        categorizedAssets: createMockCategorizedAssets({
+          stocks: [
+            {
+              currency: aaplx,
+              balance: 100_000_000,
+              value: 226.4,
+              distribution: 0.5,
+              accounts: [],
+            },
+          ],
+        }),
+      });
+
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("w40-asset-row-apple-xstock-solanasplapplex")).toBeVisible();
+      });
+
+      expect(screen.getByTestId("stocks-section")).toBeVisible();
+      expect(screen.queryByTestId("stocks-explore")).toBeNull();
     });
 
     it("should not render Stocks section when shouldDisplayAssetDiscoverability is false", () => {
@@ -661,6 +697,7 @@ describe("Portfolio (Wallet V4 Tour)", () => {
     mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
+    mockUseCategorizedAssetsFromPortfolio.mockReturnValue(defaultCategorizedAssetsMock());
   });
 
   afterEach(() => {

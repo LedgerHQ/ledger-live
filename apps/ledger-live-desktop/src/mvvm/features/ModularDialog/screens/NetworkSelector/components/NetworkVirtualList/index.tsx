@@ -18,7 +18,7 @@ type NetworkVirtualListProps = {
 export const NetworkVirtualList = ({ networks, onClick }: NetworkVirtualListProps) => {
   const renderNetworkItem = useCallback(
     (network: NetworkWithUI) => {
-      const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrency.id;
+      const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrencyId;
       return (
         <NetworkListItem
           currency={network}

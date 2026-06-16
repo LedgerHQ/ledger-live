@@ -1,7 +1,11 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   registerCoinModules,
   getRegisteredFamilies,
+  isCurrencySupported,
+  listSupportedCurrencies,
+  resetCoinModulesForTests,
   makeLoaderCache,
   loadSetupForFamily,
   loadTransactionForFamily,
@@ -11,11 +15,12 @@ import {
   loadAccountModuleForFamily,
   loadMockBridgeForFamily,
   loadMockAccountForFamily,
+  getLoadedMockAccountForFamily,
   loadValidateAddressForFamily,
   loadSignerForFamily,
   loadBridgeExtensionsForFamily,
 } from "./registry";
-import type { CoinModuleLoader, FamilySetup, TransactionModule } from "./types";
+import type { CoinModuleLoader, FamilySetup, MockAccountModule, TransactionModule } from "./types";
 
 const stubSetup: FamilySetup = {};
 const stubTxModule: TransactionModule = {
@@ -29,6 +34,7 @@ const makeLoader = (
   overrides: Partial<CoinModuleLoader> = {},
 ): CoinModuleLoader => ({
   family,
+  supportedCoins: [],
   loadSetup: () => Promise.resolve(stubSetup),
   loadTransaction: () => Promise.resolve(stubTxModule),
   ...overrides,
@@ -40,6 +46,62 @@ describe("registerCoinModules / getRegisteredFamilies", () => {
     expect(getRegisteredFamilies()).toEqual(
       expect.arrayContaining(["__regtest_a__", "__regtest_b__"]),
     );
+  });
+});
+
+describe("supported currencies", () => {
+  beforeEach(() => resetCoinModulesForTests());
+  afterEach(() => resetCoinModulesForTests());
+
+  it("derives the supported set from a loader's supportedCoins", () => {
+    registerCoinModules([makeLoader("bitcoin", { supportedCoins: ["bitcoin", "litecoin"] })]);
+    expect(isCurrencySupported(getCryptoCurrencyById("bitcoin"))).toBe(true);
+    expect(isCurrencySupported(getCryptoCurrencyById("litecoin"))).toBe(true);
+    expect(isCurrencySupported(getCryptoCurrencyById("ethereum"))).toBe(false);
+  });
+
+  it("listSupportedCurrencies unions all registered loaders", () => {
+    registerCoinModules([
+      makeLoader("bitcoin", { supportedCoins: ["bitcoin"] }),
+      makeLoader("evm", { supportedCoins: ["ethereum", "polygon"] }),
+    ]);
+    expect(
+      listSupportedCurrencies()
+        .map(c => c.id)
+        .sort(),
+    ).toEqual(["bitcoin", "ethereum", "polygon"]);
+  });
+
+  it("recomputes after a new registration (cache invalidation)", () => {
+    registerCoinModules([makeLoader("bitcoin", { supportedCoins: ["bitcoin"] })]);
+    expect(isCurrencySupported(getCryptoCurrencyById("ethereum"))).toBe(false);
+    registerCoinModules([makeLoader("evm", { supportedCoins: ["ethereum"] })]);
+    expect(isCurrencySupported(getCryptoCurrencyById("ethereum"))).toBe(true);
+  });
+
+  it("resetCoinModulesForTests clears the supported set", () => {
+    registerCoinModules([makeLoader("bitcoin", { supportedCoins: ["bitcoin"] })]);
+    resetCoinModulesForTests();
+    expect(listSupportedCurrencies()).toEqual([]);
+    expect(isCurrencySupported(getCryptoCurrencyById("bitcoin"))).toBe(false);
+  });
+
+  it("resetCoinModulesForTests clears loader caches and resolved mock accounts", async () => {
+    const mockAccount: MockAccountModule = { postSyncAccount: jest.fn(account => account) };
+    const loadSetup = jest.fn(() => Promise.resolve(stubSetup));
+    registerCoinModules([
+      makeLoader("bitcoin", { loadSetup, loadMockAccount: () => Promise.resolve(mockAccount) }),
+    ]);
+    await loadSetupForFamily("bitcoin");
+    await loadMockAccountForFamily("bitcoin");
+    expect(getLoadedMockAccountForFamily("bitcoin")).toBe(mockAccount);
+
+    resetCoinModulesForTests();
+    expect(getLoadedMockAccountForFamily("bitcoin")).toBeUndefined();
+
+    registerCoinModules([makeLoader("bitcoin", { loadSetup })]);
+    await loadSetupForFamily("bitcoin");
+    expect(loadSetup).toHaveBeenCalledTimes(2); // cache was cleared, not a stale hit
   });
 });
 

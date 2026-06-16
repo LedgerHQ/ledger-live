@@ -193,4 +193,17 @@ describe("Stocks section", () => {
     fireEvent.click(screen.getByTestId("stocks-explore"));
     expect(onSeeAll).toHaveBeenCalledTimes(1);
   });
+
+  describe("layout", () => {
+    it("lays the pills out on two rows", () => {
+      mockStocksData({ metas: [APPLE, TESLA, NVIDIA] });
+
+      render(<Stocks limit={3} navigateToAsset={navigateToAsset} onSeeAll={onSeeAll} />);
+
+      expect(screen.getAllByTestId("stocks-row")).toHaveLength(2);
+      expect(screen.getByTestId("stock-item-ticker-aaplx")).toBeVisible();
+      expect(screen.getByTestId("stock-item-ticker-tslax")).toBeVisible();
+      expect(screen.getByTestId("stock-item-ticker-nvdax")).toBeVisible();
+    });
+  });
 });

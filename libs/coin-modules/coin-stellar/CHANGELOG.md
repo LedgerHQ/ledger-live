@@ -1,5 +1,33 @@
 # @ledgerhq/coin-stellar
 
+## 6.25.0
+
+### Minor Changes
+
+- [#18253](https://github.com/LedgerHQ/ledger-live/pull/18253) [`875c815`](https://github.com/LedgerHQ/ledger-live/commit/875c8151675eb60dcde832cae7890ebd05a8b48f) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fix(coin-stellar): stop using filtered op count to terminate pagination — use Horizon page size instead, so unsupported op types no longer truncate history
+
+- [#17962](https://github.com/LedgerHQ/ledger-live/pull/17962) [`b183e9a`](https://github.com/LedgerHQ/ledger-live/commit/b183e9a3bdcc361750dc21d398d224cddf5929c9) Thanks [@semeano](https://github.com/semeano)! - Surface the native XLM legs of `path_payment_strict_send`, `path_payment_strict_receive`, `liquidity_pool_deposit` and `liquidity_pool_withdraw` operations in `listOperations` so the operations history reconciles with the on-chain account balance.
+
+### Patch Changes
+
+- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/errors@6.36.0
+  - @ledgerhq/live-network@2.6.4
+
+## 6.25.0-next.0
+
+### Minor Changes
+
+- [#18253](https://github.com/LedgerHQ/ledger-live/pull/18253) [`875c815`](https://github.com/LedgerHQ/ledger-live/commit/875c8151675eb60dcde832cae7890ebd05a8b48f) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fix(coin-stellar): stop using filtered op count to terminate pagination — use Horizon page size instead, so unsupported op types no longer truncate history
+
+- [#17962](https://github.com/LedgerHQ/ledger-live/pull/17962) [`b183e9a`](https://github.com/LedgerHQ/ledger-live/commit/b183e9a3bdcc361750dc21d398d224cddf5929c9) Thanks [@semeano](https://github.com/semeano)! - Surface the native XLM legs of `path_payment_strict_send`, `path_payment_strict_receive`, `liquidity_pool_deposit` and `liquidity_pool_withdraw` operations in `listOperations` so the operations history reconciles with the on-chain account balance.
+
+### Patch Changes
+
+- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/errors@6.36.0-next.0
+  - @ledgerhq/live-network@2.6.4-next.0
+
 ## 6.24.0
 
 ### Minor Changes

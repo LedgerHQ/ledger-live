@@ -31,7 +31,7 @@ export default defineCommand({
       if (!token) {
         throw new Error(`Token not found: id=${id}.`);
       }
-      ctx.network = token.parentCurrency.id;
+      ctx.network = token.parentCurrencyId;
       out.token(toTokenInfo(token));
     });
   },

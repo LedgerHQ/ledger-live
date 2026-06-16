@@ -35,6 +35,7 @@ export default class SwapLiveAppPage {
   switchButton = "to-account-switch-accounts";
   lnsUnsupportedBannerPattern =
     /Ledger Nano S[\s\S]*(not supported|unsupported|does not support|not compatible)/i;
+  revokeApprovalButton = "revoke-approval-button";
   giveApprovalButton = "give-approval-button";
   signPermitButton = "sign-permit-button";
   specificQuoteCardProviderName = (provider: string) =>
@@ -170,13 +171,17 @@ export default class SwapLiveAppPage {
 
   @Step("Expect execute swap button on step approval")
   async expectExecuteSwapOnStepApproval() {
-    await waitWebElementByTestId(this.executeSwapButtonStepApproval, { timeout: 20000 });
+    await waitWebElementByTestId(this.executeSwapButtonStepApproval, {
+      timeout: APPROVAL_PROCESSING_TIMEOUT,
+    });
     await detoxExpect(getWebElementByTestId(this.executeSwapButtonStepApproval)).toExist();
   }
 
   @Step("Tap execute swap button on step approval")
   async tapExecuteSwapOnStepApproval() {
-    await waitWebElementByTestId(this.executeSwapButtonStepApproval);
+    await waitWebElementByTestId(this.executeSwapButtonStepApproval, {
+      timeout: APPROVAL_PROCESSING_TIMEOUT,
+    });
     await waitForWebElementToBeEnabled(this.executeSwapButtonStepApproval);
     await tapWebElementByTestId(this.executeSwapButtonStepApproval);
     await waitForElement(app.send.summaryRecipient());
@@ -453,6 +458,18 @@ export default class SwapLiveAppPage {
     jestExpect(liveAppTitle.toLowerCase()).toContain(expectedText.toLowerCase());
   }
 
+  @Step("Expect reset allowance screen")
+  async expectResetApprovalScreen() {
+    await waitWebElementByTestId(this.revokeApprovalButton);
+    await detoxExpect(getWebElementByTestId(this.revokeApprovalButton)).toExist();
+  }
+
+  @Step("Tap revoke approval button")
+  async tapRevokeApprovalButton() {
+    await waitForWebElementToBeEnabled(this.revokeApprovalButton);
+    await tapWebElementByTestId(this.revokeApprovalButton);
+  }
+
   @Step("Expect TwoStepApprovalScreen")
   async expectTwoStepApprovalScreen() {
     await waitWebElementByTestId(this.giveApprovalButton);
@@ -461,7 +478,6 @@ export default class SwapLiveAppPage {
 
   @Step("Tap give Approval button")
   async tapGiveApprovalButton() {
-    await waitWebElementByTestId(this.giveApprovalButton);
     await waitForWebElementToBeEnabled(this.giveApprovalButton);
     await tapWebElementByTestId(this.giveApprovalButton);
   }

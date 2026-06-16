@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
+import { derivePublicTransactionMode } from "@ledgerhq/live-common/families/aleo/utils";
 import { useDispatch } from "LLD/hooks/redux";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
@@ -44,12 +44,11 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: ModalProps) => {
         onClose={handleModalClose}
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => {
-          const mainAccount = data.account
-            ? getMainAccount(data.account, data.parentAccount)
-            : null;
-
+          const { account, parentAccount } = data;
+          const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+          const isTokenTx = account?.type === "TokenAccount";
           const defaultRecipient = mainAccount?.freshAddress ?? "";
-          const defaultTransactionMode = TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+          const defaultMode = derivePublicTransactionMode({ isTokenTx, isSelfTransfer: true });
 
           return (
             <DefaultSendBody
@@ -62,13 +61,15 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: ModalProps) => {
               onChangeStepId={handleStepChange}
               params={{
                 account: data.account,
+                parentAccount: data.parentAccount,
                 transaction: {
                   family: "aleo",
                   amount: new BigNumber(0),
                   useAllAmount: false,
                   recipient: defaultRecipient,
                   fees: new BigNumber(0),
-                  mode: defaultTransactionMode,
+                  mode: defaultMode,
+                  ...(isTokenTx && data.account && { subAccountId: data.account.id }),
                 },
               }}
             />

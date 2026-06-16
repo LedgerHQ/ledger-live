@@ -10,7 +10,8 @@ import type { FeatureIntroViewModel } from "../../screens/useGenericAwarenessMod
 const content: GenericAwarenessModalFeatureIntro = {
   id: "featureIntro",
   layout: GenericAwarenessModalLayout.FeatureIntro,
-  imageUrl: "https://example.com/feature-intro.png",
+  imageUrlLight: "https://example.com/feature-intro.png",
+  imageUrlDark: "",
   title: "Connect a Ledger device",
   subtitle: "Connect a device to unlock Ledger Wallet features.",
   primaryButtonLabel: "Connect",
@@ -71,6 +72,26 @@ describe("FeatureIntroLayout", () => {
     await user.press(screen.getByText("Buy your Ledger device"));
 
     expect(onClose).toHaveBeenCalledTimes(2);
+  });
+
+  it("should render the hero image container when themed urls are provided", () => {
+    renderFeatureIntroLayout();
+
+    expect(screen.getByTestId("generic-awareness-modal-feature-intro-hero")).toBeOnTheScreen();
+  });
+
+  it("should not render the hero image when no image is provided", () => {
+    renderFeatureIntroLayout({
+      content: {
+        ...content,
+        imageUrlLight: "",
+        imageUrlDark: "",
+      },
+    });
+
+    expect(
+      screen.queryByTestId("generic-awareness-modal-feature-intro-hero"),
+    ).not.toBeOnTheScreen();
   });
 
   it("should render with fallback icon when icon name is invalid", () => {

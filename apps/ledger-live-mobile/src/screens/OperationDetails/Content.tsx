@@ -104,8 +104,6 @@ export default function Content({
   const isToken = currency.type === "TokenCurrency";
   const accountName = useAccountName(account);
   const unit = useAccountUnit(account);
-  const feeCurrency = getFeesCurrency(mainAccount);
-  const feeUnit = getFeesUnit(feeCurrency);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
@@ -129,6 +127,23 @@ export default function Content({
     byFamiliesOperationDetails[
       mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
     ];
+
+  // Fee currency/amount can be overridden by the family-specific
+  // operationDetails implementation.
+  const useFeesCurrencyOverride =
+    specificOperationDetails && "useFeesCurrency" in specificOperationDetails
+      ? specificOperationDetails.useFeesCurrency
+      : undefined;
+  const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
+  const feeCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
+  const feeUnit = getFeesUnit(feeCurrency);
+  const getDisplayFeeOverride =
+    specificOperationDetails && "getDisplayFee" in specificOperationDetails
+      ? specificOperationDetails.getDisplayFee
+      : undefined;
+  const displayFee = operation.fee
+    ? (getDisplayFeeOverride?.(operation, mainAccount, feeCurrency) ?? operation.fee)
+    : operation.fee;
 
   const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
     byFamiliesEditOperationPanel[
@@ -363,7 +378,7 @@ export default function Content({
           {operation.fee ? (
             <View style={styles.feeValueContainer}>
               <LText style={sectionStyles.value} semiBold testID="operationDetails-fees">
-                <CurrencyUnitValue showCode unit={feeUnit} value={operation.fee} />
+                <CurrencyUnitValue showCode unit={feeUnit} value={displayFee} />
               </LText>
               <LText style={styles.feeCounterValue} color="smoke" semiBold>
                 ≈
@@ -375,7 +390,7 @@ export default function Content({
                   date={operation.date}
                   subMagnitude={1}
                   currency={feeCurrency}
-                  value={operation.fee}
+                  value={displayFee}
                 />
               </LText>
             </View>

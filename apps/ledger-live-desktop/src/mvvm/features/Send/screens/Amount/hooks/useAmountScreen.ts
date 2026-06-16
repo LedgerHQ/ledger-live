@@ -12,11 +12,13 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { openURL } from "~/renderer/linking";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
   onGetFunds: () => void;
   onSelectCoinControl: () => void;
+  onMessageLinkPress: (link: string) => void;
 }>;
 
 export type AmountScreenViewModel =
@@ -72,6 +74,56 @@ export function useAmountScreen(): AmountScreenViewModel {
     close();
   }, [account, close, navigate, parentAccount, location.pathname]);
 
+  const onMessageLinkPress = useCallback(
+    (link: string) => {
+      if (link.startsWith("/")) {
+        const url = new URL(link, "ledgerlive://local");
+        navigate(url.pathname, {
+          state: Object.fromEntries(url.searchParams.entries()),
+        });
+        close();
+        return;
+      }
+
+      let url: URL;
+      try {
+        url = new URL(link);
+      } catch {
+        return;
+      }
+
+      if (url.protocol === "ledgerlive:" || url.protocol === "ledgerwallet:") {
+        const state = Object.fromEntries(url.searchParams.entries());
+
+        if (url.host === "buy") {
+          const mainAccount = account ? getMainAccount(account, parentAccount ?? undefined) : null;
+          const currencyId =
+            mainAccount && "currency" in mainAccount ? mainAccount.currency.id : undefined;
+
+          navigate("/exchange", {
+            state: {
+              ...(currencyId ? { currency: currencyId } : {}),
+              ...(mainAccount ? { account: mainAccount.id } : {}),
+              ...state,
+              mode: "buy",
+              returnTo: location.pathname,
+            },
+          });
+        } else {
+          navigate(`/${url.host}${url.pathname}`, { state });
+        }
+
+        close();
+        return;
+      }
+
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        openURL(link);
+      }
+    },
+    [account, close, location.pathname, navigate, parentAccount],
+  );
+
   const onReview = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
   }, [navigation]);
@@ -81,7 +133,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   }, [navigation]);
 
   if (!account || !transaction || !status || !uiConfig || !transactionActions) {
-    return { ready: false, onReview, onGetFunds, onSelectCoinControl };
+    return { ready: false, onReview, onGetFunds, onSelectCoinControl, onMessageLinkPress };
   }
 
   return {
@@ -97,5 +149,6 @@ export function useAmountScreen(): AmountScreenViewModel {
     onReview,
     onGetFunds,
     onSelectCoinControl,
+    onMessageLinkPress,
   };
 }

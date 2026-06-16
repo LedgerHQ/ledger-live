@@ -28,24 +28,7 @@ export type FeatureToggle =
     };
 export type Feature = FeatureCommon & FeatureToggle;
 
-// comma-separated list of currencies that we want to enable as experimental, e.g:
-// const experimentalCurrencies = "solana,cardano";
-const experimentalCurrencies = "";
 export const experimentalFeatures: Feature[] = [
-  ...((experimentalCurrencies.length
-    ? [
-        {
-          type: "toggle" as const,
-          name: "EXPERIMENTAL_CURRENCIES",
-          title: <Trans i18nKey="settings.experimental.features.experimentalCurrencies.title" />,
-          description: (
-            <Trans i18nKey="settings.experimental.features.experimentalCurrencies.description" />
-          ),
-          valueOn: experimentalCurrencies,
-          valueOff: "",
-        },
-      ]
-    : []) as Feature[]),
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",

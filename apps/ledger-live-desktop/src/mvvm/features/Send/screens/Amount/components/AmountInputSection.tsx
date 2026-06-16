@@ -16,6 +16,7 @@ type AmountInputSectionProps = Readonly<{
   toggleLabel: string;
   secondaryValue: string;
   amountMessage: AmountScreenMessage | null | undefined;
+  onMessageLinkPress?: (link: string) => void;
 }>;
 
 export function AmountInputSection({
@@ -29,6 +30,7 @@ export function AmountInputSection({
   toggleLabel,
   secondaryValue,
   amountMessage,
+  onMessageLinkPress,
 }: AmountInputSectionProps) {
   return (
     <section className="relative flex flex-col items-center pt-56 text-center">
@@ -64,7 +66,7 @@ export function AmountInputSection({
         {secondaryValue}
       </p>
       <div className="mt-8 min-h-20">
-        <AmountMessageText message={amountMessage} />
+        <AmountMessageText message={amountMessage} onLinkPress={onMessageLinkPress} />
       </div>
     </section>
   );

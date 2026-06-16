@@ -26,6 +26,7 @@ export const GlobalMarketCapDialog = ({ children }: { children: ReactNode }) => 
         />
         <DialogBody className="flex flex-col gap-24">
           <p className="body-1 text-base">{t("marketCapCard.dialog.content")}</p>
+          <p className="body-4 text-muted">{t("marketCapCard.dialog.disclaimer")}</p>
         </DialogBody>
         <DialogFooter className="justify-center">
           <Button

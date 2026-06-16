@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { track } from "~/analytics";
+import { ScreenName } from "~/const";
 import { GlobalSearch } from "../screens/GlobalSearch";
 import { GLOBAL_SEARCH_TEST_IDS } from "../screens/GlobalSearch/testIds";
 
@@ -26,7 +27,7 @@ describe("GlobalSearch screen", () => {
   it("tracks search_open on mount", () => {
     render(<GlobalSearch />);
 
-    expect(track).toHaveBeenCalledWith("search_open");
+    expect(track).toHaveBeenCalledWith("search_open", { page: ScreenName.GlobalSearch });
   });
 
   it("navigates back when the back button is pressed", async () => {

@@ -8,7 +8,6 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -23,7 +22,7 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
 import type { ModalData } from "~/renderer/modals/types";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepRecipient, { StepRecipientFooter } from "./steps/StepRecipient";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
@@ -224,8 +223,8 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
-  const specific =
-    currency && isCryptoCurrency(currency) ? getLLDCoinFamily(currency.family) : null;
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
 
   const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
   const customSteps = useMemo(() => {
@@ -283,7 +282,7 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : title ?? t("send.title"),
+    title: stepId === "warning" ? t("common.information") : (title ?? t("send.title")),
     modalName,
     stepId,
     steps,

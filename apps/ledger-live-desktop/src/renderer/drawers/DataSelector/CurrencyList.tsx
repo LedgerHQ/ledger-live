@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import Text from "~/renderer/components/Text";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import Box from "~/renderer/components/Box";
 import { RowContainer, RowInnerContainer, CurrencyLabel } from "./shared";
 import { VirtualList } from "@ledgerhq/react-ui/pre-ldls/index";
@@ -66,9 +67,9 @@ export function CurrencyList({
               {currency.ticker}
             </Text>
           </Box>
-          {currency.type === "TokenCurrency" && currency.parentCurrency ? (
+          {currency.type === "TokenCurrency" ? (
             <Box horizontal alignItems="center" marginLeft="12px">
-              <CurrencyLabel>{currency.parentCurrency.name}</CurrencyLabel>
+              <CurrencyLabel>{getCryptoCurrencyById(currency.parentCurrencyId).name}</CurrencyLabel>
             </Box>
           ) : null}
         </RowInnerContainer>

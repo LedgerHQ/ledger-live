@@ -136,5 +136,9 @@ export const getSortParam = (order: Order, range: PortfolioRange | string) => {
       return `negative-price-change-${getRange(range)}`;
     case Order.topGainers:
       return `positive-price-change-${getRange(range)}`;
+    case Order.VolumeDesc:
+      return "total-volume-desc";
+    case Order.VolumeAsc:
+      return "total-volume";
   }
 };

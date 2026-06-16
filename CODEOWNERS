@@ -95,7 +95,7 @@ apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/WalletSync/   @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/LedgerSyncEntryPoints/ @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeatureFlagsSettings/ @ledgerhq/platform
-apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/platform
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/wallet-xp
 
 # Coin integration team
 .github/**/bot-*.yml                                                @ledgerhq/coin-integration
@@ -220,6 +220,7 @@ apps/ledger-live-mobile/src/mvvm/features/Stake/                                
 apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                     @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/LiveAppModal/                                 @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/SwapTransactionStatusDialog/                  @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/LiveAppModal/                                  @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Borrow/                                       @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBorrowSection   @ledgerhq/ptx

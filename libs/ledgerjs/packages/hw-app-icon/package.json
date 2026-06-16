@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-icon",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "Ledger Hardware Wallet ICON Application API",
   "keywords": [
     "Ledger",

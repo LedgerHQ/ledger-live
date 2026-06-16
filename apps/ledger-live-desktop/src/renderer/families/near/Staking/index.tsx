@@ -22,7 +22,7 @@ import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { DelegateModalName } from "../modals";
+type DelegateModalName = "MODAL_NEAR_UNSTAKE" | "MODAL_NEAR_WITHDRAW";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

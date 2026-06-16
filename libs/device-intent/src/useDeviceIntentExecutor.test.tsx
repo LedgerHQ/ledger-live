@@ -106,7 +106,6 @@ function makeProps(overrides: Partial<TestProps> = {}): TestProps {
     onIntentJobComplete: jest.fn(),
     onIntentJobError: jest.fn(),
     enabled: true,
-    cancellableUI: false,
     onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     ...overrides,

@@ -7,7 +7,10 @@ import {
   type GenericAwarenessModalFeatureIntro,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 import { openURL } from "~/renderer/linking";
-import { closeGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
+import {
+  closeGenericAwarenessModalDialog,
+  type CloseGenericAwarenessModalDialogOptions,
+} from "../genericAwarenessModalDialog";
 import {
   getFeatureIntroAnalyticsContext,
   trackFeatureIntroCloseClick,
@@ -23,8 +26,11 @@ export interface GenericAwarenessModalFeatureIntroViewModel {
   subtitle: string;
   items: FeatureIntroContentItem[];
   primaryButtonLabel: string;
+  primaryButtonLink: string;
   secondaryButtonLabel: string;
-  imageUrl?: string;
+  secondaryButtonLink: string;
+  imageUrlLight?: string;
+  imageUrlDark?: string;
   onPrimaryClick: () => void;
   onSecondaryClick: () => void;
   onHeaderClose: () => void;
@@ -53,9 +59,12 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
   const featureIntro: GenericAwarenessModalFeatureIntro | undefined =
     contentCard?.layout === GenericAwarenessModalLayout.FeatureIntro ? contentCard : undefined;
 
-  const closeDialog = useCallback(() => {
-    dispatch(closeGenericAwarenessModalDialog());
-  }, [dispatch]);
+  const closeDialog = useCallback(
+    (options?: CloseGenericAwarenessModalDialogOptions) => {
+      dispatch(closeGenericAwarenessModalDialog(options));
+    },
+    [dispatch],
+  );
 
   const getContext = useCallback(() => {
     if (!featureIntro) {
@@ -88,7 +97,7 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
       );
       openURL(featureIntro.primaryButtonLink);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, featureIntro, getContext]);
 
   const onSecondaryClick = useCallback(() => {
@@ -101,7 +110,7 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
       );
       openURL(featureIntro.secondaryButtonLink);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, featureIntro, getContext]);
 
   const onHeaderClose = useCallback(() => {
@@ -109,7 +118,7 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
     if (context) {
       trackFeatureIntroCloseClick(context);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext]);
 
   const onDismiss = useCallback(() => {
@@ -117,7 +126,7 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
     if (context) {
       trackFeatureIntroDismissed(context);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext]);
 
   return useMemo(
@@ -126,8 +135,11 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
       subtitle: featureIntro?.subtitle ?? "",
       items: featureIntro ? mapFeatureIntroItems(featureIntro) : [],
       primaryButtonLabel: featureIntro?.primaryButtonLabel ?? "",
+      primaryButtonLink: featureIntro?.primaryButtonLink ?? "",
       secondaryButtonLabel: featureIntro?.secondaryButtonLabel ?? "",
-      imageUrl: featureIntro?.imageUrl || undefined,
+      secondaryButtonLink: featureIntro?.secondaryButtonLink ?? "",
+      imageUrlLight: featureIntro?.imageUrlLight,
+      imageUrlDark: featureIntro?.imageUrlDark,
       onPrimaryClick,
       onSecondaryClick,
       onHeaderClose,

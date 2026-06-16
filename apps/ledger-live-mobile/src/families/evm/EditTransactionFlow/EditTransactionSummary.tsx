@@ -6,7 +6,7 @@
 
 import { getEditTransactionStatus } from "@ledgerhq/coin-evm/editTransaction/index";
 import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
-import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencies/index";
+import { isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

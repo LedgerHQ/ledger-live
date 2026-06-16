@@ -1,4 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getTokenAccountTuples } from "../getTokenAccountTuples";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -43,58 +44,7 @@ const mockedCurrency = {
   ledgerSignature:
     "3045022100b2e358726e4e6a6752cf344017c0e9d45b9a904120758d45f61b2804f9ad5299022015161ef28d8c4481bd9432c13562def9cce688bcfec896ef244c9a213f106cdd",
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  parentCurrency: {
-    type: "CryptoCurrency",
-    id: "ethereum",
-    coinType: 60,
-    name: "Ethereum",
-    managerAppName: "Ethereum",
-    ticker: "ETH",
-    scheme: "ethereum",
-    color: "#0ebdcd",
-    symbol: "Ξ",
-    family: "evm",
-    blockAvgTime: 15,
-    units: [
-      {
-        name: "ether",
-        code: "ETH",
-        magnitude: 18,
-      },
-      {
-        name: "Gwei",
-        code: "Gwei",
-        magnitude: 9,
-      },
-      {
-        name: "Mwei",
-        code: "Mwei",
-        magnitude: 6,
-      },
-      {
-        name: "Kwei",
-        code: "Kwei",
-        magnitude: 3,
-      },
-      {
-        name: "wei",
-        code: "wei",
-        magnitude: 0,
-      },
-    ],
-    ethereumLikeInfo: {
-      chainId: 1,
-    },
-    explorerViews: [
-      {
-        tx: "https://etherscan.io/tx/$hash",
-        address: "https://etherscan.io/address/$address",
-        token: "https://etherscan.io/token/$contractAddress?a=$address",
-      },
-    ],
-    keywords: ["eth", "ethereum"],
-    explorerId: "eth",
-  },
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   name: "USD Coin",
   ticker: "USDC",
@@ -126,7 +76,7 @@ const mockedNestedAccounts = [
     operations: [],
     operationsCount: 0,
     pendingOperations: [],
-    currency: mockedCurrency.parentCurrency,
+    currency: getCryptoCurrencyById(mockedCurrency.parentCurrencyId),
     lastSyncDate: new Date("2025-05-22T11:38:20.767Z"),
     swapHistory: [],
     balanceHistoryCache: {

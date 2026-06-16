@@ -1,5 +1,33 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.26.0
+
+### Minor Changes
+
+- [#18246](https://github.com/LedgerHQ/ledger-live/pull/18246) [`dcd0ed9`](https://github.com/LedgerHQ/ledger-live/commit/dcd0ed903aa7f5a455dacc2259ac7ca1e5d26491) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Assign an owning team to every mobile e2e test via Allure `owner`/`parentSuite` labels (new `setTeamOwner` helper), mirroring the desktop team system so reports can be grouped and filtered by team.
+
+- [#17814](https://github.com/LedgerHQ/ledger-live/pull/17814) [`b16aa2c`](https://github.com/LedgerHQ/ledger-live/commit/b16aa2c4ba83aa9f67e6ba24a6f522de3956e16d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add wallet 4.0 my wallet e2e tests
+
+- [#18076](https://github.com/LedgerHQ/ledger-live/pull/18076) [`a3025cf`](https://github.com/LedgerHQ/ledger-live/commit/a3025cffe9bef6c082dd45a75523cadfe6677001) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Update data-testId
+
+- [#18149](https://github.com/LedgerHQ/ledger-live/pull/18149) [`7ee8538`](https://github.com/LedgerHQ/ledger-live/commit/7ee8538247a0d48c587354f04c05fff4e69bb3b4) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Declare `@babel/plugin-transform-dynamic-import` and `@babel/plugin-transform-modules-commonjs` as explicit devDependencies. They were referenced by `babel.config.js` since #18119 but resolved via pnpm hoist luck, causing `Cannot find module '@babel/plugin-transform-dynamic-import'` on jest globalSetup.
+
+- [#18119](https://github.com/LedgerHQ/ledger-live/pull/18119) [`537e45b`](https://github.com/LedgerHQ/ledger-live/commit/537e45b1dac506a7cee61485f22e560f27fa274c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix mobile e2e jest loading of ESM-only live-common: transpile `lib-es` to CommonJS in the jest main process (config/globalSetup/reporters) via an swc require-hook, and transform `@ledgerhq` packages in jest workers (`ESM_PACKAGES` + babel `modules-commonjs`/`dynamic-import`). Resolves `ERR_MODULE_NOT_FOUND` on extensionless `device-core` imports after live-common became ESM-only.
+
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#18246](https://github.com/LedgerHQ/ledger-live/pull/18246) [`dcd0ed9`](https://github.com/LedgerHQ/ledger-live/commit/dcd0ed903aa7f5a455dacc2259ac7ca1e5d26491) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Assign an owning team to every mobile e2e test via Allure `owner`/`parentSuite` labels (new `setTeamOwner` helper), mirroring the desktop team system so reports can be grouped and filtered by team.
+
+- [#17814](https://github.com/LedgerHQ/ledger-live/pull/17814) [`b16aa2c`](https://github.com/LedgerHQ/ledger-live/commit/b16aa2c4ba83aa9f67e6ba24a6f522de3956e16d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add wallet 4.0 my wallet e2e tests
+
+- [#18076](https://github.com/LedgerHQ/ledger-live/pull/18076) [`a3025cf`](https://github.com/LedgerHQ/ledger-live/commit/a3025cffe9bef6c082dd45a75523cadfe6677001) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Update data-testId
+
+- [#18149](https://github.com/LedgerHQ/ledger-live/pull/18149) [`7ee8538`](https://github.com/LedgerHQ/ledger-live/commit/7ee8538247a0d48c587354f04c05fff4e69bb3b4) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Declare `@babel/plugin-transform-dynamic-import` and `@babel/plugin-transform-modules-commonjs` as explicit devDependencies. They were referenced by `babel.config.js` since #18119 but resolved via pnpm hoist luck, causing `Cannot find module '@babel/plugin-transform-dynamic-import'` on jest globalSetup.
+
+- [#18119](https://github.com/LedgerHQ/ledger-live/pull/18119) [`537e45b`](https://github.com/LedgerHQ/ledger-live/commit/537e45b1dac506a7cee61485f22e560f27fa274c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix mobile e2e jest loading of ESM-only live-common: transpile `lib-es` to CommonJS in the jest main process (config/globalSetup/reporters) via an swc require-hook, and transform `@ledgerhq` packages in jest workers (`ESM_PACKAGES` + babel `modules-commonjs`/`dynamic-import`). Resolves `ERR_MODULE_NOT_FOUND` on extensionless `device-core` imports after live-common became ESM-only.
+
 ## 0.25.0
 
 ### Minor Changes

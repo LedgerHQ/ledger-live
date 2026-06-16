@@ -3,6 +3,11 @@ import { ZERO_ADDRESS } from "../../constants";
 export const lockedGold = jest.fn();
 export const nonVoting = jest.fn();
 export const electionConfig = jest.fn();
+// Defaults to native CELO (null). Tests override per-case with
+// `.mockResolvedValueOnce(...)` / `.mockRejectedValueOnce(...)`.
+export const getCeloTransactionFeeCurrency = jest.fn<Promise<string | null>, [string]>(() =>
+  Promise.resolve(null),
+);
 
 const LOCKED_GOLD_ADDRESS = "0x0000000000000000000000000000000000001d00";
 const ELECTION_ADDRESS = "0x000000000000000000000000000000000000ce10";
@@ -33,4 +38,5 @@ jest.mock("../../network/sdk", () => ({
   getAccountRegistrationStatus: () => Promise.resolve(true),
   getPendingWithdrawals: () => Promise.resolve([]),
   getVotes: () => Promise.resolve([]),
+  getCeloTransactionFeeCurrency: (hash: string) => getCeloTransactionFeeCurrency(hash),
 }));

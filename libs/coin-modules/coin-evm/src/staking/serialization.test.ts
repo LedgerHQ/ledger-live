@@ -178,7 +178,10 @@ describe("coin-evm/staking/serialization", () => {
       };
 
       const raw = toStakingResourcesRaw(resources);
-      expect(raw.delegations[0]).toMatchObject({ validatorId: "7", validatorName: "GalaxyDigital" });
+      expect(raw.delegations[0]).toMatchObject({
+        validatorId: "7",
+        validatorName: "GalaxyDigital",
+      });
       expect(raw.unbondings[0]).toMatchObject({ validatorName: "GalaxyDigital" });
 
       const back = fromStakingResourcesRaw(raw);

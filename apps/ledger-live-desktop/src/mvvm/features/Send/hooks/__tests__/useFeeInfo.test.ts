@@ -31,7 +31,7 @@ const usdcToken = {
   type: "TokenCurrency",
   id: "celo/erc20/usdc",
   contractAddress: "0xceba9300f2b948710d2653dd7b07f33a8b32118c",
-  parentCurrency: { id: "celo" },
+  parentCurrencyId: "celo",
   name: "USD Coin",
   ticker: "USDC",
   disableCountervalue: false,

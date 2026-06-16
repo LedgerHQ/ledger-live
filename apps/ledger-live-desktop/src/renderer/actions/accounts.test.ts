@@ -1,8 +1,5 @@
 import type { Account, AccountUserData } from "@ledgerhq/types-live";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { initAccounts } from "./accounts";
 
 function fakeTuple(
@@ -22,12 +19,10 @@ function fakeTuple(
 }
 
 describe("initAccounts", () => {
-  it("drops accounts whose currency is not supported by this build", () => {
-    setSupportedCurrencies(["bitcoin"]);
-
+  it("drops accounts whose currency has no coin module", () => {
     const action = initAccounts([
       fakeTuple("btc-1", "bitcoin"),
-      fakeTuple("eth-1", "ethereum"),
+      fakeTuple("eos-1", "eos"), // no coin-module loader → unsupported
       fakeTuple("btc-2", "bitcoin"),
     ]);
 
@@ -37,16 +32,12 @@ describe("initAccounts", () => {
   });
 
   it("keeps all accounts when every currency is supported", () => {
-    setSupportedCurrencies(["bitcoin", "ethereum"]);
-
     const action = initAccounts([fakeTuple("btc-1", "bitcoin"), fakeTuple("eth-1", "ethereum")]);
 
     expect(action.payload.accounts.map(a => a.id)).toEqual(["btc-1", "eth-1"]);
   });
 
   it("drops accounts on any non-currency error (e.g. unsupported derivation mode)", () => {
-    setSupportedCurrencies(["bitcoin"]);
-
     const action = initAccounts([
       fakeTuple("btc-segwit", "bitcoin", ""),
       fakeTuple("btc-legacy", "bitcoin", "unsupported_derivation_mode"),

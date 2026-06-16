@@ -1,9 +1,8 @@
-import { Unit, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,
   formatCurrencyUnitOptions,
   getCryptoCurrencyById,
-  setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
@@ -31,7 +30,6 @@ export const getAccountUnit = (account: AccountLike) => getAccountCurrency(accou
 export const getAccountName = (account: AccountLike) => getDefaultAccountName(account);
 
 export function initTestAccounts(currencyIds: string[]) {
-  setSupportedCurrencies(currencyIds as CryptoCurrencyId[]);
   return Promise.all(
     currencyIds.map((currencyId: string) =>
       genMockAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),

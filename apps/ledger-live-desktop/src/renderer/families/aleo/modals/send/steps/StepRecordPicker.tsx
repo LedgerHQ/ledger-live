@@ -1,11 +1,16 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import React, { useMemo } from "react";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import {
+  formatCurrencyUnit,
+  type formatCurrencyUnitOptions,
+} from "@ledgerhq/live-common/currencies/index";
 import type {
   AleoAccount,
+  AleoTokenAccount,
   AleoUnspentRecord,
   Transaction as AleoTransaction,
 } from "@ledgerhq/live-common/families/aleo/types";
@@ -20,11 +25,10 @@ import { Flex } from "@ledgerhq/react-ui/index";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { getAleoCurrencyConfig } from "../../../shared/utils";
-import { isAleoAccount } from "./utils";
+import { getAleoCurrencyConfig, isAleoAccount } from "../../../shared/utils";
 
 interface Props extends Pick<StepProps, "status" | "updateTransaction"> {
-  account: AleoAccount;
+  account: AleoAccount | AleoTokenAccount;
   transaction: AleoTransaction;
 }
 
@@ -102,21 +106,25 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
   const unit = useAccountUnit(account);
   const formatDate = useDateFormatter(dayFormat);
   const formatHours = useDateFormatter(hourFormat);
+
   const recordError = status.errors.amountRecord ?? status.errors.feeRecord;
 
-  const allUnspentRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(r =>
-    new BigNumber(r.microcredits).isGreaterThan(0),
-  );
-  const unspentRecords = useMemo(
-    () =>
-      (account.aleoResources?.unspentPrivateRecords ?? [])
+  const { allUnspentRecords, unspentRecords } = useMemo(() => {
+    const accountRecords =
+      (account.type === "TokenAccount"
+        ? account.unspentPrivateRecords
+        : account.aleoResources?.unspentPrivateRecords) ?? [];
+
+    return {
+      allUnspentRecords: accountRecords.filter(r => new BigNumber(r.microcredits).isGreaterThan(0)),
+      unspentRecords: accountRecords
         .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
         .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
         .slice(0, MAX_RECORDS_DISPLAYED),
-    [account.aleoResources?.unspentPrivateRecords],
-  );
+    };
+  }, [account]);
 
-  const formatConfig = {
+  const formatConfig: formatCurrencyUnitOptions = {
     alwaysShowSign: false,
     showCode: true,
     locale,
@@ -204,7 +212,12 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
 const StepRecordPicker = ({ account, transaction, status, updateTransaction }: StepProps) => {
   if (transaction?.family !== "aleo" || !account || !isAleoAccount(account)) return null;
 
-  const config = getAleoCurrencyConfig(account.currency);
+  const currency =
+    account.type === "Account"
+      ? account.currency
+      : getCryptoCurrencyById(account.token.parentCurrencyId);
+  const config = getAleoCurrencyConfig(currency);
+
   if (config?.recordPickingStrategy === "auto") return null;
 
   return (

@@ -5,6 +5,7 @@ import {
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
@@ -995,7 +996,9 @@ async function getStrategy(
   getFeature?: GetFeatureFn,
 ): Promise<Transaction> {
   const family =
-    currency.type === "TokenCurrency" ? currency.parentCurrency?.family : currency.family;
+    currency.type === "TokenCurrency"
+      ? findCryptoCurrencyById(currency.parentCurrencyId)?.family
+      : currency.family;
 
   if (!family) {
     throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);

@@ -23,6 +23,7 @@ type AmountScreenInnerProps = Readonly<{
   onReview: () => void;
   onGetFunds: () => void;
   onSelectCoinControl: () => void;
+  onMessageLinkPress: (link: string) => void;
 }>;
 
 export function AmountScreenInner({
@@ -37,6 +38,7 @@ export function AmountScreenInner({
   onReview,
   onGetFunds,
   onSelectCoinControl,
+  onMessageLinkPress,
 }: AmountScreenInnerProps) {
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
@@ -84,6 +86,7 @@ export function AmountScreenInner({
       onReview={handleReview}
       onGetFunds={onGetFunds}
       onSelectCoinControl={onSelectCoinControl}
+      onMessageLinkPress={onMessageLinkPress}
       pluginsSlot={pluginsSlot}
     />
   );

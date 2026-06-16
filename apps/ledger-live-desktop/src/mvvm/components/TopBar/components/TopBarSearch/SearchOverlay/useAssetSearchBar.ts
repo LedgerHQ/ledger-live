@@ -1,13 +1,17 @@
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useStocksSectionViewModel } from "LLD/features/Stocks/hooks/useStocksSectionViewModel";
 import { useAssetSuggestionsViewModel } from "LLD/features/SearchAssets/hooks/useAssetSuggestionsViewModel";
+import { useAssetSearchResultsViewModel } from "LLD/features/SearchAssets/hooks/useAssetSearchResultsViewModel";
 import { SearchMode, SearchResults, SearchSuggestions } from "./types";
-
-const EMPTY_RESULTS: SearchResults = { data: [], isLoading: false };
 
 export const STOCKS_SUGGESTION_LIMIT = 20;
 export const CRYPTOS_SUGGESTION_LIMIT = 3;
-export const STABLECOINS_SUGGESTION_LIMIT = 2;
+
+export const SEARCH_RESULTS_LIMIT = 10;
+
+const SEARCH_DEBOUNCE_MS = 300;
+const MIN_SEARCH_LENGTH = 2;
 
 export function useAssetSearchBar() {
   const [query, setQuery] = useState("");
@@ -24,23 +28,43 @@ export function useAssetSearchBar() {
     setQuery("");
   }, []);
 
+  const trimmedQuery = query.trim();
+  const debouncedQuery = useDebounce(trimmedQuery, SEARCH_DEBOUNCE_MS);
+  const searchEnabled = debouncedQuery.length >= MIN_SEARCH_LENGTH;
+
+  // --- Default suggestions (top market cap + stocks), shown when the query is empty. ---
   const stocks = useStocksSectionViewModel({ limit: STOCKS_SUGGESTION_LIMIT });
-  const { cryptos, stablecoins } = useAssetSuggestionsViewModel({
+  const { cryptos, isError: suggestionsAssetsError } = useAssetSuggestionsViewModel({
     cryptosLimit: CRYPTOS_SUGGESTION_LIMIT,
-    stablecoinsLimit: STABLECOINS_SUGGESTION_LIMIT,
   });
 
-  const suggestions: SearchSuggestions = useMemo(
-    () => ({ cryptos, stablecoins, stocks }),
-    [cryptos, stablecoins, stocks],
+  const suggestions: SearchSuggestions = useMemo(() => ({ cryptos, stocks }), [cryptos, stocks]);
+
+  // --- Live search: a single flat list from the DADA assets search, driven by the debounced query. ---
+  const search = useAssetSearchResultsViewModel({
+    search: debouncedQuery,
+    skip: !searchEnabled,
+    limit: SEARCH_RESULTS_LIMIT,
+  });
+
+  // While the debounce settles, keep the list in its loading (skeleton) state so the overlay never
+  // flashes "no results" between keystrokes.
+  const searchSettling = trimmedQuery.length > 0 && trimmedQuery !== debouncedQuery;
+
+  const results: SearchResults = useMemo(
+    () => ({ data: search.data, isLoading: search.isLoading || searchSettling }),
+    [search.data, search.isLoading, searchSettling],
   );
-  const results = EMPTY_RESULTS;
+
+  const suggestionsError = suggestionsAssetsError || stocks.isError;
+  const searchError = searchEnabled && search.isError;
 
   const mode: SearchMode = useMemo(() => {
-    if (query.trim().length === 0) return "suggestions";
-    if (results.isLoading || results.data.length > 0) return "results";
-    return "noResults";
-  }, [query, results]);
+    if (trimmedQuery.length === 0) return suggestionsError ? "error" : "suggestions";
+    if (searchError) return "error";
+    if (results.isLoading) return "results";
+    return results.data.length > 0 ? "results" : "noResults";
+  }, [trimmedQuery, suggestionsError, searchError, results]);
 
   return { query, onChangeQuery, clear, isOpen, open, close, mode, suggestions, results };
 }

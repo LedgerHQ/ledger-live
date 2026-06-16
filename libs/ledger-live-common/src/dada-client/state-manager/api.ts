@@ -127,12 +127,13 @@ async function fetchAssetsPage(
   };
 }
 
-export async function fetchAllAssetsByCategory(
+async function collectAllByCategory(
   queryArg: GetAssetsByCategoryParams,
+  extract: (data: RawApiResponse) => string[],
 ): Promise<QueryReturnValue<string[], FetchBaseQueryError, FetchBaseQueryMeta | undefined>> {
   try {
     const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
-    const allTickers: string[] = [];
+    const collected: string[] = [];
     let cursor: string | undefined;
 
     do {
@@ -158,11 +159,11 @@ export async function fetchAllAssetsByCategory(
       }
 
       const data: RawApiResponse = await response.json();
-      allTickers.push(...Object.values(data.cryptoAssets).map(a => a.ticker));
+      collected.push(...extract(data));
       cursor = response.headers.get("x-ledger-next") || undefined;
     } while (cursor);
 
-    return { data: allTickers };
+    return { data: collected };
   } catch (error) {
     return {
       error: {
@@ -171,6 +172,18 @@ export async function fetchAllAssetsByCategory(
       },
     };
   }
+}
+
+export function fetchAllAssetsByCategory(queryArg: GetAssetsByCategoryParams) {
+  return collectAllByCategory(queryArg, data =>
+    Object.values(data.cryptoAssets).map(a => a.ticker),
+  );
+}
+
+export function fetchAllAssetCurrencyIdsByCategory(queryArg: GetAssetsByCategoryParams) {
+  return collectAllByCategory(queryArg, data =>
+    Object.values(data.cryptoAssets).flatMap(meta => Object.values(meta.assetsIds)),
+  );
 }
 
 export const assetsDataApi = createApi({
@@ -213,6 +226,12 @@ export const assetsDataApi = createApi({
     getAssetsByCategory: build.query<string[], GetAssetsByCategoryParams>({
       queryFn: async queryArg => {
         return fetchAllAssetsByCategory(queryArg);
+      },
+      keepUnusedDataFor: ONE_DAY_IN_SECONDS,
+    }),
+    getAssetCurrencyIdsByCategory: build.query<string[], GetAssetsByCategoryParams>({
+      queryFn: async queryArg => {
+        return fetchAllAssetCurrencyIdsByCategory(queryArg);
       },
       keepUnusedDataFor: ONE_DAY_IN_SECONDS,
     }),
@@ -275,5 +294,6 @@ export const {
   useGetAssetsDataInfiniteQuery,
   useGetAssetDataQuery,
   useGetAssetsByCategoryQuery,
+  useGetAssetCurrencyIdsByCategoryQuery,
   useGetChunkedAssetsDataQuery,
 } = assetsDataApi;

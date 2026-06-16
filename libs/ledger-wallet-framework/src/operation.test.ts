@@ -13,9 +13,9 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 const ethereum = getCryptoCurrencyById("ethereum");
 const bitcoin = getCryptoCurrencyById("bitcoin");
 // oxlint-disable-next-line typescript/consistent-type-assertions
-const usdc = { parentCurrency: { family: "evm" } } as TokenCurrency;
+const usdc = { parentCurrencyId: "ethereum" } as TokenCurrency;
 // oxlint-disable-next-line typescript/consistent-type-assertions
-const fakeToken = { parentCurrency: { family: "bitcoin" } } as TokenCurrency;
+const fakeToken = { parentCurrencyId: "bitcoin" } as TokenCurrency;
 
 describe("Operation.ts", () => {
   describe("isPoisoningAddressOperation", () => {

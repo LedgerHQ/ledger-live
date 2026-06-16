@@ -43,7 +43,7 @@ const usdcToken: TokenCurrency = {
   type: "TokenCurrency",
   id: "celo/erc20/usdc",
   contractAddress: "0xceba9300f2b948710d2653dd7b07f33a8b32118c",
-  parentCurrency: currency,
+  parentCurrencyId: "celo",
   name: "USD Coin",
   ticker: "USDC",
   units: [
@@ -59,7 +59,7 @@ const usdtToken: TokenCurrency = {
   type: "TokenCurrency",
   id: "celo/erc20/usdt",
   contractAddress: "0x617f3112bf5397d0467d315cc709ef968d9ba546",
-  parentCurrency: currency,
+  parentCurrencyId: "celo",
   name: "Tether USD",
   ticker: "USDT",
   units: [
@@ -136,7 +136,7 @@ const subAccounts = [
       type: "TokenCurrency",
       id: "celoToken",
       contractAddress: "contract_address",
-      parentCurrency: currency,
+      parentCurrencyId: "celo",
     } as TokenCurrency,
     balance: BigNumber(212),
     spendableBalance: BigNumber(212),

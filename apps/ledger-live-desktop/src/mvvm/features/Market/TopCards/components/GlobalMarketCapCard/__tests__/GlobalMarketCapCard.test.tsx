@@ -28,6 +28,11 @@ describe("GlobalMarketCapCard", () => {
     await user.click(card);
 
     expect(await screen.findByTestId("global-market-cap-dialog-content")).toBeVisible();
+    expect(
+      screen.getByText(
+        "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
+      ),
+    ).toBeVisible();
   });
 
   it("renders an error card on a scoped query error so the row stays intact", async () => {

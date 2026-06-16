@@ -22,43 +22,10 @@ const teslaStock = createMarketCurrencyData({
   id: "tesla-xstock",
   name: "Tesla xStock",
   ticker: "tslax",
-  ledgerIds: [
-    "ethereum/erc20/tesla_xstock_0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
-  ],
+  ledgerIds: ["ethereum/erc20/tesla_xstock_0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0"],
   marketcapRank: 528,
   price: 411.28,
 });
-const nvidiaStock = createMarketCurrencyData({
-  id: "nvidia-ondo-tokenized-stock",
-  name: "NVIDIA (Ondo Tokenized Stock)",
-  ticker: "nvdaon",
-  ledgerIds: [
-    "ethereum/erc20/nvidia_ondo_tokenized_0x2d1f7226bd1f780af6b9a49dcc0ae00e8df4bdee",
-  ],
-  marketcapRank: 533,
-  price: 213.27,
-});
-const carvanaStock = createMarketCurrencyData({
-  id: "carvana-ondo-tokenized-stocks",
-  name: "Carvana (Ondo Tokenized Stock)",
-  ticker: "cvnaon",
-  ledgerIds: [
-    "ethereum/erc20/carvana_ondo_tokenized_0xfe4ec50e0413148021d2f50d114cc44de6ffbf23",
-  ],
-  marketcapRank: 12086,
-  price: 338.51,
-});
-const rootstockFalsePositive = createMarketCurrencyData({
-  id: "rif-token",
-  name: "Rootstock Infrastructure Framework",
-  ticker: "rif",
-  ledgerIds: ["rsk/erc20/rif"],
-  marketcapRank: 412,
-});
-const fullStockMarketPage = Array.from({ length: 20 }, (_, index) =>
-  createMarketCurrencyData({ id: `company-${index}-xstock`, name: `Company ${index} xStock` }),
-);
-
 function mockMarketData(overrides: Partial<MarketListRequestResult> = {}) {
   mockedUseMarketData.mockReturnValue({
     data: [bitcoin, ethereum],
@@ -167,11 +134,11 @@ describe("useMarketAssets", () => {
     );
   });
 
-  it("falls back to market cap sorting while volume is unavailable", () => {
+  it("maps volume sorting to the total-volume order", () => {
     renderHook(() => useMarketAssets({ sorting: "volume" }));
 
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(
-      expect.objectContaining({ order: Order.MarketCapDesc }),
+      expect.objectContaining({ order: Order.VolumeDesc }),
     );
   });
 
@@ -222,20 +189,20 @@ describe("useMarketAssets", () => {
     expect(result.current.emptyState).toBeUndefined();
   });
 
-  it("searches all market assets without the stock filter while search is active", () => {
+  it("drops the stock category param while search is active", () => {
     renderHook(() => useMarketAssets({ search: " aapl ", category: "stocks" }));
 
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(
-      expect.objectContaining({ page: 1, search: "aapl", filter: undefined }),
+      expect.objectContaining({ page: 1, search: "aapl", categories: undefined }),
     );
   });
 
-  it("requests stocks from the CVS stock filter", () => {
+  it("requests stocks from the dedicated CVS category", () => {
     mockMarketData({ data: [teslaStock] });
     const { result } = renderHook(() => useMarketAssets({ category: "stocks" }));
 
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(
-      expect.objectContaining({ filter: "stock", page: 1 }),
+      expect.objectContaining({ categories: "tokenized-stock", page: 1 }),
     );
     expect(result.current.assets).toHaveLength(1);
     expect(result.current.assets[0]).toMatchObject({
@@ -245,36 +212,8 @@ describe("useMarketAssets", () => {
     });
   });
 
-  it("filters non-stock CVS rows from the stocks category", () => {
-    mockMarketData({
-      data: [bitcoin, rootstockFalsePositive, teslaStock, nvidiaStock, carvanaStock, ethereum],
-    });
-
-    const { result } = renderHook(() => useMarketAssets({ category: "stocks" }));
-
-    expect(result.current.assets.map(asset => asset.id)).toEqual([
-      "tesla-xstock",
-      "nvidia-ondo-tokenized-stock",
-      "carvana-ondo-tokenized-stocks",
-    ]);
-    expect(result.current.assets.find(asset => asset.id === "bitcoin")).toBeUndefined();
-    expect(result.current.assets.find(asset => asset.id === "rif-token")).toBeUndefined();
-  });
-
-  it("loads the next CVS page when reaching the end of the stocks list", () => {
-    mockMarketData({ data: fullStockMarketPage });
-
-    const { result } = renderHook(() => useMarketAssets({ category: "stocks" }));
-
-    act(() => result.current.onEndReached());
-
-    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
-      expect.objectContaining({ filter: "stock", page: 2 }),
-    );
-  });
-
   it("shows the stocks empty state when CVS returns no stock rows", () => {
-    mockMarketData({ data: [bitcoin, ethereum, rootstockFalsePositive] });
+    mockMarketData({ data: [] });
 
     const { result } = renderHook(() => useMarketAssets({ category: "stocks" }));
 
@@ -295,15 +234,5 @@ describe("useMarketAssets", () => {
       ticker: "tslax",
       ledgerIds: [],
     });
-  });
-
-  it("maps the selected sorting and timeframe to the CVS request params for stocks", () => {
-    mockMarketData({ data: [teslaStock] });
-
-    renderHook(() => useMarketAssets({ category: "stocks", sorting: "gainers", timeframe: "7D" }));
-
-    expect(mockedUseMarketData).toHaveBeenLastCalledWith(
-      expect.objectContaining({ filter: "stock", order: Order.topGainers, range: "7d" }),
-    );
   });
 });

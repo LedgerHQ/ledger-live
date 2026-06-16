@@ -77,8 +77,8 @@ export type TokenCurrency = CurrencyCommon & {
   id: string;
   ledgerSignature?: string;
   contractAddress: string;
-  // the currency it belongs to. e.g. 'ethereum'
-  parentCurrency: CryptoCurrency;
+  // id of the currency it belongs to. e.g. 'ethereum'
+  parentCurrencyId: string;
   // the type of token in the blockchain it belongs. e.g. 'erc20'
   tokenType: string;
 };

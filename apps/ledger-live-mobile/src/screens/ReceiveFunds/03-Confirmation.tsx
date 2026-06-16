@@ -6,6 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   makeEmptyTokenAccount,
   getMainAccount,
@@ -122,7 +123,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const network = useMemo(() => {
     if (currency && currency.type === "TokenCurrency") {
-      return currency.parentCurrency?.name;
+      return findCryptoCurrencyById(currency.parentCurrencyId)?.name;
     }
   }, [currency]);
 
@@ -300,12 +301,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }
 
   let CustomConfirmationTokenAlert;
-  if (
-    currency.type === "TokenCurrency" &&
-    Object.keys(byFamilyTokenAlert).includes(currency.parentCurrency.family)
-  ) {
-    CustomConfirmationTokenAlert =
-      byFamilyTokenAlert[currency.parentCurrency.family as keyof typeof byFamilyTokenAlert];
+  if (currency.type === "TokenCurrency") {
+    const parentFamily = getCryptoCurrencyById(currency.parentCurrencyId).family;
+    if (parentFamily in byFamilyTokenAlert) {
+      CustomConfirmationTokenAlert =
+        byFamilyTokenAlert[parentFamily as keyof typeof byFamilyTokenAlert];
+    }
   }
 
   const isAnAccount = account.type === "Account";

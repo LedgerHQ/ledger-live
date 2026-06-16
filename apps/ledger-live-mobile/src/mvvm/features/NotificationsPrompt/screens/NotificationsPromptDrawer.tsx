@@ -89,14 +89,14 @@ export const NotificationsPromptDrawer = () => {
           type={"main"}
           mt={8}
           mb={7}
-          onPressIn={handleAllowNotificationsPress}
+          onPress={handleAllowNotificationsPress}
           testID="notifications-prompt-allow"
         >
           {t(allowKey)}
         </Button>
         <TextLink
           type={"shade"}
-          onPressIn={handleDelayLaterPress}
+          onPress={handleDelayLaterPress}
           testID="notifications-prompt-later"
         >
           {t(laterKey)}

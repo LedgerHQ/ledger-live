@@ -4,10 +4,7 @@ import type { FinalStateType, EnsureAppReadyState } from "@ledgerhq/live-dmk-sha
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import type { SourceFlow } from "../../../utils/SourceFlowContext";
-import {
-  CONNECT_APP_BUTTON,
-  trackConnectAppButtonClicked,
-} from "../../../utils/trackDeviceIntent";
+import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type FinalErrorState = Extract<EnsureAppReadyState, { type: FinalStateType.Error }>;
 

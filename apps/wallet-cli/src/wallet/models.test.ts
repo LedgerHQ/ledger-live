@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { parseShortAccountDescriptor, parseAccountDescriptor, toTokenInfo } from "./models";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
@@ -67,7 +67,7 @@ describe("toTokenInfo", () => {
       { name: "USDT", code: "USDT", magnitude: 6 },
       { name: "micro USDT", code: "uUSDT", magnitude: 0 },
     ],
-    parentCurrency: { id: "ethereum" } as CryptoCurrency,
+    parentCurrencyId: "ethereum",
   };
 
   it("maps id, ticker, name, contract, tokenType verbatim", () => {
@@ -83,7 +83,7 @@ describe("toTokenInfo", () => {
     expect(toTokenInfo(usdtFixture).decimals).toBe(6);
   });
 
-  it("derives parentCurrencyId from parentCurrency.id", () => {
+  it("maps parentCurrencyId verbatim", () => {
     expect(toTokenInfo(usdtFixture).parentCurrencyId).toBe("ethereum");
   });
 

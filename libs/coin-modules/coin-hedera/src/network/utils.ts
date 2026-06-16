@@ -332,7 +332,7 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
     }
 
     const [parsingError, parsingResult] = await safeParseAccountId({
-      configOrCurrencyId: token.parentCurrency.id,
+      configOrCurrencyId: token.parentCurrencyId,
       address,
     });
 
@@ -342,7 +342,7 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
 
     const addressWithoutChecksum = parsingResult.accountId;
     const mirrorAccount = await apiClient.getAccount({
-      configOrCurrencyId: token.parentCurrency.id,
+      configOrCurrencyId: token.parentCurrencyId,
       address: addressWithoutChecksum,
     });
 

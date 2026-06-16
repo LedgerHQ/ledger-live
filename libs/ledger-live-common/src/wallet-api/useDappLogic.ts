@@ -147,7 +147,7 @@ function useDappAccountLogic({
     const accountCurrencyId =
       account.type === "TokenAccount" ? account.token.id : account.currency.id;
     const accountNetworkCurrency =
-      account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
+      account.type === "TokenAccount" ? account.token.parentCurrencyId : account.currency.id;
 
     const isCompatible = networks.some(
       n => n.currency === accountCurrencyId || n.currency === accountNetworkCurrency,
@@ -261,7 +261,7 @@ export function useDappLogic({
           : currentAccount.currency.id;
       const accountNetworkCurrency =
         currentAccount.type === "TokenAccount"
-          ? currentAccount.token.parentCurrency.id
+          ? currentAccount.token.parentCurrencyId
           : currentAccount.currency.id;
 
       return n.currency === accountCurrencyId || n.currency === accountNetworkCurrency;
@@ -500,7 +500,7 @@ export function useDappLogic({
 
               const accountNetwork =
                 currentAccount.type === "TokenAccount"
-                  ? currentAccount.token.parentCurrency.id
+                  ? currentAccount.token.parentCurrencyId
                   : currentAccount.currency.id;
 
               const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
@@ -511,7 +511,7 @@ export function useDappLogic({
               trackingData = {
                 type: transactionType,
                 currency: token ? token.name : accountCurrencyName,
-                network: token ? token.parentCurrency.id : accountNetwork,
+                network: token ? token.parentCurrencyId : accountNetwork,
               };
 
               const options = nanoApp

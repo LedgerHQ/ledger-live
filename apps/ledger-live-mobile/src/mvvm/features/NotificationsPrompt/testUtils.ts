@@ -2,7 +2,8 @@ import type { Features } from "@shared/feature-flags";
 import { AB_TESTING_VARIANTS } from "./types/variants";
 
 type BrazePushNotificationsParams = NonNullable<Features["brazePushNotifications"]["params"]>;
-type BrazeNotificationsCategoryConfig = BrazePushNotificationsParams["notificationsCategories"][number];
+type BrazeNotificationsCategoryConfig =
+  BrazePushNotificationsParams["notificationsCategories"][number];
 type WordingFeatureParams = NonNullable<
   Features["lwmNewWordingOptInNotificationsDrawer"]["params"]
 >;

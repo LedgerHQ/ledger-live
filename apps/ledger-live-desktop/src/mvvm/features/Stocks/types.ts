@@ -2,16 +2,20 @@ import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/as
 
 export type { StockSuggestion };
 
-export type StocksSectionViewModelResult = {
+export type StocksSection = {
   /** Stocks ranked by market cap, already capped to the requested limit. */
   data: StockSuggestion[];
   isLoading: boolean;
 };
 
+export type StocksSectionViewModelResult = StocksSection & {
+  isError: boolean;
+};
+
 /** Header affordance: chevron "show more" (search) or "Explore" link (portfolio). */
 export type StocksHeaderVariant = "showMore" | "explore";
 
-export type StocksSectionViewProps = StocksSectionViewModelResult & {
+export type StocksSectionViewProps = StocksSection & {
   /** Number of skeleton rows rendered while loading. */
   limit: number;
   /** Redirects to the asset detail page for the given market id. */

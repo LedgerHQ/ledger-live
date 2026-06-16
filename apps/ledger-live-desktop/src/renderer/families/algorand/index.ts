@@ -9,6 +9,11 @@ const family: AlgorandFamily = {
   tokenList,
   accountHeaderManageActions,
   AccountBodyHeader,
+  modalsToPreload: [
+    "MODAL_ALGORAND_OPT_IN",
+    "MODAL_ALGORAND_CLAIM_REWARDS",
+    "MODAL_ALGORAND_EARN_REWARDS_INFO",
+  ],
 };
 
 export default family;

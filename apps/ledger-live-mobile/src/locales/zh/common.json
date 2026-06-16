@@ -895,6 +895,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "请先委托您的账户，然后再进行质押"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "质押余额不足"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
     },
@@ -1907,6 +1910,14 @@
           "buyNanoX" : "购买 Ledger Nano X",
           "discoverBenefits" : "了解优势"
         }
+      }
+    },
+    "counterfeitWarning" : {
+      "title" : "开始之前",
+      "body" : "我们建议您通过 <ledgerCom>Ledger.com</ledgerCom> 或我们的<resellerLink>官方授权经销商网络</resellerLink>购买产品。这有助于确保您的设备为正品，并可安全正常使用。",
+      "cta" : {
+        "primary" : "继续设置",
+        "secondary" : "了解更多"
       }
     },
     "stepNewDevice" : {
@@ -2965,6 +2976,7 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
+      "FINALIZE_UNSTAKE" : "已提取",
       "ASSOCIATE_TOKEN" : "关联代币",
       "CONTRACT_CALL" : "合约调用",
       "UPDATE_ACCOUNT" : "已更新的账户"
@@ -3668,6 +3680,7 @@
           "description" : "创建类似 Braze 的原始卡，通过通用认知模态框解析器进行处理，然后返回资产组合以查看抽屉栏。",
           "carousel" : "轮播",
           "featureIntro" : "功能介绍",
+          "prompt" : "提示",
           "appStart" : "应用程序启动",
           "deeplink" : "深层链接",
           "campaignId" : "活动 ID",
@@ -3689,6 +3702,8 @@
           "createCarouselDesc" : "打开表单以创建轮播式通用提示模态框。",
           "createFeatureIntro" : "创建功能简介通用提示弹窗",
           "createFeatureIntroDesc" : "打开表单以创建功能介绍通用认知模态框。",
+          "createPrompt" : "创建通用提示弹窗",
+          "createPromptDesc" : "打开用于创建通用提示弹窗的表单。",
           "openCurrent" : "打开当前活动",
           "openCurrentDesc" : "设置此活动的抽屉状态。返回资产组合查看。",
           "clear" : "清除通用提示弹窗",
@@ -6599,6 +6614,66 @@
       "status" : "状态",
       "unstaking" : "解除质押",
       "available" : "可用"
+    },
+    "earnRewards" : {
+      "title" : "赚取奖励",
+      "steps" : {
+        "delegate" : "委托",
+        "stake" : "质押"
+      },
+      "delegation" : {
+        "step" : "第 1 步 · 委托",
+        "title" : "赚取无风险奖励",
+        "subtitle" : "无锁定，无风险。",
+        "bullets" : {
+          "0" : "您的全部余额将被委托",
+          "1" : "委托资金依旧保留在您的账户中",
+          "2" : "随时支出您的 XTZ"
+        }
+      },
+      "staking" : {
+        "step" : "第 2 步 · 质押",
+        "title" : "赚取更高奖励",
+        "subtitle" : "需要先有活跃的委托。",
+        "bullets" : {
+          "0" : "您可以质押任意金额",
+          "1" : "质押资金已锁定在您的账户中",
+          "2" : "只需 4 天即可解除质押"
+        }
+      },
+      "learnMore" : "详细了解质押和委托",
+      "cta" : "开始赚取收益"
+    },
+    "stake" : {
+      "flow" : {
+        "amount" : {
+          "disclaimer" : "质押会锁定您的 XTZ，直到您解除质押。",
+          "awaitingDelegation" : "正在确认您的委托。这通常需要不到一分钟……",
+          "cta" : "质押您的 Tezos"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "质押已发送",
+              "text" : "质押奖励开始前仅需 4 天等待期。之后，奖励每天发放，并自动产生复利。"
+            }
+          }
+        },
+        "delegationSuccess" : {
+          "cta" : "质押您的泰索斯以获得更多奖励",
+          "info" : "了解 Tezos 质押与委托的区别"
+        }
+      }
+    },
+    "account" : {
+      "availableBalanceTooltip" : "您现在就可以使用的资金。",
+      "delegatedAssetsTooltip" : "已将 XTZ 委托给 Baker（验证者）。资金仍在您的钱包中，可随时发送。",
+      "stakedAssets" : "权益质押的资产",
+      "stakedAssetsTooltip" : "已将 XTZ 锁定在您的 Baker 下。解除质押约 4 天后可提取资金。",
+      "pendingWithdrawable" : "待处理的可提取资金",
+      "pendingWithdrawableTooltip" : "XTZ 正在解除质押。约 4 天后可提取。",
+      "withdrawableAssets" : "可提取资产",
+      "withdrawableAssetsTooltip" : "已完成解除质押期且已可供提取的 XTZ。"
     }
   },
   "evm" : {
@@ -6656,7 +6731,8 @@
             "warning" : {
               "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
             },
-            "cta" : "继续"
+            "cta" : "继续",
+            "seiAssociationWarning" : "您的 Sei 账户尚未在链上关联。在您的账户的第一笔转出交易获得链上确认之前，委托将会失败。先向任意地址发送小数额的 SEI，等待确认，然后再返回进行委托。"
           },
           "validator" : {
             "validators" : "验证者",
@@ -6767,30 +6843,22 @@
     "claimRewards" : {
       "stepperHeader" : {
         "validator" : "选择要收集的奖励",
-        "method" : "申领奖励",
-        "summary" : "概要",
+        "claim" : "申领奖励",
         "selectDevice" : "选择设备",
         "connectDevice" : "连接设备",
         "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
       },
       "flow" : {
         "steps" : {
-          "method" : {
+          "claim" : {
             "youEarned" : "您赚取了",
             "byDelegationAssetsTo" : "通过将资产委托给",
-            "claimReward" : "兑现",
-            "claimRewardCompound" : "复利",
-            "claimRewardInfo" : "它们现在将被申领并被添加到您的可用余额。",
-            "claimRewardCompoundInfo" : "它们现在将被申领并被自动委托给同一个验证者。",
-            "compoundOrCashIn" : "复利或兑现？",
-            "claimRewardTooltip" : "奖励将被添加至可用余额",
-            "claimRewardCompoundTooltip" : "奖励将被添加至已委托的数额",
+            "description" : "奖励现在将被申领并被添加到您的可用余额。",
             "cta" : "继续"
           },
           "verification" : {
             "success" : {
               "title" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
-              "titleCompound" : "您的奖励已委托给同一个验证者。",
               "text" : "该交易一经网络确认，就会更新您的账户余额。",
               "cta" : "查看详情"
             },
@@ -8027,6 +8095,40 @@
   },
   "market" : {
     "title" : "市场",
+    "assets" : {
+      "title" : "多种资产",
+      "emptyFavorites" : "暂无收藏",
+      "emptyStocks" : "未找到股票",
+      "categories" : {
+        "accessibilityLabel" : "资产类别",
+        "all" : "全部",
+        "stocks" : "股票",
+        "favorites" : "收藏"
+      },
+      "filters" : {
+        "accessibilityLabel" : "打开资产筛选器",
+        "title" : "筛选",
+        "sorting" : "排序方式",
+        "timeframe" : "时间范围",
+        "sortingOptions" : {
+          "marketCap" : "市值",
+          "volume" : "交易量",
+          "gainers" : "获利者",
+          "losers" : "失利者"
+        },
+        "timeframeOptions" : {
+          "1D" : "1 天",
+          "7D" : "1 周",
+          "30D" : "1 个月",
+          "6M" : "6 个月",
+          "1Y" : "1 年"
+        }
+      },
+      "error" : {
+        "title" : "无法加载资产",
+        "description" : "加载资产列表时出现错误。请稍后重试。"
+      }
+    },
     "filters" : {
       "sort" : "排序",
       "filter" : "筛选",
@@ -8126,44 +8228,44 @@
         "tooltip" : "您通过 Ledger Wallet 持有该资产的平均买入价格，包括您买入的资产以及从其他钱包接收的资产。用于追踪您的盈亏情况。"
       },
       "drawer" : {
-        "title" : "资产盈亏",
-        "description" : "概览该资产在您资产组合中的表现。",
+        "title" : "盈亏",
+        "description" : "资产表现分为预估未实现收益和已实现收益。",
         "estimatedReturn" : {
-          "title" : "预估收益",
+          "title" : "未实现收益",
           "description" : "按当前价格卖出时的预估盈亏。"
         },
         "realisedReturn" : {
           "title" : "已实现收益",
-          "description" : "此前出售、发送或互换资产后已确认的盈亏。"
+          "description" : "此前出售、发送或互换资产后预估的盈亏。"
         },
         "totalReturn" : {
           "title" : "总收益",
-          "description" : "预估收益与已实现收益的总和。"
+          "description" : "预估未实现收益与已实现收益的总和。"
         }
       }
     },
     "portfolio" : {
+      "title" : "盈亏",
       "return" : {
         "title" : "未实现收益"
       },
-      "costBasis" : {
-        "title" : "成本基础",
-        "tooltip" : "为获得当前资产而支付的总金额，包括费用。"
+      "realised" : {
+        "title" : "已实现收益"
       },
       "drawer" : {
-        "title" : "资产组合盈亏",
-        "description" : "资产组合表现分为预估和已实现收益。",
+        "title" : "盈亏",
+        "description" : "资产组合表现分为预估未实现收益和已实现收益。",
         "estimatedReturn" : {
-          "title" : "预估收益",
+          "title" : "未实现收益",
           "description" : "按当前价格卖出时的预估盈亏。"
         },
         "realisedReturn" : {
           "title" : "已实现收益",
-          "description" : "此前出售、发送或互换资产后已确认的盈亏。"
+          "description" : "此前出售、发送或互换资产后预估的盈亏。"
         },
         "totalReturn" : {
           "title" : "总收益",
-          "description" : "预估收益与已实现收益的总和。"
+          "description" : "预估未实现收益与已实现收益的总和。"
         }
       }
     }
@@ -8838,7 +8940,8 @@
     "title" : "Ledger Sync",
     "banner" : {
       "title" : "您的钱包未同步",
-      "description" : "及时更新您的资产组合"
+      "description" : "及时更新您的资产组合",
+      "cta" : "同步我的钱包"
     },
     "entryPoints" : {
       "simpleCta" : {
@@ -9093,18 +9196,32 @@
       "marketPrice" : "市场价格",
       "timeframeSelector" : "时间范围",
       "timeLabel" : {
-        "24h" : "1 天",
-        "7d" : "1 周",
-        "30d" : "1 个月",
-        "1y" : "1 年"
+        "1d" : "24 小时",
+        "1w" : "1 周",
+        "1m" : "1 个月",
+        "6m" : "6 个月",
+        "1y" : "1 年",
+        "all" : "所有时间"
       },
-      "chartPlaceholder" : "图形"
+      "range" : {
+        "1d" : "1 天",
+        "1w" : "1 周",
+        "1m" : "1 月",
+        "6m" : "6 个月",
+        "1y" : "1 年",
+        "all" : "全部"
+      },
+      "chart" : {
+        "received" : "已接收",
+        "sent" : "已发送",
+        "transactionsCount" : "{{count}} 笔交易"
+      }
     },
     "addresses" : {
-      "title" : "地址",
+      "title" : "账户",
       "addAccount" : "添加",
       "seeAll" : "显示全部",
-      "empty" : "暂无地址点按“添加”开始。"
+      "empty" : "尚无账户点按“添加”开始。"
     },
     "marketStats" : {
       "title" : "市场数据",
@@ -9117,7 +9234,8 @@
       "marketCapTooltip" : "流通中所有加密货币的总价值。可以将其视为加密货币的市场总价值。",
       "tradingVolume" : "24 小时交易量",
       "tradingVolumeTooltip" : "过去 24 小时内交易的总数额。",
-      "error" : "无法加载市场数据"
+      "error" : "无法加载市场数据",
+      "disclaimer" : "市场统计数据源自 CoinGecko"
     },
     "pricePerformance" : {
       "title" : "价格表现",
@@ -9158,6 +9276,11 @@
       "removeFavourite" : "从收藏中删除",
       "hideFromPortfolio" : "从资产组合中隐藏",
       "showInPortfolio" : "显示在资产组合中"
+    },
+    "chartOptions" : {
+      "openMenuA11yLabel" : "图表选项",
+      "hideTransactions" : "隐藏价格图表上的活动",
+      "showTransactions" : "显示价格图表上的活动"
     }
   },
   "assetSelection" : {
@@ -9552,15 +9675,30 @@
   },
   "fearAndGreed" : {
     "title" : "情绪指数",
-    "description" : "根据趋势和活动显示整体市场情绪（从 0 到 100）。以此了解市场表现：数值较低表示恐惧，数值较高表示贪婪。",
+    "description" : "主要根据波动性、市场动能和社交趋势显示整体市场情绪（从 0 到 100）。数值较低表示恐惧，数值较高表示贪婪。",
+    "disclaimer" : "数据来源于 CoinMarketCap 的恐惧与贪婪指数，仅供参考。",
     "levels" : {
+      "fearPlus" : "恐惧+",
       "fear" : "恐惧",
-      "cautious" : "谨慎",
       "neutral" : "中立",
-      "optimistic" : "乐观",
-      "greedy" : "贪婪"
+      "greed" : "贪婪",
+      "greedPlus" : "贪婪+"
     },
     "tileTitle" : "情绪"
+  },
+  "altcoinSeason" : {
+    "title" : "季",
+    "definitionTitle" : "替代币指数",
+    "description" : "替代币指数用于衡量比特币相较于其他加密货币的表现。数值越高，表示替代币相对于比特币表现越好。",
+    "disclaimer" : "数据来源于 CoinMarketCap 的恐惧与贪婪指数，仅供参考。",
+    "levels" : {
+      "bitcoin" : "比特币",
+      "altcoin" : "替代币"
+    }
+  },
+  "marketCapCard" : {
+    "title" : "总市值",
+    "description" : "总市值代表所有加密货币市值的总和。"
   },
   "analyticsAllocation" : {
     "header" : {

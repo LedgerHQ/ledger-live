@@ -22,6 +22,7 @@ describe("Bridge", () => {
     const getAddress = jest.fn().mockResolvedValue({ address: "aleo1test" });
     const getViewKey = jest.fn().mockResolvedValue({ viewKey: "view_key" });
     const getAppConfig = jest.fn().mockResolvedValue({});
+    const getTvk = jest.fn().mockResolvedValue({ tvk: new Uint8Array([0xaa]) });
 
     const mockSigner: AleoSigner = {
       signRootIntent,
@@ -30,6 +31,7 @@ describe("Bridge", () => {
       getAddress,
       getViewKey,
       getAppConfig,
+      getTvk,
     };
 
     return <T>(_deviceId: string, fn: (signer: AleoSigner) => Promise<T>): Promise<T> =>

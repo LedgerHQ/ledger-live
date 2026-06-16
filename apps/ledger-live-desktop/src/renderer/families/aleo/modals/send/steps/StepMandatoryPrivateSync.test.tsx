@@ -21,6 +21,7 @@ jest.mock("~/renderer/actions/accounts", () => ({
 }));
 
 jest.mock("../../../shared/utils", () => ({
+  ...jest.requireActual("../../../shared/utils"),
   getAleoCurrencyConfig: jest.fn(),
 }));
 

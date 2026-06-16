@@ -36,7 +36,9 @@ export async function fetchList({
       ...(starred.length > 0 && { ids: starred.sort().join(",") }),
       ...(liveCompatible && { supported: liveCompatible }),
       ...(categories && { categories }),
+      // Only apply `top=100` for global gainers/losers (LIVE-32164).
       ...(!hasExplicitFilter &&
+        !categories &&
         [Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
   });

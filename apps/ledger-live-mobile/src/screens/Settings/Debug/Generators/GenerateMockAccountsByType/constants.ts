@@ -31,6 +31,8 @@ export const ALL_STABLECOIN_IDS = [
   ...STABLECOIN_TOKENS_BY_NETWORK.algorand,
 ] as const;
 
+export const MAX_STOCK_TOKENS = 20;
+
 const allCurrencies = listSupportedCurrencies();
 
 export const MAINNET_CURRENCIES = allCurrencies.filter(c => !c.isTestnetFor);

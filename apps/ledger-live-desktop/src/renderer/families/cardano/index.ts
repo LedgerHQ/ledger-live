@@ -11,6 +11,12 @@ const family: CardanoFamily = {
   sendRecipientFields,
   AccountBalanceSummaryFooter,
   accountHeaderManageActions,
+  modalsToPreload: [
+    "MODAL_CARDANO_DELEGATE",
+    "MODAL_CARDANO_UNDELEGATE",
+    "MODAL_CARDANO_REWARDS_INFO",
+    "MODAL_CARDANO_UNDELEGATE_SELF_TX_INFO",
+  ],
 };
 
 export default family;

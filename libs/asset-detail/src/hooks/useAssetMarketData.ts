@@ -8,9 +8,11 @@ import type {
 } from "@ledgerhq/live-common/market/utils/types";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { applyDadaMarketFallback } from "../utils/applyDadaMarketFallback";
+import { resolveDadaMarket } from "../utils/resolveDadaMarket";
 import type { AssetMarketDataInput, AssetMarketDataResult } from "../types";
 
 export function useAssetMarketData({
@@ -39,6 +41,17 @@ export function useAssetMarketData({
     [knownLedgerIds, marketFromHook?.ledgerIds],
   );
 
+  // Shared bulk DADA cache: same query args as the Assets table / Global Search so the
+  // displayed price reads the exact same entry — no transient drift. `isStaging` is
+  // normalized to `undefined` (not `false`) to keep the same cache key those screens use.
+  const { data: bulkData } = useAssetsData({
+    product,
+    version,
+    isStaging: isStaging || undefined,
+    pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    skipPollingIfUnfocused: true,
+  });
+
   const {
     data: assetData,
     isLoading: isLoadingDada,
@@ -56,9 +69,9 @@ export function useAssetMarketData({
     },
   );
 
-  const dadaMarket = effectiveLedgerIds?.[0]
-    ? assetData?.markets[effectiveLedgerIds[0]]
-    : undefined;
+  // The per-asset query stays subscribed even when the bulk entry wins: it supplies
+  // `ledgerCurrencyFromDada` (used for un-held assets) and the fallback market entry.
+  const dadaMarket = resolveDadaMarket(effectiveLedgerIds, bulkData, assetData);
 
   const { status: rateStatus, rate } = useUsdToFiatRate(counterCurrency);
 

@@ -205,6 +205,7 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
+      "FINALIZE_UNSTAKE" : "引き出し済み",
       "SENDING" : "送信中",
       "BURN" : "バーン済み",
       "ASSOCIATE_TOKEN" : "トークンの関連付け",
@@ -4260,8 +4261,10 @@
         "redelegateDisabledTooltip" : "再デリゲートは、<0>{{days}}</0>後に可能です",
         "redelegateMaxDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターを再デリゲートすることはできません。",
         "undelegateDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターのデリゲートを解除することはできません。",
+        "undelegateActivatingTooltip" : "アクティベート中のステーキングはデリゲート解除できません",
         "reward" : "報酬獲得を申請",
         "activeTooltip" : "デリゲートして報酬を得る",
+        "activatingTooltip" : "デリゲートされた数量は、次のエポックから報酬が発生し始めます",
         "inactiveTooltip" : "デリゲートしていない金額は報酬を生成しません",
         "minSafeWarning" : "資金不足",
         "commission" : "コミッション",
@@ -4274,7 +4277,8 @@
               "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "資産はデリゲート解除後に使用可能"],
               "warning" : {
                 "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
-              }
+              },
+              "seiAssociationWarning" : "Seiアカウントはまだオンチェーンでリンクされていません。アカウントの最初の送信トランザクションがオンチェーンで承認されるまで、デリゲートは失敗します。まずは任意のアドレスに少額のSEIを送付し、承認を待ち、その後戻ってデリゲートしてください。"
             },
             "amount" : {
               "title" : "数量"
@@ -4373,13 +4377,13 @@
     "error" : "チャートを読み込みできません",
     "rangeSelectorLabel" : "期間を選択",
     "range" : {
-      "1D" : "1日",
-      "1W" : "1週",
-      "1M" : "1月",
-      "6M" : "6ヶ月",
-      "1Y" : "1年",
-      "5Y" : "5年",
-      "ALL" : "全て"
+      "1d" : "1日",
+      "1w" : "1週",
+      "1m" : "1月",
+      "6m" : "6ヶ月",
+      "1y" : "1年",
+      "5y" : "5年",
+      "all" : "ALL"
     }
   },
   "near" : {
@@ -5155,6 +5159,16 @@
       "customLockScreen" : "カスタムロック画面アセット",
       "customLockScreenDesc" : "カスタムロック画面のグラフィックアセットをデバッグする",
       "customLockScreenCTA" : "開始",
+      "coinConfig" : {
+        "title" : "Ledger Walletで使用されるコイン設定",
+        "desc" : "ローカルデバッグ用に通貨ごとの設定（RPC、エクスプローラー、ガス...）をオーバーライドします。有効なJSONのみが受け入れられます。オーバーライドは再起動後も維持されます；クリアするには\"すべて復元\"を使用してください。",
+        "search" : "設定キーを検索（例：config_currency_ethereum)",
+        "hint" : "デフォルトでは `config_currency_*` キーが表示されます。すべてのLiveConfigキーを表示するには検索してください。オブジェクト設定では、オーバーライドはデフォルト+リモートの価値の上にディープマージされます。",
+        "restore" : "復元",
+        "override" : "上書き",
+        "restoreAll" : "すべてのコイン設定を復元",
+        "overriddenLocally" : "ローカルで上書き"
+      },
       "featureFlagsTitle" : "Ledger Walletで使用される定義済みの機能フラグ",
       "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
       "featureFlagsEdit" : "編集",
@@ -7188,6 +7202,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "ステーキングする前に、アカウントをデリゲートしてください"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "ステーキング残高不足"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
     },
@@ -8283,6 +8300,9 @@
         "value" : "価値",
         "allocation" : "配分"
       }
+    },
+    "pnl" : {
+      "title" : "利益と損失"
     }
   },
   "walletSync" : {
@@ -8612,15 +8632,16 @@
   },
   "fearAndGreed" : {
     "levels" : {
+      "fearPlus" : "極度の恐怖",
       "fear" : "恐怖",
-      "cautious" : "慎重",
       "neutral" : "中立",
-      "optimistic" : "楽観",
-      "greedy" : "貪欲"
+      "greed" : "貪欲",
+      "greedPlus" : "極度の貪欲"
     },
     "dialog" : {
       "title" : "市場ムード指数",
-      "content" : "トレンドとアクティビティに基づいて、全体的な市場心理を0から100まで表示します。これを使って、市場がどのように動作しているかを理解してください。低い価値は恐怖を示し、高い価値は欲望を示します。",
+      "content" : "特にボラティリティ、市場のモメンタム、ソーシャルトレンドに基づいて、全体的な市場心理を0から100まで表示します。低い価値は恐怖を示し、高い価値は貪欲を示します。",
+      "disclaimer" : "データはCoinMarketCapの恐怖と強欲指数から取得されたものであり、情報提供のみを目的としています。",
       "cta" : "了解"
     }
   },
@@ -8928,9 +8949,9 @@
       "done" : "完了",
       "fundYourWallet" : "ウォレットに資金を追加する",
       "discoverSwap" : "スワップを見る",
-      "growYourRewards" : "報酬を運用する",
-      "spendYourCrypto" : "暗号資産で決済",
-      "everythingAtAGlance" : "すべてを一目で把握"
+      "discoverEarn" : "報酬獲得を確認",
+      "getCard" : "カードを手に入れる",
+      "viewPortfolio" : "ポートフォリオを見る"
     },
     "slides" : {
       "fund" : {
@@ -9017,25 +9038,46 @@
       "hideFromPortfolio" : "ポートフォリオで非表示にする",
       "showInPortfolio" : "ポートフォリオに表示する"
     },
+    "chartOptions" : {
+      "menu" : "チャートオプション",
+      "hideTransactions" : "価格チャート上のアクティビティを非表示にする",
+      "showTransactions" : "価格チャートにアクティビティを表示"
+    },
     "hiddenBanner" : {
       "description" : "この資産はポートフォリオで非表示です。",
       "showAsset" : "資産を表示"
     },
     "totalBalance" : "総資産",
     "marketPrice" : "市場価格",
-    "addresses" : "アドレス",
+    "addresses" : "アカウント",
     "addressesDialog" : {
-      "title" : "アドレス",
-      "description" : "すべてのアドレスは{{ticker}}を保持しています。"
+      "title" : "アカウント",
+      "description" : "すべてのアカウントは{{ticker}}を保持しています。"
     },
     "add" : "追加",
     "notFound" : "資産配分項目が見つかりません。",
     "marketStats" : "マーケット統計",
     "marketStatsTooltip" : "この資産の市場指標。",
+    "marketCapTooltip" : "流通しているすべてのコインの総価値。市場における暗号資産の総価値とお考えください。",
+    "circulatingSupplyTooltip" : "現在、市場に流通し、一般に保有されているトークンの総数。ロック済み、予約済み、または未発行のトークンは除外されます。",
+    "maxSupplyTooltip" : "将来的に存在し得るトークンの最大数。一部の資産では、インフレーションを防ぐためにこれは固定されています。",
     "pricePerformance" : "価格パフォーマンス",
     "marketRank" : "マーケットランキング",
     "tradingVolume24h" : "24時間取引量",
+    "tradingVolume24hTooltip" : "過去24時間に取引された合計数量。",
+    "marketStatsDisclaimer" : "市場統計はCoinGeckoから取得しています",
     "day" : "1日間",
+    "week" : "1週間",
+    "month" : "1か月",
+    "sixMonths" : "6か月",
+    "year" : "1年",
+    "fiveYears" : "5年",
+    "allTime" : "全期間",
+    "chart" : {
+      "received" : "受取済み",
+      "sent" : "送付済み",
+      "transactionsCount" : "{{count}}トランザクション"
+    },
     "staking" : {
       "availableBalance" : "利用可能残高",
       "availableBalanceTooltip" : "今すぐ利用でき、いつでも自由に送金・スワップ・出金可能な保有資産の金額。",
@@ -9050,7 +9092,7 @@
     "asset" : {
       "entry" : {
         "title" : "平均取得価格",
-        "tooltip" : "他のウォレットから購入したり、受け取ったすべてを含む、このウォレットでこの資産に対して支払った平均価格。利益または損失をチェックするために使用されます。"
+        "tooltip" : "他のウォレットから購入したり、受け取ったすべてを含む、Ledger Walletを通じてこの資産に対して支払った平均価格。利益または損失をチェックするために使用されます。"
       },
       "return" : {
         "title" : "未実現利益"
@@ -9060,42 +9102,46 @@
         "description" : "この資産がお客様のポートフォリオでどのように運用されたかをまとめたものです。",
         "totalReturn" : {
           "title" : "総リターン",
-          "description" : "未実現リターンと実現リターンの合計。"
+          "description" : "推定未実現利益と実現利益の合計。"
         },
         "unrealisedReturn" : {
           "title" : "未実現利益",
-          "description" : "本日の価格で売却した場合の利益または損失の見積もり。"
+          "description" : "現在の価格で売却した場合の利益または損失の見積もり。"
         },
         "realisedReturn" : {
           "title" : "リターンの実現",
-          "description" : "以前の売却または譲渡で確認された利益または損失。"
+          "description" : "以前の売却、送金、またはスワップで推定された利益または損失。"
         }
       }
     },
     "portfolio" : {
-      "return" : {
-        "title" : "未実現利益"
+      "cards" : {
+        "totalReturn" : "総リターン",
+        "unrealisedReturn" : "未実現利益",
+        "realisedReturn" : "リターンの実現"
       },
       "costBasis" : {
         "title" : "取得価格",
         "tooltip" : "手数料を含む、現在の保有資産を取得するために支払った合計金額。"
       },
+      "detail" : "詳細",
       "dialog" : {
         "title" : "利益と損失",
-        "description" : "ポートフォリオのパフォーマンスを、実現収益と未実現収益に分類しました。",
+        "description" : "ポートフォリオのパフォーマンスを、推定実現利益と未実現利益に分類しました。",
         "totalReturn" : {
           "title" : "総リターン",
-          "description" : "実現利益と未実現利益を組み合わせ、全体的なポジションを反映します。"
+          "description" : "推定未実現利益と実現利益の合計。"
         },
         "unrealisedReturn" : {
           "title" : "未実現利益",
-          "description" : "現在の保有資産に対する利益または損失の推定値。"
+          "description" : "現在の価格で売却した場合の利益または損失の見積もり。"
         },
         "realisedReturn" : {
           "title" : "リターンの実現",
-          "description" : "以前の売却または外部への送金で確認された利益または損失。"
+          "description" : "以前の売却、送金、またはスワップで推定された利益または損失。"
         }
       }
-    }
+    },
+    "disclaimer" : "このデータは情報提供のみを目的としており、財務上のアドバイスではありません。税務目的には使用できません。"
   }
 }

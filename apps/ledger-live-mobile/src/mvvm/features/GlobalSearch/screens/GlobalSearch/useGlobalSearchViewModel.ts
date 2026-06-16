@@ -7,11 +7,13 @@ import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
-import { useGlobalSearchDefaults } from "./useGlobalSearchDefaults";
-import { useGlobalSearchResults } from "./useGlobalSearchResults";
+import { useGlobalSearchDefaults } from "LLM/features/GlobalSearch/hooks/useGlobalSearchDefaults";
+import { useGlobalSearchResults } from "LLM/features/GlobalSearch/hooks/useGlobalSearchResults";
 import type { GlobalSearchDefaultSections } from "./types";
 
-export type GlobalSearchCategory = "crypto" | "stable" | "stocks";
+export type GlobalSearchCategory = "crypto" | "stocks";
+
+const SEARCH_FLOW = "global_search";
 
 export type GlobalSearchViewModel = {
   search: string;
@@ -21,6 +23,7 @@ export type GlobalSearchViewModel = {
   isLoadingDefaults: boolean;
   isLoadingSearch: boolean;
   hasNoResults: boolean;
+  hasError: boolean;
   defaultSections: GlobalSearchDefaultSections;
   searchResults: MarketAssetDisplayData[];
   onBack: () => void;
@@ -41,11 +44,18 @@ export function useGlobalSearchViewModel(): GlobalSearchViewModel {
     searchResults,
     isLoadingSearch,
     hasNoResults,
+    hasError: hasSearchError,
   } = useGlobalSearchResults();
-  const { defaultSections, isLoadingDefaults } = useGlobalSearchDefaults(!isSearchActive);
+  const {
+    defaultSections,
+    isLoadingDefaults,
+    hasError: hasDefaultsError,
+  } = useGlobalSearchDefaults(!isSearchActive);
+
+  const hasError = isSearchActive ? hasSearchError : hasDefaultsError;
 
   useEffect(() => {
-    track("search_open");
+    track("search_open", { page: ScreenName.GlobalSearch });
   }, []);
 
   const onBack = useCallback(() => navigation.goBack(), [navigation]);
@@ -53,8 +63,6 @@ export function useGlobalSearchViewModel(): GlobalSearchViewModel {
   const onSeeAll = useCallback(
     (category: GlobalSearchCategory) => {
       track("button_clicked", { button: "See all", page: ScreenName.GlobalSearch, category });
-
-      if (category === "stable") return;
 
       navigation.navigate(ScreenName.MarketList, {
         category: category === "stocks" ? "stocks" : "all",
@@ -64,22 +72,36 @@ export function useGlobalSearchViewModel(): GlobalSearchViewModel {
   );
 
   const onAssetPress = useCallback(
-    (asset: MarketAssetDisplayData) =>
+    (asset: MarketAssetDisplayData) => {
+      track("asset_clicked", {
+        asset: asset.name,
+        page: ScreenName.GlobalSearch,
+        flow: SEARCH_FLOW,
+        searched: isSearchActive,
+      });
       openFromMarket({
         marketCurrencyId: asset.id,
         ledgerCurrencyIds: asset.ledgerIds,
         source: ScreenName.GlobalSearch,
-      }),
-    [openFromMarket],
+      });
+    },
+    [openFromMarket, isSearchActive],
   );
 
   const onStockPress = useCallback(
-    (stock: StockSuggestion) =>
+    (stock: StockSuggestion) => {
+      track("asset_clicked", {
+        asset: stock.name,
+        page: ScreenName.GlobalSearch,
+        flow: SEARCH_FLOW,
+        searched: false,
+      });
       openFromMarket({
         marketCurrencyId: stock.navigationId,
         ledgerCurrencyIds: [stock.ledgerId],
         source: ScreenName.GlobalSearch,
-      }),
+      });
+    },
     [openFromMarket],
   );
 
@@ -91,6 +113,7 @@ export function useGlobalSearchViewModel(): GlobalSearchViewModel {
     isLoadingDefaults,
     isLoadingSearch,
     hasNoResults,
+    hasError,
     defaultSections,
     searchResults,
     onBack,

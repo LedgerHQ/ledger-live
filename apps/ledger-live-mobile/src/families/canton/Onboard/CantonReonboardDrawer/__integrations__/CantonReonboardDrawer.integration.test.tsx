@@ -1,11 +1,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  getCryptoCurrencyById,
-  listSupportedCurrencies,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import { screen, render, waitFor } from "@tests/test-renderer";
@@ -57,7 +53,6 @@ jest.mock("~/components/DeviceActionModal", () => ({
   default: () => null,
 }));
 
-let previousCurrencyIds: string[] = [];
 let currency: CryptoCurrency;
 let accountToReonboard: Account;
 
@@ -77,11 +72,6 @@ function overrideInitialStateWithDevice(state: State): State {
 
 describe("CantonReonboardDrawer integration", () => {
   beforeAll(async () => {
-    previousCurrencyIds = listSupportedCurrencies().map(c => c.id);
-    if (!previousCurrencyIds.includes("canton_network_devnet")) {
-      setSupportedCurrencies([...previousCurrencyIds, "canton_network_devnet"]);
-    }
-
     currency = getCryptoCurrencyById("canton_network_devnet");
     accountToReonboard = { ...genAccount("canton-devnet-reonboard", { currency }), used: true };
 
@@ -95,10 +85,6 @@ describe("CantonReonboardDrawer integration", () => {
     }));
 
     await getCurrencyBridge(currency);
-  });
-
-  afterAll(() => {
-    setSupportedCurrencies(previousCurrencyIds);
   });
 
   beforeEach(() => {

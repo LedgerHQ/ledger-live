@@ -6,9 +6,15 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { TFunction } from "i18next";
 import { Operation } from "@ledgerhq/types-live";
 import { DataList } from "~/renderer/drawers/OperationDetails";
+import { importLLDCoinFamily } from "~/renderer/families";
 import operationDetails from "../operationDetails";
 
 const { OperationDetailsExtra, addressCell } = operationDetails;
+
+// Preload so useLLDCoinFamily resolves synchronously on first render instead of suspending.
+beforeAll(async () => {
+  await importLLDCoinFamily("bitcoin");
+});
 
 const mockT = ((key: string) => key) as TFunction;
 

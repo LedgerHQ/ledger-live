@@ -7,6 +7,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { BorrowLiveAppNavigatorParamList } from "./types/BorrowLiveAppNavigator";
 import { BorrowLiveAppWrapper } from "LLM/features/Borrow";
+import { BorrowInfoBottomSheet } from "LLM/features/Borrow/components/BorrowInfoBottomSheet";
 import type { BorrowSwapNavigationParams } from "@ledgerhq/live-common/wallet-api/Borrow/types";
 import type { DefaultAccountSwapParamList } from "~/screens/Swap/types";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
@@ -77,13 +78,16 @@ const Borrow = (props: NavigationProps) => {
   }, [clearDeepLink, paramAction]);
 
   return (
-    <BorrowLiveAppWrapper
-      action={paramAction}
-      onNativeGoBack={goBackNative}
-      onActionHandled={clearDeepLink}
-      onWalletApiGoBack={triggerGoBackAction}
-      onWalletApiGoToSwap={goToSwap}
-    />
+    <>
+      <BorrowLiveAppWrapper
+        action={paramAction}
+        onNativeGoBack={goBackNative}
+        onActionHandled={clearDeepLink}
+        onWalletApiGoBack={triggerGoBackAction}
+        onWalletApiGoToSwap={goToSwap}
+      />
+      <BorrowInfoBottomSheet />
+    </>
   );
 };
 

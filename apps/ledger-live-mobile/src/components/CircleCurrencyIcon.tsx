@@ -30,7 +30,7 @@ function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: 
 
   const ledgerId = currency.id;
   const tickerProp = currency.ticker;
-  const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+  const network = currency.type === "TokenCurrency" ? currency.parentCurrencyId : undefined;
   const iconSize = Math.round(size * sizeRatio);
   const validIconSize = getValidCryptoIconSizeNative(iconSize);
 

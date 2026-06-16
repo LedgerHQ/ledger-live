@@ -16,7 +16,8 @@ import { openModal } from "~/renderer/actions/modals";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
@@ -53,7 +54,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
               token: currency.name,
               ticker: currency.ticker,
               tokenType: currency.tokenType.toUpperCase(),
-              currency: currency.parentCurrency.name,
+              currency: getCryptoCurrencyById(currency.parentCurrencyId).name,
             }}
           >
             <b></b>
@@ -75,7 +76,9 @@ export const StepChooseCurrencyFooter = ({
   const dispatch = useDispatch();
   const isToken = currency && currency.type === "TokenCurrency";
 
-  const parentCurrency = isToken && currency.parentCurrency;
+  const parentCurrency = isToken
+    ? getCryptoCurrencyById((currency as TokenCurrency).parentCurrencyId)
+    : undefined;
 
   const accountData = isToken && findTokenAccountByCurrency(currency, existingAccounts);
   const parentTokenAccount = accountData ? accountData.parentAccount : null;

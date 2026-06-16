@@ -15,7 +15,7 @@ export function OperationCounterpartyLabel({ item, prefix }: OperationCounterpar
   const displayAddress = address || mainAccount.freshAddress;
   const cryptoOrToken = getCurrencyForAccount(account);
   const currencyId =
-    cryptoOrToken.type === "TokenCurrency" ? cryptoOrToken.parentCurrency.id : cryptoOrToken.id;
+    cryptoOrToken.type === "TokenCurrency" ? cryptoOrToken.parentCurrencyId : cryptoOrToken.id;
   const { displayName } = useAddressDisplay(displayAddress, currencyId);
 
   if (!displayName) return null;

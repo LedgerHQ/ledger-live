@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,8 @@ import {
 import { Operation } from "@ledgerhq/types-live";
 
 import CompleteExchange, {
-  Data as CompleteExchangeData,
+  type CloseExchangeCompleteOptions,
+  type Data as CompleteExchangeData,
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
@@ -102,10 +103,21 @@ export const LiveAppDrawer = () => {
   }, [dismissDisclaimerChecked, dispatch, payload]);
 
   const [exchangeCompleted, setExchangeCompleted] = React.useState(false);
+  const [shouldRestoreDrawerFocusOnClose, setShouldRestoreDrawerFocusOnClose] = useState(true);
 
-  const onCloseExchangeComplete = useCallback(() => {
-    dispatch(closePlatformAppDrawer());
-  }, [dispatch]);
+  useEffect(() => {
+    if (!isOpen && !shouldRestoreDrawerFocusOnClose) {
+      setShouldRestoreDrawerFocusOnClose(true);
+    }
+  }, [isOpen, shouldRestoreDrawerFocusOnClose]);
+
+  const onCloseExchangeComplete = useCallback(
+    ({ shouldRestoreFocusOnClose = true }: CloseExchangeCompleteOptions = {}) => {
+      setShouldRestoreDrawerFocusOnClose(shouldRestoreFocusOnClose);
+      dispatch(closePlatformAppDrawer());
+    },
+    [dispatch],
+  );
 
   const action = useStartExchangeAction();
 
@@ -181,13 +193,23 @@ export const LiveAppDrawer = () => {
                   i18nKeyTitle="swap.wrongDevice.title"
                   i18nKeyDescription="swap.wrongDevice.description"
                   i18nKeyValues={{ provider: getProviderName(data.provider) }}
+                  variant="provider"
+                  provider={data.provider}
+                  sourceCurrency={data.exchange.fromCurrency.id}
+                  targetCurrency={data.exchange.toCurrency.id}
                 />
               );
             }
             const keys = getIncompatibleCurrencyKeys(data.exchange);
             if (keys) {
               return (
-                <HardwareUpdate i18nKeyTitle={keys.title} i18nKeyDescription={keys.description} />
+                <HardwareUpdate
+                  i18nKeyTitle={keys.title}
+                  i18nKeyDescription={keys.description}
+                  variant="currency"
+                  sourceCurrency={data.exchange.fromCurrency.id}
+                  targetCurrency={data.exchange.toCurrency.id}
+                />
               );
             }
           }
@@ -267,10 +289,12 @@ export const LiveAppDrawer = () => {
           });
         }
         dispatch(closePlatformAppDrawer());
+        setShouldRestoreDrawerFocusOnClose(true);
         // Reset state for next time
         setExchangeCompleted(false);
       }}
       direction="left"
+      shouldRestoreFocusOnClose={shouldRestoreDrawerFocusOnClose}
     >
       <ContentWrapper>{drawerContent}</ContentWrapper>
     </SideDrawer>

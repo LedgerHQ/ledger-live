@@ -13,7 +13,7 @@ import { getLoadedMockAccountForFamily, loadMockAccountForFamily } from "../coin
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
-import { TezosAccount } from "@ledgerhq/coin-tezos/types/index";
+import type { TezosAccount } from "../families/tezos/types";
 import { TronAccount } from "@ledgerhq/coin-tron/types/index";
 import { CardanoAccount, PaymentChain } from "@ledgerhq/coin-cardano/types";
 import { types } from "@stricahq/typhonjs";

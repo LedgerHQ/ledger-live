@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { AssetsViewProps, AssetTableItem } from "../types";
 import { buildPlaceholderAssetItemsFromAssetsData } from "../utils/buildPlaceholderAssetItemsFromAssetsData";
 import { useSelector } from "LLD/hooks/redux";
@@ -46,13 +47,33 @@ export function useAssetsViewModel(): AssetsViewProps {
     categorizedAssets.cryptos.length < EMPTY_STATE_CRYPTOS ||
     categorizedAssets.stablecoins.length < EMPTY_STATE_STABLECOINS;
 
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const { status: rateStatus, rate } = useUsdToFiatRate(counterValueCurrency.ticker);
+
   const { data: assetsData, isLoading: isLoadingAssetsData } = useAssetsData({
     product: "lld",
     version: __APP_VERSION__,
-    skip: !needsPadding,
     pollingInterval: ASSETS_PRICE_REFRESH_INTERVAL_MS,
     skipPollingIfUnfocused: true,
   });
+
+  const usdPriceById = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!assetsData?.markets) return map;
+    for (const [currencyId, market] of Object.entries(assetsData.markets)) {
+      if (market?.price != null) map.set(currencyId, market.price);
+    }
+    return map;
+  }, [assetsData]);
+
+  const getMarketPrice = useCallback(
+    (currencyId: string): number | undefined => {
+      if (rateStatus !== "ready" || rate == null) return undefined;
+      const usd = usdPriceById.get(currencyId);
+      return usd != null ? usd * rate : undefined;
+    },
+    [rateStatus, rate, usdPriceById],
+  );
 
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -123,7 +144,6 @@ export function useAssetsViewModel(): AssetsViewProps {
     [paddedCryptos, paddedStablecoins],
   );
 
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const nonPlaceholderCurrencies = useMemo(
     () => allItems.filter(i => !i.isPlaceholder).map(i => i.currency),
     [allItems],
@@ -133,13 +153,23 @@ export function useAssetsViewModel(): AssetsViewProps {
   const trends = useAllCurrencyTrends(allItems, "day");
 
   const cryptosWithTrend = useMemo(
-    () => paddedCryptos.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
-    [paddedCryptos, trends],
+    () =>
+      paddedCryptos.map(item => ({
+        ...item,
+        trend: trends.get(item.currency.id) ?? null,
+        marketPrice: getMarketPrice(item.currency.id),
+      })),
+    [paddedCryptos, trends, getMarketPrice],
   );
 
   const stablecoinsWithTrend = useMemo(
-    () => paddedStablecoins.map(item => ({ ...item, trend: trends.get(item.currency.id) ?? null })),
-    [paddedStablecoins, trends],
+    () =>
+      paddedStablecoins.map(item => ({
+        ...item,
+        trend: trends.get(item.currency.id) ?? null,
+        marketPrice: getMarketPrice(item.currency.id),
+      })),
+    [paddedStablecoins, trends, getMarketPrice],
   );
 
   const sections = useMemo(
@@ -177,7 +207,9 @@ export function useAssetsViewModel(): AssetsViewProps {
 
   return {
     isLoading: needsPadding
-      ? isLoadingAssetsData || isLoadingStablecoinTickers
+      ? isLoadingAssetsData ||
+        isLoadingStablecoinTickers ||
+        (!!assetsData && rateStatus === "loading")
       : isLoadingStablecoinTickers,
     sections,
   };

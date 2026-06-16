@@ -1,8 +1,9 @@
 import { addTestnetCurrencies, getTestnetCurrencies } from "../testnetCurrencies";
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/coin-modules/registry";
 
-jest.mock("@ledgerhq/ledger-wallet-framework/currencies/index", () => ({
+jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/coin-modules/registry"),
   listSupportedCurrencies: jest.fn(),
 }));
 
@@ -82,7 +83,7 @@ describe("testnetCurrencies", () => {
     name: "USD Coin",
     ticker: "USDC",
     contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-    parentCurrency: mockMainnetCurrency,
+    parentCurrencyId: "ethereum",
     tokenType: "erc20",
     units: [
       {

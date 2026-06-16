@@ -24,7 +24,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import MemoIcon from "~/renderer/icons/MemoIcon";
@@ -65,6 +65,9 @@ const StepSummary = (props: StepProps) => {
   const unit = useMaybeAccountUnit(account);
   const accountName = useMaybeAccountName(account);
   const lldMemoTag = useFeature("lldMemoTag");
+  const specific = useLLDCoinFamily(
+    transaction && mainAccount ? mainAccount.currency.family : undefined,
+  );
   const feeCurrencyAccount = useMemo(() => {
     if (!mainAccount || !status.feeCurrencyAccountId) return null;
     return findSubAccountById(mainAccount, status.feeCurrencyAccountId) ?? null;
@@ -85,8 +88,6 @@ const StepSummary = (props: StepProps) => {
   const hasNonEmptySubAccounts =
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
-
-  const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
   const SpecificSummaryFromAddress = specific?.StepSummaryFromAddress;
   const SpecificSummaryRecipientValue = specific?.StepSummaryRecipientValue;

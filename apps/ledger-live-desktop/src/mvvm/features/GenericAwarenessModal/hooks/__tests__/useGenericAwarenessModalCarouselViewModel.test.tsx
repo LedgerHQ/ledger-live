@@ -37,6 +37,8 @@ describe("useGenericAwarenessModalCarouselViewModel", () => {
       result.current.onClose();
     });
 
-    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
+    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalledWith({
+      dismissAppStart: true,
+    });
   });
 });

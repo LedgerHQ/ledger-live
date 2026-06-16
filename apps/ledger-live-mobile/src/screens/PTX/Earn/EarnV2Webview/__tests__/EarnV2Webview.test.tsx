@@ -1,4 +1,5 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { EarnV2Webview } from "../index";
 import { NavigatorName } from "~/const";
@@ -243,5 +244,41 @@ describe("EarnV2Webview", () => {
     });
 
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("paints the live-app canvas behind the webview for the simulate intent", () => {
+    render(
+      <EarnV2Webview
+        manifest={STUB_MANIFEST}
+        appManifestNotFoundError={ERROR}
+        inputs={{ intent: "simulate" }}
+      />,
+      {
+        overrideInitialState: withFlagOverrides({
+          ptxEarnUi: { enabled: true, params: { value: "v2" } },
+        }),
+      },
+    );
+
+    const flattened = StyleSheet.flatten(screen.getByTestId("earn-screen").props.style);
+    expect(flattened.backgroundColor).toEqual(expect.any(String));
+  });
+
+  it("does not override the screen background outside the simulate intent", () => {
+    render(
+      <EarnV2Webview
+        manifest={STUB_MANIFEST}
+        appManifestNotFoundError={ERROR}
+        inputs={{ intent: "deposit" }}
+      />,
+      {
+        overrideInitialState: withFlagOverrides({
+          ptxEarnUi: { enabled: true, params: { value: "v2" } },
+        }),
+      },
+    );
+
+    const flattened = StyleSheet.flatten(screen.getByTestId("earn-screen").props.style);
+    expect(flattened.backgroundColor).toBeUndefined();
   });
 });

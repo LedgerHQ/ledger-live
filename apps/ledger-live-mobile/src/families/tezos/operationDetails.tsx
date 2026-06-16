@@ -23,7 +23,10 @@ type ExtraProps = Readonly<{
 // never reaches the header. Surface it here as an extra section, matching what the list row's
 // amountCell shows.
 const stakingAmountLabel: Partial<Record<OperationType, { i18nKey: string; testID: string }>> = {
-  STAKE: { i18nKey: "operationDetails.extra.stakedAmount", testID: "operationDetails-stakedAmount" },
+  STAKE: {
+    i18nKey: "operationDetails.extra.stakedAmount",
+    testID: "operationDetails-stakedAmount",
+  },
   UNSTAKE: {
     i18nKey: "operationDetails.extra.unstakedAmount",
     testID: "operationDetails-unstakedAmount",

@@ -5,6 +5,7 @@ import { useTranslation } from "~/context/Locale";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import { useAvailableBalance } from "./useAvailableBalance";
 import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
@@ -43,17 +44,27 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { uiConfig, recipientSearch, state } = useSendFlowData();
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
+  const { displayMode } = useSendAmountDisplayMode();
 
   const accountName = useMaybeAccountName(state.account.account);
-  const spendableBalanceText = useAvailableBalance(state.account.account);
+  const spendableBalanceText = useAvailableBalance(state.account.account, displayMode);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
 
   const currencyName = state.account.currency?.ticker ?? "";
   const showTitle = currentStepConfig?.showTitle !== false;
-  const title = showTitle ? t("send.newSendFlow.title", { currency: currencyName }) : "";
-  const descriptionText = showTitle
-    ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
-    : "";
+  const isCustomFeesStep = currentStep === SEND_FLOW_STEP.CUSTOM_FEES;
+  let title = "";
+  if (showTitle) {
+    if (isCustomFeesStep) {
+      title = t("send.newSendFlow.customFees.title");
+    } else {
+      title = t("send.newSendFlow.title", { currency: currencyName });
+    }
+  }
+  const descriptionText =
+    showTitle && !isCustomFeesStep
+      ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
+      : "";
 
   const showHeaderRight = currentStepConfig?.showHeaderRight !== false;
   const canGoBack = Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());

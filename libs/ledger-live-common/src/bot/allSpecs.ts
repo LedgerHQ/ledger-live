@@ -22,7 +22,7 @@ import polkadot from "@ledgerhq/coin-polkadot/specs";
 import solana from "@ledgerhq/coin-solana/specs";
 import stacks from "@ledgerhq/coin-stacks/specs";
 import stellar from "../families/stellar/bot/specs";
-import tezos from "@ledgerhq/coin-tezos/specs";
+import tezos from "../families/tezos/bot/specs";
 import ton from "@ledgerhq/coin-ton/specs";
 import tron from "@ledgerhq/coin-tron/specs";
 import vechain from "@ledgerhq/coin-vechain/specs";

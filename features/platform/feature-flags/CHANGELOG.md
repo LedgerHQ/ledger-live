@@ -1,5 +1,27 @@
 # @features/platform-feature-flags
 
+## 0.3.0
+
+### Minor Changes
+
+- [#17990](https://github.com/LedgerHQ/ledger-live/pull/17990) [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwdWallet40` into a standalone `onboardingWidget` feature flag.
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`36f16ea`](https://github.com/LedgerHQ/ledger-live/commit/36f16eae5fcf22706f5ed2dff4094178fc8d9ef8), [`7584ec2`](https://github.com/LedgerHQ/ledger-live/commit/7584ec2f10a173a768365befce8fcbd0baa4df87), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78)]:
+  - @shared/feature-flags@0.10.0
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#17990](https://github.com/LedgerHQ/ledger-live/pull/17990) [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwdWallet40` into a standalone `onboardingWidget` feature flag.
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`36f16ea`](https://github.com/LedgerHQ/ledger-live/commit/36f16eae5fcf22706f5ed2dff4094178fc8d9ef8), [`7584ec2`](https://github.com/LedgerHQ/ledger-live/commit/7584ec2f10a173a768365befce8fcbd0baa4df87), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78)]:
+  - @shared/feature-flags@0.10.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

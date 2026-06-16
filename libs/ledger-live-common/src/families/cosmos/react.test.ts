@@ -202,7 +202,6 @@ async function setup(): Promise<{
   prepare: () => Promise<any>;
 }> {
   setEnv("MOCK", "1");
-  setEnv("EXPERIMENTAL_CURRENCIES", "cosmos");
   const seed = "cosmos-2";
   const currency = getCryptoCurrencyById("cosmos");
   const a = genAccount(seed, {

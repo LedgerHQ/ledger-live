@@ -1,15 +1,9 @@
-import type { MarketCurrencyData } from "../types";
 import {
-  STOCK_MARKET_FILTER,
+  STOCK_MARKET_CATEGORY,
   getMarketCategoriesParam,
-  getMarketFilter,
   isBuiltInMarketListCategory,
-  isStockMarketCurrency,
   parseMarketListCategory,
 } from "../category";
-
-const currency = (id: string, name: string): MarketCurrencyData =>
-  ({ id, name }) as MarketCurrencyData;
 
 describe("market category utils", () => {
   describe("parseMarketListCategory", () => {
@@ -28,13 +22,6 @@ describe("market category utils", () => {
     });
   });
 
-  describe("getMarketFilter", () => {
-    it("returns the stock filter only for the stocks category", () => {
-      expect(getMarketFilter(true)).toBe(STOCK_MARKET_FILTER);
-      expect(getMarketFilter(false)).toBeUndefined();
-    });
-  });
-
   describe("isBuiltInMarketListCategory", () => {
     it.each(["all", "starred", "stocks"] as const)("is true for the built-in %s", category => {
       expect(isBuiltInMarketListCategory(category)).toBe(true);
@@ -46,29 +33,16 @@ describe("market category utils", () => {
   });
 
   describe("getMarketCategoriesParam", () => {
-    it.each(["all", "starred", "stocks"] as const)(
-      "returns undefined for the built-in %s",
-      category => {
-        expect(getMarketCategoriesParam(category)).toBeUndefined();
-      },
-    );
+    it.each(["all", "starred"] as const)("returns undefined for the built-in %s", category => {
+      expect(getMarketCategoriesParam(category)).toBeUndefined();
+    });
+
+    it("maps the stocks built-in to the dedicated CVS category", () => {
+      expect(getMarketCategoriesParam("stocks")).toBe(STOCK_MARKET_CATEGORY);
+    });
 
     it("returns the id itself for a trending category", () => {
       expect(getMarketCategoriesParam("infrastructure")).toBe("infrastructure");
-    });
-  });
-
-  describe("isStockMarketCurrency", () => {
-    it.each([
-      currency("apple-xstock", "Apple xStock"),
-      currency("tokenized-stock-tsla", "Tesla"),
-      currency("foo", "PreStocks Nvidia"),
-    ])("matches tokenized stock currency %o", item => {
-      expect(isStockMarketCurrency(item)).toBe(true);
-    });
-
-    it("does not match regular crypto currencies", () => {
-      expect(isStockMarketCurrency(currency("bitcoin", "Bitcoin"))).toBe(false);
     });
   });
 });

@@ -35,7 +35,7 @@ export const getMockedTokenCurrency = (overrides?: Partial<TokenCurrency>): Toke
     type: "TokenCurrency",
     id: "usad",
     contractAddress: MOCK_TOKEN_PROGRAM_ID,
-    parentCurrency: getMockedCurrency(),
+    parentCurrencyId: "aleo",
     tokenType: "arc22",
     name: "USAD",
     ticker: "USAD",

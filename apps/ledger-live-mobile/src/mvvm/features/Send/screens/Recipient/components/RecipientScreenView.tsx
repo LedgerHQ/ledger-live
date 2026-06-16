@@ -4,6 +4,10 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
+import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
+import { useMemoViewModel } from "LLM/features/Send/components/Memo/hooks/useMemoViewModel";
+import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
+import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
 import React, { useCallback } from "react";
 import { useRecipientScreenView } from "../hooks/useRecipientScreenView";
 import { AddressMatchedSection } from "./AddressMatchedSection";
@@ -21,6 +25,7 @@ type RecipientScreenViewProps = Readonly<{
   currency: CryptoOrTokenCurrency;
   onAddressSelected: (address: string, ensName?: string) => void;
   recipientSupportsDomain: boolean;
+  onMemoProceed: () => void;
 }>;
 
 export const RecipientScreenView = ({
@@ -29,11 +34,10 @@ export const RecipientScreenView = ({
   currency,
   onAddressSelected,
   recipientSupportsDomain,
+  onMemoProceed,
 }: RecipientScreenViewProps) => {
   const {
     recentAddresses,
-    handleAccountSelect,
-    handleRecentAddressSelect,
     isLoading,
     showInitialState,
     showMatchedAddress,
@@ -64,6 +68,31 @@ export const RecipientScreenView = ({
     onAddressSelected,
     recipientSupportsDomain,
   });
+
+  const { uiConfig, recipientSearch } = useSendFlowData();
+  const resolvedAddress = result?.resolvedAddress ?? searchValue;
+  const showMemo = uiConfig.hasMemo && isAddressComplete;
+  const memoVm = useMemoViewModel({
+    address: showMemo ? resolvedAddress : "",
+    onSkip: onMemoProceed,
+  });
+  const showMatched = shouldShowMatchedAddress({
+    showMatchedAddress,
+    hasMemo: uiConfig.hasMemo,
+    hasFilledMemo: memoVm.hasFilledMemo,
+    hasMemoError: !!memoVm.memoError,
+  });
+
+  const revealAddress = useCallback(
+    (address: string, ensName?: string) => {
+      if (uiConfig.hasMemo) {
+        recipientSearch.setValue(address);
+      } else {
+        onAddressSelected(address, ensName);
+      }
+    },
+    [uiConfig.hasMemo, recipientSearch, onAddressSelected],
+  );
 
   const shouldShowErrorBanner =
     !isLoading &&
@@ -100,18 +129,20 @@ export const RecipientScreenView = ({
               )}
               <RecentAddressesSection
                 recentAddresses={recentAddresses}
-                onSelect={handleRecentAddressSelect}
+                onSelect={recent => revealAddress(recent.address, recent.ensName)}
                 onLongPress={handleRecentAddressLongPress}
               />
               <MyAccountsSection
                 currentAccountId={account.id}
                 currency={currency}
-                onSelect={handleAccountSelect}
+                onSelect={selectedAccount => revealAddress(selectedAccount.freshAddress)}
               />
             </>
           )}
 
-          {showMatchedAddress && (
+          {showMemo && <MemoControls vm={memoVm} />}
+
+          {showMatched && (
             <AddressMatchedSection
               searchResult={result}
               searchValue={searchValue}
@@ -131,7 +162,7 @@ export const RecipientScreenView = ({
           )}
 
           {shouldShowErrorBanner && (
-            <Box lx={{ flex: 1, paddingVertical: "s8" }}>
+            <Box lx={{ marginHorizontal: "s8", gap: "s16" }}>
               {showBridgeSenderError && (
                 <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
               )}

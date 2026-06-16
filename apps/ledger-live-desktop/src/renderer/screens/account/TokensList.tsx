@@ -21,7 +21,7 @@ import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContext
 import { useTimeRange } from "~/renderer/actions/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import AngleDown from "~/renderer/icons/AngleDown";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 
 type Props = {
@@ -56,25 +56,26 @@ function TokensList({ account }: Props) {
   }, [dispatch, account]);
   const [collapsed, setCollapsed] = useState(true);
   const toggleCollapse = useCallback(() => setCollapsed(s => !s), []);
+  const { currency } = account;
+  const family = currency.family;
+  // Pass undefined when we're about to bail out so the hook returns the empty fallback instead of
+  // triggering a dynamic import + Suspense for a component that immediately renders null.
+  const specific = useLLDCoinFamily(account.subAccounts ? family : undefined)?.tokenList;
   if (!account.subAccounts) return null;
 
   const subAccounts = listSubAccounts(account).filter(subAccount => {
     return !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id);
   });
 
-  const { currency } = account;
-  const family = currency.family;
   const tokenTypes = currency.tokenTypes || [];
   const isTokenAccount = tokenTypes.length > 0;
   const isEmpty = subAccounts.length === 0;
   const shouldSliceList = subAccounts.length >= 5;
   if (!isTokenAccount && isEmpty) return null;
-  const url =
-    currency && currency.type && tokenTypes && tokenTypes.length > 0
-      ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
-      : null;
-  const specific = getLLDCoinFamily(family)?.tokenList;
+  const url = isTokenAccount
+    ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
+    : null;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
   const ReceiveButtonComponent = specific?.ReceiveButton || ReceiveButton;
   const titleLabel = t(hasSpecificTokenWording ? `tokensList.${family}.title` : "tokensList.title");

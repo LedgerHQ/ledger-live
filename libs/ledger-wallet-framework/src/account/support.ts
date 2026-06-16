@@ -1,7 +1,6 @@
-import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
+import { AccountNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
-import { isCurrencySupported } from "../currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike, DerivationMode } from "@ledgerhq/types-live";
 
@@ -39,13 +38,6 @@ export function checkAccountSupported(account: Account): Error | null | undefine
   if (!getAllDerivationModes().includes(account.derivationMode as DerivationMode)) {
     return new AccountNotSupported("derivation not supported " + account.derivationMode, {
       reason: account.derivationMode,
-    });
-  }
-
-  if (!isCurrencySupported(account.currency)) {
-    const currencyId = account.currency.id;
-    return new CurrencyNotSupported("currency not supported: " + currencyId, {
-      currencyName: currencyId,
     });
   }
 }

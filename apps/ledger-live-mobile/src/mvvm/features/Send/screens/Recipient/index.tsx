@@ -20,17 +20,18 @@ export function RecipientScreen() {
     return account ? getAccountCurrency(account) : null;
   }, [state.account.currency, account]);
 
+  const goToAmount = useCallback(() => {
+    recipientSearch.clear();
+    navigation.navigate(ScreenName.SendFlowAmount);
+  }, [recipientSearch, navigation]);
+
   const handleAddressSelected = useCallback(
     (address: string, ensName?: string) => {
-      transaction.setRecipient({
-        address,
-        ensName,
-      });
-
+      transaction.setRecipient({ address, ensName, memo: state.recipient?.memo });
       recipientSearch.clear();
       navigation.navigate(ScreenName.SendFlowAmount);
     },
-    [transaction, recipientSearch, navigation],
+    [transaction, state.recipient?.memo, recipientSearch, navigation],
   );
 
   if (!account || !currency) {
@@ -44,6 +45,7 @@ export function RecipientScreen() {
       currency={currency}
       onAddressSelected={handleAddressSelected}
       recipientSupportsDomain={uiConfig.recipientSupportsDomain}
+      onMemoProceed={goToAmount}
     />
   );
 }

@@ -17,6 +17,15 @@ const family: LLDCoinFamily<PolkadotAccount, Transaction, TransactionStatus, Pol
   transactionConfirmFields,
   AccountBodyHeader,
   AccountBalanceSummaryFooter,
+  modalsToPreload: [
+    "MODAL_POLKADOT_MANAGE",
+    "MODAL_POLKADOT_REWARDS_INFO",
+    "MODAL_POLKADOT_SIMPLE_OPERATION",
+    "MODAL_POLKADOT_NOMINATE",
+    "MODAL_POLKADOT_BOND",
+    "MODAL_POLKADOT_UNBOND",
+    "MODAL_POLKADOT_REBOND",
+  ],
 };
 
 export default family;

@@ -12,10 +12,7 @@ import BackgroundBlue from "../assets/BackgroundBlue";
 import BackgroundRed from "../assets/BackgroundRed";
 import ContinueOnDeviceWithAnim from "../components/ContinueOnDeviceWithAnim";
 import SeedCompanionStep from "../components/SeedCompanionStep";
-import {
-  SeedPathStatus,
-  FirstStepCompanionStepKey,
-} from "../types";
+import { SeedPathStatus, FirstStepCompanionStepKey } from "../types";
 import LedgerSyncActivationStep from "../components/LedgerSyncActivationStep";
 
 const { BodyText } = VerticalTimeline;

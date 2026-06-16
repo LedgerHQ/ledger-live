@@ -11,6 +11,7 @@ jest.mock("~/analytics", () => ({ track: jest.fn() }));
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn(),
+  useFocusEffect: jest.fn(),
 }));
 
 const openFromMarket = jest.fn();
@@ -165,14 +166,18 @@ describe("useMarketScreenViewModel", () => {
 
   it("forwards the selected category and starred ids to the assets hook", () => {
     const starredMarketCoins = ["bitcoin"];
+    mockMarketListRoute("starred");
 
-    const { result } = renderHook(() => useMarketScreenViewModel(), {
-      overrideInitialState: (state: State): State => ({
-        ...state,
-        settings: { ...state.settings, starredMarketCoins },
-        marketListConfig: { ...state.marketListConfig, category: "starred" },
-      }),
-    });
+    const { result } = renderHook(
+      () => useMarketScreenViewModel(),
+      withAssetDiscoverability(
+        true,
+        (state: State): State => ({
+          ...state,
+          settings: { ...state.settings, starredMarketCoins },
+        }),
+      ),
+    );
 
     expect(result.current.assetsList.categories.selectedCategory).toBe("starred");
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith({
@@ -199,8 +204,8 @@ describe("useMarketScreenViewModel", () => {
     });
   });
 
-  it("tracks and persists the stocks category", () => {
-    const { result, store } = renderHook(() => useMarketScreenViewModel());
+  it("tracks and applies the stocks category", () => {
+    const { result } = renderHook(() => useMarketScreenViewModel());
 
     act(() => result.current.assetsList.categories.onSelectCategory("stocks"));
 
@@ -209,15 +214,15 @@ describe("useMarketScreenViewModel", () => {
       category: "stocks",
       page: "Market",
     });
-    expect(store.getState().marketListConfig.category).toBe("stocks");
+    expect(result.current.assetsList.categories.selectedCategory).toBe("stocks");
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith({
       ...defaultMarketAssetsParams,
       category: "stocks",
     });
   });
 
-  it("tracks and persists the favorites category", () => {
-    const { result, store } = renderHook(() => useMarketScreenViewModel());
+  it("tracks and applies the favorites category", () => {
+    const { result } = renderHook(() => useMarketScreenViewModel());
 
     act(() => result.current.assetsList.categories.onSelectCategory("starred"));
 
@@ -226,66 +231,66 @@ describe("useMarketScreenViewModel", () => {
       category: "starred",
       page: "Market",
     });
-    expect(store.getState().marketListConfig.category).toBe("starred");
+    expect(result.current.assetsList.categories.selectedCategory).toBe("starred");
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith({
       ...defaultMarketAssetsParams,
       category: "starred",
     });
   });
 
-  it("should set the market list category from a valid route param", () => {
+  it("uses a valid route category as the initial category", () => {
     mockMarketListRoute("stocks");
 
-    const { store } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
 
-    expect(store.getState().marketListConfig.category).toBe("stocks");
+    expect(result.current.assetsList.categories.selectedCategory).toBe("stocks");
   });
 
-  it("should support the starred route category", () => {
+  it("supports the starred route category", () => {
     mockMarketListRoute("starred");
 
-    const { store } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
 
-    expect(store.getState().marketListConfig.category).toBe("starred");
+    expect(result.current.assetsList.categories.selectedCategory).toBe("starred");
   });
 
-  it("should preserve the persisted category when route category is missing", () => {
-    const { store } = renderHook(
-      () => useMarketScreenViewModel(),
-      withAssetDiscoverability(true, state => ({
-        ...state,
-        marketListConfig: { ...state.marketListConfig, category: "starred" },
-      })),
-    );
-
-    expect(store.getState().marketListConfig.category).toBe("starred");
-  });
-
-  it("should preserve the persisted category when route category is invalid", () => {
-    mockMarketListRoute("unknown");
-
-    const { store } = renderHook(
-      () => useMarketScreenViewModel(),
-      withAssetDiscoverability(true, state => ({
-        ...state,
-        marketListConfig: { ...state.marketListConfig, category: "starred" },
-      })),
-    );
-
-    expect(store.getState().marketListConfig.category).toBe("starred");
-  });
-
-  it("should ignore the route category when asset discoverability is disabled", () => {
+  it("allows switching category even when a category is pre-selected", () => {
     mockMarketListRoute("stocks");
 
-    const { store } = renderHook(
+    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+    expect(result.current.assetsList.categories.selectedCategory).toBe("stocks");
+
+    act(() => result.current.assetsList.categories.onSelectCategory("all"));
+
+    expect(result.current.assetsList.categories.selectedCategory).toBe("all");
+    expect(mockedUseMarketAssets).toHaveBeenLastCalledWith({
+      ...defaultMarketAssetsParams,
+      category: "all",
+    });
+  });
+
+  it("defaults to the all category when there is no route category", () => {
+    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+
+    expect(result.current.assetsList.categories.selectedCategory).toBe("all");
+  });
+
+  it("defaults to the all category when the route category is invalid", () => {
+    mockMarketListRoute("unknown");
+
+    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+
+    expect(result.current.assetsList.categories.selectedCategory).toBe("all");
+  });
+
+  it("ignores the route category when asset discoverability is disabled", () => {
+    mockMarketListRoute("stocks");
+
+    const { result } = renderHook(
       () => useMarketScreenViewModel(),
-      withAssetDiscoverability(false, state => ({
-        ...state,
-        marketListConfig: { ...state.marketListConfig, category: "starred" },
-      })),
+      withAssetDiscoverability(false),
     );
 
-    expect(store.getState().marketListConfig.category).toBe("starred");
+    expect(result.current.assetsList.categories.selectedCategory).toBe("all");
   });
 });

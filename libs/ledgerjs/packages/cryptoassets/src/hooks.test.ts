@@ -48,19 +48,7 @@ const mockToken: TokenCurrency = {
   id: "ethereum/erc20/usd_coin",
   ledgerSignature: "3045022100...",
   contractAddress: "0xA0b86a33E6441b8c4C8C0e4b8b8c4C8C0e4b8b8c4",
-  parentCurrency: {
-    type: "CryptoCurrency",
-    id: "ethereum",
-    name: "Ethereum",
-    ticker: "ETH",
-    units: [],
-    family: "ethereum",
-    managerAppName: "Ethereum",
-    coinType: 60,
-    scheme: "ethereum",
-    color: "#627EEA",
-    explorerViews: [],
-  },
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   name: "USD Coin",
   ticker: "USDC",
@@ -200,10 +188,32 @@ describe("Hooks", () => {
       expect(result.current.token).toBe(mockToken);
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeUndefined();
-      expect(mockUseFindTokenByAddressInCurrencyQuery).toHaveBeenCalledWith({
-        contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-        network: "ethereum",
-      });
+      expect(mockUseFindTokenByAddressInCurrencyQuery).toHaveBeenCalledWith(
+        {
+          contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          network: "ethereum",
+        },
+        undefined,
+      );
+    });
+
+    it("forwards skip option to the RTK Query hook", () => {
+      mockUseFindTokenByAddressInCurrencyQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: undefined,
+      } as any);
+
+      renderHook(() =>
+        useTokenByAddressInCurrency("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "ethereum", {
+          skip: true,
+        }),
+      );
+
+      expect(mockUseFindTokenByAddressInCurrencyQuery).toHaveBeenCalledWith(
+        { contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", network: "ethereum" },
+        { skip: true },
+      );
     });
 
     it("should handle loading state", () => {

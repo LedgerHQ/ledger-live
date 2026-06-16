@@ -8,7 +8,7 @@ import Button from "~/renderer/components/Button";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "~/renderer/components/Text";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
@@ -145,15 +145,18 @@ export default function StepSummary({ account, message: messageData }: StepProps
   const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
   const accountName = useAccountName(account);
+  // The family slot is only used for EIP712 messages — avoid loading a chunk otherwise.
+  const specific = useLLDCoinFamily(
+    messageData.standard === "EIP712" ? mainAccount.currency.family : undefined,
+  );
 
   const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
 
   useEffect(() => {
     if (messageData.standard === "EIP712") {
-      const specific = getLLDCoinFamily(mainAccount.currency.family);
       specific?.message?.getMessageProperties(messageData).then(setMessageFields);
     }
-  }, [account.currency.family, mainAccount, messageData, setMessageFields]);
+  }, [account.currency.family, mainAccount, messageData, setMessageFields, specific]);
 
   return (
     <Box flow={1}>

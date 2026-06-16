@@ -45,7 +45,7 @@ const StepMandatoryPrivateSync = ({
     error: privateSyncError,
     start,
   } = useAleoPrivateSync({
-    account,
+    account: mainAccount,
     autoStart: true,
     onAccountUpdated: updateAccount,
   });

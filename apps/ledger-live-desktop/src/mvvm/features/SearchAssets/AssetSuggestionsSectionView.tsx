@@ -20,7 +20,6 @@ export function AssetSuggestionsSectionView({
   locale,
   counterCurrency,
 }: Readonly<AssetSuggestionsSectionViewProps>) {
-  // Hide empty sections (e.g. backend returned nothing) once loading is done.
   if (!isLoading && data.length === 0) {
     return null;
   }
@@ -38,7 +37,7 @@ export function AssetSuggestionsSectionView({
         </SubheaderRow>
       </Subheader>
       {isLoading ? (
-        <AssetSuggestionsSkeleton count={limit} testIdPrefix={testIdPrefix} />
+        <AssetSuggestionsSkeleton count={limit} testIdPrefix={testIdPrefix} className="-mx-8" />
       ) : (
         <div className="flex flex-col -mx-8" data-testid={`${testIdPrefix}-list`}>
           {data.map(currency => (

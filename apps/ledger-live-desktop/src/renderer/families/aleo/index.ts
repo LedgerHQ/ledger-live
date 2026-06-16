@@ -19,6 +19,7 @@ const family: AleoFamily = {
   StepSummaryRecipientValue,
   StepSummaryPostAlert,
   StepSummaryAdditionalRows,
+  modalsToPreload: ["MODAL_ALEO_SELF_TRANSFER"],
 };
 
 export default family;

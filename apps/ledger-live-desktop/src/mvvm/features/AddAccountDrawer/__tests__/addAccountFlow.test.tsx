@@ -14,9 +14,15 @@ import {
 } from "../../__mocks__/useSelectAssetFlow.mock";
 import { mockDomMeasurements } from "../../__tests__/shared";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
+import { importLLDCoinFamily } from "~/renderer/families";
 
 beforeEach(async () => {
   mockDomMeasurements();
+  await Promise.all([
+    importLLDCoinFamily("evm"),
+    importLLDCoinFamily("bitcoin"),
+    importLLDCoinFamily("hedera"),
+  ]);
 });
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({

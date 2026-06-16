@@ -55,6 +55,11 @@ jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
   useAssetsData: (...args: unknown[]) => mockUseAssetsData(...args),
 }));
 
+const mockUseUsdToFiatRate = jest.fn();
+jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+  useUsdToFiatRate: (...args: unknown[]) => mockUseUsdToFiatRate(...args),
+}));
+
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
   type AccountLike = { balance: { isZero: () => boolean } };
   return {
@@ -199,7 +204,6 @@ describe("buildPlaceholderAssetItemsFromAssetsData", () => {
     expect(stablecoins).toHaveLength(1);
     expect(stablecoins[0].currency.id).toBe(STABLECOIN_ASSET.currency.id);
     expect(stablecoins[0].isPlaceholder).toBe(true);
-    expect(stablecoins[0].placeholderPrice).toBe(100);
   });
 
   it("classifies tickers not in stablecoinTickers as crypto placeholders", () => {
@@ -224,6 +228,7 @@ describe("useAssetsViewModel", () => {
       stablecoinTickers: new Set<string>(),
     });
     mockUseAssetsData.mockReturnValue({ data: undefined, isLoading: false });
+    mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
   });
 
   it("should return loading state when stablecoin tickers are loading", () => {
@@ -292,7 +297,6 @@ describe("useAssetsViewModel", () => {
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
       isPlaceholder: true,
-      placeholderPrice: 43000,
       marketId: "bitcoin",
     };
 
@@ -308,7 +312,6 @@ describe("useAssetsViewModel", () => {
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
       isPlaceholder: true,
-      placeholderPrice: 2500,
       marketId: "urn:crypto:meta-currency:ethereum",
     };
 
@@ -324,7 +327,6 @@ describe("useAssetsViewModel", () => {
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
       isPlaceholder: true,
-      placeholderPrice: 1,
       marketId: "urn:crypto:meta-currency:usd_coin",
     };
 
@@ -492,7 +494,7 @@ describe("useAssetsViewModel", () => {
       expect(cryptoSection.items[0].marketId).toBe("solana");
     });
 
-    it("should include placeholderPrice from market data", () => {
+    it("should attach converted marketPrice (USD price × rate) to placeholder items", () => {
       mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
         categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
         isLoadingStablecoinTickers: false,
@@ -502,11 +504,69 @@ describe("useAssetsViewModel", () => {
       const { result } = renderHook(() => useAssetsViewModel());
       const cryptoSection = result.current.sections[0];
 
-      expect(cryptoSection.items.every(item => item.placeholderPrice === 100)).toBe(true);
+      // markets price is 100 and the mocked USD→fiat rate is 1
+      expect(cryptoSection.items.every(item => item.marketPrice === 100)).toBe(true);
+    });
+
+    it("should multiply the USD price by a non-USD rate (e.g. MAD)", () => {
+      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 10 });
+      mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+        categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+        isLoadingStablecoinTickers: false,
+        stablecoinTickers: new Set<string>(),
+      });
+
+      const { result } = renderHook(() => useAssetsViewModel());
+      const cryptoSection = result.current.sections[0];
+
+      // markets price 100 × MAD rate 10
+      expect(cryptoSection.items.every(item => item.marketPrice === 1000)).toBe(true);
+    });
+
+    it("should attach marketPrice to owned (non-placeholder) rows", () => {
+      mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+        categorizedAssets: createMockCategorizedAssets({
+          cryptos: [{ ...BITCOIN_ASSET, currency: solana }],
+          stablecoins: [],
+        }),
+        isLoadingStablecoinTickers: false,
+        stablecoinTickers: new Set<string>(),
+      });
+
+      const { result } = renderHook(() => useAssetsViewModel(), {
+        initialState: onboardedStateWithAccounts,
+      });
+      const ownedSolana = result.current.sections[0].items.find(
+        item => item.currency.id === "solana" && !item.isPlaceholder,
+      );
+
+      expect(ownedSolana?.marketPrice).toBe(100);
+    });
+
+    it("should leave marketPrice undefined while the USD→fiat rate is loading", () => {
+      mockUseUsdToFiatRate.mockReturnValue({ status: "loading", rate: null });
+      mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+        categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+        isLoadingStablecoinTickers: false,
+        stablecoinTickers: new Set<string>(),
+      });
+
+      const { result } = renderHook(() => useAssetsViewModel());
+      const cryptoSection = result.current.sections[0];
+
+      expect(cryptoSection.items.every(item => item.marketPrice === undefined)).toBe(true);
     });
 
     it("should be loading when assets data is loading and padding is needed", () => {
       mockUseAssetsData.mockReturnValue({ data: undefined, isLoading: true });
+
+      const { result } = renderHook(() => useAssetsViewModel());
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it("should be loading when the USD→fiat rate is loading and padding is needed", () => {
+      mockUseUsdToFiatRate.mockReturnValue({ status: "loading", rate: null });
 
       const { result } = renderHook(() => useAssetsViewModel());
 

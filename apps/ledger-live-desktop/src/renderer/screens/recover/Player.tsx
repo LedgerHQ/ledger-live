@@ -12,6 +12,7 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
+import { Spinner } from "@ledgerhq/lumen-ui-react";
 import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
@@ -45,6 +46,14 @@ const FullscreenWrapper = styled.div`
   height: 100vh;
   z-index: 20;
   background-color: ${p => p.theme.colors.background.default};
+`;
+
+const LoaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 `;
 
 export default function RecoverPlayer() {
@@ -125,14 +134,20 @@ export default function RecoverPlayer() {
     ],
   );
 
-  return manifest ? (
+  return (
     <FullscreenWrapper>
-      <WebRecoverPlayer
-        key={`${manifest.id}-${search}-${state?.recoverDeeplinkAt ?? ""}`}
-        manifest={manifest}
-        inputs={inputs}
-        onClose={onClose}
-      />
+      {manifest ? (
+        <WebRecoverPlayer
+          key={`${manifest.id}-${search}-${state?.recoverDeeplinkAt ?? ""}`}
+          manifest={manifest}
+          inputs={inputs}
+          onClose={onClose}
+        />
+      ) : (
+        <LoaderContainer>
+          <Spinner size={48} />
+        </LoaderContainer>
+      )}
     </FullscreenWrapper>
-  ) : null; // TODO: display an error component instead of `null`
+  );
 }

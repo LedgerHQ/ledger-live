@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 import "../../__tests__/test-helpers/dom-polyfill";
-import { setSupportedCurrencies } from "../../currencies/index";
-setSupportedCurrencies(["tron"]);
 import { renderHook, act } from "@testing-library/react";
 import {
   useTronSuperRepresentatives,

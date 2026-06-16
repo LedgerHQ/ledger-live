@@ -16,11 +16,13 @@ interface UseCryptoViewModelParams {
   variant?: CryptoVariant;
 }
 
-const TRACKING_TYPE_BY_VARIANT: Record<CryptoVariant, "crypto" | "stable" | undefined> = {
-  stablecoin: "stable",
-  crypto: "crypto",
-  all: undefined,
-};
+const TRACKING_TYPE_BY_VARIANT: Record<CryptoVariant, "crypto" | "stable" | "stocks" | undefined> =
+  {
+    stablecoin: "stable",
+    crypto: "crypto",
+    stocks: "stocks",
+    all: undefined,
+  };
 
 const useCryptoViewModel = ({
   sourceScreenName,
@@ -29,13 +31,25 @@ const useCryptoViewModel = ({
   const { t } = useTranslation();
   const { openFromAsset } = useAssetDetailNavigation();
 
-  const { categorizedAssets, isLoadingStablecoinTickers, isStablecoinTickersError } =
-    useCategorizedAssetsFromPortfolio();
+  const {
+    categorizedAssets,
+    isLoadingStablecoinTickers,
+    isStablecoinTickersError,
+    isLoadingStocks,
+    isStocksError,
+  } = useCategorizedAssetsFromPortfolio();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
   const resolvedVariant: CryptoVariant = variant ?? "all";
+
+  const dependsOnStocks = resolvedVariant === "stocks" || resolvedVariant === "all";
+  const dependsOnStablecoins = resolvedVariant !== "stocks";
+  const isLoading =
+    (dependsOnStablecoins && isLoadingStablecoinTickers) || (dependsOnStocks && isLoadingStocks);
+  const hasError =
+    (dependsOnStablecoins && isStablecoinTickersError) || (dependsOnStocks && isStocksError);
 
   const assetsToDisplay = useMemo(
     (): Asset[] => selectAssetList(categorizedAssets, resolvedVariant).map(toAsset),
@@ -64,8 +78,8 @@ const useCryptoViewModel = ({
   return {
     assetsToDisplay,
     onItemPress,
-    isLoading: isLoadingStablecoinTickers,
-    error: isStablecoinTickersError ? new Error(t("crypto.errorState")) : null,
+    isLoading,
+    error: hasError ? new Error(t("crypto.errorState")) : null,
     sourceScreenName,
     variant: resolvedVariant,
     trackingType,

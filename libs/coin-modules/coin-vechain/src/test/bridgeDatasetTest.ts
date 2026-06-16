@@ -12,18 +12,8 @@ import { vechain1, vechain3 } from "../datasets";
 import { generateNonce } from "../common-logic";
 import vechainScanAccounts1 from "../datasets/vechain.scanAccounts.1";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { NotEnoughVTHO } from "../errors";
-import {
-  listSupportedCurrencies,
-  setSupportedCurrencies,
-} from "@ledgerhq/ledger-wallet-framework/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { ABIContract, VIP180_ABI } from "@vechain/sdk-core";
-
-const listSupported = listSupportedCurrencies();
-listSupported.push(getCryptoCurrencyById("vechain"));
-setSupportedCurrencies(listSupported.map(c => c.id) as CryptoCurrencyId[]);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const vechain: CurrenciesData<Transaction> = {

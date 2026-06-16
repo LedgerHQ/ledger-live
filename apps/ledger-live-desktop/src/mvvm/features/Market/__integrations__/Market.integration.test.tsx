@@ -41,9 +41,12 @@ jest.mock("LLD/features/Market/hooks/useMarketListVirtualization.ts", () => ({
         })),
       getTotalSize: () => (marketData?.length ?? 0) * LIST_ITEM_HEIGHT,
     });
+    const rowVirtualizer = createVirtualizer();
     return {
       parentRef: { current: null },
-      rowVirtualizer: createVirtualizer(),
+      rowVirtualizer,
+      virtualItems: rowVirtualizer.getVirtualItems(),
+      totalSize: rowVirtualizer.getTotalSize(),
     };
   },
 }));

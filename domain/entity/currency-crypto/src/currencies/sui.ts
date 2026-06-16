@@ -27,5 +27,5 @@ export const sui = currency({
       address: "https://suivision.xyz/account/$address",
     },
   ],
-  tokenTypes: ["sui"],
+  tokenTypes: ["coin"],
 });

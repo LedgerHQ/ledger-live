@@ -2,11 +2,9 @@ import {
   MARKET_LIST_CONFIG_INITIAL_STATE,
   marketListConfigReducer,
   importMarketListConfig,
-  selectMarketListCategory,
   selectMarketListNetwork,
   selectMarketListSorting,
   selectMarketListTimeframe,
-  setMarketListCategory,
   setMarketListNetwork,
   setMarketListSorting,
   setMarketListTimeframe,
@@ -21,7 +19,6 @@ describe("marketListConfig slice", () => {
     expect(selectMarketListSorting(asState())).toBe("marketCap");
     expect(selectMarketListTimeframe(asState())).toBe("1D");
     expect(selectMarketListNetwork(asState())).toBeUndefined();
-    expect(selectMarketListCategory(asState())).toBe("all");
   });
 
   it("updates each preference through its action", () => {
@@ -33,9 +30,6 @@ describe("marketListConfig slice", () => {
 
     state = marketListConfigReducer(state, setMarketListNetwork("ethereum"));
     expect(state.network).toBe("ethereum");
-
-    state = marketListConfigReducer(state, setMarketListCategory("starred"));
-    expect(state.category).toBe("starred");
   });
 
   it("resets the network back to all networks", () => {
@@ -44,7 +38,7 @@ describe("marketListConfig slice", () => {
     expect(reset.network).toBeUndefined();
   });
 
-  it("rehydrates persisted preferences but resets the category to the default", () => {
+  it("rehydrates only the supported preferences and drops a legacy persisted category", () => {
     const state = marketListConfigReducer(
       undefined,
       importMarketListConfig({
@@ -52,14 +46,12 @@ describe("marketListConfig slice", () => {
         timeframe: "1Y",
         network: "bitcoin",
         category: "stocks",
-      }),
+      } as MarketListConfigState),
     );
     expect(state).toEqual({
       sorting: "gainers",
       timeframe: "1Y",
       network: "bitcoin",
-      // category is not persisted across launches: always back to the default.
-      category: "all",
     });
   });
 });

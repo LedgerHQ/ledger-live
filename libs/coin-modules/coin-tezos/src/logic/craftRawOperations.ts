@@ -206,7 +206,9 @@ async function estimateOperations(
   // exactly N so a stray estimate fails loudly instead of silently misaligning per-op.
   const maxExpected = operations.length + (needsReveal ? 1 : 0);
   if (estimates.length < operations.length || estimates.length > maxExpected) {
-    const expected = needsReveal ? `${operations.length} or ${maxExpected}` : `${operations.length}`;
+    const expected = needsReveal
+      ? `${operations.length} or ${maxExpected}`
+      : `${operations.length}`;
     throw new Error(
       `craftRawOperations: expected ${expected} estimate(s) for ${operations.length} operation(s), got ${estimates.length}`,
     );
@@ -287,7 +289,11 @@ function assertNever(op: never): never {
  * Honour any fee/gas/storage the caller already provided; fall back to the batch
  * estimate for the missing ones.
  */
-function resolveLimits(op: PartialTezosOperation, minFees: number, estimate?: Estimate): ResolvedLimits {
+function resolveLimits(
+  op: PartialTezosOperation,
+  minFees: number,
+  estimate?: Estimate,
+): ResolvedLimits {
   if (op.fee !== undefined && op.gas_limit !== undefined && op.storage_limit !== undefined) {
     return { fee: op.fee, gasLimit: op.gas_limit, storageLimit: op.storage_limit };
   }

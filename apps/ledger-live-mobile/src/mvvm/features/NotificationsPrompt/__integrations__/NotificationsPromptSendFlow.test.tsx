@@ -188,23 +188,26 @@ describe("NotificationsPrompt send flow", () => {
 
     const { user } = renderWithReactQuery(<SendFlowTestApp />, {
       navigationInitialState: sendFlowNavigationState,
-      overrideInitialState: withFlagOverrides(featureFlagsForTransactionsAlertsSendPrompt, state => ({
-        ...state,
-        accounts: MockedAccounts,
-        notifications: {
-          ...state.notifications,
-          permissionStatus: AuthorizationStatus.AUTHORIZED,
-        },
-        settings: {
-          ...state.settings,
-          readOnlyModeEnabled: false,
+      overrideInitialState: withFlagOverrides(
+        featureFlagsForTransactionsAlertsSendPrompt,
+        state => ({
+          ...state,
+          accounts: MockedAccounts,
           notifications: {
-            ...state.settings.notifications,
-            areNotificationsAllowed: true,
-            transactionsAlertsCategory: false,
+            ...state.notifications,
+            permissionStatus: AuthorizationStatus.AUTHORIZED,
           },
-        },
-      })),
+          settings: {
+            ...state.settings,
+            readOnlyModeEnabled: false,
+            notifications: {
+              ...state.settings.notifications,
+              areNotificationsAllowed: true,
+              transactionsAlertsCategory: false,
+            },
+          },
+        }),
+      ),
     });
 
     await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
@@ -215,7 +218,9 @@ describe("NotificationsPrompt send flow", () => {
     await waitFor(() => {
       expect(screen.getByText(/know the status of your money/i)).toBeVisible();
     });
-    expect(screen.getByText(/real-time alerts when your crypto is sent or received/i)).toBeVisible();
+    expect(
+      screen.getByText(/real-time alerts when your crypto is sent or received/i),
+    ).toBeVisible();
     expect(screen.queryByText(/don't miss what matters/i)).not.toBeOnTheScreen();
     expect(screen.getByText(/allow notifications/i)).toBeVisible();
   });

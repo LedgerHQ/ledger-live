@@ -22,7 +22,11 @@ const transactionsAlertsCategoryConfig: BrazeNotificationsCategoryConfig = {
   displayed: true,
   category: "transactionsAlertsCategory",
   drawerPromptEnabled: true,
-  drawerPromptActions: ["send", "receive", "swap"] as BrazeNotificationsCategoryConfig["drawerPromptActions"],
+  drawerPromptActions: [
+    "send",
+    "receive",
+    "swap",
+  ] as BrazeNotificationsCategoryConfig["drawerPromptActions"],
 };
 
 const defaultOptInState = {
@@ -531,9 +535,9 @@ describe("notificationsPromptEngine", () => {
 
   describe("helper logic", () => {
     it("checks whether transactions alerts can be prompted for an action", () => {
-      expect(
-        canPromptTransactionsAlertsForAction("send", [transactionsAlertsCategoryConfig]),
-      ).toBe(true);
+      expect(canPromptTransactionsAlertsForAction("send", [transactionsAlertsCategoryConfig])).toBe(
+        true,
+      );
       expect(
         canPromptTransactionsAlertsForAction("stake", [transactionsAlertsCategoryConfig]),
       ).toBe(false);

@@ -7,8 +7,11 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
+import { track, TrackScreen } from "~/analytics";
 import Animation from "../Animation";
 import Button from "../Button";
+
+export const SWAP_NANO_S_INCOMPATIBILITY_PAGE = "Swap Nano S Incompatibility";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -44,13 +47,51 @@ type Props = {
   provider: string;
   theme: "light" | "dark";
   onClose?: () => void;
+  sourceCurrency?: string;
+  targetCurrency?: string;
 };
 
-export function ThorSwapIncompatibility({ t, device, provider, theme, onClose }: Props) {
+export function ThorSwapIncompatibility({
+  t,
+  device,
+  provider,
+  theme,
+  onClose,
+  sourceCurrency,
+  targetCurrency,
+}: Props) {
   const hardwareWalletUrl = useLocalizedUrl(urls.hardwareWallet);
+
+  const trackingProperties = {
+    flow: "swap",
+    deviceModel: "nanoS",
+    variant: "provider",
+    provider,
+    ...(sourceCurrency ? { sourceCurrency } : {}),
+    ...(targetCurrency ? { targetCurrency } : {}),
+  };
+
+  const onExploreCompatibleDevices = () => {
+    track("button_clicked", {
+      button: "explore_compatible_devices",
+      page: SWAP_NANO_S_INCOMPATIBILITY_PAGE,
+      ...trackingProperties,
+    });
+    Linking.openURL(hardwareWalletUrl);
+  };
+
+  const onSwapWithAnotherProvider = () => {
+    track("button_clicked", {
+      button: "swap_with_another_provider",
+      page: SWAP_NANO_S_INCOMPATIBILITY_PAGE,
+      ...trackingProperties,
+    });
+    onClose?.();
+  };
 
   return (
     <ScrollView>
+      <TrackScreen category={SWAP_NANO_S_INCOMPATIBILITY_PAGE} {...trackingProperties} />
       <Wrapper width="100%" mt="30%" mb="10%" rowGap={16} pr="16px" pl="16px">
         <AnimationContainer marginTop="16px">
           <Animation
@@ -68,16 +109,17 @@ export function ThorSwapIncompatibility({ t, device, provider, theme, onClose }:
         </Flex>
       </Wrapper>
 
-      <Button
-        type="main"
-        outline={false}
-        onPress={() => Linking.openURL(hardwareWalletUrl)}
-        alignSelf="stretch"
-      >
+      <Button type="main" outline={false} onPress={onExploreCompatibleDevices} alignSelf="stretch">
         {t("transfer.swap2.wrongDevice.explore_compatible_devices")}
       </Button>
 
-      <Button outline={true} type="main" onPress={onClose} mt={4} alignSelf="stretch">
+      <Button
+        outline={true}
+        type="main"
+        onPress={onSwapWithAnotherProvider}
+        mt={4}
+        alignSelf="stretch"
+      >
         {t("transfer.swap2.wrongDevice.swapWithAnotherProvider")}
       </Button>
     </ScrollView>

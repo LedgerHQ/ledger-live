@@ -32,7 +32,7 @@ async function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): P
   }
 
   const token = await getCryptoAssetsStore().findTokenById(id);
-  if (token && walletCliSupportedSwapCurrencyIds.has(token.parentCurrency.id)) {
+  if (token && walletCliSupportedSwapCurrencyIds.has(token.parentCurrencyId)) {
     return;
   }
 

@@ -95,6 +95,43 @@ export class EarnV2Page extends EarnBasePage {
     ).toBeVisible();
   }
 
+  private readonly ethProviderPanel = "eth-provider-panel";
+  private readonly ethProviderAllFilterChip = "filter-chip-all";
+  // The provider card test id suffix is the backend `ID` enum value, which differs from the e2e
+  // provider value, so map the providers we exercise.
+  private static readonly ethProviderCardIds: Record<string, string> = {
+    lido: "Lido",
+    kiln_pooling: "KilnEthereumPooling",
+    "stader-eth": "stader-eth",
+  };
+
+  @step("Select ETH provider in deposit flow: $0")
+  async selectEthProvider(providerId: string) {
+    const webview = await this.getWebView();
+    // The provider panel only renders once the staking providers have loaded.
+    await webview.getByTestId(this.ethProviderPanel).waitFor({ state: "visible" });
+    // basic_sorting / iso_modal cohorts default to a category-filtered view ("Protocol" for
+    // >=32 ETH, "Liquid" otherwise), which can hide the target provider. Reset to "All" so any
+    // provider is selectable regardless of the account balance.
+    const allFilterChip = webview.getByTestId(this.ethProviderAllFilterChip);
+    if (await allFilterChip.isVisible()) {
+      await allFilterChip.click();
+    }
+    const cardId = EarnV2Page.ethProviderCardIds[providerId] ?? providerId;
+    await webview.getByTestId(`eth-provider-card-${cardId}`).click();
+  }
+
+  @step("Confirm deposit in selected ETH provider")
+  async depositInSelectedProvider() {
+    const webview = await this.getWebView();
+    // The CTA label only becomes "Deposit in {provider}" once a provider is actually selected,
+    // so requiring it also proves the card click registered (guards against a no-op selection).
+    const depositCta = webview.getByRole("button", { name: /Deposit in/i });
+    await expect(depositCta).toBeVisible();
+    await expect(depositCta).toBeEnabled();
+    await depositCta.click();
+  }
+
   // Navigation
   @step("Verify navigated to deposit flow")
   async verifyDepositFlowVisible() {

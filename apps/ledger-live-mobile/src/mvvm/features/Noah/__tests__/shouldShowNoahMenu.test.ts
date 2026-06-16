@@ -27,9 +27,7 @@ describe("shouldShowNoahMenu", () => {
     const token = {
       type: "TokenCurrency",
       id: "ethereum/erc20/usd__coin",
-      parentCurrency: {
-        family: "evm",
-      },
+      parentCurrencyId: "ethereum",
     } as unknown as TokenCurrency;
 
     const param = makeParams({ currency: token });

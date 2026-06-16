@@ -85,9 +85,50 @@ describe("genericAwarenessModalDialog", () => {
     expect(actions[1]).toEqual(setGenericAwarenessModalCampaignId(undefined));
   });
 
-  it("should not dismiss non-APP_START campaigns when close thunk runs for a carousel campaign", () => {
+  it("should not dismiss APP_START content card when close thunk runs without dismissAppStart", () => {
     const actions = collectThunkDispatches(dispatch => {
       closeGenericAwarenessModalDialog()(dispatch, () =>
+        createGenericAwarenessModalTestState({
+          genericAwarenessModal: {
+            contentCards: [appStartFeatureIntroCard, carouselCampaignCard],
+            campaignId: undefined,
+          },
+          dialogs: { GENERIC_AWARENESS_MODAL: true },
+        }),
+      );
+    });
+
+    expect(actions).toEqual([
+      closeDialog("GENERIC_AWARENESS_MODAL"),
+      setGenericAwarenessModalCampaignId(undefined),
+    ]);
+    expect(actions.some(isDismissedContentCardsAction)).toBe(false);
+  });
+
+  it("should dismiss APP_START content card and filter the slice when close thunk runs with dismissAppStart", () => {
+    const actions = collectThunkDispatches(dispatch => {
+      closeGenericAwarenessModalDialog({ dismissAppStart: true })(dispatch, () =>
+        createGenericAwarenessModalTestState({
+          genericAwarenessModal: {
+            contentCards: [appStartFeatureIntroCard, carouselCampaignCard],
+            campaignId: undefined,
+          },
+          dialogs: { GENERIC_AWARENESS_MODAL: true },
+        }),
+      );
+    });
+
+    const dismissAction = actions.find(isDismissedContentCardsAction);
+    expect(dismissAction?.payload.id).toBe(APP_START_CAMPAIGN_ID);
+    expect(typeof dismissAction?.payload.timestamp).toBe("number");
+    expect(actions).toContainEqual(setGenericAwarenessModalContentCards([carouselCampaignCard]));
+    expect(actions).toContainEqual(closeDialog("GENERIC_AWARENESS_MODAL"));
+    expect(actions).toContainEqual(setGenericAwarenessModalCampaignId(undefined));
+  });
+
+  it("should not dismiss non-APP_START campaigns when close thunk runs with dismissAppStart", () => {
+    const actions = collectThunkDispatches(dispatch => {
+      closeGenericAwarenessModalDialog({ dismissAppStart: true })(dispatch, () =>
         createGenericAwarenessModalTestState({
           genericAwarenessModal: {
             contentCards: [carouselCampaignCard],
@@ -114,28 +155,7 @@ describe("genericAwarenessModalDialog", () => {
     ).toBe(false);
   });
 
-  it("should dismiss APP_START content card and filter the slice when close thunk runs", () => {
-    const actions = collectThunkDispatches(dispatch => {
-      closeGenericAwarenessModalDialog()(dispatch, () =>
-        createGenericAwarenessModalTestState({
-          genericAwarenessModal: {
-            contentCards: [appStartFeatureIntroCard, carouselCampaignCard],
-            campaignId: undefined,
-          },
-          dialogs: { GENERIC_AWARENESS_MODAL: true },
-        }),
-      );
-    });
-
-    const dismissAction = actions.find(isDismissedContentCardsAction);
-    expect(dismissAction?.payload.id).toBe(APP_START_CAMPAIGN_ID);
-    expect(typeof dismissAction?.payload.timestamp).toBe("number");
-    expect(actions).toContainEqual(setGenericAwarenessModalContentCards([carouselCampaignCard]));
-    expect(actions).toContainEqual(closeDialog("GENERIC_AWARENESS_MODAL"));
-    expect(actions).toContainEqual(setGenericAwarenessModalCampaignId(undefined));
-  });
-
-  it("should dismiss APP_START content cards regardless of id casing when close thunk runs", () => {
+  it("should dismiss APP_START content cards regardless of id casing when close thunk runs with dismissAppStart", () => {
     const lowercaseAppStartCampaignId = "app_start_lowercase";
     const lowercaseAppStartCard = {
       ...appStartFeatureIntroCard,
@@ -143,7 +163,7 @@ describe("genericAwarenessModalDialog", () => {
     };
 
     const actions = collectThunkDispatches(dispatch => {
-      closeGenericAwarenessModalDialog()(dispatch, () =>
+      closeGenericAwarenessModalDialog({ dismissAppStart: true })(dispatch, () =>
         createGenericAwarenessModalTestState({
           genericAwarenessModal: {
             contentCards: [lowercaseAppStartCard, carouselCampaignCard],

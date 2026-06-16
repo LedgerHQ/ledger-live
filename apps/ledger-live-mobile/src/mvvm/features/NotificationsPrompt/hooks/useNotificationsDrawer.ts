@@ -1,7 +1,6 @@
 import { useCallback, useRef } from "react";
 import { InteractionManager } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useNavigation } from "@react-navigation/core";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -11,7 +10,6 @@ import {
 } from "~/actions/notifications";
 import { setNotifications } from "~/actions/settings";
 import { track } from "~/analytics";
-import { NavigatorName, ScreenName } from "~/const/navigation";
 import { updateUserPreferences } from "~/notifications/braze";
 import {
   notificationsDrawerPromptTarget,
@@ -28,16 +26,16 @@ import { isTransactionsAlertsPromptTarget } from "../utils/getNotificationsPromp
 
 type UseNotificationsDrawerParams = {
   permissionStatus:
-  | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
-  | null
-  | undefined;
-  areNotificationsAllowed: boolean | undefined;
+    | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
+    | null
+    | undefined;
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
   nextRepromptDelay: { days?: number; hours?: number; minutes?: number } | null;
   shouldPromptOptInDrawerAfterAction: () => boolean;
   checkIsInactive: (lastActionAt?: number) => boolean;
   markUserAsOptIn: () => void;
   markUserAsOptOut: (promptTarget?: NotificationPromptTarget) => void;
+  enableAppNotifications: () => void;
   updateUserLastInactiveTime: () => void;
   requestPushNotificationsPermission: () => Promise<
     void | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
@@ -46,13 +44,13 @@ type UseNotificationsDrawerParams = {
 
 export const useNotificationsDrawer = ({
   permissionStatus,
-  areNotificationsAllowed,
   pushNotificationsDataOfUser,
   nextRepromptDelay,
   shouldPromptOptInDrawerAfterAction,
   checkIsInactive,
   markUserAsOptIn,
   markUserAsOptOut,
+  enableAppNotifications,
   requestPushNotificationsPermission,
   updateUserLastInactiveTime,
 }: UseNotificationsDrawerParams) => {
@@ -67,7 +65,6 @@ export const useNotificationsDrawer = ({
   const notifications = useSelector(notificationsSelector);
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
   const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const openDrawer = useCallback(
@@ -89,15 +86,15 @@ export const useNotificationsDrawer = ({
     (
       data:
         | {
-          status: "success";
-          storedUserData: DataOfUser | null;
-          osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
-          areAppNotificationsEnabled: boolean;
-        }
+            status: "success";
+            storedUserData: DataOfUser | null;
+            osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
+            areAppNotificationsEnabled: boolean;
+          }
         | {
-          status: "error";
-          reason: string;
-        },
+            status: "error";
+            reason: string;
+          },
     ) => {
       if (!featureBrazePushNotifications?.enabled || isRatingsModalOpen) {
         return;
@@ -339,21 +336,23 @@ export const useNotificationsDrawer = ({
       return;
     }
 
+    enableAppNotifications();
+
+    let permission = permissionStatus;
     if (permissionStatus !== AuthorizationStatus.AUTHORIZED) {
-      const permission = await requestPushNotificationsPermission();
-      if (permission === AuthorizationStatus.DENIED) {
-        trackButtonClicked("os_notifications_deny");
-        markUserAsOptOut(promptTargetAtDismiss);
-      } else if (permission === AuthorizationStatus.AUTHORIZED) {
-        trackButtonClicked("os_notifications_allow");
-        markUserAsOptIn();
-      }
+      const requestedPermission = await requestPushNotificationsPermission();
+      permission = requestedPermission ?? permissionStatus;
     }
 
-    if (!areNotificationsAllowed) {
-      navigation.navigate(NavigatorName.Settings, {
-        screen: ScreenName.NotificationsSettings,
-      });
+    if (permission === AuthorizationStatus.DENIED) {
+      trackButtonClicked("os_notifications_deny");
+      markUserAsOptOut(promptTargetAtDismiss);
+      return;
+    }
+
+    if (permission === AuthorizationStatus.AUTHORIZED) {
+      trackButtonClicked("os_notifications_allow");
+      markUserAsOptIn();
     }
   }, [
     trackButtonClicked,
@@ -363,12 +362,11 @@ export const useNotificationsDrawer = ({
     dispatch,
     notifications,
     permissionStatus,
-    areNotificationsAllowed,
     requestPushNotificationsPermission,
     drawerSource,
+    enableAppNotifications,
     markUserAsOptIn,
     markUserAsOptOut,
-    navigation,
   ]);
 
   return {

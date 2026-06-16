@@ -1,6 +1,7 @@
 import React, { Fragment, useCallback, useState } from "react";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -11,9 +12,7 @@ import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import QuickAmountSelector from "../../../shared/QuickAmountSelector";
 import InfoBanner from "../../../shared/InfoBanner";
-import { isAleoAccount, isAleoTransaction } from "./utils";
-import { getAleoCurrencyConfig } from "../../../shared/utils";
-import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import { getAleoCurrencyConfig, isAleoAccount, isAleoTransaction } from "../../../shared/utils";
 
 const StepAmount = (props: StepProps) => {
   const {

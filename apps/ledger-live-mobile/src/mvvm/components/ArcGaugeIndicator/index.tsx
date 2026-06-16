@@ -27,30 +27,19 @@ const ARC_PATH =
 const ARC_START = { x: 6.75144, y: 57.6112 };
 const ARC_END = { x: 79.5754, y: 57.6082 };
 
-export type ArcGaugeAppearance = "compact" | "expanded";
-
-const SCALE_BY_APPEARANCE: Record<ArcGaugeAppearance, number> = {
-  compact: 0.5,
-  expanded: 0.65,
-};
+const SCALE = 0.5;
 
 type Props = Readonly<{
   value: number;
-  appearance?: ArcGaugeAppearance;
   startColor: string;
   endColor: string;
 }>;
 
-export default function ArcGaugeIndicator({
-  value,
-  appearance = "compact",
-  startColor,
-  endColor,
-}: Props) {
+export default function ArcGaugeIndicator({ value, startColor, endColor }: Props) {
   const { theme } = useTheme();
   // react-native-svg mis-resolves the ":" that useId emits inside url(#...) references.
   const gradientId = `arcGaugeGradient-${useId().replace(/:/g, "")}`;
-  const scale = SCALE_BY_APPEARANCE[appearance];
+  const scale = SCALE;
   const width = VIEWBOX_WIDTH * scale;
   const height = VIEWBOX_HEIGHT * scale;
   const cursorRadius = CURSOR_RADIUS * scale;

@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import styled from "styled-components";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -7,7 +7,7 @@ import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { colors } from "~/renderer/styles/theme";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 
 const Cell = styled(Box).attrs(() => ({
   px: 4,
@@ -26,67 +26,63 @@ type Props = {
   unit: Unit;
   isConfirmed: boolean;
 };
-class AmountCell extends PureComponent<Props> {
-  render() {
-    // eslint-disable-next-line no-unused-vars
-    const { currency, unit, operation, isConfirmed } = this.props;
-    const cryptoCurrency = "family" in currency && currency.family ? currency : null;
-    const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
-    const amount =
-      specific?.operationDetails?.getAmount?.(operation) ?? getOperationAmountNumber(operation);
+function AmountCell({ currency, unit, operation, isConfirmed }: Props) {
+  const cryptoCurrency = "family" in currency && currency.family ? currency : null;
+  const specific = useLLDCoinFamily(cryptoCurrency?.family);
+  const amount =
+    specific?.operationDetails?.getAmount?.(operation) ?? getOperationAmountNumber(operation);
 
-    const amountCellExtra = specific?.operationDetails?.amountCellExtra;
-    const Element = amountCellExtra ? amountCellExtra[operation.type] : null;
-    const amountCell = specific?.operationDetails?.amountCell;
-    const AmountElement = amountCell ? amountCell[operation.type] : null;
+  const amountCellExtra = specific?.operationDetails?.amountCellExtra;
+  const Element = amountCellExtra ? amountCellExtra[operation.type] : null;
+  const amountCell = specific?.operationDetails?.amountCell;
+  const AmountElement = amountCell ? amountCell[operation.type] : null;
 
-    return (
-      <>
-        {Element && cryptoCurrency && (
-          <Cell>
-            <Element operation={operation} unit={unit} currency={cryptoCurrency} />
-          </Cell>
-        )}
-        {(!amount.isZero() || AmountElement) && (
-          <Cell>
-            {AmountElement && cryptoCurrency ? (
-              <AmountElement
-                amount={amount}
-                operation={operation}
+  return (
+    <>
+      {Element && cryptoCurrency && (
+        <Cell>
+          <Element operation={operation} unit={unit} currency={cryptoCurrency} />
+        </Cell>
+      )}
+      {(!amount.isZero() || AmountElement) && (
+        <Cell>
+          {AmountElement && cryptoCurrency ? (
+            <AmountElement
+              amount={amount}
+              operation={operation}
+              unit={unit}
+              currency={cryptoCurrency}
+            />
+          ) : (
+            <>
+              <FormattedVal
+                val={amount}
                 unit={unit}
-                currency={cryptoCurrency}
+                showCode
+                fontSize={4}
+                alwaysShowSign
+                color={
+                  !isConfirmed && operation.type === "IN"
+                    ? colors.legacyWarning
+                    : amount.isNegative()
+                      ? "neutral.c80"
+                      : undefined
+                }
               />
-            ) : (
-              <>
-                <FormattedVal
-                  val={amount}
-                  unit={unit}
-                  showCode
-                  fontSize={4}
-                  alwaysShowSign
-                  color={
-                    !isConfirmed && operation.type === "IN"
-                      ? colors.legacyWarning
-                      : amount.isNegative()
-                        ? "neutral.c80"
-                        : undefined
-                  }
-                />
 
-                <CounterValue
-                  color="neutral.c70"
-                  fontSize={3}
-                  alwaysShowSign
-                  date={operation.date}
-                  currency={currency}
-                  value={amount}
-                />
-              </>
-            )}
-          </Cell>
-        )}
-      </>
-    );
-  }
+              <CounterValue
+                color="neutral.c70"
+                fontSize={3}
+                alwaysShowSign
+                date={operation.date}
+                currency={currency}
+                value={amount}
+              />
+            </>
+          )}
+        </Cell>
+      )}
+    </>
+  );
 }
-export default AmountCell;
+export default React.memo(AmountCell);

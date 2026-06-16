@@ -94,6 +94,7 @@ export default function Market() {
     marketData: marketData.marketData,
     loading: marketData.loading,
     currenciesLength: marketData.currenciesLength,
+    listKey: marketData.listKey,
     onLoadNextPage: marketData.onLoadNextPage,
     checkIfDataIsStaleAndRefetch: marketData.checkIfDataIsStaleAndRefetch,
   });

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
-import { InteractionManager, TextInput, View } from "react-native";
+import React, { useRef } from "react";
+import { TextInput, View } from "react-native";
 import { NavBarBackButton, SearchInput } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { useExperimental } from "~/experimental";
+import { useAutoFocusOnEnter } from "LLM/features/GlobalSearch/hooks/useAutoFocusOnEnter";
 import { DefaultSections } from "./components/DefaultSections";
 import { SearchResults } from "./components/SearchResults";
 import { GLOBAL_SEARCH_TEST_IDS } from "./testIds";
@@ -23,6 +24,7 @@ export function GlobalSearchView({
   searchResults,
   isLoadingSearch,
   hasNoResults,
+  hasError,
   onSeeAll,
   onAssetPress,
   onStockPress,
@@ -31,6 +33,7 @@ export function GlobalSearchView({
   const insets = useSafeAreaInsets();
   const hasExperimentalHeader = useExperimental();
   const inputRef = useRef<TextInput>(null);
+  useAutoFocusOnEnter(inputRef);
 
   const styles = useStyleSheet(
     theme => ({
@@ -42,7 +45,8 @@ export function GlobalSearchView({
         flexDirection: "row",
         alignItems: "center",
         minHeight: theme.sizes.s64,
-        paddingHorizontal: theme.spacings.s16,
+        paddingLeft: theme.spacings.s4,
+        paddingRight: theme.spacings.s16,
         paddingVertical: theme.spacings.s8,
         gap: theme.spacings.s8,
       },
@@ -54,13 +58,6 @@ export function GlobalSearchView({
   );
 
   const topPadding = hasExperimentalHeader ? 0 : insets.top;
-
-  useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => {
-      inputRef.current?.focus();
-    });
-    return () => task.cancel();
-  }, []);
 
   return (
     <View testID={GLOBAL_SEARCH_TEST_IDS.screen} style={styles.container}>
@@ -87,12 +84,14 @@ export function GlobalSearchView({
           results={searchResults}
           isLoading={isLoadingSearch}
           hasNoResults={hasNoResults}
+          hasError={hasError}
           onAssetPress={onAssetPress}
         />
       ) : (
         <DefaultSections
           sections={defaultSections}
           isLoading={isLoadingDefaults}
+          hasError={hasError}
           onSeeAll={onSeeAll}
           onAssetPress={onAssetPress}
           onStockPress={onStockPress}

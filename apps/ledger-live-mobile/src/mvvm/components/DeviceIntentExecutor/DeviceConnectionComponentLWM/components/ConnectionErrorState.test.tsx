@@ -96,15 +96,12 @@ describe("ConnectionErrorState", () => {
     jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
-  it.each(errorCases)(
-    "should render the $type error title and CTA",
-    ({ type, title, cta }) => {
-      renderState(type);
+  it.each(errorCases)("should render the $type error title and CTA", ({ type, title, cta }) => {
+    renderState(type);
 
-      expect(screen.getByText(title)).toBeVisible();
-      expect(screen.getByText(cta)).toBeVisible();
-    },
-  );
+    expect(screen.getByText(title)).toBeVisible();
+    expect(screen.getByText(cta)).toBeVisible();
+  });
 
   it.each(errorCases.filter(({ description }) => description))(
     "GIVEN a $type error with a description WHEN rendering THEN it renders the error description",

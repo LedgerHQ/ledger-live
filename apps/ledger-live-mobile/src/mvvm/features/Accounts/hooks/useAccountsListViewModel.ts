@@ -1,4 +1,5 @@
 import type { FlashListProps } from "@shopify/flash-list";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
@@ -87,14 +88,14 @@ const useAccountsListViewModel = ({
         });
       } else if (account.type === "TokenAccount") {
         track("account_clicked", {
-          currency: account.token.parentCurrency.name,
+          currency: getCryptoCurrencyById(account.token.parentCurrencyId).name,
           account: defaultAccountName,
           page: pageTrackingEvent,
         });
         navigation.navigate(NavigatorName.Accounts, {
           screen: ScreenName.Account,
           params: {
-            currencyId: account.token.parentCurrency.id,
+            currencyId: account.token.parentCurrencyId,
             parentId: account.parentId,
             accountId: account.id,
           },

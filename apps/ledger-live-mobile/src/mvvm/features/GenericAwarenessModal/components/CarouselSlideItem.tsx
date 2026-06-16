@@ -3,9 +3,8 @@ import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
-
-const TITLE_NUMBER_OF_LINES = 1;
-const SUBTITLE_NUMBER_OF_LINES = 3;
+import { useThemedAwarenessModalImage } from "../hooks/useThemedAwarenessModalImage";
+import { CAROUSEL_SLIDE_TEXT_LINE_LIMITS } from "../textLineLimits";
 
 type CarouselSlideItemProps = GenericAwarenessModalCarouselSlide &
   Readonly<{
@@ -17,7 +16,8 @@ type CarouselSlideItemProps = GenericAwarenessModalCarouselSlide &
   }>;
 
 export function CarouselSlideItem({
-  imageUrl,
+  imageUrlLight,
+  imageUrlDark,
   title,
   subtitle,
   isFirstSlide,
@@ -26,6 +26,8 @@ export function CarouselSlideItem({
   subtitleLineCount,
   onSubtitleTextLayout,
 }: CarouselSlideItemProps) {
+  const { imageUrl, showImage } = useThemedAwarenessModalImage({ imageUrlLight, imageUrlDark });
+  const titleNumberOfLines = CAROUSEL_SLIDE_TEXT_LINE_LIMITS.title;
   const titleMinHeight = titleLineCount > 1 ? "s80" : "s40";
   let subtitleMinHeight: "s20" | "s40" | "s64" = "s20";
   if (subtitleLineCount > 2) {
@@ -41,16 +43,20 @@ export function CarouselSlideItem({
         marginBottom: titleLineCount === 1 || subtitleLineCount === 1 ? "s8" : undefined,
       }}
     >
-      <Box lx={{ flex: 1, alignItems: "center", justifyContent: "flex-end", marginBottom: "s20" }}>
-        <FastImage
-          source={{
-            uri: imageUrl,
-            priority: isFirstSlide ? FastImage.priority.high : FastImage.priority.normal,
-          }}
-          style={styles.image}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-      </Box>
+      {showImage ? (
+        <Box
+          lx={{ flex: 1, alignItems: "center", justifyContent: "flex-end", marginBottom: "s20" }}
+        >
+          <FastImage
+            source={{
+              uri: imageUrl,
+              priority: isFirstSlide ? FastImage.priority.high : FastImage.priority.normal,
+            }}
+            style={styles.image}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+        </Box>
+      ) : null}
       <Box
         lx={{
           justifyContent: "flex-end",
@@ -58,15 +64,15 @@ export function CarouselSlideItem({
         }}
       >
         <Text
-          typography="heading2SemiBold"
+          typography="heading3SemiBold"
           lx={{
             textAlign: "center",
             color: "base",
             marginBottom: titleLineCount > 1 ? "s10" : "s4",
           }}
-          numberOfLines={TITLE_NUMBER_OF_LINES}
+          numberOfLines={titleNumberOfLines}
           onTextLayout={event => {
-            onTitleTextLayout(Math.min(event.nativeEvent.lines.length, TITLE_NUMBER_OF_LINES));
+            onTitleTextLayout(Math.min(event.nativeEvent.lines.length, titleNumberOfLines));
           }}
         >
           {title}
@@ -76,10 +82,10 @@ export function CarouselSlideItem({
         <Text
           typography="body2"
           lx={{ color: "muted", textAlign: "center" }}
-          numberOfLines={SUBTITLE_NUMBER_OF_LINES}
+          numberOfLines={CAROUSEL_SLIDE_TEXT_LINE_LIMITS.subtitle}
           onTextLayout={event => {
             onSubtitleTextLayout(
-              Math.min(event.nativeEvent.lines.length, SUBTITLE_NUMBER_OF_LINES),
+              Math.min(event.nativeEvent.lines.length, CAROUSEL_SLIDE_TEXT_LINE_LIMITS.subtitle),
             );
           }}
         >

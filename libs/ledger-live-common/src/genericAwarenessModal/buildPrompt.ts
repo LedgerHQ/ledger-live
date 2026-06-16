@@ -37,7 +37,8 @@ export const buildPrompt = (
   return {
     layout: GenericAwarenessModalLayout.Prompt,
     id: campaignId,
-    imageUrl: prompt.imageUrl,
+    imageUrlLight: prompt.imageUrlLight,
+    imageUrlDark: prompt.imageUrlDark,
     title: prompt.title,
     subtitle: prompt.subtitle,
     primaryButtonLabel: prompt.primaryButtonLabel,

@@ -33,6 +33,12 @@ function isStakingTransactionType(
   return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.UpdateAccount;
 }
 
+function isTokenAssociateTransactionType(
+  item: MergedTransaction,
+): item is Extract<MergedTransaction, { type: "mirror" }> {
+  return item.type === "mirror" && item.data.name === HEDERA_TRANSACTION_NAMES.TokenAssociate;
+}
+
 function getMirrorTransaction(item: MergedTransaction): HederaMirrorTransaction {
   return item.type === "mirror" ? item.data : item.data.mirrorTransaction;
 }
@@ -225,6 +231,14 @@ export async function getBlockV2({
           stakedNodeId: stakingAnalysis.targetStakingNodeId,
           previousStakedNodeId: stakingAnalysis.previousStakingNodeId,
           stakedAmount: stakingAnalysis.stakedAmount,
+        },
+      ];
+    } else if (isTokenAssociateTransactionType(item)) {
+      operations = [
+        {
+          type: "other",
+          operationType: "ASSOCIATE_TOKEN",
+          associatedTokenId: mirrorTx.entity_id ?? null,
         },
       ];
     } else {

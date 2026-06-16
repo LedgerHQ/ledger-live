@@ -23,7 +23,7 @@ import i18n from "~/renderer/i18n/init";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import StepRecordPicker from "./StepRecordPicker";
 import { getAleoCurrencyConfig } from "../../../shared/utils";
-import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, makeTokenAccount } from "../../../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
@@ -33,13 +33,12 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
 }));
 jest.mock("../../../shared/utils", () => ({
+  ...jest.requireActual("../../../shared/utils"),
   getAleoCurrencyConfig: jest.fn(),
 }));
 
 const mockGetAleoCurrencyConfig = jest.mocked(getAleoCurrencyConfig);
-
 const mockUseDateFormatter = jest.mocked(useDateFormatter);
-
 const mockUseAccountUnit = jest.mocked(useAccountUnit);
 
 const mockDecryptedData1: AleoDecryptedRecordResponse = {
@@ -659,5 +658,41 @@ describe("StepRecordPicker", () => {
     );
 
     expect(screen.getAllByRole("button")).toHaveLength(2);
+  });
+
+  describe("with token account", () => {
+    it("should render records from token account unspentPrivateRecords", () => {
+      const tokenAccount = makeTokenAccount([record1, record2]);
+
+      render(
+        <StepRecordPicker
+          {...defaultProps}
+          account={tokenAccount}
+          transaction={privateTransaction}
+        />,
+      );
+
+      const buttons = screen.getAllByRole("button");
+
+      expect(screen.getByText(/Available records:.*2/)).toBeInTheDocument();
+      expect(buttons).toHaveLength(2);
+      expect(buttons[0]).toHaveTextContent("2000000 ALEO");
+      expect(buttons[1]).toHaveTextContent("1000000 ALEO");
+    });
+
+    it("should show empty state when token account has no unspent records", () => {
+      const tokenAccount = makeTokenAccount([]);
+
+      render(
+        <StepRecordPicker
+          {...defaultProps}
+          account={tokenAccount}
+          transaction={privateTransaction}
+        />,
+      );
+
+      expect(screen.getByTestId("aleo-empty-records-alert")).toBeInTheDocument();
+      expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    });
   });
 });

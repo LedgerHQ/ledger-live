@@ -55,6 +55,7 @@ export class SwapPage extends WebViewAppPage {
   // Swap Steps Approval components
   private readonly giveApprovalButton = "give-approval-button";
   private readonly signPermitButton = "sign-permit-button";
+  private readonly revokeApprovalButton = "revoke-approval-button";
 
   // History Components
   readonly historyButton = this.page.getByTestId("History-tab-button");
@@ -566,6 +567,18 @@ export class SwapPage extends WebViewAppPage {
     await webview.getByTestId(this.swapMaxToggle).click();
   }
 
+  @step("Expect reset allowance screen to be displayed")
+  async expectResetApprovalScreen() {
+    await this.verifyElementIsVisible(this.revokeApprovalButton);
+  }
+
+  @step("Click Revoke Approval button")
+  async clickRevokeApprovalButton() {
+    const webview = await this.getWebView();
+    const revokeButton = webview.getByTestId(this.revokeApprovalButton);
+    await revokeButton.click();
+  }
+
   @step("Expect TwoStepApproval screen to be displayed")
   async expectTwoStepApprovalScreen() {
     await this.verifyElementIsVisible(this.giveApprovalButton);
@@ -575,14 +588,15 @@ export class SwapPage extends WebViewAppPage {
   async clickGiveApprovalButton() {
     const webview = await this.getWebView();
     const approvalButton = webview.getByTestId(this.giveApprovalButton);
-    await expect(approvalButton).toBeVisible();
-    await expect(approvalButton).toBeEnabled();
     await approvalButton.click();
   }
 
   @step("Expect TwoStepSign screen to be displayed")
   async expectTwoStepSignScreen() {
-    await this.verifyElementIsVisible(this.executeSwapBtn);
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.executeSwapBtn)).toBeVisible({
+      timeout: APPROVAL_PROCESSING_TIMEOUT,
+    });
   }
 
   @step("Click Give Authorization button")
@@ -590,7 +604,6 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const authorizationButton = webview.getByTestId(this.signPermitButton);
     await expect(authorizationButton).toBeVisible({ timeout: APPROVAL_PROCESSING_TIMEOUT });
-    await expect(authorizationButton).toBeEnabled();
     await authorizationButton.click();
   }
 

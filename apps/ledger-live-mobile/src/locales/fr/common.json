@@ -895,6 +895,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "Veuillez déléguer votre compte avant de staker"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "Solde staké insuffisant"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Commencez par vider tous les sous-comptes."
     },
@@ -1907,6 +1910,14 @@
           "buyNanoX" : "Acheter un Ledger Nano X",
           "discoverBenefits" : "Découvrir les avantages"
         }
+      }
+    },
+    "counterfeitWarning" : {
+      "title" : "Avant de commencer",
+      "body" : "Nous vous recommandons d’acheter sur <ledgerCom>Ledger.com</ledgerCom> ou via notre <resellerLink>réseau officiel de revendeurs</resellerLink>. Cela vous aide à vous assurer que votre appareil est authentique.",
+      "cta" : {
+        "primary" : "Continuer",
+        "secondary" : "En savoir plus"
       }
     },
     "stepNewDevice" : {
@@ -2965,6 +2976,7 @@
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
+      "FINALIZE_UNSTAKE" : "Retiré",
       "ASSOCIATE_TOKEN" : "Association de token",
       "CONTRACT_CALL" : "Appel de contrat",
       "UPDATE_ACCOUNT" : "Compte mis à jour"
@@ -3668,6 +3680,7 @@
           "description" : "Créez des cartes brutes de type Braze, traitez-les via le Parser d’Awareness Modal générique, puis retournez sur le Portefeuille pour voir le Drawer.",
           "carousel" : "Carrousel",
           "featureIntro" : "Intro fonctionnalités",
+          "prompt" : "Prompt",
           "appStart" : "Démarrage de l’app",
           "deeplink" : "Deeplink",
           "campaignId" : "ID de campagne",
@@ -3689,6 +3702,8 @@
           "createCarouselDesc" : "Ouvrez un Awareness Modal générique en carrousel.",
           "createFeatureIntro" : "Créer un Awareness Modal générique d’intro fonctionnalités",
           "createFeatureIntroDesc" : "Ouvrez un formulaire pour créer un Awareness Modal générique d’intro aux fonctionnalités.",
+          "createPrompt" : "Créer un Awareness Modal générique de prompt",
+          "createPromptDesc" : "Ouvrez un formulaire pour créer un Awareness Modal générique de prompt.",
           "openCurrent" : "Ouvrir la campagne en cours",
           "openCurrentDesc" : "Définissez l’état du Drawer pour cette campagne. Retournez sur le Portefeuille pour le voir.",
           "clear" : "Effacer les Awareness Modals génériques",
@@ -6599,6 +6614,66 @@
       "status" : "Statut",
       "unstaking" : "Déstaking",
       "available" : "Disponible"
+    },
+    "earnRewards" : {
+      "title" : "Gagner des récompenses",
+      "steps" : {
+        "delegate" : "Délégation",
+        "stake" : "Staking"
+      },
+      "delegation" : {
+        "step" : "Étape 1 · Délégation",
+        "title" : "Gagnez des récompenses librement",
+        "subtitle" : "Pas de période d’immobilisation.",
+        "bullets" : {
+          "0" : "L’intégralité du solde sera déléguée",
+          "1" : "Vos actifs délégués restent sur votre compte.",
+          "2" : "Utilisez vos XTZ à tout moment"
+        }
+      },
+      "staking" : {
+        "step" : "Étape 2 · Staking",
+        "title" : "Gagnez plus de récompenses",
+        "subtitle" : "Nécessite d’abord une délégation active.",
+        "bullets" : {
+          "0" : "Stakez autant que vous le souhaitez",
+          "1" : "Vos actifs stakés sont immobilisés",
+          "2" : "Déstakez en seulement 4 jours"
+        }
+      },
+      "learnMore" : "En savoir plus sur le staking et la délégation",
+      "cta" : "Commencer à gagner"
+    },
+    "stake" : {
+      "flow" : {
+        "amount" : {
+          "disclaimer" : "Avec le staking, vos XTZ sont immobilisés.",
+          "awaitingDelegation" : "Confirmation de votre délégation en cours. Cela prend généralement moins d’une minute.",
+          "cta" : "Staker mes Tezos"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "Staking effectué",
+              "text" : "Seulement 4 jours d’attente avant le début des récompenses de staking. Ensuite, les récompenses sont distribuées chaque jour et se capitalisent automatiquement."
+            }
+          }
+        },
+        "delegationSuccess" : {
+          "cta" : "Staker mes TEZOS pour gagner plus",
+          "info" : "En savoir plus sur le staking vs la délégation sur Tezos"
+        }
+      }
+    },
+    "account" : {
+      "availableBalanceTooltip" : "Actifs que vous pouvez utiliser dès maintenant.",
+      "delegatedAssetsTooltip" : "XTZ délégués à un baker. Actifs restant dans votre portefeuille et pouvant être utilisés à tout moment.",
+      "stakedAssets" : "Actifs stakés",
+      "stakedAssetsTooltip" : "XTZ immobilisés auprès de votre Baker. Déstakez-les pour pouvoir les retirer après environ 4 jours.",
+      "pendingWithdrawable" : "En cours de déstaking",
+      "pendingWithdrawableTooltip" : "XTZ actuellement en cours de déstaking. Disponibles au retrait dans environ 4 jours.",
+      "withdrawableAssets" : "Actifs retirables",
+      "withdrawableAssetsTooltip" : "XTZ ayant terminé leur période de déstaking et prêts à être retirés."
     }
   },
   "evm" : {
@@ -6656,7 +6731,8 @@
             "warning" : {
               "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
-            "cta" : "Continuer"
+            "cta" : "Continuer",
+            "seiAssociationWarning" : "Votre compte Sei n’a pas encore été lié sur la blockchain. La délégation échouera tant que votre compte n’aura pas au moins une transaction sortante confirmée sur la blockchain. Envoyez d’abord un petit montant de SEI à une adresse de votre choix, attendez la confirmation, puis revenez ici pour déléguer."
           },
           "validator" : {
             "validators" : "Validateurs",
@@ -6767,30 +6843,22 @@
     "claimRewards" : {
       "stepperHeader" : {
         "validator" : "Sélectionner la récompense à toucher",
-        "method" : "Demander les récompenses",
-        "summary" : "Récapitulatif",
+        "claim" : "Demander les récompenses",
         "selectDevice" : "Sélectionner votre appareil",
         "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
         "steps" : {
-          "method" : {
+          "claim" : {
             "youEarned" : "Vous avez gagné",
             "byDelegationAssetsTo" : "en stakant vos actifs avec",
-            "claimReward" : "Encaisser",
-            "claimRewardCompound" : "Capitaliser",
-            "claimRewardInfo" : "Elles seront demandées immédiatement et ajoutées à votre solde disponible.",
-            "claimRewardCompoundInfo" : "Elles seront demandées immédiatement et automatiquement déléguées au même validateur.",
-            "compoundOrCashIn" : "Capitaliser ou encaisser ?",
-            "claimRewardTooltip" : "Les récompenses seront ajoutées à votre solde disponible.",
-            "claimRewardCompoundTooltip" : "Les récompenses seront ajoutées au montant délégué.",
+            "description" : "Les récompenses seront demandées immédiatement et ajoutées à votre solde disponible.",
             "cta" : "Continuer"
           },
           "verification" : {
             "success" : {
               "title" : "Vous avez bien demandé vos récompenses. Elles ont été ajoutées à votre solde disponible.",
-              "titleCompound" : "Vos récompenses ont été déléguées au même validateur.",
               "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
               "cta" : "Voir les détails"
             },
@@ -8027,6 +8095,40 @@
   },
   "market" : {
     "title" : "Marché",
+    "assets" : {
+      "title" : "Actifs",
+      "emptyFavorites" : "Pas encore de favoris",
+      "emptyStocks" : "Aucune action trouvée",
+      "categories" : {
+        "accessibilityLabel" : "Catégories d’actifs",
+        "all" : "Tout",
+        "stocks" : "Actions",
+        "favorites" : "Favoris"
+      },
+      "filters" : {
+        "accessibilityLabel" : "Ouvrir les filtres pour actifs",
+        "title" : "Filtres",
+        "sorting" : "Tri",
+        "timeframe" : "Période",
+        "sortingOptions" : {
+          "marketCap" : "Capitalisation",
+          "volume" : "Volume",
+          "gainers" : "Hausses",
+          "losers" : "Baisses"
+        },
+        "timeframeOptions" : {
+          "1D" : "1 jour",
+          "7D" : "1 semaine",
+          "30D" : "1 mois",
+          "6M" : "6 mois",
+          "1Y" : "1 an"
+        }
+      },
+      "error" : {
+        "title" : "Impossible de charger les actifs",
+        "description" : "Une erreur est survenue lors du chargement de la liste des actifs. Veuillez réessayer plus tard."
+      }
+    },
     "filters" : {
       "sort" : "Trier",
       "filter" : "Filtrer",
@@ -8126,44 +8228,44 @@
         "tooltip" : "Le prix moyen auquel vous avez obtenu cet actif via Ledger Wallet, calculé sur l’ensemble de vos acquisitions et transferts entrants. Il est utilisé pour suivre la performance de votre portefeuille."
       },
       "drawer" : {
-        "title" : "Performance de l’actif",
-        "description" : "Synthèse de la performance de cet actif au sein de votre portefeuille.",
+        "title" : "Performance",
+        "description" : "La performance de votre actif, répartie en performances latente et réalisée (estimation).",
         "estimatedReturn" : {
-          "title" : "Performance estimée",
+          "title" : "Performance latente",
           "description" : "Performance estimée en cas de vente au cours actuel."
         },
         "realisedReturn" : {
           "title" : "Performance réalisée",
-          "description" : "Performance réalisée à la suite d’une vente, d’un envoi ou d’un échange passé."
+          "description" : "Performance à la suite d’une vente, d’un envoi ou d’un échange passé (estimation)."
         },
         "totalReturn" : {
           "title" : "Performance totale",
-          "description" : "Somme des performances estimée et réalisée."
+          "description" : "Somme des performances latente et réalisée (estimation)."
         }
       }
     },
     "portfolio" : {
+      "title" : "Performance",
       "return" : {
         "title" : "Performance latente"
       },
-      "costBasis" : {
-        "title" : "Coût initial",
-        "tooltip" : "Montant total payé pour acquérir vos actifs actuels, frais inclus."
+      "realised" : {
+        "title" : "Performance réalisée"
       },
       "drawer" : {
-        "title" : "Performance du portefeuille",
-        "description" : "La performance de votre portefeuille, répartie en performances estimée et réalisée.",
+        "title" : "Performance",
+        "description" : "La performance de votre portefeuille, répartie en performances latente et réalisée (estimation).",
         "estimatedReturn" : {
-          "title" : "Performance estimée",
+          "title" : "Performance latente",
           "description" : "Performance estimée en cas de vente au cours actuel."
         },
         "realisedReturn" : {
           "title" : "Performance réalisée",
-          "description" : "Performance réalisée à la suite d’une vente, d’un envoi ou d’un échange passé."
+          "description" : "Performance à la suite d’une vente, d’un envoi ou d’un échange passé (estimation)."
         },
         "totalReturn" : {
           "title" : "Performance totale",
-          "description" : "Somme des performances estimée et réalisée."
+          "description" : "Somme des performances latente et réalisée (estimation)."
         }
       }
     }
@@ -8838,7 +8940,8 @@
     "title" : "Ledger Sync",
     "banner" : {
       "title" : "Votre wallet n’est pas synchronisé",
-      "description" : "Gardez votre portefeuille à jour"
+      "description" : "Gardez votre portefeuille à jour",
+      "cta" : "Synchroniser mon wallet"
     },
     "entryPoints" : {
       "simpleCta" : {
@@ -9093,18 +9196,32 @@
       "marketPrice" : "Cours du marché",
       "timeframeSelector" : "Période",
       "timeLabel" : {
-        "24h" : "1 jour",
-        "7d" : "1 semaine",
-        "30d" : "1 mois",
-        "1y" : "1 an"
+        "1d" : "24 heures ",
+        "1w" : "1 semaine",
+        "1m" : "1 mois",
+        "6m" : "6 mois",
+        "1y" : "1 an",
+        "all" : "Tout"
       },
-      "chartPlaceholder" : "Graphique"
+      "range" : {
+        "1d" : "1J",
+        "1w" : "1S",
+        "1m" : "1M",
+        "6m" : "6M",
+        "1y" : "1A",
+        "all" : "TOUT"
+      },
+      "chart" : {
+        "received" : "Reçu",
+        "sent" : "Envoyé",
+        "transactionsCount" : "{{count}} transactions"
+      }
     },
     "addresses" : {
-      "title" : "Adresses",
+      "title" : "Comptes",
       "addAccount" : "Ajouter",
       "seeAll" : "Afficher tout",
-      "empty" : "Pas encore d’adresse. Appuyez sur Ajouter pour commencer."
+      "empty" : "Pas encore de comptes. Appuyez sur Ajouter pour commencer."
     },
     "marketStats" : {
       "title" : "Statistiques du marché",
@@ -9117,7 +9234,8 @@
       "marketCapTooltip" : "La valeur totale de toutes les unités en circulation. Elle représente la valeur totale d’une cryptomonnaie sur le marché.",
       "tradingVolume" : "Volume de trading (24h)",
       "tradingVolumeTooltip" : "Le montant total échangé au cours des dernières 24 heures.",
-      "error" : "Impossible de charger les statistiques du marché."
+      "error" : "Impossible de charger les statistiques du marché.",
+      "disclaimer" : "Statistiques sur le marché fournies par CoinGecko"
     },
     "pricePerformance" : {
       "title" : "Historique de performance",
@@ -9158,6 +9276,11 @@
       "removeFavourite" : "Retirer des favoris",
       "hideFromPortfolio" : "Masquer dans le portefeuille",
       "showInPortfolio" : "Afficher dans le portefeuille"
+    },
+    "chartOptions" : {
+      "openMenuA11yLabel" : "Options du graphique",
+      "hideTransactions" : "Masquer les opérations sur le graphique",
+      "showTransactions" : "Afficher les opérations sur le graphique"
     }
   },
   "assetSelection" : {
@@ -9552,15 +9675,30 @@
   },
   "fearAndGreed" : {
     "title" : "Sentiment du marché",
-    "description" : "Cet indicateur représente le sentiment général du marché de 0 à 100, sur la base des tendances et de l’activité. Utilisez-le pour prendre le pouls du marché : des valeurs basses indiquent la peur, des valeurs élevées signalent la cupidité.",
+    "description" : "Cet indicateur représente le sentiment général du marché de 0 à 100, sur la base notamment de la volatilité, de la dynamique du marché et des tendances sociales. Des valeurs basses indiquent la peur, des valeurs élevées signalent la cupidité.",
+    "disclaimer" : "Les données proviennent de l’indice Fear and Greed de CoinMarketCap et sont fournies à titre informatif uniquement.",
     "levels" : {
+      "fearPlus" : "Peur+",
       "fear" : "Peur",
-      "cautious" : "Prudence",
       "neutral" : "Neutre",
-      "optimistic" : "Optimisme",
-      "greedy" : "Cupidité"
+      "greed" : "Cupidité",
+      "greedPlus" : "Cupidité+"
     },
     "tileTitle" : "Sentiment"
+  },
+  "altcoinSeason" : {
+    "title" : "Saison",
+    "definitionTitle" : "Index altcoin",
+    "description" : "L’indice Altcoin indique les performances du bitcoin par rapport aux autres cryptomonnaies. Plus le nombre est élevé, plus les altcoins sont performants par rapport au bitcoin.",
+    "disclaimer" : "Les données proviennent de l’indice Fear and Greed de CoinMarketCap et sont fournies à titre informatif uniquement.",
+    "levels" : {
+      "bitcoin" : "Bitcoin",
+      "altcoin" : "Altcoin"
+    }
+  },
+  "marketCapCard" : {
+    "title" : "Capitalisation globale",
+    "description" : "La capitalisation globale représente la capitalisation de toutes les cryptomonnaies confondues."
   },
   "analyticsAllocation" : {
     "header" : {

@@ -6,7 +6,7 @@ import TopBar from "../index";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 jest.mock("~/renderer/families", () => ({
-  getLLDCoinFamily: () => ({}),
+  useLLDCoinFamily: () => ({}),
 }));
 
 jest.mock("electron-store", () => {

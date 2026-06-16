@@ -119,7 +119,7 @@ export const getSubAccounts = async ({
 
     const isTokenListedInCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
       token.contractAddress,
-      token.parentCurrency.id,
+      token.parentCurrencyId,
     );
     if (!isTokenListedInCAL) continue;
 

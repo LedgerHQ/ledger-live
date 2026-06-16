@@ -3,11 +3,7 @@ import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
 import type { AssetTableItem } from "../types";
 
-function toPlaceholderItem(
-  currency: CryptoOrTokenCurrency,
-  marketId: string,
-  price?: number,
-): AssetTableItem {
+function toPlaceholderItem(currency: CryptoOrTokenCurrency, marketId: string): AssetTableItem {
   return {
     currency,
     balance: 0,
@@ -15,7 +11,6 @@ function toPlaceholderItem(
     distribution: 0,
     accounts: [],
     isPlaceholder: true,
-    placeholderPrice: price,
     marketId,
   };
 }
@@ -35,8 +30,8 @@ export function buildPlaceholderAssetItemsFromAssetsData(
     if (!currency) continue;
 
     const ticker = assetsData.cryptoAssets[id]?.ticker?.toUpperCase() ?? "";
-    const { price, id: marketId } = assetsData.markets?.[currency.id] ?? {};
-    const item = toPlaceholderItem(currency, marketId ?? id, price);
+    const { id: marketId } = assetsData.markets?.[currency.id] ?? {};
+    const item = toPlaceholderItem(currency, marketId ?? id);
 
     if (stablecoinTickers.has(ticker)) {
       stablecoins.push(item);

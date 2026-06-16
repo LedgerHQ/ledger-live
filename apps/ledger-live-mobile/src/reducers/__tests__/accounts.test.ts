@@ -1,6 +1,5 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@tests/test-renderer";
 import {
@@ -23,8 +22,6 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
     ),
   };
 });
-
-setSupportedCurrencies(["bitcoin", "ethereum"]);
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");

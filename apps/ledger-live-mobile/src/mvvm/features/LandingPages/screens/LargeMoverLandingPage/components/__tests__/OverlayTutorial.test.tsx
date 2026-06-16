@@ -55,6 +55,17 @@ jest.mock("@ledgerhq/live-common/market/hooks/useLargeMoverChartData", () => ({
   }),
 }));
 
+jest.mock("@ledgerhq/live-common/market/hooks/useLargeMoverCurrencies", () => ({
+  useLargeMoverCurrencies: () => [
+    {
+      id: "ethereum",
+      data: mockCurrencyData,
+      isLoading: false,
+      isError: false,
+    },
+  ],
+}));
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockRoute = {
   key: "LargeMoverRouteKey",

@@ -35,6 +35,7 @@ function createMockSigner(): jest.Mocked<AleoSigner> {
     getAppConfig: jest.fn(),
     getAddress: jest.fn(),
     getViewKey: jest.fn(),
+    getTvk: jest.fn().mockResolvedValue({ tvk: new Uint8Array([0xaa]) }),
     signRootIntent: jest.fn().mockResolvedValue({ signature: "root-signature" }),
     signFeeIntent: jest.fn().mockResolvedValue({ signature: "fee-signature" }),
     signNestedCall: jest.fn().mockResolvedValue({ signature: "nested-signature" }),
@@ -59,6 +60,13 @@ describe("buildSignOperation", () => {
   const mockSigner = createMockSigner();
   const mockSignerContext = createMockSignerContext(mockSigner);
   const mockSignOperation = buildSignOperation(mockSignerContext);
+  const mockMultiRecordTransaction = getMockedTransaction({
+    mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+    properties: {
+      amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+      feeRecordCommitment: mockUnspentRecord2.commitment,
+    },
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -442,6 +450,125 @@ describe("buildSignOperation", () => {
     ).rejects.toThrow("device disconnected");
   });
 
+  it("should report device-streaming progress as a 0-1 fraction when precomputing TVKs", async () => {
+    const privateTransaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+
+    const events = await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: privateTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    const streamingEvents = events
+      .filter(event => event.type === "device-streaming")
+      .map(event => ({
+        progress: event.progress,
+        index: event.index,
+        total: event.total,
+      }));
+
+    expect(streamingEvents.length).toBeGreaterThan(0);
+    expect(streamingEvents.at(0)).toEqual({ progress: 0.01, index: 0, total: 3 });
+    expect(streamingEvents.at(-1)).toEqual({ progress: 1, index: 2, total: 3 });
+    expect(streamingEvents.every(event => event.progress >= 0 && event.progress <= 1)).toBe(true);
+    expect(mockSigner.getTvk).toHaveBeenCalledTimes(3);
+    expect(mockSigner.getTvk).toHaveBeenNthCalledWith(1, mockAccount.freshAddressPath);
+    expect(mockSigner.getTvk).toHaveBeenNthCalledWith(2, mockAccount.freshAddressPath, 1);
+    expect(mockSigner.getTvk).toHaveBeenNthCalledWith(3, mockAccount.freshAddressPath, 2);
+  });
+
+  it("should pass precomputed tvks to craftTransaction for multi-record private txs", async () => {
+    const privateTransaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: privateTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockedCraftTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tvks: ["aa", "aa", "aa"],
+      }),
+    );
+  });
+
+  it("should not precompute tvks for single-record private txs", async () => {
+    const privateTransaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: privateTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockSigner.getTvk).not.toHaveBeenCalled();
+    expect(mockedCraftTransaction).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        tvks: expect.anything(),
+      }),
+    );
+  });
+
+  it("should not precompute tvks for public txs", async () => {
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockSigner.getTvk).not.toHaveBeenCalled();
+  });
+
+  it("should propagate getTvk errors to the observable", async () => {
+    const privateTransaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+    const signer = createMockSigner();
+    signer.getTvk.mockRejectedValue(new Error("tvk precompute failed"));
+    const invalidSignOperation = buildSignOperation(createMockSignerContext(signer));
+
+    await expect(
+      firstValueFrom(
+        invalidSignOperation({
+          account: mockAccount,
+          transaction: privateTransaction,
+          deviceId: "test-device",
+        }).pipe(toArray()),
+      ),
+    ).rejects.toThrow("tvk precompute failed");
+  });
+
   it("should propagate an error when account id has no viewKey", async () => {
     const accountWithoutViewKey = getMockedAccount({ id: "js:2:aleo:aleo1test:" });
 
@@ -454,5 +581,45 @@ describe("buildSignOperation", () => {
         }).pipe(toArray()),
       ),
     ).rejects.toThrow(`aleo: view key is missing in ${accountWithoutViewKey.freshAddress} account`);
+  });
+
+  it("should stop TVK fetching when subscription is cancelled after root TVK", async () => {
+    let streamingEventCount = 0;
+    const sub = mockSignOperation({
+      account: mockAccount,
+      transaction: mockMultiRecordTransaction,
+      deviceId: "test-device",
+    }).subscribe({
+      next: event => {
+        if (event.type === "device-streaming") {
+          streamingEventCount++;
+          if (streamingEventCount === 2) sub.unsubscribe();
+        }
+      },
+    });
+
+    await new Promise<void>(resolve => setImmediate(resolve));
+
+    expect(mockSigner.getTvk).toHaveBeenCalledTimes(1);
+    expect(mockSigner.signRootIntent).not.toHaveBeenCalled();
+  });
+
+  it("should not start signing when subscription is cancelled after all TVKs are fetched", async () => {
+    const sub = mockSignOperation({
+      account: mockAccount,
+      transaction: mockMultiRecordTransaction,
+      deviceId: "test-device",
+    }).subscribe({
+      next: event => {
+        if (event.type === "device-streaming" && event.progress === 1) {
+          sub.unsubscribe();
+        }
+      },
+    });
+
+    await new Promise<void>(resolve => setImmediate(resolve));
+
+    expect(mockSigner.getTvk).toHaveBeenCalledTimes(3);
+    expect(mockSigner.signRootIntent).not.toHaveBeenCalled();
   });
 });

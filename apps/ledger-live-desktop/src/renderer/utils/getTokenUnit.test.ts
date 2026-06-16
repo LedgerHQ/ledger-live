@@ -74,36 +74,7 @@ const mockedAccount: Account = {
         id: "ethereum/erc20/usd__coin",
 
         contractAddress: "0xContractAddress",
-        parentCurrency: {
-          type: "CryptoCurrency",
-          id: "ethereum",
-          coinType: 60,
-          name: "Ethereum",
-          managerAppName: "Ethereum",
-          ticker: "ETH",
-          scheme: "ethereum",
-          color: "#0ebdcd",
-          symbol: "Ξ",
-          family: "evm",
-          blockAvgTime: 15,
-          units: [
-            {
-              name: "ether",
-              code: "ETH",
-              magnitude: 18,
-            },
-          ],
-
-          explorerViews: [
-            {
-              tx: "https://etherscan.io/tx/$hash",
-              address: "https://etherscan.io/address/$address",
-              token: "https://etherscan.io/token/$contractAddress?a=$address",
-            },
-          ],
-          keywords: ["eth", "ethereum"],
-          explorerId: "eth",
-        },
+        parentCurrencyId: "ethereum",
         tokenType: "erc20",
         name: "USD Coin",
         ticker: "USDC",

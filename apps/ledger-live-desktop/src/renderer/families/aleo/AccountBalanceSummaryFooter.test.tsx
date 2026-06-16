@@ -2,12 +2,17 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { act, fireEvent, render, screen } from "tests/testSetup";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import type {
+  AleoAccount,
+  AleoTokenAccount,
+  AleoCoinConfig,
+} from "@ledgerhq/live-common/families/aleo/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
-import { ALEO_ACCOUNT_1 } from "./__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT } from "./__mocks__/account.mock";
+import { getAleoCurrencyConfig } from "./shared/utils";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
@@ -15,9 +20,14 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
 }));
 jest.mock("./hooks/useAleoPrivateSync");
+jest.mock("./shared/utils", () => ({
+  ...jest.requireActual("./shared/utils"),
+  getAleoCurrencyConfig: jest.fn(),
+}));
 
 const mockUseAccountUnit = jest.mocked(useAccountUnit);
 const mockUseAleoPrivateSync = jest.mocked(useAleoPrivateSync);
+const mockGetAleoCurrencyConfig = jest.mocked(getAleoCurrencyConfig);
 
 describe("AccountBalanceSummaryFooter", () => {
   const mockSpendableBalance = BigNumber(100);
@@ -38,6 +48,7 @@ describe("AccountBalanceSummaryFooter", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetAleoCurrencyConfig.mockReturnValue(undefined);
 
     mockStart = jest.fn();
     mockStop = jest.fn();
@@ -83,11 +94,10 @@ describe("AccountBalanceSummaryFooter", () => {
     expect(screen.getByText("***")).toBeInTheDocument();
   });
 
-  it("should return null when account type is not Account", () => {
-    const { container } = render(
-      // @ts-expect-error - testing with a non-Account type at runtime
-      <AccountBalanceSummaryFooter account={{ ...mockAccount, type: "TokenAccount" }} />,
-    );
+  it("should return null for token accounts when token config flag is disabled", () => {
+    const { container } = render(<AccountBalanceSummaryFooter account={ALEO_TOKEN_ACCOUNT} />, {
+      initialState: { accounts: [mockAccount] },
+    });
 
     expect(container).toBeEmptyDOMElement();
   });
@@ -98,6 +108,30 @@ describe("AccountBalanceSummaryFooter", () => {
     );
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("should display transparent and private balances for token accounts when token config flag is enabled", () => {
+    mockGetAleoCurrencyConfig.mockReturnValue({ enableTokens: true } as AleoCoinConfig);
+
+    const tokenBalance = BigNumber(42);
+    const transparentBalance = BigNumber(30);
+    const tokenAccount: AleoTokenAccount = {
+      ...ALEO_TOKEN_ACCOUNT,
+      spendableBalance: tokenBalance,
+      balance: tokenBalance,
+      transparentBalance,
+    };
+
+    render(<AccountBalanceSummaryFooter account={tokenAccount} />, {
+      initialState: { accounts: [mockAccount] },
+    });
+
+    expect(screen.getByText("Available balance")).toBeInTheDocument();
+    expect(screen.getByText("Transparent balance")).toBeInTheDocument();
+    expect(screen.getByText(`formatted: ${tokenBalance}`)).toBeInTheDocument();
+    expect(screen.getByText(`formatted: ${transparentBalance}`)).toBeInTheDocument();
+    expect(screen.getAllByText(PRIVATE_BALANCE_PLACEHOLDER).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: "Start sync" })).not.toBeInTheDocument();
   });
 
   describe("sync button", () => {

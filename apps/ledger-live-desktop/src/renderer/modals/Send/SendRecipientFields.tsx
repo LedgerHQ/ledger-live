@@ -1,7 +1,7 @@
 import React from "react";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 
 type Props = {
   account: Account;
@@ -12,8 +12,12 @@ type Props = {
   autoFocus?: boolean;
 };
 
-export const getFields = (account: Account, isLldMemoTagEnabled?: boolean): string[] => {
-  const module = getLLDCoinFamily(account.currency.family)?.sendRecipientFields;
+export const getFields = (
+  account: Account,
+  isLldMemoTagEnabled?: boolean,
+  sendRecipientFieldsModule?: { fields?: string[] } | null,
+): string[] => {
+  const module = sendRecipientFieldsModule;
   if (!isLldMemoTagEnabled) {
     return module?.fields || [];
   }
@@ -28,9 +32,10 @@ export const getFields = (account: Account, isLldMemoTagEnabled?: boolean): stri
 };
 
 const RecipientRelatedField = (props: Props) => {
-  const module = getLLDCoinFamily<Account, Transaction, TransactionStatus, Operation>(
+  const specific = useLLDCoinFamily<Account, Transaction, TransactionStatus, Operation>(
     props.account.currency.family,
-  )?.sendRecipientFields;
+  );
+  const module = specific?.sendRecipientFields;
   if (!module) return null;
   const Cmp = module.component;
   return <Cmp {...props} />;

@@ -4,6 +4,7 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import invariant from "invariant";
@@ -56,7 +57,7 @@ export default function SelectToken({ navigation, route }: Props) {
       const isAlreadyAssociated = !!subAccount;
 
       track("asset_clicked", {
-        currency: currency.parentCurrency,
+        currency: getCryptoCurrencyById(currency.parentCurrencyId),
         asset: currency.name,
         page: ScreenName.HederaAssociateTokenSelectToken,
         isAlreadyAssociated,

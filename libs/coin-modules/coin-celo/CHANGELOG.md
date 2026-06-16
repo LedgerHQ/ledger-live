@@ -1,5 +1,45 @@
 # @ledgerhq/coin-celo
 
+## 2.5.0
+
+### Minor Changes
+
+- [#17901](https://github.com/LedgerHQ/ledger-live/pull/17901) [`fd81ba0`](https://github.com/LedgerHQ/ledger-live/commit/fd81ba03b5bc5a676852027003a43d3751275679) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Implements the Celo fee currency selection plugin across mobile and desktop. Users can now select a fee currency (CELO or supported tokens) to pay transaction fees. Updates include UI integration, gas estimation adjustments, and descriptor enhancements for Celo transactions.
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b), [`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`8d78462`](https://github.com/LedgerHQ/ledger-live/commit/8d784626afecbc4f336b7bcfb3d95302491a6147), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`7eb1ec7`](https://github.com/LedgerHQ/ledger-live/commit/7eb1ec7d91ded7f5dacbf11c2c3a8b795bbebbbf), [`4e8ba32`](https://github.com/LedgerHQ/ledger-live/commit/4e8ba3283c1e15b113799fc7f2648e38c0f113e9), [`f1334e7`](https://github.com/LedgerHQ/ledger-live/commit/f1334e76d8bc893b136c17c38780016c5367cd22), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b), [`3624b3d`](https://github.com/LedgerHQ/ledger-live/commit/3624b3da9dcde1909a990f89515742283f4a88f8), [`16694d5`](https://github.com/LedgerHQ/ledger-live/commit/16694d5120b9e04ba98e0725a4a907f3996b4d41), [`95c31f8`](https://github.com/LedgerHQ/ledger-live/commit/95c31f8120446925a6591150fb5b0b4af1f60913), [`2670997`](https://github.com/LedgerHQ/ledger-live/commit/2670997b889d9ba56fdceb3cd4208b4bf6fcc424), [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80), [`fb56998`](https://github.com/LedgerHQ/ledger-live/commit/fb56998e190b3fb2a034d51da29254f15e043760), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78), [`8333f85`](https://github.com/LedgerHQ/ledger-live/commit/8333f85228a167e8ef6372223f1f29d5540152a0), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94), [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2), [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024), [`2e42f3a`](https://github.com/LedgerHQ/ledger-live/commit/2e42f3a38c3cf1d25250d9c6271c51c1b6b08531)]:
+  - @ledgerhq/types-live@6.111.0
+  - @ledgerhq/cryptoassets@13.51.0
+  - @ledgerhq/ledger-wallet-framework@2.1.0
+  - @ledgerhq/coin-evm@4.2.0
+  - @ledgerhq/live-env@2.38.0
+  - @ledgerhq/live-config@3.8.0
+  - @ledgerhq/errors@6.36.0
+  - @ledgerhq/hw-app-eth@7.8.6
+  - @ledgerhq/live-network@2.6.4
+  - @ledgerhq/devices@8.15.1
+
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#17901](https://github.com/LedgerHQ/ledger-live/pull/17901) [`fd81ba0`](https://github.com/LedgerHQ/ledger-live/commit/fd81ba03b5bc5a676852027003a43d3751275679) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Implements the Celo fee currency selection plugin across mobile and desktop. Users can now select a fee currency (CELO or supported tokens) to pay transaction fees. Updates include UI integration, gas estimation adjustments, and descriptor enhancements for Celo transactions.
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b), [`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`8d78462`](https://github.com/LedgerHQ/ledger-live/commit/8d784626afecbc4f336b7bcfb3d95302491a6147), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`7eb1ec7`](https://github.com/LedgerHQ/ledger-live/commit/7eb1ec7d91ded7f5dacbf11c2c3a8b795bbebbbf), [`4e8ba32`](https://github.com/LedgerHQ/ledger-live/commit/4e8ba3283c1e15b113799fc7f2648e38c0f113e9), [`f1334e7`](https://github.com/LedgerHQ/ledger-live/commit/f1334e76d8bc893b136c17c38780016c5367cd22), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b), [`3624b3d`](https://github.com/LedgerHQ/ledger-live/commit/3624b3da9dcde1909a990f89515742283f4a88f8), [`16694d5`](https://github.com/LedgerHQ/ledger-live/commit/16694d5120b9e04ba98e0725a4a907f3996b4d41), [`95c31f8`](https://github.com/LedgerHQ/ledger-live/commit/95c31f8120446925a6591150fb5b0b4af1f60913), [`2670997`](https://github.com/LedgerHQ/ledger-live/commit/2670997b889d9ba56fdceb3cd4208b4bf6fcc424), [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80), [`fb56998`](https://github.com/LedgerHQ/ledger-live/commit/fb56998e190b3fb2a034d51da29254f15e043760), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78), [`8333f85`](https://github.com/LedgerHQ/ledger-live/commit/8333f85228a167e8ef6372223f1f29d5540152a0), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94), [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2), [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024), [`2e42f3a`](https://github.com/LedgerHQ/ledger-live/commit/2e42f3a38c3cf1d25250d9c6271c51c1b6b08531)]:
+  - @ledgerhq/types-live@6.111.0-next.0
+  - @ledgerhq/cryptoassets@13.51.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.1.0-next.0
+  - @ledgerhq/coin-evm@4.2.0-next.0
+  - @ledgerhq/live-env@2.38.0-next.0
+  - @ledgerhq/live-config@3.8.0-next.0
+  - @ledgerhq/errors@6.36.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.6-next.0
+  - @ledgerhq/live-network@2.6.4-next.0
+  - @ledgerhq/devices@8.15.1-next.0
+
 ## 2.4.1
 
 ### Patch Changes

@@ -6,6 +6,7 @@ import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import IconReceive from "~/renderer/icons/Receive";
 import IconExchange from "~/renderer/icons/Exchange";
 import Box from "~/renderer/components/Box";
@@ -87,7 +88,9 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               <Text ff="Inter|SemiBold" color="neutral.c100">
                 {account &&
                   account.type === "TokenAccount" &&
-                  (account.token.parentCurrency.tokenTypes || []).join(", ")}
+                  (getCryptoCurrencyById(account.token.parentCurrencyId).tokenTypes || []).join(
+                    ", ",
+                  )}
                 {"tokens"}
               </Text>
             </Trans>

@@ -47,9 +47,9 @@ function resolveSwapAccountForCurrency(
     return parentAccount;
   }
 
-  if (currency.parentCurrency.id !== parentAccount.currency.id) {
+  if (currency.parentCurrencyId !== parentAccount.currency.id) {
     throw new Error(
-      `--${flag} account is ${parentAccount.currency.id} but token ${userCurrencyId} belongs to ${currency.parentCurrency.id}.`,
+      `--${flag} account is ${parentAccount.currency.id} but token ${userCurrencyId} belongs to ${currency.parentCurrencyId}.`,
     );
   }
 
@@ -112,7 +112,7 @@ export async function executeSwapCommand({
 
   const provider = resolveSwapProvider(flags.provider);
   const networkCurrencyId =
-    fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrency.id : fromCurrency.id;
+    fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrencyId : fromCurrency.id;
   const network = networkStringFromCurrencyId(networkCurrencyId);
 
   const out = createCommandOutput(resolveOutputFormat(flags.output), {

@@ -205,6 +205,7 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
+      "FINALIZE_UNSTAKE" : "Çekildi",
       "SENDING" : "Gönderiliyor",
       "BURN" : "Yakıldı",
       "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
@@ -2859,8 +2860,8 @@
         "title" : "Yetki Devredin",
         "steps" : {
           "starter" : {
-            "description" : "ADA varlıklarınızın yetkisini bir havuza devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıkların yetkisini farklı bir havuza yeniden devredebilir veya yetki devrini istediğiniz zaman iptal edebilirsiniz."]
+            "description" : "ADA varlıklarınızla bir havuza yetki devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklarınızla farklı bir havuza yeniden yetki devredebilir veya yetki devrini istediğiniz zaman iptal edebilirsiniz."]
           },
           "validator" : {
             "title" : "Havuzlar"
@@ -3383,7 +3384,7 @@
     },
     "redelegation" : {
       "flow" : {
-        "title" : "Varlıkların Yetkisini Yeniden Devredin",
+        "title" : "Varlıklarınızla Yeniden Yetki Devredin",
         "steps" : {
           "starter" : {
             "title" : "Yetkinin Yeniden Devri",
@@ -4260,8 +4261,10 @@
         "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
         "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
         "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+        "undelegateActivatingTooltip" : "Etkinleşmekte olan bir stake'in yetki devrini sonlandıramazsınız",
         "reward" : "Ödüllerinizi alın",
         "activeTooltip" : "Yetkisi devredilen tutar ödül üretiyor",
+        "activatingTooltip" : "Yetki devrinde kullanılan tutarlar sonraki epoch'ta ödül üretmeye başlayacak",
         "inactiveTooltip" : "Yetki devri iptal edilen tutarlar üzerinden ödül kazanamazsınız",
         "minSafeWarning" : "Yetersiz fon miktarı",
         "commission" : "Komisyon",
@@ -4274,7 +4277,8 @@
               "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devri iptal edildikten sonra mevcut olacak"],
               "warning" : {
                 "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
-              }
+              },
+              "seiAssociationWarning" : "Sei hesabınız henüz zincir üstü bağlanmadı. Hesabınızın ilk giden işlemi zincir üstü onaylanana kadar delegasyon başarısız olacaktır. Öncelikle herhangi bir adrese küçük bir SEI tutarı gönderin, onayları bekleyin, ardından yetki devretmek için geri dönün."
             },
             "amount" : {
               "title" : "Miktar"
@@ -4301,7 +4305,7 @@
       "redelegation" : {
         "header" : "Yetki yeniden devri",
         "flow" : {
-          "title" : "Varlıkların Yetkisini Yeniden Devredin",
+          "title" : "Varlıklarınızla Yeniden Yetki Devredin",
           "steps" : {
             "starter" : {
               "title" : "Yetkinin Yeniden Devri",
@@ -4373,13 +4377,13 @@
     "error" : "Grafik yüklenemiyor",
     "rangeSelectorLabel" : "Zaman aralığı seçin",
     "range" : {
-      "1D" : "1G",
-      "1W" : "1H",
-      "1M" : "1A",
-      "6M" : "6A",
-      "1Y" : "1Y",
-      "5Y" : "5Y",
-      "ALL" : "Tümü"
+      "1d" : "1G",
+      "1w" : "1H",
+      "1m" : "1A",
+      "6m" : "6A",
+      "1y" : "1Y",
+      "5y" : "5Y",
+      "all" : "TÜMÜ"
     }
   },
   "near" : {
@@ -5155,6 +5159,16 @@
       "customLockScreen" : "Özel kilitli ekran varlıkları",
       "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
       "customLockScreenCTA" : "Başlat",
+      "coinConfig" : {
+        "title" : "Ledger Wallet'ta kullanılan coin ayarları",
+        "desc" : "Yerel hata ayıklama için para birimi bazlı yapılandırmaları (rpc, explorer, gas…) geçersiz kılın. Yalnızca geçerli JSON formatı kabul edilir. Geçersiz kılınan ayarlar yeniden başlatmalarda da korunur; bunları temizlemek için \"Restore all\" (Tümünü Geri Yükle) seçeneğini kullanın.",
+        "search" : "Yapılandırma anahtarı arayın (örn. config_currency_ethereum)",
+        "hint" : "Varsayılan olarak \"config_currency_*\" anahtarları gösterilir. Tüm LiveConfig anahtarlarını görmek için arama yapın. Nesne yapılandırmalarında geçersiz kılınan ayarlar, varsayılan + uzak (remote) değerlerin üzerine derinlemesine birleştirilir.",
+        "restore" : "Geri yükle",
+        "override" : "Uygula",
+        "restoreAll" : "Tüm coin ayarlarını geri yükle",
+        "overriddenLocally" : "yerel olarak uygulandı"
+      },
       "featureFlagsTitle" : "Ledger Wallet'ta kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
@@ -7188,6 +7202,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "Lütfen stake etmeden önce hesabınızla yetki devredin"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "Stake edilen bakiye yetersiz"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
     },
@@ -7986,7 +8003,7 @@
     },
     "redelegation" : {
       "flow" : {
-        "title" : "Varlıkların Yetkisini Yeniden Devredin",
+        "title" : "Varlıklarınızla Yeniden Yetki Devredin",
         "steps" : {
           "validators" : {
             "title" : "Doğrulayıcılar",
@@ -8283,6 +8300,9 @@
         "value" : "Değer",
         "allocation" : "Dağılım"
       }
+    },
+    "pnl" : {
+      "title" : "Kâr ve zarar"
     }
   },
   "walletSync" : {
@@ -8612,15 +8632,16 @@
   },
   "fearAndGreed" : {
     "levels" : {
+      "fearPlus" : "Aşırı Korku",
       "fear" : "Korku",
-      "cautious" : "Dikkatli",
       "neutral" : "Nötr",
-      "optimistic" : "İyimser",
-      "greedy" : "Coşkulu"
+      "greed" : "Coşku",
+      "greedPlus" : "Aşırı Coşku"
     },
     "dialog" : {
       "title" : "Duygu endeksi",
-      "content" : "Trendlere ve olaylara dayalı olarak genel piyasa duyarlılığını 0 ile 100 değer arasında gösterir. Bunu piyasanın nasıl davrandığını anlamak için kullanın. Düşük değerler korkuyu, yüksek değerler coşkuyu ifade eder.",
+      "content" : "Özellikle oynaklık, piyasa momentumu ve sosyal trendlere dayalı olarak genel piyasa duyarlılığını 0 ile 100 arasında gösterir. Düşük değerler korkuyu, yüksek değerler coşkuyu ifade eder.",
+      "disclaimer" : "Veriler, CoinMarketCap'in Korku ve Açgözlülük Endeksi'nden alınmıştır ve yalnızca bilgilendirme amacıyla sunulmaktadır.",
       "cta" : "Anladım"
     }
   },
@@ -8928,9 +8949,9 @@
       "done" : "Tamam",
       "fundYourWallet" : "Cüzdanınıza fon aktarın",
       "discoverSwap" : "Takası keşfedin",
-      "growYourRewards" : "Ödüllerinizi artırın",
-      "spendYourCrypto" : "Kriptonuzla alışveriş yapın",
-      "everythingAtAGlance" : "Tek bir bakışta her şeyi görün"
+      "discoverEarn" : "Kazan bölümünü keşfet",
+      "getCard" : "Kart alın",
+      "viewPortfolio" : "Portföyü görüntüle"
     },
     "slides" : {
       "fund" : {
@@ -9017,25 +9038,46 @@
       "hideFromPortfolio" : "Portföyden gizle",
       "showInPortfolio" : "Portföyde göster"
     },
+    "chartOptions" : {
+      "menu" : "Grafik seçenekleri",
+      "hideTransactions" : "Fiyat grafiğinde etkinliği gizle",
+      "showTransactions" : "Fiyat grafiğinde etkinliği göster"
+    },
     "hiddenBanner" : {
       "description" : "Bu varlık, portföyünüzden gizlenmiştir.",
       "showAsset" : "Varlığı göster"
     },
     "totalBalance" : "Toplam bakiye",
     "marketPrice" : "Piyasa fiyatı",
-    "addresses" : "Adresler",
+    "addresses" : "Hesaplar",
     "addressesDialog" : {
-      "title" : "Adresler",
-      "description" : "{{ticker}} içeren tüm adresleriniz."
+      "title" : "Hesaplar",
+      "description" : "{{ticker}} içeren tüm hesaplarınız."
     },
     "add" : "Ekle",
     "notFound" : "Varlık dağıtım ögesi bulunamadı.",
     "marketStats" : "Piyasa istatistikleri",
     "marketStatsTooltip" : "Bu varlıklar için piyasa metrikleri.",
+    "marketCapTooltip" : "Dolaşımdaki tüm coinlerin toplam değeri. Bunu kriptonun piyasadaki toplam değeri olarak düşünün.",
+    "circulatingSupplyTooltip" : "An itibarıyla piyasada mevcut ve halkın elinde bulunan toplam token miktarı. Kilitli, ayrılmış veya basılmamış token'ları hariç tutar.",
+    "maxSupplyTooltip" : "Var olacak maksimum token sayısı. Bazı varlıklar için, enflasyonu önlemek amacıyla bu sabittir.",
     "pricePerformance" : "Fiyat performansı",
     "marketRank" : "Piyasa sıralaması",
     "tradingVolume24h" : "24 saatlik işlem hacmi",
+    "tradingVolume24hTooltip" : "Son 24 saatte işlem gören toplam tutar.",
+    "marketStatsDisclaimer" : "Piyasa istatistikleri CoinGecko kaynaklıdır",
     "day" : "1 gün",
+    "week" : "1 hafta",
+    "month" : "1 ay",
+    "sixMonths" : "6 ay",
+    "year" : "1 yıl",
+    "fiveYears" : "5 yıl",
+    "allTime" : "Tüm zamanlar",
+    "chart" : {
+      "received" : "Alındı",
+      "sent" : "Gönderildi",
+      "transactionsCount" : "{{count}} işlem"
+    },
     "staking" : {
       "availableBalance" : "Mevcut bakiye",
       "availableBalanceTooltip" : "Varlıklarınızın şu anda kullanabileceğiniz; dilediğiniz an gönderebileceğiniz, takas edebileceğiniz veya çekebileceğiniz kısmıdır.",
@@ -9050,7 +9092,7 @@
     "asset" : {
       "entry" : {
         "title" : "Ortalama giriş fiyatı",
-        "tooltip" : "Satın aldığınız veya diğer cüzdanlardan transfer aldığınız her şey dâhil olmak üzere, bu cüzdandaki bu varlık için ödediğiniz ortalama fiyat. Bu, kârınızı veya zararınızı izlemek için kullanılır."
+        "tooltip" : "Satın aldığınız veya diğer cüzdanlardan transfer aldığınız her şey dâhil olmak üzere, Ledger Wallet aracılığıyla bu varlık için ödediğiniz ortalama fiyat. Bu, kârınızı veya zararınızı izlemek için kullanılır."
       },
       "return" : {
         "title" : "Gerçekleşmemiş getiri"
@@ -9060,42 +9102,46 @@
         "description" : "Bu varlığın portföyünüzde nasıl bir performans sergilediğine dair bir özet.",
         "totalReturn" : {
           "title" : "Toplam getiri",
-          "description" : "Gerçekleşmemiş ve gerçekleşmiş getirilerin toplamı."
+          "description" : "Tahmini gerçekleşmemiş ve gerçekleşmiş getirilerin toplamı."
         },
         "unrealisedReturn" : {
           "title" : "Gerçekleşmemiş getiri",
-          "description" : "Bugünkü fiyat üzerinden satılırsa tahmini kazanç veya zarar."
+          "description" : "Mevcut fiyat üzerinden satılırsa tahmini kâr veya zarar."
         },
         "realisedReturn" : {
           "title" : "Gerçekleşen getiri",
-          "description" : "Önceki satışlardan veya transferlerden teyit edilmiş kâr veya zararlar."
+          "description" : "Önceki satış, gönderim veya takastan tahmin edilen kâr veya zarar."
         }
       }
     },
     "portfolio" : {
-      "return" : {
-        "title" : "Gerçekleşmemiş getiri"
+      "cards" : {
+        "totalReturn" : "Toplam getiri",
+        "unrealisedReturn" : "Gerçekleşmemiş getiri",
+        "realisedReturn" : "Gerçekleşen getiri"
       },
       "costBasis" : {
         "title" : "Maliyet tabanı",
         "tooltip" : "Ücretler dâhil olmak üzere mevcut varlıklarınızı edinmek için ödediğiniz toplam tutar."
       },
+      "detail" : "Ayrıntılar",
       "dialog" : {
         "title" : "Kâr ve zarar",
-        "description" : "Portföy performansının, gerçekleşmemiş ve gerçekleşmiş getiriler olarak kırılımı.",
+        "description" : "Portföy performansının, tahmini gerçekleşmemiş ve gerçekleşmiş getiriler olarak kırılımı.",
         "totalReturn" : {
           "title" : "Toplam getiri",
-          "description" : "Genel pozisyonunuzu yansıtan, gerçekleşmiş ve gerçekleşmemiş getirilerin toplamıdır."
+          "description" : "Tahmini gerçekleşmemiş ve gerçekleşmiş getirilerin toplamı."
         },
         "unrealisedReturn" : {
           "title" : "Gerçekleşmemiş getiri",
-          "description" : "Mevcut varlıklarınız için tahmini kazanç veya kayıp."
+          "description" : "Mevcut fiyat üzerinden satılırsa tahmini kâr veya zarar."
         },
         "realisedReturn" : {
           "title" : "Gerçekleşen getiri",
-          "description" : "Önceki satışlardan veya giden transferlerden teyit edilmiş kâr veya zararlar."
+          "description" : "Önceki satış, gönderim veya takas sonrası tahmin edilen kâr veya zarar."
         }
       }
-    }
+    },
+    "disclaimer" : "Bu veriler sadece bilgilendirme amacıyla sunulmaktadır ve finansal tavsiye değildir. Vergi amaçlı kullanılamaz."
   }
 }

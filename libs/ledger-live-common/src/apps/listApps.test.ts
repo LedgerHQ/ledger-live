@@ -1,4 +1,4 @@
-import { from } from "rxjs";
+import { from, lastValueFrom } from "rxjs";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./listApps";
@@ -37,6 +37,7 @@ const mockedListInstalledAppEvent: ListInstalledAppsEvent = {
 describe("listApps", () => {
   let mockedManagerApiRepository: ManagerApiRepository;
   let listAppsWithManagerApiSpy: jest.SpyInstance;
+  const appName = "Concordium";
 
   beforeEach(() => {
     mockedManagerApiRepository = new StubManagerApiRepository();
@@ -48,6 +49,81 @@ describe("listApps", () => {
       .spyOn(ManagerAPI, "listInstalledApps")
       .mockReturnValue(from([mockedListInstalledAppEvent]));
   });
+
+  const runListApps = async () => {
+    const transport = aTransportBuilder();
+    const deviceInfo = aDeviceInfoBuilder({
+      isOSU: false,
+      isBootloader: false,
+      managerAllowed: true,
+      targetId: 0x33200000,
+    });
+
+    const event = await lastValueFrom(
+      listApps({
+        managerDevModeEnabled: false,
+        transport,
+        deviceInfo,
+        managerApiRepository: mockedManagerApiRepository,
+        forceProvider: 1,
+      }),
+    );
+
+    if (event.type !== "result") {
+      throw new Error("Expected listApps to emit a result");
+    }
+
+    return event.result;
+  };
+
+  const mockInstalledAppAndCatalog = ({
+    installedVersion,
+    catalogVersion,
+    installedHash = "installed-hash",
+    catalogHash = "catalog-hash",
+  }: {
+    installedVersion: string;
+    catalogVersion: string;
+    installedHash?: string;
+    catalogHash?: string;
+  }) => {
+    mockedManagerApiRepository = {
+      ...new StubManagerApiRepository(),
+      catalogForDevice: () =>
+        Promise.resolve([
+          makeAppV2Mock({
+            versionName: appName,
+            versionDisplayName: appName,
+            version: catalogVersion,
+            hash: catalogHash,
+            currencyId: undefined,
+          }),
+        ]),
+      getAppsByHash: hashes =>
+        Promise.resolve(
+          hashes.map(hash =>
+            hash === installedHash
+              ? makeAppV2Mock({
+                  versionName: appName,
+                  versionDisplayName: appName,
+                  version: installedVersion,
+                  hash: installedHash,
+                  currencyId: undefined,
+                })
+              : null,
+          ),
+        ),
+    };
+
+    listAppsWithManagerApiSpy.mockReturnValue(
+      from([
+        {
+          type: "result",
+          payload: [{ hash: installedHash, hash_code_data: "hash_code_data", name: appName }],
+        },
+      ]),
+    );
+  };
 
   afterEach(() => {
     jest.clearAllTimers();
@@ -431,5 +507,68 @@ describe("listApps", () => {
     });
 
     jest.advanceTimersByTime(1);
+  });
+
+  it("GIVEN an installed app with a newer semver than the catalog WHEN listing apps THEN it should not mark the app as updatable", async () => {
+    // GIVEN
+    mockInstalledAppAndCatalog({
+      installedVersion: "5.6.2",
+      catalogVersion: "5.4.1",
+    });
+
+    // WHEN
+    const result = await runListApps();
+
+    // THEN
+    expect(result.installed).toEqual([
+      expect.objectContaining({
+        name: appName,
+        updated: true,
+        version: "5.6.2",
+        availableVersion: "5.4.1",
+      }),
+    ]);
+  });
+
+  it("GIVEN an installed app with an older semver than the catalog WHEN listing apps THEN it should mark the app as updatable", async () => {
+    // GIVEN
+    mockInstalledAppAndCatalog({
+      installedVersion: "5.4.1",
+      catalogVersion: "5.6.2",
+    });
+
+    // WHEN
+    const result = await runListApps();
+
+    // THEN
+    expect(result.installed).toEqual([
+      expect.objectContaining({
+        name: appName,
+        updated: false,
+        version: "5.4.1",
+        availableVersion: "5.6.2",
+      }),
+    ]);
+  });
+
+  it("GIVEN an installed app with a non-semver version WHEN hashes differ THEN it should mark the app as updatable", async () => {
+    // GIVEN
+    mockInstalledAppAndCatalog({
+      installedVersion: "blue",
+      catalogVersion: "green",
+    });
+
+    // WHEN
+    const result = await runListApps();
+
+    // THEN
+    expect(result.installed).toEqual([
+      expect.objectContaining({
+        name: appName,
+        updated: false,
+        version: "blue",
+        availableVersion: "green",
+      }),
+    ]);
   });
 });

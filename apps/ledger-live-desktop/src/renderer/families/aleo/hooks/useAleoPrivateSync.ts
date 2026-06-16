@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -9,7 +9,7 @@ import type { State } from "~/renderer/reducers";
 import { aleoPrivateSyncProgress$ } from "@ledgerhq/live-common/families/aleo/privateSyncProgress";
 import { asyncScheduler, from, mergeMap, throttleTime } from "rxjs";
 import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "../constants";
-import { isAleoAccount } from "../modals/send/steps/utils";
+import { isAleoAccount } from "../shared/utils";
 
 /**
  * Module-level registry that keeps track of sync subscriptions that should
@@ -31,7 +31,7 @@ interface KeepAliveEntry {
 const keepAliveRegistry = new Map<string, KeepAliveEntry>();
 
 interface UseAleoPrivateSyncOptions {
-  account: Account | TokenAccount | null | undefined;
+  account: Account | null | undefined;
   /** If true, sync starts automatically on mount and cannot be stopped. */
   autoStart?: boolean;
   /** Called with the locally-computed updated account after each sync emission. */

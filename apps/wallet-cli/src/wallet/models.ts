@@ -111,7 +111,7 @@ export function toTokenInfo(t: TokenCurrency): TokenInfo {
     ticker: t.ticker,
     name: t.name,
     contractAddress: t.contractAddress,
-    parentCurrencyId: t.parentCurrency.id,
+    parentCurrencyId: t.parentCurrencyId,
     tokenType: t.tokenType,
     decimals: magnitude,
     ...(t.delisted === undefined ? {} : { delisted: t.delisted }),

@@ -1,6 +1,13 @@
 import BigNumber from "bignumber.js";
-import type { AccountRaw, Account } from "@ledgerhq/types-live";
-import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../types";
+import type { AccountRaw, Account, TokenAccount, TokenAccountRaw } from "@ledgerhq/types-live";
+import type {
+  AleoAccount,
+  AleoAccountRaw,
+  AleoResources,
+  AleoResourcesRaw,
+  AleoTokenAccount,
+  AleoTokenAccountRaw,
+} from "../types";
 
 export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
   return {
@@ -13,6 +20,9 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     unspentPrivateRecords: resources.unspentPrivateRecords
       ? JSON.stringify(resources.unspentPrivateRecords)
       : null,
+    ...(typeof resources.hasMigratedPublicTokens === "boolean" && {
+      hasMigratedPublicTokens: resources.hasMigratedPublicTokens,
+    }),
   };
 }
 
@@ -27,6 +37,9 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
     unspentPrivateRecords: rawResources.unspentPrivateRecords
       ? JSON.parse(rawResources.unspentPrivateRecords)
       : null,
+    ...(typeof rawResources.hasMigratedPublicTokens === "boolean" && {
+      hasMigratedPublicTokens: rawResources.hasMigratedPublicTokens,
+    }),
   };
 }
 
@@ -46,4 +59,32 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (aleoAccountRaw.aleoResources) {
     aleoAccount.aleoResources = fromAleoResourcesRaw(aleoAccountRaw.aleoResources);
   }
+}
+
+export function assignToTokenAccountRaw(
+  tokenAccount: TokenAccount,
+  tokenAccountRaw: TokenAccountRaw,
+): void {
+  const aleoTokenAccount = tokenAccount as AleoTokenAccount;
+  const aleoTokenAccountRaw = tokenAccountRaw as AleoTokenAccountRaw;
+  aleoTokenAccountRaw.transparentBalance = aleoTokenAccount.transparentBalance.toString();
+  aleoTokenAccountRaw.privateBalance = aleoTokenAccount.privateBalance?.toString() ?? null;
+  aleoTokenAccountRaw.unspentPrivateRecords = aleoTokenAccount.unspentPrivateRecords
+    ? JSON.stringify(aleoTokenAccount.unspentPrivateRecords)
+    : null;
+}
+
+export function assignFromTokenAccountRaw(
+  tokenAccountRaw: TokenAccountRaw,
+  tokenAccount: TokenAccount,
+): void {
+  const aleoTokenAccount = tokenAccount as AleoTokenAccount;
+  const aleoTokenAccountRaw = tokenAccountRaw as AleoTokenAccountRaw;
+  aleoTokenAccount.transparentBalance = new BigNumber(aleoTokenAccountRaw.transparentBalance ?? 0);
+  aleoTokenAccount.privateBalance = aleoTokenAccountRaw.privateBalance
+    ? new BigNumber(aleoTokenAccountRaw.privateBalance)
+    : null;
+  aleoTokenAccount.unspentPrivateRecords = aleoTokenAccountRaw.unspentPrivateRecords
+    ? JSON.parse(aleoTokenAccountRaw.unspentPrivateRecords)
+    : null;
 }

@@ -1,6 +1,6 @@
 import React, { memo, RefObject } from "react";
 import { TFunction } from "i18next";
-import { Virtualizer } from "@tanstack/react-virtual";
+import type { Virtualizer, VirtualItem } from "@tanstack/react-virtual";
 import {
   MarketCurrencyData,
   MarketListRequestParams,
@@ -16,6 +16,8 @@ import { MarketFavoritesEmptyState } from "../components/MarketFavoritesEmptySta
 type MarketListVirtualization = {
   parentRef: RefObject<HTMLDivElement | null>;
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  virtualItems: VirtualItem[];
+  totalSize: number;
 };
 
 type MarketListProps = {
@@ -52,7 +54,7 @@ function MarketList({
   t,
 }: Readonly<MarketListProps>) {
   const { order, search, starred, range, counterCurrency } = marketParams;
-  const { parentRef, rowVirtualizer } = virtualization;
+  const { parentRef, virtualItems, totalSize } = virtualization;
 
   if (emptyState === "favorites") {
     return <MarketFavoritesEmptyState t={t} />;
@@ -84,7 +86,8 @@ function MarketList({
         ) : (
           showData && (
             <ListData
-              rowVirtualizer={rowVirtualizer}
+              virtualItems={virtualItems}
+              totalSize={totalSize}
               marketData={marketData}
               starredMarketCoins={starredMarketCoins}
               counterCurrency={counterCurrency}

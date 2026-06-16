@@ -26,7 +26,7 @@ describe("MarketBannerView", () => {
 
   it("should render correctly", () => {
     render(<MarketBannerView isLoading={false} isError={false} data={undefined} />);
-    expect(screen.getByText("Explore the market")).toBeVisible();
+    expect(screen.getByText("Market")).toBeVisible();
     expect(screen.queryByTestId("skeleton-list")).toBeNull();
   });
 
@@ -47,7 +47,7 @@ describe("MarketBannerView", () => {
 
   it("should hide the ranking select when assetDiscoverability is off", () => {
     render(<MarketBannerView isLoading={false} isError={false} data={undefined} />);
-    expect(screen.getByText("Explore the market")).toBeVisible();
+    expect(screen.getByText("Market")).toBeVisible();
     expect(screen.queryByTestId(RANKING_TRIGGER)).toBeNull();
   });
 
@@ -55,7 +55,7 @@ describe("MarketBannerView", () => {
     render(<MarketBannerView isLoading={false} isError={false} data={undefined} />, {
       initialState: assetDiscoverabilityOn,
     });
-    expect(screen.getByText("Explore the market")).toBeVisible();
+    expect(screen.getByText("Market")).toBeVisible();
     expect(screen.getByTestId(RANKING_TRIGGER)).toBeVisible();
   });
 

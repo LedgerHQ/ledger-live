@@ -88,6 +88,7 @@ export function useStake() {
     account: Account | TokenAccount | AccountLike,
     walletState: WalletState,
     parentAccount?: Account,
+    cryptoAssetId?: string,
   ) =>
     | {
         screen: NavigatorName.Earn;
@@ -111,6 +112,7 @@ export function useStake() {
       account: Account | TokenAccount | AccountLike,
       walletState: WalletState,
       parentAccount?: Account,
+      cryptoAssetId?: string,
     ) => {
       const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
       const parentWalletApiAccountId = parentAccount
@@ -152,7 +154,7 @@ export function useStake() {
       const earningsAccountChainId = manifest.dapp?.networks?.find(
         manifestNetwork =>
           manifestNetwork.currency ===
-          (isTokenAccount(account) ? account.token.parentCurrency.id : account.currency.id),
+          (isTokenAccount(account) ? account.token.parentCurrencyId : account.currency.id),
       )?.chainID;
       const asset_id = tokenContractAddress
         ? `${earningsAccountChainId}_${tokenContractAddress}`
@@ -168,6 +170,7 @@ export function useStake() {
         ...customPartnerParams,
         ...(asset_id ? { asset_id } : {}),
         accountId: accountIdForManifestVersion,
+        ...(cryptoAssetId ? { cryptoAssetId } : {}),
       })?.toString();
 
       const isEarnManifest = ["earn", "earn-stg", "earn-prd-eks"].includes(manifest.id);
@@ -187,6 +190,7 @@ export function useStake() {
               ledgerAccountId: account.id,
               walletAccountId: walletApiAccount.id,
               customDappURL: customDappURL ?? undefined,
+              ...(cryptoAssetId ? { cryptoAssetId } : {}),
             },
           },
         };

@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
@@ -61,7 +62,9 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
   };
 
   const fromCryptoCurrency =
-    fromCurrency?.type === "TokenCurrency" ? fromCurrency.parentCurrency : fromCurrency;
+    fromCurrency?.type === "TokenCurrency"
+      ? getCryptoCurrencyById(fromCurrency.parentCurrencyId)
+      : fromCurrency;
 
   const getProviderExplorerUrl = () => {
     switch (provider.toLowerCase()) {

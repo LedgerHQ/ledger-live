@@ -1,4 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { ReactElement } from "react";
 import { useLeftAccountsModule } from "../hooks/useLeftAccounts";
 import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
@@ -73,7 +74,8 @@ export function useNetworkConfiguration(
   };
 
   const merged = networks.map<NetworksWithComponents>((network, i) => {
-    const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
+    const asset =
+      network.type === "TokenCurrency" ? getCryptoCurrencyById(network.parentCurrencyId) : network;
     return {
       ...asset,
       ...rightResults[rightElement]?.[i],

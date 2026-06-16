@@ -59,4 +59,12 @@ describe("market countervalues API", () => {
 
     expect(getLastRequestUrl().searchParams.get("top")).toBeNull();
   });
+
+  it("does not send the top parameter when top gainers are scoped to a category", async () => {
+    await fetchList({ counterCurrency: "usd", order: Order.topGainers, categories: "privacy" });
+
+    const url = getLastRequestUrl();
+    expect(url.searchParams.get("top")).toBeNull();
+    expect(url.searchParams.get("categories")).toBe("privacy");
+  });
 });

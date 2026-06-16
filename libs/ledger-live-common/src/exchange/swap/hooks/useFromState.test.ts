@@ -13,7 +13,6 @@ import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setSupportedCurrencies } from "../../../currencies";
 
 jest.mock("@features/platform-feature-flags", () => ({
   useFeature: jest.fn(() => null),
@@ -22,7 +21,6 @@ jest.mock("@features/platform-feature-flags", () => ({
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
-setSupportedCurrencies(["bitcoin", "ethereum"]);
 LiveConfig.setConfig({
   config_currency_bitcoin: {
     type: "object",
@@ -48,7 +46,7 @@ const USDT = {
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrency: ETH,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20" as const,
 };
 

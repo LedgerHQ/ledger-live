@@ -24,6 +24,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
@@ -102,7 +103,7 @@ import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import FeesNavigator from "./FeesNavigator";
-import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { getEarnScreenOptions } from "./getEarnScreenOptions";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 import LiveAppModalScreen from "LLM/features/LiveAppModal";
 
@@ -179,6 +180,10 @@ export default function BaseNavigator() {
     }>
   >();
   const { colors } = useTheme();
+  // The Rewards simulator's design uses the live-app canvas (pure black in Wallet 4.0 dark) for the
+  // whole screen — same canvas `getStackNavigationConfigV4` paints from (`theme.colors.bg.canvas`).
+  const { theme: lumenTheme } = useLumenTheme();
+  const liveAppCanvasColor = lumenTheme.colors.bg.canvas;
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const nativeStackScreenOptions: Partial<NativeStackNavigationOptions> = stackNavigationConfig;
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
@@ -580,19 +585,9 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Earn}
           component={EarnLiveAppNavigator}
-          options={props => {
-            const stakeLabel = getStakeLabelLocaleBased();
-            const intent = props.route?.params?.params?.intent;
-
-            return intent === "deposit" || intent === "withdraw"
-              ? {
-                  headerShown: true,
-                  closable: false,
-                  headerTitle: t(stakeLabel),
-                  headerRight: () => null,
-                }
-              : { headerShown: false };
-          }}
+          options={props =>
+            getEarnScreenOptions(props.route?.params?.params?.intent, t, liveAppCanvasColor)
+          }
         />
         <Stack.Screen
           name={NavigatorName.Borrow}

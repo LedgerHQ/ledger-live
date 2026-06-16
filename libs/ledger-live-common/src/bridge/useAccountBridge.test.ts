@@ -7,13 +7,11 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { render, renderHook, act, screen } from "@testing-library/react";
 import { genAccount } from "../mock/account";
-import { setSupportedCurrencies } from "../currencies";
 import { useAccountBridge, useAccountBridgeMany } from "./useAccountBridge";
 import { getAccountBridge } from ".";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
-setSupportedCurrencies(["bitcoin", "ethereum"]);
 
 const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(React.Suspense, { fallback: null }, children);
@@ -54,9 +52,10 @@ describe("useAccountBridge", () => {
 });
 
 describe("useAccountBridge — unsupported account", () => {
+  // "eos" has no coin-module loader → unsupported.
   function makeUnsupportedAccount(id: string) {
     const account = genAccount(id, { currency: BTC });
-    return { ...account, currency: getCryptoCurrencyById("tron") };
+    return { ...account, currency: getCryptoCurrencyById("eos") };
   }
 
   class Boundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
@@ -114,7 +113,7 @@ describe("useAccountBridge — unsupported account", () => {
       await flush();
     });
     expect(counter.n).toBeLessThan(50);
-    expect(screen.getByTestId("err").textContent).toMatch(/not supported/i);
+    expect(screen.getByTestId("err").textContent).toMatch(/no coin module registered/i);
   });
 
   test("error from useAccountBridge propagates to the ErrorBoundary with the right message", async () => {
@@ -134,7 +133,7 @@ describe("useAccountBridge — unsupported account", () => {
       );
       await flush();
     });
-    expect(screen.queryByTestId("err")?.textContent).toMatch(/not supported/i);
+    expect(screen.queryByTestId("err")?.textContent).toMatch(/no coin module registered/i);
     expect(screen.queryByTestId("fallback")).toBeNull();
   });
 

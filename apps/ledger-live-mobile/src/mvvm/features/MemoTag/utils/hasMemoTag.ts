@@ -1,4 +1,5 @@
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import perFamily from "~/generated/MemoTagInput";
 import { MEMO_TAG_COINS } from "../constants";
 
@@ -7,7 +8,7 @@ const getFamily = (coin: Currency): string => {
     case "CryptoCurrency":
       return coin.family;
     case "TokenCurrency":
-      return getFamily(coin.parentCurrency);
+      return getFamily(getCryptoCurrencyById(coin.parentCurrencyId));
     default:
       return "";
   }

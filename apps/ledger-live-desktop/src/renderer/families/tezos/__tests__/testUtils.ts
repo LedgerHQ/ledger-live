@@ -1,8 +1,5 @@
 import BigNumber from "bignumber.js";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type {
   Delegation,
@@ -10,8 +7,6 @@ import type {
   TezosAccount,
 } from "@ledgerhq/live-common/families/tezos/types";
 import type { TezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
-
-setSupportedCurrencies(["tezos"]);
 
 export const tezosCurrency = getCryptoCurrencyById("tezos");
 

@@ -89,10 +89,7 @@ export function useNotificationsPromptTriggers() {
 
       trackInactivityDecision(decision);
 
-      if (
-        decision.kind !== "show" ||
-        decision.drawerPromptTarget !== "globalPushNotifications"
-      ) {
+      if (decision.kind !== "show" || decision.drawerPromptTarget !== "globalPushNotifications") {
         return;
       }
 

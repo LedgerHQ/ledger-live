@@ -31,33 +31,13 @@ const mockEthereumCurrency: CryptoCurrency = {
   ],
 };
 
-const mockPolygonCurrency: CryptoCurrency = {
-  id: "polygon",
-  name: "Polygon",
-  ticker: "MATIC",
-  type: "CryptoCurrency",
-  managerAppName: "Polygon",
-  coinType: 60,
-  scheme: "polygon",
-  color: "#8247e5",
-  family: "evm",
-  explorerViews: [],
-  units: [
-    {
-      name: "matic",
-      code: "MATIC",
-      magnitude: 18,
-    },
-  ],
-};
-
 const mockUsdtToken: TokenCurrency = {
   id: "ethereum/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrency: mockEthereumCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [
     {
@@ -74,7 +54,7 @@ const mockUsdcToken: TokenCurrency = {
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrency: mockEthereumCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [
     {
@@ -91,7 +71,7 @@ const mockMaticUsdtToken: TokenCurrency = {
   name: "Tether USD (Polygon)",
   ticker: "USDT",
   contractAddress: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-  parentCurrency: mockPolygonCurrency,
+  parentCurrencyId: "polygon",
   tokenType: "erc20",
   units: [
     {
@@ -148,7 +128,7 @@ describe("loadBlacklistedTokenSections", () => {
     const result = await loadBlacklistedTokenSections(["ethereum/erc20/usdt"]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].parentCurrency).toBe(mockEthereumCurrency);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
     expect(result[0].tokens).toEqual([mockUsdtToken]);
   });
 
@@ -162,7 +142,7 @@ describe("loadBlacklistedTokenSections", () => {
     ]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].parentCurrency).toBe(mockEthereumCurrency);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
     expect(result[0].tokens).toHaveLength(2);
     expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
   });
@@ -177,9 +157,9 @@ describe("loadBlacklistedTokenSections", () => {
     ]);
 
     expect(result).toHaveLength(2);
-    expect(result[0].parentCurrency).toBe(mockEthereumCurrency);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
     expect(result[0].tokens).toEqual([mockUsdtToken]);
-    expect(result[1].parentCurrency).toBe(mockPolygonCurrency);
+    expect(result[1].parentCurrency.id).toBe("polygon");
     expect(result[1].tokens).toEqual([mockMaticUsdtToken]);
   });
 
@@ -195,7 +175,7 @@ describe("loadBlacklistedTokenSections", () => {
     ]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].parentCurrency).toBe(mockEthereumCurrency);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
     expect(result[0].tokens).toHaveLength(2);
     expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
   });
@@ -214,10 +194,10 @@ describe("loadBlacklistedTokenSections", () => {
     ]);
 
     expect(result).toHaveLength(2);
-    expect(result[0].parentCurrency).toBe(mockEthereumCurrency);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
     expect(result[0].tokens).toHaveLength(2);
     expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
-    expect(result[1].parentCurrency).toBe(mockPolygonCurrency);
+    expect(result[1].parentCurrency.id).toBe("polygon");
     expect(result[1].tokens).toHaveLength(1);
     expect(result[1].tokens).toEqual([mockMaticUsdtToken]);
   });

@@ -85,9 +85,11 @@ export const GenericAwarenessModalItemCountSchema = GenericAwarenessModalCampaig
 export const GenericAwarenessModalCarouselSlideSchema = z.object({
   title: GenericAwarenessModalStringFieldSchema,
   subtitle: GenericAwarenessModalStringFieldSchema,
-  imageUrl: GenericAwarenessModalStringFieldSchema,
+  imageUrlLight: GenericAwarenessModalStringFieldSchema,
+  imageUrlDark: GenericAwarenessModalStringFieldSchema,
   primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
   primaryButtonLink: GenericAwarenessModalStringFieldSchema,
+  navigationButtonLabel: GenericAwarenessModalStringFieldSchema,
 });
 
 export const GenericAwarenessModalCarouselInputSchema = z.object({
@@ -98,9 +100,11 @@ export const GenericAwarenessModalCarouselInputSchema = z.object({
   slideCount: GenericAwarenessModalSlideCountSchema,
   title: GenericAwarenessModalStringFieldSchema,
   subtitle: GenericAwarenessModalStringFieldSchema,
-  imageUrl: GenericAwarenessModalStringFieldSchema,
+  imageUrlLight: GenericAwarenessModalStringFieldSchema,
+  imageUrlDark: GenericAwarenessModalStringFieldSchema,
   primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
   primaryButtonLink: GenericAwarenessModalStringFieldSchema,
+  navigationButtonLabel: GenericAwarenessModalStringFieldSchema,
 });
 
 export const GenericAwarenessModalFeatureIntroMainInputSchema = z.object({
@@ -111,7 +115,8 @@ export const GenericAwarenessModalFeatureIntroMainInputSchema = z.object({
   itemCount: GenericAwarenessModalItemCountSchema,
   title: GenericAwarenessModalStringFieldSchema,
   subtitle: GenericAwarenessModalStringFieldSchema,
-  imageUrl: GenericAwarenessModalStringFieldSchema,
+  imageUrlLight: GenericAwarenessModalStringFieldSchema,
+  imageUrlDark: GenericAwarenessModalStringFieldSchema,
   primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
   primaryButtonLink: GenericAwarenessModalStringFieldSchema,
   secondaryButtonLabel: GenericAwarenessModalStringFieldSchema,
@@ -134,7 +139,8 @@ export const GenericAwarenessModalPromptInputSchema = z.object({
   layout: GenericAwarenessModalPromptLayoutInputSchema,
   campaignId: GenericAwarenessModalCampaignIdInputSchema,
   location: GenericAwarenessModalLocationInputSchema,
-  imageUrl: GenericAwarenessModalStringFieldSchema,
+  imageUrlLight: GenericAwarenessModalStringFieldSchema,
+  imageUrlDark: GenericAwarenessModalStringFieldSchema,
   title: GenericAwarenessModalStringFieldSchema,
   subtitle: GenericAwarenessModalStringFieldSchema,
   primaryButtonLabel: GenericAwarenessModalStringFieldSchema,
@@ -210,9 +216,11 @@ export type GenericAwarenessModalInputExtras = Partial<{
   itemCount: z.input<typeof GenericAwarenessModalItemCountSchema>;
   title: string;
   subtitle: string;
-  imageUrl: string;
+  imageUrlLight: string;
+  imageUrlDark: string;
   primaryButtonLabel: string;
   primaryButtonLink: string;
+  navigationButtonLabel: string;
   secondaryButtonLabel: string;
   secondaryButtonLink: string;
   icon: string;
@@ -243,7 +251,8 @@ export type GenericAwarenessModalFeatureIntro = {
   id: string;
   title: string;
   subtitle: string;
-  imageUrl: string;
+  imageUrlLight: string;
+  imageUrlDark: string;
   primaryButtonLabel: string;
   primaryButtonLink: string;
   secondaryButtonLabel: string;
@@ -256,7 +265,8 @@ export type GenericAwarenessModalFeatureIntro = {
 export type GenericAwarenessModalPrompt = {
   layout: GenericAwarenessModalLayout.Prompt;
   id: string;
-  imageUrl: string;
+  imageUrlLight: string;
+  imageUrlDark: string;
   title: string;
   subtitle: string;
   primaryButtonLabel: string;

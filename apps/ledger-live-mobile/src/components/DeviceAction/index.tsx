@@ -575,6 +575,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const isNanoS = device?.modelId === DeviceModelId.nanoS;
 
   if (completeExchangeStarted && completeExchangeError && isNanoS && isThorSwap) {
+    const exchange = (request as { exchange?: ExchangeSwap })?.exchange;
     return (
       <ThorSwapIncompatibility
         t={t}
@@ -582,6 +583,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         provider={provider}
         theme={theme}
         onClose={onClose}
+        sourceCurrency={exchange?.fromCurrency.id}
+        targetCurrency={exchange?.toCurrency.id}
       />
     );
   }

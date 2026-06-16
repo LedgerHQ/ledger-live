@@ -147,7 +147,7 @@ import type {
   TransactionRaw as tezosTransactionRaw,
   TransactionStatus as tezosTransactionStatus,
   TransactionStatusRaw as tezosTransactionStatusRaw,
-} from "@ledgerhq/coin-tezos/types/index";
+} from "../families/tezos/types";
 import type {
   Transaction as tonTransaction,
   TransactionRaw as tonTransactionRaw,

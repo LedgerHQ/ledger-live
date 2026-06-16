@@ -17,6 +17,7 @@ import { NavigatorName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EarnWebview } from "../EarnWebview";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 import type { WebviewState } from "~/components/Web3AppWebview/types";
 
@@ -65,6 +66,13 @@ export const EarnV2Webview = ({
 }: Props) => {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const insets = useSafeAreaInsets();
+  // The simulator uses the live-app canvas (pure black in Wallet 4.0 dark) for the whole screen.
+  // Paint the area behind the webview so the loading state matches the content and native header
+  // (no gray flash before the webview paints). Scoped to `simulate` so deposit/withdraw keep the
+  // default background.
+  const { theme: lumenTheme } = useLumenTheme();
+  const canvasColor = lumenTheme.colors.bg.canvas;
+  const isSimulateIntent = inputs?.intent === "simulate";
   const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
   const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
     useWalletFeaturesConfig("mobile");
@@ -133,7 +141,10 @@ export const EarnV2Webview = ({
   };
 
   return (
-    <View testID="earn-screen" style={styles.container}>
+    <View
+      testID="earn-screen"
+      style={[styles.container, isSimulateIntent && { backgroundColor: canvasColor }]}
+    >
       {showsBackground && <LiveAppBackground type="earn" scrollY={scrollY} />}
       <View style={styles.contentContainer} pointerEvents="box-none">
         {manifest ? (

@@ -7,7 +7,10 @@ import {
   type GenericAwarenessModalContentCard,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 import { openURL } from "~/renderer/linking";
-import { closeGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
+import {
+  closeGenericAwarenessModalDialog,
+  type CloseGenericAwarenessModalDialogOptions,
+} from "../genericAwarenessModalDialog";
 import {
   getCarouselAnalyticsContext,
   trackCarouselCloseClick,
@@ -39,9 +42,12 @@ const useGenericAwarenessModalCarouselViewModel = (
   const carousel: GenericAwarenessModalCarousel | undefined =
     contentCard?.layout === GenericAwarenessModalLayout.Carousel ? contentCard : undefined;
 
-  const closeDialog = useCallback(() => {
-    dispatch(closeGenericAwarenessModalDialog());
-  }, [dispatch]);
+  const closeDialog = useCallback(
+    (options?: CloseGenericAwarenessModalDialogOptions) => {
+      dispatch(closeGenericAwarenessModalDialog(options));
+    },
+    [dispatch],
+  );
 
   const getContext = useCallback(
     (slideIndex: number) => {
@@ -86,7 +92,7 @@ const useGenericAwarenessModalCarouselViewModel = (
         trackCarouselPrimaryClick(context, slide.primaryButtonLabel, slide.primaryButtonLink);
       }
       openURL(slide.primaryButtonLink);
-      closeDialog();
+      closeDialog({ dismissAppStart: true });
     },
     [closeDialog, getContext],
   );
@@ -114,7 +120,7 @@ const useGenericAwarenessModalCarouselViewModel = (
     if (context) {
       trackCarouselCloseClick(context);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext]);
 
   const onDismiss = useCallback(() => {
@@ -122,8 +128,12 @@ const useGenericAwarenessModalCarouselViewModel = (
     if (context) {
       trackCarouselDismissed(context);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext]);
+
+  const onCompleteClose = useCallback(() => {
+    closeDialog({ dismissAppStart: true });
+  }, [closeDialog]);
 
   return useMemo(
     () => ({
@@ -133,11 +143,11 @@ const useGenericAwarenessModalCarouselViewModel = (
       onContinueClick,
       onHeaderClose,
       onDismiss,
-      onClose: closeDialog,
+      onClose: onCompleteClose,
     }),
     [
       carousel?.data,
-      closeDialog,
+      onCompleteClose,
       onContinueClick,
       onDismiss,
       onHeaderClose,

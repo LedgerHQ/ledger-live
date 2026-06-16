@@ -1,5 +1,121 @@
 # @ledgerhq/coin-evm
 
+## 4.2.0
+
+### Minor Changes
+
+- [#17813](https://github.com/LedgerHQ/ledger-live/pull/17813) [`8d78462`](https://github.com/LedgerHQ/ledger-live/commit/8d784626afecbc4f336b7bcfb3d95302491a6147) Thanks [@qperrot](https://github.com/qperrot)! - Fix: warn user that delegation will fail if their Sei account has not yet been linked on-chain (no prior outbound transaction)
+
+- [#18048](https://github.com/LedgerHQ/ledger-live/pull/18048) [`7eb1ec7`](https://github.com/LedgerHQ/ledger-live/commit/7eb1ec7d91ded7f5dacbf11c2c3a8b795bbebbbf) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fetch pending staking rewards for Cosmos-EVM hybrid chains (Sei) via the Cosmos distribution REST endpoint so `Stake.amountRewarded` is populated, and wire the per-row "Claim rewards" action on desktop so it opens the claim flow pre-selected on the chosen validator.
+
+- [#17961](https://github.com/LedgerHQ/ledger-live/pull/17961) [`f1334e7`](https://github.com/LedgerHQ/ledger-live/commit/f1334e76d8bc893b136c17c38780016c5367cd22) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): replace the homemade validators cache with `makeLRUCache` and drop the redundant `inFlightFetches` map
+
+  The EVM staking validators cache now uses `@ledgerhq/live-network/cache`'s `makeLRUCache`. Because it stores the in-flight promise, concurrent fetches are coalesced by the cache itself, so the separate `inFlightFetches` request-deduplication map and the synchronous `getCachedValidators` accessor were removed.
+
+- [#18258](https://github.com/LedgerHQ/ledger-live/pull/18258) [`3624b3d`](https://github.com/LedgerHQ/ledger-live/commit/3624b3da9dcde1909a990f89515742283f4a88f8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad native staking claim rewards: add the per-chain `claimReward` operation (keyed by the numeric validator id) and thread the validator id from the delegation through the claim flow on mobile and desktop. Always source `validatorId` from the delegation so claiming no longer fails with "monad staking requires valId" when the matched validator from the loaded list lacks an id.
+
+- [#18164](https://github.com/LedgerHQ/ledger-live/pull/18164) [`16694d5`](https://github.com/LedgerHQ/ledger-live/commit/16694d5120b9e04ba98e0725a4a907f3996b4d41) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Display a user's active Monad staking delegations and hide the unsupported "Redelegate" action.
+
+  - **coin-evm**: add a bespoke `fetchMonadStakes` fetcher that enumerates the delegator's validators via the paginated `getDelegations(delegator, startValId)` precompile, reads each position with `getDelegator` (`amount = stake + deltaStake + nextDeltaStake`, so freshly delegated MON stays visible during the activation epoch), and resolves the validator display address via `getValidator`. Add a `hasRedelegation(currencyId)` helper (true only when the chain exposes a `redelegate` precompile).
+  - **live-common**: thread the delegation's `validatorId` (from `Stake.details`) onto `StakingDelegation` to feed the upcoming undelegate/withdraw flows; re-export `hasRedelegation`.
+  - **ledger-live-desktop**: omit the "Redelegate" item from the delegation row menu on chains without a `redelegate` precompile (e.g. Monad) instead of showing it disabled with a misleading tooltip.
+
+- [#18010](https://github.com/LedgerHQ/ledger-live/pull/18010) [`95c31f8`](https://github.com/LedgerHQ/ledger-live/commit/95c31f8120446925a6591150fb5b0b4af1f60913) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): fetch validators for `monad`
+
+  Adds a Monad validator fetcher that reads the staking precompile
+  (`getExecutionValidatorSet` + `getValidator`) and paginates via the `nextIndex`
+  cursor. It plugs into the shared LRU + cursor-pagination `getValidators` flow, so
+  `useEvmStakingValidators` walks every page. Sei stays single-page.
+
+- [#18009](https://github.com/LedgerHQ/ledger-live/pull/18009) [`2670997`](https://github.com/LedgerHQ/ledger-live/commit/2670997b889d9ba56fdceb3cd4208b4bf6fcc424) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): paginate EVM staking validators
+
+  `getValidators` is now cursor-based and returns a `Page<StakingValidatorItem>`, and the
+  `useEvmStakingValidators` hook walks every page (following `next`) instead of reading only
+  the first one. Each page is cached independently in the LRU cache (`currencyId-cursor` key).
+  Sei stays single-page (`next: undefined`), so its behaviour is unchanged.
+
+- [#17927](https://github.com/LedgerHQ/ledger-live/pull/17927) [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): represent validator token as string
+
+- [#18068](https://github.com/LedgerHQ/ledger-live/pull/18068) [`fb56998`](https://github.com/LedgerHQ/ledger-live/commit/fb56998e190b3fb2a034d51da29254f15e043760) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad native staking delegation: add the per-chain delegate operation (keyed by the numeric validator id) and thread the validator id from the delegate flow through to the transaction
+
+- [#18218](https://github.com/LedgerHQ/ledger-live/pull/18218) [`8333f85`](https://github.com/LedgerHQ/ledger-live/commit/8333f85228a167e8ef6372223f1f29d5540152a0) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix SEI_EVM validator total stake decimals: scale usei (6 decimals) to the native 18-decimal unit so displayed amounts are correct. Also fix the mobile EVM validator row to show the total staked amount instead of a hardcoded "0.00 % APR".
+
+- [#18064](https://github.com/LedgerHQ/ledger-live/pull/18064) [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Split EVM staking operations into per-chain modules and thread an optional validator id (`valId`) through the staking transaction/intent so chains that key operations by a numeric id (e.g. Monad) are supported alongside address-keyed chains (Sei, Celo)
+
+- [#18229](https://github.com/LedgerHQ/ledger-live/pull/18229) [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): fetch missing validator names
+
+- [#17710](https://github.com/LedgerHQ/ledger-live/pull/17710) [`2e42f3a`](https://github.com/LedgerHQ/ledger-live/commit/2e42f3a38c3cf1d25250d9c6271c51c1b6b08531) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Wire EVM claim rewards flow on mobile, emit fees-exceed-rewards bridge warning, and map `claimReward` staking operations to the `REWARD` type (optimistic and confirmed) so claimed rewards show as incoming in the operation history. Bump `@ledgerhq/coin-module-framework` to 3.2.0 so `'claimReward'` is part of the framework's `StakingOperation` union.
+
+### Patch Changes
+
+- Updated dependencies [[`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2)]:
+  - @ledgerhq/cryptoassets@13.51.0
+  - @ledgerhq/ledger-wallet-framework@2.1.0
+  - @ledgerhq/live-env@2.38.0
+  - @ledgerhq/errors@6.36.0
+  - @ledgerhq/domain-service@1.8.6
+  - @ledgerhq/evm-tools@1.12.9
+  - @ledgerhq/live-network@2.6.4
+  - @ledgerhq/devices@8.15.1
+
+## 4.2.0-next.0
+
+### Minor Changes
+
+- [#17813](https://github.com/LedgerHQ/ledger-live/pull/17813) [`8d78462`](https://github.com/LedgerHQ/ledger-live/commit/8d784626afecbc4f336b7bcfb3d95302491a6147) Thanks [@qperrot](https://github.com/qperrot)! - Fix: warn user that delegation will fail if their Sei account has not yet been linked on-chain (no prior outbound transaction)
+
+- [#18048](https://github.com/LedgerHQ/ledger-live/pull/18048) [`7eb1ec7`](https://github.com/LedgerHQ/ledger-live/commit/7eb1ec7d91ded7f5dacbf11c2c3a8b795bbebbbf) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fetch pending staking rewards for Cosmos-EVM hybrid chains (Sei) via the Cosmos distribution REST endpoint so `Stake.amountRewarded` is populated, and wire the per-row "Claim rewards" action on desktop so it opens the claim flow pre-selected on the chosen validator.
+
+- [#17961](https://github.com/LedgerHQ/ledger-live/pull/17961) [`f1334e7`](https://github.com/LedgerHQ/ledger-live/commit/f1334e76d8bc893b136c17c38780016c5367cd22) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): replace the homemade validators cache with `makeLRUCache` and drop the redundant `inFlightFetches` map
+
+  The EVM staking validators cache now uses `@ledgerhq/live-network/cache`'s `makeLRUCache`. Because it stores the in-flight promise, concurrent fetches are coalesced by the cache itself, so the separate `inFlightFetches` request-deduplication map and the synchronous `getCachedValidators` accessor were removed.
+
+- [#18258](https://github.com/LedgerHQ/ledger-live/pull/18258) [`3624b3d`](https://github.com/LedgerHQ/ledger-live/commit/3624b3da9dcde1909a990f89515742283f4a88f8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad native staking claim rewards: add the per-chain `claimReward` operation (keyed by the numeric validator id) and thread the validator id from the delegation through the claim flow on mobile and desktop. Always source `validatorId` from the delegation so claiming no longer fails with "monad staking requires valId" when the matched validator from the loaded list lacks an id.
+
+- [#18164](https://github.com/LedgerHQ/ledger-live/pull/18164) [`16694d5`](https://github.com/LedgerHQ/ledger-live/commit/16694d5120b9e04ba98e0725a4a907f3996b4d41) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Display a user's active Monad staking delegations and hide the unsupported "Redelegate" action.
+
+  - **coin-evm**: add a bespoke `fetchMonadStakes` fetcher that enumerates the delegator's validators via the paginated `getDelegations(delegator, startValId)` precompile, reads each position with `getDelegator` (`amount = stake + deltaStake + nextDeltaStake`, so freshly delegated MON stays visible during the activation epoch), and resolves the validator display address via `getValidator`. Add a `hasRedelegation(currencyId)` helper (true only when the chain exposes a `redelegate` precompile).
+  - **live-common**: thread the delegation's `validatorId` (from `Stake.details`) onto `StakingDelegation` to feed the upcoming undelegate/withdraw flows; re-export `hasRedelegation`.
+  - **ledger-live-desktop**: omit the "Redelegate" item from the delegation row menu on chains without a `redelegate` precompile (e.g. Monad) instead of showing it disabled with a misleading tooltip.
+
+- [#18010](https://github.com/LedgerHQ/ledger-live/pull/18010) [`95c31f8`](https://github.com/LedgerHQ/ledger-live/commit/95c31f8120446925a6591150fb5b0b4af1f60913) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): fetch validators for `monad`
+
+  Adds a Monad validator fetcher that reads the staking precompile
+  (`getExecutionValidatorSet` + `getValidator`) and paginates via the `nextIndex`
+  cursor. It plugs into the shared LRU + cursor-pagination `getValidators` flow, so
+  `useEvmStakingValidators` walks every page. Sei stays single-page.
+
+- [#18009](https://github.com/LedgerHQ/ledger-live/pull/18009) [`2670997`](https://github.com/LedgerHQ/ledger-live/commit/2670997b889d9ba56fdceb3cd4208b4bf6fcc424) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): paginate EVM staking validators
+
+  `getValidators` is now cursor-based and returns a `Page<StakingValidatorItem>`, and the
+  `useEvmStakingValidators` hook walks every page (following `next`) instead of reading only
+  the first one. Each page is cached independently in the LRU cache (`currencyId-cursor` key).
+  Sei stays single-page (`next: undefined`), so its behaviour is unchanged.
+
+- [#17927](https://github.com/LedgerHQ/ledger-live/pull/17927) [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): represent validator token as string
+
+- [#18068](https://github.com/LedgerHQ/ledger-live/pull/18068) [`fb56998`](https://github.com/LedgerHQ/ledger-live/commit/fb56998e190b3fb2a034d51da29254f15e043760) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad native staking delegation: add the per-chain delegate operation (keyed by the numeric validator id) and thread the validator id from the delegate flow through to the transaction
+
+- [#18218](https://github.com/LedgerHQ/ledger-live/pull/18218) [`8333f85`](https://github.com/LedgerHQ/ledger-live/commit/8333f85228a167e8ef6372223f1f29d5540152a0) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix SEI_EVM validator total stake decimals: scale usei (6 decimals) to the native 18-decimal unit so displayed amounts are correct. Also fix the mobile EVM validator row to show the total staked amount instead of a hardcoded "0.00 % APR".
+
+- [#18064](https://github.com/LedgerHQ/ledger-live/pull/18064) [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Split EVM staking operations into per-chain modules and thread an optional validator id (`valId`) through the staking transaction/intent so chains that key operations by a numeric id (e.g. Monad) are supported alongside address-keyed chains (Sei, Celo)
+
+- [#18229](https://github.com/LedgerHQ/ledger-live/pull/18229) [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): fetch missing validator names
+
+- [#17710](https://github.com/LedgerHQ/ledger-live/pull/17710) [`2e42f3a`](https://github.com/LedgerHQ/ledger-live/commit/2e42f3a38c3cf1d25250d9c6271c51c1b6b08531) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Wire EVM claim rewards flow on mobile, emit fees-exceed-rewards bridge warning, and map `claimReward` staking operations to the `REWARD` type (optimistic and confirmed) so claimed rewards show as incoming in the operation history. Bump `@ledgerhq/coin-module-framework` to 3.2.0 so `'claimReward'` is part of the framework's `StakingOperation` union.
+
+### Patch Changes
+
+- Updated dependencies [[`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2)]:
+  - @ledgerhq/cryptoassets@13.51.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.1.0-next.0
+  - @ledgerhq/live-env@2.38.0-next.0
+  - @ledgerhq/errors@6.36.0-next.0
+  - @ledgerhq/domain-service@1.8.6-next.0
+  - @ledgerhq/evm-tools@1.12.9-next.0
+  - @ledgerhq/live-network@2.6.4-next.0
+  - @ledgerhq/devices@8.15.1-next.0
+
 ## 4.1.0
 
 ### Minor Changes

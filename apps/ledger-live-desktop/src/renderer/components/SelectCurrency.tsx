@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Fuse from "fuse.js";
 import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { getEnv } from "@ledgerhq/live-env";
@@ -202,14 +203,16 @@ export function CurrencyOption({
   hideParentTag?: boolean;
   tagVariant?: "default" | "thin";
 }) {
-  const isParentTagDisplayed = !hideParentTag && (currency as TokenCurrency).parentCurrency;
+  const isParentTagDisplayed = !hideParentTag && (currency as TokenCurrency).parentCurrencyId;
   const textContents = singleLineLayout ? (
     <>
       <OptionTitleBox title={`${currency.name} (${currency.ticker})`}>
         {`${currency.name} (${currency.ticker})`}
       </OptionTitleBox>
       {isParentTagDisplayed ? (
-        <CurrencyLabel>{(currency as TokenCurrency).parentCurrency.name}</CurrencyLabel>
+        <CurrencyLabel>
+          {getCryptoCurrencyById((currency as TokenCurrency).parentCurrencyId).name}
+        </CurrencyLabel>
       ) : null}
     </>
   ) : (
@@ -222,13 +225,15 @@ export function CurrencyOption({
           <Text color="neutral.c60" ff="Inter|Medium" fontSize={3}>
             {currency.ticker}{" "}
             {isParentTagDisplayed && tagVariant === "thin"
-              ? `(${(currency as TokenCurrency).parentCurrency.name})`
+              ? `(${getCryptoCurrencyById((currency as TokenCurrency).parentCurrencyId).name})`
               : null}
           </Text>
         </Box>
       </OptionMultilineContainer>
       {isParentTagDisplayed && tagVariant === "default" ? (
-        <CurrencyLabel>{(currency as TokenCurrency).parentCurrency.name}</CurrencyLabel>
+        <CurrencyLabel>
+          {getCryptoCurrencyById((currency as TokenCurrency).parentCurrencyId).name}
+        </CurrencyLabel>
       ) : null}
     </>
   );

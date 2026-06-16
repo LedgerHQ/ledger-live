@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Builder, Slice } from "@ton/core";
@@ -153,7 +152,7 @@ describe("Transaction functions", () => {
               id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
               type: "TokenCurrency" as const,
               contractAddress: "EQAVLwfDxGF2LXm67Y4yzC17WYkd9A0gUWPkMS1gOsM__NOT",
-              parentCurrency: getCryptoCurrencyById("ton"),
+              parentCurrencyId: "ton",
               tokenType: "jetton",
               name: "NOT",
               ticker: "NOT",

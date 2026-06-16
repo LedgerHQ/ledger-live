@@ -55,6 +55,16 @@ const family: EvmFamily = {
       },
     };
   },
+  modalsToPreload: [
+    "MODAL_EVM_STAKE",
+    "MODAL_EVM_EDIT_TRANSACTION",
+    "MODAL_EVM_DELEGATE",
+    "MODAL_EVM_REWARDS_INFO",
+    "MODAL_EVM_UNDELEGATE",
+    "MODAL_EVM_REDELEGATE",
+    "MODAL_EVM_WITHDRAW",
+    "MODAL_EVM_CLAIM_REWARDS",
+  ],
 };
 
 export default family;

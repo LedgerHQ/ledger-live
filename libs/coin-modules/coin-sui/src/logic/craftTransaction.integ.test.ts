@@ -36,7 +36,9 @@ describe("craftTransaction", () => {
     expect(result).toEqual({ unsigned: expect.any(Uint8Array) });
 
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
-    expect(resultCoinTypes).toEqual(expect.arrayContaining([expect.stringContaining("sui")]));
+    expect(resultCoinTypes).toEqual(
+      expect.arrayContaining([expect.stringContaining("0x2::sui::SUI")]),
+    );
   }, 15000);
 
   it("should craft a token send transaction", async () => {
@@ -82,7 +84,9 @@ describe("craftTransaction", () => {
     expect(result.objects?.every(o => o instanceof Uint8Array)).toBe(true);
 
     const resultCoinTypes = await extractCoinTypeFromUnsignedTx(result.unsigned);
-    expect(resultCoinTypes).toEqual(expect.arrayContaining([expect.stringContaining("sui")]));
+    expect(resultCoinTypes).toEqual(
+      expect.arrayContaining([expect.stringContaining("0x2::sui::SUI")]),
+    );
   }, 15000);
 
   it("should craft a token send transaction, returning serialized objects when requested", async () => {

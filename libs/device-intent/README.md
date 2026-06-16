@@ -379,7 +379,6 @@ function MyFlowScreen({ enabled, onDone }: Props) {
       onIntentJobError={error => {
         /* handle error */
       }}
-      cancellableUI={true}
       cancelIntentRequestId={undefined}
     />
   );
@@ -389,9 +388,10 @@ function MyFlowScreen({ enabled, onDone }: Props) {
 ### Custom LWM headers from intent components
 
 `DeviceIntentExecutorLWM` owns the bottom sheet chrome and renders a default
-`BottomSheetHeader` for cancellable device flows. When a specific intent needs a
-more explicit title, description, or header density, its platform component can
-replace that default header by rendering `OverrideDeviceIntentExecutorHeader`.
+`BottomSheetHeader` (which carries the close button). When a specific intent
+needs a more explicit title, description, or header density, its platform
+component can replace that default header by rendering
+`OverrideDeviceIntentExecutorHeader`.
 
 The intent component should place the override where the header should appear,
 usually at the top of its render tree. Consumers do not call the internal
@@ -420,6 +420,50 @@ Use the normal Lumen `BottomSheetHeader` props for the desired UX
 larger standalone flows). The component is a no-op outside
 `DeviceIntentExecutorLWM`, so intent components stay reusable in tests and
 non-bottom-sheet previews.
+
+### Preventing the user from closing the drawer (LWM)
+
+The `DeviceIntentExecutorLWM` bottom sheet is **dismissable by default**: the
+user can close it by pressing the backdrop, dragging it down, or tapping the
+close button in the header.
+
+That is the wrong behavior while the device is waiting for the user to act on it
+(unlock the device, allow a secure connection, confirm opening an app, sign /
+review a transaction on the device, etc.) or while an operation is in progress
+on the device (installing an app, transferring data). Closing the drawer in
+those moments breaks the in-flight device flow, so the drawer must be
+**non-dismissable** for as long as that pending action lasts.
+
+To do that, render `ModalLock` (`~/components/ModalLock`) only while the step
+is on screen. While mounted, it disables the backdrop press and the
+pan-down-to-close gesture, and hides the close button; it automatically restores
+normal behavior as soon as it unmounts (and on navigation blur), so you never
+reset anything by hand.
+
+**When an intent component should use it:** whenever its current `jobState`
+represents a request that is pending on the device and the user must complete it
+there. Mount `ModalLock` for exactly those states, and leave it unmounted for
+idle, terminal, or error states where the user should be free to back out.
+
+```tsx
+import ModalLock from "~/components/ModalLock";
+
+function MySignIntentComponent({ jobState }: Props) {
+  const awaitingUserOnDevice = jobState.type === "awaiting-signature";
+
+  return (
+    <>
+      {awaitingUserOnDevice && <ModalLock />}
+      {/* intent content */}
+    </>
+  );
+}
+```
+
+The device-context initialization phase already does this for the states where a
+device action is pending or an operation is ongoing (`UnlockDevice`,
+`AllowSecureConnection`, `ConfirmOpenApp`, `InstallingApp` and `Loading`), so you
+only need to handle the pending states specific to your own intent.
 
 ### Building the `deviceInitializationInput`
 
@@ -529,7 +573,6 @@ function SignTransactionStep({
       onIntentJobComplete={() => onSigned()}
       onIntentJobError={onError}
       onUserCancel={onClose}
-      cancellableUI={true}
       cancelIntentRequestId={undefined}
     />
   );

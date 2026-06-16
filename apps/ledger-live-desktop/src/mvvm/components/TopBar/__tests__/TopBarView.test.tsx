@@ -115,5 +115,28 @@ describe("TopBarView", () => {
       await user.type(input, "{Escape}");
       expect(input).toHaveValue("");
     });
+
+    it("should keep the popover open and preserve the query when the search input is re-clicked", async () => {
+      const { user } = render(
+        <TopBarView
+          {...defaultProps}
+          shouldShowFirmwareUpdateBanner={false}
+          shouldDisplayAssetDiscoverability
+        />,
+        { initialState: assetDiscoverabilityState, initialRoute: "/" },
+      );
+
+      const input = screen.getByRole("textbox");
+
+      await user.click(input);
+      expect(screen.getByTestId("topbar-search-popover")).toBeInTheDocument();
+
+      await user.type(input, "bitcoin");
+      expect(input).toHaveValue("bitcoin");
+
+      await user.click(input);
+      expect(screen.getByTestId("topbar-search-popover")).toBeInTheDocument();
+      expect(input).toHaveValue("bitcoin");
+    });
   });
 });
