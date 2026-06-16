@@ -76,6 +76,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
@@ -179,6 +180,7 @@ export const INITIAL_STATE: SettingsState = {
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
   productTourCompleted: false,
+  doNotAskAgainSkipMemo: false,
   hasClickedRecover: false,
   deprecationDoNotRemind: [],
   analyticsConsentInfo: {
@@ -677,6 +679,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_DO_NOT_ASK_AGAIN_SKIP_MEMO]: (state, action) => ({
+    ...state,
+    doNotAskAgainSkipMemo: (action as Action<SettingsSetDoNotAskAgainSkipMemoPayload>).payload,
+  }),
+
   [SettingsActionTypes.SET_PRODUCT_TOUR_COMPLETED]: (state, action) => ({
     ...state,
     productTourCompleted: (action as Action<SettingsSetProductTourCompletedPayload>).payload,
@@ -927,6 +934,8 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+
+export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
 export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;
 export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;

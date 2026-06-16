@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -15,7 +16,7 @@ export default function StepFinish({ currency, checkedAccountsIds }: StepProps) 
   });
   const currencyName = currency
     ? currency.type === "TokenCurrency"
-      ? currency.parentCurrency.name
+      ? getCryptoCurrencyById(currency.parentCurrencyId).name
       : currency.name
     : undefined;
   return (

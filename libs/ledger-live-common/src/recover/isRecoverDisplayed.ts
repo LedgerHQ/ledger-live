@@ -9,7 +9,11 @@ import type { Features } from "@shared/feature-flags";
  * to change.
  */
 export function isRecoverDisplayed(
-  feature: Features["protectServicesDesktop"] | Features["protectServicesMobile"] | null | undefined,
+  feature:
+    | Features["protectServicesDesktop"]
+    | Features["protectServicesMobile"]
+    | null
+    | undefined,
   deviceModelId: DeviceModelId | null | undefined,
 ): boolean {
   return Boolean(feature?.enabled && deviceModelId && deviceModelId !== DeviceModelId.nanoS);

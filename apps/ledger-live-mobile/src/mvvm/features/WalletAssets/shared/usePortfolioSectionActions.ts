@@ -13,9 +13,18 @@ interface PortfolioSectionActions {
   onItemPress: (asset: Asset) => void;
 }
 
+type PortfolioSectionVariant = "crypto" | "stablecoin" | "stocks" | "all";
+
+const TRACKING_TYPE_BY_VARIANT: Record<PortfolioSectionVariant, "crypto" | "stable" | "stocks"> = {
+  crypto: "crypto",
+  stablecoin: "stable",
+  stocks: "stocks",
+  all: "crypto",
+};
+
 export function usePortfolioSectionActions(
   isReadOnly: boolean,
-  variant: "crypto" | "stablecoin" | "all",
+  variant: PortfolioSectionVariant,
 ): PortfolioSectionActions {
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -25,7 +34,7 @@ export function usePortfolioSectionActions(
   const onPressShowAll = useCallback(() => {
     track("button_clicked", {
       button: "asset_list",
-      type: variant === "stablecoin" ? "stable" : "crypto",
+      type: TRACKING_TYPE_BY_VARIANT[variant],
       page: "Wallet",
     });
     if (!isReadOnly && shouldDisplayAssetSection) {

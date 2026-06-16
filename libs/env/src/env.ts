@@ -507,11 +507,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable experimental support of Bluetooth",
   },
-  EXPERIMENTAL_CURRENCIES: {
-    def: "",
-    parser: stringParser,
-    desc: "enable experimental support of currencies (comma separated)",
-  },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
     parser: boolParser,

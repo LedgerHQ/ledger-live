@@ -1,5 +1,43 @@
 # @ledgerhq/live-wallet
 
+## 0.15.0
+
+### Minor Changes
+
+- [#17817](https://github.com/LedgerHQ/ledger-live/pull/17817) [`3e71e65`](https://github.com/LedgerHQ/ledger-live/commit/3e71e6532036db0bbaa5a99650d43801bbfe712b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `ringInitPreservesLedgerSyncMember` SDK e2e scenario covering the trustchain-backend behaviour where deriving a new application id (17, used by wallet-cli `ring init`) must not evict members previously added under another application id (16, used by Ledger Sync). The scenario asserts the Ledger Sync member is preserved after the ring derivation; the committed snapshot is recorded against the fixed backend.
+
+  `sdkForName` in the scenario harness now accepts an optional `applicationId` so a single scenario can exercise multiple derivation apps from the same device. The recorder captures request bodies at `request:start` (they are already consumed by `response:bypass`), decodes compressed response bodies before storing them, and excludes speculos loopback traffic from the snapshot.
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/live-env@2.38.0
+  - @ledgerhq/errors@6.36.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.5
+  - @ledgerhq/live-network@2.6.4
+  - @ledgerhq/speculos-transport@0.10.4
+  - @ledgerhq/hw-transport@6.35.4
+  - @ledgerhq/hw-transport-mocker@6.34.4
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#17817](https://github.com/LedgerHQ/ledger-live/pull/17817) [`3e71e65`](https://github.com/LedgerHQ/ledger-live/commit/3e71e6532036db0bbaa5a99650d43801bbfe712b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `ringInitPreservesLedgerSyncMember` SDK e2e scenario covering the trustchain-backend behaviour where deriving a new application id (17, used by wallet-cli `ring init`) must not evict members previously added under another application id (16, used by Ledger Sync). The scenario asserts the Ledger Sync member is preserved after the ring derivation; the committed snapshot is recorded against the fixed backend.
+
+  `sdkForName` in the scenario harness now accepts an optional `applicationId` so a single scenario can exercise multiple derivation apps from the same device. The recorder captures request bodies at `request:start` (they are already consumed by `response:bypass`), decodes compressed response bodies before storing them, and excludes speculos loopback traffic from the snapshot.
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/live-env@2.38.0-next.0
+  - @ledgerhq/errors@6.36.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.5-next.0
+  - @ledgerhq/live-network@2.6.4-next.0
+  - @ledgerhq/speculos-transport@0.10.4-next.0
+  - @ledgerhq/hw-transport@6.35.4-next.0
+  - @ledgerhq/hw-transport-mocker@6.34.4-next.0
+
 ## 0.14.0
 
 ### Minor Changes

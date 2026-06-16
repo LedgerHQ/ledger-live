@@ -1,5 +1,6 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useState, useCallback } from "react";
 import { track } from "~/analytics";
@@ -48,7 +49,10 @@ export default function useAddFundsButtonViewModel({
       navigation.navigate(NavigatorName.ReceiveFunds, {
         screen: ScreenName.ReceiveConfirmation,
         params: {
-          currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+          currency:
+            currency.type === "TokenCurrency"
+              ? getCryptoCurrencyById(currency.parentCurrencyId)
+              : currency,
           accountId: selectedAccount?.id,
         },
       });

@@ -30,7 +30,7 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import type { DelegationActionsModalName } from "../modals";
+type DelegationActionsModalName = "MODAL_EVM_REDELEGATE" | "MODAL_EVM_UNDELEGATE";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -246,14 +246,18 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
             }
           />
           <UnbondingHeader />
-          {mappedUnbondings.map(unbonding => (
-            <UnbondingRow
-              key={`${unbonding.validatorAddress}-${unbonding.completionDate.valueOf()}${unbonding.withdrawId !== undefined ? `-${unbonding.withdrawId}` : ""}`}
-              delegation={unbonding}
-              onWithdraw={onWithdraw}
-              onExternalLink={onExternalLink}
-            />
-          ))}
+          {mappedUnbondings.map(unbonding => {
+            const withdrawSuffix =
+              unbonding.withdrawId === undefined ? "" : `-${unbonding.withdrawId}`;
+            return (
+              <UnbondingRow
+                key={`${unbonding.validatorAddress}-${unbonding.completionDate.valueOf()}${withdrawSuffix}`}
+                delegation={unbonding}
+                onWithdraw={onWithdraw}
+                onExternalLink={onExternalLink}
+              />
+            );
+          })}
         </TableContainer>
       ) : null}
     </>

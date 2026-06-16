@@ -19,6 +19,17 @@ const family: CeloFamily = {
   sendRecipientFields,
   SendStepAmount,
   AccountFooter,
+  modalsToPreload: [
+    "MODAL_CELO_REWARDS_INFO",
+    "MODAL_CELO_MANAGE",
+    "MODAL_CELO_LOCK",
+    "MODAL_CELO_UNLOCK",
+    "MODAL_CELO_VOTE",
+    "MODAL_CELO_SIMPLE_OPERATION",
+    "MODAL_CELO_WITHDRAW",
+    "MODAL_CELO_ACTIVATE",
+    "MODAL_CELO_REVOKE",
+  ],
 };
 
 export default family;

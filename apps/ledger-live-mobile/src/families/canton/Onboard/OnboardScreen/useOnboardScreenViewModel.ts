@@ -2,6 +2,7 @@ import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -30,7 +31,9 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   const existingAccounts = useSelector(accountsSelector);
   const dispatch = useDispatch();
 
-  const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
+  const cryptoCurrency = isTokenCurrency(currency)
+    ? getCryptoCurrencyById(currency.parentCurrencyId)
+    : currency;
   const bridge = useCurrencyBridge<CantonCurrencyBridge>(cryptoCurrency);
 
   const {

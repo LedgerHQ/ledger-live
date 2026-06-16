@@ -23,7 +23,7 @@ const CryptoCurrencyIcon = ({ currency, size }: Props) => {
       ledgerId={ledgerId}
       ticker={ticker}
       size={validSize}
-      network={currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined}
+      network={currency.type === "TokenCurrency" ? currency.parentCurrencyId : undefined}
     />
   );
 };

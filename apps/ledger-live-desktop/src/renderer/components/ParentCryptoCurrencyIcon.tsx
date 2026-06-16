@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
@@ -63,13 +64,14 @@ const ParentCryptoCurrencyIcon = ({ currency, withTooltip, bigger, flat = false 
     return null;
   }
 
-  const parent = currency.type === "TokenCurrency" ? currency.parentCurrency : null;
+  const parent =
+    currency.type === "TokenCurrency" ? getCryptoCurrencyById(currency.parentCurrencyId) : null;
 
   // Use CryptoIcon directly to avoid nesting issues
   const iconSize = bigger ? 28 : 22; // Match list mode size (28px) and increase default
   const ledgerId = currency.id;
   const ticker = currency.ticker;
-  const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+  const network = currency.type === "TokenCurrency" ? currency.parentCurrencyId : undefined;
 
   const content = (
     <ParentCryptoCurrencyIconWrapper doubleIcon={false} bigger={bigger} flat={flat}>

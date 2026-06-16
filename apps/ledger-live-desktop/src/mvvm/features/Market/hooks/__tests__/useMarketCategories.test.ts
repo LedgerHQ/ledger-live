@@ -54,7 +54,7 @@ describe("useMarketCategories", () => {
     const { result } = renderCategories("all");
 
     expect(result.current.selectedCategory).toBe("all");
-    expect(result.current.tabs.map(tab => tab.value)).toEqual(["all", "stocks", "starred"]);
+    expect(result.current.tabs.map(tab => tab.value)).toEqual(["all", "starred", "stocks"]);
   });
 
   it("selects a new category and tracks the tap", () => {
@@ -87,8 +87,8 @@ describe("useMarketCategories", () => {
 
     expect(result.current.tabs.map(tab => tab.value)).toEqual([
       "all",
-      "stocks",
       "starred",
+      "stocks",
       "infrastructure",
     ]);
     expect(result.current.tabs.at(-1)).toEqual({
@@ -109,8 +109,8 @@ describe("useMarketCategories", () => {
 
     expect(result.current.tabs.map(tab => tab.value)).toEqual([
       "all",
-      "stocks",
       "starred",
+      "stocks",
       "infrastructure",
     ]);
   });

@@ -49,7 +49,7 @@ export const makeUsdcToken = (
   const id = explicitId ?? `${parentCurrency.id}/${tokenType}/usdc`;
   return {
     type: "TokenCurrency" as const,
-    parentCurrency,
+    parentCurrencyId: parentCurrency.id,
     tokenType,
     id,
     contractAddress,

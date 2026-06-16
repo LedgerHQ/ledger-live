@@ -18,6 +18,8 @@ type AssetMeta = {
 type MapOptions = {
   counterCurrency: string;
   counterValueUnit: Unit;
+  /** USD → counter-value spot rate (DADA prices are in USD). `null` while it resolves. */
+  usdToFiatRate: number | null;
   locale: string;
   t: TFunction;
 };
@@ -25,13 +27,19 @@ type MapOptions = {
 export function mapDadaMarketToDisplayData(
   meta: AssetMeta,
   market: PartialMarketItemResponse | undefined,
-  { counterCurrency, counterValueUnit, locale, t }: MapOptions,
+  { counterCurrency, counterValueUnit, usdToFiatRate, locale, t }: MapOptions,
 ): MarketAssetDisplayData {
   const change = market?.priceChangePercentage24h;
   const priceChangePercentage = typeof change === "number" && Number.isFinite(change) ? change : 0;
-  const priceAtoms = new BigNumber(market?.price ?? 0).times(
-    new BigNumber(10).pow(counterValueUnit.magnitude),
-  );
+
+  const marketCap =
+    usdToFiatRate != null && market?.marketCap != null ? market.marketCap * usdToFiatRate : null;
+  const priceAtoms =
+    usdToFiatRate == null
+      ? null
+      : new BigNumber(market?.price ?? 0)
+          .times(usdToFiatRate)
+          .times(new BigNumber(10).pow(counterValueUnit.magnitude));
 
   return {
     id: dadaIdToMarketId(market?.id ?? meta.id),
@@ -39,17 +47,20 @@ export function mapDadaMarketToDisplayData(
     ticker: (market?.ticker ?? meta.ticker).toUpperCase(),
     ledgerIds: market?.ledgerIds?.length ? market.ledgerIds : [meta.ledgerId],
     formattedMarketCap:
-      market?.marketCap == null
+      marketCap == null
         ? "-"
         : counterValueFormatter({
             currency: counterCurrency,
-            value: market.marketCap,
+            value: marketCap,
             shorten: true,
             locale,
             t,
           }),
     marketcapRank: market?.marketCapRank ?? 0,
-    formattedPrice: formatPrice(counterValueUnit, priceAtoms, { locale, showCode: true }),
+    formattedPrice:
+      priceAtoms == null
+        ? "-"
+        : formatPrice(counterValueUnit, priceAtoms, { locale, showCode: true }),
     priceChangePercentage,
   };
 }

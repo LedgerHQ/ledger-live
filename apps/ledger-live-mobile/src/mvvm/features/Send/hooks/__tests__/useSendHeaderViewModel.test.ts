@@ -6,6 +6,7 @@ import { renderHook } from "@testing-library/react-native";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
 import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
+import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { useAvailableBalance } from "../useAvailableBalance";
 import { useCurrentSendFlowStep } from "../useCurrentSendFlowStep";
 import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
@@ -21,6 +22,7 @@ jest.mock("~/context/Locale", () => ({
 }));
 jest.mock("~/reducers/wallet");
 jest.mock("../../context/SendFlowContext");
+jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
 
@@ -28,6 +30,7 @@ const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
+const mockedUseSendAmountDisplayMode = jest.mocked(useSendAmountDisplayMode);
 const mockedUseAvailableBalance = jest.mocked(useAvailableBalance);
 const mockedUseCurrentSendFlowStep = jest.mocked(useCurrentSendFlowStep);
 
@@ -56,6 +59,10 @@ describe("useSendHeaderViewModel", () => {
       goBack: jest.fn(),
     } as never);
     mockedUseMaybeAccountName.mockReturnValue("Base 1");
+    mockedUseSendAmountDisplayMode.mockReturnValue({
+      displayMode: "fiat",
+      setDisplayMode: jest.fn(),
+    });
     mockedUseAvailableBalance.mockReturnValue("$5,969.83");
     mockedUseCurrentSendFlowStep.mockReturnValue([
       SEND_FLOW_STEP.RECIPIENT,
@@ -109,5 +116,19 @@ describe("useSendHeaderViewModel", () => {
 
     expect(result.current.title).toBe("Send ETH");
     expect(result.current.descriptionText).toBe("Base 1 · $5,969.83");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat");
+  });
+
+  it("formats the header balance with the selected amount display mode", () => {
+    mockedUseSendAmountDisplayMode.mockReturnValue({
+      displayMode: "crypto",
+      setDisplayMode: jest.fn(),
+    });
+    mockedUseAvailableBalance.mockReturnValue("0.0596983 ETH");
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    expect(result.current.descriptionText).toBe("Base 1 · 0.0596983 ETH");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
   });
 });

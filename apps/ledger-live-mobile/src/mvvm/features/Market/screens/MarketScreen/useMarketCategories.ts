@@ -1,8 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import { track } from "~/analytics";
-import { useDispatch, useSelector } from "~/context/hooks";
-import { selectMarketListCategory, setMarketListCategory } from "~/reducers/market";
 import type { MarketListCategory } from "~/reducers/types";
 
 export type MarketCategoryTab = {
@@ -17,10 +16,12 @@ export type MarketCategories = {
   onSelectCategory: (category: MarketListCategory) => void;
 };
 
+const DEFAULT_CATEGORY: MarketListCategory = "all";
+
 const BUILT_IN_CATEGORY_TABS: MarketCategoryTab[] = [
   { value: "all", labelKey: "market.assets.categories.all" },
-  { value: "stocks", labelKey: "market.assets.categories.stocks" },
   { value: "starred", labelKey: "market.assets.categories.favorites" },
+  { value: "stocks", labelKey: "market.assets.categories.stocks" },
 ];
 
 function trackCategoryTap(category: MarketListCategory) {
@@ -31,10 +32,14 @@ function trackCategoryTap(category: MarketListCategory) {
   });
 }
 
-export function useMarketCategories(): MarketCategories {
-  const dispatch = useDispatch();
-  const persistedCategory = useSelector(selectMarketListCategory);
+export function useMarketCategories({
+  routeCategory,
+}: {
+  routeCategory?: MarketListCategory;
+} = {}): MarketCategories {
   const { data: trendingCategories } = useGetTrendingCategoriesQuery();
+  const entryCategory = routeCategory ?? DEFAULT_CATEGORY;
+  const [selectedCategory, setSelectedCategory] = useState<MarketListCategory>(entryCategory);
 
   const tabs = useMemo<MarketCategoryTab[]>(
     () => [
@@ -49,8 +54,15 @@ export function useMarketCategories(): MarketCategories {
 
   const selectableCategories = useMemo(() => new Set(tabs.map(tab => tab.value)), [tabs]);
 
-  // Persisted trending ids may no longer be trending after a refresh: fall back to "all".
-  const selectedCategory = selectableCategories.has(persistedCategory) ? persistedCategory : "all";
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedCategory(entryCategory);
+    }, [entryCategory]),
+  );
+
+  const effectiveCategory = selectableCategories.has(selectedCategory)
+    ? selectedCategory
+    : DEFAULT_CATEGORY;
 
   const onSelectCategory = useCallback(
     (category: MarketListCategory) => {
@@ -60,17 +72,17 @@ export function useMarketCategories(): MarketCategories {
         return;
       }
 
-      dispatch(setMarketListCategory(category));
+      setSelectedCategory(category);
     },
-    [dispatch, selectableCategories],
+    [selectableCategories],
   );
 
   return useMemo(
     () => ({
-      selectedCategory,
+      selectedCategory: effectiveCategory,
       tabs,
       onSelectCategory,
     }),
-    [onSelectCategory, selectedCategory, tabs],
+    [onSelectCategory, effectiveCategory, tabs],
   );
 }

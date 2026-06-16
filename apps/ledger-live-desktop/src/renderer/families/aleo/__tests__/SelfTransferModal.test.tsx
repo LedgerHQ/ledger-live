@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import DefaultSendBody from "~/renderer/modals/Send/Body";
 import { AleoCustomModal } from "../constants";
@@ -9,12 +9,12 @@ import SelfTransferModal from "../SelfTransferModal";
 
 jest.mock("~/renderer/families", () => ({
   ...jest.requireActual("~/renderer/families"),
-  getLLDCoinFamily: jest.fn(),
+  useLLDCoinFamily: jest.fn(),
 }));
 
 jest.mock("~/renderer/modals/Send/Body", () => jest.fn(() => null));
 
-const mockGetLLDCoinFamily = jest.mocked(getLLDCoinFamily);
+const mockGetLLDCoinFamily = jest.mocked(useLLDCoinFamily);
 const mockDefaultSendBody = jest.mocked(DefaultSendBody);
 
 describe("SelfTransferModal", () => {
@@ -30,7 +30,7 @@ describe("SelfTransferModal", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetLLDCoinFamily.mockReturnValue({ SendStepRecipient });
+    mockGetLLDCoinFamily.mockReturnValue({ SendStepRecipient } as never);
 
     const modalsDiv = document.createElement("div");
     modalsDiv.id = "modals";

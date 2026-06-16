@@ -24,7 +24,8 @@ type Props = {
 };
 
 const StepSummaryRecipientValue = ({ account, parentAccount, transaction }: Props) => {
-  const currencyId = getMainAccount(account, parentAccount).currency.id;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currencyId = mainAccount.currency.id;
   const matchingRecipientAccount = useSelector((state): Account | undefined => {
     const accounts = flattenAccountsSelector(state).filter(
       (candidate): candidate is Account => candidate.type === "Account",
@@ -36,24 +37,36 @@ const StepSummaryRecipientValue = ({ account, parentAccount, transaction }: Prop
       );
     });
   });
-  const matchingRecipientAccountName = useMaybeAccountName(matchingRecipientAccount);
+
+  const isSelfTransfer = isSelfTransferTransaction(transaction);
+
+  // For self-transfers the sender IS the recipient - fall back to mainAccount when no address match
+  const recipientAccount: Account | undefined = isSelfTransfer
+    ? (matchingRecipientAccount ?? mainAccount)
+    : matchingRecipientAccount;
+
+  const recipientAccountName = useMaybeAccountName(recipientAccount);
+
+  const isTokenAccount = account.type === "TokenAccount";
+  const displayCurrency = isTokenAccount ? account.token : recipientAccount?.currency;
+  const displayName = isTokenAccount ? account.token.name : recipientAccountName;
 
   const shouldShowAccountName =
-    isSelfTransferTransaction(transaction) &&
-    Boolean(matchingRecipientAccountName) &&
-    !!matchingRecipientAccount;
+    isSelfTransfer && !!displayName && (isTokenAccount || !!recipientAccount);
 
-  if (shouldShowAccountName && matchingRecipientAccount) {
+  if (shouldShowAccountName) {
     return (
       <Box horizontal alignItems="center" style={{ minWidth: 0 }}>
-        <RecipientIconWrapper>
-          <CryptoCurrencyIcon size={22} currency={matchingRecipientAccount.currency} />
-        </RecipientIconWrapper>
+        {displayCurrency && (
+          <RecipientIconWrapper>
+            <CryptoCurrencyIcon size={22} currency={displayCurrency} />
+          </RecipientIconWrapper>
+        )}
         <Ellipsis ff="Inter" color="neutral.c100" fontSize={4} data-testid="recipient-address">
-          {matchingRecipientAccountName}
+          {displayName}
         </Ellipsis>
         <StepSummaryAddressBadge transaction={transaction} direction="to" />
-        <AccountTagDerivationMode account={matchingRecipientAccount} />
+        {recipientAccount && <AccountTagDerivationMode account={recipientAccount} />}
       </Box>
     );
   }
@@ -65,7 +78,7 @@ const StepSummaryRecipientValue = ({ account, parentAccount, transaction }: Prop
       fontSize={4}
       data-testid="recipient-address"
     >
-      {shouldShowAccountName ? matchingRecipientAccountName : transaction.recipient}
+      {transaction.recipient}
     </Ellipsis>
   );
 };

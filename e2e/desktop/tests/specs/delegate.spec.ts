@@ -516,9 +516,11 @@ for (const currency of liveApps) {
 
         await app.account.startStakingFlowFromMainStakeButton();
         if (currency.delegate.account.currency.name == Currency.ETH.name) {
-          await app.delegate.clickLidoProvider();
+          await app.earnV2Dashboard.verifyDepositFlowVisible();
+          await app.earnV2Dashboard.selectEthProvider(currency.delegate.provider);
+        } else {
+          await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
         }
-        await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
       },
     );
   });

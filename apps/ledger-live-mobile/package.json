@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -10,6 +10,7 @@
     "start:android": "WITH_ROZENITE=true react-native start --platform android",
     "start:msw": "MSW_ENABLED=true react-native start",
     "conf": "react-native config",
+    "hermes": "node ./scripts/hermes.mjs",
     "doc": "react-native doctor",
     "doctor": "NODE_OPTIONS=--max-old-space-size=8192 RSDOCTOR=1 react-native bundle --platform ios --entry-file index.js --dev false --bundle-output main.jsbundle",
     "doctor:open": "open ../../rsdoctor/mobile/report.html",

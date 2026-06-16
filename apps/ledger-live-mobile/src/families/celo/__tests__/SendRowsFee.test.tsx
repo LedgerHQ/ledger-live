@@ -79,7 +79,7 @@ const usdcSubAccount: TokenAccount = {
     type: "TokenCurrency",
     id: "celo/erc20/usdc",
     contractAddress: "0xceba9300f2b948710d2653dd7b07f33a8b32118c",
-    parentCurrency: { id: "celo" } as never,
+    parentCurrencyId: "celo",
     name: "USD Coin",
     ticker: "USDC",
     units: [{ name: "USDC", code: "USDC", magnitude: 6 }],

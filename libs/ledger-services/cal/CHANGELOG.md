@@ -1,5 +1,29 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.18.0
+
+### Minor Changes
+
+- [#18049](https://github.com/LedgerHQ/ledger-live/pull/18049) [`4ac4774`](https://github.com/LedgerHQ/ledger-live/commit/4ac4774a41655310e652f1a990e83f9821dee1e4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Update the LiFi provider support link shown on the swap success screen (mobile & desktop) to https://scan.li.fi/
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc)]:
+  - @ledgerhq/live-env@2.38.0
+  - @ledgerhq/live-network@2.6.4
+
+## 1.18.0-next.0
+
+### Minor Changes
+
+- [#18049](https://github.com/LedgerHQ/ledger-live/pull/18049) [`4ac4774`](https://github.com/LedgerHQ/ledger-live/commit/4ac4774a41655310e652f1a990e83f9821dee1e4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Update the LiFi provider support link shown on the swap success screen (mobile & desktop) to https://scan.li.fi/
+
+### Patch Changes
+
+- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc)]:
+  - @ledgerhq/live-env@2.38.0-next.0
+  - @ledgerhq/live-network@2.6.4-next.0
+
 ## 1.17.0
 
 ### Minor Changes

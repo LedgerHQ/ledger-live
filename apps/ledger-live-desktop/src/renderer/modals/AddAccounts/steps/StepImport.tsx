@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements, filter, map, retry, concatMap } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import { openModal } from "~/renderer/actions/modals";
@@ -29,7 +30,7 @@ import { StepProps } from "..";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { classifyChecked } from "./stepImportSelection";
@@ -65,6 +66,30 @@ const LoadingRow = styled(Box).attrs(() => ({
   height: 48px;
   border: 1px dashed ${p => p.theme.colors.neutral.c70};
 `;
+const CreatableForFamily = ({
+  mainCurrencyFamily,
+  currencyName,
+  stepProps,
+}: {
+  mainCurrencyFamily: string;
+  currencyName: string;
+  stepProps: StepProps;
+}) => {
+  const specific = useLLDCoinFamily(mainCurrencyFamily);
+  const NoAssociatedAccounts = specific?.NoAssociatedAccounts;
+  if (NoAssociatedAccounts) {
+    return <NoAssociatedAccounts {...stepProps} />;
+  }
+  return (
+    <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">
+      {" "}
+      <Text ff="Inter|SemiBold" color="neutral.c100">
+        {currencyName}
+      </Text>{" "}
+    </Trans>
+  );
+};
+
 const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   // componentDidMount-like effect
   useEffect(() => {
@@ -126,7 +151,10 @@ class StepImport extends PureComponent<
       const { currency, device, setScanStatus, setScannedAccounts, blacklistedTokenIds } =
         this.props;
       if (!currency || !device) throw new UnresponsiveDeviceError();
-      const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
+      const mainCurrency =
+        currency.type === "TokenCurrency"
+          ? getCryptoCurrencyById(currency.parentCurrencyId)
+          : currency;
       const bridge = await getCurrencyBridge(mainCurrency);
 
       // will be set to false if an existing account is found
@@ -277,7 +305,10 @@ class StepImport extends PureComponent<
       t,
     } = this.props;
     if (!currency) return null;
-    const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    const mainCurrency =
+      currency.type === "TokenCurrency"
+        ? getCryptoCurrencyById(currency.parentCurrencyId)
+        : currency;
 
     // Find accounts that are (scanned && !existing && !used)
     const newAccountSchemes = scannedAccounts
@@ -296,9 +327,6 @@ class StepImport extends PureComponent<
         : [preferredNewAccountScheme!],
     });
     let creatable;
-    const NoAssociatedAccounts = mainCurrency
-      ? getLLDCoinFamily(mainCurrency.family).NoAssociatedAccounts
-      : null;
 
     if (alreadyEmptyAccount) {
       creatable = (
@@ -309,9 +337,15 @@ class StepImport extends PureComponent<
           </Text>{" "}
         </Trans>
       );
-    } else if (NoAssociatedAccounts) {
+    } else if (mainCurrency) {
       // custom family UI for "no associated accounts"
-      creatable = <NoAssociatedAccounts {...this.props} />;
+      creatable = (
+        <CreatableForFamily
+          mainCurrencyFamily={mainCurrency.family}
+          currencyName={currencyName}
+          stepProps={this.props}
+        />
+      );
     } else {
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">
@@ -421,7 +455,10 @@ export const StepImportFooter = ({
 
   const goCantonOnboard = () => {
     onCloseModal();
-    const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    const mainCurrency =
+      currency?.type === "TokenCurrency"
+        ? getCryptoCurrencyById(currency.parentCurrencyId)
+        : currency;
     if (!mainCurrency) return;
     dispatch(
       openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
@@ -436,7 +473,10 @@ export const StepImportFooter = ({
 
   const goConcordiumOnboard = () => {
     onCloseModal();
-    const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    const mainCurrency =
+      currency?.type === "TokenCurrency"
+        ? getCryptoCurrencyById(currency.parentCurrencyId)
+        : currency;
     if (!mainCurrency) return;
     dispatch(
       openModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT", {

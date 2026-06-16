@@ -64,6 +64,7 @@ import {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
@@ -287,6 +288,10 @@ export const setSelectedTabPortfolioAssets =
 
 export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4TourPayload>(
   SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR,
+);
+
+export const setDoNotAskAgainSkipMemo = createAction<SettingsSetDoNotAskAgainSkipMemoPayload>(
+  SettingsActionTypes.SET_DO_NOT_ASK_AGAIN_SKIP_MEMO,
 );
 
 export const setProductTourCompleted = createAction<SettingsSetProductTourCompletedPayload>(

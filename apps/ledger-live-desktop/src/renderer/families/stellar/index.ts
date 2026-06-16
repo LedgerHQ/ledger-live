@@ -13,6 +13,7 @@ const family: StellarFamily = {
   sendAmountFields,
   sendRecipientFields,
   tokenList,
+  modalsToPreload: ["MODAL_STELLAR_ADD_ASSET"],
 };
 
 export default family;

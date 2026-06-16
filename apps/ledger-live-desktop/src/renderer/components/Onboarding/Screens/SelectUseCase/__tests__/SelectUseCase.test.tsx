@@ -12,7 +12,8 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 
 jest.mock("LLD/features/Onboarding/components/CounterfeitWarningDialog", () => {
-  const i18n = jest.requireActual<typeof import("~/renderer/i18n/init")>("~/renderer/i18n/init").default;
+  const i18n =
+    jest.requireActual<typeof import("~/renderer/i18n/init")>("~/renderer/i18n/init").default;
   return {
     __esModule: true,
     default: ({

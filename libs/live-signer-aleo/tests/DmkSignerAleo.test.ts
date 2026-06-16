@@ -18,6 +18,7 @@ describe("DmkSignerAleo", () => {
     getAppConfig: jest.fn(),
     getAddress: jest.fn(),
     getViewKey: jest.fn(),
+    getTvk: jest.fn(),
     signRootIntent: jest.fn(),
     signFeeIntent: jest.fn(),
     signNestedCall: jest.fn(),
@@ -248,6 +249,76 @@ describe("DmkSignerAleo", () => {
 
       // WHEN / THEN
       await expect(signer.getViewKey(mockPath)).rejects.toThrow(UserRefusedOnDevice);
+    });
+  });
+
+  describe("getTvk", () => {
+    it("should return the tvk and call signer with correct params", async () => {
+      // GIVEN
+      const getTvkMock: jest.Mock = mockSignerAleo.getTvk;
+      getTvkMock.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: { tvk: new Uint8Array([0xaa, 0xbb]) },
+        }),
+      });
+
+      // WHEN
+      const result = await signer.getTvk(mockPath);
+
+      // THEN
+      expect(result).toEqual({ tvk: new Uint8Array([0xaa, 0xbb]) });
+      expect(mockSignerAleo.getTvk).toHaveBeenCalledWith(mockPath, {
+        skipOpenApp: true,
+      });
+    });
+
+    it("should pass transitionIndex when provided", async () => {
+      // GIVEN
+      const getTvkMock: jest.Mock = mockSignerAleo.getTvk;
+      getTvkMock.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: { tvk: new Uint8Array([0xcc]) },
+        }),
+      });
+
+      // WHEN
+      await signer.getTvk(mockPath, 2);
+
+      // THEN
+      expect(mockSignerAleo.getTvk).toHaveBeenCalledWith(mockPath, {
+        skipOpenApp: true,
+        transitionIndex: 2,
+      });
+    });
+
+    it("should throw LockedDeviceError when device is locked", async () => {
+      // GIVEN
+      const getTvkMock: jest.Mock = mockSignerAleo.getTvk;
+      getTvkMock.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: { _tag: "GetTvkDARejected", errorCode: "5515" },
+        }),
+      });
+
+      // WHEN / THEN
+      await expect(signer.getTvk(mockPath)).rejects.toThrow(LockedDeviceError);
+    });
+
+    it("should throw UserRefusedOnDevice when user refuses", async () => {
+      // GIVEN
+      const getTvkMock: jest.Mock = mockSignerAleo.getTvk;
+      getTvkMock.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: { _tag: "GetTvkDARejected", errorCode: "69f0" },
+        }),
+      });
+
+      // WHEN / THEN
+      await expect(signer.getTvk(mockPath)).rejects.toThrow(UserRefusedOnDevice);
     });
   });
 

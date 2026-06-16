@@ -591,12 +591,15 @@ export const patchPublicOperations = async ({
         operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE
       ) {
         const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
+        const programId =
+          operation.extra.programId ?? recordTransition.program ?? PROGRAM_ID.CREDITS;
+
         const recipientData = await sdkClient.decryptCiphertext({
           currency,
           ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
-          programId: PROGRAM_ID.CREDITS,
+          programId,
           functionName: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           outputIndex: 0,
         });

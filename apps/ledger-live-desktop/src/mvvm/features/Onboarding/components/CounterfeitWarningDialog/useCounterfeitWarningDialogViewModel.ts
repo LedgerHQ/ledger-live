@@ -41,10 +41,7 @@ const useCounterfeitWarningDialogViewModel = ({
 
   useEffect(() => {
     if (open && !hasTrackedShownRef.current) {
-      track(
-        "page_viewed",
-        eventProperties(deviceModelId, { page: COUNTERFEIT_WARNING_PAGE }),
-      );
+      track("page_viewed", eventProperties(deviceModelId, { page: COUNTERFEIT_WARNING_PAGE }));
       hasTrackedShownRef.current = true;
     }
 

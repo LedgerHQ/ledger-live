@@ -483,7 +483,11 @@ describe("staking/validators/monad", () => {
       ]);
 
     const encodeWithdrawalRequest = (withdrawalAmount: bigint, withdrawEpoch = 1n): string =>
-      monadIface.encodeFunctionResult("getWithdrawalRequest", [withdrawalAmount, 0n, withdrawEpoch]);
+      monadIface.encodeFunctionResult("getWithdrawalRequest", [
+        withdrawalAmount,
+        0n,
+        withdrawEpoch,
+      ]);
 
     // getEpoch returns [epoch, inEpochDelayPeriod].
     const encodeEpoch = (epoch: bigint): string =>
@@ -744,7 +748,11 @@ describe("staking/validators/monad", () => {
             delegate: ethers.computeAddress(SECP),
             state: "deactivating",
             stateUpdatedAt: new Date(NOW - 2 * EPOCH_DURATION_MS),
-            asset: { type: "native", name: "Monad", unit: { name: "MON", code: "MON", magnitude: 18 } },
+            asset: {
+              type: "native",
+              name: "Monad",
+              unit: { name: "MON", code: "MON", magnitude: 18 },
+            },
             amount: 40n,
             actions: [],
             details: {
@@ -760,7 +768,11 @@ describe("staking/validators/monad", () => {
             delegate: ethers.computeAddress(SECP),
             state: "deactivating",
             stateUpdatedAt: new Date(NOW + 5 * EPOCH_DURATION_MS),
-            asset: { type: "native", name: "Monad", unit: { name: "MON", code: "MON", magnitude: 18 } },
+            asset: {
+              type: "native",
+              name: "Monad",
+              unit: { name: "MON", code: "MON", magnitude: 18 },
+            },
             amount: 60n,
             actions: [],
             details: {

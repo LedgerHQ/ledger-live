@@ -1,8 +1,7 @@
 import React, { useCallback } from "react";
 import { FlatList, View, type ListRenderItemInfo } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Search, Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import AssetListItem, {
@@ -10,6 +9,7 @@ import AssetListItem, {
   type MarketAssetDisplayData,
 } from "LLM/components/AssetListItem";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
+import { StatusView } from "../StatusView";
 import { GLOBAL_SEARCH_TEST_IDS } from "../../testIds";
 
 const SKELETON_COUNT = 3;
@@ -18,10 +18,11 @@ type Props = Readonly<{
   results: MarketAssetDisplayData[];
   isLoading: boolean;
   hasNoResults: boolean;
+  hasError: boolean;
   onAssetPress: (asset: MarketAssetDisplayData) => void;
 }>;
 
-export function SearchResults({ results, isLoading, hasNoResults, onAssetPress }: Props) {
+export function SearchResults({ results, isLoading, hasNoResults, hasError, onAssetPress }: Props) {
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
 
@@ -31,6 +32,16 @@ export function SearchResults({ results, isLoading, hasNoResults, onAssetPress }
     ),
     [onAssetPress],
   );
+
+  if (hasError) {
+    return (
+      <StatusView
+        icon={Warning}
+        message={t("market.assets.error.title")}
+        testID={GLOBAL_SEARCH_TEST_IDS.searchError}
+      />
+    );
+  }
 
   if (isLoading) {
     return (
@@ -44,16 +55,11 @@ export function SearchResults({ results, isLoading, hasNoResults, onAssetPress }
 
   if (hasNoResults) {
     return (
-      <Box lx={emptyStateStyle} testID={GLOBAL_SEARCH_TEST_IDS.searchEmptyState}>
-        <View style={topSpacerStyle} />
-        <Spot appearance="icon" icon={Search} size={72} />
-        <Text
-          typography="heading4SemiBold"
-          lx={{ color: "base", textAlign: "center", marginTop: "s24" }}
-        >
-          {t("modularDrawer.emptyAssetList")}
-        </Text>
-      </Box>
+      <StatusView
+        icon={Search}
+        message={t("modularDrawer.emptyAssetList")}
+        testID={GLOBAL_SEARCH_TEST_IDS.searchEmptyState}
+      />
     );
   }
 
@@ -83,9 +89,3 @@ const listStyle = { flex: 1 };
 const contentContainerStyle = { paddingTop: 8, paddingHorizontal: 16 };
 const rowStyle: LumenViewStyle = { marginHorizontal: "-s8" };
 const skeletonStyle: LumenViewStyle = { paddingTop: "s8", paddingHorizontal: "s16" };
-const emptyStateStyle: LumenViewStyle = {
-  flex: 1,
-  alignItems: "center",
-  paddingHorizontal: "s16",
-};
-const topSpacerStyle = { height: "30%" } as const;

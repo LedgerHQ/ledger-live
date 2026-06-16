@@ -1,7 +1,10 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { Flex } from "@ledgerhq/react-ui";
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
+import {
+  formatCurrencyUnit,
+  type formatCurrencyUnitOptions,
+} from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "react-i18next";
 import {
   isPublicTransaction,
@@ -9,12 +12,14 @@ import {
   isSelfTransferTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
 import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/aleo/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountUnit, useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "../constants";
+import { isAleoAccount } from "./utils";
 import { BalanceOption } from "./BalanceOption";
 import BalanceOptionsSwitch from "./BalanceOptionsSwitch";
 
@@ -23,29 +28,40 @@ type Source = "public" | "private";
 interface Props {
   transaction: Transaction;
   mainAccount: AleoAccount;
+  subAccount?: AccountLike | null;
   onChange: (value: Source) => void;
 }
 
-const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
+const BalanceSelector = ({ mainAccount, subAccount, transaction, onChange }: Props) => {
   const { t } = useTranslation();
-  const unit = useAccountUnit(mainAccount);
+  const mainUnit = useAccountUnit(mainAccount);
+  const subAccountUnit = useMaybeAccountUnit(subAccount);
+  const unit = subAccountUnit ?? mainUnit;
   const locale = useSelector(localeSelector);
   const formatDate = useDateFormatter(dayFormat);
   const formatTime = useDateFormatter(hourFormat);
 
-  const formatConfig = {
+  const formatConfig: formatCurrencyUnitOptions = {
     alwaysShowSign: false,
     showCode: true,
     locale,
   };
 
-  const privateBalance = mainAccount?.aleoResources?.privateBalance ?? null;
-  const transparentBalance = mainAccount?.aleoResources?.transparentBalance ?? new BigNumber(0);
+  const aleoTokenAccount =
+    subAccount?.type === "TokenAccount" && isAleoAccount(subAccount) ? subAccount : null;
+
+  const transparentBalance =
+    aleoTokenAccount?.transparentBalance ??
+    mainAccount?.aleoResources?.transparentBalance ??
+    new BigNumber(0);
+  const privateBalance =
+    aleoTokenAccount?.privateBalance ?? mainAccount?.aleoResources?.privateBalance ?? null;
+
+  const formattedTransparentBalance = formatCurrencyUnit(unit, transparentBalance, formatConfig);
   const formattedPrivateBalance =
     privateBalance !== null
       ? formatCurrencyUnit(unit, privateBalance, formatConfig)
       : PRIVATE_BALANCE_PLACEHOLDER;
-  const formattedTransparentBalance = formatCurrencyUnit(unit, transparentBalance, formatConfig);
 
   const publicSyncDate = t("aleo.shared.balanceSelector.recently");
   const privateSyncDate = mainAccount.aleoResources?.lastPrivateSyncDate

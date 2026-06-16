@@ -187,7 +187,9 @@ export class PortfolioPage extends AppPage {
   @step("Expect asset row $0 to have the correct counter value $1")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
     // ON: dedicated W40 value cell. OFF: legacy AssetDistribution row (contains price + counter value).
-    const rowValue = isAssetSectionEnabled ? this.w40AssetRowValue(asset) : this.legacyAssetRow(asset);
+    const rowValue = isAssetSectionEnabled
+      ? this.w40AssetRowValue(asset)
+      : this.legacyAssetRow(asset);
     await expect(rowValue).toBeVisible();
 
     // Countervalue cells can render symbol and/or code (e.g. "€" and/or "EUR").

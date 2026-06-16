@@ -40,6 +40,30 @@ async function getAccountBalance(
   return res.data;
 }
 
+/**
+ * Fetches the public balance of an address-mapped token program
+ * (e.g. usdcx_stablecoin.aleo, usad_stablecoin.aleo) for a given address.
+ *
+ * @param currency - The Aleo currency
+ * @param programId - The token program id
+ * @param address - The owner's Aleo address
+ * @returns The balance in raw units (u128) or null if no balance exists
+ */
+async function getTokenBalance(
+  currency: CryptoCurrency,
+  programId: string,
+  address: string,
+): Promise<string | null> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${nodeUrl}/v2/${networkType}/program/${programId}/mapping/balances/${address}`,
+  });
+
+  return res.data;
+}
+
 async function getTransactionById(
   currency: CryptoCurrency,
   transactionId: string,
@@ -261,6 +285,7 @@ async function submitEncryptedDelegatedProvingRequest({
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
+  getTokenBalance,
   getTransactionById,
   getAccountPublicTransactions,
   getRecordScannerStatus,

@@ -9,16 +9,16 @@ jest.mock("../useAssetSearchBar");
 const mockedUseAssetSearchBar = jest.mocked(useAssetSearchBar);
 
 const EMPTY_SECTION = { data: [], isLoading: false };
-const SUGGESTIONS: SearchSuggestions = {
+const EMPTY_SUGGESTIONS: SearchSuggestions = {
   cryptos: EMPTY_SECTION,
-  stablecoins: EMPTY_SECTION,
   stocks: EMPTY_SECTION,
 };
+const EMPTY_RESULTS: SearchResults = { data: [], isLoading: false };
 
 function mockSearchBar({
   mode,
   query = "",
-  results = { data: [], isLoading: false },
+  results = EMPTY_RESULTS,
 }: {
   mode: SearchMode;
   query?: string;
@@ -32,7 +32,7 @@ function mockSearchBar({
     open: jest.fn(),
     close: jest.fn(),
     mode,
-    suggestions: SUGGESTIONS,
+    suggestions: EMPTY_SUGGESTIONS,
     results,
   });
 }
@@ -49,12 +49,37 @@ describe("SearchOverlayView", () => {
     expect(screen.getByTestId("search-overlay-default")).toBeInTheDocument();
   });
 
-  it("renders the results list (skeletons while loading) in `results` mode", () => {
+  it("renders the general skeleton while the results are loading in `results` mode", () => {
     mockSearchBar({ mode: "results", query: "bit", results: { data: [], isLoading: true } });
 
     render(<SearchOverlay />);
 
     expect(screen.getByTestId("search-results-skeleton")).toBeInTheDocument();
+  });
+
+  it("renders the flat results list once loaded in `results` mode", () => {
+    mockSearchBar({
+      mode: "results",
+      query: "bit",
+      results: {
+        data: [
+          {
+            id: "bitcoin",
+            name: "Bitcoin",
+            ticker: "BTC",
+            ledgerIds: ["bitcoin"],
+            price: 100,
+            priceChangePercentage: { "24h": 1.2 },
+          } as unknown as SearchResults["data"][number],
+        ],
+        isLoading: false,
+      },
+    });
+
+    render(<SearchOverlay />);
+
+    expect(screen.getByTestId("search-results-list")).toBeInTheDocument();
+    expect(screen.getByTestId("search-result-item-btc")).toBeInTheDocument();
   });
 
   it("renders the empty state in `noResults` mode", () => {
@@ -63,6 +88,15 @@ describe("SearchOverlayView", () => {
     render(<SearchOverlay />);
 
     expect(screen.getByTestId("search-empty-state")).toBeInTheDocument();
-    expect(screen.getByText('No results for "zzzz"')).toBeInTheDocument();
+    expect(screen.getByText("No asset found")).toBeInTheDocument();
+  });
+
+  it("renders the error state in `error` mode", () => {
+    mockSearchBar({ mode: "error", query: "bit" });
+
+    render(<SearchOverlay />);
+
+    expect(screen.getByTestId("search-error-state")).toBeInTheDocument();
+    expect(screen.getByText("Connection failed")).toBeInTheDocument();
   });
 });

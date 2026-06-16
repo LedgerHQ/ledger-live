@@ -8,10 +8,7 @@ import cantonHandlers, {
   CANTON_DEVNET_ONBOARDING_PREPARE_RE,
   MOCK_CANTON_PUBLIC_KEY_HEX,
 } from "./cantonHandlers";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -76,9 +73,7 @@ function buildInitialReduxState(device: Device) {
 function cantonDevnetCurrency(): CryptoCurrency {
   const currency = getCryptoCurrencyById("canton_network_devnet");
   if (!currency) {
-    throw new Error(
-      "canton_network_devnet is missing; setSupportedCurrencies must run in beforeAll for this suite",
-    );
+    throw new Error("canton_network_devnet is missing");
   }
   return currency;
 }
@@ -118,7 +113,6 @@ describe("CantonOnboard (MAD) Integration", () => {
     previousCantonNodeIdOverride = getEnv("CANTON_NODE_ID_OVERRIDE") ?? "";
     setEnv("CANTON_NODE_ID_OVERRIDE", "");
 
-    setSupportedCurrencies(["canton_network_devnet"]);
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
       networkType: "devnet",
@@ -133,7 +127,6 @@ describe("CantonOnboard (MAD) Integration", () => {
 
   afterAll(() => {
     setEnv("CANTON_NODE_ID_OVERRIDE", previousCantonNodeIdOverride);
-    setSupportedCurrencies([]);
   });
 
   beforeEach(() => {

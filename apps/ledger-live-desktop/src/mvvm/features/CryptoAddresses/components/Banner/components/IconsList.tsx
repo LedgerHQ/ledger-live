@@ -32,7 +32,7 @@ export const IconsList = memo(function IconsList({
             ledgerId={currency.id}
             ticker={currency.ticker}
             {...(currency.type === "TokenCurrency" && {
-              network: currency.parentCurrency.id,
+              network: currency.parentCurrencyId,
             })}
           />
         </div>

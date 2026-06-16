@@ -24,13 +24,17 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { DelegationActionsModalName } from "../modals";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+
+type DelegationActionsModalName =
+  | "MODAL_COSMOS_CLAIM_REWARDS"
+  | "MODAL_COSMOS_REDELEGATE"
+  | "MODAL_COSMOS_UNDELEGATE";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

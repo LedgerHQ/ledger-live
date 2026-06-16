@@ -76,7 +76,7 @@ const usdtToken = {
   type: "TokenCurrency" as const,
   id: "celo/erc20/usdt",
   contractAddress: "0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e",
-  parentCurrency: celoCurrency,
+  parentCurrencyId: "celo",
   tokenType: "erc20" as const,
   name: "Tether USD",
   ticker: "USDT",

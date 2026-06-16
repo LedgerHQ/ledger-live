@@ -18,6 +18,8 @@ import {
   asDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
+import { Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
+import { ToolPage } from "../components/ToolPage";
 
 const localCache: Record<string, unknown> = {};
 const bridgeCache = makeBridgeCacheSystem({
@@ -118,30 +120,39 @@ function App() {
     }
   }, [accountId]);
 
+  const isLoading = account === undefined && !accountError;
+
   return (
-    <div>
-      <h1>Synchronisation</h1>
-      <p>
-        <input
-          type="text"
-          placeholder="account id"
-          value={accountId}
-          onChange={e => setAccountId(e.target.value)}
-        />
-        <span style={{ color: "red" }}>{accountIdError}</span>
-      </p>
-      <pre>
-        <code>
-          {account
-            ? JSON.stringify(account, null, 2)
-            : accountError
-              ? String(accountError)
-              : account === null
-                ? "insert an account id to synchronise"
-                : "loading..."}
-        </code>
-      </pre>
-    </div>
+    <ToolPage
+      title="Synchronisation"
+      description="Synchronise an account from its id (or a currency:xpub/address shorthand)."
+    >
+      <TextInput
+        label="Account id"
+        placeholder="ethereum:0x… or js:2:ethereum:0x…:"
+        value={accountId}
+        onChange={e => setAccountId(e.target.value)}
+        status={accountIdError ? "error" : undefined}
+        helperText={accountIdError || undefined}
+      />
+
+      <div className="flex flex-col gap-8">
+        {accountError ? (
+          <p className="body-2 text-error">{String(accountError)}</p>
+        ) : isLoading ? (
+          <span className="inline-flex items-center gap-8 body-2 text-muted">
+            <Spinner size={16} /> Synchronising…
+          </span>
+        ) : null}
+        {account ? (
+          <pre className="max-h-[60vh] overflow-auto rounded-lg border border-base bg-muted p-16 body-3 text-base">
+            <code>{JSON.stringify(account, null, 2)}</code>
+          </pre>
+        ) : !accountError && !isLoading ? (
+          <p className="body-2 text-muted">Enter an account id to synchronise.</p>
+        ) : null}
+      </div>
+    </ToolPage>
   );
 }
 

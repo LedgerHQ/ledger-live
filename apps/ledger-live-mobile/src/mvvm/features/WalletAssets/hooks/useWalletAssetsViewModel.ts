@@ -13,14 +13,19 @@ interface WalletAssetsViewModelResult {
   onPressShowAll: () => void;
   shouldAddBottomPadding: boolean;
   shouldDisplayAssetSection: boolean;
+  shouldDisplayAssetDiscoverability: boolean;
 }
 
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const { onPressShowAll } = usePortfolioSectionActions(false, "all");
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
   const { walletCardsDisplayed } = useDynamicContent();
-  const { shouldDisplayOperationsList, shouldDisplayAssetSection, shouldDisplayGraphRework } =
-    useWalletFeaturesConfig("mobile");
+  const {
+    shouldDisplayOperationsList,
+    shouldDisplayAssetSection,
+    shouldDisplayGraphRework,
+    shouldDisplayAssetDiscoverability,
+  } = useWalletFeaturesConfig("mobile");
 
   const hasMore = useMemo(
     () =>
@@ -37,5 +42,6 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     shouldAddBottomPadding:
       shouldDisplayOperationsList && walletCardsDisplayed.length === 0 && shouldDisplayGraphRework,
     shouldDisplayAssetSection,
+    shouldDisplayAssetDiscoverability,
   };
 }

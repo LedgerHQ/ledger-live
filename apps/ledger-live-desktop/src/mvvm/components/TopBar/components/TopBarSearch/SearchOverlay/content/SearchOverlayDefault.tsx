@@ -3,11 +3,7 @@ import { useTranslation } from "react-i18next";
 import { StocksSectionView } from "LLD/features/Stocks/StocksSectionView";
 import { AssetSuggestionsSection } from "LLD/features/SearchAssets/AssetSuggestionsSection";
 import { useSearchOverlay } from "../SearchOverlayContext";
-import {
-  CRYPTOS_SUGGESTION_LIMIT,
-  STABLECOINS_SUGGESTION_LIMIT,
-  STOCKS_SUGGESTION_LIMIT,
-} from "../useAssetSearchBar";
+import { CRYPTOS_SUGGESTION_LIMIT, STOCKS_SUGGESTION_LIMIT } from "../useAssetSearchBar";
 
 export function SearchOverlayDefault() {
   const { t } = useTranslation();
@@ -21,14 +17,6 @@ export function SearchOverlayDefault() {
         title={t("topBar.search.cryptos")}
         testIdPrefix="cryptos"
         limit={CRYPTOS_SUGGESTION_LIMIT}
-        navigateToAsset={navigateToAsset}
-        onSeeAll={navigateToMarket}
-      />
-      <AssetSuggestionsSection
-        {...suggestions.stablecoins}
-        title={t("topBar.search.stablecoins")}
-        testIdPrefix="stablecoins"
-        limit={STABLECOINS_SUGGESTION_LIMIT}
         navigateToAsset={navigateToAsset}
         onSeeAll={navigateToMarket}
       />

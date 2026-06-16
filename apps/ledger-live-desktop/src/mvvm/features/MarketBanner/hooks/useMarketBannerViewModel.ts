@@ -25,7 +25,11 @@ import {
   selectMarketBannerRanking,
   type MarketBannerRanking,
 } from "~/renderer/reducers/marketBanner";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MARKET_BANNER_ITEMS_COUNT } from "../utils/constants";
+
+/** Ranking shown when the asset discoverability flag is off. */
+const DEFAULT_RANKING_WITHOUT_DISCOVERABILITY: MarketBannerRanking = "gainers";
 
 /** Valid `pageSize` values are 1 / 5 / 20 / 50; 50 covers the favorites banner item cap. */
 const MARKET_BANNER_FAVORITES_LIMIT = 50;
@@ -135,7 +139,11 @@ export function useFavoritesBannerItems(options?: { skip?: boolean }): MarketBan
 }
 
 export function useMarketBannerViewModel(): MarketBannerItems {
-  const ranking = useSelector(selectMarketBannerRanking);
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
+  const persistedRanking = useSelector(selectMarketBannerRanking);
+  const ranking = shouldDisplayAssetDiscoverability
+    ? persistedRanking
+    : DEFAULT_RANKING_WITHOUT_DISCOVERABILITY;
   const isFavorites = ranking === "favorites";
 
   const performers = usePerformersBannerItems(ranking, { skip: isFavorites });

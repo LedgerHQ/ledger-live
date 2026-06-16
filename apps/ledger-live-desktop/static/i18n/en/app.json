@@ -408,6 +408,42 @@
         "refunded": "Refunded"
       }
     },
+    "modals": {
+      "transactionStatus": {
+        "title": "Swap {{sendTicker}} → {{receiveTicker}}",
+        "sections": {
+          "status": {
+            "heading": "Status",
+            "sendPending": "Sending {{ticker}}",
+            "sendCompleted": "Sent {{ticker}}",
+            "receivePending": "Receiving {{ticker}}",
+            "receiveCompleted": "Received {{ticker}}"
+          },
+          "details": {
+            "networkFees": "Network fees",
+            "receiveAccount": "Receive account",
+            "provider": "Provider",
+            "swapId": "Swap ID"
+          }
+        },
+        "statusLabels": {
+          "pending": "Ongoing",
+          "onhold": "On hold",
+          "expired": "Expired",
+          "finished": "Completed",
+          "refunded": "Refunded",
+          "cancelled": "Cancelled",
+          "unknown": "Unknown"
+        },
+        "actions": {
+          "viewInExplorer": "View in explorer",
+          "copied": "Copied"
+        },
+        "accessibility": {
+          "copySwapId": "Copy swap ID"
+        }
+      }
+    },
     "exchangeDrawer": {
       "title": "Confirm your Exchange",
       "completed": {
@@ -1638,6 +1674,21 @@
       "isFavorite": "Starred Assets",
       "applyFilters": "Apply filters",
       "clearAll": "Clear all"
+    },
+    "assetsTitle": "Assets",
+    "marketTable": {
+      "crypto": "Name",
+      "price": "Market price",
+      "volume": "Volume",
+      "change": "Change",
+      "marketCap": "Market cap",
+      "actions": "Actions",
+      "menu": {
+        "more": "More",
+        "buySell": "Buy/Sell",
+        "addToFavourites": "Add to favorites",
+        "removeFromFavourites": "Remove from favorites"
+      }
     },
     "marketList": {
       "crypto": "Crypto",
@@ -5102,6 +5153,10 @@
           "title": "Stablecoin preset",
           "desc": "Generate Ethereum, Arbitrum, Optimism, Base, Solana, Tron and Algorand accounts with top stablecoins (max 5 per network)"
         },
+        "stocksGenerate": {
+          "title": "Stocks preset",
+          "desc": "Generate accounts with the top tokenized stocks from DADA (category=stocks) as sub-accounts under their network"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -5120,7 +5175,10 @@
           "generateAccountsQuick": "Generate {{count}} accounts",
           "generateEmptyAccount": "Generate empty account",
           "generateStablecoinAccounts": "Generate {{count}} stablecoin account",
-          "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts"
+          "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts",
+          "generateStockAccounts": "Generate {{count}} stock account",
+          "generateStockAccounts_other": "Generate {{count}} stock accounts",
+          "loadingStocks": "Loading stock data…"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
@@ -8726,7 +8784,7 @@
     "noDeviceTitle": "Your secure crypto wallet"
   },
   "marketBanner": {
-    "title": "Explore the market",
+    "title": "Market",
     "genericError": "Connection failed",
     "cta": "View all",
     "scrollLeft": "Scroll left",
@@ -8752,7 +8810,7 @@
     "dialog": {
       "title": "Mood index",
       "content": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
-      "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
+      "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -8760,6 +8818,7 @@
     "dialog": {
       "title": "Total market cap",
       "content": "The total market cap represents the market capitalization of all cryptocurrencies combined.",
+      "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -8767,7 +8826,7 @@
     "dialog": {
       "title": "Altcoin index",
       "content": "The Altcoin index shows how Bitcoin is performing compared to alternative cryptocurrencies. The higher the number, the better altcoins are doing compared to Bitcoin.",
-      "disclaimer": "Data is sourced from CoinMarketCap's Altcoin Season Index and provided for informational purposes only.",
+      "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -8782,6 +8841,7 @@
   "assets": {
     "cryptos": "Crypto",
     "stablecoins": "Stablecoins",
+    "stocks": "Stocks",
     "cryptoAccounts": "Crypto accounts",
     "accountsCount_one": "{{count}} account",
     "accountsCount_other": "{{count}} accounts",
@@ -8828,7 +8888,7 @@
     "title": "Crypto assets"
   },
   "stocks": {
-    "explore": "Explore"
+    "explore": "Explore all"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
@@ -8840,9 +8900,9 @@
   "topBar": {
     "searchPlaceholder": "Search assets",
     "search": {
-      "noResults": "No results for \"{{query}}\"",
+      "noAssetFound": "No asset found",
+      "error": "Connection failed",
       "cryptos": "Cryptos",
-      "stablecoins": "Stablecoins",
       "stocks": "Stocks"
     },
     "history": {
@@ -9164,7 +9224,32 @@
     "actionsList": {
       "help": "Help",
       "recover": "[L] Recover",
+      "backup": "Backup",
       "refer": "Referral"
+    },
+    "backupHub": {
+      "title": "Wallet backups",
+      "description": "Protect your assets with a combination of backup solutions for your Seed Phrase Recovery.",
+      "back": "Back",
+      "sections": {
+        "digital": "Digital ID-based backups",
+        "physical": "Physical backups"
+      },
+      "recover": {
+        "title": "Ledger Recover",
+        "notSubscribed": "Create a backup you can't lose",
+        "inProgress": "Complete activation",
+        "done": "Manage your backup",
+        "discover": "Discover"
+      },
+      "recoveryKey": {
+        "title": "Ledger Recovery Key",
+        "description": "A PIN-protected smart card"
+      },
+      "secretRecoveryPhrase": {
+        "title": "24-word metal storage",
+        "description": "Fire and water resistant protection."
+      }
     },
     "myLedger": {
       "title": "My Ledger",

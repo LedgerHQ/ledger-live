@@ -94,6 +94,7 @@ runs:
         if [ -n "${{ inputs.repeat_each }}" ]; then
           REPEAT_ARG="--repeat-each=${{ inputs.repeat_each }}"
         fi
+
         if [[ "${{ inputs.enable_asset_section }}" = "false" ]]; then
           export E2E_ENABLE_ASSET_SECTION=0
           echo "Asset Section disabled!"
@@ -112,10 +113,10 @@ runs:
         TEST_EXIT_CODE=${PIPESTATUS[0]}
         set -e
 
-        PASSED=$(grep -oP '\d+ passed' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
-        FAILED=$(grep -oP '\d+ failed' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
-        SKIPPED=$(grep -oP '\d+ skipped' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
-        FLAKY=$(grep -oP '\d+ flaky' /tmp/playwright-output.log | grep -oP '\d+' || echo "0")
+        PASSED=$(grep -oP '\d+ passed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
+        FAILED=$(grep -oP '\d+ failed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
+        SKIPPED=$(grep -oP '\d+ skipped' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
+        FLAKY=$(grep -oP '\d+ flaky' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
         TOTAL=$((PASSED + FAILED + SKIPPED + FLAKY))
 
         echo "passed=${PASSED}" >> $GITHUB_OUTPUT

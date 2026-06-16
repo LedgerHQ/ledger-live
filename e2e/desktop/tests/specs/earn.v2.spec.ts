@@ -101,10 +101,13 @@ test.describe("Earn [v2]", () => {
           await app.earnV2Dashboard.verifyColdStartPage();
           await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
           await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-          await app.earnV2Dashboard.verifyModalContainerVisible();
 
           if (account === Account.ETH_2) {
-            await app.earnV2Dashboard.verifyProviderVisible();
+            // ETH redirects to the earn deposit webview (stakePrograms redirect) rather than
+            // opening a native staking modal.
+            await app.earnV2Dashboard.verifyDepositFlowVisible();
+          } else {
+            await app.earnV2Dashboard.verifyModalContainerVisible();
           }
         },
       );
@@ -183,7 +186,8 @@ test.describe("Earn [v2]", () => {
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
 
-        await app.addAccount.close();
+        // The account is added once the scan drawer closes; ETH then proceeds into the earn
+        // deposit webview (no native add-account modal to close).
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.expectAtLeastOneAccountVisible();
       },
@@ -245,7 +249,10 @@ test.describe("Earn [v2]", () => {
   // --- Navigation: ETH Provider Staking Flows ---
 
   const ethProviders = [
-    { provider: EarnProvider.LIDO, xrayTickets: ["B2CQA-4722", "B2CQA-4644"] },
+    {
+      provider: EarnProvider.LIDO,
+      xrayTickets: ["B2CQA-4722", "B2CQA-4644"],
+    },
     { provider: EarnProvider.KILN, xrayTickets: ["B2CQA-4724"] },
   ];
 
@@ -272,12 +279,11 @@ test.describe("Earn [v2]", () => {
         async ({ app, page }) => {
           await navigateToEarn(app);
           await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-          const verifyProviderUrlPromise = app.earnV2Dashboard.verifyProviderURL(
-            provider.uiName,
-            account,
-          );
-          await app.delegate.goToProviderLiveApp(provider.uiName);
-          await verifyProviderUrlPromise;
+          await app.earnV2Dashboard.verifyDepositFlowVisible();
+          await app.earnV2Dashboard.selectEthProvider(provider.name);
+          // Confirm the selection actually opens the provider dapp (a platform live app),
+          // rather than just registering the card click.
+          await app.earnV2Dashboard.depositInSelectedProvider();
           await expect(page).toHaveURL(/\/platform\//);
         },
       );

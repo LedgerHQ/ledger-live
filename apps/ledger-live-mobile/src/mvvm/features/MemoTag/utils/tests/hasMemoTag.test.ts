@@ -11,7 +11,7 @@ describe("hasMemoDisclaimer", () => {
   it("should return true for algorand token", () => {
     const usdcAlgorandToken = {
       type: "TokenCurrency",
-      parentCurrency: { type: "CryptoCurrency", family: "algorand" },
+      parentCurrencyId: "algorand",
     } as Currency;
 
     expect(hasMemoDisclaimer(usdcAlgorandToken)).toBeTruthy();
@@ -26,7 +26,7 @@ describe("hasMemoDisclaimer", () => {
   it("should return false for ethereum token", () => {
     const usdcEthereumToken = {
       type: "TokenCurrency",
-      parentCurrency: { type: "CryptoCurrency", family: "ethereum" },
+      parentCurrencyId: "ethereum",
     } as Currency;
 
     expect(hasMemoDisclaimer(usdcEthereumToken)).toBeFalsy();

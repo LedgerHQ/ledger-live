@@ -9,6 +9,8 @@ export enum Order {
   MarketCapAsc = "asc",
   topLosers = "topLosers",
   topGainers = "topGainers",
+  VolumeDesc = "volume-desc",
+  VolumeAsc = "volume-asc",
 }
 
 export type MarketListRequestParams = {

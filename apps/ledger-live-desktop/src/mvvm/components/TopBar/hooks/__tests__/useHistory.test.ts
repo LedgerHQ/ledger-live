@@ -47,10 +47,10 @@ describe("useHistory", () => {
       result.current.handleHistory();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/history");
+    expect(mockNavigate).toHaveBeenCalledWith("/history", { replace: false });
   });
 
-  it("does not navigate when already on history page", () => {
+  it("does not navigate when already on unfiltered history page", () => {
     const { result } = renderHook(() => useHistory());
 
     act(() => {
@@ -58,6 +58,20 @@ describe("useHistory", () => {
     });
 
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("navigates to unfiltered history when already on filtered history page", () => {
+    mockUseLocation.mockReturnValueOnce(
+      createLocation("/history", "?accountIds=account-1,account-2"),
+    );
+
+    const { result } = renderHook(() => useHistory());
+
+    act(() => {
+      result.current.handleHistory();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/history", { replace: true });
   });
 
   describe("hasUnread", () => {

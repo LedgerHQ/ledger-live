@@ -12,11 +12,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { getNodeApi } from "../network/node";
-import {
-  buildStakingTransactionParams,
-  prepareStakingIntent,
-  STAKING_CONTRACTS,
-} from "../staking";
+import { buildStakingTransactionParams, prepareStakingIntent, STAKING_CONTRACTS } from "../staking";
 import {
   ApiFeeData,
   ApiGasOptions,

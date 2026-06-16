@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { SearchInput } from "@ledgerhq/react-ui";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setDrawer } from "../Provider";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
@@ -113,7 +114,9 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       const network =
-        currency.type === "TokenCurrency" ? currency.parentCurrency?.name : currency.name;
+        currency.type === "TokenCurrency"
+          ? findCryptoCurrencyById(currency.parentCurrencyId)?.name
+          : currency.name;
 
       track("asset_network_clicked ", {
         asset: currency.ticker,

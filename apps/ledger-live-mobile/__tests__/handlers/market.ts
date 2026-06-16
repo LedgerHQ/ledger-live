@@ -48,7 +48,7 @@ const handlers = [
 
     let filteredData = marketsMock;
 
-    if (searchParams.get("filter") === "stock") {
+    if (searchParams.get("categories") === "tokenized-stock") {
       filteredData = stockMarketsMock;
     }
     // When we perform a search

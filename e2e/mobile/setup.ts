@@ -23,6 +23,8 @@ afterAll(
   async () => {
     if (process.env.CI) {
       try {
+        // Workaround (QAA-1318): open modular drawer blocks the portfolio deeplink
+        await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
         await app.portfolio.openViaDeeplink(5_000);
         await device.terminateApp();
       } catch (e) {

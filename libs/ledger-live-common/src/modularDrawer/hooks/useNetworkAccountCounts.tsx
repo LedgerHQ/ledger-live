@@ -1,4 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getAccountTuplesForCurrency } from "../../utils/getAccountTuplesForCurrency";
 import type { Account } from "@ledgerhq/types-live";
 
@@ -20,7 +21,8 @@ export const useNetworkAccountCounts = ({
   formatLabel,
 }: AccountModuleParams): NetworkCountItem[] =>
   networks.map(network => {
-    const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
+    const asset =
+      network.type === "TokenCurrency" ? getCryptoCurrencyById(network.parentCurrencyId) : network;
     const { length } = getAccountTuplesForCurrency(asset, nestedAccounts);
     return {
       asset,

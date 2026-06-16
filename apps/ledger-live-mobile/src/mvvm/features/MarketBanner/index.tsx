@@ -8,6 +8,7 @@ import useMarketBannerViewModel from "./hooks/useMarketBannerViewModel";
 import { usePerformersBannerItems, useFavoritesBannerItems } from "./hooks/useMarketBannerData";
 import MarketBannerView from "./components/MarketBannerView";
 import { MarketBannerProps } from "./types";
+import { DEFAULT_RANKING_WITHOUT_DISCOVERABILITY } from "./constants";
 import type { MarketBannerRanking } from "~/reducers/types";
 
 type MarketBannerSurfaceProps = MarketBannerProps & {
@@ -49,17 +50,20 @@ const FavoritesBanner = ({ testID }: MarketBannerProps) => {
 
 const MarketBannerContent = ({ testID }: MarketBannerProps) => {
   const dispatch = useDispatch();
-  const ranking = useSelector(selectMarketBannerRanking);
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
+  const persistedRanking = useSelector(selectMarketBannerRanking);
   const hasStarred = useSelector(starredMarketCoinsSelector).length > 0;
 
-  // Favorites with no starred asset left → fall back to trending and reset the ranking.
+  const ranking = shouldDisplayAssetDiscoverability
+    ? persistedRanking
+    : DEFAULT_RANKING_WITHOUT_DISCOVERABILITY;
+
   useEffect(() => {
     if (ranking === "favorites" && !hasStarred) {
       dispatch(setMarketBannerRanking("trending"));
     }
   }, [dispatch, ranking, hasStarred]);
 
-  // Only mount the React Query-backed favorites fetch when favorites is actually active.
   return ranking === "favorites" && hasStarred ? (
     <FavoritesBanner testID={testID} />
   ) : (

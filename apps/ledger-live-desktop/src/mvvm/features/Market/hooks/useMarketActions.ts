@@ -58,7 +58,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const onBuy = useCallback(
-    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    async (e: React.SyntheticEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -77,7 +77,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const onSell = useCallback(
-    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    async (e: React.SyntheticEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -96,7 +96,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const onSwap = useCallback(
-    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    async (e: React.SyntheticEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -117,7 +117,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const onStake = useCallback(
-    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    async (e: React.SyntheticEvent) => {
       e.preventDefault();
       e.stopPropagation();
 

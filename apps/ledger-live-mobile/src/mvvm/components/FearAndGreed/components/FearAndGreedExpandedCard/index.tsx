@@ -35,7 +35,7 @@ function FearAndGreedExpandedCard({ data, width, onPress }: FearAndGreedExpanded
           </Text>
         </Box>
         <Box lx={{ flexShrink: 0 }}>
-          <FearAndGreedArc value={value} appearance="expanded" />
+          <FearAndGreedArc value={value} />
         </Box>
       </Box>
     </Pressable>

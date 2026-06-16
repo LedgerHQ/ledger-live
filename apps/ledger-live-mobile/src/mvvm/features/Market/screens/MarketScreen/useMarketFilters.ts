@@ -36,7 +36,7 @@ const ALL_NETWORKS_VALUE = "all";
 
 const sortingOptions: MarketFilterOption<MarketListSorting>[] = [
   { value: "marketCap", labelKey: "market.assets.filters.sortingOptions.marketCap" },
-  { value: "volume", labelKey: "market.assets.filters.sortingOptions.volume", disabled: true },
+  { value: "volume", labelKey: "market.assets.filters.sortingOptions.volume" },
   { value: "gainers", labelKey: "market.assets.filters.sortingOptions.gainers" },
   { value: "losers", labelKey: "market.assets.filters.sortingOptions.losers" },
 ];

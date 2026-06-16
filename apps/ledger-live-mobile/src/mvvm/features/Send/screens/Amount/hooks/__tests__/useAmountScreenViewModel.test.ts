@@ -71,6 +71,12 @@ const createBaseStatus = (overrides?: Partial<TransactionStatus>) =>
     ...overrides,
   }) as TransactionStatus;
 
+function createNamedError(name: string): Error {
+  const error = new Error("");
+  error.name = name;
+  return error;
+}
+
 const baseAmountInputController = {
   value: "0.1",
   currencyText: "EUR",
@@ -170,6 +176,40 @@ describe("useAmountScreenViewModel", () => {
     expect(result.current.message).toEqual({
       type: "info",
       error: feeTooHighWarning,
+    });
+  });
+
+  it("disables the amount input for an input-blocking recipient error", () => {
+    const recipientError = createNamedError("SourceHasMultiSign");
+    const status = createBaseStatus({
+      errors: { recipient: recipientError },
+    });
+
+    const { result } = renderHook(() =>
+      useAmountScreenViewModel({
+        account: mockAccount,
+        parentAccount: null,
+        transaction: baseTransaction,
+        status,
+        bridgePending: false,
+        bridgeError: null,
+        uiConfig: { hasFeePresets: false } as never,
+        transactionActions: { updateTransaction: jest.fn() } as never,
+        onReview: jest.fn(),
+        onGetFunds: jest.fn(),
+        onSelectCoinControl: jest.fn(),
+      }),
+    );
+
+    expect(result.current.ready).toBe(true);
+    if (!result.current.ready) {
+      throw new Error("view model should be ready");
+    }
+
+    expect(result.current.amountInput.isDisabled).toBe(true);
+    expect(result.current.message).toEqual({
+      type: "error",
+      error: recipientError,
     });
   });
 });

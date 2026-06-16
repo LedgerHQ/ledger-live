@@ -23,7 +23,7 @@ export function getAccountTuplesForCurrency(
 ): AccountTuple[] {
   if (currency.type === "TokenCurrency") {
     return allAccounts
-      .filter(account => account.currency.id === currency.parentCurrency.id)
+      .filter(account => account.currency.id === currency.parentCurrencyId)
       .map(account => ({
         account,
         subAccount:

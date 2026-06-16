@@ -7,17 +7,18 @@ import {
   SubheaderTitle,
   SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-react";
-import { StockRow } from "./components/StockRow";
+import { StockPill } from "./components/StockPill";
 import { StocksSkeleton } from "./components/StocksSkeleton";
-import { StocksHeaderVariant, StocksSectionViewProps } from "./types";
+import { splitIntoTwoRows } from "./utils/splitIntoTwoRows";
+import type { StockSuggestion, StocksHeaderVariant, StocksSectionViewProps } from "./types";
 
 function StocksHeader({
   variant,
   onSeeAll,
-}: {
+}: Readonly<{
   variant: StocksHeaderVariant;
   onSeeAll: () => void;
-}) {
+}>) {
   const { t } = useTranslation();
 
   if (variant === "explore") {
@@ -56,6 +57,34 @@ function StocksHeader({
   );
 }
 
+function StocksList({
+  data,
+  navigateToAsset,
+}: Readonly<{
+  data: StockSuggestion[];
+  navigateToAsset: (currencyId: string) => void;
+}>) {
+  const rows = splitIntoTwoRows(data);
+
+  return (
+    <div className="scrollbar-none overflow-x-auto" data-testid="stocks-list">
+      <div className="flex w-max flex-col gap-8">
+        {rows.map((rowStocks, rowIndex) => (
+          <div
+            key={rowIndex === 0 ? "top" : "bottom"}
+            className="flex gap-8"
+            data-testid="stocks-row"
+          >
+            {rowStocks.map(stock => (
+              <StockPill key={stock.id} stock={stock} onClick={navigateToAsset} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function StocksSectionView({
   data,
   isLoading,
@@ -63,7 +92,7 @@ export function StocksSectionView({
   navigateToAsset,
   onSeeAll,
   headerVariant = "showMore",
-}: StocksSectionViewProps) {
+}: Readonly<StocksSectionViewProps>) {
   if (!isLoading && data.length === 0) {
     return null;
   }
@@ -74,14 +103,7 @@ export function StocksSectionView({
       {isLoading ? (
         <StocksSkeleton count={limit} />
       ) : (
-        <div
-          className="scrollbar-none grid grid-flow-col grid-rows-2 gap-8 overflow-x-auto"
-          data-testid="stocks-list"
-        >
-          {data.map(stock => (
-            <StockRow key={stock.id} stock={stock} onClick={navigateToAsset} />
-          ))}
-        </div>
+        <StocksList data={data} navigateToAsset={navigateToAsset} />
       )}
     </div>
   );

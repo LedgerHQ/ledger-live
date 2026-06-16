@@ -50,8 +50,9 @@ const FEATURE_INTRO_MAX_ITEMS = 3;
 const buildDefaultItem = (index: number): GenericAwarenessModalDebugItem => ({
   title: `Step ${index + 1}`,
   subtitle: "Describe this step for QA.",
-  imageUrl:
+  imageUrlLight:
     "https://images.unsplash.com/photo-1640161704729-cbe966a08476?auto=format&fit=crop&w=1200&q=80",
+  imageUrlDark: "",
   primaryButtonLabel: "Continue",
   primaryButtonLink: "ledgerlive://earn",
   icon: "Info",

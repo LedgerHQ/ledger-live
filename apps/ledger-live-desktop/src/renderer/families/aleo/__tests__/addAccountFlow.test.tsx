@@ -1,8 +1,8 @@
 import React from "react";
 import { Observable, Subject } from "rxjs";
-import { setEnv } from "@ledgerhq/live-env";
 import type { Account } from "@ledgerhq/types-live";
 import { act, render, screen, userEvent } from "tests/testSetup";
+import { importLLDCoinFamily } from "~/renderer/families";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
@@ -21,6 +21,7 @@ import { aleoCurrency } from "../__mocks__/currency.mock";
 
 beforeEach(async () => {
   mockDomMeasurements();
+  await importLLDCoinFamily("aleo");
 });
 
 const mockAppState = {
@@ -190,7 +191,6 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     jest.mocked(track).mockReset();
     jest.mocked(trackPage).mockReset();
     progress$ = new Subject();
-    setEnv("EXPERIMENTAL_CURRENCIES", "aleo");
   });
 
   afterEach(() => {

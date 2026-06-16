@@ -131,8 +131,7 @@ const RSDOCTOR_LINTER = {
 export const isRsdoctorEnabled = () =>
   Boolean(process.env.RSDOCTOR && process.env.RSDOCTOR !== "0");
 
-export const isDatadogConfigured = () =>
-  Boolean(DATADOG_APPLICATION_ID && DATADOG_CLIENT_TOKEN);
+export const isDatadogConfigured = () => Boolean(DATADOG_APPLICATION_ID && DATADOG_CLIENT_TOKEN);
 
 export function getRsdoctorPlugin(bundleName: string): Plugins {
   if (isRsdoctorEnabled()) {

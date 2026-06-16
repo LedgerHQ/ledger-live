@@ -15,7 +15,7 @@ import { Props as ConfirmProps } from "./ConfirmModal";
 import { Props as ErrorProps } from "./ErrorModal";
 import { UserProps as AddAccountProps } from "./AddAccounts";
 import { ModalStartStakeProps } from "./StartStake";
-import { CoinModalsData } from "../families/generated";
+import type { CoinModalsData } from "../families/modals-loaders";
 import { Language } from "~/config/languages";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 

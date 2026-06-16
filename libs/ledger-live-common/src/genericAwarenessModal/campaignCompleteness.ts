@@ -8,9 +8,7 @@ import {
   type GenericAwarenessModalContentCard,
 } from "./types";
 
-export const parseCampaignCount = (
-  value: string | number | undefined,
-): number | undefined => {
+export const parseCampaignCount = (value: string | number | undefined): number | undefined => {
   const result = GenericAwarenessModalCampaignCountSchema.safeParse(value);
   return result.success ? result.data : undefined;
 };

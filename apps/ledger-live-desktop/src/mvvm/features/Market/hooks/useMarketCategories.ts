@@ -25,8 +25,8 @@ export type MarketCategories = {
 
 const BUILT_IN_CATEGORY_TABS: MarketCategoryTab[] = [
   { value: "all", labelKey: "market.assets.categories.all" },
-  { value: "stocks", labelKey: "market.assets.categories.stocks" },
   { value: "starred", labelKey: "market.assets.categories.favorites" },
+  { value: "stocks", labelKey: "market.assets.categories.stocks" },
 ];
 
 function trackCategoryTap(category: MarketListCategory) {

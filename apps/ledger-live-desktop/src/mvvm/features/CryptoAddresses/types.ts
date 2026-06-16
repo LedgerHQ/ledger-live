@@ -17,5 +17,5 @@ export type CryptoAssetsViewModel = {
   readonly items: AssetTableItem[];
   readonly isLoading: boolean;
   readonly onAssetRowClick: (item: AssetTableItem) => void;
-  readonly trackingType: "crypto" | "stable";
+  readonly trackingType: "crypto" | "stable" | "stocks";
 };

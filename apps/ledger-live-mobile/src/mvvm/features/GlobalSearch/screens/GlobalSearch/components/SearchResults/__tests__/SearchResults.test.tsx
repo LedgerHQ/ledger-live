@@ -22,6 +22,7 @@ const renderResults = (overrides = {}) => {
     results,
     isLoading: false,
     hasNoResults: false,
+    hasError: false,
     onAssetPress: jest.fn(),
     ...overrides,
   };
@@ -48,6 +49,13 @@ describe("SearchResults", () => {
     renderResults({ hasNoResults: true, results: [] });
 
     expect(screen.getByTestId(GLOBAL_SEARCH_TEST_IDS.searchEmptyState)).toBeVisible();
+    expect(screen.queryByTestId(GLOBAL_SEARCH_TEST_IDS.searchResults)).toBeNull();
+  });
+
+  it("shows the error state when the query fails", () => {
+    renderResults({ hasError: true, results: [] });
+
+    expect(screen.getByTestId(GLOBAL_SEARCH_TEST_IDS.searchError)).toBeVisible();
     expect(screen.queryByTestId(GLOBAL_SEARCH_TEST_IDS.searchResults)).toBeNull();
   });
 

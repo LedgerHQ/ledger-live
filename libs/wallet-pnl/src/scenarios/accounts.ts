@@ -60,7 +60,7 @@ export function makeTokenAccount(
   token: TokenCurrency,
   overrides: TokenAccountOverrides = {},
 ): TokenAccount {
-  const parentId = overrides.parentId ?? `js:2:${token.parentCurrency.id}:0xtest:`;
+  const parentId = overrides.parentId ?? `js:2:${token.parentCurrencyId}:0xtest:`;
   const id = overrides.id ?? `${parentId}+${token.id}`;
   const common = applyCommonDefaults(id, overrides);
   return {

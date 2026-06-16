@@ -362,7 +362,13 @@ const fetchStakeForValId = async (
     delegator,
   );
 
-  if (activeStake === 0n && deltaStakes === 0n &&  unclaimedRewards === 0n && withdrawals.length === 0) return [];
+  if (
+    activeStake === 0n &&
+    deltaStakes === 0n &&
+    unclaimedRewards === 0n &&
+    withdrawals.length === 0
+  )
+    return [];
 
   const validator = await callGetValidator(provider, iface, contractAddress, valId).catch(
     () => null,
@@ -408,7 +414,7 @@ const fetchStakeForValId = async (
   if (deltaStakes !== 0n) {
     stakes.push(makeStake("activating", deltaStakes));
   }
-  
+
   for (const { withdrawId, withdrawalAmount, withdrawEpoch } of withdrawals) {
     const completionDate = epochToDate(withdrawEpoch, currentEpoch);
     stakes.push({

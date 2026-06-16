@@ -26,7 +26,6 @@ const stock = (id: string, ticker: string): StockSuggestion => ({
 
 const sections = {
   cryptos: [asset("bitcoin", "BTC", "Bitcoin")],
-  stablecoins: [asset("tether", "USDT", "Tether")],
   stocks: [stock("aapl", "AAPL"), stock("tsla", "TSLA")],
 };
 
@@ -34,6 +33,7 @@ const renderSections = (overrides = {}) => {
   const props = {
     sections,
     isLoading: false,
+    hasError: false,
     onSeeAll: jest.fn(),
     onAssetPress: jest.fn(),
     onStockPress: jest.fn(),
@@ -43,11 +43,10 @@ const renderSections = (overrides = {}) => {
 };
 
 describe("DefaultSections", () => {
-  it("renders crypto/stablecoin rows and stock pills", () => {
+  it("renders crypto rows and stock pills", () => {
     renderSections();
 
     expect(screen.getByTestId("global-search-asset-bitcoin")).toBeVisible();
-    expect(screen.getByTestId("global-search-asset-tether")).toBeVisible();
     expect(screen.getByTestId("global-search-stock-aapl")).toBeVisible();
     expect(screen.getByTestId("global-search-stock-tsla")).toBeVisible();
   });
@@ -56,12 +55,10 @@ describe("DefaultSections", () => {
     const { props, user } = renderSections();
 
     await user.press(screen.getByTestId(`${GLOBAL_SEARCH_TEST_IDS.cryptosSection}-header`));
-    await user.press(screen.getByTestId(`${GLOBAL_SEARCH_TEST_IDS.stablecoinsSection}-header`));
     await user.press(screen.getByTestId(`${GLOBAL_SEARCH_TEST_IDS.stocksSection}-header`));
 
     expect(props.onSeeAll).toHaveBeenNthCalledWith(1, "crypto");
-    expect(props.onSeeAll).toHaveBeenNthCalledWith(2, "stable");
-    expect(props.onSeeAll).toHaveBeenNthCalledWith(3, "stocks");
+    expect(props.onSeeAll).toHaveBeenNthCalledWith(2, "stocks");
   });
 
   it("calls onAssetPress and onStockPress on item taps", async () => {
@@ -77,17 +74,24 @@ describe("DefaultSections", () => {
   it("shows skeletons while loading", () => {
     renderSections({
       isLoading: true,
-      sections: { cryptos: [], stablecoins: [], stocks: [] },
+      sections: { cryptos: [], stocks: [] },
     });
 
     expect(screen.getAllByTestId("global-search-asset-skeleton").length).toBeGreaterThan(0);
     expect(screen.getByTestId(GLOBAL_SEARCH_TEST_IDS.cryptosSection)).toBeVisible();
   });
 
+  it("shows the error state instead of the sections when the data fails", () => {
+    renderSections({ hasError: true, sections: { cryptos: [], stocks: [] } });
+
+    expect(screen.getByTestId(GLOBAL_SEARCH_TEST_IDS.defaultsError)).toBeVisible();
+    expect(screen.queryByTestId(GLOBAL_SEARCH_TEST_IDS.defaultSections)).toBeNull();
+  });
+
   it("hides empty sections when not loading", () => {
     renderSections({
       isLoading: false,
-      sections: { cryptos: [], stablecoins: [], stocks: [] },
+      sections: { cryptos: [], stocks: [] },
     });
 
     expect(screen.queryByTestId(GLOBAL_SEARCH_TEST_IDS.cryptosSection)).toBeNull();

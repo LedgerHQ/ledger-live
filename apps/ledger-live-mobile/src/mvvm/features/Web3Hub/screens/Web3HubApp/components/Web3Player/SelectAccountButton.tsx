@@ -22,7 +22,7 @@ export default function SelectAccountButton({
     currentAccount?.type === "TokenAccount" ? currentAccount.token : currentAccount?.currency;
   const ledgerId = currency?.id;
   const tickerProp = currency?.ticker;
-  const network = currency?.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+  const network = currency?.type === "TokenCurrency" ? currency.parentCurrencyId : undefined;
 
   const canRenderIcon = !!currentAccount && !!ledgerId && !!tickerProp;
 

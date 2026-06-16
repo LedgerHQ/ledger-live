@@ -205,6 +205,7 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
+      "FINALIZE_UNSTAKE" : "출금됨",
       "SENDING" : "보내기",
       "BURN" : "소각됨",
       "ASSOCIATE_TOKEN" : "토큰 연동",
@@ -4260,8 +4261,10 @@
         "redelegateDisabledTooltip" : "<0>{{days}}</0>에 재위임할 수 있습니다",
         "redelegateMaxDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 재위임할 수 없습니다",
         "undelegateDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 위임 해제할 수 없습니다",
+        "undelegateActivatingTooltip" : "아직 활성화 단계의 스테이킹 자산은 위임을 취소할 수 없습니다.",
         "reward" : "보상 수령",
         "activeTooltip" : "위임된 수량에서 보상이 생성됩니다",
+        "activatingTooltip" : "위임된 자산은 다음 에포크(epoch)부터 보상이 발생합니다.",
         "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
         "minSafeWarning" : "자금이 부족합니다",
         "commission" : "수수료",
@@ -4274,7 +4277,8 @@
               "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 취소 후 사용 가능합니다"],
               "warning" : {
                 "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
-              }
+              },
+              "seiAssociationWarning" : "귀하의 Sei 계정이 아직 온 체인에 연결되지 않았습니다. 계정의 첫 번째 아웃바운드 트랜잭션이 온 체인에서 확인될 때까지 위임이 실패합니다. 먼저 다른 주소로 소량의 SEI를 전송하고, 온 체인 확인을 기다린 후 다시 위임을 진행하세요."
             },
             "amount" : {
               "title" : "수량"
@@ -4373,13 +4377,13 @@
     "error" : "차트를 불러올 수 없습니다",
     "rangeSelectorLabel" : "기간 선택",
     "range" : {
-      "1D" : "1일",
-      "1W" : "1주",
-      "1M" : "1달",
-      "6M" : "6개월",
-      "1Y" : "1년",
-      "5Y" : "5년",
-      "ALL" : "전체"
+      "1d" : "1일",
+      "1w" : "1주",
+      "1m" : "1달",
+      "6m" : "6개월",
+      "1y" : "1년",
+      "5y" : "5년",
+      "all" : "전체"
     }
   },
   "near" : {
@@ -5155,6 +5159,16 @@
       "customLockScreen" : "맞춤식 잠금 화면 자산",
       "customLockScreenDesc" : "맞춤식 잠금 화면 그래픽 자산 디버그",
       "customLockScreenCTA" : "실행",
+      "coinConfig" : {
+        "title" : "Ledger Wallet에서 사용되는 코인 설정",
+        "desc" : "로컬 디버깅을 위해 통화별 설정(rpc, explorer, gas 등)을 재정의합니다. 유효한 JSON만 허용됩니다. 재정의된 설정은 앱을 재시작해도 유지됩니다. 삭제하려면 \"모두 복원\"을 사용하세요.",
+        "search" : "설정 키 검색(예: config_currency_ethereum)",
+        "hint" : "기본적으로 `config_currency_*` 키가 표시됩니다. 검색을 통해 모든 LiveConfig 키를 확인할 수 있습니다. 객체 설정의 경우, 재정의된 값은 기본값 및 원격(Remote) 값 위에 병합(Deep-merged)되어 적용됩니다.",
+        "restore" : "복구",
+        "override" : "재정의",
+        "restoreAll" : "모든 코인 설정 복원",
+        "overriddenLocally" : "로컬로 재정의됨"
+      },
       "featureFlagsTitle" : "Ledger Wallet에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
@@ -7188,6 +7202,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "스테이킹 전 계정 위임이 필요합니다"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "스테이킹 잔액 부족"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
     },
@@ -8283,6 +8300,9 @@
         "value" : "가치",
         "allocation" : "할당"
       }
+    },
+    "pnl" : {
+      "title" : "손익"
     }
   },
   "walletSync" : {
@@ -8612,15 +8632,16 @@
   },
   "fearAndGreed" : {
     "levels" : {
+      "fearPlus" : "공포+",
       "fear" : "공포",
-      "cautious" : "신중",
       "neutral" : "중립",
-      "optimistic" : "낙관",
-      "greedy" : "탐욕"
+      "greed" : "탐욕",
+      "greedPlus" : "탐욕+"
     },
     "dialog" : {
       "title" : "시장 심리 지수",
-      "content" : "트렌드와 활동을 분석하여 전반적 마켓 분위기를 0부터 100 사이 수치로 표시합니다. 이 지수로 현재 시장 상황을 파악해 보세요. 수치가 낮을수록 공포에 가깝고, 높을수록 탐욕이 커짐을 의미합니다.",
+      "content" : "변동성, 시장 모멘텀 및 소셜 트렌드를 바탕으로 전반적인 시장 심리를 0부터 100까지의 수치로 나타냅니다. 수치가 낮을수록 '공포'를, 높을수록 '탐욕'을 의미합니다.",
+      "disclaimer" : "이 데이터는 CoinMarketCap의 공포 탐욕 지수(Fear and Greed Index)를 바탕으로 하며, 단순 정보 제공을 목적으로 합니다.",
       "cta" : "확인"
     }
   },
@@ -8928,9 +8949,9 @@
       "done" : "완료",
       "fundYourWallet" : "자산 입금하기",
       "discoverSwap" : "스왑 살펴보기",
-      "growYourRewards" : "보상 수익 늘리기",
-      "spendYourCrypto" : "암호화폐로 결제하세요",
-      "everythingAtAGlance" : "모든 정보를 한눈에"
+      "discoverEarn" : "수익 창출 살펴보기",
+      "getCard" : "카드 발급받기",
+      "viewPortfolio" : "포트폴리오 확인하기"
     },
     "slides" : {
       "fund" : {
@@ -9017,25 +9038,46 @@
       "hideFromPortfolio" : "포트폴리오에서 숨기기",
       "showInPortfolio" : "포트폴리오에 표시"
     },
+    "chartOptions" : {
+      "menu" : "차트 옵션",
+      "hideTransactions" : "가격 차트에서 활동 숨기기",
+      "showTransactions" : "가격 차트에 활동 표시"
+    },
     "hiddenBanner" : {
       "description" : "이 자산은 포트폴리오에서 숨김 처리되었습니다.",
       "showAsset" : "자산 표시"
     },
     "totalBalance" : "총 잔액",
     "marketPrice" : "시장가",
-    "addresses" : "주소",
+    "addresses" : "계정",
     "addressesDialog" : {
-      "title" : "주소",
-      "description" : "모든 {{ticker}} 보유 주소."
+      "title" : "계정",
+      "description" : "모든 {{ticker}} 보유 계정."
     },
     "add" : "추가",
     "notFound" : "자산 배포 항목을 찾을 수 없습니다.",
     "marketStats" : "시장 통계",
     "marketStatsTooltip" : "이 자산에 대한 시장 지표",
+    "marketCapTooltip" : "현재 유통 중인 모든 코인의 총 가치를 의미합니다. 해당 암호화폐의 시가 총액으로 이해할 수 있습니다.",
+    "circulatingSupplyTooltip" : "현재 시장에 유통되어 일반 대중이 보유하고 있는 토큰의 총 수량입니다. 락업(잠김) 또는 예치된 토큰이나 미발행 토큰은 제외됩니다.",
+    "maxSupplyTooltip" : "앞으로 발행될 수 있는 최대 토큰 수량을 의미합니다. 일부 자산의 경우, 인플레이션을 방지하기 위해 이 수치가 고정되어 있습니다.",
     "pricePerformance" : "가격 변동 추이",
     "marketRank" : "시장 순위",
     "tradingVolume24h" : "24시간 거래량",
+    "tradingVolume24hTooltip" : "최근 24시간 동안의 거래량을 의미합니다.",
+    "marketStatsDisclaimer" : "시장 통계 데이터 출처: CoinGecko",
     "day" : "1일",
+    "week" : "1주",
+    "month" : "1달",
+    "sixMonths" : "6개월",
+    "year" : "1년",
+    "fiveYears" : "5년",
+    "allTime" : "전체 기간",
+    "chart" : {
+      "received" : "수령됨",
+      "sent" : "전송됨",
+      "transactionsCount" : "{{count}}개 트랜잭션"
+    },
     "staking" : {
       "availableBalance" : "이용 가능 수량",
       "availableBalanceTooltip" : "현재 즉시 사용할 수 있는 보유 자산으로, 언제든지 자유롭게 전송, 스왑, 출금이 가능합니다.",
@@ -9050,7 +9092,7 @@
     "asset" : {
       "entry" : {
         "title" : "평균 매수가",
-        "tooltip" : "이 지갑에서 직접 매수하거나 다른 지갑에서 전송된 자산을 모두 합산한 평균 단가입니다. 이는 손익을 추적하는 기준이 됩니다."
+        "tooltip" : "Ledger Wallet을 통해 직접 매수하거나 다른 지갑에서 전송 받은 자산을 모두 합산한 평균 단가입니다. 이는 손익을 추적하는 기준이 됩니다."
       },
       "return" : {
         "title" : "평가 손익"
@@ -9060,42 +9102,46 @@
         "description" : "포트폴리오에서 해당 자산이 기록한 성과를 요약해서 보여줍니다.",
         "totalReturn" : {
           "title" : "총 손익",
-          "description" : "평가 손익과 실현 손익을 합산한 금액입니다."
+          "description" : "예상 평가 손익과 실현 손익을 합산한 금액."
         },
         "unrealisedReturn" : {
           "title" : "평가 손익",
-          "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실입니다."
+          "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실."
         },
         "realisedReturn" : {
           "title" : "실현 손익",
-          "description" : "자산을 매도하거나 다른 곳으로 전송하여 최종 확정된 실제 수익과 손실입니다."
+          "description" : "과거 자산 매도, 전송, 스왑 거래로 예상되는 최종 손익."
         }
       }
     },
     "portfolio" : {
-      "return" : {
-        "title" : "평가 손익"
+      "cards" : {
+        "totalReturn" : "총 손익",
+        "unrealisedReturn" : "평가 손익",
+        "realisedReturn" : "실현 손익"
       },
       "costBasis" : {
         "title" : "취득 원가",
         "tooltip" : "수수료를 포함하여 현재 보유 자산을 취득하기 위해 지불한 총 금액."
       },
+      "detail" : "세부 사항",
       "dialog" : {
         "title" : "손익",
-        "description" : "실현 수익 및 평가 손익으로 나뉘어 표시된 포트폴리오 성과.",
+        "description" : "예상 실현 수익 및 평가 손익으로 나뉘어 표시된 포트폴리오 성과.",
         "totalReturn" : {
           "title" : "총 손익",
-          "description" : "실현 수익과 평가 손익을 합산한 결과로, 전체 포지션 현황을 반영합니다."
+          "description" : "예상 평가 손익과 실현 손익을 합산한 금액."
         },
         "unrealisedReturn" : {
           "title" : "평가 손익",
-          "description" : "현재 보유 자산에 대해 예상되는 평가 손익."
+          "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실."
         },
         "realisedReturn" : {
           "title" : "실현 손익",
-          "description" : "이전 매도 또는 출금을 통해 확정된 손익."
+          "description" : "과거 자산 매도, 전송, 스왑 거래로 예상되는 최종 손익."
         }
       }
-    }
+    },
+    "disclaimer" : "본 데이터는 단순 정보 제공용이며, 투자 조언이 아닙니다. 세무 목적으로는 사용할 수 없습니다."
   }
 }

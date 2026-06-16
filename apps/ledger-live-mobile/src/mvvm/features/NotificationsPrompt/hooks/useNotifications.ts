@@ -13,6 +13,7 @@ const useNotifications = () => {
   const {
     notifications,
     pushNotificationsDataOfUser,
+    enableAppNotifications,
     markUserAsOptIn,
     markUserAsOptOut,
     initializeNotificationSettingsState,
@@ -41,7 +42,6 @@ const useNotifications = () => {
     handleCloseFromBackdropPress,
   } = useNotificationsDrawer({
     permissionStatus,
-    areNotificationsAllowed: notifications.areNotificationsAllowed,
     pushNotificationsDataOfUser,
     nextRepromptDelay,
     shouldPromptOptInDrawerAfterAction,
@@ -49,6 +49,7 @@ const useNotifications = () => {
     checkIsInactive,
     markUserAsOptOut,
     markUserAsOptIn,
+    enableAppNotifications,
     requestPushNotificationsPermission,
   });
 

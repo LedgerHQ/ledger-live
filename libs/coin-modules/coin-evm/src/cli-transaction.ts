@@ -84,7 +84,7 @@ async function inferTransactions(
       `Token <${tokenId}> not found. Use a token id (e.g. ethereum/erc20/usd__coin for USDC).`,
     );
   }
-  if (tokenCurrency.parentCurrency.id !== transactions[0]?.mainAccount.currency.id) {
+  if (tokenCurrency.parentCurrencyId !== transactions[0]?.mainAccount.currency.id) {
     throw new Error(
       `Token ${tokenId} is not on ${transactions[0]?.mainAccount.currency.id}. Use a token for the account's chain.`,
     );

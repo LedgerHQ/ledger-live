@@ -1,11 +1,8 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAssetFromToken, getTokenFromAsset } from "./bridge";
 
 beforeAll(() => {
-  const stellar = getCryptoCurrencyById("stellar");
-
   const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
     findTokenById: async (_id: string) => {
       return undefined;
@@ -24,7 +21,7 @@ beforeAll(() => {
           type: "TokenCurrency",
           id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
           contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-          parentCurrency: stellar,
+          parentCurrencyId: "stellar",
           tokenType: "stellar",
           name: "USDC",
           ticker: "USDC",
@@ -72,7 +69,7 @@ describe("generic-coin-framework stellar token", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
         id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        parentCurrency: getCryptoCurrencyById("stellar"),
+        parentCurrencyId: "stellar",
         tokenType: "stellar",
         contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         name: "USDC",
@@ -99,7 +96,7 @@ describe("generic-coin-framework stellar token", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
         id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        parentCurrency: getCryptoCurrencyById("stellar"),
+        parentCurrencyId: "stellar",
         tokenType: "stellar",
         contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         name: "USDC",

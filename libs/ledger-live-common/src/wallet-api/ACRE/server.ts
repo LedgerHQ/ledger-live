@@ -232,7 +232,7 @@ export const handlers = ({
     const parentAccount = getParentAccount(account, accounts);
 
     const accountFamily = isTokenAccount(account)
-      ? account.token.parentCurrency.family
+      ? getCryptoCurrencyById(account.token.parentCurrencyId).family
       : account.currency.family;
 
     const mainAccount = getMainAccount(account, parentAccount);
@@ -394,7 +394,7 @@ export const handlers = ({
 
       const networkId =
         signerAccount.type === "TokenAccount"
-          ? signerAccount.token.parentCurrency.id
+          ? signerAccount.token.parentCurrencyId
           : signerAccount.currency.id;
 
       const broadcastTrackingData = {

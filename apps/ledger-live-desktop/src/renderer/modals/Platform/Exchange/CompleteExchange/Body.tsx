@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { openSwapTransactionStatusDialog } from "LLD/features/SwapTransactionStatusDialog/swapTransactionStatusDialog";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { broadcastLogger } from "~/datadog/logs";
 import { BodyContent } from "./BodyContent";
@@ -54,6 +55,10 @@ type ResultsState = {
   isEmbeddedSwap?: boolean;
   sponsored?: boolean;
 };
+
+export type CloseExchangeCompleteOptions = Readonly<{
+  shouldRestoreFocusOnClose?: boolean;
+}>;
 
 export function isCompleteExchangeData(data: unknown): data is Data {
   if (data === null || typeof data !== "object") {
@@ -105,7 +110,13 @@ const Root = styled.div`
   overflow: hidden;
 `;
 
-const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
+const Body = ({
+  data,
+  onClose,
+}: {
+  data: Data;
+  onClose?: (options?: CloseExchangeCompleteOptions) => void | undefined;
+}) => {
   const dispatch = useDispatch();
   const {
     onResult,
@@ -127,12 +138,20 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const redirectToHistory = useRedirectToSwapHistory();
   const onViewDetails = useCallback(
     (id: string) => {
-      onClose?.();
-      redirectToHistory({
-        swapId: id,
-      });
+      onClose?.({ shouldRestoreFocusOnClose: false });
+      setTimeout(() => {
+        redirectToHistory({
+          swapId: id,
+        });
+        dispatch(
+          openSwapTransactionStatusDialog({
+            swapId: id,
+            provider,
+          }),
+        );
+      }, 0);
     },
-    [onClose, redirectToHistory],
+    [dispatch, onClose, provider, redirectToHistory],
   );
 
   const tokenCurrency: TokenCurrency | undefined =

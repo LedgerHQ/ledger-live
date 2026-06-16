@@ -5,6 +5,7 @@ const celoGasPriceMock = jest.fn();
 const getRegistryAddressForMock = jest.fn();
 const readContractMock = jest.fn();
 const estimateMaxPriorityFeePerGasMock = jest.fn();
+const requestMock = jest.fn();
 
 jest.mock("../../network/client", () => ({
   getCeloClient: (...args: unknown[]) => getCeloClientMock(...args),
@@ -27,6 +28,7 @@ describe("network/sdk", () => {
     getCeloClientMock.mockReturnValue({
       readContract: readContractMock,
       estimateMaxPriorityFeePerGas: estimateMaxPriorityFeePerGasMock,
+      request: requestMock,
     });
 
     getRegistryAddressForMock.mockImplementation(async (name: string) => {
@@ -172,6 +174,108 @@ describe("network/sdk", () => {
     expect(params).toEqual({
       maxFeePerGas: BigInt(5),
       maxPriorityFeePerGas: BigInt(5),
+    });
+  });
+
+  describe("getCeloTransactionFeeCurrency", () => {
+    const VALID_HASH = `0x${"a".repeat(64)}`;
+
+    it("returns lowercased feeCurrency for a CIP-64 tx", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({
+        type: "0x7b",
+        feeCurrency: "0xAB12CD34AB12CD34AB12CD34AB12CD34AB12CD34",
+      });
+
+      const result = await getCeloTransactionFeeCurrency(VALID_HASH);
+
+      expect(result).toBe("0xab12cd34ab12cd34ab12cd34ab12cd34ab12cd34");
+      expect(requestMock).toHaveBeenCalledWith({
+        method: "eth_getTransactionByHash",
+        params: [VALID_HASH],
+      });
+    });
+
+    it("treats mixed-case `0x7B` as CIP-64", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({
+        type: "0x7B",
+        feeCurrency: "0xAB12CD34AB12CD34AB12CD34AB12CD34AB12CD34",
+      });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).resolves.toBe(
+        "0xab12cd34ab12cd34ab12cd34ab12cd34ab12cd34",
+      );
+    });
+
+    it("returns null for a non-CIP-64 tx", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({ type: "0x2", feeCurrency: null });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).resolves.toBeNull();
+    });
+
+    it("returns null when the response omits the `type` field", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({ feeCurrency: null });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).resolves.toBeNull();
+    });
+
+    it("throws when the node returns null (tx not found)", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce(null);
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+    });
+
+    it("throws synchronously on a malformed hash", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+
+      await expect(getCeloTransactionFeeCurrency("0xnothex")).rejects.toThrow(
+        /Invalid Celo tx hash/,
+      );
+      expect(requestMock).not.toHaveBeenCalled();
+    });
+
+    it("throws when a CIP-64 tx is missing `feeCurrency` (no silent native fallback)", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({ type: "0x7b", feeCurrency: null });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(
+        /CIP-64 but feeCurrency is missing/,
+      );
+    });
+
+    it("rejects responses with a non-string `type`", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({ type: 123, feeCurrency: null });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+    });
+
+    it("rejects responses with a malformed `feeCurrency` (no 0x prefix)", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({ type: "0x7b", feeCurrency: "deadbeef" });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+    });
+
+    it("rejects responses with a too-short `feeCurrency`", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({ type: "0x7b", feeCurrency: "0x1" });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
+    });
+
+    it("rejects responses with non-hex characters in `feeCurrency`", async () => {
+      const { getCeloTransactionFeeCurrency } = loadSdkModule();
+      requestMock.mockResolvedValueOnce({
+        type: "0x7b",
+        feeCurrency: "0xZZ12CD34AB12CD34AB12CD34AB12CD34AB12CD34",
+      });
+
+      await expect(getCeloTransactionFeeCurrency(VALID_HASH)).rejects.toThrow(/not found/);
     });
   });
 });

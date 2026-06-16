@@ -27,7 +27,7 @@ const BackDrop = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
 function renderNameState<Name extends keyof ModalData>(name: Name, data: ModalData[Name]) {
   const ModalComponent = modals[name];
   if (ModalComponent) {
-    // @ts-expect-error unclear why it can't prove this part
+    // @ts-expect-error - the name/data correlation can't pass through the spread; validated at openModal().
     return <ModalComponent key={name} name={name} {...data} />;
   }
 }

@@ -135,10 +135,12 @@ describe("GenericAwarenessModalView", () => {
         stepName: "Ledger Flex",
       }),
     );
-    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
+    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalledWith({
+      dismissAppStart: true,
+    });
   });
 
-  it("should track prompt dismiss and close the dialog on escape", () => {
+  it("should track prompt dismiss and close the dialog on escape", async () => {
     renderOpenAwarenessModalView(promptCampaignCard);
 
     fireEvent.keyDown(screen.getByTestId("generic-awareness-modal"), {
@@ -150,6 +152,8 @@ describe("GenericAwarenessModalView", () => {
       "drawer_dismissed",
       expect.objectContaining({ contentId: PROMPT_CAMPAIGN_ID }),
     );
-    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
+    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalledWith({
+      dismissAppStart: true,
+    });
   });
 });

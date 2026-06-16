@@ -2,7 +2,7 @@ import { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategoriz
 
 export type AssetTableItem = CategorizedAssetItem & {
   isPlaceholder: boolean;
-  placeholderPrice?: number;
+  marketPrice?: number;
   marketId?: string;
   trend?: number | null;
 };

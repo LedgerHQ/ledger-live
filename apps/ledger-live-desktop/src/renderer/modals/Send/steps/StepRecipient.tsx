@@ -35,7 +35,7 @@ import {
 import Alert from "~/renderer/components/Alert";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { Account } from "@ledgerhq/types-live";
 
@@ -150,13 +150,13 @@ export const DefaultStepRecipient = ({
 
 const StepRecipient = (props: StepProps) => {
   const { account, parentAccount } = props;
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
 
   if (!account) {
     return null;
   }
 
-  const mainAccount = getMainAccount(account, parentAccount);
-  const specific = getLLDCoinFamily(mainAccount.currency.family);
   const Component = specific?.SendStepRecipient ?? DefaultStepRecipient;
 
   return <Component {...props} />;
@@ -176,11 +176,11 @@ export const StepRecipientFooter = ({
   const { errors } = status;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const isTerminated = mainAccount && mainAccount.currency.terminated;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
   const fields = ["recipient"].concat(
-    mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
+    mainAccount ? getFields(mainAccount, lldMemoTag?.enabled, specific?.sendRecipientFields) : [],
   );
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
-  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const customValidationSuccess = specific?.sendRecipientCanNext?.(status) ?? true;
   const canNext =
     !bridgePending &&

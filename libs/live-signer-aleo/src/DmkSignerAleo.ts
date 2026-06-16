@@ -7,6 +7,7 @@ import type {
   AleoRootIntentSignature,
   AleoFeeIntentSignature,
   AleoNestedCallSignature,
+  AleoTvk,
 } from "@ledgerhq/coin-aleo/types/signer";
 import {
   DeviceActionState,
@@ -20,6 +21,7 @@ import {
   GetAppConfigDAError,
   GetAddressDAError,
   GetViewKeyDAError,
+  GetTvkDAError,
   SignRootIntentDAError,
   SignFeeIntentDAError,
   SignNestedCallDAError,
@@ -29,6 +31,7 @@ type DAError =
   | GetAppConfigDAError
   | GetAddressDAError
   | GetViewKeyDAError
+  | GetTvkDAError
   | SignRootIntentDAError
   | SignFeeIntentDAError
   | SignNestedCallDAError;
@@ -40,9 +43,17 @@ export class DmkSignerAleo implements AleoSigner {
     this.signer = new SignerAleoBuilder({ dmk, sessionId }).build();
   }
 
+  private _getGenericErrorMessage<E extends DAError>(error: E): string {
+    const originalError = "originalError" in error ? error.originalError : null;
+    const originalMessage = originalError instanceof Error ? originalError.message : null;
+    const tag = error._tag;
+
+    return originalMessage ? `${tag}: ${originalMessage}` : tag;
+  }
+
   private _mapError<E extends DAError>(error: E): Error {
     if (!("errorCode" in error)) {
-      return new Error(error._tag);
+      return new Error(this._getGenericErrorMessage(error));
     }
 
     switch (error.errorCode) {
@@ -51,7 +62,7 @@ export class DmkSignerAleo implements AleoSigner {
       case "69f0":
         return new UserRefusedOnDevice();
       default:
-        return new Error(error._tag);
+        return new Error(this._getGenericErrorMessage(error));
     }
   }
 
@@ -104,6 +115,26 @@ export class DmkSignerAleo implements AleoSigner {
 
     return {
       viewKey: result.viewKey,
+    };
+  }
+
+  /**
+   * GET_TVK precomputes transition view keys that are consumed by the backend during request crafting.
+   * More details can be found in ADR005.
+   * - Index 0 is a root transition
+   * - Indexes 1 to 30 are nested transitions
+   * - Index 31 is fee transition (not used on the backend side, seems unnecessary)
+   */
+  async getTvk(path: string, transitionIndex?: number): Promise<AleoTvk> {
+    const { observable } = this.signer.getTvk(path, {
+      skipOpenApp: true,
+      ...(typeof transitionIndex === "number" && { transitionIndex }),
+    });
+
+    const result = this._mapResult(await lastValueFrom(observable));
+
+    return {
+      tvk: result.tvk,
     };
   }
 

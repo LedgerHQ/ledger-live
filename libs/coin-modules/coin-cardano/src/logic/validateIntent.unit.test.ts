@@ -177,9 +177,14 @@ describe("validateIntent", () => {
   it("stays resilient when network info is unavailable (skips the min-UTXO pre-check)", async () => {
     (fetchNetworkInfo as jest.Mock).mockRejectedValueOnce(new Error("network down"));
     // Below the floor, but the params fetch failed → skip the best-effort check (craft still enforces it).
-    const res = await validateIntent(currency, intent({ amount: 100_000n }), balances(10_000_000n), {
-      value: 200_000n,
-    });
+    const res = await validateIntent(
+      currency,
+      intent({ amount: 100_000n }),
+      balances(10_000_000n),
+      {
+        value: 200_000n,
+      },
+    );
     expect(res.errors.amount).toBeUndefined();
   });
 

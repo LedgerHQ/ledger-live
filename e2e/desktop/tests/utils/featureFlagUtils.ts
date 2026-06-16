@@ -41,10 +41,6 @@ export const LWD_WALLET_40_Q2_FF_ENABLED: OptionalFeatureMap = {
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
-export const EARN_V1_DESKTOP_FLAGS: OptionalFeatureMap = {
-  ptxEarnUi: { enabled: false, params: { value: "v1" } },
-};
-
 export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
   ...(useLocalEarnManifest && {
     ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } },
@@ -56,7 +52,7 @@ export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
   stakePrograms: {
     enabled: true,
     params: {
-      list: ["ethereum", "cosmos"],
+      list: ["cosmos"],
       redirects: {
         "ethereum/erc20/usd__coin": {
           platform: "earn",
@@ -65,6 +61,15 @@ export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
             cryptoAssetId: "ethereum/erc20/usd__coin",
             intent: "deposit",
             deposit: "stablecoin",
+          },
+        },
+        ethereum: {
+          platform: "earn",
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum",
+            intent: "deposit",
+            ethDepositCohort: "basic_sorting",
           },
         },
       },

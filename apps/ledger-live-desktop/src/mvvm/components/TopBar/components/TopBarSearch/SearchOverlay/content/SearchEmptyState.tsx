@@ -1,16 +1,18 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Spot } from "@ledgerhq/lumen-ui-react";
+import { Search } from "@ledgerhq/lumen-ui-react/symbols";
 
-type SearchEmptyStateProps = Readonly<{
-  query: string;
-}>;
-
-export function SearchEmptyState({ query }: SearchEmptyStateProps) {
+export function SearchEmptyState() {
   const { t } = useTranslation();
 
   return (
-    <span className="body-2 text-muted" data-testid="search-empty-state">
-      {t("topBar.search.noResults", { query })}
-    </span>
+    <div
+      className="flex flex-col items-center justify-center gap-16 py-40"
+      data-testid="search-empty-state"
+    >
+      <Spot appearance="icon" icon={Search} />
+      <span className="heading-4-semi-bold text-base">{t("topBar.search.noAssetFound")}</span>
+    </div>
   );
 }

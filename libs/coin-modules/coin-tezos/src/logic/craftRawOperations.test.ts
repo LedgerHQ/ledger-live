@@ -90,7 +90,14 @@ describe("craftRawOperations", () => {
     await craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 7n);
 
     expect(mockTezosToolkit.estimate.batch).toHaveBeenCalledWith([
-      { kind: OpKind.TRANSACTION, source: SENDER, to: CONTRACT, amount: 0, mutez: true, parameter: parameters },
+      {
+        kind: OpKind.TRANSACTION,
+        source: SENDER,
+        to: CONTRACT,
+        amount: 0,
+        mutez: true,
+        parameter: parameters,
+      },
     ]);
     expect(forgedContents()[0]).toMatchObject({
       kind: OpKind.TRANSACTION,
@@ -131,7 +138,12 @@ describe("craftRawOperations", () => {
     ]);
     const ops = [
       { kind: "transaction", destination: RECIPIENT, amount: "10" },
-      { kind: "transaction", destination: CONTRACT, amount: "0", parameters: { entrypoint: "foo", value: { prim: "Unit" } } },
+      {
+        kind: "transaction",
+        destination: CONTRACT,
+        amount: "0",
+        parameters: { entrypoint: "foo", value: { prim: "Unit" } },
+      },
     ];
 
     await craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 9n);
@@ -178,9 +190,9 @@ describe("craftRawOperations", () => {
     ]);
     const ops = [{ kind: "transaction", destination: RECIPIENT, amount: "1000" }];
 
-    await expect(
-      craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n),
-    ).rejects.toThrow("expected 1 estimate(s)");
+    await expect(craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n)).rejects.toThrow(
+      "expected 1 estimate(s)",
+    );
   });
 
   it("honours caller-provided fee/gas/storage without estimating", async () => {
@@ -198,7 +210,11 @@ describe("craftRawOperations", () => {
     await craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n);
 
     expect(mockTezosToolkit.estimate.batch).not.toHaveBeenCalled();
-    expect(forgedContents()[0]).toMatchObject({ fee: "1234", gas_limit: "2000", storage_limit: "10" });
+    expect(forgedContents()[0]).toMatchObject({
+      fee: "1234",
+      gas_limit: "2000",
+      storage_limit: "10",
+    });
   });
 
   it("prepends a reveal when the sender is not revealed", async () => {
@@ -247,9 +263,9 @@ describe("craftRawOperations", () => {
 
     const ops = [{ kind: "transaction", destination: RECIPIENT, amount: "1000" }];
 
-    await expect(
-      craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n),
-    ).rejects.toThrow("does not match the sender");
+    await expect(craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n)).rejects.toThrow(
+      "does not match the sender",
+    );
   });
 
   it("throws on an unsupported operation kind", async () => {
@@ -272,14 +288,19 @@ describe("craftRawOperations", () => {
 
     it("throws on a non-integer amount", async () => {
       const ops = [{ kind: "transaction", destination: RECIPIENT, amount: "1.5" }];
-      await expect(
-        craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n),
-      ).rejects.toThrow("`amount` must be a non-negative integer string");
+      await expect(craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n)).rejects.toThrow(
+        "`amount` must be a non-negative integer string",
+      );
     });
 
     it("throws on a missing or invalid destination", async () => {
       await expect(
-        craftRawOperations(JSON.stringify([{ kind: "transaction", amount: "1000" }]), SENDER, PUBLIC_KEY, 5n),
+        craftRawOperations(
+          JSON.stringify([{ kind: "transaction", amount: "1000" }]),
+          SENDER,
+          PUBLIC_KEY,
+          5n,
+        ),
       ).rejects.toThrow("valid `destination`");
       await expect(
         craftRawOperations(
@@ -293,23 +314,38 @@ describe("craftRawOperations", () => {
 
     it("throws on a non-numeric fee", async () => {
       const ops = [{ kind: "transaction", destination: RECIPIENT, amount: "1000", fee: "abc" }];
-      await expect(
-        craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n),
-      ).rejects.toThrow("`fee` must be a non-negative integer string");
+      await expect(craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, 5n)).rejects.toThrow(
+        "`fee` must be a non-negative integer string",
+      );
     });
 
     it("rejects an empty or invalid delegate (must not be treated as undelegation)", async () => {
       await expect(
-        craftRawOperations(JSON.stringify([{ kind: "delegation", delegate: "" }]), SENDER, PUBLIC_KEY, 5n),
+        craftRawOperations(
+          JSON.stringify([{ kind: "delegation", delegate: "" }]),
+          SENDER,
+          PUBLIC_KEY,
+          5n,
+        ),
       ).rejects.toThrow("`delegate` must be a valid implicit account address");
       await expect(
-        craftRawOperations(JSON.stringify([{ kind: "delegation", delegate: 123 }]), SENDER, PUBLIC_KEY, 5n),
+        craftRawOperations(
+          JSON.stringify([{ kind: "delegation", delegate: 123 }]),
+          SENDER,
+          PUBLIC_KEY,
+          5n,
+        ),
       ).rejects.toThrow("`delegate` must be a valid implicit account address");
     });
 
     it("rejects a contract (KT1) delegate (delegates must be implicit accounts)", async () => {
       await expect(
-        craftRawOperations(JSON.stringify([{ kind: "delegation", delegate: CONTRACT }]), SENDER, PUBLIC_KEY, 5n),
+        craftRawOperations(
+          JSON.stringify([{ kind: "delegation", delegate: CONTRACT }]),
+          SENDER,
+          PUBLIC_KEY,
+          5n,
+        ),
       ).rejects.toThrow("`delegate` must be a valid implicit account address");
     });
 
@@ -327,7 +363,12 @@ describe("craftRawOperations", () => {
     it("throws when the sequence is out of safe integer range", async () => {
       const ops = [{ kind: "transaction", destination: RECIPIENT, amount: "1000" }];
       await expect(
-        craftRawOperations(JSON.stringify(ops), SENDER, PUBLIC_KEY, BigInt(Number.MAX_SAFE_INTEGER) + 1n),
+        craftRawOperations(
+          JSON.stringify(ops),
+          SENDER,
+          PUBLIC_KEY,
+          BigInt(Number.MAX_SAFE_INTEGER) + 1n,
+        ),
       ).rejects.toThrow("out of the safe integer range");
     });
 

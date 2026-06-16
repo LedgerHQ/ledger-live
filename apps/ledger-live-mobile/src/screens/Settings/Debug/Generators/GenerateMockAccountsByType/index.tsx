@@ -10,13 +10,16 @@ export default function GenerateMockAccountsByType() {
   const {
     includeCryptos,
     includeStablecoins,
+    includeStocks,
     includeTestnet,
     countInput,
     stablecoinsLoading,
+    stocksLoading,
     isValid,
     isReady,
     onToggleCryptos,
     setIncludeStablecoins,
+    setIncludeStocks,
     onToggleTestnet,
     setCountInput,
     onGenerate,
@@ -38,6 +41,12 @@ export default function GenerateMockAccountsByType() {
           description="1 account per network (ETH · Tron · Algorand) with 10 stablecoin sub-accounts"
           value={includeStablecoins}
           onValueChange={setIncludeStablecoins}
+        />
+        <ToggleRow
+          label="Stocks"
+          description="Tokenized stocks from DADA (category=stocks) as sub-accounts under their network"
+          value={includeStocks}
+          onValueChange={setIncludeStocks}
         />
         <ToggleRow
           label="Testnets"
@@ -69,6 +78,15 @@ export default function GenerateMockAccountsByType() {
               <Spinner size={16} />
               <Text typography="body2" lx={{ color: "muted", marginLeft: "s8" }}>
                 Loading stablecoin data…
+              </Text>
+            </Box>
+          )}
+
+          {includeStocks && stocksLoading && (
+            <Box lx={{ flexDirection: "row", alignItems: "center", marginTop: "s8" }}>
+              <Spinner size={16} />
+              <Text typography="body2" lx={{ color: "muted", marginLeft: "s8" }}>
+                Loading stock data…
               </Text>
             </Box>
           )}

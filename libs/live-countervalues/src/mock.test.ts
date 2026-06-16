@@ -15,7 +15,7 @@ const mockStore: CryptoAssetsStore = {
         type: "TokenCurrency",
         id: "ethereum/erc20/dai_stablecoin_v2_0",
         contractAddress: "0x6b175474e89094c44da98b954eedeac495271d0f",
-        parentCurrency: getCryptoCurrencyById("ethereum"),
+        parentCurrencyId: "ethereum",
         tokenType: "erc20",
         name: "Dai Stablecoin",
         ticker: "DAI",

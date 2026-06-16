@@ -43,7 +43,9 @@ export const getBitcoinYieldSetting = (stakePrograms: Features["stakePrograms"] 
       : bitcoinProvider;
 };
 
-export const getEthDepositScreenSetting = (stakePrograms: Features["stakePrograms"] | null): string => {
+export const getEthDepositScreenSetting = (
+  stakePrograms: Features["stakePrograms"] | null,
+): string => {
   /** Check if Ethereum has "earn" provider configured in redirects with ethDepositCohort. */
   const ethereumRedirect = stakePrograms?.enabled
     ? stakePrograms?.params?.redirects?.["ethereum"]

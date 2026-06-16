@@ -3,8 +3,10 @@ import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
 import {
   mockTxIntentFeePrivate,
+  mockTxIntentTransferPrivate2,
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
+import { mockUnspentRecord1, mockUnspentRecord2 } from "../__tests__/fixtures/account.fixture";
 import type { FeeConfiguration, Intent } from "../types";
 import { craftTransaction } from "./craftTransaction";
 import { mapTransactionIntentToSdkIntent, toHex } from "./utils";
@@ -18,6 +20,12 @@ const mockSdkIntent: Intent = {
   type: "transfer_public",
   amount: "1000",
   to: "aleo1recipient",
+};
+const mockMultiRecordSdkIntent: Intent = {
+  type: "transfer_private_2",
+  amount: "200",
+  to: "aleo1recipient",
+  records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
 };
 const mockSdkResponse = getMockedPreparedRequestResponse({
   network_id: 0,
@@ -100,5 +108,41 @@ describe("craftTransaction", () => {
     expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockTxIntentFeePrivate);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(toHex).toHaveBeenCalledTimes(1);
+  });
+
+  it("should pass tvks to SDK for multi-record intents", async () => {
+    const tvks = ["root-tvk", "nested-tvk-1", "nested-tvk-2"];
+
+    jest.mocked(mapTransactionIntentToSdkIntent).mockReturnValue(mockMultiRecordSdkIntent);
+
+    await craftTransaction({
+      currency: mockCurrency,
+      txIntent: mockTxIntentTransferPrivate2,
+      feeConfiguration: mockFeeConfiguration,
+      viewKey: mockViewKey,
+      tvks,
+    });
+
+    expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
+    expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
+      currency: mockCurrency,
+      intent: mockMultiRecordSdkIntent,
+      feeConfiguration: mockFeeConfiguration,
+      viewKey: mockViewKey,
+      tvks,
+    });
+  });
+
+  it("should require tvks for multi-record intents", async () => {
+    jest.mocked(mapTransactionIntentToSdkIntent).mockReturnValue(mockMultiRecordSdkIntent);
+
+    await expect(
+      craftTransaction({
+        currency: mockCurrency,
+        txIntent: mockTxIntentTransferPrivate2,
+        feeConfiguration: mockFeeConfiguration,
+        viewKey: mockViewKey,
+      }),
+    ).rejects.toThrow("aleo: tvks are required for transactions with nested calls");
   });
 });

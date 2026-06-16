@@ -18,7 +18,6 @@ export default class EarnV2DashboardPage {
   earnMenuOption = (label: string) =>
     `earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`;
   private static readonly stakingFlowTestIds: Record<string, string | RegExp> = {
-    ETH: "staking-provider-modal-title",
     ATOM: /^(enabled-|disabled-)?cosmos-delegation-start-button$/,
     SOL: /^(enabled-|disabled-)?solana-delegation-start-button$/,
   };
@@ -105,6 +104,58 @@ export default class EarnV2DashboardPage {
       throw new Error(`No staking flow testID mapped for ticker "${ticker}"`);
     }
     await detoxExpect(getElementById(testId)).toBeVisible();
+  }
+
+  @Step("Verify earn flow started for $0")
+  async verifyEarnFlowStarted(ticker: string) {
+    // ETH is redirected into the earn deposit webview (stakePrograms redirect) rather than
+    // opening a native staking drawer, so it is verified by URL instead of a native test id.
+    if (ticker === "ETH") {
+      await this.verifyDepositFlowVisible();
+    } else {
+      await this.verifyStakingFlowOpened(ticker);
+    }
+  }
+
+  // --- ETH deposit webview flow (amount -> provider -> partner dapp) ---
+
+  ethAmountInput = "amount-input-section-input";
+  ethAmountContinueCta = "amount-continue-cta";
+  ethProviderPanel = "eth-provider-panel";
+  ethProviderAllFilterChip = "filter-chip-all";
+  ethDepositProviderCta = "text-button-cta";
+  // The provider card test id suffix is the backend `ID` enum value, which differs from the e2e
+  // provider value, so map the providers we exercise.
+  private static readonly ethProviderCardIds: Record<string, string> = {
+    lido: "Lido",
+    kiln_pooling: "KilnEthereumPooling",
+    "stader-eth": "stader-eth",
+  };
+
+  @Step("Complete ETH deposit amount step with $0 ETH")
+  async completeEthDepositAmountStep(amount: string) {
+    await waitWebElementByTestId(this.ethAmountInput);
+    await typeTextByWebTestId(this.ethAmountInput, amount);
+    await waitForWebElementToBeEnabled(this.ethAmountContinueCta);
+    await tapWebElementByTestId(this.ethAmountContinueCta);
+  }
+
+  @Step("Select ETH provider $0 in deposit webview")
+  async selectEthProviderInWebview(providerId: string) {
+    await waitWebElementByTestId(this.ethProviderPanel);
+    // The ETH partner-dapp flags pin the deposit cohort to basic_sorting, so the category filter bar
+    // always renders. Its default filter (protocol/liquid) hides providers in other categories (e.g.
+    // Kiln is "pooling"), so reset to "All" to make any provider selectable. Tapping directly (no
+    // presence guard) asserts the chip exists — a regression in the filter bar fails loudly.
+    await tapWebElementByTestId(this.ethProviderAllFilterChip);
+    const cardId = EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId;
+    await tapWebElementByTestId(`eth-provider-card-${cardId}`);
+  }
+
+  @Step("Confirm ETH deposit provider selection")
+  async confirmEthDepositProvider() {
+    await waitForWebElementToBeEnabled(this.ethDepositProviderCta);
+    await tapWebElementByTestId(this.ethDepositProviderCta);
   }
 
   @Step("Tap staking provider in EvmStakingDrawer: $0")

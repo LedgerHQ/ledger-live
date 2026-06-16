@@ -6,7 +6,7 @@ type SendFlowTrackingAccount = Readonly<{
   token?: Readonly<{
     id?: string;
     ticker?: string;
-    parentCurrency: Readonly<{ id: string }>;
+    parentCurrencyId: string;
   }>;
 }>;
 
@@ -21,7 +21,7 @@ export function getSendFlowBlockchain(
   if (!account) return "";
 
   if (account.type === "TokenAccount") {
-    return parentAccount?.currency?.id ?? account.token?.parentCurrency?.id ?? "";
+    return parentAccount?.currency?.id ?? account.token?.parentCurrencyId ?? "";
   }
 
   return account.currency?.id ?? "";

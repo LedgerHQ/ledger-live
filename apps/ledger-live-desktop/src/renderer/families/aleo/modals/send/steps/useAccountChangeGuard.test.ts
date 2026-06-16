@@ -6,9 +6,17 @@ import {
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { useAccountChangeGuard } from "./useAccountChangeGuard";
 import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
-import { ALEO_ACCOUNT_1, ALEO_ACCOUNT_2 } from "../../../__mocks__/account.mock";
+import {
+  ALEO_ACCOUNT_1,
+  ALEO_ACCOUNT_2,
+  ALEO_TOKEN_ACCOUNT,
+} from "../../../__mocks__/account.mock";
 
-jest.mock("@ledgerhq/live-common/families/aleo/utils");
+jest.mock("@ledgerhq/live-common/families/aleo/utils", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/aleo/utils"),
+  isSelfTransferTransaction: jest.fn(),
+  isPrivateTransaction: jest.fn(),
+}));
 
 const mockIsSelfTransferTransaction = jest.mocked(isSelfTransferTransaction);
 const mockIsPrivateTransaction = jest.mocked(isPrivateTransaction);
@@ -81,6 +89,25 @@ describe("useAccountChangeGuard", () => {
     const nextTx = updater(tx);
 
     expect(nextTx.mode).toBe(TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE);
+    expect(nextTx.properties).toBeUndefined();
+  });
+
+  it("should reset a private token self-transfer to CONVERT_TOKEN_PUBLIC_TO_PRIVATE", () => {
+    mockIsPrivateTransaction.mockReturnValue(true);
+    mockIsSelfTransferTransaction.mockReturnValue(true);
+    const { result } = renderHook(() => useAccountChangeGuard(onChangeAccount, updateTransaction));
+
+    result.current(ALEO_ACCOUNT_2, null);
+
+    const updater = updateTransaction.mock.calls[0][0];
+    const tx = makeAleoTransaction({
+      mode: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+      subAccountId: ALEO_TOKEN_ACCOUNT.id,
+      properties: { amountRecordCommitments: ["abc"], feeRecordCommitment: null },
+    });
+    const nextTx = updater(tx);
+
+    expect(nextTx.mode).toBe(TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE);
     expect(nextTx.properties).toBeUndefined();
   });
 

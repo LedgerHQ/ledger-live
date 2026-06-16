@@ -1,5 +1,4 @@
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { isStockMarketCurrency } from "@ledgerhq/live-common/market/utils/category";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapMarketCurrencyToDisplayData } from "../../utils/marketAssetDisplay";
@@ -20,7 +19,6 @@ export function getMarketDataForDisplay(
 
 export function getMarketAssets({
   marketData,
-  isStocksCategory,
   counterCurrency,
   counterValueUnit,
   displayRange,
@@ -28,17 +26,13 @@ export function getMarketAssets({
   t,
 }: {
   marketData: MarketCurrencyData[];
-  isStocksCategory: boolean;
   counterCurrency: string;
   counterValueUnit: Unit;
   displayRange: DisplayRange;
   locale: string;
   t: Translate;
 }): MarketAssetDisplayData[] {
-  const filteredMarketData = isStocksCategory
-    ? marketData.filter(isStockMarketCurrency)
-    : marketData;
-  const uniqueById = [...new Map(filteredMarketData.map(item => [item.id, item])).values()];
+  const uniqueById = [...new Map(marketData.map(item => [item.id, item])).values()];
 
   return uniqueById.map(item =>
     mapMarketCurrencyToDisplayData(item, {

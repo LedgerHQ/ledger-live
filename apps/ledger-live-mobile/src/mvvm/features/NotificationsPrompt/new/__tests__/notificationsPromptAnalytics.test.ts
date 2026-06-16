@@ -72,13 +72,16 @@ describe("notificationsPromptAnalytics", () => {
       nextRepromptDelay: null,
     });
 
-    expect(track).toHaveBeenCalledWith("attempt_to_trigger_push_notification_drawer_after_inactivity", {
-      shouldPrompt: true,
-      variant: undefined,
-      repromptDelay: null,
-      dismissedCount: 1,
-      skipReason: undefined,
-      drawerPromptTarget: "globalPushNotifications",
-    });
+    expect(track).toHaveBeenCalledWith(
+      "attempt_to_trigger_push_notification_drawer_after_inactivity",
+      {
+        shouldPrompt: true,
+        variant: undefined,
+        repromptDelay: null,
+        dismissedCount: 1,
+        skipReason: undefined,
+        drawerPromptTarget: "globalPushNotifications",
+      },
+    );
   });
 });

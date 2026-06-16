@@ -1,4 +1,5 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { v5 as uuidv5 } from "uuid";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
@@ -82,8 +83,8 @@ export function currencyToWalletAPICurrency(
       ticker: currency.ticker,
       contract: currency.contractAddress,
       name: currency.name,
-      parent: currency.parentCurrency.id,
-      color: currency.parentCurrency.color,
+      parent: currency.parentCurrencyId,
+      color: getCryptoCurrencyById(currency.parentCurrencyId).color,
       decimals: currency.units[0].magnitude,
     };
   }

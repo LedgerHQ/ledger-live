@@ -88,7 +88,7 @@ function getInfo(
   const accountCurrency = getAccountCurrency(account);
   const currencyId =
     accountCurrency.type === "TokenCurrency"
-      ? accountCurrency.parentCurrency.id
+      ? accountCurrency.parentCurrencyId
       : accountCurrency.id;
   const currency = getCryptoCurrencyById(currencyId);
   return {

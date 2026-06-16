@@ -33,7 +33,8 @@ export function getGenericAwarenessModalCardToOpen({
   }
 
   return cards.find(
-    card => isGenericAwarenessModalAppStartId(card.id) && isGenericAwarenessModalContentCardReady(card),
+    card =>
+      isGenericAwarenessModalAppStartId(card.id) && isGenericAwarenessModalContentCardReady(card),
   );
 }
 

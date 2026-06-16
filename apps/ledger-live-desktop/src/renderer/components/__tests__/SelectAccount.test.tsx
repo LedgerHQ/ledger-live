@@ -42,7 +42,7 @@ const makeTokenAccount = (id: string, contractAddress: string): TokenAccount =>
       type: "TokenCurrency",
       id: `celo/erc20/${id}`,
       contractAddress,
-      parentCurrency: celoCurrency,
+      parentCurrencyId: "celo",
       tokenType: "erc20",
       name: id,
       ticker: id.toUpperCase(),

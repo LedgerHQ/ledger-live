@@ -17,6 +17,13 @@ const family: TezosFamily = {
   receiveWarning,
   AccountBodyHeader,
   AccountBalanceSummaryFooter,
+  modalsToPreload: [
+    "MODAL_DELEGATE",
+    "MODAL_TEZOS_EARNING_CHOICE",
+    "MODAL_TEZOS_STAKE",
+    "MODAL_TEZOS_UNSTAKE",
+    "MODAL_TEZOS_UNSTAKE_REQUIRED",
+  ],
 };
 
 export default family;

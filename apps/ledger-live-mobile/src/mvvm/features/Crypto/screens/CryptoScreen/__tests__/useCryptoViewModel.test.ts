@@ -46,6 +46,8 @@ const emptyCategorizedAssets = () => ({
   stablecoinTickers: new Set<string>(),
   isLoadingStablecoinTickers: false,
   isStablecoinTickersError: false,
+  isLoadingStocks: false,
+  isStocksError: false,
 });
 
 describe("useCryptoViewModel", () => {

@@ -24,7 +24,7 @@ const tokenCurrency = {
   id: "ethereum/erc20/usd__coin",
   name: "USD Coin",
   ticker: "USDC",
-  parentCurrency: getCryptoCurrencyById("ethereum"),
+  parentCurrencyId: "ethereum",
 } as unknown as Currency;
 
 const makeOperation = (overrides: Partial<Operation> = {}): Operation =>

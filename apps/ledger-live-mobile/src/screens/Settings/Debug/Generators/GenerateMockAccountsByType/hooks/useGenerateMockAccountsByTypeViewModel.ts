@@ -5,19 +5,23 @@ import { useDispatch } from "~/context/hooks";
 import { replaceAccounts } from "~/actions/accounts";
 import { reboot } from "~/actions/appstate";
 import { useStablecoinTokens } from "./useStablecoinTokens";
-import { MAINNET_CURRENCIES, TESTNET_CURRENCIES, findCurrencyById } from "../constants";
-import { generateCryptoAccounts, generateNetworkStablecoinAccount } from "../utils";
+import { useStockTokens } from "./useStockTokens";
+import { MAINNET_CURRENCIES, TESTNET_CURRENCIES } from "../constants";
+import { generateCryptoAccounts, buildNetworkTokenAccounts } from "../utils";
 
 export interface GenerateMockAccountsByTypeViewModelResult {
   includeCryptos: boolean;
   includeStablecoins: boolean;
+  includeStocks: boolean;
   includeTestnet: boolean;
   countInput: string;
   stablecoinsLoading: boolean;
+  stocksLoading: boolean;
   isValid: boolean;
   isReady: boolean;
   onToggleCryptos: (v: boolean) => void;
   setIncludeStablecoins: (v: boolean) => void;
+  setIncludeStocks: (v: boolean) => void;
   onToggleTestnet: (v: boolean) => void;
   setCountInput: (v: string) => void;
   onGenerate: () => void;
@@ -28,6 +32,7 @@ export function useGenerateMockAccountsByTypeViewModel(): GenerateMockAccountsBy
 
   const [includeCryptos, setIncludeCryptos] = useState(true);
   const [includeStablecoins, setIncludeStablecoins] = useState(true);
+  const [includeStocks, setIncludeStocks] = useState(true);
   const [includeTestnet, setIncludeTestnet] = useState(false);
   const [countInput, setCountInput] = useState("10");
 
@@ -38,8 +43,12 @@ export function useGenerateMockAccountsByTypeViewModel(): GenerateMockAccountsBy
     loading: stablecoinsLoading,
   } = useStablecoinTokens(includeStablecoins);
 
-  const isValid = includeCryptos || includeStablecoins;
-  const isReady = isValid && (!includeStablecoins || !stablecoinsLoading);
+  const { tokensByParent: stockTokensByParent, loading: stocksLoading } =
+    useStockTokens(includeStocks);
+
+  const isValid = includeCryptos || includeStablecoins || includeStocks;
+  const isReady =
+    isValid && (!includeStablecoins || !stablecoinsLoading) && (!includeStocks || !stocksLoading);
 
   const onToggleCryptos = useCallback((v: boolean) => {
     setIncludeCryptos(v);
@@ -66,28 +75,23 @@ export function useGenerateMockAccountsByTypeViewModel(): GenerateMockAccountsBy
       }
 
       if (includeStablecoins) {
-        // One account per supported network, each with all its stablecoin sub-accounts.
-        // This produces 10 unique stablecoin types across ETH · Tron · Algorand.
-        const eth = findCurrencyById("ethereum");
-        if (eth && ethereumTokens.length > 0) {
-          accounts.push(generateNetworkStablecoinAccount(eth, ethereumTokens));
-        }
+        accounts.push(
+          ...buildNetworkTokenAccounts([
+            { parentId: "ethereum", tokens: ethereumTokens },
+            { parentId: "tron", tokens: tronTokens },
+            { parentId: "algorand", tokens: algorandTokens },
+          ]),
+        );
+      }
 
-        const tron = findCurrencyById("tron");
-        if (tron && tronTokens.length > 0) {
-          accounts.push(generateNetworkStablecoinAccount(tron, tronTokens));
-        }
-
-        const algorand = findCurrencyById("algorand");
-        if (algorand && algorandTokens.length > 0) {
-          accounts.push(generateNetworkStablecoinAccount(algorand, algorandTokens));
-        }
+      if (includeStocks) {
+        accounts.push(...buildNetworkTokenAccounts(stockTokensByParent));
       }
 
       if (accounts.length === 0) {
         Confirm.alert(
           "No accounts generated",
-          "Stablecoin data could not be loaded. Please try again.",
+          "Account data could not be loaded. Please try again.",
         );
         return;
       }
@@ -113,20 +117,25 @@ export function useGenerateMockAccountsByTypeViewModel(): GenerateMockAccountsBy
     ethereumTokens,
     includeCryptos,
     includeStablecoins,
+    includeStocks,
     includeTestnet,
+    stockTokensByParent,
     tronTokens,
   ]);
 
   return {
     includeCryptos,
     includeStablecoins,
+    includeStocks,
     includeTestnet,
     countInput,
     stablecoinsLoading,
+    stocksLoading,
     isValid,
     isReady,
     onToggleCryptos,
     setIncludeStablecoins,
+    setIncludeStocks,
     onToggleTestnet,
     setCountInput,
     onGenerate,

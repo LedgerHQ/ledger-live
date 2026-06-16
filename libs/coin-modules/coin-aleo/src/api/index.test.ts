@@ -35,6 +35,8 @@ describe("createApi", () => {
     mockedLastBlock.mockResolvedValue({ hash: "blockHash", height: 42, time: new Date() });
     mockedListOperations.mockResolvedValue({
       operations: [mockOperation],
+      tokenOperations: [],
+      calTokens: new Map(),
       nextCursor: "next-cursor",
     });
     mockedGetTransactionType.mockReturnValue("transfer_public");
@@ -218,6 +220,7 @@ describe("createApi", () => {
 
       expect(mockedListOperations).toHaveBeenCalledTimes(1);
       expect(mockedListOperations).toHaveBeenCalledWith({
+        config: { ...mockConfig, status: { type: "active" } },
         currency: expect.any(Object),
         address: "aleo1test",
         options,
@@ -230,6 +233,8 @@ describe("createApi", () => {
       const api = createApi(mockConfig, "aleo");
       mockedListOperations.mockResolvedValueOnce({
         operations: [mockOperation],
+        tokenOperations: [],
+        calTokens: new Map(),
         nextCursor: null,
       });
       const result = await api.listOperations("aleo1test", { minHeight: 1 });

@@ -13,13 +13,8 @@ export {
   findCryptoCurrencyByTicker,
   getAbandonSeedAddress,
 } from "@ledgerhq/cryptoassets";
-export {
-  encodeURIScheme,
-  decodeURIScheme,
-  isCurrencySupported,
-  listSupportedCurrencies,
-  setSupportedCurrencies,
-} from "@ledgerhq/ledger-wallet-framework/currencies";
+export { encodeURIScheme, decodeURIScheme } from "@ledgerhq/ledger-wallet-framework/currencies";
+export { isCurrencySupported, listSupportedCurrencies } from "../coin-modules/registry";
 export {
   formatCurrencyUnit,
   formatCurrencyUnitFragment,

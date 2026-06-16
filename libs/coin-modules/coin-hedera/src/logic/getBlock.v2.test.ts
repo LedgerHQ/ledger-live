@@ -726,6 +726,39 @@ describe("getBlockV2", () => {
     ]);
   });
 
+  it("should emit ASSOCIATE_TOKEN operation with associatedTokenId for TOKENASSOCIATE transaction", async () => {
+    const mockTx = getMockedMirrorTransaction({
+      transaction_id: "0.0.999-1234567890-000000000",
+      transaction_hash: "hash_token_associate",
+      name: HEDERA_TRANSACTION_NAMES.TokenAssociate,
+      result: "SUCCESS",
+      charged_tx_fee: 51871165,
+      entity_id: "0.0.456858",
+      staking_reward_transfers: [],
+      transfers: [
+        { account: "0.0.802", amount: 51871165 },
+        { account: "0.0.999", amount: 0 },
+      ],
+      token_transfers: [],
+    });
+
+    (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+
+    const result = await getBlockV2({ configOrCurrencyId, height: 100 });
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toEqual([
+      {
+        type: "other",
+        operationType: "ASSOCIATE_TOKEN",
+        associatedTokenId: "0.0.456858",
+      },
+    ]);
+    expect(result.transactions[0].fees).toBe(BigInt(51871165));
+    expect(result.transactions[0].feesPayer).toBe("0.0.999");
+  });
+
   it("should handle CRYPTOUPDATEACCOUNT if it's not related to staking", async () => {
     const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",

@@ -64,7 +64,11 @@ module.exports = async () => ({
   setupFilesAfterEnv: ["<rootDir>/e2e/setup.ts"],
   testTimeout: 150000,
   testMatch: ["<rootDir>/e2e/specs/**/*.spec.ts"],
-  reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
+  reporters: [
+    "detox/runners/jest/reporter",
+    ["jest-allure2-reporter", jestAllure2ReporterOptions],
+    ...(process.env.CI ? [["github-actions", { silent: false }]] : []),
+  ],
   globalSetup: "<rootDir>/e2e/jest.globalSetup.ts",
   testEnvironment: "<rootDir>/e2e/jest.environment.ts",
   testEnvironmentOptions: {

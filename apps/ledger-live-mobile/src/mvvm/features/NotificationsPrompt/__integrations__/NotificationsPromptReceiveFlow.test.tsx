@@ -180,26 +180,29 @@ describe("NotificationsPrompt receive flow", () => {
 
     const { user } = renderWithReactQuery(<ReceiveFlowTestApp />, {
       navigationInitialState: receiveFlowNavigationState,
-      overrideInitialState: withFlagOverrides(featureFlagsForTransactionsAlertsReceivePrompt, state => ({
-        ...state,
-        accounts: {
-          ...state.accounts,
-          active: [BTC_ACCOUNT],
-        },
-        notifications: {
-          ...state.notifications,
-          permissionStatus: AuthorizationStatus.AUTHORIZED,
-        },
-        settings: {
-          ...state.settings,
-          readOnlyModeEnabled: true,
-          notifications: {
-            ...state.settings.notifications,
-            areNotificationsAllowed: true,
-            transactionsAlertsCategory: false,
+      overrideInitialState: withFlagOverrides(
+        featureFlagsForTransactionsAlertsReceivePrompt,
+        state => ({
+          ...state,
+          accounts: {
+            ...state.accounts,
+            active: [BTC_ACCOUNT],
           },
-        },
-      })),
+          notifications: {
+            ...state.notifications,
+            permissionStatus: AuthorizationStatus.AUTHORIZED,
+          },
+          settings: {
+            ...state.settings,
+            readOnlyModeEnabled: true,
+            notifications: {
+              ...state.settings.notifications,
+              areNotificationsAllowed: true,
+              transactionsAlertsCategory: false,
+            },
+          },
+        }),
+      ),
     });
 
     await user.press(await screen.findByText(/^continue$/i));
@@ -214,7 +217,9 @@ describe("NotificationsPrompt receive flow", () => {
     await waitFor(() => {
       expect(screen.getByText(/know the status of your money/i)).toBeVisible();
     });
-    expect(screen.getByText(/real-time alerts when your crypto is sent or received/i)).toBeVisible();
+    expect(
+      screen.getByText(/real-time alerts when your crypto is sent or received/i),
+    ).toBeVisible();
     expect(screen.queryByText(/don't miss what matters/i)).not.toBeOnTheScreen();
     expect(screen.getByText(/allow notifications/i)).toBeVisible();
   });

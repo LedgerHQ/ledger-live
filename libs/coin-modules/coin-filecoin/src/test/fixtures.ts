@@ -211,7 +211,7 @@ export const createMockTokenAccount = (
       type: "TokenCurrency" as const,
       id: `filecoin/erc20/test_token`,
       contractAddress: TEST_ADDRESSES.ERC20_CONTRACT,
-      parentCurrency: parentAccount.currency,
+      parentCurrencyId: parentAccount.currency.id,
       tokenType: "erc20" as const,
       name: "Test Token",
       ticker: "TST",

@@ -7,6 +7,7 @@ export const MY_WALLET_TRACKING_BUTTON = {
   settings: "Settings",
   notifications: "Notifications",
   recover: "Recover",
+  backup: "Backup",
   help: "Help",
   referral: "Referral",
   exploreAllLedger: "Explore all",

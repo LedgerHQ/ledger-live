@@ -179,7 +179,6 @@ function makeProps(overrides: Partial<TestProps> = {}): TestProps {
     onIntentJobComplete: jest.fn(),
     onIntentJobError: jest.fn(),
     enabled: true,
-    cancellableUI: false,
     onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     platformConfig,
@@ -280,7 +279,6 @@ function makeUnitProps(
     onIntentJobComplete: jest.fn(),
     onIntentJobError: jest.fn(),
     enabled: true,
-    cancellableUI: false,
     onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     platformConfig,
@@ -310,7 +308,6 @@ describe("DeviceIntentExecutor (unit)", () => {
         onIntentJobComplete={onIntentJobComplete}
         onIntentJobError={onIntentJobError}
         enabled={true}
-        cancellableUI={false}
         onUserCancel={onUserCancel}
         cancelIntentRequestId={undefined}
         platformConfig={platformConfig}
@@ -329,7 +326,6 @@ describe("DeviceIntentExecutor (unit)", () => {
       onIntentJobComplete,
       onIntentJobError,
       enabled: true,
-      cancellableUI: false,
       onUserCancel,
       cancelIntentRequestId: undefined,
     });

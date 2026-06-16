@@ -2,6 +2,8 @@ import type { MarketBannerRanking } from "~/reducers/types";
 
 export const MARKET_BANNER_TILE_COUNT = 7;
 
+export const DEFAULT_RANKING_WITHOUT_DISCOVERABILITY: MarketBannerRanking = "gainers";
+
 export const PAGE_NAME = "Wallet";
 export const BANNER_NAME = "Market Banner";
 

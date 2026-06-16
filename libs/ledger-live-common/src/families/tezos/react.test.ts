@@ -4,20 +4,24 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { Baker, StakingPosition, TezosAccount } from "@ledgerhq/coin-tezos/types/index";
+import type { Baker, StakingPosition, TezosAccount } from "./types";
 
 jest.mock("@ledgerhq/coin-tezos/network/index", () => ({
   bakers: {
     listBakersWithDefault: () => [],
     listBakers: jest.fn().mockResolvedValue([]),
-    getAccountDelegationSync: jest.fn().mockReturnValue(null),
-    loadAccountDelegation: jest.fn().mockResolvedValue(null),
     getBakerSync: jest.fn().mockReturnValue(undefined),
     loadBaker: jest.fn().mockResolvedValue(undefined),
   },
 }));
 
+jest.mock("./bakers", () => ({
+  getAccountDelegationSync: jest.fn().mockReturnValue(null),
+  loadAccountDelegation: jest.fn().mockResolvedValue(null),
+}));
+
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
+import { getAccountDelegationSync } from "./bakers";
 import { isAwaitingDelegation, useBaker, useTezosStakingInfo } from "./react";
 
 const mockBakers = bakers as unknown as {
@@ -141,9 +145,7 @@ describe("useTezosStakingInfo", () => {
       receiveShouldWarnDelegation: false,
       sendShouldWarnDelegation: false,
     };
-    (
-      bakers as unknown as { getAccountDelegationSync: jest.Mock }
-    ).getAccountDelegationSync.mockReturnValueOnce(legacyDelegation);
+    (getAccountDelegationSync as jest.Mock).mockReturnValueOnce(legacyDelegation);
     const account = makeTezosAccount([]);
     const { result } = renderHook(() => useTezosStakingInfo(account));
     expect(result.current.isDelegated).toBe(true);

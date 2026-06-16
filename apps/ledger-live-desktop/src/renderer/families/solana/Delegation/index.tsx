@@ -19,7 +19,11 @@ import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { Header } from "./Header";
 import { Row } from "./Row";
-import { DelegateModalName } from "../modals";
+type DelegateModalName =
+  | "MODAL_SOLANA_DELEGATION_ACTIVATE"
+  | "MODAL_SOLANA_DELEGATION_DEACTIVATE"
+  | "MODAL_SOLANA_DELEGATION_REACTIVATE"
+  | "MODAL_SOLANA_DELEGATION_WITHDRAW";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

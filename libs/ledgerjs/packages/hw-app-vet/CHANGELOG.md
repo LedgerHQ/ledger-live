@@ -1,5 +1,31 @@
 # @ledgerhq/hw-app-vet
 
+## 0.13.0
+
+### Minor Changes
+
+- [#18243](https://github.com/LedgerHQ/ledger-live/pull/18243) [`2437b0d`](https://github.com/LedgerHQ/ledger-live/commit/2437b0d319034b241e207e170a39f343bc26cab1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the unused `@ledgerhq/cryptoassets` dependency. coin-kaspa and hw-app-vet never imported it. live-countervalues and live-countervalues-react only used it in tests, which now rely on local currency fixtures, removing the dependency from the runtime graph.
+
+### Patch Changes
+
+- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/errors@6.36.0
+  - @ledgerhq/hw-transport@6.35.4
+  - @ledgerhq/hw-transport-mocker@6.34.4
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#18243](https://github.com/LedgerHQ/ledger-live/pull/18243) [`2437b0d`](https://github.com/LedgerHQ/ledger-live/commit/2437b0d319034b241e207e170a39f343bc26cab1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the unused `@ledgerhq/cryptoassets` dependency. coin-kaspa and hw-app-vet never imported it. live-countervalues and live-countervalues-react only used it in tests, which now rely on local currency fixtures, removing the dependency from the runtime graph.
+
+### Patch Changes
+
+- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
+  - @ledgerhq/errors@6.36.0-next.0
+  - @ledgerhq/hw-transport@6.35.4-next.0
+  - @ledgerhq/hw-transport-mocker@6.34.4-next.0
+
 ## 0.12.6
 
 ### Patch Changes

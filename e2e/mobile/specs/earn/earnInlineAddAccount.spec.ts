@@ -1,4 +1,4 @@
-import { runInlineAddAccountTest } from "./earn";
+import { runInlineAddAccountTest } from "./earnV2";
 
 const testConfig = {
   account: Account.ETH_1,

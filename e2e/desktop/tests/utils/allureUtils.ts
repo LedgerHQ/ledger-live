@@ -68,7 +68,10 @@ function redactSecrets(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(redactSecrets);
   if (value && typeof value === "object") {
     return Object.fromEntries(
-      Object.entries(value).map(([k, v]) => [k, SECRET_KEYS.has(k) ? "[REDACTED]" : redactSecrets(v)]),
+      Object.entries(value).map(([k, v]) => [
+        k,
+        SECRET_KEYS.has(k) ? "[REDACTED]" : redactSecrets(v),
+      ]),
     );
   }
   return value;

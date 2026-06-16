@@ -18,34 +18,6 @@ const mockInjectiveCurrency = {
   explorerViews: [],
 };
 
-const mockEthereumCurrency = {
-  type: "CryptoCurrency" as const,
-  id: "ethereum",
-  name: "Ethereum",
-  ticker: "ETH",
-  units: [],
-  family: "ethereum",
-  managerAppName: "Ethereum",
-  coinType: 60,
-  scheme: "ethereum",
-  color: "#627EEA",
-  explorerViews: [],
-};
-
-const mockBscCurrency = {
-  type: "CryptoCurrency" as const,
-  id: "bsc",
-  name: "Binance Smart Chain",
-  ticker: "BNB",
-  units: [],
-  family: "evm",
-  managerAppName: "Binance Smart Chain",
-  coinType: 60,
-  scheme: "bsc",
-  color: "#F3BA2F",
-  explorerViews: [],
-};
-
 export const mockAssetsData = {
   cryptoAssets: {
     "urn:crypto:meta-currency:injective_protocol": {
@@ -71,7 +43,7 @@ export const mockAssetsData = {
       name: "Injective Protocol",
       ticker: "INJ",
       contractAddress: "0x0",
-      parentCurrency: mockBscCurrency,
+      parentCurrencyId: "bsc",
       tokenType: "bep20",
       units: [
         {
@@ -87,7 +59,7 @@ export const mockAssetsData = {
       name: "Injective Token",
       ticker: "INJ",
       contractAddress: "0x0",
-      parentCurrency: mockEthereumCurrency,
+      parentCurrencyId: "ethereum",
       tokenType: "erc20",
       units: [
         {
@@ -160,7 +132,7 @@ export const mockBitcoinAssetsData = {
       name: "Wrapped Bitcoin",
       ticker: "WBTC",
       contractAddress: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-      parentCurrency: mockEthereumCurrency,
+      parentCurrencyId: "ethereum",
       tokenType: "erc20",
       units: [
         {
@@ -181,26 +153,6 @@ export const mockBitcoinAssetsData = {
 };
 
 // USDC mock data
-const mockPolygonCurrency = {
-  type: "CryptoCurrency" as const,
-  id: "polygon",
-  name: "Polygon",
-  ticker: "MATIC",
-  units: [
-    {
-      name: "MATIC",
-      code: "MATIC",
-      magnitude: 18,
-    },
-  ],
-  family: "evm",
-  managerAppName: "Polygon",
-  coinType: 60,
-  scheme: "polygon",
-  color: "#8247E5",
-  explorerViews: [],
-};
-
 export const mockUsdcAssetsData = {
   cryptoAssets: {
     usdc: {
@@ -224,7 +176,7 @@ export const mockUsdcAssetsData = {
       name: "USD Coin",
       ticker: "USDC",
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      parentCurrency: mockEthereumCurrency,
+      parentCurrencyId: "ethereum",
       tokenType: "erc20",
       units: [
         {
@@ -240,7 +192,7 @@ export const mockUsdcAssetsData = {
       name: "USD Coin (Polygon)",
       ticker: "USDC",
       contractAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-      parentCurrency: mockPolygonCurrency,
+      parentCurrencyId: "polygon",
       tokenType: "erc20",
       units: [
         {

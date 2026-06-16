@@ -11,6 +11,7 @@ import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
 import { buildOptOutUserData } from "../utils/buildOptOutUserData";
 import { type DataOfUser, type NotificationPromptTarget } from "../types";
 import { updateIdentify } from "~/analytics";
+import { updateUserPreferences } from "~/notifications/braze";
 
 const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
   "areNotificationsAllowed",
@@ -45,6 +46,18 @@ export const useNotificationsData = () => {
     });
     updateIdentify();
   }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
+
+  const enableAppNotifications = useCallback(() => {
+    const updatedNotifications = {
+      ...notifications,
+      areNotificationsAllowed: true,
+      announcementsCategory: true,
+      largeMoverCategory: true,
+    };
+
+    dispatch(setNotifications(updatedNotifications));
+    updateUserPreferences(updatedNotifications);
+  }, [dispatch, notifications]);
 
   const markUserAsOptOut = useCallback(
     (promptTarget?: NotificationPromptTarget) => {
@@ -168,6 +181,7 @@ export const useNotificationsData = () => {
     notifications,
     pushNotificationsDataOfUser,
     updatePushNotificationsDataOfUserInStateAndStore,
+    enableAppNotifications,
     markUserAsOptIn,
     markUserAsOptOut,
     initializeNotificationSettingsState,

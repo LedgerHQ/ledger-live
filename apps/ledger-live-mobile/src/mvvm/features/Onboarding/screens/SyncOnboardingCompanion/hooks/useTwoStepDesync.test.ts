@@ -24,9 +24,7 @@ describe("useTwoStepDesync", () => {
     const { result } = renderHook(() => useTwoStepDesync(defaultProps()));
 
     expect(result.current.isDesyncOverlayOpen).toBe(false);
-    expect(result.current.desyncOverlayDisplayDelayMs).toBe(
-      NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
-    );
+    expect(result.current.desyncOverlayDisplayDelayMs).toBe(NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS);
   });
 
   it("should open overlay and overlay header when polling error occurs", () => {

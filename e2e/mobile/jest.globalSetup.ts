@@ -1,11 +1,3 @@
-import { register } from "tsconfig-paths";
-
-const tsConfig = require("./tsconfig.json");
-register({
-  baseUrl: __dirname,
-  paths: tsConfig.compilerOptions.paths,
-});
-
 import { globalSetup } from "detox/runners/jest";
 import { log } from "detox";
 import { session as detoxSession, config as detoxConfig } from "detox/internals";

@@ -151,4 +151,17 @@ export const FEE_CURRENCY_BY_CONTRACT: Map<string, (typeof FEE_CURRENCY_OPTIONS)
   ]),
 );
 
+/** Lookup by the adapter address that CIP-64 stores in `tx.feeCurrency`.
+ *  For 18-decimal tokens the adapter address equals the contract address. */
+export const FEE_CURRENCY_BY_ADAPTER: Map<string, (typeof FEE_CURRENCY_OPTIONS)[number]> = new Map(
+  FEE_CURRENCY_OPTIONS.filter(option => option.adapterAddress !== null).map(option => [
+    option.adapterAddress!.toLowerCase(),
+    option,
+  ]),
+);
+
+/** Stored in `feeCurrencyAddress` to mark a tx as confirmed-non-CIP-64, so
+ *  subsequent syncs can skip the per-hash RPC for already-inspected native ops. */
+export const NATIVE_FEE_CURRENCY_MARKER = "native";
+
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";

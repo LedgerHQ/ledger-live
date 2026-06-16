@@ -21,9 +21,7 @@ describe("fetchTransactionSwapStatus", () => {
       fetchTransactionSwapStatus({ provider: "lifi", swapId: "swap-1" }),
     ).resolves.toEqual({ provider: "lifi", swapId: "swap-1", status: "finished" });
 
-    expect(mockGetMultipleStatus).toHaveBeenCalledWith([
-      { provider: "lifi", swapId: "swap-1" },
-    ]);
+    expect(mockGetMultipleStatus).toHaveBeenCalledWith([{ provider: "lifi", swapId: "swap-1" }]);
   });
 
   it("forwards optional transaction and operation ids", async () => {

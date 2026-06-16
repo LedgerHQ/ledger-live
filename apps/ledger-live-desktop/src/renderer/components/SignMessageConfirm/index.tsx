@@ -16,7 +16,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { Flex } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { getTokenUnit } from "~/renderer/utils";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -79,13 +79,16 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
   const { colors } = useTheme();
   const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
   const wording = getProductName(device.modelId);
+  // The family slot is only used for EIP712 messages — avoid loading a chunk otherwise.
+  const specific = useLLDCoinFamily(
+    signMessageRequested.standard === "EIP712" ? currency.family : undefined,
+  );
 
   useEffect(() => {
     if (signMessageRequested.standard === "EIP712") {
-      const specific = getLLDCoinFamily(currency.family);
       specific?.message?.getMessageProperties(signMessageRequested).then(setMessageFields);
     }
-  }, [currency, mainAccount, signMessageRequested]);
+  }, [currency, mainAccount, signMessageRequested, specific]);
 
   if (!device) return null;
 

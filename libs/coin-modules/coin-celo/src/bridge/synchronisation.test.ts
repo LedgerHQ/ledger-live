@@ -1,8 +1,16 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
-import { lockedGold, nonVoting, electionConfig } from "./__mocks__/celokit.mock";
+import {
+  lockedGold,
+  nonVoting,
+  electionConfig,
+  getCeloTransactionFeeCurrency,
+} from "./__mocks__/celokit.mock";
 import { mockGetCoinBalance, mockTokenEvmLogic } from "./__mocks__/evm.mock";
 import { mockCreateApi, erc20Operation, nativeOperation } from "./__mocks__/operations-list.mock";
+import { NATIVE_FEE_CURRENCY_MARKER } from "../constants";
+import { CeloAccount, CeloOperation, CeloOperationExtra } from "../types";
+import { accountFixture } from "./fixtures";
 import { getAccountShape } from "./synchronisation";
 
 const defaultInfo = {
@@ -176,5 +184,135 @@ describe("When getting the account shape", () => {
       },
     });
     expect(result.spendableBalance).toEqual(BigNumber(20));
+  });
+});
+
+describe("fee-currency enrichment", () => {
+  // Must match SAFE_REORG_THRESHOLD in src/bridge/synchronisation.ts.
+  const REORG_THRESHOLD = 80;
+  const CIP64_TOKEN = "0xceeb000000000000000000000000000000000001";
+  const SYNC_HASH = "0x0000000000000000000000000000000000001d00";
+
+  const buildCeloOperation = (overrides: {
+    hash: string;
+    blockHeight: number;
+    extra: CeloOperationExtra;
+  }): CeloOperation => ({
+    id: `js:2:celo:${overrides.hash}`,
+    hash: overrides.hash,
+    type: "OUT",
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    senders: [],
+    recipients: [],
+    blockHeight: overrides.blockHeight,
+    blockHash: null,
+    accountId: accountFixture.id,
+    date: new Date("2026-01-09"),
+    hasFailed: false,
+    extra: overrides.extra,
+  });
+
+  const buildInitialAccount = (operations: CeloOperation[]): CeloAccount => ({
+    ...accountFixture,
+    syncHash: SYNC_HASH,
+    operations,
+  });
+
+  beforeEach(() => {
+    getCeloTransactionFeeCurrency.mockReset();
+    // Default: tx is native CELO (matches the default mock behavior).
+    getCeloTransactionFeeCurrency.mockResolvedValue(null);
+  });
+
+  it("backfills NATIVE sentinel on a confirmed non-CIP-64 op", async () => {
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+    getCeloTransactionFeeCurrency.mockResolvedValueOnce(null);
+
+    const result = await getAccountShape(defaultInfo, defaultConfig);
+
+    expect(result.operations?.[0]?.extra).toMatchObject({
+      feeCurrencyAddress: NATIVE_FEE_CURRENCY_MARKER,
+    });
+    expect(getCeloTransactionFeeCurrency).toHaveBeenCalledWith(nativeOperation.tx.hash);
+  });
+
+  it("backfills lowercased fee-currency address on a CIP-64 op", async () => {
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+    getCeloTransactionFeeCurrency.mockResolvedValueOnce(CIP64_TOKEN);
+
+    const result = await getAccountShape(defaultInfo, defaultConfig);
+
+    expect(result.operations?.[0]?.extra).toMatchObject({
+      feeCurrencyAddress: CIP64_TOKEN,
+    });
+  });
+
+  it("leaves the op unmarked when the RPC throws (no false sentinel)", async () => {
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: 4444 }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+    getCeloTransactionFeeCurrency.mockRejectedValueOnce(new Error("rpc down"));
+
+    const result = await getAccountShape(defaultInfo, defaultConfig);
+
+    expect(result.operations?.[0]?.extra).not.toHaveProperty("feeCurrencyAddress");
+  });
+
+  it("re-fetches NATIVE sentinels inside the reorg window", async () => {
+    const tipHeight = nativeOperation.tx.block.height + REORG_THRESHOLD - 1; // in-window
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: tipHeight }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+    getCeloTransactionFeeCurrency.mockResolvedValueOnce(CIP64_TOKEN);
+
+    const initialAccount = buildInitialAccount([
+      buildCeloOperation({
+        hash: nativeOperation.tx.hash,
+        blockHeight: nativeOperation.tx.block.height,
+        extra: { feeCurrencyAddress: NATIVE_FEE_CURRENCY_MARKER },
+      }),
+    ]);
+
+    const result = await getAccountShape({ ...defaultInfo, initialAccount }, defaultConfig);
+
+    expect(getCeloTransactionFeeCurrency).toHaveBeenCalledWith(nativeOperation.tx.hash);
+    expect(result.operations?.[0]?.extra).toMatchObject({ feeCurrencyAddress: CIP64_TOKEN });
+  });
+
+  it("trusts NATIVE sentinels past the reorg window (no re-fetch)", async () => {
+    const tipHeight = nativeOperation.tx.block.height + REORG_THRESHOLD + 10; // out-of-window
+    mockCreateApi.mockReturnValue({
+      listOperations: jest.fn().mockResolvedValueOnce({ items: [nativeOperation] }),
+      lastBlock: jest.fn().mockResolvedValueOnce({ height: tipHeight }),
+    });
+    mockGetCoinBalance.mockResolvedValueOnce(new BigNumber(0));
+
+    const initialAccount = buildInitialAccount([
+      buildCeloOperation({
+        hash: nativeOperation.tx.hash,
+        blockHeight: nativeOperation.tx.block.height,
+        extra: { feeCurrencyAddress: NATIVE_FEE_CURRENCY_MARKER },
+      }),
+    ]);
+
+    const result = await getAccountShape({ ...defaultInfo, initialAccount }, defaultConfig);
+
+    expect(getCeloTransactionFeeCurrency).not.toHaveBeenCalled();
+    expect(result.operations?.[0]?.extra).toMatchObject({
+      feeCurrencyAddress: NATIVE_FEE_CURRENCY_MARKER,
+    });
   });
 });

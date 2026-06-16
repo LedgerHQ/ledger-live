@@ -1,5 +1,4 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { setSupportedCurrencies } from "../currencies";
 
 jest.mock("../coin-modules/registry", () => ({
   ...jest.requireActual("../coin-modules/registry"),
@@ -12,7 +11,6 @@ import * as registry from "../coin-modules/registry";
 import { getCurrencyBridge, getAccountBridgeByFamily, clearBridgeCache } from "./impl";
 
 const mockedLoad = registry.loadSetupForFamily as jest.Mock;
-setSupportedCurrencies(["bitcoin", "ethereum"]);
 
 beforeEach(() => {
   mockedLoad.mockReset();

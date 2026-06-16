@@ -6,6 +6,7 @@ import type {
   SendFlowOperationActions,
   SendFlowBusinessContext,
 } from "@ledgerhq/live-common/flows/send/types";
+import { SendAmountDisplayModeProvider } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { FlowStatusActions } from "@ledgerhq/live-common/flows/wizard/types";
 
@@ -71,11 +72,13 @@ export function SendFlowProvider({ value, onClose, children }: SendFlowProviderP
   );
 
   return (
-    <SendFlowDataContext.Provider value={dataValue}>
-      <SendFlowActionsContext.Provider value={actionsValue}>
-        {children}
-      </SendFlowActionsContext.Provider>
-    </SendFlowDataContext.Provider>
+    <SendAmountDisplayModeProvider>
+      <SendFlowDataContext.Provider value={dataValue}>
+        <SendFlowActionsContext.Provider value={actionsValue}>
+          {children}
+        </SendFlowActionsContext.Provider>
+      </SendFlowDataContext.Provider>
+    </SendAmountDisplayModeProvider>
   );
 }
 

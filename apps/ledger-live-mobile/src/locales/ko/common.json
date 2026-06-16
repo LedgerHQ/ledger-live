@@ -895,6 +895,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "스테이킹 전 계정 위임이 필요합니다"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "스테이킹 잔액 부족"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
     },
@@ -1907,6 +1910,14 @@
           "buyNanoX" : "Ledger Nano X 구매하기",
           "discoverBenefits" : "장점 살펴보기"
         }
+      }
+    },
+    "counterfeitWarning" : {
+      "title" : "시작하기 전에",
+      "body" : "안전한 사용과 정품 보증을 위해 <ledgerCom>Ledger.com</ledgerCom> 또는 <resellerLink>공식 리셀러 네트워크</resellerLink>에서 구매할 것을 권장합니다.",
+      "cta" : {
+        "primary" : "설정 계속하기",
+        "secondary" : "자세히 알아보기"
       }
     },
     "stepNewDevice" : {
@@ -2965,6 +2976,7 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
+      "FINALIZE_UNSTAKE" : "출금됨",
       "ASSOCIATE_TOKEN" : "토큰 연동",
       "CONTRACT_CALL" : "컨트랙트 콜(Contract call)",
       "UPDATE_ACCOUNT" : "업데이트된 계정"
@@ -3668,6 +3680,7 @@
           "description" : "가공되지 않은 Braze 형태의 카드를 생성하고, 일반 인식 모달 파서로 처리한 다음, 포트폴리오로 돌아와 드로어를 확인하세요.",
           "carousel" : "캐러셀",
           "featureIntro" : "기능 소개",
+          "prompt" : "프롬프트",
           "appStart" : "앱 실행",
           "deeplink" : "딥링크",
           "campaignId" : "캠페인 ID",
@@ -3689,6 +3702,8 @@
           "createCarouselDesc" : "캐러셀 일반 안내 모달 생성 폼을 실행합니다.",
           "createFeatureIntro" : "기능 소개 일반 안내 모달 생성",
           "createFeatureIntroDesc" : "기능 소개 일반 안내 모달 생성 양식을 실행합니다.",
+          "createPrompt" : "프롬프트 일반 안내 모달 생성",
+          "createPromptDesc" : "프롬프트 일반 안내 모달 생성 폼을 실행합니다.",
           "openCurrent" : "현재 캠페인 열기",
           "openCurrentDesc" : "해당 캠페인의 드로어 상태를 설정하고, 포트폴리오로 돌아가 설정을 확인합니다.",
           "clear" : "일반 안내 모달 삭제",
@@ -6599,6 +6614,66 @@
       "status" : "상태",
       "unstaking" : "언스테이킹",
       "available" : "이용 가능"
+    },
+    "earnRewards" : {
+      "title" : "보상 받기",
+      "steps" : {
+        "delegate" : "위임하기",
+        "stake" : "스테이킹"
+      },
+      "delegation" : {
+        "step" : "1단계 · 위임",
+        "title" : "위험 부담 없이 보상 받기",
+        "subtitle" : "락업이나 리스크 걱정 없는 스테이킹.",
+        "bullets" : {
+          "0" : "보유 수량 전체가 위임됩니다",
+          "1" : "위임 후에도 자산은 계정에 남아 있습니다.",
+          "2" : "보유한 tez는 언제든지 자유롭게 사용하세요"
+        }
+      },
+      "staking" : {
+        "step" : "2단계 · 스테이킹",
+        "title" : "더 높은 보상 받기",
+        "subtitle" : "먼저 위임을 진행해야 합니다.",
+        "bullets" : {
+          "0" : "원하는 만큼 자유롭게 스테이킹하세요.",
+          "1" : "스테이킹된 자산은 계정에 락업 상태로 보관됩니다",
+          "2" : "4일 후 언스테이킹이 가능합니다"
+        }
+      },
+      "learnMore" : "스테이킹 및 위임에 대해 자세히 알아보기",
+      "cta" : "수익 창출 시작하기"
+    },
+    "stake" : {
+      "flow" : {
+        "amount" : {
+          "disclaimer" : "스테이킹 후에는 언스테이킹을 하기 전까지 XTZ가 락업(잠금)됩니다.",
+          "awaitingDelegation" : "위임 확인 중. 보통 1분 이내에 완료됩니다.",
+          "cta" : "Tezos 스테이킹"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "스테이킹 전송 완료",
+              "text" : "단 4일의 대기 기간이 지나면 스테이킹 보상 지급이 시작됩니다. 이후 보상은 매일 지급되며 자동으로 복리 적용됩니다."
+            }
+          }
+        },
+        "delegationSuccess" : {
+          "cta" : "TEZOS를 스테이킹하고 더 큰 보상을 받아보세요.",
+          "info" : "Tezos 스테이킹과 위임의 차이 자세히 알아보기"
+        }
+      }
+    },
+    "account" : {
+      "availableBalanceTooltip" : "지금 바로 사용 가능한 자산입니다.",
+      "delegatedAssetsTooltip" : "베이커에게 위임된 XTZ입니다. 자산은 지갑에 그대로 유지되며 언제든지 전송할 수 있습니다.",
+      "stakedAssets" : "스테이킹된 자산",
+      "stakedAssetsTooltip" : "베이커에 락업(잠금)된 XTZ입니다. 언스테이킹을 진행하면 약 4일 후부터 출금할 수 있습니다.",
+      "pendingWithdrawable" : "출금 대기 중",
+      "pendingWithdrawableTooltip" : "현재 언스테이킹 중인 XTZ입니다. 약 4일 후 출금할 수 있습니다.",
+      "withdrawableAssets" : "출금 가능 자산",
+      "withdrawableAssetsTooltip" : "언스테이킹 기간이 종료되어 출금 가능한 상태의 XTZ입니다."
     }
   },
   "evm" : {
@@ -6656,7 +6731,8 @@
             "warning" : {
               "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
             },
-            "cta" : "계속"
+            "cta" : "계속",
+            "seiAssociationWarning" : "귀하의 Sei 계정이 아직 온 체인에 연결되지 않았습니다. 계정의 첫 번째 아웃바운드 트랜잭션이 온 체인에서 확인될 때까지 위임이 실패합니다. 먼저 다른 주소로 소량의 SEI를 전송하고, 온 체인 확인을 기다린 후 다시 위임을 진행하세요."
           },
           "validator" : {
             "validators" : "검증인",
@@ -6767,30 +6843,22 @@
     "claimRewards" : {
       "stepperHeader" : {
         "validator" : "수령할 보상 선택",
-        "method" : "보상 수령",
-        "summary" : "요약",
+        "claim" : "보상 수령",
         "selectDevice" : "장치 선택",
         "connectDevice" : "장치 연결",
         "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
       },
       "flow" : {
         "steps" : {
-          "method" : {
+          "claim" : {
             "youEarned" : "획득한 보상",
             "byDelegationAssetsTo" : "자산 위임 대상",
-            "claimReward" : "현금화",
-            "claimRewardCompound" : "컴파운드(Compound)",
-            "claimRewardInfo" : "바로 보상을 수령하여 사용 가능한 잔액에 추가됩니다.",
-            "claimRewardCompoundInfo" : "바로 보상을 수령하여 동일한 검증인에게 자동 위임합니다.",
-            "compoundOrCashIn" : "컴파운드 또는 현금화",
-            "claimRewardTooltip" : "보상이 이용 가능 잔액에 추가됩니다",
-            "claimRewardCompoundTooltip" : "위임된 금액에 보상이 추가됩니다",
+            "description" : "바로 보상을 수령하여 즉시 사용 가능한 자산에 추가합니다.",
             "cta" : "계속"
           },
           "verification" : {
             "success" : {
               "title" : "보상을 성공적으로 수령했습니다. 보상이 이용 가능 잔액에 추가되었습니다.",
-              "titleCompound" : "보상이 동일한 검증인에게 위임되었습니다.",
               "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
               "cta" : "세부사항 보기"
             },
@@ -8027,6 +8095,40 @@
   },
   "market" : {
     "title" : "마켓",
+    "assets" : {
+      "title" : "자산",
+      "emptyFavorites" : "아직 등록된 즐겨찾기가 없습니다",
+      "emptyStocks" : "검색된 주식이 없습니다",
+      "categories" : {
+        "accessibilityLabel" : "자산 카테고리",
+        "all" : "전체",
+        "stocks" : "주식",
+        "favorites" : "즐겨찾기"
+      },
+      "filters" : {
+        "accessibilityLabel" : "자산 필터 열기",
+        "title" : "필터",
+        "sorting" : "정렬",
+        "timeframe" : "기간",
+        "sortingOptions" : {
+          "marketCap" : "시가총액",
+          "volume" : "거래량",
+          "gainers" : "상승 코인",
+          "losers" : "하락 코인"
+        },
+        "timeframeOptions" : {
+          "1D" : "1일",
+          "7D" : "1주",
+          "30D" : "1달",
+          "6M" : "6개월",
+          "1Y" : "1년"
+        }
+      },
+      "error" : {
+        "title" : "자산을 로드할 수 없습니다",
+        "description" : "자산 목록을 불러오는 중에 문제가 발생했습니다. 나중에 다시 시도하세요."
+      }
+    },
     "filters" : {
       "sort" : "분류",
       "filter" : "필터",
@@ -8126,44 +8228,44 @@
         "tooltip" : "Ledger Wallet을 통해 직접 매수하거나 다른 지갑에서 전송 받은 자산을 모두 합산한 평균 단가입니다. 이 가격을 기준으로 손익을 추적합니다."
       },
       "drawer" : {
-        "title" : "자산 손익",
-        "description" : "포트폴리오에서 해당 자산이 기록한 성과를 요약해서 보여줍니다.",
+        "title" : "손익",
+        "description" : "예상 평가 손익 및 실현 수익으로 나뉘어 표시된 자산 운용 실적.",
         "estimatedReturn" : {
-          "title" : "예상 수익",
+          "title" : "평가 손익",
           "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실."
         },
         "realisedReturn" : {
           "title" : "실현 손익",
-          "description" : "과거 자산을 매도 또는 전송하거나 스왑하여 확정된 최종 손익."
+          "description" : "과거 자산 매도, 전송, 스왑 거래로 예상되는 최종 손익."
         },
         "totalReturn" : {
           "title" : "총 손익",
-          "description" : "예상 손익과 실현 손익을 합산한 금액."
+          "description" : "예상 평가 손익과 실현 손익을 합산한 금액."
         }
       }
     },
     "portfolio" : {
+      "title" : "손익",
       "return" : {
         "title" : "평가 손익"
       },
-      "costBasis" : {
-        "title" : "취득 원가",
-        "tooltip" : "수수료를 포함하여 현재 보유 자산을 취득하기 위해 지불한 총 금액."
+      "realised" : {
+        "title" : "실현 손익"
       },
       "drawer" : {
-        "title" : "포트폴리오 손익",
-        "description" : "예상 수익 및 실현 수익으로 나뉘어 표시된 포트폴리오 성과.",
+        "title" : "손익",
+        "description" : "예상 평가 손익 및 실현 수익으로 나뉘어 표시된 포트폴리오 성과.",
         "estimatedReturn" : {
-          "title" : "예상 수익",
+          "title" : "평가 손익",
           "description" : "현재 시세로 팔았을 때 예상되는 수익이나 손실."
         },
         "realisedReturn" : {
           "title" : "실현 손익",
-          "description" : "과거 자산을 매도 또는 전송하거나 스왑하여 확정된 최종 손익."
+          "description" : "과거 자산 매도, 전송, 스왑 거래로 예상되는 최종 손익."
         },
         "totalReturn" : {
           "title" : "총 손익",
-          "description" : "예상 손익과 실현 손익을 합산한 금액."
+          "description" : "예상 평가 손익과 실현 손익을 합산한 금액."
         }
       }
     }
@@ -8838,7 +8940,8 @@
     "title" : "Ledger 동기화",
     "banner" : {
       "title" : "지갑이 동기화되지 않았습니다",
-      "description" : "포트폴리오를 항상 업데이트된 상태로 관리하세요"
+      "description" : "포트폴리오를 항상 업데이트된 상태로 관리하세요",
+      "cta" : "지갑 동기화"
     },
     "entryPoints" : {
       "simpleCta" : {
@@ -9093,18 +9196,32 @@
       "marketPrice" : "시장가",
       "timeframeSelector" : "기간",
       "timeLabel" : {
-        "24h" : "1일",
-        "7d" : "1주",
-        "30d" : "1달",
-        "1y" : "1년"
+        "1d" : "24시간",
+        "1w" : "1주",
+        "1m" : "1달",
+        "6m" : "6개월",
+        "1y" : "1년",
+        "all" : "전체 기간"
       },
-      "chartPlaceholder" : "차트"
+      "range" : {
+        "1d" : "1일",
+        "1w" : "1주",
+        "1m" : "1달",
+        "6m" : "6개월",
+        "1y" : "1년",
+        "all" : "전체"
+      },
+      "chart" : {
+        "received" : "수령됨",
+        "sent" : "전송됨",
+        "transactionsCount" : "{{count}} 트랜잭션"
+      }
     },
     "addresses" : {
-      "title" : "주소",
+      "title" : "계정",
       "addAccount" : "추가",
       "seeAll" : "모두 보기",
-      "empty" : "아직 등록된 주소가 없습니다. 추가를 탭하여 시작하세요."
+      "empty" : "아직 등록된 계정이 없습니다. '추가'를 탭하여 시작하세요."
     },
     "marketStats" : {
       "title" : "시장 통계",
@@ -9117,7 +9234,8 @@
       "marketCapTooltip" : "현재 유통 중인 모든 코인의 총 가치를 의미합니다. 해당 암호화폐의 시가 총액으로 이해할 수 있습니다.",
       "tradingVolume" : "24시간 거래량",
       "tradingVolumeTooltip" : "최근 24시간 동안의 거래량을 의미합니다.",
-      "error" : "시장 통계를 불러올 수 없습니다"
+      "error" : "시장 통계를 불러올 수 없습니다",
+      "disclaimer" : "시장 통계 데이터 출처: CoinGecko"
     },
     "pricePerformance" : {
       "title" : "가격 변동 추이",
@@ -9158,6 +9276,11 @@
       "removeFavourite" : "즐겨찾기에서 제거",
       "hideFromPortfolio" : "포트폴리오에서 숨기기",
       "showInPortfolio" : "포트폴리오에 표시"
+    },
+    "chartOptions" : {
+      "openMenuA11yLabel" : "차트 옵션",
+      "hideTransactions" : "가격 차트에서 활동 숨기기",
+      "showTransactions" : "가격 차트에 활동 표시"
     }
   },
   "assetSelection" : {
@@ -9552,15 +9675,30 @@
   },
   "fearAndGreed" : {
     "title" : "시장 심리 지수",
-    "description" : "트렌드와 활동을 분석하여 전반적 마켓 분위기를 0부터 100 사이 수치로 표시합니다. 이 지수로 현재 시장 상황을 파악해 보세요. 수치가 낮을수록 공포에 가깝고, 높을수록 탐욕이 커짐을 의미합니다.",
+    "description" : "변동성, 시장 모멘텀 및 소셜 트렌드를 바탕으로 전반적인 시장 심리를 0부터 100까지의 수치로 나타냅니다. 수치가 낮을수록 '공포'를, 높을수록 '탐욕'을 의미합니다.",
+    "disclaimer" : "이 데이터는 CoinMarketCap의 공포 탐욕 지수(Fear and Greed Index)를 바탕으로 하며, 단순 정보 제공을 목적으로 합니다.",
     "levels" : {
+      "fearPlus" : "공포+",
       "fear" : "공포",
-      "cautious" : "신중",
       "neutral" : "중립",
-      "optimistic" : "낙관",
-      "greedy" : "탐욕"
+      "greed" : "탐욕",
+      "greedPlus" : "탐욕+"
     },
     "tileTitle" : "시장 심리"
+  },
+  "altcoinSeason" : {
+    "title" : "시즌",
+    "definitionTitle" : "알트코인 인덱스",
+    "description" : "알트코인 인덱스는 기타 암호화폐(알트코인) 대비 비트코인의 시장 성과를 나타내는 지표입니다. 지수가 높을수록 비트코인 대비 알트코인의 성과가 우수하다는 것을 의미합니다.",
+    "disclaimer" : "이 데이터는 CoinMarketCap의 공포 탐욕 지수(Fear and Greed Index)를 바탕으로 하며, 단순 정보 제공을 목적으로 합니다.",
+    "levels" : {
+      "bitcoin" : "비트코인",
+      "altcoin" : "알트코인"
+    }
+  },
+  "marketCapCard" : {
+    "title" : "전체 시가총액",
+    "description" : "전체 시가총액은 시장 전체 암호화폐의 가치를 하나로 합친 금액을 나타냅니다."
   },
   "analyticsAllocation" : {
     "header" : {

@@ -4,7 +4,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { closeModal, openModal } from "~/renderer/actions/modals";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import EditOperationPanel from "../EditOperationPanel";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
@@ -18,7 +18,7 @@ jest.mock("~/renderer/actions/modals", () => ({
 }));
 
 jest.mock("~/renderer/families", () => ({
-  getLLDCoinFamily: jest.fn(() => ({})),
+  useLLDCoinFamily: jest.fn(() => ({})),
 }));
 
 const evmAccount = genAccount("edit-operation-panel-account", {
@@ -56,7 +56,7 @@ describe("EditOperationPanel", () => {
       type: "openModal",
       payload: { modal, data },
     }));
-    (getLLDCoinFamily as jest.Mock).mockReturnValue({});
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({});
   });
 
   it("should not render panel when no edit flow is supported", () => {
@@ -67,7 +67,7 @@ describe("EditOperationPanel", () => {
 
   it("should open family modal with family params when supported by coin family", async () => {
     const familyParams = { accountId: "acc-1", transactionHash: "family-tx-hash" };
-    (getLLDCoinFamily as jest.Mock).mockReturnValue({
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({
       handlesEditTransaction: () => ({
         modalName: "MODAL_EVM_EDIT_TRANSACTION",
         params: familyParams,
@@ -98,7 +98,7 @@ describe("EditOperationPanel", () => {
       },
       transactionHash: "tx-hash",
     };
-    (getLLDCoinFamily as jest.Mock).mockReturnValue({
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({
       handlesEditTransaction: () => ({
         modalName: "MODAL_BITCOIN_EDIT_TRANSACTION",
         params: familyParams,

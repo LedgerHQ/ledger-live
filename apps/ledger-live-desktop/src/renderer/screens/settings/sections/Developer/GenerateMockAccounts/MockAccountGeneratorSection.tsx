@@ -7,6 +7,7 @@ import MockAccountGenerator from "./MockAccountGenerator";
 import CustomMockAccountGenerator from "./CustomMockAccountGenerator";
 import EmptyAccountGenerator from "./EmptyAccountGenerator";
 import StablecoinMockAccountGenerator from "./StablecoinMockAccountGenerator";
+import StocksMockAccountGenerator from "./StocksMockAccountGenerator";
 
 type MockAccountGeneratorSectionContentProps = {
   expanded: boolean;
@@ -38,6 +39,10 @@ export const MockAccountGeneratorSectionContent = ({
           <StablecoinMockAccountGenerator
             title={t("settings.developer.mockAccounts.stablecoinGenerate.title")}
             desc={t("settings.developer.mockAccounts.stablecoinGenerate.desc")}
+          />
+          <StocksMockAccountGenerator
+            title={t("settings.developer.mockAccounts.stocksGenerate.title")}
+            desc={t("settings.developer.mockAccounts.stocksGenerate.desc")}
           />
         </Flex>
       )}

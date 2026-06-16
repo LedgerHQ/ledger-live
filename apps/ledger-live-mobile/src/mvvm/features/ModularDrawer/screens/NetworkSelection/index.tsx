@@ -46,7 +46,7 @@ const NetworkSelection = ({
   const handleNetworkClick = useCallback(
     (networkId: string) => {
       const originalNetwork = availableNetworks.find(n =>
-        n.type === "CryptoCurrency" ? n.id === networkId : n.parentCurrency.id === networkId,
+        n.type === "CryptoCurrency" ? n.id === networkId : n.parentCurrencyId === networkId,
       );
       if (originalNetwork) {
         trackModularDrawerEvent(

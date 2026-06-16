@@ -2,7 +2,6 @@
  * Tests for token persistence utilities
  */
 
-import { findCryptoCurrencyById } from "../currencies";
 import {
   toTokenCurrencyRaw,
   fromTokenCurrencyRaw,
@@ -28,7 +27,7 @@ describe("Token Persistence", () => {
     type: "TokenCurrency",
     id: "ethereum/erc20/usdt",
     contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-    parentCurrency: findCryptoCurrencyById("ethereum")!,
+    parentCurrencyId: "ethereum",
     tokenType: "erc20",
     name: "Tether USD",
     ticker: "USDT",
@@ -95,8 +94,7 @@ describe("Token Persistence", () => {
       expect(token).toBeDefined();
       expect(token!.id).toBe("ethereum/erc20/usdt");
       expect(token!.contractAddress).toBe("0xdac17f958d2ee523a2206206994597c13d831ec7");
-      expect(token!.parentCurrency).toBeDefined();
-      expect(token!.parentCurrency.id).toBe("ethereum");
+      expect(token!.parentCurrencyId).toBe("ethereum");
       expect(token!.tokenType).toBe("erc20");
     });
 
@@ -135,7 +133,7 @@ describe("Token Persistence", () => {
       expect(token).toBeDefined();
       expect(token!.id).toBe(mockToken.id);
       expect(token!.contractAddress).toBe(mockToken.contractAddress);
-      expect(token!.parentCurrency.id).toBe(mockToken.parentCurrency.id);
+      expect(token!.parentCurrencyId).toBe(mockToken.parentCurrencyId);
       expect(token!.name).toBe(mockToken.name);
       expect(token!.ticker).toBe(mockToken.ticker);
     });
@@ -251,7 +249,7 @@ describe("Token Persistence", () => {
                 endpointName: "findTokenByAddressInCurrency",
                 originalArgs: {
                   contract_address: mockToken.contractAddress,
-                  network: mockToken.parentCurrency.id,
+                  network: mockToken.parentCurrencyId,
                   token_identifier: "MYTOKEN-abc123",
                 },
                 fulfilledTimeStamp: Date.now(),
@@ -305,7 +303,7 @@ describe("Token Persistence", () => {
                 endpointName: "findTokenByAddressInCurrency",
                 originalArgs: {
                   contract_address: mockToken.contractAddress,
-                  network: mockToken.parentCurrency.id,
+                  network: mockToken.parentCurrencyId,
                   token_identifier: "MYTOKEN-abc123",
                 },
                 fulfilledTimeStamp: Date.now(),
@@ -701,7 +699,7 @@ describe("Token Persistence", () => {
       const polygonToken: TokenCurrency = {
         ...mockToken,
         id: "polygon/erc20/usdt",
-        parentCurrency: findCryptoCurrencyById("polygon")!,
+        parentCurrencyId: "polygon",
       };
 
       mockDispatch.mockImplementation(async action => {
@@ -908,7 +906,7 @@ describe("Token Persistence", () => {
                 endpointName: "findTokenByAddressInCurrency",
                 originalArgs: {
                   contract_address: mockToken.contractAddress,
-                  network: mockToken.parentCurrency.id,
+                  network: mockToken.parentCurrencyId,
                   token_identifier: "MYTOKEN-abc123",
                 },
                 fulfilledTimeStamp: Date.now(),
@@ -1071,6 +1069,5 @@ describe("Token Persistence", () => {
       };
       expect(persistedCALContentEqual(a, b)).toBe(false);
     });
-
   });
 });

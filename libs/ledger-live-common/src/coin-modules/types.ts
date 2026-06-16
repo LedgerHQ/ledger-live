@@ -13,6 +13,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type Prando from "prando";
 import type { Resolver } from "../hw/getAddress/types";
@@ -131,6 +132,8 @@ export type CoinModuleLoader<
   URaw extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
 > = {
   family: string;
+  /** Currencies this loader supports. */
+  supportedCoins: CryptoCurrencyId[];
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;

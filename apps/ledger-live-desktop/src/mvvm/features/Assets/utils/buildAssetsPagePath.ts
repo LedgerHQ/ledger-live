@@ -2,6 +2,7 @@ import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_QUERY,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
+  ASSETS_PAGE_CATEGORY_STOCKS,
   type AssetsPageCategory,
 } from "../constants";
 
@@ -14,5 +15,6 @@ export function buildAssetsPagePath(category: AssetsPageCategory): string {
 export function parseAssetsPageCategory(searchParams: URLSearchParams): AssetsPageCategory {
   const raw = searchParams.get(ASSETS_PAGE_CATEGORY_QUERY);
   if (raw === ASSETS_PAGE_CATEGORY_CRYPTOS) return ASSETS_PAGE_CATEGORY_CRYPTOS;
+  if (raw === ASSETS_PAGE_CATEGORY_STOCKS) return ASSETS_PAGE_CATEGORY_STOCKS;
   return ASSETS_PAGE_CATEGORY_STABLECOINS;
 }

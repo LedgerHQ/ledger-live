@@ -25,6 +25,7 @@ const config: PlaywrightTestConfig = {
   workers: "100%",
   reporter: process.env.CI
     ? [
+        ["github"],
         ["list"],
         [
           "allure-playwright",

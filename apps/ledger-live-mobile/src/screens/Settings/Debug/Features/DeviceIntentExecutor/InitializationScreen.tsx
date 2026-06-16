@@ -92,7 +92,6 @@ export default function DebugDeviceIntentExecutorInitialization() {
       onIntentJobError: (error: unknown) => {
         setJobError(error);
       },
-      cancellableUI: true,
       cancelIntentRequestId: undefined,
       onUserCancel: handleUserCancel,
     }),

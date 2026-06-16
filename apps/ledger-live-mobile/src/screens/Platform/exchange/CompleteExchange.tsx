@@ -11,7 +11,7 @@ import { PlatformExchangeNavigatorParamList } from "~/components/RootNavigator/t
 import { ScreenName } from "~/const";
 import { useTransactionDeviceAction, useCompleteExchangeDeviceAction } from "~/hooks/deviceActions";
 import { mevProtectionSelector } from "~/reducers/settings";
-import { SignedOperation } from "@ledgerhq/types-live";
+import { BroadcastConfig, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import LoadingIndicator from "LLM/features/Web3Hub/components/ManifestsList/LoadingIndicator";
@@ -35,23 +35,30 @@ const PlatformCompleteExchange: React.FC<Props> = ({
 
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
-  const broadcast = useBroadcast({
-    account,
-    parentAccount,
-    broadcastConfig: {
+  const broadcastConfig = useMemo<BroadcastConfig>(
+    () => ({
       mevProtected,
       sponsored: request.sponsored,
       source: { type: "swap", name: request.provider },
-    },
+    }),
+    [mevProtected, request.sponsored, request.provider],
+  );
+
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+    broadcastConfig,
     logger: broadcastLogger,
   });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
   const hasPopped = useRef(false);
+  const hasBroadcastedTransaction = useRef(false);
 
   useEffect(() => {
-    if (signedOperation) {
+    if (signedOperation && !hasBroadcastedTransaction.current) {
+      hasBroadcastedTransaction.current = true;
       broadcast(signedOperation).then(
         operation => {
           onResult({ operation });

@@ -549,7 +549,7 @@ export function useWalletAPIServer({
         const accountCurrencyId =
           account.type === "TokenAccount" ? account.token.id : account.currency.id;
         const parentCurrencyId =
-          account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
+          account.type === "TokenAccount" ? account.token.parentCurrencyId : account.currency.id;
 
         // Check if account currency ID matches the effective patterns
         const isAllowed =
@@ -753,7 +753,7 @@ export function useWalletAPIServer({
 
             const networkId =
               account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
+                ? account.token.parentCurrencyId
                 : account.currency.id;
 
             const broadcastTrackingData = {
@@ -804,7 +804,7 @@ export function useWalletAPIServer({
           (account, parentAccount, signFlowInfos) => {
             currency =
               account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
+                ? account.token.parentCurrencyId
                 : account.currency.id;
             return new Promise((resolve, reject) => {
               let done = false;
@@ -885,7 +885,7 @@ export function useWalletAPIServer({
 
               const networkId =
                 account.type === "TokenAccount"
-                  ? account.token.parentCurrency.id
+                  ? account.token.parentCurrencyId
                   : account.currency.id;
 
               const broadcastTrackingData = {
@@ -981,7 +981,7 @@ export function useWalletAPIServer({
 
             const networkId =
               account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
+                ? account.token.parentCurrencyId
                 : account.currency.id;
 
             const broadcastTrackingData = {

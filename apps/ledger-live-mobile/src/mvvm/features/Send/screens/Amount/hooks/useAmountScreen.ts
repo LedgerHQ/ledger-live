@@ -14,6 +14,7 @@ type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
   onGetFunds: () => void;
   onSelectCoinControl: () => void;
+  onSelectCustomFees: () => void;
 }>;
 
 export type AmountScreenViewModel =
@@ -51,8 +52,12 @@ export function useAmountScreen(): AmountScreenViewModel {
     navigation.navigate(ScreenName.SendFlowCoinControl);
   }, [navigation]);
 
+  const onSelectCustomFees = useCallback(() => {
+    navigation.navigate(ScreenName.SendFlowCustomFees);
+  }, [navigation]);
+
   if (!account || !transaction || !status || !uiConfig || !transactionActions) {
-    return { ready: false, onReview, onGetFunds, onSelectCoinControl };
+    return { ready: false, onReview, onGetFunds, onSelectCoinControl, onSelectCustomFees };
   }
 
   return {
@@ -68,5 +73,6 @@ export function useAmountScreen(): AmountScreenViewModel {
     onReview,
     onGetFunds,
     onSelectCoinControl,
+    onSelectCustomFees,
   };
 }

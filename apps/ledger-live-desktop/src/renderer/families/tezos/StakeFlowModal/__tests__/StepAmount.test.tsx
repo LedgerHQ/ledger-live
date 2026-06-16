@@ -1,10 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { act, render, screen } from "tests/testSetup";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { TezosAccount, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import type { StepProps } from "../types";
@@ -53,7 +50,6 @@ jest.mock("~/renderer/modals/Send/AccountFooter", () => ({
 
 import StepAmount from "../steps/StepAmount";
 
-setSupportedCurrencies(["tezos"]);
 const currency = getCryptoCurrencyById("tezos");
 
 const makeAccount = (): TezosAccount =>

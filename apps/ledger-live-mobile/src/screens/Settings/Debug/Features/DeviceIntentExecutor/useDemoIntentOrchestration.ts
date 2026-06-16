@@ -249,7 +249,6 @@ export function useDemoIntentOrchestration({
       onIntentJobStateChanged: handleJobStateChanged,
       onIntentJobComplete: handleJobComplete,
       onIntentJobError: handleJobError,
-      cancellableUI: true,
       cancelIntentRequestId: undefined,
       onUserCancel: () => {
         setEnabled(false);

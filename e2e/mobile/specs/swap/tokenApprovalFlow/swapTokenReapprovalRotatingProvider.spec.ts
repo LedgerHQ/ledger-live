@@ -12,7 +12,7 @@ const eligibleProviders = [
 const provider = pickRotatingProvider(eligibleProviders);
 
 const swapTokenReapprovalFlowTestConfig = {
-  fromAccount: TokenAccount.ETH_USDC_1,
+  fromAccount: TokenAccount.ETH_USDT_1,
   toAccount: Account.ETH_1,
   provider,
   tmsLinks: ["B2CQA-4012"],

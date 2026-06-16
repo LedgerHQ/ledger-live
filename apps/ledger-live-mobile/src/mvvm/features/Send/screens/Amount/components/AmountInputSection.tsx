@@ -21,13 +21,18 @@ export function AmountInputSection({ viewModel, message, toggleLabel }: AmountIn
         paddingBottom: theme.spacings.s16,
       },
       inputRow: {
+        width: "100%",
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
         position: "relative",
       },
       toggleButton: {
         position: "absolute",
-        right: -theme.spacings.s48,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        justifyContent: "center",
       },
       secondaryValue: {
         marginTop: theme.spacings.s8,

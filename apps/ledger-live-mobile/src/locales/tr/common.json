@@ -895,6 +895,9 @@
     "MustDelegateBeforeStaking" : {
       "title" : "Lütfen stake etmeden önce hesabınızla yetki devredin"
     },
+    "TezosNotEnoughStaked" : {
+      "title" : "Stake edilen bakiye yetersiz"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
     },
@@ -1907,6 +1910,14 @@
           "buyNanoX" : "Ledger Nano X satın alın",
           "discoverBenefits" : "Avantajlarını keşfedin"
         }
+      }
+    },
+    "counterfeitWarning" : {
+      "title" : "Başlamadan önce",
+      "body" : "<ledgerCom>Ledger.com</ledgerCom>'dan veya <resellerLink>resmî bayi ağımızdan</resellerLink> satın almanızı öneririz. Bu, cihazınızın orijinal ve kullanım için güvenli olmasını sağlar.",
+      "cta" : {
+        "primary" : "Kuruluma devam et",
+        "secondary" : "Daha fazla bilgi"
       }
     },
     "stepNewDevice" : {
@@ -2965,6 +2976,7 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
+      "FINALIZE_UNSTAKE" : "Çekildi",
       "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
       "CONTRACT_CALL" : "Sözleşme çağrısı",
       "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
@@ -3668,6 +3680,7 @@
           "description" : "Ham Braze benzeri kartlar oluşturun, bunları genel farkındalık modalı ayrıştırıcısından geçirin, ardından drawer'ı görüntülemek için Portföy'e dönün.",
           "carousel" : "Galeri",
           "featureIntro" : "Özellik tanıtımı",
+          "prompt" : "Prompt",
           "appStart" : "Uygulama başlangıcı",
           "deeplink" : "Derin bağlantı (Deeplink)",
           "campaignId" : "Kampanya Kimliği",
@@ -3689,6 +3702,8 @@
           "createCarouselDesc" : "Karusel tipi genel farkındalık modalı oluşturmak için bir form açın.",
           "createFeatureIntro" : "Özellik Tanıtımı Genel Farkındalık Modalı Oluştur",
           "createFeatureIntroDesc" : "Özellik tanıtımı genel farkındalık modalı oluşturmak için bir form açın.",
+          "createPrompt" : "Prompt Genel Farkındalık Modalı Oluştur",
+          "createPromptDesc" : "Prompt genel farkındalık modalı oluşturmak için form aç",
           "openCurrent" : "Mevcut kampanyayı aç",
           "openCurrentDesc" : "Bu kampanya için drawer (çekmece) durumunu ayarlayın. Görüntülemek için Portföy'e dönün.",
           "clear" : "Genel farkındalık modal'larını temizle",
@@ -5855,11 +5870,11 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "ADA varlıklarınızın yetkisini bir havuza devrederek ödüller kazanabilirsiniz.",
+            "description" : "ADA varlıklarınızla bir havuza yetki devrederek ödüller kazanabilirsiniz.",
             "steps" : {
               "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
               "1" : "Ledger cihazınızı kullanarak yetki devredin.",
-              "2" : "Varlıkların yetkisini farklı bir havuza yeniden devredebilir veya yetki devrini istediğiniz zaman iptal edebilirsiniz."
+              "2" : "Varlıklarınızla farklı bir havuza yeniden yetki devredebilir veya yetki devrini istediğiniz zaman iptal edebilirsiniz."
             },
             "cta" : "Devam"
           },
@@ -6599,6 +6614,66 @@
       "status" : "Durum",
       "unstaking" : "Staking durduruluyor",
       "available" : "Mevcut"
+    },
+    "earnRewards" : {
+      "title" : "Ödüller kazanın",
+      "steps" : {
+        "delegate" : "Yetki Devret",
+        "stake" : "Stake edin"
+      },
+      "delegation" : {
+        "step" : "Adım 1 · Yetki Devri",
+        "title" : "Risksiz ödüller kazanın",
+        "subtitle" : "Kilitleme yok, risk yok.",
+        "bullets" : {
+          "0" : "Tüm bakiyeniz ile yetki devredilecek",
+          "1" : "Yetki devrinde kullanılan fonlar hesabınızda kalır",
+          "2" : "XTZ varlıklarınızı istediğiniz zaman harcayın"
+        }
+      },
+      "staking" : {
+        "step" : "Adım 2 · Staking",
+        "title" : "Daha yüksek ödüller kazanın",
+        "subtitle" : "Önce aktif yetki devri gerektirir.",
+        "bullets" : {
+          "0" : "İstediğiniz kadar stake edin",
+          "1" : "Stake edilen fonlar hesabınızda kilitlenir",
+          "2" : "Stake'i yalnızca 4 günde durdurabilirsiniz"
+        }
+      },
+      "learnMore" : "Staking ve yetki devri hakkında daha fazla bilgi edinin",
+      "cta" : "Kazanmaya başlayın"
+    },
+    "stake" : {
+      "flow" : {
+        "amount" : {
+          "disclaimer" : "Staking, siz stake etmeyi durdurana kadar XTZ varlıklarınızı kilitler.",
+          "awaitingDelegation" : "Yetki devriniz onaylanıyor. Bu genellikle en fazla bir dakika sürer...",
+          "cta" : "Tezos varlıklarınızı stake edin"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "Staking gönderildi",
+              "text" : "Staking ödülleri başlamadan önce sadece 4 günlük bekleme süresi. Ardından, ödüller günlük olarak dağıtılır ve otomatik olarak bileştirilir."
+            }
+          }
+        },
+        "delegationSuccess" : {
+          "cta" : "Daha fazla ödül için Tezos varlıklarınızı stake edin",
+          "info" : "Tezos stake etme ve yetki devri hakkında daha fazla bilgi edinin"
+        }
+      }
+    },
+    "account" : {
+      "availableBalanceTooltip" : "Hemen kullanabileceğiniz fonlar.",
+      "delegatedAssetsTooltip" : "Bir baker'a XTZ ile yetki devredildi. Fonlar cüzdanınızda kalır ve istenildiğinde gönderilebilir.",
+      "stakedAssets" : "Stake edilen varlıklar",
+      "stakedAssetsTooltip" : "XTZ, baker'ınızda kilitlendi. Fonlarınızı yaklaşık 4 gün içinde çekilebilir hâle getirmek için onları stake etmeyi durdurun.",
+      "pendingWithdrawable" : "Çekilebilir olmayı bekliyor",
+      "pendingWithdrawableTooltip" : "XTZ stake'i durduruluyor. Yaklaşık 4 gün içinde çekime hazır olacak.",
+      "withdrawableAssets" : "Çekilebilir varlıklar",
+      "withdrawableAssetsTooltip" : "Stake durdurma süresini tamamlamış ve çekilmeye hazır olan XTZ."
     }
   },
   "evm" : {
@@ -6656,7 +6731,8 @@
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
             },
-            "cta" : "Devam"
+            "cta" : "Devam",
+            "seiAssociationWarning" : "Sei hesabınız henüz zincir üstü bağlanmadı. Hesabınızın ilk giden işlemi zincir üstü onaylanana kadar delegasyon başarısız olacaktır. Önce herhangi bir adrese küçük bir tutar SEI gönderin, onayları bekleyin, ardından yetki devretmek için geri dönün."
           },
           "validator" : {
             "validators" : "Doğrulayıcılar",
@@ -6767,30 +6843,22 @@
     "claimRewards" : {
       "stepperHeader" : {
         "validator" : "Alınacak ödülü seçin",
-        "method" : "Ödüllerinizi alın",
-        "summary" : "Özet",
+        "claim" : "Ödüllerinizi alın",
         "selectDevice" : "Cihaz seçin",
         "connectDevice" : "Cihazı bağlayın",
         "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
       },
       "flow" : {
         "steps" : {
-          "method" : {
+          "claim" : {
             "youEarned" : "Varlıkları şuna tayin ederek",
             "byDelegationAssetsTo" : "kazandınız:",
-            "claimReward" : "Hesaba al",
-            "claimRewardCompound" : "Birleştir",
-            "claimRewardInfo" : "Bu ödüller şimdi alınacak ve mevcut bakiyenize eklenecektir.",
-            "claimRewardCompoundInfo" : "Bu ödüller şimdi alınacak ve otomatik olarak aynı doğrulayıcıya devredilecektir.",
-            "compoundOrCashIn" : "Birleştirilsin mi, hesaba mı alınsın?",
-            "claimRewardTooltip" : "Ödüller mevcut bakiyeye eklenecek",
-            "claimRewardCompoundTooltip" : "Ödüller, yetkisi devredilen tutara eklenecektir",
+            "description" : "Ödüller şimdi toplanacak ve mevcut bakiyenize eklenecektir.",
             "cta" : "Devam"
           },
           "verification" : {
             "success" : {
               "title" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
-              "titleCompound" : "Ödüllerinizin yetkileri aynı doğrulayıcıya devredildi.",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
               "cta" : "Ayrıntıları gör"
             },
@@ -8027,6 +8095,40 @@
   },
   "market" : {
     "title" : "Piyasa",
+    "assets" : {
+      "title" : "Varlıklar",
+      "emptyFavorites" : "Henüz favori yok",
+      "emptyStocks" : "Hisse bulunamadı",
+      "categories" : {
+        "accessibilityLabel" : "Varlık kategorileri",
+        "all" : "Tümü",
+        "stocks" : "Hisseler",
+        "favorites" : "Favoriler"
+      },
+      "filters" : {
+        "accessibilityLabel" : "Varlık filtrelerini aç",
+        "title" : "Filtreler",
+        "sorting" : "Sıralama",
+        "timeframe" : "Zaman aralığı",
+        "sortingOptions" : {
+          "marketCap" : "Piyasa değeri",
+          "volume" : "Hacim",
+          "gainers" : "Yükselenler",
+          "losers" : "Düşenler"
+        },
+        "timeframeOptions" : {
+          "1D" : "1 gün",
+          "7D" : "1 hafta",
+          "30D" : "1 ay",
+          "6M" : "6 ay",
+          "1Y" : "1 yıl"
+        }
+      },
+      "error" : {
+        "title" : "Varlıklar yüklenemedi",
+        "description" : "Varlık listesi yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin."
+      }
+    },
     "filters" : {
       "sort" : "Sırala",
       "filter" : "Filtre",
@@ -8126,44 +8228,44 @@
         "tooltip" : "Satın aldığınız veya diğer cüzdanlardan transfer aldığınız her şey dâhil olmak üzere, Ledger Wallet üzerinden bu varlık için ödediğiniz ortalama fiyat. Bu, kârınızı veya zararınızı izlemek için kullanılır."
       },
       "drawer" : {
-        "title" : "Varlık kâr ve zararı",
-        "description" : "Bu varlığın portföyünüzde nasıl bir performans sergilediğine dair bir özet.",
+        "title" : "Kâr ve zarar",
+        "description" : "Varlıklarınızın performansının, tahmini gerçekleşmemiş ve gerçekleşmiş getiriler olarak kırılımı.",
         "estimatedReturn" : {
-          "title" : "Tahmini getiri",
+          "title" : "Gerçekleşmemiş getiri",
           "description" : "Mevcut fiyat üzerinden satılırsa tahmini kâr veya zarar."
         },
         "realisedReturn" : {
           "title" : "Gerçekleşen getiri",
-          "description" : "Önceki satış, gönderim veya takas sonrası gerçekleşmiş kâr veya zarar."
+          "description" : "Önceki satış, gönderim veya takastan tahmin edilen kâr veya zarar."
         },
         "totalReturn" : {
           "title" : "Toplam getiri",
-          "description" : "Tahmini ve gerçekleşmiş getirilerin toplamı."
+          "description" : "Tahmini gerçekleşmemiş ve gerçekleşmiş getirilerin toplamı."
         }
       }
     },
     "portfolio" : {
+      "title" : "Kâr ve zarar",
       "return" : {
         "title" : "Gerçekleşmemiş getiri"
       },
-      "costBasis" : {
-        "title" : "Maliyet tabanı",
-        "tooltip" : "Ücretler dâhil olmak üzere mevcut varlıklarınızı edinmek için ödediğiniz toplam tutar."
+      "realised" : {
+        "title" : "Gerçekleşen getiri"
       },
       "drawer" : {
-        "title" : "Portföy kâr ve zararı",
-        "description" : "Portföy performansının, tahmini ve gerçekleşmiş getiriler olarak kırılımı.",
+        "title" : "Kâr ve zarar",
+        "description" : "Portföy performansının, tahmini gerçekleşmemiş ve gerçekleşmiş getiriler olarak kırılımı.",
         "estimatedReturn" : {
-          "title" : "Tahmini getiri",
+          "title" : "Gerçekleşmemiş getiri",
           "description" : "Mevcut fiyat üzerinden satılırsa tahmini kâr veya zarar."
         },
         "realisedReturn" : {
           "title" : "Gerçekleşen getiri",
-          "description" : "Önceki satış, gönderim veya takas sonrası gerçekleşmiş kâr veya zarar."
+          "description" : "Önceki satış, gönderim veya takastan tahmin edilen kâr veya zarar."
         },
         "totalReturn" : {
           "title" : "Toplam getiri",
-          "description" : "Tahmini ve gerçekleşmiş getirilerin toplamı."
+          "description" : "Tahmini gerçekleşmemiş ve gerçekleşmiş getirilerin toplamı."
         }
       }
     }
@@ -8838,7 +8940,8 @@
     "title" : "Ledger Sync",
     "banner" : {
       "title" : "Cüzdanınız senkronize değil",
-      "description" : "Portföyünüzü güncel tutun"
+      "description" : "Portföyünüzü güncel tutun",
+      "cta" : "Cüzdanınızı senkronize edin"
     },
     "entryPoints" : {
       "simpleCta" : {
@@ -9093,18 +9196,32 @@
       "marketPrice" : "Piyasa fiyatı",
       "timeframeSelector" : "Zaman aralığı",
       "timeLabel" : {
-        "24h" : "1 gün",
-        "7d" : "1 hafta",
-        "30d" : "1 ay",
-        "1y" : "1 yıl"
+        "1d" : "24 saatte",
+        "1w" : "1 hafta",
+        "1m" : "1 ay",
+        "6m" : "6 ay",
+        "1y" : "1 yıl",
+        "all" : "Tüm zamanlar"
       },
-      "chartPlaceholder" : "Grafik"
+      "range" : {
+        "1d" : "1G",
+        "1w" : "1H",
+        "1m" : "1A",
+        "6m" : "6A",
+        "1y" : "1Y",
+        "all" : "TÜMÜ"
+      },
+      "chart" : {
+        "received" : "Alındı",
+        "sent" : "Gönderildi",
+        "transactionsCount" : "{{count}} işlem"
+      }
     },
     "addresses" : {
-      "title" : "Adresler",
+      "title" : "Hesaplar",
       "addAccount" : "Ekle",
       "seeAll" : "Tümünü gör",
-      "empty" : "Henüz adres yok. Başlamak için Ekle seçeneğine dokunun."
+      "empty" : "Henüz hesap yok. Başlamak için Ekle seçeneğine dokunun."
     },
     "marketStats" : {
       "title" : "Piyasa istatistikleri",
@@ -9117,7 +9234,8 @@
       "marketCapTooltip" : "Dolaşımdaki tüm coinlerin toplam değeri. Bunu kriptonun piyasadaki toplam değeri olarak düşünün.",
       "tradingVolume" : "24 saatlik işlem hacmi",
       "tradingVolumeTooltip" : "Son 24 saatte işlem gören toplam tutar.",
-      "error" : "Piyasa istatistikleri yüklenemiyor."
+      "error" : "Piyasa istatistikleri yüklenemiyor.",
+      "disclaimer" : "Piyasa istatistikleri CoinGecko kaynaklıdır"
     },
     "pricePerformance" : {
       "title" : "Fiyat performansı",
@@ -9158,6 +9276,11 @@
       "removeFavourite" : "Favorilerden kaldır",
       "hideFromPortfolio" : "Portföyden gizle",
       "showInPortfolio" : "Portföyde göster"
+    },
+    "chartOptions" : {
+      "openMenuA11yLabel" : "Grafik seçenekleri",
+      "hideTransactions" : "Fiyat grafiğinde etkinliği gizle",
+      "showTransactions" : "Fiyat grafiğinde etkinliği göster"
     }
   },
   "assetSelection" : {
@@ -9552,15 +9675,30 @@
   },
   "fearAndGreed" : {
     "title" : "Duygu endeksi",
-    "description" : "Trendlere ve olaylara dayalı olarak genel piyasa duyarlılığını 0 ile 100 arasında gösterir. Bunu piyasanın nasıl davrandığını anlamak için kullanın. Düşük değerler korkuyu, yüksek değerler coşkuyu ifade eder.",
+    "description" : "Özellikle oynaklık, piyasa momentumu ve sosyal trendlere dayalı olarak genel piyasa duyarlılığını 0 ile 100 arasında gösterir. Düşük değerler korkuyu, yüksek değerler coşkuyu ifade eder.",
+    "disclaimer" : "Veriler, CoinMarketCap'in Korku ve Açgözlülük Endeksi'nden alınmıştır ve yalnızca bilgilendirme amacıyla sunulmaktadır.",
     "levels" : {
+      "fearPlus" : "Aşırı Korku",
       "fear" : "Korku",
-      "cautious" : "Dikkatli",
       "neutral" : "Nötr",
-      "optimistic" : "İyimser",
-      "greedy" : "Coşkulu"
+      "greed" : "Coşku",
+      "greedPlus" : "Aşırı Coşku"
     },
     "tileTitle" : "Duygu"
+  },
+  "altcoinSeason" : {
+    "title" : "Sezon",
+    "definitionTitle" : "Altcoin endeksi",
+    "description" : "Altcoin endeksi, alternatif kripto para birimlerinin Bitcoin'e kıyasla nasıl bir performans gösterdiğini gösterir. Bu değer ne kadar yüksekse, altcoin'ler Bitcoin karşısında o kadar iyi performans gösteriyor demektir.",
+    "disclaimer" : "Veriler, CoinMarketCap'in Korku ve Açgözlülük Endeksi'nden alınmıştır ve yalnızca bilgilendirme amacıyla sunulmaktadır.",
+    "levels" : {
+      "bitcoin" : "Bitcoin",
+      "altcoin" : "Altcoin"
+    }
+  },
+  "marketCapCard" : {
+    "title" : "Toplam Piyasa Değeri",
+    "description" : "Toplam piyasa değeri, tüm kripto paraların toplam piyasa değerini ifade eder."
   },
   "analyticsAllocation" : {
     "header" : {

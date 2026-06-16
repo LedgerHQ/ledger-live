@@ -2,10 +2,12 @@ import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import aleoCoinConfig from "../config";
-import { MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION, TRANSACTION_TYPE } from "../constants";
+import { MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION } from "../constants";
 import { estimateFees } from "../logic";
 import {
   calculateAmount,
+  derivePrivateTransactionMode,
+  derivePublicTransactionMode,
   findBestRecordForFee,
   isPrivateTransaction,
   isSelfTransferTransaction,
@@ -20,44 +22,6 @@ import type {
   TransactionPrivate as AleoTransactionPrivate,
   AleoUnspentRecord,
 } from "../types";
-
-// useBridgeTransaction.setAccount preserves the previous mode and only patches subAccountId,
-// so main/sub-account switches can leave a native mode on a token tx (or vice versa).
-function derivePublicTransactionMode({
-  isTokenTx,
-  isSelfTransfer,
-}: {
-  isTokenTx: boolean;
-  isSelfTransfer: boolean;
-}): AleoTransaction["mode"] {
-  if (isTokenTx) {
-    return isSelfTransfer
-      ? TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
-      : TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC;
-  }
-
-  return isSelfTransfer
-    ? TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
-    : TRANSACTION_TYPE.TRANSFER_PUBLIC;
-}
-
-function derivePrivateTransactionMode({
-  isTokenTx,
-  isSelfTransfer,
-}: {
-  isTokenTx: boolean;
-  isSelfTransfer: boolean;
-}): AleoTransactionPrivate["mode"] {
-  if (isTokenTx) {
-    return isSelfTransfer
-      ? TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
-      : TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
-  }
-
-  return isSelfTransfer
-    ? TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
-    : TRANSACTION_TYPE.TRANSFER_PRIVATE;
-}
 
 function getAmountRecordCommitments({
   transaction,

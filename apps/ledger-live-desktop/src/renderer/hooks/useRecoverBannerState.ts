@@ -13,6 +13,8 @@ export type RecoverBannerState = {
   displayBanner: boolean;
 };
 
+export const DEFAULT_PROTECT_ID = "protect-prod";
+
 const DISPLAY_BANNER_STORAGE_KEY = "DISPLAY_BANNER";
 const SUBSCRIPTION_STATE_STORAGE_KEY = "SUBSCRIPTION_STATE";
 

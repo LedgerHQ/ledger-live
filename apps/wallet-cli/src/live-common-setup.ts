@@ -1,5 +1,4 @@
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { walletCliConfig } from "./config";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
@@ -33,6 +32,7 @@ process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 const walletCliLoaders: CoinModuleLoader[] = [
   {
     family: "bitcoin",
+    supportedCoins: ["bitcoin"],
     loadSetup: () => import("@ledgerhq/live-common/families/bitcoin/setup"),
     loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -45,6 +45,7 @@ const walletCliLoaders: CoinModuleLoader[] = [
   },
   {
     family: "evm",
+    supportedCoins: ["ethereum"],
     loadSetup: () => import("@ledgerhq/live-common/families/evm/setup"),
     loadTransaction: () => import("@ledgerhq/coin-evm/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -62,6 +63,7 @@ const walletCliLoaders: CoinModuleLoader[] = [
   },
   {
     family: "solana",
+    supportedCoins: ["solana"],
     loadSetup: () =>
       import("@ledgerhq/live-common/families/solana/setup").then(setup => {
         // Set on the resolved instance lazily rather than eagerly at startup,
@@ -90,7 +92,6 @@ export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId
 
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
-setSupportedCurrencies([...WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS]);
 LiveConfig.setConfig(walletCliConfig);
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
 // instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).

@@ -4,6 +4,7 @@ import {
   flattenAccounts,
   getAccountCurrency,
   getAccountHistoryBalances,
+  isAccountEmpty,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type {
@@ -304,7 +305,8 @@ export function getPortfolio(
 
   return {
     balanceHistory,
-    balanceAvailable: accounts.length === 0 || availables.length > 0,
+    balanceAvailable:
+      accounts.length === 0 || availables.length > 0 || unavailableAccounts.every(isAccountEmpty),
     availableAccounts: availables.map(a => a.account),
     unavailableCurrencies: [...new Set(unavailableAccounts.map(a => getAccountCurrency(a)))],
     accounts,

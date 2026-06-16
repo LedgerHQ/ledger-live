@@ -1,4 +1,5 @@
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   PlatformCurrency,
@@ -17,7 +18,7 @@ export function isPlatformSupportedCurrency(
     return includes(PLATFORM_FAMILIES, currency.family);
   }
   if (isTokenCurrency(currency)) {
-    return includes(PLATFORM_FAMILIES, currency.parentCurrency.family);
+    return includes(PLATFORM_FAMILIES, getCryptoCurrencyById(currency.parentCurrencyId).family);
   }
   return false;
 }

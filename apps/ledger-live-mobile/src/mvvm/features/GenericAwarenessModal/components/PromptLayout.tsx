@@ -3,6 +3,7 @@ import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Linking, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useTranslation } from "~/context/Locale";
+import { useThemedAwarenessModalImage } from "../hooks/useThemedAwarenessModalImage";
 import type { PromptViewModel } from "../screens/useGenericAwarenessModalDrawerViewModel";
 
 type PromptLayoutProps = Readonly<{
@@ -13,7 +14,9 @@ type PromptLayoutProps = Readonly<{
 export function PromptLayout({ onClose, viewModel }: PromptLayoutProps) {
   const { t } = useTranslation();
   const { content } = viewModel;
-  const { imageUrl, title, subtitle, primaryButtonLabel, primaryButtonLink } = content;
+  const { imageUrlLight, imageUrlDark, title, subtitle, primaryButtonLabel, primaryButtonLink } =
+    content;
+  const { imageUrl, showImage } = useThemedAwarenessModalImage({ imageUrlLight, imageUrlDark });
   const shouldShowPrimaryButton = Boolean(primaryButtonLabel && primaryButtonLink);
 
   const handleClosePress = () => {
@@ -41,13 +44,17 @@ export function PromptLayout({ onClose, viewModel }: PromptLayoutProps) {
 
   return (
     <Box lx={{ flex: 1 }}>
-      <Box lx={{ flex: 1, alignItems: "center", justifyContent: "flex-end", marginBottom: "s20" }}>
-        <FastImage
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-      </Box>
+      {showImage ? (
+        <Box
+          lx={{ flex: 1, alignItems: "center", justifyContent: "flex-end", marginBottom: "s20" }}
+        >
+          <FastImage
+            source={{ uri: imageUrl }}
+            style={styles.image}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+        </Box>
+      ) : null}
       <Box lx={{ marginBottom: "s24" }}>
         <Text
           typography="heading2SemiBold"

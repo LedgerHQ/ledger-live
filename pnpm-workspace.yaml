@@ -24,7 +24,7 @@ catalog:
   "@ledgerhq/context-module": 2.1.0
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-management-kit": 1.6.0
-  "@ledgerhq/device-signer-kit-aleo": 0.3.0
+  "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.4.0
   "@ledgerhq/device-signer-kit-ethereum": 1.16.0
   "@ledgerhq/device-signer-kit-hyperliquid": 1.1.0
@@ -197,8 +197,8 @@ catalog:
   oxlint: 1.51.0
   oxfmt: 0.36.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-module-framework": 3.3.0
-  "@ledgerhq/coin-xrp": 7.21.7
+  "@ledgerhq/coin-module-framework": 3.5.1
+  "@ledgerhq/coin-xrp": 7.23.4
   detox: 20.51.1
 
 overrides:

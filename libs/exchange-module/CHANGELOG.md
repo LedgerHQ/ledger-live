@@ -1,5 +1,21 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.31.0
+
+### Minor Changes
+
+- [#17336](https://github.com/LedgerHQ/ledger-live/pull/17336) [`5210095`](https://github.com/LedgerHQ/ledger-live/commit/52100952ee805aa42f7fc6d8002f496b00211853) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add wallet quote global outcome errors and warnings
+
+- [#17456](https://github.com/LedgerHQ/ledger-live/pull/17456) [`0a78795`](https://github.com/LedgerHQ/ledger-live/commit/0a78795d5319cfac4dd722737c58280624c5f604) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add swap transaction status Wallet API support.
+
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#17336](https://github.com/LedgerHQ/ledger-live/pull/17336) [`5210095`](https://github.com/LedgerHQ/ledger-live/commit/52100952ee805aa42f7fc6d8002f496b00211853) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add wallet quote global outcome errors and warnings
+
+- [#17456](https://github.com/LedgerHQ/ledger-live/pull/17456) [`0a78795`](https://github.com/LedgerHQ/ledger-live/commit/0a78795d5319cfac4dd722737c58280624c5f604) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add swap transaction status Wallet API support.
+
 ## 0.30.0
 
 ### Minor Changes

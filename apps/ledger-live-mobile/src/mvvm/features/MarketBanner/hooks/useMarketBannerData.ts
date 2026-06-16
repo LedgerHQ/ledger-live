@@ -23,6 +23,9 @@ import { MARKET_BANNER_TILE_COUNT } from "../constants";
 
 const LIMIT = MARKET_BANNER_TILE_COUNT * 2;
 
+/** `useMarketData` (the /v3/markets endpoint) only accepts pageSize 1 / 5 / 20 / 50. */
+const MARKET_BANNER_FAVORITES_LIMIT = 50;
+
 export type MarketBannerItems = {
   items: MarketItemPerformer[];
   isError: boolean;
@@ -92,27 +95,29 @@ export function usePerformersBannerItems(ranking: MarketBannerRanking): MarketBa
 /**
  * Favorites ranking → the user's starred assets. Backed by React Query (`useMarketData`),
  * so this hook must only be mounted when the favorites ranking is actually active.
+ * Availability filtering is bypassed so a starred coin shows even when not buyable/swappable.
  */
 export function useFavoritesBannerItems(): MarketBannerItems {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const starredMarketCoins = useSelector(starredMarketCoinsSelector);
-  const filterItems = useMarketAvailabilityFilter();
 
   const sortedStarredIds = useMemo(
     () => [...starredMarketCoins].sort((a, b) => a.localeCompare(b)),
     [starredMarketCoins],
   );
 
-  const { data, isError } = useMarketData({
-    counterCurrency: counterValueCurrency.ticker.toLowerCase(),
-    range: "24h",
-    order: Order.MarketCapDesc,
-    limit: LIMIT,
-    liveCompatible: true,
-    starred: sortedStarredIds,
-  });
+  const { data, isError, isFetching } = useMarketData(
+    {
+      counterCurrency: counterValueCurrency.ticker.toLowerCase(),
+      range: "24h",
+      order: Order.MarketCapDesc,
+      limit: MARKET_BANNER_FAVORITES_LIMIT,
+      starred: sortedStarredIds,
+    },
+    { enabled: sortedStarredIds.length > 0 },
+  );
 
-  const items = useMemo(() => filterItems(data.map(toPerformer)), [filterItems, data]);
+  const items = useMemo(() => data.map(toPerformer).slice(0, MARKET_BANNER_TILE_COUNT), [data]);
 
-  return { items, isError };
+  return { items, isError: isError && !isFetching };
 }

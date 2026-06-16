@@ -68,6 +68,7 @@ export function MarketCapCardView({
       <MarketInsightDefinitionSheet
         title={t("marketCapCard.title")}
         description={t("marketCapCard.description")}
+        disclaimer={t("marketCapCard.disclaimer")}
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
       />

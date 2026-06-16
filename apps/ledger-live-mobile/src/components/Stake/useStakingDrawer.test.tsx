@@ -1,19 +1,20 @@
-import { renderHook } from "@testing-library/react-native";
 import BigNumber from "bignumber.js";
 import type { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import { NavigatorName } from "~/const";
 import { useStakingDrawer } from "./useStakingDrawer";
+import {
+  customRenderHookWithLiveAppProvider as renderHook,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 
 const mockGetMainActions = jest.fn();
 const mockBridge = { isAccountEmpty: jest.fn().mockReturnValue(false) };
-
-jest.mock("~/context/hooks", () => ({
-  useSelector: jest.fn(() => ({})),
-}));
+const mockGetRouteParamsForPlatformApp = jest.fn().mockReturnValue(null);
 
 jest.mock("LLM/hooks/useStake/useStake", () => ({
   useStake: () => ({
-    getRouteParamsForPlatformApp: jest.fn().mockReturnValue(null),
+    getRouteParamsForPlatformApp: (...args: unknown[]) =>
+      mockGetRouteParamsForPlatformApp(...args),
   }),
 }));
 
@@ -48,6 +49,7 @@ const parentRoute = {
 describe("useStakingDrawer", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetRouteParamsForPlatformApp.mockReturnValue(null);
   });
 
   it("passes resolved bridge to family getMainActions", async () => {
@@ -89,5 +91,48 @@ describe("useStakingDrawer", () => {
         params: { foo: 1, account: bitcoinAccount, parentAccount: undefined },
       },
     });
+  });
+
+  it("forwards currencyId as cryptoAssetId when swapToEarn flag is enabled", async () => {
+    const earnNavParams = {
+      screen: NavigatorName.Earn,
+      params: { screen: "Earn", platform: "earn", params: { cryptoAssetId: "ethereum" } },
+    };
+    mockGetRouteParamsForPlatformApp.mockReturnValue(earnNavParams);
+
+    const { result } = renderHook(
+      () => useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
+      { overrideInitialState: withFlagOverrides({ swapToEarn: { enabled: true } }) },
+    );
+
+    await result.current(bitcoinAccount as never, undefined, "ethereum");
+
+    expect(mockGetRouteParamsForPlatformApp).toHaveBeenCalledWith(
+      bitcoinAccount,
+      expect.any(Object), // walletState from Redux store
+      undefined, // parentAccount
+      "ethereum", // cryptoAssetId forwarded because swapToEarn is enabled
+    );
+    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, earnNavParams);
+  });
+
+  it("does not forward currencyId when swapToEarn flag is disabled", async () => {
+    mockGetMainActions.mockReturnValue([
+      { id: "stake", navigationParams: ["Stake", { screen: "StakeScreen", params: {} }] },
+    ]);
+
+    const { result } = renderHook(
+      () => useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
+      { overrideInitialState: withFlagOverrides({ swapToEarn: { enabled: false } }) },
+    );
+
+    await result.current(bitcoinAccount as never, undefined, "ethereum");
+
+    expect(mockGetRouteParamsForPlatformApp).toHaveBeenCalledWith(
+      bitcoinAccount,
+      expect.any(Object), // walletState from Redux store
+      undefined,
+      undefined, // cryptoAssetId is suppressed when swapToEarn is disabled
+    );
   });
 });

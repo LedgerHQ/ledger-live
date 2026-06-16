@@ -14,6 +14,7 @@ import {
   encodeERC721OperationId,
 } from "@ledgerhq/ledger-wallet-framework/nft/nftOperationId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -79,7 +80,7 @@ export const makeAccount = (
 };
 
 export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency): TokenAccount => {
-  const { parentCurrency: currency } = tokenCurrency;
+  const currency = getCryptoCurrencyById(tokenCurrency.parentCurrencyId);
   const account = makeAccount(address, currency);
 
   const tokenAccountId = encodeTokenAccountId(account.id, tokenCurrency);

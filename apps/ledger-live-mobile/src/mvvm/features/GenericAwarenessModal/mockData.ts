@@ -9,36 +9,44 @@ export const carouselWithoutPrimaryLinksMockData: GenericAwarenessModalContentCa
   layout: GenericAwarenessModalLayout.Carousel,
   data: [
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "You can also use the feature\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "Try it when you are ready\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "You can also use the feature\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "Try it when you are ready\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
   ],
   isReady: true,
@@ -49,36 +57,44 @@ export const carouselWithPrimaryLinksMockData: GenericAwarenessModalContentCard 
   layout: GenericAwarenessModalLayout.Carousel,
   data: [
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "You can also use the feature\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "Learn more external",
       primaryButtonLink: "https://www.ledger.com",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "Try it when you are ready\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "Learn more internal",
       primaryButtonLink: "ledgerlive://earn",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "You can also use the feature\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "Learn more external",
       primaryButtonLink: "https://www.ledger.com",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "Try it when you are ready\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "Learn more internal",
       primaryButtonLink: "ledgerlive://earn",
+      navigationButtonLabel: "",
     },
   ],
   isReady: true,
@@ -89,36 +105,44 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
   layout: GenericAwarenessModalLayout.Carousel,
   data: [
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "You can also use the feature\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "Learn more external",
       primaryButtonLink: "https://www.ledger.com",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "Try it when you are ready\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "Learn more internal",
       primaryButtonLink: "ledgerlive://earn",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "You can also use the feature\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need dqwdwwdqdwq Lorem ipsum dolor sit amet consectetur, adipisicing elit. Inventore ea placeat labore quidem facilis error quo beatae excepturi sapiente dolor. it\n to earn rewards",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
     {
-      imageUrl: "https://picsum.photos/480/640",
+      imageUrlLight: "https://picsum.photos/480/640",
+      imageUrlDark: "",
       title: "Try it when you are ready\n to earn rewards",
       subtitle:
         "Open the feature from Ledger Wallet whenever you need it. lorem ipsum dolor sit amet consectetur",
       primaryButtonLabel: "",
       primaryButtonLink: "",
+      navigationButtonLabel: "",
     },
   ],
   isReady: true,
@@ -127,7 +151,8 @@ export const carouselMockData: GenericAwarenessModalContentCard = {
 export const featureIntroMockData: GenericAwarenessModalContentCard = {
   id: "featureIntro",
   layout: GenericAwarenessModalLayout.FeatureIntro,
-  imageUrl: "https://picsum.photos/640/360",
+  imageUrlLight: "https://picsum.photos/640/360",
+  imageUrlDark: "",
   title: "Connect a Ledger device",
   subtitle: "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
   primaryButtonLabel: "Connect",
@@ -157,7 +182,8 @@ export const featureIntroMockData: GenericAwarenessModalContentCard = {
 export const promptMockData: GenericAwarenessModalPrompt = {
   id: "prompt",
   layout: GenericAwarenessModalLayout.Prompt,
-  imageUrl: "https://picsum.photos/480/640",
+  imageUrlLight: "https://picsum.photos/480/640",
+  imageUrlDark: "",
   title: "Try Ledger Wallet when you are ready",
   subtitle: "Open the feature from Ledger Wallet whenever you need it.",
   primaryButtonLabel: "Learn more",

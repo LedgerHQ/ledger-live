@@ -11,7 +11,7 @@ import Animation from "~/renderer/animations";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
 import useTheme from "~/renderer/hooks/useTheme";
 import ConfirmFooter from "./ConfirmFooter";
@@ -138,6 +138,8 @@ const TransactionConfirm = ({
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const type = useTheme().theme;
+  // Gate on `device` so we don't load a family chunk when the component bails out below.
+  const specific = useLLDCoinFamily(device ? mainAccount.currency.family : undefined);
 
   const { fields, loading } = useDeviceTransactionConfig({
     account,
@@ -159,7 +161,6 @@ const TransactionConfirm = ({
   }, [fields]);
 
   if (!device) return null;
-  const specific = getLLDCoinFamily(mainAccount.currency.family);
   const r = specific?.transactionConfirmFields;
   const fieldComponents: Record<string, FieldComponent> = {
     ...commonFieldComponents,

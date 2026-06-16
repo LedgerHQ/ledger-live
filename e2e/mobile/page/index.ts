@@ -31,7 +31,6 @@ import OperationPage from "./wallet/operation.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
-import EarnDashboardPage from "./trade/earnDasboard.page";
 import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
 import ModularDrawer from "./drawer/modular.drawer";
 
@@ -87,7 +86,6 @@ export class Application {
   private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
-  private earnDashboardPageInstance = lazyInit(EarnDashboardPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
 
@@ -230,10 +228,6 @@ export class Application {
 
   public get settingsHelp() {
     return this.settingsHelpPageInstance();
-  }
-
-  public get earnDashboard() {
-    return this.earnDashboardPageInstance();
   }
 
   public get earnV2Dashboard() {

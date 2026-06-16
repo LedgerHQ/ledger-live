@@ -9,7 +9,7 @@ const environmentFilePath = "allure-results/environment.properties";
 export default async function globalTeardown() {
   if (process.env.CI) {
     const electronApp: ElectronApplication = await launchApp({
-      env: Object.assign(process.env),
+      env: { ...process.env, PLAYWRIGHT_RUN: "true" },
       lang: "en-US",
       theme: "dark",
       userdataDestinationPath: "",

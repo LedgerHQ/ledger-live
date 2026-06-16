@@ -1,118 +1,17 @@
 import React, { useState, useCallback } from "react";
-import styled from "styled-components";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  Button,
+  SegmentedControl,
+  SegmentedControlButton,
+  TextInput,
+} from "@ledgerhq/lumen-ui-react";
+import { ToolPage } from "../components/ToolPage";
 
-const Container = styled.div`
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const InputSection = styled.div`
-  margin-bottom: 30px;
-`;
-
-const InputGroup = styled.div`
-  margin-bottom: 15px;
-`;
-
-const Label = styled.label`
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  max-width: 400px;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-top: 10px;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-`;
-
-const ErrorMessage = styled.div`
-  color: red;
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #ffe6e6;
-  border-radius: 4px;
-`;
-
-const DataSection = styled.div`
-  margin-top: 30px;
-`;
-
-const DataBlock = styled.pre`
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 4px;
-  overflow-x: auto;
-  overflow-y: auto;
-  font-size: 10px;
-  line-height: 1.4;
-  max-height: 300px;
-  max-width: 800px;
-`;
-
-const IconsSection = styled.div`
-  margin-top: 30px;
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-`;
-
-const IconContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-`;
-
-const IconLabel = styled.div`
-  font-weight: bold;
-  font-size: 14px;
-`;
-
-const ModeSelector = styled.div`
-  margin-bottom: 20px;
-`;
-
-const RadioGroup = styled.div`
-  display: flex;
-  gap: 20px;
-  margin-top: 10px;
-`;
-
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-`;
+const iconSize = 56;
 
 const App = () => {
   const [mode, setMode] = useState<"id" | "address">("id");
@@ -123,8 +22,8 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const onModeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setMode(e.target.value as "id" | "address");
+  const onModeChange = useCallback((value: string) => {
+    setMode(value as "id" | "address");
     setCurrency(null);
     setError(null);
   }, []);
@@ -224,130 +123,110 @@ const App = () => {
     [mode, id, contractAddress, network, findCurrencyById, findTokenByAddress],
   );
 
-  const iconSize = 56;
-
   return (
-    <Container>
-      <h1>Crypto Icons Viewer</h1>
-      <p>View crypto currency and token icons by ID or contract address</p>
+    <ToolPage
+      title="Crypto Icons"
+      description="View crypto currency and token icons by id or contract address."
+    >
+      <form onSubmit={onSubmit} className="flex flex-col gap-16">
+        <SegmentedControl
+          selectedValue={mode}
+          onSelectedChange={onModeChange}
+          tabLayout="fit"
+          className="self-start"
+          aria-label="Lookup mode"
+        >
+          <SegmentedControlButton value="id">By id</SegmentedControlButton>
+          <SegmentedControlButton value="address">By contract address</SegmentedControlButton>
+        </SegmentedControl>
 
-      <InputSection>
-        <form onSubmit={onSubmit}>
-          <ModeSelector>
-            <Label>Search Mode</Label>
-            <RadioGroup>
-              <RadioLabel>
-                <input type="radio" value="id" checked={mode === "id"} onChange={onModeChange} />
-                <span>By ID</span>
-              </RadioLabel>
-              <RadioLabel>
-                <input
-                  type="radio"
-                  value="address"
-                  checked={mode === "address"}
-                  onChange={onModeChange}
-                />
-                <span>By Contract Address + Network</span>
-              </RadioLabel>
-            </RadioGroup>
-          </ModeSelector>
+        {mode === "id" ? (
+          <TextInput
+            label="Currency / token id"
+            value={id}
+            onChange={onIdChange}
+            placeholder="e.g. bitcoin, ethereum, ethereum/erc20/usd__coin"
+            autoComplete="off"
+          />
+        ) : (
+          <>
+            <TextInput
+              label="Contract address"
+              value={contractAddress}
+              onChange={onContractAddressChange}
+              placeholder="e.g. 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+              autoComplete="off"
+            />
+            <TextInput
+              label="Network (currency id)"
+              value={network}
+              onChange={onNetworkChange}
+              placeholder="e.g. ethereum, polygon, bsc"
+              autoComplete="off"
+            />
+          </>
+        )}
 
-          {mode === "id" ? (
-            <InputGroup>
-              <Label htmlFor="currency-id">Currency/Token ID</Label>
-              <Input
-                id="currency-id"
-                name="currency-id"
-                type="text"
-                value={id}
-                onChange={onIdChange}
-                placeholder="e.g., bitcoin, ethereum, ethereum/erc20/usd__coin"
-                autoComplete="off"
-              />
-            </InputGroup>
-          ) : (
-            <>
-              <InputGroup>
-                <Label htmlFor="contract-address">Contract Address</Label>
-                <Input
-                  id="contract-address"
-                  name="contract-address"
-                  type="text"
-                  value={contractAddress}
-                  onChange={onContractAddressChange}
-                  placeholder="e.g., 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-                  autoComplete="off"
-                />
-              </InputGroup>
-              <InputGroup>
-                <Label htmlFor="network">Network (Currency ID)</Label>
-                <Input
-                  id="network"
-                  name="network"
-                  type="text"
-                  value={network}
-                  onChange={onNetworkChange}
-                  placeholder="e.g., ethereum, polygon, bsc"
-                  autoComplete="off"
-                />
-              </InputGroup>
-            </>
-          )}
+        <Button type="submit" appearance="accent" loading={loading} className="self-start">
+          {loading ? "Loading…" : "Search"}
+        </Button>
 
-          <Button type="submit" disabled={loading}>
-            {loading ? "Loading..." : "Search"}
-          </Button>
-
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-        </form>
-      </InputSection>
+        {error ? <p className="body-2 text-error">{error}</p> : null}
+      </form>
 
       {currency && (currency.type === "CryptoCurrency" || currency.type === "TokenCurrency") && (
         <>
-          <IconsSection>
-            <IconContainer>
-              <IconLabel>Circle Mode</IconLabel>
-              {currency.type === "TokenCurrency" ? (
-                <CryptoIcon
-                  ledgerId={currency.id}
-                  ticker={currency.ticker}
-                  size={iconSize}
-                  network={currency.parentCurrency.id}
-                />
-              ) : (
-                <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={iconSize} />
-              )}
-            </IconContainer>
+          <div className="flex flex-wrap gap-24">
+            <IconPreview label="Circle">
+              <CryptoIconFor currency={currency} />
+            </IconPreview>
+            <IconPreview label="Square">
+              <CryptoIconFor currency={currency} shape="square" />
+            </IconPreview>
+          </div>
 
-            <IconContainer>
-              <IconLabel>Square Mode</IconLabel>
-              {currency.type === "TokenCurrency" ? (
-                <CryptoIcon
-                  ledgerId={currency.id}
-                  ticker={currency.ticker}
-                  size={iconSize}
-                  network={currency.parentCurrency.id}
-                  shape="square"
-                />
-              ) : (
-                <CryptoIcon
-                  ledgerId={currency.id}
-                  ticker={currency.ticker}
-                  size={iconSize}
-                  shape="square"
-                />
-              )}
-            </IconContainer>
-          </IconsSection>
-
-          <DataSection>
-            <h2>Currency/Token Data</h2>
-            <DataBlock>{JSON.stringify(currency, null, 2)}</DataBlock>
-          </DataSection>
+          <div className="flex flex-col gap-8">
+            <h2 className="heading-5 text-base">Currency / token data</h2>
+            <pre className="max-h-[40vh] overflow-auto rounded-lg border border-base bg-muted p-16 body-3 text-base">
+              {JSON.stringify(currency, null, 2)}
+            </pre>
+          </div>
         </>
       )}
-    </Container>
+    </ToolPage>
   );
 };
+
+function IconPreview({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col items-center gap-10 rounded-lg border border-base bg-base p-16">
+      <span className="body-3-semi-bold text-muted">{label}</span>
+      {children}
+    </div>
+  );
+}
+
+function CryptoIconFor({
+  currency,
+  shape,
+}: {
+  currency: CryptoCurrency | TokenCurrency;
+  shape?: "square";
+}) {
+  if (currency.type === "TokenCurrency") {
+    return (
+      <CryptoIcon
+        ledgerId={currency.id}
+        ticker={currency.ticker}
+        size={iconSize}
+        network={currency.parentCurrencyId}
+        shape={shape}
+      />
+    );
+  }
+  return (
+    <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={iconSize} shape={shape} />
+  );
+}
 
 export default App;

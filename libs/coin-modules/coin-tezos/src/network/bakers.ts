@@ -1,9 +1,8 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import type { AccountLike } from "@ledgerhq/types-live";
 import coinConfig from "../config";
-import { Baker, Delegation } from "../types";
+import { Baker } from "../types";
 import { ledgerValidatorAddress } from "./bakers.whitelist-default";
 
 export type TezosApiBaker = {
@@ -92,54 +91,12 @@ export function getBakerSync(addr: string): Baker | undefined {
   return _lastBakers.find(baker => baker.address === addr);
 }
 
-export function getAccountDelegationSync(account: AccountLike): Delegation | null | undefined {
-  const op = account.operations.find(
-    op => !op.hasFailed && (op.type === "DELEGATE" || op.type === "UNDELEGATE"),
-  );
-  const pendingOp = account.pendingOperations
-    .filter(op => !account.operations.some(o => op.hash === o.hash))
-    .find(op => op.type === "DELEGATE" || op.type === "UNDELEGATE");
-  const isPending = !!pendingOp;
-  const operation = pendingOp && pendingOp.type === "DELEGATE" ? pendingOp : op;
-
-  if (!operation || operation.type === "UNDELEGATE") {
-    return null;
-  }
-
-  const recentOps = account.operations
-    .filter(op => op.date > operation.date)
-    .concat(account.pendingOperations);
-  const sendShouldWarnDelegation = !recentOps.some(op => op.type === "OUT");
-  const receiveShouldWarnDelegation = !recentOps.some(op => op.type === "IN");
-  return {
-    isPending,
-    operation,
-    address: operation.recipients[0],
-    baker: null,
-    sendShouldWarnDelegation,
-    receiveShouldWarnDelegation,
-  };
-}
-
-export function isAccountDelegating(account: AccountLike): boolean {
-  return !!getAccountDelegationSync(account);
-}
-
 export async function loadBaker(addr: string): Promise<Baker | undefined> {
   const cacheBaker = getBakerSync(addr);
   if (cacheBaker) return cacheBaker;
   const bakers = await cache();
   const baker = bakers.find(baker => baker.address === addr);
   return baker;
-}
-
-export async function loadAccountDelegation(
-  account: AccountLike,
-): Promise<Delegation | null | undefined> {
-  const delegation = getAccountDelegationSync(account);
-  if (!delegation) return null;
-  const baker = await loadBaker(delegation.address);
-  return { ...delegation, baker };
 }
 
 export const asBaker = (data: TezosApiBaker): Baker | undefined => {

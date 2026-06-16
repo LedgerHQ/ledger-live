@@ -36,7 +36,7 @@ describe("scanAccounts", () => {
       type: "TokenCurrency",
       id: "vechain/vip180/vtho",
       contractAddress: "0x0000000000000000000000000000456E65726779",
-      parentCurrency: currency,
+      parentCurrencyId: "vechain",
       tokenType: "vip180",
       name: "VeThor",
       ticker: "VTHO",

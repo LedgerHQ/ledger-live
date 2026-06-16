@@ -1,4 +1,5 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBlacklisted";
@@ -37,7 +38,7 @@ export async function loadBlacklistedTokenSections(
 
   for (const token of tokens) {
     if (token) {
-      const parentCurrency = token.parentCurrency;
+      const parentCurrency = getCryptoCurrencyById(token.parentCurrencyId);
       const index = sections.findIndex(s => s.parentCurrency === parentCurrency);
       if (index < 0) {
         sections.push({

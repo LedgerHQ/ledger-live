@@ -39,13 +39,7 @@ const mockTokenCurrency: TokenCurrency = {
   id: "ethereum/erc20/usd_coin",
   name: "USD Coin",
   ticker: "USDC",
-  parentCurrency: {
-    type: "CryptoCurrency",
-    id: "ethereum",
-    name: "Ethereum",
-    ticker: "ETH",
-    family: "evm",
-  } as unknown as CryptoCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
 } as unknown as TokenCurrency;

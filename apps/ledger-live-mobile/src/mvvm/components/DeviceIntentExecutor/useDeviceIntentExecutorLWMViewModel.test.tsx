@@ -50,7 +50,6 @@ function makeProps(overrides: Partial<Props> = {}): Props {
     onIntentJobComplete: jest.fn(),
     onIntentJobError: jest.fn(),
     enabled: true,
-    cancellableUI: true,
     onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     sourceFlow: "swap",

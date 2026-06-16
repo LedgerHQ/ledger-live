@@ -87,13 +87,13 @@ export default function TezosDelegation({ account }: Props) {
   const currentAddress = info.delegateAddress ?? "";
 
   const selectedUnstakingAddress =
-    selected?.kind === "unstaking" ? selected.position.delegate ?? "" : "";
+    selected?.kind === "unstaking" ? (selected.position.delegate ?? "") : "";
   const selectedUnstakingBaker = useBaker(selectedUnstakingAddress);
   const drawerBaker = selected?.kind === "unstaking" ? selectedUnstakingBaker : currentBaker;
   const drawerAddress = selected?.kind === "unstaking" ? selectedUnstakingAddress : currentAddress;
 
   const ops = useMemo(
-    () => (account.type === "Account" ? account.operations ?? [] : []),
+    () => (account.type === "Account" ? (account.operations ?? []) : []),
     [account],
   );
   const stakeDays = daysSince(ops.find(o => o?.type === "STAKE")?.date);

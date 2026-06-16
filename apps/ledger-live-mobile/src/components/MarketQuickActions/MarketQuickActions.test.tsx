@@ -5,7 +5,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencies/support";
+import { isCurrencySupported } from "@ledgerhq/live-common/coin-modules/registry";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -28,7 +28,7 @@ beforeAll(async () => {
           type: "TokenCurrency",
           id: "ethereum/erc20/usd__coin",
           contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-          parentCurrency: ethereumCurrency,
+          parentCurrencyId: ethereumCurrency.id,
           tokenType: "erc20",
           name: "USD Coin",
           ticker: "USDC",
@@ -42,7 +42,7 @@ beforeAll(async () => {
           type: "TokenCurrency",
           id: "ethereum/erc20/usd_tether__erc20_",
           contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-          parentCurrency: ethereumCurrency,
+          parentCurrencyId: ethereumCurrency.id,
           tokenType: "erc20",
           name: "Tether USD",
           ticker: "USDT",
@@ -69,7 +69,10 @@ const kaspaAccount = genAccount("kaspa-account", { currency: kaspaCurrency });
 const ethereumAccount = genAccount("ethereum-account", { currency: ethereumCurrency });
 
 // Mock the support module
-jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support");
+jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/coin-modules/registry"),
+  isCurrencySupported: jest.fn(),
+}));
 
 // Set up the mock implementation
 (isCurrencySupported as jest.Mock).mockImplementation(currency => {

@@ -1,5 +1,27 @@
 # @devtools/feature-flags
 
+## 0.4.0
+
+### Minor Changes
+
+- [#18044](https://github.com/LedgerHQ/ledger-live/pull/18044) [`c5f0a61`](https://github.com/LedgerHQ/ledger-live/commit/c5f0a61c63858227287e4ae7c48f19868eba8b24) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add the list of flags in feature-flags devtool. Add a toggle to enable/disable the feature-flags. And link it to web-tools
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`36f16ea`](https://github.com/LedgerHQ/ledger-live/commit/36f16eae5fcf22706f5ed2dff4094178fc8d9ef8), [`7584ec2`](https://github.com/LedgerHQ/ledger-live/commit/7584ec2f10a173a768365befce8fcbd0baa4df87), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78)]:
+  - @shared/feature-flags@0.10.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#18044](https://github.com/LedgerHQ/ledger-live/pull/18044) [`c5f0a61`](https://github.com/LedgerHQ/ledger-live/commit/c5f0a61c63858227287e4ae7c48f19868eba8b24) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add the list of flags in feature-flags devtool. Add a toggle to enable/disable the feature-flags. And link it to web-tools
+
+### Patch Changes
+
+- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`36f16ea`](https://github.com/LedgerHQ/ledger-live/commit/36f16eae5fcf22706f5ed2dff4094178fc8d9ef8), [`7584ec2`](https://github.com/LedgerHQ/ledger-live/commit/7584ec2f10a173a768365befce8fcbd0baa4df87), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78)]:
+  - @shared/feature-flags@0.10.0-next.0
+
 ## 0.3.2
 
 ### Patch Changes

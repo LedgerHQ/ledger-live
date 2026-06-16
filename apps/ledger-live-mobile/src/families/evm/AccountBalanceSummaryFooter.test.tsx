@@ -26,7 +26,7 @@ const usdt = {
     },
   ],
   tokenType: "erc20",
-  parentCurrency: ethereum,
+  parentCurrencyId: ethereum.id,
 } as unknown as TokenCurrency;
 
 const ethAccount = genAccount("test-eth", { currency: ethereum, subAccountsCount: 0 });

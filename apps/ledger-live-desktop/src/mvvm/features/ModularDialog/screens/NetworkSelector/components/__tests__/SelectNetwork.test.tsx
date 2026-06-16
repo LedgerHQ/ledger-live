@@ -15,7 +15,7 @@ bscAccount.spendableBalance = bscAccount.balance;
 
 const bscUsdcToken: TokenCurrency = {
   type: "TokenCurrency",
-  parentCurrency: bscCurrency,
+  parentCurrencyId: "bsc",
   tokenType: "bep20",
   id: "bsc/erc20/usdc",
   contractAddress: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
@@ -38,7 +38,7 @@ baseAccount.balance = new BigNumber("1000000000000000000");
 baseAccount.spendableBalance = baseAccount.balance;
 const baseUsdcToken: TokenCurrency = {
   type: "TokenCurrency",
-  parentCurrency: baseCurrency,
+  parentCurrencyId: "base",
   tokenType: "erc20",
   id: "base/erc20/usd_coin",
   contractAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",

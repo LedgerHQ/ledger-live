@@ -331,9 +331,7 @@ describe("horizon.ts (unit, spies)", () => {
         // Every page returns zero filtered ops
         rawOperationsToOperationsMock.mockResolvedValue([]);
 
-        const callMock = jest
-          .fn()
-          .mockResolvedValue({ records: [rawA, rawB] });
+        const callMock = jest.fn().mockResolvedValue({ records: [rawA, rawB] });
 
         jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
           forAccount: jest.fn().mockReturnThis(),

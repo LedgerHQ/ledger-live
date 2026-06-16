@@ -17,7 +17,7 @@ const createMockSubAccount = (overrides: Partial<TokenAccount> = {}): TokenAccou
       ticker: "TEST",
       units: [],
       tokenType: "ERC20",
-      parentCurrency: account.currency,
+      parentCurrencyId: account.currency.id,
     },
     ...overrides,
   };

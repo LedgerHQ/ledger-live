@@ -50,6 +50,12 @@ export const buildOptimisticOperation = (
             celoSourceValidator: transaction.recipient,
           }
         : {}),
+      // Mirror what the synced path will read back from `tx.feeCurrency`, so
+      // optimistic and synced ops carry the same value (adapter address for
+      // non-18-decimal tokens; adapter === contract for 18-decimal tokens).
+      ...(transaction.feeCurrency
+        ? { feeCurrencyAddress: transaction.feeCurrency.toLowerCase() }
+        : {}),
     },
   };
 

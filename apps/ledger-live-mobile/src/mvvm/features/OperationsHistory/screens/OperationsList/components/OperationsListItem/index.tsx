@@ -85,7 +85,7 @@ function OperationsListItem({
         <ListItemContent>
           <Box lx={titleRowStyle}>
             <ListItemTitle>{title}</ListItemTitle>
-            {isUnread && <DotIndicator appearance="red" testID="unread-indicator" />}
+            {isUnread && <DotIndicator appearance="base" testID="unread-indicator" />}
           </Box>
           <ListItemDescription>{subtitle}</ListItemDescription>
         </ListItemContent>

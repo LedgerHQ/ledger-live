@@ -5,7 +5,7 @@ import { renderHook, act } from "tests/testSetup";
 import { ipcRenderer } from "electron";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useExportOperationsCsv } from "./useExportOperationsCsv";
 import type { BridgeSyncState } from "@ledgerhq/live-common/bridge/react/types";
@@ -36,27 +36,13 @@ jest.mock("~/renderer/logger", () => ({
 
 const mockedIpcInvoke = jest.mocked(ipcRenderer.invoke);
 
-const mockEthCurrency: CryptoCurrency = {
-  id: "ethereum",
-  name: "Ethereum",
-  ticker: "ETH",
-  type: "CryptoCurrency",
-  managerAppName: "Ethereum",
-  coinType: 60,
-  scheme: "ethereum",
-  color: "#0ebdcd",
-  family: "ethereum",
-  explorerViews: [],
-  units: [{ name: "ether", code: "ETH", magnitude: 18 }],
-};
-
 const mockToken: TokenCurrency = {
   id: "ethereum/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrency: mockEthCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
 };

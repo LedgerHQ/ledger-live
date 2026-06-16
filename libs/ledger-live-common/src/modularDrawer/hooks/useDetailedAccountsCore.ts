@@ -60,7 +60,7 @@ export function useDetailedAccountsCore(
             fiatValue: calculateFiatValue(subAccount),
             address,
             cryptoId: details.id,
-            parentId: details.parentCurrency.id,
+            parentId: details.parentCurrencyId,
           };
         } else {
           const accountName = accountNameMap[account.id];
@@ -110,7 +110,7 @@ export function useDetailedAccountsCore(
             fiatValue: calculateFiatValue(subAccount),
             address,
             cryptoId: details.id,
-            parentId: details.parentCurrency.id,
+            parentId: details.parentCurrencyId,
             account: subAccount,
             parentAccount: account,
           };

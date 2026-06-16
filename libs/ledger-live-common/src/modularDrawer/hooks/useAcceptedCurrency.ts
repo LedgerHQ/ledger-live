@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencies/support";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { isCurrencySupported } from "../../currencies";
 import { useCurrenciesUnderFeatureFlag } from "./useCurrenciesUnderFeatureFlag";
 
 /**
@@ -17,7 +18,9 @@ export function useAcceptedCurrency() {
   const isAcceptedCurrency = useCallback(
     (currencyOrToken: CryptoOrTokenCurrency): boolean => {
       const currency: CryptoCurrency =
-        currencyOrToken.type === "TokenCurrency" ? currencyOrToken.parentCurrency : currencyOrToken;
+        currencyOrToken.type === "TokenCurrency"
+          ? getCryptoCurrencyById(currencyOrToken.parentCurrencyId)
+          : currencyOrToken;
 
       return isCurrencySupported(currency) && !deactivatedCurrencyIds.has(currency.id);
     },

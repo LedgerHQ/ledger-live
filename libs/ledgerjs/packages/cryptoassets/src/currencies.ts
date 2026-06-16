@@ -5040,7 +5040,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://suivision.xyz/account/$address",
       },
     ],
-    tokenTypes: ["sui"],
+    tokenTypes: ["coin"],
   },
   sui_testnet: {
     type: "CryptoCurrency",
@@ -5071,7 +5071,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://testnet.suivision.xyz/account/$address",
       },
     ],
-    tokenTypes: ["sui"],
+    tokenTypes: ["coin"],
   },
   babylon: {
     type: "CryptoCurrency",

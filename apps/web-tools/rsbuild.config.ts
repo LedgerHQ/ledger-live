@@ -60,7 +60,18 @@ export default defineConfig({
         http2: false,
         dns: false,
       };
-      appendPlugins([new rspack.IgnorePlugin({ resourceRegExp: /^electron$/ })]);
+      // zcash-utils is a native (napi) addon with no browser build, so it can
+      // never run on the web. Stub it (and any other native .node binary) so
+      // registerAllCoins() can register every family without breaking the web
+      // build — zcash account sync is simply unavailable here.
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "@ledgerhq/zcash-utils": false,
+      };
+      appendPlugins([
+        new rspack.IgnorePlugin({ resourceRegExp: /^electron$/ }),
+        new rspack.IgnorePlugin({ resourceRegExp: /\.node$/ }),
+      ]);
     },
   },
 });

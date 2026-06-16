@@ -21,8 +21,13 @@ export async function estimateRevealLimits(
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     revealEstimate = (await tezosToolkit.estimate.reveal()) as RevealEstimate | undefined;
   } catch (error) {
-    log("estimate-error", "error estimating reveal fees, trying to use getRevealGasLimit", { error });
-    revealEstimate = { gasLimit: getRevealGasLimit(address), suggestedFeeMutez: getRevealFee(address) };
+    log("estimate-error", "error estimating reveal fees, trying to use getRevealGasLimit", {
+      error,
+    });
+    revealEstimate = {
+      gasLimit: getRevealGasLimit(address),
+      suggestedFeeMutez: getRevealFee(address),
+    };
   }
   return {
     fee: Math.max(feesConfig.minFees, revealEstimate?.suggestedFeeMutez ?? getRevealFee(address)),

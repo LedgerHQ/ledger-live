@@ -82,7 +82,7 @@ export function createFixtureAccountWithSubAccount(
           type: "TokenCurrency",
           id: "aptToken",
           contractAddress: "contract_address",
-          parentCurrency: currency,
+          parentCurrencyId: "aptos",
           tokenType,
         } as TokenCurrency,
         balance: BigNumber(1000),
