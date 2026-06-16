@@ -34,7 +34,7 @@ export function ActionBar({
     isMarketLoading,
   });
 
-  if (viewModel.showSkeleton) {
+  if (viewModel.showSkeleton || !viewModel.isCurrencySupported) {
     return null;
   }
 

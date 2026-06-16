@@ -4,7 +4,9 @@ import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetHeader } from "./components/AssetHeader";
 import { ActionBar } from "./components/ActionBar";
 import { ChartSection } from "./components/ChartSection";
+import { FallbackBanner } from "./components/FallbackBanner";
 import { HiddenBanner } from "./components/HiddenBanner";
+import { resolveRampLedgerIds } from "./utils/resolveRampLedgerIds";
 import { MarketPriceSection } from "./components/MarketPriceSection";
 import { AddressListSection } from "./components/AddressList";
 import { MarketDataSection } from "./components/MarketDataSection";
@@ -42,6 +44,12 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
   const showPortfolioSections = portfolioSectionLoading || hasPortfolioAccounts;
   const showMarketDataSection =
     marketCurrencyData != null || isDistributionLoading || isMarketLoading;
+  const fallbackLedgerIds = resolveRampLedgerIds({
+    ledgerIds,
+    marketCurrencyData,
+    distributionItem,
+    ledgerCurrency,
+  });
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-24 pb-32">
@@ -117,6 +125,11 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
             ledgerCurrencyId={ledgerCurrency?.id ?? ledgerId}
           />
         )}
+
+        <FallbackBanner
+          ledgerIds={fallbackLedgerIds}
+          showSkeleton={isDistributionLoading || isMarketLoading}
+        />
 
         <TransactionsSection
           distributionItem={distributionItem}

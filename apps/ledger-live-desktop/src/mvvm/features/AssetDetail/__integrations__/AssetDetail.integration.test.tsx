@@ -1006,7 +1006,7 @@ describe("AssetDetail integration", () => {
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
     });
 
-    it("disables buy and sell when the ramp catalog marks the currency unavailable", async () => {
+    it("hides buy and disables sell when the ramp catalog marks the currency unavailable", async () => {
       mockIsCurrencyAvailable.mockReturnValue(false);
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       setupRoute("bitcoin", { list: [] });
@@ -1014,14 +1014,14 @@ describe("AssetDetail integration", () => {
       renderWithMockedCounterValuesProvider(<AssetDetail />);
 
       await waitFor(() => {
-        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeDisabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
       });
 
+      expect(screen.queryByTestId(TEST_ID.ACTION_BUY)).not.toBeInTheDocument();
       expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
     });
 
-    it("disables buy and sell when the currency is not on ramp despite spendable balance", async () => {
+    it("hides buy and disables sell when the currency is not on ramp despite spendable balance", async () => {
       mockIsCurrencyAvailable.mockReturnValue(false);
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       const account = genAccount("asset-detail-ramp-off-with-balance-account", { currency: btc });
@@ -1034,11 +1034,11 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => {
         expectHeader();
-        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeDisabled();
-        expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
         expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
       });
 
+      expect(screen.queryByTestId(TEST_ID.ACTION_BUY)).not.toBeInTheDocument();
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
     });
   });
