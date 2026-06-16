@@ -1,5 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
+  "private": true,
   "version": "1.6.2",
   "description": "Ledger Algorand Coin integration",
   "keywords": [

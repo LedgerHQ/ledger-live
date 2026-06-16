@@ -1,5 +1,6 @@
 {
   "name": "@ledgerhq/coin-mina",
+  "private": true,
   "version": "1.15.4",
   "description": "Mina Coin integration",
   "keywords": [

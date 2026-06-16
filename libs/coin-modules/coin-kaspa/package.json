@@ -1,5 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
+  "private": true,
   "version": "1.16.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [

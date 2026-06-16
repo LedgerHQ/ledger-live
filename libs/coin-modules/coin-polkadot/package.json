@@ -1,5 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
+  "private": true,
   "version": "6.27.2",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [

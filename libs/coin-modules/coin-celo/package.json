@@ -1,5 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
+  "private": true,
   "version": "2.5.0",
   "description": "celo coin integration",
   "keywords": [
