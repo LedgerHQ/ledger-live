@@ -565,21 +565,27 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   );
 }
 
-export async function waitForReviewTransaction(): Promise<void> {
+// Swap initiation (provider quote + partner signature + Exchange-app APDU handshake) can take well
+// over the default ~30s before the device reaches "Review transaction", especially on the slower
+// nanoSP under heavy parallel Speculos load. Swap flows pass this larger budget to avoid flaky
+// "Review transaction not found" timeouts. See QAA-1322.
+const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = 240; // ~120s at 500ms polling
+
+export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
   if (!isTouchDevice()) {
-    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
     return;
   }
 
   const port = getEnv("SPECULOS_API_PORT");
-  for (let attempt = 0; attempt < 60; attempt++) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const texts = await fetchCurrentScreenTexts(port);
     if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
       return;
     }
     if (texts.includes(DeviceLabels.YES_ENABLE)) {
       await pressAndRelease(DeviceLabels.YES_ENABLE);
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
       return;
     }
     await sleep(500);
@@ -998,7 +1004,7 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitForReviewTransaction();
+      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       const events =
         getSpeculosModel() === DeviceModelId.nanoS
           ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
@@ -1021,12 +1027,12 @@ export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
           await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
           await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
         } else {
-          await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+          await waitFor(DeviceLabels.REVIEW_TRANSACTION, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
           await pressUntilTextFound(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
           await buttons.both();
         }
       } else {
-        await waitForReviewTransaction();
+        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       }
 
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
@@ -1043,7 +1049,7 @@ export const verifyAmountsAndRejectSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitForReviewTransaction();
+      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       let events: string[] = [];
       if (isTouchDevice()) {
         events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
