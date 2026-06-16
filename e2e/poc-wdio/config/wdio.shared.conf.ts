@@ -9,17 +9,20 @@ import { ADBUtils } from "../utils/ADBUtils.ts";
 import allureReporter from "@wdio/allure-reporter";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
-const INSTANCES = Number(process.env.WDIO_INSTANCES) ?? 1;
+const INSTANCES_COUNT = Number(process.env.WDIO_INSTANCES) ?? 1;
 
-const appiumServices: WebdriverIO.Config["services"] = Array.from({ length: INSTANCES }, (_, i) => [
-  "appium",
-  {
-    args: {
-      allowInsecure: "uiautomator2:chromedriver_autodownload",
-      port: 4723 + i,
+const appiumServices: WebdriverIO.Config["services"] = Array.from(
+  { length: INSTANCES_COUNT },
+  (_, i) => [
+    "appium",
+    {
+      args: {
+        allowInsecure: "uiautomator2:chromedriver_autodownload",
+        port: 4723 + i,
+      },
     },
-  },
-]);
+  ],
+);
 
 export const config: WebdriverIO.Config = {
   //
@@ -66,7 +69,7 @@ export const config: WebdriverIO.Config = {
   // and 30 processes will get spawned. The property handles how many capabilities
   // from the same test should run tests.
   //
-  maxInstances: INSTANCES,
+  maxInstances: INSTANCES_COUNT,
   //
   // If you have trouble getting all important capabilities together, check out the
   // Sauce Labs platform configurator - a great tool to configure your capabilities:

@@ -12,32 +12,18 @@ const baseCapa: Omit<WebdriverIO.Capabilities, "custom:capa"> = {
     "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
 };
 
-const workerConfigs: WebdriverIO.Capabilities[] = [
-  {
+const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
+  { length: Number(process.env.WDIO_INSTANCES) || 1 },
+  (_, i) => ({
     ...baseCapa,
-    port: 4723,
-    "appium:deviceName": "iOS Simulator",
-    "appium:wdaLocalPort": 8203,
-    "appium:mjpegServerPort": 9100,
-    "custom:capa": { websocketPort: 8098 },
-  },
-  {
-    ...baseCapa,
-    port: 4724,
-    "appium:deviceName": "iOS Simulator 2",
-    "appium:wdaLocalPort": 8204,
-    "appium:mjpegServerPort": 9101,
-    "custom:capa": { websocketPort: 8099 },
-  },
-  {
-    ...baseCapa,
-    port: 4725,
-    "appium:deviceName": "iOS Simulator 3",
-    "appium:wdaLocalPort": 8205,
-    "appium:mjpegServerPort": 9102,
-    "custom:capa": { websocketPort: 8100 },
-  },
-];
+    port: 4723 + i,
+    // first simulator has no suffix
+    "appium:deviceName": i === 0 ? "iOS Simulator" : `iOS Simulator ${i + 1}`,
+    "appium:wdaLocalPort": 8203 + i,
+    "appium:mjpegServerPort": 9100 + i,
+    "custom:capa": { websocketPort: 8098 + i },
+  }),
+);
 
 const workerPool = new WorkerPool(workerConfigs);
 
@@ -59,27 +45,27 @@ export const config: WebdriverIO.Config = {
    * @param  {object} execArgv list of string arguments passed to the worker process
    */
   onWorkerStart: async function (cid, caps, specs, args, execArgv) {
-    if (Number(process.env.WDIO_INSTANCES) > 1) {
-      const emulator = await workerPool.acquire(cid);
-      Object.assign(caps, { ...emulator });
-    }
-
     // dynamic websocket to reduce port clash
     const websocketPort = await findFreePort();
-    caps["custom:capa"].websocketPort = websocketPort;
-    caps["appium:processArguments"] = {
-      // TODO: find free port dynamically
-      args: [
-        "-mock",
-        "0",
-        "-disable_broadcast",
-        "1",
-        "-IS_TEST",
-        "true",
-        `-wsPort`,
-        `${websocketPort}`,
-      ],
-    };
+
+    // update the worker's capabilities with the acquired emulator from the pool
+    const emulator = await workerPool.acquire(cid);
+    Object.assign(caps, {
+      ...emulator,
+      "custom:capa": { websocketPort },
+      "appium:processArguments": {
+        args: [
+          "-mock",
+          "0",
+          "-disable_broadcast",
+          "1",
+          "-IS_TEST",
+          "true",
+          `-wsPort`,
+          `${websocketPort}`,
+        ],
+      },
+    });
   },
 
   /**
