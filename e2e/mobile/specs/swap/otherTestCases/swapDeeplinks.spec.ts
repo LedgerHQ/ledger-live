@@ -2,10 +2,9 @@ import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { swapSetup } from "../../../bridge/server";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 // Account UUIDs derived from the E2E test seed via uuidv5 (namespace c3c78073-…).
-// Must match the accounts loaded by cliCommandsOnApp below.
+// Must match the accounts in e2e/mobile/userdata/swap-deeplinks.json.
 const BTC_ACCOUNT_ID = "62d8d0c0-3550-5f0c-9755-c6fb7866828b";
 const ETH_ACCOUNT_ID = "1258dc17-fbc6-5a99-ba85-2969da766f65";
 const USDT_ACCOUNT_ID = "84024965-a385-52d5-90cd-38dfc8bab5e9";
@@ -40,7 +39,7 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
 
   beforeAll(async () => {
     await app.init({
-      speculosApp: btcAccount.currency.speculosApp,
+      userdata: "swap-deeplinks",
       featureFlags: {
         ptxSwapLiveAppMobile: {
           enabled: true,
@@ -50,14 +49,6 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
           },
         },
       },
-      cliCommandsOnApp: [
-        { app: btcAccount.currency.speculosApp, cmd: liveDataWithAddressCommand(btcAccount) },
-        { app: ethAccount.currency.speculosApp, cmd: liveDataWithAddressCommand(ethAccount) },
-        {
-          app: usdtAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(usdtAccount),
-        },
-      ],
     });
     await app.portfolio.waitForPortfolioPageToLoad();
     await swapSetup();

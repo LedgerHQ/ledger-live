@@ -1,0 +1,291 @@
+{
+  "data": {
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "readOnlyModeEnabled": false,
+      "counterValue": "USD",
+      "language": "en",
+      "locale": "en-US",
+      "theme": null,
+      "region": null,
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "week",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": false,
+      "sharePersonalizedRecommandations": false,
+      "hasSeenAnalyticsOptInPrompt": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "filterTokenOperationsZeroAmount": true,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoSP",
+      "hasInstalledApps": true,
+      "lastSeenDevice": null,
+      "mevProtection": true,
+      "devicesModelList": [],
+      "lastSeenCustomImage": {
+        "size": 0,
+        "hash": ""
+      },
+      "latestFirmware": null,
+      "blacklistedTokenIds": [],
+      "deepLinkUrl": null,
+      "firstTimeLend": false,
+      "showClearCacheBanner": false,
+      "allowDebugApps": false,
+      "allowReactQueryDebug": false,
+      "allowExperimentalApps": false,
+      "enablePlatformDevTools": false,
+      "catalogProvider": "production",
+      "enableLearnPageStagingUrl": false,
+      "swap": {
+        "hasAcceptedIPSharing": false,
+        "acceptedProviders": [],
+        "selectableCurrencies": []
+      },
+      "vaultSigner": {
+        "enabled": false,
+        "host": "",
+        "token": "",
+        "workspace": ""
+      },
+      "supportedCounterValues": [],
+      "dismissedContentCards": {},
+      "anonymousBrazeId": "anonymous_id_9",
+      "starredMarketCoins": [],
+      "hasBeenUpsoldRecover": true,
+      "hasBeenRedirectedToPostOnboarding": true,
+      "onboardingUseCase": null,
+      "lastOnboardedDevice": null,
+      "alwaysShowMemoTagInfo": true,
+      "anonymousUserNotifications": {},
+      "hasSeenWalletV4Tour": false,
+      "doNotAskAgainSkipMemo": false
+    },
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "user": {
+      "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "js:2:bitcoin:xpub6D4fy7nrbPLSDDu7LCkeDAEiku1vtEEXMWELR8dc7wWbcJ3vTre9JYBbvfPjhLpxExRJjCBiJQi2B4jZcdz5HYnkA2u9Up2SiPDej9fMndw:native_segwit",
+          "seedIdentifier": "xpub6D4fy7nrbPLSDDu7LCkeDAEiku1vtEEXMWELR8dc7wWbcJ3vTre9JYBbvfPjhLpxExRJjCBiJQi2B4jZcdz5HYnkA2u9Up2SiPDej9fMndw",
+          "used": true,
+          "derivationMode": "native_segwit",
+          "index": 1,
+          "freshAddress": "bc1q8n5cpkp5qkz2xy2yax5kxrctpqkwf4hf2n2nw3",
+          "freshAddressPath": "84'/0'/1'/0/0",
+          "blockHeight": 939622,
+          "syncHash": "0xb2deeplinks01",
+          "creationDate": "2026-03-05T12:10:19.000Z",
+          "operationsCount": 1,
+          "operations": [
+            {
+              "id": "js:2:bitcoin:xpub6D4fy7nrbPLSDDu7LCkeDAEiku1vtEEXMWELR8dc7wWbcJ3vTre9JYBbvfPjhLpxExRJjCBiJQi2B4jZcdz5HYnkA2u9Up2SiPDej9fMndw:native_segwit-a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2-IN",
+              "hash": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+              "type": "IN",
+              "senders": [
+                "bc1qvetxlfzzqucpuyduemmehwjs95dg547j9rzecr"
+              ],
+              "recipients": [
+                "bc1q8n5cpkp5qkz2xy2yax5kxrctpqkwf4hf2n2nw3"
+              ],
+              "accountId": "js:2:bitcoin:xpub6D4fy7nrbPLSDDu7LCkeDAEiku1vtEEXMWELR8dc7wWbcJ3vTre9JYBbvfPjhLpxExRJjCBiJQi2B4jZcdz5HYnkA2u9Up2SiPDej9fMndw:native_segwit",
+              "blockHash": "00000000000000000001a0ca1e9439fa43984b9ce3ff063d204d98604883e068",
+              "blockHeight": 939620,
+              "extra": {},
+              "date": "2026-03-05T12:00:00.000Z",
+              "value": "100000",
+              "fee": "2000",
+              "transactionSequenceNumber": "0",
+              "hasFailed": false
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "balance": "100000",
+          "spendableBalance": "100000",
+          "balanceHistoryCache": {
+            "HOUR": { "latestDate": 1772827200000, "balances": [100000] },
+            "DAY": { "latestDate": 1772751600000, "balances": [100000] },
+            "WEEK": { "latestDate": 1772319600000, "balances": [100000] }
+          },
+          "xpub": "xpub6D4fy7nrbPLSDDu7LCkeDAEiku1vtEEXMWELR8dc7wWbcJ3vTre9JYBbvfPjhLpxExRJjCBiJQi2B4jZcdz5HYnkA2u9Up2SiPDej9fMndw",
+          "bitcoinResources": {
+            "utxos": [
+              ["a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2", 0, 939620, "bc1q8n5cpkp5qkz2xy2yax5kxrctpqkwf4hf2n2nw3", "100000", 0, 0]
+            ]
+          },
+          "swapHistory": [],
+          "name": "Bitcoin 2",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:ethereum:0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15:",
+          "seedIdentifier": "0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15",
+          "used": true,
+          "derivationMode": "",
+          "index": 2,
+          "freshAddress": "0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15",
+          "freshAddressPath": "44'/60'/2'/0/0",
+          "blockHeight": 24600648,
+          "syncHash": "0xe2deeplinks03",
+          "creationDate": "2026-03-05T15:32:23.000Z",
+          "operationsCount": 1,
+          "operations": [
+            {
+              "id": "js:2:ethereum:0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15:-0xd3b4aabbccddeeff0011223344556677aabbccddeeff00112233445566778899-IN",
+              "hash": "0xd3b4aabbccddeeff0011223344556677aabbccddeeff00112233445566778899",
+              "type": "IN",
+              "senders": [
+                "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b"
+              ],
+              "recipients": [
+                "0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15"
+              ],
+              "accountId": "js:2:ethereum:0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15:",
+              "blockHash": "0x1a273ad4db1f73ba8e29127d4da31b1fb893025e21e6b21c5e506901ed9c0e35",
+              "blockHeight": 24600640,
+              "extra": {},
+              "date": "2026-03-05T15:00:00.000Z",
+              "value": "1000000000000000000",
+              "fee": "1584949863000",
+              "transactionSequenceNumber": "0",
+              "hasFailed": false,
+              "internalOperations": []
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "balance": "1000000000000000000",
+          "spendableBalance": "1000000000000000000",
+          "balanceHistoryCache": {
+            "HOUR": { "latestDate": 1772827200000, "balances": [1000000000000000000] },
+            "DAY": { "latestDate": 1772751600000, "balances": [1000000000000000000] },
+            "WEEK": { "latestDate": 1772319600000, "balances": [1000000000000000000] }
+          },
+          "xpub": "0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15",
+          "subAccounts": [],
+          "swapHistory": [],
+          "name": "Ethereum 3",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
+          "seedIdentifier": "040ccf12de0c09ce1c151204a2268a410251d60c75965cf5b3a3fa829ac88a473bebde57c229f39f6bd0aa160ddb6cdffdcc34149c6196b7409c4e00ba3b12a942",
+          "used": true,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 24600648,
+          "syncHash": "0xe1deeplinks00",
+          "creationDate": "2026-03-05T15:32:23.000Z",
+          "operationsCount": 1,
+          "operations": [
+            {
+              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xe32aaabbccddeeff0011223344556677aabbccddeeff00112233445566778899-IN",
+              "hash": "0xe32aaabbccddeeff0011223344556677aabbccddeeff00112233445566778899",
+              "type": "IN",
+              "senders": [
+                "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b"
+              ],
+              "recipients": [
+                "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              ],
+              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
+              "blockHash": "0x1a273ad4db1f73ba8e29127d4da31b1fb893025e21e6b21c5e506901ed9c0e35",
+              "blockHeight": 24600640,
+              "extra": {},
+              "date": "2026-03-05T15:00:00.000Z",
+              "value": "1000000000000000000",
+              "fee": "1584949863000",
+              "transactionSequenceNumber": "0",
+              "hasFailed": false,
+              "internalOperations": []
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "balance": "1000000000000000000",
+          "spendableBalance": "1000000000000000000",
+          "balanceHistoryCache": {
+            "HOUR": { "latestDate": 1772827200000, "balances": [1000000000000000000] },
+            "DAY": { "latestDate": 1772751600000, "balances": [1000000000000000000] },
+            "WEEK": { "latestDate": 1772319600000, "balances": [1000000000000000000] }
+          },
+          "xpub": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
+          "subAccounts": [
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd_tether__erc20_",
+              "parentId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
+              "tokenId": "ethereum/erc20/usd_tether__erc20_",
+              "balance": "61350270",
+              "spendableBalance": "61350270",
+              "creationDate": "2026-03-06T13:22:59.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd_tether__erc20_-0xbbbb1111aabbccddeeff0011223344556677aabbccddeeff0011223344556677-IN",
+                  "hash": "0xbbbb1111aabbccddeeff0011223344556677aabbccddeeff0011223344556677",
+                  "type": "IN",
+                  "senders": [
+                    "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b"
+                  ],
+                  "recipients": [
+                    "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+                  ],
+                  "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd_tether__erc20_",
+                  "blockHash": "0x1a273ad4db1f73ba8e29127d4da31b1fb893025e21e6b21c5e506901ed9c0e35",
+                  "blockHeight": 24555000,
+                  "extra": {},
+                  "date": "2026-03-06T13:22:59.000Z",
+                  "value": "61350270",
+                  "fee": "1584949863000",
+                  "transactionSequenceNumber": "0",
+                  "hasFailed": false,
+                  "internalOperations": []
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": { "latestDate": 1772827200000, "balances": [61350270] },
+                "DAY": { "latestDate": 1772751600000, "balances": [61350270] },
+                "WEEK": { "latestDate": 1772319600000, "balances": [61350270] }
+              },
+              "starred": false
+            }
+          ],
+          "swapHistory": [],
+          "name": "Ethereum 1",
+          "starred": false
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {}
+  }
+}
