@@ -7956,6 +7956,9 @@ importers:
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
+      '@ledgerhq/device-intent':
+        specifier: workspace:^
+        version: link:../device-intent
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.6.0(rxjs@7.8.2)
@@ -8685,9 +8688,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      invariant:
-        specifier: '2'
-        version: 2.2.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
