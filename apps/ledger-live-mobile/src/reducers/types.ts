@@ -226,6 +226,9 @@ export type supportedCountervaluesData = {
   currency: Currency;
 };
 
+/** Debug-only override for the OS update banner. */
+export type DebugOsUpdateBannerMode = "off" | "card" | "compact";
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
@@ -295,6 +298,7 @@ export type SettingsState = {
   userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
+  debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;

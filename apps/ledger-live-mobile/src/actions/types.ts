@@ -307,6 +307,7 @@ export enum SettingsActionTypes {
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
+  SET_DEBUG_OS_UPDATE_BANNER_MODE = "SET_DEBUG_OS_UPDATE_BANNER_MODE",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
@@ -402,6 +403,7 @@ export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTerms
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
+export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWalletV4Tour"];
 export type SettingsSetDoNotAskAgainSkipMemoPayload = SettingsState["doNotAskAgainSkipMemo"];
@@ -465,6 +467,7 @@ export type SettingsPayload =
   | SettingsSetUserNps
   | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt
+  | SettingsSetDebugOsUpdateBannerMode
   | SettingsSetAnalyticsConsentInfoPayload
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
