@@ -23,6 +23,7 @@ export function useAssetMarketData({
   version,
   isStaging = false,
   knownMarketId,
+  enabled = true,
 }: AssetMarketDataInput): AssetMarketDataResult {
   const {
     data: marketFromHook,
@@ -31,7 +32,7 @@ export function useAssetMarketData({
   } = useGetCurrencyDataQuery(
     { id: marketApiId ?? "", counterCurrency },
     {
-      skip: !marketApiId,
+      skip: !enabled || !marketApiId,
       pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     },
   );
@@ -48,6 +49,7 @@ export function useAssetMarketData({
     product,
     version,
     isStaging: isStaging || undefined,
+    skip: !enabled,
     pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     skipPollingIfUnfocused: true,
   });
@@ -64,7 +66,7 @@ export function useAssetMarketData({
       isStaging,
     },
     {
-      skip: !effectiveLedgerIds?.length,
+      skip: !enabled || !effectiveLedgerIds?.length,
       pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     },
   );
