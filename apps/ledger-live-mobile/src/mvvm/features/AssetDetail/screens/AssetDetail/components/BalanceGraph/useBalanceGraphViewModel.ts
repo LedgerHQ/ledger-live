@@ -137,10 +137,11 @@ export function useBalanceGraphViewModel({
   const id =
     knownLedgerIds?.[0] ?? marketCurrency?.ledgerIds?.[0] ?? marketCurrency?.id ?? marketApiId;
 
-  const { data: chartData, isLoading: isChartLoading } = useAssetChartData(
-    { id, counterCurrency, range },
-    { skip: !id },
-  );
+  const {
+    currentData: chartData,
+    isLoading: isChartLoading,
+    isFetching: isChartFetching,
+  } = useAssetChartData({ id, counterCurrency, range }, { skip: !id });
 
   const ranges = useMemo(
     () =>
@@ -181,7 +182,7 @@ export function useBalanceGraphViewModel({
   const athTime = marketCurrency?.athDate?.getTime();
   const atlTime = marketCurrency?.atlDate?.getTime();
 
-  const { series, timestamps } = useMemo(() => {
+  const current = useMemo(() => {
     const rawPoints = chartData?.[range] ?? [];
     // On the "all" range, anchor the graph's high/low markers to the market
     // all-time high/low so they match the stats table (see LIVE-31732).
@@ -210,8 +211,28 @@ export function useBalanceGraphViewModel({
         },
       ] satisfies LineChartSeries[],
       timestamps: tsList,
+      hasData: data.length > 0,
     };
   }, [chartData, range, ath, atl, athTime, atlTime]);
+
+  // While the next timeframe loads, keep rendering the previous (non-empty)
+  // series so the chart morphs from the old shape (Lumen transition-loading)
+  // instead of flashing the empty placeholder. `isLoading` stays keyed to the
+  // *current* range's data, so the line shows muted until the new data lands.
+  // Scoped to `id`: morphing only applies within the same asset (a timeframe
+  // switch), never across an asset switch — otherwise we'd grey out the previous
+  // asset's shape instead of showing the new asset's loading/empty state.
+  const lastRenderedRef = useRef({ id, series: current.series, timestamps: current.timestamps });
+  if (current.hasData) {
+    lastRenderedRef.current = { id, series: current.series, timestamps: current.timestamps };
+  }
+  const chartLoading = isChartLoading || (isChartFetching && !current.hasData);
+  // Only fall back to the previous series while loading the same asset. Once the
+  // fetch settles with no data (or the asset changed), show the current (empty)
+  // series so the chart renders its empty state instead of a stale graph.
+  const canReusePrevious = lastRenderedRef.current.id === id;
+  const { series, timestamps } =
+    !current.hasData && chartLoading && canReusePrevious ? lastRenderedRef.current : current;
   const prices = series[0].data;
 
   const priceChangePercentage = useMemo(() => {
@@ -544,7 +565,7 @@ export function useBalanceGraphViewModel({
     isRangeValue: isRangeKey,
     showReceive,
     onReceivePress,
-    isLoading: isLoading || isChartLoading,
+    isLoading: isLoading || chartLoading,
     series,
     chartColor,
     points,

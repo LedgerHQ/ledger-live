@@ -1322,6 +1322,9 @@
       "select": "Select Account"
     }
   },
+  "lineChart": {
+    "error": "Unable to load chart"
+  },
   "location": {
     "titleServiceRequired": "Location services required",
     "descriptionServiceRequired": "Ledger Wallet requires location services to pair your device through Bluetooth.",

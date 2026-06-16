@@ -51,6 +51,8 @@ export type LineChartProps<TRange extends string = string> = Readonly<{
   color?: LineChartColor;
   height?: number;
   isLoading?: boolean;
+  /** Label rendered by the chart when there is no data and it is not loading. @default t("lineChart.error") */
+  emptyLabel?: string;
   testID?: string;
   /**
    * Markers to render on top of the chart. When omitted, defaults to the

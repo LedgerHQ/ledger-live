@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Box,
-  SegmentedControl,
-  SegmentedControlButton,
-  Skeleton,
-} from "@ledgerhq/lumen-ui-rnative";
+import { Box, SegmentedControl, SegmentedControlButton } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { LineChart as LumenLineChart } from "@ledgerhq/lumen-ui-rnative-visualization";
 import { LineChartPoints } from "./LineChartPoints";
@@ -21,6 +16,7 @@ export function LineChartView<TRange extends string>({
   accessibilityLabel,
   height,
   isLoading,
+  emptyLabel,
   testID,
   points,
   pointTooltips,
@@ -54,34 +50,32 @@ export function LineChartView<TRange extends string>({
 
   return (
     <Box lx={containerStyle} testID={testID}>
-      {isLoading ? (
-        <Skeleton style={{ height }} />
-      ) : (
-        <LumenLineChart
-          series={chartSeries}
-          height={height}
-          showArea={showArea}
-          enableScrubbing={enableScrubber}
-          onScrubberPositionChange={onScrubberPositionChange}
-          showXAxis={showXAxis}
-          showYAxis={showYAxis}
-          xAxis={xAxis}
-          yAxis={yAxis}
-        >
-          <LineChartPoints points={points} formatValue={formatValue} />
-          {enableScrubber && (
-            <LineChartScrubber
-              series={chartSeries}
-              formatValue={formatValue}
-              tooltipTitle={tooltipTitle}
-              showTooltip={showScrubberTooltip}
-              showBeacons={showScrubberBeacons}
-              pointTooltips={pointTooltips}
-              pointTooltipsOnly={pointTooltipsOnly}
-            />
-          )}
-        </LumenLineChart>
-      )}
+      <LumenLineChart
+        series={chartSeries}
+        loading={isLoading}
+        emptyLabel={emptyLabel}
+        height={height}
+        showArea={showArea}
+        enableScrubbing={enableScrubber}
+        onScrubberPositionChange={onScrubberPositionChange}
+        showXAxis={showXAxis}
+        showYAxis={showYAxis}
+        xAxis={xAxis}
+        yAxis={yAxis}
+      >
+        <LineChartPoints points={points} formatValue={formatValue} />
+        {enableScrubber && (
+          <LineChartScrubber
+            series={chartSeries}
+            formatValue={formatValue}
+            tooltipTitle={tooltipTitle}
+            showTooltip={showScrubberTooltip}
+            showBeacons={showScrubberBeacons}
+            pointTooltips={pointTooltips}
+            pointTooltipsOnly={pointTooltipsOnly}
+          />
+        )}
+      </LumenLineChart>
 
       {rangeSelectorTrailing ? (
         <Box lx={rangeSelectorRowStyle}>

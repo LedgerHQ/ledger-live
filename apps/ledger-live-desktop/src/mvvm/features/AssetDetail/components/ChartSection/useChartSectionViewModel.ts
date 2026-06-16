@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
@@ -105,7 +105,6 @@ export type ChartSectionViewModelResult = Readonly<{
   onRangeChange: (range: LineChartRange) => void;
   color: LineChartColor;
   isLoading: boolean;
-  isError: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle: LineChartTooltipTitle;
   onScrubberPositionChange: LineChartScrubberPositionChange;
@@ -139,9 +138,9 @@ export function useChartSectionViewModel({
     ledgerId ?? marketData.marketCurrencyData?.ledgerIds?.[0] ?? marketData.marketCurrencyData?.id;
 
   const {
-    data: chartData,
-    isLoading,
-    isError,
+    currentData: chartData,
+    isLoading: isChartLoading,
+    isFetching: isChartFetching,
   } = useAssetChartData({ id, counterCurrency, range: selectedRange }, { skip: !id });
 
   // Extract the all-time extrema as stable primitives: marketCurrencyData is a
@@ -153,7 +152,7 @@ export function useChartSectionViewModel({
   const athTime = marketCurrencyData?.athDate?.getTime();
   const atlTime = marketCurrencyData?.atlDate?.getTime();
 
-  const { series, timestamps } = useMemo(() => {
+  const current = useMemo(() => {
     const rawPoints = chartData?.[selectedRange] ?? [];
     // On the "all" range, anchor the graph's high/low markers to the market
     // all-time high/low so they match the stats table (see LIVE-31732).
@@ -183,8 +182,27 @@ export function useChartSectionViewModel({
         },
       ] satisfies LineChartSeries[],
       timestamps: tsList,
+      hasData: data.length > 0,
     };
   }, [chartData, selectedRange, ath, atl, athTime, atlTime]);
+
+  // While the next timeframe loads, keep rendering the previous (non-empty)
+  // series so the chart morphs from the old shape (Lumen transition-loading)
+  // instead of flashing the empty placeholder. Scoped to `id`: morphing only
+  // applies within the same asset (a timeframe switch), never across an asset
+  // switch — otherwise we'd grey out the previous asset's shape instead of
+  // showing the new asset's loading/empty state.
+  const lastRenderedRef = useRef({ id, series: current.series, timestamps: current.timestamps });
+  if (current.hasData) {
+    lastRenderedRef.current = { id, series: current.series, timestamps: current.timestamps };
+  }
+  const isLoading = isChartLoading || (isChartFetching && !current.hasData);
+  // Only fall back to the previous series while loading the same asset. Once the
+  // fetch settles with no data (or the asset changed), show the current (empty)
+  // series so the chart renders its empty state instead of a stale graph.
+  const canReusePrevious = lastRenderedRef.current.id === id;
+  const { series, timestamps } =
+    !current.hasData && isLoading && canReusePrevious ? lastRenderedRef.current : current;
 
   const priceChangeKey = getPriceChangeKeyForRange(selectedRange);
   const rangePercentage = marketData.marketCurrencyData?.priceChangePercentage?.[priceChangeKey];
@@ -339,7 +357,6 @@ export function useChartSectionViewModel({
     onRangeChange: handleRangeChange,
     color,
     isLoading,
-    isError,
     formatValue,
     tooltipTitle,
     onScrubberPositionChange,
