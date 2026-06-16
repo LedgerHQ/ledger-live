@@ -6,7 +6,7 @@ const baseCapa: Omit<WebdriverIO.Capabilities, "custom:capa"> = {
   platformName: "iOS",
   "appium:platformVersion": process.env.CI ? "26.3" : "26.2",
   "appium:automationName": "XCUITest",
-  "appium:wdaLaunchTimeout": 120_000,
+  "appium:wdaLaunchTimeout": 180_000,
   "appium:wdaStartupRetries": 3,
   "appium:app":
     "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
