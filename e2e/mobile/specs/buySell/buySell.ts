@@ -16,6 +16,7 @@ export async function beforeAllFunction(options: ApplicationOptions) {
     speculosApp: options.speculosApp,
     cliCommands: options.cliCommands,
     featureFlags: options.featureFlags,
+    speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }

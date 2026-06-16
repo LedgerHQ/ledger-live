@@ -77,15 +77,10 @@ on:
         required: false
         type: number
       generate_userdata:
-        description: "Experimental: pre-generate app.json userdata with Speculos and reuse it in the tests"
+        description: "Reuse the daily pre-generated app.json userdata cache (from the generate-e2e-userdata workflow) instead of scanning accounts live on Speculos"
         required: false
         type: boolean
         default: false
-      generate_userdata_coins:
-        description: "Limit userdata generation to these coin ids (space-separated, e.g. 'ethereum bitcoin'); blank = all"
-        required: false
-        type: string
-        default: ""
 
   workflow_call:
     inputs:
@@ -140,15 +135,10 @@ on:
         required: false
         type: number
       generate_userdata:
-        description: "Experimental: pre-generate app.json userdata with Speculos and reuse it in the tests"
+        description: "Reuse the daily pre-generated app.json userdata cache (from the generate-e2e-userdata workflow) instead of scanning accounts live on Speculos"
         required: false
         type: boolean
         default: false
-      generate_userdata_coins:
-        description: "Limit userdata generation to these coin ids (space-separated, e.g. 'ethereum bitcoin'); blank = all"
-        required: false
-        type: string
-        default: ""
 
 permissions:
   id-token: write
@@ -215,7 +205,10 @@ jobs:
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
-      E2E_GENERATED_USERDATA_DIR: ${{ inputs.generate_userdata && format('{0}/e2e/desktop/tests/userdata/generated', github.workspace) || '' }}
+      # S3 cache bucket holding the daily pre-generated userdata (written by generate-e2e-userdata).
+      cache-bucket: ll-nx-cache
+      # Shared app.json cache dir; the daily userdata is restored here. Empty = disabled (live scan).
+      E2E_GENERATED_USERDATA_DIR: ${{ inputs.generate_userdata && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
     outputs:
       test_passed: ${{ steps.run-playwright.outputs.passed }}
       test_failed: ${{ steps.run-playwright.outputs.failed }}
@@ -353,29 +346,35 @@ jobs:
             }
           ' "$raw"
 
-      - name: Build Ledger Live CLI (for userdata generation)
+      - name: Compute userdata cache key date
         if: ${{ inputs.generate_userdata }}
-        run: pnpm exec nx run @ledgerhq/live-cli:build
+        id: userdata-meta
         shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
 
-      - name: Pre-generate E2E userdata app.json (Speculos)
+      - name: Restore pre-generated E2E userdata (app.json) from S3 cache
         if: ${{ inputs.generate_userdata }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: e2e-userdata-desktop-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            e2e-userdata-desktop-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Show restored userdata
+        if: ${{ inputs.generate_userdata }}
+        continue-on-error: true
         shell: bash
-        env:
-          SEED: ${{ secrets.SEED_QAA_B2C }}
-          GEN_COINS: ${{ inputs.generate_userdata_coins }}
         run: |
-          set -euo pipefail
-          echo "Generating app.json userdata into: $E2E_GENERATED_USERDATA_DIR"
-          if [ -n "${GEN_COINS:-}" ]; then
-            echo "Scoped to coins: $GEN_COINS"
-            pnpm run:cli generateAppJson --coin $GEN_COINS
-          else
-            echo "Generating for all coins"
-            pnpm run:cli generateAppJson
-          fi
-          echo "Generated userdata files:"
-          ls -la "$E2E_GENERATED_USERDATA_DIR"
+          echo "Userdata dir: $E2E_GENERATED_USERDATA_DIR"
+          ls -la "$E2E_GENERATED_USERDATA_DIR" || echo "No pre-generated userdata found (tests will scan live)."
 
       - name: Run Playwright E2E tests
         id: run-playwright

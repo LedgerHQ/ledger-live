@@ -95,6 +95,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -120,6 +121,7 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -149,6 +151,7 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -171,6 +174,7 @@ export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags:
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -207,6 +211,7 @@ export function runPartnerDappCTATest(
         speculosApp: account.currency.speculosApp,
         featureFlags,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -245,6 +250,7 @@ export function runPartnerDappPositionTest(
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -273,6 +279,7 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 

@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
@@ -48,16 +49,8 @@ describe("Change Language", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
-      cliCommands: [
-        async (userdataPath?: string) => {
-          return CLI.liveData({
-            currency: nanoApp.name,
-            index: 0,
-            appjson: userdataPath,
-            add: true,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(Account.ETH_1)],
+      speculosForSetupOnly: true,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });

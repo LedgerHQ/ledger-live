@@ -18,14 +18,20 @@ import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJs
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
-    throw new Error("Test failed - aborting initialization to prevent orphaned Speculos instances");
+    throw new Error(
+      "Test failed - aborting initialization to prevent orphaned Speculos instances",
+    );
   }
 }
 
-type CliCommand = (
+type CliCommand = ((
   userdataPath?: string,
   speculosAddress?: string,
-) => Observable<unknown> | Promise<unknown> | string;
+) => Observable<unknown> | Promise<unknown> | string) & {
+  // Set by cache-aware command builders (cliCommandsUtils) to signal the command
+  // can be served from the pre-generated userdata cache without a live device.
+  canUseGeneratedUserdata?: () => boolean;
+};
 
 export type InitOptions = {
   speculosApp?: SpeculosAppType;
@@ -37,6 +43,13 @@ export type InitOptions = {
   userdata?: string;
   testedCurrencies?: string[];
   featureFlags?: PartialFeatures;
+  /**
+   * Setup-only tests (no device interaction in the test body) can skip launching
+   * Speculos when every CLI command is served from the pre-generated userdata
+   * cache. Mirrors the desktop fixture flag of the same name. No-op unless
+   * `E2E_GENERATED_USERDATA_DIR` is set and the cache holds the test's accounts.
+   */
+  speculosForSetupOnly?: boolean;
 };
 
 type Entry = {
@@ -70,9 +83,11 @@ async function executeCliCommand(
 
 // Setup all Speculos devices in parallel for better performance.
 // If any launch fails, release the ones that already came up to avoid leaking pods.
-async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record<string, Entry>> {
+async function launchSpeculosDevices(
+  toStart: SpeculosAppType[],
+): Promise<Record<string, Entry>> {
   const results = await Promise.allSettled(
-    toStart.map(async app => {
+    toStart.map(async (app) => {
       checkTestFailed();
       const device = await launchSpeculos(app.name);
       return {
@@ -92,8 +107,8 @@ async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record
 
   if (failures.length) {
     await Promise.all(
-      launched.map(entry =>
-        deleteSpeculos(entry.deviceId).catch(err =>
+      launched.map((entry) =>
+        deleteSpeculos(entry.deviceId).catch((err) =>
           log.warn(
             "E2E",
             `Cleanup after partial launch failure: failed to delete ${entry.deviceId}: ${sanitizeError(err)}`,
@@ -146,7 +161,9 @@ async function executeCliCommandsOnApp(
         await registerSpeculos(speculosPort);
 
         for (let i = 0; i < cmds.length; i++) {
-          log.info(`  📝 [${app.name}] Executing command ${i + 1}/${cmds.length}`);
+          log.info(
+            `  📝 [${app.name}] Executing command ${i + 1}/${cmds.length}`,
+          );
           await executeCliCommand(cmds[i], userdataPath, deviceId);
         }
 
@@ -193,7 +210,9 @@ async function setupMainSpeculosApp(
 ): Promise<void> {
   const main = entryMap[speculosApp.name];
   if (!main) {
-    throw new Error(`No entry found for main speculos app: ${speculosApp.name}`);
+    throw new Error(
+      `No entry found for main speculos app: ${speculosApp.name}`,
+    );
   }
 
   const maxRetries = 3;
@@ -205,7 +224,9 @@ async function setupMainSpeculosApp(
     attempt++;
 
     try {
-      log.info(`\n🔄 [${speculosApp.name}] Main setup attempt ${attempt}/${maxRetries}`);
+      log.info(
+        `\n🔄 [${speculosApp.name}] Main setup attempt ${attempt}/${maxRetries}`,
+      );
 
       if (isSpeculosRemote()) await waitForSpeculosReady(main.deviceId);
       await registerSpeculos(main.speculosPort);
@@ -222,7 +243,9 @@ async function setupMainSpeculosApp(
       if (attempt < maxRetries) {
         checkTestFailed();
 
-        log.info(`[${speculosApp.name}] Creating new main Speculos instance for retry`);
+        log.info(
+          `[${speculosApp.name}] Creating new main Speculos instance for retry`,
+        );
         await removeSpeculosAndDeregisterKnownSpeculos(main.deviceId);
         const device = await launchSpeculos(main.name);
 
@@ -285,7 +308,9 @@ async function executeCliCommands(
       }
 
       if (attempt < maxRetries) {
-        log.info(`[Global CLI] Retrying full command run (attempt ${attempt + 1}/${maxRetries})`);
+        log.info(
+          `[Global CLI] Retrying full command run (attempt ${attempt + 1}/${maxRetries})`,
+        );
       }
     }
   }
@@ -303,12 +328,36 @@ export class InitializationManager {
     userdataPath: string,
     userdataSpeculos: string,
   ): Promise<void> {
-    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags = {} } = options;
+    const {
+      speculosApp,
+      cliCommands = [],
+      cliCommandsOnApp = [],
+      featureFlags = {},
+      speculosForSetupOnly,
+    } = options;
 
     await InitializationManager.setFeatureFlags(featureFlags);
 
+    const skipSpeculos =
+      !!speculosForSetupOnly &&
+      cliCommandsOnApp.length === 0 &&
+      cliCommands.length > 0 &&
+      cliCommands.every((cmd) => cmd.canUseGeneratedUserdata?.() ?? false);
+
+    if (skipSpeculos) {
+      log.info(
+        "📦 [generated-userdata] Setup-only test: skipping Speculos boot (all CLI commands served from cache)",
+      );
+      await executeCliCommands(cliCommands, userdataPath);
+      await InitializationManager.finalizeSetup(userdataSpeculos);
+      return;
+    }
+
     // Group commands by app name
-    const commandsByAppMap = new Map<string, { app: SpeculosAppType; cmds: CliCommand[] }>();
+    const commandsByAppMap = new Map<
+      string,
+      { app: SpeculosAppType; cmds: CliCommand[] }
+    >();
     for (const { app, cmd } of cliCommandsOnApp) {
       const existing = commandsByAppMap.get(app.name);
       if (existing) {
@@ -323,15 +372,20 @@ export class InitializationManager {
     const appsToLaunch = [
       ...new Map(
         commandsByApp
-          .map(x => x.app)
+          .map((x) => x.app)
           .concat(speculosApp ? [speculosApp] : [])
-          .map(app => [app.name, app]),
+          .map((app) => [app.name, app]),
       ).values(),
     ];
     const speculosDevices = await launchSpeculosDevices(appsToLaunch);
 
     // Execute app-specific commands with retry logic
-    await executeCliCommandsOnApp(commandsByApp, speculosDevices, userdataPath, speculosApp);
+    await executeCliCommandsOnApp(
+      commandsByApp,
+      speculosDevices,
+      userdataPath,
+      speculosApp,
+    );
 
     // Setup main Speculos app if specified
     if (speculosApp) {
@@ -343,9 +397,19 @@ export class InitializationManager {
     }
 
     // Execute global commands with internal full-run retry and Speculos re-initialization
-    await executeCliCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
+    await executeCliCommands(
+      cliCommands,
+      userdataPath,
+      speculosApp,
+      speculosDevices,
+    );
 
-    // Finalize setup only after successful global CLI run
+    await InitializationManager.finalizeSetup(userdataSpeculos);
+  }
+
+  // Load the seeded userdata into the app. Feature flags are applied separately at the
+  // start of `initialize` so they also cover the setup-only path that skips Speculos.
+  private static async finalizeSetup(userdataSpeculos: string): Promise<void> {
     await loadConfig(userdataSpeculos, true);
   }
 

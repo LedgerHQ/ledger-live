@@ -19,7 +19,7 @@ export type GenerateAppJsonJobOpts = Partial<{
 
 type CoinGroup = { currency: Currency; accounts: { index: number; scheme?: string }[] };
 
-const DEFAULT_OUTPUT_DIR = "e2e/desktop/tests/userdata/generated";
+const DEFAULT_OUTPUT_DIR = "e2e/userdata/generated";
 // Same base the desktop e2e tests build their app.json from before appending accounts.
 const DEFAULT_BASE = "e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json";
 

@@ -90,6 +90,11 @@ on:
         required: false
         type: string
         default: ""
+      generate_userdata:
+        description: "Reuse the daily pre-generated app.json userdata cache (from the generate-e2e-userdata workflow) instead of scanning accounts live on Speculos"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -145,6 +150,11 @@ on:
         required: false
         type: string
         default: ""
+      generate_userdata:
+        description: "Reuse the daily pre-generated app.json userdata cache (from the generate-e2e-userdata workflow) instead of scanning accounts live on Speculos"
+        required: false
+        type: boolean
+        default: false
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -167,6 +177,9 @@ env:
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
   E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  # Shared app.json cache dir. The daily generate-e2e-userdata workflow stores the userdata in
+  # the S3 cache; each detox shard restores it here and the e2e tests read it. Empty = disabled.
+  E2E_GENERATED_USERDATA_DIR: ${{ inputs.generate_userdata && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
@@ -502,7 +515,7 @@ jobs:
   detox-tests-ios:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-ios, determine-builds]
-    if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -621,6 +634,28 @@ jobs:
           set -o pipefail
           IOS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes[-1].version // "unknown"' || echo "unknown")
           echo "DEVICE_INFO=${{ env.IOS_SIMULATOR_DEVICE }} (iOS $IOS_VERSION)" >> $GITHUB_ENV
+
+      - name: Compute userdata cache key date
+        if: ${{ inputs.generate_userdata }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore pre-generated userdata (app.json) from S3 cache
+        if: ${{ inputs.generate_userdata }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            e2e-userdata-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
@@ -837,6 +872,28 @@ jobs:
         run: |
           DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
           echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
+
+      - name: Compute userdata cache key date
+        if: ${{ inputs.generate_userdata }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore pre-generated userdata (app.json) from S3 cache
+        if: ${{ inputs.generate_userdata }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            e2e-userdata-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
