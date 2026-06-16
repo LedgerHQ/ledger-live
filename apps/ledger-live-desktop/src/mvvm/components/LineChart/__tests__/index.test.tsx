@@ -1,7 +1,10 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
+import { mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
 import { LineChart } from "../index";
 import type { LineChartProps, LineChartSeries } from "../types";
+
+const ORIGINAL_RESIZE_OBSERVER = global.ResizeObserver;
 
 const MOCK_SERIES: LineChartSeries[] = [
   {
@@ -25,6 +28,11 @@ function renderLineChart(props: Partial<LineChartProps> = {}) {
 describe("LineChart", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockLumenChartResizeObserver();
+  });
+
+  afterEach(() => {
+    global.ResizeObserver = ORIGINAL_RESIZE_OBSERVER;
   });
 
   it("renders the range selector with the selected range checked", () => {
@@ -54,19 +62,23 @@ describe("LineChart", () => {
     expect(screen.getByTestId("line-chart-range-1d")).toHaveAttribute("aria-checked", "true");
   });
 
-  it("shows the loading skeleton when isLoading is true", () => {
+  it("marks the chart as busy while keeping the range selector when isLoading is true", async () => {
     renderLineChart({ isLoading: true });
 
-    expect(screen.getByTestId("line-chart-loading")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId("chart-svg")).toHaveAttribute("aria-busy", "true");
+    });
     expect(screen.getByTestId("line-chart-range-selector")).toBeVisible();
   });
 
-  it("shows the error state when isError is true", async () => {
-    renderLineChart({ isError: true, errorMessage: "Failed to fetch prices" });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("line-chart-error")).toBeVisible();
+  it("renders the empty label via the chart when there is no data and it is not loading", async () => {
+    renderLineChart({
+      series: [{ id: "price", data: [], label: "Price", stroke: "" }],
+      emptyLabel: "Failed to fetch prices",
     });
-    expect(screen.getByText("Failed to fetch prices")).toBeVisible();
+
+    expect(await screen.findByTestId("chart-empty-label")).toHaveTextContent(
+      "Failed to fetch prices",
+    );
   });
 });

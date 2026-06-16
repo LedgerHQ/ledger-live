@@ -1,5 +1,6 @@
 import { useCallback, useMemo, type ReactNode } from "react";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useTranslation } from "~/context/Locale";
 import { DEFAULT_LINE_CHART_HEIGHT } from "./constants";
 import type {
   LineChartPointMarker,
@@ -26,6 +27,7 @@ export type LineChartViewModelResult<TRange extends string = string> = Readonly<
   accessibilityLabel: string;
   height: number;
   isLoading: boolean;
+  emptyLabel: string;
   testID?: string;
   points: LineChartPointMarker[];
   pointTooltips: ReadonlyMap<number, LineChartPointTooltip>;
@@ -54,6 +56,7 @@ export function useLineChartViewModel<TRange extends string>({
   color = "muted",
   height = DEFAULT_LINE_CHART_HEIGHT,
   isLoading = false,
+  emptyLabel,
   testID,
   points,
   enableScrubber = true,
@@ -70,6 +73,7 @@ export function useLineChartViewModel<TRange extends string>({
   yAxis,
   rangeSelectorTrailing,
 }: LineChartProps<TRange>): LineChartViewModelResult<TRange> {
+  const { t } = useTranslation();
   const { theme } = useTheme();
 
   const stroke = useMemo(
@@ -108,6 +112,7 @@ export function useLineChartViewModel<TRange extends string>({
     accessibilityLabel,
     height,
     isLoading,
+    emptyLabel: emptyLabel ?? t("lineChart.error"),
     testID,
     points: resolvedPoints,
     pointTooltips,
