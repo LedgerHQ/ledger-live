@@ -651,6 +651,8 @@
     "src/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore.ts",
     "src/flows/send/coinControl/index.ts",
     "src/flows/send/coinControl/utils/changeToReturn.ts",
+    "src/flows/send/confirmation/getConfirmationStatus.ts",
+    "src/flows/send/confirmation/useSendFlowConfirmationCore.ts",
     "src/flows/send/customFees/hooks/useBridgeFeeEstimation.ts",
     "src/flows/send/customFees/hooks/useCustomFeeValidation.ts",
     "src/flows/send/customFees/hooks/useCustomFeesViewModelCore.ts",

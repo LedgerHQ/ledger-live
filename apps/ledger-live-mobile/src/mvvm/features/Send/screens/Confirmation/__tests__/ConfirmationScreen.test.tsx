@@ -1,0 +1,66 @@
+import React from "react";
+import { render, screen, fireEvent } from "@tests/test-renderer";
+import { ConfirmationScreen } from "../index";
+import * as UseConfirmationViewModelModule from "../hooks/useConfirmationViewModel";
+
+type ConfirmationViewModel = ReturnType<
+  typeof UseConfirmationViewModelModule.useConfirmationViewModel
+>;
+
+jest.mock("../hooks/useConfirmationViewModel", () => ({
+  useConfirmationViewModel: jest.fn(),
+}));
+
+const onViewTransaction = jest.fn();
+const onClose = jest.fn();
+
+function buildViewModel(overrides: Partial<ConfirmationViewModel> = {}): ConfirmationViewModel {
+  return {
+    canViewTransaction: true,
+    onViewTransaction,
+    onClose,
+    ...overrides,
+  };
+}
+
+function mockViewModel(overrides: Partial<ConfirmationViewModel> = {}) {
+  jest
+    .mocked(UseConfirmationViewModelModule.useConfirmationViewModel)
+    .mockReturnValue(buildViewModel(overrides));
+}
+
+describe("ConfirmationScreen", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("renders the success title, description and both actions", () => {
+    mockViewModel();
+    render(<ConfirmationScreen />);
+
+    expect(screen.getByText("Transaction signed")).toBeOnTheScreen();
+    expect(screen.getByText("Your transaction is being processed")).toBeOnTheScreen();
+    expect(screen.getByTestId("send-confirmation-success-gradient")).toBeOnTheScreen();
+    expect(screen.getByTestId("send-confirmation-success-view-transaction")).toBeOnTheScreen();
+    expect(screen.getByTestId("send-confirmation-success-close")).toBeOnTheScreen();
+  });
+
+  it("triggers onViewTransaction and onClose when the buttons are pressed", () => {
+    mockViewModel();
+    render(<ConfirmationScreen />);
+
+    fireEvent.press(screen.getByTestId("send-confirmation-success-view-transaction"));
+    expect(onViewTransaction).toHaveBeenCalledTimes(1);
+
+    fireEvent.press(screen.getByTestId("send-confirmation-success-close"));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the view transaction button when there is no operation to show", () => {
+    mockViewModel({ canViewTransaction: false });
+    render(<ConfirmationScreen />);
+
+    expect(screen.queryByTestId("send-confirmation-success-view-transaction")).toBeNull();
+    expect(screen.getByTestId("send-confirmation-success-close")).toBeOnTheScreen();
+  });
+});

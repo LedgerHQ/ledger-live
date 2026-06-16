@@ -1,5 +1,11 @@
+import type { Operation } from "@ledgerhq/types-live";
 import { formatAddress } from "../../utils/addressUtils";
 import type { RecipientData } from "./types";
+
+// Prefer the first sub-operation (e.g. token transfers) over the parent operation.
+export function getConcernedOperation(optimisticOperation: Operation | null): Operation | null {
+  return optimisticOperation?.subOperations?.[0] ?? optimisticOperation ?? null;
+}
 
 /**
  * Get the display value for a recipient (formatted address with optional ENS name).
