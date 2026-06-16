@@ -40,6 +40,7 @@ describe("useMarketPriceSectionViewModel", () => {
       prices: [],
       timestamps: [],
       isLoading: false,
+      isFetching: false,
       isError: false,
     });
   });
@@ -49,6 +50,7 @@ describe("useMarketPriceSectionViewModel", () => {
       prices: [10_000, 40_000],
       timestamps: [Date.UTC(2015, 0, 1), Date.UTC(2025, 0, 1)],
       isLoading: false,
+      isFetching: false,
       isError: false,
     });
 

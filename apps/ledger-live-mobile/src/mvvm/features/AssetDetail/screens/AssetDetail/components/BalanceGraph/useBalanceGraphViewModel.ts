@@ -139,10 +139,14 @@ export function useBalanceGraphViewModel({
   const id =
     knownLedgerIds?.[0] ?? marketCurrency?.ledgerIds?.[0] ?? marketCurrency?.id ?? marketApiId;
 
-  const { data: chartData, isLoading: isChartLoading } = useAssetChartData(
-    { id, counterCurrency, range },
-    { skip: !id },
-  );
+  const {
+    // Read `currentData` (not `data`): on an id/range change RTK Query retains
+    // the previous arg's `data`, which would leak the prior asset/range's series
+    // into the new selection. `currentData` is undefined until the new arg loads.
+    currentData: chartData,
+    isLoading: isChartLoading,
+    isFetching: isChartFetching,
+  } = useAssetChartData({ id, counterCurrency, range }, { skip: !id });
 
   const ranges = useMemo(
     () =>
@@ -183,7 +187,7 @@ export function useBalanceGraphViewModel({
   const athTime = marketCurrency?.athDate?.getTime();
   const atlTime = marketCurrency?.atlDate?.getTime();
 
-  const { series, timestamps } = useMemo(() => {
+  const current = useMemo(() => {
     const { prices, timestamps: tsList } = buildMarketChartSeries({
       chartData,
       range,
@@ -205,8 +209,24 @@ export function useBalanceGraphViewModel({
         },
       ] satisfies LineChartSeries[],
       timestamps: tsList,
+      hasData: prices.length > 0,
     };
   }, [chartData, range, ath, atl, athTime, atlTime]);
+
+  // While the next timeframe loads, keep rendering the previous (non-empty)
+  // series so the chart morphs from the old shape (Lumen transition-loading)
+  // instead of flashing the empty placeholder. Scoped to `id`: morphing only
+  // applies within the same asset (a timeframe switch), never across an asset
+  // switch — otherwise we'd grey out the previous asset's shape instead of
+  // showing the new asset's loading/empty state.
+  const lastRenderedRef = useRef({ id, series: current.series, timestamps: current.timestamps });
+  if (current.hasData) {
+    lastRenderedRef.current = { id, series: current.series, timestamps: current.timestamps };
+  }
+  const chartLoading = isChartLoading || (isChartFetching && !current.hasData);
+  const canReusePrevious = lastRenderedRef.current.id === id;
+  const { series, timestamps } =
+    !current.hasData && chartLoading && canReusePrevious ? lastRenderedRef.current : current;
   const prices = series[0].data;
 
   const priceChangePercentage = useMemo(() => {
@@ -539,7 +559,7 @@ export function useBalanceGraphViewModel({
     isRangeValue: isRangeKey,
     showReceive,
     onReceivePress,
-    isLoading: isLoading || isChartLoading,
+    isLoading: isLoading || chartLoading,
     series,
     chartColor,
     points,

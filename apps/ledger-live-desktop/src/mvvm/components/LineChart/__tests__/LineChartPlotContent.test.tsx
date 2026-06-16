@@ -1,8 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { hoverChartSvg, mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
-import { LineChartPlot } from "../LineChartPlot";
-import type { LineChartPlotContentProps } from "../LineChartPlotContent";
+import { LineChartPlotContent, type LineChartPlotContentProps } from "../LineChartPlotContent";
 import type { LineChartPointMarker, LineChartSeries } from "../types";
 
 const ORIGINAL_RESIZE_OBSERVER = global.ResizeObserver;
@@ -19,7 +18,7 @@ const MOCK_SERIES: LineChartSeries[] = [
 const defaultProps: LineChartPlotContentProps = {
   height: 240,
   isLoading: false,
-  isError: false,
+  emptyLabel: "No data",
   chartSeries: MOCK_SERIES,
   points: [],
   pointTooltips: new Map(),
@@ -32,7 +31,7 @@ const defaultProps: LineChartPlotContentProps = {
   showYAxis: true,
 };
 
-describe("LineChartPlot", () => {
+describe("LineChartPlotContent", () => {
   beforeEach(() => {
     mockLumenChartResizeObserver();
   });
@@ -41,36 +40,48 @@ describe("LineChartPlot", () => {
     global.ResizeObserver = ORIGINAL_RESIZE_OBSERVER;
   });
 
-  it("shows the loading skeleton when isLoading is true", () => {
-    render(<LineChartPlot {...defaultProps} isLoading />);
+  it("marks the chart as busy while loading with existing data", async () => {
+    render(<LineChartPlotContent {...defaultProps} isLoading />);
 
-    expect(screen.getByTestId("line-chart-loading")).toBeVisible();
-    expect(screen.queryByTestId("line-chart-error")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("chart-svg")).toBeVisible();
+    });
+    expect(screen.getByTestId("chart-svg")).toHaveAttribute("aria-busy", "true");
   });
 
-  it("shows the default error message when isError is true", () => {
-    render(<LineChartPlot {...defaultProps} isError />);
+  it("shows the Lumen loading placeholder when loading with no data", async () => {
+    render(
+      <LineChartPlotContent
+        {...defaultProps}
+        isLoading
+        chartSeries={[{ id: "price", data: [], label: "Price", stroke: "#000000" }]}
+      />,
+    );
 
-    expect(screen.getByTestId("line-chart-error")).toBeVisible();
-    expect(screen.getByText("Unable to load chart")).toBeVisible();
+    expect(await screen.findByTestId("chart-empty-state")).toBeInTheDocument();
+    expect(screen.getByTestId("chart-svg")).toHaveAttribute("aria-busy", "true");
   });
 
-  it("shows a custom error message when provided", () => {
-    render(<LineChartPlot {...defaultProps} isError errorMessage="Network unavailable" />);
+  it("shows the empty label when not loading and there is no data", async () => {
+    render(
+      <LineChartPlotContent
+        {...defaultProps}
+        emptyLabel="Nothing to show"
+        chartSeries={[{ id: "price", data: [], label: "Price", stroke: "#000000" }]}
+      />,
+    );
 
-    expect(screen.getByText("Network unavailable")).toBeVisible();
+    expect(await screen.findByTestId("chart-empty-label")).toHaveTextContent("Nothing to show");
   });
 
   it("renders the chart plot by default", () => {
-    render(<LineChartPlot {...defaultProps} />);
+    render(<LineChartPlotContent {...defaultProps} />);
 
-    expect(screen.queryByTestId("line-chart-loading")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("line-chart-error")).not.toBeInTheDocument();
     expect(screen.getByTestId("line-chart-plot")).toBeVisible();
   });
 
   it("renders the scrubber after hovering the chart when enableScrubber is true", async () => {
-    render(<LineChartPlot {...defaultProps} />);
+    render(<LineChartPlotContent {...defaultProps} />);
 
     await waitFor(() => {
       expect(screen.getByTestId("chart-svg")).toBeVisible();
@@ -87,7 +98,7 @@ describe("LineChartPlot", () => {
   });
 
   it("does not render the scrubber when enableScrubber is false", async () => {
-    render(<LineChartPlot {...defaultProps} enableScrubber={false} />);
+    render(<LineChartPlotContent {...defaultProps} enableScrubber={false} />);
 
     await waitFor(() => {
       expect(screen.getByTestId("chart-svg")).toBeVisible();
@@ -102,7 +113,7 @@ describe("LineChartPlot", () => {
   });
 
   it("renders no point markers when points is empty", async () => {
-    render(<LineChartPlot {...defaultProps} />);
+    render(<LineChartPlotContent {...defaultProps} />);
 
     await waitFor(() => {
       expect(screen.getByTestId("chart-svg")).toBeVisible();
@@ -116,7 +127,7 @@ describe("LineChartPlot", () => {
       { index: 3, value: 4, labelPosition: "top", color: "success" },
     ];
 
-    render(<LineChartPlot {...defaultProps} points={points} />);
+    render(<LineChartPlotContent {...defaultProps} points={points} />);
 
     await waitFor(() => {
       expect(screen.getAllByTestId("point-group")).toHaveLength(2);
@@ -126,7 +137,7 @@ describe("LineChartPlot", () => {
   it("labels markers with formatValue when no explicit label is provided", async () => {
     const points: LineChartPointMarker[] = [{ index: 1, value: 2 }];
 
-    render(<LineChartPlot {...defaultProps} points={points} />);
+    render(<LineChartPlotContent {...defaultProps} points={points} />);
 
     await waitFor(() => {
       expect(screen.getByText("$2")).toBeVisible();
@@ -134,7 +145,7 @@ describe("LineChartPlot", () => {
   });
 
   it("fills the area under the line when showArea is true", async () => {
-    render(<LineChartPlot {...defaultProps} showArea />);
+    render(<LineChartPlotContent {...defaultProps} showArea />);
 
     await waitFor(() => {
       expect(screen.getByTestId("line-area")).toBeVisible();
@@ -142,7 +153,7 @@ describe("LineChartPlot", () => {
   });
 
   it("does not fill the area when showArea is false", async () => {
-    render(<LineChartPlot {...defaultProps} showArea={false} />);
+    render(<LineChartPlotContent {...defaultProps} showArea={false} />);
 
     await waitFor(() => {
       expect(screen.getByTestId("chart-svg")).toBeVisible();
@@ -151,26 +162,26 @@ describe("LineChartPlot", () => {
   });
 
   it("renders the x-axis when showXAxis is true and hides it when false", async () => {
-    const { rerender } = render(<LineChartPlot {...defaultProps} showXAxis />);
+    const { rerender } = render(<LineChartPlotContent {...defaultProps} showXAxis />);
 
     await waitFor(() => {
       expect(screen.getByTestId("x-axis")).toBeVisible();
     });
 
-    rerender(<LineChartPlot {...defaultProps} showXAxis={false} />);
+    rerender(<LineChartPlotContent {...defaultProps} showXAxis={false} />);
     await waitFor(() => {
       expect(screen.queryByTestId("x-axis")).not.toBeInTheDocument();
     });
   });
 
   it("renders the y-axis when showYAxis is true and hides it when false", async () => {
-    const { rerender } = render(<LineChartPlot {...defaultProps} showYAxis />);
+    const { rerender } = render(<LineChartPlotContent {...defaultProps} showYAxis />);
 
     await waitFor(() => {
       expect(screen.getByTestId("y-axis")).toBeVisible();
     });
 
-    rerender(<LineChartPlot {...defaultProps} showYAxis={false} />);
+    rerender(<LineChartPlotContent {...defaultProps} showYAxis={false} />);
     await waitFor(() => {
       expect(screen.queryByTestId("y-axis")).not.toBeInTheDocument();
     });

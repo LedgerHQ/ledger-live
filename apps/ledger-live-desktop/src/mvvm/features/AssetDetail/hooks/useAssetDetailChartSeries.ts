@@ -25,8 +25,12 @@ export function useAssetDetailChartSeries({
   skip = false,
 }: UseAssetDetailChartSeriesParams) {
   const {
-    data: chartData,
+    // Read `currentData` (not `data`): on an id/range change RTK Query retains
+    // the previous arg's `data`, which would leak the prior asset/range's series
+    // into the new selection. `currentData` is undefined until the new arg loads.
+    currentData: chartData,
     isLoading,
+    isFetching,
     isError,
   } = useAssetChartData(
     { id: id ?? "", counterCurrency, range: selectedRange },
@@ -46,5 +50,5 @@ export function useAssetDetailChartSeries({
     [chartData, selectedRange, ath, atl, athTime, atlTime],
   );
 
-  return { prices, timestamps, isLoading, isError };
+  return { prices, timestamps, isLoading, isFetching, isError };
 }
