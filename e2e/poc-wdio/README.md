@@ -24,7 +24,7 @@ WDIO handles parallel worker delegation out of the box.
 
 To run tests in parallel set the desired amount of workers with `WDIO_INSTANCES`.
 
-For example, to run specs with 3 emulators in parallel simple follow these steps:
+For example, to run specs with 3 emulators in parallel follow these steps:
 
 1. Boot all 3 emulators (Android) / simulators (iOS)
 2. Set the env var in your terminal: `export WDIO_INSTANCES=3`
