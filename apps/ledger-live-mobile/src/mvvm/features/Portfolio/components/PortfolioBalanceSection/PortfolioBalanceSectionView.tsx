@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { AmountDisplay, Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { ResponsiveAmountDisplay } from "LLM/components/ResponsiveAmountDisplay";
 import { DiscreetModeIcon } from "./DiscreetModeIcon";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -75,7 +76,7 @@ export const PortfolioBalanceSectionView = ({
         <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
           <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
             {isBalanceAvailable ? (
-              <AmountDisplay
+              <ResponsiveAmountDisplay
                 key={unit.code}
                 value={balance}
                 formatter={formatter}
