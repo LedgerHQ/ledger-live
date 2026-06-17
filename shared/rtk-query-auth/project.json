@@ -1,0 +1,8 @@
+{
+  "name": "@ledgerhq/rtk-query-auth",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

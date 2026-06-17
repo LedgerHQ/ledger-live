@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "lib": ["es2021", "es2022.error", "dom"],
+    "outDir": "lib",
+    "rootDir": "src",
+    "types": ["node", "jest"]
+  },
+  "include": ["src/**/*"]
+}
