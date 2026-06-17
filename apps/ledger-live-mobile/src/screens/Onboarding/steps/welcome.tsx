@@ -7,12 +7,11 @@ import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "~/context/hooks";
-import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import { urls } from "~/utils/urls";
 import { useAcceptGeneralTerms } from "~/logic/terms";
-import { setAnalytics, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
+import { setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import ForceTheme from "~/components/theme/ForceTheme";
 import Button from "~/components/wrappedUi/Button";
@@ -43,7 +42,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const acceptTerms = useAcceptGeneralTerms();
-  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   useMarkWalletV4TourSeenAtOnboardingStart();
 
@@ -66,31 +64,13 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const next = useCallback(() => {
     acceptTerms();
-    const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
-
-    if (llmAnalyticsOptInPromptFeature?.enabled && entryPoints.includes("Onboarding")) {
-      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
-        screen: ScreenName.AnalyticsOptInPromptMain,
-        params: {
-          entryPoint: "Onboarding",
-        },
-      });
-    } else {
-      dispatch(setAnalytics(true));
-      navigation.navigate({
-        name: ScreenName.OnboardingPostWelcomeSelection,
-        params: {
-          userHasDevice: true,
-        },
-      });
-    }
-  }, [
-    acceptTerms,
-    llmAnalyticsOptInPromptFeature?.enabled,
-    llmAnalyticsOptInPromptFeature?.params?.entryPoints,
-    navigation,
-    dispatch,
-  ]);
+    navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
+      screen: ScreenName.AnalyticsOptInPromptMain,
+      params: {
+        entryPoint: "Onboarding",
+      },
+    });
+  }, [acceptTerms, navigation]);
 
   const videoMounted = !useIsAppInBackground();
 

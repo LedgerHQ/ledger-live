@@ -151,7 +151,6 @@ function Main({ route, navigation }: Props) {
           <TrackScreen
             category="Analytics Opt In Prompt"
             name="Main"
-            variant="A"
             flow={flow}
             mandatory={shouldWeTrack}
           />
