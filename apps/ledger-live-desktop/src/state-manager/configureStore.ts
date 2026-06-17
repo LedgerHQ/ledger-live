@@ -1,6 +1,14 @@
-import { configureStore, Middleware, ThunkDispatch } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  createListenerMiddleware,
+  type Middleware,
+  type ThunkDispatch,
+} from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
+import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
+import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
+import { trustchainStoreActionTypePrefix } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
@@ -30,6 +38,16 @@ const customCreateStore = ({
   analyticsMiddleware,
   fetchRemoteFlags = defaultFetchRemoteFlags,
 }: Props) => {
+  const lkrpIdentityProvider = new LkrpIdentityProvider();
+  const lkrpListenerMiddleware = createListenerMiddleware();
+  lkrpListenerMiddleware.startListening({
+    predicate: action => action.type.startsWith(trustchainStoreActionTypePrefix),
+    effect(_action, listenerApi) {
+      const { trustchain } = listenerApi.getState() as State;
+      lkrpIdentityProvider.setTrustchainStore(trustchain);
+    },
+  });
+
   const store = configureStore({
     reducer: reducers,
     preloadedState: state,
@@ -61,9 +79,17 @@ const customCreateStore = ({
                 // LIVE-33829: force mocks until Pay Card API base URL is wired.
                 payCardApiMocksEnabled: true,
               }),
+              authSDK: new AuthSDK(
+                {
+                  clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                  keycloakBaseUrl: getEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"),
+                  keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                },
+                { provider: lkrpIdentityProvider },
+              ),
             },
           },
-        }),
+        }).prepend(lkrpListenerMiddleware.middleware),
       )
         .concat(logger)
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
@@ -71,7 +97,7 @@ const customCreateStore = ({
         .concat(
           createIdentitiesSyncMiddleware({
             pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
-            getIdentitiesState: (state: State) => state.identities,
+            getIdentitiesState: ({ identities }: State) => identities,
             getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
         )

@@ -66,7 +66,7 @@ export const trustchainHandlers: TrustchainHandlers = {
 
 // actions
 
-export const importTrustchainStoreState = (trustchain: TrustchainStore) => ({
+export const importTrustchainStoreState = (trustchain?: TrustchainStore) => ({
   type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
   payload: { trustchain },
 });

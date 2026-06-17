@@ -116,6 +116,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | NFT metadata | `nft.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Wallet icons / avatars CDN | `lw-icons.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Sanctioned addresses (compliance) | `compliance.ledger.com` | [env](/libs/env/src/env.ts) | prod |
+| Ledger API authentication (Keycloak) | `keycloak.api.live.aws.stg.ldg-tech.com`<br>_⚠️ only staging found; prod in progress   | [env](/libs/env/src/env.ts) | staging |
 | Ledger Button tracking | `ledgerb.api.ledger.com` | [code](/libs/ledger-live-common/src/wallet-api/utils/ledgerButtonTracking.ts) | prod |
 | **Live Devices** | | | |
 | Manager API | `manager.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |

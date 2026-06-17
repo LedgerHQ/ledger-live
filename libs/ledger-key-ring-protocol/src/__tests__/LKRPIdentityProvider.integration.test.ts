@@ -138,8 +138,10 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
 
 function createIdentityProvider(trustchainId: string | undefined): LkrpIdentityProvider {
   const provider = new LkrpIdentityProvider();
-  provider.setKeypair(MEMBER_CREDENTIALS);
-  provider.setTrustchainId(trustchainId);
+  provider.setTrustchainStore({
+    memberCredentials: MEMBER_CREDENTIALS,
+    trustchain: trustchainId ? { rootId: trustchainId } : null,
+  });
   return provider;
 }
 
