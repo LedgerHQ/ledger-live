@@ -578,18 +578,23 @@ export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> 
   }
 
   const port = getEnv("SPECULOS_API_PORT");
+  let texts = "";
+  let enabled = false;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const texts = await fetchCurrentScreenTexts(port);
+    texts = await fetchCurrentScreenTexts(port);
     if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
       return;
     }
-    if (texts.includes(DeviceLabels.YES_ENABLE)) {
+    if (!enabled && texts.includes(DeviceLabels.YES_ENABLE)) {
       await pressAndRelease(DeviceLabels.YES_ENABLE);
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
-      return;
+      enabled = true; // press once, then keep polling for review within the same budget
     }
     await sleep(500);
   }
+
+  throw new Error(
+    `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`,
+  );
 }
 
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
