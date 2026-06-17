@@ -3,11 +3,10 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { useFeature } from "@features/platform-feature-flags";
 import { useAcceptGeneralTerms } from "~/logic/terms";
 import { urls } from "~/utils/urls";
 import { NavigatorName, ScreenName } from "~/const/navigation";
-import { setAnalytics, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
+import { setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 
@@ -26,7 +25,6 @@ export function useWelcomeNavigation() {
   } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const acceptTerms = useAcceptGeneralTerms();
-  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const onTermsAndConditions = useCallback(
     () => Linking.openURL((urls.terms as Record<string, string>)[language] || urls.terms.en),
@@ -41,30 +39,13 @@ export function useWelcomeNavigation() {
   );
   const onGetStarted = useCallback(() => {
     acceptTerms();
-    const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
-    if (llmAnalyticsOptInPromptFeature?.enabled && entryPoints.includes("Onboarding")) {
-      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
-        screen: ScreenName.AnalyticsOptInPromptMain,
-        params: {
-          entryPoint: "Onboarding",
-        },
-      });
-    } else {
-      dispatch(setAnalytics(true));
-      navigation.navigate({
-        name: ScreenName.OnboardingPostWelcomeSelection,
-        params: {
-          userHasDevice: true,
-        },
-      });
-    }
-  }, [
-    acceptTerms,
-    llmAnalyticsOptInPromptFeature?.enabled,
-    llmAnalyticsOptInPromptFeature?.params?.entryPoints,
-    navigation,
-    dispatch,
-  ]);
+    navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
+      screen: ScreenName.AnalyticsOptInPromptMain,
+      params: {
+        entryPoint: "Onboarding",
+      },
+    });
+  }, [acceptTerms, navigation]);
 
   const [_, setBooleans] = useState<boolean[]>([]);
   const [isTappingLogo, setIsTappingLogo] = useState<boolean>(false);
