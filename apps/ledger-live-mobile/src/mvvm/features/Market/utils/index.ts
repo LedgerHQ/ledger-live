@@ -47,6 +47,42 @@ export const getDateFormatter = (locale: string, interval: string) => {
   return dateFormatters[locale][interval] || dateFormatters[locale].default;
 };
 
+const getNumberFormatter = (locale: string, currency?: string): Intl.NumberFormat => {
+  if (!currency) return new Intl.NumberFormat(locale);
+
+  if (!formatters[locale]) formatters[locale] = {};
+  if (!formatters[locale][currency]) {
+    formatters[locale][currency] = new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 8,
+      maximumSignificantDigits: 8,
+    });
+  }
+
+  return formatters[locale][currency];
+};
+
+const formatShortenedValue = (
+  formatter: Intl.NumberFormat,
+  value: number,
+  t: TFunction,
+): string => {
+  const sign = value > 0 ? "" : "-";
+  const v = Math.abs(value);
+  const index = Math.min(Math.floor(Math.log(v + 1) / Math.log(10) / 3) || 0, indexes.length - 1);
+
+  const [i, n] = indexes[index];
+
+  const roundedValue = Math.floor((v / n) * 1000) / 1000;
+  const number = formatter.format(roundedValue);
+
+  const I = t(`numberCompactNotation.${i}`);
+  const suffix = I ? ` ${I}` : "";
+
+  return number.replace(/([0-9,. ]+)/, `${sign}$1${suffix}`);
+};
+
 export const counterValueFormatter = ({
   currency,
   value,
@@ -68,38 +104,11 @@ export const counterValueFormatter = ({
     return "-";
   }
 
-  if (currency) {
-    if (!formatters[locale]) formatters[locale] = {};
-    if (!formatters[locale][currency]) {
-      formatters[locale][currency] = new Intl.NumberFormat(locale, {
-        style: "currency",
-        currency,
-        maximumFractionDigits: 8,
-        maximumSignificantDigits: 8,
-      });
-    }
-  }
-
-  const formatter = currency ? formatters[locale][currency] : new Intl.NumberFormat(locale);
+  const formatter = getNumberFormatter(locale, currency);
   const upperCaseTicker = ticker.trim().toLocaleUpperCase();
 
   if (shorten && t) {
-    const sign = value > 0 ? "" : "-";
-    const v = Math.abs(value);
-    const index = Math.min(Math.floor(Math.log(v + 1) / Math.log(10) / 3) || 0, indexes.length - 1);
-
-    const [i, n] = indexes[index];
-
-    const roundedValue = Math.floor((v / n) * 1000) / 1000;
-
-    const number = formatter.format(roundedValue);
-
-    const I = t(`numberCompactNotation.${i}`);
-
-    const suffix = I ? ` ${I}` : "";
-    const formattedNumber = number.replace(/([0-9,. ]+)/, `${sign}$1${suffix}`);
-
-    return `${formattedNumber} ${upperCaseTicker}`.trim();
+    return `${formatShortenedValue(formatter, value, t)} ${upperCaseTicker}`.trim();
   }
 
   return `${formatter.format(value)} ${upperCaseTicker}`.trim();

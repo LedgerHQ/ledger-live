@@ -1,11 +1,18 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
+import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { Order, type MarketListRequestResult } from "@ledgerhq/live-common/market/utils/types";
+import type { State } from "~/reducers/types";
 import { createMarketCurrencyData } from "../../../__tests__/helpers";
 import { useMarketAssets } from "../useMarketAssets";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
+jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider");
+jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate");
 const mockedUseMarketData = jest.mocked(useMarketData);
+const mockedUseMarketDataProvider = jest.mocked(useMarketDataProvider);
+const mockedUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
 
 const bitcoin = createMarketCurrencyData({ id: "bitcoin", name: "Bitcoin" });
 const ethereum = createMarketCurrencyData({ id: "ethereum", name: "Ethereum", ticker: "eth" });
@@ -38,10 +45,31 @@ function mockMarketData(overrides: Partial<MarketListRequestResult> = {}) {
   });
 }
 
+function mockSupportedCounterCurrencies(supportedCounterCurrencies?: string[]) {
+  mockedUseMarketDataProvider.mockReturnValue({
+    supportedCounterCurrencies,
+  } as unknown as ReturnType<typeof useMarketDataProvider>);
+}
+
+function mockUsdToFiatRate(rate: ReturnType<typeof useUsdToFiatRate>) {
+  mockedUseUsdToFiatRate.mockReturnValue(rate);
+}
+
+// Force the locale so the expected formatted price is deterministic.
+const withCounterValue = (ticker: string) => ({
+  overrideInitialState: (state: State) => ({
+    ...state,
+    settings: { ...state.settings, counterValue: ticker, language: "en" },
+  }),
+});
+
 describe("useMarketAssets", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockMarketData();
+    // Defaults: supported list not yet loaded + a no-op rate, i.e. no USD fallback.
+    mockSupportedCounterCurrencies(undefined);
+    mockUsdToFiatRate({ status: "ready", rate: 1 });
   });
 
   it("maps market data into display rows", () => {
@@ -237,6 +265,74 @@ describe("useMarketAssets", () => {
       name: "Tesla xStock",
       ticker: "tslax",
       ledgerIds: [],
+    });
+  });
+
+  // CoinGecko's markets endpoint cannot serve fiats outside its supported list
+  // (e.g. COP), so the list falls back to a USD request and rescales every row by
+  // the USD->COP spot rate, while still formatting with the COP unit.
+  describe("unsupported fiat countervalue (COP)", () => {
+    const SUPPORTED_WITHOUT_COP = ["usd", "eur", "vnd"];
+
+    it("requests in USD and rescales each row by the USD->COP rate", () => {
+      // Control: COP natively supported, value already expressed in COP, no rescale.
+      // Its formatted price is the COP-formatted target we expect the fallback to match.
+      mockSupportedCounterCurrencies(["usd", "cop"]);
+      mockUsdToFiatRate({ status: "ready", rate: 1 });
+      mockMarketData({ data: [createMarketCurrencyData({ id: "bitcoin", price: 400_000 })] });
+      const control = renderHook(() => useMarketAssets(), withCounterValue("COP"));
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ counterCurrency: "cop" }),
+      );
+      const expectedCopPrice = control.result.current.assets[0].formattedPrice;
+
+      // Fallback: COP unsupported → fetch the USD price (100) and rescale by 4000,
+      // yielding the same 400,000 COP row as the natively-served control.
+      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
+      mockUsdToFiatRate({ status: "ready", rate: 4000 });
+      mockMarketData({ data: [createMarketCurrencyData({ id: "bitcoin", price: 100 })] });
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
+
+      // The request is made in USD (the markets endpoint cannot serve COP)...
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ counterCurrency: "usd" }),
+      );
+      // ...and the rate is fetched for the user's actual countervalue.
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("cop");
+      expect(result.current.assets[0].formattedPrice).toBe(expectedCopPrice);
+    });
+
+    it("withholds rows and stays loading until the rate resolves", () => {
+      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
+      mockUsdToFiatRate({ status: "loading", rate: null });
+
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
+
+      expect(result.current.assets).toEqual([]);
+      expect(result.current.loading).toBe(true);
+    });
+
+    it("surfaces an error when the rate request fails", () => {
+      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
+      mockUsdToFiatRate({ status: "error", rate: null });
+
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
+
+      expect(result.current.assets).toEqual([]);
+      expect(result.current.isError).toBe(true);
+    });
+
+    it("requests the countervalue natively once it is known to be supported", () => {
+      mockSupportedCounterCurrencies(["usd", "eur", "cop"]);
+      mockMarketData({ data: [createMarketCurrencyData({ id: "bitcoin", price: 100 })] });
+
+      renderHook(() => useMarketAssets(), withCounterValue("COP"));
+
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ counterCurrency: "cop" }),
+      );
+      // No USD->fiat conversion request fires for a natively supported countervalue.
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd");
     });
   });
 });

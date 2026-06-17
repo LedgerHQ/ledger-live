@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
+import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -60,12 +61,23 @@ export function useMarketAssets({
   const { supportedCounterCurrencies } = useMarketDataProvider();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const settingsCounterValue = counterValueCurrency.ticker.toLowerCase();
-  // While the supported list is still loading we keep the user's counter value, and only fall
-  // back to usd once we know it is unsupported — otherwise a request fires with usd first.
-  const counterCurrency =
-    supportedCounterCurrencies && !supportedCounterCurrencies.includes(settingsCounterValue)
-      ? "usd"
-      : settingsCounterValue;
+  // The markets endpoint only serves the fiats CoinGecko lists as supported. For
+  // anything else (e.g. COP) we fetch in USD and rescale by the USD->countervalue
+  // spot rate. While the supported list is still loading we keep the user's
+  // counter value, and only fall back once we know it is unsupported — otherwise a
+  // request fires with usd first.
+  const needsUsdFallback = Boolean(
+    supportedCounterCurrencies && !supportedCounterCurrencies.includes(settingsCounterValue),
+  );
+  const counterCurrency = needsUsdFallback ? "usd" : settingsCounterValue;
+  // Passing "usd" short-circuits the rate hook to 1 without firing a request, so
+  // natively served countervalues incur no extra network call.
+  const { rate: usdToCounterValueRate, status: rateStatus } = useUsdToFiatRate(
+    needsUsdFallback ? settingsCounterValue : "usd",
+  );
+  // Withhold a rate until it resolves so we never render USD numbers formatted with
+  // the countervalue's unit. `null` defers the conversion (assets stay empty + loading).
+  const rate = needsUsdFallback ? usdToCounterValueRate : 1;
   const counterValueUnit = counterValueCurrency.units[0];
   const normalizedSearch = search.trim();
   const {
@@ -110,20 +122,28 @@ export function useMarketAssets({
 
   const assets = useMemo(
     () =>
-      getMarketAssets({
-        marketData,
-        counterCurrency,
-        counterValueUnit,
-        displayRange,
-        locale,
-        t,
-      }),
-    [counterCurrency, counterValueUnit, displayRange, locale, marketData, t],
+      rate == null
+        ? []
+        : getMarketAssets({
+            marketData,
+            // Format with the user's countervalue (the request may have used usd as
+            // a fallback, but the values are rescaled back into the countervalue).
+            counterCurrency: settingsCounterValue,
+            counterValueUnit,
+            rate,
+            displayRange,
+            locale,
+            t,
+          }),
+    [counterValueUnit, displayRange, locale, marketData, rate, settingsCounterValue, t],
   );
 
   const hasData = assets.length > 0;
   const canLoadMore = shouldFetchAssets && marketData.length >= page * PAGE_SIZE;
-  const loading = shouldFetchAssets && (result.isLoading || result.isPending) && !hasData;
+  const isRateLoading = needsUsdFallback && rateStatus === "loading";
+  const isRateError = needsUsdFallback && rateStatus === "error";
+  const loading =
+    shouldFetchAssets && (result.isLoading || result.isPending || isRateLoading) && !hasData;
   const isFetchingNextPage = shouldFetchAssets && page > 1 && result.isFetching && hasData;
 
   const onEndReached = useCallback(() => {
@@ -154,7 +174,7 @@ export function useMarketAssets({
     assets,
     loading,
     isFetchingNextPage,
-    isError: shouldFetchAssets && result.isError,
+    isError: shouldFetchAssets && (result.isError || isRateError),
     emptyState: getEmptyState({ isFavoritesCategory, hasFavoriteIds, isStocksCategory }),
     onEndReached,
   };

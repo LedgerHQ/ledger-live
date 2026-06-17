@@ -1,4 +1,5 @@
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapMarketCurrencyToDisplayData } from "../../utils/marketAssetDisplay";
@@ -21,6 +22,7 @@ export function getMarketAssets({
   marketData,
   counterCurrency,
   counterValueUnit,
+  rate = 1,
   displayRange,
   locale,
   t,
@@ -28,6 +30,10 @@ export function getMarketAssets({
   marketData: MarketCurrencyData[];
   counterCurrency: string;
   counterValueUnit: Unit;
+  // USD->countervalue spot rate applied when the data was fetched in USD as a
+  // fallback (the markets endpoint cannot serve the countervalue natively).
+  // Defaults to 1, i.e. natively served data is passed through unchanged.
+  rate?: number;
   displayRange: DisplayRange;
   locale: string;
   t: Translate;
@@ -35,7 +41,7 @@ export function getMarketAssets({
   const uniqueById = [...new Map(marketData.map(item => [item.id, item])).values()];
 
   return uniqueById.map(item =>
-    mapMarketCurrencyToDisplayData(item, {
+    mapMarketCurrencyToDisplayData(applyUsdRateToMarket(item, rate), {
       counterCurrency,
       counterValueUnit,
       range: displayRange,

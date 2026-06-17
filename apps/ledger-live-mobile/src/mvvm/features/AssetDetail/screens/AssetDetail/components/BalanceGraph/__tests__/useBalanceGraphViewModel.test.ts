@@ -6,6 +6,7 @@ import {
   useGetAssetChartDataQuery,
 } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -22,10 +23,14 @@ jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   useGetCurrencyDataQuery: jest.fn(),
   useGetAssetChartDataQuery: jest.fn(),
 }));
+jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+  useUsdToFiatRate: jest.fn(() => ({ status: "ready", rate: 1 })),
+}));
 jest.mock("LLM/features/Receive");
 
 const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
 const mockUseGetAssetChartDataQuery = jest.mocked(useGetAssetChartDataQuery);
+const mockUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 const handleOpenReceiveDrawer = jest.fn();
 
@@ -130,6 +135,7 @@ describe("useBalanceGraphViewModel", () => {
     jest.clearAllMocks();
     mockCurrency({ data: marketCurrencyData });
     mockChart({ data: CHART_DATA_BY_RANGE });
+    mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
     mockUseOpenReceiveDrawer.mockReturnValue({ handleOpenReceiveDrawer });
   });
 
@@ -428,6 +434,43 @@ describe("useBalanceGraphViewModel", () => {
       const { result } = renderVM();
 
       expect(result.current.chartColor).toBe("muted");
+    });
+  });
+
+  describe("crypto countervalue (BTC)", () => {
+    const withBtcCounterValue: StateOption = {
+      overrideInitialState: (state: State): State => ({
+        ...state,
+        settings: { ...state.settings, counterValue: "BTC" },
+      }),
+    };
+
+    it("fetches the chart in USD (not the crypto ticker)", () => {
+      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
+
+      renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
+
+      expect(mockUseGetAssetChartDataQuery).toHaveBeenCalledWith(
+        expect.objectContaining({ counterCurrency: "usd" }),
+        expect.anything(),
+      );
+    });
+
+    it("rescales the USD chart by the USD→BTC rate so the series is populated", () => {
+      const rate = 0.5;
+      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate });
+
+      const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
+
+      expect(result.current.series[0]?.data).toEqual([100, 110, 120].map(value => value * rate));
+    });
+
+    it("withholds the series (empty, not stale USD values) while the rate is unavailable", () => {
+      mockUseUsdToFiatRate.mockReturnValue({ status: "error", rate: null });
+
+      const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
+
+      expect(result.current.series[0]?.data).toEqual([]);
     });
   });
 
