@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo } from "react";
-import { useFeature } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import {
   hasSeenAnalyticsOptInPromptSelector,
@@ -10,12 +9,15 @@ import {
   setAnalyticsConsentInfo,
   setHasSeenAnalyticsOptInPrompt,
 } from "~/renderer/actions/settings";
+import { useFeature } from "@features/platform-feature-flags";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
 import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
+
+const ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS = ["Onboarding", "Portfolio"];
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -29,7 +31,6 @@ interface Props {
 export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
-  const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
   const analyticsOptInFlag = useFeature("analyticsOptIn");
   const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
@@ -41,7 +42,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
 
-  const variant = getVariant(lldAnalyticsOptInPromptFlag?.params?.variant);
+  const variant = AB_TESTING_VARIANTS.A;
 
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
   const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
@@ -59,21 +60,15 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     [setIsAnalyticsOptInPromptOpened],
   );
 
-  const isEntryPointIncludedInFlagParams = lldAnalyticsOptInPromptFlag?.params?.entryPoints
-    .map(s => s.toLowerCase())
-    .includes(entryPoint.toLowerCase());
+  const isEntryPointIncluded = ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS.map(entryPointName =>
+    entryPointName.toLowerCase(),
+  ).includes(entryPoint.toLowerCase());
 
   const isFlagEnabled = useMemo(
     () =>
-      isEntryPointIncludedInFlagParams &&
-      lldAnalyticsOptInPromptFlag?.enabled &&
+      isEntryPointIncluded &&
       (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
-    [
-      lldAnalyticsOptInPromptFlag,
-      hasSeenAnalyticsOptInPrompt,
-      entryPoint,
-      isEntryPointIncludedInFlagParams,
-    ],
+    [hasSeenAnalyticsOptInPrompt, entryPoint, isEntryPointIncluded],
   );
 
   const onSubmit = async () => {
@@ -118,7 +113,6 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onSubmit,
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
-    lldAnalyticsOptInPromptFlag,
     flow,
     shouldWeTrack,
     handleOpenPrivacyPolicy,
