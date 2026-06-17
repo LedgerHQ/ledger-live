@@ -172,7 +172,7 @@ env:
   MOBILE_ARTIFACTS_ROOT: e2e/poc-wdio/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
-  WDIO_INSTANCES: 2
+  WDIO_INSTANCES: 3
 
 jobs:
   determine-builds:
@@ -561,7 +561,7 @@ jobs:
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
         with:
-          worker_count: 2
+          worker_count: 3
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Detox Post Install

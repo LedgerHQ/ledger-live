@@ -2,27 +2,24 @@ import { config as baseConfig } from "./wdio.shared.conf.ts";
 import { findFreePort } from "../bridge/server.ts";
 import { WorkerPool } from "../workers/WorkerPool.ts";
 
-const baseCapa: Omit<WebdriverIO.Capabilities, "custom:capa"> = {
-  platformName: "iOS",
-  "appium:platformVersion": process.env.CI ? "26.3" : "26.2",
-  "appium:automationName": "XCUITest",
-  "appium:wdaLaunchTimeout": 180_000,
-  "appium:wdaStartupRetries": 3,
-  "appium:app":
-    "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
-};
-
 const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
   { length: Number(process.env.WDIO_INSTANCES) || 1 },
-  (_, i) => ({
-    ...baseCapa,
-    port: 4723 + i,
-    // first simulator has no suffix
-    "appium:deviceName": i === 0 ? "iOS Simulator" : `iOS Simulator ${i + 1}`,
-    "appium:wdaLocalPort": 8203 + i,
-    "appium:mjpegServerPort": 9100 + i,
-    "custom:capa": { websocketPort: 8098 + i },
-  }),
+  (_, i) =>
+    ({
+      platformName: "iOS",
+      port: 4723 + i,
+      // first simulator has no suffix
+      "appium:deviceName": i === 0 ? "iOS Simulator" : `iOS Simulator ${i + 1}`,
+      "appium:wdaLocalPort": 8203 + i,
+      "appium:mjpegServerPort": 9100 + i,
+      "custom:capa": { websocketPort: 8098 + i },
+      "appium:platformVersion": process.env.CI ? "26.3" : "26.2",
+      "appium:automationName": "XCUITest",
+      "appium:wdaLaunchTimeout": 180_000,
+      "appium:wdaStartupRetries": 3,
+      "appium:app":
+        "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+    }) satisfies WebdriverIO.Capabilities,
 );
 
 const workerPool = new WorkerPool(workerConfigs);

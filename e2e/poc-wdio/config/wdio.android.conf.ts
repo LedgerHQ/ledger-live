@@ -2,30 +2,27 @@ import { config as baseConfig } from "./wdio.shared.conf.ts";
 import { findFreePort } from "../bridge/server.ts";
 import { WorkerPool } from "../workers/WorkerPool.ts";
 
-const baseCapa: Omit<WebdriverIO.Capabilities, "custom:capa"> = {
-  platformName: "Android",
-  "appium:platformVersion": "16.0",
-  "appium:automationName": "UiAutomator2",
-  "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
-  "appium:adbExecTimeout": 30_000,
-  "appium:skipLogcatCapture": false,
-  "appium:clearDeviceLogsOnStart": true,
-  "appium:ensureWebviewsHavePages": true,
-  "appium:disableWindowAnimation": true,
-};
-
 const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
   { length: Number(process.env.WDIO_INSTANCES) || 1 },
-  (_, i) => ({
-    ...baseCapa,
-    port: 4723 + i,
-    // first emulator has no suffix
-    "appium:avd": i === 0 ? "Android_Emulator" : `Android_Emulator_${i + 1}`,
-    "appium:systemPort": 8201 + i,
-    "appium:chromedriverPort": 8210 + i,
-    "appium:mjpegServerPort": 7810 + i,
-    "custom:capa": { websocketPort: 8098 + i },
-  }),
+  (_, i) =>
+    ({
+      platformName: "Android",
+      port: 4723 + i,
+      // first emulator has no suffix
+      "appium:avd": i === 0 ? "Android_Emulator" : `Android_Emulator_${i + 1}`,
+      "appium:systemPort": 8201 + i,
+      "appium:chromedriverPort": 8210 + i,
+      "appium:mjpegServerPort": 7810 + i,
+      "custom:capa": { websocketPort: 8098 + i },
+      "appium:platformVersion": "16.0",
+      "appium:automationName": "UiAutomator2",
+      "appium:adbExecTimeout": 30_000,
+      "appium:skipLogcatCapture": false,
+      "appium:clearDeviceLogsOnStart": true,
+      "appium:ensureWebviewsHavePages": true,
+      "appium:disableWindowAnimation": true,
+      "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
+    }) satisfies WebdriverIO.Capabilities,
 );
 
 const workerPool = new WorkerPool(workerConfigs);
