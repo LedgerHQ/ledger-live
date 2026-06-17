@@ -978,6 +978,21 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Push Devices Service url for device tracking",
   },
+  LEDGER_AUTH_KEYCLOAK_BASE_URL: {
+    def: "https://keycloak.api.live.aws.stg.ldg-tech.com",
+    parser: stringParser,
+    desc: "Keycloak base URL for Ledger authenticated APIs",
+  },
+  LEDGER_AUTH_KEYCLOAK_REALM: {
+    def: "ledger-bc-customers",
+    parser: stringParser,
+    desc: "Keycloak realm for Ledger authenticated APIs",
+  },
+  LEDGER_AUTH_CLIENT_ID: {
+    def: "ledger-keycloak",
+    parser: stringParser,
+    desc: "Keycloak client ID for Ledger authenticated APIs",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
