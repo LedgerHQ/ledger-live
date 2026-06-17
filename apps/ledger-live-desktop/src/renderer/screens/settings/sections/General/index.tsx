@@ -11,7 +11,6 @@ import WalletSync from "./WalletSync";
 import PasswordButton from "./PasswordButton";
 import PasswordAutoLockSelect from "./PasswordAutoLockSelect";
 import SentryLogsButton from "./SentryLogsButton";
-import ShareAnalyticsButton from "./ShareAnalyticsButton";
 import SharePersonnalRecoButtonFF from "./SharePersonalRecoButtonFF";
 import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
@@ -28,7 +27,6 @@ const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
   useInitSupportedCounterValues();
-  const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
@@ -121,26 +119,18 @@ const SectionGeneral = () => {
         >
           <SentryLogsButton />
         </Row>
-        {lldAnalyticsOptInPromptFlag?.enabled ? (
-          <>
-            <Row
-              title={t("analyticsOptInPrompt.profileSettings.analytics")}
-              desc={t("analyticsOptInPrompt.profileSettings.analyticsDesc")}
-            >
-              <ShareAnalyticsButtonFF />
-            </Row>
-            <Row
-              title={t("analyticsOptInPrompt.profileSettings.personalizedExp")}
-              desc={t("analyticsOptInPrompt.profileSettings.personalizedExpDesc")}
-            >
-              <SharePersonnalRecoButtonFF />
-            </Row>
-          </>
-        ) : (
-          <Row title={t("settings.profile.analytics")} desc={t("settings.profile.analyticsDesc")}>
-            <ShareAnalyticsButton />
-          </Row>
-        )}
+        <Row
+          title={t("analyticsOptInPrompt.profileSettings.analytics")}
+          desc={t("analyticsOptInPrompt.profileSettings.analyticsDesc")}
+        >
+          <ShareAnalyticsButtonFF />
+        </Row>
+        <Row
+          title={t("analyticsOptInPrompt.profileSettings.personalizedExp")}
+          desc={t("analyticsOptInPrompt.profileSettings.personalizedExpDesc")}
+        >
+          <SharePersonnalRecoButtonFF />
+        </Row>
       </Body>
     </>
   );

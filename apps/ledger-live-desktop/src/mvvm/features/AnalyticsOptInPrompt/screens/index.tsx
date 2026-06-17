@@ -4,7 +4,6 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import VariantA from "LLD/features/AnalyticsOptInPrompt/screens/VariantA";
-import VariantB from "LLD/features/AnalyticsOptInPrompt/screens/VariantB";
 import Box from "~/renderer/components/Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { useDrawerLogic } from "../hooks/useDrawerLogic";
@@ -20,7 +19,7 @@ interface AnalyticsOptInPromptProps {
 const AnalyticsOptInPrompt = memo(
   ({ onClose, onSubmit, isOpened, entryPoint, variant }: AnalyticsOptInPromptProps) => {
     const { colors } = useTheme();
-    const { step, setStep, handleRequestBack, handleRequestClose, preventClosable, isVariantB } =
+    const { step, setStep, handleRequestBack, handleRequestClose, preventClosable } =
       useDrawerLogic({
         entryPoint,
         variant,
@@ -40,11 +39,7 @@ const AnalyticsOptInPrompt = memo(
         forceDisableFocusTrap
       >
         <Box height={"100%"}>
-          {isVariantB ? (
-            <VariantB step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
-          ) : (
-            <VariantA step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
-          )}
+          <VariantA step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
         </Box>
       </SideDrawer>
     );

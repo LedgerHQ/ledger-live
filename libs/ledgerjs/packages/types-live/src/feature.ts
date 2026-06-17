@@ -240,7 +240,6 @@ export type Features = CurrencyFeatures & {
   analyticsOptIn: DefaultFeature;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
-  lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
@@ -735,12 +734,6 @@ export type Feature_FetchAdditionalCoins = Feature<{
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
 export type Feature_LlmAnalyticsOptInPrompt = Feature<{
-  variant: ABTestingVariants;
-  entryPoints: Array<string>;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
-export type Feature_LldAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
   entryPoints: Array<string>;
 }>;
