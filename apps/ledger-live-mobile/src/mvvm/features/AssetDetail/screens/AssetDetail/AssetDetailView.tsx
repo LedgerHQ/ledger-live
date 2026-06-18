@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { RefreshControl, ScrollView } from "react-native";
+import { RefreshControl } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
