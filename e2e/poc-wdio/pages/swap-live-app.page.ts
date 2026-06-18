@@ -198,7 +198,7 @@ export class SwapLiveAppPage {
   async tapGetQuotesButton() {
     await step("Tap Get Quotes button", async () => {
       await this.webviewAction(async () => {
-        await this.quotesButtonDisabled.waitForExist({ reverse: true });
+        await driver.pause(15_000);
         await this.getQuotesButton.tap();
       });
     });
