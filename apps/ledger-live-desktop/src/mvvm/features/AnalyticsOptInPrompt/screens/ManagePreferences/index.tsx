@@ -35,7 +35,7 @@ const ManagePreferences = ({
     <>
       <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
       <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"}>
-        <HeaderTitle title={"analyticsOptInPrompt.variantA.managePreferences"} />
+        <HeaderTitle title={"analyticsOptInPrompt.preferences.managePreferences"} />
         <ManagePreferencesBody
           onSwitchChange={handleSwitchChange}
           handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)}

@@ -23,28 +23,28 @@ const MainBody = ({ handleOpenPrivacyPolicy }: MainBodyProps) => {
 
   const fields = {
     whatWeTrack: [
-      t("analyticsOptInPrompt.variantA.whatWeTrackList.1"),
-      t("analyticsOptInPrompt.variantA.whatWeTrackList.2"),
+      t("analyticsOptInPrompt.main.whatWeTrackList.1"),
+      t("analyticsOptInPrompt.main.whatWeTrackList.2"),
     ],
     whatWeDoNotTrack: [
-      t("analyticsOptInPrompt.variantA.whatWeDoNotTrackList.1"),
-      t("analyticsOptInPrompt.variantA.whatWeDoNotTrackList.2"),
-      t("analyticsOptInPrompt.variantA.whatWeDoNotTrackList.3"),
+      t("analyticsOptInPrompt.main.whatWeDoNotTrackList.1"),
+      t("analyticsOptInPrompt.main.whatWeDoNotTrackList.2"),
+      t("analyticsOptInPrompt.main.whatWeDoNotTrackList.3"),
     ],
   };
 
   return (
     <BodyBox mb={"80px"} pb={"20px"}>
       <Text variant="bodyLineHeight" fontWeight="medium" color={colors.neutral.c80} fontSize={14}>
-        {t("analyticsOptInPrompt.variantA.description")}
+        {t("analyticsOptInPrompt.main.description")}
       </Text>
       <TrackingInfoList
-        title={t("analyticsOptInPrompt.variantA.whatWeTrack")}
+        title={t("analyticsOptInPrompt.main.whatWeTrack")}
         items={fields.whatWeTrack}
         variant="success"
       />
       <TrackingInfoList
-        title={t("analyticsOptInPrompt.variantA.whatWeDoNotTrack")}
+        title={t("analyticsOptInPrompt.main.whatWeDoNotTrack")}
         items={fields.whatWeDoNotTrack}
         variant="error"
       />
