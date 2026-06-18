@@ -183,13 +183,16 @@ export class SwapLiveAppPage {
           await this.fromAmountInput.addValue(char);
           await driver.pause(50);
         }
-        if (driver.isAndroid) {
-          // workaround for ScreenContentWrapper crash on navigation and keyboard conflict
-          await driver.hideKeyboard();
-          await driver.pause(1_000);
-        }
       });
     });
+    if (driver.isAndroid) {
+      // Workaround (QAA-1329) ScreenContentWrapper crash on navigation - hide keyboard
+      await driver.hideKeyboard();
+      await driver.waitUntil(async () => (await driver.isKeyboardShown()) === false, {
+        timeout: 5000,
+        timeoutMsg: "Expected keyboard to be hidden after inputting amount",
+      });
+    }
   }
 
   async expectToAmountFloat() {
