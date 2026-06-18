@@ -8232,7 +8232,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "main" : {
       "description" : "Ledger Wallet verilerinizi paylaşmanız, tercihlerinizi anlamamıza ve sizin ilginizi çekebilecek içerikleri göstermemize yardımcı olur.",
       "whatWeTrack" : "Sizin açık rızanızla Ledger, Ledger Wallet'ı nasıl kullandığınıza dair verileri (sayfa ziyaretleri ve tıklamalar da dâhil) toplayabilir:",
       "whatWeTrackList" : {
@@ -8247,7 +8247,11 @@
       },
       "managePreferences" : "Tercihlerinizi yönetin",
       "refuse" : "Tümünü reddet",
-      "accept" : "Tümünü kabul et",
+      "accept" : "Tümünü kabul et"
+    },
+    "preferences" : {
+      "managePreferences" : "Tercihlerinizi yönetin",
+      "validate" : "Doğrula",
       "analyticsData" : {
         "title" : "Analiz",
         "description" : "Ledger Wallet'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için sayfa ziyaretleri ve tıklamalar da dâhil olmak üzere kullanım verilerini paylaşırız."
@@ -8255,27 +8259,6 @@
       "personalizationData" : {
         "title" : "Kişiselleştirme",
         "description" : "Kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler almanız ve pazarlama kampanyalarımızın performansını ölçebilmemiz için tıklamalar, sayfa ziyaretleri ve dönüşüm verileri de dâhil olmak üzere uygulama kullanımı verilerini paylaşırız."
-      },
-      "validate" : "Doğrula"
-    },
-    "variantB" : {
-      "accept" : "Kabul et",
-      "refuse" : "Reddet",
-      "analytics" : {
-        "description" : "Ledger Wallet analiz verilerinizi paylaşmanız, insanların Ledger Wallet'ı nasıl kullandıklarını anlamamıza, hataları düzeltmemize veya gelişmiş bir kullanıcı deneyimi sunmamıza yardımcı olur.",
-        "details" : {
-          "1" : "Analiz verileri arasında sayfa ziyaretleri ve tıklamalar yer alır.",
-          "2" : "Bakiyeniz, hesaplarınız ve portföyünüz ile ilgili hiçbir bilgiyi toplayamayız veya göremeyiz.",
-          "3" : "Analizler tamamen anonimdir. Kişisel bilgilerinizi göremez veya toplayamayız."
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "Kişiselleştirilmiş bir deneyim elde edin",
-        "description" : "Ledger Wallet kişiselleştirme verilerinizi paylaşmanız, tercihlerinize uygun içerikler göstermemize olanak sağlar",
-        "details" : {
-          "1" : "Kişiselleştirme verileri arasında dönüştürme verileri, tıklamalar ve sayfa ziyaretleri yer alır.",
-          "2" : "Kişisel veya portföy bilgilerinizi takip edemez veya toplayamayız."
-        }
       }
     },
     "common" : {

@@ -8232,7 +8232,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "main" : {
       "description" : "分享您的 Ledger Wallet 数据有助于我们了解您的偏好，为您展示更相关的内容。",
       "whatWeTrack" : "获得您的同意后，Ledger 将会收集有关您如何使用 Ledger Wallet 的数据（包括页面访问量和点击量）：",
       "whatWeTrackList" : {
@@ -8247,7 +8247,11 @@
       },
       "managePreferences" : "管理您的偏好",
       "refuse" : "全部拒绝",
-      "accept" : "全部接受",
+      "accept" : "全部接受"
+    },
+    "preferences" : {
+      "managePreferences" : "管理您的偏好",
+      "validate" : "验证",
       "analyticsData" : {
         "title" : "数据分析",
         "description" : "为了衡量 Ledger Wallet 的性能，优化应用程序并提升您的体验，我们会分享使用数据，包括页面访问量和点击量。"
@@ -8255,27 +8259,6 @@
       "personalizationData" : {
         "title" : "个性化",
         "description" : "为了接收符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果，我们会分享应用程序使用数据，包括点击量、页面访问量和转化数据。"
-      },
-      "validate" : "验证"
-    },
-    "variantB" : {
-      "accept" : "接受",
-      "refuse" : "拒绝",
-      "analytics" : {
-        "description" : "分享您的 Ledger Wallet 分析数据可帮助我们了解用户如何使用 Ledger Wallet，修复错误，改进用户体验。",
-        "details" : {
-          "1" : "分析数据包括页面访问量、点击量。",
-          "2" : "我们不会收集或查看有关您的余额、账户和资产组合的任何信息。",
-          "3" : "分析是完全匿名的。我们无法查看或收集您的个人信息。"
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "享受个性化体验",
-        "description" : "分享您的 Ledger Wallet 个性化数据，让我们可以为您展示符合您个人偏好的内容",
-        "details" : {
-          "1" : "个性化数据包括转化数据、点击量、页面访问量。",
-          "2" : "我们无法跟踪或收集您的任何个人信息或资产组合信息。"
-        }
       }
     },
     "common" : {

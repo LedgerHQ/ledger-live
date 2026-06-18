@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
-import VariantA from "LLD/features/AnalyticsOptInPrompt/screens/VariantA";
+import AnalyticsOptInPromptSteps from "LLD/features/AnalyticsOptInPrompt/screens/AnalyticsOptInPromptSteps";
 import Box from "~/renderer/components/Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { useDrawerLogic } from "../hooks/useDrawerLogic";
@@ -38,7 +38,12 @@ const AnalyticsOptInPrompt = memo(
         forceDisableFocusTrap
       >
         <Box height={"100%"}>
-          <VariantA step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
+          <AnalyticsOptInPromptSteps
+            step={step}
+            setStep={setStep}
+            onSubmit={onSubmit}
+            entryPoint={entryPoint}
+          />
         </Box>
       </SideDrawer>
     );
