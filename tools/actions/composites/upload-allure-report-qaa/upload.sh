@@ -133,4 +133,6 @@ if [ -n "${GITHUB_OUTPUT:-}" ]; then
   } >> "${GITHUB_OUTPUT}"
 fi
 
-echo "::notice title=qaa-allure report::${report_url}"
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+  echo "[Open report](${report_url})" >> "${GITHUB_STEP_SUMMARY}"
+fi

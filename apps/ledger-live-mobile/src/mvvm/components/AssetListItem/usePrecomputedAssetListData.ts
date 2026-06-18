@@ -3,7 +3,10 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
-import { getCurrencyPortfolio } from "@ledgerhq/live-countervalues/portfolio";
+import {
+  getCurrencyPortfolio,
+  getCurrentBalanceCountervalueChange,
+} from "@ledgerhq/live-countervalues/portfolio";
 import { useThrottledValue } from "@ledgerhq/live-hooks/useThrottledFunction";
 import { ValueChange } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -72,6 +75,18 @@ function getCountervalueChange(asset: Asset, state: SharedState): ValueChange | 
     state.cvState,
     state.counterValueCurrency,
   );
+
+  // Fallback: when the 24h portfolio change is unavailable (e.g. freshly-held positions
+  // whose 24h-ago balance was zero), show the asset's 1D price change computed from countervalues.
+  if (countervalueChange.percentage == null) {
+    return getCurrentBalanceCountervalueChange(
+      asset.accounts,
+      state.range,
+      state.cvState,
+      state.counterValueCurrency,
+    );
+  }
+
   return countervalueChange;
 }
 
@@ -125,7 +140,13 @@ export function usePrecomputedAssetListData(
   const cacheRef = useRef(new Map<string, AssetListItemViewModelResult>());
 
   return useMemo(() => {
-    const state: SharedState = { cvState, counterValueCurrency, range, locale, discreet };
+    const state: SharedState = {
+      cvState,
+      counterValueCurrency,
+      range,
+      locale,
+      discreet,
+    };
     const prev = cacheRef.current;
     const next = new Map<string, AssetListItemViewModelResult>();
     let changed = prev.size !== assets.length;

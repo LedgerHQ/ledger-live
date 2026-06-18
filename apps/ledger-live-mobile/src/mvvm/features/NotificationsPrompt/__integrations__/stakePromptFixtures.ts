@@ -1,36 +1,9 @@
-import React from "react";
-import type { ComponentType } from "react";
-import { View } from "react-native";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import * as TezosReact from "@ledgerhq/live-common/families/tezos/react";
-import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  act,
-  renderWithReactQuery as render,
-  screen,
-  waitFor,
-  withFlagOverrides,
-} from "@tests/test-renderer";
-import storage from "LLM/storage";
-import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
-import * as MobileFamilies from "~/families";
-import GlobalDrawers from "~/GlobalDrawers";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
-import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
-jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
-  __esModule: true,
-  ...jest.requireActual("@ledgerhq/live-common/families/tezos/react"),
-}));
-
-const featureFlagsForStakePrompt = createNotificationsPromptFeatureFlags();
-
-type AccountKey =
+export type AccountKey =
   | "algorand"
   | "cardano"
   | "celo"
@@ -44,24 +17,18 @@ type AccountKey =
   | "sui"
   | "tezos";
 
-type StakePromptBucket =
+export type StakePromptBucket =
   | "delegation/staking"
   | "redelegation/rebond"
   | "undelegation/unstaking"
   | "withdrawing/withdraw"
   | "revoke/claim/lifecycle";
 
-type MobileFamilyFlowExport = keyof typeof MobileFamilies;
-
-type MobileFamilyFlow = {
-  component: ComponentType;
-};
-
-type StakePromptCase = {
+export type StakePromptCase = {
   label: string;
   bucket: StakePromptBucket;
   flowName: NavigatorName;
-  familyExportKey: MobileFamilyFlowExport;
+  familyExportKey: string;
   successScreenName: ScreenName;
   errorScreenName?: ScreenName;
   accountKey: AccountKey;
@@ -70,36 +37,9 @@ type StakePromptCase = {
   params?: Record<string, unknown>;
 };
 
-const hasComponent = (familyExport: unknown): familyExport is MobileFamilyFlow => {
-  const component = (familyExport as { component?: unknown } | null)?.component;
-  return component !== null && (typeof component === "function" || typeof component === "object");
-};
+export type MobileFamilyFlowExport = StakePromptCase["familyExportKey"];
 
-const getMobileFamilyFlow = (familyExportKey: MobileFamilyFlowExport): MobileFamilyFlow => {
-  const familyExport = MobileFamilies[familyExportKey];
-  if (!hasComponent(familyExport)) {
-    throw new Error(`${familyExportKey} is not a registered mobile family flow`);
-  }
-  return familyExport;
-};
-
-const stakePromptFlowNamePattern =
-  /(Activate|Bond|ClaimRewards|Delegation|Lock|Nominate|Rebond|Redelegation|Registration|Revoke|SimpleOperation|Staking|Unbond|Undelegation|Undelegate|Unlock|Unstaking|Vote|Withdraw|Withdrawing)Flow$/;
-
-const nonStakePromptFlowExports = new Set<MobileFamilyFlowExport>(["TronVoteFlow"]);
-
-const findRegisteredStakePromptFlowExports = () =>
-  Object.entries(MobileFamilies)
-    .filter(
-      ([familyExportKey, familyExport]) =>
-        stakePromptFlowNamePattern.test(familyExportKey) &&
-        !nonStakePromptFlowExports.has(familyExportKey as MobileFamilyFlowExport) &&
-        hasComponent(familyExport),
-    )
-    .map(([familyExportKey]) => familyExportKey)
-    .sort();
-
-const accountsByKey = {
+export const accountsByKey = {
   algorand: genAccount("notifications-prompt-algorand", {
     currency: getCryptoCurrencyById("algorand"),
   }),
@@ -143,20 +83,15 @@ const accountsByKey = {
   }),
 };
 
-const createOperation = (accountId: string, type: string) => ({
+export const createOperation = (accountId: string, type: string) => ({
   id: `${accountId}-${type.toLowerCase()}-operation`,
   hash: `${type.toLowerCase()}-operation-hash`,
   type,
   accountId,
 });
 
-const stakePromptSource = { name: "NotificationsPromptStakeFlow" };
-
-function HomeScreen() {
-  return <View />;
-}
-
-const stakePromptCases: StakePromptCase[] = [
+export const stakePromptSource = { name: "NotificationsPromptStakeFlow" };
+export const stakePromptCases: StakePromptCase[] = [
   {
     label: "Algorand claim rewards",
     bucket: "revoke/claim/lifecycle",
@@ -605,252 +540,13 @@ const stakePromptCases: StakePromptCase[] = [
   },
 ];
 
-const stakePromptCasesByBucket = stakePromptCases.reduce(
-  (acc, stakePromptCase) => {
-    acc[stakePromptCase.bucket] = [...(acc[stakePromptCase.bucket] ?? []), stakePromptCase];
-    return acc;
-  },
-  {} as Record<StakePromptBucket, StakePromptCase[]>,
+export const STAKE_PROMPT_CASES_PER_CHUNK = 20;
+
+export const stakePromptCaseChunks: StakePromptCase[][] = Array.from(
+  { length: Math.ceil(stakePromptCases.length / STAKE_PROMPT_CASES_PER_CHUNK) },
+  (_, index) =>
+    stakePromptCases.slice(
+      index * STAKE_PROMPT_CASES_PER_CHUNK,
+      (index + 1) * STAKE_PROMPT_CASES_PER_CHUNK,
+    ),
 );
-
-const stakePromptErrorCasesByBucket = stakePromptCases.reduce(
-  (acc, stakePromptCase) => {
-    if (!stakePromptCase.errorScreenName) return acc;
-    acc[stakePromptCase.bucket] = [...(acc[stakePromptCase.bucket] ?? []), stakePromptCase];
-    return acc;
-  },
-  {} as Record<StakePromptBucket, StakePromptCase[]>,
-);
-
-let useTezosBakerSpy: jest.SpiedFunction<typeof TezosReact.useBaker>;
-
-describe("NotificationsPrompt stake flow", () => {
-  beforeAll(() => {
-    jest.useFakeTimers();
-    useTezosBakerSpy = jest.spyOn(TezosReact, "useBaker").mockReturnValue({
-      address: "tz1-validator",
-      name: "Tezos validator",
-      logoURL: "",
-      nominalYield: "0 %",
-      capacityStatus: "normal",
-    });
-  });
-
-  beforeEach(async () => {
-    jest.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
-    await storage.deleteAll();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-    useTezosBakerSpy.mockRestore();
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const Stack = createNativeStackNavigator();
-  const HOME_SCREEN = "Home";
-  const accountsState = {
-    ...MockedAccounts,
-    active: [...MockedAccounts.active, ...Object.values(accountsByKey)],
-  };
-  const flowRoutes = Array.from(
-    new Map(
-      stakePromptCases.map(stakePromptCase => [
-        stakePromptCase.flowName,
-        {
-          flowName: stakePromptCase.flowName,
-          component: getMobileFamilyFlow(stakePromptCase.familyExportKey).component,
-        },
-      ]),
-    ).values(),
-  );
-
-  const createParams = (stakePromptCase: StakePromptCase) => {
-    const account = accountsByKey[stakePromptCase.accountKey];
-
-    return {
-      accountId: account.id,
-      deviceId: "device-id",
-      error: {
-        name: "Error",
-        message: `${stakePromptCase.label} validation failed`,
-      } as Error,
-      result: createOperation(account.id, stakePromptCase.operationType),
-      transaction: stakePromptCase.transaction,
-      ...stakePromptCase.params,
-    };
-  };
-
-  const createFlowNavigationState = (
-    stakePromptCase: StakePromptCase,
-    screenName: ScreenName = stakePromptCase.successScreenName,
-  ) => ({
-    index: 1,
-    routes: [
-      {
-        name: HOME_SCREEN,
-      },
-      {
-        name: stakePromptCase.flowName,
-        state: {
-          index: 0,
-          routes: [
-            {
-              name: screenName,
-              params: createParams(stakePromptCase),
-            },
-          ],
-        },
-      },
-    ],
-  });
-
-  function StakeFlowTestApp() {
-    return (
-      <GlobalDrawers>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name={HOME_SCREEN} component={HomeScreen} />
-          {flowRoutes.map(({ flowName, component }) => (
-            <Stack.Screen key={flowName} name={flowName} component={component} />
-          ))}
-        </Stack.Navigator>
-      </GlobalDrawers>
-    );
-  }
-
-  const renderStakeFlow = (
-    stakePromptCase: StakePromptCase,
-    screenName: ScreenName = stakePromptCase.successScreenName,
-  ) =>
-    render(<StakeFlowTestApp />, {
-      navigationInitialState: createFlowNavigationState(stakePromptCase, screenName),
-      overrideInitialState: withFlagOverrides(featureFlagsForStakePrompt, state => ({
-        ...state,
-        accounts: accountsState,
-        notifications: {
-          ...state.notifications,
-          permissionStatus: AuthorizationStatus.NOT_DETERMINED,
-        },
-        settings: {
-          ...state.settings,
-          readOnlyModeEnabled: false,
-          notifications: {
-            ...state.settings.notifications,
-            areNotificationsAllowed: true,
-          },
-        },
-      })),
-    });
-
-  describe("coverage guards", () => {
-    it("covers every registered mobile family stake prompt flow", () => {
-      const flowExportsCoveredByTheseTests = stakePromptCases
-        .map(stakePromptCase => stakePromptCase.familyExportKey)
-        .sort();
-      const registeredStakePromptFlowExports = findRegisteredStakePromptFlowExports();
-
-      expect(flowExportsCoveredByTheseTests).toEqual(registeredStakePromptFlowExports);
-    });
-
-    it("uses ValidationSuccess screens for every stake prompt flow", () => {
-      const casesWithUnexpectedSuccessScreen = stakePromptCases
-        .filter(
-          stakePromptCase =>
-            !String(stakePromptCase.successScreenName).endsWith("ValidationSuccess"),
-        )
-        .map(stakePromptCase => stakePromptCase.label);
-
-      expect(casesWithUnexpectedSuccessScreen).toEqual([]);
-    });
-
-    it("uses ValidationError screens for every stake prompt flow", () => {
-      const casesMissingErrorScreen = stakePromptCases
-        .filter(stakePromptCase => !stakePromptCase.errorScreenName)
-        .map(stakePromptCase => stakePromptCase.label);
-      const casesWithUnexpectedErrorScreen = stakePromptCases
-        .filter(
-          stakePromptCase => !String(stakePromptCase.errorScreenName).endsWith("ValidationError"),
-        )
-        .map(stakePromptCase => stakePromptCase.label);
-
-      expect(casesMissingErrorScreen).toEqual([]);
-      expect(casesWithUnexpectedErrorScreen).toEqual([]);
-    });
-  });
-
-  describe.each(Object.entries(stakePromptCasesByBucket))("%s flows", (bucket, bucketCases) => {
-    it.each(bucketCases)(
-      "should prompt the notifications drawer when closing $label validation success",
-      async stakePromptCase => {
-        const { user } = renderStakeFlow(stakePromptCase);
-
-        expect(track).not.toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          expect.any(Object),
-        );
-
-        await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
-        await user.press(screen.getByTestId("enabled-success-close-button"));
-        await act(async () => {
-          await jest.runOnlyPendingTimersAsync();
-        });
-
-        await waitFor(() => expect(screen.getByText(/allow notifications/i)).toBeVisible());
-        expect(track).toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          {
-            action: "stake",
-            shouldPrompt: true,
-            variant: AB_TESTING_VARIANTS.B,
-            repromptDelay: null,
-            dismissedCount: 0,
-            skipReason: undefined,
-            drawerPromptTarget: "globalPushNotifications",
-          },
-        );
-
-        const allowNotificationsButton = screen.getByText(/allow notifications/i);
-        await user.press(allowNotificationsButton);
-        expect(track).toHaveBeenCalledWith("button_clicked", {
-          button: "allow notifications",
-          page: "Drawer push notification opt-in",
-          source: "stake",
-          drawerPromptTarget: "globalPushNotifications",
-          repromptDelay: null,
-          dismissedCount: 0,
-          variant: AB_TESTING_VARIANTS.B,
-        });
-      },
-    );
-
-    it.each(stakePromptErrorCasesByBucket[bucket as StakePromptBucket] ?? [])(
-      "should not prompt the notifications drawer when closing $label validation error",
-      async stakePromptCase => {
-        const { errorScreenName } = stakePromptCase;
-        if (!errorScreenName) return;
-
-        const { user } = renderStakeFlow(stakePromptCase, errorScreenName);
-
-        expect(track).not.toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          expect.any(Object),
-        );
-
-        await waitFor(() => expect(screen.getByTestId("SendErrorClose")).toBeVisible());
-        await user.press(screen.getByTestId("SendErrorClose"));
-        await act(async () => {
-          await jest.runOnlyPendingTimersAsync();
-        });
-
-        expect(track).not.toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          expect.any(Object),
-        );
-        expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-      },
-    );
-  });
-});

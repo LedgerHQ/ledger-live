@@ -8,7 +8,6 @@ import { setHasSeenQ2WalletV4Tour } from "~/actions/settings";
 import { hasSeenQ2WalletV4TourSelector } from "~/reducers/settings";
 import { Q2WalletV4TourDrawer } from "../Drawer";
 import { useQ2WalletV4TourDrawerViewModel } from "../Drawer/hooks/useQ2WalletV4TourDrawerViewModel";
-import { Q2WalletV4TourControlsProvider } from "../context/Q2WalletV4TourControlsContext";
 
 const WALLET_40_FLAG = "lwmWallet40";
 
@@ -17,7 +16,8 @@ function Q2WalletV4TourScreenDebug() {
   const hasSeenQ2WalletV4Tour = useSelector(hasSeenQ2WalletV4TourSelector);
   const lwmWallet40 = useFeature(WALLET_40_FLAG);
   const isQ2TourEnabled = (lwmWallet40?.enabled && lwmWallet40?.params?.q2Tour) ?? false;
-  const drawerControls = useQ2WalletV4TourDrawerViewModel();
+  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, closeDrawer, onSlideChange } =
+    useQ2WalletV4TourDrawerViewModel();
   const canOpenDrawer = isQ2TourEnabled && !hasSeenQ2WalletV4Tour;
 
   const handleToggleQ2TourEnabled = useCallback(() => {
@@ -28,7 +28,7 @@ function Q2WalletV4TourScreenDebug() {
         value: {
           ...lwmWallet40,
           enabled: next ? true : (lwmWallet40?.enabled ?? false),
-          params: { ...(lwmWallet40?.params ?? {}), q2Tour: next },
+          params: { ...lwmWallet40?.params, q2Tour: next },
         },
       }),
     );
@@ -38,8 +38,15 @@ function Q2WalletV4TourScreenDebug() {
     dispatch(setHasSeenQ2WalletV4Tour(!hasSeenQ2WalletV4Tour));
   }, [dispatch, hasSeenQ2WalletV4Tour]);
 
+  let openDrawerLabel = "Open Drawer (enable q2Tour)";
+  if (canOpenDrawer) {
+    openDrawerLabel = "Open Drawer";
+  } else if (isQ2TourEnabled) {
+    openDrawerLabel = "Open Drawer (reset tour seen)";
+  }
+
   return (
-    <Q2WalletV4TourControlsProvider value={drawerControls}>
+    <>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <Box lx={{ padding: "s16", rowGap: "s24" }}>
           <Text typography="body2" lx={{ color: "muted" }}>
@@ -92,20 +99,22 @@ function Q2WalletV4TourScreenDebug() {
               size="lg"
               appearance="accent"
               disabled={!canOpenDrawer}
-              onPress={drawerControls.openQ2WalletV4Tour}
+              onPress={handleOpenDrawer}
             >
-              {canOpenDrawer
-                ? "Open Drawer"
-                : isQ2TourEnabled
-                  ? "Open Drawer (reset tour seen)"
-                  : "Open Drawer (enable q2Tour)"}
+              {openDrawerLabel}
             </Button>
           </Box>
         </Box>
       </ScrollView>
 
-      <Q2WalletV4TourDrawer />
-    </Q2WalletV4TourControlsProvider>
+      <Q2WalletV4TourDrawer
+        isDrawerOpen={isDrawerOpen}
+        handleCloseDrawer={handleCloseDrawer}
+        closeDrawer={closeDrawer}
+        onSlideChange={onSlideChange}
+        source="Debug"
+      />
+    </>
   );
 }
 

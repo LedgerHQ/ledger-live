@@ -367,9 +367,8 @@ jobs:
     runs-on: [ledger-live-medium]
     needs: [prepare-devices, e2e-tests]
     outputs:
-      test_result: ${{ steps.summary.outputs.test_result }}
       status_color: ${{ steps.summary.outputs.status_color }}
-      status_emoji: ${{ steps.summary.outputs.status_emoji }}
+      summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
     if: ${{ !cancelled() }}
     env:
@@ -381,6 +380,14 @@ jobs:
           name: allure-results
           path: ${{ env.ALLURE_RESULTS }}
 
+      - name: Extract test summary for Slack notification
+        if: ${{ !cancelled() }}
+        id: summary
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ${{ env.ALLURE_RESULTS }}
+          platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
+
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
@@ -390,14 +397,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
-
-      - name: Extract test summary for Slack notification
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
-        id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-        with:
-          allure-results-path: ${{ env.ALLURE_RESULTS }}
-          platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
+          summary_message: ${{ steps.summary.outputs.summary_message }}
 
   report-to-allure-device2:
     name: "Create Allure Report - device 2"
@@ -405,9 +405,8 @@ jobs:
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     outputs:
-      test_result: ${{ steps.summary.outputs.test_result }}
       status_color: ${{ steps.summary.outputs.status_color }}
-      status_emoji: ${{ steps.summary.outputs.status_emoji }}
+      summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
     env:
       ALLURE_RESULTS: "allure-results-device2"
@@ -418,6 +417,14 @@ jobs:
           name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
           path: ${{ env.ALLURE_RESULTS }}
 
+      - name: Extract test summary for Slack notification
+        if: ${{ !cancelled() }}
+        id: summary
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ${{ env.ALLURE_RESULTS }}
+          platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
+
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
@@ -427,14 +434,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
-
-      - name: Extract test summary for Slack notification
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule') }}
-        id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-        with:
-          allure-results-path: ${{ env.ALLURE_RESULTS }}
-          platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
+          summary_message: ${{ steps.summary.outputs.summary_message }}
 
   qaa-allure-upload:
     name: "QAA Allure Upload - ${{ needs.prepare-devices.outputs.device_1 }} (Experimental)"
@@ -522,7 +522,9 @@ jobs:
 
       - name: Write Xray report in summary
         shell: bash
-        run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
+        env:
+          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
+        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
 
   notify-to-slack:
     name: "Notify to Slack"
@@ -537,8 +539,6 @@ jobs:
           IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
           DEVICE_1: ${{ needs.prepare-devices.outputs.device_1 }}
           DEVICE_2: ${{ needs.prepare-devices.outputs.device_2 }}
-          STATUS_EMOJI: ${{ needs.report-to-allure.outputs.status_emoji }}
-          STATUS_EMOJI_D2: ${{ needs.report-to-allure-device2.outputs.status_emoji }}
           EXPORT_TO_XRAY: ${{ inputs.export_to_xray }}
           TEST_EXECUTION: ${{ github.event.inputs.test_execution }}
         with:
@@ -563,14 +563,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux (${device1}) : ${process.env.STATUS_EMOJI} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                    "text": `- 🐧 linux (${device1}) : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux (${device2}) : ${process.env.STATUS_EMOJI_D2} ${{ needs.report-to-allure-device2.outputs.test_result || 'No test results' }}`
+                    "text": `- 🐧 linux (${device2}) : ${{ needs.report-to-allure-device2.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 { "type": "divider" },
@@ -593,7 +593,6 @@ jobs:
                 }
               ];
             } else {
-              const statusEmoji = process.env.STATUS_EMOJI;
               blocks = [
                 {
                   "type": "header",
@@ -608,7 +607,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                    "text": `- 🐧 linux : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 { "type": "divider" },
@@ -644,20 +643,21 @@ jobs:
               ? (d1Color === "#33FF39" && d2Color === "#33FF39" ? "#33FF39" : "#FF333C")
               : (d1Color || "#808080");
             const slackPayload = {
+              "text": " ",
               "attachments": [
                 {
                   "color": color,
+                  "fallback": `Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
                   blocks
                 }
               ]
             };
-            fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+            fs.writeFileSync("payload-slack-content.json", JSON.stringify({ ...slackPayload, channel: "C05FKJ7DFAP" }), "utf-8");
 
       - name: Post to Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
-          channel-id: "C05FKJ7DFAP"
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}

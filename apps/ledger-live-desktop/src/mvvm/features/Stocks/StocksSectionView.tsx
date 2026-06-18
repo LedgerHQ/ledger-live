@@ -11,6 +11,7 @@ import { HorizontalScroll } from "LLD/components/HorizontalScroll";
 import { StockPill } from "./components/StockPill";
 import { StocksSkeleton } from "./components/StocksSkeleton";
 import { splitIntoTwoRows } from "./utils/splitIntoTwoRows";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import type { StockSuggestion, StocksHeaderVariant, StocksSectionViewProps } from "./types";
 
 function StocksHeader({
@@ -66,7 +67,7 @@ function StocksList({
   hideListGradient,
 }: Readonly<{
   data: StockSuggestion[];
-  navigateToAsset: (currencyId: string) => void;
+  navigateToAsset: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
   listClassName?: string;
   scrollContainerClassName?: string;
   hideListGradient?: boolean;

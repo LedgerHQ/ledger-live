@@ -1,6 +1,6 @@
 import { buildTransactionPointMarker } from "../utils/buildTransactionPointMarker";
 import type { LineChartColor } from "LLM/components/LineChart";
-import type { TransactionChartGroup } from "../utils/getTransactionPointMarkers";
+import type { TransactionChartGroup } from "@ledgerhq/asset-detail";
 
 const t = (key: string, options?: { count: number }) => (options ? `${key}:${options.count}` : key);
 const formatFiat = (value: number) => `$${value}`;

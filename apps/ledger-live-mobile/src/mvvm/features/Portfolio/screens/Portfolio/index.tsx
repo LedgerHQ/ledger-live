@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
+import { useQ2WalletV4TourDrawer, Q2WalletV4TourDrawer } from "LLM/features/Q2WalletV4Tour/Drawer";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -84,6 +85,12 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
   const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
     useWalletV4TourDrawer();
+  const {
+    isDrawerOpen: isQ2DrawerOpen,
+    handleCloseDrawer: handleCloseQ2Drawer,
+    closeDrawer: closeQ2Drawer,
+    onSlideChange: onQ2SlideChange,
+  } = useQ2WalletV4TourDrawer();
 
   const data = useMemo(() => {
     const sections: React.JSX.Element[] = [];
@@ -232,6 +239,12 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         closeDrawer={closeDrawer}
         onSlideChange={onSlideChange}
         slides={slides}
+      />
+      <Q2WalletV4TourDrawer
+        isDrawerOpen={isQ2DrawerOpen}
+        handleCloseDrawer={handleCloseQ2Drawer}
+        closeDrawer={closeQ2Drawer}
+        onSlideChange={onQ2SlideChange}
       />
       <ProductTourPortfolioMount />
       <AnalyticsConsentDrawer />

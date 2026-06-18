@@ -1,3 +1,15 @@
+import { DEFAULT_MIN_SERIES_POINTS_BETWEEN_TX_MARKERS } from "./transactionMarkerClustering";
+
+export type { ChartTransactionClusteringRange } from "./transactionMarkerClustering";
+export {
+  DEFAULT_MIN_SERIES_POINTS_BETWEEN_TX_MARKERS,
+  getMinSeriesPointsBetweenTxMarkers,
+  MIN_SERIES_POINTS_BETWEEN_TX_MARKERS_BY_RANGE,
+} from "./transactionMarkerClustering";
+
+/** @deprecated Use `DEFAULT_MIN_SERIES_POINTS_BETWEEN_TX_MARKERS` instead. */
+export { DEFAULT_MIN_SERIES_POINTS_BETWEEN_TX_MARKERS as MIN_SERIES_POINTS_BETWEEN_TX_MARKERS } from "./transactionMarkerClustering";
+
 export type TransactionInput = Readonly<{
   dateMs: number;
   direction: "in" | "out";
@@ -18,6 +30,11 @@ type GroupTransactionsByChartIndexParams = Readonly<{
   timestamps: number[];
   values: number[];
   transactions: TransactionInput[];
+  /**
+   * Minimum gap, in series-points, between two emitted markers.
+   * @default DEFAULT_MIN_SERIES_POINTS_BETWEEN_TX_MARKERS
+   */
+  minSeriesPointsBetweenMarkers?: number;
 }>;
 
 function advanceNearestChartIndex(
@@ -67,10 +84,12 @@ function mergeTransactionIntoGroup(
 }
 
 /**
- * Groups transactions onto the nearest chart data point within the visible
- * window, aggregating received/sent counts and fiat totals per data point.
- * Transactions outside the window or mapping to a point with a missing value
- * are dropped. Null fiat values are excluded from the totals but still counted.
+ * Groups transactions onto chart data points within the visible window, aggregating
+ * received/sent counts and fiat totals. Marker density is capped so two markers are
+ * never closer than `minSeriesPointsBetweenMarkers` series-points apart: a transaction
+ * within that gap of the current cluster's anchor is merged into it, otherwise it opens
+ * a new marker. Transactions outside the window or mapping to a point with a missing
+ * value are dropped. Null fiat values are excluded from the totals but still counted.
  *
  * Both the chart timestamps and (after sorting) the transactions are ascending, so the
  * nearest data point only ever moves forward. We sweep them with a single shared pointer:
@@ -81,17 +100,19 @@ export function groupTransactionsByChartIndex({
   timestamps,
   values,
   transactions,
+  minSeriesPointsBetweenMarkers = DEFAULT_MIN_SERIES_POINTS_BETWEEN_TX_MARKERS,
 }: GroupTransactionsByChartIndexParams): TransactionChartGroup[] {
   if (timestamps.length < 2) return [];
 
   const windowStart = timestamps[0];
-  const windowEnd = timestamps.at(-1)!;
+  const windowEnd = timestamps.at(-1);
+  if (windowEnd == null) return [];
 
   const transactionsInWindow = transactions
     .filter(({ dateMs }) => dateMs >= windowStart && dateMs <= windowEnd)
     .sort((a, b) => a.dateMs - b.dateMs);
 
-  const groupsByIndex = new Map<number, TransactionChartGroup>();
+  const groups: TransactionChartGroup[] = [];
   let nearestIndex = 0;
 
   for (const { dateMs, direction, fiat } of transactionsInWindow) {
@@ -100,11 +121,23 @@ export function groupTransactionsByChartIndex({
     const value = values[nearestIndex];
     if (value == null || Number.isNaN(value)) continue;
 
-    const existing =
-      groupsByIndex.get(nearestIndex) ?? createEmptyChartGroup(nearestIndex, value, dateMs);
+    // Anchor of the current cluster (markers and transactions are both ascending,
+    // so the last group always holds the smallest, left-most index of its cluster).
+    const lastIndex = groups.length - 1;
+    const last = groups.at(-1);
+    if (last != null && nearestIndex - last.index < minSeriesPointsBetweenMarkers) {
+      groups[lastIndex] = mergeTransactionIntoGroup(last, direction, fiat);
+      continue;
+    }
 
-    groupsByIndex.set(nearestIndex, mergeTransactionIntoGroup(existing, direction, fiat));
+    groups.push(
+      mergeTransactionIntoGroup(
+        createEmptyChartGroup(nearestIndex, value, dateMs),
+        direction,
+        fiat,
+      ),
+    );
   }
 
-  return Array.from(groupsByIndex.values());
+  return groups;
 }

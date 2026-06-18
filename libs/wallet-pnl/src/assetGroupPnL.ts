@@ -30,6 +30,7 @@ export function computeAssetGroupPnL(
   let costBasis = ZERO;
   let lifetimeCost = ZERO;
   let totalAmount = ZERO;
+  let totalAmountInFullUnits = ZERO;
   let contributed = false;
 
   for (const account of accounts) {
@@ -42,12 +43,19 @@ export function computeAssetGroupPnL(
     costBasis = costBasis.plus(pnl.costBasis);
     lifetimeCost = lifetimeCost.plus(pnl.lifetimeCost);
     totalAmount = totalAmount.plus(pnl.reconciliation.onChainBalance);
+    // Convert each account's balance to full units with ITS OWN magnitude before
+    // summing. The same asset can span networks with different decimals (e.g.
+    // USDC: 6 on Ethereum, 18 on BNB Chain), so a single group-level magnitude
+    // would corrupt the total — and reading it from `accounts[0]` let a zero-
+    // balance account in another magnitude skew the result.
+    const magnitude = getAccountCurrency(account).units[0].magnitude;
+    totalAmountInFullUnits = totalAmountInFullUnits.plus(
+      pnl.reconciliation.onChainBalance.shiftedBy(-magnitude),
+    );
   }
 
   if (!contributed) return null;
 
-  const magnitude = getAccountCurrency(accounts[0]).units[0].magnitude;
-  const totalAmountInFullUnits = totalAmount.shiftedBy(-magnitude);
   const averageEntryPrice = totalAmountInFullUnits.isZero()
     ? ZERO
     : costBasis.div(totalAmountInFullUnits);

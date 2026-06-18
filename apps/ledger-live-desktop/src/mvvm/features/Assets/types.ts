@@ -1,4 +1,8 @@
 import { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
+import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+
+/** Router state hint so asset detail can resolve ledger id ≠ market id (e.g. xStocks). */
+export type AssetNavigationMarketState = Pick<MarketCurrencyData, "id" | "ledgerIds">;
 
 export type AssetTableItem = CategorizedAssetItem & {
   isPlaceholder: boolean;

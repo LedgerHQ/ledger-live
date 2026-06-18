@@ -86,10 +86,8 @@ describe("operations", () => {
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 
-  it("should call multiple times listOperations", async () => {
-    mockGetOperations
-      .mockResolvedValueOnce({ items: [mockOperation], next: "10" })
-      .mockResolvedValueOnce({ items: [mockOperation], next: "" });
+  it("should return cursor for caller-driven pagination", async () => {
+    mockGetOperations.mockResolvedValueOnce({ items: [mockOperation], next: "cursor-abc" });
 
     // When
     const operations = await api.listOperations("addr", {
@@ -97,9 +95,8 @@ describe("operations", () => {
       order: fromGenesisOrder,
     });
 
-    // Then
-    expect(operations).toEqual({ items: [mockOperation, mockOperation], next: undefined });
-    expect(mockGetOperations).toHaveBeenCalledTimes(2);
+    expect(operations).toEqual({ items: [mockOperation], next: "cursor-abc" });
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -23,7 +23,7 @@ catalog:
   "@jest/globals": 30.2.0
   "@ledgerhq/context-module": 2.1.0
   "@ledgerhq/crypto-icons": "2.0.4"
-  "@ledgerhq/device-management-kit": 1.6.0
+  "@ledgerhq/device-management-kit": 1.7.1
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.4.0
   "@ledgerhq/device-signer-kit-ethereum": 1.16.0
@@ -31,10 +31,10 @@ catalog:
   "@ledgerhq/device-signer-kit-solana": 1.9.1
   "@ledgerhq/device-signer-kit-cosmos": 1.0.1
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
-  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.3
+  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
   "@ledgerhq/device-transport-kit-speculos": 1.2.1
   "@ledgerhq/signer-utils": 1.2.0
-  "@ledgerhq/device-transport-kit-web-hid": 1.2.3
+  "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/lumen-design-core": 0.1.17
   "@ledgerhq/lumen-ui-react": 0.1.41

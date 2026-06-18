@@ -49,9 +49,10 @@ import {
 import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVariation";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 import {
+  getMinSeriesPointsBetweenTxMarkers,
   groupTransactionsByChartIndex,
   type TransactionInput,
-} from "./utils/getTransactionPointMarkers";
+} from "@ledgerhq/asset-detail";
 import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker";
 
 // Upper bound on operations pulled for the chart's transaction dots. The chart only
@@ -542,9 +543,14 @@ export function useBalanceGraphViewModel({
     // The user can hide transaction markers from the price chart (persisted setting).
     if (hideTransactionsOnChart || transactions.length === 0 || timestamps.length < 2)
       return extrema;
-    const groups = groupTransactionsByChartIndex({ timestamps, values: prices, transactions });
+    const groups = groupTransactionsByChartIndex({
+      timestamps,
+      values: prices,
+      transactions,
+      minSeriesPointsBetweenMarkers: getMinSeriesPointsBetweenTxMarkers(range),
+    });
     return [...extrema, ...groups.map(group => buildTransactionPointMarker(group, t, formatFiat))];
-  }, [series, transactions, timestamps, prices, t, formatFiat, hideTransactionsOnChart]);
+  }, [series, transactions, timestamps, prices, t, formatFiat, hideTransactionsOnChart, range]);
 
   return {
     price: displayedPrice,

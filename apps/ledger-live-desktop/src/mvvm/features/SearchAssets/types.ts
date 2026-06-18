@@ -1,5 +1,5 @@
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { AssetSuggestionSection } from "LLD/components/TopBar/components/TopBarSearch/SearchOverlay/types";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 
 export type AssetSuggestionsViewModelResult = {
   /** Top cryptos (excluding stablecoins) ranked by market cap, capped to the limit. */
@@ -15,7 +15,7 @@ export type AssetSuggestionsSectionProps = AssetSuggestionSection & {
   /** Disambiguates test ids and skeleton keys (e.g. "cryptos"). */
   testIdPrefix: string;
   /** Redirects to the asset detail page for the given market id. */
-  navigateToAsset: (currencyId: string, marketState?: MarketCurrencyData) => void;
+  navigateToAsset: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
   /** Lands on the market list. */
   onSeeAll: () => void;
 };
