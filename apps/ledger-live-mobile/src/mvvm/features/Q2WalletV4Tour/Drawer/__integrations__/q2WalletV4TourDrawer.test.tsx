@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { Q2WalletV4TourControlsProvider } from "../../context/Q2WalletV4TourControlsContext";
 import { useQ2WalletV4TourDrawerViewModel } from "../hooks/useQ2WalletV4TourDrawerViewModel";
 import { Q2WalletV4TourDrawer } from "../index";
 
@@ -11,8 +10,7 @@ const SLIDES = [
   },
   {
     title: "One balance for each asset",
-    subtitle:
-      "Multi-chain assets like USDT are now shown as one total. Simple, accurate, clear.",
+    subtitle: "Multi-chain assets like USDT are now shown as one total. Simple, accurate, clear.",
   },
   {
     title: "Your returns, front and center",
@@ -24,7 +22,8 @@ const SLIDES = [
   },
   {
     title: "More protocols, more rewards",
-    subtitle: "Stablecoins and top picks, surfaced right in your wallet. Less searching. More deciding.",
+    subtitle:
+      "Stablecoins and top picks, surfaced right in your wallet. Less searching. More deciding.",
   },
 ] as const;
 
@@ -33,14 +32,18 @@ const Q2_TOUR_FEATURE_FLAGS = {
 };
 
 const TestComponent = () => {
-  const drawerControls = useQ2WalletV4TourDrawerViewModel();
+  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, closeDrawer, onSlideChange } =
+    useQ2WalletV4TourDrawerViewModel();
 
   return (
     <>
-      <Button onPress={drawerControls.openQ2WalletV4Tour} title="Open Drawer" />
-      <Q2WalletV4TourControlsProvider value={drawerControls}>
-        <Q2WalletV4TourDrawer />
-      </Q2WalletV4TourControlsProvider>
+      <Button onPress={handleOpenDrawer} title="Open Drawer" />
+      <Q2WalletV4TourDrawer
+        isDrawerOpen={isDrawerOpen}
+        handleCloseDrawer={handleCloseDrawer}
+        closeDrawer={closeDrawer}
+        onSlideChange={onSlideChange}
+      />
     </>
   );
 };

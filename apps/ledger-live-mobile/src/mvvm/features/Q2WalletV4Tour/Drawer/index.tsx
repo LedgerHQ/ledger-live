@@ -7,20 +7,36 @@ import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { Platform } from "react-native";
-import { useQ2WalletV4TourControls } from "../context/Q2WalletV4TourControlsContext";
+import { TrackScreen } from "~/analytics";
 import { useQ2WalletV4TourDrawerViewModel } from "./hooks/useQ2WalletV4TourDrawerViewModel";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import { ProgressIndicator } from "./components/ProgressIndicator";
-import { Q2_WALLET_V4_TOUR_SLIDES, SLIDES_CONTAINER_HEIGHT, SLIDES_LIST_HEIGHT } from "./const";
+import {
+  PAGE_TRACKING_Q2_WALLET_V4_TOUR,
+  Q2_WALLET_V4_TOUR_SLIDES,
+  SLIDES_CONTAINER_HEIGHT,
+  SLIDES_LIST_HEIGHT,
+} from "./const";
 
 export const useQ2WalletV4TourDrawer = () => useQ2WalletV4TourDrawerViewModel();
 
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
 
-export const Q2WalletV4TourDrawer = () => {
-  const { isDrawerOpen, closeQ2WalletV4Tour, onSlideChange, completeQ2WalletV4Tour } =
-    useQ2WalletV4TourControls();
+type Q2WalletV4TourDrawerProps = Omit<
+  ReturnType<typeof useQ2WalletV4TourDrawerViewModel>,
+  "handleOpenDrawer"
+> & {
+  readonly source?: string;
+};
+
+export const Q2WalletV4TourDrawer = ({
+  isDrawerOpen,
+  handleCloseDrawer,
+  closeDrawer,
+  onSlideChange,
+  source = "Portfolio",
+}: Q2WalletV4TourDrawerProps) => {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const styles = useStyleSheet(
     theme => ({
@@ -45,13 +61,18 @@ export const Q2WalletV4TourDrawer = () => {
   return (
     <QueuedDrawerBottomSheet
       isRequestingToBeOpened={isDrawerOpen}
-      onClose={closeQ2WalletV4Tour}
+      onClose={closeDrawer}
       enableDynamicSizing
       maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
     >
       {isDrawerOpen ? (
         <BottomSheetView style={styles.content}>
           <BottomSheetHeader />
+          <TrackScreen
+            category={PAGE_TRACKING_Q2_WALLET_V4_TOUR}
+            source={source}
+            refreshSource={false}
+          />
           <Slides
             bounces={false}
             as={AnimatedGestureHandlerFlatList}
@@ -75,7 +96,7 @@ export const Q2WalletV4TourDrawer = () => {
             </Slides.ProgressIndicator>
 
             <Slides.Footer>
-              <SlideFooterButton onComplete={completeQ2WalletV4Tour} />
+              <SlideFooterButton onComplete={handleCloseDrawer} />
             </Slides.Footer>
           </Slides>
         </BottomSheetView>

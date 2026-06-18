@@ -59,7 +59,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "canton",
     supportedCoins: ["canton_network", "canton_network_devnet", "canton_network_testnet"],
     loadSetup: () => import("../families/canton/setup"),
-    loadLocalApi: () => import("../families/canton/coinModuleApi").then(m => m.createLocalCantonApi),
+    loadLocalApi: () =>
+      import("../families/canton/coinModuleApi").then(m => m.createLocalCantonApi),
     loadTransaction: () => import("@ledgerhq/coin-canton/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-canton/deviceTransactionConfig").then(m => m.default),
@@ -304,7 +305,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "solana",
     supportedCoins: ["solana", "solana_testnet", "solana_devnet"],
     loadSetup: () => import("../families/solana/setup"),
-    loadLocalApi: () => import("../families/solana/coinModuleApi").then(m => m.createLocalSolanaApi),
+    loadLocalApi: () =>
+      import("../families/solana/coinModuleApi").then(m => m.createLocalSolanaApi),
     loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
@@ -329,7 +331,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "stellar",
     supportedCoins: ["stellar"],
     loadSetup: () => import("../families/stellar/setup"),
-    loadLocalApi: () => import("../families/stellar/coinModuleApi").then(m => m.createLocalStellarApi),
+    loadLocalApi: () =>
+      import("../families/stellar/coinModuleApi").then(m => m.createLocalStellarApi),
     loadTransaction: () => import("../families/stellar/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("../families/stellar/deviceTransactionConfig").then(m => m.default),

@@ -19,6 +19,7 @@ export type AddressListItemViewModel = Readonly<{
   networkTicker: string;
   onClick: () => void;
   rowTestId: string;
+  balanceTestId: string;
 }>;
 
 export function useAddressListItemViewModel(
@@ -33,12 +34,12 @@ export function useAddressListItemViewModel(
     account.type === "TokenAccount" ? lookupParentAccount(account.parentId) : undefined;
   const networkCurrency =
     account.type === "TokenAccount"
-      ? (parentAccount?.currency ?? getCryptoCurrencyById(account.token.parentCurrencyId))
+      ? parentAccount?.currency ?? getCryptoCurrencyById(account.token.parentCurrencyId)
       : currency;
 
   const accountForDisplayName =
     account.type === "TokenAccount"
-      ? (parentAccount ?? lookupParentAccount(account.parentId))
+      ? parentAccount ?? lookupParentAccount(account.parentId)
       : account;
   const displayName = useAccountName(accountForDisplayName ?? account);
   const rawAddress = getCryptoAccountAddress(account, lookupParentAccount);
@@ -63,5 +64,6 @@ export function useAddressListItemViewModel(
     networkTicker: networkCurrency.ticker,
     onClick,
     rowTestId: `asset-detail-address-row-${account.id}`,
+    balanceTestId: `asset-detail-address-balance-${account.id}`,
   };
 }

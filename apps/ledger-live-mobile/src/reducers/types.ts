@@ -24,6 +24,7 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
+import type { BorrowState } from "./borrow";
 import type { CountervaluesState } from "./countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
@@ -351,17 +352,6 @@ export type EarnState = {
   menuBottomSheet?: { icon: string; label: string; metadata: OptionMetadata }[];
   protocolInfoModal?: true;
   actionDialog?: ActionDialogParams;
-};
-
-// === BORROW STATE ===
-
-export type BorrowState = {
-  infoBottomSheet?: {
-    message: string;
-    title: string;
-    linkText?: string;
-    linkHref?: string;
-  };
 };
 
 // === PROTECT STATE ===

@@ -34,7 +34,7 @@ export const Q2TourDialog = ({
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => { }}>
+    <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
         className="flex h-screen min-h-0 flex-col"
         onPointerDownOutside={onDismiss}
@@ -42,7 +42,11 @@ export const Q2TourDialog = ({
       >
         <DialogHeader density="compact" onClose={onHeaderClose} />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-24 overflow-hidden">
-          <Slides key={isOpen ? "open" : "closed"} initialSlideIndex={0} onSlideChange={onSlideChange}>
+          <Slides
+            key={isOpen ? "open" : "closed"}
+            initialSlideIndex={0}
+            onSlideChange={onSlideChange}
+          >
             <Slides.Content>{slideItems}</Slides.Content>
 
             <Slides.ProgressIndicator>

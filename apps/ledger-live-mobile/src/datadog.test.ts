@@ -96,7 +96,11 @@ describe("broadcastLogger", () => {
           family: "family",
           isTestnet: false,
           isSendMax: false,
-          source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: false } },
+          source: {
+            type: "coin-module",
+            name: "ledger-live-mobile",
+            flags: { newSendFlow: false },
+          },
         },
       },
     );

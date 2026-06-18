@@ -2,10 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "~/renderer/actions/general";
-import {
-  Q2_TOUR_LAST_SLIDE_INDEX,
-  Q2_TOUR_SLIDES,
-} from "../const";
+import { Q2_TOUR_LAST_SLIDE_INDEX, Q2_TOUR_SLIDES } from "../const";
 import { SLIDE_IMAGES } from "../assets";
 
 interface UseQ2TourSlideItemViewModelProps {
@@ -25,8 +22,7 @@ export function useQ2TourSlideItemViewModel({
   const theme = useSelector(themeSelector);
 
   return useMemo(() => {
-    const safeIndex =
-      slideIndex >= 0 && slideIndex <= Q2_TOUR_LAST_SLIDE_INDEX ? slideIndex : 0;
+    const safeIndex = slideIndex >= 0 && slideIndex <= Q2_TOUR_LAST_SLIDE_INDEX ? slideIndex : 0;
     const slide = Q2_TOUR_SLIDES[safeIndex];
     const imageSrc = SLIDE_IMAGES[theme][safeIndex] ?? SLIDE_IMAGES[theme][0];
 

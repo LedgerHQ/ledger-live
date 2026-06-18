@@ -2,10 +2,7 @@ import React from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import { AnalyticsConsentDialog } from "LLD/features/AnalyticsConsentDialog";
 import { ProductTourDialog, useProductTourDialogViewModel } from "LLD/features/ProductTour/Drawer";
-import {
-  Q2TourDialog,
-  useQ2TourDrawerViewModel,
-} from "LLD/features/Q2Tour";
+import { Q2TourDialog, useQ2TourDrawerViewModel } from "LLD/features/Q2Tour";
 import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,

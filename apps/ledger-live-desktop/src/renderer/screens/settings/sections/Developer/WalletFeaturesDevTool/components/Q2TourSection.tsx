@@ -9,11 +9,7 @@ interface Q2TourSectionProps {
   readonly onOpenDrawer: () => void;
 }
 
-export const Q2TourSection = ({
-  hasSeen,
-  onToggleHasSeen,
-  onOpenDrawer,
-}: Q2TourSectionProps) => {
+export const Q2TourSection = ({ hasSeen, onToggleHasSeen, onOpenDrawer }: Q2TourSectionProps) => {
   const { t } = useTranslation();
 
   return (

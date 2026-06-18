@@ -1706,7 +1706,11 @@
         "stocks": "Stocks",
         "favorites": "Favorites"
       },
-      "emptyFavorites": "No favorites yet"
+      "emptyFavorites": "No favorites yet",
+      "noAssets": {
+        "title": "No assets available",
+        "description": "Sorry, there are no assets available in this category."
+      }
     },
     "detailsPage": {
       "priceStatistics": "Price stats",
@@ -8904,7 +8908,7 @@
     "search": {
       "noAssetFound": "No asset found",
       "error": "Connection failed",
-      "cryptos": "Cryptos",
+      "cryptos": "Crypto",
       "stocks": "Stocks"
     },
     "history": {

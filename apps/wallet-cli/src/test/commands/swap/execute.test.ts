@@ -126,7 +126,9 @@ const runFullSwapPipelineMock = mock((_input: FullSwapPipelineInput) =>
   Promise.resolve({ ...mockPipelineResult }),
 );
 
-const findTokenByIdMock = mock(async (id: string) => (id === USDT_TOKEN_ID ? usdtToken : undefined));
+const findTokenByIdMock = mock(async (id: string) =>
+  id === USDT_TOKEN_ID ? usdtToken : undefined,
+);
 
 async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
   const writes: string[] = [];

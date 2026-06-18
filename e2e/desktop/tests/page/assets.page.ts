@@ -72,4 +72,16 @@ export class AssetsPage extends AppPage {
   async expectAssetVisibleInCryptosSection(assetName: string) {
     await expect(this.cryptosSection.getByText(assetName, { exact: true })).toBeVisible();
   }
+
+  @step("Click asset in stablecoins section")
+  async clickAssetInStablecoinsSection(assetName: string) {
+    await this.stablecoinsSection.getByText(assetName, { exact: true }).click();
+  }
+
+  @step("Expect a single aggregated row for asset $1 in $0 section")
+  async expectSingleAggregatedRow(section: "cryptos" | "stablecoins", assetName: string) {
+    const rows = section === "cryptos" ? this.cryptosSectionRows : this.stablecoinsSectionRows;
+    const matchingRows = rows.filter({ hasText: assetName });
+    await expect(matchingRows).toHaveCount(1);
+  }
 }

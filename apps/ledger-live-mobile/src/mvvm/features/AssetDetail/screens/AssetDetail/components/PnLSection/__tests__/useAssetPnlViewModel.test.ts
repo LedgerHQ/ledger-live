@@ -95,7 +95,7 @@ describe("useAssetPnlViewModel", () => {
       });
     });
 
-    it("fires a market_stat_definition track event when the secondary drawer opens", () => {
+    it("fires a button_clicked track event with the market_stat_definition button when the secondary drawer opens", () => {
       const { result } = renderHook(
         () => useAssetPnlViewModel({ distributionItem, enabled: true }),
         { overrideInitialState: withPnlFlag(true) },

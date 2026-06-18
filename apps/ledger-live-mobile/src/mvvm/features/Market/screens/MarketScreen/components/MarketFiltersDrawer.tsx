@@ -96,7 +96,7 @@ export function MarketFiltersDrawer({ filters }: MarketFiltersDrawerProps) {
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
-        <Box lx={{ paddingHorizontal: "s16", paddingTop: "s12" }}>
+        <Box lx={{ paddingTop: "s12" }}>
           <MarketFilterSection
             title={t("market.assets.filters.sorting")}
             items={filters.sortingOptions}

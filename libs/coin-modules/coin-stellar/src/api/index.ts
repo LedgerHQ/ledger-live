@@ -27,7 +27,7 @@ import {
   lastBlock,
   validateIntent,
 } from "../logic";
-import { operationsFromHeight } from "../logic/operationsFromHeight";
+import { listOperations } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence, registerHorizonInterceptors } from "../network";
 import { StellarMemo } from "../types";
@@ -123,9 +123,9 @@ async function estimate(_transactionIntent: TransactionIntent): Promise<FeeEstim
 
 async function operations(
   address: string,
-  { minHeight }: ListOperationsOptions,
+  options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  const { items, next } = await operationsFromHeight(address, minHeight);
+  const { items, next } = await listOperations(address, options);
   return { items, next: next || undefined };
 }
 

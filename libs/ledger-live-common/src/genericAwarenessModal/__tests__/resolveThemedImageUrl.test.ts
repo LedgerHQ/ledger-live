@@ -1,4 +1,8 @@
-import { createThemedImageUrls, hasThemedImage, resolveThemedImageUrl } from "../resolveThemedImageUrl";
+import {
+  createThemedImageUrls,
+  hasThemedImage,
+  resolveThemedImageUrl,
+} from "../resolveThemedImageUrl";
 
 describe("createThemedImageUrls", () => {
   it("should map a single url to both light and dark themed fields", () => {

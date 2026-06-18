@@ -52,39 +52,35 @@ describe("useQ2TourDrawerViewModel", () => {
 
   describe("auto-open on Portfolio", () => {
     it("should not auto-open when not on Portfolio page", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
+        initialState: getInitialState(),
+      });
 
       expect(result.current.isDialogOpen).toBe(false);
       expect(trackQ2TourInitialStep).not.toHaveBeenCalled();
     });
 
     it("should auto-open when tour is enabled, not seen, and onboarding is complete", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }), {
+        initialState: getInitialState(),
+      });
 
       expect(result.current.isDialogOpen).toBe(true);
       expect(trackQ2TourInitialStep).toHaveBeenCalledTimes(1);
     });
 
     it("should not auto-open when tour has already been seen", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }),
-        { initialState: getInitialState({ hasSeenQ2Tour: true }) },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }), {
+        initialState: getInitialState({ hasSeenQ2Tour: true }),
+      });
 
       expect(result.current.isDialogOpen).toBe(false);
     });
 
     it("should not auto-open when onboarding is incomplete", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }),
-        { initialState: getInitialState({ hasCompletedOnboarding: false }) },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }), {
+        initialState: getInitialState({ hasCompletedOnboarding: false }),
+      });
 
       expect(result.current.isDialogOpen).toBe(false);
     });
@@ -92,10 +88,9 @@ describe("useQ2TourDrawerViewModel", () => {
 
   describe("handleOpenDialog", () => {
     it("should open dialog and track initial step when tour is enabled and not seen", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
+        initialState: getInitialState(),
+      });
 
       act(() => {
         result.current.handleOpenDialog();
@@ -106,10 +101,9 @@ describe("useQ2TourDrawerViewModel", () => {
     });
 
     it("should not open when hasSeenTour is true", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }),
-        { initialState: getInitialState({ hasSeenQ2Tour: true }) },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
+        initialState: getInitialState({ hasSeenQ2Tour: true }),
+      });
 
       act(() => {
         result.current.handleOpenDialog();
@@ -119,16 +113,13 @@ describe("useQ2TourDrawerViewModel", () => {
     });
 
     it("should not open when q2Tour flag is disabled", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }),
-        {
-          initialState: getInitialState({
-            featureFlagOverrides: {
-              lwdWallet40: { enabled: true, params: { q2Tour: false } },
-            },
-          }),
-        },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
+        initialState: getInitialState({
+          featureFlagOverrides: {
+            lwdWallet40: { enabled: true, params: { q2Tour: false } },
+          },
+        }),
+      });
 
       act(() => {
         result.current.handleOpenDialog();
@@ -158,10 +149,9 @@ describe("useQ2TourDrawerViewModel", () => {
 
   describe("closeDrawer", () => {
     it("should track close click and close dialog", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }), {
+        initialState: getInitialState(),
+      });
 
       act(() => {
         result.current.closeDrawer();
@@ -172,10 +162,9 @@ describe("useQ2TourDrawerViewModel", () => {
     });
 
     it("should not track close twice when called repeatedly", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }), {
+        initialState: getInitialState(),
+      });
 
       act(() => {
         result.current.closeDrawer();
@@ -188,10 +177,9 @@ describe("useQ2TourDrawerViewModel", () => {
 
   describe("dismissDrawer", () => {
     it("should track drawer dismissed and close dialog", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: true }), {
+        initialState: getInitialState(),
+      });
 
       act(() => {
         result.current.dismissDrawer();
@@ -204,27 +192,23 @@ describe("useQ2TourDrawerViewModel", () => {
 
   describe("onSlideChange", () => {
     it("should track step navigation", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
+        initialState: getInitialState(),
+      });
 
       act(() => {
         result.current.onSlideChange(2);
       });
 
-      expect(trackQ2TourStepNavigation).toHaveBeenCalledWith(
-        expect.objectContaining({ step: 3 }),
-      );
+      expect(trackQ2TourStepNavigation).toHaveBeenCalledWith(expect.objectContaining({ step: 3 }));
     });
   });
 
   describe("onContinueClick", () => {
     it("should track continue click on non-last slide", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
+        initialState: getInitialState(),
+      });
 
       act(() => {
         result.current.onContinueClick(0, false);
@@ -235,10 +219,9 @@ describe("useQ2TourDrawerViewModel", () => {
     });
 
     it("should track tour completed on last slide", () => {
-      const { result } = renderHook(
-        () => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }),
-        { initialState: getInitialState() },
-      );
+      const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
+        initialState: getInitialState(),
+      });
 
       act(() => {
         result.current.onContinueClick(Q2_TOUR_LAST_SLIDE_INDEX, true);

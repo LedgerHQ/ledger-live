@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { hasCompletedOnboardingSelector, hasSeenQ2TourSelector } from "~/renderer/reducers/settings";
+import {
+  hasCompletedOnboardingSelector,
+  hasSeenQ2TourSelector,
+} from "~/renderer/reducers/settings";
 import { setHasSeenQ2Tour } from "~/renderer/actions/settings";
 import {
   getQ2TourAnalyticsContext,

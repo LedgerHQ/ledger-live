@@ -1,4 +1,5 @@
 import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 
 export type { StockSuggestion };
 
@@ -19,7 +20,7 @@ export type StocksSectionViewProps = StocksSection & {
   /** Number of skeleton rows rendered while loading. */
   limit: number;
   /** Redirects to the asset detail page for the given market id. */
-  navigateToAsset: (currencyId: string) => void;
+  navigateToAsset: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
   /** Lands on the market list pre-filtered to the stocks category. */
   onSeeAll: () => void;
   /** Header affordance to render. Defaults to "showMore". */

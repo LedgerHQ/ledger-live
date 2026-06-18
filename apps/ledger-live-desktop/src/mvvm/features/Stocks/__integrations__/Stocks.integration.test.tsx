@@ -130,7 +130,10 @@ describe("Stocks section", () => {
     render(<Stocks limit={2} navigateToAsset={navigateToAsset} onSeeAll={onSeeAll} />);
 
     fireEvent.click(screen.getByTestId("stock-item-ticker-aaplx"));
-    expect(navigateToAsset).toHaveBeenCalledWith(APPLE.marketId);
+    expect(navigateToAsset).toHaveBeenCalledWith(APPLE.marketId, {
+      id: APPLE.marketId,
+      ledgerIds: [APPLE.ledgerId],
+    });
   });
 
   it("navigates using the meta-currency slug when DADA omits the market id", () => {
@@ -139,7 +142,10 @@ describe("Stocks section", () => {
     render(<Stocks limit={2} navigateToAsset={navigateToAsset} onSeeAll={onSeeAll} />);
 
     fireEvent.click(screen.getByTestId("stock-item-ticker-tslax"));
-    expect(navigateToAsset).toHaveBeenCalledWith("teslax");
+    expect(navigateToAsset).toHaveBeenCalledWith("teslax", {
+      id: "teslax",
+      ledgerIds: [TESLA.ledgerId],
+    });
   });
 
   it("skips stocks that have no ledger id", () => {

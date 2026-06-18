@@ -94,7 +94,7 @@ export function useMarketPriceSectionViewModel({
   const hasPriceData = Number.isFinite(data?.price);
   const showSkeleton = Boolean(
     marketAssetId &&
-      resolveAssetDetailSectionLoading(isDistributionLoading, marketData.isLoading, hasPriceData),
+    resolveAssetDetailSectionLoading(isDistributionLoading, marketData.isLoading, hasPriceData),
   );
 
   const { percentage: normalizedPercentage, variationFiat } = resolveRangePriceChange({

@@ -4,4 +4,3 @@ export type {
   UseQ2TourDrawerViewModelOptions,
 } from "./hooks/useQ2TourDrawerViewModel";
 export { useQ2TourDrawerViewModel } from "./hooks/useQ2TourDrawerViewModel";
-

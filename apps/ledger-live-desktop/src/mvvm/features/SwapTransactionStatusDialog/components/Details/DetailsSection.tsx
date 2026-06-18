@@ -74,7 +74,10 @@ export function DetailsSection({
                   <ProviderIcon name={provider} size="XXS" borderRadius={4} />
                 </button>
               ) : (
-                <div data-testid="swap-transaction-details-provider" className="inline-flex items-center gap-6">
+                <div
+                  data-testid="swap-transaction-details-provider"
+                  className="inline-flex items-center gap-6"
+                >
                   <span className="body-3-semi-bold">{providerName}</span>
                   <ProviderIcon name={provider} size="XXS" borderRadius={4} />
                 </div>
@@ -86,7 +89,9 @@ export function DetailsSection({
           label={t("swap2.modals.transactionStatus.sections.details.swapId")}
           value={
             <div className="inline-flex items-center gap-6">
-              <span data-testid="swap-transaction-details-swap-id" className="body-3-semi-bold">{truncateMiddle(swapId)}</span>
+              <span data-testid="swap-transaction-details-swap-id" className="body-3-semi-bold">
+                {truncateMiddle(swapId)}
+              </span>
               <CopyIconButton text={swapId} />
             </div>
           }

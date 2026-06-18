@@ -38,13 +38,7 @@ const getQ2TourInteractionProperties = (context: Q2TourAnalyticsContext) => ({
 });
 
 const trackQ2TourStepPage = (context: Q2TourAnalyticsContext): void => {
-  trackPage(
-    PAGE_TRACKING_Q2_TOUR,
-    undefined,
-    getQ2TourPageProperties(context),
-    true,
-    false,
-  );
+  trackPage(PAGE_TRACKING_Q2_TOUR, undefined, getQ2TourPageProperties(context), true, false);
 };
 
 export const trackQ2TourContinueClick = (context: Q2TourAnalyticsContext): void => {

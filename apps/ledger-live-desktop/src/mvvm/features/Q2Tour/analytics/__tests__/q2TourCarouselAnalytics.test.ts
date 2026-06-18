@@ -27,9 +27,7 @@ describe("q2TourCarouselAnalytics", () => {
       totalSteps: Q2_TOUR_SLIDES.length,
     });
 
-    trackQ2TourInitialStep(
-      getQ2TourAnalyticsContext(0, Q2_TOUR_SLIDES[0].titleKey),
-    );
+    trackQ2TourInitialStep(getQ2TourAnalyticsContext(0, Q2_TOUR_SLIDES[0].titleKey));
 
     expect(trackPage).toHaveBeenCalledWith(
       PAGE_TRACKING_Q2_TOUR,

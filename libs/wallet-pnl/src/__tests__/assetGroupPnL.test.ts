@@ -2,8 +2,18 @@ import BigNumber from "bignumber.js";
 import { computeAssetGroupPnL } from "../assetGroupPnL";
 import { computeAssetPnL } from "../assetPnL";
 import { invalidatePnLCache } from "../costBasisCache";
-import { makeAccount } from "../scenarios/accounts";
-import { BTC, ETH, USD, SAT, WEI } from "../scenarios/currencies";
+import { makeAccount, makeTokenAccount } from "../scenarios/accounts";
+import {
+  BTC,
+  ETH,
+  USD,
+  SAT,
+  WEI,
+  USDC,
+  USDC_BSC,
+  USDC_UNIT,
+  USDC_BSC_UNIT,
+} from "../scenarios/currencies";
 import { buy, resetOperationIdCounter } from "../scenarios/operations";
 import { buildMultiCV } from "../scenarios/countervalues";
 import { expectBN } from "./helpers/bn";
@@ -106,6 +116,53 @@ describe("computeAssetGroupPnL", () => {
 
       const expectedUsd = new BigNumber(40000);
       expectBN(group.averageEntryPrice).toBeCloseToBN(expectedUsd.times(FIAT_MAJOR_TO_MINOR), 0);
+    });
+  });
+
+  describe("mixed-magnitude group (cross-network USDC)", () => {
+    const BUY_DATE = new Date(Date.UTC(2025, 0, 10));
+    const ONE_USD = new BigNumber(1).times(FIAT_MAJOR_TO_MINOR);
+
+    const makeEthUsdc = (units: number) =>
+      makeTokenAccount(USDC, {
+        id: "js:2:ethereum:eth-a:+ethereum/erc20/usd_coin",
+        operations: units > 0 ? [buy(USDC_UNIT.times(units), BUY_DATE)] : [],
+        balance: USDC_UNIT.times(units),
+      });
+
+    const makeBscUsdc = (units: number) =>
+      makeTokenAccount(USDC_BSC, {
+        id: "js:2:bsc:bsc-a:+bsc/bep20/binance_peg_usd_coin",
+        operations: units > 0 ? [buy(USDC_BSC_UNIT.times(units), BUY_DATE)] : [],
+        balance: USDC_BSC_UNIT.times(units),
+      });
+
+    const buildCV = () =>
+      buildMultiCV([
+        { pair: { from: USDC, to: USD }, history: { "2025-01-10": 1 }, latest: 1 },
+        { pair: { from: USDC_BSC, to: USD }, history: { "2025-01-10": 1 }, latest: 1 },
+      ]);
+
+    it("a zero-balance account in another magnitude does not inflate averageEntryPrice", () => {
+      // Reproduces the bug: empty BNB USDC (18 decimals) sitting at accounts[0]
+      // used to make the divisor 10^18 while only the ETH USDC (6 decimals)
+      // contributed, yielding a ~10^12-too-big entry price.
+      const group = computeAssetGroupPnL([makeBscUsdc(0), makeEthUsdc(1000)], buildCV(), USD)!;
+
+      expectBN(group.averageEntryPrice).toBeCloseToBN(ONE_USD, 0);
+    });
+
+    it("is independent of account ordering", () => {
+      const group = computeAssetGroupPnL([makeEthUsdc(1000), makeBscUsdc(0)], buildCV(), USD)!;
+
+      expectBN(group.averageEntryPrice).toBeCloseToBN(ONE_USD, 0);
+    });
+
+    it("sums two funded accounts that use different magnitudes", () => {
+      // 1000 USDC @ $1 on Ethereum + 1000 USDC @ $1 on BNB Chain ⇒ $1 average.
+      const group = computeAssetGroupPnL([makeBscUsdc(1000), makeEthUsdc(1000)], buildCV(), USD)!;
+
+      expectBN(group.averageEntryPrice).toBeCloseToBN(ONE_USD, 0);
     });
   });
 

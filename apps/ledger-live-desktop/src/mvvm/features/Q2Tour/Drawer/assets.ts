@@ -11,18 +11,6 @@ import earnSimulatorLight from "./assets/light/Q2_PRODUCT_TOUR_LIGHT_MODE_EARN_S
 import earnUpsellingLight from "./assets/light/Q2_PRODUCT_TOUR_LIGHT_MODE_UPSELLING.webp";
 
 export const SLIDE_IMAGES = {
-  dark: [
-    welcomeDark,
-    aggregatedBalanceDark,
-    pnlDark,
-    earnSimulatorDark,
-    earnUpsellingDark,
-  ],
-  light: [
-    welcomeLight,
-    aggregatedBalanceLight,
-    pnlLight,
-    earnSimulatorLight,
-    earnUpsellingLight,
-  ],
+  dark: [welcomeDark, aggregatedBalanceDark, pnlDark, earnSimulatorDark, earnUpsellingDark],
+  light: [welcomeLight, aggregatedBalanceLight, pnlLight, earnSimulatorLight, earnUpsellingLight],
 } as const;

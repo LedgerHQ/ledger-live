@@ -61,7 +61,9 @@ export function TransactionHeader({
         <Skeleton className="h-24 w-176 rounded-sm" />
       )}
       {createdAt ? (
-        <p data-testid="swap-transaction-date" className="body-2 text-muted">{formatCreatedAt(createdAt, locale)}</p>
+        <p data-testid="swap-transaction-date" className="body-2 text-muted">
+          {formatCreatedAt(createdAt, locale)}
+        </p>
       ) : (
         <Skeleton className="mt-8 h-16 w-176 rounded-sm" />
       )}

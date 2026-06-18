@@ -13,8 +13,7 @@ const mockGetRouteParamsForPlatformApp = jest.fn().mockReturnValue(null);
 
 jest.mock("LLM/hooks/useStake/useStake", () => ({
   useStake: () => ({
-    getRouteParamsForPlatformApp: (...args: unknown[]) =>
-      mockGetRouteParamsForPlatformApp(...args),
+    getRouteParamsForPlatformApp: (...args: unknown[]) => mockGetRouteParamsForPlatformApp(...args),
   }),
 }));
 

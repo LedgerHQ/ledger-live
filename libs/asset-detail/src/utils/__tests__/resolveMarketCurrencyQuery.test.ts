@@ -57,15 +57,18 @@ describe("shouldFetchMarketByLedgerIds", () => {
   });
 
   it("returns false for DADA urns that convert to a coingecko slug (backward compatible)", () => {
-    expect(
-      shouldFetchMarketByLedgerIds("urn:crypto:meta-currency:bonk", ["solana/spl/bonk"]),
-    ).toBe(false);
+    expect(shouldFetchMarketByLedgerIds("urn:crypto:meta-currency:bonk", ["solana/spl/bonk"])).toBe(
+      false,
+    );
   });
 });
 
 describe("getMarketLedgerIdsForQuery", () => {
   it("caps the number of ledger ids sent in the query string", () => {
-    const ledgerIds = Array.from({ length: MAX_MARKET_LEDGER_IDS + 3 }, (_, index) => `id-${index}`);
+    const ledgerIds = Array.from(
+      { length: MAX_MARKET_LEDGER_IDS + 3 },
+      (_, index) => `id-${index}`,
+    );
     expect(getMarketLedgerIdsForQuery(ledgerIds)).toHaveLength(MAX_MARKET_LEDGER_IDS);
     expect(getMarketLedgerIdsForQuery(ledgerIds)[0]).toBe("id-0");
   });

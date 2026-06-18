@@ -320,6 +320,7 @@
     "src/wallet-api/ACRE/server.ts",
     "src/wallet-api/constants.ts",
     "src/wallet-api/converters.ts",
+    "src/wallet-api/Borrow/errorBottomSheetParams.ts",
     "src/wallet-api/Borrow/navigate.ts",
     "src/wallet-api/Borrow/types.ts",
     "src/wallet-api/CustomLogger/client.ts",

@@ -99,7 +99,9 @@ describe("parseQueuedMessage", () => {
     });
 
     mockedLog.mockClear();
-    expect(parseQueuedMessage("cosmos.staking.v1beta1.MsgEditValidator", "garbage")).toBeUndefined();
+    expect(
+      parseQueuedMessage("cosmos.staking.v1beta1.MsgEditValidator", "garbage"),
+    ).toBeUndefined();
     expect(mockedLog).not.toHaveBeenCalled();
   });
 });
@@ -278,9 +280,8 @@ describe("fetchQueuedStakingMessages", () => {
 
   // network is mocked; the AxiosResponse envelope is irrelevant here, so build just `{ data }`
   const mockNetworkByUrl = (handler: (url: string) => unknown) => {
-    mockedNetwork.mockImplementation(
-      ((opts: { url: string }) => Promise.resolve({ data: handler(opts.url) })) as any,
-    );
+    mockedNetwork.mockImplementation(((opts: { url: string }) =>
+      Promise.resolve({ data: handler(opts.url) })) as any);
   };
 
   it("follows pagination and merges every page, url-encoding the page key", async () => {
@@ -322,7 +323,11 @@ describe("fetchQueuedStakingMessages", () => {
     const result = await fetchQueuedStakingMessages(endpoint, address, "ubbn");
 
     expect(result?.messages).toEqual([
-      expect.objectContaining({ delegatorAddress: address, denom: "ubbn", amount: new BigNumber(10) }),
+      expect.objectContaining({
+        delegatorAddress: address,
+        denom: "ubbn",
+        amount: new BigNumber(10),
+      }),
     ]);
   });
 

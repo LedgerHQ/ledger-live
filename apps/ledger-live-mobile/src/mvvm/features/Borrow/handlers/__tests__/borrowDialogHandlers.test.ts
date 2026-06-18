@@ -1,5 +1,5 @@
 import { createOpenBorrowInfoBottomSheetHandler } from "../borrowDialogHandlers";
-import { makeSetBorrowInfoBottomSheetAction } from "~/actions/borrow";
+import { setInfoBottomSheet } from "~/reducers/borrow";
 
 describe("createOpenBorrowInfoBottomSheetHandler", () => {
   it("should dispatch with validated params", async () => {
@@ -18,7 +18,7 @@ describe("createOpenBorrowInfoBottomSheetHandler", () => {
 
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(
-      makeSetBorrowInfoBottomSheetAction({
+      setInfoBottomSheet({
         title: "Borrow info title",
         message: "Borrow info message",
         linkText: "Learn more",

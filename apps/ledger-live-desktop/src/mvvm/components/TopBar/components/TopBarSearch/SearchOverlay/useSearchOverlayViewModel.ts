@@ -1,7 +1,7 @@
 import { KeyboardEvent, useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import {
   getMarketOrAssetDetailPath,
   isAssetOrMarketDetailPath,
@@ -33,9 +33,17 @@ export function useSearchOverlayViewModel() {
   const replace = isAssetOrMarketDetailPath(location.pathname);
 
   const navigateToAsset = useCallback(
-    (currencyId: string, marketState?: MarketCurrencyData) => {
+    (currencyId: string, marketState?: AssetNavigationMarketState) => {
+      const assetName =
+        marketState &&
+        "name" in marketState &&
+        typeof marketState.name === "string" &&
+        marketState.name
+          ? marketState.name
+          : currencyId;
+
       track("asset_clicked", {
-        asset: marketState?.name ?? currencyId,
+        asset: assetName,
         page: getCurrentTrackingPage(),
         flow: "global_search",
         source: getPreviousTrackingPage(),

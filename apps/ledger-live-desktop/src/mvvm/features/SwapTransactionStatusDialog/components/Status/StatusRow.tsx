@@ -58,7 +58,12 @@ export function StatusRow({
         <StatusIcon status={status} />
       </div>
       <span className="col-start-2 row-start-1 body-2-semi-bold text-base">{titleContent}</span>
-      <span data-testid={testId ? `${testId}-amount` : undefined} className="col-start-3 row-start-1 body-2-semi-bold text-base">{value}</span>
+      <span
+        data-testid={testId ? `${testId}-amount` : undefined}
+        className="col-start-3 row-start-1 body-2-semi-bold text-base"
+      >
+        {value}
+      </span>
       <div className="col-start-1 row-start-2 flex justify-center group-last/status-row:hidden">
         <StatusLine status={lineStatus ?? status} />
       </div>

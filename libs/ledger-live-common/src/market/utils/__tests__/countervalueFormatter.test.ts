@@ -43,4 +43,25 @@ describe("counterValueFormatter (live-common)", () => {
   it("does not append a ticker for the falsy '-' branch", () => {
     expect(counterValueFormatter({ value: 0, locale: "en-US", ticker: "btc" })).toBe("-");
   });
+
+  it("renders the Ledger fiat sign instead of the localized code", () => {
+    // USD: previously rendered US$/$US in non-US locales
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-GB", currency: "usd" })).toBe(
+      "$1,234.56",
+    );
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-US", currency: "usd" })).toBe(
+      "$1,234.56",
+    );
+  });
+
+  it("uses the same fiat sign regardless of locale so Market matches price and balances", () => {
+    // CAD: Intl narrowSymbol is locale-dependent ("$" in en-CA, "CA$" in en-US),
+    // but the Ledger fiat definition pins it to "CA$" everywhere.
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-US", currency: "cad" })).toBe(
+      "CA$1,234.56",
+    );
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-CA", currency: "cad" })).toBe(
+      "CA$1,234.56",
+    );
+  });
 });

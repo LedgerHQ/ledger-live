@@ -1,7 +1,12 @@
 import { useCallback, useMemo, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import type { AssetMarketData } from "@ledgerhq/asset-detail";
+import {
+  getMinSeriesPointsBetweenTxMarkers,
+  groupTransactionsByChartIndex,
+  type AssetMarketData,
+  type TransactionInput,
+} from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { track } from "~/renderer/analytics/segment";
@@ -41,10 +46,6 @@ import { resolveRangePriceChange } from "../MarketPriceSection/utils";
 import { useAssetDetailChartSeries } from "../../hooks/useAssetDetailChartSeries";
 import { useAssetChartDateFormatter } from "../../hooks/useAssetChartDateFormatter";
 import { useScrubbedPrice } from "../../context/ScrubbedPriceContext";
-import {
-  groupTransactionsByChartIndex,
-  type TransactionInput,
-} from "./utils/getTransactionPointMarkers";
 import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker";
 
 const MIN_X_AXIS_TICKS = 5;
@@ -230,6 +231,7 @@ export function useChartSectionViewModel({
       timestamps,
       values: prices,
       transactions,
+      minSeriesPointsBetweenMarkers: getMinSeriesPointsBetweenTxMarkers(selectedRange),
     });
 
     const transactionMarkers = groups.map(group =>
@@ -237,7 +239,16 @@ export function useChartSectionViewModel({
     );
 
     return [...extremaMarkers, ...transactionMarkers];
-  }, [series, prices, timestamps, transactions, formatFiat, t, hideTransactionsOnChart]);
+  }, [
+    series,
+    prices,
+    timestamps,
+    transactions,
+    formatFiat,
+    t,
+    hideTransactionsOnChart,
+    selectedRange,
+  ]);
 
   const formatValue = useCallback<LineChartValueFormatter>(
     value =>

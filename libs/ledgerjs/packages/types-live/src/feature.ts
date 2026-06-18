@@ -319,7 +319,6 @@ export type Features = CurrencyFeatures & {
   llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
-  llmHomescreen: DefaultFeature;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
@@ -940,8 +939,6 @@ export type Feature_LlmTransferButtonCopyVariant = Feature<{
   rowCashToStableDescription?: string;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmHomescreen"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmHomescreen = DefaultFeature;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["supportDeviceApex"]` from `@shared/feature-flags` instead. */
 export type Feature_SupportDeviceApex = DefaultFeature;
 

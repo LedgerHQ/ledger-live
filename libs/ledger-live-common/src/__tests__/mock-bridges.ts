@@ -12,6 +12,19 @@ import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
 jest.setTimeout(120000);
 
+// Speed up mock bridge tests by forcing all setTimeout delays to 0ms while preserving async ordering.
+const realSetTimeout = global.setTimeout;
+let setTimeoutSpy: jest.SpyInstance;
+beforeAll(() => {
+  setTimeoutSpy = jest
+    .spyOn(global, "setTimeout")
+    .mockImplementation(((fn: TimerHandler, _ms?: number, ...args: unknown[]) =>
+      realSetTimeout(fn, 0, ...args)) as typeof setTimeout);
+});
+afterAll(() => {
+  setTimeoutSpy.mockRestore();
+});
+
 const mockedCoins: CryptoCurrencyId[] = [
   "bitcoin",
   "zcash",

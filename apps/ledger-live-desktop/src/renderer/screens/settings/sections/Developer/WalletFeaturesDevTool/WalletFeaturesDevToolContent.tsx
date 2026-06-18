@@ -16,10 +16,7 @@ import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,
 } from "LLD/features/WalletV4Tour/Drawer";
-import {
-  Q2TourDialog,
-  useQ2TourDrawerViewModel,
-} from "LLD/features/Q2Tour";
+import { Q2TourDialog, useQ2TourDrawerViewModel } from "LLD/features/Q2Tour";
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
   const { t } = useTranslation();
   const {

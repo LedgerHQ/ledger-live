@@ -1495,7 +1495,7 @@
       "addresses": "Search addresses"
     },
     "sections": {
-      "cryptos": "Cryptos",
+      "cryptos": "Crypto",
       "stocks": "Stocks"
     }
   },
@@ -3344,6 +3344,7 @@
   "crypto": {
     "title": "Crypto",
     "stablecoinTitle": "Stablecoin",
+    "stocksTitle": "Stocks",
     "errorState": "An error occurred while loading your assets",
     "emptyState": "No assets to display"
   },
@@ -4540,6 +4541,9 @@
           "close": "Close",
           "retry": "Try again"
         }
+      },
+      "confirmation": {
+        "viewTransaction": "View transaction"
       },
       "gasOptionsSync": {
         "warningTitle": "Unable to refresh network fees",
