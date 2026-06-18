@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { z } from "zod";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { findCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyForAccount, type AccountLike } from "@ledgerhq/types-live";
@@ -24,6 +25,7 @@ import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./provid
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 
 type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
+type FindTokenById = (id: string) => Promise<TokenCurrency | null | undefined>;
 
 function resolveSwapAccountForCurrency(
   parentAccount: AccountLike,
@@ -58,6 +60,9 @@ function resolveSwapAccountForCurrency(
   );
 
   if (!tokenSub) {
+    if (flag === "to") {
+      return makeEmptyTokenAccount(parentAccount, currency);
+    }
     throw new Error(`${flag} account has no token sub-account for ${userCurrencyId}.`);
   }
   return tokenSub;
@@ -82,6 +87,7 @@ export type SwapExecuteDependencies = {
   integrateNewAccountDescriptor?: typeof integrateNewAccountDescriptor;
   getAccountBridge?: typeof getAccountBridge;
   makeBridgeCacheSystem?: typeof makeBridgeCacheSystem;
+  findTokenById?: FindTokenById;
 };
 
 export async function executeSwapCommand({
@@ -92,15 +98,14 @@ export async function executeSwapCommand({
   integrateNewAccountDescriptor: integrateDescriptor = integrateNewAccountDescriptor,
   getAccountBridge: getBridge = getAccountBridge,
   makeBridgeCacheSystem: makeCacheSystem = makeBridgeCacheSystem,
+  findTokenById = id => getCryptoAssetsStore().findTokenById(id),
 }: {
   flags: SwapExecuteFlags;
   positional: readonly string[];
 } & SwapExecuteDependencies): Promise<void> {
   const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
-  const fromCurrency =
-    findCryptoCurrencyById(flags.from) ?? (await getCryptoAssetsStore().findTokenById(flags.from));
-  const toCurrency =
-    findCryptoCurrencyById(flags.to) ?? (await getCryptoAssetsStore().findTokenById(flags.to));
+  const fromCurrency = findCryptoCurrencyById(flags.from) ?? (await findTokenById(flags.from));
+  const toCurrency = findCryptoCurrencyById(flags.to) ?? (await findTokenById(flags.to));
 
   if (!fromCurrency) {
     throw new Error(`Unknown source currency (--from): ${flags.from}`);

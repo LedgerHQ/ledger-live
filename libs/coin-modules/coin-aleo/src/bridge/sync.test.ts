@@ -1,11 +1,16 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { log } from "@ledgerhq/logs";
 import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
-import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
+import {
+  getMockedAccount,
+  getMockedTokenAccount,
+  mockAleoResources,
+} from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { AleoAccount } from "../types";
 import { AleoApiConfigurationResetError } from "../errors";
@@ -35,6 +40,10 @@ jest.mock("../network/utils");
 jest.mock("../network/api");
 jest.mock("../logic/listPrivateOperations");
 jest.mock("../logic/getPrivateBalance");
+
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
+}));
 
 const mockGetBalance = jest.mocked(getBalance);
 const mockLastBlock = jest.mocked(lastBlock);
@@ -687,6 +696,7 @@ describe("sync.ts", () => {
         [],
       );
 
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(
         expect.objectContaining({ start: 9999 }),
       );
@@ -712,6 +722,7 @@ describe("sync.ts", () => {
         [],
       );
 
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(expect.objectContaining({ start: 0 }));
     });
 
@@ -1065,6 +1076,34 @@ describe("sync.ts", () => {
       await expect(firstValueFrom(shape$)).rejects.toThrow("scanner down");
     });
 
+    it("createPrivateSyncObservable completes when performPrivateSync throws AbortError", async () => {
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+
+      const abortError = new Error("The operation was aborted");
+      abortError.name = "AbortError";
+      mockFetchAllOwnedRecords.mockRejectedValue(abortError);
+
+      const emissions: Partial<AleoAccount>[] = [];
+
+      await new Promise<void>((resolve, reject) =>
+        createPrivateSyncObservable(baseInfo, mockSyncConfig, []).subscribe({
+          next: value => emissions.push(value),
+          complete: resolve,
+          error: reject,
+        }),
+      );
+
+      expect(emissions).toHaveLength(0);
+      expect(log).toHaveBeenCalledWith(
+        "aleo/createPrivateSyncObservable",
+        `Private sync aborted for ${mockCurrency.id}`,
+      );
+    });
+
     it("public-only sync emits exactly one value and completes", async () => {
       const { syncs } = buildSyncObservables(baseInfo, {
         paginationConfig: {},
@@ -1383,6 +1422,106 @@ describe("sync.ts", () => {
       const result = postSync(synced, synced);
 
       expect(result.pendingOperations).toEqual([]);
+    });
+
+    it("should remove confirmed pending operations on sub-accounts and keep unconfirmed ones", () => {
+      const confirmedSubOp = getMockedOperation({
+        id: "token-account-tx-confirmed-OUT",
+        hash: "tx-confirmed",
+        type: "OUT",
+      });
+      const pendingConfirmedSubOp = getMockedOperation({
+        id: "token-account-tx-confirmed-OUT",
+        hash: "tx-confirmed",
+        type: "OUT",
+      });
+      const pendingUnconfirmedSubOp = getMockedOperation({
+        id: "token-account-tx-pending-OUT",
+        hash: "tx-pending",
+        type: "OUT",
+      });
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        operations: [confirmedSubOp],
+        pendingOperations: [pendingConfirmedSubOp, pendingUnconfirmedSubOp],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [],
+        subAccounts: [tokenSubAccount],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([]);
+      expect(result.subAccounts?.[0].pendingOperations).toEqual([
+        expect.objectContaining({ id: pendingUnconfirmedSubOp.id }),
+      ]);
+    });
+
+    it("should run pending cleanup when only sub-accounts have pending operations", () => {
+      const pendingSubOp = getMockedOperation({
+        id: "token-account-tx-pending-OUT",
+        hash: "tx-pending",
+        type: "OUT",
+      });
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        pendingOperations: [pendingSubOp],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [],
+        subAccounts: [tokenSubAccount],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result).not.toBe(synced);
+      expect(result.subAccounts?.[0].pendingOperations).toEqual([
+        expect.objectContaining({ id: pendingSubOp.id }),
+      ]);
+    });
+
+    it("should remove main account pending operations confirmed on a sub-account", () => {
+      const confirmedSubOp = getMockedOperation({
+        id: "shared-tx-OUT",
+        hash: "tx-shared",
+        type: "OUT",
+      });
+      const pendingMainOp = getMockedOperation({
+        id: "shared-tx-OUT",
+        hash: "tx-shared",
+        type: "OUT",
+      });
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        operations: [confirmedSubOp],
+        pendingOperations: [],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [pendingMainOp],
+        subAccounts: [tokenSubAccount],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([]);
+    });
+
+    it("should treat missing sub-account pendingOperations as empty", () => {
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        pendingOperations: [],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [],
+        subAccounts: [tokenSubAccount],
+      };
+
+      expect(postSync(synced, synced)).toBe(synced);
     });
   });
 });

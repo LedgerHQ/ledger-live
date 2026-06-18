@@ -1,8 +1,11 @@
 import { renderHook } from "tests/testSetup";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
+import { track } from "~/renderer/analytics/segment";
 import { MarketTableData, useMarketTableViewModel } from "../useMarketTableViewModel";
 import { mockT } from "../../__tests__/shared";
+
+const mockedTrack = jest.mocked(track);
 
 const mockParentRef = { current: null };
 const mockRowVirtualizer = { getVirtualItems: () => [], getTotalSize: () => 0 };
@@ -140,6 +143,25 @@ describe("useMarketTableViewModel", () => {
     );
     fromOther.current.onToggleVolume();
     expect(refresh).toHaveBeenCalledWith({ order: Order.VolumeDesc });
+  });
+
+  it("should track sort_market_list with the resulting sort state and timeframe on toggle", () => {
+    const { result } = renderHook(() =>
+      useMarketTableViewModel(
+        createData({
+          marketParams: { order: Order.MarketCapDesc, range: "7d" },
+        }),
+      ),
+    );
+
+    result.current.onToggleVolume();
+
+    expect(mockedTrack).toHaveBeenCalledWith("sort_market_list", {
+      sortVolume: "true_desc",
+      sortMarketCap: "false",
+      sortChange: "false",
+      timeframe: "7D",
+    });
   });
 
   it("should show the skeleton while fresh loading or on error", () => {

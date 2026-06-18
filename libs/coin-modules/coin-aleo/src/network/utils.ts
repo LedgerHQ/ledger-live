@@ -20,7 +20,13 @@ import type {
   AleoOperation,
   AleoTransition,
 } from "../types";
-import { parseMicrocredits } from "../logic/utils";
+import {
+  isAleoAddressPlaintext,
+  isAleoAmountPlaintext,
+  normalizeAleoPlaintext,
+  parseAmount,
+  parseMicrocredits,
+} from "../logic/utils";
 import { apiClient } from "./api";
 
 function limitTransactions(
@@ -147,6 +153,12 @@ export async function fetchAllOwnedRecords({
   start,
   resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
   signal,
+  programs = [PROGRAM_ID.CREDITS],
+  functions = [
+    EXPLORER_TRANSFER_TYPES.PRIVATE,
+    EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+    EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+  ],
 }: {
   currency: CryptoCurrency;
   uuid: string;
@@ -154,6 +166,8 @@ export async function fetchAllOwnedRecords({
   start?: number;
   resultsPerPage?: number;
   signal?: AbortSignal;
+  programs?: string[];
+  functions?: string[];
 }): Promise<AleoPrivateRecord[]> {
   const allRecords: AleoPrivateRecord[] = [];
   let page = 0;
@@ -168,12 +182,8 @@ export async function fetchAllOwnedRecords({
       ...(typeof start === "number" && { start }),
       resultsPerPage,
       page,
-      programs: [PROGRAM_ID.CREDITS],
-      functions: [
-        EXPLORER_TRANSFER_TYPES.PRIVATE,
-        EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
-        EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
-      ],
+      programs,
+      functions,
     });
 
     allRecords.push(...records);
@@ -626,3 +636,93 @@ export const patchPublicOperations = async ({
 
   return patchedOperations;
 };
+
+/**
+ * For an outgoing (OUT) private token transfer, reads both the transferred amount and
+ * the recipient address from the transition inputs. The spent input record's own
+ * `amount` is the full pre-send balance — NOT the amount sent.
+ *
+ * Returns null fields when the transition data is unavailable or cannot be parsed;
+ * callers should fall back to 0 for amount and omit the recipient.
+ */
+export async function getTokenOutDetails({
+  currency,
+  record,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  record: AleoPrivateRecord;
+  viewKey: string;
+}): Promise<{ amount: BigNumber | null; recipient: string | null; fee: BigNumber }> {
+  const txDetails = await apiClient.getTransactionById(currency, record.transaction_id.trim());
+  const fee = new BigNumber(txDetails.fee_value);
+  const transition = txDetails.execution?.transitions[record.transition_index];
+
+  if (!transition)
+    return {
+      amount: null,
+      recipient: null,
+      fee,
+    };
+
+  const plaintexts = transition.inputs.flatMap(inp =>
+    inp.type === "public" ? [normalizeAleoPlaintext(inp.value)] : [],
+  );
+  const recipient = plaintexts.find(isAleoAddressPlaintext) ?? null;
+
+  // For private_to_public the amount argument is already in plaintext at AMOUNT_ARG_INDEX.
+  if (record.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
+    // Amount is already in plaintext — scan inputs by pattern instead of assuming a
+    // fixed argument index (token programs may differ from credits.aleo).
+    const amountStr = plaintexts.find(isAleoAmountPlaintext) ?? null;
+    return { amount: amountStr ? parseAmount(amountStr) : null, recipient, fee };
+  }
+
+  // Fully private transfer: decrypt recipient and amount arguments by their function
+  // argument indices (same layout as credits.aleo transfer_private), not input array position.
+  if (transition.inputs.length <= AMOUNT_ARG_INDEX) {
+    return { amount: null, recipient, fee };
+  }
+
+  const decryptTransitionArgument = async (argumentIndex: number): Promise<string | null> => {
+    const input = transition.inputs[argumentIndex];
+    if (!input || !("value" in input) || !input.value) return null;
+
+    try {
+      const dec = await sdkClient.decryptCiphertext({
+        currency,
+        ciphertext: input.value,
+        tpk: transition.tpk,
+        viewKey,
+        programId: record.program_name,
+        functionName: record.function_name,
+        outputIndex: argumentIndex,
+      });
+      return dec.plaintext;
+    } catch {
+      return null;
+    }
+  };
+
+  const [recipientPlaintext, amountPlaintext] = await Promise.all([
+    decryptTransitionArgument(RECIPIENT_ARG_INDEX),
+    decryptTransitionArgument(AMOUNT_ARG_INDEX),
+  ]);
+
+  const resolvedRecipient =
+    recipient ??
+    (recipientPlaintext && isAleoAddressPlaintext(recipientPlaintext)
+      ? normalizeAleoPlaintext(recipientPlaintext)
+      : null);
+
+  const amount =
+    amountPlaintext && isAleoAmountPlaintext(amountPlaintext)
+      ? normalizeAleoPlaintext(amountPlaintext)
+      : null;
+
+  return {
+    amount: amount ? parseAmount(amount) : null,
+    recipient: resolvedRecipient,
+    fee,
+  };
+}

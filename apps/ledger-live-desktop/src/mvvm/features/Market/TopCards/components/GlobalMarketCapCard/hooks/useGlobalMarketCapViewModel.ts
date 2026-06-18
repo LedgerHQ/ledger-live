@@ -12,7 +12,7 @@ export const useGlobalMarketCapViewModel = () => {
 
   const onClick = () => {
     track("button_clicked", {
-      button: "market_cap",
+      button: "market_cap_definition",
     });
   };
 

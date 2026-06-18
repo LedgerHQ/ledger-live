@@ -99,6 +99,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
+import type { BackupHubNavigatorParamList } from "LLM/features/BackupHub/types";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -388,6 +389,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;
   [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
   [NavigatorName.MyWallet]?: NavigatorScreenParams<MyWalletNavigatorStackParamList>;
+  [NavigatorName.BackupHub]?: NavigatorScreenParams<BackupHubNavigatorParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
   [ScreenName.LiveAppModal]: undefined;
 };

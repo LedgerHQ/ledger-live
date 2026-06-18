@@ -33,17 +33,22 @@ interface UseRightPanelViewModelParams {
   readonly routeAssetId: string;
 }
 
+export const useRightPanelRouteCurrency = (routeAssetId: string | undefined) => {
+  const distribution = useDistribution({ groupBy: "asset" });
+  return useMemo(() => {
+    if (!routeAssetId) return undefined;
+    const decodedAssetId = decodeRouteParam(routeAssetId);
+    return resolveDistributionItem({ routeAssetId, decodedAssetId, distribution })?.currency;
+  }, [routeAssetId, distribution]);
+};
+
 export const useRightPanelViewModel = ({
   pathname,
   routeAssetId,
 }: UseRightPanelViewModelParams): RightPanelViewModel => {
-  const distribution = useDistribution({ groupBy: "asset" });
   const allAccounts = useSelector(accountsSelector);
 
-  const currency = useMemo(() => {
-    const decodedAssetId = decodeRouteParam(routeAssetId);
-    return resolveDistributionItem({ routeAssetId, decodedAssetId, distribution })?.currency;
-  }, [routeAssetId, distribution]);
+  const currency = useRightPanelRouteCurrency(routeAssetId);
 
   const initialSwapState = useMemo(() => {
     if (!currency) return undefined;

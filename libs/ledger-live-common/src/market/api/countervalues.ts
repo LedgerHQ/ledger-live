@@ -54,14 +54,19 @@ export async function fetchList({
 export async function fetchCurrency({
   counterCurrency,
   id,
+  ledgerIds,
 }: MarketCurrencyRequestParams): Promise<MarketItemResponse> {
   const url = URL.format({
     pathname: `${baseURL()}/v3/markets`,
     query: {
       to: counterCurrency,
-      ids: id,
       pageSize: 1,
       limit: 1,
+      ...(ledgerIds?.length
+        ? { ledgerIds: ledgerIds.join(",") }
+        : {
+            ids: id,
+          }),
     },
   });
 

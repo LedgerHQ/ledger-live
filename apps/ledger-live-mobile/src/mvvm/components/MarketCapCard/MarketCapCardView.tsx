@@ -59,10 +59,19 @@ export function MarketCapCardView({
           {t("marketCapCard.title")}
         </Text>
         <Box lx={valueStyle}>
-          <Text typography="body1SemiBold" numberOfLines={1} lx={{ color: "base" }}>
+          <Text
+            typography="body1SemiBold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            lx={{ color: "base", flexShrink: 1 }}
+          >
             {value}
           </Text>
-          {changePercentage !== undefined ? <Trend value={changePercentage} size="md" /> : null}
+          {changePercentage !== undefined ? (
+            <Box lx={{ flexShrink: 0 }}>
+              <Trend value={changePercentage} size="md" />
+            </Box>
+          ) : null}
         </Box>
       </Pressable>
       <MarketInsightDefinitionSheet

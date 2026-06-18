@@ -116,7 +116,7 @@ function Harness() {
   return (
     <AssetSuggestionsSection
       {...cryptos}
-      title="Cryptos"
+      title="Crypto"
       testIdPrefix="cryptos"
       limit={CRYPTOS_LIMIT}
       navigateToAsset={navigateToAsset}

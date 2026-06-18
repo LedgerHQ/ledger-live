@@ -715,7 +715,7 @@ describe("staking/validators/monad", () => {
       expect(mockedWithApi).not.toHaveBeenCalled();
     });
 
-    it("emits a deactivating stake per occupied withdrawId slot, dating its completion from the current epoch", async () => {
+    it("marks a matured withdraw slot 'withdrawable' and a pending one 'deactivating', dating completion from the current epoch", async () => {
       const EPOCH_DURATION_MS = 5.5 * 60 * 60 * 1000;
       const NOW = Date.UTC(2026, 5, 4, 12, 0, 0);
       jest.useFakeTimers().setSystemTime(NOW);
@@ -740,13 +740,14 @@ describe("staking/validators/monad", () => {
         expect(stakes).toHaveLength(3);
         expect(stakes[0]).toMatchObject({ state: "active", amount: 100n });
 
-        const deactivating = stakes.filter(s => s.state === "deactivating");
-        expect(deactivating).toStrictEqual([
+        const withdrawals = stakes.filter(s => s.uid.includes("-withdraw-"));
+        expect(withdrawals).toStrictEqual([
           {
             uid: `${PRECOMPILE}-7-${DELEGATOR}-withdraw-2`,
             address: DELEGATOR,
             delegate: ethers.computeAddress(SECP),
-            state: "deactivating",
+            // withdrawEpoch 3 <= currentEpoch 5 => matured / ready to withdraw
+            state: "withdrawable",
             stateUpdatedAt: new Date(NOW - 2 * EPOCH_DURATION_MS),
             asset: {
               type: "native",
@@ -766,6 +767,7 @@ describe("staking/validators/monad", () => {
             uid: `${PRECOMPILE}-7-${DELEGATOR}-withdraw-5`,
             address: DELEGATOR,
             delegate: ethers.computeAddress(SECP),
+            // withdrawEpoch 10 > currentEpoch 5 => still within the timelock
             state: "deactivating",
             stateUpdatedAt: new Date(NOW + 5 * EPOCH_DURATION_MS),
             asset: {

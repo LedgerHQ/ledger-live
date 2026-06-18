@@ -9,6 +9,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import tronCoinConfig, { type TronCoinConfig } from "../config";
+import { TRON_DUMMY_ADDRESS } from "../constants";
 import { validateAddress } from "../logic";
 import signerGetAddress from "../signer";
 import { type Transaction, TronAccount, TronSigner } from "../types";
@@ -52,6 +53,7 @@ function buildAccountBridge(
 
   return {
     estimateMaxSpendable,
+    getEstimationRecipient: () => TRON_DUMMY_ADDRESS,
     createTransaction,
     updateTransaction,
     getTransactionStatus,

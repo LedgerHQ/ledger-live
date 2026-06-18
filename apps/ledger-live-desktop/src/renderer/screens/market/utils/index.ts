@@ -43,7 +43,7 @@ export function isAvailableOnSell(
 }
 
 export function isAvailableOnSwap(
-  currency: MarketCurrencyData | null | undefined,
+  currency: MarketCurrencyRampLedgerIds | null | undefined,
   currenciesForSwapAllSet: Set<string>,
 ) {
   if (!currency) return false;

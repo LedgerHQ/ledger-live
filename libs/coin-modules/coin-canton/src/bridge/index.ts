@@ -9,6 +9,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import cantonCoinConfig, { type CantonCoinConfig } from "../config";
+import { CANTON_UNSET_RECIPIENT } from "../constants";
 import resolver from "../signer";
 import { CantonCurrencyBridge, CantonSigner, CantonAccount } from "../types";
 import type { Transaction } from "../types";
@@ -72,6 +73,7 @@ export function createBridges(
     assignFromAccountRaw,
     getSerializedAddressParameters,
     validateAddress,
+    getEstimationRecipient: () => CANTON_UNSET_RECIPIENT,
   };
 
   return {

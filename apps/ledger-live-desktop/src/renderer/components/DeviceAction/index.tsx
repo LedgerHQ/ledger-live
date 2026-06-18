@@ -635,7 +635,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (isDeviceNotOnboardedError(e)) {
-      return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
+      return <DeviceNotOnboardedErrorComponent t={t} device={device} location={location} />;
     }
 
     if (e instanceof NoSuchAppOnProvider) {
@@ -842,7 +842,7 @@ function DeviceActionInner<R, H extends States, P>({
 export default function DeviceAction<R, H extends States, P>(
   props: InnerProps<P> & { action: Action<R, H, P>; request: R },
 ): React.JSX.Element | null {
-  const shouldShowContent = useBuyDeviceIntercept();
+  const shouldShowContent = useBuyDeviceIntercept(props.location);
 
   if (!shouldShowContent) {
     return null;

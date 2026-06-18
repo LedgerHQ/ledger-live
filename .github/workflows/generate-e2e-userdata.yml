@@ -1,0 +1,227 @@
+name: "[E2E] - Generate userdata (app.json) - Daily"
+run-name: >
+  @E2E userdata generation • ${{ inputs.platform || 'both' }} • ${{ inputs.ref || github.ref_name }}
+
+on:
+  # schedule:
+  #   - cron: "0 1 * * *"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch/sha to checkout and generate from (blank = workflow branch)"
+        required: false
+      platform:
+        description: "Which userdata to generate"
+        required: false
+        type: choice
+        options:
+          - both
+          - desktop
+          - mobile
+        default: both
+      coins:
+        description: "Limit generation to these coin ids (space-separated, e.g. 'ethereum bitcoin'); blank = all"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: generate-e2e-userdata-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  cache-bucket: ll-nx-cache
+  COINAPPS: ${{ github.workspace }}/coin-apps
+  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
+  E2E_GENERATED_USERDATA_DIR: ${{ github.workspace }}/e2e/userdata/generated
+
+jobs:
+  generate-desktop:
+    name: "Generate desktop userdata (app.json)"
+    if: ${{ github.event_name == 'schedule' || inputs.platform == 'both' || inputs.platform == 'desktop' }}
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      BASE_USERDATA: e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json
+      CACHE_PREFIX: e2e-userdata-desktop
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pnpm-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Install dependencies
+        run: pnpm i --filter="live-cli..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
+      - name: Setup Speculos image and Coin Apps
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        timeout-minutes: 20
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Build CLI
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        with:
+          command: pnpm exec nx run @ledgerhq/live-cli:build
+          disable_cache: false
+
+      - name: Compute cache key date
+        id: meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate app.json userdata (Speculos)
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          GEN_COINS: ${{ inputs.coins }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$E2E_GENERATED_USERDATA_DIR"
+          echo "generated-at=$(date -u +%FT%TZ)" > "$E2E_GENERATED_USERDATA_DIR/.generate-info"
+          echo "Generating desktop app.json userdata into: $E2E_GENERATED_USERDATA_DIR (base: $BASE_USERDATA)"
+          if [ -n "${GEN_COINS:-}" ]; then
+            echo "Scoped to coins: $GEN_COINS"
+            pnpm run:cli generateAppJson --base "$BASE_USERDATA" --coin $GEN_COINS
+          else
+            echo "Generating for all coins"
+            pnpm run:cli generateAppJson --base "$BASE_USERDATA"
+          fi
+          echo "Generated userdata files:"
+          ls -la "$E2E_GENERATED_USERDATA_DIR"
+
+      - name: Save userdata to S3 cache
+        uses: tespkg/actions-cache/save@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: ${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Upload generated userdata artifact (debug)
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: e2e-generated-userdata-desktop
+          path: e2e/userdata/generated
+          retention-days: 2
+          if-no-files-found: warn
+
+  generate-mobile:
+    name: "Generate mobile userdata (app.json)"
+    if: ${{ github.event_name == 'schedule' || inputs.platform == 'both' || inputs.platform == 'mobile' }}
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      BASE_USERDATA: e2e/mobile/userdata/skip-onboarding.json
+      CACHE_PREFIX: e2e-userdata-mobile
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pnpm-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Install dependencies
+        run: pnpm i --filter="live-cli..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
+      - name: Setup Speculos image and Coin Apps
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        timeout-minutes: 20
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Build CLI
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        with:
+          command: pnpm exec nx run @ledgerhq/live-cli:build
+          disable_cache: false
+
+      - name: Compute cache key date
+        id: meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate app.json userdata (Speculos)
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          GEN_COINS: ${{ inputs.coins }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$E2E_GENERATED_USERDATA_DIR"
+          echo "generated-at=$(date -u +%FT%TZ)" > "$E2E_GENERATED_USERDATA_DIR/.generate-info"
+          echo "Generating mobile app.json userdata into: $E2E_GENERATED_USERDATA_DIR (base: $BASE_USERDATA)"
+          if [ -n "${GEN_COINS:-}" ]; then
+            echo "Scoped to coins: $GEN_COINS"
+            pnpm run:cli generateAppJson --base "$BASE_USERDATA" --coin $GEN_COINS
+          else
+            echo "Generating for all coins"
+            pnpm run:cli generateAppJson --base "$BASE_USERDATA"
+          fi
+          echo "Generated userdata files:"
+          ls -la "$E2E_GENERATED_USERDATA_DIR"
+
+      - name: Save userdata to S3 cache
+        uses: tespkg/actions-cache/save@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: ${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Upload generated userdata artifact (debug)
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: e2e-generated-userdata-mobile
+          path: e2e/userdata/generated
+          retention-days: 2
+          if-no-files-found: warn

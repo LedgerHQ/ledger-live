@@ -1,12 +1,16 @@
 import { createContext, useContext } from "react";
 
-export interface SlidesContextValue {
+export interface SlidesViewModelValue {
   currentIndex: number;
   totalSlides: number;
   initialIndex: number;
   goToNext: () => void;
   goToPrevious: () => void;
   goToSlide: (index: number) => void;
+}
+
+export interface SlidesContextValue extends SlidesViewModelValue {
+  displayedIndex: number;
 }
 
 export const SlidesContext = createContext<SlidesContextValue | null>(null);

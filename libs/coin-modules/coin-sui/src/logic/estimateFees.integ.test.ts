@@ -30,11 +30,14 @@ describe("estimateFees", () => {
       asset: { type: "native" },
     };
 
-    const estimatedFees = await estimateFees(transactionIntent);
+    const { fees, gasBudget } = await estimateFees(transactionIntent);
 
-    expect(typeof estimatedFees).toBe("bigint");
-    expect(estimatedFees).toBeGreaterThan(1000n);
-    expect(estimatedFees).toBeLessThan(10000000n);
+    expect(typeof fees).toBe("bigint");
+    // Net gas (`fees`) can be negative when a tx nets a storage rebate; the gas budget is the
+    // positive, sane-range reservation and is always ≥ the net fee.
+    expect(gasBudget).toBeGreaterThan(1000n);
+    expect(gasBudget).toBeLessThan(10000000n);
+    expect(gasBudget).toBeGreaterThanOrEqual(fees);
   }, 25000);
 
   it("should estimate fees for token transaction", async () => {
@@ -53,11 +56,14 @@ describe("estimateFees", () => {
       },
     };
 
-    const estimatedFees = await estimateFees(transactionIntent);
+    const { fees, gasBudget } = await estimateFees(transactionIntent);
 
-    expect(typeof estimatedFees).toBe("bigint");
-    expect(estimatedFees).toBeGreaterThan(1000n);
-    expect(estimatedFees).toBeLessThan(10000000n);
+    expect(typeof fees).toBe("bigint");
+    // Net gas (`fees`) can be negative when a tx nets a storage rebate; the gas budget is the
+    // positive, sane-range reservation and is always ≥ the net fee.
+    expect(gasBudget).toBeGreaterThan(1000n);
+    expect(gasBudget).toBeLessThan(10000000n);
+    expect(gasBudget).toBeGreaterThanOrEqual(fees);
   }, 25000);
 
   it("should handle concurrent fee estimations", async () => {
@@ -77,14 +83,16 @@ describe("estimateFees", () => {
     const results = await Promise.all(promises);
 
     // All results should be valid
-    results.forEach(fees => {
+    results.forEach(({ fees, gasBudget }) => {
       expect(typeof fees).toBe("bigint");
-      expect(fees).toBeGreaterThan(1000n);
-      expect(fees).toBeLessThan(10000000n);
+      expect(gasBudget).toBeGreaterThan(1000n);
+      expect(gasBudget).toBeLessThan(10000000n);
+      expect(gasBudget).toBeGreaterThanOrEqual(fees);
     });
 
-    // Results should be similar (may have slight variations)
-    const values = results.map(r => Number(r));
+    // Results should be similar (may have slight variations). Compare on the budget, which is the
+    // positive, stable value (net `fees` can be negative on a storage rebate).
+    const values = results.map(r => Number(r.gasBudget));
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
 

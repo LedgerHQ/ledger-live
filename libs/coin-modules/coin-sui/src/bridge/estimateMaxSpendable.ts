@@ -2,7 +2,7 @@ import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index"
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ONE_SUI } from "../constants";
-import type { SuiAccount, Transaction } from "../types";
+import type { Transaction } from "../types";
 import createTransaction from "./createTransaction";
 import getFeesForTransaction from "./getFeesForTransaction";
 
@@ -21,7 +21,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   transaction,
 }) => {
   try {
-    const mainAccount = getMainAccount(account, parentAccount) as SuiAccount;
+    const mainAccount = getMainAccount(account, parentAccount);
 
     const estimatedTransaction = {
       ...createTransaction(account),
@@ -33,12 +33,14 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
     if (transaction?.mode !== "delegate") {
       if (account.type === "Account") {
-        const fees = await getFeesForTransaction({
+        // Reserve the gas BUDGET (≥ actual fee): the network requires the gas coins to cover it, so
+        // the max-spendable must leave it aside or the send fails at execution.
+        const { gasBudget } = await getFeesForTransaction({
           account: mainAccount,
           transaction: estimatedTransaction,
         });
-        if (fees) {
-          spendableBalance = spendableBalance.minus(fees);
+        if (gasBudget) {
+          spendableBalance = spendableBalance.minus(gasBudget);
         }
       }
     }

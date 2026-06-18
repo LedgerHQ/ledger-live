@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/market/utils/index";
@@ -16,13 +16,14 @@ import {
   MARKET_PERFORMERS_SUPPORTED,
   MARKET_BANNER_REFRESH_RATE,
 } from "@ledgerhq/live-common/market/constants";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,
   starredMarketCoinsSelector,
 } from "~/renderer/reducers/settings";
 import {
   selectMarketBannerRanking,
+  setMarketBannerRanking,
   type MarketBannerRanking,
 } from "~/renderer/reducers/marketBanner";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -139,14 +140,28 @@ export function useFavoritesBannerItems(options?: { skip?: boolean }): MarketBan
 }
 
 export function useMarketBannerViewModel(): MarketBannerItems {
+  const dispatch = useDispatch();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const persistedRanking = useSelector(selectMarketBannerRanking);
+  const hasStarred = useSelector(starredMarketCoinsSelector).length > 0;
   const ranking = shouldDisplayAssetDiscoverability
     ? persistedRanking
     : DEFAULT_RANKING_WITHOUT_DISCOVERABILITY;
-  const isFavorites = ranking === "favorites";
 
-  const performers = usePerformersBannerItems(ranking, { skip: isFavorites });
+  // A persisted "favorites" ranking is only valid while the user has starred coins; once the
+  // last one is removed, fall back to trending performers (and reset the stale value below).
+  const effectiveRanking: MarketBannerRanking =
+    ranking === "favorites" && !hasStarred ? "trending" : ranking;
+  const isFavorites = effectiveRanking === "favorites";
+
+  // Reset the stale persisted "favorites" so the persisted state and the dropdown match the UI.
+  useEffect(() => {
+    if (ranking === "favorites" && !hasStarred) {
+      dispatch(setMarketBannerRanking("trending"));
+    }
+  }, [dispatch, ranking, hasStarred]);
+
+  const performers = usePerformersBannerItems(effectiveRanking, { skip: isFavorites });
   const favorites = useFavoritesBannerItems({ skip: !isFavorites });
 
   return isFavorites ? favorites : performers;

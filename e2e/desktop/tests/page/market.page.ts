@@ -23,6 +23,9 @@ export class MarketPage extends AppPage {
   private readonly starButton = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-star-button`).first();
   private starredOptionFilter = this.page.getByRole("option", { name: "Starred Assets" });
+  // Asset discoverability UI: the "Show / Starred Assets" dropdown is replaced by a category tab.
+  private readonly starredCategoryTab = this.page.getByTestId("market-category-switcher-starred");
+  private readonly allCategoryTab = this.page.getByTestId("market-category-switcher-all");
 
   @step("Search for $0")
   async search(query: string) {
@@ -41,6 +44,11 @@ export class MarketPage extends AppPage {
     await this.coinRow(ticker.toLowerCase()).click();
     await this.coinPageContainer.waitFor({ state: "attached" });
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
+  }
+
+  @step("Click coin row $0")
+  async clickCoinRow(ticker: string) {
+    await this.coinRow(ticker.toLowerCase()).click();
   }
 
   @step("Open buy page for $0")
@@ -75,6 +83,16 @@ export class MarketPage extends AppPage {
   async selectStarredAssetsFilter() {
     await this.filterDropdown.click();
     await this.starredOptionFilter.click();
+  }
+
+  @step("Select the Favorites (starred) market category")
+  async selectStarredCategory() {
+    await this.starredCategoryTab.click();
+  }
+
+  @step("Select the All market category")
+  async selectAllCategory() {
+    await this.allCategoryTab.click();
   }
 
   @step("Star coin $0")

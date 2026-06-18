@@ -24,6 +24,7 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
+import type { BorrowState } from "./borrow";
 import type { CountervaluesState } from "./countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
@@ -42,6 +43,7 @@ import type { RecoverStateSliceState } from "./recoverState";
 import type { LiveAppModalState } from "./liveAppModal";
 import type { KnownDevicesState } from "./knownDevices";
 import type { GenericAwarenessModalState } from "./genericAwarenessModal";
+import type { BackupHubFeatureIntroState } from "./backupHubFeatureIntro";
 
 // === ACCOUNT STATE ===
 
@@ -300,6 +302,7 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   productTourCompleted: boolean;
+  hasSeenQ2WalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   analyticsConsentInfo: AnalyticsConsentInfo;
@@ -349,17 +352,6 @@ export type EarnState = {
   menuBottomSheet?: { icon: string; label: string; metadata: OptionMetadata }[];
   protocolInfoModal?: true;
   actionDialog?: ActionDialogParams;
-};
-
-// === BORROW STATE ===
-
-export type BorrowState = {
-  infoBottomSheet?: {
-    message: string;
-    title: string;
-    linkText?: string;
-    linkHref?: string;
-  };
 };
 
 // === PROTECT STATE ===
@@ -452,6 +444,7 @@ export type State = LLMRTKApiState & {
   earn: EarnState;
   featureFlags: FeatureFlagsState;
   genericAwarenessModal: GenericAwarenessModalState;
+  backupHubFeatureIntro: BackupHubFeatureIntroState;
   history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;

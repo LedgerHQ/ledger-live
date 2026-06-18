@@ -120,7 +120,10 @@ export function useTopBarViewModel(
 
   const onSearchPress = useCallback(() => {
     track(BUTTON_CLICKED_EVENT, { button: "Search", page });
-    navigation.navigate(NavigatorName.GlobalSearch);
+    navigation.navigate(NavigatorName.GlobalSearch, {
+      screen: ScreenName.GlobalSearch,
+      params: { source: page },
+    });
   }, [navigation, page]);
 
   return {

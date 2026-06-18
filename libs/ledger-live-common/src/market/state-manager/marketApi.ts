@@ -58,13 +58,17 @@ export const marketApi = createApi({
       keepUnusedDataFor: REFETCH_TIME_ONE_MINUTE / 1000,
     }),
     getCurrencyData: build.query<MarketCurrencyData | undefined, MarketCurrencyRequestParams>({
-      query: ({ id, counterCurrency }) => ({
+      query: ({ id, ledgerIds, counterCurrency }) => ({
         url: "/v3/markets",
         params: {
           to: counterCurrency,
-          ids: id,
           pageSize: 1,
           limit: 1,
+          ...(ledgerIds?.length
+            ? { ledgerIds: ledgerIds.join(",") }
+            : {
+                ids: id,
+              }),
         },
       }),
       providesTags: [MarketDataTags.CurrencyData],

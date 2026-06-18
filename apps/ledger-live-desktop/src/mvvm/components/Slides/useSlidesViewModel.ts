@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { isValidReactElement } from "@ledgerhq/react-ui";
 import { Content } from "./components/Content";
-import { SlidesContextValue } from "./context";
+import { SlidesViewModelValue } from "./context";
 
 type UseSlidesViewModelParams = {
   children: ReactNode;
@@ -9,7 +9,7 @@ type UseSlidesViewModelParams = {
   initialSlideIndex?: number;
 };
 
-type UseSlidesViewModelReturn = SlidesContextValue;
+type UseSlidesViewModelReturn = SlidesViewModelValue;
 
 export function useSlidesViewModel({
   children,

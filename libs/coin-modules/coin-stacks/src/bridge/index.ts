@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { STACKS_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer/index";
 import type { Transaction, TransactionStatus, StacksSigner } from "../types";
 import { broadcast } from "./broadcast";
@@ -49,6 +50,7 @@ function buildAccountBridge(
     createTransaction,
     updateTransaction,
     getTransactionStatus,
+    getEstimationRecipient: () => STACKS_DUMMY_ADDRESS,
     prepareTransaction,
     sync,
     receive,

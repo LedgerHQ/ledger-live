@@ -8,6 +8,7 @@ import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAssetChartData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { buildMarketChartSeries } from "@ledgerhq/live-common/market/utils/buildMarketChartSeries";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import {
   formatPrice,
@@ -35,22 +36,24 @@ import {
   type LineChartYAxisConfig,
 } from "LLM/components/LineChart";
 import {
-  BALANCE_GRAPH_RANGES,
-  RANGE_TARGET_INTERVAL_MS,
-  RANGE_TO_PRICE_CHANGE_KEY,
   computeChartRangeChangePercentage,
   isChartDerivedPriceChangeRange,
+} from "@ledgerhq/live-common/market/utils/chartRangeVariation";
+import { getPriceChangeKeyForRange } from "@ledgerhq/live-common/market/utils/rangePriceChangeKey";
+import {
+  BALANCE_GRAPH_RANGES,
+  RANGE_TARGET_INTERVAL_MS,
   isRangeKey,
   type RangeKey,
 } from "../../utils/rangeMapping";
+import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVariation";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 import {
+  getMinSeriesPointsBetweenTxMarkers,
   groupTransactionsByChartIndex,
   type TransactionInput,
-} from "./utils/getTransactionPointMarkers";
+} from "@ledgerhq/asset-detail";
 import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker";
-import { resampleChartPointsByInterval } from "@ledgerhq/live-common/market/utils/resampleChartPoints";
-import { injectMarketExtrema } from "@ledgerhq/live-common/market/utils/injectMarketExtrema";
 
 // Upper bound on operations pulled for the chart's transaction dots. The chart only
 // marks operations inside the visible window, so this just caps the lookback; raise it
@@ -137,10 +140,14 @@ export function useBalanceGraphViewModel({
   const id =
     knownLedgerIds?.[0] ?? marketCurrency?.ledgerIds?.[0] ?? marketCurrency?.id ?? marketApiId;
 
-  const { data: chartData, isLoading: isChartLoading } = useAssetChartData(
-    { id, counterCurrency, range },
-    { skip: !id },
-  );
+  const {
+    // Read `currentData` (not `data`): on an id/range change RTK Query retains
+    // the previous arg's `data`, which would leak the prior asset/range's series
+    // into the new selection. `currentData` is undefined until the new arg loads.
+    currentData: chartData,
+    isLoading: isChartLoading,
+    isFetching: isChartFetching,
+  } = useAssetChartData({ id, counterCurrency, range }, { skip: !id });
 
   const ranges = useMemo(
     () =>
@@ -181,28 +188,21 @@ export function useBalanceGraphViewModel({
   const athTime = marketCurrency?.athDate?.getTime();
   const atlTime = marketCurrency?.atlDate?.getTime();
 
-  const { series, timestamps } = useMemo(() => {
-    const rawPoints = chartData?.[range] ?? [];
-    // On the "all" range, anchor the graph's high/low markers to the market
-    // all-time high/low so they match the stats table (see LIVE-31732).
-    const withExtrema =
-      range === "all"
-        ? injectMarketExtrema(rawPoints, { ath, athDate: athTime, atl, atlDate: atlTime })
-        : rawPoints;
-    // Resample to the per-range target granularity (LIVE-31777); also caps the
-    // points fed to the SVG path, which was the main source of render jank.
-    const points = resampleChartPointsByInterval(withExtrema, RANGE_TARGET_INTERVAL_MS[range]);
-    const data: number[] = [];
-    const tsList: number[] = [];
-    points.forEach(([timestamp, value]) => {
-      data.push(value);
-      tsList.push(timestamp);
+  const current = useMemo(() => {
+    const { prices, timestamps: tsList } = buildMarketChartSeries({
+      chartData,
+      range,
+      targetIntervalMs: RANGE_TARGET_INTERVAL_MS[range],
+      ath,
+      atl,
+      athTime,
+      atlTime,
     });
     return {
       series: [
         {
           id: "asset-detail-price",
-          data,
+          data: prices,
           label: "Price",
           // `stroke` is required by the Series type but is overridden by the
           // shared LineChart from the `color` prop.
@@ -210,24 +210,40 @@ export function useBalanceGraphViewModel({
         },
       ] satisfies LineChartSeries[],
       timestamps: tsList,
+      hasData: prices.length > 0,
     };
   }, [chartData, range, ath, atl, athTime, atlTime]);
+
+  // While the next timeframe loads, keep rendering the previous (non-empty)
+  // series so the chart morphs from the old shape (Lumen transition-loading)
+  // instead of flashing the empty placeholder. Scoped to `id`: morphing only
+  // applies within the same asset (a timeframe switch), never across an asset
+  // switch — otherwise we'd grey out the previous asset's shape instead of
+  // showing the new asset's loading/empty state.
+  const lastRenderedRef = useRef({ id, series: current.series, timestamps: current.timestamps });
+  if (current.hasData) {
+    lastRenderedRef.current = { id, series: current.series, timestamps: current.timestamps };
+  }
+  const chartLoading = isChartLoading || (isChartFetching && !current.hasData);
+  const canReusePrevious = lastRenderedRef.current.id === id;
+  const { series, timestamps } =
+    !current.hasData && chartLoading && canReusePrevious ? lastRenderedRef.current : current;
   const prices = series[0].data;
 
   const priceChangePercentage = useMemo(() => {
-    // No market-API key exists for 6m/all, so the change is derived purely from the
+    // No market-API key exists for all, so the change is derived purely from the
     // rendered series. When the series is too short to derive it, surface undefined
     // (→ neutral dash) rather than mislabel another period's change under this range.
     if (isChartDerivedPriceChangeRange(range)) {
       return computeChartRangeChangePercentage(prices);
     }
-    const key = RANGE_TO_PRICE_CHANGE_KEY[range];
+    const key = getPriceChangeKeyForRange(range);
     return key != null ? marketCurrency?.priceChangePercentage[key] : undefined;
   }, [range, prices, marketCurrency?.priceChangePercentage]);
 
   const formattedPriceChange = useMemo(() => {
     if (priceChangePercentage == null) return undefined;
-    // For chart-derived ranges (6m/all) the percentage comes from the rendered series,
+    // For the chart-derived all range the percentage comes from the rendered series,
     // so derive the fiat change from the same series endpoints — multiplying the live
     // price by a series-based percentage would yield an amount inconsistent with both
     // the percentage and the line. Other ranges keep using the live market price.
@@ -359,16 +375,16 @@ export function useBalanceGraphViewModel({
     if (selection == null) return undefined;
     const baselinePrice = prices[0];
     if (!Number.isFinite(baselinePrice)) return undefined;
-    const variationFiat = selection.price - baselinePrice;
-    const percentage = baselinePrice !== 0 ? (variationFiat / baselinePrice) * 100 : 0;
-    return { percentage, variationFiat };
+    return getScrubVariation(baselinePrice, selection.price, {
+      percentageUnit: "percentPoints",
+    });
   }, [selection, prices]);
 
   // Unknown range variation surfaces as NaN so the trend renders a neutral dash,
   // distinct from a genuine 0% (flat or scrubbed back to the range start).
   const displayedPriceChangePercentage = scrubVariation
     ? scrubVariation.percentage
-    : (priceChangePercentage ?? NaN);
+    : (priceChangePercentage ?? Number.NaN);
 
   const displayedFormattedPriceChange = useMemo(() => {
     if (scrubVariation == null) return formattedPriceChange;
@@ -527,9 +543,14 @@ export function useBalanceGraphViewModel({
     // The user can hide transaction markers from the price chart (persisted setting).
     if (hideTransactionsOnChart || transactions.length === 0 || timestamps.length < 2)
       return extrema;
-    const groups = groupTransactionsByChartIndex({ timestamps, values: prices, transactions });
+    const groups = groupTransactionsByChartIndex({
+      timestamps,
+      values: prices,
+      transactions,
+      minSeriesPointsBetweenMarkers: getMinSeriesPointsBetweenTxMarkers(range),
+    });
     return [...extrema, ...groups.map(group => buildTransactionPointMarker(group, t, formatFiat))];
-  }, [series, transactions, timestamps, prices, t, formatFiat, hideTransactionsOnChart]);
+  }, [series, transactions, timestamps, prices, t, formatFiat, hideTransactionsOnChart, range]);
 
   return {
     price: displayedPrice,
@@ -544,7 +565,7 @@ export function useBalanceGraphViewModel({
     isRangeValue: isRangeKey,
     showReceive,
     onReceivePress,
-    isLoading: isLoading || isChartLoading,
+    isLoading: isLoading || chartLoading,
     series,
     chartColor,
     points,

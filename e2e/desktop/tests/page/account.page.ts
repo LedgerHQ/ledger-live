@@ -87,6 +87,17 @@ export class AccountPage extends AppPage {
     await expect(this.sendButton).toBeVisible();
   }
 
+  @step("Verify `Receive` button is visible")
+  async verifyReceiveButtonVisibility() {
+    await expect(this.receiveButton).toBeVisible();
+  }
+
+  @step("Expect account header (name + settings) to be visible")
+  async expectAccountHeaderVisible() {
+    await expect(this.accountName).toBeVisible();
+    await expect(this.settingsButton).toBeVisible();
+  }
+
   @step("Click `Buy` button")
   async clickBuy() {
     await this.buyButton.click();

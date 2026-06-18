@@ -368,6 +368,24 @@ export function getOperationTransactionType(transactionType: TransactionType): A
   }
 }
 
+export function isPublicTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
+  return (
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+  );
+}
+
+export function isPrivateTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
+  return (
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
+  );
+}
+
+export function isTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
+  return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
+}
+
 export function isSelfTransferTransaction(
   transaction: Transaction,
 ): transaction is TransactionSelfTransfer {
@@ -383,8 +401,7 @@ export function isPublicTransaction(transaction: Transaction): transaction is Tr
   return (
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE ||
-    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC
+    isPublicTokenTransaction(transaction)
   );
 }
 
@@ -392,15 +409,7 @@ export function isPrivateTransaction(transaction: Transaction): transaction is T
   return (
     transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
-    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE
-  );
-}
-
-export function isTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
-  return (
-    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+    isPrivateTokenTransaction(transaction)
   );
 }
 
@@ -735,6 +744,10 @@ export function createTransactionIntent({
 }): AleoTransactionIntent {
   const base = buildTransactionIntentBase(account, transaction);
 
+  if (isTokenTransaction(transaction)) {
+    throw new Error("aleo: tokens are not supported yet");
+  }
+
   switch (transaction.mode) {
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
@@ -755,14 +768,7 @@ export function createTransactionIntent({
         },
       };
 
-    case TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC:
-    case TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE:
-    case TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE:
-    case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC:
-      throw new Error("aleo: tokens are not supported yet");
-
     default:
-      // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for transaction intent: ${transaction.mode}`);
   }
 }
@@ -983,4 +989,12 @@ export async function getCalTokens({
   });
 
   return calTokens;
+}
+
+export function isAleoAddressPlaintext(v: string): boolean {
+  return normalizeAleoPlaintext(v).toLowerCase().startsWith("aleo1");
+}
+
+export function isAleoAmountPlaintext(v: string): boolean {
+  return /^\d+u\d+$/.test(normalizeAleoPlaintext(v));
 }

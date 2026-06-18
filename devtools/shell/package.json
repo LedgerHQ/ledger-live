@@ -4,6 +4,7 @@
   "private": true,
   "description": "Ledger Live DevTools — cross-platform debug component",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
@@ -25,6 +26,9 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@react-navigation/native": "catalog:",
+    "@react-navigation/native-stack": "catalog:",
+    "react-native-screens": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-dropdown-menu": "catalog:",
@@ -40,6 +44,15 @@
   },
   "peerDependenciesMeta": {
     "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@react-navigation/native": {
+      "optional": true
+    },
+    "@react-navigation/native-stack": {
+      "optional": true
+    },
+    "react-native-screens": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {
@@ -92,6 +105,8 @@
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@react-native/babel-preset": "catalog:",
+    "@react-navigation/native": "catalog:",
+    "@react-navigation/native-stack": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@tanstack/react-table": "catalog:",
@@ -116,6 +131,7 @@
     "i18next": "catalog:",
     "react-native-reanimated": "catalog:",
     "react-native-safe-area-context": "catalog:",
+    "react-native-screens": "catalog:",
     "react-native-svg": "catalog:",
     "react-native-worklets": "catalog:",
     "react-test-renderer": "catalog:",

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import { isValidReactElement } from "@ledgerhq/react-ui";
 import { cn } from "LLD/utils/cn";
 import { SlidesContext } from "./context";
@@ -49,8 +49,13 @@ export function Slides({
 
   const slideClasses = direction > 0 ? SLIDE_CLASSES.forward : SLIDE_CLASSES.backward;
 
+  const slidesContextValue = useMemo(
+    () => ({ ...contextValue, displayedIndex }),
+    [contextValue, displayedIndex],
+  );
+
   return (
-    <SlidesContext.Provider value={contextValue}>
+    <SlidesContext.Provider value={slidesContextValue}>
       <div className={cn("flex flex-1 flex-col", className)}>
         {React.Children.map(children, child => {
           if (isContentElement(child)) {

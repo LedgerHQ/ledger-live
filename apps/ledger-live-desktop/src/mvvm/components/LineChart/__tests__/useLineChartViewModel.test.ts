@@ -49,23 +49,29 @@ describe("useLineChartViewModel", () => {
     expect(result.current.chartSeries[0]?.stroke).toBe(LINE_CHART_COLOR_TO_STROKE.success);
   });
 
-  it("forwards loading, error, and layout props", () => {
+  it("forwards loading and layout props", () => {
     const { result } = renderHook(() =>
       useLineChartViewModel({
         ...defaultProps,
         isLoading: true,
-        isError: true,
-        errorMessage: "Custom error",
         height: 180,
         selectedRange: "1y",
       }),
     );
 
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.isError).toBe(true);
-    expect(result.current.errorMessage).toBe("Custom error");
     expect(result.current.height).toBe(180);
     expect(result.current.selectedRange).toBe("1y");
+  });
+
+  it("defaults the empty label to the error translation and forwards an override", () => {
+    const { result: withDefault } = renderHook(() => useLineChartViewModel(defaultProps));
+    expect(withDefault.current.emptyLabel).toBe("Unable to load chart");
+
+    const { result: withOverride } = renderHook(() =>
+      useLineChartViewModel({ ...defaultProps, emptyLabel: "Nothing here" }),
+    );
+    expect(withOverride.current.emptyLabel).toBe("Nothing here");
   });
 
   it("forwards the rangeSelectorTrailing slot unchanged and defaults it to undefined", () => {

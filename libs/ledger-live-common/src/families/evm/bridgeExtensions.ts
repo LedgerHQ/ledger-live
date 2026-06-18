@@ -3,6 +3,7 @@ import {
   isStuckOperation,
   getStuckAccountAndOperation,
 } from "@ledgerhq/coin-evm/operation";
+import { getEvmDummyAddress } from "@ledgerhq/coin-evm/constants";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountBridgeExtensions, AccountLike } from "@ledgerhq/types-live";
@@ -14,6 +15,7 @@ function hasGasTracker(currency: CryptoCurrency): boolean {
 }
 
 const extensions: AccountBridgeExtensions = {
+  getEstimationRecipient: account => getEvmDummyAddress(account.currency.id),
   isEditableOperation: (account: Account, operation) =>
     isEditableOperation(account, operation, hasGasTracker),
   isStuckOperation,

@@ -53,9 +53,11 @@ export function useSignatureViewModel() {
 
   const action = useTransactionAction();
   const mevProtected = useSelector(mevProtectionSelector);
+
   const broadcast = useBroadcast({
     account,
     parentAccount,
+    transaction,
     broadcastConfig: {
       mevProtected,
       source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: true } },

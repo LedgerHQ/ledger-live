@@ -32,7 +32,9 @@ export function getAccountUnit(account: AccountLike): {
  * @returns {BigNumber} - The maximum amount that can be sent, or 0 if insufficient balance.
  */
 const calculateMaxSend = (account: SuiAccount, transaction: Transaction): BigNumber => {
-  const amount = account.spendableBalance.minus(transaction.fees || 0);
+  // Reserve the gas BUDGET (not the smaller actual fee) so a max-send leaves enough to cover the
+  // network's gas reservation — otherwise the send could fail at execution.
+  const amount = account.spendableBalance.minus(transaction.gasBudget || transaction.fees || 0);
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
@@ -75,7 +77,7 @@ export const calculateAmount = ({
         break;
       case "token.send":
         amount =
-          findSubAccountById(account, transaction.subAccountId!)?.spendableBalance ??
+          findSubAccountById(account, transaction.subAccountId ?? "")?.spendableBalance ??
           new BigNumber(0);
         break;
       case "delegate":

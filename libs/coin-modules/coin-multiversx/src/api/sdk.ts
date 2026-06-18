@@ -1,4 +1,3 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getEnv } from "@ledgerhq/live-env";
@@ -18,6 +17,7 @@ import {
   GAS_PRICE,
   GAS_PRICE_MODIFIER,
   MIN_GAS_LIMIT,
+  MULTIVERSX_DUMMY_ADDRESS,
   MULTIVERSX_STAKING_POOL,
 } from "../constants";
 import {
@@ -351,7 +351,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
 
   const transaction = new MultiversXSdkTransaction({
     data: TransactionPayload.fromEncoded(t.data?.trim()),
-    receiver: new Address(getAbandonSeedAddress("elrond")),
+    receiver: new Address(MULTIVERSX_DUMMY_ADDRESS),
     chainID: CHAIN_ID,
     gasPrice: GAS_PRICE,
     gasLimit: t.gasLimit ?? networkConfig.MinGasLimit,

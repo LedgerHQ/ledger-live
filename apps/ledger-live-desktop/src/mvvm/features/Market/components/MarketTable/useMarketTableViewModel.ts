@@ -6,6 +6,11 @@ import {
   Order,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketListVirtualization } from "../../hooks/useMarketListVirtualization";
+import {
+  getMarketSortDirection,
+  getMarketSortListAnalytics,
+} from "../../utils/marketPageAnalytics";
+import { track } from "~/renderer/analytics/segment";
 
 export type MarketTableData = {
   marketData: MarketCurrencyData[];
@@ -26,16 +31,6 @@ export type MarketTableData = {
   checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
   t: TFunction;
 };
-
-function getSortDirection(
-  order: Order | undefined,
-  descOrder: Order,
-  ascOrder: Order,
-): "asc" | "desc" | undefined {
-  if (order === descOrder) return "desc";
-  if (order === ascOrder) return "asc";
-  return undefined;
-}
 
 export function useMarketTableViewModel({
   marketData,
@@ -71,7 +66,13 @@ export function useMarketTableViewModel({
   const starredSet = useMemo(() => new Set(starredMarketCoins), [starredMarketCoins]);
   const isStarred = useCallback((id: string) => starredSet.has(id), [starredSet]);
 
-  const onSort = useCallback((nextOrder: Order) => refresh({ order: nextOrder }), [refresh]);
+  const onSort = useCallback(
+    (nextOrder: Order) => {
+      refresh({ order: nextOrder });
+      track("sort_market_list", getMarketSortListAnalytics({ order: nextOrder, range }));
+    },
+    [refresh, range],
+  );
   const onToggleMarketCap = useCallback(
     () => onSort(order === Order.MarketCapDesc ? Order.MarketCapAsc : Order.MarketCapDesc),
     [onSort, order],
@@ -85,9 +86,9 @@ export function useMarketTableViewModel({
     [onSort, order],
   );
 
-  const marketCapSort = getSortDirection(order, Order.MarketCapDesc, Order.MarketCapAsc);
-  const changeSort = getSortDirection(order, Order.topGainers, Order.topLosers);
-  const volumeSort = getSortDirection(order, Order.VolumeDesc, Order.VolumeAsc);
+  const marketCapSort = getMarketSortDirection(order, Order.MarketCapDesc, Order.MarketCapAsc);
+  const changeSort = getMarketSortDirection(order, Order.topGainers, Order.topLosers);
+  const volumeSort = getMarketSortDirection(order, Order.VolumeDesc, Order.VolumeAsc);
 
   return {
     parentRef,

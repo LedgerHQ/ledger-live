@@ -59,6 +59,15 @@ describe("serialization", () => {
 
       expect(result.hasMigratedPublicTokens).toBe(true);
     });
+
+    it("should serialize hasMigratedPrivateTokens when present", () => {
+      const result = toAleoResourcesRaw({
+        ...mockAleoResources,
+        hasMigratedPrivateTokens: true,
+      });
+
+      expect(result.hasMigratedPrivateTokens).toBe(true);
+    });
   });
 
   describe("fromAleoResourcesRaw", () => {
@@ -92,6 +101,15 @@ describe("serialization", () => {
       });
 
       expect(result.hasMigratedPublicTokens).toBe(true);
+    });
+
+    it("should deserialize hasMigratedPrivateTokens when present", () => {
+      const result = fromAleoResourcesRaw({
+        ...mockAleoResourcesRaw,
+        hasMigratedPrivateTokens: true,
+      });
+
+      expect(result.hasMigratedPrivateTokens).toBe(true);
     });
   });
 

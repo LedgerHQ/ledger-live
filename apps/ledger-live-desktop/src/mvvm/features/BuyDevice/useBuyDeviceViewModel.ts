@@ -4,7 +4,9 @@ import { useCallback, useEffect } from "react";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { track } from "~/renderer/analytics/segment";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import { setShouldResumeAddAccountAfterOnboarding } from "~/renderer/reducers/onboarding";
 import { getOriginFlow } from "~/renderer/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export interface BuyDeviceViewProps {
   isOpen: boolean;
@@ -51,9 +53,13 @@ const useBuyDeviceViewModel = (): BuyDeviceViewProps => {
       button: "Connect",
       page: ANALYTICS_PAGE,
     });
+
+    if (getOriginFlow() === HOOKS_TRACKING_LOCATIONS.addAccountModal) {
+      dispatch(setShouldResumeAddAccountAfterOnboarding(true));
+    }
     handleConnectDevice();
     onClose();
-  }, [onClose, handleConnectDevice]);
+  }, [dispatch, onClose, handleConnectDevice]);
 
   return {
     isOpen,

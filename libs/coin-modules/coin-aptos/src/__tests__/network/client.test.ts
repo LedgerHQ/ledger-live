@@ -14,7 +14,7 @@ import {
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
-import { APTOS_ASSET_ID } from "../../constants";
+import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 import { AptosAPI } from "../../network";
 import { AptosBalance, AptosTransaction } from "../../types";
 
@@ -631,8 +631,8 @@ describe("Aptos API", () => {
           functionArguments: ["address2", 100n],
         },
         options: {
-          maxGasAmount: 200,
-          gasUnitPrice: 100,
+          maxGasAmount: DEFAULT_GAS.toNumber(),
+          gasUnitPrice: DEFAULT_GAS_PRICE.toNumber(),
           expireTimestamp: Number(Math.ceil(+time / 1_000_000 + 2 * 60)),
         },
       });
@@ -698,8 +698,8 @@ describe("Aptos API", () => {
           functionArguments: ["address2", 100n],
         },
         options: {
-          maxGasAmount: 200,
-          gasUnitPrice: 100,
+          maxGasAmount: DEFAULT_GAS.toNumber(),
+          gasUnitPrice: DEFAULT_GAS_PRICE.toNumber(),
           expireTimestamp: Number(Math.ceil(+time / 1_000_000 + 2 * 60)),
         },
       });
@@ -764,8 +764,8 @@ describe("Aptos API", () => {
           functionArguments: ["0x111", "address2", 100n],
         },
         options: {
-          maxGasAmount: 200,
-          gasUnitPrice: 100,
+          maxGasAmount: DEFAULT_GAS.toNumber(),
+          gasUnitPrice: DEFAULT_GAS_PRICE.toNumber(),
           expireTimestamp: Number(Math.ceil(+time / 1_000_000 + 2 * 60)),
         },
       });

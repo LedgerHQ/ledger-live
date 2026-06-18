@@ -1,8 +1,7 @@
-import { device } from "detox";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { swapSetup } from "../bridge/server";
-import { isWallet40, launchApp } from "../helpers/commonHelpers";
+import { isWallet40 } from "../helpers/commonHelpers";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -32,6 +31,11 @@ describe("DeepLinks Tests", () => {
       },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
+  });
+
+  beforeEach(async () => {
+    // workaround: modular drawer blocks deeplink
+    await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
   });
 
   (isSmokeTestRun ? it.skip : it)("should open My Ledger page", async () => {
@@ -90,12 +94,6 @@ describe("DeepLinks Tests", () => {
   (isSmokeTestRun ? it.skip : it)("should open discovery to Kiln Widget live App", async () => {
     await app.discover.openViaDeeplink("Kiln-Widget");
     await app.discover.expectApp("Kiln-Widget");
-    // the Kiln widget opens the account drawer over the navigator; restart to reset UI state
-    await device.terminateApp();
-    await launchApp();
-    await device.disableSynchronization();
-    await app.portfolio.waitForPortfolioPageToLoad();
-    await device.enableSynchronization();
   });
 
   setTeamOwner(Team.SWAP);
@@ -133,20 +131,14 @@ describe("DeepLinks Tests", () => {
   (isSmokeTestRun ? describe.skip : describe)("Open modular drawer via deeplinks", () => {
     const TOP_CRYPTO_TICKERS = ["BTC", "ETH", "USDT", "XRP", "BNB"];
 
-    beforeEach(async () => {
-      await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
-    });
-
     it("should open from Add Account", async () => {
       await app.addAccount.openViaDeeplink();
       await app.modularDrawer.validateAssetsScreen(TOP_CRYPTO_TICKERS);
-      await app.modularDrawer.tapDrawerCloseButton();
     });
 
     it("should open from Receive", async () => {
       await app.receive.openViaDeeplink();
       await app.modularDrawer.validateAssetsScreen(TOP_CRYPTO_TICKERS);
-      await app.modularDrawer.tapDrawerCloseButton();
     });
 
     it("should open from Receive in a selected account", async () => {

@@ -74,6 +74,8 @@
   "common": {
     "never": "Never",
     "new": "New",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
     "skip": "Skip",
     "apply": "Apply",
     "done": "Done",
@@ -1704,7 +1706,11 @@
         "stocks": "Stocks",
         "favorites": "Favorites"
       },
-      "emptyFavorites": "No favorites yet"
+      "emptyFavorites": "No favorites yet",
+      "noAssets": {
+        "title": "No assets available",
+        "description": "Sorry, there are no assets available in this category."
+      }
     },
     "detailsPage": {
       "priceStatistics": "Price stats",
@@ -4454,6 +4460,8 @@
         "header": "Undelegation(s)",
         "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
         "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+        "timelockTooltip": "Still within the timelock. These funds are not yet available to withdraw.",
+        "readyTooltip": "The timelock has ended. These funds are ready to withdraw.",
         "flow": {
           "title": "Stop staking",
           "steps": {
@@ -8787,8 +8795,6 @@
     "title": "Market",
     "genericError": "Connection failed",
     "cta": "View all",
-    "scrollLeft": "Scroll left",
-    "scrollRight": "Scroll right",
     "ranking": {
       "trending": "Trending",
       "gainers": "Gainers",
@@ -8902,7 +8908,7 @@
     "search": {
       "noAssetFound": "No asset found",
       "error": "Connection failed",
-      "cryptos": "Cryptos",
+      "cryptos": "Crypto",
       "stocks": "Stocks"
     },
     "history": {
@@ -9145,6 +9151,35 @@
       "explore": "Explore my new portfolio"
     }
   },
+  "q2Tour": {
+    "slides": {
+      "welcome": {
+        "title": "Smarter portfolio management. Clearer paths to growth",
+        "description": ""
+      },
+      "aggregatedBalance": {
+        "title": "One balance for each asset",
+        "description": "Multi-chain assets like USDT are now shown as one total. Simple, accurate, clear."
+      },
+      "pnl": {
+        "title": "Your returns, front and center",
+        "description": "See profit and loss on every asset, across your portfolio and analytics page."
+      },
+      "earnSimulator": {
+        "title": "Test your earn potential",
+        "description": "Simulate what rewards you can earn and build a growth plan that fits your goals."
+      },
+      "earnUpselling": {
+        "title": "More protocols, more rewards",
+        "description": "Stablecoins and top picks, surfaced right in your wallet. Less searching. More deciding."
+      }
+    },
+    "cta": {
+      "seeWhatsNew": "See what's new",
+      "next": "Next",
+      "gotIt": "Got it"
+    }
+  },
   "productTour": {
     "cta": {
       "continue": "Continue",
@@ -9293,6 +9328,9 @@
     "tradingVolume24h": "24h trading volume",
     "tradingVolume24hTooltip": "The total amount traded in the last 24 hours.",
     "marketStatsDisclaimer": "Market stats sourced from CoinGecko",
+    "fallbackBanner": {
+      "title": "Swap and Buy are not supported for this asset."
+    },
     "day": "1 day",
     "week": "1 week",
     "month": "1 month",

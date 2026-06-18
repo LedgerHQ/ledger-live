@@ -50,6 +50,8 @@ export type HashMapBody = {
 
 export type MarketCurrencyRequestParams = {
   id?: string;
+  /** Ledger currency ids to resolve via the /v3/markets `ledgerIds` filter. */
+  ledgerIds?: string[];
   counterCurrency?: string;
   range?: string;
 };

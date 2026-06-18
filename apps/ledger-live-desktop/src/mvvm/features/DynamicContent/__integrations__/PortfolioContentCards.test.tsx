@@ -353,6 +353,7 @@ describe("BottomCarouselContentCards", () => {
         page: "Portfolio",
         type: "portfolio_carousel",
         location: LocationContentCard.BottomPortfolio,
+        displayedPosition: 1,
       }),
     );
     expect(title1).not.toBeInTheDocument();
@@ -379,6 +380,7 @@ describe("BottomCarouselContentCards", () => {
         page: "Portfolio",
         type: "portfolio_carousel",
         location: LocationContentCard.BottomPortfolio,
+        displayedPosition: 0,
       }),
     );
   });

@@ -18,9 +18,16 @@ const PROVIDERS_WHITELIST =
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const ONE_WEEK_MS = ONE_DAY_MS * 7;
+const MONDAY_EPOCH_UTC_MS = Date.UTC(2024, 0, 1);
 
 type QuoteErrorItem = {
   parameter?: { minAmount?: string };
+};
+
+type SwapQuoteItem = {
+  provider?: string;
+  amountTo?: number;
+  code?: string;
 };
 
 function isQuoteErrorItem(item: unknown): item is QuoteErrorItem {
@@ -97,24 +104,124 @@ export async function getMinimumSwapAmount(
   }
 }
 
-export function pickRotatingProvider(eligibleProviders: SwapProvider[]): SwapProvider {
-  if (eligibleProviders.length === 0) {
-    throw new Error("[pickRotatingProvider] - eligibleProviders is empty");
+/** Usable = the provider returned a real amount and no error code. */
+function isUsableQuote(q: SwapQuoteItem): boolean {
+  return q.code === undefined && Number(q.amountTo) > 0;
+}
+
+async function keepRunningProviders(
+  eligibleProviders: SwapProvider[],
+  accountFrom: Account,
+  accountTo: Account,
+): Promise<SwapProvider[]> {
+  const addressFrom = accountFrom.address || accountFrom.parentAccount?.address;
+  if (!addressFrom) {
+    console.warn("No address available from accounts when checking provider health.");
+    return eligibleProviders;
   }
 
-  const override = process.env.SWAP_PROVIDER;
+  const amountFrom = await getMinimumSwapAmount(
+    accountFrom,
+    accountTo,
+    eligibleProviders.map(p => p.name),
+  );
+  if (amountFrom == null) {
+    return eligibleProviders;
+  }
 
+  try {
+    const requestConfig: AxiosRequestConfig = {
+      method: "GET",
+      url: SWAP_QUOTE_URL,
+      timeout: 10_000,
+      params: {
+        from: accountFrom.currency.id,
+        to: accountTo.currency.id,
+        amountFrom,
+        addressFrom,
+        fiatForCounterValue: "USD",
+        slippage: 1,
+        networkFees: PROBE_NETWORK_FEES,
+        networkFeesCurrency: accountTo.currency.speculosApp.name.toLowerCase(),
+        displayLanguage: "en",
+        theme: "light",
+        "providers-whitelist": eligibleProviders.map(p => p.name).join(","),
+        tradeType: "INPUT",
+        uniswapOrderType: "uniswapxv1",
+      },
+      headers: { accept: "application/json" },
+    };
+
+    const { data } = await axios(requestConfig);
+    if (!Array.isArray(data)) {
+      console.warn(
+        "Unexpected quote API response while checking provider health; keeping full providers list.",
+      );
+      return eligibleProviders;
+    }
+    const healthyNames = data.filter(isUsableQuote).map(item => item.provider);
+    return eligibleProviders.filter(p => healthyNames.includes(p.name));
+  } catch (error: unknown) {
+    console.warn("Error checking swap provider health:", sanitizeError(error));
+    return eligibleProviders;
+  }
+}
+
+export async function pickRotatingProvider(
+  eligibleProviders: SwapProvider[],
+  accountFrom: Account,
+  accountTo: Account,
+): Promise<SwapProvider> {
+  if (eligibleProviders.length === 0) {
+    throw new Error("[Providers Health Check] - eligibleProviders is empty");
+  }
+
+  const runningProviders = await keepRunningProviders(eligibleProviders, accountFrom, accountTo);
+  if (runningProviders.length === 0) {
+    throw new Error(
+      `[Providers Health Check] - no running swap provider for ` +
+        `${accountFrom.currency.name} → ${accountTo.currency.name}`,
+    );
+  }
+  // Explicit override always wins, matched against the healthy set so forcing a
+  // down provider fails loudly instead of silently testing nothing.
+  const override = process.env.SWAP_PROVIDER;
   if (override) {
-    const match = eligibleProviders.find(p => p.uiName === override || p.name === override);
+    const match = runningProviders.find(p => p.uiName === override || p.name === override);
     if (!match) {
       throw new Error(
-        `[pickRotatingProvider] - "${override}" did not match any of: ` +
-          eligibleProviders.map(p => `${p.uiName} (or ${p.name})`).join(", "),
+        `[Providers Health Check] - ❌ "${override}" did not match any of the healthy providers: ` +
+          runningProviders.map(p => `${p.uiName} (or ${p.name})`).join(", "),
       );
     }
     return match;
   }
-  const MONDAY_EPOCH_UTC_MS = Date.UTC(2024, 0, 1);
+  const dropped = eligibleProviders.filter(p => !runningProviders.includes(p));
+  if (dropped.length > 0) {
+    console.warn(
+      `[Providers Health Check] - Some quotes are down for ${accountFrom.currency.name} → ` +
+        `${accountTo.currency.name}: ❌${dropped.map(p => p.name.toUpperCase()).join(", ❌")}`,
+    );
+  }
+  // Deterministic weekly slot over the eligible list; walk forward to the next
+  // healthy provider only when the scheduled one(s) is down.
+  const isRunning = runningProviders.map(p => p.name);
   const weekIndex = Math.floor((Date.now() - MONDAY_EPOCH_UTC_MS) / ONE_WEEK_MS);
-  return eligibleProviders[weekIndex % eligibleProviders.length];
+  const scheduledIndex = weekIndex % eligibleProviders.length;
+  for (let offset = 0; offset < eligibleProviders.length; offset++) {
+    const candidate = eligibleProviders[(scheduledIndex + offset) % eligibleProviders.length];
+    if (isRunning.includes(candidate.name)) {
+      if (offset > 0) {
+        console.warn(
+          `[Providers Health Check] - ❌ Scheduled provider "${eligibleProviders[scheduledIndex].name}" ` +
+            `is down; using "${candidate.name}" instead`,
+        );
+      }
+      return candidate;
+    }
+  }
+  throw new Error(
+    `[Providers Health Check] - No healthy provider found for ` +
+      `${accountFrom.currency.name} → ${accountTo.currency.name}`,
+  );
 }

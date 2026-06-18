@@ -182,6 +182,9 @@ describe("datadog logs", () => {
         appVersion: "1.0.0",
         currencyId: "bitcoin",
         family: "bitcoin",
+        isTestnet: false,
+        isSendMax: true,
+        source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: true } },
       });
 
       expect(datadogLogs.logger.info).toHaveBeenCalledWith("broadcast_success", {
@@ -190,6 +193,13 @@ describe("datadog logs", () => {
           appVersion: "1.0.0",
           currencyId: "bitcoin",
           family: "bitcoin",
+          isTestnet: false,
+          isSendMax: true,
+          source: {
+            type: "coin-module",
+            name: "ledger-live-desktop",
+            flags: { newSendFlow: true },
+          },
         },
       });
     });
@@ -205,6 +215,9 @@ describe("datadog logs", () => {
         appVersion: "1.0.0",
         currencyId: "ethereum",
         family: "evm",
+        isTestnet: false,
+        isSendMax: false,
+        source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: false } },
       });
 
       expect(datadogLogs.logger.error).toHaveBeenCalledWith(
@@ -216,6 +229,13 @@ describe("datadog logs", () => {
             appVersion: "1.0.0",
             currencyId: "ethereum",
             family: "evm",
+            isTestnet: false,
+            isSendMax: false,
+            source: {
+              type: "coin-module",
+              name: "ledger-live-desktop",
+              flags: { newSendFlow: false },
+            },
           },
         },
         error,

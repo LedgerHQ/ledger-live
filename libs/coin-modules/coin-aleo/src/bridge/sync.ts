@@ -583,16 +583,26 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
  */
 export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccount {
   const pendingOperations = synced.pendingOperations ?? [];
+  const pendingSubOperations = (synced.subAccounts ?? []).flatMap(sa => sa.pendingOperations ?? []);
 
-  if (pendingOperations.length === 0) {
+  if (pendingOperations.length === 0 && pendingSubOperations.length === 0) {
     return synced;
   }
 
-  const confirmedIds = new Set(synced.operations.map(o => o.id));
+  const confirmedIds = new Set([
+    ...synced.operations.map(o => o.id),
+    ...(synced.subAccounts ?? []).flatMap(sa => sa.operations.map(o => o.id)),
+  ]);
 
   return {
     ...synced,
     pendingOperations: pendingOperations.filter(po => !confirmedIds.has(po.id)),
+    ...(synced.subAccounts && {
+      subAccounts: synced.subAccounts.map(sa => ({
+        ...sa,
+        pendingOperations: (sa.pendingOperations ?? []).filter(po => !confirmedIds.has(po.id)),
+      })),
+    }),
   };
 }
 

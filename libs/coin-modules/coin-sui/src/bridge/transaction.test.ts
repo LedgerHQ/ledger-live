@@ -34,6 +34,7 @@ describe("transaction", () => {
         recipient: "0x456",
         useAllAmount: false,
         fees: "1000000",
+        gasBudget: "2000000",
       };
 
       const transaction = fromTransactionRaw(rawTransaction);
@@ -45,6 +46,7 @@ describe("transaction", () => {
         recipient: "0x456",
         useAllAmount: false,
         fees: new BigNumber("1000000"),
+        gasBudget: new BigNumber("2000000"),
         errors: {},
       });
     });
@@ -63,6 +65,7 @@ describe("transaction", () => {
         recipient: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
         useAllAmount: false,
         fees: "3976000",
+        gasBudget: "",
       });
     });
 

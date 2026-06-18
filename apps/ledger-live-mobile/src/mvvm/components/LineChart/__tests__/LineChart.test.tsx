@@ -72,10 +72,12 @@ describe("LineChart", () => {
     expect(screen.getByText("1D")).toBeVisible();
   });
 
-  it("renders the Skeleton while isLoading", () => {
+  it("marks the chart as busy while isLoading and keeps the range selector", () => {
     renderLineChart({ isLoading: true });
 
-    expect(screen.getByTestId("skeleton")).toBeOnTheScreen();
+    expect(screen.getByTestId("chart-container").props.accessibilityState).toMatchObject({
+      busy: true,
+    });
     expect(screen.getByText("1D")).toBeVisible();
   });
 

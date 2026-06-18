@@ -70,6 +70,8 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   adi: 0.001,
   arc: 0.001,
   arc_testnet: 0.001,
+  robinhood: 0.001,
+  robinhood_testnet: 0.001,
 };
 
 /**

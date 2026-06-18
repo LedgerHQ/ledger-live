@@ -1,5 +1,6 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "../chain/chain";
@@ -635,6 +636,182 @@ describe("CosmosApi", () => {
           signedOperation: { operation: {} as Operation, signature: "signedOperation" },
         }),
       ).rejects.toThrow("SequenceNumberError");
+    });
+  });
+
+  describe("getAccountInfo", () => {
+    const babylonAddress = "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n";
+    const babylonCurrency = { id: "babylon", units: [{}, { code: "ubbn" }] } as CryptoCurrency;
+
+    const queuedDelegate = {
+      msg_type: "cosmos.staking.v1beta1.MsgDelegate",
+      msg: `delegator_address:"${babylonAddress}" validator_address:"bbnvaloper1pending" amount:<denom:"ubbn" amount:"30" >`,
+    };
+    const queuedUndelegate = {
+      msg_type: "cosmos.staking.v1beta1.MsgUndelegate",
+      msg: `delegator_address:"${babylonAddress}" validator_address:"bbnvaloper1active" amount:<denom:"ubbn" amount:"10" >`,
+    };
+    const queuedForeignDelegate = {
+      msg_type: "cosmos.staking.v1beta1.MsgDelegate",
+      msg: `delegator_address:"bbn1someoneelse" validator_address:"bbnvaloper1pending" amount:<denom:"ubbn" amount:"99" >`,
+    };
+
+    const mockAccountInfoRoutes = (opts: {
+      height?: number;
+      epochs?: string[];
+      epochBoundary?: string;
+      msgs?: { msg: string; msg_type: string }[];
+      epochingError?: boolean;
+    }) => {
+      const {
+        height = 100,
+        epochs = ["5"],
+        epochBoundary = "360",
+        msgs = [],
+        epochingError = false,
+      } = opts;
+      let currentEpochCalls = 0;
+      // @ts-expect-error method is mocked
+      network.mockImplementation(({ url }: { url: string }) => {
+        const respond = (data: unknown) => Promise.resolve({ data });
+        if (url.includes("/babylon/epoching/v1/")) {
+          if (epochingError) {
+            return Promise.reject(new Error("epoching unavailable"));
+          }
+          if (url.includes("current_epoch")) {
+            const epoch = epochs[Math.min(currentEpochCalls, epochs.length - 1)];
+            currentEpochCalls += 1;
+            return respond({ current_epoch: epoch, epoch_boundary: epochBoundary });
+          }
+          return respond({ msgs, pagination: { next_key: null, total: String(msgs.length) } });
+        }
+        if (url.includes("node_info")) {
+          return respond({ application_version: { cosmos_sdk_version: "0.50.0" } });
+        }
+        if (url.includes("blocks/latest")) {
+          return respond({ block: { header: { height: String(height) } } });
+        }
+        if (url.includes("/auth/")) {
+          return respond({
+            account: {
+              "@type": "/cosmos.auth.v1beta1.BaseAccount",
+              account_number: "1",
+              sequence: "1",
+            },
+          });
+        }
+        if (url.includes("/bank/")) {
+          return respond({ balances: [{ denom: "ubbn", amount: "70" }] });
+        }
+        if (url.includes("/tx/v1beta1/txs")) {
+          return respond({ tx_responses: [], total: "0" });
+        }
+        if (url.includes("/redelegations")) {
+          return respond({ redelegation_responses: [] });
+        }
+        if (url.includes("/unbonding_delegations")) {
+          return respond({ unbonding_responses: [] });
+        }
+        if (url.includes("/withdraw_address")) {
+          return respond({ withdraw_address: babylonAddress });
+        }
+        if (url.includes("/rewards")) {
+          return respond({ rewards: [] });
+        }
+        if (url.includes("/staking/v1beta1/delegations/")) {
+          return respond({
+            delegation_responses: [
+              {
+                delegation: { validator_address: "bbnvaloper1active" },
+                balance: { denom: "ubbn", amount: "50" },
+              },
+            ],
+          });
+        }
+        if (url.includes("/staking/v1beta1/validators/")) {
+          return respond({ validator: { status: "BOND_STATUS_BONDED" } });
+        }
+        return Promise.reject(new Error(`unmocked url: ${url}`));
+      });
+    };
+
+    it("merges queued epoching staking messages into babylon positions", async () => {
+      mockAccountInfoRoutes({ msgs: [queuedDelegate, queuedUndelegate, queuedForeignDelegate] });
+      const babylonApi = new CosmosAPI("babylon");
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+
+      expect(result.delegations).toEqual([
+        expect.objectContaining({
+          validatorAddress: "bbnvaloper1active",
+          amount: new BigNumber(40),
+        }),
+        expect.objectContaining({
+          validatorAddress: "bbnvaloper1pending",
+          amount: new BigNumber(30),
+          pendingRewards: new BigNumber(0),
+          status: "bonded",
+        }),
+      ]);
+      expect(result.unbondings).toEqual([
+        expect.objectContaining({
+          validatorAddress: "bbnvaloper1active",
+          amount: new BigNumber(10),
+        }),
+      ]);
+      // enrichment only — the bank balance must be untouched (guards against double-counting)
+      expect(result.balances).toEqual(new BigNumber(70));
+    });
+
+    it("does not merge when the epoch changes during the queue fetch", async () => {
+      mockAccountInfoRoutes({ epochs: ["5", "6"], msgs: [queuedDelegate] });
+      const babylonApi = new CosmosAPI("babylon");
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+
+      expect(result.delegations).toEqual([
+        expect.objectContaining({
+          validatorAddress: "bbnvaloper1active",
+          amount: new BigNumber(50),
+        }),
+      ]);
+      expect(result.unbondings).toEqual([]);
+    });
+
+    it("does not merge when the block height is past the epoch boundary", async () => {
+      mockAccountInfoRoutes({ height: 999, epochBoundary: "360", msgs: [queuedDelegate] });
+      const babylonApi = new CosmosAPI("babylon");
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+
+      expect(result.delegations).toEqual([expect.objectContaining({ amount: new BigNumber(50) })]);
+    });
+
+    it("does not merge when the block height equals the epoch boundary", async () => {
+      // at the boundary block the queue has already executed into the on-chain delegations
+      mockAccountInfoRoutes({ height: 360, epochBoundary: "360", msgs: [queuedDelegate] });
+      const babylonApi = new CosmosAPI("babylon");
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+
+      expect(result.delegations).toEqual([expect.objectContaining({ amount: new BigNumber(50) })]);
+    });
+
+    it("keeps the babylon sync alive when the epoching endpoint fails", async () => {
+      mockAccountInfoRoutes({ epochingError: true, msgs: [queuedDelegate] });
+      const babylonApi = new CosmosAPI("babylon");
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+
+      expect(result.balances).toEqual(new BigNumber(70));
+      expect(result.delegations).toEqual([expect.objectContaining({ amount: new BigNumber(50) })]);
+    });
+
+    it("never requests epoching endpoints for non-epoched chains", async () => {
+      mockAccountInfoRoutes({});
+      await cosmosApi.getAccountInfo("cosmos1myaddress", {
+        id: "cosmos",
+        units: [{}, { code: "uatom" }],
+      } as CryptoCurrency);
+
+      const requestedUrls = mockedNetwork.mock.calls.map(([options]) => options.url);
+      expect(requestedUrls.length).toBeGreaterThan(0);
+      expect(requestedUrls.some(url => url?.includes("epoching"))).toBe(false);
     });
   });
 });

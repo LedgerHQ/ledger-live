@@ -3,6 +3,7 @@ import { getNetworkConfig } from "../logic/utils";
 import type { AleoLatestBlockResponse } from "../types/api";
 import { EXPLORER_TRANSFER_TYPES } from "../constants";
 import {
+  MOCK_ALEO_ADDRESS,
   testnetPrivateRecord,
   getMockedTransactionDetails,
   getMockedSimpleTransactionDetails,
@@ -145,16 +146,14 @@ describe("apiClient", () => {
   });
 
   describe("getAccountPublicTransactions", () => {
-    const mockAddress = "aleo1test123address456";
-
     it("should fetch account transactions with default parameters", async () => {
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress);
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS);
 
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
       });
 
       expect(getNetworkConfig).toHaveBeenCalledTimes(1);
@@ -162,7 +161,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true`,
       });
       expect(result).toEqual(mockResponse);
       expect(result.transactions).toHaveLength(2);
@@ -170,7 +169,7 @@ describe("apiClient", () => {
 
     it("should fetch transactions with custom limit", async () => {
       const customLimit = 10;
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
       });
 
@@ -178,7 +177,7 @@ describe("apiClient", () => {
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
         limit: customLimit,
       });
 
@@ -186,12 +185,12 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=10&sort=asc&direction=next`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=10&sort=asc&direction=next&token_info=true`,
       });
     });
 
     it("should fetch transactions with descending order", async () => {
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
       });
 
@@ -199,7 +198,7 @@ describe("apiClient", () => {
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
         order: "desc",
       });
 
@@ -207,13 +206,13 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=desc&direction=next`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=desc&direction=next&token_info=true`,
       });
     });
 
     it("should fetch transactions with cursor for pagination", async () => {
       const cursor = "123456";
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
         prev_cursor: {
           block_number: 123450,
@@ -229,7 +228,7 @@ describe("apiClient", () => {
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
         cursor,
       });
 
@@ -237,12 +236,12 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next&cursor_block_number=${cursor}`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true&cursor_block_number=${cursor}`,
       });
     });
 
     it("should fetch previous page with direction=prev", async () => {
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
       });
 
@@ -250,7 +249,7 @@ describe("apiClient", () => {
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
         direction: "prev",
       });
 
@@ -258,13 +257,13 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=prev`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=prev&token_info=true`,
       });
     });
 
     it("should fetch transactions with all custom parameters", async () => {
       const cursor = "999999";
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [
           {
             transaction_id: "at1custom",
@@ -276,7 +275,7 @@ describe("apiClient", () => {
             function_id: "transfer_public",
             amount: 75000000,
             fee: 5000000,
-            sender_address: mockAddress,
+            sender_address: MOCK_ALEO_ADDRESS,
             recipient_address: "aleo1recipient789",
             program_id: "credits.aleo",
           },
@@ -287,7 +286,7 @@ describe("apiClient", () => {
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
         cursor,
         limit: 20,
         order: "desc",
@@ -298,7 +297,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=20&sort=desc&direction=prev&cursor_block_number=${cursor}`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=20&sort=desc&direction=prev&token_info=true&cursor_block_number=${cursor}`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -309,13 +308,13 @@ describe("apiClient", () => {
       await expect(
         apiClient.getAccountPublicTransactions({
           currency: mockCurrency,
-          address: mockAddress,
+          address: MOCK_ALEO_ADDRESS,
         }),
       ).rejects.toThrow("Network error");
     });
 
     it("should handle empty transaction list", async () => {
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
       });
 
@@ -323,7 +322,7 @@ describe("apiClient", () => {
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
       });
 
       expect(result.transactions).toEqual([]);
@@ -332,7 +331,7 @@ describe("apiClient", () => {
     it("should use correct network configuration for testnet", async () => {
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
 
-      const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
       });
 
@@ -340,33 +339,31 @@ describe("apiClient", () => {
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
-        address: mockAddress,
+        address: MOCK_ALEO_ADDRESS,
       });
 
       expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true`,
       });
     });
   });
 
   describe("getAccountBalance", () => {
-    const mockAddress = "aleo1test123address456";
-
     it("should fetch the account balance successfully", async () => {
       const mockBalance = "1000000u64";
       jest.mocked(network).mockResolvedValue({ data: mockBalance, status: 200 });
 
-      const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
+      const result = await apiClient.getAccountBalance(mockCurrency, MOCK_ALEO_ADDRESS);
 
       expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/program/credits.aleo/mapping/account/${mockAddress}`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/program/credits.aleo/mapping/account/${MOCK_ALEO_ADDRESS}`,
       });
       expect(result).toEqual(mockBalance);
     });
@@ -374,7 +371,7 @@ describe("apiClient", () => {
     it("should return null when account has no balance", async () => {
       jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
 
-      const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
+      const result = await apiClient.getAccountBalance(mockCurrency, MOCK_ALEO_ADDRESS);
 
       expect(result).toBeNull();
     });
@@ -383,7 +380,7 @@ describe("apiClient", () => {
       const mockError = new Error("Network error");
       jest.mocked(network).mockRejectedValue(mockError);
 
-      await expect(apiClient.getAccountBalance(mockCurrency, mockAddress)).rejects.toThrow(
+      await expect(apiClient.getAccountBalance(mockCurrency, MOCK_ALEO_ADDRESS)).rejects.toThrow(
         "Network error",
       );
     });
@@ -392,12 +389,12 @@ describe("apiClient", () => {
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
       jest.mocked(network).mockResolvedValue({ data: "500000u64", status: 200 });
 
-      await apiClient.getAccountBalance(mockCurrency, mockAddress);
+      await apiClient.getAccountBalance(mockCurrency, MOCK_ALEO_ADDRESS);
 
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/program/credits.aleo/mapping/account/${mockAddress}`,
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/program/credits.aleo/mapping/account/${MOCK_ALEO_ADDRESS}`,
       });
     });
   });

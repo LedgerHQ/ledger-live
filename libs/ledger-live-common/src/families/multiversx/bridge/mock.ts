@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
 import type { MultiversXAccount, Transaction } from "@ledgerhq/coin-multiversx/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { MULTIVERSX_DUMMY_ADDRESS } from "@ledgerhq/coin-multiversx/constants";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -105,6 +106,7 @@ const accountBridge: AccountBridge<Transaction, any> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => MULTIVERSX_DUMMY_ADDRESS,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

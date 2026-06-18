@@ -97,4 +97,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugTooltip]: undefined;
   [ScreenName.DebugWalletV4Tour]: undefined;
   [ScreenName.DebugProductTour]: undefined;
+  [ScreenName.DebugQ2WalletV4Tour]: undefined;
 };

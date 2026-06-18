@@ -16,10 +16,13 @@ inputs:
   report_path_suffix:
     required: false
     description: "Suffix for allure report path (defaults to platform)"
+  summary_message:
+    required: false
+    description: "Formatted Allure test summary written to GitHub Step Summary before the report link"
 outputs:
   report-url:
     description: "Allure report URL"
-    value: ${{ steps.publish-report.outputs.report-url }}
+    value: ${{ steps.generate-report.outputs.url }}
 
 runs:
   using: composite
@@ -47,17 +50,32 @@ runs:
       id: prune
       shell: bash
       run: ${{ github.action_path }}/prune-ai-attachments.sh "${{ inputs.path }}" "${{ runner.temp }}/allure-upload"
-    - name: Publish report on Allure Server
-      id: publish-report
-      uses: LedgerHQ/send-to-allure-server-action@2.1.2
+    - name: Upload allure results
+      id: upload-results
+      uses: LedgerHQ/actions/allure/upload@1082f57f1acb5785e8e0271ca2c15b4f0c873bb3 # main @ 2026-06-10
       with:
-        allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
-        build-name: ${{ github.workflow }}-${{ inputs.platform }}
-        build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        url: "https://ledger-live.allure.green.ledgerlabs.net"
+        username: ${{ inputs.login }}
+        password: ${{ inputs.password }}
+        results: ${{ steps.prune.outputs.path }}
+    - name: Generate allure report
+      id: generate-report
+      uses: LedgerHQ/actions/allure/generate@1082f57f1acb5785e8e0271ca2c15b4f0c873bb3 # main @ 2026-06-10
+      with:
+        url: "https://ledger-live.allure.green.ledgerlabs.net"
         username: ${{ inputs.login }}
         password: ${{ inputs.password }}
         path: ${{ steps.report-path.outputs.path }}
-        allure-results: ${{ steps.prune.outputs.path }}
+        results: ${{ steps.upload-results.outputs.uuid }}
+        build-name: ${{ github.workflow }}-${{ inputs.platform }}
+        build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     - name: Write Allure report in summary
       shell: bash
-      run: echo "::notice title=${{ inputs.platform }} Allure report URL::${{ steps.publish-report.outputs.report-url }}"
+      env:
+        REPORT_URL: ${{ steps.generate-report.outputs.url }}
+        SUMMARY_MESSAGE: ${{ inputs.summary_message }}
+      run: |
+        if [ -n "$SUMMARY_MESSAGE" ]; then
+          echo "$SUMMARY_MESSAGE" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        echo "[Open report](${REPORT_URL})" >> "$GITHUB_STEP_SUMMARY"

@@ -7,6 +7,8 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { AleoOperation, AleoTokenAccount } from "../types/bridge";
 import { apiClient } from "../network/api";
 import { parseAmount } from "../logic/utils";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { log } from "@ledgerhq/logs";
 
 function promoteCoinOpToFees({
   coinOp,
@@ -25,33 +27,16 @@ function promoteCoinOpToFees({
   coinOp.fee = fee;
 }
 
-export async function getAleoSubAccounts({
-  currency,
+function getAleoSubAccounts({
   ledgerAccountId,
-  address,
-  tokenOperations,
   calTokens,
 }: {
-  currency: CryptoCurrency;
   ledgerAccountId: string;
-  address: string;
-  tokenOperations: AleoOperation[];
   calTokens: Map<string, TokenCurrency>;
-}): Promise<TokenAccount[]> {
-  if (tokenOperations.length === 0 || calTokens.size === 0) return [];
-
-  const results = await Promise.allSettled(
-    [...calTokens.values()].map(async tokenCurrency => {
-      const balance = parseAmount(
-        await apiClient.getTokenBalance(currency, tokenCurrency.contractAddress, address),
-      );
-
-      const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
-      return buildTokenAccount(id, ledgerAccountId, tokenCurrency, balance);
-    }),
+}): TokenAccount[] {
+  return [...calTokens.values()].map(token =>
+    buildTokenAccount(encodeTokenAccountId(ledgerAccountId, token), ledgerAccountId, token),
   );
-
-  return results.flatMap(r => (r.status === "fulfilled" && r.value !== null ? [r.value] : []));
 }
 
 type CoinOperationWithSubOps = AleoOperation & Required<Pick<AleoOperation, "subOperations">>;
@@ -174,10 +159,14 @@ export async function prepareTokenOperations({
       });
     }
 
-    parentCoinOp.subOperations = [...parentCoinOp.subOperations, subAccountOp];
+    if (!parentCoinOp.subOperations.some(so => so.id === subAccountOp.id)) {
+      parentCoinOp.subOperations = [...parentCoinOp.subOperations, subAccountOp];
+    }
 
     const existing = tokenOperationsBySubAccountId.get(tokenAccountId) ?? [];
-    tokenOperationsBySubAccountId.set(tokenAccountId, [...existing, subAccountOp]);
+    if (!existing.some(so => so.id === subAccountOp.id)) {
+      tokenOperationsBySubAccountId.set(tokenAccountId, [...existing, subAccountOp]);
+    }
   }
 
   return { updatedCoinOperations, tokenOperationsBySubAccountId };
@@ -188,6 +177,7 @@ function buildTokenAccount(
   parentId: string,
   token: TokenCurrency,
   balance: BigNumber = new BigNumber(0),
+  creationDate: Date = new Date(),
 ): TokenAccount {
   return {
     type: "TokenAccount",
@@ -196,7 +186,7 @@ function buildTokenAccount(
     token,
     balance,
     spendableBalance: balance,
-    creationDate: new Date(),
+    creationDate,
     operations: [],
     operationsCount: 0,
     pendingOperations: [],
@@ -340,26 +330,35 @@ export async function resolveTokenSubAccounts({
     calTokens,
   });
 
-  const fetchedSubAccounts = await getAleoSubAccounts({
-    currency,
-    ledgerAccountId,
-    address,
-    tokenOperations,
-    calTokens,
-  });
-
-  const newSubAccounts = fetchedSubAccounts.map(subAccount => {
+  const newSubAccounts = getAleoSubAccounts({ ledgerAccountId, calTokens }).map(subAccount => {
     const ops = tokenOperationsBySubAccountId.get(subAccount.id) ?? [];
     return { ...subAccount, operations: ops, operationsCount: ops.length };
   });
 
-  // Map of fresh transparent balances from the API, keyed by sub-account id.
-  // Used below to ensure we never confuse `balance` (may be total) with transparentBalance.
-  const freshTransparentById = new Map(newSubAccounts.map(sa => [sa.id, sa.balance]));
-
   const merged = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
+
+  // Fetch fresh transparent balances for all merged sub-accounts in a single batched pass.
+  // Covers both newly discovered accounts (in calTokens) and pre-existing ones with no
+  // recent operations. On failure the entry is omitted and applyTransparentBalance falls
+  // back to the previously stored transparentBalance.
+  const freshTransparentById = new Map<string, BigNumber>();
+  await promiseAllBatched(4, merged, async subAccount => {
+    try {
+      freshTransparentById.set(
+        subAccount.id,
+        parseAmount(
+          await apiClient.getTokenBalance(currency, subAccount.token.contractAddress, address),
+        ),
+      );
+    } catch (e) {
+      log(
+        "aleo/resolveTokenSubAccounts",
+        `Failed to fetch balance for ${subAccount.token.contractAddress}: ${String(e)}`,
+      );
+    }
+  });
 
   // For each merged sub-account:
   //   - matched accounts: use fresh transparent from API

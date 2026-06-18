@@ -26,6 +26,7 @@ import {
 } from "@ledgerhq/errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { getCosmosDummyRecipient } from "@ledgerhq/coin-cosmos/logic";
 import {
   broadcast,
   isInvalidRecipient,
@@ -146,6 +147,7 @@ const accountBridge: AccountBridge<Transaction> = {
   assignToAccountRaw,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: account => getCosmosDummyRecipient(account.currency.id),
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

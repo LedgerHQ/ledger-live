@@ -778,6 +778,8 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "base":
         case "scroll":
         case "bsc":
+        case "robinhood":
+        case "robinhood_testnet":
           response.push({ id, type: "coin" });
       }
 

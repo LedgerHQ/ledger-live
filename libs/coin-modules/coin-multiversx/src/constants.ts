@@ -21,3 +21,5 @@ export const MULTIVERSX_EXPLORER_URL = "https://explorer.multiversx.com";
 export const MULTIVERSX_STAKING_POOL =
   "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
 export const MULTIVERSX_LEDGER_VALIDATOR_ADDRESS = "";
+export const MULTIVERSX_DUMMY_ADDRESS =
+  "erd1sqhjrtmsn5yjk6w85099p8v0ly0g8z9pxeqe5dvu5rlf2n7vq3vqytny9g";

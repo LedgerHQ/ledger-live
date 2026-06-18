@@ -51,7 +51,7 @@ export function TransactionHeader({
         {hasCurrencies ? null : <Skeleton className="size-48 rounded-full" />}
       </div>
       {hasCurrencies ? (
-        <h2 className="heading-4-semi-bold text-base">
+        <h2 data-testid="swap-transaction-title" className="heading-4-semi-bold text-base">
           {t("swap2.modals.transactionStatus.title", {
             sendTicker: sendCurrency.ticker,
             receiveTicker: receiveCurrency.ticker,
@@ -61,7 +61,9 @@ export function TransactionHeader({
         <Skeleton className="h-24 w-176 rounded-sm" />
       )}
       {createdAt ? (
-        <p className="body-2 text-muted">{formatCreatedAt(createdAt, locale)}</p>
+        <p data-testid="swap-transaction-date" className="body-2 text-muted">
+          {formatCreatedAt(createdAt, locale)}
+        </p>
       ) : (
         <Skeleton className="mt-8 h-16 w-176 rounded-sm" />
       )}

@@ -11,6 +11,7 @@ import { getMockedERC20TokenTransfer } from "../test/fixtures/hgraph.fixture";
 import {
   getMockedMirrorAccount,
   getMockedMirrorContractCallResult,
+  getMockedMirrorToken,
   getMockedMirrorTransaction,
 } from "../test/fixtures/mirror.fixture";
 import type { StakingAnalysis } from "../types";
@@ -314,6 +315,11 @@ describe("getBlockV2", () => {
         amount: BigInt(-mockERC20Transfer.amount),
       },
     ]);
+    expect(result.transactions[0].details).toMatchObject({
+      gasUsed: mockContractCallResult.gas_used,
+      gasLimit: mockContractCallResult.gas_limit,
+      gasConsumed: mockContractCallResult.gas_consumed,
+    });
   });
 
   it("should deduplicate CONTRACT_CALL when matching ERC20 transfer exists", async () => {
@@ -547,9 +553,9 @@ describe("getBlockV2", () => {
     expect(result.transactions[0].operations).toHaveLength(1);
     expect(result.transactions[0].operations[0]).toEqual({
       type: "other",
-      operationType: mockStakingAnalysis.operationType,
-      stakedNodeId: mockStakingAnalysis.targetStakingNodeId,
-      previousStakedNodeId: mockStakingAnalysis.previousStakingNodeId,
+      ledgerOpType: mockStakingAnalysis.operationType,
+      targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
+      previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
       stakedAmount: mockStakingAnalysis.stakedAmount,
     });
   });
@@ -581,9 +587,9 @@ describe("getBlockV2", () => {
 
     expect(result.transactions[0].operations[0]).toEqual({
       type: "other",
-      operationType: mockStakingAnalysis.operationType,
-      stakedNodeId: mockStakingAnalysis.targetStakingNodeId,
-      previousStakedNodeId: mockStakingAnalysis.previousStakingNodeId,
+      ledgerOpType: mockStakingAnalysis.operationType,
+      targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
+      previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
       stakedAmount: mockStakingAnalysis.stakedAmount,
     });
   });
@@ -616,9 +622,9 @@ describe("getBlockV2", () => {
     expect(result.transactions[0].operations).toEqual([
       {
         type: "other",
-        operationType: mockStakingAnalysis.operationType,
-        stakedNodeId: mockStakingAnalysis.targetStakingNodeId,
-        previousStakedNodeId: mockStakingAnalysis.previousStakingNodeId,
+        ledgerOpType: mockStakingAnalysis.operationType,
+        targetStakingNodeId: mockStakingAnalysis.targetStakingNodeId,
+        previousStakingNodeId: mockStakingAnalysis.previousStakingNodeId,
         stakedAmount: mockStakingAnalysis.stakedAmount,
       },
     ]);
@@ -726,14 +732,16 @@ describe("getBlockV2", () => {
     ]);
   });
 
-  it("should emit ASSOCIATE_TOKEN operation with associatedTokenId for TOKENASSOCIATE transaction", async () => {
+  it("should emit ASSOCIATE_TOKEN operation with correct token id for TOKENASSOCIATE transaction", async () => {
+    const consensusTimestamp = "1764932745.835883000";
     const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash_token_associate",
       name: HEDERA_TRANSACTION_NAMES.TokenAssociate,
       result: "SUCCESS",
       charged_tx_fee: 51871165,
-      entity_id: "0.0.456858",
+      consensus_timestamp: consensusTimestamp,
+      entity_id: "0.0.999",
       staking_reward_transfers: [],
       transfers: [
         { account: "0.0.802", amount: 51871165 },
@@ -742,21 +750,58 @@ describe("getBlockV2", () => {
       token_transfers: [],
     });
 
+    const mockToken = getMockedMirrorToken({
+      token_id: "0.0.8279134",
+      created_timestamp: consensusTimestamp,
+    });
+
+    (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([mockToken]);
+
+    const result = await getBlockV2({ configOrCurrencyId, height: 100 });
+
+    expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledWith({
+      configOrCurrencyId,
+      address: "0.0.999",
+    });
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toEqual([
+      {
+        type: "other",
+        ledgerOpType: "ASSOCIATE_TOKEN",
+        associatedTokenId: mockToken.token_id,
+      },
+    ]);
+    expect(result.transactions[0].details).toMatchObject({
+      consensusTimestamp,
+      transactionId: mockTx.transaction_id,
+    });
+    expect(result.transactions[0].fees).toBe(BigInt(51871165));
+    expect(result.transactions[0].feesPayer).toBe("0.0.999");
+  });
+
+  it("should include consensusTimestamp and transactionId in tx.details", async () => {
+    const mockTx = getMockedMirrorTransaction({
+      transaction_id: "0.0.999-1704067210-123456789",
+      transaction_hash: "hash_tx",
+      name: "CRYPTOTRANSFER",
+      consensus_timestamp: "1704067210.123456789",
+      staking_reward_transfers: [],
+      transfers: [],
+      token_transfers: [],
+    });
+
     (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
 
     const result = await getBlockV2({ configOrCurrencyId, height: 100 });
 
-    expect(result.transactions).toHaveLength(1);
-    expect(result.transactions[0].operations).toEqual([
-      {
-        type: "other",
-        operationType: "ASSOCIATE_TOKEN",
-        associatedTokenId: "0.0.456858",
-      },
-    ]);
-    expect(result.transactions[0].fees).toBe(BigInt(51871165));
-    expect(result.transactions[0].feesPayer).toBe("0.0.999");
+    expect(result.transactions[0].details).toMatchObject({
+      consensusTimestamp: mockTx.consensus_timestamp,
+      transactionId: mockTx.transaction_id,
+    });
   });
 
   it("should handle CRYPTOUPDATEACCOUNT if it's not related to staking", async () => {

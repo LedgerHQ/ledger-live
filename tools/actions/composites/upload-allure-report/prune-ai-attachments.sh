@@ -52,6 +52,7 @@ find "$DST" -type d \( -name 'artifacts-ai' -o -name '*-ai-analysis' \) -prune -
 # Remove the AI-only text/xml attachments: delete the referenced attachment files,
 # then strip their entries from the result JSON.
 removed=0
+dst_abs=$(realpath -m -- "$DST")
 shopt -s nullglob
 for json in "$DST"/*-result.json "$DST"/*-container.json; do
   [ -f "$json" ] || continue
@@ -59,13 +60,21 @@ for json in "$DST"/*-result.json "$DST"/*-container.json; do
   while IFS= read -r src; do
     [ -n "$src" ] || continue
     case "$src" in
-      */* | ..)
-        echo "::warning::Skipping attachment with unexpected source path: $src"
+      /*)
+        echo "::warning::Skipping attachment with absolute source path: $src"
         continue
         ;;
     esac
-    if [ -f "$DST/$src" ]; then
-      rm -f "$DST/$src"
+    target=$(realpath -m -- "$DST/$src")
+    case "$target" in
+      "$dst_abs"/*) ;;
+      *)
+        echo "::warning::Skipping attachment outside results dir: $src"
+        continue
+        ;;
+    esac
+    if [ -f "$target" ]; then
+      rm -f -- "$target"
       removed=$((removed + 1))
     fi
   done < <(jq -r '[.. | objects | .attachments? // empty | .[]? | select(.type == "text/xml") | .source] | .[]' "$json")

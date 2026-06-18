@@ -10,6 +10,7 @@ import {
   setMarketOptions,
 } from "~/renderer/actions/market";
 import { marketCategorySelector, type MarketListCategory } from "~/renderer/reducers/market";
+import { getMarketPageCategoryAnalytics } from "LLD/features/Market/utils/marketPageAnalytics";
 
 export type MarketCategoryTab = {
   value: MarketListCategory;
@@ -32,7 +33,7 @@ const BUILT_IN_CATEGORY_TABS: MarketCategoryTab[] = [
 function trackCategoryTap(category: MarketListCategory) {
   track("button_clicked", {
     button: "category",
-    category,
+    category: getMarketPageCategoryAnalytics(category),
     page: "Market",
   });
 }

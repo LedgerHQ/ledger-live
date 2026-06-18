@@ -1,11 +1,10 @@
-import { Suspense, useMemo } from "react";
+import { Suspense } from "react";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import { Sidebar, ToolShell, Overview } from "../components";
 import { Loading } from "../components/Loading/Loading.web";
 import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
 import { DevToolsProvider } from "../context";
-import { tools as registry, type DevToolsConfig } from "@devtools/registry";
-import { lazyComponentsById } from "./LazyComponents";
+import { type DevToolsConfig } from "@devtools/registry";
 
 export interface DevToolsProps {
   config?: DevToolsConfig;
@@ -57,19 +56,9 @@ function DevToolsView({
 }
 
 export const DevTools = ({ config = [] }: DevToolsProps) => {
-  const tools = useMemo(() => {
-    return config.map(item => {
-      const tool = registry[item.id];
-      if (!tool) {
-        throw new Error(`Unknown devtools tool id: "${item.id}"`);
-      }
-      return { id: item.id, ...tool, component: lazyComponentsById[item.id] };
-    });
-  }, [config]);
-
   return (
     <DevToolsProvider value={config}>
-      <DevToolsView {...useDevToolsViewModel({ tools })} />
+      <DevToolsView {...useDevToolsViewModel({ config })} />
     </DevToolsProvider>
   );
 };

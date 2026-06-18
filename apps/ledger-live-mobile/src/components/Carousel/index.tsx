@@ -53,6 +53,7 @@ const Carousel = () => {
         <LogContentCardWrapper
           key={cardProps.id + index}
           id={cardProps.id}
+          displayedPosition={index}
           location={cardProps.location}
         >
           <CarouselCard id={cardProps.id} cardProps={cardProps} index={index} width={cardsWidth} />

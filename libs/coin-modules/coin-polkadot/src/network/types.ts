@@ -59,7 +59,8 @@ interface IChainType {
   asCustom?: Text;
 }
 interface IChainProperties {
-  ss58Format: string;
+  // Some chains (e.g. Westend Asset Hub) do not expose ss58Format in /runtime/spec.
+  ss58Format?: string;
   tokenDecimals: string;
   tokenSymbol: string;
 }

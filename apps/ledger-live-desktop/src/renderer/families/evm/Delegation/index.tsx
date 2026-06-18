@@ -109,8 +109,16 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
     [account, dispatch],
   );
   const onWithdraw = useCallback(
-    (validatorAddress: string, amount: BigNumber, withdrawId?: number) => {
-      dispatch(openModal("MODAL_EVM_WITHDRAW", { account, validatorAddress, amount, withdrawId }));
+    (validatorAddress: string, amount: BigNumber, withdrawId?: number, validatorId?: string) => {
+      dispatch(
+        openModal("MODAL_EVM_WITHDRAW", {
+          account,
+          validatorAddress,
+          amount,
+          withdrawId,
+          validatorId,
+        }),
+      );
     },
     [account, dispatch],
   );

@@ -25,6 +25,9 @@ export function SearchOverlayDefault() {
         limit={STOCKS_SUGGESTION_LIMIT}
         navigateToAsset={navigateToAsset}
         onSeeAll={navigateToStocksMarket}
+        listClassName="-mx-16"
+        scrollContainerClassName="px-16"
+        hideListGradient
       />
       {/* Perps section (LIVE-29947) */}
     </div>

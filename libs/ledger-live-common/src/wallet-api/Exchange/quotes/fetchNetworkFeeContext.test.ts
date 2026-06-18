@@ -17,10 +17,6 @@ jest.mock("../../../bridge", () => ({
   getAccountBridge: jest.fn(),
 }));
 
-jest.mock("../../../currencies", () => ({
-  getAbandonSeedAddress: jest.fn().mockReturnValue("0xabandon"),
-}));
-
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
 import { getAccountIdFromWalletAccountId } from "../../converters";
@@ -65,11 +61,13 @@ type MockBridge = {
   createTransaction: jest.Mock;
   prepareTransaction: jest.Mock;
   getTransactionStatus: jest.Mock;
+  getEstimationRecipient: jest.Mock;
 };
 
 function makeBridge(overrides: Partial<MockBridge> = {}): MockBridge {
   return {
     sync: jest.fn().mockReturnValue(of((acc: Account) => acc)),
+    getEstimationRecipient: jest.fn().mockReturnValue("0xabandon"),
     createTransaction: jest.fn().mockReturnValue({}),
     prepareTransaction: jest.fn().mockResolvedValue({
       maxFeePerGas: "20000000000",
@@ -173,6 +171,9 @@ describe("fetchNetworkFeeContext", () => {
     mockedGetParent.mockReturnValue(undefined as unknown as Account);
     mockedGetMain.mockReturnValue(account);
     const bridge = makeBridge({
+      getEstimationRecipient: jest
+        .fn()
+        .mockReturnValue("bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs"),
       prepareTransaction: jest.fn().mockResolvedValue({}),
       getTransactionStatus: jest.fn().mockResolvedValue({
         estimatedFees: new BigNumber("3000"),

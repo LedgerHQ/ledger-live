@@ -1,4 +1,24 @@
-import { hasThemedImage, resolveThemedImageUrl } from "../resolveThemedImageUrl";
+import {
+  createThemedImageUrls,
+  hasThemedImage,
+  resolveThemedImageUrl,
+} from "../resolveThemedImageUrl";
+
+describe("createThemedImageUrls", () => {
+  it("should map a single url to both light and dark themed fields", () => {
+    expect(createThemedImageUrls("https://example.com/image.png")).toEqual({
+      imageUrlLight: "https://example.com/image.png",
+      imageUrlDark: "https://example.com/image.png",
+    });
+  });
+
+  it("should fall back to empty strings when url is undefined", () => {
+    expect(createThemedImageUrls(undefined)).toEqual({
+      imageUrlLight: "",
+      imageUrlDark: "",
+    });
+  });
+});
 
 describe("resolveThemedImageUrl", () => {
   const urls = {

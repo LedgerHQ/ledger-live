@@ -1,11 +1,9 @@
-import { useMemo } from "react";
-import { useDevToolsNavigation } from "../hooks";
+import { useToolsFromConfig } from "../hooks";
 import { useDevToolsStorage } from "../hooks/useDevToolsStorage.web";
-import type { Category, Tool, ToolId } from "@devtools/registry";
-import { filterToolsByPlatform } from "../utils/toolsUtils";
+import type { Category, DevToolsConfig, Tool, ToolId } from "@devtools/registry";
 
 interface DevToolsInput {
-  tools: Tool[];
+  config: DevToolsConfig;
 }
 
 export interface DevToolsViewProps {
@@ -16,10 +14,11 @@ export interface DevToolsViewProps {
   onClearTool: () => void;
 }
 
-export function useDevToolsViewModel({ tools }: DevToolsInput): DevToolsViewProps {
-  const webTools = useMemo(() => filterToolsByPlatform(tools, "web"), [tools]);
-  const { activeTool, setActiveToolId, clearActiveTool, categories } =
-    useDevToolsNavigation(webTools);
+export function useDevToolsViewModel({ config }: DevToolsInput): DevToolsViewProps {
+  const { activeTool, setActiveToolId, clearActiveTool, categories } = useToolsFromConfig(
+    config,
+    "web",
+  );
   const { recentToolIds } = useDevToolsStorage(activeTool?.id, setActiveToolId);
 
   return {

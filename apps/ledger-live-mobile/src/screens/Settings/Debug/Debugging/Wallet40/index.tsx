@@ -221,6 +221,13 @@ export default function DebugWallet40() {
           arrowRight
           onPress={() => navigation.navigate(ScreenName.DebugProductTour)}
         />
+        <SettingsRow
+          title="Q2 Wallet V4 Tour (Images)"
+          desc="Test image-based Q2 Wallet V4 tour drawer"
+          iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
+          arrowRight
+          onPress={() => navigation.navigate(ScreenName.DebugQ2WalletV4Tour)}
+        />
       </Box>
     </ScrollView>
   );

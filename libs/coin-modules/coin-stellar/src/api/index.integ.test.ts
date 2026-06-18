@@ -4,16 +4,16 @@ import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from ".";
 
 /**
- * Testnet scan: https://testnet.lumenscan.io/
+ * Mainnet explorer: https://stellar.expert/explorer/public
  */
 describe("Stellar Api", () => {
   let module: CoinModuleApi<StellarMemo>;
-  const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
+  const ADDRESS = "GBAMU3EJX6KLW2JEIAIEAYNLPKHFPJR6OYQYX5HPYB3CVQ6QD4XUJ23J";
 
   beforeAll(() => {
     module = createApi({
       explorer: {
-        url: "https://horizon-testnet.stellar.org/",
+        url: "https://stellar.coin.ledger.com",
       },
     });
   });
@@ -34,21 +34,25 @@ describe("Stellar Api", () => {
         memo: { type: "NO_MEMO" },
       });
 
-      // Then
-      expect(result).toEqual({ value: BigInt(100) });
+      expect(result.value).toBeGreaterThanOrEqual(100n);
     });
   });
 
   describe("listOperations", () => {
     let txs: Operation[];
+    let nextCursor: string | undefined;
 
     beforeAll(async () => {
-      const result = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
+      const result = await module.listOperations(ADDRESS, {
+        minHeight: 0,
+        order: "asc",
+      });
       txs = result.items;
+      nextCursor = result.next;
     });
 
-    it("returns a list regarding address parameter", async () => {
-      expect(txs.length).toBeGreaterThanOrEqual(100);
+    it("returns a page of operations for the address", async () => {
+      expect(txs.length).toBeGreaterThanOrEqual(1);
       txs.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(ADDRESS) || operation.recipients.includes(ADDRESS);
@@ -63,18 +67,30 @@ describe("Stellar Api", () => {
       });
     });
 
-    it("returns all operations", async () => {
-      expect(txs.length).toBeGreaterThanOrEqual(100);
-      const checkSet = new Set(txs.map(elt => elt.tx.hash));
+    it("returns unique operations within the page", async () => {
+      expect(txs.length).toBeGreaterThanOrEqual(1);
+      const checkSet = new Set(txs.map(elt => elt.id));
       expect(checkSet.size).toEqual(txs.length);
     });
 
-    it("returns all operations from the latest, but in asc order", async () => {
-      const { items: txsDesc } = await module.listOperations(ADDRESS, {
+    it("returns a cursor for pagination when more pages exist", async () => {
+      // The test account has enough operations to fill at least one page
+      expect(typeof nextCursor).toBe("string");
+    });
+
+    it("supports cursor-based pagination", async () => {
+      if (!nextCursor) return; // skip if account has fewer ops than page size
+      const page2 = await module.listOperations(ADDRESS, {
         minHeight: 0,
-        order: "desc",
+        order: "asc",
+        cursor: nextCursor,
       });
-      expect(txsDesc[0]).toStrictEqual(txs[0]);
+      expect(page2.items.length).toBeGreaterThanOrEqual(1);
+      // No overlap between pages
+      const page1Ids = new Set(txs.map(op => op.id));
+      page2.items.forEach(op => {
+        expect(page1Ids.has(op.id)).toBe(false);
+      });
     });
   });
 

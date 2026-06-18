@@ -23,6 +23,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { getBitcoinEstimationRecipient } from "@ledgerhq/coin-bitcoin/constants";
 import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
 import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { computeDustAmount } from "@ledgerhq/coin-bitcoin/wallet-btc/utils";
@@ -153,6 +154,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: account => getBitcoinEstimationRecipient(account.currency.id),
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

@@ -36,11 +36,19 @@ export const getTransactionStatus: AccountBridge<
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const amount = new BigNumber(transaction?.amount || 0);
-  let estimatedFees = new BigNumber(transaction?.fees || 0);
-  if (estimatedFees.eq(0) && transaction.mode === "delegate") {
-    estimatedFees = BigNumber(ONE_SUI).div(10);
+  // Displayed fee/total use the accurate dry-run gas (what the tx actually pays), so the
+  // confirmation screen and the optimistic op match the eventually-synced confirmed op.
+  const estimatedFees = new BigNumber(transaction?.fees || 0);
+  // Balance validation reserves the gas BUDGET (≥ fee): Sui requires the gas coins to cover the
+  // budget, so insufficient-balance is checked against it — not the smaller actual fee. Staking
+  // reserves a fixed ONE_SUI/10 until a dry-run budget is available.
+  let gasBudget = new BigNumber(transaction?.gasBudget || 0);
+  if (gasBudget.lt(estimatedFees)) gasBudget = estimatedFees;
+  if (gasBudget.eq(0) && transaction.mode === "delegate") {
+    gasBudget = BigNumber(ONE_SUI).div(10);
   }
   const totalSpent = transaction.subAccountId ? amount : amount.plus(estimatedFees);
+  const requiredBalance = transaction.subAccountId ? amount : amount.plus(gasBudget);
   let accountBalance = account.balance;
 
   if (transaction.subAccountId) {
@@ -87,11 +95,11 @@ export const getTransactionStatus: AccountBridge<
       errors.amount = new NotEnoughBalance();
     }
 
-    if (transaction.subAccountId && estimatedFees.gt(account.balance)) {
+    if (transaction.subAccountId && gasBudget.gt(account.balance)) {
       errors.amount = new NotEnoughBalanceInParentAccount();
     }
 
-    if (totalSpent.gt(accountBalance) && !errors.amount) {
+    if (requiredBalance.gt(accountBalance) && !errors.amount) {
       errors.amount = new NotEnoughBalance();
     }
   }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   isMarketCurrencyData,
   resolveAssetDetailMarketInfo,
@@ -32,11 +33,18 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
   const [selectedRange, setSelectedRange] = useState<LineChartRange>("1d");
 
   const marketState = isMarketCurrencyData(location.state) ? location.state : undefined;
-  const decodedAssetId = routeAssetId ? decodeRouteParam(routeAssetId) : undefined;
+  const decodedAssetId = routeAssetId ? decodeRouteParam(routeAssetId).toLowerCase() : undefined;
 
   const distributionItem = useMemo(
     () => resolveDistributionItem({ routeAssetId, decodedAssetId, marketState, distribution }),
     [routeAssetId, decodedAssetId, marketState, distribution],
+  );
+
+  // The market API expects a CoinGecko id, which only coincidentally matches the
+  // ledger id for some coins (e.g. "hedera" vs "hedera-hashgraph").
+  const fallbackCurrency = useMemo(
+    () => (decodedAssetId ? findCryptoCurrencyById(decodedAssetId) : undefined),
+    [decodedAssetId],
   );
 
   const { marketApiId, knownLedgerIds } = useMemo(
@@ -44,9 +52,10 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
       resolveAssetMarketInputs({
         distributionItem,
         marketState,
+        currency: fallbackCurrency,
         fallbackId: decodedAssetId,
       }),
-    [distributionItem, marketState, decodedAssetId],
+    [distributionItem, marketState, fallbackCurrency, decodedAssetId],
   );
 
   const {

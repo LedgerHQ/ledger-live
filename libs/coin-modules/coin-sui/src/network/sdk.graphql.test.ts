@@ -22,11 +22,13 @@ import {
   executeTransactionGraphQL,
   getBlockGraphQL,
   getBlockInfoFieldsGraphQL,
+  getTransactionsWithCheckpointDigestsGraphQL,
   graphqlFetcher,
   resolveCheckpointSequenceForDigestGraphQL,
   simulateTransactionGraphQL,
 } from "./sdk.graphql";
 import type { SuiGraphQLClient } from "./graphql/client";
+import { isFinalizedTxNode } from "./graphql/transactions";
 import {
   addr,
   batchExchangeRateCalls,
@@ -1023,6 +1025,117 @@ describe("getOperations on GraphQL transport", () => {
 
     expect(query).toHaveBeenCalledTimes(1);
     expect(Array.isArray(ops)).toBe(true);
+  });
+
+  it("drops not-yet-finalized (indexing-lagged) nodes instead of mapping Failed/1970 ops", async () => {
+    const ADDR = addr("11");
+    const query = jest.fn().mockResolvedValueOnce({
+      data: {
+        transactions: {
+          nodes: [
+            {
+              digest: "0xfinalized",
+              effects: {
+                status: "SUCCESS",
+                checkpoint: { sequenceNumber: 10, digest: "0xcp1" },
+                timestamp: "2026-05-19T00:00:00.000Z",
+              },
+              transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+            },
+            // indexing lag: only the digest is known yet
+            { digest: "0xlagged", effects: null, transactionJson: null },
+          ],
+          pageInfo: { hasPreviousPage: false, startCursor: null },
+        },
+      },
+    });
+    mockNext({ query });
+
+    const ops = await getOperations("acc-1", ADDR, undefined, undefined, "sui-gql-getops");
+    const hashes = ops.map(o => o.hash);
+    expect(hashes).toContain("0xfinalized");
+    expect(hashes).not.toContain("0xlagged");
+  });
+
+  it("keeps a finalized FAILURE node (a real on-chain failure still shows)", async () => {
+    const ADDR = addr("11");
+    const query = jest.fn().mockResolvedValueOnce({
+      data: {
+        transactions: {
+          nodes: [
+            {
+              digest: "0xfail",
+              effects: {
+                status: "FAILURE",
+                checkpoint: { sequenceNumber: 11, digest: "0xcp2" },
+                timestamp: "2026-05-19T00:00:00.000Z",
+                effectsJson: { status: { error: { description: "MoveAbort" } } },
+              },
+              transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+            },
+          ],
+          pageInfo: { hasPreviousPage: false, startCursor: null },
+        },
+      },
+    });
+    mockNext({ query });
+
+    const ops = await getOperations("acc-1", ADDR, undefined, undefined, "sui-gql-getops");
+    expect(ops.find(o => o.hash === "0xfail")?.hasFailed).toBe(true);
+  });
+});
+
+describe("isFinalizedTxNode", () => {
+  it("is true for a node with an effects.timestamp", () => {
+    expect(
+      isFinalizedTxNode({
+        digest: "0x1",
+        effects: { timestamp: "2026-05-19T00:00:00.000Z" },
+      } as never),
+    ).toBe(true);
+  });
+
+  it("is false for a node with null effects (indexing lag)", () => {
+    expect(isFinalizedTxNode({ digest: "0x1", effects: null } as never)).toBe(false);
+  });
+
+  it("is false when effects carries no timestamp", () => {
+    expect(isFinalizedTxNode({ digest: "0x1", effects: { status: "SUCCESS" } } as never)).toBe(
+      false,
+    );
+  });
+});
+
+describe("getTransactionsWithCheckpointDigestsGraphQL", () => {
+  const fakeApi = (query: jest.Mock): SuiGraphQLClient =>
+    ({ query }) as unknown as SuiGraphQLClient;
+
+  it("maps finalized nodes with their checkpoint digest and drops not-yet-finalized ones", async () => {
+    const query = jest.fn().mockResolvedValueOnce({
+      data: {
+        transactions: {
+          nodes: [
+            // `last/before` yields ascending-within-page; the fn reverses to newest-first.
+            { digest: "0xlagged", effects: null }, // indexing lag — no timestamp → dropped
+            {
+              digest: "0xfinal",
+              effects: {
+                status: "SUCCESS",
+                timestamp: "2026-05-19T00:00:00.000Z",
+                checkpoint: { sequenceNumber: 9, digest: "0xcpDigest" },
+              },
+              transactionJson: { sender: addr("11") },
+            },
+          ],
+        },
+      },
+    });
+
+    const out = await getTransactionsWithCheckpointDigestsGraphQL(fakeApi(query), addr("11"), 50);
+
+    expect(out).toHaveLength(1);
+    expect(out[0].tx.digest).toBe("0xfinal");
+    expect(out[0].checkpointDigest).toBe("0xcpDigest");
   });
 });
 

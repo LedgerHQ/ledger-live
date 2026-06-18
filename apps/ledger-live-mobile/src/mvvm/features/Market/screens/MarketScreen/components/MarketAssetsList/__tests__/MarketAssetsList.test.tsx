@@ -30,6 +30,7 @@ const filters: MarketFilters = {
 const defaultProps = {
   assets: [asset],
   loading: false,
+  fetchingNextPage: false,
   error: false,
   emptyState: undefined,
   selectedCategory: "all",
@@ -101,5 +102,17 @@ describe("MarketAssetsList", () => {
     render(<MarketAssetsList {...defaultProps} assets={[]} error />);
 
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsError)).toBeVisible();
+  });
+
+  it("should render the footer spinner while fetching the next page", () => {
+    render(<MarketAssetsList {...defaultProps} fetchingNextPage />);
+
+    expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner)).toBeVisible();
+  });
+
+  it("should not render the footer spinner while the list is empty", () => {
+    render(<MarketAssetsList {...defaultProps} assets={[]} fetchingNextPage />);
+
+    expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner)).toBeNull();
   });
 });

@@ -1,7 +1,7 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { DUMMY_RECIPIENT } from "../constants";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { getTransactionStatus } from "./getTransactionStatus";
@@ -17,7 +17,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     ...createTransaction(account),
     ...transaction,
     // fee estimation might require a recipient to work, in that case, we use a dummy one
-    recipient: transaction?.recipient || getAbandonSeedAddress("boilerplate"),
+    recipient: transaction?.recipient || DUMMY_RECIPIENT,
     amount: new BigNumber(0),
   });
   const status = await getTransactionStatus(mainAccount, newTransaction);

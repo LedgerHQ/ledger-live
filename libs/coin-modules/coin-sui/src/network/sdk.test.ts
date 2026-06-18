@@ -12,6 +12,7 @@ import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import { mist, ONE_SUI } from "../constants";
 import * as sdkOriginal from "./sdk";
+import { graphqlTxToJsonRpcResponse, type GraphQLTransactionNode } from "./graphql/transactions";
 
 // Create a mutable copy of the sdk module for mocking specific functions
 const mockLoadOperations = jest.fn<
@@ -612,6 +613,101 @@ describe("SDK Functions", () => {
     expect(sdk.getOperationCoinType(suiTx as SuiTransactionBlockResponse)).toBe(
       sdk.DEFAULT_COIN_TYPE,
     );
+  });
+
+  test("getOperationCoinType returns DEFAULT_COIN_TYPE for a GraphQL (long-form) SUI tx", () => {
+    const graphqlTx = graphqlTxToJsonRpcResponse({
+      digest: "0xtx",
+      transactionJson: { sender: "0xowner" },
+      effects: {
+        status: "SUCCESS",
+        balanceChangesJson: [
+          {
+            address: "0xowner",
+            coinType:
+              "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+            amount: "-1009880",
+          },
+        ],
+      },
+    } as unknown as GraphQLTransactionNode);
+
+    expect(graphqlTx.balanceChanges?.[0]).toMatchObject({ coinType: "0x2::sui::SUI" });
+    expect(sdk.getOperationCoinType(graphqlTx)).toBe(sdk.DEFAULT_COIN_TYPE);
+  });
+
+  test("transactionToOperation maps a GraphQL (gRPC-proto) staking tx to a DELEGATE op with JSON-RPC parity", () => {
+    const sender = "0xf58d8d4ba6a2160f630c600a1b946cff4dac25c3fcac241e91bbd12791cd7528";
+    const validator = "0x4fffd0005522be4bc029724c7f0f6ed7093a6bf3a09b90e62f61dc15181e1a3e";
+    const graphqlTx = graphqlTxToJsonRpcResponse({
+      digest: "FTow2FZLfLEwd4gGy4PUmBGkMD6gK27gge374H2rbRtS",
+      transactionJson: {
+        kind: {
+          kind: "PROGRAMMABLE_TRANSACTION",
+          programmableTransaction: {
+            inputs: [
+              { kind: "PURE", pure: "gO9pf1EAAAA=" }, // u64 350030000000
+              {
+                kind: "SHARED",
+                objectId: "0x0000000000000000000000000000000000000000000000000000000000000005",
+                version: "1",
+                mutable: true,
+                mutability: "MUTABLE",
+              },
+              { kind: "PURE", pure: "T//QAFUivkvAKXJMfw9u1wk6a/Ogm5DmL2HcFRgeGj4=" }, // validator address
+            ],
+            commands: [
+              { splitCoins: { coin: { kind: "GAS" }, amounts: [{ kind: "INPUT", input: 0 }] } },
+              {
+                moveCall: {
+                  package: "0x0000000000000000000000000000000000000000000000000000000000000003",
+                  module: "sui_system",
+                  function: "request_add_stake",
+                  arguments: [
+                    { kind: "INPUT", input: 1 },
+                    { kind: "RESULT", result: 0 },
+                    { kind: "INPUT", input: 2 },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        sender,
+        gasPayment: { objects: [], owner: sender, price: "100", budget: "11815536" },
+      },
+      effects: {
+        status: "SUCCESS",
+        timestamp: "2026-06-10T12:00:00.000Z",
+        balanceChangesJson: [
+          {
+            address: sender,
+            coinType:
+              "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+            amount: "-350039759296",
+          },
+        ],
+        gasEffects: {
+          gasSummary: {
+            computationCost: 100000,
+            storageCost: 935833600,
+            storageRebate: 926174304,
+            nonRefundableStorageFee: 9355296,
+          },
+        },
+      },
+    } as unknown as GraphQLTransactionNode);
+
+    const operation = sdk.transactionToOperation("mockAccountId", sender, graphqlTx);
+    expect(operation.type).toBe("DELEGATE");
+    expect(operation.value.toString()).toBe("350039759296");
+    expect(operation.fee.toString()).toBe("9759296");
+    expect(operation.senders).toEqual([sender]);
+    // [validator, validator] mirrors JSON-RPC behaviour byte-for-byte: getOperationRecipients
+    // pushes every pure address input, then the isStaking branch pushes the validator again.
+    expect(operation.recipients).toEqual([validator, validator]);
+    expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
+    expect(sdk.getFeesPayer(graphqlTx)).toBe(sender);
   });
 
   test("transactionToOperation should map transaction to operation", () => {
@@ -1502,6 +1598,34 @@ describe("getStakingEventDetails", () => {
   it("should return empty object when no staking events", () => {
     expect(sdk.getStakingEventDetails(makeTx([]))).toEqual({});
     expect(sdk.getStakingEventDetails(makeTx(undefined))).toEqual({});
+  });
+
+  it("matches a GraphQL (long-form) StakingRequestEvent after adapter normalisation", () => {
+    const tx = graphqlTxToJsonRpcResponse({
+      digest: "0xstake",
+      transactionJson: {},
+      effects: {
+        status: "SUCCESS",
+        events: {
+          nodes: [
+            {
+              contents: {
+                type: {
+                  repr: "0x0000000000000000000000000000000000000000000000000000000000000003::validator::StakingRequestEvent",
+                },
+                json: { validator_address: "0xabc", staked_sui_id: "0xobj123" },
+              },
+            },
+          ],
+        },
+      },
+    } as unknown as GraphQLTransactionNode);
+
+    expect(tx.events?.[0].type).toBe("0x3::validator::StakingRequestEvent");
+    expect(sdk.getStakingEventDetails(tx)).toEqual({
+      validatorAddress: "0xabc",
+      stakedObjectId: "0xobj123",
+    });
   });
 });
 
@@ -3588,6 +3712,9 @@ describe("getCoinsForAmount – SIP-58 fake coins", () => {
   });
 });
 
+const PADDED_ACCUMULATOR_ROOT_ID =
+  "0x0000000000000000000000000000000000000000000000000000000000000acc";
+
 describe("isSettlementTransaction", () => {
   const makeSettlementTx = (
     overrides: Partial<SuiTransactionBlockResponse> = {},
@@ -3605,8 +3732,8 @@ describe("isSettlementTransaction", () => {
               {
                 type: "object" as const,
                 objectType: "sharedObject" as const,
-                objectId: "0xacc",
-                initialSharedVersion: "1",
+                objectId: PADDED_ACCUMULATOR_ROOT_ID,
+                initialSharedVersion: "684265543",
                 mutable: true,
               },
             ],
@@ -3633,8 +3760,34 @@ describe("isSettlementTransaction", () => {
       ...overrides,
     }) as SuiTransactionBlockResponse;
 
-  it("returns true for a transaction with 0xacc object input", () => {
+  it("returns true for a settlement tx with the padded accumulator root object input", () => {
     expect(sdk.isSettlementTransaction(makeSettlementTx())).toBe(true);
+  });
+
+  it("returns true for the short-form 0xacc object input", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).inputs[0].objectId = "0xacc";
+    expect(sdk.isSettlementTransaction(tx)).toBe(true);
+  });
+
+  it("returns true for a mixed-case padded accumulator root object input", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).inputs[0].objectId =
+      "0x0000000000000000000000000000000000000000000000000000000000000ACC";
+    expect(sdk.isSettlementTransaction(tx)).toBe(true);
+  });
+
+  it("returns false for a different padded system object input", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).inputs[0].objectId =
+      "0x0000000000000000000000000000000000000000000000000000000000000005";
+    expect(sdk.isSettlementTransaction(tx)).toBe(false);
+  });
+
+  it("returns false when the accumulator root input is not mutable", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).inputs[0].mutable = false;
+    expect(sdk.isSettlementTransaction(tx)).toBe(false);
   });
 
   it("returns false for a normal user transaction", () => {
@@ -3746,6 +3899,33 @@ describe("getUnifiedBalanceChanges", () => {
       coinType,
       owner: { AddressOwner: addr },
       amount: "-500",
+    });
+  });
+
+  it("normalises a long-form (Balance-wrapped) accumulator event ty to the short coinType", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "merge",
+            ty: "0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI>",
+            value: { integer: "1000" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual({
+      coinType: "0x2::sui::SUI",
+      owner: { AddressOwner: addr },
+      amount: "1000",
     });
   });
 
@@ -3968,8 +4148,8 @@ describe("settlement transaction filtering in operations", () => {
             {
               type: "object" as const,
               objectType: "sharedObject" as const,
-              objectId: "0xacc",
-              initialSharedVersion: "1",
+              objectId: PADDED_ACCUMULATOR_ROOT_ID,
+              initialSharedVersion: "684265543",
               mutable: true,
             },
           ],

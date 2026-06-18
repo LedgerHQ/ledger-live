@@ -57,6 +57,38 @@ describe("getTransactionStatus", () => {
     const expected = { fees: new FeeNotLoaded() };
     expect(result.errors).toEqual(expected);
   });
+  it("reports the accurate fee (not the gas budget) as estimatedFees and totals against it", async () => {
+    // Delegate: accurate dry-run gas (~0.00976 SUI) vs reserved budget (0.1 SUI). The displayed fee
+    // + total must use the accurate fee so the optimistic op matches the eventually-synced op.
+    const transaction = createFixtureTransaction({
+      mode: "delegate",
+      amount: BigNumber(1_000_000_000), // 1 SUI
+      fees: BigNumber(9_759_296), // accurate gas
+      gasBudget: BigNumber(100_000_000), // 0.1 SUI reservation
+    });
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(result.estimatedFees).toEqual(BigNumber(9_759_296));
+    expect(result.totalSpent).toEqual(BigNumber(1_009_759_296)); // amount + accurate fee
+    expect(result.errors.amount).toBeUndefined(); // ~18 SUI balance covers 1 + 0.1 budget
+  });
+  it("validates available balance against the gas budget, not the smaller accurate fee", async () => {
+    // 1.05 SUI covers amount + accurate fee (1.00976) but NOT amount + budget (1.1): Sui requires
+    // the gas coins to cover the budget, so this must still be flagged NotEnoughBalance.
+    const lowBalanceAccount = createFixtureAccount({
+      balance: BigNumber(1_050_000_000),
+      spendableBalance: BigNumber(1_050_000_000),
+    });
+    const transaction = createFixtureTransaction({
+      mode: "delegate",
+      amount: BigNumber(1_000_000_000),
+      fees: BigNumber(9_759_296),
+      gasBudget: BigNumber(100_000_000),
+    });
+    const result = await getTransactionStatus(lowBalanceAccount, transaction);
+
+    expect(result.errors.amount).toEqual(new NotEnoughBalance());
+  });
   it("should return errors if not enought balance for fees", async () => {
     const transaction = createFixtureTransaction({
       subAccountId: "subAccountId",

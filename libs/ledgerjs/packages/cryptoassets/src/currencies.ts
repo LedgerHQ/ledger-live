@@ -5271,6 +5271,42 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [blockscoutExplorerView("https://sepolia.uniscan.xyz/")],
   },
+  robinhood: {
+    type: "CryptoCurrency",
+    id: "robinhood",
+    coinType: CoinType.ETH,
+    name: "Robinhood Chain",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "robinhood",
+    color: "#00C805",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 4663,
+    },
+    explorerViews: [blockscoutExplorerView("https://explorer.chain.robinhood.com")],
+  },
+  robinhood_testnet: {
+    type: "CryptoCurrency",
+    id: "robinhood_testnet",
+    coinType: CoinType.ETH,
+    name: "Robinhood Chain Testnet",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "robinhood_testnet",
+    color: "#00C805",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH"),
+    disableCountervalue: true,
+    isTestnetFor: "robinhood",
+    ethereumLikeInfo: {
+      chainId: 46630,
+    },
+    explorerViews: [blockscoutExplorerView("https://explorer.testnet.chain.robinhood.com")],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};

@@ -168,7 +168,7 @@ const fetchStashAddr = async (addr: string, currency?: CryptoCurrency): Promise<
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar(`/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`, currency);
+  } = await callSidecar(`/pallets/staking/storage/ledger?keys[]=${addr}`, currency);
   return data.value?.stash ?? null;
 };
 
@@ -188,7 +188,7 @@ const fetchControllerAddr = async (
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar(`/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`, currency);
+  } = await callSidecar(`/pallets/staking/storage/bonded?keys[]=${addr}`, currency);
   return data.value ?? null;
 };
 
@@ -522,22 +522,17 @@ export const getTransactionParams = async (currency?: CryptoCurrency) => {
   };
 };
 
-type PostInfo = {
-  actualWeight: { refTime: string; proofSize: string } | null;
-  paysFee: "Yes" | "No";
-};
-
 type SubmitExtrinsicDryRunResponse = {
-  at: { hash: string; height: string };
-  result:
-    | {
-        resultType: "DispatchOutcome";
-        result: { postInfo: PostInfo; ok?: null };
-      }
-    | {
-        resultType: "DispatchError";
-        result: { postInfo: PostInfo; error: Record<string, unknown> };
-      };
+  // "DispatchOutcome": the call would succeed.
+  // "DispatchError": the call would be dispatched but fail (result holds { post_info, error }).
+  // "TransactionValidityError": the tx is invalid (result holds the validity error directly).
+  resultType: "DispatchOutcome" | "DispatchError" | "TransactionValidityError";
+  result: {
+    post_info?: Record<string, unknown>;
+    // present when resultType === "DispatchError"
+    error?: Record<string, unknown>;
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -562,8 +557,11 @@ export const submitExtrinsicDryRun = async (
     },
   );
 
-  if (data.result.resultType === "DispatchError") {
-    throw new Error(`polkadot: ${JSON.stringify(data.result.result.error)}`);
+  if (data.resultType === "DispatchError") {
+    throw new Error(`polkadot: ${JSON.stringify(data.result.error ?? data.result)}`);
+  }
+  if (data.resultType === "TransactionValidityError") {
+    throw new Error(`polkadot: ${JSON.stringify(data.result)}`);
   }
 
   return data;

@@ -49,7 +49,7 @@ import type {
   SuiValidator,
   Transaction as TransactionType,
 } from "../types";
-import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
+import { ensureAddressFormat, toShortStructTag, normalizeSuiAddressForComparison } from "../utils";
 import { fetcher, inferNetworkFromUrl } from "./fetcher";
 import { getCurrentSuiPreloadData } from "./preload-data";
 import { mapDryRunError } from "../logic/mapDryRunError";
@@ -202,6 +202,10 @@ function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTran
  * accumulator state at checkpoint boundaries.  They can be identified by a
  * mutable reference to the root accumulator object `0xacc` in their inputs.
  *
+ * RPC returns object ids in canonical 32-byte padded form (`0x0000…0acc` — e.g.
+ * mainnet settlement tx `8th3QUBRS4kXxNrXXgVb8oH85NFEprXk3DXqGQjv7YiN`), so
+ * inputs are normalized to the short form before comparing.
+ *
  * These are internal bookkeeping transactions and should be excluded from the
  * user-facing operations history.
  */
@@ -217,7 +221,7 @@ export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolea
       "objectType" in input &&
       input.objectType === "sharedObject" &&
       input.mutable === true &&
-      input.objectId === ACCUMULATOR_ROOT_OBJECT_ID,
+      toShortStructTag(input.objectId) === ACCUMULATOR_ROOT_OBJECT_ID,
   );
 }
 
@@ -251,7 +255,7 @@ export function getUnifiedBalanceChanges(tx: SuiTransactionBlockResponse): Balan
   for (const evt of accEvents) {
     if (!("integer" in evt.value)) continue;
 
-    const coinType = stripBalanceWrapper(evt.ty);
+    const coinType = stripBalanceWrapper(toShortStructTag(evt.ty));
     const amount = evt.operation === "merge" ? evt.value.integer : `-${evt.value.integer}`;
     const alreadyCovered = base.some(
       bc =>
@@ -1669,10 +1673,14 @@ export const paymentInfo = async (
       }
     },
     graphql: async api => {
-      const sim = await simulateTransactionGraphQL(api, txb);
-      const fees =
-        BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
-      return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
+      try {
+        const sim = await simulateTransactionGraphQL(api, txb);
+        const fees =
+          BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
+        return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
+      } catch (error) {
+        throw mapDryRunError(error);
+      }
     },
   });
 };
@@ -1718,8 +1726,6 @@ export const executeTransactionBlock = async (
     graphql: async api => {
       const signatures = Array.isArray(params.signature) ? params.signature : [params.signature];
       const r = await executeTransactionGraphQL(api, params.transactionBlock, signatures);
-      // Mirror the JSON-RPC branch: a null status (effects/status absent in the
-      // GraphQL response) is a transport-shape issue, not a real on-chain failure.
       if (r.status === null) {
         return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
       }

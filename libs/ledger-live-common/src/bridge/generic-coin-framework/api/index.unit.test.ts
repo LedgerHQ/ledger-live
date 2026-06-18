@@ -1,4 +1,6 @@
 import { getCoinModuleApi } from "./index";
+import { coinModuleLoaders } from "../../../coin-modules/loaders";
+import { registerCoinModules, resetCoinModulesForTests } from "../../../coin-modules/registry";
 import * as xrpModule from "@ledgerhq/coin-xrp/api/index";
 import * as stellarModule from "@ledgerhq/coin-stellar/api/index";
 import * as cantonModule from "@ledgerhq/coin-canton/api/index";
@@ -43,6 +45,9 @@ jest.mock("./network/network-coin-service", () => ({
 }));
 
 describe("getCoinModuleApi", () => {
+  beforeAll(() => registerCoinModules(coinModuleLoaders));
+  afterAll(() => resetCoinModulesForTests());
+
   beforeEach(() => {
     jest.clearAllMocks();
 

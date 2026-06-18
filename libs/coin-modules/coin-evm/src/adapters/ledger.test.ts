@@ -792,6 +792,56 @@ describe("EVM Family", () => {
           expect(result).toHaveLength(1);
           expect(result[0].senders).toEqual([]);
         });
+
+        it("should detect a Monad staking withdraw (value 0 contract call) as a WITHDRAW_UNBONDED operation instead of FEES", () => {
+          const monadAccountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "monad",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const ledgerOp: LedgerExplorerOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "0",
+            gas: "62350",
+            gas_price: "81876342142",
+            max_fee_per_gas: "85000000000",
+            max_priority_fee_per_gas: "33000000000",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            // Monad native staking precompile
+            to: "0x0000000000000000000000000000000000001000",
+            transfer_events: [],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 10,
+            // withdraw(uint64 validatorId, uint8 withdrawId) selector + args
+            input:
+              "0xaed2ee73" +
+              "0000000000000000000000000000000000000000000000000000000000000007" +
+              "0000000000000000000000000000000000000000000000000000000000000002",
+            gas_used: "51958",
+            cumulative_gas_used: "16087064",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: {
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              height: 38476740,
+              time: "2023-01-24T17:11:45Z",
+            },
+          };
+
+          const result = ledgerOperationToOperations(monadAccountId, ledgerOp);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].type).toBe("WITHDRAW_UNBONDED");
+        });
       });
 
       describe("ledgerERC20EventToOperations", () => {

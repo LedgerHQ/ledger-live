@@ -6,6 +6,7 @@ import { BorrowLiveAppView } from ".";
 import { useBorrowLiveAppViewModel } from "LLM/features/Borrow/screens/BorrowLiveApp/useBorrowLiveAppViewModel";
 import { useDispatch } from "~/context/hooks";
 import { createOpenBorrowInfoBottomSheetHandler } from "LLM/features/Borrow/handlers/borrowDialogHandlers";
+import { createOpenBorrowErrorBottomSheetHandler } from "LLM/features/Borrow/handlers/borrowErrorBottomSheetStore";
 
 type BorrowLiveAppWrapperProps = Readonly<{
   action?: "go-back";
@@ -41,6 +42,7 @@ export function BorrowLiveAppWrapper({
         onGoToSwap: onWalletApiGoToSwap,
       }),
       "custom.bottomSheet.info": createOpenBorrowInfoBottomSheetHandler(dispatch),
+      "custom.bottomSheet.error": createOpenBorrowErrorBottomSheetHandler(dispatch),
     }),
     [dispatch, onWalletApiGoBack, onWalletApiGoToSwap],
   );

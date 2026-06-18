@@ -42,7 +42,7 @@ describe("prepareTransaction", () => {
   it("returns a new Transaction with new fees", async () => {
     // GIVEN
     const fees = new BigNumber(42);
-    mockGetFeesForTransaction.mockResolvedValue(fees);
+    mockGetFeesForTransaction.mockResolvedValue({ fees, gasBudget: fees });
     const tx = createFixtureTransaction();
 
     // WHEN
@@ -64,7 +64,7 @@ describe("prepareTransaction", () => {
     // GIVEN
     const fees = new BigNumber(42);
     const calculatedAmount = new BigNumber(2000);
-    mockGetFeesForTransaction.mockResolvedValue(fees);
+    mockGetFeesForTransaction.mockResolvedValue({ fees, gasBudget: fees });
     mockCalculateAmount.mockReturnValue(calculatedAmount);
     const tx = createFixtureTransaction({ useAllAmount: true });
 
@@ -80,7 +80,7 @@ describe("prepareTransaction", () => {
   it("sets mode to token.send and updates coinType for token transactions", async () => {
     // GIVEN
     const fees = new BigNumber(42);
-    mockGetFeesForTransaction.mockResolvedValue(fees);
+    mockGetFeesForTransaction.mockResolvedValue({ fees, gasBudget: fees });
     const tx = createFixtureTransaction({
       subAccountId: "tokenSubAccountId",
       coinType: TEST_TOKEN_COIN_TYPE,

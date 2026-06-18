@@ -1,8 +1,6 @@
 import React from "react";
 import { LineChart as LumenLineChart } from "@ledgerhq/lumen-ui-react-visualization";
 import { LUMEN_CHART_OVERFLOW_MARGIN } from "./constants";
-import { LineChartLoading } from "./LineChartLoading";
-import { LineChartError } from "./LineChartError";
 import { LineChartPoints } from "./LineChartPoints";
 import { LineChartScrubber } from "./LineChartScrubber";
 import type {
@@ -19,8 +17,7 @@ import type {
 export type LineChartPlotContentProps = Readonly<{
   height: number;
   isLoading: boolean;
-  isError: boolean;
-  errorMessage?: string;
+  emptyLabel: string;
   chartSeries: LineChartSeries[];
   points: LineChartPointMarker[];
   pointTooltips: ReadonlyMap<number, LineChartPointTooltipData>;
@@ -40,8 +37,7 @@ export type LineChartPlotContentProps = Readonly<{
 export function LineChartPlotContent({
   height,
   isLoading,
-  isError,
-  errorMessage,
+  emptyLabel,
   chartSeries,
   points,
   pointTooltips,
@@ -57,14 +53,6 @@ export function LineChartPlotContent({
   xAxis,
   yAxis,
 }: LineChartPlotContentProps) {
-  if (isError) {
-    return <LineChartError height={height} message={errorMessage} />;
-  }
-
-  if (isLoading) {
-    return <LineChartLoading height={height} />;
-  }
-
   return (
     <div
       data-testid="line-chart-plot"
@@ -73,6 +61,8 @@ export function LineChartPlotContent({
     >
       <LumenLineChart
         series={chartSeries}
+        loading={isLoading}
+        emptyLabel={emptyLabel}
         height={height}
         width="100%"
         showArea={showArea}

@@ -15,14 +15,16 @@ describe("estimateMaxSpendable", () => {
     const account: SuiAccount = createFixtureAccount({ spendableBalance: balance });
     const transaction: Transaction = createFixtureTransaction();
     const fees = new BigNumber(10);
-    mockEstimateFees.mockResolvedValue(fees);
+    // Budget (gas reservation) is ≥ the actual fee; max-spendable must reserve the BUDGET.
+    const gasBudget = new BigNumber(20);
+    mockEstimateFees.mockResolvedValue({ fees, gasBudget });
 
     // WHEN
     const result = await estimateMaxSpendable({ account, transaction });
 
     // THEN
     expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(balance.minus(fees));
+    expect(result).toEqual(balance.minus(gasBudget));
   });
 
   it("should apply delegation-specific constraints and gas reservation", async () => {

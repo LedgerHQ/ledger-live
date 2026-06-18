@@ -4,6 +4,7 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SCROLL_UP_BUTTON_THRESHOLD, SCROLL_TO_TOP_EVENT } from "./constants";
 import { shouldDisplayRightPanel as isRightPanelPage } from "./utils";
 import { useRightPanelVisibility } from "LLD/components/RightPanel/useRightPanelVisibility";
+import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRightPanelSwapAvailability";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
@@ -29,9 +30,12 @@ export const usePageViewModel = (): PageViewModelResult => {
     shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
   const isRightPanelEnabled = useRightPanelVisibility();
+  const isSwapAvailableForRoute = useRightPanelSwapAvailability(pathname);
 
   const shouldRenderRightPanel =
-    isRightPanelPage(pathname, { shouldDisplayAggregatedAssets }) && isRightPanelEnabled;
+    isRightPanelPage(pathname, { shouldDisplayAggregatedAssets }) &&
+    isRightPanelEnabled &&
+    isSwapAvailableForRoute;
 
   // Callback ref to capture the scroller element
   const pageScrollerRef = useCallback((node: HTMLDivElement | null) => {

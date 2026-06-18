@@ -4,6 +4,7 @@ import {
   BottomSheetHeader,
   BottomSheetView,
   Box,
+  Divider,
   ListItem,
   ListItemContent,
   ListItemLeading,
@@ -48,7 +49,7 @@ function MarketFilterSection<TValue extends string>({
 
   return (
     <Box>
-      <Text typography="body2SemiBold" lx={{ color: "muted", marginBottom: "s8" }}>
+      <Text typography="body2SemiBold" lx={{ color: "muted", marginBottom: "s4" }}>
         {title}
       </Text>
       <Box testID={testID}>
@@ -95,7 +96,7 @@ export function MarketFiltersDrawer({ filters }: MarketFiltersDrawerProps) {
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
-        <Box lx={{ gap: "s24", paddingHorizontal: "s16", paddingTop: "s12" }}>
+        <Box lx={{ paddingTop: "s12" }}>
           <MarketFilterSection
             title={t("market.assets.filters.sorting")}
             items={filters.sortingOptions}
@@ -103,6 +104,7 @@ export function MarketFiltersDrawer({ filters }: MarketFiltersDrawerProps) {
             onValueChange={filters.onSelectSorting}
             testID={MARKET_SCREEN_TEST_IDS.filtersSortingList}
           />
+          <Divider orientation="horizontal" lx={{ marginVertical: "s8" }} />
           <MarketFilterSection
             title={t("market.assets.filters.timeframe")}
             items={filters.timeframeOptions}

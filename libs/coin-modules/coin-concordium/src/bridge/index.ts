@@ -7,6 +7,7 @@ import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import concordiumCoinConfig from "../config";
+import { CONCORDIUM_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
 import {
   type ConcordiumAccount,
@@ -58,6 +59,7 @@ export function createBridges(
     prepareTransaction,
     getTransactionStatus,
     estimateMaxSpendable,
+    getEstimationRecipient: () => CONCORDIUM_DUMMY_ADDRESS,
     sync,
     receive,
     signOperation,

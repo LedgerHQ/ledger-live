@@ -1,5 +1,4 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -15,6 +14,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
+import { CANTON_UNSET_RECIPIENT } from "../constants";
 import { isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
@@ -144,8 +144,7 @@ function validateUtxoCount(account: CantonAccount, transaction: Transaction): Er
     return null;
   }
 
-  const abandonSeedAddress = getAbandonSeedAddress(account.currency.id);
-  if (transaction.recipient.includes(abandonSeedAddress)) {
+  if (transaction.recipient.includes(CANTON_UNSET_RECIPIENT)) {
     return null;
   }
 

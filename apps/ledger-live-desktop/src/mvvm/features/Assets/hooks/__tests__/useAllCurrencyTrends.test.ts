@@ -1,6 +1,9 @@
 import { renderHook } from "tests/testSetup";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { getCurrencyPortfolio } from "@ledgerhq/live-countervalues/portfolio";
+import {
+  getCurrencyPortfolio,
+  getCurrentBalanceCountervalueChange,
+} from "@ledgerhq/live-countervalues/portfolio";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { CurrencyPortfolio } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -22,10 +25,12 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
 }));
 jest.mock("@ledgerhq/live-countervalues/portfolio", () => ({
   getCurrencyPortfolio: jest.fn(),
+  getCurrentBalanceCountervalueChange: jest.fn(),
 }));
 
 const mockedUseCountervaluesState = jest.mocked(useCountervaluesState);
 const mockedGetCurrencyPortfolio = jest.mocked(getCurrencyPortfolio);
+const mockedGetCurrentBalanceCountervalueChange = jest.mocked(getCurrentBalanceCountervalueChange);
 
 const mockCounterValueCurrency = getFiatCurrencyByTicker("USD");
 const mockCountervaluesState: CounterValuesState = {
@@ -62,6 +67,7 @@ describe("useAllCurrencyTrends", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseCountervaluesState.mockReturnValue(mockCountervaluesState);
+    mockedGetCurrentBalanceCountervalueChange.mockReturnValue({ value: 0, percentage: null });
   });
 
   it("should compute trends for all real items with one shared countervalues subscription", () => {
@@ -123,12 +129,13 @@ describe("useAllCurrencyTrends", () => {
     expect(result.current.get(cardano.id)).toBeNull();
   });
 
-  it("should return null when portfolio change percentage is undefined", () => {
+  it("should return null when both portfolio change and balance fallback are unavailable", () => {
     const bitcoinAccount = genAccount("btc-undefined-trend", {
       currency: getCryptoCurrencyById("bitcoin"),
     });
 
     mockedGetCurrencyPortfolio.mockReturnValueOnce(makePortfolio(undefined));
+    mockedGetCurrentBalanceCountervalueChange.mockReturnValueOnce({ value: 0, percentage: null });
 
     const { result } = renderHook(
       () =>
@@ -146,5 +153,65 @@ describe("useAllCurrencyTrends", () => {
     );
 
     expect(result.current.get(BITCOIN_ASSET.currency.id)).toBeNull();
+  });
+
+  it("should fall back to the current-balance price change when portfolio change is unavailable", () => {
+    const bitcoinAccount = genAccount("btc-fallback-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const bitcoinAccounts = [bitcoinAccount];
+
+    mockedGetCurrencyPortfolio.mockReturnValueOnce(makePortfolio(undefined));
+    mockedGetCurrentBalanceCountervalueChange.mockReturnValueOnce({ value: 42, percentage: 3.21 });
+
+    const range = "day" as const;
+    const { result } = renderHook(
+      () =>
+        useAllCurrencyTrends(
+          [
+            {
+              ...BITCOIN_ASSET,
+              accounts: bitcoinAccounts,
+              isPlaceholder: false,
+            },
+          ],
+          range,
+        ),
+      { initialState },
+    );
+
+    expect(mockedGetCurrentBalanceCountervalueChange).toHaveBeenCalledWith(
+      bitcoinAccounts,
+      range,
+      mockCountervaluesState,
+      mockCounterValueCurrency,
+    );
+    expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(3.21);
+  });
+
+  it("should not use the balance fallback when the portfolio change is available", () => {
+    const bitcoinAccount = genAccount("btc-no-fallback-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+
+    mockedGetCurrencyPortfolio.mockReturnValueOnce(makePortfolio(7.89));
+
+    const { result } = renderHook(
+      () =>
+        useAllCurrencyTrends(
+          [
+            {
+              ...BITCOIN_ASSET,
+              accounts: [bitcoinAccount],
+              isPlaceholder: false,
+            },
+          ],
+          "day",
+        ),
+      { initialState },
+    );
+
+    expect(mockedGetCurrentBalanceCountervalueChange).not.toHaveBeenCalled();
+    expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(7.89);
   });
 });

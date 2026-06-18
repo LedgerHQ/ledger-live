@@ -42,6 +42,7 @@ export type MarketAssetsParams = {
 export interface MarketAssetsResult {
   assets: MarketAssetDisplayData[];
   loading: boolean;
+  isFetchingNextPage: boolean;
   isError: boolean;
   emptyState: EmptyState;
   onEndReached: () => void;
@@ -152,6 +153,7 @@ export function useMarketAssets({
   return {
     assets,
     loading,
+    isFetchingNextPage,
     isError: shouldFetchAssets && result.isError,
     emptyState: getEmptyState({ isFavoritesCategory, hasFavoriteIds, isStocksCategory }),
     onEndReached,

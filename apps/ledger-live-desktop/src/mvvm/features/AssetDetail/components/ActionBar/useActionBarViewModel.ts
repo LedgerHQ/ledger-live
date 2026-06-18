@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import {
-  flattenAccounts,
-  getAccountCurrency,
-  isTokenAccount,
-} from "@ledgerhq/live-common/account/index";
+import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
@@ -26,6 +22,7 @@ import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useBuyNavigation } from "LLD/features/Market/hooks/useBuyNavigation";
 import { useSellNavigation } from "LLD/features/Market/hooks/useSellNavigation";
+import { resolveRampLedgerIds } from "LLD/features/AssetDetail/utils/resolveRampLedgerIds";
 
 type UseActionBarViewModelProps = Readonly<{
   distributionItem?: DistributionItem;
@@ -39,6 +36,7 @@ type UseActionBarViewModelProps = Readonly<{
 
 export type ActionBarViewModel = Readonly<{
   showSkeleton: boolean;
+  isCurrencySupported: boolean;
   receiveLabel: string;
   buyLabel: string;
   sellLabel: string;
@@ -64,24 +62,6 @@ function pickPrimaryAccount(accounts: AccountLike[]): AccountLike | undefined {
 function lookupParentAccount(accounts: Account[], child: AccountLike): Account | undefined {
   if (!isTokenAccount(child)) return undefined;
   return accounts.find(account => account.id === child.parentId);
-}
-
-function ledgerIdsFromLedgerCurrency(ledgerCurrency: CryptoOrTokenCurrency): string[] {
-  const ids = new Set<string>([ledgerCurrency.id]);
-  if (ledgerCurrency.type === "TokenCurrency") {
-    ids.add(ledgerCurrency.parentCurrencyId);
-  }
-  return [...ids];
-}
-
-function collectLedgerIdsForRampFromAccounts(accounts: AccountLike[]): string[] {
-  const ids = new Set<string>();
-  for (const a of accounts) {
-    for (const id of ledgerIdsFromLedgerCurrency(getAccountCurrency(a))) {
-      ids.add(id);
-    }
-  }
-  return [...ids];
 }
 
 function resolvePrimaryAccount(
@@ -117,22 +97,10 @@ export function useActionBarViewModel({
   const { isCurrencyAvailable } = useRampCatalog();
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
 
-  const ledgerIdsForRamp = useMemo(() => {
-    if (ledgerIds?.length) {
-      return [...ledgerIds];
-    }
-    if (marketCurrencyData?.ledgerIds?.length) {
-      return marketCurrencyData.ledgerIds;
-    }
-    const accounts = distributionItem?.accounts;
-    if (accounts?.length) {
-      return collectLedgerIdsForRampFromAccounts(accounts);
-    }
-    if (ledgerCurrency?.id) {
-      return ledgerIdsFromLedgerCurrency(ledgerCurrency);
-    }
-    return [];
-  }, [ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency]);
+  const ledgerIdsForRamp = useMemo(
+    () => resolveRampLedgerIds({ ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency }),
+    [ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency],
+  );
 
   const rampActiveLedgerIds = useMemo(
     () => ledgerIdsForRamp.filter(id => !deactivatedCurrencyIds.has(id)),
@@ -248,6 +216,7 @@ export function useActionBarViewModel({
 
   return {
     showSkeleton: isPageLoading,
+    isCurrencySupported: rampActiveLedgerIds.length > 0,
     receiveLabel: t("quickActions.receive"),
     buyLabel: t("quickActions.buy"),
     sellLabel: t("quickActions.sell"),

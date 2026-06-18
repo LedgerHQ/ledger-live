@@ -13,6 +13,7 @@ import {
   createMockMarketCurrencyData,
 } from "@ledgerhq/live-common/market/utils/fixtures";
 import { MarketItemPerformer, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { selectMarketBannerRanking } from "~/renderer/reducers/marketBanner";
 import { MARKET_BANNER_ITEMS_COUNT } from "../utils/constants";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketPerformers");
@@ -244,6 +245,42 @@ describe("MarketBanner view models", () => {
 
       expect(mockedUseMarketPerformers).toHaveBeenCalledWith(expect.anything(), { skip: true });
       expect(result.current.items.map(item => item.id)).toEqual(["bitcoin"]);
+    });
+
+    it("resets a stale favorites ranking to trending and runs the performers query when no coin is starred", () => {
+      mockPerformersQuery({ data: MOCK_MARKET_PERFORMERS });
+      mockMarketDataQuery({});
+
+      const { result, store } = renderHook(() => useMarketBannerViewModel(), {
+        initialState: {
+          ...assetDiscoverabilityOn,
+          marketBanner: { ranking: "favorites" },
+          settings: { starredMarketCoins: [] },
+        },
+      });
+
+      expect(selectMarketBannerRanking(store.getState())).toBe("trending");
+      expect(mockedUseMarketPerformers).toHaveBeenCalledWith(expect.anything(), { skip: false });
+      expect(mockedUseMarketData).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ enabled: false }),
+      );
+      expect(result.current.items.length).toBeGreaterThan(0);
+    });
+
+    it("keeps the favorites ranking when at least one coin is starred", () => {
+      mockPerformersQuery({ data: MOCK_MARKET_PERFORMERS });
+      mockMarketDataQuery({ data: [createMockMarketCurrencyData({ id: "bitcoin" })] });
+
+      const { store } = renderHook(() => useMarketBannerViewModel(), {
+        initialState: {
+          ...assetDiscoverabilityOn,
+          marketBanner: { ranking: "favorites" },
+          settings: { starredMarketCoins: ["bitcoin"] },
+        },
+      });
+
+      expect(selectMarketBannerRanking(store.getState())).toBe("favorites");
     });
 
     it("returns performers data and disables the favorites query for a performers ranking", () => {

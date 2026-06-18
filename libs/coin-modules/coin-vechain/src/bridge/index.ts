@@ -16,6 +16,7 @@ import { getAccountShape } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import resolver from "../signer";
+import { VECHAIN_DUMMY_ADDRESS } from "../constants";
 import type { Transaction, VechainSigner } from "../types";
 import { validateAddress } from "../common-logic/validateAddress";
 
@@ -46,6 +47,7 @@ export function buildAccountBridge(
 
   return {
     estimateMaxSpendable,
+    getEstimationRecipient: () => VECHAIN_DUMMY_ADDRESS,
     createTransaction,
     updateTransaction,
     getTransactionStatus,

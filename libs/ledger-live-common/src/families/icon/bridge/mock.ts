@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { ICON_DUMMY_ADDRESS } from "@ledgerhq/coin-icon/constants";
 import {
   getSerializedAddressParameters,
   updateTransaction,
@@ -84,6 +85,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => ICON_DUMMY_ADDRESS,
 };
 
 const currencyBridge: CurrencyBridge = {

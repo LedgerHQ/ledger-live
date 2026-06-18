@@ -13,6 +13,7 @@ import {
   getSupportedMarketListTimeframe,
   isMarketListSortingSupported,
 } from "./marketListFilters";
+import { getMarketSortListTracking } from "./marketTracking";
 
 export type MarketFilterOption<TValue extends string> = {
   value: TValue;
@@ -32,8 +33,6 @@ export type MarketFilters = {
   onSelectTimeframe: (timeframe: MarketListFilterTimeframe) => void;
 };
 
-const ALL_NETWORKS_VALUE = "all";
-
 const sortingOptions: MarketFilterOption<MarketListSorting>[] = [
   { value: "marketCap", labelKey: "market.assets.filters.sortingOptions.marketCap" },
   { value: "volume", labelKey: "market.assets.filters.sortingOptions.volume" },
@@ -52,17 +51,11 @@ const timeframeOptions: MarketFilterOption<MarketListFilterTimeframe>[] = [
 function trackMarketListSort({
   sorting,
   timeframe,
-  network,
 }: {
   sorting: MarketListSorting;
   timeframe: MarketListFilterTimeframe;
-  network: string | undefined;
 }) {
-  track("sort_market_list", {
-    sorting,
-    timeframe,
-    network: network ?? ALL_NETWORKS_VALUE,
-  });
+  track("sort_market_list", getMarketSortListTracking(sorting, timeframe));
 }
 
 export function useMarketFilters(): MarketFilters {
@@ -89,7 +82,7 @@ export function useMarketFilters(): MarketFilters {
       }
 
       dispatch(setMarketListSorting(nextSorting));
-      trackMarketListSort({ sorting: nextSorting, timeframe, network: undefined });
+      trackMarketListSort({ sorting: nextSorting, timeframe });
     },
     [dispatch, timeframe],
   );
@@ -97,7 +90,7 @@ export function useMarketFilters(): MarketFilters {
   const onSelectTimeframe = useCallback(
     (nextTimeframe: MarketListFilterTimeframe) => {
       dispatch(setMarketListTimeframe(nextTimeframe));
-      trackMarketListSort({ sorting, timeframe: nextTimeframe, network: undefined });
+      trackMarketListSort({ sorting, timeframe: nextTimeframe });
     },
     [dispatch, sorting],
   );

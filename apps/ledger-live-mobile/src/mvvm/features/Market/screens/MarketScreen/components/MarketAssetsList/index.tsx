@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, type ReactNode } from "react";
 import { SectionList, type SectionListRenderItemInfo } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { MarketListCategory } from "~/reducers/types";
 import AssetListItem, { type MarketAssetDisplayData } from "LLM/components/AssetListItem";
@@ -20,6 +20,7 @@ const HORIZONTAL_PADDING = 16;
 type Props = Readonly<{
   assets: MarketAssetDisplayData[];
   loading: boolean;
+  fetchingNextPage: boolean;
   error: boolean;
   emptyState: "favorites" | "stocks" | undefined;
   selectedCategory: MarketListCategory;
@@ -35,6 +36,7 @@ type Props = Readonly<{
 export function MarketAssetsList({
   assets,
   loading,
+  fetchingNextPage,
   error,
   emptyState,
   selectedCategory,
@@ -88,6 +90,15 @@ export function MarketAssetsList({
     [selectedCategory, categoryTabs, onSelectCategory],
   );
 
+  const footerSpinner = fetchingNextPage ? (
+    <Spinner
+      size={24}
+      color="base"
+      lx={footerSpinnerStyle}
+      testID={MARKET_SCREEN_TEST_IDS.assetsFooterSpinner}
+    />
+  ) : null;
+
   const listFooter =
     assets.length === 0 ? (
       <Box style={{ minHeight: footerMinHeight }}>
@@ -98,7 +109,9 @@ export function MarketAssetsList({
           showEmptySearchState={!showSubheader}
         />
       </Box>
-    ) : null;
+    ) : (
+      footerSpinner
+    );
 
   return (
     <>
@@ -143,4 +156,9 @@ const stickyCategorySwitcherStyle: LumenViewStyle = {
 
 const rowStyle: LumenViewStyle = {
   marginHorizontal: "-s8",
+};
+
+const footerSpinnerStyle: LumenViewStyle = {
+  marginVertical: "s24",
+  alignSelf: "center",
 };

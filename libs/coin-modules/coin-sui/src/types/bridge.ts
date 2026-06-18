@@ -40,7 +40,14 @@ export type Transaction = TransactionCommon & {
   mode: SuiTransactionMode;
   family: "sui";
   amount: BigNumber | null;
+  /** Accurate dry-run gas (computation + storage − rebate) — what the tx is expected to pay.
+   * Used for the displayed fee + the optimistic operation value, so the pending op matches the
+   * eventually-synced confirmed op. NOT the gas reservation — see {@link gasBudget}. */
   fees?: BigNumber | null;
+  /** Gas budget the network reserves against the gas coins (always ≥ {@link fees}; staking
+   * reserves a fixed `ONE_SUI/10`). Used for NotEnoughBalance validation and max-spendable, since
+   * Sui requires the gas coins to cover the budget — not just the actual fee. */
+  gasBudget?: BigNumber | null;
   errors?: Record<string, Error>;
   skipVerify?: boolean;
   coinType: string;
@@ -66,6 +73,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   mode: SuiTransactionMode;
   coinType: string;
   fees?: string;
+  gasBudget?: string;
   // also the transaction fields as raw JSON data
 };
 

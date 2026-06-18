@@ -1,31 +1,48 @@
-import type { Action, ReducerMap } from "redux-actions";
-import { handleActions } from "redux-actions";
-import { createSelector } from "~/context/selectors";
-import {
-  BorrowActionTypes,
-  BorrowPayload,
-  BorrowSetInfoBottomSheetPayload,
-} from "../actions/types";
-import type { BorrowState, State } from "./types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { State } from "~/reducers/types";
+
+export type BorrowInfoBottomSheetState = {
+  title: string;
+  message: string;
+  linkText?: string;
+  linkHref?: string;
+};
+
+export type BorrowErrorBottomSheetState = {
+  title: string;
+  description: string;
+  ctaLabel: string;
+};
+
+export type BorrowState = {
+  infoBottomSheet?: BorrowInfoBottomSheetState;
+  errorBottomSheet?: BorrowErrorBottomSheetState;
+};
 
 export const INITIAL_STATE: BorrowState = {
   infoBottomSheet: undefined,
+  errorBottomSheet: undefined,
 };
 
-const handlers: ReducerMap<BorrowState, BorrowPayload> = {
-  [BorrowActionTypes.BORROW_INFO_BOTTOM_SHEET]: (state, action): BorrowState => ({
-    ...state,
-    infoBottomSheet: (action as Action<BorrowSetInfoBottomSheetPayload>).payload,
-  }),
-};
+const borrowSlice = createSlice({
+  name: "borrow",
+  initialState: INITIAL_STATE,
+  reducers: {
+    setInfoBottomSheet: (state, action: PayloadAction<BorrowInfoBottomSheetState | undefined>) => {
+      state.infoBottomSheet = action.payload;
+    },
+    setErrorBottomSheet: (
+      state,
+      action: PayloadAction<BorrowErrorBottomSheetState | undefined>,
+    ) => {
+      state.errorBottomSheet = action.payload;
+    },
+  },
+});
 
-const storeSelector = (state: State): BorrowState => state.borrow;
+export const { setInfoBottomSheet, setErrorBottomSheet } = borrowSlice.actions;
 
-export const exportSelector = storeSelector;
+export const borrowInfoBottomSheetSelector = (state: State) => state.borrow.infoBottomSheet;
+export const borrowErrorBottomSheetSelector = (state: State) => state.borrow.errorBottomSheet;
 
-export const borrowInfoBottomSheetSelector = createSelector(
-  storeSelector,
-  (state: BorrowState) => state.infoBottomSheet,
-);
-
-export default handleActions<BorrowState, BorrowPayload>(handlers, INITIAL_STATE);
+export default borrowSlice.reducer;

@@ -1322,6 +1322,9 @@
       "select": "Select Account"
     }
   },
+  "lineChart": {
+    "error": "Unable to load chart"
+  },
   "location": {
     "titleServiceRequired": "Location services required",
     "descriptionServiceRequired": "Ledger Wallet requires location services to pair your device through Bluetooth.",
@@ -1335,6 +1338,28 @@
     "appNotFound": "Borrow app not found",
     "infoModal": {
       "close": "Close"
+    }
+  },
+  "backupHub": {
+    "featureIntro": {
+      "title": "Create a backup you can't lose",
+      "subtitle": "An encrypted backup of your Secret Recovery Phrase helps you get back access, no matter what.",
+      "primaryCta": "Try 1 month free",
+      "secondaryCta": "Log in",
+      "items": {
+        "secure": {
+          "title": "Backup tied to your ID",
+          "subtitle": "Only you can authorize a wallet recovery."
+        },
+        "access": {
+          "title": "Advanced backup security",
+          "subtitle": "Encrypted, fragmented, and secured in hardware security modules."
+        },
+        "restore": {
+          "title": "Restore access anytime",
+          "subtitle": "All you need is your ID, Ledger Wallet, and a Ledger device."
+        }
+      }
     }
   },
   "earn": {
@@ -1463,8 +1488,14 @@
   },
   "globalSearch": {
     "searchPlaceholder": "Search assets",
+    "searchPlaceholders": {
+      "crypto": "Search crypto",
+      "stablecoins": "Search stablecoins",
+      "stock": "Search stock",
+      "addresses": "Search addresses"
+    },
     "sections": {
-      "cryptos": "Cryptos",
+      "cryptos": "Crypto",
       "stocks": "Stocks"
     }
   },
@@ -1719,6 +1750,32 @@
       "cta": "Fund your wallet",
       "title": "Start by funding your wallet",
       "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
+    }
+  },
+  "q2WalletV4Tour": {
+    "cta": {
+      "start": "See what's new",
+      "next": "Next",
+      "done": "Got it"
+    },
+    "portfolio": {
+      "title": "Smarter portfolio management. Clearer paths to growth"
+    },
+    "balance": {
+      "title": "One balance for each asset",
+      "subTitle": "Multi-chain assets like USDT are now shown as one total. Simple, accurate, clear."
+    },
+    "returns": {
+      "title": "Your returns, front and center",
+      "subTitle": "See profit and loss on every asset, across your portfolio and analytics page."
+    },
+    "earn": {
+      "title": "Test your earn potential",
+      "subTitle": "Simulate what rewards you can earn and build a growth plan that fits your goals."
+    },
+    "protocols": {
+      "title": "More protocols, more rewards",
+      "subTitle": "Stablecoins and top picks, surfaced right in your wallet. Less searching. More deciding."
     }
   },
   "discover": {
@@ -3287,6 +3344,7 @@
   "crypto": {
     "title": "Crypto",
     "stablecoinTitle": "Stablecoin",
+    "stocksTitle": "Stocks",
     "errorState": "An error occurred while loading your assets",
     "emptyState": "No assets to display"
   },
@@ -4476,7 +4534,16 @@
       "processingTransaction": "Your transaction is being processed",
       "sign": {
         "title": "Continue on your Ledger {{wording}}",
-        "description": "Follow the instructions displayed on your Secure Touchscreen."
+        "description": "Follow the instructions displayed on your Secure Touchscreen.",
+        "cancelled": {
+          "title": "Transaction canceled",
+          "description": "You rejected the transaction. Your funds won't be affected.",
+          "close": "Close",
+          "retry": "Try again"
+        }
+      },
+      "confirmation": {
+        "viewTransaction": "View transaction"
       },
       "gasOptionsSync": {
         "warningTitle": "Unable to refresh network fees",
@@ -8223,8 +8290,8 @@
       "filters": {
         "accessibilityLabel": "Open asset filters",
         "title": "Filters",
-        "sorting": "Sorting",
-        "timeframe": "Timeframe",
+        "sorting": "Sort assets by",
+        "timeframe": "Choose timeframe",
         "sortingOptions": {
           "marketCap": "Market cap",
           "volume": "Volume",
@@ -9924,6 +9991,30 @@
       "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
+    },
+    "backupHub": {
+      "title": "Wallet backups",
+      "description": "Protect your assets with a combination of backup solutions for your Seed Phrase Recovery.",
+      "compareFooter": "Compare all backup methods",
+      "sections": {
+        "digital": "Digital ID-based backups",
+        "physical": "Physical backups"
+      },
+      "recover": {
+        "title": "Ledger Recover",
+        "notSubscribed": "Create a backup you can't lose",
+        "inProgress": "Finish setting up your backup.",
+        "done": "Manage your backup",
+        "discover": "Discover"
+      },
+      "recoveryKey": {
+        "title": "Ledger Recovery Key",
+        "description": "A PIN-protected smart card"
+      },
+      "secretRecoveryPhrase": {
+        "title": "24-word metal storage",
+        "description": "Fire and water resistant protection."
+      }
     },
     "help": {
       "title": "Help",

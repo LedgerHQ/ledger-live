@@ -1,5 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { useTradeAvailability, type TradeAvailability } from "@ledgerhq/asset-detail";
 import { track } from "~/analytics";
 import { useFooterViewModel } from "../useFooterViewModel";
 
@@ -7,15 +8,10 @@ const mockHandleOpenBuySell = jest.fn();
 const mockHandleOpenSwap = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
 const mockUseOpenReceiveDrawer = jest.fn();
-const mockIsCurrencyAvailable = jest.fn();
-const mockIsAcceptedCurrency = jest.fn().mockReturnValue(true);
 
-jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
-  useRampCatalog: () => ({ isCurrencyAvailable: mockIsCurrencyAvailable }),
-}));
-
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
-  useAcceptedCurrency: () => mockIsAcceptedCurrency,
+jest.mock("@ledgerhq/asset-detail", () => ({
+  ...jest.requireActual("@ledgerhq/asset-detail"),
+  useTradeAvailability: jest.fn(),
 }));
 
 jest.mock("LLM/features/Buy", () => ({
@@ -33,25 +29,42 @@ jest.mock("LLM/features/Receive", () => ({
   },
 }));
 
+const mockedUseTradeAvailability = jest.mocked(useTradeAvailability);
+const setAvailability = (overrides: Partial<TradeAvailability> = {}) =>
+  mockedUseTradeAvailability.mockReturnValue({
+    availableOnBuy: true,
+    availableOnSwap: true,
+    isCurrencySupported: true,
+    isResolved: true,
+    ...overrides,
+  });
+
 const bitcoin = getCryptoCurrencyById("bitcoin");
 
 describe("useFooterViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setAvailability();
   });
 
   describe("isBuyAvailable", () => {
-    it("returns true when the ramp catalog supports the currency", () => {
-      mockIsCurrencyAvailable.mockReturnValue(true);
-      const { result } = renderHook(() => useFooterViewModel(bitcoin));
+    it("returns true when the asset is supported and buyable", () => {
+      setAvailability({ availableOnBuy: true });
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
       expect(result.current.isBuyAvailable).toBe(true);
-      expect(mockIsCurrencyAvailable).toHaveBeenCalledWith("bitcoin", "onRamp");
     });
 
-    it("returns false when the ramp catalog does not support the currency", () => {
-      mockIsCurrencyAvailable.mockReturnValue(false);
-      const { result } = renderHook(() => useFooterViewModel(bitcoin));
+    it("returns false when the asset is not buyable", () => {
+      setAvailability({ availableOnBuy: false });
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isBuyAvailable).toBe(false);
+    });
+
+    it("returns false when the currency is not supported, even if buyable", () => {
+      setAvailability({ availableOnBuy: true, isCurrencySupported: false });
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
       expect(result.current.isBuyAvailable).toBe(false);
     });
@@ -63,10 +76,24 @@ describe("useFooterViewModel", () => {
     });
   });
 
+  describe("secondaryButton", () => {
+    it("is null when the currency is not supported", () => {
+      setAvailability({ isCurrencySupported: false });
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.secondaryButton).toBeNull();
+    });
+
+    it("is receive when supported and the wallet has no funds", () => {
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.secondaryButton).toBe("receive");
+    });
+  });
+
   describe("press handlers", () => {
     it("onBuyPress fires tracking and opens buy flow", () => {
-      mockIsCurrencyAvailable.mockReturnValue(true);
-      const { result } = renderHook(() => useFooterViewModel(bitcoin));
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
       act(() => result.current.onBuyPress());
 
@@ -79,7 +106,7 @@ describe("useFooterViewModel", () => {
     });
 
     it("onSwapPress fires tracking and opens swap flow", () => {
-      const { result } = renderHook(() => useFooterViewModel(bitcoin));
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
       act(() => result.current.onSwapPress());
 
@@ -92,7 +119,7 @@ describe("useFooterViewModel", () => {
     });
 
     it("onReceivePress fires tracking and opens receive flow", () => {
-      const { result } = renderHook(() => useFooterViewModel(bitcoin));
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
       act(() => result.current.onReceivePress());
 
@@ -110,14 +137,6 @@ describe("useFooterViewModel", () => {
 
       expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith(
         expect.objectContaining({ currency: bitcoin, currencyIds: ledgerIds }),
-      );
-    });
-
-    it("forwards currencyIds: undefined when no ledgerIds are provided", () => {
-      renderHook(() => useFooterViewModel(bitcoin));
-
-      expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith(
-        expect.objectContaining({ currency: bitcoin, currencyIds: undefined }),
       );
     });
 

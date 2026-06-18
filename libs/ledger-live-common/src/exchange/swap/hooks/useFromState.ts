@@ -1,15 +1,15 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo, useState } from "react";
+import { log } from "@ledgerhq/logs";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { selectorStateDefaultValues } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
+import { getAccountBridge } from "../../../bridge";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
 import { SwapSelectorStateType, SwapTransactionType } from "../types";
 import BigNumber from "bignumber.js";
 import { debounce } from "../utils/debounce";
 import { useFetchCurrencyFrom } from "./v5/useFetchCurrencyFrom";
 
-export { getAbandonSeedAddress };
 export const useFromState = ({
   accounts,
   defaultCurrency,
@@ -36,6 +36,8 @@ export const useFromState = ({
     parentAccount: defaultParentAccount ?? selectorStateDefaultValues.parentAccount,
   });
 
+  const estimationRecipientAccountIdRef = useRef<string | undefined>(undefined);
+
   /* UPDATE from account */
   const setFromAccount: SwapTransactionType["setFromAccount"] = useCallback(
     account => {
@@ -51,16 +53,18 @@ export const useFromState = ({
         parentAccount,
       });
 
-      /* @DEV: That populates fake seed. This is required to use Transaction object */
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
-      const mainCurrency = getAccountCurrency(mainAccount);
-      const recipient = getAbandonSeedAddress(mainCurrency.id);
-      bridgeTransaction.updateTransaction(transaction => {
-        return {
-          ...transaction,
-          recipient,
-        };
-      });
+      estimationRecipientAccountIdRef.current = mainAccount.id;
+      getAccountBridge(mainAccount)
+        .then(bridge => {
+          if (estimationRecipientAccountIdRef.current !== mainAccount.id) return;
+          const recipient = bridge.getEstimationRecipient(mainAccount);
+          bridgeTransaction.updateTransaction(transaction => ({
+            ...transaction,
+            recipient,
+          }));
+        })
+        .catch(e => log("swap", "useFromState: failed to set estimation recipient", e));
     },
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     [accounts, bridgeTransaction.updateTransaction],

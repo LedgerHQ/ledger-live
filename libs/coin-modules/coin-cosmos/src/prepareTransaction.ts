@@ -54,7 +54,7 @@ export const getEstimatedFees = async (
   let gasUsed = new BigNumber(chainInstance.defaultGas);
 
   const cosmosAPI = new CosmosAPI(account.currency.id);
-  const { protoMsgs } = txToMessages(account, transaction);
+  const { protoMsgs } = txToMessages(account, transaction, chainInstance);
   const { sequence, pubKey, pubKeyType } = await cosmosAPI.getAccount(account.freshAddress);
 
   const unsignedTx = buildTransaction({

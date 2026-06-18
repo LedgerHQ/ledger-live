@@ -15,6 +15,7 @@ type TrackContentCardEvent = (
 
 type Args = {
   cardProps: WalletContentCard;
+  displayedPosition: number;
   logClickCard: (cardId: string) => void;
   dismissCard: (cardId: string) => void;
   trackContentCardEvent: TrackContentCardEvent;
@@ -22,6 +23,7 @@ type Args = {
 
 export function useCarouselCardModel({
   cardProps,
+  displayedPosition,
   logClickCard,
   dismissCard,
   trackContentCardEvent,
@@ -33,20 +35,22 @@ export function useCarouselCardModel({
       ...cardProps.extras,
       screen: cardProps.location,
       campaign: cardProps.id,
+      displayedPosition,
     });
 
     logClickCard(cardProps.id);
     await Linking.openURL(cardProps.link);
-  }, [cardProps, logClickCard, trackContentCardEvent]);
+  }, [cardProps, displayedPosition, logClickCard, trackContentCardEvent]);
 
   const handleHide = useCallback(() => {
     trackContentCardEvent("contentcard_dismissed", {
       ...cardProps.extras,
       screen: cardProps.location,
       campaign: cardProps.id,
+      displayedPosition,
     });
     dismissCard(cardProps.id);
-  }, [cardProps, dismissCard, trackContentCardEvent]);
+  }, [cardProps, displayedPosition, dismissCard, trackContentCardEvent]);
 
   const mediaHeader = useMemo((): WalletCarouselMediaHeader => {
     if (cardProps.picto != null && cardProps.picto !== "") {

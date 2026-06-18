@@ -19,7 +19,7 @@ module.exports = {
     "^.+\\.jsx?$": "babel-jest",
   },
   transformIgnorePatterns: [
-    "node_modules/(?!(.pnpm|(jest-)?react-native|react-native-safe-area-context|react-native-reanimated|react-native-worklets|@react-native(-community)?|@gorhom/bottom-sheet|@ledgerhq/lumen-.*)/.)",
+    "node_modules/(?!(.pnpm|(jest-)?react-native|react-native-safe-area-context|react-native-reanimated|react-native-worklets|react-native-screens|@react-native(-community)?|@react-navigation/.*|@gorhom/bottom-sheet|@ledgerhq/lumen-.*)/.)",
   ],
   modulePaths: ["<rootDir>"],
   moduleNameMapper: {

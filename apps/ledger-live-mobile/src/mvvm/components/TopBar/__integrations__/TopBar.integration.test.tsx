@@ -117,7 +117,10 @@ describe("TopBar navigation", () => {
 
     await user.press(getByTestId("topbar-search"));
 
-    expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.search.name);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expectedNavigationParams.search.name,
+      expectedNavigationParams.search.params,
+    );
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Search",

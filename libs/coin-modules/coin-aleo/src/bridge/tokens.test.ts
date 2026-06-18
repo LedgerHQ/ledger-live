@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -11,13 +12,18 @@ import {
 } from "../__tests__/fixtures/currency.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import type { AleoOperation } from "../types";
+import type { AleoTokenAccount } from "../types/bridge";
+import { log } from "@ledgerhq/logs";
 import {
   applyTransparentBalance,
-  getAleoSubAccounts,
   mergeSubAccounts,
   prepareTokenOperations,
   resolveTokenSubAccounts,
 } from "./tokens";
+
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
+}));
 
 jest.mock("../network/api");
 
@@ -42,6 +48,13 @@ function getMockedTokenOperation(overrides?: Partial<AleoOperation>): AleoOperat
       programId: MOCK_TOKEN_PROGRAM_ID,
     },
     ...overrides,
+  });
+}
+
+function assertAleoTokenAccount(subAccount: TokenAccount): asserts subAccount is AleoTokenAccount {
+  expect(subAccount).toMatchObject({
+    transparentBalance: expect.any(BigNumber),
+    privateBalance: expect.anything(),
   });
 }
 
@@ -120,6 +133,25 @@ describe("tokens utils", () => {
       });
     });
 
+    it("should not duplicate sub-operations when the same token operation is processed twice", async () => {
+      const tokenOp = getMockedTokenOperation({ hash: "tx-dup" });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+
+      const { updatedCoinOperations, tokenOperationsBySubAccountId } = await prepareTokenOperations(
+        {
+          address,
+          ledgerAccountId,
+          publicOperations: [],
+          tokenOperations: [tokenOp, tokenOp],
+          calTokens,
+        },
+      );
+
+      expect(updatedCoinOperations).toHaveLength(1);
+      expect(updatedCoinOperations[0].subOperations).toHaveLength(1);
+      expect(tokenOperationsBySubAccountId.get(tokenAccountId)).toHaveLength(1);
+    });
+
     it("should skip token operations without programId or CAL match", async () => {
       const tokenOp = getMockedTokenOperation({
         extra: { functionId: "transfer_public", transactionType: "public" },
@@ -138,48 +170,6 @@ describe("tokens utils", () => {
 
       expect(updatedCoinOperations).toEqual([]);
       expect(tokenOperationsBySubAccountId.size).toBe(0);
-    });
-  });
-
-  describe("getAleoSubAccounts", () => {
-    it("should fetch transparent balances and build token sub-accounts", async () => {
-      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
-      const tokenOp = getMockedTokenOperation();
-
-      const result = await getAleoSubAccounts({
-        currency: mockCurrency,
-        ledgerAccountId,
-        address,
-        tokenOperations: [tokenOp],
-        calTokens,
-      });
-
-      expect(mockGetTokenBalance).toHaveBeenCalledWith(
-        mockCurrency,
-        MOCK_TOKEN_PROGRAM_ID,
-        address,
-      );
-      expect(result).toEqual([
-        expect.objectContaining({
-          id: tokenAccountId,
-          parentId: ledgerAccountId,
-          token: mockTokenCurrency,
-          balance: new BigNumber(250000),
-        }),
-      ]);
-    });
-
-    it("should return an empty array when there are no token operations", async () => {
-      const result = await getAleoSubAccounts({
-        currency: mockCurrency,
-        ledgerAccountId,
-        address,
-        tokenOperations: [],
-        calTokens: new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]),
-      });
-
-      expect(result).toEqual([]);
-      expect(mockGetTokenBalance).not.toHaveBeenCalled();
     });
   });
 
@@ -286,6 +276,74 @@ describe("tokens utils", () => {
         type: "IN",
         accountId: tokenAccountId,
       });
+      expect(mockGetTokenBalance).toHaveBeenCalledWith(
+        mockCurrency,
+        MOCK_TOKEN_PROGRAM_ID,
+        address,
+      );
+    });
+
+    it("should fetch transparent balances for pre-existing sub-accounts after merge", async () => {
+      const existingSubAccount = getMockedTokenAccount(mockTokenCurrency, {
+        transparentBalance: new BigNumber(100),
+        privateBalance: new BigNumber(50),
+        operations: [],
+        operationsCount: 0,
+      });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+      mockGetTokenBalance.mockResolvedValue("400000u128");
+
+      const { subAccounts } = await resolveTokenSubAccounts({
+        enableTokens: true,
+        currency: mockCurrency,
+        address,
+        ledgerAccountId,
+        publicOperations: [],
+        tokenOperations: [],
+        calTokens,
+        shouldSyncFromScratch: false,
+        initialAccount: getMockedAccount({ subAccounts: [existingSubAccount] }),
+      });
+
+      expect(mockGetTokenBalance).toHaveBeenCalledWith(
+        mockCurrency,
+        MOCK_TOKEN_PROGRAM_ID,
+        address,
+      );
+      expect(subAccounts).toHaveLength(1);
+      const aleoSubAccount = subAccounts[0];
+      assertAleoTokenAccount(aleoSubAccount);
+      expect(aleoSubAccount.transparentBalance).toEqual(new BigNumber(400000));
+      expect(aleoSubAccount.balance).toEqual(new BigNumber(400050));
+    });
+
+    it("should fall back to stored transparent balance when balance fetch fails", async () => {
+      const existingSubAccount = getMockedTokenAccount(mockTokenCurrency, {
+        transparentBalance: new BigNumber(120),
+        privateBalance: new BigNumber(30),
+      });
+      mockGetTokenBalance.mockRejectedValue(new Error("API unavailable"));
+
+      const { subAccounts } = await resolveTokenSubAccounts({
+        enableTokens: true,
+        currency: mockCurrency,
+        address,
+        ledgerAccountId,
+        publicOperations: [],
+        tokenOperations: [],
+        calTokens: new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]),
+        shouldSyncFromScratch: false,
+        initialAccount: getMockedAccount({ subAccounts: [existingSubAccount] }),
+      });
+
+      const aleoSubAccount = subAccounts[0];
+      assertAleoTokenAccount(aleoSubAccount);
+      expect(aleoSubAccount.transparentBalance).toEqual(new BigNumber(120));
+      expect(aleoSubAccount.balance).toEqual(new BigNumber(150));
+      expect(log).toHaveBeenCalledWith(
+        "aleo/resolveTokenSubAccounts",
+        expect.stringContaining(MOCK_TOKEN_PROGRAM_ID),
+      );
     });
 
     it("should clear sub-accounts and strip sub-operations when tokens are disabled", async () => {

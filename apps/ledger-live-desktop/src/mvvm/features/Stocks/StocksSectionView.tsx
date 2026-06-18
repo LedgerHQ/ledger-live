@@ -7,9 +7,11 @@ import {
   SubheaderTitle,
   SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-react";
+import { HorizontalScroll } from "LLD/components/HorizontalScroll";
 import { StockPill } from "./components/StockPill";
 import { StocksSkeleton } from "./components/StocksSkeleton";
 import { splitIntoTwoRows } from "./utils/splitIntoTwoRows";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import type { StockSuggestion, StocksHeaderVariant, StocksSectionViewProps } from "./types";
 
 function StocksHeader({
@@ -60,14 +62,26 @@ function StocksHeader({
 function StocksList({
   data,
   navigateToAsset,
+  listClassName,
+  scrollContainerClassName,
+  hideListGradient,
 }: Readonly<{
   data: StockSuggestion[];
-  navigateToAsset: (currencyId: string) => void;
+  navigateToAsset: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
+  listClassName?: string;
+  scrollContainerClassName?: string;
+  hideListGradient?: boolean;
 }>) {
   const rows = splitIntoTwoRows(data);
 
   return (
-    <div className="scrollbar-none overflow-x-auto" data-testid="stocks-list">
+    <HorizontalScroll
+      data-testid="stocks-list"
+      scrollContainerTestId="stocks-scroll-container"
+      className={listClassName}
+      scrollContainerClassName={scrollContainerClassName}
+      hideGradient={hideListGradient}
+    >
       <div className="flex w-max flex-col gap-8">
         {rows.map((rowStocks, rowIndex) => (
           <div
@@ -81,7 +95,7 @@ function StocksList({
           </div>
         ))}
       </div>
-    </div>
+    </HorizontalScroll>
   );
 }
 
@@ -92,6 +106,9 @@ export function StocksSectionView({
   navigateToAsset,
   onSeeAll,
   headerVariant = "showMore",
+  listClassName,
+  scrollContainerClassName,
+  hideListGradient,
 }: Readonly<StocksSectionViewProps>) {
   if (!isLoading && data.length === 0) {
     return null;
@@ -101,9 +118,19 @@ export function StocksSectionView({
     <div className="flex flex-col gap-8" data-testid="stocks-section">
       <StocksHeader variant={headerVariant} onSeeAll={onSeeAll} />
       {isLoading ? (
-        <StocksSkeleton count={limit} />
+        <StocksSkeleton
+          count={limit}
+          className={listClassName}
+          contentClassName={scrollContainerClassName}
+        />
       ) : (
-        <StocksList data={data} navigateToAsset={navigateToAsset} />
+        <StocksList
+          data={data}
+          navigateToAsset={navigateToAsset}
+          listClassName={listClassName}
+          scrollContainerClassName={scrollContainerClassName}
+          hideListGradient={hideListGradient}
+        />
       )}
     </div>
   );

@@ -7,6 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import { CASPER_DUMMY_ADDRESS } from "@ledgerhq/coin-casper/constants";
 import type { Transaction, TransactionStatus } from "../types";
 import {
   scanAccounts,
@@ -174,6 +175,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => CASPER_DUMMY_ADDRESS,
 };
 export default {
   currencyBridge,

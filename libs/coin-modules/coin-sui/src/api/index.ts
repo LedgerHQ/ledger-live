@@ -81,6 +81,9 @@ async function craft(transactionIntent: TransactionIntent): Promise<CraftedTrans
 }
 
 async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
-  const fees = await estimateFees(transactionIntent);
-  return { value: fees };
+  // The framework's FeeEstimation is the positive gas reservation (budget); the net dry-run `fees`
+  // can be negative on a storage rebate, which this contract does not expect. The bridge path uses
+  // the accurate `fees` for the optimistic-op value instead.
+  const { gasBudget } = await estimateFees(transactionIntent);
+  return { value: gasBudget };
 }

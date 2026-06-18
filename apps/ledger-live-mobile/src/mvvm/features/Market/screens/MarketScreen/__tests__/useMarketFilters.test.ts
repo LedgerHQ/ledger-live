@@ -26,9 +26,10 @@ describe("useMarketFilters", () => {
 
     expect(store.getState().marketListConfig.sorting).toBe("gainers");
     expect(track).toHaveBeenCalledWith("sort_market_list", {
-      sorting: "gainers",
+      sortVolume: "false",
+      sortMarketCap: "false",
+      sortChange: "true_desc",
       timeframe: "1D",
-      network: "all",
     });
   });
 
@@ -39,9 +40,10 @@ describe("useMarketFilters", () => {
 
     expect(store.getState().marketListConfig.sorting).toBe("volume");
     expect(track).toHaveBeenCalledWith("sort_market_list", {
-      sorting: "volume",
+      sortVolume: "true_desc",
+      sortMarketCap: "false",
+      sortChange: "false",
       timeframe: "1D",
-      network: "all",
     });
   });
 
@@ -52,9 +54,10 @@ describe("useMarketFilters", () => {
 
     expect(store.getState().marketListConfig.timeframe).toBe("30D");
     expect(track).toHaveBeenCalledWith("sort_market_list", {
-      sorting: "marketCap",
+      sortVolume: "false",
+      sortMarketCap: "true_desc",
+      sortChange: "false",
       timeframe: "30D",
-      network: "all",
     });
   });
 

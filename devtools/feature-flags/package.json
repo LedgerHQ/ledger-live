@@ -4,6 +4,7 @@
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
@@ -32,6 +33,7 @@
     "@swc/core": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-utils-shared": "0.1.4",
     "@radix-ui/react-switch": "catalog:",
@@ -44,11 +46,13 @@
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "tailwind-merge": "catalog:"
+
   },
   "peerDependencies": {
     "react": ">=19",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-slot": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",

@@ -4,10 +4,12 @@ import "../../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { installOutputCapture } from "../../../shared/ui";
 import type { AccountDescriptor } from "../../../wallet/models";
 import { MOCK_ETH_DESCRIPTOR } from "../../../test/helpers/constants";
+import { USDT_CONTRACT } from "../../helpers/cal-fixtures";
 import { executeSwapCommand, type SwapExecuteFlags } from "../../../commands/swap/execute";
 import type { FullSwapPipelineInput } from "../../../commands/swap/cli-swap-pipeline";
 
@@ -42,6 +44,30 @@ const toDescriptor: AccountDescriptor = {
   derivationMode: "",
   index: 1,
 };
+
+const ethToDescriptor: AccountDescriptor = {
+  id: "js:2:ethereum:to:",
+  currencyId: "ethereum",
+  freshAddress: "0x000000000000000000000000000000000000000e",
+  seedIdentifier: "",
+  derivationMode: "",
+  index: 1,
+};
+
+const USDT_TOKEN_ID = "ethereum/erc20/usd_tether__erc20_";
+const usdtToken = {
+  type: "TokenCurrency",
+  id: USDT_TOKEN_ID,
+  parentCurrencyId: "ethereum",
+  contractAddress: USDT_CONTRACT,
+  tokenType: "erc20",
+  ticker: "USDT",
+  name: "Tether USD",
+  units: [
+    { code: "USDT", name: "USDT", magnitude: 6 },
+    { code: "uUSDT", name: "micro USDT", magnitude: 0 },
+  ],
+} as unknown as TokenCurrency;
 
 const baseFlags: SwapExecuteFlags = {
   from: "ethereum",
@@ -80,7 +106,13 @@ function makeAccount(descriptor: AccountDescriptor): Account {
 }
 
 const resolveAccountDescriptorMock = mock(async (input: string) => {
-  return input === baseFlags.account ? fromDescriptor : toDescriptor;
+  if (input === baseFlags.account) {
+    return fromDescriptor;
+  }
+  if (input === "ethereum-destination-account") {
+    return ethToDescriptor;
+  }
+  return toDescriptor;
 });
 
 const integrateNewAccountDescriptorMock = mock(async (descriptor: AccountDescriptor) => {
@@ -92,6 +124,10 @@ const getAccountBridgeMock = getAccountBridgeMockFn as unknown as typeof getLive
 
 const runFullSwapPipelineMock = mock((_input: FullSwapPipelineInput) =>
   Promise.resolve({ ...mockPipelineResult }),
+);
+
+const findTokenByIdMock = mock(async (id: string) =>
+  id === USDT_TOKEN_ID ? usdtToken : undefined,
 );
 
 async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
@@ -108,6 +144,7 @@ async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
       integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
       getAccountBridge: getAccountBridgeMock,
       runFullSwapPipeline: runFullSwapPipelineMock,
+      findTokenById: findTokenByIdMock,
     });
   } finally {
     restoreCapture();
@@ -124,6 +161,7 @@ describe("swap execute command", () => {
     integrateNewAccountDescriptorMock.mockClear();
     getAccountBridgeMockFn.mockClear();
     runFullSwapPipelineMock.mockClear();
+    findTokenByIdMock.mockClear();
     server.start();
   });
 
@@ -158,6 +196,43 @@ describe("swap execute command", () => {
     expect(pipelineInput.getAccountBridge).toBe(getAccountBridgeMock);
   });
 
+  it("creates an empty destination token account when the token sub-account is missing", async () => {
+    const data = await runExecuteSwapCommand({
+      ...baseFlags,
+      to: USDT_TOKEN_ID,
+      "to-account": "ethereum-destination-account",
+    });
+
+    expect(data.to).toBe(USDT_TOKEN_ID);
+    expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);
+    const pipelineInput = runFullSwapPipelineMock.mock.calls[0][0];
+    expect(pipelineInput.toParentAccount?.id).toBe(ethToDescriptor.id);
+
+    if (pipelineInput.toAccount.type !== "TokenAccount") {
+      throw new Error(`Expected destination TokenAccount, got ${pipelineInput.toAccount.type}`);
+    }
+
+    expect(pipelineInput.toAccount.parentId).toBe(ethToDescriptor.id);
+    expect(pipelineInput.toAccount.token.id).toBe(USDT_TOKEN_ID);
+    expect(pipelineInput.toAccount.balance.toFixed()).toBe("0");
+    expect(pipelineInput.toAccount.spendableBalance.toFixed()).toBe("0");
+  });
+
+  it("still rejects a source token when the token sub-account is missing", async () => {
+    await expect(
+      executeSwapCommand({
+        flags: { ...baseFlags, from: USDT_TOKEN_ID, output: undefined },
+        positional: [],
+        resolveAccountDescriptor: resolveAccountDescriptorMock,
+        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+        getAccountBridge: getAccountBridgeMock,
+        runFullSwapPipeline: runFullSwapPipelineMock,
+        findTokenById: findTokenByIdMock,
+      }),
+    ).rejects.toThrow(`from account has no token sub-account for ${USDT_TOKEN_ID}.`);
+    expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+  });
+
   it("rejects an unsupported --provider before running the pipeline", async () => {
     await expect(
       runExecuteSwapCommand({ ...baseFlags, provider: "unknown_provider" }),
@@ -179,6 +254,7 @@ describe("swap execute command", () => {
         integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
         getAccountBridge: getAccountBridgeMock,
         runFullSwapPipeline: runFullSwapPipelineMock,
+        findTokenById: findTokenByIdMock,
       }),
     ).rejects.toThrow("Unknown source currency (--from): test");
   });
@@ -192,6 +268,7 @@ describe("swap execute command", () => {
         integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
         getAccountBridge: getAccountBridgeMock,
         runFullSwapPipeline: runFullSwapPipelineMock,
+        findTokenById: findTokenByIdMock,
       }),
     ).rejects.toThrow("Unknown destination currency (--to): test");
   });
@@ -205,6 +282,7 @@ describe("swap execute command", () => {
         integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
         getAccountBridge: getAccountBridgeMock,
         runFullSwapPipeline: runFullSwapPipelineMock,
+        findTokenById: findTokenByIdMock,
       }),
     ).rejects.toThrow("--from account is ethereum but --from is bitcoin.");
   });
@@ -218,6 +296,7 @@ describe("swap execute command", () => {
         integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
         getAccountBridge: getAccountBridgeMock,
         runFullSwapPipeline: runFullSwapPipelineMock,
+        findTokenById: findTokenByIdMock,
       }),
     ).rejects.toThrow("--to account is bitcoin but --to is ethereum.");
   });

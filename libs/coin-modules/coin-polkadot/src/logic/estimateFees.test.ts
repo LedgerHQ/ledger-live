@@ -43,7 +43,7 @@ describe("estimatedFees", () => {
         url: "https://polkadot-rpc.publicnode.com",
       },
       sidecar: {
-        url: "https://polkadot-sidecar.coin.ledger.com",
+        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
       },
       indexer: {
         url: "https://polkadot.coin.ledger.com",

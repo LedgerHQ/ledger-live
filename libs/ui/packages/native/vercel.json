@@ -1,5 +1,4 @@
 {
-  "public": true,
   "installCommand": "pnpm i -F \"../../\" -F \"@ledgerhq/native-ui...\" -F \"ledger-live\"",
   "buildCommand": "cd ../../../.. && pnpm exec nx run @ledgerhq/native-ui:build:storybook",
   "outputDirectory": "storybook-static"

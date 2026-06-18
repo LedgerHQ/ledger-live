@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
 import type { PolkadotAccount, Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { POLKADOT_NULL_ADDRESS } from "@ledgerhq/coin-polkadot/constants";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -104,6 +105,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => POLKADOT_NULL_ADDRESS,
 };
 
 const preload = () => {

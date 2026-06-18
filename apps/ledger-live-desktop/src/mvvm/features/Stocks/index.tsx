@@ -1,11 +1,12 @@
 import React from "react";
 import { StocksSectionView } from "./StocksSectionView";
 import { useStocksSectionViewModel } from "./hooks/useStocksSectionViewModel";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import { StocksHeaderVariant } from "./types";
 
 type StocksProps = {
   limit: number;
-  navigateToAsset: (currencyId: string) => void;
+  navigateToAsset: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
   onSeeAll: () => void;
   headerVariant?: StocksHeaderVariant;
 };

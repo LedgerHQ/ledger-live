@@ -286,52 +286,14 @@ describe("horizon.ts (unit, spies)", () => {
         expect(page.items).toHaveLength(1);
       });
 
-      it("skips to next page when all ops on a full page are filtered out", async () => {
-        const rawA = opBuilder({ paging_token: "pt-a", id: "1" });
-        const rawB = opBuilder({ paging_token: "pt-b", id: "2" });
-        const rawC = opBuilder({ paging_token: "pt-c", id: "3" });
-
-        // First call: full page (2 ops), all filtered → recurse
-        // Second call: partial page (1 op), 1 survives → return
-        rawOperationsToOperationsMock
-          .mockResolvedValueOnce([])
-          .mockResolvedValueOnce([{ type: "mock-op" } as never]);
-
-        const callMock = jest
-          .fn()
-          .mockResolvedValueOnce({ records: [rawA, rawB] })
-          .mockResolvedValueOnce({ records: [rawC] });
-
-        jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
-          forAccount: jest.fn().mockReturnThis(),
-          limit: jest.fn().mockReturnThis(),
-          order: jest.fn().mockReturnThis(),
-          cursor: jest.fn().mockReturnThis(),
-          includeFailed: jest.fn().mockReturnThis(),
-          join: jest.fn().mockReturnValue({ call: callMock }),
-        } as unknown as ReturnType<Horizon.Server["operations"]>);
-
-        const page = await fetchOperations({
-          accountId: "aid",
-          addr: "GADDRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-          minHeight: 999999,
-          order: "desc",
-          cursor: undefined,
-        });
-        // Skipped the empty first page, returned the second page's result
-        expect(page.items).toHaveLength(1);
-        expect(page.next).toBe("");
-        expect(callMock).toHaveBeenCalledTimes(2);
-      });
-
-      it("bails out after MAX_SKIP_PAGES consecutive empty pages", async () => {
+      it("returns empty items with cursor when all ops on a full page are filtered out", async () => {
         const rawA = opBuilder({ paging_token: "pt-a", id: "1" });
         const rawB = opBuilder({ paging_token: "pt-b", id: "2" });
 
-        // Every page returns zero filtered ops
+        // All ops filtered out (e.g. unsupported types or below minHeight)
         rawOperationsToOperationsMock.mockResolvedValue([]);
 
-        const callMock = jest.fn().mockResolvedValue({ records: [rawA, rawB] });
+        const callMock = jest.fn().mockResolvedValueOnce({ records: [rawA, rawB] });
 
         jest.spyOn(Horizon.Server.prototype, "operations").mockReturnValue({
           forAccount: jest.fn().mockReturnThis(),
@@ -349,11 +311,10 @@ describe("horizon.ts (unit, spies)", () => {
           order: "desc",
           cursor: undefined,
         });
-        // Exhausted skip budget: returns empty items with cursor for caller to resume
+        // Returns empty items with cursor — caller handles pagination
         expect(page.items).toHaveLength(0);
         expect(page.next).toBe("pt-b");
-        // MAX_SKIP_PAGES = 50 iterations
-        expect(callMock).toHaveBeenCalledTimes(50);
+        expect(callMock).toHaveBeenCalledTimes(1);
       });
     });
   });

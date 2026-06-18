@@ -9,6 +9,8 @@ import {
   EnrichedPrivateRecord,
 } from "../../types";
 
+export const MOCK_ALEO_ADDRESS = "aleo1test123address456";
+
 export const getMockedTransaction = (
   overrides?: Partial<AleoPublicTransaction>,
 ): AleoPublicTransaction => ({
@@ -128,7 +130,7 @@ export const getMockedPublicTransaction = (
   function_id: "transfer_public",
   amount: 100000000,
   fee: 5000000,
-  sender_address: "aleo1test123address456",
+  sender_address: MOCK_ALEO_ADDRESS,
   recipient_address: "aleo1recipient123",
   program_id: "credits.aleo",
   ...overrides,

@@ -66,8 +66,12 @@ describe("useMarketAssets", () => {
     mockMarketData({ data: fullMarketPage, isFetching: true });
     const { result } = renderHook(() => useMarketAssets());
 
+    // The first page is fetching, but it is not a "next page" load yet.
+    expect(result.current.isFetchingNextPage).toBe(false);
+
     act(() => result.current.onEndReached());
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }));
+    expect(result.current.isFetchingNextPage).toBe(true);
 
     act(() => result.current.onEndReached());
     expect(mockedUseMarketData).not.toHaveBeenCalledWith(expect.objectContaining({ page: 3 }));

@@ -8,6 +8,7 @@ const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
   delegate: "DELEGATE",
   undelegate: "UNDELEGATE",
   redelegate: "REDELEGATE",
+  withdraw: "WITHDRAW_UNBONDED",
   claimReward: "REWARD",
   compoundReward: "REWARD",
 };
@@ -20,6 +21,7 @@ export function isStakingOperation(value: string): value is StakingOperation {
     "delegate",
     "undelegate",
     "redelegate",
+    "withdraw",
     "getStakedBalance",
     "getUnstakedBalance",
     "claimReward",

@@ -9,11 +9,12 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
+import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
 
 export function runSwapTokenReapprovalFlow(
   fromAccount: TokenAccount,
   toAccount: Account,
-  swapProvider: SwapProvider,
+  swapProviders: SwapProvider[],
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -48,20 +49,21 @@ export function runSwapTokenReapprovalFlow(
     tags.forEach(tag => $Tag(tag));
 
     it("Swap - token reapproval flow", async () => {
-      await app.swap.logSelectedProvider(swapProvider.uiName);
-      await revokeTokenApproval(fromAccount, swapProvider);
+      const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
+      await app.swap.logSelectedProvider(provider.uiName);
+      await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
-      await ensureTokenApproval(fromAccount, swapProvider, smallAmount);
-      const swap = new Swap(fromAccount, toAccount, minAmount, swapProvider);
+      await ensureTokenApproval(fromAccount, provider, smallAmount);
+      const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
         minAmount,
         true,
       );
-      await app.swapLiveApp.selectSpecificProvider(swapProvider.uiName);
-      await app.swapLiveApp.tapExecuteSwap(swapProvider.uiName);
+      await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectResetApprovalScreen();
       await app.swapLiveApp.tapRevokeApprovalButton();
       await app.send.summaryContinue();

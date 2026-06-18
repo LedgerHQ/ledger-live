@@ -29,7 +29,7 @@ Here is an example PR of an EVM currency integration: https://github.com/LedgerH
 _Common steps for all new EVM currency integration_
 
 1. Add a new config entry for the new currency under [`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`](../../../../../libs/ledgerjs/packages/cryptoassets/src/currencies.ts) (the `CryptoCurrencyId` type is auto-generated)
-2. Add an entry for the new currency in the `abandonSeedAddresses` (using the currency ID as key and `EVM_DEAD_ADDRESS` as value) under [`libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts`](../../../../../libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts)
+2. Nothing to do for the fee-estimation dummy recipient: `getEvmDummyAddress` in [`libs/coin-modules/coin-evm/src/constants.ts`](../../constants.ts) returns the dead address for every EVM currency (only zkSync differs)
 3. Add the new currency ID to the `setSupportedCurrencies` function param on each relevant project ([CLI](../../../../../apps/cli/src/live-common-setup-base.ts), [LLD](../../../../../apps/ledger-live-desktop/src/live-common-set-supported-currencies.ts), [LLM](../../../../../apps/ledger-live-mobile/src/live-common-setup.ts), [LLC test environment](../../../../../libs/ledger-live-common/src/__tests__/test-helpers/environment.ts), [web-tools](../../../../../apps/web-tools/src/live-common-setup.ts) and [account-migration tests](../../../../../libs/ledger-live-common/src/__tests__/migration/account-migration.ts))
 4. Add a new feature flag config for this currency:
    1. The new feature flag type in the [`CurrencyFeatures`](../../../../../libs/ledgerjs/packages/types-live/src/feature.ts) type under `libs/ledgerjs/packages/types-live/src/feature.ts`

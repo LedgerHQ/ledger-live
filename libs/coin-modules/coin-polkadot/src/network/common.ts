@@ -24,7 +24,9 @@ export const createRegistryAndExtrinsics = (
   // Register the chain properties for this registry
   registry.setChainProperties(
     registry.createType("ChainProperties", {
-      ss58Format: Number(spec.properties.ss58Format),
+      // ss58Format may be absent (e.g. Westend Asset Hub): leave it unset (None) instead of NaN.
+      ss58Format:
+        spec.properties.ss58Format !== undefined ? Number(spec.properties.ss58Format) : undefined,
       tokenDecimals: Number(spec.properties.tokenDecimals),
       tokenSymbol: spec.properties.tokenSymbol,
     }),

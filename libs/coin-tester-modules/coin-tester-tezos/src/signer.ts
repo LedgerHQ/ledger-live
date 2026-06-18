@@ -7,7 +7,7 @@ import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 
 /**
  * Test signer matching the TezosSigner interface expected by the generic coin framework
- * (`live-common/bridge/generic-coin-framework/families/tezos/signer.ts`).
+ * (`live-common/families/tezos/signer.ts`).
  *
  * Implemented without `@taquito/signer` to avoid its UMD bundle's dependency on
  * `bn.js`, which is not available in Jest's module resolver.

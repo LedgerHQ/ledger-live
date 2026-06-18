@@ -1,7 +1,7 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
+import { ICON_DUMMY_ADDRESS } from "../constants";
 import { IconAccount, IconOperation, IconResources, Transaction } from "./index";
 
 export function createFixtureAccount(account?: Partial<IconAccount>): IconAccount {
@@ -49,7 +49,7 @@ export function createFixtureAccount(account?: Partial<IconAccount>): IconAccoun
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   return {
     amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || getAbandonSeedAddress("icon"),
+    recipient: tx?.recipient || ICON_DUMMY_ADDRESS,
     mode: tx?.mode || "send",
     family: "icon",
     fees: tx?.fees || undefined,

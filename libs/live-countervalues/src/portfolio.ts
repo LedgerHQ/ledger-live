@@ -17,6 +17,7 @@ import type {
   Portfolio,
   CurrencyPortfolio,
   AssetsDistribution,
+  ValueChange,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -366,6 +367,51 @@ export function getCurrencyPortfolio(
     cryptoChange,
     countervalueChange,
   };
+}
+
+/**
+ * Countervalue change of the CURRENT balance over a range, i.e. the asset's price move expressed
+ * in the counter-value currency. Unlike getCurrencyPortfolio (which weights by the historical
+ * balance and yields no percentage for freshly-held positions), this applies the current balance
+ * to both the start and end rates, so the percentage reduces to (rateNow - rateThen) / rateThen.
+ */
+export function getCurrentBalanceCountervalueChange(
+  accounts: AccountLike[],
+  range: PortfolioRange,
+  cvState: CounterValuesState,
+  cvCurrency: Currency,
+): ValueChange {
+  if (accounts.length === 0) return { value: 0, percentage: null };
+  const currency = getAccountCurrency(accounts[0]);
+  const balance = accounts.reduce((sum, a) => sum + a.balance.toNumber(), 0);
+  const dates = getDates(range, getPortfolioCount(accounts, range));
+  const valueThen = calculate(cvState, {
+    value: balance,
+    from: currency,
+    to: cvCurrency,
+    date: dates[0],
+    disableRounding: true,
+  });
+  const valueNow = calculate(cvState, {
+    value: balance,
+    from: currency,
+    to: cvCurrency,
+    disableRounding: true,
+  });
+  // Only meaningful when both rates are available; otherwise stay neutral rather than treating a
+  // missing rate as 0 (which would yield a bogus value/percentage).
+  if (typeof valueThen !== "number" || typeof valueNow !== "number") {
+    return { value: 0, percentage: null };
+  }
+
+  const value = valueNow - valueThen;
+
+  // Can't compute a percentage without a non-zero base.
+  if (valueThen === 0) return { value, percentage: null };
+  // A flat price is a real 0% change, not an unknown one.
+  if (value === 0) return { value, percentage: 0 };
+
+  return { value, percentage: meaningfulPercentage(value, valueThen) ?? null };
 }
 
 export function getAssetsDistribution(

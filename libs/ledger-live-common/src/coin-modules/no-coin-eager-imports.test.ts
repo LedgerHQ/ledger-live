@@ -5,7 +5,6 @@ import * as path from "path";
 const ALLOWED_SOURCES = [
   "ledger-live-common/src/families/",
   "ledger-live-common/src/coin-modules/",
-  "ledger-live-common/src/bridge/generic-coin-framework/", // coin-wiring boundary; bridges are lazily imported (LIVE-29339)
   "ledger-live-common/src/wallet-api/", // LIVE-29338
 ];
 

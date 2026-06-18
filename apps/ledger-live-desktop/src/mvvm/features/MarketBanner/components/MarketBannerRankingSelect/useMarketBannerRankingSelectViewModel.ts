@@ -7,6 +7,7 @@ import {
   setMarketBannerRanking,
 } from "~/renderer/reducers/marketBanner";
 import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
 
 const RANKINGS: readonly MarketBannerRanking[] = ["trending", "gainers", "losers", "favorites"];
 
@@ -41,6 +42,7 @@ export function useMarketBannerRankingSelectViewModel() {
     (option: MarketBannerRankingSelectItem | null) => {
       if (option == null) return;
       dispatch(setMarketBannerRanking(option.value));
+      track("change_sort_market_banner", { sort: option.value });
     },
     [dispatch],
   );

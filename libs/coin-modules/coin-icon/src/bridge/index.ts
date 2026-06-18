@@ -12,6 +12,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { IconCoinConfig, setCoinConfig } from "../config";
+import { ICON_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -65,6 +66,7 @@ export function buildAccountBridge(
     },
     broadcast,
     estimateMaxSpendable,
+    getEstimationRecipient: () => ICON_DUMMY_ADDRESS,
     getSerializedAddressParameters,
     validateAddress,
   };

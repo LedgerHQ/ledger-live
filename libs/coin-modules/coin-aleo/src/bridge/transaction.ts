@@ -9,6 +9,7 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
+import { isPrivateTransaction } from "../logic/utils";
 import { TRANSACTION_TYPE } from "../constants";
 import type { Transaction, TransactionRaw } from "../types";
 
@@ -56,12 +57,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
     fees: t.fees.toString(),
   };
 
-  if (
-    t.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
-    t.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC ||
-    t.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE ||
-    t.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
-  ) {
+  if (isPrivateTransaction(t)) {
     return {
       ...commonGeneric,
       ...commonAleo,

@@ -8,6 +8,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
+import { POLKADOT_NULL_ADDRESS } from "../constants";
 import { validateAddress } from "../logic/validateAddress";
 import signerGetAddress from "../signer";
 import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } from "../types";
@@ -73,6 +74,7 @@ function buildAccountBridge(
     formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
     validateAddress,
+    getEstimationRecipient: () => POLKADOT_NULL_ADDRESS,
   };
 }
 

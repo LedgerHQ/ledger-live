@@ -6,7 +6,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "jsx": "react",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2022", "dom"],
     "outDir": "lib",
     "rootDir": "src",
     "types": ["node", "jest"]
