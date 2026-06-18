@@ -22,6 +22,9 @@ import {
   Commitment,
   GetLatestBlockhashConfig,
   SolanaJSONRPCError,
+  SimulateTransactionConfig,
+  RpcResponseAndContext,
+  SimulatedTransactionResponse,
 } from "@solana/web3.js";
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
@@ -85,6 +88,11 @@ export type ChainAPI = Readonly<{
     buffer: Buffer,
     recentBlockhash?: BlockhashWithExpiryBlockHeight,
   ) => ReturnType<Connection["sendRawTransaction"]>;
+
+  simulateTransaction: (
+    transaction: VersionedTransaction,
+    config?: SimulateTransactionConfig,
+  ) => Promise<RpcResponseAndContext<SimulatedTransactionResponse>>;
 
   findAssocTokenAccAddress: (
     owner: string,
@@ -259,6 +267,11 @@ export function getChainAPI(
         .getMultipleParsedAccounts(addresses.map(address => new PublicKey(address)))
         .then(r => r.value)
         .catch(remapErrors),
+
+    simulateTransaction: (
+      transaction: VersionedTransaction,
+      config?: SimulateTransactionConfig,
+    ) => connection.simulateTransaction(transaction, config).catch(remapErrors),
 
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
       return (async () => {
