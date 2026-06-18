@@ -101,8 +101,6 @@ export default class SwapLiveAppPage {
   @Step("Input amount")
   async inputAmount(amount: string) {
     await typeTextByWebTestId(this.fromAmountInput, amount);
-    // Workaround (QAA-1329) ScreenContentWrapper crash on navigation - take focus off input
-    await tapWebElementByTestId(this.toAmountInput);
   }
 
   @Step("Tap get quotes button")
