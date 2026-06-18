@@ -1,12 +1,16 @@
 import React from "react";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import WarningBanner from "./WarningBanner";
 
 type Props = {
   currencies: Array<CryptoCurrency | TokenCurrency>;
 };
-const StratisDown2021Warning = createCustomErrorClass("StratisDown2021Warning");
+class StratisDown2021Warning extends Error {
+  override name = "StratisDown2021Warning";
+  constructor(message = "StratisDown2021Warning") {
+    super(message);
+  }
+}
 
 const CurrencyDownStatusAlert = ({ currencies }: Props) => {
   const errors = [];

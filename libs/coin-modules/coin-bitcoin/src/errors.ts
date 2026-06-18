@@ -1,7 +1,20 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class AccountNeedResync extends Error {
+  override name = "AccountNeedResync";
+  constructor(message = "AccountNeedResync") {
+    super(message);
+  }
+}
 
-export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
+export class TaprootNotActivated extends Error {
+  override name = "TaprootNotActivated";
+  constructor(message = "TaprootNotActivated") {
+    super(message);
+  }
+}
 
-export const TaprootNotActivated = createCustomErrorClass("TaprootNotActivated");
-
-export const BitcoinInfrastructureError = createCustomErrorClass("InfrastructureError");
+export class BitcoinInfrastructureError extends Error {
+  override name = "InfrastructureError";
+  constructor(message = "InfrastructureError") {
+    super(message);
+  }
+}

@@ -1,31 +1,97 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
 // 0x5123
-export const AppNotFound = createCustomErrorClass("AppNotFound");
-export const InvalidContext = createCustomErrorClass("InvalidContext");
+export class AppNotFound extends Error {
+  override name = "AppNotFound";
+  constructor(message = "AppNotFound") {
+    super(message);
+  }
+}
+export class InvalidContext extends Error {
+  override name = "InvalidContext";
+  constructor(message = "InvalidContext") {
+    super(message);
+  }
+}
 // 0x670a
-export const InvalidAppNameLength = createCustomErrorClass("InvalidAppNameLength");
+export class InvalidAppNameLength extends Error {
+  override name = "InvalidAppNameLength";
+  constructor(message = "InvalidAppNameLength") {
+    super(message);
+  }
+}
 // 0x5419
-export const GenerateAesKeyFailed = createCustomErrorClass("GenerateAesKeyFailed");
+export class GenerateAesKeyFailed extends Error {
+  override name = "GenerateAesKeyFailed";
+  constructor(message = "GenerateAesKeyFailed") {
+    super(message);
+  }
+}
 // 0x541a
-export const InternalCryptoOperationFailed = createCustomErrorClass(
-  "InternalCryptoOperationFailed",
-);
+export class InternalCryptoOperationFailed extends Error {
+  override name = "InternalCryptoOperationFailed";
+  constructor(message = "InternalCryptoOperationFailed") {
+    super(message);
+  }
+}
 // 0x541b
-export const InternalComputeAesCmacFailed = createCustomErrorClass("InternalComputeAesCmacFailed");
+export class InternalComputeAesCmacFailed extends Error {
+  override name = "InternalComputeAesCmacFailed";
+  constructor(message = "InternalComputeAesCmacFailed") {
+    super(message);
+  }
+}
 // 0x541c
-export const EncryptAppStorageFailed = createCustomErrorClass("EncryptAppStorageFailed");
+export class EncryptAppStorageFailed extends Error {
+  override name = "EncryptAppStorageFailed";
+  constructor(message = "EncryptAppStorageFailed") {
+    super(message);
+  }
+}
 // 0x5502
-export const PinNotSet = createCustomErrorClass("PinNotSet");
+export class PinNotSet extends Error {
+  override name = "PinNotSet";
+  constructor(message = "PinNotSet") {
+    super(message);
+  }
+}
 // 0x684a
-export const InvalidBackupHeader = createCustomErrorClass("InvalidBackupHeader");
+export class InvalidBackupHeader extends Error {
+  override name = "InvalidBackupHeader";
+  constructor(message = "InvalidBackupHeader") {
+    super(message);
+  }
+}
 // 0x6733
-export const InvalidBackupLength = createCustomErrorClass("InvalidBackupLength");
+export class InvalidBackupLength extends Error {
+  override name = "InvalidBackupLength";
+  constructor(message = "InvalidBackupLength") {
+    super(message);
+  }
+}
 // 0x6642
-export const InvalidBackupState = createCustomErrorClass("InvalidBackupState");
+export class InvalidBackupState extends Error {
+  override name = "InvalidBackupState";
+  constructor(message = "InvalidBackupState") {
+    super(message);
+  }
+}
 // 0x6643
-export const InvalidRestoreState = createCustomErrorClass("InvalidRestoreState");
+export class InvalidRestoreState extends Error {
+  override name = "InvalidRestoreState";
+  constructor(message = "InvalidRestoreState") {
+    super(message);
+  }
+}
 // 0x6734
-export const InvalidChunkLength = createCustomErrorClass("InvalidChunkLength");
+export class InvalidChunkLength extends Error {
+  override name = "InvalidChunkLength";
+  constructor(message = "InvalidChunkLength") {
+    super(message);
+  }
+}
 // 0x5501
-export const UserRefusedOnDevice = createCustomErrorClass("UserRefusedOnDevice");
+export class UserRefusedOnDevice extends Error {
+  override name = "UserRefusedOnDevice";
+  constructor(message = "UserRefusedOnDevice") {
+    super(message);
+  }
+}

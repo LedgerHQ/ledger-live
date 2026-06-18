@@ -1,8 +1,4 @@
-import {
-  deserializeError,
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-} from "@ledgerhq/errors";
+import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import Transport, { DescriptorEvent, Observer } from "@ledgerhq/hw-transport";
 import withStaticURL from "@ledgerhq/hw-transport-http";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
@@ -91,7 +87,7 @@ if (ledgerHidTransport) {
       const res = await ledgerHidTransport(...args);
       return res;
     } catch (e) {
-      throw deserializeError(e);
+      throw e instanceof Error ? e : new Error(String(e));
     }
   };
 

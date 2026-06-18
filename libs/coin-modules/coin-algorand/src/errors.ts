@@ -1,9 +1,13 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class AlgorandASANotOptInInRecipient extends Error {
+  override name = "AlgorandASANotOptInInRecipient";
+  constructor(message = "AlgorandASANotOptInInRecipient") {
+    super(message);
+  }
+}
 
-export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
-  "AlgorandASANotOptInInRecipient",
-);
-
-export const AlgorandMemoExceededSizeError = createCustomErrorClass(
-  "AlgorandMemoExceededSizeError",
-);
+export class AlgorandMemoExceededSizeError extends Error {
+  override name = "AlgorandMemoExceededSizeError";
+  constructor(message = "AlgorandMemoExceededSizeError") {
+    super(message);
+  }
+}

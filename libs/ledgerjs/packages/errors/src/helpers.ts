@@ -6,17 +6,34 @@
 const errorClasses = {};
 const deserializers = {};
 
+/**
+ * @deprecated error (de)serialization is removed. Don't reconstruct error classes
+ * across a JSON boundary — send `{ name, message }` and build a plain `Error` on
+ * the other side: `Object.assign(new Error(o.message), { name: o.name })`.
+ */
 export const addCustomErrorDeserializer = (name: string, deserializer: (obj: any) => any): void => {
   deserializers[name] = deserializer;
 };
 
-export interface LedgerErrorConstructor<F extends { [key: string]: unknown }>
-  extends ErrorConstructor {
+/**
+ * @deprecated type produced by `createCustomErrorClass`. Define a real class
+ * instead and use `typeof MyError`:
+ * `class MyError extends Error { override name = "MyError" }`.
+ */
+export interface LedgerErrorConstructor<
+  F extends { [key: string]: unknown },
+> extends ErrorConstructor {
   new (message?: string, fields?: F, options?: any): Error & F;
   (message?: string, fields?: F, options?: any): Error & F;
   readonly prototype: Error & F;
 }
 
+/**
+ * @deprecated define a real class instead:
+ * `class MyError extends Error { override name = "MyError" }`
+ * (for fields, add a constructor: `constructor(message?: string, fields?: { foo: string }) { super(message); if (fields) Object.assign(this, fields); }`).
+ * Kept only for backward compatibility with external consumers while @ledgerhq/errors is sunset.
+ */
 export const createCustomErrorClass = <
   F extends { [key: string]: unknown },
   T extends LedgerErrorConstructor<F> = LedgerErrorConstructor<F>,
@@ -61,6 +78,10 @@ function isObject(value) {
   return typeof value === "object";
 }
 
+/**
+ * @deprecated error (de)serialization is removed. Rebuild a plain error from the
+ * transferred object instead: `Object.assign(new Error(o.message), { name: o.name })`.
+ */
 // inspired from https://github.com/programble/errio/blob/master/index.js
 export const deserializeError = (object: any): Error | undefined => {
   if (object && typeof object === "object") {
@@ -121,6 +142,10 @@ export const deserializeError = (object: any): Error | undefined => {
   return new Error(String(object));
 };
 
+/**
+ * @deprecated error (de)serialization is removed. Send a plain object instead:
+ * `{ name: error.name, message: error.message }`.
+ */
 // inspired from https://github.com/sindresorhus/serialize-error/blob/master/index.js
 export const serializeError = (
   value: undefined | To | string | (() => unknown),

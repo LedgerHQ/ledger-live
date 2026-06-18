@@ -1,5 +1,3 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
 /** Decoded summary of `extras.result_xdr` (Horizon transaction result XDR). */
 export type StellarDecodedResultXdr =
   | {
@@ -22,24 +20,95 @@ export type StellarBroadcastFailedFields = {
   envelopeXdr: string;
 };
 
-export const StellarBroadcastFailedError = createCustomErrorClass<StellarBroadcastFailedFields>(
-  "StellarBroadcastFailedError",
-);
+export class StellarBroadcastFailedError extends Error {
+  override name = "StellarBroadcastFailedError";
+  cause?: unknown;
+  declare documentationSummary: string;
+  declare horizonTransactionCode: string;
+  declare horizonOperationCodes: string[] | undefined;
+  declare resultXdrSwitchName: string | undefined;
+  declare feeChargedStroops: string | undefined;
+  declare stellarDocUrl: string;
+  declare decodedResultXdr: StellarDecodedResultXdr | undefined;
+  declare envelopeXdr: string;
+  constructor(
+    message?: string,
+    fields?: StellarBroadcastFailedFields,
+    options?: { cause?: unknown },
+  ) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+    if (options && "cause" in options) this.cause = options.cause;
+  }
+}
 
-export const StellarBurnAddressError = createCustomErrorClass("StellarBurnAddressError");
-export const StellarAssetRequired = createCustomErrorClass("StellarAssetRequired");
-export const StellarMuxedAccountNotExist = createCustomErrorClass("StellarMuxedAccountNotExist");
-export const StellarWrongMemoFormat = createCustomErrorClass("StellarWrongMemoFormat");
-export const StellarAssetNotAccepted = createCustomErrorClass("StellarAssetNotAccepted");
-export const StellarAssetNotFound = createCustomErrorClass("StellarAssetNotFound");
-export const StellarNotEnoughNativeBalance = createCustomErrorClass(
-  "StellarNotEnoughNativeBalance",
-);
-export const StellarFeeSmallerThanRecommended = createCustomErrorClass(
-  "StellarFeeSmallerThanRecommended",
-);
-export const StellarFeeSmallerThanBase = createCustomErrorClass("StellarFeeSmallerThanBase");
-export const StellarNotEnoughNativeBalanceToAddTrustline = createCustomErrorClass(
-  "StellarNotEnoughNativeBalanceToAddTrustline",
-);
-export const StellarSourceHasMultiSign = createCustomErrorClass("StellarSourceHasMultiSign");
+export class StellarBurnAddressError extends Error {
+  override name = "StellarBurnAddressError";
+  constructor(message = "StellarBurnAddressError") {
+    super(message);
+  }
+}
+export class StellarAssetRequired extends Error {
+  override name = "StellarAssetRequired";
+  constructor(message = "StellarAssetRequired") {
+    super(message);
+  }
+}
+export class StellarMuxedAccountNotExist extends Error {
+  override name = "StellarMuxedAccountNotExist";
+  constructor(message = "StellarMuxedAccountNotExist") {
+    super(message);
+  }
+}
+export class StellarWrongMemoFormat extends Error {
+  override name = "StellarWrongMemoFormat";
+  constructor(message = "StellarWrongMemoFormat") {
+    super(message);
+  }
+}
+export class StellarAssetNotAccepted extends Error {
+  override name = "StellarAssetNotAccepted";
+  declare assetCode?: string;
+  constructor(message = "StellarAssetNotAccepted", fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+export class StellarAssetNotFound extends Error {
+  override name = "StellarAssetNotFound";
+  constructor(message = "StellarAssetNotFound") {
+    super(message);
+  }
+}
+export class StellarNotEnoughNativeBalance extends Error {
+  override name = "StellarNotEnoughNativeBalance";
+  constructor(message = "StellarNotEnoughNativeBalance") {
+    super(message);
+  }
+}
+export class StellarFeeSmallerThanRecommended extends Error {
+  override name = "StellarFeeSmallerThanRecommended";
+  constructor(message = "StellarFeeSmallerThanRecommended") {
+    super(message);
+  }
+}
+export class StellarFeeSmallerThanBase extends Error {
+  override name = "StellarFeeSmallerThanBase";
+  constructor(message = "StellarFeeSmallerThanBase") {
+    super(message);
+  }
+}
+export class StellarNotEnoughNativeBalanceToAddTrustline extends Error {
+  override name = "StellarNotEnoughNativeBalanceToAddTrustline";
+  constructor(message = "StellarNotEnoughNativeBalanceToAddTrustline") {
+    super(message);
+  }
+}
+export class StellarSourceHasMultiSign extends Error {
+  override name = "StellarSourceHasMultiSign";
+  declare currencyName?: string;
+  constructor(message = "StellarSourceHasMultiSign", fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}

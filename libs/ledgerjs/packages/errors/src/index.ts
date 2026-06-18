@@ -3,249 +3,529 @@ import {
   deserializeError,
   createCustomErrorClass,
   addCustomErrorDeserializer,
-  LedgerErrorConstructor,
 } from "./helpers";
 
+/**
+ * @deprecated `@ledgerhq/errors` is being sunset; kept for backward compatibility.
+ * Instead of `createCustomErrorClass`, define a real class:
+ * `class MyError extends Error { override name = "MyError" }`. Instead of
+ * serialize/deserialize, transfer `{ name, message }` and rebuild a plain `Error`.
+ */
 export { serializeError, deserializeError, createCustomErrorClass, addCustomErrorDeserializer };
 
-export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
-export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");
-export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
-  "AccountAwaitingSendPendingOperations",
-);
-export const AmountRequired = createCustomErrorClass("AmountRequired");
-export const BluetoothRequired = createCustomErrorClass("BluetoothRequired");
-export const BtcUnmatchedApp = createCustomErrorClass("BtcUnmatchedApp");
-export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
-export const CashAddrNotSupported = createCustomErrorClass("CashAddrNotSupported");
-export const ClaimRewardsFeesWarning = createCustomErrorClass("ClaimRewardsFeesWarning");
-export const CurrencyNotSupported = createCustomErrorClass<
-  { currencyName: string },
-  LedgerErrorConstructor<{ currencyName: string }>
->("CurrencyNotSupported");
-export const DeviceAppVerifyNotSupported = createCustomErrorClass("DeviceAppVerifyNotSupported");
-export const DeviceGenuineSocketEarlyClose = createCustomErrorClass(
-  "DeviceGenuineSocketEarlyClose",
-);
-export const DeviceNotGenuineError = createCustomErrorClass("DeviceNotGenuine");
-export const DeviceOnDashboardExpected = createCustomErrorClass("DeviceOnDashboardExpected");
-export const DeviceOnDashboardUnexpected = createCustomErrorClass("DeviceOnDashboardUnexpected");
-export const DeviceInOSUExpected = createCustomErrorClass("DeviceInOSUExpected");
-export const DeviceHalted = createCustomErrorClass("DeviceHalted");
-export const DeviceNameInvalid = createCustomErrorClass("DeviceNameInvalid");
-export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
-export const DeviceSocketNoBulkStatus = createCustomErrorClass("DeviceSocketNoBulkStatus");
-export const DeviceNeedsRestart = createCustomErrorClass("DeviceSocketNoBulkStatus");
-export const UnresponsiveDeviceError = createCustomErrorClass("UnresponsiveDeviceError");
-export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
-export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
-  "DisconnectedDeviceDuringOperation",
-);
-export const DeviceExtractOnboardingStateError = createCustomErrorClass(
-  "DeviceExtractOnboardingStateError",
-);
-export const DeviceOnboardingStatePollingError = createCustomErrorClass(
-  "DeviceOnboardingStatePollingError",
-);
-export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
-export const EthAppPleaseEnableContractData = createCustomErrorClass(
-  "EthAppPleaseEnableContractData",
-);
-export const SolAppPleaseEnableContractData = createCustomErrorClass(
-  "SolAppPleaseEnableContractData",
-);
-export const CeloAppPleaseEnableContractData = createCustomErrorClass(
-  "CeloAppPleaseEnableContractData",
-);
-export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
-export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecognized");
-export const HardResetFail = createCustomErrorClass("HardResetFail");
-export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
-export const InvalidAddress = createCustomErrorClass("InvalidAddress");
-export const InvalidTransactionError = createCustomErrorClass("InvalidTransactionError");
-export const InvalidNonce = createCustomErrorClass("InvalidNonce");
-export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
-  "InvalidAddressBecauseDestinationIsAlsoSource",
-);
-export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
-export const LatestFirmwareVersionRequired = createCustomErrorClass(
-  "LatestFirmwareVersionRequired",
-);
-export const UnsupportedFeatureError = createCustomErrorClass("UnsupportedFeatureError");
-export const NanoSNotSupported = createCustomErrorClass("NanoSNotSupported");
-export const UnknownMCU = createCustomErrorClass("UnknownMCU");
-export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
-export const LedgerAPIErrorWithMessage = createCustomErrorClass("LedgerAPIErrorWithMessage");
-export const LedgerAPINotAvailable = createCustomErrorClass("LedgerAPINotAvailable");
-export const ManagerAppAlreadyInstalledError = createCustomErrorClass("ManagerAppAlreadyInstalled");
-export const ManagerAppRelyOnBTCError = createCustomErrorClass("ManagerAppRelyOnBTC");
-export const ManagerAppDepInstallRequired = createCustomErrorClass("ManagerAppDepInstallRequired");
-export const ManagerAppDepUninstallRequired = createCustomErrorClass(
-  "ManagerAppDepUninstallRequired",
-);
-export const ManagerDeviceLockedError = createCustomErrorClass("ManagerDeviceLocked");
-export const ManagerFirmwareNotEnoughSpaceError = createCustomErrorClass(
-  "ManagerFirmwareNotEnoughSpace",
-);
-export const ManagerNotEnoughSpaceError = createCustomErrorClass("ManagerNotEnoughSpace");
-export const ManagerUninstallBTCDep = createCustomErrorClass("ManagerUninstallBTCDep");
-export const NetworkDown = createCustomErrorClass("NetworkDown");
-export const NetworkError = createCustomErrorClass("NetworkError");
-export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
-export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
-export const NotEnoughBalanceFees = createCustomErrorClass("NotEnoughBalanceFees");
-export const NotEnoughBalanceSwap = createCustomErrorClass("NotEnoughBalanceSwap");
-export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
-export const UnstakeNotEnoughStakedBalanceLeft = createCustomErrorClass(
-  "UnstakeNotEnoughStakedBalanceLeft",
-);
-export const RestakeNotEnoughStakedBalanceLeft = createCustomErrorClass(
-  "RestakeNotEnoughStakedBalanceLeft",
-);
+/**
+ * Base class for the shared Ledger errors that still live in this package.
+ *
+ * Replaces the former `createCustomErrorClass` factory: errors are now real,
+ * tree-shakeable classes. Subclasses only set `static override errorName`; the
+ * base preserves the historical contract — `instanceof`, `name`, a `message`
+ * that defaults to the error name, optional `fields`, and native `cause`
+ * (passed through `options`).
+ */
+export type LedgerErrorOptions = { cause?: unknown };
 
-export const NotEnoughToRestake = createCustomErrorClass("NotEnoughToRestake");
-export const NotEnoughToUnstake = createCustomErrorClass("NotEnoughToUnstake");
-export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
-  "NotEnoughBalanceInParentAccount",
-);
-export const NotEnoughSpendableBalance = createCustomErrorClass("NotEnoughSpendableBalance");
-export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
-  "NotEnoughBalanceBecauseDestinationNotCreated",
-);
-export const NotEnoughToStake = createCustomErrorClass("NotEnoughToStake");
-export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
-export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
+export class LedgerError extends Error {
+  static errorName = "LedgerError";
+  cause?: unknown;
+
+  constructor(message?: string, fields?: Record<string, unknown>, options?: LedgerErrorOptions) {
+    const name = (new.target as typeof LedgerError).errorName;
+    super(message || name);
+    this.name = name;
+    Object.setPrototypeOf(this, new.target.prototype);
+    if (fields) {
+      Object.assign(this, fields);
+    }
+    if (options && typeof options === "object" && "cause" in options) {
+      this.cause = options.cause;
+      const cause = options.cause as { stack?: string } | null;
+      if (cause && typeof cause === "object" && "stack" in cause) {
+        this.stack = this.stack + "\nCAUSE: " + cause.stack;
+      }
+    }
+  }
+}
+
+export class AccountNameRequiredError extends LedgerError {
+  static override errorName = "AccountNameRequired";
+}
+export class AccountNotSupported extends LedgerError {
+  static override errorName = "AccountNotSupported";
+}
+export class AccountAwaitingSendPendingOperations extends LedgerError {
+  static override errorName = "AccountAwaitingSendPendingOperations";
+}
+export class AmountRequired extends LedgerError {
+  static override errorName = "AmountRequired";
+}
+export class BluetoothRequired extends LedgerError {
+  static override errorName = "BluetoothRequired";
+}
+export class BtcUnmatchedApp extends LedgerError {
+  static override errorName = "BtcUnmatchedApp";
+}
+export class CantOpenDevice extends LedgerError {
+  static override errorName = "CantOpenDevice";
+}
+export class CashAddrNotSupported extends LedgerError {
+  static override errorName = "CashAddrNotSupported";
+}
+export class ClaimRewardsFeesWarning extends LedgerError {
+  static override errorName = "ClaimRewardsFeesWarning";
+}
+export class CurrencyNotSupported extends LedgerError {
+  static override errorName = "CurrencyNotSupported";
+  declare currencyName: string;
+  constructor(message?: string, fields?: { currencyName: string }, options?: LedgerErrorOptions) {
+    super(message, fields, options);
+  }
+}
+export class DeviceAppVerifyNotSupported extends LedgerError {
+  static override errorName = "DeviceAppVerifyNotSupported";
+}
+export class DeviceGenuineSocketEarlyClose extends LedgerError {
+  static override errorName = "DeviceGenuineSocketEarlyClose";
+}
+export class DeviceNotGenuineError extends LedgerError {
+  static override errorName = "DeviceNotGenuine";
+}
+export class DeviceOnDashboardExpected extends LedgerError {
+  static override errorName = "DeviceOnDashboardExpected";
+}
+export class DeviceOnDashboardUnexpected extends LedgerError {
+  static override errorName = "DeviceOnDashboardUnexpected";
+}
+export class DeviceInOSUExpected extends LedgerError {
+  static override errorName = "DeviceInOSUExpected";
+}
+export class DeviceHalted extends LedgerError {
+  static override errorName = "DeviceHalted";
+}
+export class DeviceNameInvalid extends LedgerError {
+  static override errorName = "DeviceNameInvalid";
+}
+export class DeviceSocketFail extends LedgerError {
+  static override errorName = "DeviceSocketFail";
+}
+export class DeviceSocketNoBulkStatus extends LedgerError {
+  static override errorName = "DeviceSocketNoBulkStatus";
+}
+export class DeviceNeedsRestart extends LedgerError {
+  static override errorName = "DeviceSocketNoBulkStatus";
+}
+export class UnresponsiveDeviceError extends LedgerError {
+  static override errorName = "UnresponsiveDeviceError";
+}
+export class DisconnectedDevice extends LedgerError {
+  static override errorName = "DisconnectedDevice";
+}
+export class DisconnectedDeviceDuringOperation extends LedgerError {
+  static override errorName = "DisconnectedDeviceDuringOperation";
+}
+export class DeviceExtractOnboardingStateError extends LedgerError {
+  static override errorName = "DeviceExtractOnboardingStateError";
+}
+export class DeviceOnboardingStatePollingError extends LedgerError {
+  static override errorName = "DeviceOnboardingStatePollingError";
+}
+export class EnpointConfigError extends LedgerError {
+  static override errorName = "EnpointConfig";
+}
+export class EthAppPleaseEnableContractData extends LedgerError {
+  static override errorName = "EthAppPleaseEnableContractData";
+}
+export class SolAppPleaseEnableContractData extends LedgerError {
+  static override errorName = "SolAppPleaseEnableContractData";
+}
+export class CeloAppPleaseEnableContractData extends LedgerError {
+  static override errorName = "CeloAppPleaseEnableContractData";
+}
+export class FeeEstimationFailed extends LedgerError {
+  static override errorName = "FeeEstimationFailed";
+}
+export class FirmwareNotRecognized extends LedgerError {
+  static override errorName = "FirmwareNotRecognized";
+}
+export class HardResetFail extends LedgerError {
+  static override errorName = "HardResetFail";
+}
+export class InvalidXRPTag extends LedgerError {
+  static override errorName = "InvalidXRPTag";
+}
+export class InvalidAddress extends LedgerError {
+  static override errorName = "InvalidAddress";
+}
+export class InvalidTransactionError extends LedgerError {
+  static override errorName = "InvalidTransactionError";
+}
+export class InvalidNonce extends LedgerError {
+  static override errorName = "InvalidNonce";
+}
+export class InvalidAddressBecauseDestinationIsAlsoSource extends LedgerError {
+  static override errorName = "InvalidAddressBecauseDestinationIsAlsoSource";
+}
+export class LatestMCUInstalledError extends LedgerError {
+  static override errorName = "LatestMCUInstalledError";
+}
+export class LatestFirmwareVersionRequired extends LedgerError {
+  static override errorName = "LatestFirmwareVersionRequired";
+}
+export class UnsupportedFeatureError extends LedgerError {
+  static override errorName = "UnsupportedFeatureError";
+}
+export class NanoSNotSupported extends LedgerError {
+  static override errorName = "NanoSNotSupported";
+}
+export class UnknownMCU extends LedgerError {
+  static override errorName = "UnknownMCU";
+}
+export class LedgerAPIError extends LedgerError {
+  static override errorName = "LedgerAPIError";
+}
+export class LedgerAPIErrorWithMessage extends LedgerError {
+  static override errorName = "LedgerAPIErrorWithMessage";
+}
+export class LedgerAPINotAvailable extends LedgerError {
+  static override errorName = "LedgerAPINotAvailable";
+}
+export class ManagerAppAlreadyInstalledError extends LedgerError {
+  static override errorName = "ManagerAppAlreadyInstalled";
+}
+export class ManagerAppRelyOnBTCError extends LedgerError {
+  static override errorName = "ManagerAppRelyOnBTC";
+}
+export class ManagerAppDepInstallRequired extends LedgerError {
+  static override errorName = "ManagerAppDepInstallRequired";
+}
+export class ManagerAppDepUninstallRequired extends LedgerError {
+  static override errorName = "ManagerAppDepUninstallRequired";
+}
+export class ManagerDeviceLockedError extends LedgerError {
+  static override errorName = "ManagerDeviceLocked";
+}
+export class ManagerFirmwareNotEnoughSpaceError extends LedgerError {
+  static override errorName = "ManagerFirmwareNotEnoughSpace";
+}
+export class ManagerNotEnoughSpaceError extends LedgerError {
+  static override errorName = "ManagerNotEnoughSpace";
+}
+export class ManagerUninstallBTCDep extends LedgerError {
+  static override errorName = "ManagerUninstallBTCDep";
+}
+export class NetworkDown extends LedgerError {
+  static override errorName = "NetworkDown";
+}
+export class NetworkError extends LedgerError {
+  static override errorName = "NetworkError";
+}
+export class NoAddressesFound extends LedgerError {
+  static override errorName = "NoAddressesFound";
+}
+export class NotEnoughBalance extends LedgerError {
+  static override errorName = "NotEnoughBalance";
+}
+export class NotEnoughBalanceFees extends LedgerError {
+  static override errorName = "NotEnoughBalanceFees";
+}
+export class NotEnoughBalanceSwap extends LedgerError {
+  static override errorName = "NotEnoughBalanceSwap";
+}
+export class NotEnoughBalanceToDelegate extends LedgerError {
+  static override errorName = "NotEnoughBalanceToDelegate";
+}
+export class UnstakeNotEnoughStakedBalanceLeft extends LedgerError {
+  static override errorName = "UnstakeNotEnoughStakedBalanceLeft";
+}
+export class RestakeNotEnoughStakedBalanceLeft extends LedgerError {
+  static override errorName = "RestakeNotEnoughStakedBalanceLeft";
+}
+
+export class NotEnoughToRestake extends LedgerError {
+  static override errorName = "NotEnoughToRestake";
+}
+export class NotEnoughToUnstake extends LedgerError {
+  static override errorName = "NotEnoughToUnstake";
+}
+export class NotEnoughBalanceInParentAccount extends LedgerError {
+  static override errorName = "NotEnoughBalanceInParentAccount";
+}
+export class NotEnoughSpendableBalance extends LedgerError {
+  static override errorName = "NotEnoughSpendableBalance";
+}
+export class NotEnoughBalanceBecauseDestinationNotCreated extends LedgerError {
+  static override errorName = "NotEnoughBalanceBecauseDestinationNotCreated";
+}
+export class NotEnoughToStake extends LedgerError {
+  static override errorName = "NotEnoughToStake";
+}
+export class NoAccessToCamera extends LedgerError {
+  static override errorName = "NoAccessToCamera";
+}
+export class NotEnoughGas extends LedgerError {
+  static override errorName = "NotEnoughGas";
+}
 // Error message specifically for the PTX swap flow
-export const NotEnoughGasSwap = createCustomErrorClass("NotEnoughGasSwap");
-export const TronEmptyAccount = createCustomErrorClass("TronEmptyAccount");
-export const MaybeKeepTronAccountAlive = createCustomErrorClass("MaybeKeepTronAccountAlive");
-export const NotSupportedLegacyAddress = createCustomErrorClass("NotSupportedLegacyAddress");
-export const GasLessThanEstimate = createCustomErrorClass("GasLessThanEstimate");
-export const PriorityFeeTooLow = createCustomErrorClass("PriorityFeeTooLow");
-export const PriorityFeeTooHigh = createCustomErrorClass("PriorityFeeTooHigh");
-export const PriorityFeeHigherThanMaxFee = createCustomErrorClass("PriorityFeeHigherThanMaxFee");
-export const MaxFeeTooLow = createCustomErrorClass("MaxFeeTooLow");
-export const PasswordsDontMatchError = createCustomErrorClass("PasswordsDontMatch");
-export const PasswordIncorrectError = createCustomErrorClass("PasswordIncorrect");
-export const RecommendSubAccountsToEmpty = createCustomErrorClass("RecommendSubAccountsToEmpty");
-export const RecommendUndelegation = createCustomErrorClass("RecommendUndelegation");
-export const TimeoutTagged = createCustomErrorClass("TimeoutTagged");
-export const UnexpectedBootloader = createCustomErrorClass("UnexpectedBootloader");
-export const MCUNotGenuineToDashboard = createCustomErrorClass("MCUNotGenuineToDashboard");
-export const RecipientRequired = createCustomErrorClass("RecipientRequired");
-export const UnavailableTezosOriginatedAccountReceive = createCustomErrorClass(
-  "UnavailableTezosOriginatedAccountReceive",
-);
-export const UnavailableTezosOriginatedAccountSend = createCustomErrorClass(
-  "UnavailableTezosOriginatedAccountSend",
-);
-export const UpdateFetchFileFail = createCustomErrorClass("UpdateFetchFileFail");
-export const UpdateIncorrectHash = createCustomErrorClass("UpdateIncorrectHash");
-export const UpdateIncorrectSig = createCustomErrorClass("UpdateIncorrectSig");
-export const UpdateYourApp = createCustomErrorClass("UpdateYourApp");
-export const UserRefusedDeviceNameChange = createCustomErrorClass("UserRefusedDeviceNameChange");
-export const UserRefusedAddress = createCustomErrorClass("UserRefusedAddress");
-export const UserRefusedFirmwareUpdate = createCustomErrorClass("UserRefusedFirmwareUpdate");
-export const UserRefusedAllowManager = createCustomErrorClass("UserRefusedAllowManager");
-export const UserRefusedOnDevice = createCustomErrorClass("UserRefusedOnDevice"); // TODO rename because it's just for transaction refusal
-export const PinNotSet = createCustomErrorClass("PinNotSet");
-export const ExpertModeRequired = createCustomErrorClass("ExpertModeRequired");
-export const TransportOpenUserCancelled = createCustomErrorClass("TransportOpenUserCancelled");
-export const TransportInterfaceNotAvailable = createCustomErrorClass(
-  "TransportInterfaceNotAvailable",
-);
-export const TransportRaceCondition = createCustomErrorClass("TransportRaceCondition");
-export const TransportWebUSBGestureRequired = createCustomErrorClass(
-  "TransportWebUSBGestureRequired",
-);
-export const TransactionHasBeenValidatedError = createCustomErrorClass(
-  "TransactionHasBeenValidatedError",
-);
-export const TransportExchangeTimeoutError = createCustomErrorClass(
-  "TransportExchangeTimeoutError",
-);
-export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInApp");
-export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");
-export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
-export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
-export const WrongDeviceForAccountPayout = createCustomErrorClass("WrongDeviceForAccountPayout");
-export const MissingSwapPayloadParamaters = createCustomErrorClass("MissingSwapPayloadParamaters");
-export const WrongDeviceForAccountRefund = createCustomErrorClass("WrongDeviceForAccountRefund");
-export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
+export class NotEnoughGasSwap extends LedgerError {
+  static override errorName = "NotEnoughGasSwap";
+}
+export class TronEmptyAccount extends LedgerError {
+  static override errorName = "TronEmptyAccount";
+}
+export class MaybeKeepTronAccountAlive extends LedgerError {
+  static override errorName = "MaybeKeepTronAccountAlive";
+}
+export class NotSupportedLegacyAddress extends LedgerError {
+  static override errorName = "NotSupportedLegacyAddress";
+}
+export class GasLessThanEstimate extends LedgerError {
+  static override errorName = "GasLessThanEstimate";
+}
+export class PriorityFeeTooLow extends LedgerError {
+  static override errorName = "PriorityFeeTooLow";
+}
+export class PriorityFeeTooHigh extends LedgerError {
+  static override errorName = "PriorityFeeTooHigh";
+}
+export class PriorityFeeHigherThanMaxFee extends LedgerError {
+  static override errorName = "PriorityFeeHigherThanMaxFee";
+}
+export class MaxFeeTooLow extends LedgerError {
+  static override errorName = "MaxFeeTooLow";
+}
+export class PasswordsDontMatchError extends LedgerError {
+  static override errorName = "PasswordsDontMatch";
+}
+export class PasswordIncorrectError extends LedgerError {
+  static override errorName = "PasswordIncorrect";
+}
+export class RecommendSubAccountsToEmpty extends LedgerError {
+  static override errorName = "RecommendSubAccountsToEmpty";
+}
+export class RecommendUndelegation extends LedgerError {
+  static override errorName = "RecommendUndelegation";
+}
+export class TimeoutTagged extends LedgerError {
+  static override errorName = "TimeoutTagged";
+}
+export class UnexpectedBootloader extends LedgerError {
+  static override errorName = "UnexpectedBootloader";
+}
+export class MCUNotGenuineToDashboard extends LedgerError {
+  static override errorName = "MCUNotGenuineToDashboard";
+}
+export class RecipientRequired extends LedgerError {
+  static override errorName = "RecipientRequired";
+}
+export class UnavailableTezosOriginatedAccountReceive extends LedgerError {
+  static override errorName = "UnavailableTezosOriginatedAccountReceive";
+}
+export class UnavailableTezosOriginatedAccountSend extends LedgerError {
+  static override errorName = "UnavailableTezosOriginatedAccountSend";
+}
+export class UpdateFetchFileFail extends LedgerError {
+  static override errorName = "UpdateFetchFileFail";
+}
+export class UpdateIncorrectHash extends LedgerError {
+  static override errorName = "UpdateIncorrectHash";
+}
+export class UpdateIncorrectSig extends LedgerError {
+  static override errorName = "UpdateIncorrectSig";
+}
+export class UpdateYourApp extends LedgerError {
+  static override errorName = "UpdateYourApp";
+}
+export class UserRefusedDeviceNameChange extends LedgerError {
+  static override errorName = "UserRefusedDeviceNameChange";
+}
+export class UserRefusedAddress extends LedgerError {
+  static override errorName = "UserRefusedAddress";
+}
+export class UserRefusedFirmwareUpdate extends LedgerError {
+  static override errorName = "UserRefusedFirmwareUpdate";
+}
+export class UserRefusedAllowManager extends LedgerError {
+  static override errorName = "UserRefusedAllowManager";
+}
+export class UserRefusedOnDevice extends LedgerError {
+  static override errorName = "UserRefusedOnDevice";
+} // TODO rename because it's just for transaction refusal
+export class PinNotSet extends LedgerError {
+  static override errorName = "PinNotSet";
+}
+export class ExpertModeRequired extends LedgerError {
+  static override errorName = "ExpertModeRequired";
+}
+export class TransportOpenUserCancelled extends LedgerError {
+  static override errorName = "TransportOpenUserCancelled";
+}
+export class TransportInterfaceNotAvailable extends LedgerError {
+  static override errorName = "TransportInterfaceNotAvailable";
+}
+export class TransportRaceCondition extends LedgerError {
+  static override errorName = "TransportRaceCondition";
+}
+export class TransportWebUSBGestureRequired extends LedgerError {
+  static override errorName = "TransportWebUSBGestureRequired";
+}
+export class TransactionHasBeenValidatedError extends LedgerError {
+  static override errorName = "TransactionHasBeenValidatedError";
+}
+export class TransportExchangeTimeoutError extends LedgerError {
+  static override errorName = "TransportExchangeTimeoutError";
+}
+export class DeviceShouldStayInApp extends LedgerError {
+  static override errorName = "DeviceShouldStayInApp";
+}
+export class WebsocketConnectionError extends LedgerError {
+  static override errorName = "WebsocketConnectionError";
+}
+export class WebsocketConnectionFailed extends LedgerError {
+  static override errorName = "WebsocketConnectionFailed";
+}
+export class WrongDeviceForAccount extends LedgerError {
+  static override errorName = "WrongDeviceForAccount";
+}
+export class WrongDeviceForAccountPayout extends LedgerError {
+  static override errorName = "WrongDeviceForAccountPayout";
+}
+export class MissingSwapPayloadParamaters extends LedgerError {
+  static override errorName = "MissingSwapPayloadParamaters";
+}
+export class WrongDeviceForAccountRefund extends LedgerError {
+  static override errorName = "WrongDeviceForAccountRefund";
+}
+export class WrongAppForCurrency extends LedgerError {
+  static override errorName = "WrongAppForCurrency";
+}
 
-export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
-export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
-export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
-export const FeeNotLoadedSwap = createCustomErrorClass("FeeNotLoadedSwap");
-export const FeeRequired = createCustomErrorClass("FeeRequired");
-export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
-export const ValAddressRequired = createCustomErrorClass("ValAddressRequired");
-export const RedelegateDstValAddressRequired = createCustomErrorClass(
-  "RedelegateDstValAddressRequired",
-);
-export const PendingOperation = createCustomErrorClass("PendingOperation");
-export const SyncError = createCustomErrorClass("SyncError");
-export const PairingFailed = createCustomErrorClass("PairingFailed");
-export const PeerRemovedPairing = createCustomErrorClass("PeerRemovedPairing");
-export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
+export class ETHAddressNonEIP extends LedgerError {
+  static override errorName = "ETHAddressNonEIP";
+}
+export class CantScanQRCode extends LedgerError {
+  static override errorName = "CantScanQRCode";
+}
+export class FeeNotLoaded extends LedgerError {
+  static override errorName = "FeeNotLoaded";
+}
+export class FeeNotLoadedSwap extends LedgerError {
+  static override errorName = "FeeNotLoadedSwap";
+}
+export class FeeRequired extends LedgerError {
+  static override errorName = "FeeRequired";
+}
+export class FeeTooHigh extends LedgerError {
+  static override errorName = "FeeTooHigh";
+}
+export class ValAddressRequired extends LedgerError {
+  static override errorName = "ValAddressRequired";
+}
+export class RedelegateDstValAddressRequired extends LedgerError {
+  static override errorName = "RedelegateDstValAddressRequired";
+}
+export class PendingOperation extends LedgerError {
+  static override errorName = "PendingOperation";
+}
+export class SyncError extends LedgerError {
+  static override errorName = "SyncError";
+}
+export class PairingFailed extends LedgerError {
+  static override errorName = "PairingFailed";
+}
+export class PeerRemovedPairing extends LedgerError {
+  static override errorName = "PeerRemovedPairing";
+}
+export class GenuineCheckFailed extends LedgerError {
+  static override errorName = "GenuineCheckFailed";
+}
 type NetworkType = {
   status: number;
   url: string | undefined;
   method: string;
 };
-export const LedgerAPI4xx = createCustomErrorClass<
-  NetworkType,
-  LedgerErrorConstructor<NetworkType>
->("LedgerAPI4xx");
-export const LedgerAPI5xx = createCustomErrorClass<
-  NetworkType,
-  LedgerErrorConstructor<NetworkType>
->("LedgerAPI5xx");
-export const FirmwareOrAppUpdateRequired = createCustomErrorClass("FirmwareOrAppUpdateRequired");
+export class LedgerAPI4xx extends LedgerError {
+  static override errorName = "LedgerAPI4xx";
+  declare status: number;
+  declare url: string | undefined;
+  declare method: string;
+  constructor(message?: string, fields?: NetworkType, options?: LedgerErrorOptions) {
+    super(message, fields, options);
+  }
+}
+export class LedgerAPI5xx extends LedgerError {
+  static override errorName = "LedgerAPI5xx";
+  declare status: number;
+  declare url: string | undefined;
+  declare method: string;
+  constructor(message?: string, fields?: NetworkType, options?: LedgerErrorOptions) {
+    super(message, fields, options);
+  }
+}
+export class FirmwareOrAppUpdateRequired extends LedgerError {
+  static override errorName = "FirmwareOrAppUpdateRequired";
+}
 
 // SpeedUp / Cancel EVM tx
-export const ReplacementTransactionUnderpriced = createCustomErrorClass(
-  "ReplacementTransactionUnderpriced",
-);
+export class ReplacementTransactionUnderpriced extends LedgerError {
+  static override errorName = "ReplacementTransactionUnderpriced";
+}
 
 // Bitcoin family
-export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");
-export const DustLimit = createCustomErrorClass("DustLimit");
+export class OpReturnDataSizeLimit extends LedgerError {
+  static override errorName = "OpReturnSizeLimit";
+}
+export class DustLimit extends LedgerError {
+  static override errorName = "DustLimit";
+}
 
 // Concordium family
-export const ConcordiumInsufficientFunds = createCustomErrorClass("ConcordiumInsufficientFunds");
-export const ConcordiumMemoTooLong = createCustomErrorClass("ConcordiumMemoTooLong");
-export const ConcordiumPairingExpiredError = createCustomErrorClass(
-  "ConcordiumPairingExpiredError",
-);
-export const ConcordiumSessionExpiredError = createCustomErrorClass(
-  "ConcordiumSessionExpiredError",
-);
-export const ConcordiumTrustedMetadataServiceError = createCustomErrorClass(
-  "ConcordiumTrustedMetadataServiceError",
-);
-export const ConcordiumAddressVerificationFailedError = createCustomErrorClass(
-  "ConcordiumAddressVerificationFailedError",
-);
-export const ConcordiumInvalidMaxFeeError = createCustomErrorClass("ConcordiumInvalidMaxFeeError");
+export class ConcordiumInsufficientFunds extends LedgerError {
+  static override errorName = "ConcordiumInsufficientFunds";
+}
+export class ConcordiumMemoTooLong extends LedgerError {
+  static override errorName = "ConcordiumMemoTooLong";
+}
+export class ConcordiumPairingExpiredError extends LedgerError {
+  static override errorName = "ConcordiumPairingExpiredError";
+}
+export class ConcordiumSessionExpiredError extends LedgerError {
+  static override errorName = "ConcordiumSessionExpiredError";
+}
+export class ConcordiumTrustedMetadataServiceError extends LedgerError {
+  static override errorName = "ConcordiumTrustedMetadataServiceError";
+}
+export class ConcordiumAddressVerificationFailedError extends LedgerError {
+  static override errorName = "ConcordiumAddressVerificationFailedError";
+}
+export class ConcordiumInvalidMaxFeeError extends LedgerError {
+  static override errorName = "ConcordiumInvalidMaxFeeError";
+}
 
 // Language
-export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
+export class LanguageNotFound extends LedgerError {
+  static override errorName = "LanguageNotFound";
+}
 
 // db stuff, no need to translate
-export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
-export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
-export const DBNotReset = createCustomErrorClass("DBNotReset");
+export class NoDBPathGiven extends LedgerError {
+  static override errorName = "NoDBPathGiven";
+}
+export class DBWrongPassword extends LedgerError {
+  static override errorName = "DBWrongPassword";
+}
+export class DBNotReset extends LedgerError {
+  static override errorName = "DBNotReset";
+}
 
-export const SequenceNumberError = createCustomErrorClass("SequenceNumberError");
-export const DisabledTransactionBroadcastError = createCustomErrorClass(
-  "DisabledTransactionBroadcastError",
-);
+export class SequenceNumberError extends LedgerError {
+  static override errorName = "SequenceNumberError";
+}
+export class DisabledTransactionBroadcastError extends LedgerError {
+  static override errorName = "DisabledTransactionBroadcastError";
+}
 
-export const InvalidParameterError = createCustomErrorClass("InvalidParameterError");
-
-// Represents the type of all the classes created with createCustomErrorClass
-export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;
+export class InvalidParameterError extends LedgerError {
+  static override errorName = "InvalidParameterError";
+}
 
 /**
  * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport

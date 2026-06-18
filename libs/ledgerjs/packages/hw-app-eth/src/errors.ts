@@ -1,9 +1,18 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const EthAppPleaseEnableContractData = createCustomErrorClass(
-  "EthAppPleaseEnableContractData",
-);
-export const EthAppNftNotSupported = createCustomErrorClass("EthAppNftNotSupported");
-export const CeloAppPleaseEnableContractData = createCustomErrorClass(
-  "CeloAppPleaseEnableContractData",
-);
+export class EthAppPleaseEnableContractData extends Error {
+  override name = "EthAppPleaseEnableContractData";
+  constructor(message = "EthAppPleaseEnableContractData") {
+    super(message);
+  }
+}
+export class EthAppNftNotSupported extends Error {
+  override name = "EthAppNftNotSupported";
+  constructor(message = "EthAppNftNotSupported") {
+    super(message);
+  }
+}
+export class CeloAppPleaseEnableContractData extends Error {
+  override name = "CeloAppPleaseEnableContractData";
+  constructor(message = "CeloAppPleaseEnableContractData") {
+    super(message);
+  }
+}

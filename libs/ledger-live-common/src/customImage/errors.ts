@@ -1,21 +1,69 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class ImageLoadFromGalleryError extends Error {
+  override name = "ImageLoadFromGalleryError";
+  constructor(message = "ImageLoadFromGalleryError") {
+    super(message);
+  }
+}
 
-export const ImageLoadFromGalleryError = createCustomErrorClass("ImageLoadFromGalleryError");
+export class ImageLoadFromFileError extends Error {
+  override name = "ImageLoadFromFileError";
+  constructor(message = "ImageLoadFromFileError") {
+    super(message);
+  }
+}
 
-export const ImageLoadFromFileError = createCustomErrorClass("ImageLoadFromFileError");
+export class ImageIncorrectFileTypeError extends Error {
+  override name = "ImageIncorrectFileTypeError";
+  constructor(message = "ImageIncorrectFileTypeError") {
+    super(message);
+  }
+}
 
-export const ImageIncorrectFileTypeError = createCustomErrorClass("ImageIncorrectFileTypeError");
+export class ImageDownloadError extends Error {
+  override name = "ImageDownloadError";
+  constructor(message = "ImageDownloadError") {
+    super(message);
+  }
+}
 
-export const ImageDownloadError = createCustomErrorClass("ImageDownloadError");
+export class ImageTooLargeError extends Error {
+  override name = "ImageTooLargeError";
+  constructor(message = "ImageTooLargeError") {
+    super(message);
+  }
+}
 
-export const ImageTooLargeError = createCustomErrorClass("ImageTooLargeError");
+export class ImageSizeLoadingError extends Error {
+  override name = "ImageSizeLoadingError";
+  constructor(message = "ImageSizeLoadingError") {
+    super(message);
+  }
+}
 
-export const ImageSizeLoadingError = createCustomErrorClass("ImageSizeLoadingError");
+export class ImageCropError extends Error {
+  override name = "ImageCropError";
+  constructor(message = "ImageCropError") {
+    super(message);
+  }
+}
 
-export const ImageCropError = createCustomErrorClass("ImageCropError");
+export class ImageResizeError extends Error {
+  override name = "ImageResizeError";
+  constructor(message = "ImageResizeError") {
+    super(message);
+  }
+}
 
-export const ImageResizeError = createCustomErrorClass("ImageResizeError");
+export class ImagePreviewError extends Error {
+  override name = "ImagePreviewError";
+  constructor(message = "ImagePreviewError") {
+    super(message);
+  }
+}
 
-export const ImagePreviewError = createCustomErrorClass("ImagePreviewError");
-
-export const ImageProcessingError = createCustomErrorClass("ImageProcessingError");
+export class ImageProcessingError extends Error {
+  override name = "ImageProcessingError";
+  constructor(message = "ImageProcessingError") {
+    super(message);
+  }
+}

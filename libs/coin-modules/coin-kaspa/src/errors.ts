@@ -1,6 +1,14 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const UnsupportedDerivation = createCustomErrorClass("UnsupportedDerivation");
+export class UnsupportedDerivation extends Error {
+  override name = "UnsupportedDerivation";
+  constructor(message = "UnsupportedDerivation") {
+    super(message);
+  }
+}
 
 /** When a coin-module has no CoinConfig setted */
-export const MissingCoinConfig = createCustomErrorClass("MissingCoinConfig");
+export class MissingCoinConfig extends Error {
+  override name = "MissingCoinConfig";
+  constructor(message = "MissingCoinConfig") {
+    super(message);
+  }
+}

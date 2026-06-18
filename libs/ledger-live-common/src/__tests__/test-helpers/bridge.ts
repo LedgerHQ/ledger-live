@@ -724,9 +724,15 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                         : expectedStatus;
                     const { errors, warnings } = es;
 
-                    // we match errors and warnings
-                    errors && expect(s.errors).toMatchObject(errors);
-                    warnings && expect(s.warnings).toMatchObject(warnings);
+                    // we match errors and warnings by error name: coin-specific errors
+                    // lose their class (become plain objects) once a TransactionStatus is
+                    // serialized across a boundary, so we compare names rather than instances.
+                    const byName = (o: Record<string, unknown>): Record<string, unknown> =>
+                      Object.fromEntries(
+                        Object.entries(o).map(([k, v]) => [k, (v as { name?: string })?.name]),
+                      );
+                    errors && expect(byName(s.errors)).toMatchObject(byName(errors));
+                    warnings && expect(byName(s.warnings)).toMatchObject(byName(warnings));
                     // now we match rest of fields but using the raw version for better readability
                     const restRaw: Record<string, any> = await toTransactionStatusRaw(
                       {

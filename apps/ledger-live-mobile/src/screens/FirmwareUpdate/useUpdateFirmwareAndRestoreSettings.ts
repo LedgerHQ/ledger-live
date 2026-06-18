@@ -17,9 +17,9 @@ import {
   UserRefusedAllowManager,
   WebsocketConnectionError,
   WebsocketConnectionFailed,
-  CustomErrorClassType,
-  TransportStatusErrorClassType,
 } from "@ledgerhq/errors";
+
+type ErrorClassConstructor = new (...args: never[]) => Error;
 import {
   ConnectManagerTimeout,
   ImageCommitRefusedOnDevice,
@@ -36,9 +36,7 @@ import {
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 // Errors related to the device connection
-export const reconnectDeviceErrorClasses: Array<
-  CustomErrorClassType | TransportStatusErrorClassType
-> = [
+export const reconnectDeviceErrorClasses: Array<ErrorClassConstructor> = [
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -48,17 +46,16 @@ export const reconnectDeviceErrorClasses: Array<
 ];
 
 // Errors that could be solved by the user: either on their phone or on their device
-export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportStatusErrorClassType> =
-  [
-    ...reconnectDeviceErrorClasses,
-    WebsocketConnectionError,
-    UserRefusedAllowManager,
-    LanguageInstallRefusedOnDevice,
-    ImageCommitRefusedOnDevice,
-    ImageLoadRefusedOnDevice,
-    WebsocketConnectionFailed,
-    DisconnectedDeviceDuringOperation,
-  ];
+export const userSolvableErrorClasses: Array<ErrorClassConstructor> = [
+  ...reconnectDeviceErrorClasses,
+  WebsocketConnectionError,
+  UserRefusedAllowManager,
+  LanguageInstallRefusedOnDevice,
+  ImageCommitRefusedOnDevice,
+  ImageLoadRefusedOnDevice,
+  WebsocketConnectionFailed,
+  DisconnectedDeviceDuringOperation,
+];
 
 export type FirmwareUpdateParams = {
   device: Device;

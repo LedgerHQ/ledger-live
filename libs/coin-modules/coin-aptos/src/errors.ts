@@ -1,7 +1,20 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class SequenceNumberTooOldError extends Error {
+  override name = "SequenceNumberTooOld";
+  constructor(message = "SequenceNumberTooOld") {
+    super(message);
+  }
+}
 
-export const SequenceNumberTooOldError = createCustomErrorClass("SequenceNumberTooOld");
+export class SequenceNumberTooNewError extends Error {
+  override name = "SequenceNumberTooNew";
+  constructor(message = "SequenceNumberTooNew") {
+    super(message);
+  }
+}
 
-export const SequenceNumberTooNewError = createCustomErrorClass("SequenceNumberTooNew");
-
-export const TransactionExpiredError = createCustomErrorClass("TransactionExpired");
+export class TransactionExpiredError extends Error {
+  override name = "TransactionExpired";
+  constructor(message = "TransactionExpired") {
+    super(message);
+  }
+}

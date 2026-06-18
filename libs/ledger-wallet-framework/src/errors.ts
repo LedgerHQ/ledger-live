@@ -1,3 +1,6 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const UnsupportedDerivation = createCustomErrorClass("UnsupportedDerivation");
+export class UnsupportedDerivation extends Error {
+  override name = "UnsupportedDerivation";
+  constructor(message = "UnsupportedDerivation") {
+    super(message);
+  }
+}

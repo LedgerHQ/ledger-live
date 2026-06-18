@@ -1,8 +1,27 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class SimulationError extends Error {
+  override name = "SimulationError";
+  constructor(message = "SimulationError") {
+    super(message);
+  }
+}
 
-export const SimulationError = createCustomErrorClass("SimulationError");
+export class TooManyUtxosCritical extends Error {
+  override name = "TooManyUtxosCritical";
+  constructor(message = "TooManyUtxosCritical") {
+    super(message);
+  }
+}
 
-export const TooManyUtxosCritical = createCustomErrorClass("TooManyUtxosCritical");
-export const TooManyUtxosWarning = createCustomErrorClass("TooManyUtxosWarning");
+export class TooManyUtxosWarning extends Error {
+  override name = "TooManyUtxosWarning";
+  constructor(message = "TooManyUtxosWarning") {
+    super(message);
+  }
+}
 
-export const TopologyChangeError = createCustomErrorClass("TopologyChangeError");
+export class TopologyChangeError extends Error {
+  override name = "TopologyChangeError";
+  constructor(message = "TopologyChangeError") {
+    super(message);
+  }
+}
