@@ -1,5 +1,4 @@
 import React from "react";
-import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import Default from "../Default";
 import { updateIdentify } from "../analytics/segment";
@@ -82,22 +81,6 @@ describe("Default", () => {
       const { store } = render(<Default />, {
         initialState: {
           devices: { currentDevice: null, devices: [] },
-          featureFlags: (() => {
-            const overrides = {
-              ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-              lldAnalyticsOptInPrompt: {
-                ...(FEATURE_FLAGS_INITIAL_STATE.overrides.lldAnalyticsOptInPrompt ?? {}),
-                enabled: true,
-                params: { variant: "A", entryPoints: ["Portfolio"] },
-              },
-            };
-            return {
-              ...FEATURE_FLAGS_INITIAL_STATE,
-              overrides,
-              // Mirror slice resolution so hooks reading from `resolved` see the override.
-              resolved: { ...FEATURE_FLAGS_DEFAULTS, ...overrides },
-            };
-          })(),
           settings: {
             loaded: true,
             hasCompletedOnboarding: true,

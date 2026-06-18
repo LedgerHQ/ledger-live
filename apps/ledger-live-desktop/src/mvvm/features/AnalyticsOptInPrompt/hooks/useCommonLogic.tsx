@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo } from "react";
-import { useFeature } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import {
   hasSeenAnalyticsOptInPromptSelector,
@@ -10,12 +9,18 @@ import {
   setAnalyticsConsentInfo,
   setHasSeenAnalyticsOptInPrompt,
 } from "~/renderer/actions/settings";
+import { useFeature } from "@features/platform-feature-flags";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
-import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
+import { ANALYTICS_OPT_IN_VARIANT } from "../types/variants";
+
+const ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS = new Set<EntryPoint>([
+  EntryPoint.onboarding,
+  EntryPoint.portfolio,
+]);
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -29,7 +34,6 @@ interface Props {
 export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
-  const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
   const analyticsOptInFlag = useFeature("analyticsOptIn");
   const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
@@ -41,39 +45,23 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
 
-  const variant = getVariant(lldAnalyticsOptInPromptFlag?.params?.variant);
-
-  const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
   const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
 
-  const urlByVariant = {
-    [AB_TESTING_VARIANTS.A]: trackingPolicyUrl,
-    [AB_TESTING_VARIANTS.B]: privacyPolicyUrl,
-  };
-
   const openAnalyticsOptInPrompt = useCallback(
-    (routePath: string, callBack: () => void) => {
+    (_routePath: string, callBack: () => void) => {
       setIsAnalyticsOptInPromptOpened(true);
       setNextStep(() => callBack);
     },
     [setIsAnalyticsOptInPromptOpened],
   );
 
-  const isEntryPointIncludedInFlagParams = lldAnalyticsOptInPromptFlag?.params?.entryPoints
-    .map(s => s.toLowerCase())
-    .includes(entryPoint.toLowerCase());
+  const isEntryPointIncluded = ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS.has(entryPoint);
 
   const isFlagEnabled = useMemo(
     () =>
-      isEntryPointIncludedInFlagParams &&
-      lldAnalyticsOptInPromptFlag?.enabled &&
+      isEntryPointIncluded &&
       (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
-    [
-      lldAnalyticsOptInPromptFlag,
-      hasSeenAnalyticsOptInPrompt,
-      entryPoint,
-      isEntryPointIncludedInFlagParams,
-    ],
+    [hasSeenAnalyticsOptInPrompt, entryPoint, isEntryPointIncluded],
   );
 
   const onSubmit = async () => {
@@ -95,17 +83,17 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onClose: () => setIsAnalyticsOptInPromptOpened(false),
     isOpened: isAnalyticsOptInPromptOpened,
     entryPoint: entryPoint,
-    variant,
+    shouldWeTrack,
   };
 
   const handleOpenPrivacyPolicy = (page?: string) => {
-    openURL(urlByVariant[variant]);
+    openURL(trackingPolicyUrl);
     track(
       "button_clicked",
       {
         button: "Learn more link",
         flow,
-        variant,
+        variant: ANALYTICS_OPT_IN_VARIANT,
         page,
       },
       shouldWeTrack,
@@ -118,13 +106,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onSubmit,
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
-    lldAnalyticsOptInPromptFlag,
     flow,
     shouldWeTrack,
     handleOpenPrivacyPolicy,
   };
 };
-
-export function getVariant(variant?: ABTestingVariants | undefined): ABTestingVariants {
-  return variant === AB_TESTING_VARIANTS.B ? AB_TESTING_VARIANTS.B : AB_TESTING_VARIANTS.A;
-}
