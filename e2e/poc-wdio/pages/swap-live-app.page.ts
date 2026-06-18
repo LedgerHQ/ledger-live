@@ -183,6 +183,10 @@ export class SwapLiveAppPage {
           await this.fromAmountInput.addValue(char);
           await driver.pause(50);
         }
+        if (driver.isAndroid) {
+          await driver.hideKeyboard();
+          await driver.pause(1_000);
+        }
       });
     });
   }
