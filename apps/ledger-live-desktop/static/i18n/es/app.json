@@ -8232,7 +8232,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "main" : {
+    "variantA" : {
       "description" : "Al compartir tus datos de Ledger Wallet, nos ayudas a conocer tus preferencias y mostrarte contenido relevante para ti.",
       "whatWeTrack" : "Con tu consentimiento, Ledger podrá recopilar datos sobre cómo usas Ledger Wallet (incluidas las visitas a páginas y los clics):",
       "whatWeTrackList" : {
@@ -8247,11 +8247,7 @@
       },
       "managePreferences" : "Gestiona tus preferencias",
       "refuse" : "Rechazar todo",
-      "accept" : "Aceptar todo"
-    },
-    "preferences" : {
-      "managePreferences" : "Gestiona tus preferencias",
-      "validate" : "Validar",
+      "accept" : "Aceptar todo",
       "analyticsData" : {
         "title" : "Análisis",
         "description" : "Para medir el rendimiento de Ledger Wallet y mejorar tanto la aplicación como tu experiencia, compartimos datos de uso, incluidas las visitas a páginas y los clics."
@@ -8259,6 +8255,27 @@
       "personalizationData" : {
         "title" : "Personalización",
         "description" : "Para que recibas recomendaciones personalizadas y contenido que se ajuste a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing, compartimos datos de uso de la aplicación, incluidos clics, visitas a páginas y datos de conversión."
+      },
+      "validate" : "Validar"
+    },
+    "variantB" : {
+      "accept" : "Aceptar",
+      "refuse" : "Rechazar",
+      "analytics" : {
+        "description" : "Al compartir tus datos analíticos de Ledger Wallet, nos ayudas a entender cómo se utiliza Ledger Wallet, corregir errores y mejorar la experiencia de usuario.",
+        "details" : {
+          "1" : "Los datos analíticos incluyen visitas a páginas y clics.",
+          "2" : "No recopilaremos ni veremos ninguna información relativa a tu saldo, cuentas ni portfolio.",
+          "3" : "Los análisis son completamente anónimos. No podemos ver ni recopilar tu información personal."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "Disfruta de una experiencia personalizada",
+        "description" : "Al compartir tus datos de personalización de Ledger Wallet, nos permites mostrarte contenido adaptado a tus preferencias.",
+        "details" : {
+          "1" : "Los datos de personalización incluyen datos de conversión, clics y visitas a páginas.",
+          "2" : "No podemos rastrear ni recopilar tu información personal ni información relativa a tu portfolio."
+        }
       }
     },
     "common" : {
