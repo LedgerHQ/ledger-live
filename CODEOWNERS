@@ -344,7 +344,6 @@ apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/hooks
 apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/PortfolioBannerContent/ @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeaturesAndFlowsDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/components/TourSection.tsx  @ledgerhq/engagement
-apps/ledger-live-desktop/src/renderer/screens/settings/sections/General/ShareAnalyticsButton.tsx  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/reducers/dynamicContent.ts                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/actions/dynamicContent.ts                                @ledgerhq/engagement
