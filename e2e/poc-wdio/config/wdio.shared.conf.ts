@@ -242,7 +242,7 @@ export const config: WebdriverIO.Config = {
     };
     await close();
     await init(capabilities["custom:capa"].websocketPort);
-    // ADBUtils.startLogcatStream(cid);
+    ADBUtils.startLogcatStream(cid);
   },
   /**
    * Gets executed before test execution begins. At this point you can access to all global
@@ -269,15 +269,15 @@ export const config: WebdriverIO.Config = {
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
-  // beforeTest: async function (test) {
-  //   const options = {
-  //     timeLimit: "300",
-  //     ...(driver.isAndroid ? { bugReport: true } : {}),
-  //     ...(driver.isIOS ? { videoType: "mpeg4" } : {}),
-  //   };
-  // await driver.startRecordingScreen(options);
-  // ADBUtils.markTestStart(test.title);
-  // },
+  beforeTest: async function (test) {
+    //   const options = {
+    //     timeLimit: "300",
+    //     ...(driver.isAndroid ? { bugReport: true } : {}),
+    //     ...(driver.isIOS ? { videoType: "mpeg4" } : {}),
+    //   };
+    // await driver.startRecordingScreen(options);
+    ADBUtils.markTestStart(test.title);
+  },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
    * beforeEach in Mocha)
@@ -320,17 +320,17 @@ export const config: WebdriverIO.Config = {
         console.warn(`Screenshot skipped (session may be dead): ${message}`);
       }
 
-      // const logcatFile = ADBUtils.snapshotLogcatToArtifacts(test.title);
-      // if (logcatFile) {
-      //   try {
-      //     allureReporter.addAttachment("logcat", readFileSync(logcatFile, "utf8"), "text/plain");
-      //   } catch (attachErr) {
-      //     const message = attachErr instanceof Error ? attachErr.message : String(attachErr);
-      //     console.warn(`Allure logcat attachment skipped: ${message}`);
-      //   }
-      // }
+      const logcatFile = ADBUtils.snapshotLogcatToArtifacts(test.title);
+      if (logcatFile) {
+        try {
+          allureReporter.addAttachment("logcat", readFileSync(logcatFile, "utf8"), "text/plain");
+        } catch (attachErr) {
+          const message = attachErr instanceof Error ? attachErr.message : String(attachErr);
+          console.warn(`Allure logcat attachment skipped: ${message}`);
+        }
+      }
 
-      // await ADBUtils.dumpLogcatViaDriver(test.title);
+      await ADBUtils.dumpLogcatViaDriver(test.title);
     }
   },
 
@@ -365,8 +365,8 @@ export const config: WebdriverIO.Config = {
     const envsData = formatEnvData(JSON.parse(await getEnvs()));
     await appendFile(path.resolve("artifacts/environment.properties"), flagsData + envsData);
 
-    // ADBUtils.snapshotLogcatToArtifacts("session-end");
-    // ADBUtils.stopLogcatStream();
+    ADBUtils.snapshotLogcatToArtifacts("session-end");
+    ADBUtils.stopLogcatStream();
     await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
   },
   /**
@@ -386,7 +386,7 @@ export const config: WebdriverIO.Config = {
    * @param {<Object>} results object containing test results
    */
   onComplete: function () {
-    // ADBUtils.stopLogcatStream();
+    ADBUtils.stopLogcatStream();
   },
   /**
    * Gets executed when a refresh happens.
