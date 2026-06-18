@@ -2,6 +2,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
 import { getEnvs, getFlags } from "../bridge/server.ts";
 import { appendFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { init, close } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
