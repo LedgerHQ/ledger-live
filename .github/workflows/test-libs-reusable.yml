@@ -23,6 +23,23 @@ permissions:
   contents: read
   pull-requests: write
 
+env:
+  # Co-locate the pnpm store on the _work volume (the emptyDir, same filesystem
+  # as the checkout + node_modules) so package imports are hardlinks instead of
+  # cross-device copies. The default store lives under $HOME on the runner
+  # container's overlay rootfs — a different filesystem from _work — which forces
+  # pnpm to copy every file into node_modules and pays overlay copy-up on the
+  # store itself. Co-locating removes both, cutting the small-file write storm
+  # that drives iowait under concurrent installs. See LIVE-28839.
+  #
+  # pnpm 10.24.0 (pinned via packageManager) reads the npm-style `npm_config_*`
+  # env vars and ignores the `pnpm_config_*` prefix; the docs' `pnpm_config_*`
+  # migration only takes effect in a later release. Both are set so the store
+  # relocation keeps working across a future pnpm bump — each version reads its
+  # own prefix and harmlessly ignores the other.
+  npm_config_store_dir: /home/runner/_work/.pnpm-store
+  pnpm_config_store_dir: /home/runner/_work/.pnpm-store
+
 jobs:
   test-libraries:
     name: "Libraries Test"
