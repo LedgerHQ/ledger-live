@@ -23,6 +23,7 @@ export type { MarketFilters, MarketFilterOption } from "./useMarketFilters";
 export type MarketScreenAssetsList = {
   assets: MarketAssetDisplayData[];
   assetsLoading: boolean;
+  assetsFetchingNextPage: boolean;
   assetsError: boolean;
   assetsEmptyState: "favorites" | "stocks" | undefined;
   categories: MarketCategories;
@@ -49,13 +50,14 @@ export function useMarketScreenViewModel(): MarketScreenViewModel {
   const categories = useMarketCategories({ routeCategory });
   const filters = useMarketFilters();
   const starredMarketCoins = useSelector(starredMarketCoinsSelector);
-  const { assets, loading, isError, emptyState, onEndReached } = useMarketAssets({
-    search: search.query,
-    category: categories.selectedCategory,
-    sorting: filters.sorting,
-    timeframe: filters.timeframe,
-    starredMarketCoins,
-  });
+  const { assets, loading, isFetchingNextPage, isError, emptyState, onEndReached } =
+    useMarketAssets({
+      search: search.query,
+      category: categories.selectedCategory,
+      sorting: filters.sorting,
+      timeframe: filters.timeframe,
+      starredMarketCoins,
+    });
   const onAssetPress = useMarketAssetPress();
 
   return {
@@ -68,6 +70,7 @@ export function useMarketScreenViewModel(): MarketScreenViewModel {
     assetsList: {
       assets: search.isDebouncing ? [] : assets,
       assetsLoading: search.isDebouncing || loading,
+      assetsFetchingNextPage: !search.isDebouncing && isFetchingNextPage,
       assetsError: isError,
       assetsEmptyState: search.isDebouncing ? undefined : emptyState,
       categories,

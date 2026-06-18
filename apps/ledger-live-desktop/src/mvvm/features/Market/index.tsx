@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Flex, Dropdown } from "@ledgerhq/react-ui";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import styled from "styled-components";
@@ -14,6 +14,7 @@ import MarketTable from "./components/MarketTable";
 import MarketTopCards from "./TopCards";
 import { MarketCategoryBar } from "./components/MarketCategoryBar";
 import { MarketRangeSelect } from "./components/MarketRangeSelect";
+import { getMarketDiscoverabilityPageAnalytics } from "./utils/marketPageAnalytics";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -72,13 +73,27 @@ export default function Market() {
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
 
+  const discoverabilityPageAnalytics = useMemo(
+    () =>
+      getMarketDiscoverabilityPageAnalytics({
+        order,
+        range,
+        category: categories.selectedCategory,
+      }),
+    [categories.selectedCategory, order, range],
+  );
+
   return (
     <Container>
       <TrackPage
-        category="Market"
-        sort={order !== "desc"}
-        timeframe={range}
-        countervalue={counterCurrency}
+        {...(shouldDisplayAssetDiscoverability
+          ? discoverabilityPageAnalytics
+          : {
+              sort: order !== "desc",
+              timeframe: range,
+              countervalue: counterCurrency,
+              category: "Market",
+            })}
       />
       <PageHeader title={t("market.title")} onBack={() => navigate("/")} />
 

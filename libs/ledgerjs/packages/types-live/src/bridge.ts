@@ -283,6 +283,7 @@ type AccountBridgeWithExchange<A extends Account = Account> = {
 };
 
 export interface AccountBridgeExtensions {
+  getEstimationRecipient?: (account: Account) => string;
   isAccountEmpty?: (account: AccountLike) => boolean;
   clearAccount?: <A extends AccountLike>(account: A) => A;
   getStakesCount?: (account: Account) => number;

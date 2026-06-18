@@ -7,6 +7,7 @@ describe("createBridges", () => {
         broadcast: expect.any(Function),
         createTransaction: expect.any(Function),
         estimateMaxSpendable: expect.any(Function),
+        getEstimationRecipient: expect.any(Function),
         getSerializedAddressParameters: expect.any(Function),
         getTransactionStatus: expect.any(Function),
         prepareTransaction: expect.any(Function),

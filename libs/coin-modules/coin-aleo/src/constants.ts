@@ -1,3 +1,5 @@
+export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
+
 export const PROGRAM_ID = {
   CREDITS: "credits.aleo",
 };

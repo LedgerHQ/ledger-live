@@ -3,6 +3,7 @@ import network from "@ledgerhq/live-network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Cursor, Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/types";
+
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -417,11 +418,12 @@ const fetchStakeForValId = async (
 
   for (const { withdrawId, withdrawalAmount, withdrawEpoch } of withdrawals) {
     const completionDate = epochToDate(withdrawEpoch, currentEpoch);
+    const canWithdraw = currentEpoch !== null && withdrawEpoch <= currentEpoch;
     stakes.push({
       uid: `${contractAddress}-${valId.toString()}-${delegator}-withdraw-${withdrawId}`,
       address: delegator,
       ...(validatorAddress ? { delegate: validatorAddress } : {}),
-      state: "deactivating",
+      state: canWithdraw ? "withdrawable" : "deactivating",
       ...(completionDate ? { stateUpdatedAt: completionDate } : {}),
       asset,
       amount: withdrawalAmount,

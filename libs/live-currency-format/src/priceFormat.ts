@@ -24,13 +24,14 @@ const valueFromUnit = (valueInUnit: BigNumber, unit: Unit): BigNumber =>
 export function formatPrice(
   unit: Unit,
   value: BigNumber,
-  opts: { showCode?: boolean; locale?: string; discreet?: boolean } = {},
+  opts: { showCode?: boolean; locale?: string; discreet?: boolean; alwaysShowSign?: boolean } = {},
 ): string {
   const absFiat = value.abs().shiftedBy(-unit.magnitude).toNumber();
   return formatCurrencyUnit(unit, value, {
     showCode: opts.showCode ?? false,
     locale: opts.locale,
     discreet: opts.discreet,
+    alwaysShowSign: opts.alwaysShowSign,
     ...priceOptions(absFiat, unit),
   });
 }

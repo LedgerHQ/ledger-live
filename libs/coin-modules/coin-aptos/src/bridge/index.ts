@@ -9,6 +9,7 @@ import {
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { APTOS_DUMMY_ADDRESS } from "../constants";
 import createTransaction from "../logic/createTransaction";
 import { validateAddress } from "../logic/validateAddress";
 import { hydrate, preloadWithValidators } from "../preload";
@@ -68,6 +69,7 @@ function buildAccountBridge(
     assignToAccountRaw,
     assignFromAccountRaw,
     validateAddress,
+    getEstimationRecipient: () => APTOS_DUMMY_ADDRESS,
   };
 }
 

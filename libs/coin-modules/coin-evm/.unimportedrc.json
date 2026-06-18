@@ -23,6 +23,7 @@
     "**/*.fixtures.*",
     "src/datasets/ethereum1.ts",
     "src/abis/index.ts",
+    "src/constants.ts",
     "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [

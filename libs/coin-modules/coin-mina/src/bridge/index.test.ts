@@ -53,6 +53,7 @@ describe("createBridges", () => {
         sync: expect.any(Function),
         updateTransaction: expect.any(Function),
         validateAddress: expect.any(Function),
+        getEstimationRecipient: expect.any(Function),
         assignFromAccountRaw: expect.any(Function),
         assignToAccountRaw: expect.any(Function),
       },

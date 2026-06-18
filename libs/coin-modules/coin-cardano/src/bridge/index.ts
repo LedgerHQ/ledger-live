@@ -11,6 +11,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import cardanoCoinConfig, { CardanoCoinConfig } from "../config";
+import { CARDANO_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus/getTransactionStatus";
@@ -68,6 +69,7 @@ export function buildAccountBridge(
     assignFromAccountRaw,
     getSerializedAddressParameters,
     validateAddress,
+    getEstimationRecipient: () => CARDANO_DUMMY_ADDRESS,
   };
 }
 

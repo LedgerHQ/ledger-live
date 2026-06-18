@@ -31,6 +31,7 @@ export function MarketScreenView({ search, highlights, assetsList, isSearchActiv
       <MarketAssetsList
         assets={assetsList.assets}
         loading={assetsList.assetsLoading}
+        fetchingNextPage={assetsList.assetsFetchingNextPage}
         error={assetsList.assetsError}
         emptyState={assetsList.assetsEmptyState}
         selectedCategory={assetsList.categories.selectedCategory}

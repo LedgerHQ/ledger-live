@@ -1,21 +1,32 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { createIntent } from "@ledgerhq/device-intent";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
-import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
+import { FlowName } from "@ledgerhq/live-common/device-action/utils";
+import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { useTransactionDeviceAction } from "~/hooks/deviceActions";
-import { lastConnectedDeviceSelector, mevProtectionSelector } from "~/reducers/settings";
+import { mevProtectionSelector } from "~/reducers/settings";
+import {
+  buildDeviceInitializationInput,
+  type InitializationInput,
+} from "LLM/components/DeviceIntentExecutor";
 import { ScreenName } from "~/const";
+import { broadcastLogger } from "~/datadog";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../../types";
+import { signTransactionIntentLWMDefinition } from "../intents/signTransactionIntent/intentLWMDefinition";
+
+function normalizeError(error: unknown): Error {
+  return error instanceof Error ? error : new Error(String(error));
+}
 
 export function useSignatureViewModel() {
   const navigation = useNavigation<SendFlowNavigationProp>();
-  const { operation, status } = useSendFlowActions();
+  const { operation, status, close } = useSendFlowActions();
   const { state } = useSendFlowData();
   const reduxDispatch = useDispatch();
 
@@ -23,28 +34,11 @@ export function useSignatureViewModel() {
   const transaction = state.transaction.transaction;
   const txStatus = state.transaction.status;
 
-  const action = useTransactionDeviceAction();
-  const device = useSelector(lastConnectedDeviceSelector);
   const mevProtected = useSelector(mevProtectionSelector);
-  const [isBluetoothDrawerDismissed, setIsBluetoothDrawerDismissed] = useState(false);
-  const isBluetoothRequired = Boolean(device && !device.wired);
-  const { bluetoothRequirementsState, retryRequestOnIssue, cannotRetryRequest } =
-    useDebouncedRequireBluetooth({
-      requiredFor: "connecting",
-      isHookEnabled: isBluetoothRequired && !isBluetoothDrawerDismissed,
-    });
-  const hasBluetoothIssue =
-    isBluetoothRequired &&
-    !isBluetoothDrawerDismissed &&
-    bluetoothRequirementsState !== "unknown" &&
-    bluetoothRequirementsState !== "all_respected";
-
-  const onBluetoothDrawerClose = useCallback(() => {
-    setIsBluetoothDrawerDismissed(true);
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    }
-  }, [navigation]);
+  const [deviceInitializationInput, setDeviceInitializationInput] =
+    useState<InitializationInput | null>(null);
+  const [isSigningCompleted, setIsSigningCompleted] = useState(false);
+  const isSigningCompletedRef = useRef(false);
 
   const broadcast = useBroadcast({
     account,
@@ -53,6 +47,7 @@ export function useSignatureViewModel() {
       mevProtected,
       source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: true } },
     },
+    logger: broadcastLogger,
   });
 
   const registerPendingOperation = useCallback(
@@ -71,7 +66,7 @@ export function useSignatureViewModel() {
     navigation.replace(ScreenName.SendFlowConfirmation);
   }, [navigation]);
 
-  const { request, onDeviceActionResult } = useSendFlowSignatureCore({
+  const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
     account,
     parentAccount,
     transaction,
@@ -84,19 +79,98 @@ export function useSignatureViewModel() {
     registerPendingOperation,
   });
 
+  useEffect(() => {
+    if (!request) {
+      isSigningCompletedRef.current = false;
+      setIsSigningCompleted(false);
+      setDeviceInitializationInput(null);
+      return;
+    }
+
+    let cancelled = false;
+    isSigningCompletedRef.current = false;
+    setIsSigningCompleted(false);
+    setDeviceInitializationInput(null);
+
+    const mainAccount = getMainAccount(request.account, request.parentAccount ?? undefined);
+
+    buildDeviceInitializationInput({
+      appRequest: {
+        account: mainAccount,
+        tokenCurrency: request.tokenCurrency ?? undefined,
+      },
+      flow: FlowName.send,
+    })
+      .then(input => {
+        if (!cancelled) {
+          setDeviceInitializationInput(input);
+        }
+      })
+      .catch(error => {
+        if (!cancelled) {
+          finishWithError(normalizeError(error));
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [finishWithError, request]);
+
+  const signatureIntent = useMemo(
+    () => (request ? createIntent(signTransactionIntentLWMDefinition, request) : null),
+    [request],
+  );
+
+  const onIntentJobStateChanged = useCallback(
+    (jobState: SignTransactionIntentJobState) => {
+      if (jobState.type === "signed") {
+        isSigningCompletedRef.current = true;
+        setIsSigningCompleted(true);
+        onDeviceActionResult({
+          signedOperation: jobState.signedOperation,
+          // Legacy SignatureDeviceActionResult shape; useSendFlowSignatureCore ignores device.
+          device: {},
+        });
+        return;
+      }
+
+      if (jobState.type === "cancelled") {
+        isSigningCompletedRef.current = false;
+        setIsSigningCompleted(false);
+      }
+    },
+    [onDeviceActionResult],
+  );
+
+  // On a signing failure the executor keeps the sheet open and renders its native
+  // IntentError screen (Retry / Close). We deliberately do not navigate away here so
+  // the user stays on the sheet, as opposed to the success path which broadcasts and
+  // moves to the confirmation screen.
+  const onIntentJobError = useCallback(() => {}, []);
+
+  // Explicit dismiss of the sheet (close button / backdrop) returns to the previous step.
+  const onUserCancel = useCallback(() => {
+    if (isSigningCompletedRef.current) {
+      return;
+    }
+
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+    close();
+  }, [close, navigation]);
+
   return {
     account,
     transaction,
-    device,
-    action,
     request,
-    onDeviceActionResult,
-    bluetooth: {
-      hasIssue: hasBluetoothIssue,
-      bluetoothRequirementsState,
-      retryRequestOnIssue,
-      cannotRetryRequest,
-      onDrawerClose: onBluetoothDrawerClose,
-    },
+    deviceInitializationInput,
+    signatureIntent,
+    isSigningCompleted,
+    onIntentJobStateChanged,
+    onIntentJobError,
+    onUserCancel,
   };
 }

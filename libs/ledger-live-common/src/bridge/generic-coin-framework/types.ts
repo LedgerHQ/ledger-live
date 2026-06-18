@@ -86,6 +86,7 @@ export type GenericTransaction = TransactionCommon & {
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;
+  withdrawId?: string;
   dstValAddress?: string;
 };
 
@@ -117,6 +118,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;
+  withdrawId?: string;
   dstValAddress?: string;
 };
 

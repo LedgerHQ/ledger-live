@@ -11,7 +11,6 @@ export {
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByKeyword,
   findCryptoCurrencyByTicker,
-  getAbandonSeedAddress,
 } from "@ledgerhq/cryptoassets";
 export { encodeURIScheme, decodeURIScheme } from "@ledgerhq/ledger-wallet-framework/currencies";
 export { isCurrencySupported, listSupportedCurrencies } from "../coin-modules/registry";

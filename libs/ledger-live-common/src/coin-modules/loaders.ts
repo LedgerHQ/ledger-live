@@ -333,6 +333,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       ),
     loadSigner: () =>
       import("../bridge/generic-coin-framework/families/stellar/signer").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/stellar/bridgeExtensions").then(m => m.default),
   },
   {
     family: "sui",
@@ -401,5 +402,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       ),
     loadSigner: () =>
       import("../bridge/generic-coin-framework/families/xrp/signer").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/xrp/bridgeExtensions").then(m => m.default),
   },
 ];

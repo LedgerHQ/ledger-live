@@ -14,11 +14,11 @@ import {
   hourFormat,
   useDateFormatter,
 } from "~/renderer/hooks/useDateFormatter";
+import { useAssetDetailChartSeries } from "../../hooks/useAssetDetailChartSeries";
+import { isChartDerivedPriceChangeRange } from "@ledgerhq/live-common/market/utils/chartRangeVariation";
 import {
-  clampDayChangePercentPointsNearZero,
-  getFiatPriceVariationFromPercentChange,
-  getPriceChangeKeyForRange,
   resolveMarketPriceSectionSourceId,
+  resolveRangePriceChange,
   resolveTrendPercentAndVariant,
 } from "./utils";
 import { resolveAssetDetailSectionLoading } from "../../utils/resolveAssetDetailSectionLoading";
@@ -78,16 +78,31 @@ export function useMarketPriceSectionViewModel({
   });
   const shouldRenderSection = Boolean(marketAssetId);
   const data = marketData.marketCurrencyData;
+  const isChartDerivedRange = isChartDerivedPriceChangeRange(selectedRange);
+
+  const { prices: chartPrices } = useAssetDetailChartSeries({
+    id: marketAssetId,
+    counterCurrency: counterValueCurrency.ticker.toLowerCase(),
+    selectedRange,
+    ath: data?.ath,
+    atl: data?.atl,
+    athTime: data?.athDate?.getTime(),
+    atlTime: data?.atlDate?.getTime(),
+    skip: !marketAssetId || !isChartDerivedRange,
+  });
 
   const hasPriceData = Number.isFinite(data?.price);
   const showSkeleton = Boolean(
     marketAssetId &&
-    resolveAssetDetailSectionLoading(isDistributionLoading, marketData.isLoading, hasPriceData),
+      resolveAssetDetailSectionLoading(isDistributionLoading, marketData.isLoading, hasPriceData),
   );
-  const priceChangeKey = getPriceChangeKeyForRange(selectedRange);
-  const rangePercentage = data?.priceChangePercentage?.[priceChangeKey];
-  const normalizedPercentage = clampDayChangePercentPointsNearZero(rangePercentage);
-  const variationFiat = getFiatPriceVariationFromPercentChange(data?.price, normalizedPercentage);
+
+  const { percentage: normalizedPercentage, variationFiat } = resolveRangePriceChange({
+    selectedRange,
+    chartPrices,
+    price: data?.price,
+    priceChangePercentage: data?.priceChangePercentage,
+  });
 
   const priceFormatter = useCallback(
     (value: number): FormattedValue => formatPriceFragment(fiatUnit, value, locale),
@@ -97,13 +112,14 @@ export function useMarketPriceSectionViewModel({
   const { selection } = useScrubbedPrice();
   const isScrubbing = selection != null;
 
-  const hasVariationData = hasPriceData && normalizedPercentage != null && variationFiat != null;
+  const hasVariationData =
+    normalizedPercentage != null && variationFiat != null && (isChartDerivedRange || hasPriceData);
   // While scrubbing, the trend reflects the change from the start of the range to the scrubbed point.
   const hasVariation = isScrubbing || hasVariationData;
   let variationText = "—";
   if (isScrubbing) {
     variationText = formatSignedFiatVariation(selection.variationFiat, fiatUnit, locale);
-  } else if (hasVariationData) {
+  } else if (hasVariationData && variationFiat != null) {
     variationText = formatSignedFiatVariation(variationFiat, fiatUnit, locale);
   }
 
@@ -111,7 +127,7 @@ export function useMarketPriceSectionViewModel({
     let percentage = 0;
     if (isScrubbing) {
       percentage = selection.percentage;
-    } else if (hasVariationData) {
+    } else if (hasVariationData && normalizedPercentage != null) {
       percentage = normalizedPercentage / 100;
     }
     return { percentage, value: 0 };

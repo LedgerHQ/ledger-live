@@ -21,6 +21,9 @@ export type SearchSuggestions = {
 export type SearchResults = {
   data: MarketCurrencyData[];
   isLoading: boolean;
+  loadNext?: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 };
 
 export type SearchOverlayContextValue = {

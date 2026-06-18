@@ -146,6 +146,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

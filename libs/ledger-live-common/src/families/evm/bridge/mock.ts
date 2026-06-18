@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { getEvmDummyAddress } from "@ledgerhq/coin-evm/constants";
 import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
@@ -164,6 +165,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: account => getEvmDummyAddress(account.currency.id),
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

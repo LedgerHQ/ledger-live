@@ -45,6 +45,7 @@ const mockBridge = {
   signRawOperation: jest.fn(),
   validateAddress: jest.fn(),
   getSerializedAddressParameters: jest.fn(),
+  getEstimationRecipient: jest.fn(),
   isAccountEmpty: jest.fn(),
   clearAccount: jest.fn(),
   getStakesCount: jest.fn(),

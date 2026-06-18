@@ -32,6 +32,8 @@ export type Data = {
   account: StakingAccount;
   validatorAddress: string;
   amount: BigNumber;
+  // Monad: validator id needed to finalize via `withdraw(validatorId, withdrawId)`.
+  validatorId?: string;
   // Monad: slot id of the matured withdrawal request to finalize via `withdraw(withdrawId)`.
   withdrawId?: number;
   source?: string;
@@ -84,22 +86,31 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const { account, validatorAddress, amount, source = "Account Page" } = params;
+  const {
+    account,
+    validatorAddress,
+    validatorId,
+    amount,
+    withdrawId,
+    source = "Account Page",
+  } = params;
   const bridge = useAccountBridge<EvmTransaction>(account, undefined);
 
   const { transaction, parentAccount, status, bridgeError, bridgePending } = useBridgeTransaction(
     bridge,
     () => {
       invariant(isStakingAccount(account), "evm: account with staking resources required");
-      // STUB (LIVE-31683): bridge has no "withdraw" mode yet — self-send so the flow runs
-      // end-to-end. Replace with `mode: "withdraw"` once coin-evm supports it.
+      // Monad: finalize the matured withdrawal slot via `withdraw(validatorId, withdrawId)`.
       const baseTransaction = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(baseTransaction, {
-        mode: "send",
+        mode: "withdraw",
+        valAddress: validatorAddress,
+        valId: validatorId,
+        withdrawId: withdrawId?.toString(),
         recipient: account.freshAddress,
         amount,
         useAllAmount: false,
-      });
+      } as unknown as Partial<EvmTransaction>);
       return {
         account,
         parentAccount: undefined,

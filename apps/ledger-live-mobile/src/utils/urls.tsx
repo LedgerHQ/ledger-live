@@ -288,6 +288,14 @@ export const urls = {
   recoverSources: {
     myLedger: "ledgerlive://myledger",
   },
+  backupHub: {
+    recoveryKey:
+      "https://shop.ledger.com/products/ledger-recovery-key/single-backup?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLM&utm_content=msg_backuphub",
+    secretRecoveryPhrase:
+      "https://shop.ledger.com/?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLM&utm_content=msg_backuphub#category-srp-accessories",
+    compareAll:
+      "https://shop.ledger.com/pages/recovery-solutions?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLM&utm_content=msg_backuphub",
+  },
   domainService: "https://support.ledger.com/article/9710787581469-zd",
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",

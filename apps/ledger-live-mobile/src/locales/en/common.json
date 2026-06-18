@@ -4476,7 +4476,13 @@
       "processingTransaction": "Your transaction is being processed",
       "sign": {
         "title": "Continue on your Ledger {{wording}}",
-        "description": "Follow the instructions displayed on your Secure Touchscreen."
+        "description": "Follow the instructions displayed on your Secure Touchscreen.",
+        "cancelled": {
+          "title": "Transaction canceled",
+          "description": "You rejected the transaction. Your funds won't be affected.",
+          "close": "Close",
+          "retry": "Try again"
+        }
       },
       "gasOptionsSync": {
         "warningTitle": "Unable to refresh network fees",
@@ -9924,6 +9930,30 @@
       "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
+    },
+    "backupHub": {
+      "title": "Wallet backups",
+      "description": "Protect your assets with a combination of backup solutions for your Seed Phrase Recovery.",
+      "compareFooter": "Compare all backup methods",
+      "sections": {
+        "digital": "Digital ID-based backups",
+        "physical": "Physical backups"
+      },
+      "recover": {
+        "title": "Ledger Recover",
+        "notSubscribed": "Create a backup you can't lose",
+        "inProgress": "Finish setting up your backup.",
+        "done": "Manage your backup",
+        "discover": "Discover"
+      },
+      "recoveryKey": {
+        "title": "Ledger Recovery Key",
+        "description": "A PIN-protected smart card"
+      },
+      "secretRecoveryPhrase": {
+        "title": "24-word metal storage",
+        "description": "Fire and water resistant protection."
+      }
     },
     "help": {
       "title": "Help",

@@ -1,8 +1,8 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getFees } from "./api/node";
 import { getStepPrice } from "./api/node";
 import { buildTransaction } from "./buildTransaction";
+import { ICON_DUMMY_ADDRESS } from "./constants";
 import { FEES_SAFETY_BUFFER, calculateAmount } from "./logic";
 import type { IconAccount, Transaction } from "./types";
 
@@ -21,7 +21,7 @@ const getEstimatedFees = async ({
 }): Promise<BigNumber> => {
   const tx = {
     ...transaction,
-    recipient: getAbandonSeedAddress(account.currency.id),
+    recipient: ICON_DUMMY_ADDRESS,
     // Always use a fake recipient to estimate fees
     amount: calculateAmount({
       account,

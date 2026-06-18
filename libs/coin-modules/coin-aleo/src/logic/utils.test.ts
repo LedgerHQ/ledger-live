@@ -45,6 +45,8 @@ import {
   parseMicrocredits,
   parseAmount,
   normalizeAleoPlaintext,
+  isAleoAddressPlaintext,
+  isAleoAmountPlaintext,
   determineTransactionType,
   patchAccountWithViewKey,
   toCoinFrameworkOperation,
@@ -195,6 +197,33 @@ describe("normalizeAleoPlaintext", () => {
 
   it("should not strip visibility suffixes that are not at the end", () => {
     expect(normalizeAleoPlaintext("1000000.private.extra")).toBe("1000000.private.extra");
+  });
+});
+
+describe("isAleoAddressPlaintext", () => {
+  it.each([
+    ["aleo1test123address456", true],
+    ["aleo1test123address456.public", true],
+    ["  ALEO1TEST123ADDRESS456.private  ", true],
+    ["1000000u64", false],
+    ["aleo2notvalid", false],
+    ["", false],
+  ])("(%j) → %s", (input, expected) => {
+    expect(isAleoAddressPlaintext(input)).toBe(expected);
+  });
+});
+
+describe("isAleoAmountPlaintext", () => {
+  it.each([
+    ["500000u64", true],
+    ["250000u128.public", true],
+    ["  42u32.private  ", true],
+    ["aleo1test123address456", false],
+    ["1000000", false],
+    ["500000u64.extra", false],
+    ["", false],
+  ])("(%j) → %s", (input, expected) => {
+    expect(isAleoAmountPlaintext(input)).toBe(expected);
   });
 });
 

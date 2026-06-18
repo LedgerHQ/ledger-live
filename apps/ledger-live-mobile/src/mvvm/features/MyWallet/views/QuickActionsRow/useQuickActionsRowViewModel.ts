@@ -10,13 +10,13 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFeature } from "@features/platform-feature-flags";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
-import { lastConnectedDeviceSelector, hasClickedRecoverSelector } from "~/reducers/settings";
-import { setHasClickedRecover } from "~/actions/settings";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { track } from "~/analytics";
+import { useRecoverEntry } from "LLM/hooks/useRecoverEntry";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 
 export interface QuickActionRowItem {
@@ -33,13 +33,11 @@ interface QuickActionsRowViewModel {
 
 export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
-  const hasClickedRecover = useSelector(hasClickedRecoverSelector);
-  const recoverFeature = useFeature("protectServicesMobile");
-  const protectId = recoverFeature?.params?.protectId ?? "protect-prod";
+  const { hasClickedRecover, markRecoverSeen, openRecover } = useRecoverEntry();
+  const isBackupHubEnabled = !!useFeature("lwmBackupHub")?.enabled;
 
   const hasDevice = lastConnectedDevice !== null;
   const recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
@@ -49,15 +47,14 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
     : t("myWallet.quickActions.backup");
 
   const handleRecoverPress = useCallback(() => {
-    if (!hasClickedRecover) {
-      dispatch(setHasClickedRecover(true));
-    }
+    markRecoverSeen();
     track("button_clicked", { button: "Recover", page: MY_WALLET_TRACKING_PAGE_NAME });
-    navigation.navigate(ScreenName.Recover, {
-      platform: protectId,
-      device: lastConnectedDevice ?? undefined,
-    });
-  }, [navigation, protectId, lastConnectedDevice, hasClickedRecover, dispatch]);
+    if (isBackupHubEnabled) {
+      navigation.navigate(NavigatorName.BackupHub, { screen: ScreenName.BackupHub });
+      return;
+    }
+    openRecover();
+  }, [navigation, markRecoverSeen, openRecover, isBackupHubEnabled]);
 
   const handleHelpPress = useCallback(() => {
     track("button_clicked", { button: "Help", page: MY_WALLET_TRACKING_PAGE_NAME });

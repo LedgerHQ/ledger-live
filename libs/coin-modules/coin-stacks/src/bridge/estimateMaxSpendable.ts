@@ -1,8 +1,8 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { STACKS_DUMMY_ADDRESS } from "../constants";
 import { StacksNetwork } from "../network/api";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
@@ -33,7 +33,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   const dummyTx = {
     ...createTransaction(account),
     ...transaction,
-    recipient: getAbandonSeedAddress(mainAccount.currency.id),
+    recipient: STACKS_DUMMY_ADDRESS,
     useAllAmount: true,
   };
 

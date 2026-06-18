@@ -16,6 +16,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountBridge, CurrencyBridge, DerivationMode } from "@ledgerhq/types-live";
 
+import { KASPA_DUMMY_ADDRESS } from "../constants";
 import resolver from "../hw-getAddress";
 import type { KaspaAccount, Transaction, TransactionStatus } from "../types";
 import { KaspaSigner } from "../types";
@@ -95,6 +96,7 @@ function buildAccountBridge(
     updateTransaction,
     prepareTransaction,
     getTransactionStatus,
+    getEstimationRecipient: () => KASPA_DUMMY_ADDRESS,
     sync,
     receive,
     initAccount,

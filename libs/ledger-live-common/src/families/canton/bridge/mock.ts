@@ -2,6 +2,7 @@ import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { createApi } from "@ledgerhq/coin-canton/api/index";
 import { Transaction as CantonTransaction, CantonAccount } from "@ledgerhq/coin-canton/types";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { CANTON_UNSET_RECIPIENT } from "@ledgerhq/coin-canton/constants";
 import { BigNumber } from "bignumber.js";
 import { validateAddress } from "../../../bridge/validateAddress";
 
@@ -176,6 +177,7 @@ const accountBridge: AccountBridge<CantonTransaction, CantonAccount> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => CANTON_UNSET_RECIPIENT,
 };
 
 const currencyBridge = {

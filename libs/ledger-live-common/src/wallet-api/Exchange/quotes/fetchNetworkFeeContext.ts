@@ -6,11 +6,8 @@ import { firstValueFrom, reduce } from "rxjs";
 import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 import { getAccountBridge } from "../../../bridge";
-import { getAbandonSeedAddress } from "../../../currencies";
 import { getAccountIdFromWalletAccountId } from "../../converters";
 import type { NetworkFeeContext } from "./normalizer/networkFeeEstimate";
-
-const BITCOIN_SEGWIT_ABANDON_SEED = "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 export type FetchNetworkFeeContextArgs = {
   accounts: AccountLike[];
@@ -63,10 +60,7 @@ export async function fetchNetworkFeeContext(
     });
 
     const subAccountId = fromAccount.type !== "Account" ? fromAccount.id : undefined;
-    const recipient =
-      mainAccount.currency.id === "bitcoin"
-        ? BITCOIN_SEGWIT_ABANDON_SEED
-        : getAbandonSeedAddress(mainAccount.currency.id);
+    const recipient = bridge.getEstimationRecipient(mainAccount);
 
     const preparedTx = await bridge.prepareTransaction(mainAccount, {
       ...bridge.createTransaction(mainAccount),

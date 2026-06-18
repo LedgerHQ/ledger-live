@@ -990,3 +990,11 @@ export async function getCalTokens({
 
   return calTokens;
 }
+
+export function isAleoAddressPlaintext(v: string): boolean {
+  return normalizeAleoPlaintext(v).toLowerCase().startsWith("aleo1");
+}
+
+export function isAleoAmountPlaintext(v: string): boolean {
+  return /^\d+u\d+$/.test(normalizeAleoPlaintext(v));
+}

@@ -13,6 +13,7 @@ import { validateAddress } from "../logic/validateAddress";
 import resolver from "../signer";
 import { BoilerplateSigner } from "../types";
 import type { Transaction } from "../types";
+import { DUMMY_RECIPIENT } from "../constants";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -50,6 +51,7 @@ export function createBridges(
     prepareTransaction,
     getTransactionStatus,
     estimateMaxSpendable,
+    getEstimationRecipient: () => DUMMY_RECIPIENT,
     sync,
     receive,
     signOperation,

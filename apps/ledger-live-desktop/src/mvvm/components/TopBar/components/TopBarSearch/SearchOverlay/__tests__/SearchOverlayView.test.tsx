@@ -1,10 +1,40 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import { SearchOverlay } from "..";
 import { useAssetSearchBar } from "../useAssetSearchBar";
 import { SearchMode, SearchResults, SearchSuggestions } from "../types";
 
 jest.mock("../useAssetSearchBar");
+
+// The shared VirtualList relies on layout measurements that jsdom does not provide, so we render a
+// thin stand-in that maps items through `renderItem` and forwards the infinite-scroll callback.
+jest.mock("LLD/components/VirtualList", () => {
+  const ReactModule = require("react");
+  return {
+    VirtualList: ({
+      items,
+      renderItem,
+      hasNextPage,
+      onVisibleItemsScrollEnd,
+    }: {
+      items: unknown[];
+      renderItem: (item: unknown) => unknown;
+      hasNextPage?: boolean;
+      onVisibleItemsScrollEnd?: () => void;
+    }) => {
+      ReactModule.useEffect(() => {
+        if (hasNextPage) onVisibleItemsScrollEnd?.();
+      }, [hasNextPage, onVisibleItemsScrollEnd]);
+      return ReactModule.createElement(
+        ReactModule.Fragment,
+        null,
+        items.map((item, index) =>
+          ReactModule.createElement(ReactModule.Fragment, { key: index }, renderItem(item)),
+        ),
+      );
+    },
+  };
+});
 
 const mockedUseAssetSearchBar = jest.mocked(useAssetSearchBar);
 
@@ -13,7 +43,12 @@ const EMPTY_SUGGESTIONS: SearchSuggestions = {
   cryptos: EMPTY_SECTION,
   stocks: EMPTY_SECTION,
 };
-const EMPTY_RESULTS: SearchResults = { data: [], isLoading: false };
+const EMPTY_RESULTS: SearchResults = {
+  data: [],
+  isLoading: false,
+  hasNextPage: false,
+  isFetchingNextPage: false,
+};
 
 function mockSearchBar({
   mode,
@@ -50,7 +85,11 @@ describe("SearchOverlayView", () => {
   });
 
   it("renders the general skeleton while the results are loading in `results` mode", () => {
-    mockSearchBar({ mode: "results", query: "bit", results: { data: [], isLoading: true } });
+    mockSearchBar({
+      mode: "results",
+      query: "bit",
+      results: { data: [], isLoading: true, hasNextPage: false, isFetchingNextPage: false },
+    });
 
     render(<SearchOverlay />);
 
@@ -73,6 +112,8 @@ describe("SearchOverlayView", () => {
           } as unknown as SearchResults["data"][number],
         ],
         isLoading: false,
+        hasNextPage: false,
+        isFetchingNextPage: false,
       },
     });
 
@@ -80,6 +121,34 @@ describe("SearchOverlayView", () => {
 
     expect(screen.getByTestId("search-results-list")).toBeInTheDocument();
     expect(screen.getByTestId("search-result-item-btc")).toBeInTheDocument();
+  });
+
+  it("requests the next page when more results are available in `results` mode", async () => {
+    const loadNext = jest.fn();
+    mockSearchBar({
+      mode: "results",
+      query: "bit",
+      results: {
+        data: [
+          {
+            id: "bitcoin",
+            name: "Bitcoin",
+            ticker: "BTC",
+            ledgerIds: ["bitcoin"],
+            price: 100,
+            priceChangePercentage: { "24h": 1.2 },
+          } as unknown as SearchResults["data"][number],
+        ],
+        isLoading: false,
+        hasNextPage: true,
+        isFetchingNextPage: false,
+        loadNext,
+      },
+    });
+
+    render(<SearchOverlay />);
+
+    await waitFor(() => expect(loadNext).toHaveBeenCalled());
   });
 
   it("renders the empty state in `noResults` mode", () => {

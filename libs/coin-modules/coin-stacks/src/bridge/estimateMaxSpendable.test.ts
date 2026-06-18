@@ -1,7 +1,7 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { Account } from "@ledgerhq/types-live";
 import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
+import { STACKS_DUMMY_ADDRESS } from "../constants";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -9,7 +9,6 @@ import { getAccountInfo } from "./utils/account";
 import { getAddress } from "./utils/misc";
 import { createTransaction as createStacksTransaction } from "./utils/transactions";
 
-jest.mock("@ledgerhq/cryptoassets/abandonseed");
 jest.mock("@stacks/transactions");
 jest.mock("./createTransaction");
 jest.mock("./utils/account");
@@ -17,7 +16,6 @@ jest.mock("./utils/misc");
 jest.mock("./utils/transactions");
 
 describe("estimateMaxSpendable", () => {
-  let getAbandonSeedAddressSpy: jest.SpyInstance;
   let getAccountInfoSpy: jest.SpyInstance;
   let getAddressSpy: jest.SpyInstance;
   let createTransactionSpy: jest.SpyInstance;
@@ -70,14 +68,12 @@ describe("estimateMaxSpendable", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    getAbandonSeedAddressSpy = jest.spyOn({ getAbandonSeedAddress }, "getAbandonSeedAddress");
     getAccountInfoSpy = jest.spyOn({ getAccountInfo }, "getAccountInfo");
     getAddressSpy = jest.spyOn({ getAddress }, "getAddress");
     createTransactionSpy = jest.spyOn({ createTransaction }, "createTransaction");
     createStacksTransactionSpy = jest.spyOn({ createStacksTransaction }, "createStacksTransaction");
     estimateTransactionSpy = jest.spyOn({ estimateTransaction }, "estimateTransaction");
 
-    getAbandonSeedAddressSpy.mockReturnValue("ST3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     getAccountInfoSpy.mockReturnValue({
       mainAccount: mockMainAccount,
       subAccount: null,
@@ -111,12 +107,11 @@ describe("estimateMaxSpendable", () => {
       transaction: mockTransaction,
     });
 
-    expect(getAbandonSeedAddressSpy).toHaveBeenCalledWith("stacks");
     expect(createTransactionSpy).toHaveBeenCalledWith(mockMainAccount);
 
     expect(createStacksTransactionSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        recipient: "ST3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        recipient: STACKS_DUMMY_ADDRESS,
         useAllAmount: true,
       }),
       "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",

@@ -1,6 +1,7 @@
 import {
   getAssetDetailPath,
   getMarketOrAssetDetailPath,
+  isAssetOrMarketDetailPath,
   resolveLegacyCryptoCurrencyId,
 } from "../marketAssetNavigation";
 
@@ -31,6 +32,40 @@ describe("marketAssetNavigation", () => {
 
     it("does not double-encode segments already percent-encoded from deeplink pathname", () => {
       expect(getAssetDetailPath("a%2Fb")).toBe("/asset/a%2Fb");
+    });
+  });
+
+  describe("isAssetOrMarketDetailPath", () => {
+    it("returns true for an asset detail path", () => {
+      expect(isAssetOrMarketDetailPath("/asset/bitcoin")).toBe(true);
+    });
+
+    it("returns true for a legacy market detail path", () => {
+      expect(isAssetOrMarketDetailPath("/market/bitcoin")).toBe(true);
+    });
+
+    it("returns false for the home path", () => {
+      expect(isAssetOrMarketDetailPath("/")).toBe(false);
+    });
+
+    it("returns false for the market list path", () => {
+      expect(isAssetOrMarketDetailPath("/market")).toBe(false);
+    });
+
+    it("returns false for the market list path with a trailing slash", () => {
+      expect(isAssetOrMarketDetailPath("/market/")).toBe(false);
+    });
+
+    it("returns false for the bare asset path", () => {
+      expect(isAssetOrMarketDetailPath("/asset")).toBe(false);
+    });
+
+    it("returns false for the bare asset path with a trailing slash", () => {
+      expect(isAssetOrMarketDetailPath("/asset/")).toBe(false);
+    });
+
+    it("returns false for an unrelated path", () => {
+      expect(isAssetOrMarketDetailPath("/accounts")).toBe(false);
     });
   });
 

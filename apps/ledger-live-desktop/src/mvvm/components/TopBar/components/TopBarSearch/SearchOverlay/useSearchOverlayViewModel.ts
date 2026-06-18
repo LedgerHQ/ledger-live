@@ -1,16 +1,21 @@
 import { KeyboardEvent, useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import {
+  getMarketOrAssetDetailPath,
+  isAssetOrMarketDetailPath,
+} from "LLD/utils/marketAssetNavigation";
 import { setMarketCategory } from "~/renderer/actions/market";
 import { useAssetSearchBar } from "./useAssetSearchBar";
 import { SearchOverlayContextValue } from "./types";
 import { useDispatch } from "LLD/hooks/redux";
+import { track } from "~/renderer/analytics/segment";
+import { getCurrentTrackingPage, getPreviousTrackingPage } from "~/renderer/analytics/screenRefs";
 
 export function useSearchOverlayViewModel() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { query, onChangeQuery, isOpen, open, close, mode, suggestions, results } =
@@ -23,30 +28,46 @@ export function useSearchOverlayViewModel() {
     setDisplayedMode(mode);
   }
 
+  // Searching while already on a detail page replaces the entry instead of pushing, so repeated
+  // searches don't stack in history and a single Back returns to the page before the first search.
+  const replace = isAssetOrMarketDetailPath(location.pathname);
+
   const navigateToAsset = useCallback(
     (currencyId: string, marketState?: MarketCurrencyData) => {
-      setTrackingSource("Global Search");
+      track("asset_clicked", {
+        asset: marketState?.name ?? currencyId,
+        page: getCurrentTrackingPage(),
+        flow: "global_search",
+        source: getPreviousTrackingPage(),
+        // true when clicked from the search results list, false from the default suggestions list.
+        searched: displayedMode === "results",
+      });
       navigate(getMarketOrAssetDetailPath(currencyId, shouldDisplayAggregatedAssets), {
         state: marketState,
+        replace,
       });
       close();
     },
-    [navigate, shouldDisplayAggregatedAssets, close],
+    [navigate, shouldDisplayAggregatedAssets, close, displayedMode, replace],
   );
 
-  const navigateToMarket = useCallback(() => {
-    setTrackingSource("Global Search");
-    dispatch(setMarketCategory("all"));
-    navigate("/market");
-    close();
-  }, [dispatch, navigate, close]);
+  const goToMarket = useCallback(
+    (marketCategory: Parameters<typeof setMarketCategory>[0], trackCategory: string) => {
+      dispatch(setMarketCategory(marketCategory));
+      navigate("/market", { replace });
+      track("button_clicked", {
+        button: "see all",
+        flow: "global_search",
+        page: getCurrentTrackingPage(),
+        category: trackCategory,
+      });
+      close();
+    },
+    [dispatch, navigate, close, replace],
+  );
 
-  const navigateToStocksMarket = useCallback(() => {
-    setTrackingSource("Global Search");
-    dispatch(setMarketCategory("stocks"));
-    navigate("/market");
-    close();
-  }, [dispatch, navigate, close]);
+  const navigateToMarket = useCallback(() => goToMarket("all", "crypto"), [goToMarket]);
+  const navigateToStocksMarket = useCallback(() => goToMarket("stocks", "stocks"), [goToMarket]);
 
   const onOpenChange = useCallback(
     (next: boolean) => {

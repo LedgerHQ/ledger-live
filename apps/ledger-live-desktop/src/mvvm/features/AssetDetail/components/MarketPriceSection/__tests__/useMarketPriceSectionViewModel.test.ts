@@ -5,6 +5,11 @@ import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { renderHook } from "tests/testSetup";
 import { useMarketPriceSectionViewModel } from "../useMarketPriceSectionViewModel";
 import { ScrubbedPriceContext, type ScrubSelection } from "../../../context/ScrubbedPriceContext";
+import { useAssetDetailChartSeries } from "../../../hooks/useAssetDetailChartSeries";
+
+jest.mock("../../../hooks/useAssetDetailChartSeries");
+
+const mockedUseAssetDetailChartSeries = jest.mocked(useAssetDetailChartSeries);
 
 const baseMarketCurrencyData = createMockMarketCurrencyData();
 
@@ -30,6 +35,47 @@ const makeScrubWrapper = (selection: ScrubSelection | undefined) =>
   };
 
 describe("useMarketPriceSectionViewModel", () => {
+  beforeEach(() => {
+    mockedUseAssetDetailChartSeries.mockReturnValue({
+      prices: [],
+      timestamps: [],
+      isLoading: false,
+      isError: false,
+    });
+  });
+
+  it("derives all-time variation from chart endpoints instead of the 1y market change", () => {
+    mockedUseAssetDetailChartSeries.mockReturnValue({
+      prices: [10_000, 40_000],
+      timestamps: [Date.UTC(2015, 0, 1), Date.UTC(2025, 0, 1)],
+      isLoading: false,
+      isError: false,
+    });
+
+    const { result } = renderHook(
+      () =>
+        useMarketPriceSectionViewModel({
+          ledgerId: "bitcoin",
+          marketData: {
+            ...marketData,
+            marketCurrencyData: createMockMarketCurrencyData({
+              price: 40_000,
+              priceChangePercentage: {
+                ...baseMarketCurrencyData.priceChangePercentage,
+                [KeysPriceChange.year]: 30,
+              },
+            }),
+          },
+          isDistributionLoading: false,
+          selectedRange: "all",
+        }),
+      { initialState: { settings: { counterValue: "USD", locale: "en-US" } } },
+    );
+
+    expect(result.current.percentageText).toBe("+300.00%");
+    expect(result.current.variationText).toBe("+$30,000.00");
+  });
+
   it("shows day change percentage and fiat variation in discreet mode", () => {
     const { result } = renderHook(
       () =>

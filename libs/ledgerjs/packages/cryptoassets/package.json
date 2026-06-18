@@ -39,7 +39,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
-    "invariant": "2",
     "zod": "catalog:",
     "lodash": "^4.17.21"
   },

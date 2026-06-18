@@ -1,6 +1,7 @@
-import { getAbandonSeedAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
+import { POLKADOT_NULL_ADDRESS } from "../constants";
 import { estimateFees } from "../logic";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import type { PolkadotAccount, Transaction } from "../types";
@@ -24,7 +25,7 @@ export default async function getEstimatedFees({
 
   const t = {
     ...transaction,
-    recipient: getAbandonSeedAddress(account.currency.id),
+    recipient: POLKADOT_NULL_ADDRESS,
     // Always use a fake recipient to estimate fees
     amount: calculateAmount({
       account,

@@ -39,6 +39,7 @@ function mockMarketAssets(overrides: Partial<ReturnType<typeof useMarketAssets>>
   mockedUseMarketAssets.mockReturnValue({
     assets: [createMarketAssetDisplayData()],
     loading: false,
+    isFetchingNextPage: false,
     isError: false,
     emptyState: undefined,
     onEndReached: jest.fn(),
@@ -80,11 +81,12 @@ describe("useMarketScreenViewModel", () => {
     expect(result.current.highlights.highlightCards.length).toBeGreaterThan(0);
   });
 
-  it("forwards the assets and their loading / error flags", () => {
-    mockMarketAssets({ loading: true, isError: false });
+  it("forwards the assets and their loading / fetching / error flags", () => {
+    mockMarketAssets({ loading: true, isFetchingNextPage: true, isError: false });
     const { result } = renderHook(() => useMarketScreenViewModel());
     expect(result.current.assetsList.assets).toHaveLength(1);
     expect(result.current.assetsList.assetsLoading).toBe(true);
+    expect(result.current.assetsList.assetsFetchingNextPage).toBe(true);
     expect(result.current.assetsList.assetsError).toBe(false);
   });
 
@@ -121,6 +123,7 @@ describe("useMarketScreenViewModel", () => {
 
   it("collapses sections immediately and debounces the asset search query", () => {
     jest.useFakeTimers();
+    mockMarketAssets({ isFetchingNextPage: true });
     const { result } = renderHook(() => useMarketScreenViewModel());
 
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith(defaultMarketAssetsParams);
@@ -130,6 +133,8 @@ describe("useMarketScreenViewModel", () => {
     expect(result.current.isSearchActive).toBe(true);
     expect(result.current.assetsList.assets).toEqual([]);
     expect(result.current.assetsList.assetsLoading).toBe(true);
+    // The footer spinner must stay hidden while the new query is debouncing.
+    expect(result.current.assetsList.assetsFetchingNextPage).toBe(false);
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith(defaultMarketAssetsParams);
 
     act(() => {

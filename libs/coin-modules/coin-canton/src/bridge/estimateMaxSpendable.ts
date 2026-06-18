@@ -1,7 +1,7 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { CANTON_UNSET_RECIPIENT } from "../constants";
 import { Transaction, CantonAccount } from "../types";
 import { createTransaction } from "./createTransaction";
 import { getTransactionStatus } from "./getTransactionStatus";
@@ -15,7 +15,7 @@ export const estimateMaxSpendable: AccountBridge<
   const newTransaction = await prepareTransaction(mainAccount, {
     ...createTransaction(account),
     ...transaction,
-    recipient: transaction?.recipient || getAbandonSeedAddress("canton_network"),
+    recipient: transaction?.recipient || CANTON_UNSET_RECIPIENT,
     amount: new BigNumber(0),
   });
   const status = await getTransactionStatus(mainAccount, newTransaction);

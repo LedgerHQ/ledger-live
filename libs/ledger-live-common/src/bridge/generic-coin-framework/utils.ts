@@ -101,7 +101,9 @@ function isStringArray(value: unknown): value is string[] {
 function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOperation {
   return (
     typeof mode === "string" &&
-    ["delegate", "undelegate", "redelegate", "claimReward", "compoundReward"].includes(mode)
+    ["delegate", "undelegate", "redelegate", "claimReward", "compoundReward", "withdraw"].includes(
+      mode,
+    )
   );
 }
 
@@ -134,6 +136,9 @@ function getDelegationIntentFields(
       : {}),
     ...(delegationMode !== undefined && transaction.valId
       ? { mode: delegationMode, valId: transaction.valId }
+      : {}),
+    ...(delegationMode !== undefined && transaction.withdrawId
+      ? { withdrawId: transaction.withdrawId }
       : {}),
     ...(delegationMode !== undefined && transaction.dstValAddress
       ? { dstValAddress: transaction.dstValAddress }
@@ -492,6 +497,9 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
   if (transaction.valId) {
     raw.valId = transaction.valId;
   }
+  if (transaction.withdrawId) {
+    raw.withdrawId = transaction.withdrawId;
+  }
   if (transaction.dstValAddress) {
     raw.dstValAddress = transaction.dstValAddress;
   }
@@ -515,6 +523,9 @@ export const buildOptimisticOperation = (
       break;
     case "undelegate":
       type = "UNDELEGATE";
+      break;
+    case "withdraw":
+      type = "WITHDRAW_UNBONDED";
       break;
     case "stake":
       type = "STAKE";

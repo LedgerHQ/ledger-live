@@ -8,5 +8,10 @@
   ],
   "ignoreUnused": ["@ledgerhq/live-env", "expect", "invariant", "rxjs"],
   "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
-  "ignoreUnimported": ["src/globals.d.ts", "src/network/index.ts", "src/supportedFeatures.ts"]
+  "ignoreUnimported": [
+    "src/globals.d.ts",
+    "src/network/index.ts",
+    "src/constants.ts",
+    "src/supportedFeatures.ts"
+  ]
 }

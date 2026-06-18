@@ -36,6 +36,9 @@ export function defaultClearAccount<T extends AccountLike>(
 }
 
 export const defaultBridgeExtensions: Required<AccountBridgeExtensions> = {
+  getEstimationRecipient: account => {
+    throw new Error(`no estimation recipient for currency ${account.currency.id}`);
+  },
   isAccountEmpty: defaultIsAccountEmpty,
   clearAccount: a => defaultClearAccount(a),
   getStakesCount: () => 0,

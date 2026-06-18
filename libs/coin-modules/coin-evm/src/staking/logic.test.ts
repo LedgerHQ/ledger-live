@@ -10,6 +10,7 @@ import {
   canCompound,
   canRedelegate,
   canUndelegate,
+  canWithdraw,
   getMaxEstimatedBalance,
   isSeiAccountUnassociated,
 } from "./logic";
@@ -154,6 +155,20 @@ describe("evm staking logic", () => {
     it("returns true when no delegation is provided", () => {
       const account = makeAccount("monad");
       expect(canUndelegate(account)).toBe(true);
+    });
+  });
+
+  describe("canWithdraw", () => {
+    it("returns true for a withdrawable unbonding with a withdrawId", () => {
+      expect(canWithdraw({ withdrawId: 0, status: "withdrawable" })).toBe(true);
+    });
+
+    it("returns false while the unbonding is still deactivating", () => {
+      expect(canWithdraw({ withdrawId: 0, status: "deactivating" })).toBe(false);
+    });
+
+    it("returns false when there is no withdrawId (chains that auto-return funds)", () => {
+      expect(canWithdraw({ status: "withdrawable" })).toBe(false);
     });
   });
 

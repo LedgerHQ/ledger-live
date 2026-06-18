@@ -6,5 +6,6 @@
 export {
   isAvailableOnBuy,
   isAvailableOnSell,
+  isAvailableOnSwap,
   type MarketCurrencyRampLedgerIds,
 } from "~/renderer/screens/market/utils";

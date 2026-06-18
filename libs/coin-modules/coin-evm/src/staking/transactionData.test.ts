@@ -61,6 +61,31 @@ describe("buildStakingTransactionParams", () => {
     }).toThrow("monad staking requires valId");
   });
 
+  it("encodes a Monad withdraw by (valId, withdrawId) with no value", () => {
+    const intent = delegateIntent({
+      mode: "withdraw",
+      valId: "42",
+      withdrawId: "7",
+      valAddress: "0xDisplayAddressIgnoredByEncoder",
+    });
+
+    const { to, data, value } = buildStakingTransactionParams(asCurrency("monad"), intent);
+
+    const iface = new ethers.Interface(getStakingABI("monad") as ethers.InterfaceAbi);
+    expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("withdraw", [42n, 7n]));
+    expect(to).toEqual("0x0000000000000000000000000000000000001000");
+    expect(value).toEqual(0n);
+  });
+
+  it("throws when a Monad withdraw intent has no withdrawId", () => {
+    expect(() => {
+      buildStakingTransactionParams(
+        asCurrency("monad"),
+        delegateIntent({ mode: "withdraw", valId: "42" }),
+      );
+    }).toThrow("monad withdraw requires withdrawId");
+  });
+
   it("still encodes a Sei delegate by valAddress (valId ignored)", () => {
     const valAddress = "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn";
     const intent = delegateIntent({ valAddress });

@@ -1,4 +1,3 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
@@ -10,6 +9,7 @@ import {
   PolkadotResources,
   Transaction,
 } from "../types";
+import { POLKADOT_NULL_ADDRESS } from "../constants";
 
 export function createFixtureAccount(account?: Partial<PolkadotAccount>): PolkadotAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "polkadot")!;
@@ -63,7 +63,7 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   return {
     amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || getAbandonSeedAddress("polkadot"),
+    recipient: tx?.recipient || POLKADOT_NULL_ADDRESS,
 
     mode: tx?.mode || "send",
     family: "polkadot",

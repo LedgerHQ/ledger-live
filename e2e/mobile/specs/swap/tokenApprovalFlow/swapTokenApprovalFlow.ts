@@ -5,11 +5,12 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/currencyUtils";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
+import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
 
 export function runSwapTokenApprovalFlow(
   fromAccount: TokenAccount,
   toAccount: Account,
-  provider: SwapProvider,
+  swapProviders: SwapProvider[],
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -43,6 +44,7 @@ export function runSwapTokenApprovalFlow(
     tags.forEach(tag => $Tag(tag));
 
     it("Swap - token approval flow", async () => {
+      const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
       await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
       const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);

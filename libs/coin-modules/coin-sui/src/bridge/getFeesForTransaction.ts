@@ -1,6 +1,6 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { BigNumber } from "bignumber.js";
+import { SUI_DUMMY_ADDRESS } from "../constants";
 import { estimateFees } from "../logic";
 import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
 import type { SuiAccount, Transaction } from "../types";
@@ -23,7 +23,7 @@ export default async function getEstimatedFees({
 }): Promise<BigNumber> {
   const t = {
     ...transaction,
-    recipient: getAbandonSeedAddress(account.currency.id),
+    recipient: SUI_DUMMY_ADDRESS,
     // Always use a fake recipient to estimate fees
     amount: calculateAmount({
       account,
@@ -55,7 +55,7 @@ export default async function getEstimatedFees({
 
   const fees = await estimateFees({
     intentType,
-    recipient: getAbandonSeedAddress(account.currency.id),
+    recipient: SUI_DUMMY_ADDRESS,
     sender: account.freshAddress,
     amount: BigInt(t.amount.toString()),
     type: transactionType,

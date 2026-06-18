@@ -1,4 +1,3 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getFees, getStepPrice } from "../../api/node";
 import { buildTransaction } from "../../buildTransaction";
@@ -8,7 +7,6 @@ import { IconAccount } from "../../types";
 
 jest.mock("../../buildTransaction");
 jest.mock("../../api/node");
-jest.mock("@ledgerhq/cryptoassets");
 jest.mock("../../logic");
 
 const mockedLogic = jest.mocked(logic);
@@ -37,7 +35,6 @@ describe("getEstimatedFees", () => {
     const stepLimit = new BigNumber(100000);
     const stepPrice = new BigNumber(10);
 
-    (getAbandonSeedAddress as jest.Mock).mockReturnValue("fake-recipient-address");
     mockedLogic.calculateAmount.mockReturnValue(new BigNumber(100));
     (buildTransaction as jest.Mock).mockResolvedValue({ unsigned: unsignedTx });
     (getFees as jest.Mock).mockResolvedValue(stepLimit);
@@ -62,7 +59,6 @@ describe("getEstimatedFees", () => {
       fees: new BigNumber(10),
     } as any;
 
-    (getAbandonSeedAddress as jest.Mock).mockReturnValue("fake-recipient-address");
     mockedLogic.calculateAmount.mockReturnValue(new BigNumber(100));
     // @ts-expect-error type
     mockedLogic.FEES_SAFETY_BUFFER = new BigNumber(100);

@@ -1,0 +1,1 @@
+export const TRON_DUMMY_ADDRESS = "TQDyHP3QX24zSDn5418DHm2hvYs2wzuYYY";

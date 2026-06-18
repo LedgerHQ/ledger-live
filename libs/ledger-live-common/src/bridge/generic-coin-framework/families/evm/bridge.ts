@@ -52,7 +52,7 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
   }
 
   if (
-    ["delegate", "redelegate", "undelegate", "claimReward", "compoundReward"].includes(
+    ["delegate", "redelegate", "undelegate", "claimReward", "compoundReward", "withdraw"].includes(
       transaction.mode,
     )
   ) {

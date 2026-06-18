@@ -24,7 +24,7 @@ type BuildCardsContext = {
   unrealisedPnL: BigNumber;
   realisedPnL: BigNumber;
   totalPnL: BigNumber;
-  formatFiat: (value: BigNumber) => string;
+  formatFiat: (value: BigNumber, alwaysShowSign?: boolean) => string;
   openDetail: () => void;
   t: ReturnType<typeof useTranslation>["t"];
 };
@@ -62,8 +62,13 @@ export function usePnlViewModelBase({
   const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnlData ?? {};
 
   const formatFiat = useCallback(
-    (value: BigNumber) =>
-      formatPrice(fiatCurrency.units[0], value, { showCode: true, locale, discreet }),
+    (value: BigNumber, alwaysShowSign?: boolean) =>
+      formatPrice(fiatCurrency.units[0], value, {
+        showCode: true,
+        locale,
+        discreet,
+        alwaysShowSign,
+      }),
     [fiatCurrency, locale, discreet],
   );
 

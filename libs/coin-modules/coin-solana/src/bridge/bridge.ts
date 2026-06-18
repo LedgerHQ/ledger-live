@@ -14,6 +14,7 @@ import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
+import { SOLANA_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
 import { SolanaTxConfirmationTimeout, SolanaTxSimulationFailedWhilePendingOp } from "../errors";
 import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
@@ -206,6 +207,7 @@ export function makeBridges({
     assignFromTokenAccountRaw,
     assignToTokenAccountRaw,
     validateAddress,
+    getEstimationRecipient: () => SOLANA_DUMMY_ADDRESS,
   };
 
   const currencyBridge: CurrencyBridge = {

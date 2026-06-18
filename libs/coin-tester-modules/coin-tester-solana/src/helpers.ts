@@ -86,6 +86,7 @@ function adaptLegacyBridge(bridge: AccountBridge<Transaction>): AccountBridge<Ge
     validateAddress: bridge.validateAddress,
     getSerializedAddressParameters: bridge.getSerializedAddressParameters,
     signRawOperation: bridge.signRawOperation,
+    getEstimationRecipient: bridge.getEstimationRecipient,
     createTransaction: () => ({
       family: "solana",
       amount: new BigNumber(0),

@@ -74,8 +74,16 @@ const prepareTransaction = async (
   const aptosClient = new AptosAPI(account.currency.id);
   const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
 
+  const estimationTransaction = transaction.useAllAmount
+    ? { ...transaction, amount: BigNumber(0) }
+    : transaction;
+
   try {
-    const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
+    const { fees, estimate, errors } = await getEstimatedGas(
+      account,
+      estimationTransaction,
+      aptosClient,
+    );
     const gas = BigNumber(estimate.maxGasAmount);
     const gasPrice = BigNumber(estimate.gasUnitPrice);
 

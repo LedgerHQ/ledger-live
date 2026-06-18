@@ -1,4 +1,4 @@
-import { AccountBridge } from "@ledgerhq/types-live";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,
   makeScanAccounts,
@@ -25,6 +25,7 @@ import resolver from "../hw-getAddress";
 import getFullViewingKeyResolver, { GetFullViewingKeyResult } from "../hw-getFullViewingKey";
 import { validateAddress } from "../validateAddress";
 import buildSignRawOperation from "../signRawOperation";
+import { getBitcoinEstimationRecipient } from "../constants";
 
 type GetFullViewingKeyFromBridgeFn = (
   account: BitcoinAccount,
@@ -106,6 +107,8 @@ function buildAccountBridge(signerContext: SignerContext) {
     getSerializedAddressParameters,
     validateAddress,
     getFullViewingKey: getFullViewingKeyFromBridge,
+    getEstimationRecipient: (account: Account) =>
+      getBitcoinEstimationRecipient(account.currency.id),
   };
 }
 

@@ -2,7 +2,6 @@ import { reduce, firstValueFrom } from "rxjs";
 import { Strategy } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -14,7 +13,6 @@ import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } f
 
 // Constants
 const CHAINS_WITH_FEE_DRAWER = ["evm"];
-const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 // Types
 type TransformableObject = {
@@ -94,15 +92,6 @@ function createFeeData(
 }
 
 /**
- * Gets the appropriate recipient address based on currency
- */
-function getRecipientAddress(currencyId: string): string {
-  return currencyId === "bitcoin"
-    ? getSegWitAbandonSeedAddress()
-    : getAbandonSeedAddress(currencyId);
-}
-
-/**
  * Main function to get fee data for a transaction
  */
 export const getFee =
@@ -147,7 +136,7 @@ export const getFee =
     const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
       ...transaction,
       subAccountId,
-      recipient: params.recipient || getRecipientAddress(mainAccount.currency.id),
+      recipient: params.recipient || bridge.getEstimationRecipient(mainAccount),
       amount: convertToAtomicUnit({
         amount: new BigNumber(params.fromAmount),
         account: fromAccount,

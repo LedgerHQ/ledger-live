@@ -4,6 +4,7 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type { HederaCoinConfig } from "../config";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
@@ -202,8 +203,10 @@ export async function getBlockV2({
 
   // analyze CRYPTOUPDATEACCOUNT transactions to distinguish staking operations from regular account updates.
   // this creates a map of transaction_hash -> StakingAnalysis to avoid repeated lookups.
-  const stakingAnalyses = await Promise.all(
-    mergeResult.merged.filter(isStakingTransactionType).map(async item => {
+  const stakingAnalyses = await promiseAllBatched(
+    4,
+    mergeResult.merged.filter(isStakingTransactionType),
+    async item => {
       const payerAccount = extractFeesPayer(item.data);
       const analysis = await analyzeStakingOperation({
         configOrCurrencyId,
@@ -212,12 +215,32 @@ export async function getBlockV2({
       });
 
       return [item.data.transaction_hash, analysis] as const;
-    }),
+    },
   );
   const stakingAnalysisMap = new Map(stakingAnalyses);
 
+  // prepare map with token IDs for TOKENASSOCIATE transactions by fetching payerAccount tokens and matching created_timestamp
+  const tokenAssociateEntries = await promiseAllBatched(
+    4,
+    mergeResult.merged.filter(isTokenAssociateTransactionType),
+    async item => {
+      const mirrorTx = item.data;
+      const payerAccount = extractFeesPayer(mirrorTx);
+      const tokens = await apiClient.getAccountTokens({
+        configOrCurrencyId,
+        address: payerAccount,
+      });
+      const relatedToken = tokens.find(t => t.created_timestamp === mirrorTx.consensus_timestamp);
+      const tokenId = relatedToken?.token_id ?? null;
+
+      return [mirrorTx.transaction_hash, tokenId] as const;
+    },
+  );
+  const tokenAssociateMap = new Map(tokenAssociateEntries);
+
   const blockTransactions: BlockTransaction[] = mergeResult.merged.map(item => {
     const mirrorTx = getMirrorTransaction(item);
+    const memo = getMemoFromBase64(mirrorTx.memo_base64);
     const payerAccount = extractFeesPayer(mirrorTx);
     const stakingAnalysis = stakingAnalysisMap.get(mirrorTx.transaction_hash);
 
@@ -227,18 +250,20 @@ export async function getBlockV2({
       operations = [
         {
           type: "other",
-          operationType: stakingAnalysis.operationType,
-          stakedNodeId: stakingAnalysis.targetStakingNodeId,
-          previousStakedNodeId: stakingAnalysis.previousStakingNodeId,
+          ledgerOpType: stakingAnalysis.operationType,
+          targetStakingNodeId: stakingAnalysis.targetStakingNodeId,
+          previousStakingNodeId: stakingAnalysis.previousStakingNodeId,
           stakedAmount: stakingAnalysis.stakedAmount,
         },
       ];
     } else if (isTokenAssociateTransactionType(item)) {
+      const associatedTokenId = tokenAssociateMap.get(mirrorTx.transaction_hash) ?? null;
+
       operations = [
         {
           type: "other",
-          operationType: "ASSOCIATE_TOKEN",
-          associatedTokenId: mirrorTx.entity_id ?? null,
+          ledgerOpType: "ASSOCIATE_TOKEN",
+          ...(associatedTokenId && { associatedTokenId }),
         },
       ];
     } else {
@@ -278,7 +303,16 @@ export async function getBlockV2({
       operations,
       fees: BigInt(mirrorTx.charged_tx_fee),
       feesPayer: payerAccount,
-      details: { memo: getMemoFromBase64(mirrorTx.memo_base64) },
+      details: {
+        consensusTimestamp: mirrorTx.consensus_timestamp,
+        transactionId: mirrorTx.transaction_id,
+        ...(memo && { memo }),
+        ...(item.type === "erc20" && {
+          gasUsed: item.data.contractCallResult.gas_used,
+          gasLimit: item.data.contractCallResult.gas_limit,
+          gasConsumed: item.data.contractCallResult.gas_consumed,
+        }),
+      },
     };
   });
 

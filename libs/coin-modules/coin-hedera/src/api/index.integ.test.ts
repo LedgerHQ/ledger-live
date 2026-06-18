@@ -687,27 +687,27 @@ describe("createApi", () => {
       expect(delegateOperations).toEqual([
         {
           type: "other",
-          operationType: "DELEGATE",
-          stakedNodeId: 34,
-          previousStakedNodeId: null,
+          ledgerOpType: "DELEGATE",
+          targetStakingNodeId: 34,
+          previousStakingNodeId: null,
           stakedAmount: BigInt(21083322293),
         },
       ]);
       expect(undelegateOperations).toEqual([
         {
           type: "other",
-          operationType: "UNDELEGATE",
-          stakedNodeId: null,
-          previousStakedNodeId: 22,
+          ledgerOpType: "UNDELEGATE",
+          targetStakingNodeId: null,
+          previousStakingNodeId: 22,
           stakedAmount: BigInt(21083441623),
         },
       ]);
       expect(redelegateOperations).toEqual([
         {
           type: "other",
-          operationType: "REDELEGATE",
-          stakedNodeId: 6,
-          previousStakedNodeId: 34,
+          ledgerOpType: "REDELEGATE",
+          targetStakingNodeId: 6,
+          previousStakingNodeId: 34,
           stakedAmount: BigInt(21083202902),
         },
       ]);

@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/errors";
 import type { TezosAccount, Transaction } from "../types";
 import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import { TEZOS_DUMMY_ADDRESS } from "@ledgerhq/coin-tezos/constants";
 import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
@@ -211,6 +212,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => TEZOS_DUMMY_ADDRESS,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

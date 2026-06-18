@@ -4454,6 +4454,8 @@
         "header": "Undelegation(s)",
         "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
         "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+        "timelockTooltip": "Still within the timelock. These funds are not yet available to withdraw.",
+        "readyTooltip": "The timelock has ended. These funds are ready to withdraw.",
         "flow": {
           "title": "Stop staking",
           "steps": {
@@ -9293,6 +9295,9 @@
     "tradingVolume24h": "24h trading volume",
     "tradingVolume24hTooltip": "The total amount traded in the last 24 hours.",
     "marketStatsDisclaimer": "Market stats sourced from CoinGecko",
+    "fallbackBanner": {
+      "title": "Swap and Buy are not supported for this asset."
+    },
     "day": "1 day",
     "week": "1 week",
     "month": "1 month",

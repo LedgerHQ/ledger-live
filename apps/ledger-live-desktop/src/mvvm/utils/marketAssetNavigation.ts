@@ -29,6 +29,11 @@ export function getAssetDetailPath(currencyId: string): string {
   return `/asset/${encodePathSegment(currencyId)}`;
 }
 
+/** True for asset (`/asset/:id`) or legacy market (`/market/:id`) detail pages (not the `/market` list). */
+export function isAssetOrMarketDetailPath(pathname: string): boolean {
+  return /^\/(asset|market)\/[^/]+(?:\/|$)/.test(pathname);
+}
+
 /**
  * Resolves a deeplink path segment to a canonical Ledger crypto currency id.
  * Used when Wallet 4.0 aggregated assets is off (legacy market/asset screens).

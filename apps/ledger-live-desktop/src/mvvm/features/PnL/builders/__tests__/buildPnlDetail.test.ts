@@ -9,7 +9,8 @@ const makeInput = (overrides: Partial<Parameters<typeof buildPnlDetail>[0]> = {}
   totalPnL: new BigNumber(100),
   unrealisedPnL: new BigNumber(60),
   realisedPnL: new BigNumber(40),
-  formatFiat: (v: BigNumber) => `formatted(${v.toString()})`,
+  formatFiat: (v: BigNumber, alwaysShowSign?: boolean) =>
+    `formatted(${v.toString()}${alwaysShowSign ? ",sign" : ""})`,
   t: fakeT,
   ...overrides,
 });
@@ -38,13 +39,13 @@ describe("buildPnlDetail", () => {
     ]);
   });
 
-  it("formats each PnL bucket through the provided fiat formatter", () => {
+  it("formats each PnL bucket through the provided fiat formatter, always showing the sign", () => {
     const detail = buildPnlDetail(makeInput());
 
     expect(detail.items.map(i => i.value)).toEqual([
-      "formatted(60)",
-      "formatted(40)",
-      "formatted(100)",
+      "formatted(60,sign)",
+      "formatted(40,sign)",
+      "formatted(100,sign)",
     ]);
   });
 });
