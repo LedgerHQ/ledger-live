@@ -5186,11 +5186,14 @@
           "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts",
           "generateStockAccounts": "Generate {{count}} stock account",
           "generateStockAccounts_other": "Generate {{count}} stock accounts",
-          "loadingStocks": "Loading stock data…"
+          "loadingStocks": "Loading stock data…",
+          "resetStockAccounts": "Reset stocks"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
           "confirmErase": "Existing accounts will be erased. Continue?",
+          "confirmResetStocks": "Remove all stock token accounts from your portfolio? Other accounts will be kept.",
+          "resetStocksNothingToRemove": "No stock accounts found in your portfolio.",
           "generateError": "Failed to generate mock accounts. Please try again."
         }
       },

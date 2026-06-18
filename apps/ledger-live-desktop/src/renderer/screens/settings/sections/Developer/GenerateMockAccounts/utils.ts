@@ -9,7 +9,7 @@ import {
   accountUserDataExportSelector,
 } from "@ledgerhq/live-wallet/store";
 import { getKey } from "~/renderer/storage";
-import { Account, AccountUserData } from "@ledgerhq/types-live";
+import { Account, AccountLike, AccountUserData, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { v4 as uuidv4 } from "uuid";
 import sample from "lodash/sample";
@@ -181,4 +181,53 @@ export function generateStockAccounts(
   }
 
   return results;
+}
+
+function isStockTokenAccount(account: AccountLike, stockTokenIds: Set<string>): account is TokenAccount {
+  return account.type === "TokenAccount" && stockTokenIds.has(account.token.id);
+}
+
+export function countStockTokenAccounts(accounts: AccountLike[], stockTokenIds: Set<string>): number {
+  return accounts.reduce((count, account) => {
+    if (account.type !== "Account") return count;
+    const stockSubs =
+      account.subAccounts?.filter(sub => isStockTokenAccount(sub, stockTokenIds)).length ?? 0;
+    return count + stockSubs;
+  }, 0);
+}
+
+export async function removeStockAccounts(stockTokenIds: Set<string>): Promise<number> {
+  if (stockTokenIds.size === 0) return 0;
+
+  const accountData = await getKey("app", "accounts", []);
+  let removedCount = 0;
+
+  const updated = (accountData ?? []).reduce<[Account, AccountUserData][]>((next, entry) => {
+    const [account, userData] = entry;
+
+    if (!account.subAccounts?.length) {
+      next.push(entry);
+      return next;
+    }
+
+    const subAccounts = account.subAccounts.filter(sub => {
+      if (isStockTokenAccount(sub, stockTokenIds)) {
+        removedCount += 1;
+        return false;
+      }
+      return true;
+    });
+
+    if (subAccounts.length !== account.subAccounts.length) {
+      next.push([{ ...account, subAccounts }, userData]);
+      return next;
+    }
+
+    next.push(entry);
+    return next;
+  }, []);
+
+  const store = window.ledger.store;
+  store.dispatch(initAccounts(updated));
+  return removedCount;
 }
