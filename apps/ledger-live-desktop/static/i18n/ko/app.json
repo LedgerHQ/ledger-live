@@ -8232,7 +8232,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "main" : {
+    "variantA" : {
       "description" : "Ledger Wallet 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
       "whatWeTrack" : "사용자의 동의 하에 Ledger는 사용자가 Ledger Wallet을 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
       "whatWeTrackList" : {
@@ -8247,11 +8247,7 @@
       },
       "managePreferences" : "환경 설정 관리",
       "refuse" : "모두 거부",
-      "accept" : "모두 수락"
-    },
-    "preferences" : {
-      "managePreferences" : "환경 설정 관리",
-      "validate" : "승인",
+      "accept" : "모두 수락",
       "analyticsData" : {
         "title" : "애널리틱스",
         "description" : "Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해 당사는 페이지 방문 및 클릭 수를 포함한 사용 데이터를 공유합니다."
@@ -8259,6 +8255,27 @@
       "personalizationData" : {
         "title" : "개인 맞춤화",
         "description" : "사용자의 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공받고 마케팅 캠페인 성과를 측정하기 위해 당사는 클릭수, 페이지 방문, 전환 데이터를 포함한 앱 사용 데이터를 공유합니다."
+      },
+      "validate" : "승인"
+    },
+    "variantB" : {
+      "accept" : "수락",
+      "refuse" : "거부",
+      "analytics" : {
+        "description" : "공유해 주신 Ledger Wallet 분석 데이터는 고객이 어떤 방식으로 Ledger Wallet을 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
+        "details" : {
+          "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
+          "2" : "당사는 고객의 잔액, 계좌, 포트폴리오와 관련한 어떤 정보도 수집 또는 열람할 수 없습니다.",
+          "3" : "분석은 온전히 익명으로 처리됩니다. 당사는 고객의 개인 정보를 열람 또는 수집할 수 없습니다."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "맞춤화된 고객 경험을 즐겨보세요",
+        "description" : "공유해 주신 Ledger Wallet 개인 설정 데이터를 바탕으로 고객님의 선호도에 맞는 콘텐츠를 표시할 수 있습니다.",
+        "details" : {
+          "1" : "환전 데이터, 클릭 수, 페이지 방문을 포함한 개인화 데이터.",
+          "2" : "당사는 고객의 개인 정보 또는 포트폴리오 정보를 추적하거나 수집할 수 없습니다."
+        }
       }
     },
     "common" : {

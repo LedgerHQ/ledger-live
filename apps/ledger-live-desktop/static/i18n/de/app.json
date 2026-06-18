@@ -8232,7 +8232,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "main" : {
+    "variantA" : {
       "description" : "Die Weitergabe deiner Ledger Wallet-Daten hilft uns, deine Vorlieben zu verstehen und Inhalte anzuzeigen, die für dich relevant sind.",
       "whatWeTrack" : "Mit deiner Einwilligung kann Ledger zu folgenden Zwecken Daten über dein Nutzungsverhalten in Ledger Wallet (einschließlich Seitenaufrufen und Klicks) erfassen:",
       "whatWeTrackList" : {
@@ -8247,11 +8247,7 @@
       },
       "managePreferences" : "Einstellungen verwalten",
       "refuse" : "Alle ablehnen",
-      "accept" : "Alle annehmen"
-    },
-    "preferences" : {
-      "managePreferences" : "Einstellungen verwalten",
-      "validate" : "Validieren",
+      "accept" : "Alle annehmen",
       "analyticsData" : {
         "title" : "Analysen",
         "description" : "Um die Leistung von Ledger Wallet zu messen und die App wie auch dein Nutzungserlebnis zu verbessern, geben wir Nutzungsdaten (Seitenbesuche, Klicks) weiter."
@@ -8259,6 +8255,27 @@
       "personalizationData" : {
         "title" : "Personalisierung",
         "description" : "Damit wir dir personalisierte Empfehlungen und Inhalte anzeigen können, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen, geben wir Daten zur App-Nutzung (Klicks, Seitenbesuche und Konversionsdaten) weiter."
+      },
+      "validate" : "Validieren"
+    },
+    "variantB" : {
+      "accept" : "Akzeptieren",
+      "refuse" : "Ablehnen",
+      "analytics" : {
+        "description" : "Die Freigabe deiner Ledger Wallet-Analysedaten hilft uns nachzuvollziehen, wie die Nutzer Ledger Wallet verwenden, Fehler zu beheben und die Nutzungserfahrung zu optimieren.",
+        "details" : {
+          "1" : "Zu den Analysedaten gehören Seitenaufrufe und Klicks.",
+          "2" : "Wir werden Informationen über deinen Kontostand, deine Konten und dein Portfolio weder erheben noch einsehen.",
+          "3" : "Die Analysen erfolgen völlig anonym. Wir können deine persönlichen Daten weder einsehen noch erheben."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "Nutzungserlebnis personalisieren",
+        "description" : "Durch die Weitergabe deiner Ledger Wallet-Personalisierungsdaten können wir dir Inhalte anzeigen, die deinen Vorlieben entsprechen.",
+        "details" : {
+          "1" : "Zu den Personalisierungsdaten gehören Konversionsdaten, Klicks und Seitenaufrufe.",
+          "2" : "Wir können weder deine personenbezogenen Daten noch Daten zu deinem Portfolio verfolgen oder erfassen."
+        }
       }
     },
     "common" : {

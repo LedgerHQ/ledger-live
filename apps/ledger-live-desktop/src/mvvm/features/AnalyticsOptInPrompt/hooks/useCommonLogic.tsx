@@ -17,7 +17,10 @@ import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
 import { ANALYTICS_OPT_IN_VARIANT } from "../types/variants";
 
-const ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS = ["Onboarding", "Portfolio"];
+const ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS = new Set<EntryPoint>([
+  EntryPoint.onboarding,
+  EntryPoint.portfolio,
+]);
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -52,9 +55,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     [setIsAnalyticsOptInPromptOpened],
   );
 
-  const isEntryPointIncluded = ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS.map(entryPointName =>
-    entryPointName.toLowerCase(),
-  ).includes(entryPoint.toLowerCase());
+  const isEntryPointIncluded = ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS.has(entryPoint);
 
   const isFlagEnabled = useMemo(
     () =>
