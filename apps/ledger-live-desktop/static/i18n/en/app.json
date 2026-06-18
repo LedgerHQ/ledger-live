@@ -8403,7 +8403,7 @@
     }
   },
   "analyticsOptInPrompt": {
-    "variantA": {
+    "main": {
       "description": "Sharing your Ledger Wallet data helps us understand your preferences and show content that's relevant to you.",
       "whatWeTrack": "With your consent, Ledger will be able to collect data about how you use Ledger Wallet (including page visits and clicks):",
       "whatWeTrackList": {
@@ -8418,7 +8418,11 @@
       },
       "managePreferences": "Manage your preferences",
       "refuse": "Refuse all",
-      "accept": "Accept all",
+      "accept": "Accept all"
+    },
+    "preferences": {
+      "managePreferences": "Manage your preferences",
+      "validate": "Validate",
       "analyticsData": {
         "title": "Analytics",
         "description": "To measure Ledger Wallet’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
@@ -8426,27 +8430,6 @@
       "personalizationData": {
         "title": "Personalization",
         "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
-      },
-      "validate": "Validate"
-    },
-    "variantB": {
-      "accept": "Accept",
-      "refuse": "Refuse",
-      "analytics": {
-        "description": "Sharing your Ledger Wallet analytics data helps us understand how people use Ledger Wallet, fix bugs, and offer an improved user experience.",
-        "details": {
-          "1": "Analytics data includes page visits, clicks.",
-          "2": "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
-          "3": "Analytics are completely anonymous. We can’t see or collect your personal information."
-        }
-      },
-      "personalRecommendations": {
-        "title": "Get a personalized experience",
-        "description": "Sharing your Ledger Wallet personalization data lets us display content that matches your preferences",
-        "details": {
-          "1": "Personalization data includes conversion data, clicks, page visits.",
-          "2": "We cannot track or collect any of your personal or portfolio information."
-        }
       }
     },
     "common": {

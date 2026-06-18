@@ -11,15 +11,19 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { useAnalyticsOptInPrompt } from "./useCommonLogic";
 import { ANALYTICS_OPT_IN_VARIANT } from "../types/variants";
-import { steps } from "LLD/features/AnalyticsOptInPrompt/const/steps";
+import { ANALYTICS_OPT_IN_PROMPT_TRACKING_PAGES } from "LLD/features/AnalyticsOptInPrompt/const/steps";
 
-interface UseVariantAProps {
+interface UseAnalyticsOptInPromptStepsProps {
   onSubmit?: () => void;
   entryPoint: EntryPoint;
   setStep: (value: number) => void;
 }
 
-const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
+export const useAnalyticsOptInPromptSteps = ({
+  onSubmit,
+  entryPoint,
+  setStep,
+}: UseAnalyticsOptInPromptStepsProps) => {
   const dispatch = useDispatch();
 
   const [preferences, setPreferences] = useState<Record<FieldKeySwitch, boolean>>({
@@ -31,15 +35,15 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
 
   const onManagePreferencesClick = () => {
     setStep(1);
-    trackClick("Manage Preferences", shouldWeTrack, steps.variantA.main);
+    trackClick("Manage Preferences", shouldWeTrack, ANALYTICS_OPT_IN_PROMPT_TRACKING_PAGES.main);
   };
 
   const handleShareAnalyticsChange = (value: boolean) => {
     dispatch(setSharePersonalizedRecommendations(value));
     dispatch(setShareAnalytics(value));
     onSubmit?.();
-    if (value) trackClick("Accept All", true, steps.variantA.main);
-    else trackClick("Refuse All", shouldWeTrack, steps.variantA.main);
+    if (value) trackClick("Accept All", true, ANALYTICS_OPT_IN_PROMPT_TRACKING_PAGES.main);
+    else trackClick("Refuse All", shouldWeTrack, ANALYTICS_OPT_IN_PROMPT_TRACKING_PAGES.main);
   };
 
   const handleShareCustomAnalyticsChange = (value: boolean) => {
@@ -48,7 +52,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
       dispatch(setShareAnalytics(AnalyticsData));
       dispatch(setSharePersonalizedRecommendations(PersonalizationData));
       onSubmit?.();
-      trackClick("Share", shouldWeTrack, steps.variantA.preferences);
+      trackClick("Share", shouldWeTrack, ANALYTICS_OPT_IN_PROMPT_TRACKING_PAGES.preferences);
     }
   };
 
@@ -63,7 +67,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
     }
   };
 
-  const trackClick = (button: string, shouldWeTrack: boolean, page: string) => {
+  const trackClick = (button: string, shouldTrack: boolean, page: string) => {
     track(
       "button_clicked",
       {
@@ -72,7 +76,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
         flow,
         page,
       },
-      shouldWeTrack,
+      shouldTrack,
     );
   };
 
@@ -85,7 +89,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
         value,
         variant: ANALYTICS_OPT_IN_VARIANT,
         flow,
-        page: steps.variantA.preferences,
+        page: ANALYTICS_OPT_IN_PROMPT_TRACKING_PAGES.preferences,
       },
       shouldWeTrack,
     );
@@ -100,5 +104,3 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
     handleOpenPrivacyPolicy,
   };
 };
-
-export default useVariantA;

@@ -26,7 +26,7 @@ const MainFooter = ({ setWantToManagePreferences, onShareAnalyticsChange }: Main
           color={colors.primary.c80}
           onClick={handleManagePreferencesClick}
         >
-          {t("analyticsOptInPrompt.variantA.managePreferences")}
+          {t("analyticsOptInPrompt.main.managePreferences")}
         </Link>
         <Flex columnGap={"8px"}>
           <Button
@@ -36,7 +36,7 @@ const MainFooter = ({ setWantToManagePreferences, onShareAnalyticsChange }: Main
             borderRadius={48}
             onClick={handleRefuseClick}
           >
-            {t("analyticsOptInPrompt.variantA.refuse")}
+            {t("analyticsOptInPrompt.main.refuse")}
           </Button>
           <Button
             data-testid="accept-analytics-button"
@@ -45,7 +45,7 @@ const MainFooter = ({ setWantToManagePreferences, onShareAnalyticsChange }: Main
             borderRadius={48}
             onClick={handleAcceptClick}
           >
-            {t("analyticsOptInPrompt.variantA.accept")}
+            {t("analyticsOptInPrompt.main.accept")}
           </Button>
         </Flex>
       </Flex>
