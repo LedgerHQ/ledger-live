@@ -8,7 +8,9 @@ import { computeLedgerLiveVersionCompatibilityError } from "./computeLedgerLiveV
 import { computeQuotesErrors } from "./computeQuotesErrors";
 import { computeQuotesWarnings } from "./computeQuotesWarnings";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
+import { fetchAuthenticatedQuotes } from "./service/fetchAuthenticatedQuotes";
 import { fetchQuotes } from "./service/fetchQuotes";
+import type { FetchQuotesDispatch } from "./state-manager/api";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import { buildFormatContext } from "./normalizer/buildFormatContext";
 import { normalizeQuote } from "./normalizer";
@@ -54,6 +56,8 @@ import { resolveQuotesInput } from "./resolveQuotesInput";
  *     quote warnings can include device-specific incompatibility signals.
  *   - `appVersion`: optional caller platform/version. When present, quote
  *     errors can include Ledger Live version incompatibility signals.
+ *   - `fetchQuoteDispatch`: optional Redux dispatch from the host store.
+ *     When present, quotes are fetched through the authenticated RTK Query endpoint.
  *   - `highValueLossThreshold`: optional ratio used to flag quotes whose
  *     receive-side fiat value is below the configured send-side threshold.
  */
@@ -67,6 +71,7 @@ export type GetQuotesContext = {
     platform: QuotesAppPlatform;
     version: string | null;
   };
+  fetchQuoteDispatch?: FetchQuotesDispatch;
   highValueLossThreshold?: number;
 };
 
@@ -119,10 +124,13 @@ export async function getQuotes(
     receiveParentCurrencyId,
   });
 
-  const { rawQuotes, providerErrors } = await fetchQuotes(
-    resolvedArgs,
-    context.counterValueCurrency,
-  );
+  const { rawQuotes, providerErrors } = context.fetchQuoteDispatch
+    ? await fetchAuthenticatedQuotes(
+        resolvedArgs,
+        context.counterValueCurrency,
+        context.fetchQuoteDispatch,
+      )
+    : await fetchQuotes(resolvedArgs, context.counterValueCurrency);
 
   // Drop every successful quote when the pair is on the wallet-side blocklist
   // and skip the provider-data fetch (CAL + CDN) entirely since nothing would

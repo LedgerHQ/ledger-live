@@ -4,6 +4,7 @@ import {
   handlers as exchangeHandlers,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import type { FetchQuotesDispatch } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/api";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import {
   WalletAPICustomHandlers,
@@ -107,6 +108,7 @@ export function useCustomExchangeHandlers({
   const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
   const dispatch = useDispatch();
+  const fetchQuoteDispatch = dispatch as unknown as FetchQuotesDispatch;
   const { isEnabled } = useWalletFeaturesConfig("mobile");
   const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
   const featureFlagsMap = useFeatureFlags();
@@ -346,6 +348,7 @@ export function useCustomExchangeHandlers({
         locale,
         counterValueCurrency: counterValueCurrency.ticker,
         deviceModelId: lastSeenDevice?.modelId,
+        fetchQuoteDispatch,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             const promiseId = `start-${Date.now()}`;
@@ -550,6 +553,7 @@ export function useCustomExchangeHandlers({
     getManifestById,
     getAccount,
     dispatch,
+    fetchQuoteDispatch,
     route.name,
     returnToPreviousScreenOnClose,
   ]);

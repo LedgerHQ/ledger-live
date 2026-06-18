@@ -3,11 +3,12 @@ import axios from "axios";
 import { getSwapAPIBaseURL } from "../../../../exchange/swap";
 import { ProviderErrorCodes } from "../types";
 import { fetchQuotes } from "./fetchQuotes";
+import type { RawQuote, RawQuoteError } from "./types";
 
 jest.mock("axios");
 
 jest.mock("../../../../exchange/swap", () => ({
-  getSwapAPIBaseURL: jest.fn(),
+  getSwapAPIBaseURL: jest.fn(() => "https://swap.test"),
 }));
 
 const axiosGetMock = jest.mocked(axios.get);
@@ -26,9 +27,34 @@ function makeArgs(): Parameters<typeof fetchQuotes>[0] {
       receiveAddress: "0xto",
       sendCurrencyId: "bitcoin",
       receiveCurrencyId: "ethereum",
+      networkFeesCurrencyId: "ethereum",
+      slippage: 0.5,
     },
+    headers: [["x-custom-header", "custom-value"]],
   };
 }
+
+const rawQuote: RawQuote = {
+  provider: "lifi",
+  providerType: "DEX",
+  amountFrom: 1,
+  amountTo: 0.99,
+  exchangeRate: 0.99,
+  slippage: 1,
+  type: "float",
+  networkFees: { currency: "ethereum" },
+  tags: { isRegistrationRequired: false, isTokenApprovalRequired: false },
+  key: "lifi-key",
+  liquiditySource: "AMM",
+};
+
+const providerError: RawQuoteError = {
+  code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
+  type: "float",
+  provider: "okx",
+  message: "amount out of range",
+  parameter: { minAmount: "200000000" },
+};
 
 describe("fetchQuotes", () => {
   beforeEach(() => {
@@ -39,26 +65,6 @@ describe("fetchQuotes", () => {
   });
 
   it("splits successful quote rows from provider error rows", async () => {
-    const rawQuote = {
-      provider: "lifi",
-      providerType: "DEX",
-      amountFrom: 1,
-      amountTo: 0.99,
-      exchangeRate: 0.99,
-      slippage: 1,
-      type: "float",
-      networkFees: { currency: "ethereum" },
-      tags: { isRegistrationRequired: false, isTokenApprovalRequired: false },
-      key: "lifi-key",
-      liquiditySource: "AMM",
-    };
-    const providerError = {
-      code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
-      type: "float",
-      provider: "okx",
-      message: "amount out of range",
-      parameter: { minAmount: "200000000" },
-    };
     axiosGetMock.mockResolvedValue({ data: [rawQuote, providerError] });
 
     const result = await fetchQuotes(makeArgs(), "usd");
@@ -70,7 +76,10 @@ describe("fetchQuotes", () => {
     expect(axiosGetMock).toHaveBeenCalledWith(
       "https://swap.test/quote",
       expect.objectContaining({
-        headers: expect.objectContaining({ Accept: "application/json" }),
+        headers: expect.objectContaining({
+          Accept: "application/json",
+          "x-custom-header": "custom-value",
+        }),
         params: expect.any(URLSearchParams),
       }),
     );
@@ -81,6 +90,11 @@ describe("fetchQuotes", () => {
     }
     expect(requestParams.get("from")).toBe("bitcoin");
     expect(requestParams.get("to")).toBe("ethereum");
+    expect(requestParams.get("providers-whitelist")).toBe("lifi,okx");
+    expect(requestParams.get("fiatForCounterValue")).toBe("usd");
+    expect(requestParams.get("currencyTicker")).toBe("usd");
+    expect(requestParams.get("networkFeesCurrency")).toBe("ethereum");
+    expect(requestParams.get("slippage")).toBe("0.5");
   });
 
   it("returns an empty result when the quote HTTP response is not OK", async () => {

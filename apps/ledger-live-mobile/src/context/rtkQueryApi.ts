@@ -7,6 +7,7 @@ import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager
 import { pushDevicesApi } from "@ledgerhq/client-ids/api";
 import { cmcApi } from "@ledgerhq/live-common/cmc-client/state-manager/api";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
+import { swapQuotesApi } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/api";
 // Add new RTK Query API here:
 const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
@@ -17,6 +18,7 @@ const APIs = {
   [marketApi.reducerPath]: marketApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,
+  [swapQuotesApi.reducerPath]: swapQuotesApi,
 };
 
 /*

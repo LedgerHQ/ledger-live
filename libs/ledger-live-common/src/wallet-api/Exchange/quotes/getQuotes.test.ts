@@ -1,10 +1,12 @@
 import BigNumber from "bignumber.js";
 
 import { getQuotes, type GetQuotesContext } from "./getQuotes";
+import { fetchAuthenticatedQuotes } from "./service/fetchAuthenticatedQuotes";
 import { fetchQuotes } from "./service/fetchQuotes";
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
+import type { FetchQuotesDispatch } from "./state-manager/api";
 import type { RawQuote, RawQuoteError } from "./service/types";
 import {
   ProviderErrorCodes,
@@ -16,6 +18,10 @@ import {
 
 jest.mock("./service/fetchQuotes", () => ({
   fetchQuotes: jest.fn(),
+}));
+
+jest.mock("./service/fetchAuthenticatedQuotes", () => ({
+  fetchAuthenticatedQuotes: jest.fn(),
 }));
 
 jest.mock("../../../exchange/providers/swap", () => ({
@@ -46,6 +52,7 @@ jest.mock("@ledgerhq/live-env", () => ({
 }));
 
 const fetchQuotesMock = jest.mocked(fetchQuotes);
+const fetchAuthenticatedQuotesMock = jest.mocked(fetchAuthenticatedQuotes);
 const fetchAndMergeProviderDataMock = jest.mocked(fetchAndMergeProviderData);
 const fetchNetworkFeeContextMock = jest.mocked(fetchNetworkFeeContext);
 const computeFeeEstimateMock = jest.mocked(computeFeeEstimate);
@@ -107,6 +114,34 @@ describe("getQuotes", () => {
     jest.clearAllMocks();
     fetchAndMergeProviderDataMock.mockResolvedValue({});
     fetchNetworkFeeContextMock.mockResolvedValue(null);
+  });
+
+  it("uses the Axios quote service when no authenticated dispatch is available", async () => {
+    fetchQuotesMock.mockResolvedValue({ rawQuotes: [], providerErrors: [] });
+
+    await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
+
+    expect(fetchQuotesMock).toHaveBeenCalledTimes(1);
+    expect(fetchQuotesMock).toHaveBeenCalledWith(expect.any(Object), "usd");
+    expect(fetchAuthenticatedQuotesMock).not.toHaveBeenCalled();
+  });
+
+  it("uses the authenticated quote service when dispatch is available", async () => {
+    const fetchQuoteDispatch = jest.fn() as unknown as FetchQuotesDispatch;
+    fetchAuthenticatedQuotesMock.mockResolvedValue({ rawQuotes: [], providerErrors: [] });
+
+    await getQuotes(makeArgs("ethereum", "bitcoin"), {
+      ...emptyContext,
+      fetchQuoteDispatch,
+    });
+
+    expect(fetchAuthenticatedQuotesMock).toHaveBeenCalledTimes(1);
+    expect(fetchAuthenticatedQuotesMock).toHaveBeenCalledWith(
+      expect.any(Object),
+      "usd",
+      fetchQuoteDispatch,
+    );
+    expect(fetchQuotesMock).not.toHaveBeenCalled();
   });
 
   it("returns a global error when quote input cannot be resolved", async () => {
@@ -417,10 +452,8 @@ describe("getQuotes", () => {
       fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
 
       await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1.5" }), {
+        ...emptyContext,
         accounts: [],
-        spotPrices: {},
-        locale: "en",
-        counterValueCurrency: "usd",
       });
 
       expect(fetchNetworkFeeContextMock).toHaveBeenCalledTimes(1);

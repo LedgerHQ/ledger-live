@@ -66,6 +66,7 @@ import { SwapError } from "./SwapError";
 import { getQuotes } from "./quotes";
 import { resolveQuotesInput } from "./quotes/resolveQuotesInput";
 import { fetchSpotPrices } from "./quotes/service/fetchSpotPrices";
+import type { FetchQuotesDispatch } from "./quotes/state-manager/api";
 import {
   getTransactionStatus,
   type GetTransactionStatusResponse,
@@ -197,6 +198,7 @@ export const handlers = ({
   locale,
   counterValueCurrency,
   deviceModelId,
+  fetchQuoteDispatch,
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
@@ -213,6 +215,7 @@ export const handlers = ({
   locale: string;
   counterValueCurrency: string;
   deviceModelId?: DeviceModelId;
+  fetchQuoteDispatch?: FetchQuotesDispatch;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
@@ -800,6 +803,7 @@ export const handlers = ({
           locale,
           counterValueCurrency,
           deviceModelId,
+          fetchQuoteDispatch,
         });
       },
     ),

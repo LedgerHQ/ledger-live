@@ -263,6 +263,7 @@
     "@ledgerhq/live-signer-cosmos": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/rtk-query-auth": "workspace:^",
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
