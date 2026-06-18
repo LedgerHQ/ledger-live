@@ -6,14 +6,14 @@ describe("MainFooter", () => {
   it("should render the accept analytics button", () => {
     render(<MainFooter onShareAnalyticsChange={jest.fn()} />);
 
-    expect(screen.getByTestId("accept-analytics-button")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Accept all" })).toBeVisible();
   });
 
   it("should call onShareAnalyticsChange when accept is clicked", async () => {
     const onShareAnalyticsChange = jest.fn();
     const { user } = render(<MainFooter onShareAnalyticsChange={onShareAnalyticsChange} />);
 
-    await user.click(screen.getByTestId("accept-analytics-button"));
+    await user.click(screen.getByRole("button", { name: "Accept all" }));
 
     expect(onShareAnalyticsChange).toHaveBeenCalledWith(true);
   });

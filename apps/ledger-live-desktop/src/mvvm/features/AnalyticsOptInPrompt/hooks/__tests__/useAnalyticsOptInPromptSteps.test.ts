@@ -213,4 +213,33 @@ describe("useAnalyticsOptInPromptSteps", () => {
       true,
     );
   });
+
+  it("should not submit or track share when custom preferences are refused", () => {
+    const onSubmit = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useAnalyticsOptInPromptSteps({
+          entryPoint: EntryPoint.onboarding,
+          setStep: jest.fn(),
+          onSubmit,
+        }),
+      {
+        initialState: {
+          ...featureFlagsWithAnalyticsOptIn,
+          settings: baseSettings(),
+        },
+      },
+    );
+
+    act(() => {
+      result.current.handleShareCustomAnalyticsChange(false);
+    });
+
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "Share" }),
+      expect.anything(),
+    );
+  });
 });
