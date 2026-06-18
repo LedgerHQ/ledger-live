@@ -45,6 +45,15 @@ env:
   # filesystem from _work. XDG_CACHE_HOME relocates them onto _work so writes skip
   # overlay copy-up and share a filesystem with node_modules. See LIVE-28839.
   XDG_CACHE_HOME: /home/runner/_work/.cache
+  # Electron binary + headers (the `electron` package install and @electron/rebuild,
+  # both via @electron/get) default to ~/.cache/electron on overlay. XDG_CACHE_HOME
+  # already redirects it, but pin it explicitly so it can't drift back to overlay.
+  ELECTRON_CACHE: /home/runner/_work/.cache/electron
+  # Ruby/Bundler: gems already install to vendor/bundle (on _work, via mobile's
+  # .bundle/config), but Bundler's user dir (~/.bundle) and the RubyGems spec cache
+  # (~/.gem/specs) still default to overlay. Relocate them onto _work too.
+  BUNDLE_USER_HOME: /home/runner/_work/.bundle
+  GEM_SPEC_CACHE: /home/runner/_work/.gem/specs
 
 jobs:
   test-libraries:
