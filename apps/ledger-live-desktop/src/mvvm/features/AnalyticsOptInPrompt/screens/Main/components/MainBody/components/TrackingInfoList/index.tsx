@@ -23,8 +23,8 @@ const TrackingInfoList = ({ title, items, variant }: TrackingInfoListProps) => {
       <Text variant="body" fontWeight="medium" fontSize={14} color={colors.neutral.c100}>
         {title}
       </Text>
-      {items.map((text, index) => (
-        <Flex key={index} columnGap={"8px"}>
+      {items.map(text => (
+        <Flex key={text} columnGap={"8px"}>
           <Icon size={"S"} color={color} />
           <Field variant="paragraph" fontWeight="medium" fontSize={13} color={textColor}>
             {text}

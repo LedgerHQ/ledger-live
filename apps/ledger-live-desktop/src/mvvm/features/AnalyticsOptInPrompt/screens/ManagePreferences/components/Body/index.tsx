@@ -39,12 +39,12 @@ const ManagePreferencesBody = ({
 
   const fields: Record<FieldKeySwitch, { title: string; description: string }> = {
     AnalyticsData: {
-      title: "analyticsOptInPrompt.variantA.analyticsData.title",
-      description: "analyticsOptInPrompt.variantA.analyticsData.description",
+      title: "analyticsOptInPrompt.preferences.analyticsData.title",
+      description: "analyticsOptInPrompt.preferences.analyticsData.description",
     },
     PersonalizationData: {
-      title: "analyticsOptInPrompt.variantA.personalizationData.title",
-      description: "analyticsOptInPrompt.variantA.personalizationData.description",
+      title: "analyticsOptInPrompt.preferences.personalizationData.title",
+      description: "analyticsOptInPrompt.preferences.personalizationData.description",
     },
   };
 
