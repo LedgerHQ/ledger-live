@@ -8,8 +8,8 @@ import {
 import { notificationsModalOpenSelector } from "~/reducers/notifications";
 import {
   type NotificationPromptTarget,
-  type NotificationsPromptSource,
-} from "LLM/features/NotificationsPrompt";
+  type NotificationPromptSource,
+} from "@domain/entity-notification-prompt";
 
 export function useNotificationsPromptDrawerScheduler() {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ export function useNotificationsPromptDrawerScheduler() {
 
   const openDrawer = useCallback(
     (
-      source: NotificationsPromptSource,
+      source: NotificationPromptSource,
       timer = 0,
       drawerPromptTarget?: NotificationPromptTarget,
     ) => {

@@ -1,14 +1,20 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useFeature } from "@features/platform-feature-flags";
+import {
+  mapFeatureFlagsToNotificationPromptPolicy,
+  mapFirebaseAuthorizationStatusToNotificationPermissionStatus,
+} from "@features/platform-notification-prompt";
+import {
+  evaluateAfterActionTrigger,
+  evaluateInactivityTrigger,
+  type NotificationPromptAfterActionSource,
+} from "@domain/entity-notification-prompt";
 import { useSelector } from "~/context/hooks";
 import { ratingsModalOpenSelector } from "~/reducers/ratings";
 import { hasCompletedOnboardingSelector, notificationsSelector } from "~/reducers/settings";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 import {
-  evaluateAfterActionTrigger,
-  evaluateInactivityTrigger,
   type InitPushNotificationsDataResult,
-  type NotificationsPromptAfterActionSource,
   useNotificationsData,
 } from "LLM/features/NotificationsPrompt";
 import {
@@ -26,20 +32,28 @@ export function useNotificationsPromptTriggers() {
   const { permissionStatus } = useNotificationsPermission();
   const { pushNotificationsDataOfUser } = useNotificationsData();
   const { openDrawer, isDrawerPending } = useNotificationsPromptDrawerScheduler();
+  const policy = useMemo(
+    () =>
+      mapFeatureFlagsToNotificationPromptPolicy({
+        brazePushNotifications: featureBrazePushNotifications,
+        lwmNewWordingOptInNotificationsDrawer: featureNewWordingNotificationsDrawer,
+      }),
+    [featureBrazePushNotifications, featureNewWordingNotificationsDrawer],
+  );
 
   const notifyFlowCompleted = useCallback(
-    (source: NotificationsPromptAfterActionSource) => {
+    (source: NotificationPromptAfterActionSource) => {
       const decision = evaluateAfterActionTrigger(
         {
           source,
-          permissionStatus,
+          permissionStatus:
+            mapFirebaseAuthorizationStatusToNotificationPermissionStatus(permissionStatus),
           areNotificationsAllowed: notifications.areNotificationsAllowed,
           transactionsAlertsCategory: notifications.transactionsAlertsCategory,
-          pushNotificationsDataOfUser,
+          history: pushNotificationsDataOfUser,
         },
         {
-          brazePushNotifications: featureBrazePushNotifications,
-          wordingFeature: featureNewWordingNotificationsDrawer,
+          policy,
           isRatingsModalOpen,
           isDrawerPending: isDrawerPending(),
         },
@@ -54,14 +68,13 @@ export function useNotificationsPromptTriggers() {
       openDrawer(decision.source, decision.delayMs, decision.drawerPromptTarget);
     },
     [
-      featureBrazePushNotifications,
-      featureNewWordingNotificationsDrawer,
       isDrawerPending,
       isRatingsModalOpen,
       notifications.areNotificationsAllowed,
       notifications.transactionsAlertsCategory,
       openDrawer,
       permissionStatus,
+      policy,
       pushNotificationsDataOfUser,
     ],
   );
@@ -74,14 +87,15 @@ export function useNotificationsPromptTriggers() {
 
       const decision = evaluateInactivityTrigger(
         {
-          permissionStatus: data.osPermissionStatus,
+          permissionStatus: mapFirebaseAuthorizationStatusToNotificationPermissionStatus(
+            data.osPermissionStatus,
+          ),
           areNotificationsAllowed: data.areAppNotificationsEnabled,
-          pushNotificationsDataOfUser: data.storedUserData,
+          history: data.storedUserData,
           hasCompletedOnboarding,
         },
         {
-          brazePushNotifications: featureBrazePushNotifications,
-          wordingFeature: featureNewWordingNotificationsDrawer,
+          policy,
           isRatingsModalOpen,
           isDrawerPending: isDrawerPending(),
         },
@@ -99,12 +113,11 @@ export function useNotificationsPromptTriggers() {
       openDrawer(decision.source, decision.delayMs, decision.drawerPromptTarget);
     },
     [
-      featureBrazePushNotifications,
-      featureNewWordingNotificationsDrawer,
       hasCompletedOnboarding,
       isDrawerPending,
       isRatingsModalOpen,
       openDrawer,
+      policy,
     ],
   );
 

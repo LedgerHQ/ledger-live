@@ -1,38 +1,28 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
-  type InitPushNotificationsDataResult,
-  type NotificationsPromptAfterActionSource,
-} from "LLM/features/NotificationsPrompt";
+  NotificationsPromptProvider as FlowNotificationsPromptProvider,
+  type NotificationsPromptContextValue as FlowNotificationsPromptContextValue,
+  useNotificationsPromptContext,
+} from "@features/flow-notification-prompt";
+import { type InitPushNotificationsDataResult } from "LLM/features/NotificationsPrompt";
 import { useNotificationsPromptTriggers } from "LLM/features/NotificationsPrompt/new/hooks/useNotificationsPromptTriggers";
 
 type NotificationsPromptProviderProps = {
   children: React.ReactNode;
 };
 
-export type NotificationsPromptContextValue = {
-  notifyFlowCompleted: (source: NotificationsPromptAfterActionSource) => void;
-  tryTriggerPushNotificationDrawerAfterInactivity: (data: InitPushNotificationsDataResult) => void;
-};
-
-export const NotificationsPromptContext = createContext<NotificationsPromptContextValue | null>(
-  null,
-);
+export type NotificationsPromptContextValue =
+  FlowNotificationsPromptContextValue<InitPushNotificationsDataResult>;
 
 export function useNotificationsContext() {
-  const context = useContext(NotificationsPromptContext);
-
-  if (!context) {
-    throw new Error("useNotificationsContext must be used within a NotificationsPromptProvider");
-  }
-
-  return context;
+  return useNotificationsPromptContext<InitPushNotificationsDataResult>();
 }
 
 export function NotificationsPromptProvider({ children }: NotificationsPromptProviderProps) {
   const { notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity } =
     useNotificationsPromptTriggers();
 
-  const value = useMemo(
+  const value = useMemo<NotificationsPromptContextValue>(
     () => ({
       notifyFlowCompleted,
       tryTriggerPushNotificationDrawerAfterInactivity,
@@ -41,8 +31,6 @@ export function NotificationsPromptProvider({ children }: NotificationsPromptPro
   );
 
   return (
-    <NotificationsPromptContext.Provider value={value}>
-      {children}
-    </NotificationsPromptContext.Provider>
+    <FlowNotificationsPromptProvider value={value}>{children}</FlowNotificationsPromptProvider>
   );
 }

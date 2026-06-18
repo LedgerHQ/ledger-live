@@ -1,0 +1,29 @@
+{
+  "name": "@features/flow-notification-prompt",
+  "version": "0.1.0",
+  "private": true,
+  "description": "User-facing notification prompt flow state and UI building blocks",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/entity-notification-prompt": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -2,15 +2,16 @@ import { track } from "~/analytics";
 import {
   type AfterActionTriggerDecision,
   type InactivityTriggerDecision,
-} from "LLM/features/NotificationsPrompt";
-import type { NotificationPromptTarget } from "../types";
+  type NotificationPromptTarget,
+} from "@domain/entity-notification-prompt";
+import type { NotificationPromptTarget as MobileNotificationPromptTarget } from "../types";
 
 const GLOBAL_PUSH_NOTIFICATIONS_PROMPT_TARGET = "globalPushNotifications" as const;
 
 /** For drawer-visible events only; attempt events on skip keep drawerPromptTarget undefined. */
 export const resolveDrawerPromptTargetForAnalytics = (
-  drawerPromptTarget: NotificationPromptTarget | undefined,
-): NotificationPromptTarget => drawerPromptTarget ?? GLOBAL_PUSH_NOTIFICATIONS_PROMPT_TARGET;
+  drawerPromptTarget: MobileNotificationPromptTarget | undefined,
+): MobileNotificationPromptTarget => drawerPromptTarget ?? GLOBAL_PUSH_NOTIFICATIONS_PROMPT_TARGET;
 
 const getDrawerPromptTargetFromAfterActionDecision = (
   decision: AfterActionTriggerDecision,
