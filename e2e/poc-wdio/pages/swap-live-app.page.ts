@@ -184,8 +184,9 @@ export class SwapLiveAppPage {
           await driver.pause(50);
         }
         if (driver.isAndroid) {
-          // workaround for ScreenContentWrapper crash on navigation - take focus off input
-          await this.toAmountInput.tap();
+          // workaround for ScreenContentWrapper crash on navigation and keyboard conflict
+          await driver.hideKeyboard();
+          await driver.pause(1_000);
         }
       });
     });
