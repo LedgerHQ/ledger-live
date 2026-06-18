@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Flex, Dropdown } from "@ledgerhq/react-ui";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import styled from "styled-components";
