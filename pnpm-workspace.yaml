@@ -38,7 +38,7 @@ catalog:
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/lumen-design-core": 0.1.17
   "@ledgerhq/lumen-ui-react": 0.1.41
-  "@ledgerhq/lumen-ui-rnative": 0.1.42
+  "@ledgerhq/lumen-ui-rnative": 0.1.46
   "@ledgerhq/lumen-ui-rnative-visualization": 0.1.19
   "@ledgerhq/lumen-ui-react-visualization": 0.1.20
   "@ledgerhq/zcash-utils": 0.3.1
