@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
-import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
+import type { ABTestingVariants } from "../types/variants";
 import { track } from "~/renderer/analytics/segment";
 import { useAnalyticsOptInPrompt } from "./useCommonLogic";
 
