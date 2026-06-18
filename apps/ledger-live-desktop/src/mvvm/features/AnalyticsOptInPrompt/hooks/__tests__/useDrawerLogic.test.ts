@@ -83,4 +83,26 @@ describe("useDrawerLogic", () => {
       false,
     );
   });
+
+  it("should track close with mandatory when shouldWeTrack is true", () => {
+    const onClose = jest.fn();
+    const { result } = renderHook(() =>
+      useDrawerLogic({
+        entryPoint: EntryPoint.onboarding,
+        shouldWeTrack: true,
+        onClose,
+      }),
+    );
+
+    act(() => {
+      result.current.handleRequestClose();
+    });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      { button: "close", entryPoint: EntryPoint.onboarding, variant: ANALYTICS_OPT_IN_VARIANT },
+      true,
+    );
+  });
 });
