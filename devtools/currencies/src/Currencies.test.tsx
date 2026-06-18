@@ -7,7 +7,7 @@ describe("Currencies", () => {
     render(
       <Currencies
         supportedFiats={[FIAT_CURRENCIES_REGISTRY.usd]}
-        isFetching={false}
+        status={{ type: "idle" }}
         refetch={() => {}}
       />,
     );
@@ -15,8 +15,14 @@ describe("Currencies", () => {
     expect(screen.getByText("USD")).toBeVisible();
   });
 
-  it("renders an error when provided", () => {
-    render(<Currencies supportedFiats={[]} isFetching={false} error="boom" refetch={() => {}} />);
+  it("renders an error when the status is error", () => {
+    render(
+      <Currencies
+        supportedFiats={[]}
+        status={{ type: "error", message: "boom" }}
+        refetch={() => {}}
+      />,
+    );
     expect(screen.getByRole("alert")).toHaveTextContent("boom");
   });
 });

@@ -7,5 +7,5 @@ import type { WithSupportedFiats } from "./schema";
  * @param s Any store state containing the `supportedFiats` slice.
  */
 export function selectSupportedFiats(s: WithSupportedFiats): FiatCurrency[] {
-  return s.supportedFiats.supportedFiats;
+  return s.supportedFiats.currencies;
 }

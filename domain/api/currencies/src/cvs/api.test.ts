@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { cvsApi } from "./api";
+import { cvsApi, cvsApiExtra } from "./api";
 import { SupportedFiatsResponseSchema } from "./schema";
 import { resolveSupportedFiats } from "./utils";
 
@@ -37,10 +37,13 @@ describe("cvsApi.getSupportedFiats", () => {
   const makeStore = () =>
     configureStore({
       reducer: { [cvsApi.reducerPath]: cvsApi.reducer },
-      middleware: gdm => gdm().concat(cvsApi.middleware),
+      middleware: gdm =>
+        gdm({ thunk: { extraArgument: cvsApiExtra("https://cvs.test") } }).concat(
+          cvsApi.middleware,
+        ),
     });
 
-  it("fetches and validates the supported fiats payload", async () => {
+  it("fetches the supported fiats payload from the extraArgument base URL", async () => {
     const fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify(["USD", "EUR"]), {
         status: 200,
@@ -54,7 +57,7 @@ describe("cvsApi.getSupportedFiats", () => {
     expect(result.data).toEqual(["USD", "EUR"]);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const request = fetchSpy.mock.calls[0][0] as Request;
-    expect(request.url).toContain("/v3/supported/fiat");
+    expect(request.url).toBe("https://cvs.test/v3/supported/fiat");
 
     fetchSpy.mockRestore();
   });

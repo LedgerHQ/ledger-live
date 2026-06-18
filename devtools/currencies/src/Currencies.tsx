@@ -1,15 +1,15 @@
 import type { CurrenciesToolProps } from "./types";
 
-export const Currencies = ({ supportedFiats, isFetching, error, refetch }: CurrenciesToolProps) => (
+export const Currencies = ({ supportedFiats, status, refetch }: CurrenciesToolProps) => (
   <div style={{ padding: 16 }}>
     <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-      <button type="button" onClick={refetch} disabled={isFetching}>
-        {isFetching ? "Refetching…" : "Refetch"}
+      <button type="button" onClick={refetch} disabled={status.type === "fetching"}>
+        {status.type === "fetching" ? "Refetching…" : "Refetch"}
       </button>
       <span>{supportedFiats.length} supported fiats</span>
     </div>
 
-    {error ? <p role="alert">Error: {error}</p> : null}
+    {status.type === "error" ? <p role="alert">Error: {status.message}</p> : null}
 
     <ul>
       {supportedFiats.map(fiat => (
