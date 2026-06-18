@@ -46716,7 +46716,7 @@ snapshots:
 
   '@ledgerhq/wallet-api-core@1.29.0(@ton/crypto@3.3.0)':
     dependencies:
-      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/errors': 6.32.0
       '@stacks/transactions': 6.17.0
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
