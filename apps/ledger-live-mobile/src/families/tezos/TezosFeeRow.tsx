@@ -3,7 +3,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
@@ -11,25 +11,24 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import ExternalLink from "~/icons/ExternalLink";
 import { urls } from "~/utils/urls";
-import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
   transaction: Transaction;
 };
-export default function TezosFeeRow({ account, transaction }: Props) {
+export default function TezosFeeRow({ account, parentAccount, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  const unit = useAccountUnit(account);
+  const mainAccount = getMainAccount(account, parentAccount ?? undefined);
+  const feesCurrency = getFeesCurrency(mainAccount);
+  const feesUnit = getFeesUnit(feesCurrency);
 
   if (transaction.family !== "tezos") return null;
   const fees = transaction.fees;
-
-  const currency = getAccountCurrency(account);
   return (
     <SummaryRow
       onPress={extraInfoFees}
@@ -48,12 +47,12 @@ export default function TezosFeeRow({ account, transaction }: Props) {
         <View style={styles.accountContainer}>
           {fees ? (
             <LText style={styles.valueText}>
-              <CurrencyUnitValue unit={unit} value={fees} />
+              <CurrencyUnitValue unit={feesUnit} value={fees} />
             </LText>
           ) : null}
         </View>
         <LText style={styles.countervalue} color="grey">
-          {fees ? <CounterValue before="≈ " value={fees} currency={currency} /> : null}
+          {fees ? <CounterValue before="≈ " value={fees} currency={feesCurrency} /> : null}
         </LText>
       </View>
     </SummaryRow>

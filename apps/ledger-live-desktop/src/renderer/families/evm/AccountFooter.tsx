@@ -1,9 +1,4 @@
-import {
-  getAccountCurrency,
-  getFeesCurrency,
-  getFeesUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React from "react";
@@ -23,7 +18,6 @@ type Props = {
 };
 
 const AccountFooter = ({ account, parentAccount, status }: Props) => {
-  const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
@@ -31,7 +25,7 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
 
   return (
     <>
-      <CurrencyCircleIcon size={40} currency={currency} />
+      <CurrencyCircleIcon size={40} currency={feesCurrency} />
       <Box grow>
         <Label
           fontSize={3}
