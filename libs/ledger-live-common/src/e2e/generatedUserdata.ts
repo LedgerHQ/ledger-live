@@ -73,8 +73,6 @@ function mergeCryptoAssets(base: UserdataFile, coin: UserdataFile | null): void 
   base.data.cryptoAssets = existing;
 }
 
-const tag = (account: Account | TokenAccount) => `${account.currency.id} (index ${account.index})`;
-
 export function hasGeneratedUserdata(account: Account | TokenAccount): boolean {
   if (account.currency.id.includes("/")) return false;
   const accounts = loadCoinFile(account)?.data?.accounts;
@@ -106,14 +104,10 @@ export function applyGeneratedUserdata(
       }
       mergeCryptoAssets(base, coin);
       fs.writeFileSync(userdataPath, JSON.stringify(base), "utf-8");
-      console.warn(
-        `📦 [generated-userdata] ${tag(account)}: using PRE-GENERATED app.json (skipped live CLI scan)`,
-      );
       return true;
     }
   }
 
-  console.warn(`🔄 [generated-userdata] ${tag(account)}: using OLD method (live CLI scan)`);
   return false;
 }
 
@@ -127,11 +121,5 @@ export function getGeneratedAddress(account: Account | TokenAccount): string | n
   const coin = loadCoinFile(account);
   const accounts = coin?.data?.accounts;
   const address = Array.isArray(accounts) ? matchEntry(accounts, account)?.data.freshAddress : null;
-  if (address) {
-    console.warn(`📦 [generated-userdata] ${tag(account)}: using PRE-GENERATED address`);
-    return address;
-  }
-
-  console.warn(`🔄 [generated-userdata] ${tag(account)}: using OLD method (live CLI getAddress)`);
-  return null;
+  return address ?? null;
 }

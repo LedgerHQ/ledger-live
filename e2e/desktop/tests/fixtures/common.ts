@@ -102,21 +102,6 @@ async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: stri
   });
 }
 
-function logPhase(label: string, startedAt: number) {
-  if (!process.env.E2E_PHASE_TIMING) return;
-  console.warn(`[phase-timing] ${label}: ${Date.now() - startedAt}ms`);
-}
-
-async function timePhase<T>(label: string, fn: () => Promise<T>): Promise<T> {
-  if (!process.env.E2E_PHASE_TIMING) return fn();
-  const startedAt = Date.now();
-  try {
-    return await fn();
-  } finally {
-    logPhase(label, startedAt);
-  }
-}
-
 export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
@@ -208,9 +193,7 @@ export const test = base.extend<TestFixtures>({
 
       if (cliCommandsOnApp?.length) {
         for (const { app, cmd } of cliCommandsOnApp) {
-          currentDevice = await timePhase(`${testInfo.title} :: speculos-boot (${app.name})`, () =>
-            launchSpeculos(app.name, testInfo.title),
-          );
+          currentDevice = await launchSpeculos(app.name, testInfo.title);
           await executeCliCommand(cmd, userdataDestinationPath);
           await cleanSpeculos(currentDevice);
         }
@@ -223,17 +206,13 @@ export const test = base.extend<TestFixtures>({
           cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
 
         if (!skipSpeculos) {
-          currentDevice = await timePhase(`${testInfo.title} :: speculos-boot`, () =>
-            launchSpeculos(speculosApp.name, testInfo.title),
-          );
+          currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
         }
 
         if (cliCommands?.length) {
-          await timePhase(`${testInfo.title} :: cli-setup`, async () => {
-            for (const cmd of cliCommands) {
-              await executeCliCommand(cmd, userdataDestinationPath);
-            }
-          });
+          for (const cmd of cliCommands) {
+            await executeCliCommand(cmd, userdataDestinationPath);
+          }
         }
       }
 
@@ -285,19 +264,15 @@ export const test = base.extend<TestFixtures>({
     // launch app
     const windowSize = { width: 1024, height: 768 };
 
-    const electronApp: ElectronApplication = await timePhase(
-      `${testInfo.title} :: app-launch`,
-      () =>
-        launchApp({
-          env,
-          lang,
-          theme,
-          userdataDestinationPath,
-          simulateCamera,
-          windowSize,
-          recordVideo: isLastRetry(testInfo),
-        }),
-    );
+    const electronApp: ElectronApplication = await launchApp({
+      env,
+      lang,
+      theme,
+      userdataDestinationPath,
+      simulateCamera,
+      windowSize,
+      recordVideo: isLastRetry(testInfo),
+    });
 
     await use(electronApp);
 
@@ -309,7 +284,6 @@ export const test = base.extend<TestFixtures>({
   },
   page: async ({ electronApp, speculos, cliCommandsOnApp, teamOwner }, use, testInfo) => {
     // app is ready
-    const pageReadyStart = Date.now();
     const page = await electronApp.firstWindow();
 
     if (teamOwner !== undefined) {
@@ -348,16 +322,9 @@ export const test = base.extend<TestFixtures>({
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
-    logPhase(`${testInfo.title} :: app-ready`, pageReadyStart);
-    const appReadyAt = Date.now();
 
     // use page in the test
     await use(page);
-    if (process.env.E2E_PHASE_TIMING) {
-      console.warn(
-        `[phase-timing] ${testInfo.title} :: body+sign: ${Date.now() - appReadyAt}ms (test total so far: ${testInfo.duration}ms)`,
-      );
-    }
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {

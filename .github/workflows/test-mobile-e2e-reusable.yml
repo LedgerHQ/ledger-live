@@ -90,11 +90,6 @@ on:
         required: false
         type: string
         default: ""
-      generate_userdata:
-        description: "Reuse the daily pre-generated app.json userdata cache (from the generate-e2e-userdata workflow) instead of scanning accounts live on Speculos"
-        required: false
-        type: boolean
-        default: false
 
   workflow_call:
     inputs:
@@ -150,11 +145,6 @@ on:
         required: false
         type: string
         default: ""
-      generate_userdata:
-        description: "Reuse the daily pre-generated app.json userdata cache (from the generate-e2e-userdata workflow) instead of scanning accounts live on Speculos"
-        required: false
-        type: boolean
-        default: false
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -178,8 +168,10 @@ env:
   E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   # Shared app.json cache dir. The daily generate-e2e-userdata workflow stores the userdata in
-  # the S3 cache; each detox shard restores it here and the e2e tests read it. Empty = disabled.
-  E2E_GENERATED_USERDATA_DIR: ${{ inputs.generate_userdata && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
+  # the S3 cache; each detox shard restores it here and the e2e tests read it. The cache is the
+  # default; release-validation runs (production_firebase) use the legacy live scan. Empty = disabled.
+  USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
+  E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
@@ -636,13 +628,13 @@ jobs:
           echo "DEVICE_INFO=${{ env.IOS_SIMULATOR_DEVICE }} (iOS $IOS_VERSION)" >> $GITHUB_ENV
 
       - name: Compute userdata cache key date
-        if: ${{ inputs.generate_userdata }}
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         id: userdata-meta
         shell: bash
         run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
 
       - name: Restore pre-generated userdata (app.json) from S3 cache
-        if: ${{ inputs.generate_userdata }}
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
@@ -874,13 +866,13 @@ jobs:
           echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
 
       - name: Compute userdata cache key date
-        if: ${{ inputs.generate_userdata }}
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         id: userdata-meta
         shell: bash
         run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
 
       - name: Restore pre-generated userdata (app.json) from S3 cache
-        if: ${{ inputs.generate_userdata }}
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
         uses: tespkg/actions-cache/restore@v1.9.0
         with:

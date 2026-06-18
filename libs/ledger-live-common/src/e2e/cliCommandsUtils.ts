@@ -20,6 +20,8 @@ import {
   getGeneratedAddress,
   hasGeneratedUserdata,
 } from "./generatedUserdata";
+import { getCachedAddress, isUtxoBasedCurrency } from "./addressCache";
+import { getCachedUtxoAddress } from "./utxoAddressCache";
 
 export type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
@@ -38,10 +40,18 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
     return address;
   }
 
-  const generated = getGeneratedAddress(account);
-  if (generated) {
-    account.address = generated;
-    return generated;
+  if (!isUtxoBasedCurrency(account.currency.id)) {
+    const cached = getCachedAddress(account) ?? getGeneratedAddress(account);
+    if (cached) {
+      account.address = cached;
+      return cached;
+    }
+  } else {
+    const cached = getCachedUtxoAddress(account);
+    if (cached) {
+      account.address = cached;
+      return cached;
+    }
   }
 
   const { address } = await runCliGetAddress({
@@ -68,7 +78,6 @@ export const liveDataCommand = (
       appjson: userdataPath,
     });
   };
-  // Lets the e2e fixture know this command can be served without a live device.
   cmd.canUseGeneratedUserdata = () => hasGeneratedUserdata(account);
   return cmd;
 };
@@ -209,9 +218,8 @@ export const liveDataWithAddressCommand = (
 
     return address;
   };
-  // Both the account data and its receive address come from the same cached coin
-  // file, so this can be served without a live device when the account is present.
-  cmd.canUseGeneratedUserdata = () => hasGeneratedUserdata(account);
+  cmd.canUseGeneratedUserdata = () =>
+    hasGeneratedUserdata(account) && !isUtxoBasedCurrency(account.currency.id);
   return cmd;
 };
 
@@ -238,12 +246,11 @@ export const liveDataWithParentAddressCommand = (
     accountToAssign.address = address;
     return address;
   };
-  // Skip the device only when both the seeded account and the address source
-  // (the token's parent account) are available in the pre-generated cache.
   cmd.canUseGeneratedUserdata = () =>
     hasGeneratedUserdata(liveDataAccount) &&
     !!accountToAssign.parentAccount &&
-    hasGeneratedUserdata(accountToAssign.parentAccount);
+    hasGeneratedUserdata(accountToAssign.parentAccount) &&
+    !isUtxoBasedCurrency(accountToAssign.parentAccount.currency.id);
   return cmd;
 };
 

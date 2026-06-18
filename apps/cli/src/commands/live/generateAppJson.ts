@@ -27,8 +27,6 @@ function resolveOutputDir(outputDir?: string): string {
   return path.resolve(outputDir ?? process.env.E2E_GENERATED_USERDATA_DIR ?? DEFAULT_OUTPUT_DIR);
 }
 
-// Group every scannable account from the e2e `Account` enum by its coin so we
-// can launch one Speculos app and emit a single `<coinId>.json` per coin.
 function groupAccountsByCoin(coins?: string[]): Map<string, CoinGroup> {
   const groups = new Map<string, CoinGroup>();
   for (const value of Object.values(Account)) {

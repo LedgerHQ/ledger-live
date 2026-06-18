@@ -28,8 +28,6 @@ type CliCommand = ((
   userdataPath?: string,
   speculosAddress?: string,
 ) => Observable<unknown> | Promise<unknown> | string) & {
-  // Set by cache-aware command builders (cliCommandsUtils) to signal the command
-  // can be served from the pre-generated userdata cache without a live device.
   canUseGeneratedUserdata?: () => boolean;
 };
 
@@ -43,12 +41,6 @@ export type InitOptions = {
   userdata?: string;
   testedCurrencies?: string[];
   featureFlags?: PartialFeatures;
-  /**
-   * Setup-only tests (no device interaction in the test body) can skip launching
-   * Speculos when every CLI command is served from the pre-generated userdata
-   * cache. Mirrors the desktop fixture flag of the same name. No-op unless
-   * `E2E_GENERATED_USERDATA_DIR` is set and the cache holds the test's accounts.
-   */
   speculosForSetupOnly?: boolean;
 };
 
@@ -345,9 +337,6 @@ export class InitializationManager {
       cliCommands.every((cmd) => cmd.canUseGeneratedUserdata?.() ?? false);
 
     if (skipSpeculos) {
-      log.info(
-        "📦 [generated-userdata] Setup-only test: skipping Speculos boot (all CLI commands served from cache)",
-      );
       await executeCliCommands(cliCommands, userdataPath);
       await InitializationManager.finalizeSetup(userdataSpeculos);
       return;
@@ -407,8 +396,6 @@ export class InitializationManager {
     await InitializationManager.finalizeSetup(userdataSpeculos);
   }
 
-  // Load the seeded userdata into the app. Feature flags are applied separately at the
-  // start of `initialize` so they also cover the setup-only path that skips Speculos.
   private static async finalizeSetup(userdataSpeculos: string): Promise<void> {
     await loadConfig(userdataSpeculos, true);
   }

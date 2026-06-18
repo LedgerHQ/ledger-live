@@ -30,5 +30,4 @@ libs/ui/packages/react/rsbuild.config.js.map
 nx.cache-config.json
 rsdoctor/
 
-# Pre-generated E2E userdata cache (shared by desktop + mobile), produced by the `generateAppJson` CLI
 e2e/userdata/generated/
