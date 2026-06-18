@@ -105,7 +105,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap get quotes button")
   async tapGetQuotesButton() {
-    await getValueByWebTestId(this.toAmountInput);
+    await expectWebElementNotVisible(this.quotesButtonDisabled);
     await tapWebElementByTestId(this.getQuotesButton);
   }
 
