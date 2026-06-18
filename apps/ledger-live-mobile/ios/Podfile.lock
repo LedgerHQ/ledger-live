@@ -38,7 +38,7 @@ PODS:
     - BrazeKit (= 13.3.0)
   - BVLinearGradient (2.8.3):
     - React-Core
-  - callstack-repack (5.2.3):
+  - callstack-repack (5.2.5):
     - boost
     - DoubleConversion
     - fast_float
@@ -161,7 +161,7 @@ PODS:
     - ExpoModulesCore
   - ExpoFileSystem (19.0.21):
     - ExpoModulesCore
-  - ExpoFont (14.0.11):
+  - ExpoFont (14.0.12):
     - ExpoModulesCore
   - ExpoHaptics (15.0.8):
     - ExpoModulesCore
@@ -3553,7 +3553,7 @@ DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/boost.podspec`)"
   - "braze-react-native-sdk (from `../../../node_modules/.pnpm/@braze+react-native-sdk@18.0.0/node_modules/@braze/react-native-sdk`)"
   - "BVLinearGradient (from `../../../node_modules/.pnpm/react-native-linear-gradient@2.8.3_react-native_c0ed0e13938bd5be431a97f6c6df7852/node_modules/react-native-linear-gradient`)"
-  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.3_patch_hash=8d7db4e65c89_66c2b54b8144594ab32b39292fb9bb9d/node_modules/@callstack/repack`)"
+  - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_829581da8d52aa6eb9a06ce478d1dd74/node_modules/@callstack/repack`)"
   - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_dac9b2f3392a88191c9e162224291b30/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_expo-modules-core@3.0.29_083180c0a5e10b2c5cb7be72cbb5cd78/node_modules/expo-constants/ios`)"
@@ -3562,7 +3562,7 @@ DEPENDENCIES:
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_expo-modules-core@3.0.29_rea_4dd6d0e3402a34b47bf630130064f619/node_modules/expo-asset/ios`)"
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_expo-modules-core@3.0.29_rea_77401dd5864c9e0ede5576c5c69ee65f/node_modules/expo-crypto/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._ccf77f6f454882980e5baab05c786638/node_modules/expo-file-system/ios`)"
-  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.11_99443ef9edd0bb18e35d575cacf7a5e1/node_modules/expo-font/ios`)"
+  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_99443ef9edd0bb18e35d575cacf7a5e1/node_modules/expo-font/ios`)"
   - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.8_expo-modules-core@3.0.29_re_32e08640c19d06bdd218fddc257e55f5/node_modules/expo-haptics/ios`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo-modules-core_2b8317f4fe36dd0e87f66b10fa9aaf6d/node_modules/expo-image-manipulator/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo-modules-core@3.0.29_7f844371c47f86efdbd92b0e0b2a20b7/node_modules/expo-keep-awake/ios`)"
@@ -3733,7 +3733,7 @@ EXTERNAL SOURCES:
   BVLinearGradient:
     :path: "../../../node_modules/.pnpm/react-native-linear-gradient@2.8.3_react-native_c0ed0e13938bd5be431a97f6c6df7852/node_modules/react-native-linear-gradient"
   callstack-repack:
-    :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.3_patch_hash=8d7db4e65c89_66c2b54b8144594ab32b39292fb9bb9d/node_modules/@callstack/repack"
+    :path: "../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_829581da8d52aa6eb9a06ce478d1dd74/node_modules/@callstack/repack"
   DatadogSDKReactNative:
     :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_dac9b2f3392a88191c9e162224291b30/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
@@ -3751,7 +3751,7 @@ EXTERNAL SOURCES:
   ExpoFileSystem:
     :path: "../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._ccf77f6f454882980e5baab05c786638/node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../../../node_modules/.pnpm/expo-font@14.0.11_99443ef9edd0bb18e35d575cacf7a5e1/node_modules/expo-font/ios"
+    :path: "../../../node_modules/.pnpm/expo-font@14.0.12_99443ef9edd0bb18e35d575cacf7a5e1/node_modules/expo-font/ios"
   ExpoHaptics:
     :path: "../../../node_modules/.pnpm/expo-haptics@15.0.8_expo-modules-core@3.0.29_re_32e08640c19d06bdd218fddc257e55f5/node_modules/expo-haptics/ios"
   ExpoImageManipulator:
@@ -4001,7 +4001,7 @@ SPEC CHECKSUMS:
   BrazeLocation: 47cde4ac51568718b76d4677475c926ea840633b
   BrazeUI: 4de47810a95f225e0199cf6ddc9756f9dab662eb
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
-  callstack-repack: 896993cd2e28f656f9cdbadfe90920b45aeebac3
+  callstack-repack: 6de6a4d5a87bdf8f6b75e51fd32e557c9be85110
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84
   DatadogCrashReporting: e6a83b143394e28c9c1cb48c5cfb18eff507b3be
@@ -4018,7 +4018,7 @@ SPEC CHECKSUMS:
   ExpoAsset: 9e5a7c9c0a9fb83ad5b2bb365141f2bd7f289b66
   ExpoCrypto: b6105ebaa15d6b38a811e71e43b52cd934945322
   ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
-  ExpoFont: f543ce20a228dd702813668b1a07b46f51878d47
+  ExpoFont: dfb7c572372b610da45b41e3b436321fd6a97215
   ExpoHaptics: d3a6375d8dcc3a1083d003bc2298ff654fafb536
   ExpoImageManipulator: 607a5c8c88085381639458a46cc55fb9d3869148
   ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
