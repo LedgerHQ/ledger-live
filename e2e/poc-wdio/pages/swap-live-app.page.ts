@@ -184,8 +184,12 @@ export class SwapLiveAppPage {
           await driver.pause(50);
         }
         if (driver.isAndroid) {
+          // workaround for ScreenContentWrapper crash on navigation
           await driver.hideKeyboard();
-          await driver.pause(1_000);
+          await driver.waitUntil(async () => (await driver.isKeyboardShown()) === false, {
+            timeout: 5000,
+            timeoutMsg: "Expected keyboard to be hidden after inputting amount",
+          });
         }
       });
     });
