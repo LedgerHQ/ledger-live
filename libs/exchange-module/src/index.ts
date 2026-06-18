@@ -128,7 +128,7 @@ export class ExchangeModule extends CustomModule {
     signature: string;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
-    meta?: SwapTrackingMeta & { isEmbedded?: boolean };
+    meta?: SwapTrackingMeta;
   }) {
     const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
