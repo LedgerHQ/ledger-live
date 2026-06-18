@@ -39,6 +39,12 @@ env:
   # own prefix and harmlessly ignores the other.
   npm_config_store_dir: /home/runner/_work/.pnpm-store
   pnpm_config_store_dir: /home/runner/_work/.pnpm-store
+  # Same rationale for the build caches that native-module rebuilds populate
+  # during install (node-gyp dev headers, prebuilt-binary downloads): the default
+  # ~/.cache lives on the runner container's overlay rootfs — a different
+  # filesystem from _work. XDG_CACHE_HOME relocates them onto _work so writes skip
+  # overlay copy-up and share a filesystem with node_modules. See LIVE-28839.
+  XDG_CACHE_HOME: /home/runner/_work/.cache
 
 jobs:
   test-libraries:
