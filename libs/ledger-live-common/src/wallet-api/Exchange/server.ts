@@ -228,8 +228,8 @@ export const handlers = ({
           provider: params.provider,
           exchangeType: params.exchangeType,
           ...(params.exchangeType === "SWAP" && {
-            isEmbeddedSwap: params.isEmbedded,
-            swapEntryPoint: params.swapEntryPoint,
+            isEmbeddedSwap: params.meta?.isEmbedded,
+            swapEntryPoint: params.meta?.swapEntryPoint,
           }),
         };
 
@@ -272,8 +272,8 @@ export const handlers = ({
           provider: params.provider,
           exchangeType: params.exchangeType,
           ...(params.exchangeType === "SWAP" && {
-            isEmbeddedSwap: params.isEmbedded,
-            swapEntryPoint: params.swapEntryPoint,
+            isEmbeddedSwap: params.meta?.isEmbedded,
+            swapEntryPoint: params.meta?.swapEntryPoint,
           }),
         };
 
@@ -418,8 +418,8 @@ export const handlers = ({
               refundAddress,
               payoutAddress,
               ...(params.exchangeType === "SWAP" && {
-                isEmbeddedSwap: params.isEmbedded,
-                swapEntryPoint: params.swapEntryPoint,
+                isEmbeddedSwap: params.meta?.isEmbedded,
+                swapEntryPoint: params.meta?.swapEntryPoint,
               }),
             },
             onSuccess: (transactionHash: string) => {
@@ -466,16 +466,15 @@ export const handlers = ({
           customFeeConfig,
           swapAppVersion,
           sponsored,
-          isEmbedded,
           correlationId,
-          swapEntryPoint,
+          meta,
         } = params;
 
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
-          isEmbeddedSwap: isEmbedded,
-          swapEntryPoint,
+          isEmbeddedSwap: meta?.isEmbedded,
+          swapEntryPoint: meta?.swapEntryPoint,
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -675,8 +674,8 @@ export const handlers = ({
               refundAddress,
               payoutAddress,
               sponsored,
-              isEmbeddedSwap: isEmbedded,
-              swapEntryPoint,
+              isEmbeddedSwap: meta?.isEmbedded,
+              swapEntryPoint: meta?.swapEntryPoint,
               ...(correlationId && { correlationId }),
             },
             onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {

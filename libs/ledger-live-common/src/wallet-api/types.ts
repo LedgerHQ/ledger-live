@@ -84,13 +84,16 @@ export type DAppTrackingData = {
   network: CryptoCurrency["id"];
 };
 
-export type BroadcastTrackingData = {
-  isEmbeddedSwap?: boolean;
-  partner?: string;
-  swapEntryPoint?: string;
+export type BroadcastTrackingData = SwapTrackingMeta & {
   sourceCurrency?: string;
   targetCurrency?: string;
   network?: CryptoCurrency["id"];
+};
+
+export type SwapTrackingMeta = {
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
+  partner?: string;
 };
 
 export type AccountIdFormat = "uuid" | "encoded";

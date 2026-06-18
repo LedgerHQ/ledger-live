@@ -155,7 +155,11 @@ describe("trackingWrapper with optional tracking params", () => {
       const mockedTrack = jest.fn();
 
       // When
-      trackingWrapper(mockedTrack)[method](appManifest, true, "uniswap", "main_page");
+      trackingWrapper(mockedTrack)[method](appManifest, {
+        isEmbedded: true,
+        partner: "uniswap",
+        swapEntryPoint: "main_page",
+      });
 
       // Then
       expect(mockedTrack).toHaveBeenCalledTimes(1);

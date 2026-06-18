@@ -24,14 +24,18 @@ export type ExchangeStartSellParams = {
   fromAccountId: string;
 };
 
+export type SwapTrackingMeta = {
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
+};
+
 export type ExchangeStartSwapParams = {
   exchangeType: "SWAP";
   provider: string;
   fromAccountId: string;
   toAccountId: string;
   tokenCurrency?: string;
-  swapEntryPoint?: string;
-  isEmbedded?: boolean;
+  meta?: SwapTrackingMeta;
 };
 
 export type ExchangeSwapParams = ExchangeStartSwapParams & {
@@ -80,8 +84,7 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
-  isEmbedded?: boolean;
-  swapEntryPoint?: string;
+  meta?: SwapTrackingMeta;
 };
 
 export type ExchangeCompleteParams =
