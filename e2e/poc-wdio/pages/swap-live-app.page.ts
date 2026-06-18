@@ -183,16 +183,18 @@ export class SwapLiveAppPage {
           await this.fromAmountInput.addValue(char);
           await driver.pause(50);
         }
+        // Workaround (QAA-1329) ScreenContentWrapper crash on navigation - unfocus input
+        await this.fromAmountInput.tap();
       });
+      if (driver.isAndroid) {
+        // Workaround (QAA-1329) ScreenContentWrapper crash on navigation - hide keyboard
+        await driver.hideKeyboard();
+        await driver.waitUntil(async () => (await driver.isKeyboardShown()) === false, {
+          timeout: 5000,
+          timeoutMsg: "Expected keyboard to be hidden after inputting amount",
+        });
+      }
     });
-    if (driver.isAndroid) {
-      // Workaround (QAA-1329) ScreenContentWrapper crash on navigation - hide keyboard
-      await driver.hideKeyboard();
-      await driver.waitUntil(async () => (await driver.isKeyboardShown()) === false, {
-        timeout: 5000,
-        timeoutMsg: "Expected keyboard to be hidden after inputting amount",
-      });
-    }
   }
 
   async expectToAmountFloat() {
