@@ -1,4 +1,9 @@
-import type { AppManifest, BroadcastTrackingData, DAppTrackingData } from "./types";
+import type {
+  AppManifest,
+  BroadcastTrackingData,
+  DAppTrackingData,
+  SwapTrackingMeta,
+} from "./types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -19,6 +24,20 @@ type TrackWalletAPI = (
  */
 function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
+}
+
+/**
+ * Build the analytics property payload for a sign-transaction event by
+ * spreading the wire-meta bag. 
+ */
+function buildSignTransactionProperties(manifest: AppManifest, meta: SwapTrackingMeta) {
+  const { isEmbedded, partner, swapEntryPoint } = meta;
+  return {
+    ...getEventData(manifest),
+    ...(isEmbedded !== undefined && { isEmbeddedSwap: String(isEmbedded) }),
+    ...(partner !== undefined && { partner }),
+    ...(swapEntryPoint !== undefined && { swapEntryPoint }),
+  };
 }
 
 /**
@@ -56,51 +75,18 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Sign transaction modal open
-    signTransactionRequested: (
-      manifest: AppManifest,
-      isEmbeddedSwap?: boolean,
-      partner?: string,
-      swapEntryPoint?: string,
-    ) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-        ...(swapEntryPoint !== undefined && { swapEntryPoint }),
-      };
-      track("WalletAPI SignTransaction", properties);
+    signTransactionRequested: (manifest: AppManifest, meta: SwapTrackingMeta = {}) => {
+      track("WalletAPI SignTransaction", buildSignTransactionProperties(manifest, meta));
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (
-      manifest: AppManifest,
-      isEmbeddedSwap?: boolean,
-      partner?: string,
-      swapEntryPoint?: string,
-    ) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-        ...(swapEntryPoint !== undefined && { swapEntryPoint }),
-      };
-      track("WalletAPI SignTransaction Fail", properties);
+    signTransactionFail: (manifest: AppManifest, meta: SwapTrackingMeta = {}) => {
+      track("WalletAPI SignTransaction Fail", buildSignTransactionProperties(manifest, meta));
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (
-      manifest: AppManifest,
-      isEmbeddedSwap?: boolean,
-      partner?: string,
-      swapEntryPoint?: string,
-    ) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-        ...(swapEntryPoint !== undefined && { swapEntryPoint }),
-      };
-      track("WalletAPI SignTransaction Success", properties);
+    signTransactionSuccess: (manifest: AppManifest, meta: SwapTrackingMeta = {}) => {
+      track("WalletAPI SignTransaction Success", buildSignTransactionProperties(manifest, meta));
     },
 
     // Sign Raw transaction modal open
@@ -151,8 +137,8 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     // Failed to broadcast a signed transaction
     broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties: Record<string, unknown> = getEventData(manifest);
-      if (data?.isEmbeddedSwap !== undefined)
-        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.isEmbedded !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbedded);
       if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
@@ -164,8 +150,8 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     // Successfully broadcast a signed transaction
     broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties: Record<string, unknown> = getEventData(manifest);
-      if (data?.isEmbeddedSwap !== undefined)
-        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.isEmbedded !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbedded);
       if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;

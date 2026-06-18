@@ -54,6 +54,7 @@ type ResultsState = {
   sourceCurrency: Currency;
   targetCurrency?: Currency;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
   sponsored?: boolean;
 };
 

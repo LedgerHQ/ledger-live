@@ -14,6 +14,7 @@ import {
   type GetQuotesWireArgs,
   type GetTransactionStatusResponse,
   type GetTransactionStatusWireArgs,
+  SwapTrackingMeta,
 } from "./types";
 
 export * from "./types";
@@ -70,8 +71,7 @@ export class ExchangeModule extends CustomModule {
     fromAccountId,
     toAccountId,
     tokenCurrency,
-    swapEntryPoint,
-    isEmbedded,
+    meta,
   }: ExchangeStartSwapParams) {
     const result = await this.request<ExchangeStartSwapParams, ExchangeStartResult>(
       "custom.exchange.start",
@@ -81,8 +81,7 @@ export class ExchangeModule extends CustomModule {
         fromAccountId,
         toAccountId,
         tokenCurrency,
-        swapEntryPoint,
-        isEmbedded,
+        meta,
       },
     );
 
@@ -118,8 +117,7 @@ export class ExchangeModule extends CustomModule {
     signature,
     feeStrategy,
     tokenCurrency,
-    isEmbedded,
-    swapEntryPoint,
+    meta,
   }: {
     provider: string;
     fromAccountId: string;
@@ -130,8 +128,7 @@ export class ExchangeModule extends CustomModule {
     signature: string;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
-    isEmbedded?: boolean;
-    swapEntryPoint?: string;
+    meta?: SwapTrackingMeta & { isEmbedded?: boolean };
   }) {
     const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
@@ -146,8 +143,7 @@ export class ExchangeModule extends CustomModule {
         hexSignature: signature,
         feeStrategy,
         tokenCurrency,
-        isEmbedded,
-        swapEntryPoint,
+        meta,
       },
     );
 
@@ -166,9 +162,8 @@ export class ExchangeModule extends CustomModule {
     feeStrategy,
     swapAppVersion,
     sponsored,
-    isEmbedded,
     correlationId,
-    swapEntryPoint,
+    meta,
   }: ExchangeSwapParams) {
     const { operationHash, swapId } = await this.request<ExchangeSwapParams, SwapResult>(
       "custom.exchange.swap",
@@ -185,9 +180,8 @@ export class ExchangeModule extends CustomModule {
         feeStrategy,
         swapAppVersion,
         sponsored,
-        isEmbedded,
         correlationId,
-        swapEntryPoint,
+        meta,
       },
     );
 

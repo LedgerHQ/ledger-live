@@ -32,6 +32,7 @@ import {
   WalletAPIAccount,
   WalletAPICustomHandlers,
   DiscoverDB,
+  SwapTrackingMeta,
 } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
@@ -936,10 +937,8 @@ export function useWalletAPIServer({
       "transaction.signAndBroadcast",
       async ({ accountId, tokenCurrency, transaction, options, meta }) => {
         const sponsored = transaction.family === "ethereum" && transaction.sponsored;
-        // isEmbedded, swapEntryPoint and partner are passed via meta (not transaction) as they're tracking params, not tx properties
-        const isEmbeddedSwap = (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
-        const partner = (meta as { partner?: string } | undefined)?.partner;
-        const swapEntryPoint = (meta as { swapEntryPoint?: string } | undefined)?.swapEntryPoint;
+
+        const trackingMeta = (meta ?? {}) as SwapTrackingMeta;
 
         const signedTransaction = await signTransactionLogic(
           { manifest, accounts, tracking },
@@ -956,26 +955,19 @@ export function useWalletAPIServer({
                 onSuccess: signedOperation => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionSuccess(
-                    manifest,
-                    isEmbeddedSwap,
-                    partner,
-                    swapEntryPoint,
-                  );
+                  tracking.signTransactionSuccess(manifest, trackingMeta);
                   resolve(signedOperation);
                 },
                 onError: error => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionFail(manifest, isEmbeddedSwap, partner, swapEntryPoint);
+                  tracking.signTransactionFail(manifest, trackingMeta);
                   reject(error);
                 },
               });
             }),
           tokenCurrency,
-          isEmbeddedSwap,
-          partner,
-          swapEntryPoint,
+          trackingMeta,
         );
 
         return broadcastTransactionLogic(
@@ -992,9 +984,9 @@ export function useWalletAPIServer({
                 : account.currency.id;
 
             const broadcastTrackingData = {
-              isEmbeddedSwap,
-              swapEntryPoint,
-              partner,
+              isEmbeddedSwap: trackingMeta.isEmbedded,
+              swapEntryPoint: trackingMeta.swapEntryPoint,
+              partner: trackingMeta.partner,
               sourceCurrency:
                 account.type === "TokenAccount" ? account.token.name : account.currency.name,
               network: networkId,

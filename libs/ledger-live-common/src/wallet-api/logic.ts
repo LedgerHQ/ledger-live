@@ -13,7 +13,7 @@ import {
   getAccountIdFromWalletAccountId,
 } from "./converters";
 import type { TrackingAPI } from "./tracking";
-import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
+import { AppManifest, SwapTrackingMeta, TranslatableString, WalletAPITransaction } from "./types";
 import {
   isTokenAccount,
   isAccount,
@@ -89,27 +89,25 @@ export async function signTransactionLogic(
     },
   ) => Promise<SignedOperation>,
   tokenCurrency?: string,
-  isEmbeddedSwap?: boolean,
-  partner?: string,
-  swapEntryPoint?: string,
+  trackingMeta: SwapTrackingMeta = {},
 ): Promise<SignedOperation> {
   return withLiveAppContext(manifest, async () => {
-    tracking.signTransactionRequested(manifest, isEmbeddedSwap, partner, swapEntryPoint);
+    tracking.signTransactionRequested(manifest, trackingMeta);
     if (!transaction) {
-      tracking.signTransactionFail(manifest, isEmbeddedSwap, partner, swapEntryPoint);
+      tracking.signTransactionFail(manifest, trackingMeta);
       throw new Error("Transaction required");
     }
 
     const accountId = getAccountIdFromWalletAccountId(walletAccountId);
     if (!accountId) {
-      tracking.signTransactionFail(manifest, isEmbeddedSwap, partner, swapEntryPoint);
+      tracking.signTransactionFail(manifest, trackingMeta);
       throw new Error(`accountId ${walletAccountId} unknown`);
     }
 
     const account = accounts.find(account => account.id === accountId);
 
     if (!account) {
-      tracking.signTransactionFail(manifest, isEmbeddedSwap, partner, swapEntryPoint);
+      tracking.signTransactionFail(manifest, trackingMeta);
       throw new Error("Account required");
     }
 
