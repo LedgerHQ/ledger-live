@@ -15,7 +15,7 @@ import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
-import { AB_TESTING_VARIANTS } from "../types/variants";
+import { ANALYTICS_OPT_IN_VARIANT } from "../types/variants";
 
 const ANALYTICS_OPT_IN_PROMPT_ENTRY_POINTS = ["Onboarding", "Portfolio"];
 
@@ -42,12 +42,10 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
 
-  const variant = AB_TESTING_VARIANTS.A;
-
   const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
 
   const openAnalyticsOptInPrompt = useCallback(
-    (routePath: string, callBack: () => void) => {
+    (_routePath: string, callBack: () => void) => {
       setIsAnalyticsOptInPromptOpened(true);
       setNextStep(() => callBack);
     },
@@ -84,7 +82,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onClose: () => setIsAnalyticsOptInPromptOpened(false),
     isOpened: isAnalyticsOptInPromptOpened,
     entryPoint: entryPoint,
-    variant,
+    shouldWeTrack,
   };
 
   const handleOpenPrivacyPolicy = (page?: string) => {
@@ -94,7 +92,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
       {
         button: "Learn more link",
         flow,
-        variant,
+        variant: ANALYTICS_OPT_IN_VARIANT,
         page,
       },
       shouldWeTrack,

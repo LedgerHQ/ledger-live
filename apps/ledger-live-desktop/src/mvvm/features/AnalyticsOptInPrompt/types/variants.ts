@@ -1,6 +1,2 @@
-export const AB_TESTING_VARIANTS = {
-  A: "A",
-  B: "B",
-} as const;
-
-export type ABTestingVariants = (typeof AB_TESTING_VARIANTS)[keyof typeof AB_TESTING_VARIANTS];
+/** Analytics opt-in prompt variant sent to Segment (production is always A). */
+export const ANALYTICS_OPT_IN_VARIANT = "A" as const;
