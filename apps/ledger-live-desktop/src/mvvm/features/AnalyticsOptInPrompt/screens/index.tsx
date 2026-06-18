@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import type { ABTestingVariants } from "../types/variants";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
@@ -13,16 +12,16 @@ interface AnalyticsOptInPromptProps {
   onSubmit?: () => void;
   isOpened?: boolean;
   entryPoint: EntryPoint;
-  variant: ABTestingVariants;
+  shouldWeTrack: boolean;
 }
 
 const AnalyticsOptInPrompt = memo(
-  ({ onClose, onSubmit, isOpened, entryPoint, variant }: AnalyticsOptInPromptProps) => {
+  ({ onClose, onSubmit, isOpened, entryPoint, shouldWeTrack }: AnalyticsOptInPromptProps) => {
     const { colors } = useTheme();
     const { step, setStep, handleRequestBack, handleRequestClose, preventClosable } =
       useDrawerLogic({
         entryPoint,
-        variant,
+        shouldWeTrack,
         onClose,
       });
 

@@ -10,7 +10,7 @@ import {
 } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { track } from "~/renderer/analytics/segment";
 import { useAnalyticsOptInPrompt } from "./useCommonLogic";
-import { AB_TESTING_VARIANTS } from "../types/variants";
+import { ANALYTICS_OPT_IN_VARIANT } from "../types/variants";
 import { steps } from "LLD/features/AnalyticsOptInPrompt/const/steps";
 
 interface UseVariantAProps {
@@ -20,7 +20,6 @@ interface UseVariantAProps {
 }
 
 const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
-  const variant = AB_TESTING_VARIANTS.A;
   const dispatch = useDispatch();
 
   const [preferences, setPreferences] = useState<Record<FieldKeySwitch, boolean>>({
@@ -69,7 +68,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
       "button_clicked",
       {
         button,
-        variant,
+        variant: ANALYTICS_OPT_IN_VARIANT,
         flow,
         page,
       },
@@ -84,7 +83,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
         toggle:
           field === FieldKeySwitch.AnalyticsData ? "Analytics" : "Personalised Recommendations",
         value,
-        variant,
+        variant: ANALYTICS_OPT_IN_VARIANT,
         flow,
         page: steps.variantA.preferences,
       },
