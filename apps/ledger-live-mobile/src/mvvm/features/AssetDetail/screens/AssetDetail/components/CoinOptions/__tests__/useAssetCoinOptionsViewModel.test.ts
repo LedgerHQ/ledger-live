@@ -5,7 +5,7 @@ import type { State } from "~/reducers/types";
 import { useAssetCoinOptionsViewModel } from "../useAssetCoinOptionsViewModel";
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotifications: () => ({ tryTriggerPushNotificationDrawerAfterAction: jest.fn() }),
+  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
 }));
 
 jest.mock("~/analytics", () => ({ track: jest.fn() }));

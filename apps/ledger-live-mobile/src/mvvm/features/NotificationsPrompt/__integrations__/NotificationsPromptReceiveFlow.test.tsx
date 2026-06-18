@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import {
   renderWithReactQuery,
   screen,
@@ -17,6 +16,7 @@ import GlobalDrawers from "~/GlobalDrawers";
 import { track } from "~/analytics";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import {
+  AB_TESTING_VARIANTS,
   createNotificationsPromptFeatureFlags,
   transactionsAlertsDrawerPromptCategoryConfig,
 } from "../testUtils";

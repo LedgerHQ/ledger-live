@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   renderWithReactQuery,
@@ -17,6 +16,7 @@ import GlobalDrawers from "~/GlobalDrawers";
 import { track } from "~/analytics";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 import {
+  AB_TESTING_VARIANTS,
   createNotificationsPromptFeatureFlags,
   transactionsAlertsDrawerPromptCategoryConfig,
 } from "../testUtils";

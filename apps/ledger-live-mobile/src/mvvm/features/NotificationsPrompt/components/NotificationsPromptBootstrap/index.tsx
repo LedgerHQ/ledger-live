@@ -2,8 +2,9 @@ import { useCallback, useEffect } from "react";
 import { AppState } from "react-native";
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
+import storage from "LLM/storage";
+import { getPushNotificationsDataOfUserFromStorage } from "@features/platform-notification-prompt";
 import {
-  getPushNotificationsDataOfUserFromStorage,
   type InitPushNotificationsDataResult,
   useNotificationsContext,
   useNotificationsData,
@@ -25,7 +26,7 @@ export function NotificationsPromptBootstrap() {
 
       const [permission, dataOfUserFromStorage] = await Promise.allSettled([
         getNotificationPermissionStatus(),
-        getPushNotificationsDataOfUserFromStorage(),
+        getPushNotificationsDataOfUserFromStorage(storage),
       ]);
 
       if (permission.status === "rejected") {

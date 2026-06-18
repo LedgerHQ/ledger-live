@@ -3,17 +3,21 @@ import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-ren
 import {
   NotificationsPromptProvider,
   NotificationsPromptWrapper,
-  setPushNotificationsDataOfUserInStorage,
+  useNotificationsContext,
   useNotifications,
 } from "LLM/features/NotificationsPrompt";
+import { setPushNotificationsDataOfUserInStorage } from "@features/platform-notification-prompt";
+import type { NotificationPromptAfterActionSource } from "@domain/entity-notification-prompt";
 
 import storage from "LLM/storage";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
 import { add, sub, type Duration } from "date-fns";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
-import { NotificationsState } from "~/reducers/types";
-import { createNotificationsPromptFeatureFlags } from "../testUtils";
+import {
+  AB_TESTING_VARIANTS,
+  createNotificationsPromptFeatureFlags,
+  type ABTestingVariants,
+} from "../testUtils";
 
 // Mock QueuedDrawer to bypass animation issues with Reanimated 4 in tests
 jest.mock("LLM/components/QueuedDrawer", () => {
@@ -87,7 +91,7 @@ describe("NotificationsPrompt Integration", () => {
     variant = AB_TESTING_VARIANTS.B,
     skipStorageSetup = false,
   }: {
-    actionSource?: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">;
+    actionSource?: NotificationPromptAfterActionSource;
     osPermission: AuthorizationStatusType;
     appNotifications: boolean;
     lastActionAt?: number;
@@ -100,7 +104,7 @@ describe("NotificationsPrompt Integration", () => {
     mockHasPermission.mockResolvedValue(osPermission);
     mockRequestPermission.mockResolvedValue(osPermission);
     if (!skipStorageSetup) {
-      await setPushNotificationsDataOfUserInStorage({
+      await setPushNotificationsDataOfUserInStorage(storage, {
         lastActionAt,
         dateOfNextAllowedRequest,
         alreadyDelayedToLater,
@@ -112,11 +116,9 @@ describe("NotificationsPrompt Integration", () => {
       const [isReady, setIsReady] = useState(false);
       const [reloadCount, reload] = useReducer(x => x + 1, 0);
 
-      const {
-        tryTriggerPushNotificationDrawerAfterAction,
-        initPushNotificationsData,
-        tryTriggerPushNotificationDrawerAfterInactivity,
-      } = useNotifications();
+      const { initPushNotificationsData } = useNotifications();
+      const { notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity } =
+        useNotificationsContext();
 
       useEffect(() => {
         initPushNotificationsData()
@@ -133,9 +135,7 @@ describe("NotificationsPrompt Integration", () => {
 
       return (
         <>
-          <Button onPress={() => tryTriggerPushNotificationDrawerAfterAction(actionSource)}>
-            Trigger drawer
-          </Button>
+          <Button onPress={() => notifyFlowCompleted(actionSource)}>Trigger drawer</Button>
           <Button onPress={reload}>Reload app</Button>
         </>
       );

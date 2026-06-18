@@ -7,7 +7,10 @@ import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
+import type {
+  NotificationPromptHistory,
+  NotificationPromptTarget,
+} from "@domain/entity-notification-prompt";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {
@@ -136,7 +139,7 @@ export type NotificationsState = {
     | "inactivity";
   drawerPromptTarget?: NotificationPromptTarget;
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
-  dataOfUser?: DataOfUser;
+  dataOfUser?: NotificationPromptHistory;
 };
 
 // === DYNAMIC CONTENT STATE ===

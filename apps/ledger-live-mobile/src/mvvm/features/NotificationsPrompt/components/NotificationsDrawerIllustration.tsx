@@ -4,7 +4,7 @@ import NotificationsBellDark from "~/images/illustration/Dark/_NotificationsBell
 import NotificationsBellLight from "~/images/illustration/Light/_NotificationsBell.webp";
 import NotificationsPerformanceChartDark from "~/images/illustration/Dark/_NotificationsPerformanceChart.webp";
 import NotificationsPerformanceChartLight from "~/images/illustration/Light/_NotificationsPerformanceChart.webp";
-import type { NotificationPromptTarget } from "../types";
+import type { NotificationPromptTarget } from "@domain/entity-notification-prompt";
 import { isTransactionsAlertsPromptTarget } from "../utils/getNotificationsPromptCopy";
 
 const WIDTH = 300;

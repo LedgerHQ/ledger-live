@@ -1,7 +1,6 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
@@ -16,7 +15,7 @@ import { track } from "~/analytics";
 import GlobalDrawers from "~/GlobalDrawers";
 import WebPlatformPlayer from "~/components/WebPlatformPlayer";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
-import { createNotificationsPromptFeatureFlags } from "../testUtils";
+import { AB_TESTING_VARIANTS, createNotificationsPromptFeatureFlags } from "../testUtils";
 
 jest.mock("~/analytics", () => {
   const track = jest.fn();

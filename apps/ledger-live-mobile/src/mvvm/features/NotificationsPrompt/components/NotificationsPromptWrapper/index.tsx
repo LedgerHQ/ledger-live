@@ -1,7 +1,7 @@
 import React from "react";
 import { FeatureToggle } from "@features/platform-feature-flags";
+import { NotificationsPromptBootstrap } from "LLM/features/NotificationsPrompt/components/NotificationsPromptBootstrap";
 import { NotificationsPromptDrawer } from "LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawer";
-import { NotificationsPromptBootstrap } from "LLM/features/NotificationsPrompt/new/NotificationsPromptBootstrap";
 
 export function NotificationsPromptWrapper() {
   return (

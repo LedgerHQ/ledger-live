@@ -2,8 +2,10 @@ import React from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useFeature } from "@features/platform-feature-flags";
-import { AB_TESTING_VARIANTS } from "../types/variants";
-import type { NotificationPromptTarget } from "../types";
+import {
+  NotificationPromptVariantSchema,
+  type NotificationPromptTarget,
+} from "@domain/entity-notification-prompt";
 import { getNotificationsPromptCopy } from "../utils/getNotificationsPromptCopy";
 
 type NotificationsPromptContentProps = {
@@ -16,7 +18,7 @@ export const NotificationsPromptContent = ({ promptTarget }: NotificationsPrompt
 
   const isVariantB =
     featureNewWordingNotificationsDrawer?.enabled === true &&
-    featureNewWordingNotificationsDrawer?.params?.variant === AB_TESTING_VARIANTS.B;
+    featureNewWordingNotificationsDrawer?.params?.variant === NotificationPromptVariantSchema.enum.B;
 
   const { titleKey, descriptionKey } = getNotificationsPromptCopy(promptTarget, isVariantB);
 

@@ -5,12 +5,14 @@ import { useNotifications } from "LLM/features/NotificationsPrompt";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { NotificationsDrawerIllustration } from "LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration";
 import { NotificationsPromptContent } from "LLM/features/NotificationsPrompt/components/NotificationsPromptContent";
-import { resolveDrawerPromptTargetForAnalytics } from "LLM/features/NotificationsPrompt/new/notificationsPromptAnalytics";
+import { resolveDrawerPromptTargetForAnalytics } from "@features/platform-notification-prompt";
 import { getNotificationsPromptCopy } from "LLM/features/NotificationsPrompt/utils/getNotificationsPromptCopy";
-import type { NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
+import {
+  NotificationPromptVariantSchema,
+  type NotificationPromptTarget,
+} from "@domain/entity-notification-prompt";
 import { TrackScreen } from "~/analytics";
 import { useFeature } from "@features/platform-feature-flags";
-import { AB_TESTING_VARIANTS } from "LLM/features/NotificationsPrompt/types/variants";
 import type { NotificationsState } from "~/reducers/types";
 
 type DrawerDisplayState = {
@@ -58,7 +60,7 @@ export const NotificationsPromptDrawer = () => {
   const canShowVariant = featureNewWordingNotificationsDrawer?.enabled;
   const isVariantB =
     featureNewWordingNotificationsDrawer?.enabled === true &&
-    featureNewWordingNotificationsDrawer?.params?.variant === AB_TESTING_VARIANTS.B;
+    featureNewWordingNotificationsDrawer?.params?.variant === NotificationPromptVariantSchema.enum.B;
   const { allowKey, laterKey } = getNotificationsPromptCopy(
     displayedDrawerPromptTarget,
     isVariantB,

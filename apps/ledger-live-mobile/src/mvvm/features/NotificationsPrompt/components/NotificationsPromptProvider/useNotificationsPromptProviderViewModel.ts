@@ -1,15 +1,27 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import {
+  buildAfterActionDecisionAnalytics,
+  buildInactivityDecisionAnalytics,
   mapFeatureFlagsToNotificationPromptPolicy,
   mapFirebaseAuthorizationStatusToNotificationPermissionStatus,
 } from "@features/platform-notification-prompt";
+import type { NotificationsPromptContextValue as FlowNotificationsPromptContextValue } from "@features/flow-notification-prompt";
 import {
   evaluateAfterActionTrigger,
   evaluateInactivityTrigger,
   type NotificationPromptAfterActionSource,
+  type NotificationPromptSource,
+  type NotificationPromptTarget,
 } from "@domain/entity-notification-prompt";
-import { useSelector } from "~/context/hooks";
+import {
+  setNotificationsDrawerPromptTarget,
+  setNotificationsDrawerSource,
+  setNotificationsModalOpen,
+} from "~/actions/notifications";
+import { track } from "~/analytics";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { notificationsModalOpenSelector } from "~/reducers/notifications";
 import { ratingsModalOpenSelector } from "~/reducers/ratings";
 import { hasCompletedOnboardingSelector, notificationsSelector } from "~/reducers/settings";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
@@ -17,21 +29,22 @@ import {
   type InitPushNotificationsDataResult,
   useNotificationsData,
 } from "LLM/features/NotificationsPrompt";
-import {
-  trackAfterActionDecision,
-  trackInactivityDecision,
-} from "LLM/features/NotificationsPrompt/new/notificationsPromptAnalytics";
-import { useNotificationsPromptDrawerScheduler } from "LLM/features/NotificationsPrompt/new/hooks/useNotificationsPromptDrawerScheduler";
 
-export function useNotificationsPromptTriggers() {
+type NotificationsPromptContextValue =
+  FlowNotificationsPromptContextValue<InitPushNotificationsDataResult>;
+
+export function useNotificationsPromptProviderViewModel(): NotificationsPromptContextValue {
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
   const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const notifications = useSelector(notificationsSelector);
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
+  const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const { permissionStatus } = useNotificationsPermission();
   const { pushNotificationsDataOfUser } = useNotificationsData();
-  const { openDrawer, isDrawerPending } = useNotificationsPromptDrawerScheduler();
+  const dispatch = useDispatch();
+  const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const policy = useMemo(
     () =>
       mapFeatureFlagsToNotificationPromptPolicy({
@@ -39,6 +52,35 @@ export function useNotificationsPromptTriggers() {
         lwmNewWordingOptInNotificationsDrawer: featureNewWordingNotificationsDrawer,
       }),
     [featureBrazePushNotifications, featureNewWordingNotificationsDrawer],
+  );
+
+  const openDrawer = useCallback(
+    (
+      source: NotificationPromptSource,
+      timer = 0,
+      drawerPromptTarget?: NotificationPromptTarget,
+    ) => {
+      if (eventTimeoutRef.current) {
+        clearTimeout(eventTimeoutRef.current);
+        eventTimeoutRef.current = null;
+      }
+
+      eventTimeoutRef.current = setTimeout(() => {
+        eventTimeoutRef.current = null;
+        const resolvedPromptTarget =
+          source === "inactivity" ? "globalPushNotifications" : drawerPromptTarget;
+
+        dispatch(setNotificationsDrawerSource(source));
+        dispatch(setNotificationsDrawerPromptTarget(resolvedPromptTarget));
+        dispatch(setNotificationsModalOpen(true));
+      }, timer);
+    },
+    [dispatch],
+  );
+
+  const isDrawerPending = useCallback(
+    () => isPushNotificationsModalOpen || eventTimeoutRef.current !== null,
+    [isPushNotificationsModalOpen],
   );
 
   const notifyFlowCompleted = useCallback(
@@ -58,8 +100,9 @@ export function useNotificationsPromptTriggers() {
           isDrawerPending: isDrawerPending(),
         },
       );
+      const analytics = buildAfterActionDecisionAnalytics(decision);
 
-      trackAfterActionDecision(decision);
+      track(analytics.event, analytics.properties);
 
       if (decision.kind === "skip") {
         return;
@@ -100,8 +143,9 @@ export function useNotificationsPromptTriggers() {
           isDrawerPending: isDrawerPending(),
         },
       );
+      const analytics = buildInactivityDecisionAnalytics(decision);
 
-      trackInactivityDecision(decision);
+      track(analytics.event, analytics.properties);
 
       if (
         decision.kind !== "show" ||
@@ -121,8 +165,20 @@ export function useNotificationsPromptTriggers() {
     ],
   );
 
-  return {
-    notifyFlowCompleted,
-    tryTriggerPushNotificationDrawerAfterInactivity,
-  };
+  useEffect(() => {
+    return () => {
+      if (eventTimeoutRef.current) {
+        clearTimeout(eventTimeoutRef.current);
+        eventTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  return useMemo(
+    () => ({
+      notifyFlowCompleted,
+      tryTriggerPushNotificationDrawerAfterInactivity,
+    }),
+    [notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity],
+  );
 }

@@ -1,8 +1,7 @@
 import React from "react";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { NotificationsPromptContent } from "../NotificationsPromptContent";
-import { AB_TESTING_VARIANTS } from "../../types/variants";
-import { createNotificationsPromptFeatureFlags } from "../../testUtils";
+import { AB_TESTING_VARIANTS, createNotificationsPromptFeatureFlags } from "../../testUtils";
 
 const renderContent = (
   props: React.ComponentProps<typeof NotificationsPromptContent> = {},

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { CommonActions, NavigationProp, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -20,7 +19,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import GlobalDrawers from "~/GlobalDrawers";
 import { track } from "~/analytics";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
-import { createNotificationsPromptFeatureFlags } from "../testUtils";
+import { AB_TESTING_VARIANTS, createNotificationsPromptFeatureFlags } from "../testUtils";
 
 jest.mock("~/analytics", () => {
   const track = jest.fn();

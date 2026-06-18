@@ -1,4 +1,4 @@
-import type { NotificationPromptTarget } from "../types";
+import type { NotificationPromptTarget } from "@domain/entity-notification-prompt";
 
 const TRANSACTIONS_ALERTS_PROMPT_TARGET = "transactionsAlertsCategory" as const;
 

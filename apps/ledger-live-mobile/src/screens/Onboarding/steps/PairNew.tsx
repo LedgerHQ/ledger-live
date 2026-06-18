@@ -13,7 +13,7 @@ import {
   setIsReborn,
   setOnboardingHasDevice,
 } from "~/actions/settings";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 import {
   RootComposite,
   StackNavigatorNavigation,
@@ -80,7 +80,7 @@ export default memo(function () {
   const route = useRoute<NavigationProps["route"]>();
 
   const dispatch = useDispatch();
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
     route.params;
@@ -140,7 +140,7 @@ export default memo(function () {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
 
-    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+    notifyFlowCompleted("onboarding");
   }, [
     isProtectFlow,
     deviceModelId,
@@ -148,7 +148,7 @@ export default memo(function () {
     hasCompletedOnboarding,
     navigation,
     fromAccessExistingWallet,
-    tryTriggerPushNotificationDrawerAfterAction,
+    notifyFlowCompleted,
     isFundWalletNewSetup,
     seedConfiguration,
   ]);

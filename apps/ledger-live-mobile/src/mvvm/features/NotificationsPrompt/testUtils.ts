@@ -1,5 +1,11 @@
 import type { Features } from "@shared/feature-flags";
-import { AB_TESTING_VARIANTS } from "./types/variants";
+import {
+  NotificationPromptVariantSchema,
+  type NotificationPromptVariant,
+} from "@domain/entity-notification-prompt";
+
+export const AB_TESTING_VARIANTS = NotificationPromptVariantSchema.enum;
+export type ABTestingVariants = NotificationPromptVariant;
 
 type BrazePushNotificationsParams = NonNullable<Features["brazePushNotifications"]["params"]>;
 type BrazeNotificationsCategoryConfig = BrazePushNotificationsParams["notificationsCategories"][number];

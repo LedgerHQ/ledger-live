@@ -2,7 +2,6 @@ import React from "react";
 import type { ComponentType } from "react";
 import { View } from "react-native";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import * as TezosReact from "@ledgerhq/live-common/families/tezos/react";
@@ -21,7 +20,7 @@ import * as MobileFamilies from "~/families";
 import GlobalDrawers from "~/GlobalDrawers";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-import { createNotificationsPromptFeatureFlags } from "../testUtils";
+import { AB_TESTING_VARIANTS, createNotificationsPromptFeatureFlags } from "../testUtils";
 
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   __esModule: true,

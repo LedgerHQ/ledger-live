@@ -7,9 +7,13 @@ import { setNotifications } from "~/actions/settings";
 import { setNotificationsDataOfUser } from "~/actions/notifications";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
 import { NotificationsSettings } from "~/reducers/types";
-import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
-import { buildOptOutUserData } from "../utils/buildOptOutUserData";
-import { type DataOfUser, type NotificationPromptTarget } from "../types";
+import storage from "LLM/storage";
+import { setPushNotificationsDataOfUserInStorage } from "@features/platform-notification-prompt";
+import {
+  buildNotificationPromptDismissalHistory,
+  type NotificationPromptHistory,
+  type NotificationPromptTarget,
+} from "@domain/entity-notification-prompt";
 import { updateIdentify } from "~/analytics";
 
 const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
@@ -27,13 +31,13 @@ export const useNotificationsData = () => {
   const dispatch = useDispatch();
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
-    (dataOfUserUpdated: DataOfUser) => {
+    (dataOfUserUpdated: NotificationPromptHistory) => {
       if (isEqual(pushNotificationsDataOfUser, dataOfUserUpdated)) {
         return;
       }
 
       dispatch(setNotificationsDataOfUser(dataOfUserUpdated));
-      setPushNotificationsDataOfUserInStorage(dataOfUserUpdated);
+      setPushNotificationsDataOfUserInStorage(storage, dataOfUserUpdated);
     },
     [dispatch, pushNotificationsDataOfUser],
   );
@@ -53,9 +57,10 @@ export const useNotificationsData = () => {
       // 1. after an action (swap, receive, send, favorite, etc.)
       // 2. after the inactivity period
       updatePushNotificationsDataOfUserInStateAndStore(
-        buildOptOutUserData({
-          pushNotificationsDataOfUser,
-          promptTarget,
+        buildNotificationPromptDismissalHistory({
+          history: pushNotificationsDataOfUser,
+          target: promptTarget,
+          dismissedAt: Date.now(),
         }),
       );
       updateIdentify();
@@ -94,7 +99,7 @@ export const useNotificationsData = () => {
   const syncOptOutState = useCallback(
     (
       osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus],
-      storedUserData: DataOfUser | null,
+      storedUserData: NotificationPromptHistory | null,
     ) => {
       // user has just been onboarded but is quickly redirected to the recover upsell screen.
       // So ignore the sync of permissions state.

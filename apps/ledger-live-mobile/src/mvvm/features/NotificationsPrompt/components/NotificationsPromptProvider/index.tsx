@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   NotificationsPromptProvider as FlowNotificationsPromptProvider,
   type NotificationsPromptContextValue as FlowNotificationsPromptContextValue,
   useNotificationsPromptContext,
 } from "@features/flow-notification-prompt";
 import { type InitPushNotificationsDataResult } from "LLM/features/NotificationsPrompt";
-import { useNotificationsPromptTriggers } from "LLM/features/NotificationsPrompt/new/hooks/useNotificationsPromptTriggers";
+import { useNotificationsPromptProviderViewModel } from "./useNotificationsPromptProviderViewModel";
 
 type NotificationsPromptProviderProps = {
   children: React.ReactNode;
@@ -19,16 +19,7 @@ export function useNotificationsContext() {
 }
 
 export function NotificationsPromptProvider({ children }: NotificationsPromptProviderProps) {
-  const { notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity } =
-    useNotificationsPromptTriggers();
-
-  const value = useMemo<NotificationsPromptContextValue>(
-    () => ({
-      notifyFlowCompleted,
-      tryTriggerPushNotificationDrawerAfterInactivity,
-    }),
-    [notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity],
-  );
+  const value = useNotificationsPromptProviderViewModel();
 
   return (
     <FlowNotificationsPromptProvider value={value}>{children}</FlowNotificationsPromptProvider>
