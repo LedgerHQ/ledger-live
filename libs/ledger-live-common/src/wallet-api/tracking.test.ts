@@ -188,7 +188,7 @@ describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
 
     // When
     trackingWrapper(mockedTrack)[method](appManifest, {
-      isEmbeddedSwap: true,
+      isEmbedded: true,
       swapEntryPoint: "main_page",
       partner: "uniswap",
       sourceCurrency: "Bitcoin",

@@ -28,7 +28,7 @@ function getEventData(manifest: AppManifest) {
 
 /**
  * Build the analytics property payload for a sign-transaction event by
- * spreading the wire-meta bag. 
+ * spreading the wire-meta bag.
  */
 function buildSignTransactionProperties(manifest: AppManifest, meta: SwapTrackingMeta) {
   const { isEmbedded, partner, swapEntryPoint } = meta;
