@@ -1,0 +1,10 @@
+# Portfolio -> open the add-account drawer -> "Import with your Ledger".
+# testIDs sourced from:
+#   e2e/mobile/page/wallet/portfolio.page.ts      (addAccountCta = "add-account-cta")
+#   e2e/mobile/page/accounts/addAccount.drawer.ts (modalButtonId = "add-accounts-modal-add-button")
+appId: com.ledger.live.debug
+---
+- tapOn:
+    id: "add-account-cta"
+- tapOn:
+    id: "add-accounts-modal-add-button"

@@ -1,0 +1,85 @@
+# Swap (ETH -> ETH-USDT), pure YAML. Drives the swap live-app WebView by TEXT (per the
+# feat/qaa-1242 POC): the coin selector is text "Select Currency or Token" (index 0=From,
+# 1=To); picking a currency drops into the NATIVE modular drawer (testIDs). Amount uses a
+# percentage button (the custom keypad isn't Maestro-tappable). Device signing is handled
+# by the harness (proactive verifyAmountsAndAcceptSwap).
+appId: com.ledger.live.debug
+tags:
+  - swap
+---
+- launchApp:
+    clearState: true
+    arguments:
+      wsPort: "8099"
+      mock: "0"
+      IS_TEST: true
+      # NB: the app's Speculos transport is gated on Config.DETOX (build-time, from .env.mock), not a
+      # launch arg — this is passed for completeness but does not change Config.DETOX.
+      DETOX: "1"
+# Wait for the Wallet 4.0 home to finish loading. Gate on the bottom-nav Swap tab
+# (the next tap target) — the classic UI's "topbar-settings" gear does not exist in w40
+# (settings now lives behind the "topbar-mywallet" avatar).
+- extendedWaitUntil:
+    visible:
+      id: "w40-tab-swap"
+    timeout: 180000
+# Open swap via the Wallet 4.0 bottom tab (avoids the iOS deeplink dialog).
+- tapOn:
+    id: "w40-tab-swap"
+# Wait for the swap live-app form (the coin selector text).
+- extendedWaitUntil:
+    visible:
+      text: "Select Currency or Token"
+    timeout: 90000
+# The form's "Select Currency or Token" aria-label is present in the DOM before the app
+# finishes loading (a spinner shows, and the From side reads "Choose asset"). The From asset
+# only auto-selects ETH once loading completes and the balance renders. Gate on that balance
+# so the first WebView tap doesn't race the still-loading (and volatile) a11y tree.
+- extendedWaitUntil:
+    visible:
+      text: "Balance"
+    timeout: 60000
+- takeScreenshot: artifacts/swap-form-loaded
+# --- Select the Receive (To) currency = USDT. index 1 = To (0 = From, already ETH). ---
+# Tapping the To selector fires the wallet-api `account.request`. The harness has enabled in-app
+# auto-pick (setAutoPickAccount, target = the USDT token), so that request resolves the seeded USDT
+# account DIRECTLY and NO native modular drawer opens. This replaces the old drawer dance, which was
+# flaky on iOS (the drawer auto-advanced past the asset step and often landed on "Select account"
+# with no account row, never binding the seeded USDT account). The From account (ETH) is already
+# auto-selected, so auto-pick targeting USDT is unambiguous.
+- tapOn:
+    text: "Select Currency or Token"
+    index: 1
+    retryTapIfNoChange: true
+# Auto-pick resolves To=USDT in-app (a fast WebView<->native round-trip) and the form recomputes.
+# Don't assert the "USDT" text — the WebView doesn't expose it as a standalone a11y label — just let
+# the form settle. Correctness is gated downstream: the harness taps "View quotes" only once that
+# button is ENABLED, which requires both currencies set + an amount, so an early 25% tap is harmless.
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: artifacts/swap-usdt-selected
+# --- Amount: tap a percentage button (the custom keypad isn't Maestro-tappable). ---
+- tapOn:
+    text: "25%"
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: artifacts/swap-amount-set
+# --- Everything from here (View quotes -> quote list -> provider selection -> execute) is driven by
+# the HARNESS over the bridge (the in-app webview driver), NOT by Maestro. Maestro owns the NATIVE
+# parts (open swap, the modular-drawer currency pick, the 25% amount button) and then just waits for
+# the native success screen — it does NOT touch the WebView again, which avoids two problems:
+#   1. Maestro can't reliably tap the WebView's quote/execute buttons (their a11y-frame centres are
+#      clipped under the home indicator so a by-text tap doesn't fire them; a by-point tap races the
+#      ~20s quote re-render / hits the wrong card), and
+#   2. the harness drives the WebView faster than Maestro, so any intermediate Maestro assertion on
+#      the WebView (e.g. "N quotes found") races the harness already moving past that screen.
+# The harness (backend.test.ts `driveSwapExecute`) replicates Detox's selectExchange()+tapExecuteSwap():
+# tap "View quotes", wait for the quotes, pick the first non-KYC / non-app provider (an app-requiring
+# provider e.g. 1inch makes the Exchange app exit(255) — only the Ethereum coin app is an Exchange
+# dependency), and click its execute button via a real DOM click. That sends the swap to the device;
+# the harness's proactive signer accepts it on the Speculos. ---
+- extendedWaitUntil:
+    visible:
+      id: "swap-success-title"
+    timeout: 180000
+- takeScreenshot: artifacts/swap-success
