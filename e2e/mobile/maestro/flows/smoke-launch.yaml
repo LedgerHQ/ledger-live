@@ -1,0 +1,16 @@
+# Seed-only SMOKE test (no Speculos). Validates the make-or-break questions for the
+# whole approach: do Maestro's launch args reach the app, does it connect to the
+# bridge, is onboarding skipped, and does modular-drawer navigation work?
+# It deliberately stops before account discovery (which needs a device).
+# Run via:  MAESTRO_FULL=0 bash run-eth.sh
+appId: com.ledger.live.debug
+tags:
+  - smoke
+---
+- runFlow: ../subflows/launch-seeded.yaml     # app boots seeded -> "add-account-cta" visible
+- runFlow: ../subflows/open-add-account.yaml  # opens the add-account drawer
+- tapOn:
+    id: "modular-drawer-search-input"
+- inputText: "ETH"
+- assertVisible:
+    id: "asset-item-ETH"                      # ETH reachable in the modular drawer -> nav works

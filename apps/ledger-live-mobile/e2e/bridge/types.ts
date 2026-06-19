@@ -16,6 +16,7 @@ import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemov
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import WebSocket from "ws";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
+import type { WebviewDriverOp } from "../../src/e2e/webviewDriverScripts";
 
 export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
 
@@ -43,7 +44,8 @@ export type ServerData =
   | { type: "ACK"; id: string }
   | { type: "swapSetupDone" }
   | { type: "swapLiveAppReady" }
-  | { type: "earnLiveAppReady" };
+  | { type: "earnLiveAppReady" }
+  | { type: "webviewDriverResult"; id: string; payload: string };
 
 export type MessageData =
   | {
@@ -77,6 +79,8 @@ export type MessageData =
   | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }
   | { type: "waitEarnReady"; id: string }
+  | { type: "webviewDriver"; id: string; payload: { driver: string; op: WebviewDriverOp } }
+  | { type: "setAutoPickAccount"; id: string; payload: { enabled: boolean; currencyId?: string } }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =

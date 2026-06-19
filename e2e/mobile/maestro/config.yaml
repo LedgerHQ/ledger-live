@@ -1,0 +1,11 @@
+# Maestro workspace config for the ledger-live-mobile E2E POC.
+#
+# Run the whole workspace:
+#   maestro test e2e/mobile/maestro
+# Run just the ETH add-account test:
+#   maestro test e2e/mobile/maestro/flows/add-account-eth.yaml
+#
+# Only files under flows/ are treated as test cases; subflows/ holds reusable
+# building blocks pulled in via `runFlow` (see docs: Nested Flows).
+flows:
+  - "flows/*.yaml"

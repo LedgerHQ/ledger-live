@@ -1,0 +1,14 @@
+# E2E: add an Ethereum account (Maestro port of the Detox `addAccountETH.spec.ts`).
+#
+# This is the *test case*. It is intentionally tiny: it just composes reusable
+# subflows in order (Maestro "Nested Flows"). Each subflow maps 1:1 to a step of
+# the original Detox page-object sequence.
+appId: com.ledger.live.debug
+tags:
+  - addAccount
+  - eth
+---
+- runFlow: ../subflows/launch-seeded.yaml
+- runFlow: ../subflows/open-add-account.yaml
+- runFlow: ../subflows/select-eth.yaml
+- runFlow: ../subflows/verify-eth-account.yaml

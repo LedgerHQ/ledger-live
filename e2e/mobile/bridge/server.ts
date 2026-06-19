@@ -11,6 +11,7 @@ import {
   ServerData,
 } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
 import type { OptionalFeatureMap, FeatureId } from "@shared/feature-flags";
+import type { WebviewDriverOp } from "../../../apps/ledger-live-mobile/src/e2e/webviewDriverScripts";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
@@ -203,6 +204,56 @@ export async function removeKnownSpeculos(address: string) {
   postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: address });
 }
 
+// Enable/disable the in-app E2E auto-pick of accounts (bypasses the native modular drawer for the
+// wallet-api account.request — used by the Maestro swap POC on iOS, where the drawer is flaky).
+export async function setAutoPickAccount(enabled: boolean, currencyId?: string) {
+  postMessage({ type: "setAutoPickAccount", id: uniqueId(), payload: { enabled, currencyId } });
+}
+
+// Op payload accepted by the in-app webview driver (drives the live-app WebView by data-testid).
+// Structurally identical to the app-side WebviewDriverOp; aliased to avoid duplicating the union.
+export type WebviewDriverOpPayload = WebviewDriverOp;
+
+export type WebviewDriverResult = { ok: true; data?: unknown } | { ok: false; error: string };
+
+export async function webviewDriver(
+  driver: string,
+  op: WebviewDriverOpPayload,
+  timeoutMs = RESPONSE_TIMEOUT,
+): Promise<WebviewDriverResult> {
+  const id = uniqueId();
+  const message = {
+    type: "webviewDriver" as const,
+    id,
+    payload: { driver, op },
+  };
+
+  return new Promise<WebviewDriverResult>(resolve => {
+    postMessage(message);
+    const callbackKey = `webviewDriver:${id}`;
+    const timeoutId = setTimeout(() => {
+      global.pendingCallbacks?.delete(callbackKey);
+      delete webSocket.messages[id];
+      resolve({ ok: false, error: `Webview driver op timed out after ${timeoutMs}ms` });
+    }, timeoutMs);
+
+    global.pendingCallbacks.set(callbackKey, {
+      callback: (data: string) => {
+        clearTimeout(timeoutId);
+        global.pendingCallbacks?.delete(callbackKey);
+        try {
+          resolve(JSON.parse(data));
+        } catch (parseError) {
+          resolve({
+            ok: false,
+            error: `Failed to parse webview driver result: ${String(parseError)}`,
+          });
+        }
+      },
+    });
+  });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);
@@ -244,6 +295,15 @@ function onMessage(messageStr: string) {
       if (pending) {
         global.pendingCallbacks.delete("swapSetup");
         pending.callback("swapSetup done");
+      }
+      break;
+    }
+    case "webviewDriverResult": {
+      const callbackKey = `webviewDriver:${msg.id}`;
+      const pending = global.pendingCallbacks?.get(callbackKey);
+      if (pending) {
+        global.pendingCallbacks.delete(callbackKey);
+        pending.callback(msg.payload);
       }
       break;
     }
