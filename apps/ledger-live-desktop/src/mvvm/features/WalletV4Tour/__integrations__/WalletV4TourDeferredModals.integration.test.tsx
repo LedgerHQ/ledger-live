@@ -13,12 +13,10 @@ import ModalsLayer from "~/renderer/ModalsLayer";
 import { setHasSeenWalletV4Tour } from "~/renderer/actions/settings";
 
 // Test in Wallet V4 layout (route "/" with lwdWallet40 enabled uses the V4 branch in MainAppLayout).
-// Include vaultSigner and devicesModelList so selectors used by the full layout (LiveAppDrawer, NotificationIndicator) don't crash.
-const vaultSigner = { enabled: false, host: "", token: "", workspace: "" };
+// Include devicesModelList so selectors used by the full layout (LiveAppDrawer, NotificationIndicator) do not crash.
 const baseSettings = {
   hasSeenWalletV4Tour: false,
   lastUsedVersion: "2.0.0",
-  vaultSigner,
   devicesModelList: [],
   orderAccounts: "balance|desc",
 };

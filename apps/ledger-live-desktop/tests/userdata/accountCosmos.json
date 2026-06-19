@@ -81,14 +81,7 @@
       },
       "starredMarketCoins": [],
       "overriddenFeatureFlags": {},
-      "featureFlagsButtonVisible": false,
-      "vaultSigner": {
-        "enabled": false,
-        "host": "",
-        "token": "",
-        "workspace": ""
-      }
-    },
+      "featureFlagsButtonVisible": false    },
     "user": {
       "id": "62b317fe-fbd0-4401-9e65-b79649fdbfbc"
     },

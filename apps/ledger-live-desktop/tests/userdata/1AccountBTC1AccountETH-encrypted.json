@@ -77,7 +77,6 @@
       },
       "overriddenFeatureFlags": {},
       "featureFlagsButtonVisible": false,
-      "vaultSigner": { "enabled": false, "host": "", "token": "", "workspace": "" },
       "supportedCounterValues": [
         {
           "value": "AUD",

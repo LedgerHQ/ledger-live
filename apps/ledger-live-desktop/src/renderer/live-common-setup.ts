@@ -3,7 +3,6 @@ import "~/live-common-set-supported-currencies";
 import "./families";
 
 import { Store } from "redux";
-import VaultTransport from "@ledgerhq/hw-transport-vault";
 import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { getEnv } from "@ledgerhq/live-env";
@@ -12,7 +11,6 @@ import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { setEnvOnAllThreads } from "./../helpers/env";
 import logger from "./logger";
 import type { State } from "~/renderer/reducers";
-import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import IPCTransport from "./IPCTransport";
@@ -21,7 +19,6 @@ enum RendererTransportModule {
   DeviceManagementKit,
   DeviceManagementKitSpeculos,
   IPC,
-  Vault,
 }
 
 /**
@@ -37,7 +34,6 @@ enum RendererTransportModule {
 export function registerTransportModules(store: Store<State>) {
   const userId = userIdSelector(store.getState());
   setEnvOnAllThreads("USER_ID", userId.exportUserIdForAnalytics());
-  const vaultTransportPrefixID = "vault-transport:";
 
   listenLogs(({ id, date, ...log }) => {
     if (log.type === "hid-frame") return;
@@ -45,7 +41,6 @@ export function registerTransportModules(store: Store<State>) {
   });
 
   function whichTransportModuleToUse(deviceId: string): RendererTransportModule {
-    if (deviceId.startsWith(vaultTransportPrefixID)) return RendererTransportModule.Vault;
     if (getEnv("SPECULOS_API_PORT")) return RendererTransportModule.DeviceManagementKitSpeculos;
     if (getEnv("DEVICE_PROXY_URL")) return RendererTransportModule.IPC;
     return RendererTransportModule.DeviceManagementKit;
@@ -141,31 +136,6 @@ export function registerTransportModules(store: Store<State>) {
         interval: 500,
         maxRetry: 4,
       });
-    },
-    disconnect: () => Promise.resolve(),
-  });
-
-  /**
-   * Vault Transport Module.
-   */
-  registerTransportModule({
-    id: "vault-transport",
-    open: (id: string) => {
-      if (whichTransportModuleToUse(id) !== RendererTransportModule.Vault) return;
-      setDeviceMode("polling");
-      const params = new URLSearchParams(id.split(vaultTransportPrefixID)[1]);
-      return retry(() =>
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        VaultTransport.open(params.get("host") as string).then(transport => {
-          transport.setData({
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            token: params.get("token") as string,
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            workspace: params.get("workspace") as string,
-          });
-          return Promise.resolve(transport);
-        }),
-      );
     },
     disconnect: () => Promise.resolve(),
   });

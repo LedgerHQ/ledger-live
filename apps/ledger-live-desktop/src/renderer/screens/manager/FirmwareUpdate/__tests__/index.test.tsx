@@ -22,7 +22,6 @@ const createDeviceInfo = (overrides?: Partial<DeviceInfo>): DeviceInfo =>
 
 const defaultSettings = {
   discreetMode: false,
-  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   devicesModelList: [],
   anonymousUserNotifications: {},
   latestFirmware: null as FirmwareUpdateContext | null,

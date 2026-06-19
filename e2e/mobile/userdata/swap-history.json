@@ -80,7 +80,6 @@
         "acceptedProviders": [],
         "selectableCurrencies": []
       },
-      "vaultSigner": { "enabled": false, "host": "", "token": "", "workspace": "" },
       "supportedCounterValues": [],
       "dismissedContentCards": {},
       "anonymousBrazeId": "anonymous_id_10",

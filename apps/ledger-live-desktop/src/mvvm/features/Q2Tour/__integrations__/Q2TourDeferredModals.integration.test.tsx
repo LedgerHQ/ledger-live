@@ -9,10 +9,8 @@ import IsTermOfUseUpdated from "~/renderer/components/IsTermOfUseUpdated";
 import ModalsLayer from "~/renderer/ModalsLayer";
 import { setHasSeenQ2Tour } from "~/renderer/actions/settings";
 
-const vaultSigner = { enabled: false, host: "", token: "", workspace: "" };
 const baseSettings = {
   lastUsedVersion: "2.0.0",
-  vaultSigner,
   devicesModelList: [],
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: true,

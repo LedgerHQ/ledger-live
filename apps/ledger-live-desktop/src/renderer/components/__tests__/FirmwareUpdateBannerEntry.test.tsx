@@ -20,7 +20,6 @@ describe("FirmwareUpdateBannerEntry", () => {
       ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { mainNavigation: true } } }),
       settings: {
         discreetMode: false,
-        vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
         devicesModelList: [],
         anonymousUserNotifications: {},
         latestFirmware: null as FirmwareUpdateContext | null,
@@ -159,7 +158,6 @@ describe("FirmwareUpdateBannerEntry", () => {
       ...withFlagOverrides({ lwdWallet40: { enabled: false } }),
       settings: {
         discreetMode: false,
-        vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
         devicesModelList: [],
         anonymousUserNotifications: {},
         latestFirmware: null as FirmwareUpdateContext | null,

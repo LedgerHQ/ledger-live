@@ -17,7 +17,7 @@ const store = createStore(() => ({
     source: "",
   },
   devices: { currentDevice: null },
-  settings: { vaultSigner: { enabled: false } },
+  settings: {},
   currency: bitcoinCurrency,
 }));
 

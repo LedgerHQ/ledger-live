@@ -1012,9 +1012,6 @@ importers:
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-http
-      '@ledgerhq/hw-transport-vault':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-transport-vault
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
@@ -10441,46 +10438,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/hw-transport-vault:
-    dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport-http':
-        specifier: workspace:^
-        version: link:../hw-transport-http
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -22179,7 +22136,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -24152,7 +24109,7 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
+    deprecated: this version is no longer supported, please update to at least 0.8.*
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -24501,7 +24458,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:

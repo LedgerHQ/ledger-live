@@ -247,7 +247,3 @@ export const urls = {
     learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
   },
 };
-
-export const vaultSigner = {
-  help: "https://help.vault.ledger.com/developer-portal/content/signer/overview",
-};

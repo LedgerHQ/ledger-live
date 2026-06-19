@@ -13,7 +13,6 @@ import {
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
-  VaultSigner,
   SupportedCountervaluesData,
   CurrencySettings,
 } from "~/renderer/reducers/settings";
@@ -308,11 +307,6 @@ export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
 });
-export const setVaultSigner = (payload: VaultSigner) => ({
-  type: "SET_VAULT_SIGNER",
-  payload,
-});
-
 export const setSupportedCounterValues = (payload: SupportedCountervaluesData[]) => ({
   type: "SET_SUPPORTED_COUNTER_VALUES",
   payload,

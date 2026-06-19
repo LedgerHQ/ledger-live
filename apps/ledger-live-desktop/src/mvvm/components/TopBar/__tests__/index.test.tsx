@@ -33,7 +33,6 @@ describe("TopBar", () => {
     },
     settings: {
       discreetMode: false,
-      vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
       devicesModelList: [],
       anonymousUserNotifications: {},
     },

@@ -3,7 +3,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
-import { SettingsState } from "./settings";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { createSelector } from "@reduxjs/toolkit";
 
@@ -55,26 +54,8 @@ function setCurrentDevice(state: DevicesState) {
 }
 
 export const getCurrentDevice = createSelector(
-  [
-    (state: { devices: DevicesState }) => state.devices.currentDevice,
-    (state: { settings: SettingsState }) => state.settings.vaultSigner,
-  ],
-  (currentDevice, vaultSigner) => {
-    if (vaultSigner.enabled) {
-      const transportParams = new URLSearchParams();
-      transportParams.append("host", vaultSigner.host);
-      transportParams.append("token", vaultSigner.token);
-      transportParams.append("workspace", vaultSigner.workspace);
-
-      const deviceId = `vault-transport:${transportParams.toString()}`;
-
-      return {
-        deviceId,
-        wired: true,
-        modelId: DeviceModelId.nanoS,
-      };
-    }
-
+  [(state: { devices: DevicesState }) => state.devices.currentDevice],
+  currentDevice => {
     const envConditions = [
       { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
       { condition: getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"), modelId: DeviceModelId.nanoS },

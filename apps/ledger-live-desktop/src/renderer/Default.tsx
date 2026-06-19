@@ -38,7 +38,6 @@ import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
-import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import {
   useFeature,
@@ -277,7 +276,6 @@ const MainAppContent = ({
       <TopBannerContainer>
         {shouldDisplayWallet40MainNav ? null : <FirmwareUpdateBanner />}
         {!shouldDisplayWallet40MainNav && <UpdateBanner />}
-        <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
         <Route path="/" element={withSuspense(Dashboard)({})} />

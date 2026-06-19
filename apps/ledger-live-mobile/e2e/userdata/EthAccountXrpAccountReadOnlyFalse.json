@@ -52,12 +52,6 @@
         "KYC": {}
       },
       "starredMarketCoins": [],
-      "vaultSigner": {
-        "enabled": false,
-        "host": "",
-        "token": "",
-        "workspace": ""
-      },
       "seenDevices": [
         {
           "modelId": "nanoX",

@@ -48,13 +48,6 @@ import { selectFeature } from "@shared/feature-flags";
 
 /* Initial state */
 
-export type VaultSigner = {
-  enabled: boolean;
-  host: string;
-  workspace: string;
-  token: string;
-};
-
 export type AnalyticsConsentInfo = {
   consentDate: string | null;
   privacyPolicyVersion: number | null;
@@ -121,7 +114,6 @@ export type SettingsState = {
     selectableCurrencies: string[];
     acceptedProviders: string[];
   };
-  vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [key: string]: number };
@@ -223,8 +215,6 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  // Vault
-  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   dismissedContentCards: {} as Record<string, number>,
@@ -281,7 +271,6 @@ type HandlersPayloads = {
     imageSize: number;
     imageHash: string;
   };
-  SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
   SET_DISMISSED_CONTENT_CARDS: {
@@ -430,10 +419,6 @@ const handlers: SettingsHandlers = {
       ...state.currenciesSettings,
       [payload.key]: payload.value,
     },
-  }),
-  SET_VAULT_SIGNER: (state: SettingsState, { payload }) => ({
-    ...state,
-    vaultSigner: payload,
   }),
   SET_SUPPORTED_COUNTER_VALUES: (state: SettingsState, { payload }) => {
     let activeCounterValue = state.counterValue;
@@ -858,7 +843,6 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
 export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
-export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
