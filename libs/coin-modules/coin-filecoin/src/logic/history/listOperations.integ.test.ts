@@ -19,10 +19,8 @@ describe("listOperations (integration)", () => {
     expect(result.next).toBeUndefined();
   });
 
-  // FIXME: filecoin.coin.ledger.com /v2/addresses/{addr}/transactions systematically
-  // returns "context deadline exceeded" for addresses with history, even with
-  // from_height close to the known tx. Pristine addresses work fine (test above).
-  // Un-skip when the API is stabilised.
+  // FIXME: Filecoin API `/v2/addresses/{addr}/transactions` times out for addresses with history.
+  // See: LIVE-18673
   it.skip("fetches operations with correct metadata for a standard account", async () => {
     const result = await listOperations(TEST_ADDRESSES.F1_ADDRESS, {
       minHeight: KNOWN_TX_MIN_HEIGHT,

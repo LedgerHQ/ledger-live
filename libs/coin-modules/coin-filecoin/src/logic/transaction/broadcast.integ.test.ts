@@ -29,7 +29,7 @@ describe("broadcast (integration)", () => {
         gasfeecap: message.gasFeeCap,
         gaspremium: message.gasPremium,
       },
-      signature: { type: 1, data: Buffer.from(sigBytes).toString("base64") },
+      signature: { type: 1, data: Buffer.from(sigBytes.data).toString("base64") },
     });
 
     await expect(broadcast(signedTx)).rejects.toThrow();

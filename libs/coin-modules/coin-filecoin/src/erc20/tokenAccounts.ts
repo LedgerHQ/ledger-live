@@ -12,9 +12,12 @@ import cbor from "@zondax/cbor";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import invariant from "invariant";
-import { fetchERC20TokenBalance, fetchERC20TransactionsWithPages } from "../network";
+import {
+  convertAddressFilToEth,
+  fetchERC20TokenBalance,
+  fetchERC20TransactionsWithPages,
+} from "../network";
 import { AccountType } from "../bridge/utils";
-import { convertAddressFilToEth } from "../network";
 import { ERC20Transfer, TxStatus } from "../types";
 import contractABI from "./ERC20.json";
 

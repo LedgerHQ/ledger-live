@@ -1,19 +1,14 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
-  Balance,
   BalanceOptions,
   Block,
   BlockInfo,
-  BroadcastConfig,
   CoinModuleApi,
   CraftedTransaction,
   Cursor,
-  FeeEstimation,
   Page,
   Reward,
   Stake,
-  TransactionIntent,
-  TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -35,12 +30,19 @@ export function createApi(config: FilecoinCoinConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" as const } }));
 
   return {
-    broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => broadcast(tx, broadcastConfig),
+    broadcast,
+    combine,
+    craftTransaction,
+    estimateFees,
+    lastBlock,
+    listOperations,
+    validateIntent,
+    getNextSequence,
+    validateAddress,
+    craftTransactionData,
 
-    combine: (tx: string, signature: string, pubkey?: string) => combine(tx, signature, pubkey),
-
-    craftTransaction: (intent: TransactionIntent, customFees?: FeeEstimation) =>
-      craftTransaction(intent, customFees),
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
 
     craftRawTransaction: (
       _transaction: string,
@@ -50,16 +52,6 @@ export function createApi(config: FilecoinCoinConfig): CoinModuleApi {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-
-    estimateFees: (intent: TransactionIntent, customFeesParameters?: FeeEstimation["parameters"]) =>
-      estimateFees(intent, customFeesParameters),
-
-    getBalance: (address: string, options?: BalanceOptions) =>
-      rejectBalanceOptions(() => getBalance(address), options),
-
-    lastBlock: () => lastBlock(),
-
-    listOperations: (address: string, options) => listOperations(address, options),
 
     getBlock(_height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
@@ -80,17 +72,5 @@ export function createApi(config: FilecoinCoinConfig): CoinModuleApi {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-
-    validateIntent: (
-      intent: TransactionIntent,
-      balances: Balance[],
-      customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => validateIntent(intent, balances, customFees),
-
-    getNextSequence: (address: string) => getNextSequence(address),
-
-    validateAddress: (address: string, parameters) => validateAddress(address, parameters),
-
-    craftTransactionData,
   };
 }

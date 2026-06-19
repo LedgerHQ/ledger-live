@@ -56,7 +56,7 @@ describe("estimateFees", () => {
     };
 
     const result = await estimateFees(intent);
-    expect(result.value).toBe(100_000n);
+    expect(result.value).toBe(100_000_000_000n);
   });
 
   it("throws on invalid sender address", async () => {

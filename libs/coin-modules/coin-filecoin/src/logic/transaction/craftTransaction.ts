@@ -59,16 +59,15 @@ export async function craftTransaction(
     value = "0";
     method = METHOD_INVOKE_EVM;
 
-    const recipientEth =
-      intent.recipient && intent.recipient.startsWith("0x")
-        ? intent.recipient
-        : (() => {
-            try {
-              return convertAddressFilToEth(intent.recipient ?? "");
-            } catch {
-              throw new Error(`Invalid token recipient: ${intent.recipient}`);
-            }
-          })();
+    const recipientEth = intent.recipient?.startsWith("0x")
+      ? intent.recipient
+      : (() => {
+          try {
+            return convertAddressFilToEth(intent.recipient ?? "");
+          } catch {
+            throw new Error(`Invalid token recipient: ${intent.recipient}`);
+          }
+        })();
 
     const abiEncoded = abiEncodeTransferParams(recipientEth, intent.amount.toString());
     params = encodeTxnParams(abiEncoded);

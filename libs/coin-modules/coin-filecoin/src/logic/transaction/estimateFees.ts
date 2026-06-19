@@ -13,13 +13,68 @@ const METHOD_INVOKE_EVM = 3844450837;
 // Default fallback fee used when token simulation fails due to zero native balance.
 // This is a best-effort estimate; the actual fee will be validated at sign time.
 const DEFAULT_FEE_FALLBACK: FeeEstimation = {
-  value: 100_000n,
+  value: 100_000_000_000n,
   parameters: {
     gasFeeCap: "100000",
     gasLimit: "1000000",
     gasPremium: "1000",
   },
 };
+
+type FeeRequestParams = {
+  to: string | undefined;
+  methodNum: number;
+  value: string;
+  params?: string;
+};
+
+// Resolves the ERC-20 recipient to its Ethereum-compatible (0x) form.
+function resolveTokenRecipient(recipient: string | undefined): string {
+  if (recipient?.startsWith("0x")) {
+    return recipient;
+  }
+  try {
+    return convertAddressFilToEth(recipient ?? "");
+  } catch {
+    throw new Error(`Invalid token recipient: ${recipient}`);
+  }
+}
+
+// Builds the fee-estimation request for an ERC-20 transfer.
+// Returns null when token params cannot be encoded (caller falls back to a default estimate).
+function buildErc20FeeRequest(intent: TransactionIntent): FeeRequestParams | null {
+  const asset = intent.asset as { type: "erc20"; assetReference: string };
+  const contractAddr = asset.assetReference.toLowerCase();
+  const contractValidation = validateAddress(contractAddr);
+  if (!contractValidation.isValid) {
+    throw new Error(`Invalid ERC-20 contract address: ${contractAddr}`);
+  }
+
+  const recipientEth = resolveTokenRecipient(intent.recipient);
+
+  try {
+    const abiEncoded = abiEncodeTransferParams(recipientEth, intent.amount.toString());
+    return {
+      to: contractValidation.parsedAddress.toString(),
+      methodNum: METHOD_INVOKE_EVM,
+      value: "0",
+      params: encodeTxnParams(abiEncoded),
+    };
+  } catch (e) {
+    log("debug", "[estimateFees] failed to encode token params, using fallback", e);
+    return null;
+  }
+}
+
+// Builds the fee-estimation request for a native FIL transfer.
+function buildNativeFeeRequest(intent: TransactionIntent): FeeRequestParams {
+  const recipientValidation = validateAddress(intent.recipient ?? "");
+  return {
+    to: recipientValidation.isValid ? recipientValidation.parsedAddress.toString() : undefined,
+    methodNum: METHOD_TRANSFER,
+    value: intent.amount.toString(),
+  };
+}
 
 export async function estimateFees(
   intent: TransactionIntent,
@@ -32,48 +87,20 @@ export async function estimateFees(
   const from = senderValidation.parsedAddress.toString();
 
   const assetType = intent.asset.type;
-  let to: string | undefined;
-  let methodNum: number;
-  let value: string;
-  let params: string | undefined;
-
+  let request: FeeRequestParams;
   if (assetType === "native") {
-    const recipientValidation = validateAddress(intent.recipient ?? "");
-    to = recipientValidation.isValid ? recipientValidation.parsedAddress.toString() : undefined;
-    methodNum = METHOD_TRANSFER;
-    value = intent.amount.toString();
+    request = buildNativeFeeRequest(intent);
   } else if (assetType === "erc20") {
-    const asset = intent.asset as { type: "erc20"; assetReference: string };
-    const contractAddr = asset.assetReference.toLowerCase();
-    const contractValidation = validateAddress(contractAddr);
-    if (!contractValidation.isValid) {
-      throw new Error(`Invalid ERC-20 contract address: ${contractAddr}`);
-    }
-    to = contractValidation.parsedAddress.toString();
-    methodNum = METHOD_INVOKE_EVM;
-    value = "0";
-
-    const recipientEth =
-      intent.recipient && intent.recipient.startsWith("0x")
-        ? intent.recipient
-        : (() => {
-            try {
-              return convertAddressFilToEth(intent.recipient ?? "");
-            } catch {
-              throw new Error(`Invalid token recipient: ${intent.recipient}`);
-            }
-          })();
-
-    try {
-      const abiEncoded = abiEncodeTransferParams(recipientEth, intent.amount.toString());
-      params = encodeTxnParams(abiEncoded);
-    } catch (e) {
-      log("debug", "[estimateFees] failed to encode token params, using fallback", e);
+    const erc20Request = buildErc20FeeRequest(intent);
+    if (!erc20Request) {
       return DEFAULT_FEE_FALLBACK;
     }
+    request = erc20Request;
   } else {
     throw new Error(`Unsupported asset type: ${String(assetType)}`);
   }
+
+  const { to, methodNum, value, params } = request;
 
   try {
     const fees = await fetchEstimatedFees({
