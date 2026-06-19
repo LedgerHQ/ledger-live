@@ -21,6 +21,11 @@ type Props = {
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function TezosSendRowsFee({ account, ...props }: Props) {
-  return <TezosFeeRow {...props} account={account} />;
+export default function TezosSendRowsFee({ account, parentAccount, ...props }: Props) {
+  if (account.type === "TokenAccount") {
+    if (!parentAccount) return null;
+    return <TezosFeeRow {...props} account={account} parentAccount={parentAccount} />;
+  }
+
+  return <TezosFeeRow {...props} account={account} parentAccount={parentAccount} />;
 }

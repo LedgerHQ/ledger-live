@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -13,21 +13,28 @@ import ExternalLink from "~/icons/ExternalLink";
 import { urls } from "~/utils/urls";
 
 type Props = {
-  account: AccountLike;
-  parentAccount?: Account | null;
   transaction: Transaction;
-};
+} & (
+  | {
+      account: Account;
+      parentAccount?: Account | null;
+    }
+  | {
+      account: TokenAccount;
+      parentAccount: Account;
+    }
+);
 export default function TezosFeeRow({ account, parentAccount, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  const mainAccount = getMainAccount(account, parentAccount ?? undefined);
+  if (transaction.family !== "tezos") return null;
+
+  const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
-
-  if (transaction.family !== "tezos") return null;
   const fees = transaction.fees;
   return (
     <SummaryRow

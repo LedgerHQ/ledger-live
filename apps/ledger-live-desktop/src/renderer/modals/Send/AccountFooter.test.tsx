@@ -81,4 +81,15 @@ describe("AccountFooter", () => {
     expect(screen.getByTestId("currency-circle-icon")).toHaveAttribute("data-ticker", "XTZ");
     expect(screen.getByTestId("formatted-val")).toHaveTextContent("XTZ");
   });
+
+  it("shows the account currency icon when sending from a main account", () => {
+    const tezos = getCryptoCurrencyById("tezos");
+    const account = createMockAccount({ id: "tezos-acc", currency: tezos });
+
+    render(<AccountFooter account={account} status={status} />);
+
+    expect(screen.getByTestId("currency-circle-icon")).toHaveAttribute("data-ticker", "XTZ");
+    expect(screen.getByTestId("formatted-val")).toHaveTextContent("XTZ");
+    expect(screen.getByTestId("counter-value")).toHaveTextContent("XTZ");
+  });
 });
