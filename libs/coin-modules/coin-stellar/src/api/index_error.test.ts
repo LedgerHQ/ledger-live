@@ -24,9 +24,9 @@ describe("Stellar Api", () => {
 
   describe("listOperations propagates 429 errors to caller", () => {
     it("throws LedgerAPI4xx on rate limit", async () => {
-      await expect(
-        module.listOperations(ADDRESS, { minHeight: 0, order: "asc" }),
-      ).rejects.toThrow(LedgerAPI4xx);
+      await expect(module.listOperations(ADDRESS, { minHeight: 0, order: "asc" })).rejects.toThrow(
+        LedgerAPI4xx,
+      );
     });
   });
 });

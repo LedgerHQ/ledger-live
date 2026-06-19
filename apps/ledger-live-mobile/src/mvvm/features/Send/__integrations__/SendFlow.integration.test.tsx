@@ -143,7 +143,6 @@ describe("Send flow integration tests", () => {
     throw new Error(`No TextInput found near label "${String(labelText)}"`);
   }
 
-
   describe("Stellar (memo flow)", () => {
     it("Should walk through Recipient → Amount and reach the Signature step", async () => {
       const { user } = renderForAccount(accountStellar);
@@ -281,7 +280,10 @@ describe("Send flow integration tests", () => {
       };
 
       beforeAll(async () => {
-        const bridge = (await getAccountBridge(accountEthereum, null)) as unknown as PreparableBridge;
+        const bridge = (await getAccountBridge(
+          accountEthereum,
+          null,
+        )) as unknown as PreparableBridge;
         const original = bridge.prepareTransaction.bind(bridge);
         bridge.prepareTransaction = async (account, tx) => {
           const next = await original(account, tx);
