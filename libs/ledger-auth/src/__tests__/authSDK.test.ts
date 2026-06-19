@@ -101,6 +101,28 @@ describe("AuthSDK", () => {
     expect(identityProvider.authenticate).toHaveBeenCalledTimes(1);
   });
 
+  it("shares the in-flight token request across concurrent calls", async () => {
+    const futureExp = Math.floor(Date.now() / 1000) + 3600;
+    const token = {
+      accessToken: makeJwt({ exp: futureExp }),
+      tokenType: "Bearer" as const,
+    };
+    const deferredToken = createDeferred<typeof token>();
+    identityProvider.authenticate.mockReturnValue(deferredToken.promise);
+
+    const sdk = new AuthSDK(config, { provider: identityProvider, keycloakService });
+
+    const first = sdk.authenticate();
+    const second = sdk.authenticate();
+
+    await waitForMicrotasks();
+    expect(keycloakService.getChallenge).toHaveBeenCalledTimes(1);
+    expect(identityProvider.authenticate).toHaveBeenCalledTimes(1);
+
+    deferredToken.resolve(token);
+    await expect(Promise.all([first, second])).resolves.toEqual([token, token]);
+  });
+
   it("re-authenticates when the cached token has expired", async () => {
     const pastExp = Math.floor(Date.now() / 1000) - 3600;
     identityProvider.authenticate.mockResolvedValue({
@@ -135,3 +157,18 @@ describe("AuthSDK", () => {
     ).rejects.toBeInstanceOf(WalletAuthInvalidTokenError);
   });
 });
+
+function createDeferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(res => {
+    resolve = res;
+  });
+
+  return { promise, resolve };
+}
+
+function waitForMicrotasks(): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, 0);
+  });
+}
