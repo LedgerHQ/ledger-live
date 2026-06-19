@@ -90,6 +90,8 @@ const config = {
     ],
   },
   moduleNameMapper: {
+    // resolve node16-style ".js" relative imports (e.g. e2e/shared sources) to their .ts
+    "^(\\.{1,2}/.*)\\.js$": "$1",
     "^@ledgerhq/live-common/e2e/(.*)$": "<rootDir>/../../libs/ledger-live-common/src/e2e/$1",
     ...pathsToModuleNameMapper(compilerOptions.paths, {
       prefix: "<rootDir>/",

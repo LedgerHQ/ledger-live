@@ -7,17 +7,17 @@ import { build } from "esbuild";
 // required. esbuild resolves at build time the things that make the published
 // lib-es non-Node-runnable: extensionless imports, lodash/* deep CJS imports, and
 // raw require() calls. Native .node addons can't be inlined and stay external.
+// CJS output: the e2e runners (Playwright, Detox+jest) transpile/require node_modules,
+// and a CJS bundle is natively require-able with no import.meta — avoids the ESM-in-CJS
+// transpile hazard. It is still imported from ESM (runCli) via Node interop.
 await build({
   entryPoints: ["src/commands-entry.ts"],
-  outfile: "lib/commands.mjs",
+  outfile: "lib/commands.cjs",
   bundle: true,
   platform: "node",
-  format: "esm",
+  format: "cjs",
   target: "node20",
   conditions: ["@ledgerhq/source"],
   external: ["*.node", "@ledgerhq/zcash-utils"],
-  banner: {
-    js: "import{createRequire as __cr}from'module';const require=__cr(import.meta.url);",
-  },
   logLevel: "info",
 });

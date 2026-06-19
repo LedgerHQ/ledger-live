@@ -9,7 +9,7 @@ import {
   type PersistedCAL,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { toAccountRaw } from "../../account/serialization";
-import type { LiveDataOpts } from "../runCli";
+import type { LiveDataOpts } from "./types";
 import { scan } from "./scan";
 
 export async function cmdLiveData(opts: LiveDataOpts): Promise<string> {

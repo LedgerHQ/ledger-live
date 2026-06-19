@@ -13,7 +13,7 @@ import {
   approveTokenCommand,
   revokeTokenCommand,
   getTokenAllowanceCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+} from "@ledgerhq/live-e2e-shared";
 import { getEnv } from "@ledgerhq/live-env";
 import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";

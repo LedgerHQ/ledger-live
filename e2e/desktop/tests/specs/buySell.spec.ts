@@ -12,7 +12,7 @@ import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared";
 import { getMinimumSellAmount } from "@ledgerhq/live-common/e2e/buySell";
 
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellProvider }> = [

@@ -30,7 +30,7 @@ import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { CLI } from "./utils/cliUtils";
-import * as cliCommandsUtils from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "./page/index";

@@ -6,7 +6,7 @@ import type { Transaction } from "../../generated/types";
 import { loadSetupForFamily } from "../../coin-modules/registry";
 import { getAccountBridge } from "../../bridge/index";
 import { waitForTransactionConfirmation } from "../../families/evm/waitForConfirmation";
-import type { TokenApprovalOpts } from "../runCli";
+import type { TokenApprovalOpts } from "./types";
 import { scan } from "./scan";
 
 type Inferred = { account: AccountLike; mainAccount: Account; transaction: Transaction };

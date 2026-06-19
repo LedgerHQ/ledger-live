@@ -3,18 +3,18 @@ import invariant from "invariant";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { getSeedIdentifierDerivation } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { Account, TokenAccount } from "./enum/Account";
-import { Currency } from "./enum/Currency";
-import { Transaction } from "./models/Transaction";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import {
   runCliGetAddress,
   runCliGetTokenAllowance,
   runCliLiveData,
   runCliTokenApproval,
-} from "./runCli";
-import { getCcdAccountAddress } from "./families/concordium";
-import { approveToken } from "./families/evm";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../currencies/index";
+} from "./runCli.js";
+import { getCcdAccountAddress } from "@ledgerhq/live-common/e2e/families/concordium";
+import { approveToken } from "@ledgerhq/live-common/e2e/families/evm";
+import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 
 export type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
@@ -28,7 +28,7 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
   }
 
   if (account.currency.id === Currency.CCD_TESTNET.id) {
-    const address = await getCcdAccountAddress(account);
+    const address = await getCcdAccountAddress(account, runCliGetAddress);
     account.address = address;
     return address;
   }

@@ -1,3 +1,4 @@
+export * from "./types";
 export { ensureE2ERuntime } from "./bootstrap";
 export { cmdGetAddress } from "./getAddress";
 export { cmdLiveData } from "./liveData";

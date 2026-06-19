@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/live-dmk-speculos";
 import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
+import { registerTransportModule as registerBundleTransportModule } from "@ledgerhq/live-e2e-shared";
 import {
   runCliGetAddress,
   runCliGetTokenAllowance,
@@ -21,7 +22,7 @@ import {
   type LedgerSyncOpts,
   type LiveDataOpts,
   type TokenApprovalOpts,
-} from "@ledgerhq/live-common/e2e/runCli";
+} from "@ledgerhq/live-e2e-shared";
 
 export const CLI = {
   ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {
@@ -156,11 +157,14 @@ export const CLI = {
       baseURL: speculosAddress,
     };
 
-    registerTransportModule({
+    const speculosModule = {
       id: "speculos-http-" + apiPort,
       open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
-    });
+    };
+    // runner instance (ledgerSync / keyRing) + the e2e bundle instance (the 4 commands)
+    registerTransportModule(speculosModule);
+    registerBundleTransportModule(speculosModule);
   },
   getAddress: (opts: GetAddressOpts) => runCliGetAddress(opts),
   tokenApproval: function (opts: TokenApprovalOpts) {

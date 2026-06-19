@@ -8,7 +8,7 @@ import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared";
 import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
 import type { OptionalFeatureMap } from "@shared/feature-flags";

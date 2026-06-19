@@ -1,6 +1,7 @@
+import type { GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { Account, TokenAccount } from "../enum/Account";
 import { DeviceLabels } from "../enum/DeviceLabels";
-import { runCliGetAddress } from "../runCli";
+import type { GetAddressOpts } from "../commands/types";
 import { getSendEvents } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
 import { Transaction } from "../models/Transaction";
@@ -43,8 +44,13 @@ async function resolveCcdAddressFromPublicKey(publicKey: string): Promise<string
   return accounts[0].address;
 }
 
-export async function getCcdAccountAddress(account: Account | TokenAccount): Promise<string> {
-  const { publicKey } = await runCliGetAddress({
+// getAddress is injected (the e2e bundle's command) to avoid coupling this
+// live-common family helper to the e2e-side runCli wrapper.
+export async function getCcdAccountAddress(
+  account: Account | TokenAccount,
+  getAddress: (opts: GetAddressOpts) => Promise<GetAddressResult>,
+): Promise<string> {
+  const { publicKey } = await getAddress({
     currency: account.currency.speculosApp.name,
     path: account.accountPath,
   });

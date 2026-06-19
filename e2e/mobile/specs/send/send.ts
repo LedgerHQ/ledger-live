@@ -6,7 +6,7 @@ import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import type { LiveDataCommandOptions } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared";
 import type { InitOptions } from "../../utils/initUtil";
 
 const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);

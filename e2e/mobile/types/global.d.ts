@@ -108,15 +108,15 @@ declare global {
   var waitWebElement: typeof WebElementHelpers.waitWebElement;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 
-  var getAccountAddress: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").getAccountAddress;
-  var liveDataCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataCommand;
-  var liveDataWithAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithAddressCommand;
-  var liveDataWithParentAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithParentAddressCommand;
-  var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithRecipientAddressCommand;
-  var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").parseTokenAllowanceCliOutput;
-  var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").isTokenAllowanceSufficientCommand;
-  var getTokenAllowanceCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").getTokenAllowanceCommand;
-  var approveTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").approveTokenCommand;
-  var revokeTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").revokeTokenCommand;
-  var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").setDisableTransactionBroadcastEnv;
+  var getAccountAddress: typeof import("@ledgerhq/live-e2e-shared").getAccountAddress;
+  var liveDataCommand: typeof import("@ledgerhq/live-e2e-shared").liveDataCommand;
+  var liveDataWithAddressCommand: typeof import("@ledgerhq/live-e2e-shared").liveDataWithAddressCommand;
+  var liveDataWithParentAddressCommand: typeof import("@ledgerhq/live-e2e-shared").liveDataWithParentAddressCommand;
+  var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-e2e-shared").liveDataWithRecipientAddressCommand;
+  var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-e2e-shared").parseTokenAllowanceCliOutput;
+  var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-e2e-shared").isTokenAllowanceSufficientCommand;
+  var getTokenAllowanceCommand: typeof import("@ledgerhq/live-e2e-shared").getTokenAllowanceCommand;
+  var approveTokenCommand: typeof import("@ledgerhq/live-e2e-shared").approveTokenCommand;
+  var revokeTokenCommand: typeof import("@ledgerhq/live-e2e-shared").revokeTokenCommand;
+  var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-e2e-shared").setDisableTransactionBroadcastEnv;
 }

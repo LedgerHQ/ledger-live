@@ -8,7 +8,10 @@
       "@ledgerhq/source": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./commands": "./lib/commands.mjs"
+    "./commands": {
+      "types": "./src/commands-entry.ts",
+      "default": "./lib/commands.cjs"
+    }
   },
   "scripts": {
     "build:e2e": "node scripts/build-bundle.mjs",
@@ -18,11 +21,15 @@
     "format:check": "oxfmt . --check"
   },
   "dependencies": {
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^"
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "esbuild": "0.25.5",
+    "invariant": "^2.2.4"
   },
   "devDependencies": {
-    "esbuild": "0.25.5"
+    "@types/invariant": "^2.2.36"
   }
 }

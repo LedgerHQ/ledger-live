@@ -1,10 +1,25 @@
 import type { GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { sanitizeError, sleep } from "./index";
-import { ensureE2ERuntime } from "./commands/bootstrap";
-import { cmdGetAddress } from "./commands/getAddress";
-import { cmdLiveData } from "./commands/liveData";
-import { cmdGetTokenAllowance } from "./commands/tokenAllowance";
-import { cmdTokenApproval } from "./commands/tokenApproval";
+import { sanitizeError, sleep } from "@ledgerhq/live-common/e2e";
+import {
+  ensureE2ERuntime,
+  cmdGetAddress,
+  cmdLiveData,
+  cmdTokenApproval,
+  cmdGetTokenAllowance,
+} from "@ledgerhq/live-e2e-shared/commands";
+import type {
+  GetAddressOpts,
+  LiveDataOpts,
+  TokenApprovalOpts,
+  GetTokenAllowanceOpts,
+} from "@ledgerhq/live-common/e2e/commands/types";
+
+export type {
+  GetAddressOpts,
+  LiveDataOpts,
+  TokenApprovalOpts,
+  GetTokenAllowanceOpts,
+} from "@ledgerhq/live-common/e2e/commands/types";
 
 export type LedgerKeyRingProtocolOpts = {
   initMemberCredentials?: boolean;
@@ -38,41 +53,7 @@ export type LedgerSyncOpts = {
   deleteData?: boolean;
 };
 
-export type LiveDataOpts = {
-  currency?: string;
-  index?: number;
-  scheme?: string;
-  appjson?: string;
-  add?: boolean;
-};
-
-export type GetAddressOpts = {
-  currency?: string;
-  device?: string;
-  path?: string;
-  derivationMode?: string;
-  verify?: boolean;
-};
-
-export type TokenApprovalOpts = {
-  currency: string;
-  index: number;
-  spender: string;
-  approveAmount?: string;
-  token: string;
-  waitConfirmation?: boolean;
-  mode: "revokeApproval" | "approve";
-};
-
-export type GetTokenAllowanceOpts = {
-  currency: string;
-  spenderAddress: string;
-  token: string;
-  index: number | string;
-  format?: "json";
-  ownerAddress: string;
-};
-
+/** Transient failures (network, Speculos, gateway) where a retry may help. */
 function isRetryableError(message: string): boolean {
   const retryablePatterns = [
     /503/i,
@@ -88,6 +69,11 @@ function isRetryableError(message: string): boolean {
   return retryablePatterns.some(pattern => pattern.test(message));
 }
 
+/**
+ * Runs an in-process e2e command with retry on transient errors. The commands
+ * are executed from the prebuilt esbuild bundle (@ledgerhq/live-e2e-shared/commands),
+ * which is the only Node-runnable form of live-common's bundler-only lib-es.
+ */
 async function runWithRetry<T>(
   label: string,
   fn: () => Promise<T>,

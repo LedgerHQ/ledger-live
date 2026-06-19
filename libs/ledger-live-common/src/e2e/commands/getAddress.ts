@@ -4,7 +4,7 @@ import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { withDevice } from "../../hw/deviceAccess";
 import getAddress from "../../hw/getAddress/index";
 import { findCryptoCurrencyByKeyword } from "../../currencies/index";
-import type { GetAddressOpts } from "../runCli";
+import type { GetAddressOpts } from "./types";
 
 export async function cmdGetAddress(opts: GetAddressOpts): Promise<GetAddressResult> {
   const currency = opts.currency ? findCryptoCurrencyByKeyword(opts.currency) : undefined;

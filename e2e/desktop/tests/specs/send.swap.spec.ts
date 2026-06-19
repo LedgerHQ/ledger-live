@@ -11,7 +11,7 @@ import {
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
 } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
 

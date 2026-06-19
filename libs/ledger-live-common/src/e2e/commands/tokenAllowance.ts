@@ -8,7 +8,7 @@ import {
 import { getEvmTokenAllowance } from "../../families/evm/getTokenAllowance";
 import { decodeAccountId, emptyHistoryCache, encodeAccountId } from "../../account/index";
 import { findCryptoCurrencyByKeyword, getCryptoCurrencyById } from "../../currencies/index";
-import type { GetTokenAllowanceOpts } from "../runCli";
+import type { GetTokenAllowanceOpts } from "./types";
 
 function buildMinimalEvmAccount(params: {
   currencyId: string;

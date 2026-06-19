@@ -8,6 +8,10 @@ import {
   registerTransportModule,
   unregisterAllTransportModules,
 } from "@ledgerhq/live-common/hw/index";
+import {
+  registerTransportModule as registerBundleTransportModule,
+  unregisterAllTransportModules as unregisterAllBundleTransportModules,
+} from "@ledgerhq/live-e2e-shared";
 import { retry } from "@ledgerhq/live-common/promise";
 import {
   DeviceManagementKitTransportSpeculos,
@@ -24,7 +28,7 @@ import {
   type LedgerSyncOpts,
   type LiveDataOpts,
   type TokenApprovalOpts,
-} from "@ledgerhq/live-common/e2e/runCli";
+} from "@ledgerhq/live-e2e-shared";
 
 export const CLI = {
   ledgerKeyRingProtocol: async function (opts: LedgerKeyRingProtocolOpts) {
@@ -158,16 +162,20 @@ export const CLI = {
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();
+    unregisterAllBundleTransportModules();
     const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,
       baseURL: speculosAddress,
     };
 
-    registerTransportModule({
+    const speculosModule = {
       id: "speculos-http",
       open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
-    });
+    };
+    // runner instance (ledgerSync / keyRing) + the e2e bundle instance (the 4 commands)
+    registerTransportModule(speculosModule);
+    registerBundleTransportModule(speculosModule);
   },
   getAddress: (opts: GetAddressOpts) => runCliGetAddress(opts),
   tokenApproval: function (opts: TokenApprovalOpts) {

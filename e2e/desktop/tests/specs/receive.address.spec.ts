@@ -9,10 +9,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import type { Application } from "tests/page";
-import {
-  addEmptyAccountCommand,
-  liveDataCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { addEmptyAccountCommand, liveDataCommand } from "@ledgerhq/live-e2e-shared";
 
 const nativeAccounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },

@@ -16,7 +16,7 @@ import {
   liveDataWithParentAddressCommand,
   liveDataCommand,
   getAccountAddress,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+} from "@ledgerhq/live-e2e-shared";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
