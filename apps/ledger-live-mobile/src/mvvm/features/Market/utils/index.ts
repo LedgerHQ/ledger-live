@@ -50,17 +50,18 @@ export const getDateFormatter = (locale: string, interval: string) => {
 const getNumberFormatter = (locale: string, currency?: string): Intl.NumberFormat => {
   if (!currency) return new Intl.NumberFormat(locale);
 
+  const normalizedCurrency = currency.toLocaleUpperCase();
   if (!formatters[locale]) formatters[locale] = {};
-  if (!formatters[locale][currency]) {
-    formatters[locale][currency] = new Intl.NumberFormat(locale, {
+  if (!formatters[locale][normalizedCurrency]) {
+    formatters[locale][normalizedCurrency] = new Intl.NumberFormat(locale, {
       style: "currency",
-      currency,
+      currency: normalizedCurrency,
       maximumFractionDigits: 8,
       maximumSignificantDigits: 8,
     });
   }
 
-  return formatters[locale][currency];
+  return formatters[locale][normalizedCurrency];
 };
 
 const formatShortenedValue = (

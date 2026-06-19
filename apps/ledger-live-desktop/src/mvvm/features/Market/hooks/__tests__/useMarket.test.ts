@@ -5,7 +5,7 @@ import {
   Order,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
+import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { useMarket } from "../useMarket";
 import { addStarredMarketCoins } from "~/renderer/actions/settings";
@@ -20,7 +20,7 @@ jest.mock("~/renderer/hooks/useInitSupportedCounterValues", () => ({
 }));
 
 const mockedUseMarketData = jest.mocked(useMarketData);
-const mockedUseMarketDataProvider = jest.mocked(useMarketDataProvider);
+const mockedUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
 const mockedUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
 
 const PRICE_CHANGE_ZERO: Record<KeysPriceChange, number> = {
@@ -68,9 +68,9 @@ const mockMarketData = (data: MarketCurrencyData[] = []) =>
   } as unknown as ReturnType<typeof useMarketData>);
 
 const mockSupportedCounterCurrencies = (supportedCounterCurrencies?: string[]) =>
-  mockedUseMarketDataProvider.mockReturnValue({
-    supportedCounterCurrencies,
-  } as unknown as ReturnType<typeof useMarketDataProvider>);
+  mockedUseSupportedCounterCurrencies.mockReturnValue({
+    data: supportedCounterCurrencies,
+  } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
 
 const createMarketState = (starred: string[] = []) => ({
   marketParams: {
@@ -309,6 +309,20 @@ describe("useMarket", () => {
           market: createMarketState([]),
         },
       });
+
+    it("disables the market request while counter value support is unresolved", () => {
+      mockSupportedCounterCurrencies(undefined);
+
+      const { result } = renderWithCop();
+
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ counterCurrency: "cop" }),
+        { enabled: false },
+      );
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: true });
+      expect(result.current.marketData).toEqual([]);
+      expect(result.current.loading).toBe(true);
+    });
 
     it("requests in USD and rescales each row by the USD->COP rate", () => {
       mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);

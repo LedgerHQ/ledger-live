@@ -46,6 +46,17 @@ describe("useUsdToFiatRate", () => {
     expect(result.current).toEqual({ status: "ready", rate: 1 });
   });
 
+  it("returns a ready no-op rate when explicitly skipped", () => {
+    const wrapper = createWrapper(store);
+    const { result } = renderHook(() => useUsdToFiatRate("COP", { skip: true }), { wrapper });
+
+    expect(result.current).toEqual({ status: "ready", rate: 1 });
+    expect(mockUseQuery).toHaveBeenCalledWith(
+      { to: "cop" },
+      expect.objectContaining({ skip: true }),
+    );
+  });
+
   it("returns loading while the query is pending", () => {
     mockUseQuery.mockReturnValue({ data: undefined, isLoading: true, isError: false });
 

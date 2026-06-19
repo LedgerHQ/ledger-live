@@ -61,6 +61,21 @@ describe("counterValueFormatter", () => {
       expect(result).toContain("$");
     });
 
+    it("normalizes lower-case currency codes before formatting", () => {
+      const lowerCase = counterValueFormatter({
+        value: 1234.56,
+        locale: "en-US",
+        currency: "usd",
+      });
+      const upperCase = counterValueFormatter({
+        value: 1234.56,
+        locale: "en-US",
+        currency: "USD",
+      });
+
+      expect(lowerCase).toBe(upperCase);
+    });
+
     it("formats a value with ticker", () => {
       const result = counterValueFormatter({
         value: 123.456,
