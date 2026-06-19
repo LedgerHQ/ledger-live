@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { Slides } from "LLD/components/Slides";
 import { SlideItem } from "./components/SlideItem";
@@ -33,6 +33,15 @@ export const Q2TourDialog = ({
     [],
   );
 
+  const [slidesKey, setSlidesKey] = useState(0);
+  const wasOpenRef = useRef(isOpen);
+  useLayoutEffect(() => {
+    if (isOpen && !wasOpenRef.current) {
+      setSlidesKey(key => key + 1);
+    }
+    wasOpenRef.current = isOpen;
+  }, [isOpen]);
+
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
@@ -42,11 +51,7 @@ export const Q2TourDialog = ({
       >
         <DialogHeader density="compact" onClose={onHeaderClose} />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-24 overflow-hidden">
-          <Slides
-            key={isOpen ? "open" : "closed"}
-            initialSlideIndex={0}
-            onSlideChange={onSlideChange}
-          >
+          <Slides key={slidesKey} initialSlideIndex={0} onSlideChange={onSlideChange}>
             <Slides.Content>{slideItems}</Slides.Content>
 
             <Slides.ProgressIndicator>

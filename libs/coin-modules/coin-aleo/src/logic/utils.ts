@@ -606,6 +606,24 @@ export function mapTransactionIntentToSdkIntent(
         record: txIntent.data.record,
       };
     }
+    case TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+      return {
+        type: "transfer_token_public",
+        amount,
+        to,
+        program_id: txIntent.data.programId,
+      };
+    }
+    case TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+      return {
+        type: "transfer_token_public_to_private",
+        amount,
+        to,
+        program_id: txIntent.data.programId,
+      };
+    }
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
     }
@@ -744,8 +762,8 @@ export function createTransactionIntent({
 }): AleoTransactionIntent {
   const base = buildTransactionIntentBase(account, transaction);
 
-  if (isTokenTransaction(transaction)) {
-    throw new Error("aleo: tokens are not supported yet");
+  if (isPrivateTokenTransaction(transaction)) {
+    throw new Error("aleo: private token transactions are not supported yet");
   }
 
   switch (transaction.mode) {
@@ -767,6 +785,22 @@ export function createTransactionIntent({
           }),
         },
       };
+
+    case TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC:
+    case TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE: {
+      const tokenSubAccount = getAleoSubAccount(account, transaction.subAccountId);
+      invariant(
+        tokenSubAccount,
+        "aleo: token sub-account is required for public token transaction",
+      );
+      return {
+        ...base,
+        data: {
+          type: transaction.mode,
+          programId: tokenSubAccount.token.contractAddress,
+        },
+      };
+    }
 
     default:
       throw new Error(`aleo: unsupported tx mode for transaction intent: ${transaction.mode}`);

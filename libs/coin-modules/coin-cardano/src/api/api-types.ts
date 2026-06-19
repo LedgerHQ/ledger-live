@@ -149,8 +149,8 @@ export type StakeRewardParams = {
 };
 
 // Current-epoch info used to compute validator APY (ADR-038). `reserves` and `activeStake` are
-// lovelace strings; both are required by computePoolApy but not yet served by the endpoint
-// (LIVE-18622), so they are optional and APY stays omitted until they appear.
+// lovelace strings (flattened + stringified by getEpochInfo from the API's nested adaPots /
+// activeStake_aggregate); optional, so each may be undefined and APY is then omitted.
 export type EpochInfo = {
   number: number;
   reserves: string | undefined;
@@ -158,14 +158,17 @@ export type EpochInfo = {
   params: StakeRewardParams;
 };
 
-// Shape of the Ledger node /api/rest/params response (a Hasura saved REST query).
+// Shape of the Ledger node /api/rest/params response (a Hasura saved REST query over cardano-graphql).
+// reserves/activeStake are nested (adaPots / activeStake_aggregate) and come back as JSON numbers;
+// getEpochInfo flattens + stringifies them.
 export type APIEpochParams = {
   cardano: Array<{
     currentEpoch: {
       number: number;
-      reserves?: string;
-      activeStake?: string;
       protocolParams: StakeRewardParams;
+      // optional/nullable: may be absent or null in the response
+      adaPots?: { reserves: number } | null;
+      activeStake_aggregate?: { aggregate: { sum: { amount: number | null } } };
     };
   }>;
 };

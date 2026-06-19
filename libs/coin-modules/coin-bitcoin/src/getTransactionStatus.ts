@@ -98,6 +98,8 @@ export const getTransactionStatus: AccountBridge<
           errors.amount = error;
         } else if (error.name === "DustLimit") {
           errors.dustLimit = error;
+        } else if (error.name === "RbfBuildError") {
+          errors.replacement = error;
         } else {
           throw error;
         }

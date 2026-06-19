@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import Xpub from "../xpub";
 import { Output } from "../storage/types";
 import { DerivationModes } from "../types";
+import { RbfBuildError } from "../../errors";
 
 import { mockCrypto, mockStorage } from "./fixtures/common.fixtures";
 import { IExplorer } from "../explorer/types";
@@ -183,5 +184,79 @@ describe("Xpub", () => {
     expect(tx.inputs.length).toBe(1);
     expect(tx.outputs.length).toBe(2); // one for destAddres, one for change
     expect(tx.fee).toBe(100);
+  });
+
+  it("wraps a buildRbfSelection failure as RbfBuildError", async () => {
+    mockCrypto.toOutputScript = jest.fn().mockReturnValue("outputScript");
+
+    jest
+      .spyOn(xpub as unknown as { buildRbfSelection: () => Promise<unknown> }, "buildRbfSelection")
+      .mockRejectedValue(new Error("inner rbf failure"));
+
+    await expect(
+      xpub.buildTx({
+        destAddress: "destinationAddress",
+        amount: new BigNumber(1000),
+        feePerByte: 1,
+        changeAddress: { address: "changeAddress", account: 0, index: 0 },
+        utxoPickingStrategy: {
+          crypto: mockCrypto,
+          derivationMode: DERIVATION_MODE,
+          excludedUTXOs: [],
+          selectUnspentUtxosToUse: jest.fn(),
+        } as never,
+        sequence: 0,
+        opReturnData: undefined,
+        originalTxId: "orig-txid",
+      }),
+    ).rejects.toMatchObject({
+      name: "RbfBuildError",
+      message: expect.stringContaining("inner rbf failure"),
+    });
+  });
+
+  it("wraps an RBF absolute-fee-increase failure as RbfBuildError", async () => {
+    mockCrypto.toOutputScript = jest.fn().mockReturnValue("outputScript");
+
+    jest
+      .spyOn(xpub as unknown as { buildRbfSelection: () => Promise<unknown> }, "buildRbfSelection")
+      .mockResolvedValue({
+        inputs: [],
+        associatedDerivations: [],
+        total: new BigNumber(2000),
+        fee: 100,
+        needChangeoutput: false,
+        originalTxObj: { virtualSize: () => 200 },
+      });
+
+    jest
+      .spyOn(
+        xpub as unknown as { enforceRbfAbsoluteFeeIncrease: () => Promise<void> },
+        "enforceRbfAbsoluteFeeIncrease",
+      )
+      .mockRejectedValue(
+        new Error("RBF requires an additional 522 sats fee increase but there is no change output"),
+      );
+
+    const error = await xpub
+      .buildTx({
+        destAddress: "destinationAddress",
+        amount: new BigNumber(1000),
+        feePerByte: 1,
+        changeAddress: { address: "changeAddress", account: 0, index: 0 },
+        utxoPickingStrategy: {
+          crypto: mockCrypto,
+          derivationMode: DERIVATION_MODE,
+          excludedUTXOs: [],
+          selectUnspentUtxosToUse: jest.fn(),
+        } as never,
+        sequence: 0,
+        opReturnData: undefined,
+        originalTxId: "orig-txid",
+      })
+      .catch(e => e);
+
+    expect(error).toBeInstanceOf(RbfBuildError);
+    expect(error.message).toContain("RBF requires an additional 522 sats fee increase");
   });
 });

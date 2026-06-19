@@ -76,11 +76,27 @@ interface FeePublicIntent {
   execution_id: string;
 }
 
+interface TransferTokenPublicIntent {
+  type: "transfer_token_public";
+  amount: string;
+  to: string;
+  program_id: string;
+}
+
+interface TransferTokenPublicToPrivateIntent {
+  type: "transfer_token_public_to_private";
+  amount: string;
+  to: string;
+  program_id: string;
+}
+
 export type Intent =
   | TransferPrivateIntent
   | TransferPublicIntent
   | TransferPrivateToPublicIntent
   | TransferPublicToPrivateIntent
+  | TransferTokenPublicIntent
+  | TransferTokenPublicToPrivateIntent
   | FeePrivateIntent
   | FeePublicIntent;
 

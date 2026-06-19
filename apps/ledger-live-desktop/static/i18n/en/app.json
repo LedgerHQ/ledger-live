@@ -7553,6 +7553,10 @@
     "TaprootNotActivated": {
       "title": "Sending to a taproot address is unsafe before mainnet activation"
     },
+    "RbfBuildError": {
+      "title": "Cannot replace this transaction",
+      "description": "The fee increase required to replace this transaction can't be applied with the current parameters. Try a different fee amount or cancel the operation."
+    },
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },

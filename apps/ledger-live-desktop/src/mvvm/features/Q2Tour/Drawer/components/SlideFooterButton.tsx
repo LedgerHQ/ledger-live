@@ -29,7 +29,7 @@ export function SlideFooterButton({ onContinueClick, onComplete }: SlideFooterBu
 
   return (
     <div className="flex flex-col gap-16">
-      <Button appearance="gray" size="lg" isFull onClick={handleClick}>
+      <Button appearance="base" size="lg" isFull onClick={handleClick}>
         {t(ctaKey)}
       </Button>
     </div>

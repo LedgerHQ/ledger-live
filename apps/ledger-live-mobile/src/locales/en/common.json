@@ -959,6 +959,10 @@
     "TaprootNotActivated": {
       "title": "Taproot mainnet is not activated yet"
     },
+    "RbfBuildError": {
+      "title": "Cannot replace this transaction",
+      "description": "The fee increase required to replace this transaction can't be applied with the current parameters. Try a different fee amount or cancel the operation."
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support.",
@@ -1491,7 +1495,7 @@
     "searchPlaceholders": {
       "crypto": "Search crypto",
       "stablecoins": "Search stablecoins",
-      "stock": "Search stock",
+      "stock": "Search stocks",
       "addresses": "Search addresses"
     },
     "sections": {
