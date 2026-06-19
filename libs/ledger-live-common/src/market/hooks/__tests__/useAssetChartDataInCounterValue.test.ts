@@ -58,10 +58,11 @@ describe("useAssetChartDataInCounterValue", () => {
         useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "eur", range: "1d" }),
       );
 
-      expect(mockUseAssetChartData).toHaveBeenCalledWith(
-        { id: "bitcoin", counterCurrency: "eur", range: "1d" },
-        undefined,
-      );
+      expect(mockUseAssetChartData).toHaveBeenCalledWith({
+        id: "bitcoin",
+        counterCurrency: "eur",
+        range: "1d",
+      });
       expect(result.current.data).toBe(CHART);
       expect(result.current.isError).toBe(false);
       expect(result.current.isLoading).toBe(false);
@@ -72,10 +73,11 @@ describe("useAssetChartDataInCounterValue", () => {
         useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "vnd", range: "1d" }),
       );
 
-      expect(mockUseAssetChartData).toHaveBeenCalledWith(
-        { id: "bitcoin", counterCurrency: "vnd", range: "1d" },
-        undefined,
-      );
+      expect(mockUseAssetChartData).toHaveBeenCalledWith({
+        id: "bitcoin",
+        counterCurrency: "vnd",
+        range: "1d",
+      });
       expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("usd");
     });
   });
@@ -92,10 +94,11 @@ describe("useAssetChartDataInCounterValue", () => {
         useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "cop", range: "1d" }),
       );
 
-      expect(mockUseAssetChartData).toHaveBeenCalledWith(
-        { id: "bitcoin", counterCurrency: "usd", range: "1d" },
-        undefined,
-      );
+      expect(mockUseAssetChartData).toHaveBeenCalledWith({
+        id: "bitcoin",
+        counterCurrency: "usd",
+        range: "1d",
+      });
       expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("cop");
       expect(result.current.data).toEqual({
         "1d": [
@@ -112,10 +115,11 @@ describe("useAssetChartDataInCounterValue", () => {
         useAssetChartDataInCounterValue({ id: "ethereum", counterCurrency: "btc", range: "1d" }),
       );
 
-      expect(mockUseAssetChartData).toHaveBeenCalledWith(
-        { id: "ethereum", counterCurrency: "usd", range: "1d" },
-        undefined,
-      );
+      expect(mockUseAssetChartData).toHaveBeenCalledWith({
+        id: "ethereum",
+        counterCurrency: "usd",
+        range: "1d",
+      });
       expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("btc");
       expect(result.current.data).toEqual({
         "1d": [
@@ -132,11 +136,12 @@ describe("useAssetChartDataInCounterValue", () => {
         useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "ETH", range: "1d" }),
       );
 
-      expect(mockUseAssetChartData).toHaveBeenCalledWith(
-        { id: "bitcoin", counterCurrency: "usd", range: "1d" },
-        undefined,
-      );
-      expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("ETH");
+      expect(mockUseAssetChartData).toHaveBeenCalledWith({
+        id: "bitcoin",
+        counterCurrency: "usd",
+        range: "1d",
+      });
+      expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("eth");
     });
 
     it("treats crypto as a fallback even before the supported list has loaded", () => {
@@ -147,23 +152,46 @@ describe("useAssetChartDataInCounterValue", () => {
         useAssetChartDataInCounterValue({ id: "ethereum", counterCurrency: "btc", range: "1d" }),
       );
 
-      expect(mockUseAssetChartData).toHaveBeenCalledWith(
-        { id: "ethereum", counterCurrency: "usd", range: "1d" },
-        undefined,
-      );
+      expect(mockUseAssetChartData).toHaveBeenCalledWith({
+        id: "ethereum",
+        counterCurrency: "usd",
+        range: "1d",
+      });
     });
 
-    it("requests an unsupported fiat natively until the supported list loads", () => {
+    it("skips an unsupported fiat request until the supported list resolves", () => {
       mockSupported(undefined);
 
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "cop", range: "1d" }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
         { id: "bitcoin", counterCurrency: "cop", range: "1d" },
-        undefined,
+        { skip: true },
       );
+      expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: true });
+      expect(result.current.data).toBeUndefined();
+      expect(result.current.currentData).toBeUndefined();
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it("skips the USD rate request when the chart request is skipped", () => {
+      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
+
+      const { result } = renderHook(() =>
+        useAssetChartDataInCounterValue(
+          { id: "ethereum", counterCurrency: "btc", range: "1d" },
+          { skip: true },
+        ),
+      );
+
+      expect(mockUseAssetChartData).toHaveBeenCalledWith(
+        { id: "ethereum", counterCurrency: "usd", range: "1d" },
+        { skip: true },
+      );
+      expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("btc", { skip: true });
+      expect(result.current.data).toBeUndefined();
     });
 
     it("is loading and withholds data while the rate resolves", () => {

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -58,26 +58,14 @@ export function useMarketAssets({
 }: MarketAssetsParams = {}): MarketAssetsResult {
   const { locale } = useLocale();
   const { t } = useTranslation();
-  const { supportedCounterCurrencies } = useMarketDataProvider();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const settingsCounterValue = counterValueCurrency.ticker.toLowerCase();
-  // The markets endpoint only serves the fiats CoinGecko lists as supported. For
-  // anything else (e.g. COP) we fetch in USD and rescale by the USD->countervalue
-  // spot rate. While the supported list is still loading we keep the user's
-  // counter value, and only fall back once we know it is unsupported — otherwise a
-  // request fires with usd first.
-  const needsUsdFallback = Boolean(
-    supportedCounterCurrencies && !supportedCounterCurrencies.includes(settingsCounterValue),
-  );
-  const counterCurrency = needsUsdFallback ? "usd" : settingsCounterValue;
-  // Passing "usd" short-circuits the rate hook to 1 without firing a request, so
-  // natively served countervalues incur no extra network call.
-  const { rate: usdToCounterValueRate, status: rateStatus } = useUsdToFiatRate(
-    needsUsdFallback ? settingsCounterValue : "usd",
-  );
-  // Withhold a rate until it resolves so we never render USD numbers formatted with
-  // the countervalue's unit. `null` defers the conversion (assets stay empty + loading).
-  const rate = needsUsdFallback ? usdToCounterValueRate : 1;
+  const {
+    requestCounterCurrency,
+    displayCounterCurrency = settingsCounterValue,
+    needsUsdFallback,
+    isResolutionLoading,
+  } = useResolveMarketCounterCurrency({ counterCurrency: settingsCounterValue });
   const counterValueUnit = counterValueCurrency.units[0];
   const normalizedSearch = search.trim();
   const {
@@ -106,19 +94,37 @@ export function useMarketAssets({
   const requestRange = getMarketListRequestRange(timeframe);
   const displayRange = getMarketListDisplayRange(timeframe);
   const order = getMarketListOrder(sorting);
+  const shouldFetchMarketData = shouldFetchAssets && !isResolutionLoading;
+  const marketDataOptions: [] | [{ enabled: false }] = shouldFetchMarketData
+    ? []
+    : [{ enabled: false }];
+  const usdRateOptions: [] | [{ skip: true }] =
+    isResolutionLoading || !shouldFetchAssets ? [{ skip: true }] : [];
+  // Passing "usd" short-circuits the rate hook to 1 without firing a request, so
+  // natively served countervalues incur no extra network call.
+  const { rate: usdToCounterValueRate, status: rateStatus } = useUsdToFiatRate(
+    needsUsdFallback ? displayCounterCurrency : "usd",
+    ...usdRateOptions,
+  );
+  // Withhold a rate until it resolves so we never render USD numbers formatted with
+  // the countervalue's unit. `null` defers the conversion (assets stay empty + loading).
+  const rate = needsUsdFallback ? usdToCounterValueRate : 1;
 
-  const result = useMarketData({
-    counterCurrency,
-    range: requestRange,
-    order,
-    limit: PAGE_SIZE,
-    liveCompatible: true,
-    page: requestedPage,
-    search: normalizedSearch,
-    categories: marketCategoriesParam,
-    starred: sortedFavoriteIds,
-  });
-  const marketData = getMarketDataForDisplay(result.data, shouldFetchAssets);
+  const result = useMarketData(
+    {
+      counterCurrency: requestCounterCurrency,
+      range: requestRange,
+      order,
+      limit: PAGE_SIZE,
+      liveCompatible: true,
+      page: requestedPage,
+      search: normalizedSearch,
+      categories: marketCategoriesParam,
+      starred: sortedFavoriteIds,
+    },
+    ...marketDataOptions,
+  );
+  const marketData = getMarketDataForDisplay(result.data, shouldFetchMarketData);
 
   const assets = useMemo(
     () =>
@@ -128,14 +134,14 @@ export function useMarketAssets({
             marketData,
             // Format with the user's countervalue (the request may have used usd as
             // a fallback, but the values are rescaled back into the countervalue).
-            counterCurrency: settingsCounterValue,
+            counterCurrency: displayCounterCurrency,
             counterValueUnit,
             rate,
             displayRange,
             locale,
             t,
           }),
-    [counterValueUnit, displayRange, locale, marketData, rate, settingsCounterValue, t],
+    [counterValueUnit, displayCounterCurrency, displayRange, locale, marketData, rate, t],
   );
 
   const hasData = assets.length > 0;
@@ -143,7 +149,9 @@ export function useMarketAssets({
   const isRateLoading = needsUsdFallback && rateStatus === "loading";
   const isRateError = needsUsdFallback && rateStatus === "error";
   const loading =
-    shouldFetchAssets && (result.isLoading || result.isPending || isRateLoading) && !hasData;
+    shouldFetchAssets &&
+    (isResolutionLoading || result.isLoading || result.isPending || isRateLoading) &&
+    !hasData;
   const isFetchingNextPage = shouldFetchAssets && page > 1 && result.isFetching && hasData;
 
   const onEndReached = useCallback(() => {
@@ -153,7 +161,7 @@ export function useMarketAssets({
         canLoadMore,
         loading,
         isFetchingNextPage,
-        isError: result.isError,
+        isError: result.isError || isRateError,
       })
     ) {
       return;
@@ -163,6 +171,7 @@ export function useMarketAssets({
   }, [
     canLoadMore,
     isFetchingNextPage,
+    isRateError,
     loading,
     paginationParams,
     result.isError,

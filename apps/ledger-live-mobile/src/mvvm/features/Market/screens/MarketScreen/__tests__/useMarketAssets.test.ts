@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
+import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { Order, type MarketListRequestResult } from "@ledgerhq/live-common/market/utils/types";
 import type { State } from "~/reducers/types";
@@ -11,7 +11,7 @@ jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
 jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider");
 jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate");
 const mockedUseMarketData = jest.mocked(useMarketData);
-const mockedUseMarketDataProvider = jest.mocked(useMarketDataProvider);
+const mockedUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
 const mockedUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
 
 const bitcoin = createMarketCurrencyData({ id: "bitcoin", name: "Bitcoin" });
@@ -46,9 +46,9 @@ function mockMarketData(overrides: Partial<MarketListRequestResult> = {}) {
 }
 
 function mockSupportedCounterCurrencies(supportedCounterCurrencies?: string[]) {
-  mockedUseMarketDataProvider.mockReturnValue({
-    supportedCounterCurrencies,
-  } as unknown as ReturnType<typeof useMarketDataProvider>);
+  mockedUseSupportedCounterCurrencies.mockReturnValue({
+    data: supportedCounterCurrencies,
+  } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
 }
 
 function mockUsdToFiatRate(rate: ReturnType<typeof useUsdToFiatRate>) {
@@ -198,6 +198,7 @@ describe("useMarketAssets", () => {
 
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(
       expect.objectContaining({ page: 0, starred: [] }),
+      { enabled: false },
     );
     expect(result.current.assets).toEqual([]);
     expect(result.current.loading).toBe(false);
@@ -207,6 +208,7 @@ describe("useMarketAssets", () => {
 
     expect(mockedUseMarketData).toHaveBeenLastCalledWith(
       expect.objectContaining({ page: 0, starred: [] }),
+      { enabled: false },
     );
   });
 
@@ -274,6 +276,20 @@ describe("useMarketAssets", () => {
   describe("unsupported fiat countervalue (COP)", () => {
     const SUPPORTED_WITHOUT_COP = ["usd", "eur", "vnd"];
 
+    it("disables the market request while countervalue support is unresolved", () => {
+      mockSupportedCounterCurrencies(undefined);
+
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
+
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ counterCurrency: "cop" }),
+        { enabled: false },
+      );
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: true });
+      expect(result.current.assets).toEqual([]);
+      expect(result.current.loading).toBe(true);
+    });
+
     it("requests in USD and rescales each row by the USD->COP rate", () => {
       // Control: COP natively supported, value already expressed in COP, no rescale.
       // Its formatted price is the COP-formatted target we expect the fallback to match.
@@ -320,6 +336,18 @@ describe("useMarketAssets", () => {
 
       expect(result.current.assets).toEqual([]);
       expect(result.current.isError).toBe(true);
+    });
+
+    it("does not request the next page when the rate request fails", () => {
+      mockSupportedCounterCurrencies(SUPPORTED_WITHOUT_COP);
+      mockUsdToFiatRate({ status: "error", rate: null });
+      mockMarketData({ data: fullMarketPage });
+
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("COP"));
+
+      act(() => result.current.onEndReached());
+
+      expect(mockedUseMarketData).not.toHaveBeenCalledWith(expect.objectContaining({ page: 2 }));
     });
 
     it("requests the countervalue natively once it is known to be supported", () => {

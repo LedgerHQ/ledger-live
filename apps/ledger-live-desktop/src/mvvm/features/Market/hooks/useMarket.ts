@@ -1,10 +1,10 @@
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
-import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
+import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -50,7 +50,13 @@ export function useMarket() {
 
   useInitSupportedCounterValues();
 
-  const { supportedCounterCurrencies } = useMarketDataProvider();
+  const {
+    requestCounterCurrency: resolvedRequestCounterCurrency,
+    displayCounterCurrency: resolvedDisplayCounterCurrency = settingsCounterValue,
+    needsUsdFallback: resolvedNeedsUsdFallback,
+    isResolutionLoading,
+    supportedCounterCurrencies,
+  } = useResolveMarketCounterCurrency({ counterCurrency: settingsCounterValue });
 
   const { shouldDisplayMarketBanner: filterBySupported, shouldDisplayAssetDiscoverability } =
     useWalletFeaturesConfig("desktop");
@@ -68,29 +74,27 @@ export function useMarket() {
 
   const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
 
-  // The markets endpoint only serves the fiats CoinGecko lists as supported. For
-  // anything else (e.g. COP) we fetch in USD and rescale by the USD->countervalue
-  // spot rate. While the supported list is still loading we keep the user's counter
-  // value, and only fall back to usd once we know it is unsupported — otherwise a
-  // request fires with usd first.
-  const isCounterValueUnsupported =
-    !!supportedCounterCurrencies && !supportedCounterCurrencies.includes(settingsCounterValue);
-  const needsUsdFallback = shouldDisplayAssetDiscoverability && isCounterValueUnsupported;
-  const discoverabilityCounterCurrency = isCounterValueUnsupported ? "usd" : settingsCounterValue;
+  const needsUsdFallback = shouldDisplayAssetDiscoverability && resolvedNeedsUsdFallback;
   // Counter value sent to the markets endpoint (usd on fallback so the request succeeds).
   const requestCounterCurrency = shouldDisplayAssetDiscoverability
-    ? discoverabilityCounterCurrency
+    ? resolvedRequestCounterCurrency
     : marketParams.counterCurrency;
   // Counter value used to format the rows. The request may have used usd as a
   // fallback, but the values are rescaled back into the user's counter value.
   const displayCounterCurrency = shouldDisplayAssetDiscoverability
-    ? settingsCounterValue
+    ? resolvedDisplayCounterCurrency
     : marketParams.counterCurrency;
+  const shouldFetchMarketData = !shouldDisplayAssetDiscoverability || !isResolutionLoading;
+  const marketDataOptions: [] | [{ enabled: false }] = shouldFetchMarketData
+    ? []
+    : [{ enabled: false }];
+  const usdRateOptions: [] | [{ skip: true }] = shouldFetchMarketData ? [] : [{ skip: true }];
 
   // Passing "usd" short-circuits the rate hook to 1 without firing a request, so
   // natively served counter values incur no extra network call.
   const { rate: usdToCounterValueRate, status: rateStatus } = useUsdToFiatRate(
-    needsUsdFallback ? settingsCounterValue : "usd",
+    needsUsdFallback ? (displayCounterCurrency ?? "usd") : "usd",
+    ...usdRateOptions,
   );
   // Withhold a rate until it resolves so we never render USD numbers formatted with
   // the counter value's unit. `null` defers the conversion (rows stay empty + loading).
@@ -98,16 +102,19 @@ export function useMarket() {
 
   const resolvedMarketParams = { ...marketParams, counterCurrency: displayCounterCurrency };
 
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    counterCurrency: requestCounterCurrency,
-    starred: starFilterOn ? starredMarketCoins : starred,
-    liveCompatible: shouldDisplayLiveCompatible,
-    filter: marketParams.filter,
-    categories: shouldDisplayAssetDiscoverability
-      ? getMarketCategoriesParam(categories.selectedCategory)
-      : undefined,
-  });
+  const marketResult = useMarketDataHook(
+    {
+      ...marketParams,
+      counterCurrency: requestCounterCurrency,
+      starred: starFilterOn ? starredMarketCoins : starred,
+      liveCompatible: shouldDisplayLiveCompatible,
+      filter: marketParams.filter,
+      categories: shouldDisplayAssetDiscoverability
+        ? getMarketCategoriesParam(categories.selectedCategory)
+        : undefined,
+    },
+    ...marketDataOptions,
+  );
 
   const timeRanges = useMemo(
     () =>
@@ -138,8 +145,11 @@ export function useMarket() {
   // Rescale USD-fetched rows into the user's counter value. `applyUsdRateToMarket`
   // is a no-op when `rate === 1`, so natively served data passes through unchanged.
   const rescaledData = useMemo(
-    () => (rate == null ? [] : marketResult.data.map(item => applyUsdRateToMarket(item, rate))),
-    [marketResult.data, rate],
+    () =>
+      isResolutionLoading || rate == null
+        ? []
+        : marketResult.data.map(item => applyUsdRateToMarket(item, rate)),
+    [isResolutionLoading, marketResult.data, rate],
   );
 
   const marketData = isFavoritesEmpty ? [] : rescaledData;
@@ -147,7 +157,8 @@ export function useMarket() {
   const isRateLoading = needsUsdFallback && rateStatus === "loading";
   const isRateError = needsUsdFallback && rateStatus === "error";
   const currenciesLength = marketData.length;
-  const loading = !isFavoritesEmpty && (marketResult.isLoading || isRateLoading);
+  const loading =
+    !isFavoritesEmpty && (isResolutionLoading || marketResult.isLoading || isRateLoading);
   const isError = marketResult.isError || isRateError;
   const freshLoading = loading && !currenciesLength;
 

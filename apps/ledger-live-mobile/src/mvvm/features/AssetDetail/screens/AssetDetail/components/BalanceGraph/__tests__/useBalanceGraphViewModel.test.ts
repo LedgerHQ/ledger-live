@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -26,11 +27,15 @@ jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
 jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
   useUsdToFiatRate: jest.fn(() => ({ status: "ready", rate: 1 })),
 }));
+jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider", () => ({
+  useSupportedCounterCurrencies: jest.fn(() => ({ data: ["usd", "eur", "btc"] })),
+}));
 jest.mock("LLM/features/Receive");
 
 const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
 const mockUseGetAssetChartDataQuery = jest.mocked(useGetAssetChartDataQuery);
 const mockUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
+const mockUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 const handleOpenReceiveDrawer = jest.fn();
 
@@ -136,6 +141,9 @@ describe("useBalanceGraphViewModel", () => {
     mockCurrency({ data: marketCurrencyData });
     mockChart({ data: CHART_DATA_BY_RANGE });
     mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
+    mockUseSupportedCounterCurrencies.mockReturnValue({
+      data: ["usd", "eur", "btc"],
+    } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
     mockUseOpenReceiveDrawer.mockReturnValue({ handleOpenReceiveDrawer });
   });
 
