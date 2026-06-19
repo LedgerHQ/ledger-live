@@ -35,10 +35,10 @@ const CHALLENGE_JSON = toApiChallenge(PARSED_CHALLENGE);
 const IDP_HOST = CHALLENGE_JSON.host;
 
 describe("LkrpIdentityProvider (integration, MSW)", () => {
-  let server: SetupServerApi;
+  const server: SetupServerApi = initServer();
+  const queryFn = jest.fn().mockResolvedValue({ ok: true });
 
   beforeAll(() => {
-    server = initServer();
     server.listen({ onUnhandledRequest: "error" });
   });
 
@@ -46,12 +46,13 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
     server.close();
   });
 
-  afterEach(() => {
+  beforeEach(() => {
+    jest.clearAllMocks();
     server.resetHandlers();
   });
 
   it("retrieves a Keycloak JWT without PKCE", async () => {
-    const token = await new AuthSDK(
+    await new AuthSDK(
       {
         clientId: CLIENT_ID,
         keycloakBaseUrl: KEYCLOAK_BASE_URL,
@@ -59,9 +60,9 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
         disablePkce: true,
       },
       { provider: createIdentityProvider() },
-    ).authenticate();
+    ).withToken({ queryFn });
 
-    expect(token).toEqual({
+    expect(queryFn).toHaveBeenCalledWith({
       accessToken: EXPECTED_JWT,
       tokenType: "Bearer",
       scope: "openid",
@@ -72,7 +73,7 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
   });
 
   it("retrieves a Keycloak JWT with PKCE", async () => {
-    const token = await new AuthSDK(
+    await new AuthSDK(
       {
         clientId: CLIENT_ID,
         keycloakBaseUrl: KEYCLOAK_BASE_URL,
@@ -80,9 +81,9 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
         disablePkce: false,
       },
       { provider: createIdentityProvider() },
-    ).authenticate();
+    ).withToken({ queryFn });
 
-    expect(token).toEqual({
+    expect(queryFn).toHaveBeenCalledWith({
       accessToken: EXPECTED_JWT,
       tokenType: "Bearer",
       scope: "openid",
