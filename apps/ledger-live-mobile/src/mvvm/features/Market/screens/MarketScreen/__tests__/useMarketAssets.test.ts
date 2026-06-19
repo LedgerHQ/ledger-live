@@ -363,4 +363,24 @@ describe("useMarketAssets", () => {
       expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd");
     });
   });
+
+  describe("crypto countervalue (BTC)", () => {
+    it("requests in USD and rescales rows without waiting for the supported fiat list", () => {
+      mockSupportedCounterCurrencies(undefined);
+      mockUsdToFiatRate({ status: "ready", rate: 0.00001 });
+      mockMarketData({
+        data: [createMarketCurrencyData({ id: "bitcoin", price: 100, marketcap: 200 })],
+      });
+
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("BTC"));
+
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ counterCurrency: "usd" }),
+      );
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("btc");
+      expect(result.current.loading).toBe(false);
+      expect(result.current.assets[0].formattedPrice).toContain("₿");
+      expect(result.current.assets[0].formattedMarketCap).toContain("₿");
+    });
+  });
 });

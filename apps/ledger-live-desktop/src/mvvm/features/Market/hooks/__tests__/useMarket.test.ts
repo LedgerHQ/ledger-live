@@ -298,17 +298,18 @@ describe("useMarket", () => {
   describe("unsupported fiat counter value (COP)", () => {
     const SUPPORTED_WITHOUT_COP = ["usd", "eur", "vnd"];
 
-    const renderWithCop = () =>
+    const renderWithCounterValue = (counterValue: string) =>
       renderHook(() => useMarket(), {
         initialState: {
           ...withFlagOverrides({
             lldRefreshMarketData: { enabled: false },
             lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
           }),
-          settings: { ...SETTINGS_INITIAL_STATE, counterValue: "COP", starredMarketCoins: [] },
+          settings: { ...SETTINGS_INITIAL_STATE, counterValue, starredMarketCoins: [] },
           market: createMarketState([]),
         },
       });
+    const renderWithCop = () => renderWithCounterValue("COP");
 
     it("disables the market request while counter value support is unresolved", () => {
       mockSupportedCounterCurrencies(undefined);
@@ -377,6 +378,22 @@ describe("useMarket", () => {
       // No USD->fiat conversion request fires for a natively supported counter value.
       expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd");
       expect(result.current.marketData[0].price).toBe(100);
+    });
+
+    it("requests crypto counter values in USD and rescales by the USD->BTC rate", () => {
+      mockSupportedCounterCurrencies(undefined);
+      mockedUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.00001 });
+      mockMarketData([createMarketCurrencyData({ id: "bitcoin", price: 100, marketcap: 200 })]);
+
+      const { result } = renderWithCounterValue("BTC");
+
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ counterCurrency: "usd" }),
+      );
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("btc");
+      expect(result.current.marketData[0].price).toBe(0.001);
+      expect(result.current.marketData[0].marketcap).toBe(0.002);
+      expect(result.current.marketParams.counterCurrency).toBe("btc");
     });
   });
 });

@@ -56,7 +56,10 @@ export function useMarket() {
     needsUsdFallback: resolvedNeedsUsdFallback,
     isResolutionLoading,
     supportedCounterCurrencies,
-  } = useResolveMarketCounterCurrency({ counterCurrency: settingsCounterValue });
+  } = useResolveMarketCounterCurrency({
+    counterCurrency: settingsCounterValue,
+    fallbackForCryptoCountervalues: true,
+  });
 
   const { shouldDisplayMarketBanner: filterBySupported, shouldDisplayAssetDiscoverability } =
     useWalletFeaturesConfig("desktop");

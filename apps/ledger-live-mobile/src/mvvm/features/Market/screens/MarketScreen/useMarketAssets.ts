@@ -65,7 +65,10 @@ export function useMarketAssets({
     displayCounterCurrency = settingsCounterValue,
     needsUsdFallback,
     isResolutionLoading,
-  } = useResolveMarketCounterCurrency({ counterCurrency: settingsCounterValue });
+  } = useResolveMarketCounterCurrency({
+    counterCurrency: settingsCounterValue,
+    fallbackForCryptoCountervalues: true,
+  });
   const counterValueUnit = counterValueCurrency.units[0];
   const normalizedSearch = search.trim();
   const {

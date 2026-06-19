@@ -76,6 +76,40 @@ describe("counterValueFormatter", () => {
       expect(lowerCase).toBe(upperCase);
     });
 
+    it("uses the Ledger fiat sign instead of Intl's locale-dependent symbol", () => {
+      expect(
+        counterValueFormatter({
+          value: 1234.56,
+          locale: "en-US",
+          currency: "CAD",
+        }),
+      ).toBe("CA$1,234.56");
+      expect(
+        counterValueFormatter({
+          value: 1234.56,
+          locale: "en-CA",
+          currency: "CAD",
+        }),
+      ).toBe("CA$1,234.56");
+    });
+
+    it("formats crypto countervalues with the Ledger unit instead of Intl currency style", () => {
+      expect(
+        counterValueFormatter({
+          value: 0.00001,
+          locale: "en-US",
+          currency: "BTC",
+        }),
+      ).toContain("₿");
+      expect(
+        counterValueFormatter({
+          value: 0.12345678,
+          locale: "en-US",
+          currency: "ETH",
+        }),
+      ).toBe("0.12345678 ETH");
+    });
+
     it("formats a value with ticker", () => {
       const result = counterValueFormatter({
         value: 123.456,
