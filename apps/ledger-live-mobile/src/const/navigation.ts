@@ -416,6 +416,9 @@ export enum ScreenName {
   StellarAddAssetValidation = "StellarAddAssetValidation",
   StellarAddAssetValidationError = "StellarAddAssetValidationError",
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
+  // Aleo
+  AleoAddAccount = "AleoAddAccount",
+  AleoViewKeyWarning = "AleoViewKeyWarning",
   // Canton
   CantonDisclaimer = "CantonDisclaimer",
   CantonOnboardAccount = "CantonOnboardAccount",

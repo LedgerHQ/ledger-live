@@ -271,6 +271,9 @@ export const urls = {
     evmAddressVerification: "https://ledger.com/e14",
     staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
   },
+  aleo: {
+    learnMore: "https://support.ledger.com/article/Aleo-ALEO",
+  },
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
