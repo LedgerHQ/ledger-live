@@ -16,8 +16,9 @@ type UseResolveMarketCounterCurrencyParams = {
 
 /**
  * Resolve the market endpoint countervalue. Unsupported fiat support depends on
- * CoinGecko's supported list; until it is known, callers should skip fetching so
- * they don't fire a native request that will be replaced by the USD fallback.
+ * CoinGecko's supported list; while it is loading, callers should skip fetching
+ * so they don't fire a native request that will be replaced by the USD fallback.
+ * If the supported list errors, the hook stops blocking and returns the user's value.
  */
 export function useResolveMarketCounterCurrency({
   counterCurrency,
@@ -27,8 +28,7 @@ export function useResolveMarketCounterCurrency({
   const displayCounterCurrency = counterCurrency?.toLowerCase();
   const isUsd = displayCounterCurrency === "usd";
   const isCryptoCountervalue = Boolean(
-    displayCounterCurrency &&
-    findCryptoCurrencyByTicker(displayCounterCurrency.toLocaleUpperCase()),
+    displayCounterCurrency && findCryptoCurrencyByTicker(displayCounterCurrency.toUpperCase()),
   );
 
   const cryptoFallback = fallbackForCryptoCountervalues && isCryptoCountervalue;

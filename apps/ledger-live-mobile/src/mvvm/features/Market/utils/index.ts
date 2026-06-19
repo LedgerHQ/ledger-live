@@ -50,7 +50,7 @@ export const getDateFormatter = (locale: string, interval: string) => {
 const getNumberFormatter = (locale: string, currency?: string): Intl.NumberFormat => {
   if (!currency) return new Intl.NumberFormat(locale);
 
-  const normalizedCurrency = currency.toLocaleUpperCase();
+  const normalizedCurrency = currency.toUpperCase();
   if (!formatters[locale]) formatters[locale] = {};
   if (!formatters[locale][normalizedCurrency]) {
     formatters[locale][normalizedCurrency] = new Intl.NumberFormat(locale, {
@@ -106,7 +106,7 @@ export const counterValueFormatter = ({
   }
 
   const formatter = getNumberFormatter(locale, currency);
-  const upperCaseTicker = ticker.trim().toLocaleUpperCase();
+  const upperCaseTicker = ticker.trim().toUpperCase();
 
   if (shorten && t) {
     return `${formatShortenedValue(formatter, value, t)} ${upperCaseTicker}`.trim();
