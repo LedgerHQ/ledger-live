@@ -58,6 +58,11 @@ export default class PortfolioPage {
   stablecoinListId = "StablecoinList";
   cryptosSectionHeaderId = "portfolio-cryptos-section-header";
   stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
+  portfolioStocksListId = "PortfolioStocksList";
+  stocksListId = "StocksList";
+  stocksSectionHeaderId = "portfolio-stocks-section-header";
+  stocksDiscoveryId = "portfolio-stocks-discovery";
+  stocksDiscoveryHeaderId = "portfolio-stocks-discovery-header";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -439,11 +444,20 @@ export default class PortfolioPage {
     jestExpect(count).toBe(expected);
   }
 
+  @Step("Check asset item count within a section")
+  async checkSectionAssetItemCount(sectionId: string, expected: number) {
+    const count = await countElements(getElementsById(new RegExp(`^${sectionId}-item-\\d+$`)));
+    jestExpect(count).toBe(expected);
+  }
+
   @Step("Tap first asset item (wallet 4.0) and return its currency name")
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
     const currencyName = testId.replace("assetItem-", "");
-    await tapByElement(getElementById(this.assetItemRegExp, 0));
+    // The prior test may have scrolled to the bottom (e.g. add-account CTA), leaving the
+    // first asset row clipped and not hittable — scroll it back into view before tapping.
+    await scrollToId(testId, this.emptyPortfolioListId);
+    await tapById(testId);
     return currencyName;
   }
 
@@ -482,5 +496,44 @@ export default class PortfolioPage {
   @Step("Scroll to the top of the portfolio page")
   async scrollToTopOfPortfolioPage() {
     await scrollToId(this.portfolioBalanceNormal, this.accountsListView, 1000, "up");
+  }
+
+  @Step("Check stocks discovery (empty) section is visible")
+  async checkStocksDiscoverySectionVisible() {
+    // The stocks section only renders once the DADA stock-id fetch resolves, so
+    // wait for it to exist before scrolling to avoid scrolling a still-loading list.
+    await waitForElementById(this.stocksDiscoveryHeaderId, 60000, { checkVisibility: false });
+    await scrollToId(this.stocksDiscoveryHeaderId, this.accountsListView);
+    // The discovery container wraps horizontally-overflowing stock pills, so it never
+    // reaches the visibility threshold; assert on the header row (title + "Explore all").
+    await detoxExpect(getElementById(this.stocksDiscoveryId)).toExist();
+    await detoxExpect(getElementById(this.stocksDiscoveryHeaderId)).toBeVisible();
+  }
+
+  @Step("Tap 'Explore all' in the stocks discovery section")
+  async tapStocksExploreAll() {
+    await waitForElementById(this.stocksDiscoveryHeaderId, 60000, { checkVisibility: false });
+    await scrollToId(this.stocksDiscoveryHeaderId, this.accountsListView);
+    await tapById(this.stocksDiscoveryHeaderId);
+  }
+
+  @Step("Check stocks holdings section is visible")
+  async checkStocksHoldingsSectionVisible() {
+    await waitForElementById(this.stocksSectionHeaderId, 60000, { checkVisibility: false });
+    await scrollToId(this.stocksSectionHeaderId, this.accountsListView);
+    await detoxExpect(getElementById(this.stocksSectionHeaderId)).toBeVisible();
+    await detoxExpect(getElementById(this.portfolioStocksListId)).toExist();
+  }
+
+  @Step("Tap stocks section title")
+  async tapStocksSectionTitle() {
+    await waitForElementById(this.stocksSectionHeaderId, 60000, { checkVisibility: false });
+    await scrollToId(this.stocksSectionHeaderId, this.accountsListView);
+    await tapById(this.stocksSectionHeaderId);
+  }
+
+  @Step("Check full stocks list page is visible")
+  async checkStocksListPageVisible() {
+    await this.checkListPageVisible(this.stocksListId);
   }
 }
