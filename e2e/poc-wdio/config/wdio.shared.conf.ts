@@ -12,19 +12,6 @@ import allureReporter from "@wdio/allure-reporter";
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
 const INSTANCES_COUNT = Number(process.env.WDIO_INSTANCES) ?? 1;
 
-const appiumServices: WebdriverIO.Config["services"] = Array.from(
-  { length: INSTANCES_COUNT },
-  (_, i) => [
-    "appium",
-    {
-      args: {
-        allowInsecure: "uiautomator2:chromedriver_autodownload",
-        port: 4723 + i,
-      },
-    },
-  ],
-);
-
 export const config: WebdriverIO.Config = {
   //
   // ====================
@@ -128,7 +115,15 @@ export const config: WebdriverIO.Config = {
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: appiumServices,
+  services: Array.from({ length: INSTANCES_COUNT }, (_, i) => [
+    "appium",
+    {
+      args: {
+        allowInsecure: "uiautomator2:chromedriver_autodownload",
+        port: 4723 + i,
+      },
+    },
+  ]),
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
   // see also: https://webdriver.io/docs/frameworks
@@ -243,7 +238,7 @@ export const config: WebdriverIO.Config = {
     };
     await close();
     await init(capabilities["custom:capa"].websocketPort);
-    ADBUtils.startLogcatStream(cid);
+    // ADBUtils.startLogcatStream(cid);
   },
   /**
    * Gets executed before test execution begins. At this point you can access to all global
@@ -270,15 +265,15 @@ export const config: WebdriverIO.Config = {
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
-  beforeTest: async function (test) {
-    //   const options = {
-    //     timeLimit: "300",
-    //     ...(driver.isAndroid ? { bugReport: true } : {}),
-    //     ...(driver.isIOS ? { videoType: "mpeg4" } : {}),
-    //   };
-    // await driver.startRecordingScreen(options);
-    ADBUtils.markTestStart(test.title);
-  },
+  // beforeTest: async function (test) {
+  //   const options = {
+  //     timeLimit: "300",
+  //     ...(driver.isAndroid ? { bugReport: true } : {}),
+  //     ...(driver.isIOS ? { videoType: "mpeg4" } : {}),
+  //   };
+  // await driver.startRecordingScreen(options);
+  // ADBUtils.markTestStart(test.title);
+  // },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
    * beforeEach in Mocha)
@@ -321,17 +316,16 @@ export const config: WebdriverIO.Config = {
         console.warn(`Screenshot skipped (session may be dead): ${message}`);
       }
 
-      const logcatFile = ADBUtils.snapshotLogcatToArtifacts(test.title);
-      if (logcatFile) {
-        try {
-          allureReporter.addAttachment("logcat", readFileSync(logcatFile, "utf8"), "text/plain");
-        } catch (attachErr) {
-          const message = attachErr instanceof Error ? attachErr.message : String(attachErr);
-          console.warn(`Allure logcat attachment skipped: ${message}`);
-        }
-      }
-
-      await ADBUtils.dumpLogcatViaDriver(test.title);
+      // const logcatFile = ADBUtils.snapshotLogcatToArtifacts(test.title);
+      // if (logcatFile) {
+      //   try {
+      //     allureReporter.addAttachment("logcat", readFileSync(logcatFile, "utf8"), "text/plain");
+      //   } catch (attachErr) {
+      //     const message = attachErr instanceof Error ? attachErr.message : String(attachErr);
+      //     console.warn(`Allure logcat attachment skipped: ${message}`);
+      //   }
+      // }
+      // await ADBUtils.dumpLogcatViaDriver(test.title);
     }
   },
 
@@ -366,8 +360,8 @@ export const config: WebdriverIO.Config = {
     const envsData = formatEnvData(JSON.parse(await getEnvs()));
     await appendFile(path.resolve("artifacts/environment.properties"), flagsData + envsData);
 
-    ADBUtils.snapshotLogcatToArtifacts("session-end");
-    ADBUtils.stopLogcatStream();
+    // ADBUtils.snapshotLogcatToArtifacts("session-end");
+    // ADBUtils.stopLogcatStream();
     await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
   },
   /**
@@ -386,9 +380,9 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  onComplete: function () {
-    ADBUtils.stopLogcatStream();
-  },
+  // onComplete: function () {
+  //   ADBUtils.stopLogcatStream();
+  // },
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session
