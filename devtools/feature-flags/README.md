@@ -101,3 +101,12 @@ Two jest projects, mirroring `@devtools/shell`:
 - `pnpm test:native` (`jest.native.config.js`) — `react-native` preset + `@testing-library/react-native`. Runs `*.native.test.{ts,tsx}` only. Render with the `jest/render.native` helper (wraps in the lumen `ThemeProvider`); native modules are mocked in `jest/setup.native.ts`.
 
 `pnpm test` runs both.
+
+## Typecheck
+
+`pnpm typecheck` runs two `tsc` passes:
+
+- `tsconfig.json` — `moduleSuffixes: [".web", ""]`; covers `.web.*` and platform-agnostic files, excludes `src/**/*.native.*`.
+- `tsconfig.native.json` — `moduleSuffixes: [".native", ""]`; covers `src/**/*.native.*`.
+
+Editors only load `tsconfig.json`, so use explicit `.native` / `.web` suffixes in cross-variant imports (e.g. `../pill/Pill.native`).
