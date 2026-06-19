@@ -92,10 +92,7 @@ describe("TezosFeeRow", () => {
 
   it("returns null when the transaction is not tezos", () => {
     render(
-      <TezosFeeRow
-        account={tezosAccount}
-        transaction={{ family: "bitcoin" } as Transaction}
-      />,
+      <TezosFeeRow account={tezosAccount} transaction={{ family: "bitcoin" } as Transaction} />,
     );
 
     expect(screen.queryByText("Network fees")).toBeNull();
@@ -121,11 +118,7 @@ describe("TezosFeeRow", () => {
     };
 
     render(
-      <TezosFeeRow
-        account={tokenAccount}
-        parentAccount={tezosAccount}
-        transaction={transaction}
-      />,
+      <TezosFeeRow account={tokenAccount} parentAccount={tezosAccount} transaction={transaction} />,
     );
 
     expect(screen.getByText("Network fees")).toBeTruthy();
