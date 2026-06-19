@@ -206,15 +206,25 @@ function isSpeculosRequest(url: string): boolean {
 const DECODED_BODY_HEADERS = new Set(["content-encoding", "content-length"]);
 
 function decodeBody(buffer: Buffer, encoding?: string): Buffer {
-  switch (encoding) {
-    case "gzip":
-      return zlib.gunzipSync(buffer);
-    case "br":
-      return zlib.brotliDecompressSync(buffer);
-    case "deflate":
-      return zlib.inflateSync(buffer);
-    default:
-      return buffer;
+  // Some responses (e.g. redirects) advertise a content-encoding but carry an
+  // empty body, and some fetch implementations transparently decompress the
+  // body while leaving the header in place. In both cases decompression would
+  // throw (Z_BUF_ERROR), so fall back to the raw buffer rather than failing the
+  // whole recording.
+  if (buffer.length === 0) return buffer;
+  try {
+    switch (encoding) {
+      case "gzip":
+        return zlib.gunzipSync(buffer);
+      case "br":
+        return zlib.brotliDecompressSync(buffer);
+      case "deflate":
+        return zlib.inflateSync(buffer);
+      default:
+        return buffer;
+    }
+  } catch {
+    return buffer;
   }
 }
 

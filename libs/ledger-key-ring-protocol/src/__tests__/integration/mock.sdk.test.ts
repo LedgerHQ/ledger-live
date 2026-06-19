@@ -15,6 +15,7 @@ const nonMockableScenarios = [
   "userRefusesAuth", // can't simulate device interaction at the moment
   "userRefusesRemoveMember", // can't simulate device interaction at the moment
   "ringInitPreservesLedgerSyncMember", // mock SDK does not model per-app member eviction
+  "keycloakAuth", // exercises the real Keycloak auth flow, not a mockable TrustchainSDK operation
 ];
 
 const scenarioFolder = path.join(__dirname, "../../../tests/scenarios");

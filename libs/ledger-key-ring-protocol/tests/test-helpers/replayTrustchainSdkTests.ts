@@ -11,6 +11,11 @@ setEnv("GET_CALLS_RETRY", 0);
 
 /**
  * Volatile headers added by Node.js or MSW that vary between versions.
+ *
+ * `cookie` is excluded too: cookies are reconstructed by the fetch-cookie jar
+ * from recorded `Set-Cookie` headers, which get comma-collapsed when serialized
+ * through `Headers`, so the replayed `cookie` header is not reproducible. Replay
+ * serves responses by sequence index (not by cookie), so this is safe to ignore.
  */
 const VOLATILE_HEADERS = new Set([
   "user-agent",
@@ -18,6 +23,7 @@ const VOLATILE_HEADERS = new Set([
   "connection",
   "accept-encoding",
   "host",
+  "cookie",
 ]);
 
 /**
