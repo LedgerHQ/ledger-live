@@ -20,6 +20,7 @@ import {
   SolanaInvalidValidator,
   SolanaMemoIsTooLong,
   SolanaRecipientAssociatedTokenAccountWillBeFunded,
+  SolanaStakeAccountAmountTooLow,
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountIsNotUndelegatable,
   SolanaStakeAccountNotFound,
@@ -57,6 +58,7 @@ import {
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
   getStakeAccountMinimumBalanceForRentExemption,
+  getStakeMinimumDelegation,
   ParsedOnChainMintWithInfo,
 } from "./network/chain/web3";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
@@ -644,15 +646,30 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
   const txAmount = tx.useAllAmount ? spendable : tx.amount;
 
+  const stakeMinimumDelegation = await getStakeMinimumDelegation(api);
+
+  const makeAmountTooLowError = () => {
+    const feesUnit = getFeesUnit(mainAccount.currency);
+    const ticker = mainAccount.currency.ticker ?? feesUnit.code ?? "";
+    return new SolanaStakeAccountAmountTooLow("", {
+      minimumAmount:
+        `${formatCurrencyUnit(feesUnit, new BigNumber(stakeMinimumDelegation))} ${ticker}`.trim(),
+    });
+  };
+
   if (tx.useAllAmount) {
     if (txAmount.eq(0)) {
       errors.amount = new NotEnoughBalance();
+    } else if (txAmount.lt(stakeMinimumDelegation)) {
+      errors.amount = makeAmountTooLowError();
     }
   } else {
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
     } else if (txAmount.gt(spendable)) {
       errors.amount = new NotEnoughBalance();
+    } else if (txAmount.lt(stakeMinimumDelegation)) {
+      errors.amount = makeAmountTooLowError();
     }
   }
 
