@@ -86,7 +86,7 @@ export default defineCommand({
         );
       }
 
-      await deletePrivateKey();
+      deletePrivateKey();
       session.wipeRing();
       session.write();
       out.ringDestroy(remoteDestroySucceeded);

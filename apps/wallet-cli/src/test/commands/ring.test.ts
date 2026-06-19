@@ -83,16 +83,17 @@ describe("ring — happy path", () => {
   let decFile: string;
 
   beforeAll(async () => {
+    _store.clear();
     ({ dir, env } = makeTmpDir());
     plainFile = join(dir, "plain.txt");
     encFile = join(dir, "test.enc");
     decFile = join(dir, "test.dec");
     await Bun.write(plainFile, "hello key ring");
 
-    initResult = await runCli(
-      ["ring", "init", "--name", "test-member", "--unsecure-no-password"],
-      { ...env, ...MOCK_ENV_DMK },
-    );
+    initResult = await runCli(["ring", "init", "--name", "test-member", "--unsecure-no-password"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+    });
     expect(initResult.exitCode, `init failed: ${initResult.stderr}`).toBe(0);
   });
 
@@ -140,7 +141,18 @@ describe("ring — happy path", () => {
 
   it("encrypt --output json reports dest and bytes", async () => {
     const r = await runCli(
-      ["ring", "encrypt", "--key", "prod", "--input", plainFile, "--out", encFile, "--output", "json"],
+      [
+        "ring",
+        "encrypt",
+        "--key",
+        "prod",
+        "--input",
+        plainFile,
+        "--out",
+        encFile,
+        "--output",
+        "json",
+      ],
       env,
     );
     expect(r.exitCode, r.stderr).toBe(0);
@@ -160,7 +172,18 @@ describe("ring — happy path", () => {
 
   it("decrypt --output json reports dest", async () => {
     const r = await runCli(
-      ["ring", "decrypt", "--key", "prod", "--input", encFile, "--out", decFile, "--output", "json"],
+      [
+        "ring",
+        "decrypt",
+        "--key",
+        "prod",
+        "--input",
+        encFile,
+        "--out",
+        decFile,
+        "--output",
+        "json",
+      ],
       env,
     );
     expect(r.exitCode, r.stderr).toBe(0);
@@ -194,6 +217,7 @@ describe("ring — with password", () => {
   let encFile: string;
 
   beforeAll(async () => {
+    _store.clear();
     ({ dir, env } = makeTmpDir());
     plainFile = join(dir, "plain.txt");
     encFile = join(dir, "test.enc");
@@ -203,20 +227,22 @@ describe("ring — with password", () => {
   afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
   it("init stores password-wrapped key", async () => {
-    const r = await runCli(
-      ["ring", "init", "--name", "pw-member"],
-      { ...env, ...MOCK_ENV_DMK, WALLET_PASS: "testpw" },
-    );
+    const r = await runCli(["ring", "init", "--name", "pw-member"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "testpw",
+    });
     expect(r.exitCode, r.stderr).toBe(0);
     expect(r.stdout).toContain("pw-member");
   });
 
   it("init rejects empty password", async () => {
     const { dir: d2, env: e2 } = makeTmpDir();
-    const r = await runCli(
-      ["ring", "init", "--name", "pw-member", "--output", "json"],
-      { ...e2, ...MOCK_ENV_DMK, WALLET_PASS: "" },
-    );
+    const r = await runCli(["ring", "init", "--name", "pw-member", "--output", "json"], {
+      ...e2,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "",
+    });
     rmSync(d2, { recursive: true, force: true });
     expect(r.exitCode).toBe(1);
     expect(r.stdout).toMatch(/must not be empty/i);
@@ -229,7 +255,18 @@ describe("ring — with password", () => {
 
   it("encrypt with correct password decrypts member credentials", async () => {
     const r = await runCli(
-      ["ring", "encrypt", "--key", "prod", "--input", plainFile, "--out", encFile, "--output", "json"],
+      [
+        "ring",
+        "encrypt",
+        "--key",
+        "prod",
+        "--input",
+        plainFile,
+        "--out",
+        encFile,
+        "--output",
+        "json",
+      ],
       { ...env, WALLET_PASS: "testpw" },
     );
     expect(r.exitCode, r.stderr).toBe(0);
@@ -239,7 +276,18 @@ describe("ring — with password", () => {
 
   it("encrypt with wrong password fails at decryption", async () => {
     const r = await runCli(
-      ["ring", "encrypt", "--key", "prod", "--input", plainFile, "--out", encFile, "--output", "json"],
+      [
+        "ring",
+        "encrypt",
+        "--key",
+        "prod",
+        "--input",
+        plainFile,
+        "--out",
+        encFile,
+        "--output",
+        "json",
+      ],
       { ...env, WALLET_PASS: "wrongpw" },
     );
     expect(r.exitCode).toBe(1);
@@ -247,7 +295,9 @@ describe("ring — with password", () => {
   });
 
   it("destroy with correct password fully destroys the ring", async () => {
-    const r = await runCliWithStdin(["ring", "destroy"], { ...env, WALLET_PASS: "testpw" }, ["destroy"]);
+    const r = await runCliWithStdin(["ring", "destroy"], { ...env, WALLET_PASS: "testpw" }, [
+      "destroy",
+    ]);
     expect(r.exitCode, r.stderr).toBe(0);
   });
 
@@ -256,4 +306,3 @@ describe("ring — with password", () => {
     expect(r.exitCode).toBe(1);
   });
 });
-

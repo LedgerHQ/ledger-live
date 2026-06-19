@@ -42,7 +42,7 @@ export async function savePrivateKey(
   } else {
     firstLine = hex;
   }
-  const entry = await getEntry();
+  const entry = getEntry();
   entry.setPassword(pubkey ? `${firstLine}\n${pubkey}` : firstLine);
 }
 
@@ -51,7 +51,7 @@ export async function loadMemberCredentials(
 ): Promise<MemberCredentials | null> {
   let stored: string | null;
   try {
-    stored = (await getEntry()).getPassword();
+    stored = getEntry().getPassword();
   } catch {
     return null;
   }
@@ -63,7 +63,8 @@ export async function loadMemberCredentials(
 
   let privatekey: string;
   if (firstLine.startsWith(ENC_PREFIX)) {
-    if (!wrappingKey) throw new Error("Private key is password-protected but no password provided.");
+    if (!wrappingKey)
+      throw new Error("Private key is password-protected but no password provided.");
     const ct = hexToBytes(firstLine.slice(ENC_PREFIX.length));
     try {
       privatekey = new TextDecoder().decode(await decryptData(wrappingKey, ct));
@@ -78,8 +79,8 @@ export async function loadMemberCredentials(
   return { privatekey, pubkey };
 }
 
-export async function deletePrivateKey(): Promise<void> {
+export function deletePrivateKey(): void {
   try {
-    (await getEntry()).deletePassword();
+    getEntry().deletePassword();
   } catch {}
 }

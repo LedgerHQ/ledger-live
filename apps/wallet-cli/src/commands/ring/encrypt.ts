@@ -1,5 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import { chmod } from "node:fs/promises";
 import { loadDomainKeyInteractive } from "../../key-ring/load-key-ring";
 import { encryptData } from "../../key-ring/crypto";
 import { outputOption, resolveOutputFormat, resolveUserPath } from "../inputs";
@@ -10,14 +11,11 @@ export default defineCommand({
   description:
     "Encrypt data with a key from your Ledger Key Ring. Files via -i/-o, text via stdin/stdout.",
   options: {
-    key: option(
-      z.string().min(1).max(253).regex(/^\S+$/, "key name must not contain whitespace"),
-      {
-        description:
-          "Key name used to derive a scoped encryption key (e.g. my-oss-project, openClaw-prod)",
-        short: "k",
-      },
-    ),
+    key: option(z.string().min(1).max(253).regex(/^\S+$/, "key name must not contain whitespace"), {
+      description:
+        "Key name used to derive a scoped encryption key (e.g. my-oss-project, openClaw-prod)",
+      short: "k",
+    }),
     input: option(z.string().optional(), {
       description: "Input file (default: stdin)",
       short: "i",
@@ -57,6 +55,7 @@ export default defineCommand({
       if (flags.out) {
         const dest = resolveUserPath(flags.out);
         await Bun.write(dest, ciphertext);
+        await chmod(dest, 0o600).catch(() => {});
         out.ringEncrypt({ dest, bytes: ciphertext.byteLength });
       } else {
         process.stdout.write(Buffer.from(ciphertext));
