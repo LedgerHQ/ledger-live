@@ -197,6 +197,20 @@ describe("counterValueFormatter", () => {
       expect(result).toMatch(/T|trillion/i);
     });
 
+    it("formats shortened crypto countervalues with the Ledger unit instead of Intl currency code", () => {
+      const result = counterValueFormatter({
+        value: 35_700_000,
+        locale: "en-US",
+        currency: "BTC",
+        shorten: true,
+        t: i18next.t,
+      });
+
+      expect(result).toMatch(/^₿/);
+      expect(result).toMatch(/m/i);
+      expect(result).not.toContain("BTC");
+    });
+
     it("handles negative values in shortened format", () => {
       const result = counterValueFormatter({
         value: -5000000,
