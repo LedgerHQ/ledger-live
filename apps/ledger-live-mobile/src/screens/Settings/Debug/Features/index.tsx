@@ -3,6 +3,16 @@ import { useNavigation } from "@react-navigation/native";
 import { Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { debugOsUpdateBannerModeSelector } from "~/reducers/settings";
+import { setDebugOsUpdateBannerMode } from "~/actions/settings";
+import type { DebugOsUpdateBannerMode } from "~/reducers/types";
+
+const OS_UPDATE_BANNER_OPTIONS: { value: DebugOsUpdateBannerMode; label: string }[] = [
+  { value: "off", label: "Off" },
+  { value: "card", label: "Card" },
+  { value: "compact", label: "Compact" },
+];
 import BLEPairingFlow from "./BLEPairingFlow";
 import CustomImage from "./CustomImage";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
@@ -15,6 +25,8 @@ import InfoModal from "~/modals/Info";
 export default function Features() {
   const [showBaseModalDemo, setShowBaseModalDemo] = useState(false);
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const dispatch = useDispatch();
+  const osUpdateBannerMode = useSelector(debugOsUpdateBannerModeSelector);
   const navigateToLargeMover = () => {
     navigation.navigate(ScreenName.LargeMoverLandingPage, {
       currencyIds: "BTC,ETH,SOL",
@@ -53,6 +65,23 @@ export default function Features() {
         iconLeft={<IconsLegacy.NanoFirmwareUpdateMedium size={24} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugFirmwareUpdate)}
       />
+      <SettingsRow
+        title="Device OS Update Banner"
+        desc="Debug: force-show a banner variant on Wallet & My Ledger"
+        iconLeft={<IconsLegacy.NanoFirmwareUpdateMedium size={24} color="black" />}
+      />
+      {OS_UPDATE_BANNER_OPTIONS.map(option => (
+        <SettingsRow
+          key={option.value}
+          title={option.label}
+          compact
+          onPress={() => dispatch(setDebugOsUpdateBannerMode(option.value))}
+        >
+          {osUpdateBannerMode === option.value ? (
+            <IconsLegacy.CheckAloneMedium size={20} color="black" />
+          ) : null}
+        </SettingsRow>
+      ))}
       <SettingsRow
         title="Custom lockscreen graphics"
         desc="Tool for testing the flow's graphics"
