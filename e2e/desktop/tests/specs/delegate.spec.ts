@@ -25,10 +25,6 @@ const e2eDelegationAccounts = [
     xrayTicket: "B2CQA-2740, B2CQA-2770",
   },
   {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2742",
-  },
-  {
     delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
     xrayTicket: "B2CQA-2741",
   },
@@ -51,6 +47,10 @@ const e2eDelegationAccountsWithoutBroadcast = [
   {
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Figment"),
     xrayTicket: "B2CQA-3020",
+  },
+  {
+    delegate: new Delegate(Account.SOL_2, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2742",
   },
 ];
 

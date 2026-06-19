@@ -16,17 +16,19 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { formatAPIValueWithCode } from "../common";
+import { SolanaStakeAccountAmountTooLow } from "../errors";
 import { isValidBase58Address, isSolanaStakingTransactionIntent } from "../logic";
 import { getAtaDataLengthForMint } from "../helpers/token";
-import { ChainAPI } from "../network";
-import { getMaybeTokenMint } from "../network/chain/web3";
+import { getMaybeTokenMint, getStakeAccountMinimumBalanceForRentExemption } from "../network/chain/web3";
 import type { SolanaTokenProgram } from "../types";
+import type { ChainAPI } from "../network";
 
 export async function validateIntent(
+  api: ChainAPI,
   transactionIntent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   customFees?: FeeEstimation,
-  api?: ChainAPI,
 ): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -35,7 +37,7 @@ export async function validateIntent(
   const isTokenTransfer = transactionIntent.asset.type !== "native";
 
   if (isSolanaStakingTransactionIntent(transactionIntent)) {
-    return validateStakingIntent(transactionIntent, balances, estimatedFees);
+    return validateStakingIntent(api, transactionIntent, balances, estimatedFees);
   }
 
   validateRecipient(transactionIntent, errors);
@@ -107,11 +109,12 @@ async function validateTokenTransferNativeCoverage(
   }
 }
 
-function validateStakingIntent(
+async function validateStakingIntent(
+  api: ChainAPI,
   intent: TransactionIntent,
   balances: Balance[],
   estimatedFees: bigint,
-): TransactionValidation {
+): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
@@ -125,10 +128,11 @@ function validateStakingIntent(
   let totalSpent: bigint;
 
   switch (intent.type) {
-    case "stake.createAccount":
-      amount = computeCreateAccountAmount(intent, available, estimatedFees, errors);
+    case "stake.createAccount": {
+      amount = await computeCreateAccountAmount(api, intent, available, estimatedFees, errors);
       totalSpent = amount + estimatedFees;
       break;
+    }
     case "stake.delegate":
       amount = 0n;
       totalSpent = estimatedFees;
@@ -167,22 +171,65 @@ function validateStakingRecipient(intent: TransactionIntent, errors: Record<stri
   }
 }
 
-function computeCreateAccountAmount(
+async function computeCreateAccountAmount(
+  api: ChainAPI,
   intent: TransactionIntent,
   available: bigint,
   estimatedFees: bigint,
   errors: Record<string, Error>,
-): bigint {
+): Promise<bigint> {
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();
   }
+  const amountTooLowError = (stakeMinimumDelegation: bigint) =>
+    new SolanaStakeAccountAmountTooLow("", {
+      minimumAmount: formatAPIValueWithCode(stakeMinimumDelegation),
+    });
+
+  // Best-effort: if the RPC is unavailable or unsupported, skip the minimum-delegation
+  // check rather than failing validation entirely.
+  const fetchStakeMinimumDelegation = async (): Promise<bigint | null> => {
+    try {
+      return BigInt(await api.getStakeMinimumDelegation());
+    } catch {
+      return null;
+    }
+  };
+  const fetchStakeAccountRentExempt = async (): Promise<bigint | null> => {
+    try {
+      return BigInt(await getStakeAccountMinimumBalanceForRentExemption(api));
+    } catch {
+      return null;
+    }
+  };
+
   if (intent.useAllAmount) {
-    return clampPositive(available - estimatedFees);
+    const allAmount = clampPositive(available - estimatedFees);
+    if (!errors.recipient && !errors.amount && allAmount > 0n) {
+      const [stakeMinimumDelegation, stakeAccRentExempt] = await Promise.all([
+        fetchStakeMinimumDelegation(),
+        fetchStakeAccountRentExempt(),
+      ]);
+      if (stakeMinimumDelegation !== null) {
+        const delegatedAmount = clampPositive(
+          stakeAccRentExempt !== null ? allAmount - stakeAccRentExempt : allAmount,
+        );
+        if (delegatedAmount < stakeMinimumDelegation) {
+          errors.amount = amountTooLowError(stakeMinimumDelegation);
+        }
+      }
+    }
+    return allAmount;
   }
   if (intent.amount <= 0n) {
     errors.amount = new AmountRequired();
   } else if (intent.amount + estimatedFees > available) {
     errors.amount = new NotEnoughBalance();
+  } else if (!errors.recipient) {
+    const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
+    if (stakeMinimumDelegation !== null && intent.amount < stakeMinimumDelegation) {
+      errors.amount = amountTooLowError(stakeMinimumDelegation);
+    }
   }
   return intent.amount;
 }

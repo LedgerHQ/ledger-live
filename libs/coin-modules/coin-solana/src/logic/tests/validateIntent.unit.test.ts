@@ -12,19 +12,48 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { validateIntent } from "../validateIntent";
+import { SolanaStakeAccountAmountTooLow } from "../../errors";
 import type { ChainAPI } from "../../network";
 import { getMaybeTokenMint } from "../../network/chain/web3";
+import { validateIntent as validateIntentRaw } from "../validateIntent";
+
+const SENDER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
+const RECIPIENT = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
+
+const STAKE_ACC_RENT_EXEMPT = 2_282_880;
 
 jest.mock("../../network/chain/web3", () => ({
   __esModule: true,
   getMaybeTokenMint: jest.fn(),
+  getStakeAccountMinimumBalanceForRentExemption: jest.fn((api: ChainAPI) =>
+    api.getMinimumBalanceForRentExemption(200),
+  ),
 }));
-
 const mockedGetMaybeTokenMint = getMaybeTokenMint as jest.MockedFunction<typeof getMaybeTokenMint>;
+function makeApi(
+  stakeMinimumDelegation = 1_000_000_000,
+  stakeAccRentExempt: number = STAKE_ACC_RENT_EXEMPT,
+): ChainAPI {
+  return {
+    getStakeMinimumDelegation: jest.fn().mockResolvedValue(stakeMinimumDelegation),
+    getMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(stakeAccRentExempt),
+  } as unknown as ChainAPI;
+}
 
-const SENDER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
-const RECIPIENT = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
+type IntentArg = Parameters<typeof validateIntentRaw>[1];
+type BalancesArg = Parameters<typeof validateIntentRaw>[2];
+type FeesArg = Parameters<typeof validateIntentRaw>[3];
+
+const validateIntent = (
+  intent: IntentArg,
+  balances: BalancesArg,
+  customFees?: FeesArg,
+  api?: ChainAPI,
+): ReturnType<typeof validateIntentRaw> => {
+  const resolvedApi =
+    api ?? (intent.intentType === "staking" ? makeApi() : (undefined as unknown as ChainAPI));
+  return validateIntentRaw(resolvedApi, intent, balances, customFees);
+};
 
 function makeIntent(overrides?: Partial<TransactionIntent>): TransactionIntent {
   return {
@@ -218,6 +247,143 @@ describe("validateIntent", () => {
         );
 
         expect(result.amount).toBe(0n);
+      });
+
+      it("should error when amount is below the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000),
+          makeStakeIntent({ amount: 999_999_999n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+        expect(
+          (result.errors.amount as Error & { minimumAmount?: string })?.minimumAmount,
+        ).toBe("1 SOL");
+      });
+
+      it("should error when useAllAmount yields a value below the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000),
+          makeStakeIntent({ amount: 0n, useAllAmount: true }),
+          makeBalances(500_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+      });
+
+      it("should error when useAllAmount minus rent-exempt drops below the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000, STAKE_ACC_RENT_EXEMPT),
+          makeStakeIntent({ amount: 0n, useAllAmount: true }),
+          makeBalances(1_000_500_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+      });
+
+      it("should pass when amount is at or above the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000),
+          makeStakeIntent({ amount: 1_000_000_000n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors).toEqual({});
+      });
+
+      it("should fetch the minimum delegation from the chain api", async () => {
+        const api = makeApi(2_500_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ amount: 2_000_000_000n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(api.getStakeMinimumDelegation).toHaveBeenCalledTimes(1);
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+      });
+
+      it("should skip getStakeMinimumDelegation when recipient is missing", async () => {
+        const api = makeApi(1_000_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ recipient: "" }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("should skip getStakeMinimumDelegation when recipient is invalid", async () => {
+        const api = makeApi(1_000_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ recipient: "not-valid!!!" }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("should skip getStakeMinimumDelegation when useAllAmount with missing recipient", async () => {
+        const api = makeApi(1_000_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ recipient: "", amount: 0n, useAllAmount: true }),
+          makeBalances(5_000_000_000n, 890_880n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("should return validation errors instead of rejecting when getStakeMinimumDelegation would fail and recipient is invalid", async () => {
+        const api = {
+          getStakeMinimumDelegation: jest
+            .fn()
+            .mockRejectedValue(new Error("RPC unreachable")),
+        } as unknown as ChainAPI;
+
+        await expect(
+          validateIntentRaw(
+            api,
+            makeStakeIntent({ recipient: "not-valid!!!" }),
+            makeBalances(5_000_000_000n, 0n),
+            { value: 5000n },
+          ),
+        ).resolves.toMatchObject({
+          errors: { recipient: expect.any(InvalidAddress) },
+        });
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("skips the minimum-delegation check when the RPC call fails (best-effort)", async () => {
+        const api = {
+          getStakeMinimumDelegation: jest
+            .fn()
+            .mockRejectedValue(new Error("RPC unreachable")),
+        } as unknown as ChainAPI;
+
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ amount: 1n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(api.getStakeMinimumDelegation).toHaveBeenCalledTimes(1);
+        expect(result.errors).toEqual({});
       });
     });
 

@@ -20,6 +20,9 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
   setTeamOwner(
     BST_DELEGATE_CURRENCIES.has(delegation.account.currency.id) ? Team.BST : Team.COIN_INTEGRATION,
   );
+  if (delegation.account.currency.id === Currency.SOL.id) {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+  }
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
