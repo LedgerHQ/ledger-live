@@ -1,0 +1,28 @@
+{
+  "name": "@ledgerhq/live-e2e-shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./commands": "./lib/commands.mjs"
+  },
+  "scripts": {
+    "build:e2e": "node scripts/build-bundle.mjs",
+    "typecheck": "tsc --noEmit --project tsconfig.json --customConditions node",
+    "lint": "oxlint .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check"
+  },
+  "dependencies": {
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.5"
+  }
+}
