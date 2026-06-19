@@ -70,9 +70,13 @@ export default defineCommand({
             trustchainFromMeta(trustchainMeta),
             memberCredentials,
           );
-          await sdk.destroyTrustchain(latest, memberCredentials);
+          const { trustchainDestroyed } = await sdk.destroyApplication(latest, memberCredentials);
           remoteDestroySucceeded = true;
-          destroySpin?.success("Ledger Key Ring destroyed");
+          destroySpin?.success(
+            trustchainDestroyed
+              ? "Ledger Key Ring destroyed"
+              : "wallet-cli application deactivated (Ledger Key Ring kept for other apps)",
+          );
         } catch {
           destroySpin?.error("Remote teardown failed (continuing with local wipe)");
         }
