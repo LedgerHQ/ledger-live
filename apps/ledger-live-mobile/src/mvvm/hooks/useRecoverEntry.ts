@@ -25,8 +25,6 @@ export function useRecoverEntry() {
   }, [hasClickedRecover, dispatch]);
 
   const openRecover = useCallback(() => {
-    // TODO: not-subscribed should open the Feature Intro bottom-sheet; falls back to the
-    // Ledger Recover screen until it is wired.
     navigation.navigate(ScreenName.Recover, {
       platform: protectId,
       device: lastConnectedDevice ?? undefined,

@@ -1,11 +1,19 @@
-export const BACKUP_HUB_TRACKING_PAGE_NAME = "Backup Hub";
+import type { BackupBucket } from "./types";
+
+export const BACKUP_HUB_TRACKING_PAGE_NAME = "Backup hub";
 
 export const BACKUP_HUB_TRACKING_BUTTON = {
   recover: "Ledger Recover",
-  recoveryKey: "Recovery Key",
-  secretRecoveryPhrase: "Secret Recovery Phrase",
-  compare: "Compare backup methods",
+  recoveryKey: "Ledger Recovery Key",
+  secretRecoveryPhrase: "24-words accessories",
+  compare: "Compare all",
 } as const;
+
+export const BACKUP_HUB_RECOVER_TRACKING_STATUS: Record<BackupBucket, string> = {
+  "not-subscribed": "New",
+  "in-progress": "in progress",
+  done: "done",
+};
 
 export const RECOVER_DEEPLINK_BASE = "ledgerlive://recover";
 

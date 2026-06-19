@@ -3,6 +3,7 @@ import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useMarket } from "../useMarket";
 import { addStarredMarketCoins } from "~/renderer/actions/settings";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider", () => ({
   useMarketData: () => ({
@@ -151,6 +152,38 @@ describe("useMarket", () => {
         expect(result.current.starredMarketCoins).not.toContain("ethereum");
       });
     });
+
+    it("toggleStar tracks favourite button clicks", async () => {
+      const { result } = renderHook(() => useMarket(), {
+        initialState: {
+          ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
+          settings: createSettingsState([]),
+          market: createMarketState([]),
+        },
+      });
+
+      await act(async () => {
+        result.current.toggleStar("ethereum", false);
+      });
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "favourite",
+        currency: "ethereum",
+        page: "",
+        is_favourite: true,
+      });
+
+      await act(async () => {
+        result.current.toggleStar("ethereum", true);
+      });
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "favourite",
+        currency: "ethereum",
+        page: "",
+        is_favourite: false,
+      });
+    });
   });
 
   describe("category (asset discoverability)", () => {
@@ -202,6 +235,29 @@ describe("useMarket", () => {
 
       expect(result.current.emptyState).toBeUndefined();
       expect(result.current.marketData).toEqual([]);
+    });
+  });
+
+  describe("pagination reset", () => {
+    it("resets page and currentPage when sort order changes", async () => {
+      const initialState = {
+        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
+        settings: createSettingsState([]),
+        market: {
+          ...createMarketState([]),
+          marketParams: { ...createMarketState([]).marketParams, page: 3 },
+          currentPage: 3,
+        },
+      };
+
+      const { result } = renderHook(() => useMarket(), { initialState });
+
+      await act(async () => {
+        result.current.toggleSortBy();
+      });
+
+      expect(result.current.marketParams.page).toBe(1);
+      expect(result.current.marketCurrentPage).toBe(1);
     });
   });
 

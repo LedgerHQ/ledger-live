@@ -14,22 +14,25 @@ import type { BackupHubScreenViewModel } from "./useBackupHubScreenViewModel";
 
 const RECOVER_ROW_BY_BUCKET: Record<
   BackupBucket,
-  { descriptionKey: string; showCta: boolean; isWarning: boolean }
+  { descriptionKey: string; showCta: boolean; isWarning: boolean; showNotificationDot: boolean }
 > = {
   "not-subscribed": {
     descriptionKey: "myWallet.backupHub.recover.notSubscribed",
     showCta: true,
     isWarning: false,
+    showNotificationDot: true,
   },
   "in-progress": {
     descriptionKey: "myWallet.backupHub.recover.inProgress",
     showCta: false,
     isWarning: true,
+    showNotificationDot: true,
   },
   done: {
     descriptionKey: "myWallet.backupHub.recover.done",
     showCta: false,
     isWarning: false,
+    showNotificationDot: false,
   },
 };
 
@@ -80,6 +83,7 @@ export function BackupHubScreenView({
               <LedgerRecoverRow
                 showCta={recoverRow.showCta}
                 isWarning={recoverRow.isWarning}
+                showNotificationDot={recoverRow.showNotificationDot}
                 title={t("myWallet.backupHub.recover.title")}
                 description={t(recoverRow.descriptionKey)}
                 ctaLabel={t("myWallet.backupHub.recover.discover")}

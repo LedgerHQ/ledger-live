@@ -7,7 +7,7 @@ import { useTranslation } from "~/context/Locale";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
-import { ScreenName, NavigatorName } from "~/const";
+import { ScreenName, NavigatorName, BASE_NAVIGATOR_ID } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
 import EditDeviceName from "~/screens/EditDeviceName";
@@ -108,7 +108,7 @@ import { getEarnScreenOptions } from "./getEarnScreenOptions";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 import LiveAppModalScreen from "LLM/features/LiveAppModal";
 
-const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
 type OperationDetailsRouteProp = RouteProp<
   BaseNavigatorStackParamList,
@@ -196,7 +196,7 @@ export default function BaseNavigator() {
   return (
     <>
       <RootDrawer drawer={route.params?.drawer} />
-      <Stack.Navigator screenOptions={nativeStackScreenOptions}>
+      <Stack.Navigator id={BASE_NAVIGATOR_ID} screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
         <Stack.Screen
           name={NavigatorName.MyLedger}
@@ -592,6 +592,9 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Earn}
           component={EarnLiveAppNavigator}
+          // Initial header from the entry `intent` param (first paint). Once the live-app loads,
+          // `useEarnIntentFlowPresentation` becomes the live owner and overrides this imperatively
+          // via `getParent(BASE_NAVIGATOR_ID).setOptions` as the webview route changes.
           options={props =>
             getEarnScreenOptions(props.route?.params?.params?.intent, t, liveAppCanvasColor)
           }

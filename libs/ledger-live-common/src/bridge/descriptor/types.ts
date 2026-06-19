@@ -90,6 +90,18 @@ export type FeePresetOption = Readonly<{
   disabled?: boolean;
 }>;
 
+export type FeePresetEstimationDescriptor = Readonly<{
+  /**
+   * Preset ids to estimate through the bridge when concrete preset amounts are
+   * not available yet on the transaction
+   */
+  fallbackPresetIds?: readonly string[];
+  /**
+   * Some families can estimate fees before an amount is entered
+   */
+  allowZeroAmount?: boolean | ((transaction: unknown) => boolean);
+}>;
+
 /** Strategy option for coin control (i18n key resolved by the UI layer). */
 export type CoinControlPickingStrategyOption = Readonly<{
   value: number;
@@ -188,6 +200,7 @@ export type FeeDescriptor = {
      * (`prepareTransaction` + `getTransactionStatus`) instead of using `presetAmount` directly.
      */
     shouldEstimateWithBridge?: (transaction: unknown) => boolean;
+    estimation?: FeePresetEstimationDescriptor;
   };
   /**
    * Configuration for custom fee inputs.

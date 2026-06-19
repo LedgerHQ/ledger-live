@@ -159,12 +159,11 @@ export function useCustomFeesViewModelCore({
     if (BigNumber.isBigNumber(directFees) && directFees.gt(0)) return directFees;
 
     const feeRate = patch["maxFeePerGas"] ?? patch["gasPrice"];
-    const txRecord = transaction as Record<string, unknown>;
-    const customGasLimit = BigNumber.isBigNumber(txRecord.customGasLimit)
-      ? txRecord.customGasLimit
-      : null;
+    const customGasLimitValue = Reflect.get(transaction, "customGasLimit");
+    const customGasLimit = BigNumber.isBigNumber(customGasLimitValue) ? customGasLimitValue : null;
+    const gasLimitValue = Reflect.get(transaction, "gasLimit");
     const gasLimit =
-      customGasLimit ?? (BigNumber.isBigNumber(txRecord.gasLimit) ? txRecord.gasLimit : null);
+      customGasLimit ?? (BigNumber.isBigNumber(gasLimitValue) ? gasLimitValue : null);
     if (BigNumber.isBigNumber(feeRate) && BigNumber.isBigNumber(gasLimit)) {
       const localFees = feeRate.times(gasLimit);
       if (localFees.gt(0)) return localFees;

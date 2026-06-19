@@ -9051,41 +9051,6 @@
           "link": "Learn more about our Tracking Policy"
         }
       }
-    },
-    "variantB": {
-      "main": {
-        "title": "Let's improve Ledger Wallet together",
-        "description": "Sharing your Ledger Wallet analytics data helps us understand how people use Ledger Wallet, fix bugs, and offer an improved user experience.",
-        "bulletPoints": {
-          "1": "Analytics data includes page visits, clicks.",
-          "2": "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
-          "3": "Analytics are completely anonymous. We can’t see or collect your personal information."
-        },
-        "ctas": {
-          "refuse": "Refuse",
-          "share": "Share"
-        },
-        "infoText": {
-          "info": "You can revoke your consent any time in the app settings.",
-          "link": "Learn more about our Tracking Policy"
-        }
-      },
-      "details": {
-        "title": "Get a personalized experience",
-        "description": "Sharing your Ledger Wallet personalization data lets us display content that matches your preferences.",
-        "bulletPoints": {
-          "1": "Personalization data includes conversion data, clicks, page visits.",
-          "2": "We cannot track or collect any of your personal or portfolio information."
-        },
-        "ctas": {
-          "refuse": "Refuse",
-          "allow": "Allow"
-        },
-        "infoText": {
-          "info": "You can revoke your consent any time in the app settings.",
-          "link": "Learn more about our Tracking Policy"
-        }
-      }
     }
   },
   "analyticsConsentDrawer": {
@@ -9997,23 +9962,23 @@
       "referral": "Referral"
     },
     "backupHub": {
-      "title": "Wallet backups",
-      "description": "Protect your assets with a combination of backup solutions for your Seed Phrase Recovery.",
+      "title": "Backups of your Secret Recovery Phrase",
+      "description": "Don't lose access to your assets — back up your secret recovery phrase across multiple formats.",
       "compareFooter": "Compare all backup methods",
       "sections": {
-        "digital": "Digital ID-based backups",
+        "digital": "ID-linked digital backup",
         "physical": "Physical backups"
       },
       "recover": {
         "title": "Ledger Recover",
-        "notSubscribed": "Create a backup you can't lose",
-        "inProgress": "Finish setting up your backup.",
+        "notSubscribed": "Restore access by verifying your ID.",
+        "inProgress": "Complete activation",
         "done": "Manage your backup",
         "discover": "Discover"
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key",
-        "description": "A PIN-protected smart card"
+        "description": "A PIN-protected smart card."
       },
       "secretRecoveryPhrase": {
         "title": "24-word metal storage",

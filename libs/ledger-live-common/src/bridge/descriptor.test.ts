@@ -381,6 +381,21 @@ describe("sendFeatures", () => {
     expect(sendFeatures.shouldEstimateFeePresetsWithBridge(bitcoin, {})).toBe(true);
   });
 
+  it("should return empty fee preset fallback ids when not specified", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    expect(sendFeatures.getFeePresetFallbackIds(bitcoin, {})).toEqual([]);
+  });
+
+  it("should expose fee preset fallback ids for evm", () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    expect(sendFeatures.getFeePresetFallbackIds(ethereum, {})).toEqual(["slow", "medium", "fast"]);
+  });
+
+  it("should allow zero amount fee preset estimation for evm", () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    expect(sendFeatures.canEstimateFeePresetsWithZeroAmount(ethereum, {})).toBe(true);
+  });
+
   it("should return empty plugins when not specified", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     expect(sendFeatures.getAmountPlugins(bitcoin)).toEqual([]);

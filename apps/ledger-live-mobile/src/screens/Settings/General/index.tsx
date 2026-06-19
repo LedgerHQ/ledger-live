@@ -1,5 +1,5 @@
 import React from "react";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import { TrackScreen } from "~/analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import ThemeSettingsRow from "./ThemeSettingsRow";
@@ -14,11 +14,6 @@ import WalletSyncRow from "./WalletSyncRow";
 import MevProtection from "./MevProtection";
 
 export default function GeneralSettings() {
-  const llmAnalyticsOptInPrompt = useFeature("llmAnalyticsOptInPrompt");
-  const analyticsOptInFeature = useFeature("analyticsOptIn");
-  const showPersonalizedRecommendationsRow =
-    llmAnalyticsOptInPrompt?.enabled || analyticsOptInFeature?.enabled;
-
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="General" />
@@ -33,7 +28,7 @@ export default function GeneralSettings() {
       <MevProtection />
       <ReportErrorsRow />
       <AnalyticsRow />
-      {showPersonalizedRecommendationsRow ? <PersonalizedRecommendationsRow /> : null}
+      <PersonalizedRecommendationsRow />
     </SettingsNavigationScrollView>
   );
 }

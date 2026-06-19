@@ -46,6 +46,9 @@ function promoteCoinOpToFees({
   coinOp.type = "FEES";
   coinOp.value = fee;
   coinOp.fee = fee;
+  coinOp.recipients = [];
+  // Mark as patched so patchPublicOperations skips this op on subsequent syncs.
+  coinOp.extra = { ...coinOp.extra, patched: true };
 }
 
 function getAleoSubAccounts({
@@ -596,6 +599,7 @@ function ensureFeesParentCoinOp({
       type: "FEES",
       value: privateOp.fee,
       blockHash: privateOp.blockHash ?? "",
+      recipients: [],
       extra: {
         functionId: privateOp.extra?.functionId ?? "",
         transactionType: "private" as const,

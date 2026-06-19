@@ -159,6 +159,7 @@ export async function fetchAllOwnedRecords({
     EXPLORER_TRANSFER_TYPES.PRIVATE,
     EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
     EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+    EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
   ],
 }: {
   currency: CryptoCurrency;
@@ -425,7 +426,7 @@ async function enrichIncomingRecord({
     ciphertext: rawRecord.record_ciphertext,
     viewKey,
   });
-  const microcredits = outputRecord.data?.microcredits;
+  const microcredits = outputRecord.data?.microcredits ?? outputRecord.data?.amount;
 
   if (!microcredits) {
     log(
@@ -454,6 +455,15 @@ export async function enrichPrivateRecord({
   viewKey: string;
 }): Promise<EnrichedPrivateRecord | null> {
   const transactionId = rawRecord.transaction_id.trim();
+
+  // Fee records are not transfer operations.
+  // Their transition lives in details.fee.transition, not details.execution.transitions,
+  // so transition_index may resolve to the wrong execution transition (e.g. the token transfer),
+  // leading to wrong decryption or a crash. Skip them explicitly.
+  if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE) {
+    return null;
+  }
+
   const details = await apiClient.getTransactionById(currency, transactionId);
 
   if (shouldSkipPublicToPrivateRecord(rawRecord, address)) {

@@ -167,10 +167,53 @@ describe("tokens utils", () => {
         value: new BigNumber(42),
         fee: new BigNumber(42),
         id: encodeOperationId(ledgerAccountId, "tx-out", "FEES"),
+        recipients: [],
+        extra: expect.objectContaining({ patched: true }),
       });
       expect(updatedCoinOperations[0].subOperations?.[0]).toMatchObject({
         type: "OUT",
         accountId: tokenAccountId,
+      });
+    });
+
+    it("should promote an existing semi-public coin op to FEES, clearing recipients and marking as patched", async () => {
+      const txHash = "tx-semi-promote";
+      const existingCoinOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        accountId: ledgerAccountId,
+        recipients: ["aleo1recipient"],
+        extra: {
+          functionId: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+          transactionType: "private",
+        },
+      });
+      const tokenOp = getMockedTokenOperation({
+        hash: txHash,
+        recipients: ["aleo1recipient"],
+        senders: [address],
+        fee: new BigNumber(77),
+        extra: {
+          functionId: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+          transactionType: "private",
+          programId: MOCK_TOKEN_PROGRAM_ID,
+        },
+      });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+
+      const { updatedCoinOperations } = await prepareTokenOperations({
+        address,
+        ledgerAccountId,
+        publicOperations: [existingCoinOp],
+        tokenOperations: [tokenOp],
+        calTokens,
+      });
+
+      const feeOp = updatedCoinOperations.find(op => op.hash === txHash);
+      expect(feeOp).toMatchObject({
+        type: "FEES",
+        recipients: [],
+        extra: expect.objectContaining({ patched: true }),
       });
     });
 
@@ -656,6 +699,47 @@ describe("tokens utils", () => {
       expect(operations[0].subOperations).toEqual([
         expect.objectContaining({ id: privateOutOp.id }),
       ]);
+    });
+
+    it("should promote an existing coin op to FEES with recipients cleared and patched when private token OUT op matches", () => {
+      const txHash = "tx-promote-existing";
+      const existingCoinOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        accountId: ledgerAccountId,
+        recipients: ["aleo1recipient"],
+        extra: {
+          functionId: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+          transactionType: "private",
+        },
+      });
+      const privateOutOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        accountId: tokenAccountId,
+        senders: [address],
+        fee: new BigNumber(55),
+        extra: {
+          functionId: EXPLORER_TRANSFER_TYPES.PRIVATE,
+          transactionType: "private",
+          programId: MOCK_TOKEN_PROGRAM_ID,
+        },
+      });
+      const privateTokenOpsByAccountId = new Map([[tokenAccountId, [privateOutOp]]]);
+      const operations: AleoOperation[] = [existingCoinOp];
+
+      attachPrivateTokenOpsToParent({
+        operations,
+        privateTokenOpsByAccountId,
+        ledgerAccountId,
+        address,
+      });
+
+      expect(operations[0]).toMatchObject({
+        type: "FEES",
+        recipients: [],
+        extra: expect.objectContaining({ patched: true }),
+      });
     });
 
     it("should attach private IN ops to an existing parent coin op with the same hash", () => {

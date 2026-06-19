@@ -8,7 +8,13 @@ import {
 } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
 import { track } from "~/analytics";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { MarketBannerTest, MOCK_MARKET_PERFORMERS } from "./shared";
+
+jest.mock("~/helpers/getStakeLabelLocaleBased", () => {
+  const actual = jest.requireActual("~/helpers/getStakeLabelLocaleBased");
+  return { ...actual, getCountryLocale: jest.fn(actual.getCountryLocale) };
+});
 
 const mockNavigate = jest.fn();
 jest.mock("@react-navigation/native", () => ({
@@ -526,6 +532,10 @@ describe("MarketBanner Integration Tests", () => {
   describe("Fear and Greed index", () => {
     const API_ENDPOINT = "https://proxycmc.api.live.ledger.com/v3/fear-and-greed/latest";
 
+    beforeEach(() => {
+      jest.mocked(getCountryLocale).mockReturnValue("US");
+    });
+
     it("should display fear and greed index", async () => {
       server.use(
         http.get(API_ENDPOINT, () =>
@@ -565,6 +575,37 @@ describe("MarketBanner Integration Tests", () => {
       });
 
       expect(await screen.queryByText(/neutral/i)).toBeNull();
+    });
+
+    it("should not display fear and greed index for UK users", async () => {
+      jest.mocked(getCountryLocale).mockReturnValue("GB");
+      server.use(
+        http.get(API_ENDPOINT, () =>
+          HttpResponse.json({
+            data: {
+              value: 50,
+              value_classification: "Neutral",
+              update_time: "2026-01-14T12:00:00Z",
+            },
+            status: {
+              timestamp: "2026-01-14T12:00:00Z",
+              error_code: 0,
+              error_message: "",
+              elapsed: 10,
+              credit_count: 1,
+            },
+          }),
+        ),
+      );
+
+      renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+        }),
+      });
+
+      await waitFor(() => expect(screen.getByText(/view all/i)).toBeVisible());
+      expect(screen.queryByText(/neutral/i)).toBeNull();
     });
   });
 });

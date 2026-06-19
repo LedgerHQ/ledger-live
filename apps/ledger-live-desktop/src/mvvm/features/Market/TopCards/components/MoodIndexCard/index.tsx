@@ -1,10 +1,11 @@
 import React from "react";
+import { useMoodIndexAvailability } from "LLD/features/FearAndGreed/hooks/useMoodIndexAvailability";
 import { MarketTopCardError } from "../MarketTopCardError";
 import { MarketTopCardPlaceholder } from "../MarketTopCardPlaceholder";
 import { MoodIndexCardView } from "./MoodIndexCardView";
 import { useMoodIndexCardViewModel } from "./hooks/useMoodIndexCardViewModel";
 
-export function MoodIndexCard() {
+function MoodIndexCardContent() {
   const { data, isError, isLoading, onClick } = useMoodIndexCardViewModel();
 
   if (isLoading) {
@@ -18,4 +19,14 @@ export function MoodIndexCard() {
   }
 
   return <MoodIndexCardView data={data} onClick={onClick} />;
+}
+
+export function MoodIndexCard() {
+  const isMoodIndexAvailable = useMoodIndexAvailability();
+
+  if (!isMoodIndexAvailable) {
+    return null;
+  }
+
+  return <MoodIndexCardContent />;
 }

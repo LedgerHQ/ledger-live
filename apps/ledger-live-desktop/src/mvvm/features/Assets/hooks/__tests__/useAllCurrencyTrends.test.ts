@@ -189,6 +189,31 @@ describe("useAllCurrencyTrends", () => {
     expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(3.21);
   });
 
+  it("should return zero trend for zero-value assets without using the balance fallback", () => {
+    const bitcoinAccount = genAccount("btc-zero-value-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+
+    const { result } = renderHook(
+      () =>
+        useAllCurrencyTrends(
+          [
+            makeAssetItem({
+              accounts: [bitcoinAccount],
+              balance: 100,
+              value: 0,
+            }),
+          ],
+          "day",
+        ),
+      { initialState },
+    );
+
+    expect(mockedGetCurrencyPortfolio).not.toHaveBeenCalled();
+    expect(mockedGetCurrentBalanceCountervalueChange).not.toHaveBeenCalled();
+    expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(0);
+  });
+
   it("should not use the balance fallback when the portfolio change is available", () => {
     const bitcoinAccount = genAccount("btc-no-fallback-trend", {
       currency: getCryptoCurrencyById("bitcoin"),

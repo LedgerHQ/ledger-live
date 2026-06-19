@@ -14,6 +14,7 @@ interface UseQueuedDrawerBottomSheetProps {
   isForcingToBeOpened?: boolean;
   onClose?: () => void;
   onBack?: () => void;
+  onBackdropPress?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
 }
@@ -25,6 +26,7 @@ const useQueuedDrawerBottomSheet = ({
   isForcingToBeOpened = false,
   onClose,
   onBack,
+  onBackdropPress,
   onModalHide,
   preventBackdropClick,
 }: UseQueuedDrawerBottomSheetProps) => {
@@ -40,6 +42,9 @@ const useQueuedDrawerBottomSheet = ({
 
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+
+  const onBackdropPressRef = useRef(onBackdropPress);
+  onBackdropPressRef.current = onBackdropPress;
 
   const onModalHideRef = useRef(onModalHide);
   onModalHideRef.current = onModalHide;
@@ -104,6 +109,14 @@ const useQueuedDrawerBottomSheet = ({
     logDrawer("User initiated close");
     bottomSheetRef.current?.dismiss();
   }, [bottomSheetRef]);
+
+  // Notifies the consumer of the explicit backdrop press before dismissing. Unlike onClose
+  // (which fires for any closing reason), this reflects a real user close interaction.
+  const handleBackdropPress = useCallback(() => {
+    logDrawer("Backdrop pressed");
+    onBackdropPressRef.current?.();
+    handleUserClose();
+  }, [handleUserClose]);
 
   // Fired at the START of an animation. A close animation targets index -1, so this is the
   // earliest deterministic signal that the sheet is closing — for the X (close) button, the
@@ -178,6 +191,7 @@ const useQueuedDrawerBottomSheet = ({
     bottomSheetRef,
     areDrawersLocked,
     handleUserClose,
+    handleBackdropPress,
     handleDismiss,
     handleCloseAnimationStart,
     onBack,

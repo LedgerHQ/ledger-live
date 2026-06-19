@@ -12,6 +12,7 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import BannerItem, { ListItem } from "../BannerItem";
 import { FearAndGreed } from "LLM/components/FearAndGreed";
+import { useMoodIndexAvailability } from "LLM/components/FearAndGreed/useMoodIndexAvailability";
 import ViewAllTile from "../ViewAllTile";
 import { ErrorState } from "../ErrorState";
 import { SkeletonState } from "../SkeletonState";
@@ -49,6 +50,7 @@ const MarketBannerView = ({
   testID = "market-banner-container",
 }: MarketBannerViewProps) => {
   const { t } = useTranslation();
+  const isMoodIndexAvailable = useMoodIndexAvailability();
 
   const renderItem = useCallback(
     (props: { item: ListItem; index: number }) => (
@@ -88,13 +90,15 @@ const MarketBannerView = ({
           data={items}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-          ListHeaderComponent={<FearAndGreed />}
+          ListHeaderComponent={isMoodIndexAvailable ? <FearAndGreed /> : null}
           ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
           ListEmptyComponent={<SkeletonState />}
           horizontal
           showsHorizontalScrollIndicator={false}
           testID="market-banner-list"
-          ListHeaderComponentStyle={{ marginRight: MARGIN_RIGHT }}
+          ListHeaderComponentStyle={
+            isMoodIndexAvailable ? { marginRight: MARGIN_RIGHT } : undefined
+          }
           contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
           style={{ marginHorizontal: MARGIN_HORIZONTAL }}
         />

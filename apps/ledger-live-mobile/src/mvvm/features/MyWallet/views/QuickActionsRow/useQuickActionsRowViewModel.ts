@@ -17,7 +17,10 @@ import { urls } from "~/utils/urls";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { track } from "~/analytics";
 import { useRecoverEntry } from "LLM/hooks/useRecoverEntry";
-import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
+import useRecoverBannerState from "LLM/features/Portfolio/hooks/useRecoverBannerState";
+import { ShieldCheckNotificationIcon } from "LLM/features/BackupHub/components/ShieldCheckNotificationIcon";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 
 export interface QuickActionRowItem {
   readonly id: string;
@@ -36,33 +39,59 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
-  const { hasClickedRecover, markRecoverSeen, openRecover } = useRecoverEntry();
+  const { protectId, hasClickedRecover, markRecoverSeen, openRecover } = useRecoverEntry();
   const isBackupHubEnabled = !!useFeature("lwmBackupHub")?.enabled;
 
-  const hasDevice = lastConnectedDevice !== null;
-  const recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
+  const { data } = useRecoverBannerState(protectId);
+  const hasCompletedBackup =
+    data.subscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE;
 
-  const recoverLabel = hasDevice
-    ? t("myWallet.quickActions.recover")
-    : t("myWallet.quickActions.backup");
+  const hasDevice = lastConnectedDevice !== null;
+
+  let recoverLabel: string;
+  if (isBackupHubEnabled || !hasDevice) {
+    recoverLabel = t("myWallet.quickActions.backup");
+  } else {
+    recoverLabel = t("myWallet.quickActions.recover");
+  }
+
+  let recoverIcon: TileButtonProps["icon"];
+  if (isBackupHubEnabled) {
+    recoverIcon = hasCompletedBackup ? ShieldCheck : ShieldCheckNotificationIcon;
+  } else {
+    recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
+  }
 
   const handleRecoverPress = useCallback(() => {
     markRecoverSeen();
-    track("button_clicked", { button: "Recover", page: MY_WALLET_TRACKING_PAGE_NAME });
     if (isBackupHubEnabled) {
+      track("button_clicked", {
+        button: MY_WALLET_TRACKING_BUTTON.backup,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
+      });
       navigation.navigate(NavigatorName.BackupHub, { screen: ScreenName.BackupHub });
       return;
     }
+    track("button_clicked", {
+      button: MY_WALLET_TRACKING_BUTTON.recover,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
+    });
     openRecover();
   }, [navigation, markRecoverSeen, openRecover, isBackupHubEnabled]);
 
   const handleHelpPress = useCallback(() => {
-    track("button_clicked", { button: "Help", page: MY_WALLET_TRACKING_PAGE_NAME });
+    track("button_clicked", {
+      button: MY_WALLET_TRACKING_BUTTON.help,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
+    });
     navigation.navigate(NavigatorName.MyWallet, { screen: ScreenName.MyWalletHelp });
   }, [navigation]);
 
   const handleReferralPress = useCallback(() => {
-    track("button_clicked", { button: "Referral", page: MY_WALLET_TRACKING_PAGE_NAME });
+    track("button_clicked", {
+      button: MY_WALLET_TRACKING_BUTTON.referral,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
+    });
     Linking.openURL(urls.referralProgram);
   }, []);
 

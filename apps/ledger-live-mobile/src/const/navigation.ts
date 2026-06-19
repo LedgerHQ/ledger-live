@@ -1,3 +1,10 @@
+/**
+ * `id` for the Base navigator (the root native stack). Lets descendants reach it deterministically
+ * with `navigation.getParent(BASE_NAVIGATOR_ID)` instead of by tree position (which silently
+ * no-ops if a navigator level is inserted between them).
+ */
+export const BASE_NAVIGATOR_ID = "BaseNavigator";
+
 export enum ScreenName {
   Analytics = "Analytics",
   AnalyticsPreferencesSettings = "AnalyticsPreferencesSettings",

@@ -106,7 +106,12 @@ function combineMarketData(
   });
 
   return {
-    data: results.flatMap(result => result.data?.formattedData ?? []),
+    data: results
+      .filter((result): result is typeof result & { data: NonNullable<typeof result.data> } =>
+        Boolean(result.data),
+      )
+      .sort((a, b) => a.data.page - b.data.page)
+      .flatMap(result => result.data.formattedData),
     isPending: results.some(result => result.isPending),
     isFetching: results.some(result => result.isFetching),
     isLoading: results.some(result => result.isLoading),

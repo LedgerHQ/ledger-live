@@ -1,9 +1,21 @@
 import type { Transaction as LiveTransaction } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { BigNumber } from "bignumber.js";
+
+export type EvmGasOptionsSyncTransaction = LiveTransaction & {
+  family: "evm";
+  type?: number;
+  gasOptions?: GasOptions;
+};
 
 function hasProp<K extends string>(obj: object, key: K): obj is Record<K, unknown> {
   return key in obj;
+}
+
+export function isEvmGasOptionsSyncTransaction(
+  tx: LiveTransaction,
+): tx is EvmGasOptionsSyncTransaction {
+  return typeof tx === "object" && tx !== null && tx.family === "evm";
 }
 
 export function isEvmTransaction(tx: LiveTransaction): tx is EvmTransaction {

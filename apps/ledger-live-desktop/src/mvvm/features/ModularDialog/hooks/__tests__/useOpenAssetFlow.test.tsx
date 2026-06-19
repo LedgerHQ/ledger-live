@@ -27,6 +27,32 @@ describe("useOpenAssetFlow", () => {
     expect(store.getState().modularDialog.dialogParams?.currencies?.length).toBe(0);
   });
 
+  it("should open the dialog filtered to the provided network currency ids", () => {
+    const { result, store } = renderHook(
+      () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
+      {
+        initialState: withFlagOverrides({
+          lldModularDrawer: {
+            enabled: true,
+            params: {
+              [ModularDrawerLocation.LIVE_APP]: true,
+            },
+          },
+        }),
+      },
+    );
+
+    result.current.openAssetFlow(undefined, ["ethereum", "base", "arbitrum"]);
+
+    expect(store.getState().modularDialog.isOpen).toBe(true);
+    expect(store.getState().modularDialog.dialogParams?.currencies).toEqual([
+      "ethereum",
+      "base",
+      "arbitrum",
+    ]);
+    expect(store.getState().modularDialog.dialogParams?.areCurrenciesFiltered).toBe(true);
+  });
+
   it("should handle openAssetFlow to accountFlow", () => {
     const { result, store } = renderHook(
       () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),

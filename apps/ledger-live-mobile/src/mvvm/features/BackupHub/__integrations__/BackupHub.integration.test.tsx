@@ -3,12 +3,18 @@ import { Linking, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { urls } from "~/utils/urls";
 import { BackupHubScreen } from "../screens/BackupHubScreen";
-import { BACKUP_HUB_RECOVER_DEEPLINK_QUERY, RECOVER_DEEPLINK_BASE } from "../constants";
+import {
+  BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
+  BACKUP_HUB_TRACKING_PAGE_NAME,
+  RECOVER_DEEPLINK_BASE,
+} from "../constants";
+import { RECOVER_NOTIFICATION_DOT_TEST_ID } from "../components/ShieldCheckNotificationIcon";
 
 const PROTECT_ID = "protect-test";
 
@@ -61,18 +67,25 @@ describe("BackupHub screen (mobile)", () => {
     jest.restoreAllMocks();
   });
 
-  it("renders the not-subscribed variant with a discover CTA that navigates to Recover", async () => {
-    const { user } = render(<BackupHubTestNavigator />, {
+  it("renders the not-subscribed variant with a discover CTA that opens the Feature Intro", async () => {
+    const { user, store } = render(<BackupHubTestNavigator />, {
       overrideInitialState: overrideWith(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION),
     });
 
     expect(screen.getByTestId("backup-hub")).toBeOnTheScreen();
-    expect(await screen.findByText("Create a backup you can't lose")).toBeOnTheScreen();
+    expect(await screen.findByText("Ledger Recover")).toBeOnTheScreen();
+    expect(screen.getByTestId(RECOVER_NOTIFICATION_DOT_TEST_ID)).toBeOnTheScreen();
 
     const cta = screen.getByTestId("backup-hub-recover-cta");
     await user.press(cta);
 
-    expect(await screen.findByText("RECOVER_SCREEN")).toBeOnTheScreen();
+    expect(store.getState().backupHubFeatureIntro.isOpen).toBe(true);
+    expect(screen.queryByText("RECOVER_SCREEN")).toBeNull();
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Ledger Recover",
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      status: "New",
+    });
   });
 
   it("opens the ongoing-subscription Recover deeplink for the in-progress variant", async () => {
@@ -82,14 +95,20 @@ describe("BackupHub screen (mobile)", () => {
       overrideInitialState: overrideWith(LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY),
     });
 
-    expect(await screen.findByText("Finish setting up your backup.")).toBeOnTheScreen();
+    expect(await screen.findByText("Complete activation")).toBeOnTheScreen();
     expect(screen.queryByTestId("backup-hub-recover-cta")).toBeNull();
+    expect(screen.getByTestId(RECOVER_NOTIFICATION_DOT_TEST_ID)).toBeOnTheScreen();
 
     await user.press(screen.getByTestId("backup-hub-recover-row"));
 
     expect(openURLSpy).toHaveBeenCalledWith(
       `${RECOVER_DEEPLINK_BASE}/${PROTECT_ID}?${BACKUP_HUB_RECOVER_DEEPLINK_QUERY.inProgress}`,
     );
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Ledger Recover",
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      status: "in progress",
+    });
   });
 
   it("opens the subscribed Recover deeplink for the done variant", async () => {
@@ -101,12 +120,18 @@ describe("BackupHub screen (mobile)", () => {
 
     expect(await screen.findByText("Manage your backup")).toBeOnTheScreen();
     expect(screen.queryByTestId("backup-hub-recover-cta")).toBeNull();
+    expect(screen.queryByTestId(RECOVER_NOTIFICATION_DOT_TEST_ID)).toBeNull();
 
     await user.press(screen.getByTestId("backup-hub-recover-row"));
 
     expect(openURLSpy).toHaveBeenCalledWith(
       `${RECOVER_DEEPLINK_BASE}/${PROTECT_ID}?${BACKUP_HUB_RECOVER_DEEPLINK_QUERY.done}`,
     );
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Ledger Recover",
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      status: "done",
+    });
   });
 
   it("opens the shop via Linking.openURL when a physical row is pressed", async () => {
@@ -119,6 +144,10 @@ describe("BackupHub screen (mobile)", () => {
     await user.press(await screen.findByTestId("backup-hub-physical-row-recovery-key"));
 
     expect(openURLSpy).toHaveBeenCalledWith(urls.backupHub.recoveryKey);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Ledger Recovery Key",
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+    });
   });
 
   it("opens the compare-all backup solutions shop link from the footer", async () => {
@@ -131,5 +160,9 @@ describe("BackupHub screen (mobile)", () => {
     await user.press(await screen.findByTestId("backup-hub-compare-footer"));
 
     expect(openURLSpy).toHaveBeenCalledWith(urls.backupHub.compareAll);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Compare all",
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+    });
   });
 });

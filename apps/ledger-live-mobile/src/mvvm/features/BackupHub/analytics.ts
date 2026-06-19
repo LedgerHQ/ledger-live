@@ -1,11 +1,14 @@
 import { screen, track } from "~/analytics";
+import { BACKUP_HUB_TRACKING_PAGE_NAME } from "./constants";
 
-export const BACKUP_HUB_FEATURE_INTRO_PAGE = "Backup Hub Feature Intro";
+export const BACKUP_HUB_FEATURE_INTRO_PAGE = "Ledger Recover Bottomsheet";
+
+export const BACKUP_HUB_FEATURE_INTRO_SOURCE = BACKUP_HUB_TRACKING_PAGE_NAME;
 
 export const trackBackupHubFeatureIntroViewed = () => {
   screen(BACKUP_HUB_FEATURE_INTRO_PAGE, undefined, {
     name: BACKUP_HUB_FEATURE_INTRO_PAGE,
-    source: "backup-hub-feature-intro",
+    source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
   });
 };
 
@@ -19,7 +22,7 @@ export const trackBackupHubFeatureIntroButtonClicked = ({
   track("button_clicked", {
     button,
     page: BACKUP_HUB_FEATURE_INTRO_PAGE,
-    source: "backup-hub-feature-intro",
+    source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
     link,
   });
 };
@@ -27,6 +30,6 @@ export const trackBackupHubFeatureIntroButtonClicked = ({
 export const trackBackupHubFeatureIntroDismissed = () => {
   track("modal_dismissed", {
     page: BACKUP_HUB_FEATURE_INTRO_PAGE,
-    source: "backup-hub-feature-intro",
+    source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
   });
 };

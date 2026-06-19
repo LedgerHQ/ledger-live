@@ -77,10 +77,6 @@ export function useMarketRowViewModel({
 
   const onToggleStar = useCallback(() => {
     toggleStar(currency.id, isStarred);
-    track("button_clicked", {
-      asset: currency.id,
-      button: isStarred ? "unstar" : "star",
-    });
   }, [toggleStar, currency.id, isStarred]);
 
   // Defer the favourite toggle until the menu has closed, so the open menu never

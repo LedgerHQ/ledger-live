@@ -2,6 +2,7 @@ import {
   getFearAndGreedLevel,
   getFearAndGreedTranslationKey,
   getFearAndGreedColorKey,
+  isMoodIndexAvailable,
   FEAR_AND_GREED_COLORS,
   FEAR_AND_GREED_TRANSLATION_KEYS,
 } from "../fearAndGreed";
@@ -77,6 +78,19 @@ describe("Fear and Greed utils", () => {
       ])("should have correct key for $level", ({ level, key }) => {
         expect(FEAR_AND_GREED_TRANSLATION_KEYS[level]).toBe(key);
       });
+    });
+  });
+
+  describe("isMoodIndexAvailable", () => {
+    it.each([
+      { region: "GB", expected: false },
+      { region: "FR", expected: true },
+      { region: "US", expected: true },
+      { region: "", expected: true },
+      { region: null, expected: true },
+      { region: undefined, expected: true },
+    ])("should return $expected for region $region", ({ region, expected }) => {
+      expect(isMoodIndexAvailable(region)).toBe(expected);
     });
   });
 

@@ -41,18 +41,14 @@ interface SharedState {
 
 type FmtOpts = { locale: string; showCode: boolean; discreet: boolean };
 
-function formatCounterValue(
+function getCounterValue(
   asset: Asset,
   balance: BigNumber,
   cvState: SharedState["cvState"],
   counterValueCurrency: SharedState["counterValueCurrency"],
-  fmtOpts: FmtOpts,
-): string | null {
-  const cvUnit = counterValueCurrency.units?.[0];
-  if (!cvUnit) return null;
-
+): number | null {
   if (asset.isPlaceholder) {
-    return formatPrice(cvUnit, new BigNumber(0), fmtOpts);
+    return 0;
   }
 
   const cv = calculate(cvState, {
@@ -63,11 +59,28 @@ function formatCounterValue(
   });
 
   if (typeof cv !== "number") return null;
-  return formatPrice(cvUnit, new BigNumber(cv), fmtOpts);
+  return cv;
 }
 
-function getCountervalueChange(asset: Asset, state: SharedState): ValueChange | null {
+function formatCounterValue(
+  counterValue: number | null,
+  counterValueCurrency: SharedState["counterValueCurrency"],
+  fmtOpts: FmtOpts,
+): string | null {
+  const cvUnit = counterValueCurrency.units?.[0];
+  if (!cvUnit || counterValue == null) return null;
+  return formatPrice(cvUnit, new BigNumber(counterValue), fmtOpts);
+}
+
+function getCountervalueChange(
+  asset: Asset,
+  state: SharedState,
+  currentCounterValue: number | null,
+): ValueChange | null {
   if (asset.isPlaceholder || asset.accounts.length === 0) return null;
+  if (asset.amount <= 0 || (currentCounterValue != null && currentCounterValue <= 0)) {
+    return { value: 0, percentage: 0 };
+  }
 
   const { countervalueChange } = getCurrencyPortfolio(
     asset.accounts,
@@ -96,14 +109,14 @@ function computeAssetItemData(asset: Asset, state: SharedState): AssetListItemVi
 
   const unit = asset.currency.units?.[0];
   const formattedBalance = unit ? formatCurrencyUnit(unit, balance, fmtOpts) : "";
-  const formattedCounterValue = formatCounterValue(
+  const counterValue = getCounterValue(
     asset,
     balance,
     state.cvState,
     state.counterValueCurrency,
-    fmtOpts,
   );
-  const countervalueChange = getCountervalueChange(asset, state);
+  const formattedCounterValue = formatCounterValue(counterValue, state.counterValueCurrency, fmtOpts);
+  const countervalueChange = getCountervalueChange(asset, state, counterValue);
 
   return { formattedBalance, formattedCounterValue, countervalueChange };
 }

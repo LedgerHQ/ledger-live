@@ -22,6 +22,8 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasFeePresets: jest.fn(() => false),
     shouldEstimateFeePresetsWithBridge: jest.fn(() => false),
+    getFeePresetFallbackIds: jest.fn(() => []),
+    canEstimateFeePresetsWithZeroAmount: jest.fn(() => false),
     getFeePresetOptions: jest.fn(() => []),
     getFeeCurrencyAccountId: jest.fn(() => null),
   },

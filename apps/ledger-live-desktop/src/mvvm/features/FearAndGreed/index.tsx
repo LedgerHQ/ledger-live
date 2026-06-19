@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import type { FearAndGreedIndex } from "@ledgerhq/live-common/cmc-client/state-manager/types";
+import { useMoodIndexAvailability } from "./hooks/useMoodIndexAvailability";
 import { useFearAndGreedViewModel } from "./hooks/useFearAndGreedViewModel";
 import { FearAndGreedTile } from "./components/FearAndGreedTile";
 import { LoadingTile } from "./components/LoadingTile";
@@ -23,10 +24,18 @@ const FearAndGreedView = memo(function FearAndGreedView({
   return content;
 });
 
-const FearAndGreed = () => {
+const FearAndGreedContent = () => {
   const { isLoading, data } = useFearAndGreedViewModel();
 
   return <FearAndGreedView isLoading={isLoading} data={data} />;
+};
+
+const FearAndGreed = () => {
+  const isMoodIndexAvailable = useMoodIndexAvailability();
+
+  if (!isMoodIndexAvailable) return null;
+
+  return <FearAndGreedContent />;
 };
 
 export { FearAndGreedView };

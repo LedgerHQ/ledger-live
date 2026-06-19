@@ -63,6 +63,7 @@ type Params = Readonly<{
   fiatUnit: Unit;
   enabled: boolean;
   shouldEstimateWithBridge: boolean;
+  allowZeroAmountEstimation: boolean;
 }>;
 
 async function estimateFiatValuesForPresets(params: {
@@ -124,6 +125,7 @@ export function useFeePresetFiatValues({
   fiatUnit,
   enabled,
   shouldEstimateWithBridge,
+  allowZeroAmountEstimation,
 }: Params): FeeFiatMap {
   const convertCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
   const [fiatByPreset, setFiatByPreset] = useState<FeeFiatMap>({});
@@ -132,8 +134,7 @@ export function useFeePresetFiatValues({
   const amount = useMemo(() => transaction.amount ?? new BigNumber(0), [transaction.amount]);
   const useAllAmount = Boolean(transaction.useAllAmount);
   const presetIdsToEstimate = useMemo(
-    () =>
-      feePresetOptions.length > 0 ? feePresetOptions.map(o => o.id) : (fallbackPresetIds ?? []),
+    () => (feePresetOptions.length > 0 ? feePresetOptions.map(o => o.id) : fallbackPresetIds ?? []),
     [fallbackPresetIds, feePresetOptions],
   );
 
@@ -183,8 +184,7 @@ export function useFeePresetFiatValues({
     shouldEstimateWithBridge,
   ]);
 
-  const allowZeroAmountEstimation = transaction.family === "evm";
-  const hasAmountForEstimation = allowZeroAmountEstimation ? true : useAllAmount || amount.gt(0);
+  const hasAmountForEstimation = allowZeroAmountEstimation || useAllAmount || amount.gt(0);
 
   const canEstimate =
     shouldEstimateWithBridge &&

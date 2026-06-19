@@ -236,7 +236,6 @@ export type Features = CurrencyFeatures & {
   ptxEarnUi: Feature_PtxEarnUi;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
-  llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   analyticsOptIn: DefaultFeature;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
@@ -731,12 +730,6 @@ export type Feature_PtxEarnLiveApp = Feature<{
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["fetchAdditionalCoins"]` from `@shared/feature-flags` instead. */
 export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmAnalyticsOptInPrompt = Feature<{
-  variant: ABTestingVariants;
-  entryPoints: Array<string>;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */

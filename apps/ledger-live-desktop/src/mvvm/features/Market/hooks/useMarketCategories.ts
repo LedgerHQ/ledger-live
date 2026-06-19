@@ -4,11 +4,7 @@ import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/stat
 import { isBuiltInMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { track } from "~/renderer/analytics/segment";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import {
-  setMarketCategory,
-  setMarketCurrentPage,
-  setMarketOptions,
-} from "~/renderer/actions/market";
+import { setMarketCategory } from "~/renderer/actions/market";
 import { marketCategorySelector, type MarketListCategory } from "~/renderer/reducers/market";
 import { getMarketPageCategoryAnalytics } from "LLD/features/Market/utils/marketPageAnalytics";
 
@@ -71,9 +67,6 @@ export function useMarketCategories(): MarketCategories {
       }
 
       dispatch(setMarketCategory(category));
-      // Switching categories changes the underlying list, so restart pagination.
-      dispatch(setMarketOptions({ page: 1 }));
-      dispatch(setMarketCurrentPage(1));
     },
     [dispatch, persistedCategory, selectableCategories],
   );

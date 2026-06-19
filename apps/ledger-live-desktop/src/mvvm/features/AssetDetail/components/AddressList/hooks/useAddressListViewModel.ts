@@ -17,6 +17,7 @@ import { track } from "~/renderer/analytics/segment";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import { useReceiveNetworkLedgerIds } from "LLD/features/AssetDetail/hooks/useReceiveNetworkLedgerIds";
 import { MAX_ADDRESSES_PREVIEW } from "../constants";
 
 export function useAddressListViewModel(distributionItem: DistributionItem) {
@@ -58,10 +59,20 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
     setIsAllAddressesDialogOpen(open);
   };
 
-  const { openAddAccountFlow } = useOpenAssetFlow(
+  const { openAddAccountFlow, openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     MAD_SOURCE_PAGES.ASSET_DETAIL,
   );
+
+  // Resolve the asset's full multi-network list so the add-account flow can offer
+  // every network (e.g. ETH on Ethereum/Base/Arbitrum/Optimism), mirroring mobile.
+  const networkLedgerIds = useReceiveNetworkLedgerIds({
+    metaCurrencyId: distributionItem.metaCurrencyId,
+    marketApiId: distributionItem.marketId,
+    ticker: distributionItem.currency.ticker,
+    currencyId: distributionItem.currency.id,
+    fallbackLedgerIds: [],
+  });
 
   const onAddAddress = () => {
     track("button_clicked", {
@@ -69,13 +80,17 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
       currency: distributionItem.currency.id,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
-    openAddAccountFlow(distributionItem.currency);
+    if (networkLedgerIds.length > 1) {
+      openAssetFlow(undefined, networkLedgerIds);
+    } else {
+      openAddAccountFlow(distributionItem.currency);
+    }
   };
 
   const onAccountClick = (account: AccountLike, parentAccount?: Account | null) => {
     const mainAccount =
       account.type === "TokenAccount"
-        ? (parentAccount ?? lookupParentAccount(account.parentId))
+        ? parentAccount ?? lookupParentAccount(account.parentId)
         : account;
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
     track("button_clicked", {

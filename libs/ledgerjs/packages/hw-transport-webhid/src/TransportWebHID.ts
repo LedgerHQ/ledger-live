@@ -1,6 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
 import type { Observer, DescriptorEvent, Subscription } from "@ledgerhq/hw-transport";
-import hidFraming from "@ledgerhq/devices/hid-framing";
+import hidFraming from "./hid-framing";
 import { identifyUSBProductId, ledgerUSBVendorId } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
