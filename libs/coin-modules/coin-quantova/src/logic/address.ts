@@ -4,7 +4,7 @@
  * Canonical user-facing address is **Q-branded Bech32m** over the 20-byte H160 body:
  *
  *   pubkey --SHA3-256--> digest[0..20]   (20-byte body; body[0] forced to 0x40 = "Q")
- *   display = bech32m(hrp="q", body)  ->  rendered uppercase as "Q1…"
+ *   display = bech32m(hrp="q", body)  ->  rendered uppercase as "Q1..."
  *
  * The hex H160 form ("Q<40-hex>" / "Qx<40-hex>" / "0x<40-hex>") is also accepted on the
  * wire (see runtime `token.rs::q_address_to_account`). Both encode the same 20 bytes.
@@ -16,9 +16,16 @@ import { QADDR_HRP, QADDR_BRAND_BYTE } from "../constants";
 
 const CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 const BECH32M_CONST = 0x2bc830a3;
+const GEN = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
+
+// O(1) reverse lookup: charCode -> 5-bit value (-1 if not in the bech32 charset).
+const CHARSET_REV: Int8Array = (() => {
+  const t = new Int8Array(128).fill(-1);
+  for (let i = 0; i < CHARSET.length; i++) t[CHARSET.charCodeAt(i)] = i;
+  return t;
+})();
 
 function polymod(values: number[]): number {
-  const GEN = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
   let chk = 1;
   for (const v of values) {
     const top = chk >> 25;
@@ -58,7 +65,7 @@ function convertBits(data: number[], from: number, to: number, pad: boolean): nu
   return out;
 }
 
-/** Encode a 20-byte H160 body to the canonical "Q1…" bech32m address. */
+/** Encode a 20-byte H160 body to the canonical "Q1..." bech32m address. */
 export function encodeQAddress(body: Uint8Array): string {
   if (body.length !== 20) throw new Error("Quantova address body must be 20 bytes");
   const data = convertBits(Array.from(body), 8, 5, true);
@@ -68,11 +75,11 @@ export function encodeQAddress(body: Uint8Array): string {
   const checksum: number[] = [];
   for (let i = 0; i < 6; i++) checksum.push((mod >> (5 * (5 - i))) & 31);
   const payload = data.concat(checksum).map(d => CHARSET[d]).join("");
-  // canonical display is uppercase ("Q1…")
+  // canonical display is uppercase ("Q1...")
   return `${QADDR_HRP}1${payload}`.toUpperCase();
 }
 
-/** Decode a "Q1…" bech32m address to its 20-byte H160 body, or null if invalid. */
+/** Decode a "Q1..." bech32m address to its 20-byte H160 body, or null if invalid. */
 export function decodeQAddress(addr: string): Uint8Array | null {
   const s = addr.toLowerCase();
   const pos = s.lastIndexOf("1");
@@ -81,8 +88,9 @@ export function decodeQAddress(addr: string): Uint8Array | null {
   if (hrp !== QADDR_HRP) return null;
   const dataPart = s.slice(pos + 1);
   const decoded: number[] = [];
-  for (const ch of dataPart) {
-    const d = CHARSET.indexOf(ch);
+  for (let i = 0; i < dataPart.length; i++) {
+    const code = dataPart.charCodeAt(i);
+    const d = code < 128 ? CHARSET_REV[code] : -1;
     if (d === -1) return null;
     decoded.push(d);
   }
