@@ -7,9 +7,9 @@ export * from "./signer";
  */
 export type QuantovaTransaction = {
   family: "quantova";
-  /** sender "Q1…" address */
+  /** sender "Q1..." address */
   sender: string;
-  /** recipient "Q1…" address */
+  /** recipient "Q1..." address */
   recipient: string;
   /** amount in plancks (string to stay precise) */
   amount: string;

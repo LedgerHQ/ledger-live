@@ -1,5 +1,5 @@
 /**
- * Device signer contract — the target for a Ledger `app-quantova`.
+ * Device signer contract - the target for a Ledger `app-quantova`.
  *
  * This is the SAME `QuantovaSigner` interface as the software reference, but backed by a
  * Ledger device app over a transport (APDU). The app must:
@@ -11,7 +11,7 @@
  *      (clear-signing, not blind-signing), and on user approval return the PQ signature;
  *   3. emit the `QSignature` envelope exactly as `pq/qsignature.ts` specifies.
  *
- * No such app exists yet — `signPayload` here throws until a device app is available.
+ * No such app exists yet - `signPayload` here throws until a device app is available.
  * The APDU command set is intentionally left as the integration point for Ledger.
  */
 import type { QuantovaSigner, QuantovaAddress } from "../types/signer";

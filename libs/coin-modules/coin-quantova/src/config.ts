@@ -15,7 +15,7 @@ import {
 } from "./constants";
 
 export type QuantovaCoinConfig = {
-  /** display symbol — "QTOV" (mainnet) or "TQTOV" (testnet) */
+  /** display symbol - "QTOV" (mainnet) or "TQTOV" (testnet) */
   symbol: string;
   decimals: number;
   ss58Format: number;

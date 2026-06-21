@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/coin-quantova",
   "version": "0.1.0",
-  "description": "Quantova coin integration (post-quantum L1) — work in progress",
+  "description": "Quantova coin integration (post-quantum L1) - work in progress",
   "keywords": [
     "Ledger",
     "LedgerWallet",

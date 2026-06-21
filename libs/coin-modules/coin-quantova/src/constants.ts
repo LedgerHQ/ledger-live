@@ -2,7 +2,7 @@
  * Quantova chain constants.
  *
  * Quantova is a post-quantum Layer-1 (Substrate `stable2506-pq`). Native asset QTOV,
- * 18 decimals; testnet asset TQTOV. Addresses are Q-branded Bech32m ("Q1…") over a
+ * 18 decimals; testnet asset TQTOV. Addresses are Q-branded Bech32m ("Q1...") over a
  * 20-byte H160 body whose first byte is fixed to 0x40 (the "Q" brand byte).
  */
 
@@ -13,10 +13,10 @@ export const TQTOV_SYMBOL = "TQTOV";
 /** QTOV has 18 decimals (1 QTOV = 1e18 plancks), matching the runtime (`fees.rs`). */
 export const QTOV_DECIMALS = 18;
 
-/** Bech32m human-readable prefix. The canonical display form renders uppercase: "Q1…". */
+/** Bech32m human-readable prefix. The canonical display form renders uppercase: "Q1...". */
 export const QADDR_HRP = "q";
 
-/** First byte of every account's 20-byte H160 body — the "Q" brand byte. */
+/** First byte of every account's 20-byte H160 body - the "Q" brand byte. */
 export const QADDR_BRAND_BYTE = 0x40;
 
 /** Bytes 20..32 of the 32-byte AccountId are the QVM account-mapping marker. */

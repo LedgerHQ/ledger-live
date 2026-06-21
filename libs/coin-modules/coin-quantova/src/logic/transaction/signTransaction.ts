@@ -3,7 +3,7 @@
  *
  * Flow (the proven qweb3.js path):
  *   1. qweb3.js builds the call + `TxExtension` extra. The `CheckMetadataHash` extension is
- *      set to **enabled** so the signing payload commits to the runtime's metadata digest —
+ *      set to **enabled** so the signing payload commits to the runtime's metadata digest  - 
  *      this is what lets a device clear-sign (show amount/asset/recipient) instead of
  *      blind-signing.
  *   2. We extract the raw SCALE signing-payload bytes and hand them to the `QuantovaSigner`.

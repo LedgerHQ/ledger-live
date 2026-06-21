@@ -1,10 +1,10 @@
 /**
- * @ledgerhq/coin-quantova — host-side coin module for Quantova, a post-quantum L1.
+ * @ledgerhq/coin-quantova - host-side coin module for Quantova, a post-quantum L1.
  *
  * Implemented host side: address codec, `q_` RPC, the post-quantum primitives layer
  * (scheme registry + on-chain `QSignature` envelope), key-gen & signing via qweb3.js, the
- * signing flow, and the `QuantovaSigner` device contract. The remaining piece — running a
- * PQ scheme on the Ledger Secure Element — is the open requirement (see README + docs).
+ * signing flow, and the `QuantovaSigner` device contract. The remaining piece - running a
+ * PQ scheme on the Ledger Secure Element - is the open requirement (see README + docs).
  */
 
 // Types

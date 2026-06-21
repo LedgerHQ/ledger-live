@@ -2,10 +2,10 @@
  * Software reference signer (qweb3.js).
  *
  * Implements the `QuantovaSigner` contract entirely in software using Quantova's qweb3.js
- * SDK. It produces REAL, valid `QSignature` envelopes that the chain accepts — proving the
+ * SDK. It produces REAL, valid `QSignature` envelopes that the chain accepts - proving the
  * end-to-end post-quantum signing flow.
  *
- * ⚠️  This is a REFERENCE, not a hardware wallet: the private key lives in process memory.
+ * NOTE: This is a REFERENCE, not a hardware wallet: the private key lives in process memory.
  * Its purpose is (a) to exercise the bridge in CI/bots, and (b) to be the byte-exact spec a
  * Ledger device app reproduces on-chip. The device path (`deviceSigner`) holds keys in the
  * Secure Element instead; the two are interchangeable behind this interface.

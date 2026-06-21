@@ -13,7 +13,7 @@ const body = (() => {
 })();
 
 describe("Quantova address codec", () => {
-  it("encodes a 20-byte body to a canonical Q1… Bech32m address", () => {
+  it("encodes a 20-byte body to a canonical Q1... Bech32m address", () => {
     const addr = encodeQAddress(body);
     expect(addr.startsWith("Q1")).toBe(true);
   });

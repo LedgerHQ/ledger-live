@@ -2,13 +2,13 @@
  * Post-quantum key generation + signing via Quantova's **qweb3.js** SDK.
  *
  * qweb3.js ships the proven PQ stack used by every Quantova signer:
- *   - `@quantova/keyring`      — a per-scheme Keyring (Dilithium / Falcon / SPHINCS+)
- *   - `@quantova/util-crypto`  — `cryptoWaitReady` + WASM-crypto registration
- *   - `@quantova/falcon-wasm`  — the audited PQ primitives (`*_pair_from_seed`, `*_sign`)
+ *   - `@quantova/keyring`      - a per-scheme Keyring (Dilithium / Falcon / SPHINCS+)
+ *   - `@quantova/util-crypto`  - `cryptoWaitReady` + WASM-crypto registration
+ *   - `@quantova/falcon-wasm`  - the audited PQ primitives (`*_pair_from_seed`, `*_sign`)
  *
  * We wrap that surface behind a small adapter so this module compiles without the SDK at
  * type-check time, and so an on-device app can later implement the SAME `QPair` contract.
- * The reference implementation here is a **software** signer (keys in memory) — it proves
+ * The reference implementation here is a **software** signer (keys in memory) - it proves
  * the end-to-end flow and is the exact spec a Ledger device app must reproduce on-chip.
  */
 import { QScheme, QSCHEMES } from "./schemes";
@@ -17,7 +17,7 @@ import { isValidQAddress } from "../logic/address";
 /** A post-quantum keypair, however its private material is held (software or device). */
 export interface QPair {
   scheme: QScheme;
-  /** canonical "Q1…" address */
+  /** canonical "Q1..." address */
   address: string;
   /** PQ public key bytes (length matches the scheme) */
   publicKey: Uint8Array;

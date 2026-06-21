@@ -1,7 +1,7 @@
 /**
  * Quantova signers. The same `QuantovaSigner` contract is implemented two ways:
- *  - `makeSoftwareSigner` — reference, backed by qweb3.js (keys in software).
- *  - `makeDeviceSigner`   — target, backed by a Ledger `app-quantova` (keys in the SE).
+ *  - `makeSoftwareSigner` - reference, backed by qweb3.js (keys in software).
+ *  - `makeDeviceSigner`   - target, backed by a Ledger `app-quantova` (keys in the SE).
  */
 import getAddressResolver from "./getAddress";
 

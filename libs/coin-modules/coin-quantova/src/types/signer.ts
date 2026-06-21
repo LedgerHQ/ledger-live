@@ -3,7 +3,7 @@
  *
  * A Quantova signature is **post-quantum**: one of three NIST schemes (SPHINCS+ / Falcon
  * / Dilithium), wrapped in the on-chain `QSignature` envelope. This is the interface a
- * Ledger device app (or the software reference signer) must satisfy — and the
+ * Ledger device app (or the software reference signer) must satisfy - and the
  * device-side part is what no Ledger device can do today (see README "Open requirement").
  */
 import type { QScheme } from "../pq/schemes";
@@ -11,7 +11,7 @@ import type { QSignatureEnvelope } from "../pq/qsignature";
 
 /** Address + PQ public key as returned by `getAddress`. */
 export type QuantovaAddress = {
-  /** canonical "Q1…" Bech32m address */
+  /** canonical "Q1..." Bech32m address */
   address: string;
   /** PQ public key, hex-encoded */
   publicKey: string;

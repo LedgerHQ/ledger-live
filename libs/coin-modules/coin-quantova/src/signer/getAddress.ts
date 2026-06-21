@@ -4,7 +4,7 @@ import { isValidQAddress } from "../logic/address";
 /**
  * Resolve a Quantova account address from the device for a derivation path.
  *
- * The device returns the account's PQ public key and its canonical "Q1…" address
+ * The device returns the account's PQ public key and its canonical "Q1..." address
  * (derived as SHA3-256(pubkey)[0..20], byte0 = 0x40, rendered Bech32m). We sanity-check
  * the address shape host-side.
  */

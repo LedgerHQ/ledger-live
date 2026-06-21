@@ -37,12 +37,12 @@ export class QuantovaNode {
     return parseInt(await this.call<string>("q_blockNumber"), 16);
   }
 
-  /** QTOV balance in plancks for a "Q1…" address at a block (default: latest). */
+  /** QTOV balance in plancks for a "Q1..." address at a block (default: latest). */
   async getBalance(address: string, block = "latest"): Promise<bigint> {
     return BigInt(await this.call<string>("q_getBalance", [address, block]));
   }
 
-  /** Account nonce — the number of transactions sent (use as the next tx nonce). */
+  /** Account nonce - the number of transactions sent (use as the next tx nonce). */
   async getTransactionCount(address: string, block = "latest"): Promise<number> {
     return parseInt(await this.call<string>("q_getTransactionCount", [address, block]), 16);
   }
