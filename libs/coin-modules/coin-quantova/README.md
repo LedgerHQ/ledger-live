@@ -1,12 +1,12 @@
 # @ledgerhq/coin-quantova
 
-Coin module for **Quantova** — a post-quantum Layer-1 blockchain (Substrate-based,
+Coin module for **Quantova** - a post-quantum Layer-1 blockchain (Substrate-based,
 `stable2506-pq`). Native asset **QTOV** (18 decimals); testnet asset **TQTOV**.
 
 > **Status: proposal / work-in-progress.** This module implements the host-side
 > integration (accounts, address codec, the `q_` JSON-RPC client, transaction model,
 > and the device-signer contract). It is opened as a **draft** because it depends on a
-> device-side capability Ledger does not ship yet — **post-quantum signing** (see
+> device-side capability Ledger does not ship yet - **post-quantum signing** (see
 > "Open requirement" below). We are raising it to start that conversation, not to merge
 > as-is.
 
@@ -37,30 +37,30 @@ display     = Bech32m("q", body)  ->  "Q1..."  (canonical user-facing form)
 ```
 
 So every valid address begins with `Q`. The canonical user-facing form is the
-**Q-branded Bech32m** string (`Q1…`); the hex H160 body (`Q<40-hex>` / `0x<40-hex>`)
+**Q-branded Bech32m** string (`Q1...`); the hex H160 body (`Q<40-hex>` / `0x<40-hex>`)
 is also accepted on the wire. This module's `logic/address.ts` implements both.
 
 > **Important for Ledger Live display:** Quantova advertises `ss58Format = 42` for
-> compatibility, but the canonical address is the `Q1…` Bech32m form, **not** a generic
-> `5…` SS58 string. A device/host must render `Q1…` so a user can match what their
+> compatibility, but the canonical address is the `Q1...` Bech32m form, **not** a generic
+> `5...` SS58 string. A device/host must render `Q1...` so a user can match what their
 > wallet shows.
 
 ## Architecture
 
 ```
 src/
-  pq/                     ← post-quantum primitives
-    schemes.ts            scheme registry (SPHINCS+=0, Falcon=1, Dilithium=2; sizes, NIST ids)
-    qsignature.ts         on-chain QSignature envelope codec (+ SCALE compact) — tested
-    keygen.ts             PQ key-gen + signing via qweb3.js (adapter)
+  pq/                       post-quantum primitives
+    schemes.ts              scheme registry (SPHINCS+=0, Falcon=1, Dilithium=2; sizes, NIST ids)
+    qsignature.ts           on-chain QSignature envelope codec (+ SCALE compact) - tested
+    keygen.ts               PQ key-gen + signing via qweb3.js (adapter)
   logic/
-    address.ts            Q-branded Bech32m + hex H160 codec — tested
+    address.ts              Q-branded Bech32m + hex H160 codec - tested
     transaction/
-      signTransaction.ts  craft payload (CheckMetadataHash enabled) → sign → serialize
-  network/node.ts         q_ JSON-RPC client
+      signTransaction.ts    craft payload (CheckMetadataHash enabled), sign, serialize
+  network/node.ts           q_ JSON-RPC client
   signer/
-    softwareSigner.ts     reference signer (qweb3.js) — produces REAL valid signatures
-    deviceSigner.ts       device contract + APDU placeholder (the app-quantova target)
+    softwareSigner.ts       reference signer (qweb3.js) - produces REAL valid signatures
+    deviceSigner.ts         device contract + APDU placeholder (the app-quantova target)
   config.ts / constants.ts  QTOV/TQTOV, 18 decimals, ss58, metadata-hash params
 ```
 
@@ -70,14 +70,14 @@ Quantova's **qweb3.js** SDK (`@quantova/keyring`, `@quantova/util-crypto`,
 `@quantova/falcon-wasm`) provides the audited PQ keyring and primitives used by every
 Quantova signer. `pq/keygen.ts` wraps it behind a `QPair` contract; `signer/softwareSigner.ts`
 implements the full `QuantovaSigner` with it, producing **valid `QSignature` envelopes the
-chain accepts** — i.e. the byte-exact spec an on-device app must reproduce. Both the software
+chain accepts** - i.e. the byte-exact spec an on-device app must reproduce. Both the software
 reference and a future device app are interchangeable behind the one `QuantovaSigner`
 interface.
 
 ### Will it affect other Ledger assets? No.
 
 The integration is purely additive and isolated at both layers (a new host package + a
-sandboxed BOLOS device app). Full detail — including the device-app isolation model — is in
+sandboxed BOLOS device app). Full detail - including the device-app isolation model - is in
 **[`docs/DEVICE-INTEGRATION.md`](./docs/DEVICE-INTEGRATION.md)**.
 
 ## Clear-signing readiness (RFC-78 / merkleized metadata)
@@ -90,7 +90,7 @@ this extension is currently constructed in **disabled** mode for native transact
 would be set to **enabled** for the device-signed path so the device can verify
 amount/asset/recipient instead of blind-signing.
 
-## Open requirement — device-side post-quantum signing
+## Open requirement - device-side post-quantum signing
 
 The host module is functional, but the **signature itself must be produced on the Ledger
 device**, and no Ledger device app today can produce a Dilithium / Falcon / SPHINCS+
@@ -98,7 +98,7 @@ signature. The `signer` contract here (`types/signer.ts`) defines exactly what t
 app must return:
 
 ```ts
-getAddress(path):  { publicKey /* PQ pubkey */, address /* Q1… */ }
+getAddress(path):  { publicKey /* PQ pubkey */, address /* Q1... */ }
 signTransaction(path, payload):  QSignature   // SPHINCS | FALCON | DILITHIUM
 ```
 
@@ -115,6 +115,13 @@ value Ledger's guidance:
 
 Until one of those exists, this module cannot complete an end-to-end signature; it is
 intentionally a draft and a starting point for that collaboration.
+
+## Audit and tests
+
+[`docs/AUDIT.md`](./docs/AUDIT.md) documents a correctness audit of the codecs (one latent
+SCALE-compact bug found and fixed, two optimisations) plus the benchmark. Unit tests cover
+the address and `QSignature` codecs; `src/pq/performance.test.ts` is a CI performance test.
+All 2,015 verification cases pass; codecs run at sub-microsecond to ~1.3 us/op.
 
 ## References
 
