@@ -1,46 +1,34 @@
 /**
  * Quantova device-signer contract.
  *
- * Unlike classical chains, a Quantova signature is **post-quantum**: one of three NIST
- * schemes. The on-chain `QSignature` is a tagged union (SPHINCS+ / Falcon / Dilithium),
- * each variant carrying the signature bytes and the PQ public key that the account
- * address is derived from (SHA3-256(pubkey)[0..20], byte0 = 0x40).
- *
- * This is the interface a Ledger device app (or hybrid signer) must satisfy for Quantova
- * — and the part that does not exist on any Ledger device today (see README, "Open
- * requirement").
+ * A Quantova signature is **post-quantum**: one of three NIST schemes (SPHINCS+ / Falcon
+ * / Dilithium), wrapped in the on-chain `QSignature` envelope. This is the interface a
+ * Ledger device app (or the software reference signer) must satisfy — and the
+ * device-side part is what no Ledger device can do today (see README "Open requirement").
  */
-
-/** The three NIST post-quantum signature schemes Quantova accounts use. */
-export enum QSignatureScheme {
-  SPHINCS = "sphincs+", // SLH-DSA (FIPS 205)
-  FALCON = "falcon", // FN-DSA  (FIPS 206)
-  DILITHIUM = "dilithium", // ML-DSA  (FIPS 204)
-}
-
-/** A post-quantum signature returned by the device, hex-encoded. */
-export type QSignature = {
-  scheme: QSignatureScheme;
-  /** hex of the scheme's signature bytes */
-  signature: string;
-  /** hex of the PQ public key the account is derived from */
-  publicKey: string;
-};
+import type { QScheme } from "../pq/schemes";
+import type { QSignatureEnvelope } from "../pq/qsignature";
 
 /** Address + PQ public key as returned by `getAddress`. */
 export type QuantovaAddress = {
   /** canonical "Q1…" Bech32m address */
   address: string;
-  /** hex of the PQ public key */
+  /** PQ public key, hex-encoded */
   publicKey: string;
+  /** which PQ scheme this account uses */
+  scheme: QScheme;
 };
 
 /**
- * The signer Ledger Live calls. `signTransaction` receives the SCALE-encoded signing
- * payload (call + the `TxExtension` extra, including the enabled `CheckMetadataHash`
- * digest for clear-signing) and must return a post-quantum `QSignature`.
+ * The signer Ledger Live calls. `signPayload` receives the SCALE-encoded signing payload
+ * (call + the `TxExtension` extra, including the **enabled** `CheckMetadataHash` digest so
+ * the device can clear-sign) and returns a post-quantum `QSignature` envelope.
+ *
+ * Both a software reference signer (qweb3.js) and a future on-device app implement this.
  */
 export interface QuantovaSigner {
   getAddress(path: string): Promise<QuantovaAddress>;
-  signTransaction(path: string, payload: string): Promise<QSignature>;
+  signPayload(path: string, payload: Uint8Array): Promise<QSignatureEnvelope>;
 }
+
+export type { QSignatureEnvelope };
