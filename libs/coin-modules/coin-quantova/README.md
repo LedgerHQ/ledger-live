@@ -45,16 +45,40 @@ is also accepted on the wire. This module's `logic/address.ts` implements both.
 > `5…` SS58 string. A device/host must render `Q1…` so a user can match what their
 > wallet shows.
 
-## What this module provides (host side)
+## Architecture
 
-- `logic/address.ts` — Q-branded Bech32m + hex H160 address encode/decode/validate.
-- `network/node.ts` — a thin client over Quantova's `q_` JSON-RPC namespace
-  (`q_getBalance`, `q_blockNumber`, `q_getTransactionCount`, `q_sendRawTransaction`,
-  `q_feeHistory`, …).
-- `types/` — the Quantova transaction model and the **PQ signer contract**.
-- `config.ts` / `constants.ts` — currency parameters (QTOV/TQTOV, 18 decimals, RPC, the
-  `CheckMetadataHash` transaction-extension metadata).
-- `signer/` — the `getAddress` / `signTransaction` resolver Ledger Live calls.
+```
+src/
+  pq/                     ← post-quantum primitives
+    schemes.ts            scheme registry (SPHINCS+=0, Falcon=1, Dilithium=2; sizes, NIST ids)
+    qsignature.ts         on-chain QSignature envelope codec (+ SCALE compact) — tested
+    keygen.ts             PQ key-gen + signing via qweb3.js (adapter)
+  logic/
+    address.ts            Q-branded Bech32m + hex H160 codec — tested
+    transaction/
+      signTransaction.ts  craft payload (CheckMetadataHash enabled) → sign → serialize
+  network/node.ts         q_ JSON-RPC client
+  signer/
+    softwareSigner.ts     reference signer (qweb3.js) — produces REAL valid signatures
+    deviceSigner.ts       device contract + APDU placeholder (the app-quantova target)
+  config.ts / constants.ts  QTOV/TQTOV, 18 decimals, ss58, metadata-hash params
+```
+
+### Key-gen & signing flow (qweb3.js)
+
+Quantova's **qweb3.js** SDK (`@quantova/keyring`, `@quantova/util-crypto`,
+`@quantova/falcon-wasm`) provides the audited PQ keyring and primitives used by every
+Quantova signer. `pq/keygen.ts` wraps it behind a `QPair` contract; `signer/softwareSigner.ts`
+implements the full `QuantovaSigner` with it, producing **valid `QSignature` envelopes the
+chain accepts** — i.e. the byte-exact spec an on-device app must reproduce. Both the software
+reference and a future device app are interchangeable behind the one `QuantovaSigner`
+interface.
+
+### Will it affect other Ledger assets? No.
+
+The integration is purely additive and isolated at both layers (a new host package + a
+sandboxed BOLOS device app). Full detail — including the device-app isolation model — is in
+**[`docs/DEVICE-INTEGRATION.md`](./docs/DEVICE-INTEGRATION.md)**.
 
 ## Clear-signing readiness (RFC-78 / merkleized metadata)
 
