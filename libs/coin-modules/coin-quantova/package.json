@@ -48,7 +48,11 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "bignumber.js": "^9.1.2"
+    "@quantova/falcon-wasm": "^1.0.16",
+    "@quantova/keyring": "^1.0.16",
+    "@quantova/util-crypto": "^1.0.16",
+    "bignumber.js": "^9.1.2",
+    "qweb3.js": "^1.1.4"
   },
   "devDependencies": {
     "@types/jest": "catalog:",
