@@ -108,6 +108,35 @@ jobs:
         if: matrix.os != 'windows-2022'
         run: pnpm exec nx run @ledgerhq/live-common:build
 
+      - name: Network diagnostics (coin API endpoints)
+        if: ${{ contains(needs.is-affected.outputs.coins, 'casper') }}
+        shell: bash
+        continue-on-error: true
+        run: |
+          echo "=== Casper API reachability check ==="
+
+          echo "--- DNS: casper.coin.ledger.com ---"
+          nslookup casper.coin.ledger.com 2>&1 || echo "nslookup failed (exit $?)"
+
+          echo "--- HTTPS HEAD: node endpoint ---"
+          curl -sSf --max-time 10 -X HEAD \
+            "https://casper.coin.ledger.com/node/" \
+            -w "HTTP %{http_code}  time %{time_total}s\n" \
+            -o /dev/null 2>&1 \
+            || echo "curl failed (exit $?)"
+
+          echo "--- HTTPS HEAD: indexer endpoint ---"
+          curl -sSf --max-time 10 -X HEAD \
+            "https://casper.coin.ledger.com/indexer/" \
+            -w "HTTP %{http_code}  time %{time_total}s\n" \
+            -o /dev/null 2>&1 \
+            || echo "curl failed (exit $?)"
+
+          echo "--- Casper-related env vars (values redacted) ---"
+          env | grep -iE '^(API_CASPER|CASPER|LIVE_CONFIG_CASPER)' \
+            | sed 's/=.*/=<redacted>/' \
+            || echo "(none set)"
+
       - name: Test
         shell: bash
         env:

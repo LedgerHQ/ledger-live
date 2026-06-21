@@ -33,6 +33,22 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
+
+// Network/abort errors in integration tests typically indicate a CI infrastructure
+// issue (unreachable endpoint, DNS failure, timeout) rather than a code regression.
+function isInfraFlaky(e: unknown): boolean {
+  if (!(e instanceof Error)) return false;
+  const msg = e.message.toLowerCase();
+  return (
+    msg.includes("aborted") ||
+    msg.includes("timeout") ||
+    msg.includes("enotfound") ||
+    msg.includes("econnrefused") ||
+    msg.includes("econnreset") ||
+    msg.includes("failed to send http request") ||
+    msg.includes("network request failed")
+  );
+}
 // FIXME move out into DatasetTest to be defined in
 const blacklistOpsSumEq = {
   currencies: ["ripple", "ethereum", "tezos", "assethub_polkadot"],
@@ -118,6 +134,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
 
     const scanAccounts = async apdus => {
       const deviceId = await mockDeviceWithAPDUs(apdus, currencyData.mockDeviceOptions);
+      let failed = false;
       try {
         const accounts = await firstValueFrom(
           bridge
@@ -134,10 +151,18 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         );
         return accounts;
       } catch (e: any) {
-        console.error(e.message);
+        failed = true;
+        if (isInfraFlaky(e)) {
+          console.error(
+            `[infra-flaky] scanAccounts network failure — likely a CI connectivity issue, not a code regression.\n` +
+              `  currency=${currency.id}  error=${e.message}`,
+          );
+        } else {
+          console.error(e.message);
+        }
         throw e;
       } finally {
-        releaseMockDevice(deviceId);
+        releaseMockDevice(deviceId, { allowRemainingOnAbort: failed });
       }
     };
 

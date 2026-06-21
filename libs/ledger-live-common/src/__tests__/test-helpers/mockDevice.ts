@@ -4,12 +4,16 @@ import { registerTransportModule } from "../../hw";
 let idCounter = 0;
 const transports = {};
 const recordStores = {};
-export function releaseMockDevice(id: string) {
+export function releaseMockDevice(
+  id: string,
+  { allowRemainingOnAbort = false }: { allowRemainingOnAbort?: boolean } = {},
+) {
   const store = recordStores[id];
   invariant(store, "MockDevice does not exist (%s)", id);
   try {
     store.ensureQueueEmpty();
   } catch (e: any) {
+    if (allowRemainingOnAbort) return;
     e && console.error(e.message);
     throw e;
   } finally {
