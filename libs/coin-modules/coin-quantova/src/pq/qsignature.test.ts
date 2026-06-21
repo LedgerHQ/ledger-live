@@ -13,11 +13,15 @@ const fill = (n: number, seed: number) => {
 };
 
 describe("SCALE compact codec", () => {
-  it.each([0, 1, 63, 64, 754, 2420, 7856, 16383, 16384, 1000000])("round-trips %i", n => {
-    const [v, used] = compactDecode(compactEncode(n));
-    expect(v).toBe(n);
-    expect(used).toBe(compactEncode(n).length);
-  });
+  // includes 2^29 and 2^30-1: the 4-byte-mode range that requires unsigned shifts.
+  it.each([0, 1, 63, 64, 754, 2420, 7856, 16383, 16384, 1000000, 536870912, 1073741823])(
+    "round-trips %i",
+    n => {
+      const [v, used] = compactDecode(compactEncode(n));
+      expect(v).toBe(n);
+      expect(used).toBe(compactEncode(n).length);
+    },
+  );
 });
 
 describe("QSignature envelope codec", () => {
