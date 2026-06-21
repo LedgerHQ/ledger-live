@@ -26,12 +26,12 @@ export function compactEncode(n: number): Uint8Array {
   if (n < 0 || !Number.isInteger(n)) throw new Error("compact: non-negative integer required");
   if (n < 1 << 6) return Uint8Array.of(n << 2); // single-byte mode
   if (n < 1 << 14) {
-    const v = (n << 2) | 0b01;
-    return Uint8Array.of(v & 0xff, (v >> 8) & 0xff); // two-byte mode
+    const v = ((n << 2) | 0b01) >>> 0;
+    return Uint8Array.of(v & 0xff, (v >>> 8) & 0xff); // two-byte mode
   }
   if (n < 1 << 30) {
-    const v = (n << 2) | 0b10;
-    return Uint8Array.of(v & 0xff, (v >> 8) & 0xff, (v >> 16) & 0xff, (v >> 24) & 0xff);
+    const v = ((n << 2) | 0b10) >>> 0; // unsigned: n<<2 can set bit 31
+    return Uint8Array.of(v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff);
   }
   // big-integer mode (4..67 bytes); sufficient for any PQ signature length.
   const bytes: number[] = [];
@@ -47,11 +47,11 @@ export function compactEncode(n: number): Uint8Array {
 export function compactDecode(buf: Uint8Array, offset = 0): [number, number] {
   const first = buf[offset];
   const mode = first & 0b11;
-  if (mode === 0b00) return [first >> 2, 1];
-  if (mode === 0b01) return [((first | (buf[offset + 1] << 8)) >>> 0) >> 2, 2];
+  if (mode === 0b00) return [first >>> 2, 1];
+  if (mode === 0b01) return [((first | (buf[offset + 1] << 8)) >>> 0) >>> 2, 2];
   if (mode === 0b10) {
     const v = (first | (buf[offset + 1] << 8) | (buf[offset + 2] << 16) | (buf[offset + 3] << 24)) >>> 0;
-    return [v >> 2, 4];
+    return [v >>> 2, 4]; // unsigned: 4-byte compact values can exceed 2^31
   }
   const len = (first >> 2) + 4;
   let v = 0;
