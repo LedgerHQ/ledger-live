@@ -26,6 +26,11 @@ permissions:
 jobs:
   lint-commits:
     runs-on: ubuntu-22.04
+    if: |
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.ref != 'release' &&
+       !startsWith(github.event.pull_request.head.ref, 'release/') &&
+       github.event.pull_request.head.ref != 'support/release-merge-conflicts')
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
