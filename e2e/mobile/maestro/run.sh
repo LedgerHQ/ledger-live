@@ -5,10 +5,11 @@
 #
 # Usage (via pnpm, from repo root):
 #   pnpm e2e:mobile test:maestro                 # run ALL Maestro tests (sequentially)
-#   pnpm e2e:mobile test:maestro swap            # run only tests whose name contains "swap"
+#   pnpm e2e:mobile test:maestro swap            # run ALL swap pairs
+#   pnpm e2e:mobile test:maestro btc-eth         # run ONE swap pair (any flows/swap/<pair>.yaml)
 #   pnpm e2e:mobile test:maestro send-doge
 #   pnpm e2e:mobile test:maestro add-account
-#   pnpm e2e:mobile test:maestro --list          # list available tests and exit
+#   pnpm e2e:mobile test:maestro --list          # list available tests + swap pairs and exit
 #
 # Or directly:  bash maestro/run.sh [name|--list]
 #
@@ -41,12 +42,15 @@ list_tests() {
     [ -n "$name" ] || continue
     printf "  %-14s %s\n" "$name" "$desc"
   done
+  echo "Swap pairs (run one with its name, e.g. 'btc-eth'):"
+  for f in maestro/flows/swap/*.yaml; do printf "  %s\n" "$(basename "$f" .yaml)"; done | column 2>/dev/null || for f in maestro/flows/swap/*.yaml; do printf "  %s\n" "$(basename "$f" .yaml)"; done
 }
 
 usage() {
   echo "Usage: pnpm e2e:mobile test:maestro [name]"
   echo "  (no name) | all   run all Maestro tests sequentially"
   echo "  <name>            run tests whose name contains <name> (e.g. swap, send-doge, add-account)"
+  echo "  <pair>            run ONE swap pair, e.g. btc-eth (see the list below)"
   echo "  --list | --help   show this help"
   echo
   list_tests
@@ -59,6 +63,17 @@ case "$FILTER" in
     exit 0
     ;;
 esac
+
+# Single swap pair: `test:maestro <pair>` (e.g. btc-eth), also accepts swap-<pair> / swap/<pair>.
+# (`swap` alone still runs ALL pairs via the registry below.)
+PAIR="${FILTER#swap/}"; PAIR="${PAIR#swap-}"
+if [ -n "$FILTER" ] && [ "$FILTER" != "swap" ] && [ -f "maestro/flows/swap/$PAIR.yaml" ]; then
+  echo ">> running single swap pair: $PAIR"
+  rc=0
+  bash maestro/run-swap.sh "$PAIR" || rc=$?
+  generate_allure_report
+  exit "$rc"
+fi
 
 # Select matching tests (substring match on the name; empty/"all" -> everything).
 SELECTED=""

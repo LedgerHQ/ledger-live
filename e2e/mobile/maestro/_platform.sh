@@ -52,24 +52,33 @@ platform_install_app() {
   case "$MAESTRO_PLATFORM" in
     ios)
       xcrun simctl listapps booted 2>/dev/null | grep -q "$APP_ID" && return 0
-      local app="../../apps/ledger-live-mobile/ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app"
-      if [ -d "$app" ]; then
-        echo ">> installing iOS app onto the booted simulator..."
+      # Debug locally; Release/Staging in CI (the build reusable workflow ships Release-iphonesimulator).
+      local app="" cfg products="../../apps/ledger-live-mobile/ios/build/Build/Products"
+      for cfg in Debug Release Staging; do
+        [ -d "$products/$cfg-iphonesimulator/ledgerlivemobile.app" ] && { app="$products/$cfg-iphonesimulator/ledgerlivemobile.app"; break; }
+      done
+      if [ -n "$app" ]; then
+        echo ">> installing iOS app onto the booted simulator: $app"
         xcrun simctl install booted "$app"
       else
-        echo "ERROR: app not installed and no build at $app. Run: pnpm e2e:mobile build:ios:debug"
+        echo "ERROR: no ledgerlivemobile.app under $products/{Debug,Release,Staging}-iphonesimulator/. Run: pnpm e2e:mobile build:ios:debug"
         exit 1
       fi
       ;;
     android)
       "$ADB" shell pm list packages 2>/dev/null | grep -q "package:$APP_ID" && return 0
-      local apk
-      apk="$(ls -t ../../apps/ledger-live-mobile/android/app/build/outputs/apk/debug/*.apk 2>/dev/null | head -1)"
-      if [ -n "$apk" ] && [ -f "$apk" ]; then
+      # debug locally; detox/detoxPreRelease in CI (the build reusable workflow ships the detox variant).
+      local apk="" variant apks="../../apps/ledger-live-mobile/android/app/build/outputs/apk"
+      for variant in debug detox detoxPreRelease; do
+        apk="$(ls -t "$apks/$variant"/*.apk 2>/dev/null | head -1)"
+        [ -n "$apk" ] && [ -f "$apk" ] && break
+        apk=""
+      done
+      if [ -n "$apk" ]; then
         echo ">> installing Android APK: $apk"
         "$ADB" install -r "$apk"
       else
-        echo "ERROR: app not installed and no debug APK under android/app/build/outputs/apk/debug/. Run: pnpm e2e:mobile build:android:debug"
+        echo "ERROR: no APK under $apks/{debug,detox,detoxPreRelease}/. Run: pnpm e2e:mobile build:android:debug"
         exit 1
       fi
       ;;
