@@ -32,6 +32,7 @@ const methods = [
   "bitcoin.getAddress",
   "bitcoin.getAddresses",
   "bitcoin.getPublicKey",
+  "account.getPublicKey",
   "bitcoin.getXPub",
   "exchange.start",
   "exchange.complete",
