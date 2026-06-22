@@ -36,7 +36,7 @@ Leave style, lint, and code-smell comments to Copilot and SonarQube.
 - Distinguish between blockers (must fix before merge) and suggestions (nice to have).
 - Resolve threads once addressed, or explicitly state why you disagree.
 
-## Tips
+## Appendix: Tips
 
 #### Scope your review to files you own
 

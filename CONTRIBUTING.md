@@ -63,13 +63,8 @@ Before marking your PR ready for review, ensure all of the following pass:
 - If you receive a review request for files you don't own, feel free to uncheck it.
 
 
-#### Your daily review duty
-
-> [!TIP]
-> Check incoming review requests **at least once per day**:
-> 👉 [PRs waiting for my review](https://github.com/LedgerHQ/ledger-live/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me+sort%3Aupdated-asc+-label%3AHODL+-label%3A%22do+not+review%22+draft%3Afalse)
-
-See [REVIEWING.md](REVIEWING.md) for reviewer guidance.
+> [!IMPORTANT]
+> If you are a code owner, see [REVIEWING.md](REVIEWING.md) for reviewer guidance, including your daily review queue.
 
 ## Changelogs
 
@@ -93,7 +88,7 @@ See the README files of [Ledger Wallet Desktop](apps/ledger-live-desktop) and [L
 
 Tools and resources for building on Ledger are at the [Ledger Developer Portal](https://developers.ledger.com/).
 
-## Tips
+## Appendix: Tips
 
 #### Request Copilot while still in Draft
 
