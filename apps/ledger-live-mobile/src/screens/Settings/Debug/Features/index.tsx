@@ -7,12 +7,6 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { debugOsUpdateBannerModeSelector } from "~/reducers/settings";
 import { setDebugOsUpdateBannerMode } from "~/actions/settings";
 import type { DebugOsUpdateBannerMode } from "~/reducers/types";
-
-const OS_UPDATE_BANNER_OPTIONS: { value: DebugOsUpdateBannerMode; label: string }[] = [
-  { value: "off", label: "Off" },
-  { value: "card", label: "Card" },
-  { value: "compact", label: "Compact" },
-];
 import BLEPairingFlow from "./BLEPairingFlow";
 import CustomImage from "./CustomImage";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
@@ -21,6 +15,12 @@ import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/type
 import { FeatureToggle } from "@features/platform-feature-flags";
 import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import InfoModal from "~/modals/Info";
+
+const OS_UPDATE_BANNER_OPTIONS: { value: DebugOsUpdateBannerMode; label: string }[] = [
+  { value: "off", label: "Off" },
+  { value: "card", label: "Card" },
+  { value: "compact", label: "Compact" },
+];
 
 export default function Features() {
   const [showBaseModalDemo, setShowBaseModalDemo] = useState(false);
