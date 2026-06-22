@@ -25,7 +25,6 @@ type UseClipboardRecipientProps = Readonly<{
   currency: CryptoCurrency | TokenCurrency;
   account?: AccountLike;
   parentAccount?: Account | null;
-  currentAccountId?: string;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -51,7 +50,6 @@ export function useClipboardRecipient({
   currency,
   account,
   parentAccount,
-  currentAccountId,
   recipientSupportsDomain,
 }: UseClipboardRecipientProps): UseClipboardRecipientResult {
   const [clipboardValue, setClipboardValue] = useState("");
@@ -89,7 +87,6 @@ export function useClipboardRecipient({
     currency,
     account,
     parentAccount,
-    currentAccountId,
     recipientSupportsDomain,
     // One-shot clipboard read: skip the typing debounce so the banner appears as
     // soon as the bridge confirms the format, without the 300ms typing delay.

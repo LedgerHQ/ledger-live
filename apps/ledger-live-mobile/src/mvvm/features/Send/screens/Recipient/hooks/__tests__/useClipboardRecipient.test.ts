@@ -42,7 +42,6 @@ function renderClipboardRecipient(enabled = true) {
       enabled,
       currency,
       account,
-      currentAccountId: "account_1",
       recipientSupportsDomain: true,
     }),
   );

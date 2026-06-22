@@ -4462,30 +4462,10 @@
         "cta": "Paste"
       },
       "editRecipientAccessibilityLabel": "Edit recipient",
-      "recent": "Recent",
-      "recentDetail": "Recent detail",
-      "myAccounts": "My accounts",
-      "account": "Account",
       "sendTo": "Send to {{address}}",
       "addressMatched": "Address matched",
       "addressNotFound": "Address not found",
-      "alreadyUsed": "Already used · {{date}}",
-      "recentSendWillAppear": "Your recent send will appear here",
-      "relativeDate": {
-        "justNow": "Just now",
-        "minutesAgo_one": "1 min ago",
-        "minutesAgo_other": "{{count}} min ago",
-        "hoursAgo_one": "1 hour ago",
-        "hoursAgo_other": "{{count}} hours ago",
-        "daysAgo_one": "1 day ago",
-        "daysAgo_other": "{{count}} days ago"
-      },
-      "remove": "Remove",
       "enterTag": "Enter {{tag}}",
-      "firstInteraction": {
-        "title": "You’re sending to a new address",
-        "description": "Verify that the address is correct. In case of doubt send a small amount first."
-      },
       "sanctioned": {
         "title": "Flagged address",
         "description": "This address has been flagged and Ledger doesn’t allow sending to it",
