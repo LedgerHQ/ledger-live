@@ -6,6 +6,7 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchAllLedgerOperations, fetchLedgerRecord } from "../network";
+import { decodeMemo, parseSequence } from "../network/serialization";
 import type { RawOperation } from "../types";
 import { parseAPIValue } from "./common";
 import { assertUnreachable } from "./utils";
@@ -195,34 +196,6 @@ type TxContext = {
   memo: { type: string; value?: string } | undefined;
   sequence: string | undefined;
 };
-
-function parseSequence(seq: string | number | undefined): string | undefined {
-  const bn = new BigNumber(seq ?? "");
-  return bn.isNaN() ? undefined : bn.toString();
-}
-
-function decodeMemo(
-  tx: Awaited<ReturnType<RawOperation["transaction"]>>,
-): { type: string; value?: string } | undefined {
-  switch (tx.memo_type) {
-    case "none":
-      return { type: "NO_MEMO" };
-    case "id":
-      return tx.memo ? { type: "MEMO_ID", value: tx.memo as string } : undefined;
-    case "text":
-      return tx.memo ? { type: "MEMO_TEXT", value: tx.memo as string } : undefined;
-    case "hash":
-      return tx.memo
-        ? { type: "MEMO_HASH", value: Buffer.from(tx.memo as string, "base64").toString("hex") }
-        : undefined;
-    case "return":
-      return tx.memo
-        ? { type: "MEMO_RETURN", value: Buffer.from(tx.memo as string, "base64").toString("hex") }
-        : undefined;
-    default:
-      return undefined;
-  }
-}
 
 function mapSupportedOperationToBlockOperations(
   op: SupportedGetBlockOperation,
