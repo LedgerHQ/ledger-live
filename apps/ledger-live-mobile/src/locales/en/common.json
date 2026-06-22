@@ -8995,8 +8995,7 @@
     "setPreferencesCTA": "Set preferences",
     "refuseCTA": "Refuse all",
     "acceptCTA": "Accept all",
-    "privacyPolicy": "You can revoke your consent anytime in settings.",
-    "privacyPolicyCTA": "Privacy policy",
+    "privacyPolicy": "You can revoke your consent anytime in settings. <PrivacyPolicy>Privacy policy</PrivacyPolicy>",
     "setPreferences": {
       "title": "Set preferences",
       "performance": "App performance",
