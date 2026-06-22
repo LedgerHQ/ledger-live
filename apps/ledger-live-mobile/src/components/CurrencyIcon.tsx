@@ -17,9 +17,10 @@ type Props = {
   disabled?: boolean;
   hideNetwork?: boolean;
   squared?: boolean;
+  testID?: string;
 };
 
-const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props) => {
+const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared, testID }: Props) => {
   const validIconSize = getValidCryptoIconSizeNative(size);
 
   if (currency.type === "FiatCurrency") {
@@ -32,6 +33,7 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props)
   const cryptoIconElement =
     !hideNetwork && currency.type === "TokenCurrency" ? (
       <CryptoIcon
+        testID={testID}
         ledgerId={ledgerId}
         ticker={ticker}
         size={validIconSize}
@@ -40,6 +42,7 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props)
       />
     ) : (
       <CryptoIcon
+        testID={testID}
         ledgerId={ledgerId}
         ticker={ticker}
         size={validIconSize}

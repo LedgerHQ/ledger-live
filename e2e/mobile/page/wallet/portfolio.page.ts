@@ -1,9 +1,12 @@
+import { by, element, waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { delay, isAndroid, openDeeplink } from "../../helpers/commonHelpers";
 import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 import { getFlags } from "../../bridge/server";
 import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "../../utils/featureFlagUtils";
 import type { Features } from "@shared/feature-flags";
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -15,6 +18,19 @@ export default class PortfolioPage {
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsId = "topbar-settings";
+  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
+  topBarMyWalletId = "topbar-mywallet";
+  walletV4TourCloseButtonId = "drawer-close-button";
+  productTourCloseButtonId = "product-tour-close-button";
+  walletV4TourFirstSlideTitle = "A clearer view of your portfolio";
+  walletV4TourNextButtonText = "Next";
+  walletV4TourCompleteButtonText = "Discover my new portfolio";
+  wallet40DrawerMountDelayMs = 1500;
+  analyticsConsentDrawerId = "analytics-consent-drawer";
+  analyticsConsentRefuseAllButtonId = "analytics-consent-drawer-secondary-button";
+  analyticsConsentTitle = "Help us improve Ledger";
+  analyticsConsentRefuseAllText = "Refuse all";
+  closeButtonLabel = "Close";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
@@ -65,6 +81,10 @@ export default class PortfolioPage {
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
   assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
+  assetItemCountervalueId = (currencyName: string) =>
+    `${this.baseAssetItem}${currencyName}-countervalue`;
+  assetItemExactRegExp = (currencyName: string) =>
+    new RegExp(`^${this.baseAssetItem}${escapeRegExp(currencyName)}$`);
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
@@ -299,12 +319,9 @@ export default class PortfolioPage {
   }
 
   @Step("Expect market banner to be visible")
-  async expectMarketBannerVisible() {
-    if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.marketBannerTitle, undefined, undefined, "down");
-    } else {
-      await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, "down");
-    }
+  async expectMarketBannerVisible(direction: "up" | "down" = "down") {
+    const scrollViewId = (await isAggregatedAssetsEnabled()) ? undefined : this.accountsListView;
+    await scrollToId(this.marketBannerTitle, scrollViewId, undefined, direction);
     await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
   }
 
@@ -482,6 +499,166 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(`assetItem-${currencyName}`)).toExist();
   }
 
+  @Step("Close Wallet 4.0 tour if visible")
+  async closeWalletV4TourIfVisible(timeout = 1000): Promise<boolean> {
+    if (await this.isTextVisible(this.walletV4TourFirstSlideTitle, timeout)) {
+      if (await IsIdVisible(this.walletV4TourCloseButtonId, 500)) {
+        await tapById(this.walletV4TourCloseButtonId);
+        await waitForElementNotVisible(this.walletV4TourCloseButtonId);
+        return true;
+      }
+
+      if (await this.tapCloseButtonByLabelIfVisible()) {
+        return true;
+      }
+
+      await this.tapTextIfVisible(this.walletV4TourNextButtonText);
+      await this.tapTextIfVisible(this.walletV4TourNextButtonText);
+      await this.tapTextIfVisible(this.walletV4TourCompleteButtonText);
+      return true;
+    }
+
+    if (await IsIdVisible(this.walletV4TourCloseButtonId, timeout)) {
+      await tapById(this.walletV4TourCloseButtonId);
+      await waitForElementNotVisible(this.walletV4TourCloseButtonId);
+      return true;
+    }
+
+    if (await IsIdVisible(this.productTourCloseButtonId, 500)) {
+      await tapById(this.productTourCloseButtonId);
+      await waitForElementNotVisible(this.productTourCloseButtonId);
+      return true;
+    }
+
+    return await this.tapCloseButtonByLabelIfVisible();
+  }
+
+  @Step("Close analytics consent drawer if visible")
+  async closeAnalyticsConsentDrawerIfVisible(timeout = 1000): Promise<boolean> {
+    if (await IsIdVisible(this.analyticsConsentDrawerId, timeout)) {
+      await waitForElementById(this.analyticsConsentRefuseAllButtonId, timeout);
+      await tapById(this.analyticsConsentRefuseAllButtonId);
+      await waitForElementNotVisible(this.analyticsConsentDrawerId);
+      return true;
+    }
+
+    if (!(await this.isTextVisible(this.analyticsConsentTitle, timeout))) {
+      return false;
+    }
+
+    await this.tapTextIfVisible(this.analyticsConsentRefuseAllText);
+    await waitFor(element(by.text(this.analyticsConsentTitle))).not.toBeVisible().withTimeout(1000);
+    return true;
+  }
+
+  @Step("Close Wallet 4.0 blocking drawers if visible")
+  async closeWallet40BlockingDrawersIfVisible(timeout = 1000) {
+    try {
+      await waitFor(element(by.id(this.wallet40BlockingDrawerOrTopbarIdMatcher())))
+        .toExist()
+        .withTimeout(timeout);
+    } catch {
+      return;
+    }
+
+    // Android can expose the topbar before queued Wallet 4.0 drawers finish mounting.
+    if (isAndroid()) await delay(this.wallet40DrawerMountDelayMs);
+
+    const drawerTimeout = isAndroid() ? this.wallet40DrawerMountDelayMs : 500;
+
+    await this.closeWalletV4TourIfVisible(drawerTimeout);
+    await this.closeAnalyticsConsentDrawerIfVisible(500);
+    await this.closeWalletV4TourIfVisible(drawerTimeout);
+    await this.closeAnalyticsConsentDrawerIfVisible(500);
+  }
+
+  private wallet40BlockingDrawerOrTopbarIdMatcher() {
+    return new RegExp(
+      `^(${[
+        this.topBarMyWalletId,
+        this.walletV4TourCloseButtonId,
+        this.productTourCloseButtonId,
+        this.analyticsConsentDrawerId,
+      ]
+        .map(escapeRegExp)
+        .join("|")})$`,
+    );
+  }
+
+  private async isTextVisible(text: string, timeout = 1000): Promise<boolean> {
+    try {
+      await waitFor(element(by.text(text)))
+        .toBeVisible()
+        .withTimeout(timeout);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private async tapTextIfVisible(text: string): Promise<void> {
+    if (await this.isTextVisible(text, 1000)) {
+      await element(by.text(text)).tap();
+      await delay(300);
+    }
+  }
+
+  private async tapCloseButtonByLabelIfVisible(): Promise<boolean> {
+    try {
+      const closeButton = element(by.label(this.closeButtonLabel)).atIndex(0);
+      await waitFor(closeButton).toBeVisible().withTimeout(500);
+      await closeButton.tap();
+      await waitFor(closeButton).not.toBeVisible().withTimeout(1000);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  @Step("Check aggregated asset row is visible")
+  async checkAggregatedAssetRowVisible(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemId(currencyName))).toBeVisible();
+  }
+
+  @Step("Get aggregated asset row count")
+  async getAggregatedAssetRowCount(currencyName: string) {
+    return await countElementsById(this.assetItemExactRegExp(currencyName));
+  }
+
+  @Step("Check asset countervalue is visible")
+  async checkAssetCountervalueVisible(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemCountervalueId(currencyName))).toBeVisible();
+  }
+
+  @Step("Open Wallet 4.0 asset detail")
+  async openAssetDetailW40(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemId(currencyName))).toBeVisible();
+    await tapById(this.assetItemId(currencyName));
+  }
+
+  @Step("Open Wallet 4.0 stablecoins list")
+  async openStablecoinsListW40() {
+    await this.tapStablecoinsSectionTitle();
+    await this.checkStablecoinListPageVisible();
+  }
+
+  @Step("Check if full stablecoin list page is visible")
+  async isStablecoinListPageVisible(timeout = 1000) {
+    return await IsIdVisible(this.stablecoinListId, timeout);
+  }
+
   @Step("Tap cryptos section title")
   async tapCryptosSectionTitle() {
     await scrollToId(this.quickActionTransferButtonV4, this.accountsListView, 150, "up");
@@ -490,8 +667,10 @@ export default class PortfolioPage {
 
   @Step("Tap stablecoins section title")
   async tapStablecoinsSectionTitle() {
+    await waitForElementById(this.accountsListView);
     await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView);
-    await tapById(this.stablecoinsSectionHeaderId);
+    await detoxExpect(getElementById(this.stablecoinsSectionHeaderId)).toBeVisible();
+    await tapByText("Stablecoins");
   }
 
   private async checkListPageVisible(listId: string) {

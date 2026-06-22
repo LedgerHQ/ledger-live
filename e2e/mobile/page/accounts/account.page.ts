@@ -1,3 +1,4 @@
+import { by, element as detoxElement, waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -13,7 +14,7 @@ export default class AccountPage {
   baseAccountRow = "account-row-";
   baseAccountName = this.baseAccountRow + "name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
-  operationRowRegexp = new RegExp("operation-row-" + ".*");
+  operationRowRegexp = /operation-row-.*/;
   operationHistorySection = "operations-history-";
   operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
   accountSettingsButtonId = "account-settings-button";
@@ -21,9 +22,11 @@ export default class AccountPage {
   sendButtonId = "account-quick-action-button-send";
   swapButtonId = "account-quick-action-button-swap";
   buyButtonId = "account-quick-action-button-buy";
+  headerBackButtonId = "account-header-back-button";
 
   accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
+  accountAddress = (accountId: string) => getElementById(`account-address-${accountId}`);
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
   accountDeleteRow = () => getElementById("account-settings-delete-row");
   accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
@@ -36,7 +39,7 @@ export default class AccountPage {
     `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
-  @Step("Wait for account screen and verify account name: $0")
+  @Step("Wait for account screen and verify account name")
   async waitAndVerifyAccountName(accountName: string) {
     await waitForElementById(this.accountScreenScrollView);
     await detoxExpect(getElementByText(accountName, 0)).toBeVisible();
@@ -47,6 +50,12 @@ export default class AccountPage {
     await openDeeplink(this.baseLink);
     await waitForElementById(this.accountListTitleId);
     await detoxExpect(getElementById(this.accountListTitleId)).toBeVisible();
+  }
+
+  @Step("Go back from account detail")
+  async goBackFromAccountDetail() {
+    await waitForElementById(this.headerBackButtonId);
+    await tapById(this.headerBackButtonId);
   }
 
   @Step("Go to the account with the name")
@@ -109,8 +118,11 @@ export default class AccountPage {
   @Step("Expect operation history to be visible")
   async expectOperationHistoryVisible(accountId: string) {
     const id = this.operationHistorySectionId(accountId);
-    await scrollToId(id, this.accountScreenScrollView, 1000, "bottom");
-    await detoxExpect(getElementById(id)).toBeVisible();
+    await waitFor(detoxElement(by.id(id)))
+      .toBeVisible(35)
+      .whileElement(by.id(this.accountScreenScrollView))
+      .scroll(250, "down", Number.NaN, 0.55);
+    await detoxExpect(getElementById(id)).toBeVisible(35);
   }
 
   @Step("Scroll to operation history")
@@ -134,6 +146,20 @@ export default class AccountPage {
   async expectAccountBalanceVisible(accountId: string) {
     await detoxExpect(this.accountGraph(accountId)).toBeVisible();
     await detoxExpect(this.accountBalance(accountId)).toBeVisible();
+  }
+
+  @Step("Get visible account address label")
+  async getVisibleAccountAddressLabel(accountId: string) {
+    await scrollToId(`account-address-${accountId}`, this.accountScreenScrollView);
+    await detoxExpect(this.accountAddress(accountId)).toBeVisible();
+    return await getLabelOfElement(`account-address-${accountId}`);
+  }
+
+  @Step("Expect account receive and send actions")
+  async expectReceiveAndSendActionsVisible() {
+    await scrollToId(this.receiveButtonId, this.accountScreenScrollView);
+    await detoxExpect(getElementById(this.receiveButtonId)).toBeVisible();
+    await detoxExpect(getElementById(this.sendButtonId)).toBeVisible();
   }
 
   @Step("Expect address index")

@@ -9,6 +9,8 @@ import {
 import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export default class MarketPage {
+  marketScreenSearchBarId = "market-screen-search-bar";
+  marketAssetsCategorySwitcherStarredId = "market-screen-assets-category-switcher-starred";
   marketRowTitleBaseId = "market-row-title-";
   marketFilterSortButton = () => getElementById("market-filter-sort");
   marketFilterTimeButton = () => getElementById("market-filter-time");
@@ -20,6 +22,8 @@ export default class MarketPage {
   assetDetailBackBtn = () => getElementById(this.backButtonId);
   marketRowTitle = (currency: CurrencyType) =>
     getElementById(`${this.marketRowTitleBaseId}${currency.ticker}`);
+  marketScreenItemWithTitle = (marketId: string, title: string) =>
+    getElementByIdWithDescendantTexts(`marketItem-${marketId}`, title);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
     getElementById(`market-quick-action-button-${action}`);
@@ -56,6 +60,12 @@ export default class MarketPage {
     } else {
       await detoxExpect(this.starButton()).toBeVisible();
     }
+  }
+
+  @Step("Expect market screen")
+  async expectMarketScreenVisible() {
+    await waitForElementById(this.marketScreenSearchBarId);
+    await detoxExpect(getElementById(this.marketAssetsCategorySwitcherStarredId)).toBeVisible();
   }
 
   @Step("Expect market list header left")
@@ -125,6 +135,12 @@ export default class MarketPage {
     }
   }
 
+  @Step("Filter starred assets on market screen")
+  async filterStarredAssetsOnMarketScreen() {
+    await waitForElementById(this.marketAssetsCategorySwitcherStarredId);
+    await tapById(this.marketAssetsCategorySwitcherStarredId);
+  }
+
   @Step("Expect market row title")
   async expectMarketRowTitle(currency: CurrencyType) {
     if (await isAssetDiscoverabilityEnabled()) {
@@ -132,6 +148,12 @@ export default class MarketPage {
     } else {
       await detoxExpect(this.marketRowTitle(currency)).toBeVisible();
     }
+  }
+
+  @Step("Expect market screen item")
+  async expectMarketScreenItemVisible(marketId: string, title: string) {
+    await waitForElementById(`marketItem-${marketId}`);
+    await detoxExpect(this.marketScreenItemWithTitle(marketId, title)).toBeVisible();
   }
 
   @Step("Tap on market quick action button ")

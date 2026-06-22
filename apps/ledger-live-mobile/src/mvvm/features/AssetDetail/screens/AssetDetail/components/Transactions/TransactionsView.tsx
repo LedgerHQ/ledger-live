@@ -47,6 +47,7 @@ export function TransactionsView({
         <SubheaderRow
           onPress={onHeaderPress}
           accessibilityRole="button"
+          testID={ASSET_DETAIL_TEST_IDS.transactionsHeader}
           lx={{ marginBottom: "s12" }}
         >
           <SubheaderTitle>{t("assetDetail.transactions.title")}</SubheaderTitle>
