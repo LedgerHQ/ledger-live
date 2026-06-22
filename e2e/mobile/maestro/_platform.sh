@@ -19,7 +19,7 @@ APP_ID="${APP_ID:-com.ledger.live.debug}"
 ANDROID_SDK="${ANDROID_HOME:-$HOME/Library/Android/sdk}"
 ADB="${ADB:-$ANDROID_SDK/platform-tools/adb}"
 # Export ADB so the harness (detox-stub) reverses the dynamic Speculos port with the same binary.
-export ADB MAESTRO_PLATFORM
+export ADB MAESTRO_PLATFORM APP_ID
 
 platform_preflight_device() {
   case "$MAESTRO_PLATFORM" in
@@ -123,4 +123,43 @@ start_harness() {
     pnpm exec ts-node --swc --require tsconfig-paths/register "$HARNESS_ENTRY" >"$logfile" 2>&1 &
   fi
   HARNESS_PID=$!
+}
+
+# --- Maestro run + Allure reporting --------------------------------------------------------------
+MAESTRO_DEBUG_ROOT="${MAESTRO_DEBUG_ROOT:-artifacts/maestro-debug}"
+MAESTRO_ALLURE_RESULTS="${MAESTRO_ALLURE_RESULTS:-artifacts/maestro-allure-results}"
+MAESTRO_ALLURE_REPORT="${MAESTRO_ALLURE_REPORT:-artifacts/maestro-allure-report}"
+
+# Run one Maestro flow, capturing the rich per-command trace + screenshots + maestro.log into a
+# per-flow debug dir (so the Allure converter can read it). Writes meta.json with the context the
+# converter needs (platform, appId, harness log). $1 = flow yaml; $@ = extra `maestro test` args.
+# Returns Maestro's exit code (pipefail keeps it past the noise filter); callers guard with `|| rc=$?`.
+run_maestro_flow() {
+  local flow="$1"; shift
+  local name; name="$(basename "$flow" .yaml)"
+  local debug_dir="$MAESTRO_DEBUG_ROOT/$name"
+  rm -rf "$debug_dir"; mkdir -p "$debug_dir"
+  cat >"$debug_dir/meta.json" <<EOF
+{"flow":"$name","platform":"$MAESTRO_PLATFORM","appId":"$APP_ID","speculosDevice":"${SPECULOS_DEVICE:-}","harnessLog":"${HARNESS_LOG:-}"}
+EOF
+  echo ">> running Maestro flow: $flow (debug -> e2e/mobile/$debug_dir)"
+  # --debug-output gives commands JSON + maestro.log; --test-output-dir (same dir) adds screenshots;
+  # --flatten-debug-output drops the per-run timestamp subfolder so the converter finds them.
+  maestro test --platform "$MAESTRO_PLATFORM" --no-ansi \
+    --debug-output "$debug_dir" --test-output-dir "$debug_dir" --flatten-debug-output \
+    -e APP_ID="$APP_ID" \
+    "$flow" "$@" 2>&1 | { grep -vaE "Running on (iOS Simulator|Android Emulator)" || true; }
+}
+
+# Convert every per-flow debug dir into Allure results, then build the HTML report. Safe to call even
+# when a flow failed (the failure is captured in the report). No-op if there's no debug output.
+generate_allure_report() {
+  [ -d "$MAESTRO_DEBUG_ROOT" ] || { echo ">> no Maestro debug output to report on"; return 0; }
+  echo ">> converting Maestro debug output -> Allure results ($MAESTRO_ALLURE_RESULTS)"
+  MAESTRO_DEBUG_ROOT="$MAESTRO_DEBUG_ROOT" MAESTRO_ALLURE_RESULTS="$MAESTRO_ALLURE_RESULTS" \
+    node maestro/reporting/maestro-to-allure.mjs || { echo "WARN: Allure conversion failed"; return 0; }
+  if [ "${MAESTRO_ALLURE_HTML:-1}" = "1" ]; then
+    echo ">> allure generate -> e2e/mobile/$MAESTRO_ALLURE_REPORT"
+    pnpm exec allure generate "$MAESTRO_ALLURE_RESULTS" --clean -o "$MAESTRO_ALLURE_REPORT" || true
+  fi
 }

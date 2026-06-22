@@ -1,0 +1,399 @@
+name: "[Mobile] Maestro E2E (reusable)"
+# Maestro E2E for ledger-live-mobile. Mirrors test-mobile-e2e-reusable.yml (Detox) but runs the
+# Maestro suite (e2e/mobile/maestro) instead of Detox: it reuses the same iOS/Android build reusable
+# workflows, the AVD setup + Speculos composites, and the Allure upload composite. One iOS leg
+# (macOS + remote Speculinho) and one Android leg (self-hosted Linux + local Docker Speculos), like Detox.
+#
+# NOTE: this is the first iteration of the Maestro CI — the building blocks are reused verbatim from the
+# Detox workflow, but it has not yet had a green run on the runners; validate on the first dispatch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch/sha to test (blank = workflow branch). For a PR use refs/pull/<n>/merge."
+        required: false
+        type: string
+      tests_type:
+        description: "Which platforms to run"
+        required: true
+        type: choice
+        default: "Both"
+        options: ["Both", "iOS Only", "Android Only"]
+      flow_filter:
+        description: "Maestro flow name filter (substring), or 'all'"
+        required: false
+        type: string
+        default: "all"
+      speculos_device:
+        description: "Speculos device"
+        required: true
+        type: string
+        default: "nanoX"
+      production_firebase:
+        description: "Target Firebase Production env (uses the detoxPreRelease Android variant)"
+        required: false
+        type: boolean
+        default: false
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      generate_ai_artifacts:
+        description: "Upload the raw Maestro debug output for AI analysis"
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      ref: { required: false, type: string }
+      tests_type: { required: false, type: string, default: "Both" }
+      flow_filter: { required: false, type: string, default: "all" }
+      speculos_device: { required: true, type: string }
+      production_firebase: { required: false, type: boolean, default: false }
+      enable_broadcast: { required: false, type: boolean, default: false }
+      generate_ai_artifacts: { required: false, type: boolean, default: false }
+    secrets:
+      SPECULINHO_URL:
+        description: "Base URL for the Speculinho operator (remote Speculos on iOS). Pass via secrets inherit."
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  cache-bucket: ll-nx-cache
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
+  ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
+  IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+  IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+  SPECULOS_IMAGE_TAG_ANDROID: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
+  SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
+  COINAPPS: ${{ github.workspace }}/coin-apps
+  SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
+  IOS_SIMULATOR_DEVICE: iPhone 15
+  AVD_API: 36
+  AVD_ARCH: x86_64
+  AVD_PROFILE: pixel_9_pro
+  AVD_TARGET: google_apis
+  AVD_NAME: "Android_Emulator"
+  AVD_CORES: 2
+  AVD_RAM_SIZE: 3072
+  AVD_HEAP_SIZE: 1024
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
+  MAESTRO_ALLURE_RESULTS_PATH: e2e/mobile/artifacts/maestro-allure-results
+  PNPM_FILTERS: --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..."
+
+jobs:
+  # Run-scoped cache keys (always build; no hash-based reuse — keeps this workflow simple/standalone).
+  determine:
+    name: "Determine keys"
+    runs-on: ubuntu-24.04
+    outputs:
+      ref: ${{ steps.k.outputs.ref }}
+      ios_native_key: ${{ steps.k.outputs.ios_native_key }}
+      ios_js_key: ${{ steps.k.outputs.ios_js_key }}
+      android_native_key: ${{ steps.k.outputs.android_native_key }}
+      android_js_key: ${{ steps.k.outputs.android_js_key }}
+      avd_cache_key: ${{ steps.k.outputs.avd_cache_key }}
+    steps:
+      - id: k
+        run: |
+          R="${{ inputs.ref || github.sha }}"
+          ID="${{ github.run_id }}-${{ github.run_attempt }}"
+          {
+            echo "ref=$R"
+            echo "ios_native_key=maestro-ios-native-$ID"
+            echo "ios_js_key=maestro-ios-js-$ID"
+            echo "android_native_key=maestro-android-native-$ID"
+            echo "android_js_key=maestro-android-js-$ID"
+            echo "avd_cache_key=maestro-avd-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-$ID"
+          } >> "$GITHUB_OUTPUT"
+
+  build-ios:
+    name: "iOS Build"
+    needs: [determine]
+    if: ${{ inputs.tests_type != 'Android Only' }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    with:
+      ref: ${{ needs.determine.outputs.ref }}
+      macos-specificity-runner-label: "general-pool"
+      disable-nx-cache: false
+      build-ios-js: true
+      build-ios-native: true
+      ios-native-cache-key: ${{ needs.determine.outputs.ios_native_key }}
+      ios-js-cache-key: ${{ needs.determine.outputs.ios_js_key }}
+      production_firebase: ${{ inputs.production_firebase || false }}
+    secrets: inherit
+
+  build-android:
+    name: "Android Build"
+    needs: [determine]
+    if: ${{ inputs.tests_type != 'iOS Only' }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    with:
+      ref: ${{ needs.determine.outputs.ref }}
+      disable-nx-cache: false
+      build-android-js: true
+      build-android-native: true
+      android-native-cache-key: ${{ needs.determine.outputs.android_native_key }}
+      android-js-cache-key: ${{ needs.determine.outputs.android_js_key }}
+      production_firebase: ${{ inputs.production_firebase || false }}
+    secrets: inherit
+
+  setup-android-avd:
+    name: "Setup Android AVD"
+    needs: [determine]
+    if: ${{ inputs.tests_type != 'iOS Only' }}
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    steps:
+      - name: Setup Android AVDs
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          ref: ${{ needs.determine.outputs.ref }}
+          avd_api: ${{ env.AVD_API }}
+          avd_arch: ${{ env.AVD_ARCH }}
+          avd_profile: ${{ env.AVD_PROFILE }}
+          avd_target: ${{ env.AVD_TARGET }}
+          avd_name: ${{ env.AVD_NAME }}
+          avd_cores: ${{ env.AVD_CORES }}
+          avd_ram_size: ${{ env.AVD_RAM_SIZE }}
+          avd_heap_size: ${{ env.AVD_HEAP_SIZE }}
+          avd_options: ${{ env.AVD_OPTIONS }}
+          cache_key: ${{ needs.determine.outputs.avd_cache_key }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+
+  maestro-ios:
+    name: "iOS Maestro E2E"
+    needs: [determine, build-ios]
+    if: ${{ inputs.tests_type != 'Android Only' }}
+    runs-on: ["qaa", macOS, ARM64, "performance-pool"]
+    timeout-minutes: 90
+    env:
+      MAESTRO_PLATFORM: ios
+      APP_ID: com.ledger.live
+      REMOTE_SPECULOS: "true"
+      SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
+      NODE_OPTIONS: "--max-old-space-size=8192"
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ needs.determine.outputs.ref }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+      - name: Setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pod-cache: "true"
+          skip-pnpm-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: Install dependencies
+        run: pnpm i ${{ env.PNPM_FILTERS }} --no-frozen-lockfile --unsafe-perm --ignore-scripts
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Boot iOS Simulator in Background
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        with:
+          worker_count: 1
+          artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
+      - name: Download Native Build
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        with:
+          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          key: ${{ needs.determine.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: Download JS Build
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        with:
+          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          key: ${{ needs.determine.outputs.ios_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: Copy JS build
+        run: |
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }}
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
+      - name: Build CLI
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        with:
+          command: pnpm exec nx run @ledgerhq/live-cli:build
+          disable_cache: false
+      - name: Set transaction broadcast
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        with:
+          enable_broadcast: ${{ inputs.enable_broadcast }}
+          build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
+      - name: Run Maestro (iOS)
+        id: run-ios
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+        run: pnpm --filter ledger-live-mobile-e2e-tests run test:maestro ${{ inputs.flow_filter != 'all' && inputs.flow_filter || '' }}
+      - name: Upload Allure report (iOS)
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        with:
+          platform: maestro-ios-e2e
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: ${{ env.MAESTRO_ALLURE_RESULTS_PATH }}
+      - name: Upload artifacts (iOS)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: maestro-ios-artifacts
+          path: |
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/maestro-allure-results
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/maestro-allure-report
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/maestro-debug
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/harness-*.log
+          retention-days: 7
+
+  maestro-android:
+    name: "Android Maestro E2E"
+    needs: [determine, build-android, setup-android-avd]
+    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    timeout-minutes: 90
+    env:
+      MAESTRO_PLATFORM: android
+      APP_ID: com.ledger.live${{ inputs.production_firebase == true && '' || '.detox' }}
+      REMOTE_SPECULOS: "false"
+      SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
+      ADB: /usr/local/lib/android/sdk/platform-tools/adb
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ needs.determine.outputs.ref }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+      - name: Setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pod-cache: "true"
+          skip-pnpm-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: Download Native Build
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        with:
+          key: ${{ needs.determine.outputs.android_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: Download JS Bundle
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        with:
+          key: ${{ needs.determine.outputs.android_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: Prepare APK
+        run: |
+          mkdir -p /tmp/apk/assets
+          mkdir -p /home/runner/.android/
+          mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
+          mv ${{ env.ANDROID_APK_PATH }} /tmp/apk/tmp.apk
+          (cd /tmp/apk/; zip -r tmp.apk assets/index.android.bundle)
+          /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
+          /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
+      - name: Install dependencies
+        run: pnpm i ${{ env.PNPM_FILTERS }} --no-frozen-lockfile --unsafe-perm --ignore-scripts
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Download android emulator
+        timeout-minutes: 10
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        with:
+          key: ${{ needs.determine.outputs.avd_cache_key }}
+          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
+          destination: /
+      - name: Cleanup any running Android emulators (pre-boot)
+        run: tools/scripts/cleanup-android-emulators.sh || true
+      - name: Boot Android Emulator in Background
+        run: |
+          mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
+          export AVD_NAME="${{ env.AVD_NAME }}"
+          export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
+          nohup bash tools/scripts/boot-android-emulators-ci.sh > "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log" 2>&1 &
+          echo "Android emulator boot started in background."
+      - name: Setup Speculos image and Coin Apps
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        timeout-minutes: 20
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Build CLI
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        with:
+          command: pnpm exec nx run @ledgerhq/live-cli:build
+          disable_cache: false
+      - name: Set transaction broadcast
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        with:
+          enable_broadcast: ${{ inputs.enable_broadcast }}
+          build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
+      - name: Run Maestro (Android)
+        id: run-android
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+        run: pnpm --filter ledger-live-mobile-e2e-tests run test:maestro ${{ inputs.flow_filter != 'all' && inputs.flow_filter || '' }}
+      - name: Upload Allure report (Android)
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        with:
+          platform: maestro-android-e2e
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: ${{ env.MAESTRO_ALLURE_RESULTS_PATH }}
+      - name: Upload artifacts (Android)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: maestro-android-artifacts
+          path: |
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/maestro-allure-results
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/maestro-allure-report
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/maestro-debug
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/harness-*.log
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/speculos-*.log
+          retention-days: 7

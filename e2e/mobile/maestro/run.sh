@@ -26,6 +26,10 @@ set -euo pipefail
 # Run from the e2e/mobile package dir (where the run-*.sh scripts + artifacts live).
 cd "$(dirname "$0")/.."
 
+# Shared helpers (run_maestro_flow / generate_allure_report) + a clean slate for this run's report.
+source "maestro/_platform.sh"
+rm -rf "$MAESTRO_DEBUG_ROOT" "$MAESTRO_ALLURE_RESULTS" "$MAESTRO_ALLURE_REPORT"
+
 # Test registry: "name|script|description". The name is what you filter on.
 TESTS="add-account|maestro/run-eth.sh|native ETH add-account (classic UI)
 send-doge|maestro/run-send-doge.sh|native send DOGE (on-device sign)
@@ -98,6 +102,9 @@ while IFS='|' read -r name script; do
 done <<EOF
 $SELECTED
 EOF
+
+# Build the Allure report from every flow's debug output (captures failures too).
+generate_allure_report
 
 echo
 echo "===================== Maestro results ====================="

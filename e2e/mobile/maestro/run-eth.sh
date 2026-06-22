@@ -26,6 +26,12 @@ export SPECULOS_IMAGE_TAG="${SPECULOS_IMAGE_TAG:-ghcr.io/ledgerhq/speculos:lates
 # Use the classic portfolio UI (the flow + testIDs in this POC were validated against it).
 # Wallet 4.0 has a different layout; adapting the YAML to it is a follow-up.
 export E2E_ENABLE_WALLET40="${E2E_ENABLE_WALLET40:-0}"
+# Speculos backend: local Docker (default) needs Docker + SEED; REMOTE_SPECULOS=true uses remote
+# Speculinho (needs SPECULINHO_URL) — the iOS CI macOS runners have no Docker, so they use remote.
+# The harness's add-account path is InitializationManager.initialize, which honors isSpeculosRemote().
+export REMOTE_SPECULOS="${REMOTE_SPECULOS:-false}"
+IS_REMOTE=0
+[ "$REMOTE_SPECULOS" = "true" ] && IS_REMOTE=1
 
 # --- Java (Maestro needs 17+; fall back to Android Studio's bundled JDK) ---
 # NB: macOS ships a /usr/bin/java stub that exists but has no runtime, so test
@@ -41,15 +47,16 @@ command -v maestro >/dev/null 2>&1 || { echo "ERROR: maestro not found. Install:
 source "maestro/_platform.sh"
 platform_preflight_device
 platform_install_app
-if [ "$FULL" != "0" ] && ! docker info >/dev/null 2>&1; then
-  echo "ERROR: Docker isn't running (needed for Speculos)."
-  echo "  Start Docker (+ docker pull $SPECULOS_IMAGE_TAG), or run seed-only:  MAESTRO_FULL=0 $0"
-  exit 1
-fi
-if [ "$FULL" != "0" ] && [ -z "${SEED:-}" ]; then
-  echo "ERROR: SEED is not set (Speculos needs the test mnemonic to derive addresses)."
-  echo "  export SEED=\"<24-word test mnemonic>\"  then re-run. (Sensitive -> keep it out of git.)"
-  exit 1
+if [ "$FULL" != "0" ]; then
+  if [ "$IS_REMOTE" = "1" ]; then
+    [ -n "${SPECULINHO_URL:-}" ] || { echo "ERROR: REMOTE_SPECULOS=true but SPECULINHO_URL is not set."; exit 1; }
+    echo ">> using REMOTE Speculos (Speculinho): $SPECULINHO_URL"
+  elif ! docker info >/dev/null 2>&1; then
+    echo "ERROR: Docker isn't running (needed for local Speculos). Or use REMOTE_SPECULOS=true."
+    echo "  Start Docker (+ docker pull $SPECULOS_IMAGE_TAG), or run seed-only:  MAESTRO_FULL=0 $0"
+    exit 1
+  fi
+  [ -n "${SEED:-}" ] || { echo "ERROR: SEED is not set (Speculos needs the test mnemonic to derive addresses)."; exit 1; }
 fi
 
 # Seed-only mode can't complete discovery (no device) -> run the smoke flow that
@@ -60,7 +67,8 @@ FLOW="maestro/flows/add-account-eth.yaml"
 # Snapshot Speculos containers that already existed, so on exit we only remove the
 # ones THIS run started (don't kill a Speculos you may be running elsewhere).
 SPECULOS_FILTER="ancestor=$SPECULOS_IMAGE_TAG"
-PRE_SPECULOS="$(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null | tr '\n' ' ' || true)"
+PRE_SPECULOS=""
+[ "$IS_REMOTE" = "0" ] && PRE_SPECULOS="$(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null | tr '\n' ' ' || true)"
 
 cleanup() {
   echo ">> stopping backend + Speculos..."
@@ -72,13 +80,16 @@ cleanup() {
   fi
   pkill -f "$HARNESS_PKILL_PATTERN" 2>/dev/null || true
   [ -n "${HARNESS_PID:-}" ] && wait "$HARNESS_PID" 2>/dev/null || true
-  # Now remove (synchronously) the Speculos containers started during this run.
-  for c in $(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null || true); do
-    case " $PRE_SPECULOS " in
-      *" $c "*) : ;;                                  # pre-existing -> leave it
-      *) echo ">> removing Speculos container $c"; docker rm -f "$c" >/dev/null 2>&1 || true ;;
-    esac
-  done
+  # Now remove (synchronously) the local Speculos containers started during this run (remote
+  # Speculinho pods are released by the operator's TTL, not here).
+  if [ "$IS_REMOTE" = "0" ]; then
+    for c in $(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null || true); do
+      case " $PRE_SPECULOS " in
+        *" $c "*) : ;;                                  # pre-existing -> leave it
+        *) echo ">> removing Speculos container $c"; docker rm -f "$c" >/dev/null 2>&1 || true ;;
+      esac
+    done
+  fi
 }
 trap cleanup EXIT
 
@@ -98,8 +109,4 @@ done
 
 platform_reverse_host_ports   # Android: adb reverse Metro + bridge (no-op on iOS)
 
-echo ">> running Maestro flow: $FLOW"
-# --no-ansi: plain output (the default TUI redraws an ANSI box that garbles when logged).
-# Drop the per-run "Running on iOS Simulator ..." device banner. pipefail (set above) keeps
-# Maestro's exit code despite the trailing filter.
-maestro test --platform "$MAESTRO_PLATFORM" --no-ansi "$FLOW" "$@" 2>&1 | { grep -vaE "Running on (iOS Simulator|Android Emulator)" || true; }
+run_maestro_flow "$FLOW" "$@"

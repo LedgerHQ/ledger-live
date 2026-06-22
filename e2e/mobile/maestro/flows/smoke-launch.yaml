@@ -1,4 +1,4 @@
-appId: com.ledger.live.debug
+appId: ${APP_ID}
 tags:
   - smoke
 ---
