@@ -2,6 +2,10 @@
 
 A practical reference for **human code-owner reviewers**. For automated AI review, see [`.agents/agents/code-reviewer.md`](.agents/agents/code-reviewer.md) — they cover different stages of the same workflow.
 
+> [!TIP]
+> Check your incoming review requests daily:
+> 👉 [PRs waiting for my review](https://github.com/LedgerHQ/ledger-live/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me+sort%3Aupdated-asc+-label%3AHODL+-label%3A%22do+not+review%22+draft%3Afalse)
+
 ## Before you review
 
 > [!IMPORTANT]
