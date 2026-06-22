@@ -1910,7 +1910,8 @@
       "gasConsumed": "Gas consumed",
       "gasUsed": "Gas used",
       "gasLimit": "Gas limit",
-      "functionId": "Function ID"
+      "functionId": "Function ID",
+      "feePayer": "Fee sponsored by"
     }
   },
   "operationList": {

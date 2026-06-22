@@ -6,6 +6,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
   EXPLORER_TRANSFER_TYPES,
+  FEE_SPONSOR,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   TRANSACTION_TYPE,
 } from "../constants";
@@ -25,6 +26,7 @@ import {
 import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
+  getMockedTransactionDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -66,6 +68,7 @@ import {
   fromHex,
   mapTransactionIntentToSdkIntent,
   hasSpecificIntentData,
+  detectFeePayer,
   getOperationDetailsExtraFields,
   getAvailableBalance,
   isSelfTransferTransaction,
@@ -1283,7 +1286,7 @@ describe("fromHex", () => {
 });
 
 describe("getOperationDetailsExtraFields", () => {
-  it("should return only the functionId field", () => {
+  it("should return only the functionId field when no feePayer is set", () => {
     const extra = {
       functionId: "transfer_private_to_public",
       transactionType: "private",
@@ -1293,6 +1296,212 @@ describe("getOperationDetailsExtraFields", () => {
     const result = getOperationDetailsExtraFields(extra);
 
     expect(result).toEqual([{ key: "functionId", value: "transfer_private_to_public" }]);
+  });
+
+  it("should include feePayer field when it is set", () => {
+    const sponsorAddress = "aleo1sponsor000000000000000000000000000000000000000000000000";
+    const extra = {
+      functionId: "transfer_public",
+      transactionType: "public",
+      feePayer: sponsorAddress,
+    } satisfies AleoOperationExtra;
+
+    const result = getOperationDetailsExtraFields(extra);
+
+    expect(result).toEqual([
+      { key: "functionId", value: "transfer_public" },
+      { key: "feePayer", value: sponsorAddress },
+    ]);
+  });
+
+  it("should not include feePayer field when it is absent", () => {
+    const extra = {
+      functionId: "transfer_public",
+      transactionType: "public",
+    } satisfies AleoOperationExtra;
+
+    const result = getOperationDetailsExtraFields(extra);
+
+    expect(result).toHaveLength(1);
+    expect(result.find(f => f.key === "feePayer")).toBeUndefined();
+  });
+
+  it("should preserve functionId as the first field when feePayer is present", () => {
+    const extra = {
+      functionId: "transfer_private",
+      transactionType: "private",
+      feePayer: "aleo1sponsor000000000000000000000000000000000000000000000000",
+    } satisfies AleoOperationExtra;
+
+    const result = getOperationDetailsExtraFields(extra);
+
+    expect(result[0]).toEqual({ key: "functionId", value: "transfer_private" });
+    expect(result[1].key).toBe("feePayer");
+  });
+
+  it("should not include internal-only fields (patched, programId) in the result", () => {
+    const extra = {
+      functionId: "transfer_public",
+      transactionType: "public",
+      patched: true,
+      programId: "token_program.aleo",
+    } satisfies AleoOperationExtra;
+
+    const result = getOperationDetailsExtraFields(extra);
+
+    expect(result).toHaveLength(1);
+    expect(result.find(f => f.key === "patched")).toBeUndefined();
+    expect(result.find(f => f.key === "programId")).toBeUndefined();
+  });
+
+  it.each<[string, AleoOperationExtra["transactionType"]]>([
+    ["transfer_public", "public"],
+    ["transfer_private", "private"],
+    ["transfer_public_to_private", "public"],
+    ["transfer_private_to_public", "private"],
+  ])(
+    "should always include functionId for any functionId value (%s)",
+    (functionId, transactionType) => {
+      const extra: AleoOperationExtra = { functionId, transactionType };
+
+      const result = getOperationDetailsExtraFields(extra);
+
+      expect(result).toContainEqual({ key: "functionId", value: functionId });
+    },
+  );
+});
+
+const makeFeePublicFutureValue = (payerAddress: string) =>
+  `{\n  program_id: credits.aleo,\n  function_name: fee_public,\n  arguments: [\n    ${payerAddress},\n    2308u64\n  ]\n}`;
+
+describe("detectFeePayer", () => {
+  const accountAddress = "aleo1accountowner00000000000000000000000000000000000000000000";
+  const sponsorAddress = "aleo1sponsor0000000000000000000000000000000000000000000000000";
+
+  it("should return undefined when fee transition function is unknown", () => {
+    const details = getMockedTransactionDetails("tx1", {
+      fee: {
+        transition: {
+          id: "au1fee",
+          scm: "s",
+          tcm: "t",
+          tpk: "tpk1",
+          inputs: [],
+          outputs: [],
+          program: "credits.aleo",
+          function: "fee_unknown",
+        },
+      },
+    });
+    expect(detectFeePayer(details, accountAddress)).toBeUndefined();
+  });
+
+  it("should return undefined when fee transition function is fee_private", () => {
+    const details = getMockedTransactionDetails("tx1", {
+      fee: {
+        transition: {
+          id: "au1fee",
+          scm: "s",
+          tcm: "t",
+          tpk: "tpk1",
+          inputs: [{ id: "in0", type: "record", tag: "tag1" }],
+          outputs: [],
+          program: "credits.aleo",
+          function: "fee_private",
+        },
+      },
+    });
+    expect(detectFeePayer(details, accountAddress)).toBeUndefined();
+  });
+
+  it("should return undefined when fee_public transition has no future output", () => {
+    const details = getMockedTransactionDetails("tx1", {
+      fee: {
+        transition: {
+          id: "au1fee",
+          scm: "s",
+          tcm: "t",
+          tpk: "tpk1",
+          inputs: [],
+          outputs: [{ id: "out0", type: "public", value: "1000u64" }],
+          program: "credits.aleo",
+          function: "fee_public",
+        },
+      },
+    });
+    expect(detectFeePayer(details, accountAddress)).toBeUndefined();
+  });
+
+  it("should return undefined when the fee payer address matches the account address", () => {
+    const details = getMockedTransactionDetails("tx1", {
+      fee: {
+        transition: {
+          id: "au1fee",
+          scm: "s",
+          tcm: "t",
+          tpk: "tpk1",
+          inputs: [],
+          outputs: [
+            {
+              id: "out0",
+              type: "future",
+              value: makeFeePublicFutureValue(accountAddress),
+            },
+          ],
+          program: "credits.aleo",
+          function: "fee_public",
+        },
+      },
+    });
+    expect(detectFeePayer(details, accountAddress)).toBeUndefined();
+  });
+
+  it("should return FEE_SPONSOR when fee payer address differs from account address", () => {
+    const details = getMockedTransactionDetails("tx1", {
+      fee: {
+        transition: {
+          id: "au1fee",
+          scm: "s",
+          tcm: "t",
+          tpk: "tpk1",
+          inputs: [],
+          outputs: [
+            {
+              id: "out0",
+              type: "future",
+              value: makeFeePublicFutureValue(sponsorAddress),
+            },
+          ],
+          program: "credits.aleo",
+          function: "fee_public",
+        },
+      },
+    });
+    expect(detectFeePayer(details, accountAddress)).toBe(FEE_SPONSOR);
+  });
+
+  it("should return undefined when future value has no recognisable aleo1 address", () => {
+    const details = getMockedTransactionDetails("tx1", {
+      fee: {
+        transition: {
+          id: "au1fee",
+          scm: "s",
+          tcm: "t",
+          tpk: "tpk1",
+          inputs: [],
+          outputs: [
+            {
+              id: "out0",
+              type: "future",
+              value: "{ program_id: credits.aleo, function_name: fee_public, arguments: [] }",
+            },
+          ],
+          program: "credits.aleo",
+          function: "fee_public",
+        },
+      },
+    });
+    expect(detectFeePayer(details, accountAddress)).toBeUndefined();
   });
 });
 

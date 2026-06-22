@@ -22,6 +22,7 @@ import type {
   AleoTransition,
 } from "../types";
 import {
+  detectFeePayer,
   isAleoAddressPlaintext,
   isAleoAmountPlaintext,
   normalizeAleoPlaintext,
@@ -581,6 +582,9 @@ export const patchPublicOperations = async ({
       const dateOffset = oppositeOperationType === "OUT" ? -1 : 1;
       const oppositeOperationDate = new Date(operation.date.getTime() + dateOffset);
 
+      const txDetails = await apiClient.getTransactionById(currency, operation.hash);
+      const feePayer = detectFeePayer(txDetails, address);
+
       patchedOperations.push(
         {
           ...operation,
@@ -589,6 +593,7 @@ export const patchPublicOperations = async ({
           extra: {
             ...operation.extra,
             patched: true,
+            ...(feePayer && { feePayer }),
           },
         },
         {
@@ -602,6 +607,7 @@ export const patchPublicOperations = async ({
             ...operation.extra,
             transactionType: oppositeTransactionType,
             patched: true,
+            ...(feePayer && { feePayer }),
           },
         },
       );

@@ -1,5 +1,9 @@
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
-import { getMockedTransaction } from "../__tests__/fixtures/api.fixture";
+import { apiClient } from "../network/api";
+import {
+  getMockedTransaction,
+  getMockedTransactionDetails,
+} from "../__tests__/fixtures/api.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
   getMockedCurrency,
@@ -10,18 +14,23 @@ import {
   getMockedCoinFrameworkOperation,
   getMockedOperation,
 } from "../__tests__/fixtures/operation.fixture";
-import { getCalTokens, toCoinFrameworkOperation, toBridgeOperation } from "./utils";
+import { detectFeePayer, getCalTokens, toCoinFrameworkOperation, toBridgeOperation } from "./utils";
+import { FEE_SPONSOR } from "../constants";
 import { listOperations } from "./listOperations";
 
 jest.mock("../network/utils");
+jest.mock("../network/api");
 jest.mock("./utils");
 
 const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockToCoinFrameworkOperation = jest.mocked(toCoinFrameworkOperation);
 const mockToBridgeOperation = jest.mocked(toBridgeOperation);
 const mockGetCalTokens = jest.mocked(getCalTokens);
+const mockGetTransactionById = jest.mocked(apiClient.getTransactionById);
+const mockDetectFeePayer = jest.mocked(detectFeePayer);
 
-const mockConfig = getMockedConfig("mainnet");
+const mockConfig = getMockedConfig("mainnet"); // isFeeSponsored: true by default
+const mockConfigNoSponsorship = { ...mockConfig, isFeeSponsored: false };
 const mockConfigWithTokens = { ...mockConfig, enableTokens: true };
 const mockTokenCurrency = getMockedTokenCurrency();
 
@@ -33,6 +42,9 @@ describe("listOperations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCalTokens.mockResolvedValue(new Map());
+    // Default: no sponsored fee detected — keeps existing test assertions stable
+    mockGetTransactionById.mockResolvedValue(getMockedTransactionDetails());
+    mockDetectFeePayer.mockReturnValue(undefined);
   });
 
   describe("bridge mode", () => {
@@ -336,6 +348,125 @@ describe("listOperations", () => {
       });
 
       expect(mockGetCalTokens).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("fee sponsorship enrichment", () => {
+    it("should not fetch details when isFeeSponsored is false", async () => {
+      const mockTx = getMockedTransaction({ transaction_id: "tx1" });
+      const mockOp = getMockedOperation({ id: "op1", type: "OUT" });
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [mockTx],
+        nextCursor: null,
+      });
+      mockToBridgeOperation.mockReturnValue(mockOp);
+
+      await listOperations({
+        config: mockConfigNoSponsorship,
+        currency: mockCurrency,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        mode: "bridge",
+        options: { minHeight: 0 },
+      });
+
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
+      expect(mockDetectFeePayer).not.toHaveBeenCalled();
+    });
+
+    it("should fetch details only for OUT operations when isFeeSponsored is true", async () => {
+      const outTx = getMockedTransaction({ transaction_id: "tx-out" });
+      const inTx = getMockedTransaction({ transaction_id: "tx-in" });
+      const outOp = getMockedOperation({ id: "op-out", hash: "tx-out", type: "OUT" });
+      const inOp = getMockedOperation({ id: "op-in", hash: "tx-in", type: "IN" });
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [outTx, inTx],
+        nextCursor: null,
+      });
+      mockToBridgeOperation.mockReturnValueOnce(outOp).mockReturnValueOnce(inOp);
+
+      await listOperations({
+        config: mockConfig,
+        currency: mockCurrency,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        mode: "bridge",
+        options: { minHeight: 0 },
+      });
+
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx-out");
+      expect(mockDetectFeePayer).toHaveBeenCalledTimes(1);
+    });
+
+    it("should set feePayer on the operation when detectFeePayer returns a sponsor", async () => {
+      const mockTx = getMockedTransaction({ transaction_id: "tx-sponsored" });
+      const mockOp = getMockedOperation({
+        id: "op-sponsored",
+        hash: "tx-sponsored",
+        type: "OUT",
+        extra: { functionId: "transfer_public", transactionType: "public" },
+      });
+      const mockDetails = getMockedTransactionDetails("tx-sponsored");
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [mockTx],
+        nextCursor: null,
+      });
+      mockToBridgeOperation.mockReturnValue(mockOp);
+      mockGetTransactionById.mockResolvedValue(mockDetails);
+      mockDetectFeePayer.mockReturnValue(FEE_SPONSOR);
+
+      const result = await listOperations({
+        config: mockConfig,
+        currency: mockCurrency,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        mode: "bridge",
+        options: { minHeight: 0 },
+      });
+
+      expect(result.operations).toHaveLength(1);
+      expect((result.operations[0] as (typeof mockOp)).extra.feePayer).toBe(FEE_SPONSOR);
+    });
+
+    it("should not alter the operation when detectFeePayer returns undefined", async () => {
+      const mockTx = getMockedTransaction({ transaction_id: "tx-self-paid" });
+      const mockOp = getMockedOperation({ id: "op-self-paid", hash: "tx-self-paid", type: "OUT" });
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [mockTx],
+        nextCursor: null,
+      });
+      mockToBridgeOperation.mockReturnValue(mockOp);
+      mockDetectFeePayer.mockReturnValue(undefined);
+
+      const result = await listOperations({
+        config: mockConfig,
+        currency: mockCurrency,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        mode: "bridge",
+        options: { minHeight: 0 },
+      });
+
+      expect(result.operations[0]).toBe(mockOp);
+    });
+
+    it("should not fetch details in coin-framework mode even when isFeeSponsored is true", async () => {
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [getMockedTransaction({ transaction_id: "tx1" })],
+        nextCursor: null,
+      });
+      mockToCoinFrameworkOperation.mockReturnValue(getMockedCoinFrameworkOperation({ id: "tx1" }));
+
+      await listOperations({
+        config: mockConfig,
+        currency: mockCurrency,
+        address: mockAddress,
+        mode: "coin-framework",
+        options: { minHeight: 0 },
+      });
+
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
     });
   });
 

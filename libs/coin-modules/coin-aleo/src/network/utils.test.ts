@@ -1249,6 +1249,7 @@ describe("network/utils", () => {
         sender: senderAddress,
         function_name: "transfer_public_to_private",
       });
+      mockGetTransactionById.mockResolvedValueOnce(getMockedTransactionDetails(txHash));
 
       const result = await patchPublicOperations({
         currency: mockCurrency,
@@ -1276,7 +1277,8 @@ describe("network/utils", () => {
           }),
         ]),
       );
-      expect(mockGetTransactionById).not.toHaveBeenCalled();
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, txHash);
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
@@ -1295,6 +1297,7 @@ describe("network/utils", () => {
         sender: senderAddress,
         function_name: "transfer_private_to_public",
       });
+      mockGetTransactionById.mockResolvedValueOnce(getMockedTransactionDetails(txHash));
 
       const result = await patchPublicOperations({
         currency: mockCurrency,
@@ -1337,6 +1340,7 @@ describe("network/utils", () => {
         transaction_id: txHash,
         function_name: "transfer_public_to_private",
       });
+      mockGetTransactionById.mockResolvedValueOnce(getMockedTransactionDetails(txHash));
 
       const result = await patchPublicOperations({
         currency: mockCurrency,
@@ -1670,6 +1674,7 @@ describe("network/utils", () => {
         sender: "aleo1trim_sender",
         function_name: "transfer_public_to_private",
       });
+      mockGetTransactionById.mockResolvedValueOnce(getMockedTransactionDetails(txHash));
 
       const result = await patchPublicOperations({
         currency: mockCurrency,
@@ -1682,7 +1687,8 @@ describe("network/utils", () => {
 
       // matched via trim → 2 ops (original patch + clone), no decrypt call
       expect(result).toHaveLength(2);
-      expect(mockGetTransactionById).not.toHaveBeenCalled();
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, txHash);
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
@@ -1703,6 +1709,7 @@ describe("network/utils", () => {
         sender: "aleo1semi_sender",
         function_name: "transfer_public_to_private",
       });
+      mockGetTransactionById.mockResolvedValueOnce(getMockedTransactionDetails("at1semi"));
 
       const result = await patchPublicOperations({
         currency: mockCurrency,

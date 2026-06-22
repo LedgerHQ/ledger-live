@@ -7,7 +7,7 @@ import type {
   AleoTransitionValue,
 } from "../types";
 import { enrichPrivateRecord } from "../network/utils";
-import { toPrivateBridgeOperation } from "./utils";
+import { detectFeePayer, toPrivateBridgeOperation } from "./utils";
 
 function onlyRecordValue(
   value: AleoTransitionValue,
@@ -80,7 +80,14 @@ export async function listPrivateOperations({
     .filter((record): record is EnrichedPrivateRecord => {
       return record !== null && nativeRecordTags.has(record.rawRecord.tag);
     })
-    .map(record => toPrivateBridgeOperation(ledgerAccountId, record, address));
+    .map(record =>
+      toPrivateBridgeOperation(
+        ledgerAccountId,
+        record,
+        address,
+        detectFeePayer(record.details, address),
+      ),
+    );
 
   return { operations, consumedRecordTags };
 }

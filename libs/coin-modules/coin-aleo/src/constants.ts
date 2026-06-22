@@ -1,5 +1,8 @@
 export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
+// The name of the fee sponsorship service. Shown in operation details when the fee was not paid by the account holder.
+export const FEE_SPONSOR = "Provable";
+
 export const PROGRAM_ID = {
   CREDITS: "credits.aleo",
 };

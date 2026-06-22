@@ -166,6 +166,8 @@ export type AleoOperationExtra = {
   patched?: boolean;
   // token program id for token operations (CAL lookup, sub-account routing)
   programId?: string;
+  // address of the account that paid the transaction fee, set only when different from the account address (fee sponsorship)
+  feePayer?: string;
 };
 
 export type OperationDetailsExtraField = {

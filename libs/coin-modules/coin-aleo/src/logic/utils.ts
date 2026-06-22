@@ -19,6 +19,7 @@ import { promiseAllBatched } from "@ledgerhq/live-promise";
 import aleoConfig from "../config";
 import {
   EXPLORER_TRANSFER_TYPES,
+  FEE_SPONSOR,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
@@ -39,6 +40,7 @@ import type {
   Intent,
   AleoTransactionIntentData,
   AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
   AleoOperationExtra,
   TransactionPublic,
   TransactionPrivate,
@@ -246,6 +248,7 @@ export const toPrivateBridgeOperation = (
   ledgerAccountId: string,
   enrichedRecord: EnrichedPrivateRecord,
   address: string,
+  feePayer?: string,
 ): AleoOperation => {
   const transactionId = enrichedRecord.rawRecord.transaction_id.trim();
   const blockHeight = enrichedRecord.rawRecord.block_height;
@@ -268,6 +271,7 @@ export const toPrivateBridgeOperation = (
     extra: {
       functionId: enrichedRecord.rawRecord.function_name,
       transactionType: "private",
+      ...(feePayer && { feePayer }),
     },
   };
 };
@@ -637,11 +641,63 @@ export function fromHex<T>(txHex: string): T {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
 
+// The fee_public finalize future value contains the fee payer address as its first argument.
+// Example value string:
+//   "{\n  program_id: credits.aleo,\n  function_name: fee_public,\n  arguments: [\n    aleo1...,\n    2308u64\n  ]\n}"
+function extractFeePayerFromFutureValue(futureValue: string): string | undefined {
+  const match = futureValue.match(/arguments:\s*\[\s*(aleo1[a-z0-9]+)/);
+  return match?.[1];
+}
+
+/**
+ * Returns FEE_SPONSOR when the fee_public transition's finalize arguments show a fee payer
+ * address different from the account address.
+ * Returns undefined when the account paid its own fee or the transition format is unexpected.
+ */
+export function detectFeePayer(
+  details: AleoPublicTransactionDetailsResponse,
+  accountAddress: string,
+): string | undefined {
+  const feeTransition = details.fee?.transition;
+  log(
+    "aleo/detectFeePayer",
+    `txId: ${details.id} fee.transition.function: ${feeTransition?.function ?? "MISSING"}`,
+  );
+
+  if (!feeTransition || feeTransition.function !== "fee_public") {
+    log("aleo/detectFeePayer", `skipped: not fee_public, got: ${feeTransition?.function}`);
+    return undefined;
+  }
+
+  const futureOutput = feeTransition.outputs.find(
+    (out): out is { id: string; type: "future"; value: string } => out.type === "future",
+  );
+  if (!futureOutput) {
+    log("aleo/detectFeePayer", "no future output found in fee_public transition");
+    return undefined;
+  }
+
+  const feePayerAddress = extractFeePayerFromFutureValue(futureOutput.value);
+  log(
+    "aleo/detectFeePayer",
+    `extracted feePayer: ${feePayerAddress ?? "NONE"} accountAddress: ${accountAddress} → ${feePayerAddress && feePayerAddress !== accountAddress ? FEE_SPONSOR : "user paid"}`,
+  );
+
+  if (!feePayerAddress || feePayerAddress === accountAddress) return undefined;
+  return FEE_SPONSOR;
+}
+
 // this function is used to extract the fields that should be displayed in the operation details
 export const getOperationDetailsExtraFields = (
   extra: AleoOperationExtra,
 ): OperationDetailsExtraField[] => {
-  return [{ key: "functionId", value: extra.functionId }];
+  const fields: OperationDetailsExtraField[] = [{ key: "functionId", value: extra.functionId }];
+
+  if (extra.feePayer) {
+    fields.push({ key: "feePayer", value: extra.feePayer });
+  }
+
+  return fields;
 };
 
 /**

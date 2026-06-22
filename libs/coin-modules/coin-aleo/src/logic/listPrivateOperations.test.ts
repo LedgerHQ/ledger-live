@@ -192,6 +192,7 @@ describe("listPrivateOperations", () => {
       mockLedgerAccountId,
       mockEnriched,
       mockAddress,
+      undefined, // fee_public transition in fixture → detectFeePayer returns undefined
     );
   });
 

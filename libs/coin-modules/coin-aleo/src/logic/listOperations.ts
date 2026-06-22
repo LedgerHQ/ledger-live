@@ -1,8 +1,10 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
-import { getCalTokens, toCoinFrameworkOperation, toBridgeOperation } from "./utils";
+import { apiClient } from "../network/api";
+import { detectFeePayer, getCalTokens, toCoinFrameworkOperation, toBridgeOperation } from "./utils";
 import type { AleoCoinConfig } from "../types";
 
 interface Params {
@@ -66,6 +68,33 @@ export async function listOperations(
       operations.push(op);
       if (isTokenTx) {
         tokenOperations.push(op);
+      }
+    }
+  }
+
+  // Enrich public OUT operations with fee payer info when fee sponsorship is configured.
+  // Each OUT transaction's details are fetched in parallel (capped at 5 concurrent) to determine
+  // whether the fee was paid by the account or by an external sponsor.
+  if (config.isFeeSponsored && mode === "bridge") {
+    const enrichedById = new Map<string, AleoOperation>();
+
+    await promiseAllBatched(5, operations as AleoOperation[], async op => {
+      if (op.type !== "OUT") return;
+      const details = await apiClient.getTransactionById(currency, op.hash);
+      const feePayer = detectFeePayer(details, address);
+      if (feePayer) {
+        enrichedById.set(op.id, { ...op, extra: { ...op.extra, feePayer } });
+      }
+    });
+
+    if (enrichedById.size > 0) {
+      for (let i = 0; i < operations.length; i++) {
+        const enriched = enrichedById.get((operations[i] as AleoOperation).id);
+        if (enriched) operations[i] = enriched;
+      }
+      for (let i = 0; i < tokenOperations.length; i++) {
+        const enriched = enrichedById.get((tokenOperations[i] as AleoOperation).id);
+        if (enriched) tokenOperations[i] = enriched;
       }
     }
   }
