@@ -8,7 +8,8 @@ A practical reference for **human code-owner reviewers**. For automated AI revie
 
 ## Before you review
 
-A PR should only reach your queue once all [automated checks](CONTRIBUTING.md#automated-checks) are complete (CI, SonarQube, Copilot). If a PR lands in your queue without meeting these, you can leave a comment and ask the author to put it back in Draft.
+A PR should only reach your queue once all [automated checks](CONTRIBUTING.md#automated-checks) are complete (CI, SonarQube, Copilot).
+If a PR lands in your queue without meeting these, you can leave a comment and ask the author to put it back in Draft.
 
 ## Reviewing
 
