@@ -89,16 +89,18 @@ We use [Smartling](https://www.smartling.com/) for automated translations.
 
 See the README files of [Ledger Wallet Desktop](apps/ledger-live-desktop) and [Ledger Wallet Mobile](apps/ledger-live-mobile) for the source file paths.
 
-> [!TIP]
-> **Tip 1 — Request Copilot while still in Draft**
->
-> <img width="300" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
-
-> [!TIP]
-> **Tip 2 — Re-request review after pushing fixes**
->
-> <img width="300" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />
-
 ## Developer Portal
 
 Tools and resources for building on Ledger are at the [Ledger Developer Portal](https://developers.ledger.com/).
+
+## Tips
+
+#### Request Copilot while still in Draft
+
+> [!TIP]
+> <img width="300" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
+
+#### Re-request review after pushing fixes
+
+> [!TIP]
+> <img width="300" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />
