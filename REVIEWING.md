@@ -45,11 +45,11 @@ Leave style, lint, and code-smell comments to Copilot and SonarQube.
 #### Scope your review to files you own
 
 > [!TIP]
-> <img width="400" alt="Only files owned by you" src="https://github.com/user-attachments/assets/1966a4eb-6921-49d5-ad01-da7a2e70cf23" />
+> <img width="500" alt="Only files owned by you" src="https://github.com/user-attachments/assets/1966a4eb-6921-49d5-ad01-da7a2e70cf23" />
 
 #### Remove accidental review requests
 
 If a rebase pulled in your name on files you don't own, feel free to uncheck yourself from the Reviewers panel.
 
 > [!TIP]
-> <img width="400" alt="Remove request for unwanted teams" src="https://github.com/user-attachments/assets/e9b5a5aa-d4e8-4fde-8a88-f59738924299" />
+> <img width="500" alt="Remove request for unwanted teams" src="https://github.com/user-attachments/assets/e9b5a5aa-d4e8-4fde-8a88-f59738924299" />
