@@ -69,7 +69,7 @@ Before marking your PR ready for review, ensure all of the following pass:
 > Check incoming review requests **at least once per day**:
 > 👉 [PRs waiting for my review](https://github.com/LedgerHQ/ledger-live/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me+sort%3Aupdated-asc+-label%3AHODL+-label%3A%22do+not+review%22+draft%3Afalse)
 
-See [`docs/contributing/pr-review-guide.md`](docs/contributing/pr-review-guide.md) for reviewer guidance.
+See [REVIEWING.md](REVIEWING.md) for reviewer guidance.
 
 ## Changelogs
 

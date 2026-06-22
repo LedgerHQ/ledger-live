@@ -1,11 +1,11 @@
 # PR Review Guide
 
-A practical reference for reviewing PRs in this repository.
+A practical reference for **human code-owner reviewers**. For automated AI review, see [`.agents/agents/code-reviewer.md`](.agents/agents/code-reviewer.md) — they cover different stages of the same workflow.
 
 ## Before you review
 
 > [!IMPORTANT]
-> A PR should only reach your queue once all [automated checks](../../CONTRIBUTING.md#automated-checks) are complete (CI, SonarQube, Copilot). If a PR lands in your queue without meeting these, you can leave a comment and ask the author to put it back in Draft.
+> A PR should only reach your queue once all [automated checks](CONTRIBUTING.md#automated-checks) are complete (CI, SonarQube, Copilot). If a PR lands in your queue without meeting these, you can leave a comment and ask the author to put it back in Draft.
 
 ## Reviewing
 
