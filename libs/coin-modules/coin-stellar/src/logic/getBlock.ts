@@ -191,7 +191,15 @@ function blockOperationsPathStrictReceive(op: RawPathStrictReceiveOp): BlockOper
   });
 }
 
-function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation): BlockOperation[] {
+type TxContext = {
+  memo: { type: string; value?: string } | undefined;
+  sequence: string | undefined;
+};
+
+function mapSupportedOperationToBlockOperations(
+  op: SupportedGetBlockOperation,
+  txCtx?: TxContext,
+): BlockOperation[] {
   if (op.type === "payment") {
     const asset = assetFromHorizonFields(op.asset_type, op.asset_code, op.asset_issuer);
     const toAddr = op.to_muxed || op.to;
@@ -202,14 +210,16 @@ function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation):
   }
   if (op.type === "change_trust") {
     const isOptOut = new BigNumber(op.limit || "0").eq(0);
+    const ledgerOpType = isOptOut ? "OPT_OUT" : "OPT_IN";
+    // Match listOperations details format (convertToLegacyOperation keeps:
+    // sequence, ledgerOpType, assetAmount, memo)
     return [
       {
         type: "other",
-        ledgerOpType: isOptOut ? "OPT_OUT" : "OPT_IN",
-        trustor: op.trustor,
-        assetCode: op.asset_code,
-        assetIssuer: op.asset_issuer,
-        limit: op.limit,
+        ledgerOpType,
+        assetAmount: op.asset_code ? op.limit : undefined,
+        ...(txCtx?.memo && { memo: txCtx.memo }),
+        ...(txCtx?.sequence && { sequence: txCtx.sequence }),
       },
     ];
   }
@@ -222,6 +232,25 @@ function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation):
   return assertUnreachable(op);
 }
 
+function decodeMemo(
+  tx: Awaited<ReturnType<RawOperation["transaction"]>>,
+): { type: string; value?: string } | undefined {
+  switch (tx.memo_type) {
+    case "none":
+      return { type: "NO_MEMO" };
+    case "id":
+      return tx.memo ? { type: "MEMO_ID", value: tx.memo as string } : undefined;
+    case "text":
+      return tx.memo ? { type: "MEMO_TEXT", value: tx.memo as string } : undefined;
+    case "hash":
+      return tx.memo ? { type: "MEMO_HASH", value: tx.memo as string } : undefined;
+    case "return":
+      return tx.memo ? { type: "MEMO_RETURN", value: tx.memo as string } : undefined;
+    default:
+      return undefined;
+  }
+}
+
 async function blockTransactionForHash(
   hash: string,
   ops: RawOperation[],
@@ -229,22 +258,25 @@ async function blockTransactionForHash(
   if (ops.length === 0) return null;
   const failed = !ops[0].transaction_successful;
 
+  const tx = await ops[0].transaction();
+  const fees = BigInt(tx.fee_charged || "0");
+  const feesPayer = tx.fee_account || tx.source_account;
+
+  const txCtx: TxContext = {
+    memo: decodeMemo(tx),
+    sequence: tx.source_account_sequence,
+  };
+
   let blockOperations: BlockOperation[] = [];
   if (!failed) {
     for (const op of ops) {
       if (isSupportedGetBlockOperation(op)) {
-        blockOperations = blockOperations.concat(mapSupportedOperationToBlockOperations(op));
+        blockOperations = blockOperations.concat(
+          mapSupportedOperationToBlockOperations(op, txCtx),
+        );
       }
     }
   }
-
-  if (!failed && blockOperations.length === 0) {
-    return null;
-  }
-
-  const tx = await ops[0].transaction();
-  const fees = BigInt(tx.fee_charged || "0");
-  const feesPayer = tx.fee_account || tx.source_account;
 
   return {
     hash,

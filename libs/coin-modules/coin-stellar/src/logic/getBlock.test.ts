@@ -289,11 +289,12 @@ describe("getBlock", () => {
     expect(block.transactions[0].operations[0]).toMatchObject({
       type: "other",
       ledgerOpType: "OPT_IN",
-      trustor: "GTRUSTORAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      assetAmount: "1000.0000000",
+      memo: { type: "NO_MEMO" },
     });
   });
 
-  it("omits successful transactions that only contain unsupported operation types", async () => {
+  it("keeps successful transactions with only unsupported operation types for fee tracking", async () => {
     fetchAllLedgerOperationsMock.mockResolvedValue([
       rawOp({
         type: "manage_sell_offer",
@@ -303,7 +304,9 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    expect(block.transactions).toHaveLength(0);
+    expect(block.transactions).toHaveLength(1);
+    expect(block.transactions[0].operations).toHaveLength(0);
+    expect(block.transactions[0].fees).toBe(100n);
   });
 
   it("maps path_payment_strict_send with distinct source and destination assets", async () => {
@@ -410,7 +413,7 @@ describe("getBlock", () => {
     expect(block.transactions[0]).not.toHaveProperty("feesPayer");
   });
 
-  it("maps create_account with zero starting balance to no operations", async () => {
+  it("maps create_account with zero starting balance to empty operations but keeps tx for fees", async () => {
     fetchAllLedgerOperationsMock.mockResolvedValue([
       rawOp({
         type: "create_account",
@@ -423,7 +426,9 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    expect(block.transactions).toHaveLength(0);
+    expect(block.transactions).toHaveLength(1);
+    expect(block.transactions[0].operations).toHaveLength(0);
+    expect(block.transactions[0].fees).toBe(100n);
   });
 
   it("maps payment using to_muxed when to is absent", async () => {
@@ -469,7 +474,7 @@ describe("getBlock", () => {
     });
   });
 
-  it("path_payment_strict_send with zero amounts omits the transaction row", async () => {
+  it("path_payment_strict_send with zero amounts keeps tx for fees", async () => {
     fetchAllLedgerOperationsMock.mockResolvedValue([
       rawOp({
         type: "path_payment_strict_send",
@@ -485,7 +490,9 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    expect(block.transactions).toHaveLength(0);
+    expect(block.transactions).toHaveLength(1);
+    expect(block.transactions[0].operations).toHaveLength(0);
+    expect(block.transactions[0].fees).toBe(100n);
   });
 
   it("path_payment_strict_receive uses send_max when source_amount is absent", async () => {
