@@ -178,7 +178,7 @@ jobs:
       MAESTRO_PLATFORM: ios
       APP_ID: com.ledger.live
       REMOTE_SPECULOS: "true"
-      SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
       NODE_OPTIONS: "--max-old-space-size=8192"
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -280,7 +280,7 @@ jobs:
       MAESTRO_PLATFORM: android
       APP_ID: com.ledger.live${{ inputs.production_firebase == true && '' || '.detox' }}
       REMOTE_SPECULOS: "false"
-      SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       ADB: /usr/local/lib/android/sdk/platform-tools/adb
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
