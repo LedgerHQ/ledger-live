@@ -9,6 +9,8 @@ tags:
   - eth
 ---
 - runFlow: ../subflows/launch-seeded.yaml
+# Decline the analytics consent modal if it pops (Android only; its backdrop would block taps).
+- runFlow: ../subflows/dismiss-analytics-prompt.yaml
 - runFlow: ../subflows/open-add-account.yaml
 - runFlow: ../subflows/select-eth.yaml
 - runFlow: ../subflows/verify-eth-account.yaml

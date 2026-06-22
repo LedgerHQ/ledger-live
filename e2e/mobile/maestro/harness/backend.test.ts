@@ -54,6 +54,8 @@ const SEED_FLAGS = {
   onboardingWidget: { enabled: true },
 } as const;
 
+const NO_ANALYTICS_PROMPT = { llmAnalyticsOptInPrompt: { enabled: false } } as const;
+
 // Mutable state served over the control HTTP endpoint. Updated as the backend reaches readiness /
 // derives values (e.g. the send-doge recipient), so flows can fetch them with `http.get`.
 const control: { ready: boolean; recipient?: string; amount?: string; flow: string } = {
@@ -124,7 +126,11 @@ it("maestro backend: seed state + keep the bridge alive", async () => {
     fs.copyFileSync(getUserdataPath(USERDATA), tmpPath);
     try {
       await InitializationManager.initialize(
-        { userdata: USERDATA, speculosApp: Currency.ETH.speculosApp },
+        {
+          userdata: USERDATA,
+          speculosApp: Currency.ETH.speculosApp,
+          featureFlags: { ...NO_ANALYTICS_PROMPT },
+        },
         tmpPath,
         tmp,
       );
@@ -168,7 +174,7 @@ async function setupSwap(): Promise<void> {
   const { getUserdataPath } = await import("../../page/index");
   const { InitializationManager } = await import("../../utils/initUtil");
   const { setExchangeDependencies } = await import("../../utils/speculosUtils");
-  const { swapSetup, setAutoPickAccount } = await import("../../bridge/server");
+  const { swapSetup } = await import("../../bridge/server");
   const { Swap } = await import("@ledgerhq/live-common/e2e/models/Swap");
   const { Account, TokenAccount } = await import("@ledgerhq/live-common/e2e/enum/Account");
   const { AppInfos } = await import("@ledgerhq/live-common/e2e/enum/AppInfos");
@@ -209,6 +215,7 @@ async function setupSwap(): Promise<void> {
             },
           },
           llmModularDrawer: SEED_FLAGS.llmModularDrawer,
+          ...NO_ANALYTICS_PROMPT,
           // lwmWallet40 left to InitializationManager's default (enabled = isWallet40 = true).
         },
         cliCommandsOnApp: [
@@ -231,13 +238,9 @@ async function setupSwap(): Promise<void> {
 
   await swapSetup();
 
-  // Enable in-app auto-pick for the To-account selection, targeting the USDT token. When Maestro
-  // taps the swap "To" currency selector, the wallet-api account.request resolves the seeded USDT
-  // account directly from the store instead of opening the native modular drawer (which is flaky on
-  // iOS: it auto-advances past the asset step and doesn't always bind the seeded account). The From
-  // account (ETH) is auto-selected by the swap live-app before this request, so targeting USDT is
-  // unambiguous. Buffered like the other setup messages; replayed when the app connects.
-  await setAutoPickAccount(true, swap.accountToCredit.currency.id);
+  // NB: auto-pick is intentionally NOT enabled for swap — the flow drives the real native modular
+  // drawer to pick the To currency (search USDT -> asset -> network -> account), exercising the
+  // actual currency-selection UI on both platforms.
 
   // The Speculos screen-polling in verifyAmountsAndAcceptSwap uses axios. In this jest harness
   // axios resolves to its non-node build and (with no XMLHttpRequest) auto-selects the fetch
@@ -276,7 +279,9 @@ async function setupSwap(): Promise<void> {
   void (async () => {
     if (noSign) {
       // eslint-disable-next-line no-console
-      console.log("[maestro-harness] SWAP_NO_SIGN=1 — NOT signing; recorder observes the device only.");
+      console.log(
+        "[maestro-harness] SWAP_NO_SIGN=1 — NOT signing; recorder observes the device only.",
+      );
       return;
     }
     // Patient proactive signer (like send-doge): the swap UI takes ~2-3 min (WebView drawer +
@@ -351,6 +356,17 @@ async function setupSwap(): Promise<void> {
  * The proactive signer above then accepts the swap on the Speculos the moment it reaches the device.
  */
 async function driveSwapExecute(): Promise<void> {
+  // iOS only. On Android the WebView is fully readable/tappable by Maestro (it drives the quotes +
+  // execute in the flow), and the webviewDriver's synthetic DOM click — while it finds the elements —
+  // does NOT trigger the live-app's React onClick on Android's WebView (it does on iOS WKWebView). So
+  // the bridge-driven path is iOS-specific; skip it on Android.
+  if ((process.env.MAESTRO_PLATFORM ?? "ios").toLowerCase() === "android") {
+    // eslint-disable-next-line no-console
+    console.log(
+      "[maestro-harness] Android: Maestro drives the swap WebView (quotes/execute); skipping webviewDriver.",
+    );
+    return;
+  }
   const { webviewDriver } = await import("../../bridge/server");
   const { SwapProvider } = await import("@ledgerhq/live-common/e2e/enum/Provider");
   const DRIVER = process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws";
@@ -372,13 +388,14 @@ async function driveSwapExecute(): Promise<void> {
     return { ok: false as const, error: "webview driver: timed out waiting for registration" };
   };
 
-  // 0. BEST-EFFORT tap "View quotes" once Maestro has entered the amount (which enables it). The
-  //    form sometimes auto-searches quotes (no button), so DON'T block on the button — give it a
-  //    short window, then fall through and gate on the quotes appearing (step 1). A long hard wait
-  //    here would hang the whole swap when the app auto-searched.
+  // 0. Tap "View quotes" once Maestro has entered the To currency + amount (which enables it). This
+  //    runs CONCURRENTLY with Maestro, so wait generously for the button to become enabled — the
+  //    Android emulator drives the form noticeably slower than the iOS sim, and a short poll here
+  //    expired before Maestro had set To+amount. The form sometimes auto-searches quotes (no button),
+  //    so this is still best-effort: fall through and gate on the quotes appearing (step 1).
   let r = await wv(
-    { op: "tapByTestIdWhenEnabled", testId: "mobile-get-quotes-button", timeoutMs: 30_000 },
-    35_000,
+    { op: "tapByTestIdWhenEnabled", testId: "mobile-get-quotes-button", timeoutMs: 110_000 },
+    115_000,
   );
   if (!r.ok) {
     // eslint-disable-next-line no-console
@@ -391,7 +408,9 @@ async function driveSwapExecute(): Promise<void> {
   r = await wv({ op: "waitForTestId", testId: "number-of-quotes", timeoutMs: 120_000 }, 125_000);
   if (!r.ok) {
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness] webviewDriver: quotes never appeared: ${(r as { error?: string }).error}`);
+    console.warn(
+      `[maestro-harness] webviewDriver: quotes never appeared: ${(r as { error?: string }).error}`,
+    );
     return;
   }
 
@@ -400,7 +419,7 @@ async function driveSwapExecute(): Promise<void> {
     op: "querySelectorAllText",
     selector: "[data-testid^='compact-quote-card-provider-name-']",
   });
-  const uiNames = (r.ok ? ((r.data as string[]) ?? []) : []).filter(Boolean);
+  const uiNames = (r.ok ? (r.data as string[]) ?? [] : []).filter(Boolean);
 
   // 3. Pick the first non-KYC, non-app provider (skip LI.FI) — exactly like Detox selectExchange.
   let picked: { name: string; uiName: string } | undefined;
@@ -413,7 +432,9 @@ async function driveSwapExecute(): Promise<void> {
   }
   if (!picked) {
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness] webviewDriver: no non-app provider in quotes: [${uiNames.join(", ")}]`);
+    console.warn(
+      `[maestro-harness] webviewDriver: no non-app provider in quotes: [${uiNames.join(", ")}]`,
+    );
     return;
   }
   // eslint-disable-next-line no-console
@@ -423,7 +444,9 @@ async function driveSwapExecute(): Promise<void> {
   r = await wv({ op: "tapByTestId", testId: `compact-quote-card-provider-name-${picked.name}` });
   if (!r.ok) {
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness] webviewDriver: failed selecting provider: ${(r as { error?: string }).error}`);
+    console.warn(
+      `[maestro-harness] webviewDriver: failed selecting provider: ${(r as { error?: string }).error}`,
+    );
     return;
   }
 
@@ -439,7 +462,9 @@ async function driveSwapExecute(): Promise<void> {
   );
   if (!r.ok) {
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness] webviewDriver: failed tapping execute: ${(r as { error?: string }).error}`);
+    console.warn(
+      `[maestro-harness] webviewDriver: failed tapping execute: ${(r as { error?: string }).error}`,
+    );
     return;
   }
   // eslint-disable-next-line no-console
@@ -493,7 +518,7 @@ async function setupSendDoge(): Promise<void> {
       {
         userdata: USERDATA,
         speculosApp: dogeApp,
-        featureFlags: {},
+        featureFlags: { ...NO_ANALYTICS_PROMPT },
         cliCommandsOnApp: [
           { app: dogeApp, cmd: liveDataWithAddressCommand(tx.accountToDebit) },
           {
@@ -591,10 +616,14 @@ async function dumpSpeculosConnDiag(): Promise<void> {
       }
     }
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness][CONN-DIAG] at first ECONNREFUSED:\n  probe ${url} = ${probe}${extra}`);
+    console.warn(
+      `[maestro-harness][CONN-DIAG] at first ECONNREFUSED:\n  probe ${url} = ${probe}${extra}`,
+    );
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness][CONN-DIAG] failed: ${e instanceof Error ? e.message : String(e)}`);
+    console.warn(
+      `[maestro-harness][CONN-DIAG] failed: ${e instanceof Error ? e.message : String(e)}`,
+    );
   }
 }
 
@@ -611,7 +640,9 @@ async function dumpSpeculinhoLogsIfRemote(failureMsg: string): Promise<void> {
     const addr = process.env.SPECULOS_ADDRESS;
     if (!addr) {
       // eslint-disable-next-line no-console
-      console.warn("[maestro-harness][POD-LOGS] SPECULOS_ADDRESS is unset — cannot fetch pod logs.");
+      console.warn(
+        "[maestro-harness][POD-LOGS] SPECULOS_ADDRESS is unset — cannot fetch pod logs.",
+      );
       return;
     }
     const runId = new URL(addr).hostname.split(".")[0];
@@ -657,7 +688,9 @@ async function dumpAppLogs(): Promise<void> {
     console.warn(`[maestro-harness][APP-LOGS] (filtered tail):\n${tail.slice(-4000)}`);
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness][APP-LOGS] failed: ${e instanceof Error ? e.message : String(e)}`);
+    console.warn(
+      `[maestro-harness][APP-LOGS] failed: ${e instanceof Error ? e.message : String(e)}`,
+    );
   }
 }
 
@@ -680,9 +713,9 @@ async function speculosEventsUrl(): Promise<string> {
  */
 async function fetchScreenTextDirect(): Promise<string> {
   const url = await speculosEventsUrl();
-  const mod = (url.startsWith("https:")
-    ? await import("https")
-    : await import("http")) as typeof import("http");
+  const mod = (
+    url.startsWith("https:") ? await import("https") : await import("http")
+  ) as typeof import("http");
   return new Promise<string>((resolve, reject) => {
     const req = mod.get(url, res => {
       if (res.statusCode !== 200) {
@@ -736,7 +769,9 @@ function startSpeculosScreenRecorder(): void {
         last = line;
         if (logged++ < MAX) {
           // eslint-disable-next-line no-console
-          console.log(`[maestro-harness][SCREEN] ${new Date().toISOString().slice(11, 23)} | ${line}`);
+          console.log(
+            `[maestro-harness][SCREEN] ${new Date().toISOString().slice(11, 23)} | ${line}`,
+          );
         }
       }
       await new Promise(r => setTimeout(r, 800));
@@ -746,9 +781,9 @@ function startSpeculosScreenRecorder(): void {
 
 /** GET a URL (http or https), resolving to a short status string ("HTTP 200" / "ERR ..." / "TIMEOUT"). */
 async function probeHttp(url: string, timeoutMs = 4000): Promise<string> {
-  const mod = (url.startsWith("https:")
-    ? await import("https")
-    : await import("http")) as typeof import("http");
+  const mod = (
+    url.startsWith("https:") ? await import("https") : await import("http")
+  ) as typeof import("http");
   return new Promise<string>(resolve => {
     const req = mod.get(url, res => {
       resolve(`HTTP ${res.statusCode}`);
