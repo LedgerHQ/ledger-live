@@ -51,11 +51,11 @@ modular drawer worked), and `getFlags` resolves to `""` on timeout. Harmless for
 Maestro searched/selected ETH, **Speculos derived the account ("Ethereum 1") — real discovery, not a
 mock**, the account was added, and the asset page balance asserted. All four subflows COMPLETED.
 
-What it took to run the full backend from a plain Jest process (all in `harness/`, no app changes):
+What it took to run the full backend as a standalone `ts-node` daemon (all in `harness/`, no app changes):
 - `harness/setup-globals.ts` — recreate the `webSocket` / `pendingCallbacks` / `jestExpect` globals the
-  Detox `jest.environment.ts` normally installs.
-- `harness/detox-stub.ts` (mapped via `moduleNameMapper`) — stub Detox's `device` (its `reverseTcpPort`
-  needs a Detox worker and is a no-op on an iOS sim) and `log`.
+  Detox `jest.environment.ts` normally installs (`jestExpect` is a tiny `getState()` shim outside jest).
+- `harness/detox-stub.ts` (mapped via the `detox` path alias in `harness/tsconfig.json`) — stub Detox's
+  `device` (its `reverseTcpPort` needs a Detox worker and is a no-op on an iOS sim) and `log`.
 - call `setupEnvironment()` in the harness — sets `E2E_NANO_APP_VERSION_PATH`, `DETOX=1`, `MOCK=""`, etc.
 - env: `SEED` (test mnemonic) + `COINAPPS` (clone of LedgerHQ/coin-apps) — same as the Detox suite needs.
 - `E2E_ENABLE_WALLET40=0` — the POC's flow/testIDs target the classic portfolio; Wallet 4.0 has a
@@ -71,7 +71,7 @@ Maestro (YAML, UI only) ──launchApp(args: wsPort=8099, mock=0)──▶  led
                                                                           │ reads launch args via
                                                                           │ react-native-launch-arguments
                                                                           ▼
-harness/backend.test.ts ──ws://:8099──▶ bridge (seed: skip-onboarding userdata + feature flags)
+harness/main.ts ──ws://:8099──▶ bridge (seed: skip-onboarding userdata + feature flags)
         │
         └── Speculos(Ethereum) in Docker ──DMK transport──▶ account discovery (address derivation)
 ```
@@ -103,10 +103,11 @@ Maestro doesn't own** (the harness), which this POC shows is small and requires 
 1. **Launch-arg delivery — VALIDATED on iOS** (`Client connected` in the smoke run). Still to confirm on
    Android (intent extras). `client.ts` defaults `wsPort` to `8099`, so a fixed port works even if only
    `mock`/`IS_TEST` propagate.
-2. **Harness runner — resolved during a first run attempt.** `tsx` cannot resolve the package's
-   `@shared/*`/`~/*` TS aliases, so the harness now runs as a **jest test** (`harness/jest.config.js`,
-   with all Detox bits stripped so it never launches the app). Running under jest also satisfies
-   `expect.getState()` + the allure runtime used by the Speculos path. For a first smoke test use
+2. **Harness runner.** The harness is a plain **`ts-node` daemon** (`harness/main.ts`), run via
+   `ts-node --swc --require tsconfig-paths/register` so it gets the `@swc` transform and resolves the
+   `@shared/*`/`~/*` TS aliases + the `detox`->stub remap from `harness/tsconfig.json` (pinned to
+   CommonJS so dynamic imports go through require). `harness/setup-globals.ts` provides the few globals
+   (e.g. an `expect.getState()` shim) the reused Speculos path expects outside jest. For a first smoke test use
    `MAESTRO_FULL=0` (bridge only). Note also: a fresh machine may have **no iOS simulator created** and
    **no mock app installed** — `run-eth.sh` now preflights both and fails fast with guidance.
 3. **testID exactness.** A few selectors are dynamic/regex (`asset-item-ETH`, `account-item-*`). Confirm
@@ -131,7 +132,7 @@ Maestro doesn't own** (the harness), which this POC shows is small and requires 
 
 # Swap (ETH → ETH-USDT) attempt — harder, partially blocked
 
-Adapting `specs/swap/swapETH_ETH_USDT.spec.ts`. Artifacts: `harness/backend.test.ts` (MAESTRO_FLOW=swap),
+Adapting `specs/swap/swapETH_ETH_USDT.spec.ts`. Artifacts: `harness/main.ts` (MAESTRO_FLOW=swap),
 `flows/open-swap.yaml`, `run-swap.sh`.
 
 ## What works
@@ -286,7 +287,7 @@ Confirmed empirically:
 > (with `adb reverse`). We chose to keep local Docker on iOS, so the fix targets that path.
 
 ## Fix (this session — flows stay 100% YAML; changes are harness/orchestrator only)
-- **`harness/backend.test.ts`** — added `waitForSpeculosApiReady()`: after `swapSetup()` and before
+- **`harness/main.ts`** — added `waitForSpeculosApiReady()`: after `swapSetup()` and before
   declaring "swap backend ready", poll the registered `SPECULOS_API_PORT` on `127.0.0.1` until the
   REST API answers (≤60 s), logging container state; warn loudly (with `docker ps`) if it never does.
   This guarantees the device step has a *live* device and turns the silent intermittent failure into

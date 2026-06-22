@@ -100,3 +100,27 @@ platform_reverse_host_ports() {
   "$ADB" reverse tcp:8081 tcp:8081 >/dev/null 2>&1 || true
   "$ADB" reverse "tcp:${MAESTRO_BRIDGE_PORT:-8099}" "tcp:${MAESTRO_BRIDGE_PORT:-8099}" >/dev/null 2>&1 || true
 }
+
+# --- Backend harness (ts-node daemon) -------------------------------------------------------------
+# The harness reuses the e2e/mobile bridge + Speculos seeding. It runs as a plain ts-node script (NOT
+# a jest test): `ts-node --swc` transpiles via @swc/core, and `tsconfig-paths/register` resolves the
+# package's `~/*` / `@shared/*` / `@ledgerhq/live-common/e2e/*` aliases (+ the detox->stub remap) from
+# maestro/harness/tsconfig.json. Mirrors the existing `e2e:loadConfig` ts-node bridge script.
+HARNESS_ENTRY="maestro/harness/main.ts"
+HARNESS_PROJECT="maestro/harness/tsconfig.json"
+# Pattern the cleanup traps use to reap a detached harness if the PID-based kill misses it.
+HARNESS_PKILL_PATTERN="ts-node .*${HARNESS_ENTRY}"
+
+# Launch the harness in the background, redirecting its (verbose) logs to $1 unless VERBOSE=1.
+# Sets HARNESS_PID in the caller's scope. $1 = log file path.
+start_harness() {
+  local logfile="$1"
+  export TS_NODE_PROJECT="$HARNESS_PROJECT"
+  if [ "${VERBOSE:-0}" = "1" ]; then
+    pnpm exec ts-node --swc --require tsconfig-paths/register "$HARNESS_ENTRY" &
+  else
+    echo ">> harness backend logs -> e2e/mobile/$logfile (set VERBOSE=1 to stream them here)"
+    pnpm exec ts-node --swc --require tsconfig-paths/register "$HARNESS_ENTRY" >"$logfile" 2>&1 &
+  fi
+  HARNESS_PID=$!
+}

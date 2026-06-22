@@ -1,6 +1,6 @@
 /**
- * Minimal `detox` stand-in for the Maestro harness (mapped via moduleNameMapper in
- * harness/jest.config.js). Maestro owns the device; Detox's `device` port-forwarding is mostly a
+ * Minimal `detox` stand-in for the Maestro harness (mapped via the `detox` path alias in
+ * harness/tsconfig.json). Maestro owns the device; Detox's `device` port-forwarding is mostly a
  * no-op here. On an iOS simulator the host and sim share localhost, so Speculos at
  * localhost:<port> is reachable without `reverseTcpPort`.
  *

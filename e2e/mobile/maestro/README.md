@@ -17,8 +17,10 @@ maestro/
 │   ├── select-eth.yaml         # search + pick ETH (+ network if asked)
 │   └── verify-eth-account.yaml # discovery → add → close → assert balance
 ├── harness/
-│   ├── backend.test.ts         # reuses e2e/mobile bridge + Speculos seeding (runs as a jest test)
-│   └── jest.config.js          # detox-free jest config (resolves @shared/* aliases, no app launch)
+│   ├── main.ts                 # reuses e2e/mobile bridge + Speculos seeding (plain ts-node daemon)
+│   ├── setup-globals.ts        # recreates the few globals the reused infra reads (no jest env)
+│   ├── detox-stub.ts           # `detox` stand-in (Maestro owns the device; does Android adb reverse)
+│   └── tsconfig.json           # ts-node/tsconfig-paths config: aliases + detox->stub, no app launch
 └── run-eth.sh                  # orchestrator: preflight → start backend → maestro test → teardown
 ```
 
@@ -56,9 +58,12 @@ Use `maestro studio` against the running app to confirm any testID that doesn't 
 - **Launch-arg delivery is the key thing to validate first** — confirm Maestro's `arguments` reach
   `LaunchArguments.value()` on device. If not, the app defaults `wsPort` to `8099`, so a fixed port
   still works.
-- **Runner:** the harness runs as a **jest test** (`harness/jest.config.js`), not `tsx`. That's how the
-  `@shared/*`/`~/*` TS aliases, the `@swc` transform, `expect.getState()` and the `jest-allure2-reporter`
-  runtime resolve — plain `tsx`/`node` cannot resolve those aliases.
+- **Runner:** the harness is a plain **`ts-node` daemon** (`harness/main.ts`), not a jest test. It runs
+  via `ts-node --swc --require tsconfig-paths/register` (see `start_harness` in `_platform.sh`), which
+  gives it the `@swc` transform and resolves the `@shared/*`/`~/*` TS aliases + the `detox`->stub remap
+  from `harness/tsconfig.json` (pinned to CommonJS so dynamic imports go through require). Mirrors the
+  existing `e2e:loadConfig` ts-node bridge script. `harness/setup-globals.ts` recreates the handful of
+  globals the reused infra expects outside a jest environment (`webSocket`, an `expect.getState()` shim).
 - **Android:** same `appId` for debug (`com.ledger.live.debug`); the app reaches the bridge at
   `10.0.2.2:8099`. Release build → `com.ledger.live`.
 

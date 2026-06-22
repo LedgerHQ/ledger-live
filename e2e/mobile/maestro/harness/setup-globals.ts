@@ -18,6 +18,13 @@ g.webSocket = {
 g.pendingCallbacks = new Map();
 g.speculosDevices = new Map();
 g.IS_FAILED = false;
-// Speculos launch (utils/speculosUtils.ts) reads `jestExpect.getState()`; the Detox
-// env normally exposes jest's expect under this name.
-g.jestExpect = (globalThis as { expect?: unknown }).expect;
+// utils/speculosUtils.ts reads the global `jestExpect.getState().testPath` and the allure helpers
+// read the global `expect.getState()`. Outside jest there is no `expect`, so install a tiny shim: a
+// callable returning a chainable no-op matcher, carrying getState() with the fields the infra reads.
+const noop: unknown = new Proxy(function () {}, { get: () => noop, apply: () => noop });
+const flowName = process.env.MAESTRO_FLOW ?? "add-account";
+const expectShim = Object.assign(() => noop, {
+  getState: () => ({ testPath: `maestro-${flowName}`, currentTestName: `maestro-${flowName}` }),
+});
+g.jestExpect = expectShim;
+g.expect = expectShim;
