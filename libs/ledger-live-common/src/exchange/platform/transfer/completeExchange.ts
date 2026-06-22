@@ -69,7 +69,6 @@ const completeExchange = (
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const accountBridge = await getAccountBridge(mainAccount);
         const mainPayoutCurrency = getAccountCurrency(mainAccount);
-        const payoutCurrency = getAccountCurrency(fromAccount);
 
         if (mainPayoutCurrency.type !== "CryptoCurrency")
           throw new CompleteExchangeError(
@@ -134,8 +133,13 @@ const completeExchange = (
           );
         }
 
+        // Use mainPayoutCurrency (the parent coin) rather than the fromAccount currency.
+        // When fromAccount is a token account (e.g. ERC-20), the firmware's
+        // CHECK_ASSET_IN_AND_DISPLAY expects the parent coin config (e.g. ETH), not
+        // the token config. Token accounts share the parent's address derivation path,
+        // so the coin config is always the correct one here.
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          await getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(mainPayoutCurrency);
 
         try {
           o.next({
