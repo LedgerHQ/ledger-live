@@ -1,6 +1,6 @@
 # PR Review Guide
 
-A practical reference for **human code-owner reviewers**. For automated AI review, see [`.agents/agents/code-reviewer.md`](.agents/agents/code-reviewer.md) — they cover different stages of the same workflow.
+A practical reference for **human code-owner reviewers**. For automated AI review, see [`.agents/agents/code-reviewer.md`](.agents/agents/code-reviewer.md)
 
 > [!TIP]
 > Check your incoming review requests daily:
