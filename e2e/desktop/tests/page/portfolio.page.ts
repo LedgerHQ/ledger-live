@@ -3,7 +3,7 @@ import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { sanitizeAssetNameForTestId } from "~/mvvm/features/Assets/utils/assetTableHelpers";
 import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { isAssetSectionEnabled, isOperationsListEnabled } from "tests/utils/featureFlagUtils";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -13,6 +13,14 @@ export class PortfolioPage extends AppPage {
   private readonly stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private readonly chart = this.page.getByTestId("chart-container");
   private readonly operationList = this.page.locator("#operation-list");
+  private readonly historyButton = this.page.getByTestId("topbar-action-button-history");
+  private readonly historyTable = this.page.getByTestId("history-table");
+  private readonly historyOperationRows = this.page.locator(
+    "[data-testid^='history-operation-row-']",
+  );
+  private readonly homeSideBarButton = this.page
+    .getByTestId("sidebar-navigation")
+    .getByRole("button", { name: "home" });
   private readonly assetAllocationTitle = this.page.getByText("Asset allocation");
   private readonly assetRowElements = this.page.locator(
     "[data-testid^='w40-asset-row-']:not([data-testid^='w40-asset-row-value-'])",
@@ -146,6 +154,18 @@ export class PortfolioPage extends AppPage {
 
   @step("check operation history")
   async checkOperationHistory() {
+    // operationsList ON: operations live on the dedicated History page. Open it from the topbar,
+    // assert the history table renders at least one operation, then return to the portfolio so the
+    // caller can keep asserting portfolio-level content.
+    if (isOperationsListEnabled) {
+      await this.historyButton.click();
+      await this.checkVisibility(this.historyTable);
+      await expect(this.historyOperationRows.first()).toBeVisible();
+      await this.homeSideBarButton.click();
+      await this.checkVisibility(this.portfolioTotalBalance);
+      return;
+    }
+
     await this.operationList.scrollIntoViewIfNeeded();
     await this.checkVisibility(this.operationList);
 

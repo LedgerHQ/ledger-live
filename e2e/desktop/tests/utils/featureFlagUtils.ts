@@ -9,6 +9,8 @@ export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> =
 };
 
 export const isAssetSectionEnabled = process.env.E2E_ENABLE_ASSET_SECTION !== "0";
+export const isMyWalletEnabled = process.env.E2E_ENABLE_MY_WALLET !== "0";
+export const isOperationsListEnabled = process.env.E2E_ENABLE_OPERATIONS_LIST !== "0";
 
 const lwdWallet40BaseParams = {
   marketBanner: true,
@@ -17,12 +19,21 @@ const lwdWallet40BaseParams = {
   mainNavigation: true,
 } as const;
 
-// The Wallet 4.0 "Asset Section" is ON by default for all desktop E2E tests.
-// Force it OFF (the "assetSection OFF" test variant) by setting E2E_ENABLE_ASSET_SECTION=0 (used by CI).
+// The Wallet 4.0 Q2 params (Asset Section, My Wallet, operations History page, aggregated assets, PnL)
+// are ON by default for all desktop E2E tests, matching the upcoming production default.
+// Force a given param OFF (its legacy variant) via the matching E2E_ENABLE_* env var (used by CI):
+// - E2E_ENABLE_ASSET_SECTION=0  -> assetSection OFF
+// - E2E_ENABLE_MY_WALLET=0      -> myWallet OFF (Settings/Notifications/My Ledger stay in the topbar)
+// - E2E_ENABLE_OPERATIONS_LIST=0 -> operationsList OFF (legacy operation list on the portfolio)
 export const LWD_WALLET_40_FF_ENABLED: OptionalFeatureMap = {
   lwdWallet40: {
     enabled: true,
-    params: { ...lwdWallet40BaseParams, assetSection: isAssetSectionEnabled },
+    params: {
+      ...lwdWallet40BaseParams,
+      assetSection: isAssetSectionEnabled,
+      myWallet: isMyWalletEnabled,
+      operationsList: isOperationsListEnabled,
+    },
   },
 };
 
