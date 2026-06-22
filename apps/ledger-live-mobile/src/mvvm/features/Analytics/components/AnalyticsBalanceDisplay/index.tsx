@@ -1,5 +1,6 @@
 import React from "react";
-import { AmountDisplay, Skeleton } from "@ledgerhq/lumen-ui-rnative";
+import { Skeleton } from "@ledgerhq/lumen-ui-rnative";
+import { FittedAmountDisplay } from "LLM/components/FittedAmountDisplay";
 import { useAnalyticsBalanceDisplayViewModel } from "./useAnalyticsBalanceDisplayViewModel";
 
 type Props = {
@@ -32,7 +33,7 @@ export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
   }
 
   return (
-    <AmountDisplay
+    <FittedAmountDisplay
       value={value}
       formatter={formatter}
       hidden={discreet}

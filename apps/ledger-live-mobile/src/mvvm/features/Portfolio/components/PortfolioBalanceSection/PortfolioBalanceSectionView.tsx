@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { AmountDisplay, Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { FittedAmountDisplay } from "LLM/components/FittedAmountDisplay";
 import { DiscreetModeIcon } from "./DiscreetModeIcon";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -10,6 +11,8 @@ import { useTranslation, useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";
 import { PortfolioBalanceSectionViewProps } from "./types";
 import { AnalyticPill } from "./AnalyticPill";
+
+const DISCREET_ICON_RESERVED_WIDTH = 38;
 
 const containerStyle: LumenViewStyle = {
   alignItems: "center",
@@ -56,6 +59,26 @@ export const PortfolioBalanceSectionView = ({
     );
   };
 
+  const renderBalance = () => {
+    if (!isBalanceAvailable) {
+      return (
+        <Skeleton testID="portfolio-placeholder-balance" lx={{ height: "s48", width: "s256" }} />
+      );
+    }
+
+    return (
+      <FittedAmountDisplay
+        key={unit.code}
+        value={balance}
+        formatter={formatter}
+        hidden={discreet}
+        loading={shouldDisplayBalanceRefreshRework && isLoading}
+        reservedTrailingWidth={discreet ? DISCREET_ICON_RESERVED_WIDTH : 0}
+        testID="portfolio-balance-amount"
+      />
+    );
+  };
+
   const renderContent = () => {
     if (state === "noSigner" || state === "noAccounts") {
       return (
@@ -73,22 +96,15 @@ export const PortfolioBalanceSectionView = ({
     return (
       <>
         <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
-          <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
-            {isBalanceAvailable ? (
-              <AmountDisplay
-                key={unit.code}
-                value={balance}
-                formatter={formatter}
-                hidden={discreet}
-                loading={shouldDisplayBalanceRefreshRework && isLoading}
-                testID="portfolio-balance-amount"
-              />
-            ) : (
-              <Skeleton
-                testID="portfolio-placeholder-balance"
-                lx={{ height: "s48", width: "s256" }}
-              />
-            )}
+          <Box
+            lx={{
+              flexDirection: "row",
+              alignItems: "baseline",
+              justifyContent: "center",
+              gap: "s14",
+            }}
+          >
+            {renderBalance()}
             {discreet && <DiscreetModeIcon />}
           </Box>
         </Pressable>
