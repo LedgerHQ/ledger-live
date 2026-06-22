@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+tags:
+  - swap
+  - btc
+  - eth
+---
+- runFlow:
+    file: ../../subflows/swap.yaml
+    env:
+      FROM_TICKER: "BTC"
+      FROM_NETWORK: "bitcoin"
+      FROM_NETWORK_REQUIRED: "false"
+      TO_TICKER: "ETH"
+      TO_NETWORK: "ethereum"
+      TO_NETWORK_REQUIRED: "false"

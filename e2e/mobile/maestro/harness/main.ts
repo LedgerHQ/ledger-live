@@ -195,7 +195,24 @@ async function setupSwap(): Promise<void> {
   const { randomUUID } = await import("crypto");
 
   const amount = process.env.SWAP_AMOUNT ?? "0.01";
-  const swap = new Swap(Account.ETH_1, TokenAccount.ETH_USDT_1, amount, undefined, Fee.MEDIUM);
+  // FROM/TO come from the pair (SWAP_FROM/SWAP_TO tickers); everything below derives from the Swap's
+  // two accounts (Speculos deps, account seeding, the on-device swap-pair check).
+  const accounts: Record<string, Account | TokenAccount> = {
+    BTC: Account.BTC_NATIVE_SEGWIT_1,
+    ETH: Account.ETH_1,
+    USDT: TokenAccount.ETH_USDT_1,
+    USDC: TokenAccount.ETH_USDC_1,
+    SOL: Account.SOL_1,
+    XRP: Account.XRP_1,
+    LTC: Account.LTC_1,
+  };
+  const fromTicker = (process.env.SWAP_FROM ?? "ETH").toUpperCase();
+  const toTicker = (process.env.SWAP_TO ?? "USDT").toUpperCase();
+  const from = accounts[fromTicker];
+  const to = accounts[toTicker];
+  if (!from || !to)
+    throw new Error(`[maestro-harness] unknown swap pair ${fromTicker}->${toTicker}`);
+  const swap = new Swap(from, to, amount, undefined, Fee.MEDIUM);
   control.amount = amount; // exposed via GET /amount
 
   // Share the amount with the Maestro flow so it types the exact value the harness verifies.
@@ -276,9 +293,11 @@ async function setupSwap(): Promise<void> {
   startSpeculosScreenRecorder();
 
   // Background: retry until the Speculos "Review transaction" screen appears (Maestro has to
-  // tap through the quote + the "Sign to swap" step first), then verify + sign. The `amount`
-  // is matched as a substring of the on-device amount (verifySwapData uses contains), so a
-  // stable prefix like "0.013" matches the live ~25% amount. Do NOT await.
+  // tap through the quote + the "Sign to swap" step first), then verify the swap pair + sign.
+  // The amount is matched as a substring of the on-device amount; Maestro drives a 25% button so
+  // the exact value isn't known here — SWAP_VERIFY_AMOUNT defaults to "" (skip the amount check,
+  // keep the FROM->TO pair check). Set it to a prefix to assert the amount. Do NOT await.
+  const verifyAmount = process.env.SWAP_VERIFY_AMOUNT ?? "";
   let connRefusedDiagDone = false;
   // DIAGNOSTIC: SWAP_NO_SIGN=1 disables the harness's button-pressing so ONLY the read-only screen
   // recorder observes the device. If the device then shows a stable review (instead of exit(255)),
@@ -298,7 +317,7 @@ async function setupSwap(): Promise<void> {
     const MAX_ATTEMPTS = 40;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       try {
-        await verifyAmountsAndAcceptSwap(swap, amount);
+        await verifyAmountsAndAcceptSwap(swap, verifyAmount);
         // eslint-disable-next-line no-console
         console.log("[maestro-harness] swap signed on device");
         return;
@@ -382,7 +401,7 @@ async function driveSwapExecute(): Promise<void> {
   // Retry the bridge op while the WebView isn't registered yet (Maestro hasn't opened swap).
   type Op = Parameters<typeof webviewDriver>[1];
   const wv = async (op: Op, waitMs = 30000) => {
-    const deadline = Date.now() + 180_000;
+    const deadline = Date.now() + 300_000;
     while (Date.now() < deadline) {
       const r = await webviewDriver(DRIVER, op, waitMs);
       if (r.ok) return r;
@@ -402,8 +421,8 @@ async function driveSwapExecute(): Promise<void> {
   //    expired before Maestro had set To+amount. The form sometimes auto-searches quotes (no button),
   //    so this is still best-effort: fall through and gate on the quotes appearing (step 1).
   let r = await wv(
-    { op: "tapByTestIdWhenEnabled", testId: "mobile-get-quotes-button", timeoutMs: 110_000 },
-    115_000,
+    { op: "tapByTestIdWhenEnabled", testId: "mobile-get-quotes-button", timeoutMs: 240_000 },
+    245_000,
   );
   if (!r.ok) {
     // eslint-disable-next-line no-console

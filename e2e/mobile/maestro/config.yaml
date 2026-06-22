@@ -2,3 +2,4 @@
 # Only flows/ are test cases; subflows/ holds reusable building blocks pulled in via runFlow.
 flows:
   - "flows/*.yaml"
+  - "flows/swap/*.yaml"

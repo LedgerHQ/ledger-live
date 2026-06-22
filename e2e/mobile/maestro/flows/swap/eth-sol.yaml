@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+tags:
+  - swap
+  - eth
+  - sol
+---
+- runFlow:
+    file: ../../subflows/swap.yaml
+    env:
+      FROM_TICKER: "ETH"
+      FROM_NETWORK: "ethereum"
+      FROM_NETWORK_REQUIRED: "false"
+      TO_TICKER: "SOL"
+      TO_NETWORK: "solana"
+      TO_NETWORK_REQUIRED: "false"

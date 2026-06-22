@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+tags:
+  - swap
+  - xrp
+  - usdc
+---
+- runFlow:
+    file: ../../subflows/swap.yaml
+    env:
+      FROM_TICKER: "XRP"
+      FROM_NETWORK: "ripple"
+      FROM_NETWORK_REQUIRED: "false"
+      TO_TICKER: "USDC"
+      TO_NETWORK: "ethereum"
+      TO_NETWORK_REQUIRED: "true"

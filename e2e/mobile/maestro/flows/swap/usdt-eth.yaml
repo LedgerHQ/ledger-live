@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+tags:
+  - swap
+  - usdt
+  - eth
+---
+- runFlow:
+    file: ../../subflows/swap.yaml
+    env:
+      FROM_TICKER: "USDT"
+      FROM_NETWORK: "ethereum"
+      FROM_NETWORK_REQUIRED: "true"
+      TO_TICKER: "ETH"
+      TO_NETWORK: "ethereum"
+      TO_NETWORK_REQUIRED: "false"

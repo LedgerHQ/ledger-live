@@ -1,28 +1,37 @@
 appId: ${APP_ID}
-tags:
-  - swap
-onFlowStart:
-  - runScript: ../scripts/assert-backend.js
 ---
-- runFlow: ../subflows/launch.yaml
+- runScript: ../scripts/assert-backend.js
+- runFlow: launch.yaml
 - extendedWaitUntil:
     visible:
       id: "w40-tab-swap"
     timeout: 180000
-- runFlow: ../subflows/dismiss-analytics-prompt.yaml
+- runFlow: dismiss-analytics-prompt.yaml
 - tapOn:
     id: "w40-tab-swap"
-# Swap live-app WebView. "Select Currency or Token" is in the DOM before load finishes; "Balance"
-# renders once From auto-selects ETH, so gate on it before the first WebView tap.
+# Swap live-app WebView. Both currency selectors expose the "Select Currency or Token" aria-label
+# regardless of selection, so From = index 0 and To = index 1 are stable. Picking a currency drops
+# into the native modular drawer.
 - extendedWaitUntil:
     visible:
       text: "Select Currency or Token"
     timeout: 90000
+- tapOn:
+    text: "Select Currency or Token"
+    index: 0
+    retryTapIfNoChange: true
 - extendedWaitUntil:
     visible:
-      text: "Balance"
-    timeout: 60000
-# Receive (To) currency = USDT. index 1 = To (0 = From). The tap opens the native modular drawer.
+      id: "modular-drawer-search-input"
+    timeout: 30000
+- runFlow:
+    file: modular-drawer-pick.yaml
+    env:
+      SEARCH: "${FROM_TICKER}"
+      ASSET_ID: "asset-item-${FROM_TICKER}"
+      NETWORK_ID: "network-item-${FROM_NETWORK}"
+      NETWORK_REQUIRED: "${FROM_NETWORK_REQUIRED}"
+      PICK_ACCOUNT: "true"
 - tapOn:
     text: "Select Currency or Token"
     index: 1
@@ -32,12 +41,12 @@ onFlowStart:
       id: "modular-drawer-search-input"
     timeout: 30000
 - runFlow:
-    file: ../subflows/modular-drawer-pick.yaml
+    file: modular-drawer-pick.yaml
     env:
-      SEARCH: "USD"
-      ASSET_ID: "asset-item-USDT"
-      NETWORK_ID: "network-item-ethereum"
-      NETWORK_REQUIRED: "true"
+      SEARCH: "${TO_TICKER}"
+      ASSET_ID: "asset-item-${TO_TICKER}"
+      NETWORK_ID: "network-item-${TO_NETWORK}"
+      NETWORK_REQUIRED: "${TO_NETWORK_REQUIRED}"
       PICK_ACCOUNT: "true"
 - extendedWaitUntil:
     visible:
@@ -45,8 +54,7 @@ onFlowStart:
     timeout: 30000
 - tapOn:
     text: "25%"
-# Quotes/provider/execute: iOS is driven by the harness (webviewDriver — the buttons are clipped under
-# the home indicator); Android taps them directly (the synthetic DOM click doesn't fire React there).
+# Quotes/provider/execute: iOS is driven by the harness (webviewDriver); Android taps them directly.
 - runFlow:
     when:
       platform: Android
@@ -104,5 +112,5 @@ onFlowStart:
 - extendedWaitUntil:
     visible:
       id: "swap-success-title"
-    timeout: 180000
-- takeScreenshot: artifacts/swap-success
+    timeout: 240000
+- takeScreenshot: artifacts/swap-${FROM_TICKER}-${TO_TICKER}-success

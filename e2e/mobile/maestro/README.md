@@ -12,13 +12,17 @@ maestro/
 ├── flows/                          # test cases — each is an ordered runFlow of subflows
 │   ├── add-account-eth.yaml
 │   ├── send-doge.yaml
-│   ├── swap-eth-usdt.yaml
-│   └── smoke-launch.yaml           # seed-only smoke (no Speculos)
+│   ├── smoke-launch.yaml           # seed-only smoke (no Speculos)
+│   └── swap/                       # one thin wrapper per pair (tags + runFlow ../../subflows/swap.yaml)
+│       ├── btc-eth.yaml
+│       ├── eth-usdt.yaml
+│       └── ... (14 pairs: <from>-<to>.yaml)
 ├── subflows/                       # reusable, parameterized building blocks (Nested Flows)
 │   ├── launch.yaml                 # launchApp with the seed launch args
 │   ├── dismiss-analytics-prompt.yaml
 │   ├── open-add-account.yaml
 │   ├── modular-drawer-pick.yaml    # env SEARCH/ASSET_ID/NETWORK_ID/NETWORK_REQUIRED/PICK_ACCOUNT
+│   ├── swap.yaml                   # generic swap (env FROM_*/TO_*); reused by every flows/swap/*.yaml
 │   ├── add-discovered-account.yaml # env ACCOUNT_NAME
 │   ├── open-asset-assert-balance.yaml  # env ASSET_ID/TITLE_ID
 │   ├── enter-recipient.yaml        # env RECIPIENT
