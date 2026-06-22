@@ -1,9 +1,5 @@
-import type {
-  AppManifest,
-  BroadcastTrackingData,
-  DAppTrackingData,
-  SwapTrackingMeta,
-} from "./types";
+import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
+import type { AppManifest, BroadcastTrackingData, DAppTrackingData } from "./types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -137,26 +133,32 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     // Failed to broadcast a signed transaction
     broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties: Record<string, unknown> = getEventData(manifest);
-      if (data?.isEmbedded !== undefined)
+      if (typeof data?.isEmbedded === "boolean") {
         properties.isEmbeddedSwap = String(data.isEmbedded);
-      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
-      if (data?.partner !== undefined) properties.partner = data.partner;
-      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
-      if (data?.network !== undefined) properties.network = data.network;
+      }
+      if (typeof data?.swapEntryPoint === "string") {
+        properties.swapEntryPoint = data.swapEntryPoint;
+      }
+      if (typeof data?.partner === "string") properties.partner = data.partner;
+      if (data?.sourceCurrency != null) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency != null) properties.targetCurrency = data.targetCurrency;
+      if (data?.network != null) properties.network = data.network;
       track("WalletAPI Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
     broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties: Record<string, unknown> = getEventData(manifest);
-      if (data?.isEmbedded !== undefined)
+      if (typeof data?.isEmbedded === "boolean") {
         properties.isEmbeddedSwap = String(data.isEmbedded);
-      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
-      if (data?.partner !== undefined) properties.partner = data.partner;
-      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
-      if (data?.network !== undefined) properties.network = data.network;
+      }
+      if (typeof data?.swapEntryPoint === "string") {
+        properties.swapEntryPoint = data.swapEntryPoint;
+      }
+      if (typeof data?.partner === "string") properties.partner = data.partner;
+      if (data?.sourceCurrency != null) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency != null) properties.targetCurrency = data.targetCurrency;
+      if (data?.network != null) properties.network = data.network;
       track("WalletAPI Broadcast Success", properties);
     },
 

@@ -66,7 +66,7 @@ import {
 import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
-import { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
+import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -984,7 +984,7 @@ export function useWalletAPIServer({
                 : account.currency.id;
 
             const broadcastTrackingData = {
-              isEmbeddedSwap: trackingMeta.isEmbedded,
+              isEmbedded: trackingMeta.isEmbedded,
               swapEntryPoint: trackingMeta.swapEntryPoint,
               partner: trackingMeta.partner,
               sourceCurrency:
