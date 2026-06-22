@@ -56,7 +56,7 @@ Before marking your PR ready for review, ensure all of the following pass:
 - **SonarQube** — a green state is expected: above 80% test coverage and no unhandled code smells. See [SonarQube Guide](docs/contributing/sonarqube-guide.md).
 - **Copilot** — request a Copilot review, address or explicitly dismiss every comment, and resolve all threads.
 
-### Code owner review
+### Ready for review
 
 - Click **"Ready for review"** to convert from Draft — this automatically requests the relevant code owners via `CODEOWNERS`.
 - When a reviewer leaves feedback and you push a fix, **re-request their review** (GitHub "Re-request" button).
