@@ -34,5 +34,5 @@ For example, to run specs with 3 emulators in parallel follow these steps:
 
 Running the app in debug mode allows us to see bridge logs, inspect the UI, etc.
 
-1. Set debug env var in your terminal: `export E2E_DEBUG_APP=true`
-2. Launch the tests for the relevant patform, eg `pnpm android`
+1. Set the debug env var in your terminal: `export E2E_DEBUG_APP=true`
+2. Launch a test for the relevant patform, eg `pnpm android --spec specs/swapETH_ETH_USDT.spec.ts`
