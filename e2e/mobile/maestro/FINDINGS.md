@@ -133,7 +133,7 @@ Maestro doesn't own** (the harness), which this POC shows is small and requires 
 # Swap (ETH → ETH-USDT) attempt — harder, partially blocked
 
 Adapting `specs/swap/swapETH_ETH_USDT.spec.ts`. Artifacts: `harness/main.ts` (MAESTRO_FLOW=swap),
-`flows/swap-eth-usdt.yaml`, `run-swap.sh`.
+`flows/swap/` (per-pair wrappers) + `subflows/swap.yaml`, `run-swap.sh`.
 
 ## What works
 - **Swap backend harness initializes fully** (reusing the Detox swap setup, no app changes): builds the
@@ -225,7 +225,7 @@ possible by text or coordinate.
 
 The verdict above was **wrong**, found by studying the `feat/qaa-1242` POC. My failure was using the
 wrong text ("Choose asset") and testing the keypad (a special case). The swap live-app buttons ARE
-tappable by text. `flows/swap-eth-usdt.yaml` now drives the whole swap in **100% YAML** (no flow-generation
+tappable by text. `subflows/swap.yaml` (driven per-pair by `flows/swap/*.yaml`) drives the whole swap in **100% YAML** (no flow-generation
 TS; the only TS is the Speculos backend harness, unavoidable):
 
 | Step | How (pure YAML) |

@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 #
-# Orchestrates the Maestro swap (ETH -> ETH-USDT) POC. Mirrors run-eth.sh but starts the
-# harness in swap mode (Exchange app + live-data seeding + swap live app) and points the
-# swap WebView at the staging backend.
+# Orchestrates the Maestro swap E2E across currency pairs. Each pair is one harness + Speculos cycle
+# (the FROM/TO coin apps differ) that runs flows/swap/<pair>.yaml. With no arg, runs every pair.
 #
 # Usage:
-#   SEED="..." COINAPPS=/path/to/coin-apps bash maestro/run-swap.sh
-#   SWAP_FLOW=maestro/flows/swap-eth-usdt.yaml DUMP_HIERARCHY=1 SEED=... COINAPPS=... bash maestro/run-swap.sh
-#     ^ Step-1 gate: open the swap screen, then dump the WebView hierarchy to artifacts/.
+#   SEED=... SPECULINHO_URL=https://<host> bash maestro/run-swap.sh                  # all pairs (remote)
+#   REMOTE_SPECULOS=false SEED=... COINAPPS=/path bash maestro/run-swap.sh btc-eth   # one pair (local)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -37,8 +35,6 @@ export DISABLE_TRANSACTION_BROADCAST="${DISABLE_TRANSACTION_BROADCAST:-1}"
 
 IS_REMOTE=0
 [ "$REMOTE_SPECULOS" = "true" ] && IS_REMOTE=1
-
-FLOW="${SWAP_FLOW:-maestro/flows/swap-eth-usdt.yaml}"
 
 # --- Java (Maestro needs 17+; macOS /usr/bin/java is a stub, so test `java -version`) ---
 if ! java -version >/dev/null 2>&1; then
@@ -73,24 +69,21 @@ SPECULOS_FILTER="ancestor=$SPECULOS_IMAGE_TAG"
 PRE_SPECULOS=""
 [ "$IS_REMOTE" = "0" ] && PRE_SPECULOS="$(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null | tr '\n' ' ' || true)"
 
-cleanup() {
-  echo ">> stopping backend + Speculos..."
+# Stop the harness and remove the local Speculos containers it started (remote Speculinho pods are
+# released by the operator TTL). Run after each pair and as the EXIT safety net.
+teardown_harness() {
   if [ -n "${HARNESS_PID:-}" ]; then
     pkill -P "$HARNESS_PID" 2>/dev/null || true
     kill "$HARNESS_PID" 2>/dev/null || true
+    wait "$HARNESS_PID" 2>/dev/null || true
   fi
   pkill -f "$HARNESS_PKILL_PATTERN" 2>/dev/null || true
-  [ -n "${HARNESS_PID:-}" ] && wait "$HARNESS_PID" 2>/dev/null || true
-  # Remote Speculos (Speculinho) pods aren't local containers — they're released by the operator's
-  # TTL (the harness is killed and can't run its own release). Only clean local Docker containers.
+  HARNESS_PID=""
   if [ "$IS_REMOTE" = "0" ]; then
     for c in $(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null || true); do
       case " $PRE_SPECULOS " in
         *" $c "*) : ;;
         *)
-          # Dump the container's logs before removing it: a swap that fails with GeneralDmkError /
-          # ECONNREFUSED is almost always a Speculos (Exchange) that crashed or never bound its REST
-          # API port. These logs are the ground truth for why.
           docker logs "$c" >"artifacts/speculos-$c.log" 2>&1 || true
           echo ">> saved Speculos logs to artifacts/speculos-$c.log; removing container $c"
           docker rm -f "$c" >/dev/null 2>&1 || true ;;
@@ -98,48 +91,62 @@ cleanup() {
     done
   fi
 }
-trap cleanup EXIT
+trap teardown_harness EXIT
 
-# Free the bridge port if a previous run's harness is still holding it. Otherwise initBridge
-# fails with EADDRINUSE, the harness crashes before seeding, and the app is left stuck on
-# onboarding (no Speculos) while Maestro hangs waiting for the seeded portfolio.
-if lsof -ti tcp:"$MAESTRO_BRIDGE_PORT" >/dev/null 2>&1; then
-  echo ">> port $MAESTRO_BRIDGE_PORT is busy (stale harness?), freeing it..."
-  lsof -ti tcp:"$MAESTRO_BRIDGE_PORT" | xargs kill -9 2>/dev/null || true
-  sleep 1
+# Run one pair: derive FROM/TO from the pair name, seed the harness, run flows/swap/<pair>.yaml, tear down.
+run_one_pair() {
+  local pair="$1"
+  local flow="maestro/flows/swap/$pair.yaml"
+  [ -f "$flow" ] || { echo "ERROR: no flow for pair '$pair' ($flow)"; return 1; }
+  export SWAP_FROM SWAP_TO
+  SWAP_FROM="$(echo "${pair%%-*}" | tr '[:lower:]' '[:upper:]')"
+  SWAP_TO="$(echo "${pair##*-}" | tr '[:lower:]' '[:upper:]')"
+  echo
+  echo ">> swap pair: $SWAP_FROM -> $SWAP_TO   ($flow)"
+  # Free a stale bridge port (otherwise initBridge EADDRINUSEs and the app stays on onboarding).
+  if lsof -ti tcp:"$MAESTRO_BRIDGE_PORT" >/dev/null 2>&1; then
+    lsof -ti tcp:"$MAESTRO_BRIDGE_PORT" | xargs kill -9 2>/dev/null || true
+    sleep 1
+  fi
+  # Regenerate the nano-app catalog fresh, like Detox's jest.globalSetup (cleanupPreviousNanoAppJsonFile),
+  # so the harness requests current Exchange/coin-app versions (a stale catalog can crash the Exchange).
+  rm -f "artifacts/appVersion/nano-app-catalog.json"
+  HARNESS_LOG="artifacts/harness-swap-$pair.log"
+  echo ">> starting swap harness (logs -> e2e/mobile/$HARNESS_LOG)"
+  start_harness "$HARNESS_LOG"
+  echo ">> waiting for bridge on port $MAESTRO_BRIDGE_PORT ..."
+  for _ in $(seq 1 "${BACKEND_WAIT:-120}"); do
+    nc -z localhost "$MAESTRO_BRIDGE_PORT" 2>/dev/null && break
+    sleep 1
+  done
+  platform_reverse_host_ports
+  local rc=0
+  run_maestro_flow "$flow" || rc=$?
+  teardown_harness
+  return "$rc"
+}
+
+# Pairs to run: the arg, else every flows/swap/*.yaml (the wrappers are the registry).
+PAIRS=()
+if [ -n "${1:-}" ]; then
+  PAIRS=("$1")
+else
+  for f in maestro/flows/swap/*.yaml; do PAIRS+=("$(basename "$f" .yaml)"); done
 fi
 
-# Regenerate the nano-app catalog fresh, exactly like the Detox jest.globalSetup does
-# (cleanupPreviousNanoAppJsonFile). The Maestro harness sets globalSetup=undefined, so without this
-# it REUSES a stale artifacts/appVersion/nano-app-catalog.json and requests OLDER Exchange / coin-app
-# versions than a fresh Detox run spawns. With a stale catalog the Exchange Speculos can crash
-# (HTTP 503 / "the app kills the speculos") at the swap signing step. Deleting it makes the harness's
-# getNanoAppCatalogVersionMap refetch the current versions from the manager API.
-NANO_APP_CATALOG="artifacts/appVersion/nano-app-catalog.json"
-if [ -f "$NANO_APP_CATALOG" ]; then
-  echo ">> removing stale nano-app catalog so it regenerates fresh (matches Detox globalSetup)"
-  rm -f "$NANO_APP_CATALOG"
-fi
-
-echo ">> starting swap backend harness (port $MAESTRO_BRIDGE_PORT) via ts-node..."
-# The harness console output (bridge/Speculos/[SCREEN]/CLI diagnostics) is verbose and would drown
-# the Maestro step output. Send it to a log file by default; VERBOSE=1 streams it for debugging.
-HARNESS_LOG="artifacts/harness-swap.log"
-start_harness "$HARNESS_LOG"
-
-echo ">> waiting for bridge on port $MAESTRO_BRIDGE_PORT ..."
-for _ in $(seq 1 "${BACKEND_WAIT:-120}"); do
-  nc -z localhost "$MAESTRO_BRIDGE_PORT" 2>/dev/null && break
-  sleep 1
+overall=0
+results=""
+for pair in "${PAIRS[@]}"; do
+  if run_one_pair "$pair"; then
+    results="${results}  PASS  ${pair}"$'\n'
+  else
+    results="${results}  FAIL  ${pair}"$'\n'
+    overall=1
+  fi
 done
 
-platform_reverse_host_ports   # Android: adb reverse Metro + bridge (no-op on iOS)
-
-if [ "${DUMP_HIERARCHY:-0}" = "1" ]; then
-  run_maestro_flow "$FLOW" || true
-  echo ">> dumping view hierarchy + screenshot to artifacts/ ..."
-  maestro hierarchy > artifacts/swap-hierarchy.json 2>/dev/null || true
-  xcrun simctl io booted screenshot artifacts/swap-screen.png >/dev/null 2>&1 || true
-else
-  run_maestro_flow "$FLOW"
-fi
+echo
+echo "===================== Swap pairs ====================="
+printf '%s' "$results"
+echo "======================================================"
+exit "$overall"

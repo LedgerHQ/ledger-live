@@ -4,12 +4,15 @@ appId: ${APP_ID}
     id: "modular-drawer-search-input"
 - inputText: ${SEARCH}
 - waitForAnimationToEnd
-# The drawer auto-advances past any step with a single option, so the asset row may be skipped.
 - runFlow:
     when:
-      visible:
-        id: ${ASSET_ID}
+      notVisible:
+        id: "account-item"
     commands:
+      - extendedWaitUntil:
+          visible:
+            id: ${ASSET_ID}
+          timeout: 30000
       - tapOn:
           id: ${ASSET_ID}
           retryTapIfNoChange: true

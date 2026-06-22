@@ -195,8 +195,11 @@ function convertFlow(dir) {
   const platform = meta.platform || "unknown";
 
   const flat = flatten(entries);
-  const tags = (flat.find(e => e.type === "applyConfigurationCommand")?.cmd.applyConfigurationCommand
-    ?.config?.tags) || [];
+  // A wrapper flow that runFlows a subflow has several applyConfigurationCommands (wrapper + subflows);
+  // use the one that actually carries tags.
+  const tags = (flat.find(
+    e => e.type === "applyConfigurationCommand" && e.cmd.applyConfigurationCommand?.config?.tags,
+  )?.cmd.applyConfigurationCommand?.config?.tags) || [];
   const failed = flat.find(e => e.meta.status === "FAILED");
   const status = failed ? "failed" : "passed";
 
