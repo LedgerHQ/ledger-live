@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
@@ -157,37 +157,54 @@ jobs:
               return;
             }
 
-            // Reset the managed sync branch to the base tip, then add exactly one
-            // commit on top of it (mirrors the previous force-push semantics).
+            const upsertBranchRef = async (branch, sha) => {
+              const ref = `heads/${branch}`;
+              try {
+                await github.rest.git.getRef({ owner, repo, ref });
+                await github.rest.git.updateRef({ owner, repo, ref, sha, force: true });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.git.createRef({ owner, repo, ref: `refs/${ref}`, sha });
+              }
+            };
+
             const baseSha = (
               await github.rest.repos.getBranch({ owner, repo, branch: baseBranch })
             ).data.commit.sha;
 
-            const ref = `heads/${syncBranch}`;
-            try {
-              await github.rest.git.getRef({ owner, repo, ref });
-              await github.rest.git.updateRef({ owner, repo, ref, sha: baseSha, force: true });
-            } catch (error) {
-              if (error.status !== 404) throw error;
-              await github.rest.git.createRef({ owner, repo, ref: `refs/${ref}`, sha: baseSha });
-            }
+            // Build the signed commit on a throwaway branch, then move the sync
+            // branch to it in a single update (old head -> new commit). Pointing
+            // the sync branch itself at the base tip first would briefly make its
+            // head an ancestor of the base, which auto-closes the open PR and
+            // leaves the next step creating a duplicate.
+            const buildBranch = `${syncBranch}-build`;
+            await upsertBranchRef(buildBranch, baseSha);
 
-            await github.graphql(
-              `mutation ($input: CreateCommitOnBranchInput!) {
-                createCommitOnBranch(input: $input) { commit { oid } }
-              }`,
-              {
-                input: {
-                  branch: {
-                    repositoryNameWithOwner: targetRepository,
-                    branchName: syncBranch,
+            try {
+              const { createCommitOnBranch } = await github.graphql(
+                `mutation ($input: CreateCommitOnBranchInput!) {
+                  createCommitOnBranch(input: $input) { commit { oid } }
+                }`,
+                {
+                  input: {
+                    branch: {
+                      repositoryNameWithOwner: targetRepository,
+                      branchName: buildBranch,
+                    },
+                    expectedHeadOid: baseSha,
+                    message: { headline: "chore: sync wallet-cli skill" },
+                    fileChanges: { additions, deletions },
                   },
-                  expectedHeadOid: baseSha,
-                  message: { headline: "chore: sync wallet-cli skill" },
-                  fileChanges: { additions, deletions },
                 },
-              },
-            );
+              );
+              await upsertBranchRef(syncBranch, createCommitOnBranch.commit.oid);
+            } finally {
+              await github.rest.git
+                .deleteRef({ owner, repo, ref: `heads/${buildBranch}` })
+                .catch((error) =>
+                  core.warning(`Could not delete build branch ${buildBranch}: ${error.message}`),
+                );
+            }
 
             core.setOutput("changed", "true");
 
