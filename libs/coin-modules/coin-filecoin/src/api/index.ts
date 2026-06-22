@@ -13,18 +13,16 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type FilecoinCoinConfig } from "../config";
-import {
-  broadcast,
-  combine,
-  craftTransaction,
-  estimateFees,
-  getBalance,
-  getNextSequence,
-  lastBlock,
-  listOperations,
-  validateAddress,
-  validateIntent,
-} from "../logic";
+import { getBalance } from "../logic/account/getBalance";
+import { getNextSequence } from "../logic/account/getNextSequence";
+import { lastBlock } from "../logic/history/lastBlock";
+import { listOperations } from "../logic/history/listOperations";
+import { broadcast } from "../logic/transaction/broadcast";
+import { combine } from "../logic/transaction/combine";
+import { craftTransaction } from "../logic/transaction/craftTransaction";
+import { estimateFees } from "../logic/transaction/estimateFees";
+import { validateAddress } from "../logic/validateAddress";
+import { validateIntent } from "../logic/validateIntent";
 
 export function createApi(config: FilecoinCoinConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" as const } }));

@@ -1,13 +1,20 @@
 import { fetchTxs, fetchERC20Transactions } from "../../network/api";
-import { TransactionResponse } from "../../types";
+import { convertAddressFilToEth } from "../../network/addresses";
+import { ERC20Transfer, TransactionResponse } from "../../types";
 import { listOperations } from "./listOperations";
 
 jest.mock("../../network/api");
+jest.mock("../../network/addresses", () => ({
+  convertAddressFilToEth: jest.fn(),
+}));
 jest.mock("@ledgerhq/logs");
 
 const mockedFetchTxs = fetchTxs as jest.MockedFunction<typeof fetchTxs>;
 const mockedFetchERC20 = fetchERC20Transactions as jest.MockedFunction<
   typeof fetchERC20Transactions
+>;
+const mockedConvertToEth = convertAddressFilToEth as jest.MockedFunction<
+  typeof convertAddressFilToEth
 >;
 
 const ADDRESS = "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za";
@@ -31,7 +38,7 @@ const makeNativeTx = (overrides = {}) => ({
 });
 
 describe("listOperations", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => jest.resetAllMocks());
 
   it("OUT value equals amount + fee", async () => {
     mockedFetchTxs.mockResolvedValueOnce({
@@ -100,6 +107,40 @@ describe("listOperations", () => {
 
     // Should fall back to default cursor (minHeight=100, offset=0)
     expect(result.items.length).toBeGreaterThan(0);
+  });
+
+  it("maps ERC-20 transfers into token operations", async () => {
+    const ethAddr = "0xabc0000000000000000000000000000000000001";
+    mockedConvertToEth.mockReturnValue(ethAddr);
+
+    const tokenTx: ERC20Transfer = {
+      id: "erc20-1",
+      height: 3_100_000,
+      type: "transfer",
+      status: "Ok",
+      from: "0x0000000000000000000000000000000000000002",
+      to: ethAddr,
+      amount: "5000000000000000000",
+      contract_address: "0xCONTRACTaddress0000000000000000000000AA",
+      timestamp: 1700001000,
+      tx_hash: "0xtokenhash1",
+    };
+
+    mockedFetchTxs.mockResolvedValueOnce({ txs: [], metadata: { limit: 50, offset: 0 } });
+    mockedFetchERC20.mockResolvedValueOnce({ txs: [tokenTx] });
+
+    const result = await listOperations(ADDRESS, { minHeight: 0 });
+
+    const tokenOps = result.items.filter(op => op.asset.type === "erc20");
+    expect(tokenOps).toHaveLength(1);
+    const tokenOp = tokenOps[0];
+    expect(tokenOp.type).toBe("IN");
+    expect(tokenOp.value).toBe(5_000_000_000_000_000_000n);
+    expect(tokenOp.asset).toEqual({
+      type: "erc20",
+      assetReference: "0xcontractaddress0000000000000000000000aa",
+    });
+    expect(tokenOp.tx.hash).toBe("0xtokenhash1");
   });
 
   it("gracefully handles undefined txs from API", async () => {

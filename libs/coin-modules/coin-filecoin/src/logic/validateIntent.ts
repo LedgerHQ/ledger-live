@@ -45,9 +45,12 @@ function validateTokenAmount(
     b => "assetReference" in b.asset && b.asset.assetReference.toLowerCase() === assetRef,
   );
 
-  if (intent.amount <= 0n) {
-    errors.amount = new AmountRequired();
-  } else if (intent.amount > (tokenBalance?.value ?? 0n)) {
+  const tokenAvailable = tokenBalance?.value ?? 0n;
+  const amount = intent.useAllAmount ? tokenAvailable : intent.amount;
+
+  if (amount <= 0n) {
+    errors.amount = intent.useAllAmount ? new NotEnoughBalance() : new AmountRequired();
+  } else if (amount > tokenAvailable) {
     errors.amount = new NotEnoughBalance();
   }
 
@@ -58,7 +61,7 @@ function validateTokenAmount(
     errors.amount = new NotEnoughBalance();
   }
 
-  return intent.amount;
+  return amount;
 }
 
 function validateNativeAmount(
@@ -77,7 +80,7 @@ function validateNativeAmount(
   }
 
   if (amount <= 0n) {
-    errors.amount = new AmountRequired();
+    errors.amount = intent.useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   } else if (amount + estimatedFees > available) {
     errors.amount = new NotEnoughBalance();
   }

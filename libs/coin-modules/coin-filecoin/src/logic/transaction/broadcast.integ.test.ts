@@ -32,6 +32,6 @@ describe("broadcast (integration)", () => {
       signature: { type: 1, data: Buffer.from(sigBytes.data).toString("base64") },
     });
 
-    await expect(broadcast(signedTx)).rejects.toThrow();
+    await expect(broadcast(signedTx)).rejects.toThrow(/Something went wrong/);
   });
 });

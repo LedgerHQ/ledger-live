@@ -43,6 +43,14 @@ describe("validateIntent", () => {
     expect(result.errors.amount).toBeInstanceOf(Error);
   });
 
+  it("returns NotEnoughBalance (not AmountRequired) for send-max when fees consume the balance", async () => {
+    const intent = { ...baseIntent, useAllAmount: true };
+    const result = await validateIntent(intent, NATIVE_BALANCES, {
+      value: 5_000_000_000_000_000_000n,
+    });
+    expect(result.errors.amount?.name).toBe("NotEnoughBalance");
+  });
+
   it("emits feeTooHigh warning when fees exceed balance", async () => {
     const lowBalance = [{ value: 100n, asset: { type: "native" as const }, locked: 0n }];
     const smallIntent = { ...baseIntent, amount: 1n };
@@ -68,6 +76,22 @@ describe("validateIntent", () => {
     ];
     const result = await validateIntent(tokenIntent, tokenBalances);
     expect(result.errors.amount).toBeInstanceOf(Error); // 5000 > 3000
+  });
+
+  it("computes send-max amount as the full token balance for erc20 intent", async () => {
+    const tokenIntent = {
+      ...baseIntent,
+      amount: 0n,
+      useAllAmount: true,
+      asset: { type: "erc20" as const, assetReference: "0xcontract" },
+    };
+    const tokenBalances = [
+      ...NATIVE_BALANCES,
+      { value: 3_000n, asset: { type: "erc20" as const, assetReference: "0xcontract" } },
+    ];
+    const result = await validateIntent(tokenIntent, tokenBalances);
+    expect(result.errors.amount).toBeUndefined();
+    expect(result.amount).toBe(3_000n);
   });
 
   it("rejects erc20 intent when native balance is insufficient to cover fees", async () => {
