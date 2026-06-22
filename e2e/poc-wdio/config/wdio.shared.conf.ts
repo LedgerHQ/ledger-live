@@ -9,8 +9,10 @@ import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 import { ADBUtils } from "../utils/ADBUtils.ts";
 import allureReporter from "@wdio/allure-reporter";
 
+import type { ActiveAppInfo } from "webdriverio";
+
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
-const INSTANCES_COUNT = Number(process.env.WDIO_INSTANCES) ?? 1;
+const INSTANCES_COUNT = Number(process.env.E2E_WDIO_INSTANCES) || 1;
 
 export const config: WebdriverIO.Config = {
   //
@@ -247,8 +249,21 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs        List of spec file paths that are to be run
    * @param {object}         browser      instance of created browser/device session
    */
-  // before: function (capabilities, specs, browser) {
-  // },
+  before: function (capabilities, specs, browser) {
+    driver.addCommand(
+      "getAppIdentifier",
+      async function (this: WebdriverIO.Browser): Promise<string> {
+        // `this` refers to the `browser` scope\
+        if (this.isAndroid) {
+          const packageName = await this.getCurrentPackage();
+          return packageName;
+        } else {
+          const appInfo: ActiveAppInfo = await this.execute("mobile: activeAppInfo");
+          return appInfo.bundleId;
+        }
+      },
+    );
+  },
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name

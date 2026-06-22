@@ -20,6 +20,9 @@ declare global {
         websocketPort: number;
       };
     }
+    interface Browser {
+      getAppIdentifier: () => Promise<string>;
+    }
   }
 }
 

@@ -22,10 +22,17 @@ $ pnpm ios
 
 WDIO handles parallel worker delegation out of the box.
 
-To run tests in parallel set the desired amount of workers with `WDIO_INSTANCES`.
+To run tests in parallel set the desired amount of workers with `E2E_WDIO_INSTANCES`.
 
 For example, to run specs with 3 emulators in parallel follow these steps:
 
 1. Boot all 3 emulators (Android) / simulators (iOS)
-2. Set the env var in your terminal: `export WDIO_INSTANCES=3`
+2. Set the env var in your terminal: `export E2E_WDIO_INSTANCES=3`
 3. Launch the tests for the relevant patform, eg `pnpm android`
+
+## Running tests in debug mode
+
+Running the app in debug mode allows us to see bridge logs, inspect the UI, etc.
+
+1. Set debug env var in your terminal: `export E2E_DEBUG_APP=true`
+2. Launch the tests for the relevant patform, eg `pnpm android`

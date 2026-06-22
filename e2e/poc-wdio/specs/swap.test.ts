@@ -52,13 +52,6 @@ export const runSwapTest = async (swap: Swap, tmsLinks: string[], tags: string[]
             process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
         },
       },
-      llmAnalyticsOptInPrompt: {
-        enabled: true,
-        params: {
-          variant: ABTestingVariants.variantA,
-          entryPoints: [],
-        },
-      },
     },
     cliCommandsOnApp: options.cliCommandsOnApp,
   });

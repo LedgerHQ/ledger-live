@@ -9,12 +9,9 @@ export class SwapPage {
 
   // steps
   async openDeeplink() {
+    const appIdentifier = await driver.getAppIdentifier();
     await step("Open swap via deeplink", async () => {
-      await driver.deepLink(
-        "ledgerlive://swap",
-        // TODO: store app or bundle ID in a central reference
-        `com.ledger.live${driver.isAndroid ? ".detox" : ""}`,
-      );
+      await driver.deepLink("ledgerlive://swap", appIdentifier);
     });
   }
 

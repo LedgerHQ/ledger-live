@@ -172,7 +172,7 @@ env:
   MOBILE_ARTIFACTS_ROOT: e2e/poc-wdio/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
-  WDIO_INSTANCES: 3
+  E2E_WDIO_INSTANCES: 3
 
 jobs:
   determine-builds:

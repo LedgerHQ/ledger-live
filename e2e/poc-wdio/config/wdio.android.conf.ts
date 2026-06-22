@@ -2,8 +2,16 @@ import { config as baseConfig } from "./wdio.shared.conf.ts";
 import { findFreePort } from "../bridge/server.ts";
 import { WorkerPool } from "../workers/WorkerPool.ts";
 
+const getAppPath = () => {
+  const architecture = process.env.CI ? "x86_64" : "arm64-v8a";
+  const basePath = "../../apps/ledger-live-mobile/android/app/build/outputs/apk";
+  return process.env.E2E_DEBUG_APP
+    ? `${basePath}/debug/app-${architecture}-debug.apk`
+    : `${basePath}/detox/app-${architecture}-detox.apk`;
+};
+
 const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
-  { length: Number(process.env.WDIO_INSTANCES) || 1 },
+  { length: Number(process.env.E2E_WDIO_INSTANCES) || 1 },
   (_, i) =>
     ({
       platformName: "Android",
@@ -21,7 +29,7 @@ const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
       "appium:clearDeviceLogsOnStart": true,
       "appium:ensureWebviewsHavePages": true,
       "appium:disableWindowAnimation": true,
-      "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
+      "appium:app": getAppPath(),
     }) satisfies WebdriverIO.Capabilities,
 );
 

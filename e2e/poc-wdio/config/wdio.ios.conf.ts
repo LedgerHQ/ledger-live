@@ -2,8 +2,15 @@ import { config as baseConfig } from "./wdio.shared.conf.ts";
 import { findFreePort } from "../bridge/server.ts";
 import { WorkerPool } from "../workers/WorkerPool.ts";
 
+const getAppPath = () => {
+  const basePath = "../../apps/ledger-live-mobile/ios/build/Build/Products";
+  return process.env.E2E_DEBUG_APP
+    ? `${basePath}/Debug-iphonesimulator/ledgerlivemobile.app`
+    : `${basePath}/Release-iphonesimulator/ledgerlivemobile.app`;
+};
+
 const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
-  { length: Number(process.env.WDIO_INSTANCES) || 1 },
+  { length: Number(process.env.E2E_WDIO_INSTANCES) || 1 },
   (_, i) =>
     ({
       platformName: "iOS",
@@ -17,8 +24,7 @@ const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
       "appium:automationName": "XCUITest",
       "appium:wdaLaunchTimeout": 180_000,
       "appium:wdaStartupRetries": 3,
-      "appium:app":
-        "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+      "appium:app": getAppPath(),
     }) satisfies WebdriverIO.Capabilities,
 );
 
