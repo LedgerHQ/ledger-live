@@ -1,0 +1,17 @@
+appId: com.ledger.live.debug
+---
+- extendedWaitUntil:
+    visible:
+      id: "disabled-amount-continue-button"
+    timeout: 20000
+# The amount field is a RN TextInput that exposes no testID/resource-id and no discrete node in the
+# view hierarchy on iOS, so it can't be selected — tap its row by point to focus it, then type.
+- tapOn:
+    point: "50%,21%"
+- inputText: ${AMOUNT}
+- extendedWaitUntil:
+    visible:
+      id: "enabled-amount-continue-button"
+    timeout: 20000
+- tapOn:
+    id: "enabled-amount-continue-button"

@@ -1,0 +1,9 @@
+appId: com.ledger.live.debug
+---
+- launchApp:
+    clearState: true
+    arguments:
+      wsPort: "8099"
+      mock: "0"
+      IS_TEST: true
+      DETOX: "1"

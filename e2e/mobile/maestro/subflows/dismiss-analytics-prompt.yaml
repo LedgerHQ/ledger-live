@@ -1,12 +1,7 @@
 appId: com.ledger.live.debug
 ---
-# Decline the "Help us improve Ledger" analytics consent modal if it appears. It is gated by
-# `hasSeenAnalyticsOptInPrompt`, which the seeded userdata sets to true — but on ANDROID the Portfolio
-# mounts and navigates to the prompt BEFORE the seeded setting / a feature-flag override takes effect
-# (a race iOS happens to win), so it can't be reliably suppressed. The modal's backdrop swallows taps
-# until answered, and it pops a few seconds after the home renders (an unpredictable delay), so poll
-# for it. Every tap is optional, so this is a no-op when the prompt isn't shown. Answering it records
-# the choice, so it won't reappear. Gated to Android (iOS doesn't show/block it here).
+# Android races the seeded opt-out: the analytics modal can mount after the home and its backdrop
+# swallows taps until answered. Poll and dismiss; answering records the choice so it won't reappear.
 - runFlow:
     when:
       platform: Android
@@ -14,7 +9,6 @@ appId: com.ledger.live.debug
       - repeat:
           times: 12
           commands:
-            # Cover both variants: "Refuse all"/"Accept all" texts + the accept button's testID.
             - tapOn:
                 text: "Refuse all"
                 optional: true
@@ -24,5 +18,4 @@ appId: com.ledger.live.debug
             - tapOn:
                 id: "accept-analytics-button"
                 optional: true
-            - waitForAnimationToEnd:
-                timeout: 1000
+            - waitForAnimationToEnd

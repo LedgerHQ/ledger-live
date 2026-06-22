@@ -1,26 +1,14 @@
 /**
- * Maestro backend harness — a plain ts-node daemon (NOT a jest test).
- *
- * It reuses the EXISTING e2e/mobile infra to seed the app, but does NOT launch the
- * app — Maestro does that and points it at this bridge (../subflows/launch-seeded.yaml).
- * main() seeds state then blocks forever; the orchestrator (../run-eth.sh) kills the
- * process once Maestro finishes.
- *
- * How it runs without jest: `ts-node --swc` transpiles via @swc/core, and
- * `tsconfig-paths/register` (reading ./tsconfig.json) resolves the package aliases
- * (`~/*`, `@shared/*`, `@ledgerhq/live-common/e2e/*`) plus the `detox` -> ./detox-stub
- * remap. ./setup-globals recreates the few globals the reused infra reads (`webSocket`,
- * `pendingCallbacks`, `speculosDevices`, and a jest-`expect` shim for `getState().testPath`).
- * Mirrors the existing `e2e:loadConfig` ts-node bridge script.
+ * Maestro backend harness — a plain ts-node daemon (NOT a jest test). Reuses the e2e/mobile infra to
+ * seed the app over the bridge; Maestro launches the app and points it here (../subflows/launch.yaml).
+ * Run via `ts-node --swc --require tsconfig-paths/register` so the package aliases + the detox->stub
+ * remap (tsconfig.json) resolve and ./setup-globals installs the globals the reused infra reads.
  *
  * Env:
- *   MAESTRO_FLOW  "add-account" (default) or "swap".
- *   MAESTRO_BRIDGE_PORT  default 8099 — MUST match `wsPort` in launch-seeded.yaml
+ *   MAESTRO_FLOW  "add-account" (default) | "swap" | "send-doge".
+ *   MAESTRO_BRIDGE_PORT  default 8099 — MUST match `wsPort` in launch.yaml.
  *   MAESTRO_FULL  (add-account only) "1" (default) = Speculos(Ethereum) discovery; "0" = seed-only.
  *   SWAP_AMOUNT   (swap only) ETH amount to swap; default "0.01".
- *
- * Run via: TS_NODE_PROJECT=maestro/harness/tsconfig.json \
- *   pnpm exec ts-node --swc --require tsconfig-paths/register maestro/harness/main.ts
  */
 import "./setup-globals"; // must run first: installs the globals the reused infra reads
 import { init as initBridge, loadConfig, setFeatureFlags } from "../../bridge/server";

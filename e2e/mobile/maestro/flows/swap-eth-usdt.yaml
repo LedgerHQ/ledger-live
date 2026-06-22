@@ -1,0 +1,108 @@
+appId: com.ledger.live.debug
+tags:
+  - swap
+onFlowStart:
+  - runScript: ../scripts/assert-backend.js
+---
+- runFlow: ../subflows/launch.yaml
+- extendedWaitUntil:
+    visible:
+      id: "w40-tab-swap"
+    timeout: 180000
+- runFlow: ../subflows/dismiss-analytics-prompt.yaml
+- tapOn:
+    id: "w40-tab-swap"
+# Swap live-app WebView. "Select Currency or Token" is in the DOM before load finishes; "Balance"
+# renders once From auto-selects ETH, so gate on it before the first WebView tap.
+- extendedWaitUntil:
+    visible:
+      text: "Select Currency or Token"
+    timeout: 90000
+- extendedWaitUntil:
+    visible:
+      text: "Balance"
+    timeout: 60000
+# Receive (To) currency = USDT. index 1 = To (0 = From). The tap opens the native modular drawer.
+- tapOn:
+    text: "Select Currency or Token"
+    index: 1
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: "modular-drawer-search-input"
+    timeout: 30000
+- runFlow:
+    file: ../subflows/modular-drawer-pick.yaml
+    env:
+      SEARCH: "USD"
+      ASSET_ID: "asset-item-USDT"
+      NETWORK_ID: "network-item-ethereum"
+      NETWORK_REQUIRED: "true"
+      PICK_ACCOUNT: "true"
+- extendedWaitUntil:
+    visible:
+      text: "25%"
+    timeout: 30000
+- tapOn:
+    text: "25%"
+# Quotes/provider/execute: iOS is driven by the harness (webviewDriver — the buttons are clipped under
+# the home indicator); Android taps them directly (the synthetic DOM click doesn't fire React there).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible:
+            text: "View quotes"
+          timeout: 30000
+      - tapOn:
+          text: "View quotes"
+      - extendedWaitUntil:
+          visible:
+            text: "[0-9]+ quotes? found"
+          timeout: 90000
+      - evalScript: ${output.picked = "no"}
+      - runFlow:
+          when:
+            visible:
+              text: "MoonPay Trade"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "MoonPay Trade" }
+            - evalScript: ${output.picked = "MoonPay Trade"}
+      - runFlow:
+          when:
+            visible:
+              text: "NEAR Intents"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "NEAR Intents" }
+            - evalScript: ${output.picked = "NEAR Intents"}
+      - runFlow:
+          when:
+            visible:
+              text: "Changelly"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "Changelly" }
+            - evalScript: ${output.picked = "Changelly"}
+      - runFlow:
+          when:
+            visible:
+              text: "Exodus"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "Exodus" }
+            - evalScript: ${output.picked = "Exodus"}
+      - assertTrue: ${output.picked != "no"}
+      - extendedWaitUntil:
+          visible:
+            text: "Swap with ${output.picked}"
+          timeout: 20000
+      - tapOn:
+          text: "Swap with ${output.picked}"
+- extendedWaitUntil:
+    visible:
+      id: "swap-success-title"
+    timeout: 180000
+- takeScreenshot: artifacts/swap-success

@@ -6,7 +6,7 @@
 #
 # Usage:
 #   SEED="..." COINAPPS=/path/to/coin-apps bash maestro/run-swap.sh
-#   SWAP_FLOW=maestro/flows/open-swap.yaml DUMP_HIERARCHY=1 SEED=... COINAPPS=... bash maestro/run-swap.sh
+#   SWAP_FLOW=maestro/flows/swap-eth-usdt.yaml DUMP_HIERARCHY=1 SEED=... COINAPPS=... bash maestro/run-swap.sh
 #     ^ Step-1 gate: open the swap screen, then dump the WebView hierarchy to artifacts/.
 set -euo pipefail
 
@@ -38,7 +38,7 @@ export DISABLE_TRANSACTION_BROADCAST="${DISABLE_TRANSACTION_BROADCAST:-1}"
 IS_REMOTE=0
 [ "$REMOTE_SPECULOS" = "true" ] && IS_REMOTE=1
 
-FLOW="${SWAP_FLOW:-maestro/flows/open-swap.yaml}"
+FLOW="${SWAP_FLOW:-maestro/flows/swap-eth-usdt.yaml}"
 
 # --- Java (Maestro needs 17+; macOS /usr/bin/java is a stub, so test `java -version`) ---
 if ! java -version >/dev/null 2>&1; then

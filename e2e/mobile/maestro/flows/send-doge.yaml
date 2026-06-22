@@ -1,46 +1,19 @@
-# E2E: send DOGE (Dogecoin 1 -> Dogecoin 2), Maestro port of the Detox sendDOGE.spec.ts.
-#
-# Native flow (no WebView, single Dogecoin app — no Exchange handoff):
-#   accounts list -> Dogecoin account -> Send -> recipient -> amount -> summary (fee Slow) ->
-#   continue -> device review (the harness signs via signSendTransaction) -> success -> op details.
-#
-# The harness (MAESTRO_FLOW=send-doge) seeds Dogecoin 1 + derives the Dogecoin 2 recipient address.
-# The recipient is derived on the device (Maestro can't), so an onFlowStart hook fetches it (+ the
-# amount) from the harness's control endpoint over HTTP into output.recipient / output.amount — no
-# bash `-e` plumbing. Navigation is pure UI (no deeplink — iOS deeplinks hit the SpringBoard dialog):
-#   portfolio -> assetItem-Dogecoin -> asset-quick-action-button-send -> recipient/amount/summary.
 appId: com.ledger.live.debug
 tags:
   - send
   - doge
+# The recipient is derived on-device by the harness; fetch it (+ amount) over HTTP into output vars.
 onFlowStart:
   - runScript: ../scripts/fetch-send-params.js
 ---
-- launchApp:
-    clearState: true
-    arguments:
-      wsPort: "8099"
-      mock: "0"
-      IS_TEST: true
-      DETOX: "1"
-# Decline the analytics consent modal if it pops (its backdrop would otherwise swallow our taps).
+- runFlow: ../subflows/launch.yaml
 - runFlow: ../subflows/dismiss-analytics-prompt.yaml
-# Seeded Wallet 4.0 home loads. Open the accounts list, then the Dogecoin account, then tap its Send
-# quick action — mirrors Detox's navigateToSendScreen (goToAccountByName -> tapSend). Only the way we
-# OPEN the accounts list differs per platform (both then tap the same "Dogecoin 1" row):
-#   - iOS: tap the Assets/Accounts toggle (a deeplink would hit an untappable SpringBoard alert).
-#   - Android: open the ledgerlive://account deeplink, exactly like Detox's openViaDeeplink (the
-#     native-ui toggle doesn't forward Maestro taps to its onToggle on Android). The run script
-#     guarantees a single ledgerlive:// handler so this opens directly (no app chooser).
 - extendedWaitUntil:
     visible:
       id: "tab-selector-Accounts"
     timeout: 180000
-# Open the accounts list, scroll the Dogecoin 1 row into view, and tap it. The row sits low (under
-# the bottom nav), so centerElement scrolls it clear of the tab bar; the W40 home re-renders often
-# (price tickers) so each scroll gets a settle window. The TAP SELECTOR differs by platform because
-# of how React Native forwards touches: on iOS the account name Text forwards the tap to the row's
-# onPress (tap by text), on Android it does not but the name's testID node does (tap by id).
+# Open the Dogecoin 1 account. iOS taps the Accounts toggle + row by text; Android opens the
+# deeplink + taps the row's id (RN doesn't forward the toggle/text taps to onPress on Android).
 - runFlow:
     when:
       platform: iOS
@@ -52,8 +25,6 @@ onFlowStart:
             text: "Dogecoin 1"
           direction: DOWN
           centerElement: true
-          timeout: 30000
-          waitToSettleTimeoutMs: 500
       - tapOn:
           text: "Dogecoin 1"
 - runFlow:
@@ -70,112 +41,32 @@ onFlowStart:
             id: "account-row-name-Dogecoin 1"
           direction: DOWN
           centerElement: true
-          timeout: 30000
-          waitToSettleTimeoutMs: 500
       - tapOn:
           id: "account-row-name-Dogecoin 1"
-# Account page -> Send quick action.
 - extendedWaitUntil:
     visible:
       id: "account-quick-action-button-send"
     timeout: 20000
 - tapOn:
     id: "account-quick-action-button-send"
-# --- Recipient (derived by the harness, fetched via the onFlowStart hook into output.recipient) ---
-- extendedWaitUntil:
-    visible:
-      id: "recipient-input"
-    timeout: 20000
-- tapOn:
-    id: "recipient-input"
-- inputText: "${output.recipient}"
-# Android's soft keyboard occasionally drops a character while typing the long address, making it
-# invalid so the Continue button never enables. Re-enter until Continue is enabled (no-op on iOS,
-# where the first inputText is reliable). Do NOT re-tap the field here: it stays focused with the
-# cursor at the end, so eraseText clears the whole value (re-tapping would move the cursor and leave
-# a trailing fragment).
-- repeat:
-    times: 5
-    commands:
-      - runFlow:
-          when:
-            notVisible:
-              id: "enabled-recipient-continue-button"
-          commands:
-            - eraseText
-            - inputText: "${output.recipient}"
-            - waitForAnimationToEnd:
-                timeout: 1500
-- extendedWaitUntil:
-    visible:
-      id: "enabled-recipient-continue-button"
-    timeout: 20000
-- tapOn:
-    id: "enabled-recipient-continue-button"
-# Dogecoin has no memo, but if a memo-tag drawer appears, ignore it.
 - runFlow:
-    when:
-      visible:
-        id: "enabled-memo-tag-ignore-button"
-    commands:
-      - tapOn:
-          id: "enabled-memo-tag-ignore-button"
-# --- Amount ---
-# The amount field is a custom component: iOS does NOT surface its testID (amount-input) to Maestro,
-# and there's no on-screen keypad. Wait for the amount screen (its disabled continue button), tap the
-# amount row to focus the input, then type. (Detox uses replaceText on amount-input, unavailable here.)
-- extendedWaitUntil:
-    visible:
-      id: "disabled-amount-continue-button"
-    timeout: 20000
-- tapOn:
-    point: "50%,21%"
-- inputText: "${output.amount}"
-# No hideKeyboard: the numeric keypad doesn't respond to it and the Continue button sits above the
-# keypad anyway. Wait for the amount to validate (continue enables), then tap it.
-- extendedWaitUntil:
-    visible:
-      id: "enabled-amount-continue-button"
-    timeout: 20000
-- tapOn:
-    id: "enabled-amount-continue-button"
-# --- Summary: wait for it, pick the Slow fee strategy (selected by visible text), continue ---
-- extendedWaitUntil:
-    visible:
-      id: "send-summary-amount"
-    timeout: 20000
-- takeScreenshot: artifacts/send-doge-summary
-# Choose the Slow fee (chooseFeeStrategy taps the fee by its visible text). Scroll it into view.
+    file: ../subflows/enter-recipient.yaml
+    env:
+      RECIPIENT: "${output.recipient}"
 - runFlow:
-    when:
-      visible:
-        text: "Slow"
-    commands:
-      - tapOn:
-          text: "Slow"
-- extendedWaitUntil:
-    visible:
-      id: "enabled-summary-continue-button"
-    timeout: 20000
-- tapOn:
-    id: "enabled-summary-continue-button"
-# Dismiss the high-fee confirmation modal if it appears.
+    file: ../subflows/enter-amount.yaml
+    env:
+      AMOUNT: "${output.amount}"
 - runFlow:
-    when:
-      visible:
-        id: "enabled-confirmation-modal-confirm-button"
-    commands:
-      - tapOn:
-          id: "enabled-confirmation-modal-confirm-button"
-# --- Device review: the harness (signSendTransaction) signs on Speculos. Wait for the success screen. ---
-- extendedWaitUntil:
-    visible:
-      id: "validate-success-screen"
-    timeout: 120000
-- takeScreenshot: artifacts/send-doge-success
+    file: ../subflows/choose-fee-and-continue.yaml
+    env:
+      FEE: "Slow"
+- runFlow:
+    file: ../subflows/await-ondevice-success.yaml
+    env:
+      SUCCESS_ID: "validate-success-screen"
 - tapOn:
     id: "enabled-success-view-details-button"
-# --- Operation details (the Detox spec asserts account / recipient / OUT here) ---
 - extendedWaitUntil:
     visible:
       id: "operationDetails-title"

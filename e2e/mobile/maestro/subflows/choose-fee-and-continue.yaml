@@ -1,0 +1,26 @@
+appId: com.ledger.live.debug
+---
+- extendedWaitUntil:
+    visible:
+      id: "send-summary-amount"
+    timeout: 20000
+- runFlow:
+    when:
+      visible:
+        text: ${FEE}
+    commands:
+      - tapOn:
+          text: ${FEE}
+- extendedWaitUntil:
+    visible:
+      id: "enabled-summary-continue-button"
+    timeout: 20000
+- tapOn:
+    id: "enabled-summary-continue-button"
+- runFlow:
+    when:
+      visible:
+        id: "enabled-confirmation-modal-confirm-button"
+    commands:
+      - tapOn:
+          id: "enabled-confirmation-modal-confirm-button"

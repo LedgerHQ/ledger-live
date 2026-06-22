@@ -1,16 +1,29 @@
-# E2E: add an Ethereum account (Maestro port of the Detox `addAccountETH.spec.ts`).
-#
-# This is the *test case*. It is intentionally tiny: it just composes reusable
-# subflows in order (Maestro "Nested Flows"). Each subflow maps 1:1 to a step of
-# the original Detox page-object sequence.
 appId: com.ledger.live.debug
 tags:
   - addAccount
   - eth
 ---
-- runFlow: ../subflows/launch-seeded.yaml
-# Decline the analytics consent modal if it pops (Android only; its backdrop would block taps).
+- runFlow: ../subflows/launch.yaml
+- extendedWaitUntil:
+    visible:
+      id: "add-account-cta"
+    timeout: 180000
 - runFlow: ../subflows/dismiss-analytics-prompt.yaml
 - runFlow: ../subflows/open-add-account.yaml
-- runFlow: ../subflows/select-eth.yaml
-- runFlow: ../subflows/verify-eth-account.yaml
+- runFlow:
+    file: ../subflows/modular-drawer-pick.yaml
+    env:
+      SEARCH: "ETH"
+      ASSET_ID: "asset-item-ETH"
+      NETWORK_ID: "network-item-[Ee]thereum"
+      NETWORK_REQUIRED: "false"
+      PICK_ACCOUNT: "false"
+- runFlow:
+    file: ../subflows/add-discovered-account.yaml
+    env:
+      ACCOUNT_NAME: "Ethereum 1"
+- runFlow:
+    file: ../subflows/open-asset-assert-balance.yaml
+    env:
+      ASSET_ID: "assetItem-Ethereum"
+      TITLE_ID: "accounts-title-ethereum"
