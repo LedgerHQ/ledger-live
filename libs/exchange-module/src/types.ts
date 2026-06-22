@@ -24,10 +24,8 @@ export type ExchangeStartSellParams = {
   fromAccountId: string;
 };
 
-export type SwapTrackingMeta = {
-  isEmbedded?: boolean;
-  swapEntryPoint?: string;
-};
+type TrackingMetaValue = string | number | boolean | null;
+export type SwapTrackingMeta = Record<string, TrackingMetaValue>;
 
 export type ExchangeStartSwapParams = {
   exchangeType: "SWAP";

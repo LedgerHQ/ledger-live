@@ -32,7 +32,6 @@ import {
   WalletAPIAccount,
   WalletAPICustomHandlers,
   DiscoverDB,
-  SwapTrackingMeta,
 } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
@@ -68,6 +67,7 @@ import {
 import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
