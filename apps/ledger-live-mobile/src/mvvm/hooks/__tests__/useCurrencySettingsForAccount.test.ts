@@ -6,7 +6,6 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const parentAccountRaw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -36,10 +35,7 @@ const mockTokenAccount: TokenAccount = {
     type: "TokenCurrency",
     id: "ethereum/erc20/usd_tether__erc20_",
     contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-    parentCurrency: {
-      id: "ethereum",
-      type: "CryptoCurrency",
-    } as CryptoCurrency,
+    parentCurrencyId: "ethereum",
     tokenType: "erc20",
     name: "Tether USD",
     ticker: "USDT",

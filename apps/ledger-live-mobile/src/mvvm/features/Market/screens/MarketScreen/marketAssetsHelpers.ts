@@ -3,17 +3,12 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapMarketCurrencyToDisplayData } from "../../utils/marketAssetDisplay";
 
-const STOCK_MARKET_FILTER = "stock";
 const EMPTY_MARKET_DATA: MarketCurrencyData[] = [];
 
 type DisplayRange = Parameters<typeof mapMarketCurrencyToDisplayData>[1]["range"];
 type Translate = Parameters<typeof mapMarketCurrencyToDisplayData>[1]["t"];
 
 export type EmptyState = "favorites" | "stocks" | undefined;
-
-export function getMarketFilter(isStocksCategory: boolean): string | undefined {
-  return isStocksCategory ? STOCK_MARKET_FILTER : undefined;
-}
 
 export function getMarketDataForDisplay(
   data: MarketCurrencyData[],
@@ -24,7 +19,6 @@ export function getMarketDataForDisplay(
 
 export function getMarketAssets({
   marketData,
-  isStocksCategory,
   counterCurrency,
   counterValueUnit,
   displayRange,
@@ -32,17 +26,13 @@ export function getMarketAssets({
   t,
 }: {
   marketData: MarketCurrencyData[];
-  isStocksCategory: boolean;
   counterCurrency: string;
   counterValueUnit: Unit;
   displayRange: DisplayRange;
   locale: string;
   t: Translate;
 }): MarketAssetDisplayData[] {
-  const filteredMarketData = isStocksCategory
-    ? marketData.filter(isStockMarketCurrency)
-    : marketData;
-  const uniqueById = [...new Map(filteredMarketData.map(item => [item.id, item])).values()];
+  const uniqueById = [...new Map(marketData.map(item => [item.id, item])).values()];
 
   return uniqueById.map(item =>
     mapMarketCurrencyToDisplayData(item, {
@@ -89,18 +79,4 @@ export function getEmptyState({
   }
 
   return undefined;
-}
-
-function isStockMarketCurrency(item: MarketCurrencyData): boolean {
-  const id = item.id.toLowerCase();
-  const name = item.name.toLowerCase();
-
-  return (
-    id.includes("xstock") ||
-    id.includes("tokenized-stock") ||
-    id.includes("prestocks") ||
-    name.includes("xstock") ||
-    name.includes("tokenized stock") ||
-    name.includes("prestocks")
-  );
 }

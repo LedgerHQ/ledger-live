@@ -36,6 +36,7 @@ type UseNetworkFeesParams = Readonly<{
   uiConfig: SendFlowUiConfig;
   transactionActions: SendFlowTransactionActions;
   onSelectCoinControl?: () => void;
+  onSelectCustomFees?: () => void;
 }>;
 
 export function useNetworkFees({
@@ -46,6 +47,7 @@ export function useNetworkFees({
   uiConfig,
   transactionActions,
   onSelectCoinControl,
+  onSelectCustomFees,
 }: UseNetworkFeesParams): NetworkFeesViewModel {
   const { t } = useTranslation();
   const { locale } = useLocale();
@@ -174,6 +176,7 @@ export function useNetworkFees({
       feePresetLabelsOptions: feePresetOptionsMapped,
       onSelectFeeStrategy,
       onSelectCoinControl,
+      onSelectCustomFees,
       uiConfig: {
         hasCustomFees: uiConfig.hasCustomFees,
         hasCoinControl: uiConfig.hasCoinControl,
@@ -190,6 +193,7 @@ export function useNetworkFees({
       feePresetOptionsMapped,
       onSelectFeeStrategy,
       onSelectCoinControl,
+      onSelectCustomFees,
     ],
   );
 }

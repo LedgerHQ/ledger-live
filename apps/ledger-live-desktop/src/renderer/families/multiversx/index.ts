@@ -13,6 +13,13 @@ const family: MultiversXFamily = {
   AccountSubHeader,
   AccountBalanceSummaryFooter,
   StakeBanner,
+  modalsToPreload: [
+    "MODAL_MULTIVERSX_DELEGATE",
+    "MODAL_MULTIVERSX_REWARDS_INFO",
+    "MODAL_MULTIVERSX_UNDELEGATE",
+    "MODAL_MULTIVERSX_CLAIM_REWARDS",
+    "MODAL_MULTIVERSX_WITHDRAW",
+  ],
 };
 
 export default family;

@@ -2,7 +2,6 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { render, screen } from "@tests/test-renderer";
@@ -45,13 +44,17 @@ jest.mock("LLM/features/Send/hooks/useNewSendFlowFeature", () => ({
   }),
 }));
 
-setSupportedCurrencies(["ethereum", "polygon"]);
-
 const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
-const usdc = { parentCurrency: ethereum } as unknown as TokenCurrency;
-const usdtEth = { id: "ethereum/erc20/usdt", parentCurrency: ethereum } as unknown as TokenCurrency;
-const usdtPoly = { id: "polygon/erc20/usdt", parentCurrency: polygon } as unknown as TokenCurrency;
+const usdc = { parentCurrencyId: ethereum.id } as unknown as TokenCurrency;
+const usdtEth = {
+  id: "ethereum/erc20/usdt",
+  parentCurrencyId: ethereum.id,
+} as unknown as TokenCurrency;
+const usdtPoly = {
+  id: "polygon/erc20/usdt",
+  parentCurrencyId: polygon.id,
+} as unknown as TokenCurrency;
 
 const EMPTY_ETH = genAccount("sa-empty-eth", {
   currency: ethereum,

@@ -1,27 +1,44 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import { AwarenessModalClampedText, CAROUSEL_SLIDE_TEXT_LINE_LIMITS } from "./clampedText";
+import { hasAwarenessModalActionButton } from "@ledgerhq/live-common/genericAwarenessModal";
+import { useThemedAwarenessModalImage } from "../hooks/useThemedAwarenessModalImage";
+import { AwarenessModalClampedText, PROMPT_TEXT_LINE_LIMITS } from "./clampedText";
 
 export type PromptContentProps = {
   title: string;
   subtitle: string;
   primaryButtonLabel: string;
+  primaryButtonLink: string;
   secondaryButtonLabel: string;
+  secondaryButtonLink: string;
   onPrimaryClick: () => void;
   onSecondaryClick: () => void;
-  imageUrl?: string;
+  imageUrlLight?: string;
+  imageUrlDark?: string;
 };
 
 export default function PromptContent({
   title,
   subtitle,
-  imageUrl,
+  imageUrlLight,
+  imageUrlDark,
   primaryButtonLabel,
+  primaryButtonLink,
   secondaryButtonLabel,
+  secondaryButtonLink,
   onPrimaryClick,
   onSecondaryClick,
 }: Readonly<PromptContentProps>) {
-  const showImage = imageUrl != null && imageUrl.length > 0;
+  const showPrimaryButton = hasAwarenessModalActionButton(primaryButtonLabel, primaryButtonLink);
+  const showSecondaryButton = hasAwarenessModalActionButton(
+    secondaryButtonLabel,
+    secondaryButtonLink,
+  );
+  const { imageUrl, showImage } = useThemedAwarenessModalImage(
+    imageUrlLight != null || imageUrlDark != null
+      ? { imageUrlLight: imageUrlLight ?? "", imageUrlDark: imageUrlDark ?? "" }
+      : undefined,
+  );
 
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col">
@@ -40,35 +57,39 @@ export default function PromptContent({
         <div className="flex w-full min-w-0 flex-col items-center text-center">
           <AwarenessModalClampedText
             text={title}
-            maxLines={CAROUSEL_SLIDE_TEXT_LINE_LIMITS.title}
+            maxLines={PROMPT_TEXT_LINE_LIMITS.title}
             className="mb-8 text-center heading-4-semi-bold text-base"
           />
           <AwarenessModalClampedText
             text={subtitle}
-            maxLines={CAROUSEL_SLIDE_TEXT_LINE_LIMITS.subtitle}
+            maxLines={PROMPT_TEXT_LINE_LIMITS.subtitle}
             className="body-2 text-center text-muted"
           />
         </div>
       </div>
       <div className="flex w-full shrink-0 flex-col items-center gap-16 pt-24">
-        <Button
-          appearance="base"
-          size="lg"
-          onClick={onPrimaryClick}
-          className="w-full"
-          data-testid="generic-awareness-modal-primary-button"
-        >
-          {primaryButtonLabel}
-        </Button>
-        <Button
-          appearance="gray"
-          size="lg"
-          onClick={onSecondaryClick}
-          className="w-full"
-          data-testid="generic-awareness-modal-secondary-button"
-        >
-          {secondaryButtonLabel}
-        </Button>
+        {showPrimaryButton ? (
+          <Button
+            appearance="base"
+            size="lg"
+            onClick={onPrimaryClick}
+            className="w-full"
+            data-testid="generic-awareness-modal-primary-button"
+          >
+            {primaryButtonLabel}
+          </Button>
+        ) : null}
+        {showSecondaryButton ? (
+          <Button
+            appearance="gray"
+            size="lg"
+            onClick={onSecondaryClick}
+            className="w-full"
+            data-testid="generic-awareness-modal-secondary-button"
+          >
+            {secondaryButtonLabel}
+          </Button>
+        ) : null}
       </div>
     </div>
   );

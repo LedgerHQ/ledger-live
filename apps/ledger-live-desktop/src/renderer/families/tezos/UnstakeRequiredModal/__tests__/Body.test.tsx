@@ -16,7 +16,7 @@ describe("UnstakeRequiredModal/Body", () => {
     render(<Body onClose={jest.fn()} params={{ reason: "changeBaker" }} />);
     expect(screen.getByText("Unstake before changing baker")).toBeInTheDocument();
     expect(
-      screen.getByText(/Unstake your funds before delegating to a new baker/i),
+      screen.getByText(/Unstake all your funds before delegating to a new baker/i),
     ).toBeInTheDocument();
   });
 
@@ -24,14 +24,14 @@ describe("UnstakeRequiredModal/Body", () => {
     render(<Body onClose={jest.fn()} params={{ reason: "endDelegation" }} />);
     expect(screen.getByText("Unstake before ending delegation")).toBeInTheDocument();
     expect(
-      screen.getByText(/Unstake your funds before ending the delegation/i),
+      screen.getByText(/Unstake all your funds before ending the delegation/i),
     ).toBeInTheDocument();
   });
 
   it("renders all four step descriptions and numbered badges", () => {
     render(<Body onClose={jest.fn()} params={{ reason: "changeBaker" }} />);
-    expect(screen.getByText(/Open the Earn menu/i)).toBeInTheDocument();
-    expect(screen.getByText(/Confirm the amount/i)).toBeInTheDocument();
+    expect(screen.getByText(/Open the Tezos Account dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Unstake the MAX amount/i)).toBeInTheDocument();
     expect(screen.getByText(/Wait ~4 days/i)).toBeInTheDocument();
     expect(screen.getByText(/Once withdrawn/i)).toBeInTheDocument();
     [1, 2, 3, 4].forEach(n => {

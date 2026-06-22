@@ -5,6 +5,7 @@ import {
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
@@ -35,6 +36,7 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
+import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import { ExchangeSwap, FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../coin-modules/transaction-types";
@@ -191,6 +193,7 @@ export const handlers = ({
   tracking,
   manifest,
   flags,
+  getFeature,
   locale,
   counterValueCurrency,
   deviceModelId,
@@ -206,6 +209,7 @@ export const handlers = ({
   tracking: TrackingAPI;
   manifest: AppManifest;
   flags?: FeatureFlags;
+  getFeature?: GetFeatureFn;
   locale: string;
   counterValueCurrency: string;
   deviceModelId?: DeviceModelId;
@@ -588,7 +592,7 @@ export const handlers = ({
           sponsored,
         };
 
-        const transaction: Transaction = await getStrategy(strategyData, "swap");
+        const transaction: Transaction = await getStrategy(strategyData, "swap", getFeature);
 
         const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
 
@@ -989,9 +993,12 @@ async function getStrategy(
     sponsored,
   }: StrategyParams,
   customErrorType?: any,
+  getFeature?: GetFeatureFn,
 ): Promise<Transaction> {
   const family =
-    currency.type === "TokenCurrency" ? currency.parentCurrency?.family : currency.family;
+    currency.type === "TokenCurrency"
+      ? findCryptoCurrencyById(currency.parentCurrencyId)?.family
+      : currency.family;
 
   if (!family) {
     throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);
@@ -1016,16 +1023,19 @@ async function getStrategy(
     }
   }
 
-  return strategy({
-    family,
-    amount: new BigNumber(amount),
-    recipient,
-    customFeeConfig: convertedCustomFeeConfig,
-    payinExtraId,
-    extraTransactionParameters,
-    customErrorType,
-    sponsored,
-  });
+  return strategy(
+    {
+      family,
+      amount: new BigNumber(amount),
+      recipient,
+      customFeeConfig: convertedCustomFeeConfig,
+      payinExtraId,
+      extraTransactionParameters,
+      customErrorType,
+      sponsored,
+    },
+    getFeature,
+  );
 }
 
 function isDrawerClosedError(error: unknown) {

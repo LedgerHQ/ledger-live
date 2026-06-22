@@ -83,8 +83,21 @@ describe("getBalance", () => {
     await expect(getBalance(mockCurrency, mockAccount.freshAddress)).rejects.toThrow();
   });
 
-  it("should throw error when balance format has wrong suffix", async () => {
+  it("should parse balance with u32 suffix", async () => {
     mockGetAccountBalance.mockResolvedValue("1000000u32");
+
+    const result = await getBalance(mockCurrency, mockAccount.freshAddress);
+
+    expect(result).toEqual([
+      {
+        asset: { type: "native" },
+        value: BigInt(1000000),
+      },
+    ]);
+  });
+
+  it("should throw error when balance format has incomplete unit suffix", async () => {
+    mockGetAccountBalance.mockResolvedValue("1000000u");
 
     await expect(getBalance(mockCurrency, mockAccount.freshAddress)).rejects.toThrow();
   });

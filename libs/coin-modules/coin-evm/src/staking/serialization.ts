@@ -60,6 +60,7 @@ function toStakingUnbondingRaw(u: StakingUnbonding): StakingUnbondingRaw {
     ...(u.validatorName !== undefined ? { validatorName: u.validatorName } : {}),
     amount: u.amount.toString(),
     completionDate: u.completionDate.toISOString(),
+    ...(u.withdrawId !== undefined ? { withdrawId: u.withdrawId.toString() } : {}),
   };
 }
 
@@ -69,6 +70,7 @@ function fromStakingUnbondingRaw(u: StakingUnbondingRaw): StakingUnbonding {
     ...(typeof u.validatorName === "string" ? { validatorName: u.validatorName } : {}),
     amount: new BigNumber(u.amount),
     completionDate: new Date(u.completionDate),
+    ...(u.withdrawId !== undefined ? { withdrawId: Number(u.withdrawId) } : {}),
   };
 }
 

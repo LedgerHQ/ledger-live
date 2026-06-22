@@ -55,6 +55,7 @@ export function mapUnbondings(
   unit: Unit,
 ): CosmosMappedUnbonding[] {
   return unbondings
+    .slice()
     .sort((a, b) => a.completionDate.valueOf() - b.completionDate.valueOf())
     .map(u => {
       const validator = validators.find(v => v.validatorAddress === u.validatorAddress);

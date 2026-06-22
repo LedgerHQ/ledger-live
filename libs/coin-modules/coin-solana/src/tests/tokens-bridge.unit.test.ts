@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -82,7 +81,7 @@ const wSolToken: TokenCurrency = {
   name: "Wrapped SOL",
   ticker: "WSOL",
   units: [{ name: "WSOL", code: "WSOL", magnitude: 9 }],
-  parentCurrency: getCryptoCurrencyById("solana"),
+  parentCurrencyId: "solana",
 } as TokenCurrency;
 
 const baseAccount = {

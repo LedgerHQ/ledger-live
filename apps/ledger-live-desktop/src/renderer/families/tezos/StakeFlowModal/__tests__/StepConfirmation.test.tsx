@@ -1,10 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { act, fireEvent, render, screen } from "tests/testSetup";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { TezosAccount, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import type { Operation } from "@ledgerhq/types-live";
@@ -25,6 +22,11 @@ jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: () => "https://stake.example",
 }));
 jest.mock("~/renderer/linking", () => ({ __esModule: true, openURL: jest.fn() }));
+const mockNavigate = jest.fn();
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: () => mockNavigate,
+}));
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   __esModule: true,
   SyncOneAccountOnMount: () => null,
@@ -54,7 +56,6 @@ jest.mock("~/renderer/components/RetryButton", () => ({
 
 import StepConfirmation, { StepConfirmationFooter } from "../steps/StepConfirmation";
 
-setSupportedCurrencies(["tezos"]);
 const currency = getCryptoCurrencyById("tezos");
 
 const makeAccount = (): TezosAccount =>
@@ -121,6 +122,10 @@ const makeOp = (): Operation =>
   }) as unknown as Operation;
 
 describe("StakeFlowModal/StepConfirmation", () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+  });
+
   it("renders success when the operation has been broadcasted", () => {
     const props = makeProps({ optimisticOperation: makeOp() });
     act(() => {
@@ -171,17 +176,33 @@ describe("StakeFlowModal/StepConfirmation", () => {
     expect(props.transitionTo).toHaveBeenCalledWith("amount");
   });
 
-  it("footer success CTA closes the modal", () => {
+  it("footer success CTA closes the modal and navigates to the account page", () => {
     const props = makeProps({ optimisticOperation: makeOp() });
     let result: ReturnType<typeof render>;
     act(() => {
       result = render(<StepConfirmationFooter {...props} />);
     });
-    const cta = result!.container.querySelector("#tezos-stake-confirmation-visit-earn-button");
+    const cta = result!.container.querySelector("#tezos-stake-confirmation-visit-account-button");
     expect(cta).toBeInTheDocument();
     act(() => {
       fireEvent.click(cta!);
     });
     expect(props.onClose).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(`/account/${props.account?.id}`);
+  });
+
+  it("footer success CTA falls back to the operation's account id when account is missing", () => {
+    const operation = makeOp();
+    const props = makeProps({ optimisticOperation: operation, account: null });
+    let result: ReturnType<typeof render>;
+    act(() => {
+      result = render(<StepConfirmationFooter {...props} />);
+    });
+    const cta = result!.container.querySelector("#tezos-stake-confirmation-visit-account-button");
+    act(() => {
+      fireEvent.click(cta!);
+    });
+    expect(props.onClose).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(`/account/${operation.accountId}`);
   });
 });

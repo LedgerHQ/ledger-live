@@ -30,10 +30,15 @@ export const STABLECOIN_ASSET: CategorizedAssetItem = {
   accounts: [],
 };
 
+export type MockCategorizedAssets = CategorizedAssets & {
+  stocks: CategorizedAssetItem[];
+};
+
 export const createMockCategorizedAssets = (
-  overrides?: Partial<CategorizedAssets>,
-): CategorizedAssets => ({
+  overrides?: Partial<MockCategorizedAssets>,
+): MockCategorizedAssets => ({
   cryptos: [BITCOIN_ASSET, ETHEREUM_ASSET],
   stablecoins: [STABLECOIN_ASSET],
+  stocks: [],
   ...overrides,
 });

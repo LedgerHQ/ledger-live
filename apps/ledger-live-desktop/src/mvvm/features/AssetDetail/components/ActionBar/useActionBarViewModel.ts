@@ -69,7 +69,7 @@ function lookupParentAccount(accounts: Account[], child: AccountLike): Account |
 function ledgerIdsFromLedgerCurrency(ledgerCurrency: CryptoOrTokenCurrency): string[] {
   const ids = new Set<string>([ledgerCurrency.id]);
   if (ledgerCurrency.type === "TokenCurrency") {
-    ids.add(ledgerCurrency.parentCurrency.id);
+    ids.add(ledgerCurrency.parentCurrencyId);
   }
   return [...ids];
 }

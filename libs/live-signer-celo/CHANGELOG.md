@@ -1,5 +1,32 @@
 # @ledgerhq/live-signer-celo
 
+## 1.1.4
+
+### Patch Changes
+
+- Updated dependencies [[`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`621a175`](https://github.com/LedgerHQ/ledger-live/commit/621a1756ef8b59844a086a610ff45819521ff633)]:
+  - @ledgerhq/coin-celo@2.6.0
+  - @ledgerhq/hw-app-eth@7.8.7
+  - @ledgerhq/hw-app-celo@7.1.4
+
+## 1.1.4-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-celo@2.6.0-next.1
+  - @ledgerhq/hw-app-eth@7.8.7-next.1
+  - @ledgerhq/hw-app-celo@7.1.4-next.1
+
+## 1.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`621a175`](https://github.com/LedgerHQ/ledger-live/commit/621a1756ef8b59844a086a610ff45819521ff633)]:
+  - @ledgerhq/coin-celo@2.6.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.7-next.0
+  - @ledgerhq/hw-app-celo@7.1.4-next.0
+
 ## 1.1.3
 
 ### Patch Changes

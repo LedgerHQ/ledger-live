@@ -20,9 +20,13 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
-import { DelegateModalName } from "../modals";
 import Discreet from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+type DelegateModalName =
+  | "MODAL_SOLANA_DELEGATION_ACTIVATE"
+  | "MODAL_SOLANA_DELEGATION_DEACTIVATE"
+  | "MODAL_SOLANA_DELEGATION_REACTIVATE"
+  | "MODAL_SOLANA_DELEGATION_WITHDRAW";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;

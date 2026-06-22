@@ -1,7 +1,10 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { Flex } from "@ledgerhq/react-ui";
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
+import {
+  formatCurrencyUnit,
+  type formatCurrencyUnitOptions,
+} from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "react-i18next";
 import {
   isPublicTransaction,
@@ -33,7 +36,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
   const formatDate = useDateFormatter(dayFormat);
   const formatTime = useDateFormatter(hourFormat);
 
-  const formatConfig = {
+  const formatConfig: formatCurrencyUnitOptions = {
     alwaysShowSign: false,
     showCode: true,
     locale,

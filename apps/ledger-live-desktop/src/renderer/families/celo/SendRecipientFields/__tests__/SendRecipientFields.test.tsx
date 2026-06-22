@@ -126,7 +126,7 @@ const makeTokenAccount = (contractAddress: string, id = "sub-account-1"): TokenA
     type: "TokenCurrency" as const,
     id: `celo/erc20/token_${contractAddress}`,
     contractAddress,
-    parentCurrency: mockCeloCurrency,
+    parentCurrencyId: "celo",
     tokenType: "erc20",
     name: "Token",
     ticker: "TKN",

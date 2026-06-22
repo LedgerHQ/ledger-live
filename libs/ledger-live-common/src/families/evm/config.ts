@@ -1284,6 +1284,34 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       feeHistoryRewardPercentile: 60,
     },
   },
+  config_currency_robinhood: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "external", uri: "https://rpc.chain.robinhood.com" },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_robinhood_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "external", uri: "https://rpc.testnet.chain.robinhood.com" },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
 };
 
 export { evmConfig };

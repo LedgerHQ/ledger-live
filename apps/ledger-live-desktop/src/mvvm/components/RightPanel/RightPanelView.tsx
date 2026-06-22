@@ -15,11 +15,7 @@ export const RightPanelView = memo(function RightPanelView({ viewModel }: RightP
   const { initialSwapState, webviewKey } = viewModel;
   return (
     <div className="flex h-full flex-col pb-32">
-      <SwapWebViewEmbedded
-        key={webviewKey}
-        height="100%"
-        initialSwapState={initialSwapState}
-      />
+      <SwapWebViewEmbedded key={webviewKey} height="100%" initialSwapState={initialSwapState} />
     </div>
   );
 });

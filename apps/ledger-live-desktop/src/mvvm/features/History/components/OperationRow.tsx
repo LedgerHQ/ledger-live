@@ -1,11 +1,13 @@
 import React, { useCallback, memo } from "react";
 import { DotIndicator, TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
 import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
+import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -23,20 +25,25 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
   const item = row.original;
   const { operation, currency, amount, address, type, isUnread } = item;
 
-  const typeLabel = operation.hasFailed
-    ? t("operationDetails.failed")
-    : t(`operation.type.${operation.type}`);
-
-  const direction = getAddressDirection(type);
-  const addressPrefix = address ? t(`history.address.${direction}`) : undefined;
-
   const cryptoCurrency: CryptoCurrency | TokenCurrency | undefined =
     currency.type === "FiatCurrency" ? undefined : currency;
   const isToken = cryptoCurrency?.type === "TokenCurrency";
+  const family = isToken
+    ? getCryptoCurrencyById(cryptoCurrency.parentCurrencyId).family
+    : cryptoCurrency?.family;
+
+  const typeLabel = operation.hasFailed
+    ? t("operationDetails.failed")
+    : t(getOperationTypeI18nKey(operation.type, family));
+
+  const direction = getAddressDirection(type);
+  const addressPrefix = address ? t(`history.address.${direction}`) : undefined;
   const iconCurrency =
-    isToken && shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrency : cryptoCurrency;
+    isToken && shouldDisplayAggregatedAssets
+      ? getCryptoCurrencyById(cryptoCurrency.parentCurrencyId)
+      : cryptoCurrency;
   const iconNetwork =
-    isToken && !shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrency.id : undefined;
+    isToken && !shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrencyId : undefined;
 
   return (
     <TableRow clickable onClick={handleClick} data-testid={`history-operation-row-${operation.id}`}>
@@ -52,7 +59,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
                 mediaSize={40}
                 network={
                   !shouldDisplayAggregatedAssets && isToken
-                    ? cryptoCurrency.parentCurrency.id
+                    ? cryptoCurrency.parentCurrencyId
                     : undefined
                 }
               />
@@ -62,7 +69,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
             <div className="inline-flex items-center gap-12">
               {typeLabel}
               {isUnread && (
-                <DotIndicator appearance="red" size="lg" data-testid="unread-indicator" />
+                <DotIndicator appearance="base" size="lg" data-testid="unread-indicator" />
               )}
             </div>
           }

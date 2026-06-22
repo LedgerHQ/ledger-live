@@ -2,7 +2,7 @@ import { initState } from "./logic";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import type { FilterOptions, SortOptions } from "./filtering";
 import { sortFilterApps, isAppAssociatedCurrencySupported } from "./filtering";
-import { setSupportedCurrencies } from "../currencies/index";
+import { supportOnlyForTest } from "../__tests__/test-helpers/supportedCoins";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setWalletAPIVersion } from "../wallet-api/version";
 import { App } from "@ledgerhq/types-live";
@@ -22,14 +22,7 @@ type FilteringScenario = {
   _sortOptions: SortOptions;
   _filterOptions: FilterOptions;
 };
-setSupportedCurrencies([
-  "ethereum",
-  "bitcoin",
-  "dogecoin",
-  "ethereum_classic",
-  "ripple",
-  "litecoin",
-]);
+supportOnlyForTest(["ethereum", "bitcoin", "dogecoin", "ethereum_classic", "ripple", "litecoin"]);
 const apps =
   "Bitcoin, Ethereum, Litecoin, Dogecoin, HODL, Password Manager, Ethereum Classic, XRP, Stellar ";
 const scenarios: FilteringScenario[] = [

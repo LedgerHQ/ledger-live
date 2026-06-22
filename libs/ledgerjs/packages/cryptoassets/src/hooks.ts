@@ -31,11 +31,15 @@ export function useTokenById(id: string, options?: { skip?: boolean }): TokenRes
 /**
  * Hook to find a token by its contract address and currency
  */
-export function useTokenByAddressInCurrency(address: string, currencyId: string): TokenResult {
-  const result = cryptoAssetsApi.useFindTokenByAddressInCurrencyQuery({
-    contract_address: address,
-    network: currencyId,
-  });
+export function useTokenByAddressInCurrency(
+  address: string,
+  currencyId: string,
+  options?: { skip?: boolean },
+): TokenResult {
+  const result = cryptoAssetsApi.useFindTokenByAddressInCurrencyQuery(
+    { contract_address: address, network: currencyId },
+    options,
+  );
   return {
     token: result.data,
     loading: result.isLoading,

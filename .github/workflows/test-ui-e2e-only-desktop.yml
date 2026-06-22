@@ -72,6 +72,10 @@ on:
         required: false
         type: string
         default: ""
+      repeat_each:
+        description: "Repeat each test N times (optional)"
+        required: false
+        type: number
 
   workflow_call:
     inputs:
@@ -121,6 +125,10 @@ on:
         required: false
         type: string
         default: ""
+      repeat_each:
+        description: "Repeat each test N times (optional)"
+        required: false
+        type: number
 
 permissions:
   id-token: write
@@ -280,12 +288,16 @@ jobs:
           TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
           BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
+          REPEAT_EACH="${{ inputs.repeat_each }}"
 
           if [ -z "$FILTER_PATTERN" ]; then
             FILTER_PATTERN="(none)"
           fi
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
+          fi
+          if [ -z "$REPEAT_EACH" ]; then
+            REPEAT_EACH="(none)"
           fi
           {
             echo "## Workflow Context"
@@ -300,6 +312,7 @@ jobs:
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
             echo "- **Extra feature flags:** $EXTRA_FEATURE_FLAGS"
+            echo "- **Repeat each:** $REPEAT_EACH"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Validate feature flags JSON input
@@ -326,6 +339,7 @@ jobs:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
+          repeat_each: ${{ inputs.repeat_each }}
           enable_asset_section: ${{ github.event_name == 'schedule' || inputs.enable_asset_section != false }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}

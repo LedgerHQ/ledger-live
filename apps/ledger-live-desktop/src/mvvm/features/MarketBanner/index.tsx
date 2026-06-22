@@ -1,8 +1,6 @@
 import React, { memo, useCallback } from "react";
-import SkeletonList from "./components/SkeletonList";
 import { useNavigate } from "react-router";
 import { useMarketBannerViewModel } from "./hooks/useMarketBannerViewModel";
-import GenericError from "./components/GenericError";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { TrendingAssetsList } from "./components/TrendingAssetsList";
 import { MarketBannerHeader } from "./components/MarketBannerHeader";
@@ -30,27 +28,18 @@ const MarketBannerView = memo(function MarketBannerView({
     navigate("/market");
   }, [navigate]);
 
-  let content: React.ReactNode = null;
-  if (isLoading) {
-    content = <SkeletonList />;
-  } else if (isError) {
-    content = <GenericError />;
-  } else if (data && data.length > 0) {
-    content = <TrendingAssetsList items={data} />;
-  }
-
   return (
     <div className="flex flex-col gap-12">
       <MarketBannerHeader onNavigate={goToMarket} />
-      {content}
+      <TrendingAssetsList items={data ?? []} isLoading={isLoading} isError={isError} />
     </div>
   );
 });
 
 const MarketBanner = () => {
-  const { isLoading, isError, data } = useMarketBannerViewModel();
+  const { items, isLoading, isError } = useMarketBannerViewModel();
 
-  return <MarketBannerView isLoading={isLoading} isError={isError} data={data} />;
+  return <MarketBannerView isLoading={isLoading} isError={isError} data={items} />;
 };
 
 export { MarketBannerView };

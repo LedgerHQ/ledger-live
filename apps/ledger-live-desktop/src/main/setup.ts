@@ -1,6 +1,7 @@
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
+import { captureExceptionMain } from "~/datadog/main";
 import { app, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
@@ -21,6 +22,7 @@ for (const k in process.env) {
 
 ipcMain.on("mainCrashTest", () => {
   captureException(new Error("CrashTestMain"));
+  captureExceptionMain(new Error("CrashTestMain"));
 });
 
 ipcMain.on("updater", (e, type) => {

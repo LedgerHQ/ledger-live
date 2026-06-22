@@ -1,18 +1,13 @@
 import "./test-helpers/staticTime";
 import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "../mock/account";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-  setSupportedCurrencies,
-} from "../currencies";
+import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 // Setup mock store for unit tests
 setupMockCryptoAssetsStore();
-setSupportedCurrencies(["ethereum", "ripple"]);
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
 test("export CSV", async () => {

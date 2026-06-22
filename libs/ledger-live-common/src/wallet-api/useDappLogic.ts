@@ -19,6 +19,7 @@ import { getTxType } from "./utils/txTrackingHelper";
 import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { withLiveAppContext } from "./blindSigningContext";
 
 type MessageId = number | string | null;
 
@@ -146,7 +147,7 @@ function useDappAccountLogic({
     const accountCurrencyId =
       account.type === "TokenAccount" ? account.token.id : account.currency.id;
     const accountNetworkCurrency =
-      account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
+      account.type === "TokenAccount" ? account.token.parentCurrencyId : account.currency.id;
 
     const isCompatible = networks.some(
       n => n.currency === accountCurrencyId || n.currency === accountNetworkCurrency,
@@ -260,7 +261,7 @@ export function useDappLogic({
           : currentAccount.currency.id;
       const accountNetworkCurrency =
         currentAccount.type === "TokenAccount"
-          ? currentAccount.token.parentCurrency.id
+          ? currentAccount.token.parentCurrencyId
           : currentAccount.currency.id;
 
       return n.currency === accountCurrencyId || n.currency === accountNetworkCurrency;
@@ -499,7 +500,7 @@ export function useDappLogic({
 
               const accountNetwork =
                 currentAccount.type === "TokenAccount"
-                  ? currentAccount.token.parentCurrency.id
+                  ? currentAccount.token.parentCurrencyId
                   : currentAccount.currency.id;
 
               const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
@@ -510,7 +511,7 @@ export function useDappLogic({
               trackingData = {
                 type: transactionType,
                 currency: token ? token.name : accountCurrencyName,
-                network: token ? token.parentCurrency.id : accountNetwork,
+                network: token ? token.parentCurrencyId : accountNetwork,
               };
 
               const options = nanoApp
@@ -518,19 +519,23 @@ export function useDappLogic({
                 : undefined;
               tracking.dappSendTransactionRequested(manifest, trackingData);
 
-              const signedTransaction = await new Promise<SignedOperation>((resolve, reject) =>
-                uiHook["transaction.sign"]({
-                  account: currentAccount,
-                  parentAccount: undefined,
-                  signFlowInfos,
-                  options,
-                  onSuccess: signedOperation => {
-                    resolve(signedOperation);
-                  },
-                  onError: error => {
-                    reject(error);
-                  },
-                }),
+              const signedTransaction = await withLiveAppContext(
+                manifest,
+                () =>
+                  new Promise<SignedOperation>((resolve, reject) =>
+                    uiHook["transaction.sign"]({
+                      account: currentAccount,
+                      parentAccount: undefined,
+                      signFlowInfos,
+                      options,
+                      onSuccess: signedOperation => {
+                        resolve(signedOperation);
+                      },
+                      onError: error => {
+                        reject(error);
+                      },
+                    }),
+                  ),
               );
 
               const bridge = await getAccountBridge(currentAccount, undefined);
@@ -608,17 +613,21 @@ export function useDappLogic({
             );
 
             const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
-            const signedMessage = await new Promise<string>((resolve, reject) =>
-              uiHook["message.sign"]({
-                account: currentAccount,
-                message: formattedMessage,
-                options,
-                onSuccess: resolve,
-                onError: reject,
-                onCancel: () => {
-                  reject("Canceled by user");
-                },
-              }),
+            const signedMessage = await withLiveAppContext(
+              manifest,
+              () =>
+                new Promise<string>((resolve, reject) =>
+                  uiHook["message.sign"]({
+                    account: currentAccount,
+                    message: formattedMessage,
+                    options,
+                    onSuccess: resolve,
+                    onError: reject,
+                    onCancel: () => {
+                      reject("Canceled by user");
+                    },
+                  }),
+                ),
             );
 
             tracking.dappPersonalSignSuccess(manifest);
@@ -655,17 +664,21 @@ export function useDappLogic({
             );
 
             const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
-            const signedMessage = await new Promise<string>((resolve, reject) =>
-              uiHook["message.sign"]({
-                account: currentAccount,
-                message: formattedMessage,
-                options,
-                onSuccess: resolve,
-                onError: reject,
-                onCancel: () => {
-                  reject("Canceled by user");
-                },
-              }),
+            const signedMessage = await withLiveAppContext(
+              manifest,
+              () =>
+                new Promise<string>((resolve, reject) =>
+                  uiHook["message.sign"]({
+                    account: currentAccount,
+                    message: formattedMessage,
+                    options,
+                    onSuccess: resolve,
+                    onError: reject,
+                    onCancel: () => {
+                      reject("Canceled by user");
+                    },
+                  }),
+                ),
             );
 
             tracking.dappSignTypedDataSuccess(manifest);

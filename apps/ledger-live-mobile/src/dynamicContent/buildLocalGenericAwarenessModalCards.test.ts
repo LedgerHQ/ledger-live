@@ -16,14 +16,16 @@ describe("buildLocalGenericAwarenessModalCards", () => {
         {
           title: "Second",
           subtitle: "Second slide",
-          imageUrl: "https://example.com/second.png",
+          imageUrlLight: "https://example.com/second.png",
+          imageUrlDark: "",
           primaryButtonLabel: "Next",
           primaryButtonLink: "ledgerlive://portfolio",
         },
         {
           title: "First",
           subtitle: "First slide",
-          imageUrl: "https://example.com/first.png",
+          imageUrlLight: "https://example.com/first.png",
+          imageUrlDark: "",
           primaryButtonLabel: "Start",
           primaryButtonLink: "ledgerlive://portfolio",
         },
@@ -50,16 +52,20 @@ describe("buildLocalGenericAwarenessModalCards", () => {
           {
             title: "Second",
             subtitle: "Second slide",
-            imageUrl: "https://example.com/second.png",
+            imageUrlLight: "https://example.com/second.png",
+            imageUrlDark: "",
             primaryButtonLabel: "Next",
             primaryButtonLink: "ledgerlive://portfolio",
+            navigationButtonLabel: "",
           },
           {
             title: "First",
             subtitle: "First slide",
-            imageUrl: "https://example.com/first.png",
+            imageUrlLight: "https://example.com/first.png",
+            imageUrlDark: "",
             primaryButtonLabel: "Start",
             primaryButtonLink: "ledgerlive://portfolio",
+            navigationButtonLabel: "",
           },
         ],
       },
@@ -73,7 +79,8 @@ describe("buildLocalGenericAwarenessModalCards", () => {
       campaignId: "debug-feature-intro",
       title: "Feature intro",
       subtitle: "Feature intro subtitle",
-      imageUrl: "https://example.com/main.png",
+      imageUrlLight: "https://example.com/main.png",
+      imageUrlDark: "",
       primaryButtonLabel: "Start",
       primaryButtonLink: "ledgerlive://buy",
       secondaryButtonLabel: "Later",
@@ -109,7 +116,8 @@ describe("buildLocalGenericAwarenessModalCards", () => {
         isReady: true,
         title: "Feature intro",
         subtitle: "Feature intro subtitle",
-        imageUrl: "https://example.com/main.png",
+        imageUrlLight: "https://example.com/main.png",
+        imageUrlDark: "",
         primaryButtonLabel: "Start",
         primaryButtonLink: "ledgerlive://buy",
         secondaryButtonLabel: "Later",
@@ -132,7 +140,8 @@ describe("buildLocalGenericAwarenessModalCards", () => {
       campaignId: "debug-prompt",
       title: "Prompt title",
       subtitle: "Prompt subtitle",
-      imageUrl: "https://example.com/prompt.png",
+      imageUrlLight: "https://example.com/prompt.png",
+      imageUrlDark: "",
       primaryButtonLabel: "Learn more",
       primaryButtonLink: "https://example.com",
       secondaryButtonLabel: "Maybe later",
@@ -149,7 +158,8 @@ describe("buildLocalGenericAwarenessModalCards", () => {
       location: "generic_awareness_modal",
       title: "Prompt title",
       subtitle: "Prompt subtitle",
-      imageUrl: "https://example.com/prompt.png",
+      imageUrlLight: "https://example.com/prompt.png",
+      imageUrlDark: "",
       primaryButtonLabel: "Learn more",
       primaryButtonLink: "https://example.com",
       secondaryButtonLabel: "Maybe later",
@@ -164,13 +174,50 @@ describe("buildLocalGenericAwarenessModalCards", () => {
         layout: GenericAwarenessModalLayout.Prompt,
         title: "Prompt title",
         subtitle: "Prompt subtitle",
-        imageUrl: "https://example.com/prompt.png",
+        imageUrlLight: "https://example.com/prompt.png",
+        imageUrlDark: "",
         primaryButtonLabel: "Learn more",
         primaryButtonLink: "https://example.com",
         secondaryButtonLabel: "Maybe later",
         secondaryButtonLink: "ledgerlive://myledger",
       },
     ]);
+  });
+
+  it("should pass carousel navigationButtonLabel from debug form to Braze extras", () => {
+    const values: GenericAwarenessModalDebugFormValues = {
+      ...buildDefaultGenericAwarenessModalFormValues(),
+      campaignId: "debug-carousel-nav",
+      items: [
+        {
+          title: "Slide one",
+          subtitle: "Keep going",
+          navigationButtonLabel: "Keep going",
+        },
+        {
+          title: "Slide two",
+          subtitle: "All done",
+          navigationButtonLabel: "Done for now",
+        },
+      ],
+    };
+
+    const rawCards = buildLocalGenericAwarenessModalBrazeCards(values);
+    const contentCards = buildLocalGenericAwarenessModalContentCards(values);
+
+    expect(rawCards[0].extras).toMatchObject({
+      navigationButtonLabel: "Keep going",
+    });
+    expect(rawCards[1].extras).toMatchObject({
+      navigationButtonLabel: "Done for now",
+    });
+    expect(contentCards[0]).toMatchObject({
+      layout: GenericAwarenessModalLayout.Carousel,
+      data: [
+        expect.objectContaining({ navigationButtonLabel: "Keep going" }),
+        expect.objectContaining({ navigationButtonLabel: "Done for now" }),
+      ],
+    });
   });
 
   it("should provide app-start and deeplink campaign defaults", () => {

@@ -64,6 +64,7 @@ export function createApi(
     },
     listOperations: async (address, options) => {
       const { operations, nextCursor } = await listOperations({
+        config: aleoCoinConfig,
         currency,
         address,
         options,

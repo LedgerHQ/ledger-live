@@ -68,7 +68,7 @@ export function toTokenCurrencyRaw(token: TokenCurrency): TokenCurrencyRaw {
   return {
     id: token.id,
     contractAddress: token.contractAddress,
-    parentCurrencyId: token.parentCurrency.id,
+    parentCurrencyId: token.parentCurrencyId,
     tokenType: token.tokenType,
     name: token.name,
     ticker: token.ticker,
@@ -94,7 +94,7 @@ export function fromTokenCurrencyRaw(raw: TokenCurrencyRaw): TokenCurrency | und
     type: "TokenCurrency",
     id: raw.id,
     contractAddress: raw.contractAddress,
-    parentCurrency,
+    parentCurrencyId: raw.parentCurrencyId,
     tokenType: raw.tokenType,
     name: raw.name,
     ticker: raw.ticker,
@@ -344,7 +344,7 @@ export async function restoreTokensToCache(
       endpointName: "findTokenByAddressInCurrency",
       arg: {
         contract_address: token.contractAddress,
-        network: token.parentCurrency.id,
+        network: token.parentCurrencyId,
         ...(entry.token_identifier === undefined
           ? {}
           : { token_identifier: entry.token_identifier }),
@@ -359,7 +359,7 @@ export async function restoreTokensToCache(
         endpointName: "findTokenByAddressInCurrency",
         arg: {
           contract_address: token.contractAddress,
-          network: token.parentCurrency.id,
+          network: token.parentCurrencyId,
         },
         value: token,
       });

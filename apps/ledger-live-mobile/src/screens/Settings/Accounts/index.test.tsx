@@ -2,7 +2,7 @@ import React from "react";
 import { screen, waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import AccountsSettings from "./index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -17,53 +17,13 @@ jest.mock("@ledgerhq/cryptoassets/state", () => ({
   setCryptoAssetsStore: jest.fn(),
 }));
 
-const mockEthereumCurrency: CryptoCurrency = {
-  id: "ethereum",
-  name: "Ethereum",
-  ticker: "ETH",
-  type: "CryptoCurrency",
-  managerAppName: "Ethereum",
-  coinType: 60,
-  scheme: "ethereum",
-  color: "#0ebdcd",
-  family: "ethereum",
-  explorerViews: [],
-  units: [
-    {
-      name: "ether",
-      code: "ETH",
-      magnitude: 18,
-    },
-  ],
-};
-
-const mockPolygonCurrency: CryptoCurrency = {
-  id: "polygon",
-  name: "Polygon",
-  ticker: "MATIC",
-  type: "CryptoCurrency",
-  managerAppName: "Polygon",
-  coinType: 60,
-  scheme: "polygon",
-  color: "#8247e5",
-  family: "ethereum",
-  explorerViews: [],
-  units: [
-    {
-      name: "matic",
-      code: "MATIC",
-      magnitude: 18,
-    },
-  ],
-};
-
 const mockUsdtToken: TokenCurrency = {
   id: "ethereum/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrency: mockEthereumCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [
     {
@@ -80,7 +40,7 @@ const mockUsdcToken: TokenCurrency = {
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrency: mockEthereumCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [
     {
@@ -97,7 +57,7 @@ const mockPolygonUsdcToken: TokenCurrency = {
   name: "USD Coin (Polygon)",
   ticker: "USDC",
   contractAddress: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
-  parentCurrency: mockPolygonCurrency,
+  parentCurrencyId: "polygon",
   tokenType: "erc20",
   units: [
     {

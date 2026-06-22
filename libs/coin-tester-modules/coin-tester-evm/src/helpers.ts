@@ -24,6 +24,7 @@ export const blast = getCryptoCurrencyById("blast");
 export const bnb = getCryptoCurrencyById("bsc");
 export const base = getCryptoCurrencyById("base");
 export const arcTestnet = getCryptoCurrencyById("arc_testnet");
+export const robinhoodTestnet = getCryptoCurrencyById("robinhood_testnet");
 export const ERC20Interface = new ethers.Interface(ERC20_ABI);
 export const ERC721Interface = new ethers.Interface(ERC721_ABI);
 export const ERC1155Interface = new ethers.Interface(ERC1155_ABI);

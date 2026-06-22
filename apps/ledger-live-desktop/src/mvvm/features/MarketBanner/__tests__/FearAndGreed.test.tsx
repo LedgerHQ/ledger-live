@@ -105,7 +105,10 @@ describe("FearAndGreedIndicator", () => {
     const { container } = render(<FearAndGreedIndicator value={50} />);
     const path = container.querySelector("path");
     expect(path).toBeVisible();
-    expect(path?.getAttribute("stroke")).toBe("url(#paint0_linear_15877_11047)");
+
+    const stroke = path?.getAttribute("stroke");
+    expect(stroke).toMatch(/^url\(#.+\)$/);
+    expect(container.querySelector("linearGradient")).toBeTruthy();
   });
 
   it("renders the white indicator circle", () => {

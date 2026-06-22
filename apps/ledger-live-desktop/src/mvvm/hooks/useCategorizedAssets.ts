@@ -1,7 +1,11 @@
 import { useMemo } from "react";
 import { useDistribution } from "~/renderer/actions/general";
 import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
-import { useCategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/index";
+import { useStockAssetIds } from "@ledgerhq/live-common/dada-client/hooks/useStockAssetIds";
+import {
+  useCategorizedAssets,
+  type CategorizedAssetItem,
+} from "@ledgerhq/asset-aggregation/assetCategorization/index";
 import { useSelector } from "LLD/hooks/redux";
 import {
   blacklistedTokenIdsSelector,
@@ -10,7 +14,8 @@ import {
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function useCategorizedAssetsFromPortfolio() {
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("desktop");
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
@@ -20,24 +25,58 @@ export function useCategorizedAssetsFromPortfolio() {
     groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
   });
 
-  const { tickers: stablecoinTickers, isLoading: isLoadingStablecoinTickers } =
-    useStablecoinTickers("lld", __APP_VERSION__);
+  const {
+    tickers: stablecoinTickers,
+    isLoading: isLoadingStablecoinTickers,
+    isError: isStablecoinTickersError,
+  } = useStablecoinTickers("lld", __APP_VERSION__);
+
+  const {
+    ids: stockAssetIds,
+    isLoading: isLoadingStockIds,
+    isError: isStockIdsError,
+  } = useStockAssetIds("lld", __APP_VERSION__, !shouldDisplayAssetDiscoverability);
+
   const rawCategorizedAssets = useCategorizedAssets(distribution, stablecoinTickers);
 
+  const blacklistedTokenIdsSet = useMemo(
+    () => new Set(blacklistedTokenIds ?? []),
+    [blacklistedTokenIds],
+  );
+
   const categorizedAssets = useMemo(() => {
-    if (!blacklistedTokenIds?.length) return rawCategorizedAssets;
-    const isVisible = (item: { currency: { id: string } }) =>
-      !blacklistedTokenIds.includes(item.currency.id);
-    return {
-      ...rawCategorizedAssets,
-      cryptos: rawCategorizedAssets.cryptos.filter(isVisible),
-      stablecoins: rawCategorizedAssets.stablecoins.filter(isVisible),
-    };
-  }, [rawCategorizedAssets, blacklistedTokenIds]);
+    const cryptos: CategorizedAssetItem[] = [];
+    const stocks: CategorizedAssetItem[] = [];
+
+    for (const item of rawCategorizedAssets.cryptos) {
+      if (blacklistedTokenIdsSet.has(item.currency.id)) {
+        continue;
+      }
+      if (shouldDisplayAssetDiscoverability && stockAssetIds.has(item.currency.id)) {
+        stocks.push(item);
+      } else {
+        cryptos.push(item);
+      }
+    }
+
+    const stablecoins = rawCategorizedAssets.stablecoins.filter(
+      ({ currency }) => !blacklistedTokenIdsSet.has(currency.id),
+    );
+
+    return { cryptos, stablecoins, stocks };
+  }, [
+    rawCategorizedAssets,
+    blacklistedTokenIdsSet,
+    stockAssetIds,
+    shouldDisplayAssetDiscoverability,
+  ]);
 
   return {
     categorizedAssets,
     isLoadingStablecoinTickers: isLoadingStablecoinTickers || distribution.isLoading,
+    isStablecoinTickersError,
     stablecoinTickers,
+    isLoadingStocks: isLoadingStockIds || distribution.isLoading,
+    isStocksError: isStockIdsError,
   };
 }

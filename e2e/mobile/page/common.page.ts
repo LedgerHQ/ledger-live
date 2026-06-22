@@ -68,7 +68,7 @@ export default class CommonPage {
 
   @Step("Tap on view details")
   async successViewDetails() {
-    await waitForElementById(this.validateSuccessScreenId, 10000);
+    await waitForElementById(this.validateSuccessScreenId);
     await waitForElementById(this.successViewDetailsButtonId);
     await tapById(this.successViewDetailsButtonId);
   }

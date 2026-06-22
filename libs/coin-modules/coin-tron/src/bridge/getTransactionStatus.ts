@@ -11,13 +11,13 @@ import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framewo
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";
 import { ONE_TRX } from "../logic/constants";
+import { validateAddress } from "../logic/validateAddress";
 import {
   fetchTronAccount,
   fetchTronContract,
   getContractUserEnergyRatioConsumption,
   getDelegatedResource,
   getTronSuperRepresentatives,
-  validateAddress,
 } from "../network";
 import { Transaction, TransactionStatus, TronAccount } from "../types";
 import {
@@ -61,7 +61,7 @@ const getTransactionStatus = async (
   if (["send", "unDelegateResource", "legacyUnfreeze"].includes(mode)) {
     if (recipient === acc.freshAddress) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-    } else if (recipient && !(await validateAddress(recipient))) {
+    } else if (recipient && !(await validateAddress(recipient, {}))) {
       errors.recipient = new InvalidAddress(undefined, {
         currencyName: acc.currency.name,
       });

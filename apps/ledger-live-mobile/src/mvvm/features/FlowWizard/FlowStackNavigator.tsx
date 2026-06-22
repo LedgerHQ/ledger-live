@@ -21,7 +21,11 @@ import type {
 import type { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 
 import type { FlowStep } from "@ledgerhq/live-common/flows/wizard/types";
-import type { FlowStackNavigatorProps, ReactNativeFlowStepConfig } from "./types";
+import type {
+  FlowStackNavigatorProps,
+  ReactNativeFlowScreenPresentation,
+  ReactNativeFlowStepConfig,
+} from "./types";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AddAccountsNavigatorParamList, NavigatorName.AddAccounts>
@@ -29,7 +33,7 @@ type NavigationProps = BaseComposite<
 
 const Stack = createNativeStackNavigator();
 
-const bottomSheetScreenOptions: NativeStackNavigationOptions = {
+const transparentModalScreenOptions: NativeStackNavigationOptions = {
   presentation: "transparentModal",
   animation: "none",
   headerShown: false,
@@ -42,16 +46,16 @@ const bottomSheetScreenOptions: NativeStackNavigationOptions = {
 export function getFlowStackScreenOptions({
   defaultOptions,
   customOptions,
-  isBottomSheet,
+  screenPresentation,
 }: Readonly<{
   defaultOptions: NativeStackNavigationOptions;
   customOptions?: NativeStackNavigationOptions;
-  isBottomSheet?: boolean;
+  screenPresentation?: ReactNativeFlowScreenPresentation;
 }>): NativeStackNavigationOptions {
   return {
     ...defaultOptions,
     ...customOptions,
-    ...(isBottomSheet === true ? bottomSheetScreenOptions : {}),
+    ...(screenPresentation === "transparentModal" ? transparentModalScreenOptions : {}),
   };
 }
 
@@ -163,7 +167,7 @@ export function FlowStackNavigator<
         const stepScreenOptions = getFlowStackScreenOptions({
           defaultOptions,
           customOptions,
-          isBottomSheet: stepConfig?.bottomSheet,
+          screenPresentation: stepConfig?.screenPresentation,
         });
 
         // Generate initial params

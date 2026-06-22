@@ -8,7 +8,7 @@
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
-import { parseMarketListCategory } from "LLM/features/Market/utils/marketListCategory";
+import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { isDatadogEnabled } from "../../datadog";
 import type { MarketListCategory, OptionMetadata } from "../../reducers/types";
 
@@ -26,6 +26,7 @@ export enum EarnDeeplinkAction {
   GO_BACK = "go-back",
   STAKE = "stake",
   STAKE_ACCOUNT = "stake-account",
+  SIMULATE = "simulate",
 }
 
 export interface ValidatedEarnInfoModal {
@@ -261,7 +262,9 @@ export function validateMarketCurrencyId(currencyId: string | null): string | nu
   return currency?.id ?? null;
 }
 
-export function validateMarketListCategory(category: string | null): MarketListCategory | undefined {
+export function validateMarketListCategory(
+  category: string | null,
+): MarketListCategory | undefined {
   return parseMarketListCategory(category);
 }
 
@@ -296,20 +299,22 @@ export function validateEarnMenuModal(
   };
 }
 
+const VALID_EARN_ACTIONS = new Set<string>([
+  EarnDeeplinkAction.INFO_MODAL,
+  EarnDeeplinkAction.MENU_MODAL,
+  EarnDeeplinkAction.PROTOCOL_INFO_MODAL,
+  EarnDeeplinkAction.GET_FUNDS,
+  EarnDeeplinkAction.GO_BACK,
+  EarnDeeplinkAction.STAKE,
+  EarnDeeplinkAction.STAKE_ACCOUNT,
+  EarnDeeplinkAction.SIMULATE,
+]);
+
 /**
  * Type guard to check if a string is a valid EarnDeeplinkAction
  */
 function isValidEarnAction(action: string): action is EarnDeeplinkAction {
-  const validActions: string[] = [
-    EarnDeeplinkAction.INFO_MODAL,
-    EarnDeeplinkAction.MENU_MODAL,
-    EarnDeeplinkAction.PROTOCOL_INFO_MODAL,
-    EarnDeeplinkAction.GET_FUNDS,
-    EarnDeeplinkAction.GO_BACK,
-    EarnDeeplinkAction.STAKE,
-    EarnDeeplinkAction.STAKE_ACCOUNT,
-  ];
-  return validActions.includes(action);
+  return VALID_EARN_ACTIONS.has(action);
 }
 
 /**

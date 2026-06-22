@@ -1,8 +1,8 @@
 import { runSwapTest } from "./swap";
 
-const swap = new Swap(Account.ETH_1, Account.DOT_1, "0.02", undefined, Fee.MEDIUM);
 runSwapTest(
-  swap,
+  Account.ETH_1,
+  Account.DOT_1,
   ["B2CQA-3017"],
   [
     "@NanoSP",

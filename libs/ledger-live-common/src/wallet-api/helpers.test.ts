@@ -387,6 +387,34 @@ describe("wallet-api helpers", () => {
         expect(result).toBe(inputs.goToURL);
         expect(result).toContain("default.example.com");
       });
+
+      it("should keep manifest params authoritative when goToURL carries its own params", () => {
+        const trustedDappUrl = "https://default.example.com/app";
+        const manifest = {
+          url: "https://default.example.com/",
+          domains: ["default.example.com"],
+          params: {
+            dappUrl: trustedDappUrl,
+            networks: [{ currency: "ethereum", chainID: 1 }],
+          },
+        };
+        const otherParams = {
+          dappUrl: "https://other.example/app",
+          networks: [{ currency: "ethereum", chainID: 1 }],
+        };
+        const inputs = {
+          goToURL: `https://default.example.com/?params=${encodeURIComponent(
+            JSON.stringify(otherParams),
+          )}`,
+        };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        const result = getInitialURL(inputs, manifest);
+
+        const resultUrl = new URL(result);
+        const params = JSON.parse(resultUrl.searchParams.get("params") ?? "{}");
+        expect(params.dappUrl).toBe(trustedDappUrl);
+        expect(result).not.toContain("other.example");
+      });
     });
 
     describe("real-world manifest patterns", () => {
@@ -449,7 +477,24 @@ describe("wallet-api helpers", () => {
       expect(result).toContain("params=%7B%22foo%22%3A%22bar%22%7D"); // JSON.stringify({foo: "bar"}) encoded
     });
 
-    it("should use goToURL as-is when on same domain (without adding params)", () => {
+    it("should use goToURL as-is when on same domain and manifest has no params", () => {
+      const manifest = {
+        url: "https://example.com",
+        domains: ["allowed.com"],
+      };
+      const inputs = {
+        goToURL: "https://example.com/page",
+        customParam: "value",
+      };
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+      const result = getInitialURL(inputs, manifest);
+
+      expect(result).toBe("https://example.com/page");
+      expect(result).not.toContain("customParam");
+      expect(result).not.toContain("params");
+    });
+
+    it("should pin trusted manifest.params onto goToURL when on same domain", () => {
       const manifest = {
         url: "https://example.com",
         domains: ["allowed.com"],
@@ -462,9 +507,29 @@ describe("wallet-api helpers", () => {
       // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
       const result = getInitialURL(inputs, manifest);
 
-      expect(result).toBe("https://example.com/page");
+      const resultUrl = new URL(result);
+      expect(resultUrl.origin + resultUrl.pathname).toBe("https://example.com/page");
+      expect(resultUrl.searchParams.get("params")).toBe(JSON.stringify({ foo: "bar" }));
       expect(result).not.toContain("customParam");
-      expect(result).not.toContain("params");
+    });
+
+    it("should override params already present in goToURL with trusted manifest.params", () => {
+      const manifest = {
+        url: "https://example.com",
+        domains: ["allowed.com"],
+        params: { foo: "bar" },
+      };
+      const inputs = {
+        goToURL: `https://example.com/page?params=${encodeURIComponent(
+          JSON.stringify({ foo: "other" }),
+        )}`,
+      };
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+      const result = getInitialURL(inputs, manifest);
+
+      const resultUrl = new URL(result);
+      expect(resultUrl.searchParams.get("params")).toBe(JSON.stringify({ foo: "bar" }));
+      expect(result).not.toContain("other");
     });
   });
 });

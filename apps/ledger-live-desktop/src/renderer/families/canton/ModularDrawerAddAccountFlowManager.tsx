@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
@@ -74,7 +75,10 @@ const ModularDrawerAddAccountFlowManager = ({
   });
 
   const isAccountSelectionFlow = !!onAccountSelected;
-  const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
+  const cryptoCurrency =
+    currency.type === "CryptoCurrency"
+      ? currency
+      : getCryptoCurrencyById(currency.parentCurrencyId);
 
   const handleConnect = useCallback(
     (result: AppResult) => {

@@ -1,6 +1,7 @@
 export { broadcast } from "./broadcast";
 export { combine } from "./combine";
 export { craftTransaction, rawEncode } from "./craftTransaction";
+export { craftRawOperations } from "./craftRawOperations";
 export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { getBlock } from "./getBlock";

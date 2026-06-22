@@ -21,7 +21,8 @@ export function useTopBarViewModel(
 ) {
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
-  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("mobile");
   const page = screenName ?? ScreenName.Portfolio;
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { navigateToRebornFlow } = useRebornFlow();
@@ -117,7 +118,14 @@ export function useTopBarViewModel(
     });
   }, [navigation, page]);
 
+  const onSearchPress = useCallback(() => {
+    track(BUTTON_CLICKED_EVENT, { button: "Search", page });
+    navigation.navigate(NavigatorName.GlobalSearch);
+  }, [navigation, page]);
+
   return {
+    shouldDisplayAssetDiscoverability,
+    onSearchPress,
     onMyLedgerPress,
     onMyWalletPress,
     shouldDisplayMyWallet,

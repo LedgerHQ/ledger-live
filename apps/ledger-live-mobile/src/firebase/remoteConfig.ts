@@ -2,11 +2,12 @@ import { getRemoteConfig } from "@react-native-firebase/remote-config";
 import snakeCase from "lodash/snakeCase";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
-import { formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import { formatDefaultFeatures } from "@features/platform-feature-flags";
 import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 
-// Precomputed inverse of live-common's `formatToFirebaseFeatureId` (`feature_${snakeCase(id)}`).
+// Precomputed inverse of @features/platform-feature-flags' `formatToFirebaseFeatureId`
+// (`feature_${snakeCase(id)}`).
 // `lodash.camelCase(snakeCase(id))` is not a clean round-trip for FeatureIds with digits
 // or consecutive uppercase letters (e.g. `llmAccountListUI` → `llm_account_list_ui` →
 // `llmAccountListUi`), which silently drops the flag at the slice boundary.

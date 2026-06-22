@@ -1,4 +1,5 @@
 import { log } from "@ledgerhq/logs";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import type {
@@ -20,7 +21,7 @@ export function isWalletAPISupportedCurrency(
   }
 
   if (isTokenCurrency(currency)) {
-    return includes(WALLET_API_FAMILIES, currency.parentCurrency.family);
+    return includes(WALLET_API_FAMILIES, getCryptoCurrencyById(currency.parentCurrencyId).family);
   }
   return false;
 }
@@ -145,7 +146,12 @@ export const getInitialURL = (
       typeof inputs?.goToURL === "string" &&
       isWhitelistedDomain(inputs.goToURL, manifest.url.toString())
     ) {
-      return inputs?.goToURL;
+      if (manifest.params) {
+        const goToURL = new URL(inputs.goToURL);
+        goToURL.searchParams.set("params", JSON.stringify(manifest.params));
+        return goToURL.toString();
+      }
+      return inputs.goToURL;
     }
 
     const url = new URL(manifest.url.toString());

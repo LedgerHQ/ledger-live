@@ -10,7 +10,7 @@ export const htsToken: TokenCurrency = {
   ticker: "MHTS",
   units: [{ name: "My HTS Token", code: "MHTS", magnitude: 8 }],
   contractAddress: "0.0.123456",
-  parentCurrency: hederaCurrency,
+  parentCurrencyId: hederaCurrency.id,
   tokenType: "hts",
 };
 
@@ -21,6 +21,6 @@ export const erc20Token: TokenCurrency = {
   ticker: "MERC",
   units: [{ name: "My ERC-20 Token", code: "MERC", magnitude: 18 }],
   contractAddress: "0x1234",
-  parentCurrency: hederaCurrency,
+  parentCurrencyId: hederaCurrency.id,
   tokenType: "erc20",
 };

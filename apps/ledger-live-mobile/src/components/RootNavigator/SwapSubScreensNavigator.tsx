@@ -35,11 +35,7 @@ function SwapHistoryBackButton() {
   );
 }
 
-function getSwapHistoryScreenOptions({
-  headerTitle,
-}: {
-  headerTitle: string;
-}) {
+function getSwapHistoryScreenOptions({ headerTitle }: { headerTitle: string }) {
   return {
     headerTitle,
     headerLeft: () => <SwapHistoryBackButton />,

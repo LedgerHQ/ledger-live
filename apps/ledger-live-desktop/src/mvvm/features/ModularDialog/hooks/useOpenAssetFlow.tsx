@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   useModularDrawerVisibility,
@@ -102,7 +103,9 @@ export function useOpenAssetFlow(
         );
       } else {
         const cryptoCurrency =
-          currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
+          currency.type === "CryptoCurrency"
+            ? currency
+            : getCryptoCurrencyById(currency.parentCurrencyId);
         if (autoCloseDrawer) {
           setDrawer();
         }

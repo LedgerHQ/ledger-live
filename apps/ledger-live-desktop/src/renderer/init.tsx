@@ -51,6 +51,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
+import { importMarketBannerState } from "./reducers/marketBanner";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { setupRecentAddressesStore } from "./recentAddresses";
@@ -61,6 +62,7 @@ import {
   setBannerVisible,
   selectFeature,
   selectRemoteFlagsReady,
+  type FeatureId,
 } from "@shared/feature-flags";
 import {
   setAllCoinConfigOverrides,
@@ -69,7 +71,6 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
-import { FeatureId } from "@ledgerhq/types-live";
 import { initHistory } from "~/renderer/reducers/history";
 
 const rootNode = document.getElementById("react-root");
@@ -332,6 +333,11 @@ async function init() {
   const marketState = await getKey("app", "market");
   if (marketState) {
     store.dispatch(importMarketState(marketState));
+  }
+
+  const marketBannerState = await getKey("app", "marketBanner");
+  if (marketBannerState) {
+    store.dispatch(importMarketBannerState(marketBannerState));
   }
 
   webFrame.setVisualZoomLevelLimits(1, 1);

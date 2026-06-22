@@ -102,6 +102,11 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     selectorBottomSheetRef.current?.dismiss();
   }, [viewModel, selectorBottomSheetRef]);
 
+  const handleSelectCustomFees = useCallback(() => {
+    viewModel.onSelectCustomFees?.();
+    selectorBottomSheetRef.current?.dismiss();
+  }, [viewModel, selectorBottomSheetRef]);
+
   const handleCloseInfo = useCallback(() => {
     infoBottomSheetRef.current?.dismiss();
   }, [infoBottomSheetRef]);
@@ -192,7 +197,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
           ) : null}
 
           {viewModel.uiConfig?.hasCustomFees ? (
-            <Pressable style={styles.presetOption} onPress={() => handleSelectStrategy("custom")}>
+            <Pressable style={styles.presetOption} onPress={handleSelectCustomFees}>
               <View style={styles.presetLeft}>
                 <Text typography="body2SemiBold" lx={{ color: "base" }}>
                   {t("send.fees.customFees")}

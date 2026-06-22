@@ -18,7 +18,8 @@ import type {
 } from "@ledgerhq/cryptoassets/cal-client/state-manager/types";
 import { Subject } from "rxjs";
 import { StateDB } from "../hooks/useDBRaw";
-import { useFeatureFlags } from "../featureFlags/FeatureFlagsContext";
+import { useFeatureFlags } from "@features/platform-feature-flags";
+import type { Feature, FeatureId } from "@shared/feature-flags";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
@@ -313,7 +314,8 @@ export function useWalletAPIServer({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<ThunkDispatch<any, any, UnknownAction>>();
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
-  const { getFeature } = useFeatureFlags();
+  const flags = useFeatureFlags();
+  const getFeature = useCallback((id: FeatureId): Feature | null => flags[id] ?? null, [flags]);
   const permission = usePermission(manifest);
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
@@ -547,7 +549,7 @@ export function useWalletAPIServer({
         const accountCurrencyId =
           account.type === "TokenAccount" ? account.token.id : account.currency.id;
         const parentCurrencyId =
-          account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
+          account.type === "TokenAccount" ? account.token.parentCurrencyId : account.currency.id;
 
         // Check if account currency ID matches the effective patterns
         const isAllowed =
@@ -751,7 +753,7 @@ export function useWalletAPIServer({
 
             const networkId =
               account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
+                ? account.token.parentCurrencyId
                 : account.currency.id;
 
             const broadcastTrackingData = {
@@ -802,7 +804,7 @@ export function useWalletAPIServer({
           (account, parentAccount, signFlowInfos) => {
             currency =
               account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
+                ? account.token.parentCurrencyId
                 : account.currency.id;
             return new Promise((resolve, reject) => {
               let done = false;
@@ -883,7 +885,7 @@ export function useWalletAPIServer({
 
               const networkId =
                 account.type === "TokenAccount"
-                  ? account.token.parentCurrency.id
+                  ? account.token.parentCurrencyId
                   : account.currency.id;
 
               const broadcastTrackingData = {
@@ -979,7 +981,7 @@ export function useWalletAPIServer({
 
             const networkId =
               account.type === "TokenAccount"
-                ? account.token.parentCurrency.id
+                ? account.token.parentCurrencyId
                 : account.currency.id;
 
             const broadcastTrackingData = {

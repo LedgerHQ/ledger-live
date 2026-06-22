@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
+import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
@@ -117,6 +119,10 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
+  const allAccounts = useSelector(accountsSelector);
+
+  const mainAccount =
+    account.type === "TokenAccount" ? getParentAccount(account, allAccounts) : account;
 
   const {
     isSyncing,
@@ -124,7 +130,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     start: handleStart,
     stop: handleStop,
   } = useAleoPrivateSync({
-    account,
+    account: mainAccount,
     autoStart: account.type === "Account" && !account.aleoResources?.lastPrivateSyncDate,
     keepAliveOnUnmount: true,
   });

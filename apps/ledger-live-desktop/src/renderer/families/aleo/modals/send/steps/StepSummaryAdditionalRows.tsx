@@ -5,13 +5,12 @@ import {
   getEstimatedSigningTime,
   isPublicTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
-import { isAleoTransaction } from "./utils";
-import { getAleoCurrencyConfig } from "../../../shared/utils";
 import Label from "~/renderer/components/Label";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import Box from "~/renderer/components/Box";
 import type { BoxProps } from "~/renderer/components/Box/Box";
 import type { AleoFamily } from "../../../types";
+import { getAleoCurrencyConfig, isAleoTransaction } from "../../../shared/utils";
 
 type StepSummaryAdditionalRowProps = BoxProps & {
   label: React.ReactNode;

@@ -1,5 +1,25 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.27.0
+
+### Minor Changes
+
+- [#18421](https://github.com/LedgerHQ/ledger-live/pull/18421) [`8b3c998`](https://github.com/LedgerHQ/ledger-live/commit/8b3c99867c109bd6502cf10ecd2d15b0c2f4680a) Thanks [@jeportie](https://github.com/jeportie)! - Use a dynamic minimum sell amount in the buy/sell E2E specs: fetch the live per-currency `maxOfMin` from the sell `cryptoLimitations` API (with a USD-countervalues fallback) instead of hardcoded amounts, so sell flows always clear every provider's threshold. Extract `getAmountFromUSD` into a shared `currencyUtils` helper.
+
+- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint the remaining `@ledgerhq/types-live` feature-type consumers (desktop app + desktop/mobile e2e) onto `@shared/feature-flags`, taking in-repo usage of the legacy types-live feature types to zero. Also drop now-dead feature-flag tooling config: the `@ledgerhq/live-common/featureFlags/index` `unimported` entry in `live-dmk-desktop`, and the deleted `FeatureFlagsContextBridge` eslint-guardrail exemptions in both apps (the block rules against re-introducing the deleted module are kept).
+
+- [#18435](https://github.com/LedgerHQ/ledger-live/pull/18435) [`136ca7c`](https://github.com/LedgerHQ/ledger-live/commit/136ca7c3bc4a489e49a8df647e2f87585cd705c5) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Align delegate and earn v2 e2e tests (desktop and mobile) with the versioned stakePrograms feature-flag values. ETH staking now redirects into the earn deposit webview instead of a native staking flow, so the affected cold-start, inline add-account, partner-dapp CTA and delegate assertions drive the deposit webview for ETH (amount → provider → partner dapp) while other assets keep the native staking checks. Keeps the test environment in sync with production.
+
+## 0.27.0-next.0
+
+### Minor Changes
+
+- [#18421](https://github.com/LedgerHQ/ledger-live/pull/18421) [`8b3c998`](https://github.com/LedgerHQ/ledger-live/commit/8b3c99867c109bd6502cf10ecd2d15b0c2f4680a) Thanks [@jeportie](https://github.com/jeportie)! - Use a dynamic minimum sell amount in the buy/sell E2E specs: fetch the live per-currency `maxOfMin` from the sell `cryptoLimitations` API (with a USD-countervalues fallback) instead of hardcoded amounts, so sell flows always clear every provider's threshold. Extract `getAmountFromUSD` into a shared `currencyUtils` helper.
+
+- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint the remaining `@ledgerhq/types-live` feature-type consumers (desktop app + desktop/mobile e2e) onto `@shared/feature-flags`, taking in-repo usage of the legacy types-live feature types to zero. Also drop now-dead feature-flag tooling config: the `@ledgerhq/live-common/featureFlags/index` `unimported` entry in `live-dmk-desktop`, and the deleted `FeatureFlagsContextBridge` eslint-guardrail exemptions in both apps (the block rules against re-introducing the deleted module are kept).
+
+- [#18435](https://github.com/LedgerHQ/ledger-live/pull/18435) [`136ca7c`](https://github.com/LedgerHQ/ledger-live/commit/136ca7c3bc4a489e49a8df647e2f87585cd705c5) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Align delegate and earn v2 e2e tests (desktop and mobile) with the versioned stakePrograms feature-flag values. ETH staking now redirects into the earn deposit webview instead of a native staking flow, so the affected cold-start, inline add-account, partner-dapp CTA and delegate assertions drive the deposit webview for ETH (amount → provider → partner dapp) while other assets keep the native staking checks. Keeps the test environment in sync with production.
+
 ## 0.26.0
 
 ### Minor Changes

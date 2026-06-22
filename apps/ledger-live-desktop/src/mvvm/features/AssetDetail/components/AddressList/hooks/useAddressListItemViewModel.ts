@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -32,7 +33,7 @@ export function useAddressListItemViewModel(
     account.type === "TokenAccount" ? lookupParentAccount(account.parentId) : undefined;
   const networkCurrency =
     account.type === "TokenAccount"
-      ? (parentAccount?.currency ?? account.token.parentCurrency)
+      ? (parentAccount?.currency ?? getCryptoCurrencyById(account.token.parentCurrencyId))
       : currency;
 
   const accountForDisplayName =

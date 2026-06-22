@@ -54,11 +54,6 @@ async function main() {
     }
   }
 
-  // when running inside the test electron container, there is no src.
-  if (fs.existsSync("src")) {
-    child_process.exec("zx ./scripts/sync-families-dispatch.mjs");
-  }
-
   const releaseNotes = fs.existsSync("release-notes.json");
   if (!releaseNotes) {
     fs.writeFileSync("release-notes.json", JSON.stringify([], null, 2), "utf-8");

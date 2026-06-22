@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { buildTransaction } from "../buildTransaction";
 import { CardanoNotEnoughFunds } from "../errors";
 import type { CardanoAccount, CardanoResources, Transaction, TransactionStatus } from "../types";
+import { isRecoverableBuildError } from "./buildErrors";
 
 export async function getUndelegateTransactionStatus(
   account: CardanoAccount,
@@ -24,11 +25,8 @@ export async function getUndelegateTransactionStatus(
 
   try {
     await buildTransaction(account, transaction);
-  } catch (e: any) {
-    if (
-      e.message.toLowerCase() === "not enough ada" ||
-      e.message.toLowerCase() === "not enough tokens"
-    ) {
+  } catch (e: unknown) {
+    if (isRecoverableBuildError(e)) {
       errors.amount = new CardanoNotEnoughFunds();
     } else {
       throw e;

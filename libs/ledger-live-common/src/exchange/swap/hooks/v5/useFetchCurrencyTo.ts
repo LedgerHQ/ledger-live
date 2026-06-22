@@ -4,7 +4,7 @@ import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/he
 import { getSwapAPIBaseURL } from "../../index";
 import { fetchCurrencyTo } from "../../api/v5";
 import { useAPI } from "../../../../hooks/useAPI";
-import { useFeature } from "../../../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useFilteredProviders } from "./useFilteredProviders";
 import { FETCH_CURRENCIES_TIMEOUT_MS } from "./constants";
 

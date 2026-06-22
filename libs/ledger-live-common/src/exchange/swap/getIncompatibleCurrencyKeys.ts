@@ -100,11 +100,11 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
 export const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
   const parentFrom =
     exchange.fromAccount.type === "TokenAccount"
-      ? INCOMPATIBLE_NANO_S_TOKENS_KEYS[exchange.fromAccount.token.parentCurrency.id]
+      ? INCOMPATIBLE_NANO_S_TOKENS_KEYS[exchange.fromAccount.token.parentCurrencyId]
       : undefined;
   const parentTo =
     exchange.toAccount.type === "TokenAccount"
-      ? INCOMPATIBLE_NANO_S_TOKENS_KEYS[exchange.toAccount.token.parentCurrency.id]
+      ? INCOMPATIBLE_NANO_S_TOKENS_KEYS[exchange.toAccount.token.parentCurrencyId]
       : undefined;
   const from =
     exchange.fromAccount.type === "Account"

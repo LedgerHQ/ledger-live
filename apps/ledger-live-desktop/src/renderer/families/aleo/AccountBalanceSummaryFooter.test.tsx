@@ -7,7 +7,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
-import { ALEO_ACCOUNT_1 } from "./__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT } from "./__mocks__/account.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
@@ -84,10 +84,9 @@ describe("AccountBalanceSummaryFooter", () => {
   });
 
   it("should return null when account type is not Account", () => {
-    const { container } = render(
-      // @ts-expect-error - testing with a non-Account type at runtime
-      <AccountBalanceSummaryFooter account={{ ...mockAccount, type: "TokenAccount" }} />,
-    );
+    const { container } = render(<AccountBalanceSummaryFooter account={ALEO_TOKEN_ACCOUNT} />, {
+      initialState: { accounts: [mockAccount] },
+    });
 
     expect(container).toBeEmptyDOMElement();
   });

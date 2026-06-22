@@ -9,7 +9,11 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
-import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  localeSelector,
+  starredMarketCoinsSelector,
+} from "~/renderer/reducers/settings";
 import {
   BASIC_REFETCH,
   REFETCH_TIME_ONE_MINUTE,
@@ -17,6 +21,11 @@ import {
   isDataStale,
 } from "~/renderer/screens/market/utils";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
+import { useMarketCategories } from "LLD/features/Market/hooks/useMarketCategories";
+import {
+  getMarketCategoriesParam,
+  isBuiltInMarketListCategory,
+} from "@ledgerhq/live-common/market/utils/category";
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
@@ -26,6 +35,7 @@ export function useMarket() {
   const marketCurrentPage = useSelector(marketCurrentPageSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
+  const settingsCounterValue = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
 
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
@@ -34,20 +44,47 @@ export function useMarket() {
 
   const { range, starred = [], liveCompatible, order, search = "" } = marketParams;
 
-  const starFilterOn = starred.length > 0;
+  const categories = useMarketCategories();
 
   useInitSupportedCounterValues();
 
   const { supportedCounterCurrencies } = useMarketDataProvider();
 
-  const { shouldDisplayMarketBanner: filterBySupported } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayMarketBanner: filterBySupported, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("desktop");
+
+  // When asset discoverability is on, the category bar is the source of truth for
+  // the starred / stocks lists; otherwise we keep the legacy `starred` param behaviour.
+  const isStarredCategory =
+    shouldDisplayAssetDiscoverability && categories.selectedCategory === "starred";
+  const isStocksCategory =
+    shouldDisplayAssetDiscoverability && categories.selectedCategory === "stocks";
+  const isTrendingCategory =
+    shouldDisplayAssetDiscoverability && !isBuiltInMarketListCategory(categories.selectedCategory);
+
+  const starFilterOn = isStarredCategory || starred.length > 0;
 
   const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
 
+  // While the supported list is still loading we keep the user's counter value, and only fall
+  // back to usd once we know it is unsupported — otherwise a request fires with usd first.
+  const isCounterValueUnsupported =
+    !!supportedCounterCurrencies && !supportedCounterCurrencies.includes(settingsCounterValue);
+  const discoverabilityCounterCurrency = isCounterValueUnsupported ? "usd" : settingsCounterValue;
+  const effectiveCounterCurrency = shouldDisplayAssetDiscoverability
+    ? discoverabilityCounterCurrency
+    : marketParams.counterCurrency;
+
+  const resolvedMarketParams = { ...marketParams, counterCurrency: effectiveCounterCurrency };
+
   const marketResult = useMarketDataHook({
-    ...marketParams,
+    ...resolvedMarketParams,
     starred: starFilterOn ? starredMarketCoins : starred,
     liveCompatible: shouldDisplayLiveCompatible,
+    filter: marketParams.filter,
+    categories: shouldDisplayAssetDiscoverability
+      ? getMarketCategoriesParam(categories.selectedCategory)
+      : undefined,
   });
 
   const timeRanges = useMemo(
@@ -61,12 +98,46 @@ export function useMarket() {
 
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
-  const currenciesLength = marketResult.data.length;
-  const loading = marketResult.isLoading;
+  // Full-word labels ("1 day", "1 week"…) for the Lumen Select pill (asset discoverability).
+  const timeRangeSelectOptions = useMemo(
+    () =>
+      timeRanges.map(({ value }) => ({
+        value,
+        label: t(`market.range.${rangeDataTable[value].label.replace("_label", "_fullLabel")}`),
+      })),
+    [t, timeRanges],
+  );
+
+  // The backend drops the `starred` filter when the list is empty (it then returns
+  // the full list), so with no favorites we must show the empty state instead.
+  const isFavoritesEmpty = isStarredCategory && starredMarketCoins.length === 0;
+  const emptyState = isFavoritesEmpty ? ("favorites" as const) : undefined;
+
+  const marketData = isFavoritesEmpty ? [] : marketResult.data;
+
+  const currenciesLength = marketData.length;
+  const loading = !isFavoritesEmpty && marketResult.isLoading;
   const isError = marketResult.isError;
   const freshLoading = loading && !currenciesLength;
+
+  // Identity of the underlying list (everything but the page cursor). When it changes the user
+  // switched list (category/sort/range/search/filter…), so pagination must re-arm and the scroll
+  // must jump back to the top. It intentionally excludes `page`, so paginating/refetching the same
+  // list does not trigger a reset.
+  const listKey = [
+    categories.selectedCategory,
+    order,
+    range,
+    effectiveCounterCurrency,
+    search,
+    String(shouldDisplayLiveCompatible),
+    String(starFilterOn),
+  ].join("|");
+  // The extra row is the "show all" affordance, only relevant for the unfiltered list.
   const itemCount =
-    starred.length > 0 || search.length > 0 ? currenciesLength : currenciesLength + 1;
+    starFilterOn || isStocksCategory || isTrendingCategory || search.length > 0
+      ? currenciesLength
+      : currenciesLength + 1;
 
   const setCounterCurrency = useCallback(
     (ticker: string) => {
@@ -118,11 +189,23 @@ export function useMarket() {
   );
 
   const toggleFilterByStarredAccounts = useCallback(() => {
+    // With the category bar on, the starred shortcut maps to the All/Starred categories.
+    if (shouldDisplayAssetDiscoverability) {
+      categories.onSelectCategory(isStarredCategory ? "all" : "starred");
+      return;
+    }
     if (starredMarketCoins.length > 0 || starFilterOn) {
       const starred = starFilterOn ? [] : starredMarketCoins;
       refresh({ starred, page: 1 });
     }
-  }, [refresh, starFilterOn, starredMarketCoins]);
+  }, [
+    categories,
+    isStarredCategory,
+    refresh,
+    shouldDisplayAssetDiscoverability,
+    starFilterOn,
+    starredMarketCoins,
+  ]);
 
   const toggleLiveCompatible = useCallback(() => {
     refresh({ liveCompatible: !liveCompatible });
@@ -198,10 +281,14 @@ export function useMarket() {
     t,
     liveCompatible,
     starFilterOn,
-    marketData: marketResult.data,
+    marketData,
+    categories,
+    shouldDisplayAssetDiscoverability,
+    emptyState,
     starredMarketCoins,
     timeRanges,
-    marketParams,
+    timeRangeSelectOptions,
+    marketParams: resolvedMarketParams,
     marketCurrentPage,
     timeRangeValue,
     itemCount,
@@ -209,6 +296,7 @@ export function useMarket() {
     loading,
     isError,
     currenciesLength,
+    listKey,
     refreshRate: REFRESH_RATE,
   };
 }

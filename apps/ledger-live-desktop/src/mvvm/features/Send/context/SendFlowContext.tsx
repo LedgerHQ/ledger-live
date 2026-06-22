@@ -10,6 +10,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { FlowStatusActions } from "@ledgerhq/live-common/flows/wizard/types";
 import type { FlowWizardContextValue } from "../../FlowWizard/types";
 import { FlowWizardProvider } from "../../FlowWizard/FlowWizardContext";
+import { SendAmountDisplayModeProvider } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import type { SendStepConfig } from "../types";
 
 /**
@@ -89,11 +90,13 @@ export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
 
   return (
     <FlowWizardProvider value={value}>
-      <SendFlowDataContext.Provider value={dataValue}>
-        <SendFlowActionsContext.Provider value={actionsValue}>
-          {children}
-        </SendFlowActionsContext.Provider>
-      </SendFlowDataContext.Provider>
+      <SendAmountDisplayModeProvider>
+        <SendFlowDataContext.Provider value={dataValue}>
+          <SendFlowActionsContext.Provider value={actionsValue}>
+            {children}
+          </SendFlowActionsContext.Provider>
+        </SendFlowDataContext.Provider>
+      </SendAmountDisplayModeProvider>
     </FlowWizardProvider>
   );
 }

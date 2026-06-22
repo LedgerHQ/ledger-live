@@ -14,8 +14,10 @@ import { createMockCategorizedAssets } from "@ledgerhq/asset-aggregation/mocks/c
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
+import { mockStocksResponse } from "@ledgerhq/live-common/dada-client/mocks/stocks.mock";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
+const DADA_API_ENDPOINT = "https://dada.api.ledger-test.com/v1/assets";
 
 const mockNavigate = jest.fn();
 
@@ -103,13 +105,21 @@ const defaultPollingMock = {
   stop: jest.fn(),
   wipe: jest.fn(),
 };
+
+const mockUseCategorizedAssetsFromPortfolio = jest.fn();
+
 jest.mock("LLD/hooks/useCategorizedAssets", () => ({
-  useCategorizedAssetsFromPortfolio: () => ({
-    categorizedAssets: createMockCategorizedAssets(),
-    isLoadingStablecoinTickers: false,
-    stablecoinTickers: new Set<string>(),
-  }),
+  useCategorizedAssetsFromPortfolio: (...args: unknown[]) =>
+    mockUseCategorizedAssetsFromPortfolio(...args),
 }));
+
+const defaultCategorizedAssetsMock = () => ({
+  categorizedAssets: createMockCategorizedAssets({ stocks: [] }),
+  isLoadingStablecoinTickers: false,
+  stablecoinTickers: new Set<string>(),
+  isLoadingStocks: false,
+  isStocksError: false,
+});
 
 jest.mock("~/renderer/hooks/usePrice", () => {
   const { getFiatCurrencyByTicker } = jest.requireActual("@ledgerhq/live-common/currencies/index");
@@ -156,6 +166,7 @@ describe("PortfolioView", () => {
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
+    shouldDisplayAssetDiscoverability: false,
     shouldDisplayOperationsList: true,
     shouldDisplayBorrowSection: false,
     shouldDisplayBrazePlacement: false,
@@ -172,6 +183,7 @@ describe("PortfolioView", () => {
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
     mockedUseNavigate.mockReturnValue(mockNavigate);
+    mockUseCategorizedAssetsFromPortfolio.mockReturnValue(defaultCategorizedAssetsMock());
   });
 
   afterEach(() => {
@@ -426,7 +438,7 @@ describe("PortfolioView", () => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
       });
 
-      expect(screen.getByText("Explore the market")).toBeVisible();
+      expect(screen.getByText("Market")).toBeVisible();
     });
 
     it("should render MarketBanner skeleton while loading", () => {
@@ -458,7 +470,7 @@ describe("PortfolioView", () => {
 
     it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Explore the market")).toBeNull();
+      expect(screen.queryByText("Market")).toBeNull();
     });
   });
 
@@ -621,6 +633,54 @@ describe("PortfolioView", () => {
       expect(screen.queryByTestId("crypto-addresses-banner")).toBeNull();
     });
   });
+
+  describe("AssetDiscoverability", () => {
+    it("should render Stocks discovery section when shouldDisplayAssetDiscoverability is true and user holds no stocks", async () => {
+      server.use(http.get(DADA_API_ENDPOINT, () => HttpResponse.json(mockStocksResponse)));
+
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("stock-item-ticker-aaplx")).toBeVisible();
+      });
+
+      expect(screen.getByTestId("stocks-section")).toBeVisible();
+      expect(screen.getByTestId("stocks-explore")).toBeVisible();
+    });
+
+    it("should render owned stocks as an asset table when user holds stocks", async () => {
+      const aaplx = mockStocksResponse.cryptoOrTokenCurrencies["solana/spl/applex"];
+      mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+        ...defaultCategorizedAssetsMock(),
+        categorizedAssets: createMockCategorizedAssets({
+          stocks: [
+            {
+              currency: aaplx,
+              balance: 100_000_000,
+              value: 226.4,
+              distribution: 0.5,
+              accounts: [],
+            },
+          ],
+        }),
+      });
+
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("w40-asset-row-apple-xstock-solanasplapplex")).toBeVisible();
+      });
+
+      expect(screen.getByTestId("stocks-section")).toBeVisible();
+      expect(screen.queryByTestId("stocks-explore")).toBeNull();
+    });
+
+    it("should not render Stocks section when shouldDisplayAssetDiscoverability is false", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={false} />);
+
+      expect(screen.queryByTestId("stocks-section")).toBeNull();
+    });
+  });
 });
 
 const walletV4TourFlagOverrides = withFlagOverrides({
@@ -637,6 +697,7 @@ describe("Portfolio (Wallet V4 Tour)", () => {
     mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
+    mockUseCategorizedAssetsFromPortfolio.mockReturnValue(defaultCategorizedAssetsMock());
   });
 
   afterEach(() => {

@@ -63,16 +63,13 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
     <QueuedDrawerBottomSheet
       isRequestingToBeOpened={wrappedProps.enabled}
       onClose={wrappedProps.onUserCancel}
-      preventBackdropClick={!wrappedProps.cancellableUI}
       hideHandle
       enableDynamicSizing
     >
       <SourceFlowProvider value={sourceFlow}>
         <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
           <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
-            {wrappedProps.cancellableUI && !hasHeaderOverride && (
-              <BottomSheetHeader density="expanded" />
-            )}
+            {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
             <DeviceIntentExecutor
               {...wrappedProps}
               platformConfig={platformConfig}

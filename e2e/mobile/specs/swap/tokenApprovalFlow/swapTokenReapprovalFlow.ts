@@ -50,7 +50,6 @@ export function runSwapTokenReapprovalFlow(
     it("Swap - token reapproval flow", async () => {
       await app.swap.logSelectedProvider(swapProvider.uiName);
       await revokeTokenApproval(fromAccount, swapProvider);
-      await app.swap.ensureRevokeTokenApproval(fromAccount, swapProvider);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
       await ensureTokenApproval(fromAccount, swapProvider, smallAmount);
@@ -63,11 +62,15 @@ export function runSwapTokenReapprovalFlow(
       );
       await app.swapLiveApp.selectSpecificProvider(swapProvider.uiName);
       await app.swapLiveApp.tapExecuteSwap(swapProvider.uiName);
+      await app.swapLiveApp.expectResetApprovalScreen();
+      await app.swapLiveApp.tapRevokeApprovalButton();
+      await app.send.summaryContinue();
+      await app.speculos.signTokenApproval();
       await app.swapLiveApp.expectTwoStepApprovalScreen();
       await app.swapLiveApp.tapGiveApprovalButton();
       await app.send.summaryContinue();
       await app.speculos.signTokenApproval();
       await app.swapLiveApp.expectExecuteSwapOnStepApproval();
-    });
+    }, 600_000);
   });
 }

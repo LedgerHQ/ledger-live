@@ -27,6 +27,11 @@ import {
   Transaction,
 } from "./types";
 
+function sortByAdaDesc(a: CardanoOutput, b: CardanoOutput): number {
+  const diff = b.amount.minus(a.amount);
+  return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
+}
+
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   const address = TyphonUtils.getAddressFromHex(
     Buffer.from(utxo.address, "hex"),
@@ -117,12 +122,9 @@ const buildSendTokenTransaction = async ({
     const diff = sendingTokenB.amount.minus(sendingTokenA.amount);
     return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
   });
-  const sortedOtherUtxos = otherUtxos.sort((a, b) => {
-    const diff = b.amount.minus(a.amount);
-    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
-  });
+  const sortedOtherUtxos = otherUtxos.sort(sortByAdaDesc);
 
-  const totalAddedTokenAmount = new BigNumber(0);
+  let totalAddedTokenAmount = new BigNumber(0);
   const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
     {
       address: receiverAddress,
@@ -136,7 +138,7 @@ const buildSendTokenTransaction = async ({
     const u = sortedTokenUtxo[i];
     const sendingToken = u.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
     typhonTx.addInput(getTyphonInputFromUtxo(u));
-    totalAddedTokenAmount.plus(sendingToken.amount);
+    totalAddedTokenAmount = totalAddedTokenAmount.plus(sendingToken.amount);
     if (totalAddedTokenAmount.gte(transactionAmount)) break;
   }
 
@@ -214,26 +216,51 @@ const buildSendAdaTransaction = async ({
     });
   }
 
-  // sorting utxo from higher to lower ADA value
-  // to minimize the number of utxo use in transaction
-  const sortedUtxos = cardanoResources.utxos.sort((a, b) => {
-    const diff = b.amount.minus(a.amount);
-    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
-  });
+  // Prefer pure ADA UTXOs first to avoid unnecessarily pulling in native
+  // tokens. When the required amount forces the selection of token-bearing
+  // UTXOs, those tokens must be returned to self as a change output.
+  const pureAdaUtxos = cardanoResources.utxos.filter(u => u.tokens.length === 0);
+  const tokenBearingUtxos = cardanoResources.utxos.filter(u => u.tokens.length > 0);
 
+  const sortedPureAdaUtxos = pureAdaUtxos.sort(sortByAdaDesc);
+  const sortedTokenBearingUtxos = tokenBearingUtxos.sort(sortByAdaDesc);
+  const sortedUtxos = [...sortedPureAdaUtxos, ...sortedTokenBearingUtxos];
+
+  const selectedUtxos: Array<CardanoOutput> = [];
   const transactionInputs: Array<TyphonTypes.Input> = [];
-  const usedUtxoAdaAmount = new BigNumber(0);
-  // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
+  let usedUtxoAdaAmount = new BigNumber(0);
+  // Add 10 ADA as buffer for utxo selection to cover fees and any token change output.
   const requiredInputAmount = transaction.amount.plus(10e6);
   for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
     transactionInputs.push(transactionInput);
-    usedUtxoAdaAmount.plus(transactionInput.amount);
+    selectedUtxos.push(utxo);
+    usedUtxoAdaAmount = usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
   const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
+
+  // If any selected UTXOs carry native tokens, those tokens must appear in
+  // outputs or Typhon will throw "Not enough tokens". We send them back to
+  // the change address, reserving the minimum required ADA for that output.
+  const selectedTokenBalance = mergeTokens(selectedUtxos.flatMap(u => u.tokens));
+  if (selectedTokenBalance.length > 0) {
+    const minAmountForTokenChange = TyphonUtils.calculateMinUtxoAmountBabbage(
+      {
+        address: changeAddress,
+        amount: new BigNumber(CARDANO_MAX_SUPPLY),
+        tokens: selectedTokenBalance,
+      },
+      new BigNumber(protocolParams.utxoCostPerByte),
+    );
+    typhonTx.addOutput({
+      address: changeAddress,
+      amount: minAmountForTokenChange,
+      tokens: selectedTokenBalance,
+    });
+  }
 
   typhonTx.addOutput({
     address: receiverAddress,
@@ -290,22 +317,17 @@ const buildDelegateTransaction = async ({
   };
   typhonTx.addCertificate(delegationCert);
 
-  // sorting utxo from higher to lower ADA value
-  // to minimize the number of utxo use in transaction
-  const sortedUtxos = cardanoResources.utxos.sort((a, b) => {
-    const diff = b.amount.minus(a.amount);
-    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
-  });
+  const sortedUtxos = cardanoResources.utxos.sort(sortByAdaDesc);
 
   const transactionInputs: Array<TyphonTypes.Input> = [];
-  const usedUtxoAdaAmount = new BigNumber(0);
+  let usedUtxoAdaAmount = new BigNumber(0);
   // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
   const requiredInputAmount = transaction.amount.plus(10e6);
   for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
     transactionInputs.push(transactionInput);
-    usedUtxoAdaAmount.plus(transactionInput.amount);
+    usedUtxoAdaAmount = usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
   const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
@@ -353,22 +375,17 @@ const buildUndelegateTransaction = async ({
   };
   typhonTx.addCertificate(stakeKeyDeRegistrationCertificate);
 
-  // sorting utxo from higher to lower ADA value
-  // to minimize the number of utxo use in transaction
-  const sortedUtxos = cardanoResources.utxos.sort((a, b) => {
-    const diff = b.amount.minus(a.amount);
-    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
-  });
+  const sortedUtxos = cardanoResources.utxos.sort(sortByAdaDesc);
 
   const transactionInputs: Array<TyphonTypes.Input> = [];
-  const usedUtxoAdaAmount = new BigNumber(0);
+  let usedUtxoAdaAmount = new BigNumber(0);
   // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
   const requiredInputAmount = transaction.amount.plus(10e6);
   for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
     transactionInputs.push(transactionInput);
-    usedUtxoAdaAmount.plus(transactionInput.amount);
+    usedUtxoAdaAmount = usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
   return typhonTx.prepareTransaction({

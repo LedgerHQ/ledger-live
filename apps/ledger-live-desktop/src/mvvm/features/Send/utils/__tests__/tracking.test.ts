@@ -13,7 +13,7 @@ describe("send flow tracking", () => {
   it("uses the parent account currency id for token account blockchain", () => {
     expect(
       getSendFlowBlockchain(
-        { type: "TokenAccount", token: { parentCurrency: { id: "polygon" } } },
+        { type: "TokenAccount", token: { parentCurrencyId: "polygon" } },
         { currency: { id: "ethereum" } },
       ),
     ).toBe("ethereum");
@@ -23,7 +23,7 @@ describe("send flow tracking", () => {
     expect(
       getSendFlowBlockchain({
         type: "TokenAccount",
-        token: { parentCurrency: { id: "polygon" } },
+        token: { parentCurrencyId: "polygon" },
       }),
     ).toBe("polygon");
   });
@@ -36,7 +36,7 @@ describe("send flow tracking", () => {
     expect(
       getSendFlowCurrencyId({
         type: "TokenAccount",
-        token: { id: "ethereum/erc20/usd_tether__erc20_", parentCurrency: { id: "ethereum" } },
+        token: { id: "ethereum/erc20/usd_tether__erc20_", parentCurrencyId: "ethereum" },
       }),
     ).toBe("ethereum/erc20/usd_tether__erc20_");
   });
@@ -57,7 +57,7 @@ describe("send flow tracking", () => {
         token: {
           id: "ethereum/erc20/usd_tether__erc20_",
           ticker: "USDT",
-          parentCurrency: { id: "ethereum" },
+          parentCurrencyId: "ethereum",
         },
       }),
     ).toBe("USDT");
@@ -91,7 +91,7 @@ describe("send flow tracking", () => {
           token: {
             id: "ethereum/erc20/usd_tether__erc20_",
             ticker: "USDT",
-            parentCurrency: { id: "ethereum" },
+            parentCurrencyId: "ethereum",
           },
         },
         { currency: { id: "ethereum" } },

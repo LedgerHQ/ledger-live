@@ -34,7 +34,6 @@
   ],
   "ignorePatterns": [
     "*.min.js",
-    "src/renderer/families/generated.ts",
     "src/mvvm/hooks/redux.ts",
     "tests/artifacts/**"
   ],

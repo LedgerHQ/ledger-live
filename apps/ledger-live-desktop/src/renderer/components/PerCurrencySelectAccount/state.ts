@@ -17,7 +17,7 @@ export function getAccountTuplesForCurrency(
         // because the wallet-api is not able to setup empty accounts
         // for all parentAccounts and currencies we support
         // and we would lose the empty token accounts in the drawer
-        return account.currency.id === currency.parentCurrency.id;
+        return account.currency.id === currency.parentCurrencyId;
       })
       .map(account => ({
         account,

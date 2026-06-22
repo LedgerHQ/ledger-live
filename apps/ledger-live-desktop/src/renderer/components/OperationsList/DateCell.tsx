@@ -4,6 +4,7 @@ import { TFunction } from "i18next";
 import React from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
+import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import OperationDate from "./OperationDate";
 
 const Cell = styled(Box).attrs(() => ({
@@ -23,6 +24,7 @@ type Props = {
   compact?: boolean;
   editable?: boolean;
   isStuck?: boolean;
+  family?: string;
 };
 
 const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): React.JSX.Element => {
@@ -37,7 +39,15 @@ const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): Re
   return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
 };
 
-const DateCell = ({ t, operation, compact, text, editable, isStuck }: Props): React.JSX.Element => {
+const DateCell = ({
+  t,
+  operation,
+  compact,
+  text,
+  editable,
+  isStuck,
+  family,
+}: Props): React.JSX.Element => {
   const ellipsis = {
     display: "block",
     textOverflow: "ellipsis",
@@ -55,7 +65,9 @@ const DateCell = ({ t, operation, compact, text, editable, isStuck }: Props): Re
         data-testid={`operation-status-${operation.id}`}
       >
         {text ||
-          t(operation.hasFailed ? "operationDetails.failed" : `operation.type.${operation.type}`)}
+          (operation.hasFailed
+            ? t("operationDetails.failed")
+            : t(getOperationTypeI18nKey(operation.type, family)))}
       </Box>
       {editable ? (
         <Box fontSize={3} color="neutral.c80">

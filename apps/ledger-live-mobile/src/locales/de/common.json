@@ -1338,6 +1338,9 @@
     }
   },
   "earn" : {
+    "simulator" : {
+      "title" : "Rewards-Simulator"
+    },
     "deposit" : {
       "protocolInfoModal" : {
         "title" : "Bei der Auswahl eines Protokolls solltest du ein paar Dinge beachten:",
@@ -1457,6 +1460,13 @@
     "description" : "Deinstalliere die App auf deinem Smartphone und installiere sie anschließend neu, um die Daten von Ledger Wallet, einschließlich Konten und Einstellungen, zu löschen.",
     "button" : "Zurücksetzen",
     "warning" : "Das Zurücksetzen von Ledger Wallet löscht die Swap-Transaktionsverläufe für alle deine Konten."
+  },
+  "globalSearch" : {
+    "searchPlaceholder" : "Asset suchen",
+    "sections" : {
+      "cryptos" : "Kryptos",
+      "stocks" : "Aktien"
+    }
   },
   "graph" : {
     "week" : "1W",
@@ -2976,7 +2986,7 @@
       "STAKE" : "Gestaked",
       "UNSTAKE" : "Nicht mehr gestaked",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
-      "FINALIZE_UNSTAKE" : "Ausgezahlt",
+      "FINALIZE_UNSTAKE" : "Nicht mehr gestaket",
       "ASSOCIATE_TOKEN" : "Token zuordnen",
       "CONTRACT_CALL" : "Vertragsaufruf",
       "UPDATE_ACCOUNT" : "Aktualisiertes Konto"
@@ -3052,6 +3062,7 @@
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
       "stakedAmount" : "Betrag gestaked",
+      "unstakedAmount" : "Unstaking-Betrag",
       "accountCreationFee" : "Kontoerstellungsgebühr",
       "associatedTokenId" : "ID des zugeordneten Tokens",
       "targetStakingNodeId" : "ID des Zielknotens",
@@ -3686,9 +3697,11 @@
           "campaignId" : "Kampagnen-ID",
           "titleField" : "Titel",
           "subtitle" : "Untertitel",
-          "imageUrl" : "Bild-URL",
+          "imageUrlLight" : "Bild-URL (hell)",
+          "imageUrlDark" : "Bild-URL (dunkel)",
           "primaryButtonLabel" : "Primäres Button-Label",
           "primaryButtonLink" : "Primärer Button-Link",
+          "navigationButtonLabel" : "Beschriftung der Navigationsschaltfläche (Weiter/Schließen)",
           "secondaryButtonLabel" : "Sekundäres Button-Label",
           "secondaryButtonLink" : "Sekundärer Button-Link",
           "icon" : "Icon",
@@ -3728,7 +3741,11 @@
       "desc" : "Erhalte die neuesten Updates zu Ledger Wallet, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Du kannst dich jederzeit in den Einstellungen wieder abmelden",
       "descVariantB" : "Erhalte Echtzeit-Benachrichtigungen zu neuen Token, Ertragschancen und Marktbewegungen. Abmeldung jederzeit möglich.",
       "allow" : "Benachrichtigungen zulassen",
-      "later" : "Vielleicht später"
+      "later" : "Vielleicht später",
+      "transactionsAlerts" : {
+        "title" : "Kenne den Status deines Geldes",
+        "desc" : "Empfange Echtzeit-Warnungen, wenn deine Kryptos gesendet oder empfangen werden. Abmeldung jederzeit in den Einstellungen."
+      }
     },
     "optInScreen" : {
       "title" : "Benachrichtigungen aktivieren?",
@@ -4378,6 +4395,10 @@
       "available" : "{{amount}} verfügbar",
       "placeholder" : "Adresse oder ENS eingeben",
       "placeholderNoENS" : "Adresse eingeben",
+      "pasteFromClipboard" : {
+        "title" : "Aus der Zwischenablage einfügen",
+        "cta" : "Einfügen"
+      },
       "editRecipientAccessibilityLabel" : "Empfänger bearbeiten",
       "recent" : "Neulich",
       "recentDetail" : "Aktuelles Detail",
@@ -4415,11 +4436,23 @@
       },
       "skipMemo" : {
         "title" : "{{tag}} hinzufügen überspringen?",
-        "warning" : "Deine Assets können verloren gehen, falls der Empfänger ein {{tag}} voraussetzt"
+        "warning" : "Deine Assets können verloren gehen, falls der Empfänger ein {{tag}} voraussetzt",
+        "notRequired" : "{{tag}} für die Empfängeradresse nicht erforderlich?",
+        "confirm" : "Ja, überspringen",
+        "neverAskAgain" : "Diese Warnung nicht mehr anzeigen"
       },
       "tagHelp" : {
         "title" : "Was ist ein {{tag}}?",
-        "description" : "Ein {{tag}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Ist kein {{tag}}-Memo angegeben, dann kann dies zum Verlust der Assets führen."
+        "description" : "Ein {{tag}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Ist kein {{tag}} angegeben, dann kann dies zum Verlust der Assets führen."
+      },
+      "memoLabel" : {
+        "ripple" : "Tag",
+        "casper" : "Transaktions-ID",
+        "ton" : "Kommentar",
+        "default" : "Memo"
+      },
+      "memo" : {
+        "transactionIdentifier" : "Transaktionskennung"
       },
       "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
       "feesAmount" : "Gebührenbetrag ({{unit}})",
@@ -4461,7 +4494,8 @@
         "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
         "invalidValue" : "Gib eine gültige Zahl ein.",
         "belowMinimum" : "Der Mindestbetrag ist {{min}}",
-        "maxFeeBelowPriorityFee" : "Die maximale Gebühr muss größer oder gleich der maximalen Prioritätsgebühr sein."
+        "maxFeeBelowPriorityFee" : "Die maximale Gebühr muss größer oder gleich der maximalen Prioritätsgebühr sein.",
+        "payFeesIn" : "Bezahl Gebühren in"
       },
       "coinControl" : {
         "title" : "Coin-Kontrolle",
@@ -6604,7 +6638,9 @@
       "title" : "Du kannst Prämien verdienen, indem du dein Konto delegierst",
       "btn" : "Prämien verdienen"
     },
-    "manage" : "Verwalten",
+    "operationTypes" : {
+      "UNSTAKE" : "Unstaking"
+    },
     "delegation" : {
       "addCustomValidator" : "+ Benutzerdefinierten Validator hinzufügen",
       "sectionLabel" : "Delegierung"
@@ -6613,7 +6649,11 @@
       "sectionLabel" : "Staking",
       "status" : "Status",
       "unstaking" : "Unstaking",
-      "available" : "Verfügbar"
+      "available" : "Verfügbar",
+      "availableIn" : "Verfügbar in",
+      "lessThanADay" : "Weniger als ein Tag",
+      "stakeMore" : "Mehr staken",
+      "unstake" : "Unstake"
     },
     "earnRewards" : {
       "title" : "Prämien verdienen",
@@ -6664,6 +6704,41 @@
           "info" : "Weitere Informationen zu Tezos-Staking vs. Delegierung"
         }
       }
+    },
+    "unstake" : {
+      "flow" : {
+        "amount" : {
+          "unbondingNotice" : "Das Unstaking dauert 4 Tage. Während der Wartezeit bleiben deine XTZ delegiert und verdienen keine Staking-Rewards mehr.",
+          "staked" : "Gestaket",
+          "cta" : "Unstake"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "Unstaking übermittelt",
+              "text" : "Das Staking deiner XTZ wird aufgehoben und wird in etwa vier Tagen zur Abhebung verfügbar sein."
+            }
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Beende das Staking, bevor du den Baker wechselst",
+        "description" : "Du hast XTZ mit deinem aktuellen Baker gestaked. Beende das Staking deiner Assets, bevor du sie an einen neuen Validator delegierst."
+      },
+      "endDelegation" : {
+        "title" : "Beende das Staking, bevor du die Delegierung beendest",
+        "description" : "Du hast XTZ mit deinem aktuellen Baker gestakt. Beende das Staken deiner Assets, bevor du die Delegierung beendest."
+      },
+      "steps" : {
+        "0" : "Öffne das Verdienen-Menü und wähle Unstake aus.",
+        "1" : "Bestätige den Betrag und sende die Unstaking Transaktion auf deinem Gerät.",
+        "2" : "Warte etwa 4 Tage, bis das Unstaking abgeschlossen ist.",
+        "3" : "Nach der Abhebung kannst du den Baker wechseln oder die Delegierung beenden."
+      },
+      "learnMore" : "Mehr über Tezos-Staking erfahren",
+      "close" : "Schließen"
     },
     "account" : {
       "availableBalanceTooltip" : "Assets, die du direkt nutzen kannst.",
@@ -6732,7 +6807,7 @@
               "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner delegierten Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
             },
             "cta" : "Weiter",
-            "seiAssociationWarning" : "Dein Sei-Konto wurde noch nicht on-chain verknüpft. Die Delegierung wird fehlschlagen, bis die erste ausgehende Transaktion deines Kontos on-chain bestätigt ist. Sende zuerst einen kleinen Betrag SEI an eine beliebige Adresse, warte auf Bestätigungen und kehre dann zurück, um zu delegieren."
+            "seiAssociationWarning" : "Zum Delegieren musst du dein Konto aktivieren, indem du einen beliebigen Betrag an eine beliebige Adresse sendest, auch an deine eigene. Dies ist eine Anforderung des Sei-Netzwerks."
           },
           "validator" : {
             "validators" : "Validatoren",
@@ -6854,16 +6929,49 @@
             "youEarned" : "Du hast verdient",
             "byDelegationAssetsTo" : "durch delegieren von Assets an",
             "description" : "Rewards werden jetzt eingefordert und deinem verfügbaren Kontostand gutgeschrieben.",
-            "cta" : "Weiter"
+            "compoundRewardDescription" : "Rewards werden beim selben Validator restaked, wodurch sich dein delegierter Kontostand erhöht.",
+            "cta" : "Weiter",
+            "method" : {
+              "claimReward" : "Einzahlen",
+              "compoundReward" : "Compound",
+              "compoundOrCashIn" : "Zusammenrechnen oder einzahlen?",
+              "claimRewardTooltip" : "Prämien werden deinem verfügbaren Guthaben gutgeschrieben.",
+              "compoundRewardTooltip" : "Rewards werden erneut an denselben Validator gestakt."
+            }
           },
           "verification" : {
             "success" : {
               "title" : "Du hast deine Prämien erfolgreich eingefordert. Diese wurden deinem verfügbaren Guthaben gutgeschrieben.",
+              "titleCompound" : "Deine Belohnungen wurden an denselben Validator delegiert.",
               "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
               "cta" : "Details anzeigen"
             },
             "pending" : {
               "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "title" : "Abheben",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "withdraw" : {
+            "warning" : "Die Sperrfrist des undelegierten Betrags ist abgelaufen und er wird auf deinen verfügbaren Kontostand zurückgebucht.",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich abgehoben.",
+              "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
             },
             "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
           }
@@ -8095,6 +8203,7 @@
   },
   "market" : {
     "title" : "Markt",
+    "searchPlaceholder" : "Asset suchen",
     "assets" : {
       "title" : "Vermögenswerte",
       "emptyFavorites" : "Noch keine Favoriten",
@@ -8611,7 +8720,11 @@
     "tabs" : {
       "crypto" : "Krypto",
       "stablecoins" : "Stablecoins",
+      "stocks" : "Aktien",
       "market" : "Markt"
+    },
+    "stocks" : {
+      "exploreAll" : "Alle entdecken"
     },
     "referralProgram" : "20 USD"
   },
@@ -9314,7 +9427,7 @@
     }
   },
   "marketBanner" : {
-    "title" : "Markt erkunden",
+    "title" : "Markt",
     "viewAll" : "Alles anzeigen",
     "viewAllAccessibilityHint" : "Doppeltippen, um alle Assets anzuzeigen",
     "connectionFailed" : "Verbindung fehlgeschlagen",
@@ -9322,6 +9435,18 @@
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "Doppeltippen, um Marktdetails anzuzeigen"
+    },
+    "filter" : {
+      "accessibilityLabel" : "Marktbanner-Filter ändern",
+      "accessibilityHint" : "Doppelt tippen, um die angezeigten Assets auszuwählen.",
+      "title" : "Sortieren nach",
+      "noFavorites" : "Noch keine Favoriten",
+      "options" : {
+        "trending" : "Im Trend",
+        "gainers" : "Gewinner",
+        "losers" : "Verlierer",
+        "favorites" : "Favoriten"
+      }
     }
   },
   "largeMover" : {
@@ -9676,7 +9801,7 @@
   "fearAndGreed" : {
     "title" : "Stimmungsindex",
     "description" : "Zeigt die allgemeine Marktstimmung von 0 bis 100 an, basierend insbesondere auf Volatilität, Marktdynamik und sozialen Trends. Niedrigere Werte deuten auf Angst hin, höhere Werte auf Gier.",
-    "disclaimer" : "Die Daten stammen aus dem Fear and Greed Index von CoinMarketCap und dienen nur zu Informationszwecken.",
+    "disclaimer" : "Die Daten stammen von CoinMarketCap. Nur zu Informationszwecken bereitgestellt.",
     "levels" : {
       "fearPlus" : "Angst+",
       "fear" : "Angst",
@@ -9690,7 +9815,7 @@
     "title" : "Saison",
     "definitionTitle" : "Altcoin-Index",
     "description" : "Der Altcoin-Index zeigt, wie sich Bitcoin im Vergleich zu alternativen Kryptowährungen entwickelt. Je höher die Zahl, desto besser schneiden Altcoins im Vergleich zu Bitcoin ab.",
-    "disclaimer" : "Die Daten stammen aus dem Fear and Greed Index von CoinMarketCap und dienen nur zu Informationszwecken.",
+    "disclaimer" : "Die Daten stammen von CoinMarketCap. Nur zu Informationszwecken bereitgestellt.",
     "levels" : {
       "bitcoin" : "Bitcoin",
       "altcoin" : "Altcoin"
@@ -9698,7 +9823,8 @@
   },
   "marketCapCard" : {
     "title" : "Gesamtmarktkapitalisierung",
-    "description" : "Die gesamte Marktkapitalisierung entspricht der Marktkapitalisierung aller Kryptowährungen zusammen."
+    "description" : "Die gesamte Marktkapitalisierung entspricht der Marktkapitalisierung aller Kryptowährungen zusammen.",
+    "disclaimer" : "Die Daten stammen von CoinMarketCap. Nur zu Informationszwecken bereitgestellt."
   },
   "analyticsAllocation" : {
     "header" : {

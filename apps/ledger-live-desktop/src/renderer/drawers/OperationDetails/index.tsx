@@ -9,6 +9,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   findOperationInAccount,
@@ -50,7 +51,8 @@ import ConfirmationCheck from "~/renderer/components/OperationsList/Confirmation
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
 import Text, { TextProps } from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
+import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
@@ -154,7 +156,7 @@ const OperationD = (props: Props) => {
 
   const unit = useAccountUnit(account);
   const cryptoCurrency = mainAccount.currency;
-  const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+  const specific = useLLDCoinFamily(cryptoCurrency.family);
   const amount =
     specific?.operationDetails?.getAmount?.(operation) ?? getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
@@ -247,7 +249,7 @@ const OperationD = (props: Props) => {
   }, [parentAccount, account, mainAccount, navigate, onClose, location]);
   const currencyName = currency
     ? currency.type === "TokenCurrency"
-      ? currency.parentCurrency.name
+      ? getCryptoCurrencyById(currency.parentCurrencyId).name
       : currency.name
     : undefined;
 
@@ -377,8 +379,17 @@ const OperationD = (props: Props) => {
   ]);
 
   const isStuck = bridge.isStuckOperation(operation);
-  const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
+  // Fee currency/amount can be overridden by the family-specific
+  // operationDetails implementation.
+  const useFeesCurrencyOverride = specific?.operationDetails?.useFeesCurrency;
+  const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
+  const feesCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
+  const getDisplayFeeOverride = specific?.operationDetails?.getDisplayFee;
+  const displayFee = useMemo(
+    () => (fee ? (getDisplayFeeOverride?.(operation, mainAccount, feesCurrency) ?? fee) : fee),
+    [getDisplayFeeOverride, operation, mainAccount, feesCurrency, fee],
+  );
 
   return (
     <Box flow={3} px={20} mt={20}>
@@ -426,7 +437,9 @@ const OperationD = (props: Props) => {
         mb={1}
         data-testid="transaction-type"
       >
-        <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
+        {editable
+          ? t("operation.type.SENDING")
+          : t(getOperationTypeI18nKey(operation.type, cryptoCurrency.family))}
       </Text>
 
       <Box alignItems="center" mt={0}>
@@ -534,7 +547,7 @@ const OperationD = (props: Props) => {
                       />
                     </Box>
                   ) : null}
-                  <FormattedVal unit={feesUnit} showCode val={fee} color="neutral.c80" />
+                  <FormattedVal unit={feesUnit} showCode val={displayFee} color="neutral.c80" />
                 </Box>
                 <Box horizontal justifyContent="flex-end">
                   <CounterValue
@@ -542,7 +555,7 @@ const OperationD = (props: Props) => {
                     date={date}
                     fontSize={3}
                     currency={feesCurrency}
-                    value={fee}
+                    value={displayFee}
                     subMagnitude={1}
                     style={{
                       width: "auto",
@@ -586,7 +599,7 @@ const OperationD = (props: Props) => {
             fontSize={4}
             color="neutral.c70"
           >
-            <Trans i18nKey={`operation.type.${operation.type}`} />
+            {t(getOperationTypeI18nKey(operation.type, cryptoCurrency.family))}
           </Text>
         </OpDetailsData>
       </OpDetailsSection>
@@ -845,6 +858,30 @@ const More = styled(Text).attrs<TextProps>(p => ({
   text-transform: ${p => (!p.textTransform ? "auto" : "uppercase")};
   outline: none;
 `;
+const DataListLine = ({
+  line,
+  cryptoCurrencyFamily,
+  operationType,
+}: {
+  line: string;
+  cryptoCurrencyFamily: string | undefined;
+  operationType: OperationType | undefined;
+}) => {
+  const specific = useLLDCoinFamily(cryptoCurrencyFamily);
+  const SplitAddressComponent =
+    specific?.operationDetails?.splitAddress?.[operationType as OperationType] || SplitAddress;
+  return (
+    <OpDetailsData relative horizontal>
+      <HashContainer>
+        <SplitAddressComponent value={line} />
+      </HashContainer>
+      <GradientHover>
+        <CopyWithFeedback text={line} />
+      </GradientHover>
+    </OpDetailsData>
+  );
+};
+
 export class DataList extends Component<{
   lines: string[];
   t: TFunction;
@@ -868,18 +905,13 @@ export class DataList extends Component<{
     const { showMore, numToShow } = this.state;
     // Hardcoded for now
     const shouldShowMore = lines.length > 3;
-    const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
-    const SplitAddressComponent =
-      specific?.operationDetails?.splitAddress?.[operation?.type as OperationType] || SplitAddress;
     const renderLine = (line: string, index: number) => (
-      <OpDetailsData relative horizontal key={line + index}>
-        <HashContainer>
-          <SplitAddressComponent value={line} />
-        </HashContainer>
-        <GradientHover>
-          <CopyWithFeedback text={line} />
-        </GradientHover>
-      </OpDetailsData>
+      <DataListLine
+        key={line + index}
+        line={line}
+        cryptoCurrencyFamily={cryptoCurrency?.family}
+        operationType={operation?.type as OperationType | undefined}
+      />
     );
     return (
       <Box

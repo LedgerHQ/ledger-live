@@ -189,4 +189,57 @@ describe("marketApi", () => {
       });
     });
   });
+
+  describe("[endpoint] getTrendingCategories", () => {
+    const { getTrendingCategories } = marketApi.endpoints;
+
+    const category = (id: string) => ({ id, name: `${id} name` });
+
+    it("requests /v3/categories/trending", async () => {
+      const seenUrls: string[] = [];
+      server.use(
+        http.get("*/v3/categories/trending", ({ request }) => {
+          seenUrls.push(request.url);
+          return HttpResponse.json([category("infrastructure")]);
+        }),
+      );
+
+      await store.dispatch(getTrendingCategories.initiate());
+
+      expect(seenUrls).toHaveLength(1);
+      expect(new URL(seenUrls[0]).pathname).toBe("/v3/categories/trending");
+    });
+
+    it("returns the validated trending categories", async () => {
+      const categories = [category("infrastructure"), category("yield-farming")];
+      server.use(http.get("*/v3/categories/trending", () => HttpResponse.json(categories)));
+
+      const result = await store.dispatch(getTrendingCategories.initiate());
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data).toEqual(categories);
+    });
+
+    it("keeps only the first 5 trending categories", async () => {
+      const categories = Array.from({ length: 8 }, (_, i) => category(`category-${i}`));
+      server.use(http.get("*/v3/categories/trending", () => HttpResponse.json(categories)));
+
+      const result = await store.dispatch(getTrendingCategories.initiate());
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data).toHaveLength(5);
+      expect(result.data).toEqual(categories.slice(0, 5));
+    });
+
+    it("returns isError when the response schema is invalid", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+      server.use(http.get("*/v3/categories/trending", () => HttpResponse.json([{ id: "x" }])));
+
+      const result = await store.dispatch(getTrendingCategories.initiate());
+
+      expect(result.isError).toBe(true);
+      expect(result.data).toBeUndefined();
+      consoleErrorSpy.mockRestore();
+    });
+  });
 });

@@ -22,6 +22,7 @@ export function AmountScreen() {
       onReview={viewModel.onReview}
       onGetFunds={viewModel.onGetFunds}
       onSelectCoinControl={viewModel.onSelectCoinControl}
+      onMessageLinkPress={viewModel.onMessageLinkPress}
     />
   );
 }

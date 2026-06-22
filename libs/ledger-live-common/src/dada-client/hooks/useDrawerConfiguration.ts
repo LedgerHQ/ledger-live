@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import useFeature from "../../featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 interface DrawerConfiguration {
   assets?: Record<string, unknown>;

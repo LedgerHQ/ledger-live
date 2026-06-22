@@ -22,6 +22,7 @@ import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
+import { usePostOnboardingCompletionTracking } from "~/logic/postOnboarding/usePostOnboardingCompletionTracking";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import storage from "LLM/storage";
 import { DdRum } from "@datadog/mobile-react-native";
@@ -94,6 +95,8 @@ const usePortfolioViewModel = (navigation: {
   }, [navigation]);
 
   useAutoRedirectToPostOnboarding();
+
+  usePostOnboardingCompletionTracking();
 
   usePortfolioAnalyticsOptInPrompt();
 

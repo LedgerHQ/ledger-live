@@ -20,6 +20,16 @@ jest.mock("@ledgerhq/live-countervalues-react");
 jest.mock("~/context/Locale");
 jest.mock("LLM/hooks/useAccountUnit");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
+jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => {
+  const React = jest.requireActual<typeof import("react")>("react");
+
+  return {
+    useSendAmountDisplayMode: () => {
+      const [displayMode, setDisplayMode] = React.useState<"fiat" | "crypto">("fiat");
+      return { displayMode, setDisplayMode };
+    },
+  };
+});
 
 const btcUnit = { name: "Bitcoin", code: "BTC", magnitude: 8 };
 const usdUnit = { name: "US Dollar", code: "USD", magnitude: 2 };

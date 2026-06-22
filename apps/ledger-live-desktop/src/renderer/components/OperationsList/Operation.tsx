@@ -6,6 +6,7 @@ import Box from "~/renderer/components/Box";
 import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import ConfirmationCell from "./ConfirmationCell";
 import DateCell from "./DateCell";
@@ -14,7 +15,7 @@ import AddressCell from "./AddressCell";
 import AmountCell from "./AmountCell";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { State } from "~/renderer/reducers";
 import { useAccountName } from "~/renderer/reducers/wallet";
@@ -68,10 +69,13 @@ function OperationComponent({
 
   const isOptimistic = operation.blockHeight === null;
   const currency = getAccountCurrency(account);
-  const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
+  const cryptoCurrency =
+    currency.type === "CryptoCurrency"
+      ? currency
+      : getCryptoCurrencyById(currency.parentCurrencyId);
 
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-  const specific = getLLDCoinFamily(cryptoCurrency.family);
+  const specific = useLLDCoinFamily(cryptoCurrency.family);
   const CustomMetadataCell = specific ? specific.operationDetails?.customMetadataCell : null;
   const editable =
     mainAccount.type === "Account" && bridge.isEditableOperation(mainAccount, operation);
@@ -95,6 +99,7 @@ function OperationComponent({
         editable={editable}
         isStuck={bridge.isStuckOperation(operation)}
         t={t}
+        family={cryptoCurrency.family}
       />
       {withAccount && <AccountCell accountName={accountName} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} currency={currency} /> : <Box flex="1" />}

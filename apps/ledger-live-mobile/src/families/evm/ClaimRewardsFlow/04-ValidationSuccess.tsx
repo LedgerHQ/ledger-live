@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
@@ -24,7 +24,14 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
+  const transaction = route.params?.transaction;
+  const transactionMode: string | undefined =
+    transaction && "mode" in transaction ? transaction.mode : undefined;
+  const isCompound = transactionMode === "compoundReward";
+  const closing = useRef(false);
   const onClose = useCallback(() => {
+    if (closing.current) return;
+    closing.current = true;
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
@@ -49,7 +56,15 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={<Trans i18nKey="evm.claimRewards.flow.steps.verification.success.title" />}
+        title={
+          <Trans
+            i18nKey={
+              isCompound
+                ? "evm.claimRewards.flow.steps.verification.success.titleCompound"
+                : "evm.claimRewards.flow.steps.verification.success.title"
+            }
+          />
+        }
         description={<Trans i18nKey="evm.claimRewards.flow.steps.verification.success.text" />}
       />
     </View>

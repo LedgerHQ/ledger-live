@@ -408,6 +408,42 @@
         "refunded": "Refunded"
       }
     },
+    "modals": {
+      "transactionStatus": {
+        "title": "Swap {{sendTicker}} → {{receiveTicker}}",
+        "sections": {
+          "status": {
+            "heading": "Status",
+            "sendPending": "Sending {{ticker}}",
+            "sendCompleted": "Sent {{ticker}}",
+            "receivePending": "Receiving {{ticker}}",
+            "receiveCompleted": "Received {{ticker}}"
+          },
+          "details": {
+            "networkFees": "Network fees",
+            "receiveAccount": "Receive account",
+            "provider": "Provider",
+            "swapId": "Swap ID"
+          }
+        },
+        "statusLabels": {
+          "pending": "Ongoing",
+          "onhold": "On hold",
+          "expired": "Expired",
+          "finished": "Completed",
+          "refunded": "Refunded",
+          "cancelled": "Cancelled",
+          "unknown": "Unknown"
+        },
+        "actions": {
+          "viewInExplorer": "View in explorer",
+          "copied": "Copied"
+        },
+        "accessibility": {
+          "copySwapId": "Copy swap ID"
+        }
+      }
+    },
     "exchangeDrawer": {
       "title": "Confirm your Exchange",
       "completed": {
@@ -1609,6 +1645,23 @@
   },
   "market": {
     "title": "Market",
+    "topCards": {
+      "error": "Something went wrong",
+      "moodIndex": {
+        "title": "Mood index"
+      },
+      "globalMarketCap": {
+        "title": "Total market cap",
+        "period": "Today"
+      },
+      "altSeason": {
+        "title": "Season",
+        "levels": {
+          "bitcoin": "Bitcoin",
+          "altcoin": "Altcoin"
+        }
+      }
+    },
     "currency": "Currency",
     "rangeLabel": "Time",
     "goBack": "Go back",
@@ -1622,12 +1675,36 @@
       "applyFilters": "Apply filters",
       "clearAll": "Clear all"
     },
+    "assetsTitle": "Assets",
+    "marketTable": {
+      "crypto": "Name",
+      "price": "Market price",
+      "volume": "Volume",
+      "change": "Change",
+      "marketCap": "Market cap",
+      "actions": "Actions",
+      "menu": {
+        "more": "More",
+        "buySell": "Buy/Sell",
+        "addToFavourites": "Add to favorites",
+        "removeFromFavourites": "Remove from favorites"
+      }
+    },
     "marketList": {
       "crypto": "Crypto",
       "price": "Price",
       "change": "Change",
       "marketCap": "Market cap",
       "last7d": "Last 7 days"
+    },
+    "assets": {
+      "categories": {
+        "accessibilityLabel": "Asset categories",
+        "all": "All",
+        "stocks": "Stocks",
+        "favorites": "Favorites"
+      },
+      "emptyFavorites": "No favorites yet"
     },
     "detailsPage": {
       "priceStatistics": "Price stats",
@@ -1651,6 +1728,11 @@
       "1W_label": "1W",
       "1M_label": "1M",
       "1Y_label": "1Y",
+      "1H_fullLabel": "1 hour",
+      "1D_fullLabel": "1 day",
+      "1W_fullLabel": "1 week",
+      "1M_fullLabel": "1 month",
+      "1Y_fullLabel": "1 year",
       "1h": "1h",
       "24h": "24h",
       "7d": "7d",
@@ -4305,9 +4387,12 @@
                 "Assets will be available after undelegation"
               ],
               "warning": {
-                "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
-              },
-              "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
+                "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately.",
+                "seiAssociationWarning": {
+                  "description": "To delegate, you need to activate your account by sending any amount to any address, including your own. This is a Sei network requirement.",
+                  "learnMore": "Learn more"
+                }
+              }
             },
             "amount": {
               "title": "Amount"
@@ -4390,6 +4475,33 @@
               "success": {
                 "title": "You have successfully undelegated your assets.",
                 "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
+      },
+      "withdraw": {
+        "cta": "Withdraw",
+        "flow": {
+          "title": "Withdraw",
+          "steps": {
+            "withdraw": {
+              "title": "Withdraw",
+              "warning": "The undelegated amount has completed its timelock and will be sent back to your available balance.",
+              "fields": {
+                "validator": "Validator"
+              }
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully withdrawn your assets.",
+                "description": "<0>{{amount}}</0> were withdrawn from <0>{{validator}}</0>",
                 "cta": "View details"
               },
               "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -4657,6 +4769,10 @@
     }
   },
   "tezos": {
+    "operationTypes": {
+      "UNSTAKE": "Unstaking",
+      "FINALIZE_UNSTAKE": "Unstaked"
+    },
     "earnChoice": {
       "title": "Earn Tezos Rewards: Delegate or Stake",
       "description": "Earn rewards on your Tezos (XTZ) by delegating to a Baker, keeping full control. For higher returns, stake your XTZ, understanding the low associated risk. Choose the best way to grow your assets.",
@@ -4735,7 +4851,7 @@
             "success": {
               "title": "You have successfully staked your assets",
               "text": "You staked {{amount}}. Your account balance will be updated when the blockchain confirms the transaction.",
-              "cta": "Visit Earn Dashboard"
+              "cta": "Visit Account Dashboard"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
             "howItWorks": "How staking works"
@@ -4746,15 +4862,15 @@
     "unstakeRequired": {
       "changeBaker": {
         "title": "Unstake before changing baker",
-        "description": "You have staked XTZ with your current baker. Unstake your funds before delegating to a new baker."
+        "description": "You have staked XTZ with your current baker. Unstake all your funds before delegating to a new baker."
       },
       "endDelegation": {
         "title": "Unstake before ending delegation",
-        "description": "You have staked XTZ with your current baker. Unstake your funds before ending the delegation."
+        "description": "You have staked XTZ with your current baker. Unstake all your funds before ending the delegation."
       },
       "steps": {
-        "0": "Open the Earn menu and select Unstake.",
-        "1": "Confirm the amount and submit the unstake transaction on your device.",
+        "0": "Open the Tezos Account dashboard and select the Unstake option in your staking section.",
+        "1": "Unstake the MAX amount and submit the unstake transaction on your device.",
         "2": "Wait ~4 days for the unstake period to complete.",
         "3": "Once withdrawn, you can change baker or end delegation."
       },
@@ -5037,6 +5153,10 @@
           "title": "Stablecoin preset",
           "desc": "Generate Ethereum, Arbitrum, Optimism, Base, Solana, Tron and Algorand accounts with top stablecoins (max 5 per network)"
         },
+        "stocksGenerate": {
+          "title": "Stocks preset",
+          "desc": "Generate accounts with the top tokenized stocks from DADA (category=stocks) as sub-accounts under their network"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -5055,7 +5175,10 @@
           "generateAccountsQuick": "Generate {{count}} accounts",
           "generateEmptyAccount": "Generate empty account",
           "generateStablecoinAccounts": "Generate {{count}} stablecoin account",
-          "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts"
+          "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts",
+          "generateStockAccounts": "Generate {{count}} stock account",
+          "generateStockAccounts_other": "Generate {{count}} stock accounts",
+          "loadingStocks": "Loading stock data…"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
@@ -6295,6 +6418,10 @@
       "transfer_private": "private recipient",
       "convert_public_to_private": "private recipient",
       "convert_private_to_public": "public recipient",
+      "transfer_token_public": "public recipient",
+      "transfer_token_private": "private recipient",
+      "convert_token_public_to_private": "private recipient",
+      "convert_token_private_to_public": "public recipient",
       "delegate": "validator",
       "redelegate": "validator",
       "undelegate": "validator",
@@ -8657,11 +8784,17 @@
     "noDeviceTitle": "Your secure crypto wallet"
   },
   "marketBanner": {
-    "title": "Explore the market",
+    "title": "Market",
     "genericError": "Connection failed",
     "cta": "View all",
     "scrollLeft": "Scroll left",
     "scrollRight": "Scroll right",
+    "ranking": {
+      "trending": "Trending",
+      "gainers": "Gainers",
+      "losers": "Losers",
+      "favorites": "Favorites"
+    },
     "fearAndGreed": {
       "title": "Mood"
     }
@@ -8677,7 +8810,23 @@
     "dialog": {
       "title": "Mood index",
       "content": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
-      "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
+      "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
+      "cta": "Got it"
+    }
+  },
+  "marketCapCard": {
+    "dialog": {
+      "title": "Total market cap",
+      "content": "The total market cap represents the market capitalization of all cryptocurrencies combined.",
+      "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
+      "cta": "Got it"
+    }
+  },
+  "altSeasonCard": {
+    "dialog": {
+      "title": "Altcoin index",
+      "content": "The Altcoin index shows how Bitcoin is performing compared to alternative cryptocurrencies. The higher the number, the better altcoins are doing compared to Bitcoin.",
+      "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -8692,6 +8841,7 @@
   "assets": {
     "cryptos": "Crypto",
     "stablecoins": "Stablecoins",
+    "stocks": "Stocks",
     "cryptoAccounts": "Crypto accounts",
     "accountsCount_one": "{{count}} account",
     "accountsCount_other": "{{count}} accounts",
@@ -8737,6 +8887,9 @@
   "cryptoAssets": {
     "title": "Crypto assets"
   },
+  "stocks": {
+    "explore": "Explore all"
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {
@@ -8745,6 +8898,13 @@
     }
   },
   "topBar": {
+    "searchPlaceholder": "Search assets",
+    "search": {
+      "noAssetFound": "No asset found",
+      "error": "Connection failed",
+      "cryptos": "Cryptos",
+      "stocks": "Stocks"
+    },
     "history": {
       "cta": "Transactions"
     },
@@ -9064,7 +9224,32 @@
     "actionsList": {
       "help": "Help",
       "recover": "[L] Recover",
+      "backup": "Backup",
       "refer": "Referral"
+    },
+    "backupHub": {
+      "title": "Wallet backups",
+      "description": "Protect your assets with a combination of backup solutions for your Seed Phrase Recovery.",
+      "back": "Back",
+      "sections": {
+        "digital": "Digital ID-based backups",
+        "physical": "Physical backups"
+      },
+      "recover": {
+        "title": "Ledger Recover",
+        "notSubscribed": "Create a backup you can't lose",
+        "inProgress": "Complete activation",
+        "done": "Manage your backup",
+        "discover": "Discover"
+      },
+      "recoveryKey": {
+        "title": "Ledger Recovery Key",
+        "description": "A PIN-protected smart card"
+      },
+      "secretRecoveryPhrase": {
+        "title": "24-word metal storage",
+        "description": "Fire and water resistant protection."
+      }
     },
     "myLedger": {
       "title": "My Ledger",

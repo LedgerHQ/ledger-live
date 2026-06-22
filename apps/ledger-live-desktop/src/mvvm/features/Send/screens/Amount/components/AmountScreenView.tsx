@@ -34,6 +34,7 @@ export function AmountScreenView({
   onSelectCoinControl,
   onReview,
   onGetFunds,
+  onMessageLinkPress,
   pluginsSlot,
 }: AmountScreenViewProps) {
   return (
@@ -51,6 +52,7 @@ export function AmountScreenView({
             toggleLabel={toggleLabel}
             secondaryValue={secondaryValue}
             amountMessage={amountMessage}
+            onMessageLinkPress={onMessageLinkPress}
           />
 
           {showQuickActions ? <QuickActionsRow actions={quickActions} /> : null}

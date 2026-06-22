@@ -6,8 +6,8 @@ import TezosAccountBodyHeader from "../AccountBodyHeader";
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({}), { virtual: true });
 
 let mockFeature: { enabled: boolean } | null;
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
   useFeature: () => mockFeature,
 }));
 

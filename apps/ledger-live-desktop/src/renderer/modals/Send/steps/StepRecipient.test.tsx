@@ -4,7 +4,7 @@ import { TFunction } from "i18next";
 import { SolanaAccount, SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account } from "@ledgerhq/types-live";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import StepRecipient from "./StepRecipient";
 
 jest.mock("~/renderer/families");
@@ -17,7 +17,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;
-const mockGetLLDCoinFamily = jest.mocked(getLLDCoinFamily);
+const mockUseLLDCoinFamily = jest.mocked(useLLDCoinFamily);
 
 describe("StepRecipient", () => {
   const baseParams = {
@@ -114,7 +114,7 @@ describe("StepRecipient", () => {
   });
 
   it("renders DefaultStepRecipient when the coin family has no SendStepRecipient", () => {
-    mockGetLLDCoinFamily.mockReturnValue({});
+    mockUseLLDCoinFamily.mockReturnValue({} as never);
 
     render(<StepRecipient {...baseParams} />);
 
@@ -123,7 +123,7 @@ describe("StepRecipient", () => {
 
   it("renders the family-specific SendStepRecipient when the coin family provides one", () => {
     const SendStepRecipient = jest.fn(() => <div data-testid="family-send-step" />);
-    mockGetLLDCoinFamily.mockReturnValue({ SendStepRecipient });
+    mockUseLLDCoinFamily.mockReturnValue({ SendStepRecipient } as never);
 
     render(<StepRecipient {...baseParams} />);
 
@@ -132,7 +132,7 @@ describe("StepRecipient", () => {
 
   it("renders without crashing when useAccountBridgeOrNull returns null", () => {
     mockUseAccountBridgeOrNull.mockReturnValueOnce(null as never);
-    mockGetLLDCoinFamily.mockReturnValue({});
+    mockUseLLDCoinFamily.mockReturnValue({} as never);
 
     render(<StepRecipient {...baseParams} />);
 

@@ -22,7 +22,8 @@ describe("buildCarousel", () => {
       slideCount: "2",
       title: "Slide 2",
       subtitle: "Second",
-      imageUrl: "https://example.com/2.png",
+      imageUrlLight: "https://example.com/2.png",
+      imageUrlDark: "",
       primaryButtonLabel: "Go",
       primaryButtonLink: "https://example.com/2",
     });
@@ -33,7 +34,8 @@ describe("buildCarousel", () => {
       slideCount: "2",
       title: "Slide 1",
       subtitle: "First",
-      imageUrl: "https://example.com/1.png",
+      imageUrlLight: "https://example.com/1.png",
+      imageUrlDark: "",
       primaryButtonLabel: "Start",
       primaryButtonLink: "https://example.com/1",
     });
@@ -48,16 +50,20 @@ describe("buildCarousel", () => {
         {
           title: "Slide 1",
           subtitle: "First",
-          imageUrl: "https://example.com/1.png",
+          imageUrlLight: "https://example.com/1.png",
+          imageUrlDark: "",
           primaryButtonLabel: "Start",
           primaryButtonLink: "https://example.com/1",
+          navigationButtonLabel: "",
         },
         {
           title: "Slide 2",
           subtitle: "Second",
-          imageUrl: "https://example.com/2.png",
+          imageUrlLight: "https://example.com/2.png",
+          imageUrlDark: "",
           primaryButtonLabel: "Go",
           primaryButtonLink: "https://example.com/2",
+          navigationButtonLabel: "",
         },
       ],
     });
@@ -78,11 +84,26 @@ describe("buildCarousel", () => {
       {
         title: "",
         subtitle: "",
-        imageUrl: "",
+        imageUrlLight: "",
+        imageUrlDark: "",
         primaryButtonLabel: "",
         primaryButtonLink: "",
+        navigationButtonLabel: "",
       },
     ]);
+  });
+
+  it("should trim navigationButtonLabel from carousel input", () => {
+    const card = makeCard("1", {
+      layout: GenericAwarenessModalLayout.Carousel,
+      campaignId: "campaign-1",
+      index: "0",
+      slideCount: "1",
+      title: "Slide 1",
+      navigationButtonLabel: "  Next  ",
+    });
+
+    expect(buildCarousel("campaign-1", [card])?.data[0]?.navigationButtonLabel).toBe("Next");
   });
 
   it("should return carousel with isReady false when slideCount is set but not all slides have arrived", () => {
@@ -148,9 +169,11 @@ describe("buildCarousel", () => {
       {
         title: "Valid",
         subtitle: "",
-        imageUrl: "",
+        imageUrlLight: "",
+        imageUrlDark: "",
         primaryButtonLabel: "",
         primaryButtonLink: "",
+        navigationButtonLabel: "",
       },
     ]);
   });

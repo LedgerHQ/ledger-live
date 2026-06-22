@@ -15,6 +15,7 @@ import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { isValidAddress } from "../logic";
 import { getNetworkParameters } from "../networks";
 import type { CardanoAccount, Token, Transaction, TransactionStatus } from "../types";
+import { isRecoverableBuildError } from "./buildErrors";
 
 export async function getSendTransactionStatus(
   account: CardanoAccount,
@@ -100,11 +101,8 @@ export async function getSendTransactionStatus(
   } else {
     try {
       await buildTransaction(account, transaction);
-    } catch (e: any) {
-      if (
-        e.message.toLowerCase() === "not enough ada" ||
-        e.message.toLowerCase() === "not enough tokens"
-      ) {
+    } catch (e: unknown) {
+      if (isRecoverableBuildError(e)) {
         errors.amount = new CardanoNotEnoughFunds();
       } else {
         throw e;

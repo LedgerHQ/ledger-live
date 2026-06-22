@@ -1,10 +1,8 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./bridge";
 
 beforeAll(() => {
-  const tezos = getCryptoCurrencyById("tezos");
   const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
     findTokenById: async (_id: string) => {
       return undefined;
@@ -18,7 +16,7 @@ beforeAll(() => {
           type: "TokenCurrency",
           id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
           contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
-          parentCurrency: tezos,
+          parentCurrencyId: "tezos",
           tokenType: "fa2",
           name: "Tether USD",
           ticker: "USDt",
@@ -39,7 +37,6 @@ beforeAll(() => {
 describe("generic-coin-framework Tezos token", () => {
   describe("Tezos token helpers", () => {
     it("computes the token of a known asset", async () => {
-      const tezos = getCryptoCurrencyById("tezos");
       await expect(
         getTokenFromAsset({
           type: "token",
@@ -50,7 +47,7 @@ describe("generic-coin-framework Tezos token", () => {
         type: "TokenCurrency",
         id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
         contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
-        parentCurrency: tezos,
+        parentCurrencyId: "tezos",
         tokenType: "fa2",
         name: "Tether USD",
         ticker: "USDt",
@@ -96,12 +93,11 @@ describe("generic-coin-framework Tezos token", () => {
 
   describe("getAssetFromToken", () => {
     it("returns asset with contractAddress as assetReference and owner as assetOwner", () => {
-      const tezos = getCryptoCurrencyById("tezos");
       const token: TokenCurrency = {
         type: "TokenCurrency",
         id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
         contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
-        parentCurrency: tezos,
+        parentCurrencyId: "tezos",
         tokenType: "fa2",
         name: "Tether USD",
         ticker: "USDt",

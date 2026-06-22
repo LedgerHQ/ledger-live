@@ -184,7 +184,7 @@ export const accountWithMandatoryTokens = (
     .filter(
       (
         t, // token of the same currency
-      ) => t.parentCurrency.id === account.currency.id && !existingTokens.includes(t), // not yet in the sub accounts
+      ) => t.parentCurrencyId === account.currency.id && !existingTokens.includes(t), // not yet in the sub accounts
     )
     .map<TokenAccount>(token => ({
       type: "TokenAccount",
@@ -218,7 +218,7 @@ export const findTokenAccountByCurrency = (
     }
   | null
   | undefined => {
-  const parentCurrency = tokenCurrency.parentCurrency;
+  const parentCurrencyId = tokenCurrency.parentCurrencyId;
 
   for (const parentAccount of accounts) {
     if (parentAccount.subAccounts && parentAccount.subAccounts.length > 0) {
@@ -237,7 +237,7 @@ export const findTokenAccountByCurrency = (
 
     const parentC = getAccountCurrency(parentAccount);
 
-    if (parentC.id === parentCurrency.id) {
+    if (parentC.id === parentCurrencyId) {
       // if no token currency matches but parent matches return parentAccount
       return {
         parentAccount,

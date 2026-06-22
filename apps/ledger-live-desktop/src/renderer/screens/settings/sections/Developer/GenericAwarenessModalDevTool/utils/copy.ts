@@ -39,9 +39,11 @@ export const COPY = {
   fields: {
     title: "Title",
     subtitle: "Subtitle",
-    imageUrl: "Image URL",
+    imageUrlLight: "Image URL (light)",
+    imageUrlDark: "Image URL (dark)",
     primaryButtonLabel: "Primary button label",
     primaryButtonLink: "Primary button link",
+    navigationButtonLabel: "Navigation button label (Continue/Close)",
     secondaryButtonLabel: "Secondary button label",
     secondaryButtonLink: "Secondary button link",
     icon: "Icon (Lumen symbol name)",

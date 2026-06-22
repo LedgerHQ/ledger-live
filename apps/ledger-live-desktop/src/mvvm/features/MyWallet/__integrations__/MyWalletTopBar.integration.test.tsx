@@ -29,6 +29,12 @@ jest.mock("~/renderer/analytics/TrackPage", () => ({
   setTrackingSource: jest.fn(),
 }));
 
+jest.mock("~/renderer/store", () => ({
+  getStoreValue: jest.fn(),
+  setStoreValue: jest.fn(),
+  resetStore: jest.fn(),
+}));
+
 const mockedUseNavigate = jest.mocked(useNavigate);
 const mockSetTrackingSource = jest.mocked(setTrackingSource);
 const mockTrack = jest.mocked(track);

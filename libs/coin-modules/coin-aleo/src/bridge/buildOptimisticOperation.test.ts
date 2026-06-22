@@ -37,4 +37,34 @@ describe("buildOptimisticOperation", () => {
       },
     });
   });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, "transfer_token_private", "private"],
+    [
+      TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+      "transfer_token_private_to_public",
+      "private",
+    ],
+  ])(
+    "should build an optimistic operation for token-private mode %s",
+    (mode, functionId, transactionType) => {
+      const transaction = getMockedTransaction({
+        amount: new BigNumber(1_000_000),
+        fees: new BigNumber(2_308),
+        recipient: "aleo1recipient123",
+        mode,
+        properties: {
+          amountRecordCommitments: ["commitment1"],
+          feeRecordCommitment: "feeCommitment1",
+        },
+      });
+
+      const operation = buildOptimisticOperation({ account, transaction });
+
+      expect(operation.extra).toEqual({
+        functionId,
+        transactionType,
+      });
+    },
+  );
 });

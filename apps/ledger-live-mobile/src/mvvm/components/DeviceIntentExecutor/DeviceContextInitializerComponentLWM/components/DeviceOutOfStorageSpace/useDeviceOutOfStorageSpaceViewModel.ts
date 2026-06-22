@@ -3,10 +3,7 @@ import type { BlockingStateType, EnsureAppReadyState } from "@ledgerhq/live-dmk-
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import type { SourceFlow } from "../../../utils/SourceFlowContext";
-import {
-  CONNECT_APP_BUTTON,
-  trackConnectAppButtonClicked,
-} from "../../../utils/trackDeviceIntent";
+import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type DeviceOutOfStorageSpaceState = Extract<
   EnsureAppReadyState,

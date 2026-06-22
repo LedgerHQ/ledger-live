@@ -35,7 +35,7 @@ const eursToken: TokenCurrency = {
   type: "TokenCurrency",
   id: "ethereum/erc20/stasis_eurs",
   contractAddress: "0xdB25f211AB05b1c97D595516F45794528a807ad8",
-  parentCurrency: mockEthCryptoCurrency,
+  parentCurrencyId: mockEthCryptoCurrency.id,
   tokenType: "erc20",
   name: "STASIS EURS Token",
   ticker: "EURS",

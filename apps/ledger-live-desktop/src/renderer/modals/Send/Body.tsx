@@ -7,11 +7,7 @@ import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import {
-  addPendingOperation,
-  getMainAccount,
-  getRecentAddressesStore,
-} from "@ledgerhq/live-common/account/index";
+import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -27,7 +23,7 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
 import type { ModalData } from "~/renderer/modals/types";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepRecipient, { StepRecipientFooter } from "./steps/StepRecipient";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
@@ -228,8 +224,9 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
-  const specific =
-    currency && isCryptoCurrency(currency) ? getLLDCoinFamily(currency.family) : null;
+  const specific = useLLDCoinFamily(
+    currency && isCryptoCurrency(currency) ? currency.family : undefined,
+  );
 
   const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
   const customSteps = useMemo(() => {
@@ -272,14 +269,8 @@ const Body = ({
       );
       setOptimisticOperation(optimisticOperation);
       setTransactionError(null);
-      // Add address to recent addresses store after successful broadcast
-      if (transaction && mainAccount) {
-        const store = getRecentAddressesStore();
-        const ensName = transaction.recipientDomain?.domain;
-        store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
-      }
     },
-    [account, parentAccount, updateAccountWithUpdater, transaction],
+    [account, parentAccount, updateAccountWithUpdater],
   );
   const handleStepChange = useCallback(
     (e: { id: StepId }) => onChangeStepId(e.id),

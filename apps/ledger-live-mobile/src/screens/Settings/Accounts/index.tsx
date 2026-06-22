@@ -22,7 +22,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type BlacklistedTokenSection = {
   key: string;
-  parentCurrency: TokenCurrency["parentCurrency"];
+  parentCurrency: CryptoCurrency;
   data: TokenCurrency[];
 };
 

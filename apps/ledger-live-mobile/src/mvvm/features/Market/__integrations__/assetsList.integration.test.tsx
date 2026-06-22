@@ -30,13 +30,12 @@ const enableAssetDiscoverability = withFlagOverrides({
   lwmWallet40: { enabled: true, params: { assetDiscoverability: true } },
 });
 
-function enableFavoritesCategory(starredMarketCoins: string[] = []) {
+function withStarredMarketCoins(starredMarketCoins: string[] = []) {
   return withFlagOverrides(
     { lwmWallet40: { enabled: true, params: { assetDiscoverability: true } } },
     (state: State): State => ({
       ...state,
       settings: { ...state.settings, starredMarketCoins },
-      marketListConfig: { ...state.marketListConfig, category: "starred" },
     }),
   );
 }
@@ -53,27 +52,16 @@ function hasTestID(node: React.ReactNode, testID: string): boolean {
 }
 
 function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: string[]) {
+  // The dedicated CVS `tokenized-stock` category is authoritative, so it returns only stocks.
   const stockMarketsMock: typeof marketsMock = [
-    marketsMock[0],
     {
       ...marketsMock[0],
       id: "tesla-xstock",
-      ledgerIds: [
-        "ethereum/erc20/tesla_xstock_0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
-      ],
+      ledgerIds: ["ethereum/erc20/tesla_xstock_0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0"],
       ticker: "tslax",
       name: "Tesla xStock",
       marketCapRank: 528,
       price: 411.28,
-    },
-    {
-      ...marketsMock[0],
-      id: "rif-token",
-      ledgerIds: ["rsk/erc20/rif"],
-      ticker: "rif",
-      name: "Rootstock Infrastructure Framework",
-      marketCapRank: 412,
-      price: 0.07,
     },
   ];
 
@@ -82,14 +70,16 @@ function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: s
       marketRequests.push(request.url);
       const searchParams = new URL(request.url).searchParams;
       const filter = searchParams.get("filter")?.toLowerCase();
+      const categories = searchParams.get("categories");
       const ids = searchParams.get("ids")?.split(",") ?? [];
 
       let filteredData = marketsMock;
-      if (filter === "stock") {
+      if (categories === "tokenized-stock") {
         filteredData = stockMarketsMock;
       } else if (filter) {
-        filteredData = marketsMock.filter(({ name, ticker }) =>
-          ticker.toLowerCase().includes(filter) || name.toLowerCase().includes(filter),
+        filteredData = marketsMock.filter(
+          ({ name, ticker }) =>
+            ticker.toLowerCase().includes(filter) || name.toLowerCase().includes(filter),
         );
       } else if (ids.length > 0) {
         filteredData = marketsMock.filter(({ id }) => ids.includes(id));
@@ -182,22 +172,37 @@ describe("MarketScreen assets list (Block 3)", () => {
   });
 
   it("renders the favorites empty state when no market coin is starred", async () => {
-    renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableFavoritesCategory(),
+    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: withStarredMarketCoins(),
     });
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    await user.press(
+      screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-starred`),
+    );
 
     await waitFor(() => {
       expect(screen.getByText("No favorites yet")).toBeVisible();
     });
-
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsFavoritesEmptyIcon)).toBeVisible();
     expect(screen.queryByTestId("marketItem-bitcoin")).toBeNull();
   });
 
   it("renders only starred market coins in the Favorites category", async () => {
-    renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableFavoritesCategory(["bitcoin"]),
+    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: withStarredMarketCoins(["bitcoin"]),
     });
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-ethereum")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    await user.press(
+      screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-starred`),
+    );
 
     await waitFor(
       () => {
@@ -225,9 +230,7 @@ describe("MarketScreen assets list (Block 3)", () => {
       { timeout: 5000 },
     );
 
-    fireEvent.press(
-      screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-stocks`),
-    );
+    fireEvent.press(screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-stocks`));
 
     await waitFor(
       () => {
@@ -237,7 +240,7 @@ describe("MarketScreen assets list (Block 3)", () => {
     );
 
     const stockMarketRequest = marketRequests.find(
-      url => new URL(url).searchParams.get("filter") === "stock",
+      url => new URL(url).searchParams.get("categories") === "tokenized-stock",
     );
     const dadaStocksRequests = dadaRequests.filter(
       url => new URL(url).searchParams.get("categories") === "stocks",
@@ -252,27 +255,78 @@ describe("MarketScreen assets list (Block 3)", () => {
     expect(screen.queryByTestId("marketItem-rif-token")).toBeNull();
   });
 
-  it("renders CVS stock rows when the Stocks category is persisted", async () => {
-    renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: withFlagOverrides(
-        { lwmWallet40: { enabled: true, params: { assetDiscoverability: true } } },
-        (state: State): State => ({
-          ...state,
-          marketListConfig: { ...state.marketListConfig, category: "stocks" },
-        }),
-      ),
-    });
+  it("renders trending categories and filters the list by the selected one", async () => {
+    const marketRequests: string[] = [];
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("marketItem-tesla-xstock")).toBeVisible();
-      },
-      { timeout: 5000 },
+    server.use(
+      http.get("https://countervalues.live.ledger.com/v3/categories/trending", () =>
+        HttpResponse.json([{ id: "infrastructure", name: "Infrastructure" }]),
+      ),
+      http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
+        marketRequests.push(request.url);
+        const searchParams = new URL(request.url).searchParams;
+        const category = searchParams.get("categories");
+        const page = parseInt(searchParams.get("page") || "0");
+        const pageSize = 10;
+
+        const data =
+          category === "infrastructure"
+            ? [{ ...marketsMock[0], id: "rif-token", ticker: "rif", name: "Rootstock Infra" }]
+            : marketsMock;
+
+        return HttpResponse.json(data.slice(page * pageSize, (page + 1) * pageSize));
+      }),
     );
 
-    expect(screen.getByText("Tesla xStock")).toBeVisible();
-    expect(screen.getByText("Stocks")).toBeVisible();
-    expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher)).toBeVisible();
+    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: enableAssetDiscoverability,
+    });
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    const trendingTab = await screen.findByTestId(
+      `${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-infrastructure`,
+    );
+    expect(screen.getByText("Infrastructure")).toBeVisible();
+
+    await user.press(trendingTab);
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-rif-token")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    const categoryRequest = marketRequests.find(
+      url => new URL(url).searchParams.get("categories") === "infrastructure",
+    );
+    expect(categoryRequest).toBeDefined();
     expect(screen.queryByTestId("marketItem-bitcoin")).toBeNull();
+  });
+
+  it("switches categories from the tabs, including back to All", async () => {
+    const marketRequests: string[] = [];
+    const dadaRequests: string[] = [];
+    installCapturedMarketHandlers(marketRequests, dadaRequests);
+
+    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: enableAssetDiscoverability,
+    });
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    await user.press(screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-stocks`));
+    await waitFor(() => expect(screen.getByTestId("marketItem-tesla-xstock")).toBeVisible(), {
+      timeout: 5000,
+    });
+    expect(screen.queryByTestId("marketItem-bitcoin")).toBeNull();
+
+    await user.press(screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-all`));
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
+      timeout: 5000,
+    });
+    expect(screen.queryByTestId("marketItem-tesla-xstock")).toBeNull();
   });
 });

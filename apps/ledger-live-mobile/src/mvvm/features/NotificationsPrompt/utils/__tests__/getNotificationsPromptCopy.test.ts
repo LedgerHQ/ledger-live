@@ -1,0 +1,39 @@
+import {
+  getNotificationsPromptCopy,
+  isTransactionsAlertsPromptTarget,
+} from "../getNotificationsPromptCopy";
+
+describe("getNotificationsPromptCopy", () => {
+  it("returns global prompt copy by default", () => {
+    expect(getNotificationsPromptCopy(undefined, false)).toEqual({
+      titleKey: "notifications.prompt.title",
+      descriptionKey: "notifications.prompt.desc",
+      allowKey: "notifications.prompt.allow",
+      laterKey: "notifications.prompt.later",
+    });
+  });
+
+  it("returns variant B global copy when enabled", () => {
+    expect(getNotificationsPromptCopy("globalPushNotifications", true)).toEqual({
+      titleKey: "notifications.prompt.titleVariantB",
+      descriptionKey: "notifications.prompt.descVariantB",
+      allowKey: "notifications.prompt.allow",
+      laterKey: "notifications.prompt.later",
+    });
+  });
+
+  it("returns transactions alerts copy for the category prompt target", () => {
+    expect(getNotificationsPromptCopy("transactionsAlertsCategory", false)).toEqual({
+      titleKey: "notifications.prompt.transactionsAlerts.title",
+      descriptionKey: "notifications.prompt.transactionsAlerts.desc",
+      allowKey: "notifications.prompt.allow",
+      laterKey: "notifications.prompt.later",
+    });
+  });
+
+  it("identifies the transactions alerts prompt target", () => {
+    expect(isTransactionsAlertsPromptTarget("transactionsAlertsCategory")).toBe(true);
+    expect(isTransactionsAlertsPromptTarget("globalPushNotifications")).toBe(false);
+    expect(isTransactionsAlertsPromptTarget(undefined)).toBe(false);
+  });
+});

@@ -11,19 +11,11 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
-import type { OptionalFeatureMap } from "@ledgerhq/types-live";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 
 function setupEnv(disableBroadcast?: boolean) {
-  const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
-  test.beforeAll(async () => {
-    if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-  });
-  test.afterAll(async () => {
-    if (originalBroadcastValue !== undefined) {
-      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
-    } else {
-      delete process.env.DISABLE_TRANSACTION_BROADCAST;
-    }
+  test.use({
+    env: disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {},
   });
 }
 
@@ -524,9 +516,11 @@ for (const currency of liveApps) {
 
         await app.account.startStakingFlowFromMainStakeButton();
         if (currency.delegate.account.currency.name == Currency.ETH.name) {
-          await app.delegate.clickLidoProvider();
+          await app.earnV2Dashboard.verifyDepositFlowVisible();
+          await app.earnV2Dashboard.selectEthProvider(currency.delegate.provider);
+        } else {
+          await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
         }
-        await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
       },
     );
   });

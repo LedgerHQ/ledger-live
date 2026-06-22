@@ -5,7 +5,10 @@ import {
   type GenericAwarenessModalContentCard,
   type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
-import { closeGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
+import {
+  closeGenericAwarenessModalDialog,
+  type CloseGenericAwarenessModalDialogOptions,
+} from "../genericAwarenessModalDialog";
 import { openURL } from "~/renderer/linking";
 import {
   getPromptAnalyticsContext,
@@ -20,8 +23,11 @@ export interface GenericAwarenessModalPromptViewModel {
   title: string;
   subtitle: string;
   primaryButtonLabel: string;
+  primaryButtonLink: string;
   secondaryButtonLabel: string;
-  imageUrl?: string;
+  secondaryButtonLink: string;
+  imageUrlLight?: string;
+  imageUrlDark?: string;
   onPrimaryClick: () => void;
   onSecondaryClick: () => void;
   onHeaderClose: () => void;
@@ -38,9 +44,12 @@ const useGenericAwarenessModalPromptViewModel = (
   const prompt: GenericAwarenessModalPrompt | undefined =
     contentCard?.layout === GenericAwarenessModalLayout.Prompt ? contentCard : undefined;
 
-  const closeDialog = useCallback(() => {
-    dispatch(closeGenericAwarenessModalDialog());
-  }, [dispatch]);
+  const closeDialog = useCallback(
+    (options?: CloseGenericAwarenessModalDialogOptions) => {
+      dispatch(closeGenericAwarenessModalDialog(options));
+    },
+    [dispatch],
+  );
 
   const getContext = useCallback(() => {
     if (!prompt) {
@@ -69,7 +78,7 @@ const useGenericAwarenessModalPromptViewModel = (
       trackPromptPrimaryClick(context, prompt.primaryButtonLabel, prompt.primaryButtonLink);
       openURL(prompt.primaryButtonLink);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext, prompt]);
 
   const onSecondaryClick = useCallback(() => {
@@ -78,7 +87,7 @@ const useGenericAwarenessModalPromptViewModel = (
       trackPromptSecondaryClick(context, prompt.secondaryButtonLabel, prompt.secondaryButtonLink);
       openURL(prompt.secondaryButtonLink);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext, prompt]);
 
   const onHeaderClose = useCallback(() => {
@@ -86,7 +95,7 @@ const useGenericAwarenessModalPromptViewModel = (
     if (context) {
       trackPromptCloseClick(context);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext]);
 
   const onDismiss = useCallback(() => {
@@ -94,7 +103,7 @@ const useGenericAwarenessModalPromptViewModel = (
     if (context) {
       trackPromptDismissed(context);
     }
-    closeDialog();
+    closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext]);
 
   return useMemo(
@@ -102,8 +111,11 @@ const useGenericAwarenessModalPromptViewModel = (
       title: prompt?.title ?? "",
       subtitle: prompt?.subtitle ?? "",
       primaryButtonLabel: prompt?.primaryButtonLabel ?? "",
+      primaryButtonLink: prompt?.primaryButtonLink ?? "",
       secondaryButtonLabel: prompt?.secondaryButtonLabel ?? "",
-      imageUrl: prompt?.imageUrl || undefined,
+      secondaryButtonLink: prompt?.secondaryButtonLink ?? "",
+      imageUrlLight: prompt?.imageUrlLight,
+      imageUrlDark: prompt?.imageUrlDark,
       onPrimaryClick,
       onSecondaryClick,
       onHeaderClose,

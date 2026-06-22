@@ -51,7 +51,9 @@ export const GENERIC_TRANSACTION_MODE = [
   "undelegate",
   "unstake",
   "finalize_unstake",
+  "withdraw",
   "claimReward",
+  "compoundReward",
 ] as const;
 
 export type GenericTransactionMode = (typeof GENERIC_TRANSACTION_MODE)[number];

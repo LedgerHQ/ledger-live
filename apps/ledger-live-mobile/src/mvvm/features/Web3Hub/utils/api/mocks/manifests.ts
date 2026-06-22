@@ -137,6 +137,8 @@ export const mocks: AppManifest[] = [
       "berachain",
       "arc",
       "arc_testnet",
+      "robinhood",
+      "robinhood_testnet",
       "coreum",
       "injective",
       "neon_evm",

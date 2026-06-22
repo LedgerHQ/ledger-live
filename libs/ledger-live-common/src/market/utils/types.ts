@@ -9,6 +9,8 @@ export enum Order {
   MarketCapAsc = "asc",
   topLosers = "topLosers",
   topGainers = "topGainers",
+  VolumeDesc = "volume-desc",
+  VolumeAsc = "volume-asc",
 }
 
 export type MarketListRequestParams = {
@@ -21,6 +23,7 @@ export type MarketListRequestParams = {
   search?: string;
   filter?: string;
   liveCompatible?: boolean;
+  categories?: string;
 };
 
 export type MarketListRequestResult = {

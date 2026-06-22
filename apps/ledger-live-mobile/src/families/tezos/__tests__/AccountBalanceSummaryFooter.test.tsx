@@ -22,8 +22,8 @@ jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
   useFeature: () => ({ enabled: mockFeatureEnabled }),
 }));
 

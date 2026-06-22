@@ -17,7 +17,7 @@ export function HistoryButton() {
   );
 
   return hasUnread ? (
-    <DotIndicator appearance="red" size="lg" data-testid="unread-indicator">
+    <DotIndicator appearance="base" size="lg" data-testid="unread-indicator">
       {button}
     </DotIndicator>
   ) : (

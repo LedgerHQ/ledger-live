@@ -42,11 +42,27 @@ type Props = {
   inputs?: Record<string, string | undefined>;
   isLwm40Enabled?: boolean;
   onScroll?: ComponentProps<typeof WebView>["onScroll"];
+  /** Surfaces the live webview state (notably its URL) so the parent can react to in-webview navigation. */
+  onWebviewStateChange?: (state: WebviewState) => void;
 };
 /** Subset of WebPTXPlayer functionality required for Earn live app. */
-export const EarnWebview = ({ manifest, inputs, isLwm40Enabled, onScroll }: Props) => {
+export const EarnWebview = ({
+  manifest,
+  inputs,
+  isLwm40Enabled,
+  onScroll,
+  onWebviewStateChange,
+}: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+
+  const handleStateChange = useCallback(
+    (state: WebviewState) => {
+      setWebviewState(state);
+      onWebviewStateChange?.(state);
+    },
+    [onWebviewStateChange],
+  );
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -154,7 +170,7 @@ export const EarnWebview = ({ manifest, inputs, isLwm40Enabled, onScroll }: Prop
         ref={webviewAPIRef}
         manifest={manifest}
         inputs={inputs}
-        onStateChange={setWebviewState}
+        onStateChange={handleStateChange}
         customHandlers={customHandlers}
         onScroll={onScroll}
         Loader={() => <Loading backgroundColor="transparent" />}

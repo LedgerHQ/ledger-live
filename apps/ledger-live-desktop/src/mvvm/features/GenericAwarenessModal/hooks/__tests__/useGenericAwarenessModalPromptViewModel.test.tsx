@@ -29,8 +29,11 @@ describe("useGenericAwarenessModalPromptViewModel", () => {
       title: "",
       subtitle: "",
       primaryButtonLabel: "",
+      primaryButtonLink: "",
       secondaryButtonLabel: "",
-      imageUrl: undefined,
+      secondaryButtonLink: "",
+      imageUrlLight: undefined,
+      imageUrlDark: undefined,
       onPrimaryClick: expect.any(Function),
       onSecondaryClick: expect.any(Function),
       onHeaderClose: expect.any(Function),
@@ -56,7 +59,8 @@ describe("useGenericAwarenessModalPromptViewModel", () => {
     expect(result.current.subtitle).toBe("Move assets to a hardware signer for true self-custody.");
     expect(result.current.primaryButtonLabel).toBe("Learn more");
     expect(result.current.secondaryButtonLabel).toBe("Maybe later");
-    expect(result.current.imageUrl).toBe("https://example.com/prompt.png");
+    expect(result.current.imageUrlLight).toBe("https://example.com/prompt.png");
+    expect(result.current.imageUrlDark).toBe("");
   });
 
   it("should track page view when open with a prompt card", () => {
@@ -89,10 +93,12 @@ describe("useGenericAwarenessModalPromptViewModel", () => {
       }),
     );
     expect(openURL).toHaveBeenCalledWith("https://www.ledger.com/academy");
-    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
+    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalledWith({
+      dismissAppStart: true,
+    });
   });
 
-  it("should track secondary click, open the link, and close dialog", () => {
+  it("should track secondary click, open the link, and dismiss app start when closing", () => {
     const { result } = renderHookWithStore(() =>
       useGenericAwarenessModalPromptViewModel(promptCampaignCard, true),
     );
@@ -110,6 +116,8 @@ describe("useGenericAwarenessModalPromptViewModel", () => {
       }),
     );
     expect(openURL).toHaveBeenCalledWith("https://www.ledger.com");
-    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
+    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalledWith({
+      dismissAppStart: true,
+    });
   });
 });

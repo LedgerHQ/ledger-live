@@ -65,6 +65,7 @@ export default function UndelegationAmount({ navigation, route }: Props) {
         transaction: bridge.updateTransaction(tx, {
           mode: "undelegate",
           valAddress: delegation.validatorAddress,
+          valId: delegation.validatorId,
           recipient: account.freshAddress,
         }) as unknown as Transaction,
       };

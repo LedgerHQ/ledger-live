@@ -2,16 +2,29 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Slides, useSlidesContext } from "LLD/components/Slides";
 import { Button, PageIndicator } from "@ledgerhq/lumen-ui-react";
-import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
+import {
+  hasAwarenessModalActionButton,
+  resolveCarouselNavigationButtonLabel,
+  type GenericAwarenessModalCarouselSlide,
+} from "@ledgerhq/live-common/genericAwarenessModal";
+import { useThemedAwarenessModalImage } from "../hooks/useThemedAwarenessModalImage";
 import { AwarenessModalClampedText, CAROUSEL_SLIDE_TEXT_LINE_LIMITS } from "./clampedText";
 
 type CarouselContentSlideProps = Pick<
   GenericAwarenessModalCarouselSlide,
-  "title" | "subtitle" | "imageUrl"
+  "title" | "subtitle" | "imageUrlLight" | "imageUrlDark"
 >;
 
-function CarouselContentSlide({ title, subtitle, imageUrl }: Readonly<CarouselContentSlideProps>) {
-  const showImage = imageUrl != null && imageUrl.length > 0;
+function CarouselContentSlide({
+  title,
+  subtitle,
+  imageUrlLight,
+  imageUrlDark,
+}: Readonly<CarouselContentSlideProps>) {
+  const { imageUrl, showImage } = useThemedAwarenessModalImage({
+    imageUrlLight,
+    imageUrlDark,
+  });
 
   return (
     <div className="flex size-full flex-col">
@@ -81,6 +94,13 @@ function CarouselContentFooter({
   const { currentIndex, totalSlides, goToNext } = useSlidesContext();
   const isLastSlide = currentIndex === totalSlides - 1;
   const currentSlide = slides[currentIndex];
+  const navigationButtonLabel = resolveCarouselNavigationButtonLabel(
+    currentSlide?.navigationButtonLabel ?? "",
+    isLastSlide ? t("common.close") : t("common.continue"),
+  );
+  const showPrimaryButton = currentSlide
+    ? hasAwarenessModalActionButton(currentSlide.primaryButtonLabel, currentSlide.primaryButtonLink)
+    : false;
 
   const handleContinue = useCallback(() => {
     onContinueClick(currentIndex, isLastSlide);
@@ -99,15 +119,17 @@ function CarouselContentFooter({
 
   return (
     <div className="flex flex-col gap-16">
-      <Button
-        appearance="base"
-        size="lg"
-        isFull
-        onClick={handlePrimary}
-        data-testid="generic-awareness-modal-primary-button"
-      >
-        {currentSlide?.primaryButtonLabel}
-      </Button>
+      {showPrimaryButton ? (
+        <Button
+          appearance="base"
+          size="lg"
+          isFull
+          onClick={handlePrimary}
+          data-testid="generic-awareness-modal-primary-button"
+        >
+          {currentSlide?.primaryButtonLabel}
+        </Button>
+      ) : null}
       <Button
         appearance="gray"
         size="lg"
@@ -115,7 +137,7 @@ function CarouselContentFooter({
         onClick={handleContinue}
         data-testid="generic-awareness-modal-continue-button"
       >
-        {isLastSlide ? t("common.close") : t("common.continue")}
+        {navigationButtonLabel}
       </Button>
     </div>
   );

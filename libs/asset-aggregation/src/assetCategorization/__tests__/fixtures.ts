@@ -10,7 +10,7 @@ export function makeToken(id: string, ticker: string, name: string, magnitude = 
     type: "TokenCurrency",
     id,
     contractAddress: `0x${id.replace(/\//g, "")}`,
-    parentCurrency: eth,
+    parentCurrencyId: eth.id,
     tokenType: "erc20",
     name,
     ticker,

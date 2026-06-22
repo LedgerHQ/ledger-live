@@ -106,6 +106,7 @@ export type DrawerProps = {
   title?: string;
   preventBackdropClick?: boolean;
   forceDisableFocusTrap?: boolean;
+  shouldRestoreFocusOnClose?: boolean;
   style?: React.CSSProperties;
   withPaddingTop?: boolean;
   closeButtonComponent?: React.ComponentType<{
@@ -122,6 +123,7 @@ export function SideDrawer({
   title,
   preventBackdropClick = false,
   forceDisableFocusTrap = false,
+  shouldRestoreFocusOnClose = true,
   closeButtonComponent,
   ...props
 }: DrawerProps) {
@@ -151,8 +153,15 @@ export function SideDrawer({
   }, [onKeyPress]);
   const nodeRef = useRef<HTMLDivElement>(null);
   const focusTrap = useRef<FocusTrap | null>(null);
+  const shouldRestoreFocusOnCloseRef = useRef(shouldRestoreFocusOnClose);
+  shouldRestoreFocusOnCloseRef.current = shouldRestoreFocusOnClose;
   const modalsState = useSelector(modalsStateSelector);
   const shouldDisableFocusTrap = Object.values(modalsState).some(state => state?.isOpened);
+  const deactivateFocusTrap = useCallback(() => {
+    focusTrap.current?.deactivate({ returnFocus: shouldRestoreFocusOnCloseRef.current });
+    focusTrap.current = null;
+  }, []);
+
   useEffect(() => {
     if (forceDisableFocusTrap) {
       return;
@@ -163,17 +172,16 @@ export function SideDrawer({
         escapeDeactivates: false,
         clickOutsideDeactivates: false,
         preventScroll: true,
+        returnFocusOnDeactivate: shouldRestoreFocusOnCloseRef.current,
       });
       focusTrap.current?.activate();
     } else if (shouldDisableFocusTrap) {
-      focusTrap.current?.deactivate();
-      focusTrap.current = null;
+      deactivateFocusTrap();
     }
     return () => {
-      focusTrap.current?.deactivate();
-      focusTrap.current = null;
+      deactivateFocusTrap();
     };
-  }, [isOpen, shouldDisableFocusTrap, forceDisableFocusTrap]);
+  }, [isOpen, shouldDisableFocusTrap, forceDisableFocusTrap, deactivateFocusTrap]);
   return domNode
     ? createPortal(
         <Transition

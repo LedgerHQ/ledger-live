@@ -57,7 +57,7 @@ describe("useDetailedAccountsCore", () => {
       ticker: "USDC",
       name: "USD Coin",
       units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
-      parentCurrency: mockAccount.currency,
+      parentCurrencyId: "ethereum",
     },
     balance: new BigNumber("1000000"), // 1 USDC
   } as TokenAccount;

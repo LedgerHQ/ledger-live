@@ -15,11 +15,17 @@ import { FearAndGreed } from "LLM/components/FearAndGreed";
 import ViewAllTile from "../ViewAllTile";
 import { ErrorState } from "../ErrorState";
 import { SkeletonState } from "../SkeletonState";
+import { MarketBannerFilterDrawer } from "../MarketBannerFilterDrawer";
+import { MarketBannerFilterTrigger } from "../MarketBannerFilterTrigger";
+import { MARKET_BANNER_FILTER_LABEL_KEYS, MARKET_BANNER_TEST_IDS } from "../../constants";
+import type { MarketBannerFilterController } from "../../hooks/useMarketBannerFilter";
 
 interface MarketBannerViewProps {
   items: MarketItemPerformer[];
   range: PortfolioRange;
   isError: boolean;
+  showFilter: boolean;
+  bannerFilter: MarketBannerFilterController;
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;
   onSectionTitlePress: () => void;
@@ -35,6 +41,8 @@ const MarketBannerView = ({
   items,
   range,
   isError,
+  showFilter,
+  bannerFilter,
   onTilePress,
   onViewAllPress,
   onSectionTitlePress,
@@ -61,6 +69,15 @@ const MarketBannerView = ({
         >
           <SubheaderTitle>{t("marketBanner.title")}</SubheaderTitle>
           <SubheaderShowMore />
+          {showFilter ? (
+            <MarketBannerFilterTrigger
+              label={t(MARKET_BANNER_FILTER_LABEL_KEYS[bannerFilter.filter])}
+              onPress={bannerFilter.onOpen}
+              accessibilityLabel={t("marketBanner.filter.accessibilityLabel")}
+              accessibilityHint={t("marketBanner.filter.accessibilityHint")}
+              testID={MARKET_BANNER_TEST_IDS.filterButton}
+            />
+          ) : null}
         </SubheaderRow>
       </Subheader>
 
@@ -82,6 +99,8 @@ const MarketBannerView = ({
           style={{ marginHorizontal: MARGIN_HORIZONTAL }}
         />
       )}
+
+      {showFilter ? <MarketBannerFilterDrawer controller={bannerFilter} /> : null}
     </Box>
   );
 };

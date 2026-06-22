@@ -2,7 +2,7 @@ import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from 
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
-import { OptionalFeatureMap } from "@ledgerhq/types-live";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 import { setEnv } from "@ledgerhq/live-env";
 
 import { Application } from "tests/page";

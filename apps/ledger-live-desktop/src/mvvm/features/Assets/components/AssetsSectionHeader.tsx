@@ -6,7 +6,11 @@ import {
   SubheaderShowMore,
   SubheaderCount,
 } from "@ledgerhq/lumen-ui-react";
-import { MAX_ITEM_DISPLAYED } from "../constants";
+import {
+  ASSETS_PAGE_CATEGORY_STOCKS,
+  MAX_ITEM_DISPLAYED,
+  MAX_STOCKS_TO_DISPLAY,
+} from "../constants";
 
 type AssetSectionHeaderProps = {
   readonly sectionId: string;
@@ -21,7 +25,9 @@ export const AssetsSectionHeader = ({
   onNavigate,
   numberOfItems,
 }: AssetSectionHeaderProps) => {
-  const shouldShowMore = numberOfItems > MAX_ITEM_DISPLAYED;
+  const maxItemsDisplayed =
+    sectionId === ASSETS_PAGE_CATEGORY_STOCKS ? MAX_STOCKS_TO_DISPLAY : MAX_ITEM_DISPLAYED;
+  const shouldShowMore = numberOfItems > maxItemsDisplayed;
 
   return (
     <Subheader>

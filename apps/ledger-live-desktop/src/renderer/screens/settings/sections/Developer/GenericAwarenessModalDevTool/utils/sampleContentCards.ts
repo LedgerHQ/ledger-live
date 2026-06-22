@@ -5,27 +5,35 @@ import {
 import { DEV_CAMPAIGN_IDS } from "./campaignIds";
 import { getDevToolCarouselImageUrl, getDevToolPlaceholderImageUrl } from "./placeholderImages";
 
+const toThemedImage = (url: string) => ({
+  imageUrlLight: url,
+  imageUrlDark: url,
+});
+
 const sampleCarouselSlides = [
   {
     title: "Ledger Flex",
     subtitle: "The new standard to buy, swap, stake, and build your portfolio with ease.",
-    imageUrl: getDevToolCarouselImageUrl(0),
+    ...toThemedImage(getDevToolCarouselImageUrl(0)),
     primaryButtonLabel: "Discover Flex",
     primaryButtonLink: "https://www.ledger.com/products/ledger-flex",
+    navigationButtonLabel: "",
   },
   {
     title: "Ledger Wallet clarity",
     subtitle: "Faster trades with real-time market and portfolio insights.",
-    imageUrl: getDevToolCarouselImageUrl(1),
+    ...toThemedImage(getDevToolCarouselImageUrl(1)),
     primaryButtonLabel: "Explore the app",
     primaryButtonLink: "https://www.ledger.com/ledger-wallet",
+    navigationButtonLabel: "",
   },
   {
     title: "Bitcoin, secured",
     subtitle: "Manage Bitcoin with keys that never leave your device.",
-    imageUrl: getDevToolCarouselImageUrl(2),
+    ...toThemedImage(getDevToolCarouselImageUrl(2)),
     primaryButtonLabel: "Bitcoin wallet",
     primaryButtonLink: "https://www.ledger.com/coin/wallet/bitcoin",
+    navigationButtonLabel: "",
   },
 ];
 
@@ -37,7 +45,7 @@ export const sampleGenericAwarenessModalContentCards: GenericAwarenessModalConte
     title: "Connect a Ledger device",
     subtitle:
       "Go beyond exchanges and software wallets. Pair a signer to unlock the full Ledger Wallet experience.",
-    imageUrl: getDevToolPlaceholderImageUrl("sample-feature-intro-app-start"),
+    ...toThemedImage(getDevToolPlaceholderImageUrl("sample-feature-intro-app-start")),
     primaryButtonLabel: "Got it",
     primaryButtonLink: "https://www.ledger.com",
     secondaryButtonLabel: "Compare signers",
@@ -68,7 +76,7 @@ export const sampleGenericAwarenessModalContentCards: GenericAwarenessModalConte
     title: "Not your keys, not your coins",
     subtitle:
       "Hot wallets and exchanges are convenient, but only a hardware signer gives you true ownership of your crypto.",
-    imageUrl: getDevToolPlaceholderImageUrl("sample-feature-intro-banner"),
+    ...toThemedImage(getDevToolPlaceholderImageUrl("sample-feature-intro-banner")),
     primaryButtonLabel: "Learn about cold storage",
     primaryButtonLink:
       "https://www.ledger.com/academy/topics/ledgersolutions/what-is-a-cold-wallet",
@@ -101,7 +109,7 @@ export const sampleGenericAwarenessModalContentCards: GenericAwarenessModalConte
     id: DEV_CAMPAIGN_IDS.appStartPrompt,
     title: "Stay in control",
     subtitle: "Move assets to a hardware signer for true self-custody.",
-    imageUrl: getDevToolPlaceholderImageUrl("sample-prompt-app-start"),
+    ...toThemedImage(getDevToolPlaceholderImageUrl("sample-prompt-app-start")),
     primaryButtonLabel: "Learn more",
     primaryButtonLink: "https://www.ledger.com/academy",
     secondaryButtonLabel: "Maybe later",
@@ -112,7 +120,7 @@ export const sampleGenericAwarenessModalContentCards: GenericAwarenessModalConte
     id: DEV_CAMPAIGN_IDS.bannerPrompt,
     title: "Secure your assets",
     subtitle: "Hardware signers keep your keys offline and under your control.",
-    imageUrl: getDevToolPlaceholderImageUrl("sample-prompt-banner"),
+    ...toThemedImage(getDevToolPlaceholderImageUrl("sample-prompt-banner")),
     primaryButtonLabel: "Discover signers",
     primaryButtonLink: "https://www.ledger.com/products",
     secondaryButtonLabel: "Not now",

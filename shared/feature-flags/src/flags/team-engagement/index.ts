@@ -35,4 +35,3 @@ export * from "./ratingsPrompt";
 export * from "./referralProgramDesktopSidebar";
 export * from "./storyly";
 export * from "./transactionsAlerts";
-export * from "./welcomeScreenVideoCarousel";

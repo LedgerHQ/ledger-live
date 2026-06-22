@@ -34,6 +34,7 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
 
 jest.mock("@ledgerhq/live-common/explorers", () => ({
   getAddressExplorer: () => "https://tzkt.io/tz1abc/operations",
+  getTransactionExplorer: () => "https://tzkt.io/tx/abc",
   getDefaultExplorerView: () => ({}),
 }));
 
@@ -90,11 +91,6 @@ jest.mock("~/components/AccountSectionLabel", () => {
   );
 });
 
-jest.mock("../LabelRight", () => {
-  const { Text } = jest.requireActual("react-native");
-  return ({ label }: { label: string }) => <Text>{label}</Text>;
-});
-
 jest.mock("../Row", () => {
   const { TouchableOpacity, Text } = jest.requireActual("react-native");
   return ({
@@ -122,10 +118,12 @@ jest.mock("~/components/DelegationDrawer", () => {
     isOpen,
     onClose,
     data,
+    actions = [],
   }: {
     isOpen: boolean;
     onClose: () => void;
     data: { label: string; Component: React.ReactNode }[];
+    actions?: { label?: string; event?: string; onPress?: () => void }[];
   }) =>
     isOpen ? (
       <View testID="delegation-drawer">
@@ -137,8 +135,22 @@ jest.mock("~/components/DelegationDrawer", () => {
             {field.Component}
           </View>
         ))}
+        {actions.map(action => (
+          <TouchableOpacity key={action.event} testID={action.event} onPress={action.onPress}>
+            <Text>{action.label}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
     ) : null;
+});
+
+jest.mock("../../UnstakeRequiredDrawer", () => {
+  const { View } = jest.requireActual("react-native");
+  return {
+    __esModule: true,
+    default: ({ isOpen, reason }: { isOpen: boolean; reason: string }) =>
+      isOpen ? <View testID={`unstake-required-${reason}`} /> : null,
+  };
 });
 
 type StakingPositionLike = {
@@ -157,7 +169,11 @@ function makeInfo(
     availableBalance: BigNumber;
     unstakingPositions: StakingPositionLike[];
     delegateAddress: string;
-    delegation: { address: string; baker: { name: string }; operation: { date: Date } } | null;
+    delegation: {
+      address: string;
+      baker: { name: string };
+      operation: { date: Date; hash?: string };
+    } | null;
   }> = {},
 ) {
   return {
@@ -171,7 +187,7 @@ function makeInfo(
     delegation: null as {
       address: string;
       baker: { name: string };
-      operation: { date: Date };
+      operation: { date: Date; hash?: string };
     } | null,
     ...overrides,
   };
@@ -255,6 +271,24 @@ describe("TezosDelegation (staking dashboard)", () => {
     expect(Linking.openURL).toHaveBeenCalledWith("https://tzkt.io/tz1abc/operations");
   });
 
+  it("shows the delegation transaction ID and opens the tx explorer", () => {
+    mockStakingInfo = makeInfo({
+      isDelegated: true,
+      availableBalance: new BigNumber(50),
+      delegateAddress: "tz1delegate",
+      delegation: {
+        address: "tz1delegate",
+        baker: { name: "MyBaker" },
+        operation: { date: new Date("2026-05-01"), hash: "ooDelegateHash" },
+      },
+    });
+    render(<TezosDelegation account={makeAccount()} />);
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    expect(screen.getByTestId("drawer-field-delegation.transactionID")).toBeTruthy();
+    fireEvent.press(screen.getByTestId("TezosOpenTransactionExplorer"));
+    expect(Linking.openURL).toHaveBeenCalledWith("https://tzkt.io/tx/abc");
+  });
+
   it("renders only the staking section with an active stake", () => {
     mockStakingInfo = makeInfo({ isStaked: true, stakedBalance: new BigNumber(10) });
     render(
@@ -299,6 +333,54 @@ describe("TezosDelegation (staking dashboard)", () => {
     render(<TezosDelegation account={makeAccount()} />);
     fireEvent.press(screen.getByTestId("delegation-row"));
     expect(screen.getByTestId("drawer-field-tezos.staking.status")).toBeTruthy();
+  });
+
+  it("shows the time left until withdrawal for a pending unstaking position", () => {
+    const dayMs = 24 * 60 * 60 * 1000;
+    mockStakingInfo = makeInfo({
+      hasUnstaking: true,
+      unstakingPositions: [
+        {
+          uid: "unstaking-1",
+          amount: new BigNumber(3),
+          createdAt: new Date(Date.now() - dayMs).toISOString(),
+        },
+      ],
+    });
+    render(<TezosDelegation account={makeAccount()} />);
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    expect(screen.getByTestId("drawer-field-tezos.staking.availableIn")).toBeTruthy();
+  });
+
+  it("omits the time left once an unstaking position is finalizable", () => {
+    mockStakingInfo = makeInfo({
+      hasUnstaking: true,
+      unstakingPositions: [
+        { uid: "finalizable-1", amount: new BigNumber(2), createdAt: "2026-05-10" },
+      ],
+    });
+    render(<TezosDelegation account={makeAccount()} />);
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    expect(screen.queryByTestId("drawer-field-tezos.staking.availableIn")).toBeNull();
+  });
+
+  it("shows the unstaking transaction ID when a matching operation exists", () => {
+    const createdAt = "2026-05-25T00:00:00.000Z";
+    mockStakingInfo = makeInfo({
+      hasUnstaking: true,
+      unstakingPositions: [{ uid: "unstaking-1", amount: new BigNumber(3), createdAt }],
+    });
+    render(
+      <TezosDelegation
+        account={makeAccount({
+          operations: [{ type: "UNSTAKE", date: new Date(createdAt), hash: "ooUnstakeHash" }],
+        })}
+      />,
+    );
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    expect(screen.getByTestId("drawer-field-delegation.transactionID")).toBeTruthy();
+    fireEvent.press(screen.getByTestId("TezosOpenTransactionExplorer"));
+    expect(Linking.openURL).toHaveBeenCalledWith("https://tzkt.io/tx/abc");
   });
 
   it("renders both sections when staked and delegated", () => {
@@ -382,5 +464,89 @@ describe("TezosDelegation (staking dashboard)", () => {
     expect(screen.getByTestId("delegation-drawer")).toBeTruthy();
     fireEvent.press(screen.getByTestId("drawer-close"));
     expect(screen.queryByTestId("delegation-drawer")).toBeNull();
+  });
+
+  it("navigates to the stake flow from the stake-row Stake more action", () => {
+    mockStakingInfo = makeInfo({ isStaked: true, stakedBalance: new BigNumber(10) });
+    render(<TezosDelegation account={makeAccount({ id: "acc-7" })} />);
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    fireEvent.press(screen.getByTestId("TezosStakeMore"));
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.TezosStakeFlow, {
+      screen: ScreenName.TezosStakeAmount,
+      params: { accountId: "acc-7" },
+    });
+  });
+
+  it("navigates to the unstake flow from the stake-row Unstake action", () => {
+    mockStakingInfo = makeInfo({ isStaked: true, stakedBalance: new BigNumber(10) });
+    render(<TezosDelegation account={makeAccount({ id: "acc-7" })} />);
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    fireEvent.press(screen.getByTestId("TezosUnstake"));
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.TezosUnstakeFlow, {
+      screen: ScreenName.TezosUnstakeAmount,
+      params: { accountId: "acc-7" },
+    });
+  });
+
+  it("changes baker directly when nothing is staked", () => {
+    mockStakingInfo = makeInfo({
+      isDelegated: true,
+      availableBalance: new BigNumber(50),
+      delegateAddress: "tz1delegate",
+    });
+    render(<TezosDelegation account={makeAccount({ id: "acc-7" })} />);
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    fireEvent.press(screen.getByTestId("TezosChangeBaker"));
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.TezosDelegationFlow, {
+      screen: ScreenName.DelegationSummary,
+      params: { accountId: "acc-7" },
+    });
+    expect(screen.queryByTestId("unstake-required-changeBaker")).toBeNull();
+  });
+
+  it("ends delegation in undelegate mode when nothing is staked", () => {
+    mockStakingInfo = makeInfo({
+      isDelegated: true,
+      availableBalance: new BigNumber(50),
+      delegateAddress: "tz1delegate",
+    });
+    render(<TezosDelegation account={makeAccount({ id: "acc-7" })} />);
+    fireEvent.press(screen.getByTestId("delegation-row"));
+    fireEvent.press(screen.getByTestId("TezosEndDelegation"));
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.TezosDelegationFlow, {
+      screen: ScreenName.DelegationSummary,
+      params: { accountId: "acc-7", mode: "undelegate" },
+    });
+  });
+
+  it("requires unstaking before changing baker when staked", () => {
+    mockStakingInfo = makeInfo({
+      isStaked: true,
+      isDelegated: true,
+      stakedBalance: new BigNumber(10),
+      availableBalance: new BigNumber(40),
+      delegateAddress: "tz1delegate",
+    });
+    render(<TezosDelegation account={makeAccount()} />);
+    // [0] = staking-section row, [1] = delegation-section row
+    fireEvent.press(screen.getAllByTestId("delegation-row")[1]);
+    fireEvent.press(screen.getByTestId("TezosChangeBaker"));
+    expect(screen.getByTestId("unstake-required-changeBaker")).toBeTruthy();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("requires unstaking before ending delegation when staked", () => {
+    mockStakingInfo = makeInfo({
+      isStaked: true,
+      isDelegated: true,
+      stakedBalance: new BigNumber(10),
+      availableBalance: new BigNumber(40),
+      delegateAddress: "tz1delegate",
+    });
+    render(<TezosDelegation account={makeAccount()} />);
+    fireEvent.press(screen.getAllByTestId("delegation-row")[1]);
+    fireEvent.press(screen.getByTestId("TezosEndDelegation"));
+    expect(screen.getByTestId("unstake-required-endDelegation")).toBeTruthy();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

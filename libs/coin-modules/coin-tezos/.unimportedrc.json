@@ -2,23 +2,20 @@
   "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/api/index.ts",
-    "src/bridge/deviceTransactionConfig.ts",
     "src/index.ts",
-    "src/signer/getAddress.ts",
-    "src/signer/index.ts",
-    "src/test/bot-deviceActions.ts",
-    "src/test/bot-specs.ts",
-    "src/test/cli.ts",
-    "src/test/index.ts",
+    "src/config.ts",
+    "src/utils.ts",
+    "src/network/index.ts",
+    "src/network/bakers.ts",
+    "src/network/bakers.whitelist-default.ts",
     "src/test/config.ts",
     "src/types/errors.ts",
     "src/types/index.ts",
     "src/types/model.ts",
-    "src/types/signer.ts",
-    "src/types/bridge.fixture.ts",
-    "src/logic/validateAddress.ts"
+    "src/logic/validateAddress.ts",
+    "src/logic/positionUid.ts"
   ],
-  "ignoreUnimported": ["src/deviceTransactionConfig.ts", "src/supportedFeatures.ts"],
+  "ignoreUnimported": ["src/supportedFeatures.ts"],
   "ignore": [],
   "ignoreUnused": []
 }

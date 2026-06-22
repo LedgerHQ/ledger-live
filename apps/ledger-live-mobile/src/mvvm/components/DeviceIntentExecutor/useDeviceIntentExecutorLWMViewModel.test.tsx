@@ -9,6 +9,7 @@ import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-k
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
 import { PAGE_CONNECT_APP } from "./utils/trackDeviceIntent";
@@ -22,7 +23,12 @@ jest.mock("~/analytics", () => {
   };
 });
 
+jest.mock("~/hooks/useKeepScreenAwake", () => ({
+  useKeepScreenAwake: jest.fn(),
+}));
+
 const mockedTrack = jest.mocked(track);
+const mockedUseKeepScreenAwake = jest.mocked(useKeepScreenAwake);
 
 const layerABaseProperties = {
   deviceUxV2: true,
@@ -44,7 +50,6 @@ function makeProps(overrides: Partial<Props> = {}): Props {
     onIntentJobComplete: jest.fn(),
     onIntentJobError: jest.fn(),
     enabled: true,
-    cancellableUI: true,
     onUserCancel: jest.fn(),
     cancelIntentRequestId: undefined,
     sourceFlow: "swap",
@@ -387,5 +392,21 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
       expect(mockedTrack).not.toHaveBeenCalledWith("deviceflow_aborted", expect.anything());
       expect(onUserCancel).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it("GIVEN the flow is enabled WHEN the ViewModel renders THEN it keeps the screen awake", () => {
+    // WHEN
+    renderViewModel({ enabled: true });
+
+    // THEN
+    expect(mockedUseKeepScreenAwake).toHaveBeenCalledWith(true);
+  });
+
+  it("GIVEN the flow is disabled WHEN the ViewModel renders THEN it does not keep the screen awake", () => {
+    // WHEN
+    renderViewModel({ enabled: false });
+
+    // THEN
+    expect(mockedUseKeepScreenAwake).toHaveBeenCalledWith(false);
   });
 });

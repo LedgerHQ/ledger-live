@@ -22,7 +22,7 @@ import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { FirstStepCompanionStepKey, SEED_STATE } from "../../types";
-import useFirstStepCompanionState from "~/screens/SyncOnboarding/TwoStepStepper/useFirstStepCompanionState";
+import useFirstStepCompanionState from "../../hooks/useFirstStepCompanionState";
 import useCompanionSteps from "../../hooks/useCompanionSteps";
 import { screen } from "~/analytics";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";

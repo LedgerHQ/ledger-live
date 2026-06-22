@@ -5,9 +5,11 @@ import { Text } from "@ledgerhq/lumen-ui-rnative";
 import { ScreenName } from "~/const";
 import { SendFlowLayout } from "../../components/SendFlowLayout";
 import type { SendFlowNavigationProp } from "../../types";
+import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
 
 export function SignatureScreen() {
   const navigation = useNavigation<SendFlowNavigationProp>();
+  useSignatureViewModel();
 
   const handleContinue = useCallback(() => {
     navigation.replace(ScreenName.SendFlowConfirmation);

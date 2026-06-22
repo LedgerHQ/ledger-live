@@ -1,4 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCurrencyBridge } from "../impl";
 import { descriptor as algorandDescriptor } from "../../families/algorand/descriptor";
 import { descriptor as aptosDescriptor } from "../../families/aptos/descriptor";
@@ -67,7 +68,8 @@ export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): Coin
     return null;
   }
 
-  const cryptoCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
+  const cryptoCurrency =
+    currency.type === "TokenCurrency" ? getCryptoCurrencyById(currency.parentCurrencyId) : currency;
   const bridge = getCurrencyBridge(cryptoCurrency);
 
   // Check if bridge implements getDescriptor directly

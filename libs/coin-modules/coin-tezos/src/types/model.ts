@@ -6,3 +6,13 @@ export type TezosOperationMode =
   | "unstake"
   | "finalize_unstake"
   | "send_token";
+
+type CapacityStatus = "normal" | "full";
+
+export type Baker = {
+  address: string;
+  name: string;
+  logoURL: string;
+  nominalYield: `${number} %`;
+  capacityStatus: CapacityStatus;
+};

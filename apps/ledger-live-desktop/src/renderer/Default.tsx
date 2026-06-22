@@ -49,7 +49,8 @@ import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
+import { Spinner } from "@ledgerhq/lumen-ui-react";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
@@ -123,7 +124,7 @@ const LoaderWrapper = styled.div`
 const Fallback = () => (
   <LoaderWrapper>
     <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
-      <InfiniteLoader size={58} />
+      <Spinner size={48} />
     </Flex>
   </LoaderWrapper>
 );
@@ -132,6 +133,35 @@ const Fallback = () => (
 // @ts-ignore
 const withSuspense = Component => props => (
   <Suspense fallback={<Fallback />}>
+    <Component {...props} />
+  </Suspense>
+);
+
+const FullscreenFallback = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${p => p.theme.colors.background.default};
+`;
+
+const FullscreenLoader = () => (
+  <FullscreenFallback>
+    <Spinner size={48} />
+  </FullscreenFallback>
+);
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const withFullscreenSuspense = Component => props => (
+  <Suspense fallback={<FullscreenLoader />}>
     <Component {...props} />
   </Suspense>
 );
@@ -217,7 +247,7 @@ const NightlyLayer = React.memo(NightlyLayerR);
 const RecoverPlayerWithFeatureToggle = () => {
   return (
     <FeatureToggle featureId="protectServicesDesktop">
-      {withSuspense(RecoverPlayer)({})}
+      {withFullscreenSuspense(RecoverPlayer)({})}
     </FeatureToggle>
   );
 };
@@ -239,7 +269,7 @@ const MainAppContent = ({
   <>
     <Routes>
       <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
-      <Route path="/perps/*" element={withSuspense(Perps)({})} />
+      <Route path="/perps/*" element={withFullscreenSuspense(Perps)({})} />
     </Routes>
     {shouldDisplayWallet40MainNav ? <SideBar /> : <MainSideBar />}
 

@@ -4,6 +4,7 @@ import { Trans } from "~/context/Locale";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -155,7 +156,7 @@ function SelectAccount({ navigation, route }: Props) {
       params: {
         currency:
           currency.type === "TokenCurrency"
-            ? currency.parentCurrency
+            ? getCryptoCurrencyById(currency.parentCurrencyId)
             : (currency as CryptoCurrency),
         context: AddAccountContexts.AddAccounts,
         inline: true,

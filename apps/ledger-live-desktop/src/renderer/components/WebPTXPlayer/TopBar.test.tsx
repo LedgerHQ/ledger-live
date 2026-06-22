@@ -26,6 +26,11 @@ jest.mock("react-i18next", () => ({
   Trans: ({ i18nKey }: { i18nKey: string }) => <span>{i18nKey}</span>,
 }));
 
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeature: jest.fn(() => null),
+  useFeatureFlags: jest.fn(() => ({})),
+}));
+
 const mockManifest: LiveAppManifest | undefined = {
   id: "buy-sell-ui",
   name: "Buy / Sell",

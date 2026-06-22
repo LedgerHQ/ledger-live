@@ -773,21 +773,6 @@ export const getTronAccountNetwork = async (address: string): Promise<NetworkInf
   };
 };
 
-export const validateAddress = async (address: string): Promise<boolean> => {
-  try {
-    const result = await post(`/wallet/validateaddress`, {
-      address: decode58Check(address),
-    });
-    return result.result || false;
-  } catch (e: any) {
-    // FIXME we should not silent errors!
-    log("tron-error", "validateAddress fails with " + e.message, {
-      address,
-    });
-    return false;
-  }
-};
-
 // cache for account names (name is unchanged over time)
 export const accountNamesCache = makeLRUCache(
   async (addr: string): Promise<string | null | undefined> => getAccountName(addr),

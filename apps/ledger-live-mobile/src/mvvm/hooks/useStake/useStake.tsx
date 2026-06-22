@@ -152,7 +152,7 @@ export function useStake() {
       const earningsAccountChainId = manifest.dapp?.networks?.find(
         manifestNetwork =>
           manifestNetwork.currency ===
-          (isTokenAccount(account) ? account.token.parentCurrency.id : account.currency.id),
+          (isTokenAccount(account) ? account.token.parentCurrencyId : account.currency.id),
       )?.chainID;
       const asset_id = tokenContractAddress
         ? `${earningsAccountChainId}_${tokenContractAddress}`

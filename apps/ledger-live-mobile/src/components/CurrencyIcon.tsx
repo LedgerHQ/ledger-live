@@ -35,7 +35,7 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props)
         ledgerId={ledgerId}
         ticker={ticker}
         size={validIconSize}
-        network={currency.parentCurrency.id}
+        network={currency.parentCurrencyId}
         shape={squared ? "square" : undefined}
       />
     ) : (

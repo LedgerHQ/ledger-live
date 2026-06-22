@@ -24,6 +24,7 @@ import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
   combine,
+  craftRawOperations,
   craftTransaction,
   estimateFees,
   getBalance,
@@ -56,13 +57,14 @@ export function createApi(config: TezosConfig): CoinModuleApi {
     broadcast,
     combine,
     craftTransaction: craft,
-    craftRawTransaction: (
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
+    craftRawTransaction: async (
+      transaction: string,
+      sender: string,
+      publicKey: string,
+      sequence: bigint,
     ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
+      const tx = await craftRawOperations(transaction, sender, publicKey, sequence);
+      return { transaction: tx };
     },
     estimateFees: estimate,
     getBalance: (address: string, options?: BalanceOptions) =>

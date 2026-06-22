@@ -6,6 +6,7 @@ import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
+const TRENDING_CATEGORIES_ENDPOINT = "https://countervalues.live.ledger.com/v3/categories/trending";
 
 const mockNavigate = jest.fn();
 
@@ -40,9 +41,12 @@ jest.mock("LLD/features/Market/hooks/useMarketListVirtualization.ts", () => ({
         })),
       getTotalSize: () => (marketData?.length ?? 0) * LIST_ITEM_HEIGHT,
     });
+    const rowVirtualizer = createVirtualizer();
     return {
       parentRef: { current: null },
-      rowVirtualizer: createVirtualizer(),
+      rowVirtualizer,
+      virtualItems: rowVirtualizer.getVirtualItems(),
+      totalSize: rowVirtualizer.getTotalSize(),
     };
   },
 }));
@@ -108,10 +112,67 @@ const createSettingsState = (starredMarketCoins: string[] = []) => ({
 
 const marketFeatureFlagsState = withFlagOverrides({ lldRefreshMarketData: { enabled: false } });
 
+const marketWithTopCardsOn = withFlagOverrides({
+  lldRefreshMarketData: { enabled: false },
+  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
+});
+
+const marketWithTopCardsOff = withFlagOverrides({
+  lldRefreshMarketData: { enabled: false },
+  lwdWallet40: { enabled: false },
+});
+
 describe("Market Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     server.resetHandlers();
+  });
+
+  it("should render top cards section when assetDiscoverability is enabled", async () => {
+    server.use(
+      http.get(MARKET_API_ENDPOINT, () => {
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+        ...marketWithTopCardsOn,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: /market top cards/i })).toBeVisible();
+      expect(screen.getByTestId("market-top-card-1")).toBeVisible();
+      expect(screen.getByTestId("market-top-card-2")).toBeVisible();
+      expect(screen.getByTestId("market-top-card-3")).toBeVisible();
+    });
+  });
+
+  it("should not render top cards section when assetDiscoverability is disabled", async () => {
+    server.use(
+      http.get(MARKET_API_ENDPOINT, () => {
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+        ...marketWithTopCardsOff,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Market")).toBeVisible();
+    });
+
+    expect(screen.queryByRole("region", { name: /market top cards/i })).toBeNull();
   });
 
   it("should render market page with header", async () => {
@@ -306,6 +367,43 @@ describe("Market Integration", () => {
     const sellButton = screen.getByTestId("market-BTC-sell-button");
     expect(sellButton).toBeInTheDocument();
     expect(sellButton).toBeVisible();
+  });
+
+  it("should append trending categories after the built-in tabs and filter the list when selected", async () => {
+    const marketRequests: URL[] = [];
+
+    server.use(
+      http.get(TRENDING_CATEGORIES_ENDPOINT, () => {
+        return HttpResponse.json([{ id: "infrastructure", name: "Infrastructure" }]);
+      }),
+      http.get(MARKET_API_ENDPOINT, ({ request }) => {
+        marketRequests.push(new URL(request.url));
+        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
+      }),
+    );
+
+    const { user } = render(<Market />, {
+      withRampCatalog: true,
+      initialState: {
+        market: createMarketState(),
+        settings: createSettingsState(),
+        ...marketWithTopCardsOn,
+      },
+    });
+
+    const trendingChip = await screen.findByTestId("market-category-switcher-infrastructure");
+    expect(trendingChip).toHaveTextContent("Infrastructure");
+    expect(screen.getByTestId("market-category-switcher-all")).toBeVisible();
+    expect(screen.getByTestId("market-category-switcher-stocks")).toBeVisible();
+    expect(screen.getByTestId("market-category-switcher-starred")).toBeVisible();
+
+    await user.click(trendingChip);
+
+    await waitFor(() => {
+      expect(
+        marketRequests.some(url => url.searchParams.get("categories") === "infrastructure"),
+      ).toBe(true);
+    });
   });
 
   it("should navigate to exchange with sell state when sell button is clicked", async () => {

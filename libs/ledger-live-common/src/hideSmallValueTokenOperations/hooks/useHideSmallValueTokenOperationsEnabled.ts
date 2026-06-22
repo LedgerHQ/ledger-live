@@ -1,4 +1,4 @@
-import { useFeature } from "../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD } from "../smallValueOperationsThreshold";
 
 export type HideSmallValueTokenOperationsConfig = {

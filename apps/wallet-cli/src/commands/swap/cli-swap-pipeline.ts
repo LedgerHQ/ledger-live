@@ -4,6 +4,7 @@ import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framew
 import type { Account, AccountLike, SignOperationEvent } from "@ledgerhq/types-live";
 import { getCurrencyForAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { filter, tap } from "rxjs/operators";
@@ -113,7 +114,7 @@ function buildStrategyTransaction(args: {
     args;
   const family =
     fromCurrency.type === "TokenCurrency"
-      ? fromCurrency.parentCurrency?.family
+      ? findCryptoCurrencyById(fromCurrency.parentCurrencyId)?.family
       : fromCurrency.family;
   if (!family) {
     throw new Error(`TokenCurrency missing parentCurrency family: ${fromCurrency.id}`);

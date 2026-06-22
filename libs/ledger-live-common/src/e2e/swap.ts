@@ -2,11 +2,11 @@ import { Account } from "./enum/Account";
 import { sanitizeError } from "./index";
 import axios, { AxiosRequestConfig } from "axios";
 import { SwapProvider } from "./enum/Provider";
+import { getAmountFromUSD } from "./currencyUtils";
 
 // Target a sensible USD amount that works for most pairs
 const FALLBACK_TARGET_USD = 50;
 
-const COUNTERVALUES_URL = "https://countervalues.live.ledger.com/v3/spot/simple";
 const SWAP_QUOTE_URL = "https://swap-stg.ledger-test.com/v5/quote";
 
 /** Smallest amount sent to the quote API to discover minimum thresholds. */
@@ -25,35 +25,6 @@ type QuoteErrorItem = {
 
 function isQuoteErrorItem(item: unknown): item is QuoteErrorItem {
   return typeof item === "object" && item !== null && "parameter" in item;
-}
-
-/**
- * Fetches the current USD price for a currency from the Ledger countervalues API
- * and converts a target USD value into the equivalent crypto amount.
- */
-export async function getAmountFromUSD(
-  currencyId: string,
-  targetUSD: number,
-): Promise<number | null> {
-  try {
-    const { data } = await axios.get(COUNTERVALUES_URL, {
-      params: {
-        froms: currencyId,
-        to: "USD",
-      },
-    });
-
-    const price = data?.[currencyId];
-    if (!price || price <= 0) {
-      console.warn(`No USD price found for ${currencyId}`);
-      return null;
-    }
-
-    return targetUSD / price;
-  } catch (error: unknown) {
-    console.warn(`Failed to fetch countervalue for ${currencyId}:`, sanitizeError(error));
-    return null;
-  }
 }
 
 export async function getMinimumSwapAmount(

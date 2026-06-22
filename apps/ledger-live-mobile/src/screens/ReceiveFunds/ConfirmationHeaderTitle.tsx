@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 type Props = {
   accountCurrency?: Currency;
@@ -11,7 +12,7 @@ function ConfirmationHeaderTitle({ accountCurrency }: Props) {
   const { t } = useTranslation();
   const networkName =
     accountCurrency?.type === "TokenCurrency"
-      ? accountCurrency.parentCurrency?.name
+      ? findCryptoCurrencyById(accountCurrency.parentCurrencyId)?.name
       : accountCurrency?.name;
 
   return (

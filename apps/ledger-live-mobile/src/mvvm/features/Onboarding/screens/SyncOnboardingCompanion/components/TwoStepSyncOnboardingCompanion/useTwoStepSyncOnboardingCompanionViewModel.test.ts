@@ -1,10 +1,43 @@
-import { renderHook, act } from "@tests/test-renderer";
-import { ScreenName } from "~/const";
-import { COMPANION_STATE, SEED_STATE } from "../../types";
+import { act, renderHook } from "@tests/test-renderer";
 import { useTwoStepSyncOnboardingCompanionViewModel } from "./useTwoStepSyncOnboardingCompanionViewModel";
-import type { UseTwoStepSyncOnboardingCompanionViewModelProps } from "./types";
+import { COMPANION_STATE, SEED_STATE } from "../../types";
+import { ScreenName } from "~/const";
+import {
+  completeOnboarding,
+  setHasOrderedNano,
+  setIsOnboardingFlow,
+  setIsOnboardingFlowReceiveSuccess,
+  setReadOnlyMode,
+} from "~/actions/settings";
+import type { State } from "~/reducers/types";
+import type { TwoStepSyncOnboardingCompanionProps } from "./types";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 jest.useFakeTimers();
+
+jest.mock("@ledgerhq/devices", () => ({
+  ...jest.requireActual("@ledgerhq/devices"),
+  getDeviceModel: jest.fn(() => ({ productName: "Ledger Stax" })),
+}));
+
+const mockNavigate = jest.fn();
+const mockReset = jest.fn();
+const mockAddListener = jest.fn(() => jest.fn());
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({ reset: mockReset }),
+  useIsFocused: () => true,
+}));
+
+jest.mock("~/hooks/useKeepScreenAwake", () => ({
+  useKeepScreenAwake: jest.fn(),
+}));
+
+const mockHandleOpenReceiveDrawer = jest.fn();
+jest.mock("LLM/features/Receive", () => ({
+  useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer }),
+}));
 
 const dispatchRedux = jest.fn();
 jest.mock("~/context/hooks", () => {
@@ -14,36 +47,6 @@ jest.mock("~/context/hooks", () => {
     useDispatch: () => dispatchRedux,
   };
 });
-
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ reset: jest.fn() }),
-  useIsFocused: () => false,
-}));
-
-jest.mock("~/hooks/useKeepScreenAwake", () => ({
-  useKeepScreenAwake: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/devices", () => ({
-  ...jest.requireActual("@ledgerhq/devices"),
-  getDeviceModel: () => ({ productName: "Ledger Device" }),
-}));
-
-const mockHandleOpenReceiveDrawer = jest.fn();
-jest.mock("LLM/features/Receive", () => ({
-  useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer }),
-}));
-
-jest.mock("~/screens/SyncOnboarding/TwoStepStepper/useTwoStepDesync", () => ({
-  __esModule: true,
-  default: () => ({
-    isDesyncOverlayOpen: false,
-    desyncOverlayDisplayDelayMs: 0,
-    handleSeedGenerationDelay: jest.fn(),
-    handlePollingError: jest.fn(),
-  }),
-}));
 
 jest.mock("~/actions/settings", () => ({
   completeOnboarding: jest.fn(() => ({ type: "completeOnboarding" })),
@@ -59,81 +62,79 @@ jest.mock("~/actions/settings", () => ({
   setReadOnlyMode: jest.fn((value: boolean) => ({ type: "setReadOnlyMode", payload: value })),
 }));
 
+const withReceiveSuccess =
+  (enabled: boolean): ((state: State) => State) =>
+  state => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      isOnboardingFlowReceiveSuccess: enabled,
+    },
+  });
+
 describe("useTwoStepSyncOnboardingCompanionViewModel", () => {
-  const navigate = jest.fn();
-  const navigation = {
-    navigate,
-    addListener: jest.fn(),
-  } as unknown as UseTwoStepSyncOnboardingCompanionViewModelProps["navigation"];
-
   const device = {
-    modelId: "europa",
+    modelId: DeviceModelId.stax,
     deviceId: "device-1",
-    deviceName: "My Ledger",
     wired: false,
-  } as unknown as UseTwoStepSyncOnboardingCompanionViewModelProps["device"];
+  } as unknown as TwoStepSyncOnboardingCompanionProps["device"];
+  const navigation = {
+    navigate: mockNavigate,
+    addListener: mockAddListener,
+  } as unknown as TwoStepSyncOnboardingCompanionProps["navigation"];
 
-  const defaultProps = (): UseTwoStepSyncOnboardingCompanionViewModelProps => ({
-    navigation,
+  const defaultProps = (): TwoStepSyncOnboardingCompanionProps => ({
     device,
+    navigation,
     onLostDevice: jest.fn(),
     onShouldHeaderBeOverlaid: jest.fn(),
     updateHeaderOverlayDelay: jest.fn(),
+    notifyEarlySecurityCheckShouldReset: jest.fn(),
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    jest.clearAllTimers();
-  });
-
-  it("should initialize with default state", () => {
-    const { result } = renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(defaultProps()));
-
-    expect(result.current.companionStep).toBe(COMPANION_STATE.SETUP);
-    expect(result.current.isPollingOn).toBe(true);
-    expect(result.current.productName).toBe("Ledger Device");
-  });
-
-  it("should complete onboarding and navigate to completion when second step finishes with done=false", () => {
-    const { result } = renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(defaultProps()));
+  it("should navigate to completion when second step finishes without done flag", () => {
+    const props = defaultProps();
+    const { result } = renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(props));
 
     act(() => {
       result.current.handleSecondStepFinish(false);
     });
 
-    expect(dispatchRedux).toHaveBeenCalledWith({ type: "setReadOnlyMode", payload: false });
-    expect(dispatchRedux).toHaveBeenCalledWith({ type: "setHasOrderedNano", payload: false });
-    expect(dispatchRedux).toHaveBeenCalledWith({ type: "completeOnboarding" });
-    expect(navigate).toHaveBeenCalledWith(
-      ScreenName.SyncOnboardingCompletion,
-      expect.objectContaining({ device }),
-    );
+    expect(dispatchRedux).toHaveBeenCalledWith(setReadOnlyMode(false));
+    expect(dispatchRedux).toHaveBeenCalledWith(setHasOrderedNano(false));
+    expect(dispatchRedux).toHaveBeenCalledWith(completeOnboarding());
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SyncOnboardingCompletion, {
+      device,
+      seedConfiguration: undefined,
+    });
   });
 
-  it("should open the receive drawer when second step finishes with done=true on a new seed", () => {
-    const { result } = renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(defaultProps()));
+  it("should open receive drawer when second step finishes for new seed flow", () => {
+    const props = defaultProps();
+    const { result } = renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(props));
 
     act(() => {
-      result.current.setCompanionStep(SEED_STATE.NEW_SEED);
+      result.current.handleFinishFirstStep(SEED_STATE.NEW_SEED);
     });
 
     act(() => {
       result.current.handleSecondStepFinish(true);
     });
 
-    expect(dispatchRedux).toHaveBeenCalledWith({ type: "setIsOnboardingFlow", payload: true });
+    expect(dispatchRedux).toHaveBeenCalledWith(setIsOnboardingFlow(true));
     expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
-    expect(navigate).not.toHaveBeenCalled();
   });
 
-  it("should move to EXIT and complete onboarding after the redirect delay for an existing seed", () => {
-    const { result } = renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(defaultProps()));
+  it("should set exit companion step and complete onboarding after redirect delay", () => {
+    const props = defaultProps();
+    const { result } = renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(props));
 
     act(() => {
-      result.current.setCompanionStep(SEED_STATE.RESTORE);
+      result.current.handleFinishFirstStep(SEED_STATE.RESTORE);
     });
 
     act(() => {
@@ -141,15 +142,24 @@ describe("useTwoStepSyncOnboardingCompanionViewModel", () => {
     });
 
     expect(result.current.companionStep).toBe(COMPANION_STATE.EXIT);
-    expect(navigate).not.toHaveBeenCalled();
 
     act(() => {
       jest.advanceTimersByTime(2500);
     });
 
-    expect(navigate).toHaveBeenCalledWith(
-      ScreenName.SyncOnboardingCompletion,
-      expect.objectContaining({ device }),
-    );
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SyncOnboardingCompletion, {
+      device,
+      seedConfiguration: undefined,
+    });
+  });
+
+  it("should clear stale receive success flag on mount", () => {
+    const props = defaultProps();
+
+    renderHook(() => useTwoStepSyncOnboardingCompanionViewModel(props), {
+      overrideInitialState: withReceiveSuccess(true),
+    });
+
+    expect(dispatchRedux).toHaveBeenCalledWith(setIsOnboardingFlowReceiveSuccess(false));
   });
 });

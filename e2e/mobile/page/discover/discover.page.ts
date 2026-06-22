@@ -6,7 +6,7 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 const discoverApps = [
   { name: "MoonPay", url: "https://www.moonpay.com/" },
   { name: "Ramp", url: "https://rampnetwork.com/buy-crypto" },
-  { name: "Kiln", url: "https://kiln.fi" },
+  { name: "Kiln-Widget", url: "https://ledger-defi.widget.kiln.fi/earn" },
   { name: "Lido", url: "https://lido.fi/" },
   { name: "1inch", url: "https://1inch.com" },
   { name: "Zerion", url: "https://zerion.io/" },
@@ -14,6 +14,8 @@ const discoverApps = [
 ] as const;
 
 export type DiscoverAppName = (typeof discoverApps)[number]["name"];
+
+const randomPoolExcludedApps = new Set<DiscoverAppName>(["1inch", "Kiln-Widget"]);
 
 export default class DiscoverPage {
   discoverApps = discoverApps;
@@ -29,7 +31,7 @@ export default class DiscoverPage {
 
   @Step("Get live App")
   getRandomLiveApp(): DiscoverAppName {
-    const pool = this.discoverApps.filter(a => a.name !== "1inch");
+    const pool = this.discoverApps.filter(a => !randomPoolExcludedApps.has(a.name));
     const app = pool[randomInt(0, pool.length)].name;
     log.info(`Selected Live app: ${app}`);
     return app;

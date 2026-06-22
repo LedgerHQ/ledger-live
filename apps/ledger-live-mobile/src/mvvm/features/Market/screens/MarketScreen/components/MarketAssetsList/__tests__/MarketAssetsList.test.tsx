@@ -11,8 +11,8 @@ const asset = createMarketAssetDisplayData();
 
 const categoryTabs: MarketCategoryTab[] = [
   { value: "all", labelKey: "market.assets.categories.all" },
-  { value: "stocks", labelKey: "market.assets.categories.stocks" },
   { value: "starred", labelKey: "market.assets.categories.favorites" },
+  { value: "stocks", labelKey: "market.assets.categories.stocks" },
 ];
 
 const filters: MarketFilters = {

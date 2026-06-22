@@ -35,8 +35,8 @@ type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
 type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
 type UpdateStatus = import("./src/main/updater/init").UpdateStatus;
-type FeatureId = import("@ledgerhq/types-live").FeatureId;
-type Feature = import("@ledgerhq/types-live").Feature;
+type FeatureId = import("@shared/feature-flags").FeatureId;
+type Feature = import("@shared/feature-flags").Feature;
 type EnvName = import("@ledgerhq/live-env").EnvName;
 
 interface RawEvents {

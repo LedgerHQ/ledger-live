@@ -1,10 +1,8 @@
 import flatMap from "lodash/flatMap";
 import { fromAccountRaw, groupAccountOperationsByDay } from "../../account";
 import { TezosAccountRaw } from "../../families/tezos/types";
-import { setSupportedCurrencies } from "../../currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-setSupportedCurrencies(["tezos"]);
 
 LiveConfig.setConfig({
   feature_cal_lazy_loading: {

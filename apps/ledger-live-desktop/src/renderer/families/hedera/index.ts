@@ -32,6 +32,13 @@ const family: HederaFamily = {
   receiveTokensConfig: {
     networkFamily: "hedera",
   },
+  modalsToPreload: [
+    "MODAL_HEDERA_RECEIVE_WITH_ASSOCIATION",
+    "MODAL_HEDERA_DELEGATION",
+    "MODAL_HEDERA_UNDELEGATION",
+    "MODAL_HEDERA_REDELEGATION",
+    "MODAL_HEDERA_CLAIM_REWARDS",
+  ],
 };
 
 export default family;

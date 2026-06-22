@@ -59,7 +59,6 @@ async function setup(): Promise<{
   prepare: () => Promise<any>;
 }> {
   setEnv("MOCK", "1");
-  setEnv("EXPERIMENTAL_CURRENCIES", "solana");
   const seed = "solana-2";
   const currency = getCryptoCurrencyById("solana");
   const a = genAccount(seed, {

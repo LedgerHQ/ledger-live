@@ -1338,6 +1338,9 @@
     }
   },
   "earn" : {
+    "simulator" : {
+      "title" : "奖励模拟器"
+    },
     "deposit" : {
       "protocolInfoModal" : {
         "title" : "选择协议时，请记住以下几点：",
@@ -1457,6 +1460,13 @@
     "description" : "请在手机上卸载并重新安装应用程序以删除 Ledger Wallet 数据，包括账户和设置参数）。",
     "button" : "重置",
     "warning" : "重置 Ledger Wallet 将删除您所有账户的互换交易历史。"
+  },
+  "globalSearch" : {
+    "searchPlaceholder" : "搜索资产",
+    "sections" : {
+      "cryptos" : "加密货币",
+      "stocks" : "股票"
+    }
   },
   "graph" : {
     "week" : "1 周",
@@ -2976,7 +2986,7 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "FINALIZE_UNSTAKE" : "已提取",
+      "FINALIZE_UNSTAKE" : "已解除权益质押",
       "ASSOCIATE_TOKEN" : "关联代币",
       "CONTRACT_CALL" : "合约调用",
       "UPDATE_ACCOUNT" : "已更新的账户"
@@ -3052,6 +3062,7 @@
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
       "stakedAmount" : "权益质押数额",
+      "unstakedAmount" : "已解除质押的数额",
       "accountCreationFee" : "账户创建费",
       "associatedTokenId" : "关联代币 ID",
       "targetStakingNodeId" : "目标节点 ID",
@@ -3686,9 +3697,11 @@
           "campaignId" : "活动 ID",
           "titleField" : "标题",
           "subtitle" : "副标题",
-          "imageUrl" : "图片网址",
+          "imageUrlLight" : "图片网址（浅色）",
+          "imageUrlDark" : "图片网址（深色）",
           "primaryButtonLabel" : "主按钮标签",
           "primaryButtonLink" : "主按钮链接",
+          "navigationButtonLabel" : "导航按钮标签（继续/关闭）",
           "secondaryButtonLabel" : "次要按钮标签",
           "secondaryButtonLink" : "次要按钮链接",
           "icon" : "图标",
@@ -3728,7 +3741,11 @@
       "desc" : "获取关于 Ledger Wallet、Ledger 产品、市场的最新资讯以及个性化推荐。在设置中随时选择停用",
       "descVariantB" : "获取有关新代币、收益机会和市场变动的实时提醒。您可随时决定退出。",
       "allow" : "允许通知",
-      "later" : "以后再说"
+      "later" : "以后再说",
+      "transactionsAlerts" : {
+        "title" : "了解您的资金状态",
+        "desc" : "当您的加密货币被发送或接收时，接收实时警报。在设置中随时选择退出。"
+      }
     },
     "optInScreen" : {
       "title" : "启用通知？",
@@ -4378,6 +4395,10 @@
       "available" : "可用 {{amount}}",
       "placeholder" : "请输入地址或 ENS",
       "placeholderNoENS" : "输入地址",
+      "pasteFromClipboard" : {
+        "title" : "从剪贴板粘贴",
+        "cta" : "粘贴"
+      },
       "editRecipientAccessibilityLabel" : "编辑接收方",
       "recent" : "最近",
       "recentDetail" : "最近详情",
@@ -4414,12 +4435,24 @@
         "walletNotExist" : "钱包不存在"
       },
       "skipMemo" : {
-        "title" : "跳过添加备忘标签 {{tag}}？",
-        "warning" : "如果接收方要求备忘标签 {{tag}}，您的资产可能会丢失。"
+        "title" : "跳过添加标签 {{tag}}？",
+        "warning" : "如果接收方要求备忘标签 {{tag}}，您的资产可能会丢失。",
+        "notRequired" : "接收方不需要备忘标签 {{tag}}？",
+        "confirm" : "是，跳过",
+        "neverAskAgain" : "不再显示此警告"
       },
       "tagHelp" : {
         "title" : "什么是备忘标签 {{tag}}？",
-        "description" : "向加密货币交易所发送 {{currency}} 时，需要输入备忘标签 {{tag}}。这是用于识别交易接收人的功能。不填写备忘标签 {{tag}} 可能会导致资金损失。"
+        "description" : "向加密货币交易所发送 {{currency}} 时，需要填写备忘标签 {{tag}}。这是用于识别交易接收人的功能。不填写备忘标签 {{tag}} 可能会导致资金损失。"
+      },
+      "memoLabel" : {
+        "ripple" : "标签",
+        "casper" : "转账 ID",
+        "ton" : "备注",
+        "default" : "备忘标签"
+      },
+      "memo" : {
+        "transactionIdentifier" : "交易标识符"
       },
       "networkFeesInFiat" : "网络费用为 {{currency}}",
       "feesAmount" : "费用数额 ({{unit}})",
@@ -4461,7 +4494,8 @@
         "networkFeesInFiat" : "网络费用为 {{currency}}",
         "invalidValue" : "输入有效的数字",
         "belowMinimum" : "最小值为 {{min}}",
-        "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用"
+        "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用",
+        "payFeesIn" : "手续费支付资产"
       },
       "coinControl" : {
         "title" : "币控制（UTXO 管理）",
@@ -6604,7 +6638,9 @@
       "title" : "您可以通过将您的账户委托出去，从而赚取奖励",
       "btn" : "赚取奖励"
     },
-    "manage" : "管理",
+    "operationTypes" : {
+      "UNSTAKE" : "解除质押"
+    },
     "delegation" : {
       "addCustomValidator" : "+ 添加自定义验证者",
       "sectionLabel" : "委托"
@@ -6613,7 +6649,11 @@
       "sectionLabel" : "质押",
       "status" : "状态",
       "unstaking" : "解除质押",
-      "available" : "可用"
+      "available" : "可用",
+      "availableIn" : "将于以下时间后可用",
+      "lessThanADay" : "少于一天",
+      "stakeMore" : "质押更多",
+      "unstake" : "取消权益质押"
     },
     "earnRewards" : {
       "title" : "赚取奖励",
@@ -6664,6 +6704,41 @@
           "info" : "了解 Tezos 质押与委托的区别"
         }
       }
+    },
+    "unstake" : {
+      "flow" : {
+        "amount" : {
+          "unbondingNotice" : "解除质押用时 4 天。在此期间，您的 XTZ 仍处于委托状态并停止赚取权益质押奖励。",
+          "staked" : "已权益质押",
+          "cta" : "取消权益质押"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "已提交解除质押",
+              "text" : "您的 XTZ 正在解除质押，将于约四天后可供提取。"
+            }
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "更换 Baker 验证者前解除质押",
+        "description" : "您与当前的 Baker 验证者质押了 XTZ。在委托给新的 Baker 之前，先解除质押您的资金。"
+      },
+      "endDelegation" : {
+        "title" : "结束委托之前，先解除质押",
+        "description" : "您与当前的 Baker 验证者质押了 XTZ。在结束委托之前，先解除质押您的资金。"
+      },
+      "steps" : {
+        "0" : "打开“赚取”菜单，选择“解除质押”。",
+        "1" : "在您的设备上确认数额并提交解除质押交易。",
+        "2" : "等待约 4 天，解除质押期完成。",
+        "3" : "提取后，您可以更改 Baker 验证者或结束委托。"
+      },
+      "learnMore" : "详细了解 Tezos 质押",
+      "close" : "关闭"
     },
     "account" : {
       "availableBalanceTooltip" : "您现在就可以使用的资金。",
@@ -6732,7 +6807,7 @@
               "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
             },
             "cta" : "继续",
-            "seiAssociationWarning" : "您的 Sei 账户尚未在链上关联。在您的账户的第一笔转出交易获得链上确认之前，委托将会失败。先向任意地址发送小数额的 SEI，等待确认，然后再返回进行委托。"
+            "seiAssociationWarning" : "要进行委托，您需要向任意地址（包括您自己的地址）发送任意数额以激活您的账户。这是 Sei 网络的要求。"
           },
           "validator" : {
             "validators" : "验证者",
@@ -6854,16 +6929,49 @@
             "youEarned" : "您赚取了",
             "byDelegationAssetsTo" : "通过将资产委托给",
             "description" : "奖励现在将被申领并被添加到您的可用余额。",
-            "cta" : "继续"
+            "compoundRewardDescription" : "奖励将被重新质押至同一验证者，从而增加您的已委托余额。",
+            "cta" : "继续",
+            "method" : {
+              "claimReward" : "兑现",
+              "compoundReward" : "复利",
+              "compoundOrCashIn" : "复利或兑现？",
+              "claimRewardTooltip" : "奖励将添加至您的可用余额。",
+              "compoundRewardTooltip" : "奖励将重新质押给同一个验证者。"
+            }
           },
           "verification" : {
             "success" : {
               "title" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
+              "titleCompound" : "您的奖励已委托给同一个验证者。",
               "text" : "该交易一经网络确认，就会更新您的账户余额。",
               "cta" : "查看详情"
             },
             "pending" : {
               "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "title" : "提取",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "withdraw" : {
+            "warning" : "已解除委托的数额已完成锁定期，并将返还至您的可用余额。",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您的资产已成功提取。",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
             },
             "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
           }
@@ -8095,6 +8203,7 @@
   },
   "market" : {
     "title" : "市场",
+    "searchPlaceholder" : "搜索资产",
     "assets" : {
       "title" : "多种资产",
       "emptyFavorites" : "暂无收藏",
@@ -8611,7 +8720,11 @@
     "tabs" : {
       "crypto" : "加密货币",
       "stablecoins" : "稳定币",
+      "stocks" : "股票",
       "market" : "市场"
+    },
+    "stocks" : {
+      "exploreAll" : "探索全部"
     },
     "referralProgram" : "$20"
   },
@@ -9314,7 +9427,7 @@
     }
   },
   "marketBanner" : {
-    "title" : "探索市场",
+    "title" : "市场",
     "viewAll" : "查看全部",
     "viewAllAccessibilityHint" : "双击查看全部市场资产",
     "connectionFailed" : "连接失败",
@@ -9322,6 +9435,18 @@
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "双击查看市场详情"
+    },
+    "filter" : {
+      "accessibilityLabel" : "更改市场横幅筛选器",
+      "accessibilityHint" : "双击以选择显示哪些资产",
+      "title" : "排序方式",
+      "noFavorites" : "暂无收藏",
+      "options" : {
+        "trending" : "热门",
+        "gainers" : "获利者",
+        "losers" : "失利者",
+        "favorites" : "收藏"
+      }
     }
   },
   "largeMover" : {
@@ -9676,7 +9801,7 @@
   "fearAndGreed" : {
     "title" : "情绪指数",
     "description" : "主要根据波动性、市场动能和社交趋势显示整体市场情绪（从 0 到 100）。数值较低表示恐惧，数值较高表示贪婪。",
-    "disclaimer" : "数据来源于 CoinMarketCap 的恐惧与贪婪指数，仅供参考。",
+    "disclaimer" : "数据来自 CoinMarketCap。仅供参考。",
     "levels" : {
       "fearPlus" : "恐惧+",
       "fear" : "恐惧",
@@ -9690,7 +9815,7 @@
     "title" : "季",
     "definitionTitle" : "替代币指数",
     "description" : "替代币指数用于衡量比特币相较于其他加密货币的表现。数值越高，表示替代币相对于比特币表现越好。",
-    "disclaimer" : "数据来源于 CoinMarketCap 的恐惧与贪婪指数，仅供参考。",
+    "disclaimer" : "数据来自 CoinMarketCap。仅供参考。",
     "levels" : {
       "bitcoin" : "比特币",
       "altcoin" : "替代币"
@@ -9698,7 +9823,8 @@
   },
   "marketCapCard" : {
     "title" : "总市值",
-    "description" : "总市值代表所有加密货币市值的总和。"
+    "description" : "总市值代表所有加密货币市值的总和。",
+    "disclaimer" : "数据来自 CoinMarketCap。仅供参考。"
   },
   "analyticsAllocation" : {
     "header" : {

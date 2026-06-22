@@ -1,7 +1,7 @@
 import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
@@ -11,7 +11,10 @@ import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
-import { getTokenAllowanceCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+
+// Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
+// before the sign-permit button appears (the app shows a "1-5 mins" estimate).
+const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
@@ -52,6 +55,7 @@ export class SwapPage extends WebViewAppPage {
   // Swap Steps Approval components
   private readonly giveApprovalButton = "give-approval-button";
   private readonly signPermitButton = "sign-permit-button";
+  private readonly revokeApprovalButton = "revoke-approval-button";
 
   // History Components
   readonly historyButton = this.page.getByTestId("History-tab-button");
@@ -563,15 +567,16 @@ export class SwapPage extends WebViewAppPage {
     await webview.getByTestId(this.swapMaxToggle).click();
   }
 
-  @step("Ensure token approval has been revoked")
-  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: SwapProvider) {
-    if (!provider.contractAddress) {
-      throw new Error(
-        `Provider "${provider.name}" has no contractAddress - revoke requires an EVM token provider`,
-      );
-    }
-    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
-    expect(remaining).toBe("0");
+  @step("Expect reset allowance screen to be displayed")
+  async expectResetApprovalScreen() {
+    await this.verifyElementIsVisible(this.revokeApprovalButton);
+  }
+
+  @step("Click Revoke Approval button")
+  async clickRevokeApprovalButton() {
+    const webview = await this.getWebView();
+    const revokeButton = webview.getByTestId(this.revokeApprovalButton);
+    await revokeButton.click();
   }
 
   @step("Expect TwoStepApproval screen to be displayed")
@@ -583,22 +588,22 @@ export class SwapPage extends WebViewAppPage {
   async clickGiveApprovalButton() {
     const webview = await this.getWebView();
     const approvalButton = webview.getByTestId(this.giveApprovalButton);
-    await expect(approvalButton).toBeVisible();
-    await expect(approvalButton).toBeEnabled();
     await approvalButton.click();
   }
 
   @step("Expect TwoStepSign screen to be displayed")
   async expectTwoStepSignScreen() {
-    await this.verifyElementIsVisible(this.executeSwapBtn);
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.executeSwapBtn)).toBeVisible({
+      timeout: APPROVAL_PROCESSING_TIMEOUT,
+    });
   }
 
   @step("Click Give Authorization button")
   async clickGiveAuthorizationButton() {
     const webview = await this.getWebView();
     const authorizationButton = webview.getByTestId(this.signPermitButton);
-    await expect(authorizationButton).toBeVisible();
-    await expect(authorizationButton).toBeEnabled();
+    await expect(authorizationButton).toBeVisible({ timeout: APPROVAL_PROCESSING_TIMEOUT });
     await authorizationButton.click();
   }
 

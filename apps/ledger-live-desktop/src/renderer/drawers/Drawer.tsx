@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useEffect, useState, useRef } from "react";
+import React, { useContext, useCallback, useEffect, useState, useRef, Suspense } from "react";
 import { context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
@@ -126,10 +126,12 @@ const Drawer = () => {
                   }
                 >
                   {Component && (
-                    <Component
-                      onClose={state.options.onRequestClose || onRequestClose}
-                      {...props}
-                    />
+                    <Suspense fallback={null}>
+                      <Component
+                        onClose={state.options.onRequestClose || onRequestClose}
+                        {...props}
+                      />
+                    </Suspense>
                   )}
                 </Bar>
               )}

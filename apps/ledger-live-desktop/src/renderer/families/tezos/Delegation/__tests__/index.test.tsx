@@ -1,10 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { useBaker, useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
@@ -38,7 +35,6 @@ jest.mock("../Header", () => ({
   default: () => <div data-testid="delegation-header" />,
 }));
 
-setSupportedCurrencies(["tezos"]);
 const currency = getCryptoCurrencyById("tezos");
 const account = { ...genAccount("tezos-index-test", { currency }) } as unknown as TezosAccount;
 

@@ -6,6 +6,60 @@ import { getRegistryAddressFor } from "./registry";
 import type { CeloVote } from "../types/types";
 
 /**
+ * CIP-64 transaction type byte. See https://github.com/celo-org/celo-proposals/blob/master/CIPs/cip-0064.md
+ */
+const CIP64_TX_TYPE = "0x7b";
+
+type CeloRpcTransaction = {
+  type?: string;
+  feeCurrency?: `0x${string}` | null;
+};
+
+// CIP-64 `feeCurrency` is always a 20-byte EVM address. Reject anything else
+// (e.g. "0x1", "0xZZZ") rather than persisting garbage that would silently
+// mis-render ops and never retry — sync only retries when feeCurrencyAddress
+// is absent, not when it points to a non-existent contract.
+const ADDRESS_RE = /^0x[0-9a-f]{40}$/i;
+
+const isCeloRpcTransaction = (v: unknown): v is CeloRpcTransaction => {
+  if (v === null || typeof v !== "object") return false;
+  const obj = v as Record<string, unknown>;
+  if (obj.type !== undefined && typeof obj.type !== "string") return false;
+  if (obj.feeCurrency !== undefined && obj.feeCurrency !== null) {
+    if (typeof obj.feeCurrency !== "string" || !ADDRESS_RE.test(obj.feeCurrency)) return false;
+  }
+  return true;
+};
+
+// 32-byte tx hash: "0x" + 64 hex chars.
+const TX_HASH_RE = /^0x[0-9a-f]{64}$/i;
+const isHexHash = (s: string): s is `0x${string}` => TX_HASH_RE.test(s);
+
+/**
+ * Returns the lowercased fee-currency address for a CIP-64 tx, `null` for a
+ * confirmed non-CIP-64 (native CELO) tx, or throws on RPC failure / tx-not-found.
+ *
+ * Callers MUST distinguish `null` from a thrown error: persisting "native" for
+ * a transient RPC failure would permanently mis-label a real CIP-64 op.
+ */
+export const getCeloTransactionFeeCurrency = async (hash: string): Promise<string | null> => {
+  if (!isHexHash(hash)) throw new Error(`Invalid Celo tx hash: ${hash}`);
+  const client = getCeloClient();
+  const result: unknown = await client.request({
+    method: "eth_getTransactionByHash",
+    params: [hash],
+  });
+  if (!isCeloRpcTransaction(result)) throw new Error(`Celo tx ${hash} not found`);
+  // JSON-RPC nodes may return hex strings in mixed case (e.g. "0x7B").
+  if (result.type?.toLowerCase() !== CIP64_TX_TYPE) return null;
+  // CIP-64 with no feeCurrency = malformed response. Throwing forces a retry on
+  // the next sync — returning null here would persist the NATIVE sentinel and
+  // permanently mis-label a real CIP-64 op.
+  if (!result.feeCurrency) throw new Error(`Celo tx ${hash} is CIP-64 but feeCurrency is missing`);
+  return result.feeCurrency.toLowerCase();
+};
+
+/**
  * Fetch account registered status. To lock any Celo, account needs to be registered first.
  */
 export const getAccountRegistrationStatus = async (address: string): Promise<boolean> => {

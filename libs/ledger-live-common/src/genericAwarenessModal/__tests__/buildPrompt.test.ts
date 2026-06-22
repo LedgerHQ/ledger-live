@@ -18,7 +18,8 @@ describe("buildPrompt", () => {
     const promptCard = makeCard("prompt-1", {
       layout: GenericAwarenessModalLayout.Prompt,
       campaignId: "campaign-1",
-      imageUrl: "https://example.com/prompt.png",
+      imageUrlLight: "https://example.com/prompt.png",
+      imageUrlDark: "",
       title: "Prompt title",
       subtitle: "Prompt subtitle",
       primaryButtonLabel: "Primary",
@@ -32,7 +33,8 @@ describe("buildPrompt", () => {
     expect(prompt).toEqual({
       layout: GenericAwarenessModalLayout.Prompt,
       id: "campaign-1",
-      imageUrl: "https://example.com/prompt.png",
+      imageUrlLight: "https://example.com/prompt.png",
+      imageUrlDark: "",
       title: "Prompt title",
       subtitle: "Prompt subtitle",
       primaryButtonLabel: "Primary",
@@ -53,7 +55,8 @@ describe("buildPrompt", () => {
     expect(prompt).toEqual({
       layout: GenericAwarenessModalLayout.Prompt,
       id: "campaign-1",
-      imageUrl: "",
+      imageUrlLight: "",
+      imageUrlDark: "",
       title: "",
       subtitle: "",
       primaryButtonLabel: "",

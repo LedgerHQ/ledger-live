@@ -46,33 +46,12 @@ const TRC10_ID = "tron/trc10/1002000";
 const TRC20_ID = "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7";
 const TRC20_CONTRACT = "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7";
 
-const parentCurrency = {
-  type: "CryptoCurrency",
-  id: "tron",
-  coinType: 195,
-  name: "Tron",
-  managerAppName: "Tron",
-  ticker: "TRX",
-  scheme: "tron",
-  color: "#D9012C",
-  family: "tron",
-  blockAvgTime: 9,
-  units: [{ name: "TRX", code: "TRX", magnitude: 6 }],
-  explorerViews: [
-    {
-      tx: "https://tronscan.org/#/transaction/$hash",
-      address: "https://tronscan.org/#/address/$address",
-    },
-  ],
-  keywords: ["trx", "tron"],
-};
-
 const mockTokens: Record<string, TokenCurrency> = {
   [TRC10_ID]: {
     type: "TokenCurrency",
     id: TRC10_ID,
     contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
-    parentCurrency: parentCurrency as TokenCurrency["parentCurrency"],
+    parentCurrencyId: "tron",
     tokenType: "trc10",
     name: "BitTorrent Old",
     ticker: "BTTOLD",
@@ -85,7 +64,7 @@ const mockTokens: Record<string, TokenCurrency> = {
     type: "TokenCurrency",
     id: TRC20_ID,
     contractAddress: TRC20_CONTRACT,
-    parentCurrency: parentCurrency as TokenCurrency["parentCurrency"],
+    parentCurrencyId: "tron",
     tokenType: "trc20",
     name: "WINK",
     ticker: "WIN",

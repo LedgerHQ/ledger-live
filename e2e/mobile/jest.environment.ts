@@ -1,4 +1,8 @@
-import { attachSpeculinhoLogsToAllure, takeSpeculosScreenshot } from "./utils/speculosUtils";
+import {
+  cleanupAllSpeculos,
+  attachSpeculinhoLogsToAllure,
+  takeSpeculosScreenshot,
+} from "./utils/speculosUtils";
 import {
   attachTestExecutionConsoleToAllure,
   attachFailureLogsToAllure,
@@ -80,6 +84,42 @@ async function captureFailureDiagnostics(): Promise<void> {
   console.info("Failure diagnostics capture completed");
 }
 
+// Jest's afterAll/teardown hooks are skipped when the worker dies from a signal (CI timeout, manual SIGINT, uncaught exception).
+//  Without this, remote Speculos pods leak because nothing ever DELETEs them.
+let speculosTerminationHandlersInstalled = false;
+function installSpeculosTerminationHandlers() {
+  if (speculosTerminationHandlersInstalled) return;
+  speculosTerminationHandlersInstalled = true;
+
+  let cleaning = false;
+  const releaseAndExit = async (reason: string, exitCode: number) => {
+    if (cleaning) return;
+    cleaning = true;
+    try {
+      await withTimeout(
+        cleanupAllSpeculos(),
+        SLOW_DIAGNOSTIC_TIMEOUT_MS,
+        `cleanupAllSpeculos(${reason})`,
+      );
+    } catch (error) {
+      console.info(`Speculos cleanup on ${reason} failed:`, sanitizeError(error));
+    } finally {
+      process.exit(exitCode);
+    }
+  };
+
+  process.on("SIGINT", () => void releaseAndExit("SIGINT", 130));
+  process.on("SIGTERM", () => void releaseAndExit("SIGTERM", 143));
+  process.on("uncaughtException", error => {
+    console.error("uncaughtException — releasing Speculos:", sanitizeError(error));
+    void releaseAndExit("uncaughtException", 1);
+  });
+  process.on("unhandledRejection", reason => {
+    console.error("unhandledRejection — releasing Speculos:", sanitizeError(reason));
+    void releaseAndExit("unhandledRejection", 1);
+  });
+}
+
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
 
@@ -89,6 +129,7 @@ export default class TestEnvironment extends DetoxEnvironment {
     await super.setup();
 
     setupEnvironment();
+    installSpeculosTerminationHandlers();
 
     const speculosDevicesMap = new Map<string, number>();
     const webSocketObj = {
@@ -210,6 +251,12 @@ export default class TestEnvironment extends DetoxEnvironment {
   }
 
   async teardown() {
+    try {
+      await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
+    } catch (error) {
+      console.info("Speculos cleanup on teardown failed:", sanitizeError(error));
+    }
+
     try {
       uninstallConsoleCapture();
       if (this.global.webSocket?.wss) {

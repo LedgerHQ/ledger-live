@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
+import useTheme from "~/renderer/hooks/useTheme";
 import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
 import { advanceCarouselSlide } from "../../testUtils/modalTestUtils";
 import CarouselContent, { type CarouselContentProps } from "../CarouselContent";
@@ -9,16 +10,20 @@ const slides: GenericAwarenessModalCarouselSlide[] = [
   {
     title: "First slide title",
     subtitle: "First slide subtitle",
-    imageUrl: "https://example.com/a.png",
+    imageUrlLight: "https://example.com/a-light.png",
+    imageUrlDark: "https://example.com/a-dark.png",
     primaryButtonLabel: "Primary A",
     primaryButtonLink: "https://www.ledger.com",
+    navigationButtonLabel: "",
   },
   {
     title: "Second slide title",
     subtitle: "Second slide subtitle",
-    imageUrl: "https://example.com/b.png",
+    imageUrlLight: "https://example.com/b-light.png",
+    imageUrlDark: "https://example.com/b-dark.png",
     primaryButtonLabel: "Primary B",
     primaryButtonLink: "https://www.ledger.com/compare",
+    navigationButtonLabel: "",
   },
 ];
 
@@ -30,18 +35,44 @@ const defaultProps: CarouselContentProps = {
   onClose: jest.fn(),
 };
 
+jest.mock("~/renderer/hooks/useTheme");
+
+const mockUseTheme = jest.mocked(useTheme);
+
 const renderCarousel = (props: Partial<CarouselContentProps> = {}) =>
   render(<CarouselContent {...defaultProps} {...props} />);
 
 describe("CarouselContent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseTheme.mockReturnValue({ theme: "light" } as ReturnType<typeof useTheme>);
+  });
+
+  it("should hide the primary button when label or link is empty", () => {
+    renderCarousel({
+      slides: [{ ...slides[0], primaryButtonLabel: "Primary A", primaryButtonLink: "" }],
+    });
+
+    expect(screen.queryByTestId("generic-awareness-modal-primary-button")).not.toBeInTheDocument();
+    expect(screen.getByTestId("generic-awareness-modal-continue-button")).toBeVisible();
+  });
+
+  it("should render a custom navigation button label when provided", () => {
+    renderCarousel({
+      slides: [{ ...slides[0], navigationButtonLabel: "Keep going" }],
+    });
+
+    expect(screen.getByTestId("generic-awareness-modal-continue-button")).toHaveTextContent(
+      "Keep going",
+    );
   });
 
   it("should render the first slide with line limits and primary label", () => {
     renderCarousel();
 
-    expect(screen.getByText("First slide title")).toHaveClass("truncate");
+    expect(screen.getByText("First slide title").style.getPropertyValue("-webkit-line-clamp")).toBe(
+      String(CAROUSEL_SLIDE_TEXT_LINE_LIMITS.title),
+    );
     expect(
       screen.getByText("First slide subtitle").style.getPropertyValue("-webkit-line-clamp"),
     ).toBe(String(CAROUSEL_SLIDE_TEXT_LINE_LIMITS.subtitle));
@@ -50,18 +81,25 @@ describe("CarouselContent", () => {
     );
   });
 
-  it("should render the slide image when imageUrl is provided", () => {
-    renderCarousel();
+  it.each([
+    ["light", "https://example.com/a-light.png"],
+    ["dark", "https://example.com/a-dark.png"],
+  ] as const)(
+    "should render the %s slide image when themed urls are provided",
+    (theme, expectedSrc) => {
+      mockUseTheme.mockReturnValue({ theme } as ReturnType<typeof useTheme>);
+      renderCarousel();
 
-    const image = screen.getByRole("presentation");
-    expect(image).toBeVisible();
-    expect(image).toHaveAttribute("src", "https://example.com/a.png");
-    expect(image).toHaveAttribute("alt", "");
-  });
+      const image = screen.getByRole("presentation");
+      expect(image).toBeVisible();
+      expect(image).toHaveAttribute("src", expectedSrc);
+      expect(image).toHaveAttribute("alt", "");
+    },
+  );
 
-  it("should not render an image when imageUrl is empty", () => {
+  it("should not render an image when themed urls are empty", () => {
     const slidesWithoutImage: GenericAwarenessModalCarouselSlide[] = [
-      { ...slides[0], imageUrl: "" },
+      { ...slides[0], imageUrlLight: "", imageUrlDark: "" },
       slides[1],
     ];
 

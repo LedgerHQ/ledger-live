@@ -22,4 +22,7 @@ export const expectedNavigationParams: TopBarNavigationParams = {
   settings: {
     name: NavigatorName.Settings,
   },
+  search: {
+    name: NavigatorName.GlobalSearch,
+  },
 };

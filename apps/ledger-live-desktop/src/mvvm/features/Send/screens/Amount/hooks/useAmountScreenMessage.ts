@@ -1,87 +1,39 @@
 import { useMemo } from "react";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBridgeError";
-import { getAmountScreenMessage } from "@ledgerhq/live-common/flows/send/amount/utils/messages";
 import {
-  getStatusError,
-  pickBlockingError,
-} from "@ledgerhq/live-common/flows/send/amount/utils/errors";
+  getAmountScreenRawMessage,
+  isAmountInputDisabledByRecipientError,
+} from "@ledgerhq/live-common/flows/send/amount/utils/messages";
 import type { AmountScreenMessage } from "../types";
 
 export function useAmountScreenMessage(params: {
   status: TransactionStatus;
-  accountCurrency: CryptoOrTokenCurrency | undefined;
-  amountComputationPending: boolean;
   hasRawAmount: boolean;
 }): Readonly<{
   amountMessage: AmountScreenMessage | null;
-  isStellarMultisignBlocked: boolean;
+  isAmountInputDisabled: boolean;
 }> {
-  const amountError = useTranslatedBridgeError(params.status.errors?.amount);
+  const rawAmountMessage = useMemo(
+    () => getAmountScreenRawMessage({ status: params.status, hasRawAmount: params.hasRawAmount }),
+    [params.hasRawAmount, params.status],
+  );
+  const translatedAmountMessage = useTranslatedBridgeError(rawAmountMessage?.error);
 
-  // Some bridges (e.g., Bitcoin) put FeeTooHigh in warnings.feeTooHigh, others in warnings.amount
-  const amountWarningRaw = params.status.warnings?.amount ?? params.status.warnings?.feeTooHigh;
-  const amountWarning = useTranslatedBridgeError(amountWarningRaw);
+  const amountMessage = useMemo((): AmountScreenMessage | null => {
+    if (!rawAmountMessage || !translatedAmountMessage?.title) return null;
 
-  const recipientErrorRaw = getStatusError(params.status.errors, "recipient");
-  const recipientError = useTranslatedBridgeError(recipientErrorRaw);
+    return {
+      type: rawAmountMessage.type,
+      text: translatedAmountMessage.title,
+      error: rawAmountMessage.error,
+    };
+  }, [rawAmountMessage, translatedAmountMessage?.title]);
 
-  const otherBlockingErrorRaw = useMemo(() => {
-    const candidate = pickBlockingError(params.status.errors);
-    return candidate?.name === "AmountRequired" ? undefined : candidate;
-  }, [params.status.errors]);
-  const otherBlockingError = useTranslatedBridgeError(otherBlockingErrorRaw);
+  const isAmountInputDisabled = useMemo(
+    () => isAmountInputDisabledByRecipientError(params.status),
+    [params.status],
+  );
 
-  // Always hide "AmountRequired" error - the Review button is already disabled when there's no amount,
-  // so this error message provides no value and causes visual glitches during input
-  const isAmountRequiredError = params.status.errors?.amount?.name === "AmountRequired";
-
-  const amountErrorTitle = amountError && !isAmountRequiredError ? amountError.title : undefined;
-  const amountWarningTitle = amountWarning ? amountWarning.title : undefined;
-
-  const isFeeTooHigh =
-    params.status.warnings?.amount?.name === "FeeTooHigh" ||
-    params.status.warnings?.feeTooHigh?.name === "FeeTooHigh";
-
-  const cryptoCurrency =
-    params.accountCurrency?.type === "TokenCurrency"
-      ? params.accountCurrency.parentCurrency
-      : params.accountCurrency;
-
-  const isStellarMultisignBlocked =
-    cryptoCurrency?.family === "stellar" && recipientErrorRaw?.name === "StellarSourceHasMultiSign";
-
-  const multisignMessage =
-    isStellarMultisignBlocked && recipientError?.title
-      ? ({ type: "error", text: recipientError.title } as const)
-      : null;
-
-  const baseAmountMessage = useMemo((): AmountScreenMessage | null => {
-    if (!params.hasRawAmount) return null;
-
-    if (amountErrorTitle) {
-      return { type: "error", text: amountErrorTitle };
-    }
-
-    if (otherBlockingError?.title) {
-      return { type: "error", text: otherBlockingError.title };
-    }
-
-    return getAmountScreenMessage({
-      amountWarningTitle,
-      isFeeTooHigh,
-      hasRawAmount: params.hasRawAmount,
-    });
-  }, [
-    params.hasRawAmount,
-    amountErrorTitle,
-    otherBlockingError?.title,
-    amountWarningTitle,
-    isFeeTooHigh,
-  ]);
-
-  const amountMessage = multisignMessage ?? baseAmountMessage;
-
-  return { amountMessage, isStellarMultisignBlocked };
+  return { amountMessage, isAmountInputDisabled };
 }

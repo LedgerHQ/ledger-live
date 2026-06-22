@@ -59,9 +59,7 @@ export const ProductTourDrawer = () => {
           // against the app palette instead of dark.
           <ForceTheme selectedPalette={"dark"}>
             <BottomSheetView style={{ paddingBottom: bottomInset + 8 }}>
-              <Box
-                lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}
-              >
+              <Box lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}>
                 <IconButton
                   icon={Close}
                   appearance="transparent"

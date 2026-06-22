@@ -312,7 +312,7 @@ const App = () => {
                   ledgerId={currency.id}
                   ticker={currency.ticker}
                   size={iconSize}
-                  network={currency.parentCurrency.id}
+                  network={currency.parentCurrencyId}
                 />
               ) : (
                 <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={iconSize} />
@@ -326,7 +326,7 @@ const App = () => {
                   ledgerId={currency.id}
                   ticker={currency.ticker}
                   size={iconSize}
-                  network={currency.parentCurrency.id}
+                  network={currency.parentCurrencyId}
                   shape="square"
                 />
               ) : (

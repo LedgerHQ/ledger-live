@@ -1,13 +1,13 @@
 import { useFeature } from "@features/platform-feature-flags";
-import type { Feature_StakePrograms } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useMemo } from "react";
 import semver from "semver";
 
 export function getVersionedRedirects(
-  stakeProgramsFeature: Feature_StakePrograms,
+  stakeProgramsFeature: Features["stakePrograms"],
   appVersion: string,
-): Feature_StakePrograms {
+): Features["stakePrograms"] {
   const { list, redirects, versions } = stakeProgramsFeature.params || {};
 
   if (!versions || versions.length === 0) {
@@ -50,10 +50,10 @@ export function getVersionedRedirects(
 
 /**
  * Hook that provides version-aware stake program features
- * This wrapper handles the versioned redirects logic and returns a standard Feature_StakePrograms object
- * @returns Feature_StakePrograms object with the appropriate redirects for the current app version
+ * This wrapper handles the versioned redirects logic and returns a standard Features["stakePrograms"] object
+ * @returns Features["stakePrograms"] object with the appropriate redirects for the current app version
  */
-export const useVersionedStakePrograms = (): Feature_StakePrograms | null => {
+export const useVersionedStakePrograms = (): Features["stakePrograms"] | null => {
   const rawStakePrograms = useFeature("stakePrograms");
 
   const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -62,7 +62,6 @@ export const useVersionedStakePrograms = (): Feature_StakePrograms | null => {
       return null;
     }
 
-    // TODO(LIVE-31326): drop cast once types-live's `Redirect<M>.queryParams` brand is loosened.
-    return getVersionedRedirects(rawStakePrograms as unknown as Feature_StakePrograms, appVersion);
+    return getVersionedRedirects(rawStakePrograms, appVersion);
   }, [rawStakePrograms, appVersion]);
 };

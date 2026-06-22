@@ -9,7 +9,6 @@ import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 const raw: AccountRaw = {
@@ -60,10 +59,7 @@ const mockUSDTTokenAccount: TokenAccount = {
     type: "TokenCurrency",
     id: "ethereum/erc20/usd_tether__erc20_",
     contractAddress: "",
-    parentCurrency: {
-      id: "ethereum",
-      type: "CryptoCurrency",
-    } as CryptoCurrency,
+    parentCurrencyId: "ethereum",
     tokenType: "",
     name: "",
     ticker: "",
@@ -89,10 +85,7 @@ const mockUSDCTokenAccount: TokenAccount = {
     type: "TokenCurrency",
     id: "ethereum/erc20/usd__coin",
     contractAddress: "",
-    parentCurrency: {
-      id: "ethereum",
-      type: "CryptoCurrency",
-    } as CryptoCurrency,
+    parentCurrencyId: "ethereum",
     tokenType: "",
     name: "",
     ticker: "",
@@ -111,10 +104,7 @@ const mockUSDSTokenAccount: TokenAccount = {
     type: "TokenCurrency",
     id: "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f",
     contractAddress: "",
-    parentCurrency: {
-      id: "ethereum",
-      type: "CryptoCurrency",
-    } as CryptoCurrency,
+    parentCurrencyId: "ethereum",
     tokenType: "",
     name: "",
     ticker: "",

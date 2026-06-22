@@ -6,18 +6,17 @@ import {
   isPublicTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
-import { getAleoCurrencyConfig } from "../../../shared/utils";
 import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
 import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
-import { isAleoTransaction } from "./utils";
+import { getAleoCurrencyConfig, isAleoTransaction } from "../../../shared/utils";
 import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 
 jest.mock("@ledgerhq/live-common/families/aleo/utils");
-jest.mock("./utils");
 jest.mock("../../../shared/utils", () => ({
   ...jest.requireActual("../../../shared/utils"),
   getAleoCurrencyConfig: jest.fn(),
+  isAleoTransaction: jest.fn(),
 }));
 
 const mockedIsPublicTransaction = jest.mocked(isPublicTransaction);

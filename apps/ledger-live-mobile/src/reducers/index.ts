@@ -7,6 +7,7 @@ import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
 import ble from "./ble";
+import borrow from "./borrow";
 import countervalues from "./countervalues";
 import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
@@ -17,6 +18,7 @@ import inView from "./inView";
 import knownDevices from "./knownDevices";
 import largeMover from "./largeMover";
 import market, { marketListConfigReducer } from "./market";
+import { marketBannerReducer } from "./marketBanner";
 import modularDrawer from "./modularDrawer";
 import receiveOptionsDrawer from "./receiveOptionsDrawer";
 import rebornBuyDeviceDrawer from "./rebornBuyDeviceDrawer";
@@ -46,6 +48,7 @@ const appReducer = combineReducers({
   appstate,
   auth,
   ble,
+  borrow,
   countervalues,
   deeplinkInstallApp,
   dynamicContent,
@@ -59,6 +62,7 @@ const appReducer = combineReducers({
   largeMover,
   market,
   marketListConfig: marketListConfigReducer,
+  marketBanner: marketBannerReducer,
   modularDrawer,
   receiveOptionsDrawer,
   rebornBuyDeviceDrawer,

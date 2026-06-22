@@ -4,7 +4,10 @@ import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { LayoutChangeEvent, Linking, StyleSheet } from "react-native";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
-import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
+import {
+  resolveCarouselNavigationButtonLabel,
+  type GenericAwarenessModalCarouselSlide,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 
 type CarouselFooterButtonProps = Readonly<{
   slides: GenericAwarenessModalCarouselSlide[];
@@ -31,6 +34,10 @@ export function CarouselFooterButton({
   const primaryButtonHeight = useSharedValue(0);
   const currentSlide = slides[currentIndex];
   const isLastSlide = currentIndex === slides.length - 1;
+  const navigationButtonLabel = resolveCarouselNavigationButtonLabel(
+    currentSlide?.navigationButtonLabel ?? "",
+    isLastSlide ? t("common.close") : t("common.continue"),
+  );
   const shouldShowPrimaryButton = hasPrimaryButton(currentSlide);
   const slideIndexes = useMemo(() => slides.map((_, index) => index), [slides]);
   const primaryButtonVisibilities = useMemo(
@@ -85,8 +92,7 @@ export function CarouselFooterButton({
   };
 
   const handleNavigationPress = () => {
-    const button = isLastSlide ? t("common.close") : t("common.continue");
-    onNavigationPress(currentIndex, button, isLastSlide);
+    onNavigationPress(currentIndex, navigationButtonLabel, isLastSlide);
 
     if (!isLastSlide) {
       goToNext();
@@ -99,7 +105,7 @@ export function CarouselFooterButton({
   return (
     <Box lx={{ position: "relative" }}>
       <Button appearance="base" size="lg" onPress={handleNavigationPress}>
-        {isLastSlide ? t("common.close") : t("common.continue")}
+        {navigationButtonLabel}
       </Button>
       <Box pointerEvents="none" style={styles.primaryButtonMeasurer} accessibilityElementsHidden>
         {slides.map((slide, slideIndex) => {

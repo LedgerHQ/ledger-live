@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import React, { useEffect, useMemo } from "react";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -20,13 +21,16 @@ const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
 
   const currencyName = currency
     ? currency.type === "TokenCurrency"
-      ? currency.parentCurrency.name
+      ? getCryptoCurrencyById(currency.parentCurrencyId).name
       : currency.name
     : undefined;
 
   const request = useMemo(
     () => ({
-      currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+      currency:
+        currency.type === "TokenCurrency"
+          ? getCryptoCurrencyById(currency.parentCurrencyId)
+          : currency,
     }),
     [currency],
   );

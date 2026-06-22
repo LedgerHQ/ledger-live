@@ -6,11 +6,18 @@ import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live"
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { AleoAccount } from "../types";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
-import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import coinConfig from "../config";
+import {
+  accessProvableApi,
+  fetchAllOwnedRecords,
+  patchPublicOperations,
+  fetchAccountTransactionsFromHeight,
+} from "../network/utils";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
@@ -20,6 +27,7 @@ import {
   createPublicSyncObservable,
   postSync,
 } from "./sync";
+import { apiClient } from "../network/api";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
 
 jest.mock("../logic");
@@ -31,14 +39,17 @@ jest.mock("../logic/getPrivateBalance");
 const mockGetBalance = jest.mocked(getBalance);
 const mockLastBlock = jest.mocked(lastBlock);
 const mockListOperations = jest.mocked(listOperations);
+const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
 const mockListPrivateOperations = jest.mocked(listPrivateOperations);
 const mockGetPrivateBalance = jest.mocked(getPrivateBalance);
 const mockPatchPublicOperations = jest.mocked(patchPublicOperations);
+const mockApiClient = jest.mocked(apiClient);
 
 describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
+  const mockConfig = getMockedConfig("mainnet");
   const mockAccount = getMockedAccount();
   const mockDerivationMode: DerivationMode = "";
   const mockSyncConfig: SyncConfig = {
@@ -57,6 +68,7 @@ describe("sync.ts", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    coinConfig.setCoinConfig(() => mockConfig);
 
     mockGetBalance.mockResolvedValue([
       {
@@ -73,10 +85,17 @@ describe("sync.ts", () => {
 
     mockListOperations.mockResolvedValue({
       operations: [],
+      tokenOperations: [],
+      calTokens: new Map(),
       nextCursor: null,
     });
     mockAccessProvableApi.mockResolvedValue(mockAleoResources.provableApi);
     mockFetchAllOwnedRecords.mockResolvedValue([]);
+    mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+      transactions: [],
+      nextCursor: null,
+    });
+    mockApiClient.getTokenBalance.mockResolvedValue(null);
     mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
     mockPatchPublicOperations.mockResolvedValue([]);
@@ -199,6 +218,7 @@ describe("sync.ts", () => {
 
       expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
+        config: mockConfig,
         currency: mockCurrency,
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
@@ -214,6 +234,10 @@ describe("sync.ts", () => {
       const mockOperation = getMockedOperation({
         blockHeight: 12345,
         accountId: mockInitialAccount.id,
+        extra: {
+          transactionType: "public",
+          functionId: "transfer_public",
+        },
       });
 
       const accountWithOperations = {
@@ -235,6 +259,7 @@ describe("sync.ts", () => {
 
       expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
+        config: mockConfig,
         currency: mockCurrency,
         address: mockAccount.freshAddress,
         ledgerAccountId: mockInitialAccount.id,
@@ -284,6 +309,8 @@ describe("sync.ts", () => {
 
       mockListOperations.mockResolvedValue({
         operations: [newOperation as any],
+        tokenOperations: [],
+        calTokens: new Map(),
         nextCursor: null,
       });
 
@@ -823,6 +850,8 @@ describe("sync.ts", () => {
       mockListOperations.mockResolvedValueOnce({
         // @ts-expect-error - bridge operation type is expected in this test
         operations: [newPublicOp],
+        tokenOperations: [],
+        calTokens: new Map(),
         nextCursor: null,
       });
       mockListPrivateOperations.mockResolvedValueOnce({
@@ -888,6 +917,8 @@ describe("sync.ts", () => {
       const privateRecord = getMockedRecord();
       mockListOperations.mockResolvedValueOnce({
         operations: [newPublicOp as any],
+        tokenOperations: [],
+        calTokens: new Map(),
         nextCursor: null,
       });
       mockFetchAllOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);

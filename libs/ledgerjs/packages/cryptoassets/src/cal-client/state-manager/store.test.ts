@@ -222,8 +222,7 @@ describe("RtkCryptoAssetsStore", () => {
         tokenType: "erc20",
         delisted: false,
         disableCountervalue: false,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-        parentCurrency: {} as any,
+        parentCurrencyId: "ethereum",
       };
 
       mockDispatch.mockResolvedValue({ data: mockToken });
@@ -243,8 +242,7 @@ describe("RtkCryptoAssetsStore", () => {
         tokenType: "erc20",
         delisted: false,
         disableCountervalue: false,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-        parentCurrency: {} as any,
+        parentCurrencyId: "ethereum",
       };
 
       mockDispatch.mockResolvedValue({ data: mockToken });

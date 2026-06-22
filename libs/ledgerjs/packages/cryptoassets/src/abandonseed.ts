@@ -160,6 +160,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   unichain_sepolia: EVM_DEAD_ADDRESS,
   arc: EVM_DEAD_ADDRESS,
   arc_testnet: EVM_DEAD_ADDRESS,
+  robinhood: EVM_DEAD_ADDRESS,
+  robinhood_testnet: EVM_DEAD_ADDRESS,
 };
 
 /**

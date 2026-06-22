@@ -1,10 +1,11 @@
 import React, { memo } from "react";
-import { Virtualizer } from "@tanstack/react-virtual";
+import type { VirtualItem } from "@tanstack/react-virtual";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { RowItem } from "./RowItem";
 
 type ListDataProps = {
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  virtualItems: VirtualItem[];
+  totalSize: number;
   marketData: MarketCurrencyData[];
   starredMarketCoins: string[];
   counterCurrency?: string;
@@ -14,7 +15,8 @@ type ListDataProps = {
 };
 
 export const ListData = memo<ListDataProps>(function ListData({
-  rowVirtualizer,
+  virtualItems,
+  totalSize,
   marketData,
   starredMarketCoins,
   counterCurrency,
@@ -25,13 +27,13 @@ export const ListData = memo<ListDataProps>(function ListData({
   return (
     <div
       style={{
-        height: `${rowVirtualizer.getTotalSize()}px`,
+        height: `${totalSize}px`,
         width: "100%",
         position: "relative",
       }}
       data-testid="market-list-data"
     >
-      {rowVirtualizer.getVirtualItems().map(virtualRow => {
+      {virtualItems.map(virtualRow => {
         const currency = marketData[virtualRow.index];
         if (!currency) return null;
 

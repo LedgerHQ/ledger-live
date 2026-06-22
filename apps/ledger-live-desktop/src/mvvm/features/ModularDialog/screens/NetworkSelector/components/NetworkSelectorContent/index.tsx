@@ -45,7 +45,7 @@ export const NetworkSelectorContent = ({
     const network = formattedNetworks.find(network =>
       network.type === "CryptoCurrency"
         ? network.id === networkId
-        : network.parentCurrency.id === networkId,
+        : network.parentCurrencyId === networkId,
     );
 
     if (!network) return;

@@ -25,7 +25,7 @@ export function buildStakingTransactionParams(
     throw new Error("Intent must be a staking intent");
   }
 
-  const { amount, sender, mode, valAddress, valId, dstValAddress } = intent;
+  const { amount, sender, mode, valAddress, valId, dstValAddress, withdrawId } = intent;
 
   const config = STAKING_CONTRACTS[currency.id];
   if (!config) {
@@ -42,6 +42,7 @@ export function buildStakingTransactionParams(
     amount,
     dstValAddress,
     delegator: sender,
+    withdrawId,
   });
 
   const to = config.specificContractAddressByOperation?.[mode] ?? config.contractAddress;

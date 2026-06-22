@@ -8,7 +8,6 @@ import {
   groupAccountsOperationsByDay,
   shortAddressPreview,
 } from ".";
-import { setSupportedCurrencies } from "../currencies";
 import { genAccount } from "../mocks/account";
 import "../test-helpers/staticTime";
 import tokenData from "./__fixtures__/ethereum-erc20-0x_project.json";
@@ -20,8 +19,6 @@ setupMockCryptoAssetsStore();
 
 // oxlint-disable-next-line typescript/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
-
-setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
 
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
@@ -163,7 +160,7 @@ test("accountWithMandatoryTokens ethereum", () => {
       type: "TokenCurrency" as const,
       id: `${currency.id}/erc20/mock_token_${i}`,
       contractAddress: `0x${i.toString(16).padStart(40, "0")}`,
-      parentCurrency: currency,
+      parentCurrencyId: currency.id,
       tokenType: "erc20" as const,
       name: `Mock Token ${i}`,
       ticker: `MOCK${i}`,

@@ -88,6 +88,7 @@ export const urls = {
     blue: "https://support.ledger.com/article/4404382075537-zd",
   },
   maxSpendable: "https://support.ledger.com/article/360012960679-zd",
+  seiAssociationWarning: "https://support.ledger.com/article/Sei-SEI",
   stakingEthereum:
     "https://www.ledger.com/staking/staking-ethereum?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=ethereum",
   stakingCosmos:
@@ -210,6 +211,12 @@ export const urls = {
   buyDevice:
     "https://shop.ledger.com/pages/unlock-ledger-wallet-desktop?utm_source=ledger_wallet_desktop&utm_medium=self_referral&utm_content=onboarding-2",
   charonLearnMore: "https://shop.ledger.com/products/ledger-recovery-key",
+  backupHub: {
+    recoveryKey:
+      "https://shop.ledger.com/products/ledger-recovery-key/single-backup?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLD&utm_content=msg_backuphub",
+    secretRecoveryPhrase:
+      "https://shop.ledger.com/?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLD&utm_content=msg_backuphub#category-srp-accessories",
+  },
 
   // Node errors
   txBroadcastErrors: {

@@ -31,12 +31,12 @@ export function mapDelegations(
     return {
       ...d,
       formattedAmount: formatCurrencyUnit(unit, d.amount, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
       formattedPendingRewards: formatCurrencyUnit(unit, d.pendingRewards, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
@@ -59,7 +59,7 @@ export function mapUnbondings(
     return {
       ...u,
       formattedAmount: formatCurrencyUnit(unit, u.amount, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
@@ -79,7 +79,7 @@ export function mapRedelegations(
     return {
       ...r,
       formattedAmount: formatCurrencyUnit(unit, r.amount, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
@@ -99,7 +99,7 @@ export const mapDelegationInfo = (
     ...d,
     validator: validators.find(v => v.validatorAddress === d.address),
     formattedAmount: formatCurrencyUnit(unit, transaction ? transaction.amount : d.amount, {
-      disableRounding: true,
+      disableRounding: false,
       alwaysShowSign: false,
       showCode: true,
     }),
@@ -174,6 +174,16 @@ export function canRedelegate(
   // redelegation (21-day cooldown). Check completionDate explicitly so that
   // stale cached data does not incorrectly block redelegations after the window.
   return !activeRedelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress);
+}
+
+export function canCompound(account: StakingAccount, delegation: StakingDelegation): boolean {
+  // The chain must expose a compound precompile function; without it the
+  // transaction will always fail, so the UI option should be hidden entirely.
+  if (!STAKING_CONTRACTS[account.currency.id]?.functions.compoundReward) return false;
+
+  // Compounding restakes accrued rewards, so it only makes sense when there is
+  // something to restake.
+  return delegation.pendingRewards.gt(0);
 }
 
 export function getRedelegation(

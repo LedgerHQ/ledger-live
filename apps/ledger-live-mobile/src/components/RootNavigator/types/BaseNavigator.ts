@@ -40,6 +40,7 @@ import type { EditTransactionParamList } from "../../../families/evm/EditTransac
 import type { EvmDelegationFlowParamList } from "../../../families/evm/DelegationFlow/types";
 import type { EvmUndelegationFlowParamList } from "../../../families/evm/UndelegationFlow/types";
 import type { EvmClaimRewardsFlowParamList } from "../../../families/evm/ClaimRewardsFlow/types";
+import type { EvmWithdrawFlowParamList } from "../../../families/evm/WithdrawFlow/types";
 import type { BitcoinEditTransactionParamList } from "../../../families/bitcoin/EditTransactionFlow/EditTransactionParamList";
 import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
@@ -50,6 +51,7 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TezosStakeFlowParamList } from "../../../families/tezos/StakeFlow/types";
+import type { TezosUnstakeFlowParamList } from "../../../families/tezos/UnstakeFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
@@ -90,6 +92,7 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { SwapSubScreensNavigatorParamList } from "./SwapSubScreensNavigator";
 import type { PerpsNavigatorParamList } from "./PerpsNavigator";
+import type { GlobalSearchNavigatorParamList } from "LLM/features/GlobalSearch/types";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
@@ -231,6 +234,7 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
   [NavigatorName.Perps]?: NavigatorScreenParams<PerpsNavigatorParamList>;
+  [NavigatorName.GlobalSearch]?: NavigatorScreenParams<GlobalSearchNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Borrow]?: NavigatorScreenParams<BorrowLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
@@ -295,6 +299,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.EvmDelegationFlow]: NavigatorScreenParams<EvmDelegationFlowParamList>;
   [NavigatorName.EvmUndelegationFlow]: NavigatorScreenParams<EvmUndelegationFlowParamList>;
   [NavigatorName.EvmClaimRewardsFlow]: NavigatorScreenParams<EvmClaimRewardsFlowParamList>;
+  [NavigatorName.EvmWithdrawFlow]: NavigatorScreenParams<EvmWithdrawFlowParamList>;
   [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
   // Bitcoin edit transaction (RBF)
@@ -309,6 +314,7 @@ export type BaseNavigatorStackParamList = {
   // Tezos
   [NavigatorName.TezosDelegationFlow]: NavigatorScreenParams<TezosDelegationFlowParamList>;
   [NavigatorName.TezosStakeFlow]: NavigatorScreenParams<TezosStakeFlowParamList>;
+  [NavigatorName.TezosUnstakeFlow]: NavigatorScreenParams<TezosUnstakeFlowParamList>;
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;

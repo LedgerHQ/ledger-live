@@ -105,5 +105,5 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
 
   return cosmosChainParams[currencyId];
 
-  // TODO: Currently, all cosmos currencies included setSupportedCurrencies must be supported here. We are working on a new way to support/enable new currencies
+  // TODO: Currently, all cosmos currencies listed in the cosmos loader's supportedCoins must be supported here. We are working on a new way to support/enable new currencies
 }

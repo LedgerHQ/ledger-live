@@ -45,6 +45,7 @@ export type StakingUnbonding = {
   validatorName?: string;
   amount: BigNumber;
   completionDate: Date;
+  withdrawId?: number;
 };
 
 export type StakingUnbondingRaw = {
@@ -52,6 +53,7 @@ export type StakingUnbondingRaw = {
   validatorName?: string;
   amount: string;
   completionDate: string;
+  withdrawId?: string;
 };
 
 export type StakingResources = {

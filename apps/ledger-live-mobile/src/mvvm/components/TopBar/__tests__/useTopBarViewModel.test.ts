@@ -106,6 +106,21 @@ describe("useTopBarViewModel", () => {
     );
   });
 
+  it("should navigate to GlobalSearch and track button_clicked when onSearchPress is invoked", () => {
+    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
+
+    act(() => {
+      result.current.onSearchPress();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.search.name);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Search",
+      page: ScreenName.Portfolio,
+    });
+  });
+
   it("should call navigate with expected params when onSettingsPress is invoked", () => {
     const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
 

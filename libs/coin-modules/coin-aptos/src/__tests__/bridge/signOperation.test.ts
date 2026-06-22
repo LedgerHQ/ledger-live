@@ -198,30 +198,7 @@ describe("buildSignOperation", () => {
             id: "aptos/coin/dstapt_0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::stakedaptos",
             contractAddress:
               "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
-            parentCurrency: {
-              type: "CryptoCurrency",
-              id: "aptos",
-              coinType: 637,
-              name: "Aptos",
-              managerAppName: "Aptos",
-              ticker: "APT",
-              scheme: "aptos",
-              color: "#231F20",
-              family: "aptos",
-              units: [
-                {
-                  name: "APT",
-                  code: "APT",
-                  magnitude: 8,
-                },
-              ],
-              explorerViews: [
-                {
-                  address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
-                  tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
-                },
-              ],
-            },
+            parentCurrencyId: "aptos",
             name: "dstAPT",
             tokenType: "coin",
             ticker: "dstAPT",

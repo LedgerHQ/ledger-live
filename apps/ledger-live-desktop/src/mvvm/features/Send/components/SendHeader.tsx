@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
+import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
@@ -23,8 +24,9 @@ export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
+  const { displayMode } = useSendAmountDisplayMode();
   const { t } = useTranslation();
-  const availableText = useAvailableBalance(state.account.account);
+  const availableText = useAvailableBalance(state.account.account, displayMode);
 
   const { navigation, currentStep } = wizard;
   const currencyId = state.account.currency?.id;

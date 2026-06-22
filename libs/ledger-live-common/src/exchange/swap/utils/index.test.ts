@@ -93,7 +93,7 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
       ticker: "AAVE",
       units: [{ name: "Aave Token", code: "AAVE", magnitude: 18 }],
       contractAddress: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
-      parentCurrency: getCryptoCurrencyById("ethereum"),
+      parentCurrencyId: "ethereum",
       tokenType: "erc20" as const,
     });
 

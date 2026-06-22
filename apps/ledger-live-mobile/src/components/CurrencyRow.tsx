@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex, Tag } from "@ledgerhq/native-ui";
@@ -63,8 +64,8 @@ const CurrencyRow = ({ currency, style, isOK = true, iconSize = 32, onPress }: P
           {currency.ticker}
         </LText>
       </Flex>
-      {currency.type === "TokenCurrency" && currency.parentCurrency ? (
-        <Tag>{currency.parentCurrency.name}</Tag>
+      {currency.type === "TokenCurrency" ? (
+        <Tag>{getCryptoCurrencyById(currency.parentCurrencyId).name}</Tag>
       ) : null}
     </StyledPressable>
   );

@@ -1,5 +1,6 @@
 import React from "react";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -8,10 +9,8 @@ import Label from "~/renderer/components/Label";
 import SelectAccount from "~/renderer/components/SelectAccount";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useHandleChangeAccount } from "./useHandleChangeAccount";
 import BalanceSelector from "../shared/BalanceSelector";
 import { Trans } from "react-i18next";
-import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 
 export const SelfTransferStepRecipient = ({
   t,
@@ -25,9 +24,6 @@ export const SelfTransferStepRecipient = ({
   status,
   currencyName,
 }: StepProps) => {
-  // change account with updating "recipient" field that cannot be controlled manually
-  const handleChangeAccount = useHandleChangeAccount({ onChangeAccount, updateTransaction });
-
   if (!status || !account || transaction?.family !== "aleo") {
     return null;
   }
@@ -59,7 +55,7 @@ export const SelfTransferStepRecipient = ({
           <SelectAccount
             id="account-debit-placeholder"
             autoFocus={!openedFromAccount}
-            onChange={handleChangeAccount}
+            onChange={onChangeAccount}
             value={account}
             filter={accountFilter}
           />

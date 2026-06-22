@@ -22,6 +22,7 @@ import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
+import { selectFeature, type FeatureId, type WithFeatureFlags } from "@shared/feature-flags";
 import { ipcRenderer } from "electron";
 import { memoryLogger } from "~/renderer/logger";
 import { getJSONStringifyReplacer } from "~/helpers/saveLogs";
@@ -220,7 +221,12 @@ const localizationEvents = [
 interface RawEvents {
   [key: string]: unknown;
 }
-window.getAllFeatureFlags = getAllFeatureFlags;
+window.getAllFeatureFlags = () => {
+  const store = (window as unknown as { __STORE__?: { getState: () => WithFeatureFlags } })
+    .__STORE__;
+  if (!store) return {};
+  return getAllFeatureFlags((key: FeatureId) => selectFeature(store.getState(), key) ?? null);
+};
 window.getAllEnvs = getAllEnvs;
 window.saveLogs = async (path: string): Promise<void> => {
   const memoryLogs = memoryLogger.getMemoryLogs();

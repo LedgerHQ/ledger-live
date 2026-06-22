@@ -27,6 +27,9 @@ import {
   EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../../types";
+import { enrichRewardOperationsValue } from "../../staking/rewardsFromReceipt";
+import { withApi } from "../node/rpc.common";
+import { isExternalNodeConfig } from "../node/types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
@@ -278,6 +281,28 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
   });
 
   const operations = ops.flatMap(tx => etherscanOperationToOperations(params.accountId, tx));
+
+  // Recover REWARD op amounts (claim/compound) from receipt logs — these txs send 0 native
+  // value, so the amount would otherwise show as 0 in history and operation details.
+  const node = getCoinConfig(params.currency.id).info.node;
+  if (
+    operations.some(op => op.type === "REWARD" && op.value.isZero()) &&
+    isExternalNodeConfig(node)
+  ) {
+    try {
+      await withApi(
+        params.currency,
+        api =>
+          enrichRewardOperationsValue(params.currency.id, operations, hash =>
+            api.getTransactionReceipt(hash),
+          ),
+        node,
+      );
+    } catch (e) {
+      log("EVM getOperations", "reward amount enrichment failed", e);
+    }
+  }
+
   const maxBlock = boundBlockFromOperations(operations);
 
   return {

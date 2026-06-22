@@ -8,7 +8,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
-import { HEDERA_TRANSACTION_NAMES } from "../constants";
+import { HEDERA_TRANSACTION_NAMES, MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE } from "../constants";
 import { apiClient } from "../network/api";
 import { parseTransfers, analyzeStakingOperation } from "../network/utils";
 import type {
@@ -24,12 +24,6 @@ import {
   getMemoFromBase64,
   getSyntheticBlock,
 } from "./utils";
-
-const txNameToCustomOperationType: Record<string, OperationType> = {
-  TOKENASSOCIATE: "ASSOCIATE_TOKEN",
-  CONTRACTCALL: "CONTRACT_CALL",
-  CRYPTOUPDATEACCOUNT: "UPDATE_ACCOUNT",
-};
 
 function getCommonOperationData(
   rawTx: HederaMirrorTransaction,
@@ -164,7 +158,7 @@ function processTransfers({
   const { type, value, senders, recipients } = parseTransfers(transfers, address);
   const { hash, fee, timestamp, blockHeight, blockHash, hasFailed } = commonData;
   const extra = { ...commonData.extra };
-  let operationType = txNameToCustomOperationType[rawTx.name] ?? type;
+  let operationType = MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[rawTx.name] ?? type;
 
   // update operation type and extra fields if staking analysis is available
   if (stakingAnalysis) {

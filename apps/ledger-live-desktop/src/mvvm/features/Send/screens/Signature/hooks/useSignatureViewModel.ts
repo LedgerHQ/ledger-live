@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import {
-  addPendingOperation,
-  getMainAccount,
-  getRecentAddressesStore,
-} from "@ledgerhq/live-common/account/index";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
@@ -24,7 +20,6 @@ export function useSignatureViewModel() {
   const { state } = useSendFlowData();
   const reduxDispatch = useDispatch();
 
-  const hasFinishedRef = useRef(false);
   const wasBuyDeviceOpenRef = useRef(false);
 
   const isBuyDeviceOpen = useSelector(selectIsBuyDeviceOpen);
@@ -56,22 +51,6 @@ export function useSignatureViewModel() {
     trackPage("Modal send - step device review", null, sendFlowTrackingProperties);
   }, [sendFlowTrackingProperties]);
 
-  const depsRef = useRef({
-    account,
-    parentAccount,
-    transaction,
-    txStatus,
-  });
-  if (
-    depsRef.current.account !== account ||
-    depsRef.current.parentAccount !== parentAccount ||
-    depsRef.current.transaction !== transaction ||
-    depsRef.current.txStatus !== txStatus
-  ) {
-    hasFinishedRef.current = false;
-    depsRef.current = { account, parentAccount, transaction, txStatus };
-  }
-
   const action = useTransactionAction();
   const mevProtected = useSelector(mevProtectionSelector);
   const broadcast = useBroadcast({
@@ -84,98 +63,25 @@ export function useSignatureViewModel() {
     logger: broadcastLogger,
   });
 
-  const request = useMemo(() => {
-    const tokenCurrency =
-      (account && account.type === "TokenAccount" && account.token) || undefined;
-
-    return {
-      tokenCurrency,
-      parentAccount,
-      account,
-      transaction,
-      status: txStatus,
-    };
-  }, [account, parentAccount, transaction, txStatus]);
-
-  const finishWithError = useCallback(
-    (error: Error) => {
-      if (hasFinishedRef.current) return;
-      hasFinishedRef.current = true;
-      operation.onTransactionError(error);
-
-      const shouldResetStatus =
-        currency == null || sendFeatures.isUserRefusedTransactionError(currency, error);
-
-      if (shouldResetStatus) {
-        status.resetStatus();
-      } else {
-        status.setError();
-      }
-
-      navigation.goToNextStep();
+  const registerPendingOperation = useCallback(
+    (mainAccount: Account, op: Operation) => {
+      reduxDispatch(updateAccountWithUpdater(mainAccount.id, acc => addPendingOperation(acc, op)));
     },
-    [navigation, operation, status, currency],
+    [reduxDispatch],
   );
 
-  const finishWithSuccess = useCallback(
-    (op: Operation) => {
-      if (hasFinishedRef.current) return;
-      hasFinishedRef.current = true;
-
-      // Add pending operation to account (like in old flow)
-      if (account) {
-        const mainAccount = getMainAccount(account, parentAccount);
-        reduxDispatch(
-          updateAccountWithUpdater(mainAccount.id, acc => addPendingOperation(acc, op)),
-        );
-      }
-
-      // Add recipient address to recent addresses store (like in old flow)
-      if (account && transaction?.recipient) {
-        const mainAccount = getMainAccount(account, parentAccount);
-        const store = getRecentAddressesStore();
-        const ensName = transaction.recipientDomain?.domain;
-        store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
-      }
-
-      operation.onOperationBroadcasted(op);
-      status.setSuccess();
-      navigation.goToNextStep();
-    },
-    [account, parentAccount, transaction, navigation, operation, status, reduxDispatch],
-  );
-
-  const onDeviceActionResult = useCallback(
-    (
-      result:
-        | { signedOperation: SignedOperation | undefined | null; device: unknown }
-        | { transactionSignError: Error },
-    ) => {
-      if ("transactionSignError" in result) {
-        finishWithError(result.transactionSignError);
-        return;
-      }
-
-      const signedOperation = result.signedOperation;
-      if (!signedOperation) {
-        finishWithError(new Error("Missing signed operation"));
-        return;
-      }
-
-      operation.onSigned();
-      broadcast(signedOperation)
-        .then(finishWithSuccess)
-        .catch(error => {
-          try {
-            const normalizedError = error instanceof Error ? error : new Error(String(error));
-            finishWithError(normalizedError);
-          } catch (e) {
-            console.error("Unhandled error during broadcast error handling", e);
-          }
-        });
-    },
-    [broadcast, finishWithError, finishWithSuccess, operation],
-  );
+  const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
+    account,
+    parentAccount,
+    transaction,
+    status: txStatus,
+    currency,
+    broadcast,
+    operation,
+    statusActions: status,
+    onFinish: navigation.goToNextStep,
+    registerPendingOperation,
+  });
 
   return {
     account,

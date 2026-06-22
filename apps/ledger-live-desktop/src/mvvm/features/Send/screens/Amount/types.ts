@@ -6,6 +6,7 @@ import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
 export type AmountScreenMessage = Readonly<{
   type: "error" | "warning" | "info";
   text: string;
+  error?: Error;
 }>;
 
 export type AmountScreenQuickAction = Readonly<{
@@ -40,6 +41,7 @@ type AmountInputProps = Readonly<{
   toggleLabel: string;
   secondaryValue: string;
   amountMessage?: AmountScreenMessage | null;
+  onMessageLinkPress?: (link: string) => void;
 }>;
 
 type FeesProps = Readonly<{
@@ -75,7 +77,10 @@ export type AmountScreenViewProps = AmountInputProps &
   QuickActionsProps &
   ReviewProps & { pluginsSlot?: ReactNode };
 
-export type AmountScreenViewModel = Omit<AmountScreenViewProps, "onReview" | "onGetFunds"> &
+export type AmountScreenViewModel = Omit<
+  AmountScreenViewProps,
+  "onReview" | "onGetFunds" | "onMessageLinkPress"
+> &
   Readonly<{
     showFeePresets: boolean;
     onOpenCustomFees: () => void;

@@ -1,7 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Action, ReducerMap, handleActions } from "redux-actions";
 import {
-  MarketListCategory,
   MarketListConfigState,
   MarketListFilterTimeframe,
   MarketListSorting,
@@ -98,13 +97,13 @@ export default handleActions<MarketState, MarketPayload>(handlers, INITIAL_STATE
 
 /**
  * V4 asset list config — shared between MarketScreen and modularAssetDrawer.
- * Gated by llmAssetDiscoverability. Persisted as a user preference (never reset).
+ * Gated by llmAssetDiscoverability. Sorting/timeframe/network persist as user
+ * preferences. The selected category is not persisted (kept as local screen state).
  */
 export const MARKET_LIST_CONFIG_INITIAL_STATE: MarketListConfigState = {
   sorting: "marketCap",
   timeframe: "1D",
   network: undefined,
-  category: "all",
 };
 
 const marketListConfigSlice = createSlice({
@@ -120,12 +119,10 @@ const marketListConfigSlice = createSlice({
     setMarketListNetwork: (state, action: PayloadAction<string | undefined>) => {
       state.network = action.payload;
     },
-    setMarketListCategory: (state, action: PayloadAction<MarketListCategory>) => {
-      state.category = action.payload;
-    },
     importMarketListConfig: (_state, action: PayloadAction<MarketListConfigState>) => ({
-      ...MARKET_LIST_CONFIG_INITIAL_STATE,
-      ...action.payload,
+      sorting: action.payload.sorting ?? MARKET_LIST_CONFIG_INITIAL_STATE.sorting,
+      timeframe: action.payload.timeframe ?? MARKET_LIST_CONFIG_INITIAL_STATE.timeframe,
+      network: action.payload.network,
     }),
   },
 });
@@ -134,7 +131,6 @@ export const {
   setMarketListSorting,
   setMarketListTimeframe,
   setMarketListNetwork,
-  setMarketListCategory,
   importMarketListConfig,
 } = marketListConfigSlice.actions;
 
@@ -144,8 +140,6 @@ export const selectMarketListTimeframe = (state: State): MarketListFilterTimefra
   state.marketListConfig.timeframe;
 export const selectMarketListNetwork = (state: State): string | undefined =>
   state.marketListConfig.network;
-export const selectMarketListCategory = (state: State): MarketListCategory =>
-  state.marketListConfig.category;
 
 export const exportMarketListConfigSelector = (state: State): MarketListConfigState =>
   state.marketListConfig;

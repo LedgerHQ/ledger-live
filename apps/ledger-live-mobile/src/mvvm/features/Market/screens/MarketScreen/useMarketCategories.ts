@@ -1,14 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import { track } from "~/analytics";
-import { useDispatch, useSelector } from "~/context/hooks";
-import { selectMarketListCategory, setMarketListCategory } from "~/reducers/market";
 import type { MarketListCategory } from "~/reducers/types";
-
-const SELECTABLE_MARKET_CATEGORIES = new Set<MarketListCategory>(["all", "stocks", "starred"]);
 
 export type MarketCategoryTab = {
   value: MarketListCategory;
-  labelKey: string;
+  labelKey?: string;
+  label?: string;
 };
 
 export type MarketCategories = {
@@ -17,15 +16,13 @@ export type MarketCategories = {
   onSelectCategory: (category: MarketListCategory) => void;
 };
 
-const categoryTabs: MarketCategoryTab[] = [
-  { value: "all", labelKey: "market.assets.categories.all" },
-  { value: "stocks", labelKey: "market.assets.categories.stocks" },
-  { value: "starred", labelKey: "market.assets.categories.favorites" },
-];
+const DEFAULT_CATEGORY: MarketListCategory = "all";
 
-function isSelectableMarketCategory(category: MarketListCategory): boolean {
-  return SELECTABLE_MARKET_CATEGORIES.has(category);
-}
+const BUILT_IN_CATEGORY_TABS: MarketCategoryTab[] = [
+  { value: "all", labelKey: "market.assets.categories.all" },
+  { value: "starred", labelKey: "market.assets.categories.favorites" },
+  { value: "stocks", labelKey: "market.assets.categories.stocks" },
+];
 
 function trackCategoryTap(category: MarketListCategory) {
   track("button_clicked", {
@@ -35,32 +32,57 @@ function trackCategoryTap(category: MarketListCategory) {
   });
 }
 
-export function useMarketCategories(): MarketCategories {
-  const dispatch = useDispatch();
-  const persistedCategory = useSelector(selectMarketListCategory);
-  const selectedCategory = isSelectableMarketCategory(persistedCategory)
-    ? persistedCategory
-    : "all";
+export function useMarketCategories({
+  routeCategory,
+}: {
+  routeCategory?: MarketListCategory;
+} = {}): MarketCategories {
+  const { data: trendingCategories } = useGetTrendingCategoriesQuery();
+  const entryCategory = routeCategory ?? DEFAULT_CATEGORY;
+  const [selectedCategory, setSelectedCategory] = useState<MarketListCategory>(entryCategory);
+
+  const tabs = useMemo<MarketCategoryTab[]>(
+    () => [
+      ...BUILT_IN_CATEGORY_TABS,
+      ...(trendingCategories?.map(category => ({
+        value: category.id,
+        label: category.name,
+      })) ?? []),
+    ],
+    [trendingCategories],
+  );
+
+  const selectableCategories = useMemo(() => new Set(tabs.map(tab => tab.value)), [tabs]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedCategory(entryCategory);
+    }, [entryCategory]),
+  );
+
+  const effectiveCategory = selectableCategories.has(selectedCategory)
+    ? selectedCategory
+    : DEFAULT_CATEGORY;
 
   const onSelectCategory = useCallback(
     (category: MarketListCategory) => {
       trackCategoryTap(category);
 
-      if (!isSelectableMarketCategory(category)) {
+      if (!selectableCategories.has(category)) {
         return;
       }
 
-      dispatch(setMarketListCategory(category));
+      setSelectedCategory(category);
     },
-    [dispatch],
+    [selectableCategories],
   );
 
   return useMemo(
     () => ({
-      selectedCategory,
-      tabs: categoryTabs,
+      selectedCategory: effectiveCategory,
+      tabs,
       onSelectCategory,
     }),
-    [onSelectCategory, selectedCategory],
+    [onSelectCategory, effectiveCategory, tabs],
   );
 }

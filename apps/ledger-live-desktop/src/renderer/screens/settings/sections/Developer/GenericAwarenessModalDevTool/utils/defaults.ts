@@ -15,9 +15,11 @@ const CAROUSEL_PRIMARY_BUTTON_LABELS = ["Learn more", "Discover", "Explore"] as 
 const defaultCarouselSlide = (index: number): CarouselSlideForm => ({
   title: `Slide ${index + 1} title`,
   subtitle: `Slide ${index + 1} subtitle`,
-  imageUrl: getDevToolCarouselImageUrl(index),
+  imageUrlLight: getDevToolCarouselImageUrl(index),
+  imageUrlDark: getDevToolCarouselImageUrl(index),
   primaryButtonLabel: CAROUSEL_PRIMARY_BUTTON_LABELS[index % CAROUSEL_PRIMARY_BUTTON_LABELS.length],
   primaryButtonLink: "https://www.ledger.com",
+  navigationButtonLabel: "",
 });
 
 const defaultFeatureIntroItem = (index: number): FeatureIntroItemForm => ({
@@ -74,7 +76,8 @@ export const createInitialFormState = (
   slides: createDefaultCarouselSlides(),
   items: createDefaultFeatureIntroItems(),
   ...(layout === "carousel" ? featureIntroDefaults : layoutContentDefaults[layout]),
-  imageUrl: getDevToolPlaceholderImageUrl(),
+  imageUrlLight: getDevToolPlaceholderImageUrl(),
+  imageUrlDark: getDevToolPlaceholderImageUrl(),
 });
 
 export const createDefaultCarouselSlideAt = (index: number): CarouselSlideForm =>

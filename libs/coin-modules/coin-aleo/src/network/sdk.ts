@@ -104,11 +104,13 @@ async function createRequestFromIntent({
   intent,
   feeConfiguration,
   viewKey,
+  tvks,
 }: {
   currency: CryptoCurrency;
   intent: Intent;
   feeConfiguration: FeeConfiguration | null;
   viewKey?: string;
+  tvks?: string[];
 }): Promise<PreparedRequestResponse> {
   const { sdkUrl } = getNetworkConfig(currency);
 
@@ -119,6 +121,7 @@ async function createRequestFromIntent({
       intent,
       fee: feeConfiguration,
       ...(viewKey && { view_key: viewKey }),
+      ...(tvks && { tvks }),
     },
   });
 

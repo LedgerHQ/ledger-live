@@ -12,7 +12,8 @@ import {
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
-import { Alert, Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, Alert } from "@ledgerhq/native-ui";
+import AlertComponent from "~/components/Alert";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
@@ -33,9 +34,11 @@ import CurrencyInput from "~/components/CurrencyInput";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
 import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import Warning from "~/icons/Warning";
 import { ScreenName } from "~/const";
+import { urls } from "~/utils/urls";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
@@ -80,7 +83,6 @@ export default function SelectAmount({ navigation, route }: Props) {
   const remaining = maxSpendable.minus(amount);
   const hasErrors = Object.keys(status.errors).length > 0;
   const firstError = Object.values(status.errors)[0];
-  const firstErrorMessage = firstError instanceof Error ? firstError.message : undefined;
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
@@ -147,10 +149,13 @@ export default function SelectAmount({ navigation, route }: Props) {
 
             {showSeiAssociationWarning ? (
               <View style={styles.alertContainer}>
-                <Alert
+                <AlertComponent
                   type="warning"
-                  title={t("evm.delegation.flow.steps.starter.seiAssociationWarning")}
-                />
+                  learnMoreUrl={urls.seiAssociationWarning}
+                  learnMoreKey="common.learnMore"
+                >
+                  <Trans i18nKey="evm.delegation.flow.steps.starter.seiAssociationWarning" />
+                </AlertComponent>
               </View>
             ) : null}
             <View style={styles.footer}>
@@ -191,11 +196,11 @@ export default function SelectAmount({ navigation, route }: Props) {
                   </Text>
                 </Flex>
               ) : null}
-              {firstErrorMessage ? (
+              {firstError instanceof Error ? (
                 <View style={styles.errorContainer}>
                   <Warning size={16} color={colors.error.c50} />
                   <LText style={styles.errorText} color="red">
-                    {firstErrorMessage}
+                    <TranslatedError error={firstError} />
                   </LText>
                 </View>
               ) : null}

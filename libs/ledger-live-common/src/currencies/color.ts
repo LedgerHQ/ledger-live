@@ -1,4 +1,5 @@
 import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const defaultColor = "#999";
 
@@ -7,9 +8,7 @@ export type ColorableCurrency = {
   color?: string | undefined;
   id: string;
   ticker: string;
-  parentCurrency?: {
-    color?: string | undefined;
-  };
+  parentCurrencyId?: string;
 };
 
 export function getCurrencyColor(currency: ColorableCurrency | Currency): string {
@@ -18,7 +17,11 @@ export function getCurrencyColor(currency: ColorableCurrency | Currency): string
       return currency.color ?? defaultColor;
 
     case "TokenCurrency":
-      return currency?.parentCurrency?.color ?? defaultColor;
+      return (
+        (currency.parentCurrencyId
+          ? findCryptoCurrencyById(currency.parentCurrencyId)?.color
+          : undefined) ?? defaultColor
+      );
 
     default:
       return defaultColor;

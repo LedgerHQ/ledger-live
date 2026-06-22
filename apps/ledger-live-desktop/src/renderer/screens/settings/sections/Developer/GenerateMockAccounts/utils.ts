@@ -165,3 +165,20 @@ export async function generateStablecoinAccounts(): Promise<[Account, AccountUse
 
   return results;
 }
+
+export function generateStockAccounts(
+  tokensByParent: { parentId: string; tokens: TokenCurrency[] }[],
+): [Account, AccountUserData][] {
+  const results: [Account, AccountUserData][] = [];
+
+  for (const { parentId, tokens } of tokensByParent) {
+    if (tokens.length === 0) continue;
+    const currency = getCryptoCurrencyById(parentId);
+    const account = genAccount(uuidv4(), { currency });
+    account.subAccounts = tokens.map((token, i) => genTokenAccount(i, account, token));
+    const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
+    results.push([account, userData]);
+  }
+
+  return results;
+}

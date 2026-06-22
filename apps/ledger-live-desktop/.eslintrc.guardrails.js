@@ -56,12 +56,6 @@ module.exports = {
     },
     {
       files: ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
-      // Sanctioned bridge (+ its test) between live-common's FeatureFlagsContext and the
-      // slice. Temporary — removed once live-common's internal hooks migrate off the Context.
-      excludedFiles: [
-        "src/renderer/components/FeatureFlagsContextBridge.tsx",
-        "src/renderer/components/FeatureFlagsContextBridge.test.tsx",
-      ],
       rules: {
         "no-restricted-imports": ["error", featureFlagsRestrictions],
       },

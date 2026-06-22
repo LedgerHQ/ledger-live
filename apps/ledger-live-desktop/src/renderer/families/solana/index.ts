@@ -21,6 +21,14 @@ const family: SolanaFamily = {
   operationDetails,
   sendAmountFields,
   transactionConfirmFields,
+  modalsToPreload: [
+    "MODAL_SOLANA_REWARDS_INFO",
+    "MODAL_SOLANA_DELEGATE",
+    "MODAL_SOLANA_DELEGATION_ACTIVATE",
+    "MODAL_SOLANA_DELEGATION_DEACTIVATE",
+    "MODAL_SOLANA_DELEGATION_REACTIVATE",
+    "MODAL_SOLANA_DELEGATION_WITHDRAW",
+  ],
 };
 
 export default family;

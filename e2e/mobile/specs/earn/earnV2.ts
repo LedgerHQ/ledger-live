@@ -15,6 +15,39 @@ const EARN_V2_FLAGS: PartialFeatures = {
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
 };
 
+// Pins the ETH deposit webview to the `basic_sorting` cohort (mirrors the desktop
+// FF_STAKE_PROGRAMS_MODAL). This guarantees the provider category filter bar — including the "All"
+// chip we tap to reveal every provider — is deterministically rendered, so the tests can assert on
+// it rather than treating it as optional.
+const FF_STAKE_PROGRAMS_MODAL: PartialFeatures = {
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["cosmos"],
+      redirects: {
+        "ethereum/erc20/usd__coin": {
+          platform: "earn",
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum/erc20/usd__coin",
+            intent: "deposit",
+            deposit: "stablecoin",
+          },
+        },
+        ethereum: {
+          platform: "earn",
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum",
+            intent: "deposit",
+            ethDepositCohort: "basic_sorting",
+          },
+        },
+      },
+    },
+  },
+};
+
 let earnReady: Promise<string>;
 
 async function navigateToEarn() {
@@ -74,7 +107,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
       await app.earnV2Dashboard.verifyColdStartPage();
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
+      await app.earnV2Dashboard.verifyEarnFlowStarted(account.currency.ticker);
     });
   });
 }
@@ -161,12 +194,18 @@ export function runPartnerDappCTATest(
   tmsLinks: string[],
   tags: string[],
 ) {
+  // ETH selects a provider in the deposit webview, which requires the category filter bar; pin its
+  // cohort so that bar is guaranteed to render. Other tickers use the native staking drawer.
+  const featureFlags =
+    account.currency.ticker === "ETH"
+      ? { ...EARN_V2_FLAGS, ...FF_STAKE_PROGRAMS_MODAL }
+      : EARN_V2_FLAGS;
   describe(`Earn V2 - CTA -> Partner dapp (${account.currency.ticker} / ${providerId})`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_FLAGS,
+        featureFlags,
         cliCommands: [liveDataWithAddressCommand(account)],
       });
     });
@@ -177,8 +216,17 @@ export function runPartnerDappCTATest(
     it(`${account.currency.ticker} earn CTA -> ${providerId} provider -> dapp`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
-      await app.earnV2Dashboard.tapStakingProvider(providerId);
+      if (account.currency.ticker === "ETH") {
+        // ETH redirects into the earn deposit webview: pick an amount, choose the provider, then
+        // confirm to open the partner dapp (no native staking drawer in this flow).
+        await app.earnV2Dashboard.verifyDepositFlowVisible();
+        await app.earnV2Dashboard.completeEthDepositAmountStep("0.02");
+        await app.earnV2Dashboard.selectEthProviderInWebview(providerId);
+        await app.earnV2Dashboard.confirmEthDepositProvider();
+      } else {
+        await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
+        await app.earnV2Dashboard.tapStakingProvider(providerId);
+      }
       await app.earnV2Dashboard.verifyPartnerDappLoaded(dappUrlSubstring);
     });
   });
@@ -240,6 +288,37 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
       await app.earnV2Dashboard.waitForManageDrawerAndVerifyOptions(["Withdraw all", "Earn more"]);
       await app.earnV2Dashboard.tapManageDrawerOption("Withdraw all");
       await app.earnV2Dashboard.verifyWithdrawalFlowVisible();
+    });
+  });
+}
+
+// --- Inline Add Account ---
+
+export function runInlineAddAccountTest(account: Account, tmsLinks: string[], tags: string[]) {
+  describe("Earn V2 - Inline Add Account", () => {
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: account.currency.speculosApp,
+        featureFlags: EARN_V2_FLAGS,
+      });
+    });
+
+    setTeamOwner(Team.EARN);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Inline Add Account [${account.currency.speculosApp.name}]`, async () => {
+      await navigateToEarn();
+      await app.earnV2Dashboard.verifyIceColdStartPage();
+      await app.earnV2Dashboard.clickIceColdStartEarnCTA();
+      await app.earnV2Dashboard.verifyModularAssetDrawerVisible();
+
+      await app.modularDrawer.performSearchByTicker(account.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+      await app.addAccount.addAccountAtIndex(`${account.currency.name} 1`, account.currency.id, 0);
+
+      await app.earnV2Dashboard.verifyEarnFlowStarted(account.currency.ticker);
     });
   });
 }

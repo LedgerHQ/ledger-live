@@ -32,7 +32,7 @@ type NavigationProps = BaseComposite<
 
 type EarnNavigation = NavigationProp<ParamListBase>;
 
-const Earn = (props: NavigationProps) => {
+export const Earn = (props: NavigationProps) => {
   const paramAction = props.route.params?.action;
   const paramAccountId = props.route.params?.accountId;
   const paramCurrencyId = props.route.params?.currencyId;
@@ -82,6 +82,22 @@ const Earn = (props: NavigationProps) => {
                 intent: "deposit",
                 cryptoAssetId: paramCryptoAssetId,
                 accountId: paramAccountId,
+              },
+            },
+          });
+          break;
+        }
+        case "simulate": {
+          // Present the Rewards simulator full-screen (Base stack → no top bar / bottom tab).
+          // The earn live app fires `ledgerlive://earn?action=simulate` and routes itself to the
+          // simulator on load; intent="simulate" is handled by BaseNavigator (native header on the
+          // live-app canvas) and EarnV2Webview (INTENT_FLOWS / return-to-tab).
+          navigation.navigate(NavigatorName.Base, {
+            screen: NavigatorName.Earn,
+            params: {
+              screen: ScreenName.Earn,
+              params: {
+                intent: "simulate",
               },
             },
           });

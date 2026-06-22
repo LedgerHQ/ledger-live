@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
-import { useFeatureFlags } from "../../featureFlags";
+import { useFeatureFlags } from "@features/platform-feature-flags";
 import { initPostOnboarding, postOnboardingSetFinished } from "../actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
@@ -26,7 +26,7 @@ type StartPostOnboardingOptions = {
  */
 export function useStartPostOnboardingCallback(): (options: StartPostOnboardingOptions) => void {
   const dispatch = useDispatch();
-  const { getFeature } = useFeatureFlags();
+  const flags = useFeatureFlags();
   const { getPostOnboardingActionsForDevice, navigateToPostOnboardingHub } =
     usePostOnboardingContext();
 
@@ -35,7 +35,7 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
       const { deviceModelId, mock = false, fallbackIfNoAction, resetNavigationStack } = options;
       const actions = getPostOnboardingActionsForDevice(deviceModelId, mock).filter(
         actionWithState =>
-          (!actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled) &&
+          (!actionWithState.featureFlagId || flags[actionWithState.featureFlagId]?.enabled) &&
           (actionWithState.id !== PostOnboardingActionId.recover || options.canShowRecover),
       );
       dispatch(
@@ -52,6 +52,6 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
       }
       navigateToPostOnboardingHub(resetNavigationStack);
     },
-    [dispatch, getFeature, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub],
+    [dispatch, flags, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub],
   );
 }

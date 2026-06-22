@@ -95,6 +95,11 @@ describe("getSortParam", () => {
     expect(getSortParam(Order.topGainers, "6m")).toBe("positive-price-change-6m");
     expect(getSortParam(Order.topLosers, "6m")).toBe("negative-price-change-6m");
   });
+
+  it("maps volume orders to total-volume sort params", () => {
+    expect(getSortParam(Order.VolumeDesc, "24h")).toBe("total-volume-desc");
+    expect(getSortParam(Order.VolumeAsc, "24h")).toBe("total-volume");
+  });
 });
 
 describe("isAvailableForTrading", () => {

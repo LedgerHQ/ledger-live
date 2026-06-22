@@ -1338,6 +1338,9 @@
     }
   },
   "earn": {
+    "simulator": {
+      "title": "Rewards simulator"
+    },
     "deposit": {
       "protocolInfoModal": {
         "title": "To choose a protocol, here’s a few things to bear in mind:",
@@ -1457,6 +1460,13 @@
     "description": "Please uninstall then reinstall the app on your phone to delete Ledger Wallet data, including accounts and settings.",
     "button": "Reset",
     "warning": "Resetting Ledger Wallet will erase your swap transaction history for all your accounts."
+  },
+  "globalSearch": {
+    "searchPlaceholder": "Search assets",
+    "sections": {
+      "cryptos": "Cryptos",
+      "stocks": "Stocks"
+    }
   },
   "graph": {
     "week": "1W",
@@ -2976,7 +2986,7 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
-      "FINALIZE_UNSTAKE": "Withdrawn",
+      "FINALIZE_UNSTAKE": "Unstaked",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
       "UPDATE_ACCOUNT": "Updated account"
@@ -3052,6 +3062,7 @@
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
       "stakedAmount": "Staked amount",
+      "unstakedAmount": "Unstaked amount",
       "accountCreationFee": "Account Creation Fee",
       "associatedTokenId": "Associated token ID",
       "targetStakingNodeId": "Target node ID",
@@ -3686,9 +3697,11 @@
           "campaignId": "Campaign ID",
           "titleField": "Title",
           "subtitle": "Subtitle",
-          "imageUrl": "Image URL",
+          "imageUrlLight": "Image URL (light)",
+          "imageUrlDark": "Image URL (dark)",
           "primaryButtonLabel": "Primary button label",
           "primaryButtonLink": "Primary button link",
+          "navigationButtonLabel": "Navigation button label (Continue/Close)",
           "secondaryButtonLabel": "Secondary button label",
           "secondaryButtonLink": "Secondary button link",
           "icon": "Icon",
@@ -3728,7 +3741,11 @@
       "desc": "Get the latest updates on Ledger Wallet, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
       "descVariantB": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time.",
       "allow": "Allow notifications",
-      "later": "Maybe later"
+      "later": "Maybe later",
+      "transactionsAlerts": {
+        "title": "Know the status of your money",
+        "desc": "Receive real-time alerts when your crypto is sent or received. Opt out at anytime via Settings."
+      }
     },
     "optInScreen": {
       "title": "Enable notifications?",
@@ -4378,6 +4395,10 @@
       "available": "Available {{amount}}",
       "placeholder": "Enter address or ENS",
       "placeholderNoENS": "Enter address",
+      "pasteFromClipboard": {
+        "title": "Paste from clipboard",
+        "cta": "Paste"
+      },
       "editRecipientAccessibilityLabel": "Edit recipient",
       "recent": "Recent",
       "recentDetail": "Recent detail",
@@ -4414,12 +4435,24 @@
         "walletNotExist": "Wallet doesn’t exist"
       },
       "skipMemo": {
-        "title": "Skip adding {{tag}}?",
-        "warning": "Your asset may be lost if a {{tag}} is required by your recipient"
+        "title": "Skip adding a {{tag}}?",
+        "warning": "Your asset may be lost if a {{tag}} is required by your recipient",
+        "notRequired": "{{tag}} not required by recipient?",
+        "confirm": "Yes, skip",
+        "neverAskAgain": "Don’t show this warning again"
       },
       "tagHelp": {
         "title": "What’s a {{tag}}?",
-        "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+        "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} may result in a loss of funds."
+      },
+      "memoLabel": {
+        "ripple": "Tag",
+        "casper": "Transfer ID",
+        "ton": "Comment",
+        "default": "Memo"
+      },
+      "memo": {
+        "transactionIdentifier": "Transaction identifier"
       },
       "networkFeesInFiat": "Network fees in {{currency}}",
       "feesAmount": "Fees amount ({{unit}})",
@@ -4461,7 +4494,8 @@
         "networkFeesInFiat": "Network fees in {{currency}}",
         "invalidValue": "Enter a valid number",
         "belowMinimum": "Minimum is {{min}}",
-        "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+        "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee",
+        "payFeesIn": "Pay fees in"
       },
       "coinControl": {
         "title": "Coin control",
@@ -6602,7 +6636,9 @@
       "title": "You can earn rewards by delegating your account",
       "btn": "Earn rewards"
     },
-    "manage": "Manage",
+    "operationTypes": {
+      "UNSTAKE": "Unstaking"
+    },
     "delegation": {
       "addCustomValidator": "+ Add custom validator",
       "sectionLabel": "Delegation"
@@ -6611,7 +6647,11 @@
       "sectionLabel": "Staking",
       "status": "Status",
       "unstaking": "Unstaking",
-      "available": "Available"
+      "available": "Available",
+      "availableIn": "Available in",
+      "lessThanADay": "Less than a day",
+      "stakeMore": "Stake more",
+      "unstake": "Unstake"
     },
     "earnRewards": {
       "title": "Earn Rewards",
@@ -6662,6 +6702,41 @@
           "info": "Learn more about Tezos staking vs Delegation"
         }
       }
+    },
+    "unstake": {
+      "flow": {
+        "amount": {
+          "unbondingNotice": "Unstaking takes 4 days. During this period your XTZ remains delegated and stops earning staking rewards.",
+          "staked": "Staked",
+          "cta": "Unstake"
+        },
+        "steps": {
+          "confirmation": {
+            "success": {
+              "title": "Unstake submitted",
+              "text": "Your XTZ are unstaking and will be available for withdrawal in ~4 days."
+            }
+          }
+        }
+      }
+    },
+    "unstakeRequired": {
+      "changeBaker": {
+        "title": "Unstake before changing baker",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before delegating to a new baker."
+      },
+      "endDelegation": {
+        "title": "Unstake before ending delegation",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before ending the delegation."
+      },
+      "steps": {
+        "0": "Open the Earn menu and select Unstake.",
+        "1": "Confirm the amount and submit the unstake transaction on your device.",
+        "2": "Wait ~4 days for the unstake period to complete.",
+        "3": "Once withdrawn, you can change baker or end delegation."
+      },
+      "learnMore": "Learn more about Tezos staking",
+      "close": "Close"
     },
     "account": {
       "availableBalanceTooltip": "Funds you can use right now.",
@@ -6730,7 +6805,7 @@
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
             "cta": "Continue",
-            "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
+            "seiAssociationWarning": "To delegate, you need to activate your account by sending any amount to any address, including your own. This is a Sei network requirement."
           },
           "validator": {
             "validators": "Validators",
@@ -6852,16 +6927,49 @@
             "youEarned": "You earned",
             "byDelegationAssetsTo": "by delegating assets to",
             "description": "Rewards will be claimed now and added to your available balance.",
-            "cta": "Continue"
+            "compoundRewardDescription": "Rewards will be restaked to the same validator, increasing your delegated balance.",
+            "cta": "Continue",
+            "method": {
+              "claimReward": "Cash in",
+              "compoundReward": "Compound",
+              "compoundOrCashIn": "Compound or Cash in?",
+              "claimRewardTooltip": "Rewards will be added to your available balance.",
+              "compoundRewardTooltip": "Rewards will be restaked to the same validator."
+            }
           },
           "verification": {
             "success": {
               "title": "You have successfully claimed your rewards. They were added to your available balance.",
+              "titleCompound": "Your rewards were delegated to the same validator.",
               "text": "Your account balance will be updated when the network confirms the transaction.",
               "cta": "View details"
             },
             "pending": {
               "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "stepperHeader": {
+        "title": "Withdraw",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "withdraw": {
+            "warning": "The undelegated amount has completed its timelock and will be sent back to your available balance.",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully withdrawn your assets.",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
@@ -8101,6 +8209,7 @@
   },
   "market": {
     "title": "Market",
+    "searchPlaceholder": "Search asset",
     "assets": {
       "title": "Assets",
       "emptyFavorites": "No favorites yet",
@@ -8617,7 +8726,11 @@
     "tabs": {
       "crypto": "Crypto",
       "stablecoins": "Stablecoins",
+      "stocks": "Stocks",
       "market": "Market"
+    },
+    "stocks": {
+      "exploreAll": "Explore All"
     },
     "referralProgram": "$20"
   },
@@ -9278,8 +9391,8 @@
     },
     "coinOptions": {
       "openMenuA11yLabel": "Coin options",
-      "addFavourite": "Add to favourites",
-      "removeFavourite": "Remove from favourites",
+      "addFavourite": "Add to favorites",
+      "removeFavourite": "Remove from favorites",
       "hideFromPortfolio": "Hide from portfolio",
       "showInPortfolio": "Show in portfolio"
     },
@@ -9320,7 +9433,7 @@
     }
   },
   "marketBanner": {
-    "title": "Explore the market",
+    "title": "Market",
     "viewAll": "View all",
     "viewAllAccessibilityHint": "Double tap to view all market assets",
     "connectionFailed": "Connection failed",
@@ -9328,6 +9441,18 @@
     "tile": {
       "accessibilityLabel": "{{name}}, {{change}}",
       "accessibilityHint": "Double tap to view market details"
+    },
+    "filter": {
+      "accessibilityLabel": "Change market banner filter",
+      "accessibilityHint": "Double tap to choose which assets are shown",
+      "title": "Sort by",
+      "noFavorites": "No favorite yet",
+      "options": {
+        "trending": "Trending",
+        "gainers": "Gainers",
+        "losers": "Losers",
+        "favorites": "Favorites"
+      }
     }
   },
   "largeMover": {
@@ -9682,7 +9807,7 @@
   "fearAndGreed": {
     "title": "Mood index",
     "description": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
-    "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
+    "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
     "levels": {
       "fearPlus": "Fear+",
       "fear": "Fear",
@@ -9696,7 +9821,7 @@
     "title": "Season",
     "definitionTitle": "Altcoin index",
     "description": "The Altcoin index shows how Bitcoin is performing compared to alternative cryptocurrencies. The higher the number, the better altcoins are doing compared to Bitcoin.",
-    "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
+    "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only.",
     "levels": {
       "bitcoin": "Bitcoin",
       "altcoin": "Altcoin"
@@ -9704,7 +9829,8 @@
   },
   "marketCapCard": {
     "title": "Total market cap",
-    "description": "The total market cap represents the market capitalization of all cryptocurrencies combined."
+    "description": "The total market cap represents the market capitalization of all cryptocurrencies combined.",
+    "disclaimer": "Data is sourced from CoinMarketCap. Provided for informational purposes only."
   },
   "analyticsAllocation": {
     "header": {

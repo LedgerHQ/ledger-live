@@ -104,9 +104,14 @@ export function GenericAwarenessModalFormSheet({
                 multiline
               />
               <GenericAwarenessModalField
-                label={t("settings.debug.contentCards.genericAwareness.imageUrl")}
-                value={form.imageUrl}
-                onChangeText={value => onChangeField("imageUrl", value)}
+                label={t("settings.debug.contentCards.genericAwareness.imageUrlLight")}
+                value={form.imageUrlLight}
+                onChangeText={value => onChangeField("imageUrlLight", value)}
+              />
+              <GenericAwarenessModalField
+                label={t("settings.debug.contentCards.genericAwareness.imageUrlDark")}
+                value={form.imageUrlDark}
+                onChangeText={value => onChangeField("imageUrlDark", value)}
               />
               <GenericAwarenessModalField
                 label={t("settings.debug.contentCards.genericAwareness.primaryButtonLabel")}

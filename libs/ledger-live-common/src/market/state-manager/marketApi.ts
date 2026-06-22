@@ -18,8 +18,12 @@ import {
   MarketChartApiResponseSchema,
   MarketDataTags,
   MarketPerformersQueryParams,
+  MarketTrendingCategory,
+  TrendingCategoriesResponseSchema,
 } from "./types";
 import { format, formatPerformer } from "../utils/currencyFormatter";
+
+const MAX_TRENDING_CATEGORIES = 5;
 
 export const marketApi = createApi({
   reducerPath: "marketApi",
@@ -31,6 +35,7 @@ export const marketApi = createApi({
     MarketDataTags.CurrencyData,
     MarketDataTags.ChartData,
     MarketDataTags.GlobalData,
+    MarketDataTags.TrendingCategories,
   ],
   endpoints: build => ({
     getMarketPerformers: build.query<MarketItemPerformer[], MarketPerformersQueryParams>({
@@ -118,6 +123,27 @@ export const marketApi = createApi({
       },
       keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
     }),
+    getTrendingCategories: build.query<MarketTrendingCategory[], void>({
+      query: () => ({ url: "/v3/categories/trending" }),
+      providesTags: [MarketDataTags.TrendingCategories],
+      transformResponse: (response: unknown): MarketTrendingCategory[] => {
+        const result = TrendingCategoriesResponseSchema.safeParse(response);
+
+        if (!result.success) {
+          log("market", "Invalid trending categories response schema:", {
+            errors: result.error.issues,
+          });
+          throw new Error(
+            `[Market API] Trending categories schema validation failed: ${result.error.issues
+              .map(e => `${e.path.join(".")}: ${e.message}`)
+              .join(", ")}`,
+          );
+        }
+
+        return result.data.slice(0, MAX_TRENDING_CATEGORIES);
+      },
+      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
+    }),
   }),
 });
 
@@ -126,4 +152,5 @@ export const {
   useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
   useGetGlobalMarketDataQuery,
+  useGetTrendingCategoriesQuery,
 } = marketApi;

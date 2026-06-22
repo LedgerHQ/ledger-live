@@ -32,13 +32,17 @@ describe("useMarketFilters", () => {
     });
   });
 
-  it("blocks volume sorting while the API does not support it", () => {
+  it("persists volume sorting and tracks the selection", () => {
     const { result, store } = renderHook(() => useMarketFilters());
 
     act(() => result.current.onSelectSorting("volume"));
 
-    expect(store.getState().marketListConfig.sorting).toBe("marketCap");
-    expect(track).not.toHaveBeenCalled();
+    expect(store.getState().marketListConfig.sorting).toBe("volume");
+    expect(track).toHaveBeenCalledWith("sort_market_list", {
+      sorting: "volume",
+      timeframe: "1D",
+      network: "all",
+    });
   });
 
   it("persists timeframe values and tracks them with the current sorting", () => {

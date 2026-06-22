@@ -13,6 +13,13 @@ const family: CosmosFamily = {
   AccountBodyHeader,
   sendRecipientFields,
   AccountBalanceSummaryFooter,
+  modalsToPreload: [
+    "MODAL_COSMOS_DELEGATE",
+    "MODAL_COSMOS_REWARDS_INFO",
+    "MODAL_COSMOS_CLAIM_REWARDS",
+    "MODAL_COSMOS_REDELEGATE",
+    "MODAL_COSMOS_UNDELEGATE",
+  ],
 };
 
 export default family;

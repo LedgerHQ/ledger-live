@@ -8,7 +8,11 @@ import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
-import { HARDCODED_BLOCK_HEIGHT, HEDERA_TRANSACTION_NAMES } from "../constants";
+import {
+  HARDCODED_BLOCK_HEIGHT,
+  HEDERA_TRANSACTION_NAMES,
+  MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE,
+} from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { parseTransfers, enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
@@ -30,12 +34,6 @@ import {
   mergeTransactionsFromDifferentSources,
   toEntityId,
 } from "./utils";
-
-const txNameToCustomOperationType: Record<string, OperationType> = {
-  TOKENASSOCIATE: "ASSOCIATE_TOKEN",
-  CONTRACTCALL: "CONTRACT_CALL",
-  CRYPTOUPDATEACCOUNT: "UPDATE_ACCOUNT",
-};
 
 function getCommonMirrorOperationData(
   rawTx: HederaMirrorTransaction,
@@ -331,7 +329,7 @@ function processCoinTransfers({
 
   const { hash, fee, date, blockHeight, blockHash, hasFailed } = commonData;
   const extra = { ...commonData.extra };
-  let operationType = txNameToCustomOperationType[rawTx.name] ?? type;
+  let operationType = MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[rawTx.name] ?? type;
 
   // update operation type and extra fields if staking analysis is available
   if (stakingAnalysis) {

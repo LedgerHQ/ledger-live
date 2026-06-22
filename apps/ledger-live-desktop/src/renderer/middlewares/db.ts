@@ -25,6 +25,7 @@ import {
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 import { marketStoreSelector } from "../reducers/market";
+import { marketBannerStoreSelector } from "../reducers/marketBanner";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
@@ -100,6 +101,18 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     // settings reducer, so settings persistence must also run on this branch.
     if (areSettingsLoaded(newState) && oldState.settings !== newState.settings) {
       setKey("app", "settings", settingsStoreSelector(newState));
+    }
+
+    return res;
+  }
+
+  if (action.type.startsWith("marketBanner/")) {
+    const oldState = store.getState();
+    const res = next(action);
+    const newState = store.getState();
+
+    if (oldState.marketBanner !== newState.marketBanner) {
+      setKey("app", "marketBanner", marketBannerStoreSelector(newState));
     }
 
     return res;

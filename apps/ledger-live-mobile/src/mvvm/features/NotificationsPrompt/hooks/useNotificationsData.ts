@@ -8,8 +8,10 @@ import { setNotificationsDataOfUser } from "~/actions/notifications";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
 import { NotificationsSettings } from "~/reducers/types";
 import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
-import { type DataOfUser } from "../types";
+import { buildOptOutUserData } from "../utils/buildOptOutUserData";
+import { type DataOfUser, type NotificationPromptTarget } from "../types";
 import { updateIdentify } from "~/analytics";
+import { updateUserPreferences } from "~/notifications/braze";
 
 const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
   "areNotificationsAllowed",
@@ -39,28 +41,40 @@ export const useNotificationsData = () => {
 
   const markUserAsOptIn = useCallback(() => {
     updatePushNotificationsDataOfUserInStateAndStore({
+      ...pushNotificationsDataOfUser,
       lastActionAt: Date.now(),
     });
     updateIdentify();
-  }, [updatePushNotificationsDataOfUserInStateAndStore]);
-
-  const markUserAsOptOut = useCallback(() => {
-    const now = Date.now();
-    const dismissedOptInDrawerAtList = [
-      ...(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ?? []),
-      now,
-    ];
-
-    // when a user is marked as opt out,
-    // we will use 2 ways to prompt the opt in drawer:
-    // 1. after an action (swap, receive, send, favorite, etc.)
-    // 2. after the inactivity period
-    updatePushNotificationsDataOfUserInStateAndStore({
-      dismissedOptInDrawerAtList,
-      lastActionAt: now,
-    });
-    updateIdentify();
   }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
+
+  const enableAppNotifications = useCallback(() => {
+    const updatedNotifications = {
+      ...notifications,
+      areNotificationsAllowed: true,
+      announcementsCategory: true,
+      largeMoverCategory: true,
+    };
+
+    dispatch(setNotifications(updatedNotifications));
+    updateUserPreferences(updatedNotifications);
+  }, [dispatch, notifications]);
+
+  const markUserAsOptOut = useCallback(
+    (promptTarget?: NotificationPromptTarget) => {
+      // when a user is marked as opt out,
+      // we will use 2 ways to prompt the opt in drawer:
+      // 1. after an action (swap, receive, send, favorite, etc.)
+      // 2. after the inactivity period
+      updatePushNotificationsDataOfUserInStateAndStore(
+        buildOptOutUserData({
+          pushNotificationsDataOfUser,
+          promptTarget,
+        }),
+      );
+      updateIdentify();
+    },
+    [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser],
+  );
 
   const updateUserLastInactiveTime = useCallback(() => {
     // here user can be marked as inactive but we have to keep track of all the times
@@ -167,6 +181,7 @@ export const useNotificationsData = () => {
     notifications,
     pushNotificationsDataOfUser,
     updatePushNotificationsDataOfUserInStateAndStore,
+    enableAppNotifications,
     markUserAsOptIn,
     markUserAsOptOut,
     initializeNotificationSettingsState,

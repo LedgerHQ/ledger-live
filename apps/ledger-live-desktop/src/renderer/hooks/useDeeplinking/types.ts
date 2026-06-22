@@ -188,6 +188,8 @@ export interface WalletConnectRoute {
 export interface MarketRoute {
   type: "market";
   path: string;
+  /** Optional pre-selected category (e.g. `?category=stocks`); unknown values fall back to `all`. */
+  category?: string;
 }
 
 export interface AssetRoute {

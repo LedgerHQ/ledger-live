@@ -1,4 +1,4 @@
-import { useFeature } from "../../featureFlags";
+import { useFeature } from "@features/platform-feature-flags";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
 
 const assetConfigurationDisabled: EnhancedModularDrawerConfiguration["assets"] = {

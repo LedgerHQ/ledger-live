@@ -12,7 +12,6 @@ import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
 import { openModal } from "~/renderer/actions/modals";
-import { DelegateModalName } from "../modals";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { canStake } from "@ledgerhq/live-common/families/sui/logic";
 import { useSuiMappedStakingPositions } from "@ledgerhq/live-common/families/sui/react";
@@ -20,7 +19,10 @@ import ToolTip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
+import type { CoinModalsData } from "~/renderer/families/modals-loaders";
 import { Row } from "./Row";
+
+type DelegateModalName = Extract<keyof CoinModalsData, "MODAL_SUI_DELEGATE" | "MODAL_SUI_UNSTAKE">;
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

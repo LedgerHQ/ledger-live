@@ -16,4 +16,5 @@ export * from "./llmRefreshMarketData";
 export * from "./llmThai";
 export * from "./lwdWallet40";
 export * from "./lwmWallet40";
+export * from "./lwmQuickActionsCtasVariant";
 export * from "./llmTransferButtonCopyVariant";

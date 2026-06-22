@@ -1,9 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useAssetSelection } from "../useAssetSelection";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
-
-setSupportedCurrencies(["cardano", "bitcoin", "ethereum", "neo"]);
 
 // Mock useAcceptedCurrency to return a function that checks if currency is in supported list
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
@@ -30,11 +27,6 @@ describe("useAssetSelection", () => {
     type: "CryptoCurrency",
   } as CryptoOrTokenCurrency;
   const mockNeo = { id: "neo", name: "NEO", type: "CryptoCurrency" } as CryptoOrTokenCurrency;
-
-  beforeEach(() => {
-    // Ensure currencies are marked as supported before each test
-    setSupportedCurrencies(["cardano", "bitcoin", "ethereum", "neo"]);
-  });
 
   it("returns all currencies when all are supported", () => {
     const mockSorted = [mockEthereum, mockBitcoin, mockCardano, mockNeo];

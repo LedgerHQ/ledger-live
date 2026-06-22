@@ -11,7 +11,7 @@ import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
 import { Data, Item } from "~/renderer/components/Chart/types";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
@@ -101,9 +101,9 @@ export default function AccountBalanceSummary({
     [counterValue.units],
   );
   const displayCountervalue = countervalueFirst && countervalueAvailable;
-  const AccountBalanceSummaryFooter = mainAccount
-    ? getLLDCoinFamily(mainAccount.currency.family).AccountBalanceSummaryFooter
-    : null;
+  const AccountBalanceSummaryFooter = useLLDCoinFamily(
+    mainAccount?.currency.family,
+  ).AccountBalanceSummaryFooter;
   const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
   return (
     <Card p={0} py={5}>

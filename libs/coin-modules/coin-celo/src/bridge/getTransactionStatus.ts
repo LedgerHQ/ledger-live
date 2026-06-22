@@ -6,6 +6,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughBalanceFees,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -143,12 +144,12 @@ export const getTransactionStatus: AccountBridge<
       if (feeTokenAccount) {
         const feeTokenBalance = feeTokenAccount.spendableBalance;
         if (feesForTotalSpent.gt(feeTokenBalance)) {
-          errors.fees = new NotEnoughBalance();
+          errors.fees = new NotEnoughBalanceFees();
         }
       } else if (isTokenTransaction) {
         // Fees paid in native CELO — check main account spendable balance
         if (estimatedFees.gt(totalSpendableBalance)) {
-          errors.fees = new NotEnoughBalance();
+          errors.fees = new NotEnoughBalanceFees();
         }
       }
     }

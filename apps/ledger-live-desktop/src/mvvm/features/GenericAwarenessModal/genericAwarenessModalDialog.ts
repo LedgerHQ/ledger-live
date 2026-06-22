@@ -21,6 +21,11 @@ const DIALOG_ID: DialogId = "GENERIC_AWARENESS_MODAL";
 const isAppStartContentCardId = (contentCardId: string) =>
   contentCardId.toLowerCase().startsWith("app_start");
 
+export type CloseGenericAwarenessModalDialogOptions = {
+  /** When true, APP_START campaigns are persisted as dismissed and removed from the store. */
+  dismissAppStart?: boolean;
+};
+
 export const openGenericAwarenessModalDialog =
   (options?: { campaignId?: string }) => (dispatch: AppDispatch, getState: () => State) => {
     const campaignId = options?.campaignId;
@@ -33,12 +38,13 @@ export const openGenericAwarenessModalDialog =
   };
 
 export const closeGenericAwarenessModalDialog =
-  () => (dispatch: AppDispatch, getState: () => State) => {
+  (options?: CloseGenericAwarenessModalDialogOptions) =>
+  (dispatch: AppDispatch, getState: () => State) => {
     const state = getState();
     const campaignId = selectGenericAwarenessModalCampaignId(state);
     const contentCard = selectGenericAwarenessModalContentCardByCampaignId(state)(campaignId);
 
-    if (contentCard?.id && isAppStartContentCardId(contentCard.id)) {
+    if (options?.dismissAppStart && contentCard?.id && isAppStartContentCardId(contentCard.id)) {
       const dismissedAt = Date.now();
       dispatch(setDismissedContentCards({ id: contentCard.id, timestamp: dismissedAt }));
       const dismissedIds = [

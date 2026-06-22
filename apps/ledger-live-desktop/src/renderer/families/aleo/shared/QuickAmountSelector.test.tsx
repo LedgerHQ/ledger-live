@@ -5,7 +5,7 @@ import type { AleoAccount, AleoUnspentRecord } from "@ledgerhq/live-common/famil
 import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "@ledgerhq/live-common/families/aleo/constants";
 import { getEstimatedSigningTime } from "@ledgerhq/live-common/families/aleo/utils";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, makeTokenAccount } from "../__mocks__/account.mock";
 import { makeRecord } from "../__mocks__/record.mock";
 import { makeAleoTransaction } from "../__mocks__/transaction.mock";
 import QuickAmountSelector from "./QuickAmountSelector";
@@ -255,5 +255,45 @@ describe("QuickAmountSelector", () => {
     );
 
     expect(screen.getByText(/Spendable Balance/i)).toBeInTheDocument();
+  });
+
+  describe("with token account", () => {
+    it("calls updateTransaction when fast tile is clicked with token account records", async () => {
+      const account = makeTokenAccount([makeRecord("300"), makeRecord("100")]);
+      const transaction = makeAleoTransaction();
+      const updateTransaction = jest.fn();
+
+      const { user } = render(
+        <QuickAmountSelector
+          account={account}
+          transaction={transaction}
+          updateTransaction={updateTransaction}
+        />,
+      );
+
+      await user.click(screen.getByText("Fast"));
+
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+      const updater = updateTransaction.mock.calls[0][0];
+      expect(updater(transaction).useAllAmount).toBe(true);
+    });
+
+    it("all tiles are disabled when token account has null unspentPrivateRecords", async () => {
+      const account = makeTokenAccount(null);
+      const transaction = makeAleoTransaction();
+      const updateTransaction = jest.fn();
+
+      const { user } = render(
+        <QuickAmountSelector
+          account={account}
+          transaction={transaction}
+          updateTransaction={updateTransaction}
+        />,
+      );
+
+      await user.click(screen.getByText("Fast"));
+
+      expect(updateTransaction).not.toHaveBeenCalled();
+    });
   });
 });

@@ -96,6 +96,10 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
     extra.celoSourceValidator = extraRaw.celoSourceValidator;
   }
 
+  if (extraRaw.feeCurrencyAddress) {
+    extra.feeCurrencyAddress = extraRaw.feeCurrencyAddress;
+  }
+
   return extra;
 }
 
@@ -112,6 +116,10 @@ export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
 
   if (extra.celoSourceValidator) {
     extraRaw.celoSourceValidator = extra.celoSourceValidator;
+  }
+
+  if (extra.feeCurrencyAddress) {
+    extraRaw.feeCurrencyAddress = extra.feeCurrencyAddress;
   }
 
   return extraRaw;

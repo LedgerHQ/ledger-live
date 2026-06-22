@@ -2,12 +2,6 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import {
-  Baker,
-  Delegation,
-  StakingPosition,
-  isTezosAccount,
-} from "@ledgerhq/coin-tezos/types/index";
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
 import {
   isDelegationPosition,
@@ -15,6 +9,9 @@ import {
   isStakePosition,
   isUnstakingPosition,
 } from "@ledgerhq/coin-tezos/logic/positionUid";
+import { isTezosAccount } from "./types";
+import type { Baker, Delegation, StakingPosition } from "./types";
+import { getAccountDelegationSync, loadAccountDelegation } from "./bakers";
 
 export { isDelegationPosition, isFinalizablePosition, isStakePosition, isUnstakingPosition };
 
@@ -30,11 +27,10 @@ export function useBakers(whitelistAddresses: string[]): Baker[] {
 }
 
 export function useDelegation(account: AccountLike): Delegation | null | undefined {
-  const [delegation, setDelegation] = useState(() => bakers.getAccountDelegationSync(account));
+  const [delegation, setDelegation] = useState(() => getAccountDelegationSync(account));
   useEffect(() => {
     let cancelled = false;
-    bakers
-      .loadAccountDelegation(account)
+    loadAccountDelegation(account)
       .then(delegation => {
         if (cancelled) return;
         setDelegation(delegation);

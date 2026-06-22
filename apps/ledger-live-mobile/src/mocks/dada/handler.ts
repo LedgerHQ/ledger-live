@@ -1,12 +1,14 @@
 import { http, HttpResponse } from "msw";
 import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { mockStablecoinsResponse } from "@ledgerhq/live-common/dada-client/mocks/stablecoins.mock";
+import { mockStocksResponse } from "@ledgerhq/live-common/dada-client/mocks/stocks.mock";
 
 const handler = ({ request }: { request: Request }) => {
   const searchParams = new URL(request.url).searchParams;
   const categories = searchParams.get("categories");
 
   if (categories === "stablecoins") return HttpResponse.json(mockStablecoinsResponse);
+  if (categories === "stocks") return HttpResponse.json(mockStocksResponse);
 
   const search = searchParams.get("search")?.toLowerCase().trim();
 

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { NetworkConfigurationOptions, BalanceUI, NetworkHookParams } from "../utils/type";
 import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 import BigNumber from "bignumber.js";
@@ -25,7 +26,8 @@ export function useRightBalanceNetwork(
   const balanceMap = new Map(networkBalanceData.map(b => [b.id, b]));
 
   return networks.map(network => {
-    const currency = network.type === "TokenCurrency" ? network.parentCurrency : network;
+    const currency =
+      network.type === "TokenCurrency" ? getCryptoCurrencyById(network.parentCurrencyId) : network;
     const balanceData = balanceMap.get(network.id) || {
       currency,
       balance: new BigNumber(0),

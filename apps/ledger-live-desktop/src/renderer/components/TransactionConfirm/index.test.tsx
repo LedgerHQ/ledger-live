@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import TransactionConfirm from "./index";
 import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getMainAccount, findSubAccountById } from "@ledgerhq/live-common/account/index";
@@ -73,7 +73,7 @@ describe("TransactionConfirm", () => {
     (useTheme as jest.Mock).mockReturnValue({ colors: { palette: { type: "dark" } } });
     (useAccountUnit as jest.Mock).mockReturnValue(mockUnit);
     (getMainAccount as jest.Mock).mockReturnValue(mockAccount);
-    (getLLDCoinFamily as jest.Mock).mockReturnValue(undefined);
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({});
     (getDeviceAnimation as jest.Mock).mockReturnValue({ name: "test-animation", loop: true });
   });
 
@@ -270,7 +270,7 @@ describe("TransactionConfirm", () => {
 
   it("renders custom family title", () => {
     const CustomTitle = () => <div>Custom Title</div>;
-    (getLLDCoinFamily as jest.Mock).mockReturnValue({
+    (useLLDCoinFamily as jest.Mock).mockReturnValue({
       transactionConfirmFields: {
         title: CustomTitle,
         fieldComponents: {},

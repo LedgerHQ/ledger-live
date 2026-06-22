@@ -7,13 +7,8 @@ import {
   TokenAccount,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { setSupportedCurrencies } from "../currencies";
 import * as signMessage from "../hw/signMessage/index";
-import {
-  createFixtureAccount,
-  createFixtureCryptoCurrency,
-  createFixtureTokenAccount,
-} from "../mock/fixtures/cryptoCurrencies";
+import { createFixtureAccount, createFixtureTokenAccount } from "../mock/fixtures/cryptoCurrencies";
 import * as converters from "./converters";
 
 jest.mock("../hw/signMessage/index", () => ({
@@ -144,13 +139,6 @@ describe("completeExchangeLogic", () => {
     "12",
   );
   const uiNavigation = jest.fn();
-
-  beforeAll(() => {
-    setSupportedCurrencies(["bitcoin", "ethereum"]);
-  });
-  afterAll(() => {
-    setSupportedCurrencies([]);
-  });
 
   beforeEach(() => {
     mockPlatformCompleteExchangeRequested.mockClear();
@@ -741,7 +729,7 @@ function createTokenCurrency(): TokenCurrency {
     type: "TokenCurrency",
     id: "3",
     contractAddress: "",
-    parentCurrency: createFixtureCryptoCurrency("eth"),
+    parentCurrencyId: "ethereum",
     tokenType: "",
     //-- CurrencyCommon
     name: "",

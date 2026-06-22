@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
@@ -91,7 +92,9 @@ export function useDeviceNavigation({
   const navigateToDeviceWithCurrency = useCallback(
     (selectedCurrency: CryptoOrTokenCurrency) => {
       const isToken = selectedCurrency.type === "TokenCurrency";
-      const asset = isToken ? selectedCurrency.parentCurrency : selectedCurrency;
+      const asset = isToken
+        ? getCryptoCurrencyById(selectedCurrency.parentCurrencyId)
+        : selectedCurrency;
       const createTokenAccount = isToken;
 
       // Store the token currency so we can return the correct account type in onSuccess

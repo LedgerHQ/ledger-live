@@ -70,11 +70,6 @@ jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: mockT }),
 }));
 
-jest.mock("~/screens/SyncOnboarding/TwoStepStepper/useFirstStepCompanionState", () => ({
-  __esModule: true,
-  default: () => undefined,
-}));
-
 const mockUseTrackOnboardingFlow = jest.fn();
 jest.mock("~/analytics/hooks/useTrackOnboardingFlow", () => ({
   useTrackOnboardingFlow: (args: unknown) => mockUseTrackOnboardingFlow(args),
@@ -89,13 +84,10 @@ let companion: {
   isLedgerSyncActive: boolean;
   steps: Array<unknown>;
 };
-jest.mock(
-  "LLM/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps",
-  () => ({
-    __esModule: true,
-    default: () => companion,
-  }),
-);
+jest.mock("../../hooks/useCompanionSteps", () => ({
+  __esModule: true,
+  default: () => companion,
+}));
 
 const withProtectServicesMobile = (
   enabled: boolean,

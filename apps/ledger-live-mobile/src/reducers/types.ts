@@ -5,6 +5,7 @@ import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/valida
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
@@ -299,6 +300,7 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   productTourCompleted: boolean;
+  doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   analyticsConsentInfo: AnalyticsConsentInfo;
   hasClickedRecover: boolean;
@@ -349,6 +351,17 @@ export type EarnState = {
   actionDialog?: ActionDialogParams;
 };
 
+// === BORROW STATE ===
+
+export type BorrowState = {
+  infoBottomSheet?: {
+    message: string;
+    title: string;
+    linkText?: string;
+    linkHref?: string;
+  };
+};
+
 // === PROTECT STATE ===
 
 export type ProtectData = {
@@ -386,14 +399,21 @@ export type MarketState = {
 
 export type MarketListSorting = "marketCap" | "volume" | "gainers" | "losers";
 export type MarketListFilterTimeframe = "1D" | "7D" | "30D" | "6M" | "1Y";
-export type MarketListCategory = "all" | "starred" | "stocks";
+export type { MarketListCategory };
 
 export type MarketListConfigState = {
   sorting: MarketListSorting;
   timeframe: MarketListFilterTimeframe;
   /** Selected network id, or `undefined` for all networks (consumed by LIVE-29972). */
   network: string | undefined;
-  category: MarketListCategory;
+};
+
+// === MARKET BANNER STATE (V4) ===
+
+export type MarketBannerRanking = "trending" | "gainers" | "losers" | "favorites";
+
+export type MarketBannerState = {
+  ranking: MarketBannerRanking;
 };
 
 // === WALLETSYNC STATE ===
@@ -425,6 +445,7 @@ export type State = LLMRTKApiState & {
   appstate: AppState;
   auth: AuthState;
   ble: BleState;
+  borrow: BorrowState;
   countervalues: CountervaluesState;
   deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;
@@ -438,6 +459,7 @@ export type State = LLMRTKApiState & {
   largeMover: LargeMoverState;
   market: MarketState;
   marketListConfig: MarketListConfigState;
+  marketBanner: MarketBannerState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;

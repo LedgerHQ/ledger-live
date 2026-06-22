@@ -6,6 +6,7 @@ import {
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
 import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "@ledgerhq/coin-evm/utils";
 
@@ -16,7 +17,7 @@ const getChainId = (account: AccountLike): number => {
     return account.currency.ethereumLikeInfo?.chainId || 0;
   }
   if (account.type === "TokenAccount") {
-    return account.token.parentCurrency.ethereumLikeInfo?.chainId || 0;
+    return getCryptoCurrencyById(account.token.parentCurrencyId).ethereumLikeInfo?.chainId || 0;
   }
   return 0;
 };

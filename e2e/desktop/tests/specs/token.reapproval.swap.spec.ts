@@ -16,7 +16,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
 
-const fromAccount = TokenAccount.ETH_USDC_1;
+const fromAccount = TokenAccount.ETH_USDT_1;
 const toAccount = Account.ETH_1;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
@@ -67,10 +67,11 @@ test.describe("Token reapproval - flow", () => {
       ],
     },
     async ({ app }) => {
+      // Reapproval broadcasts revoke + approve and waits for each to confirm on mainnet; extend beyond the 400s CI default.
+      test.setTimeout(600_000);
       await app.swap.logSelectedProvider(provider.uiName);
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await revokeTokenApproval(fromAccount, provider);
-      await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
       await ensureTokenApproval(fromAccount, provider, smallAmount);
@@ -78,12 +79,16 @@ test.describe("Token reapproval - flow", () => {
       await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
       await app.swap.selectSpecificProvider(provider);
       await app.swap.clickExchangeButton(provider.name);
+      await app.swap.expectResetApprovalScreen();
+      await app.swap.clickRevokeApprovalButton();
+      await app.swap.clickContinueButton();
+      await app.speculos.signTokenApproval();
+      await app.swap.expectTransactionSentToasterToBeVisible();
       await app.swap.expectTwoStepApprovalScreen();
       await app.swap.clickGiveApprovalButton();
       await app.swap.clickContinueButton();
       await app.speculos.signTokenApproval();
       await app.swap.expectTwoStepSignScreen();
-      await app.swap.expectTransactionSentToasterToBeVisible();
     },
   );
 });

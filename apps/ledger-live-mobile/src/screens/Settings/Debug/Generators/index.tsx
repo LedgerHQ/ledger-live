@@ -90,7 +90,7 @@ export default function Generators() {
       />
       <SettingsRow
         title="Accounts by type"
-        desc="Generate accounts filtered by crypto/stablecoin/testnet"
+        desc="Generate accounts filtered by crypto/stablecoin/stocks/testnet"
         iconLeft={<IconsLegacy.FiltersMedium size={24} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugMockGenerateAccountsByType)}
       />

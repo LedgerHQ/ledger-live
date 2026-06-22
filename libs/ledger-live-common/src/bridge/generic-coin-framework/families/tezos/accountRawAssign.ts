@@ -1,4 +1,4 @@
-import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-tezos/serialization";
+import { assignFromAccountRaw, assignToAccountRaw } from "../../../../families/tezos/serialization";
 
 /**
  * Tezos-specific hooks that persist `stakingPositions` through the

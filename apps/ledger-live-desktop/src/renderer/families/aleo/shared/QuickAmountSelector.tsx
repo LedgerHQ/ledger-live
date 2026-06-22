@@ -11,15 +11,19 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import Label from "~/renderer/components/Label";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { isAleoTransaction } from "~/renderer/families/aleo/modals/send/steps/utils";
-import type { AleoAccount, AleoUnspentRecord } from "@ledgerhq/live-common/families/aleo/types";
 import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "@ledgerhq/live-common/families/aleo/constants";
+import type {
+  AleoAccount,
+  AleoTokenAccount,
+  AleoUnspentRecord,
+} from "@ledgerhq/live-common/families/aleo/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getEstimatedSigningTime,
   isPrivateTransaction,
   sumPrivateRecords,
 } from "@ledgerhq/live-common/families/aleo/utils";
+import { isAleoTransaction } from "./utils";
 
 type SigningStrategy = "fast" | "balanced" | "full";
 
@@ -53,7 +57,7 @@ const STRATEGY_ICONS: Record<SigningStrategy, React.ReactElement> = {
 };
 
 type Props = {
-  account: AleoAccount;
+  account: AleoAccount | AleoTokenAccount;
   transaction: Transaction;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   onSelect?: () => void;
@@ -112,14 +116,16 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
   const { t } = useTranslation();
   const accountUnit = useAccountUnit(account);
 
-  const sortedRecords: AleoUnspentRecord[] = useMemo(
-    () =>
-      [...(account.aleoResources?.unspentPrivateRecords ?? [])]
-        .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-        .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits)),
-    [account.aleoResources?.unspentPrivateRecords],
-  );
+  const sortedRecords: AleoUnspentRecord[] = useMemo(() => {
+    const unspentPrivateRecords =
+      (account.type === "TokenAccount"
+        ? account.unspentPrivateRecords
+        : account.aleoResources?.unspentPrivateRecords) ?? [];
 
+    return unspentPrivateRecords
+      .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
+      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
+  }, [account]);
   const spendableRecords = useMemo(
     () => sortedRecords.slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION),
     [sortedRecords],

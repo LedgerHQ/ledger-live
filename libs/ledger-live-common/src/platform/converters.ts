@@ -1,4 +1,5 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { isTokenAccount } from "../account";
 import { loadPlatformAdapterForFamily } from "../coin-modules/registry";
 import type { Transaction } from "../coin-modules/transaction-types";
@@ -61,8 +62,8 @@ export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency):
       ticker: currency.ticker,
       contract: currency.contractAddress,
       name: currency.name,
-      parent: currency.parentCurrency.id,
-      color: currency.parentCurrency.color,
+      parent: currency.parentCurrencyId,
+      color: getCryptoCurrencyById(currency.parentCurrencyId).color,
       units: currency.units.map(unit => ({
         name: unit.name,
         code: unit.code,

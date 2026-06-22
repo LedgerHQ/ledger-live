@@ -13,6 +13,12 @@ const family: NearFamily = {
   AccountSubHeader,
   AccountBalanceSummaryFooter,
   StakeBanner,
+  modalsToPreload: [
+    "MODAL_NEAR_STAKE",
+    "MODAL_NEAR_REWARDS_INFO",
+    "MODAL_NEAR_UNSTAKE",
+    "MODAL_NEAR_WITHDRAW",
+  ],
 };
 
 export default family;

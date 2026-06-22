@@ -8,6 +8,7 @@ import {
   SOLANA_CWIF,
   SOLANA_USDC,
   SOLANA_VIRTUAL,
+  SOLANA_TSLAX,
   WITHDRAWABLE_AMOUNT,
   initMSW,
   makeAccount,
@@ -332,6 +333,64 @@ function makeScenarioTransactions(
       expect(currentAssociatedTokenAccount?.spendableBalance).toStrictEqual(new BigNumber(0));
     },
   };
+  const tslaxSubAccountId = computeSubAccountId(
+    parentAccountId,
+    address,
+    SOLANA_TSLAX,
+    TOKEN_2022_PROGRAM_ID,
+    strategy,
+  );
+
+  const scenarioSendTslaxTransaction: SolanaScenarioTransaction = {
+    name: "Send 1 TSLAx",
+    amount: new BigNumber(1e8),
+    recipient: RECIPIENT,
+    subAccountId: tslaxSubAccountId,
+    expect: (previousAccount, currentAccount) => {
+      expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
+
+      const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
+        sa => sa.id === tslaxSubAccountId,
+      );
+      const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
+        sa => sa.id === tslaxSubAccountId,
+      );
+      const [latestAssociatedTokenAccountOperation] =
+        currentAssociatedTokenAccount?.operations ?? [];
+      expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
+      expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e8));
+      expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
+      expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
+      expect(currentAssociatedTokenAccount?.balance).toStrictEqual(
+        previousAssociatedTokenAccount?.balance.minus(latestAssociatedTokenAccountOperation.value),
+      );
+    },
+  };
+
+  const scenarioSendAllTslaxTransaction: SolanaScenarioTransaction = {
+    name: "Send All TSLAx",
+    useAllAmount: true,
+    recipient: RECIPIENT,
+    subAccountId: tslaxSubAccountId,
+    expect: (previousAccount, currentAccount) => {
+      const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
+        sa => sa.id === tslaxSubAccountId,
+      );
+      const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
+        sa => sa.id === tslaxSubAccountId,
+      );
+      const [latestAssociatedTokenAccountOperation] =
+        currentAssociatedTokenAccount?.operations ?? [];
+      expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
+      expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
+      expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
+      expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
+      expect(currentAssociatedTokenAccount?.balance).toStrictEqual(
+        previousAssociatedTokenAccount?.balance.minus(latestAssociatedTokenAccountOperation.value),
+      );
+      expect(currentAssociatedTokenAccount?.spendableBalance).toStrictEqual(new BigNumber(0));
+    },
+  };
 
   const scenarioSendAllSolTransaction: SolanaScenarioTransaction = {
     name: "Send All Sol",
@@ -489,6 +548,8 @@ function makeScenarioTransactions(
     scenarioSendAllCwifTransaction,
     scenarioSendVirtualTransaction,
     scenarioSendAllVirtualTransaction,
+    scenarioSendTslaxTransaction,
+    scenarioSendAllTslaxTransaction,
     scenarioCreateSolStakeAccountTransaction,
     scenarioActivateStakeAccount,
     scenarioDeactivateStakeAccount,
@@ -534,6 +595,7 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
     await createSplAccount(account.freshAddress, SOLANA_USDC, 5, "spl-token");
     await createSplAccount(account.freshAddress, SOLANA_CWIF, 5, "spl-token-2022");
     await createSplAccount(account.freshAddress, SOLANA_VIRTUAL, 5, "spl-token");
+    await createSplAccount(account.freshAddress, SOLANA_TSLAX, 5, "spl-token-2022");
     await initVoteAccount();
     await initStakeAccount(account.freshAddress, WITHDRAWABLE_AMOUNT);
 

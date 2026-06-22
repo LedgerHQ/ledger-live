@@ -17,10 +17,14 @@ import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-import type { DelegateModalName } from "../modals";
 import { Header } from "./Header";
 import { Row } from "./Row";
 import DelegationPlaceholder from "./DelegationPlaceholder";
+type DelegateModalName =
+  | "MODAL_HEDERA_DELEGATION"
+  | "MODAL_HEDERA_UNDELEGATION"
+  | "MODAL_HEDERA_REDELEGATION"
+  | "MODAL_HEDERA_CLAIM_REWARDS";
 
 const Delegations = ({
   account,

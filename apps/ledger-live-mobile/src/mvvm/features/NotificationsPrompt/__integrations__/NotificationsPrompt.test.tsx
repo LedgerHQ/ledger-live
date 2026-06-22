@@ -9,10 +9,12 @@ import {
 
 import storage from "LLM/storage";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
+import { notificationsSelector } from "~/reducers/settings";
 import { add, sub, type Duration } from "date-fns";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
-import { NotificationsState } from "~/reducers/types";
+import { NotificationsSettings, NotificationsState } from "~/reducers/types";
+import Braze from "@braze/react-native-sdk";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
 // Mock QueuedDrawer to bypass animation issues with Reanimated 4 in tests
@@ -54,7 +56,6 @@ const mockRequestPermission = jest.fn<Promise<AuthorizationStatusType>, []>(() =
 const mockHasPermission = jest.fn<Promise<AuthorizationStatusType>, []>(() =>
   Promise.resolve(AuthorizationStatus.AUTHORIZED),
 );
-
 jest.mock("@react-native-firebase/messaging", () => {
   const AuthorizationStatus = {
     NOT_DETERMINED: -1,
@@ -76,6 +77,21 @@ const REPROMPT_SCHEDULE = [{ days: 7 }, { days: 30 }, { days: 90 }] as const;
 const INACTIVITY_REPROMPT = { months: 6 } as const;
 
 describe("NotificationsPrompt Integration", () => {
+  const expectAppNotificationsSyncedWithBraze = () => {
+    expect(jest.mocked(Braze.setCustomUserAttribute)).toHaveBeenCalledWith(
+      "notificationsAllowed",
+      true,
+    );
+    expect(jest.mocked(Braze.setCustomUserAttribute)).toHaveBeenCalledWith(
+      "optInAnnouncements",
+      true,
+    );
+    expect(jest.mocked(Braze.setCustomUserAttribute)).toHaveBeenCalledWith(
+      "optInLargeMovers",
+      true,
+    );
+  };
+
   async function setup({
     actionSource = "onboarding",
     osPermission,
@@ -84,6 +100,7 @@ describe("NotificationsPrompt Integration", () => {
     dateOfNextAllowedRequest,
     alreadyDelayedToLater,
     dismissedOptInDrawerAtList,
+    notificationSettings = {},
     variant = AB_TESTING_VARIANTS.B,
     skipStorageSetup = false,
   }: {
@@ -94,6 +111,7 @@ describe("NotificationsPrompt Integration", () => {
     dateOfNextAllowedRequest?: Date;
     alreadyDelayedToLater?: boolean;
     dismissedOptInDrawerAtList?: number[];
+    notificationSettings?: Partial<NotificationsSettings>;
     variant?: ABTestingVariants;
     skipStorageSetup?: boolean;
   }) {
@@ -191,6 +209,7 @@ describe("NotificationsPrompt Integration", () => {
               ...state.settings,
               notifications: {
                 ...state.settings.notifications,
+                ...notificationSettings,
                 areNotificationsAllowed: appNotifications,
               },
             },
@@ -501,6 +520,87 @@ describe("NotificationsPrompt Integration", () => {
         await tryTriggerDrawer();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
       });
+
+      it("should enable app notifications directly when OS permission is already allowed", async () => {
+        const { store, tryTriggerDrawer, user } = await setup({
+          actionSource: "add_favorite_coin",
+          osPermission: AuthorizationStatus.AUTHORIZED,
+          appNotifications: false,
+          notificationSettings: {
+            announcementsCategory: false,
+            largeMoverCategory: false,
+          },
+        });
+
+        await tryTriggerDrawer();
+        const allowNotificationsButton = screen.getByText(/allow notifications/i);
+        expect(allowNotificationsButton).toBeOnTheScreen();
+
+        await user.press(allowNotificationsButton);
+        await waitFor(() => expect(allowNotificationsButton).not.toBeOnTheScreen());
+
+        expect(mockRequestPermission).not.toHaveBeenCalled();
+        expect(notificationsSelector(store.getState())).toEqual(
+          expect.objectContaining({
+            areNotificationsAllowed: true,
+            announcementsCategory: true,
+            largeMoverCategory: true,
+          }),
+        );
+        expectAppNotificationsSyncedWithBraze();
+
+        advanceTime({
+          years: 999,
+        });
+        await tryTriggerDrawer();
+        expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+      });
+
+      it.each([
+        ["denied", AuthorizationStatus.DENIED],
+        ["not determined", AuthorizationStatus.NOT_DETERMINED],
+      ])(
+        "should enable app notifications when they are off and OS permission is %s",
+        async (_, osPermission) => {
+          const { store, tryTriggerDrawer, user } = await setup({
+            osPermission,
+            appNotifications: false,
+            notificationSettings: {
+              announcementsCategory: false,
+              largeMoverCategory: false,
+            },
+          });
+
+          expect(notificationsSelector(store.getState())).toEqual(
+            expect.objectContaining({
+              areNotificationsAllowed: false,
+              announcementsCategory: false,
+              largeMoverCategory: false,
+            }),
+          );
+
+          if (osPermission === AuthorizationStatus.DENIED) {
+            advanceTime(REPROMPT_SCHEDULE[0]);
+          }
+
+          await tryTriggerDrawer();
+          const allowNotificationsButton = screen.getByText(/allow notifications/i);
+          expect(allowNotificationsButton).toBeOnTheScreen();
+
+          await user.press(allowNotificationsButton);
+
+          await waitFor(() =>
+            expect(notificationsSelector(store.getState())).toEqual(
+              expect.objectContaining({
+                areNotificationsAllowed: true,
+                announcementsCategory: true,
+                largeMoverCategory: true,
+              }),
+            ),
+          );
+          expectAppNotificationsSyncedWithBraze();
+        },
+      );
 
       it("should reprompt after each delay when user opts out notifications by clicking on maybe later text", async () => {
         const { tryTriggerDrawer, user } = await setup({

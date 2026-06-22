@@ -1,5 +1,327 @@
 # @ledgerhq/live-common
 
+## 36.2.0
+
+### Minor Changes
+
+- [#18423](https://github.com/LedgerHQ/ledger-live/pull/18423) [`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a favorites ranking to the desktop Market Banner. The banner now switches between the trending performers list and the user's starred market coins, fetching favorites via `useMarketData` (availability filtering bypassed so starred coins always show) and disabling whichever query is inactive.
+
+- [#18222](https://github.com/LedgerHQ/ledger-live/pull/18222) [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7) Thanks [@henri-ly](https://github.com/henri-ly)! - add undelegate for monad
+
+- [#18255](https://github.com/LedgerHQ/ledger-live/pull/18255) [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): hook in llc for signature view model
+
+- [#18362](https://github.com/LedgerHQ/ledger-live/pull/18362) [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add theme-specific awareness modal hero images, feature intro border, carousel navigation label, and related UI improvements
+
+- [#18344](https://github.com/LedgerHQ/ledger-live/pull/18344) [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Prepare coin-tezos for migration to coin-modules (LIVE-32021, Step 1): move all wallet-related code that depends on `@ledgerhq/types-live` out of `coin-tezos` and into `ledger-live-common`'s `families/tezos` layer. Transaction, deviceTransactionConfig, serialization, CLI, bot specs/deviceActions, the wallet-facing types and the `TezosSigner` interface now live in `families/tezos`; the `AccountLike`-coupled delegation helpers move out of `network/bakers` into `families/tezos/bakers`. `coin-tezos/src` no longer imports `@ledgerhq/types-live`, `@ledgerhq/cryptoassets` or `@ledgerhq/types-cryptoassets`, and the corresponding entrypoints (`./transaction`, `./deviceTransactionConfig`, `./specs`) are removed from its package.json.
+
+- [#18237](https://github.com/LedgerHQ/ledger-live/pull/18237) [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate `@ledgerhq/live-common`'s internal feature-flag consumers off its React `featureFlags` Context module and `@ledgerhq/types-live` feature types, onto the Redux-backed `@shared/feature-flags` / `@features/platform-feature-flags` packages, and remove the `featureFlags` module along with the apps' now-inert `FeatureFlagsContextBridge`. Remaining external React consumers (both apps) are repointed to `@features/platform-feature-flags`; `@ledgerhq/live-dmk-desktop` receives its `ldmkTransport` flag via a prop instead of depending on the feature-flags package; non-React imperative reads use an injected getter or the relocated `live-common/firebase/featureFlags` reader. Adds the platform-specific `formatToFirebaseFeatureId` / `formatDefaultFeatures` to `@features/platform-feature-flags` and the generic `isValidFeatureId` to `@shared/feature-flags`. No behavioral change — resolved flag values are identical.
+
+- [#18553](https://github.com/LedgerHQ/ledger-live/pull/18553) [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): switch mode amount step new send flow changes header
+
+- [#18305](https://github.com/LedgerHQ/ledger-live/pull/18305) [`e272e02`](https://github.com/LedgerHQ/ledger-live/commit/e272e0221aaa8b78120c3746d315108f30fc4dc9) Thanks [@Justkant](https://github.com/Justkant)! - Keep manifest params authoritative when resolving a live app initial URL: `getInitialURL` now re-applies the trusted `manifest.params` onto an accepted `goToURL` for manifests that define params, instead of trusting the params it carries.
+
+- [#18326](https://github.com/LedgerHQ/ledger-live/pull/18326) [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3) Thanks [@qperrot](https://github.com/qperrot)! - Fix Sui token type mismatch by aligning tokenType to "coin" with backend (CAL/DaDa)
+
+- [#18428](https://github.com/LedgerHQ/ledger-live/pull/18428) [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Global Search default-sections data on mobile, fed by DADA. Cryptos (top 3) and stablecoins (top 2) render as market rows; stocks (top 10) as pills.
+
+  Share the DADA asset-discovery selection in `@ledgerhq/live-common` (`selectTopStocks`, `selectTopAssetsByCategory`, `StockSuggestion`) so desktop and mobile use one implementation; desktop's stocks section now consumes `selectTopStocks` instead of its own copy.
+
+- [#18292](https://github.com/LedgerHQ/ledger-live/pull/18292) [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(llc): support compound reward operation
+
+- [#18509](https://github.com/LedgerHQ/ledger-live/pull/18509) [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): new send flow custom fees common hooks
+
+- [#18300](https://github.com/LedgerHQ/ledger-live/pull/18300) [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): changes signature request type for new send flow
+
+- [#18490](https://github.com/LedgerHQ/ledger-live/pull/18490) [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d) Thanks [@ysitbon](https://github.com/ysitbon)! - Replace the embedded `TokenCurrency.parentCurrency: CryptoCurrency` object with a `parentCurrencyId: string` foreign key.
+
+  `TokenCurrency` no longer carries the full parent `CryptoCurrency` object. Resolve the parent on demand with `getCryptoCurrencyById(token.parentCurrencyId)` (or `findCryptoCurrencyById` when a missing parent must be tolerated). The CAL token converter and persistence layer now read/write `parentCurrencyId` directly, aligning the legacy type with the `@domain/entity-currency-token` schema.
+
+- [#18294](https://github.com/LedgerHQ/ledger-live/pull/18294) [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Add the Market category switcher (All / Stocks / Favorites) on the V4 Market page, gated by the `lwdWallet40.assetDiscoverability` feature flag. The selected category is persisted across reloads and supersedes the legacy starred filter drawer when the flag is on. The shared category helpers (`parseMarketListCategory`, `getMarketFilter`, `isStockMarketCurrency`) now live in `@ledgerhq/live-common/market/utils/category` and are reused by both desktop and mobile.
+
+- [#18452](https://github.com/LedgerHQ/ledger-live/pull/18452) [`e962c2d`](https://github.com/LedgerHQ/ledger-live/commit/e962c2df66669d8b9bcf99a421c67f52a3278a6e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix(market): stop excluding most coins when combining a trending category with the top gainers/losers filter. The `top=100` restriction is no longer sent alongside a `categories` filter, since the backend intersects both sets and category coins rarely rank in the global top 100.
+
+- [#18541](https://github.com/LedgerHQ/ledger-live/pull/18541) [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a "Total volume" sort option to the desktop Market table. The Volume column header is now sortable and toggles between highest and lowest 24h volume, mapping to the new `total-volume-desc` and `total-volume` values of the `/v3/markets` `sort` parameter.
+
+- [#18342](https://github.com/LedgerHQ/ledger-live/pull/18342) [`d3829e5`](https://github.com/LedgerHQ/ledger-live/commit/d3829e5889af420f986562aaec2f226ad68c66ed) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add trending categories to the Market screen. Trending categories are fetched from `/v3/categories/trending` and appended to the category controls (after All / Stocks / Favorites); selecting one filters the asset list via the `/v3/markets` `categories` param.
+
+  Shared logic lives in `@ledgerhq/live-common/market` so desktop can reuse it: the `getTrendingCategories` RTK Query endpoint (`useGetTrendingCategoriesQuery`), the `categories` request param threaded through `fetchList`/`useMarketData`, and category helpers (widened `MarketListCategory`, `isBuiltInMarketListCategory`, `getMarketCategoriesParam`).
+
+- [#18465](https://github.com/LedgerHQ/ledger-live/pull/18465) [`f59b441`](https://github.com/LedgerHQ/ledger-live/commit/f59b441b040495884a317f61c8588db7014078c2) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add memo/tag input to the new send flow, and clear an empty memo/tag in applyMemoToTransaction instead of applying 0 or an empty string
+
+- [#18329](https://github.com/LedgerHQ/ledger-live/pull/18329) [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad compound (restake rewards): add the per-chain `compoundReward` staking operation to coin-evm (native `compound(uint64)` precompile call, nonpayable) and a Claim/Compound toggle in the EVM claim-rewards flow on desktop and mobile. The toggle is only shown for compound-capable chains (Monad) and defaults to Claim; the history operation type is `REWARD`, matching the existing claim flow.
+
+- [#18642](https://github.com/LedgerHQ/ledger-live/pull/18642) [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+- [#18298](https://github.com/LedgerHQ/ledger-live/pull/18298) [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Extract `quickActionsCtasVariant` out of the `feature_lwm_wallet_40` feature flag into a dedicated `feature_lwm_quick_actions_ctas_variant` flag so the A/B test can run independently from other Wallet 4.0 parameters
+
+- [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
+
+- [#17064](https://github.com/LedgerHQ/ledger-live/pull/17064) [`5dcc7b5`](https://github.com/LedgerHQ/ledger-live/commit/5dcc7b58625744541d6240bf9f58a9adcc3efcfd) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Scope live-app blind-signing tracking context per sign call so concurrent dApp transactions report the correct originating context
+
+- [#18405](https://github.com/LedgerHQ/ledger-live/pull/18405) [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: prepare aleo utils for incoming tokens integration
+
+- [#18554](https://github.com/LedgerHQ/ledger-live/pull/18554) [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): remove stellar specific mention on error message new send flow
+
+- [#18561](https://github.com/LedgerHQ/ledger-live/pull/18561) [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use the dedicated CVS `tokenized-stock` category for the Market stocks filter instead of the hardcoded `filter=stock` + client-side id matching, and stop firing a spurious `to=usd` market request while the supported counter-values list is still loading.
+
+- [#18325](https://github.com/LedgerHQ/ledger-live/pull/18325) [`086bf9b`](https://github.com/LedgerHQ/ledger-live/commit/086bf9b63dda23c8bef4a05f45b4b7ecdf3caa65) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `useStocksData` hook exposing a paginated DADA stocks feed (`/assets?categories=stocks`) with merged full rows, mirroring `useAssetsData` but isolated from it
+
+- [#18469](https://github.com/LedgerHQ/ledger-live/pull/18469) [`6e0f83d`](https://github.com/LedgerHQ/ledger-live/commit/6e0f83d30dc4f294a579d84db14efd43d720ef25) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Portfolio Stocks data layer. `useDefaultStocksAssets` fetches the top stocks (market-cap ordered) from the DADA stocks category via `useStocksData` + `selectTopStocks` for the discovery scenario (no-op when disabled). `useCategorizedAssetsFromPortfolio` now returns a `stocks` bucket split out of `cryptos`, identified by DADA currency id via the new `useStockAssetIds` hook — matching by id rather than ticker avoids symbol collisions (e.g. a crypto like TON is no longer misclassified as a stock).
+
+- [#18256](https://github.com/LedgerHQ/ledger-live/pull/18256) [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Derive "supported currencies" from the coin-modules registry instead of `setSupportedCurrencies`.
+
+  Each `CoinModuleLoader` now declares a `supportedCoins: CryptoCurrencyId[]` field, and a currency is supported when it appears in a registered loader's `supportedCoins`. The framework `setSupportedCurrencies` / `listSupportedCurrencies` / `isCurrencySupported` and the `EXPERIMENTAL_CURRENCIES` env are removed; `listSupportedCurrencies` / `isCurrencySupported` are now exported from `@ledgerhq/live-common/currencies` backed by the registry. Apps no longer maintain a supported-currencies list — registering the coin modules is what makes their currencies supported.
+
+- [#18385](https://github.com/LedgerHQ/ledger-live/pull/18385) [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo fixtures and base constants extended
+
+- [#18560](https://github.com/LedgerHQ/ledger-live/pull/18560) [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102) Thanks [@dilaouid](https://github.com/dilaouid)! - chore(lwdm): refactor memo feature for new send flow
+
+- [#18361](https://github.com/LedgerHQ/ledger-live/pull/18361) [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Tezos message signing: a `signMessage` that signs an already-watermarked payload verbatim (normalising the device signature to raw r||s), and wire it as the `tezos` family `messageSigner`.
+
+### Patch Changes
+
+- Updated dependencies [[`61fe10b`](https://github.com/LedgerHQ/ledger-live/commit/61fe10b15ae6c8c4aa916f75e19899c79f90ba77), [`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`5e1a944`](https://github.com/LedgerHQ/ledger-live/commit/5e1a944f96531dec46e8d199bce4da3cd0fa12fa), [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd), [`558e633`](https://github.com/LedgerHQ/ledger-live/commit/558e633d633b73fd5b7f9bd6845ef2902ed60405), [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`1de6b9a`](https://github.com/LedgerHQ/ledger-live/commit/1de6b9afb239f8a2e2a8c573d661b95a8bcb8260), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516), [`16b9bbc`](https://github.com/LedgerHQ/ledger-live/commit/16b9bbcf1df6546a8894acf22b58fb6e35576ed4), [`4304c17`](https://github.com/LedgerHQ/ledger-live/commit/4304c17dd3e761e604690352e295588a7b680738), [`0b5a04a`](https://github.com/LedgerHQ/ledger-live/commit/0b5a04ac3a47c6d146b389ddab174c13c84d96e1), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`621a175`](https://github.com/LedgerHQ/ledger-live/commit/621a1756ef8b59844a086a610ff45819521ff633), [`70b8692`](https://github.com/LedgerHQ/ledger-live/commit/70b869271c712b9d2719b1437d60042e5ecbb42b), [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041), [`6699b3c`](https://github.com/LedgerHQ/ledger-live/commit/6699b3cb896907abf8912d2d8ef77e2c8a31f7a2), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`a215f72`](https://github.com/LedgerHQ/ledger-live/commit/a215f72ab3313edc9646df76090167acbdf53b50), [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451), [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2), [`70c658e`](https://github.com/LedgerHQ/ledger-live/commit/70c658e2739c072313cc689ec626a9a73cd02f1c), [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e), [`252c330`](https://github.com/LedgerHQ/ledger-live/commit/252c330293d504f901a7fd00980ef1ed02aaa7b7)]:
+  - @ledgerhq/coin-cardano@0.27.0
+  - @ledgerhq/live-env@2.39.0
+  - @ledgerhq/coin-evm@4.3.0
+  - @ledgerhq/cryptoassets@13.52.0
+  - @ledgerhq/coin-celo@2.6.0
+  - @ledgerhq/coin-aleo@1.15.0
+  - @ledgerhq/live-signer-aleo@0.18.0
+  - @ledgerhq/coin-tezos@7.6.0
+  - @ledgerhq/coin-cosmos@0.36.0
+  - @shared/feature-flags@0.11.0
+  - @features/platform-feature-flags@0.4.0
+  - @ledgerhq/coin-sui@0.37.0
+  - @ledgerhq/coin-hedera@1.35.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0
+  - @ledgerhq/live-currency-format@0.10.0
+  - @ledgerhq/live-countervalues@0.20.0
+  - @ledgerhq/coin-tron@6.3.0
+  - @ledgerhq/client-ids@0.10.3
+  - @ledgerhq/coin-algorand@1.6.3
+  - @ledgerhq/coin-aptos@3.20.3
+  - @ledgerhq/coin-bitcoin@0.44.1
+  - @ledgerhq/coin-canton@0.26.2
+  - @ledgerhq/coin-concordium@0.13.1
+  - @ledgerhq/coin-filecoin@1.25.1
+  - @ledgerhq/coin-icon@0.23.5
+  - @ledgerhq/coin-kaspa@1.16.1
+  - @ledgerhq/coin-multiversx@0.17.4
+  - @ledgerhq/coin-solana@0.55.2
+  - @ledgerhq/coin-stacks@0.21.7
+  - @ledgerhq/coin-ton@0.29.1
+  - @ledgerhq/coin-vechain@2.22.5
+  - @ledgerhq/ledger-cal-service@1.18.1
+  - @ledgerhq/ledger-trust-service@0.8.6
+  - @ledgerhq/live-network@2.6.5
+  - @ledgerhq/live-wallet@0.27.3
+  - @ledgerhq/speculos-transport@0.10.5
+  - @ledgerhq/asset-aggregation@0.8.1
+  - @ledgerhq/coin-casper@2.13.7
+  - @ledgerhq/coin-internet_computer@1.22.5
+  - @ledgerhq/coin-mina@1.15.5
+  - @ledgerhq/coin-near@0.25.7
+  - @ledgerhq/coin-polkadot@6.27.3
+  - @ledgerhq/device-core@0.11.4
+  - @ledgerhq/hw-app-eth@7.8.7
+  - @ledgerhq/live-countervalues-react@0.15.1
+  - @ledgerhq/live-signer-canton@0.9.8
+  - @ledgerhq/live-signer-celo@1.1.4
+  - @ledgerhq/live-signer-cosmos@0.2.7
+  - @ledgerhq/live-signer-evm@0.19.1
+  - @ledgerhq/live-signer-solana@0.15.5
+  - @ledgerhq/live-signer-concordium@0.4.1
+  - @ledgerhq/hw-app-exchange@0.22.4
+  - @ledgerhq/coin-stellar@6.25.1
+
+## 36.2.0-next.1
+
+### Minor Changes
+
+- [#18642](https://github.com/LedgerHQ/ledger-live/pull/18642) [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+### Patch Changes
+
+- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
+  - @ledgerhq/cryptoassets@13.52.0-next.1
+  - @ledgerhq/coin-evm@4.3.0-next.1
+  - @ledgerhq/live-currency-format@0.10.0-next.1
+  - @shared/feature-flags@0.11.0-next.1
+  - @ledgerhq/asset-aggregation@0.8.1-next.1
+  - @ledgerhq/coin-aleo@1.15.0-next.1
+  - @ledgerhq/coin-algorand@1.6.3-next.1
+  - @ledgerhq/coin-aptos@3.20.3-next.1
+  - @ledgerhq/coin-bitcoin@0.44.1-next.1
+  - @ledgerhq/coin-canton@0.26.2-next.1
+  - @ledgerhq/coin-cardano@0.27.0-next.1
+  - @ledgerhq/coin-casper@2.13.7-next.1
+  - @ledgerhq/coin-celo@2.6.0-next.1
+  - @ledgerhq/coin-concordium@0.13.1-next.1
+  - @ledgerhq/coin-cosmos@0.36.0-next.1
+  - @ledgerhq/coin-filecoin@1.25.1-next.1
+  - @ledgerhq/coin-hedera@1.35.0-next.1
+  - @ledgerhq/coin-icon@0.23.5-next.1
+  - @ledgerhq/coin-internet_computer@1.22.5-next.1
+  - @ledgerhq/coin-mina@1.15.5-next.1
+  - @ledgerhq/coin-multiversx@0.17.4-next.1
+  - @ledgerhq/coin-near@0.25.7-next.1
+  - @ledgerhq/coin-polkadot@6.27.3-next.1
+  - @ledgerhq/coin-solana@0.55.2-next.1
+  - @ledgerhq/coin-stacks@0.21.7-next.1
+  - @ledgerhq/coin-sui@0.37.0-next.1
+  - @ledgerhq/coin-ton@0.29.1-next.1
+  - @ledgerhq/coin-tron@6.3.0-next.1
+  - @ledgerhq/coin-vechain@2.22.5-next.1
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.1
+  - @ledgerhq/live-wallet@0.27.3-next.1
+  - @ledgerhq/coin-kaspa@1.16.1-next.1
+  - @ledgerhq/device-core@0.11.4-next.1
+  - @ledgerhq/hw-app-eth@7.8.7-next.1
+  - @ledgerhq/live-countervalues@0.20.0-next.1
+  - @ledgerhq/live-countervalues-react@0.15.1-next.1
+  - @ledgerhq/live-signer-aleo@0.18.0-next.1
+  - @ledgerhq/live-signer-canton@0.9.8-next.1
+  - @ledgerhq/live-signer-celo@1.1.4-next.1
+  - @ledgerhq/live-signer-cosmos@0.2.7-next.1
+  - @ledgerhq/live-signer-evm@0.19.1-next.1
+  - @ledgerhq/live-signer-solana@0.15.5-next.1
+  - @features/platform-feature-flags@0.4.0-next.1
+  - @ledgerhq/live-signer-concordium@0.4.1-next.1
+
+## 36.2.0-next.0
+
+### Minor Changes
+
+- [#18423](https://github.com/LedgerHQ/ledger-live/pull/18423) [`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a favorites ranking to the desktop Market Banner. The banner now switches between the trending performers list and the user's starred market coins, fetching favorites via `useMarketData` (availability filtering bypassed so starred coins always show) and disabling whichever query is inactive.
+
+- [#18222](https://github.com/LedgerHQ/ledger-live/pull/18222) [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7) Thanks [@henri-ly](https://github.com/henri-ly)! - add undelegate for monad
+
+- [#18255](https://github.com/LedgerHQ/ledger-live/pull/18255) [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): hook in llc for signature view model
+
+- [#18362](https://github.com/LedgerHQ/ledger-live/pull/18362) [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add theme-specific awareness modal hero images, feature intro border, carousel navigation label, and related UI improvements
+
+- [#18344](https://github.com/LedgerHQ/ledger-live/pull/18344) [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Prepare coin-tezos for migration to coin-modules (LIVE-32021, Step 1): move all wallet-related code that depends on `@ledgerhq/types-live` out of `coin-tezos` and into `ledger-live-common`'s `families/tezos` layer. Transaction, deviceTransactionConfig, serialization, CLI, bot specs/deviceActions, the wallet-facing types and the `TezosSigner` interface now live in `families/tezos`; the `AccountLike`-coupled delegation helpers move out of `network/bakers` into `families/tezos/bakers`. `coin-tezos/src` no longer imports `@ledgerhq/types-live`, `@ledgerhq/cryptoassets` or `@ledgerhq/types-cryptoassets`, and the corresponding entrypoints (`./transaction`, `./deviceTransactionConfig`, `./specs`) are removed from its package.json.
+
+- [#18237](https://github.com/LedgerHQ/ledger-live/pull/18237) [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate `@ledgerhq/live-common`'s internal feature-flag consumers off its React `featureFlags` Context module and `@ledgerhq/types-live` feature types, onto the Redux-backed `@shared/feature-flags` / `@features/platform-feature-flags` packages, and remove the `featureFlags` module along with the apps' now-inert `FeatureFlagsContextBridge`. Remaining external React consumers (both apps) are repointed to `@features/platform-feature-flags`; `@ledgerhq/live-dmk-desktop` receives its `ldmkTransport` flag via a prop instead of depending on the feature-flags package; non-React imperative reads use an injected getter or the relocated `live-common/firebase/featureFlags` reader. Adds the platform-specific `formatToFirebaseFeatureId` / `formatDefaultFeatures` to `@features/platform-feature-flags` and the generic `isValidFeatureId` to `@shared/feature-flags`. No behavioral change — resolved flag values are identical.
+
+- [#18553](https://github.com/LedgerHQ/ledger-live/pull/18553) [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): switch mode amount step new send flow changes header
+
+- [#18305](https://github.com/LedgerHQ/ledger-live/pull/18305) [`e272e02`](https://github.com/LedgerHQ/ledger-live/commit/e272e0221aaa8b78120c3746d315108f30fc4dc9) Thanks [@Justkant](https://github.com/Justkant)! - Keep manifest params authoritative when resolving a live app initial URL: `getInitialURL` now re-applies the trusted `manifest.params` onto an accepted `goToURL` for manifests that define params, instead of trusting the params it carries.
+
+- [#18326](https://github.com/LedgerHQ/ledger-live/pull/18326) [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3) Thanks [@qperrot](https://github.com/qperrot)! - Fix Sui token type mismatch by aligning tokenType to "coin" with backend (CAL/DaDa)
+
+- [#18428](https://github.com/LedgerHQ/ledger-live/pull/18428) [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Global Search default-sections data on mobile, fed by DADA. Cryptos (top 3) and stablecoins (top 2) render as market rows; stocks (top 10) as pills.
+
+  Share the DADA asset-discovery selection in `@ledgerhq/live-common` (`selectTopStocks`, `selectTopAssetsByCategory`, `StockSuggestion`) so desktop and mobile use one implementation; desktop's stocks section now consumes `selectTopStocks` instead of its own copy.
+
+- [#18292](https://github.com/LedgerHQ/ledger-live/pull/18292) [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(llc): support compound reward operation
+
+- [#18509](https://github.com/LedgerHQ/ledger-live/pull/18509) [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): new send flow custom fees common hooks
+
+- [#18300](https://github.com/LedgerHQ/ledger-live/pull/18300) [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): changes signature request type for new send flow
+
+- [#18490](https://github.com/LedgerHQ/ledger-live/pull/18490) [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d) Thanks [@ysitbon](https://github.com/ysitbon)! - Replace the embedded `TokenCurrency.parentCurrency: CryptoCurrency` object with a `parentCurrencyId: string` foreign key.
+
+  `TokenCurrency` no longer carries the full parent `CryptoCurrency` object. Resolve the parent on demand with `getCryptoCurrencyById(token.parentCurrencyId)` (or `findCryptoCurrencyById` when a missing parent must be tolerated). The CAL token converter and persistence layer now read/write `parentCurrencyId` directly, aligning the legacy type with the `@domain/entity-currency-token` schema.
+
+- [#18294](https://github.com/LedgerHQ/ledger-live/pull/18294) [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Add the Market category switcher (All / Stocks / Favorites) on the V4 Market page, gated by the `lwdWallet40.assetDiscoverability` feature flag. The selected category is persisted across reloads and supersedes the legacy starred filter drawer when the flag is on. The shared category helpers (`parseMarketListCategory`, `getMarketFilter`, `isStockMarketCurrency`) now live in `@ledgerhq/live-common/market/utils/category` and are reused by both desktop and mobile.
+
+- [#18452](https://github.com/LedgerHQ/ledger-live/pull/18452) [`e962c2d`](https://github.com/LedgerHQ/ledger-live/commit/e962c2df66669d8b9bcf99a421c67f52a3278a6e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix(market): stop excluding most coins when combining a trending category with the top gainers/losers filter. The `top=100` restriction is no longer sent alongside a `categories` filter, since the backend intersects both sets and category coins rarely rank in the global top 100.
+
+- [#18541](https://github.com/LedgerHQ/ledger-live/pull/18541) [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a "Total volume" sort option to the desktop Market table. The Volume column header is now sortable and toggles between highest and lowest 24h volume, mapping to the new `total-volume-desc` and `total-volume` values of the `/v3/markets` `sort` parameter.
+
+- [#18342](https://github.com/LedgerHQ/ledger-live/pull/18342) [`d3829e5`](https://github.com/LedgerHQ/ledger-live/commit/d3829e5889af420f986562aaec2f226ad68c66ed) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add trending categories to the Market screen. Trending categories are fetched from `/v3/categories/trending` and appended to the category controls (after All / Stocks / Favorites); selecting one filters the asset list via the `/v3/markets` `categories` param.
+
+  Shared logic lives in `@ledgerhq/live-common/market` so desktop can reuse it: the `getTrendingCategories` RTK Query endpoint (`useGetTrendingCategoriesQuery`), the `categories` request param threaded through `fetchList`/`useMarketData`, and category helpers (widened `MarketListCategory`, `isBuiltInMarketListCategory`, `getMarketCategoriesParam`).
+
+- [#18465](https://github.com/LedgerHQ/ledger-live/pull/18465) [`f59b441`](https://github.com/LedgerHQ/ledger-live/commit/f59b441b040495884a317f61c8588db7014078c2) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add memo/tag input to the new send flow, and clear an empty memo/tag in applyMemoToTransaction instead of applying 0 or an empty string
+
+- [#18329](https://github.com/LedgerHQ/ledger-live/pull/18329) [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad compound (restake rewards): add the per-chain `compoundReward` staking operation to coin-evm (native `compound(uint64)` precompile call, nonpayable) and a Claim/Compound toggle in the EVM claim-rewards flow on desktop and mobile. The toggle is only shown for compound-capable chains (Monad) and defaults to Claim; the history operation type is `REWARD`, matching the existing claim flow.
+
+- [#18298](https://github.com/LedgerHQ/ledger-live/pull/18298) [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Extract `quickActionsCtasVariant` out of the `feature_lwm_wallet_40` feature flag into a dedicated `feature_lwm_quick_actions_ctas_variant` flag so the A/B test can run independently from other Wallet 4.0 parameters
+
+- [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
+
+- [#17064](https://github.com/LedgerHQ/ledger-live/pull/17064) [`5dcc7b5`](https://github.com/LedgerHQ/ledger-live/commit/5dcc7b58625744541d6240bf9f58a9adcc3efcfd) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Scope live-app blind-signing tracking context per sign call so concurrent dApp transactions report the correct originating context
+
+- [#18405](https://github.com/LedgerHQ/ledger-live/pull/18405) [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: prepare aleo utils for incoming tokens integration
+
+- [#18554](https://github.com/LedgerHQ/ledger-live/pull/18554) [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): remove stellar specific mention on error message new send flow
+
+- [#18561](https://github.com/LedgerHQ/ledger-live/pull/18561) [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use the dedicated CVS `tokenized-stock` category for the Market stocks filter instead of the hardcoded `filter=stock` + client-side id matching, and stop firing a spurious `to=usd` market request while the supported counter-values list is still loading.
+
+- [#18325](https://github.com/LedgerHQ/ledger-live/pull/18325) [`086bf9b`](https://github.com/LedgerHQ/ledger-live/commit/086bf9b63dda23c8bef4a05f45b4b7ecdf3caa65) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `useStocksData` hook exposing a paginated DADA stocks feed (`/assets?categories=stocks`) with merged full rows, mirroring `useAssetsData` but isolated from it
+
+- [#18469](https://github.com/LedgerHQ/ledger-live/pull/18469) [`6e0f83d`](https://github.com/LedgerHQ/ledger-live/commit/6e0f83d30dc4f294a579d84db14efd43d720ef25) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Portfolio Stocks data layer. `useDefaultStocksAssets` fetches the top stocks (market-cap ordered) from the DADA stocks category via `useStocksData` + `selectTopStocks` for the discovery scenario (no-op when disabled). `useCategorizedAssetsFromPortfolio` now returns a `stocks` bucket split out of `cryptos`, identified by DADA currency id via the new `useStockAssetIds` hook — matching by id rather than ticker avoids symbol collisions (e.g. a crypto like TON is no longer misclassified as a stock).
+
+- [#18256](https://github.com/LedgerHQ/ledger-live/pull/18256) [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Derive "supported currencies" from the coin-modules registry instead of `setSupportedCurrencies`.
+
+  Each `CoinModuleLoader` now declares a `supportedCoins: CryptoCurrencyId[]` field, and a currency is supported when it appears in a registered loader's `supportedCoins`. The framework `setSupportedCurrencies` / `listSupportedCurrencies` / `isCurrencySupported` and the `EXPERIMENTAL_CURRENCIES` env are removed; `listSupportedCurrencies` / `isCurrencySupported` are now exported from `@ledgerhq/live-common/currencies` backed by the registry. Apps no longer maintain a supported-currencies list — registering the coin modules is what makes their currencies supported.
+
+- [#18385](https://github.com/LedgerHQ/ledger-live/pull/18385) [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo fixtures and base constants extended
+
+- [#18560](https://github.com/LedgerHQ/ledger-live/pull/18560) [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102) Thanks [@dilaouid](https://github.com/dilaouid)! - chore(lwdm): refactor memo feature for new send flow
+
+- [#18361](https://github.com/LedgerHQ/ledger-live/pull/18361) [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Tezos message signing: a `signMessage` that signs an already-watermarked payload verbatim (normalising the device signature to raw r||s), and wire it as the `tezos` family `messageSigner`.
+
+### Patch Changes
+
+- Updated dependencies [[`61fe10b`](https://github.com/LedgerHQ/ledger-live/commit/61fe10b15ae6c8c4aa916f75e19899c79f90ba77), [`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`5e1a944`](https://github.com/LedgerHQ/ledger-live/commit/5e1a944f96531dec46e8d199bce4da3cd0fa12fa), [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd), [`558e633`](https://github.com/LedgerHQ/ledger-live/commit/558e633d633b73fd5b7f9bd6845ef2902ed60405), [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`1de6b9a`](https://github.com/LedgerHQ/ledger-live/commit/1de6b9afb239f8a2e2a8c573d661b95a8bcb8260), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516), [`16b9bbc`](https://github.com/LedgerHQ/ledger-live/commit/16b9bbcf1df6546a8894acf22b58fb6e35576ed4), [`4304c17`](https://github.com/LedgerHQ/ledger-live/commit/4304c17dd3e761e604690352e295588a7b680738), [`0b5a04a`](https://github.com/LedgerHQ/ledger-live/commit/0b5a04ac3a47c6d146b389ddab174c13c84d96e1), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`621a175`](https://github.com/LedgerHQ/ledger-live/commit/621a1756ef8b59844a086a610ff45819521ff633), [`70b8692`](https://github.com/LedgerHQ/ledger-live/commit/70b869271c712b9d2719b1437d60042e5ecbb42b), [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041), [`6699b3c`](https://github.com/LedgerHQ/ledger-live/commit/6699b3cb896907abf8912d2d8ef77e2c8a31f7a2), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`a215f72`](https://github.com/LedgerHQ/ledger-live/commit/a215f72ab3313edc9646df76090167acbdf53b50), [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451), [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2), [`70c658e`](https://github.com/LedgerHQ/ledger-live/commit/70c658e2739c072313cc689ec626a9a73cd02f1c), [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e), [`252c330`](https://github.com/LedgerHQ/ledger-live/commit/252c330293d504f901a7fd00980ef1ed02aaa7b7)]:
+  - @ledgerhq/coin-cardano@0.27.0-next.0
+  - @ledgerhq/live-env@2.39.0-next.0
+  - @ledgerhq/coin-evm@4.3.0-next.0
+  - @ledgerhq/cryptoassets@13.52.0-next.0
+  - @ledgerhq/coin-celo@2.6.0-next.0
+  - @ledgerhq/coin-aleo@1.15.0-next.0
+  - @ledgerhq/live-signer-aleo@0.18.0-next.0
+  - @ledgerhq/coin-tezos@7.6.0-next.0
+  - @ledgerhq/coin-cosmos@0.36.0-next.0
+  - @shared/feature-flags@0.11.0-next.0
+  - @features/platform-feature-flags@0.4.0-next.0
+  - @ledgerhq/coin-sui@0.37.0-next.0
+  - @ledgerhq/coin-hedera@1.35.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
+  - @ledgerhq/live-countervalues@0.20.0-next.0
+  - @ledgerhq/coin-tron@6.3.0-next.0
+  - @ledgerhq/client-ids@0.10.3-next.0
+  - @ledgerhq/coin-algorand@1.6.3-next.0
+  - @ledgerhq/coin-aptos@3.20.3-next.0
+  - @ledgerhq/coin-bitcoin@0.44.1-next.0
+  - @ledgerhq/coin-canton@0.26.2-next.0
+  - @ledgerhq/coin-concordium@0.13.1-next.0
+  - @ledgerhq/coin-filecoin@1.25.1-next.0
+  - @ledgerhq/coin-icon@0.23.5-next.0
+  - @ledgerhq/coin-kaspa@1.16.1-next.0
+  - @ledgerhq/coin-multiversx@0.17.4-next.0
+  - @ledgerhq/coin-solana@0.55.2-next.0
+  - @ledgerhq/coin-stacks@0.21.7-next.0
+  - @ledgerhq/coin-ton@0.29.1-next.0
+  - @ledgerhq/coin-vechain@2.22.5-next.0
+  - @ledgerhq/ledger-cal-service@1.18.1-next.0
+  - @ledgerhq/ledger-trust-service@0.8.6-next.0
+  - @ledgerhq/live-currency-format@0.9.3-next.0
+  - @ledgerhq/live-network@2.6.5-next.0
+  - @ledgerhq/live-wallet@0.27.3-next.0
+  - @ledgerhq/speculos-transport@0.10.5-next.0
+  - @ledgerhq/asset-aggregation@0.8.1-next.0
+  - @ledgerhq/coin-casper@2.13.7-next.0
+  - @ledgerhq/coin-internet_computer@1.22.5-next.0
+  - @ledgerhq/coin-mina@1.15.5-next.0
+  - @ledgerhq/coin-near@0.25.7-next.0
+  - @ledgerhq/coin-polkadot@6.27.3-next.0
+  - @ledgerhq/device-core@0.11.4-next.0
+  - @ledgerhq/hw-app-eth@7.8.7-next.0
+  - @ledgerhq/live-countervalues-react@0.15.1-next.0
+  - @ledgerhq/live-signer-canton@0.9.8-next.0
+  - @ledgerhq/live-signer-celo@1.1.4-next.0
+  - @ledgerhq/live-signer-cosmos@0.2.7-next.0
+  - @ledgerhq/live-signer-evm@0.19.1-next.0
+  - @ledgerhq/live-signer-solana@0.15.5-next.0
+  - @ledgerhq/live-signer-concordium@0.4.1-next.0
+  - @ledgerhq/hw-app-exchange@0.22.4
+  - @ledgerhq/coin-stellar@6.25.1-next.0
+
 ## 36.1.0
 
 ### Minor Changes

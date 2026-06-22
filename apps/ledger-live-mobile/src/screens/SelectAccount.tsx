@@ -54,7 +54,7 @@ function ReceiveFunds({ navigation, route }: Props) {
         acc =>
           acc.currency.id ===
           (selectedCurrency.type === "TokenCurrency"
-            ? selectedCurrency.parentCurrency.id
+            ? selectedCurrency.parentCurrencyId
             : selectedCurrency.id),
       );
       if (selectedCurrency.type === "TokenCurrency") {

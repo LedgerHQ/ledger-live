@@ -25,9 +25,14 @@ export type CounterfeitWarningDialogViewProps = Readonly<{
   onDismiss: () => void;
 }>;
 
+const eventProperties = (deviceModelId: DeviceModelId, properties: Record<string, unknown>) => ({
+  deviceModelId,
+  ...properties,
+});
+
 const useCounterfeitWarningDialogViewModel = ({
   open,
-  deviceModelId: _deviceModelId,
+  deviceModelId,
   onProceed,
   onDismiss,
 }: CounterfeitWarningDialogContainerProps): CounterfeitWarningDialogViewProps => {
@@ -36,30 +41,36 @@ const useCounterfeitWarningDialogViewModel = ({
 
   useEffect(() => {
     if (open && !hasTrackedShownRef.current) {
-      track("page_viewed", { page: COUNTERFEIT_WARNING_PAGE });
+      track("page_viewed", eventProperties(deviceModelId, { page: COUNTERFEIT_WARNING_PAGE }));
       hasTrackedShownRef.current = true;
     }
 
     if (!open) {
       hasTrackedShownRef.current = false;
     }
-  }, [open]);
+  }, [deviceModelId, open]);
 
   const handleProceed = useCallback(() => {
-    track("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    track(
+      "button_clicked",
+      eventProperties(deviceModelId, {
+        button: COUNTERFEIT_WARNING_BUTTON.continueSetup,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     onProceed();
-  }, [onProceed]);
+  }, [deviceModelId, onProceed]);
 
   const handleLearnMore = useCallback(() => {
-    track("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.learnMore,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    track(
+      "button_clicked",
+      eventProperties(deviceModelId, {
+        button: COUNTERFEIT_WARNING_BUTTON.learnMore,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     openURL(urls.genuineCheck);
-  }, []);
+  }, [deviceModelId]);
 
   const handleLedgerComLink = useCallback(() => {
     openURL(urls.ledger);
@@ -70,12 +81,15 @@ const useCounterfeitWarningDialogViewModel = ({
   }, []);
 
   const handleDismiss = useCallback(() => {
-    track("button_clicked", {
-      button: COUNTERFEIT_WARNING_BUTTON.close,
-      page: COUNTERFEIT_WARNING_PAGE,
-    });
+    track(
+      "button_clicked",
+      eventProperties(deviceModelId, {
+        button: COUNTERFEIT_WARNING_BUTTON.close,
+        page: COUNTERFEIT_WARNING_PAGE,
+      }),
+    );
     onDismiss();
-  }, [onDismiss]);
+  }, [deviceModelId, onDismiss]);
 
   return {
     open,

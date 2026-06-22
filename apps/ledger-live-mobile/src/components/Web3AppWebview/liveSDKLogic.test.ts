@@ -15,7 +15,8 @@ import { PLATFORM_FAMILIES_ENUM, PlatformTransaction } from "@ledgerhq/live-comm
 import prepareSignTransaction from "./liveSDKLogic";
 
 // Fake the support of the test currency
-jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => ({
+jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/coin-modules/registry"),
   isCurrencySupported: () => true,
 }));
 
@@ -40,7 +41,7 @@ describe("prepareSignTransaction", () => {
       maxFeePerGas: undefined,
       maxPriorityFeePerGas: undefined,
       type: 0,
-      chainId: 0,
+      chainId: 1,
     };
 
     // When
@@ -74,7 +75,7 @@ describe("prepareSignTransaction", () => {
       maxFeePerGas: undefined,
       maxPriorityFeePerGas: undefined,
       type: 0,
-      chainId: 0,
+      chainId: 1,
     };
 
     // When
@@ -210,7 +211,7 @@ function createTokenCurrency(): TokenCurrency {
     type: "TokenCurrency",
     id: "3",
     contractAddress: "",
-    parentCurrency: defaultEthCryptoFamily,
+    parentCurrencyId: "ethereum",
     tokenType: "",
     // -- CurrencyCommon
     name: "",

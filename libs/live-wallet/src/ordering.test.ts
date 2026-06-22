@@ -2,12 +2,9 @@
 
 import type { AccountRaw } from "@ledgerhq/types-live";
 import { sortAccountsComparatorFromOrder } from "./ordering";
-import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { WalletState, accountRawToAccountUserData } from "./store";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-
-setSupportedCurrencies(["ethereum"]);
 
 const raws: AccountRaw[] = [
   <AccountRaw>{

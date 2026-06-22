@@ -1,9 +1,7 @@
-import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
+import { getCryptoCurrencyById } from "../currencies";
 import { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { accountPersistedStateChanged, accountsPersistedStateChanged } from "./persistence";
-
-setSupportedCurrencies(["ethereum"]);
 
 const Ethereum = getCryptoCurrencyById("ethereum");
 type PrivateInfoTestShape = {

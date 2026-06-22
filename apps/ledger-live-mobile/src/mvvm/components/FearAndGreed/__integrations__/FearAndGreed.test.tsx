@@ -95,7 +95,7 @@ describe("FearAndGreed Integration", () => {
 
       expect(
         screen.getByText(
-          /Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only./i,
+          /Data is sourced from CoinMarketCap. Provided for informational purposes only./i,
         ),
       ).toBeVisible();
     });

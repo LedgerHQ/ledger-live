@@ -14,9 +14,11 @@ export type GenericAwarenessModalDebugTrigger = "appStart" | "deeplink";
 export type GenericAwarenessModalDebugItem = {
   title: string;
   subtitle: string;
-  imageUrl?: string;
+  imageUrlLight?: string;
+  imageUrlDark?: string;
   primaryButtonLabel?: string;
   primaryButtonLink?: string;
+  navigationButtonLabel?: string;
   icon?: string;
 };
 
@@ -26,7 +28,8 @@ export type GenericAwarenessModalDebugFormValues = {
   campaignId: string;
   title: string;
   subtitle: string;
-  imageUrl: string;
+  imageUrlLight: string;
+  imageUrlDark: string;
   primaryButtonLabel: string;
   primaryButtonLink: string;
   secondaryButtonLabel: string;
@@ -74,7 +77,8 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
     campaignId: getDefaultGenericAwarenessModalCampaignId(layout, trigger),
     title: "Secure your crypto journey",
     subtitle: "Discover how Ledger Wallet helps you stay in control.",
-    imageUrl: DEFAULT_IMAGE_URL,
+    imageUrlLight: DEFAULT_IMAGE_URL,
+    imageUrlDark: "",
     primaryButtonLabel: "Continue",
     primaryButtonLink: "ledgerlive://buy/bitcoin",
     secondaryButtonLabel: "Maybe later",
@@ -83,7 +87,8 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
       {
         title: "Own your keys",
         subtitle: "Your private keys stay protected by your Ledger device.",
-        imageUrl: DEFAULT_IMAGE_URL,
+        imageUrlLight: DEFAULT_IMAGE_URL,
+        imageUrlDark: "",
         primaryButtonLabel: "Open My Ledger",
         primaryButtonLink: "ledgerlive://myledger",
         icon: "Shield",
@@ -91,7 +96,8 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
       {
         title: "Explore safely",
         subtitle: "Review every transaction before you sign.",
-        imageUrl: DEFAULT_IMAGE_URL,
+        imageUrlLight: DEFAULT_IMAGE_URL,
+        imageUrlDark: "",
         primaryButtonLabel: "Receive Bitcoin",
         primaryButtonLink: "ledgerlive://receive?currency=bitcoin",
         icon: "Eye",
@@ -99,7 +105,8 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
       {
         title: "Stay informed",
         subtitle: "Get timely product and security updates.",
-        imageUrl: DEFAULT_IMAGE_URL,
+        imageUrlLight: DEFAULT_IMAGE_URL,
+        imageUrlDark: "",
         primaryButtonLabel: "Open Discover",
         primaryButtonLink: "ledgerlive://discover",
         icon: "Bell",
@@ -123,9 +130,11 @@ function buildCarouselBrazeCards({
       index: String(index),
       title: item.title,
       subtitle: item.subtitle,
-      imageUrl: item.imageUrl,
+      imageUrlLight: item.imageUrlLight ?? "",
+      imageUrlDark: item.imageUrlDark ?? "",
       primaryButtonLabel: item.primaryButtonLabel,
       primaryButtonLink: item.primaryButtonLink,
+      navigationButtonLabel: item.navigationButtonLabel,
     },
   }));
 }
@@ -144,7 +153,8 @@ function buildFeatureIntroBrazeCards(
       itemCount,
       title: values.title,
       subtitle: values.subtitle,
-      imageUrl: values.imageUrl,
+      imageUrlLight: values.imageUrlLight,
+      imageUrlDark: values.imageUrlDark,
       primaryButtonLabel: values.primaryButtonLabel,
       primaryButtonLink: values.primaryButtonLink,
       secondaryButtonLabel: values.secondaryButtonLabel,
@@ -182,7 +192,8 @@ function buildPromptBrazeCard(
         location: GENERIC_AWARENESS_LOCATION,
         title: values.title,
         subtitle: values.subtitle,
-        imageUrl: values.imageUrl,
+        imageUrlLight: values.imageUrlLight,
+        imageUrlDark: values.imageUrlDark,
         primaryButtonLabel: values.primaryButtonLabel,
         primaryButtonLink: values.primaryButtonLink,
         secondaryButtonLabel: values.secondaryButtonLabel,

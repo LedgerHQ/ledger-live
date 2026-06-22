@@ -21,6 +21,12 @@ type UseBridgeRecipientValidationProps = {
   parentAccount?: Account | null;
   memo?: Memo;
   enabled?: boolean;
+  /**
+   * Debounce applied before triggering the bridge validation. Defaults to 300ms,
+   * which suits live typing. One-shot validations (e.g. a pasted/clipboard value)
+   * can pass `0` to validate immediately without the typing debounce.
+   */
+  debounceMs?: number;
 };
 
 const DEBOUNCE_DELAY = 300;
@@ -36,6 +42,7 @@ export function useBridgeRecipientValidation({
   parentAccount,
   memo,
   enabled = true,
+  debounceMs = DEBOUNCE_DELAY,
 }: UseBridgeRecipientValidationProps): BridgeRecipientValidationResult {
   const [validationState, setValidationState] = useState<{
     errors: BridgeValidationErrors;
@@ -179,7 +186,7 @@ export function useBridgeRecipientValidation({
 
     debounceTimeoutRef.current = setTimeout(() => {
       validateRecipient();
-    }, DEBOUNCE_DELAY);
+    }, debounceMs);
   }
 
   return useMemo(

@@ -8,6 +8,7 @@ import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
@@ -77,7 +78,9 @@ export default function useScanDeviceAccountsViewModel({
     () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
     [newAccountSchemes],
   );
-  const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
+  const cryptoCurrency = isTokenCurrency(currency)
+    ? getCryptoCurrencyById(currency.parentCurrencyId)
+    : currency;
   const currencyBridge = useCurrencyBridge(cryptoCurrency);
   const startSubscription = useCallback(() => {
     const syncConfig = {

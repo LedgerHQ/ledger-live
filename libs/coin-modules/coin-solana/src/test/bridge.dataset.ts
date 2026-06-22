@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
   InvalidAddress,
@@ -52,7 +51,7 @@ const wSolToken: TokenCurrency = {
   name: "Wrapped SOL",
   ticker: "WSOL",
   units: [{ name: "WSOL", code: "WSOL", magnitude: 9 }],
-  parentCurrency: getCryptoCurrencyById("solana"),
+  parentCurrencyId: "solana",
 } as TokenCurrency;
 
 const fees = (signatureCount: number) =>

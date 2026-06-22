@@ -48,7 +48,7 @@ const handlers = [
 
     let filteredData = marketsMock;
 
-    if (searchParams.get("filter") === "stock") {
+    if (searchParams.get("categories") === "tokenized-stock") {
       filteredData = stockMarketsMock;
     }
     // When we perform a search
@@ -73,6 +73,12 @@ const handlers = [
     const paginatedData = filteredData.slice(startIndex, endIndex);
 
     return HttpResponse.json(paginatedData);
+  }),
+  http.get("https://countervalues.live.ledger.com/v3/categories/trending", () => {
+    return HttpResponse.json([
+      { id: "infrastructure", name: "Infrastructure" },
+      { id: "yield-farming", name: "Yield Farming" },
+    ]);
   }),
   http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () => {
     return HttpResponse.json(["usd", "eur", "gbp"]);

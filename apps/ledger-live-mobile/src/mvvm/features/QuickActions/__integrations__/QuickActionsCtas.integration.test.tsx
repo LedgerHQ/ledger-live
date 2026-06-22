@@ -224,7 +224,7 @@ describe("QuickActionsCtas Integration Tests", () => {
     );
   });
 
-  describe("Variant mode (quickActionsCtasVariant: true)", () => {
+  describe("Variant mode (lwmQuickActionsCtasVariant enabled)", () => {
     describe("Has Funds State", () => {
       it("should display Receive, Send, Swap, Buy buttons when variant is enabled with funds", async () => {
         render(<TestQuickActionsWrapper />, {

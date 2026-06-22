@@ -408,6 +408,42 @@
         "refunded" : "Para iadesi yapıldı"
       }
     },
+    "modals" : {
+      "transactionStatus" : {
+        "title" : "{{sendTicker}} → {{receiveTicker}} takas edin",
+        "sections" : {
+          "status" : {
+            "heading" : "Durum",
+            "sendPending" : "{{ticker}} gönderiliyor",
+            "sendCompleted" : "{{ticker}} gönderildi",
+            "receivePending" : "{{ticker}} alınıyor",
+            "receiveCompleted" : "{{ticker}} alındı"
+          },
+          "details" : {
+            "networkFees" : "Ağ ücretleri",
+            "receiveAccount" : "Alıcı hesap",
+            "provider" : "Sağlayıcı",
+            "swapId" : "Swap ID'si"
+          }
+        },
+        "statusLabels" : {
+          "pending" : "Devam ediyor",
+          "onhold" : "Durduruldu",
+          "expired" : "Süresi doldu",
+          "finished" : "Tamamlandı",
+          "refunded" : "Para iadesi yapıldı",
+          "cancelled" : "İptal edildi",
+          "unknown" : "Bilinmiyor"
+        },
+        "actions" : {
+          "viewInExplorer" : "Tarayıcıda görüntüle",
+          "copied" : "Kopyalandı"
+        },
+        "accessibility" : {
+          "copySwapId" : "Takas kimliğini kopyala"
+        }
+      }
+    },
     "exchangeDrawer" : {
       "title" : "Takas işleminizi onaylayın",
       "completed" : {
@@ -1609,6 +1645,23 @@
   },
   "market" : {
     "title" : "Piyasa",
+    "topCards" : {
+      "error" : "Bir hata oluştu",
+      "moodIndex" : {
+        "title" : "Duygu endeksi"
+      },
+      "globalMarketCap" : {
+        "title" : "Toplam Piyasa Değeri",
+        "period" : "Bugün"
+      },
+      "altSeason" : {
+        "title" : "Sezon",
+        "levels" : {
+          "bitcoin" : "Bitcoin",
+          "altcoin" : "Altcoin"
+        }
+      }
+    },
     "currency" : "Para birimi",
     "rangeLabel" : "Zaman",
     "goBack" : "Geri dön",
@@ -1622,12 +1675,36 @@
       "applyFilters" : "Filtreleri uygula",
       "clearAll" : "Tümünü temizle"
     },
+    "assetsTitle" : "Varlıklar",
+    "marketTable" : {
+      "crypto" : "İsim",
+      "price" : "Piyasa fiyatı",
+      "volume" : "Hacim",
+      "change" : "Değiştir",
+      "marketCap" : "Piyasa değeri",
+      "actions" : "Eylemler",
+      "menu" : {
+        "more" : "Daha fazlası",
+        "buySell" : "Satın Al / Sat",
+        "addToFavourites" : "Favorilere ekle",
+        "removeFromFavourites" : "Favorilerden kaldır"
+      }
+    },
     "marketList" : {
       "crypto" : "Kripto",
       "price" : "Fiyat",
       "change" : "Değişim",
       "marketCap" : "Piyasa değeri",
       "last7d" : "Son 7 gün"
+    },
+    "assets" : {
+      "categories" : {
+        "accessibilityLabel" : "Varlık kategorileri",
+        "all" : "Tümü",
+        "stocks" : "Hisseler",
+        "favorites" : "Favoriler"
+      },
+      "emptyFavorites" : "Henüz favori yok"
     },
     "detailsPage" : {
       "priceStatistics" : "Fiyat istatistikleri",
@@ -1651,6 +1728,11 @@
       "1W_label" : "1H",
       "1M_label" : "1A",
       "1Y_label" : "1Y",
+      "1H_fullLabel" : "1 saat",
+      "1D_fullLabel" : "1 gün",
+      "1W_fullLabel" : "1 hafta",
+      "1M_fullLabel" : "1 ay",
+      "1Y_fullLabel" : "1 yıl",
       "1h" : "1sa",
       "24h" : "24sa",
       "7d" : "7g",
@@ -4276,9 +4358,12 @@
               "description" : "{{currencyTicker}} varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
               "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devri iptal edildikten sonra mevcut olacak"],
               "warning" : {
-                "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
-              },
-              "seiAssociationWarning" : "Sei hesabınız henüz zincir üstü bağlanmadı. Hesabınızın ilk giden işlemi zincir üstü onaylanana kadar delegasyon başarısız olacaktır. Öncelikle herhangi bir adrese küçük bir SEI tutarı gönderin, onayları bekleyin, ardından yetki devretmek için geri dönün."
+                "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz.",
+                "seiAssociationWarning" : {
+                  "description" : "Yetki devretmek için kendi adresiniz de dahil olmak üzere herhangi bir adrese herhangi bir miktarda varlık göndererek hesabınızı aktif hâle getirmeniz gerekir. Bu, Sei ağının bir gerekliliğidir.",
+                  "learnMore" : "Daha fazla bilgi"
+                }
+              }
             },
             "amount" : {
               "title" : "Miktar"
@@ -4361,6 +4446,33 @@
               "success" : {
                 "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
                 "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetkilendirme iptal edildi",
+                "cta" : "Ayrıntıları gör"
+              },
+              "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "cta" : "Çek",
+        "flow" : {
+          "title" : "Çek",
+          "steps" : {
+            "withdraw" : {
+              "title" : "Çek",
+              "warning" : "Yetki devri kaldırılan tutar, kilit süresini tamamladı ve kullanılabilir bakiyenize geri aktarılacak.",
+              "fields" : {
+                "validator" : "Doğrulayıcı"
+              }
+            },
+            "connectDevice" : {
+              "title" : "Cihaz"
+            },
+            "confirmation" : {
+              "title" : "Onaylayın",
+              "success" : {
+                "title" : "Varlıklarınızı başarıyla çektiniz.",
+                "description" : "<0>{{validator}}</0> doğrulayıcısından <0>{{amount}}</0> tutarında çekim yapıldı",
                 "cta" : "Ayrıntıları gör"
               },
               "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -4624,6 +4736,10 @@
     }
   },
   "tezos" : {
+    "operationTypes" : {
+      "UNSTAKE" : "Staking durduruluyor",
+      "FINALIZE_UNSTAKE" : "Stake durdurma"
+    },
     "earnChoice" : {
       "title" : "Tezos Ödülleri Kazanın: Yetki Devredin veya Stake Edin",
       "description" : "Tam kontrolü elinizde tutarken Tezos (XTZ) varlıklarınızla bir Baker'a yetki devrederek ödüller kazanın. Daha yüksek getiriler için, ilişkili düşük riskleri göz önünde bulundurarak XTZ varlıklarınızı stake edin. Varlıklarınızı büyütmek için en iyi yöntemi seçin.",
@@ -4702,7 +4818,7 @@
             "success" : {
               "title" : "Varlıklarınızı başarıyla stake ettiniz",
               "text" : "{{amount}} yatırdınız. İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecektir.",
-              "cta" : "Kazan Panosuna git"
+              "cta" : "Hesap Panosuna git"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
             "howItWorks" : "Staking Nasıl Çalışır?"
@@ -4713,15 +4829,15 @@
     "unstakeRequired" : {
       "changeBaker" : {
         "title" : "Baker'ı değiştirmeden önce stake etmeyi durdurun",
-        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yeni bir doğrulayıcıya yetki devretmeden önce fonlarınızı stake etmeyi durdurun."
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yeni bir doğrulayıcıya yetki devretmeden önce tüm fonlarınızı stake etmeyi durdurun."
       },
       "endDelegation" : {
         "title" : "Yetki devrini sonlandırmadan önce stake etmeyi durdurun",
-        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yetki devrini sonlandırmadan önce fonlarınızı stake etmeyi durdurun."
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yetki devrini sonlandırmadan önce tüm fonlarınızı stake etmeyi durdurun."
       },
       "steps" : {
-        "0" : "Kazan menüsünü açın ve Staking'i durdur seçimini uygulayın.",
-        "1" : "Tutarı cihazınızda onaylayın ve stake etmeyi durdurma talebini gönderin.",
+        "0" : "Tezos Hesap panosunu açın ve staking bölümündeki stake etmeyi durdurma seçeneğini uygulayın.",
+        "1" : "TÜM tutarın stake'ini durdurun ve stake durdurma işlemini cihazınızda onaylayın.",
         "2" : "Stake durdurulma süresinin tamamlanması için yaklaşık 4 gün bekleyin.",
         "3" : "Çektiğinizde, baker'ı değiştirebilir veya yetki devrini sonlandırabilirsiniz."
       },
@@ -5004,6 +5120,10 @@
           "title" : "Stabil coin ön ayarı",
           "desc" : "En popüler stabil coin'lere sahip Ethereum, Arbitrum, Optimism, Base, Solana, Tron ve Algorand hesapları oluşturun (ağ başına en fazla 5)"
         },
+        "stocksGenerate" : {
+          "title" : "Hisse senetleri ön ayarı",
+          "desc" : "DADA (category=stocks) üzerindeki en popüler tokenize hisse senetlerini, kendi ağları altında alt hesaplar olarak oluşturun."
+        },
         "currencySelector" : {
           "placeholder" : "Para birimleri seçin...",
           "searchPlaceholder" : "Ara",
@@ -5022,7 +5142,10 @@
           "generateAccountsQuick" : "{{count}} Hesap Oluştur",
           "generateEmptyAccount" : "Test hesabı oluştur",
           "generateStablecoinAccounts" : "{{count}} stabil coin hesap oluştur",
-          "generateStablecoinAccounts_other" : "{{count}} stabil coin hesap oluştur"
+          "generateStablecoinAccounts_other" : "{{count}} stabil coin hesap oluştur",
+          "generateStockAccounts" : "{{count}} hisse senedi hesabı oluştur",
+          "generateStockAccounts_other" : "{{count}} hisse senedi hesabı oluştur",
+          "loadingStocks" : "Hisse senedi verileri yükleniyor…"
         },
         "alerts" : {
           "selectCurrency" : "Lütfen en az bir para birimi seçin",
@@ -6263,6 +6386,10 @@
       "transfer_private" : "özel alıcı",
       "convert_public_to_private" : "özel alıcı",
       "convert_private_to_public" : "açık alıcı",
+      "transfer_token_public" : "açık alıcı",
+      "transfer_token_private" : "özel alıcı",
+      "convert_token_public_to_private" : "özel alıcı",
+      "convert_token_private_to_public" : "açık alıcı",
       "delegate" : "doğrulayıcı",
       "redelegate" : "doğrulayıcı",
       "undelegate" : "doğrulayıcı",
@@ -8621,11 +8748,17 @@
     "noDeviceTitle" : "Güvenli kripto cüzdanınız"
   },
   "marketBanner" : {
-    "title" : "Piyasayı keşfedin",
+    "title" : "Piyasa",
     "genericError" : "Bağlantı başarısız oldu",
     "cta" : "Tümünü gör",
     "scrollLeft" : "Sola kaydır",
     "scrollRight" : "Sağa kaydır",
+    "ranking" : {
+      "trending" : "Revaçtakiler",
+      "gainers" : "Yükselenler",
+      "losers" : "Düşenler",
+      "favorites" : "Favoriler"
+    },
     "fearAndGreed" : {
       "title" : "Duygu"
     }
@@ -8641,7 +8774,23 @@
     "dialog" : {
       "title" : "Duygu endeksi",
       "content" : "Özellikle oynaklık, piyasa momentumu ve sosyal trendlere dayalı olarak genel piyasa duyarlılığını 0 ile 100 arasında gösterir. Düşük değerler korkuyu, yüksek değerler coşkuyu ifade eder.",
-      "disclaimer" : "Veriler, CoinMarketCap'in Korku ve Açgözlülük Endeksi'nden alınmıştır ve yalnızca bilgilendirme amacıyla sunulmaktadır.",
+      "disclaimer" : "Veriler CoinMarketCap'ten alınmıştır. Yalnızca bilgilendirme amacıyla sunulmaktadır.",
+      "cta" : "Anladım"
+    }
+  },
+  "marketCapCard" : {
+    "dialog" : {
+      "title" : "Toplam Piyasa Değeri",
+      "content" : "Toplam piyasa değeri, tüm kripto paraların toplam piyasa değerini ifade eder.",
+      "disclaimer" : "Veriler CoinMarketCap'ten alınmıştır. Yalnızca bilgilendirme amacıyla sunulmaktadır.",
+      "cta" : "Anladım"
+    }
+  },
+  "altSeasonCard" : {
+    "dialog" : {
+      "title" : "Altcoin endeksi",
+      "content" : "Altcoin endeksi, alternatif kripto para birimlerinin Bitcoin'e kıyasla nasıl bir performans gösterdiğini gösterir. Bu değer ne kadar yüksekse, altcoin'ler Bitcoin karşısında o kadar iyi performans gösteriyor demektir.",
+      "disclaimer" : "Veriler CoinMarketCap'ten alınmıştır. Yalnızca bilgilendirme amacıyla sunulmaktadır.",
       "cta" : "Anladım"
     }
   },
@@ -8656,6 +8805,7 @@
   "assets" : {
     "cryptos" : "Kripto",
     "stablecoins" : "Stabil coin'ler",
+    "stocks" : "Hisseler",
     "cryptoAccounts" : "Kripto hesapları",
     "accountsCount_one" : "{{count}} hesap",
     "accountsCount_other" : "{{count}} hesap",
@@ -8701,6 +8851,9 @@
   "cryptoAssets" : {
     "title" : "Kripto varlıklar"
   },
+  "stocks" : {
+    "explore" : "Tümünü keşfet"
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
     "entry" : {
@@ -8709,6 +8862,13 @@
     }
   },
   "topBar" : {
+    "searchPlaceholder" : "Varlık ara",
+    "search" : {
+      "noAssetFound" : "Varlık bulunamadı",
+      "error" : "Bağlantı başarısız oldu",
+      "cryptos" : "Kriptolar",
+      "stocks" : "Hisseler"
+    },
     "history" : {
       "cta" : "İşlemler"
     },
@@ -9022,7 +9182,32 @@
     "actionsList" : {
       "help" : "Yardım",
       "recover" : "[L] Recover",
+      "backup" : "Yedekle",
       "refer" : "Referans"
+    },
+    "backupHub" : {
+      "title" : "Cüzdan yedeklemeleri",
+      "description" : "Kurtarma İfadesi yedekleme ve kurtarma süreçleriniz için farklı çözümleri bir arada kullanarak varlıklarınızı güvence altına alın.",
+      "back" : "Geri",
+      "sections" : {
+        "digital" : "Dijital kimlik tabanlı yedekleme",
+        "physical" : "Fiziksel yedeklemeler"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "Kaybedemeyeceğiniz bir yedekleme oluşturun",
+        "inProgress" : "Etkinleştirmeyi tamamlayın",
+        "done" : "Senkronizasyonunuzu yönetin",
+        "discover" : "Keşfet"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "description" : "PIN korumalı bir akıllı kart"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "24 kelime için metal yedekleme",
+        "description" : "Ateşe ve suya dayanıklı koruma."
+      }
     },
     "myLedger" : {
       "title" : "My Ledger",

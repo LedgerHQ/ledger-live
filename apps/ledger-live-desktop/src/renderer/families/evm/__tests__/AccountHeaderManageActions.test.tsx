@@ -1,10 +1,7 @@
 import { act } from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Account } from "@ledgerhq/types-live";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
@@ -23,7 +20,6 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
   };
 });
 
-setSupportedCurrencies(["sei_evm"]);
 const seiEvmCurrency = getCryptoCurrencyById("sei_evm");
 
 const emptyStakingResources = {

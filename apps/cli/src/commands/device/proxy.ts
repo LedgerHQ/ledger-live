@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/hw-transport-mocker";
 import Transport from "@ledgerhq/hw-transport";
 import { log, listen } from "@ledgerhq/logs";
-import { open } from "@ledgerhq/live-common/hw/index";
+import { discoverDevices, open } from "@ledgerhq/live-common/hw/index";
 import fs from "fs";
 import http from "http";
 import express from "express";
@@ -13,7 +13,8 @@ import cors from "cors";
 import WebSocket, { WebSocketServer } from "ws";
 import bodyParser from "body-parser";
 import os from "os";
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
+import { filter, timeout } from "rxjs/operators";
 import { DeviceCommonOpts, deviceOpt } from "../../scan";
 const args = [
   deviceOpt,
@@ -89,6 +90,17 @@ const job = ({
       create: () => Promise<Transport>;
     };
 
+    const getDeviceModelId = async (): Promise<string | null> => {
+      const discoveredDevice = await firstValueFrom(
+        discoverDevices(module => module.id === "hid").pipe(
+          filter(event => event.type === "add" && (!device || event.id === device)),
+          timeout(2_000),
+        ),
+      );
+
+      return discoveredDevice.deviceModel?.id ?? null;
+    };
+
     const getTransportLike = (): TransportLike => {
       return {
         open: () => open(device || ""),
@@ -151,9 +163,24 @@ const job = ({
     const wss: WebSocketServer = new WebSocket.Server({
       server,
     });
+    let pending = false;
     app.use(cors());
     app.get("/", (req: any, res: any) => {
       res.sendStatus(200);
+    });
+    app.get("/metadata", (req: any, res: any) => {
+      getDeviceModelId()
+        .then(deviceModelId =>
+          res.json({
+            deviceModelId,
+          }),
+        )
+        .catch((e: Error) =>
+          res.status(500).json({
+            error: e.message,
+            deviceModelId: null,
+          }),
+        );
     });
 
     if (recordStore) {
@@ -173,7 +200,6 @@ const job = ({
       });
     }
 
-    let pending = false;
     app.post("/", bodyParser.json(), async (req: any, res: any) => {
       if (!req.body) return res.sendStatus(400);
       let data: Buffer | null = null;

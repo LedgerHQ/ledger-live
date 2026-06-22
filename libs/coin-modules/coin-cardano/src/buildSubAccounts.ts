@@ -30,9 +30,6 @@ export const decodeTokenAssetId = (id: string): { policyId: string; assetName: s
   return { policyId, assetName };
 };
 
-const encodeTokenCurrencyId = (parentCurrency: CryptoCurrency, assetId: string): string =>
-  `${parentCurrency.id}/native/${assetId}`;
-
 export const decodeTokenCurrencyId = (
   id: string,
 ): { parentCurrencyId: string; type: string; assetId: string } => {
@@ -63,12 +60,11 @@ const mapTxToTokenAccountOperation = async ({
   for (const tx of newTransactions) {
     const accountChange = getAccountChange(tx, accountCredentialsMap);
     for (const token of accountChange.tokens) {
-      const assetId = getTokenAssetId({
-        policyId: token.policyId,
-        assetName: token.assetName,
-      });
-      const tokenCurrencyId = encodeTokenCurrencyId(parentCurrency, assetId);
-      const tokenCurrency = await getCryptoAssetsStore().findTokenById(tokenCurrencyId);
+      const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        token.policyId,
+        parentCurrency.id,
+        token.assetName === "" ? undefined : token.assetName,
+      );
       // skip the unsupported tokens by ledger-live
       if (tokenCurrency === null || tokenCurrency === undefined) {
         continue;
@@ -151,8 +147,10 @@ export async function buildSubAccounts({
     const operations = mergeOps(oldOperations, newOperations);
     const { token: tokenCurrency } = await decodeTokenAccountId(tokenAccountId);
     if (tokenCurrency) {
-      const accountBalance =
-        tokensBalanceByAssetId[tokenCurrency.contractAddress]?.amount || new BigNumber(0);
+      const { assetId } = decodeTokenCurrencyId(tokenCurrency.id);
+      const { policyId, assetName } = decodeTokenAssetId(assetId);
+      const contractAddress = policyId + assetName;
+      const accountBalance = tokensBalanceByAssetId[contractAddress]?.amount || new BigNumber(0);
       const tokenAccount: TokenAccount = {
         type: "TokenAccount",
         id: tokenAccountId,

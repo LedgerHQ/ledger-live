@@ -44,6 +44,7 @@ const sampleResources: StakingResources = {
       validatorAddress: "seivaloper1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx01",
       amount: new BigNumber("250000000000000000"),
       completionDate,
+      withdrawId: 3,
     },
   ],
   delegatedBalance: new BigNumber("3000000000000000000"),
@@ -106,6 +107,28 @@ describe("coin-evm/staking/serialization", () => {
       );
     });
 
+    it("roundtrips a Monad unbonding `withdrawId` (number ↔ string), omitting them when absent", () => {
+      const raw = toStakingResourcesRaw(sampleResources);
+      expect(raw.unbondings[0]).toHaveProperty("withdrawId", "3");
+
+      const back = fromStakingResourcesRaw(raw);
+      expect(back.unbondings[0].withdrawId).toBe(3);
+
+      const noId: StakingResources = {
+        ...sampleResources,
+        unbondings: [
+          {
+            validatorAddress: sampleResources.unbondings[0].validatorAddress,
+            amount: sampleResources.unbondings[0].amount,
+            completionDate: sampleResources.unbondings[0].completionDate,
+          },
+        ],
+      };
+      const rawNoId = toStakingResourcesRaw(noId);
+      expect(rawNoId.unbondings[0]).not.toHaveProperty("withdrawId");
+      expect(fromStakingResourcesRaw(rawNoId).unbondings[0]).not.toHaveProperty("withdrawId");
+    });
+
     it("only propagates `validators` when defined", () => {
       expect(toStakingResourcesRaw(sampleResources)).not.toHaveProperty("validators");
       expect(toStakingResourcesRaw({ ...sampleResources, validators: [] })).toHaveProperty(
@@ -155,7 +178,10 @@ describe("coin-evm/staking/serialization", () => {
       };
 
       const raw = toStakingResourcesRaw(resources);
-      expect(raw.delegations[0]).toMatchObject({ validatorId: "7", validatorName: "GalaxyDigital" });
+      expect(raw.delegations[0]).toMatchObject({
+        validatorId: "7",
+        validatorName: "GalaxyDigital",
+      });
       expect(raw.unbondings[0]).toMatchObject({ validatorName: "GalaxyDigital" });
 
       const back = fromStakingResourcesRaw(raw);

@@ -1,5 +1,4 @@
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   decodeTokenAccountId,
@@ -461,7 +460,7 @@ describe("Aptos sync logic", () => {
               type: "TokenCurrency" as const,
               id: "aptos/coin/dstapt::staked_coin::stakedaptos",
               contractAddress: "0xd111::staked_coin::StakedAptos",
-              parentCurrency: getCryptoCurrencyById("aptos"),
+              parentCurrencyId: "aptos",
               name: "dstAPT",
               tokenType: "coin",
               ticker: "dstAPT",
@@ -744,7 +743,7 @@ describe("Aptos sync logic", () => {
               type: "TokenCurrency" as const,
               id: "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
               contractAddress: "0x2ebb",
-              parentCurrency: getCryptoCurrencyById("aptos"),
+              parentCurrencyId: "aptos",
               name: "CELLANA",
               tokenType: "fungible_asset",
               ticker: "CELL",

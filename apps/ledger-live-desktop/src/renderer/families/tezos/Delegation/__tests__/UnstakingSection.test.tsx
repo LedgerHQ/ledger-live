@@ -1,10 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { fireEvent, render, screen } from "tests/testSetup";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { StakingPosition, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
@@ -21,7 +18,6 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
 
 jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
-setSupportedCurrencies(["tezos"]);
 const currency = getCryptoCurrencyById("tezos");
 const account = { ...genAccount("tezos-unstake-section", { currency }) } as unknown as TezosAccount;
 

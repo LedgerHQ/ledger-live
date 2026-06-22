@@ -3,6 +3,7 @@ import type { WalletState } from "@ledgerhq/live-wallet/store";
 import { renderHook } from "tests/testSetup";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useAddressListItemViewModel } from "../useAddressListItemViewModel";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
@@ -72,8 +73,8 @@ describe("useAddressListItemViewModel", () => {
     {
       label: "parent account is missing",
       lookup: (_id: string): Account | null => null,
-      expectedId: usdcToken.parentCurrency.id,
-      expectedTicker: usdcToken.parentCurrency.ticker,
+      expectedId: usdcToken.parentCurrencyId,
+      expectedTicker: getCryptoCurrencyById(usdcToken.parentCurrencyId).ticker,
     },
   ])(
     "uses chain currency for network icon when $label",

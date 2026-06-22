@@ -222,7 +222,7 @@ describe("api.ts", () => {
       tokenType: "erc20",
       delisted: false,
       disableCountervalue: false,
-      parentCurrency: {} as any,
+      parentCurrencyId: "ethereum",
     };
 
     beforeEach(() => {
@@ -333,7 +333,7 @@ describe("api.ts", () => {
       tokenType: "erc20",
       delisted: false,
       disableCountervalue: false,
-      parentCurrency: {} as any,
+      parentCurrencyId: "ethereum",
     };
 
     beforeEach(() => {
@@ -440,7 +440,7 @@ describe("api.ts", () => {
       tokenType: "erc20",
       delisted: false,
       disableCountervalue: false,
-      parentCurrency: {} as any,
+      parentCurrencyId: "ethereum",
     };
 
     beforeEach(() => {

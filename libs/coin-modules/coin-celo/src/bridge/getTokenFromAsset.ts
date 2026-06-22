@@ -17,7 +17,7 @@ export function getAssetFromToken(
   token: TokenCurrency,
   owner: string,
 ): AssetInfo {
-  if (token.parentCurrency.id !== currency.id) {
+  if (token.parentCurrencyId !== currency.id) {
     throw new Error(`'${token.id}' is not a valid token for '${currency.id}'`);
   }
 

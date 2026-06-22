@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { useFeature } from "@features/platform-feature-flags";
+import type { Features } from "@shared/feature-flags";
 import { track } from "~/analytics";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector } from "~/reducers/settings";
@@ -26,7 +26,7 @@ export type NotificationsOptInViewModel = {
   isAllowNotificationsDisabled: boolean;
   dismissedCount: number;
   nextRepromptDelay: ReturnType<typeof useNotifications>["nextRepromptDelay"];
-  variant?: ABTestingVariants;
+  variant?: NonNullable<Features["lwmNewWordingOptInNotificationsDrawer"]["params"]>["variant"];
 };
 
 export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {

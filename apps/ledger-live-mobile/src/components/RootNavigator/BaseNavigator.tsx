@@ -24,9 +24,9 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
@@ -34,6 +34,7 @@ import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
+import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -62,7 +63,9 @@ import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
+import { hasNoAccountsSelector, accountScreenSelector } from "~/reducers/accounts";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getOperationTypeI18nKey } from "~/logic/operationTypeName";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
 import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
@@ -100,7 +103,7 @@ import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import FeesNavigator from "./FeesNavigator";
-import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { getEarnScreenOptions } from "./getEarnScreenOptions";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 import LiveAppModalScreen from "LLM/features/LiveAppModal";
 
@@ -136,12 +139,14 @@ function OperationDetailsHeaderLeft() {
 function OperationDetailsHeaderTitle() {
   const { t } = useTranslation();
   const route = useRoute<OperationDetailsRouteProp>();
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const operationType = route.params?.operation?.type;
+  const family = account ? getMainAccount(account, parentAccount).currency.family : undefined;
 
   return (
     <StepHeader
       subtitle={t("operationDetails.title")}
-      title={operationType ? t(`operations.types.${operationType}`) : ""}
+      title={operationType ? t(getOperationTypeI18nKey(operationType, family)) : ""}
       testID="operationDetails-title"
     />
   );
@@ -175,7 +180,10 @@ export default function BaseNavigator() {
     }>
   >();
   const { colors } = useTheme();
-  const { backgroundColor } = useWallet40Theme("mobile");
+  // The Rewards simulator's design uses the live-app canvas (pure black in Wallet 4.0 dark) for the
+  // whole screen — same canvas `getStackNavigationConfigV4` paints from (`theme.colors.bg.canvas`).
+  const { theme: lumenTheme } = useLumenTheme();
+  const liveAppCanvasColor = lumenTheme.colors.bg.canvas;
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const nativeStackScreenOptions: Partial<NativeStackNavigationOptions> = stackNavigationConfig;
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
@@ -351,6 +359,11 @@ export default function BaseNavigator() {
           name={NavigatorName.Perps}
           component={PerpsNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.GlobalSearch}
+          component={GlobalSearchNavigator}
+          options={{ headerShown: false, animation: "fade" }}
         />
         <Stack.Screen
           name={NavigatorName.Freeze}
@@ -572,46 +585,14 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Earn}
           component={EarnLiveAppNavigator}
-          options={props => {
-            const stakeLabel = getStakeLabelLocaleBased();
-            const intent = props.route?.params?.params?.intent;
-
-            return intent === "deposit" || intent === "withdraw"
-              ? {
-                  headerShown: true,
-                  closable: false,
-                  headerTitle: t(stakeLabel),
-                  headerRight: () => null,
-                }
-              : { headerShown: false };
-          }}
+          options={props =>
+            getEarnScreenOptions(props.route?.params?.params?.intent, t, liveAppCanvasColor)
+          }
         />
         <Stack.Screen
           name={NavigatorName.Borrow}
           component={BorrowLiveAppNavigator}
-          options={props => {
-            return {
-              headerShown: true,
-              closable: false,
-              headerLeft: () => (
-                <NavigationHeaderBackButton
-                  onPress={nav => {
-                    nav.navigate(NavigatorName.Borrow, {
-                      screen: ScreenName.Borrow,
-                      params: {
-                        ...props.route?.params?.params,
-                        action: "go-back",
-                      },
-                    });
-                  }}
-                />
-              ),
-              headerTitle: t("borrow.title"),
-              headerRight: () => null,
-              headerStyle: { backgroundColor },
-              contentStyle: { backgroundColor },
-            };
-          }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}

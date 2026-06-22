@@ -2,7 +2,9 @@ import BigNumber from "bignumber.js";
 import { Subject } from "rxjs";
 import { act } from "react";
 import { renderHook } from "tests/testSetup";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { aleoPrivateSyncProgress$ } from "@ledgerhq/live-common/families/aleo/privateSyncProgress";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { useAleoPrivateSync } from "./useAleoPrivateSync";
@@ -267,9 +269,9 @@ describe("useAleoPrivateSync", () => {
       expect(mockSync).toHaveBeenCalledTimes(1);
     });
 
-    it("should not call sync for a non-Aleo account (no aleoResources)", async () => {
-      // Plain account without aleoResources — isAleoAccount returns false
-      const { result } = renderHook(() => useAleoPrivateSync({ account: { ...ALEO_ACCOUNT_1 } }));
+    it("should not call sync for a non-Aleo account", async () => {
+      const nonAleoAccount = genAccount("btc-1", { currency: getCryptoCurrencyById("bitcoin") });
+      const { result } = renderHook(() => useAleoPrivateSync({ account: nonAleoAccount }));
 
       await act(async () => {
         result.current.start();

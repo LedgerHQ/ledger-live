@@ -18,7 +18,6 @@ import Expand from "./Expand";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { DisplayName, IdentityManager } from "./IdentityManager";
 import { AppSetDeviceId } from "./AppSetDeviceId";
-import { AppSetSupportedCurrencies } from "./AppSetSupportedCurrencies";
 import { AppSetApplicationId } from "./AppSetApplicationId";
 import { AppQRCodeCandidate } from "./AppQRCodeCandidate";
 import { TrustchainSDKContext, defaultContext } from "../context";
@@ -200,7 +199,6 @@ const App = () => {
               <AppSetTrustchainAPIEnv />
               <AppSetCloudSyncAPIEnv />
               <AppMockEnv />
-              <AppSetSupportedCurrencies />
               <AppSetApplicationId
                 applicationId={applicationId}
                 setApplicationId={setApplicationId}

@@ -162,11 +162,6 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInpu
   onIntentJobError: (error: unknown) => void;
   /** When `false` the executor is hidden and inactive; setting to `false` terminates any running job. */
   enabled: boolean;
-  /**
-   * Whether the UI allows the user to cancel the current execution
-   * (e.g. close the bottom sheet containing the executor).
-   */
-  cancellableUI: boolean;
   /** Called when the user performs an action that cancels the current execution
    * (e.g. user closes the bottom sheet containing the executor, or clicks a "Close" CTA in a given error state, etc.).
    */

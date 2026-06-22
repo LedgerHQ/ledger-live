@@ -1,14 +1,23 @@
+import BigNumber from "bignumber.js";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
+import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
 import { makeAleoTransaction } from "../__mocks__/transaction.mock";
-import { getAleoAddressBadgeI18nKey, getAleoCurrencyConfig } from "./utils";
+import {
+  getAleoAddressBadgeI18nKey,
+  getAleoCurrencyConfig,
+  isAleoAccount,
+  isAleoTransaction,
+} from "./utils";
 
 jest.mock("@ledgerhq/live-common/config/index");
 
 const mockGetCurrencyConfiguration = jest.mocked(getCurrencyConfiguration);
+
 describe("getAleoCurrencyConfig", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -30,7 +39,7 @@ describe("getAleoCurrencyConfig", () => {
     // @ts-expect-error - not all fields are needed for this test
     const tokenCurrency: TokenCurrency = {
       type: "TokenCurrency",
-      parentCurrency: aleoCurrency,
+      parentCurrencyId: "aleo",
     };
 
     const result = getAleoCurrencyConfig(tokenCurrency);
@@ -57,6 +66,10 @@ describe("getAleoAddressBadgeI18nKey", () => {
     [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, "aleo.operations.type.private"],
     [TRANSACTION_TYPE.TRANSFER_PUBLIC, "aleo.operations.type.public"],
     [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, "aleo.operations.type.public"],
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, "aleo.operations.type.private"],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC, "aleo.operations.type.private"],
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC, "aleo.operations.type.public"],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE, "aleo.operations.type.public"],
   ])("returns the correct key for %s in from direction", (mode, expectedKey) => {
     const tx = makeAleoTransaction({ mode });
 
@@ -68,9 +81,47 @@ describe("getAleoAddressBadgeI18nKey", () => {
     [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, "aleo.operations.type.private"],
     [TRANSACTION_TYPE.TRANSFER_PUBLIC, "aleo.operations.type.public"],
     [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, "aleo.operations.type.public"],
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, "aleo.operations.type.private"],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE, "aleo.operations.type.private"],
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC, "aleo.operations.type.public"],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC, "aleo.operations.type.public"],
   ])("returns the correct key for %s in to direction", (mode, expectedKey) => {
     const tx = makeAleoTransaction({ mode });
 
     expect(getAleoAddressBadgeI18nKey(tx, "to")).toBe(expectedKey);
+  });
+});
+
+describe("isAleoAccount", () => {
+  it("should return true for an account with aleoResources", () => {
+    const aleoAccount: AleoAccount = {
+      ...ALEO_ACCOUNT_1,
+      aleoResources: {
+        transparentBalance: new BigNumber(0),
+        privateBalance: new BigNumber(0),
+        unspentPrivateRecords: [],
+        provableApi: null,
+        lastPrivateSyncDate: null,
+      },
+    };
+
+    expect(isAleoAccount(aleoAccount)).toBe(true);
+  });
+
+  it("should return true for a plain Aleo account without aleoResources", () => {
+    expect(isAleoAccount(ALEO_ACCOUNT_1)).toBe(true);
+  });
+});
+
+describe("isAleoTransaction", () => {
+  it("should return true for an aleo transaction", () => {
+    expect(isAleoTransaction(makeAleoTransaction())).toBe(true);
+  });
+
+  it("should return false for a non-aleo transaction", () => {
+    expect(
+      // @ts-expect-error - testing invalid family
+      isAleoTransaction({ ...makeAleoTransaction(), family: "bitcoin" }),
+    ).toBe(false);
   });
 });

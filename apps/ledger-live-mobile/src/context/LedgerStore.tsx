@@ -27,6 +27,7 @@ import {
   getProtect,
   getMarketState,
   getMarketListConfig,
+  getMarketBannerState,
   getTrustchainState,
   getWalletExportState,
   getLargeMoverState,
@@ -42,6 +43,7 @@ import { INITIAL_STATE as settingsState } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
+import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
@@ -99,6 +101,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         postOnboardingState,
         marketState,
         marketListConfigState,
+        marketBannerState,
         trustchainStore,
         walletStore,
         protect,
@@ -117,6 +120,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
+        retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
         retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
         retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
@@ -176,6 +180,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (marketListConfigState) {
         store.dispatch(importMarketListConfig(marketListConfigState));
+      }
+
+      if (marketBannerState) {
+        store.dispatch(importMarketBannerState(marketBannerState));
       }
 
       if (trustchainStore) {

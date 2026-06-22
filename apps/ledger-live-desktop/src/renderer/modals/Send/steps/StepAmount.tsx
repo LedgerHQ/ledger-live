@@ -16,7 +16,7 @@ import { StepProps } from "../types";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { useLLDCoinFamily } from "~/renderer/families";
 
 export const DefaultStepAmount = (props: StepProps) => {
   const dispatch = useDispatch();
@@ -97,13 +97,13 @@ export const DefaultStepAmount = (props: StepProps) => {
 
 const StepAmount = (props: StepProps) => {
   const { account, parentAccount } = props;
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
 
   if (!account) {
     return null;
   }
 
-  const mainAccount = getMainAccount(account, parentAccount);
-  const specific = getLLDCoinFamily(mainAccount.currency.family);
   const Component = specific?.SendStepAmount ?? DefaultStepAmount;
 
   return <Component {...props} />;

@@ -5,7 +5,7 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { fireEvent } from "@testing-library/react";
 import BlacklistedTokens from "./BlacklistedTokens";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockSync = jest.fn();
 const mockFindTokenById = jest.fn();
@@ -20,33 +20,13 @@ jest.mock("@ledgerhq/cryptoassets/state", () => ({
   }),
 }));
 
-const mockEthereumCurrency: CryptoCurrency = {
-  id: "ethereum",
-  name: "Ethereum",
-  ticker: "ETH",
-  type: "CryptoCurrency",
-  managerAppName: "Ethereum",
-  coinType: 60,
-  scheme: "ethereum",
-  color: "#0ebdcd",
-  family: "ethereum",
-  explorerViews: [],
-  units: [
-    {
-      name: "ether",
-      code: "ETH",
-      magnitude: 18,
-    },
-  ],
-};
-
 const mockUsdtToken: TokenCurrency = {
   id: "ethereum/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrency: mockEthereumCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [
     {
@@ -63,7 +43,7 @@ const mockUsdcToken: TokenCurrency = {
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrency: mockEthereumCurrency,
+  parentCurrencyId: "ethereum",
   tokenType: "erc20",
   units: [
     {

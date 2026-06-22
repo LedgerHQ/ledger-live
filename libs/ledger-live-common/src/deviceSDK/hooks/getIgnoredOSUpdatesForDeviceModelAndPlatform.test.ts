@@ -1,9 +1,9 @@
-import { type Feature_OnboardingIgnoredOSUpdates } from "@ledgerhq/types-live";
+import { type Features } from "@shared/feature-flags";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getIgnoredOSUpdatesForDeviceModelAndPlatform } from "./getIgnoredOSUpdatesForDeviceModelAndPlatform";
 
 describe("getIgnoredOSUpdatesForDeviceModelAndPlatform", () => {
-  const mockConfig: Feature_OnboardingIgnoredOSUpdates["params"] = {
+  const mockConfig: Features["onboardingIgnoredOsUpdates"]["params"] = {
     ios: {
       [DeviceModelId.nanoS]: ["1.6.0", "1.6.1"],
       [DeviceModelId.nanoX]: ["2.0.0"],
@@ -38,7 +38,7 @@ describe("getIgnoredOSUpdatesForDeviceModelAndPlatform", () => {
   describe("when config is null", () => {
     it("should return empty array", () => {
       const result = getIgnoredOSUpdatesForDeviceModelAndPlatform(
-        null as unknown as Feature_OnboardingIgnoredOSUpdates["params"],
+        null as unknown as Features["onboardingIgnoredOsUpdates"]["params"],
         DeviceModelId.nanoS,
         "ios",
       );
@@ -48,7 +48,7 @@ describe("getIgnoredOSUpdatesForDeviceModelAndPlatform", () => {
 
   describe("when platform does not exist in config", () => {
     it("should return empty array", () => {
-      const configWithoutPlatform: Feature_OnboardingIgnoredOSUpdates["params"] = {
+      const configWithoutPlatform: Features["onboardingIgnoredOsUpdates"]["params"] = {
         ios: { [DeviceModelId.nanoS]: ["1.6.0"] },
       };
 
@@ -74,7 +74,7 @@ describe("getIgnoredOSUpdatesForDeviceModelAndPlatform", () => {
 
   describe("when device model exists but has no ignored updates", () => {
     it("should return empty array", () => {
-      const configWithEmptyArray: Feature_OnboardingIgnoredOSUpdates["params"] = {
+      const configWithEmptyArray: Features["onboardingIgnoredOsUpdates"]["params"] = {
         ios: {
           [DeviceModelId.nanoS]: [],
         },
@@ -147,7 +147,7 @@ describe("getIgnoredOSUpdatesForDeviceModelAndPlatform", () => {
 
   describe("edge cases", () => {
     it("should handle empty config object", () => {
-      const emptyConfig: Feature_OnboardingIgnoredOSUpdates["params"] = {};
+      const emptyConfig: Features["onboardingIgnoredOsUpdates"]["params"] = {};
 
       const result = getIgnoredOSUpdatesForDeviceModelAndPlatform(
         emptyConfig,
@@ -158,7 +158,7 @@ describe("getIgnoredOSUpdatesForDeviceModelAndPlatform", () => {
     });
 
     it("should handle config with empty platform objects", () => {
-      const configWithEmptyPlatforms: Feature_OnboardingIgnoredOSUpdates["params"] = {
+      const configWithEmptyPlatforms: Features["onboardingIgnoredOsUpdates"]["params"] = {
         ios: {},
         android: {},
         macos: {},
@@ -175,7 +175,7 @@ describe("getIgnoredOSUpdatesForDeviceModelAndPlatform", () => {
     });
 
     it("should handle undefined device model entries", () => {
-      const configWithUndefined: Feature_OnboardingIgnoredOSUpdates["params"] = {
+      const configWithUndefined: Features["onboardingIgnoredOsUpdates"]["params"] = {
         ios: {
           [DeviceModelId.nanoS]: undefined as unknown as string[],
         },

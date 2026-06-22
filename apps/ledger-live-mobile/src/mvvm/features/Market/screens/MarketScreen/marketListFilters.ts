@@ -1,7 +1,7 @@
 import { KeysPriceChange, Order } from "@ledgerhq/live-common/market/utils/types";
 import type { MarketListFilterTimeframe, MarketListSorting } from "~/reducers/types";
 
-const SUPPORTED_SORTINGS = new Set<MarketListSorting>(["marketCap", "gainers", "losers"]);
+const SUPPORTED_SORTINGS = new Set<MarketListSorting>(["marketCap", "volume", "gainers", "losers"]);
 const SUPPORTED_TIMEFRAMES = new Set<MarketListFilterTimeframe>(["1D", "7D", "30D", "6M", "1Y"]);
 
 export function isMarketListSortingSupported(sorting: MarketListSorting): boolean {
@@ -24,8 +24,9 @@ export function getMarketListOrder(sorting: MarketListSorting): Order {
       return Order.topGainers;
     case "losers":
       return Order.topLosers;
-    case "marketCap":
     case "volume":
+      return Order.VolumeDesc;
+    case "marketCap":
     default:
       return Order.MarketCapDesc;
   }

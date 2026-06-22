@@ -28,7 +28,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayMarketBanner: isEnabled && Boolean(params?.marketBanner),
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
-      shouldDisplayQuickActionsCtasVariant: isEnabled && Boolean(params?.quickActionsCtasVariant),
       shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
@@ -76,8 +75,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayGraphRework: boolean;
   /** Whether to show quick action CTAs */
   readonly shouldDisplayQuickActionCtas: boolean;
-  /** Whether to show the quick actions CTAs variant */
-  readonly shouldDisplayQuickActionsCtasVariant: boolean;
   /** Whether to show the new receive options dialog (Lumen) */
   readonly shouldDisplayNewReceiveDialog: boolean;
   /** Whether to show the wallet 4.0 main navigation */

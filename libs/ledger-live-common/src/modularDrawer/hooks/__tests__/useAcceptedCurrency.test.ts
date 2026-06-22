@@ -4,12 +4,16 @@
 import { renderHook } from "@testing-library/react";
 import { useAcceptedCurrency } from "../useAcceptedCurrency";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useCurrenciesUnderFeatureFlag } from "../useCurrenciesUnderFeatureFlag";
-import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencies/support";
+import { isCurrencySupported } from "../../../coin-modules/registry";
 
 // Mock dependencies
 jest.mock("../useCurrenciesUnderFeatureFlag");
-jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support");
+jest.mock("../../../coin-modules/registry", () => ({
+  ...jest.requireActual("../../../coin-modules/registry"),
+  isCurrencySupported: jest.fn(),
+}));
 
 const mockUseCurrenciesUnderFeatureFlag = useCurrenciesUnderFeatureFlag as jest.MockedFunction<
   typeof useCurrenciesUnderFeatureFlag
@@ -38,7 +42,7 @@ describe("useAcceptedCurrency", () => {
     name: "USD Coin",
     ticker: "USDC",
     type: "TokenCurrency",
-    parentCurrency: mockCryptoCurrency,
+    parentCurrencyId: "bitcoin",
   } as TokenCurrency;
 
   const mockTokenWithDeactivatedParent: TokenCurrency = {
@@ -46,7 +50,7 @@ describe("useAcceptedCurrency", () => {
     name: "Wrapped Ethereum",
     ticker: "WETH",
     type: "TokenCurrency",
-    parentCurrency: mockDeactivatedCurrency,
+    parentCurrencyId: "ethereum",
   } as TokenCurrency;
 
   beforeEach(() => {
@@ -106,7 +110,7 @@ describe("useAcceptedCurrency", () => {
     const isAccepted = result.current(mockTokenCurrency);
 
     expect(isAccepted).toBe(true);
-    expect(mockIsCurrencySupported).toHaveBeenCalledWith(mockCryptoCurrency);
+    expect(mockIsCurrencySupported).toHaveBeenCalledWith(getCryptoCurrencyById("bitcoin"));
   });
 
   it("should return false for a token with a deactivated parent currency", () => {
@@ -120,7 +124,7 @@ describe("useAcceptedCurrency", () => {
     const isAccepted = result.current(mockTokenWithDeactivatedParent);
 
     expect(isAccepted).toBe(false);
-    expect(mockIsCurrencySupported).toHaveBeenCalledWith(mockDeactivatedCurrency);
+    expect(mockIsCurrencySupported).toHaveBeenCalledWith(getCryptoCurrencyById("ethereum"));
   });
 
   it("should return false for a token with an unsupported parent currency", () => {
@@ -134,7 +138,7 @@ describe("useAcceptedCurrency", () => {
     const isAccepted = result.current(mockTokenCurrency);
 
     expect(isAccepted).toBe(false);
-    expect(mockIsCurrencySupported).toHaveBeenCalledWith(mockCryptoCurrency);
+    expect(mockIsCurrencySupported).toHaveBeenCalledWith(getCryptoCurrencyById("bitcoin"));
   });
 
   it("should update when deactivatedCurrencyIds changes", () => {

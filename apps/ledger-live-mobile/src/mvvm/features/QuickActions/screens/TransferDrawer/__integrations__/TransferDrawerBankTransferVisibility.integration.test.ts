@@ -18,7 +18,7 @@ const mockBitcoin = getCryptoCurrencyById("bitcoin");
 const mockUsdc = {
   type: "TokenCurrency",
   id: USDC_CURRENCY_ID,
-  parentCurrency: { family: "evm" },
+  parentCurrencyId: "ethereum",
 } as unknown as TokenCurrency;
 
 const withOpenDrawer =

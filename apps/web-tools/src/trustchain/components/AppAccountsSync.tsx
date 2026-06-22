@@ -30,7 +30,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
-import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Loading } from "./Loading";
@@ -358,7 +358,7 @@ function HeadlessAddAccounts({
           className="bg-base border border-base rounded-md px-8 py-6 body-2 text-base"
         >
           <option value="">Select a currency</option>
-          {listSupportedCurrencies().map(c => (
+          {listCryptoCurrencies().map(c => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>
@@ -387,7 +387,7 @@ function AccountRow({
 
   const ledgerId = currency.id;
   const ticker = currency.ticker;
-  const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+  const network = currency.type === "TokenCurrency" ? currency.parentCurrencyId : undefined;
   const validSize = 20;
 
   return (

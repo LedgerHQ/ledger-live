@@ -1,10 +1,13 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 
 export function createTransaction(account: Account | TokenAccount): GenericTransaction {
   const currency =
-    account.type === "TokenAccount" ? account.token.parentCurrency : account.currency;
+    account.type === "TokenAccount"
+      ? getCryptoCurrencyById(account.token.parentCurrencyId)
+      : account.currency;
   switch (currency.family) {
     case "xrp":
     case "ripple":

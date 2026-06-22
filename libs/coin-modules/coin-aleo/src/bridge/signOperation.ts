@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import type {
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import {
   type Transaction,
@@ -10,6 +14,7 @@ import {
   type FeeConfiguration,
   PreparedRequestResponse,
   type AleoCoinConfig,
+  AleoTransactionIntentData,
 } from "../types";
 import { sdkClient } from "../network/sdk";
 import { craftTransaction } from "../logic";
@@ -32,6 +37,72 @@ interface SigningParams {
   baseFee: BigNumber;
   priorityFee: BigNumber;
   viewKey: string;
+}
+
+type DeviceStreamingCallback = (arg0: { progress: number; total: number; index: number }) => void;
+
+function createStreamingReporter(
+  onDeviceStreaming: DeviceStreamingCallback,
+  total: number,
+): {
+  reportInitialStep: () => void;
+  reportStepCompleted: () => void;
+} {
+  let completedSteps = 0;
+  return {
+    reportInitialStep: () => {
+      onDeviceStreaming({ total, index: 0, progress: 0.01 }); // show 1% to indicate that the initial step is in progress
+    },
+    reportStepCompleted: () => {
+      completedSteps += 1;
+      const index = completedSteps - 1;
+      const progress = completedSteps / total;
+      onDeviceStreaming({ total, index, progress });
+    },
+  };
+}
+
+async function getTvks({
+  signer,
+  path,
+  txIntent,
+  onDeviceStreaming,
+}: {
+  signer: AleoSigner;
+  path: string;
+  txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
+  onDeviceStreaming: DeviceStreamingCallback;
+}): Promise<{
+  rootTvk: string;
+  nestedTvks: string[];
+  // feeTvk: string; // not used on the backend side, left just for documentation purposes
+} | null> {
+  const records = "data" in txIntent && "records" in txIntent.data ? txIntent.data.records : null;
+  const isTxWithNestedCalls = records && records.length > 1;
+
+  // TVKs are only needed for transactions with nested calls.
+  // In our case it can happen only when more than 1 record is used
+  if (!isTxWithNestedCalls) {
+    return null;
+  }
+
+  const nestedTvks: string[] = [];
+  const tvksToFetch = records.length + 1;
+  const streamingReporter = createStreamingReporter(onDeviceStreaming, tvksToFetch);
+
+  streamingReporter.reportInitialStep();
+
+  const rootResult = await signer.getTvk(path);
+  const rootTvk = Buffer.from(rootResult.tvk).toString("hex");
+  streamingReporter.reportStepCompleted();
+
+  for (let transitionIndex = 1; transitionIndex < tvksToFetch; transitionIndex++) {
+    const nestedResult = await signer.getTvk(path, transitionIndex);
+    nestedTvks.push(Buffer.from(nestedResult.tvk).toString("hex"));
+    streamingReporter.reportStepCompleted();
+  }
+
+  return { rootTvk, nestedTvks };
 }
 
 async function buildFeeAuthorization({
@@ -152,6 +223,7 @@ export const buildSignOperation =
         try {
           const viewKey = extractViewKey(account);
           const config = resolveConfig(account.currency.id);
+          const txIntent = createTransactionIntent({ account, transaction });
           const baseFee = transaction.fees;
           const priorityFee = new BigNumber(0);
 
@@ -161,21 +233,36 @@ export const buildSignOperation =
             max_priority_fee: priorityFee.toString(),
           };
 
-          const craftedRequest = await craftTransaction({
-            currency: account.currency,
-            viewKey,
-            feeConfiguration,
-            txIntent: createTransactionIntent({ account, transaction }),
-          });
+          const signedTx = await signerContext(deviceId, async signer => {
+            const tvks = await getTvks({
+              signer,
+              path: account.freshAddressPath,
+              txIntent,
+              onDeviceStreaming: ({ progress, index, total }) => {
+                o.next({
+                  type: "device-streaming",
+                  progress,
+                  index,
+                  total,
+                });
+              },
+            });
 
-          const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
+            const craftedRequest = await craftTransaction({
+              currency: account.currency,
+              viewKey,
+              feeConfiguration,
+              txIntent,
+              ...(tvks && { tvks: [tvks.rootTvk, ...tvks.nestedTvks] }),
+            });
 
-          o.next({
-            type: "device-signature-requested",
-          });
+            const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
 
-          const signedTx = await signerContext(deviceId, signer =>
-            executeSigningFlow({
+            o.next({
+              type: "device-signature-requested",
+            });
+
+            return executeSigningFlow({
               signer,
               onDeviceSigned: () => o.next({ type: "device-signature-granted" }),
               params: {
@@ -187,8 +274,8 @@ export const buildSignOperation =
                 priorityFee,
                 viewKey,
               },
-            }),
-          );
+            });
+          });
 
           const operation = buildOptimisticOperation({
             account,

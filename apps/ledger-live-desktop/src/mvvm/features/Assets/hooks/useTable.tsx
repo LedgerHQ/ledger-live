@@ -76,10 +76,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         header: t("assets.columns.price"),
         enableSorting: false,
         cell: ({ row }) => (
-          <PriceCell
-            currency={row.original.currency}
-            placeholderPrice={row.original.placeholderPrice}
-          />
+          <PriceCell currency={row.original.currency} marketPrice={row.original.marketPrice} />
         ),
         meta: { align: "end", hideBelow: "xl" },
       },

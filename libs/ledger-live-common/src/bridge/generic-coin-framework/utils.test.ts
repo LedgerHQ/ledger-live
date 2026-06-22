@@ -546,7 +546,13 @@ describe("coin-framework utils", () => {
       });
     });
 
-    it.each(["delegate", "undelegate", "redelegate", "claimReward"] as GenericTransactionMode[])(
+    it.each([
+      "delegate",
+      "undelegate",
+      "redelegate",
+      "claimReward",
+      "compoundReward",
+    ] as GenericTransactionMode[])(
       "should return a correct intent for a delegation transaction with mode %s",
       mode => {
         const valAddress = "0x5A7FC11397E9a8AD41BF10bf13F22B0a63f96f6d";
@@ -586,7 +592,13 @@ describe("coin-framework utils", () => {
       },
     );
 
-    it.each(["delegate", "undelegate", "redelegate", "claimReward"] as GenericTransactionMode[])(
+    it.each([
+      "delegate",
+      "undelegate",
+      "redelegate",
+      "claimReward",
+      "compoundReward",
+    ] as GenericTransactionMode[])(
       "should return an intent without delegation fields when missing from transaction for mode %s",
       mode => {
         const transaction: GenericTransaction = {

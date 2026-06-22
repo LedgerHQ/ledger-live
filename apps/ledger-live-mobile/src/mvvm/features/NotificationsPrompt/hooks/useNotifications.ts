@@ -13,6 +13,7 @@ const useNotifications = () => {
   const {
     notifications,
     pushNotificationsDataOfUser,
+    enableAppNotifications,
     markUserAsOptIn,
     markUserAsOptOut,
     initializeNotificationSettingsState,
@@ -32,6 +33,7 @@ const useNotifications = () => {
   const {
     isPushNotificationsModalOpen,
     drawerSource,
+    drawerPromptTarget,
     eventTimeoutRef,
     tryTriggerPushNotificationDrawerAfterAction,
     tryTriggerPushNotificationDrawerAfterInactivity,
@@ -40,7 +42,6 @@ const useNotifications = () => {
     handleCloseFromBackdropPress,
   } = useNotificationsDrawer({
     permissionStatus,
-    areNotificationsAllowed: notifications.areNotificationsAllowed,
     pushNotificationsDataOfUser,
     nextRepromptDelay,
     shouldPromptOptInDrawerAfterAction,
@@ -48,6 +49,7 @@ const useNotifications = () => {
     checkIsInactive,
     markUserAsOptOut,
     markUserAsOptIn,
+    enableAppNotifications,
     requestPushNotificationsPermission,
   });
 
@@ -128,32 +130,40 @@ const useNotifications = () => {
     };
   }, [eventTimeoutRef]);
 
-  return {
-    initPushNotificationsData,
-
+  const permission = {
     permissionStatus,
-
-    drawerSource,
-
-    nextRepromptDelay,
-    pushNotificationsDataOfUser,
-
-    isPushNotificationsModalOpen,
-
     requestPushNotificationsPermission,
+  };
 
-    markUserAsOptIn,
-    markUserAsOptOut,
-
+  const drawer = {
+    isPushNotificationsModalOpen,
+    drawerSource,
+    drawerPromptTarget,
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
+  };
 
+  const prompt = {
+    nextRepromptDelay,
+    pushNotificationsDataOfUser,
     shouldPromptOptInDrawerAfterAction,
     tryTriggerPushNotificationDrawerAfterAction,
-
-    // MAKE SURE TO CALL IT ONLY ON THE STACK NAVIGATOR WHERE THE USER IS ALREADY ONBOARDED
+    // Call only on stack navigators where onboarding is already complete.
     tryTriggerPushNotificationDrawerAfterInactivity,
+  };
+
+  const userState = {
+    markUserAsOptIn,
+    markUserAsOptOut,
+  };
+
+  return {
+    initPushNotificationsData,
+    ...permission,
+    ...drawer,
+    ...prompt,
+    ...userState,
   };
 };
 

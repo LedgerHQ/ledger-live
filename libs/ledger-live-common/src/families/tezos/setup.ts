@@ -1,12 +1,13 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import type { TezosSigner } from "@ledgerhq/coin-tezos/types/index";
-import makeCliTools from "@ledgerhq/coin-tezos/test/cli";
-import type { CliTools } from "@ledgerhq/coin-tezos/test/cli";
+import makeCliTools from "./cli";
+import type { CliTools } from "./cli";
+import type { TezosSigner } from "./types";
+import { signMessage } from "./hw-signMessage";
 import tezosResolver from "./getAddress";
 import Xtz, { Curve } from "@ledgerhq/hw-app-tezos";
 import Transport from "@ledgerhq/hw-transport";
-import { createResolver, CreateSigner } from "../../bridge/setup";
+import { createMessageSigner, createResolver, CreateSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 
 const createSigner: CreateSigner<TezosSigner> = (transport: Transport) => {
@@ -33,6 +34,10 @@ const createSigner: CreateSigner<TezosSigner> = (transport: Transport) => {
 
 const resolver: Resolver = createResolver(createSigner, tezosResolver);
 
+const messageSigner = {
+  signMessage: createMessageSigner(createSigner, signMessage),
+};
+
 const cliTools: CliTools = makeCliTools();
 
-export { cliTools, resolver };
+export { cliTools, messageSigner, resolver };

@@ -5,12 +5,23 @@ import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
 import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { genAccount } from "../mock/account";
-import { setSupportedCurrencies } from "../currencies";
+import { coinModuleLoaders } from "../coin-modules/loaders";
+import { registerCoinModules, resetCoinModulesForTests } from "../coin-modules/registry";
 import { getAccountBridge, clearBridgeCache } from ".";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
-setSupportedCurrencies(["bitcoin", "ethereum"]);
+
+const loadersFor = (...families: string[]) =>
+  coinModuleLoaders.filter(l => families.includes(l.family));
+
+// bitcoin + evm registered, tron absent → getAccountBridge(tron) rejects CurrencyNotSupported.
+const registerWithoutTron = () => {
+  resetCoinModulesForTests();
+  registerCoinModules(loadersFor("bitcoin", "evm"));
+  clearBridgeCache();
+};
+registerWithoutTron();
 
 describe("wrapAccountBridge — extension routing", () => {
   test("bitcoin clearAccount resets bitcoinResources (coin-specific override)", async () => {
@@ -58,9 +69,9 @@ describe("wrapAccountBridge — extension routing", () => {
 });
 
 describe("getAccountBridge — unsupported account rejection", () => {
-  function makeUnsupportedCurrencyAccount(id: string) {
+  function makeUnsupportedCurrencyAccount(id: string, family = "tron") {
     const account = genAccount(id, { currency: BTC });
-    return { ...account, currency: getCryptoCurrencyById("tron") };
+    return { ...account, currency: getCryptoCurrencyById(family) };
   }
 
   function makeUnsupportedDerivationAccount(id: string) {
@@ -102,31 +113,29 @@ describe("getAccountBridge — unsupported account rejection", () => {
     p1.catch(() => {});
     await expect(p1).rejects.toBeInstanceOf(CurrencyNotSupported);
 
-    setSupportedCurrencies(["bitcoin", "ethereum", "tron"]);
+    registerCoinModules(loadersFor("tron"));
     clearBridgeCache();
     try {
       const p2 = getAccountBridge(account);
       await expect(p2).resolves.toBeDefined();
     } finally {
-      setSupportedCurrencies(["bitcoin", "ethereum"]);
-      clearBridgeCache();
+      registerWithoutTron();
     }
   });
 
-  test("clearBridgeCache(family) evicts unsupported-cache entries for that family", async () => {
-    const account = makeUnsupportedCurrencyAccount("family-targeted-eviction");
+  test("clearBridgeCache(family) evicts the cached rejection for that family", async () => {
+    const account = makeUnsupportedCurrencyAccount("family-targeted-eviction", "celo");
     const p1 = getAccountBridge(account);
     p1.catch(() => {});
     await expect(p1).rejects.toBeInstanceOf(CurrencyNotSupported);
 
-    setSupportedCurrencies(["bitcoin", "ethereum", "tron"]);
-    clearBridgeCache("tron");
+    registerCoinModules(loadersFor("celo"));
+    clearBridgeCache("celo");
     try {
       const p2 = getAccountBridge(account);
       await expect(p2).resolves.toBeDefined();
     } finally {
-      setSupportedCurrencies(["bitcoin", "ethereum"]);
-      clearBridgeCache();
+      registerWithoutTron();
     }
   });
 

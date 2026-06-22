@@ -419,11 +419,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => {
         const delegated: bigint = delegatedAmountForStakingResources(b);
         const validatorName = b.stake.details?.validatorName;
+        const withdrawId = b.stake.details?.withdrawId;
         return {
           validatorAddress: b.stake.delegate,
           amount: new BigNumber(delegated.toString()),
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
+          ...(typeof withdrawId === "number" ? { withdrawId } : {}),
         };
       });
       stakingResources = {
