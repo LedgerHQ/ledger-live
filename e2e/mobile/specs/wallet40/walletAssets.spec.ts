@@ -15,7 +15,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
       speculosApp: currency.speculosApp,
       featureFlags: WALLET_40_FEATURE_FLAGS,
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   tmsLinks.forEach(link => $TmsLink(link));
@@ -32,7 +32,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
     await app.portfolio.tapFirstAssetItemW40();
     await app.market.expectMarketDetailPage();
     await app.market.leaveMarketDetailPage();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 });
 
@@ -45,7 +45,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than sectio
       userdata: "wallet40-btc-only",
       featureFlags: WALLET_40_FEATURE_FLAGS,
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   tmsLinks.forEach(link => $TmsLink(link));
@@ -68,7 +68,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
       userdata: "wallet40-many-stablecoins",
       featureFlags: WALLET_40_FEATURE_FLAGS,
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   tmsLinks.forEach(link => $TmsLink(link));
@@ -83,7 +83,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
     await app.portfolio.tapCryptosSectionTitle();
     await app.portfolio.checkCryptoListPageVisible();
     await app.common.goToPreviousPage();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   it("should cap stablecoins at 6, show only stablecoins when clicking section title, and list all stablecoin assets", async () => {
@@ -93,6 +93,6 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
     await app.portfolio.tapStablecoinsSectionTitle();
     await app.portfolio.checkStablecoinListPageVisible();
     await app.common.goToPreviousPage();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 });

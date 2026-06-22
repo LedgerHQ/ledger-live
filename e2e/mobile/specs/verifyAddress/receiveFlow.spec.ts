@@ -1,8 +1,6 @@
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { isWallet40 } from "../../helpers/commonHelpers";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -22,19 +20,13 @@ describe("Receive Flow", () => {
       },
     });
 
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   beforeEach(async () => {
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
-    if (isWallet40) {
-      await app.portfolio.pressQuickActionTransferButton();
-      await app.portfolio.pressTransferBottomSheetReceiveButton();
-    } else {
-      await app.portfolio.tapQuickActionReceiveButton();
-      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
-    }
+    await app.mainNavigation.openPortfolioViaDeeplink();
+    await app.portfolio.pressQuickActionTransferButton();
+    await app.portfolio.pressTransferBottomSheetReceiveButton();
   });
 
   afterEach(async () => {
@@ -78,13 +70,8 @@ describe("Receive Flow", () => {
     await app.receive.verifyAddress(address);
     await app.common.closePage();
 
-    if (isWallet40) {
-      await app.portfolio.pressQuickActionTransferButton();
-      await app.portfolio.pressTransferBottomSheetReceiveButton();
-    } else {
-      await app.portfolio.tapQuickActionReceiveButton();
-      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
-    }
+    await app.portfolio.pressQuickActionTransferButton();
+    await app.portfolio.pressTransferBottomSheetReceiveButton();
 
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
     await app.modularDrawer.selectNetwork(Currency.BASE.name);

@@ -10,7 +10,7 @@ interface PortfolioBannersSectionViewModelParams {
 }
 
 interface PortfolioBannersSectionViewModelResult {
-  readonly sectionMarginTop: "s8" | "s12" | "s16" | "s32";
+  readonly contentCardsPaddingTop: "s12" | "s24" | undefined;
   readonly hasAssets: boolean;
   readonly shouldShowOnboardingWidget: boolean;
   readonly shouldDisplayRecover: boolean;
@@ -28,15 +28,10 @@ export const usePortfolioBannersSectionViewModel = ({
   const [carouselIndex, setCarouselIndex] = useState(0);
 
   const hasAssets = showAssets === true;
-  const hasMultipleCards = shouldDisplayRecover && shouldShowOnboardingWidget;
-  let sectionMarginTop: PortfolioBannersSectionViewModelResult["sectionMarginTop"] = "s32";
 
-  if (!hasMultipleCards && (!shouldDisplayQuickActionCtas || !hasAssets)) {
-    sectionMarginTop = "s16";
-  } else if (hasTopWalletDisplayableCards || shouldDisplayRecover) {
-    sectionMarginTop = "s12";
-  } else if (!hasMultipleCards) {
-    sectionMarginTop = "s8";
+  let contentCardsPaddingTop: PortfolioBannersSectionViewModelResult["contentCardsPaddingTop"];
+  if (hasTopWalletDisplayableCards) {
+    contentCardsPaddingTop = shouldDisplayQuickActionCtas ? "s12" : "s24";
   }
 
   const onScroll = useCallback(
@@ -50,7 +45,7 @@ export const usePortfolioBannersSectionViewModel = ({
 
   return {
     shouldShowOnboardingWidget,
-    sectionMarginTop,
+    contentCardsPaddingTop,
     hasAssets,
     shouldDisplayRecover,
     onScroll,

@@ -2,9 +2,10 @@ import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index"
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ONE_SUI } from "../constants";
-import type { Transaction } from "../types";
+import type { SuiAccount, Transaction } from "../types";
 import createTransaction from "./createTransaction";
 import getFeesForTransaction from "./getFeesForTransaction";
+import { addressBalanceSpendCap } from "./utils";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -41,6 +42,9 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
         });
         if (gasBudget) {
           spendableBalance = spendableBalance.minus(gasBudget);
+          // SIP-58: bound the max by the address balance minus gas when real coins can't cover gas.
+          const cap = addressBalanceSpendCap(mainAccount as SuiAccount, new BigNumber(gasBudget));
+          if (cap !== null) spendableBalance = BigNumber.min(spendableBalance, cap);
         }
       }
     }

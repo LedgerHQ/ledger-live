@@ -19,6 +19,7 @@ Pay special attention to:
 - `.agents/skills/react-general/SKILL.md` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
 - `.agents/skills/coin-families-contract/SKILL.md` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
 - `.agents/skills/codeownership/SKILL.md` — Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
+- `.agents/skills/knip-migration/SKILL.md` — Dead-code detection is moving to `knip`, which needs explicit (non-`./*`) `package.json#exports`; new packages must use explicit exports + knip, not `.unimportedrc.json`
 
 ## Review Scope
 
@@ -45,6 +46,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
 - **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead.
 - **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
+- **Dead-code tooling — explicit exports + knip (new packages):** For a **new** package, flag either (a) a `.unimportedrc.json` or a script running the bare `unimported` binary (`"unimported": "unimported"`), or (b) a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and use `knip` via a root `knip.json` `workspaces` entry. The repo is migrating dead-code detection off `unimported` (see `.agents/skills/knip-migration/SKILL.md`).
 
 ## Confidence Scoring
 

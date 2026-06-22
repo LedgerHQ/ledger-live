@@ -64,4 +64,26 @@ describe("counterValueFormatter (live-common)", () => {
       "CA$1,234.56",
     );
   });
+
+  it("formats compact BTC countervalues without exceeding Intl fraction digit bounds", () => {
+    expect(
+      counterValueFormatter({
+        value: 21_000_000,
+        locale: "en-US",
+        currency: "btc",
+        shorten: true,
+      }),
+    ).toContain("₿");
+  });
+
+  it("formats compact ETH countervalues without falling back to Intl currency style", () => {
+    expect(
+      counterValueFormatter({
+        value: 21_000_000,
+        locale: "en-US",
+        currency: "eth",
+        shorten: true,
+      }),
+    ).toContain("ETH");
+  });
 });

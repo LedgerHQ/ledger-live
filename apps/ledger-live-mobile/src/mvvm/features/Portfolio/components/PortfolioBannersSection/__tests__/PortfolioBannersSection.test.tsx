@@ -27,7 +27,7 @@ const MockContentCardsLocation = jest.mocked(ContentCardsLocation);
 
 const baseViewModel = {
   shouldShowOnboardingWidget: false,
-  sectionMarginTop: "s16" as const,
+  contentCardsPaddingTop: undefined,
   hasAssets: false,
   shouldDisplayRecover: false,
   onScroll: jest.fn(),

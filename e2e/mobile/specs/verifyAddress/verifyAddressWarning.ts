@@ -21,7 +21,7 @@ export function runVerifyAddressWarningTest(
         speculosApp: account.currency.speculosApp,
         cliCommands: [liveDataCommand(account)],
       });
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.mainNavigation.waitForWallet40Ready();
     });
 
     setTeamOwner(Team.COIN_INTEGRATION);

@@ -8,6 +8,10 @@ export type UsdToFiatRate = {
   rate: number | null;
 };
 
+type UseUsdToFiatRateOptions = {
+  skip?: boolean;
+};
+
 /**
  * Generic primitive that resolves a USD → user-fiat spot rate from the
  * countervalues API. Short-circuits to a rate of `1` for USD without firing
@@ -16,9 +20,12 @@ export type UsdToFiatRate = {
  *
  * Returns flat primitives so consumers can depend on `status` and `rate`
  */
-export function useUsdToFiatRate(targetTicker: string): UsdToFiatRate {
+export function useUsdToFiatRate(
+  targetTicker: string,
+  options: UseUsdToFiatRateOptions = {},
+): UsdToFiatRate {
   const to = targetTicker.toLowerCase();
-  const skip = to === "usd";
+  const skip = options.skip || to === "usd";
   const { data, isLoading, isError } = useGetUsdToFiatRateQuery(
     { to },
     { skip, pollingInterval: USD_FIAT_RATE_POLLING_MS },

@@ -10,19 +10,19 @@ wallet-cli is the stable v1 CLI for USB-based Ledger Wallet flows. Its scope is 
 
 ### Commands
 
-| Command | Role |
-| -------- | ---- |
-| `account discover` | Discover accounts for a network on the **connected Ledger** (USB). Each discovered account is saved to the session under a **label** (e.g. `ethereum-1`). |
-| `session view` / `session reset` | List or wipe accounts stored in the session. |
-| `balances` | Fetch **native and token balances** for an account (by session label). **No device** required. |
-| `operations` | **List operations** for an account (by session label). **No device** required. Optional pagination via `--limit` and `--cursor`. |
-| `send` | Sign and broadcast a transaction. Requires `--amount` with ticker (e.g. `0.001 BTC`, `0.01 ETH`). Use `--dry-run` to validate without signing. |
-| `receive` | Get the receive address for an account (optionally verify on device). |
-| `swap quote` | Fetch swap quotes for supported currencies and tokens. |
-| `swap execute` | Execute the full swap flow with `--from`, `--to`, `--provider`, and `--amount`: prepare the swap, interact with the connected device as needed, complete the exchange, then sign and broadcast the transaction. |
-| `swap status` | Read the current swap status from the partner API. |
-| `assets token` / `assets token-by-id` | Resolve token metadata by contract address or token id. |
-| `genuine-check` | Check whether the connected Ledger device is genuine. |
+| Command                               | Role                                                                                                                                                                                                            |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `account discover`                    | Discover accounts for a network on the **connected Ledger** (USB). Each discovered account is saved to the session under a **label** (e.g. `ethereum-1`).                                                       |
+| `session view` / `session reset`      | List or wipe accounts stored in the session.                                                                                                                                                                    |
+| `balances`                            | Fetch **native and token balances** for an account (by session label). **No device** required.                                                                                                                  |
+| `operations`                          | **List operations** for an account (by session label). **No device** required. Optional pagination via `--limit` and `--cursor`.                                                                                |
+| `send`                                | Sign and broadcast a transaction. Requires `--amount` with ticker (e.g. `0.001 BTC`, `0.01 ETH`). Use `--dry-run` to validate without signing.                                                                  |
+| `receive`                             | Get the receive address for an account (optionally verify on device).                                                                                                                                           |
+| `swap quote`                          | Fetch swap quotes for supported currencies and tokens.                                                                                                                                                          |
+| `swap execute`                        | Execute the full swap flow with `--from`, `--to`, `--provider`, and `--amount`: prepare the swap, interact with the connected device as needed, complete the exchange, then sign and broadcast the transaction. |
+| `swap status`                         | Read the current swap status from the partner API.                                                                                                                                                              |
+| `assets token` / `assets token-by-id` | Resolve token metadata by contract address or token id.                                                                                                                                                         |
+| `genuine-check`                       | Check whether the connected Ledger device is genuine.                                                                                                                                                           |
 
 Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the assigned **session label** (e.g. `--account ethereum-1`) to `balances`, `operations`, `send`, or `receive`. Use `session view` to see what's saved.
 
@@ -49,7 +49,7 @@ Most commands support `--output human` (default) or `--output json`.
 ## Prerequisites
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
-- **pnpm** and this monorepo checked out; install dependencies per [common commands](../../docs/common-commands.md) (e.g. `mise install`, `pnpm i`)
+- **pnpm** and this monorepo checked out; install dependencies per [repo commands](../../docs/repo-commands.md) (e.g. `mise install`, `pnpm i`)
 - A **Ledger** on USB when using `account discover`, `send`, `swap execute`, or `receive --verify`
 - **Linux:** USB/HID build deps, for example:
 

@@ -6,6 +6,7 @@ import * as stellarModule from "@ledgerhq/coin-stellar/api/index";
 import * as cantonModule from "@ledgerhq/coin-canton/api/index";
 import * as tronModule from "@ledgerhq/coin-tron/api/index";
 import * as evmModule from "@ledgerhq/coin-evm/api/index";
+import * as cardanoModule from "@ledgerhq/coin-cardano/api/index";
 import * as config from "../../../config";
 import * as networkApi from "./network/network-coin-service";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/currencies";
@@ -40,6 +41,10 @@ jest.mock("@ledgerhq/coin-evm/api/index", () => ({
   createApi: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/coin-cardano/api/index", () => ({
+  createApi: jest.fn(),
+}));
+
 jest.mock("./network/network-coin-service", () => ({
   getNetworkCoinModuleApi: jest.fn(),
 }));
@@ -66,6 +71,8 @@ describe("getCoinModuleApi", () => {
           return { id: "ethereum", family: "evm" };
         case "sonic":
           return { id: "sonic", family: "evm" };
+        case "cardano":
+          return { id: "cardano", family: "cardano" };
         default:
           return undefined;
       }
@@ -78,6 +85,7 @@ describe("getCoinModuleApi", () => {
     jest.spyOn(cantonModule, "createApi").mockReturnValue(mockApiInstance as any);
     jest.spyOn(tronModule, "createApi").mockReturnValue(mockApiInstance as any);
     jest.spyOn(evmModule, "createApi").mockReturnValue(mockApiInstance as any);
+    jest.spyOn(cardanoModule, "createApi").mockReturnValue(mockApiInstance as any);
     jest.spyOn(networkApi, "getNetworkCoinModuleApi").mockReturnValue(mockApiInstance as any);
   });
 
@@ -93,6 +101,12 @@ describe("getCoinModuleApi", () => {
       params: [{ config: true }, "ethereum"],
     },
     { network: "sonic", module: evmModule, label: "Sonic", params: [{ config: true }, "sonic"] },
+    {
+      network: "cardano",
+      module: cardanoModule,
+      label: "Cardano",
+      params: [{ config: true }, "cardano"],
+    },
   ];
 
   testCases.forEach(({ network, module, label, params }) => {

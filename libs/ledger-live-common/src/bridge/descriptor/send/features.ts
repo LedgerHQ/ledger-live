@@ -5,6 +5,7 @@ import type {
   CustomFeeConfig,
   FeeAssetsConfig,
   FeePresetOption,
+  FlowEffect,
   SelfTransferPolicy,
   SendDescriptor,
 } from "../types";
@@ -65,6 +66,7 @@ export const sendFeatures = {
     return allowZeroAmount ?? false;
   },
   getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), [] as readonly string[]),
+  getAmountEffects: fromDescriptor(d => d.amount?.effects, [] as readonly FlowEffect[]),
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,

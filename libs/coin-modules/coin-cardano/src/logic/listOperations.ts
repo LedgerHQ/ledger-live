@@ -327,6 +327,14 @@ function extractTokenOperations(
     const details: Record<string, unknown> = {
       policyId: tokenData.policyId,
       assetName: tokenData.assetName,
+      // The generic-coin-framework adapter rebuilds the token sub-account operation from these
+      // (extra.ledgerOpType → op.type, extra.assetAmount → op.value, …) and treats it as internal
+      // so it isn't also surfaced as a parent-account operation. Mirrors coin-solana's token ops.
+      ledgerOpType: tokenType,
+      assetAmount: tokenValue.toString(),
+      assetSenders: senders,
+      assetRecipients: recipients,
+      internal: true,
     };
 
     if (decodedName !== tokenData.assetName) {

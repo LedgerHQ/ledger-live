@@ -22,6 +22,7 @@ import KeyboardView from "~/components/KeyboardView";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import { ScreenName } from "~/const";
+import { useKeyboardVisible } from "~/logic/keyboardVisible";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { TezosUnstakeFlowParamList } from "./types";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
@@ -34,6 +35,7 @@ export default function UnstakeAmount() {
   const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { isKeyboardVisible } = useKeyboardVisible();
   const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account?.type === "Account", "tezos account required");
@@ -106,7 +108,9 @@ export default function UnstakeAmount() {
         currency="xtz"
       />
       <KeyboardView style={styles.container}>
-        <Alert type="primary" title={t("tezos.unstake.flow.amount.unbondingNotice")} />
+        {!isKeyboardVisible && (
+          <Alert type="primary" title={t("tezos.unstake.flow.amount.unbondingNotice")} />
+        )}
         <TouchableWithoutFeedback onPress={blur}>
           <View style={styles.amountWrapper}>
             <AmountInput

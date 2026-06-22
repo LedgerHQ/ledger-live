@@ -16,7 +16,7 @@ export async function beforeAllFunctionSwap(options: ApplicationOptions) {
     },
     cliCommandsOnApp: options.cliCommandsOnApp,
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
   await swapSetup();
   await app.swap.openViaDeeplink();
   await app.swapLiveApp.expectSwapLiveApp();

@@ -44,10 +44,16 @@ export const PortfolioBannersSection = ({
   isLNSUpsellBannerShown,
   showAssets,
 }: PortfolioBannersSectionProps) => {
-  const { shouldShowOnboardingWidget, hasAssets, shouldDisplayRecover, onScroll, carouselIndex } =
-    usePortfolioBannersSectionViewModel({
-      showAssets,
-    });
+  const {
+    shouldShowOnboardingWidget,
+    contentCardsPaddingTop,
+    hasAssets,
+    shouldDisplayRecover,
+    onScroll,
+    carouselIndex,
+  } = usePortfolioBannersSectionViewModel({
+    showAssets,
+  });
 
   if (isLNSUpsellBannerShown) {
     return (
@@ -79,11 +85,13 @@ export const PortfolioBannersSection = ({
               <RecoverBanner paddingHorizontal="s0" />
             </Box>
           )}
-          <ContentCardsLocation
-            key="contentCardsLocationPortfolio"
-            locationId={ContentCardLocation.TopWallet}
-            mx={-6}
-          />
+          <Box lx={contentCardsPaddingTop ? { paddingTop: contentCardsPaddingTop } : undefined}>
+            <ContentCardsLocation
+              key="contentCardsLocationPortfolio"
+              locationId={ContentCardLocation.TopWallet}
+              mx={-6}
+            />
+          </Box>
         </Box>
       </SectionContainer>
     );

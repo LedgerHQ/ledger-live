@@ -89,6 +89,42 @@ describe("getTransactionStatus", () => {
 
     expect(result.errors.amount).toEqual(new NotEnoughBalance());
   });
+  it("flags NotEnoughBalance when the address balance can't cover amount + gas and real coins are too small for gas (SIP-58)", async () => {
+    // Real coins can't cover the gas budget, so gas is withdrawn from the address balance
+    // alongside the transfer. The address balance can't cover amount + gas even though the total
+    // can — so the send must be blocked before signing (it would otherwise fail at broadcast with
+    // "Invalid withdraw reservation").
+    const acc = createFixtureAccount({
+      balance: BigNumber(100_001_000_000),
+      spendableBalance: BigNumber(100_001_000_000),
+      suiResources: { fundsInAddressBalance: BigNumber(100_000_000_000) },
+    });
+    const transaction = createFixtureTransaction({
+      amount: BigNumber(99_999_000_000),
+      fees: BigNumber(1_000_000),
+      gasBudget: BigNumber(2_000_000),
+    });
+    const result = await getTransactionStatus(acc, transaction);
+
+    expect(result.errors.amount).toEqual(new NotEnoughBalance());
+  });
+  it("does not apply the SIP-58 guard when real coins cover the gas budget", async () => {
+    // Same near-address-balance amount, but real coins (5 SUI) comfortably cover gas, so gas is
+    // paid from them and the address balance only funds the transfer — the send is valid.
+    const acc = createFixtureAccount({
+      balance: BigNumber(105_000_000_000),
+      spendableBalance: BigNumber(105_000_000_000),
+      suiResources: { fundsInAddressBalance: BigNumber(100_000_000_000) },
+    });
+    const transaction = createFixtureTransaction({
+      amount: BigNumber(99_999_000_000),
+      fees: BigNumber(1_000_000),
+      gasBudget: BigNumber(2_000_000),
+    });
+    const result = await getTransactionStatus(acc, transaction);
+
+    expect(result.errors.amount).toBeUndefined();
+  });
   it("should return errors if not enought balance for fees", async () => {
     const transaction = createFixtureTransaction({
       subAccountId: "subAccountId",

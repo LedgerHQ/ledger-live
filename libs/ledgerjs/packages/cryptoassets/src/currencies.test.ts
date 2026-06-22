@@ -9,9 +9,9 @@ import {
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByTicker,
   findCryptoCurrencyByKeyword,
-  registerCryptoCurrency,
   cryptocurrenciesById,
 } from "./currencies";
+import { setCryptoCurrenciesStore } from "./currencies-store";
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
@@ -194,7 +194,7 @@ test("Evm family convention: all evm testnet coins must derivate on the same coi
   ).toEqual([]);
 });
 
-test("can register a new coin externally", () => {
+test("can inject a currency registry via setCryptoCurrenciesStore", () => {
   const coinId = "mycoin";
   expect(() => getCryptoCurrencyById("mycoin")).toThrow(`currency with id "${coinId}" not found`);
   const mycoin = {
@@ -227,6 +227,12 @@ test("can register a new coin externally", () => {
       },
     ],
   };
-  registerCryptoCurrency(mycoin as CryptoCurrency);
-  expect(getCryptoCurrencyById(coinId)).toEqual(mycoin);
+  try {
+    setCryptoCurrenciesStore([mycoin as CryptoCurrency]);
+    expect(getCryptoCurrencyById(coinId)).toEqual(mycoin);
+  } finally {
+    // Restore the bundled registry for the remaining tests in this file.
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    (globalThis as Record<string, unknown>).__ledgerCryptoCurrenciesStore = undefined;
+  }
 });

@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   PanResponder,
-  FlatList,
   StyleProp,
   ViewStyle,
   LayoutChangeEvent,
@@ -113,34 +112,6 @@ const SelectableAccountsList = ({
 
   const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
 
-  const renderSelectableAccount = useCallback(
-    ({ item, index }: { index: number; item: Account }) => (
-      <SelectableAccount
-        navigation={navigation}
-        showHint={!index && showHint}
-        rowIndex={index}
-        listIndex={listIndex}
-        account={item}
-        onAccountNameChange={onAccountNameChange}
-        isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
-        isDisabled={isDisabled}
-        onPress={onPressAccount}
-        useFullBalance={useFullBalance}
-      />
-    ),
-    [
-      navigation,
-      showHint,
-      listIndex,
-      selectedIds,
-      forceSelected,
-      isDisabled,
-      onAccountNameChange,
-      onPressAccount,
-      useFullBalance,
-    ],
-  );
-
   return (
     <Flex marginBottom={7} testID="selectable-accounts-list" {...props}>
       {header ? (
@@ -151,16 +122,27 @@ const SelectableAccountsList = ({
           onUnselectAll={onUnselectAllProp ? onUnselectAll : undefined}
         />
       ) : null}
-      <FlatList
-        data={accounts}
-        keyExtractor={(item, index) => item.id + index}
-        renderItem={renderSelectableAccount}
-        ListEmptyComponent={() => (
-          <Flex height="100%" flexDirection="row" justifyContent="center">
-            {emptyState || null}
-          </Flex>
-        )}
-      />
+      {accounts.length > 0 ? (
+        accounts.map((item, index) => (
+          <SelectableAccount
+            key={item.id + index}
+            navigation={navigation}
+            showHint={!index && showHint}
+            rowIndex={index}
+            listIndex={listIndex}
+            account={item}
+            onAccountNameChange={onAccountNameChange}
+            isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
+            isDisabled={isDisabled}
+            onPress={onPressAccount}
+            useFullBalance={useFullBalance}
+          />
+        ))
+      ) : (
+        <Flex height="100%" flexDirection="row" justifyContent="center">
+          {emptyState || null}
+        </Flex>
+      )}
     </Flex>
   );
 };
@@ -293,15 +275,11 @@ const SelectableAccount = ({
     <LeftActions translation={translation} />
   );
 
-  const { animatedStyle, startAnimation } = useItemAnimation();
+  const { entering } = useItemAnimation();
   const styles = getStyles(space);
 
-  useEffect(() => {
-    startAnimation();
-  }, [startAnimation]);
-
   const inner = (
-    <Animated.View style={[animatedStyle]} testID={`account-${account.id}`}>
+    <Animated.View entering={entering} testID={`account-${account.id}`}>
       <Flex
         {...styles.selectableAccount}
         flexDirection="row"

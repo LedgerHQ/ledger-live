@@ -58,6 +58,8 @@ export function AllAddressesDrawer({ isOpen, onClose, accountIds }: Props) {
       testID={ASSET_DETAIL_TEST_IDS.allAddressesDrawer}
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
+      snapPoints="full"
+      enableHandlePanningGesture={false}
     >
       <BottomSheetHeader spacing density="expanded" title={headerTitle} />
       <BottomSheetFlatList

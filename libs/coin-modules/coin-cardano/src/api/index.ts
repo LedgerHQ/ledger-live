@@ -16,11 +16,11 @@ import type {
   StringMemo,
   TransactionIntent,
   TransactionValidation,
-  TxDataNotSupported,
   Validator,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import coinConfig, { type CardanoConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
@@ -92,8 +92,6 @@ export function createApi(config: CardanoConfig, currencyId: string): CoinModule
     ): Promise<boolean> => {
       throw new Error("validateAddress is not supported");
     },
-    craftTransactionData: (_intent: TransactionIntent<StringMemo>): TxDataNotSupported => {
-      throw new Error("craftTransactionData is not supported");
-    },
+    craftTransactionData,
   };
 }

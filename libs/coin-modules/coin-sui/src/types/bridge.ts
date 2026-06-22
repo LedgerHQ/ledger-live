@@ -24,6 +24,13 @@ export type MappedStake = StakeObject & {
 export type SuiResources = {
   stakes?: DelegatedStake[];
   cachedOps?: Record<string, Record<string, string>>;
+  /**
+   * SIP-58 address-balance portion of the native SUI balance (in MIST). When real coin objects
+   * can't cover the gas budget, gas is withdrawn from this address balance alongside the
+   * transfer, so `getTransactionStatus`/`calculateMaxSend` must validate the spend against it
+   * (not just the total) to avoid a broadcast-time "Invalid withdraw reservation".
+   */
+  fundsInAddressBalance?: BigNumber;
 };
 
 /**

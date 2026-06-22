@@ -190,11 +190,13 @@ export default defineCommand({
     "Swap flow with Ledger device + API pipeline (nonce → payload → complete exchange → sign/broadcast).",
   options: {
     from: option(swapExecuteFlagsSchema.shape.from, {
-      description: "Source currency ID",
+      description:
+        "Source currency ID — native (e.g. ethereum) or token <network>/erc20/<slug> (e.g. ethereum/erc20/usd_tether__erc20_)",
       short: "f",
     }),
     to: option(swapExecuteFlagsSchema.shape.to, {
-      description: "Destination currency ID",
+      description:
+        "Destination currency ID — native (e.g. bitcoin) or token <network>/erc20/<slug> (e.g. ethereum/erc20/usd_tether__erc20_)",
       short: "t",
     }),
     provider: option(swapExecuteFlagsSchema.shape.provider, {

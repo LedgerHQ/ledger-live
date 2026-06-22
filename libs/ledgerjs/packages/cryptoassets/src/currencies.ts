@@ -28,6 +28,11 @@ import {
   ExplorerView,
   Unit,
 } from "@ledgerhq/types-cryptoassets";
+import {
+  type CryptoCurrenciesStore,
+  getInjectedCurrenciesStore,
+  registerCurrencyInStore,
+} from "./currencies-store";
 
 /**
  * Make an ExplorerView for a Blockscout based explorer
@@ -5309,49 +5314,26 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
 };
 
-const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
-const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
-const cryptocurrenciesArray: CryptoCurrency[] = [];
-const prodCryptoArray: CryptoCurrency[] = [];
-const cryptocurrenciesArrayWithoutTerminated: CryptoCurrency[] = [];
-const prodCryptoArrayWithoutTerminated: CryptoCurrency[] = [];
+// The bundled registry. Reuses the exported `cryptocurrenciesById` literal as its by-id map so
+// direct importers of that map (and `registerCryptoCurrency`) stay in sync; the derived indices
+// and arrays start empty and are filled in place by the init loop below.
+const bundledCurrenciesStore: CryptoCurrenciesStore = {
+  cryptocurrenciesById,
+  cryptocurrenciesByScheme: {},
+  cryptocurrenciesByTicker: {},
+  cryptocurrenciesArray: [],
+  prodCryptoArray: [],
+  cryptocurrenciesArrayWithoutTerminated: [],
+  prodCryptoArrayWithoutTerminated: [],
+};
 
 for (const cryptoCurrency of Object.values(cryptocurrenciesById)) {
-  registerCryptoCurrency(cryptoCurrency);
+  registerCurrencyInStore(bundledCurrenciesStore, cryptoCurrency);
 }
 
-/**
- *
- * @param {string} id
- * @param {CryptoCurrency} currency
- */
-export function registerCryptoCurrency(currency: CryptoCurrency): void {
-  cryptocurrenciesById[currency.id] = currency;
-  cryptocurrenciesByScheme[currency.scheme] = currency;
-
-  if (!currency.isTestnetFor) {
-    const currencyAlreadySet = cryptocurrenciesByTicker[currency.ticker];
-    const curencyHasTickerinKeywords = Boolean(currency?.keywords?.includes(currency.ticker));
-
-    if (
-      !currencyAlreadySet ||
-      // In case of duplicates, we prioritize currencies with the ticker as a keyword of the currency
-      (currencyAlreadySet && curencyHasTickerinKeywords)
-    ) {
-      cryptocurrenciesByTicker[currency.ticker] = currency;
-    }
-    prodCryptoArray.push(currency);
-
-    if (!currency.terminated) {
-      prodCryptoArrayWithoutTerminated.push(currency);
-    }
-  }
-
-  cryptocurrenciesArray.push(currency);
-
-  if (!currency.terminated) {
-    cryptocurrenciesArrayWithoutTerminated.push(currency);
-  }
+// All registry accessors read from the injected store when present, else the bundled data.
+function activeCurrenciesStore(): CryptoCurrenciesStore {
+  return getInjectedCurrenciesStore() ?? bundledCurrenciesStore;
 }
 
 /**
@@ -5363,13 +5345,14 @@ export function listCryptoCurrencies(
   withDevCrypto = false,
   withTerminated = false,
 ): CryptoCurrency[] {
+  const store = activeCurrenciesStore();
   return withTerminated
     ? withDevCrypto
-      ? cryptocurrenciesArray
-      : prodCryptoArray
+      ? store.cryptocurrenciesArray
+      : store.prodCryptoArray
     : withDevCrypto
-      ? cryptocurrenciesArrayWithoutTerminated
-      : prodCryptoArrayWithoutTerminated;
+      ? store.cryptocurrenciesArrayWithoutTerminated
+      : store.prodCryptoArrayWithoutTerminated;
 }
 
 /**
@@ -5379,7 +5362,7 @@ export function listCryptoCurrencies(
 export function findCryptoCurrency(
   f: (arg0: CryptoCurrency) => boolean,
 ): CryptoCurrency | null | undefined {
-  return cryptocurrenciesArray.find(f);
+  return activeCurrenciesStore().cryptocurrenciesArray.find(f);
 }
 
 /**
@@ -5387,7 +5370,7 @@ export function findCryptoCurrency(
  * @param {*} scheme
  */
 export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | null | undefined {
-  return cryptocurrenciesByScheme[scheme];
+  return activeCurrenciesStore().cryptocurrenciesByScheme[scheme];
 }
 
 /**
@@ -5395,22 +5378,22 @@ export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | nul
  * @param {*} ticker
  */
 export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | null | undefined {
-  return cryptocurrenciesByTicker[ticker];
+  return activeCurrenciesStore().cryptocurrenciesByTicker[ticker];
 }
 
 export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
-  return cryptocurrenciesById[id];
+  return activeCurrenciesStore().cryptocurrenciesById[id];
 }
 
 const testsMap = {
-  keywords: s =>
+  keywords: (s: string) =>
     findCryptoCurrency(c =>
       Boolean(c?.keywords?.map(k => k.replace(/ /, "").toLowerCase()).includes(s)),
     ),
-  name: s => findCryptoCurrency(c => c.name.replace(/ /, "").toLowerCase() === s),
-  id: s => findCryptoCurrencyById(s.toLowerCase()),
-  ticker: s => findCryptoCurrencyByTicker(s.toUpperCase()),
-  manager: s => findCryptoCurrencyByManagerAppName(s),
+  name: (s: string) => findCryptoCurrency(c => c.name.replace(/ /, "").toLowerCase() === s),
+  id: (s: string) => findCryptoCurrencyById(s.toLowerCase()),
+  ticker: (s: string) => findCryptoCurrencyByTicker(s.toUpperCase()),
+  manager: (s: string) => findCryptoCurrencyByManagerAppName(s),
 };
 
 /**
@@ -5453,7 +5436,8 @@ export const findCryptoCurrencyByManagerAppName = (
  *
  * @param {*} id
  */
-export const hasCryptoCurrencyId = (id: string): boolean => id in cryptocurrenciesById;
+export const hasCryptoCurrencyId = (id: string): boolean =>
+  Object.prototype.hasOwnProperty.call(activeCurrenciesStore().cryptocurrenciesById, id);
 
 export function getCryptoCurrencyById(id: string): CryptoCurrency {
   const currency = findCryptoCurrencyById(id);

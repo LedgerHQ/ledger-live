@@ -91,6 +91,7 @@
     "cli": "pnpm --filter live-cli",
     "wallet-framework": "pnpm --filter ledger-wallet-framework",
     "wallet-cli": "pnpm --filter wallet-cli",
+    "apdu-proxy": "pnpm --filter wallet-cli apdu-proxy",
     "coin:features:report": "node scripts/coin-features-report.mjs",
     "coin:coverage": "nx run-many -t coverage -p \"@ledgerhq/coin-*\" --parallel=2",
     "coin:coverage:report": "pnpm coin:coverage && node scripts/coin-coverage-report.mjs",
@@ -129,6 +130,7 @@
     "coin-modules:lint-fix": "nx run-many -t lint:fix -p \"@ledgerhq/coin-*\"",
     "coin-modules:test-integ": "nx run-many -t test-integ -p \"@ledgerhq/coin-*\"",
     "coin:modules:monitoring": "pnpm --filter coin-modules-monitoring",
+    "coin:tester:cardano": "pnpm --filter coin-tester-cardano",
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
@@ -328,11 +330,12 @@
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
-      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
+      "react-native@0.81.6": "patches/react-native@0.81.6.patch",
       "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch",
       "@callstack/repack@5.2.5": "patches/@callstack__repack@5.2.5.patch",
       "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch",
-      "usb@2.17.0": "patches/usb@2.17.0.patch"
+      "usb@2.17.0": "patches/usb@2.17.0.patch",
+      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

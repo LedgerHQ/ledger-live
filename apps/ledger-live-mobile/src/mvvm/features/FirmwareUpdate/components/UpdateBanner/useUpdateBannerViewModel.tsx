@@ -7,6 +7,7 @@ import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
   lastConnectedDeviceSelector,
+  debugOsUpdateBannerModeSelector,
 } from "~/reducers/settings";
 import { hasConnectedDeviceSelector } from "~/reducers/appstate";
 import { FirmwareUpdateBannerProps } from ".";
@@ -32,8 +33,14 @@ export function useUpdateBannerViewModel({
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
   const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
 
-  const bannerVisible = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
-  const version = latestFirmware?.final?.name ?? "";
+  // Debug override (Settings > Debug > Features): force-show a banner variant.
+  const debugBannerMode = useSelector(debugOsUpdateBannerModeSelector);
+
+  const bannerVisible =
+    debugBannerMode !== "off" ||
+    (Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice);
+  // Mock version for the debug-forced banner.
+  const version = latestFirmware?.final?.name ?? (debugBannerMode !== "off" ? "1.1.1" : "");
   const connectionType = lastConnectedDevice?.wired ? "usb" : "bluetooth";
 
   const isNewUxSupported = isNewFirmwareUpdateUxSupported(
@@ -113,5 +120,6 @@ export function useUpdateBannerViewModel({
       Platform.OS === "android" && isNewUxSupported && !bleUpdateSupported,
     shouldDisplayWallet40MainNav,
     isInMyLedgerDeviceScreen,
+    debugBannerMode,
   };
 }

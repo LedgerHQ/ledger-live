@@ -1,4 +1,21 @@
-import { findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
+
+const MAXIMUM_FRACTION_DIGITS = 8;
+
+const getFractionDigitOptions = (
+  unit: Unit | undefined,
+  shorten: boolean | undefined,
+): Pick<Intl.NumberFormatOptions, "maximumFractionDigits" | "minimumFractionDigits"> => {
+  const maximumFractionDigits = shorten ? 3 : MAXIMUM_FRACTION_DIGITS;
+
+  if (!unit) return { maximumFractionDigits };
+
+  return {
+    maximumFractionDigits,
+    minimumFractionDigits: shorten ? 0 : Math.min(unit.magnitude, maximumFractionDigits),
+  };
+};
 
 export const counterValueFormatter = ({
   currency,
@@ -16,29 +33,28 @@ export const counterValueFormatter = ({
   if (!value) {
     return "-";
   }
-  const fiat = currency ? findFiatCurrencyByTicker(currency.toUpperCase()) : undefined;
+  const normalizedCurrency = currency?.toUpperCase();
+  const fiat = normalizedCurrency ? findFiatCurrencyByTicker(normalizedCurrency) : undefined;
+  const crypto = normalizedCurrency ? findCryptoCurrencyByTicker(normalizedCurrency) : undefined;
+  const unit = fiat?.units[0] ?? crypto?.units[0];
   const baseOptions: Intl.NumberFormatOptions = {
     notation: shorten ? "compact" : "standard",
-    maximumFractionDigits: shorten ? 3 : 8,
+    ...getFractionDigitOptions(unit, shorten),
   };
   let formatted: string;
-  if (fiat) {
-    // Resolve the sign from the Ledger fiat definition (unit.code) so Market matches the price
-    // and balances (e.g. "$", "CA$", "AU$", "₿") instead of Intl's locale-dependent narrow symbol.
-    const unit = fiat.units[0];
-    // Pin minimumFractionDigits to the fiat's magnitude (e.g. 2 for USD, 3 for BHD, 0 for JPY) so
-    // decimal style keeps the trailing zeros that "currency" style used to add (2500.5 -> "2,500.50").
+  if (unit) {
+    // Resolve the sign from the Ledger unit so Market matches price and balances
+    // (e.g. "$", "CA$", "AU$", "₿") instead of Intl's locale-dependent narrow symbol.
     const number = new Intl.NumberFormat(locale, {
       ...baseOptions,
       style: "decimal",
-      minimumFractionDigits: unit.magnitude,
     }).format(value);
     formatted = unit.prefixCode ? `${unit.code}${number}` : `${number} ${unit.code}`;
   } else {
     formatted = new Intl.NumberFormat(locale, {
       ...baseOptions,
-      style: currency ? "currency" : "decimal",
-      currency,
+      style: normalizedCurrency ? "currency" : "decimal",
+      currency: normalizedCurrency,
     }).format(value);
   }
   const upperTicker = ticker?.trim().toUpperCase();

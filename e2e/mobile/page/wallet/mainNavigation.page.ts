@@ -34,8 +34,8 @@ export default class MainNavigationPage {
   // =====================
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
-  async waitForWallet40Ready() {
-    await waitForElementById(this.topBarMyWalletId);
+  async waitForWallet40Ready(timeout = 60000) {
+    await waitForElementById(this.topBarMyWalletId, timeout);
   }
 
   @Step("Wait for Legacy navigation to be ready")
@@ -143,9 +143,9 @@ export default class MainNavigationPage {
   // =====================
 
   @Step("Open Portfolio via deeplink (W40)")
-  async openPortfolioViaDeeplink() {
+  async openPortfolioViaDeeplink(timeout = 60000) {
     await openDeeplink("portfolio");
-    await this.waitForWallet40Ready();
+    await this.waitForWallet40Ready(timeout);
   }
 
   @Step("Expect Portfolio page visible")

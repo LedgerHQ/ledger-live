@@ -1376,24 +1376,48 @@ export const getCoinsForAmount = async (
   return coins;
 };
 
+type SuiFundingModel = {
+  /** SIP-58 address-balance portion of the SUI balance. */
+  addressBalance: bigint;
+  /** Real SUI coin objects (the SDK's `coinBalance` = total − address balance). */
+  realCoinBalance: bigint;
+  /**
+   * Source gas from the address balance via `setGasPayment([])`. Only when there
+   * are no real coin objects — otherwise let the SDK auto-select a real coin for
+   * gas so the *entire* address balance stays available for the transfer.
+   */
+  gasFromAddressBalance: boolean;
+  /**
+   * Split the transfer straight out of `tx.gas`. Only for the classic
+   * coin-object-only account (no address balance); when an address balance
+   * exists the transfer is resolved via `coinWithBalance` instead.
+   */
+  transferFromGasCoin: boolean;
+};
+
 /**
- * Check whether the sender should fund gas from a real SUI coin object
- * (vs. from the SIP-58 address balance via `setGasPayment([])`).
+ * Decide how a send funds its gas vs. its transfer (`getCoins` is unusable post-SIP-58 — it
+ * returns synthetic "fake coins" for the address balance, so we read `client.core.getBalance`).
  *
- * Post SIP-58 the RPC's `getCoins` returns synthetic "fake coin" objects
- * representing address-balance reservations alongside real coins, so we cannot
- * rely on its result to decide. Instead we read `fundsInAddressBalance` from
- * `getAllBalances`: if any address-balance funds exist, prefer them for gas —
- * this avoids picking a real coin object that may be too small for the auto-
- * computed gas budget.
+ * Gas comes from real coin objects whenever any exist, keeping the full address balance free for
+ * the transfer — forcing `setGasPayment([])` while the transfer also drains the address balance is
+ * what overdrew it (`amount + gasBudget > addressBalance`) and failed at broadcast. Only with no
+ * real coins do we fall back to address-balance gas (then `total === addressBalance`, so the
+ * existing `amount + gasBudget ≤ total` check already prevents an overdraw).
  */
-async function hasGasCoinObjects(client: ClientWithCoreApi, address: string): Promise<boolean> {
-  // `client.core.getBalance` returns a single SDK-normalized `Balance` —
-  // `addressBalance` is the SIP-58 address-balance reservation, `balance` is
-  // the total. If any address-balance funds exist, prefer them for gas.
+async function getSuiFundingModel(
+  client: ClientWithCoreApi,
+  address: string,
+): Promise<SuiFundingModel> {
   const { balance } = await client.core.getBalance({ owner: address, coinType: DEFAULT_COIN_TYPE });
-  if (BigInt(balance.addressBalance ?? "0") > 0n) return false;
-  return BigInt(balance.balance ?? "0") > 0n;
+  const addressBalance = BigInt(balance.addressBalance);
+  const realCoinBalance = BigInt(balance.coinBalance);
+  return {
+    addressBalance,
+    realCoinBalance,
+    gasFromAddressBalance: realCoinBalance === 0n,
+    transferFromGasCoin: addressBalance === 0n && realCoinBalance > 0n,
+  };
 }
 
 /**
@@ -1475,17 +1499,17 @@ const buildDelegateBody = async (
   const sender = ensureAddressFormat(address);
   tx.setSender(sender);
 
-  const senderHasGasCoins = await hasGasCoinObjects(client, sender);
-  if (!senderHasGasCoins) {
+  const { gasFromAddressBalance, transferFromGasCoin } = await getSuiFundingModel(client, sender);
+  if (gasFromAddressBalance) {
     tx.setGasPayment([]);
   }
 
   const { amount } = transaction;
-  // When gas is paid from the SIP-58 address balance (`setGasPayment([])`),
-  // `tx.gas` is sized only for the auto-computed gas budget, so we can't
-  // split the stake amount out of it. Resolve it via `coinWithBalance`,
-  // which the SDK turns into a FundsWithdrawal sized for the stake amount.
-  const stakeCoin = senderHasGasCoins
+  // When the stake is funded from the SIP-58 address balance, `tx.gas` is sized
+  // only for the gas budget, so we can't split the stake amount out of it.
+  // Resolve it via `coinWithBalance`, which the SDK turns into a FundsWithdrawal
+  // sized for the stake amount. Only split from `tx.gas` for coin-object-only accounts.
+  const stakeCoin = transferFromGasCoin
     ? tx.splitCoins(tx.gas, [BigInt(amount.toFixed())])[0]
     : coinWithBalance({ balance: BigInt(amount.toFixed()) })(tx);
 
@@ -1524,7 +1548,7 @@ const buildUndelegateBody = async (
   const sender = ensureAddressFormat(address);
   tx.setSender(sender);
 
-  if (!(await hasGasCoinObjects(client, sender))) {
+  if ((await getSuiFundingModel(client, sender)).gasFromAddressBalance) {
     tx.setGasPayment([]);
   }
 
@@ -1565,8 +1589,10 @@ const createTransactionForUndelegate = (
 /**
  * SIP-58 transfer builder:
  *
- * - **Native SUI**: uses `tx.gas` for the transfer. When the sender has no coin
- *   objects `setGasPayment([])` lets the network source gas from address balance.
+ * - **Native SUI**: when the account has only coin objects (no address balance), splits the
+ *   transfer out of `tx.gas`. When an address balance exists, resolves the transfer via
+ *   `coinWithBalance` (FundsWithdrawal from the address balance) while gas is paid from real
+ *   coin objects — see {@link getSuiFundingModel}.
  *
  * - **Non-SUI tokens**: first tries `getCoinsForAmount` (which may return fake
  *   coins).  If no coin objects are available at all, falls back to
@@ -1583,8 +1609,8 @@ const buildOthersBody = async (
   const sender = ensureAddressFormat(address);
   tx.setSender(sender);
 
-  const senderHasGasCoins = await hasGasCoinObjects(client, sender);
-  if (!senderHasGasCoins) {
+  const { gasFromAddressBalance, transferFromGasCoin } = await getSuiFundingModel(client, sender);
+  if (gasFromAddressBalance) {
     tx.setGasPayment([]);
   }
 
@@ -1609,15 +1635,14 @@ const buildOthersBody = async (
       })(tx);
       tx.transferObjects([coin], transaction.recipient);
     }
-  } else if (senderHasGasCoins) {
+  } else if (transferFromGasCoin) {
     const [coin] = tx.splitCoins(tx.gas, [BigInt(transaction.amount.toFixed())]);
     tx.transferObjects([coin], transaction.recipient);
   } else {
-    // SIP-58 native SUI path: gas is paid from address balance via
-    // `setGasPayment([])`, so the gas reservation is sized only for fees.
-    // We can't split the transfer amount out of `tx.gas`; instead resolve
-    // the transfer via `coinWithBalance`, which the SDK turns into a
-    // FundsWithdrawal sized for the transfer amount itself.
+    // SIP-58 native SUI path: the transfer is drawn from the address balance via
+    // `coinWithBalance` (a FundsWithdrawal sized for the transfer amount). Gas is paid from
+    // real coin objects when present (see `getSuiFundingModel`), so the transfer can consume
+    // the full address balance without the gas reservation overdrawing it.
     const coin = coinWithBalance({ balance: BigInt(transaction.amount.toFixed()) })(tx);
     tx.transferObjects([coin], transaction.recipient);
   }

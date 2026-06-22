@@ -18,6 +18,7 @@
   "type": "module",
   "scripts": {
     "start": "bun run ./src/cli.ts",
+    "apdu-proxy": "bun run ./src/apdu-proxy.ts",
     "dev": "bunli dev",
     "generate": "bunli generate",
     "build": "bunli build",

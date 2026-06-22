@@ -20,11 +20,15 @@ import {
 } from "../utils/types";
 import { GlobalMarketDataRequestParams } from "../state-manager/types";
 
-export const useCurrencyData = ({ id, ledgerIds, counterCurrency }: MarketCurrencyRequestParams) =>
+export const useCurrencyData = (
+  { id, ledgerIds, counterCurrency }: MarketCurrencyRequestParams,
+  options?: { skip?: boolean },
+) =>
   useGetCurrencyDataQuery(
     { id, ledgerIds, counterCurrency },
     {
       pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+      skip: options?.skip,
     },
   );
 
