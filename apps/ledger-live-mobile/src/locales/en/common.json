@@ -2867,8 +2867,8 @@
     },
     "borrowEntry": {
       "title": "Loans",
-      "cardTitle": "Borrow Stablecoin",
-      "cardDescription": "Unlock liquidity",
+      "cardTitle": "Get stablecoin",
+      "cardDescription": "Get cash without selling",
       "cta": "Explore"
     },
     "recommended": {
