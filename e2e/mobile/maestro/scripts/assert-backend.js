@@ -1,10 +1,6 @@
-// Maestro onFlowStart hook: confirm the backend harness (started by run-*.sh / `pnpm e2e:mobile
-// test:maestro <name>`) is reachable BEFORE the flow drives the UI. Fails fast with a clear message
-// instead of a confusing mid-flow timeout when the backend was never started.
-//
-// NB: this only checks reachability, not full readiness — for swap/add-account the harness finishes
-// init only AFTER the app connects (which happens in the flow body via launchApp), so gating on
-// `ready` here would deadlock. The control server itself is up early, so /status answers immediately.
+// onFlowStart hook: fail fast if the backend harness isn't reachable. Checks reachability only, not
+// readiness — the harness finishes init after the app connects (in the flow body), so /status, not
+// /ready, is what answers early.
 var url = "http://localhost:8100/status";
 var res;
 try {

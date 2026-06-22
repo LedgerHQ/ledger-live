@@ -1,0 +1,35 @@
+appId: com.ledger.live.debug
+---
+- extendedWaitUntil:
+    visible:
+      id: "recipient-input"
+    timeout: 20000
+- tapOn:
+    id: "recipient-input"
+- inputText: ${RECIPIENT}
+# Android's soft keyboard can drop a character in the long address, leaving Continue disabled.
+# Re-enter (cursor stays at the end, so eraseText clears the whole value) until it validates.
+- repeat:
+    times: 5
+    commands:
+      - runFlow:
+          when:
+            notVisible:
+              id: "enabled-recipient-continue-button"
+          commands:
+            - eraseText
+            - inputText: ${RECIPIENT}
+            - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: "enabled-recipient-continue-button"
+    timeout: 20000
+- tapOn:
+    id: "enabled-recipient-continue-button"
+- runFlow:
+    when:
+      visible:
+        id: "enabled-memo-tag-ignore-button"
+    commands:
+      - tapOn:
+          id: "enabled-memo-tag-ignore-button"

@@ -1,0 +1,8 @@
+appId: com.ledger.live.debug
+---
+- tapOn:
+    id: ${ASSET_ID}
+- assertVisible:
+    id: ${TITLE_ID}
+- assertVisible:
+    id: "asset-graph-balance"

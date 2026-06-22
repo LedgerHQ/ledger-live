@@ -1,27 +1,33 @@
-# Maestro POC — ETH "Add Account"
+# Maestro POC — ledger-live-mobile E2E
 
 A proof-of-concept evaluating **[Maestro](https://docs.maestro.dev)** as a replacement for Detox for
-mobile E2E. It reproduces the Detox `addAccountETH.spec.ts` as Maestro YAML, reusing the existing
-`e2e/mobile` backend (websocket bridge + Speculos) for state seeding.
+mobile E2E, reusing the existing `e2e/mobile` backend (websocket bridge + Speculos) for state seeding.
+It ports three Detox specs to Maestro YAML: ETH add-account, send DOGE, and ETH→USDT swap.
 
 ## Layout (Nested Flows)
 
 ```
 maestro/
-├── config.yaml                 # workspace config (flows/ are the test cases)
-├── flows/
-│   └── add-account-eth.yaml    # the test = ordered runFlow of subflows
-├── subflows/                   # reusable building blocks (Maestro "Nested Flows")
-│   ├── launch-seeded.yaml      # launchApp with wsPort/mock launch args
-│   ├── open-add-account.yaml   # portfolio → "Import with your Ledger"
-│   ├── select-eth.yaml         # search + pick ETH (+ network if asked)
-│   └── verify-eth-account.yaml # discovery → add → close → assert balance
-├── harness/
-│   ├── main.ts                 # reuses e2e/mobile bridge + Speculos seeding (plain ts-node daemon)
-│   ├── setup-globals.ts        # recreates the few globals the reused infra reads (no jest env)
-│   ├── detox-stub.ts           # `detox` stand-in (Maestro owns the device; does Android adb reverse)
-│   └── tsconfig.json           # ts-node/tsconfig-paths config: aliases + detox->stub, no app launch
-└── run-eth.sh                  # orchestrator: preflight → start backend → maestro test → teardown
+├── config.yaml                     # workspace config (flows/ are the test cases)
+├── flows/                          # test cases — each is an ordered runFlow of subflows
+│   ├── add-account-eth.yaml
+│   ├── send-doge.yaml
+│   ├── swap-eth-usdt.yaml
+│   └── smoke-launch.yaml           # seed-only smoke (no Speculos)
+├── subflows/                       # reusable, parameterized building blocks (Nested Flows)
+│   ├── launch.yaml                 # launchApp with the seed launch args
+│   ├── dismiss-analytics-prompt.yaml
+│   ├── open-add-account.yaml
+│   ├── modular-drawer-pick.yaml    # env SEARCH/ASSET_ID/NETWORK_ID/NETWORK_REQUIRED/PICK_ACCOUNT
+│   ├── add-discovered-account.yaml # env ACCOUNT_NAME
+│   ├── open-asset-assert-balance.yaml  # env ASSET_ID/TITLE_ID
+│   ├── enter-recipient.yaml        # env RECIPIENT
+│   ├── enter-amount.yaml           # env AMOUNT
+│   ├── choose-fee-and-continue.yaml    # env FEE
+│   └── await-ondevice-success.yaml # env SUCCESS_ID
+├── scripts/                        # onFlowStart JS hooks (backend reachability, fetch send params)
+├── harness/                        # reuses e2e/mobile bridge + Speculos seeding (plain ts-node daemon)
+└── run.sh, run-eth.sh, run-send-doge.sh, run-swap.sh, _platform.sh   # orchestrators
 ```
 
 ## Why a harness?

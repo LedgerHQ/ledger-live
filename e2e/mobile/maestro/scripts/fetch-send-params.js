@@ -1,9 +1,5 @@
-// Maestro onFlowStart hook (send-doge): fetch the device-derived recipient + amount from the backend
-// harness over HTTP, instead of bash reading a temp file and passing them via `-e`. Maestro can't
-// derive a device address, so the harness derives it (the Dogecoin 2 account) and serves it on its
-// control endpoint; the flow pulls it into output vars used by the recipient/amount inputs.
-//
-// run-send-doge.sh gates on /recipient being 200 before launching Maestro, so this is set by now.
+// onFlowStart hook (send-doge): the recipient (Dogecoin 2) is derived on-device by the harness, so
+// fetch it (+ amount) from the control endpoint into output vars for the recipient/amount inputs.
 var base = "http://localhost:8100";
 
 var rcpt = http.get(base + "/recipient");

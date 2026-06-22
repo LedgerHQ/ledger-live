@@ -1,0 +1,11 @@
+appId: com.ledger.live.debug
+---
+- extendedWaitUntil:
+    visible:
+      id: "enabled-add-accounts-continue-button"
+    timeout: 240000
+- assertVisible: ${ACCOUNT_NAME}
+- tapOn:
+    id: "enabled-add-accounts-continue-button"
+- tapOn:
+    id: "button-close-add-account"

@@ -1,0 +1,7 @@
+appId: com.ledger.live.debug
+---
+# The harness signs the transaction on Speculos; wait for the app's success screen.
+- extendedWaitUntil:
+    visible:
+      id: ${SUCCESS_ID}
+    timeout: 120000

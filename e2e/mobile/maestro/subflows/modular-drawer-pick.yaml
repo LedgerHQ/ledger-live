@@ -1,0 +1,40 @@
+appId: com.ledger.live.debug
+---
+- tapOn:
+    id: "modular-drawer-search-input"
+- inputText: ${SEARCH}
+- waitForAnimationToEnd
+# The drawer auto-advances past any step with a single option, so the asset row may be skipped.
+- runFlow:
+    when:
+      visible:
+        id: ${ASSET_ID}
+    commands:
+      - tapOn:
+          id: ${ASSET_ID}
+          retryTapIfNoChange: true
+- runFlow:
+    when:
+      true: ${NETWORK_REQUIRED == "true"}
+    commands:
+      - extendedWaitUntil:
+          visible:
+            id: ${NETWORK_ID}
+          timeout: 30000
+- runFlow:
+    when:
+      visible:
+        id: ${NETWORK_ID}
+    commands:
+      - tapOn:
+          id: ${NETWORK_ID}
+          retryTapIfNoChange: true
+- runFlow:
+    when:
+      true: ${PICK_ACCOUNT == "true"}
+      visible:
+        id: "account-item"
+    commands:
+      - tapOn:
+          id: "account-item"
+          retryTapIfNoChange: true
