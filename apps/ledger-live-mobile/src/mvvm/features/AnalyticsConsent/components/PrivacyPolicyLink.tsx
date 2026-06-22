@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet, Text as RNText } from "react-native";
 import { Trans } from "~/context/Locale";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
 
@@ -14,18 +13,17 @@ const PrivacyPolicyLink = ({ onPrivacyPolicyPress }: PrivacyPolicyLinkProps) => 
         i18nKey="analyticsConsent.privacyPolicy"
         components={{
           PrivacyPolicy: (
-            <RNText style={styles.link} onPress={onPrivacyPolicyPress} accessibilityRole="link" />
+            <Text
+              typography="body3"
+              onPress={onPrivacyPolicyPress}
+              accessibilityRole="link"
+              style={{ textDecorationLine: "underline" }}
+            />
           ),
         }}
       />
     </Text>
   );
 };
-
-const styles = StyleSheet.create({
-  link: {
-    textDecorationLine: "underline",
-  },
-});
 
 export default PrivacyPolicyLink;
