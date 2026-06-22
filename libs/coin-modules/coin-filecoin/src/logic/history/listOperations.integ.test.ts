@@ -2,7 +2,7 @@ import { generateMnemonic, accountFromMnemonic } from "iso-filecoin/wallet";
 import { TEST_ADDRESSES } from "../../test/fixtures";
 import { listOperations } from "./listOperations";
 
-// F1_ADDRESS has a single known IN transaction at block 145170.
+// F1_ADDRESS has on-chain history starting around block 145170.
 const KNOWN_TX_MIN_HEIGHT = 145_000;
 
 describe("listOperations (integration)", () => {
@@ -19,9 +19,7 @@ describe("listOperations (integration)", () => {
     expect(result.next).toBeUndefined();
   });
 
-  // FIXME: Filecoin API `/v2/addresses/{addr}/transactions` times out for addresses with history.
-  // See: LIVE-18673
-  it.skip("fetches operations with correct metadata for a standard account", async () => {
+  it("fetches operations with correct metadata for a standard account", async () => {
     const result = await listOperations(TEST_ADDRESSES.F1_ADDRESS, {
       minHeight: KNOWN_TX_MIN_HEIGHT,
       limit: 5,
