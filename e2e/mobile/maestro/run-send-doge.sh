@@ -37,21 +37,10 @@ fi
 java -version >/dev/null 2>&1 || { echo "ERROR: Java 17+ not found. Install a JDK / set JAVA_HOME."; exit 1; }
 command -v maestro >/dev/null 2>&1 || { echo "ERROR: maestro not found. brew install maestro"; exit 1; }
 
-# --- device + app preflight (iOS) ---
-if ! xcrun simctl list devices booted 2>/dev/null | grep -q "Booted"; then
-  echo "ERROR: No booted iOS simulator. Boot one: maestro start-device --platform ios"
-  exit 1
-fi
-if ! xcrun simctl listapps booted 2>/dev/null | grep -q "com.ledger.live.debug"; then
-  APP_PATH="../../apps/ledger-live-mobile/ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app"
-  if [ -d "$APP_PATH" ]; then
-    echo ">> installing built app onto the booted simulator..."
-    xcrun simctl install booted "$APP_PATH"
-  else
-    echo "ERROR: app not installed and no build at $APP_PATH. Run: pnpm e2e:mobile build:ios:debug"
-    exit 1
-  fi
-fi
+# --- device + app preflight (platform-aware: iOS sim / Android emulator; see _platform.sh) ---
+source "maestro/_platform.sh"
+platform_preflight_device
+platform_install_app
 
 [ -n "${SEED:-}" ] || { echo "ERROR: SEED is not set (Speculos test mnemonic)."; exit 1; }
 if [ "$IS_REMOTE" = "1" ]; then
@@ -132,13 +121,15 @@ done
 recipient_ready || { echo "ERROR: harness did not produce a recipient within ${BACKEND_WAIT:-300}s."; exit 1; }
 echo ">> recipient ready; the flow fetches it (+ amount) from the control endpoint via onFlowStart."
 
+platform_reverse_host_ports   # Android: adb reverse Metro + bridge (no-op on iOS)
+
 echo ">> running Maestro flow: $FLOW"
 strip_maestro_noise() { grep -vaE "Running on (iOS Simulator|Android Emulator)" || true; }
 if [ "${DUMP_HIERARCHY:-0}" = "1" ]; then
-  maestro test --no-ansi "$FLOW" 2>&1 | strip_maestro_noise || true
+  maestro test --platform "$MAESTRO_PLATFORM" --no-ansi "$FLOW" 2>&1 | strip_maestro_noise || true
   echo ">> dumping view hierarchy + screenshot to artifacts/ ..."
   maestro hierarchy > artifacts/send-doge-hierarchy.json 2>/dev/null || true
   xcrun simctl io booted screenshot artifacts/send-doge-screen.png >/dev/null 2>&1 || true
 else
-  maestro test --no-ansi "$FLOW" 2>&1 | strip_maestro_noise
+  maestro test --platform "$MAESTRO_PLATFORM" --no-ansi "$FLOW" 2>&1 | strip_maestro_noise
 fi

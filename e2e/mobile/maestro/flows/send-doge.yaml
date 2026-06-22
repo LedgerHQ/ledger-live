@@ -23,27 +23,57 @@ onFlowStart:
       mock: "0"
       IS_TEST: true
       DETOX: "1"
-# Seeded Wallet 4.0 home loads. Switch to the Accounts tab, then open the Dogecoin account and tap
-# its Send quick action — this mirrors Detox's navigateToSendScreen (goToAccountByName -> tapSend,
-# which uses the ACCOUNT page button account-quick-action-button-send). NB: tapping the asset row on
-# the Assets tab is unreliable (it sits under the bottom nav and the W40 asset page exposes only
-# "quick-action-transfer", not a direct send), so we go via the account.
+# Decline the analytics consent modal if it pops (its backdrop would otherwise swallow our taps).
+- runFlow: ../subflows/dismiss-analytics-prompt.yaml
+# Seeded Wallet 4.0 home loads. Open the accounts list, then the Dogecoin account, then tap its Send
+# quick action — mirrors Detox's navigateToSendScreen (goToAccountByName -> tapSend). Only the way we
+# OPEN the accounts list differs per platform (both then tap the same "Dogecoin 1" row):
+#   - iOS: tap the Assets/Accounts toggle (a deeplink would hit an untappable SpringBoard alert).
+#   - Android: open the ledgerlive://account deeplink, exactly like Detox's openViaDeeplink (the
+#     native-ui toggle doesn't forward Maestro taps to its onToggle on Android). The run script
+#     guarantees a single ledgerlive:// handler so this opens directly (no app chooser).
 - extendedWaitUntil:
     visible:
       id: "tab-selector-Accounts"
     timeout: 180000
-- tapOn:
-    id: "tab-selector-Accounts"
-# The Dogecoin account row sits low in the list (often under the bottom nav) -> scroll it to center
-# before tapping, otherwise the tap lands on the tab bar and nothing navigates.
-- scrollUntilVisible:
-    element:
-      text: "Dogecoin 1"
-    direction: DOWN
-    centerElement: true
-    timeout: 30000
-- tapOn:
-    text: "Dogecoin 1"
+# Open the accounts list, scroll the Dogecoin 1 row into view, and tap it. The row sits low (under
+# the bottom nav), so centerElement scrolls it clear of the tab bar; the W40 home re-renders often
+# (price tickers) so each scroll gets a settle window. The TAP SELECTOR differs by platform because
+# of how React Native forwards touches: on iOS the account name Text forwards the tap to the row's
+# onPress (tap by text), on Android it does not but the name's testID node does (tap by id).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          id: "tab-selector-Accounts"
+      - scrollUntilVisible:
+          element:
+            text: "Dogecoin 1"
+          direction: DOWN
+          centerElement: true
+          timeout: 30000
+          waitToSettleTimeoutMs: 500
+      - tapOn:
+          text: "Dogecoin 1"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - openLink: ledgerlive://account
+      - extendedWaitUntil:
+          visible:
+            id: "accounts-list-title"
+          timeout: 30000
+      - scrollUntilVisible:
+          element:
+            id: "account-row-name-Dogecoin 1"
+          direction: DOWN
+          centerElement: true
+          timeout: 30000
+          waitToSettleTimeoutMs: 500
+      - tapOn:
+          id: "account-row-name-Dogecoin 1"
 # Account page -> Send quick action.
 - extendedWaitUntil:
     visible:
@@ -59,6 +89,23 @@ onFlowStart:
 - tapOn:
     id: "recipient-input"
 - inputText: "${output.recipient}"
+# Android's soft keyboard occasionally drops a character while typing the long address, making it
+# invalid so the Continue button never enables. Re-enter until Continue is enabled (no-op on iOS,
+# where the first inputText is reliable). Do NOT re-tap the field here: it stays focused with the
+# cursor at the end, so eraseText clears the whole value (re-tapping would move the cursor and leave
+# a trailing fragment).
+- repeat:
+    times: 5
+    commands:
+      - runFlow:
+          when:
+            notVisible:
+              id: "enabled-recipient-continue-button"
+          commands:
+            - eraseText
+            - inputText: "${output.recipient}"
+            - waitForAnimationToEnd:
+                timeout: 1500
 - extendedWaitUntil:
     visible:
       id: "enabled-recipient-continue-button"

@@ -26,61 +26,141 @@ onFlowStart:
     visible:
       id: "w40-tab-swap"
     timeout: 180000
+# Decline the analytics consent modal if it pops — it appears WITH the home (Portfolio mount), so
+# dismiss it here (after the home gate, before tapping) or its backdrop swallows the tab tap.
+- runFlow: ../subflows/dismiss-analytics-prompt.yaml
 # Open swap via the Wallet 4.0 bottom tab (avoids the iOS deeplink dialog).
 - tapOn:
     id: "w40-tab-swap"
-# Wait for the swap live-app form (the coin selector text).
+# Wait for the swap live-app form (the coin selector text). The live-app WebView tree is readable by
+# Maestro on BOTH platforms (iOS WKWebView + Android WebView), so the currency/amount taps are driven
+# here; only the clip-prone quote/execute taps are delegated to the harness (see below).
 - extendedWaitUntil:
     visible:
       text: "Select Currency or Token"
     timeout: 90000
-# The form's "Select Currency or Token" aria-label is present in the DOM before the app
-# finishes loading (a spinner shows, and the From side reads "Choose asset"). The From asset
-# only auto-selects ETH once loading completes and the balance renders. Gate on that balance
-# so the first WebView tap doesn't race the still-loading (and volatile) a11y tree.
+# The form's "Select Currency or Token" aria-label is present in the DOM before the app finishes
+# loading (a spinner shows, the From side reads "Choose asset"). From auto-selects ETH only once the
+# balance renders, so gate on "Balance" before the first WebView tap (don't race the volatile tree).
 - extendedWaitUntil:
     visible:
       text: "Balance"
     timeout: 60000
 - takeScreenshot: artifacts/swap-form-loaded
-# --- Select the Receive (To) currency = USDT. index 1 = To (0 = From, already ETH). ---
-# Tapping the To selector fires the wallet-api `account.request`. The harness has enabled in-app
-# auto-pick (setAutoPickAccount, target = the USDT token), so that request resolves the seeded USDT
-# account DIRECTLY and NO native modular drawer opens. This replaces the old drawer dance, which was
-# flaky on iOS (the drawer auto-advanced past the asset step and often landed on "Select account"
-# with no account row, never binding the seeded USDT account). The From account (ETH) is already
-# auto-selected, so auto-pick targeting USDT is unambiguous.
+# --- Select the Receive (To) currency = USDT via the NATIVE modular drawer. index 1 = To (0 = From,
+# already ETH). Tapping the To coin selector fires the wallet-api account.request, which opens the
+# modular drawer (the real currency/account picker). Drive it: search -> asset -> network -> account.
 - tapOn:
     text: "Select Currency or Token"
     index: 1
     retryTapIfNoChange: true
-# Auto-pick resolves To=USDT in-app (a fast WebView<->native round-trip) and the form recomputes.
-# Don't assert the "USDT" text — the WebView doesn't expose it as a standalone a11y label — just let
-# the form settle. Correctness is gated downstream: the harness taps "View quotes" only once that
-# button is ENABLED, which requires both currencies set + an amount, so an early 25% tap is harmless.
+- extendedWaitUntil:
+    visible:
+      id: "modular-drawer-search-input"
+    timeout: 30000
+- tapOn:
+    id: "modular-drawer-search-input"
+# Search a PARTIAL term ("USD") not the exact ticker: once the filter narrows to a SINGLE result the
+# drawer auto-advances past the asset step before we can tap it. "USD" keeps several matches (USDT,
+# USDC, ...) so the asset row stays until we tap it explicitly.
+- inputText: "USD"
+- extendedWaitUntil:
+    visible:
+      id: "asset-item-USDT"
+    timeout: 30000
+- tapOn:
+    id: "asset-item-USDT"
+    retryTapIfNoChange: true
+# Network step: USDT exists on several chains -> pick Ethereum. Sometimes the drawer auto-advances
+# past it (single network), so this is optional.
+- tapOn:
+    id: "network-item-ethereum"
+    retryTapIfNoChange: true
+    optional: true
+# Account step: pick the seeded USDT account (the drawer's account row), which closes the drawer.
+- extendedWaitUntil:
+    visible:
+      id: "account-item"
+    timeout: 30000
+- tapOn:
+    id: "account-item"
+    retryTapIfNoChange: true
 - waitForAnimationToEnd:
     timeout: 4000
 - takeScreenshot: artifacts/swap-usdt-selected
-# --- Amount: tap a percentage button (the custom keypad isn't Maestro-tappable). ---
+# --- Amount: select 25% of the balance (a quotable amount) via the keypad's percentage button.
 - tapOn:
     text: "25%"
 - waitForAnimationToEnd:
     timeout: 4000
 - takeScreenshot: artifacts/swap-amount-set
-# --- Everything from here (View quotes -> quote list -> provider selection -> execute) is driven by
-# the HARNESS over the bridge (the in-app webview driver), NOT by Maestro. Maestro owns the NATIVE
-# parts (open swap, the modular-drawer currency pick, the 25% amount button) and then just waits for
-# the native success screen — it does NOT touch the WebView again, which avoids two problems:
-#   1. Maestro can't reliably tap the WebView's quote/execute buttons (their a11y-frame centres are
-#      clipped under the home indicator so a by-text tap doesn't fire them; a by-point tap races the
-#      ~20s quote re-render / hits the wrong card), and
-#   2. the harness drives the WebView faster than Maestro, so any intermediate Maestro assertion on
-#      the WebView (e.g. "N quotes found") races the harness already moving past that screen.
-# The harness (backend.test.ts `driveSwapExecute`) replicates Detox's selectExchange()+tapExecuteSwap():
-# tap "View quotes", wait for the quotes, pick the first non-KYC / non-app provider (an app-requiring
-# provider e.g. 1inch makes the Exchange app exit(255) — only the Ethereum coin app is an Exchange
-# dependency), and click its execute button via a real DOM click. That sends the swap to the device;
-# the harness's proactive signer accepts it on the Speculos. ---
+# --- View quotes -> pick provider -> execute. WHO drives this differs by platform:
+#   - iOS: the HARNESS (backend.test.ts `driveSwapExecute`) drives it over the bridge, because these
+#     buttons' a11y-frame centres are clipped under the home indicator (a Maestro tap misses). The
+#     webviewDriver's synthetic DOM click fires the live-app's React onClick on iOS WKWebView.
+#   - Android: Maestro drives it directly. The WebView tree is fully readable/tappable here and the
+#     buttons aren't clipped; the webviewDriver's synthetic click does NOT fire React onClick on
+#     Android's WebView, so the harness skips it (Maestro must do real taps).
+# Both pick the first non-KYC / non-app provider (an app-requiring provider e.g. 1inch makes the
+# Exchange app exit(255) — only the Ethereum coin app is an Exchange dependency). Execute sends the
+# swap to the device; the harness's proactive signer accepts it on the Speculos.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible:
+            text: "View quotes"
+          timeout: 30000
+      - tapOn:
+          text: "View quotes"
+      - extendedWaitUntil:
+          visible:
+            text: "[0-9]+ quotes? found"
+          timeout: 90000
+      # Pick the first visible non-app provider (cascade), then execute via its inline "Swap with X".
+      - evalScript: ${output.picked = "no"}
+      - runFlow:
+          when:
+            visible:
+              text: "MoonPay Trade"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "MoonPay Trade" }
+            - evalScript: ${output.picked = "MoonPay Trade"}
+      - runFlow:
+          when:
+            visible:
+              text: "NEAR Intents"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "NEAR Intents" }
+            - evalScript: ${output.picked = "NEAR Intents"}
+      - runFlow:
+          when:
+            visible:
+              text: "Changelly"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "Changelly" }
+            - evalScript: ${output.picked = "Changelly"}
+      - runFlow:
+          when:
+            visible:
+              text: "Exodus"
+            true: ${output.picked == "no"}
+          commands:
+            - tapOn: { text: "Exodus" }
+            - evalScript: ${output.picked = "Exodus"}
+      - assertTrue: ${output.picked != "no"}
+      - waitForAnimationToEnd:
+          timeout: 4000
+      - extendedWaitUntil:
+          visible:
+            text: "Swap with ${output.picked}"
+          timeout: 20000
+      - tapOn:
+          text: "Swap with ${output.picked}"
 - extendedWaitUntil:
     visible:
       id: "swap-success-title"

@@ -37,26 +37,10 @@ fi
 java -version >/dev/null 2>&1 || { echo "ERROR: Java 17+ not found (Maestro needs it). Install a JDK / set JAVA_HOME."; exit 1; }
 command -v maestro >/dev/null 2>&1 || { echo "ERROR: maestro not found. Install: brew install maestro"; exit 1; }
 
-# --- device + app preflight (iOS) ---
-if ! xcrun simctl list devices booted 2>/dev/null | grep -q "Booted"; then
-  echo "ERROR: No booted iOS simulator (this is the '0 devices' error)."
-  echo "  Boot one, e.g.:  maestro start-device --platform ios   (or open Simulator.app)"
-  exit 1
-fi
-if ! xcrun simctl listapps booted 2>/dev/null | grep -q "com.ledger.live.debug"; then
-  # `build:ios:debug` only builds the .app; install it here (Detox normally installs at test time).
-  APP_PATH="../../apps/ledger-live-mobile/ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app"
-  if [ -d "$APP_PATH" ]; then
-    echo ">> installing built app onto the booted simulator..."
-    xcrun simctl install booted "$APP_PATH"
-  else
-    echo "ERROR: Mock app not installed and no build found at:"
-    echo "    $APP_PATH"
-    echo "  Build it first (from repo root):  pnpm e2e:mobile build:ios:debug"
-    echo "  (iOS debug also needs Metro running: pnpm mobile start)"
-    exit 1
-  fi
-fi
+# --- device + app preflight (platform-aware: iOS sim / Android emulator; see _platform.sh) ---
+source "maestro/_platform.sh"
+platform_preflight_device
+platform_install_app
 if [ "$FULL" != "0" ] && ! docker info >/dev/null 2>&1; then
   echo "ERROR: Docker isn't running (needed for Speculos)."
   echo "  Start Docker (+ docker pull $SPECULOS_IMAGE_TAG), or run seed-only:  MAESTRO_FULL=0 $0"
@@ -119,8 +103,10 @@ for _ in $(seq 1 "${BACKEND_WAIT:-120}"); do
   sleep 1
 done
 
+platform_reverse_host_ports   # Android: adb reverse Metro + bridge (no-op on iOS)
+
 echo ">> running Maestro flow: $FLOW"
 # --no-ansi: plain output (the default TUI redraws an ANSI box that garbles when logged).
 # Drop the per-run "Running on iOS Simulator ..." device banner. pipefail (set above) keeps
 # Maestro's exit code despite the trailing filter.
-maestro test --no-ansi "$FLOW" "$@" 2>&1 | { grep -vaE "Running on (iOS Simulator|Android Emulator)" || true; }
+maestro test --platform "$MAESTRO_PLATFORM" --no-ansi "$FLOW" "$@" 2>&1 | { grep -vaE "Running on (iOS Simulator|Android Emulator)" || true; }
