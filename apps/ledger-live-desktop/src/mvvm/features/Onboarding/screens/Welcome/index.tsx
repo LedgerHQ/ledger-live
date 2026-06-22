@@ -3,6 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { useTheme } from "styled-components";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
+import { AnalyticsOptInScreenV2 } from "LLD/features/AnalyticsOptInPrompt/screens/AnalyticsOptInScreenV2";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint as LSEntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 
@@ -20,7 +21,7 @@ import {
   TermsAndConditionsText,
   StyledLink,
 } from "./components/WelcomeStyles";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function Welcome() {
   const {
@@ -52,6 +53,7 @@ export function Welcome() {
   const { colors } = useTheme();
 
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("desktop");
+  const lwdAnalyticsOptInScreenV2 = useFeature("lwdAnalyticsOptInScreenV2");
 
   return (
     <WelcomeContainer ref={containerRef}>
@@ -159,9 +161,12 @@ export function Welcome() {
           </TermsAndConditionsText>
         </BottomSection>
       </ContentOverlay>
-      {isFeatureFlagsAnalyticsPrefDisplayed && (
-        <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
-      )}
+      {isFeatureFlagsAnalyticsPrefDisplayed &&
+        (lwdAnalyticsOptInScreenV2?.enabled ? (
+          <AnalyticsOptInScreenV2 {...extendedAnalyticsOptInPromptProps} />
+        ) : (
+          <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
+        ))}
     </WelcomeContainer>
   );
 }
