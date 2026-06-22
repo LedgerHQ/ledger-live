@@ -66,7 +66,6 @@ import {
 import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
-import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -937,8 +936,11 @@ export function useWalletAPIServer({
       "transaction.signAndBroadcast",
       async ({ accountId, tokenCurrency, transaction, options, meta }) => {
         const sponsored = transaction.family === "ethereum" && transaction.sponsored;
-
-        const trackingMeta = (meta ?? {}) as SwapTrackingMeta;
+        const trackingMeta = {
+          isEmbeddedSwap: (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded,
+          swapEntryPoint: (meta as { swapEntryPoint?: string } | undefined)?.swapEntryPoint,
+          partner: (meta as { partner?: string } | undefined)?.partner,
+        };
 
         const signedTransaction = await signTransactionLogic(
           { manifest, accounts, tracking },
@@ -984,9 +986,7 @@ export function useWalletAPIServer({
                 : account.currency.id;
 
             const broadcastTrackingData = {
-              isEmbedded: trackingMeta.isEmbedded,
-              swapEntryPoint: trackingMeta.swapEntryPoint,
-              partner: trackingMeta.partner,
+              ...trackingMeta,
               sourceCurrency:
                 account.type === "TokenAccount" ? account.token.name : account.currency.name,
               network: networkId,

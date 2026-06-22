@@ -22,17 +22,14 @@ function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
 }
 
-/**
- * Build the analytics property payload for a sign-transaction event by
- * spreading the wire-meta bag.
- */
-function buildSignTransactionProperties(manifest: AppManifest, meta: SwapTrackingMeta) {
-  const { isEmbedded, partner, swapEntryPoint } = meta;
+function buildSignTransactionProperties(manifest: AppManifest, meta?: SwapTrackingMeta) {
   return {
     ...getEventData(manifest),
-    ...(typeof isEmbedded === "boolean" && { isEmbeddedSwap: String(isEmbedded) }),
-    ...(typeof partner === "string" && { partner }),
-    ...(typeof swapEntryPoint === "string" && { swapEntryPoint }),
+    ...(typeof meta?.isEmbeddedSwap === "boolean" && {
+      isEmbeddedSwap: String(meta.isEmbeddedSwap),
+    }),
+    ...(typeof meta?.swapEntryPoint === "string" && { swapEntryPoint: meta.swapEntryPoint }),
+    ...(typeof meta?.partner === "string" && { partner: meta.partner }),
   };
 }
 
@@ -71,17 +68,17 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Sign transaction modal open
-    signTransactionRequested: (manifest: AppManifest, meta: SwapTrackingMeta = {}) => {
+    signTransactionRequested: (manifest: AppManifest, meta?: SwapTrackingMeta) => {
       track("WalletAPI SignTransaction", buildSignTransactionProperties(manifest, meta));
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (manifest: AppManifest, meta: SwapTrackingMeta = {}) => {
+    signTransactionFail: (manifest: AppManifest, meta?: SwapTrackingMeta) => {
       track("WalletAPI SignTransaction Fail", buildSignTransactionProperties(manifest, meta));
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (manifest: AppManifest, meta: SwapTrackingMeta = {}) => {
+    signTransactionSuccess: (manifest: AppManifest, meta?: SwapTrackingMeta) => {
       track("WalletAPI SignTransaction Success", buildSignTransactionProperties(manifest, meta));
     },
 
@@ -133,32 +130,30 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     // Failed to broadcast a signed transaction
     broadcastFail: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties: Record<string, unknown> = getEventData(manifest);
-      if (typeof data?.isEmbedded === "boolean") {
-        properties.isEmbeddedSwap = String(data.isEmbedded);
-      }
+      if (data?.isEmbeddedSwap !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
       if (typeof data?.swapEntryPoint === "string") {
         properties.swapEntryPoint = data.swapEntryPoint;
       }
-      if (typeof data?.partner === "string") properties.partner = data.partner;
-      if (data?.sourceCurrency != null) properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency != null) properties.targetCurrency = data.targetCurrency;
-      if (data?.network != null) properties.network = data.network;
+      if (data?.partner !== undefined) properties.partner = data.partner;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
     broadcastSuccess: (manifest: AppManifest, data?: BroadcastTrackingData) => {
       const properties: Record<string, unknown> = getEventData(manifest);
-      if (typeof data?.isEmbedded === "boolean") {
-        properties.isEmbeddedSwap = String(data.isEmbedded);
-      }
+      if (data?.isEmbeddedSwap !== undefined)
+        properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
       if (typeof data?.swapEntryPoint === "string") {
         properties.swapEntryPoint = data.swapEntryPoint;
       }
-      if (typeof data?.partner === "string") properties.partner = data.partner;
-      if (data?.sourceCurrency != null) properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency != null) properties.targetCurrency = data.targetCurrency;
-      if (data?.network != null) properties.network = data.network;
+      if (data?.partner !== undefined) properties.partner = data.partner;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
+      if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Success", properties);
     },
 

@@ -4,7 +4,6 @@ import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-c
 import type { CustomHandlers as WalletAPICustomHandlers } from "@ledgerhq/wallet-api-server";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { LiveAppManifest } from "../platform/types";
-import { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 
 export type { WalletAPITransaction, WalletAPICustomHandlers };
 
@@ -85,7 +84,10 @@ export type DAppTrackingData = {
   network: CryptoCurrency["id"];
 };
 
-export type BroadcastTrackingData = SwapTrackingMeta & {
+export type BroadcastTrackingData = {
+  isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
+  partner?: string;
   sourceCurrency?: string;
   targetCurrency?: string;
   network?: CryptoCurrency["id"];

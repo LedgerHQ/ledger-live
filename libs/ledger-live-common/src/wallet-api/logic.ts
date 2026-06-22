@@ -13,7 +13,7 @@ import {
   getAccountIdFromWalletAccountId,
 } from "./converters";
 import type { TrackingAPI } from "./tracking";
-import { AppManifest, SwapTrackingMeta, TranslatableString, WalletAPITransaction } from "./types";
+import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
 import {
   isTokenAccount,
   isAccount,
@@ -29,6 +29,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -89,10 +90,11 @@ export async function signTransactionLogic(
     },
   ) => Promise<SignedOperation>,
   tokenCurrency?: string,
-  trackingMeta: SwapTrackingMeta = {},
+  trackingMeta?: SwapTrackingMeta,
 ): Promise<SignedOperation> {
   return withLiveAppContext(manifest, async () => {
     tracking.signTransactionRequested(manifest, trackingMeta);
+
     if (!transaction) {
       tracking.signTransactionFail(manifest, trackingMeta);
       throw new Error("Transaction required");
@@ -534,8 +536,6 @@ export type CompleteExchangeUiRequest = {
   rate?: number;
   amountExpectedTo?: number;
   tokenCurrency?: string;
-  isEmbeddedSwap?: boolean;
-  swapEntryPoint?: string;
 };
 
 export async function completeExchangeLogic(

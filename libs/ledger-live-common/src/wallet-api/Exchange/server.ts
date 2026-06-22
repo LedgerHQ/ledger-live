@@ -113,6 +113,7 @@ export type CompleteExchangeUiRequest = {
   payoutAddress?: string;
   sponsored?: boolean;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
@@ -143,7 +144,6 @@ export type SwapUiRequest = CompleteExchangeUiRequest & {
   toAccountId?: string;
   tokenCurrency?: string;
   correlationId?: string;
-  swapEntryPoint?: string;
 };
 
 type ExchangeUiHooks = {
@@ -235,7 +235,7 @@ export const handlers = ({
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
-          ...(params.exchangeType === "SWAP" && extractSwapTrackingMeta(params.meta)),
+          meta: params.exchangeType === "SWAP" ? extractSwapTrackingMeta(params.meta) : undefined,
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -272,13 +272,11 @@ export const handlers = ({
           tracking.completeExchangeNoParams(manifest);
           return { transactionHash: "" };
         }
-
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
-          ...(params.exchangeType === "SWAP" && extractSwapTrackingMeta(params.meta)),
+          meta: params.exchangeType === "SWAP" ? extractSwapTrackingMeta(params.meta) : undefined,
         };
-
         tracking.completeExchangeRequested(trackingParams);
 
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
@@ -419,7 +417,7 @@ export const handlers = ({
               magnitudeAwareRate,
               refundAddress,
               payoutAddress,
-              ...(params.exchangeType === "SWAP" && extractSwapTrackingMeta(params.meta)),
+              ...extractSwapTrackingMeta(params.exchangeType === "SWAP" ? params.meta : undefined),
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess({
