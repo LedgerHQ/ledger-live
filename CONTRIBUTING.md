@@ -35,8 +35,6 @@ Use `pnpm commit` for an interactive prompt, or `pnpm commitlint --from <target-
 - Small, self-contained branches → rebase on `develop`.
 - Branches with cross-branch merges → merge `develop` into them to stay up to date.
 
-> [!WARNING]
-> Do **not** rebase a branch that is awaiting translations from Smartling.
 
 ## The PR Lifecycle
 
@@ -53,14 +51,10 @@ flowchart LR
 
 Before marking your PR ready for review, ensure all of the following pass:
 
-- **CI linters** — lint and TypeScript checks must pass.
-- **CI tests** — unit tests and e2e tests must be green.
-- **SonarQube** — address all findings: fix, mark as accepted debt, or flag as false positive. See [`docs/contributing/sonarqube-guide.md`](docs/contributing/sonarqube-guide.md).
-- **Copilot** — request a Copilot review as early as Draft, address or explicitly dismiss every comment, and resolve all threads.
-
-<img width="300" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
-
-For testing requirements see the [Developer Portal](https://developers.ledger.com/docs/ledger-live/contributing/reference/testing).
+- **lint, TypeScript** — all linter and type checks must pass.
+- **unit tests, e2e** — all tests must be green. See [testing requirements](https://developers.ledger.com/docs/ledger-live/contributing/reference/testing).
+- **SonarQube** — a green state is expected: above 80% test coverage and no unhandled code smells. See [SonarQube Guide](docs/contributing/sonarqube-guide.md).
+- **Copilot** — request a Copilot review, address or explicitly dismiss every comment, and resolve all threads.
 
 ### Code owner review
 
@@ -68,7 +62,6 @@ For testing requirements see the [Developer Portal](https://developers.ledger.co
 - When a reviewer leaves feedback and you push a fix, **re-request their review** (GitHub "Re-request" button).
 - If you receive a review request for files you don't own, feel free to uncheck it.
 
-<img width="300" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />
 
 #### Your daily review duty
 
@@ -95,6 +88,16 @@ We use [Smartling](https://www.smartling.com/) for automated translations.
 **Only edit the English source files.** Never commit files for other locales.
 
 See the README files of [Ledger Wallet Desktop](apps/ledger-live-desktop) and [Ledger Wallet Mobile](apps/ledger-live-mobile) for the source file paths.
+
+> [!TIP]
+> **Tip 1 — Request Copilot while still in Draft**
+>
+> <img width="300" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
+
+> [!TIP]
+> **Tip 2 — Re-request review after pushing fixes**
+>
+> <img width="300" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />
 
 ## Developer Portal
 
