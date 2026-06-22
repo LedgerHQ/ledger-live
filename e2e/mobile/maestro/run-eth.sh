@@ -99,7 +99,14 @@ cleanup() {
 trap cleanup EXIT
 
 echo ">> starting backend harness (full=$FULL, port $MAESTRO_BRIDGE_PORT) via jest..."
-pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
+# Quiet the verbose harness Jest output by default (it would drown the Maestro steps); VERBOSE=1 streams it.
+HARNESS_LOG="artifacts/harness-add-account.log"
+if [ "${VERBOSE:-0}" = "1" ]; then
+  pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
+else
+  echo ">> harness backend logs -> e2e/mobile/$HARNESS_LOG (set VERBOSE=1 to stream them here)"
+  pnpm exec jest --config maestro/harness/jest.config.js --runInBand >"$HARNESS_LOG" 2>&1 &
+fi
 HARNESS_PID=$!
 
 # Wait for the bridge port to open, then launch. In full mode the harness's Speculos

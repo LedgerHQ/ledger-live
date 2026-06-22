@@ -5,17 +5,16 @@
 #   continue -> device review (the harness signs via signSendTransaction) -> success -> op details.
 #
 # The harness (MAESTRO_FLOW=send-doge) seeds Dogecoin 1 + derives the Dogecoin 2 recipient address.
-# The recipient address is derived on the device (Maestro can't), so the orchestrator passes it in:
-#   maestro test -e RECIPIENT=<addr> -e AMOUNT=<amt> flows/send-doge.yaml
-# Navigation is pure UI (no deeplink — iOS deeplinks hit the SpringBoard dialog):
+# The recipient is derived on the device (Maestro can't), so an onFlowStart hook fetches it (+ the
+# amount) from the harness's control endpoint over HTTP into output.recipient / output.amount — no
+# bash `-e` plumbing. Navigation is pure UI (no deeplink — iOS deeplinks hit the SpringBoard dialog):
 #   portfolio -> assetItem-Dogecoin -> asset-quick-action-button-send -> recipient/amount/summary.
 appId: com.ledger.live.debug
 tags:
   - send
   - doge
-# NB: RECIPIENT + AMOUNT come ONLY from `maestro test -e RECIPIENT=<addr> -e AMOUNT=<amt>` (set by
-# run-send-doge.sh). Do NOT add an `env:` block with defaults here — a flow-level `env:` default
-# (e.g. RECIPIENT: "") shadows the -e value and the recipient field ends up empty.
+onFlowStart:
+  - runScript: ../scripts/fetch-send-params.js
 ---
 - launchApp:
     clearState: true
@@ -52,14 +51,14 @@ tags:
     timeout: 20000
 - tapOn:
     id: "account-quick-action-button-send"
-# --- Recipient (derived by the harness, injected via -e RECIPIENT) ---
+# --- Recipient (derived by the harness, fetched via the onFlowStart hook into output.recipient) ---
 - extendedWaitUntil:
     visible:
       id: "recipient-input"
     timeout: 20000
 - tapOn:
     id: "recipient-input"
-- inputText: "${RECIPIENT}"
+- inputText: "${output.recipient}"
 - extendedWaitUntil:
     visible:
       id: "enabled-recipient-continue-button"
@@ -84,7 +83,7 @@ tags:
     timeout: 20000
 - tapOn:
     point: "50%,21%"
-- inputText: "${AMOUNT}"
+- inputText: "${output.amount}"
 # No hideKeyboard: the numeric keypad doesn't respond to it and the Continue button sits above the
 # keypad anyway. Wait for the amount to validate (continue enables), then tap it.
 - extendedWaitUntil:
