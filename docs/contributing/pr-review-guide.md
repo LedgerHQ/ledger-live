@@ -13,10 +13,10 @@ A practical reference for reviewing PRs in this repository.
 
 Use GitHub's file tree to filter the diff to files your team owns. Mark files as "Viewed" as you go.
 
-<img alt="Only files owned by you" src="https://github.com/user-attachments/assets/1966a4eb-6921-49d5-ad01-da7a2e70cf23" />
-
 > [!NOTE]
 > If you notice files in the diff that are **not covered by any `CODEOWNERS` entry**, update `CODEOWNERS` yourself to claim them. Unclaimed files get reviewed by nobody.
+
+<img width="400" alt="Only files owned by you" src="https://github.com/user-attachments/assets/1966a4eb-6921-49d5-ad01-da7a2e70cf23" />
 
 ### What to look for
 
