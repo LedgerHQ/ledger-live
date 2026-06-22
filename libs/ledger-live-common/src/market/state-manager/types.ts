@@ -7,6 +7,7 @@ export enum MarketDataTags {
   ChartData = "ChartData",
   GlobalData = "GlobalData",
   TrendingCategories = "TrendingCategories",
+  TrendingPerformers = "TrendingPerformers",
 }
 
 export interface MarketPerformersQueryParams {
@@ -16,6 +17,10 @@ export interface MarketPerformersQueryParams {
   top?: number;
   sort: "asc" | "desc";
   supported: boolean;
+}
+
+export interface TrendingPerformersQueryParams {
+  counterCurrency: string;
 }
 
 export const MarketChartApiResponseSchema = z.object({
@@ -53,3 +58,13 @@ export const TrendingCategoriesResponseSchema = z.array(
 );
 
 export type MarketTrendingCategory = z.infer<typeof TrendingCategoriesResponseSchema>[number];
+
+// Raw /v3/currencies/trending response: an ordered list of { id, supported } currencies.
+export const TrendingCurrenciesResponseSchema = z.array(
+  z.object({
+    id: z.string(),
+    supported: z.boolean(),
+  }),
+);
+
+export type TrendingCurrency = z.infer<typeof TrendingCurrenciesResponseSchema>[number];

@@ -6,17 +6,43 @@
 const errorClasses = {};
 const deserializers = {};
 
+/**
+ * @ignore
+ * @deprecated Part of the error serialization stack being sunset. Do not register
+ * new deserializers. Prefer checking `error.name === "X"` over rebuilding classes —
+ * a name comparison works the same before and after a value crosses a boundary.
+ */
 export const addCustomErrorDeserializer = (name: string, deserializer: (obj: any) => any): void => {
   deserializers[name] = deserializer;
 };
 
-export interface LedgerErrorConstructor<F extends { [key: string]: unknown }>
-  extends ErrorConstructor {
+/**
+ * @ignore
+ * @deprecated Type of the legacy `createCustomErrorClass` factory, which is itself
+ * deprecated. Do not type new code against it.
+ */
+export interface LedgerErrorConstructor<
+  F extends { [key: string]: unknown },
+> extends ErrorConstructor {
   new (message?: string, fields?: F, options?: any): Error & F;
   (message?: string, fields?: F, options?: any): Error & F;
   readonly prototype: Error & F;
 }
 
+/**
+ * @ignore
+ * @deprecated Do not create new error classes with this factory. Define a plain
+ * native class instead, in your own package's `src/errors.ts`:
+ *
+ * ```ts
+ * export class MyError extends Error {
+ *   override name = "MyError";
+ * }
+ * ```
+ *
+ * Check the type with `error.name === "MyError"` (survives serialization) rather
+ * than `instanceof`.
+ */
 export const createCustomErrorClass = <
   F extends { [key: string]: unknown },
   T extends LedgerErrorConstructor<F> = LedgerErrorConstructor<F>,
@@ -61,6 +87,13 @@ function isObject(value) {
   return typeof value === "object";
 }
 
+/**
+ * @ignore
+ * @deprecated The serialize/deserialize stack is being sunset. Rebuilding a class
+ * from a wire object is brittle (it silently degrades to a plain Error for unknown
+ * names). Pass `{ name, message }` and branch on `error.name` at the consumer
+ * instead.
+ */
 // inspired from https://github.com/programble/errio/blob/master/index.js
 export const deserializeError = (object: any): Error | undefined => {
   if (object && typeof object === "object") {
@@ -121,6 +154,11 @@ export const deserializeError = (object: any): Error | undefined => {
   return new Error(String(object));
 };
 
+/**
+ * @ignore
+ * @deprecated The serialize/deserialize stack is being sunset. Send a plain
+ * `{ name, message }` shape and branch on `error.name` at the consumer instead.
+ */
 // inspired from https://github.com/sindresorhus/serialize-error/blob/master/index.js
 export const serializeError = (
   value: undefined | To | string | (() => unknown),

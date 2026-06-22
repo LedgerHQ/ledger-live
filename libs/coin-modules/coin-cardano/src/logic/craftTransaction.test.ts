@@ -284,7 +284,9 @@ describe("buildUnsignedTransaction — token", () => {
   });
 
   it.each([
-    ["missing reference", { type: "token" }],
+    // A token transfer is identified by the presence of an assetReference (Cardano native tokens have
+    // tokenType "native", so asset.type alone can't distinguish them from ADA); a referenceless asset
+    // is treated as a native send, so only present-but-malformed references reach this validation.
     ["too short to hold a policy id", { type: "token", assetReference: "abcd" }],
     ["non-hex policy id", { type: "token", assetReference: `${"z".repeat(56)}abcd` }],
     ["non-hex asset name", { type: "token", assetReference: `${POLICY_ID}zz` }],

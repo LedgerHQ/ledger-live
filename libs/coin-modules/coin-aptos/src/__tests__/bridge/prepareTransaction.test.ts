@@ -4,6 +4,8 @@ import { getMaxSendBalance } from "../../bridge/logic";
 import prepareTransaction from "../../bridge/prepareTransaction";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../../constants";
 import { AptosAPI } from "../../network";
@@ -58,20 +60,28 @@ describe("Aptos prepareTransaction", () => {
       expect(result.fees?.isZero()).toBe(true);
     });
 
-    it("should set the amount to max sendable balance if useAllAmount is true", async () => {
+    it("should set the amount to max sendable balance using the default gas budget if useAllAmount is true", async () => {
       transaction.recipient = "test-recipient";
       transaction.useAllAmount = true;
       (getMaxSendBalance as jest.Mock).mockReturnValue(new BigNumber(900));
       (getEstimatedGas as jest.Mock).mockResolvedValue({
         fees: new BigNumber(2000),
-        estimate: { maxGasAmount: new BigNumber(200), gasUnitPrice: new BigNumber(10) },
+        estimate: { maxGasAmount: new BigNumber(10), gasUnitPrice: new BigNumber(10) },
         errors: {},
       });
 
       const result = await prepareTransaction(account, transaction);
+
+      expect(getMaxSendBalance).toHaveBeenCalledWith(
+        account,
+        undefined,
+        new BigNumber(DEFAULT_GAS),
+        new BigNumber(DEFAULT_GAS_PRICE),
+      );
       expect(result.amount.isEqualTo(new BigNumber(900))).toBe(true);
-      expect(result.fees?.isEqualTo(new BigNumber(2000))).toBe(true);
-      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(result.fees?.isEqualTo(DEFAULT_GAS.multipliedBy(DEFAULT_GAS_PRICE))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(DEFAULT_GAS)).toBe(true);
+      expect(new BigNumber(result.options.gasUnitPrice).isEqualTo(DEFAULT_GAS_PRICE)).toBe(true);
       expect(result.errors).toEqual({});
     });
 

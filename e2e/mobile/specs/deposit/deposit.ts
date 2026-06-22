@@ -1,8 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
-import { isWallet40 } from "../../helpers/commonHelpers";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { ApplicationOptions } from "page";
 
@@ -15,7 +13,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
     cliCommands: options.cliCommands,
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
 }
 
 export async function runSelectCryptoNetworkTest(
@@ -42,17 +40,9 @@ export async function runSelectCryptoNetworkTest(
     it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${
       account.currency.ticker
     }`, async () => {
-      if (isWallet40) {
-        await app.portfolio.pressQuickActionTransferButton();
-        await app.portfolio.pressTransferBottomSheetReceiveButton();
-      } else {
-        if (withAccount) {
-          await app.portfolio.tapQuickActionReceiveButton();
-        } else {
-          await app.portfolioEmptyState.navigateToReceive();
-        }
-        await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
-      }
+      await app.portfolio.pressQuickActionTransferButton();
+      await app.portfolio.pressTransferBottomSheetReceiveButton();
+
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
       await app.modularDrawer.validateNetworksScreen(networks);
@@ -79,13 +69,8 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`should select crypto without network and account for ${account.currency.ticker}`, async () => {
-      if (isWallet40) {
-        await app.portfolio.pressQuickActionTransferButton();
-        await app.portfolio.pressTransferBottomSheetReceiveButton();
-      } else {
-        await app.portfolioEmptyState.navigateToReceive();
-        await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
-      }
+      await app.portfolio.pressQuickActionTransferButton();
+      await app.portfolio.pressTransferBottomSheetReceiveButton();
 
       await app.modularDrawer.validateAssetsScreen([account.currency.ticker]);
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);

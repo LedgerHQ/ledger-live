@@ -4,12 +4,15 @@ import { track } from "~/analytics";
 import useRecoverBannerState from "LLM/features/Portfolio/hooks/useRecoverBannerState";
 import { useRecoverEntry } from "LLM/hooks/useRecoverEntry";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { useDispatch } from "~/context/hooks";
+import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
 import { urls } from "~/utils/urls";
 import { getBackupBucket } from "../../utils/getBackupBucket";
 import {
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
+  BACKUP_HUB_RECOVER_TRACKING_STATUS,
   RECOVER_DEEPLINK_BASE,
 } from "../../constants";
 import type { BackupBucket, PhysicalRowId } from "../../types";
@@ -30,7 +33,8 @@ export type BackupHubScreenViewModel = {
 };
 
 export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
-  const { protectId, markRecoverSeen, openRecover } = useRecoverEntry();
+  const dispatch = useDispatch();
+  const { protectId, markRecoverSeen } = useRecoverEntry();
 
   const { data } = useRecoverBannerState(protectId);
   const bucket = getBackupBucket(data.subscriptionState);
@@ -44,6 +48,7 @@ export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
     track("button_clicked", {
       button: BACKUP_HUB_TRACKING_BUTTON.recover,
       page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      status: BACKUP_HUB_RECOVER_TRACKING_STATUS[bucket],
     });
 
     if (bucket === "in-progress") {
@@ -58,8 +63,8 @@ export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
       );
       return;
     }
-    openRecover();
-  }, [bucket, protectId, markRecoverSeen, openRecover]);
+    dispatch(openBackupHubFeatureIntro());
+  }, [bucket, protectId, markRecoverSeen, dispatch]);
 
   const openShop = useCallback((url: string, button: string) => {
     track("button_clicked", { button, page: BACKUP_HUB_TRACKING_PAGE_NAME });

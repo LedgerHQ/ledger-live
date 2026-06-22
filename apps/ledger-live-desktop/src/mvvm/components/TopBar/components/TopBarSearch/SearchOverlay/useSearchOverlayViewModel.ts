@@ -17,7 +17,8 @@ export function useSearchOverlayViewModel() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("desktop");
   const { query, onChangeQuery, isOpen, open, close, mode, suggestions, results } =
     useAssetSearchBar();
 
@@ -125,5 +126,6 @@ export function useSearchOverlayViewModel() {
     onKeyDown,
     mode: displayedMode,
     contextValue,
+    animatedTitle: shouldDisplayAssetDiscoverability,
   };
 }

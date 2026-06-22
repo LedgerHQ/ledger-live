@@ -2,23 +2,16 @@
 
 ## Overview
 
-- "Ledger Wallet" (formerly "ledger-live") is a crypto wallet
-- This pnpm and nx monorepo provides frontend apps
+"Ledger Wallet" (formerly "ledger-live") is a crypto wallet. This pnpm and Nx monorepo contains multiple frontend apps and over 150 library packages. See the root [README](./README.md) for an overview.
 
-## Common Commands
+We are working towards consistency across all those packages but each workspace has it's own details. Read local README files relevant to where you are working.
 
-- Use pnpm commands for build, dev, linting and testing.
-- See [/docs/common-commands.md](/docs/common-commands.md)
+## Repo Commands
+
+Prefer commands given in local README files. For example appls like [Ledger Wallet Desktop](./apps/ledger-live-desktop/README.md) and [Ledger Wallet Mobile](./apps/ledger-live-mobile/README.md) have very specific commands for setup, dev and build commands.
+
+For general test, build and check recipes see [/docs/repo-commands.md](/docs/repo-commands.md), which also contains notes on Nx, filtering and aliases.
 
 ## Validate Before Finishing
 
-- Before finishing any agentic code change, run static checks for the affected scope
-- See [/docs/validate-before-finishing.md](/docs/validate-before-finishing.md)
-
-## Read READMEs for packages where you're working
-
-See examples:
-
-- **Entity packages** (`domain/entity/`): read `domain/entity/README.md`
-- **API packages** (`domain/api/`): read `domain/api/README.md`
-- **Shared packages** (`shared/**`): read `shared/README.md`
+Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.

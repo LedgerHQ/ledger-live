@@ -218,6 +218,24 @@ describe("initIdentities", () => {
     getItemSpy.mockRestore();
   });
 
+  it("should not recover a legacy user whose id is the dummy value", async () => {
+    mockGetKey.mockImplementation(async (ns, keyPath) => {
+      if (ns === "app" && keyPath === "identities") return undefined;
+      if (ns === "app" && keyPath === "user") return { id: "00000000-0000-0000-0000-000000000000" };
+      return undefined;
+    });
+    const getItemSpy = jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+
+    const store = createMockStore();
+    const result = await initIdentities(store);
+
+    expect(result).toBe(true);
+    expect(store.getState().identities.userId.exportUserIdForPersistence()).not.toBe(
+      "00000000-0000-0000-0000-000000000000",
+    );
+    getItemSpy.mockRestore();
+  });
+
   it("when persisted has userId but no datadogId (partial-persisted), should preserve userId and generate only datadogId", async () => {
     const partialPersisted = {
       userId: "persisted-user-id-only",
@@ -245,15 +263,17 @@ describe("initIdentities", () => {
     getItemSpy.mockRestore();
   });
 
-  it("when persisted has old shape (no userId/datadogId) and legacy user, should restore deviceIds and generate new ids (persisted takes precedence)", async () => {
-    const oldShapePersisted = {
-      deviceIds: ["device-old-1"],
-      pushDevicesSyncState: "unsynced" as const,
-      pushDevicesServiceUrl: "https://push.example.com",
+  it("when persisted has usable userId but missing datadogId and legacy user has datadogId, should keep persisted userId and recover legacy datadogId", async () => {
+    const partialPersisted = {
+      userId: "persisted-user-id",
+      deviceIds: ["device-1"],
+      pushDevicesSyncState: "synced" as const,
+      pushDevicesServiceUrl: null,
     };
     mockGetKey.mockImplementation(async (ns, keyPath) => {
-      if (ns === "app" && keyPath === "identities") return oldShapePersisted;
-      if (ns === "app" && keyPath === "user") return { id: "legacy-user-from-app-user" };
+      if (ns === "app" && keyPath === "identities") return partialPersisted;
+      if (ns === "app" && keyPath === "user")
+        return { id: "legacy-user-id", datadogId: "legacy-dd-id" };
       return undefined;
     });
 
@@ -262,13 +282,59 @@ describe("initIdentities", () => {
 
     expect(result).toBe(false);
     const state = store.getState().identities;
-    expect(state.userId.exportUserIdForPersistence()).not.toBe("legacy-user-from-app-user");
-    expect(state.userId.exportUserIdForPersistence()).not.toBe("");
-    expect(state.datadogId?.exportDatadogIdForPersistence()).toBeDefined();
+    expect(state.userId.exportUserIdForPersistence()).toBe("persisted-user-id");
+    expect(state.datadogId?.exportDatadogIdForPersistence()).toBe("legacy-dd-id");
+  });
+
+  it("when persisted has old shape (no userId/datadogId) and legacy user, should recover the legacy userId and restore deviceIds", async () => {
+    const oldShapePersisted = {
+      deviceIds: ["device-old-1"],
+      pushDevicesSyncState: "unsynced" as const,
+      pushDevicesServiceUrl: "https://push.example.com",
+    };
+    mockGetKey.mockImplementation(async (ns, keyPath) => {
+      if (ns === "app" && keyPath === "identities") return oldShapePersisted;
+      if (ns === "app" && keyPath === "user")
+        return { id: "legacy-user-from-app-user", datadogId: "legacy-dd-from-app-user" };
+      return undefined;
+    });
+
+    const store = createMockStore();
+    const result = await initIdentities(store);
+
+    expect(result).toBe(false);
+    const state = store.getState().identities;
+    expect(state.userId.exportUserIdForPersistence()).toBe("legacy-user-from-app-user");
+    expect(state.datadogId?.exportDatadogIdForPersistence()).toBe("legacy-dd-from-app-user");
     expect(state.deviceIds).toHaveLength(1);
     expect(state.deviceIds[0].exportDeviceIdForPersistence()).toBe("device-old-1");
     expect(state.pushDevicesSyncState).toBe("unsynced");
     expect(state.pushDevicesServiceUrl).toBe("https://push.example.com");
+  });
+
+  it("when persisted has old shape (no userId) and only localStorage userId, should recover it and restore deviceIds", async () => {
+    const oldShapePersisted = {
+      deviceIds: ["device-old-3"],
+      pushDevicesSyncState: "unsynced" as const,
+      pushDevicesServiceUrl: null,
+    };
+    mockGetKey.mockImplementation(async (ns, keyPath) => {
+      if (ns === "app" && keyPath === "identities") return oldShapePersisted;
+      return undefined;
+    });
+    const getItemSpy = jest
+      .spyOn(Storage.prototype, "getItem")
+      .mockImplementation((key: string) => (key === "userId" ? "ls-legacy-user" : null));
+
+    const store = createMockStore();
+    const result = await initIdentities(store);
+
+    expect(result).toBe(false);
+    const state = store.getState().identities;
+    expect(state.userId.exportUserIdForPersistence()).toBe("ls-legacy-user");
+    expect(state.deviceIds).toHaveLength(1);
+    expect(state.deviceIds[0].exportDeviceIdForPersistence()).toBe("device-old-3");
+    getItemSpy.mockRestore();
   });
 
   it("when persisted has old shape (no userId/datadogId) and no legacy user, should restore deviceIds and generate new ids", async () => {

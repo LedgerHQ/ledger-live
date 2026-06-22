@@ -24,7 +24,7 @@ import {
 const BACKUP_HUB_FEATURE_INTRO_ID = "backup-hub-feature-intro";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const backupHubFeatureIntroAsset = require("~/images/backup-hub-feature-intro.webp");
+const backupHubFeatureIntroAsset = require("../../assets/backup_feature_intro.webp");
 
 const backupHubFeatureIntroImageUrls = createThemedImageUrls(
   Image.resolveAssetSource(backupHubFeatureIntroAsset).uri ??

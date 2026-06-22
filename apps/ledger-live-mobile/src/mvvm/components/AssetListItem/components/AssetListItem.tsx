@@ -72,6 +72,7 @@ const PortfolioRow = memo(({ asset, onPress, precomputed, lx, hideNetwork }: Por
             <Delta
               valueChange={countervalueChange}
               percent
+              show0Delta
               fallbackToPercentPlaceholder
               isArrowDisplayed
             />

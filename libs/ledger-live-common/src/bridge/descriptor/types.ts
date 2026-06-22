@@ -1,4 +1,4 @@
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../../coin-modules/transaction-types";
 
@@ -88,6 +88,18 @@ export type FeePresetOption = Readonly<{
   amount: BigNumber;
   estimatedMs?: number;
   disabled?: boolean;
+}>;
+
+export type FeePresetEstimationDescriptor = Readonly<{
+  /**
+   * Preset ids to estimate through the bridge when concrete preset amounts are
+   * not available yet on the transaction
+   */
+  fallbackPresetIds?: readonly string[];
+  /**
+   * Some families can estimate fees before an amount is entered
+   */
+  allowZeroAmount?: boolean | ((transaction: unknown) => boolean);
 }>;
 
 /** Strategy option for coin control (i18n key resolved by the UI layer). */
@@ -188,6 +200,7 @@ export type FeeDescriptor = {
      * (`prepareTransaction` + `getTransactionStatus`) instead of using `presetAmount` directly.
      */
     shouldEstimateWithBridge?: (transaction: unknown) => boolean;
+    estimation?: FeePresetEstimationDescriptor;
   };
   /**
    * Configuration for custom fee inputs.
@@ -213,6 +226,42 @@ export type FeeDescriptor = {
   getFeeCurrencyAccountId?: (transaction: unknown) => string | null;
 };
 
+/**
+ * Opaque transaction patch produced by a flow effect.
+ *
+ * family-agnostic: it carries no coin vocabulary (no gas, EVM,
+ * UTXO, ...). The UI never reads it because it's forwarded as-is to
+ * `bridge.updateTransaction`, which owns the concrete transaction shape
+ */
+export type TransactionPatch = Record<string, unknown>;
+
+/**
+ * Inputs handed to a flow effect when it runs.
+ * The bridge is resolved generically by the runner, so an effect can perform a
+ * bridge-backed preparation step without the UI ever importing a coin-module
+ */
+export type FlowEffectContext = Readonly<{
+  account: AccountLike;
+  parentAccount: Account | null;
+  transaction: Transaction;
+  bridge: AccountBridge<Transaction>;
+}>;
+
+/**
+ * A declarative, family agnostic side effect owned by a coin-module descriptor
+ * A single generic runner `useFlowEffects` executes the effect and applies the patch
+ */
+export type FlowEffect = Readonly<{
+  /** Stable identifier */
+  id: string;
+  /**
+   * Resolves with a transaction patch to apply, or `null` when nothing should
+   * change. May be async: the family chunk is loaded through the bridge before
+   * the patch is computed, so the runner owns the loading states
+   */
+  run: (context: FlowEffectContext) => Promise<TransactionPatch | null>;
+}>;
+
 export type SendAmountDescriptor = Readonly<{
   /**
    * Optional list of plugins that should run on the Amount step.
@@ -220,6 +269,12 @@ export type SendAmountDescriptor = Readonly<{
    */
   getPlugins?: () => readonly string[];
   canSendMax?: boolean;
+  /**
+   * Generic and family agnostic effects executed by the `useFlowEffects` runner
+   * while the Amount step is active. Each effect returns a transaction
+   * patch applied through the `bridge.updateTransaction`
+   */
+  effects?: readonly FlowEffect[];
 }>;
 
 /**

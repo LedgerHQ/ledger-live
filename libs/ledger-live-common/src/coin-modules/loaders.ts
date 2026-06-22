@@ -71,11 +71,18 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "cardano",
     supportedCoins: ["cardano"],
     loadSetup: () => import("../families/cardano/setup"),
+    loadLocalApi: () =>
+      import("../families/cardano/coinModuleApi").then(m => m.createLocalCardanoApi),
     loadTransaction: () => import("@ledgerhq/coin-cardano/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-cardano/deviceTransactionConfig").then(m => m.default),
     loadAccount: () => import("@ledgerhq/coin-cardano/account").then(m => m.default),
     loadMockBridge: () => import("../families/cardano/bridge/mock").then(m => m.default),
+    loadBridgeApi: () => import("../families/cardano/bridge/api").then(m => m.default),
+    loadValidateAddress: () =>
+      import("@ledgerhq/coin-cardano/logic/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
   },
   {
     family: "casper",

@@ -1,0 +1,5 @@
+{
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util", "ansi-styles", "supports-color"],
+  "ignoreUnused": ["@ledgerhq/live-env"],
+  "ignoreUnimported": ["src/env.setup.ts"]
+}

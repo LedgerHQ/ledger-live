@@ -31,7 +31,7 @@ describe("Wallet 4.0 - Portfolio", () => {
         ...WALLET_40_FEATURE_FLAGS,
       },
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   testConfig.tmsLinks.forEach(link => $TmsLink(link));
@@ -76,16 +76,14 @@ describe("Wallet 4.0 - Portfolio", () => {
 
   setTeamOwner(Team.SWAP);
   it("navigates to the swap screen", async () => {
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.openPortfolioViaDeeplink();
 
     await app.portfolio.pressQuickActionSwapButton();
     await app.swapLiveApp.expectSwapLiveApp();
   });
 
   it("performs the transfer bottom sheet actions", async () => {
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.pressQuickActionTransferButton();
     await app.portfolio.checkTransferBottomSheetReceiveButtonVisibility();
     await app.portfolio.checkTransferBottomSheetSendButtonVisibility();

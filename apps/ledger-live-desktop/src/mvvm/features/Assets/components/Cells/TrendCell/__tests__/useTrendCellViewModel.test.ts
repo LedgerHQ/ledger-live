@@ -30,11 +30,11 @@ describe("useTrendCellViewModel", () => {
     expect(result.current.colorClass).toBe("text-muted");
   });
 
-  it("should return 0.00% with success color for zero percentage", () => {
+  it("should return 0.00% with muted color for zero percentage", () => {
     const { result } = renderHook(() => useTrendCellViewModel(0));
 
     expect(result.current.formattedTrend).toBe("0.00%");
-    expect(result.current.colorClass).toBe("text-success");
+    expect(result.current.colorClass).toBe("text-muted");
   });
 
   it("should return '***' when discreet mode is enabled", () => {

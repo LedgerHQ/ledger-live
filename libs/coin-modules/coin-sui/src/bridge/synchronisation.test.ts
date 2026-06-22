@@ -109,6 +109,7 @@ describe("getAccountShape", () => {
       operationsCount: 0,
       suiResources: {
         stakes: [],
+        fundsInAddressBalance: new BigNumber(0),
       },
       subAccounts: [],
       syncHash: undefined,
@@ -448,6 +449,7 @@ describe("getAccountShape", () => {
       // THEN
       expect(shape.suiResources).toEqual({
         stakes: [],
+        fundsInAddressBalance: new BigNumber(0),
       });
     });
 
@@ -500,6 +502,7 @@ describe("getAccountShape", () => {
       // THEN
       expect(shape.suiResources).toEqual({
         stakes: mockStakes,
+        fundsInAddressBalance: new BigNumber(0),
       });
     });
 
@@ -749,7 +752,7 @@ describe("getAccountShape", () => {
       );
 
       // THEN
-      expect(shape.suiResources).toEqual({ stakes: null });
+      expect(shape.suiResources).toEqual({ stakes: null, fundsInAddressBalance: new BigNumber(0) });
     });
   });
 });

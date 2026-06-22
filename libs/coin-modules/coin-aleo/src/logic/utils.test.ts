@@ -38,6 +38,8 @@ import {
   mockTxIntentTransferPrivate,
   mockTxIntentTransferPrivate2,
   mockTxIntentTransferPublic,
+  mockTxIntentTransferTokenPublic,
+  mockTxIntentConvertTokenPublicToPrivate,
 } from "../__tests__/fixtures/transaction.fixture";
 import type { AleoOperationExtra, ProvableApi } from "../types";
 import {
@@ -1190,6 +1192,44 @@ describe("mapTransactionIntentToSdkIntent", () => {
     );
   });
 
+  it("should map transfer_token_public intent to SDK intent with correct fields", () => {
+    const intent = mockTxIntentTransferTokenPublic;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_token_public",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+  });
+
+  it("should map convert_token_public_to_private intent to SDK intent with correct fields", () => {
+    const intent = mockTxIntentConvertTokenPublicToPrivate;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_token_public_to_private",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC, mockTxIntentTransferTokenPublic],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE, mockTxIntentConvertTokenPublicToPrivate],
+  ] as const)("should throw when %s intent has no matching data", (type, baseIntent) => {
+    const intent = { ...baseIntent, type };
+    delete (intent as { data?: unknown }).data;
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: intent data is required for ${type}`,
+    );
+  });
+
   it("should throw for unsupported intent type", () => {
     const intent = {
       ...mockTxIntentTransferPublic,
@@ -1513,6 +1553,57 @@ describe("createTransactionIntent", () => {
 
     expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
       `aleo: too many amount records selected (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
+    );
+  });
+
+  it.each([
+    TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+    TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
+  ] as const)("should create a public token transaction intent with programId for %s", mode => {
+    const tokenSubAccount = getMockedTokenAccount();
+    const account = getMockedAccount({ subAccounts: [tokenSubAccount] });
+    const transaction = getMockedTransaction({
+      mode,
+      subAccountId: tokenSubAccount.id,
+      amount: new BigNumber(500000),
+      recipient: "aleo1recipient",
+    });
+
+    const result = createTransactionIntent({ account, transaction });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: { type: "native" },
+      type: mode,
+      amount: BigInt(transaction.amount.toString()),
+      recipient: transaction.recipient,
+      sender: account.freshAddress,
+      data: {
+        type: mode,
+        programId: tokenSubAccount.token.contractAddress,
+      },
+    });
+  });
+
+  it("should throw when public token transaction has no matching sub-account", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+      subAccountId: "non-existent-sub-account-id",
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: token sub-account is required for public token transaction",
+    );
+  });
+
+  it.each([
+    TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  ] as const)("should throw for private token transaction mode %s", mode => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      "aleo: private token transactions are not supported yet",
     );
   });
 });

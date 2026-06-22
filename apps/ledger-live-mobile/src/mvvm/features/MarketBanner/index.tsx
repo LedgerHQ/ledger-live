@@ -5,7 +5,11 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { selectMarketBannerRanking, setMarketBannerRanking } from "~/reducers/marketBanner";
 import { starredMarketCoinsSelector } from "~/reducers/settings";
 import useMarketBannerViewModel from "./hooks/useMarketBannerViewModel";
-import { usePerformersBannerItems, useFavoritesBannerItems } from "./hooks/useMarketBannerData";
+import {
+  usePerformersBannerItems,
+  useFavoritesBannerItems,
+  useTrendingBannerItems,
+} from "./hooks/useMarketBannerData";
 import MarketBannerView from "./components/MarketBannerView";
 import { MarketBannerProps } from "./types";
 import { DEFAULT_RANKING_WITHOUT_DISCOVERABILITY } from "./constants";
@@ -48,6 +52,14 @@ const FavoritesBanner = ({ testID }: MarketBannerProps) => {
   return <MarketBannerSurface items={items} isError={isError} testID={testID} />;
 };
 
+const TrendingBanner = ({ testID }: MarketBannerProps) => {
+  const trending = useTrendingBannerItems();
+  // If the trending endpoint fails, fall back to gainers (sort "asc") so the banner never breaks.
+  const fallback = usePerformersBannerItems("trending", { skip: !trending.isError });
+  const { items, isError } = trending.isError ? fallback : trending;
+  return <MarketBannerSurface items={items} isError={isError} testID={testID} />;
+};
+
 const MarketBannerContent = ({ testID }: MarketBannerProps) => {
   const dispatch = useDispatch();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
@@ -64,11 +76,13 @@ const MarketBannerContent = ({ testID }: MarketBannerProps) => {
     }
   }, [dispatch, ranking, hasStarred]);
 
-  return ranking === "favorites" && hasStarred ? (
-    <FavoritesBanner testID={testID} />
-  ) : (
-    <PerformersBanner ranking={ranking} testID={testID} />
-  );
+  if (ranking === "favorites" && hasStarred) {
+    return <FavoritesBanner testID={testID} />;
+  }
+  if (ranking === "trending") {
+    return <TrendingBanner testID={testID} />;
+  }
+  return <PerformersBanner ranking={ranking} testID={testID} />;
 };
 
 const MarketBanner = ({ testID }: MarketBannerProps) => {

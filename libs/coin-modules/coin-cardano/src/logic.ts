@@ -1,3 +1,4 @@
+import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
@@ -31,6 +32,19 @@ import {
   Token,
   ProtocolParams,
 } from "./types";
+
+/**
+ * Identify a Cardano native asset (token) in a CoinModule AssetInfo, as opposed to plain ADA.
+ * The reliable signal is the presence of an `assetReference` (`<policyId><assetName>`), not
+ * `asset.type`: CAL types Cardano native tokens as tokenType "native", so a token's `type` is
+ * "native" on intent assets (the adapter sets it from the TokenCurrency) and "token" on balance
+ * assets (getBalance) — `type` is therefore inconsistent, while only plain ADA ever lacks an
+ * assetReference. This single check is shared by craftTransaction and validateIntent so they
+ * classify identically.
+ */
+export function isTokenAsset(asset: AssetInfo): boolean {
+  return "assetReference" in asset && !!asset.assetReference;
+}
 
 /**
  *  returns BipPath object with account, chain and index field for cardano
@@ -379,6 +393,24 @@ export function isValidNumString(value: unknown): boolean {
   if (isNaN(Number(value))) return false;
   if (new BigNumber(value).isNaN()) return false;
   return true;
+}
+
+/** Convert the Strica `/v1/*` ProtocolParams (string-encoded) into Typhon's BigNumber/number shape. */
+export function toTyphonProtocolParams(pp: ProtocolParams): TyphonTypes.ProtocolParams {
+  return {
+    minFeeA: new BigNumber(pp.minFeeA),
+    minFeeB: new BigNumber(pp.minFeeB),
+    stakeKeyDeposit: new BigNumber(pp.stakeKeyDeposit),
+    lovelacePerUtxoWord: new BigNumber(pp.lovelacePerUtxoWord),
+    collateralPercent: new BigNumber(pp.collateralPercent),
+    priceSteps: new BigNumber(pp.priceSteps),
+    priceMem: new BigNumber(pp.priceMem),
+    languageView: pp.languageView,
+    maxTxSize: Number(pp.maxTxSize),
+    maxValueSize: Number(pp.maxValueSize),
+    utxoCostPerByte: new BigNumber(pp.utxoCostPerByte),
+    minFeeRefScriptCostPerByte: new BigNumber(pp.minFeeRefScriptCostPerByte),
+  };
 }
 
 export function isProtocolParamsValid(pp: ProtocolParams): boolean {

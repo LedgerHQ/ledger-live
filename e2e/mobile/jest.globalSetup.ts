@@ -5,6 +5,10 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { exec } from "child_process";
 import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/e2e/speculosCI";
+import {
+  getDeviceFirmwareVersion,
+  getSpeculosModel,
+} from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { isSpeculosRemote } from "./helpers/commonHelpers";
 import { ARTIFACTS_DIR, SPECULOS_TRACKING_FILE_PATTERN } from "./utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "./utils/constants";
@@ -17,12 +21,20 @@ export default async function setup(): Promise<void> {
   try {
     await fs.access(envFile, fs.constants.R_OK);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    throw new Error(`Mock env file not found or not readable: ${envFile} (${errorMessage})`);
+    throw Object.assign(new Error(`Mock env file not found or not readable: ${envFile}`), {
+      cause: error,
+    });
   }
 
   setupSpeculosCleanupHandlers();
   await cleanupPreviousNanoAppJsonFile();
+
+  // Sets SPECULOS_FIRMWARE_VERSION in the controller so the Allure environment file gets a value.
+  try {
+    await getDeviceFirmwareVersion(getSpeculosModel());
+  } catch (error) {
+    log.warn("Failed to resolve Speculos firmware version:", sanitizeError(error));
+  }
 
   await globalSetup();
 

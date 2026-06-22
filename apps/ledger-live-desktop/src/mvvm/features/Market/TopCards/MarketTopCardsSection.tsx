@@ -7,7 +7,7 @@ type MarketTopCardsSectionProps = {
 export function MarketTopCardsSection({ children }: MarketTopCardsSectionProps) {
   return (
     <section
-      className="grid grid-cols-3 gap-12 mb-24"
+      className="grid grid-flow-col auto-cols-fr gap-12 mb-24"
       data-testid="market-top-cards-section"
       aria-label="market top cards"
     >

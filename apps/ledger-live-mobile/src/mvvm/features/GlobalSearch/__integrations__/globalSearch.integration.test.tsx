@@ -1,8 +1,9 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, act } from "@tests/test-renderer";
 import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { GlobalSearch } from "../screens/GlobalSearch";
+import { PLACEHOLDER_INTERVAL_MS } from "../screens/GlobalSearch/components/AnimatedSearchPlaceholder/useCyclingPlaceholder";
 import { GLOBAL_SEARCH_TEST_IDS } from "../screens/GlobalSearch/testIds";
 
 const mockGoBack = jest.fn();
@@ -25,6 +26,14 @@ describe("GlobalSearch screen", () => {
     expect(screen.getByLabelText(/search assets/i)).toBeVisible();
     expect(screen.getByTestId(GLOBAL_SEARCH_TEST_IDS.searchPlaceholder)).toBeVisible();
     expect(screen.getByText("Search crypto")).toBeOnTheScreen();
+  });
+
+  it("renders the stocks placeholder in plural", () => {
+    render(<GlobalSearch />);
+
+    act(() => jest.advanceTimersByTime(PLACEHOLDER_INTERVAL_MS * 2));
+
+    expect(screen.getByText("Search stocks")).toBeOnTheScreen();
   });
 
   it("tracks search_open on mount", () => {

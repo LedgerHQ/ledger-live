@@ -3,6 +3,7 @@
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInput, Transaction } from "./types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
+import { RbfBuildError } from "./errors";
 import BigNumber from "bignumber.js";
 
 // Mock modules before importing the module under test
@@ -136,5 +137,51 @@ describe("getTransactionStatus on Bitcoin", () => {
 
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors).toEqual({});
+  });
+
+  describe("RBF build failures", () => {
+    const recipient = "bc1pxlmrudqyq8qd8pfsc4mpmlaw56x6vtcr9m8nvp8kj3gckefc4kmqhkg4l7";
+
+    beforeEach(() => {
+      validateRecipientSpy.mockResolvedValue({
+        recipientError: undefined,
+        recipientWarning: undefined,
+        changeAddressError: undefined,
+        changeAddressWarning: undefined,
+      });
+      isAddressSanctionedSpy.mockResolvedValue(false);
+    });
+
+    const buildAccount = () =>
+      ({
+        currency: { id: "bitcoin" },
+        blockHeight: MAX_BLOCK_HEIGHT_FOR_TAPROOT + 1,
+      }) as unknown as Account;
+
+    const buildTransaction = () =>
+      ({
+        amount: BigNumber(1),
+        recipient,
+        feePerByte: BigNumber(1),
+      }) as unknown as Transaction;
+
+    it("classifies RbfBuildError into status.errors.replacement instead of re-throwing", async () => {
+      const rbfError = new RbfBuildError("Failed to build RBF transaction: needs more fees");
+      calculateFeesSpy.mockRejectedValue(rbfError);
+
+      const status = await getTransactionStatus(buildAccount(), buildTransaction());
+
+      expect(status.errors).toEqual({ replacement: rbfError });
+      expect(status.errors.replacement).toBeInstanceOf(RbfBuildError);
+    });
+
+    it("re-throws unknown errors from calculateFees", async () => {
+      const unknownError = new Error("network down");
+      calculateFeesSpy.mockRejectedValue(unknownError);
+
+      await expect(getTransactionStatus(buildAccount(), buildTransaction())).rejects.toBe(
+        unknownError,
+      );
+    });
   });
 });

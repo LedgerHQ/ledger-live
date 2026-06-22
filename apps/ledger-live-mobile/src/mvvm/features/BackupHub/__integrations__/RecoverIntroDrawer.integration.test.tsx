@@ -9,7 +9,7 @@ import {
 } from "~/reducers/backupHubFeatureIntro";
 import { handleBackupHubDeeplink } from "~/navigation/deeplinks/handleBackupHubDeeplink";
 import { RecoverIntroDrawer } from "../components/RecoverIntroDrawer";
-import { BACKUP_HUB_FEATURE_INTRO_PAGE } from "../analytics";
+import { BACKUP_HUB_FEATURE_INTRO_PAGE, BACKUP_HUB_FEATURE_INTRO_SOURCE } from "../analytics";
 
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useCustomURI: jest.fn(
@@ -59,7 +59,7 @@ describe("RecoverIntroDrawer", () => {
     expect(await screen.findByText("Create a backup you can't lose")).toBeOnTheScreen();
     expect(analyticsScreen).toHaveBeenCalledWith(BACKUP_HUB_FEATURE_INTRO_PAGE, undefined, {
       name: BACKUP_HUB_FEATURE_INTRO_PAGE,
-      source: "backup-hub-feature-intro",
+      source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
     });
   });
 
@@ -74,7 +74,7 @@ describe("RecoverIntroDrawer", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Try 1 month free",
       page: BACKUP_HUB_FEATURE_INTRO_PAGE,
-      source: "backup-hub-feature-intro",
+      source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
       link: "ledgerlive://recover/protect-prod?redirectTo=resumeActivate",
     });
     expect(openURL).toHaveBeenCalledWith(
@@ -94,7 +94,7 @@ describe("RecoverIntroDrawer", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Log in",
       page: BACKUP_HUB_FEATURE_INTRO_PAGE,
-      source: "backup-hub-feature-intro",
+      source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
       link: "ledgerlive://recover/protect-prod?redirectTo=login",
     });
     expect(openURL).toHaveBeenCalledWith("ledgerlive://recover/protect-prod?redirectTo=login");
@@ -116,7 +116,7 @@ describe("RecoverIntroDrawer", () => {
     });
     expect(track).toHaveBeenCalledWith("modal_dismissed", {
       page: BACKUP_HUB_FEATURE_INTRO_PAGE,
-      source: "backup-hub-feature-intro",
+      source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
     });
   });
 

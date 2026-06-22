@@ -54,7 +54,9 @@ export class HumanFormatter {
 
   async formatBalance(b: Balance): Promise<string> {
     const amount = await this.formatAmount(b.balance, b.assetId);
-    return b.balance === "0" ? colors.dim(amount) : colors.green(amount);
+    const colored = b.balance === "0" ? colors.dim(amount) : colors.green(amount);
+    if (findCryptoCurrencyById(b.assetId)) return colored;
+    return `${colored} ${colors.dim(`(${b.assetId})`)}`;
   }
 
   formatTokenInfo(t: TokenInfo): string {

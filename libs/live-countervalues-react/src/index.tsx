@@ -1,6 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   calculate,
+  filterSupportedTrackingPairs,
   importCountervalues,
   inferTrackingPairForAccounts,
   loadCountervalues,
@@ -113,9 +114,16 @@ function Effect({
 }: Pick<Props, "autopollInterval" | "bridge" | "debounceDelay" | "pollInitDelay" | "savedState">) {
   const userSettings = bridge.useUserSettings();
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
-  const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
 
   const marketcapIds = bridge.useMarketcapIds();
+  const filteredUserSettings = useMemo(
+    () => ({
+      ...userSettings,
+      trackingPairs: filterSupportedTrackingPairs(userSettings.trackingPairs, marketcapIds),
+    }),
+    [marketcapIds, userSettings],
+  );
+  const debouncedUserSettings = useDebounce(filteredUserSettings, debounceDelay);
 
   const batchStrategySolver = useMemo(
     () => ({
@@ -148,9 +156,9 @@ function Effect({
     bridge.setStatePending(true);
     loadCountervalues(
       currentState,
-      userSettings,
+      filteredUserSettings,
       batchStrategySolver,
-      userSettings.granularitiesRates,
+      filteredUserSettings.granularitiesRates,
     ).then(
       s => {
         bridge.setState(s);
@@ -161,7 +169,7 @@ function Effect({
         bridge.setStatePending(false);
       },
     );
-  }, [pending, currentState, userSettings, triggerLoad, batchStrategySolver, bridge]);
+  }, [pending, currentState, filteredUserSettings, triggerLoad, batchStrategySolver, bridge]);
 
   // restore state from persisted raw (history only so we know it's first run and check holes)
   useEffect(() => {

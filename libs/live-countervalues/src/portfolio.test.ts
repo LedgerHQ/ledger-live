@@ -338,6 +338,20 @@ describe("Portfolio", () => {
       expect(change.percentage).toBe(0);
     });
 
+    it("returns a neutral change for a zero current balance even when rates are available", () => {
+      const account = genAccountBitcoin();
+      const zeroBalance = account.balance.minus(account.balance);
+      const emptyAccount = {
+        ...account,
+        balance: zeroBalance,
+        spendableBalance: zeroBalance,
+      };
+      const to = getFiatCurrencyByTicker("USD");
+      const state = stateWithRates({ now: 100, then: 80 });
+      const change = getCurrentBalanceCountervalueChange([emptyAccount], range, state, to);
+      expect(change).toEqual({ value: 0, percentage: null });
+    });
+
     it("returns a neutral change when the past rate is missing", () => {
       const account = genAccountBitcoin();
       const to = getFiatCurrencyByTicker("USD");

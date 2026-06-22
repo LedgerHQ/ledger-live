@@ -35,6 +35,23 @@ import { getCryptoCurrencyById } from "../../currencies";
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
 
+const ARC_CURRENCY_IDS = new Set(["arc", "arc_testnet"]);
+
+export function shouldForceZeroAmountForDexSwap({
+  isDex,
+  family,
+  hasSubAccountId,
+  fromCurrencyId,
+}: {
+  isDex: boolean;
+  family: string;
+  hasSubAccountId: boolean;
+  fromCurrencyId: string;
+}): boolean {
+  if (!isDex || family !== "evm") return false;
+  return hasSubAccountId || ARC_CURRENCY_IDS.has(fromCurrencyId);
+}
+
 const completeExchange = (
   input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
@@ -107,7 +124,17 @@ const completeExchange = (
         // - This workaround can't be applied earlier in the flow as the amount is used for display purposes and checks.
         //   We must set the amount to 0 at this stage to avoid issues during the transaction.
         // - This ensures proper handling of Thorswap/LiFi ERC20-specific transactions.
-        if (isDex && transaction.subAccountId && transaction.family === "evm") {
+        // - Arc's native coin is itself spent through an ERC20 alias by the LiFi router, so the
+        //   swap calldata must also be sent with amount 0 even though it has no subAccountId.
+        // See https://ledgerhq.atlassian.net/browse/LIVE-32179
+        if (
+          shouldForceZeroAmountForDexSwap({
+            isDex,
+            family: transaction.family,
+            hasSubAccountId: Boolean(transaction.subAccountId),
+            fromCurrencyId: mainRefundCurrency.id,
+          })
+        ) {
           const transactionFixed = {
             ...transaction,
             subAccountId: undefined,

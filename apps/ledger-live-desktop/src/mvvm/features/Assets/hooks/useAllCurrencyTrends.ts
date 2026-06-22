@@ -31,6 +31,10 @@ export function useAllCurrencyTrends(
         map.set(item.currency.id, null);
         continue;
       }
+      if (item.value <= 0) {
+        map.set(item.currency.id, 0);
+        continue;
+      }
       const accounts = item.accounts as AccountLike[];
       const portfolio = getCurrencyPortfolio(accounts, range, state, to);
       const trend =

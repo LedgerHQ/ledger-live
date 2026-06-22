@@ -30,6 +30,13 @@ const handlers = [
   http.get("https://countervalues.live.ledger.com/v3/categories/trending", () => {
     return HttpResponse.json([]);
   }),
+  http.get("https://countervalues.live.ledger.com/v3/currencies/trending", () => {
+    return HttpResponse.json([
+      { id: "bitcoin", supported: true },
+      { id: "ethereum", supported: true },
+      { id: "solana", supported: true },
+    ]);
+  }),
 ];
 
 export default handlers;

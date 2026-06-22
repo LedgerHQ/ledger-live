@@ -60,6 +60,7 @@ describe("useFeePresetFiatValues", () => {
         fiatUnit: fiatCurrency.units[0],
         enabled: true,
         shouldEstimateWithBridge: false,
+        allowZeroAmountEstimation: false,
       }),
     );
 
@@ -112,6 +113,7 @@ describe("useFeePresetFiatValues", () => {
         fiatUnit: fiatCurrency.units[0],
         enabled: true,
         shouldEstimateWithBridge: true,
+        allowZeroAmountEstimation: true,
       }),
     );
 
@@ -189,6 +191,7 @@ describe("useFeePresetFiatValues", () => {
         fiatUnit: fiatCurrency.units[0],
         enabled: true,
         shouldEstimateWithBridge: true,
+        allowZeroAmountEstimation: true,
       }),
     );
 

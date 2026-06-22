@@ -54,20 +54,70 @@ WebUSB is currently only supported on Google Chrome / Chromium.
 
 #### Table of Contents
 
-*   [TransportWebUSB](#transportwebusb)
+*   [createHIDframing](#createhidframing)
     *   [Parameters](#parameters)
+*   [makeBlocks](#makeblocks)
+    *   [Parameters](#parameters-1)
+*   [reduceResponse](#reduceresponse)
+    *   [Parameters](#parameters-2)
+*   [getReducedResult](#getreducedresult)
+    *   [Parameters](#parameters-3)
+*   [TransportWebUSB](#transportwebusb)
+    *   [Parameters](#parameters-4)
     *   [Examples](#examples)
     *   [close](#close)
     *   [exchange](#exchange)
-        *   [Parameters](#parameters-1)
+        *   [Parameters](#parameters-5)
     *   [isSupported](#issupported)
     *   [list](#list)
     *   [listen](#listen)
-        *   [Parameters](#parameters-2)
+        *   [Parameters](#parameters-6)
     *   [request](#request)
     *   [openConnected](#openconnected)
     *   [open](#open)
-        *   [Parameters](#parameters-3)
+        *   [Parameters](#parameters-7)
+
+### createHIDframing
+
+Object to handle HID frames (encoding and decoding)
+
+#### Parameters
+
+*   `channel` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `packetSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The HID protocol packet size in bytes (usually 64)
+
+### makeBlocks
+
+Frames/encodes an APDU message into HID USB packets/frames
+
+#### Parameters
+
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The APDU message to send, in a Buffer containing \[cla, ins, p1, p2, data length, data(if not empty)]
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)<[ArrayBuffer](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)>>** an array of HID USB frames ready to be sent
+
+### reduceResponse
+
+Reduces HID USB packets/frames to one response.
+
+#### Parameters
+
+*   `acc` **ResponseAcc** The value resulting from (accumulating) the previous call of reduceResponse.
+    On first call initialized to `initialAcc`. The accumulator enables handling multi-frames messages.
+*   `chunk` **[Buffer](https://nodejs.org/api/buffer.html)** Current chunk to reduce into accumulator
+
+Returns **ResponseAcc** An accumulator value updated with the current chunk
+
+### getReducedResult
+
+Returns the response message that has been reduced from the HID USB frames
+
+#### Parameters
+
+*   `acc` **ResponseAcc** The accumulator
+
+Returns **([Buffer](https://nodejs.org/api/buffer.html) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** A Buffer containing the cleaned response message, or null if no response message, or undefined if the
+accumulator is incorrect (message length is not valid)
 
 ### TransportWebUSB
 

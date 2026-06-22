@@ -2,6 +2,11 @@
 
 ## @ledgerhq/errors
 
+> ⚠️ **Deprecated and frozen.** Do not add new errors here and do not use
+> `createCustomErrorClass` or the serialize/deserialize stack. Define errors as
+> plain native classes in your own package's `src/errors.ts` and check them with
+> `error.name === "X"`. See [DEPRECATED.md](./DEPRECATED.md).
+
 Hodl all possible errors of Ledger (live, ledgerjs) so we can deal with them in a unified way (share between libraries, `instanceof` them,...)
 
 ## API

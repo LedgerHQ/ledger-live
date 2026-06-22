@@ -27,6 +27,7 @@ import {
   incrementPerGranularity,
   datapointLimits,
   datapointRetention,
+  inferCurrencyAPIID,
 } from "./helpers";
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
@@ -590,4 +591,19 @@ export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
   return Object.keys(trackingPairs)
     .sort()
     .map(id => trackingPairs[id]);
+}
+
+export function filterSupportedTrackingPairs(
+  pairs: TrackingPair[],
+  supportedCryptoIds?: string[],
+): TrackingPair[] {
+  if (!supportedCryptoIds?.length) return pairs;
+
+  const supportedIds = new Set(supportedCryptoIds);
+  const filteredPairs = pairs.filter(({ from }) => {
+    if (from.type === "FiatCurrency") return true;
+    return supportedIds.has(inferCurrencyAPIID(from));
+  });
+
+  return filteredPairs.length === pairs.length ? pairs : filteredPairs;
 }

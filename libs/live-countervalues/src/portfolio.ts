@@ -382,8 +382,9 @@ export function getCurrentBalanceCountervalueChange(
   cvCurrency: Currency,
 ): ValueChange {
   if (accounts.length === 0) return { value: 0, percentage: null };
-  const currency = getAccountCurrency(accounts[0]);
   const balance = accounts.reduce((sum, a) => sum + a.balance.toNumber(), 0);
+  if (balance === 0) return { value: 0, percentage: null };
+  const currency = getAccountCurrency(accounts[0]);
   const dates = getDates(range, getPortfolioCount(accounts, range));
   const valueThen = calculate(cvState, {
     value: balance,

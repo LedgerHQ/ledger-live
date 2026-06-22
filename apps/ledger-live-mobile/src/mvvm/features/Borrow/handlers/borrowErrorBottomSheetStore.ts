@@ -39,9 +39,9 @@ export function resolveBorrowErrorBottomSheet(confirmed: boolean) {
 }
 
 export function createOpenBorrowErrorBottomSheetHandler(dispatch: Dispatch) {
-  return async (
-    request: { params?: BorrowErrorBottomSheetParams },
-  ): Promise<{ confirmed: boolean }> => {
+  return async (request: {
+    params?: BorrowErrorBottomSheetParams;
+  }): Promise<{ confirmed: boolean }> => {
     const validated = sanitizeBorrowErrorBottomSheetParams(request.params, HANDLER_NAME);
 
     // If a previous sheet is still pending, resolve it as dismissed before opening the new one.

@@ -54,6 +54,7 @@ function BitcoinEditTransactionSummaryContent({
     setTransaction,
     status: txStatus,
     bridgePending,
+    bridgeError,
   } = useBridgeTransaction(bridge, () => ({
     transaction: route.params.transaction,
     account,
@@ -111,7 +112,7 @@ function BitcoinEditTransactionSummaryContent({
 
   const { amount, totalSpent, errors, warnings } = status;
 
-  const firstError = errors[Object.keys(errors)[0]];
+  const firstError = errors[Object.keys(errors)[0]] ?? bridgeError ?? undefined;
 
   const currencyOrToken = getAccountCurrency(account);
 
@@ -147,7 +148,7 @@ function BitcoinEditTransactionSummaryContent({
         />
       }
       isContinueDisabled={bridgePending || !!firstError}
-      isContinuePending={bridgePending}
+      isContinuePending={bridgePending && !firstError}
       onContinue={onContinue}
       highFeesOpen={highFeesOpen}
       onRejectFees={onRejectFees}

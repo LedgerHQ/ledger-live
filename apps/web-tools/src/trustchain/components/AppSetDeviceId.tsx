@@ -33,8 +33,6 @@ export function AppSetDeviceId({
         onChange={e => setLocalDeviceId(e.target.value)}
       >
         <option value="webhid">webhid</option>
-        <option value="webble">webble</option>
-        <option value="proxy">proxy</option>
       </select>
     </Actionable>
   );

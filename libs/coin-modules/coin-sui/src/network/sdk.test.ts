@@ -993,6 +993,37 @@ describe("SDK Functions", () => {
     expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
   });
 
+  test("createTransaction does not force empty gas payment when real coins exist alongside an address balance", async () => {
+    // SIP-58 regression guard: with BOTH real coin objects and an address balance, gas must be
+    // paid from the real coins (SDK auto-selection) so the full address balance stays available
+    // for the transfer. Forcing setGasPayment([]) here is what overdrew the address balance at
+    // broadcast ("Invalid withdraw reservation": amount + gasBudget > addressBalance).
+    mockApi.getAllBalances.mockResolvedValueOnce([
+      {
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        coinObjectCount: 1,
+        totalBalance: mist(10),
+        lockedBalance: {},
+        fundsInAddressBalance: mist(8),
+      },
+    ]);
+
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const transaction = {
+      mode: "send" as const,
+      coinType: sdk.DEFAULT_COIN_TYPE,
+      // Amount == address balance: the window that previously overdrew it.
+      amount: new BigNumber(mist(8)),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+    };
+
+    const tx = await sdk.createTransaction(address, transaction);
+    expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
+    const MockTransaction = Transaction as unknown as jest.Mock;
+    const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
+    expect(mockTxInstance.setGasPayment).not.toHaveBeenCalled();
+  });
+
   test("createTransaction uses coinWithBalance fallback for token with no coin objects", async () => {
     mockApi.getCoins.mockReset();
     mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });

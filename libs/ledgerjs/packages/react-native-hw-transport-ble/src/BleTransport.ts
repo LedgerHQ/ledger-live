@@ -4,16 +4,8 @@ import type {
   Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
 import Transport from "@ledgerhq/hw-transport";
-// ---------------------------------------------------------------------------------------------
-// Since this is a react-native library and metro bundler does not support
-// package exports yet (see: https://github.com/facebook/metro/issues/670)
-// we need to import the file directly from the lib folder.
-// Otherwise it would force the consumer of the lib to manually "tell" metro to resolve to /lib.
-//
-// TLDR: /!\ Do not remove the /lib part in the import statements below (@ledgerhq/devices/lib) ! /!\
-// See: https://github.com/LedgerHQ/ledger-live/pull/879
-import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
-import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
+import { sendAPDU } from "./ble/sendAPDU";
+import { receiveAPDU } from "./ble/receiveAPDU";
 import {
   BleError,
   BleErrorCode,

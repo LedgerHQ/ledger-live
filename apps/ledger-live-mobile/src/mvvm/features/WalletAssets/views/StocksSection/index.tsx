@@ -21,15 +21,8 @@ interface PortfolioStocksSectionProps {
 
 const PortfolioStocksSectionComponent: React.FC<PortfolioStocksSectionProps> = ({ variant }) => {
   const { t } = useTranslation();
-  const {
-    stocksCount,
-    hasMore,
-    stocksToDisplay,
-    isLoading,
-    isError,
-    onPressShowAll,
-    onItemPress,
-  } = usePortfolioStocksSectionViewModel({ variant });
+  const { stocksCount, hasMore, stocksToDisplay, isLoading, isError, onPressShowAll, onItemPress } =
+    usePortfolioStocksSectionViewModel({ variant });
 
   if (!isLoading && !isError && stocksCount === 0) return <StocksDiscoverySection />;
 

@@ -17,10 +17,7 @@ describe("borrow slice", () => {
     });
 
     it("clears infoBottomSheet when payload is undefined", () => {
-      const seeded = reducer(
-        INITIAL_STATE,
-        setInfoBottomSheet({ title: "Info", message: "Help" }),
-      );
+      const seeded = reducer(INITIAL_STATE, setInfoBottomSheet({ title: "Info", message: "Help" }));
       const state = reducer(seeded, setInfoBottomSheet(undefined));
 
       expect(state.infoBottomSheet).toBeUndefined();
