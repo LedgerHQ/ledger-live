@@ -281,7 +281,7 @@ describe("getBlock", () => {
         asset_code: "ABC",
         asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         limit: "1000.0000000",
-        transactionRecord: txRecord(),
+        transactionRecord: txRecord({ source_account_sequence: "12345" } as Partial<Horizon.ServerApi.TransactionRecord>),
       }),
     ]);
 
@@ -291,6 +291,45 @@ describe("getBlock", () => {
       ledgerOpType: "OPT_IN",
       assetAmount: "1000.0000000",
       memo: { type: "NO_MEMO" },
+      sequence: "12345",
+    });
+  });
+
+  it("decodes MEMO_HASH from base64 to hex in change_trust details", async () => {
+    const base64Hash = Buffer.from("abcdef1234567890", "hex").toString("base64");
+    fetchAllLedgerOperationsMock.mockResolvedValue([
+      rawOp({
+        type: "change_trust",
+        transaction_hash: "txhash",
+        asset_code: "USD",
+        asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        limit: "500.0000000",
+        transactionRecord: txRecord({ memo_type: "hash", memo: base64Hash } as Partial<Horizon.ServerApi.TransactionRecord>),
+      }),
+    ]);
+
+    const block = await getBlock(10);
+    expect(block.transactions[0].operations[0]).toMatchObject({
+      memo: { type: "MEMO_HASH", value: "abcdef1234567890" },
+    });
+  });
+
+  it("decodes MEMO_RETURN from base64 to hex in change_trust details", async () => {
+    const base64Hash = Buffer.from("deadbeef", "hex").toString("base64");
+    fetchAllLedgerOperationsMock.mockResolvedValue([
+      rawOp({
+        type: "change_trust",
+        transaction_hash: "txreturn",
+        asset_code: "EUR",
+        asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        limit: "100.0000000",
+        transactionRecord: txRecord({ memo_type: "return", memo: base64Hash } as Partial<Horizon.ServerApi.TransactionRecord>),
+      }),
+    ]);
+
+    const block = await getBlock(10);
+    expect(block.transactions[0].operations[0]).toMatchObject({
+      memo: { type: "MEMO_RETURN", value: "deadbeef" },
     });
   });
 

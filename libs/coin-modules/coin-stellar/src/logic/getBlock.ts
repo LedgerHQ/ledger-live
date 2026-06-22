@@ -196,6 +196,11 @@ type TxContext = {
   sequence: string | undefined;
 };
 
+function parseSequence(seq: string | number | undefined): string | undefined {
+  const bn = new BigNumber(seq ?? "");
+  return bn.isNaN() ? undefined : bn.toString();
+}
+
 function decodeMemo(
   tx: Awaited<ReturnType<RawOperation["transaction"]>>,
 ): { type: string; value?: string } | undefined {
@@ -207,9 +212,13 @@ function decodeMemo(
     case "text":
       return tx.memo ? { type: "MEMO_TEXT", value: tx.memo as string } : undefined;
     case "hash":
-      return tx.memo ? { type: "MEMO_HASH", value: tx.memo as string } : undefined;
+      return tx.memo
+        ? { type: "MEMO_HASH", value: Buffer.from(tx.memo as string, "base64").toString("hex") }
+        : undefined;
     case "return":
-      return tx.memo ? { type: "MEMO_RETURN", value: tx.memo as string } : undefined;
+      return tx.memo
+        ? { type: "MEMO_RETURN", value: Buffer.from(tx.memo as string, "base64").toString("hex") }
+        : undefined;
     default:
       return undefined;
   }
@@ -259,7 +268,7 @@ async function blockTransactionForHash(
   const tx = await ops[0].transaction();
   const txCtx: TxContext = {
     memo: decodeMemo(tx),
-    sequence: tx.source_account_sequence,
+    sequence: parseSequence(tx.source_account_sequence),
   };
 
   let blockOperations: BlockOperation[] = [];
