@@ -1,4 +1,4 @@
-appId: com.ledger.live.debug
+appId: ${APP_ID}
 ---
 - tapOn:
     id: "modular-drawer-search-input"

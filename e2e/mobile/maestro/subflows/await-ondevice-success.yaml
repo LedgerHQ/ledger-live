@@ -1,4 +1,4 @@
-appId: com.ledger.live.debug
+appId: ${APP_ID}
 ---
 # The harness signs the transaction on Speculos; wait for the app's success screen.
 - extendedWaitUntil:

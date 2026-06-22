@@ -135,16 +135,11 @@ done
 
 platform_reverse_host_ports   # Android: adb reverse Metro + bridge (no-op on iOS)
 
-echo ">> running Maestro flow: $FLOW"
-# Maestro's default TUI redraws a box with ANSI cursor moves that becomes garbage when piped
-# to a log; --no-ansi gives plain one-line-per-step output. Also drop the per-run
-# "Running on iOS Simulator ..." device banner.
-strip_maestro_noise() { grep -vaE "Running on (iOS Simulator|Android Emulator)" || true; }
 if [ "${DUMP_HIERARCHY:-0}" = "1" ]; then
-  maestro test --platform "$MAESTRO_PLATFORM" --no-ansi "$FLOW" 2>&1 | strip_maestro_noise || true
+  run_maestro_flow "$FLOW" || true
   echo ">> dumping view hierarchy + screenshot to artifacts/ ..."
   maestro hierarchy > artifacts/swap-hierarchy.json 2>/dev/null || true
   xcrun simctl io booted screenshot artifacts/swap-screen.png >/dev/null 2>&1 || true
 else
-  maestro test --platform "$MAESTRO_PLATFORM" --no-ansi "$FLOW" 2>&1 | strip_maestro_noise
+  run_maestro_flow "$FLOW"
 fi

@@ -1,4 +1,4 @@
-appId: com.ledger.live.debug
+appId: ${APP_ID}
 ---
 # Android races the seeded opt-out: the analytics modal can mount after the home and its backdrop
 # swallows taps until answered. Poll and dismiss; answering records the choice so it won't reappear.
