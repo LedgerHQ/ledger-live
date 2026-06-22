@@ -196,42 +196,6 @@ type TxContext = {
   sequence: string | undefined;
 };
 
-function mapSupportedOperationToBlockOperations(
-  op: SupportedGetBlockOperation,
-  txCtx?: TxContext,
-): BlockOperation[] {
-  if (op.type === "payment") {
-    const asset = assetFromHorizonFields(op.asset_type, op.asset_code, op.asset_issuer);
-    const toAddr = op.to_muxed || op.to;
-    return mapPaymentLikeTransfer(op.from, toAddr, op.amount, asset);
-  }
-  if (op.type === "create_account") {
-    return mapPaymentLikeTransfer(op.funder, op.account, op.starting_balance, NATIVE_ASSET);
-  }
-  if (op.type === "change_trust") {
-    const isOptOut = new BigNumber(op.limit || "0").eq(0);
-    const ledgerOpType = isOptOut ? "OPT_OUT" : "OPT_IN";
-    // Match listOperations details format (convertToLegacyOperation keeps:
-    // sequence, ledgerOpType, assetAmount, memo)
-    return [
-      {
-        type: "other",
-        ledgerOpType,
-        assetAmount: op.asset_code ? op.limit : undefined,
-        ...(txCtx?.memo && { memo: txCtx.memo }),
-        ...(txCtx?.sequence && { sequence: txCtx.sequence }),
-      },
-    ];
-  }
-  if (op.type === "path_payment_strict_send") {
-    return blockOperationsPathStrictSend(op);
-  }
-  if (op.type === "path_payment_strict_receive") {
-    return blockOperationsPathStrictReceive(op);
-  }
-  return assertUnreachable(op);
-}
-
 function decodeMemo(
   tx: Awaited<ReturnType<RawOperation["transaction"]>>,
 ): { type: string; value?: string } | undefined {
@@ -251,6 +215,40 @@ function decodeMemo(
   }
 }
 
+function mapSupportedOperationToBlockOperations(
+  op: SupportedGetBlockOperation,
+  txCtx: TxContext,
+): BlockOperation[] {
+  if (op.type === "payment") {
+    const asset = assetFromHorizonFields(op.asset_type, op.asset_code, op.asset_issuer);
+    const toAddr = op.to_muxed || op.to;
+    return mapPaymentLikeTransfer(op.from, toAddr, op.amount, asset);
+  }
+  if (op.type === "create_account") {
+    return mapPaymentLikeTransfer(op.funder, op.account, op.starting_balance, NATIVE_ASSET);
+  }
+  if (op.type === "change_trust") {
+    const isOptOut = new BigNumber(op.limit || "0").eq(0);
+    // Align with listOperations details (convertToLegacyOperation output)
+    return [
+      {
+        type: "other",
+        ledgerOpType: isOptOut ? "OPT_OUT" : "OPT_IN",
+        assetAmount: op.asset_code ? op.limit : undefined,
+        ...(txCtx.memo && { memo: txCtx.memo }),
+        ...(txCtx.sequence && { sequence: txCtx.sequence }),
+      },
+    ];
+  }
+  if (op.type === "path_payment_strict_send") {
+    return blockOperationsPathStrictSend(op);
+  }
+  if (op.type === "path_payment_strict_receive") {
+    return blockOperationsPathStrictReceive(op);
+  }
+  return assertUnreachable(op);
+}
+
 async function blockTransactionForHash(
   hash: string,
   ops: RawOperation[],
@@ -259,9 +257,6 @@ async function blockTransactionForHash(
   const failed = !ops[0].transaction_successful;
 
   const tx = await ops[0].transaction();
-  const fees = BigInt(tx.fee_charged || "0");
-  const feesPayer = tx.fee_account || tx.source_account;
-
   const txCtx: TxContext = {
     memo: decodeMemo(tx),
     sequence: tx.source_account_sequence,
@@ -271,12 +266,13 @@ async function blockTransactionForHash(
   if (!failed) {
     for (const op of ops) {
       if (isSupportedGetBlockOperation(op)) {
-        blockOperations = blockOperations.concat(
-          mapSupportedOperationToBlockOperations(op, txCtx),
-        );
+        blockOperations = blockOperations.concat(mapSupportedOperationToBlockOperations(op, txCtx));
       }
     }
   }
+
+  const fees = BigInt(tx.fee_charged || "0");
+  const feesPayer = tx.fee_account || tx.source_account;
 
   return {
     hash,
