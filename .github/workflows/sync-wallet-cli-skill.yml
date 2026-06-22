@@ -106,9 +106,8 @@ jobs:
       # GitHub signs them server-side — agent-skills' `main` ruleset requires
       # signed commits, which a local push from the bot token cannot satisfy.
       #
-      # NOTE: $SYNC_BRANCH is fully managed by this workflow: it is reset to the
-      # base branch tip and rewritten on every run. Do not commit to it
-      # directly — manual commits will be lost.
+      # NOTE: $SYNC_BRANCH is fully managed and rewritten on every run. Do not
+      # commit to it directly — manual commits will be lost.
       - name: Create signed commit
         id: commit
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
@@ -123,7 +122,6 @@ jobs:
             const targetSkillDir = process.env.TARGET_SKILL_DIR;
             const targetRepository = process.env.TARGET_REPOSITORY;
             const [owner, repo] = targetRepository.split("/");
-            const baseBranch = process.env.TARGET_BASE;
             const syncBranch = process.env.SYNC_BRANCH;
 
             const git = (args) =>
@@ -143,6 +141,11 @@ jobs:
             for (let i = 0; i < records.length; i += 2) {
               const status = records[i];
               const filePath = records[i + 1];
+              if (status === undefined || filePath === undefined) {
+                throw new Error(
+                  `Unexpected git diff output (odd field count): ${JSON.stringify(records)}`,
+                );
+              }
               if (status === "D") {
                 deletions.push({ path: filePath });
               } else {
@@ -168,9 +171,10 @@ jobs:
               }
             };
 
-            const baseSha = (
-              await github.rest.repos.getBranch({ owner, repo, branch: baseBranch })
-            ).data.commit.sha;
+            // Parent the commit on the checked-out base tip — the same revision
+            // the staged diff was computed against — so the additions/deletions
+            // stay consistent with the commit base even if the remote base moves.
+            const baseSha = git(["rev-parse", "HEAD"]).toString("utf8").trim();
 
             // Build the signed commit on a throwaway branch, then move the sync
             // branch to it in a single update (old head -> new commit). Pointing
