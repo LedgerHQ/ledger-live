@@ -12,14 +12,11 @@ import { handleActions } from "redux-actions";
 import { State } from "./types";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
-import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
-export function recentAddressesSelector(state: State): RecentAddressesState {
-  return walletSelector(state).recentAddresses;
-}
 export function latestDistantStateSelector(state: State): DistantState | null {
   return walletSyncStateSelector(walletSelector(state)).data;
 }
