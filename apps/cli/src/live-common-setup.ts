@@ -1,17 +1,6 @@
 export * from "./live-common-setup-base";
-import fs from "node:fs";
-import path from "node:path";
-import invariant from "invariant";
-import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
-import {
-  registerTransportModule,
-  unregisterTransportModule,
-  disconnect,
-} from "@ledgerhq/live-common/hw/index";
+import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -22,61 +11,12 @@ import {
 } from "@ledgerhq/live-dmk-speculos";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
-let idCounter = 0;
-const mockTransports: Record<string, any> = {};
-const recordStores: Record<string, RecordStore> = {};
+const NON_SPECULOS_DEVICE_ERROR =
+  "This CLI only supports Speculos devices (set SPECULOS_API_PORT or SPECULOS_APDU_PORT). " +
+  "To interact with a real Ledger device, use the Ledger Live desktop or mobile app directly, " +
+  "or @ledgerhq/wallet-cli if you need a CLI-based flow.";
 
-export function releaseMockDevice(id: string) {
-  const store = recordStores[id];
-  invariant(store, "MockDevice does not exist (%s)", id);
-  try {
-    store.ensureQueueEmpty();
-  } finally {
-    delete recordStores[id];
-    delete mockTransports[id];
-  }
-}
-
-export async function mockDeviceWithAPDUs(apdus: string) {
-  const id = `mock:${++idCounter}`;
-  const store = RecordStore.fromString(apdus);
-  recordStores[id] = store;
-  mockTransports[id] = await openTransportReplayer(store);
-  return id;
-}
-
-registerTransportModule({
-  id: "mock",
-  open: id => {
-    if (id in mockTransports) {
-      const Tr = mockTransports[id];
-      return Tr;
-    }
-  },
-  disconnect: () => Promise.resolve(),
-});
-
-const {
-  SPECULOS_API_PORT,
-  SPECULOS_APDU_PORT,
-  SPECULOS_BUTTON_PORT,
-  SPECULOS_HOST,
-  DEVICE_PROXY_URL,
-} = process.env;
-
-if (DEVICE_PROXY_URL) {
-  const Tr = createTransportHttp(DEVICE_PROXY_URL.split("|"));
-  registerTransportModule({
-    id: "http",
-    open: () =>
-      // oxlint-disable-next-line typescript/ban-ts-comment
-      // @ts-ignore
-      retry(() => Tr.create(3000, 5000), {
-        context: "open-http-proxy",
-      }),
-    disconnect: () => Promise.resolve(),
-  });
-}
+const { SPECULOS_API_PORT, SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
 
 if (SPECULOS_API_PORT) {
   registerSpeculosTransport(parseInt(SPECULOS_API_PORT, 10));
@@ -103,88 +43,15 @@ if (SPECULOS_API_PORT) {
   });
 }
 
-const cacheBle = {};
-
-const DEVICE_DEPS_HINT =
-  "\n[device-deps] Native USB/HID bindings look missing or broken. " +
-  "Run this from the monorepo root, then retry:\n  pnpm build:device-deps\n";
-
-let deviceDepsHintShown = false;
-function printDeviceDepsHint() {
-  if (deviceDepsHintShown) return;
-  deviceDepsHintShown = true;
-  console.error(DEVICE_DEPS_HINT);
-}
-
-function isMissingNativeBinding(e: unknown): boolean {
-  const msg = (e as { message?: string })?.message ?? "";
-  return (
-    msg.includes("Could not locate the bindings file") ||
-    msg.includes("HID.node") ||
-    msg.includes("HID_hidraw.node") ||
-    msg.includes("NODE_MODULE_VERSION") ||
-    (msg.includes("dlopen") && msg.includes(".node")) ||
-    /Cannot find module ['"]node-hid['"]/.test(msg)
-  );
-}
-
-function isNodeHidNativeBindingBuilt(): boolean {
-  try {
-    // oxlint-disable-next-line typescript/no-require-imports
-    const pkgDir = path.dirname(require.resolve("node-hid"));
-    const releaseDir = path.join(pkgDir, "build", "Release");
-    return ["HID.node", "HID_hidraw.node"].some(c => fs.existsSync(path.join(releaseDir, c)));
-  } catch {
-    return false;
-  }
-}
-
-async function init() {
-  if (!SPECULOS_APDU_PORT && !isNodeHidNativeBindingBuilt()) {
-    printDeviceDepsHint();
-  }
-
-  let TransportNodeHid: any;
-  try {
-    // oxlint-disable-next-line typescript/no-require-imports
-    TransportNodeHid = require("@ledgerhq/hw-transport-node-hid").default;
-  } catch (e) {
-    if (isMissingNativeBinding(e)) {
-      if (!SPECULOS_APDU_PORT) printDeviceDepsHint();
-      return;
-    }
-    throw e;
-  }
-
-  registerTransportModule({
-    id: "hid",
-    open: async devicePath => {
-      try {
-        return await retry(() => TransportNodeHid.open(devicePath), {
-          context: "open-hid",
-        });
-      } catch (e) {
-        if (isMissingNativeBinding(e)) {
-          printDeviceDepsHint();
-        }
-        throw e;
-      }
-    },
-    discovery: new Observable(TransportNodeHid.listen).pipe(
-      map((e: any) => ({
-        type: e.type,
-        id: e.device.path,
-        name: e.device.deviceName || "",
-        deviceModel: e.deviceModel,
-        wired: true,
-      })),
-    ),
-    disconnect: () => Promise.resolve(),
-  });
-}
+// The CLI no longer ships USB/HID or HTTP-proxy transports: it is Speculos-only.
+// This fallback matches any non-Speculos deviceId and fails with an actionable error.
+registerTransportModule({
+  id: "non-speculos",
+  open: () => Promise.reject(new Error(NON_SPECULOS_DEVICE_ERROR)),
+  disconnect: () => Promise.resolve(),
+});
 
 export function registerSpeculosTransport(apiPort: number) {
-  unregisterTransportModule("hid");
   const speculosAddress = process.env.SPECULOS_ADDRESS;
   const req: SpeculosHttpTransportOpts = {
     apiPort: apiPort.toString(),
@@ -200,12 +67,7 @@ export function registerSpeculosTransport(apiPort: number) {
 
 LiveConfig.setConfig(liveConfig);
 
-if (!process.env.CI && !SPECULOS_API_PORT && !DEVICE_PROXY_URL) {
-  init();
-}
-
 export function closeAllDevices() {
-  Object.keys(cacheBle).forEach(disconnect);
   closeAllSpeculosDevices();
 }
 

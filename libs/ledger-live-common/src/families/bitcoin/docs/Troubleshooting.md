@@ -17,19 +17,7 @@ Mostly due to UTXO calculation errors, using already spent UTXOs as inputs for n
 1. **Find Account ID in Ledger Live:** Look for a unique ID in the account's settings page.
 2. **Check `app.json` File:** This file contains all account IDs in the current Ledger Live.
 3. **Bitcoin ID Components:** For Bitcoin, the ID contains a currency id(bitcoin, dogecoin...) and a xpub and a derivation mode (legacy, segwit, native_segwit, taproot). e.g. `js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit`
-4. **Retrieve Account Data:** Use CLI tool with the ID to get the account's UTXOs, transactions, and balance.
-
-##### Example Commands
-- Bitcoin (native_segwit):
-```
-pnpm run:cli sync --id js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit
-```
-- Dogecoin (legacy):
-```
-pnpm run:cli sync --id js:2:dogecoin:dgub8rLBz9DzvDxQTL2JqCcwRwzdz53mYZFNim9pPNM2np5BRFaoFfsV13wkhC43ENdSXYgc2tRvztLmtW7jDjArjaqsU1xJDKAwNLpJax9c38h:
-```
-
-The CLI tool returns transactions, UTXOs for each address and the overall balance for the account.
+4. **Retrieve Account Data:** Inspect the account's UTXOs, transactions, and balance directly with the in-app developer tools — in the Ledger Live desktop/mobile app, or on the [live.ledger.tools](https://live.ledger.tools) web app, which embeds the same devtools. You can also query the explorer REST API directly (see step 6).
 
 5. **Identify problematic addresses:** Compare UTXOs/transactions against public Bitcoin explorers like [Wallet Explorer](https://www.walletexplorer.com/) or [Blockchain.com Explorer](https://www.blockchain.com/explorer) to identify problematic Bitcoin addresses for further debugging.
 
@@ -70,10 +58,6 @@ Sync account errors in Ledger Live, indicated by UI errors. These can be due to 
 Failures in `bridge.integration.test.ts` may be due to nano app updates or `hw-app-btc` modifications leading to APDU incompatibility.
 
 #### Debugging Steps
-- Update APDU datasets using:
-```
-pnpm run:cli generateTestScanAccounts -c [mycoin]
-```
 - For comprehensive details on handling bridge integration tests and APDU updates, please refer to [Ledger Developers Documentation](https://developers.ledger.com/docs/blockchain/testing#writing-bridgeintegrationtestts).
 
 ---
