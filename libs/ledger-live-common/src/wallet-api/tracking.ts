@@ -30,9 +30,9 @@ function buildSignTransactionProperties(manifest: AppManifest, meta: SwapTrackin
   const { isEmbedded, partner, swapEntryPoint } = meta;
   return {
     ...getEventData(manifest),
-    ...(isEmbedded !== undefined && { isEmbeddedSwap: String(isEmbedded) }),
-    ...(partner !== undefined && { partner }),
-    ...(swapEntryPoint !== undefined && { swapEntryPoint }),
+    ...(typeof isEmbedded === "boolean" && { isEmbeddedSwap: String(isEmbedded) }),
+    ...(typeof partner === "string" && { partner }),
+    ...(typeof swapEntryPoint === "string" && { swapEntryPoint }),
   };
 }
 
