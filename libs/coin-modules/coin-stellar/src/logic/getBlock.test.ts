@@ -281,7 +281,7 @@ describe("getBlock", () => {
         asset_code: "ABC",
         asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         limit: "1000.0000000",
-        transactionRecord: txRecord({ source_account_sequence: "12345" } as Partial<Horizon.ServerApi.TransactionRecord>),
+        transactionRecord: txRecord({ source_account_sequence: "12345" }),
       }),
     ]);
 
@@ -304,7 +304,7 @@ describe("getBlock", () => {
         asset_code: "USD",
         asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         limit: "500.0000000",
-        transactionRecord: txRecord({ memo_type: "hash", memo: base64Hash } as Partial<Horizon.ServerApi.TransactionRecord>),
+        transactionRecord: txRecord({ memo_type: "hash", memo: base64Hash }),
       }),
     ]);
 
@@ -323,7 +323,7 @@ describe("getBlock", () => {
         asset_code: "EUR",
         asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         limit: "100.0000000",
-        transactionRecord: txRecord({ memo_type: "return", memo: base64Hash } as Partial<Horizon.ServerApi.TransactionRecord>),
+        transactionRecord: txRecord({ memo_type: "return", memo: base64Hash }),
       }),
     ]);
 
@@ -444,7 +444,7 @@ describe("getBlock", () => {
         transactionRecord: txRecord({
           fee_charged: "100",
           source_account: "",
-        } as Partial<Horizon.ServerApi.TransactionRecord>),
+        }),
       }),
     ]);
 

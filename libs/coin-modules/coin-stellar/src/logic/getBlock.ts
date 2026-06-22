@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchAllLedgerOperations, fetchLedgerRecord } from "../network";
 import { decodeMemo, parseSequence } from "../network/serialization";
-import type { RawOperation } from "../types";
+import type { RawOperation, StellarMemo } from "../types";
 import { parseAPIValue } from "./common";
 import { assertUnreachable } from "./utils";
 import BigNumber from "bignumber.js";
@@ -193,7 +193,7 @@ function blockOperationsPathStrictReceive(op: RawPathStrictReceiveOp): BlockOper
 }
 
 type TxContext = {
-  memo: { type: string; value?: string } | undefined;
+  memo: StellarMemo | undefined;
   sequence: string | undefined;
 };
 
