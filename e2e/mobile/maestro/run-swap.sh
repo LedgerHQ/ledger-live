@@ -133,7 +133,16 @@ if [ -f "$NANO_APP_CATALOG" ]; then
 fi
 
 echo ">> starting swap backend harness (port $MAESTRO_BRIDGE_PORT) via jest..."
-pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
+# The harness is a Jest process whose console output (bridge/Speculos/[SCREEN]/CLI diagnostics) is
+# verbose and would drown the Maestro step output. Send it to a log file by default; VERBOSE=1
+# streams it to the terminal for debugging.
+HARNESS_LOG="artifacts/harness-swap.log"
+if [ "${VERBOSE:-0}" = "1" ]; then
+  pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
+else
+  echo ">> harness backend logs -> e2e/mobile/$HARNESS_LOG (set VERBOSE=1 to stream them here)"
+  pnpm exec jest --config maestro/harness/jest.config.js --runInBand >"$HARNESS_LOG" 2>&1 &
+fi
 HARNESS_PID=$!
 
 echo ">> waiting for bridge on port $MAESTRO_BRIDGE_PORT ..."

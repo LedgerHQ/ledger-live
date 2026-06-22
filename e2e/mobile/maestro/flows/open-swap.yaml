@@ -6,6 +6,9 @@
 appId: com.ledger.live.debug
 tags:
   - swap
+# Confirm the backend harness is up before driving the UI (fail fast if run-*.sh didn't start it).
+onFlowStart:
+  - runScript: ../scripts/assert-backend.js
 ---
 - launchApp:
     clearState: true

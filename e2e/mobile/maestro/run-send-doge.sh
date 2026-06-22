@@ -28,8 +28,6 @@ IS_REMOTE=0
 [ "$REMOTE_SPECULOS" = "true" ] && IS_REMOTE=1
 
 FLOW="${SEND_FLOW:-maestro/flows/send-doge.yaml}"
-RECIPIENT_FILE="artifacts/.maestro-send-recipient"
-AMOUNT_FILE="artifacts/.maestro-send-amount"
 
 # --- Java (Maestro needs 17+; macOS /usr/bin/java is a stub, so test `java -version`) ---
 if ! java -version >/dev/null 2>&1; then
@@ -107,34 +105,40 @@ fi
 NANO_APP_CATALOG="artifacts/appVersion/nano-app-catalog.json"
 [ -f "$NANO_APP_CATALOG" ] && { echo ">> removing stale nano-app catalog (regenerates fresh)"; rm -f "$NANO_APP_CATALOG"; }
 
-# Remove a stale recipient file so we only read THIS run's value.
-rm -f "$RECIPIENT_FILE" 2>/dev/null || true
+CONTROL_PORT="${MAESTRO_CONTROL_PORT:-8100}"
 
 echo ">> starting send-doge backend harness (port $MAESTRO_BRIDGE_PORT) via jest..."
-pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
+# Quiet the verbose harness Jest output by default (it would drown the Maestro steps); VERBOSE=1 streams it.
+HARNESS_LOG="artifacts/harness-send-doge.log"
+if [ "${VERBOSE:-0}" = "1" ]; then
+  pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
+else
+  echo ">> harness backend logs -> e2e/mobile/$HARNESS_LOG (set VERBOSE=1 to stream them here)"
+  pnpm exec jest --config maestro/harness/jest.config.js --runInBand >"$HARNESS_LOG" 2>&1 &
+fi
 HARNESS_PID=$!
 
 # The harness derives the Dogecoin 2 recipient address EARLY (in cliCommandsOnApp, before the
-# app-dependent init steps) and writes it to RECIPIENT_FILE. Wait for it, then launch Maestro with
-# the address. Launching Maestro is also what lets the app connect so the harness's init can finish.
-echo ">> waiting for the harness to derive the recipient address ($RECIPIENT_FILE) ..."
+# app-dependent init steps) and serves it on its control endpoint (GET /recipient -> 200). Gate on
+# that here so the flow's onFlowStart hook can fetch it over HTTP (no `-e` plumbing). Launching
+# Maestro is also what lets the app connect so the harness's init can finish.
+echo ">> waiting for the harness to derive the recipient (control endpoint :$CONTROL_PORT/recipient) ..."
+recipient_ready() { [ "$(curl -s -o /dev/null -w '%{http_code}' "localhost:$CONTROL_PORT/recipient" 2>/dev/null)" = "200" ]; }
 for _ in $(seq 1 "${BACKEND_WAIT:-300}"); do
-  [ -s "$RECIPIENT_FILE" ] && break
+  recipient_ready && break
   kill -0 "$HARNESS_PID" 2>/dev/null || { echo "ERROR: harness exited before producing the recipient address (see log above)."; exit 1; }
   sleep 1
 done
-RECIPIENT="$(cat "$RECIPIENT_FILE" 2>/dev/null || true)"
-AMOUNT="$(cat "$AMOUNT_FILE" 2>/dev/null || echo "0.01")"
-[ -n "$RECIPIENT" ] || { echo "ERROR: harness did not produce a recipient address within ${BACKEND_WAIT:-300}s."; exit 1; }
-echo ">> recipient (Dogecoin 2) = $RECIPIENT ; amount = $AMOUNT"
+recipient_ready || { echo "ERROR: harness did not produce a recipient within ${BACKEND_WAIT:-300}s."; exit 1; }
+echo ">> recipient ready; the flow fetches it (+ amount) from the control endpoint via onFlowStart."
 
 echo ">> running Maestro flow: $FLOW"
 strip_maestro_noise() { grep -vaE "Running on (iOS Simulator|Android Emulator)" || true; }
 if [ "${DUMP_HIERARCHY:-0}" = "1" ]; then
-  maestro test --no-ansi -e RECIPIENT="$RECIPIENT" -e AMOUNT="$AMOUNT" "$FLOW" 2>&1 | strip_maestro_noise || true
+  maestro test --no-ansi "$FLOW" 2>&1 | strip_maestro_noise || true
   echo ">> dumping view hierarchy + screenshot to artifacts/ ..."
   maestro hierarchy > artifacts/send-doge-hierarchy.json 2>/dev/null || true
   xcrun simctl io booted screenshot artifacts/send-doge-screen.png >/dev/null 2>&1 || true
 else
-  maestro test --no-ansi -e RECIPIENT="$RECIPIENT" -e AMOUNT="$AMOUNT" "$FLOW" 2>&1 | strip_maestro_noise
+  maestro test --no-ansi "$FLOW" 2>&1 | strip_maestro_noise
 fi

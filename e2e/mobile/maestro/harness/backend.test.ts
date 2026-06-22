@@ -18,9 +18,14 @@
 import { init as initBridge, loadConfig, setFeatureFlags } from "../../bridge/server";
 import fs from "fs";
 import path from "path";
+import http from "http";
 
 const FLOW = process.env.MAESTRO_FLOW ?? "add-account";
 const PORT = Number(process.env.MAESTRO_BRIDGE_PORT ?? 8099);
+// Tiny HTTP control endpoint the Maestro flows talk to directly (onFlowStart hooks + JS http.get),
+// so a flow can coordinate with this backend itself instead of relying on bash to pass values via
+// `-e` / temp files. Maestro's JS sandbox runs on the HOST, so localhost reaches this process.
+const CONTROL_PORT = Number(process.env.MAESTRO_CONTROL_PORT ?? 8100);
 const FULL = process.env.MAESTRO_FULL !== "0";
 const USERDATA = "skip-onboarding";
 // The orchestrator waits for this file before launching the app, so all seed
@@ -49,10 +54,53 @@ const SEED_FLAGS = {
   onboardingWidget: { enabled: true },
 } as const;
 
+// Mutable state served over the control HTTP endpoint. Updated as the backend reaches readiness /
+// derives values (e.g. the send-doge recipient), so flows can fetch them with `http.get`.
+const control: { ready: boolean; recipient?: string; amount?: string; flow: string } = {
+  ready: false,
+  flow: FLOW,
+};
+
+function startControlServer(port: number): void {
+  const server = http.createServer((req, res) => {
+    const url = (req.url ?? "/").split("?")[0];
+    const send = (status: number, body: string) => {
+      res.writeHead(status, { "content-type": "text/plain", "cache-control": "no-store" });
+      res.end(body);
+    };
+    switch (url) {
+      case "/ready":
+        // 200 once seeding is buffered + (full mode) Speculos is up; 503 until then.
+        return control.ready ? send(200, "ready") : send(503, "not-ready");
+      case "/recipient":
+        // The device-derived send recipient (send-doge); Maestro can't derive a device address.
+        return control.recipient ? send(200, control.recipient) : send(503, "");
+      case "/amount":
+        return send(200, control.amount ?? "");
+      case "/status":
+        return send(200, JSON.stringify(control));
+      default:
+        return send(404, "not-found");
+    }
+  });
+  // Don't let a stray port conflict crash the harness — the bridge/Speculos path is what matters.
+  server.on("error", err => {
+    // eslint-disable-next-line no-console
+    console.warn(`[maestro-harness] control server error on :${port}: ${err}`);
+  });
+  server.listen(port, () => {
+    // eslint-disable-next-line no-console
+    console.log(
+      `[maestro-harness] control HTTP server on :${port} (/ready /recipient /amount /status)`,
+    );
+  });
+}
+
 it("maestro backend: seed state + keep the bridge alive", async () => {
   // eslint-disable-next-line no-console
   console.log(`[maestro-harness] bridge listening on :${PORT} (flow=${FLOW}, full=${FULL})`);
   initBridge(PORT);
+  startControlServer(CONTROL_PORT);
 
   if (FLOW === "swap") {
     await setupSwap();
@@ -97,6 +145,7 @@ it("maestro backend: seed state + keep the bridge alive", async () => {
   // Signal the orchestrator that seeding is buffered and it's safe to launch the app.
   fs.mkdirSync(path.dirname(READY_FILE), { recursive: true });
   fs.writeFileSync(READY_FILE, String(Date.now()));
+  control.ready = true; // also expose readiness over the control HTTP endpoint (onFlowStart hooks)
 
   // Block forever — keeps the bridge open while Maestro drives the app.
   await new Promise<void>(() => {});
@@ -130,6 +179,7 @@ async function setupSwap(): Promise<void> {
 
   const amount = process.env.SWAP_AMOUNT ?? "0.01";
   const swap = new Swap(Account.ETH_1, TokenAccount.ETH_USDT_1, amount, undefined, Fee.MEDIUM);
+  control.amount = amount; // exposed via GET /amount
 
   // Share the amount with the Maestro flow so it types the exact value the harness verifies.
   fs.mkdirSync(path.dirname(READY_FILE), { recursive: true });
@@ -322,21 +372,23 @@ async function driveSwapExecute(): Promise<void> {
     return { ok: false as const, error: "webview driver: timed out waiting for registration" };
   };
 
-  // 0. Tap "View quotes" (Maestro entered the amount via the 25% button, which enables this button).
-  //    tapByTestIdWhenEnabled waits until the button is present + enabled (i.e. a valid amount is in),
-  //    so it implicitly waits for Maestro to open swap + select USDT + tap 25%.
+  // 0. BEST-EFFORT tap "View quotes" once Maestro has entered the amount (which enables it). The
+  //    form sometimes auto-searches quotes (no button), so DON'T block on the button — give it a
+  //    short window, then fall through and gate on the quotes appearing (step 1). A long hard wait
+  //    here would hang the whole swap when the app auto-searched.
   let r = await wv(
-    { op: "tapByTestIdWhenEnabled", testId: "mobile-get-quotes-button", timeoutMs: 120_000 },
-    125_000,
+    { op: "tapByTestIdWhenEnabled", testId: "mobile-get-quotes-button", timeoutMs: 30_000 },
+    35_000,
   );
   if (!r.ok) {
     // eslint-disable-next-line no-console
-    console.warn(`[maestro-harness] webviewDriver: "View quotes" never enabled: ${(r as { error?: string }).error}`);
-    return;
+    console.log(
+      `[maestro-harness] webviewDriver: "View quotes" not tapped (${(r as { error?: string }).error}) — form may auto-search; waiting for quotes.`,
+    );
   }
 
-  // 1. Wait for the quotes to render.
-  r = await wv({ op: "waitForTestId", testId: "number-of-quotes", timeoutMs: 90_000 }, 95_000);
+  // 1. Wait for the quotes to render (the real gate — whether tapped or auto-searched).
+  r = await wv({ op: "waitForTestId", testId: "number-of-quotes", timeoutMs: 120_000 }, 125_000);
   if (!r.ok) {
     // eslint-disable-next-line no-console
     console.warn(`[maestro-harness] webviewDriver: quotes never appeared: ${(r as { error?: string }).error}`);
@@ -431,6 +483,7 @@ async function setupSendDoge(): Promise<void> {
   // Stale recipient from a previous run must not be picked up by the orchestrator.
   if (fs.existsSync(recipientFile)) fs.unlinkSync(recipientFile);
   fs.writeFileSync(path.resolve("artifacts", ".maestro-send-amount"), amount);
+  control.amount = amount; // exposed via GET /amount
 
   const tmp = `temp-userdata-${randomUUID()}`;
   const tmpPath = getUserdataPath(tmp);
@@ -450,6 +503,7 @@ async function setupSendDoge(): Promise<void> {
               tx.accountToCredit.address = address;
               tx.recipientAddress = address;
               fs.writeFileSync(recipientFile, address);
+              control.recipient = address; // exposed via GET /recipient (flow fetches it itself)
               // eslint-disable-next-line no-console
               console.log(`[maestro-harness] send recipient (Dogecoin 2) = ${address}`);
               return address;
