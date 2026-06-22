@@ -14,7 +14,7 @@ import {
   type GetQuotesWireArgs,
   type GetTransactionStatusResponse,
   type GetTransactionStatusWireArgs,
-  SwapTrackingMeta,
+  type SwapTrackingMeta,
 } from "./types";
 
 export * from "./types";

@@ -2,7 +2,7 @@
 "@ledgerhq/types-live": patch
 "ledger-live-desktop": patch
 "@ledgerhq/live-common": patch
-"@ledgerhq/wallet-api-exchange-module": patch
+"@ledgerhq/wallet-api-exchange-module": minor
 "@shared/feature-flags": patch
 ---
 
