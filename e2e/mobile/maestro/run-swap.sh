@@ -79,7 +79,7 @@ cleanup() {
     pkill -P "$HARNESS_PID" 2>/dev/null || true
     kill "$HARNESS_PID" 2>/dev/null || true
   fi
-  pkill -f "jest --config maestro/harness/jest.config.js" 2>/dev/null || true
+  pkill -f "$HARNESS_PKILL_PATTERN" 2>/dev/null || true
   [ -n "${HARNESS_PID:-}" ] && wait "$HARNESS_PID" 2>/dev/null || true
   # Remote Speculos (Speculinho) pods aren't local containers — they're released by the operator's
   # TTL (the harness is killed and can't run its own release). Only clean local Docker containers.
@@ -121,18 +121,11 @@ if [ -f "$NANO_APP_CATALOG" ]; then
   rm -f "$NANO_APP_CATALOG"
 fi
 
-echo ">> starting swap backend harness (port $MAESTRO_BRIDGE_PORT) via jest..."
-# The harness is a Jest process whose console output (bridge/Speculos/[SCREEN]/CLI diagnostics) is
-# verbose and would drown the Maestro step output. Send it to a log file by default; VERBOSE=1
-# streams it to the terminal for debugging.
+echo ">> starting swap backend harness (port $MAESTRO_BRIDGE_PORT) via ts-node..."
+# The harness console output (bridge/Speculos/[SCREEN]/CLI diagnostics) is verbose and would drown
+# the Maestro step output. Send it to a log file by default; VERBOSE=1 streams it for debugging.
 HARNESS_LOG="artifacts/harness-swap.log"
-if [ "${VERBOSE:-0}" = "1" ]; then
-  pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
-else
-  echo ">> harness backend logs -> e2e/mobile/$HARNESS_LOG (set VERBOSE=1 to stream them here)"
-  pnpm exec jest --config maestro/harness/jest.config.js --runInBand >"$HARNESS_LOG" 2>&1 &
-fi
-HARNESS_PID=$!
+start_harness "$HARNESS_LOG"
 
 echo ">> waiting for bridge on port $MAESTRO_BRIDGE_PORT ..."
 for _ in $(seq 1 "${BACKEND_WAIT:-120}"); do

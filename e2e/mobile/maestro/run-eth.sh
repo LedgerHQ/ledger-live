@@ -64,13 +64,13 @@ PRE_SPECULOS="$(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null | tr '\n' '
 
 cleanup() {
   echo ">> stopping backend + Speculos..."
-  # Kill the harness tree FIRST so jest can't be mid-managing Speculos while we remove
-  # containers (otherwise it races with the framework's own async cleanup).
+  # Kill the harness tree FIRST so it can't be mid-managing Speculos while we remove
+  # containers (otherwise it races with the harness's own async cleanup).
   if [ -n "${HARNESS_PID:-}" ]; then
     pkill -P "$HARNESS_PID" 2>/dev/null || true
     kill "$HARNESS_PID" 2>/dev/null || true
   fi
-  pkill -f "jest --config maestro/harness/jest.config.js" 2>/dev/null || true
+  pkill -f "$HARNESS_PKILL_PATTERN" 2>/dev/null || true
   [ -n "${HARNESS_PID:-}" ] && wait "$HARNESS_PID" 2>/dev/null || true
   # Now remove (synchronously) the Speculos containers started during this run.
   for c in $(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null || true); do
@@ -82,16 +82,9 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo ">> starting backend harness (full=$FULL, port $MAESTRO_BRIDGE_PORT) via jest..."
-# Quiet the verbose harness Jest output by default (it would drown the Maestro steps); VERBOSE=1 streams it.
+echo ">> starting backend harness (full=$FULL, port $MAESTRO_BRIDGE_PORT) via ts-node..."
 HARNESS_LOG="artifacts/harness-add-account.log"
-if [ "${VERBOSE:-0}" = "1" ]; then
-  pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
-else
-  echo ">> harness backend logs -> e2e/mobile/$HARNESS_LOG (set VERBOSE=1 to stream them here)"
-  pnpm exec jest --config maestro/harness/jest.config.js --runInBand >"$HARNESS_LOG" 2>&1 &
-fi
-HARNESS_PID=$!
+start_harness "$HARNESS_LOG"
 
 # Wait for the bridge port to open, then launch. In full mode the harness's Speculos
 # registration polls the app (getEnvs), so the app MUST be able to connect during init;

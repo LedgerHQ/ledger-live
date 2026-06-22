@@ -60,31 +60,40 @@ onFlowStart:
     timeout: 30000
 - tapOn:
     id: "modular-drawer-search-input"
-# Search a PARTIAL term ("USD") not the exact ticker: once the filter narrows to a SINGLE result the
-# drawer auto-advances past the asset step before we can tap it. "USD" keeps several matches (USDT,
-# USDC, ...) so the asset row stays until we tap it explicitly.
 - inputText: "USD"
+# The modular drawer AUTO-ADVANCES past any step that has a single option. Searching "USD" can narrow
+# to just USDT (USDC etc. may not be in the list), so the drawer skips the asset step and jumps
+# straight to "Select network". So the steps below are tolerant: settle the search, tap the USDT asset
+# row ONLY if it is still shown, then drive the network + account steps (which appear whether or not
+# the asset step auto-advanced). USDT has several networks, so the network step reliably shows.
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "asset-item-USDT"
+    commands:
+      - tapOn:
+          id: "asset-item-USDT"
+          retryTapIfNoChange: true
+# Network step: USDT exists on several chains -> pick Ethereum.
 - extendedWaitUntil:
     visible:
-      id: "asset-item-USDT"
+      id: "network-item-ethereum"
     timeout: 30000
-- tapOn:
-    id: "asset-item-USDT"
-    retryTapIfNoChange: true
-# Network step: USDT exists on several chains -> pick Ethereum. Sometimes the drawer auto-advances
-# past it (single network), so this is optional.
 - tapOn:
     id: "network-item-ethereum"
     retryTapIfNoChange: true
-    optional: true
-# Account step: pick the seeded USDT account (the drawer's account row), which closes the drawer.
-- extendedWaitUntil:
-    visible:
-      id: "account-item"
-    timeout: 30000
-- tapOn:
-    id: "account-item"
-    retryTapIfNoChange: true
+# Account step: pick the seeded USDT account (closes the drawer). With a single account the drawer can
+# auto-advance past this too, so tap it only if shown.
+- runFlow:
+    when:
+      visible:
+        id: "account-item"
+    commands:
+      - tapOn:
+          id: "account-item"
+          retryTapIfNoChange: true
 - waitForAnimationToEnd:
     timeout: 4000
 - takeScreenshot: artifacts/swap-usdt-selected
@@ -95,7 +104,7 @@ onFlowStart:
     timeout: 4000
 - takeScreenshot: artifacts/swap-amount-set
 # --- View quotes -> pick provider -> execute. WHO drives this differs by platform:
-#   - iOS: the HARNESS (backend.test.ts `driveSwapExecute`) drives it over the bridge, because these
+#   - iOS: the HARNESS (main.ts `driveSwapExecute`) drives it over the bridge, because these
 #     buttons' a11y-frame centres are clipped under the home indicator (a Maestro tap misses). The
 #     webviewDriver's synthetic DOM click fires the live-app's React onClick on iOS WKWebView.
 #   - Android: Maestro drives it directly. The WebView tree is fully readable/tappable here and the

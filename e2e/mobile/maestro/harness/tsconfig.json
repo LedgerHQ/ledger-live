@@ -1,0 +1,27 @@
+// ts-node + tsconfig-paths read THIS file (via TS_NODE_PROJECT) to run maestro/harness/main.ts as a
+// plain script — no jest. It extends the package tsconfig for compilerOptions, sets baseUrl to the
+// package root (e2e/mobile) so the aliases resolve exactly like the old jest moduleNameMapper, and
+// adds the `detox` -> ./detox-stub remap (Maestro owns the device; see ./detox-stub.ts).
+// Keep `paths` in sync with ../../tsconfig.json.
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // The base resolves to NodeNext (ESM), which makes ts-node emit native `import()` that bypasses
+    // its CommonJS require hook + tsconfig-paths. Pin CommonJS so dynamic imports go through require
+    // (this is what the old jest @swc transform did explicitly with module.type = "commonjs").
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "baseUrl": "../..",
+    "paths": {
+      "*": ["./*"],
+      "LLM/*": ["../../apps/ledger-live-mobile/src/mvvm/*"],
+      "~/*": ["../../apps/ledger-live-mobile/src/*"],
+      "@shared/feature-flags": ["../../shared/feature-flags/src"],
+      "@ledgerhq/live-common/e2e/*": ["../../libs/ledger-live-common/src/e2e/*"],
+      "@ledgerhq/live-common/lib/e2e/*": ["../../libs/ledger-live-common/src/e2e/*"],
+      "@ledgerhq/live-common/hw/index": ["../../libs/ledger-live-common/src/hw/index"],
+      "@ledgerhq/live-common/hw/deviceAccess": ["../../libs/ledger-live-common/src/hw/deviceAccess"],
+      "detox": ["./maestro/harness/detox-stub"]
+    }
+  }
+}

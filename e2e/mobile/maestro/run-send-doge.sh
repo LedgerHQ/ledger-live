@@ -67,7 +67,7 @@ cleanup() {
     pkill -P "$HARNESS_PID" 2>/dev/null || true
     kill "$HARNESS_PID" 2>/dev/null || true
   fi
-  pkill -f "jest --config maestro/harness/jest.config.js" 2>/dev/null || true
+  pkill -f "$HARNESS_PKILL_PATTERN" 2>/dev/null || true
   [ -n "${HARNESS_PID:-}" ] && wait "$HARNESS_PID" 2>/dev/null || true
   if [ "$IS_REMOTE" = "0" ]; then
     for c in $(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null || true); do
@@ -96,16 +96,9 @@ NANO_APP_CATALOG="artifacts/appVersion/nano-app-catalog.json"
 
 CONTROL_PORT="${MAESTRO_CONTROL_PORT:-8100}"
 
-echo ">> starting send-doge backend harness (port $MAESTRO_BRIDGE_PORT) via jest..."
-# Quiet the verbose harness Jest output by default (it would drown the Maestro steps); VERBOSE=1 streams it.
+echo ">> starting send-doge backend harness (port $MAESTRO_BRIDGE_PORT) via ts-node..."
 HARNESS_LOG="artifacts/harness-send-doge.log"
-if [ "${VERBOSE:-0}" = "1" ]; then
-  pnpm exec jest --config maestro/harness/jest.config.js --runInBand &
-else
-  echo ">> harness backend logs -> e2e/mobile/$HARNESS_LOG (set VERBOSE=1 to stream them here)"
-  pnpm exec jest --config maestro/harness/jest.config.js --runInBand >"$HARNESS_LOG" 2>&1 &
-fi
-HARNESS_PID=$!
+start_harness "$HARNESS_LOG"
 
 # The harness derives the Dogecoin 2 recipient address EARLY (in cliCommandsOnApp, before the
 # app-dependent init steps) and serves it on its control endpoint (GET /recipient -> 200). Gate on

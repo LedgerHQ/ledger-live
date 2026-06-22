@@ -1,11 +1,17 @@
 /**
- * Maestro backend harness (runs as a Jest test so the package's alias resolution,
- * @swc transform, expect.getState() and allure runtime are all available).
+ * Maestro backend harness — a plain ts-node daemon (NOT a jest test).
  *
  * It reuses the EXISTING e2e/mobile infra to seed the app, but does NOT launch the
  * app — Maestro does that and points it at this bridge (../subflows/launch-seeded.yaml).
- * The single test seeds state then blocks forever; the orchestrator (../run-eth.sh)
- * kills the process once Maestro finishes.
+ * main() seeds state then blocks forever; the orchestrator (../run-eth.sh) kills the
+ * process once Maestro finishes.
+ *
+ * How it runs without jest: `ts-node --swc` transpiles via @swc/core, and
+ * `tsconfig-paths/register` (reading ./tsconfig.json) resolves the package aliases
+ * (`~/*`, `@shared/*`, `@ledgerhq/live-common/e2e/*`) plus the `detox` -> ./detox-stub
+ * remap. ./setup-globals recreates the few globals the reused infra reads (`webSocket`,
+ * `pendingCallbacks`, `speculosDevices`, and a jest-`expect` shim for `getState().testPath`).
+ * Mirrors the existing `e2e:loadConfig` ts-node bridge script.
  *
  * Env:
  *   MAESTRO_FLOW  "add-account" (default) or "swap".
@@ -13,12 +19,23 @@
  *   MAESTRO_FULL  (add-account only) "1" (default) = Speculos(Ethereum) discovery; "0" = seed-only.
  *   SWAP_AMOUNT   (swap only) ETH amount to swap; default "0.01".
  *
- * Run via: pnpm exec jest --config maestro/harness/jest.config.js --runInBand
+ * Run via: TS_NODE_PROJECT=maestro/harness/tsconfig.json \
+ *   pnpm exec ts-node --swc --require tsconfig-paths/register maestro/harness/main.ts
  */
+import "./setup-globals"; // must run first: installs the globals the reused infra reads
 import { init as initBridge, loadConfig, setFeatureFlags } from "../../bridge/server";
 import fs from "fs";
 import path from "path";
 import http from "http";
+
+// axios is NOT a direct dependency of e2e/mobile — pnpm isolates it under live-common. Resolve it from
+// live-common's node_modules, exactly like the old jest config did (require.resolve("axios", { paths:
+// [live-common] })). That resolves to axios's Node build — the one with the http adapter the Speculos
+// screen-polling needs.
+const LIVE_COMMON_DIR = path.resolve(__dirname, "../../../../libs/ledger-live-common");
+async function loadAxios() {
+  return (await import(require.resolve("axios", { paths: [LIVE_COMMON_DIR] }))).default;
+}
 
 const FLOW = process.env.MAESTRO_FLOW ?? "add-account";
 const PORT = Number(process.env.MAESTRO_BRIDGE_PORT ?? 8099);
@@ -98,7 +115,7 @@ function startControlServer(port: number): void {
   });
 }
 
-it("maestro backend: seed state + keep the bridge alive", async () => {
+async function main(): Promise<void> {
   // eslint-disable-next-line no-console
   console.log(`[maestro-harness] bridge listening on :${PORT} (flow=${FLOW}, full=${FULL})`);
   initBridge(PORT);
@@ -155,7 +172,13 @@ it("maestro backend: seed state + keep the bridge alive", async () => {
 
   // Block forever — keeps the bridge open while Maestro drives the app.
   await new Promise<void>(() => {});
-}, 6_000_000);
+}
+
+main().catch(err => {
+  // eslint-disable-next-line no-console
+  console.error("[maestro-harness] fatal:", err);
+  process.exit(1);
+});
 
 /**
  * Swap (ETH -> ETH-USDT) backend, mirroring the Detox `beforeAllFunction` in
@@ -242,14 +265,11 @@ async function setupSwap(): Promise<void> {
   // drawer to pick the To currency (search USDT -> asset -> network -> account), exercising the
   // actual currency-selection UI on both platforms.
 
-  // The Speculos screen-polling in verifyAmountsAndAcceptSwap uses axios. In this jest harness
-  // axios resolves to its non-node build and (with no XMLHttpRequest) auto-selects the fetch
-  // (undici) adapter, which fails against the Docker-forwarded Speculos port — every request
-  // errors with ECONNREFUSED / "network error" even though a raw http.get to the same port
-  // returns 200 (verified from inside this process). The harness jest config maps "axios" to its
-  // node build; here we also pin the http adapter on the shared instance so verifyAmounts works.
-  // Seeding is unaffected — it shells out to the CLI, not axios.
-  const axios = (await import("axios")).default;
+  // The Speculos screen-polling in verifyAmountsAndAcceptSwap uses axios. Pin the Node http adapter
+  // on the shared instance so it talks to the Docker-forwarded Speculos REST port directly — the
+  // default adapter selection can pick fetch/undici, which fails against that port even though a raw
+  // http.get to it returns 200. Seeding is unaffected — it shells out to the CLI, not axios.
+  const axios = await loadAxios();
   axios.defaults.adapter = "http";
 
   // P0 fix: gate on the Speculos (Exchange) REST API actually being reachable before declaring
@@ -544,7 +564,7 @@ async function setupSendDoge(): Promise<void> {
   }
 
   // Pin the axios http adapter (same rationale as swap) for the Speculos screen polling/signing.
-  const axios = (await import("axios")).default;
+  const axios = await loadAxios();
   axios.defaults.adapter = "http";
 
   await waitForSpeculosApiReady();
