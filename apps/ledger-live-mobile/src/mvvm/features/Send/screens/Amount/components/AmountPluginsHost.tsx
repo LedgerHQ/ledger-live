@@ -4,6 +4,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { CeloFeeCurrencyPlugin } from "./plugins/CeloFeeCurrencyPlugin";
 
 type AmountPluginProps = Readonly<{
@@ -27,6 +28,14 @@ export function AmountPluginsHost(props: AmountPluginProps) {
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
 
   const pluginIds = useMemo(() => sendFeatures.getAmountPlugins(currency), [currency]);
+
+  useFlowEffects({
+    account: props.account,
+    parentAccount: props.parentAccount,
+    transaction: props.transaction,
+    currency,
+    updateTransaction: props.transactionActions.updateTransaction,
+  });
 
   return (
     <>

@@ -8962,6 +8962,20 @@
       "privateBalanceTooltip": "Balance that is hidden from the public"
     },
     "shielded": {
+      "send": {
+        "transferFrom": {
+          "label": "Transfer from",
+          "public": {
+            "title": "Public balance",
+            "subtitle": "Transparent"
+          },
+          "private": {
+            "title": "Private balance",
+            "subtitle": "Shielded",
+            "unavailable": "Private balance unavailable"
+          }
+        }
+      },
       "state": {
         "showBalance": "Show balance",
         "startSync": "Start sync",

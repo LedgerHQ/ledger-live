@@ -5,7 +5,6 @@ import type {
 import {
   InvalidAddress,
   RecipientRequired,
-  RecommendUndelegation,
   NotEnoughBalance,
   NotEnoughBalanceToDelegate,
   AmountRequired,
@@ -80,21 +79,6 @@ function validateBasicSendParams(intent: TransactionIntent): Record<string, Erro
   return errors;
 }
 
-// send max not allowed on delegated accounts (must undelegate acc first); native XTZ only
-function validateSendConstraints(
-  intent: TransactionIntent,
-  senderInfo: APIUserAccount,
-): Record<string, Error> {
-  if (
-    intent.useAllAmount &&
-    resolveValidationOperationMode(intent) === "send" &&
-    senderInfo.delegate?.address
-  ) {
-    return { amount: new RecommendUndelegation() };
-  }
-  return {};
-}
-
 function validateStakeConstraints(
   intent: TransactionIntent,
   senderInfo: APIUserAccount,
@@ -140,8 +124,6 @@ function validateTransactionConstraints(
   finalizable: bigint,
 ): Record<string, Error> {
   switch (intent.type) {
-    case "send":
-      return validateSendConstraints(intent, senderInfo);
     case "stake":
       return validateStakeConstraints(intent, senderInfo);
     case "unstake":

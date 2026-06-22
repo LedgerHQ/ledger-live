@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
+import { useTrendingPerformers } from "@ledgerhq/live-common/market/hooks/useTrendingPerformers";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/market/utils/index";
 import {
@@ -73,21 +74,45 @@ function useMarketAvailabilityFilter() {
  * Performers-based rankings (trending / gainers → positive change, losers → negative).
  * Backed by RTK Query — no React Query dependency.
  */
-export function usePerformersBannerItems(ranking: MarketBannerRanking): MarketBannerItems {
+export function usePerformersBannerItems(
+  ranking: MarketBannerRanking,
+  options?: { skip?: boolean },
+): MarketBannerItems {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const filterItems = useMarketAvailabilityFilter();
 
-  const { data, isError, isFetching } = useMarketPerformers({
-    sort: ranking === "losers" ? "desc" : "asc",
+  const { data, isError, isFetching } = useMarketPerformers(
+    {
+      sort: ranking === "losers" ? "desc" : "asc",
+      counterCurrency: counterValueCurrency.ticker,
+      range: TIME_RANGE,
+      limit: LIMIT,
+      top: MARKET_BANNER_TOP,
+      supported: MARKET_PERFORMERS_SUPPORTED,
+      refreshRate: MARKET_BANNER_REFRESH_RATE,
+    },
+    { skip: options?.skip },
+  );
+
+  const items = useMemo(() => filterItems(data ?? []), [filterItems, data]);
+
+  return { items, isError: isError && !isFetching };
+}
+
+/**
+ * Trending ranking → the dedicated `/v3/currencies/trending` endpoint, which returns a curated,
+ * ordered list. Availability filtering is intentionally not applied so the banner mirrors what is
+ * trending in the market. Only mounted when the trending ranking is active.
+ */
+export function useTrendingBannerItems(): MarketBannerItems {
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const { data, isError, isFetching } = useTrendingPerformers({
     counterCurrency: counterValueCurrency.ticker,
-    range: TIME_RANGE,
-    limit: LIMIT,
-    top: MARKET_BANNER_TOP,
-    supported: MARKET_PERFORMERS_SUPPORTED,
     refreshRate: MARKET_BANNER_REFRESH_RATE,
   });
 
-  const items = useMemo(() => filterItems(data ?? []), [filterItems, data]);
+  const items = useMemo(() => (data ?? []).slice(0, MARKET_BANNER_TILE_COUNT), [data]);
 
   return { items, isError: isError && !isFetching };
 }

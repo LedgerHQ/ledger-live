@@ -13,7 +13,7 @@ const beforeAllFunction = async (delegation: DelegateType) => {
     cliCommands: [liveDataWithAddressCommand(delegation.account)],
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
 };
 
 export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {

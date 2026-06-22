@@ -30,7 +30,6 @@ jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
   useFetchCurrencyAll: () => mockUseFetchCurrencyAll(),
 }));
 
-const COUNTERVALUES_API = "https://countervalues.live.ledger.com";
 const BUY_API = "https://buy.api.live.ledger.com/buy/v1";
 
 // Mock data for ramp catalog API
@@ -61,11 +60,7 @@ describe("MarketBanner Integration Tests", () => {
 
   describe("Feature flag handling", () => {
     it("should not render when lwmWallet40 feature flag is disabled", () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -77,11 +72,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should not render when marketBanner param is false", () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -93,11 +84,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should render when lwmWallet40 is enabled and marketBanner is true", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -111,11 +98,7 @@ describe("MarketBanner Integration Tests", () => {
 
   describe("Filter trigger", () => {
     const renderWithAssetDiscoverability = (assetDiscoverability: boolean) => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       return renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -178,11 +161,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should fall back to trending when favorites is active but no asset is starred", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { store } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: state => {
@@ -208,7 +187,7 @@ describe("MarketBanner Integration Tests", () => {
     it("should request favorites with a valid pageSize (the /v3/markets endpoint only accepts 1/5/20/50)", async () => {
       let favoritesPageSize: string | null = null;
       server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, ({ request }) => {
+        http.get("*/v3/markets", ({ request }) => {
           const url = new URL(request.url);
           if (url.searchParams.get("ids")) {
             favoritesPageSize = url.searchParams.get("pageSize");
@@ -240,7 +219,7 @@ describe("MarketBanner Integration Tests", () => {
     it("ignores the persisted ranking when assetDiscoverability is off and keeps the stored preference", async () => {
       let performersSort: string | null = null;
       server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, ({ request }) => {
+        http.get("*/v3/markets", ({ request }) => {
           const sort = new URL(request.url).searchParams.get("sort");
           if (sort?.includes("price-change")) performersSort = sort;
           return HttpResponse.json(MOCK_MARKET_PERFORMERS);
@@ -271,7 +250,7 @@ describe("MarketBanner Integration Tests", () => {
   describe("Loading state", () => {
     it("should display skeleton tiles when loading", async () => {
       server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, async () => {
+        http.get("*/v3/markets", async () => {
           await new Promise(resolve => setTimeout(resolve, 1000));
           return HttpResponse.json(MOCK_MARKET_PERFORMERS);
         }),
@@ -290,9 +269,7 @@ describe("MarketBanner Integration Tests", () => {
 
   describe("Error state", () => {
     it("should display error state with icon and message when API fails", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json(null, { status: 500 })),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(null, { status: 500 })));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -304,9 +281,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should not display FearAndGreed or ViewAll when in error state", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json(null, { status: 500 })),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(null, { status: 500 })));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -322,11 +297,7 @@ describe("MarketBanner Integration Tests", () => {
 
   describe("Tile rendering", () => {
     it("should render market tiles with correct data", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -341,11 +312,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should render View All tile as the last element", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -358,11 +325,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should display section title", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -374,13 +337,56 @@ describe("MarketBanner Integration Tests", () => {
     });
   });
 
+  describe("Trending data source", () => {
+    it("requests the staging /v3/currencies/trending endpoint for the default trending ranking", async () => {
+      let trendingRequested = false;
+      server.use(
+        http.get("*/v3/currencies/trending", () => {
+          trendingRequested = true;
+          return HttpResponse.json([
+            { id: "bitcoin", supported: true },
+            { id: "ethereum", supported: true },
+          ]);
+        }),
+        http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)),
+      );
+
+      renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: {
+            enabled: true,
+            params: { marketBanner: true, assetDiscoverability: true },
+          },
+        }),
+      });
+
+      expect(await screen.findByTestId("market-banner-tile-0")).toBeVisible();
+      expect(trendingRequested).toBe(true);
+    });
+
+    it("falls back to gainers when the trending endpoint fails so the banner never breaks", async () => {
+      server.use(
+        http.get("*/v3/currencies/trending", () => HttpResponse.json(null, { status: 500 })),
+        http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)),
+      );
+
+      renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: {
+            enabled: true,
+            params: { marketBanner: true, assetDiscoverability: true },
+          },
+        }),
+      });
+
+      expect(await screen.findByTestId("market-banner-tile-0")).toBeVisible();
+      expect(screen.queryByText(/Connection failed/i)).toBeNull();
+    });
+  });
+
   describe("Analytics tracking", () => {
     it("should track tile click", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -407,11 +413,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should track View All click", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -428,11 +430,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should track section title click", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -451,11 +449,7 @@ describe("MarketBanner Integration Tests", () => {
 
   describe("Navigation", () => {
     it("navigates to AssetDetail when aggregatedAssets is enabled", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -482,11 +476,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("falls back to MarketDetail when aggregatedAssets is disabled", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
@@ -508,11 +498,7 @@ describe("MarketBanner Integration Tests", () => {
     });
 
     it("should navigate to market list when View All is pressed", async () => {
-      server.use(
-        http.get(`${COUNTERVALUES_API}/v3/markets`, () =>
-          HttpResponse.json(MOCK_MARKET_PERFORMERS),
-        ),
-      );
+      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({

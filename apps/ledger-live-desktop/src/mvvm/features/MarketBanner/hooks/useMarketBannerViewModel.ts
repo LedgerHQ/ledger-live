@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
+import { useTrendingPerformers } from "@ledgerhq/live-common/market/hooks/useTrendingPerformers";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/market/utils/index";
 import {
@@ -107,6 +108,29 @@ export function usePerformersBannerItems(
   };
 }
 
+// Trending is backed by the dedicated `/v3/currencies/trending` endpoint, which already returns a
+// curated, ordered list. Availability filtering is intentionally not applied so the banner mirrors
+// what is trending in the market.
+export function useTrendingBannerItems(options?: { skip?: boolean }): MarketBannerItems {
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const { data, isError, isLoading, isFetching } = useTrendingPerformers(
+    {
+      counterCurrency: counterValueCurrency.ticker,
+      refreshRate: MARKET_BANNER_REFRESH_RATE,
+    },
+    { skip: options?.skip },
+  );
+
+  const items = useMemo(() => (data ?? []).slice(0, MARKET_BANNER_ITEMS_COUNT), [data]);
+
+  return {
+    items,
+    isLoading: isLoading || (isFetching && !data),
+    isError: isError && !isFetching,
+  };
+}
+
 // Availability filtering is bypassed so a starred coin shows even when not swap-available.
 // The endpoint returns the whole market when no `ids` are sent, so the query is disabled when
 // there are no starred coins (or favorites is not active).
@@ -153,6 +177,7 @@ export function useMarketBannerViewModel(): MarketBannerItems {
   const effectiveRanking: MarketBannerRanking =
     ranking === "favorites" && !hasStarred ? "trending" : ranking;
   const isFavorites = effectiveRanking === "favorites";
+  const isTrending = effectiveRanking === "trending";
 
   // Reset the stale persisted "favorites" so the persisted state and the dropdown match the UI.
   useEffect(() => {
@@ -161,8 +186,15 @@ export function useMarketBannerViewModel(): MarketBannerItems {
     }
   }, [dispatch, ranking, hasStarred]);
 
-  const performers = usePerformersBannerItems(effectiveRanking, { skip: isFavorites });
+  const trending = useTrendingBannerItems({ skip: !isTrending });
+  // If the trending endpoint fails, fall back to gainers (sort "asc") so the banner never breaks.
+  const trendingFailed = isTrending && trending.isError;
+  const performers = usePerformersBannerItems(effectiveRanking, {
+    skip: isFavorites || (isTrending && !trendingFailed),
+  });
   const favorites = useFavoritesBannerItems({ skip: !isFavorites });
 
-  return isFavorites ? favorites : performers;
+  if (isFavorites) return favorites;
+  if (isTrending) return trendingFailed ? performers : trending;
+  return performers;
 }

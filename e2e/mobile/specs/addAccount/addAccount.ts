@@ -11,7 +11,7 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
         userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
       });
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.mainNavigation.waitForWallet40Ready();
     });
 
     setTeamOwner(BST_ADD_ACCOUNT_CURRENCIES.has(currency.id) ? Team.BST : Team.COIN_INTEGRATION);

@@ -7,40 +7,61 @@ The purpose of this app is to allow automated front end testing of Ledger Live's
 
 The app is a simple React app bundled with Rspack which uses the [Wallet API](https://www.npmjs.com/package/@ledgerhq/wallet-api).
 
-## Local Dummy App setup steps
+## Local Setup
+
+Run commands from the repository root.
 
 ```sh
 pnpm i
 pnpm dummy-wallet-app start # Start development server
 ```
 
-## Serve production build
+## E2E Usage
+
+Use the maintained E2E setup docs for environment prerequisites:
+
+- [Desktop E2E](../../e2e/desktop/README.md)
+- [Mobile E2E](../../e2e/mobile/README.md)
+
+Build the production dummy app before running Wallet API E2E tests:
 
 ```sh
-### Setup
-
-pnpm i
 pnpm build:dummy-wallet-app
+```
 
 ### Desktop
+
+```sh
 pnpm build:lld:deps
 pnpm desktop build:testing
-### Run the setup only once if not done yet
 pnpm desktop test:playwright:setup
-pnpm desktop test:playwright wallet-api.spec.ts
+pnpm desktop test:playwright tests/specs/services/wallet-api.spec.ts
+```
 
-###  Mobie
+### Mobile
+
+Start Metro in a separate terminal when running iOS debug tests:
+
+```sh
 pnpm mobile start
+```
 
 ### iOS
+
+```sh
 pnpm build:llm:deps
 pnpm mobile e2e:build -c ios.sim.debug
 pnpm mobile e2e:test -c ios.sim.debug apps/ledger-live-mobile/e2e/specs/wallet-api/accountRequest.spec.ts
+```
 
 ### Android
+
+Android local E2E runs use release builds.
+
+```sh
 pnpm build:llm:deps
-pnpm mobile e2e:build -c android.emu.debug
-pnpm mobile e2e:test -c android.emu.debug apps/ledger-live-mobile/e2e/specs/wallet-api/accountRequest.spec.ts
+pnpm mobile e2e:build -c android.emu.release
+pnpm mobile e2e:test -c android.emu.release apps/ledger-live-mobile/e2e/specs/wallet-api/accountRequest.spec.ts
 ```
 
 # How does it work?

@@ -29,7 +29,7 @@ describe("Wallet 4.0 - Market Banner", () => {
       //todo: remove feature flag when market banner is enabled for all users
       featureFlags: WALLET_40_FEATURE_FLAGS,
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   it("should display and interact with market banner", async () => {
