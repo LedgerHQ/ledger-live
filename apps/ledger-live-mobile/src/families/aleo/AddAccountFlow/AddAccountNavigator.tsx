@@ -7,6 +7,7 @@ import { ScreenName } from "~/const";
 import { AleoAddAccountParamList, AleoViewKeyFlowParamList } from "./types";
 import ViewKeyWarningScreen from "./ViewKeyWarningScreen";
 import ViewKeyApproveScreen from "./ViewKeyApproveScreen";
+import ViewKeyRejectedScreen from "./ViewKeyRejectedScreen";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type Props = StackNavigatorProps<AleoAddAccountParamList, ScreenName.AleoAddAccount>;
@@ -35,6 +36,16 @@ function AddAccountNavigator({ route }: Props) {
       <Stack.Screen
         name={ScreenName.AleoViewKeyApprove}
         component={ViewKeyApproveScreen}
+        initialParams={
+          route.params.accountsToAdd
+            ? { ...route.params, accountsToAdd: route.params.accountsToAdd }
+            : route.params
+        }
+        options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.AleoViewKeyRejected}
+        component={ViewKeyRejectedScreen}
         initialParams={route.params}
         options={{ headerTitle: "" }}
       />

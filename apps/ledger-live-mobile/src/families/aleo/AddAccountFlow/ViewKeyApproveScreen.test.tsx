@@ -262,8 +262,25 @@ describe("ViewKeyApproveScreen", () => {
   });
 
   describe("onResult", () => {
-    it("calls goBack when no accounts have view keys", () => {
-      renderScreen({ result: null });
+    it("navigates to AleoViewKeyRejected when all view keys are explicitly rejected on device", () => {
+      renderScreen({
+        result: { account1: null, account2: null },
+        shareProgress: { completed: 2, total: 2, viewKeys: { account1: null, account2: null } },
+      });
+
+      expect(capturedOnResult).toBeDefined();
+      capturedOnResult!();
+
+      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.AleoViewKeyRejected, mockRoute.params);
+      expect(mockGoBack).not.toHaveBeenCalled();
+      expect(mockDispatch).not.toHaveBeenCalled();
+    });
+
+    it("calls goBack when result is empty but not all accounts were explicitly rejected", () => {
+      renderScreen({
+        result: null,
+        shareProgress: { completed: 0, total: 2, viewKeys: {} },
+      });
 
       expect(capturedOnResult).toBeDefined();
       capturedOnResult!();

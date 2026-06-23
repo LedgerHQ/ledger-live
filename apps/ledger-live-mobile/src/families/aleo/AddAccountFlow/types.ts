@@ -17,7 +17,10 @@ type AleoAddAccountCommonParams = {
 
 export type AleoAddAccountParams = AleoAddAccountCommonParams & {
   accountsToAdd?: Account[];
-  initialRoute?: ScreenName.AleoViewKeyWarning | ScreenName.AleoViewKeyApprove;
+  initialRoute?:
+    | ScreenName.AleoViewKeyWarning
+    | ScreenName.AleoViewKeyApprove
+    | ScreenName.AleoViewKeyRejected;
 };
 
 export type AleoAddAccountParamList = {
@@ -29,4 +32,5 @@ export type AleoViewKeyFlowParamList = {
   [ScreenName.AleoViewKeyApprove]: AleoAddAccountParams & {
     accountsToAdd: Account[];
   };
+  [ScreenName.AleoViewKeyRejected]: AleoAddAccountParams;
 };

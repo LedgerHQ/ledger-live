@@ -54,7 +54,11 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
     const accountsWithViewKeys = buildAccountsWithViewKeys(accountsToAdd, payload);
 
     if (accountsWithViewKeys.length === 0) {
-      (navigation.getParent() ?? navigation).goBack();
+      if (rejectedAccountIds.size === accountsToAdd.length) {
+        navigation.navigate(ScreenName.AleoViewKeyRejected, route.params);
+      } else {
+        (navigation.getParent() ?? navigation).goBack();
+      }
       return;
     }
 
@@ -81,7 +85,7 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
         onCloseNavigation: route.params.onCloseNavigation,
       },
     });
-  }, [payload, accountsToAdd, existingAccounts, dispatch, navigation, currency, route.params]);
+  }, [payload, accountsToAdd, rejectedAccountIds, existingAccounts, dispatch, navigation, currency, route.params]);
 
   const getAccountStatusIcon = useCallback(
     (index: number, accountId: string) => {
