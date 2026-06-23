@@ -270,6 +270,9 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 }
 
 test.describe("e2e delegation - Tezos", () => {
+  // XTZ_1 (index 0) is the funded + UNDELEGATED account: with lldTezosStaking off (the default) this
+  // routes to the delegate starter ("delegate to earn rewards"). The delegated + staked account lives
+  // on XTZ_2 (index 1), used by the staking specs.
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
   setupEnv(true);
   test.use({

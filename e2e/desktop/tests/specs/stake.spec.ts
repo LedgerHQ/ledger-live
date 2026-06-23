@@ -19,11 +19,12 @@ const tags = [
   ...(family ? [`@family-${family}`] : []),
 ];
 
-// Two accounts: XTZ_2 (index 1) funded + UNDELEGATED for the earning-choice chooser; XTZ_1 (index 0)
+// Two accounts: XTZ_1 (index 0) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
 // DELEGATED + STAKED for the stake (Earn -> stake modal) and unstake (staking-section menu) flows.
+// (index 0 must stay undelegated: the legacy receive/add-account/delegate Tezos specs rely on it.)
 test.describe("e2e staking - Tezos - earning choice", () => {
-  // XTZ_2: funded + undelegated -> Earn routes to the earning-choice chooser.
-  const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
+  // XTZ_1: funded + undelegated -> Earn routes to the earning-choice chooser.
+  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
 
   test.use({
     env: { DISABLE_TRANSACTION_BROADCAST: "1" },
@@ -64,8 +65,8 @@ test.describe("e2e staking - Tezos - earning choice", () => {
 });
 
 test.describe("e2e staking - Tezos - stake", () => {
-  // XTZ_1 must be already delegated + funded so pressing Earn opens the stake modal directly.
-  const account = new Delegate(Account.XTZ_1, "0.005", "Ledger by Kiln");
+  // XTZ_2 must be already delegated + funded so pressing Earn opens the stake modal directly.
+  const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
 
   test.use({
     // off by default (CI); run with DISABLE_TRANSACTION_BROADCAST=0 to broadcast + confirm the stake on-chain.
@@ -100,8 +101,8 @@ test.describe("e2e staking - Tezos - stake", () => {
 });
 
 test.describe("e2e staking - Tezos - unstake", () => {
-  // XTZ_1 must be delegated + have a staked balance so the staking section (and its unstake menu) render.
-  const account = new Delegate(Account.XTZ_1, "0.005", "Ledger by Kiln");
+  // XTZ_2 must be delegated + have a staked balance so the staking section (and its unstake menu) render.
+  const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
 
   test.use({
     // off by default (CI); run with DISABLE_TRANSACTION_BROADCAST=0 to broadcast + confirm the unstake on-chain.
@@ -135,8 +136,8 @@ test.describe("e2e staking - Tezos - unstake", () => {
 });
 
 test.describe("e2e staking - Tezos - change validator blocked", () => {
-  // XTZ_1 is delegated + staked, so changing validator is blocked until the user unstakes first.
-  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
+  // XTZ_2 is delegated + staked, so changing validator is blocked until the user unstakes first.
+  const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   test.use({
     env: { DISABLE_TRANSACTION_BROADCAST: "1" }, // assertion-only: never signs or broadcasts
@@ -165,8 +166,8 @@ test.describe("e2e staking - Tezos - change validator blocked", () => {
 });
 
 test.describe("e2e staking - Tezos - end delegation blocked", () => {
-  // XTZ_1 is delegated + staked, so stopping delegation is blocked until the user unstakes first.
-  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
+  // XTZ_2 is delegated + staked, so stopping delegation is blocked until the user unstakes first.
+  const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   test.use({
     env: { DISABLE_TRANSACTION_BROADCAST: "1" }, // assertion-only: never signs or broadcasts
