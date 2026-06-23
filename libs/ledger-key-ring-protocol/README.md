@@ -2,6 +2,11 @@
 
 Ledger Key Ring Protocol layer.
 
+> This is the Trustchain SDK powering **Ledger Sync**. For the full picture (auth, members, key
+> rotation, QR-code protocol, and how it fits the stack) see
+> [`docs/ledger-sync`](../../docs/ledger-sync/README.md) — notably
+> [TrustchainSDK](../../docs/ledger-sync/02-trustchain-sdk.md).
+
 ## Testing the SDK with recorded scenarios
 
 The SDK is exercised end-to-end through **scenarios** that are recorded once against
