@@ -22,16 +22,14 @@ import { MAX_UTXOS_PER_TX } from "../logic/constants";
 import { KaspaAccount, Transaction, TransactionStatus } from "../types";
 import { ReducedAmountUtxoWarning, UtxoLimitReachedError } from "../types/errors";
 
-const getCachedUtxos = makeLRUCache(
+export const getCachedUtxos = makeLRUCache(
   async (account: KaspaAccount) => {
     const { compressedPublicKey, chainCode } = parseExtendedPublicKey(
       Buffer.from(account.xpub, "hex"),
     );
     return await scanUtxos(compressedPublicKey, chainCode);
   },
-  (account: KaspaAccount) => {
-    return `${account.id}`;
-  },
+  (account: KaspaAccount) => `${account.id}`,
   minutes(1),
 );
 
