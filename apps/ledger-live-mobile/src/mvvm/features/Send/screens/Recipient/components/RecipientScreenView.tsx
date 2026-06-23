@@ -2,7 +2,7 @@ import { RecentAddress as RecentAddressType } from "@ledgerhq/live-common/flows/
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
 import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
 import { useMemoViewModel } from "LLM/features/Send/components/Memo/hooks/useMemoViewModel";
@@ -187,7 +187,7 @@ export const RecipientScreenView = ({
         </Box>
       </SendFlowLayout>
       {selectedRecentAddress && (
-        <QueuedDrawerBottomSheet
+        <QueuedBottomSheet
           snapPoints={["25%"]}
           isRequestingToBeOpened={!!selectedRecentAddress}
           onClose={() => setSelectedRecentAddress(null)}
@@ -196,7 +196,7 @@ export const RecipientScreenView = ({
             selectedRecentAddress={selectedRecentAddress}
             handleRemoveAddress={handleRemoveRecentAddress}
           />
-        </QueuedDrawerBottomSheet>
+        </QueuedBottomSheet>
       )}
     </>
   );

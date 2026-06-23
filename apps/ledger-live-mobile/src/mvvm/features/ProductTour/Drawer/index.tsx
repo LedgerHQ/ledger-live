@@ -6,7 +6,7 @@ import { Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetView, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { useProductTourControls } from "../context/ProductTourControlsContext";
@@ -42,7 +42,7 @@ export const ProductTourDrawer = () => {
     // Outer ForceTheme: the BottomSheet computes its background/handle styles via useTheme at this
     // declaration site (passed in as resolved styles), so it must be wrapped here to render dark.
     <ForceTheme selectedPalette={"dark"}>
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={isDrawerOpen}
         onClose={closeProductTour}
         noCloseButton
@@ -102,7 +102,7 @@ export const ProductTourDrawer = () => {
             </BottomSheetView>
           </ForceTheme>
         ) : null}
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </ForceTheme>
   );
 };

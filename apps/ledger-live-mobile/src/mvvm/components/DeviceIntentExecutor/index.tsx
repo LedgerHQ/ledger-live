@@ -4,7 +4,7 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
@@ -66,7 +66,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   } = useDeviceIntentExecutorLWMViewModel(props);
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={wrappedProps.enabled}
       onClose={wrappedProps.onUserCancel}
       onHeaderClosePressed={onHeaderClosePressed}
@@ -86,6 +86,6 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
           </BottomSheetView>
         </DeviceIntentExecutorHeaderContext.Provider>
       </SourceFlowProvider>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

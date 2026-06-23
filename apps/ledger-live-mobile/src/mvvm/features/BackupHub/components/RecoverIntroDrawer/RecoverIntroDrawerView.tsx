@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
 import type { UseRecoverIntroDrawerViewModelResult } from "./useRecoverIntroDrawerViewModel";
 
@@ -13,7 +13,7 @@ export function RecoverIntroDrawerView({
   onCloseFromCta,
 }: RecoverIntroDrawerViewProps) {
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       key="backup-hub-feature-intro-drawer"
       isRequestingToBeOpened={isOpen}
       onClose={onDismiss}
@@ -26,6 +26,6 @@ export function RecoverIntroDrawerView({
           <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
         </Box>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

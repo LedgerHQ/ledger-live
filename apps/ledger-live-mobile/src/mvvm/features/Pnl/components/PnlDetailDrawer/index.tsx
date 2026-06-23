@@ -2,7 +2,7 @@ import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetHeader, BottomSheetView, Text } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { PnlDetailDrawerProps } from "./types";
 import { PnlDetailRow } from "./PnlDetailRow";
 
@@ -21,7 +21,7 @@ export function PnlDetailDrawer({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       testID={testID}
       isRequestingToBeOpened={isOpen}
       enableDynamicSizing
@@ -46,6 +46,6 @@ export function PnlDetailDrawer({
           </Text>
         ) : null}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

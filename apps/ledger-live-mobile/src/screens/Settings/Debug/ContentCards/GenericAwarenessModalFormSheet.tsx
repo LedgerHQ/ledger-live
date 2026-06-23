@@ -7,7 +7,7 @@ import {
   Box,
   Button as LumenButton,
 } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useTranslation } from "~/context/Locale";
 import KeyboardView from "~/components/KeyboardView";
 import type {
@@ -72,7 +72,7 @@ export function GenericAwarenessModalFormSheet({
   const title = t(getTitleTranslationKey(form.layout));
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       snapPoints={["92%"]}
@@ -164,7 +164,7 @@ export function GenericAwarenessModalFormSheet({
           </Box>
         </BottomSheetScrollView>
       </KeyboardView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
 

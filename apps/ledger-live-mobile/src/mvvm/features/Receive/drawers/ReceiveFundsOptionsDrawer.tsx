@@ -3,7 +3,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 import { OptionButton } from "../components/OptionButton";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import useReceiveFundsOptionsViewModel from "./useReceiveFundsOptionsViewModel";
 import { TFunction } from "i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,11 +21,7 @@ function View({ isOpen, t, handleGoToFiat, handleGoToCrypto, handleClose }: View
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet
-      isRequestingToBeOpened={isOpen}
-      enableDynamicSizing
-      onClose={handleClose}
-    >
+    <QueuedBottomSheet isRequestingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
         <TrackScreen category="receive_drawer" type="drawer" />
@@ -46,7 +42,7 @@ function View({ isOpen, t, handleGoToFiat, handleGoToCrypto, handleClose }: View
           testID="option-button-content-fiat"
         />
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
 

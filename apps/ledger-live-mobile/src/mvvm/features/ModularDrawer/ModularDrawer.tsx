@@ -4,7 +4,7 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 import { AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
@@ -126,7 +126,7 @@ export function ModularDrawer({
   };
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
       onClose={handleCloseButton}
       enableBlurKeyboardOnGesture={true}
@@ -136,6 +136,6 @@ export function ModularDrawer({
       enablePanDownToClose
     >
       <ModularDrawerFlowManager {...flowManagerProps} />
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { BottomSheetView, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { InfoState } from "LLM/components/InfoState";
 import { useSelector } from "~/context/hooks";
 import { borrowErrorBottomSheetSelector } from "~/reducers/borrow";
@@ -62,7 +62,7 @@ export function BorrowErrorBottomSheet() {
   }, []);
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isRequestingToBeOpened}
       onClose={handleClose}
       enableDynamicSizing
@@ -84,6 +84,6 @@ export function BorrowErrorBottomSheet() {
           />
         ) : null}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { BottomSheetView, BottomSheetHeader, Box, Link, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ValidatedInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type InfoBottomSheetProps = Readonly<{
@@ -22,7 +22,7 @@ export function InfoBottomSheet({ data, onClose }: InfoBottomSheetProps) {
   const showLink = Boolean(linkText && linkHref);
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isRequestingToBeOpened}
       onClose={onClose}
       enableDynamicSizing
@@ -43,6 +43,6 @@ export function InfoBottomSheet({ data, onClose }: InfoBottomSheetProps) {
           </Box>
         ) : null}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

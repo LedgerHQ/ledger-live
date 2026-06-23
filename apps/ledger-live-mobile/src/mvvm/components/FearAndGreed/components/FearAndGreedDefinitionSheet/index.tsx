@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetHeader, BottomSheetView, Text } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useTranslation } from "~/context/Locale";
 
 type Props = Readonly<{
@@ -32,12 +32,12 @@ function FearAndGreedDefinitionSheet({ isOpen, onClose }: Props) {
   );
 
   return (
-    <QueuedDrawerBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
+    <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader />
         {content}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
 

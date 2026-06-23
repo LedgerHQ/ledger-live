@@ -1,7 +1,7 @@
 import React from "react";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Button, Box, Text, BottomSheetView, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -34,7 +34,7 @@ const UnsupportedUpdateDrawer = ({
     : t("FirmwareUpdate.drawerUpdate.description");
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       noCloseButton={noCloseButton}
@@ -62,7 +62,7 @@ const UnsupportedUpdateDrawer = ({
           </Button>
         </Box>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 };
 

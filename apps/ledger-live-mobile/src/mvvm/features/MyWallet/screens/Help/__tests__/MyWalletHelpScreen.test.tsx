@@ -18,9 +18,9 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   };
 });
 
-jest.mock("LLM/components/QueuedDrawer/QueuedDrawerBottomSheet", () => {
+jest.mock("LLM/components/QueuedDrawer/QueuedBottomSheet", () => {
   const { View } = require("react-native");
-  return function MockQueuedDrawerBottomSheet({
+  return function MockQueuedBottomSheet({
     children,
     isRequestingToBeOpened,
   }: {

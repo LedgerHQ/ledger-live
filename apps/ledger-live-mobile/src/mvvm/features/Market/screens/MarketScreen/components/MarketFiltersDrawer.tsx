@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Check } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { MARKET_SCREEN_TEST_IDS } from "../testIds";
 import type { MarketFilterOption, MarketFilters } from "../useMarketFilters";
 
@@ -88,7 +88,7 @@ export function MarketFiltersDrawer({ filters }: MarketFiltersDrawerProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       testID={MARKET_SCREEN_TEST_IDS.filtersDrawer}
       isRequestingToBeOpened={filters.isOpen}
       enableDynamicSizing
@@ -114,6 +114,6 @@ export function MarketFiltersDrawer({ filters }: MarketFiltersDrawerProps) {
           />
         </Box>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

@@ -3,7 +3,7 @@ import { Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import type { BottomSheetBackgroundTone } from "LLM/contexts/BottomSheetBackgroundContext";
 import { useBottomSheetBackgroundTone } from "LLM/hooks/useBottomSheetBackgroundTone";
-import QueuedDrawerBottomSheet from "../QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "../QueuedBottomSheet";
 import QueuedDrawersContextProvider from "../QueuedDrawersContextProvider";
 
 const statusGradientTones = ["error", "info", "success"] as const;
@@ -46,10 +46,10 @@ jest.mock("@react-navigation/native", () => ({
   useIsFocused: () => true,
 }));
 
-function renderQueuedDrawerBottomSheet(children: React.ReactNode) {
+function renderQueuedBottomSheet(children: React.ReactNode) {
   return render(
     <QueuedDrawersContextProvider>
-      <QueuedDrawerBottomSheet>{children}</QueuedDrawerBottomSheet>
+      <QueuedBottomSheet>{children}</QueuedBottomSheet>
     </QueuedDrawersContextProvider>,
   );
 }
@@ -66,7 +66,7 @@ function expectNoStatusGradient() {
   });
 }
 
-describe("QueuedDrawerBottomSheet background tone integration", () => {
+describe("QueuedBottomSheet background tone integration", () => {
   beforeEach(() => {
     mockBottomSheetProps.length = 0;
   });
@@ -76,7 +76,7 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
       "GIVEN a component inside the bottom sheet WHEN it requests the %s tone THEN the matching background gradient is displayed in the same render pass",
       tone => {
         // GIVEN / WHEN
-        renderQueuedDrawerBottomSheet(<BackgroundToneRequester tone={tone} />);
+        renderQueuedBottomSheet(<BackgroundToneRequester tone={tone} />);
 
         // THEN
         const lastProps = mockBottomSheetProps[mockBottomSheetProps.length - 1];
@@ -89,7 +89,7 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
   describe("undefined tone requests", () => {
     it("GIVEN a component inside the bottom sheet WHEN it requests an undefined tone THEN no background gradient is displayed", () => {
       // GIVEN / WHEN
-      renderQueuedDrawerBottomSheet(<BackgroundToneRequester tone={undefined} />);
+      renderQueuedBottomSheet(<BackgroundToneRequester tone={undefined} />);
 
       // THEN
       const lastProps = mockBottomSheetProps[mockBottomSheetProps.length - 1];
@@ -101,15 +101,13 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
   describe("request cleanup", () => {
     it("GIVEN a component requested a defined tone WHEN that component unmounts THEN the background gradient is cleared in the same render pass", () => {
       // GIVEN
-      const { rerender } = renderQueuedDrawerBottomSheet(
-        <BackgroundToneRequester tone="success" />,
-      );
+      const { rerender } = renderQueuedBottomSheet(<BackgroundToneRequester tone="success" />);
       expect(screen.getByTestId("bottom-sheet-status-gradient-success")).toBeVisible();
 
       // WHEN
       rerender(
         <QueuedDrawersContextProvider>
-          <QueuedDrawerBottomSheet>{null}</QueuedDrawerBottomSheet>
+          <QueuedBottomSheet>{null}</QueuedBottomSheet>
         </QueuedDrawersContextProvider>,
       );
 
@@ -123,7 +121,7 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
   describe("successive different tone requesters", () => {
     it("GIVEN a component requesting one tone unmounts and another requesting a different tone mounts THEN the background gradient switches to the new tone with no residual gradient in the same render pass", () => {
       // GIVEN
-      const { rerender } = renderQueuedDrawerBottomSheet(
+      const { rerender } = renderQueuedBottomSheet(
         <BackgroundToneRequester key="first" tone="success" />,
       );
       expect(screen.getByTestId("bottom-sheet-status-gradient-success")).toBeVisible();
@@ -131,9 +129,9 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
       // WHEN
       rerender(
         <QueuedDrawersContextProvider>
-          <QueuedDrawerBottomSheet>
+          <QueuedBottomSheet>
             <BackgroundToneRequester key="second" tone="error" />
-          </QueuedDrawerBottomSheet>
+          </QueuedBottomSheet>
         </QueuedDrawersContextProvider>,
       );
 

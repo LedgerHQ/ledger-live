@@ -16,7 +16,7 @@ import {
 import { HandCoins, ShieldLock, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 const items = [
   {
@@ -119,16 +119,12 @@ function WrapperView({ isOpen, handleClose, ...viewProps }: Readonly<ViewProps>)
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet
-      isRequestingToBeOpened={isOpen}
-      onClose={handleClose}
-      enableDynamicSizing
-    >
+    <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={handleClose} enableDynamicSizing>
       <BottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 12 }}>
         <BottomSheetHeader />
         <View {...viewProps} />
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
 
