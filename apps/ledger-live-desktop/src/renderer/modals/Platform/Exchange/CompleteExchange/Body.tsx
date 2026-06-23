@@ -262,8 +262,8 @@ const Body = ({
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           targetCurrency: targetCurrency as Currency,
           isEmbeddedSwap,
-          sponsored,
           swapEntryPoint,
+          sponsored,
         }
       : {
           provider,

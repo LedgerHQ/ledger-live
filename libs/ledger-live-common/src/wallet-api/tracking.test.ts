@@ -136,18 +136,14 @@ describe("trackingWrapper with optional tracking params", () => {
     { method: "signTransactionFail", message: "WalletAPI SignTransaction Fail" },
     { method: "signTransactionSuccess", message: "WalletAPI SignTransaction Success" },
   ])(
-    "$method includes isEmbeddedSwap, swapEntryPoint, and partner when provided",
+    "$method includes isEmbeddedSwap, partner, and swapEntryPoint when provided",
     ({ method, message }) => {
       // Given
       const appManifest = appManifestFixture();
       const mockedTrack = jest.fn();
 
       // When
-      trackingWrapper(mockedTrack)[method](appManifest, {
-        isEmbeddedSwap: true,
-        partner: "uniswap",
-        swapEntryPoint: "main_page",
-      });
+      trackingWrapper(mockedTrack)[method](appManifest, true, "uniswap", "asset_embed");
 
       // Then
       expect(mockedTrack).toHaveBeenCalledTimes(1);
@@ -157,7 +153,7 @@ describe("trackingWrapper with optional tracking params", () => {
           walletAPI: appManifest.name,
           isEmbeddedSwap: "true",
           partner: "uniswap",
-          swapEntryPoint: "main_page",
+          swapEntryPoint: "asset_embed",
         },
         null,
       );
@@ -177,7 +173,7 @@ describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
     // When
     trackingWrapper(mockedTrack)[method](appManifest, {
       isEmbeddedSwap: true,
-      swapEntryPoint: "main_page",
+      swapEntryPoint: "asset_embed",
       partner: "uniswap",
       sourceCurrency: "Bitcoin",
       targetCurrency: "LBTC",
@@ -191,8 +187,8 @@ describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
       {
         walletAPI: appManifest.name,
         isEmbeddedSwap: "true",
+        swapEntryPoint: "asset_embed",
         partner: "uniswap",
-        swapEntryPoint: "main_page",
         sourceCurrency: "Bitcoin",
         targetCurrency: "LBTC",
         network: "bitcoin",

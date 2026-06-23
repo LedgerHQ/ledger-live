@@ -1,4 +1,3 @@
-import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 import type { AppManifest, BroadcastTrackingData, DAppTrackingData } from "./types";
 
 /**
@@ -22,14 +21,19 @@ function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
 }
 
-function buildSignTransactionProperties(manifest: AppManifest, meta?: SwapTrackingMeta) {
+function buildSignTransactionProperties(
+  manifest: AppManifest,
+  isEmbeddedSwap?: boolean,
+  partner?: string,
+  swapEntryPoint?: string,
+) {
   return {
     ...getEventData(manifest),
-    ...(typeof meta?.isEmbeddedSwap === "boolean" && {
-      isEmbeddedSwap: String(meta.isEmbeddedSwap),
+    ...(typeof isEmbeddedSwap === "boolean" && {
+      isEmbeddedSwap: String(isEmbeddedSwap),
     }),
-    ...(typeof meta?.swapEntryPoint === "string" && { swapEntryPoint: meta.swapEntryPoint }),
-    ...(typeof meta?.partner === "string" && { partner: meta.partner }),
+    ...(typeof partner === "string" && { partner }),
+    ...(typeof swapEntryPoint === "string" && { swapEntryPoint }),
   };
 }
 
@@ -68,18 +72,42 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Sign transaction modal open
-    signTransactionRequested: (manifest: AppManifest, meta?: SwapTrackingMeta) => {
-      track("WalletAPI SignTransaction", buildSignTransactionProperties(manifest, meta));
+    signTransactionRequested: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+      swapEntryPoint?: string,
+    ) => {
+      track(
+        "WalletAPI SignTransaction",
+        buildSignTransactionProperties(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+      );
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (manifest: AppManifest, meta?: SwapTrackingMeta) => {
-      track("WalletAPI SignTransaction Fail", buildSignTransactionProperties(manifest, meta));
+    signTransactionFail: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+      swapEntryPoint?: string,
+    ) => {
+      track(
+        "WalletAPI SignTransaction Fail",
+        buildSignTransactionProperties(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+      );
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (manifest: AppManifest, meta?: SwapTrackingMeta) => {
-      track("WalletAPI SignTransaction Success", buildSignTransactionProperties(manifest, meta));
+    signTransactionSuccess: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+      swapEntryPoint?: string,
+    ) => {
+      track(
+        "WalletAPI SignTransaction Success",
+        buildSignTransactionProperties(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+      );
     },
 
     // Sign Raw transaction modal open
@@ -132,9 +160,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
-      if (typeof data?.swapEntryPoint === "string") {
-        properties.swapEntryPoint = data.swapEntryPoint;
-      }
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
       if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
@@ -147,9 +173,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
-      if (typeof data?.swapEntryPoint === "string") {
-        properties.swapEntryPoint = data.swapEntryPoint;
-      }
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
       if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
