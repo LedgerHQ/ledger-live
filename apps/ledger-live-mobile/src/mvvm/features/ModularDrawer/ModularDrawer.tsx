@@ -3,10 +3,8 @@ import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
@@ -64,8 +62,6 @@ export function ModularDrawer({
   uiUseCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
-
   const {
     assetsConfiguration: assetsConfigurationSanitized,
     networkConfiguration: networkConfigurationSanitized,
@@ -105,7 +101,6 @@ export function ModularDrawer({
   });
 
   const flowManagerProps = {
-    useLumenBottomSheet: isEnabled,
     assetsViewModel: {
       availableAssets: sortedCryptoCurrencies,
       onAssetSelected: handleAsset,
@@ -130,24 +125,8 @@ export function ModularDrawer({
     },
   };
 
-  if (isEnabled) {
-    return (
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
-        onClose={handleCloseButton}
-        enableBlurKeyboardOnGesture={true}
-        snapPoints={SNAP_POINTS}
-        hasBackButton={shouldShowBackButton}
-        onBack={handleBackButton}
-        enablePanDownToClose
-      >
-        <ModularDrawerFlowManager {...flowManagerProps} />
-      </QueuedDrawerBottomSheet>
-    );
-  }
-
   return (
-    <QueuedDrawerGorhom
+    <QueuedDrawerBottomSheet
       isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
       onClose={handleCloseButton}
       enableBlurKeyboardOnGesture={true}
@@ -155,9 +134,8 @@ export function ModularDrawer({
       hasBackButton={shouldShowBackButton}
       onBack={handleBackButton}
       enablePanDownToClose
-      keyboardBehavior="extend"
     >
       <ModularDrawerFlowManager {...flowManagerProps} />
-    </QueuedDrawerGorhom>
+    </QueuedDrawerBottomSheet>
   );
 }

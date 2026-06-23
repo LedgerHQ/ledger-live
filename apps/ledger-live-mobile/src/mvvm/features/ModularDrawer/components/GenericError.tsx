@@ -1,51 +1,38 @@
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
-import styled from "styled-components/native";
+import { useTheme } from "styled-components/native";
 
 type Props = { onClick?: () => void; type: "backend" | "internet" };
 
 export const GenericError = ({ onClick, type }: Props) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
-    <Container p={6} flexDirection="row" mx={16}>
+    <Flex
+      p={6}
+      flexDirection="row"
+      mx={16}
+      style={{ borderRadius: 12, backgroundColor: colors.error.c70a02 }}
+    >
       <Icons.DeleteCircleFill size="M" color={"error.c70"} />
-      <Content ml={3}>
-        <Title mb={2}>{t("modularDrawer.errors.title")}</Title>
-        <Description mb={4}>{t(`modularDrawer.errors.${type}`)}</Description>
+      <Flex ml={3}>
+        <Text mb={2} style={{ fontSize: 16, fontWeight: "600", color: colors.neutral.c100 }}>
+          {t("modularDrawer.errors.title")}
+        </Text>
+        <Text mb={4} style={{ fontSize: 14, fontWeight: "500", color: colors.neutral.c100 }}>
+          {t(`modularDrawer.errors.${type}`)}
+        </Text>
 
         {onClick && (
           <Button type="error" onPress={onClick} alignSelf="flex-start">
-            <Cta>{t("modularDrawer.errors.cta")}</Cta>
+            <Text style={{ fontSize: 14, fontWeight: "600", color: colors.constant.white }}>
+              {t("modularDrawer.errors.cta")}
+            </Text>
           </Button>
         )}
-      </Content>
-    </Container>
+      </Flex>
+    </Flex>
   );
 };
-
-const Container = styled(Flex)`
-  border-radius: 12px;
-  background-color: ${p => p.theme.colors.error.c70a02};
-`;
-
-const Content = styled(Flex)``;
-
-const Title = styled(Text)`
-  font-size: 16px;
-  font-weight: 600;
-  color: ${p => p.theme.colors.neutral.c100};
-`;
-
-const Description = styled(Text)`
-  font-size: 14px;
-  font-weight: 500;
-  color: ${p => p.theme.colors.neutral.c100};
-`;
-
-const Cta = styled(Text)`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${p => p.theme.colors.constant.white};
-`;

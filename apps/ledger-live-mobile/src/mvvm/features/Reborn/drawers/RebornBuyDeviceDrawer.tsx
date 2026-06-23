@@ -16,10 +16,6 @@ import {
 import { HandCoins, ShieldLock, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerGorhom, {
-  BottomSheetView as GorhomBottomSheetView,
-} from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 
 const items = [
@@ -121,34 +117,18 @@ function View({ t, setupDevice, buyLedger }: Readonly<Omit<ViewProps, "isOpen" |
 
 function WrapperView({ isOpen, handleClose, ...viewProps }: Readonly<ViewProps>) {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
-
-  if (isEnabled) {
-    return (
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={isOpen}
-        onClose={handleClose}
-        enableDynamicSizing
-      >
-        <BottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 12 }}>
-          <BottomSheetHeader />
-          <View {...viewProps} />
-        </BottomSheetView>
-      </QueuedDrawerBottomSheet>
-    );
-  }
 
   return (
-    <QueuedDrawerGorhom
+    <QueuedDrawerBottomSheet
       isRequestingToBeOpened={isOpen}
-      enableDynamicSizing
       onClose={handleClose}
-      showHandle
+      enableDynamicSizing
     >
-      <GorhomBottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 32 }}>
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 12 }}>
+        <BottomSheetHeader />
         <View {...viewProps} />
-      </GorhomBottomSheetView>
-    </QueuedDrawerGorhom>
+      </BottomSheetView>
+    </QueuedDrawerBottomSheet>
   );
 }
 

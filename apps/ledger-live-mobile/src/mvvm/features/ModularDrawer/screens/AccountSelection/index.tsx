@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList } from "react-native";
 import { BottomSheetVirtualizedList, BottomSheetHeader, Banner } from "@ledgerhq/lumen-ui-rnative";
 import {
   TrackDrawerScreen,
@@ -20,7 +20,6 @@ export type AccountSelectionStepProps = {
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
   asset?: CryptoOrTokenCurrency | null;
   onAddNewAccount: () => void;
-  useLumenBottomSheet?: boolean;
   uiUseCase?: string;
 };
 
@@ -32,7 +31,6 @@ const AccountSelectionContent = ({
   asset,
   onAddNewAccount,
   onAccountSelected,
-  useLumenBottomSheet = false,
   uiUseCase,
 }: Readonly<AccountSelectionStepProps> & { asset: CryptoOrTokenCurrency }) => {
   const flow = useSelector(modularDrawerFlowSelector);
@@ -84,9 +82,7 @@ const AccountSelectionContent = ({
   return (
     <>
       <TrackDrawerScreen page={EVENTS_NAME.MODULAR_ACCOUNT_SELECTION} flow={flow} source={source} />
-      {useLumenBottomSheet && (
-        <BottomSheetHeader spacing title={t("modularDrawer.selectAccount")} density="expanded" />
-      )}
+      <BottomSheetHeader spacing title={t("modularDrawer.selectAccount")} density="expanded" />
       <BottomSheetVirtualizedList
         ref={listRef}
         scrollToOverflowEnabled={true}
@@ -97,10 +93,8 @@ const AccountSelectionContent = ({
         renderItem={renderItem}
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}
-        style={useLumenBottomSheet ? undefined : LEGACY_LIST_STYLE}
         contentContainerStyle={{
           paddingBottom: MARGIN_BOTTOM,
-          ...(useLumenBottomSheet ? {} : { marginTop: 16 }),
         }}
       />
     </>
@@ -110,13 +104,5 @@ const AccountSelection = (props: AccountSelectionStepProps) => {
   if (!props.asset) return null;
   return <AccountSelectionContent {...props} asset={props.asset} />;
 };
-
-/**
- * Temporary: cancels QueuedDrawerGorhom's paddingHorizontal: 16 so list items
- * align with the header. Will be removed when Gorhom fallback is deleted.
- */
-const LEGACY_LIST_STYLE = StyleSheet.create({
-  list: { marginHorizontal: -16 },
-}).list;
 
 export default withDiscreetMode(React.memo(AccountSelection));

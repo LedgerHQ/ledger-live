@@ -89,13 +89,6 @@ type DrawerVariant = {
 
 const DRAWER_VARIANTS: DrawerVariant[] = [
   {
-    label: "Gorhom (legacy)",
-    backButtonTestId: "drawer-back-button",
-    renderOptions: {
-      overrideInitialState: withReadOnlyDisabled,
-    },
-  },
-  {
     label: "Lumen BottomSheet (lwmWallet40)",
     backButtonTestId: "bottom-sheet-header-back-button",
     renderOptions: {

@@ -40,6 +40,26 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
+// Bypass the drawer queue: QueuedDrawerBottomSheet cleans the shared queue on gorhom's
+// onDismiss, which the jest mock never fires, so the closed ModularDrawer would block
+// DeviceActionModal and stall the device → account-scan handoff. Render the real Lumen
+// BottomSheet (for BottomSheetHeader's context) without enqueuing.
+jest.mock("LLM/components/QueuedDrawer/QueuedDrawerBottomSheet", () => {
+  const { BottomSheet } = require("@ledgerhq/lumen-ui-rnative");
+  return function MockQueuedDrawerBottomSheet({
+    children,
+    isRequestingToBeOpened,
+    isForcingToBeOpened,
+  }: {
+    children: React.ReactNode;
+    isRequestingToBeOpened?: boolean;
+    isForcingToBeOpened?: boolean;
+  }) {
+    if (!isRequestingToBeOpened && !isForcingToBeOpened) return null;
+    return <BottomSheet>{children}</BottomSheet>;
+  };
+});
+
 jest.mock("@ledgerhq/live-common/hw/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/hw/index"),
   discoverDevices: jest.fn((_filter?: (module: { id: string }) => boolean) => {
