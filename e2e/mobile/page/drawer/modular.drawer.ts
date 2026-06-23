@@ -2,7 +2,6 @@ import { Step } from "jest-allure2-reporter/api";
 import type { Features } from "@shared/feature-flags";
 import { getFlags } from "../../bridge/server";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { isIos } from "../../helpers/commonHelpers";
 
 export default class ModularDrawer {
   // TODO - once lumenBottomSheet is activated we can remove the `or` statements
@@ -139,30 +138,6 @@ export default class ModularDrawer {
     await this.selectFirstAccount();
   }
 
-  /**
-   * Workaround for iOS Buy/Sell flow where drawer opens over WebView.
-   * Avoids any kind of waitFor visibility checks that cause Ledger Live App to freeze.
-   * Falls back to standard selectAsset on Android.
-   */
-  @Step("Select currency in modular drawer - (workaround) buy sell flow")
-  async selectAssetBuySellIosWorkaround(account: Account): Promise<void> {
-    if (!isIos()) {
-      return this.selectAsset(account);
-    }
-
-    await this.performSearchByTicker(account.currency.ticker);
-    const assetItemId = this.assetItemByTicker(account.currency.ticker);
-    await tapById(assetItemId, 0);
-
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    if (modularDrawerAttributes.label?.includes("Select network")) {
-      const networkName = this.getNetworkNameForAccount(account);
-      const id = this.networkItemIdMAD(networkName);
-      await tapById(id, 0);
-    }
-    await this.selectFirstAccount();
-  }
-
   @Step("Validate account(s) present on account list")
   async validateAccountsScreen(accounts?: string[]): Promise<void> {
     await waitForElement(getElementById(this.accountScreenId));
@@ -200,7 +175,7 @@ export default class ModularDrawer {
   @Step("Validate assets present on account list")
   async validateAssetsScreen(assets: string[]): Promise<void> {
     await waitForElement(getElementById(this.assetScreenId));
-    jestExpect(await getTextOfElement(this.assetBasedTitleIdMAD)).toMatch(/Select asset.*/i);
+    jestExpect(await getLabelOfElement(this.assetBasedTitleIdMAD)).toMatch(/Select asset.*/i);
     for (const asset of assets) {
       const assetItemId = this.assetItemByTicker(asset);
       await detoxExpect(getElementById(assetItemId)).toBeVisible();
