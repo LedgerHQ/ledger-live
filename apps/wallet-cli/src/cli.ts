@@ -53,6 +53,7 @@ function normalizeNegatedFlags(argv: string[]): string[] {
 
 if (import.meta.main) {
   let exitCode = 0;
+  startAnalytics();
   try {
     startAnalytics();
     exitCode = await runMain();
