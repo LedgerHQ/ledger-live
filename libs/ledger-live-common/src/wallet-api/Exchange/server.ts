@@ -470,7 +470,7 @@ export const handlers = ({
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
-          ...extractSwapTrackingMeta(meta),
+          meta: extractSwapTrackingMeta(meta),
         };
 
         tracking.startExchangeRequested(trackingParams);
