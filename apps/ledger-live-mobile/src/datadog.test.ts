@@ -49,6 +49,7 @@ describe("broadcastLogger", () => {
       family: "family",
       isTestnet: false,
       isSendMax: true,
+      intentType: "send",
       source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: true } },
     });
 
@@ -60,6 +61,7 @@ describe("broadcastLogger", () => {
         family: "family",
         isTestnet: false,
         isSendMax: true,
+        intentType: "send",
         source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: true } },
       },
     });
@@ -79,6 +81,7 @@ describe("broadcastLogger", () => {
       family: "family",
       isTestnet: false,
       isSendMax: false,
+      intentType: "delegate",
       source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: false } },
     });
 
@@ -96,6 +99,7 @@ describe("broadcastLogger", () => {
           family: "family",
           isTestnet: false,
           isSendMax: false,
+          intentType: "delegate",
           source: {
             type: "coin-module",
             name: "ledger-live-mobile",

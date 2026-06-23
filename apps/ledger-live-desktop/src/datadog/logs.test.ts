@@ -184,6 +184,7 @@ describe("datadog logs", () => {
         family: "bitcoin",
         isTestnet: false,
         isSendMax: true,
+        intentType: "send",
         source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: true } },
       });
 
@@ -195,6 +196,7 @@ describe("datadog logs", () => {
           family: "bitcoin",
           isTestnet: false,
           isSendMax: true,
+          intentType: "send",
           source: {
             type: "coin-module",
             name: "ledger-live-desktop",
@@ -217,6 +219,7 @@ describe("datadog logs", () => {
         family: "evm",
         isTestnet: false,
         isSendMax: false,
+        intentType: "delegate",
         source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: false } },
       });
 
@@ -231,6 +234,7 @@ describe("datadog logs", () => {
             family: "evm",
             isTestnet: false,
             isSendMax: false,
+            intentType: "delegate",
             source: {
               type: "coin-module",
               name: "ledger-live-desktop",

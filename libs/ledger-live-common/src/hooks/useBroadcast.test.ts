@@ -53,7 +53,7 @@ describe("useBroadcast", () => {
       "token-id",
     ],
   ])("%s", (_s, account, parentAccount, expectedTokenId) => {
-    const transaction = { useAllAmount: true } as any;
+    const transaction = { useAllAmount: true, mode: "delegate" } as any;
 
     it("logs on success", async () => {
       const logger = jest.fn();
@@ -85,6 +85,7 @@ describe("useBroadcast", () => {
         appVersion: "llc/test",
         isTestnet: false,
         isSendMax: true,
+        intentType: "delegate",
         source: { type: "coin-module", name: "ledger-live-desktop" },
       });
       expect(value).toEqual({ id: "operation-id", date: new Date(2026, 3, 24) });
@@ -125,6 +126,7 @@ describe("useBroadcast", () => {
         appVersion: "llc/test",
         isTestnet: false,
         isSendMax: true,
+        intentType: "delegate",
         source: { type: "coin-module", name: "ledger-live-desktop" },
         txPayload: { signature: "signed-transaction", rawData: { raw_hex: "raw-hex" } },
       });
@@ -152,11 +154,38 @@ describe("useBroadcast", () => {
     );
 
     await act(async () => {
-      await result.current({} as any);
+      await result.current({ operation: { type: "OUT" } } as any);
     });
 
     expect(logger).toHaveBeenCalledWith(
       expect.objectContaining({ currencyId: "ethereum_sepolia", isTestnet: true }),
     );
+  });
+
+  it("falls back to the operation type when the transaction has no mode", async () => {
+    const logger = jest.fn();
+    mockBroadcast.mockResolvedValue({ id: "operation-id", date: new Date(2026, 3, 24) });
+    setEnv("LEDGER_CLIENT_VERSION", "llc/test");
+    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+
+    const account = {
+      id: "main-account-id",
+      type: "Account",
+      currency: { id: "bitcoin", family: "bitcoin" },
+    };
+
+    const { result } = renderHook(() =>
+      useBroadcast({
+        account,
+        parentAccount: account,
+        logger,
+      } as any),
+    );
+
+    await act(async () => {
+      await result.current({ operation: { type: "OUT" } } as any);
+    });
+
+    expect(logger).toHaveBeenCalledWith(expect.objectContaining({ intentType: "OUT" }));
   });
 });
