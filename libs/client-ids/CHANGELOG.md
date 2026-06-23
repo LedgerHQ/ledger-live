@@ -1,5 +1,16 @@
 # @ledgerhq/client-ids
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#18770](https://github.com/LedgerHQ/ledger-live/pull/18770) [`7817aff`](https://github.com/LedgerHQ/ledger-live/commit/7817aff12e1a26fbfbe70176afa6811d7020087d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix desktop userId migration so returning users keep their identity after upgrade. When `app.identities` was created by the deviceId rollout (deviceIds only, no userId), boot now recovers the legacy userId from `app.user`/localStorage instead of generating a new one, which had made returning users appear as new in Segment and Braze. `shouldUsePersistedId` is now exported from `@ledgerhq/client-ids/store`.
+
+### Patch Changes
+
+- Updated dependencies [[`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba)]:
+  - @ledgerhq/live-env@2.40.0-next.0
+
 ## 0.10.3
 
 ### Patch Changes

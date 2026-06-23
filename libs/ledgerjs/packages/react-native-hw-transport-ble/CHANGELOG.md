@@ -1,5 +1,18 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.41.0-next.0
+
+### Minor Changes
+
+- [#18775](https://github.com/LedgerHQ/ledger-live/pull/18775) [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Reduce the scope of `@ledgerhq/devices` to the devices list only. The transport framing helpers (`hid-framing`, `ble/sendAPDU`, `ble/receiveAPDU`) are inlined into the transports that use them and the corresponding subpath exports are removed.
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c)]:
+  - @ledgerhq/errors@6.37.0-next.0
+  - @ledgerhq/devices@8.16.0-next.0
+  - @ledgerhq/hw-transport@6.35.5-next.0
+
 ## 6.40.4
 
 ### Patch Changes

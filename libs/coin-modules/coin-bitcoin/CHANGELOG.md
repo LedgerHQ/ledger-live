@@ -1,5 +1,27 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.45.0-next.0
+
+### Minor Changes
+
+- [#18741](https://github.com/LedgerHQ/ledger-live/pull/18741) [`913f4a8`](https://github.com/LedgerHQ/ledger-live/commit/913f4a8ead3b50b9d17db177cf62d4c0e29c8a98) Thanks [@qperrot](https://github.com/qperrot)! - Fix: handle the "RBF requires an additional sats fee" error and show it in the frontend
+
+- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
+
+- [#18625](https://github.com/LedgerHQ/ledger-live/pull/18625) [`ab76877`](https://github.com/LedgerHQ/ledger-live/commit/ab768773eb1a82a704e1a74213d12d8df91a16ba) Thanks [@semeano](https://github.com/semeano)! - Add a "Transfer from" source selector (Public / Private) to the Zcash send Recipient step, behind the zcashShielded feature flag
+
+### Patch Changes
+
+- Updated dependencies [[`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`b8a0765`](https://github.com/LedgerHQ/ledger-live/commit/b8a0765d7ac1ac1a60456f9c604e7a694e38bd84), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
+  - @ledgerhq/live-signer-zcash@0.3.0-next.0
+  - @ledgerhq/types-live@6.113.0-next.0
+  - @ledgerhq/errors@6.37.0-next.0
+  - @ledgerhq/live-env@2.40.0-next.0
+  - @ledgerhq/cryptoassets@13.53.0-next.0
+  - @ledgerhq/devices@8.16.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.2.1-next.0
+  - @ledgerhq/live-network@2.6.6-next.0
+
 ## 0.44.1
 
 ### Patch Changes

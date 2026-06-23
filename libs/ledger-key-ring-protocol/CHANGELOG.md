@@ -1,5 +1,18 @@
 # @ledgerhq/live-wallet
 
+## 0.15.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba)]:
+  - @ledgerhq/errors@6.37.0-next.0
+  - @ledgerhq/live-env@2.40.0-next.0
+  - @ledgerhq/speculos-transport@0.10.6-next.0
+  - @ledgerhq/hw-transport@6.35.5-next.0
+  - @ledgerhq/live-network@2.6.6-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.7-next.0
+  - @ledgerhq/hw-transport-mocker@6.34.5-next.0
+
 ## 0.15.1
 
 ### Patch Changes

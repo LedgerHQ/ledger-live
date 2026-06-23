@@ -1,6 +1,6 @@
 {
   "name": "@devtools/feature-flags",
-  "version": "0.5.0",
+  "version": "0.5.1-next.0",
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",
@@ -46,7 +46,6 @@
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "tailwind-merge": "catalog:"
-
   },
   "peerDependencies": {
     "react": ">=19",

@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
 ## 0.2.0
 
 ### Minor Changes

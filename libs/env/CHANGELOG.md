@@ -1,5 +1,19 @@
 # @ledgerhq/live-env
 
+## 2.40.0-next.0
+
+### Minor Changes
+
+- [#18823](https://github.com/LedgerHQ/ledger-live/pull/18823) [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - chore: remove unused thirdweb code
+
+- [#17970](https://github.com/LedgerHQ/ledger-live/pull/17970) [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Migrate the Polkadot family (mainnet and Westend, relay chain and asset hub) to the new polkadot-rest-api endpoints, served under a `/v1` prefix (`/v1/rc` for the relay chain).
+
+  Adapt the coin-polkadot client to the rest-api, which is not fully 1:1 with substrate-api-sidecar:
+
+  - staking storage queries use `keys[]` only (drop the legacy `key1` query param, rejected by the rest-api);
+  - tolerate a missing `ss58Format` in `/runtime/spec` (e.g. Westend Asset Hub) instead of producing `NaN`;
+  - parse the new `/transaction/dry-run` response shape (`resultType` at the root, error under `result.error`, plus the `TransactionValidityError` case).
+
 ## 2.39.0
 
 ### Minor Changes

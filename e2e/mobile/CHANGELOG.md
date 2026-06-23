@@ -1,5 +1,11 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.28.0-next.0
+
+### Minor Changes
+
+- [#18681](https://github.com/LedgerHQ/ledger-live/pull/18681) [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Remove llmAnalyticsOptInPrompt feature flag and unused variant B code
+
 ## 0.27.0
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # @ledgerhq/coin-tezos
 
+## 7.7.0-next.0
+
+### Minor Changes
+
+- [#18678](https://github.com/LedgerHQ/ledger-live/pull/18678) [`246bb7d`](https://github.com/LedgerHQ/ledger-live/commit/246bb7def5224d552e9adba6322a473529a1a566) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix Tezos send "Use Max" on delegated accounts: resolve the spendable max instead of blocking the transaction
+
+- [#18761](https://github.com/LedgerHQ/ledger-live/pull/18761) [`8e3723b`](https://github.com/LedgerHQ/ledger-live/commit/8e3723bc2daf2f2a24ebfac4d30f47322b6e5186) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - coin-tezos: surface origination operations in listOperations so contract deployment fees are reflected in balance
+
+- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2)]:
+  - @ledgerhq/errors@6.37.0-next.0
+  - @ledgerhq/live-network@2.6.6-next.0
+
 ## 7.6.0
 
 ### Minor Changes
