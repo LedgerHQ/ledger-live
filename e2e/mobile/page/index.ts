@@ -91,7 +91,7 @@ export class Application {
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
-  private topBarSearchPageInstance = lazyInit(TopBarSearchPage);
+  private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {

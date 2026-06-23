@@ -28,7 +28,7 @@ afterEach(async () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Asset discoverability - Stocks empty discovery state", () => {
+describe("Wallet 4.0 - Asset discoverability - Stocks empty discovery state", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
@@ -50,7 +50,7 @@ describe("Asset discoverability - Stocks empty discovery state", () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Asset discoverability - Stocks holdings", () => {
+describe("Wallet 4.0 - Asset discoverability - Stocks holdings", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
@@ -74,7 +74,7 @@ describe("Asset discoverability - Stocks holdings", () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Asset discoverability - Global search categories", () => {
+describe("Wallet 4.0 - Asset discoverability - Global search categories", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
@@ -100,7 +100,7 @@ describe("Asset discoverability - Global search categories", () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Asset discoverability - Global search ranking", () => {
+describe("Wallet 4.0 - Asset discoverability - Global search ranking", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
@@ -115,11 +115,11 @@ describe("Asset discoverability - Global search ranking", () => {
   it("should match the typed ticker to the top search result", async () => {
     await app.topBarSearch.open();
 
-    await app.topBarSearch.searchFor("btc");
-    await app.topBarSearch.expectFirstResult("bitcoin");
+    await app.topBarSearch.searchFor(Currency.BTC.ticker.toLowerCase());
+    await app.topBarSearch.expectFirstResult(Currency.BTC.id);
 
     await app.topBarSearch.clearSearch();
-    await app.topBarSearch.searchFor("eth");
-    await app.topBarSearch.expectFirstResult("ethereum");
+    await app.topBarSearch.searchFor(Currency.ETH.ticker.toLowerCase());
+    await app.topBarSearch.expectFirstResult(Currency.ETH.id);
   });
 });

@@ -77,7 +77,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
   it("should cap cryptos at 6, show only cryptos when clicking section title, and list all 6 crypto assets", async () => {
     await app.portfolio.scrollToTopOfPortfolioPage();
     await app.portfolio.checkCryptosListSectionVisible();
-    await app.portfolio.checkSectionAssetItemCount(app.portfolio.portfolioCryptosListId, 6);
+    await app.portfolio.checkCryptosSectionAssetItemCount(6);
     await app.portfolio.checkAssetVisible("Ethereum");
     await app.portfolio.checkAssetVisible("Bitcoin");
     await app.portfolio.tapCryptosSectionTitle();

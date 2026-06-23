@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
+import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -63,6 +64,7 @@ export default class PortfolioPage {
   stocksSectionHeaderId = "portfolio-stocks-section-header";
   stocksDiscoveryId = "portfolio-stocks-discovery";
   stocksDiscoveryHeaderId = "portfolio-stocks-discovery-header";
+  sectionAssetItemRegExp = (sectionId: string) => new RegExp(String.raw`^${sectionId}-item-\d+$`);
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -444,18 +446,20 @@ export default class PortfolioPage {
     jestExpect(count).toBe(expected);
   }
 
-  @Step("Check asset item count within a section")
-  async checkSectionAssetItemCount(sectionId: string, expected: number) {
-    const count = await countElements(getElementsById(new RegExp(`^${sectionId}-item-\\d+$`)));
+  private async checkSectionAssetItemCount(sectionId: string, expected: number) {
+    const count = await countElementsById(this.sectionAssetItemRegExp(sectionId));
     jestExpect(count).toBe(expected);
+  }
+
+  @Step("Check cryptos section asset item count")
+  async checkCryptosSectionAssetItemCount(expected: number) {
+    await this.checkSectionAssetItemCount(this.portfolioCryptosListId, expected);
   }
 
   @Step("Tap first asset item (wallet 4.0) and return its currency name")
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
     const currencyName = testId.replace("assetItem-", "");
-    // The prior test may have scrolled to the bottom (e.g. add-account CTA), leaving the
-    // first asset row clipped and not hittable — scroll it back into view before tapping.
     await scrollToId(testId, this.emptyPortfolioListId);
     await tapById(testId);
     return currencyName;
@@ -498,37 +502,34 @@ export default class PortfolioPage {
     await scrollToId(this.portfolioBalanceNormal, this.accountsListView, 1000, "up");
   }
 
+  private async scrollToStocksHeader(headerId: string) {
+    await waitForElementById(headerId, DEFAULT_TIMEOUT, { checkVisibility: false });
+    await scrollToId(headerId, this.accountsListView);
+  }
+
   @Step("Check stocks discovery (empty) section is visible")
   async checkStocksDiscoverySectionVisible() {
-    // The stocks section only renders once the DADA stock-id fetch resolves, so
-    // wait for it to exist before scrolling to avoid scrolling a still-loading list.
-    await waitForElementById(this.stocksDiscoveryHeaderId, 60000, { checkVisibility: false });
-    await scrollToId(this.stocksDiscoveryHeaderId, this.accountsListView);
-    // The discovery container wraps horizontally-overflowing stock pills, so it never
-    // reaches the visibility threshold; assert on the header row (title + "Explore all").
+    await this.scrollToStocksHeader(this.stocksDiscoveryHeaderId);
     await detoxExpect(getElementById(this.stocksDiscoveryId)).toExist();
     await detoxExpect(getElementById(this.stocksDiscoveryHeaderId)).toBeVisible();
   }
 
   @Step("Tap 'Explore all' in the stocks discovery section")
   async tapStocksExploreAll() {
-    await waitForElementById(this.stocksDiscoveryHeaderId, 60000, { checkVisibility: false });
-    await scrollToId(this.stocksDiscoveryHeaderId, this.accountsListView);
+    await this.scrollToStocksHeader(this.stocksDiscoveryHeaderId);
     await tapById(this.stocksDiscoveryHeaderId);
   }
 
   @Step("Check stocks holdings section is visible")
   async checkStocksHoldingsSectionVisible() {
-    await waitForElementById(this.stocksSectionHeaderId, 60000, { checkVisibility: false });
-    await scrollToId(this.stocksSectionHeaderId, this.accountsListView);
+    await this.scrollToStocksHeader(this.stocksSectionHeaderId);
     await detoxExpect(getElementById(this.stocksSectionHeaderId)).toBeVisible();
     await detoxExpect(getElementById(this.portfolioStocksListId)).toExist();
   }
 
   @Step("Tap stocks section title")
   async tapStocksSectionTitle() {
-    await waitForElementById(this.stocksSectionHeaderId, 60000, { checkVisibility: false });
-    await scrollToId(this.stocksSectionHeaderId, this.accountsListView);
+    await this.scrollToStocksHeader(this.stocksSectionHeaderId);
     await tapById(this.stocksSectionHeaderId);
   }
 

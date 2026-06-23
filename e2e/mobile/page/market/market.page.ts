@@ -2,6 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
 import type { Features } from "@shared/feature-flags";
+import type { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export default class MarketPage {
   marketRowTitleBaseId = "market-row-title-";
@@ -12,7 +13,8 @@ export default class MarketPage {
   starButton = () => getElementById("star-asset");
   backButtonId = "market-back-btn";
   assetDetailBackBtn = () => getElementById(this.backButtonId);
-  marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
+  marketRowTitle = (currency: CurrencyType) =>
+    getElementById(`${this.marketRowTitleBaseId}${currency.ticker}`);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
     getElementById(`market-quick-action-button-${action}`);
@@ -22,31 +24,15 @@ export default class MarketPage {
   marketCategoryTabId = (value: string) => `${this.marketCategorySwitcherId}-${value}`;
   headerBackButtonId = "navigation-header-back-button";
 
-  // New (asset discoverability) MarketScreen / AssetDetail test ids — see
-  // apps/ledger-live-mobile/src/mvvm/features/Market/screens/MarketScreen/testIds.ts
-  // and apps/ledger-live-mobile/src/mvvm/features/AssetDetail/testIds.ts
   marketScreenFilterButton = () => getElementById("market-screen-assets-filter-button");
   coinOptionsTrigger = () => getElementById("asset-detail-coin-options-trailing");
   coinOptionsFavouriteRow = () => getElementById("asset-detail-coin-options-favourite-row");
-  marketScreenRow = (ticker: string) =>
-    getElementById(`marketItem-${this.marketIdForTicker(ticker)}`);
-
-  // The new MarketScreen keys rows by ledger currency id, not ticker.
-  marketIdByTicker: Record<string, string> = {
-    BTC: "bitcoin",
-    ETH: "ethereum",
-    SOL: "solana",
-    XRP: "ripple",
-    ADA: "cardano",
-    DOT: "polkadot",
-  };
-
-  private marketIdForTicker(ticker: string): string {
-    return this.marketIdByTicker[ticker.toUpperCase()] ?? ticker.toLowerCase();
-  }
+  // The new MarketScreen keys rows by ledger currency id, the legacy list by ticker.
+  marketScreenRow = (currency: CurrencyType) => getElementById(`marketItem-${currency.id}`);
 
   private flags: Features["lwmWallet40"] | null = null;
 
+  @Step("Reset market feature flags cache")
   resetFlags(): void {
     this.flags = null;
   }
@@ -55,15 +41,13 @@ export default class MarketPage {
     this.flags ??= JSON.parse(await getFlags()).lwmWallet40;
   }
 
-  // Gates the new market list / categories / search screens.
   private async isAssetDiscoverabilityEnabled(): Promise<boolean> {
     await this.loadFlags();
     return !!this.flags?.enabled && !!this.flags?.params?.assetDiscoverability;
   }
 
-  // Gates the destination of a market row tap: the new MVVM AssetDetail screen
-  // (with coin-options) when on, the legacy MarketDetail screen when off. This is
-  // a different flag from `assetDiscoverability` (see useAssetDetailNavigation).
+  // Distinct from `assetDiscoverability`: gates the new MVVM AssetDetail (with
+  // coin-options) vs the legacy MarketDetail screen (see useAssetDetailNavigation).
   private async isAggregatedAssetsEnabled(): Promise<boolean> {
     await this.loadFlags();
     return !!this.flags?.enabled && !!this.flags?.params?.aggregatedAssets;
@@ -106,11 +90,11 @@ export default class MarketPage {
   }
 
   @Step("Open asset page")
-  async openAssetPage(ticker: string) {
+  async openAssetPage(currency: CurrencyType) {
     if (await this.isAssetDiscoverabilityEnabled()) {
-      await tapByElement(this.marketScreenRow(ticker));
+      await tapByElement(this.marketScreenRow(currency));
     } else {
-      await tapByElement(this.marketRowTitle(ticker));
+      await tapByElement(this.marketRowTitle(currency));
     }
   }
 
@@ -143,11 +127,11 @@ export default class MarketPage {
   }
 
   @Step("Expect market row title")
-  async expectMarketRowTitle(ticker: string) {
+  async expectMarketRowTitle(currency: CurrencyType) {
     if (await this.isAssetDiscoverabilityEnabled()) {
-      await detoxExpect(this.marketScreenRow(ticker)).toBeVisible();
+      await detoxExpect(this.marketScreenRow(currency)).toBeVisible();
     } else {
-      await detoxExpect(this.marketRowTitle(ticker)).toBeVisible();
+      await detoxExpect(this.marketRowTitle(currency)).toBeVisible();
     }
   }
 
@@ -173,7 +157,7 @@ export default class MarketPage {
     await detoxExpect(getElementById(this.marketCategoryTabId(value))).toBeVisible();
   }
 
-  @Step("Expect category tab $0 to be selected")
+  @Step("Expect category $0 to be selected")
   async expectCategorySelected(value: string) {
     await this.expectCategoryTabVisible(value);
   }
