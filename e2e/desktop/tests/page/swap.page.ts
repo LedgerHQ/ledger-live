@@ -29,7 +29,7 @@ export class SwapPage extends WebViewAppPage {
     .getByRole("heading", { name: "Swap" });
   // Wallet 4.0 AssetDetail (aggregatedAssets ON) reaches swap through the always-mounted embedded
   // rail rather than the full swap page, so there is no "Swap" page header to wait for.
-  private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
+  private readonly embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");

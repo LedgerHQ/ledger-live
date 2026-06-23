@@ -155,8 +155,6 @@ export class PortfolioPage extends AppPage {
     await this.page.getByText("Choose Asset").waitFor({ state: "visible" });
   }
 
-  // operationsList ON: operations no longer live on the portfolio; they move to the dedicated
-  // History page reached from the topbar. Open it and wait for the history table to render.
   private async openHistoryPage() {
     await this.historyButton.click();
     await this.checkVisibility(this.historyTable);
@@ -164,25 +162,22 @@ export class PortfolioPage extends AppPage {
 
   @step("check operation history")
   async checkOperationHistory() {
-    // operationsList ON: assert the History page renders at least one operation, then return to the
-    // portfolio so the caller can keep asserting portfolio-level content.
-    if (isOperationsListEnabled) {
+    if (await isOperationsListEnabled(this.page)) {
       await this.openHistoryPage();
       await expect(this.historyOperationRows.first()).toBeVisible();
       await this.homeSideBarButton.click();
       await this.checkVisibility(this.portfolioTotalBalance);
-      return;
-    }
+    } else {
+      await this.operationList.scrollIntoViewIfNeeded();
+      await this.checkVisibility(this.operationList);
 
-    await this.operationList.scrollIntoViewIfNeeded();
-    await this.checkVisibility(this.operationList);
+      const numberOfOperationsBefore = await this.operationRows.count();
 
-    const numberOfOperationsBefore = await this.operationRows.count();
-
-    if (await this.showMoreButton.isVisible()) {
-      await this.showMoreButton.click();
-      const numberOfOperationsAfter = await this.operationRows.count();
-      expect(numberOfOperationsAfter).toBeGreaterThan(numberOfOperationsBefore);
+      if (await this.showMoreButton.isVisible()) {
+        await this.showMoreButton.click();
+        const numberOfOperationsAfter = await this.operationRows.count();
+        expect(numberOfOperationsAfter).toBeGreaterThan(numberOfOperationsBefore);
+      }
     }
   }
 
@@ -234,27 +229,26 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    // operationsList ON: the latest operations are on the History page, not the portfolio.
-    if (isOperationsListEnabled) {
+    if (await isOperationsListEnabled(this.page)) {
       await this.openHistoryPage();
       await this.checkVisibility(this.historyOperationRows.first());
-      return;
+    } else {
+      await this.checkVisibility(this.operationRows.first());
     }
-    await this.checkVisibility(this.operationRows.first());
   }
 
   @step("Expect operation to contain counter value $0")
   async expectOperationCounterValue(counterValue: string) {
-    if (isOperationsListEnabled) {
+    if (await isOperationsListEnabled(this.page)) {
       await this.openHistoryPage();
       const valueCell = this.historyOperationValue.first();
       await this.checkVisibility(valueCell);
       await expect(valueCell).toContainText(this.getExpectedCounterValuePattern(counterValue));
-      return;
+    } else {
+      await this.expectOperationRowToBeVisible();
+      const operationRow = this.operationRows.first();
+      await expect(operationRow).toContainText(counterValue);
     }
-    await this.expectOperationRowToBeVisible();
-    const operationRow = this.operationRows.first();
-    await expect(operationRow).toContainText(counterValue);
   }
 
   @step("Wait for balance to be visible")

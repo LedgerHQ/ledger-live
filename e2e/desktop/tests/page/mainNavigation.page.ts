@@ -96,15 +96,14 @@ export class MainNavigationPage extends AppPage {
   @step("Open $0 from main navigation")
   async openTargetFromMainNavigation(target: TargetName) {
     // With My Wallet ON, "refer a friend" is removed from the sidebar and lives in the My Wallet popover.
-    if (target === "refer a friend" && isMyWalletEnabled) {
+    if (target === "refer a friend" && (await isMyWalletEnabled(this.page))) {
       await this.myWallet.openMyWalletPopover();
       await this.myWallet.clickReferralTile();
-      return;
+    } else {
+      const { selector } = (await this.getSidebarTargets())[target];
+      await expect(selector).toBeEnabled();
+      await selector.click();
     }
-
-    const { selector } = (await this.getSidebarTargets())[target];
-    await expect(selector).toBeEnabled();
-    await selector.click();
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")
@@ -113,7 +112,8 @@ export class MainNavigationPage extends AppPage {
 
     // The My Wallet popover refer entry navigates without leaving a persistent active sidebar item.
     const expectActive =
-      targetConfig.expectActive && !(target === "refer a friend" && isMyWalletEnabled);
+      targetConfig.expectActive &&
+      !(target === "refer a friend" && (await isMyWalletEnabled(this.page)));
 
     if (expectActive) {
       await expect(targetConfig.selector).toHaveAttribute("aria-current", "page");
@@ -132,7 +132,7 @@ export class MainNavigationPage extends AppPage {
     popoverAction: () => Promise<void>,
     legacyTopbarButton: Locator,
   ) {
-    if (isMyWalletEnabled) {
+    if (await isMyWalletEnabled(this.page)) {
       await this.myWallet.openMyWalletPopover();
       await popoverAction();
     } else {

@@ -89,6 +89,7 @@ for (const asset of assets) {
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.clickOnSelectedAssetRow(crypto.currency.name);
         await app.assetPage.startBuyFlow();
+        await app.buyAndSell.selectNetworkAndAccountIfShown(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -108,6 +109,7 @@ for (const asset of assets) {
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
+        await app.buyAndSell.selectNetworkAndAccountIfShown(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },

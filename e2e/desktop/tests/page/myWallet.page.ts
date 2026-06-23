@@ -28,7 +28,7 @@ export class MyWalletPage extends AppPage {
     await expect(this.popoverActionsList).toBeVisible();
   }
 
-  @step("Wait for My Wallet popover to close")
+  @step("Expect My Wallet popover to be closed")
   async waitForMyWalletPopoverToClose() {
     await expect(this.popoverActionsList).toBeHidden();
   }

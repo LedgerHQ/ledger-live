@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { expect } from "@playwright/test";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { coinDetailUrlPattern } from "tests/utils/featureFlagUtils";
+import { coinDetailUrlPattern } from "tests/utils/urlUtils";
 
 test.describe("Market Banner", () => {
   test.use({
@@ -33,17 +33,23 @@ test.describe("Market Banner", () => {
 
       const assetId = await app.marketBanner.clickFirstAssetTile();
 
-      await expect(app.layout.getPage()).toHaveURL(coinDetailUrlPattern(assetId));
+      await expect(app.layout.getPage()).toHaveURL(
+        await coinDetailUrlPattern(app.layout.getPage(), assetId),
+      );
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.marketBanner.clickExploreMarketHeader();
       await expect(app.layout.getPage()).toHaveURL(/\/market$/);
       await app.market.openCoinPage("BTC");
-      await expect(app.layout.getPage()).toHaveURL(coinDetailUrlPattern("bitcoin"));
+      await expect(app.layout.getPage()).toHaveURL(
+        await coinDetailUrlPattern(app.layout.getPage(), "bitcoin"),
+      );
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.marketBanner.scrollToAndClickViewAllTile();
       await expect(app.layout.getPage()).toHaveURL(/\/market$/);
       await app.market.openCoinPage("BTC");
-      await expect(app.layout.getPage()).toHaveURL(coinDetailUrlPattern("bitcoin"));
+      await expect(app.layout.getPage()).toHaveURL(
+        await coinDetailUrlPattern(app.layout.getPage(), "bitcoin"),
+      );
     },
   );
 });
