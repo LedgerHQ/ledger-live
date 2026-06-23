@@ -7,6 +7,7 @@ import useAnalyticsViewModel from "./useAnalyticsViewModel";
 import type { AnalyticsViewModel } from "./types";
 import { AllocationSection } from "./components/Allocation/AllocationSection";
 import { PnLSection } from "./components/PnL";
+import { ChartSection } from "./components/ChartSection";
 import { useTranslation } from "react-i18next";
 
 export default function Analytics() {
@@ -21,6 +22,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
     navigateToDashboard,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
+    shouldDisplayPnl,
     balanceInfo,
   } = viewModel;
 
@@ -32,14 +34,18 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 
       <div className="overflow-hidden rounded-md bg-surface" data-testid="analytics-chart">
-        <PortfolioBalanceSummary
-          counterValue={counterValue}
-          chartColor={colors.wallet}
-          range={selectedTimeRange}
-          isWallet40
-          shouldDisplayGraphRework={shouldDisplayGraphRework}
-          balanceInfo={balanceInfo}
-        />
+        {shouldDisplayPnl ? (
+          <ChartSection balanceInfo={balanceInfo} />
+        ) : (
+          <PortfolioBalanceSummary
+            counterValue={counterValue}
+            chartColor={colors.wallet}
+            range={selectedTimeRange}
+            isWallet40
+            shouldDisplayGraphRework={shouldDisplayGraphRework}
+            balanceInfo={balanceInfo}
+          />
+        )}
       </div>
 
       <PnLSection />

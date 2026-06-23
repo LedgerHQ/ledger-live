@@ -3,7 +3,8 @@ import { useNavigate } from "react-router";
 import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import * as usePortfolioBalanceDisplayStateModule from "LLD/hooks/usePortfolioBalanceDisplayState";
-import { mockPortfolioBalanceInfo } from "LLD/hooks/__tests__/fixtures";
+import { usePortfolio } from "~/renderer/actions/portfolio";
+import { mockPortfolioBalanceInfo, defaultPortfolio } from "LLD/hooks/__tests__/fixtures";
 import useAnalyticsViewModel from "../useAnalyticsViewModel";
 
 jest.mock("react-router", () => ({
@@ -12,11 +13,13 @@ jest.mock("react-router", () => ({
 }));
 
 jest.mock("LLD/hooks/usePortfolioBalanceDisplayState");
+jest.mock("~/renderer/actions/portfolio");
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 const mockUsePortfolioBalanceDisplayState = jest.mocked(
   usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState,
 );
+const mockUsePortfolio = jest.mocked(usePortfolio);
 
 describe("useAnalyticsViewModel", () => {
   beforeEach(() => {
@@ -24,6 +27,10 @@ describe("useAnalyticsViewModel", () => {
     mockUsePortfolioBalanceDisplayState.mockReturnValue({
       balanceInfo: mockPortfolioBalanceInfo,
     } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
+    mockUsePortfolio.mockReturnValue({
+      ...defaultPortfolio,
+      countervalueChange: { percentage: 0.2, value: 200 },
+    });
   });
 
   it("should return expected values and navigate back to dashboard", () => {
@@ -32,7 +39,9 @@ describe("useAnalyticsViewModel", () => {
 
     const { result } = renderHook(() => useAnalyticsViewModel(), {
       initialState: {
-        ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { graphRework: true } } }),
+        ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { graphRework: true, pnl: true } },
+        }),
         settings: {
           ...INITIAL_STATE,
           counterValue: "USD",
@@ -44,8 +53,9 @@ describe("useAnalyticsViewModel", () => {
     expect(result.current.counterValue).toBe(getFiatCurrencyByTicker("USD"));
     expect(result.current.selectedTimeRange).toBe("day");
     expect(result.current.shouldDisplayGraphRework).toBe(true);
-    expect(result.current.balanceInfo).toEqual(mockPortfolioBalanceInfo);
-    expect(mockUsePortfolioBalanceDisplayState).toHaveBeenCalledWith({ legacyRange: false });
+    expect(result.current.shouldDisplayPnl).toBe(false);
+    expect(result.current.balanceInfo.valueChange).toEqual({ percentage: 0.2, value: 200 });
+    expect(mockUsePortfolioBalanceDisplayState).toHaveBeenCalledWith();
 
     act(() => {
       result.current.navigateToDashboard();
@@ -54,10 +64,14 @@ describe("useAnalyticsViewModel", () => {
     expect(navigate).toHaveBeenCalledWith("/");
   });
 
-  it("should use legacyRange for non-day time ranges", () => {
+  it("should derive value change from the selected portfolio range", () => {
     mockedUseNavigate.mockReturnValue(jest.fn());
+    mockUsePortfolio.mockReturnValue({
+      ...defaultPortfolio,
+      countervalueChange: { percentage: 0.08, value: 80 },
+    });
 
-    renderHook(() => useAnalyticsViewModel(), {
+    const { result } = renderHook(() => useAnalyticsViewModel(), {
       initialState: {
         ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { graphRework: true } } }),
         settings: {
@@ -68,6 +82,6 @@ describe("useAnalyticsViewModel", () => {
       },
     });
 
-    expect(mockUsePortfolioBalanceDisplayState).toHaveBeenCalledWith({ legacyRange: true });
+    expect(result.current.balanceInfo.valueChange).toEqual({ percentage: 0.08, value: 80 });
   });
 });

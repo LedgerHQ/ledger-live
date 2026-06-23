@@ -17,6 +17,10 @@ jest.mock("~/renderer/screens/dashboard/GlobalSummary", () => ({
   default: () => <div data-testid="portfolio-balance-summary">PortfolioBalanceSummary</div>,
 }));
 
+jest.mock("../components/ChartSection", () => ({
+  ChartSection: () => <div data-testid="analytics-chart-section">ChartSection</div>,
+}));
+
 let intersectionCallback: IntersectionObserverCallback;
 const mockObserve = jest.fn();
 const mockDisconnect = jest.fn();
@@ -44,6 +48,7 @@ const defaultViewModel = {
   selectedTimeRange: "month",
   navigateToDashboard: mockNavigateToDashboard,
   balanceInfo: mockPortfolioBalanceInfo,
+  shouldDisplayPnl: false,
 };
 
 describe("Analytics", () => {
@@ -58,6 +63,19 @@ describe("Analytics", () => {
 
     expect(screen.getByText("Analytics")).toBeVisible();
     expect(screen.getByTestId("analytics-chart")).toBeVisible();
+    expect(screen.getByTestId("portfolio-balance-summary")).toBeVisible();
+  });
+
+  it("should render the Lumen chart section when shouldDisplayPnl is true", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayPnl: true,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.getByTestId("analytics-chart-section")).toBeVisible();
+    expect(screen.queryByTestId("portfolio-balance-summary")).not.toBeInTheDocument();
   });
 
   it("should call navigateToDashboard when back button is clicked", async () => {
