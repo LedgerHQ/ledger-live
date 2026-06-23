@@ -13,8 +13,9 @@ import { listCryptoCurrencies } from "./currencies";
  * and exposes each currency once, while the domain registry is keyed by `.id`.
  */
 
-// Every legacy currency incl. dev/testnet + terminated.
-const legacyCurrencies = listCryptoCurrencies(true, true);
+// Every legacy currency incl. dev/testnet. Terminated currencies are always included in
+// the store arrays (the `withTerminated` parameter was removed in LIVE-32899).
+const legacyCurrencies = listCryptoCurrencies(true);
 const legacyIds = legacyCurrencies.map(c => c.id);
 const legacyById = new Map<string, CryptoCurrency>(legacyCurrencies.map(c => [c.id, c]));
 
