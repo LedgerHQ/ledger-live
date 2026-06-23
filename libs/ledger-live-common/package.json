@@ -19,6 +19,30 @@
       "*.json": [
         "*.json"
       ],
+      "exchange/transactionStatus": [
+        "lib-es/exchange/swapTransactionStatus/transactionStatus"
+      ],
+      "exchange/transactionStatus/index": [
+        "lib-es/exchange/swapTransactionStatus/transactionStatus"
+      ],
+      "exchange/transactionStatus/fetchSwapStatus": [
+        "lib-es/exchange/swapTransactionStatus/api/fetchSwapStatus"
+      ],
+      "exchange/transactionStatus/fromSwapOperation": [
+        "lib-es/exchange/swapTransactionStatus/history/fromSwapOperation"
+      ],
+      "exchange/transactionStatus/parseParams": [
+        "lib-es/exchange/swapTransactionStatus/params/parseParams"
+      ],
+      "exchange/transactionStatus/statusController": [
+        "lib-es/exchange/swapTransactionStatus/status/statusController"
+      ],
+      "exchange/transactionStatus/statusValues": [
+        "lib-es/exchange/swapTransactionStatus/status/statusValues"
+      ],
+      "exchange/transactionStatus/types": [
+        "lib-es/exchange/swapTransactionStatus/types"
+      ],
       "*": [
         "lib-es/*"
       ],
@@ -46,6 +70,46 @@
         "./src/*.tsx"
       ],
       "default": "./lib-es/*.js"
+    },
+    "./exchange/transactionStatus": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/transactionStatus.js"
+    },
+    "./exchange/transactionStatus/index": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/transactionStatus.js"
+    },
+    "./exchange/transactionStatus/fetchSwapStatus": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/api/fetchSwapStatus.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/api/fetchSwapStatus.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/api/fetchSwapStatus.js"
+    },
+    "./exchange/transactionStatus/fromSwapOperation": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/history/fromSwapOperation.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/history/fromSwapOperation.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/history/fromSwapOperation.js"
+    },
+    "./exchange/transactionStatus/parseParams": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/params/parseParams.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/params/parseParams.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/params/parseParams.js"
+    },
+    "./exchange/transactionStatus/statusController": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/status/statusController.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/status/statusController.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/status/statusController.js"
+    },
+    "./exchange/transactionStatus/statusValues": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/status/statusValues.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/status/statusValues.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/status/statusValues.js"
+    },
+    "./exchange/transactionStatus/types": {
+      "@ledgerhq/source": "./src/exchange/swapTransactionStatus/types.ts",
+      "types": "./lib-es/exchange/swapTransactionStatus/types.d.ts",
+      "default": "./lib-es/exchange/swapTransactionStatus/types.js"
     },
     ".": {
       "default": "./lib-es/index.js"

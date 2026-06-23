@@ -1,10 +1,10 @@
-import type { SwapStatus } from "../swap/types";
+import type { SwapStatus } from "../../swap/types";
 import type {
   SwapTransactionStatusParseResult,
   SwapTransactionStatusParamsError,
   SwapTransactionStatusRawParams,
-} from "./types";
-import { isTransactionStatusValue } from "./statusValues";
+} from "../types";
+import { isTransactionStatusValue } from "../status/statusValues";
 
 const ALLOWED_REDIRECT_PROTOCOLS = new Set(["https:", "ledgerlive:", "ledgerwallet:"]);
 
