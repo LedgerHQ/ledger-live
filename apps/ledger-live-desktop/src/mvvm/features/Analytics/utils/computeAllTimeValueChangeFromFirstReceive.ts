@@ -1,18 +1,11 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { meaningfulPercentage } from "@ledgerhq/live-countervalues/portfolio";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, ValueChange } from "@ledgerhq/types-live";
-
-function meaningfulPercentage(delta: number, divider: number): number | null {
-  if (delta && divider && divider !== 0) {
-    const percent = delta / divider;
-    if (percent < 100_000) return percent;
-  }
-  return null;
-}
 
 export function computeAllTimeValueChangeFromFirstReceive(
   accounts: AccountLike[],
@@ -55,6 +48,6 @@ export function computeAllTimeValueChangeFromFirstReceive(
 
   return {
     value,
-    percentage: meaningfulPercentage(value, firstReceiveCountervalue),
+    percentage: meaningfulPercentage(value, firstReceiveCountervalue) ?? null,
   };
 }

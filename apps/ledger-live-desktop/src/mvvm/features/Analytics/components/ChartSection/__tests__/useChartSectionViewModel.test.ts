@@ -96,20 +96,20 @@ describe("useChartSectionViewModel", () => {
     expect(result.current.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
   });
 
-  it("formats the trend from balanceInfo value change", () => {
+  it("passes valueChange from balanceInfo to the view", () => {
+    const valueChange = { percentage: 0.0523, value: 100 };
     const { result } = renderHook(
       () =>
         useChartSectionViewModel({
           balanceInfo: {
             ...mockPortfolioBalanceInfo,
-            valueChange: { percentage: 0.0523, value: 100 },
+            valueChange,
           },
         }),
       { initialState },
     );
 
-    expect(result.current.percentageText).toBe("+5.23%");
-    expect(result.current.trendVariant).toBe("positive");
+    expect(result.current.valueChange).toBe(valueChange);
   });
 
   it("exposes the sync loading state from usePortfolioBalanceDisplayState", () => {

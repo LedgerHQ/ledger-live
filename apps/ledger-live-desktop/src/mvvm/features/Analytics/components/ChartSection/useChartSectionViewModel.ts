@@ -3,8 +3,8 @@ import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import { formatPrice } from "@ledgerhq/live-currency-format";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
+import type { ValueChange } from "@ledgerhq/types-live";
 import {
   type PortfolioBalanceInfo,
   usePortfolioBalanceDisplayState,
@@ -18,9 +18,14 @@ import {
   type LineChartSeries,
   type LineChartTooltipTitle,
   type LineChartValueFormatter,
-  type LineChartXAxisConfig,
-  type LineChartYAxisConfig,
 } from "LLD/components/LineChart";
+import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
+import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
+import {
+  buildLineChartBottomPaddedYAxisConfig,
+  buildLineChartXAxisConfig,
+  LINE_CHART_VIEW_HEIGHT,
+} from "LLD/components/LineChart/utils/lineChartAxisConfig";
 import { usePortfolio } from "~/renderer/actions/portfolio";
 import {
   counterValueCurrencySelector,
@@ -32,28 +37,11 @@ import { setSelectedTimeRange } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
 import { useAssetChartDateFormatter } from "LLD/features/AssetDetail/hooks/useAssetChartDateFormatter";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { useTrendViewModel } from "LLD/features/Portfolio/hooks/useTrendViewModel";
 import {
   ANALYTICS_CHART_RANGES,
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
 } from "../../utils/portfolioRangeMapping";
-
-const MIN_X_AXIS_TICKS = 5;
-const MIN_X_AXIS_TICKS_1D = 8;
-const CHART_BASE_HEIGHT = 240;
-const Y_AXIS_OFFSET_BOTTOM_PX = 50;
-const CHART_HEIGHT = CHART_BASE_HEIGHT + Y_AXIS_OFFSET_BOTTOM_PX;
-
-function getEvenlySpacedTicks(length: number, minTicks: number): number[] {
-  if (length <= 0) return [];
-  if (length <= minTicks) return Array.from({ length }, (_, index) => index);
-
-  const ticks = Array.from({ length: minTicks }, (_, index) =>
-    Math.round((index * (length - 1)) / (minTicks - 1)),
-  );
-  return Array.from(new Set(ticks));
-}
 
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
@@ -67,8 +55,7 @@ export type ChartSectionViewModelResult = Readonly<{
   isLoading: boolean;
   shouldDisplayBalanceRefreshRework: boolean;
   balanceFormatter: (value: number) => FormattedValue;
-  percentageText: string;
-  trendVariant: "positive" | "negative" | "neutral";
+  valueChange: ValueChange;
   series: LineChartSeries[];
   height: number;
   selectedRange: LineChartRange;
@@ -80,8 +67,8 @@ export type ChartSectionViewModelResult = Readonly<{
   onScrubberPositionChange: LineChartScrubberPositionChange;
   showXAxis: boolean;
   showYAxis: boolean;
-  xAxis: LineChartXAxisConfig;
-  yAxis: LineChartYAxisConfig;
+  xAxis: ReturnType<typeof buildLineChartXAxisConfig>;
+  yAxis: ReturnType<typeof buildLineChartBottomPaddedYAxisConfig>;
   points: ReturnType<typeof getExtremaPointMarkers>;
   ranges: typeof ANALYTICS_CHART_RANGES;
   discreet: boolean;
@@ -131,12 +118,8 @@ export function useChartSectionViewModel({
 
   const points = useMemo(() => getExtremaPointMarkers(series), [series]);
 
-  const formatValue = useCallback<LineChartValueFormatter>(
-    value =>
-      formatPrice(fiatUnit, new BigNumber(value).times(10 ** fiatUnit.magnitude), {
-        showCode: true,
-        locale,
-      }),
+  const formatValue = useMemo(
+    () => createFiatLineChartValueFormatter(fiatUnit, locale),
     [fiatUnit, locale],
   );
 
@@ -151,43 +134,17 @@ export function useChartSectionViewModel({
 
   const formatDate = useAssetChartDateFormatter(selectedRange);
 
-  const tooltipTitle = useCallback<LineChartTooltipTitle>(
-    dataIndex => {
-      const timestamp = timestamps[dataIndex];
-      if (timestamp == null) return undefined;
-      return formatDate(timestamp);
-    },
+  const tooltipTitle = useCallback(
+    createLineChartTooltipTitle(timestamps, formatDate),
     [timestamps, formatDate],
   );
 
-  const xAxis = useMemo<LineChartXAxisConfig>(
-    () => ({
-      showLine: false,
-      ticks: getEvenlySpacedTicks(
-        timestamps.length,
-        selectedRange === "1d" ? MIN_X_AXIS_TICKS_1D : MIN_X_AXIS_TICKS,
-      ),
-      tickLabelFormatter: value => {
-        const timestamp = timestamps[Number(value)];
-        return timestamp == null ? "" : formatDate(timestamp);
-      },
-    }),
+  const xAxis = useMemo(
+    () => buildLineChartXAxisConfig({ timestamps, selectedRange, formatDate }),
     [timestamps, formatDate, selectedRange],
   );
 
-  const yAxis = useMemo<LineChartYAxisConfig>(
-    () => ({
-      domain: ({ min, max }) => {
-        const range = max - min || Math.abs(max) || 1;
-        const valuePerPx = range / CHART_BASE_HEIGHT;
-        return {
-          min: min - Y_AXIS_OFFSET_BOTTOM_PX * valuePerPx,
-          max,
-        };
-      },
-    }),
-    [],
-  );
+  const yAxis = useMemo(() => buildLineChartBottomPaddedYAxisConfig(), []);
 
   const onScrubberPositionChange = useCallback<LineChartScrubberPositionChange>(
     index => {
@@ -214,10 +171,6 @@ export function useChartSectionViewModel({
 
   const balance = hoveredBalance ?? balanceInfo.totalBalance;
   const isChartLoading = !portfolio.balanceAvailable && portfolio.balanceHistory.length === 0;
-  const { percentageText, variant: trendVariant } = useTrendViewModel({
-    valueChange: balanceInfo.valueChange,
-    useDiscreetMasking: true,
-  });
 
   return {
     title: t("dashboard.header"),
@@ -227,10 +180,9 @@ export function useChartSectionViewModel({
     isLoading,
     shouldDisplayBalanceRefreshRework,
     balanceFormatter,
-    percentageText,
-    trendVariant,
+    valueChange: balanceInfo.valueChange,
     series,
-    height: CHART_HEIGHT,
+    height: LINE_CHART_VIEW_HEIGHT,
     selectedRange,
     onRangeChange,
     color,

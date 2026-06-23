@@ -1,7 +1,7 @@
 import React from "react";
 import { AmountDisplay, Skeleton } from "@ledgerhq/lumen-ui-react";
 import { LineChart } from "LLD/components/LineChart";
-import { trendPercentageBody2Styles } from "LLD/shared/trendPercentageStyles";
+import { Trend } from "LLD/features/Portfolio/components/Trend";
 import type { ChartSectionViewModelResult } from "./useChartSectionViewModel";
 
 type ChartSectionViewProps = Readonly<ChartSectionViewModelResult>;
@@ -14,8 +14,7 @@ export function ChartSectionView({
   isLoading,
   shouldDisplayBalanceRefreshRework,
   balanceFormatter,
-  percentageText,
-  trendVariant,
+  valueChange,
   series,
   height,
   selectedRange,
@@ -50,16 +49,13 @@ export function ChartSectionView({
             <Skeleton className="h-48 w-256 rounded-md" data-testid="analytics-balance-skeleton" />
           )}
           {balanceAvailable && (
-            <div className="flex items-baseline gap-4" data-testid="analytics-balance-trend">
-              <span
-                className={trendPercentageBody2Styles({ variant: trendVariant })}
-                data-testid="analytics-balance-trend-percentage"
-              >
-                {percentageText}
-              </span>
-              <span className="body-2 text-base">·</span>
-              <span className="body-2 text-base">{rangeLabel}</span>
-            </div>
+            <Trend
+              valueChange={valueChange}
+              suffixLabel={rangeLabel}
+              className="items-baseline"
+              testId="analytics-balance-trend"
+              percentageTestId="analytics-balance-trend-percentage"
+            />
           )}
         </div>
       </div>
