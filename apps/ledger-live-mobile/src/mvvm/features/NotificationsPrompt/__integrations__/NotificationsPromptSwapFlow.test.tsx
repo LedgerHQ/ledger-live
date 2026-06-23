@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { CommonActions, NavigationProp, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { getTransactionStatus } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import {
   act,
   renderWithReactQuery as render,
@@ -18,6 +19,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { NavigatorName, ScreenName } from "~/const";
 import GlobalDrawers from "~/GlobalDrawers";
 import { track } from "~/analytics";
+import { closeSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
@@ -37,8 +39,23 @@ jest.mock("~/analytics", () => {
 jest.mock("~/screens/Swap/LiveApp/SwapLiveAppWallet40", () => ({
   SwapLiveAppWallet40: () => null,
 }));
+jest.mock("@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index", () => ({
+  getTransactionStatus: jest.fn(),
+}));
+
+// This test verifies the notification opt-in drawer, not the swap transaction status
+// drawer. The two share a single QueuedDrawer queue, and the real status drawer can't
+// complete its close lifecycle in tests — the @gorhom/bottom-sheet mock never fires
+// onDismiss — so it would hold the queue slot and the opt-in drawer could never mount.
+// Stub it so it never occupies the queue; its open/closed state is driven directly via
+// redux below, and its own behaviour is covered by the SwapTransactionStatus tests.
+jest.mock("LLM/features/SwapTransactionStatus", () => {
+  const actual = jest.requireActual("LLM/features/SwapTransactionStatus");
+  return { ...actual, SwapTransactionStatusDrawerWrapper: () => null };
+});
 
 const featureFlagsForSwapPrompt = createNotificationsPromptFeatureFlags();
+const mockedGetTransactionStatus = jest.mocked(getTransactionStatus);
 
 describe("NotificationsPrompt swap flow", () => {
   beforeAll(() => {
@@ -47,6 +64,15 @@ describe("NotificationsPrompt swap flow", () => {
 
   beforeEach(async () => {
     jest.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
+    mockedGetTransactionStatus.mockResolvedValue({
+      provider: "changelly",
+      swapId: swapOperation.swapId,
+      status: "finished",
+      fromAccountId: MockedAccounts.active[0].id,
+      toAccountId: MockedAccounts.active[0].id,
+      sentAmount: swapOperation.fromAmount.toString(),
+      receivedAmount: swapOperation.toAmount.toString(),
+    });
     await storage.deleteAll();
   });
 
@@ -55,6 +81,7 @@ describe("NotificationsPrompt swap flow", () => {
   });
 
   afterEach(() => {
+    jest.clearAllTimers();
     jest.clearAllMocks();
   });
 
@@ -133,7 +160,12 @@ describe("NotificationsPrompt swap flow", () => {
         <SwapFlowTestWrapper>
           <HomeScreen swapParams={swapParams} />
         </SwapFlowTestWrapper>,
-        { overrideInitialState: overrideSwapPromptInitialState },
+        {
+          overrideInitialState: overrideSwapPromptInitialState,
+          userEventOptions: {
+            advanceTimers: delay => jest.advanceTimersByTime(delay),
+          },
+        },
       );
     }
 
@@ -148,8 +180,8 @@ describe("NotificationsPrompt swap flow", () => {
       );
 
       await user.press(screen.getAllByTestId("NavigationHeaderCloseButton")[0]);
-      await act(async () => {
-        await jest.runOnlyPendingTimersAsync();
+      act(() => {
+        jest.runOnlyPendingTimers();
       });
 
       expect(track).toHaveBeenCalledWith(
@@ -178,8 +210,8 @@ describe("NotificationsPrompt swap flow", () => {
       });
     });
 
-    it("should prompt only after closing history when swap success opens history", async () => {
-      const { user } = renderWalletV4SwapFlow(swapSuccessParams);
+    it("should prompt notifications drawer after closing transaction status and leaving history", async () => {
+      const { user, store } = renderWalletV4SwapFlow(swapSuccessParams);
 
       await waitFor(() => expect(screen.getByTestId("swap-success-title")).toBeVisible());
       expect(track).not.toHaveBeenCalledWith(
@@ -193,10 +225,20 @@ describe("NotificationsPrompt swap flow", () => {
       expect(track).not.toHaveBeenCalledWith(
         "attempt_to_trigger_push_notification_drawer_after_action",
       );
+      expect(store.getState().swapTransactionStatusDrawer.isOpen).toBe(true);
+      expect(screen.queryByText(/allow notifications/i)).toBeNull();
+
+      // Dismiss the status drawer via state — this test doesn't exercise its UI. Closing it
+      // before leaving history mirrors the real flow (the prompt surfaces only afterwards).
+      act(() => {
+        store.dispatch(closeSwapTransactionStatusDrawer());
+      });
+      expect(store.getState().swapTransactionStatusDrawer.isOpen).toBe(false);
+      expect(screen.queryByText(/allow notifications/i)).toBeNull();
 
       await user.press(screen.getAllByTestId("navigation-header-back-button")[0]);
-      await act(async () => {
-        await jest.runOnlyPendingTimersAsync();
+      act(() => {
+        jest.runOnlyPendingTimers();
       });
 
       expect(track).toHaveBeenCalledWith(
@@ -210,6 +252,11 @@ describe("NotificationsPrompt swap flow", () => {
           drawerPromptTarget: "globalPushNotifications",
         },
       );
+
+      expect(store.getState().notifications.isPushNotificationsModalOpen).toBe(true);
+      await waitFor(() => {
+        expect(screen.getByText(/allow notifications/i)).toBeVisible();
+      });
 
       await user.press(screen.getByText(/allow notifications/i));
       expect(track).toHaveBeenCalledWith("button_clicked", {
