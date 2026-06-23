@@ -5,10 +5,22 @@ import type {
   CustomFeeConfig,
   FeeAssetsConfig,
   FeePresetOption,
+  FeeUnitLabel,
   FlowEffect,
   SelfTransferPolicy,
   SendDescriptor,
 } from "../types";
+
+export function resolveFeeUnitLabel(
+  unitLabel: FeeUnitLabel | undefined,
+  currency: CryptoOrTokenCurrency | undefined,
+): string | undefined {
+  if (typeof unitLabel === "function") {
+    return currency ? unitLabel(currency) : undefined;
+  }
+
+  return unitLabel;
+}
 
 /** Builds a (currency) => T helper that reads from the send descriptor with a fallback when missing. */
 function fromDescriptor<T>(
@@ -21,16 +33,23 @@ function fromDescriptor<T>(
   };
 }
 
+const noCustomFeeConfig: CustomFeeConfig | null = null;
+const noFeeAssetsConfig: FeeAssetsConfig | null = null;
+const noCoinControlConfig: CoinControlConfig | null = null;
+const noAmountPlugins: readonly string[] = [];
+const noAmountEffects: readonly FlowEffect[] = [];
+const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
+
 export const sendFeatures = {
   canSendMax: fromDescriptor(d => d.amount?.canSendMax, true),
   hasMemo: fromDescriptor(d => d.inputs.memo != null, false),
   hasFeePresets: fromDescriptor(d => d.fees.hasPresets, false),
   hasCustomFees: fromDescriptor(d => d.fees.hasCustom, false),
-  getCustomFeeConfig: fromDescriptor(d => d.fees.custom, null as CustomFeeConfig | null),
+  getCustomFeeConfig: fromDescriptor(d => d.fees.custom, noCustomFeeConfig),
   hasCustomAssets: fromDescriptor(d => d.fees.hasCustomAssets, false),
-  getCustomAssetsConfig: fromDescriptor(d => d.fees.customAssets, null as FeeAssetsConfig | null),
+  getCustomAssetsConfig: fromDescriptor(d => d.fees.customAssets, noFeeAssetsConfig),
   hasCoinControl: fromDescriptor(d => d.fees.hasCoinControl, false),
-  getCoinControlConfig: fromDescriptor(d => d.fees.coinControl, null as CoinControlConfig | null),
+  getCoinControlConfig: fromDescriptor(d => d.fees.coinControl, noCoinControlConfig),
   getFeePresetOptions: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,
@@ -65,8 +84,8 @@ export const sendFeatures = {
 
     return allowZeroAmount ?? false;
   },
-  getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), [] as readonly string[]),
-  getAmountEffects: fromDescriptor(d => d.amount?.effects, [] as readonly FlowEffect[]),
+  getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), noAmountPlugins),
+  getAmountEffects: fromDescriptor(d => d.amount?.effects, noAmountEffects),
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,
@@ -80,7 +99,7 @@ export const sendFeatures = {
   getMemoOptions: fromDescriptor(d => d.inputs.memo?.options, undefined),
   getMemoDefaultOption: fromDescriptor(d => d.inputs.memo?.defaultOption, undefined),
   supportsDomain: fromDescriptor(d => d.inputs.recipientSupportsDomain, false),
-  getSelfTransferPolicy: fromDescriptor(d => d.selfTransfer, "impossible" as SelfTransferPolicy),
+  getSelfTransferPolicy: fromDescriptor(d => d.selfTransfer, defaultSelfTransferPolicy),
   getUserRefusedTransactionErrorName: fromDescriptor(
     d => d.errors?.userRefusedTransaction,
     "TransactionRefusedOnDevice",

@@ -34,10 +34,10 @@ apps/ledger-live-desktop/tools/                          @ledgerhq/platform
 apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 
 # Platform — domain
-domain/entity/unit                                       @ledgerhq/platform
-domain/entity/crypto-currency                            @ledgerhq/platform
-domain/entity/crypto-asset                               @ledgerhq/platform
-domain/api/crypto-assets                                 @ledgerhq/platform
+/domain/                                                 @ledgerhq/platform
+
+# Platform — features
+/features/                                               @ledgerhq/platform
 
 # Platform — shared
 shared/feature-flags                                     @ledgerhq/platform
@@ -266,6 +266,8 @@ libs/ledger-live-common/src/customImage/                            @ledgerhq/li
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/     @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/components/DeviceActionContent/   @ledgerhq/live-devices
+apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/ @ledgerhq/live-devices
+apps/ledger-live-desktop/src/mvvm/components/DeviceActionContent/  @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/live-devices
@@ -279,6 +281,8 @@ apps/ledger-live-mobile/src/transport/                             @ledgerhq/liv
 apps/ledger-live-mobile/src/react-native-hw-transport-ble/         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/Settings/Debug/Features/DeviceIntentExecutor/ @ledgerhq/live-devices
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/DeviceIntentExecutorDevTool/ @ledgerhq/live-devices
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/DeviceActionContentDevTool/  @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
@@ -472,10 +476,15 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 /nx.json                                              @ledgerhq/platform @ledgerhq/wallet-ci
 
 # Platform — Agent files
-AGENTS.md                         @ledgerhq/platform
-/CLAUDE.md                        @ledgerhq/platform
-.agents/                          @ledgerhq/platform
-.github/copilot-instructions.md   @ledgerhq/platform
+.agents/                           @ledgerhq/platform
+.claude/                           @ledgerhq/platform
+.codex                             @ledgerhq/platform
+.cursor/                           @ledgerhq/platform
+.github/copilot-instructions.md    @ledgerhq/platform
+.koda/                             @ledgerhq/platform
+/CLAUDE.md                         @ledgerhq/platform
+/docs/                             @ledgerhq/platform
+AGENTS.md                          @ledgerhq/platform
 
 # Monitoring
 apps/ledger-live-desktop/src/datadog/                 @ledgerhq/platform

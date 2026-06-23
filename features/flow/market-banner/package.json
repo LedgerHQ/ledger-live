@@ -11,7 +11,7 @@
     "lint": "oxlint src && pnpm lint:tailwind",
     "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
-    "lint:tailwind": "eslint -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"

@@ -1,5 +1,27 @@
 # @ledgerhq/device-intent
 
+## 3.3.0
+
+### Minor Changes
+
+- [#18302](https://github.com/LedgerHQ/ledger-live/pull/18302) [`3cf8c3f`](https://github.com/LedgerHQ/ledger-live/commit/3cf8c3fc7a3e4143576e50ec953b995982ea86a6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Replace the DeviceIntentExecutor `cancellableUI` prop with the `ModalLock` pattern to control bottom sheet dismissability. The drawer is now locked (no close button, backdrop and pan-down disabled) while a device action is pending or in progress (unlock, allow secure connection, confirm open app, installing app, loading), and dismissable otherwise.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.3
+
+## 3.3.0-next.0
+
+### Minor Changes
+
+- [#18302](https://github.com/LedgerHQ/ledger-live/pull/18302) [`3cf8c3f`](https://github.com/LedgerHQ/ledger-live/commit/3cf8c3fc7a3e4143576e50ec953b995982ea86a6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Replace the DeviceIntentExecutor `cancellableUI` prop with the `ModalLock` pattern to control bottom sheet dismissability. The drawer is now locked (no close button, backdrop and pan-down disabled) while a device action is pending or in progress (unlock, allow secure connection, confirm open app, installing app, loading), and dismissable otherwise.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.3-next.0
+
 ## 3.2.0
 
 ### Minor Changes

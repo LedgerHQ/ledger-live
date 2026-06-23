@@ -45,6 +45,7 @@ import { TezosStakeModal } from "./modal/tezos.stake.modal";
 import { TezosEarningChoiceModal } from "./modal/tezos.earning.choice.modal";
 import { TezosUnstakeModal } from "./modal/tezos.unstake.modal";
 import { TezosUnstakeRequiredModal } from "./modal/tezos.unstake.required.modal";
+import { TopBarSearch } from "./topBarSearch.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -93,4 +94,5 @@ export class Application extends PageHolder {
   public tezosEarningChoice = new TezosEarningChoiceModal(this.page);
   public tezosUnstake = new TezosUnstakeModal(this.page);
   public tezosUnstakeRequired = new TezosUnstakeRequiredModal(this.page);
+  public topBarSearch = new TopBarSearch(this.page);
 }

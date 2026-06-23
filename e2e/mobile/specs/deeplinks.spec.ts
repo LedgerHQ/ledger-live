@@ -38,6 +38,11 @@ describe("DeepLinks Tests", () => {
     await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
   });
 
+  beforeEach(async () => {
+    // workaround: modular drawer blocks deeplink
+    await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
+  });
+
   (isSmokeTestRun ? it.skip : it)("should open My Ledger page", async () => {
     await app.manager.openViaDeeplink();
     await app.manager.expectManagerPage();

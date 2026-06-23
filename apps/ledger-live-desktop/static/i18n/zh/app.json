@@ -408,6 +408,42 @@
         "refunded" : "已退款"
       }
     },
+    "modals" : {
+      "transactionStatus" : {
+        "title" : "互换 {{sendTicker}} → {{receiveTicker}}",
+        "sections" : {
+          "status" : {
+            "heading" : "状态",
+            "sendPending" : "正在发送 {{ticker}}",
+            "sendCompleted" : "已发送 {{ticker}}",
+            "receivePending" : "正在接收 {{ticker}}",
+            "receiveCompleted" : "已接收 {{ticker}}"
+          },
+          "details" : {
+            "networkFees" : "网络费用",
+            "receiveAccount" : "接收账户",
+            "provider" : "提供方",
+            "swapId" : "互换代码"
+          }
+        },
+        "statusLabels" : {
+          "pending" : "进行中",
+          "onhold" : "已暂停",
+          "expired" : "已逾期",
+          "finished" : "已完成",
+          "refunded" : "已退款",
+          "cancelled" : "已取消",
+          "unknown" : "未知"
+        },
+        "actions" : {
+          "viewInExplorer" : "在浏览器中查看",
+          "copied" : "已复制"
+        },
+        "accessibility" : {
+          "copySwapId" : "复制互换 ID"
+        }
+      }
+    },
     "exchangeDrawer" : {
       "title" : "确认您的交易",
       "completed" : {
@@ -1609,6 +1645,23 @@
   },
   "market" : {
     "title" : "市场",
+    "topCards" : {
+      "error" : "出错了",
+      "moodIndex" : {
+        "title" : "情绪指数"
+      },
+      "globalMarketCap" : {
+        "title" : "总市值",
+        "period" : "今天"
+      },
+      "altSeason" : {
+        "title" : "季",
+        "levels" : {
+          "bitcoin" : "比特币",
+          "altcoin" : "替代币"
+        }
+      }
+    },
     "currency" : "货币",
     "rangeLabel" : "时间",
     "goBack" : "返回",
@@ -1622,12 +1675,36 @@
       "applyFilters" : "使用筛选",
       "clearAll" : "清除所有"
     },
+    "assetsTitle" : "多种资产",
+    "marketTable" : {
+      "crypto" : "名称",
+      "price" : "市场价格",
+      "volume" : "交易量",
+      "change" : "更改",
+      "marketCap" : "市值",
+      "actions" : "操作",
+      "menu" : {
+        "more" : "更多",
+        "buySell" : "买入 / 卖出",
+        "addToFavourites" : "添加到收藏",
+        "removeFromFavourites" : "从收藏中删除"
+      }
+    },
     "marketList" : {
       "crypto" : "加密货币",
       "price" : "价格",
       "change" : "更改",
       "marketCap" : "市值",
       "last7d" : "最近 7 天"
+    },
+    "assets" : {
+      "categories" : {
+        "accessibilityLabel" : "资产类别",
+        "all" : "全部",
+        "stocks" : "股票",
+        "favorites" : "收藏"
+      },
+      "emptyFavorites" : "暂无收藏"
     },
     "detailsPage" : {
       "priceStatistics" : "价格统计",
@@ -1651,6 +1728,11 @@
       "1W_label" : "1 周",
       "1M_label" : "1 月",
       "1Y_label" : "1 年",
+      "1H_fullLabel" : "1 小时",
+      "1D_fullLabel" : "1 天",
+      "1W_fullLabel" : "1 周",
+      "1M_fullLabel" : "1 个月",
+      "1Y_fullLabel" : "1 年",
       "1h" : "1 小时",
       "24h" : "24 小时",
       "7d" : "7 天",
@@ -4276,9 +4358,12 @@
               "description" : "您可以通过将 {{currencyTicker}} 资产委托给验证者来赚取奖励。",
               "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在解除委托后可用"],
               "warning" : {
-                "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
-              },
-              "seiAssociationWarning" : "您的 Sei 账户尚未在链上关联。在您的账户的第一笔转出交易获得链上确认之前，委托将会失败。先向任意地址发送小数额的 SEI，等待确认，然后再返回进行委托。"
+                "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。",
+                "seiAssociationWarning" : {
+                  "description" : "要进行委托，您需要向任意地址（包括您自己的地址）发送任意数额以激活您的账户。这是 Sei 网络的要求。",
+                  "learnMore" : "了解更多"
+                }
+              }
             },
             "amount" : {
               "title" : "数额"
@@ -4361,6 +4446,33 @@
               "success" : {
                 "title" : "您的资产已成功解除委托",
                 "description" : "<0>{{amount}}</0>已从<0>{{validator}}</0>解除委托",
+                "cta" : "查看详情"
+              },
+              "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "cta" : "提取",
+        "flow" : {
+          "title" : "提取",
+          "steps" : {
+            "withdraw" : {
+              "title" : "提取",
+              "warning" : "撤销委托的数额已完成时间锁定，并将退回至您的可用余额。",
+              "fields" : {
+                "validator" : "验证者"
+              }
+            },
+            "connectDevice" : {
+              "title" : "设备"
+            },
+            "confirmation" : {
+              "title" : "确认",
+              "success" : {
+                "title" : "您的资产已成功提取。",
+                "description" : "<0>{{amount}}</0> 已从 <0>{{validator}}</0> 提取",
                 "cta" : "查看详情"
               },
               "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
@@ -4624,6 +4736,10 @@
     }
   },
   "tezos" : {
+    "operationTypes" : {
+      "UNSTAKE" : "解除质押",
+      "FINALIZE_UNSTAKE" : "已解除权益质押"
+    },
     "earnChoice" : {
       "title" : "赚取 Tezos 奖励：委托或质押",
       "description" : "将您的 Tezos (XTZ) 委托给 Baker，即可赚取奖励，同时始终保持对资产的完全控制。若希望获得更高收益，您可以质押 XTZ，了解其中所涉及的较低风险。选择增长资产的最佳方式。",
@@ -4702,7 +4818,7 @@
             "success" : {
               "title" : "您已成功权益质押资产",
               "text" : "您已质押了{{amount}} 。当区块链确认该笔交易后，您的账户余额将会更新。",
-              "cta" : "访问赚取功能面板"
+              "cta" : "访问账户功能面板"
             },
             "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。",
             "howItWorks" : "权益质押的运作方式"
@@ -4713,15 +4829,15 @@
     "unstakeRequired" : {
       "changeBaker" : {
         "title" : "更换 Baker 验证者前解除质押",
-        "description" : "您与当前的 Baker 验证者质押了 XTZ。在委托给新的 Baker 之前，先解除质押您的资金。"
+        "description" : "您已通过当前的 Baker 验证者质押了 XTZ。在委托给新的 Baker 之前，先解除质押您的所有资金。"
       },
       "endDelegation" : {
         "title" : "结束委托之前，先解除质押",
-        "description" : "您与当前的 Baker 验证者质押了 XTZ。在结束委托之前，先解除质押您的资金。"
+        "description" : "您已通过当前的 Baker 验证者质押了 XTZ。在结束委托之前，先解除质押您的所有资金。"
       },
       "steps" : {
-        "0" : "打开“赚取”菜单，选择“解除质押”。",
-        "1" : "在您的设备上确认数额并提交解除质押交易。",
+        "0" : "打开 Tezos 账户功能面板，并在您的质押版块中选择“解除质押”选项。",
+        "1" : "在您的设备上解除质押最大数额并提交解除质押交易。",
         "2" : "等待约 4 天，解除质押期完成。",
         "3" : "提取后，您可以更改 Baker 验证者或结束委托。"
       },
@@ -5004,6 +5120,10 @@
           "title" : "稳定币预设",
           "desc" : "使用主流稳定币生成 Ethereum、Arbitrum、Optimism、Base、Solana、Tron 和 Algorand 账户（每个网络最多 5 个）。"
         },
+        "stocksGenerate" : {
+          "title" : "股票预设",
+          "desc" : "生成包含来自 DADA（类别=股票) 的顶级代币化股票的账户，作为其网络下的子账户"
+        },
         "currencySelector" : {
           "placeholder" : "选择货币...",
           "searchPlaceholder" : "搜索",
@@ -5022,7 +5142,10 @@
           "generateAccountsQuick" : "生成 {{count}} 个账户",
           "generateEmptyAccount" : "生成空账户",
           "generateStablecoinAccounts" : "生成 {{count}} 个稳定币账户",
-          "generateStablecoinAccounts_other" : "生成 {{count}} 个稳定币账户"
+          "generateStablecoinAccounts_other" : "生成 {{count}} 个稳定币账户",
+          "generateStockAccounts" : "生成 {{count}} 个股票账户",
+          "generateStockAccounts_other" : "生成 {{count}} 个股票账户",
+          "loadingStocks" : "正在加载股票数据…"
         },
         "alerts" : {
           "selectCurrency" : "请至少选择一种货币",
@@ -6263,6 +6386,10 @@
       "transfer_private" : "私密接收者",
       "convert_public_to_private" : "私密接收者",
       "convert_private_to_public" : "公开接收方",
+      "transfer_token_public" : "公开接收方",
+      "transfer_token_private" : "私密接收者",
+      "convert_token_public_to_private" : "私密接收者",
+      "convert_token_private_to_public" : "公开接收方",
       "delegate" : "验证者",
       "redelegate" : "验证者",
       "undelegate" : "验证者",
@@ -8621,11 +8748,17 @@
     "noDeviceTitle" : "您的安全加密货币钱包"
   },
   "marketBanner" : {
-    "title" : "探索市场",
+    "title" : "市场",
     "genericError" : "连接失败",
     "cta" : "查看全部",
     "scrollLeft" : "向左滚动",
     "scrollRight" : "向右滚动",
+    "ranking" : {
+      "trending" : "热门",
+      "gainers" : "获利者",
+      "losers" : "失利者",
+      "favorites" : "收藏"
+    },
     "fearAndGreed" : {
       "title" : "情绪"
     }
@@ -8641,7 +8774,23 @@
     "dialog" : {
       "title" : "情绪指数",
       "content" : "主要根据波动性、市场动能和社交趋势显示整体市场情绪（从 0 到 100）。数值较低表示恐惧，数值较高表示贪婪。",
-      "disclaimer" : "数据来源于 CoinMarketCap 的恐惧与贪婪指数，仅供参考。",
+      "disclaimer" : "数据来自 CoinMarketCap。仅供参考。",
+      "cta" : "知道了"
+    }
+  },
+  "marketCapCard" : {
+    "dialog" : {
+      "title" : "总市值",
+      "content" : "总市值代表所有加密货币市值的总和。",
+      "disclaimer" : "数据来自 CoinMarketCap。仅供参考。",
+      "cta" : "知道了"
+    }
+  },
+  "altSeasonCard" : {
+    "dialog" : {
+      "title" : "替代币指数",
+      "content" : "替代币指数用于衡量比特币相较于其他加密货币的表现。数值越高，表示替代币相对于比特币表现越好。",
+      "disclaimer" : "数据来自 CoinMarketCap。仅供参考。",
       "cta" : "知道了"
     }
   },
@@ -8656,6 +8805,7 @@
   "assets" : {
     "cryptos" : "加密货币",
     "stablecoins" : "稳定币",
+    "stocks" : "股票",
     "cryptoAccounts" : "加密货币账户",
     "accountsCount_one" : "{{count}} 个账户",
     "accountsCount_other" : "{{count}} 个账户",
@@ -8701,6 +8851,9 @@
   "cryptoAssets" : {
     "title" : "加密资产"
   },
+  "stocks" : {
+    "explore" : "探索全部"
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
     "entry" : {
@@ -8709,6 +8862,13 @@
     }
   },
   "topBar" : {
+    "searchPlaceholder" : "搜索资产",
+    "search" : {
+      "noAssetFound" : "未找到资产。",
+      "error" : "连接失败",
+      "cryptos" : "加密货币",
+      "stocks" : "股票"
+    },
     "history" : {
       "cta" : "交易"
     },
@@ -9022,7 +9182,32 @@
     "actionsList" : {
       "help" : "帮助",
       "recover" : "[L] Recover",
+      "backup" : "备份",
       "refer" : "推荐"
+    },
+    "backupHub" : {
+      "title" : "钱包备份",
+      "description" : "综合使用多种助记词恢复备份解决方案保护您的资产。",
+      "back" : "返回",
+      "sections" : {
+        "digital" : "基于数字身份的备份",
+        "physical" : "实体备份"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "创建不会丢失的备份",
+        "inProgress" : "完成激活",
+        "done" : "管理您的备份",
+        "discover" : "探索"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key 恢复钥匙",
+        "description" : "受 PIN 识别码保护的智能卡"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "24 个助记词金属存储",
+        "description" : "水火不侵的保护。"
+      }
     },
     "myLedger" : {
       "title" : "我的 Ledger",

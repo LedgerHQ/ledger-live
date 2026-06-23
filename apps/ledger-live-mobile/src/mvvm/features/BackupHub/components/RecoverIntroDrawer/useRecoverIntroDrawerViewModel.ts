@@ -19,6 +19,7 @@ import {
   trackBackupHubFeatureIntroButtonClicked,
   trackBackupHubFeatureIntroDismissed,
   trackBackupHubFeatureIntroViewed,
+  resetBackupHubFeatureIntroViewTracking,
 } from "../../analytics";
 
 const BACKUP_HUB_FEATURE_INTRO_ID = "backup-hub-feature-intro";
@@ -47,7 +48,6 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
   const isLwmBackupHubEnabled = !!lwmBackupHub?.enabled;
   const isOpen = useSelector(selectIsBackupHubFeatureIntroOpen);
   const deeplinkNonce = useSelector(selectBackupHubFeatureIntroDeeplinkNonce);
-  const hasTrackedViewRef = useRef(false);
   const hasClosedRef = useRef(false);
   const lastHandledDeeplinkNonceRef = useRef(0);
 
@@ -142,15 +142,16 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
 
   useEffect(() => {
     if (!isOpen) {
-      hasTrackedViewRef.current = false;
+      resetBackupHubFeatureIntroViewTracking();
       hasClosedRef.current = false;
       return;
     }
 
-    if (!hasTrackedViewRef.current) {
-      hasTrackedViewRef.current = true;
-      trackBackupHubFeatureIntroViewed();
-    }
+    trackBackupHubFeatureIntroViewed();
+
+    return () => {
+      resetBackupHubFeatureIntroViewTracking();
+    };
   }, [isOpen]);
 
   useEffect(() => {

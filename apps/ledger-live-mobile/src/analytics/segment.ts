@@ -15,7 +15,7 @@ import {
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
 import React, { type RefObject, useCallback } from "react";
-import { ABTestingVariants, idsToLanguage } from "@ledgerhq/types-live";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import type { FeatureId, Features } from "@shared/feature-flags";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
@@ -171,13 +171,9 @@ const getLedgerSyncAttributes = (state: State) => {
 };
 
 const getRebornAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const reborn = analyticsFeatureFlagMethod("llmRebornLP");
-  const isFFEnabled = reborn?.enabled;
-
   return {
-    llmRebornLP_A: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantA : false,
-    llmRebornLP_B: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantB : false,
+    llmRebornLP_A: true,
+    llmRebornLP_B: false,
   };
 };
 

@@ -239,7 +239,9 @@ describe("LargeMoverLandingPage Integration Tests", () => {
       },
     );
 
-    expect(await screen.findByText("£47,123.00")).toBeOnTheScreen();
+    const gbpPrices = await screen.findAllByText("£47,123.00");
+    expect(gbpPrices.length).toBeGreaterThan(0);
+    expect(screen.queryByText("$47,123.00")).toBeNull();
     expect(captured.to?.toLowerCase()).toBe("gbp");
   });
 

@@ -77,6 +77,18 @@
           {
             "group": ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
             "message": "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports."
+          },
+          {
+            "group": [
+              "@ledgerhq/live-common/featureFlags",
+              "@ledgerhq/live-common/featureFlags/index",
+              "@ledgerhq/live-common/featureFlags/FeatureFlagsContext",
+              "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/*",
+              "@ledgerhq/live-common/featureFlags/defaultFeatures",
+              "@ledgerhq/live-common/featureFlags/groupedFeatures"
+            ],
+            "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
+            "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
           }
         ]
       }
@@ -154,6 +166,18 @@
               {
                 "group": ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
                 "message": "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports."
+              },
+              {
+                "group": [
+                  "@ledgerhq/live-common/featureFlags",
+                  "@ledgerhq/live-common/featureFlags/index",
+                  "@ledgerhq/live-common/featureFlags/FeatureFlagsContext",
+                  "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/*",
+                  "@ledgerhq/live-common/featureFlags/defaultFeatures",
+                  "@ledgerhq/live-common/featureFlags/groupedFeatures"
+                ],
+                "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
+                "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
               }
             ]
           }

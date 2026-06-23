@@ -1,5 +1,6 @@
-import type { FeeDescriptor } from "../../../bridge/descriptor/types";
 import { BigNumber } from "bignumber.js";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { FeeDescriptor } from "../../../bridge/descriptor/types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -7,6 +8,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isBigNumber(value: unknown): value is BigNumber {
   return BigNumber.isBigNumber(value);
+}
+
+function getFeePerVByteUnit(currency: CryptoOrTokenCurrency): string | undefined {
+  const unit = currency.units.find(unit => unit.magnitude === 0);
+  return unit ? `${unit.code}/vbyte` : undefined;
 }
 
 type BitcoinFeeItem = {
@@ -46,7 +52,7 @@ export const fees: FeeDescriptor = {
   hasCustom: true,
   hasCoinControl: true,
   presets: {
-    legend: { type: "feeRate", unit: "sat/vbyte", valueFrom: "presetAmount" },
+    legend: { type: "feeRate", unit: getFeePerVByteUnit, valueFrom: "presetAmount" },
     strategyLabelInAmount: "legend",
     getOptions: transaction => {
       if (!isRecord(transaction)) {
@@ -86,7 +92,7 @@ export const fees: FeeDescriptor = {
       {
         key: "feePerByte",
         type: "number",
-        unitLabel: "sat/vbyte",
+        unitLabel: getFeePerVByteUnit,
         suggestedRange: {
           getRange: transaction => {
             if (!isRecord(transaction)) return null;

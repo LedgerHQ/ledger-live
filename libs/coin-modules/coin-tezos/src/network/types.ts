@@ -98,6 +98,19 @@ export function isAPIStakingType(op: APIOperation): op is APIStakingType {
   return op.type === "staking";
 }
 
+export type APIOriginationType = CommonOperationType & {
+  type: "origination";
+  sender: { address: string } | undefined | null;
+  counter: number;
+  contractBalance: number;
+  originatedContract?: {
+    address: string;
+  };
+};
+export function isAPIOriginationType(op: APIOperation): op is APIOriginationType {
+  return op.type === "origination";
+}
+
 // https://api.tzkt.io/#operation/Accounts_GetOperations
 export type AccountsGetOperationsOptions = {
   lastId?: number; // used as a pagination cursor to fetch more transactions
@@ -119,13 +132,7 @@ export type APIOperation =
       type: "activation";
       balance: number;
     })
-  | (CommonOperationType & {
-      type: "origination";
-      contractBalance: number;
-      originatedContract: {
-        address: string;
-      };
-    })
+  | APIOriginationType
   | (CommonOperationType & {
       type: "migration";
       balanceChange: number;

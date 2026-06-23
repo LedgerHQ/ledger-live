@@ -41,7 +41,7 @@ describe("Account name change", () => {
     await app.accounts.openViaDeeplink();
     await app.common.expectAccountName(newAccountName);
     await device.terminateApp();
-    await launchApp();
+    await launchApp({ newInstance: true });
     await device.disableSynchronization();
     await loadConfig("skip-onboarding", true);
     await app.mainNavigation.waitForWallet40Ready();

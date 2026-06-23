@@ -1,9 +1,17 @@
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { AccountLike } from "@ledgerhq/types-live";
-import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  ACCOUNT_SIZE,
+  ExtensionType,
+  getAccountLen,
+  getAccountTypeOfMintType,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import type { PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
+import type { ParsedOnChainMintWithInfo } from "../network/chain/web3";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
   SolanaTokenAccount,
@@ -35,6 +43,34 @@ export function getTokenAccountProgramId(program: SolanaTokenProgram): PublicKey
 
 export function isTokenProgram(program: string): boolean {
   return program === PARSED_PROGRAMS.SPL_TOKEN || program === PARSED_PROGRAMS.SPL_TOKEN_2022;
+}
+
+// Only mint extensions that add an account-side extension affect ATA size.
+const PARSED_MINT_EXTENSION_TO_TYPE: Record<string, ExtensionType> = {
+  transferFeeConfig: ExtensionType.TransferFeeConfig,
+  confidentialTransferMint: ExtensionType.ConfidentialTransferMint,
+  nonTransferable: ExtensionType.NonTransferable,
+  transferHook: ExtensionType.TransferHook,
+};
+
+export function getAtaDataLengthForMint(mint: ParsedOnChainMintWithInfo): number {
+  if (mint.onChainAcc.data.program !== PARSED_PROGRAMS.SPL_TOKEN_2022) {
+    return ACCOUNT_SIZE;
+  }
+
+  // The SPL Associated Token Account program always initializes ImmutableOwner
+  // on Token-2022 ATAs, so every Token-2022 ATA — even when the mint declares
+  // no extensions — is larger than the classic 165-byte account.
+  const accountExtensions: ExtensionType[] = [ExtensionType.ImmutableOwner];
+
+  for (const ext of mint.info.extensions ?? []) {
+    const mintExtensionType = PARSED_MINT_EXTENSION_TO_TYPE[ext.extension];
+    if (mintExtensionType !== undefined) {
+      accountExtensions.push(getAccountTypeOfMintType(mintExtensionType));
+    }
+  }
+
+  return getAccountLen(accountExtensions);
 }
 
 export function bpsToPercent(bps: number): number {

@@ -1,5 +1,47 @@
 # @ledgerhq/types-live
 
+## 6.112.0
+
+### Minor Changes
+
+- [#18222](https://github.com/LedgerHQ/ledger-live/pull/18222) [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7) Thanks [@henri-ly](https://github.com/henri-ly)! - add undelegate for monad
+
+- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855) Thanks [@ysitbon](https://github.com/ysitbon)! - Deprecate the legacy feature-flag types in `feature.ts` (`Feature`, `Features`, `FeatureId`, `FeatureMap`, `OptionalFeatureMap`, `FeatureParam`, and all `Feature_*`). The Ledger Live feature-flag registry has moved to `@shared/feature-flags`; every export now carries a `@deprecated` annotation pointing to its replacement (e.g. `Feature_Noah` → `Features["noah"]`). The types stay exported for backward compatibility and are slated for removal in a future major.
+
+- [#18642](https://github.com/LedgerHQ/ledger-live/pull/18642) [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+- [#18298](https://github.com/LedgerHQ/ledger-live/pull/18298) [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Extract `quickActionsCtasVariant` out of the `feature_lwm_wallet_40` feature flag into a dedicated `feature_lwm_quick_actions_ctas_variant` flag so the A/B test can run independently from other Wallet 4.0 parameters
+
+- [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.3
+
+## 6.112.0-next.1
+
+### Minor Changes
+
+- [#18642](https://github.com/LedgerHQ/ledger-live/pull/18642) [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+## 6.112.0-next.0
+
+### Minor Changes
+
+- [#18222](https://github.com/LedgerHQ/ledger-live/pull/18222) [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7) Thanks [@henri-ly](https://github.com/henri-ly)! - add undelegate for monad
+
+- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855) Thanks [@ysitbon](https://github.com/ysitbon)! - Deprecate the legacy feature-flag types in `feature.ts` (`Feature`, `Features`, `FeatureId`, `FeatureMap`, `OptionalFeatureMap`, `FeatureParam`, and all `Feature_*`). The Ledger Live feature-flag registry has moved to `@shared/feature-flags`; every export now carries a `@deprecated` annotation pointing to its replacement (e.g. `Feature_Noah` → `Features["noah"]`). The types stay exported for backward compatibility and are slated for removal in a future major.
+
+- [#18298](https://github.com/LedgerHQ/ledger-live/pull/18298) [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Extract `quickActionsCtasVariant` out of the `feature_lwm_wallet_40` feature flag into a dedicated `feature_lwm_quick_actions_ctas_variant` flag so the A/B test can run independently from other Wallet 4.0 parameters
+
+- [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.10.3-next.0
+
 ## 6.111.0
 
 ### Minor Changes

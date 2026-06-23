@@ -1,5 +1,35 @@
 # @ledgerhq/coin-tezos
 
+## 7.6.0
+
+### Minor Changes
+
+- [#18344](https://github.com/LedgerHQ/ledger-live/pull/18344) [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Prepare coin-tezos for migration to coin-modules (LIVE-32021, Step 1): move all wallet-related code that depends on `@ledgerhq/types-live` out of `coin-tezos` and into `ledger-live-common`'s `families/tezos` layer. Transaction, deviceTransactionConfig, serialization, CLI, bot specs/deviceActions, the wallet-facing types and the `TezosSigner` interface now live in `families/tezos`; the `AccountLike`-coupled delegation helpers move out of `network/bakers` into `families/tezos/bakers`. `coin-tezos/src` no longer imports `@ledgerhq/types-live`, `@ledgerhq/cryptoassets` or `@ledgerhq/types-cryptoassets`, and the corresponding entrypoints (`./transaction`, `./deviceTransactionConfig`, `./specs`) are removed from its package.json.
+
+- [#18359](https://github.com/LedgerHQ/ledger-live/pull/18359) [`70c658e`](https://github.com/LedgerHQ/ledger-live/commit/70c658e2739c072313cc689ec626a9a73cd02f1c) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Implement `craftRawTransaction`: forge arbitrary Tezos operations (transfers, contract calls, delegations, batches) from partial operation contents, with fee/gas/storage estimation and reveal handling.
+
+- [#18361](https://github.com/LedgerHQ/ledger-live/pull/18361) [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Tezos message signing: a `signMessage` that signs an already-watermarked payload verbatim (normalising the device signature to raw r||s), and wire it as the `tezos` family `messageSigner`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.5
+
+## 7.6.0-next.0
+
+### Minor Changes
+
+- [#18344](https://github.com/LedgerHQ/ledger-live/pull/18344) [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Prepare coin-tezos for migration to coin-modules (LIVE-32021, Step 1): move all wallet-related code that depends on `@ledgerhq/types-live` out of `coin-tezos` and into `ledger-live-common`'s `families/tezos` layer. Transaction, deviceTransactionConfig, serialization, CLI, bot specs/deviceActions, the wallet-facing types and the `TezosSigner` interface now live in `families/tezos`; the `AccountLike`-coupled delegation helpers move out of `network/bakers` into `families/tezos/bakers`. `coin-tezos/src` no longer imports `@ledgerhq/types-live`, `@ledgerhq/cryptoassets` or `@ledgerhq/types-cryptoassets`, and the corresponding entrypoints (`./transaction`, `./deviceTransactionConfig`, `./specs`) are removed from its package.json.
+
+- [#18359](https://github.com/LedgerHQ/ledger-live/pull/18359) [`70c658e`](https://github.com/LedgerHQ/ledger-live/commit/70c658e2739c072313cc689ec626a9a73cd02f1c) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Implement `craftRawTransaction`: forge arbitrary Tezos operations (transfers, contract calls, delegations, batches) from partial operation contents, with fee/gas/storage estimation and reveal handling.
+
+- [#18361](https://github.com/LedgerHQ/ledger-live/pull/18361) [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Tezos message signing: a `signMessage` that signs an already-watermarked payload verbatim (normalising the device signature to raw r||s), and wire it as the `tezos` family `messageSigner`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.5-next.0
+
 ## 7.5.0
 
 ### Minor Changes

@@ -1,4 +1,5 @@
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../../coin-modules/transaction-types";
 
@@ -27,6 +28,8 @@ export type InputDescriptor = Readonly<{
   supportsDomain?: boolean; // Whether the field supports domain names (ENS for EVM)
 }>;
 
+export type FeeUnitLabel = string | ((currency: CryptoOrTokenCurrency) => string | undefined);
+
 /**
  * Descriptor for a single custom fee input field
  */
@@ -36,7 +39,7 @@ export type CustomFeeInputDescriptor = Readonly<{
   /** Input type (currently only "number") */
   type: "number";
   /** Display unit for the input, e.g. "Gwei", "sat/vbyte". Omit for unitless fields (e.g. gas limit). */
-  unitLabel?: string;
+  unitLabel?: FeeUnitLabel;
   /** Optional suggested range displayed below the input */
   suggestedRange?: {
     getRange: (transaction: unknown) => { min: string; max: string } | null;
@@ -179,7 +182,7 @@ export type FeeDescriptor = {
      */
     legend?: {
       type: "none" | "feeRate";
-      unit: string;
+      unit: FeeUnitLabel;
       valueFrom: "presetAmount";
     };
     /**

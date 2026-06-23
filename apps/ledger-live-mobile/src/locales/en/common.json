@@ -1258,13 +1258,13 @@
       "description": "Please try again or contact Ledger Support."
     },
     "TonExcessFee": {
-      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+      "title": "It constitutes a token transfer. You will pay 0.1 GRAM in fees, and any extra will be returned to you."
     },
     "TonNotEnoughBalanceInParentAccount": {
-      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+      "title": "Insufficient funds in main account (GRAM) to calculate fees. The minimum required balance is 0.1 GRAM."
     },
     "TonMinimumRequired": {
-      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+      "title": "Insufficient funds. The minimum required balance is 0.02 GRAM."
     },
     "BackupAppDataError": {
       "title": "Error during app data backup"
@@ -4205,10 +4205,10 @@
       "incompatibility": {
         "explore_compatible_devices": "Explore compatible devices",
         "contact_support": "Contact customer support",
-        "ton_title": "Ledger Nano S™ does not support swapping Ton",
-        "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
-        "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_title": "Ledger Nano S™ does not support swapping Gram",
+        "ton_description": "To swap Gram, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_tokens_title": "Ledger Nano S™ does not support swapping Gram Tokens",
+        "ton_tokens_description": "To swap Gram Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
         "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "near_title": "Ledger Nano S™ does not support swapping Near",

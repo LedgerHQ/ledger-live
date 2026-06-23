@@ -1,5 +1,38 @@
 # @devtools/feature-flags
 
+## 0.5.0
+
+### Minor Changes
+
+- [#18177](https://github.com/LedgerHQ/ledger-live/pull/18177) [`fc60d9e`](https://github.com/LedgerHQ/ledger-live/commit/fc60d9e91ef2e77434a101a1dc2d558afa0aa4ae) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add a sidebar that triggers when clicking on a flag. It contains a switch, a button to restore a flag if it has been overriden and a jsonEditor to change the parameters of the flag. There is also a diffView to see the difference between the jsonEditor content and the current flag parameters.
+
+- [#18316](https://github.com/LedgerHQ/ledger-live/pull/18316) [`59e5b2c`](https://github.com/LedgerHQ/ledger-live/commit/59e5b2c933040d58ac896d7f971eabf834e81edf) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add a ToolBar to devtools feature flags to sort, search, filter, clear all, import and export overrides
+
+### Patch Changes
+
+- Updated dependencies [[`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356)]:
+  - @shared/feature-flags@0.11.0
+
+## 0.5.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
+  - @shared/feature-flags@0.11.0-next.1
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#18177](https://github.com/LedgerHQ/ledger-live/pull/18177) [`fc60d9e`](https://github.com/LedgerHQ/ledger-live/commit/fc60d9e91ef2e77434a101a1dc2d558afa0aa4ae) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add a sidebar that triggers when clicking on a flag. It contains a switch, a button to restore a flag if it has been overriden and a jsonEditor to change the parameters of the flag. There is also a diffView to see the difference between the jsonEditor content and the current flag parameters.
+
+- [#18316](https://github.com/LedgerHQ/ledger-live/pull/18316) [`59e5b2c`](https://github.com/LedgerHQ/ledger-live/commit/59e5b2c933040d58ac896d7f971eabf834e81edf) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add a ToolBar to devtools feature flags to sort, search, filter, clear all, import and export overrides
+
+### Patch Changes
+
+- Updated dependencies [[`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356)]:
+  - @shared/feature-flags@0.11.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

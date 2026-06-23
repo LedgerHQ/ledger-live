@@ -166,6 +166,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format GoChain unit (GO) 1`] = `"123.456.789,00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Gram unit (GRAM) 1`] = `"12.345.678,900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
@@ -363,8 +365,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
@@ -586,6 +586,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format GoChain unit (GO) 1`] = `"123,456,789.00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Gram unit (GRAM) 1`] = `"12,345,678.900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
@@ -783,8 +785,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
@@ -1006,6 +1006,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format GoChain unit (GO) 1`] = `"123.456.789,00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Gram unit (GRAM) 1`] = `"12.345.678,900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
@@ -1203,8 +1205,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
@@ -1426,6 +1426,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format GoChain unit (GO) 1`] = `"123 456 789,00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Gram unit (GRAM) 1`] = `"12 345 678,900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Groestlcoin unit (GRS) 1`] = `"123 456 789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
@@ -1623,8 +1625,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sui unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TX unit (TX) 1`] = `"12 345 678 900,000000- -TX"`;
 
@@ -1846,6 +1846,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format GoChain unit (GO) 1`] = `"123,456,789.00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Gram unit (GRAM) 1`] = `"12,345,678.900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
@@ -2043,8 +2045,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
@@ -2266,6 +2266,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format GoChain unit (GO) 1`] = `"123,456,789.00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Gram unit (GRAM) 1`] = `"12,345,678.900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
@@ -2463,8 +2465,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
@@ -2686,6 +2686,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format GoChain unit (GO) 1`] = `"123.456.789,00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Gram unit (GRAM) 1`] = `"12.345.678,900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
@@ -2883,8 +2885,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
@@ -3106,6 +3106,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format GoChain unit (GO) 1`] = `"123 456 789,00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Gram unit (GRAM) 1`] = `"12 345 678,900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Groestlcoin unit (GRS) 1`] = `"123 456 789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
@@ -3303,8 +3305,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sui unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TX unit (TX) 1`] = `"12 345 678 900,000000- -TX"`;
 
@@ -3526,6 +3526,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format GoChain unit (GO) 1`] = `"123.456.789,00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Gram unit (GRAM) 1`] = `"12.345.678,900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
@@ -3723,8 +3725,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
@@ -3946,6 +3946,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format GoChain unit (GO) 1`] = `"123,456,789.00000000- -GO"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Gram unit (GRAM) 1`] = `"12,345,678.900000000- -GRAM"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
@@ -4143,8 +4145,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
@@ -4366,6 +4366,8 @@ exports[`formatCurrencyUnit with default options should correctly format GameCre
 
 exports[`formatCurrencyUnit with default options should correctly format GoChain unit (GO) 1`] = `"123,456,789"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Gram unit (GRAM) 1`] = `"12,345,678"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789"`;
@@ -4563,8 +4565,6 @@ exports[`formatCurrencyUnit with default options should correctly format Sui (Te
 exports[`formatCurrencyUnit with default options should correctly format Sui unit (Sui) 1`] = `"12,345,678"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Syscoin unit (SYS) 1`] = `"0.0123456"`;
-
-exports[`formatCurrencyUnit with default options should correctly format TON unit (TON) 1`] = `"12,345,678"`;
 
 exports[`formatCurrencyUnit with default options should correctly format TX unit (TX) 1`] = `"12,345,678,900"`;
 

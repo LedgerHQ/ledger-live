@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.8.0",
+  "version": "4.9.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -68,7 +68,6 @@
     "lint:ci": "oxlint src e2e --quiet",
     "lint:fix": "oxfmt src e2e && oxlint src e2e --fix --quiet",
     "lint:i18n": "eslint --no-eslintrc -c .eslintrc.i18n.js --ext .ts,.tsx,.js,.jsx src e2e --quiet",
-    "lint:guardrails": "eslint --no-eslintrc -c .eslintrc.guardrails.js src __tests__ --quiet",
     "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 node scripts/typecheck.js",
     "test:env": "node ./scripts/mobile-env-md.mjs",
     "test": "pnpm test:jest:coverage && pnpm test:env",

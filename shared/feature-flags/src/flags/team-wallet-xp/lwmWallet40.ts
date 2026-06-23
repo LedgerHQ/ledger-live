@@ -11,7 +11,6 @@ export const lwmWallet40 = flagWith(
     lazyOnboarding: z.boolean(),
     balanceRefreshRework: z.boolean(),
     assetSection: z.boolean(),
-    newReceiveDialog: z.boolean().optional(),
     operationsList: z.boolean(),
     aggregatedAssets: z.boolean(),
     myWallet: z.boolean(),

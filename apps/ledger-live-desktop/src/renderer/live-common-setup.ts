@@ -15,6 +15,8 @@ import type { State } from "~/renderer/reducers";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
+import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import IPCTransport from "./IPCTransport";
 
 enum RendererTransportModule {
@@ -22,6 +24,22 @@ enum RendererTransportModule {
   DeviceManagementKitSpeculos,
   IPC,
   Vault,
+}
+
+// Speculos cannot tell the DMK transport which device it emulates (it defaults
+// to Stax), so we map the SPECULOS_DEVICE name set by the e2e setup to the model.
+const SPECULOS_DEVICE_TO_MODEL: Record<string, DeviceModelId> = {
+  nanoS: DeviceModelId.nanoS,
+  nanoSP: DeviceModelId.nanoSP,
+  nanoX: DeviceModelId.nanoX,
+  stax: DeviceModelId.stax,
+  flex: DeviceModelId.europa,
+  nanoGen5: DeviceModelId.apex,
+};
+
+function getSpeculosDmkModel() {
+  const model = SPECULOS_DEVICE_TO_MODEL[getEnv("SPECULOS_DEVICE")];
+  return model ? ledgerToDmkDeviceIdMap[model] : undefined;
 }
 
 /**
@@ -103,6 +121,7 @@ export function registerTransportModules(store: Store<State>) {
           DeviceManagementKitTransportSpeculos.open({
             apiPort: speculosApiPort ? String(speculosApiPort) : undefined,
             timeout: timeoutMs,
+            model: getSpeculosDmkModel(),
           }),
         {
           interval: 500,

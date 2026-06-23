@@ -408,6 +408,42 @@
         "refunded" : "Reembolsada"
       }
     },
+    "modals" : {
+      "transactionStatus" : {
+        "title" : "Trocar {{sendTicker}} → {{receiveTicker}}",
+        "sections" : {
+          "status" : {
+            "heading" : "Status",
+            "sendPending" : "Enviando {{ticker}}",
+            "sendCompleted" : "Enviado {{ticker}}",
+            "receivePending" : "Recebendo {{ticker}}",
+            "receiveCompleted" : "Recebido {{ticker}}"
+          },
+          "details" : {
+            "networkFees" : "Taxas de rede",
+            "receiveAccount" : "Conta para receber",
+            "provider" : "Provedor",
+            "swapId" : "Swap ID"
+          }
+        },
+        "statusLabels" : {
+          "pending" : "Em andamento",
+          "onhold" : "Retida",
+          "expired" : "Expirada",
+          "finished" : "Concluído",
+          "refunded" : "Reembolsada",
+          "cancelled" : "Cancelado",
+          "unknown" : "Desconhecido"
+        },
+        "actions" : {
+          "viewInExplorer" : "Ver no explorer",
+          "copied" : "Copiado"
+        },
+        "accessibility" : {
+          "copySwapId" : "Copiar Swap ID"
+        }
+      }
+    },
     "exchangeDrawer" : {
       "title" : "Confirme sua negociação",
       "completed" : {
@@ -1609,6 +1645,23 @@
   },
   "market" : {
     "title" : "Mercado",
+    "topCards" : {
+      "error" : "Algo deu errado",
+      "moodIndex" : {
+        "title" : "Índice de Sentimento"
+      },
+      "globalMarketCap" : {
+        "title" : "Capitalização de mercado total",
+        "period" : "Hoje"
+      },
+      "altSeason" : {
+        "title" : "Temporada",
+        "levels" : {
+          "bitcoin" : "Bitcoin",
+          "altcoin" : "Altcoin"
+        }
+      }
+    },
     "currency" : "Moeda",
     "rangeLabel" : "Tempo",
     "goBack" : "Voltar",
@@ -1622,12 +1675,36 @@
       "applyFilters" : "Aplicar Filtros",
       "clearAll" : "Limpar Tudo"
     },
+    "assetsTitle" : "Ativos",
+    "marketTable" : {
+      "crypto" : "Nome",
+      "price" : "Preço de mercado",
+      "volume" : "Volume",
+      "change" : "Variação",
+      "marketCap" : "Capitalização de mercado",
+      "actions" : "Ações",
+      "menu" : {
+        "more" : "Mais",
+        "buySell" : "Comprar / Vender",
+        "addToFavourites" : "Adicionar aos favoritos",
+        "removeFromFavourites" : "Remover dos favoritos"
+      }
+    },
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Preço",
       "change" : "Variação",
       "marketCap" : "Capitalização de mercado",
       "last7d" : "Últimos 7 dias"
+    },
+    "assets" : {
+      "categories" : {
+        "accessibilityLabel" : "Categorias de ativos",
+        "all" : "Todos",
+        "stocks" : "Ações",
+        "favorites" : "Favoritos"
+      },
+      "emptyFavorites" : "Ainda não há favoritos"
     },
     "detailsPage" : {
       "priceStatistics" : "Estatísticas de preço",
@@ -1651,6 +1728,11 @@
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A",
+      "1H_fullLabel" : "1 hora",
+      "1D_fullLabel" : "1 dia",
+      "1W_fullLabel" : "1 semana",
+      "1M_fullLabel" : "1 mês",
+      "1Y_fullLabel" : "1 ano",
       "1h" : "1h",
       "24h" : "24h",
       "7d" : "7d",
@@ -4276,9 +4358,12 @@
               "description" : "Você pode receber recompensas delegando seus ativos {{currencyTicker}} a um validador.",
               "bullet" : ["Você continua tendo posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos estarão disponíveis após parar delegação"],
               "warning" : {
-                "description" : "Escolha seu validador com sabedoria: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
-              },
-              "seiAssociationWarning" : "Sua conta Sei ainda não foi vinculada on-chain. A delegação falhará até que sua conta tenha a primeira transação de saída confirmada on-chain. Envie primeiro uma pequena quantia de SEI para qualquer endereço, aguarde as confirmações e volte para delegar."
+                "description" : "Escolha seu validador com sabedoria: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente.",
+                "seiAssociationWarning" : {
+                  "description" : "Para delegar, você precisa ativar sua conta enviando qualquer quantia para qualquer endereço, incluindo o seu. Este é um requisito da rede Sei.",
+                  "learnMore" : "Saiba mais"
+                }
+              }
             },
             "amount" : {
               "title" : "Quantia"
@@ -4361,6 +4446,33 @@
               "success" : {
                 "title" : "Ativos desdelegados com sucesso.",
                 "description" : "<0>{{amount}}</0> foram removidos de delegação do <0>{{validator}}</0>",
+                "cta" : "Ver detalhes"
+              },
+              "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "cta" : "Sacar",
+        "flow" : {
+          "title" : "Sacar",
+          "steps" : {
+            "withdraw" : {
+              "title" : "Sacar",
+              "warning" : "A quantia não delegada concluiu seu período de bloqueio e será devolvida ao seu saldo disponível.",
+              "fields" : {
+                "validator" : "Validador"
+              }
+            },
+            "connectDevice" : {
+              "title" : "Dispositivo"
+            },
+            "confirmation" : {
+              "title" : "Confirmação",
+              "success" : {
+                "title" : "Você sacou seus ativos com sucesso.",
+                "description" : "<0>{{amount}}</0> foram sacados de <0>{{validator}}</0>",
                 "cta" : "Ver detalhes"
               },
               "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
@@ -4624,6 +4736,10 @@
     }
   },
   "tezos" : {
+    "operationTypes" : {
+      "UNSTAKE" : "Desaplicando",
+      "FINALIZE_UNSTAKE" : "Desaplicado"
+    },
     "earnChoice" : {
       "title" : "Ganhe Recompensas Tezos: Delegar ou Fazer Staking",
       "description" : "Ganhe recompensas em seu Tezos (XTZ) delegando a um Baker, mantendo o controle total. Para retornos mais altos, faça staking de sua XTZ, entendendo o baixo risco associado. Escolha a melhor maneira de multiplicar seus ativos.",
@@ -4702,7 +4818,7 @@
             "success" : {
               "title" : "Você fez staking de seus ativos com sucesso",
               "text" : "Você fez staking de {{amount}}. O saldo de sua conta será atualizado quando a blockchain confirmar a transação.",
-              "cta" : "Visitar o Painel Ganhar"
+              "cta" : "Visitar o Painel da Conta"
             },
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente.",
             "howItWorks" : "Como o Staking Funciona"
@@ -4720,8 +4836,8 @@
         "description" : "Você fez staking de XTZ com o seu baker atual. Desaplique seus fundos antes de encerrar a delegação."
       },
       "steps" : {
-        "0" : "Abra o painel Ganhar e selecione Desaplicar.",
-        "1" : "Confirme a quantia e envie a transação de desaplicação em seu dispositivo.",
+        "0" : "Abra o painel da conta Tezos e selecione a opção Desaplicar na sua seção de staking.",
+        "1" : "Desaplique a quantia MAX e envie a transação para desaplicar em seu dispositivo.",
         "2" : "Aguarde cerca de 4 dias para que o período de desaplicação seja concluído.",
         "3" : "Uma vez sacado, você pode mudar o baker ou encerrar a delegação."
       },
@@ -5004,6 +5120,10 @@
           "title" : "Predefinição Stablecoin",
           "desc" : "Gere contas Ethereum, Arbitrum, Optimism, Base, Solana, Tron e Algorand com as principais stablecoins (máximo de 5 por rede)."
         },
+        "stocksGenerate" : {
+          "title" : "Preset de ações",
+          "desc" : "Gerar contas com as principais ações tokenizadas da DADA (category=stocks) como subcontas em sua rede"
+        },
         "currencySelector" : {
           "placeholder" : "Escolher moedas…",
           "searchPlaceholder" : "Buscar",
@@ -5022,7 +5142,10 @@
           "generateAccountsQuick" : "Gerar {{count}} contas",
           "generateEmptyAccount" : "Criar conta vazia",
           "generateStablecoinAccounts" : "Gerar {{count}} conta stablecoin",
-          "generateStablecoinAccounts_other" : "Gerar {{count}} contas stablecoin"
+          "generateStablecoinAccounts_other" : "Gerar {{count}} contas stablecoin",
+          "generateStockAccounts" : "Gerar {{count}} conta de ações",
+          "generateStockAccounts_other" : "Gerar {{count}} contas de ações",
+          "loadingStocks" : "Carregando dados de ações…"
         },
         "alerts" : {
           "selectCurrency" : "Selecione pelo menos uma moeda",
@@ -6263,6 +6386,10 @@
       "transfer_private" : "destinatário privado",
       "convert_public_to_private" : "destinatário privado",
       "convert_private_to_public" : "destinatário público",
+      "transfer_token_public" : "destinatário público",
+      "transfer_token_private" : "destinatário privado",
+      "convert_token_public_to_private" : "destinatário privado",
+      "convert_token_private_to_public" : "destinatário público",
       "delegate" : "validador",
       "redelegate" : "validador",
       "undelegate" : "validador",
@@ -8621,11 +8748,17 @@
     "noDeviceTitle" : "Sua carteira de criptomoedas segura"
   },
   "marketBanner" : {
-    "title" : "Explorar o mercado",
+    "title" : "Mercado",
     "genericError" : "Falha de conexão",
     "cta" : "Ver todos",
     "scrollLeft" : "Deslize para a esquerda",
     "scrollRight" : "Deslize para a direita",
+    "ranking" : {
+      "trending" : "Em alta",
+      "gainers" : "Melhores",
+      "losers" : "Piores",
+      "favorites" : "Favoritos"
+    },
     "fearAndGreed" : {
       "title" : "Sentimento"
     }
@@ -8641,7 +8774,23 @@
     "dialog" : {
       "title" : "Índice de Sentimento",
       "content" : "Mostra o sentimento geral do mercado de 0 a 100, principalmente com base em volatilidade, momento no mercado e tendências sociais. Valores mais baixos indicam medo, valores mais altos indicam ganância.",
-      "disclaimer" : "Os dados são obtidos do índice Fear and Greed da CoinMarketCap e fornecidos apenas para fins informativos.",
+      "disclaimer" : "Os dados provêm do CoinMarketCap. Fornecido apenas para fins informativos.",
+      "cta" : "Entendi"
+    }
+  },
+  "marketCapCard" : {
+    "dialog" : {
+      "title" : "Capitalização de mercado total",
+      "content" : "A capitalização de mercado total representa a capitalização de mercado de todas as criptomoedas combinadas.",
+      "disclaimer" : "Os dados provêm do CoinMarketCap. Fornecido apenas para fins informativos.",
+      "cta" : "Entendi"
+    }
+  },
+  "altSeasonCard" : {
+    "dialog" : {
+      "title" : "Índice de altcoin",
+      "content" : "O índice de altcoin mostra o desempenho do Bitcoin em comparação com criptomoedas alternativas. Quanto maior o número, melhor o desempenho das altcoins em relação ao Bitcoin.",
+      "disclaimer" : "Os dados provêm do CoinMarketCap. Fornecido apenas para fins informativos.",
       "cta" : "Entendi"
     }
   },
@@ -8656,6 +8805,7 @@
   "assets" : {
     "cryptos" : "Cripto",
     "stablecoins" : "Stablecoins",
+    "stocks" : "Ações",
     "cryptoAccounts" : "Contas cripto",
     "accountsCount_one" : "{{count}} conta",
     "accountsCount_other" : "{{count}} contas",
@@ -8701,6 +8851,9 @@
   "cryptoAssets" : {
     "title" : "Criptoativos"
   },
+  "stocks" : {
+    "explore" : "Explorar todos"
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
     "entry" : {
@@ -8709,6 +8862,13 @@
     }
   },
   "topBar" : {
+    "searchPlaceholder" : "Procurar ativo",
+    "search" : {
+      "noAssetFound" : "Nenhum ativo encontrado",
+      "error" : "Falha de conexão",
+      "cryptos" : "Criptomoedas",
+      "stocks" : "Ações"
+    },
     "history" : {
       "cta" : "Transações"
     },
@@ -9022,7 +9182,32 @@
     "actionsList" : {
       "help" : "Ajuda",
       "recover" : "[L] Recover",
+      "backup" : "Backup",
       "refer" : "Indicação"
+    },
+    "backupHub" : {
+      "title" : "Backups de carteira",
+      "description" : "Proteja seus ativos combinando soluções de backup para a recuperação da sua seed phrase.",
+      "back" : "Voltar",
+      "sections" : {
+        "digital" : "Backups baseados em ID digital",
+        "physical" : "Backups físicos"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "Criar um backup impossível de perder",
+        "inProgress" : "Concluir ativação",
+        "done" : "Gerencie seu backup",
+        "discover" : "Explorar"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "description" : "Um cartão inteligente protegido por PIN"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "Armazenamento de metal para 24 palavras",
+        "description" : "Proteção resistente ao fogo e à água."
+      }
     },
     "myLedger" : {
       "title" : "Minha Ledger",

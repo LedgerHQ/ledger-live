@@ -1,8 +1,8 @@
 import React from "react";
+import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
 import type { UseRecoverIntroDrawerViewModelResult } from "./useRecoverIntroDrawerViewModel";
-import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 
 type RecoverIntroDrawerViewProps = UseRecoverIntroDrawerViewModelResult;
 
@@ -20,10 +20,12 @@ export function RecoverIntroDrawerView({
       testID="backup-hub-feature-intro-drawer"
       enableDynamicSizing
     >
-      <BottomSheetScrollView contentContainerStyle={{ paddingTop: 12, paddingBottom: 12 }}>
-        <BottomSheetHeader />
-        <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
-      </BottomSheetScrollView>
+      <BottomSheetView>
+        <Box lx={{ paddingTop: "s12", paddingBottom: "s12" }}>
+          <BottomSheetHeader />
+          <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
+        </Box>
+      </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );
 }

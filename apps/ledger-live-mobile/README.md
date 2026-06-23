@@ -27,10 +27,10 @@ pnpm i
 
 Then install the native platform tooling you need:
 
-| Platform | Requirements                                                                 |
-| -------- | ---------------------------------------------------------------------------- |
-| iOS      | Xcode, Ruby 3+, Bundler, CocoaPods                                           |
-| Android  | Android Studio, JDK 17, Android SDK/NDK versions from `android/build.gradle` |
+| Platform | Requirements                                                                                                                                                                          |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| iOS      | [Xcode](https://developer.apple.com/xcode/), [Ruby](https://www.ruby-lang.org/en/downloads/releases/) 3+, [Bundler](https://bundler.io/), [CocoaPods](https://cocoapods.org/)         |
+| Android  | [Android Studio](https://developer.android.com/studio), [JDK 17](https://www.oracle.com/uk/java/technologies/downloads/#java17), Android SDK/NDK versions from `android/build.gradle` |
 
 ## Development
 

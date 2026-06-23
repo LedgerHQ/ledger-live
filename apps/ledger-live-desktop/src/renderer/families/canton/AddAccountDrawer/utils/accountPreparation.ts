@@ -1,3 +1,4 @@
+import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
@@ -24,7 +25,10 @@ export function getCreatableAccount(
 }
 
 export function getImportableAccounts(selectedAccounts: Account[]): Account[] {
-  return selectedAccounts.filter(account => account.used);
+  // Already-onboarded Canton accounts are importable even when unfunded (used=false). LIVE-32985
+  return selectedAccounts.filter(
+    account => account.used || (isCantonAccount(account) && account.cantonResources.isOnboarded),
+  );
 }
 
 function resolveAccountName(

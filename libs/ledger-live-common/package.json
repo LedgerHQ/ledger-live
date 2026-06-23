@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "36.1.0",
+  "version": "36.2.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -126,7 +126,6 @@
     "build": "rimraf lib lib-es && tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "watch": "tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es --watch",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
-    "prettier": "prettier --write 'src/**/*.?s'",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
     "lint:fix": "oxlint src --fix --quiet",

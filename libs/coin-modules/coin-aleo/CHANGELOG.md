@@ -1,5 +1,66 @@
 # @ledgerhq/coin-aleo
 
+## 1.15.0
+
+### Minor Changes
+
+- [#18441](https://github.com/LedgerHQ/ledger-live/pull/18441) [`5e1a944`](https://github.com/LedgerHQ/ledger-live/commit/5e1a944f96531dec46e8d199bce4da3cd0fa12fa) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo getTvk and signOperation integration
+
+- [#18455](https://github.com/LedgerHQ/ledger-live/pull/18455) [`1de6b9a`](https://github.com/LedgerHQ/ledger-live/commit/1de6b9afb239f8a2e2a8c573d661b95a8bcb8260) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo public sync logic for tokens
+
+- [#18415](https://github.com/LedgerHQ/ledger-live/pull/18415) [`0b5a04a`](https://github.com/LedgerHQ/ledger-live/commit/0b5a04ac3a47c6d146b389ddab174c13c84d96e1) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo prepareTransaction with tokens support
+
+- [#18486](https://github.com/LedgerHQ/ledger-live/pull/18486) [`6699b3c`](https://github.com/LedgerHQ/ledger-live/commit/6699b3cb896907abf8912d2d8ef77e2c8a31f7a2) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: aleo utils
+
+- [#18405](https://github.com/LedgerHQ/ledger-live/pull/18405) [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: prepare aleo utils for incoming tokens integration
+
+- [#18385](https://github.com/LedgerHQ/ledger-live/pull/18385) [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo fixtures and base constants extended
+
+### Patch Changes
+
+- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
+  - @ledgerhq/live-env@2.39.0
+  - @ledgerhq/types-live@6.112.0
+  - @ledgerhq/cryptoassets@13.52.0
+  - @ledgerhq/types-cryptoassets@7.38.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0
+  - @ledgerhq/live-network@2.6.5
+
+## 1.15.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
+  - @ledgerhq/cryptoassets@13.52.0-next.1
+  - @ledgerhq/types-live@6.112.0-next.1
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.1
+
+## 1.15.0-next.0
+
+### Minor Changes
+
+- [#18441](https://github.com/LedgerHQ/ledger-live/pull/18441) [`5e1a944`](https://github.com/LedgerHQ/ledger-live/commit/5e1a944f96531dec46e8d199bce4da3cd0fa12fa) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo getTvk and signOperation integration
+
+- [#18455](https://github.com/LedgerHQ/ledger-live/pull/18455) [`1de6b9a`](https://github.com/LedgerHQ/ledger-live/commit/1de6b9afb239f8a2e2a8c573d661b95a8bcb8260) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo public sync logic for tokens
+
+- [#18415](https://github.com/LedgerHQ/ledger-live/pull/18415) [`0b5a04a`](https://github.com/LedgerHQ/ledger-live/commit/0b5a04ac3a47c6d146b389ddab174c13c84d96e1) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo prepareTransaction with tokens support
+
+- [#18486](https://github.com/LedgerHQ/ledger-live/pull/18486) [`6699b3c`](https://github.com/LedgerHQ/ledger-live/commit/6699b3cb896907abf8912d2d8ef77e2c8a31f7a2) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: aleo utils
+
+- [#18405](https://github.com/LedgerHQ/ledger-live/pull/18405) [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: prepare aleo utils for incoming tokens integration
+
+- [#18385](https://github.com/LedgerHQ/ledger-live/pull/18385) [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo fixtures and base constants extended
+
+### Patch Changes
+
+- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
+  - @ledgerhq/live-env@2.39.0-next.0
+  - @ledgerhq/types-live@6.112.0-next.0
+  - @ledgerhq/cryptoassets@13.52.0-next.0
+  - @ledgerhq/types-cryptoassets@7.38.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
+  - @ledgerhq/live-network@2.6.5-next.0
+
 ## 1.14.0
 
 ### Minor Changes

@@ -13,7 +13,7 @@ Pay special attention to:
 - `.agents/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
 - `.agents/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
 - `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
-- `.agents/skills/coin-modules/SKILL.md` — Module layout, Alpaca path, and import rules for `libs/coin-modules/`
+- `.agents/skills/coin-modules/SKILL.md` — Module layout, Coin Module API path, and import rules for `libs/coin-modules/`
 - `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
 - `.agents/skills/typescript/SKILL.md` — Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
 - `.agents/skills/react-general/SKILL.md` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules

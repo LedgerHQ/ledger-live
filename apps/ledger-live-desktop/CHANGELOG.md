@@ -1,5 +1,432 @@
 # ledger-live-desktop
 
+## 4.9.0
+
+### Minor Changes
+
+- [#18333](https://github.com/LedgerHQ/ledger-live/pull/18333) [`1bb2d22`](https://github.com/LedgerHQ/ledger-live/commit/1bb2d220026f2860b1e60925ba46197163668479) Thanks [@qperrot](https://github.com/qperrot)! - Fix: add support link for SEI delegation warning
+
+- [#18423](https://github.com/LedgerHQ/ledger-live/pull/18423) [`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a favorites ranking to the desktop Market Banner. The banner now switches between the trending performers list and the user's starred market coins, fetching favorites via `useMarketData` (availability filtering bypassed so starred coins always show) and disabling whichever query is inactive.
+
+- [#18222](https://github.com/LedgerHQ/ledger-live/pull/18222) [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7) Thanks [@henri-ly](https://github.com/henri-ly)! - add undelegate for monad
+
+- [#18255](https://github.com/LedgerHQ/ledger-live/pull/18255) [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): hook in llc for signature view model
+
+- [#18362](https://github.com/LedgerHQ/ledger-live/pull/18362) [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add theme-specific awareness modal hero images, feature intro border, carousel navigation label, and related UI improvements
+
+- [#18315](https://github.com/LedgerHQ/ledger-live/pull/18315) [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7) Thanks [@shazzzam](https://github.com/shazzzam)! - Display the correct fee currency for Celo CIP-64 transactions (fees paid in tokens such as USDT/USDC instead of native CELO). Adds a `feeCurrencyAddress` field to `CeloOperationExtra`, an `eth_getTransactionByHash`-based sync enrichment, and a `skip` option to `useTokenByAddressInCurrency` for conditional CAL lookups.
+
+- [#18291](https://github.com/LedgerHQ/ledger-live/pull/18291) [`c0b15db`](https://github.com/LedgerHQ/ledger-live/commit/c0b15db0d809fd7e6d18070a2e7cfbdab31460f9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Altcoin Season index card to the Market top cards section. The arc gauge used by the Fear & Greed indicator is extracted into a shared `ArcGaugeIndicator` component, and a shared `MarketTopCardError` component now renders a graceful error state for each top card instead of silently hiding it.
+
+- [#17844](https://github.com/LedgerHQ/ledger-live/pull/17844) [`7a120cb`](https://github.com/LedgerHQ/ledger-live/commit/7a120cbfb0881c01054f99a749049ade1d7410aa) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Adopt `@datadog/electron-sdk` to cover the Electron main process. Uncaught exceptions, unhandled rejections, and renderer crashes (`render-process-gone`) are now reported to Datadog, and `dd-trace` adds main-process resource/trace and renderer telemetry forwarding. Gated by the existing `sentryLogs` user opt-in; no new feature flag.
+
+  Bundle stack frames from the packaged asar are rewritten to `https://app.asar/…` before sending, so Datadog can match the uploaded source maps and unminify stack traces — both the renderer's `file://…/app.asar/.webpack/…` URLs and the main process's raw `/…/app.asar/.webpack/…` filesystem paths.
+
+- [#18337](https://github.com/LedgerHQ/ledger-live/pull/18337) [`fdd5d35`](https://github.com/LedgerHQ/ledger-live/commit/fdd5d3536682b5011eb31a4e171ffb09032cb7de) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: add tracking on select device button clicked
+
+- [#18397](https://github.com/LedgerHQ/ledger-live/pull/18397) [`4fc3636`](https://github.com/LedgerHQ/ledger-live/commit/4fc3636002f1a7a9f2ff5a9678640cb1b6659da7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Cryptos and Stablecoins suggestion sections to the global Search overlay. Both sections are sourced from DADA market data (shared single fetch, split in-memory by DADA stablecoin tickers), ranked by market cap and capped to a per-section limit, with loading skeletons and click-through to the asset detail / market list.
+
+- [#18522](https://github.com/LedgerHQ/ledger-live/pull/18522) [`1b39e2b`](https://github.com/LedgerHQ/ledger-live/commit/1b39e2b3abf14502148c7abf1c23789ed54959b8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - change order of categories in market
+
+- [#18237](https://github.com/LedgerHQ/ledger-live/pull/18237) [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate `@ledgerhq/live-common`'s internal feature-flag consumers off its React `featureFlags` Context module and `@ledgerhq/types-live` feature types, onto the Redux-backed `@shared/feature-flags` / `@features/platform-feature-flags` packages, and remove the `featureFlags` module along with the apps' now-inert `FeatureFlagsContextBridge`. Remaining external React consumers (both apps) are repointed to `@features/platform-feature-flags`; `@ledgerhq/live-dmk-desktop` receives its `ldmkTransport` flag via a prop instead of depending on the feature-flags package; non-React imperative reads use an injected getter or the relocated `live-common/firebase/featureFlags` reader. Adds the platform-specific `formatToFirebaseFeatureId` / `formatDefaultFeatures` to `@features/platform-feature-flags` and the generic `isValidFeatureId` to `@shared/feature-flags`. No behavioral change — resolved flag values are identical.
+
+- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint the remaining `@ledgerhq/types-live` feature-type consumers (desktop app + desktop/mobile e2e) onto `@shared/feature-flags`, taking in-repo usage of the legacy types-live feature types to zero. Also drop now-dead feature-flag tooling config: the `@ledgerhq/live-common/featureFlags/index` `unimported` entry in `live-dmk-desktop`, and the deleted `FeatureFlagsContextBridge` eslint-guardrail exemptions in both apps (the block rules against re-introducing the deleted module are kept).
+
+- [#18555](https://github.com/LedgerHQ/ledger-live/pull/18555) [`8c2d80c`](https://github.com/LedgerHQ/ledger-live/commit/8c2d80c9d0cfbd7d4e89165948c351c30d342918) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use base color instead of red for the unread operation dot indicator
+
+- [#18553](https://github.com/LedgerHQ/ledger-live/pull/18553) [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): switch mode amount step new send flow changes header
+
+- [#18546](https://github.com/LedgerHQ/ledger-live/pull/18546) [`9c17db3`](https://github.com/LedgerHQ/ledger-live/commit/9c17db3d6c993bfb4aad2baca1a44184554d34b6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Global Search navigating to "asset not found" for assets without a market-provider entry (e.g. Canton). The search now forwards the full market currency (with its `ledgerIds`) as navigation state, so the Asset Detail screen can resolve such assets via the DADA fallback — matching the behaviour of the Market table rows and mobile.
+
+- [#18428](https://github.com/LedgerHQ/ledger-live/pull/18428) [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Global Search default-sections data on mobile, fed by DADA. Cryptos (top 3) and stablecoins (top 2) render as market rows; stocks (top 10) as pills.
+
+  Share the DADA asset-discovery selection in `@ledgerhq/live-common` (`selectTopStocks`, `selectTopAssetsByCategory`, `StockSuggestion`) so desktop and mobile use one implementation; desktop's stocks section now consumes `selectTopStocks` instead of its own copy.
+
+- [#18509](https://github.com/LedgerHQ/ledger-live/pull/18509) [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): new send flow custom fees common hooks
+
+- [#18543](https://github.com/LedgerHQ/ledger-live/pull/18543) [`a342b65`](https://github.com/LedgerHQ/ledger-live/commit/a342b65215976d8e980c5d46e491b3c6d48e5cc7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - align footer note in market cards
+
+- [#18480](https://github.com/LedgerHQ/ledger-live/pull/18480) [`7626bfb`](https://github.com/LedgerHQ/ledger-live/commit/7626bfb042a107fa88e4bdd5464206c285c90685) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Gate the desktop market banner ranking behind the asset discoverability feature flag and default the ranking to gainers when the flag is off
+
+- [#18300](https://github.com/LedgerHQ/ledger-live/pull/18300) [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): changes signature request type for new send flow
+
+- [#18450](https://github.com/LedgerHQ/ledger-live/pull/18450) [`89b52f5`](https://github.com/LedgerHQ/ledger-live/commit/89b52f50f4cc7fc7d0ed6db541c813c12b5729a9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add live asset search results to the top-bar search overlay. Typing a query (debounced, min 2 chars) fetches matching assets from DADA via `useAssetSearchResultsViewModel` and renders them as a flat list, with dedicated empty ("No asset found") and error ("Connection failed") states. The asset row gains a `default` density for the expanded results layout, and the clear button no longer toggles the overlay.
+
+- [#18557](https://github.com/LedgerHQ/ledger-live/pull/18557) [`74c559f`](https://github.com/LedgerHQ/ledger-live/commit/74c559fa79a0de4a6f30615b5116d7b79b3e015c) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix: re-clicking the global search bar no longer closes the search overlay. Clicks inside the open search field are now prevented from toggling the Popover trigger, so the overlay stays open and the typed query is preserved.
+
+- [#18449](https://github.com/LedgerHQ/ledger-live/pull/18449) [`db3bb7e`](https://github.com/LedgerHQ/ledger-live/commit/db3bb7e2adcdc3de1b7aee0e68a55c7501037dbe) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate the search-overlay asset suggestions to the DADA assets endpoint (`useAssetsData` + `useUsdToFiatRate`) instead of `useMarketData`, exposing an `isError` state for cryptos/stablecoins and stocks. The Stocks section also moves from a CSS grid to an explicit two-row layout (shared `splitIntoTwoRows` helper) to keep the column-major scroll order.
+
+- [#18002](https://github.com/LedgerHQ/ledger-live/pull/18002) [`5d583bf`](https://github.com/LedgerHQ/ledger-live/commit/5d583bfa54397147b9fb429bbd0e95d31864a534) Thanks [@gre-ledger](https://github.com/gre-ledger)! - perf(lld): defer-load renderer coin families and modals via dynamic import()
+
+- [#18419](https://github.com/LedgerHQ/ledger-live/pull/18419) [`8fcac22`](https://github.com/LedgerHQ/ledger-live/commit/8fcac228a6b60fdd902579a17aee356f4299f31d) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwd): add links for amount screen in new send flow
+
+- [#18312](https://github.com/LedgerHQ/ledger-live/pull/18312) [`621a175`](https://github.com/LedgerHQ/ledger-live/commit/621a1756ef8b59844a086a610ff45819521ff633) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Surface insufficient fee-token balance on Celo Send Desktop as an explicit error banner.
+
+- [#18488](https://github.com/LedgerHQ/ledger-live/pull/18488) [`b5b7fc5`](https://github.com/LedgerHQ/ledger-live/commit/b5b7fc5059e1c666b4ce1de9c5deb93e7f1effbe) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a "Stocks preset" generator to the developer mock-accounts tooling (dev-only tooling, no user-facing change). It fetches the top tokenized stocks from DADA (category=stocks) and injects them as sub-accounts grouped under their network.
+
+- [#18548](https://github.com/LedgerHQ/ledger-live/pull/18548) [`7ad54da`](https://github.com/LedgerHQ/ledger-live/commit/7ad54daebcb0a0b8f99352348ef35dd997bfde33) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix transaction history staying filtered by asset when opening Transactions from the top bar while already on a scoped history view
+
+- [#18294](https://github.com/LedgerHQ/ledger-live/pull/18294) [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Add the Market category switcher (All / Stocks / Favorites) on the V4 Market page, gated by the `lwdWallet40.assetDiscoverability` feature flag. The selected category is persisted across reloads and supersedes the legacy starred filter drawer when the flag is on. The shared category helpers (`parseMarketListCategory`, `getMarketFilter`, `isStockMarketCurrency`) now live in `@ledgerhq/live-common/market/utils/category` and are reused by both desktop and mobile.
+
+- [#18307](https://github.com/LedgerHQ/ledger-live/pull/18307) [`59aa611`](https://github.com/LedgerHQ/ledger-live/commit/59aa611a3833724516747f05514b5af44b932817) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Support a `category` param in the Market deeplink (e.g. `ledgerwallet://market?category=stocks`). When present, the category is pre-selected (`setMarketCategory`) before navigating to `/market`; unknown values fall back to `all`.
+
+- [#18299](https://github.com/LedgerHQ/ledger-live/pull/18299) [`1187d63`](https://github.com/LedgerHQ/ledger-live/commit/1187d634e7c8b4ac763a20671911c32ba37c4582) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Replace the Market page time-range dropdown (`@ledgerhq/react-ui`) with the Lumen `Select` pill (`MediaButton` trigger), matching Figma. The range value still flows through `useMarket` and persists exactly as before — no behaviour change.
+
+- [#18487](https://github.com/LedgerHQ/ledger-live/pull/18487) [`b528cf5`](https://github.com/LedgerHQ/ledger-live/commit/b528cf5ef7f1c0a5cdb563afc29fbd2dc90cfaeb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Portfolio Stocks section behind the `assetDiscoverability` flag. `useCategorizedAssetsFromPortfolio` now returns a `stocks` bucket split out of `cryptos` by DADA currency id (collision-free vs ticker, so a crypto like TON isn't misclassified). When the user holds stocks the section renders a table like Cryptos/Stablecoins (max 5, "Explore all" → the `/assets?category=stocks` filtered view); otherwise it renders the discovery grid of the top default stocks ("Explore" → Market filtered to stocks). Renames the discovery `StockRow` pill to `StockPill`.
+
+- [#18497](https://github.com/LedgerHQ/ledger-live/pull/18497) [`1aab949`](https://github.com/LedgerHQ/ledger-live/commit/1aab9495340ad48aa69b9bc42b917153d6d2bfdd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Harmonize asset prices across Global Search, the Assets table and Asset detail so the same asset shows the same price to the cent. The Assets table Price column now sources from DADA (with the USD→fiat conversion applied, fixing non-USD fiats like MAD/EUR) and Asset detail reads from the shared bulk DADA cache, removing the transient drift between screens. The Value column stays on countervalues for portfolio consistency.
+
+- [#18338](https://github.com/LedgerHQ/ledger-live/pull/18338) [`eb5cd74`](https://github.com/LedgerHQ/ledger-live/commit/eb5cd7438bd41d9a93418f1c240d34d395f72a70) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a ranking selector (Trending, Gainers, Losers, Favorites) to the MarketBanner header, gated behind the `assetDiscoverability` feature flag. The selection is persisted across reloads via a new `marketBanner` Redux slice. Favorites is disabled when no market coins are starred.
+
+- [#18518](https://github.com/LedgerHQ/ledger-live/pull/18518) [`a513132`](https://github.com/LedgerHQ/ledger-live/commit/a5131324e0068d3420dc332f42138e71e88c3658) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Market list pagination and scroll position when switching lists (category, sort, range, search, filter): re-arm the pagination guard and reset scroll to the top on list identity change, and detect the end of every list type by tracking whether new rows arrived
+
+- [#18466](https://github.com/LedgerHQ/ledger-live/pull/18466) [`ede0766`](https://github.com/LedgerHQ/ledger-live/commit/ede0766908a9e545404a3920bc68a01ca31267b3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MarketTable component (view, view-model, sortable header and loading skeleton) for the new asset-discoverability Market view
+
+- [#18466](https://github.com/LedgerHQ/ledger-live/pull/18466) [`caf22a8`](https://github.com/LedgerHQ/ledger-live/commit/caf22a8b34feefbd0626289a325c04d5de1b6673) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MarketRow component (view, view-model and row actions) for the new asset-discoverability Market table
+
+- [#18466](https://github.com/LedgerHQ/ledger-live/pull/18466) [`65f2d6f`](https://github.com/LedgerHQ/ledger-live/commit/65f2d6fcd84abbf1a64cfe913cd3d8fc46c21f70) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Display the new Market table on the Market page when asset discoverability is enabled, keeping the legacy list otherwise
+
+- [#18541](https://github.com/LedgerHQ/ledger-live/pull/18541) [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a "Total volume" sort option to the desktop Market table. The Volume column header is now sortable and toggles between highest and lowest 24h volume, mapping to the new `total-volume-desc` and `total-volume` values of the `/v3/markets` `sort` parameter.
+
+- [#18533](https://github.com/LedgerHQ/ledger-live/pull/18533) [`dd7447f`](https://github.com/LedgerHQ/ledger-live/commit/dd7447f45787e01adefa205953e19747b4799f2a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Market V2 table polish: truncate long asset names, render "0.00%" without a trend icon for negligible price changes, add the "Assets" subheader, and adjust table grid spacing
+
+- [#18514](https://github.com/LedgerHQ/ledger-live/pull/18514) [`de88099`](https://github.com/LedgerHQ/ledger-live/commit/de88099fe3383d6ebf73060d4b5b37f387e95892) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - rename market banner title
+
+- [#18329](https://github.com/LedgerHQ/ledger-live/pull/18329) [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad compound (restake rewards): add the per-chain `compoundReward` staking operation to coin-evm (native `compound(uint64)` precompile call, nonpayable) and a Claim/Compound toggle in the EVM claim-rewards flow on desktop and mobile. The toggle is only shown for compound-capable chains (Monad) and defaults to Claim; the history operation type is `REWARD`, matching the existing claim flow.
+
+- [#18285](https://github.com/LedgerHQ/ledger-live/pull/18285) [`5b47803`](https://github.com/LedgerHQ/ledger-live/commit/5b478037292ebaaad60dc6f2385436e2b888d8ae) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Mood index card to the Market top cards section, reusing the Fear & Greed data, gauge indicator and definition dialog. The card is shown in the middle slot when asset discoverability is enabled.
+
+- [#18230](https://github.com/LedgerHQ/ledger-live/pull/18230) [`6956332`](https://github.com/LedgerHQ/ledger-live/commit/69563321293b85845da75618e656cda72c3f468e) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Move the Borrow entry point below the Assets section on the Portfolio view
+
+- [#18486](https://github.com/LedgerHQ/ledger-live/pull/18486) [`6699b3c`](https://github.com/LedgerHQ/ledger-live/commit/6699b3cb896907abf8912d2d8ef77e2c8a31f7a2) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: aleo utils
+
+- [#18642](https://github.com/LedgerHQ/ledger-live/pull/18642) [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+- [#18303](https://github.com/LedgerHQ/ledger-live/pull/18303) [`e6e8605`](https://github.com/LedgerHQ/ledger-live/commit/e6e8605d6c72472b3d48c713c6f2277a10144149) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a global search input to the TopBar, gated behind the Wallet 4.0 asset discoverability flag. When enabled, the TopBar renders the global search (in place of the breadcrumb) and the Market page hides its local search input.
+
+- [#18446](https://github.com/LedgerHQ/ledger-live/pull/18446) [`ee5c21e`](https://github.com/LedgerHQ/ledger-live/commit/ee5c21e92bcd3e22d6e99e60f2eb4c5c13984e56) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add dynamic trending categories to the Market category bar. Trending categories from the `/v3/categories/trending` backend endpoint are appended after the built-in categories (All / Stocks / Favorites), deduplicated against built-ins, and filter the market list when selected. The category bar now sizes each chip to its label and scrolls horizontally (scrollbar hidden) when the chips overflow.
+
+- [#18364](https://github.com/LedgerHQ/ledger-live/pull/18364) [`f4abb5d`](https://github.com/LedgerHQ/ledger-live/commit/f4abb5de3dc1a413fe29f8f19ab51c39b40e820a) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix missing Tezos staking texts: family-scoped UNSTAKE/FINALIZE_UNSTAKE operation labels, neutral unsigned amount for pending unstakes, stake-success CTA opening the account dashboard, and updated unstake-required modal copy
+
+- [#18424](https://github.com/LedgerHQ/ledger-live/pull/18424) [`2cc5f89`](https://github.com/LedgerHQ/ledger-live/commit/2cc5f894fdcb5692f4ea75eb16ca52178686ccd8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix(market): use the Settings countervalue in the Market list when asset discoverability is enabled
+
+  When the asset discoverability feature flag is enabled, the per-market countervalue selector is hidden, so the Market list now follows the app-wide Settings countervalue (validated against the supported list, defaulting to USD) for both fetching and displaying prices. When the flag is off, the market store remains the source of truth and the dropdown still drives the list.
+
+- [#18381](https://github.com/LedgerHQ/ledger-live/pull/18381) [`a4e4bf5`](https://github.com/LedgerHQ/ledger-live/commit/a4e4bf5646c333ac83a1e9993507cd422707677e) Thanks [@dgreen-ledger](https://github.com/dgreen-ledger)! - Stabilize Concordium OnboardModal happy-path test by moving the transient QR-code assertion to a dedicated PREPARE-only test that can't race the SUCCESS debounce
+
+- [#18496](https://github.com/LedgerHQ/ledger-live/pull/18496) [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix the global synchronization spinner spinning indefinitely when the portfolio contains only empty accounts (LIVE-32175). Empty accounts are never tracked for countervalues, so `getPortfolio` reported `balanceAvailable: false` forever, which kept `isColdStart`/`isBalanceLoading` true and the sync lifecycle stuck on `"syncing"`. `getPortfolio` now reports the balance as available when every still-unpriced account is empty (the total is a known 0), so the spinner settles and the balance shows instead of a permanent placeholder.
+
+- [#17457](https://github.com/LedgerHQ/ledger-live/pull/17457) [`8375bee`](https://github.com/LedgerHQ/ledger-live/commit/8375bee079108a6cf4814da9e8020b91b6153e03) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add Desktop swap transaction status dialog for [LIVE-29443](https://ledgerhq.atlassian.net/browse/LIVE-29443).
+
+- [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
+
+- [#18304](https://github.com/LedgerHQ/ledger-live/pull/18304) [`d0ea14d`](https://github.com/LedgerHQ/ledger-live/commit/d0ea14d01197541e5b8d10ff891c470a9f4a8efd) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd - backup hub
+
+- [#18519](https://github.com/LedgerHQ/ledger-live/pull/18519) [`712b4aa`](https://github.com/LedgerHQ/ledger-live/commit/712b4aa5f7be78c8c8e9e5a8350a8c8dbc0d9db2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove stablecoins section in global search
+
+- [#18405](https://github.com/LedgerHQ/ledger-live/pull/18405) [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: prepare aleo utils for incoming tokens integration
+
+- [#18289](https://github.com/LedgerHQ/ledger-live/pull/18289) [`ca8f675`](https://github.com/LedgerHQ/ledger-live/commit/ca8f675f28dc9ca917fab3cce918989a60351afb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the global market cap card to the Market top cards section, displaying the total crypto market capitalization with its 24h trend and a definition dialog.
+
+- [#18280](https://github.com/LedgerHQ/ledger-live/pull/18280) [`dc902cb`](https://github.com/LedgerHQ/ledger-live/commit/dc902cb2d2f05056cd9ee58a88dc1358a275cf99) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Market top cards section shell, a feature-flagged layout that renders three placeholder cards above the market list when asset discoverability is enabled.
+
+- [#18554](https://github.com/LedgerHQ/ledger-live/pull/18554) [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): remove stellar specific mention on error message new send flow
+
+- [#18561](https://github.com/LedgerHQ/ledger-live/pull/18561) [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use the dedicated CVS `tokenized-stock` category for the Market stocks filter instead of the hardcoded `filter=stock` + client-side id matching, and stop firing a spurious `to=usd` market request while the supported counter-values list is still loading.
+
+- [#18370](https://github.com/LedgerHQ/ledger-live/pull/18370) [`5cc8f0c`](https://github.com/LedgerHQ/ledger-live/commit/5cc8f0c0eb21a274e412f2ad87247f52ee8f59a6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a Stocks section to the Portfolio screen, under the Stablecoins section. It reuses the search-overlay Stocks feature (DADA-sourced, ranked by market cap, horizontally scrollable two-row grid) with an "Explore" link header variant instead of the "show more" affordance, and is gated behind the Asset Discoverability flag.
+
+- [#18256](https://github.com/LedgerHQ/ledger-live/pull/18256) [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Derive "supported currencies" from the coin-modules registry instead of `setSupportedCurrencies`.
+
+  Each `CoinModuleLoader` now declares a `supportedCoins: CryptoCurrencyId[]` field, and a currency is supported when it appears in a registered loader's `supportedCoins`. The framework `setSupportedCurrencies` / `listSupportedCurrencies` / `isCurrencySupported` and the `EXPERIMENTAL_CURRENCIES` env are removed; `listSupportedCurrencies` / `isCurrencySupported` are now exported from `@ledgerhq/live-common/currencies` backed by the registry. Apps no longer maintain a supported-currencies list — registering the coin modules is what makes their currencies supported.
+
+- [#18310](https://github.com/LedgerHQ/ledger-live/pull/18310) [`e95d1ce`](https://github.com/LedgerHQ/ledger-live/commit/e95d1ce8cda53cd0739bb2c8b1dd08d8eb96b52e) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Track Nano S swap incompatibility views: add page-view and CTA click analytics for the "Explore compatible devices" and "Swap with another provider" actions
+
+- [#18385](https://github.com/LedgerHQ/ledger-live/pull/18385) [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo fixtures and base constants extended
+
+- [#18560](https://github.com/LedgerHQ/ledger-live/pull/18560) [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102) Thanks [@dilaouid](https://github.com/dilaouid)! - chore(lwdm): refactor memo feature for new send flow
+
+- [#18352](https://github.com/LedgerHQ/ledger-live/pull/18352) [`1f251d7`](https://github.com/LedgerHQ/ledger-live/commit/1f251d73cf1a6b3cc541455a198e6a27bde90d26) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a Stocks section to the global search overlay default view. Stocks are sourced from DADA, ranked by market cap, rendered in a horizontally scrollable two-row grid with skeleton loading, and link to the asset/market detail page (with a "see all" entry to the stocks market category).
+
+- [#18529](https://github.com/LedgerHQ/ledger-live/pull/18529) [`9d5dd70`](https://github.com/LedgerHQ/ledger-live/commit/9d5dd70e0b64fdcd0694a4eb4f28fa407c4d67e5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update footnote on all cards on market list cards
+
+- [#18319](https://github.com/LedgerHQ/ledger-live/pull/18319) [`e30bdaf`](https://github.com/LedgerHQ/ledger-live/commit/e30bdaff418424f8603f1560926bb1222cc2c009) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the SearchOverlay shell for the global TopBar asset search: a Popover container with a shared Context and a mode-based content switch (suggestions / results / no results). Behind the `assetDiscoverability` feature flag; section content and the live data pipeline land in follow-up tickets.
+
+- [#18516](https://github.com/LedgerHQ/ledger-live/pull/18516) [`bf9d9f3`](https://github.com/LedgerHQ/ledger-live/commit/bf9d9f319de6037e4f89a652d9e52c0148485492) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): custom fees new send flow screen
+
+- [#18270](https://github.com/LedgerHQ/ledger-live/pull/18270) [`7d06bb4`](https://github.com/LedgerHQ/ledger-live/commit/7d06bb45548155c28b89aeea58f7641ef45eb43e) Thanks [@qperrot](https://github.com/qperrot)! - Fix: new message for sei delegation when address not linked
+
+- [#18306](https://github.com/LedgerHQ/ledger-live/pull/18306) [`decf1f0`](https://github.com/LedgerHQ/ledger-live/commit/decf1f04b85b68a66cf7e6433806d382fd7e2b6d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MSW handlers for Ledger Sync `/_info` endpoints and fix React 19 fake-timer hang in WalletSync tests
+
+- [#18506](https://github.com/LedgerHQ/ledger-live/pull/18506) [`bda68fd`](https://github.com/LedgerHQ/ledger-live/commit/bda68fd5c8c78b9336c8c4aadc0ada49e373aae0) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix live app loader with wallet v4
+
+- [#18235](https://github.com/LedgerHQ/ledger-live/pull/18235) [`c013b8a`](https://github.com/LedgerHQ/ledger-live/commit/c013b8a0a6f87e80bacde155d9db461a92742577) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add Monad withdraw flow to finalize matured undelegations from the stakes table
+
+- [#18532](https://github.com/LedgerHQ/ledger-live/pull/18532) [`11f7e93`](https://github.com/LedgerHQ/ledger-live/commit/11f7e9365cddc440aa2110e5c8f1fae9e4796377) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd backup hub tracking
+
+### Patch Changes
+
+- Updated dependencies [[`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09), [`61fe10b`](https://github.com/LedgerHQ/ledger-live/commit/61fe10b15ae6c8c4aa916f75e19899c79f90ba77), [`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8), [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd), [`558e633`](https://github.com/LedgerHQ/ledger-live/commit/558e633d633b73fd5b7f9bd6845ef2902ed60405), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21), [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311), [`e272e02`](https://github.com/LedgerHQ/ledger-live/commit/e272e0221aaa8b78120c3746d315108f30fc4dc9), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac), [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516), [`16b9bbc`](https://github.com/LedgerHQ/ledger-live/commit/16b9bbcf1df6546a8894acf22b58fb6e35576ed4), [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f), [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e), [`1aab949`](https://github.com/LedgerHQ/ledger-live/commit/1aab9495340ad48aa69b9bc42b917153d6d2bfdd), [`e962c2d`](https://github.com/LedgerHQ/ledger-live/commit/e962c2df66669d8b9bcf99a421c67f52a3278a6e), [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5), [`d3829e5`](https://github.com/LedgerHQ/ledger-live/commit/d3829e5889af420f986562aaec2f226ad68c66ed), [`f59b441`](https://github.com/LedgerHQ/ledger-live/commit/f59b441b040495884a317f61c8588db7014078c2), [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`5dcc7b5`](https://github.com/LedgerHQ/ledger-live/commit/5dcc7b58625744541d6240bf9f58a9adcc3efcfd), [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d), [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901), [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b), [`086bf9b`](https://github.com/LedgerHQ/ledger-live/commit/086bf9b63dda23c8bef4a05f45b4b7ecdf3caa65), [`6e0f83d`](https://github.com/LedgerHQ/ledger-live/commit/6e0f83d30dc4f294a579d84db14efd43d720ef25), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451), [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2), [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102), [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e), [`252c330`](https://github.com/LedgerHQ/ledger-live/commit/252c330293d504f901a7fd00980ef1ed02aaa7b7)]:
+  - @ledgerhq/live-common@36.2.0
+  - @ledgerhq/coin-cardano@0.27.0
+  - @ledgerhq/live-env@2.39.0
+  - @ledgerhq/types-live@6.112.0
+  - @ledgerhq/coin-evm@4.3.0
+  - @ledgerhq/cryptoassets@13.52.0
+  - @ledgerhq/coin-cosmos@0.36.0
+  - @shared/feature-flags@0.11.0
+  - @features/platform-feature-flags@0.4.0
+  - @ledgerhq/live-dmk-desktop@0.18.0
+  - @ledgerhq/types-cryptoassets@7.38.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0
+  - @ledgerhq/wallet-pnl@0.6.0
+  - @ledgerhq/asset-detail@0.6.0
+  - @ledgerhq/live-currency-format@0.10.0
+  - @ledgerhq/live-countervalues@0.20.0
+  - @ledgerhq/client-ids@0.10.3
+  - @ledgerhq/coin-bitcoin@0.44.1
+  - @ledgerhq/coin-canton@0.26.2
+  - @ledgerhq/coin-concordium@0.13.1
+  - @ledgerhq/coin-filecoin@1.25.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.6
+  - @ledgerhq/ledger-key-ring-protocol@0.15.1
+  - @ledgerhq/live-dmk-speculos@0.9.2
+  - @ledgerhq/live-network@2.6.5
+  - @ledgerhq/live-wallet@0.27.3
+  - @ledgerhq/asset-aggregation@0.8.1
+  - @ledgerhq/coin-casper@2.13.7
+  - @ledgerhq/domain-service@1.8.7
+  - @ledgerhq/live-countervalues-react@0.15.1
+
+## 4.9.0-next.1
+
+### Minor Changes
+
+- [#18642](https://github.com/LedgerHQ/ledger-live/pull/18642) [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+### Patch Changes
+
+- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
+  - @ledgerhq/cryptoassets@13.52.0-next.1
+  - @ledgerhq/types-live@6.112.0-next.1
+  - @ledgerhq/coin-evm@4.3.0-next.1
+  - @ledgerhq/live-currency-format@0.10.0-next.1
+  - @ledgerhq/live-common@36.2.0-next.1
+  - @shared/feature-flags@0.11.0-next.1
+  - @ledgerhq/asset-aggregation@0.8.1-next.1
+  - @ledgerhq/coin-bitcoin@0.44.1-next.1
+  - @ledgerhq/coin-canton@0.26.2-next.1
+  - @ledgerhq/coin-cardano@0.27.0-next.1
+  - @ledgerhq/coin-casper@2.13.7-next.1
+  - @ledgerhq/coin-concordium@0.13.1-next.1
+  - @ledgerhq/coin-cosmos@0.36.0-next.1
+  - @ledgerhq/coin-filecoin@1.25.1-next.1
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.1
+  - @ledgerhq/live-wallet@0.27.3-next.1
+  - @ledgerhq/wallet-pnl@0.6.0-next.1
+  - @ledgerhq/domain-service@1.8.7-next.1
+  - @ledgerhq/live-countervalues@0.20.0-next.1
+  - @ledgerhq/live-countervalues-react@0.15.1-next.1
+  - @ledgerhq/asset-detail@0.6.0-next.1
+  - @ledgerhq/live-dmk-desktop@0.18.0-next.1
+  - @features/platform-feature-flags@0.4.0-next.1
+
+## 4.9.0-next.0
+
+### Minor Changes
+
+- [#18333](https://github.com/LedgerHQ/ledger-live/pull/18333) [`1bb2d22`](https://github.com/LedgerHQ/ledger-live/commit/1bb2d220026f2860b1e60925ba46197163668479) Thanks [@qperrot](https://github.com/qperrot)! - Fix: add support link for SEI delegation warning
+
+- [#18423](https://github.com/LedgerHQ/ledger-live/pull/18423) [`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a favorites ranking to the desktop Market Banner. The banner now switches between the trending performers list and the user's starred market coins, fetching favorites via `useMarketData` (availability filtering bypassed so starred coins always show) and disabling whichever query is inactive.
+
+- [#18222](https://github.com/LedgerHQ/ledger-live/pull/18222) [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7) Thanks [@henri-ly](https://github.com/henri-ly)! - add undelegate for monad
+
+- [#18255](https://github.com/LedgerHQ/ledger-live/pull/18255) [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): hook in llc for signature view model
+
+- [#18362](https://github.com/LedgerHQ/ledger-live/pull/18362) [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add theme-specific awareness modal hero images, feature intro border, carousel navigation label, and related UI improvements
+
+- [#18315](https://github.com/LedgerHQ/ledger-live/pull/18315) [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7) Thanks [@shazzzam](https://github.com/shazzzam)! - Display the correct fee currency for Celo CIP-64 transactions (fees paid in tokens such as USDT/USDC instead of native CELO). Adds a `feeCurrencyAddress` field to `CeloOperationExtra`, an `eth_getTransactionByHash`-based sync enrichment, and a `skip` option to `useTokenByAddressInCurrency` for conditional CAL lookups.
+
+- [#18291](https://github.com/LedgerHQ/ledger-live/pull/18291) [`c0b15db`](https://github.com/LedgerHQ/ledger-live/commit/c0b15db0d809fd7e6d18070a2e7cfbdab31460f9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Altcoin Season index card to the Market top cards section. The arc gauge used by the Fear & Greed indicator is extracted into a shared `ArcGaugeIndicator` component, and a shared `MarketTopCardError` component now renders a graceful error state for each top card instead of silently hiding it.
+
+- [#17844](https://github.com/LedgerHQ/ledger-live/pull/17844) [`7a120cb`](https://github.com/LedgerHQ/ledger-live/commit/7a120cbfb0881c01054f99a749049ade1d7410aa) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Adopt `@datadog/electron-sdk` to cover the Electron main process. Uncaught exceptions, unhandled rejections, and renderer crashes (`render-process-gone`) are now reported to Datadog, and `dd-trace` adds main-process resource/trace and renderer telemetry forwarding. Gated by the existing `sentryLogs` user opt-in; no new feature flag.
+
+  Bundle stack frames from the packaged asar are rewritten to `https://app.asar/…` before sending, so Datadog can match the uploaded source maps and unminify stack traces — both the renderer's `file://…/app.asar/.webpack/…` URLs and the main process's raw `/…/app.asar/.webpack/…` filesystem paths.
+
+- [#18337](https://github.com/LedgerHQ/ledger-live/pull/18337) [`fdd5d35`](https://github.com/LedgerHQ/ledger-live/commit/fdd5d3536682b5011eb31a4e171ffb09032cb7de) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: add tracking on select device button clicked
+
+- [#18397](https://github.com/LedgerHQ/ledger-live/pull/18397) [`4fc3636`](https://github.com/LedgerHQ/ledger-live/commit/4fc3636002f1a7a9f2ff5a9678640cb1b6659da7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Cryptos and Stablecoins suggestion sections to the global Search overlay. Both sections are sourced from DADA market data (shared single fetch, split in-memory by DADA stablecoin tickers), ranked by market cap and capped to a per-section limit, with loading skeletons and click-through to the asset detail / market list.
+
+- [#18522](https://github.com/LedgerHQ/ledger-live/pull/18522) [`1b39e2b`](https://github.com/LedgerHQ/ledger-live/commit/1b39e2b3abf14502148c7abf1c23789ed54959b8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - change order of categories in market
+
+- [#18237](https://github.com/LedgerHQ/ledger-live/pull/18237) [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate `@ledgerhq/live-common`'s internal feature-flag consumers off its React `featureFlags` Context module and `@ledgerhq/types-live` feature types, onto the Redux-backed `@shared/feature-flags` / `@features/platform-feature-flags` packages, and remove the `featureFlags` module along with the apps' now-inert `FeatureFlagsContextBridge`. Remaining external React consumers (both apps) are repointed to `@features/platform-feature-flags`; `@ledgerhq/live-dmk-desktop` receives its `ldmkTransport` flag via a prop instead of depending on the feature-flags package; non-React imperative reads use an injected getter or the relocated `live-common/firebase/featureFlags` reader. Adds the platform-specific `formatToFirebaseFeatureId` / `formatDefaultFeatures` to `@features/platform-feature-flags` and the generic `isValidFeatureId` to `@shared/feature-flags`. No behavioral change — resolved flag values are identical.
+
+- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint the remaining `@ledgerhq/types-live` feature-type consumers (desktop app + desktop/mobile e2e) onto `@shared/feature-flags`, taking in-repo usage of the legacy types-live feature types to zero. Also drop now-dead feature-flag tooling config: the `@ledgerhq/live-common/featureFlags/index` `unimported` entry in `live-dmk-desktop`, and the deleted `FeatureFlagsContextBridge` eslint-guardrail exemptions in both apps (the block rules against re-introducing the deleted module are kept).
+
+- [#18555](https://github.com/LedgerHQ/ledger-live/pull/18555) [`8c2d80c`](https://github.com/LedgerHQ/ledger-live/commit/8c2d80c9d0cfbd7d4e89165948c351c30d342918) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use base color instead of red for the unread operation dot indicator
+
+- [#18553](https://github.com/LedgerHQ/ledger-live/pull/18553) [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): switch mode amount step new send flow changes header
+
+- [#18546](https://github.com/LedgerHQ/ledger-live/pull/18546) [`9c17db3`](https://github.com/LedgerHQ/ledger-live/commit/9c17db3d6c993bfb4aad2baca1a44184554d34b6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Global Search navigating to "asset not found" for assets without a market-provider entry (e.g. Canton). The search now forwards the full market currency (with its `ledgerIds`) as navigation state, so the Asset Detail screen can resolve such assets via the DADA fallback — matching the behaviour of the Market table rows and mobile.
+
+- [#18428](https://github.com/LedgerHQ/ledger-live/pull/18428) [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Global Search default-sections data on mobile, fed by DADA. Cryptos (top 3) and stablecoins (top 2) render as market rows; stocks (top 10) as pills.
+
+  Share the DADA asset-discovery selection in `@ledgerhq/live-common` (`selectTopStocks`, `selectTopAssetsByCategory`, `StockSuggestion`) so desktop and mobile use one implementation; desktop's stocks section now consumes `selectTopStocks` instead of its own copy.
+
+- [#18509](https://github.com/LedgerHQ/ledger-live/pull/18509) [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): new send flow custom fees common hooks
+
+- [#18543](https://github.com/LedgerHQ/ledger-live/pull/18543) [`a342b65`](https://github.com/LedgerHQ/ledger-live/commit/a342b65215976d8e980c5d46e491b3c6d48e5cc7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - align footer note in market cards
+
+- [#18480](https://github.com/LedgerHQ/ledger-live/pull/18480) [`7626bfb`](https://github.com/LedgerHQ/ledger-live/commit/7626bfb042a107fa88e4bdd5464206c285c90685) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Gate the desktop market banner ranking behind the asset discoverability feature flag and default the ranking to gainers when the flag is off
+
+- [#18300](https://github.com/LedgerHQ/ledger-live/pull/18300) [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(llc): changes signature request type for new send flow
+
+- [#18450](https://github.com/LedgerHQ/ledger-live/pull/18450) [`89b52f5`](https://github.com/LedgerHQ/ledger-live/commit/89b52f50f4cc7fc7d0ed6db541c813c12b5729a9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add live asset search results to the top-bar search overlay. Typing a query (debounced, min 2 chars) fetches matching assets from DADA via `useAssetSearchResultsViewModel` and renders them as a flat list, with dedicated empty ("No asset found") and error ("Connection failed") states. The asset row gains a `default` density for the expanded results layout, and the clear button no longer toggles the overlay.
+
+- [#18557](https://github.com/LedgerHQ/ledger-live/pull/18557) [`74c559f`](https://github.com/LedgerHQ/ledger-live/commit/74c559fa79a0de4a6f30615b5116d7b79b3e015c) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix: re-clicking the global search bar no longer closes the search overlay. Clicks inside the open search field are now prevented from toggling the Popover trigger, so the overlay stays open and the typed query is preserved.
+
+- [#18449](https://github.com/LedgerHQ/ledger-live/pull/18449) [`db3bb7e`](https://github.com/LedgerHQ/ledger-live/commit/db3bb7e2adcdc3de1b7aee0e68a55c7501037dbe) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate the search-overlay asset suggestions to the DADA assets endpoint (`useAssetsData` + `useUsdToFiatRate`) instead of `useMarketData`, exposing an `isError` state for cryptos/stablecoins and stocks. The Stocks section also moves from a CSS grid to an explicit two-row layout (shared `splitIntoTwoRows` helper) to keep the column-major scroll order.
+
+- [#18002](https://github.com/LedgerHQ/ledger-live/pull/18002) [`5d583bf`](https://github.com/LedgerHQ/ledger-live/commit/5d583bfa54397147b9fb429bbd0e95d31864a534) Thanks [@gre-ledger](https://github.com/gre-ledger)! - perf(lld): defer-load renderer coin families and modals via dynamic import()
+
+- [#18419](https://github.com/LedgerHQ/ledger-live/pull/18419) [`8fcac22`](https://github.com/LedgerHQ/ledger-live/commit/8fcac228a6b60fdd902579a17aee356f4299f31d) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwd): add links for amount screen in new send flow
+
+- [#18312](https://github.com/LedgerHQ/ledger-live/pull/18312) [`621a175`](https://github.com/LedgerHQ/ledger-live/commit/621a1756ef8b59844a086a610ff45819521ff633) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Surface insufficient fee-token balance on Celo Send Desktop as an explicit error banner.
+
+- [#18488](https://github.com/LedgerHQ/ledger-live/pull/18488) [`b5b7fc5`](https://github.com/LedgerHQ/ledger-live/commit/b5b7fc5059e1c666b4ce1de9c5deb93e7f1effbe) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a "Stocks preset" generator to the developer mock-accounts tooling (dev-only tooling, no user-facing change). It fetches the top tokenized stocks from DADA (category=stocks) and injects them as sub-accounts grouped under their network.
+
+- [#18548](https://github.com/LedgerHQ/ledger-live/pull/18548) [`7ad54da`](https://github.com/LedgerHQ/ledger-live/commit/7ad54daebcb0a0b8f99352348ef35dd997bfde33) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix transaction history staying filtered by asset when opening Transactions from the top bar while already on a scoped history view
+
+- [#18294](https://github.com/LedgerHQ/ledger-live/pull/18294) [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Add the Market category switcher (All / Stocks / Favorites) on the V4 Market page, gated by the `lwdWallet40.assetDiscoverability` feature flag. The selected category is persisted across reloads and supersedes the legacy starred filter drawer when the flag is on. The shared category helpers (`parseMarketListCategory`, `getMarketFilter`, `isStockMarketCurrency`) now live in `@ledgerhq/live-common/market/utils/category` and are reused by both desktop and mobile.
+
+- [#18307](https://github.com/LedgerHQ/ledger-live/pull/18307) [`59aa611`](https://github.com/LedgerHQ/ledger-live/commit/59aa611a3833724516747f05514b5af44b932817) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Support a `category` param in the Market deeplink (e.g. `ledgerwallet://market?category=stocks`). When present, the category is pre-selected (`setMarketCategory`) before navigating to `/market`; unknown values fall back to `all`.
+
+- [#18299](https://github.com/LedgerHQ/ledger-live/pull/18299) [`1187d63`](https://github.com/LedgerHQ/ledger-live/commit/1187d634e7c8b4ac763a20671911c32ba37c4582) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - W4.0 - Replace the Market page time-range dropdown (`@ledgerhq/react-ui`) with the Lumen `Select` pill (`MediaButton` trigger), matching Figma. The range value still flows through `useMarket` and persists exactly as before — no behaviour change.
+
+- [#18487](https://github.com/LedgerHQ/ledger-live/pull/18487) [`b528cf5`](https://github.com/LedgerHQ/ledger-live/commit/b528cf5ef7f1c0a5cdb563afc29fbd2dc90cfaeb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Portfolio Stocks section behind the `assetDiscoverability` flag. `useCategorizedAssetsFromPortfolio` now returns a `stocks` bucket split out of `cryptos` by DADA currency id (collision-free vs ticker, so a crypto like TON isn't misclassified). When the user holds stocks the section renders a table like Cryptos/Stablecoins (max 5, "Explore all" → the `/assets?category=stocks` filtered view); otherwise it renders the discovery grid of the top default stocks ("Explore" → Market filtered to stocks). Renames the discovery `StockRow` pill to `StockPill`.
+
+- [#18497](https://github.com/LedgerHQ/ledger-live/pull/18497) [`1aab949`](https://github.com/LedgerHQ/ledger-live/commit/1aab9495340ad48aa69b9bc42b917153d6d2bfdd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Harmonize asset prices across Global Search, the Assets table and Asset detail so the same asset shows the same price to the cent. The Assets table Price column now sources from DADA (with the USD→fiat conversion applied, fixing non-USD fiats like MAD/EUR) and Asset detail reads from the shared bulk DADA cache, removing the transient drift between screens. The Value column stays on countervalues for portfolio consistency.
+
+- [#18338](https://github.com/LedgerHQ/ledger-live/pull/18338) [`eb5cd74`](https://github.com/LedgerHQ/ledger-live/commit/eb5cd7438bd41d9a93418f1c240d34d395f72a70) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a ranking selector (Trending, Gainers, Losers, Favorites) to the MarketBanner header, gated behind the `assetDiscoverability` feature flag. The selection is persisted across reloads via a new `marketBanner` Redux slice. Favorites is disabled when no market coins are starred.
+
+- [#18518](https://github.com/LedgerHQ/ledger-live/pull/18518) [`a513132`](https://github.com/LedgerHQ/ledger-live/commit/a5131324e0068d3420dc332f42138e71e88c3658) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Market list pagination and scroll position when switching lists (category, sort, range, search, filter): re-arm the pagination guard and reset scroll to the top on list identity change, and detect the end of every list type by tracking whether new rows arrived
+
+- [#18466](https://github.com/LedgerHQ/ledger-live/pull/18466) [`ede0766`](https://github.com/LedgerHQ/ledger-live/commit/ede0766908a9e545404a3920bc68a01ca31267b3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MarketTable component (view, view-model, sortable header and loading skeleton) for the new asset-discoverability Market view
+
+- [#18466](https://github.com/LedgerHQ/ledger-live/pull/18466) [`caf22a8`](https://github.com/LedgerHQ/ledger-live/commit/caf22a8b34feefbd0626289a325c04d5de1b6673) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MarketRow component (view, view-model and row actions) for the new asset-discoverability Market table
+
+- [#18466](https://github.com/LedgerHQ/ledger-live/pull/18466) [`65f2d6f`](https://github.com/LedgerHQ/ledger-live/commit/65f2d6fcd84abbf1a64cfe913cd3d8fc46c21f70) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Display the new Market table on the Market page when asset discoverability is enabled, keeping the legacy list otherwise
+
+- [#18541](https://github.com/LedgerHQ/ledger-live/pull/18541) [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a "Total volume" sort option to the desktop Market table. The Volume column header is now sortable and toggles between highest and lowest 24h volume, mapping to the new `total-volume-desc` and `total-volume` values of the `/v3/markets` `sort` parameter.
+
+- [#18533](https://github.com/LedgerHQ/ledger-live/pull/18533) [`dd7447f`](https://github.com/LedgerHQ/ledger-live/commit/dd7447f45787e01adefa205953e19747b4799f2a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Market V2 table polish: truncate long asset names, render "0.00%" without a trend icon for negligible price changes, add the "Assets" subheader, and adjust table grid spacing
+
+- [#18514](https://github.com/LedgerHQ/ledger-live/pull/18514) [`de88099`](https://github.com/LedgerHQ/ledger-live/commit/de88099fe3383d6ebf73060d4b5b37f387e95892) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - rename market banner title
+
+- [#18329](https://github.com/LedgerHQ/ledger-live/pull/18329) [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Support Monad compound (restake rewards): add the per-chain `compoundReward` staking operation to coin-evm (native `compound(uint64)` precompile call, nonpayable) and a Claim/Compound toggle in the EVM claim-rewards flow on desktop and mobile. The toggle is only shown for compound-capable chains (Monad) and defaults to Claim; the history operation type is `REWARD`, matching the existing claim flow.
+
+- [#18285](https://github.com/LedgerHQ/ledger-live/pull/18285) [`5b47803`](https://github.com/LedgerHQ/ledger-live/commit/5b478037292ebaaad60dc6f2385436e2b888d8ae) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Mood index card to the Market top cards section, reusing the Fear & Greed data, gauge indicator and definition dialog. The card is shown in the middle slot when asset discoverability is enabled.
+
+- [#18230](https://github.com/LedgerHQ/ledger-live/pull/18230) [`6956332`](https://github.com/LedgerHQ/ledger-live/commit/69563321293b85845da75618e656cda72c3f468e) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Move the Borrow entry point below the Assets section on the Portfolio view
+
+- [#18486](https://github.com/LedgerHQ/ledger-live/pull/18486) [`6699b3c`](https://github.com/LedgerHQ/ledger-live/commit/6699b3cb896907abf8912d2d8ef77e2c8a31f7a2) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: aleo utils
+
+- [#18303](https://github.com/LedgerHQ/ledger-live/pull/18303) [`e6e8605`](https://github.com/LedgerHQ/ledger-live/commit/e6e8605d6c72472b3d48c713c6f2277a10144149) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a global search input to the TopBar, gated behind the Wallet 4.0 asset discoverability flag. When enabled, the TopBar renders the global search (in place of the breadcrumb) and the Market page hides its local search input.
+
+- [#18446](https://github.com/LedgerHQ/ledger-live/pull/18446) [`ee5c21e`](https://github.com/LedgerHQ/ledger-live/commit/ee5c21e92bcd3e22d6e99e60f2eb4c5c13984e56) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add dynamic trending categories to the Market category bar. Trending categories from the `/v3/categories/trending` backend endpoint are appended after the built-in categories (All / Stocks / Favorites), deduplicated against built-ins, and filter the market list when selected. The category bar now sizes each chip to its label and scrolls horizontally (scrollbar hidden) when the chips overflow.
+
+- [#18364](https://github.com/LedgerHQ/ledger-live/pull/18364) [`f4abb5d`](https://github.com/LedgerHQ/ledger-live/commit/f4abb5de3dc1a413fe29f8f19ab51c39b40e820a) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix missing Tezos staking texts: family-scoped UNSTAKE/FINALIZE_UNSTAKE operation labels, neutral unsigned amount for pending unstakes, stake-success CTA opening the account dashboard, and updated unstake-required modal copy
+
+- [#18424](https://github.com/LedgerHQ/ledger-live/pull/18424) [`2cc5f89`](https://github.com/LedgerHQ/ledger-live/commit/2cc5f894fdcb5692f4ea75eb16ca52178686ccd8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix(market): use the Settings countervalue in the Market list when asset discoverability is enabled
+
+  When the asset discoverability feature flag is enabled, the per-market countervalue selector is hidden, so the Market list now follows the app-wide Settings countervalue (validated against the supported list, defaulting to USD) for both fetching and displaying prices. When the flag is off, the market store remains the source of truth and the dropdown still drives the list.
+
+- [#18381](https://github.com/LedgerHQ/ledger-live/pull/18381) [`a4e4bf5`](https://github.com/LedgerHQ/ledger-live/commit/a4e4bf5646c333ac83a1e9993507cd422707677e) Thanks [@dgreen-ledger](https://github.com/dgreen-ledger)! - Stabilize Concordium OnboardModal happy-path test by moving the transient QR-code assertion to a dedicated PREPARE-only test that can't race the SUCCESS debounce
+
+- [#18496](https://github.com/LedgerHQ/ledger-live/pull/18496) [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix the global synchronization spinner spinning indefinitely when the portfolio contains only empty accounts (LIVE-32175). Empty accounts are never tracked for countervalues, so `getPortfolio` reported `balanceAvailable: false` forever, which kept `isColdStart`/`isBalanceLoading` true and the sync lifecycle stuck on `"syncing"`. `getPortfolio` now reports the balance as available when every still-unpriced account is empty (the total is a known 0), so the spinner settles and the balance shows instead of a permanent placeholder.
+
+- [#17457](https://github.com/LedgerHQ/ledger-live/pull/17457) [`8375bee`](https://github.com/LedgerHQ/ledger-live/commit/8375bee079108a6cf4814da9e8020b91b6153e03) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add Desktop swap transaction status dialog for [LIVE-29443](https://ledgerhq.atlassian.net/browse/LIVE-29443).
+
+- [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
+
+- [#18304](https://github.com/LedgerHQ/ledger-live/pull/18304) [`d0ea14d`](https://github.com/LedgerHQ/ledger-live/commit/d0ea14d01197541e5b8d10ff891c470a9f4a8efd) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd - backup hub
+
+- [#18519](https://github.com/LedgerHQ/ledger-live/pull/18519) [`712b4aa`](https://github.com/LedgerHQ/ledger-live/commit/712b4aa5f7be78c8c8e9e5a8350a8c8dbc0d9db2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove stablecoins section in global search
+
+- [#18405](https://github.com/LedgerHQ/ledger-live/pull/18405) [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: prepare aleo utils for incoming tokens integration
+
+- [#18289](https://github.com/LedgerHQ/ledger-live/pull/18289) [`ca8f675`](https://github.com/LedgerHQ/ledger-live/commit/ca8f675f28dc9ca917fab3cce918989a60351afb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the global market cap card to the Market top cards section, displaying the total crypto market capitalization with its 24h trend and a definition dialog.
+
+- [#18280](https://github.com/LedgerHQ/ledger-live/pull/18280) [`dc902cb`](https://github.com/LedgerHQ/ledger-live/commit/dc902cb2d2f05056cd9ee58a88dc1358a275cf99) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Market top cards section shell, a feature-flagged layout that renders three placeholder cards above the market list when asset discoverability is enabled.
+
+- [#18554](https://github.com/LedgerHQ/ledger-live/pull/18554) [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): remove stellar specific mention on error message new send flow
+
+- [#18561](https://github.com/LedgerHQ/ledger-live/pull/18561) [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use the dedicated CVS `tokenized-stock` category for the Market stocks filter instead of the hardcoded `filter=stock` + client-side id matching, and stop firing a spurious `to=usd` market request while the supported counter-values list is still loading.
+
+- [#18370](https://github.com/LedgerHQ/ledger-live/pull/18370) [`5cc8f0c`](https://github.com/LedgerHQ/ledger-live/commit/5cc8f0c0eb21a274e412f2ad87247f52ee8f59a6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a Stocks section to the Portfolio screen, under the Stablecoins section. It reuses the search-overlay Stocks feature (DADA-sourced, ranked by market cap, horizontally scrollable two-row grid) with an "Explore" link header variant instead of the "show more" affordance, and is gated behind the Asset Discoverability flag.
+
+- [#18256](https://github.com/LedgerHQ/ledger-live/pull/18256) [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Derive "supported currencies" from the coin-modules registry instead of `setSupportedCurrencies`.
+
+  Each `CoinModuleLoader` now declares a `supportedCoins: CryptoCurrencyId[]` field, and a currency is supported when it appears in a registered loader's `supportedCoins`. The framework `setSupportedCurrencies` / `listSupportedCurrencies` / `isCurrencySupported` and the `EXPERIMENTAL_CURRENCIES` env are removed; `listSupportedCurrencies` / `isCurrencySupported` are now exported from `@ledgerhq/live-common/currencies` backed by the registry. Apps no longer maintain a supported-currencies list — registering the coin modules is what makes their currencies supported.
+
+- [#18310](https://github.com/LedgerHQ/ledger-live/pull/18310) [`e95d1ce`](https://github.com/LedgerHQ/ledger-live/commit/e95d1ce8cda53cd0739bb2c8b1dd08d8eb96b52e) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Track Nano S swap incompatibility views: add page-view and CTA click analytics for the "Explore compatible devices" and "Swap with another provider" actions
+
+- [#18385](https://github.com/LedgerHQ/ledger-live/pull/18385) [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo fixtures and base constants extended
+
+- [#18560](https://github.com/LedgerHQ/ledger-live/pull/18560) [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102) Thanks [@dilaouid](https://github.com/dilaouid)! - chore(lwdm): refactor memo feature for new send flow
+
+- [#18352](https://github.com/LedgerHQ/ledger-live/pull/18352) [`1f251d7`](https://github.com/LedgerHQ/ledger-live/commit/1f251d73cf1a6b3cc541455a198e6a27bde90d26) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a Stocks section to the global search overlay default view. Stocks are sourced from DADA, ranked by market cap, rendered in a horizontally scrollable two-row grid with skeleton loading, and link to the asset/market detail page (with a "see all" entry to the stocks market category).
+
+- [#18529](https://github.com/LedgerHQ/ledger-live/pull/18529) [`9d5dd70`](https://github.com/LedgerHQ/ledger-live/commit/9d5dd70e0b64fdcd0694a4eb4f28fa407c4d67e5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update footnote on all cards on market list cards
+
+- [#18319](https://github.com/LedgerHQ/ledger-live/pull/18319) [`e30bdaf`](https://github.com/LedgerHQ/ledger-live/commit/e30bdaff418424f8603f1560926bb1222cc2c009) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the SearchOverlay shell for the global TopBar asset search: a Popover container with a shared Context and a mode-based content switch (suggestions / results / no results). Behind the `assetDiscoverability` feature flag; section content and the live data pipeline land in follow-up tickets.
+
+- [#18516](https://github.com/LedgerHQ/ledger-live/pull/18516) [`bf9d9f3`](https://github.com/LedgerHQ/ledger-live/commit/bf9d9f319de6037e4f89a652d9e52c0148485492) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): custom fees new send flow screen
+
+- [#18270](https://github.com/LedgerHQ/ledger-live/pull/18270) [`7d06bb4`](https://github.com/LedgerHQ/ledger-live/commit/7d06bb45548155c28b89aeea58f7641ef45eb43e) Thanks [@qperrot](https://github.com/qperrot)! - Fix: new message for sei delegation when address not linked
+
+- [#18306](https://github.com/LedgerHQ/ledger-live/pull/18306) [`decf1f0`](https://github.com/LedgerHQ/ledger-live/commit/decf1f04b85b68a66cf7e6433806d382fd7e2b6d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add MSW handlers for Ledger Sync `/_info` endpoints and fix React 19 fake-timer hang in WalletSync tests
+
+- [#18506](https://github.com/LedgerHQ/ledger-live/pull/18506) [`bda68fd`](https://github.com/LedgerHQ/ledger-live/commit/bda68fd5c8c78b9336c8c4aadc0ada49e373aae0) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix live app loader with wallet v4
+
+- [#18235](https://github.com/LedgerHQ/ledger-live/pull/18235) [`c013b8a`](https://github.com/LedgerHQ/ledger-live/commit/c013b8a0a6f87e80bacde155d9db461a92742577) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add Monad withdraw flow to finalize matured undelegations from the stakes table
+
+- [#18532](https://github.com/LedgerHQ/ledger-live/pull/18532) [`11f7e93`](https://github.com/LedgerHQ/ledger-live/commit/11f7e9365cddc440aa2110e5c8f1fae9e4796377) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwd backup hub tracking
+
+### Patch Changes
+
+- Updated dependencies [[`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09), [`61fe10b`](https://github.com/LedgerHQ/ledger-live/commit/61fe10b15ae6c8c4aa916f75e19899c79f90ba77), [`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8), [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd), [`558e633`](https://github.com/LedgerHQ/ledger-live/commit/558e633d633b73fd5b7f9bd6845ef2902ed60405), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21), [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311), [`e272e02`](https://github.com/LedgerHQ/ledger-live/commit/e272e0221aaa8b78120c3746d315108f30fc4dc9), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac), [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516), [`16b9bbc`](https://github.com/LedgerHQ/ledger-live/commit/16b9bbcf1df6546a8894acf22b58fb6e35576ed4), [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f), [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e), [`1aab949`](https://github.com/LedgerHQ/ledger-live/commit/1aab9495340ad48aa69b9bc42b917153d6d2bfdd), [`e962c2d`](https://github.com/LedgerHQ/ledger-live/commit/e962c2df66669d8b9bcf99a421c67f52a3278a6e), [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5), [`d3829e5`](https://github.com/LedgerHQ/ledger-live/commit/d3829e5889af420f986562aaec2f226ad68c66ed), [`f59b441`](https://github.com/LedgerHQ/ledger-live/commit/f59b441b040495884a317f61c8588db7014078c2), [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`5dcc7b5`](https://github.com/LedgerHQ/ledger-live/commit/5dcc7b58625744541d6240bf9f58a9adcc3efcfd), [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d), [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901), [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b), [`086bf9b`](https://github.com/LedgerHQ/ledger-live/commit/086bf9b63dda23c8bef4a05f45b4b7ecdf3caa65), [`6e0f83d`](https://github.com/LedgerHQ/ledger-live/commit/6e0f83d30dc4f294a579d84db14efd43d720ef25), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451), [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2), [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102), [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e), [`252c330`](https://github.com/LedgerHQ/ledger-live/commit/252c330293d504f901a7fd00980ef1ed02aaa7b7)]:
+  - @ledgerhq/live-common@36.2.0-next.0
+  - @ledgerhq/coin-cardano@0.27.0-next.0
+  - @ledgerhq/live-env@2.39.0-next.0
+  - @ledgerhq/types-live@6.112.0-next.0
+  - @ledgerhq/coin-evm@4.3.0-next.0
+  - @ledgerhq/cryptoassets@13.52.0-next.0
+  - @ledgerhq/coin-cosmos@0.36.0-next.0
+  - @shared/feature-flags@0.11.0-next.0
+  - @features/platform-feature-flags@0.4.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.18.0-next.0
+  - @ledgerhq/types-cryptoassets@7.38.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
+  - @ledgerhq/wallet-pnl@0.6.0-next.0
+  - @ledgerhq/asset-detail@0.6.0-next.0
+  - @ledgerhq/live-countervalues@0.20.0-next.0
+  - @ledgerhq/client-ids@0.10.3-next.0
+  - @ledgerhq/coin-bitcoin@0.44.1-next.0
+  - @ledgerhq/coin-canton@0.26.2-next.0
+  - @ledgerhq/coin-concordium@0.13.1-next.0
+  - @ledgerhq/coin-filecoin@1.25.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.6-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.15.1-next.0
+  - @ledgerhq/live-currency-format@0.9.3-next.0
+  - @ledgerhq/live-dmk-speculos@0.9.2-next.0
+  - @ledgerhq/live-network@2.6.5-next.0
+  - @ledgerhq/live-wallet@0.27.3-next.0
+  - @ledgerhq/asset-aggregation@0.8.1-next.0
+  - @ledgerhq/coin-casper@2.13.7-next.0
+  - @ledgerhq/domain-service@1.8.7-next.0
+  - @ledgerhq/live-countervalues-react@0.15.1-next.0
+
 ## 4.8.0
 
 ### Minor Changes

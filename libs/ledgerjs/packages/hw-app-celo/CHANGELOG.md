@@ -1,5 +1,26 @@
 # @ledgerhq/hw-app-polkadot
 
+## 7.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@7.8.7
+
+## 7.1.4-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@7.8.7-next.1
+
+## 7.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@7.8.7-next.0
+
 ## 7.1.3
 
 ### Patch Changes

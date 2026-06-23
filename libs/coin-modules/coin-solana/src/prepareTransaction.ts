@@ -39,7 +39,7 @@ import {
   SolanaRecipientMemoIsRequired,
 } from "./errors";
 import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
-import { calculateToken2022TransferFees } from "./helpers/token";
+import { calculateToken2022TransferFees, getAtaDataLengthForMint } from "./helpers/token";
 import {
   decodeAccountIdWithTokenAccountAddress,
   isEd25519Address,
@@ -220,21 +220,22 @@ const deriveTokenTransferCommandDescriptor = async (
   }
 
   const assocAccRentExempt = recipientDescriptor.shouldCreateAsAssociatedTokenAccount
-    ? await api.getAssocTokenAccMinNativeBalance()
+    ? await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mintOrError))
     : 0;
 
   if (recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
     warnings.recipient = new SolanaRecipientAssociatedTokenAccountWillBeFunded();
   }
 
-  const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
-  if (spendableSol.lt(assocAccRentExempt) || spendableSol.isZero()) {
+  const requiredSol = new BigNumber(assocAccRentExempt + fee);
+  if (mainAccount.spendableBalance.lt(requiredSol) || mainAccount.spendableBalance.isZero()) {
     const query = new URLSearchParams({
       ...(mainAccount?.id ? { account: mainAccount.id } : {}),
     });
     errors.gasPrice = new NotEnoughGas(undefined, {
-      fees: formatCurrencyUnit(getFeesUnit(mainAccount.currency), new BigNumber(fee)),
+      fees: formatCurrencyUnit(getFeesUnit(mainAccount.currency), requiredSol),
       ticker: mainAccount.currency.ticker,
       cryptoName: mainAccount.currency.name,
       links: [`ledgerlive://buy?${query.toString()}`],
