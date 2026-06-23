@@ -5,6 +5,7 @@ import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { AB_TESTING_VARIANTS } from "../types/variants";
 import { CommonActions, NavigationProp, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { getTransactionStatus } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import {
   act,
   renderWithReactQuery as render,
@@ -38,8 +39,12 @@ jest.mock("~/analytics", () => {
 jest.mock("~/screens/Swap/LiveApp/SwapLiveAppWallet40", () => ({
   SwapLiveAppWallet40: () => null,
 }));
+jest.mock("@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index", () => ({
+  getTransactionStatus: jest.fn(),
+}));
 
 const featureFlagsForSwapPrompt = createNotificationsPromptFeatureFlags();
+const mockedGetTransactionStatus = jest.mocked(getTransactionStatus);
 
 describe("NotificationsPrompt swap flow", () => {
   beforeAll(() => {
@@ -48,6 +53,15 @@ describe("NotificationsPrompt swap flow", () => {
 
   beforeEach(async () => {
     jest.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
+    mockedGetTransactionStatus.mockResolvedValue({
+      provider: "changelly",
+      swapId: swapOperation.swapId,
+      status: "finished",
+      fromAccountId: MockedAccounts.active[0].id,
+      toAccountId: MockedAccounts.active[0].id,
+      sentAmount: swapOperation.fromAmount.toString(),
+      receivedAmount: swapOperation.toAmount.toString(),
+    });
     await storage.deleteAll();
   });
 
@@ -56,6 +70,7 @@ describe("NotificationsPrompt swap flow", () => {
   });
 
   afterEach(() => {
+    jest.clearAllTimers();
     jest.clearAllMocks();
   });
 
@@ -134,7 +149,10 @@ describe("NotificationsPrompt swap flow", () => {
         <SwapFlowTestWrapper>
           <HomeScreen swapParams={swapParams} />
         </SwapFlowTestWrapper>,
-        { overrideInitialState: overrideSwapPromptInitialState },
+        {
+          overrideInitialState: overrideSwapPromptInitialState,
+          userEventOptions: { advanceTimers: delay => jest.advanceTimersByTime(delay) },
+        },
       );
     }
 
@@ -149,8 +167,8 @@ describe("NotificationsPrompt swap flow", () => {
       );
 
       await user.press(screen.getAllByTestId("NavigationHeaderCloseButton")[0]);
-      await act(async () => {
-        await jest.runOnlyPendingTimersAsync();
+      act(() => {
+        jest.runOnlyPendingTimers();
       });
 
       expect(track).toHaveBeenCalledWith(
@@ -181,8 +199,8 @@ describe("NotificationsPrompt swap flow", () => {
       });
     });
 
-    it("should prompt only after closing history when swap success opens history", async () => {
-      const { user } = renderWalletV4SwapFlow(swapSuccessParams);
+    it("should schedule the prompt only after closing history when swap success opens history", async () => {
+      const { user, store } = renderWalletV4SwapFlow(swapSuccessParams);
 
       await waitFor(() => expect(screen.getByTestId("swap-success-title")).toBeVisible());
       expect(track).not.toHaveBeenCalledWith(
@@ -198,8 +216,8 @@ describe("NotificationsPrompt swap flow", () => {
       );
 
       await user.press(screen.getAllByTestId("navigation-header-back-button")[0]);
-      await act(async () => {
-        await jest.runOnlyPendingTimersAsync();
+      act(() => {
+        jest.runOnlyPendingTimers();
       });
 
       expect(track).toHaveBeenCalledWith(
@@ -215,16 +233,9 @@ describe("NotificationsPrompt swap flow", () => {
         },
       );
 
-      await user.press(screen.getByText(/allow notifications/i));
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "allow notifications",
-        page: "Drawer push notification opt-in",
-        source: "swap",
-        drawerPromptTarget: "globalPushNotifications",
-        repromptDelay: null,
-        dismissedCount: 0,
-        variant: AB_TESTING_VARIANTS.B,
-      });
+      expect(store.getState().notifications.isPushNotificationsModalOpen).toBe(true);
+      expect(store.getState().swapTransactionStatusDrawer.isOpen).toBe(true);
+      expect(screen.queryByText(/allow notifications/i)).toBeNull();
     });
   });
 });
