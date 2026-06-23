@@ -21,7 +21,14 @@ export default class ModularDrawer {
     "i",
   );
   networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
-  accountTitleIdMAD = "modular-drawer-Account-title";
+  accountTitleIdMAD = new RegExp(
+    `${this.bottomSheetId("header-title")}|modular-drawer-Account-title`,
+    "i",
+  );
+
+  assetScreenId = "Asset-screen";
+  networkScreenId = "Network-screen";
+  accountScreenId = "Account-screen";
   addNewOrExistingAccountButton = "add-new-account-button";
   drawerCloseButtonId = new RegExp(
     `${this.bottomSheetId("header-close-button")}|drawer-close-button`,
@@ -99,10 +106,7 @@ export default class ModularDrawer {
 
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
-    const isPresent = await IsIdPresent(this.modularDrawerFlowViewId);
-    if (!isPresent) return;
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    if (modularDrawerAttributes.label?.includes("Select network")) {
+    if (await IsIdVisible(this.networkScreenId)) {
       await this.selectNetwork(networkName);
     }
   }
@@ -160,8 +164,8 @@ export default class ModularDrawer {
 
   @Step("Validate account(s) present on account list")
   async validateAccountsScreen(accounts?: string[]): Promise<void> {
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    jestExpect(modularDrawerAttributes.label).toMatch(/Select account.*/i);
+    await waitForElement(getElementById(this.accountScreenId));
+    jestExpect(await getTextOfElement(this.accountTitleIdMAD)).toMatch(/Select account.*/i);
     if (!accounts) {
       await detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
       return;
@@ -182,8 +186,8 @@ export default class ModularDrawer {
 
   @Step("Validate network(s) present on network list")
   async validateNetworksScreen(networks: string[]): Promise<void> {
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    jestExpect(modularDrawerAttributes.label).toMatch(/Select network.*/i);
+    await waitForElement(getElementById(this.networkScreenId));
+    jestExpect(await getTextOfElement(this.networkBasedTitleIdMAD)).toMatch(/Select network.*/i);
     await getElementById(this.networkBasedTitleIdMAD).swipe("up");
     for (const network of networks) {
       const networkItemId = this.networkItemIdMAD(network);
@@ -194,8 +198,8 @@ export default class ModularDrawer {
 
   @Step("Validate assets present on account list")
   async validateAssetsScreen(assets: string[]): Promise<void> {
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    jestExpect(modularDrawerAttributes.label).toMatch(/Select asset.*/i);
+    await waitForElement(getElementById(this.assetScreenId));
+    jestExpect(await getTextOfElement(this.assetBasedTitleIdMAD)).toMatch(/Select asset.*/i);
     for (const asset of assets) {
       const assetItemId = this.assetItemByTicker(asset);
       await detoxExpect(getElementById(assetItemId)).toBeVisible();
