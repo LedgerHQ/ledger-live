@@ -659,13 +659,8 @@ export function detectFeePayer(
   accountAddress: string,
 ): string | undefined {
   const feeTransition = details.fee?.transition;
-  log(
-    "aleo/detectFeePayer",
-    `txId: ${details.id} fee.transition.function: ${feeTransition?.function ?? "MISSING"}`,
-  );
 
   if (!feeTransition || feeTransition.function !== "fee_public") {
-    log("aleo/detectFeePayer", `skipped: not fee_public, got: ${feeTransition?.function}`);
     return undefined;
   }
 
@@ -673,15 +668,10 @@ export function detectFeePayer(
     (out): out is { id: string; type: "future"; value: string } => out.type === "future",
   );
   if (!futureOutput) {
-    log("aleo/detectFeePayer", "no future output found in fee_public transition");
     return undefined;
   }
 
   const feePayerAddress = extractFeePayerFromFutureValue(futureOutput.value);
-  log(
-    "aleo/detectFeePayer",
-    `extracted feePayer: ${feePayerAddress ?? "NONE"} accountAddress: ${accountAddress} → ${feePayerAddress && feePayerAddress !== accountAddress ? FEE_SPONSOR : "user paid"}`,
-  );
 
   if (!feePayerAddress || feePayerAddress === accountAddress) return undefined;
   return FEE_SPONSOR;

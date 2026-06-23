@@ -76,27 +76,17 @@ export async function listOperations(
   // Each OUT transaction's details are fetched in parallel (capped at 5 concurrent) to determine
   // whether the fee was paid by the account or by an external sponsor.
   if (config.isFeeSponsored && mode === "bridge") {
-    const enrichedById = new Map<string, AleoOperation>();
-
     await promiseAllBatched(5, operations as AleoOperation[], async op => {
       if (op.type !== "OUT") return;
       const details = await apiClient.getTransactionById(currency, op.hash);
       const feePayer = detectFeePayer(details, address);
-      if (feePayer) {
-        enrichedById.set(op.id, { ...op, extra: { ...op.extra, feePayer } });
-      }
+      if (!feePayer) return;
+      const enriched = { ...op, extra: { ...op.extra, feePayer } };
+      const opIdx = (operations as AleoOperation[]).indexOf(op);
+      if (opIdx !== -1) operations[opIdx] = enriched;
+      const tokenIdx = (tokenOperations as AleoOperation[]).indexOf(op);
+      if (tokenIdx !== -1) tokenOperations[tokenIdx] = enriched;
     });
-
-    if (enrichedById.size > 0) {
-      for (let i = 0; i < operations.length; i++) {
-        const enriched = enrichedById.get((operations[i] as AleoOperation).id);
-        if (enriched) operations[i] = enriched;
-      }
-      for (let i = 0; i < tokenOperations.length; i++) {
-        const enriched = enrichedById.get((tokenOperations[i] as AleoOperation).id);
-        if (enriched) tokenOperations[i] = enriched;
-      }
-    }
   }
 
   return {
