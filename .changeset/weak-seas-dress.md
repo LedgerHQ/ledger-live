@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/wallet-cli": patch
+"@ledgerhq/wallet-cli": minor
 ---
 
 remove to fresh address

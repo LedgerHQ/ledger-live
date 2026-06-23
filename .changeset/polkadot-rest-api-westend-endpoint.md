@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-polkadot": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/live-env": patch
+"@ledgerhq/coin-polkadot": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/live-env": minor
 ---
 
 Migrate the Polkadot family (mainnet and Westend, relay chain and asset hub) to the new polkadot-rest-api endpoints, served under a `/v1` prefix (`/v1/rc` for the relay chain).

@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-stellar": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-stellar": minor
+"@ledgerhq/live-common": minor
 ---
 
 test: remove un-faked real timers from two unit suites (no production change)
