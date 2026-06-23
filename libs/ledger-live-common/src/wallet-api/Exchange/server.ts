@@ -30,7 +30,6 @@ import {
   SwapResult,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
-  type SwapTrackingMeta,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { customWrapper, RPCHandler } from "@ledgerhq/wallet-api-server";
 import { BigNumber } from "bignumber.js";
@@ -74,13 +73,6 @@ import {
 } from "./transactionStatus";
 
 export { ExchangeType };
-
-const extractSwapTrackingMeta = (
-  meta: SwapTrackingMeta | undefined,
-): { isEmbeddedSwap?: boolean; swapEntryPoint?: string } => ({
-  isEmbeddedSwap: typeof meta?.isEmbedded === "boolean" ? meta.isEmbedded : undefined,
-  swapEntryPoint: typeof meta?.swapEntryPoint === "string" ? meta.swapEntryPoint : undefined,
-});
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -235,7 +227,8 @@ export const handlers = ({
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
-          meta: params.exchangeType === "SWAP" ? extractSwapTrackingMeta(params.meta) : undefined,
+          isEmbeddedSwap: params.exchangeType === "SWAP" ? params.isEmbedded : undefined,
+          swapEntryPoint: params.exchangeType === "SWAP" ? params.swapEntryPoint : undefined,
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -275,7 +268,8 @@ export const handlers = ({
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
-          meta: params.exchangeType === "SWAP" ? extractSwapTrackingMeta(params.meta) : undefined,
+          isEmbeddedSwap: params.exchangeType === "SWAP" ? params.isEmbedded : undefined,
+          swapEntryPoint: params.exchangeType === "SWAP" ? params.swapEntryPoint : undefined,
         };
         tracking.completeExchangeRequested(trackingParams);
 
@@ -417,7 +411,8 @@ export const handlers = ({
               magnitudeAwareRate,
               refundAddress,
               payoutAddress,
-              ...extractSwapTrackingMeta(params.exchangeType === "SWAP" ? params.meta : undefined),
+              isEmbeddedSwap: params.exchangeType === "SWAP" ? params.isEmbedded : undefined,
+              swapEntryPoint: params.exchangeType === "SWAP" ? params.swapEntryPoint : undefined,
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess({
@@ -463,14 +458,16 @@ export const handlers = ({
           customFeeConfig,
           swapAppVersion,
           sponsored,
+          isEmbedded,
+          swapEntryPoint,
           correlationId,
-          meta,
         } = params;
 
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
-          meta: extractSwapTrackingMeta(meta),
+          isEmbeddedSwap: isEmbedded,
+          swapEntryPoint,
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -670,7 +667,8 @@ export const handlers = ({
               refundAddress,
               payoutAddress,
               sponsored,
-              ...extractSwapTrackingMeta(meta),
+              isEmbeddedSwap: isEmbedded,
+              swapEntryPoint,
               ...(correlationId && { correlationId }),
             },
             onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {

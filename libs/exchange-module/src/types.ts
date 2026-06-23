@@ -33,7 +33,8 @@ export type ExchangeStartSwapParams = {
   fromAccountId: string;
   toAccountId: string;
   tokenCurrency?: string;
-  meta?: SwapTrackingMeta;
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
 };
 
 export type ExchangeSwapParams = ExchangeStartSwapParams & {
@@ -82,7 +83,8 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
-  meta?: SwapTrackingMeta;
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
 };
 
 export type ExchangeCompleteParams =

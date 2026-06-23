@@ -30,7 +30,6 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -91,26 +90,28 @@ export async function signTransactionLogic(
     },
   ) => Promise<SignedOperation>,
   tokenCurrency?: string,
-  trackingMeta?: SwapTrackingMeta,
+  isEmbeddedSwap?: boolean,
+  partner?: string,
+  swapEntryPoint?: string,
 ): Promise<SignedOperation> {
   return withLiveAppContext(manifest, async () => {
-    tracking.signTransactionRequested(manifest, trackingMeta);
+    tracking.signTransactionRequested(manifest, isEmbeddedSwap, partner, swapEntryPoint);
 
     if (!transaction) {
-      tracking.signTransactionFail(manifest, trackingMeta);
+      tracking.signTransactionFail(manifest, isEmbeddedSwap, partner, swapEntryPoint);
       throw new Error("Transaction required");
     }
 
     const accountId = getAccountIdFromWalletAccountId(walletAccountId);
     if (!accountId) {
-      tracking.signTransactionFail(manifest, trackingMeta);
+      tracking.signTransactionFail(manifest, isEmbeddedSwap, partner, swapEntryPoint);
       throw new Error(`accountId ${walletAccountId} unknown`);
     }
 
     const account = accounts.find(account => account.id === accountId);
 
     if (!account) {
-      tracking.signTransactionFail(manifest, trackingMeta);
+      tracking.signTransactionFail(manifest, isEmbeddedSwap, partner, swapEntryPoint);
       throw new Error("Account required");
     }
 
