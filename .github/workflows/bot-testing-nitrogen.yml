@@ -44,7 +44,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/qaa_improve_workflow_test
         with:
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -53,7 +53,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Run the bot
-        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@support/qaa_improve_workflow_test
         id: bot
         timeout-minutes: 120
         with:

@@ -66,11 +66,11 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/qaa_improve_workflow_test
 
       - name: Setup the toolchain
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/qaa_improve_workflow_test
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -81,13 +81,13 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/qaa_improve_workflow_test
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@support/qaa_improve_workflow_test
         id: update-snapshots
         with:
           os: ubuntu-22.04

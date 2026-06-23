@@ -135,7 +135,7 @@ jobs:
           fi
 
       - name: Run performance tests
-        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@develop
+        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@support/qaa_improve_workflow_test
         id: test-results
         with:
           api-key: ${{ secrets.DATADOG_API_KEY }}
