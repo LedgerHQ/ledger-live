@@ -172,6 +172,7 @@ export async function performPublicSync(
       calTokens: latestAccountPublicOperations.calTokens,
       shouldSyncFromScratch,
       initialAccount,
+      isFeeSponsored: config.isFeeSponsored,
     });
 
   const operations = [...updatedPublicOperations, ...preservedPrivateOps].sort(

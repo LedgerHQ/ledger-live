@@ -17,8 +17,12 @@ import {
 } from "../__tests__/fixtures/currency.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import type { AleoOperation, AleoTokenAccount, AleoPrivateTokenBalance } from "../types";
-import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
-import { EXPLORER_TRANSFER_TYPES, TOKEN_RECORD_NAME } from "../constants";
+import {
+  getMockedRecord,
+  getMockedTransactionDetails,
+  MOCK_ALEO_ADDRESS,
+} from "../__tests__/fixtures/api.fixture";
+import { EXPLORER_TRANSFER_TYPES, FEE_SPONSOR, TOKEN_RECORD_NAME } from "../constants";
 import type { AleoPrivateRecord } from "../types";
 import { sdkClient } from "../network/sdk";
 import { log } from "@ledgerhq/logs";
@@ -130,6 +134,7 @@ describe("tokens utils", () => {
           publicOperations: [parentOp],
           tokenOperations: [tokenOp],
           calTokens,
+          currency: mockCurrency,
         },
       );
 
@@ -159,6 +164,7 @@ describe("tokens utils", () => {
         publicOperations: [],
         tokenOperations: [tokenOp],
         calTokens,
+        currency: mockCurrency,
       });
 
       expect(updatedCoinOperations).toHaveLength(1);
@@ -207,6 +213,7 @@ describe("tokens utils", () => {
         publicOperations: [existingCoinOp],
         tokenOperations: [tokenOp],
         calTokens,
+        currency: mockCurrency,
       });
 
       const feeOp = updatedCoinOperations.find(op => op.hash === txHash);
@@ -228,6 +235,7 @@ describe("tokens utils", () => {
           publicOperations: [],
           tokenOperations: [tokenOp, tokenOp],
           calTokens,
+          currency: mockCurrency,
         },
       );
 
@@ -249,11 +257,120 @@ describe("tokens utils", () => {
           publicOperations: [],
           tokenOperations: [tokenOp],
           calTokens,
+          currency: mockCurrency,
         },
       );
 
       expect(updatedCoinOperations).toEqual([]);
       expect(tokenOperationsBySubAccountId.size).toBe(0);
+    });
+
+    it("should set feePayer on an OUT subAccountOp when isFeeSponsored is true and a sponsor is detected", async () => {
+      const sponsorAddress = "aleo1sponsor0000000000000000000000000000000000000000000000000";
+      const tokenOp = getMockedTokenOperation({
+        hash: "tx-sponsored-out",
+        recipients: ["aleo1recipient"],
+        senders: [address],
+        fee: new BigNumber(10),
+      });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+      mockGetTransactionById.mockResolvedValue(
+        getMockedTransactionDetails("tx-sponsored-out", {
+          fee: {
+            transition: {
+              id: "au1fee",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk",
+              inputs: [],
+              outputs: [
+                {
+                  id: "out0",
+                  type: "future",
+                  value: `{\n  program_id: credits.aleo,\n  function_name: fee_public,\n  arguments: [\n    ${sponsorAddress},\n    10u64\n  ]\n}`,
+                },
+              ],
+              program: "credits.aleo",
+              function: "fee_public",
+            },
+          },
+        }),
+      );
+
+      const { tokenOperationsBySubAccountId } = await prepareTokenOperations({
+        address,
+        ledgerAccountId,
+        publicOperations: [],
+        tokenOperations: [tokenOp],
+        calTokens,
+        currency: mockCurrency,
+        isFeeSponsored: true,
+      });
+
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx-sponsored-out");
+      const subOp = tokenOperationsBySubAccountId.get(tokenAccountId)?.[0];
+      expect(subOp?.extra?.feePayer).toBe(FEE_SPONSOR);
+    });
+
+    it("should not set feePayer on an OUT subAccountOp when detectFeePayer finds no sponsor", async () => {
+      const tokenOp = getMockedTokenOperation({
+        hash: "tx-self-paid",
+        recipients: ["aleo1recipient"],
+        senders: [address],
+      });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+      mockGetTransactionById.mockResolvedValue(getMockedTransactionDetails("tx-self-paid"));
+
+      const { tokenOperationsBySubAccountId } = await prepareTokenOperations({
+        address,
+        ledgerAccountId,
+        publicOperations: [],
+        tokenOperations: [tokenOp],
+        calTokens,
+        currency: mockCurrency,
+        isFeeSponsored: true,
+      });
+
+      const subOp = tokenOperationsBySubAccountId.get(tokenAccountId)?.[0];
+      expect(subOp?.extra?.feePayer).toBeUndefined();
+    });
+
+    it("should not call getTransactionById for IN ops even when isFeeSponsored is true", async () => {
+      const tokenOp = getMockedTokenOperation({ hash: "tx-in-sponsored" });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+
+      await prepareTokenOperations({
+        address,
+        ledgerAccountId,
+        publicOperations: [],
+        tokenOperations: [tokenOp],
+        calTokens,
+        currency: mockCurrency,
+        isFeeSponsored: true,
+      });
+
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
+    });
+
+    it("should not call getTransactionById for OUT ops when isFeeSponsored is false", async () => {
+      const tokenOp = getMockedTokenOperation({
+        hash: "tx-out-no-sponsor",
+        recipients: ["aleo1recipient"],
+        senders: [address],
+      });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+
+      await prepareTokenOperations({
+        address,
+        ledgerAccountId,
+        publicOperations: [],
+        tokenOperations: [tokenOp],
+        calTokens,
+        currency: mockCurrency,
+      });
+
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
     });
   });
 
@@ -473,6 +590,55 @@ describe("tokens utils", () => {
         (subAccount): subAccount is AleoTokenAccount => "transparentBalance" in subAccount,
       );
       expect(aleoSubAccount?.transparentBalance).toEqual(new BigNumber(77));
+    });
+
+    it("should propagate isFeeSponsored and set feePayer on OUT token sub-account ops", async () => {
+      const sponsorAddress = "aleo1sponsor0000000000000000000000000000000000000000000000000";
+      const tokenOp = getMockedTokenOperation({
+        hash: "tx-resolve-sponsored",
+        recipients: ["aleo1recipient"],
+        senders: [address],
+        fee: new BigNumber(5),
+      });
+      const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
+      mockGetTransactionById.mockResolvedValue(
+        getMockedTransactionDetails("tx-resolve-sponsored", {
+          fee: {
+            transition: {
+              id: "au1fee",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk",
+              inputs: [],
+              outputs: [
+                {
+                  id: "out0",
+                  type: "future",
+                  value: `{\n  program_id: credits.aleo,\n  function_name: fee_public,\n  arguments: [\n    ${sponsorAddress},\n    5u64\n  ]\n}`,
+                },
+              ],
+              program: "credits.aleo",
+              function: "fee_public",
+            },
+          },
+        }),
+      );
+
+      const { subAccounts } = await resolveTokenSubAccounts({
+        enableTokens: true,
+        currency: mockCurrency,
+        address,
+        ledgerAccountId,
+        publicOperations: [],
+        tokenOperations: [tokenOp],
+        calTokens,
+        shouldSyncFromScratch: true,
+        initialAccount: undefined,
+        isFeeSponsored: true,
+      });
+
+      const subOp = subAccounts[0]?.operations[0];
+      expect(subOp?.extra).toMatchObject({ feePayer: FEE_SPONSOR });
     });
 
     it("should clear sub-accounts and strip sub-operations when tokens are disabled", async () => {

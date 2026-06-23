@@ -11,7 +11,7 @@ import {
   PRIVATE_TRANSFER_FUNCTIONS,
   SEMI_PUBLIC_TOKEN_FUNCTIONS,
 } from "../constants";
-import { parseAmount } from "../logic/utils";
+import { detectFeePayer, parseAmount } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
 import { getTokenOutDetails } from "../network/utils";
@@ -117,12 +117,16 @@ export async function prepareTokenOperations({
   publicOperations,
   tokenOperations,
   calTokens,
+  currency,
+  isFeeSponsored,
 }: {
   address: string;
   ledgerAccountId: string;
   publicOperations: AleoOperation[];
   tokenOperations: AleoOperation[];
   calTokens: Map<string, TokenCurrency>;
+  currency: CryptoCurrency;
+  isFeeSponsored?: boolean;
 }): Promise<{
   updatedCoinOperations: AleoOperation[];
   tokenOperationsBySubAccountId: Map<string, AleoOperation[]>;
@@ -160,11 +164,18 @@ export async function prepareTokenOperations({
     // a meaningful direction.
     const type: OperationType = tokenOp.recipients.includes(address) ? "IN" : "OUT";
 
+    let feePayer: string | undefined;
+    if (type === "OUT" && isFeeSponsored) {
+      const details = await apiClient.getTransactionById(currency, tokenOp.hash);
+      feePayer = detectFeePayer(details, address);
+    }
+
     const subAccountOp: AleoOperation = {
       ...tokenOp,
       id: encodeOperationId(tokenAccountId, tokenOp.hash, type),
       accountId: tokenAccountId,
       type,
+      extra: { ...tokenOp.extra, ...(feePayer && { feePayer }) },
     };
 
     // Get or create the single parent coin op for this transaction hash.
@@ -330,6 +341,7 @@ export async function resolveTokenSubAccounts({
   calTokens,
   shouldSyncFromScratch,
   initialAccount,
+  isFeeSponsored,
 }: {
   enableTokens: boolean;
   currency: CryptoCurrency;
@@ -340,6 +352,7 @@ export async function resolveTokenSubAccounts({
   calTokens: Map<string, TokenCurrency>;
   shouldSyncFromScratch: boolean;
   initialAccount: Account | undefined;
+  isFeeSponsored?: boolean;
 }): Promise<{ updatedCoinOperations: AleoOperation[]; subAccounts: TokenAccount[] }> {
   // If tokens are disabled, we should clear any existing token sub-accounts and token related operations (ops having any subOperation)
   if (!enableTokens) {
@@ -355,6 +368,8 @@ export async function resolveTokenSubAccounts({
     publicOperations,
     tokenOperations,
     calTokens,
+    currency,
+    ...(isFeeSponsored !== undefined && { isFeeSponsored }),
   });
 
   const newSubAccounts = getAleoSubAccounts({ ledgerAccountId, calTokens }).map(subAccount => {
