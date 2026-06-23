@@ -8,8 +8,14 @@ export class MarketPage extends AppPage {
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private readonly coinRow = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-row`).first();
-  private coinPageContainer = this.page.getByTestId("market-coin-page-container");
+  // aggregatedAssets ON redirects the legacy market coin page to the Wallet 4.0 AssetDetail page,
+  // so accept either container as "the coin detail page is loaded".
+  private coinPageContainer = this.page
+    .getByTestId("market-coin-page-container")
+    .or(this.page.getByTestId("asset-detail-header"));
   private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
+  // AssetDetail (aggregatedAssets ON) has no per-asset swap CTA; swap is the embedded rail.
+  private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
 
   private readonly buyButton = (ticker: string) =>
     this.coinRow(ticker).getByTestId(`market-${ticker}-buy-button-icon`);
@@ -69,7 +75,16 @@ export class MarketPage extends AppPage {
 
   @step("Click on swap button on asset")
   async clickOnSwapButtonOnAsset() {
-    await this.swapButtonOnAsset.click();
+    // Wait for whichever swap entry the rendered coin-detail page exposes, then click only the
+    // legacy CTA. On AssetDetail the embedded swap rail is already mounted (nothing to click) and
+    // the caller's swap-readiness wait takes over.
+    await this.swapButtonOnAsset
+      .or(this.embeddedSwapContainer)
+      .first()
+      .waitFor({ state: "visible" });
+    if (await this.swapButtonOnAsset.isVisible()) {
+      await this.swapButtonOnAsset.click();
+    }
   }
 
   @step("Click on stake button for $0")
