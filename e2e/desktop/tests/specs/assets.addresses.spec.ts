@@ -5,7 +5,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { isAssetSectionEnabled, coinDetailUrlPattern } from "tests/utils/featureFlagUtils";
 
 /**
  * Suite: Wallet 4.0 - Portfolio-Asset/Address
@@ -64,7 +64,7 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
         // Step 2: Select a placeholder asset — redirects to the asset market page
         await test.step("Click placeholder asset - redirected to market page", async () => {
           await app.assets.clickAssetInCryptosSection("Bitcoin");
-          await expect(app.layout.getPage()).toHaveURL(/\/market\/bitcoin/);
+          await expect(app.layout.getPage()).toHaveURL(coinDetailUrlPattern("bitcoin"));
         });
 
         // Step 3: Go back to portfolio

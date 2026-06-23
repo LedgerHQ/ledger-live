@@ -465,8 +465,15 @@ test.describe("Staking flow from different entry point", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
-      await app.market.search(delegateAccount.account.currency.ticker);
-      await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+      // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
+      // reached by opening the asset detail page. Both entry points open the same stake flow.
+      if (await app.market.isLegacyMarketList()) {
+        await app.market.search(delegateAccount.account.currency.ticker);
+        await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+      } else {
+        await app.market.openCoinPage(delegateAccount.account.currency.ticker);
+        await app.assetDetail.startEarnFlow();
+      }
 
       const selector = await getModularSelector(app, "ACCOUNT");
       if (selector) {

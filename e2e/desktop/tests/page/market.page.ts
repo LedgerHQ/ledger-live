@@ -8,13 +8,11 @@ export class MarketPage extends AppPage {
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private readonly coinRow = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-row`).first();
-  // aggregatedAssets ON redirects the legacy market coin page to the Wallet 4.0 AssetDetail page,
-  // so accept either container as "the coin detail page is loaded".
+  // aggregatedAssets ON redirects the legacy coin page to the AssetDetail page; accept either.
   private coinPageContainer = this.page
     .getByTestId("market-coin-page-container")
     .or(this.page.getByTestId("asset-detail-header"));
   private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
-  // AssetDetail (aggregatedAssets ON) has no per-asset swap CTA; swap is the embedded rail.
   private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
 
   private readonly buyButton = (ticker: string) =>
@@ -28,18 +26,74 @@ export class MarketPage extends AppPage {
   private filterDropdown = this.page.getByText("Show").first();
   private readonly starButton = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-star-button`).first();
-  private starredOptionFilter = this.page.getByRole("option", { name: "Starred Assets" });
-  // Asset discoverability UI: the "Show / Starred Assets" dropdown is replaced by a category tab.
+  private starredOptionFilter = this.page.getByRole("option", {
+    name: "Starred Assets",
+  });
   private readonly starredCategoryTab = this.page.getByTestId("market-category-switcher-starred");
   private readonly allCategoryTab = this.page.getByTestId("market-category-switcher-all");
 
   private readonly categorySwitcher = this.page.getByTestId("market-category-switcher");
   private readonly categoryTab = (value: string) =>
     this.page.getByTestId(`market-category-switcher-${value}`);
+  // Asset discoverability UI: per-row buy/sell and favourite live in this overflow menu.
+  private readonly actionsMenu = (ticker: string) =>
+    this.page.getByTestId(`market-${ticker}-actions-menu`).first();
+  private readonly listData = this.page.getByTestId("market-list-data");
+  private readonly buySellMenuItem = this.page.getByRole("menuitem", {
+    name: "Buy/Sell",
+  });
+  private readonly addToFavoritesMenuItem = this.page.getByRole("menuitem", {
+    name: "Add to favorites",
+  });
+
+  // Wait for one of the two mutually-exclusive markers (legacy search input vs disco category tab)
+  // so the variant check can't race the initial load and pick the wrong branch.
+  async isLegacyMarketList(): Promise<boolean> {
+    await this.searchInput.or(this.allCategoryTab).first().waitFor({ state: "visible" });
+    return this.searchInput.isVisible();
+  }
+
+  // The disco list is virtualised, so scroll its nearest scrollable ancestor to render more rows.
+  private async scrollMarketListBy(deltaY: number) {
+    await this.listData.evaluate((node: HTMLElement, dy: number) => {
+      let scroller: HTMLElement | null = node;
+      while (scroller && scroller.scrollHeight <= scroller.clientHeight) {
+        scroller = scroller.parentElement;
+      }
+      if (scroller) scroller.scrollTop += dy;
+    }, deltaY);
+  }
+
+  private async ensureCoinRowVisible(ticker: string) {
+    const lowerTicker = ticker.toLowerCase();
+    const row = this.coinRow(lowerTicker);
+    await this.listData.or(this.coinRow("btc")).first().waitFor({ state: "visible" });
+
+    // Mid-cap rows mount only once scrolled into range, so scroll until the row appears.
+    for (let attempt = 0; attempt < 40; attempt++) {
+      if ((await row.count()) > 0) {
+        await row.scrollIntoViewIfNeeded();
+        await expect(row).toBeVisible();
+        return;
+      }
+      await this.scrollMarketListBy(600);
+      await this.page.waitForTimeout(150);
+    }
+    await expect(row).toBeVisible();
+  }
+
+  private async openActionsMenu(ticker: string) {
+    await this.ensureCoinRowVisible(ticker);
+    await this.actionsMenu(ticker.toLowerCase()).click();
+  }
 
   @step("Search for $0")
   async search(query: string) {
-    await this.searchInput.fill(query);
+    if (await this.isLegacyMarketList()) {
+      await this.searchInput.fill(query);
+      return;
+    }
+    await this.ensureCoinRowVisible(query);
   }
 
   @step("Validate Market List")
@@ -51,6 +105,9 @@ export class MarketPage extends AppPage {
 
   @step("Open coin page for $0")
   async openCoinPage(ticker: string) {
+    if (!(await this.isLegacyMarketList())) {
+      await this.ensureCoinRowVisible(ticker);
+    }
     await this.coinRow(ticker.toLowerCase()).click();
     await this.coinPageContainer.waitFor({ state: "attached" });
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
@@ -63,8 +120,12 @@ export class MarketPage extends AppPage {
 
   @step("Open buy page for $0")
   async openBuyPage(ticker: string) {
-    const button = this.buyButton(ticker.toLowerCase());
-    await button.click();
+    if (await this.isLegacyMarketList()) {
+      await this.buyButton(ticker.toLowerCase()).click();
+      return;
+    }
+    await this.openActionsMenu(ticker);
+    await this.buySellMenuItem.click();
   }
 
   @step("Click on swap button for $0")
@@ -75,9 +136,7 @@ export class MarketPage extends AppPage {
 
   @step("Click on swap button on asset")
   async clickOnSwapButtonOnAsset() {
-    // Wait for whichever swap entry the rendered coin-detail page exposes, then click only the
-    // legacy CTA. On AssetDetail the embedded swap rail is already mounted (nothing to click) and
-    // the caller's swap-readiness wait takes over.
+    // Legacy exposes a swap CTA to click; AssetDetail mounts the embedded swap rail (nothing to click).
     await this.swapButtonOnAsset
       .or(this.embeddedSwapContainer)
       .first()
@@ -93,15 +152,23 @@ export class MarketPage extends AppPage {
     await button.click();
   }
 
-  @step("Expect filter dropdown to be visible")
+  @step("Expect starred filter control to be visible")
   async expectFilterDropdownToBeVisible() {
-    await expect(this.filterDropdown).toBeVisible();
+    if (await this.isLegacyMarketList()) {
+      await expect(this.filterDropdown).toBeVisible();
+      return;
+    }
+    await expect(this.starredCategoryTab).toBeVisible();
   }
 
-  @step("Open filter dropdown and select Starred Assets")
+  @step("Filter the list to starred assets only")
   async selectStarredAssetsFilter() {
-    await this.filterDropdown.click();
-    await this.starredOptionFilter.click();
+    if (await this.isLegacyMarketList()) {
+      await this.filterDropdown.click();
+      await this.starredOptionFilter.click();
+      return;
+    }
+    await this.selectStarredCategory();
   }
 
   @step("Select the Favorites (starred) market category")
@@ -116,7 +183,12 @@ export class MarketPage extends AppPage {
 
   @step("Star coin $0")
   async starCoin(ticker: string) {
-    await this.starButton(ticker.toLowerCase()).click();
+    if (await this.isLegacyMarketList()) {
+      await this.starButton(ticker.toLowerCase()).click();
+      return;
+    }
+    await this.openActionsMenu(ticker);
+    await this.addToFavoritesMenuItem.click();
   }
 
   @step("Expect coin $0 to be visible")

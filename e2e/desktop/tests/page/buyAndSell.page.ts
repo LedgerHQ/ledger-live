@@ -105,6 +105,16 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifyElementIsSelected(this.tabTestId(operation));
   }
 
+  @step("Select network/account in the modular drawer if it opens")
+  async selectNetworkAndAccountIfShown(account: AccountType) {
+    if (await this.modularDialog.waitForNetworkDialogVisible()) {
+      await this.modularDialog.selectNetwork(account.currency);
+      if (await this.modularDialog.waitForAccountSelectionVisible()) {
+        await this.modularDialog.selectAccountByName(account);
+      }
+    }
+  }
+
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
     if (await this.isCorrectAssetAlreadySelected(account)) return;
