@@ -3,12 +3,16 @@ import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
 
 export class TezosStakeModal extends Modal {
-  private amountField = this.page.getByTestId("modal-amount-field");
-  private validatorContinueButton = this.page.locator("#tezos-stake-validator-continue-button");
-  private amountContinueButton = this.page.locator("#tezos-stake-amount-continue-button");
-  private visitAccountButton = this.page.locator("#tezos-stake-confirmation-visit-account-button");
-  private successMessageLabel = this.page.getByTestId("success-message-label");
-  private awaitingDelegationLabel = this.page.getByText("Confirming your delegation", {
+  private readonly amountField = this.page.getByTestId("modal-amount-field");
+  private readonly validatorContinueButton = this.page.locator(
+    "#tezos-stake-validator-continue-button",
+  );
+  private readonly amountContinueButton = this.page.locator("#tezos-stake-amount-continue-button");
+  private readonly visitAccountButton = this.page.locator(
+    "#tezos-stake-confirmation-visit-account-button",
+  );
+  private readonly successMessageLabel = this.page.getByTestId("success-message-label");
+  private readonly awaitingDelegationLabel = this.page.getByText("Confirming your delegation", {
     exact: false,
   });
 

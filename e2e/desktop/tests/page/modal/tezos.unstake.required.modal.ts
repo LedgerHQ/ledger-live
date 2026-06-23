@@ -5,10 +5,12 @@ import { step } from "tests/misc/reporters/step";
 export class TezosUnstakeRequiredModal extends Modal {
   // Delegation-row context-menu ids come from DropDownSelector's `buttonId` ("tezos-delegation-menu"):
   // the trigger is `#<buttonId>` and each item is `#<buttonId>-<key>`.
-  private delegationMenuButton = this.page.locator("#tezos-delegation-menu");
-  private changeValidatorItem = this.page.locator("#tezos-delegation-menu-redelegate");
-  private stopDelegationItem = this.page.locator("#tezos-delegation-menu-stopDelegation");
-  private requiredCloseButton = this.page.getByTestId("tezos-unstake-required-close-button");
+  private readonly delegationMenuButton = this.page.locator("#tezos-delegation-menu");
+  private readonly changeValidatorItem = this.page.locator("#tezos-delegation-menu-redelegate");
+  private readonly stopDelegationItem = this.page.locator("#tezos-delegation-menu-stopDelegation");
+  private readonly requiredCloseButton = this.page.getByTestId(
+    "tezos-unstake-required-close-button",
+  );
 
   @step("Open the delegation menu and pick Change validator")
   async openChangeValidator() {

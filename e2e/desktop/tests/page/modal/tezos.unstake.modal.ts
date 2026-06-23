@@ -5,11 +5,13 @@ import { step } from "tests/misc/reporters/step";
 export class TezosUnstakeModal extends Modal {
   // The staking-section dropdown ids come from DropDownSelector's `buttonId` ("tezos-staking-menu"):
   // the trigger is `#<buttonId>` and each item is `#<buttonId>-<key>`.
-  private stakingMenuButton = this.page.locator("#tezos-staking-menu");
-  private unstakeMenuItem = this.page.locator("#tezos-staking-menu-unstake");
-  private amountField = this.page.getByTestId("modal-amount-field");
-  private amountContinueButton = this.page.getByTestId("tezos-unstake-amount-continue-button");
-  private successMessageLabel = this.page.getByTestId("success-message-label");
+  private readonly stakingMenuButton = this.page.locator("#tezos-staking-menu");
+  private readonly unstakeMenuItem = this.page.locator("#tezos-staking-menu-unstake");
+  private readonly amountField = this.page.getByTestId("modal-amount-field");
+  private readonly amountContinueButton = this.page.getByTestId(
+    "tezos-unstake-amount-continue-button",
+  );
+  private readonly successMessageLabel = this.page.getByTestId("success-message-label");
 
   @step("Open the unstake flow from the staking-section menu")
   async openFromStakingMenu() {
