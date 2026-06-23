@@ -4,39 +4,21 @@ import { getFlags } from "../../bridge/server";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class ModularDrawer {
-  // TODO - once lumenBottomSheet is activated we can remove the `or` statements
   bottomSheetId = (component: string) => `bottom-sheet-${component}`;
 
   accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
   selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
   modularDrawerFlowViewId = "modular-drawer-flow-view";
-  networkBasedTitleIdMAD = new RegExp(
-    `${this.bottomSheetId("header-title")}|modular-drawer-Network-title`,
-    "i",
-  );
-  assetBasedTitleIdMAD = new RegExp(
-    `${this.bottomSheetId("header-title")}|modular-drawer-Asset-title`,
-    "i",
-  );
+  basedTitleIdMAD = `${this.bottomSheetId("header-title")}`;
   networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
-  accountTitleIdMAD = new RegExp(
-    `${this.bottomSheetId("header-title")}|modular-drawer-Account-title`,
-    "i",
-  );
 
   assetScreenId = "Asset-screen";
   networkScreenId = "Network-screen";
   accountScreenId = "Account-screen";
   addNewOrExistingAccountButton = "add-new-account-button";
-  drawerCloseButtonId = new RegExp(
-    `${this.bottomSheetId("header-close-button")}|drawer-close-button`,
-    "i",
-  );
-  drawerBackButtonId = new RegExp(
-    `${this.bottomSheetId("header-back-button")}|drawer-back-button`,
-    "i",
-  );
+  drawerCloseButtonId = `${this.bottomSheetId("header-close-button")}`;
+  drawerBackButtonId = `${this.bottomSheetId("header-back-button")}`;
 
   accountItemNameId = (name: string) => `account-item-name-${name}`;
 
@@ -115,7 +97,7 @@ export default class ModularDrawer {
   async selectNetwork(networkName: string): Promise<void> {
     const id = this.networkItemIdMAD(networkName);
     if (!(await IsIdVisible(id))) {
-      await getElementById(this.networkBasedTitleIdMAD).swipe("up");
+      await getElementById(this.basedTitleIdMAD).swipe("up");
       await this.swipeToNetworkItem(id);
     }
     await tapById(id, 0);
@@ -141,7 +123,7 @@ export default class ModularDrawer {
   @Step("Validate account(s) present on account list")
   async validateAccountsScreen(accounts?: string[]): Promise<void> {
     await waitForElement(getElementById(this.accountScreenId));
-    jestExpect(await getTextOfElement(this.accountTitleIdMAD)).toMatch(/Select account.*/i);
+    jestExpect(await getTextOfElement(this.basedTitleIdMAD)).toMatch(/Select account.*/i);
     if (!accounts) {
       await detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
       return;
@@ -163,8 +145,8 @@ export default class ModularDrawer {
   @Step("Validate network(s) present on network list")
   async validateNetworksScreen(networks: string[]): Promise<void> {
     await waitForElement(getElementById(this.networkScreenId));
-    jestExpect(await getTextOfElement(this.networkBasedTitleIdMAD)).toMatch(/Select network.*/i);
-    await getElementById(this.networkBasedTitleIdMAD).swipe("up");
+    jestExpect(await getTextOfElement(this.basedTitleIdMAD)).toMatch(/Select network.*/i);
+    await getElementById(this.basedTitleIdMAD).swipe("up");
     for (const network of networks) {
       const networkItemId = this.networkItemIdMAD(network);
       await this.swipeToNetworkItem(networkItemId);
@@ -175,7 +157,7 @@ export default class ModularDrawer {
   @Step("Validate assets present on account list")
   async validateAssetsScreen(assets: string[]): Promise<void> {
     await waitForElement(getElementById(this.assetScreenId));
-    jestExpect(await getLabelOfElement(this.assetBasedTitleIdMAD)).toMatch(/Select asset.*/i);
+    jestExpect(await getLabelOfElement(this.basedTitleIdMAD)).toMatch(/Select asset.*/i);
     for (const asset of assets) {
       const assetItemId = this.assetItemByTicker(asset);
       await detoxExpect(getElementById(assetItemId)).toBeVisible();
@@ -189,8 +171,8 @@ export default class ModularDrawer {
 
   @Step("Expect (Select Asset) page")
   async checkSelectAssetPage() {
-    await waitForElement(getElementById(this.assetBasedTitleIdMAD));
-    await detoxExpect(getElementById(this.assetBasedTitleIdMAD)).toBeVisible();
+    await waitForElement(getElementById(this.basedTitleIdMAD));
+    await detoxExpect(getElementById(this.basedTitleIdMAD)).toBeVisible();
     await detoxExpect(this.searchBar()).toBeVisible();
   }
 
