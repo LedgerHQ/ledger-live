@@ -43,6 +43,8 @@ import { MainNavigationPage } from "./mainNavigation.page";
 import { SwapTransactionStatusDialog } from "./dialog/swap.transaction.status.dialog";
 import { TezosStakeModal } from "./modal/tezos.stake.modal";
 import { TezosEarningChoiceModal } from "./modal/tezos.earning.choice.modal";
+import { TezosUnstakeModal } from "./modal/tezos.unstake.modal";
+import { TezosUnstakeRequiredModal } from "./modal/tezos.unstake.required.modal";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -89,4 +91,6 @@ export class Application extends PageHolder {
   public assets = new AssetsPage(this.page);
   public tezosStake = new TezosStakeModal(this.page);
   public tezosEarningChoice = new TezosEarningChoiceModal(this.page);
+  public tezosUnstake = new TezosUnstakeModal(this.page);
+  public tezosUnstakeRequired = new TezosUnstakeRequiredModal(this.page);
 }
