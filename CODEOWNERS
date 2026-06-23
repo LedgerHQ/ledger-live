@@ -202,6 +202,7 @@ apps/ledger-live-mobile/src/components/Stake/                        					@ledge
 apps/ledger-live-mobile/src/components/WebPTXPlayer/                 					@ledgerhq/ptx
 apps/ledger-live-mobile/src/reducers/earn.ts                         					@ledgerhq/ptx
 apps/ledger-live-mobile/src/reducers/swap.ts                         					@ledgerhq/ptx
+apps/ledger-live-mobile/src/reducers/swapTransactionStatusDrawer.ts           @ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/Exchange/                        					@ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/PTX/                             					@ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/Swap/                            					@ledgerhq/ptx
