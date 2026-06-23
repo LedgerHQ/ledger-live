@@ -41,6 +41,8 @@ import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { HistoryPage } from "./history.page";
 import { MainNavigationPage } from "./mainNavigation.page";
 import { SwapTransactionStatusDialog } from "./dialog/swap.transaction.status.dialog";
+import { TezosStakeModal } from "./modal/tezos.stake.modal";
+import { TezosEarningChoiceModal } from "./modal/tezos.earning.choice.modal";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -85,4 +87,6 @@ export class Application extends PageHolder {
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
   public assets = new AssetsPage(this.page);
+  public tezosStake = new TezosStakeModal(this.page);
+  public tezosEarningChoice = new TezosEarningChoiceModal(this.page);
 }
