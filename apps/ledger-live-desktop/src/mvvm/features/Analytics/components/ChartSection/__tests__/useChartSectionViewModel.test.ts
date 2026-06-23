@@ -59,10 +59,10 @@ describe("useChartSectionViewModel", () => {
       { initialState },
     );
 
-    expect(result.current.series[0].data).toEqual([1000, 1200]);
-    expect(result.current.selectedRange).toBe("1w");
-    expect(result.current.rangeLabel).toBe("1W");
-    expect(result.current.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
+    expect(result.current.chart.series[0].data).toEqual([1000, 1200]);
+    expect(result.current.chart.selectedRange).toBe("1w");
+    expect(result.current.header.rangeLabel).toBe("1 week");
+    expect(result.current.header.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
   });
 
   it("dispatches the portfolio range and tracks when the chart range changes", () => {
@@ -72,7 +72,7 @@ describe("useChartSectionViewModel", () => {
     );
 
     act(() => {
-      result.current.onRangeChange("1m");
+      result.current.chart.onRangeChange("1m");
     });
 
     expect(store.getState().settings.selectedTimeRange).toBe("month");
@@ -86,17 +86,17 @@ describe("useChartSectionViewModel", () => {
     );
 
     act(() => {
-      result.current.onScrubberPositionChange(0);
+      result.current.chart.onScrubberPositionChange?.(0);
     });
-    expect(result.current.balance).toBe(1000);
+    expect(result.current.header.balance).toBe(1000);
 
     act(() => {
-      result.current.onScrubberPositionChange(undefined);
+      result.current.chart.onScrubberPositionChange?.(undefined);
     });
-    expect(result.current.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
+    expect(result.current.header.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
   });
 
-  it("passes valueChange from balanceInfo to the view", () => {
+  it("passes valueChange-derived trend data to the header", () => {
     const valueChange = { percentage: 0.0523, value: 100 };
     const { result } = renderHook(
       () =>
@@ -109,7 +109,8 @@ describe("useChartSectionViewModel", () => {
       { initialState },
     );
 
-    expect(result.current.valueChange).toBe(valueChange);
+    expect(result.current.header.percentageText).toBe("+5.23%");
+    expect(result.current.header.variationVariant).toBe("positive");
   });
 
   it("exposes the sync loading state from usePortfolioBalanceDisplayState", () => {
@@ -123,6 +124,6 @@ describe("useChartSectionViewModel", () => {
       { initialState },
     );
 
-    expect(result.current.isLoading).toBe(true);
+    expect(result.current.header.isLoading).toBe(true);
   });
 });

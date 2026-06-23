@@ -1,23 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
-import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
-import type { ValueChange } from "@ledgerhq/types-live";
-import {
-  type PortfolioBalanceInfo,
-  usePortfolioBalanceDisplayState,
-} from "LLD/hooks/usePortfolioBalanceDisplayState";
+import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import {
   getExtremaPointMarkers,
   resolveLineChartColorFromPercentChange,
-  type LineChartColor,
+  type LineChartProps,
   type LineChartRange,
   type LineChartScrubberPositionChange,
   type LineChartSeries,
-  type LineChartTooltipTitle,
-  type LineChartValueFormatter,
 } from "LLD/components/LineChart";
 import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
 import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
@@ -29,50 +20,32 @@ import {
 import { usePortfolio } from "~/renderer/actions/portfolio";
 import {
   counterValueCurrencySelector,
-  discreetModeSelector,
   localeSelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
 import { setSelectedTimeRange } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
 import { useAssetChartDateFormatter } from "LLD/features/AssetDetail/hooks/useAssetChartDateFormatter";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   ANALYTICS_CHART_RANGES,
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
 } from "../../utils/portfolioRangeMapping";
+import {
+  useChartSectionHeaderViewModel,
+} from "./ChartSectionHeader/useChartSectionHeaderViewModel";
+import type { ChartSectionHeaderViewModel } from "./ChartSectionHeader/types";
 
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
 }>;
 
 export type ChartSectionViewModelResult = Readonly<{
-  title: string;
-  rangeLabel: string;
-  balance: number;
-  balanceAvailable: boolean;
-  isLoading: boolean;
-  shouldDisplayBalanceRefreshRework: boolean;
-  balanceFormatter: (value: number) => FormattedValue;
-  valueChange: ValueChange;
-  series: LineChartSeries[];
-  height: number;
-  selectedRange: LineChartRange;
-  onRangeChange: (range: LineChartRange) => void;
-  color: LineChartColor;
-  isChartLoading: boolean;
-  formatValue: LineChartValueFormatter;
-  tooltipTitle: LineChartTooltipTitle;
-  onScrubberPositionChange: LineChartScrubberPositionChange;
-  showXAxis: boolean;
-  showYAxis: boolean;
-  xAxis: ReturnType<typeof buildLineChartXAxisConfig>;
-  yAxis: ReturnType<typeof buildLineChartBottomPaddedYAxisConfig>;
-  points: ReturnType<typeof getExtremaPointMarkers>;
-  ranges: typeof ANALYTICS_CHART_RANGES;
-  discreet: boolean;
+  header: ChartSectionHeaderViewModel;
+  chart: LineChartProps;
 }>;
+
+export type { ChartSectionHeaderViewModel } from "./ChartSectionHeader/types";
 
 export function useChartSectionViewModel({
   balanceInfo,
@@ -83,12 +56,11 @@ export function useChartSectionViewModel({
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
-  const discreet = useSelector(discreetModeSelector);
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("desktop");
-  const { isLoading } = usePortfolioBalanceDisplayState();
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
   const [hoveredBalance, setHoveredBalance] = useState<number | null>(null);
+
+  const header = useChartSectionHeaderViewModel({ balanceInfo, hoveredBalance });
 
   const { prices, timestamps } = useMemo(() => {
     const history = portfolio.balanceHistory;
@@ -120,15 +92,6 @@ export function useChartSectionViewModel({
 
   const formatValue = useMemo(
     () => createFiatLineChartValueFormatter(fiatUnit, locale),
-    [fiatUnit, locale],
-  );
-
-  const balanceFormatter = useCallback(
-    (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(fiatUnit, new BigNumber(value), {
-        locale,
-        showCode: true,
-      }),
     [fiatUnit, locale],
   );
 
@@ -169,33 +132,27 @@ export function useChartSectionViewModel({
     [dispatch, selectedTimeRange],
   );
 
-  const balance = hoveredBalance ?? balanceInfo.totalBalance;
   const isChartLoading = !portfolio.balanceAvailable && portfolio.balanceHistory.length === 0;
 
   return {
-    title: t("dashboard.header"),
-    rangeLabel: t(`time.range.${selectedTimeRange}`),
-    balance,
-    balanceAvailable: balanceInfo.isAvailable,
-    isLoading,
-    shouldDisplayBalanceRefreshRework,
-    balanceFormatter,
-    valueChange: balanceInfo.valueChange,
-    series,
-    height: LINE_CHART_VIEW_HEIGHT,
-    selectedRange,
-    onRangeChange,
-    color,
-    isChartLoading,
-    formatValue,
-    tooltipTitle,
-    onScrubberPositionChange,
-    showXAxis: false,
-    showYAxis: false,
-    xAxis,
-    yAxis,
-    points,
-    ranges: ANALYTICS_CHART_RANGES,
-    discreet,
+    header,
+    chart: {
+      series,
+      selectedRange,
+      onRangeChange,
+      color,
+      isLoading: isChartLoading,
+      height: LINE_CHART_VIEW_HEIGHT,
+      formatValue,
+      tooltipTitle,
+      onScrubberPositionChange,
+      showXAxis: false,
+      showYAxis: false,
+      xAxis,
+      yAxis,
+      points,
+      ranges: ANALYTICS_CHART_RANGES,
+      showScrubberTooltip: true,
+    },
   };
 }

@@ -46,8 +46,9 @@ describe("ChartSection", () => {
     render(<ChartSection balanceInfo={mockPortfolioBalanceInfo} />, { initialState });
 
     expect(screen.getByTestId("analytics-chart-section")).toBeVisible();
+    expect(screen.getByTestId("analytics-chart-header")).toBeVisible();
     expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
-    expect(screen.getByTestId("analytics-balance-trend")).toHaveTextContent("1W");
+    expect(screen.getByTestId("analytics-balance-trend")).toHaveTextContent("1 week");
     expect(screen.getByTestId("line-chart-range-1w")).toHaveAttribute("aria-checked", "true");
   });
 
