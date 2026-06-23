@@ -7476,6 +7476,9 @@
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"
     },
+    "XrpDestinationTagRequired": {
+      "title": "A destination tag is required for this recipient"
+    },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
     },

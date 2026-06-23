@@ -1173,6 +1173,9 @@
     "XrpInvalidMemo": {
       "title": "Memo format is wrong, it should be less than 4294967296"
     },
+    "XrpDestinationTagRequired": {
+      "title": "A destination tag is required for this recipient"
+    },
     "HederaMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 100 characters"
     },

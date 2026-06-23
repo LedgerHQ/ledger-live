@@ -19,8 +19,8 @@ catalogs:
       specifier: 3.5.1
       version: 3.5.1
     '@ledgerhq/coin-xrp':
-      specifier: 7.23.4
-      version: 7.23.4
+      specifier: 7.23.5
+      version: 7.23.5
     '@ledgerhq/crypto-icons':
       specifier: 2.0.4
       version: 2.0.4
@@ -7264,7 +7264,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 7.23.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 7.23.5(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -8092,7 +8092,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 7.23.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 7.23.5(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
@@ -17556,8 +17556,8 @@ packages:
     peerDependencies:
       '@ledgerhq/errors': ^6.33.0
 
-  '@ledgerhq/coin-xrp@7.23.4':
-    resolution: {integrity: sha512-hVPjIPn9Uo65Iz98JfdSgZZUwWc9XP7tmoOrnM9xe0RxNveSKPY46yJCHMsx6AiBYa4Ql4IcT6Zz5uKycCDMKg==}
+  '@ledgerhq/coin-xrp@7.23.5':
+    resolution: {integrity: sha512-aJiFFNhzg4zpn0t7rDVMwczV12otM0L5iiqM4F+zT3VhcfR4/eEphB6EpciUobh7Jv+YpjmY2YP16h1j1/rv1A==}
     peerDependencies:
       '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-network': ^2.4.0
@@ -45658,7 +45658,7 @@ snapshots:
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-xrp@7.23.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+  '@ledgerhq/coin-xrp@7.23.5(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
       '@ledgerhq/coin-module-framework': 3.5.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors

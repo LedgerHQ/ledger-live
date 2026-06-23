@@ -155,7 +155,7 @@ export function SendHeader() {
               ) : null}
             </div>
 
-            {showSkipMemo && (
+            {showSkipMemo && !transactionError && (
               <SkipMemoSection
                 currencyId={currencyId}
                 state={skipMemoState}

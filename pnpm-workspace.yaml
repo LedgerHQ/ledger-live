@@ -202,7 +202,7 @@ catalog:
   oxfmt: 0.36.0
   # Modules published by coin-modules
   "@ledgerhq/coin-module-framework": 3.5.1
-  "@ledgerhq/coin-xrp": 7.23.4
+  "@ledgerhq/coin-xrp": 7.23.5
   detox: 20.51.1
 
 overrides:
