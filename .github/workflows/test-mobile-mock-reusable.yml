@@ -700,8 +700,8 @@ jobs:
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
-      SPECULOS_FIRMWARE_VERSION: 1.6.0
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
+      SPECULOS_FIRMWARE_VERSION: 2.7.1
       SPECULOS_DEVICE: nanoX
       COINAPPS: ${{ github.workspace }}/coin-apps
     outputs:
@@ -945,7 +945,8 @@ jobs:
     needs: [build-ios, determine-builds]
     # Only run on merge to develop (push), not on PRs
     if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
-    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    # Pin to performance-pool so smoke-test timing stats are accurate and consistent
+    runs-on: ["performance-pool", macOS, ARM64]
     timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -953,8 +954,8 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       IOS_SIMULATOR_DEVICE: iPhone 15
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
-      SPECULOS_FIRMWARE_VERSION: 1.6.0
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
+      SPECULOS_FIRMWARE_VERSION: 2.7.1
       SPECULOS_DEVICE: nanoX
     outputs:
       status: ${{ steps.detox.outcome }}
