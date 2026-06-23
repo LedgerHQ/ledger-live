@@ -398,6 +398,7 @@ export default function TezosDelegation({ account }: Props) {
           <View style={[styles.card, { backgroundColor: colors.card }]}>
             {info.isStaked && (
               <DelegationRow
+                testID="tezos-staking-row"
                 baker={currentBaker}
                 address={currentAddress}
                 amount={info.stakedBalance}
