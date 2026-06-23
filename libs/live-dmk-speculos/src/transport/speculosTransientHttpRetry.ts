@@ -10,6 +10,7 @@ const RETRYABLE_AXIOS_NETWORK_CODES = new Set([
   "ECONNREFUSED",
   "EPIPE",
   "ERR_BAD_RESPONSE",
+  "ERR_NETWORK", // axios code for a dropped/failed connection (e.g. reused dead socket)
 ]);
 
 export type TransientHttpRetryOptions = {
@@ -37,9 +38,9 @@ export function isRetryableSpeculosHttpError(error: unknown): boolean {
       const code = obj.code;
       if (typeof code === "string" && RETRYABLE_AXIOS_NETWORK_CODES.has(code)) return true;
 
-      // Node often uses ECONNRESET; some stacks only surface this on the Axios message.
+      // Some stacks only surface the failure on the Axios message (RN sets "Network Error").
       const msg = String((obj as { message?: string }).message ?? "");
-      if (msg.includes("socket hang up")) return true;
+      if (msg.includes("socket hang up") || msg.includes("Network Error")) return true;
     }
 
     const errLike = e as Error & { cause?: unknown };
