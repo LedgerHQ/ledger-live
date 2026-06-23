@@ -43,6 +43,8 @@ Summary of implementations available per platform
 1. 3 implementations available
 2. via Android Chrome
 
+**Deliberate test**
+
 **Beware the current web support:**
 
 | Channels | U2F                    | WebHID.         | WebUSB             | WebBluetooth |
