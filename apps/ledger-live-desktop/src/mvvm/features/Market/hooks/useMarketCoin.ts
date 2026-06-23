@@ -15,6 +15,8 @@ import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { track } from "~/renderer/analytics/segment";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
@@ -77,6 +79,12 @@ export const useMarketCoin = () => {
 
   const toggleStar = useCallback(() => {
     if (!id) return;
+    track("button_clicked", {
+      button: "favourite",
+      currency: id,
+      page: getCurrentTrackingPage(),
+      is_favourite: !isStarred,
+    });
     dispatch(isStarred ? removeStarredMarketCoins(id) : addStarredMarketCoins(id));
   }, [dispatch, isStarred, id]);
 

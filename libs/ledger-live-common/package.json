@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "36.1.0",
+  "version": "36.2.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -62,6 +62,16 @@
       "@ledgerhq/source": "./src/device-action/*.ts",
       "default": "./lib-es/device-action/*.js"
     },
+    "./intents/signTransactionIntent": {
+      "@ledgerhq/source": "./src/intents/signTransactionIntent.ts",
+      "types": "./lib-es/intents/signTransactionIntent.d.ts",
+      "default": "./lib-es/intents/signTransactionIntent.js"
+    },
+    "./intents/*": {
+      "@ledgerhq/source": "./src/intents/*/index.ts",
+      "types": "./lib-es/intents/*/index.d.ts",
+      "default": "./lib-es/intents/*/index.js"
+    },
     "./hooks": {
       "default": "./lib-es/hooks/index.js"
     },
@@ -116,7 +126,6 @@
     "build": "rimraf lib lib-es && tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "watch": "tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es --watch",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
-    "prettier": "prettier --write 'src/**/*.?s'",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
     "lint:fix": "oxlint src --fix --quiet",
@@ -206,6 +215,7 @@
     "@ledgerhq/coin-xrp": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
+    "@ledgerhq/device-intent": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
@@ -255,10 +265,10 @@
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
-    "@ledgerhq/wallet-api-client": "^1.14.0",
-    "@ledgerhq/wallet-api-core": "^1.30.0",
+    "@ledgerhq/wallet-api-client": "^1.15.0",
+    "@ledgerhq/wallet-api-core": "^1.33.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
-    "@ledgerhq/wallet-api-server": "^3.3.0",
+    "@ledgerhq/wallet-api-server": "^3.4.0",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",

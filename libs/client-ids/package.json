@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/client-ids",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "Ledger Live client IDs management library",
   "keywords": [
     "Ledger"

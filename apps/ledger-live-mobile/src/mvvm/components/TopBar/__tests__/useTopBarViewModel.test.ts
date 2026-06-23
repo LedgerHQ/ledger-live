@@ -114,7 +114,10 @@ describe("useTopBarViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.search.name);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expectedNavigationParams.search.name,
+      expectedNavigationParams.search.params,
+    );
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Search",
       page: ScreenName.Portfolio,

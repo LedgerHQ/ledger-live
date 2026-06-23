@@ -35,6 +35,7 @@ import {
 } from "./errors";
 import { HWDeviceProvider } from "./HWDeviceProvider";
 import { genericWithJWT } from "./auth";
+import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
 
 type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 type WithDevice = <T>(job: (device: Device) => Promise<T>) => Promise<T>;
@@ -474,15 +475,6 @@ export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): MemberC
   };
 }
 
-export function convertLiveCredentialsToKeyPair(
-  memberCredentials: MemberCredentials,
-): CryptoKeyPair {
-  return {
-    publicKey: crypto.from_hex(memberCredentials.pubkey),
-    privateKey: crypto.from_hex(memberCredentials.privatekey),
-  };
-}
-
 function getSoftwareDevice(memberCredentials: MemberCredentials): SoftwareDevice {
   const kp = convertLiveCredentialsToKeyPair(memberCredentials);
   return new SoftwareDevice(kp);
@@ -505,20 +497,6 @@ async function extractEncryptionKey(
     }
     throw e;
   }
-}
-
-// spec https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/4335960138/ARCH+LedgerLive+Auth+specifications
-function liveAuthentication(rootId: string): Uint8Array {
-  const trustchainId = new TextEncoder().encode(rootId);
-  const att = new Uint8Array(2 + trustchainId.length);
-  att[0] = 0x02; // Prefix tag
-  att[1] = trustchainId.length;
-  att.set(trustchainId, 2);
-  return att;
-}
-
-function credentialForPubKey(publicKey: string) {
-  return { version: 0, curveId: 33, signAlgorithm: 1, publicKey };
 }
 
 function invariant(condition: unknown, message: string): asserts condition {

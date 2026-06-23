@@ -61,6 +61,65 @@ describe("counterValueFormatter", () => {
       expect(result).toContain("$");
     });
 
+    it("normalizes lower-case currency codes before formatting", () => {
+      const lowerCase = counterValueFormatter({
+        value: 1234.56,
+        locale: "en-US",
+        currency: "usd",
+      });
+      const upperCase = counterValueFormatter({
+        value: 1234.56,
+        locale: "en-US",
+        currency: "USD",
+      });
+
+      expect(lowerCase).toBe(upperCase);
+    });
+
+    it("uses the Ledger fiat sign instead of Intl's locale-dependent symbol", () => {
+      expect(
+        counterValueFormatter({
+          value: 1234.56,
+          locale: "en-US",
+          currency: "CAD",
+        }),
+      ).toBe("CA$1,234.56");
+      expect(
+        counterValueFormatter({
+          value: 1234.56,
+          locale: "en-CA",
+          currency: "CAD",
+        }),
+      ).toBe("CA$1,234.56");
+    });
+
+    it("keeps the minus sign before prefixed units", () => {
+      expect(
+        counterValueFormatter({
+          value: -1234.56,
+          locale: "en-US",
+          currency: "USD",
+        }),
+      ).toBe("-$1,234.56");
+    });
+
+    it("formats crypto countervalues with the Ledger unit instead of Intl currency style", () => {
+      expect(
+        counterValueFormatter({
+          value: 0.00001,
+          locale: "en-US",
+          currency: "BTC",
+        }),
+      ).toContain("₿");
+      expect(
+        counterValueFormatter({
+          value: 0.12345678,
+          locale: "en-US",
+          currency: "ETH",
+        }),
+      ).toBe("0.12345678 ETH");
+    });
+
     it("formats a value with ticker", () => {
       const result = counterValueFormatter({
         value: 123.456,
@@ -148,6 +207,20 @@ describe("counterValueFormatter", () => {
       expect(result).toMatch(/T|trillion/i);
     });
 
+    it("formats shortened crypto countervalues with the Ledger unit instead of Intl currency code", () => {
+      const result = counterValueFormatter({
+        value: 35_700_000,
+        locale: "en-US",
+        currency: "BTC",
+        shorten: true,
+        t: i18next.t,
+      });
+
+      expect(result).toMatch(/^₿/);
+      expect(result).toMatch(/m/i);
+      expect(result).not.toContain("BTC");
+    });
+
     it("handles negative values in shortened format", () => {
       const result = counterValueFormatter({
         value: -5000000,
@@ -158,6 +231,19 @@ describe("counterValueFormatter", () => {
       });
       expect(result).toContain("-");
       expect(result).toContain("5");
+    });
+
+    it("does not prefix zero with a minus sign in shortened format", () => {
+      const result = counterValueFormatter({
+        value: 0,
+        locale: "en-US",
+        currency: "USD",
+        shorten: true,
+        t: i18next.t,
+        allowZeroValue: true,
+      });
+
+      expect(result).toBe("$0");
     });
 
     it("formats small values without shortening", () => {

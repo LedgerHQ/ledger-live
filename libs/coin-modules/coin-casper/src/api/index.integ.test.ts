@@ -1,11 +1,11 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { fetchAccountStateInfo, fetchBalance, fetchBlockHeight, fetchTxs } from ".";
+import { CASPER_DUMMY_ADDRESS } from "../constants";
 
 const pubkey = "0202664e3958608cd8dc2b80d4c73f18f76ef197f1cccca2f4f817c70bb050b248bd";
-const pubkeyAbandon = getAbandonSeedAddress("casper");
+const pubkeyAbandon = CASPER_DUMMY_ADDRESS;
 
 jest.mock("../config");
 describe("Casper API", () => {

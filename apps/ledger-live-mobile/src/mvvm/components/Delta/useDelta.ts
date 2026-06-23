@@ -3,12 +3,12 @@ import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
 
 type ColorType = "success" | "error" | "base";
-type SignType = "+" | "-";
+type SignType = "+" | "-" | "";
 
 const getColorAndSign = (value: number): readonly [ColorType, SignType] => {
   if (value > 0) return ["success", "+"] as const;
   if (value < 0) return ["error", "-"] as const;
-  return ["base", "-"] as const;
+  return ["base", ""] as const;
 };
 
 type UseDeltaParams = {
@@ -52,8 +52,6 @@ export const useDelta = ({
 
   const roundedDelta = Number.parseFloat(delta.toFixed(2));
 
-  if (roundedDelta === 0) return null;
-
   if (
     percent &&
     ((valueChange.percentage === 0 && !show0Delta) ||
@@ -64,6 +62,7 @@ export const useDelta = ({
   }
 
   if (Number.isNaN(delta)) return null;
+  if (roundedDelta === 0 && !show0Delta) return null;
 
   const [color, sign] = getColorAndSign(roundedDelta);
   const absDelta = Math.abs(delta);

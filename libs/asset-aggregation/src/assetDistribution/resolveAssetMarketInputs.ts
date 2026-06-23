@@ -64,6 +64,7 @@ function resolveKnownLedgerIds({
   | readonly string[]
   | undefined {
   if (distributionItem) return [distributionItem.currency.id];
+  if (marketState?.ledgerIds?.length) return marketState.ledgerIds;
   if (currency) return [currency.id];
-  return marketState?.ledgerIds;
+  return undefined;
 }

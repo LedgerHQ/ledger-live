@@ -78,6 +78,7 @@ import type {
   SettingsSetHasSeenWalletV4TourPayload,
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
+  SettingsSetHasSeenQ2WalletV4TourPayload,
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
 } from "../actions/types";
@@ -180,6 +181,7 @@ export const INITIAL_STATE: SettingsState = {
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
   productTourCompleted: false,
+  hasSeenQ2WalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
   hasClickedRecover: false,
   deprecationDoNotRemind: [],
@@ -689,6 +691,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     productTourCompleted: (action as Action<SettingsSetProductTourCompletedPayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_HAS_SEEN_Q2_WALLET_V4_TOUR]: (state, action) => ({
+    ...state,
+    hasSeenQ2WalletV4Tour: (action as Action<SettingsSetHasSeenQ2WalletV4TourPayload>).payload,
+  }),
+
   [SettingsActionTypes.SET_HAS_CLICKED_RECOVER]: (state, action) => ({
     ...state,
     hasClickedRecover: (action as Action<SettingsSetHasClickedRecoverPayload>).payload,
@@ -937,5 +944,6 @@ export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasS
 
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
+export const hasSeenQ2WalletV4TourSelector = (state: State) => state.settings.hasSeenQ2WalletV4Tour;
 export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;
 export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;

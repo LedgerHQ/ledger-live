@@ -8,6 +8,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { MinaCoinConfig, setCoinConfig } from "../config";
+import { MINA_DUMMY_ADDRESS } from "../constants";
 import { validateAddress } from "../logic/validateAddress";
 import resolver from "../signer/getAddress";
 import makeCliTools from "../test/cli";
@@ -69,6 +70,7 @@ export function buildAccountBridge(
     broadcast,
     getSerializedAddressParameters,
     validateAddress,
+    getEstimationRecipient: () => MINA_DUMMY_ADDRESS,
   };
 }
 

@@ -1,21 +1,12 @@
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import estimateMaxSpendable from "../../bridge/estimateMaxSpendable";
-import { getEstimatedGas } from "../../bridge/getFeesForTransaction";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 
-jest.mock("../../bridge/getFeesForTransaction", () => ({
-  getEstimatedGas: jest.fn(() => ({
-    fees: new BigNumber(0),
-    estimate: {
-      maxGasAmount: 1,
-      gasUnitPrice: 2,
-    },
-    errors: {},
-  })),
-}));
+const DEFAULT_TOTAL_GAS = DEFAULT_GAS.multipliedBy(DEFAULT_GAS_PRICE);
 
 describe("estimateMaxSpendable Test", () => {
-  describe("spendable balance is lower than the total gas", () => {
+  describe("spendable balance is lower than the default total gas", () => {
     it("should return 0", async () => {
       const account = createFixtureAccount();
 
@@ -33,8 +24,8 @@ describe("estimateMaxSpendable Test", () => {
     });
   });
 
-  describe("spendable balance is higher than the total gas", () => {
-    it("should return spendable amount minus total gas", async () => {
+  describe("spendable balance is higher than the default total gas", () => {
+    it("should return spendable amount minus the default total gas", async () => {
       const account = createFixtureAccount();
 
       const spendableBalance = new BigNumber(100000);
@@ -45,14 +36,14 @@ describe("estimateMaxSpendable Test", () => {
         account,
       });
 
-      const expected = new BigNumber(80000);
+      const expected = spendableBalance.minus(DEFAULT_TOTAL_GAS);
 
       expect(result.isEqualTo(expected)).toBe(true);
     });
   });
 
-  describe("transaction spendable balance is higher than the total gas", () => {
-    it("should return transaction spendable amount minus total gas", async () => {
+  describe("transaction spendable balance is lower than the default total gas", () => {
+    it("should return 0", async () => {
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -71,8 +62,8 @@ describe("estimateMaxSpendable Test", () => {
     });
   });
 
-  describe("transaction spendable balance is higher than the total gas", () => {
-    it("should return transaction spendable amount minus total gas", async () => {
+  describe("transaction spendable balance is higher than the default total gas", () => {
+    it("should return transaction spendable amount minus the default total gas", async () => {
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -85,29 +76,25 @@ describe("estimateMaxSpendable Test", () => {
         transaction,
       });
 
-      const expected = new BigNumber(99998);
+      const expected = spendableBalance.minus(DEFAULT_TOTAL_GAS);
 
       expect(result.isEqualTo(expected)).toBe(true);
     });
   });
 
-  describe("when getEstimatedGas throws", () => {
-    it("should fall back to default gas and return spendable minus default total gas", async () => {
+  describe("when a transaction has a non-zero amount", () => {
+    it("should ignore the amount and reserve the default total gas", async () => {
       const account = createFixtureAccount();
-      const transaction = createFixtureTransaction();
+      const transaction = createFixtureTransaction({ amount: new BigNumber(12345) });
 
       const spendableBalance = new BigNumber(100000);
       account.spendableBalance = spendableBalance;
 
-      (getEstimatedGas as jest.Mock).mockRejectedValueOnce(new Error("gas estimation failed"));
+      const result = await estimateMaxSpendable({ account, transaction });
 
-      const result = await estimateMaxSpendable({
-        account,
-        transaction,
-      });
+      const expected = spendableBalance.minus(DEFAULT_TOTAL_GAS);
 
-      const expected = new BigNumber(80000);
-      expect(result).toStrictEqual(expected);
+      expect(result.isEqualTo(expected)).toBe(true);
     });
   });
 });

@@ -76,15 +76,20 @@ function getResolution(
   deviceModelId?: DeviceModelId,
   certificateSignatureKind?: "prod" | "test",
 ): Resolution | undefined {
-  if (!transaction.subAccountId || !transaction.model.commandDescriptor) {
-    return;
-  }
-
-  const baseResolution: Resolution = {
-    deviceModelId,
-    certificateSignatureKind,
+  let baseResolution: Resolution = {
     ...(transaction.templateId && { templateId: transaction.templateId }),
   };
+
+  if (!transaction.subAccountId || !transaction.model.commandDescriptor) {
+    return baseResolution;
+  }
+
+  baseResolution = {
+    ...baseResolution,
+    deviceModelId,
+    certificateSignatureKind,
+  };
+
   const { command } = transaction.model.commandDescriptor;
   switch (command.kind) {
     case "token.transfer": {

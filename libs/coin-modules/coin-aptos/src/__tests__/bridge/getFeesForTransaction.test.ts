@@ -10,13 +10,14 @@ import * as getFeesForTransaction from "../../bridge/getFeesForTransaction";
 import { AptosAPI } from "../../network";
 
 let simulateTransaction = jest.fn();
+const generateTransaction = jest.fn(() => "tx");
 
 jest.mock("../../network", () => {
   return {
     AptosAPI: function () {
       return {
         estimateGasPrice: jest.fn(() => ({ gas_estimate: 101 })),
-        generateTransaction: jest.fn(() => "tx"),
+        generateTransaction,
         simulateTransaction,
         getAccount: jest.fn(() => ({ sequence_number: "123" })),
       };
@@ -204,6 +205,45 @@ describe("getFeesForTransaction Test", () => {
         };
 
         expect(result).toEqual(expected);
+      });
+    });
+
+    describe("with stale gas options on the transaction", () => {
+      it("should simulate against the default gas options instead of reusing the stale ones", async () => {
+        simulateTransaction = jest.fn(() => [
+          {
+            success: true,
+            vm_status: [],
+            expiration_timestamp_secs: 5,
+            gas_used: "9",
+            gas_unit_price: "102",
+          },
+        ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
+        generateTransaction.mockClear();
+
+        const account = createFixtureAccount();
+        // Stale, too-tight gas options leaked from a previous estimation (e.g. the zero-amount
+        // "use max" estimation) that would otherwise make the simulation run out of gas.
+        const transaction = createFixtureTransaction({
+          options: { maxGasAmount: "1", gasUnitPrice: "1" },
+        });
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
+
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
+
+        expect(result.errors.maxGasAmount).toBeUndefined();
+        const [, , optionsUsed] = generateTransaction.mock.calls.at(-1) as unknown as [
+          string,
+          unknown,
+          { maxGasAmount: string; gasUnitPrice: string },
+        ];
+        expect(optionsUsed.maxGasAmount).toBe(DEFAULT_GAS.toString());
+        expect(optionsUsed.gasUnitPrice).toBe(DEFAULT_GAS_PRICE.toString());
       });
     });
 

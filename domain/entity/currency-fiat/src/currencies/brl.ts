@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const brl = fiat({
   type: "FiatCurrency",
   id: "brl",
-  name: "Brazilian Real",
   ticker: "BRL",
+  name: "Brazilian Real",
   symbol: "R$",
-  units: [{ name: "Brazilian Real", code: "BRL", magnitude: 2 }],
-  keywords: ["real", "brl"],
+  units: [
+    {
+      code: "R$",
+      name: "Brazilian Real",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

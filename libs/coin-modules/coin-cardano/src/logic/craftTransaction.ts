@@ -18,30 +18,21 @@ import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_MAX_SUPPLY, MEMO_LABEL } from "../constants";
-import { type DerivedUtxo, deriveUtxos, getTTL, isTestnet, mergeTokens } from "../logic";
+import {
+  type DerivedUtxo,
+  deriveUtxos,
+  getTTL,
+  isTestnet,
+  isTokenAsset,
+  mergeTokens,
+  toTyphonProtocolParams,
+} from "../logic";
 import { CardanoDelegation, ProtocolParams } from "../types";
 import {
   EMPTY_CREDENTIAL_KEY,
   extractPaymentKeyFromAddress,
   extractStakeKeyFromAddress,
 } from "../utils";
-
-function toTyphonProtocolParams(pp: ProtocolParams): TyphonTypes.ProtocolParams {
-  return {
-    minFeeA: new BigNumber(pp.minFeeA),
-    minFeeB: new BigNumber(pp.minFeeB),
-    stakeKeyDeposit: new BigNumber(pp.stakeKeyDeposit),
-    lovelacePerUtxoWord: new BigNumber(pp.lovelacePerUtxoWord),
-    collateralPercent: new BigNumber(pp.collateralPercent),
-    priceSteps: new BigNumber(pp.priceSteps),
-    priceMem: new BigNumber(pp.priceMem),
-    languageView: pp.languageView,
-    maxTxSize: Number(pp.maxTxSize),
-    maxValueSize: Number(pp.maxValueSize),
-    utxoCostPerByte: new BigNumber(pp.utxoCostPerByte),
-    minFeeRefScriptCostPerByte: new BigNumber(pp.minFeeRefScriptCostPerByte),
-  };
-}
 
 /**
  * The CoinModule API receives only the sender address (no xpub), so all inputs share the
@@ -345,6 +336,8 @@ export async function buildUnsignedTransaction(
   // entire balance (minus fee) lands there with no explicit recipient output.
   let changeAddress: TyphonTypes.CardanoAddress = senderAddress;
 
+  const isTokenTransfer = isTokenAsset(intent.asset);
+
   if (intent.intentType === "staking") {
     if (!stakeKey) throw new Error("Sender address has no stake credential");
     addStakingCertificates(
@@ -354,10 +347,10 @@ export async function buildUnsignedTransaction(
       stakeKey,
       delegation,
     );
-  } else if (intent.asset.type === "native") {
-    changeAddress = addNativeOutputs(typhonTx, intent, senderAddress, inputs, protocolParams);
-  } else {
+  } else if (isTokenTransfer) {
     addTokenOutput(typhonTx, intent, inputs, protocolParams);
+  } else {
+    changeAddress = addNativeOutputs(typhonTx, intent, senderAddress, inputs, protocolParams);
   }
 
   // Spend the largest UTXOs first so Typhon's coin selection covers the outputs with the fewest
@@ -369,8 +362,7 @@ export async function buildUnsignedTransaction(
   // covered), so for a sweep we force every UTXO as a mandatory input and hand it nothing to
   // select — all remaining ADA then lands in the change output (whose address is the recipient).
   // Every other intent lets Typhon select the minimal set from the available inputs.
-  const sweepAll =
-    intent.intentType === "transaction" && intent.asset.type === "native" && !!intent.useAllAmount;
+  const sweepAll = intent.intentType === "transaction" && !isTokenTransfer && !!intent.useAllAmount;
   if (sweepAll) {
     inputs.forEach(input => typhonTx.addInput(input));
   }

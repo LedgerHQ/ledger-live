@@ -14,6 +14,12 @@ function getMaxFeeFromGasOption(maxFeePerGas: unknown, gasPrice: unknown): BigNu
   return new BigNumber(0);
 }
 
+function getEstimatedMs(strategy: string): number {
+  if (strategy === "slow") return 2 * 60 * 1000;
+  if (strategy === "medium") return 30 * 1000;
+  return 15 * 1000;
+}
+
 export const evmSendDescriptor: SendDescriptor = {
   inputs: {
     recipientSupportsDomain: true,
@@ -22,6 +28,10 @@ export const evmSendDescriptor: SendDescriptor = {
     hasPresets: true,
     hasCustom: true,
     presets: {
+      estimation: {
+        fallbackPresetIds: EVM_STRATEGIES,
+        allowZeroAmount: true,
+      },
       getOptions: transaction => {
         if (!isRecord(transaction)) {
           return [];
@@ -47,12 +57,6 @@ export const evmSendDescriptor: SendDescriptor = {
 
           const maxFee = getMaxFeeFromGasOption(maxFeePerGas, gasPrice);
           const estimatedFees = maxFee.times(gasLimit);
-
-          const getEstimatedMs = (strategyType: string): number => {
-            if (strategyType === "slow") return 2 * 60 * 1000;
-            if (strategyType === "medium") return 30 * 1000;
-            return 15 * 1000;
-          };
 
           options.push({
             id: strategy,

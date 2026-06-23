@@ -1,7 +1,14 @@
 import BigNumber from "bignumber.js";
 import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { AleoApiConfigurationResetError } from "../errors";
-import { EXPLORER_TRANSFER_TYPES, DEFAULT_RECORDS_PAGE_SIZE, PROGRAM_ID } from "../constants";
+import {
+  EXPLORER_TRANSFER_TYPES,
+  DEFAULT_RECORDS_PAGE_SIZE,
+  PROGRAM_ID,
+  TOKEN_RECORD_NAME,
+  RECIPIENT_ARG_INDEX,
+  AMOUNT_ARG_INDEX,
+} from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
 import type { ProvableApi } from "../types";
@@ -18,6 +25,7 @@ import {
   fetchAllOwnedRecords,
   enrichPrivateRecord,
   patchPublicOperations,
+  getTokenOutDetails,
 } from "./utils";
 
 jest.mock("./api");
@@ -548,6 +556,23 @@ describe("network/utils", () => {
     const mockViewKey = "AViewKey1testviewkey";
     const mockEnrichAddress = "aleo1testowner123address456";
 
+    it("should return null for fee_private records without making backend calls", async () => {
+      const rawRecord = getMockedRecord({
+        function_name: "fee_private",
+        transaction_id: "tx_fee_private",
+      });
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toBeNull();
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
+    });
+
     it("should return null when PUBLIC_TO_PRIVATE and sender is this address", async () => {
       const rawRecord = getMockedRecord({
         function_name: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
@@ -835,7 +860,7 @@ describe("network/utils", () => {
         viewKey: mockViewKey,
         programId: rawRecord.program_name,
         functionName: rawRecord.function_name,
-        outputIndex: 1, // RECIPIENT_ARG_INDEX
+        outputIndex: RECIPIENT_ARG_INDEX,
       });
       expect(mockDecryptCiphertext).toHaveBeenCalledWith({
         currency: mockCurrency,
@@ -844,7 +869,7 @@ describe("network/utils", () => {
         viewKey: mockViewKey,
         programId: rawRecord.program_name,
         functionName: rawRecord.function_name,
-        outputIndex: 2, // AMOUNT_ARG_INDEX
+        outputIndex: AMOUNT_ARG_INDEX,
       });
     });
 
@@ -947,6 +972,50 @@ describe("network/utils", () => {
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
+    it("should fall back to `amount` field when decrypted record has no `microcredits`", async () => {
+      const senderAddress = "aleo1senderaddress789";
+      const rawRecord = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        sender: senderAddress,
+        record_ciphertext: "ciphertext_token_record",
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(rawRecord.transaction_id, {
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [{ id: "in0", type: "private", value: "some_input" }],
+                outputs: [],
+                program: "token_program.aleo",
+                function: "transfer_private",
+              },
+            ],
+          },
+        }),
+      );
+      mockDecryptRecord.mockResolvedValueOnce({
+        owner: mockEnrichAddress,
+        data: { amount: "500000u128" },
+        nonce: "nonce1",
+        version: 1,
+      });
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).not.toBeNull();
+      expect(result?.value).toEqual(new BigNumber(500000));
+    });
+
     it("should trim transaction_id whitespace before fetching details", async () => {
       const rawRecord = getMockedRecord({
         transaction_id: "  tx_with_spaces  ",
@@ -987,6 +1056,153 @@ describe("network/utils", () => {
       expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
       expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx_with_spaces");
       expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should use token input layout (index 0 = recipient, 1 = amount) for outgoing PRIVATE_TO_PUBLIC token record", async () => {
+      const recipientAddress = "aleo1tokenrecipient123";
+      const rawRecord = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+        sender: mockEnrichAddress,
+        record_name: TOKEN_RECORD_NAME,
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(rawRecord.transaction_id, {
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [
+                  { id: "in0", type: "public", value: recipientAddress }, // index 0 = recipient for token
+                  { id: "in1", type: "public", value: "500000u64" }, // index 1 = amount for token
+                ],
+                outputs: [],
+                program: "token_program.aleo",
+                function: "transfer_private_to_public",
+              },
+            ],
+          },
+        }),
+      );
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).not.toBeNull();
+      expect(result?.recipient).toBe(recipientAddress);
+      expect(result?.value).toEqual(new BigNumber(500000));
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should decrypt ciphertexts from token input indices (0 and 1) for outgoing PRIVATE token record", async () => {
+      const recipientAddress = "aleo1tokenrecipient456";
+      const rawRecord = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        sender: mockEnrichAddress,
+        program_name: "token_program.aleo",
+        record_name: TOKEN_RECORD_NAME,
+        transition_index: 0,
+      });
+      const mockDetails = getMockedTransactionDetails(rawRecord.transaction_id, {
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk_token",
+              inputs: [
+                { id: "in0", type: "private", value: "ciphertext_recipient" }, // index 0 = recipient for token
+                { id: "in1", type: "private", value: "ciphertext_amount" }, // index 1 = amount for token
+              ],
+              outputs: [],
+              program: "token_program.aleo",
+              function: "transfer_private",
+            },
+          ],
+        },
+      });
+      mockGetTransactionById.mockResolvedValueOnce(mockDetails);
+      mockDecryptCiphertext
+        .mockResolvedValueOnce({ plaintext: recipientAddress })
+        .mockResolvedValueOnce({ plaintext: "800000u64" });
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).not.toBeNull();
+      expect(result?.recipient).toBe(recipientAddress);
+      expect(result?.value).toEqual(new BigNumber(800000));
+      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(2);
+      expect(mockDecryptCiphertext).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        ciphertext: "ciphertext_recipient",
+        tpk: "tpk_token",
+        viewKey: mockViewKey,
+        programId: "token_program.aleo",
+        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        outputIndex: RECIPIENT_ARG_INDEX - 1,
+      });
+      expect(mockDecryptCiphertext).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        ciphertext: "ciphertext_amount",
+        tpk: "tpk_token",
+        viewKey: mockViewKey,
+        programId: "token_program.aleo",
+        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        outputIndex: AMOUNT_ARG_INDEX - 1,
+      });
+    });
+
+    it("should return null when token record has no value field at input index 0", async () => {
+      const rawRecord = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        sender: mockEnrichAddress,
+        record_name: TOKEN_RECORD_NAME,
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(rawRecord.transaction_id, {
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [
+                  { id: "in0", type: "record", tag: "record_tag_0" }, // index 0 = no value field (recipient for token)
+                  { id: "in1", type: "private", value: "ciphertext_amount" }, // index 1 = amount for token
+                ],
+                outputs: [],
+                program: "token_program.aleo",
+                function: "transfer_private",
+              },
+            ],
+          },
+        }),
+      );
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toBeNull();
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
   });
@@ -1533,6 +1749,7 @@ describe("network/utils", () => {
           EXPLORER_TRANSFER_TYPES.PRIVATE,
           EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+          EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
         ],
       });
       expect(result).toEqual(records);
@@ -1561,6 +1778,7 @@ describe("network/utils", () => {
           EXPLORER_TRANSFER_TYPES.PRIVATE,
           EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+          EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
         ],
       });
       expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(2, {
@@ -1573,6 +1791,7 @@ describe("network/utils", () => {
           EXPLORER_TRANSFER_TYPES.PRIVATE,
           EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+          EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
         ],
       });
       expect(result).toEqual([...page0, ...page1]);
@@ -1710,6 +1929,7 @@ describe("network/utils", () => {
         EXPLORER_TRANSFER_TYPES.PRIVATE,
         EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
         EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+        EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
       ];
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(
@@ -1746,6 +1966,271 @@ describe("network/utils", () => {
       ).rejects.toMatchObject({ name: "AbortError" });
 
       expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("getTokenOutDetails", () => {
+    const mockViewKey = "AViewKey1testviewkey";
+
+    it("should return null amount and recipient when transition is missing", async () => {
+      const record = getMockedRecord({
+        transaction_id: "tx_missing_transition",
+        transition_index: 5,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails("tx_missing_transition", {
+          fee_value: 12345,
+          execution: { transitions: [] },
+        }),
+      );
+
+      const result = await getTokenOutDetails({
+        currency: mockCurrency,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual({
+        amount: null,
+        recipient: null,
+        fee: new BigNumber(12345),
+      });
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx_missing_transition");
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should read plaintext amount and recipient for PRIVATE_TO_PUBLIC transfers", async () => {
+      const recipientAddress = "aleo1tokenrecipient123456";
+      const record = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+        transaction_id: "tx_priv_to_pub",
+        transition_index: 0,
+        program_name: "token_program.aleo",
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails("tx_priv_to_pub", {
+          fee_value: 5000,
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [
+                  { id: "in0", type: "public", value: "record_cipher" },
+                  { id: "in1", type: "public", value: "750000u128.public" },
+                  { id: "in2", type: "public", value: recipientAddress },
+                ],
+                outputs: [],
+                program: "token_program.aleo",
+                function: "transfer_private_to_public",
+              },
+            ],
+          },
+        }),
+      );
+
+      const result = await getTokenOutDetails({
+        currency: mockCurrency,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual({
+        amount: new BigNumber(750000),
+        recipient: recipientAddress,
+        fee: new BigNumber(5000),
+      });
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should decrypt recipient and amount for fully private transfers", async () => {
+      const recipientAddress = "aleo1privaterecipient789";
+      const record = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        transaction_id: "tx_private",
+        transition_index: 0,
+        program_name: "token_program.aleo",
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(record.transaction_id, {
+          fee_value: 9000,
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk_private",
+                inputs: [
+                  { id: "in1", type: "private", value: "ciphertext_recipient" },
+                  { id: "in2", type: "private", value: "ciphertext_amount" },
+                ],
+                outputs: [],
+                program: record.program_name,
+                function: "transfer_private",
+              },
+            ],
+          },
+        }),
+      );
+      mockDecryptCiphertext
+        .mockResolvedValueOnce({ plaintext: recipientAddress })
+        .mockResolvedValueOnce({ plaintext: "300000u64" });
+
+      const result = await getTokenOutDetails({
+        currency: mockCurrency,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual({
+        amount: new BigNumber(300000),
+        recipient: recipientAddress,
+        fee: new BigNumber(9000),
+      });
+      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(2);
+      expect(mockDecryptCiphertext).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        ciphertext: "ciphertext_recipient",
+        tpk: "tpk_private",
+        viewKey: mockViewKey,
+        programId: record.program_name,
+        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        outputIndex: RECIPIENT_ARG_INDEX - 1,
+      });
+      expect(mockDecryptCiphertext).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        ciphertext: "ciphertext_amount",
+        tpk: "tpk_private",
+        viewKey: mockViewKey,
+        programId: record.program_name,
+        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        outputIndex: AMOUNT_ARG_INDEX - 1,
+      });
+    });
+
+    it("should return null amount when private transfer has too few inputs", async () => {
+      const recipientAddress = "aleo1plaintextrecipient";
+      const record = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        transaction_id: "tx_short_inputs",
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails("tx_short_inputs", {
+          fee_value: 1000,
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [{ id: "in0", type: "public", value: recipientAddress }],
+                outputs: [],
+                program: "credits.aleo",
+                function: "transfer_private",
+              },
+            ],
+          },
+        }),
+      );
+
+      const result = await getTokenOutDetails({
+        currency: mockCurrency,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual({
+        amount: null,
+        recipient: recipientAddress,
+        fee: new BigNumber(1000),
+      });
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
+    it("should return null fields when decryption fails", async () => {
+      const record = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        transaction_id: "tx_decrypt_fail",
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails("tx_decrypt_fail", {
+          fee_value: 2000,
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [
+                  { id: "in0", type: "private", value: "cipher_record" },
+                  { id: "in1", type: "private", value: "cipher_recipient" },
+                  { id: "in2", type: "private", value: "cipher_amount" },
+                ],
+                outputs: [],
+                program: "credits.aleo",
+                function: "transfer_private",
+              },
+            ],
+          },
+        }),
+      );
+      mockDecryptCiphertext.mockRejectedValue(new Error("decrypt failed"));
+
+      const result = await getTokenOutDetails({
+        currency: mockCurrency,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual({
+        amount: null,
+        recipient: null,
+        fee: new BigNumber(2000),
+      });
+    });
+
+    it("should trim transaction_id whitespace before fetching details", async () => {
+      const record = getMockedRecord({
+        transaction_id: "  tx_with_spaces  ",
+        transition_index: 0,
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails("tx_with_spaces", {
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [
+                  { id: "in0", type: "public", value: "100u64" },
+                  { id: "in1", type: "public", value: "aleo1recipient123" },
+                ],
+                outputs: [],
+                program: "credits.aleo",
+                function: "transfer_private_to_public",
+              },
+            ],
+          },
+        }),
+      );
+
+      await getTokenOutDetails({
+        currency: mockCurrency,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "tx_with_spaces");
     });
   });
 });

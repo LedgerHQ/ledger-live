@@ -88,7 +88,6 @@ export const urls = {
     SyncError: "https://support.ledger.com/article/360012207759-zd",
     LedgerAPIErrorWithMessage:
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
-    StratisDown2021Warning: "https://support.ledger.com/article/115005175329-zd",
     TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
     AddressesSanctionedError:
       "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
@@ -287,6 +286,14 @@ export const urls = {
   lnxFirmwareUpdate: "https://support.ledger.com/article/9305992683165-zd",
   recoverSources: {
     myLedger: "ledgerlive://myledger",
+  },
+  backupHub: {
+    recoveryKey:
+      "https://shop.ledger.com/products/ledger-recovery-key/single-backup?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLM&utm_content=msg_backuphub",
+    secretRecoveryPhrase:
+      "https://shop.ledger.com/?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLM&utm_content=msg_backuphub#category-srp-accessories",
+    compareAll:
+      "https://shop.ledger.com/pages/recovery-solutions?utm_source=Ledger_Wallet&utm_medium=Native&utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLM&utm_content=msg_backuphub",
   },
   domainService: "https://support.ledger.com/article/9710787581469-zd",
   editEvmTx: {

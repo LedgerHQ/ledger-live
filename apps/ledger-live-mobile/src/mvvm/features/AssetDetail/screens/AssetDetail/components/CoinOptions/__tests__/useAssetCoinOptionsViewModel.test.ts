@@ -61,6 +61,27 @@ describe("useAssetCoinOptionsViewModel", () => {
     );
   });
 
+  it("allows toggling favourites when currency is not resolved yet", () => {
+    const { result, store } = renderHook(
+      () =>
+        useAssetCoinOptionsViewModel({
+          currency: undefined,
+          currencyId: "ethereum/erc20/shiba_inu",
+          marketId: "shiba-inu",
+        }),
+      {
+        overrideInitialState: (state: State): State => ({
+          ...state,
+          settings: { ...state.settings, starredMarketCoins: [] },
+        }),
+      },
+    );
+
+    act(() => result.current.onToggleFavourite());
+
+    expect(store.getState().settings.starredMarketCoins).toContain("shiba-inu");
+  });
+
   it("prefers marketId over currencyId as the star key so favourites stay aligned with the Market list", () => {
     const { result, store } = renderViewModel({ marketId: "bitcoin-coingecko-id" });
 

@@ -1,9 +1,13 @@
 import { BehaviorSubject, firstValueFrom } from "rxjs";
 import { skip } from "rxjs/operators";
 import { ApduResponse, DeviceModelId, type TransportArgs } from "@ledgerhq/device-management-kit";
-import { HTTP_PROXY_TRANSPORT_IDENTIFIER, HttpProxyDmkTransport } from "./HttpProxyDmkTransport";
+import {
+  buildHttpProxyLegacyDeviceId,
+  HTTP_PROXY_TRANSPORT_IDENTIFIER,
+  HttpProxyDmkTransport,
+} from "./HttpProxyDmkTransport";
 
-const SYNTHETIC_DEVICE_ID = "http-proxy-device";
+const SYNTHETIC_DEVICE_ID = buildHttpProxyLegacyDeviceId("http://localhost:8435");
 
 const mockDeviceModel = {
   model: DeviceModelId.NANO_X,
@@ -82,6 +86,9 @@ describe("HttpProxyDmkTransport", () => {
       const emitted = await nextEmission;
 
       expect(emitted).toHaveLength(1);
+      expect((emitted[0] as { id: string }).id).toBe(
+        buildHttpProxyLegacyDeviceId("http://other:9999"),
+      );
       expect((emitted[0] as { name: string }).name).toContain("http://other:9999");
     });
   });
@@ -348,7 +355,7 @@ describe("HttpProxyDmkTransport", () => {
       expect((emitted[0] as { name: string }).name).toContain(url);
     });
 
-    it("should use a stable id across URL changes", async () => {
+    it("should encode the current URL in the legacy-compatible device id", async () => {
       const transport = new HttpProxyDmkTransport(createMockArgs(), urlSubject);
       const ids: string[] = [];
 
@@ -371,7 +378,7 @@ describe("HttpProxyDmkTransport", () => {
         });
       });
 
-      expect(ids).toEqual([SYNTHETIC_DEVICE_ID, SYNTHETIC_DEVICE_ID]);
+      expect(ids).toEqual([SYNTHETIC_DEVICE_ID, buildHttpProxyLegacyDeviceId("http://other:9999")]);
     });
   });
 });

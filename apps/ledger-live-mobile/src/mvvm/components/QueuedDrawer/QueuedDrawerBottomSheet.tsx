@@ -22,6 +22,17 @@ export type QueuedDrawerBottomSheetProps = {
   onBack?: () => void;
   /** Callback when the drawer is closed. */
   onClose?: () => void;
+  /**
+   * Callback when the header close button (X) is pressed. Unlike {@link onClose}, which can fire
+   * for any closing reason (header, backdrop, gestures, or programmatic dismiss), this fires only
+   * on an explicit header close press. Use it to track close intent accurately.
+   */
+  onHeaderClosePressed?: () => void;
+  /**
+   * Callback when the backdrop is pressed. Fires only on an explicit backdrop press, before the
+   * drawer is dismissed. Use it to track close intent accurately.
+   */
+  onBackdropPress?: () => void;
   /** Callback after the drawer is fully hidden. */
   onModalHide?: () => void;
   /** Prevent closing via backdrop press. */
@@ -48,6 +59,8 @@ const QueuedDrawerBottomSheet = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
+  onHeaderClosePressed,
+  onBackdropPress,
   onBack,
   hasBackButton,
   onModalHide,
@@ -66,7 +79,7 @@ const QueuedDrawerBottomSheet = ({
   const {
     bottomSheetRef,
     areDrawersLocked,
-    handleUserClose,
+    handleBackdropPress,
     handleDismiss,
     handleCloseAnimationStart,
     onBack: hookOnBack,
@@ -78,6 +91,7 @@ const QueuedDrawerBottomSheet = ({
     isForcingToBeOpened,
     onClose,
     onBack,
+    onBackdropPress,
     onModalHide,
     preventBackdropClick,
   });
@@ -97,8 +111,9 @@ const QueuedDrawerBottomSheet = ({
       onBack={hasBackButton ? hookOnBack : undefined}
       onAnimate={handleCloseAnimationStart}
       onDismiss={handleDismiss}
+      onHeaderClosePressed={onHeaderClosePressed}
       backdropPressBehavior={preventBackdropClick || areDrawersLocked ? "none" : "close"}
-      onBackdropPress={handleUserClose}
+      onBackdropPress={handleBackdropPress}
       backgroundComponent={backgroundComponent}
     >
       <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>

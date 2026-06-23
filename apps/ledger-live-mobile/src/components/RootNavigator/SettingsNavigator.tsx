@@ -90,6 +90,7 @@ import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import WalletV4TourScreenDebug from "LLM/features/WalletV4Tour/Debug";
 import ProductTourScreenDebug from "LLM/features/ProductTour/Debug";
+import Q2WalletV4TourScreenDebug from "LLM/features/Q2WalletV4Tour/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -634,6 +635,13 @@ export default function SettingsNavigator() {
         component={ProductTourScreenDebug}
         options={{
           title: "Product Tour",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQ2WalletV4Tour}
+        component={Q2WalletV4TourScreenDebug}
+        options={{
+          title: "Q2 Wallet V4 Tour",
         }}
       />
     </Stack.Navigator>

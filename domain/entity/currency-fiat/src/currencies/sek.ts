@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const sek = fiat({
   type: "FiatCurrency",
   id: "sek",
-  name: "Swedish Krona",
   ticker: "SEK",
+  name: "Swedish Krona",
   symbol: "kr",
-  units: [{ name: "Swedish Krona", code: "SEK", magnitude: 2 }],
-  keywords: ["krona", "sek"],
+  units: [
+    {
+      code: "kr",
+      name: "Swedish Krona",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

@@ -173,6 +173,8 @@ export type CurrencyFeatures = {
   currencyUnichainSepolia: DefaultFeature;
   currencyArc: DefaultFeature;
   currencyArcTestnet: DefaultFeature;
+  currencyRobinhood: DefaultFeature;
+  currencyRobinhoodTestnet: DefaultFeature;
 };
 
 /**
@@ -234,7 +236,6 @@ export type Features = CurrencyFeatures & {
   ptxEarnUi: Feature_PtxEarnUi;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
-  llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   analyticsOptIn: DefaultFeature;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
@@ -253,7 +254,6 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
-  llmRebornLP: Feature_LlmRebornLP;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
@@ -317,7 +317,6 @@ export type Features = CurrencyFeatures & {
   llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
-  llmHomescreen: DefaultFeature;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
@@ -732,12 +731,6 @@ export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmAnalyticsOptInPrompt = Feature<{
-  variant: ABTestingVariants;
-  entryPoints: Array<string>;
-}>;
-
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
 export type Feature_LldAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
@@ -910,11 +903,6 @@ export type Feature_PtxSwapDetailedView = Feature<{
   variant: ABTestingVariants;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmRebornLP"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmRebornLP = Feature<{
-  variant: ABTestingVariants;
-}>;
-
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldNanoSUpsellBanners"]` from `@shared/feature-flags` instead. */
 export type Feature_LldNanoSUpsellBanners = Feature<{
   opted_in: LldNanoSUpsellBannersConfig;
@@ -938,8 +926,6 @@ export type Feature_LlmTransferButtonCopyVariant = Feature<{
   rowCashToStableDescription?: string;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmHomescreen"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmHomescreen = DefaultFeature;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["supportDeviceApex"]` from `@shared/feature-flags` instead. */
 export type Feature_SupportDeviceApex = DefaultFeature;
 
@@ -982,19 +968,15 @@ type Feature_Wallet40_Params = {
   assetDiscoverability: boolean;
   // Specifics
   brazePlacement?: boolean;
-  newReceiveDialog?: boolean;
   earnUpselling?: boolean;
   earnSimulator?: boolean;
+  q2Tour?: boolean;
 };
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwdWallet40"]` from `@shared/feature-flags` instead. */
-export type Feature_LwdWallet40 = Feature<
-  {
-    newReceiveDialog: boolean;
-  } & Feature_Wallet40_Params
->;
+export type Feature_LwdWallet40 = Feature<Feature_Wallet40_Params>;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmNewWordingOptInNotificationsDrawer"]` from `@shared/feature-flags` instead. */
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
   variant: ABTestingVariants;

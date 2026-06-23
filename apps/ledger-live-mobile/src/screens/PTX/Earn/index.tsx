@@ -29,6 +29,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { EarnV2Webview } from "./EarnV2Webview";
+import { buildEarnGoToURL } from "./buildEarnGoToURL";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -89,8 +90,11 @@ function Earn({ route }: Props) {
   }
   const Container = hideMainNavigator ? Fragment : TabBarSafeAreaView;
 
-  const webviewInputs = useMemo(
-    () => ({
+  const webviewInputs = useMemo(() => {
+    const { customDappURL, customDappUrl, ...restParams } = params;
+    const dappUrl = customDappURL ?? customDappUrl;
+
+    const earnInitParams: Record<string, string | undefined> = {
       theme,
       lang: language,
       locale: language,
@@ -105,23 +109,27 @@ function Earn({ route }: Props) {
       OS: Platform.OS,
       ethDepositCohort,
       uiVersion: "v1",
-      ...params,
+      ...restParams,
       ...Object.fromEntries(searchParams.entries()),
-    }),
-    [
-      theme,
-      language,
-      countryLocale,
-      currencyTicker,
-      devMode,
-      discreet,
-      stakeProgramsParam,
-      stakeCurrenciesParam,
-      ethDepositCohort,
-      params,
-      searchParams,
-    ],
-  );
+    };
+
+    return {
+      ...earnInitParams,
+      goToURL: dappUrl ? buildEarnGoToURL(dappUrl, earnInitParams) : undefined,
+    };
+  }, [
+    theme,
+    language,
+    countryLocale,
+    currencyTicker,
+    devMode,
+    discreet,
+    stakeProgramsParam,
+    stakeCurrenciesParam,
+    ethDepositCohort,
+    params,
+    searchParams,
+  ]);
 
   /** V2: single shell (background + content). Use lastKnownManifest whenever manifest is missing so remount (e.g. dev Strict Mode) keeps showing webview instead of loader. */
   if (isLwm40Enabled) {

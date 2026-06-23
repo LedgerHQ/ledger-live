@@ -2,6 +2,7 @@ import "./live-common-setup";
 import sendAmountFields from "./SendAmountFields";
 import sendRecipientFields from "./SendRecipientFields";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
+import SendStepRecipientFromSelector from "./ZcashTransferFromSelector";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import operationDetails from "./operationDetails";
@@ -12,6 +13,7 @@ const family: BitcoinFamily = {
   sendAmountFields,
   sendRecipientFields,
   StepReceiveFundsPostAlert,
+  SendStepRecipientFromSelector,
   accountHeaderManageActions,
   AccountBalanceSummaryFooter,
   operationDetails,

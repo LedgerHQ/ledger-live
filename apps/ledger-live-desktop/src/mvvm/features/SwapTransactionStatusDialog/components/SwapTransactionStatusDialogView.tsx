@@ -27,7 +27,10 @@ export function SwapTransactionStatusDialogView({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} height="fit">
-      <DialogContent className="max-h-[calc(100vh-16px)] w-[400px] bg-base p-0">
+      <DialogContent
+        data-testid="swap-transaction-status-dialog"
+        className="max-h-[calc(100vh-16px)] w-[400px] bg-base p-0"
+      >
         <DialogHeader density="compact" onClose={onClose} />
         <DialogBody className="flex flex-col px-24 pb-24 gap-24">
           <SwapTransactionStatusDialogContent key={contentKey} params={params} />

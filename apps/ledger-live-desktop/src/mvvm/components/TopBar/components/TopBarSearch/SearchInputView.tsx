@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { SearchInput } from "@ledgerhq/lumen-ui-react";
 import { cn } from "LLD/utils/cn";
+import { AnimatedSearchPlaceholder } from "./AnimatedSearchPlaceholder";
 
 type SearchInputViewProps = {
   value: string;
@@ -14,12 +15,13 @@ type SearchInputViewProps = {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
   isOpen: boolean;
+  animatedTitle: boolean;
   testId?: string;
 } & Omit<ComponentPropsWithoutRef<"div">, "onChange" | "onKeyDown">;
 
 export const SearchInputView = forwardRef<HTMLDivElement, SearchInputViewProps>(
   function SearchInputView(
-    { value, placeholder, onChange, onKeyDown, isOpen, testId, className, ...rest },
+    { value, placeholder, onChange, onKeyDown, isOpen, animatedTitle, testId, className, ...rest },
     ref,
   ) {
     // While the overlay is open, clicks inside the search field (the input itself or the clear
@@ -33,15 +35,27 @@ export const SearchInputView = forwardRef<HTMLDivElement, SearchInputViewProps>(
 
     return (
       <div ref={ref} className={cn("min-w-0 max-w-[450px] flex-auto mr-24", className)} {...rest}>
-        <div onClick={stopOverlayToggleWhenOpen} onPointerDown={stopOverlayToggleWhenOpen}>
+        <div
+          className="relative"
+          onClick={stopOverlayToggleWhenOpen}
+          onPointerDown={stopOverlayToggleWhenOpen}
+        >
           <SearchInput
             appearance="transparent"
             value={value}
-            placeholder={placeholder}
+            placeholder={animatedTitle ? "" : placeholder}
+            aria-label={animatedTitle ? placeholder : undefined}
             onChange={onChange}
             onKeyDown={onKeyDown}
             data-testid={testId}
           />
+          {animatedTitle && (
+            <AnimatedSearchPlaceholder
+              visible={value.length === 0}
+              cycling={!isOpen}
+              testId={testId ? `${testId}-animated-placeholder` : undefined}
+            />
+          )}
         </div>
       </div>
     );

@@ -55,7 +55,7 @@ runs:
         LEGACY_ACCOUNT_ID: ${{ inputs.legacy-account-id }}
         LEGACY_ROLE_NAME: ${{ inputs.legacy-role-name }}
         ACTION_PATH: ${{ github.action_path }}
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       with:
         script: |
           const fs = require('fs');

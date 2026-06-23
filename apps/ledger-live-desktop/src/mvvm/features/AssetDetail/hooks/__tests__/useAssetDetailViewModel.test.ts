@@ -95,6 +95,34 @@ describe("useAssetDetailViewModel", () => {
       const { result } = renderVM();
       await waitFor(() => expect(result.current.mode).toBe("not-found"));
     });
+
+    it("resolves via DADA when the route param is a Ledger currency whose market id differs", async () => {
+      mockMarket.empty();
+      mockDada.withMarkets({
+        hedera: { id: "hedera-hashgraph", ledgerIds: ["hedera"], name: "Hedera", price: 1 },
+      });
+      route("hedera");
+
+      const { result } = renderVM();
+      await waitFor(() => {
+        assertReady(result.current);
+        expect(result.current.marketData.marketCurrencyData?.name).toBe("Hedera");
+      });
+    });
+
+    it("resolves via DADA when the route param is a mixed-case Ledger currency id", async () => {
+      mockMarket.empty();
+      mockDada.withMarkets({
+        hedera: { id: "hedera-hashgraph", ledgerIds: ["hedera"], name: "Hedera", price: 1 },
+      });
+      route("Hedera");
+
+      const { result } = renderVM();
+      await waitFor(() => {
+        assertReady(result.current);
+        expect(result.current.marketData.marketCurrencyData?.name).toBe("Hedera");
+      });
+    });
   });
 
   describe("distributionItem resolution", () => {

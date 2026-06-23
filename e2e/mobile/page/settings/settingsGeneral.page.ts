@@ -76,7 +76,11 @@ export default class SettingsGeneralPage {
   @Step("Change counter value to $0")
   async changeCounterValue(currency: string) {
     await this.clickOnCountervalueSettingsRow();
-    await scrollToId(this.compactSettingsRowId(currency), this.counterValueSettingsFlatListId);
+    await scrollToId(
+      this.compactSettingsRowId(currency),
+      this.counterValueSettingsFlatListId,
+      2000,
+    );
     await tapById(this.compactSettingsRowId(currency));
   }
 

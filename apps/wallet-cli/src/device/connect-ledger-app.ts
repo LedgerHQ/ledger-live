@@ -19,6 +19,10 @@ type ConnectAppState = DeviceActionState<
   ConnectAppDAIntermediateValue
 >;
 
+type ConnectAppOnceResult =
+  | { status: "success" }
+  | { status: "error"; error: ConnectAppDAError };
+
 /**
  * Default unlock timeout: how long ConnectApp waits for the user to unlock the device
  * before giving up. Overridable per-call via the `deviceTimeoutMs` option (CLI flag
@@ -93,9 +97,9 @@ export async function connectLedgerApp(
       deviceTimeoutMs,
       silenceTimeoutMs,
     });
-    if (!result) return;
+    if (result.status === "success") return;
 
-    if (isTransportFramingError(result) && attempt < MAX_TRANSPORT_ERROR_RETRIES) {
+    if (isTransportFramingError(result.error) && attempt < MAX_TRANSPORT_ERROR_RETRIES) {
       walletCliDebug(
         "Transport framing error, retrying ConnectApp (%d/%d)…",
         attempt + 1,
@@ -105,13 +109,13 @@ export async function connectLedgerApp(
       continue;
     }
 
-    throw WalletCliDeviceError.fromUnknown(result, { expectedApp: managerAppName });
+    throw WalletCliDeviceError.fromUnknown(result.error, { expectedApp: managerAppName });
   }
 }
 
 /**
  * Single attempt at running ConnectAppDeviceAction.
- * Returns `undefined` on success, or the DA error to let the caller decide whether to retry.
+ * Returns success, or the DA error to let the caller decide whether to retry.
  */
 async function connectLedgerAppOnce(
   dmk: DeviceManagementKit,
@@ -126,7 +130,7 @@ async function connectLedgerAppOnce(
     deviceTimeoutMs: number;
     silenceTimeoutMs: number;
   },
-): Promise<ConnectAppDAError | undefined> {
+): Promise<ConnectAppOnceResult> {
   const deviceAction = new ConnectAppDeviceAction({
     input: {
       application: { name: managerAppName },
@@ -139,9 +143,18 @@ async function connectLedgerAppOnce(
 
   let finalState: ConnectAppState;
   const { observable, cancel } = dmk.executeDeviceAction({ sessionId, deviceAction });
-  const stallTimer = globalThis.setTimeout(() => {
-    cancel();
-  }, silenceTimeoutMs);
+  const silenceTimeoutError = { _tag: "SendApduTimeoutError" } as ConnectAppDAError;
+  let stallTimer: ReturnType<typeof globalThis.setTimeout> | undefined;
+  const silenceTimeoutPromise = new Promise<never>((_, reject) => {
+    stallTimer = globalThis.setTimeout(() => {
+      try {
+        cancel();
+      } catch (e) {
+        walletCliDebug("ConnectApp cancel after silence timeout failed: %o", e);
+      }
+      reject(silenceTimeoutError);
+    }, silenceTimeoutMs);
+  });
 
   let lastRequiredInteraction: ConnectAppDARequiredInteraction | undefined;
   const onIntermediateState = (state: ConnectAppState) => {
@@ -160,21 +173,26 @@ async function connectLedgerAppOnce(
     }
   };
   try {
-    finalState = await lastValueFrom(observable.pipe(tap(onIntermediateState)));
+    finalState = await Promise.race([
+      lastValueFrom(observable.pipe(tap(onIntermediateState))),
+      silenceTimeoutPromise,
+    ]);
   } catch (e) {
     if (e instanceof EmptyError) {
       throw new WalletCliDeviceError({ code: "disconnected" }, { cause: e });
     }
     throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
   } finally {
-    globalThis.clearTimeout(stallTimer);
+    if (stallTimer !== undefined) {
+      globalThis.clearTimeout(stallTimer);
+    }
   }
 
   walletCliDebug("ConnectApp finalState: status=%s app=%s", finalState.status, managerAppName);
 
   if (finalState.status === DeviceActionStatus.Error) {
     walletCliDebug("ConnectApp error detail: %o", summarizeConnectAppError(finalState.error));
-    return finalState.error;
+    return { status: "error", error: finalState.error };
   }
 
   if (finalState.status === DeviceActionStatus.Completed && finalState.output) {
@@ -191,5 +209,5 @@ async function connectLedgerAppOnce(
       cause: new Error(`Connect app ended with status: ${finalState.status}`),
     });
   }
-  return undefined;
+  return { status: "success" };
 }

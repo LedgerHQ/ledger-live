@@ -6,11 +6,14 @@ import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import type { SendFlowConfig } from "../types";
-import * as useSendFlowStateModule from "../hooks/useSendFlowState";
 
 jest.mock("../hooks/useSendFlowState", () => ({
   useSendFlowBusinessLogic: jest.fn(),
 }));
+
+const { useSendFlowBusinessLogic: mockUseSendFlowBusinessLogic } = jest.requireMock(
+  "../hooks/useSendFlowState",
+);
 
 jest.mock("../context/SendFlowContext", () => ({
   SendFlowProvider: ({
@@ -27,12 +30,27 @@ jest.mock("../context/SendFlowContext", () => ({
   ),
 }));
 
+jest.mock("../context/SendSignatureContext", () => ({
+  SendSignatureProvider: ({ children }: { children: React.ReactNode }) => children,
+  useSendSignature: jest.fn(),
+}));
+
+const { useSendSignature: mockUseSendSignature } = jest.requireMock(
+  "../context/SendSignatureContext",
+);
+
 const MockFlowStackNavigator = jest.fn();
 jest.mock("../../FlowWizard/FlowStackNavigator", () => ({
   FlowStackNavigator: (props: unknown) => {
     MockFlowStackNavigator(props);
     return <Text testID="flow-stack-navigator">FlowStackNavigator</Text>;
   },
+}));
+
+// Keep this unit test focused on orchestration: the real overlay host pulls in the whole Device
+// Intent Executor chain (expo-keep-awake, DMK, …) which this suite does not exercise.
+jest.mock("../components/SignatureOverlayHost", () => ({
+  SignatureOverlayHost: () => null,
 }));
 
 function createStepRegistry(): StepRegistry<SendFlowStep> {
@@ -84,9 +102,13 @@ describe("SendFlowOrchestrator", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useSendFlowStateModule.useSendFlowBusinessLogic as jest.Mock).mockReturnValue(
-      mockBusinessContext,
-    );
+    mockUseSendFlowBusinessLogic.mockReturnValue(mockBusinessContext);
+    mockUseSendSignature.mockReturnValue({
+      isSigning: false,
+      startSigning: jest.fn(),
+      finishSigning: jest.fn(),
+      stopSigning: jest.fn(),
+    });
   });
 
   it("should render SendFlowProvider and FlowStackNavigator", () => {
@@ -120,6 +142,29 @@ describe("SendFlowOrchestrator", () => {
           stepOrder: flowConfig.stepOrder,
           stepConfigs: flowConfig.stepConfigs,
         }),
+      }),
+    );
+  });
+
+  it("should disable back gestures while signing", () => {
+    mockUseSendSignature.mockReturnValue({
+      isSigning: true,
+      startSigning: jest.fn(),
+      finishSigning: jest.fn(),
+      stopSigning: jest.fn(),
+    });
+
+    render(
+      <SendFlowOrchestrator
+        onClose={mockOnClose}
+        stepRegistry={createStepRegistry()}
+        flowConfig={createFlowConfig()}
+      />,
+    );
+
+    expect(MockFlowStackNavigator).toHaveBeenCalledWith(
+      expect.objectContaining({
+        disableBackGesture: true,
       }),
     );
   });

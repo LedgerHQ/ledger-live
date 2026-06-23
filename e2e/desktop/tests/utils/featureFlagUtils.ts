@@ -35,8 +35,18 @@ export const LWD_WALLET_40_Q2_FF_ENABLED: OptionalFeatureMap = {
       assetSection: true,
       operationsList: true,
       myWallet: true,
+      aggregatedAssets: true,
+      assetDiscoverability: true,
+      pnl: true,
     },
   },
+};
+
+// Wallet 4.0 Q2 flags with the analytics consent dialog forced OFF, so the
+// "Help us improve Ledger" prompt never interrupts portfolio-landing E2E flows.
+export const LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT: OptionalFeatureMap = {
+  ...LWD_WALLET_40_Q2_FF_ENABLED,
+  analyticsOptIn: { enabled: false },
 };
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";

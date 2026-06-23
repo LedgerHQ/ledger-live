@@ -17,7 +17,7 @@ export async function beforeAllFunction(options: ApplicationOptions) {
     cliCommands: options.cliCommands,
     featureFlags: options.featureFlags,
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
 }
 
 export async function runNavigateToBuyFromPortfolioPageTest(

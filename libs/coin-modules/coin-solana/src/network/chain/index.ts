@@ -96,6 +96,8 @@ export type ChainAPI = Readonly<{
 
   getMinimumBalanceForRentExemption: (dataLength: number) => Promise<number>;
 
+  getStakeMinimumDelegation: () => Promise<number>;
+
   getEpochInfo: () => ReturnType<Connection["getEpochInfo"]>;
 
   getRecentPrioritizationFees: (
@@ -309,6 +311,12 @@ export function getChainAPI(
 
     getMinimumBalanceForRentExemption: (dataLength: number) =>
       connection.getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
+
+    getStakeMinimumDelegation: () =>
+      connection
+        .getStakeMinimumDelegation()
+        .then(res => res.value)
+        .catch(remapErrors),
 
     getEpochInfo: () => connection.getEpochInfo().catch(remapErrors),
 

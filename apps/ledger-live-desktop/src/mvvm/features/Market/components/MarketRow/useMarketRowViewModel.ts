@@ -8,7 +8,12 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
+import { getMarketPageCategoryAnalytics } from "LLD/features/Market/utils/marketPageAnalytics";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import { track } from "~/renderer/analytics/segment";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
+import { useSelector } from "LLD/hooks/redux";
+import { marketCategorySelector } from "~/renderer/reducers/market";
 
 type UseMarketRowViewModelProps = {
   size: number;
@@ -35,6 +40,8 @@ export function useMarketRowViewModel({
   const navigate = useNavigate();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
 
+  const selectedCategory = useSelector(marketCategorySelector);
+  const category = getMarketPageCategoryAnalytics(selectedCategory);
   const {
     onBuy,
     onSell,
@@ -57,15 +64,20 @@ export function useMarketRowViewModel({
 
   const onCurrencyClick = useCallback(() => {
     setTrackingSource("Page Market");
+    track("button_clicked", {
+      button: "Asset",
+      currency: currency.id,
+      page: getCurrentTrackingPage(),
+      category,
+    });
     navigate(getMarketOrAssetDetailPath(currency.id, shouldDisplayAggregatedAssets), {
       state: currency,
     });
-  }, [currency, navigate, shouldDisplayAggregatedAssets]);
+  }, [category, currency, navigate, shouldDisplayAggregatedAssets]);
 
-  const onToggleStar = useCallback(
-    () => toggleStar(currency.id, isStarred),
-    [toggleStar, currency.id, isStarred],
-  );
+  const onToggleStar = useCallback(() => {
+    toggleStar(currency.id, isStarred);
+  }, [toggleStar, currency.id, isStarred]);
 
   // Defer the favourite toggle until the menu has closed, so the open menu never
   // shows the updated label/icon before disappearing (avoids a flicker).

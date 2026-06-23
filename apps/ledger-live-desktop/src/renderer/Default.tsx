@@ -258,13 +258,11 @@ const MainAppContent = ({
   shouldDisplayWallet40MainNav,
   shouldDisplayAssetSection,
   shouldDisplayAggregatedAssets,
-  shouldDisplayAssetDiscoverability,
 }: {
   shouldDisplayMarketBanner: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAggregatedAssets: boolean;
-  shouldDisplayAssetDiscoverability: boolean;
 }) => (
   <>
     <Routes>
@@ -351,7 +349,6 @@ export const MainAppLayout = () => {
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
@@ -400,7 +397,6 @@ export const MainAppLayout = () => {
           shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
           shouldDisplayAssetSection={shouldDisplayAssetSection}
           shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
-          shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
         />
       </div>
 

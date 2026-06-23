@@ -7,6 +7,13 @@ export * from "./types";
 // Export market category helpers (shared by desktop & mobile)
 export * from "./category";
 
+// Export asset-detail chart helpers (shared by desktop & mobile)
+export * from "./chartRangeVariation";
+export * from "./buildMarketChartSeries";
+export * from "./scrubVariation";
+export * from "./rangePriceChangeKey";
+export * from "./resolveRangePriceChange";
+
 // Export fixtures for testing
 export * from "./fixtures";
 

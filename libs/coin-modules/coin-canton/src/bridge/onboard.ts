@@ -12,6 +12,7 @@ import {
   prepareOnboarding,
   submitOnboarding,
   getPartyByPubKey,
+  isPartyAlreadyExists,
   prepareTapRequest,
   submitTapRequest,
   preparePreApprovalTransaction,
@@ -20,7 +21,7 @@ import {
   clearIsTopologyChangeRequiredCache,
 } from "../network/gateway";
 import resolver from "../signer";
-import type { CantonSigner } from "../types";
+import type { CantonAccount, CantonSigner } from "../types";
 import {
   OnboardStatus,
   AuthorizeStatus,
@@ -44,6 +45,13 @@ export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: st
   }
 };
 
+// Matches the gateway "party already exists" error, e.g.
+// `Party with id "ldg::1220…" already exists and its topology is up to date`, and captures the id.
+const PARTY_ALREADY_EXISTS_ID_RE = /party with id\s+"?([^"\s]+)"?\s+already exists/i;
+
+const extractExistingPartyId = (error: unknown): string | undefined =>
+  error instanceof Error ? (error.message.match(PARTY_ALREADY_EXISTS_ID_RE)?.[1] ?? undefined) : undefined;
+
 export const isCantonCoinPreapproved = async (currency: CryptoCurrency, partyId: string) => {
   const { expires_at, receiver } = await getTransferPreApproval(currency, partyId);
   const isReceiver = receiver === partyId;
@@ -57,17 +65,21 @@ const createOnboardedAccount = (
   account: Account,
   partyId: string,
   currency: CryptoCurrency,
-): Account => ({
-  ...account,
-  xpub: partyId,
-  id: encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: partyId,
-    derivationMode: account.derivationMode,
-  }),
-});
+): CantonAccount => {
+  const cantonAccount = account as CantonAccount;
+  return {
+    ...cantonAccount,
+    xpub: partyId,
+    cantonResources: { ...cantonAccount.cantonResources, isOnboarded: true },
+    id: encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: currency.id,
+      xpubOrAddress: partyId,
+      derivationMode: account.derivationMode,
+    }),
+  };
+};
 
 export const buildOnboardAccount =
   (signerContext: SignerContext<CantonSigner>) =>
@@ -99,7 +111,30 @@ export const buildOnboardAccount =
           return;
         }
 
-        const preparedTransaction = await prepareOnboarding(currency, publicKey);
+        const preparedTransaction = await prepareOnboarding(currency, publicKey).catch(
+          (error: unknown) => {
+            // The gateway can report the party "already exists" while getPartyByPubKey still 404s for
+            // minutes during its by-public-key indexing lag (e.g. re-adding a just-onboarded account).
+            // The party_id is in the error message, so link the existing party directly — instantly,
+            // without waiting for the index — instead of failing or creating a duplicate. LIVE-32985
+            const existingPartyId = isPartyAlreadyExists(error)
+              ? extractExistingPartyId(error)
+              : undefined;
+            if (existingPartyId) {
+              o.next({
+                partyId: existingPartyId,
+                account: createOnboardedAccount(account, existingPartyId, currency),
+              }); // success (linked existing party, no submission)
+              return undefined;
+            }
+            throw error;
+          },
+        );
+
+        if (!preparedTransaction) {
+          return; // linked an already-existing party above; nothing left to sign/submit
+        }
+
         partyId = preparedTransaction.party_id;
 
         o.next({ status: OnboardStatus.SIGN });

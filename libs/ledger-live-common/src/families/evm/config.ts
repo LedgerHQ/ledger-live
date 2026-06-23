@@ -391,7 +391,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://cronos.coin.ledger.com",
       },
       explorer: {
-        type: "none",
+        type: "blockscout",
+        uri: "https://cronos.org/explorer/api",
       },
       showNfts: false,
     },
@@ -1282,6 +1283,34 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       // meaningful number of transactions are sampled for priority-fee estimation.
       feeHistoryBlockCount: 1024,
       feeHistoryRewardPercentile: 60,
+    },
+  },
+  config_currency_robinhood: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "external", uri: "https://rpc.chain.robinhood.com" },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_robinhood_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "external", uri: "https://rpc.testnet.chain.robinhood.com" },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
     },
   },
 };

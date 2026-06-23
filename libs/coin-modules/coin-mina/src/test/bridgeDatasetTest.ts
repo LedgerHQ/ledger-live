@@ -1,4 +1,3 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import {
   AmountRequired,
   InvalidAddress,
@@ -11,10 +10,11 @@ import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";
 import type { Transaction } from "../types/common";
 import { InvalidMemoMina, AccountCreationFeeWarning, AmountTooSmall } from "../types/errors";
+import { MINA_DUMMY_ADDRESS } from "../constants";
 
 const ACCOUNT_ADDRESS = "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD";
 const ACCOUNT_ADDRESS_1 = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314";
-const ACCOUNT_ABANDONED = getAbandonSeedAddress("mina");
+const ACCOUNT_ABANDONED = MINA_DUMMY_ADDRESS;
 
 const mina: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: ["blockHash", "resources"],

@@ -82,6 +82,39 @@ describe("useCurrencyData", () => {
     unmount();
   });
 
+  it("should skip the API request when skip option is enabled", async () => {
+    const wrapper = createWrapper(store);
+    const { result, unmount } = renderHook(
+      () => useCurrencyData({ id: "bitcoin", counterCurrency: "cop" }, { skip: true }),
+      { wrapper },
+    );
+
+    expect(result.current.isUninitialized).toBe(true);
+    expect(requestCount).toBe(0);
+
+    unmount();
+  });
+
+  it("should call API with ledgerIds when provided", async () => {
+    const wrapper = createWrapper(store);
+    const { unmount } = renderHook(
+      () =>
+        useCurrencyData({
+          ledgerIds: ["ethereum/erc20/shiba_inu"],
+          counterCurrency: "usd",
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(requestCount).toBe(1));
+
+    const url = new URL(lastRequestUrl ?? "");
+    expect(url.searchParams.get("ledgerIds")).toBe("ethereum/erc20/shiba_inu");
+    expect(url.searchParams.get("ids")).toBeNull();
+
+    unmount();
+  });
+
   it("should refetch data automatically based on pollingInterval", async () => {
     const wrapper = createWrapper(store);
     const { result, unmount } = renderHook(

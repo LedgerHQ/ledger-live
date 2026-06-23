@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import type { SendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useFeePresetLegends } from "../useFeePresetLegends";
@@ -19,6 +19,17 @@ const currency = {
   name: "Bitcoin",
   ticker: "BTC",
   units: [{ code: "BTC", magnitude: 8, name: "BTC" }],
+} as unknown as CryptoCurrency;
+
+const litecoin = {
+  type: "CryptoCurrency",
+  id: "litecoin",
+  name: "Litecoin",
+  ticker: "LTC",
+  units: [
+    { code: "LTC", magnitude: 8, name: "Litecoin" },
+    { code: "litoshi", magnitude: 0, name: "litoshi" },
+  ],
 } as unknown as CryptoCurrency;
 
 describe("useFeePresetLegends", () => {
@@ -49,6 +60,36 @@ describe("useFeePresetLegends", () => {
     expect(result.current).toEqual({
       slow: "2 sat/vbyte",
       medium: "5 sat/vbyte",
+    });
+  });
+
+  it("resolves fee rate unit from currency when descriptor provides a unit resolver", () => {
+    mockedGetSendDescriptor.mockReturnValue({
+      fees: {
+        hasPresets: true,
+        hasCustom: false,
+        presets: {
+          legend: {
+            type: "feeRate",
+            unit: (selectedCurrency: CryptoOrTokenCurrency) =>
+              `${selectedCurrency.units.find(unit => unit.magnitude === 0)?.code}/vbyte`,
+            valueFrom: "presetAmount",
+          },
+        },
+      },
+      inputs: {},
+    } as unknown as SendDescriptor);
+
+    const feePresetOptions = [
+      { id: "slow", amount: new BigNumber(2) },
+    ] satisfies readonly FeePresetOption[];
+
+    const { result } = renderHook(() =>
+      useFeePresetLegends({ currency: litecoin, feePresetOptions }),
+    );
+
+    expect(result.current).toEqual({
+      slow: "2 litoshi/vbyte",
     });
   });
 

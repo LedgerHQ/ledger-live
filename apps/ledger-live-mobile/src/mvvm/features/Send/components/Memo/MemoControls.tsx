@@ -47,7 +47,7 @@ export function MemoControls({ vm }: MemoControlsProps) {
         />
       )}
 
-      {vm.showSkipMemo && (
+      {vm.showSkipMemo && !vm.memoError && (
         <SkipMemoSection
           memoLabel={vm.memoLabel}
           state={vm.skipMemoState}

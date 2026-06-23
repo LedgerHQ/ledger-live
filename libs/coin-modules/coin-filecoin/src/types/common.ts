@@ -60,7 +60,7 @@ export interface FeeData {
 }
 
 export interface BalanceResponse {
-  locked_balance: string;
+  locked_balance?: string;
   spendable_balance: string;
   total_balance: string;
 }

@@ -44,6 +44,7 @@
     "src/common-logic/parseAddress.ts",
     "src/common-logic/validateAddress.ts",
     "src/config.ts",
+    "src/constants/address.ts",
     "src/constants/env.ts",
     "src/constants/index.ts",
     "src/datasets/index.ts",

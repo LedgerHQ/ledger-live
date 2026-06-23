@@ -40,7 +40,7 @@ const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
 
 describe("createApi", () => {
   let api: ReturnType<typeof createApi>;
-  const mockConfig = { ...getMockedConfig(), useHgraphForErc20: true };
+  const mockConfig = { ...getMockedConfig() };
   const mockCurrency = getMockedCurrency();
 
   beforeEach(() => {

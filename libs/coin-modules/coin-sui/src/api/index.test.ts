@@ -68,10 +68,10 @@ describe("api/index", () => {
   });
 
   it("should call estimateFees via estimate wrapper and return FeeEstimation", async () => {
-    jest.spyOn(logic, "estimateFees").mockResolvedValue(123n);
+    jest.spyOn(logic, "estimateFees").mockResolvedValue({ fees: 123n, gasBudget: 200n });
     const txIntent = { foo: "bar" } as any;
     const result = await api.estimateFees(txIntent);
-    expect(result).toEqual({ value: 123n });
+    expect(result).toEqual({ value: 200n }); // framework reports the positive gas budget
     expect(logic.estimateFees).toHaveBeenCalledWith(txIntent);
   });
 

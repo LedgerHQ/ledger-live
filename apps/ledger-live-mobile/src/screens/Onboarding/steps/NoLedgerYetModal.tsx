@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useState } from "react";
+import React, { ReactNode, useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/core";
@@ -11,7 +11,6 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { TrackScreen, track, updateIdentify } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
-import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import ImageLedger from "~/images/double-ledger.webp";
 
 type Props = {
@@ -27,9 +26,6 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps["navigation"]>();
-
-  const [isFromBuy, setFromBuy] = useState(false);
-  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow();
 
   const identifyUser = useCallback(
     (hasDevice: boolean | null) => {
@@ -60,20 +56,10 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
     });
   }, [dispatch, navigation, identifyUser]);
 
-  const buyLedger = useCallback(() => {
-    setFromBuy(true);
-    track("button_clicked", {
-      button: "Buy a Ledger",
-      page: "Onboarding Get Started",
-      drawer: "Get Started Upsell",
-    });
-    navigateToRebornFlow();
-  }, [navigateToRebornFlow]);
-
   return (
     <QueuedDrawer
       isRequestingToBeOpened={!!isOpen}
-      onClose={isFromBuy ? onClose : onCloseAndTrack}
+      onClose={onCloseAndTrack}
       CustomHeader={CustomHeader}
     >
       <TrackScreen category="Onboard" name="Start Upsell" drawer="Get Started Upsell" />
@@ -86,31 +72,14 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
         </Text>
       </Flex>
 
-      {!rebornFeatureFlagEnabled && (
-        <Flex mx={16} flexDirection={"row"} mt={8}>
-          <Button
-            onPress={buyLedger}
-            type="main"
-            size={"large"}
-            flex={1}
-            testID="onboarding-noLedgerYetModal-buy"
-          >
-            {t("onboarding.postWelcomeStep.noLedgerYetModal.buy")}
-          </Button>
-        </Flex>
-      )}
       <Flex mx={16} flexDirection={"row"} mt={24}>
         <Button
           onPress={exploreLedger}
-          type={rebornFeatureFlagEnabled ? "main" : "default"}
+          type="main"
           flex={1}
           testID="onboarding-noLedgerYetModal-explore"
         >
-          <Text
-            variant="large"
-            fontWeight="semiBold"
-            color={rebornFeatureFlagEnabled ? "neutral.c00" : "neutral.c100"}
-          >
+          <Text variant="large" fontWeight="semiBold" color="neutral.c00">
             {t("onboarding.postWelcomeStep.noLedgerYetModal.explore")}
           </Text>
         </Button>

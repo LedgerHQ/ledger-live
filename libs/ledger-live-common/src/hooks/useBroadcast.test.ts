@@ -53,6 +53,8 @@ describe("useBroadcast", () => {
       "token-id",
     ],
   ])("%s", (_s, account, parentAccount, expectedTokenId) => {
+    const transaction = { useAllAmount: true } as any;
+
     it("logs on success", async () => {
       const logger = jest.fn();
       mockBroadcast.mockResolvedValue({ id: "operation-id", date: new Date(2026, 3, 24) });
@@ -64,6 +66,7 @@ describe("useBroadcast", () => {
         useBroadcast({
           account,
           parentAccount,
+          transaction,
           broadcastConfig: { source: { type: "coin-module", name: "ledger-live-desktop" } },
           logger,
         } as any),
@@ -80,6 +83,8 @@ describe("useBroadcast", () => {
         tokenId: expectedTokenId,
         family: "family",
         appVersion: "llc/test",
+        isTestnet: false,
+        isSendMax: true,
         source: { type: "coin-module", name: "ledger-live-desktop" },
       });
       expect(value).toEqual({ id: "operation-id", date: new Date(2026, 3, 24) });
@@ -96,6 +101,7 @@ describe("useBroadcast", () => {
         useBroadcast({
           account,
           parentAccount,
+          transaction,
           broadcastConfig: { source: { type: "coin-module", name: "ledger-live-desktop" } },
           logger,
         } as any),
@@ -117,9 +123,40 @@ describe("useBroadcast", () => {
         tokenId: expectedTokenId,
         family: "family",
         appVersion: "llc/test",
+        isTestnet: false,
+        isSendMax: true,
         source: { type: "coin-module", name: "ledger-live-desktop" },
         txPayload: { signature: "signed-transaction", rawData: { raw_hex: "raw-hex" } },
       });
     });
+  });
+
+  it("derives isTestnet from the currency model (true for a testnet currency)", async () => {
+    const logger = jest.fn();
+    mockBroadcast.mockResolvedValue({ id: "operation-id", date: new Date(2026, 3, 24) });
+    setEnv("LEDGER_CLIENT_VERSION", "llc/test");
+    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+
+    const account = {
+      id: "main-account-id",
+      type: "Account",
+      currency: { id: "ethereum_sepolia", family: "evm", isTestnetFor: "ethereum" },
+    };
+
+    const { result } = renderHook(() =>
+      useBroadcast({
+        account,
+        parentAccount: account,
+        logger,
+      } as any),
+    );
+
+    await act(async () => {
+      await result.current({} as any);
+    });
+
+    expect(logger).toHaveBeenCalledWith(
+      expect.objectContaining({ currencyId: "ethereum_sepolia", isTestnet: true }),
+    );
   });
 });

@@ -4,7 +4,7 @@ import { initialIdentitiesState, DUMMY_ID_STR } from "./types";
 import { PersistedIdentities } from "./persistence";
 import { v4 as uuid } from "uuid";
 
-function shouldUsePersistedId(value: string | undefined): value is string {
+export function shouldUsePersistedId(value: string | undefined): value is string {
   return typeof value === "string" && value.trim() !== "" && value !== DUMMY_ID_STR;
 }
 

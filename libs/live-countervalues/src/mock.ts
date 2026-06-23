@@ -24,7 +24,7 @@ export const TICKER_TO_ID_AND_VALUE: Record<string, [string, number]> = {
   AVAX: ["avalanche_c_chain", 0.0000018004678299540296],
   SUI: ["sui", 1.23456789],
   OP: ["optimism", 1.1552422993073057e-7],
-  TON: ["ton", 0.0000018004678299540296],
+  GRAM: ["ton", 0.0000018004678299540296],
   CRO: ["crypto_org", 0.000006419945986307079],
   NEAR: ["near", 0.0000018004678299540296],
   STETH: ["ethereum/erc20/steth", 0.024148511267564544],

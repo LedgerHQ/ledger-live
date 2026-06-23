@@ -9,6 +9,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getAccountShape } from "../common-logic/utils";
+import { FILECOIN_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
 import type { Transaction, TransactionStatus, FilecoinSigner } from "../types";
 import { broadcast } from "./broadcast";
@@ -49,6 +50,7 @@ function buildAccountBridge(
     createTransaction,
     updateTransaction,
     getTransactionStatus,
+    getEstimationRecipient: () => FILECOIN_DUMMY_ADDRESS,
     prepareTransaction,
     sync,
     receive,

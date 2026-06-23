@@ -2,13 +2,10 @@ import React from "react";
 import { TFunction } from "i18next";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { TableRoot, Table, TableBody } from "@ledgerhq/lumen-ui-react";
-import {
-  MarketCurrencyData,
-  MarketListRequestParams,
-} from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { NoCryptoPlaceholder } from "~/renderer/screens/market/MarketList/components/NoCryptoPlaceholder";
 import { MarketFavoritesEmptyState } from "../MarketFavoritesEmptyState";
+import { MarketNoAssetsEmptyState } from "../MarketNoAssetsEmptyState";
 import { MarketRow } from "../MarketRow";
 import { MarketTableHeader, SortDirection } from "./MarketTableHeader";
 import { MarketTableSkeleton } from "./MarketTableSkeleton";
@@ -17,7 +14,6 @@ export type MarketTableViewProps = {
   parentRef: React.RefObject<HTMLDivElement | null>;
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
   marketData: MarketCurrencyData[];
-  marketParams: MarketListRequestParams;
   counterCurrency?: string;
   range?: string;
   search?: string;
@@ -25,7 +21,6 @@ export type MarketTableViewProps = {
   currenciesLength: number;
   showSkeleton: boolean;
   emptyState?: "favorites";
-  resetSearch: () => void;
   isStarred: (id: string) => boolean;
   toggleStar: (id: string, isStarred: boolean) => void;
   marketCapSort: SortDirection;
@@ -41,7 +36,6 @@ export function MarketTableView({
   parentRef,
   rowVirtualizer,
   marketData,
-  marketParams,
   counterCurrency,
   range,
   search,
@@ -49,7 +43,6 @@ export function MarketTableView({
   currenciesLength,
   showSkeleton,
   emptyState,
-  resetSearch,
   isStarred,
   toggleStar,
   marketCapSort,
@@ -65,7 +58,7 @@ export function MarketTableView({
   }
 
   if (!showSkeleton && currenciesLength === 0) {
-    return <NoCryptoPlaceholder requestParams={marketParams} t={t} resetSearch={resetSearch} />;
+    return <MarketNoAssetsEmptyState t={t} />;
   }
 
   return (

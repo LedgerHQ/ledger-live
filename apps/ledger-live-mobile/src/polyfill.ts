@@ -22,6 +22,14 @@ import { Platform } from "react-native";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 global.Buffer = require("buffer").Buffer;
 
+// `structuredClone` is an ES2022 global Hermes doesn't provide; the SUI send flow calls it (via
+// @mysten/sui) and crashes with "Property 'structuredClone' doesn't exist" without this. Guarded
+// so a native impl wins; @ungap/structured-clone is pure JS and preserves BigInt/Map/Set.
+if (typeof globalThis.structuredClone !== "function") {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  globalThis.structuredClone = require("@ungap/structured-clone").default;
+}
+
 if (!console.assert) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.assert = () => {};

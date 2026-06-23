@@ -174,7 +174,7 @@ async function formatOperation(
   }
 }
 
-function parseSequence(seq: string | number | undefined): string | undefined {
+export function parseSequence(seq: string | number | undefined): string | undefined {
   const bn = new BigNumber(seq ?? "");
   return bn.isNaN() ? undefined : bn.toString();
 }
@@ -548,7 +548,7 @@ async function formatFeeOnlyOperation(
   };
 }
 
-function decodeMemo(transaction: Horizon.ServerApi.TransactionRecord): StellarMemo | undefined {
+export function decodeMemo(transaction: Horizon.ServerApi.TransactionRecord): StellarMemo | undefined {
   switch (transaction.memo_type) {
     case "none":
       return { type: "NO_MEMO" };

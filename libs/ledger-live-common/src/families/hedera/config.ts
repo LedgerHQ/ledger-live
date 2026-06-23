@@ -9,7 +9,6 @@ export const hederaConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      useHgraphForErc20: true,
       useNetworkTimestamp: true,
       networkType: "mainnet",
       apiUrls: {
@@ -25,7 +24,6 @@ export const hederaConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      useHgraphForErc20: true,
       useNetworkTimestamp: true,
       networkType: "testnet",
       apiUrls: {

@@ -6,7 +6,8 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchAllLedgerOperations, fetchLedgerRecord } from "../network";
-import type { RawOperation } from "../types";
+import { decodeMemo, parseSequence } from "../network/serialization";
+import type { RawOperation, StellarMemo } from "../types";
 import { parseAPIValue } from "./common";
 import { assertUnreachable } from "./utils";
 import BigNumber from "bignumber.js";
@@ -191,7 +192,15 @@ function blockOperationsPathStrictReceive(op: RawPathStrictReceiveOp): BlockOper
   });
 }
 
-function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation): BlockOperation[] {
+type TxContext = {
+  memo: StellarMemo | undefined;
+  sequence: string | undefined;
+};
+
+function mapSupportedOperationToBlockOperations(
+  op: SupportedGetBlockOperation,
+  txCtx: TxContext,
+): BlockOperation[] {
   if (op.type === "payment") {
     const asset = assetFromHorizonFields(op.asset_type, op.asset_code, op.asset_issuer);
     const toAddr = op.to_muxed || op.to;
@@ -202,14 +211,14 @@ function mapSupportedOperationToBlockOperations(op: SupportedGetBlockOperation):
   }
   if (op.type === "change_trust") {
     const isOptOut = new BigNumber(op.limit || "0").eq(0);
+    // Align with listOperations details (convertToLegacyOperation output)
     return [
       {
         type: "other",
         ledgerOpType: isOptOut ? "OPT_OUT" : "OPT_IN",
-        trustor: op.trustor,
-        assetCode: op.asset_code,
-        assetIssuer: op.asset_issuer,
-        limit: op.limit,
+        assetAmount: op.asset_code ? op.limit : undefined,
+        ...(txCtx.memo && { memo: txCtx.memo }),
+        ...(txCtx.sequence && { sequence: txCtx.sequence }),
       },
     ];
   }
@@ -229,20 +238,21 @@ async function blockTransactionForHash(
   if (ops.length === 0) return null;
   const failed = !ops[0].transaction_successful;
 
+  const tx = await ops[0].transaction();
+  const txCtx: TxContext = {
+    memo: decodeMemo(tx),
+    sequence: parseSequence(tx.source_account_sequence),
+  };
+
   let blockOperations: BlockOperation[] = [];
   if (!failed) {
     for (const op of ops) {
       if (isSupportedGetBlockOperation(op)) {
-        blockOperations = blockOperations.concat(mapSupportedOperationToBlockOperations(op));
+        blockOperations = blockOperations.concat(mapSupportedOperationToBlockOperations(op, txCtx));
       }
     }
   }
 
-  if (!failed && blockOperations.length === 0) {
-    return null;
-  }
-
-  const tx = await ops[0].transaction();
   const fees = BigInt(tx.fee_charged || "0");
   const feesPayer = tx.fee_account || tx.source_account;
 

@@ -11,7 +11,6 @@ export const lwmWallet40 = flagWith(
     lazyOnboarding: z.boolean(),
     balanceRefreshRework: z.boolean(),
     assetSection: z.boolean(),
-    newReceiveDialog: z.boolean().optional(),
     operationsList: z.boolean(),
     aggregatedAssets: z.boolean(),
     myWallet: z.boolean(),
@@ -20,6 +19,7 @@ export const lwmWallet40 = flagWith(
     assetDiscoverability: z.boolean(),
     earnUpselling: z.boolean().optional(),
     earnSimulator: z.boolean().optional(),
+    q2Tour: z.boolean().optional(),
   },
   {
     enabled: false,
@@ -39,6 +39,7 @@ export const lwmWallet40 = flagWith(
       assetDiscoverability: false,
       earnUpselling: false,
       earnSimulator: false,
+      q2Tour: false,
     },
   },
 );

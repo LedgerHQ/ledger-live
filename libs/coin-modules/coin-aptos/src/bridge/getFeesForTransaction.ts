@@ -44,7 +44,18 @@ export const getFee = async (
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
-      const tx = await buildTransaction(account, transaction, aptosClient);
+      // Always simulate against the default gas options. Reusing the maxGasAmount/gasUnitPrice
+      // that a previous estimation stored on the transaction (e.g. the zero-amount "use max"
+      // estimation) can make the simulation run out of gas and wrongly surface a
+      // GasInsufficientBalance error even though the entered amount covers the fees.
+      const simulationTransaction: Transaction = {
+        ...transaction,
+        options: {
+          maxGasAmount: DEFAULT_GAS.toString(),
+          gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
+        },
+      };
+      const tx = await buildTransaction(account, simulationTransaction, aptosClient);
       const [completedTx] = await aptosClient.simulateTransaction(publicKeyEd, tx);
 
       gasLimit = new BigNumber(completedTx.gas_used)

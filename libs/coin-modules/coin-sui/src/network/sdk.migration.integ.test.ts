@@ -503,12 +503,10 @@ describe("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
         expect(g.type).toBe(r.type);
         expect(g.senders).toEqual(r.senders);
         expect(g.date.getTime()).toBe(r.date.getTime());
-        // TODO adapter gaps (graphql/transactions.ts):
-        //   - value / fee: `getUnifiedBalanceChanges` reads `balanceChanges` +
-        //     `effects.accumulatorEvents`; gRPC-proto shapes need fuller mapping.
-        //   - recipients: PTB `inputs` shape in `transactionJson` differs from JSON-RPC.
-        //   - extra: depends on recipients extraction.
-        //   - asset (in alpaca path): coin-type long-form not normalised via `shortenCoinType`.
+        expect(g.value.toFixed()).toBe(r.value.toFixed());
+        expect(g.fee.toFixed()).toBe(r.fee.toFixed());
+        expect(g.recipients).toEqual(r.recipients);
+        expect(g.extra).toEqual(r.extra);
       }
     });
   });
@@ -593,7 +591,10 @@ describe("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
         expect(g.tx.hash).toBe(r.tx.hash);
         expect(g.tx.date.getTime()).toBe(r.tx.date.getTime());
         expect(g.senders).toEqual(r.senders);
-        // TODO same adapter gaps as `getOperations` — value/tx.fees/recipients/asset.
+        expect(g.value).toBe(r.value);
+        expect(g.tx.fees).toBe(r.tx.fees);
+        expect(g.recipients).toEqual(r.recipients);
+        expect(g.asset).toEqual(r.asset);
       }
     });
 

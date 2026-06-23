@@ -11,7 +11,6 @@
  * blockAvgTime: the average time between 2 blocks, in seconds. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
  * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
- * terminated: Present when we no longer support this specific coin.
  * Specific cases:
  *
  * if it's a testnet coin, use isTestnetFor field. testnet MUST only be added if we actually support it at ledger (in our explorer api)
@@ -28,6 +27,11 @@ import {
   ExplorerView,
   Unit,
 } from "@ledgerhq/types-cryptoassets";
+import {
+  type CryptoCurrenciesStore,
+  getInjectedCurrenciesStore,
+  registerCurrencyInStore,
+} from "./currencies-store";
 
 /**
  * Make an ExplorerView for a Blockscout based explorer
@@ -871,44 +875,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     tokenTypes: ["erc20"],
   },
-  clubcoin: {
-    terminated: {
-      link: "https://support.ledger.com/",
-    },
-    type: "CryptoCurrency",
-    id: "clubcoin",
-    coinType: CoinType.CLUB,
-    name: "Clubcoin",
-    managerAppName: "Clubcoin",
-    ticker: "CLUB",
-    scheme: "club",
-    color: "#000000",
-    family: "bitcoin",
-    blockAvgTime: 140,
-    bitcoinLikeInfo: {
-      P2PKH: 28,
-      P2SH: 85,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "club",
-        code: "CLUB",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://chainz.cryptoid.info/club/tx.dws?$hash.htm",
-      },
-    ],
-    explorerId: "club",
-  },
   concordium: {
     type: "CryptoCurrency",
     id: "concordium",
@@ -1586,40 +1552,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://chainz.cryptoid.info/grs/tx.dws?$hash.htm",
       },
     ],
-  },
-  hcash: {
-    type: "CryptoCurrency",
-    id: "hcash",
-    coinType: CoinType.HCASH,
-    name: "Hcash",
-    managerAppName: "HCash",
-    ticker: "HSR",
-    scheme: "hcash",
-    color: "#56438c",
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 40,
-      P2SH: 100,
-      XPUBVersion: 0x0488c21e,
-    },
-    units: [
-      {
-        name: "hcash",
-        code: "HSR",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [],
-    terminated: {
-      link: "https://support.ledger.com/hc/en-us/articles/115003917133",
-    },
-    explorerId: "hsr",
   },
   hedera: {
     type: "CryptoCurrency",
@@ -2555,41 +2487,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "matic_amoy",
   },
-  poswallet: {
-    type: "CryptoCurrency",
-    id: "poswallet",
-    coinType: CoinType.POSWALLET,
-    name: "PosW",
-    managerAppName: "PoSW",
-    ticker: "POSW",
-    scheme: "posw",
-    // FIXME
-    color: "#000000",
-    family: "bitcoin",
-    blockAvgTime: 60,
-    bitcoinLikeInfo: {
-      P2PKH: 55,
-      P2SH: 85,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "posw",
-        code: "POSW",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [],
-    terminated: {
-      link: "https://support.ledger.com/hc/en-us/articles/115005175309",
-    },
-    explorerId: "posw",
-  },
   qrl: {
     type: "CryptoCurrency",
     id: "qrl",
@@ -2862,45 +2759,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     keywords: ["sol", "solana"],
     tokenTypes: ["spl"],
   },
-  stakenet: {
-    type: "CryptoCurrency",
-    id: "stakenet",
-    coinType: CoinType.STAKENET,
-    name: "Stakenet",
-    managerAppName: "XSN",
-    ticker: "XSN",
-    scheme: "xsn",
-    terminated: {
-      link: "https://support.ledger.com/",
-    },
-    color: "#141828",
-    supportsSegwit: true,
-    family: "bitcoin",
-    blockAvgTime: 60,
-    bitcoinLikeInfo: {
-      P2PKH: 76,
-      P2SH: 16,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "xsn",
-        code: "XSN",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://xsnexplorer.io/transactions/$hash",
-        address: "https://xsnexplorer.io/addresses/$address",
-      },
-    ],
-  },
   stargaze: {
     type: "CryptoCurrency",
     id: "stargaze",
@@ -2929,45 +2787,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://www.mintscan.io/stargaze/validators/$address",
       },
     ],
-  },
-  stratis: {
-    terminated: {
-      link: "https://support.ledger.com/",
-    },
-    type: "CryptoCurrency",
-    id: "stratis",
-    coinType: CoinType.STRATIS,
-    name: "Stratis",
-    managerAppName: "Stratis",
-    ticker: "STRAT",
-    scheme: "stratis",
-    color: "#1382c6",
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 63,
-      P2SH: 125,
-      XPUBVersion: 0x0488c21e,
-    },
-    units: [
-      {
-        name: "stratis",
-        code: "STRAT",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://chainz.cryptoid.info/strat/tx.dws?$hash.htm",
-        address: "https://chainz.cryptoid.info/strat/address.dws?$address.htm",
-      },
-    ],
-    explorerId: "strat",
   },
   stellar: {
     type: "CryptoCurrency",
@@ -3159,23 +2978,23 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "ton",
     coinType: CoinType.TON,
-    name: "TON",
+    name: "Gram",
     managerAppName: "TON",
-    ticker: "TON",
+    ticker: "GRAM",
     scheme: "ton",
     color: "#0098ea",
     family: "ton",
     units: [
       {
-        name: "TON",
-        code: "TON",
+        name: "GRAM",
+        code: "GRAM",
         magnitude: 9,
       },
     ],
     explorerViews: [
       {
-        tx: "https://tonscan.org/tx/$hash",
-        address: "https://tonscan.org/address/$address",
+        tx: "https://gramscan.org/tx/$hash",
+        address: "https://gramscan.org/address/$address",
       },
     ],
     tokenTypes: ["jetton"],
@@ -5271,69 +5090,71 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [blockscoutExplorerView("https://sepolia.uniscan.xyz/")],
   },
+  robinhood: {
+    type: "CryptoCurrency",
+    id: "robinhood",
+    coinType: CoinType.ETH,
+    name: "Robinhood Chain",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "robinhood",
+    color: "#00C805",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 4663,
+    },
+    explorerViews: [blockscoutExplorerView("https://explorer.chain.robinhood.com")],
+  },
+  robinhood_testnet: {
+    type: "CryptoCurrency",
+    id: "robinhood_testnet",
+    coinType: CoinType.ETH,
+    name: "Robinhood Chain Testnet",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "robinhood_testnet",
+    color: "#00C805",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH"),
+    disableCountervalue: true,
+    isTestnetFor: "robinhood",
+    ethereumLikeInfo: {
+      chainId: 46630,
+    },
+    explorerViews: [blockscoutExplorerView("https://explorer.testnet.chain.robinhood.com")],
+  },
 };
 
-const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
-const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
-const cryptocurrenciesArray: CryptoCurrency[] = [];
-const prodCryptoArray: CryptoCurrency[] = [];
-const cryptocurrenciesArrayWithoutTerminated: CryptoCurrency[] = [];
-const prodCryptoArrayWithoutTerminated: CryptoCurrency[] = [];
+// The bundled registry. Reuses the exported `cryptocurrenciesById` literal as its by-id map so
+// direct importers of that map (and `registerCryptoCurrency`) stay in sync; the derived indices
+// and arrays start empty and are filled in place by the init loop below.
+const bundledCurrenciesStore: CryptoCurrenciesStore = {
+  cryptocurrenciesById,
+  cryptocurrenciesByScheme: {},
+  cryptocurrenciesByTicker: {},
+  cryptocurrenciesArray: [],
+  prodCryptoArray: [],
+};
 
 for (const cryptoCurrency of Object.values(cryptocurrenciesById)) {
-  registerCryptoCurrency(cryptoCurrency);
+  registerCurrencyInStore(bundledCurrenciesStore, cryptoCurrency);
 }
 
-/**
- *
- * @param {string} id
- * @param {CryptoCurrency} currency
- */
-export function registerCryptoCurrency(currency: CryptoCurrency): void {
-  cryptocurrenciesById[currency.id] = currency;
-  cryptocurrenciesByScheme[currency.scheme] = currency;
-
-  if (!currency.isTestnetFor) {
-    const currencyAlreadySet = cryptocurrenciesByTicker[currency.ticker];
-    const curencyHasTickerinKeywords = Boolean(currency?.keywords?.includes(currency.ticker));
-
-    if (
-      !currencyAlreadySet ||
-      // In case of duplicates, we prioritize currencies with the ticker as a keyword of the currency
-      (currencyAlreadySet && curencyHasTickerinKeywords)
-    ) {
-      cryptocurrenciesByTicker[currency.ticker] = currency;
-    }
-    prodCryptoArray.push(currency);
-
-    if (!currency.terminated) {
-      prodCryptoArrayWithoutTerminated.push(currency);
-    }
-  }
-
-  cryptocurrenciesArray.push(currency);
-
-  if (!currency.terminated) {
-    cryptocurrenciesArrayWithoutTerminated.push(currency);
-  }
+// All registry accessors read from the injected store when present, else the bundled data.
+function activeCurrenciesStore(): CryptoCurrenciesStore {
+  return getInjectedCurrenciesStore() ?? bundledCurrenciesStore;
 }
 
 /**
  *
  * @param {*} withDevCrypto
- * @param {*} withTerminated
  */
-export function listCryptoCurrencies(
-  withDevCrypto = false,
-  withTerminated = false,
-): CryptoCurrency[] {
-  return withTerminated
-    ? withDevCrypto
-      ? cryptocurrenciesArray
-      : prodCryptoArray
-    : withDevCrypto
-      ? cryptocurrenciesArrayWithoutTerminated
-      : prodCryptoArrayWithoutTerminated;
+export function listCryptoCurrencies(withDevCrypto = false): CryptoCurrency[] {
+  const store = activeCurrenciesStore();
+  return withDevCrypto ? store.cryptocurrenciesArray : store.prodCryptoArray;
 }
 
 /**
@@ -5343,7 +5164,7 @@ export function listCryptoCurrencies(
 export function findCryptoCurrency(
   f: (arg0: CryptoCurrency) => boolean,
 ): CryptoCurrency | null | undefined {
-  return cryptocurrenciesArray.find(f);
+  return activeCurrenciesStore().cryptocurrenciesArray.find(f);
 }
 
 /**
@@ -5351,7 +5172,7 @@ export function findCryptoCurrency(
  * @param {*} scheme
  */
 export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | null | undefined {
-  return cryptocurrenciesByScheme[scheme];
+  return activeCurrenciesStore().cryptocurrenciesByScheme[scheme];
 }
 
 /**
@@ -5359,22 +5180,22 @@ export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | nul
  * @param {*} ticker
  */
 export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | null | undefined {
-  return cryptocurrenciesByTicker[ticker];
+  return activeCurrenciesStore().cryptocurrenciesByTicker[ticker];
 }
 
 export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
-  return cryptocurrenciesById[id];
+  return activeCurrenciesStore().cryptocurrenciesById[id];
 }
 
 const testsMap = {
-  keywords: s =>
+  keywords: (s: string) =>
     findCryptoCurrency(c =>
       Boolean(c?.keywords?.map(k => k.replace(/ /, "").toLowerCase()).includes(s)),
     ),
-  name: s => findCryptoCurrency(c => c.name.replace(/ /, "").toLowerCase() === s),
-  id: s => findCryptoCurrencyById(s.toLowerCase()),
-  ticker: s => findCryptoCurrencyByTicker(s.toUpperCase()),
-  manager: s => findCryptoCurrencyByManagerAppName(s),
+  name: (s: string) => findCryptoCurrency(c => c.name.replace(/ /, "").toLowerCase() === s),
+  id: (s: string) => findCryptoCurrencyById(s.toLowerCase()),
+  ticker: (s: string) => findCryptoCurrencyByTicker(s.toUpperCase()),
+  manager: (s: string) => findCryptoCurrencyByManagerAppName(s),
 };
 
 /**
@@ -5417,7 +5238,8 @@ export const findCryptoCurrencyByManagerAppName = (
  *
  * @param {*} id
  */
-export const hasCryptoCurrencyId = (id: string): boolean => id in cryptocurrenciesById;
+export const hasCryptoCurrencyId = (id: string): boolean =>
+  Object.prototype.hasOwnProperty.call(activeCurrenciesStore().cryptocurrenciesById, id);
 
 export function getCryptoCurrencyById(id: string): CryptoCurrency {
   const currency = findCryptoCurrencyById(id);

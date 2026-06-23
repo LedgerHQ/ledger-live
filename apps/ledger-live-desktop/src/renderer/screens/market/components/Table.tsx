@@ -74,7 +74,7 @@ const TableRowBase = styled((props: FlexBoxProps & { header?: boolean; disabled?
     justify-content: flex-end;
   }
   ${TableCellBaseStyled}:nth-child(5) {
-    flex: 0 0 80px;
+    flex: 0 0 110px;
     justify-content: flex-end;
   }
   ${TableCellBaseStyled}:nth-child(6) {

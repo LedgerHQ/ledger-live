@@ -1,6 +1,3 @@
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
-
 type FreezeStatus = "NOT_APPLICABLE" | "FROZEN" | "UNFROZEN";
 
 type KycStatus = "NOT_APPLICABLE" | "GRANTED" | "REVOKED";
@@ -111,11 +108,6 @@ export interface HederaMirrorContractCallResult {
   gas_limit: number;
   gas_used: number;
   timestamp: string;
-}
-
-export interface HederaERC20TokenBalance {
-  token: TokenCurrency;
-  balance: BigNumber;
 }
 
 export interface HederaMirrorContractCallEstimate {

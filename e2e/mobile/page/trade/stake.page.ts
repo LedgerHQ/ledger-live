@@ -86,7 +86,7 @@ export default class StakePage {
 
   @Step("Get fees displayed in summary")
   async getDisplayedFees(currencyId: string) {
-    const fees = getTextOfElement(this.delegationFees(currencyId));
+    const fees = await getTextOfElement(this.delegationFees(currencyId));
     invariant(fees, "Fees empty in summary");
     return fees;
   }

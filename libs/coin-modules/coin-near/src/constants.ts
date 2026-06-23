@@ -5,3 +5,5 @@ export const STAKING_GAS_BASE = "25000000000000";
 export const FIGMENT_NEAR_VALIDATOR_ADDRESS = "ledgerbyfigment.poolv1.near";
 export const FRACTIONAL_DIGITS = 5;
 export const YOCTO_THRESHOLD_VARIATION = "10";
+export const NEAR_DUMMY_ADDRESS =
+  "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d";

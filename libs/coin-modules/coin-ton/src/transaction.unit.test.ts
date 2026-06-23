@@ -651,7 +651,7 @@ TO test-recipient"
     };
     expect(formatTransaction(transaction, account)).toMatchInlineSnapshot(`
 "
-SEND  0.000001 TON
+SEND  0.000001 GRAM
 TO test-recipient"
 `);
   });

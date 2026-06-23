@@ -1,8 +1,6 @@
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { isWallet40 } from "../../helpers/commonHelpers";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -22,19 +20,13 @@ describe("Receive Flow", () => {
       },
     });
 
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   beforeEach(async () => {
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
-    if (isWallet40) {
-      await app.portfolio.pressQuickActionTransferButton();
-      await app.portfolio.pressTransferBottomSheetReceiveButton();
-    } else {
-      await app.portfolio.tapQuickActionReceiveButton();
-      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
-    }
+    await app.mainNavigation.openPortfolioViaDeeplink();
+    await app.portfolio.pressQuickActionTransferButton();
+    await app.portfolio.pressTransferBottomSheetReceiveButton();
   });
 
   afterEach(async () => {
@@ -42,7 +34,6 @@ describe("Receive Flow", () => {
   });
 
   $TmsLink("B2CQA-1858");
-  $TmsLink("B2CQA-1860");
   $TmsLink("B2CQA-1857");
   (isSmokeTestRun ? it.skip : it)(
     "Should display the number of account existing per networks",
@@ -65,7 +56,6 @@ describe("Receive Flow", () => {
   );
 
   $TmsLink("B2CQA-1856");
-  $TmsLink("B2CQA-1862");
   $TmsLink("B2CQA-1861");
   (isSmokeTestRun ? it.skip : it)("Should create an account on a network", async () => {
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
@@ -80,13 +70,8 @@ describe("Receive Flow", () => {
     await app.receive.verifyAddress(address);
     await app.common.closePage();
 
-    if (isWallet40) {
-      await app.portfolio.pressQuickActionTransferButton();
-      await app.portfolio.pressTransferBottomSheetReceiveButton();
-    } else {
-      await app.portfolio.tapQuickActionReceiveButton();
-      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
-    }
+    await app.portfolio.pressQuickActionTransferButton();
+    await app.portfolio.pressTransferBottomSheetReceiveButton();
 
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
     await app.modularDrawer.selectNetwork(Currency.BASE.name);
@@ -121,7 +106,7 @@ describe("Receive Flow", () => {
     await app.receive.expectReceivePageIsDisplayed(Currency.XRP.ticker, Account.XRP_2.accountName);
   });
 
-  $TmsLink("B2CQA-1898");
+  $TmsLink("B2CQA-1860");
   $Tag("@smoke");
   it("Should access to receive after selecting an existing ETH account", async () => {
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);

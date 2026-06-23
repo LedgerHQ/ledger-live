@@ -4,6 +4,10 @@ Coin Modules
 Coin framework compatibility
 ----------------------------
 
+The coin framework ships as the published `@ledgerhq/coin-module-framework` package (pinned in the `pnpm-workspace.yaml` catalog), not as an in-repo lib. Coin modules depend on it for their API/logic types (e.g. `CoinModuleApi` from `@ledgerhq/coin-module-framework/api/index`).
+
+In `api`, `logic`, and `network`, the only permitted `@ledgerhq/*` imports are `@ledgerhq/errors`, `@ledgerhq/logs`, `@ledgerhq/live-network`, and `@ledgerhq/coin-module-framework` (enforced by `eslint/no-restricted-imports` in [`.oxlintrc.json`](./.oxlintrc.json)).
+
 ### Architectural Decision
 The following concepts are mandatory for a CoinModule to be *Coin framework compliant*.
 

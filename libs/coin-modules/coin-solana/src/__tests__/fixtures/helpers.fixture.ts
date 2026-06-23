@@ -166,6 +166,7 @@ export function transaction(options?: {
   subAccountId?: string;
   raw?: string;
   uiState?: Record<string, unknown>;
+  templateId?: string;
 }): Transaction {
   const kind = options?.kind ?? "transfer";
   const defaultUiState = { subAccountId: options?.subAccountId, memo: "random memo for unit test" };
@@ -190,5 +191,6 @@ export function transaction(options?: {
       },
     },
     raw: options?.raw ?? "",
+    templateId: options?.templateId ?? "",
   } as unknown as Transaction;
 }

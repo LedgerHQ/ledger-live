@@ -17,6 +17,7 @@ export type AssetMarketDataInput = Readonly<{
   product: "lld" | "llm";
   version: string;
   isStaging?: boolean;
+  enabled?: boolean;
 }>;
 
 export type AssetMarketData = Readonly<{

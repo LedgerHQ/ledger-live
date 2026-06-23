@@ -1,5 +1,5 @@
 import { buildTransactionPointMarker } from "../buildTransactionPointMarker";
-import type { TransactionChartGroup } from "../getTransactionPointMarkers";
+import type { TransactionChartGroup } from "@ledgerhq/asset-detail";
 
 const t = (key: string, options?: { count: number }) => (options ? `${key}:${options.count}` : key);
 

@@ -23,7 +23,7 @@ In order to get merged, a pull request must:
 - Pass the linter (`yarn lint`)
 - Pass the typechecker (`yarn typecheck`)
 
-If you are using VSCode, you can use the `eslint` and `prettier` plugins to auto-format your code on save.
+If you are using VSCode, you can use the [`oxc`](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode) plugin to lint and format your code on save.
 
 A git pre-commit hook is also active and should prevent commits that do not pass these checks.
 To bypass the hook, add the `--no-verify` option when using git.

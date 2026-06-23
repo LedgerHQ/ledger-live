@@ -15,11 +15,13 @@ describe("estimateFees", () => {
     jest.clearAllMocks();
   });
 
-  it("should return the correct gas budget as bigint", async () => {
-    // Mock the paymentInfo response
+  it("should return both the accurate fee and the gas budget as bigints", async () => {
+    // Mock the paymentInfo response: dry-run returns the actual gas (`fees`) and the reserved budget.
     const mockGasBudget = "1000000";
+    const mockFees = "850000";
     (suiAPI.paymentInfo as jest.Mock).mockResolvedValue({
       gasBudget: mockGasBudget,
+      fees: mockFees,
     });
 
     const transactionIntent = {
@@ -45,13 +47,15 @@ describe("estimateFees", () => {
       }),
       undefined,
     );
-    expect(result).toBe(BigInt(mockGasBudget));
+    expect(result).toEqual({ fees: BigInt(mockFees), gasBudget: BigInt(mockGasBudget) });
   });
 
   it("should handle zero amount transactions", async () => {
     const mockGasBudget = "500000";
+    const mockFees = "400000";
     (suiAPI.paymentInfo as jest.Mock).mockResolvedValue({
       gasBudget: mockGasBudget,
+      fees: mockFees,
     });
 
     const transactionIntent = {
@@ -77,6 +81,6 @@ describe("estimateFees", () => {
       }),
       undefined,
     );
-    expect(result).toBe(BigInt(mockGasBudget));
+    expect(result).toEqual({ fees: BigInt(mockFees), gasBudget: BigInt(mockGasBudget) });
   });
 });

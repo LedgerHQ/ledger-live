@@ -20,5 +20,7 @@ export type EarnLiveAppNavigatorParamList = {
     platform?: string;
     intent?: "deposit" | "withdraw" | "simulate";
     cryptoAssetId?: TokenCurrency["id"]; // Only for deposit/withdraw flows
+    customDappURL?: string;
+    customDappUrl?: string;
   };
 };

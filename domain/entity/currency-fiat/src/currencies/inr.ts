@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const inr = fiat({
   type: "FiatCurrency",
   id: "inr",
-  name: "Indian Rupee",
   ticker: "INR",
+  name: "Indian Rupee",
   symbol: "₹",
-  units: [{ name: "Indian Rupee", code: "INR", magnitude: 2 }],
-  keywords: ["rupee", "inr"],
+  units: [
+    {
+      code: "₹",
+      name: "Indian Rupee",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

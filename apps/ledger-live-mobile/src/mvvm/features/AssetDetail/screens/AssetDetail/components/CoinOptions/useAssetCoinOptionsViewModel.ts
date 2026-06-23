@@ -40,12 +40,11 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
   const trailingAccessibilityLabel = t("assetDetail.coinOptions.openMenuA11yLabel");
 
   const onToggleFavourite = useCallback(() => {
-    if (!currency) return;
     const nextStarred = !isStarred;
 
     track("button_clicked", {
       button: "favourite",
-      currency: currency.id,
+      currency: currency?.id ?? currencyId,
       page: "Asset Detail",
       is_favourite: nextStarred,
     });
@@ -61,6 +60,7 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
     closeCoinOptions();
   }, [
     currency,
+    currencyId,
     isStarred,
     starKey,
     dispatch,

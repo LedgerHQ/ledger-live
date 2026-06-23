@@ -28,7 +28,7 @@ export const PnlDetail = ({
 }: PnlDetailProps) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
     {open ? <TrackPage category="Detailed PnL" refreshSource={false} /> : null}
-    <DialogContent>
+    <DialogContent data-testid="pnl-detail-dialog">
       <DialogHeader
         density="expanded"
         title={title}

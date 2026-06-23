@@ -50,9 +50,10 @@ function hasActiveStake(balance: Balance): balance is Balance & {
 }
 
 function hasDeactivatingStake(balance: Balance): balance is Balance & {
-  stake: Stake & { state: "deactivating" };
+  stake: Stake;
 } {
-  return balance.stake !== undefined && balance.stake.state === "deactivating";
+  const state = balance.stake?.state;
+  return state === "deactivating" || state === "withdrawable";
 }
 
 function hasStakeDelegate<T extends Balance & { stake: Stake }>(
@@ -418,12 +419,16 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       });
       const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => {
         const delegated: bigint = delegatedAmountForStakingResources(b);
+        const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const withdrawId = b.stake.details?.withdrawId;
+
         return {
           validatorAddress: b.stake.delegate,
           amount: new BigNumber(delegated.toString()),
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
+          status: b.stake.state === "withdrawable" ? "withdrawable" : "deactivating",
+          ...(typeof validatorId === "string" ? { validatorId } : {}),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
           ...(typeof withdrawId === "number" ? { withdrawId } : {}),
         };

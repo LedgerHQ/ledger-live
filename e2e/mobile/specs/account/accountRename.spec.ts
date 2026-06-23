@@ -28,7 +28,7 @@ describe("Account name change", () => {
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataCommand(account)],
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   it("should persist Account name change after app restart", async () => {
@@ -41,10 +41,10 @@ describe("Account name change", () => {
     await app.accounts.openViaDeeplink();
     await app.common.expectAccountName(newAccountName);
     await device.terminateApp();
-    await launchApp();
+    await launchApp({ newInstance: true });
     await device.disableSynchronization();
     await loadConfig("skip-onboarding", true);
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
     await device.enableSynchronization();
     await app.portfolio.goToSpecificAsset(account.currency.name);
     await app.common.expectAccountName(newAccountName);

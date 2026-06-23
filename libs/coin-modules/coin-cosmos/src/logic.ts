@@ -1,7 +1,9 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import cryptoFactory from "./chain/chain";
 import type {
   CosmosAccount,
   CosmosDelegation,
@@ -23,6 +25,13 @@ export const COSMOS_MAX_DELEGATIONS = 5;
 export const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
 
 export const COSMOS_MIN_FEES = new BigNumber(6000); // 6000 uAtom
+
+const DUMMY_PAYLOAD = Buffer.from("28ff5c6d57d8cfd492b6fb42614536ed648e01fd", "hex");
+export const getCosmosDummyRecipient = (currencyId: string): string => {
+  // croeseid testnet has no own chain in cryptoFactory; it reuses crypto_org's prefix
+  const id = currencyId === "crypto_org_croeseid" ? "crypto_org" : currencyId;
+  return bech32.encode(cryptoFactory(id).prefix, bech32.toWords(DUMMY_PAYLOAD));
+};
 
 export function mapDelegations(
   delegations: CosmosDelegation[],

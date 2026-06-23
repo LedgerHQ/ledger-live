@@ -259,18 +259,22 @@ export async function resolveRedelegationValidators(
 }
 
 /**
- * Resolve the validator address for a single DELEGATE or UNDELEGATE operation.
+ * Resolve the validator address for a single DELEGATE, UNDELEGATE or WITHDRAW operation.
  *
- * The validator address is the first ABI argument for both operations.
+ * The validator address is the first ABI argument for all three operations.
  * Follows the same payload-resolution strategy as `resolveRedelegationValidators`:
  * cached `contractPayload` first, then RPC fallback.
+ *
+ * NOTE: the returned `amount` is only meaningful for DELEGATE/UNDELEGATE, where the
+ * second ABI argument is the staked amount. For WITHDRAW the second argument is a slot
+ * identifier (`withdrawId`), not an amount, so callers should rely on `operation.value`.
  *
  * Returns `null` when the payload cannot be obtained or decoded.
  */
 export async function resolveStakingValidator(
   currency: CryptoCurrency,
   operation: Operation,
-  operationType: "delegate" | "undelegate",
+  operationType: "delegate" | "undelegate" | "withdraw",
 ): Promise<{ validatorAddress: string; amount: BigNumber | null } | null> {
   const extra = isRecord(operation.extra) ? operation.extra : undefined;
   const cached = extra?.contractPayload;

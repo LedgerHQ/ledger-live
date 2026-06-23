@@ -303,7 +303,9 @@ export class InitializationManager {
     userdataPath: string,
     userdataSpeculos: string,
   ): Promise<void> {
-    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags } = options;
+    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags = {} } = options;
+
+    await InitializationManager.setFeatureFlags(featureFlags);
 
     // Group commands by app name
     const commandsByAppMap = new Map<string, { app: SpeculosAppType; cmds: CliCommand[] }>();
@@ -345,6 +347,9 @@ export class InitializationManager {
 
     // Finalize setup only after successful global CLI run
     await loadConfig(userdataSpeculos, true);
+  }
+
+  static async setFeatureFlags(featureFlags: PartialFeatures) {
     const defaultFlags = {
       lwmWallet40: {
         enabled: isWallet40,

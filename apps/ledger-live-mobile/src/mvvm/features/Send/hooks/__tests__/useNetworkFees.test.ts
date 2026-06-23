@@ -153,6 +153,8 @@ describe("useNetworkFees", () => {
       })),
     });
     sendFeatures.shouldEstimateFeePresetsWithBridge = jest.fn(() => false);
+    sendFeatures.getFeePresetFallbackIds = jest.fn(() => []);
+    sendFeatures.canEstimateFeePresetsWithZeroAmount = jest.fn(() => false);
     sendFeatures.getFeeCurrencyAccountId = jest.fn(
       (_currency: unknown, transaction: { feeCurrencyAccountId?: string | null }) =>
         transaction?.feeCurrencyAccountId ?? null,
@@ -440,13 +442,13 @@ describe("useNetworkFees", () => {
     });
   });
 
-  describe("EVM fallback presets", () => {
-    it("calls useFeePresetFiatValues with fallbackPresetIds when hasFeePresets, evm family, and empty feePresetOptions", () => {
+  describe("descriptor fallback presets", () => {
+    it("calls useFeePresetFiatValues with descriptor fallbackPresetIds when fee preset options are empty", () => {
       mockUseFeePresetOptions.mockReturnValue([]);
       mockUseFeePresetFiatValues.mockReturnValue({});
+      sendFeatures.getFeePresetFallbackIds = jest.fn(() => ["slow", "medium", "fast"]);
 
       const params = buildParams({
-        transaction: { family: "evm" } as Partial<Transaction>,
         uiConfig: { hasFeePresets: true },
       });
 

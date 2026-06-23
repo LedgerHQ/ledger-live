@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { useExperimental } from "~/experimental";
 import { useAutoFocusOnEnter } from "LLM/features/GlobalSearch/hooks/useAutoFocusOnEnter";
+import { AnimatedSearchPlaceholder } from "./components/AnimatedSearchPlaceholder";
 import { DefaultSections } from "./components/DefaultSections";
 import { SearchResults } from "./components/SearchResults";
 import { GLOBAL_SEARCH_TEST_IDS } from "./testIds";
@@ -72,10 +73,12 @@ export function GlobalSearchView({
               onChangeText={setSearch}
               onClear={clearSearch}
               hideClearButton={false}
-              placeholder={t("globalSearch.searchPlaceholder")}
+              placeholder=""
+              accessibilityLabel={t("globalSearch.searchPlaceholder")}
               autoCorrect={false}
               autoCapitalize="none"
             />
+            <AnimatedSearchPlaceholder visible={search === ""} />
           </View>
         </View>
       </View>

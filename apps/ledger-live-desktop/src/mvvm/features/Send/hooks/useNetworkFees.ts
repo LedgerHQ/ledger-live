@@ -51,11 +51,12 @@ export function useNetworkFees({
     accountCurrency,
     transaction,
   );
-  const shouldForceBridgeEstimationForEvm =
-    hasFeePresets && transaction.family === "evm" && feePresetOptions.length === 0;
+  const fallbackPresetIds = sendFeatures.getFeePresetFallbackIds(accountCurrency, transaction);
+  const shouldEstimateFallbackPresetsWithBridge =
+    hasFeePresets && feePresetOptions.length === 0 && fallbackPresetIds.length > 0;
 
   const shouldEstimateFeePresets =
-    shouldEstimateFeePresetsWithBridge || shouldForceBridgeEstimationForEvm;
+    shouldEstimateFeePresetsWithBridge || shouldEstimateFallbackPresetsWithBridge;
 
   const fiatByPreset = useFeePresetFiatValues({
     account,
@@ -63,11 +64,15 @@ export function useNetworkFees({
     mainAccount,
     transaction,
     feePresetOptions,
-    fallbackPresetIds: shouldForceBridgeEstimationForEvm ? ["slow", "medium", "fast"] : undefined,
+    fallbackPresetIds: shouldEstimateFallbackPresetsWithBridge ? fallbackPresetIds : undefined,
     counterValueCurrency,
     fiatUnit,
     enabled: hasFeePresets,
     shouldEstimateWithBridge: shouldEstimateFeePresets,
+    allowZeroAmountEstimation: sendFeatures.canEstimateFeePresetsWithZeroAmount(
+      accountCurrency,
+      transaction,
+    ),
   });
   const legendByPreset = useFeePresetLegends({
     currency: accountCurrency,
@@ -99,7 +104,7 @@ export function useNetworkFees({
   const selectedFeeStrategy = transaction.feesStrategy ?? null;
   const selectedPresetFiatValue =
     selectedFeeStrategy && selectedFeeStrategy !== "custom"
-      ? (fiatByPreset[selectedFeeStrategy] ?? null)
+      ? fiatByPreset[selectedFeeStrategy] ?? null
       : null;
 
   const onSelectFeeStrategy = useCallback(

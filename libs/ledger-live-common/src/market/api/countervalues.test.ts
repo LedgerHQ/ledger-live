@@ -48,14 +48,14 @@ describe("market countervalues API", () => {
     expect(getLastRequestUrl().searchParams.get("filter")).toBe("stock");
   });
 
-  it("keeps the top parameter for unfiltered top gainers", async () => {
+  it("does not send the top parameter for unfiltered top gainers", async () => {
     await fetchList({ counterCurrency: "usd", order: Order.topGainers });
 
-    expect(getLastRequestUrl().searchParams.get("top")).toBe("100");
+    expect(getLastRequestUrl().searchParams.get("top")).toBeNull();
   });
 
-  it("does not send the top parameter when top gainers use an explicit filter", async () => {
-    await fetchList({ counterCurrency: "usd", order: Order.topGainers, filter: "stock" });
+  it("does not send the top parameter for unfiltered top losers", async () => {
+    await fetchList({ counterCurrency: "usd", order: Order.topLosers });
 
     expect(getLastRequestUrl().searchParams.get("top")).toBeNull();
   });

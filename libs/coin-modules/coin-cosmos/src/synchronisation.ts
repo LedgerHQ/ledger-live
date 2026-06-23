@@ -127,10 +127,15 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
     op.hasFailed = tx.code !== 0;
 
     // simplify the message types
-    const messages = tx.tx.body.messages.map((message: any) => ({
-      ...message,
-      type: message["@type"].substring(message["@type"].lastIndexOf(".") + 1),
-    }));
+    const messages = tx.tx.body.messages.map((message: any) => {
+      const type = message["@type"].substring(message["@type"].lastIndexOf(".") + 1);
+      // babylon x/epoching nests the real staking msg under `msg` (MsgWrapped*); unwrap so the
+      // standard delegate/undelegate/redelegate handling below applies.
+      if (message["@type"].startsWith("/babylon.epoching.") && message.msg) {
+        return { ...message.msg, type: type.replace("Wrapped", "") };
+      }
+      return { ...message, type };
+    });
     const mainMessage = getMainMessage(messages);
 
     if (!mainMessage) {

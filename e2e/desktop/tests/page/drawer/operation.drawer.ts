@@ -1,8 +1,6 @@
 import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import type { ClickedHistoryOperationSnapshot } from "../history.page";
 
 export class OperationDrawer extends Drawer {
@@ -14,17 +12,6 @@ export class OperationDrawer extends Drawer {
   readonly amountValue = this.page.getByTestId("operation-amount");
   readonly transactionType = this.page.getByTestId("transaction-type");
   readonly accountName = this.page.getByTestId("account-name");
-
-  readonly swapDrawerTitle = this.page.getByTestId("swap-drawer-operation-type");
-  readonly swapIdLabel = this.page.getByText("Swap ID");
-  readonly swapIdValue = this.page.getByTestId("swap-drawer-swapId");
-  readonly swapStatus = this.page.getByTestId("swap-drawer-status");
-  readonly swapProviderLink = this.page.getByTestId("swap-drawer-provider-link");
-  readonly swapFromAccount = this.page.getByTestId("swap-drawer-account-from");
-  readonly swapToAccount = this.page.getByTestId("swap-drawer-account-to");
-  readonly swapAmountSent = this.page.getByTestId("swap-drawer-amount-from");
-  readonly swapAmountReceived = this.page.getByTestId("swap-drawer-amount-to");
-  readonly swapOperationDetailsLink = this.page.getByTestId("swap-drawer-operation-details-link");
 
   @step("Verify history operation details match clicked row")
   async expectOperationDetailsVisible(snapshot: ClickedHistoryOperationSnapshot) {
@@ -59,25 +46,5 @@ export class OperationDrawer extends Drawer {
     } else {
       await expect(this.amountValue).not.toBeVisible();
     }
-  }
-
-  @step("Verify swap drawer information")
-  async expectSwapDrawerInfos(swapId: string, swap: Swap, provider: SwapProvider) {
-    await this.waitForDrawerToBeVisible();
-    expect(await this.swapDrawerTitle.textContent()).toMatch("Swap");
-    await expect(this.swapIdLabel).toBeVisible();
-    expect(await this.swapIdValue.textContent()).toMatch(swapId);
-    await expect(this.swapStatus).toBeVisible();
-    expect(await this.swapStatus.textContent()).toMatch(/pending|finished/);
-    expect(await this.dateValue.textContent()).toMatch(
-      /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/,
-    );
-    expect(await this.swapFromAccount.textContent()).toMatch(swap.accountToDebit.accountName);
-    expect(await this.swapAmountSent.textContent()).toContain(swap.amount);
-    expect(await this.swapToAccount.textContent()).toMatch(swap.accountToCredit.accountName);
-    await expect(this.swapAmountReceived).toBeVisible();
-
-    expect(await this.swapProviderLink.textContent()).toContain(provider.uiName);
-    await expect(this.swapOperationDetailsLink).toBeVisible();
   }
 }

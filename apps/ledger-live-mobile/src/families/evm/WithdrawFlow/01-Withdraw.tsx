@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -40,18 +39,14 @@ function Withdraw() {
   const bridge = useAccountBridge<GenericTransaction>(account);
 
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
-    // STUB (LIVE-31683): bridge has no "withdraw" mode yet — self-send so the flow
-    // runs end-to-end. Replace with `mode: "withdraw"` once coin-evm supports it.
-    const base = bridge.updateTransaction(bridge.createTransaction(account), {
+    // Monad: finalize the matured withdrawal slot via `withdraw(validatorId, withdrawId)`.
+    const withdrawTx = bridge.updateTransaction(bridge.createTransaction(account), {
+      mode: "withdraw",
+      valAddress: unbonding.validatorAddress,
+      valId: unbonding.validatorId,
+      withdrawId: unbonding.withdrawId?.toString(),
       recipient: account.freshAddress,
-    });
-    const withdrawTx = bridge.updateTransaction(base, {
-      mode: "send",
-      recipient: account.freshAddress,
-      // Minimal self-send: the matured amount is still locked until the real withdraw
-      // call (LIVE-31683), so sending it would hit NotEnoughBalance. 1 wei keeps the
-      // stub flow usable (user only covers fees).
-      amount: new BigNumber(1),
+      amount: unbonding.amount,
       useAllAmount: false,
     });
     return { account, parentAccount: undefined, transaction: withdrawTx as unknown as Transaction };

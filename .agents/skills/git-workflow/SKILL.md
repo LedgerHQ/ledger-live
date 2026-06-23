@@ -85,3 +85,4 @@ test(coin): add bitcoin integration tests
 - Never mix refactor + fix + feature
 - Rebase before PR to keep history clean
 - Squash only for trivial branches (`support/cleanup`)
+- **Never use `--no-verify` when committing or pushing** — pre-commit/pre-push hooks (lint, typecheck, tests) must run. If a hook fails, fix the underlying issue rather than skip it; if a hook is genuinely broken, surface it to the user instead of bypassing it.

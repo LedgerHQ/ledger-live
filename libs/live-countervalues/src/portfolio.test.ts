@@ -2,12 +2,14 @@ import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { initialState, loadCountervalues, inferTrackingPairForAccounts } from "./logic";
+import { pairId } from "./helpers";
 import {
   getPortfolioCount,
   getBalanceHistory,
   getBalanceHistoryWithCountervalue,
   getPortfolio,
   getCurrencyPortfolio,
+  getCurrentBalanceCountervalueChange,
   getAssetsDistribution,
   defaultAssetsDistribution,
   getPortfolioRangeConfig,
@@ -250,6 +252,123 @@ describe("Portfolio", () => {
       expect(portfolio).toMatchSnapshot();
     });
   });
+  describe("getCurrentBalanceCountervalueChange", () => {
+    const range: PortfolioRange = "day";
+    // Builds an account whose hourly balance history is flat (= current balance) over the range,
+    // so getCurrencyPortfolio (historical balance) reduces to the same price-only change.
+    function genFlatBalanceAccount(id = "bitcoin_1"): Account {
+      const account = genAccountBitcoin(id);
+      const balance = account.balance.toNumber();
+      return {
+        ...account,
+        balanceHistoryCache: {
+          ...account.balanceHistoryCache,
+          HOUR: {
+            latestDate: startOfHour(new Date()).getTime(),
+            balances: new Array(8 * 24).fill(balance),
+          },
+        },
+      };
+    }
+
+    it("returns a neutral change for an empty accounts list", () => {
+      const to = getFiatCurrencyByTicker("USD");
+      const state = { ...initialState, data: {} };
+      expect(getCurrentBalanceCountervalueChange([], range, state, to)).toEqual({
+        value: 0,
+        percentage: null,
+      });
+    });
+    it("returns no percentage when no rate is available for the past date", async () => {
+      const account = genAccountBitcoin();
+      const { to } = await loadCV(account);
+      const state = { ...initialState, data: {} };
+      const change = getCurrentBalanceCountervalueChange([account], range, state, to);
+      expect(change.value).toBe(0);
+      expect(change.percentage).toBeFalsy();
+    });
+    it("matches the portfolio change when the balance is constant over the range", async () => {
+      const account = genFlatBalanceAccount();
+      const { state, to } = await loadCV(account);
+      const portfolio = getCurrencyPortfolio([account], range, state, to);
+      const change = getCurrentBalanceCountervalueChange([account], range, state, to);
+      expect(typeof change.percentage).toBe("number");
+      expect(change.percentage).toBeCloseTo(portfolio.countervalueChange.percentage as number, 4);
+    });
+    it("is balance-independent (percentage unchanged when the balance scales)", async () => {
+      const account = genAccountBitcoin();
+      const { state, to } = await loadCV(account);
+      const single = getCurrentBalanceCountervalueChange([account], range, state, to);
+      const doubled = getCurrentBalanceCountervalueChange([account, account], range, state, to);
+      expect(doubled.percentage).toBeCloseTo(single.percentage as number, 8);
+    });
+
+    // Builds a state where the "now" rate comes from "latest" and the "then" rate from the fallback,
+    // so both endpoints can be controlled independently for the edge cases below.
+    function stateWithRates({ now, then }: { now?: number; then?: number }) {
+      const from = getCryptoCurrencyById("bitcoin");
+      const to = getFiatCurrencyByTicker("USD");
+      const map = new Map<string, number>();
+      if (now !== undefined) map.set("latest", now);
+      return {
+        ...initialState,
+        data: {},
+        cache: {
+          [pairId({ from, to })]: {
+            map,
+            fallback: then,
+            stats: {
+              oldest: null,
+              earliest: null,
+              oldestDate: null,
+              earliestDate: null,
+              earliestStableDate: null,
+            },
+          },
+        },
+      };
+    }
+
+    it("returns a 0% change when the price is flat over the range", () => {
+      const account = genAccountBitcoin();
+      const to = getFiatCurrencyByTicker("USD");
+      const state = stateWithRates({ now: 100, then: 100 });
+      const change = getCurrentBalanceCountervalueChange([account], range, state, to);
+      expect(change.value).toBe(0);
+      expect(change.percentage).toBe(0);
+    });
+
+    it("returns a neutral change for a zero current balance even when rates are available", () => {
+      const account = genAccountBitcoin();
+      const zeroBalance = account.balance.minus(account.balance);
+      const emptyAccount = {
+        ...account,
+        balance: zeroBalance,
+        spendableBalance: zeroBalance,
+      };
+      const to = getFiatCurrencyByTicker("USD");
+      const state = stateWithRates({ now: 100, then: 80 });
+      const change = getCurrentBalanceCountervalueChange([emptyAccount], range, state, to);
+      expect(change).toEqual({ value: 0, percentage: null });
+    });
+
+    it("returns a neutral change when the past rate is missing", () => {
+      const account = genAccountBitcoin();
+      const to = getFiatCurrencyByTicker("USD");
+      const state = stateWithRates({ now: 100, then: undefined });
+      const change = getCurrentBalanceCountervalueChange([account], range, state, to);
+      expect(change).toEqual({ value: 0, percentage: null });
+    });
+
+    it("returns a neutral change when the current rate is missing", () => {
+      const account = genAccountBitcoin();
+      const to = getFiatCurrencyByTicker("USD");
+      const state = stateWithRates({ now: undefined, then: 100 });
+      const change = getCurrentBalanceCountervalueChange([account], range, state, to);
+      expect(change).toEqual({ value: 0, percentage: null });
+    });
+  });
+
   describe("getAssetsDistribution", () => {
     it("snapshot", async () => {
       const account = genAccountBitcoin();

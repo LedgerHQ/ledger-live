@@ -31,6 +31,7 @@ export type FlowStackNavigatorProps<
   stepRegistry: StepRegistry<TStep>;
   flowConfig: ReactNativeFlowConfig<TStep, TStepConfig>;
   screenOptions?: NativeStackNavigationOptions;
+  disableBackGesture?: boolean;
   getScreenName?: (step: TStep) => string;
   getScreenOptions?: (step: TStep, config: TStepConfig) => NativeStackNavigationOptions;
   getInitialParams?: (step: TStep, config: TStepConfig) => Record<string, unknown>;

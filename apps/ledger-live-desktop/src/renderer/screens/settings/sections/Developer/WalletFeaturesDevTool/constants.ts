@@ -8,7 +8,7 @@ export const WALLET_FEATURES_PARAMS = [
   { key: "quickActionCtas", label: "Quick Action CTAs" },
   { key: "mainNavigation", label: "Main Navigation" },
   { key: "tour", label: "Tour" },
-  { key: "newReceiveDialog", label: "New Receive Dialog" },
+  { key: "q2Tour", label: "Q2 Tour" },
   { key: "balanceRefreshRework", label: "Balance Refresh Rework" },
   { key: "assetSection", label: "Asset Section" },
   {

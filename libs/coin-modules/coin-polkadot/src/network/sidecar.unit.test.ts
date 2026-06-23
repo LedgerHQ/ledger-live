@@ -106,9 +106,8 @@ describe("getAccount", () => {
       http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/storage/bonded`, ({ request }) => {
         const url = new URL(request.url);
         const keys = url.searchParams.get("keys[]");
-        const key1 = url.searchParams.get("key1");
 
-        if (keys === "addr" && key1 === "addr") {
+        if (keys === "addr") {
           return HttpResponse.json({ value: {} });
         }
 
@@ -193,9 +192,8 @@ describe("getAccount", () => {
       http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/storage/bonded`, ({ request }) => {
         const url = new URL(request.url);
         const keys = url.searchParams.get("keys[]");
-        const key1 = url.searchParams.get("key1");
 
-        if (keys === "addr" && key1 === "addr") {
+        if (keys === "addr") {
           return HttpResponse.json({ value: {} });
         }
 

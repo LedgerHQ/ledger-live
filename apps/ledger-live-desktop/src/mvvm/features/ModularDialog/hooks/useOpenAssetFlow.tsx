@@ -27,15 +27,16 @@ import { useFeature } from "@features/platform-feature-flags";
 function selectCurrencyDialog(
   dispatch: ReturnType<typeof useDispatch>,
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
-  currencies?: CryptoOrTokenCurrency[],
+  currencyIds?: string[],
   onClose?: () => void,
   dialogConfiguration?: EnhancedModularDrawerConfiguration,
 ): void {
-  const filteredCurrencies = currencies?.map(currency => currency.id) ?? [];
+  const filteredCurrencies = currencyIds ?? [];
 
   dispatch(
     openDialog({
       currencies: filteredCurrencies,
+      areCurrenciesFiltered: filteredCurrencies.length > 0,
       onAssetSelected,
       dialogConfiguration: dialogConfiguration ?? {
         assets: { leftElement: "undefined", rightElement: "balance" },
@@ -127,14 +128,14 @@ export function useOpenAssetFlow(
   );
 
   const openAssetFlow = useCallback(
-    (dialogConfiguration?: EnhancedModularDrawerConfiguration) => {
+    (dialogConfiguration?: EnhancedModularDrawerConfiguration, currencyIds?: string[]) => {
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         dispatch(setFlowValue(modularDrawerVisibleParams.location));
         dispatch(setSourceValue(source));
         selectCurrencyDialog(
           dispatch,
           openAddAccountFlow,
-          undefined,
+          currencyIds,
           handleClose,
           dialogConfiguration,
         );

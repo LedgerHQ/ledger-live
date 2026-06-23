@@ -6,6 +6,8 @@ import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/cate
 
 export type { MarketListCategory };
 
+const DEFAULT_MARKET_CATEGORY: MarketListCategory = "all";
+
 export type MarketState = {
   marketParams: MarketListRequestParams;
   currentPage: number;
@@ -26,7 +28,7 @@ const initialState: MarketState = {
   },
   currentPage: 1,
   hideTransactionsOnChart: false,
-  category: "all",
+  category: DEFAULT_MARKET_CATEGORY,
 };
 
 type HandlersPayloads = {
@@ -41,13 +43,18 @@ type HandlersPayloads = {
 type MarketHandlers<PreciseKey = true> = Handlers<MarketState, HandlersPayloads, PreciseKey>;
 
 const handlers: MarketHandlers = {
-  MARKET_SET_VALUES: (state: MarketState, { payload }: { payload: MarketListRequestParams }) => ({
-    ...state,
-    marketParams: {
+  MARKET_SET_VALUES: (state: MarketState, { payload }: { payload: MarketListRequestParams }) => {
+    const nextMarketParams = {
       ...state.marketParams,
       ...payload,
-    },
-  }),
+    };
+
+    return {
+      ...state,
+      marketParams: nextMarketParams,
+      ...(nextMarketParams.page === 1 ? { currentPage: 1 } : {}),
+    };
+  },
   MARKET_SET_CURRENT_PAGE: (state: MarketState, { payload }: { payload: number }) => ({
     ...state,
     currentPage: payload,
@@ -59,10 +66,22 @@ const handlers: MarketHandlers = {
     ...state,
     hideTransactionsOnChart: payload,
   }),
-  MARKET_SET_CATEGORY: (state: MarketState, { payload }: { payload: MarketListCategory }) => ({
-    ...state,
-    category: payload,
-  }),
+  MARKET_SET_CATEGORY: (state: MarketState, { payload }: { payload: MarketListCategory }) => {
+    if (state.category !== undefined && payload === state.category) {
+      return state;
+    }
+
+    return {
+      ...state,
+      category: payload,
+      currentPage: 1,
+      marketParams: {
+        ...state.marketParams,
+        order: Order.MarketCapDesc,
+        page: 1,
+      },
+    };
+  },
 
   MARKET_IMPORT_STATE: (state, { payload }: { payload: MarketState }) => ({
     ...state,

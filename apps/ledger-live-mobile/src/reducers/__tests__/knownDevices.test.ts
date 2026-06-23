@@ -24,12 +24,6 @@ import reducer, {
   updateKnownDevice,
 } from "../knownDevices";
 
-jest.mock("@ledgerhq/live-dmk-mobile", () => ({
-  ...jest.requireActual("@ledgerhq/live-dmk-mobile"),
-  rnBleTransportIdentifier: "react-native-ble",
-  rnHidTransportIdentifier: "react-native-hid",
-}));
-
 describe("knownDevices reducer", () => {
   const nanoX = {
     id: "ble-id",

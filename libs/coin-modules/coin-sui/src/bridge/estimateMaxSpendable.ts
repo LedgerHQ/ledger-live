@@ -5,6 +5,7 @@ import { ONE_SUI } from "../constants";
 import type { SuiAccount, Transaction } from "../types";
 import createTransaction from "./createTransaction";
 import getFeesForTransaction from "./getFeesForTransaction";
+import { addressBalanceSpendCap } from "./utils";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -21,7 +22,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   transaction,
 }) => {
   try {
-    const mainAccount = getMainAccount(account, parentAccount) as SuiAccount;
+    const mainAccount = getMainAccount(account, parentAccount);
 
     const estimatedTransaction = {
       ...createTransaction(account),
@@ -33,12 +34,17 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
     if (transaction?.mode !== "delegate") {
       if (account.type === "Account") {
-        const fees = await getFeesForTransaction({
+        // Reserve the gas BUDGET (≥ actual fee): the network requires the gas coins to cover it, so
+        // the max-spendable must leave it aside or the send fails at execution.
+        const { gasBudget } = await getFeesForTransaction({
           account: mainAccount,
           transaction: estimatedTransaction,
         });
-        if (fees) {
-          spendableBalance = spendableBalance.minus(fees);
+        if (gasBudget) {
+          spendableBalance = spendableBalance.minus(gasBudget);
+          // SIP-58: bound the max by the address balance minus gas when real coins can't cover gas.
+          const cap = addressBalanceSpendCap(mainAccount as SuiAccount, new BigNumber(gasBudget));
+          if (cap !== null) spendableBalance = BigNumber.min(spendableBalance, cap);
         }
       }
     }

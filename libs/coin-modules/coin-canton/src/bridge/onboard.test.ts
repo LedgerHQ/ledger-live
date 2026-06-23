@@ -111,6 +111,7 @@ describe("onboard", () => {
         partyId: mockPartyId,
         account: expect.objectContaining({
           xpub: mockPartyId,
+          cantonResources: expect.objectContaining({ isOnboarded: true }),
         }),
       });
 
@@ -174,6 +175,44 @@ describe("onboard", () => {
       const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
       expect(result).toMatchObject({
         partyId: newPartyId,
+        account: expect.objectContaining({
+          xpub: newPartyId,
+          cantonResources: expect.objectContaining({ isOnboarded: true }),
+        }),
+      });
+    });
+
+    it("links the existing party (no submit) when prepareOnboarding reports it already exists", async () => {
+      // Re-adding a just-onboarded account during the gateway's by-public-key index lag:
+      // getPartyByPubKey still 404s, but prepareOnboarding reports the party already exists (with its id).
+      const account = createMockCantonAccount();
+      const existingPartyId =
+        "ldg::1220ac1d0368a250bc2b515a058d04a8b884cae4bb425258270ab3019b1ddd49cd1f";
+
+      mockedGateway.getPartyByPubKey.mockRejectedValue(
+        new Error('Party with public key "pk" does not exist'),
+      );
+      mockedGateway.prepareOnboarding.mockRejectedValue(
+        new Error(`Party with id "${existingPartyId}" already exists and its topology is up to date`),
+      );
+      mockedGateway.isPartyAlreadyExists.mockReturnValue(true);
+
+      const onboardObservable = buildOnboardAccount(mockSignerContext);
+      const values = await firstValueFrom(
+        onboardObservable(mockCurrency, mockDeviceId, account).pipe(toArray()),
+      );
+
+      // Linked the existing party directly — no submission, no signing.
+      expect(mockedGateway.submitOnboarding).not.toHaveBeenCalled();
+      expect(mockedSignTransaction.signTransaction).not.toHaveBeenCalled();
+
+      const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
+      expect(result).toMatchObject({
+        partyId: existingPartyId,
+        account: expect.objectContaining({
+          xpub: existingPartyId,
+          cantonResources: expect.objectContaining({ isOnboarded: true }),
+        }),
       });
     });
   });

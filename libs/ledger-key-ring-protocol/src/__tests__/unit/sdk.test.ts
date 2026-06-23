@@ -12,8 +12,9 @@ import {
 import { getEnv } from "@ledgerhq/live-env";
 import { PutCommandsRequest } from "../../api";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
-import { convertLiveCredentialsToKeyPair, SDK } from "../../sdk";
+import { SDK } from "../../sdk";
 import { TrustchainResultType } from "../../types";
+import { convertLiveCredentialsToKeyPair } from "../../utils";
 
 describe("Trustchain SDK", () => {
   // Setup API calls mocks

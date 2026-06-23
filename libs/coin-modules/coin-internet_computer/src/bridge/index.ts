@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { ICP_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
 import type { Transaction, TransactionStatus, ICPSigner } from "../types";
 import { getAccountShape } from "./bridgeHelpers/account";
@@ -49,6 +50,7 @@ function buildAccountBridge(
     createTransaction,
     updateTransaction,
     getTransactionStatus,
+    getEstimationRecipient: () => ICP_DUMMY_ADDRESS,
     prepareTransaction,
     sync,
     receive,

@@ -91,6 +91,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       // undelegate(uint64 validatorId, uint256 amount, uint8 withdrawId).
       // withdrawId is a 0-255 slot identifier per (validator, delegator) pair.
       undelegate: "undelegate",
+      // withdraw(uint64 validatorId, uint8 withdrawId) — finalizes a matured undelegation slot.
+      withdraw: "withdraw",
       // getDelegator(uint64 validatorId, address delegator) — returns stake, rewards, pending changes.
       getStakedBalance: "getDelegator",
       // claimRewards(uint64 validatorId).

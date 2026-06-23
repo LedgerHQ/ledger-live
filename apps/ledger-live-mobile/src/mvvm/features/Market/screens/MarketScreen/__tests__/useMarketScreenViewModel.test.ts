@@ -39,6 +39,7 @@ function mockMarketAssets(overrides: Partial<ReturnType<typeof useMarketAssets>>
   mockedUseMarketAssets.mockReturnValue({
     assets: [createMarketAssetDisplayData()],
     loading: false,
+    isFetchingNextPage: false,
     isError: false,
     emptyState: undefined,
     onEndReached: jest.fn(),
@@ -80,11 +81,12 @@ describe("useMarketScreenViewModel", () => {
     expect(result.current.highlights.highlightCards.length).toBeGreaterThan(0);
   });
 
-  it("forwards the assets and their loading / error flags", () => {
-    mockMarketAssets({ loading: true, isError: false });
+  it("forwards the assets and their loading / fetching / error flags", () => {
+    mockMarketAssets({ loading: true, isFetchingNextPage: true, isError: false });
     const { result } = renderHook(() => useMarketScreenViewModel());
     expect(result.current.assetsList.assets).toHaveLength(1);
     expect(result.current.assetsList.assetsLoading).toBe(true);
+    expect(result.current.assetsList.assetsFetchingNextPage).toBe(true);
     expect(result.current.assetsList.assetsError).toBe(false);
   });
 
@@ -97,6 +99,7 @@ describe("useMarketScreenViewModel", () => {
       button: "asset",
       currency: "BTC",
       page: "Market",
+      category: "all",
     });
     expect(openFromMarket).toHaveBeenCalledWith({
       marketCurrencyId: "bitcoin",
@@ -121,6 +124,7 @@ describe("useMarketScreenViewModel", () => {
 
   it("collapses sections immediately and debounces the asset search query", () => {
     jest.useFakeTimers();
+    mockMarketAssets({ isFetchingNextPage: true });
     const { result } = renderHook(() => useMarketScreenViewModel());
 
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith(defaultMarketAssetsParams);
@@ -130,6 +134,8 @@ describe("useMarketScreenViewModel", () => {
     expect(result.current.isSearchActive).toBe(true);
     expect(result.current.assetsList.assets).toEqual([]);
     expect(result.current.assetsList.assetsLoading).toBe(true);
+    // The footer spinner must stay hidden while the new query is debouncing.
+    expect(result.current.assetsList.assetsFetchingNextPage).toBe(false);
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith(defaultMarketAssetsParams);
 
     act(() => {
@@ -201,6 +207,41 @@ describe("useMarketScreenViewModel", () => {
       ...defaultMarketAssetsParams,
       sorting: "losers",
       timeframe: "30D",
+    });
+  });
+
+  it("exposes the default page tracking properties", () => {
+    const { result } = renderHook(() => useMarketScreenViewModel());
+
+    expect(result.current.pageTracking).toEqual({
+      sortVolume: "desc",
+      sortMarketCap: "desc",
+      sortChange: "desc",
+      timeframe: "1D",
+      category: "all",
+    });
+  });
+
+  it("maps the active sorting and starred category into the page tracking properties", () => {
+    mockMarketListRoute("starred");
+
+    const { result } = renderHook(
+      () => useMarketScreenViewModel(),
+      withAssetDiscoverability(
+        true,
+        (state: State): State => ({
+          ...state,
+          marketListConfig: { ...state.marketListConfig, sorting: "losers", timeframe: "7D" },
+        }),
+      ),
+    );
+
+    expect(result.current.pageTracking).toEqual({
+      sortVolume: "desc",
+      sortMarketCap: "desc",
+      sortChange: "asc",
+      timeframe: "7D",
+      category: "favorites",
     });
   });
 

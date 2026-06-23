@@ -11,6 +11,7 @@ import { scenarioSonic } from "./scenarii/sonic";
 import { scenarioCore } from "./scenarii/core";
 import { scenarioBnb } from "./scenarii/bnb";
 import { scenarioArcTestnetNative } from "./scenarii/arc_testnet";
+import { scenarioRobinhoodTestnet } from "./scenarii/robinhood_testnet";
 // Import tokenFixtures to setup mock store
 import "./tokenFixtures";
 
@@ -40,6 +41,7 @@ describe("EVM Deterministic Tester", () => {
   it("scenario Base", () => safeExecuteScenario(scenarioBase));
   it("scenario BNB (BSC)", () => safeExecuteScenario(scenarioBnb));
   it("scenario Arc Testnet", () => safeExecuteScenario(scenarioArcTestnetNative));
+  it("scenario Robinhood Testnet", () => safeExecuteScenario(scenarioRobinhoodTestnet));
 });
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>

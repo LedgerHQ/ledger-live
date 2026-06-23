@@ -9,6 +9,7 @@ import {
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import hederaCoinConfig, { type HederaCoinConfig } from "../config";
+import { HEDERA_DUMMY_ADDRESS } from "../constants";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
 import resolver from "../signer/index";
 import type { Transaction, TransactionStatus, HederaSigner, HederaAccount } from "../types";
@@ -20,7 +21,7 @@ import { prepareTransaction } from "./prepareTransaction";
 import { receive } from "./receive";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape, buildIterateResult, postSync } from "./synchronisation";
+import { getAccountShape, buildIterateResult } from "./synchronisation";
 import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
@@ -40,7 +41,7 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
   };
 }
 
-const sync = makeSync({ getAccountShape, postSync, shouldMergeOps: false });
+const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
 function buildAccountBridge(
   signerContext: SignerContext<HederaSigner>,
@@ -54,6 +55,7 @@ function buildAccountBridge(
     createTransaction,
     updateTransaction,
     getTransactionStatus,
+    getEstimationRecipient: () => HEDERA_DUMMY_ADDRESS,
     prepareTransaction,
     assignToAccountRaw,
     assignFromAccountRaw,

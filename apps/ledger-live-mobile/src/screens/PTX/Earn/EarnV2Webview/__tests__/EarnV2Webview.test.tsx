@@ -2,13 +2,15 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { EarnV2Webview } from "../index";
-import { NavigatorName } from "~/const";
+import { BASE_NAVIGATOR_ID, NavigatorName } from "~/const";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 const mockNavigate = jest.fn();
+const mockSetOptions = jest.fn();
+const mockGetParent = jest.fn(() => ({ setOptions: mockSetOptions }));
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: mockNavigate }),
+  useNavigation: () => ({ navigate: mockNavigate, getParent: mockGetParent }),
 }));
 
 jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
@@ -69,6 +71,7 @@ describe("EarnV2Webview", () => {
   beforeEach(() => {
     mockWebviewUrl = undefined;
     mockNavigate.mockClear();
+    mockSetOptions.mockClear();
   });
 
   it("renders LiveAppBackground when ptxEarnUi is v2", () => {
@@ -145,6 +148,7 @@ describe("EarnV2Webview", () => {
   });
 
   it("returns to the Earn dashboard tab when the intent flow webview navigates out of the intent route", () => {
+    jest.useFakeTimers();
     mockWebviewUrl = "https://earn.test/v2/android/homescreen?uiVersion=v4";
 
     render(
@@ -156,16 +160,55 @@ describe("EarnV2Webview", () => {
       },
     );
 
+    expect(mockNavigate).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(500);
+
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
       screen: NavigatorName.Earn,
     });
+
+    jest.useRealTimers();
+  });
+
+  it("syncs the Base-stack native header (not route params) when the webview navigates from simulate to deposit", () => {
+    mockWebviewUrl = "https://earn.test/v2/android/deposit?intent=deposit&uiVersion=v4";
+
+    render(
+      <EarnV2Webview
+        manifest={STUB_MANIFEST}
+        appManifestNotFoundError={ERROR}
+        hideMainNavigator
+        inputs={{ intent: "simulate" }}
+      />,
+      {
+        overrideInitialState: withFlagOverrides({
+          ptxEarnUi: { enabled: true, params: { value: "v2" } },
+        }),
+      },
+    );
+
+    // The header is driven imperatively via the parent navigator's options — NOT by mutating
+    // route params (a cross-navigator merge-navigate wipes them and blanks the screen).
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockGetParent).toHaveBeenCalledWith(BASE_NAVIGATOR_ID);
+    const options = mockSetOptions.mock.calls.at(-1)?.[0];
+    // Deposit-specific header: titled, non-closable, and (unlike simulate) no canvas headerStyle —
+    // proving the header tracked the webview's deposit route, not the entry simulate intent.
+    expect(options).toEqual(expect.objectContaining({ headerShown: true, closable: false }));
+    expect(options.headerTitle).toBeTruthy();
+    expect(options.headerStyle).toBeUndefined();
   });
 
   it("does not leave the intent flow presentation while the webview is still on the deposit route", () => {
     mockWebviewUrl = "https://earn.test/v2/android/deposit?intent=deposit&uiVersion=v4";
 
     render(
-      <EarnV2Webview manifest={STUB_MANIFEST} appManifestNotFoundError={ERROR} hideMainNavigator />,
+      <EarnV2Webview
+        manifest={STUB_MANIFEST}
+        appManifestNotFoundError={ERROR}
+        hideMainNavigator
+        inputs={{ intent: "deposit" }}
+      />,
       {
         overrideInitialState: withFlagOverrides({
           ptxEarnUi: { enabled: true, params: { value: "v2" } },

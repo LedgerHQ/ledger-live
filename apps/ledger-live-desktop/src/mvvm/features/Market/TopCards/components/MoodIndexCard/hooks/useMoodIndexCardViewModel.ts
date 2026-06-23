@@ -6,7 +6,7 @@ export const useMoodIndexCardViewModel = () => {
 
   const onClick = () => {
     track("button_clicked", {
-      button: "mood_index",
+      button: "mood_index_definition",
     });
   };
 

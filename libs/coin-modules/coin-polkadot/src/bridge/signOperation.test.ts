@@ -67,7 +67,7 @@ describe("signOperation", () => {
           type: "active",
         },
         sidecar: {
-          url: "https://polkadot-sidecar.coin.ledger.com",
+          url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
           credentials: "",
         },
         staking: {

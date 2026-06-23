@@ -2,10 +2,11 @@ import { useCallback } from "react";
 import { track } from "~/analytics";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
+import type { MarketListCategory } from "~/reducers/types";
 
 const PAGE = "Market";
 
-export function useMarketAssetPress() {
+export function useMarketAssetPress(category: MarketListCategory) {
   const { openFromMarket } = useAssetDetailNavigation();
 
   return useCallback(
@@ -16,6 +17,7 @@ export function useMarketAssetPress() {
         button: "asset",
         currency: asset.ticker.toUpperCase(),
         page: PAGE,
+        category,
       });
       openFromMarket({
         marketCurrencyId: asset.id,
@@ -23,6 +25,6 @@ export function useMarketAssetPress() {
         source: PAGE,
       });
     },
-    [openFromMarket],
+    [openFromMarket, category],
   );
 }

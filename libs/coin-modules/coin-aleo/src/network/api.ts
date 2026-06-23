@@ -99,6 +99,7 @@ async function getAccountPublicTransactions({
     limit: limit.toString(),
     sort: order,
     direction,
+    token_info: "true",
     ...(cursor && { cursor_block_number: cursor }),
   });
 

@@ -201,9 +201,9 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
             coin-apps
@@ -368,7 +368,7 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ steps.cache-keys.outputs.ios_native_key }}
@@ -382,7 +382,7 @@ jobs:
 
       - name: Check if Android Native Build exists already
         id: check-android-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
           key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -396,7 +396,7 @@ jobs:
 
       - name: Check if iOS JS Build exists already
         id: check-ios-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.ios_js_key }}
@@ -410,7 +410,7 @@ jobs:
 
       - name: Check if Android JS Build exists already
         id: check-android-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.android_js_key }}
@@ -548,7 +548,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
-      - uses: nick-fields/retry@v3
+      - uses: nick-fields/retry@v4
         name: install dependencies
         id: install-dependencies
         with:
@@ -808,7 +808,7 @@ jobs:
         timeout-minutes: 20
         with:
           coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build CLI
@@ -877,7 +877,7 @@ jobs:
     needs: [determine-builds, detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
-      result: ${{ steps.summary.outputs.test_result }}
+      summary_message: ${{ steps.summary.outputs.summary_message }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
       missingShards: ${{ steps.aggregate.outputs.missingShards }}
     steps:
@@ -890,6 +890,13 @@ jobs:
       - name: Remove Detox simulator artifacts
         if: ${{ !cancelled() }}
         run: rm -rf ios-test-artifacts/ios.sim.release.*
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ios-test-artifacts
+          platform: iOS
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}
         id: upload
@@ -899,13 +906,7 @@ jobs:
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
-      - name: Get summary
-        id: summary
-        if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-        with:
-          allure-results-path: ios-test-artifacts
-          platform: iOS
+          summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -952,7 +953,7 @@ jobs:
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
-      result: ${{ steps.summary.outputs.test_result }}
+      summary_message: ${{ steps.summary.outputs.summary_message }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
       missingShards: ${{ steps.aggregate.outputs.missingShards }}
     needs: [determine-builds, detox-tests-android]
@@ -966,6 +967,13 @@ jobs:
       - name: Remove Detox emulator artifacts
         if: ${{ !cancelled() }}
         run: rm -rf android-test-artifacts/android.emu.release.*
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: android-test-artifacts
+          platform: android
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         if: ${{ !cancelled() }}
@@ -975,13 +983,7 @@ jobs:
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
-      - name: Get summary
-        id: summary
-        if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-        with:
-          allure-results-path: android-test-artifacts
-          platform: android
+          summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -1130,7 +1132,9 @@ jobs:
           echo "xray_key=$key" >> $GITHUB_OUTPUT
       - name: Write Xray report link in summary
         shell: bash
-        run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
+        env:
+          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
+        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
 
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
@@ -1147,7 +1151,7 @@ jobs:
       TESTS_TYPE: ${{ inputs.tests_type }}
     steps:
       - name: format message
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         id: message
         with:
           script: |
@@ -1172,7 +1176,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🍏 iOS - ${{ needs.determine-builds.outputs.ios_device }}: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
+                  "text": `- 🍏 iOS - ${{ needs.determine-builds.outputs.ios_device }}: ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];
@@ -1182,7 +1186,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android - ${{ needs.determine-builds.outputs.android_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                  "text": `- 🤖 Android - ${{ needs.determine-builds.outputs.android_device }}: ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];
@@ -1250,33 +1254,34 @@ jobs:
               .concat(infoBlock);
 
             const result = {
+                text: " ",
                 attachments: [
                   {
                     color: process.env.ANDROID_STATUS !== 'success' || (process.env.IOS_STATUS !== 'success' && process.env.ANDROID_ONLY == 'false')
                       ? "#FF333C"
                       : "#33FF39",
+                    fallback: text,
                     blocks,
                   },
                 ],
               };
 
-            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify({ ...result, channel: "CTMQ0S5SB" }, null, 2));
+            fs.writeFileSync(`./payload-slack-content-alt.json`, JSON.stringify({ ...result, channel: "C05FKJ7DFAP" }, null, 2));
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
-          channel-id: "CTMQ0S5SB"
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       - name: post to a Slack channel
         if: ${{ contains(fromJson('["release"]'), github.ref_name) || contains(fromJson('["release, develop"]'), inputs.ref) || github.event_name == 'schedule' }}
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
-          channel-id: "C05FKJ7DFAP"
-          payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          payload-file-path: "./payload-slack-content-alt.json"
 
   merge-ios-timings:
     name: Merge iOS Timing Files
@@ -1285,7 +1290,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -1314,7 +1319,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}

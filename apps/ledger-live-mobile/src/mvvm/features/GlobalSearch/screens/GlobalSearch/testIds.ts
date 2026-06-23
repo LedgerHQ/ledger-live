@@ -1,6 +1,7 @@
 export const GLOBAL_SEARCH_TEST_IDS = {
   screen: "global-search-screen",
   searchInput: "global-search-input",
+  searchPlaceholder: "global-search-placeholder",
   defaultSections: "global-search-default-sections",
   cryptosSection: "global-search-cryptos-section",
   stocksSection: "global-search-stocks-section",

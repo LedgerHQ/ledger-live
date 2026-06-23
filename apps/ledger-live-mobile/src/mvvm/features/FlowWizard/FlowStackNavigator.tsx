@@ -5,10 +5,10 @@ import {
   type NativeStackHeaderRightProps,
   type NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
-import { useTheme } from "styled-components/native";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigatorName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
 import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
@@ -86,12 +86,13 @@ export function FlowStackNavigator<
   stepRegistry,
   flowConfig,
   screenOptions: baseScreenOptions,
+  disableBackGesture = false,
   getScreenName,
   getScreenOptions,
   getInitialParams,
   onClose,
 }: FlowStackNavigatorProps<TStep, TStepConfig>) {
-  const { colors } = useTheme();
+  const { theme } = useLumenTheme();
   const route = useRoute<NavigationProps["route"]>();
   const navigation = useNavigation<StackNavigatorNavigation<AddAccountsNavigatorParamList>>();
 
@@ -120,11 +121,11 @@ export function FlowStackNavigator<
 
   const defaultStackNavigationConfig = useMemo(
     () => ({
-      ...getStackNavigatorConfig(colors, true),
+      ...getStackNavigationConfigV4(theme),
       headerRight: createHeaderRightClose(handleClose),
       headerShown: false,
     }),
-    [colors, handleClose],
+    [theme, handleClose],
   );
 
   const handleBackPress = useCallback(() => {
@@ -156,7 +157,7 @@ export function FlowStackNavigator<
         const canGoBack = stepConfig?.canGoBack && index > 0;
         const defaultOptions = {
           ...TransparentHeaderNavigationOptions,
-          gestureEnabled: Platform.OS === "ios" && canGoBack,
+          gestureEnabled: Platform.OS === "ios" && canGoBack && !disableBackGesture,
           headerLeft: canGoBack
             ? () => <NavigationHeaderBackButton onPress={handleBackPress} />
             : () => null,
@@ -196,6 +197,7 @@ export function FlowStackNavigator<
     getInitialParams,
     handleClose,
     handleBackPress,
+    disableBackGesture,
   ]);
 
   // Merge base screen options with default config

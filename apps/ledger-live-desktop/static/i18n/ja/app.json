@@ -408,6 +408,42 @@
         "refunded" : "返金済み"
       }
     },
+    "modals" : {
+      "transactionStatus" : {
+        "title" : "スワップ{{sendTicker}}→{{receiveTicker}}",
+        "sections" : {
+          "status" : {
+            "heading" : "ステータス",
+            "sendPending" : "{{ticker}}を送信中",
+            "sendCompleted" : "{{ticker}}を送信済み",
+            "receivePending" : "{{ticker}}を受け取る",
+            "receiveCompleted" : "{{ticker}}を受け取る"
+          },
+          "details" : {
+            "networkFees" : "ネットワーク手数料",
+            "receiveAccount" : "受け取るアカウント",
+            "provider" : "プロバイダー",
+            "swapId" : "スワップID"
+          }
+        },
+        "statusLabels" : {
+          "pending" : "継続中",
+          "onhold" : "保留中",
+          "expired" : "期限切れ",
+          "finished" : "完了",
+          "refunded" : "返金済み",
+          "cancelled" : "キャンセル済み",
+          "unknown" : "不明"
+        },
+        "actions" : {
+          "viewInExplorer" : "エクスプローラーで表示",
+          "copied" : "コピー済み"
+        },
+        "accessibility" : {
+          "copySwapId" : "スワップIDをコピー"
+        }
+      }
+    },
     "exchangeDrawer" : {
       "title" : "取引を確認",
       "completed" : {
@@ -1609,6 +1645,23 @@
   },
   "market" : {
     "title" : "マーケット",
+    "topCards" : {
+      "error" : "問題が発生しました。",
+      "moodIndex" : {
+        "title" : "市場ムード指数"
+      },
+      "globalMarketCap" : {
+        "title" : "マーケットキャップ総額",
+        "period" : "今日"
+      },
+      "altSeason" : {
+        "title" : "シーズン",
+        "levels" : {
+          "bitcoin" : "ビットコイン",
+          "altcoin" : "アルトコイン"
+        }
+      }
+    },
     "currency" : "通貨",
     "rangeLabel" : "時刻",
     "goBack" : "戻る",
@@ -1622,12 +1675,36 @@
       "applyFilters" : "フィルターを適用",
       "clearAll" : "全てクリア"
     },
+    "assetsTitle" : "資産",
+    "marketTable" : {
+      "crypto" : "名前",
+      "price" : "市場価格",
+      "volume" : "ボリューム",
+      "change" : "変更",
+      "marketCap" : "マーケットキャップ",
+      "actions" : "アクション",
+      "menu" : {
+        "more" : "詳細",
+        "buySell" : "購入/売却",
+        "addToFavourites" : "お気に入りに追加",
+        "removeFromFavourites" : "お気に入りから削除"
+      }
+    },
     "marketList" : {
       "crypto" : "暗号資産",
       "price" : "価格",
       "change" : "変更",
       "marketCap" : "マーケットキャップ",
       "last7d" : "過去7日間"
+    },
+    "assets" : {
+      "categories" : {
+        "accessibilityLabel" : "資産カテゴリー",
+        "all" : "全て",
+        "stocks" : "株",
+        "favorites" : "お気に入り"
+      },
+      "emptyFavorites" : "まだお気に入りがありません"
     },
     "detailsPage" : {
       "priceStatistics" : "価格統計",
@@ -1651,6 +1728,11 @@
       "1W_label" : "1週",
       "1M_label" : "1月",
       "1Y_label" : "1年",
+      "1H_fullLabel" : "1時間",
+      "1D_fullLabel" : "1日間",
+      "1W_fullLabel" : "1週間",
+      "1M_fullLabel" : "1か月",
+      "1Y_fullLabel" : "1年",
       "1h" : "1時間",
       "24h" : "24時間",
       "7d" : "7日間",
@@ -4276,9 +4358,12 @@
               "description" : "{{currencyTicker}}資産をバリデーターにデリゲートすることで報酬を得ることができます。",
               "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "資産はデリゲート解除後に使用可能"],
               "warning" : {
-                "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
-              },
-              "seiAssociationWarning" : "Seiアカウントはまだオンチェーンでリンクされていません。アカウントの最初の送信トランザクションがオンチェーンで承認されるまで、デリゲートは失敗します。まずは任意のアドレスに少額のSEIを送付し、承認を待ち、その後戻ってデリゲートしてください。"
+                "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。",
+                "seiAssociationWarning" : {
+                  "description" : "デリゲートするには、ご自身のアドレスを含む任意のアドレスに任意の数量を送金し、アカウントを有効化する必要があります。これはSeiネットワークの要件です。",
+                  "learnMore" : "詳細はこちら"
+                }
+              }
             },
             "amount" : {
               "title" : "数量"
@@ -4361,6 +4446,33 @@
               "success" : {
                 "title" : "資産のデリゲートを正常に解除しました。",
                 "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>からデリゲート解除されました。",
+                "cta" : "詳細を表示"
+              },
+              "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "cta" : "出金",
+        "flow" : {
+          "title" : "出金",
+          "steps" : {
+            "withdraw" : {
+              "title" : "出金",
+              "warning" : "デリゲート解除された数量はタイムロックを完了し、利用可能残高に戻されます。",
+              "fields" : {
+                "validator" : "バリデータ"
+              }
+            },
+            "connectDevice" : {
+              "title" : "デバイス"
+            },
+            "confirmation" : {
+              "title" : "確認",
+              "success" : {
+                "title" : "資産の引き出しに成功しました。",
+                "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>から引き出されました",
                 "cta" : "詳細を表示"
               },
               "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
@@ -4624,6 +4736,10 @@
     }
   },
   "tezos" : {
+    "operationTypes" : {
+      "UNSTAKE" : "ステーキング解除",
+      "FINALIZE_UNSTAKE" : "ステーキング解除済み"
+    },
     "earnChoice" : {
       "title" : "Tezosの報酬獲得：デリゲートまたはステーキング",
       "description" : "完全な主導権を握りながら、ベーカーにデリゲートしてTezos（XTZ）で報酬を獲得しましょう。より高いリターンを得るには、リスクが低いことを理解した上で、XTZをステーキングしてください。資産を運用するために最適な方法を選びましょう。",
@@ -4702,7 +4818,7 @@
             "success" : {
               "title" : "資産が正常にステーキングされました",
               "text" : "{{amount}}をステーキングしました。ブロックチェーンによるトランザクションの承認後、アカウント残高が更新されます。",
-              "cta" : "報酬獲得ダッシュボードを開く"
+              "cta" : "アカウントダッシュボードを開く"
             },
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",
             "howItWorks" : "ステーキングの仕組み"
@@ -4720,8 +4836,8 @@
         "description" : "現在のベーカーでXTZをステーキングしました。デリゲーションを終了する前に、資金のステーキング解除をしてください。"
       },
       "steps" : {
-        "0" : "報酬獲得メニューを開き、ステーキング解除を選択する。",
-        "1" : "デバイスで数量を確認し、ステーキング解除のトランザクションを送信する。",
+        "0" : "Tezosアカウントのダッシュボードを開き、ステーキングセクションでステーキング解除オプションを選択します。",
+        "1" : "最大数量をステーキング解除し、デバイスでステーキング解除のトランザクションを送信する。",
         "2" : "ステーキング解除期間が完了するまで約4日待機してください。",
         "3" : "引き出した後は、ベーカーを変更したりデリゲートを解除したりできます。"
       },
@@ -5004,6 +5120,10 @@
           "title" : "ステーブルコインのプリセット",
           "desc" : "人気のステーブルコインでEthereum、Arbitrum、Optimism、Base、Solana、Tron、Algorandのアカウントを生成（ネットワークごとに最大5つ）"
         },
+        "stocksGenerate" : {
+          "title" : "株式のプリセット",
+          "desc" : "DADA（カテゴリー=株式）の上位トークン化株式を含むアカウントを、そのネットワーク配下のサブアカウントとして生成します。"
+        },
         "currencySelector" : {
           "placeholder" : "通貨を選択...",
           "searchPlaceholder" : "検索",
@@ -5022,7 +5142,10 @@
           "generateAccountsQuick" : "{{count}}個のアカウントを生成",
           "generateEmptyAccount" : "空のアカウントを生成",
           "generateStablecoinAccounts" : "{{count}}ステーブルコインアカウントを生成",
-          "generateStablecoinAccounts_other" : "{{count}}個のステーブルコインのアカウントを生成"
+          "generateStablecoinAccounts_other" : "{{count}}個のステーブルコインのアカウントを生成",
+          "generateStockAccounts" : "{{count}}個の株式アカウントを生成",
+          "generateStockAccounts_other" : "{{count}}個の株式アカウントを生成",
+          "loadingStocks" : "株式データを読み込み中…"
         },
         "alerts" : {
           "selectCurrency" : "少なくとも1つの通貨を選択してください",
@@ -6263,6 +6386,10 @@
       "transfer_private" : "プライベートの受取人",
       "convert_public_to_private" : "プライベートの受取人",
       "convert_private_to_public" : "公開受取人",
+      "transfer_token_public" : "公開受取人",
+      "transfer_token_private" : "プライベートの受取人",
+      "convert_token_public_to_private" : "プライベートの受取人",
+      "convert_token_private_to_public" : "公開受取人",
       "delegate" : "バリデーター",
       "redelegate" : "バリデーター",
       "undelegate" : "バリデーター",
@@ -8621,11 +8748,17 @@
     "noDeviceTitle" : "安全な暗号資産ウォレット"
   },
   "marketBanner" : {
-    "title" : "市場を見る",
+    "title" : "マーケット",
     "genericError" : "接続に失敗",
     "cta" : "すべて表示",
     "scrollLeft" : "左にスクロール",
     "scrollRight" : "右にスクロール",
+    "ranking" : {
+      "trending" : "トレンド",
+      "gainers" : "上昇",
+      "losers" : "下降",
+      "favorites" : "お気に入り"
+    },
     "fearAndGreed" : {
       "title" : "市場ムード"
     }
@@ -8641,7 +8774,23 @@
     "dialog" : {
       "title" : "市場ムード指数",
       "content" : "特にボラティリティ、市場のモメンタム、ソーシャルトレンドに基づいて、全体的な市場心理を0から100まで表示します。低い価値は恐怖を示し、高い価値は貪欲を示します。",
-      "disclaimer" : "データはCoinMarketCapの恐怖と強欲指数から取得されたものであり、情報提供のみを目的としています。",
+      "disclaimer" : "データはCoinMarketCapから取得しています。情報提供のみを目的として提供されています。",
+      "cta" : "了解"
+    }
+  },
+  "marketCapCard" : {
+    "dialog" : {
+      "title" : "マーケットキャップ総額",
+      "content" : "総マーケットキャップは、すべての暗号資産の時価総額の合計を表します。",
+      "disclaimer" : "データはCoinMarketCapから取得しています。情報提供のみを目的として提供されています。",
+      "cta" : "了解"
+    }
+  },
+  "altSeasonCard" : {
+    "dialog" : {
+      "title" : "アルトコイン指数",
+      "content" : "アルトコイン指数は、他の暗号資産と比較したビットコインのパフォーマンスを示しています。数値が高いほど、アルトコインがビットコインよりも好調であることを示します。",
+      "disclaimer" : "データはCoinMarketCapから取得しています。情報提供のみを目的として提供されています。",
       "cta" : "了解"
     }
   },
@@ -8656,6 +8805,7 @@
   "assets" : {
     "cryptos" : "暗号資産",
     "stablecoins" : "ステーブルコイン",
+    "stocks" : "株",
     "cryptoAccounts" : "暗号資産アカウント",
     "accountsCount_one" : "{{count}}アカウント",
     "accountsCount_other" : "{{count}}アカウント",
@@ -8701,6 +8851,9 @@
   "cryptoAssets" : {
     "title" : "暗号資産"
   },
+  "stocks" : {
+    "explore" : "すべて見る"
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
     "entry" : {
@@ -8709,6 +8862,13 @@
     }
   },
   "topBar" : {
+    "searchPlaceholder" : "資産を検索",
+    "search" : {
+      "noAssetFound" : "資産が見つかりません",
+      "error" : "接続に失敗しました",
+      "cryptos" : "暗号資産",
+      "stocks" : "株"
+    },
     "history" : {
       "cta" : "トランザクション"
     },
@@ -9022,7 +9182,32 @@
     "actionsList" : {
       "help" : "ヘルプ",
       "recover" : "[L] Recover",
+      "backup" : "バックアップ",
       "refer" : "紹介"
+    },
+    "backupHub" : {
+      "title" : "ウォレットのバックアップ",
+      "description" : "シードフレーズ復元のための複数のバックアップソリューションを組み合わせることで、資産を保護できます。",
+      "back" : "戻る",
+      "sections" : {
+        "digital" : "デジタルIDベースのバックアップ",
+        "physical" : "物理的なバックアップ"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "紛失しないバックアップを作成する",
+        "inProgress" : "有効化を完了",
+        "done" : "バックアップの管理",
+        "discover" : "アプリ一覧"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "description" : "PINコード保護のスマートカード"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "24単語メタルストレージ",
+        "description" : "耐火・耐水性を備えた保護。"
+      }
     },
     "myLedger" : {
       "title" : "My Ledger",

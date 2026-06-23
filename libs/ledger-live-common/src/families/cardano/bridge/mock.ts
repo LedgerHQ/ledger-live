@@ -17,7 +17,7 @@ import {
 } from "@ledgerhq/errors";
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "@ledgerhq/coin-cardano/errors";
 import { buildTransaction } from "@ledgerhq/coin-cardano/buildTransaction";
-import { CARDANO_MAX_SUPPLY } from "@ledgerhq/coin-cardano/constants";
+import { CARDANO_DUMMY_ADDRESS, CARDANO_MAX_SUPPLY } from "@ledgerhq/coin-cardano/constants";
 import {
   getSerializedAddressParameters,
   updateTransaction,
@@ -174,6 +174,7 @@ const accountBridge: AccountBridge<CardanoTransaction> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => CARDANO_DUMMY_ADDRESS,
 };
 
 const currencyBridge: CurrencyBridge = {

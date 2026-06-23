@@ -65,6 +65,8 @@ export * from "./currencyPolygonAmoy";
 export * from "./currencyPolygonZkEvm";
 export * from "./currencyPolygonZkEvmTestnet";
 export * from "./currencyQuicksilver";
+export * from "./currencyRobinhood";
+export * from "./currencyRobinhoodTestnet";
 export * from "./currencyRsk";
 export * from "./currencyScroll";
 export * from "./currencyScrollSepolia";

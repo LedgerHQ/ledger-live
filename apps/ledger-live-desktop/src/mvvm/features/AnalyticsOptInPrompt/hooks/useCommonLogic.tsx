@@ -15,7 +15,6 @@ import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
-import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -41,15 +40,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
 
-  const variant = getVariant(lldAnalyticsOptInPromptFlag?.params?.variant);
-
-  const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
   const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
-
-  const urlByVariant = {
-    [AB_TESTING_VARIANTS.A]: trackingPolicyUrl,
-    [AB_TESTING_VARIANTS.B]: privacyPolicyUrl,
-  };
 
   const openAnalyticsOptInPrompt = useCallback(
     (routePath: string, callBack: () => void) => {
@@ -95,17 +86,15 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onClose: () => setIsAnalyticsOptInPromptOpened(false),
     isOpened: isAnalyticsOptInPromptOpened,
     entryPoint: entryPoint,
-    variant,
   };
 
   const handleOpenPrivacyPolicy = (page?: string) => {
-    openURL(urlByVariant[variant]);
+    openURL(trackingPolicyUrl);
     track(
       "button_clicked",
       {
         button: "Learn more link",
         flow,
-        variant,
         page,
       },
       shouldWeTrack,
@@ -124,7 +113,3 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     handleOpenPrivacyPolicy,
   };
 };
-
-export function getVariant(variant?: ABTestingVariants | undefined): ABTestingVariants {
-  return variant === AB_TESTING_VARIANTS.B ? AB_TESTING_VARIANTS.B : AB_TESTING_VARIANTS.A;
-}

@@ -15,7 +15,7 @@ type CarouselCardProps = {
   id: string;
   width: number;
   cardProps: WalletContentCard;
-  index?: number;
+  index: number;
 };
 
 const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
@@ -25,6 +25,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
   const { handleHide, handlePress, mediaHeader } = useCarouselCardModel({
     cardProps,
+    displayedPosition: index,
     logClickCard,
     dismissCard,
     trackContentCardEvent,

@@ -71,6 +71,7 @@ export default function EditTransactionSummaryView({
     BigNumber.isBigNumber(amount) && BigNumber.isBigNumber(totalSpent)
       ? !amount.eq(totalSpent)
       : amount !== totalSpent;
+
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen category="SendFunds" name="Summary" currencyName={currencyName} />

@@ -25,11 +25,15 @@ export type MarketNavigatorStackParamList = {
   };
 };
 
-interface NavigatorProps {
-  Stack: ReturnType<typeof createNativeStackNavigator<BaseNavigatorStackParamList>>;
+interface NavigatorProps<NavId extends string | undefined = string | undefined> {
+  // Generic over the navigator id so any Base stack works regardless of whether it sets an id
+  // (e.g. the production stack now carries BASE_NAVIGATOR_ID, test stacks do not).
+  Stack: ReturnType<typeof createNativeStackNavigator<BaseNavigatorStackParamList, NavId>>;
 }
 
-export default function MarketNavigator({ Stack }: NavigatorProps) {
+export default function MarketNavigator<NavId extends string | undefined = string | undefined>({
+  Stack,
+}: Readonly<NavigatorProps<NavId>>) {
   const { t } = useTranslation();
   const { theme } = useLumenTheme();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");

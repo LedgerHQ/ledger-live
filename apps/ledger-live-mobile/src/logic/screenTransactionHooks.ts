@@ -307,9 +307,11 @@ export const broadcastSignedTx = async (
 export function useSignedTxHandler({
   account,
   parentAccount,
+  transaction,
 }: SignTransactionArgs & {
   account: AccountLike;
   parentAccount: Account | null | undefined;
+  transaction?: Transaction | null;
 }) {
   const mevProtected = useSelector(mevProtectionSelector);
   const navigation = useNavigation();
@@ -320,6 +322,7 @@ export function useSignedTxHandler({
   const broadcast = useBroadcast({
     account,
     parentAccount,
+    transaction,
     broadcastConfig: {
       mevProtected,
       source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow } },

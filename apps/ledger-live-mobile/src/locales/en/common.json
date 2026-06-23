@@ -910,9 +910,6 @@
     "DustLimit": {
       "title": "Amount is lower than dust limit"
     },
-    "StratisDown2021Warning": {
-      "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
-    },
     "SwapExchangeRateAmountTooLow": {
       "title": "Amount must be higher than {{minAmountFromFormatted}}"
     },
@@ -959,6 +956,10 @@
     "TaprootNotActivated": {
       "title": "Taproot mainnet is not activated yet"
     },
+    "RbfBuildError": {
+      "title": "Cannot replace this transaction",
+      "description": "The fee increase required to replace this transaction can't be applied with the current parameters. Try a different fee amount or cancel the operation."
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support.",
@@ -1002,6 +1003,9 @@
     },
     "SolanaUseAllAmountStakeWarning": {
       "title": "Ensure you have enough balance left for future transactions fees"
+    },
+    "SolanaStakeAccountAmountTooLow": {
+      "title": "Amount is too low for staking. Minimum is {{minimumAmount}}."
     },
     "SolanaTxSimulationFailedWhilePendingOp": {
       "title": "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
@@ -1169,6 +1173,9 @@
     "XrpInvalidMemo": {
       "title": "Memo format is wrong, it should be less than 4294967296"
     },
+    "XrpDestinationTagRequired": {
+      "title": "A destination tag is required for this recipient"
+    },
     "HederaMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 100 characters"
     },
@@ -1254,13 +1261,13 @@
       "description": "Please try again or contact Ledger Support."
     },
     "TonExcessFee": {
-      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+      "title": "It constitutes a token transfer. You will pay 0.1 GRAM in fees, and any extra will be returned to you."
     },
     "TonNotEnoughBalanceInParentAccount": {
-      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+      "title": "Insufficient funds in main account (GRAM) to calculate fees. The minimum required balance is 0.1 GRAM."
     },
     "TonMinimumRequired": {
-      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+      "title": "Insufficient funds. The minimum required balance is 0.02 GRAM."
     },
     "BackupAppDataError": {
       "title": "Error during app data backup"
@@ -1322,6 +1329,9 @@
       "select": "Select Account"
     }
   },
+  "lineChart": {
+    "error": "Unable to load chart"
+  },
   "location": {
     "titleServiceRequired": "Location services required",
     "descriptionServiceRequired": "Ledger Wallet requires location services to pair your device through Bluetooth.",
@@ -1335,6 +1345,28 @@
     "appNotFound": "Borrow app not found",
     "infoModal": {
       "close": "Close"
+    }
+  },
+  "backupHub": {
+    "featureIntro": {
+      "title": "Create a backup you can't lose",
+      "subtitle": "An encrypted backup of your Secret Recovery Phrase helps you get back access, no matter what.",
+      "primaryCta": "Try 1 month free",
+      "secondaryCta": "Log in",
+      "items": {
+        "secure": {
+          "title": "Backup tied to your ID",
+          "subtitle": "Only you can authorize a wallet recovery."
+        },
+        "access": {
+          "title": "Advanced backup security",
+          "subtitle": "Encrypted, fragmented, and secured in hardware security modules."
+        },
+        "restore": {
+          "title": "Restore access anytime",
+          "subtitle": "All you need is your ID, Ledger Wallet, and a Ledger device."
+        }
+      }
     }
   },
   "earn": {
@@ -1463,8 +1495,14 @@
   },
   "globalSearch": {
     "searchPlaceholder": "Search assets",
+    "searchPlaceholders": {
+      "crypto": "Search crypto",
+      "stablecoins": "Search stablecoins",
+      "stock": "Search stocks",
+      "addresses": "Search addresses"
+    },
     "sections": {
-      "cryptos": "Cryptos",
+      "cryptos": "Crypto",
       "stocks": "Stocks"
     }
   },
@@ -1719,6 +1757,32 @@
       "cta": "Fund your wallet",
       "title": "Start by funding your wallet",
       "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
+    }
+  },
+  "q2WalletV4Tour": {
+    "cta": {
+      "start": "See what's new",
+      "next": "Next",
+      "done": "Got it"
+    },
+    "portfolio": {
+      "title": "Smarter portfolio management. Clearer paths to growth"
+    },
+    "balance": {
+      "title": "One balance for each asset",
+      "subTitle": "Multi-chain assets like USDT are now shown as one total. Simple, accurate, clear."
+    },
+    "returns": {
+      "title": "Your returns, front and center",
+      "subTitle": "See profit and loss on every asset, across your portfolio and analytics page."
+    },
+    "earn": {
+      "title": "Test your earn potential",
+      "subTitle": "Simulate what rewards you can earn and build a growth plan that fits your goals."
+    },
+    "protocols": {
+      "title": "More protocols, more rewards",
+      "subTitle": "Stablecoins and top picks, surfaced right in your wallet. Less searching. More deciding."
     }
   },
   "discover": {
@@ -3287,6 +3351,7 @@
   "crypto": {
     "title": "Crypto",
     "stablecoinTitle": "Stablecoin",
+    "stocksTitle": "Stocks",
     "errorState": "An error occurred while loading your assets",
     "emptyState": "No assets to display"
   },
@@ -4143,10 +4208,10 @@
       "incompatibility": {
         "explore_compatible_devices": "Explore compatible devices",
         "contact_support": "Contact customer support",
-        "ton_title": "Ledger Nano S™ does not support swapping Ton",
-        "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
-        "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_title": "Ledger Nano S™ does not support swapping Gram",
+        "ton_description": "To swap Gram, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_tokens_title": "Ledger Nano S™ does not support swapping Gram Tokens",
+        "ton_tokens_description": "To swap Gram Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
         "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "near_title": "Ledger Nano S™ does not support swapping Near",
@@ -4476,7 +4541,16 @@
       "processingTransaction": "Your transaction is being processed",
       "sign": {
         "title": "Continue on your Ledger {{wording}}",
-        "description": "Follow the instructions displayed on your Secure Touchscreen."
+        "description": "Follow the instructions displayed on your Secure Touchscreen.",
+        "cancelled": {
+          "title": "Transaction canceled",
+          "description": "You rejected the transaction. Your funds won't be affected.",
+          "close": "Close",
+          "retry": "Try again"
+        }
+      },
+      "confirmation": {
+        "viewTransaction": "View transaction"
       },
       "gasOptionsSync": {
         "warningTitle": "Unable to refresh network fees",
@@ -6723,15 +6797,15 @@
     "unstakeRequired": {
       "changeBaker": {
         "title": "Unstake before changing baker",
-        "description": "You have staked XTZ with your current baker. Unstake your funds before delegating to a new baker."
+        "description": "You have staked XTZ with your current baker. Unstake all your funds before delegating to a new baker."
       },
       "endDelegation": {
         "title": "Unstake before ending delegation",
-        "description": "You have staked XTZ with your current baker. Unstake your funds before ending the delegation."
+        "description": "You have staked XTZ with your current baker. Unstake all your funds before ending the delegation."
       },
       "steps": {
-        "0": "Open the Earn menu and select Unstake.",
-        "1": "Confirm the amount and submit the unstake transaction on your device.",
+        "0": "Open the Tezos Account dashboard and select the Unstake option in your staking section.",
+        "1": "Unstake the MAX amount and submit the unstake transaction on your device.",
         "2": "Wait ~4 days for the unstake period to complete.",
         "3": "Once withdrawn, you can change baker or end delegation."
       },
@@ -8223,8 +8297,8 @@
       "filters": {
         "accessibilityLabel": "Open asset filters",
         "title": "Filters",
-        "sorting": "Sorting",
-        "timeframe": "Timeframe",
+        "sorting": "Sort assets by",
+        "timeframe": "Choose timeframe",
         "sortingOptions": {
           "marketCap": "Market cap",
           "volume": "Volume",
@@ -8974,41 +9048,6 @@
           "accept": "Accept",
           "acceptAll": "Accept All",
           "confirm": "Validate"
-        },
-        "infoText": {
-          "info": "You can revoke your consent any time in the app settings.",
-          "link": "Learn more about our Tracking Policy"
-        }
-      }
-    },
-    "variantB": {
-      "main": {
-        "title": "Let's improve Ledger Wallet together",
-        "description": "Sharing your Ledger Wallet analytics data helps us understand how people use Ledger Wallet, fix bugs, and offer an improved user experience.",
-        "bulletPoints": {
-          "1": "Analytics data includes page visits, clicks.",
-          "2": "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
-          "3": "Analytics are completely anonymous. We can’t see or collect your personal information."
-        },
-        "ctas": {
-          "refuse": "Refuse",
-          "share": "Share"
-        },
-        "infoText": {
-          "info": "You can revoke your consent any time in the app settings.",
-          "link": "Learn more about our Tracking Policy"
-        }
-      },
-      "details": {
-        "title": "Get a personalized experience",
-        "description": "Sharing your Ledger Wallet personalization data lets us display content that matches your preferences.",
-        "bulletPoints": {
-          "1": "Personalization data includes conversion data, clicks, page visits.",
-          "2": "We cannot track or collect any of your personal or portfolio information."
-        },
-        "ctas": {
-          "refuse": "Refuse",
-          "allow": "Allow"
         },
         "infoText": {
           "info": "You can revoke your consent any time in the app settings.",
@@ -9924,6 +9963,30 @@
       "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
+    },
+    "backupHub": {
+      "title": "Backups of your Secret Recovery Phrase",
+      "description": "Don't lose access to your assets — back up your secret recovery phrase across multiple formats.",
+      "compareFooter": "Compare all backup methods",
+      "sections": {
+        "digital": "ID-linked digital backup",
+        "physical": "Physical backups"
+      },
+      "recover": {
+        "title": "Ledger Recover",
+        "notSubscribed": "Restore access by verifying your ID.",
+        "inProgress": "Complete activation",
+        "done": "Manage your backup",
+        "discover": "Discover"
+      },
+      "recoveryKey": {
+        "title": "Ledger Recovery Key",
+        "description": "A PIN-protected smart card."
+      },
+      "secretRecoveryPhrase": {
+        "title": "24-word metal storage",
+        "description": "Fire and water resistant protection."
+      }
     },
     "help": {
       "title": "Help",

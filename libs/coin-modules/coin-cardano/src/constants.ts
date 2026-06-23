@@ -17,3 +17,6 @@ export const CARDANO_EPOCH_PARAMS_ENDPOINT = getEnv("CARDANO_EPOCH_PARAMS_ENDPOI
 export const CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT = getEnv(
   "CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT",
 );
+
+export const CARDANO_DUMMY_ADDRESS =
+  "addr1qykrup76qz622wxgmqtuumr6mn3vvkqc4jgxj6ytqudchccayfawlf9hwv2fzuygt2km5v92kvf8e3s3mk7ynxw77cwq80z2rm";

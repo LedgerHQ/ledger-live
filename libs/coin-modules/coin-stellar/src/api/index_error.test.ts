@@ -1,7 +1,9 @@
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import nock from "nock";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { StellarMemo } from "../types";
 import { createApi } from ".";
+
 describe("Stellar Api", () => {
   let module: CoinModuleApi<StellarMemo>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
@@ -11,10 +13,6 @@ describe("Stellar Api", () => {
       .get(/.*/)
       .reply(() => {
         return [429, { error: "whatever, only status code is important" }];
-      })
-      .get(/.*/)
-      .reply(() => {
-        return [200, { _links: {}, _embedded: { records: [] } }];
       });
 
     module = createApi({
@@ -24,10 +22,11 @@ describe("Stellar Api", () => {
     });
   });
 
-  describe("listOperations can handle 429 errors", () => {
-    it("retrieved operations", async () => {
-      const { items: txs } = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
-      expect(txs.length).toBe(0);
+  describe("listOperations propagates 429 errors to caller", () => {
+    it("throws LedgerAPI4xx on rate limit", async () => {
+      await expect(module.listOperations(ADDRESS, { minHeight: 0, order: "asc" })).rejects.toThrow(
+        LedgerAPI4xx,
+      );
     });
   });
 });

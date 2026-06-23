@@ -28,11 +28,11 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayMarketBanner: isEnabled && Boolean(params?.marketBanner),
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
-      shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
+      shouldDisplayQ2Tour: isEnabled && Boolean(params?.q2Tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
@@ -75,8 +75,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayGraphRework: boolean;
   /** Whether to show quick action CTAs */
   readonly shouldDisplayQuickActionCtas: boolean;
-  /** Whether to show the new receive options dialog (Lumen) */
-  readonly shouldDisplayNewReceiveDialog: boolean;
   /** Whether to show the wallet 4.0 main navigation */
   readonly shouldDisplayWallet40MainNav: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
@@ -85,6 +83,8 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayBalanceRefreshRework: boolean;
   /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */
   readonly shouldDisplayTour: boolean;
+  /** Whether to show the Q2 Tour on Portfolio */
+  readonly shouldDisplayQ2Tour: boolean;
   /** Whether to show the asset section */
   readonly shouldDisplayAssetSection: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */

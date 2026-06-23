@@ -24,7 +24,7 @@ const mockHederaConfig = jest.mocked(hederaCoinConfig);
 describe("getBalance", () => {
   const address = "0.0.12345";
   const mockCurrency = getMockedCurrency();
-  const mockConfig = { ...getMockedConfig(), useHgraphForErc20: true };
+  const mockConfig = { ...getMockedConfig() };
   const mockMirrorAccount = {
     balance: {
       balance: "1000000000",

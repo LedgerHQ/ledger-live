@@ -2,7 +2,6 @@ import React from "react";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { render, screen } from "tests/testSetup";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
-import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { MarketTableView, MarketTableViewProps } from "../MarketTableView";
 import { mockT } from "../../__tests__/shared";
 
@@ -16,14 +15,12 @@ function createProps(overrides: Partial<MarketTableViewProps> = {}): MarketTable
     parentRef: { current: null },
     rowVirtualizer: emptyVirtualizer,
     marketData: MOCK_MARKET_CURRENCY_DATA,
-    marketParams: { order: Order.MarketCapDesc },
     counterCurrency: "usd",
     range: "24h",
     search: "",
     locale: "en",
     currenciesLength: MOCK_MARKET_CURRENCY_DATA.length,
     showSkeleton: false,
-    resetSearch: jest.fn(),
     isStarred: () => false,
     toggleStar: jest.fn(),
     marketCapSort: "desc",
@@ -47,9 +44,10 @@ describe("MarketTableView", () => {
     expect(screen.queryByTestId("market-list-data")).toBeNull();
   });
 
-  it("should render the no-crypto placeholder when there are no currencies and no skeleton", () => {
+  it("should render the no-assets empty state when there are no currencies and no skeleton", () => {
     render(<MarketTableView {...createProps({ currenciesLength: 0, showSkeleton: false })} />);
 
+    expect(screen.getByTestId("market-no-assets-empty")).toBeInTheDocument();
     expect(screen.queryByTestId("market-list-data")).toBeNull();
   });
 

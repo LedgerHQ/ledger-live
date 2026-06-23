@@ -38,6 +38,7 @@ export const fromTransactionRaw = (transaction: TransactionRaw): Transaction => 
     mode: transaction.mode,
     coinType: transaction.coinType,
     fees: transaction.fees ? BigNumber(transaction.fees) : null,
+    gasBudget: transaction.gasBudget ? BigNumber(transaction.gasBudget) : null,
     errors: {},
   };
 };
@@ -50,6 +51,7 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
     mode: transaction.mode,
     coinType: transaction.coinType,
     fees: transaction.fees?.toString() || "",
+    gasBudget: transaction.gasBudget?.toString() || "",
   };
 };
 

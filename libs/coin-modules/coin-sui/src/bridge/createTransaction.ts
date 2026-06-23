@@ -17,6 +17,7 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
     recipient: "",
     useAllAmount: false,
     fees: null,
+    gasBudget: null,
     errors: {},
   };
   return transaction;

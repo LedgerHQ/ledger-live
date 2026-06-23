@@ -9,6 +9,7 @@ import type {
 } from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
 import type { SendFlowNavigationProp } from "../../../types";
+import { useSendSignature } from "../../../context/SendSignatureContext";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -36,6 +37,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { state, uiConfig } = useSendFlowData();
   const { transaction: transactionActions, close } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
+  const { startSigning } = useSendSignature();
 
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
@@ -45,8 +47,8 @@ export function useAmountScreen(): AmountScreenViewModel {
   }, [close]);
 
   const onReview = useCallback(() => {
-    navigation.navigate(ScreenName.SendFlowSignature);
-  }, [navigation]);
+    startSigning(() => navigation.navigate(ScreenName.SendFlowConfirmation));
+  }, [startSigning, navigation]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.navigate(ScreenName.SendFlowCoinControl);

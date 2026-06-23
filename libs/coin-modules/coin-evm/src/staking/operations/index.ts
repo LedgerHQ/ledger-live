@@ -36,9 +36,9 @@ export const buildTransactionParams = (
   if (
     params.withdrawId === undefined &&
     currencyId === "monad" &&
-    transactionType === "undelegate"
+    (transactionType === "undelegate" || transactionType === "withdraw")
   ) {
-    throw new Error(`${currencyId} undelegate requires withdrawId`);
+    throw new Error(`${currencyId} ${transactionType} requires withdrawId`);
   }
 
   return operation(params);

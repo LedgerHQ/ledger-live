@@ -139,8 +139,8 @@ const envDefinitions = {
   },
   API_POLKADOT_SIDECAR: {
     parser: stringParser,
-    def: "https://polkadot-sidecar.coin.ledger.com",
-    desc: "Polkadot Sidecar API url",
+    def: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc",
+    desc: "Polkadot rest-api base URL",
   },
   API_POLKADOT_SIDECAR_CREDENTIALS: {
     parser: stringParser,
@@ -286,11 +286,6 @@ const envDefinitions = {
     def: "https://hedera-testnet.coin.ledger.com",
     parser: stringParser,
     desc: "testnet mirror node API for Hedera",
-  },
-  API_HEDERA_THIRDWEB_URL: {
-    def: "https://hedera-tokens.coin.ledger.com",
-    parser: stringParser,
-    desc: "Thirdweb API for Hedera",
   },
   API_HEDERA_HGRAPH: {
     def: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",

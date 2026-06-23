@@ -29,7 +29,7 @@ Welcome to Ledger's JavaScript libraries.
 | Nano S Plus | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
 | Nano X      | DEPRECATED<sup>1</sup> | YES | YES    | YES       |
 
-1. U2F is deprecated. See https://github.com/LedgerHQ/ledger-live/wiki/LJS:MigrateWebUSB
+1. U2F is deprecated. See [docs/migrate_webusb.md](docs/migrate_webusb.md).
 
 Summary of implementations available per platform
 
@@ -55,8 +55,8 @@ Summary of implementations available per platform
 | Firefox  | DEPRECATED<sup>1</sup> | NO              | NO                 | NO           |
 | IE.      | DEPRECATED<sup>1</sup> | NO              | NO                 | NO           |
 
-1. U2F is deprecated. See https://github.com/LedgerHQ/ledger-live/wiki/LJS:MigrateWebUSB
-2. instabilities has been reported
+1. U2F is deprecated. See [docs/migrate_webusb.md](docs/migrate_webusb.md).
+2. Instabilities have been reported
 3. WebHID supported under _Chrome experimental flags_
 
 **Please find respective documentation for each transport:**
@@ -140,14 +140,11 @@ getBtcAddress().then(a => console.log(a));
 ## Contributing
 
 Please read our [contribution guidelines](./CONTRIBUTING.md) before getting
-started.
-
-**You need to have a recent [Node.js](https://nodejs.org/) and
-[Yarn](https://yarnpkg.com/) installed.**
+started, and install the pinned repo toolchain with `mise install`.
 
 ### Install dependencies
 
-> Reminder: all commands should be run at the root of the monorepository
+Run commands from the repository root.
 
 ```bash
 pnpm i

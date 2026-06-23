@@ -3,15 +3,13 @@ import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
 import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import useAnalyticsConsentLogic from "./useAnalyticsConsentLogic";
 
 type Props = {
   entryPoint: EntryPoint;
-  variant: ABTestingVariants;
 };
 
-const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
+const useAnalyticsOptInPromptLogic = ({ entryPoint }: Props) => {
   const { locale } = useLocale();
   const {
     navigation,
@@ -23,24 +21,15 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
     goToPersonalizedRecommendationsStep,
   } = useAnalyticsConsentLogic({ entryPoint });
 
-  const privacyPolicyUrl =
-    (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en;
-
   const trackingPolicyUrl =
     (urls.trackingPolicy as Record<string, string>)[locale] || urls.trackingPolicy.en;
 
-  const urlByVariant = {
-    [ABTestingVariants.variantA]: trackingPolicyUrl,
-    [ABTestingVariants.variantB]: privacyPolicyUrl,
-  };
-
   const clickOnLearnMore = () => {
-    Linking.openURL(urlByVariant[variant]);
+    Linking.openURL(trackingPolicyUrl);
     track(
       "button_clicked",
       {
         button: "Learn More",
-        variant,
         flow,
       },
       shouldWeTrack,

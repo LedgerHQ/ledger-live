@@ -81,7 +81,7 @@ describe("StepRecordPickerFooter", () => {
     expect(screen.getByRole("button", { name: /continue/i })).toBeInTheDocument();
   });
 
-  it("should have the continue button enabled for a non-terminated currency", () => {
+  it("should have the continue button enabled by default", () => {
     render(<StepRecordPickerFooter {...defaultProps} />);
 
     expect(screen.getByRole("button", { name: /continue/i })).not.toBeDisabled();

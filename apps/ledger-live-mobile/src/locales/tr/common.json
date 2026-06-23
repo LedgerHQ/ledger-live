@@ -1338,6 +1338,9 @@
     }
   },
   "earn" : {
+    "simulator" : {
+      "title" : "Ödül simülatörü"
+    },
     "deposit" : {
       "protocolInfoModal" : {
         "title" : "Bir protokol seçerken aklınızda bulundurmanız gereken birkaç şey:",
@@ -1457,6 +1460,13 @@
     "description" : "Hesaplar ve ayarlar dahil olmak üzere Ledger Wallet verilerini silmek için lütfen uygulamayı telefonunuzdan kaldırıp yeniden yükleyin.",
     "button" : "Sıfırla",
     "warning" : "Ledger Wallet'ı sıfırlamak, tüm hesaplarınız için takas işlem geçmişinizi siler."
+  },
+  "globalSearch" : {
+    "searchPlaceholder" : "Varlık ara",
+    "sections" : {
+      "cryptos" : "Kriptolar",
+      "stocks" : "Hisseler"
+    }
   },
   "graph" : {
     "week" : "1H",
@@ -2976,7 +2986,7 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
-      "FINALIZE_UNSTAKE" : "Çekildi",
+      "FINALIZE_UNSTAKE" : "Stake durdurma",
       "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
       "CONTRACT_CALL" : "Sözleşme çağrısı",
       "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
@@ -3052,6 +3062,7 @@
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
       "stakedAmount" : "Stake edilen miktar",
+      "unstakedAmount" : "Staking’i durdurulan tutar",
       "accountCreationFee" : "Hesap Oluşturma Ücreti",
       "associatedTokenId" : "İlgili token kimliği",
       "targetStakingNodeId" : "Hedef düğüm kimliği",
@@ -3686,9 +3697,11 @@
           "campaignId" : "Kampanya Kimliği",
           "titleField" : "Başlık",
           "subtitle" : "Alt başlık",
-          "imageUrl" : "Resim URL'si",
+          "imageUrlLight" : "Resim URL'si (açık)",
+          "imageUrlDark" : "Resim URL'si (koyu)",
           "primaryButtonLabel" : "Birincil buton etiketi",
           "primaryButtonLink" : "Birincil buton bağlantısı",
+          "navigationButtonLabel" : "Gezinme butonu etiketi (Devam et/Kapat)",
           "secondaryButtonLabel" : "İkincil buton etiketi",
           "secondaryButtonLink" : "İkincil buton bağlantısı",
           "icon" : "Simge",
@@ -3728,7 +3741,11 @@
       "desc" : "Ledger Wallet, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
       "descVariantB" : "Yeni token’lar, kazanç fırsatları ve piyasa değişimleri hakkında gerçek zamanlı uyarılar alın. İstediğiniz zaman devre dışı bırakabilirsiniz.",
       "allow" : "Bildirimlere izin ver",
-      "later" : "Belki sonra"
+      "later" : "Belki sonra",
+      "transactionsAlerts" : {
+        "title" : "Paranızın durumunu öğrenin",
+        "desc" : "Kriptonuz gönderildiğinde veya alındığında gerçek zamanlı uyarılar alın. Ayarlar üzerinden istediğiniz zaman kapatabilirsiniz."
+      }
     },
     "optInScreen" : {
       "title" : "Bildirimler etkinleştirilsin mi?",
@@ -4378,6 +4395,10 @@
       "available" : "Mevcut: {{amount}}",
       "placeholder" : "Adres ya da ENS adı girin",
       "placeholderNoENS" : "Adresi girin",
+      "pasteFromClipboard" : {
+        "title" : "Panodan yapıştır",
+        "cta" : "Yapıştır"
+      },
       "editRecipientAccessibilityLabel" : "Alıcıyı düzenle",
       "recent" : "Son kullanılanlar",
       "recentDetail" : "Son işlem ayrıntıları",
@@ -4414,12 +4435,24 @@
         "walletNotExist" : "Böyle bir cüzdan yok"
       },
       "skipMemo" : {
-        "title" : "{{tag}} ekleme atlansın mı?",
-        "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir."
+        "title" : "Bir {{tag}} ekleme atlansın mı?",
+        "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir.",
+        "notRequired" : "Alıcı tarafından {{tag}} gerekli kılınmamış mı?",
+        "confirm" : "Evet, atla",
+        "neverAskAgain" : "Bu uyarıyı tekrar gösterme"
       },
       "tagHelp" : {
         "title" : "{{tag}} nedir?",
-        "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{tag}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{tag}} memo’sunun eklenmediği durumlarda fonlar kaybolabilir."
+        "description" : "Bir kripto para borsasına {{currency}} gönderirken {{tag}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{tag}} memo’sunun eklenmediği durumlarda fonlar kaybolabilir."
+      },
+      "memoLabel" : {
+        "ripple" : "Etiket",
+        "casper" : "Transfer Kimliği",
+        "ton" : "Yorum",
+        "default" : "Memo"
+      },
+      "memo" : {
+        "transactionIdentifier" : "İşlem tanımlayıcı"
       },
       "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
       "feesAmount" : "Ücret tutarı ({{unit}})",
@@ -4461,7 +4494,8 @@
         "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
         "invalidValue" : "Geçerli bir sayı girin.",
         "belowMinimum" : "Minimum değer: {{min}}",
-        "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır."
+        "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır.",
+        "payFeesIn" : "Bu varlıkla öde:"
       },
       "coinControl" : {
         "title" : "Coin yönetimi",
@@ -6604,7 +6638,9 @@
       "title" : "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
       "btn" : "Ödüller kazanın"
     },
-    "manage" : "Yönet",
+    "operationTypes" : {
+      "UNSTAKE" : "Staking durduruluyor"
+    },
     "delegation" : {
       "addCustomValidator" : "+ Özel doğrulayıcı ekle",
       "sectionLabel" : "Yetki Devri"
@@ -6613,7 +6649,11 @@
       "sectionLabel" : "Staking",
       "status" : "Durum",
       "unstaking" : "Staking durduruluyor",
-      "available" : "Mevcut"
+      "available" : "Mevcut",
+      "availableIn" : "Kalan süre:",
+      "lessThanADay" : "Bir günden az",
+      "stakeMore" : "Daha fazla stake et",
+      "unstake" : "Staking'i durdur"
     },
     "earnRewards" : {
       "title" : "Ödüller kazanın",
@@ -6664,6 +6704,41 @@
           "info" : "Tezos stake etme ve yetki devri hakkında daha fazla bilgi edinin"
         }
       }
+    },
+    "unstake" : {
+      "flow" : {
+        "amount" : {
+          "unbondingNotice" : "Stake durdurma işlemi 4 gün sürer. Bu süre zarfında XTZ varlıklarınız yetki devrinde kalır ve staking ödülleri kazanmayı durdurur.",
+          "staked" : "Stake edildi",
+          "cta" : "Staking'i durdur"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "Stake durdurma işlemi gönderildi",
+              "text" : "XTZ varlıklarınızın stake işlemi sonlandırılıyor ve yaklaşık 4 gün içinde çekime hazır olacaklar."
+            }
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Baker'ı değiştirmeden önce stake etmeyi durdurun",
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yeni bir doğrulayıcıya yetki devretmeden önce fonlarınızı stake etmeyi durdurun."
+      },
+      "endDelegation" : {
+        "title" : "Yetki devrini sonlandırmadan önce stake etmeyi durdurun",
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yetki devrini sonlandırmadan önce fonlarınızı stake etmeyi durdurun."
+      },
+      "steps" : {
+        "0" : "Kazan menüsünü açın ve Staking'i durdur seçimini uygulayın.",
+        "1" : "Tutarı cihazınızda onaylayın ve stake etmeyi durdurma talebini gönderin.",
+        "2" : "Stake durdurulma süresinin tamamlanması için yaklaşık 4 gün bekleyin.",
+        "3" : "Çektiğinizde, baker'ı değiştirebilir veya yetki devrini sonlandırabilirsiniz."
+      },
+      "learnMore" : "Tezos stake etme hakkında daha fazla bilgi edinin",
+      "close" : "Kapat"
     },
     "account" : {
       "availableBalanceTooltip" : "Hemen kullanabileceğiniz fonlar.",
@@ -6732,7 +6807,7 @@
               "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
             },
             "cta" : "Devam",
-            "seiAssociationWarning" : "Sei hesabınız henüz zincir üstü bağlanmadı. Hesabınızın ilk giden işlemi zincir üstü onaylanana kadar delegasyon başarısız olacaktır. Önce herhangi bir adrese küçük bir tutar SEI gönderin, onayları bekleyin, ardından yetki devretmek için geri dönün."
+            "seiAssociationWarning" : "Yetki devretmek için kendi adresiniz de dahil olmak üzere herhangi bir adrese herhangi bir miktarda varlık göndererek hesabınızı aktif hâle getirmeniz gerekir. Bu, Sei ağının bir gerekliliğidir."
           },
           "validator" : {
             "validators" : "Doğrulayıcılar",
@@ -6854,16 +6929,49 @@
             "youEarned" : "Varlıkları şuna tayin ederek",
             "byDelegationAssetsTo" : "kazandınız:",
             "description" : "Ödüller şimdi toplanacak ve mevcut bakiyenize eklenecektir.",
-            "cta" : "Devam"
+            "compoundRewardDescription" : "Ödüller aynı doğrulayıcıya yeniden stake edilerek yetki devreden bakiyenizi artıracaktır.",
+            "cta" : "Devam",
+            "method" : {
+              "claimReward" : "Hesaba al",
+              "compoundReward" : "Birleştir",
+              "compoundOrCashIn" : "Birleştirilsin mi, hesaba mı alınsın?",
+              "claimRewardTooltip" : "Ödüller, mevcut bakiyenize eklenecektir.",
+              "compoundRewardTooltip" : "Ödüller aynı doğrulayıcıya yeniden stake edilecek."
+            }
           },
           "verification" : {
             "success" : {
               "title" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
+              "titleCompound" : "Ödüllerinizin yetkileri aynı doğrulayıcıya devredildi.",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
               "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "title" : "Çek",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "withdraw" : {
+            "warning" : "Yetki devri kaldırılan tutar, kilit süresini tamamladı ve kullanılabilir bakiyenize geri aktarılacak.",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz.",
+              "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -8095,6 +8203,7 @@
   },
   "market" : {
     "title" : "Piyasa",
+    "searchPlaceholder" : "Varlık ara",
     "assets" : {
       "title" : "Varlıklar",
       "emptyFavorites" : "Henüz favori yok",
@@ -8611,7 +8720,11 @@
     "tabs" : {
       "crypto" : "Kripto",
       "stablecoins" : "Stabil coin'ler",
+      "stocks" : "Hisseler",
       "market" : "Piyasa"
+    },
+    "stocks" : {
+      "exploreAll" : "Tümünü Keşfet"
     },
     "referralProgram" : "$20"
   },
@@ -9314,7 +9427,7 @@
     }
   },
   "marketBanner" : {
-    "title" : "Piyasayı keşfedin",
+    "title" : "Piyasa",
     "viewAll" : "Tümünü gör",
     "viewAllAccessibilityHint" : "Piyasadaki tüm varlıkları görüntülemek için çift dokunun",
     "connectionFailed" : "Bağlantı başarısız oldu",
@@ -9322,6 +9435,18 @@
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "Piyasa bilgilerini görüntülemek için çift dokunun"
+    },
+    "filter" : {
+      "accessibilityLabel" : "Piyasa banner filtresini değiştir",
+      "accessibilityHint" : "Gösterilecek varlıkları seçmek için çift dokunun",
+      "title" : "Sıralama türü",
+      "noFavorites" : "Henüz favori yok",
+      "options" : {
+        "trending" : "Revaçtakiler",
+        "gainers" : "Yükselenler",
+        "losers" : "Düşenler",
+        "favorites" : "Favoriler"
+      }
     }
   },
   "largeMover" : {
@@ -9676,7 +9801,7 @@
   "fearAndGreed" : {
     "title" : "Duygu endeksi",
     "description" : "Özellikle oynaklık, piyasa momentumu ve sosyal trendlere dayalı olarak genel piyasa duyarlılığını 0 ile 100 arasında gösterir. Düşük değerler korkuyu, yüksek değerler coşkuyu ifade eder.",
-    "disclaimer" : "Veriler, CoinMarketCap'in Korku ve Açgözlülük Endeksi'nden alınmıştır ve yalnızca bilgilendirme amacıyla sunulmaktadır.",
+    "disclaimer" : "Veriler CoinMarketCap'ten alınmıştır. Yalnızca bilgilendirme amacıyla sunulmaktadır.",
     "levels" : {
       "fearPlus" : "Aşırı Korku",
       "fear" : "Korku",
@@ -9690,7 +9815,7 @@
     "title" : "Sezon",
     "definitionTitle" : "Altcoin endeksi",
     "description" : "Altcoin endeksi, alternatif kripto para birimlerinin Bitcoin'e kıyasla nasıl bir performans gösterdiğini gösterir. Bu değer ne kadar yüksekse, altcoin'ler Bitcoin karşısında o kadar iyi performans gösteriyor demektir.",
-    "disclaimer" : "Veriler, CoinMarketCap'in Korku ve Açgözlülük Endeksi'nden alınmıştır ve yalnızca bilgilendirme amacıyla sunulmaktadır.",
+    "disclaimer" : "Veriler CoinMarketCap'ten alınmıştır. Yalnızca bilgilendirme amacıyla sunulmaktadır.",
     "levels" : {
       "bitcoin" : "Bitcoin",
       "altcoin" : "Altcoin"
@@ -9698,7 +9823,8 @@
   },
   "marketCapCard" : {
     "title" : "Toplam Piyasa Değeri",
-    "description" : "Toplam piyasa değeri, tüm kripto paraların toplam piyasa değerini ifade eder."
+    "description" : "Toplam piyasa değeri, tüm kripto paraların toplam piyasa değerini ifade eder.",
+    "disclaimer" : "Veriler CoinMarketCap'ten alınmıştır. Yalnızca bilgilendirme amacıyla sunulmaktadır."
   },
   "analyticsAllocation" : {
     "header" : {

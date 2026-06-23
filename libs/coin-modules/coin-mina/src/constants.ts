@@ -1,0 +1,1 @@
+export const MINA_DUMMY_ADDRESS = "B62qpJZZ8KcQTkPaoonqJ6GMyph2TW3LrgEQBYoMsYL23hiGvRXWRy6";

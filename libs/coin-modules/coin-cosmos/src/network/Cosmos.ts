@@ -18,6 +18,7 @@ import {
   CosmosUnbonding,
   CosmosValidatorItem,
 } from "../types";
+import { fetchQueuedStakingMessages, mergeQueuedMessages } from "./babylonEpoching";
 import * as CosmosSDKTypes from "./types";
 
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
@@ -78,15 +79,32 @@ export class CosmosAPI {
         this.getWithdrawAddress(address),
       ]);
 
+      let staking = { delegations, redelegations, unbondings };
+
+      if (this.chainInstance.epochedStaking) {
+        const queued = await fetchQueuedStakingMessages(
+          this.defaultEndpoint,
+          address,
+          currency.units[1].code,
+        );
+        // at or past the boundary the queued msgs have already executed into `delegations`
+        // (the queue runs in the boundary block's EndBlocker), so merging would double-count
+        if (queued && queued.messages.length > 0 && blockHeight < queued.epochBoundary) {
+          staking = mergeQueuedMessages(staking, queued.messages, {
+            blockHeight,
+            epochBoundary: queued.epochBoundary,
+            unbondingPeriodDays: this.chainInstance.unbondingPeriod,
+          });
+        }
+      }
+
       return {
         accountInfo,
         balances,
         blockHeight,
         txs,
-        delegations,
-        redelegations,
-        unbondings,
         withdrawAddress,
+        ...staking,
       };
     } catch (e) {
       const error = e as AxiosError;

@@ -1,4 +1,3 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import {
   findSubAccountById,
   getMainAccount,
@@ -6,6 +5,7 @@ import {
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { computeAlgoMaxSpendable } from "./bridgeLogic";
+import { ALGORAND_DUMMY_ADDRESS } from "./constants";
 import createTransaction from "./createTransaction";
 import { getEstimatedFees } from "./getFeesForTransaction";
 import { AlgorandAccount, AlgorandTransaction } from "./types";
@@ -24,7 +24,7 @@ export const estimateMaxSpendable: AccountBridge<
     ...createTransaction(account),
     subAccountId: account.type === "Account" ? null : account.id,
     ...transaction,
-    recipient: transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id),
+    recipient: transaction?.recipient || ALGORAND_DUMMY_ADDRESS,
     useAllAmount: true,
   };
 

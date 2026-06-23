@@ -12,7 +12,6 @@ function ChartSectionViewComponent({
   onRangeChange,
   color,
   isLoading,
-  isError,
   formatValue,
   tooltipTitle,
   onScrubberPositionChange,
@@ -32,7 +31,6 @@ function ChartSectionViewComponent({
         color={color}
         height={height}
         isLoading={isLoading}
-        isError={isError}
         formatValue={formatValue}
         tooltipTitle={tooltipTitle}
         showScrubberTooltip={true}

@@ -59,7 +59,7 @@ describe("Change Language", () => {
         },
       ],
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   it("should go to General Settings", async () => {

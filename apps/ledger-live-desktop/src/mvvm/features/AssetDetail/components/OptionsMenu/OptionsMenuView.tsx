@@ -43,6 +43,7 @@ export function OptionsMenuView({ viewModel }: OptionsMenuViewProps) {
       <MenuContent className="w-full min-w-200" side="bottom" align="end">
         <MenuItem
           disabled={!isStarEnabled}
+          data-testid={isStarred ? "asset-detail-remove-favorite" : "asset-detail-add-favorite"}
           onClick={() => {
             onToggleStar();
           }}

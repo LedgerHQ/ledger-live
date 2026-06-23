@@ -7,7 +7,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {
   convertToAtomicUnit,
   convertToNonAtomicUnit,
@@ -140,7 +139,6 @@ function simplifyFromPath(path: string): string {
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
-const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const SwapWebView = ({
   manifest,
@@ -254,11 +252,7 @@ const SwapWebView = ({
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
           subAccountId,
-          recipient:
-            params.recipient ||
-            (mainAccount.currency.id === "bitcoin"
-              ? getSegWitAbandonSeedAddress()
-              : getAbandonSeedAddress(mainAccount.currency.id)),
+          recipient: params.recipient || bridge.getEstimationRecipient(mainAccount),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
             account: fromAccount,

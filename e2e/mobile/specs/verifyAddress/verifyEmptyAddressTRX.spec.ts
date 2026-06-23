@@ -11,7 +11,7 @@ describe("Verify Address warnings", () => {
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataCommand(account)],
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   $TmsLink("B2CQA-1551");

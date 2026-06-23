@@ -36,10 +36,6 @@ export async function fetchList({
       ...(starred.length > 0 && { ids: starred.sort().join(",") }),
       ...(liveCompatible && { supported: liveCompatible }),
       ...(categories && { categories }),
-      // Only apply `top=100` for global gainers/losers (LIVE-32164).
-      ...(!hasExplicitFilter &&
-        !categories &&
-        [Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
   });
 
@@ -54,14 +50,19 @@ export async function fetchList({
 export async function fetchCurrency({
   counterCurrency,
   id,
+  ledgerIds,
 }: MarketCurrencyRequestParams): Promise<MarketItemResponse> {
   const url = URL.format({
     pathname: `${baseURL()}/v3/markets`,
     query: {
       to: counterCurrency,
-      ids: id,
       pageSize: 1,
       limit: 1,
+      ...(ledgerIds?.length
+        ? { ledgerIds: ledgerIds.join(",") }
+        : {
+            ids: id,
+          }),
     },
   });
 

@@ -15,7 +15,7 @@ export async function estimateFees({
   useAllAmount?: boolean;
   stakedSuiId?: string;
   currencyId?: string;
-}): Promise<bigint> {
+}): Promise<{ fees: bigint; gasBudget: bigint }> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
     coinType = asset.assetReference;
@@ -34,7 +34,10 @@ export async function estimateFees({
       break;
   }
 
-  const { gasBudget } = await suiAPI.paymentInfo(
+  // `paymentInfo` dry-runs the tx and returns both the accurate gas spent (`fees`) and the gas
+  // budget the network reserves (`gasBudget`, ≥ fees). Callers display/optimistic-credit `fees` but
+  // validate available balance against `gasBudget`.
+  const { fees, gasBudget } = await suiAPI.paymentInfo(
     sender,
     {
       mode,
@@ -47,5 +50,5 @@ export async function estimateFees({
     },
     currencyId,
   );
-  return BigInt(gasBudget);
+  return { fees: BigInt(fees), gasBudget: BigInt(gasBudget) };
 }

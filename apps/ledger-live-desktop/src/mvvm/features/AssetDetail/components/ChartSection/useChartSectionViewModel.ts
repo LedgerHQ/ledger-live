@@ -1,11 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import type { AssetMarketData } from "@ledgerhq/asset-detail";
+import {
+  getMinSeriesPointsBetweenTxMarkers,
+  groupTransactionsByChartIndex,
+  type AssetMarketData,
+  type TransactionInput,
+} from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { useAssetChartData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { injectMarketExtrema } from "@ledgerhq/live-common/market/utils/injectMarketExtrema";
-import { resampleChartPointsByInterval } from "@ledgerhq/live-common/market/utils/resampleChartPoints";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { track } from "~/renderer/analytics/segment";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
@@ -38,37 +40,16 @@ import {
   filterOperationTableItemsByAllowedAccountIds,
   filterTopLevelAccountsByAllowedAccountIds,
 } from "LLD/features/History/utils/accountScopeForHistory";
-import {
-  clampDayChangePercentPointsNearZero,
-  getPriceChangeKeyForRange,
-  getScrubVariation,
-} from "../MarketPriceSection/utils";
+import { clampDayChangePercentPointsNearZero } from "@ledgerhq/live-common/market/utils/resolveRangePriceChange";
+import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVariation";
+import { resolveRangePriceChange } from "../MarketPriceSection/utils";
+import { useAssetDetailChartSeries } from "../../hooks/useAssetDetailChartSeries";
 import { useAssetChartDateFormatter } from "../../hooks/useAssetChartDateFormatter";
 import { useScrubbedPrice } from "../../context/ScrubbedPriceContext";
-import {
-  groupTransactionsByChartIndex,
-  type TransactionInput,
-} from "./utils/getTransactionPointMarkers";
 import { buildTransactionPointMarker } from "./utils/buildTransactionPointMarker";
 
 const MIN_X_AXIS_TICKS = 5;
 const MIN_X_AXIS_TICKS_1D = 8;
-
-const MINUTE_MS = 60_000;
-const HOUR_MS = 60 * MINUTE_MS;
-const DAY_MS = 24 * HOUR_MS;
-
-// Target spacing between chart points per range (LIVE-31777). 6m is served
-// daily, so its 3h target falls back to the daily resolution.
-const RANGE_TARGET_INTERVAL_MS: Record<LineChartRange, number> = {
-  "1d": 5 * MINUTE_MS,
-  "1w": HOUR_MS,
-  "1m": 2 * HOUR_MS,
-  "6m": 3 * HOUR_MS,
-  "1y": DAY_MS,
-  "5y": 7 * DAY_MS,
-  all: 7 * DAY_MS,
-};
 
 const CHART_BASE_HEIGHT = 240;
 const Y_AXIS_OFFSET_BOTTOM_PX = 50;
@@ -105,7 +86,6 @@ export type ChartSectionViewModelResult = Readonly<{
   onRangeChange: (range: LineChartRange) => void;
   color: LineChartColor;
   isLoading: boolean;
-  isError: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle: LineChartTooltipTitle;
   onScrubberPositionChange: LineChartScrubberPositionChange;
@@ -138,12 +118,6 @@ export function useChartSectionViewModel({
   const id =
     ledgerId ?? marketData.marketCurrencyData?.ledgerIds?.[0] ?? marketData.marketCurrencyData?.id;
 
-  const {
-    data: chartData,
-    isLoading,
-    isError,
-  } = useAssetChartData({ id, counterCurrency, range: selectedRange }, { skip: !id });
-
   // Extract the all-time extrema as stable primitives: marketCurrencyData is a
   // new object on every market poll (athDate/atlDate are fresh Date instances),
   // so depending on it would re-run the series pipeline on each price refresh.
@@ -153,41 +127,58 @@ export function useChartSectionViewModel({
   const athTime = marketCurrencyData?.athDate?.getTime();
   const atlTime = marketCurrencyData?.atlDate?.getTime();
 
-  const { series, timestamps } = useMemo(() => {
-    const rawPoints = chartData?.[selectedRange] ?? [];
-    // On the "all" range, anchor the graph's high/low markers to the market
-    // all-time high/low so they match the stats table (see LIVE-31732).
-    const withExtrema =
-      selectedRange === "all"
-        ? injectMarketExtrema(rawPoints, { ath, athDate: athTime, atl, atlDate: atlTime })
-        : rawPoints;
-    // Resample to the per-range target granularity (LIVE-31777).
-    const points = resampleChartPointsByInterval(
-      withExtrema,
-      RANGE_TARGET_INTERVAL_MS[selectedRange],
-    );
-    const data: number[] = [];
-    const tsList: number[] = [];
-    points.forEach(([timestamp, value]) => {
-      data.push(value);
-      tsList.push(timestamp);
-    });
-    return {
-      series: [
-        {
-          id: "asset-detail-price",
-          data,
-          label: "Price",
-          // Stroke is required by Series typing but is always overridden by <LineChart /> from `color`.
-          stroke: "",
-        },
-      ] satisfies LineChartSeries[],
-      timestamps: tsList,
-    };
-  }, [chartData, selectedRange, ath, atl, athTime, atlTime]);
+  const {
+    prices: currentPrices,
+    timestamps: currentTimestamps,
+    isLoading: isChartLoading,
+    isFetching: isChartFetching,
+  } = useAssetDetailChartSeries({
+    id,
+    counterCurrency,
+    selectedRange,
+    ath,
+    atl,
+    athTime,
+    atlTime,
+  });
 
-  const priceChangeKey = getPriceChangeKeyForRange(selectedRange);
-  const rangePercentage = marketData.marketCurrencyData?.priceChangePercentage?.[priceChangeKey];
+  // While the next timeframe loads, keep rendering the previous (non-empty)
+  // series so the chart morphs from the old shape (Lumen transition-loading)
+  // instead of flashing the empty placeholder. Scoped to `id`: morphing only
+  // applies within the same asset (a timeframe switch), never across an asset
+  // switch — otherwise we'd grey out the previous asset's shape instead of
+  // showing the new asset's loading/empty state.
+  const hasData = currentPrices.length > 0;
+  const lastRenderedRef = useRef({ id, prices: currentPrices, timestamps: currentTimestamps });
+  if (hasData) {
+    lastRenderedRef.current = { id, prices: currentPrices, timestamps: currentTimestamps };
+  }
+  const isLoading = isChartLoading || (isChartFetching && !hasData);
+  const canReusePrevious = lastRenderedRef.current.id === id;
+  const { prices, timestamps } =
+    !hasData && isLoading && canReusePrevious
+      ? lastRenderedRef.current
+      : { prices: currentPrices, timestamps: currentTimestamps };
+
+  const series = useMemo<LineChartSeries[]>(
+    () => [
+      {
+        id: "asset-detail-price",
+        data: prices,
+        label: "Price",
+        // Stroke is required by Series typing but is always overridden by <LineChart /> from `color`.
+        stroke: "",
+      },
+    ],
+    [prices],
+  );
+
+  const { percentage: rangePercentage } = resolveRangePriceChange({
+    selectedRange,
+    chartPrices: prices,
+    price: marketCurrencyData?.price,
+    priceChangePercentage: marketCurrencyData?.priceChangePercentage,
+  });
   const color = resolveLineChartColorFromPercentChange(
     clampDayChangePercentPointsNearZero(rangePercentage),
   );
@@ -238,8 +229,9 @@ export function useChartSectionViewModel({
 
     const groups = groupTransactionsByChartIndex({
       timestamps,
-      values: series[0]?.data ?? [],
+      values: prices,
       transactions,
+      minSeriesPointsBetweenMarkers: getMinSeriesPointsBetweenTxMarkers(selectedRange),
     });
 
     const transactionMarkers = groups.map(group =>
@@ -247,7 +239,16 @@ export function useChartSectionViewModel({
     );
 
     return [...extremaMarkers, ...transactionMarkers];
-  }, [series, timestamps, transactions, formatFiat, t, hideTransactionsOnChart]);
+  }, [
+    series,
+    prices,
+    timestamps,
+    transactions,
+    formatFiat,
+    t,
+    hideTransactionsOnChart,
+    selectedRange,
+  ]);
 
   const formatValue = useCallback<LineChartValueFormatter>(
     value =>
@@ -303,8 +304,8 @@ export function useChartSectionViewModel({
   const onScrubberPositionChange = useCallback<LineChartScrubberPositionChange>(
     index => {
       if (index == null) return setSelection(undefined);
-      const price = series[0]?.data[index];
-      const baselinePrice = series[0]?.data[0];
+      const price = prices[index];
+      const baselinePrice = prices[0];
       const timestamp = timestamps[index];
       if (!Number.isFinite(price) || !Number.isFinite(baselinePrice) || timestamp == null) {
         return setSelection(undefined);
@@ -312,7 +313,7 @@ export function useChartSectionViewModel({
       const { percentage, variationFiat } = getScrubVariation(baselinePrice, price);
       setSelection({ price, timestamp, percentage, variationFiat });
     },
-    [series, timestamps, setSelection],
+    [prices, timestamps, setSelection],
   );
 
   const handleRangeChange = useCallback(
@@ -339,7 +340,6 @@ export function useChartSectionViewModel({
     onRangeChange: handleRangeChange,
     color,
     isLoading,
-    isError,
     formatValue,
     tooltipTitle,
     onScrubberPositionChange,

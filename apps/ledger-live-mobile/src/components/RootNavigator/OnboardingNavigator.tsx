@@ -10,7 +10,6 @@ import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName, NavigatorName } from "~/const";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import LegacyOnboardingWelcome from "~/screens/Onboarding/steps/welcome";
 import OnboardingWelcome from "LLM/features/WelcomePage";
 import OnboardingLanguage from "~/screens/Onboarding/steps/language";
 import OnboardingTerms from "~/screens/Onboarding/steps/terms";
@@ -47,7 +46,6 @@ import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWalle
 import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
-import { useFeature } from "@features/platform-feature-flags";
 import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
 import NotificationsOptIn from "LLM/features/NotificationsOptIn";
 
@@ -98,7 +96,6 @@ const infoModalOptions = ({ theme }: { theme: Theme }): Partial<NativeStackNavig
 export default function OnboardingNavigator() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const llmHomescreenEnabled = useFeature("llmHomescreen")?.enabled ?? false;
 
   return (
     <Stack.Navigator
@@ -109,10 +106,7 @@ export default function OnboardingNavigator() {
         headerStyle: { backgroundColor: theme.colors.background.main },
       }}
     >
-      <Stack.Screen
-        name={ScreenName.OnboardingWelcome}
-        component={llmHomescreenEnabled ? OnboardingWelcome : LegacyOnboardingWelcome}
-      />
+      <Stack.Screen name={ScreenName.OnboardingWelcome} component={OnboardingWelcome} />
       <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
         component={PostWelcomeSelection}

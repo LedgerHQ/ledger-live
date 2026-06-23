@@ -1,23 +1,31 @@
 import BigNumber from "bignumber.js";
+import { encodeTokenAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { log } from "@ledgerhq/logs";
 import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { getBalance, lastBlock, listOperations } from "../logic";
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
-import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
+import {
+  getMockedCurrency,
+  getMockedTokenCurrency,
+  MOCK_TOKEN_PROGRAM_ID,
+} from "../__tests__/fixtures/currency.fixture";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { EXPLORER_TRANSFER_TYPES, TOKEN_RECORD_NAME } from "../constants";
+import { sdkClient } from "../network/sdk";
+import {
+  getMockedAccount,
+  getMockedTokenAccount,
+  mockAleoResources,
+} from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { AleoAccount } from "../types";
+import type { AleoAccount, AleoTokenAccount } from "../types";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
+import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
-import {
-  accessProvableApi,
-  fetchAllOwnedRecords,
-  patchPublicOperations,
-  fetchAccountTransactionsFromHeight,
-} from "../network/utils";
+import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
@@ -30,33 +38,58 @@ import {
 import { apiClient } from "../network/api";
 import { buildSyncObservables, makeGetAccountShape } from "./sync";
 
+jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account"),
+  getSyncHash: jest.fn(),
+}));
 jest.mock("../logic");
 jest.mock("../network/utils");
 jest.mock("../network/api");
 jest.mock("../logic/listPrivateOperations");
 jest.mock("../logic/getPrivateBalance");
+jest.mock("../network/sdk");
 
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
+}));
+
+const mockGetSyncHash = jest.mocked(getSyncHash);
 const mockGetBalance = jest.mocked(getBalance);
 const mockLastBlock = jest.mocked(lastBlock);
 const mockListOperations = jest.mocked(listOperations);
-const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
 const mockListPrivateOperations = jest.mocked(listPrivateOperations);
 const mockGetPrivateBalance = jest.mocked(getPrivateBalance);
 const mockPatchPublicOperations = jest.mocked(patchPublicOperations);
 const mockApiClient = jest.mocked(apiClient);
+const mockDecryptRecord = jest.mocked(sdkClient.decryptRecord);
 
 describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
   const mockConfig = getMockedConfig("mainnet");
-  const mockAccount = getMockedAccount();
+  const mockConfigWithTokens = { ...mockConfig, enableTokens: true };
+  const mockTokenCurrency = getMockedTokenCurrency();
   const mockDerivationMode: DerivationMode = "";
+  const mockLedgerAccountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: mockCurrency.id,
+    xpubOrAddress: MOCK_ALEO_ADDRESS,
+    derivationMode: mockDerivationMode,
+    customData: "AViewKey123",
+  });
+  const mockAccount = getMockedAccount({
+    freshAddress: MOCK_ALEO_ADDRESS,
+    id: mockLedgerAccountId,
+  });
+  const mockSyncHash = "mock-sync-hash";
   const mockSyncConfig: SyncConfig = {
     paginationConfig: {},
   };
   const mockInitialAccount: AleoAccount = {
-    ...getMockedAccount(),
+    ...getMockedAccount({ freshAddress: MOCK_ALEO_ADDRESS, id: mockLedgerAccountId }),
+    syncHash: mockSyncHash,
     aleoResources: {
       transparentBalance: new BigNumber(500000),
       provableApi: null,
@@ -68,6 +101,7 @@ describe("sync.ts", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetSyncHash.mockResolvedValue(mockSyncHash);
     coinConfig.setCoinConfig(() => mockConfig);
 
     mockGetBalance.mockResolvedValue([
@@ -91,10 +125,6 @@ describe("sync.ts", () => {
     });
     mockAccessProvableApi.mockResolvedValue(mockAleoResources.provableApi);
     mockFetchAllOwnedRecords.mockResolvedValue([]);
-    mockFetchAccountTransactionsFromHeight.mockResolvedValue({
-      transactions: [],
-      nextCursor: null,
-    });
     mockApiClient.getTokenBalance.mockResolvedValue(null);
     mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
@@ -405,6 +435,333 @@ describe("sync.ts", () => {
 
       expect(result.operations).toEqual([]);
     });
+
+    it("should preserve existing private operations during public sync", async () => {
+      const privateOp = getMockedOperation({
+        id: "priv-op",
+        extra: { transactionType: "private", functionId: "transfer_private" },
+      });
+      const accountWithPrivateOps = { ...mockInitialAccount, operations: [privateOp] };
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithPrivateOps,
+        },
+        mockSyncConfig,
+      );
+
+      expect(result.operations).toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: "priv-op" })]),
+      );
+    });
+
+    it("should include preserved private balance in total balance during public sync", async () => {
+      const accountWithPrivateBalance = {
+        ...mockInitialAccount,
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          privateBalance: new BigNumber(2500),
+        },
+      };
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithPrivateBalance,
+        },
+        mockSyncConfig,
+      );
+
+      expect(result.balance).toEqual(new BigNumber(100000 + 2500));
+    });
+
+    it("should reset public sync cursor when token migration is required", async () => {
+      coinConfig.setCoinConfig(() => mockConfigWithTokens);
+      const publicOp = getMockedOperation({
+        blockHeight: 900,
+        extra: { transactionType: "public", functionId: "transfer_public" },
+      });
+      const accountNeedingMigration = {
+        ...mockInitialAccount,
+        operations: [publicOp],
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          hasMigratedPublicTokens: false,
+        },
+      };
+
+      await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountNeedingMigration,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockListOperations).toHaveBeenCalledWith(
+        expect.objectContaining({
+          address: MOCK_ALEO_ADDRESS,
+          options: expect.not.objectContaining({ cursor: expect.anything() }),
+        }),
+      );
+      coinConfig.setCoinConfig(() => mockConfig);
+    });
+
+    it("should exclude incoming public ops whose ids are already patched locally", async () => {
+      const patchedPublicOp = getMockedOperation({
+        id: "patched-op",
+        hash: "tx-patched",
+        blockHeight: 100,
+        senders: [mockAccount.freshAddress],
+        extra: {
+          transactionType: "public",
+          functionId: "transfer_public_to_private",
+          patched: true,
+        },
+      });
+      const incomingDuplicate = getMockedOperation({
+        id: "patched-op",
+        hash: "tx-patched",
+        blockHeight: 100,
+        recipients: [""],
+        extra: {
+          transactionType: "public",
+          functionId: "transfer_public_to_private",
+        },
+      });
+      const accountWithPatchedOp = {
+        ...mockInitialAccount,
+        operations: [patchedPublicOp],
+      };
+
+      mockListOperations.mockResolvedValueOnce({
+        operations: [incomingDuplicate as never],
+        tokenOperations: [],
+        calTokens: new Map(),
+        nextCursor: null,
+      });
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithPatchedOp,
+        },
+        mockSyncConfig,
+      );
+
+      expect(result.operations).toHaveLength(1);
+      const preservedOp = result.operations?.[0];
+      expect(preservedOp?.senders).toEqual(patchedPublicOp.senders);
+      expect(
+        preservedOp?.extra &&
+          typeof preservedOp.extra === "object" &&
+          "patched" in preservedOp.extra &&
+          preservedOp.extra.patched,
+      ).toBe(true);
+    });
+
+    it("should exclude incoming token ops whose ids are already patched in a sub-account", async () => {
+      coinConfig.setCoinConfig(() => mockConfigWithTokens);
+
+      const tokenAccountId = encodeTokenAccountId(mockLedgerAccountId, mockTokenCurrency);
+      const patchedTokenOp = getMockedOperation({
+        id: encodeTokenAccountId(mockLedgerAccountId, mockTokenCurrency) + ":op1-IN",
+        hash: "tx-patched-token",
+        blockHeight: 100,
+        accountId: tokenAccountId,
+        senders: ["aleo1sender"],
+        recipients: [MOCK_ALEO_ADDRESS],
+        extra: {
+          transactionType: "public",
+          functionId: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+          patched: true,
+        },
+      });
+      const incomingDuplicate = getMockedOperation({
+        id: patchedTokenOp.id,
+        hash: "tx-patched-token",
+        blockHeight: 100,
+        accountId: tokenAccountId,
+        senders: [],
+        recipients: [MOCK_ALEO_ADDRESS],
+        extra: {
+          transactionType: "public",
+          functionId: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+        },
+      });
+
+      const tokenSubAccount = getMockedTokenAccount(mockTokenCurrency, {
+        id: tokenAccountId,
+        parentId: mockLedgerAccountId,
+        operations: [patchedTokenOp],
+      });
+      const accountWithPatchedTokenOp = {
+        ...mockInitialAccount,
+        subAccounts: [tokenSubAccount],
+      };
+
+      mockListOperations.mockResolvedValueOnce({
+        operations: [],
+        tokenOperations: [incomingDuplicate as never],
+        calTokens: new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]),
+        nextCursor: null,
+      });
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithPatchedTokenOp,
+        },
+        mockSyncConfig,
+      );
+
+      const resultSubAccount = result.subAccounts?.find(sa => sa.id === tokenAccountId);
+      expect(resultSubAccount?.operations).toHaveLength(1);
+      const preservedOp = resultSubAccount?.operations[0];
+      expect(preservedOp?.senders).toEqual(patchedTokenOp.senders);
+      expect(
+        preservedOp?.extra &&
+          typeof preservedOp.extra === "object" &&
+          "patched" in preservedOp.extra &&
+          preservedOp.extra.patched,
+      ).toBe(true);
+    });
+
+    it("should not trigger full re-sync on CAL change when tokens are disabled", async () => {
+      const publicOp = getMockedOperation({
+        blockHeight: 900,
+        extra: { transactionType: "public", functionId: "transfer_public" },
+      });
+      const accountWithStoredHash = {
+        ...mockInitialAccount,
+        syncHash: "stored-hash",
+        operations: [publicOp],
+      };
+
+      mockGetSyncHash.mockResolvedValue("cal-changed-hash");
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithStoredHash,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockGetSyncHash).not.toHaveBeenCalled();
+      expect(result.syncHash).toBe(accountWithStoredHash.syncHash);
+      expect(mockListOperations).toHaveBeenCalledWith(
+        expect.objectContaining({
+          options: expect.objectContaining({ cursor: publicOp.blockHeight?.toString() }),
+        }),
+      );
+    });
+
+    it("should call getSyncHash and include result as syncHash when tokens are enabled", async () => {
+      coinConfig.setCoinConfig(() => mockConfigWithTokens);
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockGetSyncHash).toHaveBeenCalledWith(mockCurrency.id, undefined);
+      expect(result.syncHash).toBe(mockSyncHash);
+    });
+
+    it("should reset public sync cursor when syncHash has changed (tokens enabled)", async () => {
+      coinConfig.setCoinConfig(() => mockConfigWithTokens);
+      mockGetSyncHash.mockResolvedValue("new-sync-hash");
+      const publicOp = getMockedOperation({
+        blockHeight: 900,
+        extra: { transactionType: "public", functionId: "transfer_public" },
+      });
+      const accountWithOldSyncHash = {
+        ...mockInitialAccount,
+        syncHash: "old-sync-hash",
+        operations: [publicOp],
+      };
+
+      await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithOldSyncHash,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockListOperations).toHaveBeenCalledWith(
+        expect.objectContaining({
+          options: expect.not.objectContaining({ cursor: expect.anything() }),
+        }),
+      );
+    });
+
+    it("should pass cursor when syncHash matches initial account", async () => {
+      const publicOp = getMockedOperation({
+        blockHeight: 12345,
+        extra: { transactionType: "public", functionId: "transfer_public" },
+      });
+      const accountWithMatchingSyncHash = {
+        ...mockInitialAccount,
+        syncHash: mockSyncHash,
+        operations: [publicOp],
+      };
+
+      await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithMatchingSyncHash,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockListOperations).toHaveBeenCalledWith(
+        expect.objectContaining({
+          options: expect.objectContaining({ cursor: "12345" }),
+        }),
+      );
+    });
   });
 
   describe("accessProvableApi handling", () => {
@@ -427,8 +784,8 @@ describe("sync.ts", () => {
     it("should call accessProvableApi with correct args from initialAccount", async () => {
       const accountWithProvableApi = getMockedAccount();
 
-      await performPrivateSync(
-        {
+      await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -436,9 +793,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: accountWithProvableApi,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
       expect(mockAccessProvableApi).toHaveBeenCalledTimes(1);
       expect(mockAccessProvableApi).toHaveBeenCalledWith({
@@ -455,8 +812,8 @@ describe("sync.ts", () => {
       // catch block swallows the error and falls back to initialAccount.aleoResources.provableApi;
       // scanner is not synced on the fallback so performPrivateSync resolves to null gracefully
       await expect(
-        performPrivateSync(
-          {
+        performPrivateSync({
+          info: {
             index: mockAccount.index,
             derivationPath: mockAccount.freshAddressPath,
             address: mockAccount.freshAddress,
@@ -464,9 +821,9 @@ describe("sync.ts", () => {
             derivationMode: mockDerivationMode,
             initialAccount: accountWithProvableApi,
           },
-          mockSyncConfig,
-          [],
-        ),
+          syncConfig: mockSyncConfig,
+          currentPublicOps: [],
+        }),
       ).resolves.toBeNull();
     });
 
@@ -476,8 +833,8 @@ describe("sync.ts", () => {
 
       // catch only falls back to existing config; with no prior provableApi the error is rethrown
       await expect(
-        performPrivateSync(
-          {
+        performPrivateSync({
+          info: {
             index: mockAccount.index,
             derivationPath: mockAccount.freshAddressPath,
             address: mockAccount.freshAddress,
@@ -485,9 +842,9 @@ describe("sync.ts", () => {
             derivationMode: mockDerivationMode,
             initialAccount: accountWithNoResources,
           },
-          mockSyncConfig,
-          [],
-        ),
+          syncConfig: mockSyncConfig,
+          currentPublicOps: [],
+        }),
       ).rejects.toThrow("boom");
     });
 
@@ -498,8 +855,8 @@ describe("sync.ts", () => {
       };
       mockAccessProvableApi.mockResolvedValueOnce(updatedProvableApi);
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -507,9 +864,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: mockInitialAccount,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
       expect(result?.aleoResources?.provableApi).toEqual(updatedProvableApi);
     });
@@ -523,8 +880,8 @@ describe("sync.ts", () => {
 
     it("should skip private sync when there is no initialAccount", async () => {
       await expect(
-        performPrivateSync(
-          {
+        performPrivateSync({
+          info: {
             index: mockAccount.index,
             derivationPath: mockAccount.freshAddressPath,
             address: mockAccount.freshAddress,
@@ -532,9 +889,9 @@ describe("sync.ts", () => {
             derivationMode: mockDerivationMode,
             initialAccount: undefined as any,
           },
-          mockSyncConfig,
-          [],
-        ),
+          syncConfig: mockSyncConfig,
+          currentPublicOps: [],
+        }),
       ).rejects.toThrow();
 
       expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
@@ -546,8 +903,8 @@ describe("sync.ts", () => {
       mockAccessProvableApi.mockRejectedValueOnce(new AleoApiConfigurationResetError());
 
       await expect(
-        performPrivateSync(
-          {
+        performPrivateSync({
+          info: {
             index: mockAccount.index,
             derivationPath: mockAccount.freshAddressPath,
             address: mockAccount.freshAddress,
@@ -555,9 +912,9 @@ describe("sync.ts", () => {
             derivationMode: mockDerivationMode,
             initialAccount: mockInitialAccount,
           },
-          mockSyncConfig,
-          [],
-        ),
+          syncConfig: mockSyncConfig,
+          currentPublicOps: [],
+        }),
       ).rejects.toThrow("AleoApiConfigurationResetError");
 
       expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
@@ -573,8 +930,8 @@ describe("sync.ts", () => {
       };
       mockAccessProvableApi.mockResolvedValueOnce(notReadyProvableApi);
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -582,9 +939,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: mockInitialAccount,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
       expect(result).toBeNull();
       expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
@@ -622,8 +979,8 @@ describe("sync.ts", () => {
         unspentRecords: mockUnspentResult,
       });
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -631,9 +988,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: mockInitialAccount,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
@@ -674,8 +1031,8 @@ describe("sync.ts", () => {
       });
       const accountWithPrivateOps = { ...mockInitialAccount, operations: [privateOp] };
 
-      await performPrivateSync(
-        {
+      await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -683,13 +1040,64 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: accountWithPrivateOps,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(
         expect.objectContaining({ start: 9999 }),
       );
+    });
+
+    it("should reset private sync cursor to 0 when freshSyncHash differs from initialAccount.syncHash", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const privateOp = getMockedOperation({
+        blockHeight: 9999,
+        extra: { transactionType: "private", functionId: "transfer_private" },
+      });
+      const accountWithOldSyncHash = {
+        ...mockInitialAccount,
+        syncHash: "old-sync-hash",
+        operations: [privateOp],
+      };
+
+      await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithOldSyncHash,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+        freshSyncHash: "new-sync-hash",
+      });
+
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(expect.objectContaining({ start: 0 }));
+    });
+
+    it("should persist freshSyncHash in private sync result", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const freshSyncHash = "new-sync-hash";
+
+      const result = await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+        freshSyncHash,
+      });
+
+      expect(result?.syncHash).toBe(freshSyncHash);
     });
 
     it("should use 0 as start cursor when previous private op has undefined blockHeight", async () => {
@@ -699,8 +1107,8 @@ describe("sync.ts", () => {
         extra: { transactionType: "private", functionId: "transfer_private" },
       });
 
-      await performPrivateSync(
-        {
+      await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -708,10 +1116,11 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: { ...mockInitialAccount, operations: [unconfirmedPrivateOp] },
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(expect.objectContaining({ start: 0 }));
     });
 
@@ -753,8 +1162,8 @@ describe("sync.ts", () => {
         unspentRecords: [],
       });
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -762,10 +1171,10 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: mockInitialAccount,
         },
-        mockSyncConfig,
-        [],
-        new BigNumber(1000000),
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+        freshTransparentBalance: new BigNumber(1000000),
+      });
 
       expect(result?.balance).toEqual(new BigNumber(1500000));
       expect(result?.spendableBalance).toEqual(new BigNumber(1500000));
@@ -785,8 +1194,8 @@ describe("sync.ts", () => {
         },
       };
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -794,10 +1203,10 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: accountWithTransparentBalance,
         },
-        mockSyncConfig,
-        [],
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
         // freshTransparentBalance intentionally omitted
-      );
+      });
 
       expect(result?.balance).toEqual(new BigNumber(6000)); // 1000 + 5000
     });
@@ -810,8 +1219,8 @@ describe("sync.ts", () => {
       });
       const { aleoResources: _aleoResources2, ...accountWithNoResources } = mockInitialAccount;
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -819,9 +1228,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: accountWithNoResources,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
       expect(result?.balance).toEqual(new BigNumber(5000)); // 0 + 5000
     });
@@ -860,8 +1269,8 @@ describe("sync.ts", () => {
       });
       mockPatchPublicOperations.mockResolvedValueOnce([newPublicOp, oldPublicOp]);
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -869,9 +1278,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: accountWithOps,
         },
-        mockSyncConfig,
-        [newPublicOp, oldPublicOp],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [newPublicOp, oldPublicOp],
+      });
 
       expect(result?.operationsCount).toBe(3);
       expect(result?.operations).toEqual([
@@ -923,8 +1332,8 @@ describe("sync.ts", () => {
       });
       mockFetchAllOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
 
-      await performPrivateSync(
-        {
+      await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -932,9 +1341,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: mockInitialAccount,
         },
-        mockSyncConfig,
-        [newPublicOp],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [newPublicOp],
+      });
 
       expect(mockPatchPublicOperations).toHaveBeenCalledTimes(1);
       expect(mockPatchPublicOperations).toHaveBeenCalledWith({
@@ -952,8 +1361,8 @@ describe("sync.ts", () => {
       const patchedOp = getMockedOperation({ id: "patched_op", date: new Date("2024-03-01") });
       mockPatchPublicOperations.mockResolvedValueOnce([patchedOp]);
 
-      const result = await performPrivateSync(
-        {
+      const result = await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -961,9 +1370,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: mockInitialAccount,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
       expect(result?.operations).toEqual(
         expect.arrayContaining([expect.objectContaining({ id: "patched_op" })]),
@@ -984,8 +1393,8 @@ describe("sync.ts", () => {
         consumedRecordTags: new Set([consumedTag]),
       });
 
-      await performPrivateSync(
-        {
+      await performPrivateSync({
+        info: {
           index: mockAccount.index,
           derivationPath: mockAccount.freshAddressPath,
           address: mockAccount.freshAddress,
@@ -993,9 +1402,9 @@ describe("sync.ts", () => {
           derivationMode: mockDerivationMode,
           initialAccount: mockInitialAccount,
         },
-        mockSyncConfig,
-        [],
-      );
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
 
       expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
       expect(mockGetPrivateBalance).toHaveBeenCalledWith({
@@ -1004,6 +1413,246 @@ describe("sync.ts", () => {
         privateRecords: [unspentRecord],
         oldUnspentRecords: [],
       });
+    });
+  });
+
+  describe("token-enabled private sync", () => {
+    const configuredProvableApi = {
+      ...mockAleoResources.provableApi!,
+      scannerStatus: { percentage: 100, synced: true },
+    };
+
+    const tokenPrivateRecord = getMockedRecord({
+      program_name: MOCK_TOKEN_PROGRAM_ID,
+      record_name: TOKEN_RECORD_NAME,
+      function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+      block_height: 200,
+      sender: "aleo1sender",
+      tag: "token-tag",
+      record_ciphertext: "token-cipher",
+    });
+
+    beforeEach(() => {
+      coinConfig.setCoinConfig(() => mockConfigWithTokens);
+      setupMockCryptoAssetsStore({
+        findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
+          if (programName === MOCK_TOKEN_PROGRAM_ID) {
+            return mockTokenCurrency;
+          }
+          return undefined;
+        }),
+      });
+      mockDecryptRecord.mockResolvedValue({
+        owner: "owner.private",
+        data: { amount: "100u128" },
+        nonce: "nonce",
+        version: 1,
+      });
+    });
+
+    afterEach(() => {
+      coinConfig.setCoinConfig(() => mockConfig);
+    });
+
+    it("should fetch native and token records when tokens are enabled", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      mockFetchAllOwnedRecords
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([tokenPrivateRecord])
+        .mockResolvedValueOnce([tokenPrivateRecord]);
+
+      await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(4);
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(
+        expect.objectContaining({
+          programs: [],
+          functions: [],
+          start: 0,
+        }),
+      );
+    });
+
+    it("should pass token records to listPrivateOperations for consumed tag computation", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      mockFetchAllOwnedRecords
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([tokenPrivateRecord])
+        .mockResolvedValueOnce([]);
+
+      await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+
+      expect(mockListPrivateOperations).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tokenRecords: [tokenPrivateRecord],
+        }),
+      );
+    });
+
+    it("should use last private block height as token fetch cursor after private token migration", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const privateOp = getMockedOperation({
+        blockHeight: 7777,
+        extra: { transactionType: "private", functionId: "transfer_private" },
+      });
+      const migratedAccount = {
+        ...mockInitialAccount,
+        operations: [privateOp],
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          hasMigratedPrivateTokens: true,
+        },
+      };
+
+      await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: migratedAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+
+      expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith(
+        expect.objectContaining({
+          programs: [],
+          functions: [],
+          start: 7777,
+        }),
+      );
+    });
+
+    it("should filter token unspent records using consumedRecordTags before building sub-accounts", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const consumedTag = "consumed-token-tag";
+      const spentTokenRecord = getMockedRecord({
+        ...tokenPrivateRecord,
+        tag: consumedTag,
+      });
+      const unspentTokenRecord = getMockedRecord({
+        ...tokenPrivateRecord,
+        tag: "live-token-tag",
+        record_ciphertext: "live-cipher",
+      });
+      const tokenSubAccount = getMockedTokenAccount(mockTokenCurrency, {
+        id: encodeTokenAccountId(mockLedgerAccountId, mockTokenCurrency),
+        parentId: mockLedgerAccountId,
+      });
+
+      mockFetchAllOwnedRecords
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([spentTokenRecord, unspentTokenRecord]);
+      mockListPrivateOperations.mockResolvedValueOnce({
+        operations: [],
+        consumedRecordTags: new Set([consumedTag]),
+      });
+
+      const result = await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+        publicSubAccounts: [tokenSubAccount],
+      });
+
+      const tokenSubAccountResult = result?.subAccounts?.find(
+        (subAccount): subAccount is AleoTokenAccount => "unspentPrivateRecords" in subAccount,
+      );
+      expect(tokenSubAccountResult?.unspentPrivateRecords).toHaveLength(1);
+      expect(tokenSubAccountResult?.unspentPrivateRecords?.[0].tag).toBe("live-token-tag");
+    });
+
+    it("should set private token migration flags and return token sub-accounts when tokens are enabled", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      mockFetchAllOwnedRecords
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([tokenPrivateRecord])
+        .mockResolvedValueOnce([tokenPrivateRecord]);
+
+      const result = await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+
+      expect(result?.aleoResources?.hasMigratedPrivateTokens).toBe(true);
+      expect(result?.aleoResources?.hasMigratedPublicTokens).toBe(true);
+      expect(result?.subAccounts).toHaveLength(1);
+    });
+
+    it("should strip sub-operations from operations when tokens are disabled during private sync", async () => {
+      coinConfig.setCoinConfig(() => mockConfig);
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const tokenSubOp = getMockedOperation({
+        hash: "tx-with-sub",
+        type: "IN",
+        accountId: "token-account",
+      });
+      const parentWithSubOp = getMockedOperation({
+        hash: "tx-with-sub",
+        type: "NONE",
+        subOperations: [tokenSubOp],
+      });
+
+      const result = await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [parentWithSubOp],
+      });
+
+      expect(result?.operations?.every(op => (op.subOperations ?? []).length === 0)).toBe(true);
+      expect(result?.subAccounts).toEqual([]);
     });
   });
 
@@ -1063,6 +1712,34 @@ describe("sync.ts", () => {
 
       const shape$ = createPrivateSyncObservable(baseInfo, mockSyncConfig, []);
       await expect(firstValueFrom(shape$)).rejects.toThrow("scanner down");
+    });
+
+    it("createPrivateSyncObservable completes when performPrivateSync throws AbortError", async () => {
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+
+      const abortError = new Error("The operation was aborted");
+      abortError.name = "AbortError";
+      mockFetchAllOwnedRecords.mockRejectedValue(abortError);
+
+      const emissions: Partial<AleoAccount>[] = [];
+
+      await new Promise<void>((resolve, reject) =>
+        createPrivateSyncObservable(baseInfo, mockSyncConfig, []).subscribe({
+          next: value => emissions.push(value),
+          complete: resolve,
+          error: reject,
+        }),
+      );
+
+      expect(emissions).toHaveLength(0);
+      expect(log).toHaveBeenCalledWith(
+        "aleo/createPrivateSyncObservable",
+        `Private sync aborted for ${mockCurrency.id}`,
+      );
     });
 
     it("public-only sync emits exactly one value and completes", async () => {
@@ -1383,6 +2060,106 @@ describe("sync.ts", () => {
       const result = postSync(synced, synced);
 
       expect(result.pendingOperations).toEqual([]);
+    });
+
+    it("should remove confirmed pending operations on sub-accounts and keep unconfirmed ones", () => {
+      const confirmedSubOp = getMockedOperation({
+        id: "token-account-tx-confirmed-OUT",
+        hash: "tx-confirmed",
+        type: "OUT",
+      });
+      const pendingConfirmedSubOp = getMockedOperation({
+        id: "token-account-tx-confirmed-OUT",
+        hash: "tx-confirmed",
+        type: "OUT",
+      });
+      const pendingUnconfirmedSubOp = getMockedOperation({
+        id: "token-account-tx-pending-OUT",
+        hash: "tx-pending",
+        type: "OUT",
+      });
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        operations: [confirmedSubOp],
+        pendingOperations: [pendingConfirmedSubOp, pendingUnconfirmedSubOp],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [],
+        subAccounts: [tokenSubAccount],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([]);
+      expect(result.subAccounts?.[0].pendingOperations).toEqual([
+        expect.objectContaining({ id: pendingUnconfirmedSubOp.id }),
+      ]);
+    });
+
+    it("should run pending cleanup when only sub-accounts have pending operations", () => {
+      const pendingSubOp = getMockedOperation({
+        id: "token-account-tx-pending-OUT",
+        hash: "tx-pending",
+        type: "OUT",
+      });
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        pendingOperations: [pendingSubOp],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [],
+        subAccounts: [tokenSubAccount],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result).not.toBe(synced);
+      expect(result.subAccounts?.[0].pendingOperations).toEqual([
+        expect.objectContaining({ id: pendingSubOp.id }),
+      ]);
+    });
+
+    it("should remove main account pending operations confirmed on a sub-account", () => {
+      const confirmedSubOp = getMockedOperation({
+        id: "shared-tx-OUT",
+        hash: "tx-shared",
+        type: "OUT",
+      });
+      const pendingMainOp = getMockedOperation({
+        id: "shared-tx-OUT",
+        hash: "tx-shared",
+        type: "OUT",
+      });
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        operations: [confirmedSubOp],
+        pendingOperations: [],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [pendingMainOp],
+        subAccounts: [tokenSubAccount],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([]);
+    });
+
+    it("should treat missing sub-account pendingOperations as empty", () => {
+      const tokenSubAccount = getMockedTokenAccount(undefined, {
+        pendingOperations: [],
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        pendingOperations: [],
+        subAccounts: [tokenSubAccount],
+      };
+
+      expect(postSync(synced, synced)).toBe(synced);
     });
   });
 });

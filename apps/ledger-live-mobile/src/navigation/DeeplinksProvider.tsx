@@ -52,6 +52,7 @@ import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeepli
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
 import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink";
+import { handleBackupHubDeeplink } from "./deeplinks/handleBackupHubDeeplink";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
@@ -362,6 +363,7 @@ export const DeeplinksProvider = ({
   } = useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
+  const lwmBackupHubFlag = useFeature("lwmBackupHub");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -861,6 +863,16 @@ export const DeeplinksProvider = ({
             if (productTourState) return productTourState;
           }
 
+          if (hostname === "backup-hub") {
+            const backupHubState = handleBackupHubDeeplink({
+              isLwmBackupHubEnabled: lwmBackupHubFlag?.enabled ?? false,
+              hasCompletedOnboarding,
+              dispatch,
+              config,
+            });
+            if (backupHubState) return backupHubState;
+          }
+
           if (hostname === "generic-awareness-modal") {
             return handleGenericAwarenessModalDeeplink({
               isGenericAwarenessModalEnabled: genericAwarenessModalFlag?.enabled ?? false,
@@ -934,6 +946,7 @@ export const DeeplinksProvider = ({
     web3hubFlag?.enabled,
     genericAwarenessModalFlag?.enabled,
     lwmProductTourFlag?.enabled,
+    lwmBackupHubFlag?.enabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);

@@ -71,10 +71,10 @@ export type CarouselContentProps = {
 };
 
 function CarouselContentProgress() {
-  const { currentIndex, totalSlides } = useSlidesContext();
+  const { displayedIndex, totalSlides } = useSlidesContext();
   return (
     <div className="flex justify-center py-24">
-      <PageIndicator currentPage={currentIndex + 1} totalPages={totalSlides} />
+      <PageIndicator currentPage={displayedIndex + 1} totalPages={totalSlides} />
     </div>
   );
 }

@@ -24,7 +24,7 @@ export const prepareTransaction: AccountBridge<
     amount = calculateAmount({ account, transaction });
   }
 
-  const fees = await getFeesForTransaction({
+  const { fees, gasBudget } = await getFeesForTransaction({
     account,
     transaction,
   });
@@ -42,6 +42,7 @@ export const prepareTransaction: AccountBridge<
   const patch: Partial<Transaction> = {
     amount,
     fees,
+    gasBudget,
     mode,
     coinType,
     ...(tokenId ? { tokenId } : {}),

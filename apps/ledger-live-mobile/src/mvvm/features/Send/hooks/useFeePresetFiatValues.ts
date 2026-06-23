@@ -44,6 +44,7 @@ type Params = Readonly<{
   locale: string;
   enabled: boolean;
   shouldEstimateWithBridge: boolean;
+  allowZeroAmountEstimation: boolean;
 }>;
 
 async function estimateFiatValuesForPresets(params: {
@@ -110,6 +111,7 @@ export function useFeePresetFiatValues({
   locale,
   enabled,
   shouldEstimateWithBridge,
+  allowZeroAmountEstimation,
 }: Params): FeeFiatMap {
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const convertCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
@@ -169,7 +171,7 @@ export function useFeePresetFiatValues({
     feePresetOptions.length > 0 &&
     Object.keys(directFiatValues).length === feePresetOptions.length &&
     !shouldEstimateWithBridge;
-  const hasAmountForEstimation = useAllAmount || amount.gt(0);
+  const hasAmountForEstimation = allowZeroAmountEstimation || useAllAmount || amount.gt(0);
 
   const canEstimate =
     !hasDirectValues && enabled && recipient && hasAmountForEstimation && presetIds.length > 0;

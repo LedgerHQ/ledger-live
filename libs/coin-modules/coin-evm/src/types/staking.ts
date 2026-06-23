@@ -5,6 +5,7 @@ export type StakingOperation =
   | "delegate"
   | "undelegate"
   | "redelegate"
+  | "withdraw"
   | "getStakedBalance"
   | "getUnstakedBalance"
   | "claimReward"

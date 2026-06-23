@@ -4,7 +4,6 @@ import buildCoinConfig, {
 } from "@ledgerhq/coin-module-framework/config";
 
 export interface HederaConfig {
-  useHgraphForErc20: boolean;
   /**
    * When true, the transaction valid-start time is sourced from the latest
    * network block instead of the local machine clock.

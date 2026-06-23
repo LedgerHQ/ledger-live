@@ -304,6 +304,53 @@ describe("MarketScreen assets list (Block 3)", () => {
     expect(screen.queryByTestId("marketItem-bitcoin")).toBeNull();
   });
 
+  it("shows the footer spinner while loading the next page of assets", async () => {
+    let resolveSecondPage: (() => void) | undefined;
+    const secondPageLoaded = new Promise<void>(resolve => {
+      resolveSecondPage = resolve;
+    });
+
+    server.use(
+      http.get("https://countervalues.live.ledger.com/v3/markets", async ({ request }) => {
+        const searchParams = new URL(request.url).searchParams;
+        const page = parseInt(searchParams.get("page") || "0");
+        const pageSize = parseInt(searchParams.get("pageSize") || "20");
+
+        // Hold the next page in flight so the footer spinner stays visible.
+        if (page >= 1) {
+          await secondPageLoaded;
+        }
+
+        return HttpResponse.json(marketsMock.slice(page * pageSize, page * pageSize + pageSize));
+      }),
+    );
+
+    renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: enableAssetDiscoverability,
+    });
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
+      timeout: 5000,
+    });
+    expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner)).toBeNull();
+
+    act(() => {
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.onEndReached();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner)).toBeVisible();
+    });
+
+    act(() => {
+      resolveSecondPage?.();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.assetsFooterSpinner)).toBeNull();
+    });
+  }, 30000);
+
   it("switches categories from the tabs, including back to All", async () => {
     const marketRequests: string[] = [];
     const dadaRequests: string[] = [];

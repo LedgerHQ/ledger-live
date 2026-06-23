@@ -137,6 +137,30 @@ describe("validateIntent", () => {
     expect(res.errors.amount?.name).toBe("NotEnoughBalance");
   });
 
+  it('treats an asset carrying an assetReference as a token even when its type is "native"', async () => {
+    // CAL types Cardano native tokens as tokenType "native", so the generic-coin-framework adapter
+    // hands validateIntent a token intent (and balances) with asset.type "native" + assetReference.
+    const nativeTypedToken = {
+      type: "native",
+      assetReference: TOKEN_REF,
+      assetOwner: SENDER,
+    } as const;
+    const balances: Balance[] = [
+      { asset: { type: "native" }, value: 10_000_000n },
+      { asset: nativeTypedToken, value: 1_000n },
+    ];
+    const res = await validateIntent(
+      currency,
+      intent({ asset: nativeTypedToken, amount: 500n }),
+      balances,
+      { value: 1_000_000n },
+    );
+    expect(res.errors).toEqual({});
+    // Token amount is spent in the token; fees are excluded from totalSpent (token path).
+    expect(res.amount).toBe(500n);
+    expect(res.totalSpent).toBe(500n);
+  });
+
   it("computes max spendable for a useAllAmount token transfer (full token balance)", async () => {
     const res = await validateIntent(
       currency,
@@ -195,5 +219,87 @@ describe("validateIntent", () => {
       balances(10_000_000n),
     );
     expect(res.errors.transaction?.name).toBe("CardanoMemoExceededSizeError");
+  });
+
+  describe("staking", () => {
+    const POOL_HASH = "1".repeat(56);
+
+    function stakeIntent(
+      over: Partial<TransactionIntent<StringMemo>> = {},
+    ): TransactionIntent<StringMemo> {
+      return intent({
+        intentType: "staking",
+        type: "stake",
+        mode: "delegate",
+        valAddress: POOL_HASH,
+        recipient: "",
+        amount: 0n,
+        ...over,
+      } as Partial<TransactionIntent<StringMemo>>);
+    }
+
+    it("validates a fundable delegation (no ADA moved, only fees)", async () => {
+      const res = await validateIntent(currency, stakeIntent(), balances(10_000_000n), {
+        value: 200_000n,
+      });
+      expect(res.errors).toEqual({});
+      expect(res.amount).toBe(0n);
+      expect(res.estimatedFees).toBe(200_000n);
+      expect(res.totalSpent).toBe(200_000n);
+    });
+
+    it("does not run the native recipient check for a delegation (empty recipient is fine)", async () => {
+      const res = await validateIntent(
+        currency,
+        stakeIntent({ recipient: "" }),
+        balances(10_000_000n),
+        {
+          value: 200_000n,
+        },
+      );
+      expect(res.errors.recipient).toBeUndefined();
+    });
+
+    it("flags a delegation missing its pool id", async () => {
+      const res = await validateIntent(
+        currency,
+        stakeIntent({ valAddress: "" } as Partial<TransactionIntent<StringMemo>>),
+        balances(10_000_000n),
+        {
+          value: 200_000n,
+        },
+      );
+      expect(res.errors.valAddress?.name).toBe("ValAddressRequired");
+    });
+
+    it("flags a delegation whose fee the balance cannot cover", async () => {
+      const res = await validateIntent(currency, stakeIntent(), balances(100_000n), {
+        value: 200_000n,
+      });
+      expect(res.errors.amount?.name).toBe("NotEnoughBalance");
+    });
+
+    it("validates an undelegation without requiring a pool id", async () => {
+      const res = await validateIntent(
+        currency,
+        stakeIntent({ mode: "undelegate", valAddress: "" } as Partial<
+          TransactionIntent<StringMemo>
+        >),
+        balances(10_000_000n),
+        { value: 200_000n },
+      );
+      expect(res.errors).toEqual({});
+      expect(res.totalSpent).toBe(200_000n);
+    });
+
+    it("flags an oversized memo on a delegation (craft applies it for staking too)", async () => {
+      const res = await validateIntent(
+        currency,
+        stakeIntent({ memo: { type: "string", kind: "text", value: "a".repeat(65) } }),
+        balances(10_000_000n),
+        { value: 200_000n },
+      );
+      expect(res.errors.transaction?.name).toBe("CardanoMemoExceededSizeError");
+    });
   });
 });

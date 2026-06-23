@@ -23,6 +23,13 @@ export class MarketPage extends AppPage {
   private readonly starButton = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-star-button`).first();
   private starredOptionFilter = this.page.getByRole("option", { name: "Starred Assets" });
+  // Asset discoverability UI: the "Show / Starred Assets" dropdown is replaced by a category tab.
+  private readonly starredCategoryTab = this.page.getByTestId("market-category-switcher-starred");
+  private readonly allCategoryTab = this.page.getByTestId("market-category-switcher-all");
+
+  private readonly categorySwitcher = this.page.getByTestId("market-category-switcher");
+  private readonly categoryTab = (value: string) =>
+    this.page.getByTestId(`market-category-switcher-${value}`);
 
   @step("Search for $0")
   async search(query: string) {
@@ -41,6 +48,11 @@ export class MarketPage extends AppPage {
     await this.coinRow(ticker.toLowerCase()).click();
     await this.coinPageContainer.waitFor({ state: "attached" });
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
+  }
+
+  @step("Click coin row $0")
+  async clickCoinRow(ticker: string) {
+    await this.coinRow(ticker.toLowerCase()).click();
   }
 
   @step("Open buy page for $0")
@@ -77,6 +89,16 @@ export class MarketPage extends AppPage {
     await this.starredOptionFilter.click();
   }
 
+  @step("Select the Favorites (starred) market category")
+  async selectStarredCategory() {
+    await this.starredCategoryTab.click();
+  }
+
+  @step("Select the All market category")
+  async selectAllCategory() {
+    await this.allCategoryTab.click();
+  }
+
   @step("Star coin $0")
   async starCoin(ticker: string) {
     await this.starButton(ticker.toLowerCase()).click();
@@ -90,5 +112,21 @@ export class MarketPage extends AppPage {
   @step("Expect coin $0 to not be visible")
   async expectCoinToNotBeVisible(ticker: string) {
     await expect(this.coinRow(ticker.toLowerCase())).not.toBeVisible();
+  }
+
+  @step("Expect Market page to be visible")
+  async expectMarketPageVisible() {
+    await expect(this.navbarTitle).toHaveText("Market");
+    await expect(this.categorySwitcher).toBeVisible();
+  }
+
+  @step("Expect category tab $0 to be selected")
+  async expectCategorySelected(value: string) {
+    await expect(this.categoryTab(value)).toHaveAttribute("aria-checked", "true");
+  }
+
+  @step("Select category tab $0")
+  async selectCategory(value: string) {
+    await this.categoryTab(value).click();
   }
 }

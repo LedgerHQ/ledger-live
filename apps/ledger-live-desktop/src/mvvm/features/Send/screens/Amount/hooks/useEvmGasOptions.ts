@@ -1,7 +1,8 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
+import type { EvmGasOptionsSyncTransaction } from "../../../utils/isEvmTransaction";
 
 /**
  * Fetches and polls EVM gas options for a given account/transaction.
@@ -10,7 +11,7 @@ import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 export function useEvmGasOptions(
   account: AccountLike,
   parentAccount: Account | null,
-  transaction: EvmTransaction,
+  transaction: EvmGasOptionsSyncTransaction,
 ): [GasOptions | undefined, Error | undefined, boolean] {
   const mainAccount = getMainAccount(account, parentAccount ?? undefined);
   const interval = mainAccount.currency.blockAvgTime

@@ -37,9 +37,11 @@ export function DetailsSection({
         <DetailRow
           label={t("swap2.modals.transactionStatus.sections.details.networkFees")}
           value={feesAmount ?? <Skeleton className="h-16 w-96 rounded-sm" />}
+          testId="swap-transaction-details-network-fees"
         />
         <DetailRow
           label={t("swap2.modals.transactionStatus.sections.details.receiveAccount")}
+          testId="swap-transaction-details-receive-account"
           value={
             receiveAccountName ? (
               <div className="inline-flex items-center gap-6">
@@ -64,6 +66,7 @@ export function DetailsSection({
               providerData?.mainUrl ? (
                 <button
                   type="button"
+                  data-testid="swap-transaction-details-provider"
                   className="inline-flex cursor-pointer items-center gap-6 border-0 bg-transparent p-0 body-3 text-base"
                   onClick={() => openURL(providerData.mainUrl, "SwapTransactionStatus_Provider")}
                 >
@@ -71,7 +74,10 @@ export function DetailsSection({
                   <ProviderIcon name={provider} size="XXS" borderRadius={4} />
                 </button>
               ) : (
-                <div className="inline-flex items-center gap-6">
+                <div
+                  data-testid="swap-transaction-details-provider"
+                  className="inline-flex items-center gap-6"
+                >
                   <span className="body-3-semi-bold">{providerName}</span>
                   <ProviderIcon name={provider} size="XXS" borderRadius={4} />
                 </div>
@@ -83,7 +89,9 @@ export function DetailsSection({
           label={t("swap2.modals.transactionStatus.sections.details.swapId")}
           value={
             <div className="inline-flex items-center gap-6">
-              <span className="body-3-semi-bold">{truncateMiddle(swapId)}</span>
+              <span data-testid="swap-transaction-details-swap-id" className="body-3-semi-bold">
+                {truncateMiddle(swapId)}
+              </span>
               <CopyIconButton text={swapId} />
             </div>
           }

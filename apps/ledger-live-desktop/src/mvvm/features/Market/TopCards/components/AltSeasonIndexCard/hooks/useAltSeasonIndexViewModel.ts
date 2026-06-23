@@ -16,7 +16,7 @@ export const useAltSeasonIndexViewModel = () => {
 
   const onClick = () => {
     track("button_clicked", {
-      button: "altcoin_index",
+      button: "alt_season_index_definition",
     });
   };
 

@@ -9,6 +9,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import suiConfig, { type SuiCoinConfig } from "../config";
+import { SUI_DUMMY_ADDRESS } from "../constants";
 import { getAddress as signerGetAddress } from "../signer";
 import { SuiAccount, SuiSigner, TransactionStatus, type Transaction } from "../types";
 import { broadcast } from "./broadcast";
@@ -66,6 +67,7 @@ function buildAccountBridge(
     toOperationExtraRaw,
     getSerializedAddressParameters,
     validateAddress,
+    getEstimationRecipient: () => SUI_DUMMY_ADDRESS,
   };
 }
 
