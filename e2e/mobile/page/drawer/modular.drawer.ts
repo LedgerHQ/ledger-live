@@ -12,8 +12,8 @@ export default class ModularDrawer {
   networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
 
   assetScreenId = "Asset-screen";
-  networkScreenId = "Network-screen";
   accountScreenId = "Account-screen";
+  networkScreenId = "Network-screen";
   addNewOrExistingAccountButton = "add-new-account-button";
   drawerCloseButtonId = `${this.bottomSheetId("header-close-button")}`;
   drawerBackButtonId = `${this.bottomSheetId("header-back-button")}`;
@@ -34,6 +34,13 @@ export default class ModularDrawer {
   async selectFirstAccount() {
     await waitForElement(getElementById(this.accountItem));
     await tapById(this.accountItem, 0);
+  }
+
+  @Step("Select first account in modular drawer if asked")
+  async selectFirstAccountIfAsked(): Promise<void> {
+    if (await IsIdVisible(this.accountScreenId)) {
+      await this.selectFirstAccount();
+    }
   }
 
   @Step("Select Account")
