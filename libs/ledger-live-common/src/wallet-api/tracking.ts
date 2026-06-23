@@ -21,7 +21,7 @@ function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
 }
 
-function buildSignTransactionProperties(
+function getSignTrackingPayload(
   manifest: AppManifest,
   isEmbeddedSwap?: boolean,
   partner?: string,
@@ -80,7 +80,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     ) => {
       track(
         "WalletAPI SignTransaction",
-        buildSignTransactionProperties(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
       );
     },
 
@@ -93,7 +93,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     ) => {
       track(
         "WalletAPI SignTransaction Fail",
-        buildSignTransactionProperties(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
       );
     },
 
@@ -106,7 +106,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     ) => {
       track(
         "WalletAPI SignTransaction Success",
-        buildSignTransactionProperties(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
       );
     },
 
