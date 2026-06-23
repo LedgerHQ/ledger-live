@@ -27,6 +27,9 @@ export class SwapPage extends WebViewAppPage {
   private swapPageHeading = this.page
     .getByTestId("page-header")
     .getByRole("heading", { name: "Swap" });
+  // Wallet 4.0 AssetDetail (aggregatedAssets ON) reaches swap through the always-mounted embedded
+  // rail rather than the full swap page, so there is no "Swap" page header to wait for.
+  private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
@@ -501,9 +504,13 @@ export class SwapPage extends WebViewAppPage {
     // reset cached webview page to ensure we fetch the correct one after navigation
     this._webviewPage = undefined;
 
-    // perform passed in action and wait for the swap page and webview
+    // perform passed in action and wait for the swap page and webview. Swap renders either as the
+    // full swap page (legacy / left-menu entry) or the embedded rail on AssetDetail; accept both.
     await swapFunction();
-    await this.swapPageHeading.waitFor({ state: "visible", timeout: 60_000 });
+    await this.swapPageHeading
+      .or(this.embeddedSwapContainer)
+      .first()
+      .waitFor({ state: "visible", timeout: 60_000 });
     await this.getWebView();
   }
 

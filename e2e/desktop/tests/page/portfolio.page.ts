@@ -18,6 +18,7 @@ export class PortfolioPage extends AppPage {
   private readonly historyOperationRows = this.page.locator(
     "[data-testid^='history-operation-row-']",
   );
+  private readonly historyOperationValue = this.page.getByTestId("history-operation-value");
   private readonly homeSideBarButton = this.page
     .getByTestId("sidebar-navigation")
     .getByRole("button", { name: "home" });
@@ -152,14 +153,19 @@ export class PortfolioPage extends AppPage {
     await this.page.getByText("Choose Asset").waitFor({ state: "visible" });
   }
 
+  // operationsList ON: operations no longer live on the portfolio; they move to the dedicated
+  // History page reached from the topbar. Open it and wait for the history table to render.
+  private async openHistoryPage() {
+    await this.historyButton.click();
+    await this.checkVisibility(this.historyTable);
+  }
+
   @step("check operation history")
   async checkOperationHistory() {
-    // operationsList ON: operations live on the dedicated History page. Open it from the topbar,
-    // assert the history table renders at least one operation, then return to the portfolio so the
-    // caller can keep asserting portfolio-level content.
+    // operationsList ON: assert the History page renders at least one operation, then return to the
+    // portfolio so the caller can keep asserting portfolio-level content.
     if (isOperationsListEnabled) {
-      await this.historyButton.click();
-      await this.checkVisibility(this.historyTable);
+      await this.openHistoryPage();
       await expect(this.historyOperationRows.first()).toBeVisible();
       await this.homeSideBarButton.click();
       await this.checkVisibility(this.portfolioTotalBalance);
@@ -226,12 +232,24 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    const operationRow = this.operationRows.first();
-    await this.checkVisibility(operationRow);
+    // operationsList ON: the latest operations are on the History page, not the portfolio.
+    if (isOperationsListEnabled) {
+      await this.openHistoryPage();
+      await this.checkVisibility(this.historyOperationRows.first());
+      return;
+    }
+    await this.checkVisibility(this.operationRows.first());
   }
 
   @step("Expect operation to contain counter value $0")
   async expectOperationCounterValue(counterValue: string) {
+    if (isOperationsListEnabled) {
+      await this.openHistoryPage();
+      const valueCell = this.historyOperationValue.first();
+      await this.checkVisibility(valueCell);
+      await expect(valueCell).toContainText(this.getExpectedCounterValuePattern(counterValue));
+      return;
+    }
     await this.expectOperationRowToBeVisible();
     const operationRow = this.operationRows.first();
     await expect(operationRow).toContainText(counterValue);

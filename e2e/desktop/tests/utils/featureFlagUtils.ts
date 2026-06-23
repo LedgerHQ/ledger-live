@@ -12,6 +12,15 @@ export const isAssetSectionEnabled = process.env.E2E_ENABLE_ASSET_SECTION !== "0
 export const isMyWalletEnabled = process.env.E2E_ENABLE_MY_WALLET !== "0";
 export const isOperationsListEnabled = process.env.E2E_ENABLE_OPERATIONS_LIST !== "0";
 
+// Wallet 4.0 `aggregatedAssets` redirects the legacy market coin route (`/market/:id`) to the
+// asset detail route (`/asset/:id`). It is enabled per-spec via `LWD_WALLET_40_Q2_FF_ENABLED`, so
+// page objects/specs detect it at runtime rather than from a global env flag. Use this pattern to
+// assert the coin-detail URL so the assertion holds whether the flag is ON (Q2) or OFF (legacy).
+export const coinDetailUrlPattern = (assetId: string): RegExp => {
+  const escaped = assetId.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  return new RegExp(`/(?:market|asset)/${escaped}`);
+};
+
 const lwdWallet40BaseParams = {
   marketBanner: true,
   graphRework: true,
