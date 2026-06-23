@@ -362,7 +362,7 @@ export class InitializationManager {
           lazyOnboarding: isWallet40,
           balanceRefreshRework: isWallet40,
           assetSection: false,
-          operationsList: false,
+          operationsList: isWallet40,
           aggregatedAssets: false,
           myWallet: isWallet40,
           pnl: false,

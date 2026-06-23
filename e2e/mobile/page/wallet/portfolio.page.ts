@@ -22,6 +22,7 @@ export default class PortfolioPage {
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
+  topBarTransactionHistoryId = "topbar-transaction-history";
   showAllAssetsButton = "assets-button";
   showAllAccountsButton = "show-all-accounts-button";
   seeAllTransactionsButton = "portfolio-seeAll-transaction";
@@ -245,6 +246,15 @@ export default class PortfolioPage {
 
   @Step("Check asset transaction history")
   async checkTransactionHistorySection() {
+    if (isWallet40) {
+      // Wallet 4.0 removed the transaction history section from the portfolio;
+      // it is now reachable from the top bar entry, which opens the operations list.
+      await detoxExpect(getElementById(this.topBarTransactionHistoryId)).toBeVisible();
+      await tapById(this.topBarTransactionHistoryId);
+      await app.operation.expectOperationsListVisible();
+      await app.operation.expectOperationItemVisible();
+      return;
+    }
     await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView);
     await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
     jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
@@ -256,6 +266,13 @@ export default class PortfolioPage {
 
   @Step("Click on selected last operation")
   async selectAndClickOnLastOperation(operationType: string | RegExp, accountName?: string) {
+    if (isWallet40) {
+      // Wallet 4.0 operations live in the dedicated operations list (operations-list-item),
+      // already open from checkTransactionHistorySection. The legacy operationRowBody matcher
+      // and per-type/account filter don't exist there, so tap the latest operation.
+      await app.operation.tapFirstOperationItem();
+      return;
+    }
     await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
   }
 
