@@ -1,4 +1,3 @@
-import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 import type { AppManifest } from "../types";
 
 /**
@@ -15,16 +14,15 @@ type TrackExchange = (
 interface TrackEventPayload {
   exchangeType: "SELL" | "FUND" | "SWAP";
   provider: string;
-  meta?: SwapTrackingMeta;
+  isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
 }
 
-function formatTrackingMeta(meta?: SwapTrackingMeta) {
-  return {
-    isEmbeddedSwap:
-      typeof meta?.isEmbeddedSwap === "boolean" ? String(meta.isEmbeddedSwap) : undefined,
-    swapEntryPoint: typeof meta?.swapEntryPoint === "string" ? meta.swapEntryPoint : undefined,
-  };
-}
+/**
+ * Converts isEmbeddedSwap boolean to string for analytics consistency
+ */
+const formatIsEmbeddedSwap = (isEmbeddedSwap?: boolean): string | undefined =>
+  isEmbeddedSwap !== undefined ? String(isEmbeddedSwap) : undefined;
 
 function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
@@ -55,29 +53,47 @@ export default function trackingWrapper(trackCall: TrackExchange) {
 
   return {
     // Generate Exchange nonce modal open
-    startExchangeRequested: ({ provider, exchangeType, meta }: TrackEventPayload) => {
+    startExchangeRequested: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Starts Exchange ${exchangeType} Nonce request`, {
         provider,
         exchangeType,
-        ...formatTrackingMeta(meta),
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
     // Successfully generated an Exchange app nonce
-    startExchangeSuccess: ({ provider, exchangeType, meta }: TrackEventPayload) => {
+    startExchangeSuccess: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Starts Exchange ${exchangeType} Nonce success`, {
         provider,
         exchangeType,
-        ...formatTrackingMeta(meta),
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
     // Failed to generate an Exchange app nonce
-    startExchangeFail: ({ provider, exchangeType, meta }: TrackEventPayload) => {
+    startExchangeFail: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Starts Exchange ${exchangeType} Nonce fail`, {
         provider,
         exchangeType,
-        ...formatTrackingMeta(meta),
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
@@ -86,11 +102,17 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       track("Starts Exchange no params", getEventData(manifest));
     },
 
-    completeExchangeRequested: ({ provider, exchangeType, meta }: TrackEventPayload) => {
+    completeExchangeRequested: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Completes Exchange ${exchangeType} requested`, {
         provider,
         exchangeType,
-        ...formatTrackingMeta(meta),
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
@@ -99,22 +121,30 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       provider,
       exchangeType,
       currency,
-      meta,
+      isEmbeddedSwap,
+      swapEntryPoint,
     }: TrackEventPayload & { currency: string }) => {
       track(`Completes Exchange ${exchangeType} success`, {
         provider,
         exchangeType,
         currency,
-        ...formatTrackingMeta(meta),
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 
     // Failed to complete an Exchange
-    completeExchangeFail: ({ provider, exchangeType, meta }: TrackEventPayload) => {
+    completeExchangeFail: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+    }: TrackEventPayload) => {
       track(`Completes Exchange ${exchangeType} Nonce fail`, {
         provider,
         exchangeType,
-        ...formatTrackingMeta(meta),
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
       });
     },
 

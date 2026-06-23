@@ -30,7 +30,6 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { SwapTrackingMeta } from "@ledgerhq/wallet-api-exchange-module";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
