@@ -8838,6 +8838,9 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@domain/entity-currency-fiat':
+        specifier: workspace:^
+        version: link:../../../../domain/entity/currency-fiat
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../types-cryptoassets
