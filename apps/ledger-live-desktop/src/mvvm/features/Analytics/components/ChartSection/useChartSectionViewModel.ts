@@ -31,21 +31,16 @@ import {
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
 } from "../../utils/portfolioRangeMapping";
-import {
-  useChartSectionHeaderViewModel,
-} from "./ChartSectionHeader/useChartSectionHeaderViewModel";
-import type { ChartSectionHeaderViewModel } from "./ChartSectionHeader/types";
 
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
 }>;
 
 export type ChartSectionViewModelResult = Readonly<{
-  header: ChartSectionHeaderViewModel;
+  balanceInfo: PortfolioBalanceInfo;
+  hoveredBalance: number | null;
   chart: LineChartProps;
 }>;
-
-export type { ChartSectionHeaderViewModel } from "./ChartSectionHeader/types";
 
 export function useChartSectionViewModel({
   balanceInfo,
@@ -59,8 +54,6 @@ export function useChartSectionViewModel({
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
   const [hoveredBalance, setHoveredBalance] = useState<number | null>(null);
-
-  const header = useChartSectionHeaderViewModel({ balanceInfo, hoveredBalance });
 
   const { prices, timestamps } = useMemo(() => {
     const history = portfolio.balanceHistory;
@@ -135,7 +128,8 @@ export function useChartSectionViewModel({
   const isChartLoading = !portfolio.balanceAvailable && portfolio.balanceHistory.length === 0;
 
   return {
-    header,
+    balanceInfo,
+    hoveredBalance,
     chart: {
       series,
       selectedRange,

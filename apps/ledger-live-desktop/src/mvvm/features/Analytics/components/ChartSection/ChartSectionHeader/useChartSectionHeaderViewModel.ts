@@ -14,15 +14,8 @@ import {
   localeSelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
+import { PORTFOLIO_RANGE_LABEL_KEY } from "../../../utils/portfolioRangeMapping";
 import type { ChartSectionHeaderViewModel } from "./types";
-
-const PORTFOLIO_RANGE_LABEL_KEY = {
-  day: "assetDetails.day",
-  week: "assetDetails.week",
-  month: "assetDetails.month",
-  year: "assetDetails.year",
-  all: "assetDetails.allTime",
-} as const;
 
 type UseChartSectionHeaderViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;

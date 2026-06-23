@@ -3,6 +3,14 @@ import type { LineChartRange } from "LLD/components/LineChart";
 
 export const ANALYTICS_CHART_RANGES: readonly LineChartRange[] = ["1d", "1w", "1m", "1y", "all"];
 
+export const PORTFOLIO_RANGE_LABEL_KEY: Record<PortfolioRange, string> = {
+  day: "assetDetails.day",
+  week: "assetDetails.week",
+  month: "assetDetails.month",
+  year: "assetDetails.year",
+  all: "assetDetails.allTime",
+};
+
 const PORTFOLIO_TO_LINE_CHART: Record<PortfolioRange, LineChartRange> = {
   day: "1d",
   week: "1w",

@@ -1,8 +1,7 @@
-import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { usePortfolio } from "~/renderer/actions/portfolio";
 import { track } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import * as usePortfolioBalanceDisplayStateModule from "LLD/hooks/usePortfolioBalanceDisplayState";
 import {
   defaultPortfolio,
   mockCounterValue,
@@ -14,13 +13,9 @@ jest.mock("~/renderer/actions/portfolio");
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
-jest.mock("LLD/hooks/usePortfolioBalanceDisplayState");
 
 const mockUsePortfolio = jest.mocked(usePortfolio);
 const mockTrack = jest.mocked(track);
-const mockUsePortfolioBalanceDisplayState = jest.mocked(
-  usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState,
-);
 
 const portfolioWithHistory = {
   ...defaultPortfolio,
@@ -38,19 +33,12 @@ const initialState = {
     counterValueCurrency: mockCounterValue,
     selectedTimeRange: "week" as const,
   },
-  ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-  }),
 };
 
 describe("useChartSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePortfolio.mockReturnValue(portfolioWithHistory);
-    mockUsePortfolioBalanceDisplayState.mockReturnValue({
-      isLoading: false,
-      shouldDisplayBalanceRefreshRework: true,
-    } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
   });
 
   it("builds chart series from portfolio balance history and maps the selected range", () => {
@@ -61,8 +49,8 @@ describe("useChartSectionViewModel", () => {
 
     expect(result.current.chart.series[0].data).toEqual([1000, 1200]);
     expect(result.current.chart.selectedRange).toBe("1w");
-    expect(result.current.header.rangeLabel).toBe("1 week");
-    expect(result.current.header.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
+    expect(result.current.balanceInfo).toBe(mockPortfolioBalanceInfo);
+    expect(result.current.hoveredBalance).toBeNull();
   });
 
   it("dispatches the portfolio range and tracks when the chart range changes", () => {
@@ -79,7 +67,7 @@ describe("useChartSectionViewModel", () => {
     expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", { timeframe: "month" });
   });
 
-  it("updates the displayed balance when scrubbing the chart", () => {
+  it("updates hoveredBalance when scrubbing the chart", () => {
     const { result } = renderHook(
       () => useChartSectionViewModel({ balanceInfo: mockPortfolioBalanceInfo }),
       { initialState },
@@ -88,42 +76,11 @@ describe("useChartSectionViewModel", () => {
     act(() => {
       result.current.chart.onScrubberPositionChange?.(0);
     });
-    expect(result.current.header.balance).toBe(1000);
+    expect(result.current.hoveredBalance).toBe(1000);
 
     act(() => {
       result.current.chart.onScrubberPositionChange?.(undefined);
     });
-    expect(result.current.header.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
-  });
-
-  it("passes valueChange-derived trend data to the header", () => {
-    const valueChange = { percentage: 0.0523, value: 100 };
-    const { result } = renderHook(
-      () =>
-        useChartSectionViewModel({
-          balanceInfo: {
-            ...mockPortfolioBalanceInfo,
-            valueChange,
-          },
-        }),
-      { initialState },
-    );
-
-    expect(result.current.header.percentageText).toBe("+5.23%");
-    expect(result.current.header.variationVariant).toBe("positive");
-  });
-
-  it("exposes the sync loading state from usePortfolioBalanceDisplayState", () => {
-    mockUsePortfolioBalanceDisplayState.mockReturnValue({
-      isLoading: true,
-      shouldDisplayBalanceRefreshRework: true,
-    } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
-
-    const { result } = renderHook(
-      () => useChartSectionViewModel({ balanceInfo: mockPortfolioBalanceInfo }),
-      { initialState },
-    );
-
-    expect(result.current.header.isLoading).toBe(true);
+    expect(result.current.hoveredBalance).toBeNull();
   });
 });
