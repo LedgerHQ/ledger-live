@@ -6,6 +6,8 @@ import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import { Result as ManagerResult } from "@ledgerhq/live-common/hw/actions/manager";
+import { managerResultToAppResult } from "@ledgerhq/live-common/wallet-api/helpers";
 import { Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
@@ -18,7 +20,9 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-import { useAppDeviceAction } from "~/hooks/deviceActions";
+import { useAppDeviceAction, useManagerDeviceAction } from "~/hooks/deviceActions";
+
+const MANAGER_REQUEST = {} as const;
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.DeviceConnect>
@@ -38,6 +42,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const hasHandledSuccessRef = useRef(false);
   const {
     appName = "BOLOS",
+    allowManager,
     requireLatestFirmware,
     allowPartialDependencies,
     skipAppInstallIfNotFound,
@@ -52,7 +57,8 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     }),
     [appName, requireLatestFirmware, allowPartialDependencies, skipAppInstallIfNotFound],
   );
-  const action = useAppDeviceAction();
+  const connectAppAction = useAppDeviceAction();
+  const connectManagerAction = useManagerDeviceAction();
 
   const onDone = useCallback(() => {
     navigation.pop();
@@ -66,6 +72,13 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
       onDone();
     },
     [onDone, onSuccess],
+  );
+
+  const handleManagerSuccess = useCallback(
+    (result: ManagerResult) => {
+      handleSuccess(managerResultToAppResult(result));
+    },
+    [handleSuccess],
   );
 
   const resetDevice = useCallback(() => {
@@ -110,14 +123,27 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>
-      <DeviceActionModal
-        action={action}
-        device={device}
-        onResult={handleSuccess}
-        onClose={resetDevice}
-        request={request}
-        analyticsPropertyFlow={"device connect"}
-      />
+      {allowManager ? (
+        <DeviceActionModal
+          key="connect-manager"
+          action={connectManagerAction}
+          device={device}
+          onResult={handleManagerSuccess}
+          onClose={resetDevice}
+          request={MANAGER_REQUEST}
+          analyticsPropertyFlow={"device connect"}
+        />
+      ) : (
+        <DeviceActionModal
+          key="connect-app"
+          action={connectAppAction}
+          device={device}
+          onResult={handleSuccess}
+          onClose={resetDevice}
+          request={request}
+          analyticsPropertyFlow={"device connect"}
+        />
+      )}
     </SafeAreaView>
   );
 }

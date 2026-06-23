@@ -614,16 +614,18 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
       "transaction.broadcast": () => {
         onTransactionBroadcast?.();
       },
-      "device.transport": ({ appName, onSuccess, onCancel }) => {
+      "device.transport": ({ appName, allowManager, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
+          allowManager,
           onSuccess,
           onClose: onCancel,
         });
       },
-      "device.select": ({ appName, onSuccess, onCancel }) => {
+      "device.select": ({ appName, allowManager, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
+          allowManager,
           onSuccess,
           onClose: onCancel,
         });
