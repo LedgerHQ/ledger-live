@@ -164,8 +164,6 @@ export type CompleteExchangeUiRequest = {
   exchangeType: number;
   swapId?: string;
   amountExpectedTo?: number;
-  isEmbeddedSwap?: boolean;
-  swapEntryPoint?: string;
 };
 export async function completeExchangeLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
