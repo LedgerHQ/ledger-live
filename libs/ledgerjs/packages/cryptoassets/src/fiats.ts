@@ -20,6 +20,7 @@ function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {
   };
 }
 
+// Dual-maintained with `@domain/entity-currency-fiat` (the primary registry); see its README.
 const byTicker: Record<string, FiatCurrency> = {
   AED: fiat("Emirati Dirham", "AED", "د.إ.", 2),
   AFN: fiat("Afghan Afghani", "AFN", "؋", 2),

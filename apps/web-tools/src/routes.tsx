@@ -5,7 +5,6 @@ import Home from "./pages/index";
 import LldSignatures from "./pages/lld-signatures";
 import LogsViewer from "./pages/logsviewer";
 import NetworkTroubleshoot from "./pages/networkTroubleshoot";
-import Repl from "./pages/repl";
 import Sync from "./pages/sync";
 import Trustchain from "./pages/trustchain";
 import PnlCalculator from "./pages/pnl-calculator";
@@ -20,7 +19,6 @@ export const AppRoutes = () => (
     <Route path="/networkTroubleshoot" element={<NetworkTroubleshoot />} />
     <Route path="/pnl-calculator" element={<PnlCalculator />} />
     <Route path="/sync" element={<Sync />} />
-    <Route path="/repl" element={<Repl />} />
     <Route path="/trustchain" element={<Trustchain />} />
     <Route path="/crypto-icons" element={<CryptoIcons />} />
     <Route path="/dev-tools" element={<DevToolsPage />} />

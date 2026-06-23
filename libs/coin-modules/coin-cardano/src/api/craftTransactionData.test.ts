@@ -5,11 +5,9 @@ import type { StringMemo, TransactionIntent } from "@ledgerhq/coin-module-framew
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 
 describe("craftTransactionData", () => {
-  it("throws an unsupported error", () => {
+  it("reports no transaction data — Cardano carries none", () => {
     const api = createApi(config, "cardano");
 
-    expect(() => api.craftTransactionData({} as TransactionIntent<StringMemo>)).toThrow(
-      "craftTransactionData is not supported",
-    );
+    expect(api.craftTransactionData({} as TransactionIntent<StringMemo>)).toEqual({ type: "none" });
   });
 });

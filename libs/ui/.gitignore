@@ -33,9 +33,6 @@ jspm_packages/
 # Optional npm cache directory
 .npm
 
-# Optional eslint cache
-.eslintcache
-
 # dotenv environment variables file
 .env
 .env.test

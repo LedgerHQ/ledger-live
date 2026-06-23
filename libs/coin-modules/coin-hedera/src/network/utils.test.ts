@@ -23,7 +23,6 @@ import {
 } from "../test/fixtures/mirror.fixture";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import hederaCoinConfig from "../config";
-import { getMockedThirdwebTransaction } from "../test/fixtures/thirdweb.fixture";
 import type { HederaMirrorCoinTransfer, HederaMirrorTransaction } from "../types";
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
@@ -34,10 +33,7 @@ import {
   checkAccountTokenAssociationStatus,
   createTransactionId,
   enrichERC20Transfers,
-  getERC20BalancesForAccount,
   getERC20BalancesForAccountV2,
-  getERC20Operations,
-  parseThirdwebTransactionParams,
   parseTransfers,
   safeParseAccountId,
   toEVMAddress,
@@ -305,51 +301,6 @@ describe("network utils", () => {
     });
   });
 
-  describe("getERC20BalancesForAccount", () => {
-    it("returns balances only for supported ERC20 tokens and calls apiClient.getERC20Balance accordingly", async () => {
-      const mockAccount = getMockedAccount();
-      const mockedSupportedTokenIds = ["0/erc20/0x0", "0/erc20/0x1", "0/erc20/0x2"];
-      const erc20Token = getMockedERC20TokenCurrency();
-
-      const mockedResponse = Array.from({ length: mockedSupportedTokenIds.length }, () => ({
-        token: erc20Token,
-        balance: new BigNumber(123),
-      }));
-
-      (apiClient.getERC20Balance as jest.Mock).mockResolvedValue(new BigNumber(123));
-      setupMockCryptoAssetsStore({
-        findTokenById: jest.fn().mockReturnValue(erc20Token),
-      });
-
-      const res = await getERC20BalancesForAccount({
-        configOrCurrencyId: mockCurrency.id,
-        evmAccountId: mockAccount.freshAddress,
-        supportedTokenIds: mockedSupportedTokenIds,
-      });
-
-      expect(apiClient.getERC20Balance).toHaveBeenCalledTimes(mockedSupportedTokenIds.length);
-      expect(apiClient.getERC20Balance).toHaveBeenCalledWith({
-        configOrCurrencyId: mockCurrency.id,
-        accountEvmAddress: mockAccount.freshAddress,
-        contractEvmAddress: erc20Token.contractAddress,
-      });
-
-      expect(res).toEqual(mockedResponse);
-    });
-
-    it("returns empty array when there are no supported ERC20 tokens", async () => {
-      const supportedTokenIds: string[] = [];
-      const res = await getERC20BalancesForAccount({
-        configOrCurrencyId: mockCurrency.id,
-        evmAccountId: "0xaccount",
-        supportedTokenIds,
-      });
-
-      expect(res).toEqual([]);
-      expect(apiClient.getERC20Balance).not.toHaveBeenCalled();
-    });
-  });
-
   describe("getERC20BalancesForAccountV2", () => {
     it("returns balances only for supported ERC20 tokens and calls hgraphClient.getERC20Balances accordingly", async () => {
       const mockAccount = getMockedAccount();
@@ -383,164 +334,6 @@ describe("network utils", () => {
           }),
         },
       ]);
-    });
-  });
-
-  describe("getERC20Operations", () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it("should fetch and combine data from thirdweb and mirror node", async () => {
-      const mockTokenERC20 = getMockedERC20TokenCurrency();
-      const mockThirdwebTransaction = getMockedThirdwebTransaction({
-        transactionHash: "0xTXHASH1",
-        address: mockTokenERC20.contractAddress,
-        decoded: {
-          name: "Transfer",
-          signature: "Transfer(address,address,uint256)",
-          params: {
-            from: "0x1234",
-            to: "0x5678",
-            value: "1000000",
-          },
-        },
-      });
-      const mockContractCallResult = getMockedMirrorContractCallResult({
-        timestamp: "1234567890.000000000",
-        contract_id: mockTokenERC20.contractAddress,
-        gas_consumed: 50000,
-        gas_limit: 100000,
-        gas_used: 50000,
-      });
-      const mockMirrorTransaction = getMockedMirrorTransaction({
-        consensus_timestamp: mockContractCallResult.timestamp,
-        transaction_hash: "BASE64HASH",
-        transaction_id: "0.0.123@1234567890.000",
-        charged_tx_fee: 100000,
-        memo_base64: "",
-      });
-
-      (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(mockContractCallResult);
-      (apiClient.findTransactionByContractCall as jest.Mock).mockResolvedValue(
-        mockMirrorTransaction,
-      );
-      setupMockCryptoAssetsStore({
-        findTokenByAddressInCurrency: jest.fn().mockReturnValue(mockTokenERC20),
-      });
-
-      const result = await getERC20Operations({
-        currencyId: mockCurrency.id,
-        latestERC20Transactions: [mockThirdwebTransaction],
-      });
-
-      expect(result).toEqual([
-        {
-          thirdwebTransaction: mockThirdwebTransaction,
-          mirrorTransaction: mockMirrorTransaction,
-          contractCallResult: mockContractCallResult,
-          token: mockTokenERC20,
-        },
-      ]);
-      expect(apiClient.getContractCallResult).toHaveBeenCalledTimes(1);
-      expect(apiClient.getContractCallResult).toHaveBeenCalledWith({
-        configOrCurrencyId: mockCurrency.id,
-        transactionHash: mockThirdwebTransaction.transactionHash,
-      });
-      expect(apiClient.findTransactionByContractCall).toHaveBeenCalledTimes(1);
-      expect(apiClient.findTransactionByContractCall).toHaveBeenCalledWith({
-        configOrCurrencyId: mockCurrency.id,
-        timestamp: mockContractCallResult.timestamp,
-        contractId: mockTokenERC20.contractAddress,
-      });
-    });
-
-    it("should skip transactions for tokens not found in currency list", async () => {
-      const mockThirdwebTransactions = [
-        getMockedThirdwebTransaction({
-          transactionHash: "0xTXHASH1",
-          address: "unknown",
-        }),
-      ];
-
-      setupMockCryptoAssetsStore({
-        findTokenByAddressInCurrency: jest.fn().mockReturnValue(undefined),
-      });
-
-      const result = await getERC20Operations({
-        currencyId: mockCurrency.id,
-        latestERC20Transactions: mockThirdwebTransactions,
-      });
-
-      expect(result).toEqual([]);
-      expect(apiClient.getContractCallResult).not.toHaveBeenCalled();
-      expect(apiClient.findTransactionByContractCall).not.toHaveBeenCalled();
-    });
-
-    it("should skip transactions when mirror transaction is not found", async () => {
-      const mockTokenERC20 = getMockedERC20TokenCurrency();
-      const mockThirdwebTransactions = getMockedThirdwebTransaction({
-        transactionHash: "0xTXHASH1",
-        address: mockTokenERC20.contractAddress,
-      });
-      const mockContractCallResult = getMockedMirrorContractCallResult({
-        timestamp: "1234567890.000000000",
-        contract_id: mockTokenERC20.contractAddress,
-      });
-
-      (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(mockContractCallResult);
-      (apiClient.findTransactionByContractCall as jest.Mock).mockResolvedValue(null);
-      setupMockCryptoAssetsStore({
-        findTokenByAddressInCurrency: jest.fn().mockReturnValue(mockTokenERC20),
-      });
-
-      const result = await getERC20Operations({
-        currencyId: mockCurrency.id,
-        latestERC20Transactions: [mockThirdwebTransactions],
-      });
-
-      expect(result).toEqual([]);
-    });
-  });
-
-  describe("parseThirdwebTransactionParams", () => {
-    it("should parse valid transaction params", () => {
-      const mockTransaction = getMockedThirdwebTransaction({
-        decoded: {
-          name: "",
-          signature: "",
-          params: {
-            from: "0x1234",
-            to: "0x5678",
-            value: "1000000",
-          },
-        },
-      });
-
-      const result = parseThirdwebTransactionParams(mockTransaction);
-
-      expect(result).toEqual({
-        from: mockTransaction.decoded.params.from,
-        to: mockTransaction.decoded.params.to,
-        value: mockTransaction.decoded.params.value,
-      });
-    });
-
-    it("should return null if params are invalid", () => {
-      const mockTransaction = getMockedThirdwebTransaction({
-        decoded: {
-          name: "",
-          signature: "",
-          params: {
-            from: "0x1234",
-            to: 123,
-          },
-        },
-      });
-
-      const result = parseThirdwebTransactionParams(mockTransaction);
-
-      expect(result).toBeNull();
     });
   });
 

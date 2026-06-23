@@ -5,7 +5,18 @@ export const BACKUP_HUB_FEATURE_INTRO_PAGE = "Ledger Recover Bottomsheet";
 
 export const BACKUP_HUB_FEATURE_INTRO_SOURCE = BACKUP_HUB_TRACKING_PAGE_NAME;
 
+let hasTrackedBackupHubFeatureIntroView = false;
+
+export const resetBackupHubFeatureIntroViewTracking = () => {
+  hasTrackedBackupHubFeatureIntroView = false;
+};
+
 export const trackBackupHubFeatureIntroViewed = () => {
+  if (hasTrackedBackupHubFeatureIntroView) {
+    return;
+  }
+
+  hasTrackedBackupHubFeatureIntroView = true;
   screen(BACKUP_HUB_FEATURE_INTRO_PAGE, undefined, {
     name: BACKUP_HUB_FEATURE_INTRO_PAGE,
     source: BACKUP_HUB_FEATURE_INTRO_SOURCE,

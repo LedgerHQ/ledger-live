@@ -1,5 +1,27 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.26.0
+
+### Minor Changes
+
+- [#18240](https://github.com/LedgerHQ/ledger-live/pull/18240) [`4d59f9d`](https://github.com/LedgerHQ/ledger-live/commit/4d59f9d250f232875627dab640b3b31943dc5fdc) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix HTTP proxy device model metadata for DMK mobile transport
+
+### Patch Changes
+
+- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
+  - @ledgerhq/live-env@2.39.0
+
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#18240](https://github.com/LedgerHQ/ledger-live/pull/18240) [`4d59f9d`](https://github.com/LedgerHQ/ledger-live/commit/4d59f9d250f232875627dab640b3b31943dc5fdc) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix HTTP proxy device model metadata for DMK mobile transport
+
+### Patch Changes
+
+- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
+  - @ledgerhq/live-env@2.39.0-next.0
+
 ## 0.25.0
 
 ### Minor Changes

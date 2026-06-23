@@ -1,11 +1,12 @@
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
 import { type ModularDrawerAddAccountStep } from "LLD/features/AddAccountDrawer/domain";
@@ -27,6 +28,7 @@ import {
   type ModularDrawerAddAccountFlowManagerProps,
 } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import { setFlowValue } from "~/renderer/reducers/modularDialog";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { CANTON_MODULAR_DRAWER_ADD_ACCOUNT_STEP } from "./AddAccountDrawer/domain";
 import type { CantonModularDrawerAddAccountStep } from "./AddAccountDrawer/domain";
 import { useAddAccountFlowNavigation } from "./AddAccountDrawer/hooks/useAddAccountFlowNavigation";
@@ -46,6 +48,7 @@ const ModularDrawerAddAccountFlowManager = ({
 }: ModularDrawerAddAccountFlowManagerProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const existingAccounts = useSelector(accountsSelector);
 
   const [connectAppResult, setConnectAppResult] = useState<AppResult>();
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
@@ -99,11 +102,21 @@ const ModularDrawerAddAccountFlowManager = ({
         setCantonAccountsToOnboard(accounts);
         navigateToCantonOnboard();
       } else {
+        // Already-onboarded accounts skip onboarding; the scan defers addition for the
+        // onboarding path, so dispatch here or the re-add is silently lost. LIVE-32985
+        dispatch(
+          addAccountsAction({
+            existingAccounts,
+            scannedAccounts: accounts,
+            selectedIds: accounts.map(account => account.id),
+            renamings: {},
+          }),
+        );
         setSelectedAccounts(accounts);
         navigateToAccountsAdded();
       }
     },
-    [navigateToCantonOnboard, navigateToAccountsAdded],
+    [dispatch, existingAccounts, navigateToCantonOnboard, navigateToAccountsAdded],
   );
 
   const handleOnboardComplete = useCallback(

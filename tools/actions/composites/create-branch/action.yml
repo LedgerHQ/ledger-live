@@ -27,7 +27,7 @@ runs:
   using: "composite"
   steps:
     - name: "Create branch ${{ inputs.branch-name }} from ${{ inputs.base-branch }}"
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       id: create-branch
       with:
         github-token: ${{ inputs.github-token }}

@@ -7,6 +7,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { EvmGasOptionsSyncPlugin } from "./plugins/EvmGasOptionsSyncPlugin";
 import { CeloFeeCurrencyPlugin } from "./plugins/CeloFeeCurrencyPlugin";
 
@@ -32,6 +33,14 @@ export function AmountPluginsHost(props: AmountPluginProps) {
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
 
   const pluginIds = useMemo(() => sendFeatures.getAmountPlugins(currency), [currency]);
+
+  useFlowEffects({
+    account: props.account,
+    parentAccount: props.parentAccount,
+    transaction: props.transaction,
+    currency,
+    updateTransaction: props.transactionActions.updateTransaction,
+  });
 
   return (
     <>

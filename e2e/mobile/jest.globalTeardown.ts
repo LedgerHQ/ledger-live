@@ -40,7 +40,7 @@ export default async () => {
   if (process.env.CI && process.env.SHARD_INDEX === "1") {
     try {
       await initDetox();
-      await launchApp();
+      await launchApp({ newInstance: true });
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
       await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
 

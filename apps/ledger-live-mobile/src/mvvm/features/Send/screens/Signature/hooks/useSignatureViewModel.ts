@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { createIntent } from "@ledgerhq/device-intent";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
@@ -14,10 +13,9 @@ import {
   buildDeviceInitializationInput,
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
-import { ScreenName } from "~/const";
 import { broadcastLogger } from "~/datadog";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
-import type { SendFlowNavigationProp } from "../../../types";
+import { useSendSignature } from "../../../context/SendSignatureContext";
 import { signTransactionIntentLWMDefinition } from "../intents/signTransactionIntent/intentLWMDefinition";
 
 function normalizeError(error: unknown): Error {
@@ -25,9 +23,9 @@ function normalizeError(error: unknown): Error {
 }
 
 export function useSignatureViewModel() {
-  const navigation = useNavigation<SendFlowNavigationProp>();
-  const { operation, status, close } = useSendFlowActions();
+  const { operation, status } = useSendFlowActions();
   const { state } = useSendFlowData();
+  const { finishSigning, stopSigning } = useSendSignature();
   const reduxDispatch = useDispatch();
 
   const { account, parentAccount, currency } = state.account;
@@ -64,8 +62,11 @@ export function useSignatureViewModel() {
   );
 
   const goToConfirmation = useCallback(() => {
-    navigation.replace(ScreenName.SendFlowConfirmation);
-  }, [navigation]);
+    // Dismisses the overlay and runs the onComplete callback registered by the triggering screen
+    // (Amount or CoinControl). That callback holds the navigation reference to navigate to
+    // Confirmation from within the FlowStackNavigator's React subtree.
+    finishSigning();
+  }, [finishSigning]);
 
   const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
     account,
@@ -150,18 +151,14 @@ export function useSignatureViewModel() {
   // moves to the confirmation screen.
   const onIntentJobError = useCallback(() => {}, []);
 
-  // Explicit dismiss of the sheet (close button / backdrop) returns to the previous step.
+  // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
+  // on the underlying review screen.
   const onUserCancel = useCallback(() => {
     if (isSigningCompletedRef.current) {
       return;
     }
-
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-      return;
-    }
-    close();
-  }, [close, navigation]);
+    stopSigning();
+  }, [stopSigning]);
 
   return {
     account,

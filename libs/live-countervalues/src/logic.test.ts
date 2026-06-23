@@ -3,6 +3,7 @@ import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "./tests/currenci
 import {
   inferTrackingPairForAccounts,
   exportCountervalues,
+  filterSupportedTrackingPairs,
   hasNewCountervaluesToExport,
   importCountervalues,
   initialState,
@@ -10,6 +11,7 @@ import {
 } from "./logic";
 import type { CounterValuesState, TrackingPair } from "./types";
 import { datapointRetention, formatCounterValueDay, formatCounterValueHour } from "./helpers";
+import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("inferTrackingPairForAccounts", () => {
   const accounts = Array(20)
@@ -35,6 +37,68 @@ describe("inferTrackingPairForAccounts", () => {
     const second = genAccount("test2", { currency: getCryptoCurrencyById("bitcoin") });
     const trackingPairs = inferTrackingPairForAccounts([first, second], usd);
     expect(trackingPairs.length).toBe(1);
+  });
+});
+
+describe("filterSupportedTrackingPairs", () => {
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const ethereum = getCryptoCurrencyById("ethereum");
+  const usd = getFiatCurrencyByTicker("USD");
+  const unsupportedToken: TokenCurrency = {
+    type: "TokenCurrency",
+    id: "ethereum/erc20/lc_staked_shared_eth_0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
+    contractAddress: "0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
+    parentCurrencyId: "ethereum",
+    tokenType: "erc20",
+    name: "Ledger Staked Shared ETH",
+    ticker: "osETH",
+    delisted: false,
+    disableCountervalue: false,
+    units: [{ name: "osETH", code: "osETH", magnitude: 18 }],
+  };
+  const assetHubPolkadot: CryptoCurrency = {
+    ...ethereum,
+    id: "assethub_polkadot",
+    name: "Asset Hub Polkadot",
+    ticker: "DOT",
+  };
+
+  function trackingPair(from: Currency): TrackingPair {
+    return { from, to: usd, startDate: new Date("2026-06-19T00:00:00.000Z") };
+  }
+
+  test("should remove unsupported token pairs when supported ids are loaded", () => {
+    const supportedPair = trackingPair(bitcoin);
+    const unsupportedPair = trackingPair(unsupportedToken);
+
+    expect(filterSupportedTrackingPairs([supportedPair, unsupportedPair], ["bitcoin"])).toEqual([
+      supportedPair,
+    ]);
+  });
+
+  test("should keep supported crypto pairs", () => {
+    const pairs = [trackingPair(bitcoin), trackingPair(ethereum)];
+
+    expect(filterSupportedTrackingPairs(pairs, ["bitcoin", "ethereum"])).toBe(pairs);
+  });
+
+  test("should keep pairs unchanged when supported ids are unavailable", () => {
+    const pairs = [trackingPair(bitcoin), trackingPair(unsupportedToken)];
+
+    expect(filterSupportedTrackingPairs(pairs)).toBe(pairs);
+    expect(filterSupportedTrackingPairs(pairs, [])).toBe(pairs);
+  });
+
+  test("should keep fiat source pairs", () => {
+    const pairs = [{ from: usd, to: bitcoin, startDate: new Date("2026-06-19T00:00:00.000Z") }];
+
+    expect(filterSupportedTrackingPairs(pairs, ["bitcoin"])).toBe(pairs);
+  });
+
+  test("should match supported ids through countervalues API id inference", () => {
+    const pairs = [trackingPair(assetHubPolkadot)];
+
+    expect(filterSupportedTrackingPairs(pairs, ["polkadot"])).toBe(pairs);
   });
 });
 

@@ -8,7 +8,6 @@ import {
   NotSupportedLegacyAddress,
   NotEnoughBalanceInParentAccount,
   AmountRequired,
-  RecommendUndelegation,
   RecommendSubAccountsToEmpty,
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
@@ -29,7 +28,6 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { isAccountDelegating } from "../staking";
 import { validateAddress } from "../../../bridge/validateAddress";
 
 const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
@@ -141,9 +139,7 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
     const thresholdWarning = 0.5 * 10 ** a.currency.units[0].magnitude;
 
     if (!subAcc && !errors.amount && account.balance.minus(totalSpent).lt(thresholdWarning)) {
-      if (isAccountDelegating(account)) {
-        warnings.amount = new RecommendUndelegation();
-      } else if ((a.subAccounts || []).some(isAccountBalanceSignificant)) {
+      if ((a.subAccounts || []).some(isAccountBalanceSignificant)) {
         warnings.amount = new RecommendSubAccountsToEmpty();
       }
     }

@@ -112,6 +112,11 @@ export type MarketPerformersParams = {
   refreshRate?: number;
 };
 
+export type TrendingPerformersParams = {
+  counterCurrency: string;
+  refreshRate?: number;
+};
+
 export type MarketItemResponse = {
   allTimeHigh: number;
   allTimeHighDate: string;

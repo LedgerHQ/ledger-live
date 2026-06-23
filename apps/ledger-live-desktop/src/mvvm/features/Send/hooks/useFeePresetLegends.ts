@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
+import { resolveFeeUnitLabel } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FeePresetOption } from "./useFeePresetOptions";
 import { formatFeeRate } from "../utils/gas";
@@ -19,7 +20,7 @@ export function useFeePresetLegends({ currency, feePresetOptions }: Params): Fee
     if (!legendConfig || legendConfig.type === "none") return {};
     if (legendConfig.type !== "feeRate" || legendConfig.valueFrom !== "presetAmount") return {};
 
-    const unit = legendConfig.unit?.trim();
+    const unit = resolveFeeUnitLabel(legendConfig.unit, currency)?.trim();
     if (!unit) return {};
 
     const next: Record<string, string> = {};

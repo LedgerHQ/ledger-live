@@ -3,6 +3,8 @@ import { SDK } from "./sdk";
 import { MockSDK } from "./mockSdk";
 import { TrustchainSDKContext, TrustchainSDK, TrustchainLifecycle, WithDevice } from "./types";
 
+export { LkrpIdentityProvider } from "./LKRPIdentityProvider";
+
 /**
  * Get an implementation of a TrustchainSDK
  */

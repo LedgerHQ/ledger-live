@@ -82,6 +82,19 @@ describe("useCurrencyData", () => {
     unmount();
   });
 
+  it("should skip the API request when skip option is enabled", async () => {
+    const wrapper = createWrapper(store);
+    const { result, unmount } = renderHook(
+      () => useCurrencyData({ id: "bitcoin", counterCurrency: "cop" }, { skip: true }),
+      { wrapper },
+    );
+
+    expect(result.current.isUninitialized).toBe(true);
+    expect(requestCount).toBe(0);
+
+    unmount();
+  });
+
   it("should call API with ledgerIds when provided", async () => {
     const wrapper = createWrapper(store);
     const { unmount } = renderHook(

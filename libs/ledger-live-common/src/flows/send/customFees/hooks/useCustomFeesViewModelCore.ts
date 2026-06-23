@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { FeeAssetOption } from "../../../../bridge/descriptor/types";
-import { sendFeatures } from "../../../../bridge/descriptor/send/features";
+import { resolveFeeUnitLabel, sendFeatures } from "../../../../bridge/descriptor/send/features";
 import type { SendFlowTransactionActions } from "../../types";
 import { useBridgeFeeEstimation } from "./useBridgeFeeEstimation";
 import { useCustomFeeValidation } from "./useCustomFeeValidation";
@@ -241,7 +241,10 @@ export function useCustomFeesViewModelCore({
 
       return {
         key: input.key,
-        label: labels.getInputLabel(input.key, effectiveUnitLabel ?? input.unitLabel),
+        label: labels.getInputLabel(
+          input.key,
+          effectiveUnitLabel ?? resolveFeeUnitLabel(input.unitLabel, currency),
+        ),
         value,
         error,
         suggestedRange,
@@ -261,6 +264,7 @@ export function useCustomFeesViewModelCore({
     hasInsufficientBalance,
     insufficientBalanceTargetInputKey,
     effectiveUnitLabel,
+    currency,
     labels,
   ]);
 

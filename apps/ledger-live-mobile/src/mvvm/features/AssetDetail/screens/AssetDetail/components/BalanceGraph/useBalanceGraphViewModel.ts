@@ -7,7 +7,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useAssetChartData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useAssetChartDataInCounterValue } from "@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue";
 import { buildMarketChartSeries } from "@ledgerhq/live-common/market/utils/buildMarketChartSeries";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import {
@@ -147,7 +147,7 @@ export function useBalanceGraphViewModel({
     currentData: chartData,
     isLoading: isChartLoading,
     isFetching: isChartFetching,
-  } = useAssetChartData({ id, counterCurrency, range }, { skip: !id });
+  } = useAssetChartDataInCounterValue({ id, counterCurrency, range }, { skip: !id });
 
   const ranges = useMemo(
     () =>

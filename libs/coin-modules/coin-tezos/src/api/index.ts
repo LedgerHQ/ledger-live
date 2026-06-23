@@ -16,7 +16,6 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { RecommendUndelegation } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getRevealFee } from "@taquito/taquito";
 import { getPkhfromPk, validatePublicKey, ValidationResult } from "@taquito/utils";
@@ -117,13 +116,9 @@ async function craft(
   const tokenCraftInfo =
     tezosMode === "send_token" ? parseTezosTokenAsset(transactionIntent.asset)! : undefined;
 
-  // Guard: send max is incompatible with delegated accounts (native XTZ only)
   let amountToUse = tezosMode === "finalize_unstake" ? 0n : transactionIntent.amount;
   if (tezosMode === "send" && transactionIntent.useAllAmount) {
     const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
-    if (senderInfo.type === "user" && senderInfo.delegate?.address) {
-      throw new RecommendUndelegation();
-    }
     if (senderInfo.type === "user") {
       // Use the amount calculated by the estimation which includes proper buffers and adjustments
       if (estimation.parameters?.amount !== undefined) {

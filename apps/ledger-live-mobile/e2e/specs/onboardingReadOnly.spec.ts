@@ -1,17 +1,6 @@
 import { device } from "detox";
 
 describe("Onboarding - Read Only", () => {
-  $TmsLink("B2CQA-1752");
-  it("is able to buy a nano from the onboarding flow", async () => {
-    await app.onboarding.startOnboarding();
-    await app.onboarding.chooseNoLedgerYet();
-    await app.onboarding.chooseToBuyLedger();
-    /*  Todo: Fix webview check tests
-        await app.buyDevice.buyNano();
-        await app.buyDevice.expectBuyNanoWebPage();
-    */
-  });
-
   $TmsLink("B2CQA-370");
   $TmsLink("B2CQA-1753");
   $TmsLink("B2CQA-1806");

@@ -9,12 +9,51 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { validateIntent } from "../validateIntent";
+import { SolanaStakeAccountAmountTooLow } from "../../errors";
+import type { ChainAPI } from "../../network";
+import { getMaybeTokenMint } from "../../network/chain/web3";
+import { validateIntent as validateIntentRaw } from "../validateIntent";
 
 const SENDER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const RECIPIENT = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
+
+const STAKE_ACC_RENT_EXEMPT = 2_282_880;
+
+jest.mock("../../network/chain/web3", () => ({
+  __esModule: true,
+  getMaybeTokenMint: jest.fn(),
+  getStakeAccountMinimumBalanceForRentExemption: jest.fn((api: ChainAPI) =>
+    api.getMinimumBalanceForRentExemption(200),
+  ),
+}));
+const mockedGetMaybeTokenMint = getMaybeTokenMint as jest.MockedFunction<typeof getMaybeTokenMint>;
+function makeApi(
+  stakeMinimumDelegation = 1_000_000_000,
+  stakeAccRentExempt: number = STAKE_ACC_RENT_EXEMPT,
+): ChainAPI {
+  return {
+    getStakeMinimumDelegation: jest.fn().mockResolvedValue(stakeMinimumDelegation),
+    getMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(stakeAccRentExempt),
+  } as unknown as ChainAPI;
+}
+
+type IntentArg = Parameters<typeof validateIntentRaw>[1];
+type BalancesArg = Parameters<typeof validateIntentRaw>[2];
+type FeesArg = Parameters<typeof validateIntentRaw>[3];
+
+const validateIntent = (
+  intent: IntentArg,
+  balances: BalancesArg,
+  customFees?: FeesArg,
+  api?: ChainAPI,
+): ReturnType<typeof validateIntentRaw> => {
+  const resolvedApi =
+    api ?? (intent.intentType === "staking" ? makeApi() : (undefined as unknown as ChainAPI));
+  return validateIntentRaw(resolvedApi, intent, balances, customFees);
+};
 
 function makeIntent(overrides?: Partial<TransactionIntent>): TransactionIntent {
   return {
@@ -209,6 +248,143 @@ describe("validateIntent", () => {
 
         expect(result.amount).toBe(0n);
       });
+
+      it("should error when amount is below the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000),
+          makeStakeIntent({ amount: 999_999_999n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+        expect(
+          (result.errors.amount as Error & { minimumAmount?: string })?.minimumAmount,
+        ).toBe("1 SOL");
+      });
+
+      it("should error when useAllAmount yields a value below the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000),
+          makeStakeIntent({ amount: 0n, useAllAmount: true }),
+          makeBalances(500_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+      });
+
+      it("should error when useAllAmount minus rent-exempt drops below the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000, STAKE_ACC_RENT_EXEMPT),
+          makeStakeIntent({ amount: 0n, useAllAmount: true }),
+          makeBalances(1_000_500_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+      });
+
+      it("should pass when amount is at or above the stake minimum delegation", async () => {
+        const result = await validateIntentRaw(
+          makeApi(1_000_000_000),
+          makeStakeIntent({ amount: 1_000_000_000n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors).toEqual({});
+      });
+
+      it("should fetch the minimum delegation from the chain api", async () => {
+        const api = makeApi(2_500_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ amount: 2_000_000_000n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(api.getStakeMinimumDelegation).toHaveBeenCalledTimes(1);
+        expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
+      });
+
+      it("should skip getStakeMinimumDelegation when recipient is missing", async () => {
+        const api = makeApi(1_000_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ recipient: "" }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("should skip getStakeMinimumDelegation when recipient is invalid", async () => {
+        const api = makeApi(1_000_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ recipient: "not-valid!!!" }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("should skip getStakeMinimumDelegation when useAllAmount with missing recipient", async () => {
+        const api = makeApi(1_000_000_000);
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ recipient: "", amount: 0n, useAllAmount: true }),
+          makeBalances(5_000_000_000n, 890_880n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("should return validation errors instead of rejecting when getStakeMinimumDelegation would fail and recipient is invalid", async () => {
+        const api = {
+          getStakeMinimumDelegation: jest
+            .fn()
+            .mockRejectedValue(new Error("RPC unreachable")),
+        } as unknown as ChainAPI;
+
+        await expect(
+          validateIntentRaw(
+            api,
+            makeStakeIntent({ recipient: "not-valid!!!" }),
+            makeBalances(5_000_000_000n, 0n),
+            { value: 5000n },
+          ),
+        ).resolves.toMatchObject({
+          errors: { recipient: expect.any(InvalidAddress) },
+        });
+        expect(api.getStakeMinimumDelegation).not.toHaveBeenCalled();
+      });
+
+      it("skips the minimum-delegation check when the RPC call fails (best-effort)", async () => {
+        const api = {
+          getStakeMinimumDelegation: jest
+            .fn()
+            .mockRejectedValue(new Error("RPC unreachable")),
+        } as unknown as ChainAPI;
+
+        const result = await validateIntentRaw(
+          api,
+          makeStakeIntent({ amount: 1n }),
+          makeBalances(5_000_000_000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(api.getStakeMinimumDelegation).toHaveBeenCalledTimes(1);
+        expect(result.errors).toEqual({});
+      });
     });
 
     describe("stake.delegate", () => {
@@ -390,6 +566,179 @@ describe("validateIntent", () => {
       );
 
       expect(result.amount).toBe(0n);
+    });
+
+    describe("native SOL coverage for ATA rent + fee (via api)", () => {
+      const FEE = 5000n;
+      const CLASSIC_ATA_RENT = 2_039_280n;
+      const TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE = 2_157_600n;
+
+      function makeFakeApi(opts: {
+        ataExists: boolean;
+        rentLamports?: number;
+        rentByDataLength?: Record<number, number>;
+      }): ChainAPI {
+        return {
+          findAssocTokenAccAddress: jest.fn(async () => "FakeAtaAddress"),
+          getBalance: jest.fn(async () => (opts.ataExists ? 1n : 0n)),
+          getMinimumBalanceForRentExemption: jest.fn(async (dataLength: number) => {
+            if (opts.rentByDataLength && dataLength in opts.rentByDataLength) {
+              return opts.rentByDataLength[dataLength];
+            }
+            if (opts.rentLamports !== undefined) return opts.rentLamports;
+            throw new Error(`unexpected dataLength ${dataLength} in test`);
+          }),
+        } as unknown as ChainAPI;
+      }
+
+      function makeMint(program: "spl-token" | "spl-token-2022", extensions: string[] = []) {
+        return {
+          onChainAcc: { data: { program } },
+          info: { extensions: extensions.map(extension => ({ extension })) },
+        } as Awaited<ReturnType<typeof getMaybeTokenMint>>;
+      }
+
+      function balancesWithNative(nativeValue: bigint, locked: bigint = 890_880n): Balance[] {
+        return [
+          { value: nativeValue, asset: { type: "native" }, locked },
+          { value: 10_000_000n, asset: { type: "spl-token", assetReference: USDC_MINT } },
+        ];
+      }
+
+      beforeEach(() => {
+        mockedGetMaybeTokenMint.mockReset();
+      });
+
+      it("packs NotEnoughGas when spendable equals classic ATA rent + fee but the Token-2022 ATA needs more SOL", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(
+          makeMint("spl-token-2022", ["transferFeeConfig"]),
+        );
+        const api = makeFakeApi({
+          ataExists: false,
+          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(2_935_160n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect((result.errors.gasPrice as Error & { fees?: string }).fees).toBe(
+          (TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE).toString(),
+        );
+      });
+
+      it("does not pack NotEnoughGas when spendable covers mint-aware ATA rent + fee", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(
+          makeMint("spl-token-2022", ["transferFeeConfig"]),
+        );
+        const api = makeFakeApi({
+          ataExists: false,
+          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE + 890_880n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+      });
+
+      it("packs NotEnoughGas when classic SPL ATA needs to be created and spendable can't cover rent + fee", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({
+          ataExists: false,
+          rentLamports: Number(CLASSIC_ATA_RENT),
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(CLASSIC_ATA_RENT + FEE - 1n + 890_880n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+      });
+
+      it("does not require ATA rent when the recipient's ATA already exists", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({
+          ataExists: true,
+          rentByDataLength: {},
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(FEE + 890_880n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+        expect(api.getMinimumBalanceForRentExemption).not.toHaveBeenCalled();
+      });
+
+      it("packs NotEnoughGas when spendable is zero, regardless of fee value", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({
+          ataExists: true,
+          rentByDataLength: {},
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(890_880n),
+          { value: 0n },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+      });
+
+      it("skips the native coverage check when api is not provided (back-compat)", async () => {
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(0n),
+          { value: FEE },
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+        expect(mockedGetMaybeTokenMint).not.toHaveBeenCalled();
+      });
+
+      it("skips the native coverage check when recipient address is invalid", async () => {
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n, recipient: "not-a-valid-address" }),
+          balancesWithNative(0n),
+          { value: FEE },
+          makeFakeApi({ ataExists: false, rentByDataLength: {} }),
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+        expect(result.errors.gasPrice).toBeUndefined();
+        expect(mockedGetMaybeTokenMint).not.toHaveBeenCalled();
+      });
+
+      it("bails out silently when getMaybeTokenMint returns an Error (no gasPrice noise)", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(new Error("network failed") as any);
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(0n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+      });
     });
   });
 });

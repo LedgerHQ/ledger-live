@@ -2,7 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { BigNumber } from "bignumber.js";
 import { getDescriptor, getSendDescriptor } from "./descriptor/registry";
-import { sendFeatures } from "./descriptor/send/features";
+import { resolveFeeUnitLabel, sendFeatures } from "./descriptor/send/features";
 import { applyMemoToTransaction } from "./descriptor/send/memo";
 import * as configModule from "../config/index";
 
@@ -36,7 +36,7 @@ describe("getDescriptor", () => {
           hasCustom: true,
           hasCoinControl: true,
           presets: {
-            legend: { type: "feeRate", unit: "sat/vbyte", valueFrom: "presetAmount" },
+            legend: { type: "feeRate", unit: expect.any(Function), valueFrom: "presetAmount" },
             strategyLabelInAmount: "legend",
           },
         },
@@ -170,7 +170,7 @@ describe("getSendDescriptor", () => {
         hasCustom: true,
         hasCoinControl: true,
         presets: {
-          legend: { type: "feeRate", unit: "sat/vbyte", valueFrom: "presetAmount" },
+          legend: { type: "feeRate", unit: expect.any(Function), valueFrom: "presetAmount" },
           strategyLabelInAmount: "legend",
         },
       },
@@ -260,10 +260,26 @@ describe("sendFeatures", () => {
     expect(config?.inputs[0]).toMatchObject({
       key: "feePerByte",
       type: "number",
-      unitLabel: "sat/vbyte",
+      unitLabel: expect.any(Function),
     });
+    expect(resolveFeeUnitLabel(config?.inputs[0].unitLabel, bitcoin)).toBe("sat/vbyte");
     expect(typeof config?.getInitialValues).toBe("function");
     expect(typeof config?.buildTransactionPatch).toBe("function");
+  });
+
+  it("should resolve bitcoin-family fee unit labels from the selected currency", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const litecoin = getCryptoCurrencyById("litecoin");
+
+    const bitcoinLegend = getSendDescriptor(bitcoin)?.fees.presets?.legend;
+    const litecoinLegend = getSendDescriptor(litecoin)?.fees.presets?.legend;
+    const litecoinCustomFeeConfig = sendFeatures.getCustomFeeConfig(litecoin);
+
+    expect(resolveFeeUnitLabel(bitcoinLegend?.unit, bitcoin)).toBe("sat/vbyte");
+    expect(resolveFeeUnitLabel(litecoinLegend?.unit, litecoin)).toBe("litoshi/vbyte");
+    expect(resolveFeeUnitLabel(litecoinCustomFeeConfig?.inputs[0].unitLabel, litecoin)).toBe(
+      "litoshi/vbyte",
+    );
   });
 
   it("should return custom fee config for ethereum with EIP-1559 inputs", () => {

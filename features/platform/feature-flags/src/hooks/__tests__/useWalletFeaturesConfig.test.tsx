@@ -38,7 +38,6 @@ const makeConfig = (
   shouldDisplayMarketBanner: value,
   shouldDisplayGraphRework: value,
   shouldDisplayQuickActionCtas: value,
-  shouldDisplayNewReceiveDialog: value,
   shouldDisplayWallet40MainNav: value,
   shouldUseLazyOnboarding: value,
   shouldDisplayBalanceRefreshRework: value,
@@ -60,7 +59,6 @@ const makeParams = (value: boolean): Wallet40Params => ({
   marketBanner: value,
   graphRework: value,
   quickActionCtas: value,
-  newReceiveDialog: value,
   mainNavigation: value,
   lazyOnboarding: value,
   balanceRefreshRework: value,
@@ -118,7 +116,6 @@ describe("useWalletFeaturesConfig hook", () => {
         ["marketBanner", { marketBanner: true }, { shouldDisplayMarketBanner: true }],
         ["graphRework", { graphRework: true }, { shouldDisplayGraphRework: true }],
         ["quickActionCtas", { quickActionCtas: true }, { shouldDisplayQuickActionCtas: true }],
-        ["newReceiveDialog", { newReceiveDialog: true }, { shouldDisplayNewReceiveDialog: true }],
         ["mainNavigation", { mainNavigation: true }, { shouldDisplayWallet40MainNav: true }],
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
         [

@@ -327,6 +327,14 @@ export const NativeElementHelpers = {
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
 
+  async getLabelOfElement(id: string | RegExp, index = 0): Promise<string> {
+    const attributes = await retryUntilTimeout(async () =>
+      NativeElementHelpers.getElementById(id, index).getAttributes(),
+    );
+    const rawLabel = "elements" in attributes ? attributes.elements[index].label : attributes.label;
+    return rawLabel != null ? String(rawLabel) : "";
+  },
+
   async getIdOfElement(elem: NativeElement, index = 0): Promise<string> {
     const attributes = await retryUntilTimeout(async () => elem.getAttributes());
     return (

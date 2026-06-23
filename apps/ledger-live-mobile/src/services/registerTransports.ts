@@ -12,9 +12,19 @@ import {
   DeviceManagementKitHTTPProxyTransport,
 } from "@ledgerhq/live-dmk-mobile";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
+import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { retry } from "@ledgerhq/live-common/promise";
 
 const SPECULOS_PREFIX = "speculos|";
+
+// Speculos cannot tell the DMK transport which device it emulates (it defaults
+// to Stax). The e2e bridge sends the real model via `setSpeculosDeviceModel`,
+// which we then forward when opening the transport so the app behaves like it.
+let speculosDeviceModel: DeviceModelId | undefined;
+
+export function setSpeculosDeviceModel(model?: DeviceModelId) {
+  speculosDeviceModel = model;
+}
 
 /**
  * Registers transport modules for different connection types (BLE, HID, HTTP Debug, Speculos).
@@ -43,7 +53,8 @@ export const registerTransports = () => {
       open: id => {
         if (!id.startsWith(SPECULOS_PREFIX)) return null;
         const baseURL = id.slice(SPECULOS_PREFIX.length);
-        return retry(() => DeviceManagementKitTransportSpeculos.open({ baseURL }));
+        const model = speculosDeviceModel ? ledgerToDmkDeviceIdMap[speculosDeviceModel] : undefined;
+        return retry(() => DeviceManagementKitTransportSpeculos.open({ baseURL, model }));
       },
       disconnect: id => (id.startsWith(SPECULOS_PREFIX) ? Promise.resolve() : null),
     });

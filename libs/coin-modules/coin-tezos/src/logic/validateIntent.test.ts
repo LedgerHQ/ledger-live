@@ -5,7 +5,6 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   NotEnoughBalance,
-  RecommendUndelegation,
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
 import coinConfig from "../config";
@@ -235,7 +234,7 @@ describe("validateIntent", () => {
   });
 
   describe("transaction constraints", () => {
-    it("should return RecommendUndelegation when send-max native XTZ on a delegated account", async () => {
+    it("allows send-max on a delegated account with no error or warning and resolves the max amount", async () => {
       mockGetAccountByAddress.mockResolvedValue(
         makeUserAccount({
           delegate: { alias: "baker", address: validRecipient, active: true },
@@ -253,8 +252,11 @@ describe("validateIntent", () => {
         useAllAmount: true,
       });
 
-      expect(result.errors.amount).toBeInstanceOf(RecommendUndelegation);
-      expect(mockEstimateFees).not.toHaveBeenCalled();
+      expect(result.errors).toEqual({});
+      expect(result.warnings).toEqual({});
+      // balance 5_000_000 - fees 1_000
+      expect(result.amount).toBe(4999000n);
+      expect(result.totalSpent).toBe(5000000n);
     });
 
     it("should return MustDelegateBeforeStaking when stake intent has no delegate", async () => {

@@ -1,18 +1,52 @@
 import React from "react";
-import { Linking } from "react-native";
+import { Linking, Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
+import { type NavigatorScreenParams } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import * as analytics from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type {
+  AnalyticsOptInPromptNavigatorParamList,
+  EntryPoint,
+} from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import AnalyticsConsentScreen from "../screens/AnalyticsConsentScreen";
 
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
-}));
+type TestStackParamList = {
+  AnalyticsConsent: { entryPoint: EntryPoint };
+  [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
+  [NavigatorName.Base]: NavigatorScreenParams<BaseNavigatorStackParamList>;
+};
 
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: jest.fn() }),
-  useRoute: () => ({ params: { entryPoint: "Portfolio" } }),
-}));
+const Stack = createNativeStackNavigator<TestStackParamList>();
+
+function SetPreferencesScreen() {
+  return <Text>{ScreenName.AnalyticsOptInPromptDetails}</Text>;
+}
+
+function PortfolioScreen() {
+  return <Text>Portfolio</Text>;
+}
+
+function renderScreen() {
+  return render(
+    <NotificationsPromptProvider>
+      <Stack.Navigator
+        initialRouteName="AnalyticsConsent"
+        screenOptions={{ headerShown: false, animation: "none" }}
+      >
+        <Stack.Screen
+          name="AnalyticsConsent"
+          component={AnalyticsConsentScreen}
+          initialParams={{ entryPoint: "Portfolio" }}
+        />
+        <Stack.Screen name={NavigatorName.AnalyticsOptInPrompt} component={SetPreferencesScreen} />
+        <Stack.Screen name={NavigatorName.Base} component={PortfolioScreen} />
+      </Stack.Navigator>
+    </NotificationsPromptProvider>,
+  );
+}
 
 describe("AnalyticsConsentScreen", () => {
   beforeEach(() => {
@@ -20,7 +54,7 @@ describe("AnalyticsConsentScreen", () => {
   });
 
   it("should enable analytics + recommendations and track when Accept all is pressed", async () => {
-    const { user, store } = render(<AnalyticsConsentScreen />);
+    const { user, store } = renderScreen();
 
     await user.press(screen.getByRole("button", { name: "Accept all" }));
 
@@ -40,7 +74,7 @@ describe("AnalyticsConsentScreen", () => {
   });
 
   it("should disable analytics + recommendations and track when Refuse all is pressed", async () => {
-    const { user, store } = render(<AnalyticsConsentScreen />);
+    const { user, store } = renderScreen();
 
     await user.press(screen.getByRole("button", { name: "Refuse all" }));
 
@@ -60,7 +94,7 @@ describe("AnalyticsConsentScreen", () => {
   });
 
   it("should track Set Preferences when the link is pressed", async () => {
-    const { user } = render(<AnalyticsConsentScreen />);
+    const { user } = renderScreen();
 
     await user.press(screen.getByText("Set preferences"));
 
@@ -77,7 +111,7 @@ describe("AnalyticsConsentScreen", () => {
 
   it("should open the privacy policy URL and track when Privacy policy is pressed", async () => {
     const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { user } = render(<AnalyticsConsentScreen />);
+    const { user } = renderScreen();
 
     await user.press(screen.getByText("Privacy policy"));
 

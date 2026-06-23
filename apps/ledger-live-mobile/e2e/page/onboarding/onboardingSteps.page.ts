@@ -11,7 +11,6 @@ export default class OnboardingStepsPage {
   accessWalletButton = () => getElementById("onboarding-accessWallet");
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
-  buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
 
   setupLedger = "onboarding-setupLedger";
@@ -74,10 +73,6 @@ export default class OnboardingStepsPage {
     await waitForElementById(this.discoverLiveTitle(3));
     await waitForElementById(this.exploreWithoutDeviceButtonId);
     await tapById(this.exploreWithoutDeviceButtonId);
-  }
-
-  async chooseToBuyLedger() {
-    await tapByElement(this.buyLedgerButton());
   }
 
   // Accessing existing Wallet

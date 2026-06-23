@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAssetChartData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useAssetChartDataInCounterValue } from "@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue";
 import type { LineChartRange } from "LLD/components/LineChart";
 import { buildAssetDetailChartSeries } from "../utils/buildAssetDetailChartSeries";
 
@@ -32,7 +32,7 @@ export function useAssetDetailChartSeries({
     isLoading,
     isFetching,
     isError,
-  } = useAssetChartData(
+  } = useAssetChartDataInCounterValue(
     { id: id ?? "", counterCurrency, range: selectedRange },
     { skip: !id || skip },
   );

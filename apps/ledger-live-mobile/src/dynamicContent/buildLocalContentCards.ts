@@ -153,7 +153,6 @@ export function buildSampleActionCarouselInitial(variant: SampleActionBannerVari
     cardsLayout: ContentCardsLayout.carousel,
     cardsType: ContentCardsType.action,
     type: ContentCardsType.category,
-    title: "Sample actions",
     isDismissable: true,
   };
 

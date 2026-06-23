@@ -1,5 +1,75 @@
 # @ledgerhq/live-cli
 
+## 24.45.0
+
+### Minor Changes
+
+- [#18240](https://github.com/LedgerHQ/ledger-live/pull/18240) [`4d59f9d`](https://github.com/LedgerHQ/ledger-live/commit/4d59f9d250f232875627dab640b3b31943dc5fdc) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix HTTP proxy device model metadata for DMK mobile transport
+
+- [#18256](https://github.com/LedgerHQ/ledger-live/pull/18256) [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Derive "supported currencies" from the coin-modules registry instead of `setSupportedCurrencies`.
+
+  Each `CoinModuleLoader` now declares a `supportedCoins: CryptoCurrencyId[]` field, and a currency is supported when it appears in a registered loader's `supportedCoins`. The framework `setSupportedCurrencies` / `listSupportedCurrencies` / `isCurrencySupported` and the `EXPERIMENTAL_CURRENCIES` env are removed; `listSupportedCurrencies` / `isCurrencySupported` are now exported from `@ledgerhq/live-common/currencies` backed by the registry. Apps no longer maintain a supported-currencies list — registering the coin modules is what makes their currencies supported.
+
+### Patch Changes
+
+- Updated dependencies [[`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09), [`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8), [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311), [`e272e02`](https://github.com/LedgerHQ/ledger-live/commit/e272e0221aaa8b78120c3746d315108f30fc4dc9), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac), [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516), [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f), [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e), [`e962c2d`](https://github.com/LedgerHQ/ledger-live/commit/e962c2df66669d8b9bcf99a421c67f52a3278a6e), [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5), [`d3829e5`](https://github.com/LedgerHQ/ledger-live/commit/d3829e5889af420f986562aaec2f226ad68c66ed), [`f59b441`](https://github.com/LedgerHQ/ledger-live/commit/f59b441b040495884a317f61c8588db7014078c2), [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`5dcc7b5`](https://github.com/LedgerHQ/ledger-live/commit/5dcc7b58625744541d6240bf9f58a9adcc3efcfd), [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d), [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901), [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b), [`086bf9b`](https://github.com/LedgerHQ/ledger-live/commit/086bf9b63dda23c8bef4a05f45b4b7ecdf3caa65), [`6e0f83d`](https://github.com/LedgerHQ/ledger-live/commit/6e0f83d30dc4f294a579d84db14efd43d720ef25), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451), [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2), [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102), [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e)]:
+  - @ledgerhq/live-common@36.2.0
+  - @ledgerhq/live-env@2.39.0
+  - @ledgerhq/types-live@6.112.0
+  - @ledgerhq/cryptoassets@13.52.0
+  - @ledgerhq/types-cryptoassets@7.38.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0
+  - @ledgerhq/live-countervalues@0.20.0
+  - @ledgerhq/coin-bitcoin@0.44.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.6
+  - @ledgerhq/ledger-key-ring-protocol@0.15.1
+  - @ledgerhq/live-dmk-speculos@0.9.2
+  - @ledgerhq/live-network@2.6.5
+  - @ledgerhq/live-wallet@0.27.3
+  - @ledgerhq/device-core@0.11.4
+
+## 24.45.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
+  - @ledgerhq/cryptoassets@13.52.0-next.1
+  - @ledgerhq/types-live@6.112.0-next.1
+  - @ledgerhq/live-common@36.2.0-next.1
+  - @ledgerhq/coin-bitcoin@0.44.1-next.1
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.1
+  - @ledgerhq/live-wallet@0.27.3-next.1
+  - @ledgerhq/device-core@0.11.4-next.1
+  - @ledgerhq/live-countervalues@0.20.0-next.1
+
+## 24.45.0-next.0
+
+### Minor Changes
+
+- [#18240](https://github.com/LedgerHQ/ledger-live/pull/18240) [`4d59f9d`](https://github.com/LedgerHQ/ledger-live/commit/4d59f9d250f232875627dab640b3b31943dc5fdc) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix HTTP proxy device model metadata for DMK mobile transport
+
+- [#18256](https://github.com/LedgerHQ/ledger-live/pull/18256) [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Derive "supported currencies" from the coin-modules registry instead of `setSupportedCurrencies`.
+
+  Each `CoinModuleLoader` now declares a `supportedCoins: CryptoCurrencyId[]` field, and a currency is supported when it appears in a registered loader's `supportedCoins`. The framework `setSupportedCurrencies` / `listSupportedCurrencies` / `isCurrencySupported` and the `EXPERIMENTAL_CURRENCIES` env are removed; `listSupportedCurrencies` / `isCurrencySupported` are now exported from `@ledgerhq/live-common/currencies` backed by the registry. Apps no longer maintain a supported-currencies list — registering the coin modules is what makes their currencies supported.
+
+### Patch Changes
+
+- Updated dependencies [[`3fa1fca`](https://github.com/LedgerHQ/ledger-live/commit/3fa1fca3134dadd680fcfdc0166c3413ddd38d09), [`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`1da564f`](https://github.com/LedgerHQ/ledger-live/commit/1da564f4ae88b64e1bf34a36f7141844fe47d5f8), [`9fe00b7`](https://github.com/LedgerHQ/ledger-live/commit/9fe00b72671abe567c05fd7dfd84b7bf7489895f), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`597a15d`](https://github.com/LedgerHQ/ledger-live/commit/597a15dcda93e0c65ff0c2d4e95b8d8d807892dd), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`e9edcfa`](https://github.com/LedgerHQ/ledger-live/commit/e9edcfafa53200750eb70dd90d4dea718fb23311), [`e272e02`](https://github.com/LedgerHQ/ledger-live/commit/e272e0221aaa8b78120c3746d315108f30fc4dc9), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`67c3a67`](https://github.com/LedgerHQ/ledger-live/commit/67c3a6709f6925ae2c29c31758b6eba0455bfaac), [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516), [`2241e4f`](https://github.com/LedgerHQ/ledger-live/commit/2241e4f7c569db7b428f03aa28d5f862b4270d0f), [`8f5c122`](https://github.com/LedgerHQ/ledger-live/commit/8f5c122ebad1fc3451ba5a1863c5ead3b63ad786), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`f4f4185`](https://github.com/LedgerHQ/ledger-live/commit/f4f41850543109f51a0791f0bd90d0bd82aa491e), [`e962c2d`](https://github.com/LedgerHQ/ledger-live/commit/e962c2df66669d8b9bcf99a421c67f52a3278a6e), [`851d224`](https://github.com/LedgerHQ/ledger-live/commit/851d2244839e7e2d9dfba024e9bb3f7c41eca0e5), [`d3829e5`](https://github.com/LedgerHQ/ledger-live/commit/d3829e5889af420f986562aaec2f226ad68c66ed), [`f59b441`](https://github.com/LedgerHQ/ledger-live/commit/f59b441b040495884a317f61c8588db7014078c2), [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`5dcc7b5`](https://github.com/LedgerHQ/ledger-live/commit/5dcc7b58625744541d6240bf9f58a9adcc3efcfd), [`8d77293`](https://github.com/LedgerHQ/ledger-live/commit/8d77293075748d0007872c1bf2b32eb50fad887d), [`1660756`](https://github.com/LedgerHQ/ledger-live/commit/166075636286b0f6d8210b4278c512a00b0eb901), [`dd3547b`](https://github.com/LedgerHQ/ledger-live/commit/dd3547b301e1448efc2b1c0d58356a64508ac31b), [`086bf9b`](https://github.com/LedgerHQ/ledger-live/commit/086bf9b63dda23c8bef4a05f45b4b7ecdf3caa65), [`6e0f83d`](https://github.com/LedgerHQ/ledger-live/commit/6e0f83d30dc4f294a579d84db14efd43d720ef25), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451), [`56ccfb9`](https://github.com/LedgerHQ/ledger-live/commit/56ccfb9cf77bf3a1288404bb5d8996ac78736dd2), [`9dacc01`](https://github.com/LedgerHQ/ledger-live/commit/9dacc01d02dedc205be6d01f849b2c0e84f27102), [`3534656`](https://github.com/LedgerHQ/ledger-live/commit/3534656fccb01bed3c289ec08a07f8e3daa6fa9e)]:
+  - @ledgerhq/live-common@36.2.0-next.0
+  - @ledgerhq/live-env@2.39.0-next.0
+  - @ledgerhq/types-live@6.112.0-next.0
+  - @ledgerhq/cryptoassets@13.52.0-next.0
+  - @ledgerhq/types-cryptoassets@7.38.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
+  - @ledgerhq/live-countervalues@0.20.0-next.0
+  - @ledgerhq/coin-bitcoin@0.44.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.6-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.15.1-next.0
+  - @ledgerhq/live-dmk-speculos@0.9.2-next.0
+  - @ledgerhq/live-network@2.6.5-next.0
+  - @ledgerhq/live-wallet@0.27.3-next.0
+  - @ledgerhq/device-core@0.11.4-next.0
+
 ## 24.44.0
 
 ### Minor Changes

@@ -1338,6 +1338,9 @@
     }
   },
   "earn" : {
+    "simulator" : {
+      "title" : "Simulateur de récompenses"
+    },
     "deposit" : {
       "protocolInfoModal" : {
         "title" : "Pour choisir un protocole, voici quelques éléments à connaître :",
@@ -1457,6 +1460,13 @@
     "description" : "Veuillez désinstaller puis réinstaller l’application sur votre téléphone pour supprimer les données de Ledger Wallet, y compris de comptes et paramètres.",
     "button" : "Réinitialiser",
     "warning" : "La réinitialisation de Ledger Wallet effacera l’historique des transactions Swap de tous vos comptes."
+  },
+  "globalSearch" : {
+    "searchPlaceholder" : "Rechercher un actif",
+    "sections" : {
+      "cryptos" : "Cryptos",
+      "stocks" : "Actions"
+    }
   },
   "graph" : {
     "week" : "1S",
@@ -2976,7 +2986,7 @@
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
-      "FINALIZE_UNSTAKE" : "Retiré",
+      "FINALIZE_UNSTAKE" : "Déstaké",
       "ASSOCIATE_TOKEN" : "Association de token",
       "CONTRACT_CALL" : "Appel de contrat",
       "UPDATE_ACCOUNT" : "Compte mis à jour"
@@ -3052,6 +3062,7 @@
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
       "stakedAmount" : "Montant staké",
+      "unstakedAmount" : "Montant déstaké",
       "accountCreationFee" : "Frais de création de compte",
       "associatedTokenId" : "ID du token associé",
       "targetStakingNodeId" : "ID du nœud cible",
@@ -3686,9 +3697,11 @@
           "campaignId" : "ID de campagne",
           "titleField" : "Titre",
           "subtitle" : "Sous-titre",
-          "imageUrl" : "URL de l’image",
+          "imageUrlLight" : "URL de l’image (clair)",
+          "imageUrlDark" : "URL de l’image (sombre)",
           "primaryButtonLabel" : "Libellé du bouton principal",
           "primaryButtonLink" : "Lien du bouton principal",
+          "navigationButtonLabel" : "Libellé du bouton de navigation (Continuer/Fermer)",
           "secondaryButtonLabel" : "Libellé du bouton secondaire",
           "secondaryButtonLink" : "Lien du bouton secondaire",
           "icon" : "Icône",
@@ -3728,7 +3741,11 @@
       "desc" : "Ne manquez plus rien sur Ledger Wallet, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
       "descVariantB" : "Recevez des alertes en temps réel sur les nouvelles cryptos, les opportunités de rendement et les mouvements du marché. Vous pouvez les désactiver à tout moment.",
       "allow" : "Autoriser les notifications",
-      "later" : "Plus tard"
+      "later" : "Plus tard",
+      "transactionsAlerts" : {
+        "title" : "Suivez votre portefeuille",
+        "desc" : "Recevez des alertes en temps réel lors de l’envoi ou la réception de cryptos. Vous pouvez les désactiver à tout moment dans les paramètres."
+      }
     },
     "optInScreen" : {
       "title" : "Activer les notifications ?",
@@ -4378,6 +4395,10 @@
       "available" : "Disponible : {{amount}}",
       "placeholder" : "Entrer une adresse ou un ENS",
       "placeholderNoENS" : "Entrer l’adresse",
+      "pasteFromClipboard" : {
+        "title" : "Coller depuis le presse-papiers",
+        "cta" : "Coller"
+      },
       "editRecipientAccessibilityLabel" : "Modifier le bénéficiaire",
       "recent" : "Récent",
       "recentDetail" : "Détails",
@@ -4415,11 +4436,23 @@
       },
       "skipMemo" : {
         "title" : "Ne pas ajouter de {{tag}} ?",
-        "warning" : "Votre actif peut être perdu si un {{tag}} est requis par le bénéficiaire."
+        "warning" : "Votre actif peut être perdu si un {{tag}} est requis par le bénéficiaire.",
+        "notRequired" : "Le bénéficiaire n’exige pas de {{tag}} ?",
+        "confirm" : "Ne pas ajouter",
+        "neverAskAgain" : "Ne plus afficher cet avertissement"
       },
       "tagHelp" : {
         "title" : "Qu’est-ce qu’un {{tag}} ?",
         "description" : "Un {{tag}} est requis lors de l’envoi de {{currency}} vers une plateforme d’échange de cryptos. Cette fonctionnalité permet d’identifier le bénéficiaire de la transaction. L’absence de {{tag}} peut entraîner une perte d’actifs."
+      },
+      "memoLabel" : {
+        "ripple" : "Tag",
+        "casper" : "Identifiant de transfert",
+        "ton" : "Commentaire",
+        "default" : "Mémo"
+      },
+      "memo" : {
+        "transactionIdentifier" : "Identifiant de transaction"
       },
       "networkFeesInFiat" : "Frais de réseau en {{currency}}",
       "feesAmount" : "Montant des frais ({{unit}})",
@@ -4461,7 +4494,8 @@
         "networkFeesInFiat" : "Frais de réseau en {{currency}}",
         "invalidValue" : "Saisissez un nombre valide",
         "belowMinimum" : "Minimum : {{min}}",
-        "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max."
+        "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max.",
+        "payFeesIn" : "Payer les frais en"
       },
       "coinControl" : {
         "title" : "Sélection manuelle",
@@ -6604,7 +6638,9 @@
       "title" : "Gagner des récompenses en déléguant votre compte",
       "btn" : "Gagner des récompenses"
     },
-    "manage" : "Gérer",
+    "operationTypes" : {
+      "UNSTAKE" : "Déstaking"
+    },
     "delegation" : {
       "addCustomValidator" : "Ajouter validateur personnalisé",
       "sectionLabel" : "Délégation"
@@ -6613,7 +6649,11 @@
       "sectionLabel" : "staker",
       "status" : "Statut",
       "unstaking" : "Déstaking",
-      "available" : "Disponible"
+      "available" : "Disponible",
+      "availableIn" : "Disponible dans",
+      "lessThanADay" : "Moins d’un jour",
+      "stakeMore" : "Staker plus",
+      "unstake" : "Déstaker"
     },
     "earnRewards" : {
       "title" : "Gagner des récompenses",
@@ -6664,6 +6704,41 @@
           "info" : "En savoir plus sur le staking vs la délégation sur Tezos"
         }
       }
+    },
+    "unstake" : {
+      "flow" : {
+        "amount" : {
+          "unbondingNotice" : "Le déstaking prend 4 jours. Pendant cette période, vos XTZ restent délégués et ne vous rapportent plus de récompenses de staking.",
+          "staked" : "Staké",
+          "cta" : "Déstaker"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "Déstaking enregistré",
+              "text" : "Vos XTZ sont en cours de déstaking et seront disponibles au retrait dans environ 4 jours."
+            }
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Déstaking requis pour changer de Baker",
+        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant de les déléguer à un nouveau Baker."
+      },
+      "endDelegation" : {
+        "title" : "Déstaking requis pour arrêter une délégation",
+        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant d’arrêter votre délégation."
+      },
+      "steps" : {
+        "0" : "Ouvrez le menu Gagner et sélectionnez Déstaker.",
+        "1" : "Confirmez le montant et la transaction de déstaking sur votre appareil.",
+        "2" : "Patientez pendant la période de déstaking d’environ 4 jours.",
+        "3" : "Une fois vos actifs retirés, vous pouvez changer de Baker ou mettre fin à votre délégation."
+      },
+      "learnMore" : "En savoir plus sur le staking Tezos",
+      "close" : "Fermer"
     },
     "account" : {
       "availableBalanceTooltip" : "Actifs que vous pouvez utiliser dès maintenant.",
@@ -6732,7 +6807,7 @@
               "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
             "cta" : "Continuer",
-            "seiAssociationWarning" : "Votre compte Sei n’a pas encore été lié sur la blockchain. La délégation échouera tant que votre compte n’aura pas au moins une transaction sortante confirmée sur la blockchain. Envoyez d’abord un petit montant de SEI à une adresse de votre choix, attendez la confirmation, puis revenez ici pour déléguer."
+            "seiAssociationWarning" : "Pour déléguer, vous devez activer votre compte en envoyant le montant de votre choix à une adresse de votre choix (telle que la vôtre). Cela est requis par le réseau Sei."
           },
           "validator" : {
             "validators" : "Validateurs",
@@ -6854,16 +6929,49 @@
             "youEarned" : "Vous avez gagné",
             "byDelegationAssetsTo" : "en stakant vos actifs avec",
             "description" : "Les récompenses seront demandées immédiatement et ajoutées à votre solde disponible.",
-            "cta" : "Continuer"
+            "compoundRewardDescription" : "Les récompenses seront restakées auprès du même validateur, augmentant ainsi votre solde délégué.",
+            "cta" : "Continuer",
+            "method" : {
+              "claimReward" : "Encaisser",
+              "compoundReward" : "Capitaliser",
+              "compoundOrCashIn" : "Capitaliser ou encaisser ?",
+              "claimRewardTooltip" : "Les récompenses seront ajoutées à votre solde disponible.",
+              "compoundRewardTooltip" : "Les récompenses seront restakées auprès du même validateur."
+            }
           },
           "verification" : {
             "success" : {
               "title" : "Vous avez bien demandé vos récompenses. Elles ont été ajoutées à votre solde disponible.",
+              "titleCompound" : "Vos récompenses ont été déléguées au même validateur.",
               "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
               "cta" : "Voir les détails"
             },
             "pending" : {
               "title" : "Diffusion de la transaction..."
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "title" : "Retirer",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "withdraw" : {
+            "warning" : "Le montant retiré de la délégation n’est plus immobilisé et il sera reversé sur votre solde disponible.",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Retrait des actifs effectué",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
+              "cta" : "Voir les détails"
             },
             "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
           }
@@ -8095,6 +8203,7 @@
   },
   "market" : {
     "title" : "Marché",
+    "searchPlaceholder" : "Rechercher un actif",
     "assets" : {
       "title" : "Actifs",
       "emptyFavorites" : "Pas encore de favoris",
@@ -8113,8 +8222,8 @@
         "sortingOptions" : {
           "marketCap" : "Capitalisation",
           "volume" : "Volume",
-          "gainers" : "Hausses",
-          "losers" : "Baisses"
+          "gainers" : "Top hausses",
+          "losers" : "Top baisses"
         },
         "timeframeOptions" : {
           "1D" : "1 jour",
@@ -8611,7 +8720,11 @@
     "tabs" : {
       "crypto" : "Cryptos",
       "stablecoins" : "Stablecoins",
+      "stocks" : "Actions",
       "market" : "Marché"
+    },
+    "stocks" : {
+      "exploreAll" : "Explorer tout"
     },
     "referralProgram" : "20 USD"
   },
@@ -9314,7 +9427,7 @@
     }
   },
   "marketBanner" : {
-    "title" : "Explorez le marché",
+    "title" : "Marché",
     "viewAll" : "Voir tout",
     "viewAllAccessibilityHint" : "Appuyez deux fois pour afficher tous les actifs",
     "connectionFailed" : "Échec de la connexion",
@@ -9322,6 +9435,18 @@
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "Appuyez deux fois pour afficher les détails"
+    },
+    "filter" : {
+      "accessibilityLabel" : "Modifier le filtre de la bannière Marché",
+      "accessibilityHint" : "Appuyez deux fois pour choisir les actifs à afficher",
+      "title" : "Trier par",
+      "noFavorites" : "Pas encore de favoris",
+      "options" : {
+        "trending" : "Tendance",
+        "gainers" : "Hausses",
+        "losers" : "Baisses",
+        "favorites" : "Favoris"
+      }
     }
   },
   "largeMover" : {
@@ -9676,7 +9801,7 @@
   "fearAndGreed" : {
     "title" : "Sentiment du marché",
     "description" : "Cet indicateur représente le sentiment général du marché de 0 à 100, sur la base notamment de la volatilité, de la dynamique du marché et des tendances sociales. Des valeurs basses indiquent la peur, des valeurs élevées signalent la cupidité.",
-    "disclaimer" : "Les données proviennent de l’indice Fear and Greed de CoinMarketCap et sont fournies à titre informatif uniquement.",
+    "disclaimer" : "Les données proviennent de CoinMarketCap. Fournies à titre informatif uniquement.",
     "levels" : {
       "fearPlus" : "Peur+",
       "fear" : "Peur",
@@ -9690,7 +9815,7 @@
     "title" : "Saison",
     "definitionTitle" : "Index altcoin",
     "description" : "L’indice Altcoin indique les performances du bitcoin par rapport aux autres cryptomonnaies. Plus le nombre est élevé, plus les altcoins sont performants par rapport au bitcoin.",
-    "disclaimer" : "Les données proviennent de l’indice Fear and Greed de CoinMarketCap et sont fournies à titre informatif uniquement.",
+    "disclaimer" : "Les données proviennent de CoinMarketCap. Fournies à titre informatif uniquement.",
     "levels" : {
       "bitcoin" : "Bitcoin",
       "altcoin" : "Altcoin"
@@ -9698,7 +9823,8 @@
   },
   "marketCapCard" : {
     "title" : "Capitalisation globale",
-    "description" : "La capitalisation globale représente la capitalisation de toutes les cryptomonnaies confondues."
+    "description" : "La capitalisation globale représente la capitalisation de toutes les cryptomonnaies confondues.",
+    "disclaimer" : "Les données proviennent de CoinMarketCap. Fournies à titre informatif uniquement."
   },
   "analyticsAllocation" : {
     "header" : {

@@ -7,7 +7,7 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
-import { TokenCurrency, type Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
@@ -17,9 +17,6 @@ import { getChecksum, nanosToSeconds, toEntityId, toTimestamp } from "../logic/u
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
-  HederaThirdwebTransaction,
-  HederaThirdwebDecodedTransferParams,
-  OperationERC20,
   HederaERC20TokenBalance,
   ERC20TokenTransfer,
   EnrichedERC20Transfer,
@@ -114,44 +111,6 @@ export function parseTransfers(
   };
 }
 
-// TODO: remove once migration to new API is complete
-export async function getERC20BalancesForAccount({
-  configOrCurrencyId,
-  evmAccountId,
-  supportedTokenIds = SUPPORTED_ERC20_TOKENS.map(token => token.id),
-}: {
-  configOrCurrencyId: HederaCoinConfig | string;
-  evmAccountId: string;
-  supportedTokenIds?: string[];
-}): Promise<HederaERC20TokenBalance[]> {
-  const availableTokens: TokenCurrency[] = [];
-
-  for (const erc20TokenId of supportedTokenIds) {
-    const calToken = await getCryptoAssetsStore().findTokenById(erc20TokenId);
-
-    if (calToken) {
-      availableTokens.push(calToken);
-    }
-  }
-
-  const promises = availableTokens.map(async erc20token => {
-    const balance = await apiClient.getERC20Balance({
-      configOrCurrencyId,
-      accountEvmAddress: evmAccountId,
-      contractEvmAddress: erc20token.contractAddress,
-    });
-
-    return {
-      balance,
-      token: erc20token,
-    };
-  });
-
-  const balances = await Promise.all(promises);
-
-  return balances;
-}
-
 export async function getERC20BalancesForAccountV2({
   configOrCurrencyId,
   address,
@@ -187,61 +146,6 @@ export async function getERC20BalancesForAccountV2({
   }
 
   return balances;
-}
-
-// TODO: remove once migration to new API is complete
-export const getERC20Operations = async ({
-  config,
-  currencyId,
-  latestERC20Transactions,
-}: {
-  config?: HederaCoinConfig;
-  currencyId: string;
-  latestERC20Transactions: HederaThirdwebTransaction[];
-}): Promise<OperationERC20[]> => {
-  const latestERC20Operations: OperationERC20[] = [];
-
-  for (const thirdwebTransaction of latestERC20Transactions) {
-    const tokenId = thirdwebTransaction.address;
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currencyId);
-
-    if (!token) continue;
-
-    const hash = thirdwebTransaction.transactionHash;
-    const contractCallResult = await apiClient.getContractCallResult({
-      configOrCurrencyId: config ?? currencyId,
-      transactionHash: hash,
-    });
-    const mirrorTransaction = await apiClient.findTransactionByContractCall({
-      configOrCurrencyId: config ?? currencyId,
-      timestamp: contractCallResult.timestamp,
-      contractId: contractCallResult.contract_id,
-    });
-
-    if (!mirrorTransaction) continue;
-
-    latestERC20Operations.push({
-      thirdwebTransaction,
-      mirrorTransaction,
-      contractCallResult,
-      token,
-    });
-  }
-
-  return latestERC20Operations;
-};
-
-// TODO: remove once migration to new API is complete
-export function parseThirdwebTransactionParams(
-  transaction: HederaThirdwebTransaction,
-): HederaThirdwebDecodedTransferParams | null {
-  const { from, to, value } = transaction.decoded.params;
-
-  if (typeof from !== "string" || typeof to !== "string" || typeof value !== "string") {
-    return null;
-  }
-
-  return { from, to, value };
 }
 
 /**

@@ -9,7 +9,6 @@ export const WALLET_FEATURES_PARAMS = [
   { key: "mainNavigation", label: "Main Navigation" },
   { key: "tour", label: "Tour" },
   { key: "q2Tour", label: "Q2 Tour" },
-  { key: "newReceiveDialog", label: "New Receive Dialog" },
   { key: "balanceRefreshRework", label: "Balance Refresh Rework" },
   { key: "assetSection", label: "Asset Section" },
   {

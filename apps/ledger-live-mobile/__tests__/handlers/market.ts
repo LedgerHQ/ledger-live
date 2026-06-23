@@ -42,37 +42,40 @@ const stockMarketsMock: typeof marketsMock = [
   },
 ];
 
+const marketsResolver = ({ request }: { request: Request }) => {
+  const searchParams = new URL(request.url).searchParams;
+
+  let filteredData = marketsMock;
+
+  if (searchParams.get("categories") === "tokenized-stock") {
+    filteredData = stockMarketsMock;
+  }
+  // When we perform a search
+  else if (searchParams.get("filter")) {
+    const coins = searchParams.get("filter")?.toLowerCase().split(",") || [];
+    filteredData = marketsMock.filter(({ name, ticker }) =>
+      coins.some(coin => ticker.toLowerCase().includes(coin) || name.toLowerCase().includes(coin)),
+    );
+  }
+  // When we perform starred / trending hydration by ids
+  else if (searchParams.get("ids")) {
+    const coins = searchParams.get("ids")?.split(",") || [];
+    filteredData = marketsMock.filter(({ id }) => coins.includes(id));
+  }
+
+  const page = parseInt(searchParams.get("page") || "0");
+  const pageSize = 10;
+  const startIndex = page * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
+
+  return HttpResponse.json(paginatedData);
+};
+
 const handlers = [
-  http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
-    const searchParams = new URL(request.url).searchParams;
-
-    let filteredData = marketsMock;
-
-    if (searchParams.get("categories") === "tokenized-stock") {
-      filteredData = stockMarketsMock;
-    }
-    // When we perform a search
-    else if (searchParams.get("filter")) {
-      const coins = searchParams.get("filter")?.toLowerCase().split(",") || [];
-      filteredData = marketsMock.filter(({ name, ticker }) =>
-        coins.some(
-          coin => ticker.toLowerCase().includes(coin) || name.toLowerCase().includes(coin),
-        ),
-      );
-    }
-    // When we perform starred
-    else if (searchParams.get("ids")) {
-      const coins = searchParams.get("ids")?.split(",") || [];
-      filteredData = marketsMock.filter(({ id }) => coins.includes(id));
-    }
-
-    const page = parseInt(searchParams.get("page") || "0");
-    const pageSize = 10;
-    const startIndex = page * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedData = filteredData.slice(startIndex, endIndex);
-
-    return HttpResponse.json(paginatedData);
+  http.get("https://countervalues.live.ledger.com/v3/markets", marketsResolver),
+  http.get("https://countervalues.live.ledger.com/v3/currencies/trending", () => {
+    return HttpResponse.json(marketsMock.slice(0, 7).map(({ id }) => ({ id, supported: true })));
   }),
   http.get("https://countervalues.live.ledger.com/v3/categories/trending", () => {
     return HttpResponse.json([

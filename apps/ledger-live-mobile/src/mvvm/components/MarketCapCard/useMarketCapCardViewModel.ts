@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useGlobalMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useLocale, useTranslation } from "~/context/Locale";
@@ -21,7 +22,8 @@ export function useMarketCapCardViewModel(): MarketCapCardViewModel {
   const { locale } = useLocale();
   const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
 
-  const { data, isLoading, isError } = useGlobalMarketData({ counterCurrency });
+  const { data, isLoading, isError } = useGlobalMarketData({ counterCurrency: "usd" });
+  const { rate, status: rateStatus } = useUsdToFiatRate(counterCurrency);
 
   const handleOpenDrawer = useCallback(() => {
     trackDefinitionPressed();
@@ -31,20 +33,21 @@ export function useMarketCapCardViewModel(): MarketCapCardViewModel {
   const handleCloseDrawer = useCallback(() => {
     setIsDrawerOpen(false);
   }, []);
+  const marketCap = data && rate != null ? data.marketCap * rate : undefined;
 
   return {
-    value: data
+    value: marketCap
       ? counterValueFormatter({
           currency: counterCurrency,
-          value: data.marketCap,
+          value: marketCap,
           shorten: true,
           locale,
           t,
         })
       : "",
     changePercentage: data?.changePercentage24h,
-    isLoading,
-    isError: isError || !data,
+    isLoading: isLoading || rateStatus === "loading",
+    isError: isError || rateStatus === "error" || !data,
     isDrawerOpen,
     handleOpenDrawer,
     handleCloseDrawer,

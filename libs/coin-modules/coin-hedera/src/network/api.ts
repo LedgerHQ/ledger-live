@@ -18,7 +18,6 @@ import type {
   HederaMirrorTransaction,
   HederaMirrorNetworkFees,
   HederaMirrorContractCallResult,
-  HederaMirrorContractCallBalance,
   HederaMirrorContractCallEstimate,
   HederaMirrorNode,
   HederaMirrorNodesResponse,
@@ -272,30 +271,6 @@ async function getContractCallResult({
   return res.data;
 }
 
-// TODO: remove once migration to new API is complete
-async function findTransactionByContractCall({
-  configOrCurrencyId,
-  timestamp,
-  contractId,
-}: {
-  configOrCurrencyId: HederaCoinConfig | string;
-  timestamp: string;
-  contractId: string;
-}): Promise<HederaMirrorTransaction | null> {
-  const config = resolveConfig(configOrCurrencyId);
-
-  const res = await network<HederaMirrorTransactionsResponse>({
-    method: "GET",
-    url: `${config.apiUrls.mirrorNode}/api/v1/transactions?timestamp=${timestamp}`,
-  });
-  const transactions = res.data.transactions;
-  const relatedTx = transactions.find(
-    el => el.name === HEDERA_TRANSACTION_NAMES.ContractCall && el.entity_id === contractId,
-  );
-
-  return relatedTx ?? null;
-}
-
 async function findTransactionByContractCallV2({
   configOrCurrencyId,
   timestamp,
@@ -334,34 +309,6 @@ async function findTransactionByContractCallV2({
   });
 
   return relatedTx ?? null;
-}
-
-// TODO: remove once migration to new API is complete
-async function getERC20Balance({
-  configOrCurrencyId,
-  accountEvmAddress,
-  contractEvmAddress,
-}: {
-  configOrCurrencyId: HederaCoinConfig | string;
-  accountEvmAddress: string;
-  contractEvmAddress: string;
-}): Promise<BigNumber> {
-  const config = resolveConfig(configOrCurrencyId);
-  const res = await network<HederaMirrorContractCallBalance>({
-    method: "POST",
-    url: `${config.apiUrls.mirrorNode}/api/v1/contracts/call`,
-    data: {
-      block: "latest",
-      to: contractEvmAddress,
-      data: encodeFunctionData({
-        abi: erc20Abi,
-        functionName: "balanceOf",
-        args: [accountEvmAddress as `0x${string}`],
-      }),
-    },
-  });
-
-  return new BigNumber(res.data.result);
 }
 
 async function estimateContractCallGas({
@@ -524,9 +471,7 @@ export const apiClient = {
   getLatestTransaction,
   getNetworkFees,
   getContractCallResult,
-  findTransactionByContractCall,
   findTransactionByContractCallV2,
-  getERC20Balance,
   estimateContractCallGas,
   getTransactionsByTimestampRange,
   getNode,

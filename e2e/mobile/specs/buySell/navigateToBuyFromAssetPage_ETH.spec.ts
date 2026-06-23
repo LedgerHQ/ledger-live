@@ -22,4 +22,4 @@ const tags = [
   "@family-evm",
 ];
 
-runNavigateToBuyFromAssetPageTest(ethBuySell, paymentMethod, ["B2CQA-3392"], [...tags, "@smoke"]);
+runNavigateToBuyFromAssetPageTest(ethBuySell, paymentMethod, ["B2CQA-3392"], tags);

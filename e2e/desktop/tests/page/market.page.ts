@@ -27,6 +27,10 @@ export class MarketPage extends AppPage {
   private readonly starredCategoryTab = this.page.getByTestId("market-category-switcher-starred");
   private readonly allCategoryTab = this.page.getByTestId("market-category-switcher-all");
 
+  private readonly categorySwitcher = this.page.getByTestId("market-category-switcher");
+  private readonly categoryTab = (value: string) =>
+    this.page.getByTestId(`market-category-switcher-${value}`);
+
   @step("Search for $0")
   async search(query: string) {
     await this.searchInput.fill(query);
@@ -108,5 +112,21 @@ export class MarketPage extends AppPage {
   @step("Expect coin $0 to not be visible")
   async expectCoinToNotBeVisible(ticker: string) {
     await expect(this.coinRow(ticker.toLowerCase())).not.toBeVisible();
+  }
+
+  @step("Expect Market page to be visible")
+  async expectMarketPageVisible() {
+    await expect(this.navbarTitle).toHaveText("Market");
+    await expect(this.categorySwitcher).toBeVisible();
+  }
+
+  @step("Expect category tab $0 to be selected")
+  async expectCategorySelected(value: string) {
+    await expect(this.categoryTab(value)).toHaveAttribute("aria-checked", "true");
+  }
+
+  @step("Select category tab $0")
+  async selectCategory(value: string) {
+    await this.categoryTab(value).click();
   }
 }

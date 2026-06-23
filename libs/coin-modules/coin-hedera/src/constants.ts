@@ -43,9 +43,6 @@ export const DEFAULT_TINYBAR_FEE = 150200;
 
 export const SYNTHETIC_BLOCK_WINDOW_SECONDS = 10;
 
-export const ERC20_TRANSFER_EVENT_TOPIC =
-  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-
 export const ESTIMATED_GAS_SAFETY_RATE = 1.2;
 
 export const ESTIMATED_FEE_SAFETY_RATE = 2;
@@ -53,8 +50,6 @@ export const ESTIMATED_FEE_SAFETY_RATE = 2;
 export const DEFAULT_GAS_LIMIT = new BigNumber(100_000);
 
 export const DEFAULT_GAS_PRICE_TINYBARS = new BigNumber(100);
-
-export const HEDERA_MAINNET_CHAIN_ID = 295;
 
 export const TRANSACTION_VALID_DURATION_SECONDS = 180;
 

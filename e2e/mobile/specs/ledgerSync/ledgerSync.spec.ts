@@ -22,7 +22,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
           }),
       ],
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -30,7 +30,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
   it(`Synchronize one instance then delete the backup`, async () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectNoAccount();
-    await app.portfolio.openViaDeeplink();
+    await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
     await app.settingsGeneral.navigateToLedgerSync();
@@ -44,7 +44,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.portfolio.waitForPortfolioWithAccounts();
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(2, app.ledgerSync.ledgerSyncPushDataArgs.data);
-    await app.portfolio.openViaDeeplink();
+    await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
     await device.disableSynchronization(); // TODO: Remove line when LIVE-15405 is fixed

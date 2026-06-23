@@ -287,11 +287,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "testnet mirror node API for Hedera",
   },
-  API_HEDERA_THIRDWEB_URL: {
-    def: "https://hedera-tokens.coin.ledger.com",
-    parser: stringParser,
-    desc: "Thirdweb API for Hedera",
-  },
   API_HEDERA_HGRAPH: {
     def: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
     parser: stringParser,

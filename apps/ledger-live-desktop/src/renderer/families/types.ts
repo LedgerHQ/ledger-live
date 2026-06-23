@@ -326,6 +326,18 @@ export type LLDCoinFamily<
   SendStepAmount?: React.ComponentType<SendStepProps>;
 
   /**
+   * Allow to add a family-specific component above the recipient field in the
+   * Send modal (e.g. Zcash transparent/shielded "transfer from" selector).
+   * The component is responsible for its own gating (feature flags, currency
+   * checks) and should render nothing when it does not apply.
+   */
+  SendStepRecipientFromSelector?: React.ComponentType<{
+    account: A;
+    transaction: T;
+    onChange: (t: T) => void;
+  }>;
+
+  /**
    * Allow to add component below recipient field
    *
    * FIXME: account will have to be A | TokenAccount

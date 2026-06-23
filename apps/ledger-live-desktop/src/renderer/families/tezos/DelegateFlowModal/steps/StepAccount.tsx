@@ -48,16 +48,9 @@ const StepAccount = ({
     </Box>
   );
 };
-export const StepAccountFooter = ({
-  account,
-  parentAccount,
-  bridgePending,
-  transitionTo,
-}: StepProps) => {
+export const StepAccountFooter = ({ bridgePending, transitionTo }: StepProps) => {
   const { t } = useTranslation();
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const isTerminated = mainAccount && mainAccount.currency.terminated;
-  const canNext = !bridgePending && !isTerminated;
+  const canNext = !bridgePending;
   const onNext = useCallback(() => transitionTo("summary"), [transitionTo]);
   return (
     <>

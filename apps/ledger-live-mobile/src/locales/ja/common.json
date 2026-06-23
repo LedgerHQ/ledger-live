@@ -1338,6 +1338,9 @@
     }
   },
   "earn" : {
+    "simulator" : {
+      "title" : "報酬シミュレーター"
+    },
     "deposit" : {
       "protocolInfoModal" : {
         "title" : "プロトコルを選ぶ際は、以下にご注意ください。",
@@ -1457,6 +1460,13 @@
     "description" : "アカウントと設定を含むLedger Walletのデータを削除するには、スマートフォンからアプリを一旦アンインストールしてから、もう一度インストールし直してください。",
     "button" : "リセット",
     "warning" : "Ledger Walletをリセットすると、すべてのアカウントのスワップ取引履歴が消去されます。"
+  },
+  "globalSearch" : {
+    "searchPlaceholder" : "資産を検索",
+    "sections" : {
+      "cryptos" : "暗号資産",
+      "stocks" : "株"
+    }
   },
   "graph" : {
     "week" : "1週",
@@ -2976,7 +2986,7 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
-      "FINALIZE_UNSTAKE" : "引き出し済み",
+      "FINALIZE_UNSTAKE" : "ステーキング解除済み",
       "ASSOCIATE_TOKEN" : "トークンの関連付け",
       "CONTRACT_CALL" : "コントラクトコール",
       "UPDATE_ACCOUNT" : "アカウント更新"
@@ -3052,6 +3062,7 @@
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
       "stakedAmount" : "ステーキング済み量",
+      "unstakedAmount" : "ステーキング解除済み数量",
       "accountCreationFee" : "アカウント作成手数料",
       "associatedTokenId" : "関連トークンID",
       "targetStakingNodeId" : "ターゲットノードID",
@@ -3686,9 +3697,11 @@
           "campaignId" : "キャンペーンID",
           "titleField" : "タイトル",
           "subtitle" : "サブタイトル",
-          "imageUrl" : "画像URL",
+          "imageUrlLight" : "画像URL（ライト）",
+          "imageUrlDark" : "画像URL（ダーク）",
           "primaryButtonLabel" : "プライマリボタンのラベル",
           "primaryButtonLink" : "プライマリボタンリンク",
+          "navigationButtonLabel" : "ナビゲーションボタンラベル（続行/閉じる）",
           "secondaryButtonLabel" : "セカンダリボタンラベル",
           "secondaryButtonLink" : "セカンダリボタンリンク",
           "icon" : "アイコン",
@@ -3728,7 +3741,11 @@
       "desc" : "Ledger Wallet、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定からいつでも購読解除できます。",
       "descVariantB" : "新規トークン、収益機会、市場変動をリアルタイムでお知らせします。通知はいつでも解除できます。",
       "allow" : "通知を許可",
-      "later" : "後で"
+      "later" : "後で",
+      "transactionsAlerts" : {
+        "title" : "資産の状況を把握する",
+        "desc" : "暗号資産を送信または受け取った際に、リアルタイムのアラートを受け取ります。設定からいつでも停止可能です。"
+      }
     },
     "optInScreen" : {
       "title" : "通知を有効にしますか？",
@@ -4378,6 +4395,10 @@
       "available" : "利用可能: {{amount}}",
       "placeholder" : "アドレスまたはENSを入力してください",
       "placeholderNoENS" : "アドレスを入力",
+      "pasteFromClipboard" : {
+        "title" : "クリップボードから貼り付け",
+        "cta" : "貼り付け"
+      },
       "editRecipientAccessibilityLabel" : "受取人を編集",
       "recent" : "再送信",
       "recentDetail" : "最近の詳細",
@@ -4415,11 +4436,23 @@
       },
       "skipMemo" : {
         "title" : "{{tag}}の追加をスキップしますか？",
-        "warning" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります"
+        "warning" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります",
+        "notRequired" : "受取人は{{tag}}を不要としていますか？",
+        "confirm" : "はい、スキップします",
+        "neverAskAgain" : "今後この警告を表示しない"
       },
       "tagHelp" : {
         "title" : "{{tag}}とは何ですか？",
         "description" : "{{currency}}を暗号資産取引所に送付する際、{{tag}}が必要です。これは、取引の受信者を識別するために使用される機能です。{{tag}}のメモを入力しないと、資産を失う可能性があります。"
+      },
+      "memoLabel" : {
+        "ripple" : "タグ",
+        "casper" : "送金ID",
+        "ton" : "コメント",
+        "default" : "メモ"
+      },
+      "memo" : {
+        "transactionIdentifier" : "トランザクション識別子"
       },
       "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
       "feesAmount" : "手数料金額 ({{unit}})",
@@ -4461,7 +4494,8 @@
         "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
         "invalidValue" : "有効な数字を入力してください",
         "belowMinimum" : "最小は{{min}}です",
-        "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上である必要があります"
+        "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上である必要があります",
+        "payFeesIn" : "手数料の支払い："
       },
       "coinControl" : {
         "title" : "コインコントロール",
@@ -6604,7 +6638,9 @@
       "title" : "アカウントをデリゲートすることで報酬を得ることができます。",
       "btn" : "報酬を獲得する"
     },
-    "manage" : "管理",
+    "operationTypes" : {
+      "UNSTAKE" : "ステーキング解除"
+    },
     "delegation" : {
       "addCustomValidator" : "+ カスタムバリデーターを追加",
       "sectionLabel" : "デリゲート"
@@ -6613,7 +6649,11 @@
       "sectionLabel" : "ステーキング",
       "status" : "ステータス",
       "unstaking" : "ステーキング解除",
-      "available" : "利用可能"
+      "available" : "利用可能",
+      "availableIn" : "利用可能日：",
+      "lessThanADay" : "1日未満",
+      "stakeMore" : "さらにステーキング",
+      "unstake" : "ステーキング解除"
     },
     "earnRewards" : {
       "title" : "報酬を獲得する",
@@ -6664,6 +6704,41 @@
           "info" : "Tezosのステーキングとデリゲーションの比較の詳細を知る"
         }
       }
+    },
+    "unstake" : {
+      "flow" : {
+        "amount" : {
+          "unbondingNotice" : "ステーキング解除には4日かかります。この期間中、XTZはデリゲートされたままとなり、ステーキング報酬を獲得することはできなくなります。",
+          "staked" : "ステーキング済み",
+          "cta" : "ステーキング解除"
+        },
+        "steps" : {
+          "confirmation" : {
+            "success" : {
+              "title" : "ステーキング解除が送信されました。",
+              "text" : "XTZはステーキング解除されており、最大4日後に出金可能になります。"
+            }
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "ベーカーを変更する前にステーキング解除してください",
+        "description" : "現在のベーカーでXTZをステーキングしました。新しいベーカーにデリゲートする前に、資金のステーキングを解除してください。"
+      },
+      "endDelegation" : {
+        "title" : "デリゲートを終了する前にステーキング解除する",
+        "description" : "現在のベーカーでXTZをステーキングしました。デリゲーションを終了する前に、資金のステーキング解除をしてください。"
+      },
+      "steps" : {
+        "0" : "報酬獲得メニューを開き、ステーキング解除を選択する。",
+        "1" : "デバイスで数量を確認し、ステーキング解除のトランザクションを送信する。",
+        "2" : "ステーキング解除期間が完了するまで約4日待機してください。",
+        "3" : "引き出した後は、ベーカーを変更したりデリゲートを解除したりできます。"
+      },
+      "learnMore" : "Tezosのステーキングの詳細を知る",
+      "close" : "閉じる"
     },
     "account" : {
       "availableBalanceTooltip" : "今すぐ利用可能な資金です。",
@@ -6732,7 +6807,7 @@
               "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
             },
             "cta" : "続行",
-            "seiAssociationWarning" : "Seiアカウントはまだオンチェーンでリンクされていません。アカウントの最初の送信トランザクションがオンチェーンで承認されるまで、デリゲートは失敗します。まずは任意のアドレスに少額のSEIを送付し、承認を待ってから、その後戻ってデリゲートしてください。"
+            "seiAssociationWarning" : "デリゲートするには、ご自身のアドレスを含む任意のアドレスに任意の数量を送金して、アカウントを有効化する必要があります。これはSeiネットワークの要件です。"
           },
           "validator" : {
             "validators" : "バリデーター",
@@ -6854,16 +6929,49 @@
             "youEarned" : "獲得額",
             "byDelegationAssetsTo" : "資産のデリゲート先：",
             "description" : "報酬獲得を申請し、報酬は利用可能残高に加算されます。",
-            "cta" : "続行"
+            "compoundRewardDescription" : "報酬は同じバリデーターに再ステーキングされ、デリゲート残高が増加します。",
+            "cta" : "続行",
+            "method" : {
+              "claimReward" : "キャッシュイン",
+              "compoundReward" : "Compound",
+              "compoundOrCashIn" : "コンパウンドとキャッシュイン？",
+              "claimRewardTooltip" : "報酬は利用可能残高に加算されます。",
+              "compoundRewardTooltip" : "報酬は同じバリデーターに再度ステーキングされます。"
+            }
           },
           "verification" : {
             "success" : {
               "title" : "報酬を正常に獲得しました。報酬は利用可能残高に加算されました。",
+              "titleCompound" : "報酬が同じバリデータにデリゲートされました。",
               "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
               "cta" : "詳細を表示"
             },
             "pending" : {
               "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "stepperHeader" : {
+        "title" : "出金",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "withdraw" : {
+            "warning" : "デリゲート解除された数量はタイムロックを完了し、利用可能残高に戻されます。",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産の引き出しに成功しました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
             },
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
           }
@@ -8095,6 +8203,7 @@
   },
   "market" : {
     "title" : "マーケット",
+    "searchPlaceholder" : "資産を検索",
     "assets" : {
       "title" : "資産",
       "emptyFavorites" : "まだお気に入りがありません",
@@ -8611,7 +8720,11 @@
     "tabs" : {
       "crypto" : "暗号資産",
       "stablecoins" : "ステーブルコイン",
+      "stocks" : "株",
       "market" : "マーケット"
+    },
+    "stocks" : {
+      "exploreAll" : "すべて見る"
     },
     "referralProgram" : "20ドル"
   },
@@ -9314,7 +9427,7 @@
     }
   },
   "marketBanner" : {
-    "title" : "市場を見る",
+    "title" : "マーケット",
     "viewAll" : "すべて表示",
     "viewAllAccessibilityHint" : "ダブルタップですべての市場資産を表示",
     "connectionFailed" : "接続に失敗しました",
@@ -9322,6 +9435,18 @@
     "tile" : {
       "accessibilityLabel" : "{{name}}, {{change}}",
       "accessibilityHint" : "ダブルタップで市場の詳細を表示"
+    },
+    "filter" : {
+      "accessibilityLabel" : "マーケットバナーフィルターを変更",
+      "accessibilityHint" : "ダブルタップして表示する資産を選択",
+      "title" : "並び替え",
+      "noFavorites" : "まだお気に入りがありません",
+      "options" : {
+        "trending" : "トレンド",
+        "gainers" : "上昇",
+        "losers" : "下降",
+        "favorites" : "お気に入り"
+      }
     }
   },
   "largeMover" : {
@@ -9676,7 +9801,7 @@
   "fearAndGreed" : {
     "title" : "市場ムード指数",
     "description" : "特にボラティリティ、市場のモメンタム、ソーシャルトレンドに基づいて、全体的な市場心理を0から100まで表示します。低い価値は恐怖を示し、高い価値は貪欲を示します。",
-    "disclaimer" : "データはCoinMarketCapの恐怖と強欲指数から取得されたものであり、情報提供のみを目的としています。",
+    "disclaimer" : "データはCoinMarketCapから取得しています。情報提供のみを目的として提供されています。",
     "levels" : {
       "fearPlus" : "極度の恐怖",
       "fear" : "恐怖",
@@ -9690,7 +9815,7 @@
     "title" : "シーズン",
     "definitionTitle" : "アルトコイン指数",
     "description" : "アルトコイン指数は、他の暗号資産と比較したビットコインのパフォーマンスを示しています。数値が高いほど、アルトコインがビットコインよりも好調であることを示します。",
-    "disclaimer" : "データはCoinMarketCapの恐怖と強欲指数から取得されたものであり、情報提供のみを目的としています。",
+    "disclaimer" : "データはCoinMarketCapから取得しています。情報提供のみを目的として提供されています。",
     "levels" : {
       "bitcoin" : "ビットコイン",
       "altcoin" : "アルトコイン"
@@ -9698,7 +9823,8 @@
   },
   "marketCapCard" : {
     "title" : "マーケットキャップ総額",
-    "description" : "総マーケットキャップは、すべての暗号資産の時価総額の合計を表します。"
+    "description" : "総マーケットキャップは、すべての暗号資産の時価総額の合計を表します。",
+    "disclaimer" : "データはCoinMarketCapから取得しています。情報提供のみを目的として提供されています。"
   },
   "analyticsAllocation" : {
     "header" : {

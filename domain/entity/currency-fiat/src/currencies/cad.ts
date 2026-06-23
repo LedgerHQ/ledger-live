@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const cad = fiat({
   type: "FiatCurrency",
   id: "cad",
-  name: "Canadian Dollar",
   ticker: "CAD",
-  symbol: "C$",
-  units: [{ name: "Canadian Dollar", code: "CAD", magnitude: 2 }],
-  keywords: ["canadian dollar", "cad"],
+  name: "Canadian Dollar",
+  symbol: "CA$",
+  units: [
+    {
+      code: "CA$",
+      name: "Canadian Dollar",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

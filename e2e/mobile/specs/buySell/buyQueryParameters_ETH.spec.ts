@@ -11,17 +11,7 @@ const testConfig = {
   },
   tmsLinks: ["B2CQA-3522"],
   paymentMethod: "card",
-  tags: [
-    "@NanoSP",
-    "@LNS",
-    "@NanoX",
-    "@Stax",
-    "@Flex",
-    "@NanoGen5",
-    "@smoke",
-    "@ethereum",
-    "@family-evm",
-  ],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
 runQueryParametersTest(

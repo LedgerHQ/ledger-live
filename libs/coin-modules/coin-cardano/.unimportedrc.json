@@ -25,6 +25,7 @@
     "src/fixtures/protocolParams.ts",
     "src/getTransactionStatus.unit.test.ts",
     "src/hw-getAddress.ts",
+    "src/logic/validateAddress.ts",
     "src/postSyncPatch.ts",
     "src/serialization.ts",
     "src/signer.ts",

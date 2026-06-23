@@ -1,23 +1,21 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  BottomGradientFooter,
+  BOTTOM_GRADIENT_FOOTER_HEIGHT,
+} from "LLM/components/BottomGradientFooter";
 
 type Props = Readonly<{
   label: string;
   onPress: () => void;
 }>;
 
-const PADDING_BOTTOM = 16;
-
-export const FOOTER_HEIGHT = 80;
+export const FOOTER_HEIGHT = BOTTOM_GRADIENT_FOOTER_HEIGHT;
 
 export default function CryptoAddressesFooter({ label, onPress }: Props) {
-  const { bottom } = useSafeAreaInsets();
-
   return (
-    <Box style={[styles.container, { paddingBottom: bottom + PADDING_BOTTOM }]}>
+    <BottomGradientFooter contentStyle={{ alignItems: "center" }}>
       <Button
         appearance="base"
         size="lg"
@@ -27,18 +25,6 @@ export default function CryptoAddressesFooter({ label, onPress }: Props) {
       >
         {label}
       </Button>
-    </Box>
+    </BottomGradientFooter>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-});

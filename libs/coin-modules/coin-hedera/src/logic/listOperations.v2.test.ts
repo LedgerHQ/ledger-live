@@ -1404,7 +1404,6 @@ describe("listOperationsV2", () => {
     });
     (hgraphClient.getERC20Transfers as jest.Mock).mockResolvedValue([mockERC20Transfer]);
     (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(mockContractCallResult);
-    (apiClient.findTransactionByContractCall as jest.Mock).mockResolvedValue(mockMirrorTransaction);
     (hgraphClient.getLatestIndexedConsensusTimestamp as jest.Mock).mockResolvedValue(
       new BigNumber(sharedTimestamp),
     );

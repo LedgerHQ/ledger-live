@@ -205,5 +205,64 @@ describe("Aptos prepareTransaction", () => {
         fees: null,
       });
     });
+
+    it("should estimate fees for a token send within the token balance even when the raw amount exceeds the native APT balance", async () => {
+      jest.clearAllMocks();
+      account.spendableBalance = new BigNumber(1_000_000);
+      account.subAccounts = [
+        {
+          type: "TokenAccount",
+          id: "usdt-account-id",
+          spendableBalance: new BigNumber(50_000_000),
+          balance: new BigNumber(50_000_000),
+        },
+      ] as unknown as AptosAccount["subAccounts"];
+      transaction.recipient = "test-recipient";
+      transaction.subAccountId = "usdt-account-id";
+      transaction.amount = new BigNumber(10_000_000);
+      (getEstimatedGas as jest.Mock).mockResolvedValue({
+        fees: new BigNumber(200),
+        estimate: { maxGasAmount: new BigNumber(200), gasUnitPrice: new BigNumber(10) },
+        errors: {},
+      });
+
+      const result = await prepareTransaction(account, transaction);
+
+      expect(getEstimatedGas).toHaveBeenCalled();
+      expect(result.fees?.isEqualTo(new BigNumber(200))).toBe(true);
+    });
+
+    it("should skip fee estimation when the token send amount exceeds the token balance", async () => {
+      jest.clearAllMocks();
+      account.spendableBalance = new BigNumber(1_000_000);
+      account.subAccounts = [
+        {
+          type: "TokenAccount",
+          id: "usdt-account-id",
+          spendableBalance: new BigNumber(50_000_000),
+          balance: new BigNumber(50_000_000),
+        },
+      ] as unknown as AptosAccount["subAccounts"];
+      transaction.recipient = "test-recipient";
+      transaction.subAccountId = "usdt-account-id";
+      transaction.amount = new BigNumber(60_000_000);
+
+      const result = await prepareTransaction(account, transaction);
+
+      expect(getEstimatedGas).not.toHaveBeenCalled();
+      expect(result).toEqual(transaction);
+    });
+
+    it("should throw when the token account is missing for a set subAccountId", async () => {
+      jest.clearAllMocks();
+      account.subAccounts = [];
+      transaction.recipient = "test-recipient";
+      transaction.subAccountId = "missing-token-account-id";
+      transaction.amount = new BigNumber(10_000_000);
+
+      await expect(prepareTransaction(account, transaction)).rejects.toThrow(
+        "aptos: token account is missing",
+      );
+    });
   });
 });

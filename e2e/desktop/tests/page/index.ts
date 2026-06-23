@@ -41,6 +41,7 @@ import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { HistoryPage } from "./history.page";
 import { MainNavigationPage } from "./mainNavigation.page";
 import { SwapTransactionStatusDialog } from "./dialog/swap.transaction.status.dialog";
+import { TopBarSearch } from "./topBarSearch.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -85,4 +86,5 @@ export class Application extends PageHolder {
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
   public assets = new AssetsPage(this.page);
+  public topBarSearch = new TopBarSearch(this.page);
 }

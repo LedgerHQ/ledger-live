@@ -387,11 +387,16 @@ export default function SendSelectRecipient({ route }: Props) {
                   placeholder={t("send.summary.memo.title")}
                   autoFocus={focusMemoInput}
                   onChange={memoTag.handleChange}
-                  error={status.errors.transaction?.name}
+                  error={
+                    status.errors.transaction
+                      ? t(`errors.${status.errors.transaction.name}.title`, {
+                          defaultValue: t("errors.generic.title", {
+                            message: status.errors.transaction.message,
+                          }),
+                        })
+                      : undefined
+                  }
                 />
-                <Text mt={4} pl={2} color="alert">
-                  <TranslatedError error={status.errors.transaction} />
-                </Text>
               </View>
             )}
 

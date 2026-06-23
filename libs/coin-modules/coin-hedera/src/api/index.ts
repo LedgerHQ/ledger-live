@@ -8,7 +8,6 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { validateAddress } from "../bridge/validateAddress";
@@ -22,17 +21,14 @@ import {
   combine,
   craftTransaction,
   getBalance,
-  getBlock,
   getBlockInfo,
   getBlockV2,
   getRewards,
   getStakes,
   getValidators,
-  lastBlock,
   lastBlockV2,
   broadcast as logicBroadcast,
   estimateFees as logicEstimateFees,
-  listOperations as logicListOperations,
   listOperationsV2 as logicListOperationsV2,
 } from "../logic";
 import {
@@ -43,7 +39,7 @@ import {
 } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
-import type { EstimateFeesParams, HederaMemo, HederaOperationExtra, HederaTxData } from "../types";
+import type { EstimateFeesParams, HederaMemo, HederaTxData } from "../types";
 
 export function createApi(
   config: HederaConfig,
@@ -101,75 +97,40 @@ export function createApi(
     getBalance: (address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(() => getBalance({ config: coinConfig, currencyId, address }), options),
     getBlock: height => {
-      if (config.useHgraphForErc20) {
-        return getBlockV2({ configOrCurrencyId: coinConfig, height });
-      }
-
-      return getBlock({ configOrCurrencyId: coinConfig, height });
+      return getBlockV2({ configOrCurrencyId: coinConfig, height });
     },
     getBlockInfo: height => getBlockInfo(height),
     lastBlock: () => {
-      if (config.useHgraphForErc20) {
-        return lastBlockV2({ configOrCurrencyId: coinConfig });
-      }
-
-      return lastBlock({ configOrCurrencyId: coinConfig });
+      return lastBlockV2({ configOrCurrencyId: coinConfig });
     },
     listOperations: async (address, { cursor, limit, order, minHeight }) => {
       invariant(minHeight === 0, "minHeight is not supported");
 
-      let latestAccountOperations: {
-        coinOperations: LiveOperation<HederaOperationExtra>[];
-        tokenOperations: LiveOperation<HederaOperationExtra>[];
-        nextCursor: string | null;
-      };
+      const evmAddress = await toEVMAddress({
+        configOrCurrencyId: coinConfig,
+        accountId: address,
+      });
+      invariant(evmAddress, `hedera: evm address is missing for ${address}`);
+      const [mirrorTokens, erc20TokenBalances] = await Promise.all([
+        apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
+        getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
+      ]);
 
-      if (config.useHgraphForErc20) {
-        const evmAddress = await toEVMAddress({
-          configOrCurrencyId: coinConfig,
-          accountId: address,
-        });
-        invariant(evmAddress, `hedera: evm address is missing for ${address}`);
-        const [mirrorTokens, erc20TokenBalances] = await Promise.all([
-          apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
-          getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
-        ]);
-
-        latestAccountOperations = await logicListOperationsV2({
-          config: coinConfig,
-          currencyId,
-          address,
-          evmAddress,
-          mirrorTokens,
-          ...(typeof cursor === "string" && { cursor }),
-          ...(typeof limit === "number" && { limit }),
-          ...(typeof order === "string" && { order }),
-          erc20Tokens: erc20TokenBalances,
-          fetchAllPages: false,
-          skipFeesForTokenOperations: true,
-          useEncodedHash: false,
-          useSyntheticBlocks: true,
-        });
-      } else {
-        const mirrorTokens = await apiClient.getAccountTokens({
-          configOrCurrencyId: coinConfig,
-          address,
-        });
-
-        latestAccountOperations = await logicListOperations({
-          config: coinConfig,
-          currencyId,
-          address,
-          cursor,
-          limit,
-          order,
-          mirrorTokens,
-          fetchAllPages: false,
-          skipFeesForTokenOperations: true,
-          useEncodedHash: false,
-          useSyntheticBlocks: true,
-        });
-      }
+      const latestAccountOperations = await logicListOperationsV2({
+        config: coinConfig,
+        currencyId,
+        address,
+        evmAddress,
+        mirrorTokens,
+        ...(typeof cursor === "string" && { cursor }),
+        ...(typeof limit === "number" && { limit }),
+        ...(typeof order === "string" && { order }),
+        erc20Tokens: erc20TokenBalances,
+        fetchAllPages: false,
+        skipFeesForTokenOperations: true,
+        useEncodedHash: false,
+        useSyntheticBlocks: true,
+      });
 
       const liveOperations = [
         ...latestAccountOperations.coinOperations,

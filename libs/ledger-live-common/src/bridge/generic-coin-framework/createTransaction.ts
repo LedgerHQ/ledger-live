@@ -66,6 +66,19 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         mode: "send",
       };
+    case "cardano":
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        // Cardano is UTXO — no account sequence. utils.ts maps nonce → intent.sequence, which lets
+        // signOperation skip getNextSequence (coin-cardano throws it). nonce 0 is meaningless to
+        // craft, so the default tx is signable without callers having to set it.
+        nonce: new BigNumber(0),
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

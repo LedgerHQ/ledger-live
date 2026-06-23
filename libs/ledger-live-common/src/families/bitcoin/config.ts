@@ -37,15 +37,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_clubcoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    },
-  },
   config_currency_dash: {
     type: "object",
     default: {
@@ -100,15 +91,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_hcash: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    },
-  },
   config_currency_komodo: {
     type: "object",
     default: {
@@ -145,15 +127,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_poswallet: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    },
-  },
   config_currency_qtum: {
     type: "object",
     default: {
@@ -173,24 +146,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     },
   },
   config_currency_resistance: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    },
-  },
-  config_currency_stakenet: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    },
-  },
-  config_currency_stratis: {
     type: "object",
     default: {
       status: {

@@ -9,7 +9,6 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import {
   ChartPie,
-  Code,
   ColorPalette,
   LedgerLogo,
   ListEye,
@@ -57,12 +56,6 @@ const tools: Tool[] = [
     title: "Synchronisation",
     description: "Run account synchronisation flows.",
     icon: Refresh,
-  },
-  {
-    to: "/repl",
-    title: "REPL",
-    description: "Interactive APDU & live-common console.",
-    icon: Code,
   },
   {
     to: "/trustchain",

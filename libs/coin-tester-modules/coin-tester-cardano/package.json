@@ -1,0 +1,78 @@
+{
+  "name": "@ledgerhq/coin-tester-cardano",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ledger Cardano Coin Tester",
+  "main": "src/scenarii.test.ts",
+  "keywords": ["Ledger", "LedgerWallet", "Cardano", "Testing"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-cardano",
+  "typesVersions": {
+    "*": {
+      "lib/*": ["lib/*"],
+      "lib-es/*": ["lib-es/*"],
+      "*": ["lib/*"]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
+    "unimported": "unimported"
+  },
+  "dependencies": {
+    "@ledgerhq/coin-cardano": "workspace:^",
+    "@ledgerhq/coin-tester": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@stricahq/bip32ed25519": "^1.0.4",
+    "@stricahq/cbors": "^1.0.2",
+    "@stricahq/typhonjs": "^3.0.0",
+    "bignumber.js": "^9",
+    "bip39": "^3.1.0",
+    "msw": "catalog:"
+  },
+  "devDependencies": {
+    "@bloxbean/yaci-devkit": "0.10.6",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "rimraf": "^5",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10",
+    "typescript": "catalog:",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:"
+  }
+}

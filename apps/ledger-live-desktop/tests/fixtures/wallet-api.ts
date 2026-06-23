@@ -1278,8 +1278,8 @@ export const expectedCurrencyList = [
   {
     type: "CryptoCurrency",
     id: "ton",
-    ticker: "TON",
-    name: "TON",
+    ticker: "GRAM",
+    name: "Gram",
     family: "ton",
     color: "#0098ea",
     decimals: 9,

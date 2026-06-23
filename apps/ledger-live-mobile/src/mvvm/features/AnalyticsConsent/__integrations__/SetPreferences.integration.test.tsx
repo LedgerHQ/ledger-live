@@ -1,27 +1,38 @@
 import React from "react";
-import { Linking } from "react-native";
+import { Linking, Text } from "react-native";
 import { fireEvent, render, screen } from "@tests/test-renderer";
+import { type NavigatorScreenParams } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import * as analytics from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import SetPreferences from "../screens/SetPreferences";
 
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
-}));
-
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: jest.fn() }),
-}));
-
-const routeProp = {
-  key: "AnalyticsOptInPromptDetails",
-  name: "AnalyticsOptInPromptDetails" as const,
-  params: { entryPoint: "Portfolio" as const },
+type TestStackParamList = AnalyticsOptInPromptNavigatorParamList & {
+  [NavigatorName.Base]: NavigatorScreenParams<BaseNavigatorStackParamList>;
 };
 
+const Stack = createNativeStackNavigator<TestStackParamList>();
+
+function PortfolioScreen() {
+  return <Text>Portfolio</Text>;
+}
+
 function renderScreen() {
-  // @ts-expect-error - navigation prop is unused by SetPreferences but required by the type
-  return render(<SetPreferences route={routeProp} />);
+  return render(
+    <NotificationsPromptProvider>
+      <Stack.Navigator initialRouteName={ScreenName.AnalyticsOptInPromptDetails}>
+        <Stack.Screen
+          name={ScreenName.AnalyticsOptInPromptDetails}
+          component={SetPreferences}
+          initialParams={{ entryPoint: "Portfolio" }}
+        />
+        <Stack.Screen name={NavigatorName.Base} component={PortfolioScreen} />
+      </Stack.Navigator>
+    </NotificationsPromptProvider>,
+  );
 }
 
 describe("SetPreferences", () => {

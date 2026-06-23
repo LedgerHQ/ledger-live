@@ -24,7 +24,6 @@ describe("createApi", () => {
   const api = createApi(
     {
       ...getMockedConfig(),
-      useHgraphForErc20: true,
       useNetworkTimestamp: true,
       apiUrls: {
         mirrorNode: getEnv("API_HEDERA_MIRROR"),

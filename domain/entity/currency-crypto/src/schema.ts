@@ -96,8 +96,6 @@ export const CryptoCurrencySchema = z.object({
   ethereumLikeInfo: EthereumLikeInfoSchema.optional(),
   /** One or more blockchain explorer URL templates. */
   explorerViews: z.array(ExplorerViewSchema),
-  /** When set, the currency has been terminated; the link points to more info. */
-  terminated: z.object({ link: z.string() }).optional(),
   /** Ticker displayed on the device (when different from `ticker`). */
   deviceTicker: z.string().optional(),
   /** Id used to connect to the Ledger explorer endpoint (when different from the currency id and ticker). */

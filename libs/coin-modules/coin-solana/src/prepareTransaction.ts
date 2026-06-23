@@ -1,4 +1,3 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   AmountRequired,
@@ -8,7 +7,7 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { findSubAccountById, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -20,6 +19,7 @@ import {
   SolanaInvalidValidator,
   SolanaMemoIsTooLong,
   SolanaRecipientAssociatedTokenAccountWillBeFunded,
+  SolanaStakeAccountAmountTooLow,
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountIsNotUndelegatable,
   SolanaStakeAccountNotFound,
@@ -39,7 +39,7 @@ import {
   SolanaRecipientMemoIsRequired,
 } from "./errors";
 import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
-import { calculateToken2022TransferFees } from "./helpers/token";
+import { calculateToken2022TransferFees, getAtaDataLengthForMint } from "./helpers/token";
 import {
   decodeAccountIdWithTokenAccountAddress,
   isEd25519Address,
@@ -57,6 +57,7 @@ import {
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
   getStakeAccountMinimumBalanceForRentExemption,
+  getStakeMinimumDelegation,
   ParsedOnChainMintWithInfo,
 } from "./network/chain/web3";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
@@ -85,6 +86,7 @@ import type {
   TransferTransaction,
 } from "./types";
 import { assertUnreachable } from "./utils";
+import { formatAPIValue, formatAPIValueWithCode } from "./common";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -126,7 +128,7 @@ const prepareTransaction = async (
   api: ChainAPI,
 ): Promise<Transaction> => {
   if (tx.raw) {
-    return toLiveTransaction(api, tx.raw);
+    return toLiveTransaction(api, tx.raw, tx.templateId);
   }
 
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);
@@ -220,21 +222,22 @@ const deriveTokenTransferCommandDescriptor = async (
   }
 
   const assocAccRentExempt = recipientDescriptor.shouldCreateAsAssociatedTokenAccount
-    ? await api.getAssocTokenAccMinNativeBalance()
+    ? await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mintOrError))
     : 0;
 
   if (recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
     warnings.recipient = new SolanaRecipientAssociatedTokenAccountWillBeFunded();
   }
 
-  const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
-  if (spendableSol.lt(assocAccRentExempt) || spendableSol.isZero()) {
+  const requiredSol = new BigNumber(assocAccRentExempt + fee);
+  if (mainAccount.spendableBalance.lt(requiredSol) || mainAccount.spendableBalance.isZero()) {
     const query = new URLSearchParams({
       ...(mainAccount?.id ? { account: mainAccount.id } : {}),
     });
     errors.gasPrice = new NotEnoughGas(undefined, {
-      fees: formatCurrencyUnit(getFeesUnit(mainAccount.currency), new BigNumber(fee)),
+      fees: formatAPIValue(requiredSol),
       ticker: mainAccount.currency.ticker,
       cryptoName: mainAccount.currency.name,
       links: [`ledgerlive://buy?${query.toString()}`],
@@ -457,11 +460,8 @@ async function deriveTransferCommandDescriptor(
   if (!errors.amount && warnings.recipient instanceof SolanaAccountNotFunded && txAmount.gt(0)) {
     const recipientMinAmount = await api.getMinimumBalanceForRentExemption(0);
     if (txAmount.lt(recipientMinAmount)) {
-      const feesUnit = getFeesUnit(mainAccount.currency);
-      const ticker = mainAccount.currency.ticker ?? feesUnit.code ?? "";
       errors.amount = new SolanaRecipientAccountNotFunded("", {
-        minimumAmount:
-          `${formatCurrencyUnit(feesUnit, new BigNumber(recipientMinAmount))} ${ticker}`.trim(),
+        minimumAmount: formatAPIValueWithCode(recipientMinAmount),
       });
     }
   }
@@ -644,15 +644,30 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
   const txAmount = tx.useAllAmount ? spendable : tx.amount;
 
+  const amountTooLowError = (stakeMinimumDelegation: number) =>
+    new SolanaStakeAccountAmountTooLow("", {
+      minimumAmount: formatAPIValueWithCode(stakeMinimumDelegation),
+    });
+
   if (tx.useAllAmount) {
     if (txAmount.eq(0)) {
       errors.amount = new NotEnoughBalance();
+    } else {
+      const stakeMinimumDelegation = await getStakeMinimumDelegation(api);
+      if (txAmount.lt(stakeMinimumDelegation)) {
+        errors.amount = amountTooLowError(stakeMinimumDelegation);
+      }
     }
   } else {
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
     } else if (txAmount.gt(spendable)) {
       errors.amount = new NotEnoughBalance();
+    } else {
+      const stakeMinimumDelegation = await getStakeMinimumDelegation(api);
+      if (txAmount.lt(stakeMinimumDelegation)) {
+        errors.amount = amountTooLowError(stakeMinimumDelegation);
+      }
     }
   }
 

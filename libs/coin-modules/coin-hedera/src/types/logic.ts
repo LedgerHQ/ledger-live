@@ -4,10 +4,8 @@ import type { OperationType } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
 import type { HEDERA_OPERATION_TYPES } from "../constants";
-import type { HederaOperationExtra } from "./bridge";
 import type { ERC20TokenTransfer } from "./hgraph";
 import type { HederaMirrorContractCallResult, HederaMirrorTransaction } from "./mirror";
-import type { HederaThirdwebTransaction } from "./thirdweb";
 
 export type EstimateFeesParams =
   | {
@@ -25,27 +23,9 @@ export interface EstimateFeesResult {
   gas?: BigNumber;
 }
 
-// TODO: remove once migration to new API is complete
-export interface OperationERC20 {
-  thirdwebTransaction: HederaThirdwebTransaction;
-  mirrorTransaction: HederaMirrorTransaction;
-  contractCallResult: HederaMirrorContractCallResult;
+export interface HederaERC20TokenBalance {
   token: TokenCurrency;
-}
-
-export interface ERC20OperationFields {
-  date: Date;
-  type: OperationType;
-  fee: BigNumber;
-  value: BigNumber;
-  senders: string[];
-  recipients: string[];
-  blockHeight: number;
-  blockHash: string;
-  extra: HederaOperationExtra;
-  contract: string;
-  standard: "erc20";
-  hasFailed: false;
+  balance: BigNumber;
 }
 
 export interface OperationDetailsExtraField {

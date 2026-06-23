@@ -23,7 +23,6 @@ export const getWallet40Attributes = (
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     q2Tour: wallet40FeatureFlag?.params?.q2Tour ?? false,
     mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
-    newReceiveDialog: wallet40FeatureFlag?.params?.newReceiveDialog ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
     balanceRefreshRework: wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,

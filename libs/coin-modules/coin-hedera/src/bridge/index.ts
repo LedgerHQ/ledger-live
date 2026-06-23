@@ -21,7 +21,7 @@ import { prepareTransaction } from "./prepareTransaction";
 import { receive } from "./receive";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape, buildIterateResult, postSync } from "./synchronisation";
+import { getAccountShape, buildIterateResult } from "./synchronisation";
 import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
@@ -41,7 +41,7 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
   };
 }
 
-const sync = makeSync({ getAccountShape, postSync, shouldMergeOps: false });
+const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
 function buildAccountBridge(
   signerContext: SignerContext<HederaSigner>,

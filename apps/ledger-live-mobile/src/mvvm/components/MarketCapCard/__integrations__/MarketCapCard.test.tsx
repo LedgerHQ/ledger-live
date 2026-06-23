@@ -5,6 +5,7 @@ import { http, HttpResponse } from "msw";
 import { MarketCapCard } from "../index";
 
 const API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets/global";
+const SPOT_SIMPLE_URL = "https://countervalues.live.ledger.com/v3/spot/simple";
 
 // percentageChanges are ratios (0.1 => +10.00%).
 const createMockResponse = (marketCap: number, dailyChangeRatio: number) => ({
@@ -34,6 +35,23 @@ describe("MarketCapCard Integration", () => {
     expect(card.getByText("Total market cap")).toBeVisible();
     expect(card.getByText(/3.*T/i)).toBeVisible();
     expect(card.getByText("10.00%")).toBeVisible();
+  });
+
+  it("should rescale the USD global market cap into a crypto countervalue", async () => {
+    server.use(
+      http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(3_000_000_000_000, 0.1))),
+      http.get(SPOT_SIMPLE_URL, () => HttpResponse.json({ USD: 0.00001 })),
+    );
+
+    render(<MarketCapCard width={276} />, {
+      overrideInitialState: state => ({
+        ...state,
+        settings: { ...state.settings, counterValue: "BTC" },
+      }),
+    });
+
+    const card = within(await screen.findByTestId("market-cap-card"));
+    expect(card.getByText(/₿30.*M/i)).toBeVisible();
   });
 
   it("should open definition drawer when card is pressed", async () => {

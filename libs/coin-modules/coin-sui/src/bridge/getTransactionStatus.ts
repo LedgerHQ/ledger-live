@@ -21,6 +21,7 @@ import {
 } from "../errors";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { ensureAddressFormat } from "../utils";
+import { addressBalanceSpendCap } from "./utils";
 /**
  * Get the status of a transaction.
  * @function getTransactionStatus
@@ -101,6 +102,17 @@ export const getTransactionStatus: AccountBridge<
 
     if (requiredBalance.gt(accountBalance) && !errors.amount) {
       errors.amount = new NotEnoughBalance();
+    }
+
+    // SIP-58 safety net: when real coin objects can't cover the gas budget, gas is withdrawn from
+    // the address balance together with the transfer — so the address balance, not the total, must
+    // cover `amount + gasBudget`. Without this the tx builds and dry-runs fine but the node rejects
+    // the withdrawal reservation at broadcast ("Invalid withdraw reservation").
+    if (!transaction.subAccountId && !errors.amount) {
+      const cap = addressBalanceSpendCap(account, gasBudget);
+      if (cap !== null && amount.gt(cap)) {
+        errors.amount = new NotEnoughBalance();
+      }
     }
   }
   if (transaction.mode === "delegate") {

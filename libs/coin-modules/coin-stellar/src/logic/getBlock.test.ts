@@ -281,7 +281,7 @@ describe("getBlock", () => {
         asset_code: "ABC",
         asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         limit: "1000.0000000",
-        transactionRecord: txRecord(),
+        transactionRecord: txRecord({ source_account_sequence: "12345" }),
       }),
     ]);
 
@@ -289,11 +289,51 @@ describe("getBlock", () => {
     expect(block.transactions[0].operations[0]).toMatchObject({
       type: "other",
       ledgerOpType: "OPT_IN",
-      trustor: "GTRUSTORAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      assetAmount: "1000.0000000",
+      memo: { type: "NO_MEMO" },
+      sequence: "12345",
     });
   });
 
-  it("omits successful transactions that only contain unsupported operation types", async () => {
+  it("decodes MEMO_HASH from base64 to hex in change_trust details", async () => {
+    const base64Hash = Buffer.from("abcdef1234567890", "hex").toString("base64");
+    fetchAllLedgerOperationsMock.mockResolvedValue([
+      rawOp({
+        type: "change_trust",
+        transaction_hash: "txhash",
+        asset_code: "USD",
+        asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        limit: "500.0000000",
+        transactionRecord: txRecord({ memo_type: "hash", memo: base64Hash }),
+      }),
+    ]);
+
+    const block = await getBlock(10);
+    expect(block.transactions[0].operations[0]).toMatchObject({
+      memo: { type: "MEMO_HASH", value: "abcdef1234567890" },
+    });
+  });
+
+  it("decodes MEMO_RETURN from base64 to hex in change_trust details", async () => {
+    const base64Hash = Buffer.from("deadbeef", "hex").toString("base64");
+    fetchAllLedgerOperationsMock.mockResolvedValue([
+      rawOp({
+        type: "change_trust",
+        transaction_hash: "txreturn",
+        asset_code: "EUR",
+        asset_issuer: "GISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        limit: "100.0000000",
+        transactionRecord: txRecord({ memo_type: "return", memo: base64Hash }),
+      }),
+    ]);
+
+    const block = await getBlock(10);
+    expect(block.transactions[0].operations[0]).toMatchObject({
+      memo: { type: "MEMO_RETURN", value: "deadbeef" },
+    });
+  });
+
+  it("keeps successful transactions with only unsupported operation types for fee tracking", async () => {
     fetchAllLedgerOperationsMock.mockResolvedValue([
       rawOp({
         type: "manage_sell_offer",
@@ -303,7 +343,9 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    expect(block.transactions).toHaveLength(0);
+    expect(block.transactions).toHaveLength(1);
+    expect(block.transactions[0].operations).toHaveLength(0);
+    expect(block.transactions[0].fees).toBe(100n);
   });
 
   it("maps path_payment_strict_send with distinct source and destination assets", async () => {
@@ -402,7 +444,7 @@ describe("getBlock", () => {
         transactionRecord: txRecord({
           fee_charged: "100",
           source_account: "",
-        } as Partial<Horizon.ServerApi.TransactionRecord>),
+        }),
       }),
     ]);
 
@@ -410,7 +452,7 @@ describe("getBlock", () => {
     expect(block.transactions[0]).not.toHaveProperty("feesPayer");
   });
 
-  it("maps create_account with zero starting balance to no operations", async () => {
+  it("maps create_account with zero starting balance to empty operations but keeps tx for fees", async () => {
     fetchAllLedgerOperationsMock.mockResolvedValue([
       rawOp({
         type: "create_account",
@@ -423,7 +465,9 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    expect(block.transactions).toHaveLength(0);
+    expect(block.transactions).toHaveLength(1);
+    expect(block.transactions[0].operations).toHaveLength(0);
+    expect(block.transactions[0].fees).toBe(100n);
   });
 
   it("maps payment using to_muxed when to is absent", async () => {
@@ -469,7 +513,7 @@ describe("getBlock", () => {
     });
   });
 
-  it("path_payment_strict_send with zero amounts omits the transaction row", async () => {
+  it("path_payment_strict_send with zero amounts keeps tx for fees", async () => {
     fetchAllLedgerOperationsMock.mockResolvedValue([
       rawOp({
         type: "path_payment_strict_send",
@@ -485,7 +529,9 @@ describe("getBlock", () => {
     ]);
 
     const block = await getBlock(10);
-    expect(block.transactions).toHaveLength(0);
+    expect(block.transactions).toHaveLength(1);
+    expect(block.transactions[0].operations).toHaveLength(0);
+    expect(block.transactions[0].fees).toBe(100n);
   });
 
   it("path_payment_strict_receive uses send_max when source_amount is absent", async () => {

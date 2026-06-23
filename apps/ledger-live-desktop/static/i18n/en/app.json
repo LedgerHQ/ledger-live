@@ -505,10 +505,10 @@
       "changeProvider": "Swap with another provider"
     },
     "incompatibility": {
-      "ton_title": "Ledger Nano S™ does not support swapping Ton",
-      "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
-      "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ton_title": "Ledger Nano S™ does not support swapping Gram",
+      "ton_description": "To swap Gram, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ton_tokens_title": "Ledger Nano S™ does not support swapping Gram Tokens",
+      "ton_tokens_description": "To swap Gram Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
       "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "sui_tokens_title": "Ledger Nano S™ does not support swapping Sui tokens",
@@ -1463,7 +1463,6 @@
       "cta": "Clear cache"
     },
     "migrate": "Ledger Wallet accounts update available",
-    "genericTerminatedCrypto": "{{coinName}} is not supported anymore",
     "valentine": {
       "title": "Valentine’s day",
       "description": "As a proof of our love, Ledger is reducing buy & sell fees on Ledger Wallet"
@@ -7477,6 +7476,9 @@
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"
     },
+    "XrpDestinationTagRequired": {
+      "title": "A destination tag is required for this recipient"
+    },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
     },
@@ -7595,6 +7597,9 @@
     },
     "SolanaUseAllAmountStakeWarning": {
       "title": "Ensure you have enough balance left for future transactions fees"
+    },
+    "SolanaStakeAccountAmountTooLow": {
+      "title": "Amount is too low for staking. Minimum is {{minimumAmount}}."
     },
     "SolanaTxSimulationFailedWhilePendingOp": {
       "title": "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
@@ -7829,13 +7834,13 @@
       "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
     },
     "TonExcessFee": {
-      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+      "title": "It constitutes a token transfer. You will pay 0.1 GRAM in fees, and any extra will be returned to you."
     },
     "TonNotEnoughBalanceInParentAccount": {
-      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+      "title": "Insufficient funds in main account (GRAM) to calculate fees. The minimum required balance is 0.1 GRAM."
     },
     "TonMinimumRequired": {
-      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+      "title": "Insufficient funds. The minimum required balance is 0.02 GRAM."
     },
     "AleoAmountRecordRequired": {
       "title": "Select a valid private record for the amount.",
@@ -8407,7 +8412,7 @@
     }
   },
   "analyticsOptInPrompt": {
-    "variantA": {
+    "screen": {
       "description": "Sharing your Ledger Wallet data helps us understand your preferences and show content that's relevant to you.",
       "whatWeTrack": "With your consent, Ledger will be able to collect data about how you use Ledger Wallet (including page visits and clicks):",
       "whatWeTrackList": {
@@ -8432,26 +8437,6 @@
         "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
       },
       "validate": "Validate"
-    },
-    "variantB": {
-      "accept": "Accept",
-      "refuse": "Refuse",
-      "analytics": {
-        "description": "Sharing your Ledger Wallet analytics data helps us understand how people use Ledger Wallet, fix bugs, and offer an improved user experience.",
-        "details": {
-          "1": "Analytics data includes page visits, clicks.",
-          "2": "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
-          "3": "Analytics are completely anonymous. We can’t see or collect your personal information."
-        }
-      },
-      "personalRecommendations": {
-        "title": "Get a personalized experience",
-        "description": "Sharing your Ledger Wallet personalization data lets us display content that matches your preferences",
-        "details": {
-          "1": "Personalization data includes conversion data, clicks, page visits.",
-          "2": "We cannot track or collect any of your personal or portfolio information."
-        }
-      }
     },
     "common": {
       "title": "Help us improve and personalize your experience",
@@ -8962,6 +8947,20 @@
       "privateBalanceTooltip": "Balance that is hidden from the public"
     },
     "shielded": {
+      "send": {
+        "transferFrom": {
+          "label": "Transfer from",
+          "public": {
+            "title": "Public balance",
+            "subtitle": "Transparent"
+          },
+          "private": {
+            "title": "Private balance",
+            "subtitle": "Shielded",
+            "unavailable": "Private balance unavailable"
+          }
+        }
+      },
       "state": {
         "showBalance": "Show balance",
         "startSync": "Start sync",
@@ -9273,7 +9272,7 @@
       "refer": "Referral"
     },
     "backupHub": {
-      "title": "Backups of your Secret Recovery Phrase",
+      "title": "Backups",
       "description": "Don't lose access to your assets — back up your secret recovery phrase across multiple formats.",
       "back": "Back",
       "sections": {

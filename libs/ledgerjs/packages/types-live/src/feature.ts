@@ -254,7 +254,6 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
-  llmRebornLP: Feature_LlmRebornLP;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
@@ -904,11 +903,6 @@ export type Feature_PtxSwapDetailedView = Feature<{
   variant: ABTestingVariants;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmRebornLP"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmRebornLP = Feature<{
-  variant: ABTestingVariants;
-}>;
-
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldNanoSUpsellBanners"]` from `@shared/feature-flags` instead. */
 export type Feature_LldNanoSUpsellBanners = Feature<{
   opted_in: LldNanoSUpsellBannersConfig;
@@ -974,7 +968,6 @@ type Feature_Wallet40_Params = {
   assetDiscoverability: boolean;
   // Specifics
   brazePlacement?: boolean;
-  newReceiveDialog?: boolean;
   earnUpselling?: boolean;
   earnSimulator?: boolean;
   q2Tour?: boolean;
@@ -983,11 +976,7 @@ type Feature_Wallet40_Params = {
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwdWallet40"]` from `@shared/feature-flags` instead. */
-export type Feature_LwdWallet40 = Feature<
-  {
-    newReceiveDialog: boolean;
-  } & Feature_Wallet40_Params
->;
+export type Feature_LwdWallet40 = Feature<Feature_Wallet40_Params>;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmNewWordingOptInNotificationsDrawer"]` from `@shared/feature-flags` instead. */
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
   variant: ABTestingVariants;
