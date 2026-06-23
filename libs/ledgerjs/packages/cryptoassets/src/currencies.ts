@@ -99,6 +99,7 @@ const ethereumUnits = (name, code) => [
   },
 ];
 
+// Dual-maintained with `@domain/entity-currency-crypto` (the primary registry); see its README.
 // FIXME: We must be aware that we don't handle correcly currencies that use the same `managerApp`
 // to fix that we should always have the 'main' currency of the managerapp first in this list
 // e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
@@ -5088,7 +5089,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 1301,
     },
-    explorerViews: [blockscoutExplorerView("https://sepolia.uniscan.xyz/")],
+    explorerViews: [blockscoutExplorerView("https://sepolia.uniscan.xyz")],
   },
   robinhood: {
     type: "CryptoCurrency",
