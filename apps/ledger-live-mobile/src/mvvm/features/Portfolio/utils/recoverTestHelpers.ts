@@ -2,7 +2,7 @@ import { withFlagOverrides } from "@tests/test-renderer";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import type { State } from "~/reducers/types";
 
-export const PROTECT_ID = "protect-simu";
+export const PROTECT_ID = "protect-prod";
 
 export const withBannerEnabled = withFlagOverrides({
   protectServicesMobile: {

@@ -40,25 +40,25 @@ export const protectServicesMobile = flagWith(
       deeplink: "",
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
+          "ledgerlive://recover/protect-prod?source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
       },
       managerStatesData: {
         NEW: {
           quickAccessURI:
-            "ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm-navbar-quick-access&ajs_prop_source=llm-navbar-quick-access&ajs_prop_campaign=recover-launch",
+            "ledgerlive://recover/protect-prod?redirectTo=upsell&source=llm-navbar-quick-access&ajs_prop_source=llm-navbar-quick-access&ajs_prop_campaign=recover-launch",
           alreadyOnboardedURI:
-            "ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm-pairing&ajs_prop_source=llm-pairing&ajs_prop_campaign=recover-launch",
+            "ledgerlive://recover/protect-prod?redirectTo=upsell&source=llm-pairing&ajs_prop_source=llm-pairing&ajs_prop_campaign=recover-launch",
         },
       },
       onboardingRestore: {
         postOnboardingURI:
-          "ledgerlive://recover/protect-simu?redirectTo=restore&source=llm-restore-24&ajs_prop_source=llm-restore-24&ajs_prop_campaign=recover-launch",
+          "ledgerlive://recover/protect-prod?redirectTo=restore&source=llm-restore-24&ajs_prop_source=llm-restore-24&ajs_prop_campaign=recover-launch",
         restoreInfoDrawer: {
           enabled: true,
           supportLinkURI: "https://support.ledger.com",
         },
       },
-      protectId: "protect-simu",
+      protectId: "protect-prod",
     },
   },
 );

@@ -28,13 +28,7 @@ export const Wrapper = styled(Box).attrs(() => ({
   position: relative;
 `;
 
-const recoverIdsShowTopBar = [
-  "protect-local",
-  "protect-local-dev",
-  "protect-simu",
-  "protect-staging",
-  "protect-staging-v2",
-];
+const recoverIdsShowTopBar = ["protect-local", "protect-local-dev", "protect-staging"];
 
 export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverWebviewProps) {
   useRecoverStateSync(manifest.id);
