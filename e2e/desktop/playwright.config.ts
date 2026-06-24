@@ -35,8 +35,7 @@ const config: PlaywrightTestConfig = {
     {
       // Everything else runs fully parallel (inherits the global workers + fullyParallel).
       name: "parallel",
-      // grepInvert: /@swapBroadcast/,
-      testMatch: /.*send.swap.spec.ts/,
+      grepInvert: /@swapBroadcast/,
     },
   ],
   reporter: process.env.CI
