@@ -15,6 +15,7 @@ import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { hasSwapTabRoute } from "../../navigation/navigateBackToSwapTab";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -70,9 +71,15 @@ export function useSwapCustomHandlers(
   }, [navigation]);
 
   const navigateToSwapHistory = useCallback(() => {
-    navigation.navigate(NavigatorName.SwapSubScreens, {
-      screen: ScreenName.SwapHistory,
-    });
+    if (hasSwapTabRoute(navigation.getState())) {
+      navigation.navigate(NavigatorName.Swap, {
+        screen: ScreenName.SwapHistory,
+      });
+    } else {
+      navigation.navigate(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapHistory,
+      });
+    }
   }, [navigation]);
 
   const walletAPISwapHandlers = useCustomExchangeHandlers({

@@ -1,7 +1,7 @@
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate, useLocation } from "react-router";
 import Card from "~/renderer/components/Box/Card";
@@ -11,6 +11,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import logger from "~/renderer/logger";
 import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
+import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils/index";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
@@ -24,6 +25,16 @@ const Swap = () => {
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme().theme;
   const params = location.state || {};
+  const redirectToHistory = useRedirectToSwapHistory();
+
+  const customHandlers = useMemo(
+    () => ({
+      "custom.swapRedirectToHistory": async () => {
+        redirectToHistory();
+      },
+    }),
+    [redirectToHistory],
+  );
 
   const handleCrash = useDebounce(() => {
     console.log("[swap web player] Unable to load live app", {
@@ -70,6 +81,7 @@ const Swap = () => {
             currencyTicker: fiatCurrency.ticker,
             ...params,
           }}
+          customHandlers={customHandlers}
           onStateChange={onStateChange}
         />
       ) : null}
