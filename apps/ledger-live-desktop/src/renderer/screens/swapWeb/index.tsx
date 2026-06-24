@@ -11,7 +11,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import logger from "~/renderer/logger";
 import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
-import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
