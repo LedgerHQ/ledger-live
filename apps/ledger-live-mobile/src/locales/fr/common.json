@@ -959,6 +959,10 @@
     "TaprootNotActivated" : {
       "title" : "Taproot n’est pas encore activé sur le réseau principal"
     },
+    "RbfBuildError" : {
+      "title" : "Cette transaction ne peut pas être remplacée",
+      "description" : "L’augmentation des frais requise pour remplacer cette transaction ne peut pas être appliquée avec les paramètres actuels. Essayez avec un montant de frais différent ou annulez l’opération."
+    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger.",
@@ -1254,13 +1258,13 @@
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "TonExcessFee" : {
-      "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
+      "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 GRAM, et tout excédent vous sera remboursé."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Solde insuffisant sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+      "title" : "Solde insuffisant sur le compte principal (GRAM) pour couvrir les frais. Le solde minimum requis est de 0,1 GRAM."
     },
     "TonMinimumRequired" : {
-      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
+      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 GRAM."
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"
@@ -1322,6 +1326,9 @@
       "select" : "Sélectionnez un compte"
     }
   },
+  "lineChart" : {
+    "error" : "Échec du chargement du graphique"
+  },
   "location" : {
     "titleServiceRequired" : "Localisation requise",
     "descriptionServiceRequired" : "Ledger Wallet a besoin des services de localisation pour appairer votre appareil en Bluetooth.",
@@ -1335,6 +1342,28 @@
     "appNotFound" : "App Prêt non trouvée",
     "infoModal" : {
       "close" : "Fermer"
+    }
+  },
+  "backupHub" : {
+    "featureIntro" : {
+      "title" : "Créez une sauvegarde que vous ne perdrez pas",
+      "subtitle" : "Une sauvegarde chiffrée pour votre phrase de récupération secrète vous aide à retrouver l’accès à vos actifs, quoi qu’il arrive.",
+      "primaryCta" : "Profitez de 1 mois offert",
+      "secondaryCta" : "Me connecter",
+      "items" : {
+        "secure" : {
+          "title" : "Sauvegarde liée à votre identité",
+          "subtitle" : "Vous seul(e) pouvez autoriser une restauration de votre wallet."
+        },
+        "access" : {
+          "title" : "Sécurité avancée",
+          "subtitle" : "Chiffrement, fragmentation, sécurisation dans des modules de sécurité matériels."
+        },
+        "restore" : {
+          "title" : "Restauration à tout moment",
+          "subtitle" : "Votre pièce d’identité, Ledger Wallet et un appareil Ledger suffisent."
+        }
+      }
     }
   },
   "earn" : {
@@ -1463,6 +1492,12 @@
   },
   "globalSearch" : {
     "searchPlaceholder" : "Rechercher un actif",
+    "searchPlaceholders" : {
+      "crypto" : "Rechercher une crypto",
+      "stablecoins" : "Rechercher un stablecoin",
+      "stock" : "Rechercher des actions",
+      "addresses" : "Rechercher une adresse"
+    },
     "sections" : {
       "cryptos" : "Cryptos",
       "stocks" : "Actions"
@@ -1719,6 +1754,32 @@
       "cta" : "Déposer des actifs",
       "title" : "Commencez par déposer des actifs",
       "subTitle" : "Approvisionnez votre wallet : transférez, achetez ou réalisez un virement."
+    }
+  },
+  "q2WalletV4Tour" : {
+    "cta" : {
+      "start" : "Voir les nouveautés",
+      "next" : "Suivant",
+      "done" : "Compris"
+    },
+    "portfolio" : {
+      "title" : "Gestion d’actifs optimisée. Opportunités plus claires."
+    },
+    "balance" : {
+      "title" : "Un solde, un actif",
+      "subTitle" : "Chaque actif a désormais un solde unique, tous réseaux confondus. Gagnez en clarté."
+    },
+    "returns" : {
+      "title" : "Vos performances à l’honneur",
+      "subTitle" : "Suivez la performance de tous vos actifs, directement depuis votre page d’accueil."
+    },
+    "earn" : {
+      "title" : "Simulation de votre potentiel de croissance",
+      "subTitle" : "Estimez vos récompenses potentielles et élaborez une stratégie adaptée à vos objectifs."
+    },
+    "protocols" : {
+      "title" : "Davantage de protocoles, toujours plus d’opportunités",
+      "subTitle" : "Les stablecoins et actifs phares sont propulsés sur la page d’accueil. Gagnez du temps."
     }
   },
   "discover" : {
@@ -3287,6 +3348,7 @@
   "crypto" : {
     "title" : "Cryptos",
     "stablecoinTitle" : "Stablecoins",
+    "stocksTitle" : "Actions",
     "errorState" : "Une erreur est survenue lors du chargement de vos actifs",
     "emptyState" : "Aucun actif à afficher"
   },
@@ -4143,10 +4205,10 @@
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
         "contact_support" : "Contacter l’Assistance",
-        "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
-        "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
-        "ton_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Ton",
-        "ton_tokens_description" : "Pour échanger des tokens Ton, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Gram",
+        "ton_description" : "Pour échanger des Gram, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ton_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Gram",
+        "ton_tokens_description" : "Pour échanger des tokens Gram, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
         "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "near_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de NEAR",
@@ -4476,7 +4538,16 @@
       "processingTransaction" : "Transaction en cours de traitement",
       "sign" : {
         "title" : "Continuez sur votre Ledger {{wording}}",
-        "description" : "Consultez les instructions sur son écran tactile sécurisé."
+        "description" : "Consultez les instructions sur son écran tactile sécurisé.",
+        "cancelled" : {
+          "title" : "Transaction annulée",
+          "description" : "Vous avez rejeté cette transaction. Vos actifs ne seront pas affectés.",
+          "close" : "Fermer",
+          "retry" : "Réessayer"
+        }
+      },
+      "confirmation" : {
+        "viewTransaction" : "Voir la transaction"
       },
       "gasOptionsSync" : {
         "warningTitle" : "Échec de l’actualisation des frais de réseau",
@@ -6725,15 +6796,15 @@
     "unstakeRequired" : {
       "changeBaker" : {
         "title" : "Déstaking requis pour changer de Baker",
-        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant de les déléguer à un nouveau Baker."
+        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez tout avant de déléguer à un nouveau Baker."
       },
       "endDelegation" : {
         "title" : "Déstaking requis pour arrêter une délégation",
-        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez-les avant d’arrêter votre délégation."
+        "description" : "Vous stakez des XTZ avec votre Baker actuel. Déstakez tout avant d’arrêter votre délégation."
       },
       "steps" : {
-        "0" : "Ouvrez le menu Gagner et sélectionnez Déstaker.",
-        "1" : "Confirmez le montant et la transaction de déstaking sur votre appareil.",
+        "0" : "Ouvrez le tableau de bord de votre compte Tezos et sélectionnez l’option Déstaker.",
+        "1" : "Déstakez le montant MAX et validez la transaction de déstaking sur votre appareil Ledger.",
         "2" : "Patientez pendant la période de déstaking d’environ 4 jours.",
         "3" : "Une fois vos actifs retirés, vous pouvez changer de Baker ou mettre fin à votre délégation."
       },
@@ -8217,8 +8288,8 @@
       "filters" : {
         "accessibilityLabel" : "Ouvrir les filtres pour actifs",
         "title" : "Filtres",
-        "sorting" : "Tri",
-        "timeframe" : "Période",
+        "sorting" : "Trier les actifs par",
+        "timeframe" : "Choisir la période",
         "sortingOptions" : {
           "marketCap" : "Capitalisation",
           "volume" : "Volume",
@@ -8968,41 +9039,6 @@
           "accept" : "Accepter",
           "acceptAll" : "Tout accepter",
           "confirm" : "Valider"
-        },
-        "infoText" : {
-          "info" : "Vous pouvez retirer votre consentement à tout moment dans les Paramètres de l’application.",
-          "link" : "En savoir plus sur notre politique de suivi"
-        }
-      }
-    },
-    "variantB" : {
-      "main" : {
-        "title" : "Améliorons Ledger Wallet ensemble",
-        "description" : "Le partage des données analytiques de Ledger Wallet nous permet de comprendre comment Ledger Wallet est utilisé, de corriger les bugs et d’améliorer l’expérience utilisateur.",
-        "bulletPoints" : {
-          "1" : "Les données analytiques incluent les visites de pages et les clics.",
-          "2" : "Nous ne collecterons ni ne verrons aucune donnée relative à vos soldes, comptes ou à votre portefeuille.",
-          "3" : "Les données analytiques sont entièrement anonymes. Nous ne pouvons pas voir ni collecter vos données personnelles."
-        },
-        "ctas" : {
-          "refuse" : "Refuser",
-          "share" : "Partager"
-        },
-        "infoText" : {
-          "info" : "Vous pouvez retirer votre consentement à tout moment dans les Paramètres de l’application.",
-          "link" : "En savoir plus sur notre politique de suivi"
-        }
-      },
-      "details" : {
-        "title" : "Profitez d’une expérience personnalisée",
-        "description" : "Le partage des données de personnalisation de Ledger Wallet nous permet de vous proposer un contenu qui correspond à vos préférences.",
-        "bulletPoints" : {
-          "1" : "Les données de personnalisation incluent les données de conversion, les clics et les visites de pages.",
-          "2" : "Nous ne pouvons pas suivre ni collecter vos données personnelles ni celles relatives à votre portefeuille."
-        },
-        "ctas" : {
-          "refuse" : "Refuser",
-          "allow" : "Autoriser"
         },
         "infoText" : {
           "info" : "Vous pouvez retirer votre consentement à tout moment dans les Paramètres de l’application.",
@@ -9918,6 +9954,30 @@
       "backup" : "Sauvegarde",
       "help" : "Aide",
       "referral" : "Parrainage"
+    },
+    "backupHub" : {
+      "title" : "Sauvegardes pour votre phrase de récupération secrète",
+      "description" : "Ne perdez pas l’accès à vos actifs : sauvegardez votre phrase de récupération secrète dans plusieurs formats.",
+      "compareFooter" : "Comparer les sauvegardes",
+      "sections" : {
+        "digital" : "Sauvegarde numérique",
+        "physical" : "Sauvegardes physiques"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "Accès à vos actifs via votre identité",
+        "inProgress" : "Terminer l’activation",
+        "done" : "Gérer la synchronisation",
+        "discover" : "Découvrir"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "description" : "Carte à puce protégée par code PIN"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "Sauvegardes en métal",
+        "description" : "Protection résistante au feu et à l’eau"
+      }
     },
     "help" : {
       "title" : "Aide",
