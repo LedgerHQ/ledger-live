@@ -108,10 +108,10 @@ export default {
     black: "#000000",
   },
   background: {
-    default: "#131214",
-    main: "#131214",
-    drawer: "#1D1C1F",
-    card: "#1C1D1F",
+    default: "#00FF00",
+    main: "#00FF00",
+    drawer: "#00FF00",
+    card: "#00FF00",
   },
   effects: {
     dropShadow: "rgba(0, 0, 0, 0.48)",

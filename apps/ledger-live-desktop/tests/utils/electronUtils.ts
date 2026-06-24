@@ -24,6 +24,9 @@ export async function launchApp({
       "--disable-dev-shm-usage",
       "--no-sandbox",
       "--enable-logging",
+      // Force software rendering so page.screenshot() captures real pixels in xvfb
+      "--disable-gpu",
+      "--in-process-gpu",
       // When mitmproxy is active (HTTP_PROXY set), Chromium's renderer rejects
       // the mitmproxy CA cert because it uses its own cert store on Linux,
       // not the system store updated by update-ca-certificates.
