@@ -86,6 +86,7 @@ export type DAppTrackingData = {
 
 export type BroadcastTrackingData = {
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
   partner?: string;
   sourceCurrency?: string;
   targetCurrency?: string;

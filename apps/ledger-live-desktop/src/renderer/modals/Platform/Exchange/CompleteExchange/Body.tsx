@@ -44,6 +44,7 @@ export type Data = {
   payoutAddress?: string;
   sponsored?: boolean;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
 };
 
 type ResultsState = {
@@ -53,6 +54,7 @@ type ResultsState = {
   sourceCurrency: Currency;
   targetCurrency?: Currency;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
   sponsored?: boolean;
 };
 
@@ -126,6 +128,7 @@ const Body = ({
     refundAddress,
     payoutAddress,
     isEmbeddedSwap,
+    swapEntryPoint,
     ...exchangeParams
   } = data;
   const { exchange, provider, transaction: transactionParams, sponsored } = exchangeParams;
@@ -259,6 +262,7 @@ const Body = ({
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           targetCurrency: targetCurrency as Currency,
           isEmbeddedSwap,
+          swapEntryPoint,
           sponsored,
         }
       : {

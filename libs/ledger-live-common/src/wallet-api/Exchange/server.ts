@@ -105,6 +105,7 @@ export type CompleteExchangeUiRequest = {
   payoutAddress?: string;
   sponsored?: boolean;
   isEmbeddedSwap?: boolean;
+  swapEntryPoint?: string;
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
@@ -226,6 +227,8 @@ export const handlers = ({
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
+          isEmbeddedSwap: params.exchangeType === "SWAP" ? params.isEmbedded : undefined,
+          swapEntryPoint: params.exchangeType === "SWAP" ? params.swapEntryPoint : undefined,
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -265,6 +268,8 @@ export const handlers = ({
         const trackingParams = {
           provider: params.provider,
           exchangeType: params.exchangeType,
+          isEmbeddedSwap: params.exchangeType === "SWAP" ? params.isEmbedded : undefined,
+          swapEntryPoint: params.exchangeType === "SWAP" ? params.swapEntryPoint : undefined,
         };
         tracking.completeExchangeRequested(trackingParams);
 
@@ -406,6 +411,8 @@ export const handlers = ({
               magnitudeAwareRate,
               refundAddress,
               payoutAddress,
+              isEmbeddedSwap: params.exchangeType === "SWAP" ? params.isEmbedded : undefined,
+              swapEntryPoint: params.exchangeType === "SWAP" ? params.swapEntryPoint : undefined,
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess({
@@ -452,6 +459,7 @@ export const handlers = ({
           swapAppVersion,
           sponsored,
           isEmbedded,
+          swapEntryPoint,
           correlationId,
         } = params;
 
@@ -459,6 +467,7 @@ export const handlers = ({
           provider: params.provider,
           exchangeType: params.exchangeType,
           isEmbeddedSwap: isEmbedded,
+          swapEntryPoint,
         };
 
         tracking.startExchangeRequested(trackingParams);
@@ -574,13 +583,7 @@ export const handlers = ({
           extraTransactionParameters,
         });
 
-        // Complete Swap
-        const trackingCompleteParams = {
-          provider: params.provider,
-          exchangeType: params.exchangeType,
-          isEmbeddedSwap: isEmbedded,
-        };
-        tracking.completeExchangeRequested(trackingCompleteParams);
+        tracking.completeExchangeRequested(trackingParams);
 
         const strategyData = {
           recipient: payinAddress,
@@ -665,6 +668,7 @@ export const handlers = ({
               payoutAddress,
               sponsored,
               isEmbeddedSwap: isEmbedded,
+              swapEntryPoint,
               ...(correlationId && { correlationId }),
             },
             onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
