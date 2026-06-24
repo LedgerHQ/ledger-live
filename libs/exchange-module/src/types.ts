@@ -24,9 +24,6 @@ export type ExchangeStartSellParams = {
   fromAccountId: string;
 };
 
-type TrackingMetaValue = string | number | boolean | null | undefined;
-export type SwapTrackingMeta = Record<string, TrackingMetaValue>;
-
 export type ExchangeStartSwapParams = {
   exchangeType: "SWAP";
   provider: string;
