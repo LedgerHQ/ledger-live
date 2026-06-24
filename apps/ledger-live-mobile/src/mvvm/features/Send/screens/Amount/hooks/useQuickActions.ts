@@ -44,9 +44,10 @@ export function useQuickActions({
   onSelectMax,
 }: UseQuickActionsParams): AmountScreenQuickAction[] {
   const { t } = useTranslation();
-  const [lastSelection, setLastSelection] = useState<null | { id: string; amount: BigNumber }>(
-    null,
-  );
+  const [lastSelection, setLastSelection] = useState<null | {
+    id: string;
+    amount: BigNumber;
+  }>(null);
   const mainAccount = useMemo(
     () => getMainAccount(account, parentAccount ?? undefined),
     [account, parentAccount],
@@ -101,6 +102,7 @@ export function useQuickActions({
       },
       active: isMaxActive,
       disabled: disabled || !canSendMax,
+      untracked: true,
     });
 
     return actions;

@@ -6,13 +6,15 @@ import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
 import { useMemoViewModel } from "LLM/features/Send/components/Memo/hooks/useMemoViewModel";
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
-import React from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useRecipientScreenView } from "../hooks/useRecipientScreenView";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
 import { ValidationBanner } from "./ValidationBanner";
+import { useAnalytics } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type RecipientScreenViewProps = Readonly<{
   account: AccountLike;
@@ -59,11 +61,29 @@ export const RecipientScreenView = ({
   });
 
   const { uiConfig } = useSendFlowData();
+  const { track } = useAnalytics();
+  const trackingProperties = useMemo(() => {
+    return {
+      ...getSendFlowTrackingProperties(account, parentAccount),
+      button: "my accounts",
+      page: "step recipient",
+    };
+  }, [account, parentAccount]);
+
+  const handleSkipMemo = useCallback(() => {
+    track("button_clicked", {
+      ...trackingProperties,
+      button: "skip",
+      page: "step memo",
+    });
+    onMemoProceed();
+  }, [track, onMemoProceed, trackingProperties]);
+
   const resolvedAddress = result?.resolvedAddress ?? searchValue;
   const showMemo = uiConfig.hasMemo && isAddressComplete;
   const memoVm = useMemoViewModel({
     address: showMemo ? resolvedAddress : "",
-    onSkip: onMemoProceed,
+    onSkip: handleSkipMemo,
   });
   const showMatched = shouldShowMatchedAddress({
     showMatchedAddress,
@@ -72,12 +92,36 @@ export const RecipientScreenView = ({
     hasMemoError: !!memoVm.memoError,
   });
 
+  const handleMatchedAddress = useCallback(
+    (address: string, ensName?: string) => {
+      track("button_clicked", trackingProperties);
+      handleAddressSelect(address, ensName);
+    },
+    [track, trackingProperties, handleAddressSelect],
+  );
+
   const shouldShowErrorBanner =
     !isLoading &&
     (showBridgeSenderError ||
       showSanctionedBanner ||
       showBridgeRecipientError ||
       showBridgeRecipientWarning);
+
+  useEffect(() => {
+    if (showMemo) {
+      track("send_modal", { ...trackingProperties, name: "step memo" });
+    }
+  }, [showMemo, track, trackingProperties]);
+
+  useEffect(() => {
+    if (uiConfig.hasMemo && memoVm.hasFilledMemo && !memoVm.memoError) {
+      track("send_modal", {
+        ...trackingProperties,
+        button: "skip",
+        name: "step memo",
+      });
+    }
+  }, [track, trackingProperties, uiConfig.hasMemo, memoVm.hasFilledMemo, memoVm.memoError]);
 
   return (
     <SendFlowLayout>

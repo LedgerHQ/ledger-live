@@ -1,7 +1,7 @@
 import type { Intent, IntentDefinition, IntentPlatformDefinition } from "@ledgerhq/device-intent";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { SignatureRequest } from "../../flows/send/hooks/useSendFlowSignatureCore";
-import type { SignedOperation } from "@ledgerhq/types-live";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 
 export type SignTransactionIntentJobState =
   | { type: "pending"; deviceModelId: DeviceModelId }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { View, Pressable } from "react-native";
 import {
   AddressInput,
@@ -16,6 +16,9 @@ import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 
 import { useSendHeaderViewModel } from "../hooks/useSendHeaderViewModel";
+import { useSendFlowData } from "../context/SendFlowContext";
+import { useAnalytics } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type SendHeaderProps = Readonly<{
   headerRight?: React.ReactNode;
@@ -44,6 +47,22 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
     }),
     [],
   );
+
+  const { state } = useSendFlowData();
+  const { account, parentAccount } = state.account;
+
+  const { track } = useAnalytics();
+  const trackingProperties = useMemo(() => {
+    return getSendFlowTrackingProperties(account ?? null, parentAccount);
+  }, [account, parentAccount]);
+
+  useEffect(() => {
+    track("send_modal", {
+      ...trackingProperties,
+      name: "step recipient",
+      flow: "send",
+    });
+  }, [track, trackingProperties]);
 
   return (
     <>
