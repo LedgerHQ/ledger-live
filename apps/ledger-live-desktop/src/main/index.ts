@@ -27,6 +27,7 @@ import {
   setupZcashNativeHost,
   cleanupZcashNativeHost,
 } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ipc/main-host";
+import { setupMeshPayWebviewHandlers } from "./meshPayWebview";
 import { setupWebviewHandlers } from "./webviewHandlers";
 // End import timing, start initialization
 console.timeEnd("T-imports");
@@ -174,6 +175,7 @@ app.on("ready", async () => {
     setTags(tags);
   });
   setupWebviewHandlers(SUPPORTED_SCHEMES);
+  setupMeshPayWebviewHandlers();
   Menu.setApplicationMenu(menu);
 
   // Apply window parameters now that we have DB data
