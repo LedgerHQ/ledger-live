@@ -1,14 +1,7 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import * as usePortfolioBalanceDisplayStateModule from "LLD/hooks/usePortfolioBalanceDisplayState";
 import { mockCounterValue, mockPortfolioBalanceInfo } from "LLD/hooks/__tests__/fixtures";
 import { useChartSectionHeaderViewModel } from "../useChartSectionHeaderViewModel";
-
-jest.mock("LLD/hooks/usePortfolioBalanceDisplayState");
-
-const mockUsePortfolioBalanceDisplayState = jest.mocked(
-  usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState,
-);
 
 const initialState = {
   settings: {
@@ -23,14 +16,6 @@ const initialState = {
 };
 
 describe("useChartSectionHeaderViewModel", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockUsePortfolioBalanceDisplayState.mockReturnValue({
-      isLoading: false,
-      shouldDisplayBalanceRefreshRework: true,
-    } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
-  });
-
   it("formats balance, trend, and range label for the selected portfolio range", () => {
     const { result } = renderHook(
       () =>
@@ -40,6 +25,8 @@ describe("useChartSectionHeaderViewModel", () => {
             valueChange: { percentage: 0.1234, value: 567 },
           },
           hoveredBalance: null,
+          isLoading: false,
+          shouldDisplayBalanceRefreshRework: true,
         }),
       { initialState },
     );
@@ -56,6 +43,8 @@ describe("useChartSectionHeaderViewModel", () => {
         useChartSectionHeaderViewModel({
           balanceInfo: mockPortfolioBalanceInfo,
           hoveredBalance: 1000,
+          isLoading: false,
+          shouldDisplayBalanceRefreshRework: true,
         }),
       { initialState },
     );
@@ -63,17 +52,14 @@ describe("useChartSectionHeaderViewModel", () => {
     expect(result.current.balance).toBe(1000);
   });
 
-  it("exposes the sync loading state from usePortfolioBalanceDisplayState", () => {
-    mockUsePortfolioBalanceDisplayState.mockReturnValue({
-      isLoading: true,
-      shouldDisplayBalanceRefreshRework: true,
-    } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
-
+  it("exposes the loading state passed from the parent view model", () => {
     const { result } = renderHook(
       () =>
         useChartSectionHeaderViewModel({
           balanceInfo: mockPortfolioBalanceInfo,
           hoveredBalance: null,
+          isLoading: true,
+          shouldDisplayBalanceRefreshRework: true,
         }),
       { initialState },
     );

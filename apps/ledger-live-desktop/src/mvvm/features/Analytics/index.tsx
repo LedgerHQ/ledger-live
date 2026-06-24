@@ -28,6 +28,9 @@ function AnalyticsView({
     shouldDisplayAssetSection,
     shouldDisplayPnl,
     balanceInfo,
+    portfolio,
+    isLoading,
+    shouldDisplayBalanceRefreshRework,
   } = viewModel;
 
   const { t } = useTranslation();
@@ -43,7 +46,12 @@ function AnalyticsView({
 
       <div data-testid="analytics-chart">
         {shouldDisplayPnl ? (
-          <ChartSection balanceInfo={balanceInfo} />
+          <ChartSection
+            balanceInfo={balanceInfo}
+            portfolio={portfolio}
+            isLoading={isLoading}
+            shouldDisplayBalanceRefreshRework={shouldDisplayBalanceRefreshRework}
+          />
         ) : (
           <PortfolioBalanceSummary
             counterValue={counterValue}

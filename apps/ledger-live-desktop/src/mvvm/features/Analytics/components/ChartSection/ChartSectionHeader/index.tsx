@@ -8,9 +8,21 @@ export type { ChartSectionHeaderViewModel } from "./types";
 type ChartSectionHeaderProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   hoveredBalance: number | null;
+  isLoading: boolean;
+  shouldDisplayBalanceRefreshRework: boolean;
 }>;
 
-export function ChartSectionHeader({ balanceInfo, hoveredBalance }: ChartSectionHeaderProps) {
-  const viewModel = useChartSectionHeaderViewModel({ balanceInfo, hoveredBalance });
+export function ChartSectionHeader({
+  balanceInfo,
+  hoveredBalance,
+  isLoading,
+  shouldDisplayBalanceRefreshRework,
+}: ChartSectionHeaderProps) {
+  const viewModel = useChartSectionHeaderViewModel({
+    balanceInfo,
+    hoveredBalance,
+    isLoading,
+    shouldDisplayBalanceRefreshRework,
+  });
   return <ChartSectionHeaderView viewModel={viewModel} />;
 }

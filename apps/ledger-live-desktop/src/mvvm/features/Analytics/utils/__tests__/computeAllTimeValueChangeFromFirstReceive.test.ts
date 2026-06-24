@@ -68,4 +68,22 @@ describe("computeAllTimeValueChangeFromFirstReceive", () => {
     expect(result.value).toBe(150);
     expect(result.percentage).toBe(1.5);
   });
+
+  it("returns a neutral value change when the first receive countervalue is unavailable", () => {
+    const account = accountWithReceive("btc-1", new Date("2020-01-01"), 1_000_000);
+    mockCalculate.mockReturnValue(undefined);
+
+    const result = computeAllTimeValueChangeFromFirstReceive([account], 1000, mockCvState, usd);
+
+    expect(result).toEqual({ value: 0, percentage: null });
+  });
+
+  it("returns zero percentage when the all-time delta is exactly zero", () => {
+    const account = accountWithReceive("btc-1", new Date("2020-01-01"), 1_000_000);
+    mockCalculate.mockReturnValue(1000);
+
+    const result = computeAllTimeValueChangeFromFirstReceive([account], 1000, mockCvState, usd);
+
+    expect(result).toEqual({ value: 0, percentage: 0 });
+  });
 });

@@ -8,7 +8,6 @@ import {
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioBalanceDisplayState } from "LLD/hooks/usePortfolioBalanceDisplayState";
-import { usePortfolio } from "~/renderer/actions/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { resolveAnalyticsValueChange } from "./utils/resolveAnalyticsValueChange";
 import type { AnalyticsViewModel } from "./types";
@@ -18,14 +17,18 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
   const counterValue = useSelector(counterValueCurrencySelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const accounts = useSelector(accountsSelector);
-  const portfolio = usePortfolio();
   const cvState = useCountervaluesState();
   const {
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayPnl: isPnlFlagOn,
   } = useWalletFeaturesConfig("desktop");
-  const { balanceInfo: syncBalanceInfo } = usePortfolioBalanceDisplayState();
+  const {
+    balanceInfo: syncBalanceInfo,
+    portfolio,
+    isLoading,
+    shouldDisplayBalanceRefreshRework,
+  } = usePortfolioBalanceDisplayState();
 
   const shouldDisplayPnl = isPnlFlagOn && accounts.length > 0;
 
@@ -59,6 +62,9 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
     counterValue,
     selectedTimeRange,
     balanceInfo,
+    portfolio,
+    isLoading,
+    shouldDisplayBalanceRefreshRework,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayPnl,

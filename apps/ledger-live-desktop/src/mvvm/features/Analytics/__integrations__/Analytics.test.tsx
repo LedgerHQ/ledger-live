@@ -4,7 +4,7 @@ import Analytics from "../index";
 import useAnalyticsViewModel from "../useAnalyticsViewModel";
 import { useAllocationData } from "../hooks/useAllocationData";
 import { makeAllocationViewProps } from "../__fixtures__/allocationFixtures";
-import { mockPortfolioBalanceInfo } from "LLD/hooks/__tests__/fixtures";
+import { mockPortfolioBalanceInfo, defaultPortfolio } from "LLD/hooks/__tests__/fixtures";
 
 jest.mock("../useAnalyticsViewModel");
 const mockedUseAnalyticsViewModel = useAnalyticsViewModel as jest.Mock;
@@ -48,6 +48,9 @@ const defaultViewModel = {
   selectedTimeRange: "month",
   navigateToDashboard: mockNavigateToDashboard,
   balanceInfo: mockPortfolioBalanceInfo,
+  portfolio: defaultPortfolio,
+  isLoading: false,
+  shouldDisplayBalanceRefreshRework: false,
   shouldDisplayPnl: false,
 };
 

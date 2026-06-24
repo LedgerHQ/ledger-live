@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
+import type { Portfolio } from "@ledgerhq/types-live";
 import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import {
   getExtremaPointMarkers,
@@ -9,15 +10,14 @@ import {
   type LineChartRange,
   type LineChartScrubberPositionChange,
   type LineChartSeries,
+  type LineChartTooltipTitle,
 } from "LLD/components/LineChart";
 import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
-import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
 import {
   buildLineChartBottomPaddedYAxisConfig,
   buildLineChartXAxisConfig,
   LINE_CHART_VIEW_HEIGHT,
 } from "LLD/components/LineChart/utils/lineChartAxisConfig";
-import { usePortfolio } from "~/renderer/actions/portfolio";
 import {
   counterValueCurrencySelector,
   localeSelector,
@@ -34,6 +34,7 @@ import {
 
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
+  portfolio: Portfolio;
 }>;
 
 export type ChartSectionViewModelResult = Readonly<{
@@ -44,10 +45,10 @@ export type ChartSectionViewModelResult = Readonly<{
 
 export function useChartSectionViewModel({
   balanceInfo,
+  portfolio,
 }: UseChartSectionViewModelProps): ChartSectionViewModelResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const portfolio = usePortfolio();
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
@@ -90,8 +91,12 @@ export function useChartSectionViewModel({
 
   const formatDate = useAssetChartDateFormatter(selectedRange);
 
-  const tooltipTitle = useCallback(
-    createLineChartTooltipTitle(timestamps, formatDate),
+  const tooltipTitle = useCallback<LineChartTooltipTitle>(
+    dataIndex => {
+      const timestamp = timestamps[dataIndex];
+      if (timestamp == null) return undefined;
+      return formatDate(timestamp);
+    },
     [timestamps, formatDate],
   );
 
@@ -125,7 +130,7 @@ export function useChartSectionViewModel({
     [dispatch, selectedTimeRange],
   );
 
-  const isChartLoading = !portfolio.balanceAvailable && portfolio.balanceHistory.length === 0;
+  const isChartLoading = !balanceInfo.isAvailable;
 
   return {
     balanceInfo,

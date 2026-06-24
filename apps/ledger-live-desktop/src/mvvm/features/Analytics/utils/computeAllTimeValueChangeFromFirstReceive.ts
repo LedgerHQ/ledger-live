@@ -40,14 +40,15 @@ export function computeAllTimeValueChangeFromFirstReceive(
     disableRounding: true,
   });
 
-  if (typeof firstReceiveCountervalue !== "number" || firstReceiveCountervalue === 0) {
-    return { value: currentBalance, percentage: null };
+  if (typeof firstReceiveCountervalue !== "number") {
+    return { value: 0, percentage: null };
   }
 
   const value = currentBalance - firstReceiveCountervalue;
 
   return {
     value,
-    percentage: meaningfulPercentage(value, firstReceiveCountervalue) ?? null,
+    percentage:
+      value === 0 ? 0 : (meaningfulPercentage(value, firstReceiveCountervalue) ?? null),
   };
 }

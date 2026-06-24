@@ -1,5 +1,4 @@
 import { act, renderHook } from "tests/testSetup";
-import { usePortfolio } from "~/renderer/actions/portfolio";
 import { track } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
@@ -9,12 +8,10 @@ import {
 } from "LLD/hooks/__tests__/fixtures";
 import { useChartSectionViewModel } from "../useChartSectionViewModel";
 
-jest.mock("~/renderer/actions/portfolio");
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
-const mockUsePortfolio = jest.mocked(usePortfolio);
 const mockTrack = jest.mocked(track);
 
 const portfolioWithHistory = {
@@ -38,12 +35,15 @@ const initialState = {
 describe("useChartSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePortfolio.mockReturnValue(portfolioWithHistory);
   });
 
   it("builds chart series from portfolio balance history and maps the selected range", () => {
     const { result } = renderHook(
-      () => useChartSectionViewModel({ balanceInfo: mockPortfolioBalanceInfo }),
+      () =>
+        useChartSectionViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          portfolio: portfolioWithHistory,
+        }),
       { initialState },
     );
 
@@ -53,9 +53,26 @@ describe("useChartSectionViewModel", () => {
     expect(result.current.hoveredBalance).toBeNull();
   });
 
+  it("uses balanceInfo availability for the chart loading state", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionViewModel({
+          balanceInfo: { ...mockPortfolioBalanceInfo, isAvailable: false },
+          portfolio: portfolioWithHistory,
+        }),
+      { initialState },
+    );
+
+    expect(result.current.chart.isLoading).toBe(true);
+  });
+
   it("dispatches the portfolio range and tracks when the chart range changes", () => {
     const { result, store } = renderHook(
-      () => useChartSectionViewModel({ balanceInfo: mockPortfolioBalanceInfo }),
+      () =>
+        useChartSectionViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          portfolio: portfolioWithHistory,
+        }),
       { initialState },
     );
 
@@ -69,7 +86,11 @@ describe("useChartSectionViewModel", () => {
 
   it("updates hoveredBalance when scrubbing the chart", () => {
     const { result } = renderHook(
-      () => useChartSectionViewModel({ balanceInfo: mockPortfolioBalanceInfo }),
+      () =>
+        useChartSectionViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          portfolio: portfolioWithHistory,
+        }),
       { initialState },
     );
 

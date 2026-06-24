@@ -5,9 +5,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import { formatSignedFiatVariation } from "@ledgerhq/live-currency-format";
 import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
-import { usePortfolioBalanceDisplayState } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import { useTrendViewModel } from "LLD/features/Portfolio/hooks/useTrendViewModel";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
@@ -20,19 +18,21 @@ import type { ChartSectionHeaderViewModel } from "./types";
 type UseChartSectionHeaderViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   hoveredBalance: number | null;
+  isLoading: boolean;
+  shouldDisplayBalanceRefreshRework: boolean;
 }>;
 
 export function useChartSectionHeaderViewModel({
   balanceInfo,
   hoveredBalance,
+  isLoading,
+  shouldDisplayBalanceRefreshRework,
 }: UseChartSectionHeaderViewModelProps): ChartSectionHeaderViewModel {
   const { t } = useTranslation();
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("desktop");
-  const { isLoading } = usePortfolioBalanceDisplayState();
   const fiatUnit = counterValue.units[0];
 
   const balance = hoveredBalance ?? balanceInfo.totalBalance;

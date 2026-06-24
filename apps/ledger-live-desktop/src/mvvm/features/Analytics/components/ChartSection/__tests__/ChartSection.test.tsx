@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
-import { usePortfolio } from "~/renderer/actions/portfolio";
 import {
   defaultPortfolio,
   mockCounterValue,
@@ -10,10 +9,16 @@ import {
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { ChartSection } from "../index";
 
-jest.mock("~/renderer/actions/portfolio");
-
-const mockUsePortfolio = jest.mocked(usePortfolio);
 const ORIGINAL_RESIZE_OBSERVER = global.ResizeObserver;
+
+const portfolioWithHistory = {
+  ...defaultPortfolio,
+  balanceHistory: [
+    { date: new Date("2026-01-01T00:00:00.000Z"), value: 1000 },
+    { date: new Date("2026-01-02T00:00:00.000Z"), value: 1200 },
+  ],
+  balanceAvailable: true,
+};
 
 const initialState = {
   settings: {
@@ -28,14 +33,6 @@ describe("ChartSection", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockLumenChartResizeObserver();
-    mockUsePortfolio.mockReturnValue({
-      ...defaultPortfolio,
-      balanceHistory: [
-        { date: new Date("2026-01-01T00:00:00.000Z"), value: 1000 },
-        { date: new Date("2026-01-02T00:00:00.000Z"), value: 1200 },
-      ],
-      balanceAvailable: true,
-    });
   });
 
   afterEach(() => {
@@ -43,7 +40,15 @@ describe("ChartSection", () => {
   });
 
   it("renders the portfolio balance, trend, and chart for the selected range", () => {
-    render(<ChartSection balanceInfo={mockPortfolioBalanceInfo} />, { initialState });
+    render(
+      <ChartSection
+        balanceInfo={mockPortfolioBalanceInfo}
+        portfolio={portfolioWithHistory}
+        isLoading={false}
+        shouldDisplayBalanceRefreshRework={false}
+      />,
+      { initialState },
+    );
 
     expect(screen.getByTestId("analytics-chart-section")).toBeVisible();
     expect(screen.getByTestId("analytics-chart-header")).toBeVisible();
@@ -53,9 +58,15 @@ describe("ChartSection", () => {
   });
 
   it("shows a skeleton when the balance is unavailable", () => {
-    render(<ChartSection balanceInfo={{ ...mockPortfolioBalanceInfo, isAvailable: false }} />, {
-      initialState,
-    });
+    render(
+      <ChartSection
+        balanceInfo={{ ...mockPortfolioBalanceInfo, isAvailable: false }}
+        portfolio={portfolioWithHistory}
+        isLoading={false}
+        shouldDisplayBalanceRefreshRework={false}
+      />,
+      { initialState },
+    );
 
     expect(screen.getByTestId("analytics-balance-skeleton")).toBeVisible();
     expect(screen.queryByTestId("analytics-balance-trend")).not.toBeInTheDocument();
