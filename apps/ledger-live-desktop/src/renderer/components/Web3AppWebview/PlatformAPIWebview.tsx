@@ -51,7 +51,7 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const manifestDomainCheckEnabled = useFeature("lldWebviewManifestDomainCheck")?.enabled;
-    const { webviewState, webviewRef, setWebviewRef, webviewProps, webviewPartition } =
+    const { webviewState, webviewRef, webviewNode, setWebviewRef, webviewProps, webviewPartition } =
       useWebviewState(
         {
           manifest,
@@ -432,11 +432,26 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
     useEffect(() => {
-      const webview = webviewRef.current;
+      // Key off the node state (not the stable ref) so this effect re-runs exactly when the
+      // <webview> mounts, guaranteeing the listeners attach to the live node.
+      const webview = webviewNode;
 
       if (webview) {
         webview.addEventListener("did-finish-load", handleLoad);
         webview.addEventListener("dom-ready", handleDomReady);
+
+        // Recover from a missed "did-finish-load": on a cold start the main thread is busy and
+        // this passive effect can attach after the webview already finished loading, so the
+        // event never reaches us and the loader stays up forever. If the load is already done,
+        // mark the widget loaded now. isLoading() throws before dom-ready (the webview has no
+        // WebContents yet) — that just means it is still loading, so the listener will catch it.
+        try {
+          if (!webview.isLoading()) {
+            handleLoad();
+          }
+        } catch {
+          // webview not attached/dom-ready yet — nothing to recover, the listener will fire.
+        }
       }
 
       return () => {
@@ -446,7 +461,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         }
       };
       // oxlint-disable-next-line react-hooks/exhaustive-deps
-    }, [handleLoad, handleDomReady]);
+    }, [handleLoad, handleDomReady, webviewNode]);
 
     const webviewStyle = useMemo(() => {
       return {

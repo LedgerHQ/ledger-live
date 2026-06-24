@@ -322,6 +322,7 @@ function useWebView(
     "manifest" | "customHandlers" | "currentAccountHistDb" | "setCurrentAccountHistDb" | "inputs"
   >,
   webviewRef: RefObject<WebviewTag | null>,
+  webviewNode: WebviewTag | null,
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
@@ -417,12 +418,27 @@ function useWebView(
   }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
   useEffect(() => {
-    const webview = webviewRef.current;
+    // Key off the node state (not the stable ref) so this effect re-runs exactly when the
+    // <webview> mounts, guaranteeing the listeners attach to the live node.
+    const webview = webviewNode;
 
     if (webview) {
       webview.addEventListener("did-finish-load", onLoad);
       webview.addEventListener("ipc-message", handleMessage);
       webview.addEventListener("dom-ready", handleDomReady);
+
+      // Recover from a missed "did-finish-load": on a cold start the main thread is busy and
+      // this passive effect can attach after the webview already finished loading, so the
+      // event never reaches us and the loader stays up forever. If the load is already done,
+      // mark the widget loaded now. isLoading() throws before dom-ready (the webview has no
+      // WebContents yet) — that just means it is still loading, so the listener will catch it.
+      try {
+        if (!webview.isLoading()) {
+          onLoad();
+        }
+      } catch {
+        // webview not attached/dom-ready yet — nothing to recover, the listener will fire.
+      }
     }
 
     return () => {
@@ -432,7 +448,7 @@ function useWebView(
         webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
-  }, [handleDomReady, handleMessage, onLoad, webviewRef]);
+  }, [handleDomReady, handleMessage, onLoad, webviewNode]);
 
   const webviewStyle = useMemo(() => {
     return {
@@ -495,6 +511,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const {
       webviewState,
       webviewRef,
+      webviewNode,
       setWebviewRef,
       webviewProps,
       handleRefresh,
@@ -523,6 +540,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         inputs,
       },
       webviewRef,
+      webviewNode,
       tracking,
       serverRef,
       customWebviewStyle,

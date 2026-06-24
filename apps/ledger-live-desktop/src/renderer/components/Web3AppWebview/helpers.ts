@@ -56,6 +56,8 @@ type UseWebviewStateReturn = {
     src: string;
   };
   webviewRef: RefObject<WebviewTag | null>;
+  /** The mounted <webview> DOM node, tracked as state so effects re-run when it mounts. */
+  webviewNode: WebviewTag | null;
   setWebviewRef: (node: WebviewTag) => () => void;
   webviewPartition: WebviewPartition;
   handleRefresh: () => void;
@@ -318,6 +320,7 @@ export function useWebviewState(
     webviewState: state,
     webviewProps: props,
     webviewRef,
+    webviewNode,
     setWebviewRef,
     webviewPartition,
     handleRefresh,
