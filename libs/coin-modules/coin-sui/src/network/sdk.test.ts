@@ -376,6 +376,9 @@ function mockStakingTx(address: string, amount: string) {
         parsedJson: {
           validator_address: validatorAddress,
           staked_sui_id: "0xstaked_object_id_123",
+          // `StakingRequestEvent` carries the staked principal as `amount`
+          // (Sui `sui_system::validator`); `UnstakingRequestEvent` uses `principal_amount`.
+          amount: String(ONE_SUI),
         },
       },
     ],
@@ -1409,7 +1412,16 @@ describe("Staking Operations", () => {
       expect(operation).toHaveProperty("type", "DELEGATE");
       expect(operation).toHaveProperty("hash", "delegate_tx_digest_123");
       expect(operation).toHaveProperty("extra");
-      expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
+      const stakingExtra = operation.extra as {
+        coinType: string;
+        validatorAddress: string;
+        stakedAmount: string;
+      };
+      expect(stakingExtra.coinType).toBe(sdk.DEFAULT_COIN_TYPE);
+      expect(stakingExtra.validatorAddress).toBe(
+        "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
+      );
+      expect(stakingExtra.stakedAmount).toBe(String(ONE_SUI));
       expect(operation.value).toEqual(new BigNumber(mist(1))); // The function returns minus of the balance change
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
@@ -1429,10 +1441,52 @@ describe("Staking Operations", () => {
       expect(operation).toHaveProperty("type", "UNDELEGATE");
       expect(operation).toHaveProperty("hash", "undelegate_tx_digest_456");
       expect(operation).toHaveProperty("extra");
-      expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
+      const unstakingExtra = operation.extra as {
+        coinType: string;
+        validatorAddress: string;
+        stakedAmount: string;
+      };
+      expect(unstakingExtra.coinType).toBe(sdk.DEFAULT_COIN_TYPE);
+      expect(unstakingExtra.validatorAddress).toBe(
+        "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
+      );
+      // `principal_amount` from the unstaking event — see mockUnstakingTx.
+      expect(unstakingExtra.stakedAmount).toBe(mist(1.2));
       expect(operation.value).toEqual(new BigNumber(mist(-1)));
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
+    });
+
+    test("transactionToOperation leaves extra clean for non-staking transfers", () => {
+      const accountId = "mockAccountId";
+      const address = "0xsender";
+      const tx = {
+        digest: "transfer_tx_digest_123",
+        transaction: {
+          data: {
+            sender: address,
+            gasData: { owner: address },
+            transaction: { kind: "ProgrammableTransaction", inputs: [], transactions: [] },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+          gasUsed: { computationCost: "0", storageCost: "0", storageRebate: "0" },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "-1000",
+          },
+        ],
+        timestampMs: "1742294454878",
+        checkpoint: "1",
+      } as unknown as SuiTransactionBlockResponse;
+      const op = sdk.transactionToOperation(accountId, address, tx);
+      const extra = op.extra as Record<string, unknown>;
+      expect(extra.validatorAddress).toBeUndefined();
+      expect(extra.stakedAmount).toBeUndefined();
     });
 
     test("transactionToOp should map staking transaction correctly", () => {
@@ -1566,6 +1620,35 @@ describe("Staking Operations", () => {
       );
       expect(operation.tx.feesPayer).toBe(sponsorAddress);
     });
+  });
+});
+
+describe("getStakingExtraByDigest on JSON-RPC transport", () => {
+  // `features.graphql: false` (beforeAll) routes withTransport to the jsonRpc branch, where
+  // `withApi`'s client is the shared mock — so `mockApi.getTransactionBlock` drives it.
+  it("reads validator_address + amount from StakingRequestEvent (DELEGATE)", async () => {
+    mockApi.getTransactionBlock.mockResolvedValueOnce({
+      events: [
+        {
+          type: "0x3::validator::StakingRequestEvent",
+          parsedJson: { validator_address: "0xval", amount: "1000000000" },
+        },
+      ],
+    } as unknown as SuiTransactionBlockResponse);
+    const out = await sdk.getStakingExtraByDigest("0xdigest", "DELEGATE", "sui-jsonrpc-stake");
+    expect(out).toEqual({ validatorAddress: "0xval", stakedAmount: "1000000000" });
+    expect(mockApi.getTransactionBlock).toHaveBeenCalledWith({
+      digest: "0xdigest",
+      options: { showEvents: true },
+    });
+  });
+
+  it("returns null when the digest has no matching staking event", async () => {
+    mockApi.getTransactionBlock.mockResolvedValueOnce({
+      events: [],
+    } as unknown as SuiTransactionBlockResponse);
+    const out = await sdk.getStakingExtraByDigest("0xmissing", "DELEGATE", "sui-jsonrpc-miss");
+    expect(out).toBeNull();
   });
 });
 

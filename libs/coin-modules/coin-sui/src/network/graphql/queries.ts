@@ -207,28 +207,36 @@ export const ALL_BALANCES_BY_OWNER = graphql(`
 `);
 
 /**
- * Single transaction by digest. JSON blobs (`transactionJson`, `effectsJson`,
- * `balanceChangesJson`) carry the gRPC-proto shapes the existing JSON-RPC
- * mappers consume; typed `gasEffects` and `events` are read directly.
+ * Resolve a transaction digest to its checkpoint sequence number.
+ *
+ * Used to translate `getListOperations`' alpaca-style `timestamp:digest` cursor
+ * into a server-side `before/afterCheckpoint` filter. Intentionally minimal —
+ * everything else the bridge needs about a transaction is delivered in the
+ * `TRANSACTIONS_BY_AFFECTED_ADDRESS` payload at sync time.
  */
-export const TRANSACTION_BY_DIGEST = graphql(`
-  query TransactionByDigest($digest: String!, $eventsFirst: Int!) {
+export const CHECKPOINT_BY_DIGEST = graphql(`
+  query CheckpointByDigest($digest: String!) {
     transaction(digest: $digest) {
-      digest
-      transactionJson
       effects {
-        status
-        timestamp
-        balanceChangesJson
-        effectsJson
-        gasEffects {
-          gasSummary {
-            computationCost
-            storageCost
-            storageRebate
-            nonRefundableStorageFee
-          }
+        checkpoint {
+          sequenceNumber
         }
+      }
+    }
+  }
+`);
+
+export type CheckpointByDigestResult = ResultOf<typeof CHECKPOINT_BY_DIGEST>;
+
+/**
+ * Events (only) for a single transaction by digest. Backs the legacy backfill path
+ * (`getStakingExtraByDigest`) — recovers staking extras for operations synced before they were
+ * persisted on `op.extra`.
+ */
+export const STAKING_EVENTS_BY_DIGEST = graphql(`
+  query StakingEventsByDigest($digest: String!, $eventsFirst: Int!) {
+    transaction(digest: $digest) {
+      effects {
         events(first: $eventsFirst) {
           nodes {
             contents {
@@ -239,15 +247,12 @@ export const TRANSACTION_BY_DIGEST = graphql(`
             }
           }
         }
-        checkpoint {
-          sequenceNumber
-        }
       }
     }
   }
 `);
 
-export type TransactionByDigestResult = ResultOf<typeof TRANSACTION_BY_DIGEST>;
+export type StakingEventsByDigestResult = ResultOf<typeof STAKING_EVENTS_BY_DIGEST>;
 
 /**
  * Paginated transaction history for an address. `affectedAddress` matches sender, sponsor, OR

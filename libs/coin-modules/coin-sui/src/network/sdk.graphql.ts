@@ -15,18 +15,23 @@ import {
   ALL_BALANCES_BY_OWNER,
   BATCH_RATES_15,
   BLOCK_BY_SEQUENCE,
+  CHECKPOINT_BY_DIGEST,
   CHECKPOINT_BY_SEQUENCE,
   EXCHANGE_RATE_AT_EPOCH,
   EXECUTE_TRANSACTION,
   LATEST_CHECKPOINT_SEQUENCE,
   SIMULATE_TRANSACTION,
   STAKED_SUI_OBJECTS_BY_OWNER,
+  STAKING_EVENTS_BY_DIGEST,
   SUI_SYSTEM_STATE,
-  TRANSACTION_BY_DIGEST,
   TRANSACTIONS_BY_AFFECTED_ADDRESS,
   type SuiSystemStateResult,
 } from "./graphql/queries";
-import { graphqlTxToJsonRpcResponse, isFinalizedTxNode } from "./graphql/transactions";
+import {
+  graphqlTxToJsonRpcResponse,
+  isFinalizedTxNode,
+  mapEventNodeContents,
+} from "./graphql/transactions";
 import {
   assertSystemStateJson,
   computeApy,
@@ -644,21 +649,8 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
 };
 
 // ============================================================================
-// Transaction history (`getOperations` + `getOperationExtra` paths)
+// Transaction history (`getOperations` path)
 // ============================================================================
-
-/** Fetch a single transaction by digest, projected to JSON-RPC shape; null on miss. */
-export const getTransactionByDigestGraphQL = async (
-  api: SuiGraphQLClient,
-  digest: string,
-): Promise<SuiTransactionBlockResponse | null> => {
-  const res = await api.query({
-    query: TRANSACTION_BY_DIGEST,
-    variables: { digest, eventsFirst: EVENTS_PAGE_SIZE },
-  });
-  const tx = unwrapGraphQL("TransactionByDigest", res).transaction;
-  return tx ? graphqlTxToJsonRpcResponse(tx) : null;
-};
 
 /**
  * Paginated transaction history via the `affectedAddress` filter — covers
@@ -728,18 +720,40 @@ export const getTransactionsByAddressGraphQL = async (
  * translate `getListOperations`' alpaca-style `timestamp:digest` cursor into
  * a server-side `beforeCheckpoint`/`afterCheckpoint` filter. Returns `null`
  * if the digest isn't found or hasn't been finalised.
+ *
+ * Backed by the slim `CHECKPOINT_BY_DIGEST` query — only the sequence number
+ * is read, so the heavier per-transaction payload is not fetched.
  */
 export const resolveCheckpointSequenceForDigestGraphQL = async (
   api: SuiGraphQLClient,
   digest: string,
 ): Promise<number | null> => {
   const res = await api.query({
-    query: TRANSACTION_BY_DIGEST,
-    variables: { digest, eventsFirst: EVENTS_PAGE_SIZE },
+    query: CHECKPOINT_BY_DIGEST,
+    variables: { digest },
   });
-  const seq = unwrapGraphQL("TransactionByDigest", res).transaction?.effects?.checkpoint
+  const seq = unwrapGraphQL("CheckpointByDigest", res).transaction?.effects?.checkpoint
     ?.sequenceNumber;
   return seq === undefined || seq === null ? null : Number(seq);
+};
+
+/**
+ * Fetch just the events for a single digest, projected to the JSON-RPC event
+ * shape (`{ type, parsedJson }`) that `stakingExtraFromEvents` consumes. Backs
+ * the legacy `getStakingExtraByDigest` backfill path — operations synced before
+ * staking extras were persisted on `op.extra`.
+ */
+export const getStakingEventsByDigestGraphQL = async (
+  api: SuiGraphQLClient,
+  digest: string,
+): Promise<{ type: string; parsedJson: unknown }[]> => {
+  const res = await api.query({
+    query: STAKING_EVENTS_BY_DIGEST,
+    variables: { digest, eventsFirst: EVENTS_PAGE_SIZE },
+  });
+  const nodes =
+    unwrapGraphQL("StakingEventsByDigest", res).transaction?.effects?.events?.nodes ?? [];
+  return nodes.map(mapEventNodeContents);
 };
 
 /**
