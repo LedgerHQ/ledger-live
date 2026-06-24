@@ -1098,7 +1098,7 @@ jobs:
 
       - name: Publish report on Allure Server
         id: upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/fix_allure_upload
         with:
           platform: mobile-ui-e2e-smoke
           login: ${{ vars.ALLURE_USERNAME }}

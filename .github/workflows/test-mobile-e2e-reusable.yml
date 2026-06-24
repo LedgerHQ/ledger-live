@@ -891,7 +891,7 @@ jobs:
         with:
           allure-results-path: ios-test-artifacts
           platform: iOS
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/fix_allure_upload
         if: ${{ !cancelled() }}
         id: upload
         with:
@@ -965,7 +965,7 @@ jobs:
         with:
           allure-results-path: android-test-artifacts
           platform: android
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/fix_allure_upload
         id: upload
         if: ${{ !cancelled() }}
         with:
