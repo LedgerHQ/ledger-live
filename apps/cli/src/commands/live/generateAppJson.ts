@@ -20,7 +20,6 @@ export type GenerateAppJsonJobOpts = Partial<{
 type CoinGroup = { currency: Currency; accounts: { index: number; scheme?: string }[] };
 
 const DEFAULT_OUTPUT_DIR = "e2e/userdata/generated";
-// Same base the desktop e2e tests build their app.json from before appending accounts.
 const DEFAULT_BASE = "e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json";
 
 function resolveOutputDir(outputDir?: string): string {
@@ -32,7 +31,7 @@ function groupAccountsByCoin(coins?: string[]): Map<string, CoinGroup> {
   for (const value of Object.values(Account)) {
     if (!(value instanceof Account) || !value.accountPath) continue;
     const id = value.currency.id;
-    if (id.includes("/")) continue; // tokens come along as sub-accounts of their parent
+    if (id.includes("/")) continue;
     if (coins?.length && !coins.includes(id)) continue;
     const group = groups.get(id) ?? { currency: value.currency, accounts: [] };
     const scheme = value.derivationMode || undefined;
@@ -56,13 +55,9 @@ async function generateCoin(
     device = await startSpeculos(`generate-${coinId}`, specs[specKey]);
     if (!device) throw new Error(`Speculos not started for ${specKey}`);
 
-    // Both stores, like launchSpeculos: the subprocess reads process.env, while
-    // in-process live-common helpers read the live-env store.
     setEnv("SPECULOS_API_PORT", device.port);
     process.env.SPECULOS_API_PORT = String(device.port);
 
-    // Start from the e2e base userdata, then append accounts with the same
-    // `liveData --add` the tests use, so the entries are identical.
     const outPath = path.join(outDir, `${coinId}.json`);
     fs.copyFileSync(baseTemplate, outPath);
 
@@ -124,8 +119,6 @@ export default {
     process.env.MOCK = "";
     setEnv("PLAYWRIGHT_RUN", true);
 
-    // The Speculos catalog file is downloaded on demand, but the env must point
-    // at a real file path (the desktop test fixture sets this too).
     if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
       setEnv("E2E_NANO_APP_VERSION_PATH", path.join(outDir, "nano-app-catalog.json"));
     }

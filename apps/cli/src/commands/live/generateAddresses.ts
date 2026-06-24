@@ -6,14 +6,11 @@ import {
   type GenerateAddressesJobOpts,
 } from "../../addressCacheGen";
 
-// Families whose getAddress is not a plain HD derivation (the e2e
-// `getAccountAddress` resolves them through dedicated paths), so they are never
-// cached here.
 const NON_DERIVABLE_FAMILIES = new Set(["hedera", "concordium"]);
 
 function isCacheable(currencyId: string): boolean {
-  if (currencyId.includes("/")) return false; // tokens resolve via their parent
-  if (isUtxoBasedCurrency(currencyId)) return false; // UTXO: own cache (generateUtxoAddresses)
+  if (currencyId.includes("/")) return false;
+  if (isUtxoBasedCurrency(currencyId)) return false;
   const family = getFamilyByCurrencyId(currencyId);
   return !(family && NON_DERIVABLE_FAMILIES.has(family));
 }

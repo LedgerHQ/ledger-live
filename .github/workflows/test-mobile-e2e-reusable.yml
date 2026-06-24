@@ -167,9 +167,6 @@ env:
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
   E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
-  # Shared app.json cache dir. The daily generate-e2e-userdata workflow stores the userdata in
-  # the S3 cache; each detox shard restores it here and the e2e tests read it. The cache is the
-  # default; release-validation runs (production_firebase) use the legacy live scan. Empty = disabled.
   USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
   E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
   # iOS Simulator configuration

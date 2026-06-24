@@ -6,8 +6,6 @@ import {
   type GenerateAddressesJobOpts,
 } from "../../addressCacheGen";
 
-// Only UTXO-based coins (bitcoin family, Cardano, Kaspa) belong in this cache.
-// Tokens resolve via their parent; account-based coins live in addresses.json.
 function isUtxoCacheable(currencyId: string): boolean {
   if (currencyId.includes("/")) return false;
   return isUtxoBasedCurrency(currencyId);

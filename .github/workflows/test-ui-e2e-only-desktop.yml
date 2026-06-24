@@ -196,8 +196,6 @@ jobs:
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
       cache-bucket: ll-nx-cache
-      # The userdata cache is the default; release-validation runs (build_type=js) use the legacy
-      # live Speculos scan.
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
       E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
     outputs:

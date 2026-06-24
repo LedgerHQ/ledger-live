@@ -65,8 +65,6 @@ async function generateCoin(
     device = await startSpeculos(`addresses-${coinId}`, specs[specKey]);
     if (!device) throw new Error(`Speculos not started for ${specKey}`);
 
-    // Both stores, like launchSpeculos: the CLI subprocess reads process.env,
-    // while in-process live-common helpers read the live-env store.
     setEnv("SPECULOS_API_PORT", device.port);
     process.env.SPECULOS_API_PORT = String(device.port);
 
@@ -87,13 +85,6 @@ async function generateCoin(
   }
 }
 
-/**
- * Shared engine behind the `generateAddresses` and `generateUtxoAddresses` CLI
- * commands: launches Speculos per coin, derives each account's receive address
- * via the CLI, and writes the result to `outFile` in the resolved output dir.
- * Callers differ only by which coins they accept (`isCacheable`) and where they
- * write (`outFile`).
- */
 export async function generateAddressCache(opts: {
   coin?: string[];
   outputDir?: string;
@@ -109,8 +100,6 @@ export async function generateAddressCache(opts: {
   process.env.MOCK = "";
   setEnv("PLAYWRIGHT_RUN", true);
 
-  // The Speculos catalog file is downloaded on demand, but the env must point
-  // at a real file path (the desktop test fixture sets this too).
   if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
     setEnv("E2E_NANO_APP_VERSION_PATH", path.join(outDir, "nano-app-catalog.json"));
   }
@@ -131,7 +120,6 @@ export async function generateAddressCache(opts: {
   return results.join("\n");
 }
 
-/** Shared CLI args for both address-cache generators. */
 export const addressCacheArgs = [
   {
     name: "coin",

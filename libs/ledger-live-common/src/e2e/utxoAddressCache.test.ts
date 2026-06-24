@@ -35,7 +35,6 @@ describe("e2e utxoAddressCache", () => {
             { index: 0, derivationMode: "", address: "1Legacy0" },
           ],
           cardano: [{ index: 1, derivationMode: "", address: "addr1CARDANO" }],
-          // present but must never be served (account-based lives in addresses.json)
           ethereum: [{ index: 0, derivationMode: "", address: "0xShouldNotBeUsed" }],
         },
       };

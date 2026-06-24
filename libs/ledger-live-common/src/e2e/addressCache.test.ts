@@ -58,7 +58,6 @@ describe("e2e addressCache", () => {
         addresses: {
           ethereum: [{ index: 0, derivationMode: "", address: "0xETH0" }],
           solana: [{ index: 1, derivationMode: "", address: "SOL1" }],
-          // present but must never be served (UTXO is always derived live)
           bitcoin: [{ index: 0, derivationMode: "", address: "btcShouldNotBeUsed" }],
         },
       };
