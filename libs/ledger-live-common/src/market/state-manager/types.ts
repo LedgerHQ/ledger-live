@@ -8,7 +8,26 @@ export enum MarketDataTags {
   GlobalData = "GlobalData",
   TrendingCategories = "TrendingCategories",
   TrendingPerformers = "TrendingPerformers",
+  SearchTerm = "SearchTerm",
 }
+
+export interface MarketSearchTermQueryParams {
+  /** Free-text term: a coin id, token ticker, name, or CoinGecko slug. */
+  term: string;
+  counterCurrency: string;
+}
+
+// Subset of /v3/markets fields needed to resolve and rank a free-text search match.
+export const MarketSearchResultSchema = z.object({
+  id: z.string(),
+  ticker: z.string(),
+  name: z.string(),
+  ledgerIds: z.array(z.string()),
+});
+
+export const MarketSearchResponseSchema = z.array(MarketSearchResultSchema);
+
+export type MarketSearchResult = z.infer<typeof MarketSearchResultSchema>;
 
 export interface MarketPerformersQueryParams {
   counterCurrency: string;

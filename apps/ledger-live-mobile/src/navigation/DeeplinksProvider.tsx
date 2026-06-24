@@ -47,6 +47,7 @@ import {
   validateMarketCurrencyId,
   validateMarketListCategory,
 } from "./deeplinks/validation";
+import { sanitizeMarketTerm } from "@ledgerhq/live-common/market/utils/sanitizeMarketTerm";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
@@ -695,7 +696,11 @@ export const DeeplinksProvider = ({
           if (hostname === "market") {
             const currencyIdFromPath = pathname.replace("/", "");
             if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+              // In Wallet 4.0, Asset Detail resolves token tickers/names/slugs itself, so pass a
+              // sanitized term through when the term isn't a known coin. Legacy stays coin-only.
+              const validatedCurrencyId =
+                validateMarketCurrencyId(currencyIdFromPath) ??
+                (shouldDisplayAggregatedAssets ? sanitizeMarketTerm(currencyIdFromPath) : null);
 
               if (!validatedCurrencyId) {
                 return getStateFromPath("market", config);
@@ -727,7 +732,11 @@ export const DeeplinksProvider = ({
           if (hostname === "asset") {
             const currencyIdFromPath = pathname.replace("/", "");
             if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+              // In Wallet 4.0, Asset Detail resolves token tickers/names/slugs itself, so pass a
+              // sanitized term through when the term isn't a known coin. Legacy stays coin-only.
+              const validatedCurrencyId =
+                validateMarketCurrencyId(currencyIdFromPath) ??
+                (shouldDisplayAggregatedAssets ? sanitizeMarketTerm(currencyIdFromPath) : null);
 
               if (!validatedCurrencyId) {
                 return getStateFromPath("portfolio", config);
