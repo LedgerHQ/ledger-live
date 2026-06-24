@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 4.10.0-next.2
+
+### Minor Changes
+
+- [#18943](https://github.com/LedgerHQ/ledger-live/pull/18943) [`d60474c`](https://github.com/LedgerHQ/ledger-live/commit/d60474ca81da537dad606744fe5b8ba3bb8f5ba6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llc): use Arc native USDC's ERC20 token CAL descriptor for the exchange config, so the device shows the correct (6-decimal) swap amount
+
+### Patch Changes
+
+- Updated dependencies [[`d60474c`](https://github.com/LedgerHQ/ledger-live/commit/d60474ca81da537dad606744fe5b8ba3bb8f5ba6)]:
+  - @ledgerhq/live-common@36.3.0-next.2
+  - @ledgerhq/asset-detail@0.7.0-next.2
+  - @ledgerhq/live-dmk-desktop@0.19.0-next.2
+
 ## 4.10.0-next.1
 
 ### Patch Changes

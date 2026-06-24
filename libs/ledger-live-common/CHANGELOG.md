@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 36.3.0-next.2
+
+### Minor Changes
+
+- [#18943](https://github.com/LedgerHQ/ledger-live/pull/18943) [`d60474c`](https://github.com/LedgerHQ/ledger-live/commit/d60474ca81da537dad606744fe5b8ba3bb8f5ba6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llc): use Arc native USDC's ERC20 token CAL descriptor for the exchange config, so the device shows the correct (6-decimal) swap amount
+
 ## 36.3.0-next.1
 
 ### Patch Changes

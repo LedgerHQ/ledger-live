@@ -1,5 +1,12 @@
 # @ledgerhq/live-cli
 
+## 24.45.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`d60474c`](https://github.com/LedgerHQ/ledger-live/commit/d60474ca81da537dad606744fe5b8ba3bb8f5ba6)]:
+  - @ledgerhq/live-common@36.3.0-next.2
+
 ## 24.45.1-next.1
 
 ### Patch Changes

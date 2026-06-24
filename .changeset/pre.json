@@ -191,6 +191,7 @@
     "aptos-send-max-gas-reserve",
     "aptos-skip-null-data-changes",
     "aptos-token-fee-estimation",
+    "arc-swap-native-usdc-exchange-config",
     "asset-detail-network-add-account",
     "asset-detail-star-ledgerids",
     "backup-hub-feature-intro-sheet",
