@@ -23,28 +23,44 @@ const config: PlaywrightTestConfig = {
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
   workers: "100%",
+  projects: [
+    {
+      // Specs that broadcast real approve/revoke txs all sign from the same
+      // shared EOA. Pin them to a single worker so their broadcasts never overlap and
+      // race on the account nonce. Tag the broadcasting tests with @swapBroadcast.
+      name: "swap-broadcast-serial",
+      grep: /@swapBroadcast/,
+      workers: 1,
+    },
+    {
+      // Everything else runs fully parallel (inherits the global workers + fullyParallel).
+      name: "parallel",
+      // grepInvert: /@swapBroadcast/,
+      testMatch: /.*send.swap.spec.ts/,
+    },
+  ],
   reporter: process.env.CI
     ? [
-        ["github"],
-        ["list"],
-        [
-          "allure-playwright",
-          {
-            detail: false,
-            links: {
-              issue: {
-                nameTemplate: "%s",
-                urlTemplate: "https://ledgerhq.atlassian.net/browse/%s",
-              },
-              tms: {
-                nameTemplate: "%s",
-                urlTemplate: "https://ledgerhq.atlassian.net/browse/%s",
-              },
+      ["github"],
+      ["list"],
+      [
+        "allure-playwright",
+        {
+          detail: false,
+          links: {
+            issue: {
+              nameTemplate: "%s",
+              urlTemplate: "https://ledgerhq.atlassian.net/browse/%s",
+            },
+            tms: {
+              nameTemplate: "%s",
+              urlTemplate: "https://ledgerhq.atlassian.net/browse/%s",
             },
           },
-        ],
-        ["./tests/utils/customJsonReporter.ts"],
-      ]
+        },
+      ],
+      ["./tests/utils/customJsonReporter.ts"],
+    ]
     : [["allure-playwright", { detail: false }]],
 };
 

@@ -406,7 +406,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
     test(
       `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
       {
-        tag: tag,
+        tag: [...tag, ...(fromAccount instanceof TokenAccount ? ["@swapBroadcast"] : [])],
         annotation: {
           type: "TMS",
           description: xrayTicket,

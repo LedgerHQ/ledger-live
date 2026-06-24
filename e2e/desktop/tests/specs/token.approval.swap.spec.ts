@@ -56,7 +56,17 @@ test.describe("Token approval - flow", () => {
   test(
     "Swap - token approval flow",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@swapBroadcast",
+      ],
       annotation: [
         {
           type: "TMS",

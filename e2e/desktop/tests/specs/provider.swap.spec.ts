@@ -70,6 +70,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
           "@NanoGen5",
           "@ethereum",
           "@family-evm",
+          ...(fromAccount instanceof TokenAccount ? ["@swapBroadcast"] : []),
         ],
         annotation: [
           {
