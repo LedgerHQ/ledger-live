@@ -108,8 +108,8 @@ export default {
     black: "#000000",
   },
   background: {
-    default: "#131214",
-    main: "#131214",
+    default: "#E83A1A",
+    main: "#E83A1A",
     drawer: "#1D1C1F",
     card: "#1C1D1F",
   },

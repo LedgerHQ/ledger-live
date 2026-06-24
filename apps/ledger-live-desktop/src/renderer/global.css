@@ -8,6 +8,18 @@ body {
   font-family: Inter;
 }
 
+:root, .light {
+  --color-background-canvas: #FF4500;
+  --color-background-canvas-muted: #FF4500;
+  --color-background-base: #FF4500;
+}
+
+.dark {
+  --color-background-canvas: #E83A1A;
+  --color-background-canvas-muted: #E83A1A;
+  --color-background-base: #E83A1A;
+}
+
 #react-root {
   display: flex;
   flex-direction: column;
