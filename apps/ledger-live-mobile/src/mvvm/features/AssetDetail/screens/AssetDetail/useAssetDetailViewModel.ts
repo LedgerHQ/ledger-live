@@ -17,6 +17,22 @@ import { useReceiveNetworkLedgerIds } from "./hooks/useReceiveNetworkLedgerIds";
 
 type Route = StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>["route"];
 
+export type AssetDetailMode = "loading" | "ready" | "not-found";
+
+export function resolveAssetDetailMode({
+  hasCurrency,
+  isDistributionLoading,
+  isMarketLoading,
+}: {
+  hasCurrency: boolean;
+  isDistributionLoading: boolean;
+  isMarketLoading: boolean;
+}): AssetDetailMode {
+  if (hasCurrency) return "ready";
+  if (isDistributionLoading || isMarketLoading) return "loading";
+  return "not-found";
+}
+
 export function useAssetDetailViewModel() {
   const route = useRoute<Route>();
   const { currencyId, source, marketState } = route.params;
@@ -34,30 +50,44 @@ export function useAssetDetailViewModel() {
 
   const ledgerIdFallback = marketState?.ledgerIds?.[0] ?? currencyId;
   const { currency: ledgerCurrencyById } = useCurrencyById(ledgerIdFallback);
-  const currency = distributionItem?.currency ?? ledgerCurrencyById;
+  const currencyFromRegistry = distributionItem?.currency ?? ledgerCurrencyById;
 
   const { marketApiId, knownLedgerIds, knownMarketId } = useMemo(
     () =>
       resolveAssetMarketInputs({
         distributionItem,
         marketState,
-        currency,
+        currency: currencyFromRegistry,
         fallbackId: currencyId,
       }),
-    [distributionItem, marketState, currency, currencyId],
+    [distributionItem, marketState, currencyFromRegistry, currencyId],
   );
-
-  const isLoading = distribution.isLoading;
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
     setIsRefreshing(false);
   }, []);
 
-  const { marketId, ledgerIds, marketCurrency } = useAssetMarketData({
+  const {
+    marketId,
+    ledgerIds,
+    marketCurrency,
+    ledgerCurrencyFromDada,
+    isLoading: isMarketLoading,
+  } = useAssetMarketData({
     marketApiId,
     knownLedgerIds,
     knownMarketId,
+  });
+
+  const currency = currencyFromRegistry ?? ledgerCurrencyFromDada;
+
+  const isLoading = distribution.isLoading;
+
+  const mode = resolveAssetDetailMode({
+    hasCurrency: Boolean(currency),
+    isDistributionLoading: distribution.isLoading,
+    isMarketLoading,
   });
   // Tokens (e.g. USDT/USDC) collapse to a single ledger id here because CoinGecko
   // does not expose their multi-network list. Expand it from DADA so the receive
@@ -79,6 +109,7 @@ export function useAssetDetailViewModel() {
   const coinOptions = useAssetCoinOptionsViewModel({ currency, currencyId, marketId });
 
   return {
+    mode,
     currency,
     distributionItem,
     marketApiId,

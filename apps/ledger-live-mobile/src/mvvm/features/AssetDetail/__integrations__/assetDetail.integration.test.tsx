@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, waitFor, within } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -49,6 +50,12 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 
 const Stack = createNativeStackNavigator();
 
+const MARKET_LIST_MOCK_TEST_ID = "market-list-mock";
+
+function MarketListMock() {
+  return <Text testID={MARKET_LIST_MOCK_TEST_ID}>Market</Text>;
+}
+
 type NavigatorParams = {
   currencyId: string;
   source?: string;
@@ -69,6 +76,11 @@ function AssetDetailTestNavigator({
           screen: ScreenName.AssetDetail,
           params,
         }}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.MarketList}
+        component={MarketListMock}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -376,6 +388,30 @@ describe("AssetDetail screen layout", () => {
         expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeNull(),
       );
       expect(store.getState().settings.blacklistedTokenIds).not.toContain("bitcoin");
+    });
+  });
+
+  describe("unresolved deeplink term (crash regression)", () => {
+    // A CoinGecko slug / token ticker deeplink (e.g. "hedera-hashgraph") isn't a Ledger currency
+    // id, so the registry can't resolve it.
+    it("redirects to the Market list for a term that resolves to nothing", async () => {
+      render(<AssetDetailTestNavigator params={{ currencyId: "totally-unknown-asset-xyz" }} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(MARKET_LIST_MOCK_TEST_ID)).toBeVisible();
+      });
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeNull();
+    });
+
+    it("renders the body for a registry-resolved coin (gating does not regress known coins)", async () => {
+      render(<AssetDetailTestNavigator params={{ currencyId: "bitcoin" }} />);
+
+      // bitcoin resolves synchronously from the registry, so the body mounts immediately.
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
+      expect(screen.queryByTestId(MARKET_LIST_MOCK_TEST_ID)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.loading)).toBeNull();
     });
   });
 

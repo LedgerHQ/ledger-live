@@ -52,6 +52,21 @@ describe("useAssetMarketData", () => {
       expect(result.current.isError).toBe(false);
     });
 
+    it("exposes ledgerCurrencyFromDada so the screen can recover the currency for slug deeplinks", async () => {
+      // The view model falls back to this when the registry can't resolve the route segment
+      // (e.g. a CoinGecko slug like "hedera-hashgraph").
+      const { result } = renderHook(() =>
+        useAssetMarketData({
+          marketApiId: mockBtcCryptoCurrency.id,
+          knownLedgerIds: [mockBtcCryptoCurrency.id],
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.ledgerCurrencyFromDada).toBeDefined();
+      });
+    });
+
     it("defaults counterCurrency to the USD settings value", () => {
       const { result } = renderHook(() =>
         useAssetMarketData({
