@@ -133,7 +133,9 @@ export default class PortfolioPage {
 
   @Step("Expect balance diff to be visible")
   async expectBalanceDiffToBeVisible() {
-    await waitForElementById(this.portfolioBalanceDelta);
+    // Wallet 4.0 shows the balance change inside the analytics pill; the inner
+    // `portfolio-balance-delta` text isn't reliably matchable on its own, so assert the pill.
+    await waitForElementById(this.portfolioBalanceAnalyticsPill);
   }
 
   @Step("Expect operation row to be visible")
