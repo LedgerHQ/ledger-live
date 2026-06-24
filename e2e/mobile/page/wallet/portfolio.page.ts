@@ -140,20 +140,23 @@ export default class PortfolioPage {
 
   @Step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    if (isWallet40) {
-      // Wallet 4.0 moved operations off the portfolio into the top-bar operations list.
-      await app.mainNavigation.tapTopBarTransactionHistory();
-      await app.operation.expectOperationsListVisible();
-      await scrollToId(this.operationRowCounterValue, app.operation.operationsListId);
-      await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
-      return;
-    }
     await scrollToId(this.operationRowCounterValue, this.accountsListView);
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
 
   @Step("Expect operation to contain counter value")
   async expectOperationCounterValue(counterValue: string) {
+    if (isWallet40) {
+      // Wallet 4.0 moved operations off the portfolio into the top-bar operations list.
+      // The crypto amount uses the asset code, so the counter-value currency is unique to its
+      // row — assert an operation row showing it (matching by text, no app testID required).
+      await app.mainNavigation.tapTopBarTransactionHistory();
+      await app.operation.expectOperationsListVisible();
+      await detoxExpect(
+        getElementByIdWithDescendantTexts(app.operation.operationItemId, counterValue).atIndex(0),
+      ).toBeVisible();
+      return;
+    }
     await this.expectOperationRowToBeVisible();
     const text = await getTextOfElement(this.operationRowCounterValue);
     jestExpect(text).toContain(counterValue);
