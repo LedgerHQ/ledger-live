@@ -5,6 +5,9 @@ import {
   isValidNumString,
   selectMinimumUtxos,
   getTyphonInputFromUtxo,
+  computeAdaBalance,
+  findVoteDelegation,
+  getRewardAddress,
 } from "./logic";
 import { CardanoAccount, CardanoOutput } from "./types";
 
@@ -189,5 +192,55 @@ describe("getTyphonInputFromUtxo", () => {
     expect(typhonInput.amount).toEqual(new BigNumber(100));
     expect(typhonInput.tokens).toEqual([]);
     expect(typhonInput.address).toBeDefined();
+  });
+});
+
+describe("findVoteDelegation", () => {
+  const stakeKey = "aabbccddeeff00112233445566778899aabbccddeeff001122334455";
+  const networkId = 1;
+  const stakeHex = getRewardAddress(stakeKey, networkId).getHex();
+
+  it("should return undefined if there are no vote delegations", () => {
+    const tx = { certificate: {} } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toBeUndefined();
+
+    const tx2 = { certificate: { voteDelegations: [] } } as any;
+    expect(findVoteDelegation(tx2, stakeKey, networkId)).toBeUndefined();
+  });
+
+  it("should return undefined if the vote delegation does not match the stake address", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex: "differentStakeHex", dRepHex: "2" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toBeUndefined();
+  });
+
+  it("should return 'ABSTAIN' if matched and dRepHex is '2'", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex, dRepHex: "2" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toEqual("ABSTAIN");
+  });
+
+  it("should return 'NO CONFIDENCE' if matched and dRepHex is '3'", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex, dRepHex: "3" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toEqual("NO CONFIDENCE");
+  });
+
+  it("should return dRepHex if matched and dRepHex is a custom address", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex, dRepHex: "customDRepHex" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toEqual("customDRepHex");
   });
 });

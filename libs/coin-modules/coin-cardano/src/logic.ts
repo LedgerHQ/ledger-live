@@ -531,6 +531,26 @@ export function findWithdrawal(tx: APITransaction, stakeKey: string): string | u
   return match?.amount;
 }
 
+export function findVoteDelegation(
+  tx: APITransaction,
+  stakeKey: string,
+  networkId: number,
+): string | undefined {
+  if (!tx.certificate.voteDelegations?.length) {
+    return undefined;
+  }
+
+  const stakeAddress = getRewardAddress(stakeKey, networkId);
+  const match = tx.certificate.voteDelegations.find(w => stakeAddress.getHex() === w.stakeHex);
+  if (match) {
+    const isAbstain = match.dRepHex === "2";
+    const isNoConfidence = match.dRepHex === "3";
+    return isAbstain ? "ABSTAIN" : isNoConfidence ? "NO CONFIDENCE" : match.dRepHex;
+  }
+
+  return undefined;
+}
+
 /**
  * Minimum ADA that must back a UTXO carrying the given token bundle (Babbage per-byte rule).
  * Returns 0 when there are no tokens. `address` is only used to size the output; pass any
