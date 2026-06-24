@@ -13,6 +13,7 @@ import DiscreetModeButton from "~/components/DiscreetModeButton";
 import { track } from "~/analytics";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import Notifications from "~/icons/Notifications";
+import { LocalClock } from "LLM/features/Portfolio/components/LocalClock";
 
 const NotificationsButton = () => {
   const navigation = useNavigation();
@@ -114,6 +115,9 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         {!hidePortfolio && !isNewPortfolioEnabled && <DiscreetModeButton size={20} />}
       </Flex>
       <Flex flexDirection="row">
+        <Flex mr={7}>
+          <LocalClock />
+        </Flex>
         <Flex mr={7}>
           <Touchable
             onPress={onSideImageCardButtonPress}

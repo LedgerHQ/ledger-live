@@ -7,6 +7,7 @@ import { PortfolioBalanceSection } from "../PortfolioBalanceSection";
 import { PortfolioRefreshStatus } from "../PortfolioRefreshStatus";
 import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
 import { usePortfolioHeaderSectionViewModel } from "./usePortfolioHeaderSectionViewModel";
+import { LocalClock } from "../LocalClock";
 
 interface PortfolioHeaderSectionProps {
   readonly showAssets: boolean;
@@ -43,6 +44,9 @@ export const PortfolioHeaderSection = ({
         <ScreenHeroSectionView ctas={ctas} minContentHeight={minContentHeight}>
           <PortfolioBalanceSection showAssets={showAssets} isReadOnlyMode={isReadOnlyMode} />
         </ScreenHeroSectionView>
+        <View style={{ position: "absolute", top: 16, right: 16 }}>
+          <LocalClock />
+        </View>
       </View>
     );
   }
@@ -59,6 +63,9 @@ export const PortfolioHeaderSection = ({
         hideGraph={hideGraph}
         isReadOnlyMode={isReadOnlyMode}
       />
+      <View style={{ position: "absolute", top: 16, right: 16 }}>
+        <LocalClock />
+      </View>
     </View>
   );
 };
