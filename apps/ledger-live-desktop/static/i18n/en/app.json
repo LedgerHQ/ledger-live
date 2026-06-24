@@ -9188,7 +9188,11 @@
       "description": "Come back later to see your transactions."
     },
     "actionsBar": {
-      "csv": "Export"
+      "csv": "Export",
+      "more": "Transaction history options",
+      "hideDustTransactions": "Hide dust transactions",
+      "showDustTransactions": "Show dust transactions",
+      "dustTransactionsDescription": "Transactions below {{threshold}} will be hidden."
     },
     "exportDialog": {
       "title": "Export transaction history",

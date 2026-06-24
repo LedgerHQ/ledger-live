@@ -1,4 +1,8 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { initialState as countervaluesInitialState } from "@ledgerhq/live-countervalues/logic";
+import type { CountervaluesSettings } from "@ledgerhq/live-countervalues/types";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import {
   BTC_ACCOUNT,
@@ -6,6 +10,7 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
 } from "LLD/features/__mocks__/accounts.mock";
+import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import historyReducer, {
   type HistoryState,
   markOperationsAsSeen,
@@ -14,6 +19,7 @@ import historyReducer, {
   hasUnreadOperationsSelector,
 } from "../history";
 import type { State } from "../index";
+import type { CountervaluesState } from "../countervalues";
 
 const settingsUnreadBase = {
   currenciesSettings: {},
@@ -37,6 +43,86 @@ function makeUnreadTestState(lastSeenDate: string | null, accounts: Account[]): 
     settings: settingsUnreadBase,
     featureFlags: FEATURE_FLAGS_INITIAL_STATE,
   } as unknown as State;
+}
+
+function createCountervaluesState(): CountervaluesState {
+  return {
+    countervalues: {
+      state: countervaluesInitialState,
+      pending: false,
+      error: null,
+    },
+    polling: {
+      isPolling: true,
+      triggerLoad: false,
+    },
+    userSettings: {
+      trackingPairs: [],
+      autofillGaps: true,
+      refreshRate: 0,
+      marketCapBatchingAfterRank: 0,
+    } satisfies CountervaluesSettings,
+  };
+}
+
+function createAccountWithUnreadZeroValueTokenOperation(): Account {
+  const parentAccount = genAccount("history-test-dust-desktop", {
+    currency: ETH_ACCOUNT.currency,
+    operationsSize: 0,
+    subAccountsCount: 0,
+  });
+  const tokenAccount = genTokenAccount(0, parentAccount, usdcToken);
+  const tokenOperation = {
+    id: "history-test-dust-zero-value-token-op",
+    hash: "0xdust",
+    type: "IN",
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    senders: ["0xsender"],
+    recipients: ["0xrecipient"],
+    blockHash: "0xblock",
+    blockHeight: 1,
+    accountId: tokenAccount.id,
+    date: new Date("2024-12-01T00:00:00.000Z"),
+    extra: {},
+  } satisfies Operation;
+
+  return {
+    ...parentAccount,
+    subAccounts: [
+      {
+        ...tokenAccount,
+        operations: [tokenOperation],
+        operationsCount: 1,
+      },
+    ],
+  };
+}
+
+function withDustPreferenceEnabled(state: State): State {
+  return {
+    ...state,
+    settings: {
+      ...state.settings,
+      hideSmallValueTokenOperations: true,
+    },
+  };
+}
+
+function withDustFeatureEnabled(state: State): State {
+  return {
+    ...state,
+    countervalues: createCountervaluesState(),
+    featureFlags: {
+      ...state.featureFlags,
+      resolved: {
+        ...state.featureFlags.resolved,
+        lwdDustFiltering: {
+          enabled: true,
+        },
+      },
+    },
+  };
 }
 
 describe("historyReducer", () => {
@@ -118,5 +204,31 @@ describe("hasUnreadOperationsSelector", () => {
   it("returns false when lastSeenOperationDate is in the future", () => {
     const future = new Date("2099-01-01").toISOString();
     expect(hasUnreadOperationsSelector(makeUnreadTestState(future, [BTC_ACCOUNT]))).toBe(false);
+  });
+
+  it("ignores the dust preference when the dust filter feature flag is disabled", () => {
+    const accountWithDustOperation = createAccountWithUnreadZeroValueTokenOperation();
+
+    expect(
+      hasUnreadOperationsSelector(
+        withDustPreferenceEnabled(
+          makeUnreadTestState("2024-06-01T00:00:00.000Z", [accountWithDustOperation]),
+        ),
+      ),
+    ).toBe(true);
+  });
+
+  it("filters dust operations when the dust preference and feature flag are enabled", () => {
+    const accountWithDustOperation = createAccountWithUnreadZeroValueTokenOperation();
+
+    expect(
+      hasUnreadOperationsSelector(
+        withDustFeatureEnabled(
+          withDustPreferenceEnabled(
+            makeUnreadTestState("2024-06-01T00:00:00.000Z", [accountWithDustOperation]),
+          ),
+        ),
+      ),
+    ).toBe(false);
   });
 });
