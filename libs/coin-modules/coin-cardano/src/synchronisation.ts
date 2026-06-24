@@ -22,6 +22,7 @@ import {
   computeAdaBalance,
   findStakeDeRegistration,
   findStakeRegistration,
+  findVoteDelegation,
   findWithdrawal,
   getAccountChange,
   getAccountStakeCredential,
@@ -260,19 +261,9 @@ export function mapTxToAccountOperation(
     });
   }
 
-  if (tx.certificate.voteDelegations?.length) {
-    const walletVoteDelegation = tx.certificate.voteDelegations.find(
-      w => stakeAddress.getHex() === w.stakeHex,
-    );
-    if (walletVoteDelegation) {
-      const isAbstain = walletVoteDelegation.dRepHex === "2";
-      const isNoConfidence = walletVoteDelegation.dRepHex === "3";
-      extra.vote = isAbstain
-        ? "ABSTAIN"
-        : isNoConfidence
-          ? "NO CONFIDENCE"
-          : walletVoteDelegation.dRepHex;
-    }
+  const vote = findVoteDelegation(tx, stakeCredential.key, networkParams.networkId);
+  if (vote) {
+    extra.vote = vote;
   }
 
   let mainOperationType: OperationType;

@@ -13,6 +13,7 @@ export function getDelegationFixture(over: Partial<CardanoDelegation> = {}): Car
     ticker: "TICK",
     name: "Pool",
     dRepHex: undefined,
+    dRepName: undefined,
     rewards: new BigNumber(0),
     ...over,
   };
