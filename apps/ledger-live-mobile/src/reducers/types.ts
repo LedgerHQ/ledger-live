@@ -254,6 +254,7 @@ export type SettingsState = {
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  hideSmallValueTokenOperations: boolean;
   blacklistedTokenIds: string[];
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;

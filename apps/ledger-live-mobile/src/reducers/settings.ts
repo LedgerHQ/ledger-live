@@ -82,6 +82,7 @@ import type {
   SettingsSetHasSeenQ2WalletV4TourPayload,
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
+  SettingsHideSmallValueTokenOperationsPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -116,6 +117,7 @@ export const INITIAL_STATE: SettingsState = {
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
   filterTokenOperationsZeroAmount: true,
+  hideSmallValueTokenOperations: false,
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
@@ -410,6 +412,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     filterTokenOperationsZeroAmount: (
       action as Action<SettingsFilterTokenOperationsZeroAmountPayload>
     ).payload,
+  }),
+
+  [SettingsActionTypes.SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS]: (state, action) => ({
+    ...state,
+    hideSmallValueTokenOperations: (action as Action<SettingsHideSmallValueTokenOperationsPayload>)
+      .payload,
   }),
 
   [SettingsActionTypes.SHOW_TOKEN]: (state, action) => {
@@ -863,6 +871,8 @@ export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>
+  state.settings.hideSmallValueTokenOperations;
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) => state.settings.hasAvailableUpdate;
 export const dismissedDynamicCardsSelector = (state: State) => state.settings.dismissedDynamicCards;

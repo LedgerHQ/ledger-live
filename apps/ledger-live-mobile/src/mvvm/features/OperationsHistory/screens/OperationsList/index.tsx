@@ -1,6 +1,11 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useLayoutEffect, useMemo } from "react";
 import { SectionList, SectionListRenderItem } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type {
+  NativeStackHeaderRightProps,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import { Account, Operation } from "@ledgerhq/types-live";
 import type { OperationsListSection } from "./useOperationsListViewModel";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -8,6 +13,7 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import OperationsListItem from "./components/OperationsListItem";
 import OperationsSectionHeader from "./components/OperationsSectionHeader";
@@ -16,8 +22,14 @@ import { OperationsListFooter } from "./components/OperationsListFooter";
 import { SectionSeparator } from "./components/SectionSeparator";
 import { useOperationsListViewModel } from "./useOperationsListViewModel";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
+import { OperationsHistoryOptionsTrailing } from "./components/OperationsHistoryOptionsTrailing";
+import { OperationsHistoryOptionsSheet } from "./components/OperationsHistoryOptionsSheet";
 
 type Props = StackNavigatorProps<OperationsHistoryNavigatorParamsList, ScreenName.OperationsList>;
+type NavigationProps = NativeStackNavigationProp<
+  OperationsHistoryNavigatorParamsList,
+  ScreenName.OperationsList
+>;
 
 function keyExtractor(item: Operation) {
   return `${item.accountId}_${item.id}_${item.type}`;
@@ -26,6 +38,7 @@ function keyExtractor(item: Operation) {
 export default function OperationsList({ route }: Props) {
   const { bottom } = useSafeAreaInsets();
   const accountIds = route.params?.accountIds;
+  const navigation = useNavigation<NavigationProps>();
   const {
     accounts,
     flattenedAccounts,
@@ -36,7 +49,33 @@ export default function OperationsList({ route }: Props) {
     isEmpty,
     hasPendingOperations,
     onEndReached,
+    isOptionsSheetOpen,
+    openOptionsSheet,
+    closeOptionsSheet,
+    hideSmallValueTokenOperations,
+    dustFilterThreshold,
+    onToggleHideSmallValueTokenOperations,
   } = useOperationsListViewModel(accountIds);
+
+  const renderTrailing = useCallback(
+    (_props: NativeStackHeaderRightProps) => (
+      <OperationsHistoryOptionsTrailing onPress={openOptionsSheet} />
+    ),
+    [openOptionsSheet],
+  );
+
+  useLayoutEffect(() => {
+    const opts: Partial<LumenNativeStackNavigationOptions> = {
+      lumenNavBar: {
+        renderTrailing,
+        navBarTrailingProps: {
+          style: { marginRight: 16 },
+        },
+      },
+    };
+
+    navigation.setOptions(opts);
+  }, [navigation, renderTrailing]);
 
   const listContentStyle = useMemo(
     () => ({
@@ -109,6 +148,13 @@ export default function OperationsList({ route }: Props) {
         ListEmptyComponent={ListEmptyComponent}
       />
       {!isEmpty && <BottomFadeGradient />}
+      <OperationsHistoryOptionsSheet
+        isOpen={isOptionsSheetOpen}
+        isFilterEnabled={hideSmallValueTokenOperations}
+        threshold={dustFilterThreshold}
+        onClose={closeOptionsSheet}
+        onToggle={onToggleHideSmallValueTokenOperations}
+      />
     </Box>
   );
 }

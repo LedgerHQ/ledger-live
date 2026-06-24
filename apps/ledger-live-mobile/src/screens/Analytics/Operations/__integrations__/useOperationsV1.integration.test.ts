@@ -107,6 +107,15 @@ const initialStateWithFilterEnabledButNoEvmFamily = (state: State): State => ({
   },
 });
 
+const initialStateWithDustFilterEnabled = (state: State): State => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    filterTokenOperationsZeroAmount: false,
+    hideSmallValueTokenOperations: true,
+  },
+});
+
 describe("useOperationsV1 integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -131,5 +140,16 @@ describe("useOperationsV1 integration", () => {
     });
 
     expect(result.current.sections[0].data.length).toBe(2);
+  });
+
+  it("should filter out zero-value token operations when dust filtering is enabled", () => {
+    const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabled,
+    });
+
+    expect(result.current.sections[0].data.length).toBe(1);
+    expect(result.current.sections[0].data[0].id).toBe("non-zero-value-token-op-id");
   });
 });
