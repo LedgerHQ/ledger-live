@@ -11,7 +11,15 @@ import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/t
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
 import { ipcRenderer } from "electron";
-import React, { type RefObject, forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  type RefObject,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { userIdSelector } from "@ledgerhq/client-ids/store";
@@ -43,6 +51,11 @@ import { useFeature } from "@features/platform-feature-flags";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
+
+// If a Live App webview never fires `did-finish-load` within this window (e.g. its document
+// response stalls mid-stream on a cold start), fall back to the network-error/retry screen
+// instead of spinning forever.
+const WEBVIEW_LOAD_TIMEOUT_MS = 20_000;
 
 function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
@@ -549,7 +562,23 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       customWebviewStyle,
       manifestDomainCheckEnabled,
     );
-    const isNetworkErrorVisible = !webviewState.loading && webviewState.isAppUnavailable;
+    // Bound the load: if `did-finish-load` never fires (stalled document on cold start), surface
+    // the retry screen instead of an infinite spinner. Cleared once the widget loads; restarted
+    // on retry.
+    const [loadTimedOut, setLoadTimedOut] = useState(false);
+    useEffect(() => {
+      if (widgetLoaded || loadTimedOut) return;
+      const id = setTimeout(() => setLoadTimedOut(true), WEBVIEW_LOAD_TIMEOUT_MS);
+      return () => clearTimeout(id);
+    }, [widgetLoaded, loadTimedOut]);
+
+    const handleRetry = useCallback(() => {
+      setLoadTimedOut(false);
+      handleRefresh();
+    }, [handleRefresh]);
+
+    const isNetworkErrorVisible =
+      (!webviewState.loading && webviewState.isAppUnavailable) || (loadTimedOut && !widgetLoaded);
     const displayedWebviewStyle = useMemo(
       () => (isNetworkErrorVisible ? { ...webviewStyle, display: "none" } : webviewStyle),
       [isNetworkErrorVisible, webviewStyle],
@@ -572,7 +601,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     return (
       <>
-        {isNetworkErrorVisible && <NetworkErrorScreen refresh={handleRefresh} />}
+        {isNetworkErrorVisible && <NetworkErrorScreen refresh={handleRetry} />}
         <webview
           ref={setWebviewRef}
           /**
@@ -595,7 +624,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewPartition}
         />
-        {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}
+        {!hideLoader ? (
+          <Loader manifest={manifest} isLoading={!widgetLoaded && !isNetworkErrorVisible} />
+        ) : null}
       </>
     );
   },

@@ -2,4 +2,8 @@
 "ledger-live-desktop": minor
 ---
 
-Fix full-screen live apps (e.g. Recover) getting stuck on an infinite loader on cold start. The webview's `did-finish-load` listener was attached via an effect keyed on a stable ref, so on a cold start it could attach after the webview had already finished loading and miss the event, leaving `widgetLoaded` false forever. The listener now keys off the mounted webview node and recovers if the load already completed.
+Harden the Live App webview load so full-screen apps (e.g. Recover) can no longer get stuck on an infinite loader on cold start:
+
+- The `did-finish-load` listener now keys off the mounted webview node (not a stable ref) and recovers if the load already completed, so a mount-timing race can't leave `widgetLoaded` false forever.
+- Bound the load with a timeout: if the webview never finishes loading (e.g. its document response stalls mid-stream on a cold start), fall back to the existing network-error/retry screen instead of spinning indefinitely.
+- Stop leaking React Router's splat (`*`) into the webview URL as a junk query param.

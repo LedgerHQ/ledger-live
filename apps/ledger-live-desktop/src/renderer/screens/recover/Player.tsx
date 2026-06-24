@@ -102,19 +102,24 @@ export default function RecoverPlayer() {
   }, [onClose, onboardingState]);
 
   const inputs = useMemo(
-    () => ({
-      theme,
-      lang: locale,
-      availableOnDesktop,
-      deviceId: state?.deviceId,
-      deviceModelId: device?.modelId,
-      devModeEnabled,
-      currency,
-      hasConnectedNanoS,
-      countryCode,
-      ...params,
-      ...queryParams,
-    }),
+    () => {
+      // React Router's splat ("*") leaks into params/queryParams and ends up as a junk
+      // "*=recover/protect-prod" query param on the webview URL, which the Recover frontend
+      // can choke on. It is never a valid Live App input, so drop it.
+      const { "*": _splat, ...passthroughParams } = { ...params, ...queryParams };
+      return {
+        theme,
+        lang: locale,
+        availableOnDesktop,
+        deviceId: state?.deviceId,
+        deviceModelId: device?.modelId,
+        devModeEnabled,
+        currency,
+        hasConnectedNanoS,
+        countryCode,
+        ...passthroughParams,
+      };
+    },
     /**
      * deviceModelId is purposely ignored from dependencies.
      *
