@@ -79,6 +79,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/device-intent": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ethereum-provider": "workspace:^",
