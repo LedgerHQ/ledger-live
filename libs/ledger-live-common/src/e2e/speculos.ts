@@ -64,6 +64,7 @@ import { sleep } from "./index";
 import { delegateMina } from "./families/mina";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
+const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = 240; // ~120s at 500ms polling
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -569,8 +570,6 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
 // over the default ~30s before the device reaches "Review transaction", especially on the slower
 // nanoSP under heavy parallel Speculos load. Swap flows pass this larger budget to avoid flaky
 // "Review transaction not found" timeouts. See QAA-1322.
-const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = 240; // ~120s at 500ms polling
-
 export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
   if (!isTouchDevice()) {
     await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
