@@ -14,11 +14,19 @@ import {
 } from "LLD/components/DeviceIntentExecutor";
 import type { InitializerConfig } from "LLD/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWD";
 import { INITIALIZATION_SCENARIOS } from "../../initializationScenarios";
+import { getAddressLegacyWithDeviceDemoIntentLWDDefinition } from "../../intents/getAddressLegacyWithDeviceDemoIntent/intentLWDDefinition";
+import { getEthAddressDMKSignerDemoIntentLWDDefinition } from "../../intents/getEthAddressDMKSignerDemoIntent/intentLWDDefinition";
 import { initializationEchoIntentLWDDefinition } from "../../intents/initializationEchoIntent/intentLWDDefinition";
 import type {
   InitializationEchoIntentInput,
   InitializationEchoIntentJobState,
 } from "../../intents/initializationEchoIntent/types";
+import type { DemoIntentDefinitions } from "../../intents/orchestrationTypes";
+import { timerDemoIntentLWDDefinition } from "../../intents/timerDemoIntent/intentLWDDefinition";
+import { uninstallAppDemoIntentLWDDefinition } from "../../intents/uninstallAppDemoIntent/intentLWDDefinition";
+import { useDemoIntentOrchestration } from "../../useDemoIntentOrchestration";
+
+type PlaygroundMode = "orchestration" | "initialization";
 
 type InitializationExecutorProps = DeviceIntentExecutorProps<
   InitializationEchoIntentJobState,
@@ -33,10 +41,18 @@ const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
 };
 
+const DEMO_INTENT_DEFINITIONS: DemoIntentDefinitions = {
+  timer: timerDemoIntentLWDDefinition,
+  getAddressLegacyWithDevice: getAddressLegacyWithDeviceDemoIntentLWDDefinition,
+  getEthAddressDMKSigner: getEthAddressDMKSignerDemoIntentLWDDefinition,
+  uninstallApp: uninstallAppDemoIntentLWDDefinition,
+};
+
 const initializationIntent = createIntent(initializationEchoIntentLWDDefinition, undefined);
 
 export default function DeviceIntentExecutorDevScreen() {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<PlaygroundMode>("orchestration");
 
   return (
     <div
@@ -67,9 +83,85 @@ export default function DeviceIntentExecutorDevScreen() {
           are still being implemented.
         </p>
 
-        <InitializationMode />
+        <section className="flex w-full flex-col gap-16 rounded-lg bg-surface p-16">
+          <SettingSection title="Mode">
+            <ChoiceButton
+              label="Orchestration"
+              selected={mode === "orchestration"}
+              onPress={() => setMode("orchestration")}
+            />
+            <ChoiceButton
+              label="Initialization"
+              selected={mode === "initialization"}
+              onPress={() => setMode("initialization")}
+            />
+          </SettingSection>
+        </section>
+
+        {mode === "orchestration" ? <OrchestrationMode /> : <InitializationMode />}
       </main>
     </div>
+  );
+}
+
+function OrchestrationMode() {
+  const [tickCount, setTickCount] = useState(5);
+  const orchestration = useDemoIntentOrchestration({
+    tickCount,
+    intentDefs: DEMO_INTENT_DEFINITIONS,
+  });
+  const { enabled, toggleEnabled } = orchestration;
+
+  return (
+    <>
+      <section className="flex w-full flex-col gap-16 rounded-lg bg-surface p-16">
+        <h2 className="body-2-semi-bold text-base">Orchestration mode</h2>
+        <p className="body-2 text-muted">
+          Mirrors the mobile chained-intent playground: timer, ETH/BTC address steps, DMK signer
+          step, then ETH/BTC uninstall steps. Jobs are placeholder-safe for desktop bootstrap, but
+          each phase now uses the matching mobile intent shape.
+        </p>
+
+        <StateCard>
+          <StateRow label="Phase" value={orchestration.demoPhase.phase} />
+          <StateRow label="Executor" value={orchestration.executorState?.type ?? "-"} />
+          <StateRow
+            label="Job state"
+            value={
+              orchestration.latestJobState ? JSON.stringify(orchestration.latestJobState) : "-"
+            }
+          />
+          <StateRow label="Job completed" value={orchestration.jobCompleted ? "YES" : "no"} />
+          <StateRow label="Job error" value={formatError(orchestration.jobError)} />
+        </StateCard>
+
+        <SettingSection title="Timer tick count">
+          <Button
+            size="sm"
+            appearance="gray"
+            onClick={() => setTickCount(prev => Math.max(1, prev - 1))}
+            disabled={enabled}
+          >
+            -
+          </Button>
+          <span className="body-2-semi-bold flex items-center text-base">{tickCount}</span>
+          <Button
+            size="sm"
+            appearance="gray"
+            onClick={() => setTickCount(prev => prev + 1)}
+            disabled={enabled}
+          >
+            +
+          </Button>
+        </SettingSection>
+
+        <Button appearance={enabled ? "red" : "base"} size="lg" onClick={toggleEnabled}>
+          {enabled ? "Stop orchestration" : "Start orchestration"}
+        </Button>
+      </section>
+
+      {orchestration.enabled ? <DeviceIntentExecutorLWD {...orchestration.executorProps} /> : null}
+    </>
   );
 }
 
