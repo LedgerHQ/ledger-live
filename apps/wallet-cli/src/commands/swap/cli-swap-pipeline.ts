@@ -34,6 +34,8 @@ import {
   getErrorDetails,
   getSwapStepFromError,
 } from "@ledgerhq/live-common/exchange/error";
+import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
+import { trackSwapCompleted, trackSwapRejected, trackSwapStarted } from "./swap-analytics";
 
 const EXCHANGE_SWAP: ExchangeTypes.Swap = 0x00;
 const RATE_FIXED: RateTypes = 0x00;
@@ -92,6 +94,7 @@ export type FullSwapPipelineInput = {
   toParentAccount?: Account;
   getAccountBridge?: typeof getAccountBridge;
   getDeviceModelId?: typeof getWalletCliDeviceModelId;
+  flowId?: string;
 };
 
 export type FullSwapPipelineResult = {
@@ -279,6 +282,7 @@ export async function runFullSwapPipeline(
     toParentAccount: toParent,
     getAccountBridge: getBridge = getAccountBridge,
     getDeviceModelId = getWalletCliDeviceModelId,
+    flowId,
   } = input;
 
   const accounts: AccountLike[] = [fromAccount, toAccount, fromParent, toParent].filter(
@@ -300,6 +304,16 @@ export async function runFullSwapPipeline(
 
   let swapId: string | undefined;
   let hardwareWalletType: Device["modelId"] | undefined;
+
+  if (flowId) {
+    trackSwapStarted({
+      flowId,
+      fromCurrency: fromCurrency.id,
+      toCurrency: toCurrency.id,
+      provider,
+      feeStrategy,
+    });
+  }
 
   try {
     return await withLedgerManagerAppSession(EXCHANGE_APP_NAME, async () => {
@@ -404,6 +418,14 @@ export async function runFullSwapPipeline(
         });
       }
 
+      if (flowId) {
+        trackSwapCompleted({
+          flowId,
+          fromAmount: amount,
+          toAmount: amountExpectedTo.toFixed(),
+        });
+      }
+
       return {
         transactionId,
         payload,
@@ -414,6 +436,15 @@ export async function runFullSwapPipeline(
       };
     });
   } catch (error) {
+    if (flowId && WalletCliDeviceError.fromKnownDeviceError(error)?.state.code === "rejected") {
+      trackSwapRejected({
+        flowId,
+        fromCurrency: fromCurrency.id,
+        toCurrency: toCurrency.id,
+        device: hardwareWalletType,
+      });
+    }
+
     const {
       name: rawErrorName,
       message: rawErrorMessage,
