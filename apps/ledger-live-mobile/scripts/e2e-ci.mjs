@@ -65,7 +65,7 @@ const bundle_ios_with_cache = async () => {
 const test_ios = async () => {
   const result = await $`pnpm mobile ${testType}:test\
       -c ios.sim.${target} \
-      --loglevel warn \
+      --loglevel info \
       --record-logs failing \
       --take-screenshots failing \
       --forceExit \
@@ -83,7 +83,7 @@ const build_android = async () => {
 const test_android = async () => {
   const result = await $`pnpm mobile ${testType}:test \\
       -c android.emu.${target} \\
-      --loglevel warn \\
+      --loglevel info \\
       --record-logs failing \\
       --take-screenshots failing \\
       --forceExit \\

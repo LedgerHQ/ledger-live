@@ -38,13 +38,18 @@ export function useWelcomeNavigation() {
     [language],
   );
   const onGetStarted = useCallback(() => {
+    console.warn("[onGetStarted] fired");
     acceptTerms();
+    console.warn("[onGetStarted] after acceptTerms()");
     navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
       screen: ScreenName.AnalyticsOptInPromptMain,
       params: {
         entryPoint: "Onboarding",
       },
     });
+    console.warn(
+      "[onGetStarted] after navigation.navigate(AnalyticsOptInPrompt)",
+    );
   }, [acceptTerms, navigation]);
 
   const [_, setBooleans] = useState<boolean[]>([]);
