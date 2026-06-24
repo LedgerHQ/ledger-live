@@ -108,7 +108,7 @@ export default {
     black: "#000000",
   },
   background: {
-    default: "#F9F9F9",
+    default: "#FFB6C1",
     main: "#FFFFFF",
     drawer: "#FFFFFF",
     card: "#FFFFFF",
