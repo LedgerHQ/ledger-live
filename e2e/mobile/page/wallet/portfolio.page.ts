@@ -138,6 +138,14 @@ export default class PortfolioPage {
 
   @Step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
+    if (isWallet40) {
+      // Wallet 4.0 moved operations off the portfolio into the top-bar operations list.
+      await app.mainNavigation.tapTopBarTransactionHistory();
+      await app.operation.expectOperationsListVisible();
+      await scrollToId(this.operationRowCounterValue, app.operation.operationsListId);
+      await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
+      return;
+    }
     await scrollToId(this.operationRowCounterValue, this.accountsListView);
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
@@ -267,10 +275,18 @@ export default class PortfolioPage {
   @Step("Click on selected last operation")
   async selectAndClickOnLastOperation(operationType: string | RegExp, accountName?: string) {
     if (isWallet40) {
-      // Wallet 4.0 operations live in the dedicated operations list (operations-list-item),
-      // already open from checkTransactionHistorySection. The legacy operationRowBody matcher
-      // and per-type/account filter don't exist there, so tap the latest operation.
-      await app.operation.tapFirstOperationItem();
+      // Wallet 4.0's aggregated operations list (operations-list-item, already open from
+      // checkTransactionHistorySection) mixes accounts — including token accounts — so the
+      // first row may belong to another account. Match by account name + type like the
+      // legacy row instead of tapping the latest operation.
+      const operationItem = accountName
+        ? getElementByIdWithDescendantTexts(
+            app.operation.operationItemId,
+            accountName,
+            operationType,
+          )
+        : getElementByIdWithDescendantTexts(app.operation.operationItemId, operationType);
+      await tapByElement(operationItem.atIndex(0));
       return;
     }
     await tapByElement(this.operationByType(operationType, accountName).atIndex(0));

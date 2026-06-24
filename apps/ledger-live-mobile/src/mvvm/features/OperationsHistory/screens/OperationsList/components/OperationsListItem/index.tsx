@@ -96,7 +96,11 @@ function OperationsListItem({
             <Text typography="body2SemiBold" lx={{ color: amountColor }}>
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
-            <Text typography="body3" lx={counterValueStyle}>
+            <Text
+              typography="body3"
+              lx={counterValueStyle}
+              testID="operationRow-counterValue-label"
+            >
               <CounterValue
                 showCode
                 date={operation.date}
