@@ -155,11 +155,11 @@ export default class PortfolioPage {
       await detoxExpect(
         getElementByIdWithDescendantTexts(app.operation.operationItemId, counterValue).atIndex(0),
       ).toBeVisible();
-      return;
+    } else {
+      await this.expectOperationRowToBeVisible();
+      const text = await getTextOfElement(this.operationRowCounterValue);
+      jestExpect(text).toContain(counterValue);
     }
-    await this.expectOperationRowToBeVisible();
-    const text = await getTextOfElement(this.operationRowCounterValue);
-    jestExpect(text).toContain(counterValue);
   }
 
   @Step("Open Portfolio via deeplink")
@@ -266,15 +266,15 @@ export default class PortfolioPage {
       await tapById(this.topBarTransactionHistoryId);
       await app.operation.expectOperationsListVisible();
       await app.operation.expectOperationItemVisible();
-      return;
+    } else {
+      await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView);
+      await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
+      jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
+      await scrollToId(this.seeAllTransactionsButton, this.accountsListView, 2000, "down");
+      await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
+      await tapById(this.seeAllTransactionsButton);
+      jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
     }
-    await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView);
-    await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
-    jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
-    await scrollToId(this.seeAllTransactionsButton, this.accountsListView, 2000, "down");
-    await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
-    await tapById(this.seeAllTransactionsButton);
-    jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
   }
 
   @Step("Click on selected last operation")
@@ -292,9 +292,9 @@ export default class PortfolioPage {
           )
         : getElementByIdWithDescendantTexts(app.operation.operationItemId, operationType);
       await tapByElement(operationItem.atIndex(0));
-      return;
+    } else {
+      await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
     }
-    await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
   }
 
   @Step("Tap on tab selector")
