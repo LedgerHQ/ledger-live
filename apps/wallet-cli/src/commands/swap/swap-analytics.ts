@@ -16,7 +16,7 @@ export function trackSwapQuoteRequested(p: {
   deviceRequired?: boolean;
 }): void {
   track("swapquote_requested", {
-    flow: QUOTE,
+    page: QUOTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
     toCurrency: p.toCurrency,
@@ -31,7 +31,7 @@ export function trackSwapQuoteReturned(p: {
   providersCount: number;
 }): void {
   track("swapquote_returned", {
-    flow: QUOTE,
+    page: QUOTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
     toCurrency: p.toCurrency,
@@ -46,7 +46,7 @@ export function trackSwapSimulated(p: {
   provider: string;
 }): void {
   track("swap_simulated", {
-    flow: EXECUTE,
+    page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
     toCurrency: p.toCurrency,
@@ -61,7 +61,7 @@ export function trackSwapFailed(p: {
   errorCode: string;
 }): void {
   track("swap_failed", {
-    flow: EXECUTE,
+    page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
     toCurrency: p.toCurrency,
@@ -77,7 +77,7 @@ export function trackSwapStarted(p: {
   feeStrategy: string;
 }): void {
   track("swap_started", {
-    flow: EXECUTE,
+    page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
     toCurrency: p.toCurrency,
@@ -92,7 +92,7 @@ export function trackSwapCompleted(p: {
   toAmount?: string;
 }): void {
   track("swap_completed", {
-    flow: EXECUTE,
+    page: EXECUTE,
     flowId: p.flowId,
     fromAmount: p.fromAmount,
     toAmount: p.toAmount,
@@ -106,7 +106,7 @@ export function trackSwapRejected(p: {
   device?: string;
 }): void {
   track("swap_rejected", {
-    flow: EXECUTE,
+    page: EXECUTE,
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
     toCurrency: p.toCurrency,
@@ -120,7 +120,7 @@ export function trackSwapStatusPolled(p: {
   provider: string;
 }): void {
   track("swapstatus_polled", {
-    flow: STATUS,
+    page: STATUS,
     flowId: p.flowId,
     swapId: p.swapId,
     provider: p.provider,
