@@ -955,6 +955,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/device-intent':
+        specifier: workspace:^
+        version: link:../../libs/device-intent
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
