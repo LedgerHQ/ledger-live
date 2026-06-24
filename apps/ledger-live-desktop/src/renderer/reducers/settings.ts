@@ -97,6 +97,7 @@ export type SettingsState = {
   mevProtection: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  hideSmallValueTokenOperations: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
   starredAccountIds?: string[];
@@ -194,6 +195,7 @@ export const INITIAL_STATE: SettingsState = {
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
+  hideSmallValueTokenOperations: false,
   sidebarCollapsed: false,
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
@@ -339,7 +341,7 @@ const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
     const filteredPayload = filterValidSettings(payload);
-    const { analyticsConsentInfo, ...rest } = filteredPayload;
+    const { analyticsConsentInfo: _analyticsConsentInfo, ...rest } = filteredPayload;
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const changed = (Object.keys(rest) as (keyof typeof rest)[]).some(
@@ -842,6 +844,8 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+export const hideSmallValueTokenOperationsSelector = (state: State) =>
+  state.settings.hideSmallValueTokenOperations;
 
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {

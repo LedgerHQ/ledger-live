@@ -1,12 +1,14 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Features } from "@shared/feature-flags";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   flattenAccounts,
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { isSmallValueTokenOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import {
   getOperationAmountNumber,
   flattenOperationWithInternalsAndNfts,
@@ -16,6 +18,7 @@ import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/o
 import { currencySettingsDefaults, type CurrencySettings } from "~/renderer/reducers/settings";
 import { getOperationCounterpartyAddress } from "./getOperationCounterpartyAddress";
 import type { OperationTableItem } from "../types";
+import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
 
 type AccountInfo = { account: AccountLike; parentAccount?: Account };
 type FilterFn = (operation: Operation, account: AccountLike) => boolean;
@@ -174,16 +177,40 @@ export function historyHasUnreadOperations(
   currenciesSettings: Record<string, CurrencySettings>,
   shouldFilterTokenOps: boolean,
   addressPoisoningFamilies: string[] | null,
+  shouldHideSmallValueTokenOperations = false,
+  countervaluesState?: CounterValuesState,
+  userCounterValueCurrency?: Currency,
 ): boolean {
   if (!lastSeenDate) return false;
   const lastSeenTs = parseLastSeenMs(lastSeenDate);
   const filterOperation: FilterFn = (operation, account) => {
-    if (!shouldFilterTokenOps) return true;
-    return !isAddressPoisoningOperation(
-      operation,
-      account,
-      addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-    );
+    if (
+      shouldFilterTokenOps &&
+      isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      shouldHideSmallValueTokenOperations &&
+      countervaluesState &&
+      userCounterValueCurrency &&
+      isSmallValueTokenOperation({
+        operation,
+        account,
+        countervaluesState,
+        userCounterValueCurrency,
+        thresholdUsd: HISTORY_DUST_FILTER_THRESHOLD_USD,
+      })
+    ) {
+      return false;
+    }
+
+    return true;
   };
   const getConfirmationsNb = (mainAccount: Account) =>
     getConfirmationsNbForCurrency(currenciesSettings, mainAccount.currency);

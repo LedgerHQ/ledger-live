@@ -189,6 +189,15 @@ describe("History integration", () => {
 
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
+
+  it("toggles dust filtering from the actions menu", async () => {
+    const { user, store } = renderHistory();
+
+    await user.click(await screen.findByTestId("history-actions-menu-button"));
+    await user.click(await screen.findByTestId("history-toggle-dust-filter-button"));
+
+    expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+  });
 });
 
 describe("History export dialog integration", () => {
@@ -214,6 +223,8 @@ describe("History export dialog integration", () => {
   }
 
   async function openExportDialog(user: ReturnType<typeof renderHistoryWithAccounts>["user"]) {
+    const menuButton = await screen.findByTestId("history-actions-menu-button");
+    await user.click(menuButton);
     const exportButton = await screen.findByTestId("history-export-csv-button");
     await user.click(exportButton);
     return within(await screen.findByRole("dialog"));

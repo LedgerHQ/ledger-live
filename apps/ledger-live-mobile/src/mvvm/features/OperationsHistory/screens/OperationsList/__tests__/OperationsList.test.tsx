@@ -42,9 +42,10 @@ function stateWithAccountsAndOperations(base: State): State {
 const operation = accountWithOperations.operations[1];
 
 const mockNavigate = jest.fn();
+const mockSetOptions = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: mockNavigate }),
+  useNavigation: () => ({ navigate: mockNavigate, setOptions: mockSetOptions }),
 }));
 
 const Stack = createNativeStackNavigator<OperationsHistoryNavigatorParamsList>();
@@ -56,6 +57,10 @@ const MockNavigator = () => (
 );
 
 describe("OperationsList", () => {
+  beforeEach(() => {
+    mockSetOptions.mockClear();
+  });
+
   it("tracks the OperationsList screen on focus", () => {
     render(<MockNavigator />);
     expect(screen).toHaveBeenCalledWith(
@@ -66,6 +71,18 @@ describe("OperationsList", () => {
       true,
       false,
       false,
+    );
+  });
+
+  it("registers the transaction history options menu in the navigation bar", () => {
+    render(<MockNavigator />);
+
+    expect(mockSetOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lumenNavBar: expect.objectContaining({
+          renderTrailing: expect.any(Function),
+        }),
+      }),
     );
   });
 

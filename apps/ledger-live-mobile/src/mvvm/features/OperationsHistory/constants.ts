@@ -1,0 +1,1 @@
+export const HISTORY_DUST_FILTER_THRESHOLD_USD = 0.01;

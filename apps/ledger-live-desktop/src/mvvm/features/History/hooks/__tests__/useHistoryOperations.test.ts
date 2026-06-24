@@ -1,10 +1,55 @@
+import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useHistoryOperations } from "../useHistoryOperations";
 import { BTC_ACCOUNT, ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+
+const ZERO_VALUE_TOKEN_OP_ID = "zero-value-token-op-id";
+const NON_ZERO_VALUE_TOKEN_OP_ID = "non-zero-value-token-op-id";
+
+function createTokenOperation(tokenAccountId: string, id: string, value: BigNumber): Operation {
+  return {
+    id,
+    hash: id,
+    type: "IN",
+    value,
+    fee: new BigNumber(0),
+    senders: ["0xsender"],
+    recipients: ["0xrecipient"],
+    blockHash: "0xblock",
+    blockHeight: 1,
+    accountId: tokenAccountId,
+    date: new Date(),
+    extra: {},
+  };
+}
+
+function createAccountWithZeroValueTokenOperation(): Account {
+  const ethRoot = genAccount("eth-zero-value-token", {
+    currency: ETH_ACCOUNT.currency,
+    subAccountsCount: 0,
+    operationsSize: 0,
+  });
+  const usdc = genTokenAccount(0, ethRoot, usdcToken);
+
+  const tokenAccountWithOperations: TokenAccount = {
+    ...usdc,
+    operations: [
+      createTokenOperation(usdc.id, ZERO_VALUE_TOKEN_OP_ID, new BigNumber(0)),
+      createTokenOperation(usdc.id, NON_ZERO_VALUE_TOKEN_OP_ID, new BigNumber(1)),
+    ],
+    operationsCount: 2,
+  };
+
+  return {
+    ...ethRoot,
+    subAccounts: [tokenAccountWithOperations],
+  };
+}
 
 describe("useHistoryOperations", () => {
   it("returns an empty array when there are no accounts", () => {
@@ -73,6 +118,42 @@ describe("useHistoryOperations", () => {
     const items = result.current;
     expect(items.length).toBeGreaterThan(0);
     expect(items.every(item => item.account.id === usdc.id)).toBe(true);
+  });
+
+  it("keeps zero-value token operations when dust filtering is disabled", () => {
+    const account = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useHistoryOperations(), {
+      initialState: {
+        accounts: [account],
+        settings: {
+          ...INITIAL_STATE,
+          filterTokenOperationsZeroAmount: false,
+          hideSmallValueTokenOperations: false,
+        },
+      },
+    });
+
+    expect(result.current.map(item => item.operation.id)).toEqual(
+      expect.arrayContaining([ZERO_VALUE_TOKEN_OP_ID, NON_ZERO_VALUE_TOKEN_OP_ID]),
+    );
+  });
+
+  it("filters zero-value token operations when dust filtering is enabled", () => {
+    const account = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useHistoryOperations(), {
+      initialState: {
+        accounts: [account],
+        settings: {
+          ...INITIAL_STATE,
+          filterTokenOperationsZeroAmount: false,
+          hideSmallValueTokenOperations: true,
+        },
+      },
+    });
+
+    expect(result.current.map(item => item.operation.id)).toEqual([NON_ZERO_VALUE_TOKEN_OP_ID]);
   });
 
   describe("isUnread flag", () => {

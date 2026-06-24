@@ -6,7 +6,12 @@ import {
 } from "LLD/features/History/utils/historyOperationItems";
 import type { State } from ".";
 import { accountsSelector } from "./accounts";
-import { filterTokenOperationsZeroAmountSelector } from "./settings";
+import {
+  counterValueCurrencySelector,
+  filterTokenOperationsZeroAmountSelector,
+  hideSmallValueTokenOperationsSelector,
+} from "./settings";
+import { countervaluesStateSelector } from "./countervalues";
 
 export type HistoryState = {
   lastSeenOperationDate: string | null;
@@ -45,8 +50,20 @@ export const hasUnreadOperationsSelector = createSelector(
   lastSeenOperationDateSelector,
   (state: State) => state.settings.currenciesSettings,
   filterTokenOperationsZeroAmountSelector,
+  hideSmallValueTokenOperationsSelector,
+  countervaluesStateSelector,
+  counterValueCurrencySelector,
   (state: State) => selectFeature(state, "addressPoisoningOperationsFilter"),
-  (accounts, lastSeenDate, currenciesSettings, shouldFilterTokenOps, poisoningFeature) => {
+  (
+    accounts,
+    lastSeenDate,
+    currenciesSettings,
+    shouldFilterTokenOps,
+    shouldHideSmallValueTokenOperations,
+    countervaluesState,
+    userCounterValueCurrency,
+    poisoningFeature,
+  ) => {
     if (!lastSeenDate) return false;
     const families = getAddressPoisoningFamiliesForFilter(shouldFilterTokenOps, poisoningFeature);
     return historyHasUnreadOperations(
@@ -55,6 +72,9 @@ export const hasUnreadOperationsSelector = createSelector(
       currenciesSettings,
       shouldFilterTokenOps,
       families,
+      shouldHideSmallValueTokenOperations,
+      countervaluesState,
+      userCounterValueCurrency,
     );
   },
 );
