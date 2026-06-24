@@ -11,18 +11,7 @@ type ChartSectionProps = Readonly<{
   shouldDisplayBalanceRefreshRework: boolean;
 }>;
 
-export function ChartSection({
-  balanceInfo,
-  portfolio,
-  isLoading,
-  shouldDisplayBalanceRefreshRework,
-}: ChartSectionProps) {
-  const viewModel = useChartSectionViewModel({ balanceInfo, portfolio });
-  return (
-    <ChartSectionView
-      {...viewModel}
-      isLoading={isLoading}
-      shouldDisplayBalanceRefreshRework={shouldDisplayBalanceRefreshRework}
-    />
-  );
+export function ChartSection(props: ChartSectionProps) {
+  const viewModel = useChartSectionViewModel(props);
+  return <ChartSectionView viewModel={viewModel} />;
 }

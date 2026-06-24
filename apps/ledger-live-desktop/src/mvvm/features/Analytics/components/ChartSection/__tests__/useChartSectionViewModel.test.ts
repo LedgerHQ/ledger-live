@@ -43,6 +43,8 @@ describe("useChartSectionViewModel", () => {
         useChartSectionViewModel({
           balanceInfo: mockPortfolioBalanceInfo,
           portfolio: portfolioWithHistory,
+          isLoading: false,
+          shouldDisplayBalanceRefreshRework: false,
         }),
       { initialState },
     );
@@ -59,6 +61,8 @@ describe("useChartSectionViewModel", () => {
         useChartSectionViewModel({
           balanceInfo: { ...mockPortfolioBalanceInfo, isAvailable: false },
           portfolio: portfolioWithHistory,
+          isLoading: true,
+          shouldDisplayBalanceRefreshRework: true,
         }),
       { initialState },
     );
@@ -72,6 +76,8 @@ describe("useChartSectionViewModel", () => {
         useChartSectionViewModel({
           balanceInfo: mockPortfolioBalanceInfo,
           portfolio: portfolioWithHistory,
+          isLoading: false,
+          shouldDisplayBalanceRefreshRework: false,
         }),
       { initialState },
     );
@@ -90,6 +96,8 @@ describe("useChartSectionViewModel", () => {
         useChartSectionViewModel({
           balanceInfo: mockPortfolioBalanceInfo,
           portfolio: portfolioWithHistory,
+          isLoading: false,
+          shouldDisplayBalanceRefreshRework: false,
         }),
       { initialState },
     );

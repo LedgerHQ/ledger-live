@@ -26,6 +26,7 @@ import {
   type LineChartValueFormatter,
 } from "LLD/components/LineChart";
 import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
+import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
 import {
   buildLineChartBottomPaddedYAxisConfig,
   buildLineChartXAxisConfig,
@@ -239,12 +240,8 @@ export function useChartSectionViewModel({
 
   const formatDate = useAssetChartDateFormatter(selectedRange);
 
-  const tooltipTitle = useCallback<LineChartTooltipTitle>(
-    dataIndex => {
-      const timestamp = timestamps[dataIndex];
-      if (timestamp == null) return undefined;
-      return formatDate(timestamp);
-    },
+  const tooltipTitle = useMemo(
+    () => createLineChartTooltipTitle(timestamps, formatDate),
     [timestamps, formatDate],
   );
 

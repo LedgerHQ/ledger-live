@@ -3,20 +3,14 @@ import { LineChart } from "LLD/components/LineChart";
 import { ChartSectionHeader } from "./ChartSectionHeader";
 import type { ChartSectionViewModelResult } from "./useChartSectionViewModel";
 
-type ChartSectionViewProps = Readonly<
-  ChartSectionViewModelResult & {
-    isLoading: boolean;
-    shouldDisplayBalanceRefreshRework: boolean;
-  }
->;
+type ChartSectionViewProps = Readonly<{
+  viewModel: ChartSectionViewModelResult;
+}>;
 
-export function ChartSectionView({
-  balanceInfo,
-  hoveredBalance,
-  chart,
-  isLoading,
-  shouldDisplayBalanceRefreshRework,
-}: ChartSectionViewProps) {
+export function ChartSectionView({ viewModel }: ChartSectionViewProps) {
+  const { balanceInfo, hoveredBalance, chart, isLoading, shouldDisplayBalanceRefreshRework } =
+    viewModel;
+
   return (
     <div className="flex flex-col gap-24 px-24" data-testid="analytics-chart-section">
       <ChartSectionHeader

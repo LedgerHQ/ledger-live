@@ -10,9 +10,9 @@ import {
   type LineChartRange,
   type LineChartScrubberPositionChange,
   type LineChartSeries,
-  type LineChartTooltipTitle,
 } from "LLD/components/LineChart";
 import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
+import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
 import {
   buildLineChartBottomPaddedYAxisConfig,
   buildLineChartXAxisConfig,
@@ -35,17 +35,23 @@ import {
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   portfolio: Portfolio;
+  isLoading: boolean;
+  shouldDisplayBalanceRefreshRework: boolean;
 }>;
 
 export type ChartSectionViewModelResult = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   hoveredBalance: number | null;
+  isLoading: boolean;
+  shouldDisplayBalanceRefreshRework: boolean;
   chart: LineChartProps;
 }>;
 
 export function useChartSectionViewModel({
   balanceInfo,
   portfolio,
+  isLoading,
+  shouldDisplayBalanceRefreshRework,
 }: UseChartSectionViewModelProps): ChartSectionViewModelResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -91,12 +97,8 @@ export function useChartSectionViewModel({
 
   const formatDate = useAssetChartDateFormatter(selectedRange);
 
-  const tooltipTitle = useCallback<LineChartTooltipTitle>(
-    dataIndex => {
-      const timestamp = timestamps[dataIndex];
-      if (timestamp == null) return undefined;
-      return formatDate(timestamp);
-    },
+  const tooltipTitle = useMemo(
+    () => createLineChartTooltipTitle(timestamps, formatDate),
     [timestamps, formatDate],
   );
 
@@ -135,6 +137,8 @@ export function useChartSectionViewModel({
   return {
     balanceInfo,
     hoveredBalance,
+    isLoading,
+    shouldDisplayBalanceRefreshRework,
     chart: {
       series,
       selectedRange,
