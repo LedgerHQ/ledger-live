@@ -11,17 +11,17 @@ import type { AleoViewKeyFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyWarning>;
 
+const bulletPointTranslationKeys = [
+  "aleo.addAccount.stepViewKeyWarning.bullets.0",
+  "aleo.addAccount.stepViewKeyWarning.bullets.1",
+  "aleo.addAccount.stepViewKeyWarning.bullets.2",
+  "aleo.addAccount.stepViewKeyWarning.bullets.3",
+  "aleo.addAccount.stepViewKeyWarning.bullets.4",
+];
+
 export default function ViewKeyWarningScreen({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
-  const bulletPointTranslationKeys = [
-    "aleo.addAccount.stepViewKeyWarning.bullets.0",
-    "aleo.addAccount.stepViewKeyWarning.bullets.1",
-    "aleo.addAccount.stepViewKeyWarning.bullets.2",
-    "aleo.addAccount.stepViewKeyWarning.bullets.3",
-    "aleo.addAccount.stepViewKeyWarning.bullets.4",
-  ];
 
   const onContinue = useCallback(() => {
     const {
@@ -126,7 +126,6 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "rgba(0,0,0,0.45)",
   },
   bullet: {
     fontSize: 14,

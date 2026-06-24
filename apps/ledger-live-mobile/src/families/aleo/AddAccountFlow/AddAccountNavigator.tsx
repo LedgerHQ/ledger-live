@@ -6,6 +6,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { ScreenName } from "~/const";
 import { AleoAddAccountParamList, AleoViewKeyFlowParamList } from "./types";
 import ViewKeyWarningScreen from "./ViewKeyWarningScreen";
+import ViewKeyApproveScreen from "./ViewKeyApproveScreen";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type Props = StackNavigatorProps<AleoAddAccountParamList, ScreenName.AleoAddAccount>;
@@ -15,10 +16,11 @@ const Stack = createNativeStackNavigator<AleoViewKeyFlowParamList>();
 function AddAccountNavigator({ route }: Props) {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const initialRouteName = route.params.initialRoute ?? ScreenName.AleoViewKeyWarning;
 
   return (
     <Stack.Navigator
-      initialRouteName={ScreenName.AleoViewKeyWarning}
+      initialRouteName={initialRouteName}
       screenOptions={{
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
@@ -27,6 +29,12 @@ function AddAccountNavigator({ route }: Props) {
       <Stack.Screen
         name={ScreenName.AleoViewKeyWarning}
         component={ViewKeyWarningScreen}
+        initialParams={route.params}
+        options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.AleoViewKeyApprove}
+        component={ViewKeyApproveScreen}
         initialParams={route.params}
         options={{ headerTitle: "" }}
       />

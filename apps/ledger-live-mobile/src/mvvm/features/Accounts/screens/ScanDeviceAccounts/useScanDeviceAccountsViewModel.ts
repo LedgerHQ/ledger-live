@@ -14,6 +14,7 @@ import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
 import noAssociatedAccountsByFamily from "~/generated/NoAssociatedAccounts";
+import { getCustomAddAccountFlow } from "./customAddAccountFlow";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
@@ -232,6 +233,14 @@ export default function useScanDeviceAccountsViewModel({
         });
         return;
       }
+    }
+
+    const customFlow = getCustomAddAccountFlow(currency);
+
+    if (customFlow?.onImportAccounts) {
+      customFlow.onImportAccounts({ navigation, routeParams: route.params, accountsToAdd });
+      setIsAddinAccounts(true);
+      return;
     }
 
     setIsAddinAccounts(true);

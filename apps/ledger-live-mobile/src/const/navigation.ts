@@ -419,6 +419,7 @@ export enum ScreenName {
   // Aleo
   AleoAddAccount = "AleoAddAccount",
   AleoViewKeyWarning = "AleoViewKeyWarning",
+  AleoViewKeyApprove = "AleoViewKeyApprove",
   // Canton
   CantonDisclaimer = "CantonDisclaimer",
   CantonOnboardAccount = "CantonOnboardAccount",
