@@ -959,6 +959,10 @@
     "TaprootNotActivated" : {
       "title" : "Taproot ana ağı henüz etkinleştirilmedi"
     },
+    "RbfBuildError" : {
+      "title" : "Bu işlem değiştirilemiyor",
+      "description" : "Bu işlemi değiştirmek için gereken ücret artışı mevcut parametrelerle uygulanamıyor. Farklı bir ücret tutarı deneyin veya işlemi iptal edin."
+    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin.",
@@ -1254,13 +1258,13 @@
       "description" : "Lütfen tekrar deneyin veya Ledger Destek ekibiyle iletişime geçin."
     },
     "TonExcessFee" : {
-      "title" : "Bir token transferi oluşturur. İşlem ücreti olarak 0,1 TON ödersiniz ve fazlası size iade edilir."
+      "title" : "Bir token transferi oluşturur. İşlem ücreti olarak 0,1 GRAM ödersiniz ve fazlası size iade edilir."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Ücretlerin hesaplanması için ana hesapta (TON) yeterli miktarda fon yok. Gerekli minimum bakiye 0,1 TON'dur."
+      "title" : "Ücretlerin hesaplanması için ana hesapta yeterli miktarda fon (GRAM) yok. Gerekli minimum bakiye 0,1 GRAM'dır."
     },
     "TonMinimumRequired" : {
-      "title" : "Yetersiz fon miktarı. Gerekli minimum bakiye 0,02 TON'dur."
+      "title" : "Yetersiz fon miktarı. Gerekli minimum bakiye 0,02 GRAM'dır."
     },
     "BackupAppDataError" : {
       "title" : "Uygulama verileri yedeklenirken hata oluştu"
@@ -1322,6 +1326,9 @@
       "select" : "Hesap seç"
     }
   },
+  "lineChart" : {
+    "error" : "Grafik yüklenemiyor"
+  },
   "location" : {
     "titleServiceRequired" : "Konum hizmetleri gerekli",
     "descriptionServiceRequired" : "Ledger Wallet, cihazınızı Bluetooth üzerinden eşlemek için konum hizmetleri gerektirir.",
@@ -1335,6 +1342,28 @@
     "appNotFound" : "Borrow uygulaması bulunamadı",
     "infoModal" : {
       "close" : "Kapat"
+    }
+  },
+  "backupHub" : {
+    "featureIntro" : {
+      "title" : "Kaybedemeyeceğiniz bir yedekleme oluşturun",
+      "subtitle" : "Gizli Kurtarma İfadenizin şifrelenmiş bir yedeklemesi ile, varlıklarınıza her koşulda yeniden erişebilirsiniz.",
+      "primaryCta" : "1 ay ücretsiz dene",
+      "secondaryCta" : "Oturum aç",
+      "items" : {
+        "secure" : {
+          "title" : "Kimliğinize bağlı yedekleme",
+          "subtitle" : "Cüzdan kurtarmayı yalnızca siz yetkilendirebilirsiniz."
+        },
+        "access" : {
+          "title" : "Gelişmiş yedekleme güvenliği",
+          "subtitle" : "Şifrelenir, parçalara bölünür ve Donanım Güvenlik Modüllerinde (HSM) korunur."
+        },
+        "restore" : {
+          "title" : "Erişimi istediğiniz zaman geri yükleyin",
+          "subtitle" : "Tek ihtiyacınız olan kimliğiniz, Ledger Wallet ve bir Ledger cihazı."
+        }
+      }
     }
   },
   "earn" : {
@@ -1463,8 +1492,14 @@
   },
   "globalSearch" : {
     "searchPlaceholder" : "Varlık ara",
+    "searchPlaceholders" : {
+      "crypto" : "Kripto ara",
+      "stablecoins" : "Stabil coin ara",
+      "stock" : "Hisse senedi ara",
+      "addresses" : "Adres ara"
+    },
     "sections" : {
-      "cryptos" : "Kriptolar",
+      "cryptos" : "Kripto",
       "stocks" : "Hisseler"
     }
   },
@@ -1719,6 +1754,32 @@
       "cta" : "Cüzdanınıza fon aktarın",
       "title" : "Cüzdanınıza fon aktararak başlayın.",
       "subTitle" : "Ledger Wallet'ı dilediğiniz şekilde fonlayın: transfer edin, satın alın veya nakit paranızı stabil coinlere dönüştürün."
+    }
+  },
+  "q2WalletV4Tour" : {
+    "cta" : {
+      "start" : "Yenilikleri görün",
+      "next" : "Sonraki",
+      "done" : "Anladım"
+    },
+    "portfolio" : {
+      "title" : "Daha akıllı portföy yönetimi. Daha net büyütme yolları"
+    },
+    "balance" : {
+      "title" : "Her varlık için tek bir bakiye",
+      "subTitle" : "USDT gibi çok zincirli varlıklar artık tek bir toplamla gösteriliyor. Basit, doğru, net."
+    },
+    "returns" : {
+      "title" : "Getirileriniz tam önünüzde ve merkezde",
+      "subTitle" : "Portföyünüzde ve analiz sayfasında her varlığın sağladığı kazanç ve kaybı görün."
+    },
+    "earn" : {
+      "title" : "Kazanç potansiyelinizi test edin",
+      "subTitle" : "Hangi ödülleri kazanabileceğinizi simüle edin ve hedefinize uygun bir büyüme planı yapın."
+    },
+    "protocols" : {
+      "title" : "Daha fazla protokol, daha fazla ödül",
+      "subTitle" : "Stabil coin’ler ve en iyi seçimler cüzdanınızda ön planda. Daha az arama. Daha çok karar."
     }
   },
   "discover" : {
@@ -3287,6 +3348,7 @@
   "crypto" : {
     "title" : "Kripto",
     "stablecoinTitle" : "Stabil coin",
+    "stocksTitle" : "Hisseler",
     "errorState" : "Varlıklarınız yüklenirken bir hata oluştu",
     "emptyState" : "Gösterilecek varlık yok"
   },
@@ -4143,10 +4205,10 @@
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
         "contact_support" : "Müşteri destek ekibiyle iletişime geç",
-        "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
-        "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
-        "ton_tokens_title" : "Ledger Nano S™, Ton token takasını desteklemez",
-        "ton_tokens_description" : "Ton token’larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "ton_title" : "Ledger Nano S™, Gram takasını desteklemez",
+        "ton_description" : "Gram takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+        "ton_tokens_title" : "Ledger Nano S™, Gram token takasını desteklemez",
+        "ton_tokens_description" : "Gram token’larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
         "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "near_title" : "Ledger Nano S™, Near takasını desteklemez",
@@ -4476,7 +4538,16 @@
       "processingTransaction" : "İşleminiz gerçekleştiriliyor",
       "sign" : {
         "title" : "Ledger {{wording}} üzerinde devam edin",
-        "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+        "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin.",
+        "cancelled" : {
+          "title" : "İşlem iptal edildi",
+          "description" : "İşlemi reddettiniz. Fonlarınız etkilenmeyecektir.",
+          "close" : "Kapat",
+          "retry" : "Tekrar deneyin"
+        }
+      },
+      "confirmation" : {
+        "viewTransaction" : "İşlemi görüntüle"
       },
       "gasOptionsSync" : {
         "warningTitle" : "Ağ ücretleri yenilenemiyor",
@@ -6725,15 +6796,15 @@
     "unstakeRequired" : {
       "changeBaker" : {
         "title" : "Baker'ı değiştirmeden önce stake etmeyi durdurun",
-        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yeni bir doğrulayıcıya yetki devretmeden önce fonlarınızı stake etmeyi durdurun."
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yeni bir doğrulayıcıya yetki devretmeden önce tüm fonlarınızı stake etmeyi durdurun."
       },
       "endDelegation" : {
         "title" : "Yetki devrini sonlandırmadan önce stake etmeyi durdurun",
-        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yetki devrini sonlandırmadan önce fonlarınızı stake etmeyi durdurun."
+        "description" : "Mevcut baker'ınızla XTZ stake ettiniz. Yetki devrini sonlandırmadan önce tüm fonlarınızı stake etmeyi durdurun."
       },
       "steps" : {
-        "0" : "Kazan menüsünü açın ve Staking'i durdur seçimini uygulayın.",
-        "1" : "Tutarı cihazınızda onaylayın ve stake etmeyi durdurma talebini gönderin.",
+        "0" : "Tezos Hesap panosunu açın ve staking bölümündeki stake etmeyi durdurma seçeneğini uygulayın.",
+        "1" : "TÜM tutarın stake'ini durdurun ve stake durdurma işlemini cihazınızda onaylayın.",
         "2" : "Stake durdurulma süresinin tamamlanması için yaklaşık 4 gün bekleyin.",
         "3" : "Çektiğinizde, baker'ı değiştirebilir veya yetki devrini sonlandırabilirsiniz."
       },
@@ -8217,7 +8288,7 @@
       "filters" : {
         "accessibilityLabel" : "Varlık filtrelerini aç",
         "title" : "Filtreler",
-        "sorting" : "Sıralama",
+        "sorting" : "Varlık sıralaması",
         "timeframe" : "Zaman aralığı",
         "sortingOptions" : {
           "marketCap" : "Piyasa değeri",
@@ -8968,41 +9039,6 @@
           "accept" : "Kabul et",
           "acceptAll" : "Tümünü Kabul Et",
           "confirm" : "Doğrula"
-        },
-        "infoText" : {
-          "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
-          "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
-        }
-      }
-    },
-    "variantB" : {
-      "main" : {
-        "title" : "Ledger Wallet’ı birlikte geliştirelim",
-        "description" : "Ledger Wallet analiz verilerinizi paylaşmanız, insanların Ledger Wallet'ı nasıl kullandıklarını anlamamıza, hataları düzeltmemize veya gelişmiş bir kullanıcı deneyimi sunmamıza yardımcı oluyor.",
-        "bulletPoints" : {
-          "1" : "Analiz verileri arasında sayfa ziyaretleri ve tıklamalar yer alır.",
-          "2" : "Bakiyeniz, hesaplarınız ve portföyünüz ile ilgili hiçbir bilgiyi toplayamayız veya göremeyiz.",
-          "3" : "Analizler tamamen anonimdir. Kişisel bilgilerinizi göremez veya toplayamayız."
-        },
-        "ctas" : {
-          "refuse" : "Reddet",
-          "share" : "Paylaş"
-        },
-        "infoText" : {
-          "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
-          "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
-        }
-      },
-      "details" : {
-        "title" : "Kişiselleştirilmiş bir deneyim elde edin",
-        "description" : "Ledger Wallet kişiselleştirme verilerinizi paylaşmanız, tercihlerinizle uyumlu içerikler göstermemizi sağlar.",
-        "bulletPoints" : {
-          "1" : "Kişiselleştirme verileri arasında dönüştürme verileri, tıklamalar ve sayfa ziyaretleri yer alır.",
-          "2" : "Kişisel veya portföy bilgilerinizi takip edemez veya toplayamayız."
-        },
-        "ctas" : {
-          "refuse" : "Reddet",
-          "allow" : "İzin ver"
         },
         "infoText" : {
           "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
@@ -9918,6 +9954,30 @@
       "backup" : "Yedekle",
       "help" : "Yardım",
       "referral" : "Referans"
+    },
+    "backupHub" : {
+      "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
+      "description" : "Varlıklarınıza erişimi kaybetmeyin: Gizli Kurtarma İfadenizi birden fazla yöntemle yedekleyin.",
+      "compareFooter" : "Tüm yedekleme yöntemlerini karşılaştırın",
+      "sections" : {
+        "digital" : "Kimliğe bağlı dijital yedekleme",
+        "physical" : "Fiziksel yedeklemeler"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "Kimliğinizi doğrulayarak erişiminizi geri yükleyin.",
+        "inProgress" : "Etkinleştirmeyi tamamlayın",
+        "done" : "Senkronizasyonunuzu yönetin",
+        "discover" : "Keşfet"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "description" : "PIN korumalı bir akıllı kart"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "24 kelime için metal yedekleme",
+        "description" : "Ateşe ve suya dayanıklı koruma."
+      }
     },
     "help" : {
       "title" : "Yardım",
