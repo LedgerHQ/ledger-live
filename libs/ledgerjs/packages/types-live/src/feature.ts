@@ -323,7 +323,6 @@ export type Features = CurrencyFeatures & {
   newSendFlow: Feature_NewSendFlow;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
-  llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
