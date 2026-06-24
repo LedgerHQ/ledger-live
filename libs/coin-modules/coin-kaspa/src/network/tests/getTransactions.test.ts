@@ -169,5 +169,31 @@ describe("getTransactions function", () => {
 
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
     await expect(getTransactions(address)).rejects.toThrow("Network response was not ok.");
+    expect(global.fetch).toHaveBeenCalledTimes(4);
+  });
+
+  it("should retry a transient network failure and then succeed", async () => {
+    global.fetch = jest
+      .fn()
+      .mockRejectedValueOnce(new TypeError("fetch failed"))
+      .mockResolvedValueOnce({
+        ok: true,
+        headers: { get: jest.fn(() => "") },
+        json: async () => [{ transaction_id: "abc" }],
+      });
+
+    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
+    const result = await getTransactions(address);
+
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(result.transactions.length).toBe(1);
+  });
+
+  it("should not retry a 4xx response", async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 400 });
+
+    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
+    await expect(getTransactions(address)).rejects.toThrow("Network response was not ok.");
+    expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 });
