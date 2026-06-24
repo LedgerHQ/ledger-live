@@ -515,7 +515,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
       );
       await app.swapLiveApp.switchYouSendAndYouReceive();
       await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
-      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "-");
+      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "0");
     });
   });
 }
@@ -523,7 +523,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
 async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
   await app.swapLiveApp.expectSwapLiveApp();
   await app.swapLiveApp.checkAssetFrom(accountFrom, "");
-  await app.swapLiveApp.checkAssetTo(accountTo, "-");
+  await app.swapLiveApp.checkAssetTo(accountTo, "0");
 }
 
 async function openSwapFromPortfolioEntryPoint() {
