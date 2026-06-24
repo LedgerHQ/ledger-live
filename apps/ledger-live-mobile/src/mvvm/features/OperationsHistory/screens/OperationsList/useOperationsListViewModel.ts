@@ -1,12 +1,22 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
+import BigNumber from "bignumber.js";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { floorThresholdToCurrencyMinorUnit } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import { setHideSmallValueTokenOperations } from "~/actions/settings";
 import { useSelector, useDispatch } from "~/context/hooks";
+import { useLocale } from "~/context/Locale";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
+import {
+  counterValueCurrencySelector,
+  hideSmallValueTokenOperationsEnabledSelector,
+} from "~/reducers/settings";
 import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOperations";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useOperationsSections } from "./hooks/useOperationsSections";
+import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "LLM/features/OperationsHistory/constants";
 
 export type { OperationsListSection } from "./hooks/useOperationsSections";
 
@@ -18,6 +28,10 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const allAccounts = useSelector(shallowAccountsSelector);
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
+  const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
+  const hideSmallValueTokenOperations = useSelector(hideSmallValueTokenOperationsEnabledSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const { locale } = useLocale();
 
   const allowedIds = useMemo(
     () => (accountIds && accountIds.length > 0 ? new Set(accountIds) : null),
@@ -76,6 +90,23 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const isEmpty = completed && sections.length === 0;
 
   const hasPendingOperations = useMemo(() => sections.some(s => s.isPending), [sections]);
+  const dustFilterThreshold = useMemo(() => {
+    const thresholdMinorUnit =
+      floorThresholdToCurrencyMinorUnit(HISTORY_DUST_FILTER_THRESHOLD_USD, counterValueCurrency) ??
+      new BigNumber(0);
+
+    return formatCurrencyUnit(counterValueCurrency.units[0], thresholdMinorUnit, {
+      showCode: true,
+      locale,
+    });
+  }, [counterValueCurrency, locale]);
+
+  const openOptionsSheet = useCallback(() => setOptionsSheetOpen(true), []);
+  const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
+  const onToggleHideSmallValueTokenOperations = useCallback(() => {
+    dispatch(setHideSmallValueTokenOperations(!hideSmallValueTokenOperations));
+    closeOptionsSheet();
+  }, [dispatch, hideSmallValueTokenOperations, closeOptionsSheet]);
 
   return {
     accounts,
@@ -87,5 +118,11 @@ export function useOperationsListViewModel(accountIds?: string[]) {
     isEmpty,
     hasPendingOperations,
     onEndReached,
+    isOptionsSheetOpen,
+    openOptionsSheet,
+    closeOptionsSheet,
+    hideSmallValueTokenOperations,
+    dustFilterThreshold,
+    onToggleHideSmallValueTokenOperations,
   };
 }

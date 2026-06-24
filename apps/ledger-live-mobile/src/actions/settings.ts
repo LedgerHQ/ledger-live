@@ -39,6 +39,7 @@ import {
   SettingsSetDismissedDynamicCardsPayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
+  SettingsHideSmallValueTokenOperationsPayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
@@ -143,6 +144,10 @@ export const setHideEmptyTokenAccounts = createAction<SettingsHideEmptyTokenAcco
 export const setFilterTokenOperationsZeroAmount =
   createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
     SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT,
+  );
+export const setHideSmallValueTokenOperations =
+  createAction<SettingsHideSmallValueTokenOperationsPayload>(
+    SettingsActionTypes.SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS,
   );
 export const blacklistToken = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,

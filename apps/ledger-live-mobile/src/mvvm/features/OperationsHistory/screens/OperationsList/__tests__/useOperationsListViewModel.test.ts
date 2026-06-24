@@ -72,6 +72,28 @@ describe("useOperationsListViewModel", () => {
     });
   });
 
+  describe("dust filtering options", () => {
+    it("starts disabled and toggles the setting from the options sheet", () => {
+      const { result, store } = renderHook(() => useOperationsListViewModel());
+
+      expect(result.current.hideSmallValueTokenOperations).toBe(false);
+      expect(result.current.isOptionsSheetOpen).toBe(false);
+
+      act(() => {
+        result.current.openOptionsSheet();
+      });
+
+      expect(result.current.isOptionsSheetOpen).toBe(true);
+
+      act(() => {
+        result.current.onToggleHideSmallValueTokenOperations();
+      });
+
+      expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+      expect(result.current.isOptionsSheetOpen).toBe(false);
+    });
+  });
+
   describe("accountIds scoping", () => {
     it("filters root accounts to those whose tree intersects the given accountIds", () => {
       const ethereum = getCryptoCurrencyById("ethereum");
