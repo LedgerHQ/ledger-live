@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 36.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`bcca8ab`](https://github.com/LedgerHQ/ledger-live/commit/bcca8ab2beaf5ae0ebeec8fdae043e7b7c9e2b1a)]:
+  - @ledgerhq/coin-sui@0.38.0-next.1
+
 ## 36.3.0-next.0
 
 ### Minor Changes

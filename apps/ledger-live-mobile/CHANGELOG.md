@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.10.0-next.1
+
+### Minor Changes
+
+- [#18890](https://github.com/LedgerHQ/ledger-live/pull/18890) [`bcca8ab`](https://github.com/LedgerHQ/ledger-live/commit/bcca8ab2beaf5ae0ebeec8fdae043e7b7c9e2b1a) Thanks [@ishaba](https://github.com/ishaba)! - fix(coin-sui): swap/sell from Sui failing on-device with UNKNOWN_ERROR (0x6e05)
+
 ## 4.10.0-next.0
 
 ### Minor Changes
