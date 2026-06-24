@@ -19,18 +19,20 @@ type Params = {
 export function useAssetMarketData({ marketApiId, knownLedgerIds, knownMarketId }: Params) {
   const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
 
-  const { marketCurrencyData, marketId, ledgerIds, isLoading, isError } = useSharedAssetMarketData({
-    marketApiId,
-    knownLedgerIds,
-    counterCurrency,
-    product: "llm",
-    version: VersionNumber.appVersion,
-    knownMarketId,
-  });
+  const { marketCurrencyData, marketId, ledgerCurrencyFromDada, ledgerIds, isLoading, isError } =
+    useSharedAssetMarketData({
+      marketApiId,
+      knownLedgerIds,
+      counterCurrency,
+      product: "llm",
+      version: VersionNumber.appVersion,
+      knownMarketId,
+    });
 
   return {
     marketCurrency: marketCurrencyData,
     marketId,
+    ledgerCurrencyFromDada,
     counterCurrency,
     ledgerIds,
     isLoading,

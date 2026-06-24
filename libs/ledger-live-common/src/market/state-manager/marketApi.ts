@@ -8,8 +8,9 @@ import {
   MarketCurrencyRequestParams,
   MarketItemPerformer,
   MarketItemResponse,
+  Order,
 } from "../utils/types";
-import { getChartRangeSegment, getRange } from "../utils";
+import { getChartRangeSegment, getRange, getSortParam } from "../utils";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import {
   GlobalMarketData,
@@ -18,12 +19,16 @@ import {
   MarketChartApiResponseSchema,
   MarketDataTags,
   MarketPerformersQueryParams,
+  MarketSearchResponseSchema,
+  MarketSearchResult,
+  MarketSearchTermQueryParams,
   MarketTrendingCategory,
   TrendingCategoriesResponseSchema,
   TrendingCurrenciesResponseSchema,
   TrendingPerformersQueryParams,
 } from "./types";
 import { format, formatPerformer } from "../utils/currencyFormatter";
+import { pickBestMarketSearchMatch } from "../utils/pickBestMarketSearchMatch";
 
 const MAX_TRENDING_CATEGORIES = 5;
 
@@ -42,6 +47,7 @@ export const marketApi = createApi({
     MarketDataTags.GlobalData,
     MarketDataTags.TrendingCategories,
     MarketDataTags.TrendingPerformers,
+    MarketDataTags.SearchTerm,
   ],
   endpoints: build => ({
     getMarketPerformers: build.query<MarketItemPerformer[], MarketPerformersQueryParams>({
@@ -80,6 +86,42 @@ export const marketApi = createApi({
       providesTags: [MarketDataTags.CurrencyData],
       transformResponse: (response: MarketItemResponse[]) =>
         response?.[0] ? format(response[0]) : undefined,
+      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
+    }),
+    // Resolves a free-text term (ticker / name / slug) to a single best market match. Used to
+    // open a deeplinked asset whose id is unknown to the local registry (e.g. tokens).
+    searchMarketTerm: build.query<MarketSearchResult | undefined, MarketSearchTermQueryParams>({
+      query: ({ term, counterCurrency }) => ({
+        url: "/v3/markets",
+        params: {
+          to: counterCurrency,
+          filter: term,
+          // pageSize must be one of (1, 5, 20, 50); 5 leaves room to skip ledgerless junk rows.
+          pageSize: 5,
+          sort: getSortParam(Order.MarketCapDesc, "24h"),
+        },
+      }),
+      providesTags: [MarketDataTags.SearchTerm],
+      transformResponse: (
+        response: unknown,
+        _meta,
+        { term }: MarketSearchTermQueryParams,
+      ): MarketSearchResult | undefined => {
+        const result = MarketSearchResponseSchema.safeParse(response);
+
+        if (!result.success) {
+          log("market", "Invalid market search response schema:", {
+            errors: result.error.issues,
+          });
+          throw new Error(
+            `[Market API] Market search schema validation failed: ${result.error.issues
+              .map(e => `${e.path.join(".")}: ${e.message}`)
+              .join(", ")}`,
+          );
+        }
+
+        return pickBestMarketSearchMatch(result.data, term);
+      },
       keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
     }),
     getAssetChartData: build.query<MarketCoinDataChart, MarketAssetChartDataRequestParams>({
@@ -207,6 +249,7 @@ export const marketApi = createApi({
 export const {
   useGetMarketPerformersQuery,
   useGetCurrencyDataQuery,
+  useSearchMarketTermQuery,
   useGetAssetChartDataQuery,
   useGetGlobalMarketDataQuery,
   useGetTrendingCategoriesQuery,

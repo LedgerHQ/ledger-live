@@ -251,6 +251,20 @@ export function validateLargeMoverLedgerIds(ledgerIds: string | null): string | 
   return unique.length ? unique.join(",") : null;
 }
 
+/**
+ * Safely decodes a deeplink path segment. `URL.pathname` preserves percent-encoding, so a
+ * name-based market/asset deeplink arrives encoded (e.g. "World%20Liberty%20Financial"). Decode it
+ * before validation/sanitization so spaces and other characters survive — otherwise sanitizing the
+ * encoded form would strip the `%` and produce a wrong term (e.g. "world20liberty...").
+ */
+export function decodeDeeplinkSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
 export function validateMarketCurrencyId(currencyId: string | null): string | null {
   if (!currencyId || currencyId.trim() === "") {
     return null;

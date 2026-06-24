@@ -191,6 +191,85 @@ describe("marketApi", () => {
     });
   });
 
+  describe("[endpoint] searchMarketTerm", () => {
+    const { searchMarketTerm } = marketApi.endpoints;
+
+    it("queries /v3/markets with the filter term and a valid pageSize", async () => {
+      const seenUrls: string[] = [];
+      server.use(
+        http.get("*/v3/markets", ({ request }) => {
+          seenUrls.push(request.url);
+          return HttpResponse.json([
+            createMockMarketItemResponse({
+              id: "world-liberty-financial",
+              ticker: "wlfi",
+              ledgerIds: ["ethereum/erc20/world_liberty_financial"],
+            }),
+          ]);
+        }),
+      );
+
+      await store.dispatch(searchMarketTerm.initiate({ term: "wlfi", counterCurrency: "usd" }));
+
+      expect(seenUrls).toHaveLength(1);
+      const url = new URL(seenUrls[0]);
+      expect(url.searchParams.get("to")).toBe("usd");
+      expect(url.searchParams.get("filter")).toBe("wlfi");
+      expect(url.searchParams.get("pageSize")).toBe("5");
+    });
+
+    it("picks the ledger-backed exact ticker match and skips junk rows", async () => {
+      server.use(
+        http.get("*/v3/markets", () =>
+          HttpResponse.json([
+            createMockMarketItemResponse({ id: "junk", ticker: "wlfi", ledgerIds: [] }),
+            createMockMarketItemResponse({
+              id: "world-liberty-financial",
+              ticker: "wlfi",
+              ledgerIds: ["ethereum/erc20/world_liberty_financial"],
+            }),
+          ]),
+        ),
+      );
+
+      const result = await store.dispatch(
+        searchMarketTerm.initiate({ term: "wlfi", counterCurrency: "usd" }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data?.id).toBe("world-liberty-financial");
+      expect(result.data?.ledgerIds).toEqual(["ethereum/erc20/world_liberty_financial"]);
+    });
+
+    it("returns undefined when no ledger-backed result exists", async () => {
+      server.use(
+        http.get("*/v3/markets", () =>
+          HttpResponse.json([createMockMarketItemResponse({ id: "junk", ledgerIds: [] })]),
+        ),
+      );
+
+      const result = await store.dispatch(
+        searchMarketTerm.initiate({ term: "wlfi", counterCurrency: "usd" }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data).toBeUndefined();
+    });
+
+    it("returns isError when the response schema is invalid", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+      server.use(http.get("*/v3/markets", () => HttpResponse.json([{ id: 123 }])));
+
+      const result = await store.dispatch(
+        searchMarketTerm.initiate({ term: "wlfi", counterCurrency: "usd" }),
+      );
+
+      expect(result.isError).toBe(true);
+      expect(result.data).toBeUndefined();
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
   describe("[endpoint] getTrendingCategories", () => {
     const { getTrendingCategories } = marketApi.endpoints;
 

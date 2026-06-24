@@ -83,10 +83,18 @@ jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampC
 
 const mockIsCurrencyAvailable = jest.fn((_currencyId: string, _mode: "onRamp" | "offRamp") => true);
 
+// Captures the `<Navigate>` redirect target so the not-found redirect can be asserted without a
+// full routes tree (useLocation is mocked, so the real router location can't be read directly).
+const mockNavigate = jest.fn();
+
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useParams: jest.fn(),
   useLocation: jest.fn(() => ({ state: null, pathname: "/asset/bitcoin", search: "", hash: "" })),
+  Navigate: (props: { to: string; replace?: boolean }) => {
+    mockNavigate(props);
+    return null;
+  },
 }));
 
 jest.mock("~/renderer/actions/general", () => ({
@@ -141,7 +149,8 @@ const expectNoOwnedView = () => {
   expect(screen.queryByText(LABEL.TOTAL_BALANCE)).not.toBeInTheDocument();
   expect(screen.queryByTestId(TEST_ID.ADDRESS_LIST)).not.toBeInTheDocument();
 };
-const expectNotFound = () => expect(screen.getByText(LABEL.NOT_FOUND)).toBeVisible();
+const expectRedirectToMarket = () =>
+  expect(mockNavigate).toHaveBeenCalledWith(expect.objectContaining({ to: "/market", replace: true }));
 const expectActionBarHidden = () =>
   expect(screen.queryByTestId(TEST_ID.ACTION_BAR)).not.toBeInTheDocument();
 
@@ -873,17 +882,17 @@ describe("AssetDetail integration", () => {
     });
   });
 
-  describe("not-found state", () => {
-    it.each(NOT_FOUND_FAILURES)("renders not-found when $description", async ({ setup }) => {
+  describe("unresolved asset redirect", () => {
+    it.each(NOT_FOUND_FAILURES)("redirects to the Market list when $description", async ({ setup }) => {
       setup();
       setupRoute("unknown-asset", { list: [] });
 
       render(<AssetDetail />);
 
-      await waitFor(() => expectNotFound());
+      await waitFor(() => expectRedirectToMarket());
     });
 
-    it("does not render not-found while distribution is still loading", () => {
+    it("does not redirect while distribution is still loading", () => {
       setupDistributionRouteMocks(useParams, useDistribution, "unknown-asset", {
         list: [],
         isLoading: true,
@@ -893,7 +902,7 @@ describe("AssetDetail integration", () => {
 
       expectActionBarHidden();
       expect(screen.getByTestId("asset-detail-total-balance-skeleton")).toBeVisible();
-      expect(screen.queryByText(LABEL.NOT_FOUND)).not.toBeInTheDocument();
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 

@@ -9,6 +9,7 @@ import { ScreenName } from "~/const";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
 import { useAssetDetailViewModel } from "./useAssetDetailViewModel";
 import { AssetDetailView } from "./AssetDetailView";
+import { AssetDetailLoading } from "./components/AssetDetailLoading";
 import { AssetCoinOptionsTrailing } from "./components/CoinOptions/AssetCoinOptionsTrailing";
 
 type NavigationProps = NativeStackNavigationProp<
@@ -18,7 +19,7 @@ type NavigationProps = NativeStackNavigationProp<
 
 export default function AssetDetail() {
   const viewModel = useAssetDetailViewModel();
-  const { currency, coinOptions } = viewModel;
+  const { currency, coinOptions, mode } = viewModel;
   const navigation = useNavigation<NavigationProps>();
 
   useLayoutEffect(() => {
@@ -48,6 +49,10 @@ export default function AssetDetail() {
     };
     navigation.setOptions(opts);
   }, [navigation, currency, coinOptions.openCoinOptions, coinOptions.trailingAccessibilityLabel]);
+
+  if (mode === "loading") return <AssetDetailLoading />;
+
+  if (mode === "not-found") return null;
 
   return <AssetDetailView {...viewModel} />;
 }

@@ -1,9 +1,25 @@
 import {
+  decodeDeeplinkSegment,
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
   validateMarketCurrencyId,
   validateMarketListCategory,
 } from "../validation";
+
+describe("decodeDeeplinkSegment", () => {
+  it("decodes a percent-encoded name so spaces survive", () => {
+    expect(decodeDeeplinkSegment("World%20Liberty%20Financial")).toBe("World Liberty Financial");
+  });
+
+  it("leaves a plain segment unchanged", () => {
+    expect(decodeDeeplinkSegment("hedera-hashgraph")).toBe("hedera-hashgraph");
+  });
+
+  it("returns malformed input unchanged instead of throwing", () => {
+    expect(decodeDeeplinkSegment("%")).toBe("%");
+    expect(decodeDeeplinkSegment("100%off")).toBe("100%off");
+  });
+});
 
 describe("validateLargeMoverCurrencyIds", () => {
   it("should return null when currencyIds is null", () => {

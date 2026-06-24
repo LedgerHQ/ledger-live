@@ -1,5 +1,8 @@
 import { useMemo } from "react";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/api";
+import {
+  useGetCurrencyDataQuery,
+  useSearchMarketTermQuery,
+} from "@ledgerhq/live-common/market/state-manager/api";
 import { format } from "@ledgerhq/live-common/market/utils/currencyFormatter";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
 import type {
@@ -29,9 +32,29 @@ export function useAssetMarketData({
   knownMarketId,
   enabled = true,
 }: AssetMarketDataInput): AssetMarketDataResult {
+  // When the registry didn't resolve the term to a coin, `knownLedgerIds` is empty — the term may
+  // be a token ticker / name / slug (e.g. a `market/WLFI` deeplink). Resolve it through the market
+  // search so we recover a CoinGecko slug + ledgerIds, the same inputs coins already render with.
+  const shouldSearchTerm = enabled && !knownLedgerIds?.length && !!marketApiId;
+  const { data: searchMatch, isLoading: isSearching } = useSearchMarketTermQuery(
+    { term: marketApiId ?? "", counterCurrency },
+    { skip: !shouldSearchTerm },
+  );
+
+  const resolvedMarketApiId = knownLedgerIds?.length ? marketApiId : (searchMatch?.id ?? marketApiId);
+  const resolvedKnownLedgerIds = useMemo<readonly string[] | undefined>(
+    () => (knownLedgerIds?.length ? knownLedgerIds : (searchMatch?.ledgerIds ?? knownLedgerIds)),
+    [knownLedgerIds, searchMatch?.ledgerIds],
+  );
+
   const { args: currencyQueryArgs, skip: skipMarketQueryBase } = useMemo(
-    () => buildMarketCurrencyQueryArgs({ marketApiId, knownLedgerIds, counterCurrency }),
-    [marketApiId, knownLedgerIds, counterCurrency],
+    () =>
+      buildMarketCurrencyQueryArgs({
+        marketApiId: resolvedMarketApiId,
+        knownLedgerIds: resolvedKnownLedgerIds,
+        counterCurrency,
+      }),
+    [resolvedMarketApiId, resolvedKnownLedgerIds, counterCurrency],
   );
 
   const skipMarketQuery = !enabled || skipMarketQueryBase;
@@ -46,8 +69,8 @@ export function useAssetMarketData({
   });
 
   const effectiveLedgerIds = useMemo<readonly string[] | undefined>(
-    () => knownLedgerIds ?? marketFromHook?.ledgerIds,
-    [knownLedgerIds, marketFromHook?.ledgerIds],
+    () => resolvedKnownLedgerIds ?? marketFromHook?.ledgerIds,
+    [resolvedKnownLedgerIds, marketFromHook?.ledgerIds],
   );
 
   // Shared bulk DADA cache: same query args as the Assets table / Global Search so the
@@ -109,15 +132,19 @@ export function useAssetMarketData({
   const ledgerIds = useMemo<string[]>(() => {
     if (marketFromHook?.ledgerIds?.length) return marketFromHook.ledgerIds;
     if (marketCurrencyData?.ledgerIds?.length) return marketCurrencyData.ledgerIds;
-    return knownLedgerIds ? [...knownLedgerIds] : [];
-  }, [marketFromHook?.ledgerIds, marketCurrencyData?.ledgerIds, knownLedgerIds]);
+    return resolvedKnownLedgerIds ? [...resolvedKnownLedgerIds] : [];
+  }, [marketFromHook?.ledgerIds, marketCurrencyData?.ledgerIds, resolvedKnownLedgerIds]);
 
   return {
     marketCurrencyData,
-    marketId: marketFromHook?.id ?? resolveCoingeckoIdForIdsQuery(knownMarketId),
+    marketId: marketFromHook?.id ?? searchMatch?.id ?? resolveCoingeckoIdForIdsQuery(knownMarketId),
     ledgerCurrencyFromDada,
     ledgerIds,
-    isLoading: isLoadingMarket || isLoadingDada || (!!dadaMarket && rateStatus === "loading"),
+    isLoading:
+      isSearching ||
+      isLoadingMarket ||
+      isLoadingDada ||
+      (!!dadaMarket && rateStatus === "loading"),
     isError: isErrorMarket || isErrorDada || (!!dadaMarket && rateStatus === "error"),
   };
 }
