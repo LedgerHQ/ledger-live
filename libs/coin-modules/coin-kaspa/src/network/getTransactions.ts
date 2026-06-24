@@ -20,18 +20,15 @@ const isRetriableError = (error: unknown): boolean => {
 export const getTransactions = async (
   address: string,
   after: number = 1,
-): Promise<{ transactions: ApiResponseTransaction[]; nextPageAfter: string | null }> =>
-  retry(
-    async () => {
-      const url = new URL(
-        `/addresses/${encodeURIComponent(address)}/full-transactions-page`,
-        API_BASE,
-      );
-      url.searchParams.set("resolve_previous_outpoints", "light");
-      url.searchParams.set("limit", "500");
-      url.searchParams.set("before", "0");
-      url.searchParams.set("after", String(after));
+): Promise<{ transactions: ApiResponseTransaction[]; nextPageAfter: string | null }> => {
+  const url = new URL(`/addresses/${encodeURIComponent(address)}/full-transactions-page`, API_BASE);
+  url.searchParams.set("resolve_previous_outpoints", "light");
+  url.searchParams.set("limit", "500");
+  url.searchParams.set("before", "0");
+  url.searchParams.set("after", String(after));
 
+  return retry(
+    async () => {
       const response = await fetch(url, {
         headers: {
           Accept: "application/json",
@@ -51,3 +48,4 @@ export const getTransactions = async (
     },
     { maxRetry: 3, context: "kaspa-getTransactions", retryCondition: isRetriableError },
   );
+};
