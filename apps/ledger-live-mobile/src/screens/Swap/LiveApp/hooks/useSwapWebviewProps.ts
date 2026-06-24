@@ -26,6 +26,7 @@ import { DefaultAccountSwapParamList } from "../../types";
 type UseSwapWebviewPropsParams = {
   manifest: LiveAppManifest;
   params: DefaultAccountSwapParamList | null;
+  resetWebview: () => void;
 };
 
 /**
@@ -33,19 +34,11 @@ type UseSwapWebviewPropsParams = {
  * - Custom handlers (swap + deeplink)
  * - Webview inputs (theme, language, env vars, swap params, etc.)
  */
-export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsParams) {
+export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapWebviewPropsParams) {
   // Swap duplicated the Custom Handlers due to different needs compared to the rest of the platform apps,
   // to avoid complexifying the logic in the shared custom handlers.
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
-  const customSwapHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
-  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
-  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
-    return {
-      ...customSwapHandlers,
-      ...customDeeplinkHandlers,
-    };
-  }, [customSwapHandlers, customDeeplinkHandlers]);
 
   const { theme } = useTheme();
   const { language } = useSettings();
@@ -115,6 +108,15 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
       swapParams,
     ],
   );
+
+  const customSwapHandlers = useSwapCustomHandlers(manifest, accounts, dispatch, resetWebview);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...customSwapHandlers,
+      ...customDeeplinkHandlers,
+    };
+  }, [customSwapHandlers, customDeeplinkHandlers]);
 
   return {
     customHandlers,

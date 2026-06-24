@@ -18,7 +18,6 @@ import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
-import { isGoingToSwapHistory } from "~/screens/Swap/navigation/navigateBackToSwapTab";
 
 const TRACKING_SOURCES = {
   Accounts: "Account",
@@ -115,14 +114,6 @@ export default function SwapNavigator(
         options={{
           headerTitle: t("transfer.swap.title"),
           headerLeft: NullHeader,
-        }}
-        listeners={{
-          beforeRemove: ({ data }) => {
-            if (isGoingToSwapHistory(data.action.payload)) {
-              return;
-            }
-            notifyFlowCompleted("swap");
-          },
         }}
       />
 

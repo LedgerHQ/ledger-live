@@ -17,6 +17,13 @@ type NavigationWithState = {
   goBack(): void;
 };
 
+type BeforeRemoveEvent = {
+  preventDefault(): void;
+  data: {
+    action: unknown;
+  };
+};
+
 export function hasSwapTabRoute(state: NavigationStateWithRouteNames | undefined) {
   const routeNames = state?.routeNames;
   return Array.isArray(routeNames) && routeNames.includes(ScreenName.SwapTab);
@@ -64,4 +71,36 @@ export function isGoingToSwapHistory(payload: unknown) {
   }
 
   return routes.some(route => route?.name === ScreenName.SwapHistory);
+}
+
+/**
+ * Handles the `beforeRemove` event of the Swap success (PendingOperation)
+ * screen. Fires the flow completion notification unless the user is explicitly
+ * navigating to Swap history or the close button already fired it.
+ *
+ * Navigation interception is no longer needed here: `navigateToSwapPendingOperation`
+ * now uses `StackActions.replace` so the stack is always a clean
+ * [SwapPendingOperation], and the default back action bubbles naturally to
+ * BaseNavigator — which pops SwapSubScreensNavigator and returns to SwapTab.
+ * See LIVE-28726.
+ */
+export function handlePendingOperationBeforeRemove({
+  event,
+  allowRemovalRef,
+  onFlowCompleted,
+}: {
+  event: BeforeRemoveEvent;
+  allowRemovalRef: { current: boolean };
+  onFlowCompleted: () => void;
+}) {
+  const actionPayload =
+    event.data.action && typeof event.data.action === "object" && "payload" in event.data.action
+      ? (event.data.action as { payload?: unknown }).payload
+      : undefined;
+
+  if (allowRemovalRef.current || isGoingToSwapHistory(actionPayload)) {
+    return;
+  }
+
+  onFlowCompleted();
 }
