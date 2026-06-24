@@ -25,7 +25,6 @@ type Props = {
 const headerShownIds = [
   "protect-local",
   "protect-local-dev",
-  "protect-simu",
   "protect-staging",
   "protect-staging-v2",
 ];

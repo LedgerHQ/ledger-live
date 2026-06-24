@@ -31,7 +31,6 @@ export const Wrapper = styled(Box).attrs(() => ({
 const recoverIdsShowTopBar = [
   "protect-local",
   "protect-local-dev",
-  "protect-simu",
   "protect-staging",
   "protect-staging-v2",
 ];

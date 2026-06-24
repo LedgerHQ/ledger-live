@@ -184,7 +184,7 @@ describe("useFirstStepSyncOnboardingViewModel", () => {
     const props = defaultProps();
 
     const { result } = renderHook(() => useFirstStepSyncOnboardingViewModel(props), {
-      overrideInitialState: withProtectServicesMobile(true, { protectId: "protect" }),
+      overrideInitialState: withProtectServicesMobile(true, { protectId: "protect-prod" }),
     });
 
     act(() => {
@@ -198,7 +198,7 @@ describe("useFirstStepSyncOnboardingViewModel", () => {
         params: expect.objectContaining({
           fromOnboarding: true,
           device,
-          platform: "protect",
+          platform: "protect-prod",
           redirectTo: "restore",
           date: expect.any(String),
         }),

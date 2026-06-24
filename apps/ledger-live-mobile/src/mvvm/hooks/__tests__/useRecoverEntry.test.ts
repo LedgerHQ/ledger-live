@@ -38,7 +38,7 @@ describe("useRecoverEntry", () => {
     const { result } = renderHook(() => useRecoverEntry());
 
     // The test environment provides the protectServicesMobile feature flag default.
-    expect(result.current.protectId).toBe("protect-simu");
+    expect(result.current.protectId).toBe("protect-prod");
   });
 
   it("falls back to DEFAULT_PROTECT_ID when the feature flag has no protectId param", () => {
@@ -57,7 +57,7 @@ describe("useRecoverEntry", () => {
     act(() => result.current.openRecover());
 
     expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Recover, {
-      platform: "protect-simu",
+      platform: "protect-prod",
       device: undefined,
     });
   });
@@ -70,7 +70,7 @@ describe("useRecoverEntry", () => {
     act(() => result.current.openRecover());
 
     expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Recover, {
-      platform: "protect-simu",
+      platform: "protect-prod",
       device: mockDevice,
     });
   });

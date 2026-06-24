@@ -8,10 +8,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
-import {
-  PROTECT_ID,
-  withRecoverState,
-} from "LLM/features/Portfolio/utils/recoverTestHelpers";
+import { PROTECT_ID, withRecoverState } from "LLM/features/Portfolio/utils/recoverTestHelpers";
 import { ShieldCheckNotificationIcon } from "LLM/features/BackupHub/components/ShieldCheckNotificationIcon";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 import { useQuickActionsRowViewModel } from "../useQuickActionsRowViewModel";
@@ -100,7 +97,7 @@ describe("useQuickActionsRowViewModel", () => {
       act(() => recoverAction.onPress());
 
       expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Recover, {
-        platform: "protect-simu",
+        platform: "protect-prod",
         device: undefined,
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
@@ -205,9 +202,7 @@ describe("useQuickActionsRowViewModel", () => {
 
       it("should open the Backup Hub navigator and track the event on press", () => {
         const { result } = renderHook(() => useQuickActionsRowViewModel(), {
-          overrideInitialState: withBackupHubOn(
-            LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
-          ),
+          overrideInitialState: withBackupHubOn(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION),
         });
         const recoverAction = result.current.actions.find(a => a.id === "recover")!;
 
