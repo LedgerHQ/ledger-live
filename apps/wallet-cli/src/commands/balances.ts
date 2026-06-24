@@ -10,6 +10,7 @@ import {
   resolveAccountDescriptor,
   resolveOutputFormat,
 } from "./inputs";
+import { trackBalanceViewed } from "./accounts-analytics";
 
 export default defineCommand({
   name: "balances",
@@ -37,6 +38,7 @@ export default defineCommand({
         "Balances fetched",
         () => wallet.getAccountBalances(descriptor),
       );
+      trackBalanceViewed({ network: ctx.network });
       await out.balances(balances);
     });
   },

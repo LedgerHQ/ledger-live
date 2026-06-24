@@ -1,7 +1,10 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../../wallet";
-import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
+import {
+  WALLET_CLI_DMK_DEVICE_ID,
+  getWalletCliDeviceModelId,
+} from "../../device/register-dmk-transport";
 import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
 import {
   getManagerAppNameForCurrencyId,
@@ -14,6 +17,7 @@ import { createCommandOutput } from "../../output";
 import { Session } from "../../session/session-store";
 import { runObservable } from "../run-observable";
 import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "../inputs";
+import { trackDiscoveryStarted, trackDiscoveryCompleted } from "../accounts-analytics";
 
 type DiscoverAccountsParams = {
   wallet: WalletAdapter;
@@ -34,6 +38,10 @@ async function discoverAccounts({
   let count = 0;
   let added = 0;
 
+  const networks = [`${network.name}:${network.env}`];
+  const device = await getWalletCliDeviceModelId();
+  trackDiscoveryStarted({ networks, device });
+
   await runObservable({
     source$: wallet.discoverAccounts(network, WALLET_CLI_DMK_DEVICE_ID),
     onNext: raw => {
@@ -51,6 +59,7 @@ async function discoverAccounts({
 
   scanSpin?.success(`Found ${count} account${count === 1 ? "" : "s"}`);
   out.flushDiscovery();
+  trackDiscoveryCompleted({ networks, accountsCount: count, device });
   return added;
 }
 
