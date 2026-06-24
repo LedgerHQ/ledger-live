@@ -48,7 +48,6 @@ export function computeAllTimeValueChangeFromFirstReceive(
 
   return {
     value,
-    percentage:
-      value === 0 ? 0 : (meaningfulPercentage(value, firstReceiveCountervalue) ?? null),
+    percentage: value === 0 ? 0 : (meaningfulPercentage(value, firstReceiveCountervalue) ?? null),
   };
 }

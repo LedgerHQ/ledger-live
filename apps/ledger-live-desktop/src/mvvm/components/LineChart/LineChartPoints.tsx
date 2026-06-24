@@ -19,7 +19,7 @@ export function LineChartPoints({ points, formatValue }: LineChartPointsProps) {
           key={`${marker.index}-${marker.value}-${marker.labelPosition ?? "top"}`}
           dataX={marker.index}
           dataY={marker.value}
-          label={marker.hideLabel ? undefined : marker.label ?? formatValue(marker.value)}
+          label={marker.hideLabel ? undefined : (marker.label ?? formatValue(marker.value))}
           labelPosition={marker.labelPosition ?? "top"}
           hidePoint={marker.hidePoint}
           size={LINE_CHART_POINT_SIZE}

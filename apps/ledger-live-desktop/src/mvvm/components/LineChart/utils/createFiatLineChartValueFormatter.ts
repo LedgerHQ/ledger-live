@@ -6,10 +6,12 @@ import type { LineChartValueFormatter } from "../types";
 export function createFiatLineChartValueFormatter(
   fiatUnit: Unit,
   locale: string,
+  discreet = false,
 ): LineChartValueFormatter {
   return value =>
     formatPrice(fiatUnit, new BigNumber(value).times(10 ** fiatUnit.magnitude), {
       showCode: true,
       locale,
+      discreet,
     });
 }
