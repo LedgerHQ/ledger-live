@@ -566,10 +566,6 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   );
 }
 
-// Swap initiation (provider quote + partner signature + Exchange-app APDU handshake) can take well
-// over the default ~30s before the device reaches "Review transaction", especially on the slower
-// nanoSP under heavy parallel Speculos load. Swap flows pass this larger budget to avoid flaky
-// "Review transaction not found" timeouts. See QAA-1322.
 export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
   if (!isTouchDevice()) {
     await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
