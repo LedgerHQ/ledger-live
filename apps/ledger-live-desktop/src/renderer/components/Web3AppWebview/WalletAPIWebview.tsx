@@ -427,17 +427,20 @@ function useWebView(
       webview.addEventListener("ipc-message", handleMessage);
       webview.addEventListener("dom-ready", handleDomReady);
 
-      // Recover from a missed "did-finish-load": on a cold start the main thread is busy and
-      // this passive effect can attach after the webview already finished loading, so the
-      // event never reaches us and the loader stays up forever. If the load is already done,
-      // mark the widget loaded now. isLoading() throws before dom-ready (the webview has no
-      // WebContents yet) — that just means it is still loading, so the listener will catch it.
+      // Recover from missed events: on a cold start the main thread is busy and this passive
+      // effect can attach after the webview already finished loading, so neither "did-finish-load"
+      // nor "dom-ready" ever reaches us — the loader stays up forever and the manifest-domain
+      // guard (installed via handleDomReady) is never wired. If the load is already done, replay
+      // both: dom-ready always precedes did-finish-load, so a settled load implies both fired.
+      // isLoading() throws before dom-ready (the webview has no WebContents yet) — that just means
+      // it is still loading, so the listeners will catch the events.
       try {
         if (!webview.isLoading()) {
+          handleDomReady();
           onLoad();
         }
       } catch {
-        // webview not attached/dom-ready yet — nothing to recover, the listener will fire.
+        // webview not attached/dom-ready yet — nothing to recover, the listeners will fire.
       }
     }
 
