@@ -78,6 +78,7 @@ describe("useOperationsListViewModel", () => {
 
       expect(result.current.hideSmallValueTokenOperations).toBe(false);
       expect(result.current.isOptionsSheetOpen).toBe(false);
+      expect(result.current.dustFilterOption.title).toBe("Hide dust transactions");
 
       act(() => {
         result.current.openOptionsSheet();
@@ -91,6 +92,7 @@ describe("useOperationsListViewModel", () => {
 
       expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
       expect(result.current.isOptionsSheetOpen).toBe(false);
+      expect(result.current.dustFilterOption.title).toBe("Show dust transactions");
     });
   });
 
