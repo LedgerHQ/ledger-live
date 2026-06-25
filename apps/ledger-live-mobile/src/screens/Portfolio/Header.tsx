@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import PortfolioClock from "./PortfolioClock";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "~/context/Locale";
@@ -113,7 +114,8 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         </Text>
         {!hidePortfolio && !isNewPortfolioEnabled && <DiscreetModeButton size={20} />}
       </Flex>
-      <Flex flexDirection="row">
+      <Flex flexDirection="row" alignItems="center" overflow="visible">
+        <PortfolioClock />
         <Flex mr={7}>
           <Touchable
             onPress={onSideImageCardButtonPress}
