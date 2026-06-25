@@ -97,7 +97,7 @@ function withDustFeatureEnabled(state: State): State {
       ...state.featureFlags,
       resolved: {
         ...state.featureFlags.resolved,
-        llHideSmallValueTokenOperations: {
+        lwHideSmallValueTokenOperations: {
           enabled: true,
           params: { enabledMobile: true, enabledDesktop: false },
         },
