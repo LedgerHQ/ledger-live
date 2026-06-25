@@ -10,31 +10,24 @@ import {
   ListItemTitle,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import { useTranslation } from "~/context/Locale";
+import type { OperationsHistoryDustFilterOption } from "../useOperationsListViewModel";
 
 type Props = Readonly<{
   isOpen: boolean;
-  isFilterEnabled: boolean;
-  threshold: string;
+  dustFilterOption: OperationsHistoryDustFilterOption;
   onClose: () => void;
   onToggle: () => void;
 }>;
 
 export function OperationsHistoryOptionsSheet({
   isOpen,
-  isFilterEnabled,
-  threshold,
+  dustFilterOption,
   onClose,
   onToggle,
 }: Props) {
-  const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
-  const Icon = isFilterEnabled ? Eye : EyeCross;
-  const title = isFilterEnabled
-    ? t("operationsList.options.showDustTransactions")
-    : t("operationsList.options.hideDustTransactions");
+  const { Icon, title, description } = dustFilterOption;
 
   return (
     <QueuedDrawerBottomSheet
@@ -50,9 +43,7 @@ export function OperationsHistoryOptionsSheet({
             <Spot appearance="icon" icon={Icon} />
             <ListItemContent>
               <ListItemTitle>{title}</ListItemTitle>
-              <ListItemDescription>
-                {t("operationsList.options.dustTransactionsDescription", { threshold })}
-              </ListItemDescription>
+              <ListItemDescription>{description}</ListItemDescription>
             </ListItemContent>
           </ListItemLeading>
         </ListItem>

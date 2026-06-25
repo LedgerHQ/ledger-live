@@ -3,9 +3,10 @@ import BigNumber from "bignumber.js";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { floorThresholdToCurrencyMinorUnit } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { setHideSmallValueTokenOperations } from "~/actions/settings";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useLocale } from "~/context/Locale";
+import { useLocale, useTranslation } from "~/context/Locale";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import {
@@ -20,6 +21,12 @@ import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "LLM/features/OperationsHistor
 
 export type { OperationsListSection } from "./hooks/useOperationsSections";
 
+export type OperationsHistoryDustFilterOption = Readonly<{
+  Icon: typeof Eye;
+  title: string;
+  description: string;
+}>;
+
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
 
@@ -32,6 +39,7 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const hideSmallValueTokenOperations = useSelector(hideSmallValueTokenOperationsEnabledSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { locale } = useLocale();
+  const { t } = useTranslation();
 
   const allowedIds = useMemo(
     () => (accountIds && accountIds.length > 0 ? new Set(accountIds) : null),
@@ -100,6 +108,20 @@ export function useOperationsListViewModel(accountIds?: string[]) {
       locale,
     });
   }, [counterValueCurrency, locale]);
+  const dustFilterOption: OperationsHistoryDustFilterOption = useMemo(() => {
+    const Icon = hideSmallValueTokenOperations ? Eye : EyeCross;
+    const title = hideSmallValueTokenOperations
+      ? t("operationsList.options.showDustTransactions")
+      : t("operationsList.options.hideDustTransactions");
+
+    return {
+      Icon,
+      title,
+      description: t("operationsList.options.dustTransactionsDescription", {
+        threshold: dustFilterThreshold,
+      }),
+    };
+  }, [dustFilterThreshold, hideSmallValueTokenOperations, t]);
 
   const openOptionsSheet = useCallback(() => setOptionsSheetOpen(true), []);
   const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
@@ -122,7 +144,7 @@ export function useOperationsListViewModel(accountIds?: string[]) {
     openOptionsSheet,
     closeOptionsSheet,
     hideSmallValueTokenOperations,
-    dustFilterThreshold,
+    dustFilterOption,
     onToggleHideSmallValueTokenOperations,
   };
 }
