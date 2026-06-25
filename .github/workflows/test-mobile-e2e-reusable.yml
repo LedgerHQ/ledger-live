@@ -1337,3 +1337,5 @@ jobs:
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}
+
+# test-fixture: TC4 intentional change
