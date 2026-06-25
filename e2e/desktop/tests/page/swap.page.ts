@@ -33,6 +33,7 @@ export class SwapPage extends WebViewAppPage {
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
   private toAccountCoinSelector = "to-account-coin-selector";
+  private toAccountAccountNameTag = "to-account-account-name-tag";
   private quoteCardProviderName = "compact-quote-card-provider-";
   private specificQuoteCardProviderName = (provider: string) =>
     `[data-testid^='compact-quote-card-provider-name-${provider.toLowerCase()}']`;
@@ -473,6 +474,12 @@ export class SwapPage extends WebViewAppPage {
   async checkAssetToContains(expected: string) {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(this.toAccountCoinSelector)).toContainText(expected);
+  }
+
+  @step("Check currency to swap to account name contains $0")
+  async checkAssetToAccountNameContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.toAccountAccountNameTag)).toContainText(expected);
   }
 
   @step("Verify swap amount error message match: $0")
