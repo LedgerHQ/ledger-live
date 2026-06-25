@@ -1,9 +1,4 @@
-import {
-  buildBeforeSend,
-  getDatadogBuildConfig,
-  rewriteAsarUrls,
-  toDatadogStackFrames,
-} from "./config";
+import { buildBeforeSend, getDatadogBuildConfig, rewriteAsarUrls } from "./config";
 
 jest.mock("~/sentry/anonymizer", () => ({
   __esModule: true,
@@ -207,52 +202,6 @@ describe("datadog config", () => {
       const input =
         "    at IpcMainImpl.emit (/Applications/Ledger Wallet.app/Contents/Resources/app.asar/.webpack/main.bundle.js:1:2)";
       expect(rewriteAsarUrls(input)).toContain("at IpcMainImpl.emit (https://app.asar/");
-    });
-  });
-
-  describe("toDatadogStackFrames", () => {
-    it("converts a named parenthesized frame to the @ shape", () => {
-      const input =
-        "    at IpcMainImpl.<anonymous> (https://app.asar/.webpack/main.bundle.js:82:104341)";
-      expect(toDatadogStackFrames(input)).toBe(
-        "    at IpcMainImpl.<anonymous> @ https://app.asar/.webpack/main.bundle.js:82:104341",
-      );
-    });
-
-    it("converts a bare anonymous frame to the @ shape with <anonymous>", () => {
-      const input = "    at node:diagnostics_channel:374:23";
-      expect(toDatadogStackFrames(input)).toBe(
-        "    at <anonymous> @ node:diagnostics_channel:374:23",
-      );
-    });
-
-    it("keeps the error header and other non-frame lines untouched", () => {
-      const input = "Error: CrashTestMain\n    at run (node:diagnostics_channel:168:14)";
-      expect(toDatadogStackFrames(input)).toBe(
-        "Error: CrashTestMain\n    at run @ node:diagnostics_channel:168:14",
-      );
-    });
-
-    it("is idempotent: leaves frames already in @ shape alone", () => {
-      const input = "    at E0 @ https://app.asar/.webpack/renderer.bundle.js:8166:265";
-      expect(toDatadogStackFrames(input)).toBe(input);
-    });
-
-    it("handles a full main-process stack", () => {
-      const input = [
-        "Error: CrashTestMain",
-        "    at IpcMainImpl.<anonymous> (https://app.asar/.webpack/main.bundle.js:82:104341)",
-        "    at run (node:diagnostics_channel:168:14)",
-        "    at node:diagnostics_channel:374:23",
-      ].join("\n");
-      expect(toDatadogStackFrames(input)).toBe(
-        [
-          "Error: CrashTestMain",
-          "    at IpcMainImpl.<anonymous> @ https://app.asar/.webpack/main.bundle.js:82:104341",
-          "    at run @ node:diagnostics_channel:168:14",
-          "    at <anonymous> @ node:diagnostics_channel:374:23",
-        ].join("\n"),
-      );
     });
   });
 });
