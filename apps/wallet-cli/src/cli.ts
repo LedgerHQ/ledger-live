@@ -10,6 +10,12 @@ import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { disposeAnalytics, startAnalytics } from "./analytics/segment";
+import {
+  parseCommand,
+  trackCommandCompleted,
+  trackCommandFailed,
+  trackCommandInvoked,
+} from "./analytics/lifecycle-analytics";
 import { getCliProcessExitCode } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 import AccountGroup from "./commands/account/index";
@@ -53,16 +59,31 @@ function normalizeNegatedFlags(argv: string[]): string[] {
 
 if (import.meta.main) {
   let exitCode = 0;
+  let failure: unknown;
+  const argv = normalizeNegatedFlags(process.argv.slice(2));
+  const command = parseCommand(argv);
+  const startedAt = Date.now();
   try {
     startAnalytics();
-    exitCode = await runMain();
+    if (command) {
+      trackCommandInvoked(command, argv);
+    }
+    exitCode = await runMain(argv);
   } catch (e) {
-    const code = getCliProcessExitCode(e);
-    if (code === null) throw e;
-    exitCode = code;
+    failure = e;
+    exitCode = getCliProcessExitCode(e) ?? 1;
   } finally {
+    if (command) {
+      const durationMs = Date.now() - startedAt;
+      if (exitCode === 0) {
+        trackCommandCompleted(command, durationMs);
+      } else {
+        trackCommandFailed(command, durationMs, failure);
+      }
+    }
     await disposeWalletCliDmkTransportFully();
     await disposeAnalytics();
   }
+  if (failure && getCliProcessExitCode(failure) === null) throw failure;
   process.exitCode = exitCode;
 }
