@@ -96,6 +96,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
+    const ptxBorrowLiveAppFlag = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
     const llmSyncOnboardingIncr1Flag = analyticsFeatureFlagMethod("llmSyncOnboardingIncr1");
     const lwmAnalyticsConsentOnboardingFlag = analyticsFeatureFlagMethod(
       "lwmAnalyticsConsentOnboarding",
@@ -113,6 +114,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+    const borrowFeature = Boolean(ptxBorrowLiveAppFlag?.enabled);
     const llmSyncOnboardingIncr1 = Boolean(llmSyncOnboardingIncr1Flag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
@@ -149,6 +151,7 @@ const getFeatureFlagProperties = () => {
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
       ptxSwapLiveAppKycWarningEnabled,
+      borrowFeature,
       llmSyncOnboardingIncr1,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
