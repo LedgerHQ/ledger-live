@@ -41,8 +41,8 @@ const setLastOnboardedDevice = (payload: Device | null) => ({
 const addDevice = (payload: Device) => ({ type: "ADD_DEVICE", payload });
 
 describe("knownDevices reducer", () => {
-  it("normalizes known devices as web-hid", () => {
-    expect(WEB_HID_TRANSPORT_IDENTIFIER).toBe("web-hid");
+  it("uses the DMK WebHID transport identifier for known devices", () => {
+    expect(WEB_HID_TRANSPORT_IDENTIFIER).toBe("WEB-HID");
   });
 
   it("starts empty", () => {

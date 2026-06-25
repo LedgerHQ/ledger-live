@@ -6,11 +6,7 @@ import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "./index";
 import type { SettingsState } from "./settings";
 
-/**
- * Transport identifier used by the DMK WebHID transport (`webHidIdentifier`).
- * Desktop only connects over WebHID, so all known devices use this transport.
- */
-export const WEB_HID_TRANSPORT_IDENTIFIER: KnownDevice["transport"] = "web-hid";
+export const WEB_HID_TRANSPORT_IDENTIFIER: KnownDevice["transport"] = "WEB-HID";
 
 export type KnownDevicesState = {
   knownDevices: KnownDevice[];

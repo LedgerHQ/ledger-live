@@ -1,5 +1,4 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Observable, of } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -18,8 +17,6 @@ import {
   type UnknownDiscoveryError,
 } from "./types";
 import { filterKnownDevicesByAcceptedModels } from "./utils";
-
-const LOG_TYPE = "connectDeviceUseCase";
 
 export type ConnectDeviceUseCaseInput<
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
@@ -69,7 +66,6 @@ export function connectDeviceUseCase<
      * This is purely defensive programming: we don't want the outer observable to error.
      */
     catchError(error => {
-      log(LOG_TYPE, "unexpected error escaped the connect device state machine", { error });
       return of<ConnectDeviceUIState<TDiscoveryError | UnknownDiscoveryError, TConnectionError>>({
         type: ConnectDeviceUIStateTypes.UnknownError,
         error,
