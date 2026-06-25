@@ -10060,6 +10060,9 @@
     }
   },
   "aleo": {
+    "accountActions": {
+      "publicToPrivate": "Self transfer"
+    },
     "addAccount": {
       "stepViewKeyWarning": {
         "title": "Set up Aleo private balance",
