@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, type ComponentType } from "react";
 import BigNumber from "bignumber.js";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { floorThresholdToCurrencyMinorUnit } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import type { IconProps } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { setHideSmallValueTokenOperations } from "~/actions/settings";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -22,7 +23,7 @@ import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "LLM/features/OperationsHistor
 export type { OperationsListSection } from "./hooks/useOperationsSections";
 
 export type OperationsHistoryDustFilterOption = Readonly<{
-  Icon: typeof Eye;
+  Icon: ComponentType<IconProps>;
   title: string;
   description: string;
 }>;
