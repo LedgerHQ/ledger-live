@@ -105,6 +105,7 @@ export * from "./lldHideSmallValueTokenOperations";
 export * from "./lldMemoTag";
 export * from "./lldTezosStaking";
 export * from "./lldWebviewManifestDomainCheck";
+export * from "./llmHideSmallValueTokenOperations";
 export * from "./lwdDeeplinkOpenHardening";
 export * from "./lwmDeeplinkOpenHardening";
 export * from "./llmMemoTag";

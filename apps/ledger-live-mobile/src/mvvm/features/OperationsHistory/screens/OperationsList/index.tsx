@@ -43,6 +43,7 @@ export default function OperationsList({ route, navigation }: Props) {
     isOptionsSheetOpen,
     openOptionsSheet,
     closeOptionsSheet,
+    isDustFilterFeatureEnabled,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,
   } = useOperationsListViewModel(accountIds);
@@ -57,15 +58,17 @@ export default function OperationsList({ route, navigation }: Props) {
   useLayoutEffect(() => {
     const opts: Partial<LumenNativeStackNavigationOptions> = {
       lumenNavBar: {
-        renderTrailing,
-        navBarTrailingProps: {
-          style: { marginRight: 16 },
-        },
+        renderTrailing: isDustFilterFeatureEnabled ? renderTrailing : undefined,
+        navBarTrailingProps: isDustFilterFeatureEnabled
+          ? {
+              style: { marginRight: 16 },
+            }
+          : undefined,
       },
     };
 
     navigation.setOptions(opts);
-  }, [navigation, renderTrailing]);
+  }, [isDustFilterFeatureEnabled, navigation, renderTrailing]);
 
   const listContentStyle = useMemo(
     () => ({
@@ -138,12 +141,14 @@ export default function OperationsList({ route, navigation }: Props) {
         ListEmptyComponent={ListEmptyComponent}
       />
       {!isEmpty && <BottomFadeGradient />}
-      <OperationsHistoryOptionsSheet
-        isOpen={isOptionsSheetOpen}
-        dustFilterOption={dustFilterOption}
-        onClose={closeOptionsSheet}
-        onToggle={onToggleHideSmallValueTokenOperations}
-      />
+      {isDustFilterFeatureEnabled ? (
+        <OperationsHistoryOptionsSheet
+          isOpen={isOptionsSheetOpen}
+          dustFilterOption={dustFilterOption}
+          onClose={closeOptionsSheet}
+          onToggle={onToggleHideSmallValueTokenOperations}
+        />
+      ) : null}
     </Box>
   );
 }

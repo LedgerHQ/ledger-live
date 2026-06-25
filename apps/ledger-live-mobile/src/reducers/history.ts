@@ -9,7 +9,7 @@ import { accountsSelector } from "./accounts";
 import {
   counterValueCurrencySelector,
   filterTokenOperationsZeroAmountEnabledSelector,
-  hideSmallValueTokenOperationsEnabledSelector,
+  hideSmallValueTokenOperationsEffectiveSelector,
 } from "./settings";
 import { countervaluesStateSelector } from "./countervalues";
 
@@ -43,12 +43,12 @@ export const lastSeenOperationDateSelector = (state: Pick<State, "history">): st
   state.history.lastSeenOperationDate;
 
 const dustFilterCountervaluesStateSelector = (state: State) =>
-  hideSmallValueTokenOperationsEnabledSelector(state)
+  hideSmallValueTokenOperationsEffectiveSelector(state)
     ? countervaluesStateSelector(state)
     : undefined;
 
 const dustFilterCounterValueCurrencySelector = (state: State) =>
-  hideSmallValueTokenOperationsEnabledSelector(state)
+  hideSmallValueTokenOperationsEffectiveSelector(state)
     ? counterValueCurrencySelector(state)
     : undefined;
 
@@ -61,7 +61,7 @@ export const hasUnreadOperationsSelector = createSelector(
   accountsSelector,
   lastSeenOperationDateSelector,
   filterTokenOperationsZeroAmountEnabledSelector,
-  hideSmallValueTokenOperationsEnabledSelector,
+  hideSmallValueTokenOperationsEffectiveSelector,
   dustFilterCountervaluesStateSelector,
   dustFilterCounterValueCurrencySelector,
   (state: State) => selectFeature(state, "addressPoisoningOperationsFilter"),

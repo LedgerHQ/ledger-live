@@ -7,7 +7,7 @@ import { useSelector } from "~/context/hooks";
 import {
   counterValueCurrencySelector,
   filterTokenOperationsZeroAmountEnabledSelector,
-  hideSmallValueTokenOperationsEnabledSelector,
+  hideSmallValueTokenOperationsEffectiveSelector,
 } from "~/reducers/settings";
 import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
@@ -26,7 +26,7 @@ export function useOperationsV1(
     filterTokenOperationsZeroAmountEnabledSelector,
   );
   const shouldHideSmallValueTokenOperations = useSelector(
-    hideSmallValueTokenOperationsEnabledSelector,
+    hideSmallValueTokenOperationsEffectiveSelector,
   );
   const countervaluesState = useSelector(state =>
     shouldHideSmallValueTokenOperations ? countervaluesStateSelector(state) : undefined,
