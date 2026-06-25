@@ -9,6 +9,8 @@ import historyReducer, {
   lastSeenOperationDateSelector,
   hasUnreadOperationsSelector,
 } from "../history";
+import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "../countervalues";
+import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "../settings";
 import type { State } from "../types";
 
 const SEEN = "2024-06-01T00:00:00.000Z";
@@ -33,8 +35,12 @@ function mapAllOperationsDate<T extends AccountLike>(accountLike: T, date: Date)
 function makeState(lastSeenDate: string | null, accounts: Account[]): State {
   return {
     accounts: { active: accounts },
+    countervalues: COUNTERVALUES_INITIAL_STATE,
     history: { lastSeenOperationDate: lastSeenDate },
-    settings: { filterTokenOperationsZeroAmount: false },
+    settings: {
+      ...SETTINGS_INITIAL_STATE,
+      filterTokenOperationsZeroAmount: false,
+    },
     featureFlags: FEATURE_FLAGS_INITIAL_STATE,
   } as unknown as State;
 }
