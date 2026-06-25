@@ -9,7 +9,7 @@ import {
   filterTokenOperationsZeroAmountEnabledSelector,
   hideSmallValueTokenOperationsEnabledSelector,
 } from "~/reducers/settings";
-import { useCountervaluesState } from "~/reducers/countervalues";
+import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "LLM/features/OperationsHistory/constants";
 
@@ -28,8 +28,12 @@ export function useOperationsV1(
   const shouldHideSmallValueTokenOperations = useSelector(
     hideSmallValueTokenOperationsEnabledSelector,
   );
-  const countervaluesState = useCountervaluesState();
-  const userCounterValueCurrency = useSelector(counterValueCurrencySelector);
+  const countervaluesState = useSelector(state =>
+    shouldHideSmallValueTokenOperations ? countervaluesStateSelector(state) : undefined,
+  );
+  const userCounterValueCurrency = useSelector(state =>
+    shouldHideSmallValueTokenOperations ? counterValueCurrencySelector(state) : undefined,
+  );
 
   const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
     shouldFilter: shouldFilterTokenOpsZeroAmount,
@@ -55,6 +59,8 @@ export function useOperationsV1(
 
       if (
         shouldHideSmallValueTokenOperations &&
+        countervaluesState &&
+        userCounterValueCurrency &&
         isSmallValueTokenOperation({
           operation,
           account,

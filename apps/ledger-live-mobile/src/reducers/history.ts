@@ -42,6 +42,16 @@ export default historySlice.reducer;
 export const lastSeenOperationDateSelector = (state: Pick<State, "history">): string | null =>
   state.history.lastSeenOperationDate;
 
+const dustFilterCountervaluesStateSelector = (state: State) =>
+  hideSmallValueTokenOperationsEnabledSelector(state)
+    ? countervaluesStateSelector(state)
+    : undefined;
+
+const dustFilterCounterValueCurrencySelector = (state: State) =>
+  hideSmallValueTokenOperationsEnabledSelector(state)
+    ? counterValueCurrencySelector(state)
+    : undefined;
+
 /**
  * Returns true when any operation shown in global History is newer than lastSeenOperationDate
  * (same pipeline as the History list: flattened accounts, pending ops, address-poisoning filter).
@@ -52,8 +62,8 @@ export const hasUnreadOperationsSelector = createSelector(
   lastSeenOperationDateSelector,
   filterTokenOperationsZeroAmountEnabledSelector,
   hideSmallValueTokenOperationsEnabledSelector,
-  countervaluesStateSelector,
-  counterValueCurrencySelector,
+  dustFilterCountervaluesStateSelector,
+  dustFilterCounterValueCurrencySelector,
   (state: State) => selectFeature(state, "addressPoisoningOperationsFilter"),
   (
     accounts,

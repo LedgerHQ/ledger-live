@@ -45,7 +45,7 @@ const mockNavigate = jest.fn();
 const mockSetOptions = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: mockNavigate, setOptions: mockSetOptions }),
+  useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
 const Stack = createNativeStackNavigator<OperationsHistoryNavigatorParamsList>();
@@ -55,6 +55,24 @@ const MockNavigator = () => (
     <Stack.Screen name={ScreenName.OperationsList} component={OperationsList} />
   </Stack.Navigator>
 );
+
+type OperationsListProps = React.ComponentProps<typeof OperationsList>;
+
+const operationsListRoute = {
+  key: ScreenName.OperationsList,
+  name: ScreenName.OperationsList,
+  params: undefined,
+} as OperationsListProps["route"];
+
+const renderOperationsListWithNavigation = (
+  navigation: Partial<OperationsListProps["navigation"]>,
+) =>
+  render(
+    <OperationsList
+      route={operationsListRoute}
+      navigation={navigation as OperationsListProps["navigation"]}
+    />,
+  );
 
 describe("OperationsList", () => {
   beforeEach(() => {
@@ -75,7 +93,7 @@ describe("OperationsList", () => {
   });
 
   it("registers the transaction history options menu in the navigation bar", () => {
-    render(<MockNavigator />);
+    renderOperationsListWithNavigation({ setOptions: mockSetOptions });
 
     expect(mockSetOptions).toHaveBeenCalledWith(
       expect.objectContaining({
