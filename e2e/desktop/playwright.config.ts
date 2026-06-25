@@ -25,16 +25,10 @@ const config: PlaywrightTestConfig = {
   workers: "100%",
   projects: [
     {
-      // Specs that broadcast real approve/revoke txs all sign from the same
-      // shared EOA. Pin them to a single worker so their broadcasts never overlap and
-      // race on the account nonce. Tag the broadcasting tests with @swapBroadcast.
-      name: "swap-broadcast-serial",
       grep: /@swapBroadcast/,
       workers: 1,
     },
     {
-      // Everything else runs fully parallel (inherits the global workers + fullyParallel).
-      name: "parallel",
       grepInvert: /@swapBroadcast/,
     },
   ],
