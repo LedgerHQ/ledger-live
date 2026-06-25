@@ -10,7 +10,7 @@ const mockDevice: Device = {
 };
 
 describe("useCompanionSteps", () => {
-  it("should return correct amount of steps when two step version", () => {
+  it("should return correct amount of steps", () => {
     const { result } = renderHook(
       () =>
         useCompanionSteps({
@@ -20,7 +20,6 @@ describe("useCompanionSteps", () => {
           deviceName: "stax",
           seedPathStatus: "new_seed",
           productName: "stax",
-          isTwoStep: true,
         }),
       {
         minimal: false,
@@ -28,26 +27,6 @@ describe("useCompanionSteps", () => {
     );
 
     expect(result.current.defaultSteps).toHaveLength(3);
-  });
-
-  it("should return correct amount of steps when not two step", () => {
-    const { result } = renderHook(
-      () =>
-        useCompanionSteps({
-          device: mockDevice,
-          setStepKey: jest.fn(),
-          shouldRestoreApps: false,
-          deviceName: "stax",
-          seedPathStatus: "new_seed",
-          productName: "stax",
-          isTwoStep: false,
-        }),
-      {
-        minimal: false,
-      },
-    );
-
-    expect(result.current.defaultSteps).toHaveLength(5);
   });
 
   it("should return callback to complete app step", () => {
@@ -61,7 +40,6 @@ describe("useCompanionSteps", () => {
           deviceName: "stax",
           seedPathStatus: "new_seed",
           productName: "stax",
-          isTwoStep: false,
         }),
       {
         minimal: false,

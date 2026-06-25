@@ -243,9 +243,6 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
     : { enabled: false };
-  const lldSyncOnboardingIncr1 = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("lldSyncOnboardingIncr1")
-    : { enabled: false };
   const ldmkSolanaSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
     : { enabled: false };
@@ -334,7 +331,6 @@ const extraProperties = (store: ReduxStore) => {
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
-    lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
     ...getOnboardingStatusAttributes(
