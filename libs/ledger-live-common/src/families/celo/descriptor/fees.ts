@@ -1,6 +1,7 @@
 import type { CustomFeeInputDescriptor, FeeDescriptor } from "../../../bridge/descriptor/types";
 import type { Transaction as CeloTransaction } from "../types";
 import { BigNumber } from "bignumber.js";
+import { celoFeeAssets } from "./feeAssets";
 
 const GWEI_DIVISOR = new BigNumber(10).pow(9);
 
@@ -63,7 +64,8 @@ const celoCustomInputs: readonly CustomFeeInputDescriptor[] = [
 export const fees: FeeDescriptor = {
   hasPresets: false,
   hasCustom: true,
-  hasCustomAssets: false,
+  hasCustomAssets: true,
+  customAssets: celoFeeAssets,
   custom: {
     inputs: celoCustomInputs,
     getInitialValues: (transaction): Record<string, string> => {

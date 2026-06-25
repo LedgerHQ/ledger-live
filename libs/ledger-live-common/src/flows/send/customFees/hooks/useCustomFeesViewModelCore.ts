@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -8,7 +8,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
-import type { FeeAssetOption } from "../../../../bridge/descriptor/types";
+import type { FeeAssetContext, FeeAssetOption } from "../../../../bridge/descriptor/types";
 import { resolveFeeUnitLabel, sendFeatures } from "../../../../bridge/descriptor/send/features";
 import type { SendFlowTransactionActions } from "../../types";
 import { useBridgeFeeEstimation } from "./useBridgeFeeEstimation";
@@ -106,19 +106,48 @@ export function useCustomFeesViewModelCore({
     () => sendFeatures.getCustomAssetsConfig(currency),
     [currency],
   );
-  const hasCustomAssetsFlag = Boolean(customAssetsConfig?.options.length);
 
-  const [selectedAssetId, setSelectedAssetId] = useState<string>(
-    () => customAssetsConfig?.defaultId ?? "",
+  const feeAssetContext = useMemo<FeeAssetContext>(
+    () => ({ mainAccount, transaction }),
+    [mainAccount, transaction],
   );
-  const onAssetChange = useCallback((id: string) => setSelectedAssetId(id), []);
+
+  // The coin-module owns the options, the selected value and the resulting patch.
+  // This view model only renders the "Pay fees in" select and forwards the choice.
+  const assetOptions = useMemo(
+    () => customAssetsConfig?.getOptions(feeAssetContext) ?? [],
+    [customAssetsConfig, feeAssetContext],
+  );
+  const hasCustomAssetsFlag = assetOptions.length > 0;
+
+  const selectedAssetId = useMemo(
+    () => customAssetsConfig?.getSelectedOptionId(feeAssetContext) ?? "",
+    [customAssetsConfig, feeAssetContext],
+  );
+
+  const onAssetChange = useCallback(
+    (id: string) => {
+      const patch = customAssetsConfig?.buildPatch(id, feeAssetContext);
+      if (!patch) return;
+      transactionActions.updateTransaction(tx => ({ ...tx, ...patch }) as Transaction);
+    },
+    [customAssetsConfig, feeAssetContext, transactionActions],
+  );
+
+  // Let the coin-module reset an invalid fee asset selection (e.g. the selected
+  // token sub-account vanished). Reconciliation logic stays in the descriptor.
+  useEffect(() => {
+    const patch = customAssetsConfig?.reconcile?.(feeAssetContext);
+    if (!patch) return;
+    transactionActions.updateTransaction(tx => ({ ...tx, ...patch }) as Transaction);
+  }, [customAssetsConfig, feeAssetContext, transactionActions]);
 
   // When hasCustomAssets, the unit label comes from the selected asset (eg. "Gwei" for CELO)
   const effectiveUnitLabel = useMemo(() => {
-    if (!hasCustomAssetsFlag || !customAssetsConfig) return null;
-    const selectedAsset = customAssetsConfig.options.find(o => o.id === selectedAssetId);
+    if (!hasCustomAssetsFlag) return null;
+    const selectedAsset = assetOptions.find(o => o.id === selectedAssetId);
     return selectedAsset?.unitLabel ?? selectedAsset?.ticker ?? null;
-  }, [hasCustomAssetsFlag, customAssetsConfig, selectedAssetId]);
+  }, [hasCustomAssetsFlag, assetOptions, selectedAssetId]);
 
   const [values, setValues] = useState<Record<string, string>>(() => {
     if (!customFeeConfig) return {};
@@ -317,7 +346,7 @@ export function useCustomFeesViewModelCore({
     onInputClear,
     onConfirm: handleConfirm,
     hasCustomAssets: hasCustomAssetsFlag,
-    assetOptions: customAssetsConfig?.options ?? [],
+    assetOptions,
     selectedAssetId,
     onAssetChange,
     confirmLabel: labels.confirm,

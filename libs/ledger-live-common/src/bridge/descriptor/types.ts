@@ -68,7 +68,8 @@ export type CustomFeeConfig = Readonly<{
 }>;
 
 /**
- * Option for a fee-paying asset (for Celo WIP)
+ * A single selectable fee-paying asset displayed in the "Pay fees in" control
+ * of the Custom Fees step (e.g. native CELO or an allowlisted token).
  */
 export type FeeAssetOption = Readonly<{
   id: string;
@@ -79,11 +80,36 @@ export type FeeAssetOption = Readonly<{
 }>;
 
 /**
- * Configuration for coins that support paying fees with alternative assets/tokens.
+ * Context handed to a fee asset config. Exposes the resolved main account (so a
+ * config can read sub-accounts, balances, ...) and the current transaction.
+ * `transaction` is intentionally `unknown`: the owning coin-module narrows it,
+ * the generic UI never reads it.
+ */
+export type FeeAssetContext = Readonly<{
+  mainAccount: Account;
+  transaction: unknown;
+}>;
+
+/**
+ * Declarative, family agnostic configuration for coins that let users pay fees
+ * with an alternative asset/token (e.g. Celo's fee abstraction). The coin-module
+ * owns the options, the selected value and the resulting opaque transaction
+ * patch; the generic Custom Fees UI only renders the "Pay fees in" select and
+ * forwards the user's choice — no coin code lives in the apps.
  */
 export type FeeAssetsConfig = Readonly<{
-  options: readonly FeeAssetOption[];
-  defaultId: string;
+  /** Computes the selectable fee assets from the current account/transaction. */
+  getOptions: (context: FeeAssetContext) => readonly FeeAssetOption[];
+  /** Resolves the currently-selected option id from the transaction. */
+  getSelectedOptionId: (context: FeeAssetContext) => string;
+  /** Builds an opaque transaction patch for the chosen option, or `null`. */
+  buildPatch: (optionId: string, context: FeeAssetContext) => TransactionPatch | null;
+  /**
+   * Optional reconciliation run by the generic UI when the account/transaction
+   * change. Returns a patch to apply when the current selection became invalid
+   * (e.g. the selected sub-account disappeared), or `null` to leave it as-is.
+   */
+  reconcile?: (context: FeeAssetContext) => TransactionPatch | null;
 }>;
 
 export type FeePresetOption = Readonly<{
@@ -214,8 +240,8 @@ export type FeeDescriptor = {
   /**
    * Configuration for fee asset selection.
    * When `hasCustomAssets` is true, this describes which assets can be used
-   * to pay transaction fees (e.g. Celo's cUSD, cEUR).
-   * (Not yet implemented)
+   * to pay transaction fees (e.g. Celo's fee abstraction tokens) and how the
+   * selection maps to an opaque transaction patch.
    */
   customAssets?: FeeAssetsConfig;
   /** When `hasCoinControl` is true, describes rows and patches for the coin control step. */
@@ -265,58 +291,6 @@ export type FlowEffect = Readonly<{
   run: (context: FlowEffectContext) => Promise<TransactionPatch | null>;
 }>;
 
-/**
- * Context handed to an amount extra field. It exposes the resolved main account
- * (so a field can read sub-accounts, balances, ...) and the current transaction.
- * `transaction` is intentionally `unknown`: the owning coin-module narrows it,
- * the generic UI never reads it.
- */
-export type AmountExtraFieldContext = Readonly<{
-  mainAccount: Account;
-  transaction: unknown;
-}>;
-
-/**
- * A single selectable option of an amount extra field.
- * `label` is a literal display string provided by the coin-module (e.g. a token
- * ticker), not an i18n key.
- */
-export type AmountExtraFieldOption = Readonly<{
-  id: string;
-  label: string;
-}>;
-
-/**
- * A declarative, family agnostic visual field rendered on the Amount step by a
- * generic UI slot. The coin-module owns the options and the resulting opaque
- * patch; the UI only renders a control and forwards the user's choice.
- *
- * Replaces family-specific Amount plugins: no coin component, no plugin registry.
- */
-export type AmountSelectField = Readonly<{
-  type: "select";
-  /** Stable identifier. */
-  id: string;
-  /** i18n key for the field label, resolved by the platform UI. */
-  labelKey: string;
-  /** Optional base test id for the rendered control. */
-  testId?: string;
-  /** Computes the selectable options from the current account/transaction. */
-  getOptions: (context: AmountExtraFieldContext) => readonly AmountExtraFieldOption[];
-  /** Resolves the currently-selected option id from the transaction. */
-  getSelectedOptionId: (context: AmountExtraFieldContext) => string;
-  /** Builds an opaque transaction patch for the chosen option, or `null`. */
-  buildPatch: (optionId: string, context: AmountExtraFieldContext) => TransactionPatch | null;
-  /**
-   * Optional reconciliation run by the generic UI when the account/transaction
-   * change. Returns a patch to apply when the current selection became invalid
-   * (e.g. the selected sub-account disappeared), or `null` to leave it as-is.
-   */
-  reconcile?: (context: AmountExtraFieldContext) => TransactionPatch | null;
-}>;
-
-export type AmountExtraField = AmountSelectField;
-
 export type SendAmountDescriptor = Readonly<{
   canSendMax?: boolean;
   /**
@@ -325,11 +299,6 @@ export type SendAmountDescriptor = Readonly<{
    * patch applied through the `bridge.updateTransaction`
    */
   effects?: readonly FlowEffect[];
-  /**
-   * Generic and family agnostic visual fields rendered on the Amount step by a
-   * generic UI slot. Replaces family-specific Amount plugins.
-   */
-  extraFields?: readonly AmountExtraField[];
 }>;
 
 /**

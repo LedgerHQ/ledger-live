@@ -16,7 +16,6 @@ jest.mock("../../bridge/descriptor/send/features", () => ({
     hasFeePresets: jest.fn(),
     hasCustomFees: jest.fn(),
     hasCoinControl: jest.fn(),
-    getAmountExtraFields: jest.fn(() => []),
   },
 }));
 
@@ -46,14 +45,6 @@ const mockSolanaCurrency: CryptoCurrency = {
   name: "Solana",
   ticker: "SOL",
   family: "solana",
-} as unknown as CryptoCurrency;
-
-const mockCeloCurrency: CryptoCurrency = {
-  type: "CryptoCurrency",
-  id: "celo",
-  name: "Celo",
-  ticker: "CELO",
-  family: "celo",
 } as unknown as CryptoCurrency;
 
 describe("getSendUiConfig", () => {
@@ -104,7 +95,6 @@ describe("getSendUiConfig", () => {
         hasFeePresets: true,
         hasCustomFees: true,
         hasCoinControl: true,
-        hasAmountExtraFields: false,
       });
     });
   });
@@ -136,7 +126,6 @@ describe("getSendUiConfig", () => {
         hasFeePresets: true,
         hasCustomFees: true,
         hasCoinControl: false,
-        hasAmountExtraFields: false,
       });
     });
   });
@@ -170,53 +159,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: false,
         hasCustomFees: true,
         hasCoinControl: false,
-        hasAmountExtraFields: false,
       });
-    });
-  });
-
-  describe("for a coin with Amount extra fields (e.g. Celo)", () => {
-    it("returns hasAmountExtraFields: true when the descriptor advertises extra fields", () => {
-      mockedGetSendDescriptor.mockReturnValue({
-        inputs: {},
-        fees: { hasPresets: false, hasCustom: true },
-      });
-      mockedSendFeatures.hasMemo.mockReturnValue(false);
-      mockedSendFeatures.getMemoMaxLength.mockReturnValue(undefined);
-      mockedSendFeatures.getMemoMaxValue.mockReturnValue(undefined);
-      mockedSendFeatures.getMemoOptions.mockReturnValue(undefined);
-      mockedSendFeatures.supportsDomain.mockReturnValue(false);
-      mockedSendFeatures.hasFeePresets.mockReturnValue(false);
-      mockedSendFeatures.hasCustomFees.mockReturnValue(true);
-      mockedSendFeatures.hasCoinControl.mockReturnValue(false);
-      mockedSendFeatures.getAmountExtraFields.mockReturnValue([
-        { id: "celoFeeCurrency" } as never,
-      ]);
-
-      const result = getSendUiConfig(mockCeloCurrency);
-
-      expect(result.hasAmountExtraFields).toBe(true);
-      expect(mockedSendFeatures.getAmountExtraFields).toHaveBeenCalledWith(mockCeloCurrency);
-    });
-
-    it("returns hasAmountExtraFields: false when the descriptor advertises no extra fields", () => {
-      mockedGetSendDescriptor.mockReturnValue({
-        inputs: {},
-        fees: { hasPresets: false, hasCustom: true },
-      });
-      mockedSendFeatures.hasMemo.mockReturnValue(false);
-      mockedSendFeatures.getMemoMaxLength.mockReturnValue(undefined);
-      mockedSendFeatures.getMemoMaxValue.mockReturnValue(undefined);
-      mockedSendFeatures.getMemoOptions.mockReturnValue(undefined);
-      mockedSendFeatures.supportsDomain.mockReturnValue(false);
-      mockedSendFeatures.hasFeePresets.mockReturnValue(false);
-      mockedSendFeatures.hasCustomFees.mockReturnValue(true);
-      mockedSendFeatures.hasCoinControl.mockReturnValue(false);
-      mockedSendFeatures.getAmountExtraFields.mockReturnValue([]);
-
-      const result = getSendUiConfig(mockCeloCurrency);
-
-      expect(result.hasAmountExtraFields).toBe(false);
     });
   });
 
@@ -232,7 +175,6 @@ describe("getSendUiConfig", () => {
         hasFeePresets: false,
         hasCustomFees: false,
         hasCoinControl: false,
-        hasAmountExtraFields: false,
       });
     });
   });
