@@ -139,7 +139,9 @@ export class PortfolioPage extends AppPage {
 
   @step("Click on asset row $0")
   async clickOnSelectedAssetRow(asset: string) {
-    const assetRow = isAssetSectionEnabled ? this.w40AssetRow(asset) : this.legacyAssetRow(asset);
+    const assetRow = (await isAssetSectionEnabled(this.page))
+      ? this.w40AssetRow(asset)
+      : this.legacyAssetRow(asset);
     await assetRow.click();
   }
 
@@ -164,7 +166,7 @@ export class PortfolioPage extends AppPage {
   async checkOperationHistory() {
     // operationsList ON: assert the History page renders at least one operation, then return to the
     // portfolio so the caller can keep asserting portfolio-level content.
-    if (isOperationsListEnabled) {
+    if (await isOperationsListEnabled(this.page)) {
       await this.openHistoryPage();
       await expect(this.historyOperationRows.first()).toBeVisible();
       await this.homeSideBarButton.click();
@@ -217,7 +219,7 @@ export class PortfolioPage extends AppPage {
   @step("Expect asset row $0 to have the correct counter value $1")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
     // ON: dedicated W40 value cell. OFF: legacy AssetDistribution row (contains price + counter value).
-    const rowValue = isAssetSectionEnabled
+    const rowValue = (await isAssetSectionEnabled(this.page))
       ? this.w40AssetRowValue(asset)
       : this.legacyAssetRow(asset);
     await expect(rowValue).toBeVisible();
@@ -233,7 +235,7 @@ export class PortfolioPage extends AppPage {
   @step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
     // operationsList ON: the latest operations are on the History page, not the portfolio.
-    if (isOperationsListEnabled) {
+    if (await isOperationsListEnabled(this.page)) {
       await this.openHistoryPage();
       await this.checkVisibility(this.historyOperationRows.first());
       return;
@@ -243,7 +245,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect operation to contain counter value $0")
   async expectOperationCounterValue(counterValue: string) {
-    if (isOperationsListEnabled) {
+    if (await isOperationsListEnabled(this.page)) {
       await this.openHistoryPage();
       const valueCell = this.historyOperationValue.first();
       await this.checkVisibility(valueCell);

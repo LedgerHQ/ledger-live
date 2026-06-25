@@ -1,4 +1,9 @@
-import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
+import {
+  test as base,
+  Page,
+  ElectronApplication,
+  ChromiumBrowserContext,
+} from "@playwright/test";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
@@ -21,14 +26,19 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { lastValueFrom, Observable } from "rxjs";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
-import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import {
+  getSpeculosAddress,
+  SpeculosDevice,
+} from "@ledgerhq/live-common/e2e/speculos";
 import { attachNetworkLogging } from "../utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
 import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
-type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
+type CliCommand = (
+  userdataPath?: string,
+) => Observable<unknown> | Promise<unknown> | string;
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 export type SpeculosFixtureHandle = {
@@ -65,7 +75,10 @@ type TestFixtures = {
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
+setEnv(
+  "SWAP_API_BASE",
+  process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5",
+);
 
 const EXTRA_FEATURE_FLAGS: OptionalFeatureMap = parseExtraFeatureFlags(
   process.env.E2E_FEATURE_FLAGS_JSON,
@@ -90,11 +103,16 @@ const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
   },
 };
 
-async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
+async function executeCliCommand(
+  cmd: CliCommand,
+  userdataDestinationPath?: string,
+) {
   const label = cmd.name || "anonymous";
   return runCliStep(label, async () => {
     const promise = await cmd(`${userdataDestinationPath}/app.json`);
-    return promise instanceof Observable ? await lastValueFrom(promise) : await promise;
+    return promise instanceof Observable
+      ? await lastValueFrom(promise)
+      : await promise;
   });
 }
 
@@ -119,15 +137,26 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async (
-    { userdataOriginalFile, settings, extraUserdataFiles, localManifestOverride },
+    {
+      userdataOriginalFile,
+      settings,
+      extraUserdataFiles,
+      localManifestOverride,
+    },
     use,
   ) => {
-    const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
+    const userdataDestinationPath = path.join(
+      __dirname,
+      "../artifacts/userdata",
+      randomUUID(),
+    );
     // create userdata path
     await mkdir(userdataDestinationPath, { recursive: true });
 
     const fileUserData = userdataOriginalFile
-      ? await readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
+      ? await readFile(userdataOriginalFile, { encoding: "utf-8" }).then(
+          JSON.parse,
+        )
       : {};
 
     const userData = merge({ data: { settings } }, fileUserData);
@@ -136,7 +165,10 @@ export const test = base.extend<TestFixtures>({
       userData.data.discover = userData.data.discover || {};
       userData.data.discover.localLiveApp = localManifestOverride;
     }
-    await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+    await writeFile(
+      `${userdataDestinationPath}/app.json`,
+      JSON.stringify(userData),
+    );
     if (extraUserdataFiles) {
       await Promise.all(
         Object.entries(extraUserdataFiles).map(([name, contents]) =>
@@ -147,7 +179,9 @@ export const test = base.extend<TestFixtures>({
     await use(userdataDestinationPath);
   },
   userdataOriginalFile: async ({ userdata }, use) => {
-    await use(userdata && path.join(__dirname, "../userdata/", `${userdata}.json`));
+    await use(
+      userdata && path.join(__dirname, "../userdata/", `${userdata}.json`),
+    );
   },
   userdataFile: async ({ userdataDestinationPath }, use) => {
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
@@ -164,12 +198,18 @@ export const test = base.extend<TestFixtures>({
     const handle: SpeculosFixtureHandle = {
       get current(): SpeculosDevice {
         if (!currentDevice) {
-          throw new Error("[E2E] speculos fixture: no device (missing speculosApp?)");
+          throw new Error(
+            "[E2E] speculos fixture: no device (missing speculosApp?)",
+          );
         }
         return currentDevice;
       },
       relaunch: async (appName: string) => {
-        currentDevice = await launchSpeculos(appName, testInfo.title, currentDevice);
+        currentDevice = await launchSpeculos(
+          appName,
+          testInfo.title,
+          currentDevice,
+        );
         return currentDevice;
       },
     };
@@ -248,9 +288,12 @@ export const test = base.extend<TestFixtures>({
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
         MANAGER_DEV_MODE: true,
-        SPECULOS_API_PORT: speculosApp ? String(speculos.current.port) : undefined,
+        SPECULOS_API_PORT: speculosApp
+          ? String(speculos.current.port)
+          : undefined,
         SPECULOS_ADDRESS: speculosApp ? getSpeculosAddress() : undefined,
-        DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
+        DISABLE_TRANSACTION_BROADCAST:
+          process.env.DISABLE_TRANSACTION_BROADCAST || "1",
       },
       env,
     );
@@ -276,7 +319,11 @@ export const test = base.extend<TestFixtures>({
       // App may already be closed when capturing failure video
     }
   },
-  page: async ({ electronApp, speculosApp, cliCommandsOnApp, teamOwner }, use, testInfo) => {
+  page: async (
+    { electronApp, speculosApp, cliCommandsOnApp, teamOwner },
+    use,
+    testInfo,
+  ) => {
     // app is ready
     const page = await electronApp.firstWindow();
 
@@ -289,7 +336,9 @@ export const test = base.extend<TestFixtures>({
     attachNetworkLogging(page, testInfo);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
-      const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
+      const client = await (
+        page.context() as ChromiumBrowserContext
+      ).newCDPSession(page);
       await client.send("Emulation.setCPUThrottlingRate", {
         rate: parseInt(process.env.PLAYWRIGHT_CPU_THROTTLING_RATE),
       });
@@ -297,7 +346,7 @@ export const test = base.extend<TestFixtures>({
 
     // record all logs into an artifact
     const logFile = testInfo.outputPath("logs.log");
-    page.on("console", msg => {
+    page.on("console", (msg) => {
       const txt = msg.text();
       if (IS_DEBUG_MODE && msg.type() == "error") {
         console.error(txt);
@@ -322,8 +371,16 @@ export const test = base.extend<TestFixtures>({
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      const takeSpeculosScreenshot = Boolean(speculosApp || (cliCommandsOnApp?.length ?? 0) > 0);
-      await captureArtifacts(page, testInfo, electronApp, takeSpeculosScreenshot, webviewCollector);
+      const takeSpeculosScreenshot = Boolean(
+        speculosApp || (cliCommandsOnApp?.length ?? 0) > 0,
+      );
+      await captureArtifacts(
+        page,
+        testInfo,
+        electronApp,
+        takeSpeculosScreenshot,
+        webviewCollector,
+      );
     }
 
     // Remove video if test passed

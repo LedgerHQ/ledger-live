@@ -18,9 +18,6 @@ inputs:
     required: false
   repeat_each:
     description: "Repeat each test N times (omit to run tests once)"
-  enable_asset_section:
-    description: "Enable the Wallet 4.0 Asset Section"
-    required: false
 outputs:
   passed:
     description: "Number of passed tests"
@@ -93,14 +90,6 @@ runs:
         REPEAT_ARG=""
         if [ -n "${{ inputs.repeat_each }}" ]; then
           REPEAT_ARG="--repeat-each=${{ inputs.repeat_each }}"
-        fi
-
-        if [[ "${{ inputs.enable_asset_section }}" = "false" ]]; then
-          export E2E_ENABLE_ASSET_SECTION=0
-          echo "Asset Section disabled!"
-        else
-          export E2E_ENABLE_ASSET_SECTION=1
-          echo "Asset Section enabled!"
         fi
 
         set +e

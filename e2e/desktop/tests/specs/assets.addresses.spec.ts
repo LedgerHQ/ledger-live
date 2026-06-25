@@ -5,7 +5,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { isAssetSectionEnabled, coinDetailUrlPattern } from "tests/utils/featureFlagUtils";
+import { coinDetailUrlPattern, LWD_WALLET_40_Q2_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 /**
  * Suite: Wallet 4.0 - Portfolio-Asset/Address
@@ -16,13 +16,9 @@ import { isAssetSectionEnabled, coinDetailUrlPattern } from "tests/utils/feature
  */
 
 test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
-  // This suite only covers the Wallet 4.0 Assets section UI (cryptos/stablecoins sections and
-  // category pages), which does not exist when the Asset Section is OFF (the portfolio renders the
-  // legacy AssetDistribution instead). Skip the whole suite in the "Asset Section OFF" variant.
-  test.skip(
-    !isAssetSectionEnabled,
-    "Asset Section disabled (E2E_ENABLE_ASSET_SECTION=0): no Assets section UI to test",
-  );
+  // This suite covers the Wallet 4.0 Assets section UI (cryptos/stablecoins sections and category
+  // pages), which only exists with the Asset Section ON, so opt into the Q2 feature-flag set.
+  test.use({ featureFlags: LWD_WALLET_40_Q2_FF_ENABLED });
 
   /**
    * Scenario 1a: Open the app without accounts

@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -11,15 +11,18 @@ export class AccountsPage extends AppPage {
   //   OFF → legacy Accounts page header button (`accounts-add-account-button`)
   private cryptoAddAddressButton = this.page.getByTestId("crypto-add-address-button");
   private accountsAddAccountButton = this.page.getByTestId("accounts-add-account-button");
+
   // Account-list row test ids differ per Asset Section variant:
   //   ON  → CryptoAddresses rows: `crypto-account-row-<sanitized name>`
   //   OFF → legacy Accounts rows: `account-component-<raw name>`
-  private readonly accountRowTestIdPrefix = isAssetSectionEnabled
-    ? "crypto-account-row-"
-    : "account-component-";
-  private readonly visibleAccountsList = this.page
-    .locator(`[data-testid^="${this.accountRowTestIdPrefix}"]`)
-    .filter({ visible: true });
+  private async accountRowTestIdPrefix(): Promise<string> {
+    return (await isAssetSectionEnabled(this.page)) ? "crypto-account-row-" : "account-component-";
+  }
+
+  private async visibleAccountsList(): Promise<Locator> {
+    const prefix = await this.accountRowTestIdPrefix();
+    return this.page.locator(`[data-testid^="${prefix}"]`).filter({ visible: true });
+  }
 
   private readonly getSanitizedAccountName = (accountName: string) =>
     accountName.replaceAll(/\s+/g, "-");
@@ -34,8 +37,8 @@ export class AccountsPage extends AppPage {
   }
 
   // Account-list row matching the active Asset Section variant (crypto vs legacy).
-  private accountRow(accountName: string) {
-    return isAssetSectionEnabled
+  private async accountRow(accountName: string): Promise<Locator> {
+    return (await isAssetSectionEnabled(this.page))
       ? this.cryptoAccountRow(accountName)
       : this.legacyAccountRow(accountName);
   }
@@ -48,7 +51,7 @@ export class AccountsPage extends AppPage {
 
   @step("Click add account button from accounts page")
   async clickAddAccountButtonFromAccountsPage() {
-    const addAccountButton = isAssetSectionEnabled
+    const addAccountButton = (await isAssetSectionEnabled(this.page))
       ? this.cryptoAddAddressButton
       : this.accountsAddAccountButton;
     await addAccountButton.click();
@@ -61,7 +64,7 @@ export class AccountsPage extends AppPage {
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
-    await this.accountRow(accountName).click();
+    await (await this.accountRow(accountName)).click();
   }
 
   @step("Click sync account button for: $0")
@@ -101,18 +104,21 @@ export class AccountsPage extends AppPage {
 
   @step("Check $0 account was deleted ")
   async expectAccountAbsence(accountName: string) {
-    await expect(this.accountRow(accountName).filter({ visible: true })).toHaveCount(0);
+    const row = await this.accountRow(accountName);
+    await expect(row.filter({ visible: true })).toHaveCount(0);
     expect(await this.getAccountsName()).not.toContain(accountName);
   }
 
   @step("Get number of accounts in the list")
   async countAccounts(): Promise<number> {
-    return await this.visibleAccountsList.count();
+    return await (await this.visibleAccountsList()).count();
   }
 
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number, timeout = 30_000) {
-    await expect(this.visibleAccountsList).toHaveCount(count, { timeout });
+    await expect(await this.visibleAccountsList()).toHaveCount(count, {
+      timeout,
+    });
   }
 
   private async getReduxAccountIds(): Promise<string[]> {
@@ -138,7 +144,9 @@ export class AccountsPage extends AppPage {
   @step("Expect Redux accounts length to be $0")
   async expectReduxAccountsLength(count: number) {
     await expect
-      .poll(async () => (await this.getReduxAccountIds()).length, { timeout: 60_000 })
+      .poll(async () => (await this.getReduxAccountIds()).length, {
+        timeout: 60_000,
+      })
       .toBe(count);
   }
 
@@ -160,7 +168,7 @@ export class AccountsPage extends AppPage {
 
   @step("Expect account row for $0 to be visible")
   async expectCryptoAccountRowVisible(accountName: string) {
-    const row = this.accountRow(accountName);
+    const row = await this.accountRow(accountName);
     await row.waitFor({ state: "attached", timeout: 120_000 });
     await row.scrollIntoViewIfNeeded();
     await expect(row).toBeVisible({ timeout: 60_000 });
@@ -168,18 +176,20 @@ export class AccountsPage extends AppPage {
 
   @step("Expect at least one visible account in the list")
   async expectAtLeastOneAccountVisible() {
-    await expect(this.visibleAccountsList).not.toHaveCount(0);
+    await expect(await this.visibleAccountsList()).not.toHaveCount(0);
   }
 
   async getAccountsName() {
-    const accountElements = await this.visibleAccountsList.all();
+    const assetSectionEnabled = await isAssetSectionEnabled(this.page);
+    const prefix = await this.accountRowTestIdPrefix();
+    const accountElements = await (await this.visibleAccountsList()).all();
     const accountNames = [];
     for (const element of accountElements) {
       const testId = await element.getAttribute("data-testid");
       if (testId) {
-        const rawName = testId.replace(this.accountRowTestIdPrefix, "");
+        const rawName = testId.replace(prefix, "");
         // ON sanitizes spaces to dashes in the test id; OFF keeps the raw account name.
-        accountNames.push(isAssetSectionEnabled ? rawName.replaceAll("-", " ") : rawName);
+        accountNames.push(assetSectionEnabled ? rawName.replaceAll("-", " ") : rawName);
       }
     }
     return accountNames;
