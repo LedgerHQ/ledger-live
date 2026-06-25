@@ -10,15 +10,29 @@
     "Portfolio": "[Pp]ortfolio"
   },
   "currencies": {
-    "Bitcoin": "@family-bitcoin",
     "Ethereum & EVM chains": "@family-evm",
+    "Bitcoin": "@family-bitcoin",
     "Solana": "@family-solana",
     "XRP": "@family-xrp",
     "Cosmos": "@family-cosmos",
     "Polkadot": "@family-polkadot",
     "Tron": "@family-tron",
-    "Cardano": "@family-cardano",
+    "Hedera": "@family-hedera",
+    "Algorand": "@family-algorand",
     "Tezos": "@family-tezos",
-    "Stellar": "@family-stellar"
+    "Stellar": "@family-stellar",
+    "Cardano": "@family-cardano",
+    "Sui": "@family-sui",
+    "Celo": "@family-celo",
+    "Aptos": "@family-aptos",
+    "Zcash": "@family-zcash",
+    "NEAR": "@family-near",
+    "Litecoin": "@family-litecoin",
+    "VeChain": "@family-vechain",
+    "TON": "@family-ton",
+    "MultiversX": "@family-multiversx",
+    "Kaspa": "@family-kaspa",
+    "Internet Computer": "@family-internet_computer",
+    "Concordium": "@family-concordium"
   }
 }

@@ -14,7 +14,6 @@ on:
     - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
   workflow_dispatch:
     inputs:
-      # ────────────── What to test (start here) ──────────────
       ref:
         description: "Branch to test — leave blank to use this workflow's own branch"
         required: false
@@ -39,16 +38,30 @@ on:
         default: "All currencies"
         options:
           - "All currencies"
-          - "Bitcoin"
           - "Ethereum & EVM chains"
+          - "Bitcoin"
           - "Solana"
           - "XRP"
           - "Cosmos"
           - "Polkadot"
           - "Tron"
-          - "Cardano"
+          - "Hedera"
+          - "Algorand"
           - "Tezos"
           - "Stellar"
+          - "Cardano"
+          - "Sui"
+          - "Celo"
+          - "Aptos"
+          - "Zcash"
+          - "NEAR"
+          - "Litecoin"
+          - "VeChain"
+          - "TON"
+          - "MultiversX"
+          - "Kaspa"
+          - "Internet Computer"
+          - "Concordium"
       tests_type:
         description: "Which platforms to run on?"
         required: true
@@ -70,9 +83,8 @@ on:
           - flex
           - nanoGen5
         default: nanoX
-      # ────────────── Advanced filtering (power users) ──────────────
       test_filter:
-        description: 'Advanced override: custom pattern by tag (@bitcoin, @family-evm) or test name (addAccount). Comma-separate to match any. When set, REPLACES the Scope & Currency choices above.'
+        description: "Advanced override: custom pattern by tag (@bitcoin, @family-evm) or test name (addAccount). Comma-separate to match any. When set, REPLACES the Scope & Currency choices above."
         required: false
         type: string
       production_firebase:
@@ -136,7 +148,7 @@ on:
         type: string
         default: "All currencies"
       test_filter:
-        description: 'Advanced override: custom pattern by tag or test name. When set, replaces test_scope/currency.'
+        description: "Advanced override: custom pattern by tag or test name. When set, replaces test_scope/currency."
         required: false
         type: string
       tests_type:

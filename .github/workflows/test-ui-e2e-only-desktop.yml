@@ -7,7 +7,6 @@ on:
     - cron: "0 4 * * 1-5"
   workflow_dispatch:
     inputs:
-      # ────────────── What to test (start here) ──────────────
       ref:
         description: "Branch to test — leave blank to use this workflow's own branch"
         required: false
@@ -32,16 +31,30 @@ on:
         default: "All currencies"
         options:
           - "All currencies"
-          - "Bitcoin"
           - "Ethereum & EVM chains"
+          - "Bitcoin"
           - "Solana"
           - "XRP"
           - "Cosmos"
           - "Polkadot"
           - "Tron"
-          - "Cardano"
+          - "Hedera"
+          - "Algorand"
           - "Tezos"
           - "Stellar"
+          - "Cardano"
+          - "Sui"
+          - "Celo"
+          - "Aptos"
+          - "Zcash"
+          - "NEAR"
+          - "Litecoin"
+          - "VeChain"
+          - "TON"
+          - "MultiversX"
+          - "Kaspa"
+          - "Internet Computer"
+          - "Concordium"
       speculos_device:
         description: "Hardware device to simulate — Nano S Plus / Stax / Flex / Nano X / Nano Gen5 / Nano S"
         required: false
@@ -60,15 +73,13 @@ on:
         required: false
         type: boolean
         default: false
-      # ────────────── Advanced filtering (power users) ──────────────
       test_filter:
-        description: 'Advanced override: custom pattern by tag (@bitcoin, @family-evm) or test name (Accounts). Comma-separate to match any. When set, REPLACES the Scope & Currency choices above.'
+        description: "Advanced override: custom pattern by tag (@bitcoin, @family-evm) or test name (Accounts). Comma-separate to match any. When set, REPLACES the Scope & Currency choices above."
         required: false
       invert_filter:
         description: "Advanced: run everything EXCEPT what matches the selection/filter above"
         type: boolean
         default: false
-      # ────────────── Run options ──────────────
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
@@ -96,7 +107,6 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
-      # ────────────── Reporting ──────────────
       slack_notif:
         description: "Send notification to Slack?"
         required: false
@@ -129,7 +139,7 @@ on:
         type: string
         default: "All currencies"
       test_filter:
-        description: 'Advanced override: custom pattern by tag or test name. When set, replaces test_scope/currency.'
+        description: "Advanced override: custom pattern by tag or test name. When set, replaces test_scope/currency."
         required: false
         type: string
       invert_filter:
