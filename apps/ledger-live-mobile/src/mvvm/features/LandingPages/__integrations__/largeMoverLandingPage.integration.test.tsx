@@ -14,6 +14,7 @@ import { PanGesture, State as GestureState } from "react-native-gesture-handler"
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { MockedLargeMoverLandingPage } from "./shared";
 import { mappingServiceHandlers } from "../__tests__/mappingServiceHandlers";
+import { i18n } from "~/context/Locale";
 
 jest.mock("@react-navigation/native", () => {
   const actual = jest.requireActual("@react-navigation/native");
@@ -32,11 +33,50 @@ const mockRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMover
   },
 };
 
+const bitcoinMarket = (overrides: Record<string, unknown> = {}) => [
+  {
+    id: "bitcoin",
+    ledgerIds: ["bitcoin"],
+    ticker: "btc",
+    name: "Bitcoin",
+    image: "",
+    marketCap: 928_000_000_000,
+    marketCapRank: 1,
+    fullyDilutedValuation: 928_000_000_000,
+    totalVolume: 21_000_000_000,
+    high24h: 48000,
+    low24h: 46000,
+    price: 47123,
+    priceChange24h: 1000,
+    priceChangePercentage1h: 0.1,
+    priceChangePercentage24h: 2.1,
+    priceChangePercentage7d: 1.1,
+    priceChangePercentage30d: -1.2,
+    priceChangePercentage1y: 100,
+    marketCapChange24h: 1,
+    marketCapChangePercentage24h: 2.1,
+    circulatingSupply: 2_500_000_000,
+    totalSupply: 21_000_000_000,
+    maxSupply: 21_000_000_000,
+    allTimeHigh: 54000,
+    allTimeLow: 50,
+    allTimeHighDate: "2024-03-14T07:10:36.635Z",
+    allTimeLowDate: "2013-07-06T00:00:00Z",
+    sparkline: [],
+    updatedAt: "2024-05-15T14:48:15Z",
+    ...overrides,
+  },
+];
+
 describe("LargeMoverLandingPage Integration Tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.mocked(navigationModule.useNavigation).mockReturnValue(mockNavigation);
     server.use(...mappingServiceHandlers);
+  });
+
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
   });
 
   it("displays the ticker of the first currency", async () => {
@@ -243,7 +283,87 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     expect(gbpPrices.length).toBeGreaterThan(0);
     expect(screen.queryByText("$47,123.00")).toBeNull();
     expect(captured.to?.toLowerCase()).toBe("gbp");
+    expect(await screen.findByText("19.7 M BTC")).toBeOnTheScreen();
+    expect(await screen.findByText("21 M BTC")).toBeOnTheScreen();
   });
+
+  // The test harness wraps with I18nextProvider but not the app LocaleProvider, so the number
+  // `locale` is pinned to en; only the i18next language (the translated suffix) can be switched.
+  // That still verifies the translation-driven, uppercased compact suffix per language.
+  it.each([
+    ["fr", "2.5 MD BTC", "21 MD BTC"],
+    ["de", "2.5 MRD. BTC", "21 MRD. BTC"],
+  ])(
+    "formats supply figures with the localized, uppercase compact suffix (%s)",
+    async (language, circulating, total) => {
+      await i18n.changeLanguage(language);
+      server.use(
+        http.get("https://countervalues.live.ledger.com/v3/markets", () =>
+          HttpResponse.json(bitcoinMarket()),
+        ),
+      );
+
+      renderWithReactQuery(
+        <MockedLargeMoverLandingPage
+          key={mockRoute.key}
+          name={mockRoute.name}
+          params={{ currencyIds: "BTC", initialRange: InitialRange.Day }}
+        />,
+        {
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              counterValue: "USD",
+            },
+            largeMover: {
+              tutorial: false,
+            },
+          }),
+        },
+      );
+
+      expect(await screen.findByText(circulating)).toBeOnTheScreen();
+      expect(await screen.findByText(total)).toBeOnTheScreen();
+    },
+  );
+
+  it.each([
+    ["USD", "$928 BN"],
+    ["EUR", "€928 BN"],
+    ["GBP", "£928 BN"],
+  ])(
+    "formats the market cap with the selected counter-value currency symbol (%s)",
+    async (counterValue, marketCap) => {
+      server.use(
+        http.get("https://countervalues.live.ledger.com/v3/markets", () =>
+          HttpResponse.json(bitcoinMarket()),
+        ),
+      );
+
+      renderWithReactQuery(
+        <MockedLargeMoverLandingPage
+          key={mockRoute.key}
+          name={mockRoute.name}
+          params={{ currencyIds: "BTC", initialRange: InitialRange.Day }}
+        />,
+        {
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              counterValue,
+            },
+            largeMover: {
+              tutorial: false,
+            },
+          }),
+        },
+      );
+
+      expect((await screen.findAllByText(marketCap)).length).toBeGreaterThan(0);
+    },
+  );
 
   it("displays token data when using ledgerIds parameter", async () => {
     const tokenRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage> =
