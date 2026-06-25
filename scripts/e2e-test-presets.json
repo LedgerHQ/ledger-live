@@ -1,0 +1,24 @@
+{
+  "$comment": "Single source of truth for the friendly 'Scope' and 'Currency' selectors used by the Desktop and Mobile E2E workflows. Each label maps to a regex fragment understood by resolve-e2e-test-filter.mjs. Scope patterns are case-tolerant so they match both Desktop test titles (Capitalized, e.g. 'Swap') and Mobile spec paths/dirs (lowercase, e.g. 'swap/'). Currency patterns are @family-* tags that exist in both Desktop (built at runtime) and Mobile (spec tags). Keep the 'options:' lists in the two workflow YAMLs in sync with the keys below.",
+  "scopes": {
+    "Send & Receive": "[Ss]end|[Rr]eceive",
+    "Swap": "[Ss]wap",
+    "Stake / Earn": "[Ee]arn|[Dd]elegate|[Ss]take",
+    "Buy / Sell": "[Bb]uy|[Ss]ell",
+    "Accounts": "[Aa]ccount",
+    "Settings": "[Ss]ettings",
+    "Portfolio": "[Pp]ortfolio"
+  },
+  "currencies": {
+    "Bitcoin": "@family-bitcoin",
+    "Ethereum & EVM chains": "@family-evm",
+    "Solana": "@family-solana",
+    "XRP": "@family-xrp",
+    "Cosmos": "@family-cosmos",
+    "Polkadot": "@family-polkadot",
+    "Tron": "@family-tron",
+    "Cardano": "@family-cardano",
+    "Tezos": "@family-tezos",
+    "Stellar": "@family-stellar"
+  }
+}

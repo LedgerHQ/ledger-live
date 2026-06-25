@@ -7,30 +7,68 @@ on:
     - cron: "0 4 * * 1-5"
   workflow_dispatch:
     inputs:
+      # ────────────── What to test (start here) ──────────────
       ref:
-        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
+        description: "Branch to test — leave blank to use this workflow's own branch"
         required: false
+      test_scope:
+        description: "Which feature area? Leave on 'All tests' to run everything."
+        required: false
+        type: choice
+        default: "All tests"
+        options:
+          - "All tests"
+          - "Send & Receive"
+          - "Swap"
+          - "Stake / Earn"
+          - "Buy / Sell"
+          - "Accounts"
+          - "Settings"
+          - "Portfolio"
+      currency:
+        description: "Limit to one currency? Leave on 'All currencies' for no limit."
+        required: false
+        type: choice
+        default: "All currencies"
+        options:
+          - "All currencies"
+          - "Bitcoin"
+          - "Ethereum & EVM chains"
+          - "Solana"
+          - "XRP"
+          - "Cosmos"
+          - "Polkadot"
+          - "Tron"
+          - "Cardano"
+          - "Tezos"
+          - "Stellar"
+      speculos_device:
+        description: "Hardware device to simulate — Nano S Plus / Stax / Flex / Nano X / Nano Gen5 / Nano S"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+          - stax
+          - flex
+          - nanoGen5
+          - nanoSP and stax
+        default: nanoSP
+      smoke_tests:
+        description: "Run only the fast smoke subset (quick sanity check)"
+        required: false
+        type: boolean
+        default: false
+      # ────────────── Advanced filtering (power users) ──────────────
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
+        description: 'Advanced override: custom pattern by tag (@bitcoin, @family-evm) or test name (Accounts). Comma-separate to match any. When set, REPLACES the Scope & Currency choices above.'
         required: false
       invert_filter:
-        description: Ignore test having name pattern (entered in the previous field)
+        description: "Advanced: run everything EXCEPT what matches the selection/filter above"
         type: boolean
         default: false
-      slack_notif:
-        description: "Send notification to Slack?"
-        required: false
-        type: boolean
-        default: false
-      export_to_xray:
-        description: Send tests results to Xray
-        required: false
-        type: boolean
-        default: false
-      test_execution:
-        description: "Test Execution ticket ID"
-        required: false
-        type: string
+      # ────────────── Run options ──────────────
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
@@ -45,24 +83,6 @@ on:
           - staging
           - testing
         default: testing
-      speculos_device:
-        description: "Device to be used"
-        required: false
-        type: choice
-        options:
-          - nanoS
-          - nanoSP
-          - nanoX
-          - stax
-          - flex
-          - nanoGen5
-          - nanoSP and stax
-        default: nanoSP
-      smoke_tests:
-        description: "Run smoke tests"
-        required: false
-        type: boolean
-        default: false
       enable_asset_section:
         description: "Enable the Wallet 4.0 Asset Section"
         type: boolean
@@ -76,6 +96,21 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      # ────────────── Reporting ──────────────
+      slack_notif:
+        description: "Send notification to Slack?"
+        required: false
+        type: boolean
+        default: false
+      export_to_xray:
+        description: Send tests results to Xray
+        required: false
+        type: boolean
+        default: false
+      test_execution:
+        description: "Test Execution ticket ID"
+        required: false
+        type: string
 
   workflow_call:
     inputs:
@@ -83,12 +118,22 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
         type: string
+      test_scope:
+        description: "Friendly feature-area preset (see e2e-test-presets.json). Use 'All tests' for no scope."
+        required: false
+        type: string
+        default: "All tests"
+      currency:
+        description: "Friendly currency preset (see e2e-test-presets.json). Use 'All currencies' for no limit."
+        required: false
+        type: string
+        default: "All currencies"
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
+        description: 'Advanced override: custom pattern by tag or test name. When set, replaces test_scope/currency.'
         required: false
         type: string
       invert_filter:
-        description: Ignore test having name pattern (entered in the previous field)
+        description: Run everything EXCEPT what matches the selection/filter above
         type: boolean
         default: false
       slack_notif:
@@ -272,12 +317,16 @@ jobs:
         run: |
           RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
             --input "$TEST_FILTER_INPUT" \
+            --scope "$TEST_SCOPE_INPUT" \
+            --currency "$CURRENCY_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/desktop/tests")"
           echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
         shell: bash
         env:
           TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+          TEST_SCOPE_INPUT: ${{ inputs.test_scope }}
+          CURRENCY_INPUT: ${{ inputs.currency }}
           SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
 
       - name: Write workflow context to GitHub Summary
@@ -306,8 +355,10 @@ jobs:
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
             echo "- **Device selected:** $DEVICE"
+            echo "- **Scope selected:** ${{ inputs.test_scope || 'All tests' }}"
+            echo "- **Currency selected:** ${{ inputs.currency || 'All currencies' }}"
             echo "- **Asset Section:** ${{ (github.event_name == 'schedule' || inputs.enable_asset_section != false) && 'enabled' || 'disabled' }}"
-            echo "- **Filtered pattern:** $FILTER_PATTERN"
+            echo "- **Resolved filter pattern:** $FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"

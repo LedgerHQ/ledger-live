@@ -7,10 +7,16 @@ import { test } from "node:test";
 import {
   applySmokeFilter,
   resolveBaseFilter,
+  resolveScopeAndCurrency,
   resolveTestFilter,
 } from "./resolve-e2e-test-filter.mjs";
 
 const ENABLED_FAMILIES = ["evm", "xrp", "stellar", "tezos"];
+
+const PRESETS = {
+  scopes: { Swap: "[Ss]wap", "Send & Receive": "[Ss]end|[Rr]eceive" },
+  currencies: { Bitcoin: "@family-bitcoin", "Ethereum & EVM chains": "@family-evm" },
+};
 
 test("expands generic coin framework aliases from enabled families", () => {
   assert.equal(
@@ -46,6 +52,33 @@ test("deduplicates expanded and explicit filters", () => {
 
 test("applies smoke filter after alias expansion", () => {
   assert.equal(applySmokeFilter("@family-evm|@family-xrp", true), "@smoke @family-evm|@family-xrp");
+});
+
+test("resolves a single scope selector to its preset expression", () => {
+  assert.equal(resolveScopeAndCurrency("Swap", "All currencies", PRESETS), "[Ss]wap");
+});
+
+test("resolves a single currency selector to its preset tag", () => {
+  assert.equal(resolveScopeAndCurrency("All tests", "Bitcoin", PRESETS), "@family-bitcoin");
+});
+
+test("ANDs scope and currency with lookaheads when both are selected", () => {
+  assert.equal(
+    resolveScopeAndCurrency("Send & Receive", "Ethereum & EVM chains", PRESETS),
+    "(?=.*([Ss]end|[Rr]eceive))(?=.*(@family-evm))",
+  );
+});
+
+test("returns an empty filter when neither selector narrows the run", () => {
+  assert.equal(resolveScopeAndCurrency("All tests", "All currencies", PRESETS), "");
+  assert.equal(resolveScopeAndCurrency("", "", PRESETS), "");
+});
+
+test("advanced filter input takes precedence over scope/currency selectors", () => {
+  assert.equal(
+    resolveTestFilter({ input: "@solana", scope: "Swap", currency: "Bitcoin" }),
+    "@solana",
+  );
 });
 
 test("emits warnings but preserves resolved filter when a tag has no matches", () => {

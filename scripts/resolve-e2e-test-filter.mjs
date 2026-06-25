@@ -12,6 +12,7 @@ const genericCoinFrameworkFamiliesPath = path.join(
   repoRoot,
   "libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json",
 );
+const presetsPath = path.join(currentDir, "e2e-test-presets.json");
 
 const GENERIC_COIN_FRAMEWORK_ALIASES = new Set([
   "generic-family",
@@ -36,6 +37,32 @@ function splitFilter(input) {
 
 function joinFilterParts(parts) {
   return [...new Set(parts)].join("|");
+}
+
+export function loadPresets(presetsFilePath = presetsPath) {
+  try {
+    const presets = JSON.parse(fs.readFileSync(presetsFilePath, "utf8"));
+    return { scopes: presets.scopes ?? {}, currencies: presets.currencies ?? {} };
+  } catch {
+    console.warn(
+      `::warning title=E2E presets unavailable::Could not read ${presetsFilePath}; Scope/Currency selectors are ignored`,
+    );
+    return { scopes: {}, currencies: {} };
+  }
+}
+
+// Resolves the friendly "Scope" + "Currency" selectors into a single grep expression.
+// Each selector maps to a regex fragment via the presets file. When both are set we AND
+// them with zero-width lookaheads so the run is narrowed to their intersection
+// (e.g. "Swap" + "Bitcoin" -> only Bitcoin swap tests). A single selector is used as-is.
+export function resolveScopeAndCurrency(scope = "", currency = "", presets = loadPresets()) {
+  const scopeExpr = presets.scopes?.[scope?.trim()] ?? "";
+  const currencyExpr = presets.currencies?.[currency?.trim()] ?? "";
+
+  if (scopeExpr && currencyExpr) {
+    return `(?=.*(${scopeExpr}))(?=.*(${currencyExpr}))`;
+  }
+  return scopeExpr || currencyExpr;
 }
 
 export function resolveBaseFilter(
@@ -127,6 +154,8 @@ function warnZeroMatches(checkDir, baseFilter, expandedTags) {
 function parseArgs(args) {
   const parsed = {
     input: "",
+    scope: "",
+    currency: "",
     smokeTests: false,
     checkDir: "",
   };
@@ -136,6 +165,12 @@ function parseArgs(args) {
     switch (arg) {
       case "--input":
         parsed.input = args[++i] ?? "";
+        break;
+      case "--scope":
+        parsed.scope = args[++i] ?? "";
+        break;
+      case "--currency":
+        parsed.currency = args[++i] ?? "";
         break;
       case "--smoke-tests":
         parsed.smokeTests = args[++i] === "true";
@@ -152,9 +187,23 @@ function parseArgs(args) {
   return parsed;
 }
 
-export function resolveTestFilter({ input = "", smokeTests = false, checkDir = "" } = {}) {
-  const { filter: baseFilter, expandedTags } = resolveBaseFilter(input);
-  warnZeroMatches(checkDir, baseFilter, expandedTags);
+export function resolveTestFilter({
+  input = "",
+  scope = "",
+  currency = "",
+  smokeTests = false,
+  checkDir = "",
+} = {}) {
+  // The advanced "Filter" field always wins: when it is set we ignore the Scope/Currency
+  // selectors and keep the legacy behaviour (alias expansion + zero-match warnings).
+  if (input) {
+    const { filter: baseFilter, expandedTags } = resolveBaseFilter(input);
+    warnZeroMatches(checkDir, baseFilter, expandedTags);
+    return applySmokeFilter(baseFilter, smokeTests);
+  }
+
+  const baseFilter = resolveScopeAndCurrency(scope, currency);
+  warnZeroMatches(checkDir, baseFilter, []);
   return applySmokeFilter(baseFilter, smokeTests);
 }
 

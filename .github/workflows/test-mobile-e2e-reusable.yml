@@ -14,15 +14,43 @@ on:
     - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
   workflow_dispatch:
     inputs:
+      # ────────────── What to test (start here) ──────────────
       ref:
-        description: "Specify branch to checkout and test or leave blank to use the workflow branch"
+        description: "Branch to test — leave blank to use this workflow's own branch"
         required: false
-      test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
+      test_scope:
+        description: "Which feature area? Leave on 'All tests' to run everything."
         required: false
-        type: string
+        type: choice
+        default: "All tests"
+        options:
+          - "All tests"
+          - "Send & Receive"
+          - "Swap"
+          - "Stake / Earn"
+          - "Buy / Sell"
+          - "Accounts"
+          - "Settings"
+          - "Portfolio"
+      currency:
+        description: "Limit to one currency? Leave on 'All currencies' for no limit."
+        required: false
+        type: choice
+        default: "All currencies"
+        options:
+          - "All currencies"
+          - "Bitcoin"
+          - "Ethereum & EVM chains"
+          - "Solana"
+          - "XRP"
+          - "Cosmos"
+          - "Polkadot"
+          - "Tron"
+          - "Cardano"
+          - "Tezos"
+          - "Stellar"
       tests_type:
-        description: "Which tests to run"
+        description: "Which platforms to run on?"
         required: true
         type: choice
         default: "iOS & Android"
@@ -31,7 +59,7 @@ on:
           - "iOS Only"
           - "iOS & Android"
       speculos_device:
-        description: Speculos device to use
+        description: "Hardware device to simulate — Nano X / Stax / Flex / Nano S Plus / Nano Gen5 / Nano S"
         required: true
         type: choice
         options:
@@ -42,6 +70,11 @@ on:
           - flex
           - nanoGen5
         default: nanoX
+      # ────────────── Advanced filtering (power users) ──────────────
+      test_filter:
+        description: 'Advanced override: custom pattern by tag (@bitcoin, @family-evm) or test name (addAccount). Comma-separate to match any. When set, REPLACES the Scope & Currency choices above.'
+        required: false
+        type: string
       production_firebase:
         description: "Target Firebase Production env"
         required: false
@@ -66,7 +99,7 @@ on:
         required: false
         type: string
       smoke_tests:
-        description: "Run smoke tests"
+        description: "Run only the fast smoke subset (quick sanity check)"
         required: false
         type: boolean
         default: false
@@ -92,8 +125,18 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
         type: string
+      test_scope:
+        description: "Friendly feature-area preset (see e2e-test-presets.json). Use 'All tests' for no scope."
+        required: false
+        type: string
+        default: "All tests"
+      currency:
+        description: "Friendly currency preset (see e2e-test-presets.json). Use 'All currencies' for no limit."
+        required: false
+        type: string
+        default: "All currencies"
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: 'Advanced override: custom pattern by tag or test name. When set, replaces test_scope/currency.'
         required: false
         type: string
       tests_type:
@@ -116,7 +159,7 @@ on:
         type: boolean
         default: false
       smoke_tests:
-        description: "Run smoke tests"
+        description: "Run only the fast smoke subset (quick sanity check)"
         required: false
         type: boolean
         default: false
@@ -218,6 +261,7 @@ jobs:
             e2e/mobile
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
             scripts/resolve-e2e-test-filter.mjs
+            scripts/e2e-test-presets.json
             .pnpmfile.cjs
             tools
             .mise/tasks
@@ -285,7 +329,9 @@ jobs:
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **iOS device:** $IOS_DEVICE"
           echo "- **Android device:** $ANDROID_DEVICE"
-          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "- **Scope selected:** ${{ inputs.test_scope || 'All tests' }}"
+          echo "- **Currency selected:** ${{ inputs.currency || 'All currencies' }}"
+          echo "- **Advanced filter (raw input):** $FILTER_PATTERN"
           echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
@@ -332,12 +378,16 @@ jobs:
         run: |
           RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
             --input "$TEST_FILTER_INPUT" \
+            --scope "$TEST_SCOPE_INPUT" \
+            --currency "$CURRENCY_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/mobile/specs")"
           echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
         shell: bash
         env:
           TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+          TEST_SCOPE_INPUT: ${{ inputs.test_scope }}
+          CURRENCY_INPUT: ${{ inputs.currency }}
           SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
 
       - name: Write resolved filter to GitHub Summary
@@ -364,6 +414,16 @@ jobs:
           aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # Fail loudly instead of "passing" with zero tests: if a manual run asked to narrow
+      # the suite (Scope / Currency / advanced filter / smoke) but nothing matched, the
+      # downstream build & test jobs would be skipped and the workflow would look green.
+      - name: Guard against an empty manual selection
+        if: ${{ github.event_name == 'workflow_dispatch' && steps.generate-shards.outputs.test_files_for_sharding == '' && (inputs.test_filter != '' || (inputs.test_scope != '' && inputs.test_scope != 'All tests') || (inputs.currency != '' && inputs.currency != 'All currencies') || inputs.smoke_tests) }}
+        run: |
+          echo "::error title=No tests matched your selection::Scope='${{ inputs.test_scope }}', Currency='${{ inputs.currency }}', Filter='${{ inputs.test_filter }}', Smoke='${{ inputs.smoke_tests }}' resolved to '${{ steps.test-filter.outputs.filter }}' and matched 0 specs. Check your selection (or clear the advanced filter)."
+          exit 1
+        shell: bash
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
