@@ -17,6 +17,9 @@ describe("Receive different currency (polkadot, cosmos)", () => {
         noah: {
           enabled: false,
         },
+        currencyPolkadot: {
+          enabled: false,
+        },
       },
     });
     deviceAction = new DeviceAction(knownDevice);
