@@ -7,7 +7,18 @@
       "name": "Attach Electron Renderer",
       "type": "chrome",
       "request": "attach",
-      "port": 8315
+      "port": 8315,
+      "webRoot": "${workspaceFolder}/apps/ledger-live-desktop",
+      "timeout": 30000,
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "sourceMapPathOverrides": {
+        "webpack://ledger-live-desktop/./*": "${workspaceFolder}/apps/ledger-live-desktop/*",
+        "webpack://ledger-live-desktop/../../*": "${workspaceFolder}/*",
+        "webpack:///./*": "${workspaceFolder}/apps/ledger-live-desktop/*",
+        "webpack:///../../*": "${workspaceFolder}/*",
+        "webpack-internal:///./*": "${workspaceFolder}/apps/ledger-live-desktop/*",
+        "webpack-internal:///../../*": "${workspaceFolder}/*"
+      }
     },
     {
       // Start LLD with:
@@ -22,6 +33,21 @@
       "type": "node",
       "request": "attach",
       "port": 9229
+    },
+    {
+      // One-click: open a *.test.ts file in libs/ledger-live-common, then run this.
+      "name": "Debug LLC Jest (current file)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/libs/ledger-live-common",
+      "program": "${workspaceFolder}/libs/ledger-live-common/node_modules/jest/bin/jest.js",
+      "args": ["--runInBand", "--watch", "${fileBasenameNoExtension}"],
+      "env": { "TZ": "America/New_York" },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     }
   ]
 }

@@ -23,9 +23,15 @@ const boolParser = (v: unknown): boolean | undefined => {
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
+const stringParser = (v: unknown): string | undefined =>
+  typeof v === "string" ? v : undefined;
 
-type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;
 
 const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
@@ -42,6 +48,11 @@ const stringArrayParser = (v: unknown): string[] | undefined => {
 };
 
 const envDefinitions = {
+  A4_API_ENDPOINT: {
+    def: "https://explorers.api.live.stg.ledger-test.com/a4",
+    parser: stringParser,
+    desc: "Default A4 indexer API base URL (per-currency coin config may override). Without trailing network segment.",
+  },
   ADDRESS_POISONING_FAMILIES: {
     def: "evm,tron,stellar,hedera,algorand,cardano,cosmos,solana,xrp",
     parser: stringParser,
@@ -1067,26 +1078,30 @@ export const getDefinition = (name: string): EnvDef<any> | undefined => {
   return undefined;
 };
 
-const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[Key]["def"] }>(
-  (acc, curr) => {
-    return {
-      ...acc,
-      [curr]: envDefinitions[curr as EnvName].def,
-    };
-  },
-  {} as { [Key in EnvName]: EnvDefs[Key]["def"] },
-);
+const defaults = Object.keys(envDefinitions).reduce<{
+  [Key in EnvName]: EnvDefs[Key]["def"];
+}>((acc, curr) => {
+  return {
+    ...acc,
+    [curr]: envDefinitions[curr as EnvName].def,
+  };
+}, {} as { [Key in EnvName]: EnvDefs[Key]["def"] });
 
 // private local state
 const env = { ...defaults };
-export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions) as EnvName[];
+export const getAllEnvNames = (): EnvName[] =>
+  Object.keys(envDefinitions) as EnvName[];
 export const getAllEnvs = (): Env => ({ ...env });
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
-export const getEnv = <Name extends EnvName>(name: Name): EnvValue<Name> => env[name];
-export const getEnvDefault = <Name extends EnvName>(name: Name): EnvValue<Name> => defaults[name];
+export const getEnv = <Name extends EnvName>(name: Name): EnvValue<Name> =>
+  env[name];
+export const getEnvDefault = <Name extends EnvName>(
+  name: Name
+): EnvValue<Name> => defaults[name];
 export const isEnvDefault = <Name extends EnvName>(name: Name): boolean =>
   env[name] === defaults[name];
-export const getEnvDesc = <Name extends EnvName>(name: Name): string => envDefinitions[name].desc;
+export const getEnvDesc = <Name extends EnvName>(name: Name): string =>
+  envDefinitions[name].desc;
 type ChangeValue<T extends EnvName> = {
   name: EnvName;
   value: EnvValue<T>;
@@ -1094,7 +1109,10 @@ type ChangeValue<T extends EnvName> = {
 };
 export const changes: Subject<ChangeValue<any>> = new Subject();
 // change one environment
-export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>): void => {
+export const setEnv = <Name extends EnvName>(
+  name: Name,
+  value: EnvValue<Name>
+): void => {
   const oldValue = env[name];
 
   if (oldValue !== value) {

@@ -1,5 +1,6 @@
 import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 import { appConfig } from "../apps/config";
+import { a4Config } from "../bridge/generic-coin-framework/config";
 import { algorandConfig } from "../families/algorand/config";
 import { bitcoinConfig } from "../families/bitcoin/config";
 import { cardanoConfig } from "../families/cardano/config";
@@ -47,6 +48,7 @@ const liveCommonConfig: ConfigSchema = {
 export const liveConfig: ConfigSchema = {
   ...countervaluesConfig,
   ...liveCommonConfig,
+  ...a4Config,
   ...algorandConfig,
   ...bitcoinConfig,
   ...cardanoConfig,
