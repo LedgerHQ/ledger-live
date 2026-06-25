@@ -52,8 +52,7 @@ export default function OperationsList({ route }: Props) {
     isOptionsSheetOpen,
     openOptionsSheet,
     closeOptionsSheet,
-    hideSmallValueTokenOperations,
-    dustFilterThreshold,
+    dustFilterOption,
     onToggleHideSmallValueTokenOperations,
   } = useOperationsListViewModel(accountIds);
 
@@ -150,8 +149,7 @@ export default function OperationsList({ route }: Props) {
       {!isEmpty && <BottomFadeGradient />}
       <OperationsHistoryOptionsSheet
         isOpen={isOptionsSheetOpen}
-        isFilterEnabled={hideSmallValueTokenOperations}
-        threshold={dustFilterThreshold}
+        dustFilterOption={dustFilterOption}
         onClose={closeOptionsSheet}
         onToggle={onToggleHideSmallValueTokenOperations}
       />
