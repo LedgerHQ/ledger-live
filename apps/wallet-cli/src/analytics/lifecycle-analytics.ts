@@ -4,6 +4,16 @@ import { getCliProcessExitCode } from "../cli-process-exit-error";
 import { parseCommand } from "../shared/parse-command";
 import { track } from "./segment";
 
+const HELP = "Help";
+
+function trackHelpViewed(p: { command?: string } = {}): void {
+  track("help_viewed", { page: HELP, ...(p.command ? { command: p.command } : {}) });
+}
+
+function isHelpRequested(argv: string[]): boolean {
+  return argv.some(arg => arg === "--help" || arg === "-h");
+}
+
 function getErrorName(error: unknown): string {
   // A non-zero exit with no thrown error, or an explicit CliProcessExitError,
   // is an intentional process exit rather than a runtime failure.
@@ -42,6 +52,11 @@ export async function withCommandLifecycleAnalytics(
   run: () => Promise<number>,
 ): Promise<number> {
   const command = parseCommand(argv);
+
+  if (isHelpRequested(argv)) {
+    trackHelpViewed(command ? { command } : {});
+  }
+
   const startedAt = Date.now();
   if (command) trackCommandInvoked(command, argv);
 

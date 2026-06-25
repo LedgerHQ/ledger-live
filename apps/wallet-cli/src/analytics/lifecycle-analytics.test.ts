@@ -67,9 +67,40 @@ describe("withCommandLifecycleAnalytics", () => {
   });
 
   it("tracks nothing when no command can be parsed", async () => {
-    const exitCode = await withCommandLifecycleAnalytics(["--help"], async () => 0);
+    const exitCode = await withCommandLifecycleAnalytics(["nope"], async () => 0);
 
     expect(exitCode).toBe(0);
     expect(trackCalls).toHaveLength(0);
+  });
+
+  describe("help view tracking", () => {
+    const helpCalls = () => trackCalls.filter(c => c.event === "help_viewed");
+
+    it("tracks help viewed for --help with no command", async () => {
+      await withCommandLifecycleAnalytics(["--help"], async () => 0);
+
+      expect(helpCalls()).toHaveLength(1);
+      expect(helpCalls()[0].properties).not.toHaveProperty("command");
+    });
+
+    it("tracks help viewed for -h with no command", async () => {
+      await withCommandLifecycleAnalytics(["-h"], async () => 0);
+
+      expect(helpCalls()).toHaveLength(1);
+      expect(helpCalls()[0].properties).not.toHaveProperty("command");
+    });
+
+    it("includes the subcommand when help is requested for a command", async () => {
+      await withCommandLifecycleAnalytics(["send", "--help"], async () => 0);
+
+      expect(helpCalls()).toHaveLength(1);
+      expect(helpCalls()[0].properties).toMatchObject({ command: "send" });
+    });
+
+    it("does not track help viewed without a help flag", async () => {
+      await withCommandLifecycleAnalytics(["send", "--json"], async () => 0);
+
+      expect(helpCalls()).toHaveLength(0);
+    });
   });
 });
