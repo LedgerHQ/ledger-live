@@ -104,7 +104,10 @@ describe("useOperationsListViewModel", () => {
     it("starts disabled and toggles the setting from the options sheet when the feature flag is enabled", () => {
       const { result, store } = renderHook(() => useOperationsListViewModel(), {
         overrideInitialState: withFlagOverrides({
-          llmHideSmallValueTokenOperations: { enabled: true },
+          llHideSmallValueTokenOperations: {
+            enabled: true,
+            params: { mobile: true, desktop: false },
+          },
         }),
       });
 
@@ -126,6 +129,21 @@ describe("useOperationsListViewModel", () => {
       expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
       expect(result.current.isOptionsSheetOpen).toBe(false);
       expect(result.current.dustFilterOption?.title).toBe("Show dust transactions");
+    });
+
+    it("hides and disables the dust filter option when only the desktop flag param is enabled", () => {
+      const { result } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: withFlagOverrides({
+          llHideSmallValueTokenOperations: {
+            enabled: true,
+            params: { mobile: false, desktop: true },
+          },
+        }),
+      });
+
+      expect(result.current.hideSmallValueTokenOperations).toBe(false);
+      expect(result.current.isDustFilterFeatureEnabled).toBe(false);
+      expect(result.current.dustFilterOption).toBeUndefined();
     });
   });
 

@@ -111,7 +111,10 @@ describe("OperationsList", () => {
       { setOptions: mockSetOptions },
       {
         overrideInitialState: withFlagOverrides({
-          llmHideSmallValueTokenOperations: { enabled: true },
+          llHideSmallValueTokenOperations: {
+            enabled: true,
+            params: { mobile: true, desktop: false },
+          },
         }),
       },
     );
