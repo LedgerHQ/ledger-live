@@ -184,8 +184,13 @@ test.describe.parallel("Onboarding", () => {
         await expect(page).toHaveScreenshot("v3-genuine-check-done.png");
       });
 
-      await test.step("Secure your crypto", async () => {
+      await test.step("Enable sync", async () => {
         await onboardingPage.continue();
+        await expect(page).toHaveScreenshot("v3-enable-sync.png");
+        await onboardingPage.continueTutorialSecondary();
+      });
+
+      await test.step("Secure your crypto", async () => {
         await expect(page).toHaveScreenshot("v3-secure-your-crypto.png");
         await onboardingPage.continueTutorialSecondary();
       });
