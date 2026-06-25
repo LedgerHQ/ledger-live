@@ -32,14 +32,6 @@ type PermissionPreflightConfig = {
   ) => MobileDiscoveryError;
 };
 
-export const arePermissionsGranted = async (permissions: Permission[]): Promise<boolean> => {
-  const results = await Promise.all(
-    permissions.map(permission => PermissionsAndroid.check(permission)),
-  );
-
-  return results.every(Boolean);
-};
-
 export const requestPermissions = async (
   permissions: Permission[],
 ): Promise<PermissionRequestResult> => {

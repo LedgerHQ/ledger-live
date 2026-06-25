@@ -41,8 +41,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "purify-ts": "^2.1.0",
-    "xstate": "catalog:"
+    "purify-ts": "^2.1.0"
   },
   "devDependencies": {
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
