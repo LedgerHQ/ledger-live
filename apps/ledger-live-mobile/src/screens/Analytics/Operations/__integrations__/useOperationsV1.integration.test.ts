@@ -3,7 +3,7 @@ import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useOperationsV1 } from "../useOperationsV1";
 import { State } from "~/reducers/types";
 
@@ -107,7 +107,7 @@ const initialStateWithFilterEnabledButNoEvmFamily = (state: State): State => ({
   },
 });
 
-const initialStateWithDustFilterEnabled = (state: State): State => ({
+const initialStateWithDustPreferenceEnabled = (state: State): State => ({
   ...state,
   settings: {
     ...state.settings,
@@ -115,6 +115,13 @@ const initialStateWithDustFilterEnabled = (state: State): State => ({
     hideSmallValueTokenOperations: true,
   },
 });
+
+const initialStateWithDustFilterEnabled = withFlagOverrides(
+  {
+    llmHideSmallValueTokenOperations: { enabled: true },
+  },
+  initialStateWithDustPreferenceEnabled,
+);
 
 describe("useOperationsV1 integration", () => {
   beforeEach(() => {
@@ -142,7 +149,17 @@ describe("useOperationsV1 integration", () => {
     expect(result.current.sections[0].data.length).toBe(2);
   });
 
-  it("should filter out zero-value token operations when dust filtering is enabled", () => {
+  it("should not filter zero-value token operations when dust preference is enabled but the feature flag is disabled", () => {
+    const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
+      overrideInitialState: initialStateWithDustPreferenceEnabled,
+    });
+
+    expect(result.current.sections[0].data).toHaveLength(2);
+  });
+
+  it("should filter out zero-value token operations when dust preference and feature flag are enabled", () => {
     const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
 
     const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {

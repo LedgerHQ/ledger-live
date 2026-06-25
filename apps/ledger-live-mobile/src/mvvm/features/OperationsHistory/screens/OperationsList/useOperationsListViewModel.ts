@@ -12,6 +12,7 @@ import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/acc
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import {
   counterValueCurrencySelector,
+  hideSmallValueTokenOperationsFeatureEnabledSelector,
   hideSmallValueTokenOperationsEnabledSelector,
 } from "~/reducers/settings";
 import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOperations";
@@ -37,8 +38,15 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
-  const hideSmallValueTokenOperations = useSelector(hideSmallValueTokenOperationsEnabledSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const isDustFilterFeatureEnabled = useSelector(
+    hideSmallValueTokenOperationsFeatureEnabledSelector,
+  );
+  const userHideSmallValueTokenOperations = useSelector(
+    hideSmallValueTokenOperationsEnabledSelector,
+  );
+  const counterValueCurrency = useSelector(state =>
+    isDustFilterFeatureEnabled ? counterValueCurrencySelector(state) : undefined,
+  );
   const { locale } = useLocale();
   const { t } = useTranslation();
 
@@ -100,6 +108,8 @@ export function useOperationsListViewModel(accountIds?: string[]) {
 
   const hasPendingOperations = useMemo(() => sections.some(s => s.isPending), [sections]);
   const dustFilterThreshold = useMemo(() => {
+    if (!counterValueCurrency) return undefined;
+
     const thresholdMinorUnit =
       floorThresholdToCurrencyMinorUnit(HISTORY_DUST_FILTER_THRESHOLD_USD, counterValueCurrency) ??
       new BigNumber(0);
@@ -109,9 +119,11 @@ export function useOperationsListViewModel(accountIds?: string[]) {
       locale,
     });
   }, [counterValueCurrency, locale]);
-  const dustFilterOption: OperationsHistoryDustFilterOption = useMemo(() => {
-    const Icon = hideSmallValueTokenOperations ? Eye : EyeCross;
-    const title = hideSmallValueTokenOperations
+  const dustFilterOption: OperationsHistoryDustFilterOption | undefined = useMemo(() => {
+    if (!isDustFilterFeatureEnabled || !dustFilterThreshold) return undefined;
+
+    const Icon = userHideSmallValueTokenOperations ? Eye : EyeCross;
+    const title = userHideSmallValueTokenOperations
       ? t("operationsList.options.showDustTransactions")
       : t("operationsList.options.hideDustTransactions");
 
@@ -122,14 +134,20 @@ export function useOperationsListViewModel(accountIds?: string[]) {
         threshold: dustFilterThreshold,
       }),
     };
-  }, [dustFilterThreshold, hideSmallValueTokenOperations, t]);
+  }, [dustFilterThreshold, isDustFilterFeatureEnabled, userHideSmallValueTokenOperations, t]);
 
-  const openOptionsSheet = useCallback(() => setOptionsSheetOpen(true), []);
+  const openOptionsSheet = useCallback(() => {
+    if (isDustFilterFeatureEnabled) {
+      setOptionsSheetOpen(true);
+    }
+  }, [isDustFilterFeatureEnabled]);
   const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
   const onToggleHideSmallValueTokenOperations = useCallback(() => {
-    dispatch(setHideSmallValueTokenOperations(!hideSmallValueTokenOperations));
+    if (!isDustFilterFeatureEnabled) return;
+
+    dispatch(setHideSmallValueTokenOperations(!userHideSmallValueTokenOperations));
     closeOptionsSheet();
-  }, [dispatch, hideSmallValueTokenOperations, closeOptionsSheet]);
+  }, [dispatch, isDustFilterFeatureEnabled, userHideSmallValueTokenOperations, closeOptionsSheet]);
 
   return {
     accounts,
@@ -144,7 +162,8 @@ export function useOperationsListViewModel(accountIds?: string[]) {
     isOptionsSheetOpen,
     openOptionsSheet,
     closeOptionsSheet,
-    hideSmallValueTokenOperations,
+    hideSmallValueTokenOperations: isDustFilterFeatureEnabled && userHideSmallValueTokenOperations,
+    isDustFilterFeatureEnabled,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,
   };
