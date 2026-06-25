@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.10.0-next.4
+
+### Minor Changes
+
+- [#18976](https://github.com/LedgerHQ/ledger-live/pull/18976) [`0b9f1df`](https://github.com/LedgerHQ/ledger-live/commit/0b9f1df29ec8cf0cb01c82c3a9f081bfec0ea640) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Revert the `@datadog/electron-sdk` main-process integration (#17844) due to boot-time issues. The Electron main process no longer initializes Datadog/dd-trace; renderer Datadog reporting is unchanged. The asar source-map URL rewrite in the renderer `beforeSend` is kept.
+
 ## 4.10.0-next.3
 
 ### Minor Changes
