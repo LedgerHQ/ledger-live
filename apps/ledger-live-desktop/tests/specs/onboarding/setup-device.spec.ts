@@ -9,6 +9,13 @@ test.use({
   },
   featureFlags: {
     noah: { enabled: false },
+    // Pin to keep the post-genuine-check setup flow deterministic: when this
+    // flag is enabled an extra "Enable sync" screen appears before "Secure your
+    // crypto", and its remote value races per worker, making the flow flaky.
+    lldOnboardingEnableSync: {
+      enabled: false,
+      params: { nanos: false, touchscreens: false },
+    },
   },
 });
 
@@ -184,13 +191,8 @@ test.describe.parallel("Onboarding", () => {
         await expect(page).toHaveScreenshot("v3-genuine-check-done.png");
       });
 
-      await test.step("Enable sync", async () => {
-        await onboardingPage.continue();
-        await expect(page).toHaveScreenshot("v3-enable-sync.png");
-        await onboardingPage.continueTutorialSecondary();
-      });
-
       await test.step("Secure your crypto", async () => {
+        await onboardingPage.continue();
         await expect(page).toHaveScreenshot("v3-secure-your-crypto.png");
         await onboardingPage.continueTutorialSecondary();
       });
