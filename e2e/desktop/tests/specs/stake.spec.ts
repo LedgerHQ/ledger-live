@@ -27,7 +27,8 @@ test.describe("e2e staking - Tezos - earning choice", () => {
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
 
   test.use({
-    env: { DISABLE_TRANSACTION_BROADCAST: "1" },
+    // off by default (CI); with DISABLE_TRANSACTION_BROADCAST=0 this delegates idx0 on-chain — undelegate after to reset.
+    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
@@ -140,7 +141,8 @@ test.describe("e2e staking - Tezos - change validator blocked", () => {
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   test.use({
-    env: { DISABLE_TRANSACTION_BROADCAST: "1" }, // assertion-only: never signs or broadcasts
+    // assertion-only (never signs); env-driven for consistency
+    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
@@ -170,7 +172,8 @@ test.describe("e2e staking - Tezos - end delegation blocked", () => {
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   test.use({
-    env: { DISABLE_TRANSACTION_BROADCAST: "1" }, // assertion-only: never signs or broadcasts
+    // assertion-only (never signs); env-driven for consistency
+    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
