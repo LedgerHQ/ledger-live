@@ -873,6 +873,11 @@ export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
 export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>
   state.settings.hideSmallValueTokenOperations;
+export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) =>
+  selectFeature(state, "llmHideSmallValueTokenOperations")?.enabled === true;
+export const hideSmallValueTokenOperationsEffectiveSelector = (state: State) =>
+  hideSmallValueTokenOperationsFeatureEnabledSelector(state) &&
+  hideSmallValueTokenOperationsEnabledSelector(state);
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) => state.settings.hasAvailableUpdate;
 export const dismissedDynamicCardsSelector = (state: State) => state.settings.dismissedDynamicCards;

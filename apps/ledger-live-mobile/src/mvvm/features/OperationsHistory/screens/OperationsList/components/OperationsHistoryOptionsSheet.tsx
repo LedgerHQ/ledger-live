@@ -15,7 +15,7 @@ import type { OperationsHistoryDustFilterOption } from "../useOperationsListView
 
 type Props = Readonly<{
   isOpen: boolean;
-  dustFilterOption: OperationsHistoryDustFilterOption;
+  dustFilterOption: OperationsHistoryDustFilterOption | undefined;
   onClose: () => void;
   onToggle: () => void;
 }>;
@@ -27,6 +27,8 @@ export function OperationsHistoryOptionsSheet({
   onToggle,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
+  if (!dustFilterOption) return null;
+
   const { Icon, title, description } = dustFilterOption;
 
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
-import { render } from "@tests/test-renderer";
+import { render, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screen, track } from "~/analytics";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
@@ -66,12 +66,14 @@ const operationsListRoute = {
 
 const renderOperationsListWithNavigation = (
   navigation: Partial<OperationsListProps["navigation"]>,
+  options?: Parameters<typeof render>[1],
 ) =>
   render(
     <OperationsList
       route={operationsListRoute}
       navigation={navigation as OperationsListProps["navigation"]}
     />,
+    options,
   );
 
 describe("OperationsList", () => {
@@ -92,8 +94,27 @@ describe("OperationsList", () => {
     );
   });
 
-  it("registers the transaction history options menu in the navigation bar", () => {
+  it("does not register the transaction history options menu when the dust filter feature flag is disabled", () => {
     renderOperationsListWithNavigation({ setOptions: mockSetOptions });
+
+    expect(mockSetOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lumenNavBar: expect.objectContaining({
+          renderTrailing: undefined,
+        }),
+      }),
+    );
+  });
+
+  it("registers the transaction history options menu in the navigation bar when the dust filter feature flag is enabled", () => {
+    renderOperationsListWithNavigation(
+      { setOptions: mockSetOptions },
+      {
+        overrideInitialState: withFlagOverrides({
+          llmHideSmallValueTokenOperations: { enabled: true },
+        }),
+      },
+    );
 
     expect(mockSetOptions).toHaveBeenCalledWith(
       expect.objectContaining({
