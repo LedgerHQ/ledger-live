@@ -52,6 +52,7 @@ import {
 import { Flex } from "@ledgerhq/react-ui";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { useTrackFundsReceived } from "LLD/features/Analytics/hooks/useTrackFundsReceived";
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
@@ -427,6 +428,7 @@ export default function Default() {
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 
   useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
+  useTrackFundsReceived();
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
