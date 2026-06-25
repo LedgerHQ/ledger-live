@@ -52,6 +52,7 @@ import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
+import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { setupRecentAddressesStore } from "./recentAddresses";
@@ -210,6 +211,20 @@ async function init() {
 
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
+  }
+
+  // Hydrate persisted known devices before settings so the settings-based
+  // migration only seeds the store for first-time users (empty known devices).
+  const persistedKnownDevices = await getKey("app", "knownDevices");
+  if (persistedKnownDevices?.knownDevices?.length) {
+    store.dispatch(
+      importKnownDevices({
+        knownDevices: persistedKnownDevices.knownDevices.flatMap(device => {
+          const knownDevice = mapPersistedKnownDeviceToKnownDevice(device);
+          return knownDevice ? [knownDevice] : [];
+        }),
+      }),
+    );
   }
 
   fetchSettings(settingsToLoad)(store.dispatch);
