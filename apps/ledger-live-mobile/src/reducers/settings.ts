@@ -863,7 +863,7 @@ export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>
   state.settings.hideSmallValueTokenOperations;
 export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) => {
   const feature = selectFeature(state, "llHideSmallValueTokenOperations");
-  return feature?.enabled === true && feature.params?.mobile === true;
+  return feature?.enabled === true && feature.params?.enabledMobile === true;
 };
 export const hideSmallValueTokenOperationsEffectiveSelector = (state: State) =>
   hideSmallValueTokenOperationsFeatureEnabledSelector(state) &&
