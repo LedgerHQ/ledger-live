@@ -78,8 +78,11 @@ export function useAssetDetailViewModel() {
   const hideReceiveInBalanceGraph = !isCurrencySupported || secondaryButton === "receive";
   const showFallbackBanner = isCurrencySupported && !isBuyAvailable && !availableOnSwap;
   const robinhoodDisclaimer = useFeature("llRobinhoodDisclaimer");
+  const hasPositiveBalance = (distributionItem?.amount ?? 0) > 0;
   const showStockDisclaimerBanner =
-    !!robinhoodDisclaimer?.enabled && isRobinhoodExclusiveAsset(receiveLedgerIds);
+    !!robinhoodDisclaimer?.enabled &&
+    hasPositiveBalance &&
+    isRobinhoodExclusiveAsset(receiveLedgerIds);
 
   const coinOptions = useAssetCoinOptionsViewModel({ currency, currencyId, marketId });
 

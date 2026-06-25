@@ -393,11 +393,15 @@ describe("AssetDetail screen layout", () => {
     const ROBINHOOD_ONLY_LEDGER_IDS = [
       "robinhood_testnet/erc20/amd_0x71178bac73cbeb415514eb542a8995b82669778d",
     ];
+    // Enables the flag and funds the asset, so only the Robinhood-exclusivity gate is exercised.
     const enableDisclaimer = () => ({
-      overrideInitialState: withFlagOverrides({ llRobinhoodDisclaimer: { enabled: true } }),
+      overrideInitialState: withFlagOverrides(
+        { llRobinhoodDisclaimer: { enabled: true } },
+        withBtcAccounts(1).overrideInitialState,
+      ),
     });
 
-    it("shows the disclaimer banner when the flag is on and the asset is exclusive to a Robinhood chain", async () => {
+    it("shows the disclaimer banner when the flag is on, the balance is positive and the asset is exclusive to a Robinhood chain", async () => {
       mockedUseReceiveNetworkLedgerIds.mockReturnValue(ROBINHOOD_ONLY_LEDGER_IDS);
 
       render(<AssetDetailTestNavigator />, enableDisclaimer());
@@ -433,6 +437,16 @@ describe("AssetDetail screen layout", () => {
       mockedUseReceiveNetworkLedgerIds.mockReturnValue(ROBINHOOD_ONLY_LEDGER_IDS);
 
       render(<AssetDetailTestNavigator />);
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.stockDisclaimerBanner)).toBeNull();
+    });
+
+    it("hides the disclaimer banner when the asset has no balance", () => {
+      mockedUseReceiveNetworkLedgerIds.mockReturnValue(ROBINHOOD_ONLY_LEDGER_IDS);
+
+      render(<AssetDetailTestNavigator />, {
+        overrideInitialState: withFlagOverrides({ llRobinhoodDisclaimer: { enabled: true } }),
+      });
 
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.stockDisclaimerBanner)).toBeNull();
     });
