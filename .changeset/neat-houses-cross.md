@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-ledgerjs-hw-app-cardano version bumped to work with cardano firmware 8.0.4
+Bump @cardano-foundation/ledgerjs-hw-app-cardano to 8.0.0-beta for compatibility with the Cardano Ledger app v8.0.4 (APDU protocol)
