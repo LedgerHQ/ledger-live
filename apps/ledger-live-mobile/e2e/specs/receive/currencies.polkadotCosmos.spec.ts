@@ -20,6 +20,9 @@ describe("Receive different currency (polkadot, cosmos)", () => {
         currencyPolkadot: {
           enabled: false,
         },
+        currencyAssetHubPolkadot: {
+          enabled: true,
+        },
       },
     });
     deviceAction = new DeviceAction(knownDevice);
