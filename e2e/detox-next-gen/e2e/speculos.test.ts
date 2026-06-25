@@ -9,10 +9,10 @@
  * also needs Docker + COINAPPS, or REMOTE_SPECULOS=true + SPECULINHO_URL.
  * See `helpers/speculos.ts` for the full list.
  */
-import { element, by, expect } from "detox";
 import { launchApp, closeApp } from "../helpers/launchApp";
 import { loadConfig } from "../helpers/loadConfig";
 import { launchSpeculos, shutdownSpeculos, SpeculosHandle } from "../helpers/speculos";
+import { app } from "../pages";
 
 const hasSpeculosEnv =
   !!process.env.SEED && (!!process.env.COINAPPS || process.env.REMOTE_SPECULOS === "true");
@@ -34,8 +34,8 @@ maybeDescribe("Speculos smoke", () => {
   });
 
   it("starts a Speculos and reaches the wallet root", async () => {
-    // Smoke: the app is still up after Speculos was wired in.
-    await expect(element(by.text("Discover"))).toBeVisible();
+    // Smoke: the app is still up at the wallet root after Speculos was wired in.
+    await app.wallet.expectReady();
     // Sanity: the helper returned a routable address + a port.
     if (!handle.port) throw new Error("Speculos handle has no port");
   });

@@ -58,6 +58,13 @@ export async function launchSpeculos(appName: keyof typeof specs): Promise<Specu
 
   await device.reverseTcpPort(result.port);
   setEnv("SPECULOS_API_PORT", result.port);
+  // Mirror e2e/mobile's `registerSpeculos`: export the port on
+  // process.env (not just live-env's in-memory store) so child processes
+  // — notably the ledger-live CLI spawned by liveDataWithAddressCommand /
+  // getAccountAddress — route their transport to this Speculos instead of
+  // looking for real USB/HID hardware (which fails with `NoDevice`).
+  process.env.SPECULOS_API_PORT = String(result.port);
+  delete process.env.DEVICE_PROXY_URL;
 
   const address = speculosAddress(result.port);
   await bridge.addKnownSpeculos(address, getSpeculosModel());
@@ -88,4 +95,5 @@ export async function shutdownSpeculos(handle: SpeculosHandle): Promise<void> {
     /* best effort */
   }
   setEnv("SPECULOS_API_PORT", 0);
+  delete process.env.SPECULOS_API_PORT;
 }
