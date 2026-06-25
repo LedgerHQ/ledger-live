@@ -18,6 +18,7 @@
   },
   "scripts": {
     "nx:write-cache-config": "node tools/nx/write-nx-cache-config.mjs",
+    "generate:labeler": "node .github/labeler.yml.ts",
     "postinstall": "pnpm run nx:write-cache-config",
     "lint:boundaries": "nx run enforce-boundaries:lint:boundaries",
     "bump": "changeset version",

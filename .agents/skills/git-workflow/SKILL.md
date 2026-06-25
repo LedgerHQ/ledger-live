@@ -5,84 +5,10 @@ description: Git workflow and commit conventions for Ledger Wallet
 
 # Git Workflow & Commit Conventions
 
-## Branch Naming
+Canonical guidelines: [CONTRIBUTING.md — Git Conventions](../../../CONTRIBUTING.md#git-conventions).
 
-Branches must use a clear prefix based on their purpose:
+Before creating a branch, commit, or PR title, read that section. 
 
-- **feat/** — New features
-- **bugfix/** — Bug fixes
-- **support/** — Refactor, tests, CI, improvements
-- **chore** — Maintenance, tooling, configs
+## Agent-specific
 
-### Examples
-
-- `feat/add-ethereum-staking`
-- `bugfix/fix-transaction-signing`
-- `support/update-dependencies`
-
-### Best Practices
-
-- Use **kebab-case**
-- Keep names **short, explicit, action-oriented**
-- One branch = **one isolated concern**
-
----
-
-## Commit Message Format
-
-Follow the **Conventional Commits** standard.
-
-### Format
-
-```
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-### Rules
-
-- Description must be **imperative, clear, lowercase**
-- Scope is optional but recommended (`desktop`, `mobile`, `coin`, `common`, etc.)
-- Add body for complex or user-facing changes
-- If needed, include footers:
-  - `BREAKING CHANGE: ...`
-  - Jira ticket (`LL-1234`)
-
----
-
-## Commit Types
-
-- **feat** — New feature
-- **fix** — Bug fix
-- **docs** — Docs only
-- **style** — Formatting, no code change
-- **refactor** — Restructure without behavior change
-- **test** — Add/update tests
-- **chore** — Maintenance, tooling, configs
-- **perf** — Performance improvements
-- **ci** — CI/CD changes
-
-### Examples
-
-```
-feat(desktop): add dark mode toggle
-fix(mobile): resolve transaction signing issue
-docs(common): update API documentation
-refactor(account): simplify account syncing logic
-test(coin): add bitcoin integration tests
-```
-
----
-
-## Workflow Best Practices
-
-- Commits must be **small, isolated, meaningful**
-- One commit = **one logical change**
-- Prefer **multiple focused commits** over large mixed ones
-- Never mix refactor + fix + feature
-- Rebase before PR to keep history clean
-- Squash only for trivial branches (`support/cleanup`)
-- **Never use `--no-verify` when committing or pushing** — pre-commit/pre-push hooks (lint, typecheck, tests) must run. If a hook fails, fix the underlying issue rather than skip it; if a hook is genuinely broken, surface it to the user instead of bypassing it.
+- **Never use `--no-verify`** when committing or pushing. Fix hook failures; if a hook is broken, surface it to the user.

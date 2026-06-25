@@ -30,25 +30,116 @@ There is a good chance that we will reject feature based PRs based on the fact t
 
 ### Git Conventions
 
-We use the following git conventions for the `ledger-live` monorepo.
+We follow conventions for commit messages, pull request titles and branch names. The conventions include consistent naming of the "scope" and "type" of each change. 
+
+#### Scope values
+
+Scope identifies which part of the monorepo a change affects. The canonical list lives in [`.github/scopes.ts`](.github/scopes.ts)
+
+Examples: `desktop`, `mobile`, `common`, `coin-modules`, `shared-lib`, `ui`, `translations`.
+
+`scopes.ts` is also used to generate labels and apply them to pull requests. Read more in [`.github/README.md`](.github/README.md)
+
+#### Commit types
+
+Type describes the nature of a change. Use one of the following values (aligned with [Conventional Commits](https://www.conventionalcommits.org/) and enforced by [commitlint](commitlint.config.js)):
+
+| Type | Use for |
+| --- | --- |
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `docs` | Documentation only |
+| `style` | Formatting, no code change |
+| `refactor` | Restructure without behavior change |
+| `perf` | Performance improvement |
+| `test` | Add or update tests |
+| `build` | Build system or external dependencies |
+| `ci` | CI/CD configuration |
+| `chore` | Maintenance, tooling, configs |
+| `revert` | Revert a previous commit |
 
 #### Branch naming
 
-Depending on the purpose every git branch should be prefixed.
+Branch names are recommended but not enforced. Use this pattern:
 
-- `feat/` when adding a new feature to the application or library
-- `bugfix/` when fixing an existing bug
-- `support/` for any other changes (refactor, tests, improvements, CI…)
+```
+<type>/[<scope>][-<ticket>]-<short-description>
+```
+
+- **type** — one of the [commit types](#commit-types) above (for example `feat`, `fix`, `chore`)
+- **scope** — a [scope](#scope-values) (for example `desktop`, `mobile`, `common`) (optional)
+- **ticket** — Jira issue key when applicable (for example `LIVE-27608`); (optional)
+- **short-description** — kebab-case summary of the change
+
+Examples:
+
+- `feat/desktop-LIVE-1234-add-dark-mode-toggle`
+- `fix/mobile-resolve-transaction-signing`
+- `chore/automation-update-labeler-config`
+
+Use kebab-case, keep names short and action-oriented, and limit each branch to one isolated concern.
+
+#### Commit message
+
+We use the [Conventional Commits](https://www.conventionalcommits.org/) specification and enforce it using [commitlint](https://commitlint.js.org/) ([`commitlint.config.js`](commitlint.config.js)).
+
+Format:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+Rules:
+
+- **type** — one of the [commit types](#commit-types) above
+- **scope** — optional but recommended; must be a [scope](#scope-values) from scopes.ts
+- **description** — imperative, lowercase, no trailing period
+- **body** — use for complex or user-facing changes
+- **footers** — `BREAKING CHANGE: ...` or Jira ticket reference when needed
+- **length** — keep the subject line (type, scope, and description) within 72 characters; GitHub truncates longer titles in the UI
+- **gitmoji** — not used in this repository
+
+You can use the `pnpm commit` prompt to ensure that your commit messages are valid, as well as the `pnpm commitlint --from <target branch>` command to check that every commit on your current branch are valid.
+
+Examples:
+
+```
+feat(desktop): add dark mode toggle
+fix(mobile): resolve transaction signing issue
+docs(common): update API documentation
+refactor(coin-modules): simplify account syncing logic
+test(shared-lib): add client-ids unit tests
+```
+
+#### Pull request title
+
+Pull request titles follow the same `type(scope): description` pattern as [commit messages](#commit-message).
+
+Examples:
+
+```
+feat(desktop): add dark mode toggle
+fix(coin-modules): correct fee estimation for bitcoin
+chore(automation): harmonize scope definitions
+```
+
+A GitHub workflow may automatically prepend a scope prefix based on changed files:
+
+- `[LWD]` — Desktop-only changes
+- `[LWM]` — Mobile-only changes
+- `[LWDM]` — Common, shared, or cross-platform changes (including both Desktop and Mobile)
+
+The resulting title looks like `[LWD] feat(desktop): add dark mode toggle`. This prefix is used by Jira fix-version automation and should be left in place.
+
+PR titles should be reusable for merge commit naming.
 
 #### Changelogs
 
 We use [**changesets**](https://github.com/changesets/changesets) to handle the versioning of our libraries and apps. A detailed guide is available on the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki/Changesets).
-
-#### Commit message
-
-We use the standard [**Conventional Commits**](https://www.conventionalcommits.org/) specification and enforce it using [**commitlint**](https://commitlint.js.org/).
-
-You can use the `pnpm commit` prompt to ensure that your commit messages are valid, as well as the `pnpm commitlint --from <target branch>` command to check that every commit on your current branch are valid.
 
 #### Rebase & Merge strategies
 
@@ -56,7 +147,7 @@ The rule of thumb is to **always favour rebasing** as long as your branch does n
 
 For instance:
 
-- bugfix branches that are small and self-contained should always get rebased on top of develop
+- fix branches that are small and self-contained should always get rebased on top of develop
 - feature branches that have merge commit from other branches (sub-features) should merge their target into them to be kept up to date
 
 **⚠️ Important: do not rebase a branch that is waiting for translations from a third party service.**
