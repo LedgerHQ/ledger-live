@@ -267,7 +267,7 @@
   },
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
-    "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "8.0.0-beta",
     "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/client-ids": "workspace:^",
