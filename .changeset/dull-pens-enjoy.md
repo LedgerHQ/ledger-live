@@ -1,8 +1,8 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/wallet-api-exchange-module": patch
-"@shared/feature-flags": patch
+"ledger-live-desktop": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/wallet-api-exchange-module": minor
+"@shared/feature-flags": minor
 ---
 
 Add swapEntryPoint tracking field and ptxSwapLiveAppOnAsset feature flag

@@ -1,5 +1,13 @@
 # live-mobile
 
+## 4.10.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e)]:
+  - @shared/feature-flags@0.12.0-next.1
+  - @features/platform-feature-flags@0.5.0-next.1
+
 ## 4.10.0-next.2
 
 ### Minor Changes

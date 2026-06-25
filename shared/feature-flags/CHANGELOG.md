@@ -1,5 +1,11 @@
 # @shared/feature-flags
 
+## 0.12.0-next.1
+
+### Minor Changes
+
+- [#18550](https://github.com/LedgerHQ/ledger-live/pull/18550) [`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add swapEntryPoint tracking field and ptxSwapLiveAppOnAsset feature flag
+
 ## 0.12.0-next.0
 
 ### Minor Changes
