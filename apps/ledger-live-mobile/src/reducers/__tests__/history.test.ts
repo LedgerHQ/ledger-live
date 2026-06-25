@@ -99,7 +99,7 @@ function withDustFeatureEnabled(state: State): State {
         ...state.featureFlags.resolved,
         llHideSmallValueTokenOperations: {
           enabled: true,
-          params: { mobile: true, desktop: false },
+          params: { enabledMobile: true, enabledDesktop: false },
         },
       },
     },

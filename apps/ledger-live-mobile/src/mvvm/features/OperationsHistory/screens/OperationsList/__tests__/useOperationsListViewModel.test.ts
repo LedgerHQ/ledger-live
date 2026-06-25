@@ -106,7 +106,7 @@ describe("useOperationsListViewModel", () => {
         overrideInitialState: withFlagOverrides({
           llHideSmallValueTokenOperations: {
             enabled: true,
-            params: { mobile: true, desktop: false },
+            params: { enabledMobile: true, enabledDesktop: false },
           },
         }),
       });
@@ -136,7 +136,7 @@ describe("useOperationsListViewModel", () => {
         overrideInitialState: withFlagOverrides({
           llHideSmallValueTokenOperations: {
             enabled: true,
-            params: { mobile: false, desktop: true },
+            params: { enabledMobile: false, enabledDesktop: true },
           },
         }),
       });

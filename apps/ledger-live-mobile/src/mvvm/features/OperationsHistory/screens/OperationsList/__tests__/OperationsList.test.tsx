@@ -113,7 +113,7 @@ describe("OperationsList", () => {
         overrideInitialState: withFlagOverrides({
           llHideSmallValueTokenOperations: {
             enabled: true,
-            params: { mobile: true, desktop: false },
+            params: { enabledMobile: true, enabledDesktop: false },
           },
         }),
       },
