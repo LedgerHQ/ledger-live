@@ -1,16 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import {
-  Title,
-  SubTitle,
-  Bullet,
-  Column,
-  Row,
-  IllustrationContainer,
-  AsideFooter,
-} from "../shared";
+import { Title, SubTitle, Bullet, Column, Row } from "../shared";
 import { Button, IconsLegacy } from "@ledgerhq/react-ui";
-import hideRecoverySheet from "../assets/hideRecoverySheet.png";
 type Props = {
   handleHelp: () => void;
 };
@@ -45,22 +36,6 @@ export function HideRecoveryPhrase({ handleHelp }: Props) {
     </Column>
   );
 }
-
-HideRecoveryPhrase.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={hideRecoverySheet} />
-);
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.hideRecoveryPhrase.help.descr")}
-    />
-  );
-};
-
-HideRecoveryPhrase.Footer = Footer;
 
 HideRecoveryPhrase.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.hideRecoveryPhrase.buttons.next" />

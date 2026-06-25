@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, SubTitle, AsideFooter, CheckStep, Column, IllustrationContainer } from "../shared";
-import recoverySheet from "../assets/recoverySheet.png";
+import { Title, SubTitle, CheckStep, Column } from "../shared";
 
 type Props = {
   toggleUserUnderstandConsequences: () => void;
@@ -28,22 +27,6 @@ export function NewRecoveryPhrase({
     </Column>
   );
 }
-
-NewRecoveryPhrase.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={recoverySheet} />
-);
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.newRecoveryPhrase.help.descr")}
-    />
-  );
-};
-
-NewRecoveryPhrase.Footer = Footer;
 
 NewRecoveryPhrase.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.newRecoveryPhrase.buttons.next" />

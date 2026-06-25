@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Text, Flex, Icon, Switch } from "@ledgerhq/react-ui";
 import { SwitchProps } from "@ledgerhq/react-ui/components/form/Switch/index";
@@ -10,23 +9,6 @@ export interface TrackTutorialProps {
   flow?: string;
   deviceModelId?: string;
 }
-
-export const AnimationContainer = styled(Flex)`
-  overflow-x: clip;
-  width: 324px;
-  flex-shrink: 0;
-  > * {
-    transform: scale(1.3);
-    margin-left: 70px;
-  }
-`;
-
-export const IllustrationContainer = styled(Flex)<{ src: string }>`
-  // prettier-ignore
-  background: url('${({ src }) => src}') no-repeat center;
-  background-size: contain;
-  flex-shrink: 0;
-`;
 
 export const Title = (props: TextProps & { children?: React.ReactNode }) => (
   <Text
@@ -114,25 +96,3 @@ export const CheckStep = ({
     </Text>
   </BorderFlex>
 );
-
-const Footer = styled(Column).attrs({ flex: "1", p: 8 })`
-  border-top: 1px solid ${p => p.theme.colors.constant.black};
-  cursor: pointer;
-`;
-
-export const AsideFooter = ({ text, ...props }: { text: string }) => {
-  const { t } = useTranslation();
-  return (
-    <Footer {...props}>
-      <Row mb={4}>
-        <Text mr={2} variant="large" color="constant.black">
-          {t("common.needHelp")}
-        </Text>
-        <Icon name="LifeRing" size={18} color="constant.black" />
-      </Row>
-      <Text variant="small" color="constant.black">
-        {text}
-      </Text>
-    </Footer>
-  );
-};
