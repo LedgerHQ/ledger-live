@@ -118,7 +118,20 @@ const initialStateWithDustPreferenceEnabled = (state: State): State => ({
 
 const initialStateWithDustFilterEnabled = withFlagOverrides(
   {
-    llmHideSmallValueTokenOperations: { enabled: true },
+    llHideSmallValueTokenOperations: {
+      enabled: true,
+      params: { mobile: true, desktop: false },
+    },
+  },
+  initialStateWithDustPreferenceEnabled,
+);
+
+const initialStateWithDesktopDustFilterEnabled = withFlagOverrides(
+  {
+    llHideSmallValueTokenOperations: {
+      enabled: true,
+      params: { mobile: false, desktop: true },
+    },
   },
   initialStateWithDustPreferenceEnabled,
 );
@@ -154,6 +167,16 @@ describe("useOperationsV1 integration", () => {
 
     const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
       overrideInitialState: initialStateWithDustPreferenceEnabled,
+    });
+
+    expect(result.current.sections[0].data).toHaveLength(2);
+  });
+
+  it("should not filter zero-value token operations when only the desktop dust filter param is enabled", () => {
+    const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
+      overrideInitialState: initialStateWithDesktopDustFilterEnabled,
     });
 
     expect(result.current.sections[0].data).toHaveLength(2);
