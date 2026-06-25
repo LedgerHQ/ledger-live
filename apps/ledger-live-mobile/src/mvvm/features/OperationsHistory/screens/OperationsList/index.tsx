@@ -1,11 +1,7 @@
 import React, { useCallback, useLayoutEffect, useMemo } from "react";
 import { SectionList, SectionListRenderItem } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import type {
-  NativeStackHeaderRightProps,
-  NativeStackNavigationProp,
-} from "@react-navigation/native-stack";
+import type { NativeStackHeaderRightProps } from "@react-navigation/native-stack";
 import { Account, Operation } from "@ledgerhq/types-live";
 import type { OperationsListSection } from "./useOperationsListViewModel";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -26,19 +22,14 @@ import { OperationsHistoryOptionsTrailing } from "./components/OperationsHistory
 import { OperationsHistoryOptionsSheet } from "./components/OperationsHistoryOptionsSheet";
 
 type Props = StackNavigatorProps<OperationsHistoryNavigatorParamsList, ScreenName.OperationsList>;
-type NavigationProps = NativeStackNavigationProp<
-  OperationsHistoryNavigatorParamsList,
-  ScreenName.OperationsList
->;
 
 function keyExtractor(item: Operation) {
   return `${item.accountId}_${item.id}_${item.type}`;
 }
 
-export default function OperationsList({ route }: Props) {
+export default function OperationsList({ route, navigation }: Props) {
   const { bottom } = useSafeAreaInsets();
   const accountIds = route.params?.accountIds;
-  const navigation = useNavigation<NavigationProps>();
   const {
     accounts,
     flattenedAccounts,
