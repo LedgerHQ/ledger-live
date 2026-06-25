@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.10.0-next.4
+
+### Minor Changes
+
+- [#18977](https://github.com/LedgerHQ/ledger-live/pull/18977) [`f832e06`](https://github.com/LedgerHQ/ledger-live/commit/f832e06726c7f9db2a4e9dbfdd5a9062ee65b5b3) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add `borrowFeature` analytics property derived from the `ptxBorrowLiveApp` feature flag, included in identify traits and track events on both desktop and mobile.
+
 ## 4.10.0-next.3
 
 ### Patch Changes
