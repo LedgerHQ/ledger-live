@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, type ComponentType } from "react";
 import BigNumber from "bignumber.js";
+import { useHideSmallValueTokenOperationsFeature } from "@features/platform-feature-flags";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { floorThresholdToCurrencyMinorUnit } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
@@ -12,7 +13,6 @@ import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/acc
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import {
   counterValueCurrencySelector,
-  hideSmallValueTokenOperationsFeatureEnabledSelector,
   hideSmallValueTokenOperationsEnabledSelector,
 } from "~/reducers/settings";
 import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOperations";
@@ -38,9 +38,8 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
-  const isDustFilterFeatureEnabled = useSelector(
-    hideSmallValueTokenOperationsFeatureEnabledSelector,
-  );
+  const { isEnabled: isDustFilterFeatureEnabled } =
+    useHideSmallValueTokenOperationsFeature("mobile");
   const userHideSmallValueTokenOperations = useSelector(
     hideSmallValueTokenOperationsEnabledSelector,
   );
