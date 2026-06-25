@@ -28,7 +28,7 @@ export function InfoState(props: InfoStateProps) {
     <div className={cn("w-full", isFullHeight && "flex flex-1")} data-testid={testID}>
       <div
         className={cn(
-          "flex w-full flex-col items-center gap-32 overflow-hidden px-16 py-24",
+          "flex w-full flex-col items-center gap-32 overflow-hidden",
           isFullHeight && "min-h-[480px] flex-1",
         )}
       >
