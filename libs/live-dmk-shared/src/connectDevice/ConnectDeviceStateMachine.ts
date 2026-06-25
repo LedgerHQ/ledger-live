@@ -1,33 +1,51 @@
 import { Subscription } from "rxjs";
 import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import type {
-  DeviceDiscoveryService,
-  DiscoveryError,
-  MatchedDevice,
-  ConnectDeviceStateMachineEvent,
-  ConnectDeviceStateMachineContext,
-  ConnectDeviceStateMachineInput,
+import {
+  BaseDiscoveryErrorTypes,
+  ConnectDeviceStateMachineEventTypes,
+  ConnectDeviceUIStateTypes,
+  type BaseConnectionError,
+  type BaseDiscoveryError,
+  type ConnectDeviceStateMachineContext,
+  type ConnectDeviceStateMachineEvent,
+  type ConnectDeviceStateMachineInput,
+  type DeviceDiscoveryService,
+  type KnownDevice,
+  type MatchedDevice,
+  type UnknownDiscoveryError,
 } from "./types";
-import { ConnectDeviceStateMachineEventTypes, ConnectDeviceUIStateTypes, DiscoveryErrorTypes } from "./types";
 import {
   getSelectedMatchedDeviceFromDiscoveryEvent,
   getMatchedDevicesFromDiscoveryEvent,
   getFirstMatchedDeviceFromDiscoveryEvent,
-  createConnectionError,
   buildDisplayedDevices,
-  filterMatchedDevices,
 } from "./utils";
-import { KnownDevice, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
 
 const WAITING_FOR_SELECTED_DEVICE_TIMEOUT = 30000;
 
-const createConnectDeviceStateMachine = () =>
+type ConnectDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDiscoveryError> =
+  | TDiscoveryError
+  | UnknownDiscoveryError;
+
+const createConnectDeviceStateMachine = <
+  TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
+  TConnectionError extends BaseConnectionError = BaseConnectionError,
+>() =>
   setup({
     types: {
-      context: {} as ConnectDeviceStateMachineContext,
-      events: {} as ConnectDeviceStateMachineEvent,
-      input: {} as ConnectDeviceStateMachineInput,
+      context: {} as ConnectDeviceStateMachineContext<
+        ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+        TConnectionError
+      >,
+      events: {} as ConnectDeviceStateMachineEvent<
+        ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>
+      >,
+      input: {} as ConnectDeviceStateMachineInput<
+        ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+        TConnectionError
+      >,
     },
     actors: {
       connectDevice: fromPromise(
@@ -46,13 +64,14 @@ const createConnectDeviceStateMachine = () =>
           return sessionId;
         },
       ),
-      retryDiscovery: fromPromise<true | DiscoveryError, DiscoveryError>(
+      retryDiscovery: fromPromise<true | BaseDiscoveryError, BaseDiscoveryError>(
         async ({ input }) => {
           if (input.resolution?.type === "none") {
             return true;
           }
           return await input.resolution!.retry();
-        }),
+        },
+      ),
     },
     guards: {
       hasNoKnownDevice: ({ context }) => context.knownDevices.length === 0,
@@ -61,7 +80,8 @@ const createConnectDeviceStateMachine = () =>
       hasSession: ({ context }) => context.sessionId !== null,
       hasSelectedKnownDeviceMatch: ({ context, event }) =>
         getSelectedMatchedDeviceFromDiscoveryEvent(event, context.selectedKnownDevice) !== null,
-      retryOutputIsTrue: (_, params: { output: true | DiscoveryError }) => params.output === true,
+      retryOutputIsTrue: (_, params: { output: true | BaseDiscoveryError }) =>
+        params.output === true,
     },
     actions: {
       assignDiscoveryError: assign({
@@ -73,8 +93,10 @@ const createConnectDeviceStateMachine = () =>
         },
       }),
       assignDiscoveryRetryError: assign({
-        discoveryError: (_, params: { output: true | DiscoveryError }) =>
-          params.output === true ? null : params.output,
+        discoveryError: (_, params: { output: true | BaseDiscoveryError }) =>
+          params.output === true
+            ? null
+            : (params.output as ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>),
       }),
       assignMatchedDevices: assign({
         matchedDevices: ({ event }) => getMatchedDevicesFromDiscoveryEvent(event),
@@ -104,8 +126,8 @@ const createConnectDeviceStateMachine = () =>
           getSelectedMatchedDeviceFromDiscoveryEvent(event, context.selectedKnownDevice),
       }),
       assignConnectionError: assign({
-        connectionError: (_, params: { error: unknown }) => {
-          return createConnectionError(params.error);
+        connectionError: ({ context }, params: { error: unknown }) => {
+          return context.mapConnectionError(params.error);
         },
       }),
       assignSessionId: assign({
@@ -133,7 +155,9 @@ const createConnectDeviceStateMachine = () =>
       startDiscovery: assign({
         isDiscovering: ({ context }) => {
           if (!context.isDiscovering) {
-            context.deviceDiscoveryService.start({ ignoreTransportIdentifiers: context.skipTransportIds });
+            context.deviceDiscoveryService.start({
+              ignoreTransportIdentifiers: context.skipTransportIds,
+            });
           }
 
           return true;
@@ -169,9 +193,13 @@ const createConnectDeviceStateMachine = () =>
           error: context.discoveryError!,
           ignore: () =>
             self.send({ type: ConnectDeviceStateMachineEventTypes.UserTapsDiscoveryIgnore }),
-          ...(context.discoveryError!.resolution !== undefined && context.discoveryError!.resolution.type !== "none")
-            ? { retry: () => self.send({ type: ConnectDeviceStateMachineEventTypes.UserTapsDiscoveryRetry }) }
-            : {},
+          ...(context.discoveryError!.resolution !== undefined &&
+          context.discoveryError!.resolution.type !== "none"
+            ? {
+                retry: () =>
+                  self.send({ type: ConnectDeviceStateMachineEventTypes.UserTapsDiscoveryRetry }),
+              }
+            : {}),
         });
       },
       emitConnecting: ({ context }) => {
@@ -357,9 +385,11 @@ const createConnectDeviceStateMachine = () =>
             target: "DiscoveryError",
             actions: {
               type: "assignDiscoveryRetryError",
-              params: ({ event }) => ({ output: { type: DiscoveryErrorTypes.Unknown, error: event.error } }),
+              params: ({ event }) => ({
+                output: { type: BaseDiscoveryErrorTypes.Unknown, error: event.error },
+              }),
             },
-          }
+          },
         },
       },
       Connecting: {
@@ -412,33 +442,59 @@ export interface ConnectDeviceStateMachine {
   stop(): void;
 }
 
-export class DefaultConnectDeviceStateMachine implements ConnectDeviceStateMachine {
+export class DefaultConnectDeviceStateMachine<
+  TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
+  TConnectionError extends BaseConnectionError = BaseConnectionError,
+> implements ConnectDeviceStateMachine {
   private readonly actor;
 
-  private readonly deviceDiscoveryService: DeviceDiscoveryService;
+  private readonly deviceDiscoveryService: DeviceDiscoveryService<
+    ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>
+  >;
 
   private readonly knownDevices: KnownDevice[];
 
+  private readonly matchDiscoveredDevices: ConnectDeviceStateMachineInput<
+    ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+    TConnectionError
+  >["matchDiscoveredDevices"];
+
   private subscriptions: Array<Subscription> = [];
 
-  constructor(input: ConnectDeviceStateMachineInput) {
+  constructor(
+    input: ConnectDeviceStateMachineInput<
+      ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+      TConnectionError
+    >,
+  ) {
     this.deviceDiscoveryService = input.deviceDiscoveryService;
     this.knownDevices = input.knownDevices;
-    this.actor = createActor(createConnectDeviceStateMachine(), { input });
+    this.matchDiscoveredDevices = input.matchDiscoveredDevices;
+    this.actor = createActor(createConnectDeviceStateMachine<TDiscoveryError, TConnectionError>(), {
+      input,
+    });
   }
 
   start(): void {
-    const discoveredDevicesSubscription = this.deviceDiscoveryService.discoveredDevices.subscribe(devices => {
-        const matchedDevices = filterMatchedDevices(devices, this.knownDevices);
+    const discoveredDevicesSubscription = this.deviceDiscoveryService.discoveredDevices.subscribe(
+      devices => {
+        const matchedDevices = this.matchDiscoveredDevices(devices, this.knownDevices);
 
         if (matchedDevices.length === 0) {
           this.actor.send({ type: ConnectDeviceStateMachineEventTypes.DiscoveredNoDevice });
         } else if (matchedDevices.length === 1) {
-          this.actor.send({ type: ConnectDeviceStateMachineEventTypes.DiscoveredOneDevice, matchedDevices: matchedDevices });
+          this.actor.send({
+            type: ConnectDeviceStateMachineEventTypes.DiscoveredOneDevice,
+            matchedDevices: matchedDevices,
+          });
         } else {
-          this.actor.send({ type: ConnectDeviceStateMachineEventTypes.DiscoveredManyDevices, matchedDevices: matchedDevices });
+          this.actor.send({
+            type: ConnectDeviceStateMachineEventTypes.DiscoveredManyDevices,
+            matchedDevices: matchedDevices,
+          });
         }
-    });
+      },
+    );
     const errorsSubscription = this.deviceDiscoveryService.errors.subscribe(error => {
       this.actor.send({ type: ConnectDeviceStateMachineEventTypes.DiscoveryError, error });
     });

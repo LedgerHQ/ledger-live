@@ -1,6 +1,6 @@
 import { State as BlePlxState } from "react-native-ble-plx";
 import { BlePlxManager } from "../../../../transport/BlePlxManager";
-import { type DiscoveryError } from "../../../types";
+import { type MobileDiscoveryError } from "../../../types";
 import {
   buildBluetoothDisabledManualActionError,
   buildBluetoothStateError,
@@ -44,7 +44,7 @@ export class IosBleDiscoveryPreflightChecks implements DiscoveryPreflightChecks 
     }
   }
 
-  private buildBluetoothStateError(state: BlePlxState): DiscoveryError {
+  private buildBluetoothStateError(state: BlePlxState): MobileDiscoveryError {
     const retry = () => retryPreflightCheck(() => this.getPreflight());
 
     return state === BlePlxState.PoweredOff

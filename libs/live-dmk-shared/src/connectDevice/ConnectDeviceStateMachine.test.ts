@@ -3,52 +3,55 @@ import {
   DeviceModelId as DMKDeviceModelId,
   type DeviceManagementKit,
   type DiscoveredDevice,
+  type TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
-import {
-  PairingRefusedError,
-  rnBleTransportIdentifier,
-} from "@ledgerhq/device-transport-kit-react-native-ble";
-import { DeviceModelId } from "@ledgerhq/devices";
-import { PeerRemovedPairing } from "@ledgerhq/errors";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Subject, type Observer } from "rxjs";
-import { KnownDevice, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 
 import { DefaultConnectDeviceStateMachine } from "./ConnectDeviceStateMachine";
 import {
+  BaseConnectionErrorTypes,
+  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
-  ConnectionError,
-  ConnectionErrorTypes,
-  DiscoveryErrorTypes,
   DisplayedDevice,
-  type ConnectDeviceConnectionService,
+  type ConnectDeviceMapConnectionError,
+  type ConnectDeviceMatchDiscoveredDevices,
   type ConnectDeviceUIState,
   type DeviceDiscoveryService,
-  type DiscoveryError,
+  type KnownDevice,
+  type MatchedDevice,
+  type UnknownConnectionError,
+  type UnknownDiscoveryError,
 } from "./types";
+import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
 
 // Test helpers
+const testTransport = "RN_BLE" as TransportIdentifier;
+
 const knownDeviceA: KnownDevice = {
-  transport: "RN_BLE",
+  transport: testTransport,
   deviceModelId: DeviceModelId.nanoX,
   id: "known-device-a",
   name: "Ledger Nano X",
 };
 
 const knownDeviceB: KnownDevice = {
-  transport: "RN_BLE",
+  transport: testTransport,
   deviceModelId: DeviceModelId.nanoSP,
   id: "known-device-b",
   name: "Ledger Nano S Plus",
 };
 
 const knownDeviceC: KnownDevice = {
-  transport: "RN_BLE",
+  transport: testTransport,
   deviceModelId: DeviceModelId.stax,
   id: "known-device-c",
   name: "Ledger Stax",
 };
 
-const deviceModelByKnownDeviceModelId: Partial<Record<DeviceModelId, DiscoveredDevice["deviceModel"]>> = {
+const deviceModelByKnownDeviceModelId: Partial<
+  Record<DeviceModelId, DiscoveredDevice["deviceModel"]>
+> = {
   [DeviceModelId.nanoX]: {
     id: DeviceModelId.nanoX,
     model: DMKDeviceModelId.NANO_X,
@@ -75,7 +78,7 @@ const makeDiscoveredDevice = (overrides: Partial<DiscoveredDevice> = {}): Discov
       model: DMKDeviceModelId.NANO_X,
       name: "Ledger Nano X",
     },
-    transport: rnBleTransportIdentifier,
+    transport: testTransport,
     ...overrides,
   }) as DiscoveredDevice;
 
@@ -100,17 +103,15 @@ const makeConnectedDevice = (overrides: Partial<ConnectedDevice> = {}): Connecte
     modelId: DMKDeviceModelId.NANO_X,
     name: "Ledger Nano X",
     type: "BLE",
-    transport: "RN_BLE",
+    transport: testTransport,
     ...overrides,
   }) as ConnectedDevice;
 
-type UnknownDiscoveryError = Extract<DiscoveryError, { type: DiscoveryErrorTypes.Unknown }>;
-
 const makeDiscoveryError = (
   overrides: Partial<Omit<UnknownDiscoveryError, "type">> = {},
-): DiscoveryError => ({
-  type: DiscoveryErrorTypes.Unknown,
-  transportId: "RN_BLE",
+): UnknownDiscoveryError => ({
+  type: BaseDiscoveryErrorTypes.Unknown,
+  transportId: testTransport,
   ...overrides,
 });
 
@@ -118,15 +119,34 @@ type SetupTestOptions = {
   readonly knownDevices?: Array<KnownDevice>;
   readonly dmk?: DeviceManagementKit;
   readonly sessionId?: string | null;
-  readonly connect?: jest.MockedFunction<ConnectDeviceConnectionService["connect"]>;
+  readonly connect?: jest.MockedFunction<DeviceManagementKit["connect"]>;
+  readonly mapConnectionError?: ConnectDeviceMapConnectionError;
+  readonly matchDiscoveredDevices?: ConnectDeviceMatchDiscoveredDevices;
   readonly onConnected?: jest.Mock;
 };
+
+const defaultMatchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices = (
+  discoveredDevices,
+  knownDevices,
+) =>
+  discoveredDevices
+    .map(discoveredDevice => {
+      const knownDevice = knownDevices.find(
+        knownDevice =>
+          knownDevice.transport === discoveredDevice.transport &&
+          knownDevice.id === discoveredDevice.id &&
+          dmkToLedgerDeviceIdMap[discoveredDevice.deviceModel.model] === knownDevice.deviceModelId,
+      );
+
+      return knownDevice ? { knownDevice, discoveredDevice } : null;
+    })
+    .filter((matchedDevice): matchedDevice is MatchedDevice => matchedDevice !== null);
 
 const setupTest = (options: SetupTestOptions = {}) => {
   const {
     knownDevices = [
       {
-        transport: "RN_BLE",
+        transport: testTransport,
         deviceModelId: DeviceModelId.nanoX,
         id: "known-device-a",
         name: "Ledger Nano X",
@@ -134,10 +154,12 @@ const setupTest = (options: SetupTestOptions = {}) => {
     ],
     sessionId = null,
     connect = jest.fn().mockResolvedValue("session-id"),
+    mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
+    matchDiscoveredDevices = defaultMatchDiscoveredDevices,
     onConnected = jest.fn(),
   } = options;
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
-  const errors = new Subject<DiscoveryError>();
+  const errors = new Subject<UnknownDiscoveryError>();
   const dmk =
     options.dmk ??
     ({
@@ -165,11 +187,13 @@ const setupTest = (options: SetupTestOptions = {}) => {
     sessionId,
     observer,
     deviceDiscoveryService,
+    mapConnectionError,
+    matchDiscoveredDevices,
     onConnected,
   });
 
   const discoverDevices = (devices: Array<DiscoveredDevice>) => discoveredDevices.next(devices);
-  const emitDiscoveryError = (error: DiscoveryError) => errors.next(error);
+  const emitDiscoveryError = (error: UnknownDiscoveryError) => errors.next(error);
 
   return {
     connect,
@@ -227,7 +251,9 @@ describe("ConnectDeviceStateMachine", () => {
       machine.start();
 
       // Assert
-      expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice, device: knownDeviceA }]);
+      expect(states).toEqual([
+        { type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice, device: knownDeviceA },
+      ]);
       expect(deviceDiscoveryService.start).toHaveBeenCalledWith({ ignoreTransportIdentifiers: [] });
     });
 
@@ -516,9 +542,7 @@ describe("ConnectDeviceStateMachine", () => {
           device: KnownDevice;
         }
       ).device;
-      expect(waitingStateDevice).toEqual(
-        expect.objectContaining(knownDeviceA),
-      );
+      expect(waitingStateDevice).toEqual(expect.objectContaining(knownDeviceA));
     });
 
     it("stays waiting when discovered many devices does not include the selected device", () => {
@@ -709,7 +733,6 @@ describe("ConnectDeviceStateMachine", () => {
     expect(waitingStateDevice).toEqual(expect.objectContaining(knownDeviceA));
   });
 
-
   describe("Discovery errors", () => {
     it("stops discovery and emits DiscoveryError when the errors observable emits an error", () => {
       // Arrange
@@ -730,7 +753,7 @@ describe("ConnectDeviceStateMachine", () => {
         (
           discoveryErrorState as {
             type: ConnectDeviceUIStateTypes.DiscoveryError;
-            error: DiscoveryError;
+            error: UnknownDiscoveryError;
           }
         ).error,
       ).toBe(discoveryError);
@@ -741,7 +764,9 @@ describe("ConnectDeviceStateMachine", () => {
       const { deviceDiscoveryService, emitDiscoveryError, machine, states } = setupTest({
         knownDevices: [knownDeviceA, knownDeviceB],
       });
-      const retryableError = makeDiscoveryError({ resolution: { type: "prompt", retry: jest.fn() } });
+      const retryableError = makeDiscoveryError({
+        resolution: { type: "prompt", retry: jest.fn() },
+      });
 
       // Act
       machine.start();
@@ -755,7 +780,7 @@ describe("ConnectDeviceStateMachine", () => {
         (
           retryableState as {
             type: ConnectDeviceUIStateTypes.DiscoveryError;
-            error: DiscoveryError;
+            error: UnknownDiscoveryError;
           }
         ).error,
       ).toBe(retryableError);
@@ -799,7 +824,9 @@ describe("ConnectDeviceStateMachine", () => {
       discoveryErrorIgnore();
 
       // Assert
-      expect(deviceDiscoveryService.start).toHaveBeenLastCalledWith({ ignoreTransportIdentifiers: ["ble-transport"] });
+      expect(deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: ["ble-transport"],
+      });
       const discoveringState = states[states.length - 1];
       expect(discoveringState.type).toBe(ConnectDeviceUIStateTypes.Discovering);
       const discoveringStateDevices = (
@@ -880,21 +907,24 @@ describe("ConnectDeviceStateMachine", () => {
       const retryState = states[states.length - 1];
       expect(retryState.type).toBe(ConnectDeviceUIStateTypes.DiscoveryError);
       const retryStateError = (
-        retryState as { type: ConnectDeviceUIStateTypes.DiscoveryError; error: DiscoveryError }
+        retryState as {
+          type: ConnectDeviceUIStateTypes.DiscoveryError;
+          error: UnknownDiscoveryError;
+        }
       ).error;
       expect(retryStateError).toBe(retryError);
     });
 
-    it("emits a DiscoveryError when retry fails with an unknown error", async () => {
+    it("emits an unknown DiscoveryError when retry rejects unexpectedly", async () => {
       // Arrange
       const unknownError = new Error("unknown error");
       const onRetry = jest.fn().mockRejectedValue(unknownError);
       const { emitDiscoveryError, machine, states } = setupTest();
+      const retryableError = makeDiscoveryError({ resolution: { type: "prompt", retry: onRetry } });
 
       // Act
       machine.start();
-      const waitingForSelectedDeviceState = states[states.length - 1];
-      emitDiscoveryError(makeDiscoveryError({ resolution: { type: "prompt", retry: onRetry } }));
+      emitDiscoveryError(retryableError);
       const discoveryErrorState = states[states.length - 1];
       const discoveryErrorRetry = (
         discoveryErrorState as { type: ConnectDeviceUIStateTypes.DiscoveryError; retry: () => void }
@@ -911,24 +941,32 @@ describe("ConnectDeviceStateMachine", () => {
       const unknownErrorState = states[states.length - 1];
       expect(unknownErrorState.type).toBe(ConnectDeviceUIStateTypes.DiscoveryError);
       const unknownErrorError = (
-        unknownErrorState as { type: ConnectDeviceUIStateTypes.DiscoveryError; error: DiscoveryError }
+        unknownErrorState as {
+          type: ConnectDeviceUIStateTypes.DiscoveryError;
+          error: UnknownDiscoveryError;
+        }
       ).error;
-      expect(unknownErrorError).toEqual(
-        expect.objectContaining({ type: DiscoveryErrorTypes.Unknown, error: unknownError }),
-      );
+      expect(unknownErrorError).toEqual({
+        type: BaseDiscoveryErrorTypes.Unknown,
+        error: unknownError,
+      });
     });
   });
 
   describe("Connection errors", () => {
-    it("emits a BLE pairing-refused ConnectionError when connection fails", async () => {
+    it("emits the mapped ConnectionError when connection fails", async () => {
       // Arrange
+      const connectionError = new Error("connection failed");
+      const mapConnectionError: ConnectDeviceMapConnectionError = jest.fn(() => ({
+        type: "mapped-connection-error",
+      }));
       const connect = jest
         .fn<
-          ReturnType<ConnectDeviceConnectionService["connect"]>,
-          Parameters<ConnectDeviceConnectionService["connect"]>
+          ReturnType<DeviceManagementKit["connect"]>,
+          Parameters<DeviceManagementKit["connect"]>
         >()
-        .mockRejectedValue(new PairingRefusedError());
-      const { discoverDevices, machine, states } = setupTest({ connect });
+        .mockRejectedValue(connectionError);
+      const { discoverDevices, machine, states } = setupTest({ connect, mapConnectionError });
 
       // Act
       machine.start();
@@ -944,23 +982,25 @@ describe("ConnectDeviceStateMachine", () => {
       const connectionErrorError = (
         connectionErrorState as {
           type: ConnectDeviceUIStateTypes.ConnectionError;
-          error: ConnectionError;
+          error: UnknownConnectionError;
         }
       ).error;
       expect(connectionErrorError).toEqual({
-        type: ConnectionErrorTypes.BlePairingRefused,
+        type: "mapped-connection-error",
       });
+      expect(mapConnectionError).toHaveBeenCalledWith(connectionError);
       expect(connectionErrorState).toEqual(expect.objectContaining({ device: knownDeviceA }));
     });
 
-    it("emits a BLE peer-removed-pairing ConnectionError when connection fails", async () => {
+    it("emits an unknown ConnectionError by default when connection fails", async () => {
       // Arrange
+      const connectionError = new Error("connection failed");
       const connect = jest
         .fn<
-          ReturnType<ConnectDeviceConnectionService["connect"]>,
-          Parameters<ConnectDeviceConnectionService["connect"]>
+          ReturnType<DeviceManagementKit["connect"]>,
+          Parameters<DeviceManagementKit["connect"]>
         >()
-        .mockRejectedValue(new PeerRemovedPairing());
+        .mockRejectedValue(connectionError);
       const { discoverDevices, machine, states } = setupTest({ connect });
 
       // Act
@@ -977,11 +1017,12 @@ describe("ConnectDeviceStateMachine", () => {
       const connectionErrorError = (
         connectionErrorState as {
           type: ConnectDeviceUIStateTypes.ConnectionError;
-          error: ConnectionError;
+          error: UnknownConnectionError;
         }
       ).error;
       expect(connectionErrorError).toEqual({
-        type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
+        type: BaseConnectionErrorTypes.Unknown,
+        error: connectionError,
       });
       expect(connectionErrorState).toEqual(expect.objectContaining({ device: knownDeviceA }));
     });
@@ -990,10 +1031,10 @@ describe("ConnectDeviceStateMachine", () => {
       // Arrange
       const connect = jest
         .fn<
-          ReturnType<ConnectDeviceConnectionService["connect"]>,
-          Parameters<ConnectDeviceConnectionService["connect"]>
+          ReturnType<DeviceManagementKit["connect"]>,
+          Parameters<DeviceManagementKit["connect"]>
         >()
-        .mockRejectedValueOnce(new PeerRemovedPairing());
+        .mockRejectedValueOnce(new Error("connection failed"));
       const { discoverDevices, machine, states } = setupTest({ connect });
 
       // Act
@@ -1027,10 +1068,10 @@ describe("ConnectDeviceStateMachine", () => {
       // Arrange
       const connect = jest
         .fn<
-          ReturnType<ConnectDeviceConnectionService["connect"]>,
-          Parameters<ConnectDeviceConnectionService["connect"]>
+          ReturnType<DeviceManagementKit["connect"]>,
+          Parameters<DeviceManagementKit["connect"]>
         >()
-        .mockRejectedValue(new PeerRemovedPairing());
+        .mockRejectedValue(new Error("connection failed"));
       const { deviceDiscoveryService, discoverDevices, machine, states } = setupTest({ connect });
 
       // Act
@@ -1055,11 +1096,12 @@ describe("ConnectDeviceStateMachine", () => {
       const connectionErrorStateError = (
         connectionErrorState as {
           type: ConnectDeviceUIStateTypes.ConnectionError;
-          error: ConnectionError;
+          error: UnknownConnectionError;
         }
       ).error;
       expect(connectionErrorStateError).toEqual({
-        type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
+        type: BaseConnectionErrorTypes.Unknown,
+        error: expect.any(Error),
       });
     });
   });

@@ -1,31 +1,11 @@
-import type {
-  DeviceManagementKit,
-  DiscoveredDevice,
-  TransportIdentifier,
-} from "@ledgerhq/device-management-kit";
+import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
 import { Subject, type Observable } from "rxjs";
-import { DiscoveryErrorTypes, type DiscoveryError } from "../types";
+import { BaseDiscoveryErrorTypes, type UnknownDiscoveryError } from "../types";
 import { DefaultDeviceDiscoveryService } from "./DefaultDeviceDiscoveryService";
 import type {
   DeviceDiscoverySource,
   DeviceDiscoverySourceEvent,
 } from "./sources/DeviceDiscoverySource";
-import { RnBleDeviceDiscoverySource } from "./sources/RnBleDeviceDiscoverySource";
-import { RnHidDeviceDiscoverySource } from "./sources/RnHidDeviceDiscoverySource";
-
-jest.mock("./sources/RnBleDeviceDiscoverySource", () => ({
-  RnBleDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
-    listen: jest.fn(),
-    transportId: "ble",
-  })),
-}));
-
-jest.mock("./sources/RnHidDeviceDiscoverySource", () => ({
-  RnHidDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
-    listen: jest.fn(),
-    transportId: "hid",
-  })),
-}));
 
 const createDiscoveredDevice = (id: string, transport: TransportIdentifier): DiscoveredDevice =>
   ({
@@ -37,15 +17,25 @@ const createDiscoveredDevice = (id: string, transport: TransportIdentifier): Dis
 
 const createSource = (
   transportId: TransportIdentifier,
-  subject: Subject<DeviceDiscoverySourceEvent> = new Subject<DeviceDiscoverySourceEvent>(),
-): DeviceDiscoverySource & { subject: Subject<DeviceDiscoverySourceEvent>; listen: jest.Mock } => ({
+  subject: Subject<DeviceDiscoverySourceEvent<UnknownDiscoveryError>> = new Subject<
+    DeviceDiscoverySourceEvent<UnknownDiscoveryError>
+  >(),
+): DeviceDiscoverySource<UnknownDiscoveryError> & {
+  subject: Subject<DeviceDiscoverySourceEvent<UnknownDiscoveryError>>;
+  listen: jest.Mock;
+} => ({
   transportId,
   subject,
-  listen: jest.fn((): Observable<DeviceDiscoverySourceEvent> => subject.asObservable()),
+  listen: jest.fn(
+    (): Observable<DeviceDiscoverySourceEvent<UnknownDiscoveryError>> => subject.asObservable(),
+  ),
 });
 
-const unknownErrorFor = (transportId: TransportIdentifier, error: unknown): DiscoveryError => ({
-  type: DiscoveryErrorTypes.Unknown,
+const unknownErrorFor = (
+  transportId: TransportIdentifier,
+  error: unknown,
+): UnknownDiscoveryError => ({
+  type: BaseDiscoveryErrorTypes.Unknown,
   transportId,
   error,
 });
@@ -54,8 +44,7 @@ describe("DefaultDeviceDiscoveryService", () => {
   it("GIVEN discovery has not started, WHEN subscribing to discovered devices, THEN it should emit an empty list", () => {
     // GIVEN
     const source = createSource("transport-1");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([[source.transportId, source]]),
     );
     const discoveredDevices: DiscoveredDevice[][] = [];
@@ -70,27 +59,11 @@ describe("DefaultDeviceDiscoveryService", () => {
     subscription.unsubscribe();
   });
 
-  it("GIVEN no source map is provided, WHEN creating the service, THEN it should build the default discovery source map", () => {
-    // GIVEN
-    const dmk = {
-      listenToAvailableDevices: jest.fn(() => new Subject<DiscoveredDevice[]>().asObservable()),
-    } as unknown as DeviceManagementKit;
-
-    // WHEN
-    const service = new DefaultDeviceDiscoveryService(dmk);
-
-    // THEN
-    expect(service.discoveredDevices).toBeDefined();
-    expect(RnBleDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
-    expect(RnHidDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
-  });
-
   it("GIVEN all sources are started, WHEN they emit devices, THEN it should aggregate discovered devices", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([
         [sourceA.transportId, sourceA],
         [sourceB.transportId, sourceB],
@@ -114,8 +87,7 @@ describe("DefaultDeviceDiscoveryService", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([
         [sourceA.transportId, sourceA],
         [sourceB.transportId, sourceB],
@@ -134,15 +106,14 @@ describe("DefaultDeviceDiscoveryService", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([
         [sourceA.transportId, sourceA],
         [sourceB.transportId, sourceB],
       ]),
     );
     const discoveredDevices: DiscoveredDevice[][] = [];
-    const errors: DiscoveryError[] = [];
+    const errors: UnknownDiscoveryError[] = [];
     service.discoveredDevices.subscribe(devices => discoveredDevices.push(devices));
     service.errors.subscribe(error => errors.push(error));
     const deviceA = createDiscoveredDevice("a", sourceA.transportId);
@@ -163,11 +134,10 @@ describe("DefaultDeviceDiscoveryService", () => {
   it("GIVEN a source observable throws, WHEN discovery is running, THEN it should emit an unknown discovery error", () => {
     // GIVEN
     const source = createSource("transport-a");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([[source.transportId, source]]),
     );
-    const errors: DiscoveryError[] = [];
+    const errors: UnknownDiscoveryError[] = [];
     service.errors.subscribe(error => errors.push(error));
     const error = new Error("observable error");
 
@@ -179,11 +149,38 @@ describe("DefaultDeviceDiscoveryService", () => {
     expect(errors).toEqual([unknownErrorFor(source.transportId, error)]);
   });
 
+  it("GIVEN a source emits a retryable error, WHEN retry rejects, THEN it should preserve the source error retry behavior", async () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+    const errors: UnknownDiscoveryError[] = [];
+    service.errors.subscribe(error => errors.push(error));
+    const error = new Error("retry error");
+    const discoveryError: UnknownDiscoveryError = {
+      type: BaseDiscoveryErrorTypes.Unknown,
+      transportId: source.transportId,
+      resolution: { type: "prompt", retry: jest.fn().mockRejectedValue(error) },
+    };
+
+    // WHEN
+    service.start();
+    source.subject.next({ type: "error", error: discoveryError });
+
+    // THEN
+    const emittedError = errors[0];
+    if (emittedError.resolution?.type === "none" || !emittedError.resolution) {
+      throw new Error("Expected a retryable discovery error");
+    }
+    expect(emittedError).toBe(discoveryError);
+    await expect(emittedError.resolution.retry()).rejects.toBe(error);
+  });
+
   it("GIVEN a source has devices, WHEN it completes, THEN it should clear that source devices", () => {
     // GIVEN
     const source = createSource("transport-a");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([[source.transportId, source]]),
     );
     const discoveredDevices: DiscoveredDevice[][] = [];
@@ -202,8 +199,7 @@ describe("DefaultDeviceDiscoveryService", () => {
   it("GIVEN discovery is already started, WHEN starting again before stop, THEN it should not subscribe twice", () => {
     // GIVEN
     const source = createSource("transport-a");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([[source.transportId, source]]),
     );
 
@@ -219,8 +215,7 @@ describe("DefaultDeviceDiscoveryService", () => {
     // GIVEN
     const sourceA = createSource("transport-a");
     const sourceB = createSource("transport-b");
-    const service = new DefaultDeviceDiscoveryService(
-      {} as DeviceManagementKit,
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
       new Map([
         [sourceA.transportId, sourceA],
         [sourceB.transportId, sourceB],

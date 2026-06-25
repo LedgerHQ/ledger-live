@@ -1,15 +1,15 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
 import { connectDeviceUseCase, type ConnectDeviceUseCaseInput } from "./connectDeviceUseCase";
-import { DefaultDeviceDiscoveryService } from "./discoveryService/DefaultDeviceDiscoveryService";
 import {
+  BaseConnectionErrorTypes,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
   type DeviceDiscoveryService,
+  type KnownDevice,
 } from "./types";
-import { KnownDevice } from "@ledgerhq/live-dmk-shared";
 
 // Test helpers
 const knownDevice: KnownDevice = {
@@ -19,26 +19,21 @@ const knownDevice: KnownDevice = {
   name: "Ledger Nano X",
 };
 
-jest.mock("./discoveryService/DefaultDeviceDiscoveryService", () => ({
-  DefaultDeviceDiscoveryService: jest.fn(),
-}));
-
-const DefaultDeviceDiscoveryServiceMock = jest.mocked(DefaultDeviceDiscoveryService);
-
 type SetupTestOptions = {
   readonly knownDevices?: Array<KnownDevice>;
+  readonly acceptedDeviceModelIds?: Array<DeviceModelId>;
 };
 
-const setupTest = ({ knownDevices = [knownDevice] }: SetupTestOptions = {}) => {
+const setupTest = ({
+  acceptedDeviceModelIds,
+  knownDevices = [knownDevice],
+}: SetupTestOptions = {}) => {
   const deviceDiscoveryService: DeviceDiscoveryService = {
     start: jest.fn(),
     stop: jest.fn(),
     discoveredDevices: EMPTY,
     errors: EMPTY,
   };
-  DefaultDeviceDiscoveryServiceMock.mockImplementation(
-    () => deviceDiscoveryService as DefaultDeviceDiscoveryService,
-  );
 
   const dmk = {
     listConnectedDevices: jest.fn(() => []),
@@ -46,7 +41,11 @@ const setupTest = ({ knownDevices = [knownDevice] }: SetupTestOptions = {}) => {
 
   const input = {} as ConnectDeviceUseCaseInput;
   input.knownDevices = knownDevices;
+  input.acceptedDeviceModelIds = acceptedDeviceModelIds;
   input.dmk = dmk;
+  input.deviceDiscoveryService = deviceDiscoveryService;
+  input.matchDiscoveredDevices = jest.fn(() => []);
+  input.mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error }));
   input.onConnected = jest.fn();
 
   return {
@@ -132,6 +131,32 @@ describe("connectDeviceUseCase", () => {
     ]);
     expect(errorHandler).not.toHaveBeenCalled();
     expect(completeHandler).toHaveBeenCalledTimes(1);
+
+    subscription.unsubscribe();
+  });
+
+  it("should filter known devices by accepted device models", () => {
+    // Arrange
+    const rejectedKnownDevice: KnownDevice = {
+      transport: "RN_BLE",
+      deviceModelId: DeviceModelId.nanoSP,
+      id: "known-device-b",
+      name: "Ledger Nano S Plus",
+    };
+    const { input } = setupTest({
+      knownDevices: [knownDevice, rejectedKnownDevice],
+      acceptedDeviceModelIds: [DeviceModelId.nanoX],
+    });
+    const states: Array<ConnectDeviceUIState> = [];
+
+    // Act
+    const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
+
+    // Assert
+    expect(states[0]).toEqual({
+      type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
+      device: knownDevice,
+    });
 
     subscription.unsubscribe();
   });

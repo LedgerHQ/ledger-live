@@ -1,26 +1,17 @@
-import type {
-  DeviceManagementKit,
-  DiscoveredDevice,
-  TransportIdentifier,
-} from "@ledgerhq/device-management-kit";
+import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
 import { BehaviorSubject, Subject, Subscription, type Observable } from "rxjs";
 import {
-  DiscoveryErrorTypes,
+  BaseDiscoveryErrorTypes,
+  type BaseDiscoveryError,
   type DeviceDiscoveryService,
   type DeviceDiscoveryStartArgs,
-  type DiscoveryError,
+  type UnknownDiscoveryError,
 } from "../types";
 import { type DeviceDiscoverySource } from "./sources/DeviceDiscoverySource";
-import { RnBleDeviceDiscoverySource } from "./sources/RnBleDeviceDiscoverySource";
-import { RnHidDeviceDiscoverySource } from "./sources/RnHidDeviceDiscoverySource";
 
-const createDefaultDeviceDiscoverySources = (
-  dmk: DeviceManagementKit,
-): Map<TransportIdentifier, DeviceDiscoverySource> => {
-  const sources = [new RnHidDeviceDiscoverySource(dmk), new RnBleDeviceDiscoverySource(dmk)];
-
-  return new Map(sources.map(source => [source.transportId, source]));
-};
+type DefaultDeviceDiscoveryServiceError<TDiscoveryError extends BaseDiscoveryError> =
+  | TDiscoveryError
+  | UnknownDiscoveryError;
 
 /**
  * Note: this logic should be part of the DMK, but for now the API of the DMK is not designed to handle:
@@ -28,18 +19,25 @@ const createDefaultDeviceDiscoverySources = (
  * - preflight checks (BLE enabled, BLE permissions, android location services enabled, etc.),
  * and related error management and retry logic.
  */
-export class DefaultDeviceDiscoveryService implements DeviceDiscoveryService {
+export class DefaultDeviceDiscoveryService<
+  TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
+> implements DeviceDiscoveryService<DefaultDeviceDiscoveryServiceError<TDiscoveryError>> {
   private subscription: Subscription | null = null;
   private readonly discoveredDevicesSubject = new BehaviorSubject<DiscoveredDevice[]>([]);
-  private readonly errorsSubject = new Subject<DiscoveryError>();
+  private readonly errorsSubject = new Subject<
+    DefaultDeviceDiscoveryServiceError<TDiscoveryError>
+  >();
 
   readonly discoveredDevices: Observable<DiscoveredDevice[]> =
     this.discoveredDevicesSubject.asObservable();
-  readonly errors: Observable<DiscoveryError> = this.errorsSubject.asObservable();
+  readonly errors: Observable<DefaultDeviceDiscoveryServiceError<TDiscoveryError>> =
+    this.errorsSubject.asObservable();
 
   constructor(
-    dmk: DeviceManagementKit,
-    private readonly discoverySources = createDefaultDeviceDiscoverySources(dmk),
+    private readonly discoverySources: Map<
+      TransportIdentifier,
+      DeviceDiscoverySource<TDiscoveryError>
+    >,
   ) {}
 
   start({ ignoreTransportIdentifiers = [] }: DeviceDiscoveryStartArgs = {}): void {
@@ -73,7 +71,7 @@ export class DefaultDeviceDiscoveryService implements DeviceDiscoveryService {
             devicesByTransport.set(source.transportId, []);
             this.emitDiscoveredDevices(devicesByTransport);
             this.errorsSubject.next({
-              type: DiscoveryErrorTypes.Unknown,
+              type: BaseDiscoveryErrorTypes.Unknown,
               transportId: source.transportId,
               error,
             });
