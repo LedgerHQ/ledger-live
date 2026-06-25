@@ -35,7 +35,6 @@ export function AmountScreenView({
   onReview,
   onGetFunds,
   onMessageLinkPress,
-  pluginsSlot,
 }: AmountScreenViewProps) {
   return (
     <>
@@ -56,8 +55,6 @@ export function AmountScreenView({
           />
 
           {showQuickActions ? <QuickActionsRow actions={quickActions} /> : null}
-
-          {pluginsSlot}
         </div>
       </DialogBody>
 

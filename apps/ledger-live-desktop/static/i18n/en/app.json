@@ -2525,7 +2525,6 @@
   },
   "newSendFlow": {
     "title": "Send {{currency}}",
-    "feeCurrency": "Fee currency",
     "available": "Available {{amount}}",
     "to": "To:",
     "placeholder": "Enter address or ENS",

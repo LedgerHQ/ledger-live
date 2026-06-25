@@ -4,4 +4,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-feat(lwdm): remove celo mentions on the new send flow with extraFields property
+feat(lwdm): move the Celo "Pay fees in" selector from the Amount step to the Custom fees step using a generic, family-agnostic fee asset descriptor
