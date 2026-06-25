@@ -452,7 +452,7 @@ export function runSwapWithSendMaxTest(
           ? fromAccount.parentAccount.currency.name
           : fromAccount.currency.speculosApp.name;
         await app.modularDrawer.selectNetworkIfAsked(networkName);
-        await app.modularDrawer.selectFirstAccount();
+        await app.modularDrawer.selectFirstAccountIfAsked();
         await app.swapLiveApp.tapToCurrency();
         await app.modularDrawer.performSearchByTicker(toAccount.currency.ticker);
         await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
@@ -460,7 +460,7 @@ export function runSwapWithSendMaxTest(
           ? toAccount.parentAccount.currency.name
           : toAccount.currency.speculosApp.name;
         await app.modularDrawer.selectNetworkIfAsked(networkName);
-        await app.modularDrawer.selectFirstAccount();
+        await app.modularDrawer.selectFirstAccountIfAsked();
       } else {
         await app.common.performSearch(fromAccount.currency.name);
         await app.stake.selectCurrency(fromAccount.currency.id);

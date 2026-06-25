@@ -107,6 +107,16 @@ export default class ModularDrawer {
     }
   }
 
+  @Step("Select first account in modular drawer if asked")
+  async selectFirstAccountIfAsked(): Promise<void> {
+    const isPresent = await IsIdPresent(this.modularDrawerFlowViewId);
+    if (!isPresent) return;
+    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
+    if (modularDrawerAttributes.label?.includes("Select account")) {
+      await this.selectFirstAccount();
+    }
+  }
+
   @Step("Select network")
   async selectNetwork(networkName: string): Promise<void> {
     const id = this.networkItemIdMAD(networkName);
@@ -131,7 +141,7 @@ export default class ModularDrawer {
     await this.selectCurrencyByTicker(account.currency.ticker);
     const networkName = this.getNetworkNameForAccount(account);
     await this.selectNetworkIfAsked(networkName);
-    await this.selectFirstAccount();
+    await this.selectFirstAccountIfAsked();
   }
 
   /**
