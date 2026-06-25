@@ -18,7 +18,6 @@ export { analyticsOptIn } from "./analyticsOptIn";
 export * from "./llmNanoOnboardingFundWallet";
 export * from "./llmNanoSUpsellBanners";
 export * from "./llmOnboardingEnableSync";
-export * from "./llmSyncOnboardingIncr1";
 export * from "./lwmNotificationsOptIn";
 export * from "./lwmProductTour";
 export * from "./nanoOnboardingFundWallet";
