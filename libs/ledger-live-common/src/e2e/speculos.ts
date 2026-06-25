@@ -64,7 +64,12 @@ import { sleep } from "./index";
 import { delegateMina } from "./families/mina";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
-const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = 240; // ~120s at 500ms polling
+const SCREEN_POLL_INTERVAL_MS = 500;
+const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+// Derived from timeout + interval so the budget can't silently drift if either changes.
+const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+  SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
+);
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -558,7 +563,7 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
       return texts;
     }
 
-    await sleep(500);
+    await sleep(SCREEN_POLL_INTERVAL_MS);
   }
 
   throw new Error(
@@ -584,7 +589,7 @@ export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> 
       await pressAndRelease(DeviceLabels.YES_ENABLE);
       enabled = true; // press once, then keep polling for review within the same budget
     }
-    await sleep(500);
+    await sleep(SCREEN_POLL_INTERVAL_MS);
   }
 
   throw new Error(
