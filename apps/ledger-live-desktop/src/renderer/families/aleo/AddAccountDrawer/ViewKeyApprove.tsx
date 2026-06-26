@@ -1,11 +1,9 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useSelector } from "LLD/hooks/redux";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import {
-  type Request,
-  type ViewKeysByAccountId,
-} from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
+import { useAleoViewKeyApproval } from "@ledgerhq/live-common/families/aleo/react";
+import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
@@ -14,7 +12,6 @@ import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 import { ADD_ACCOUNT_FLOW_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { ALEO_ADD_ACCOUNT_PAGE_NAME } from "./analytics/addAccount.types";
 import { AleoTrackAddAccountScreen } from "./analytics/AleoTrackAddAccountScreen";
-import { useGetViewKeyAction } from "./useGetViewKeyAction";
 import { ViewKeyConfirmation } from "./ViewKeyConfirmation";
 
 interface Props {
@@ -26,36 +23,12 @@ interface Props {
 
 export function ViewKeyApprove({ currency, selectedAccounts, onResult, onCancel }: Props) {
   const source = useSelector(modularDialogSourceSelector);
-  const action = useGetViewKeyAction();
-
-  const request: Request = useMemo(
-    () => ({
-      appName: "Aleo",
-      selectedAccounts,
-      currency,
-    }),
-    [currency, selectedAccounts],
-  );
-
   const device = useSelector(getCurrentDevice);
-  const hookState = action.useHook(device, request);
-  const payload = action.mapResult(hookState);
+
+  const { hookState, payload, request, confirmedAccountIds, rejectedAccountIds } =
+    useAleoViewKeyApproval({ device, selectedAccounts, currency });
+
   useKeepScreenAwake(true);
-
-  const status = useMemo(() => {
-    const confirmed = new Set<string>();
-    const rejected = new Set<string>();
-
-    Object.entries(hookState.shareProgress.viewKeys).forEach(([accountId, viewKey]) => {
-      const destination = viewKey === null ? rejected : confirmed;
-      destination.add(accountId);
-    });
-
-    return {
-      confirmedAccountIds: confirmed,
-      rejectedAccountIds: rejected,
-    };
-  }, [hookState.shareProgress.viewKeys]);
 
   return (
     <>
@@ -76,8 +49,8 @@ export function ViewKeyApprove({ currency, selectedAccounts, onResult, onCancel 
           device={device}
           shared={hookState.shareProgress.completed}
           selectedAccounts={selectedAccounts}
-          confirmedAccountIds={status.confirmedAccountIds}
-          rejectedAccountIds={status.rejectedAccountIds}
+          confirmedAccountIds={confirmedAccountIds}
+          rejectedAccountIds={rejectedAccountIds}
           onCancel={onCancel}
         />
       )}
