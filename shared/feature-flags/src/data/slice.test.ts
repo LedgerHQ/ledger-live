@@ -325,8 +325,7 @@ describe("middleware behavior", () => {
 
     jest.advanceTimersByTime(1_000);
     await flushPromises();
-    // Reducer state is unchanged because syncRemoteConfig is not dispatched on failure;
-    // the previous resolved value remains visible.
+    // Remote cache is unchanged on failure; resolved value stays as after the last sync.
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 
@@ -345,9 +344,28 @@ describe("middleware behavior", () => {
     const store = createStore(undefined, { fetchRemoteFlags: fetcher, refreshInterval: 1_000 });
 
     await flushPromises();
-    // syncRemoteConfig never fires on failure, so resolved stays at defaults.
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
     expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
+  });
+
+  it("uses envFlags when the first fetch rejects", async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error("network down"));
+    const store = createStore(undefined, {
+      resolutionConfig: {
+        envFlags: { mockFeature: { enabled: true, params: { fromEnv: true } } },
+      },
+      fetchRemoteFlags: fetcher,
+      refreshInterval: 1_000,
+    });
+
+    await flushPromises();
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+    expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
+      enabled: true,
+      params: { fromEnv: true },
+      overriddenByEnv: true,
+      overridesRemote: true,
+    });
   });
 
   it("does not schedule any timer when fetchRemoteFlags is omitted", () => {

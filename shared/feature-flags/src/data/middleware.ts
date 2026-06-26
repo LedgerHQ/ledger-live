@@ -112,9 +112,10 @@ function getMeta(action: Action<string>) {
 
 /**
  * Self-rescheduling poll loop: fetches remote flags, writes them to the ref on
- * success, dispatches the update, signals readiness, then schedules the next
- * iteration. A failed fetch resolves to `null` (via `.catch`), leaves the ref
- * untouched, and still re-schedules so transient errors don't kill the loop.
+ * success, updates the ref, re-resolves flags (so env overrides still apply when
+ * remote is empty), signals readiness, then schedules the next iteration. A
+ * failed fetch resolves to `null` (via `.catch`), leaves the ref untouched, still
+ * re-resolves, and re-schedules so transient errors don't kill the loop.
  *
  * @param fetch
  * Async callback that returns the latest remote flags map.
@@ -146,8 +147,8 @@ async function pollRemoteFlags(
   const remote = await fetch().catch(() => null);
   if (remote !== null) {
     ref.current = remote;
-    dispatchSync();
   }
+  dispatchSync();
   dispatchReady();
   setTimeout(pollRemoteFlags, ms, fetch, ref, dispatchSync, dispatchReady, ms);
 }
