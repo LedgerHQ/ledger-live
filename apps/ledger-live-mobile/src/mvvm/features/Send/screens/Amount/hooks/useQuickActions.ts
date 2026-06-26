@@ -33,6 +33,15 @@ const QUICK_ACTIONS_CONFIG = [
   { id: "threeQuarters", ratio: 0.75 },
 ];
 
+type QuickActionConfig = {
+  id: string;
+  label: string;
+  onPress: () => void;
+  active: boolean;
+  disabled: boolean;
+  untracked?: boolean;
+};
+
 const TOLERANCE_MAGNITUDE_CAP = 8;
 
 export function useQuickActions({
@@ -64,7 +73,7 @@ export function useQuickActions({
     const disabled = mainAccount.balance.lte(0);
     const currentAmount = transaction.amount ?? new BigNumber(0);
 
-    const actions = QUICK_ACTIONS_CONFIG.map(config => {
+    const actions: QuickActionConfig[] = QUICK_ACTIONS_CONFIG.map(config => {
       const targetAmount = availableBalance
         .multipliedBy(config.ratio)
         .integerValue(BigNumber.ROUND_DOWN);
