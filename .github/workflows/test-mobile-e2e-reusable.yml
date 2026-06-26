@@ -186,9 +186,9 @@ jobs:
       test_filter: ${{ steps.test-filter.outputs.filter }}
       ios_timeout: ${{ steps.generate-shards.outputs.ios_timeout }}
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
-      ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
+      ios_native_exists: "false"
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
-      android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
+      android_native_exists: "false"
       android_js_exists: ${{ steps.check-android-js.outputs.cache-hit }}
       ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
       ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
