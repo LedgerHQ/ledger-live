@@ -317,6 +317,54 @@ describe("getBalance", () => {
     });
   });
 
+  describe("manualContracts", () => {
+    const MANUAL_CONTRACT = "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E";
+    const setManualContracts = (manualContracts?: string[]) =>
+      setCoinConfig(() => ({ info: { manualContracts } }) as unknown as EvmCoinConfig);
+
+    it("fetches balance for manualContracts even with no operations from explorer", async () => {
+      setManualContracts([MANUAL_CONTRACT]);
+      nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber("0"));
+      nodeApiMock.getTokenBalance.mockResolvedValue(new BigNumber("777"));
+      mockGetStakes.mockResolvedValue({ items: [] });
+      mockGetExplorerApi.mockReturnValue({
+        getOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [], nextPagingToken: "" }),
+      });
+
+      const result = await getBalance({} as CryptoCurrency, "address");
+
+      expect(nodeApiMock.getTokenBalance).toHaveBeenCalledWith(
+        expect.anything(),
+        "address",
+        MANUAL_CONTRACT,
+      );
+      expect(result).toEqual([
+        { asset: { type: "native" }, value: 0n },
+        {
+          asset: { type: "erc20", assetReference: MANUAL_CONTRACT, assetOwner: "address" },
+          value: 777n,
+        },
+      ]);
+    });
+
+    it("does not duplicate a manual contract already seen in history", async () => {
+      setManualContracts([MANUAL_CONTRACT]);
+      nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber("0"));
+      nodeApiMock.getTokenBalance.mockResolvedValue(new BigNumber("1"));
+      mockGetStakes.mockResolvedValue({ items: [] });
+      mockGetExplorerApi.mockReturnValue({
+        getOperations: jest.fn().mockResolvedValue({
+          lastTokenOperations: [{ contract: MANUAL_CONTRACT }],
+          nextPagingToken: "",
+        }),
+      });
+
+      await getBalance({} as CryptoCurrency, "address");
+
+      expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("returns empty stake when balance is zero", async () => {
     nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
 

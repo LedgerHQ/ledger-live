@@ -1,4 +1,8 @@
-import type { Balance, AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  Balance,
+  AssetInfo,
+  BalanceOptions,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { getCoinConfig } from "../config";
@@ -19,7 +23,7 @@ export const TOKEN_BALANCE_BATCH_SIZE = 8;
 export async function getBalance(
   currency: CryptoCurrency,
   address: string,
-  options?: BalanceOptions,
+  options?: BalanceOptions
 ): Promise<Balance[]> {
   const nodeApi = getNodeApi(currency);
   const explorerApi = getExplorerApi(currency);
@@ -35,7 +39,7 @@ export async function getBalance(
 async function getNativeBalance(
   currency: CryptoCurrency,
   address: string,
-  nodeApi: NodeApi,
+  nodeApi: NodeApi
 ): Promise<Balance> {
   // Get native balance for the first element array
   const nativeBalance = await nodeApi.getCoinBalance(currency, address);
@@ -51,19 +55,24 @@ async function getTokenBalances(
   address: string,
   nodeApi: NodeApi,
   explorerApi: ExplorerApi,
-  options?: BalanceOptions,
+  options?: BalanceOptions
 ): Promise<Balance[]> {
   const balances: Balance[] = [];
 
   // Execute staking and token operations in parallel for better performance
   const [stakingResult, tokenOperationsResult] = await Promise.allSettled([
     getStakes(currency, address),
-    explorerApi.getOperations(currency, address, `js:2:${currency.id}:${address}:`, 0),
+    explorerApi.getOperations(
+      currency,
+      address,
+      `js:2:${currency.id}:${address}:`,
+      0
+    ),
   ]);
 
   // Add staking positions to balances (with error handling)
   if (stakingResult.status === "fulfilled") {
-    stakingResult.value.items.forEach(stake => {
+    stakingResult.value.items.forEach((stake) => {
       balances.push({
         value: stake.amount,
         asset: stake.asset,
@@ -80,31 +89,51 @@ async function getTokenBalances(
 
   // Contracts whose ERC20 balance mirrors the native balance — skip them here to avoid
   // counting the same value twice (the native balance is already returned upstream).
-  const { nativeContracts = [] } = getCoinConfig(currency.id).info;
-  const nativeContractsSet = new Set(nativeContracts.map(c => c.toLowerCase()));
+  const { nativeContracts = [], manualContracts = [] } = getCoinConfig(currency.id).info;
+  const nativeContractsSet = new Set(
+    nativeContracts.map((c) => c.toLowerCase())
+  );
 
   const { contracts, assets } = await collectTokenAssets(
     lastTokenOperations,
     address,
     nativeContractsSet,
-    options,
+    options
   );
+
+  // Add contracts that can't be deduced from history (configured via `manualContracts`).
+  for (const contract of manualContracts) {
+    if (contracts.has(contract)) continue;
+    contracts.add(contract);
+    assets.set(contract, {
+      type: "erc20",
+      assetReference: contract,
+      assetOwner: address,
+    });
+  }
 
   // Fetch balances in parallel (by batches)
   const contractsArray = Array.from(contracts);
   for (let i = 0; i < contractsArray.length; i += TOKEN_BALANCE_BATCH_SIZE) {
     const chunk = contractsArray.slice(i, i + TOKEN_BALANCE_BATCH_SIZE);
     const chunkBalancesPromises = await Promise.allSettled(
-      chunk.map(async contract => {
+      chunk.map(async (contract) => {
         const asset = assets.get(contract);
-        if (asset === undefined) throw new Error(`No asset defined for contract ${contract}`);
-        const balance = await nodeApi.getTokenBalance(currency, address, contract);
+        if (asset === undefined)
+          throw new Error(`No asset defined for contract ${contract}`);
+        const balance = await nodeApi.getTokenBalance(
+          currency,
+          address,
+          contract
+        );
         return { asset, value: BigInt(balance.toFixed(0)) };
-      }),
+      })
     );
     const chunkBalances = chunkBalancesPromises
-      .filter((p): p is PromiseFulfilledResult<Balance> => p.status === "fulfilled")
-      .map(balance => balance.value);
+      .filter(
+        (p): p is PromiseFulfilledResult<Balance> => p.status === "fulfilled"
+      )
+      .map((balance) => balance.value);
     balances.push(...chunkBalances);
   }
 
@@ -120,7 +149,7 @@ async function collectTokenAssets(
   lastTokenOperations: { contract?: string; standard?: string }[],
   address: string,
   nativeContractsSet: Set<string>,
-  options: BalanceOptions | undefined,
+  options: BalanceOptions | undefined
 ): Promise<{ contracts: Set<string>; assets: Map<string, AssetInfo> }> {
   const contracts = new Set<string>();
   const assets = new Map<string, AssetInfo>();
@@ -135,7 +164,8 @@ async function collectTokenAssets(
       assetOwner: address,
     };
 
-    const includeAssets = !options?.includeAssets || (await options.includeAssets(assetInfo));
+    const includeAssets =
+      !options?.includeAssets || (await options.includeAssets(assetInfo));
     if (includeAssets) {
       contracts.add(operation.contract);
       assets.set(operation.contract, assetInfo);

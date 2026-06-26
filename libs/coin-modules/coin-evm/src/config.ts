@@ -62,6 +62,13 @@ export type EvmConfig = {
    */
   nativeContracts?: string[];
   /**
+   * ERC20 contract addresses whose balances must always be fetched, even when they can't
+   * be deduced from the account's transfer history (e.g. chains without an explorer, or
+   * testnets that don't expose token transfers). Addresses are added on top of those
+   * discovered from history.
+   */
+  manualContracts?: string[];
+  /**
    * Minimum effective price per gas (in wei, decimal string) accepted by this chain's
    * mempool. Applied as a floor to both the legacy `gasPrice` and the EIP-1559
    * `maxPriorityFeePerGas`. Useful on sparse testnets where the network's effective
