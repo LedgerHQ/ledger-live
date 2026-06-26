@@ -437,7 +437,6 @@ for (const transaction of transactionsAddressValid) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
-          "@smoke",
           "@solana",
           "@family-solana",
         ],
