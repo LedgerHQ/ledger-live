@@ -66,7 +66,7 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
       name: "step recipient",
       flow: "send",
     });
-  }, [track, trackingProperties]);
+  }, [track, trackingProperties, viewModel]);
 
   return (
     <>

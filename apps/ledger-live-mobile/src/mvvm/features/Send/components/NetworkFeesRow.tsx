@@ -114,7 +114,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
       viewModel.onSelectFeeStrategy(strategy);
       selectorBottomSheetRef.current?.dismiss();
     },
-    [viewModel, selectorBottomSheetRef],
+    [viewModel, selectorBottomSheetRef, track, trackingProperties],
   );
 
   const handleSelectCoinControl = useCallback(() => {
