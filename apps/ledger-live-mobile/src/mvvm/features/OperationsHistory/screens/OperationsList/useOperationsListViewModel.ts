@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, type ComponentType } from "react";
 import BigNumber from "bignumber.js";
-import { useHideSmallValueTokenOperationsFeature } from "@features/platform-feature-flags";
+import { useDustFilteringFeature } from "@features/platform-feature-flags";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { floorThresholdToCurrencyMinorUnit } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
@@ -38,8 +38,7 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
-  const { isEnabled: isDustFilterFeatureEnabled } =
-    useHideSmallValueTokenOperationsFeature("mobile");
+  const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
   const userHideSmallValueTokenOperations = useSelector(
     hideSmallValueTokenOperationsEnabledSelector,
   );

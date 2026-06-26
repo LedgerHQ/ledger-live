@@ -97,9 +97,8 @@ function withDustFeatureEnabled(state: State): State {
       ...state.featureFlags,
       resolved: {
         ...state.featureFlags.resolved,
-        lwHideSmallValueTokenOperations: {
+        lwmDustFiltering: {
           enabled: true,
-          params: { enabledMobile: true, enabledDesktop: false },
         },
       },
     },
