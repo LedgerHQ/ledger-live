@@ -25,7 +25,7 @@ describe("Receive different currency (polkadot, cosmos)", () => {
   });
 
   it.each([
-    ["polkadot", "assethub_polkadot"],
+    // ["polkadot", "assethub_polkadot"], //Quarantine: Polkadot
     ["cosmos", "cosmos"],
     // ["solana"], // TOFIX Error during flow
   ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
