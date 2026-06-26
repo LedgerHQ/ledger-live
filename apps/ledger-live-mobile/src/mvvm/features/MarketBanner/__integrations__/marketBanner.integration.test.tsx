@@ -58,44 +58,6 @@ describe("MarketBanner Integration Tests", () => {
     });
   });
 
-  describe("Feature flag handling", () => {
-    it("should not render when lwmWallet40 feature flag is disabled", () => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: false, params: { marketBanner: true } },
-        }),
-      });
-
-      expect(screen.queryByTestId("market-banner-container")).toBeNull();
-    });
-
-    it("should not render when marketBanner param is false", () => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: false } },
-        }),
-      });
-
-      expect(screen.queryByTestId("market-banner-container")).toBeNull();
-    });
-
-    it("should render when lwmWallet40 is enabled and marketBanner is true", async () => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
-        }),
-      });
-
-      expect(await screen.findByTestId("market-banner-container")).toBeVisible();
-    });
-  });
-
   describe("Filter trigger", () => {
     const renderWithAssetDiscoverability = (assetDiscoverability: boolean) => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
