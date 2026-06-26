@@ -6,6 +6,7 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
+import { z } from "zod";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import {
   type GetTokensDataParams,
@@ -22,6 +23,10 @@ import {
   MAX_RETRIES,
   TOKEN_OUTPUT_FIELDS,
   TOKEN_TAGS,
+  commitHeaderMissingError,
+  currencyNotFoundError,
+  fetchCurrencyError,
+  fetchError,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
@@ -32,24 +37,32 @@ import {
  * owns no env/config/logging dependency. The app picks the prod or staging URL — there is no
  * staging switch in here.
  */
-export interface CalApiExtra {
-  calServiceUrl: string;
-  ledgerClientVersion: string;
-  logger?: (...args: unknown[]) => void;
-}
+const CalApiExtraSchema = z.object({
+  calServiceUrl: z.string().min(1),
+  ledgerClientVersion: z.string().min(1),
+  logger: z.custom<(...args: unknown[]) => void>().optional(),
+});
+
+export type CalApiExtra = z.infer<typeof CalApiExtraSchema>;
 
 /**
  * Builds this package's slice of the thunk `extraArgument`. RTK leaves `extraArgument` untyped, so
- * this is the one compile-checked entry point ensuring the CAL config is complete and correctly named.
+ * this is the one compile- and runtime-checked entry point: `parse` fails fast at app init if the CAL
+ * config is incomplete (e.g. an env var resolved to an empty string).
  */
 export function calApiExtra(extra: CalApiExtra): CalApiExtra {
-  return extra;
+  return CalApiExtraSchema.parse(extra);
+}
+
+/** Extracts the {@link CalApiExtra} from the `extraArgument` of the API. */
+function getCalExtra(api: { extra: unknown }): CalApiExtra {
+  return api.extra as CalApiExtra;
 }
 
 /** Reads the injected {@link CalApiExtra} and delegates to {@link fetchBaseQuery}. Wrapped in `retry`. */
 const calBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = retry(
   (args, api, extraOptions) => {
-    const extra = api.extra as CalApiExtra;
+    const extra = getCalExtra(api);
     return fetchBaseQuery({
       baseUrl: extra.calServiceUrl,
       prepareHeaders: headers => {
@@ -103,7 +116,7 @@ export const cryptoAssetsApi = createApi({
 
     getTokensSyncHash: build.query<string, string>({
       async queryFn(currencyId, queryApi) {
-        const extra = queryApi.extra as CalApiExtra;
+        const extra = getCalExtra(queryApi);
         try {
           const url = new URL("/v1/currencies", extra.calServiceUrl);
           url.searchParams.set("output", "id");
@@ -118,61 +131,38 @@ export const cryptoAssetsApi = createApi({
           });
 
           if (!response.ok) {
-            return {
-              error: {
-                status: response.status,
-                data: `Failed to fetch currency: ${response.statusText}`,
-                originalStatus: response.status,
-              },
-            };
+            return fetchCurrencyError(response.status, response.statusText);
           }
 
           // Check if the response contains data (not an empty array)
           const responseData = await response.json();
           if (Array.isArray(responseData) && responseData.length === 0) {
-            return {
-              error: {
-                status: 404,
-                data: `Currency not found: ${currencyId}`,
-                originalStatus: 404,
-              },
-            };
+            return currencyNotFoundError(currencyId);
           }
 
           const hash = response.headers.get(HEADER_X_LEDGER_COMMIT);
 
           if (!hash) {
-            return {
-              error: {
-                status: "PARSING_ERROR",
-                data: "X-Ledger-Commit header not found in response",
-                error: "X-Ledger-Commit header not found in response",
-                originalStatus: 200,
-              },
-            };
+            return commitHeaderMissingError();
           }
 
           return { data: hash };
         } catch (error) {
-          return {
-            error: {
-              status: "FETCH_ERROR",
-              error: error instanceof Error ? error.message : "Unknown error",
-            },
-          };
+          return fetchError(error);
         }
       },
-      async onQueryStarted(currencyId, { dispatch, queryFulfilled, getCacheEntry, extra }) {
+      async onQueryStarted(currencyId, api) {
+        const extra = getCalExtra(api);
         try {
-          const previousHash = getCacheEntry()?.data as string | undefined;
-          const { data: newHash } = await queryFulfilled;
+          const previousHash = api.getCacheEntry()?.data as string | undefined;
+          const { data: newHash } = await api.queryFulfilled;
 
           if (previousHash && newHash && previousHash !== newHash) {
-            (extra as CalApiExtra).logger?.(
+            extra.logger?.(
               "cryptoassets",
               `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
             );
-            dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
+            api.dispatch(cryptoAssetsApi.util.invalidateTags([...TOKEN_TAGS]));
           }
         } catch {
           // Query failed, skip eviction
@@ -181,18 +171,17 @@ export const cryptoAssetsApi = createApi({
     }),
 
     getTokensData: build.infiniteQuery<TokensDataWithPagination, GetTokensDataParams, PageParam>({
-      query: ({ pageParam, queryArg = {} }) => {
+      query({ pageParam, queryArg = {} }) {
         const { output, networkFamily, pageSize = DEFAULT_PAGE_SIZE, limit, ref } = queryArg;
 
         const params = {
-          output: output?.join(",") || TOKEN_OUTPUT_FIELDS.join(","),
+          output: output?.join(",") ?? TOKEN_OUTPUT_FIELDS.join(","),
+          pageSize,
           ...(pageParam?.cursor && { cursor: pageParam.cursor }),
           ...(networkFamily && { network_family: networkFamily }),
-          pageSize,
           ...(limit && { limit }),
           ...(ref && { ref }),
         };
-
         return {
           url: "/v1/tokens",
           params,

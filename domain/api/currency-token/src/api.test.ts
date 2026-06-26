@@ -137,6 +137,20 @@ describe("param interfaces", () => {
   });
 });
 
+describe("calApiExtra", () => {
+  it("returns the validated config", () => {
+    expect(
+      calApiExtra({ calServiceUrl: "https://cal.test", ledgerClientVersion: "1.2.3" }),
+    ).toEqual({ calServiceUrl: "https://cal.test", ledgerClientVersion: "1.2.3" });
+  });
+
+  it("throws when a required field is missing or empty", () => {
+    // @ts-expect-error — ledgerClientVersion is required
+    expect(() => calApiExtra({ calServiceUrl: "https://cal.test" })).toThrow();
+    expect(() => calApiExtra({ calServiceUrl: "", ledgerClientVersion: "1.2.3" })).toThrow();
+  });
+});
+
 describe("cryptoAssetsApi requests", () => {
   let fetchSpy: jest.SpyInstance;
 
