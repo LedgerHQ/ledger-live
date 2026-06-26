@@ -15,11 +15,6 @@ export function AmountScreen() {
     return getSendFlowTrackingProperties(account, parentAccount);
   }, [account, parentAccount]);
 
-  const viewModel = useAmountScreen();
-  if (!viewModel.ready) {
-    return null;
-  }
-
   useEffect(() => {
     track("send_modal", {
       ...trackingProperties,
@@ -27,6 +22,11 @@ export function AmountScreen() {
       flow: "send",
     });
   }, [track, trackingProperties]);
+
+  const viewModel = useAmountScreen();
+  if (!viewModel.ready) {
+    return null;
+  }
 
   return (
     <SendFlowLayout>

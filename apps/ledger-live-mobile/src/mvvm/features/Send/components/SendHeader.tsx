@@ -57,6 +57,10 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
   }, [account, parentAccount]);
 
   useEffect(() => {
+    if (!viewModel.isRecipientStep) {
+      return;
+    }
+
     track("send_modal", {
       ...trackingProperties,
       name: "step recipient",

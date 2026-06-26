@@ -65,6 +65,7 @@ export function QuickActionsRow({ actions }: QuickActionsRowProps) {
   const handleOnPress = useCallback(
     (actionId: string, onPress: () => void, untracked?: boolean) => {
       if (untracked) {
+        onPress();
         return;
       }
 
