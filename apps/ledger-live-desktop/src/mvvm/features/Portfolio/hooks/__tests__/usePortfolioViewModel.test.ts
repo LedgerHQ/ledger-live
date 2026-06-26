@@ -93,7 +93,6 @@ describe("usePortfolioViewModel", () => {
     });
 
     expect(result.current.hasExchangeBannerCTA).toBe(true);
-    expect(result.current.shouldDisplayMarketBanner).toBe(true);
     expect(result.current.shouldDisplayGraphRework).toBe(true);
     expect(result.current.isWallet40Enabled).toBe(true);
   });

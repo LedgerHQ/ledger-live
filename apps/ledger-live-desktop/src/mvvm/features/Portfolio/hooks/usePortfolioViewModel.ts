@@ -18,7 +18,6 @@ export interface PortfolioViewModelResult {
   readonly totalOperations: number;
   readonly totalCurrencies: number;
   readonly hasExchangeBannerCTA: boolean;
-  readonly shouldDisplayMarketBanner: boolean;
   readonly shouldDisplayGraphRework: boolean;
   readonly shouldDisplayAssetSection: boolean;
   readonly shouldDisplayAssetDiscoverability: boolean;
@@ -40,7 +39,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   useResumeAddAccountAfterOnboarding();
 
   const {
-    shouldDisplayMarketBanner,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
@@ -88,7 +86,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     totalOperations,
     totalCurrencies,
     hasExchangeBannerCTA,
-    shouldDisplayMarketBanner,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
