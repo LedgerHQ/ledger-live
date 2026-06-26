@@ -4,6 +4,12 @@ export const TRANSACTION_OPTIONS_TX_HASH_SIGN = 0b0001;
 export const TRANSACTION_VERSION_DEFAULT = 2;
 export const METACHAIN_SHARD = 4294967295;
 export const MAX_PAGINATION_SIZE = 50;
+/**
+ * Upper bound on how deep listOperations will offset-page while draining a single
+ * timestamp that holds more transfers than one window. Matches the API's
+ * `from + size` result-window ceiling and guarantees the drain loop terminates.
+ */
+export const MAX_CURSOR_DRAIN = 10000;
 export const GAS = {
   ESDT_TRANSFER: 500000,
   DELEGATE: 75000000,

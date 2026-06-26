@@ -14,11 +14,13 @@
     "src/helpers/handleTransactionStatus.ts",
     "src/helpers/hasMinimumDelegableBalance.ts",
     "src/helpers/randomizeProviders.ts",
+    "src/logic/helpers/msw-http.mock.ts",
+    "src/logic/index.ts",
     "src/specs.ts",
     "src/speculos-deviceActions.ts",
-    "src/transaction.ts",
+    "src/supportedFeatures.ts",
     "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/transaction.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
@@ -31,5 +33,6 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"]
+    "jest-util"
+  ]
 }

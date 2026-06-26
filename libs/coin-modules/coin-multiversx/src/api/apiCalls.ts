@@ -1,11 +1,11 @@
 import network from "@ledgerhq/live-network";
-import { SignedOperation } from "@ledgerhq/types-live";
 import { MAX_PAGINATION_SIZE, METACHAIN_SHARD } from "../constants";
 import {
   ESDTToken,
   MultiversXApiTransaction,
   MultiversXDelegation,
   MultiversXProvider,
+  MultiversXSignedTransaction,
   MultiversXTransactionAction,
   MultiversXTransactionMode,
   MultiversXTransferOptions,
@@ -116,7 +116,7 @@ export default class MultiversXApi {
     };
   }
 
-  async submit(signedOperation: SignedOperation): Promise<string> {
+  async submit(signedOperation: MultiversXSignedTransaction): Promise<string> {
     const transaction = {
       ...signedOperation.rawData,
       signature: signedOperation.signature,
@@ -161,6 +161,57 @@ export default class MultiversXApi {
     }
 
     return allTransactions;
+  }
+
+  /**
+   * Fetches a single page of account transfers from the unified `/transfers`
+   * endpoint, which returns native EGLD and ESDT transfers in one timestamp-sorted
+   * stream. Unlike getHistory/getESDTTransactionsForAddress this does NOT drain the
+   * whole history: it returns at most `size` items so the caller can paginate.
+   *
+   * The endpoint windows by timestamp (`before`/`after`, both inclusive) rather than
+   * block height, and token identifier/amount are only exposed inside
+   * `action.arguments.transfers` (no top-level tokenIdentifier/tokenValue), so we
+   * surface the first fungible ESDT transfer here for mapToOperation to consume.
+   *
+   * @param addr - Account bech32 address
+   * @param options - Page size and optional timestamp window / order
+   * @returns One page of transfers (Transactions and SmartContractResults)
+   */
+  async getTransfers(
+    addr: string,
+    options: {
+      size: number;
+      from?: number;
+      before?: number;
+      after?: number;
+      order?: "asc" | "desc";
+    },
+  ): Promise<MultiversXApiTransaction[]> {
+    const { size, from = 0, before, after, order } = options;
+    const params = new URLSearchParams({ from: String(from), size: String(size) });
+    if (order) params.set("order", order);
+    if (before !== undefined) params.set("before", String(before));
+    if (after !== undefined) params.set("after", String(after));
+
+    const { data: transfers } = await network<MultiversXApiTransaction[]>({
+      method: "GET",
+      url: `${this.API_URL}/accounts/${addr}/transfers?${params.toString()}`,
+    });
+
+    for (const transfer of transfers) {
+      transfer.mode = decodeTransactionMode(transfer.action) as MultiversXTransactionMode;
+      const esdt = transfer.action?.arguments?.transfers?.find(
+        t => typeof t.token === "string" && t.token.length > 0,
+      );
+      if (esdt?.token) {
+        transfer.transfer = MultiversXTransferOptions.esdt;
+        transfer.tokenIdentifier = esdt.token;
+        transfer.tokenValue = esdt.value ?? "0";
+      }
+    }
+
+    return transfers;
   }
 
   async getAccountDelegations(addr: string): Promise<MultiversXDelegation[]> {

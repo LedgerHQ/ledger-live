@@ -26,6 +26,7 @@ import {
   MultiversXDelegation,
   MultiversXOperation,
   MultiversXProvider,
+  MultiversXSignedTransaction,
   MultiversXTransactionOperation,
   MultiversXTransferOptions,
   Transaction,
@@ -126,9 +127,9 @@ function getESDTOperationValue(
       token1 = transaction.action.arguments.transfers[0];
       token2 = transaction.action.arguments.transfers[1];
       if (token1.token === tokenIdentifier) {
-        return new BigNumber(token1.value);
+        return new BigNumber(token1.value ?? 0);
       } else {
-        return new BigNumber(token2.value);
+        return new BigNumber(token2.value ?? 0);
       }
     default:
       return new BigNumber(transaction.tokenValue ?? 0);
@@ -367,5 +368,8 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
  * Broadcast blob to blockchain
  */
 export const broadcastTransaction = async (signedOperation: SignedOperation): Promise<string> => {
-  return await api.submit(signedOperation);
+  return await api.submit({
+    signature: signedOperation.signature,
+    rawData: signedOperation.rawData as MultiversXSignedTransaction["rawData"],
+  });
 };

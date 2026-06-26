@@ -282,10 +282,17 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "multiversx",
     supportedCoins: ["elrond"],
     loadSetup: () => import("../families/multiversx/setup"),
+    loadLocalApi: () =>
+      import("../families/multiversx/coinModuleApi").then(m => m.createLocalMultiversXApi),
     loadTransaction: () => import("@ledgerhq/coin-multiversx/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-multiversx/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/multiversx/bridge/mock").then(m => m.default),
+    loadValidateAddress: () =>
+      import("@ledgerhq/coin-multiversx/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
+    loadBridgeApi: () => import("../families/multiversx/bridge/api").then(m => m.default),
   },
   {
     family: "near",

@@ -93,6 +93,15 @@ export type MultiversXProtocolTransaction = {
 };
 
 /**
+ * A signed MultiversX transaction ready to be broadcast.
+ * `rawData` holds the protocol transaction fields (without the signature).
+ */
+export type MultiversXSignedTransaction = {
+  signature: string;
+  rawData: Omit<MultiversXProtocolTransaction, "signature">;
+};
+
+/**
  * MultiversX transaction as received from explorer
  */
 export type MultiversXApiTransaction = {
@@ -115,6 +124,8 @@ export type MultiversXApiTransaction = {
   data?: string;
   tokenIdentifier?: string;
   tokenValue?: string;
+  /** Item kind on the /transfers endpoint: "Transaction" | "SmartContractResult". */
+  type?: string;
   action?: MultiversXTransactionAction;
   operations?: MultiversXTransactionOperation[];
 };
@@ -143,8 +154,10 @@ export type MultiversXTransactionActionArguments = {
 };
 
 export type MultiversXTransactionActionArgumentsTransfers = {
-  token: string;
-  value: string;
+  // NFT/Meta-ESDT transfers on the /transfers endpoint omit `token`; only fungible
+  // ESDT transfers carry an identifier here.
+  token?: string;
+  value?: string;
 };
 
 export type ESDTToken = {
@@ -232,4 +245,19 @@ export function isMultiversXOperationExtraRaw(
   op: OperationExtraRaw,
 ): op is MultiversXOperationExtraRaw {
   return op !== null && typeof op === "object" && "amount" in op;
+}
+
+/**
+ * Input parameters for crafting a MultiversX transaction.
+ * Used by the craftTransaction logic function.
+ */
+export interface CraftTransactionInput {
+  sender: string;
+  recipient: string;
+  amount: bigint;
+  nonce: number;
+  gasLimit?: number;
+  mode: "send" | "delegate" | "unDelegate" | "claimRewards" | "withdraw" | "reDelegateRewards";
+  tokenIdentifier?: string;
+  chainID?: string | undefined;
 }

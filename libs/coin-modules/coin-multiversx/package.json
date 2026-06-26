@@ -35,10 +35,20 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
+    },
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -74,6 +84,7 @@
     "@types/lodash": "^4.17.7",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
@@ -88,7 +99,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
-    "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
