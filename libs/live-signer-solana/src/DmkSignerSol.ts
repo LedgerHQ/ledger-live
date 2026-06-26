@@ -16,7 +16,10 @@ import {
   TransactionResolutionContext,
   SignMessageVersion,
 } from "@ledgerhq/device-signer-kit-solana";
-import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import {
+  DeviceActionStatus,
+  DeviceManagementKit,
+} from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 
@@ -31,7 +34,10 @@ export type DAError =
  */
 export class DmkSignerSol implements SolanaSigner {
   private dmkSigner: SignerSolana;
-  private readonly DMKPubKeyDisplayMode: { readonly long: string; readonly short: string } = {
+  private readonly DMKPubKeyDisplayMode: {
+    readonly long: string;
+    readonly short: string;
+  } = {
     long: "long",
     short: "short",
   };
@@ -69,12 +75,13 @@ export class DmkSignerSol implements SolanaSigner {
     const { observable } = this.dmkSigner.getAppConfiguration();
     return new Promise<AppConfig>((resolve, reject) => {
       observable.subscribe({
-        next: state => {
+        next: (state) => {
           if (state.status === DeviceActionStatus.Error) {
             reject(this._mapError<GetAppConfigurationDAError>(state.error));
           }
           if (state.status === DeviceActionStatus.Completed) {
-            const { version, blindSigningEnabled, pubKeyDisplayMode } = state.output;
+            const { version, blindSigningEnabled, pubKeyDisplayMode } =
+              state.output;
             const mode =
               pubKeyDisplayMode === this.DMKPubKeyDisplayMode.long
                 ? PubKeyDisplayMode.LONG
@@ -82,7 +89,7 @@ export class DmkSignerSol implements SolanaSigner {
             resolve({ version, blindSigningEnabled, pubKeyDisplayMode: mode });
           }
         },
-        error: err => {
+        error: (err) => {
           reject(err);
         },
       });
@@ -101,7 +108,7 @@ export class DmkSignerSol implements SolanaSigner {
     });
     return new Promise<SolanaAddress>((resolve, reject) => {
       observable.subscribe({
-        next: state => {
+        next: (state) => {
           if (state.status === DeviceActionStatus.Error) {
             reject(this._mapError<GetAddressDAError>(state.error));
           }
@@ -111,7 +118,7 @@ export class DmkSignerSol implements SolanaSigner {
             resolve({ address: addressBytes });
           }
         },
-        error: err => {
+        error: (err) => {
           reject(err);
         },
       });
@@ -122,14 +129,17 @@ export class DmkSignerSol implements SolanaSigner {
    * Converts a Resolution from coin-solana to a TransactionResolutionContext for device-signer-kit-solana.
    * The userInputType values are identical between both types ("sol" | "ata") but defined separately
    */
-  private _toTransactionResolutionContext(resolution: Resolution): TransactionResolutionContext {
+  private _toTransactionResolutionContext(
+    resolution: Resolution,
+  ): TransactionResolutionContext {
     return {
       tokenAddress: resolution.tokenAddress,
       tokenInternalId: resolution.tokenInternalId,
       createATA: resolution.createATA,
       templateId: resolution.templateId,
       // Cast is safe: UserInputType enum values ("sol" | "ata") are identical in both types
-      userInputType: resolution.userInputType as TransactionResolutionContext["userInputType"],
+      userInputType:
+        resolution.userInputType as TransactionResolutionContext["userInputType"],
     };
   }
 
@@ -148,13 +158,15 @@ export class DmkSignerSol implements SolanaSigner {
       transactionResolutionContext: resolution
         ? this._toTransactionResolutionContext(resolution)
         : undefined,
-      delayed: resolution?.delayed,
-      solanaRPCURL: resolution?.solanaRPCURL,
+      delayed: resolution?.templateId ? false : resolution?.delayed,
+      solanaRPCURL: resolution?.templateId
+        ? undefined
+        : resolution?.solanaRPCURL,
       fetchBlockhash: resolution?.fetchBlockhash,
     });
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
-        next: state => {
+        next: (state) => {
           if (state.status === DeviceActionStatus.Error) {
             reject(this._mapError<SignTransactionDAError>(state.error));
           }
@@ -163,7 +175,7 @@ export class DmkSignerSol implements SolanaSigner {
             resolve({ signature: signatureBuffer });
           }
         },
-        error: err => {
+        error: (err) => {
           reject(err);
         },
       });
@@ -175,7 +187,10 @@ export class DmkSignerSol implements SolanaSigner {
    * @param path - BIP32 derivation path
    * @param messageHex - message to sign in hexadecimal format
    */
-  async signMessage(path: string, messageHex: string): Promise<SolanaSignature> {
+  async signMessage(
+    path: string,
+    messageHex: string,
+  ): Promise<SolanaSignature> {
     const { observable } = this.dmkSigner.signMessage(
       path,
       new Uint8Array(Buffer.from(messageHex, "hex")),
@@ -183,16 +198,18 @@ export class DmkSignerSol implements SolanaSigner {
     );
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
-        next: state => {
+        next: (state) => {
           if (state.status === DeviceActionStatus.Error) {
             reject(this._mapError<SignMessageDAError>(state.error));
           }
           if (state.status === DeviceActionStatus.Completed) {
-            const signatureBuffer = Buffer.from(bs58.decode(state.output.signature));
+            const signatureBuffer = Buffer.from(
+              bs58.decode(state.output.signature),
+            );
             resolve({ signature: signatureBuffer });
           }
         },
-        error: err => {
+        error: (err) => {
           reject(err);
         },
       });
