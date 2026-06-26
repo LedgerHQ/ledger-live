@@ -874,8 +874,8 @@ export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
 export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>
   state.settings.hideSmallValueTokenOperations;
 export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) => {
-  const feature = selectFeature(state, "lwHideSmallValueTokenOperations");
-  return feature?.enabled === true && feature.params?.enabledMobile === true;
+  const feature = selectFeature(state, "lwmDustFiltering");
+  return feature?.enabled === true;
 };
 export const hideSmallValueTokenOperationsEffectiveSelector = (state: State) =>
   hideSmallValueTokenOperationsFeatureEnabledSelector(state) &&

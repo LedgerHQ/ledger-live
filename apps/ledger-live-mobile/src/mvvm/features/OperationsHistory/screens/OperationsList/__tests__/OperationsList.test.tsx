@@ -111,9 +111,8 @@ describe("OperationsList", () => {
       { setOptions: mockSetOptions },
       {
         overrideInitialState: withFlagOverrides({
-          lwHideSmallValueTokenOperations: {
+          lwmDustFiltering: {
             enabled: true,
-            params: { enabledMobile: true, enabledDesktop: false },
           },
         }),
       },

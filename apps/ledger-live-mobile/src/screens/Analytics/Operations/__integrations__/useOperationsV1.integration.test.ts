@@ -118,9 +118,8 @@ const initialStateWithDustPreferenceEnabled = (state: State): State => ({
 
 const initialStateWithDustFilterEnabled = withFlagOverrides(
   {
-    lwHideSmallValueTokenOperations: {
+    lwmDustFiltering: {
       enabled: true,
-      params: { enabledMobile: true, enabledDesktop: false },
     },
   },
   initialStateWithDustPreferenceEnabled,
@@ -128,9 +127,8 @@ const initialStateWithDustFilterEnabled = withFlagOverrides(
 
 const initialStateWithDesktopDustFilterEnabled = withFlagOverrides(
   {
-    lwHideSmallValueTokenOperations: {
+    lwdDustFiltering: {
       enabled: true,
-      params: { enabledMobile: false, enabledDesktop: true },
     },
   },
   initialStateWithDustPreferenceEnabled,

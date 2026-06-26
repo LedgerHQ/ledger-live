@@ -104,9 +104,8 @@ describe("useOperationsListViewModel", () => {
     it("starts disabled and toggles the setting from the options sheet when the feature flag is enabled", () => {
       const { result, store } = renderHook(() => useOperationsListViewModel(), {
         overrideInitialState: withFlagOverrides({
-          lwHideSmallValueTokenOperations: {
+          lwmDustFiltering: {
             enabled: true,
-            params: { enabledMobile: true, enabledDesktop: false },
           },
         }),
       });
@@ -134,9 +133,8 @@ describe("useOperationsListViewModel", () => {
     it("hides and disables the dust filter option when only the desktop flag param is enabled", () => {
       const { result } = renderHook(() => useOperationsListViewModel(), {
         overrideInitialState: withFlagOverrides({
-          lwHideSmallValueTokenOperations: {
+          lwdDustFiltering: {
             enabled: true,
-            params: { enabledMobile: false, enabledDesktop: true },
           },
         }),
       });
