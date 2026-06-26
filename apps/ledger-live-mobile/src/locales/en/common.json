@@ -10008,5 +10008,10 @@
       "unavailable": "Not connected",
       "menuAccessibilityLabel": "Device options"
     }
+  },
+  "aleo": {
+    "accountActions": {
+      "publicToPrivate": "Self transfer"
+    }
   }
 }
