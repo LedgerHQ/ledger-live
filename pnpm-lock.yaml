@@ -3006,6 +3006,58 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
+  domain/api/currency-token:
+    dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../entity/currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../entity/currency-token
+      '@domain/entity-currency-unit':
+        specifier: workspace:*
+        version: link:../../entity/currency-unit
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.21
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   domain/entity/currency:
     dependencies:
       '@domain/entity-currency-crypto':
@@ -22098,7 +22150,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -49875,6 +49927,18 @@ snapshots:
       react: 19.1.4
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.1.4)
 
+  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@standard-schema/utils': 0.3.0
+      immer: 11.1.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 19.1.4
+      react-redux: 9.2.0(react@19.1.4)
+
   '@remix-run/router@1.23.2': {}
 
   '@rjsf/core@5.24.13(@rjsf/utils@5.24.13(react@19.1.4))(react@19.1.4)':
@@ -69190,6 +69254,12 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
       redux: 5.0.1
+
+  react-redux@9.2.0(react@19.1.4):
+    dependencies:
+      '@types/use-sync-external-store': 0.0.6
+      react: 19.1.4
+      use-sync-external-store: 1.6.0(react@19.1.4)
 
   react-refresh@0.14.2: {}
 
