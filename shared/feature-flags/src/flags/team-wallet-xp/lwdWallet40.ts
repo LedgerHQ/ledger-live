@@ -20,7 +20,7 @@ export const lwdWallet40 = flagWith(
     earnSimulator: z.boolean().optional(),
   },
   {
-    enabled: false,
+    enabled: true,
     params: {
       graphRework: true,
       mainNavigation: true,
