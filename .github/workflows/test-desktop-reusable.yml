@@ -86,11 +86,6 @@ jobs:
         id: test-filter
         run: echo "filter=@smoke" >> $GITHUB_OUTPUT
         shell: bash
-      - name: Install zstd for cache restore
-        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
-        continue-on-error: true
-        shell: bash
-        run: command -v zstd || sudo apt-get install -y zstd
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         id: userdata-meta
