@@ -5,6 +5,8 @@ import { store } from "~/state-manager/configureStore";
 import { importSettings, setLastConnectedDevice } from "~/actions/settings";
 import { setOverride, setAllOverrides, selectFeature } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
+import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
+import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
 import {
@@ -101,6 +103,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       case "importAccounts": {
         store.dispatch(await importAccountsRaw({ active: msg.payload }));
+        try {
+          // workaround: persist bridge-imported accounts so they survive app restarts (QAA-1353)
+          await saveAccounts(await accountsExportSelector(store.getState()));
+        } catch (error) {
+          log(`Failed to persist bridge-imported accounts: ${String(error)}`);
+        }
         break;
       }
       case "mockDeviceEvent": {
