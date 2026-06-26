@@ -83,11 +83,7 @@ import type {
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
 } from "../actions/types";
-import {
-  SettingsActionTypes,
-  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
-} from "../actions/types";
-import { ScreenName } from "~/const";
+import { SettingsActionTypes } from "../actions/types";
 import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
 import {
   needsConsentRenewal,
@@ -159,7 +155,6 @@ export const INITIAL_STATE: SettingsState = {
     topGainersLosers: true,
   },
   neverClickedOnAllowNotificationsButton: true,
-  walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: true, // will be set to false at the end of an onboarding, not false by default to avoid upsell for existing users
@@ -565,13 +560,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
-    ...state,
-    walletTabNavigatorLastVisitedTab: (
-      action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
-    ).payload,
-  }),
-
   [SettingsActionTypes.SETTINGS_SET_DATE_FORMAT]: (state, action) => ({
     ...state,
     dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload,
@@ -921,8 +909,6 @@ export const onboardingTypeSelector = (state: State) => state.settings.onboardin
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
-export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
-  state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
