@@ -127,7 +127,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         </>
       ),
     });
-  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
+  }, [navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
 
   const {
     onboardingState,
