@@ -11,7 +11,6 @@ export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> =
 export const isAssetSectionEnabled = process.env.E2E_ENABLE_ASSET_SECTION !== "0";
 
 const lwdWallet40BaseParams = {
-  marketBanner: true,
   graphRework: true,
   mainNavigation: true,
 } as const;

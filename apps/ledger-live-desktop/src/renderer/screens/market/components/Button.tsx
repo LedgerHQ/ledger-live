@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text, Button as BaseButton } from "@ledgerhq/react-ui";
+import { Button as BaseButton } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 
 export const Button = styled(BaseButton)<{ big?: boolean }>`
