@@ -88,6 +88,7 @@ export default defineCommand({
           {
             deviceTimeoutMs: flags["device-timeout"],
             onStateChange: state => out.deviceState(state),
+            flow: "receive",
           },
         );
       } else {

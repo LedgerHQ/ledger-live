@@ -13,6 +13,12 @@ import {
   getManagerAppNameForCurrencyId,
   withCurrencyDeviceSession,
 } from "../session/bridge-device-session";
+import {
+  isDeviceRejection,
+  trackSignatureApproved,
+  trackSignatureRejected,
+  trackSignatureRequested,
+} from "../analytics/device-events";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
@@ -126,12 +132,25 @@ async function runLiveSend({
           deviceId: WALLET_CLI_DMK_DEVICE_ID,
           deviceModelId,
         }),
-        onNext: event => out.sendEvent(event),
-        mapError: error =>
-          WalletCliDeviceError.fromKnownDeviceError(error, {
-            expectedApp: managerAppName,
-            rejectedContext: "sign",
-          }) ?? error,
+        onNext: event => {
+          if (event.type === "device-signature-requested") {
+            trackSignatureRequested("send", deviceModelId);
+          } else if (event.type === "device-signature-granted") {
+            trackSignatureApproved("send", deviceModelId);
+          }
+          out.sendEvent(event);
+        },
+        mapError: error => {
+          if (isDeviceRejection(error)) {
+            trackSignatureRejected("send", deviceModelId);
+          }
+          return (
+            WalletCliDeviceError.fromKnownDeviceError(error, {
+              expectedApp: managerAppName,
+              rejectedContext: "sign",
+            }) ?? error
+          );
+        },
       });
 
       out.sendComplete();

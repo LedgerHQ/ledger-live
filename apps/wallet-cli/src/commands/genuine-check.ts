@@ -100,7 +100,7 @@ export default defineCommand({
           },
           mapError: mapGenuineCheckError,
         });
-      });
+      }, "genuine");
 
       if (!isGenuine) {
         throw new Error("Genuine check completed without a result.");

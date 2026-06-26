@@ -24,6 +24,12 @@ import {
   WALLET_CLI_DMK_DEVICE_ID,
 } from "../../device/register-dmk-transport";
 import { withLedgerManagerAppSession } from "../../session/exchange-device-session";
+import {
+  isDeviceRejection,
+  trackSignatureApproved,
+  trackSignatureRejected,
+  trackSignatureRequested,
+} from "../../analytics/device-events";
 import type {
   SwapPayloadRequestData,
   SwapPayloadResponse,
@@ -234,6 +240,7 @@ async function signAndBroadcast(
   fromParentAccount: Account | null | undefined,
   transaction: Transaction,
   getBridge: typeof getAccountBridge,
+  device?: string,
 ): Promise<{ operationHash?: string }> {
   const mainAccount = getMainAccount(fromAccount, fromParentAccount);
   const bridge = await getBridge(fromAccount, fromParentAccount);
@@ -245,11 +252,26 @@ async function signAndBroadcast(
     deviceId: WALLET_CLI_DMK_DEVICE_ID,
   });
 
-  const signed = await firstValueFrom(
-    sign$.pipe(
-      filter((e): e is Extract<SignOperationEvent, { type: "signed" }> => e.type === "signed"),
-    ),
-  );
+  let signed: Extract<SignOperationEvent, { type: "signed" }>;
+  try {
+    signed = await firstValueFrom(
+      sign$.pipe(
+        tap((e: SignOperationEvent) => {
+          if (e.type === "device-signature-requested") {
+            trackSignatureRequested("swap", device);
+          } else if (e.type === "device-signature-granted") {
+            trackSignatureApproved("swap", device);
+          }
+        }),
+        filter((e): e is Extract<SignOperationEvent, { type: "signed" }> => e.type === "signed"),
+      ),
+    );
+  } catch (e) {
+    if (isDeviceRejection(e)) {
+      trackSignatureRejected("swap", device);
+    }
+    throw e;
+  }
 
   const hash = await bridge.broadcast({
     account: mainAccount,
@@ -310,109 +332,114 @@ export async function runFullSwapPipeline(
       );
       hardwareWalletType = deviceInfo.modelId;
 
-      out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
-      const payload = await retrieveSwapPayload({
-        provider,
-        deviceTransactionId: transactionId,
-        fromAccountAddress,
-        toAccountAddress,
-        fromAccountCurrency: fromCurrency.id,
-        toAccountCurrency: toCurrency.id,
-        amount,
-        amountInAtomicUnit,
-        ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
-      });
-      out.swapExecuteProgress(
-        `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
-      );
-      swapId = payload.swapId;
-
-      const strategyTx = buildStrategyTransaction({
-        payinAddress: payload.payinAddress,
-        fromAmountAtomic: amountInAtomicUnit,
-        fromCurrency,
-        payinExtraId: payload.payinExtraId,
-        extraTransactionParameters: payload.extraTransactionParameters,
-      });
-
-      if (strategyTx.family !== mainFromAccount.currency.family) {
-        throw new Error(
-          `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${strategyTx.family}`,
-        );
-      }
-
-      const accountBridge = await getBridge(fromAccount, fromParentAccount);
-      const subAccountId =
-        fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
-      const bridgeTx = accountBridge.createTransaction(fromAccount);
-      const tx = accountBridge.updateTransaction(
-        { ...bridgeTx, recipient: strategyTx.recipient },
-        {
-          ...strategyTx,
-          feesStrategy: feeStrategy.toLowerCase(),
-          subAccountId,
-        },
-      );
-
-      const decodePayload = await decodeSwapPayload(payload.binaryPayload);
-      const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
-      const magnitudeAwareRate =
-        tx.amount && new BigNumber(tx.amount).gt(0)
-          ? amountExpectedTo.dividedBy(tx.amount)
-          : undefined;
-      tx.amount = new BigNumber(tx.amount);
-
-      const rateType = quoteId != null && quoteId !== "" ? RATE_FIXED : RATE_FLOATING;
-
-      const exchange = {
-        fromAccount,
-        fromParentAccount,
-        toAccount,
-        toParentAccount,
-        fromCurrency,
-        toCurrency,
-      };
-
-      const transaction = await completeExchangeTransaction(out, {
-        provider,
-        binaryPayload: payload.binaryPayload,
-        signature: payload.signature,
-        rateType,
-        transaction: tx,
-        exchange,
-        getDeviceModelId,
-      });
-      const { operationHash } = await signAndBroadcast(
-        out,
-        fromAccount,
-        fromParentAccount,
-        transaction,
-        getBridge,
-      );
-
-      if (swapId && operationHash) {
-        setBroadcastTransaction({
+        out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
+        const payload = await retrieveSwapPayload({
           provider,
-          result: { operation: operationHash, swapId },
-          sourceCurrencyId: fromCurrency.id,
-          targetCurrencyId: toCurrency.id,
-          hardwareWalletType,
-          swapType,
+          deviceTransactionId: transactionId,
           fromAccountAddress,
           toAccountAddress,
-          fromAmount: amount,
+          fromAccountCurrency: fromCurrency.id,
+          toAccountCurrency: toCurrency.id,
+          amount,
+          amountInAtomicUnit,
+          ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
         });
-      }
+        out.swapExecuteProgress(
+          `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
+        );
+        swapId = payload.swapId;
 
-      return {
-        transactionId,
-        payload,
-        operationHash,
-        swapId: payload.swapId,
-        amountExpectedTo: amountExpectedTo.toFixed(),
-        ...(magnitudeAwareRate != null ? { magnitudeAwareRate: magnitudeAwareRate.toFixed() } : {}),
-      };
-    });
+        const strategyTx = buildStrategyTransaction({
+          payinAddress: payload.payinAddress,
+          fromAmountAtomic: amountInAtomicUnit,
+          fromCurrency,
+          payinExtraId: payload.payinExtraId,
+          extraTransactionParameters: payload.extraTransactionParameters,
+        });
+
+        if (strategyTx.family !== mainFromAccount.currency.family) {
+          throw new Error(
+            `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${strategyTx.family}`,
+          );
+        }
+
+        const accountBridge = await getBridge(fromAccount, fromParentAccount);
+        const subAccountId =
+          fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
+        const bridgeTx = accountBridge.createTransaction(fromAccount);
+        const tx = accountBridge.updateTransaction(
+          { ...bridgeTx, recipient: strategyTx.recipient },
+          {
+            ...strategyTx,
+            feesStrategy: feeStrategy.toLowerCase(),
+            subAccountId,
+          },
+        );
+
+        const decodePayload = await decodeSwapPayload(payload.binaryPayload);
+        const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+        const magnitudeAwareRate =
+          tx.amount && new BigNumber(tx.amount).gt(0)
+            ? amountExpectedTo.dividedBy(tx.amount)
+            : undefined;
+        tx.amount = new BigNumber(tx.amount);
+
+        const rateType = quoteId != null && quoteId !== "" ? RATE_FIXED : RATE_FLOATING;
+
+        const exchange = {
+          fromAccount,
+          fromParentAccount,
+          toAccount,
+          toParentAccount,
+          fromCurrency,
+          toCurrency,
+        };
+
+        const transaction = await completeExchangeTransaction(out, {
+          provider,
+          binaryPayload: payload.binaryPayload,
+          signature: payload.signature,
+          rateType,
+          transaction: tx,
+          exchange,
+          getDeviceModelId,
+        });
+        const { operationHash } = await signAndBroadcast(
+          out,
+          fromAccount,
+          fromParentAccount,
+          transaction,
+          getBridge,
+          hardwareWalletType,
+        );
+
+        if (swapId && operationHash) {
+          setBroadcastTransaction({
+            provider,
+            result: { operation: operationHash, swapId },
+            sourceCurrencyId: fromCurrency.id,
+            targetCurrencyId: toCurrency.id,
+            hardwareWalletType,
+            swapType,
+            fromAccountAddress,
+            toAccountAddress,
+            fromAmount: amount,
+          });
+        }
+
+        return {
+          transactionId,
+          payload,
+          operationHash,
+          swapId: payload.swapId,
+          amountExpectedTo: amountExpectedTo.toFixed(),
+          ...(magnitudeAwareRate != null
+            ? { magnitudeAwareRate: magnitudeAwareRate.toFixed() }
+            : {}),
+        };
+      },
+      "swap",
+    );
   } catch (error) {
     const {
       name: rawErrorName,
