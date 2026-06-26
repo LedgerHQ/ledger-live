@@ -5,6 +5,8 @@ import { store } from "~/state-manager/configureStore";
 import { importSettings, setLastConnectedDevice } from "~/actions/settings";
 import { setOverride, setAllOverrides, selectFeature } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
+import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
+import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
 import {
@@ -101,6 +103,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       case "importAccounts": {
         store.dispatch(await importAccountsRaw({ active: msg.payload }));
+        // The e2e bridge injects accounts straight into the Redux store, which bypasses
+        // the user flows that normally schedule a persistence save (the DBSave effect only
+        // reacts to account changes that happen after it has mounted; an import that lands
+        // before it mounts is adopted as the "already saved" baseline and never written).
+        // Persist immediately so the accounts survive an app restart in tests asserting it.
+        await saveAccounts(await accountsExportSelector(store.getState()));
         break;
       }
       case "mockDeviceEvent": {
