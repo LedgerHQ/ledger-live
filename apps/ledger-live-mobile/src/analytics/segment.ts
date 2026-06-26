@@ -232,20 +232,6 @@ const getMADAttributes = () => {
   };
 };
 
-const getOptimiseOptInNotificationsNewWordingAttributes = (): Record<string, unknown> => {
-  if (!analyticsFeatureFlagMethod) return {};
-  const optimiseOptInNotificationsNewWording = analyticsFeatureFlagMethod(
-    "lwmNewWordingOptInNotificationsDrawer",
-  );
-  const isFFEnabled = optimiseOptInNotificationsNewWording?.enabled;
-
-  if (!isFFEnabled) return {};
-
-  return {
-    pushOptInVariant: optimiseOptInNotificationsNewWording?.params?.variant,
-  };
-};
-
 const getAnalyticsConsentOnboardingAttributes = () => {
   if (!analyticsFeatureFlagMethod) return { lwmAnalyticsConsentOnboarding: false };
   const flag = analyticsFeatureFlagMethod("lwmAnalyticsConsentOnboarding");
@@ -416,8 +402,6 @@ const extraProperties = async (store: AppStore) => {
     ({ event }) => event === STARTUP_EVENTS.APP_STARTED,
   )?.time;
 
-  const optimiseOptInNotificationsNewWordingAttributes =
-    getOptimiseOptInNotificationsNewWordingAttributes();
   const backupHubAttributes = getBackupHubAttributes();
 
   return {
@@ -472,7 +456,6 @@ const extraProperties = async (store: AppStore) => {
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
-    ...optimiseOptInNotificationsNewWordingAttributes,
     ...remoteABTestingAttributes,
   };
 };

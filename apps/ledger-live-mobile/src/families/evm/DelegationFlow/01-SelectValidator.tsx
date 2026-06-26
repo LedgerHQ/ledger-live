@@ -3,6 +3,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
+import { sortLedgerValidatorFirst } from "@ledgerhq/live-common/families/evm/staking/ledgerValidator";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   isStakingAccount,
@@ -58,7 +59,7 @@ export default function SelectValidator({ navigation, route }: Props) {
       : [];
     const source = e2eValidators.length > 0 ? e2eValidators : fetchedValidators;
 
-    return [...source]
+    const sorted = [...source]
       .filter(validator => {
         if (requiresValidatorId && !validator.validatorId) return false;
         if (validator.commission === 1) return false;
@@ -73,6 +74,8 @@ export default function SelectValidator({ navigation, route }: Props) {
         if (bTokens < aTokens) return -1;
         return 0;
       });
+
+    return sortLedgerValidatorFirst(sorted, account.currency.id);
   }, [account.currency.id, account.stakingResources?.validators, fetchedValidators, searchQuery]);
   const baseTransaction = useMemo(() => {
     const transaction = bridge.createTransaction(account);

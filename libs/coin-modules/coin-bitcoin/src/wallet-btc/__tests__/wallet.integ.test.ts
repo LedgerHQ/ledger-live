@@ -84,17 +84,16 @@ describe("testing wallet", () => {
 
     const [opReturnOutput] = outputs.filter(output => output.address === null);
 
-    expect(opReturnOutput).toBeDefined();
-
     const [opType, message] = script.decompile(opReturnOutput.script) as [number, Buffer];
 
-    expect(opReturnOutput.isChange).toBe(false);
-    expect(opReturnOutput.value.toNumber()).toBe(0);
+    expect(opReturnOutput).toMatchObject({
+      value: new BigNumber(0),
+      isChange: false,
+    });
     expect(opType).toEqual(script.OPS.OP_RETURN);
     expect(message.toString()).toEqual("charley loves heidi");
 
     const [valueTx] = outputs.filter(output => output.value.eq(100000));
-    expect(valueTx).toBeDefined();
     expect(valueTx.address).toBe(receiveAddress.address);
   });
 
@@ -137,9 +136,10 @@ describe("testing wallet", () => {
 
     const [opReturnOutput] = outputs.filter(output => output.address === changeAddress.address);
 
-    expect(opReturnOutput).toBeDefined();
-    expect(opReturnOutput.address).toEqual(changeAddress.address);
-    expect(opReturnOutput?.isChange).toBe(true);
+    expect(opReturnOutput).toMatchObject({
+      address: changeAddress.address,
+      isChange: true,
+    });
   });
 
   it("should throw error if wrong changeAddress", async () => {

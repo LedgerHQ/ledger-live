@@ -3,17 +3,17 @@ import {
   BlePoweredOff,
   rnBleTransportIdentifier,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
+import type { DeviceDiscoverySource, DeviceDiscoverySourceEvent } from "@ledgerhq/live-dmk-shared";
 import { BleError, BleErrorCode } from "react-native-ble-plx";
 import { catchError, from, map, mergeMap, of, type Observable } from "rxjs";
-import { DiscoveryErrorTypes } from "../../types";
+import { BaseDiscoveryErrorTypes, type MobileDiscoveryError } from "../../types";
 import { DefaultBleDiscoveryPreflightChecks } from "../preflight/DefaultBleDiscoveryPreflightChecks";
 import type { DiscoveryPreflightChecks } from "../preflight/preflightResult";
-import {
-  type DeviceDiscoverySource,
-  type DeviceDiscoverySourceEvent,
-} from "./DeviceDiscoverySource";
 
-export class RnBleDeviceDiscoverySource implements DeviceDiscoverySource {
+type MobileDeviceDiscoverySource = DeviceDiscoverySource<MobileDiscoveryError>;
+type MobileDeviceDiscoverySourceEvent = DeviceDiscoverySourceEvent<MobileDiscoveryError>;
+
+export class RnBleDeviceDiscoverySource implements MobileDeviceDiscoverySource {
   readonly transportId = rnBleTransportIdentifier;
 
   constructor(
@@ -21,11 +21,11 @@ export class RnBleDeviceDiscoverySource implements DeviceDiscoverySource {
     private readonly preflightChecks: DiscoveryPreflightChecks = new DefaultBleDiscoveryPreflightChecks(),
   ) {}
 
-  listen(): Observable<DeviceDiscoverySourceEvent> {
+  listen(): Observable<MobileDeviceDiscoverySourceEvent> {
     return from(this.preflightChecks.getPreflight()).pipe(
       mergeMap(preflightResult => {
         if (!preflightResult.success) {
-          const event: DeviceDiscoverySourceEvent = {
+          const event: MobileDeviceDiscoverySourceEvent = {
             type: "error",
             error: preflightResult.discoveryError,
           };
@@ -58,11 +58,11 @@ export class RnBleDeviceDiscoverySource implements DeviceDiscoverySource {
     );
   }
 
-  private mapUnknownErrorToDiscoveryEvent(error: unknown): DeviceDiscoverySourceEvent {
+  private mapUnknownErrorToDiscoveryEvent(error: unknown): MobileDeviceDiscoverySourceEvent {
     return {
       type: "error",
       error: {
-        type: DiscoveryErrorTypes.Unknown,
+        type: BaseDiscoveryErrorTypes.Unknown,
         transportId: this.transportId,
         error,
       },

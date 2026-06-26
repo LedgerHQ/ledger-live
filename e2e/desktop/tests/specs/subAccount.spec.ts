@@ -26,21 +26,54 @@ const subAccounts = [
     xrayTicket1: "B2CQA-2577, B2CQA-1079",
     xrayTicket2: "B2CQA-2583",
   },
-  { account: TokenAccount.XLM_USDC, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
-  { account: TokenAccount.ALGO_USDT_1, xrayTicket1: "B2CQA-2575", xrayTicket2: "B2CQA-2581" },
-  { account: TokenAccount.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
-  { account: TokenAccount.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
-  { account: TokenAccount.POL_DAI_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
-  { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-3904", xrayTicket2: "B2CQA-3905" },
+  {
+    account: TokenAccount.XLM_USDC,
+    xrayTicket1: "B2CQA-2579",
+    xrayTicket2: "B2CQA-2585",
+  },
+  {
+    account: TokenAccount.ALGO_USDT_1,
+    xrayTicket1: "B2CQA-2575",
+    xrayTicket2: "B2CQA-2581",
+  },
+  {
+    account: TokenAccount.TRX_USDT,
+    xrayTicket1: "B2CQA-2580",
+    xrayTicket2: "B2CQA-2586",
+  },
+  {
+    account: TokenAccount.BSC_BUSD_1,
+    xrayTicket1: "B2CQA-2576",
+    xrayTicket2: "B2CQA-2582",
+  },
+  {
+    account: TokenAccount.POL_DAI_1,
+    xrayTicket1: "B2CQA-2578",
+    xrayTicket2: "B2CQA-2584",
+  },
+  {
+    account: TokenAccount.SUI_USDC_1,
+    xrayTicket1: "B2CQA-3904",
+    xrayTicket2: "B2CQA-3905",
+  },
 ];
 
 const subAccountReceive: Array<{
   account: TokenAccount;
   xrayTicket: string;
   shouldSelectTokenOnReceiveFlow?: boolean;
+  shouldSelectReceiveCryptoOption?: boolean;
 }> = [
-  { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
-  { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
+  {
+    account: TokenAccount.ETH_USDT_1,
+    xrayTicket: "B2CQA-2492",
+    shouldSelectReceiveCryptoOption: true,
+  },
+  {
+    account: TokenAccount.ETH_LIDO,
+    xrayTicket: "B2CQA-2491",
+    shouldSelectReceiveCryptoOption: true,
+  },
   { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
   //TODO: re-enable tests when https://ledgerhq.atlassian.net/browse/LIVE-25852 is fixed
   // { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
@@ -145,6 +178,10 @@ for (const token of subAccountReceive) {
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
         await app.account.clickAddToken();
+        if (token.shouldSelectReceiveCryptoOption) {
+          await app.receive.expectRecieveMenu();
+          await app.receive.clickReceive();
+        }
         if (token.shouldSelectTokenOnReceiveFlow) {
           // e.g. for Hedera. This works together with the fact a family activate or not the receiveTokensConfig
           await app.receive.selectToken(token.account);
@@ -320,9 +357,9 @@ for (const transaction of transactionsAddressInvalid) {
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
         async (userdataPath?: string) => {
-          await liveDataCommand(transaction.transaction.accountToDebit, { useScheme: false })(
-            userdataPath,
-          );
+          await liveDataCommand(transaction.transaction.accountToDebit, {
+            useScheme: false,
+          })(userdataPath);
           if (transaction.recipient === undefined) {
             const receiveAddress = await getAccountAddress(transaction.transaction.accountToCredit);
             transaction.recipient = receiveAddress;

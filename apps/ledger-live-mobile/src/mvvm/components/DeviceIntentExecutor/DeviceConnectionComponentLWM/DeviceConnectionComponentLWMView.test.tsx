@@ -3,9 +3,9 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import {
-  ConnectionErrorTypes,
+  BaseConnectionErrorTypes,
+  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
-  DiscoveryErrorTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
@@ -102,7 +102,7 @@ describe("DeviceConnectionComponentLWMView", () => {
   it("should render the discovery error state", () => {
     renderView({
       type: ConnectDeviceUIStateTypes.DiscoveryError,
-      error: { type: DiscoveryErrorTypes.Unknown },
+      error: { type: BaseDiscoveryErrorTypes.Unknown },
       ignore: jest.fn(),
     });
 
@@ -118,7 +118,7 @@ describe("DeviceConnectionComponentLWMView", () => {
   it("should render the connection error state", () => {
     renderView({
       type: ConnectDeviceUIStateTypes.ConnectionError,
-      error: { type: ConnectionErrorTypes.Unknown },
+      error: { type: BaseConnectionErrorTypes.Unknown },
       device: makeKnownDevice(),
       retry: jest.fn(),
       ignore: jest.fn(),

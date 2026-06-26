@@ -219,32 +219,40 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
-        await app.delegate.continue();
 
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
-          await app.delegate.openSearchProviderModal();
-          await app.delegate.inputProvider(account.delegate.provider);
+        if (account.delegate.account.currency.name == Currency.SOL.name) {
           await app.delegate.selectProviderByName(account.delegate.provider);
-        } else if (
-          [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
-            account.delegate.account.currency.name,
-          )
-        ) {
-          await app.delegate.inputProvider(account.delegate.provider);
-          await app.delegate.selectProviderByName(account.delegate.provider);
-        } else {
-          await app.delegate.verifyFirstProviderName(account.delegate.provider);
-        }
-
-        await app.delegate.continue();
-
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
-          await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
-          await app.delegate.verifyFeesVisible();
           await app.delegate.continue();
-        } else {
           await app.delegate.fillAmount(account.delegate.amount);
           await app.delegate.continue();
+        } else {
+          await app.delegate.continue();
+
+          if (account.delegate.account.currency.name == Currency.ADA.name) {
+            await app.delegate.openSearchProviderModal();
+            await app.delegate.inputProvider(account.delegate.provider);
+            await app.delegate.selectProviderByName(account.delegate.provider);
+          } else if (
+            [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
+              account.delegate.account.currency.name,
+            )
+          ) {
+            await app.delegate.inputProvider(account.delegate.provider);
+            await app.delegate.selectProviderByName(account.delegate.provider);
+          } else {
+            await app.delegate.verifyFirstProviderName(account.delegate.provider);
+          }
+
+          await app.delegate.continue();
+
+          if (account.delegate.account.currency.name == Currency.ADA.name) {
+            await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
+            await app.delegate.verifyFeesVisible();
+            await app.delegate.continue();
+          } else {
+            await app.delegate.fillAmount(account.delegate.amount);
+            await app.delegate.continue();
+          }
         }
 
         await app.speculos.signDelegationTransaction(account.delegate);

@@ -2,6 +2,8 @@ import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useWelcomeViewModel } from "../useWelcomeViewModel";
 import { AFTER_ONBOARDING_STATE, INITIAL_STATE } from "~/renderer/reducers/settings";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 const mockNavigate = jest.fn();
 
@@ -16,6 +18,10 @@ jest.mock("~/renderer/terms", () => ({
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
+}));
+
+jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: (url: string) => url,
 }));
 
 jest.mock("LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic", () => ({
@@ -136,6 +142,24 @@ describe("useWelcomeViewModel", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/onboarding/select-device");
+    });
+  });
+
+  describe("handleBuyNew", () => {
+    it("opens the Reborn URL", () => {
+      const { result } = renderHook(() => useWelcomeViewModel(), {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+          },
+        },
+      });
+
+      act(() => {
+        result.current.handleBuyNew();
+      });
+
+      expect(openURL).toHaveBeenCalledWith(urls.reborn);
     });
   });
 });

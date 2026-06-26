@@ -87,7 +87,6 @@ export class MarketPage extends AppPage {
   @step("Start stake flow for $0")
   async startStakeFlowByTicker(ticker: string) {
     await this.stakeButton(ticker).click();
-    await this.page.getByText("choose account").waitFor({ state: "visible" });
-    await this.page.getByText("Add account").waitFor({ state: "visible" });
+    await this.page.getByRole("dialog").first().waitFor({ state: "visible" });
   }
 }

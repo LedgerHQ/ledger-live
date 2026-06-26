@@ -125,7 +125,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await portfolioPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-portfolio.png", {
-      mask: [page.getByTestId("select-asset-drawer-list-container")],
+      mask: [page.getByTestId("modular-dialog-screen-ASSET_SELECTION")],
     });
   });
 
@@ -135,7 +135,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   });
 
   await test.step("choose ethereum account", async () => {
-    await drawer.selectAccount("Ethereum", 0);
+    await drawer.selectAccount("Ethereum 1");
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 
@@ -220,7 +220,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await marketCoinPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
-    await drawer.selectAccount("Ethereum", 1);
+    await drawer.selectAccount("Ethereum 2");
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked2",
       properties: {

@@ -15,11 +15,9 @@ import {
 import type { State } from "~/renderer/reducers";
 import { dismissedContentCardsSelector } from "~/renderer/reducers/settings";
 import type { AppDispatch } from "~/state-manager/configureStore";
+import { isAppStartContentCardId } from "./utils/isAppStartContentCardId";
 
 const DIALOG_ID: DialogId = "GENERIC_AWARENESS_MODAL";
-
-const isAppStartContentCardId = (contentCardId: string) =>
-  contentCardId.toLowerCase().startsWith("app_start");
 
 export type CloseGenericAwarenessModalDialogOptions = {
   /** When true, APP_START campaigns are persisted as dismissed and removed from the store. */

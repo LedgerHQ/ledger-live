@@ -305,6 +305,7 @@
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-intent": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",

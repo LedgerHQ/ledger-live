@@ -148,7 +148,7 @@ describe("Unit tests for bitcoin storage", () => {
 
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(true);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
-    expect(storage.getLastUnconfirmedTx()).toBeDefined();
+    expect(storage.getLastUnconfirmedTx()).toMatchObject({ block: null });
     // remove pending tx
     storage.removePendingTxs({ account: 0, index: 0 });
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);

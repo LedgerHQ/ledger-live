@@ -53,16 +53,12 @@ export const preload = async (): Promise<CeloPreloadData> => {
   const { validatorGroups: previousValidatorGroups } = currentCeloPreloadedData;
   let validatorGroups = previousValidatorGroups;
 
-  if (!validatorGroups || !validatorGroups.length) {
-    log("celo/preload", "refreshing celo validatorGroups...");
-
-    try {
-      validatorGroups = await getValidatorGroups();
-    } catch (error) {
-      log("celo/preload", "failed to fetch validatorGroups", {
-        error,
-      });
-    }
+  // Always refetch (gated by preloadMaxAge); guarding on the hydrated list would pin it forever.
+  log("celo/preload", "refreshing celo validatorGroups...");
+  try {
+    validatorGroups = await getValidatorGroups();
+  } catch (error) {
+    log("celo/preload", "failed to fetch validatorGroups", { error });
   }
 
   return { validatorGroups };

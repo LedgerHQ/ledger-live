@@ -126,22 +126,20 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
     await liveAppWebview.accountRequest();
 
-    await drawer.waitForDrawerToBeVisible();
+    await drawer.waitForAssetAccountSelectorVisible();
     await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("tether usd");
     await expect(drawer.selectAccountTitle).toBeVisible();
 
     // Test name and balance for tokens
-    await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
-      "Ethereum 3 (USDT)71.8174 USDT",
-    );
+    await expect(drawer.getAccountButton("Ethereum 3")).toContainText("71.8174 USDT");
     await drawer.back();
     await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("bitcoin");
     await expect(drawer.selectAccountTitle).toBeVisible();
-    await drawer.selectAccount("bitcoin");
+    await drawer.selectAccount("Bitcoin 1 (legacy)");
 
     await drawer.waitForDrawerToDisappear();
 
@@ -749,7 +747,9 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
       route.fulfill({
         headers: { teststatus: "mocked" },
         status: 200,
-        body: JSON.stringify({ bannedAddresses: [Addresses.SANCTIONED_ETHEREUM] }),
+        body: JSON.stringify({
+          bannedAddresses: [Addresses.SANCTIONED_ETHEREUM],
+        }),
       }),
     );
 

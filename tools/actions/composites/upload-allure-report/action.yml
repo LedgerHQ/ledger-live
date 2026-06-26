@@ -46,21 +46,21 @@ runs:
     - name: Compress PNG files
       shell: bash
       run: ${{ github.action_path }}/compress-pngs.sh "${{ inputs.path }}"
-    - name: Prune AI-analysis attachments
-      id: prune
+    - name: Build Allure upload dir
+      id: prepare
       shell: bash
-      run: ${{ github.action_path }}/prune-ai-attachments.sh "${{ inputs.path }}" "${{ runner.temp }}/allure-upload"
+      run: ${{ github.action_path }}/build-allure-upload-dir.sh "${{ inputs.path }}" "${{ runner.temp }}/allure-upload"
     - name: Upload allure results
       id: upload-results
-      uses: LedgerHQ/actions/allure/upload@1082f57f1acb5785e8e0271ca2c15b4f0c873bb3 # main @ 2026-06-10
+      uses: LedgerHQ/actions/allure/upload@815ffa9c111f5f0947ff73c9b12067d787bf34e0 # main @ 2026-06-25
       with:
         url: "https://ledger-live.allure.green.ledgerlabs.net"
         username: ${{ inputs.login }}
         password: ${{ inputs.password }}
-        results: ${{ steps.prune.outputs.path }}
+        results: ${{ steps.prepare.outputs.path }}
     - name: Generate allure report
       id: generate-report
-      uses: LedgerHQ/actions/allure/generate@1082f57f1acb5785e8e0271ca2c15b4f0c873bb3 # main @ 2026-06-10
+      uses: LedgerHQ/actions/allure/generate@815ffa9c111f5f0947ff73c9b12067d787bf34e0 # main @ 2026-06-25
       with:
         url: "https://ledger-live.allure.green.ledgerlabs.net"
         username: ${{ inputs.login }}

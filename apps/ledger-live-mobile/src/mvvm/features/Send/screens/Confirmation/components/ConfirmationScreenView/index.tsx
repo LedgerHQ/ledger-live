@@ -3,7 +3,7 @@ import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { ConfirmationStatusLayout } from "../ConfirmationStatusLayout";
 import { useAnalytics } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
-import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
+import { useSendFlowData } from "../../../../context/SendFlowContext";
 
 export type ConfirmationScreenViewProps = Readonly<{
   title: string;
@@ -59,6 +59,10 @@ export function ConfirmationScreenView({
     });
     onClose();
   }, [track, trackingProperties, onClose]);
+
+  useEffect(() => {
+    track("send_modal", { ...trackingProperties, name: "step confirmation" });
+  }, [track, trackingProperties]);
 
   return (
     <ConfirmationStatusLayout

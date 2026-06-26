@@ -123,6 +123,11 @@ export default class OnboardingStepsPage {
     }
   }
 
+  @Step("Wait for analytics button to be visible")
+  async waitForAnalyticsButtonToBeVisible(): Promise<void> {
+    await waitForElementById(this.acceptAnalyticsButtonId);
+  }
+
   @Step("Accept analytics")
   async acceptAnalytics(): Promise<void> {
     const analyticsBtn = this.acceptAnalyticsButton();

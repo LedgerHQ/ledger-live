@@ -32,25 +32,36 @@ export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
 
   const eligibleSet = new Set(eligibleGroups.map(a => a.toLowerCase()));
 
-  // Check on-chain capacity for every group in parallel.
-  // A group must be in the eligible set and have remaining vote capacity (getNumVotesReceivable > 0),
-  // which matches the semantics of ContractKit's getValidatorGroupVotes { eligible, capacity }.
-  const canReceiveVotes = await Promise.all(
-    rawGroups.map(async (vg: { address: `0x${string}` }) => {
-      try {
-        if (!eligibleSet.has(vg.address.toLowerCase())) return false;
-        const capacity = await client.readContract({
+  // Batch all capacity reads in one Multicall3 round-trip. A group can receive votes when its
+  // cap (getNumVotesReceivable) is above its current total votes; saturated groups are excluded.
+  type CapacityResult = { status: "success"; result: unknown } | { status: "failure" };
+  const capacityResults: readonly CapacityResult[] = await client
+    .multicall({
+      allowFailure: true,
+      contracts: rawGroups.flatMap((vg: { address: `0x${string}` }) => [
+        {
           address: electionAddress,
           abi: electionABI,
           functionName: "getNumVotesReceivable",
           args: [vg.address],
-        });
-        return capacity > BigInt(0);
-      } catch {
-        return true;
-      }
-    }),
-  );
+        },
+        {
+          address: electionAddress,
+          abi: electionABI,
+          functionName: "getTotalVotesForGroup",
+          args: [vg.address],
+        },
+      ]),
+    })
+    .catch(() => []);
+
+  const canReceiveVotes = rawGroups.map((vg: { address: `0x${string}` }, index: number) => {
+    if (!eligibleSet.has(vg.address.toLowerCase())) return false;
+    const voteCap = capacityResults[index * 2];
+    const totalVotes = capacityResults[index * 2 + 1];
+    if (voteCap?.status !== "success" || totalVotes?.status !== "success") return true;
+    return (voteCap.result as bigint) > (totalVotes.result as bigint);
+  });
 
   const result = rawGroups
     .filter((_: unknown, idx: number) => canReceiveVotes[idx])

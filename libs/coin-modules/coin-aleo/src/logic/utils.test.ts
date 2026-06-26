@@ -7,6 +7,7 @@ import aleoConfig from "../config";
 import {
   EXPLORER_TRANSFER_TYPES,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
@@ -21,6 +22,8 @@ import {
   mockAleoResources,
   mockUnspentRecord1,
   mockUnspentRecord2,
+  mockUnspentTokenRecord1,
+  mockUnspentTokenRecord2,
 } from "../__tests__/fixtures/account.fixture";
 import {
   getMockedTransaction as getMockedPublicTransaction,
@@ -40,6 +43,10 @@ import {
   mockTxIntentTransferPublic,
   mockTxIntentTransferTokenPublic,
   mockTxIntentConvertTokenPublicToPrivate,
+  mockTxIntentTransferTokenPrivate,
+  mockTxIntentTransferTokenPrivate2,
+  mockTxIntentConvertTokenPrivateToPublic,
+  mockTxIntentConvertTokenPrivateToPublic2,
 } from "../__tests__/fixtures/transaction.fixture";
 import type { AleoOperationExtra, ProvableApi } from "../types";
 import {
@@ -714,6 +721,69 @@ describe("calculateAmount", () => {
       totalSpent: estimatedFees,
     });
   });
+
+  it("should return tokenAccount transparentBalance as amount for public token transfer with useAllAmount", () => {
+    const estimatedFees = new BigNumber(5000);
+    const tokenTransparentBalance = new BigNumber(500000);
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      transparentBalance: tokenTransparentBalance,
+    });
+    const account = getMockedAccount({ subAccounts: [tokenAccount] });
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+      subAccountId: tokenAccount.id,
+      useAllAmount: true,
+      amount: new BigNumber(0),
+    });
+
+    const result = calculateAmount({ account, transaction, estimatedFees });
+
+    expect(result.amount).toStrictEqual(tokenTransparentBalance);
+    expect(result.totalSpent).toStrictEqual(tokenTransparentBalance);
+  });
+
+  it("should not add fees to totalSpent for token transactions without useAllAmount", () => {
+    const estimatedFees = new BigNumber(5000);
+    const tokenAccount = getMockedTokenAccount();
+    const account = getMockedAccount({ subAccounts: [tokenAccount] });
+    const txAmount = new BigNumber(100000);
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+      subAccountId: tokenAccount.id,
+      useAllAmount: false,
+      amount: txAmount,
+    });
+
+    const result = calculateAmount({ account, transaction, estimatedFees });
+
+    expect(result.amount).toStrictEqual(txAmount);
+    expect(result.totalSpent).toStrictEqual(txAmount);
+  });
+
+  it("should sum token amount records for private token transfer with useAllAmount and not add fees to totalSpent", () => {
+    const estimatedFees = new BigNumber(5000);
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      unspentPrivateRecords: [mockUnspentTokenRecord1],
+      privateBalance: new BigNumber(600000),
+    });
+    const account = getMockedAccount({ subAccounts: [tokenAccount] });
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+      subAccountId: tokenAccount.id,
+      useAllAmount: true,
+      amount: new BigNumber(0),
+      properties: {
+        amountRecordCommitments: [mockUnspentTokenRecord1.commitment],
+        feeRecordCommitment: null,
+      },
+    });
+
+    const result = calculateAmount({ account, transaction, estimatedFees });
+
+    const expectedAmount = new BigNumber(mockUnspentTokenRecord1.microcredits);
+    expect(result.amount).toStrictEqual(expectedAmount);
+    expect(result.totalSpent).toStrictEqual(expectedAmount);
+  });
 });
 
 describe("isProvableApiConfigured", () => {
@@ -1230,6 +1300,106 @@ describe("mapTransactionIntentToSdkIntent", () => {
     );
   });
 
+  it("should map transfer_token_private intent with single record to SDK intent", () => {
+    const intent = mockTxIntentTransferTokenPrivate;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_token_private",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      record: mockUnspentTokenRecord1.decryptedData,
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+  });
+
+  it("should map transfer_token_private intent with two records to transfer_token_private_2 SDK intent", () => {
+    const intent = mockTxIntentTransferTokenPrivate2;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_token_private_2",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+  });
+
+  it("should map convert_token_private_to_public intent with single record to SDK intent", () => {
+    const intent = mockTxIntentConvertTokenPrivateToPublic;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_token_private_to_public",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      record: mockUnspentTokenRecord1.decryptedData,
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+  });
+
+  it("should map convert_token_private_to_public intent with two records to transfer_token_private_to_public_2 SDK intent", () => {
+    const intent = mockTxIntentConvertTokenPrivateToPublic2;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_token_private_to_public_2",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, mockTxIntentTransferTokenPrivate],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC, mockTxIntentConvertTokenPrivateToPublic],
+  ] as const)("should throw when %s intent has no matching data", (type, baseIntent) => {
+    const intent = { ...baseIntent, type };
+    delete (intent as { data?: unknown }).data;
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: intent data is required for ${type}`,
+    );
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, mockTxIntentTransferTokenPrivate],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC, mockTxIntentConvertTokenPrivateToPublic],
+  ] as const)("should throw when %s intent contains an empty records array", (type, baseIntent) => {
+    const intent = {
+      ...baseIntent,
+      data: { type, programId: MOCK_TOKEN_PROGRAM_ID, records: [] },
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: at least one record is required for ${type}`,
+    );
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, mockTxIntentTransferTokenPrivate],
+    [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC, mockTxIntentConvertTokenPrivateToPublic],
+  ] as const)("should throw when %s intent contains too many records", (type, baseIntent) => {
+    const records = Array.from(
+      { length: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 },
+      () => mockUnspentTokenRecord1.decryptedData,
+    );
+    const intent = {
+      ...baseIntent,
+      data: { type, programId: MOCK_TOKEN_PROGRAM_ID, records },
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: too many records for ${type} (max: ${MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION})`,
+    );
+  });
+
   it("should throw for unsupported intent type", () => {
     const intent = {
       ...mockTxIntentTransferPublic,
@@ -1606,6 +1776,83 @@ describe("createTransactionIntent", () => {
       "aleo: token account is missing",
     );
   });
+
+  it.each([
+    TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  ] as const)(
+    "should create a private token transaction intent with programId and records for %s",
+    mode => {
+      const tokenAccount = getMockedTokenAccount(undefined, {
+        unspentPrivateRecords: [mockUnspentTokenRecord1],
+      });
+      const account = getMockedAccount({ subAccounts: [tokenAccount] });
+      const transaction = getMockedTransaction({
+        mode,
+        subAccountId: tokenAccount.id,
+        amount: new BigNumber(500000),
+        recipient: "aleo1recipient",
+        properties: {
+          amountRecordCommitments: [mockUnspentTokenRecord1.commitment],
+          feeRecordCommitment: null,
+        },
+      });
+
+      const result = createTransactionIntent({ account, transaction });
+
+      expect(result).toMatchObject({
+        type: mode,
+        data: {
+          type: mode,
+          programId: tokenAccount.token.contractAddress,
+          records: [mockUnspentTokenRecord1.decryptedData],
+        },
+      });
+    },
+  );
+
+  it("should throw when too many token amount record commitments are selected", () => {
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      unspentPrivateRecords: [],
+    });
+    const account = getMockedAccount({ subAccounts: [tokenAccount] });
+    const tooManyCommitments = Array.from(
+      { length: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 },
+      (_, i) => `token-commitment-${i}`,
+    );
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+      subAccountId: tokenAccount.id,
+      properties: {
+        amountRecordCommitments: tooManyCommitments,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account, transaction })).toThrow(
+      `aleo: too many token amount records selected (max: ${MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION})`,
+    );
+  });
+
+  it("should throw when a token amount record commitment cannot be found in tokenAccount", () => {
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      unspentPrivateRecords: [mockUnspentTokenRecord1],
+    });
+    const account = getMockedAccount({ subAccounts: [tokenAccount] });
+    const missingCommitment = "non-existent-token-commitment";
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+      subAccountId: tokenAccount.id,
+      properties: {
+        amountRecordCommitments: [missingCommitment],
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account, transaction })).toThrow(
+      `aleo: no token amount records found for given commitments: ${missingCommitment}`,
+    );
+  });
 });
 
 describe("createFeeTransactionIntent", () => {
@@ -1806,6 +2053,78 @@ describe("getRecordByCommitment", () => {
     const result = getRecordByCommitment({
       account,
       commitment: mockUnspentRecord1.commitment,
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should search tokenAccount.unspentPrivateRecords when tokenAccount is provided", () => {
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      unspentPrivateRecords: [mockUnspentTokenRecord1],
+    });
+    const account = getMockedAccount({ subAccounts: [tokenAccount] });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentTokenRecord1.commitment,
+      tokenAccount,
+    });
+
+    expect(result).toEqual(mockUnspentTokenRecord1);
+  });
+
+  it("should return null when commitment is not in tokenAccount.unspentPrivateRecords", () => {
+    const missingCommitment = "non-existent-token-commitment";
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      unspentPrivateRecords: [mockUnspentTokenRecord1],
+    });
+    // Put a native record with the same commitment to catch any incorrect fallback.
+    const nativeDecoy = { ...mockUnspentRecord1, commitment: missingCommitment };
+    const account = getMockedAccount({
+      subAccounts: [tokenAccount],
+      aleoResources: { ...mockAleoResources, unspentPrivateRecords: [nativeDecoy] },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: missingCommitment,
+      tokenAccount,
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should not fall back to native records when tokenAccount is provided", () => {
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      unspentPrivateRecords: [],
+    });
+    const account = getMockedAccount({
+      aleoResources: { ...mockAleoResources, unspentPrivateRecords: [mockUnspentRecord1] },
+      subAccounts: [tokenAccount],
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord1.commitment,
+      tokenAccount,
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when tokenAccount.unspentPrivateRecords is null", () => {
+    const tokenAccount = getMockedTokenAccount(undefined, { unspentPrivateRecords: null });
+    // Put a native record with the same commitment to catch any incorrect fallback.
+    const nativeDecoy = { ...mockUnspentRecord1, commitment: mockUnspentTokenRecord1.commitment };
+    const account = getMockedAccount({
+      subAccounts: [tokenAccount],
+      aleoResources: { ...mockAleoResources, unspentPrivateRecords: [nativeDecoy] },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentTokenRecord1.commitment,
+      tokenAccount,
     });
 
     expect(result).toBeNull();

@@ -17,6 +17,7 @@ describe("User opens application", () => {
     await app.onboarding.expectProgressBarToBeVisible();
     await app.onboarding.tapOnGetStartedButton();
 
+    await app.onboarding.waitForAnalyticsButtonToBeVisible();
     await app.onboarding.acceptAnalytics();
     await app.onboarding.selectStartingOption("setupLedger");
 

@@ -12,12 +12,19 @@ jest.mock("../hooks/useConfirmationViewModel", () => ({
   useConfirmationViewModel: jest.fn(),
 }));
 
-jest.mock("LLM/features/Send/context/SendFlowContext", () => ({
-  ...jest.requireActual("LLM/features/Send/context/SendFlowContext"),
-  useSendFlowData: () => ({
-    state: { account: { account: null, parentAccount: null } },
-  }),
-}));
+jest.mock("../../../context/SendFlowContext", () => {
+  return {
+    ...jest.requireActual("../../../context/SendFlowContext"),
+    useSendFlowData: jest.fn().mockReturnValue({
+      state: {
+        account: {
+          account: null,
+          parentAccount: null,
+        },
+      },
+    }),
+  };
+});
 
 const onViewTransaction = jest.fn();
 const onSaveLogs = jest.fn();

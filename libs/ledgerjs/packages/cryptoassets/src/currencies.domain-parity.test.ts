@@ -1,6 +1,11 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
-import { listCryptoCurrencies } from "./currencies";
+import {
+  findCryptoCurrencyByScheme,
+  findCryptoCurrencyByTicker,
+  listCryptoCurrencies,
+} from "./currencies";
+import { setCryptoCurrenciesStore } from "./currencies-store";
 
 /**
  * Parity guard between the legacy bundled registry (`@ledgerhq/cryptoassets`) and the
@@ -34,5 +39,64 @@ describe("@domain/entity-currency-crypto parity with @ledgerhq/cryptoassets", ()
 
   it.each(sortedLegacyIds)("matches the legacy definition for %s", id => {
     expect(CRYPTO_CURRENCIES_REGISTRY[id]).toEqual(legacyById.get(id));
+  });
+});
+
+// Authoritative scheme → id mapping built straight from the legacy data, not via
+// findCryptoCurrencyByScheme — otherwise a regression in that accessor would be baked into the
+// expected values and the injected-store assertion below could still pass.
+const bundledIdByScheme = new Map(legacyCurrencies.map(c => [c.scheme, c.id]));
+
+// id-sorted (deterministic, unlike Object.values insertion order) puts the non-canonical currency
+// first for every ambiguous ticker (arbitrum < ethereum, cronos < crypto_org), so this pass fails
+// if the keyword tiebreak regresses to first-in-array-wins.
+const domainArraySortedById = [...Object.values(CRYPTO_CURRENCIES_REGISTRY)].sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
+// Reversed to exercise the opposite ordering and confirm full order-independence.
+const domainArrayReversed = [...domainArraySortedById].reverse();
+
+const AMBIGUOUS_TICKERS = [
+  { ticker: "ETH", expectedId: "ethereum" },
+  { ticker: "BNB", expectedId: "bsc" },
+  { ticker: "DOT", expectedId: "polkadot" },
+  { ticker: "XTZ", expectedId: "tezos" },
+  { ticker: "CRO", expectedId: "crypto_org" },
+] as const;
+
+function clearInjectedStore() {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  (globalThis as Record<string, unknown>).__ledgerCryptoCurrenciesStore = undefined;
+}
+
+describe("lookup parity: bundled store vs injected domain array", () => {
+  describe("bundled store", () => {
+    it.each(AMBIGUOUS_TICKERS)(
+      'findCryptoCurrencyByTicker("$ticker") → $expectedId',
+      ({ ticker, expectedId }) => {
+        expect(findCryptoCurrencyByTicker(ticker)?.id).toBe(expectedId);
+      },
+    );
+  });
+
+  describe.each([
+    ["id-sorted order (non-canonical currency first)", domainArraySortedById],
+    ["reversed order (order-independence check)", domainArrayReversed],
+  ] as const)("injected domain store — %s", (_, currencies) => {
+    beforeEach(() => setCryptoCurrenciesStore([...currencies]));
+    afterEach(clearInjectedStore);
+
+    it.each(AMBIGUOUS_TICKERS)(
+      'findCryptoCurrencyByTicker("$ticker") → $expectedId',
+      ({ ticker, expectedId }) => {
+        expect(findCryptoCurrencyByTicker(ticker)?.id).toBe(expectedId);
+      },
+    );
+
+    it("findCryptoCurrencyByScheme is identical to bundled for all currencies", () => {
+      for (const [scheme, bundledId] of bundledIdByScheme) {
+        expect(findCryptoCurrencyByScheme(scheme)?.id).toBe(bundledId);
+      }
+    });
   });
 });

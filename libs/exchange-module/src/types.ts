@@ -283,13 +283,17 @@ export type QuotePermit2Types = {
 /**
  * Partial Permit2 typed-data payload. UniswapX populates `values`; 1inch-fusion
  * populates `message`. Consumers must tolerate missing fields.
+ *
+ * `primaryType` is widened to a free-form string: classic AMM Permit2 quotes
+ * use `"PermitSingle"`, UniswapX RFQ orders use `"PermitWitnessTransferFrom"`,
+ * and 1inch-fusion forwards its provider-supplied primary type as-is.
  */
 export type QuotePermit2Message = {
   values?: QuotePermit2Single;
   message?: QuotePermit2Single;
   domain?: QuotePermit2Domain;
   types?: QuotePermit2Types;
-  primaryType?: "PermitSingle";
+  primaryType?: string;
 };
 
 /**
@@ -374,6 +378,49 @@ export type Quote = {
    * omit it, and consumers must handle `undefined`.
    */
   formatted?: FormattedQuoteValues;
+  /**
+   * Provider-specific opaque blob forwarded verbatim to the swap-api DEX
+   * endpoints (e.g. Uniswap spreads it into the swap body, Velora reads
+   * `priceRoute` from it, OKX uses it whole). Consumers outside the DEX
+   * builders should not interpret this field.
+   */
+  customFields?: Record<string, unknown>;
+};
+
+/**
+ * Parameters for the new device-intent-based swap entry point
+ * (`custom.swap`). Currently only the EVM token-approval step is wired on
+ * the wallet side; the submit-swap and broadcast-swap steps will reuse the
+ * same input shape as they come online.
+ */
+export type CustomSwapParams = {
+  /** Quote selected by the live app (from `custom.exchange.getQuotes`). */
+  quote: Quote;
+  /** Wallet-API account id of the sending account. */
+  fromAccountId: string;
+  /** Wallet-API account id of the receiving account. */
+  toAccountId: string;
+  /** Provider name (e.g. `"uniswap"`). */
+  provider: string;
+};
+
+/**
+ * Result of `custom.swap`. Fields are additive: classic AMM swaps populate
+ * `approvalTxHash` / `swapTxHash`; RFQ swaps additionally populate
+ * `swapId`, `finalAmount`, and `rfqStatus` once the partner-submitted
+ * order resolves.
+ */
+export type CustomSwapResult = {
+  /** Hash of the broadcast-and-confirmed approval transaction, when one was needed. */
+  approvalTxHash?: string;
+  /** Hash of the broadcast-and-confirmed swap transaction, when the swap step ran. */
+  swapTxHash?: string;
+  /** Partner-side swap id returned by the RFQ submit/status endpoints. */
+  swapId?: string;
+  /** Final filled amount reported by the RFQ status endpoint, when available. */
+  finalAmount?: string;
+  /** Terminal RFQ status reported by the swap-api `/swap/status` endpoint. */
+  rfqStatus?: "finished" | "refunded";
 };
 
 export enum ProviderErrorCodes {

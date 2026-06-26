@@ -4,6 +4,7 @@ import { setGenericAwarenessModalContentCards } from "~/renderer/reducers/generi
 import { openDialog } from "~/renderer/reducers/dialogs";
 import {
   APP_START_CAMPAIGN_ID,
+  appStartFeatureIntroCard,
   carouselCampaignCard,
   featureIntroCampaignCard,
   genericAwarenessModalTestContentCards,
@@ -69,6 +70,39 @@ describe("useGenericAwarenessModalAppStart", () => {
     });
 
     expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBeUndefined();
+  });
+
+  it("should not open the modal when APP_START campaign is incomplete", () => {
+    const { store } = renderHookWithStore(() => useGenericAwarenessModalAppStart());
+
+    act(() => {
+      store.dispatch(saveSettings({ hasCompletedOnboarding: true }));
+      store.dispatch(
+        setGenericAwarenessModalContentCards([{ ...appStartFeatureIntroCard, isReady: false }]),
+      );
+    });
+
+    expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBeUndefined();
+  });
+
+  it("should open the modal when APP_START campaign becomes complete", () => {
+    const { store, rerender } = renderHookWithStore(() => useGenericAwarenessModalAppStart());
+
+    act(() => {
+      store.dispatch(saveSettings({ hasCompletedOnboarding: true }));
+      store.dispatch(
+        setGenericAwarenessModalContentCards([{ ...appStartFeatureIntroCard, isReady: false }]),
+      );
+    });
+
+    expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBeUndefined();
+
+    act(() => {
+      store.dispatch(setGenericAwarenessModalContentCards([appStartFeatureIntroCard]));
+    });
+    rerender();
+
+    expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(true);
   });
 
   it("should not open the modal when no APP_START content card exists", () => {

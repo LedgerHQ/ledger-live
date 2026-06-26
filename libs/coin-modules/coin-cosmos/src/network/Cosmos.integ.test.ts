@@ -3,6 +3,43 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { buildTransaction } from "../buildTransaction";
 import { CosmosAPI } from "./Cosmos";
 
+describe("fetchTransactions", () => {
+  const cosmosApi = new CosmosAPI("cosmos", {
+    endpoint: "https://cosmoshub4.coin.ledger.com",
+  } as any);
+
+  it("respects the limit", async () => {
+    const result = await cosmosApi["fetchTransactions"](
+      new URLSearchParams({
+        query: "message.sender='cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq'",
+        page: "1",
+        limit: "5",
+        order_by: "ORDER_BY_DESC",
+      }),
+    );
+    expect(result.txs.length).toBeGreaterThan(0);
+    expect(result.txs.length).toBeLessThanOrEqual(5);
+  });
+
+  it.each([
+    ["ORDER_BY_DESC", (first: number, last: number) => first >= last],
+    ["ORDER_BY_ASC", (first: number, last: number) => first <= last],
+  ] as const)("respects %s", async (order_by, compare) => {
+    const result = await cosmosApi["fetchTransactions"](
+      new URLSearchParams({
+        query: "message.sender='cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq'",
+        page: "1",
+        limit: "10",
+        order_by,
+      }),
+    );
+    expect(result.txs.length).toBeGreaterThan(1);
+    expect(
+      compare(Number(result.txs[0].height), Number(result.txs[result.txs.length - 1].height)),
+    ).toBe(true);
+  });
+});
+
 describe("Broadcast", () => {
   it("throws on uninitialized account", async () => {
     const cosmosApi = new CosmosAPI("cosmos", {

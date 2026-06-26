@@ -612,7 +612,12 @@ test.describe("Send flows", () => {
   });
 
   test.describe("Send Concordium (Testnet)", () => {
-    const ccdTx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "50", undefined);
+    const ccdTx = new Transaction(
+      Account.CCD_TESTNET_1,
+      Account.CCD_TESTNET_2,
+      "0.000005",
+      undefined,
+    );
 
     test.use({
       teamOwner: Team.COIN_INTEGRATION,

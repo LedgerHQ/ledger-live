@@ -9340,6 +9340,9 @@
     "fallbackBanner": {
       "title": "Swap and Buy are not supported for this asset."
     },
+    "robinhoodDisclaimerBanner": {
+      "title": "Total balance does not include dividends or stock splits."
+    },
     "day": "1 day",
     "week": "1 week",
     "month": "1 month",

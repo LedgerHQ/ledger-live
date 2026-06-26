@@ -21,6 +21,7 @@ export enum DeviceLabels {
   DELEGATE_STAKE = "Delegate stake",
   DEPOSIT = "Deposit",
   EXPERT_MODE = "Expert mode",
+  ENABLE_TRANSACTION_CHECK = "Enable Transaction Check",
   FEES = "Fees",
   GET = "Get",
   I_UNDERSTAND = "I understand",

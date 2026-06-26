@@ -2,35 +2,23 @@ import { Step } from "jest-allure2-reporter/api";
 import type { Features } from "@shared/feature-flags";
 import { getFlags } from "../../bridge/server";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { isIos } from "../../helpers/commonHelpers";
 
 export default class ModularDrawer {
-  // TODO - once lumenBottomSheet is activated we can remove the `or` statements
   bottomSheetId = (component: string) => `bottom-sheet-${component}`;
 
   accountItem = "account-item";
   searchBarId = "modular-drawer-search-input";
   selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
   modularDrawerFlowViewId = "modular-drawer-flow-view";
-  networkBasedTitleIdMAD = new RegExp(
-    `${this.bottomSheetId("header-title")}|modular-drawer-Network-title`,
-    "i",
-  );
-  assetBasedTitleIdMAD = new RegExp(
-    `${this.bottomSheetId("header-title")}|modular-drawer-Asset-title`,
-    "i",
-  );
+  basedTitleIdMAD = `${this.bottomSheetId("header-title")}`;
   networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
-  accountTitleIdMAD = "modular-drawer-Account-title";
+
+  assetScreenId = "Asset-screen";
+  networkScreenId = "Network-screen";
+  accountScreenId = "Account-screen";
   addNewOrExistingAccountButton = "add-new-account-button";
-  drawerCloseButtonId = new RegExp(
-    `${this.bottomSheetId("header-close-button")}|drawer-close-button`,
-    "i",
-  );
-  drawerBackButtonId = new RegExp(
-    `${this.bottomSheetId("header-back-button")}|drawer-back-button`,
-    "i",
-  );
+  drawerCloseButtonId = `${this.bottomSheetId("header-close-button")}`;
+  drawerBackButtonId = `${this.bottomSheetId("header-back-button")}`;
 
   accountItemNameId = (name: string) => `account-item-name-${name}`;
 
@@ -63,6 +51,7 @@ export default class ModularDrawer {
 
   @Step("Select first account in modular drawer")
   async selectFirstAccount() {
+    await waitForElement(getElementById(this.accountItem));
     await tapById(this.accountItem, 0);
   }
 
@@ -99,10 +88,7 @@ export default class ModularDrawer {
 
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
-    const isPresent = await IsIdPresent(this.modularDrawerFlowViewId);
-    if (!isPresent) return;
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    if (modularDrawerAttributes.label?.includes("Select network")) {
+    if (await IsIdVisible(this.networkScreenId)) {
       await this.selectNetwork(networkName);
     }
   }
@@ -111,7 +97,7 @@ export default class ModularDrawer {
   async selectNetwork(networkName: string): Promise<void> {
     const id = this.networkItemIdMAD(networkName);
     if (!(await IsIdVisible(id))) {
-      await getElementById(this.networkBasedTitleIdMAD).swipe("up");
+      await getElementById(this.basedTitleIdMAD).swipe("up");
       await this.swipeToNetworkItem(id);
     }
     await tapById(id, 0);
@@ -134,34 +120,10 @@ export default class ModularDrawer {
     await this.selectFirstAccount();
   }
 
-  /**
-   * Workaround for iOS Buy/Sell flow where drawer opens over WebView.
-   * Avoids any kind of waitFor visibility checks that cause Ledger Live App to freeze.
-   * Falls back to standard selectAsset on Android.
-   */
-  @Step("Select currency in modular drawer - (workaround) buy sell flow")
-  async selectAssetBuySellIosWorkaround(account: Account): Promise<void> {
-    if (!isIos()) {
-      return this.selectAsset(account);
-    }
-
-    await this.performSearchByTicker(account.currency.ticker);
-    const assetItemId = this.assetItemByTicker(account.currency.ticker);
-    await tapById(assetItemId, 0);
-
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    if (modularDrawerAttributes.label?.includes("Select network")) {
-      const networkName = this.getNetworkNameForAccount(account);
-      const id = this.networkItemIdMAD(networkName);
-      await tapById(id, 0);
-    }
-    await this.selectFirstAccount();
-  }
-
   @Step("Validate account(s) present on account list")
   async validateAccountsScreen(accounts?: string[]): Promise<void> {
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    jestExpect(modularDrawerAttributes.label).toMatch(/Select account.*/i);
+    await waitForElement(getElementById(this.accountScreenId));
+    jestExpect(await getTextOfElement(this.basedTitleIdMAD)).toMatch(/Select account.*/i);
     if (!accounts) {
       await detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
       return;
@@ -182,9 +144,9 @@ export default class ModularDrawer {
 
   @Step("Validate network(s) present on network list")
   async validateNetworksScreen(networks: string[]): Promise<void> {
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    jestExpect(modularDrawerAttributes.label).toMatch(/Select network.*/i);
-    await getElementById(this.networkBasedTitleIdMAD).swipe("up");
+    await waitForElement(getElementById(this.networkScreenId));
+    jestExpect(await getTextOfElement(this.basedTitleIdMAD)).toMatch(/Select network.*/i);
+    await getElementById(this.basedTitleIdMAD).swipe("up");
     for (const network of networks) {
       const networkItemId = this.networkItemIdMAD(network);
       await this.swipeToNetworkItem(networkItemId);
@@ -194,8 +156,8 @@ export default class ModularDrawer {
 
   @Step("Validate assets present on account list")
   async validateAssetsScreen(assets: string[]): Promise<void> {
-    const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
-    jestExpect(modularDrawerAttributes.label).toMatch(/Select asset.*/i);
+    await waitForElement(getElementById(this.assetScreenId));
+    jestExpect(await getLabelOfElement(this.basedTitleIdMAD)).toMatch(/Select asset.*/i);
     for (const asset of assets) {
       const assetItemId = this.assetItemByTicker(asset);
       await detoxExpect(getElementById(assetItemId)).toBeVisible();
@@ -209,8 +171,8 @@ export default class ModularDrawer {
 
   @Step("Expect (Select Asset) page")
   async checkSelectAssetPage() {
-    await waitForElement(getElementById(this.assetBasedTitleIdMAD));
-    await detoxExpect(getElementById(this.assetBasedTitleIdMAD)).toBeVisible();
+    await waitForElement(getElementById(this.basedTitleIdMAD));
+    await detoxExpect(getElementById(this.basedTitleIdMAD)).toBeVisible();
     await detoxExpect(this.searchBar()).toBeVisible();
   }
 

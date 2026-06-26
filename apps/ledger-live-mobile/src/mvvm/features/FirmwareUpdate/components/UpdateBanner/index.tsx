@@ -22,12 +22,16 @@ const UpdateBannerView = ({
   isUpdateSupportedButDeviceNotWired,
   shouldDisplayWallet40MainNav,
   isInMyLedgerDeviceScreen,
+  debugBannerMode,
 }: ViewProps) => {
   if (!bannerVisible) return null;
 
   const productName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
-    : undefined;
+    : // Placeholder name for the debug-forced banner.
+      debugBannerMode !== "off"
+      ? "Speculos"
+      : undefined;
 
   const drawerProps: DrawerProps = {
     unsupportedUpdateDrawerOpened,
@@ -35,6 +39,30 @@ const UpdateBannerView = ({
     isUpdateSupportedButDeviceNotWired,
     productName,
   };
+
+  // Debug override: force a specific variant.
+  if (debugBannerMode === "compact") {
+    return (
+      <Wallet40PortfolioBanner
+        deviceIcon={getDeviceSymbol(lastConnectedDevice)}
+        onClickUpdate={onClickUpdate}
+        drawerProps={drawerProps}
+      />
+    );
+  }
+
+  if (debugBannerMode === "card") {
+    return (
+      <LegacyBanner
+        lastConnectedDevice={lastConnectedDevice}
+        deviceName={lastConnectedDevice?.deviceName ?? undefined}
+        productName={productName}
+        version={version}
+        onClickUpdate={onClickUpdate}
+        drawerProps={drawerProps}
+      />
+    );
+  }
 
   if (shouldDisplayWallet40MainNav && !isInMyLedgerDeviceScreen) {
     return (

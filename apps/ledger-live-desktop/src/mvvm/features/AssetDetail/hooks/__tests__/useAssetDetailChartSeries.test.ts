@@ -12,7 +12,9 @@ const mockedBuildSeries = jest.mocked(buildAssetDetailChartSeries);
 
 const chartData: MarketCoinDataChart = { "1d": [[1, 2]] };
 
-const mockChartData = (overrides: Partial<ReturnType<typeof useAssetChartDataInCounterValue>> = {}) =>
+const mockChartData = (
+  overrides: Partial<ReturnType<typeof useAssetChartDataInCounterValue>> = {},
+) =>
   mockedUseAssetChartData.mockReturnValue({
     data: chartData,
     currentData: chartData,

@@ -86,7 +86,7 @@ const SyncProgress = ({
         }}
       >
         <Spinner size={14} />
-        <Text style={{ fontSize: "12px", paddingLeft: "10px" }}>{progress}%</Text>
+        <Text style={{ fontSize: "12px", paddingLeft: "10px", minWidth: "40px" }}>{progress}%</Text>
       </div>
     );
   }

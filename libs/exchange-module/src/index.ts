@@ -10,6 +10,8 @@ import {
   ExchangeSwapParams,
   SwapResult,
   SwapLiveError,
+  type CustomSwapParams,
+  type CustomSwapResult,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
   type GetTransactionStatusResponse,
@@ -187,6 +189,15 @@ export class ExchangeModule extends CustomModule {
    */
   async getQuotes(params: GetQuotesWireArgs): Promise<GetQuotesResponse> {
     return this.request<GetQuotesWireArgs, GetQuotesResponse>("custom.exchange.getQuotes", params);
+  }
+
+  /**
+   * Run the device-intent-based swap flow on the wallet host.
+   *
+   * Result fields are additive; see {@link CustomSwapResult}.
+   */
+  async customSwap(params: CustomSwapParams): Promise<CustomSwapResult> {
+    return this.request<CustomSwapParams, CustomSwapResult>("custom.swap", params);
   }
 
   /**

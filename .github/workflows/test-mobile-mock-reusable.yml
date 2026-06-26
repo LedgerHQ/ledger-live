@@ -135,7 +135,7 @@ jobs:
             PREFIX="develop/"
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-3" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT

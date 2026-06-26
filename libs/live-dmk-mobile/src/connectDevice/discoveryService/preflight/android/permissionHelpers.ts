@@ -1,5 +1,5 @@
 import { PermissionsAndroid, type Permission, type PermissionStatus } from "react-native";
-import type { DiscoveryError } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
 import {
   mapDiscoveryErrorToPreflightResult,
   successPreflightResult,
@@ -21,23 +21,15 @@ export type PermissionRequestResult = {
 
 type PermissionPreflightConfig = {
   permissions: Permission[];
-  retry: () => Promise<true | DiscoveryError>;
+  retry: () => Promise<true | MobileDiscoveryError>;
   buildPromptableError: (
     permissions: Permission[],
-    retry: () => Promise<true | DiscoveryError>,
-  ) => DiscoveryError;
+    retry: () => Promise<true | MobileDiscoveryError>,
+  ) => MobileDiscoveryError;
   buildManualSettingsError: (
     permissions: Permission[],
-    retry: () => Promise<true | DiscoveryError>,
-  ) => DiscoveryError;
-};
-
-export const arePermissionsGranted = async (permissions: Permission[]): Promise<boolean> => {
-  const results = await Promise.all(
-    permissions.map(permission => PermissionsAndroid.check(permission)),
-  );
-
-  return results.every(Boolean);
+    retry: () => Promise<true | MobileDiscoveryError>,
+  ) => MobileDiscoveryError;
 };
 
 export const requestPermissions = async (

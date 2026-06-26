@@ -1,12 +1,10 @@
 import { add } from "date-fns";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import type { Features } from "@shared/feature-flags";
-import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 import type { NotificationsState } from "~/reducers/types";
 import type { DataOfUser, NotificationPromptTarget } from "../types";
 
 type BrazePushNotifications = Features["brazePushNotifications"];
-type LwmNewWordingOptInNotificationsDrawer = Features["lwmNewWordingOptInNotificationsDrawer"];
 
 type PermissionStatus =
   | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
@@ -14,7 +12,6 @@ type PermissionStatus =
   | undefined;
 
 type BrazePushNotificationsFeature = BrazePushNotifications | null | undefined;
-type WordingFeature = LwmNewWordingOptInNotificationsDrawer | null | undefined;
 
 export type NotificationsPromptSource = NonNullable<NotificationsState["drawerSource"]>;
 export type NotificationsPromptAfterActionSource = Exclude<NotificationsPromptSource, "inactivity">;
@@ -31,8 +28,6 @@ export type NotificationsPromptSkipReason =
   | "reprompt_delay_not_reached"
   | "action_event_disabled"
   | "transactions_alerts_not_eligible"
-  | "variant_a_only_onboarding"
-  | "variant_a_inactivity_disabled"
   | "onboarding_incomplete"
   | "user_not_inactive"
   | "globally_opted_in_no_inactivity_drawer";
@@ -41,7 +36,6 @@ type NotificationsPromptDecisionBase<TSource extends NotificationsPromptSource> 
   source: TSource;
   dismissedCount: number;
   nextRepromptDelay: NotificationsPromptRepromptDelay | null;
-  variant?: ABTestingVariants;
 };
 
 export type NotificationsPromptShowDecision<TSource extends NotificationsPromptSource> =
@@ -84,7 +78,6 @@ type AfterActionEligibilityInput = NotificationsPromptOptInStateInput & {
 
 type NotificationsPromptEvaluationContext = {
   brazePushNotifications: BrazePushNotificationsFeature;
-  wordingFeature: WordingFeature;
   isRatingsModalOpen: boolean;
   isDrawerPending: boolean;
   now?: number;
@@ -133,12 +126,6 @@ const TRANSACTIONS_ALERTS_PROMPT_TARGET =
 type BrazeNotificationsCategoryConfig = NonNullable<
   BrazePushNotifications["params"]
 >["notificationsCategories"][number];
-
-const getVariant = (wordingFeature: WordingFeature) =>
-  wordingFeature?.enabled ? wordingFeature.params?.variant : undefined;
-
-const isVariantA = (wordingFeature: WordingFeature) =>
-  getVariant(wordingFeature) === AB_TESTING_VARIANTS.A;
 
 const isGloballyOptedIn = (
   permissionStatus: PermissionStatus,
@@ -246,12 +233,10 @@ const getDecisionBase = <TSource extends NotificationsPromptSource>(
   pushNotificationsDataOfUser: DataOfUser | null | undefined,
   promptTarget: NotificationPromptTarget | null,
   nextRepromptDelay: NotificationsPromptRepromptDelay | null,
-  wordingFeature: WordingFeature,
 ): NotificationsPromptDecisionBase<TSource> => ({
   source,
   dismissedCount: getDismissedCount(pushNotificationsDataOfUser, promptTarget),
   nextRepromptDelay,
-  variant: getVariant(wordingFeature),
 });
 
 type BuildAfterActionPromptDecisionInput = {
@@ -259,7 +244,6 @@ type BuildAfterActionPromptDecisionInput = {
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
   promptTarget: NotificationPromptTarget;
   repromptSchedule: NotificationsPromptRepromptDelay[] | null | undefined;
-  wordingFeature: WordingFeature;
   now: number;
   delayMs: number;
 };
@@ -269,7 +253,6 @@ const buildAfterActionPromptDecision = ({
   pushNotificationsDataOfUser,
   promptTarget,
   repromptSchedule,
-  wordingFeature,
   now,
   delayMs,
 }: BuildAfterActionPromptDecisionInput): AfterActionTriggerDecision => {
@@ -284,7 +267,6 @@ const buildAfterActionPromptDecision = ({
     pushNotificationsDataOfUser,
     promptTarget,
     nextRepromptDelay,
-    wordingFeature,
   );
 
   if (!canShow) {
@@ -371,7 +353,6 @@ export const evaluateAfterActionTrigger = (
   }: EvaluateAfterActionTriggerParams,
   {
     brazePushNotifications,
-    wordingFeature,
     isRatingsModalOpen,
     isDrawerPending,
     now = Date.now(),
@@ -389,7 +370,6 @@ export const evaluateAfterActionTrigger = (
     pushNotificationsDataOfUser,
     drawerPromptTarget,
     null,
-    wordingFeature,
   );
 
   if (!brazePushNotifications?.enabled) {
@@ -408,10 +388,6 @@ export const evaluateAfterActionTrigger = (
     return { ...baseDecision, kind: "skip", reason: "drawer_already_pending" };
   }
 
-  if (source !== "onboarding" && isVariantA(wordingFeature)) {
-    return { ...baseDecision, kind: "skip", reason: "variant_a_only_onboarding" };
-  }
-
   const actionEvent =
     brazePushNotifications.params.action_events[AFTER_ACTION_SOURCE_TO_EVENT_KEY[source]];
   if (!actionEvent) {
@@ -428,7 +404,6 @@ export const evaluateAfterActionTrigger = (
       pushNotificationsDataOfUser,
       promptTarget: "globalPushNotifications",
       repromptSchedule,
-      wordingFeature,
       now,
       delayMs: actionEvent.timer,
     });
@@ -451,7 +426,6 @@ export const evaluateAfterActionTrigger = (
     pushNotificationsDataOfUser,
     promptTarget: TRANSACTIONS_ALERTS_PROMPT_TARGET,
     repromptSchedule,
-    wordingFeature,
     now,
     delayMs: actionEvent.timer,
   });
@@ -467,7 +441,6 @@ export const evaluateInactivityTrigger = (
   }: EvaluateInactivityTriggerParams,
   {
     brazePushNotifications,
-    wordingFeature,
     isRatingsModalOpen,
     isDrawerPending,
     now = Date.now(),
@@ -480,7 +453,6 @@ export const evaluateInactivityTrigger = (
     pushNotificationsDataOfUser,
     globallyOptedIn ? null : globalPromptTarget,
     null,
-    wordingFeature,
   );
 
   if (!brazePushNotifications?.enabled) {
@@ -497,10 +469,6 @@ export const evaluateInactivityTrigger = (
 
   if (!hasCompletedOnboarding) {
     return { ...baseDecision, kind: "skip", reason: "onboarding_incomplete" };
-  }
-
-  if (isVariantA(wordingFeature)) {
-    return { ...baseDecision, kind: "skip", reason: "variant_a_inactivity_disabled" };
   }
 
   if (!brazePushNotifications.params?.inactivity_reprompt) {
@@ -531,13 +499,7 @@ export const evaluateInactivityTrigger = (
   }
 
   return {
-    ...getDecisionBase(
-      "inactivity",
-      pushNotificationsDataOfUser,
-      globalPromptTarget,
-      null,
-      wordingFeature,
-    ),
+    ...getDecisionBase("inactivity", pushNotificationsDataOfUser, globalPromptTarget, null),
     kind: "show",
     delayMs: INACTIVITY_DRAWER_DELAY_MS,
     drawerPromptTarget: globalPromptTarget,

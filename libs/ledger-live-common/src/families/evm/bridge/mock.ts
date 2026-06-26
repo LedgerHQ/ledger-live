@@ -21,6 +21,7 @@ import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import { getCurrencyConfiguration } from "../../../config";
 import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { validateAddress } from "../../../bridge/validateAddress";
+import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-evm/staking/serialization";
 
 const receive = makeAccountBridgeReceive();
 const defaultGetFees = (_a, t: any) => {
@@ -166,6 +167,8 @@ const accountBridge: AccountBridge<Transaction> = {
   getSerializedAddressParameters,
   validateAddress,
   getEstimationRecipient: account => getEvmDummyAddress(account.currency.id),
+  assignFromAccountRaw,
+  assignToAccountRaw,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

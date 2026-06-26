@@ -67,6 +67,7 @@ libs/asset-aggregation/                                  @ledgerhq/wallet-xp
 libs/asset-detail/                                       @ledgerhq/wallet-xp
 libs/wallet-pnl/                                         @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
+libs/live-wallet/src/walletsync/                          @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
@@ -202,6 +203,7 @@ apps/ledger-live-mobile/src/components/Stake/                        					@ledge
 apps/ledger-live-mobile/src/components/WebPTXPlayer/                 					@ledgerhq/ptx
 apps/ledger-live-mobile/src/reducers/earn.ts                         					@ledgerhq/ptx
 apps/ledger-live-mobile/src/reducers/swap.ts                         					@ledgerhq/ptx
+apps/ledger-live-mobile/src/reducers/swapTransactionStatusDrawer.ts           @ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/Exchange/                        					@ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/PTX/                             					@ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/Swap/                            					@ledgerhq/ptx
@@ -471,6 +473,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/tsconfig*                                          @ledgerhq/platform
 **/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
+mise.toml                                             @ledgerhq/platform
 
 # CI — Nx
 /nx.json                                              @ledgerhq/platform @ledgerhq/wallet-ci

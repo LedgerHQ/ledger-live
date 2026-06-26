@@ -31,6 +31,7 @@ import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
+import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
@@ -226,6 +227,9 @@ export type supportedCountervaluesData = {
   currency: Currency;
 };
 
+/** Debug-only override for the OS update banner. */
+export type DebugOsUpdateBannerMode = "off" | "card" | "compact";
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
@@ -295,6 +299,7 @@ export type SettingsState = {
   userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
+  debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
@@ -457,6 +462,7 @@ export type State = LLMRTKApiState & {
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;
   transferDrawer: TransferDrawerState;
+  swapTransactionStatusDrawer: SwapTransactionStatusDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   postOnboardingHubDrawer: PostOnboardingHubDrawerState;

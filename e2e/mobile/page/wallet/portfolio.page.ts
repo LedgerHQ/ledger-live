@@ -191,7 +191,7 @@ export default class PortfolioPage {
   @Step("Go to asset's accounts from portfolio wallet 40")
   async goToAccountsW40(currencyName: string) {
     await waitForElementById(this.accountsListView, 10000);
-    await scrollToId(this.assetItemId(currencyName));
+    await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     await tapById(this.assetItemId(currencyName));
   }
 

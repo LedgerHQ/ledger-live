@@ -80,6 +80,7 @@ const QueuedDrawerBottomSheet = ({
     bottomSheetRef,
     areDrawersLocked,
     handleBackdropPress,
+    handleHeaderClosePressed,
     handleDismiss,
     handleCloseAnimationStart,
     onBack: hookOnBack,
@@ -91,6 +92,7 @@ const QueuedDrawerBottomSheet = ({
     isForcingToBeOpened,
     onClose,
     onBack,
+    onHeaderClosePressed,
     onBackdropPress,
     onModalHide,
     preventBackdropClick,
@@ -109,9 +111,9 @@ const QueuedDrawerBottomSheet = ({
       hideCloseButton={noCloseButton || areDrawersLocked}
       hideHandle={hideHandle}
       onBack={hasBackButton ? hookOnBack : undefined}
+      onHeaderClosePressed={handleHeaderClosePressed}
       onAnimate={handleCloseAnimationStart}
       onDismiss={handleDismiss}
-      onHeaderClosePressed={onHeaderClosePressed}
       backdropPressBehavior={preventBackdropClick || areDrawersLocked ? "none" : "close"}
       onBackdropPress={handleBackdropPress}
       backgroundComponent={backgroundComponent}

@@ -320,6 +320,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Sei: {
+    currency: getCryptoCurrencyById("sei_evm"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Sei",
+    },
+    dependencies: [AppInfos.ETHEREUM],
+  },
   Litecoin: {
     currency: getCryptoCurrencyById("litecoin"),
     appQuery: {
@@ -868,6 +876,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.POL.id:
     case Currency.ETH.id:
     case Currency.ETH_USDT.id:
+    case Currency.SEI_EVM.id:
       await sendEVM(tx);
       break;
     case Currency.BTC.id:
@@ -1104,5 +1113,42 @@ export const shareViewKey = withDeviceController(({ getButtonsController }) => a
     await buttons.both();
   }
 });
+
+export const acceptEnableTransactionCheck = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      const buttons = getButtonsController();
+
+      // Wait for loading to finish: poll until either the Transaction Check prompt
+      // or the next (review transaction) screen is displayed. If the prompt never
+      // shows up, skip this step instead of waiting for it to appear.
+      const port = getEnv("SPECULOS_API_PORT");
+      const enableLabel = DeviceLabels.ENABLE_TRANSACTION_CHECK.toLowerCase();
+      const reviewLabel = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
+      let isTransactionCheckDisplayed = false;
+      for (let attempt = 0; attempt < 60; attempt++) {
+        const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
+        if (texts.includes(enableLabel)) {
+          isTransactionCheckDisplayed = true;
+          break;
+        }
+        if (texts.includes(reviewLabel)) {
+          break;
+        }
+        await sleep(500);
+      }
+
+      if (!isTransactionCheckDisplayed) {
+        return;
+      }
+
+      if (isTouchDevice()) {
+        await pressAndRelease(DeviceLabels.YES_ENABLE);
+      } else {
+        await pressUntilTextFound(DeviceLabels.CONFIRM);
+        await buttons.both();
+      }
+    },
+);
 
 export { approveToken, signTypedMessage };

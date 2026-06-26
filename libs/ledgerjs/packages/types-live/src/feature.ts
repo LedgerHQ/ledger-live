@@ -260,7 +260,6 @@ export type Features = CurrencyFeatures & {
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwdProductTour: DefaultFeature;
   lwdBackupHub: DefaultFeature;
-  lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -324,7 +323,6 @@ export type Features = CurrencyFeatures & {
   newSendFlow: Feature_NewSendFlow;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
-  lldRebornABtest: DefaultFeature;
   llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
@@ -974,11 +972,6 @@ type Feature_Wallet40_Params = {
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwdWallet40"]` from `@shared/feature-flags` instead. */
 export type Feature_LwdWallet40 = Feature<Feature_Wallet40_Params>;
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmNewWordingOptInNotificationsDrawer"]` from `@shared/feature-flags` instead. */
-export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
-  variant: ABTestingVariants;
-}>;
-
 /**
  * Utils types.
  * @deprecated Moved to `@shared/feature-flags`. Use `FeatureMap` from `@shared/feature-flags` instead.

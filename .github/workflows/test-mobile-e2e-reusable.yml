@@ -52,6 +52,11 @@ on:
         required: false
         type: boolean
         default: false
+      slack_notif:
+        description: "Send notification to Slack"
+        required: false
+        type: boolean
+        default: false
       export_to_xray:
         description: "Send results to Xray"
         required: false
@@ -112,6 +117,11 @@ on:
         default: false
       enable_broadcast:
         description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      slack_notif:
+        description: "Send notification to Slack"
         required: false
         type: boolean
         default: false
@@ -291,6 +301,7 @@ jobs:
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+          echo "- **Slack notification:** ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}"
           echo "- **Wallet 4.0:** ${{ env.E2E_ENABLE_WALLET40 == '1' && 'enabled' || 'disabled' }}"
           echo "- **Extra feature flags:** $EXTRA_FEATURE_FLAGS"
           } >> $GITHUB_STEP_SUMMARY
@@ -320,7 +331,7 @@ jobs:
             PREFIX="develop/"
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
@@ -884,9 +895,6 @@ jobs:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
           merge-multiple: true
-      - name: Remove Detox simulator artifacts
-        if: ${{ !cancelled() }}
-        run: rm -rf ios-test-artifacts/ios.sim.release.*
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -961,9 +969,6 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
-      - name: Remove Detox emulator artifacts
-        if: ${{ !cancelled() }}
-        run: rm -rf android-test-artifacts/android.emu.release.*
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -1273,7 +1278,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           payload-file-path: "./payload-slack-content.json"
       - name: post to a Slack channel
-        if: ${{ contains(fromJson('["release"]'), github.ref_name) || contains(fromJson('["release, develop"]'), inputs.ref) || github.event_name == 'schedule' }}
+        if: ${{ inputs.slack_notif || github.event_name == 'schedule' }}
         uses: slackapi/slack-github-action@v3.0.1
         with:
           method: chat.postMessage

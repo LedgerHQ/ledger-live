@@ -2911,6 +2911,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "XTZ",
     scheme: "tezos",
     color: "#007BFF",
+    keywords: ["xtz", "tezos"],
     family: "tezos",
     blockAvgTime: 60,
     units: [
@@ -3325,6 +3326,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",
+    keywords: ["cro", "cronos pos chain"],
     family: "cosmos",
     units: [
       {
@@ -5177,8 +5179,9 @@ export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | nul
 }
 
 /**
- *
- * @param {*} ticker
+ * @deprecated Tickers are not unique across currencies, so the result is ambiguous and arbitrary.
+ * Look up by id with {@link findCryptoCurrencyById} instead.
+ * @param ticker
  */
 export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | null | undefined {
   return activeCurrenciesStore().cryptocurrenciesByTicker[ticker];

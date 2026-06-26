@@ -36,10 +36,7 @@ describe("send flow tracking", () => {
     expect(
       getSendFlowCurrencyId({
         type: "TokenAccount",
-        token: {
-          id: "ethereum/erc20/usd_tether__erc20_",
-          parentCurrencyId: "ethereum",
-        },
+        token: { id: "ethereum/erc20/usd_tether__erc20_", parentCurrencyId: "ethereum" },
       }),
     ).toBe("ethereum/erc20/usd_tether__erc20_");
   });

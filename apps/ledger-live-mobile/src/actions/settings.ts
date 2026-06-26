@@ -51,6 +51,7 @@ import {
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
+  SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -253,6 +254,10 @@ export const setSupportedCounterValues = createAction<SettingsSetSupportedCounte
 
 export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(
   SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT,
+);
+
+export const setDebugOsUpdateBannerMode = createAction<SettingsSetDebugOsUpdateBannerMode>(
+  SettingsActionTypes.SET_DEBUG_OS_UPDATE_BANNER_MODE,
 );
 
 export const setAnalyticsConsentInfo = createAction<SettingsSetAnalyticsConsentInfoPayload>(

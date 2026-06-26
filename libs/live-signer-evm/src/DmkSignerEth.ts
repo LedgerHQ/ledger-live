@@ -37,7 +37,12 @@ export type DAError =
   | SignPersonalMessageDAError;
 
 export class DmkSignerEth implements EvmSigner {
-  private readonly signer: SignerEth;
+  /**
+   * CAL-wired {@link SignerEth}. Exposed as readonly so device-intent
+   * jobs can reuse the step-event observables without rebuilding a bare
+   * SignerEth (which would skip CAL and force blind signing).
+   */
+  readonly signer: SignerEth;
   constructor(
     readonly dmk: DeviceManagementKit,
     readonly sessionId: string,
