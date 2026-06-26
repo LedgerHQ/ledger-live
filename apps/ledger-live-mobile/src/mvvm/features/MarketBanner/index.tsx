@@ -86,13 +86,6 @@ const MarketBannerContent = ({ testID }: MarketBannerProps) => {
 };
 
 const MarketBanner = ({ testID }: MarketBannerProps) => {
-  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
-
-  // Gate before any data hook so a disabled banner does no work.
-  if (!shouldDisplayMarketBanner) {
-    return null;
-  }
-
   return <MarketBannerContent testID={testID} />;
 };
 

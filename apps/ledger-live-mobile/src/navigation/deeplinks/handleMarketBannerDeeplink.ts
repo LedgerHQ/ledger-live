@@ -4,10 +4,6 @@ import type { MarketListCategory } from "~/reducers/types";
 /**
  * Handles the `market` deeplink when the Market banner feature is active.
  *
- * When `shouldDisplayMarketBanner` is ON, the market deeplink without a currency
- * path should navigate directly to the MarketList screen via the BaseNavigator,
- * rather than going through the static linking config.
- *
  * @returns Navigation state targeting the MarketList screen
  */
 export function handleMarketBannerDeeplink(
