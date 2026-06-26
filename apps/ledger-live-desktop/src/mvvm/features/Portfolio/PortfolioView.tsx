@@ -25,7 +25,6 @@ export const PortfolioView = memo(function PortfolioView({
   totalOperations,
   totalCurrencies,
   hasExchangeBannerCTA,
-  shouldDisplayMarketBanner,
   shouldDisplayGraphRework,
   shouldDisplayQuickActionCtas,
   shouldDisplayAssetSection,
@@ -68,7 +67,8 @@ export const PortfolioView = memo(function PortfolioView({
           </div>
 
           <PortfolioBannerContent />
-          {shouldDisplayMarketBanner && <MarketBanner />}
+
+          <MarketBanner />
 
           <PerpsEntryPoint />
 

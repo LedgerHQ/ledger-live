@@ -85,7 +85,8 @@ const Collapser = styled(Box).attrs(() => ({
 
   cursor: pointer;
   border-radius: 50%;
-  background: linear-gradient(
+  background:
+    linear-gradient(
       ${p => p.theme.colors.opacityDefault.c05} 0%,
       ${p => p.theme.colors.opacityDefault.c05} 100%
     ),
@@ -96,7 +97,8 @@ const Collapser = styled(Box).attrs(() => ({
   z-index: 100;
 
   &:hover {
-    background: linear-gradient(
+    background:
+      linear-gradient(
         ${p => p.theme.colors.opacityDefault.c10} 0%,
         ${p => p.theme.colors.opacityDefault.c10} 100%
       ),
@@ -137,7 +139,8 @@ const SideBar = styled(Box).attrs(() => ({
 }))`
   flex: 0 0 auto;
   width: auto;
-  background: linear-gradient(
+  background:
+    linear-gradient(
       ${p => p.theme.colors.opacityDefault.c05} 0%,
       ${p => p.theme.colors.opacityDefault.c05} 100%
     ),
@@ -216,7 +219,6 @@ const MainSideBar = () => {
     earnLabel,
     isCardDisabled,
     isLiveAppTabSelected,
-    isMarketBannerEnabled,
     isQuickActionCtasEnabled,
     isWallet40MainNavEnabled,
     referralProgramConfig,
@@ -275,17 +277,6 @@ const MainSideBar = () => {
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
-                {!isMarketBannerEnabled && (
-                  <SideBarListItem
-                    id={"market"}
-                    label={t("sidebar.market")}
-                    icon={Icons.GraphAsc}
-                    iconActiveColor="wallet"
-                    onClick={handleClickMarket}
-                    isActive={locationPathname.startsWith("/market")}
-                    collapsed={secondAnim}
-                  />
-                )}
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}

@@ -17,7 +17,11 @@ export const getWallet40Attributes = (
 
   return {
     isEnabled,
-    marketBanner: wallet40FeatureFlag?.params?.marketBanner ?? false,
+    ...(platform === "lwm"
+      ? {
+          marketBanner: analyticsFeatureFlagMethod("lwmWallet40")?.params?.marketBanner ?? false,
+        }
+      : {}),
     graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
     quickActionCtas: wallet40FeatureFlag?.params?.quickActionCtas ?? false,
     tour: wallet40FeatureFlag?.params?.tour ?? false,

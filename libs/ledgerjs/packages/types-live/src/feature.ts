@@ -4,7 +4,10 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
-import { LldNanoSUpsellBannersConfig, LlmNanoSUpsellBannersConfig } from "./lnsUpsell";
+import {
+  LldNanoSUpsellBannersConfig,
+  LlmNanoSUpsellBannersConfig,
+} from "./lnsUpsell";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
@@ -358,7 +361,11 @@ export type FeatureId = keyof Features;
  * EthStakingProvider category type.
  * @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`.
  */
-export type EthStakingProviderCategory = "liquid" | "pooling" | "protocol" | "restaking";
+export type EthStakingProviderCategory =
+  | "liquid"
+  | "pooling"
+  | "protocol"
+  | "restaking";
 
 /**
  * EthStakingProvider rewards strategy.
@@ -432,11 +439,12 @@ export type Feature_SwapWalletApiPartnerList = Feature<{
 export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
 
 /** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
-export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
-  ? {
-      yieldId: string;
-    }
-  : unknown;
+export type RedirectQueryParam<M extends PlatformManifestId> =
+  "stakekit" extends M
+    ? {
+        yieldId: string;
+      }
+    : unknown;
 
 /** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type Redirect<M extends PlatformManifestId> = {
@@ -461,7 +469,9 @@ export type Feature_StakePrograms = Feature<{
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["stakeAccountBanner"]` from `@shared/feature-flags` instead. */
-export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
+export type Feature_StakeAccountBanner = Feature<{
+  [blockchainName: string]: any;
+}>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["referralProgramDesktopSidebar"]` from `@shared/feature-flags` instead. */
 export type Feature_ReferralProgramDesktopSidebar = Feature<{
@@ -940,7 +950,9 @@ export type IgnoredOSUpdates = Array<string>;
 export type Platform = "ios" | "android" | "macos" | "windows" | "linux";
 
 /** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
-export type IgnoredOSUpdatesByPlatform = { [M in DeviceModelId]?: IgnoredOSUpdates };
+export type IgnoredOSUpdatesByPlatform = {
+  [M in DeviceModelId]?: IgnoredOSUpdates;
+};
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["onboardingIgnoredOsUpdates"]` from `@shared/feature-flags` instead. */
 export type Feature_OnboardingIgnoredOSUpdates = Feature<{
@@ -948,7 +960,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 }>;
 
 type Feature_Wallet40_Params = {
-  marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
   mainNavigation: boolean;
@@ -962,6 +973,7 @@ type Feature_Wallet40_Params = {
   pnl: boolean;
   assetDiscoverability: boolean;
   // Specifics
+  marketBanner?: boolean;
   brazePlacement?: boolean;
   earnUpselling?: boolean;
   earnSimulator?: boolean;

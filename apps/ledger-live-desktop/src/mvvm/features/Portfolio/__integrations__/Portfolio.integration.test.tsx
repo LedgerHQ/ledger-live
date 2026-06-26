@@ -153,7 +153,10 @@ const createPortfolioMock = (countervalueChange: {
   countervalueChange,
 });
 
-const defaultPortfolioMock = createPortfolioMock({ percentage: 0.0542, value: 5000 });
+const defaultPortfolioMock = createPortfolioMock({
+  percentage: 0.0542,
+  value: 5000,
+});
 
 describe("PortfolioView", () => {
   const defaultProps = {
@@ -162,7 +165,6 @@ describe("PortfolioView", () => {
     totalOperations: 10,
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
-    shouldDisplayMarketBanner: true,
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
@@ -432,7 +434,7 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
@@ -449,7 +451,7 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       expect(screen.getByTestId("skeleton-list")).toBeVisible();
     });
@@ -461,16 +463,11 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("generic-error")).toBeVisible();
       });
-    });
-
-    it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Market")).toBeNull();
     });
   });
 

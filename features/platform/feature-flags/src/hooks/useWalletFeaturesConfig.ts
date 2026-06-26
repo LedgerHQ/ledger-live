@@ -12,7 +12,9 @@ import { useFeature } from "../hooks/useFeature";
  * @returns
  * Configuration object with boolean flags for each feature
  */
-export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeaturesConfig {
+export function useWalletFeaturesConfig(
+  platform: WalletPlatform,
+): WalletFeaturesConfig {
   const featureFlagKey = FEATURE_FLAG_KEYS[platform];
   const walletFeatureFlag = useFeature(featureFlagKey);
 
@@ -27,19 +29,24 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       isEnabled,
       shouldDisplayMarketBanner: isEnabled && Boolean(params?.marketBanner),
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
-      shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
-      shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
+      shouldDisplayQuickActionCtas:
+        isEnabled && Boolean(params?.quickActionCtas),
+      shouldDisplayWallet40MainNav:
+        isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
-      shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
+      shouldDisplayBalanceRefreshRework:
+        isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayQ2Tour: isEnabled && Boolean(params?.q2Tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
-      shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
+      shouldDisplayAggregatedAssets:
+        isEnabled && Boolean(params?.aggregatedAssets),
       shouldDisplayMyWallet: isEnabled && Boolean(params?.myWallet),
       shouldDisplayPnl: isEnabled && Boolean(params?.pnl),
-      shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
+      shouldDisplayAssetDiscoverability:
+        isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
       shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
     };
@@ -70,7 +77,7 @@ export interface WalletFeaturesConfig {
   /** Whether the feature flag is enabled */
   readonly isEnabled: boolean;
   /** Whether to show the market banner on portfolio */
-  readonly shouldDisplayMarketBanner: boolean;
+  readonly shouldDisplayMarketBanner?: boolean;
   /** Whether to show the graph rework UI */
   readonly shouldDisplayGraphRework: boolean;
   /** Whether to show quick action CTAs */

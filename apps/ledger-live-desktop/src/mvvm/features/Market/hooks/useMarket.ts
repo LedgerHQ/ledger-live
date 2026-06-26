@@ -112,8 +112,7 @@ export function useMarket() {
     fallbackForCryptoCountervalues: true,
   });
 
-  const { shouldDisplayMarketBanner: filterBySupported, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
 
   // When asset discoverability is on, the category bar is the source of truth for
   // the starred / stocks lists; otherwise we keep the legacy `starred` param behaviour.
@@ -122,7 +121,7 @@ export function useMarket() {
 
   const starFilterOn = isStarredCategory || starred.length > 0;
 
-  const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
+  const shouldDisplayLiveCompatible = marketParams.liveCompatible;
 
   const needsUsdFallback = shouldDisplayAssetDiscoverability && resolvedNeedsUsdFallback;
   // Counter value sent to the markets endpoint (usd on fallback so the request succeeds).
@@ -146,7 +145,10 @@ export function useMarket() {
   // the counter value's unit. `null` defers the conversion (rows stay empty + loading).
   const rate = needsUsdFallback ? usdToCounterValueRate : 1;
 
-  const resolvedMarketParams = { ...marketParams, counterCurrency: displayCounterCurrency };
+  const resolvedMarketParams = {
+    ...marketParams,
+    counterCurrency: displayCounterCurrency,
+  };
 
   const marketResult = useMarketDataHook(
     {
@@ -166,7 +168,10 @@ export function useMarket() {
     () =>
       Object.keys(rangeDataTable)
         .filter(k => k !== "1h")
-        .map(key => ({ value: key, label: t(`market.range.${rangeDataTable[key].label}`) }))
+        .map(key => ({
+          value: key,
+          label: t(`market.range.${rangeDataTable[key].label}`),
+        }))
         .reverse(),
     [t],
   );

@@ -38,7 +38,6 @@ export default function Market() {
     updateSearch,
     updateTimeRange,
     toggleFilterByStarredAccounts,
-    toggleLiveCompatible,
     resetMarketPage,
     refetchData,
     marketParams,
@@ -71,7 +70,7 @@ export default function Market() {
     return () => clearInterval(intervalId);
   }, [marketCurrentPage, refetchData, refreshRate]);
 
-  const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
+  const { order, range, counterCurrency, search = "" } = marketParams;
 
   useTrackMarketDiscoverabilityPage(shouldDisplayAssetDiscoverability, {
     order,
@@ -137,10 +136,6 @@ export default function Market() {
                     toggle: toggleFilterByStarredAccounts,
                     value: starFilterOn,
                     disabled: !starredMarketCoins?.length,
-                  },
-                  liveCompatible: {
-                    toggle: toggleLiveCompatible,
-                    value: Boolean(liveCompatible),
                   },
                 }}
                 t={t}
