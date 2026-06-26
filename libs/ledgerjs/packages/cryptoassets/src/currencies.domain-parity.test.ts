@@ -1,8 +1,13 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import {
+  CRYPTO_CURRENCIES_REGISTRY,
+  CRYPTO_CURRENCY_ALIASES,
+} from "@domain/entity-currency-crypto";
+import {
+  cryptocurrenciesById,
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByTicker,
+  getCryptoCurrencyById,
   listCryptoCurrencies,
 } from "./currencies";
 import { setCryptoCurrenciesStore } from "./currencies-store";
@@ -39,6 +44,17 @@ describe("@domain/entity-currency-crypto parity with @ledgerhq/cryptoassets", ()
 
   it.each(sortedLegacyIds)("matches the legacy definition for %s", id => {
     expect(CRYPTO_CURRENCIES_REGISTRY[id]).toEqual(legacyById.get(id));
+  });
+
+  // The bundled map exposes a few legacy alias keys (source-literal key ≠ .id, e.g. "osmosis" → osmo).
+  // CRYPTO_CURRENCY_ALIASES must mirror them so the injected store keeps resolving those keys.
+  it("CRYPTO_CURRENCY_ALIASES mirrors the legacy bundled alias keys", () => {
+    const legacyAliases = Object.fromEntries(
+      Object.entries(cryptocurrenciesById)
+        .filter(([key, currency]) => key !== currency.id)
+        .map(([key, currency]) => [key, currency.id]),
+    );
+    expect(CRYPTO_CURRENCY_ALIASES).toEqual(legacyAliases);
   });
 });
 
@@ -99,4 +115,26 @@ describe("lookup parity: bundled store vs injected domain array", () => {
       }
     });
   });
+});
+
+// Guards the injection contract used by every app's bootstrap (`setCryptoCurrenciesStore(
+// Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES)`): once injected, the store
+// has no per-key fallback, so `getCryptoCurrencyById` must resolve every id — and every alias — or
+// it throws. This is the guard against the alias-key regression class (e.g. legacy "osmosis" → osmo).
+describe("getCryptoCurrencyById over the injected domain registry", () => {
+  beforeEach(() =>
+    setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES),
+  );
+  afterEach(clearInjectedStore);
+
+  it.each(sortedLegacyIds)("resolves %s to the domain object", id => {
+    expect(getCryptoCurrencyById(id)).toBe(CRYPTO_CURRENCIES_REGISTRY[id]);
+  });
+
+  it.each(Object.entries(CRYPTO_CURRENCY_ALIASES))(
+    "resolves legacy alias %s to its canonical currency",
+    (alias, id) => {
+      expect(getCryptoCurrencyById(alias)).toBe(CRYPTO_CURRENCIES_REGISTRY[id]);
+    },
+  );
 });

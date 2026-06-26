@@ -88,6 +88,7 @@
     "@braze/react-native-sdk": "18.0.0",
     "@datadog/mobile-react-native": "2.8.2",
     "@datadog/mobile-react-navigation": "2.8.2",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",

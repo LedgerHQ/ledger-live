@@ -9,6 +9,11 @@ import { setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 import pkg from "../package.json" with { type: "json" };
 import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { setCryptoCurrenciesStore } from "@ledgerhq/cryptoassets";
+import {
+  CRYPTO_CURRENCIES_REGISTRY,
+  CRYPTO_CURRENCY_ALIASES,
+} from "@domain/entity-currency-crypto";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -97,6 +102,8 @@ export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId
 ];
 
 setWalletAPIVersion(WALLET_API_VERSION);
+// The domain registry is the runtime source of truth for currency data.
+setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)

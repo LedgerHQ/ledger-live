@@ -44,6 +44,7 @@
   "devDependencies": {
     "@bunli/core": "0.9.1",
     "@bunli/utils": "0.6.0",
+    "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
