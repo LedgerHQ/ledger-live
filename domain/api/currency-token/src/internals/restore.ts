@@ -1,7 +1,7 @@
 import type { ThunkDispatch } from "@reduxjs/toolkit";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { cryptoAssetsApi } from "../api";
-import type { PersistedTokenEntry } from "../persistence";
+import type { PersistedTokenEntry } from "../types";
 
 // Package-private cache-restoration helpers for `restoreTokensToCache`. Imported directly by
 // `persistence.ts` (not via the internals barrel) so `api.ts` → internals never forms a cycle.

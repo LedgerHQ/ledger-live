@@ -10,10 +10,9 @@ import {
   filterExpiredTokens,
   restoreTokensToCache,
   parsePersistedCAL,
-  type PersistedTokenEntry,
-  type PersistedCAL,
   type WithCryptoAssetsApi,
 } from "./persistence";
+import { type PersistedCAL, type PersistedTokenEntry } from "./types";
 
 const mockToken: TokenCurrency = token({
   type: "TokenCurrency",

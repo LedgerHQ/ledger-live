@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import type { TokenCurrency } from "@domain/entity-currency-token";
 
 jest.mock("./converter", () => ({
   convertApiToken: jest.fn(),
@@ -14,35 +13,11 @@ import {
   useFindTokenByAddressInCurrencyQuery,
   useGetTokensSyncHashQuery,
 } from "./api";
-import { ApiResponseSchema, type ApiTokenResponse } from "./schema";
+import { ApiResponseSchema } from "./schema";
 import type { TokenByIdParams, TokenByAddressInCurrencyParams } from "./types";
+import { mockApiTokenResponse, mockTokenCurrency } from "./fixtures";
 
 const mockConvert = convertApiToken as jest.MockedFunction<typeof convertApiToken>;
-
-const mockApiTokenResponse: ApiTokenResponse = {
-  id: "ethereum/erc20/usd_coin",
-  contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  name: "USD Coin",
-  ticker: "USDC",
-  units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
-  standard: "erc20",
-  decimals: 6,
-  delisted: false,
-  live_signature: "3045022100...",
-};
-
-const mockTokenCurrency = {
-  type: "TokenCurrency",
-  id: "ethereum/erc20/usd_coin",
-  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  parentCurrencyId: "ethereum",
-  tokenType: "erc20",
-  name: "USD Coin",
-  ticker: "USDC",
-  delisted: false,
-  disableCountervalue: false,
-  units: [{ code: "USDC", name: "USD Coin", magnitude: 6 }],
-} as TokenCurrency;
 
 beforeEach(() => {
   jest.clearAllMocks();

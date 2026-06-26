@@ -6,9 +6,10 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import { z } from "zod";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { CalApiExtraSchema } from "./schema";
 import {
+  type CalApiExtra,
   type GetTokensDataParams,
   type PageParam,
   type TokenByAddressInCurrencyParams,
@@ -30,20 +31,6 @@ import {
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
-
-/**
- * Thunk `extraArgument` contract for {@link cryptoAssetsApi}. The app supplies the resolved CAL
- * service URL, client version and an optional logger at store configuration time, so this package
- * owns no env/config/logging dependency. The app picks the prod or staging URL — there is no
- * staging switch in here.
- */
-const CalApiExtraSchema = z.object({
-  calServiceUrl: z.string().min(1),
-  ledgerClientVersion: z.string().min(1),
-  logger: z.custom<(...args: unknown[]) => void>().optional(),
-});
-
-export type CalApiExtra = z.infer<typeof CalApiExtraSchema>;
 
 /**
  * Builds this package's slice of the thunk `extraArgument`. RTK leaves `extraArgument` untyped, so

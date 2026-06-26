@@ -1,5 +1,5 @@
 import { token } from "@domain/entity-currency-token";
-import type { PersistedTokenEntry } from "../persistence";
+import type { PersistedTokenEntry } from "../types";
 import {
   buildRestoreCacheEntries,
   groupTokensByCurrency,

@@ -1,46 +1,15 @@
-import { z } from "zod";
 import isEqual from "lodash/isEqual";
-import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-currency-token";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { ThunkDispatch } from "@reduxjs/toolkit";
 import { cryptoAssetsApi } from "./api";
-import { PERSISTENCE_VERSION } from "./internals";
+import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
 import {
   buildRestoreCacheEntries,
   groupTokensByCurrency,
   resolveCurrenciesToEvict,
 } from "./internals/restore";
-import type { TokenByAddressInCurrencyParams } from "./types";
-
-/** Matches an RTK Query `getTokensSyncHash` cache key, capturing the currency id. */
-const SYNC_HASH_QUERY_KEY = /getTokensSyncHash\("([^"]+)"\)/;
-
-/** Schema for a persisted token entry: a {@link TokenCurrency} plus cache-restoration metadata. */
-export const PersistedTokenEntrySchema = z.object({
-  /** Serializable token data (post-LIVE-32268 `TokenCurrency` is already serializable). */
-  data: TokenCurrencySchema,
-  /** When this token was fetched (Unix timestamp in ms). */
-  timestamp: z.number(),
-  /**
-   * The `token_identifier` used in the `findTokenByAddressInCurrency` query, if any.
-   * Needed to reconstruct the correct RTK Query cache key on hydration for chains where
-   * `contract_address` alone is not unique (e.g. MultiversX, Algorand, Cardano).
-   */
-  token_identifier: z.string().optional(),
-});
-
-export type PersistedTokenEntry = z.infer<typeof PersistedTokenEntrySchema>;
-
-/** Schema for the root persisted CAL blob, with a version pin and an optional hash map. */
-export const PersistedCALSchema = z.object({
-  /** The persistence version of the CAL blob. Used to determine compatibility with the current schema. */
-  version: z.literal(PERSISTENCE_VERSION),
-  /** The persisted token entries. */
-  tokens: z.array(PersistedTokenEntrySchema),
-  /** Mapping of currencyId to its `X-Ledger-Commit` hash. */
-  hashes: z.record(z.string(), z.string()).optional(),
-});
-
-export type PersistedCAL = z.infer<typeof PersistedCALSchema>;
+import { PersistedCALSchema } from "./schema";
+import type { PersistedCAL, PersistedTokenEntry, TokenByAddressInCurrencyParams } from "./types";
 
 /**
  * Validates an untrusted persisted blob (e.g. read from localStorage) against

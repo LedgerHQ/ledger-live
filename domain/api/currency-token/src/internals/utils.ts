@@ -1,8 +1,8 @@
 import type { FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { ApiResponseSchema, ApiTokenResponseSchema, type ApiTokenResponse } from "../schema";
+import { ApiResponseSchema, ApiTokenResponseSchema } from "../schema";
 import { convertApiToken } from "../converter";
-import type { TokensDataWithPagination } from "../types";
+import type { ApiTokenResponse, TokensDataWithPagination } from "../types";
 import { HEADER_X_LEDGER_NEXT } from "./constants";
 
 /**
