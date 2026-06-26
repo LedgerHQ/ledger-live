@@ -3,6 +3,7 @@ import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
+  computeUseAllAmount,
   extractBalances,
   toGasOptionsFromUnknown,
   transactionToIntent,
@@ -106,69 +107,76 @@ export function genericPrepareTransaction(
       gasOptions: transaction.gasOptions,
     });
     const estimation: FeeEstimation = customParametersFees
-      ? { value: BigInt(customParametersFees.toFixed()) }
+      ? {
+          value: BigInt(customParametersFees.toFixed()),
+          parameters: BigNumber.isBigNumber(transaction.additionalFees)
+            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
+            : undefined,
+        }
       : await coinModuleApi.estimateFees(intent, customFeesParameters);
     const fees = new BigNumber(estimation.value.toString());
 
-    if (!bnEq(transaction.fees, fees)) {
-      const next: GenericTransaction = {
-        ...transaction,
-        fees,
-        assetReference,
-        assetOwner,
-        customFees: {
-          parameters: {
-            fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
-          },
-        },
-      };
-
-      // Propagate needed fields
-      const fieldsToPropagate = [
-        "type",
-        "storageLimit",
-        "gasPrice",
-        // gas limit must not change in case it is custom
-        ...(transaction.customGasLimit ? [] : ["gasLimit"]),
-        "maxFeePerGas",
-        "maxPriorityFeePerGas",
-        "additionalFees",
-        // Slow/medium/fast presets produced by the coin-module: surfaced as-is
-        // so the UI can render fee presets without ever fetching them itself.
-        // Families that don't produce them leave this untouched.
-        "gasOptions",
-      ];
-
-      for (const field of fieldsToPropagate) {
-        propagateField(estimation, field, next);
-      }
-
-      if (
-        transaction.useAllAmount ||
-        ["stake", "unstake", "finalize_unstake", "delegate", "undelegate", "redelegate"].includes(
-          transaction.mode ?? "",
-        )
-      ) {
-        // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22228
-        const { amount } = await coinModuleApi.validateIntent(
+    let nextAmount = transaction.amount;
+    if (transaction.useAllAmount) {
+      if (transaction.subAccountId) {
+        // token send-max uses the full token balance (fees are paid in the native unit)
+        nextAmount = amount;
+      } else if (intent.intentType === "staking" || (!!assetReference && !!assetOwner)) {
+        // staking and tokens without a subAccountId have a coin-specific max we can't
+        // compute generically, so let the coin module work it out via validateIntent
+        const { amount: validated } = await coinModuleApi.validateIntent(
           transactionToIntent(
             account,
-            {
-              ...transaction,
-              assetOwner,
-              assetReference,
-            },
+            { ...transaction, assetOwner, assetReference },
             bridgeApi.computeIntentType,
             coinModuleApi.craftTransactionData,
           ),
           extractBalances(account, getAssetFromTokenForCurrency),
         );
-        next.amount = new BigNumber(amount.toString());
+        nextAmount = new BigNumber(validated.toString());
+      } else {
+        nextAmount = computeUseAllAmount(estimation, account.spendableBalance);
       }
-      return next;
     }
 
-    return transaction;
+    if (bnEq(transaction.fees, fees) && bnEq(transaction.amount, nextAmount)) {
+      return transaction;
+    }
+
+    const next: GenericTransaction = {
+      ...transaction,
+      fees,
+      amount: nextAmount,
+      assetReference,
+      assetOwner,
+      customFees: {
+        parameters: {
+          fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
+        },
+      },
+    };
+
+    // Propagate needed fields
+    const fieldsToPropagate = [
+      "type",
+      "storageLimit",
+      "gasPrice",
+      // gas limit must not change in case it is custom
+      ...(transaction.customGasLimit ? [] : ["gasLimit"]),
+      "maxFeePerGas",
+      "maxPriorityFeePerGas",
+      "additionalFees",
+      // Slow/medium/fast presets produced by the coin-module: surfaced as-is
+      // so the UI can render fee presets without ever fetching them itself.
+      // Families that don't produce them leave this untouched.
+      "gasOptions",
+    ];
+
+    for (const field of fieldsToPropagate) {
+      propagateField(estimation, field, next);
+    }
+
+    return next;
   };
 }
 

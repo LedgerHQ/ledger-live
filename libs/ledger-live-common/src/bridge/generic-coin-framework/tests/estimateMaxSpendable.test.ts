@@ -15,7 +15,6 @@ jest.mock("../createTransaction", () => ({
 const mockedGetCoinModuleApi = coinframework.getCoinModuleApi as jest.Mock;
 
 describe("genericEstimateMaxSpendable", () => {
-  const validateIntentMock = jest.fn();
   const estimateFeesMock = jest.fn();
   const dummyAccount = {
     id: "account_id",
@@ -36,10 +35,23 @@ describe("genericEstimateMaxSpendable", () => {
     jest.clearAllMocks();
   });
 
+  it("returns the token account spendable balance directly for a TokenAccount", async () => {
+    mockedGetCoinModuleApi.mockReturnValue({ estimateFees: estimateFeesMock });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const result = await estimate({
+      account: { type: "TokenAccount", spendableBalance: new BigNumber(123) } as any,
+      parentAccount: null,
+      transaction: {} as any,
+    });
+
+    expect(result.toString()).toBe("123");
+    expect(estimateFeesMock).not.toHaveBeenCalled();
+  });
+
   it("subtracts estimated fee from spendable balance", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
-      validateIntent: validateIntentMock.mockResolvedValue({ amount: 49990000n }),
     });
 
     const estimate = genericEstimateMaxSpendable("testnet", "local");
@@ -50,11 +62,42 @@ describe("genericEstimateMaxSpendable", () => {
     });
 
     expect(result.toString()).toBe("49990000");
-    expect(validateIntentMock).toHaveBeenCalledWith(
-      expect.anything(),
-      [{ value: 60000000n, locked: 10000000n, asset: { type: "native" } }],
-      expect.anything(),
-    );
+  });
+
+  it("subtracts additionalFees surfaced in parameters", async () => {
+    mockedGetCoinModuleApi.mockReturnValue({
+      estimateFees: estimateFeesMock.mockResolvedValue({
+        value: 10000n,
+        parameters: { additionalFees: 5000n },
+      }),
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const result = await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: {} as any,
+    });
+
+    expect(result.toString()).toBe("49985000");
+  });
+
+  it("uses parameters.amount when the coin module provides it", async () => {
+    mockedGetCoinModuleApi.mockReturnValue({
+      estimateFees: estimateFeesMock.mockResolvedValue({
+        value: 10000n,
+        parameters: { amount: 42n },
+      }),
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const result = await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: {} as any,
+    });
+
+    expect(result.toString()).toBe("42");
   });
 
   it("returns 0 if fee is higher than spendable", async () => {
@@ -65,7 +108,6 @@ describe("genericEstimateMaxSpendable", () => {
 
     mockedGetCoinModuleApi.mockReturnValue({
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
-      validateIntent: validateIntentMock.mockResolvedValue({ amount: 0n }),
     });
 
     const estimate = genericEstimateMaxSpendable("testnet", "local");
@@ -131,7 +173,6 @@ describe("genericEstimateMaxSpendable", () => {
   it("returns full spendable balance if fee is 0", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 0n }),
-      validateIntent: validateIntentMock.mockResolvedValue({ amount: 50000000n }),
     });
 
     const estimate = genericEstimateMaxSpendable("testnet", "local");
@@ -142,5 +183,37 @@ describe("genericEstimateMaxSpendable", () => {
     });
 
     expect(result.toString()).toBe("50000000");
+  });
+
+  it("uses the provided transaction fees without estimating again", async () => {
+    mockedGetCoinModuleApi.mockReturnValue({
+      estimateFees: estimateFeesMock,
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const result = await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: { fees: new BigNumber(20000) } as any,
+    });
+
+    expect(result.toString()).toBe("49980000");
+    expect(estimateFeesMock).not.toHaveBeenCalled();
+  });
+
+  it("subtracts provided additionalFees on top of the provided fees", async () => {
+    mockedGetCoinModuleApi.mockReturnValue({
+      estimateFees: estimateFeesMock,
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const result = await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: { fees: new BigNumber(20000), additionalFees: new BigNumber(5000) } as any,
+    });
+
+    expect(result.toString()).toBe("49975000");
+    expect(estimateFeesMock).not.toHaveBeenCalled();
   });
 });

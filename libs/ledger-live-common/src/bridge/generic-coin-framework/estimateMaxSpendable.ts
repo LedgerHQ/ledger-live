@@ -1,13 +1,9 @@
 import { AccountBridge } from "@ledgerhq/types-live";
+import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { getMainAccount } from "../../account";
 import { getCoinModuleApi } from "./api";
 import { createTransaction } from "./createTransaction";
-import {
-  bigNumberToBigIntDeep,
-  extractBalances,
-  getPendingTokenSpent,
-  transactionToIntent,
-} from "./utils";
+import { computeUseAllAmount, getPendingTokenSpent, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 import { getBridgeApi } from "./bridge";
@@ -31,35 +27,22 @@ export function genericEstimateMaxSpendable(
       useAllAmount: true,
     };
 
-    let fees = transaction?.fees;
-    if (!BigNumber.isBigNumber(fees)) {
-      const { value } = await coinModuleApi.estimateFees(
-        transactionToIntent(
-          mainAccount,
-          draftTransaction,
-          bridgeApi.computeIntentType,
-          coinModuleApi.craftTransactionData,
-        ),
-      );
+    const estimation: FeeEstimation = BigNumber.isBigNumber(transaction?.fees)
+      ? {
+          value: BigInt(transaction.fees.toFixed()),
+          parameters: BigNumber.isBigNumber(transaction?.additionalFees)
+            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
+            : undefined,
+        }
+      : await coinModuleApi.estimateFees(
+          transactionToIntent(
+            mainAccount,
+            draftTransaction,
+            bridgeApi.computeIntentType,
+            coinModuleApi.craftTransactionData,
+          ),
+        );
 
-      fees = new BigNumber(value.toString());
-    }
-
-    // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22229
-    const { amount } = await coinModuleApi.validateIntent(
-      transactionToIntent(
-        account,
-        { ...draftTransaction },
-        bridgeApi.computeIntentType,
-        coinModuleApi.craftTransactionData,
-      ),
-      extractBalances(account, bridgeApi.getAssetFromToken),
-      bigNumberToBigIntDeep({ value: transaction?.fees ?? new BigNumber(0) }),
-    );
-    if (["stellar", "tezos", "evm", "solana"].includes(network)) {
-      return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
-    }
-    const bnFee = BigNumber(fees.toString());
-    return BigNumber.max(0, account.spendableBalance.minus(bnFee));
+    return computeUseAllAmount(estimation, account.spendableBalance);
   };
 }

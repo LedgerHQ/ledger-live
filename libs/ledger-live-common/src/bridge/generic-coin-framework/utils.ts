@@ -10,6 +10,7 @@ import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
+  FeeEstimation,
   StakingOperation,
   TransactionIntent,
   TxData,
@@ -187,6 +188,27 @@ export function extractBalances(
   }
 
   return balances;
+}
+
+/** Base fee plus any `additionalFees` from parameters (e.g. EVM L2 data fees). */
+function totalFeesFromEstimation(estimation: FeeEstimation): BigNumber {
+  const raw = estimation.parameters?.additionalFees;
+  const additional =
+    typeof raw === "bigint" || typeof raw === "number" || typeof raw === "string"
+      ? new BigNumber(raw.toString())
+      : new BigNumber(0);
+  return new BigNumber(estimation.value.toString()).plus(additional);
+}
+
+/** Send-max amount: the coin's `parameters.amount` if present (e.g. Tezos), else spendableBalance - fees. */
+export function computeUseAllAmount(
+  estimation: FeeEstimation,
+  spendableBalance: BigNumber,
+): BigNumber {
+  if (estimation.parameters?.amount !== undefined) {
+    return BigNumber.max(0, new BigNumber(String(estimation.parameters.amount)));
+  }
+  return BigNumber.max(0, spendableBalance.minus(totalFeesFromEstimation(estimation)));
 }
 
 function isStringArray(value: unknown): value is string[] {

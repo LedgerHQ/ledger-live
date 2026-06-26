@@ -90,6 +90,32 @@ describe("genericSignOperation", () => {
     );
   });
 
+  it("signs the prepared amount on useAllAmount without recomputing it via validateIntent", async () => {
+    const validateIntent = jest.fn();
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      craftTransaction,
+      getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
+      combine: jest.fn().mockResolvedValue("signedTx"),
+      getNextSequence: jest.fn().mockResolvedValue(1n),
+      validateIntent,
+    });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    const observable = signOperation({
+      account,
+      transaction: { ...transaction, useAllAmount: true, amount: new BigNumber(100_000) },
+      deviceId: "",
+    });
+
+    await lastValueFrom(observable.pipe(toArray()));
+
+    expect(validateIntent).not.toHaveBeenCalled();
+    expect(craftTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ amount: 100000n }),
+      expect.anything(),
+    );
+  });
+
   it("throws FeeNotLoaded if fees are missing", async () => {
     const txWithoutFees = { ...transaction };
     delete txWithoutFees.fees;
