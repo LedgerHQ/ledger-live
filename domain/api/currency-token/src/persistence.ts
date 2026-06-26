@@ -4,7 +4,15 @@ import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-currency
 import type { ThunkDispatch } from "@reduxjs/toolkit";
 import { cryptoAssetsApi } from "./api";
 import { PERSISTENCE_VERSION } from "./internals";
+import {
+  buildRestoreCacheEntries,
+  groupTokensByCurrency,
+  resolveCurrenciesToEvict,
+} from "./internals/restore";
 import type { TokenByAddressInCurrencyParams } from "./types";
+
+/** Matches an RTK Query `getTokensSyncHash` cache key, capturing the currency id. */
+const SYNC_HASH_QUERY_KEY = /getTokensSyncHash\("([^"]+)"\)/;
 
 /** Schema for a persisted token entry: a {@link TokenCurrency} plus cache-restoration metadata. */
 export const PersistedTokenEntrySchema = z.object({
@@ -56,7 +64,7 @@ export interface WithCryptoAssetsApi {
 export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTokenEntry[] {
   const rtkState = state[cryptoAssetsApi.reducerPath];
 
-  if (!rtkState || !rtkState.queries) {
+  if (!rtkState?.queries) {
     return [];
   }
 
@@ -65,8 +73,7 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
 
   for (const query of Object.values(rtkState.queries)) {
     if (
-      query &&
-      query.status === "fulfilled" &&
+      query?.status === "fulfilled" &&
       query.data &&
       (query.endpointName === "findTokenById" ||
         query.endpointName === "findTokenByAddressInCurrency")
@@ -97,7 +104,7 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
 export function extractHashesFromState(state: WithCryptoAssetsApi): Record<string, string> {
   const rtkState = state[cryptoAssetsApi.reducerPath];
 
-  if (!rtkState || !rtkState.queries) {
+  if (!rtkState?.queries) {
     return {};
   }
 
@@ -105,15 +112,14 @@ export function extractHashesFromState(state: WithCryptoAssetsApi): Record<strin
 
   for (const [queryKey, query] of Object.entries(rtkState.queries)) {
     if (
-      query &&
-      query.status === "fulfilled" &&
+      query?.status === "fulfilled" &&
       query.endpointName === "getTokensSyncHash" &&
       query.data &&
       typeof query.data === "string"
     ) {
       // Query key format: 'getTokensSyncHash("ethereum")'
-      const match = queryKey.match(/getTokensSyncHash\("([^"]+)"\)/);
-      if (match && match[1]) {
+      const match = SYNC_HASH_QUERY_KEY.exec(queryKey);
+      if (match?.[1]) {
         hashes[match[1]] = query.data;
       }
     }
@@ -180,98 +186,21 @@ export async function restoreTokensToCache(
     return;
   }
 
-  const tokensByCurrency = new Map<string, PersistedTokenEntry[]>();
-  for (const entry of validTokens) {
-    const currencyId = entry.data.parentCurrencyId;
-    if (!tokensByCurrency.has(currencyId)) {
-      tokensByCurrency.set(currencyId, []);
-    }
-    tokensByCurrency.get(currencyId)!.push(entry);
-  }
-
-  const currencyIdsToEvict = new Set<string>();
-  const hashes = persistedData.hashes || {};
-
-  for (const currencyId of tokensByCurrency.keys()) {
-    const storedHash = hashes[currencyId];
-    if (!storedHash) continue;
-
-    try {
-      const currentHashResult = await dispatch(
-        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, {
-          forceRefetch: false,
-        }),
-      );
-      const currentHash = currentHashResult.data;
-
-      if (currentHash && currentHash !== storedHash) {
-        currencyIdsToEvict.add(currencyId);
-      }
-    } catch {
-      currencyIdsToEvict.add(currencyId);
-    }
-  }
+  const tokensByCurrency = groupTokensByCurrency(validTokens);
+  const currencyIdsToEvict = await resolveCurrenciesToEvict(
+    dispatch,
+    tokensByCurrency,
+    persistedData.hashes ?? {},
+  );
 
   const tokensToRestore = validTokens.filter(
     entry => !currencyIdsToEvict.has(entry.data.parentCurrencyId),
   );
-
   if (tokensToRestore.length === 0) {
     return;
   }
 
-  const entries: Array<
-    | {
-        endpointName: "findTokenById";
-        arg: { id: string };
-        value: TokenCurrency | undefined;
-      }
-    | {
-        endpointName: "findTokenByAddressInCurrency";
-        arg: {
-          contract_address: string;
-          network: string;
-          token_identifier?: string;
-        };
-        value: TokenCurrency | undefined;
-      }
-  > = [];
-
-  for (const entry of tokensToRestore) {
-    const token = entry.data;
-
-    entries.push({
-      endpointName: "findTokenById",
-      arg: { id: token.id },
-      value: token,
-    });
-
-    entries.push({
-      endpointName: "findTokenByAddressInCurrency",
-      arg: {
-        contract_address: token.contractAddress,
-        network: token.parentCurrencyId,
-        ...(entry.token_identifier === undefined
-          ? {}
-          : { token_identifier: entry.token_identifier }),
-      },
-      value: token,
-    });
-
-    // Also restore the address-only key so lookups without token_identifier hit the cache.
-    // Collision on chains where address is not unique is a coin-level concern.
-    if (entry.token_identifier !== undefined) {
-      entries.push({
-        endpointName: "findTokenByAddressInCurrency",
-        arg: {
-          contract_address: token.contractAddress,
-          network: token.parentCurrencyId,
-        },
-        value: token,
-      });
-    }
-  }
-
+  const entries = buildRestoreCacheEntries(tokensToRestore);
   if (entries.length > 0) {
     dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
   }
