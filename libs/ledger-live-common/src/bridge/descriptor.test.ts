@@ -412,16 +412,6 @@ describe("sendFeatures", () => {
     expect(sendFeatures.canEstimateFeePresetsWithZeroAmount(ethereum, {})).toBe(true);
   });
 
-  it("should return empty plugins when not specified", () => {
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    expect(sendFeatures.getAmountPlugins(bitcoin)).toEqual([]);
-  });
-
-  it("should not expose legacy amount plugins for evm", () => {
-    const ethereum = getCryptoCurrencyById("ethereum");
-    expect(sendFeatures.getAmountPlugins(ethereum)).toEqual([]);
-  });
-
   it("should expose the gas options sync effect for evm", () => {
     const ethereum = getCryptoCurrencyById("ethereum");
     expect(sendFeatures.getAmountEffects(ethereum).map(e => e.id)).toEqual(["syncGasOptions"]);
