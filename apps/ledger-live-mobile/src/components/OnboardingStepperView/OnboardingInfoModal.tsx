@@ -57,7 +57,7 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
   const [primaryColor, textColor, bulletColor] = [colors.card, colors.darkBlue, colors.lightLive];
   return sceneInfoProps ? (
     <SafeAreaView
-      edges={["left", "right", "bottom"]}
+      edges={["top", "left", "right", "bottom"]}
       style={[
         styles.root,
         {

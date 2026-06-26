@@ -178,7 +178,7 @@ export const EarnWebview = ({
   return isLwm40Enabled ? (
     <View style={[styles.root]}>{webview}</View>
   ) : (
-    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root]}>
+    <SafeAreaView edges={["top", "left", "right", "bottom"]} style={[styles.root]}>
       {webview}
     </SafeAreaView>
   );
