@@ -17,15 +17,15 @@ import {
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { lastValueFrom, Observable } from "rxjs";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
-import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
 import { attachNetworkLogging } from "../utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 type CliCommand = ((userdataPath?: string) => Observable<unknown> | Promise<unknown> | string) & {

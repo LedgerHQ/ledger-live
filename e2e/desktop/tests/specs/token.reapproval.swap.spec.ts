@@ -1,20 +1,20 @@
 import test from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   revokeTokenApproval,
   ensureTokenApproval,
 } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import BigNumber from "bignumber.js";
-import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
+import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 
 const fromAccount = TokenAccount.ETH_USDT_1;
 const toAccount = Account.ETH_1;

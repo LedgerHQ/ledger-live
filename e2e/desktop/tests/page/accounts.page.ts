@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 export class AccountsPage extends AppPage {

@@ -5,7 +5,7 @@ import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;

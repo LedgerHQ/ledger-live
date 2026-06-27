@@ -1,14 +1,14 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import {
   Account,
   TokenAccount,
   getParentAccountName,
-} from "@ledgerhq/live-common/e2e/enum/Account";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+} from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import invariant from "invariant";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
@@ -16,9 +16,9 @@ import {
   liveDataWithParentAddressCommand,
   liveDataCommand,
   getAccountAddress,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 const subAccounts = [
   {

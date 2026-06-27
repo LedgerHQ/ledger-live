@@ -2,7 +2,7 @@ import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
-import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { isSpeculosRemote, isWallet40 } from "../helpers/commonHelpers";
 import {
   deleteSpeculos,
@@ -11,10 +11,10 @@ import {
   registerSpeculos,
   removeSpeculosAndDeregisterKnownSpeculos,
 } from "./speculosUtils";
-import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
+import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
 import type { PartialFeatures } from "@shared/feature-flags";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {

@@ -1,14 +1,14 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
 import type { OptionalFeatureMap } from "@shared/feature-flags";

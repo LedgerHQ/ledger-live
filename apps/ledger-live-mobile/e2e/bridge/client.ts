@@ -3,7 +3,12 @@ import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
 import { importSettings, setLastConnectedDevice } from "~/actions/settings";
-import { setOverride, setAllOverrides, selectFeature } from "@shared/feature-flags";
+import {
+  setOverride,
+  setAllOverrides,
+  selectFeature,
+  getAllFeatureFlags,
+} from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
@@ -19,7 +24,6 @@ import logReport from "../../src/log-report";
 import { webviewLogStore } from "../../src/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
-import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";

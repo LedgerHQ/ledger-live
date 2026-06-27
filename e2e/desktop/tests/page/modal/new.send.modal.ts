@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
 import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";

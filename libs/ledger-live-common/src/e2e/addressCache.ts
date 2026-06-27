@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { getFamilyByCurrencyId, isUTXOCompliant } from "../currencies/helpers";
+import { getFamilyByCurrencyId, isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import type { Account, TokenAccount } from "./enum/Account";
 
 const ENV_DIR = "E2E_GENERATED_ADDRESSES_DIR";

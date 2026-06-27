@@ -1,11 +1,11 @@
 import { step } from "../misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";

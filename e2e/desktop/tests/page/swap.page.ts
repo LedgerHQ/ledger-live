@@ -1,16 +1,16 @@
 import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
-import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
+import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
