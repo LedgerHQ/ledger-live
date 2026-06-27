@@ -1,5 +1,5 @@
 import { expect, Locator } from "@playwright/test";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { sanitizeAssetNameForTestId } from "~/mvvm/features/Assets/utils/assetTableHelpers";
 import { step } from "tests/misc/reporters/step";
 

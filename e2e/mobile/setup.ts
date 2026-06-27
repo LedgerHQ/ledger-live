@@ -1,6 +1,6 @@
 import { device, log } from "detox";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { close as closeBridge } from "./bridge/server";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setAllureDescription } from "./helpers/allure/allure-helper";

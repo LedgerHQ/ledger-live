@@ -1,6 +1,6 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";

@@ -1,7 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export class AssetDrawer extends Drawer {
   private assetInput = this.page.getByTestId("select-asset-drawer-search-input");

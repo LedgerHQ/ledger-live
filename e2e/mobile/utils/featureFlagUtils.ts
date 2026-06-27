@@ -1,4 +1,4 @@
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { isWallet40 } from "../helpers/commonHelpers";
 

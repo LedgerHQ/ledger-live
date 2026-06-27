@@ -2,7 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { Component } from "../../page/abstractClasses";
 import { AssetCategory, AssetSection } from "./assetSection";
 import { AssetsTable } from "./assetsTable";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export class AssetsView extends Component {
   readonly section = (category: AssetCategory) => new AssetSection(this.page, category);

@@ -5,7 +5,7 @@ import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/util
 import { isAssetSectionEnabled, isOperationsListEnabled } from "tests/utils/featureFlagUtils";
 import { CryptoAddressesBanner } from "../component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 

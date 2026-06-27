@@ -1,5 +1,5 @@
 import { CLI } from "tests/utils/cliUtils";
-import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
+import { activateLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { expect, Page, Response } from "@playwright/test";
 import { Application } from "tests/page";

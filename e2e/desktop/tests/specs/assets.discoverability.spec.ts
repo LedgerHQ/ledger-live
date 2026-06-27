@@ -1,11 +1,11 @@
 import { test } from "tests/fixtures/common";
 import { expect } from "@playwright/test";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 const deviceTags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 

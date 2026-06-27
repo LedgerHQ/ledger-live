@@ -1,6 +1,6 @@
 import { ApplicationOptions } from "page";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 async function beforeAllFunction(options: ApplicationOptions) {

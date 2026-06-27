@@ -1,6 +1,6 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";

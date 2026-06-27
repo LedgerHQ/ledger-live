@@ -17,12 +17,12 @@ import {
   approveToken,
   signTypedMessage as signTypedMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
+} from "@ledgerhq/live-e2e-shared/speculos";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {

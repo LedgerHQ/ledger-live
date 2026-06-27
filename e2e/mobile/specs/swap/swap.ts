@@ -1,9 +1,9 @@
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "./swap.setup";
 
