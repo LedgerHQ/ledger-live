@@ -1295,6 +1295,9 @@ importers:
       '@ledgerhq/live-cli':
         specifier: workspace:^
         version: link:../cli/dist
+      '@ledgerhq/live-e2e-shared':
+        specifier: workspace:^
+        version: link:../../e2e/shared
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport
@@ -2110,6 +2113,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-e2e-shared':
+        specifier: workspace:^
+        version: link:../../e2e/shared
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport
@@ -3172,6 +3178,9 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
+      '@ledgerhq/live-e2e-shared':
+        specifier: workspace:^
+        version: link:../shared
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -3292,6 +3301,9 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
+      '@ledgerhq/live-e2e-shared':
+        specifier: workspace:^
+        version: link:../shared
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -3412,6 +3424,89 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
+
+  e2e/shared:
+    dependencies:
+      '@ledgerhq/device-core':
+        specifier: workspace:^
+        version: link:../../libs/device-core
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../libs/ledgerjs/packages/devices
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../libs/ledger-wallet-framework
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../libs/env
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/logs
+      '@ledgerhq/speculos-device-controller':
+        specifier: 'catalog:'
+        version: 0.3.0(rxjs@7.8.2)
+      '@ledgerhq/speculos-transport':
+        specifier: workspace:^
+        version: link:../../libs/speculos-transport
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-devices':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-devices
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-live
+      '@shared/feature-flags':
+        specifier: workspace:*
+        version: link:../../shared/feature-flags
+      axios:
+        specifier: 'catalog:'
+        version: 1.13.5
+      expect:
+        specifier: 'catalog:'
+        version: 30.2.0
+      invariant:
+        specifier: ^2.2.4
+        version: 2.2.4
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.1
+    devDependencies:
+      '@types/invariant':
+        specifier: 2.2.37
+        version: 2.2.37
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/uuid':
+        specifier: ^9.0.0
+        version: 9.0.8
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
     optionalDependencies:
       '@oxlint/binding-darwin-arm64':
         specifier: 1.51.0
@@ -8243,9 +8338,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
-      '@ledgerhq/speculos-device-controller':
-        specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -11394,7 +11486,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 0.3.0(rxjs@7.8.2)
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -17794,8 +17886,6 @@ packages:
 
   '@ledgerhq/speculos-device-controller@0.3.0':
     resolution: {integrity: sha512-FCOGVs28pTxYEom+Yr8skQ1QUyj1+sC0YDvE+Xk+DfXQx8FMRI1l41x+XT8ZGPNUh8kRTd0hsZc2lqVpxD6a8w==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.1
 
   '@ledgerhq/wallet-api-client-react@1.4.31':
     resolution: {integrity: sha512-WbvKKd0EmlmU0xwFox+qYUSBMPWwnax0kzis3qQ7WGT6aMlwEGEPAwlJ81Hn209NjcIbSDhteHQk9eiV2sZEJw==}
@@ -24392,7 +24482,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -28534,7 +28624,7 @@ packages:
   git-raw-commits@2.0.11:
     resolution: {integrity: sha512-VnctFhw+xfj8Va1xtfEqCUD2XDrbAPSJx+hSrE5K7fGdjZruW7XV+QOrN7LF/RJyvspRiD2I0asWsxFp0ya26A==}
     engines: {node: '>=10'}
-    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-up@7.0.0:
@@ -33634,6 +33724,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -46351,10 +46442,14 @@ snapshots:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/speculos-device-controller@0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/speculos-device-controller@0.3.0(rxjs@7.8.2)':
     dependencies:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
+    transitivePeerDependencies:
+      - bufferutil
+      - rxjs
+      - utf-8-validate
 
   '@ledgerhq/wallet-api-client-react@1.4.31(@ton/crypto@3.3.0)(react@19.1.4)':
     dependencies:

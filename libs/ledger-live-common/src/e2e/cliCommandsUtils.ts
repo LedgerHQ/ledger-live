@@ -14,7 +14,7 @@ import {
 } from "./runCli";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../currencies/index";
+import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 
 export type LiveDataCommandOptions = {
   readonly useScheme?: boolean;

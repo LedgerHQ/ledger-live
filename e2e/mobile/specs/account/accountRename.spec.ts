@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { launchApp } from "../../helpers/commonHelpers";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { loadConfig } from "../../bridge/server";

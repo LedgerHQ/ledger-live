@@ -1,8 +1,8 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 const DELEGATION_AMOUNT = "1";
 const delegation = new Delegate(Account.SEI_EVM_1, DELEGATION_AMOUNT, "first-available");

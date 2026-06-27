@@ -1,5 +1,5 @@
-import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {

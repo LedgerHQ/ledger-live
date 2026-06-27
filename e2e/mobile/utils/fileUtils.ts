@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import * as fs from "fs/promises";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 export class FileUtils {
   @Step("get app.json size")

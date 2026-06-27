@@ -5,10 +5,10 @@ import {
   stopSpeculos,
   type SpeculosDevice,
   getSpeculosAddress,
-} from "@ledgerhq/live-common/e2e/speculos";
+} from "@ledgerhq/live-e2e-shared/speculos";
 import invariant from "invariant";
 import * as allure from "allure-js-commons";
-import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
+import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
 import { CLI } from "./cliUtils";
 import { unregisterTransportModule } from "@ledgerhq/live-common/hw/index";
 

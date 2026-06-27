@@ -163,10 +163,6 @@
     "./hooks": {
       "default": "./lib-es/hooks/index.js"
     },
-    "./e2e": {
-      "@ledgerhq/source": "./src/e2e/index.ts",
-      "default": "./lib-es/e2e/index.js"
-    },
     "./featureFlags": {
       "@ledgerhq/source": "./src/featureFlags/*.ts",
       "default": "./lib-es/featureFlags/*.js"
@@ -351,7 +347,6 @@
     "@ledgerhq/live-signer-cosmos": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
     "@ledgerhq/wallet-api-client": "^1.15.0",

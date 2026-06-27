@@ -272,6 +272,7 @@
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/asset-detail": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",

@@ -1,22 +1,22 @@
 import test from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   Account,
   TokenAccount,
   getParentAccountName,
-} from "@ledgerhq/live-common/e2e/enum/Account";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+} from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 

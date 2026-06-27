@@ -5,7 +5,7 @@ import {
   createNanoAppJsonFile,
   getDeviceFirmwareVersion,
   getSpeculosModel,
-} from "@ledgerhq/live-common/e2e/speculosAppVersion";
+} from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import path from "path";
 import { NANO_APP_CATALOG_PATH } from "./fileUtils";
 
