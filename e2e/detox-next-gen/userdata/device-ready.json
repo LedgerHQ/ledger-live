@@ -2755,6 +2755,49 @@
           "starred": false
         },
         "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:solana:7VTmWoH8YCmrvBPp3aYseGtYVpgP23E5RKV6QUP4FPFE:solanaSub",
+          "seedIdentifier": "9qtdByS8FYx6z8YznVFM7XGtjUv16VpZkjGxCBHE3zdm",
+          "used": false,
+          "derivationMode": "solanaSub",
+          "index": 0,
+          "freshAddress": "7VTmWoH8YCmrvBPp3aYseGtYVpgP23E5RKV6QUP4FPFE",
+          "freshAddressPath": "44'/501'/0'",
+          "blockHeight": 429009080,
+          "creationDate": "2026-06-16T09:59:07.000Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "solana",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistoryCache": {
+            "HOUR": {
+              "latestDate": 1782471600000,
+              "balances": []
+            },
+            "DAY": {
+              "latestDate": 1782428400000,
+              "balances": []
+            },
+            "WEEK": {
+              "latestDate": 1781996400000,
+              "balances": []
+            }
+          },
+          "subAccounts": [],
+          "solanaResources": {
+            "stakes": "[]",
+            "unstakeReserve": "0"
+          },
+          "swapHistory": [],
+          "nfts": [],
+          "name": "Solana 1",
+          "starred": false
+        },
+        "version": 1
       }
     ],
     "countervalues": {

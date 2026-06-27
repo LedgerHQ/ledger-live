@@ -4,7 +4,12 @@
 const SWC_CONFIG = {
   jsc: {
     target: "es2022",
-    parser: { syntax: "typescript", tsx: false, decorators: true, dynamicImport: true },
+    parser: {
+      syntax: "typescript",
+      tsx: false,
+      decorators: true,
+      dynamicImport: true,
+    },
   },
   sourceMaps: "inline",
   module: { type: "commonjs" },
@@ -15,8 +20,8 @@ const SWC_CONFIG = {
 // see them. The default ignore (everything under node_modules) is fine.
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
-  rootDir: "..",
-  testMatch: ["<rootDir>/e2e/**/*.test.ts"],
+  rootDir: ".",
+  testMatch: ["<rootDir>/specs/**/*.test.ts"],
   testTimeout: 300000,
   // Bump via `DETOX_WORKERS=4 pnpm test:ios` when you have multiple sims booted.
   maxWorkers: Number(process.env.DETOX_WORKERS) || 1,
@@ -24,12 +29,24 @@ module.exports = {
     "^.+\\.(ts|tsx)$": ["@swc/jest", SWC_CONFIG],
     "^.+\\.(js|mjs|cjs)$": [
       "@swc/jest",
-      { ...SWC_CONFIG, jsc: { ...SWC_CONFIG.jsc, parser: { syntax: "ecmascript" } } },
+      {
+        ...SWC_CONFIG,
+        jsc: { ...SWC_CONFIG.jsc, parser: { syntax: "ecmascript" } },
+      },
     ],
   },
   globalSetup: "detox/runners/jest/globalSetup",
   globalTeardown: "detox/runners/jest/globalTeardown",
-  reporters: ["detox/runners/jest/reporter"],
-  testEnvironment: "detox/runners/jest/testEnvironment",
+  reporters: [
+    "default", // Keep for console output
+    "jest-allure2-reporter",
+  ],
+  testEnvironment: "<rootDir>/jest.environment.ts",
+  testEnvironmentOptions: {
+    eventListeners: [
+      "jest-allure2-reporter/environment-listener",
+      ["detox-allure2-adapter"],
+    ],
+  },
   verbose: true,
 };

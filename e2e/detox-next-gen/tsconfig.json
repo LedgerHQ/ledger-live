@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "types": ["jest", "detox", "node"]
   },
-  "include": ["bridge/**/*", "helpers/**/*", "pages/**/*", "e2e/**/*", ".detoxrc.js"]
+  "include": ["bridge/**/*", "helpers/**/*", "pages/**/*", "specs/**/*", "flows/**/*", ".detoxrc.js"]
 }

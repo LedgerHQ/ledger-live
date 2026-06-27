@@ -16,8 +16,6 @@ import { WebHandle } from "../helpers/elements";
 import { TIMEOUTS } from "../helpers/timeouts";
 import { LiveAppPage } from "./liveApp.page";
 
-type Percentage = "25%" | "50%" | "75%" | "max";
-
 export class SwapLiveAppPage extends LiveAppPage {
   private readonly deeplink = "ledgerlive://swap";
 
@@ -30,8 +28,6 @@ export class SwapLiveAppPage extends LiveAppPage {
     "[data-testid^='compact-quote-card-provider-name-']",
   );
 
-  private readonly percentageToggle = (p: Percentage): WebHandle =>
-    this.web.testId(`mobile-keyboard-percentage-${p}`);
   private readonly providerCard = (name: string): WebHandle =>
     this.web.testId(`compact-quote-card-provider-name-${name}`);
   private readonly executeButton = (name: string): WebHandle =>
@@ -58,9 +54,24 @@ export class SwapLiveAppPage extends LiveAppPage {
     await this.toSelector.tap();
   }
 
-  /** Populate the amount via a percentage toggle on the keypad. */
-  async setPercentage(p: Percentage): Promise<void> {
-    await this.percentageToggle(p).tap();
+  /**
+   * True if the "from" selector already shows `ticker` (case-insensitive).
+   * Lets a flow skip the drawer round-trip when the currency is already set
+   * (the form often defaults the "from" side) — mirrors e2e/mobile's
+   * `selectCurrency` early-return.
+   */
+  async fromShows(ticker: string): Promise<boolean> {
+    return (await this.fromSelector.getValue()).toLowerCase().includes(ticker.toLowerCase());
+  }
+
+  /** True if the "to" selector already shows `ticker` (case-insensitive). */
+  async toShows(ticker: string): Promise<boolean> {
+    return (await this.toSelector.getValue()).toLowerCase().includes(ticker.toLowerCase());
+  }
+
+  /** Set an explicit amount in the "you send" field (a React-controlled input). */
+  async inputAmount(amount: string): Promise<void> {
+    await this.fromAmountInput.fill(amount);
   }
 
   /** Read the currently displayed "you send" amount. */
@@ -68,17 +79,14 @@ export class SwapLiveAppPage extends LiveAppPage {
     return this.fromAmountInput.getValue();
   }
 
-  /** Request quotes. */
+  /**
+   * Request quotes. Also dismisses the amount keypad — the quote cards become
+   * reachable on their own, so there's no separate "view quotes" step (the
+   * button that used to be relabelled "View quotes" is gone by the time the
+   * cards render; `selectProvider` scrolls the chosen card into view).
+   */
   async getQuotes(): Promise<void> {
     await this.getQuotesButton.tap();
-  }
-
-  /**
-   * Bring the quote cards into view: the keypad overlays the lower screen
-   * and relabels this same button to "View quotes".
-   */
-  async viewQuotes(): Promise<void> {
-    await this.getQuotesButton.tap({ scroll: true });
   }
 
   /** Wait for at least one provider quote card to appear. */

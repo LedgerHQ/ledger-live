@@ -22,7 +22,10 @@
     "@types/node": "catalog:",
     "@types/ws": "^8.5.12",
     "detox": "catalog:",
+    "detox-allure2-adapter": "1.0.0-alpha.42",
     "jest": "^29.7.0",
+    "jest-allure2-reporter": "2.2.8",
+    "jest-docblock": "29.7.0",
     "typescript": "catalog:",
     "ws": "^8.18.0"
   },

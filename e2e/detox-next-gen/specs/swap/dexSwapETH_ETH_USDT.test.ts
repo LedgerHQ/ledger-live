@@ -22,10 +22,9 @@
  * rather than a success screen, which is what step 14 asserts.
  */
 import { device } from "detox";
-import { launchApp, closeApp } from "../helpers/launchApp";
-import { loadConfig } from "../helpers/loadConfig";
-import { launchSpeculos, shutdownSpeculos, SpeculosHandle } from "../helpers/speculos";
-import * as bridge from "../bridge/server";
+import { startSession, endSession } from "../../helpers/session";
+import { SpeculosHandle } from "../../helpers/speculos";
+import * as bridge from "../../bridge/server";
 import {
   pressUntilTextFound,
   setExchangeDependencies,
@@ -38,14 +37,10 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { app } from "../pages";
+import { app } from "../../pages";
+import { performSwapUntilQuotes } from "../../flows/swap/swapFlow";
 
-const hasSpeculosEnv =
-  !!process.env.SEED && (!!process.env.COINAPPS || process.env.REMOTE_SPECULOS === "true");
-
-const maybeDescribe = hasSpeculosEnv ? describe : describe.skip;
-
-maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
+describe("Swap — ETH → ETH_USDT via Speculos", () => {
   let handle: SpeculosHandle;
   // provider = OKX so verifySwapData looks for the provider name on
   // the device instead of "swap ETH to USDT" — OKX is a DEX whose
@@ -62,9 +57,7 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
     // setExchangeDependencies is kept for parity with e2e/mobile — it
     // mutates specs["Exchange"] which is unused in this flow but free.
     setExchangeDependencies([{ name: "Ethereum" }]);
-    await launchApp();
-    await loadConfig("device-ready");
-    handle = await launchSpeculos("Ethereum");
+    handle = await startSession({ userdata: "device-ready", speculosApp: "Ethereum" });
     // Derive the account addresses on-device and populate the Account
     // singletons, exactly like e2e/mobile's swap setup (cliCommandsOnApp
     // → liveDataWithAddressCommand). getMinimumSwapAmount needs
@@ -99,10 +92,7 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
     await bridge.swapSetup();
   });
 
-  afterAll(async () => {
-    if (handle) await shutdownSpeculos(handle);
-    closeApp();
-  });
+  afterAll(() => endSession(handle));
 
   it("ETH to ETH_USDT", async () => {
     // 1. Minimum swap amount the API accepts right now (needs the address
@@ -114,43 +104,32 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
     // 2. Open the Swap Live App and wait for the form.
     await app.swapLiveApp.openViaDeeplink();
 
-    // 3. From currency: ETH on Ethereum.
-    await app.swapLiveApp.tapFromSelector();
-    await app.modularDrawer.chooseAsset("ETH", "Ethereum");
-    await app.modularDrawer.selectNetwork("ethereum");
-    await app.modularDrawer.selectAccount("Ethereum 1");
-
-    // 4. To currency: USDT (ERC20) on Ethereum.
-    await app.swapLiveApp.tapToSelector();
-    await app.modularDrawer.chooseAsset("USDT", "Tether USD");
-    await app.modularDrawer.selectNetwork("ethereum");
-    await app.modularDrawer.selectAccount("Ethereum 1");
-
-    // 5. Populate the amount via the 25% percentage toggle.
-    await app.swapLiveApp.setPercentage("25%");
-
-    // 6. Read the displayed from-amount so verifyAmountsAndAcceptSwap matches
-    //    the device screen, then request quotes.
-    const displayed = await app.swapLiveApp.getSendAmount();
+    // 3. Fill the form (ETH from, USDT to, min amount) and request quotes via
+    //    the shared helper. It skips the drawer when a side already shows the
+    //    ticker; keep swap.amount aligned with the displayed (possibly
+    //    reformatted) from-amount for verifyAmountsAndAcceptSwap.
+    const displayed = await performSwapUntilQuotes(
+      Account.ETH_1,
+      TokenAccount.ETH_USDT_1,
+      String(min),
+    );
     if (displayed) swap.amount = displayed;
-    await app.swapLiveApp.getQuotes();
 
-    // 7. Hardcode OKX so the test is deterministic — wait for its specific
+    // 4. Hardcode OKX so the test is deterministic — wait for its specific
     //    quote card (fails fast if OKX doesn't quote this pair).
     const provider = SwapProvider.OKX.name;
     await app.swapLiveApp.waitForProvider(provider);
 
-    // 8. Dismiss the keypad overlay (View quotes), select OKX, then execute.
-    await app.swapLiveApp.viewQuotes();
+    // 5. Select OKX's quote card (selectProvider scrolls it into view), then execute.
     await app.swapLiveApp.selectProvider(provider);
     await app.swapLiveApp.waitForExecuteReady(provider);
     await app.swapLiveApp.tapExecute(provider);
 
-    // 9. Quote selection navigates to the "Complete steps / Sign to swap"
+    // 6. Quote selection navigates to the "Complete steps / Sign to swap"
     //    step-approval screen — tap it to hand off to the native send flow.
     await app.swapLiveApp.confirmStepApproval();
 
-    // 10. Hands off to the native SendFunds Summary (Step 1 of 3). Wait for
+    // 7. Hands off to the native SendFunds Summary (Step 1 of 3). Wait for
     //     Continue with sync ON (clean transition), then disable Detox sync
     //     BEFORE tapping — Continue advances to Connect device, which streams
     //     swap APDUs and would otherwise deadlock Detox's wait-for-idle.
@@ -158,12 +137,12 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
     await device.disableSynchronization();
     await app.common.tapContinue();
 
-    // 11. High Fee modal — appears when network fees are >10% of the swap
+    // 8. High Fee modal — appears when network fees are >10% of the swap
     //     amount (the OKX router call has a non-trivial fee on small amounts).
     //     Dismissed silently if not shown.
     await app.swap.dismissHighFeeModal();
 
-    // 12. Speculos's Ethereum app shows a "Blind signing ahead" warning before
+    // 9. Speculos's Ethereum app shows a "Blind signing ahead" warning before
     //     "Review transaction" for a contract call with blind signing on.
     //     verifyAmountsAndAcceptSwap doesn't know this intermediate screen —
     //     poll for it and press both via the Speculos HTTP button API.
@@ -186,7 +165,7 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
       await new Promise(r => setTimeout(r, 500));
     }
 
-    // 13. Drive Speculos to sign. DEX swaps via the Ethereum app surface raw
+    // 10. Drive Speculos to sign. DEX swaps via the Ethereum app surface raw
     //     From/Amount/To/Max fees/Tx hash — not an Exchange "swap X to Y" line
     //     nor the provider uiName — so verifySwapData throws. Let the function
     //     walk the review screens, swallow that verification throw, and press
@@ -199,11 +178,10 @@ maybeDescribe("Swap — ETH → ETH_USDT via Speculos", () => {
       await pressBoth();
     }
 
-    // 14. Terminal state. With broadcast disabled the signed tx is produced on
+    // 11. Terminal state. With broadcast disabled the signed tx is produced on
     //     device but never broadcast, so there's no on-chain hash and the
     //     live-app returns to the step-approval ("Sign to swap") screen rather
     //     than a success screen — mirrors e2e/mobile's expectExecuteSwapOnStepApproval.
     await app.swapLiveApp.expectBackOnStepApproval();
-    await device.takeScreenshot("swap-signed-back-on-step-approval");
   });
 });

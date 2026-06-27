@@ -12,14 +12,15 @@ It is **not** a replacement for `e2e/mobile` yet — treat it as a sandbox.
 |---|---|
 | [docs/elements.md](docs/elements.md) | Using or extending the element lib (`helpers/elements`) |
 | [docs/page-objects.md](docs/page-objects.md) | Adding or changing a page object (`pages/`) |
-| [docs/specs.md](docs/specs.md) | Writing or changing a spec (`e2e/`) |
+| [docs/specs.md](docs/specs.md) | Writing or changing a spec (`specs/`) |
 | [docs/timeouts.md](docs/timeouts.md) | Choosing a wait timeout |
 
 ## Layout
 
 | Path | What |
 |---|---|
-| `e2e/*.test.ts` | Specs — drive the app via `app.*` only |
+| `specs/<feature>/*.test.ts` | Specs — drive the app via `app.*` only; one scenario per file |
+| `flows/<feature>/` | Reusable flows + setup + parameterized runners (`*.runner.ts`) |
 | `pages/` | Page objects + the `app` aggregator |
 | `helpers/elements/` | Element-interaction lib (`native/` + `web/`) |
 | `helpers/timeouts.ts` | Speed-tier wait durations |
@@ -50,7 +51,9 @@ image (`docker pull ghcr.io/ledgerhq/speculos:latest`), and `mise install` from 
 | `SPECULOS_DEVICE` | Device model — `LNSP` (default), `LNS`, `LNX`, `STAX`, `FLEX`, `NanoGen5` | optional |
 | `ANDROID_HOME` | Android SDK path | Android specs |
 
-Speculos specs auto-skip when `SEED` is missing.
+Speculos specs **require** `SEED` + (`COINAPPS` or `REMOTE_SPECULOS`): they boot a real
+Speculos in `beforeAll`, so without it they fail rather than skip. Run them with the env set
+(or target the non-device specs, e.g. `specs/smoke/starter.test.ts`).
 
 ### Build & run
 
@@ -62,7 +65,7 @@ pnpm --filter live-mobile run e2e:build --configuration ios.sim.release   # or a
 pnpm --filter detox-next-gen test:ios                                      # or test:android
 
 # single spec
-cd e2e/detox-next-gen && pnpm exec detox test --configuration ios.sim.release e2e/receive.test.ts
+cd e2e/detox-next-gen && pnpm exec detox test --configuration ios.sim.release specs/receive/receive.test.ts
 ```
 
 ## Userdata

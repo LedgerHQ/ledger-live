@@ -11,31 +11,20 @@
  * Pre-reqs (env): SEED, COINAPPS (local) or REMOTE_SPECULOS=true + SPECULINHO_URL.
  */
 import { device } from "detox";
-import { launchApp, closeApp } from "../helpers/launchApp";
-import { loadConfig } from "../helpers/loadConfig";
-import { launchSpeculos, shutdownSpeculos, SpeculosHandle } from "../helpers/speculos";
+import { startSession, endSession } from "../../helpers/session";
+import { SpeculosHandle } from "../../helpers/speculos";
 import { expectValidAddressDevice } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { app } from "../pages";
+import { app } from "../../pages";
 
-const hasSpeculosEnv =
-  !!process.env.SEED && (!!process.env.COINAPPS || process.env.REMOTE_SPECULOS === "true");
-
-const maybeDescribe = hasSpeculosEnv ? describe : describe.skip;
-
-maybeDescribe("Receive — Bitcoin verify-on-device via Speculos", () => {
+describe("Receive — Bitcoin verify-on-device via Speculos", () => {
   let handle: SpeculosHandle;
 
   beforeAll(async () => {
-    await launchApp();
-    await loadConfig("skip-onboarding-w40");
-    handle = await launchSpeculos("Bitcoin");
+    handle = await startSession({ userdata: "skip-onboarding-w40", speculosApp: "Bitcoin" });
   });
 
-  afterAll(async () => {
-    if (handle) await shutdownSpeculos(handle);
-    closeApp();
-  });
+  afterAll(() => endSession(handle));
 
   it("verifies the receive address on Speculos", async () => {
     // 1. Wallet 4.0 empty home → Transfer → Receive. Sync ON here:
@@ -62,7 +51,6 @@ maybeDescribe("Receive — Bitcoin verify-on-device via Speculos", () => {
 
     // 6. Read the address the app is asking the device to verify.
     const addressFromApp = await app.receive.getAddressToVerify();
-    await device.takeScreenshot("verify-address-app-side");
 
     // 7. Drive Speculos: assert the on-device address matches what the app
     //    sent, then accept. Reads SPECULOS_API_PORT (set by launchSpeculos).
@@ -71,6 +59,5 @@ maybeDescribe("Receive — Bitcoin verify-on-device via Speculos", () => {
     // 8. After Speculos confirms, the app transitions to the final Receive
     //    screen (Confirmation 03) with the QR code + address.
     await app.receive.expectAddressVerified();
-    await device.takeScreenshot("receive-address-verified");
   });
 });

@@ -19,51 +19,51 @@ const getAndroidBinary = type =>
 const getAndroidTestBinary = type =>
   path.join(androidDir, `app/build/outputs/apk/androidTest/${type}/app-${type}-androidTest.apk`);
 
-
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
     args: {
-      '$0': 'jest',
-      config: 'e2e/jest.config.js'
+      $0: "jest",
+      config: "jest.config.js",
     },
     jest: {
-      setupTimeout: 120000
-    }
+      setupTimeout: 120000,
+    },
+  },
+  logger: {
+    level: "info",
   },
   behavior: {
     // Don't reinstall the .app between specs — the bridge resets state.
     // Flip to `true` if a spec mutates native storage in a way the bridge
     // can't undo (rare).
-    init: { reinstallApp: false, exposeGlobals: false },
-    launchApp: 'auto',
+    init: { exposeGlobals: false },
+    launchApp: "auto",
     // Reuse the booted simulator across specs and across runs locally.
     cleanup: { shutdownDevice: false },
   },
   apps: {
-    'ios.debug': {
-      type: 'ios.app',
-      binaryPath: getIosBinary('Debug'),
-      build: `xcodebuild -workspace ios/${SCHEME}.xcworkspace -scheme ${SCHEME} -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`
+    "ios.debug": {
+      type: "ios.app",
+      binaryPath: getIosBinary("Debug"),
+      build: `xcodebuild -workspace ios/${SCHEME}.xcworkspace -scheme ${SCHEME} -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
     },
-    'ios.release': {
-      type: 'ios.app',
-      binaryPath: getIosBinary('Release'),
+    "ios.release": {
+      type: "ios.app",
+      binaryPath: getIosBinary("Release"),
       build: `export ENVFILE=${ENV_FILE_MOCK} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/${SCHEME}.xcworkspace -scheme ${SCHEME} -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
     },
-    'android.debug': {
-      type: 'android.apk',
-      binaryPath: getAndroidBinary('debug'),
-      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug',
-      reversePorts: [
-        8081
-      ]
+    "android.debug": {
+      type: "android.apk",
+      binaryPath: getAndroidBinary("debug"),
+      build: "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug",
+      reversePorts: [8081],
     },
-    'android.release': {
-      type: 'android.apk',
-      binaryPath: getAndroidBinary('release'),
-      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release'
-    }
+    "android.release": {
+      type: "android.apk",
+      binaryPath: getAndroidBinary("release"),
+      build: "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release",
+    },
   },
   devices: {
     simulator: {
@@ -73,42 +73,42 @@ module.exports = {
       },
     },
     attached: {
-      type: 'android.attached',
+      type: "android.attached",
       device: {
-        adbName: '.*'
-      }
+        adbName: ".*",
+      },
     },
     emulator: {
-      type: 'android.emulator',
+      type: "android.emulator",
       device: {
-        avdName: 'Pixel_3a_API_30_x86'
-      }
-    }
+        avdName: "Pixel_3a_API_30_x86",
+      },
+    },
   },
   configurations: {
-    'ios.sim.debug': {
-      device: 'simulator',
-      app: 'ios.debug'
+    "ios.sim.debug": {
+      device: "simulator",
+      app: "ios.debug",
     },
-    'ios.sim.release': {
-      device: 'simulator',
-      app: 'ios.release'
+    "ios.sim.release": {
+      device: "simulator",
+      app: "ios.release",
     },
-    'android.att.debug': {
-      device: 'attached',
-      app: 'android.debug'
+    "android.att.debug": {
+      device: "attached",
+      app: "android.debug",
     },
-    'android.att.release': {
-      device: 'attached',
-      app: 'android.release'
+    "android.att.release": {
+      device: "attached",
+      app: "android.release",
     },
-    'android.emu.debug': {
-      device: 'emulator',
-      app: 'android.debug'
+    "android.emu.debug": {
+      device: "emulator",
+      app: "android.debug",
     },
-    'android.emu.release': {
-      device: 'emulator',
-      app: 'android.release'
-    }
-  }
+    "android.emu.release": {
+      device: "emulator",
+      app: "android.release",
+    },
+  },
 };

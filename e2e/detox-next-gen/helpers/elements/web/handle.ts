@@ -40,6 +40,19 @@ const VISIBILITY_SCRIPT = `(el) => {
     style.visibility !== 'hidden' && style.display !== 'none' && style.opacity !== '0';
 }`;
 
+/**
+ * `runScript` body (string — no DOM lib in tsconfig) that sets a controlled
+ * `<input>`'s value the way React expects. React tracks the value via its own
+ * descriptor, so assigning `el.value` is ignored; we call the native prototype
+ * setter and dispatch a bubbling `input` event so React's `onChange` fires.
+ * The new value arrives as `runScript`'s arg. Mirrors e2e/mobile's typeText.
+ */
+const SET_VALUE_SCRIPT = `(el, val) => {
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+  if (setter) setter.call(el, val); else el.value = val;
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+}`;
+
 export class WebHandle {
   constructor(private readonly target: Detox.WebElement) {}
 
@@ -108,6 +121,17 @@ export class WebHandle {
   async type(text: string, opts: WebWaitOpts & { contentEditable?: boolean } = {}): Promise<void> {
     await this.wait(opts);
     await this.target.typeText(text, opts.contentEditable ?? false);
+  }
+
+  /**
+   * Wait, then set a React-controlled `<input>`'s value (replacing any existing
+   * content) and fire its `onChange`. Use this instead of {@link type} for
+   * framework-controlled fields where simulated keystrokes don't register —
+   * e.g. the swap amount input.
+   */
+  async fill(value: string, opts: WebWaitOpts = {}): Promise<void> {
+    await this.wait(opts);
+    await this.target.runScript(SET_VALUE_SCRIPT, [value]);
   }
 
   /** Wait, then read the element's `.value` / `textContent` via `runScript`. */
