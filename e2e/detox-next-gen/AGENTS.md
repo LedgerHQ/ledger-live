@@ -1,7 +1,7 @@
 # detox-next-gen — agent guide
 
 Experimental next-gen Detox E2E suite. The conventions live in the [README](README.md)
-and the `docs/` it links (page objects, elements, timeouts, debugging) — read those
+and [`docs/`](docs/) — elements, page objects, specs, timeouts, debugging — read those
 before changing tests. This file holds the design rule most easily missed.
 
 ## Put logic at the right layer — don't duplicate mechanics across pages
