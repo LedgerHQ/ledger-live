@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>detox-next-gen — three improvements</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
+  <style>
+    :root {
+      --teal: #0f6e56; --teal-fill: #e1f5ee; --teal-border: #5dcaa5;
+      --gray-fill: #f1efe8; --gray-border: #b4b2a9; --ink: #2c2c2a; --muted: #5f5e5a;
+    }
+    .reveal { font-size: 30px; }
+    .reveal h1 { font-size: 1.7em; }
+    .reveal h2 { font-size: 1.35em; }
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4 { text-transform: none; font-weight: 500; color: var(--ink); }
+    .reveal section { text-align: left; }
+    .reveal section.center { text-align: center; }
+    .reveal pre { box-shadow: none; width: 100%; font-size: 0.46em; margin: 0; }
+    .reveal pre code { padding: 14px 16px; line-height: 1.45; max-height: 520px; border-radius: 6px; }
+    .lead { color: var(--muted); font-size: 0.72em; }
+    .cols { display: flex; gap: 22px; align-items: flex-start; }
+    .col { flex: 1; min-width: 0; }
+    .lbl { font-size: 0.6em; font-weight: 500; margin: 0 0 6px; }
+    .lbl.before { color: var(--muted); }
+    .lbl.after { color: var(--teal); }
+    .note { margin-top: 20px; font-size: 0.62em; }
+    .win { color: var(--teal); font-weight: 500; }
+    .cost { color: var(--muted); font-weight: 500; }
+    .reveal ul { display: inline-block; }
+    .reveal table.benefits { font-size: 0.44em; border-collapse: collapse; width: 100%; margin: 0; }
+    .reveal table.benefits th, .reveal table.benefits td { text-align: left; padding: 6px 12px; vertical-align: top; border-bottom: 1px solid var(--gray-border); }
+    .reveal table.benefits th { font-weight: 500; color: var(--ink); }
+    .reveal table.benefits td:first-child { color: var(--teal); font-weight: 500; white-space: nowrap; }
+    .reveal table.benefits ul { margin: 0; padding-left: 18px; display: block; }
+    .reveal table.benefits li { margin: 2px 0; }
+    .arch { display: block; margin: 0 auto; max-height: 540px; }
+    .arch text { font-family: inherit; }
+    .arch .t { font-size: 14px; fill: var(--ink); }
+    .arch .ts { font-size: 12px; fill: var(--muted); }
+    .arch .th { font-size: 14px; font-weight: 500; fill: var(--ink); }
+    .arch .box-gray { fill: var(--gray-fill); stroke: var(--gray-border); stroke-width: 1.4; }
+    .arch .box-teal { fill: var(--teal-fill); stroke: var(--teal-border); stroke-width: 1.6; }
+    .arch .arr { stroke: var(--muted); stroke-width: 1.4; fill: none; }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section>
+        <h2>Same layers — three changes</h2>
+        <svg class="arch" viewBox="0 0 680 422" role="img" xmlns="http://www.w3.org/2000/svg">
+          <title>Architecture comparison: e2e/mobile today vs detox-next-gen</title>
+          <desc>Two five-layer call stacks. Both share Specs and Raw Detox (gray). Flows, Pages and the Element layer differ (teal): a dedicated flows directory, leaf page objects, and a typed element-handle layer.</desc>
+          <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+          <text class="th" x="184" y="36" text-anchor="middle">e2e/mobile — today</text>
+          <text class="ts" x="184" y="54" text-anchor="middle">216 specs · in CI</text>
+          <text class="th" x="496" y="36" text-anchor="middle">detox-next-gen</text>
+          <text class="ts" x="496" y="54" text-anchor="middle">sandbox · 1 feature e2e</text>
+          <g><rect class="box-gray" x="48" y="72" width="272" height="46" rx="4"/><text class="th" x="184" y="91" text-anchor="middle">Specs</text><text class="ts" x="184" y="108" text-anchor="middle">data-driven .spec.ts</text></g>
+          <g><rect class="box-gray" x="360" y="72" width="272" height="46" rx="4"/><text class="th" x="496" y="91" text-anchor="middle">Specs</text><text class="ts" x="496" y="108" text-anchor="middle">data-driven .test.ts</text></g>
+          <g><rect class="box-gray" x="48" y="136" width="272" height="46" rx="4"/><text class="th" x="184" y="155" text-anchor="middle">Flows</text><text class="ts" x="184" y="172" text-anchor="middle">helpers in specs/</text></g>
+          <g><rect class="box-teal" x="360" y="136" width="272" height="46" rx="4"/><text class="th" x="496" y="155" text-anchor="middle">Flows</text><text class="ts" x="496" y="172" text-anchor="middle">dedicated flows/ dir</text></g>
+          <g><rect class="box-gray" x="48" y="200" width="272" height="46" rx="4"/><text class="th" x="184" y="219" text-anchor="middle">Pages</text><text class="ts" x="184" y="236" text-anchor="middle">pages call pages</text></g>
+          <g><rect class="box-teal" x="360" y="200" width="272" height="46" rx="4"/><text class="th" x="496" y="219" text-anchor="middle">Pages</text><text class="ts" x="496" y="236" text-anchor="middle">leaves, no page→page</text></g>
+          <g><rect class="box-gray" x="48" y="264" width="272" height="46" rx="4"/><text class="th" x="184" y="283" text-anchor="middle">Element layer</text><text class="ts" x="184" y="300" text-anchor="middle">global helper fns</text></g>
+          <g><rect class="box-teal" x="360" y="264" width="272" height="46" rx="4"/><text class="th" x="496" y="283" text-anchor="middle">Element layer</text><text class="ts" x="496" y="300" text-anchor="middle">typed element handles</text></g>
+          <g><rect class="box-gray" x="48" y="328" width="272" height="46" rx="4"/><text class="th" x="184" y="347" text-anchor="middle">Raw Detox</text><text class="ts" x="184" y="364" text-anchor="middle">by.id · by.web.css</text></g>
+          <g><rect class="box-gray" x="360" y="328" width="272" height="46" rx="4"/><text class="th" x="496" y="347" text-anchor="middle">Raw Detox</text><text class="ts" x="496" y="364" text-anchor="middle">by.id · by.web.css</text></g>
+          <line class="arr" x1="184" y1="120" x2="184" y2="133" marker-end="url(#arrow)"/>
+          <line class="arr" x1="184" y1="184" x2="184" y2="197" marker-end="url(#arrow)"/>
+          <line class="arr" x1="184" y1="248" x2="184" y2="261" marker-end="url(#arrow)"/>
+          <line class="arr" x1="184" y1="312" x2="184" y2="325" marker-end="url(#arrow)"/>
+          <line class="arr" x1="496" y1="120" x2="496" y2="133" marker-end="url(#arrow)"/>
+          <line class="arr" x1="496" y1="184" x2="496" y2="197" marker-end="url(#arrow)"/>
+          <line class="arr" x1="496" y1="248" x2="496" y2="261" marker-end="url(#arrow)"/>
+          <line class="arr" x1="496" y1="312" x2="496" y2="325" marker-end="url(#arrow)"/>
+          <rect class="box-gray" x="196" y="388" width="12" height="12" rx="2"/><text class="ts" x="214" y="398">same on both</text>
+          <rect class="box-teal" x="372" y="388" width="12" height="12" rx="2"/><text class="ts" x="390" y="398">next-gen change</text>
+        </svg>
+        <aside class="notes">Same five layers on both sides — we only changed the three in teal. Specs and the raw-Detox escape hatch are identical, so this isn't a rewrite of how tests are written, it's a refinement of the middle. (Verbally set up the context here: mobile is the authoritative suite — 216 specs, in CI; next-gen is a sandbox.)</aside>
+      </section>
+
+      <section>
+        <h2>1 · Element layer</h2>
+        <p class="lead">String ids + global functions over raw Detox → a typed handle that owns its match strategy and waits before every action.</p>
+        <div class="cols">
+          <div class="col">
+            <p class="lbl before">e2e/mobile — 83 injected globals</p>
+            <pre><code data-trim class="language-typescript">
+recipientInputId = "recipient-input";
+
+await waitForElementById(this.recipientInputId);
+await typeTextById(this.recipientInputId, address);
+            </code></pre>
+          </div>
+          <div class="col">
+            <p class="lbl after">detox-next-gen</p>
+            <pre><code data-trim class="language-typescript">
+recipient = byId("recipient-input");
+
+// waits, then acts — one call
+await this.recipient.replaceText(address);
+            </code></pre>
+          </div>
+        </div>
+        <p class="note"><span class="win">Win:</span> every action waits first → kills the #1 flake; strategy explicit at definition; native + web symmetric. &nbsp; <span class="cost">Cost:</span> a new lib to learn and own.</p>
+        <aside class="notes">Mobile repeats the id and splits wait from act. Next-gen declares the locator once with its strategy, and the wait is baked into .tap()/.fill()/.replaceText(). This is the slide to run the fast-fail demo on.</aside>
+      </section>
+
+      <section>
+        <h2>2 · Cross-page flows</h2>
+        <p class="lead">A page method coupled to other pages → pages stay leaves; cross-page orchestration moves to <code>flows/&lt;feature&gt;/</code>.</p>
+        <div class="cols">
+          <div class="col">
+            <p class="lbl before">e2e/mobile — a page reaches into others</p>
+            <pre><code data-trim class="language-typescript">
+// buySell.page.ts (BuySellPage)
+async chooseAssetIfNotSelected(account) {
+  if (await app.modularDrawer.isFlowEnabled(...))
+    await app.modularDrawer.selectAsset(account);
+  else
+    await app.common.selectAccount(account);
+}
+            </code></pre>
+          </div>
+          <div class="col">
+            <p class="lbl after">detox-next-gen — a flow over pages</p>
+            <pre><code data-trim class="language-typescript">
+// flows/swap/swapFlow.ts — selectSwapCurrency()
+await app.swapLiveApp.tapFromSelector();
+await app.modularDrawer.chooseAsset(ticker, name);
+await app.modularDrawer.selectAccount(name);
+            </code></pre>
+          </div>
+        </div>
+        <p class="note"><span class="win">Litmus:</span> touches &gt;1 page → flow; one page → page method. &nbsp; <code>BuySellPage</code> depends on <code>ModularDrawer</code> + <code>CommonPage</code>; in next-gen that orchestration lives in <code>swapFlow</code>, so pages never reference each other.</p>
+        <aside class="notes">Concrete files: in mobile, BuySellPage.chooseAssetIfNotSelected (page/trade/buySell.page.ts:70) reaches into two other page objects in one method — app.modularDrawer and app.common. That cross-page knowledge sits inside a page. In next-gen, selectSwapCurrency lives in flows/swap/swapFlow.ts:34 and spans swapLiveApp + modularDrawer; its file comment says it lives there to avoid page→page delegation. Pages stay leaves → no circular deps, each readable alone.</aside>
+      </section>
+
+      <section>
+        <h2>3 · Timeouts</h2>
+        <p class="lead">One uniform 60s knob → named speed tiers, fast-by-default, opt up on demand.</p>
+        <div class="cols">
+          <div class="col">
+            <p class="lbl before">e2e/mobile</p>
+            <pre><code data-trim class="language-typescript">
+// applied to ~every wait
+const DEFAULT_TIMEOUT = 60000;
+            </code></pre>
+          </div>
+          <div class="col">
+            <p class="lbl after">detox-next-gen</p>
+            <pre><code data-trim class="language-typescript">
+XS=1s  S=5s  M=60s  L=120s  XL=180s
+
+// default XS; a slow step opts up
+async openViaDeeplink(t = TIMEOUTS.M) {}
+            </code></pre>
+          </div>
+        </div>
+        <p class="note"><span class="win">Win:</span> a failing test fails in ~1s, not 60s — tight loop, fast red signal; the tier names the intent. &nbsp; <span class="cost">Cost:</span> mis-tiering → flake (we hit it twice). A deliberate trade.</p>
+        <aside class="notes">Keep this one brief — it's the last topic before the ask. Mobile's 60s is slow-but-safe. Tiers trade that for speed + intent, and ask the author to think about each wait. Be honest about the new failure mode.</aside>
+      </section>
+
+      <section>
+        <h2>Benefits — talking points</h2>
+        <table class="benefits">
+          <thead>
+            <tr><th>Benefit</th><th>Talking points (proof + rebuttal)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fewer flakes</td><td><ul>
+              <li>Every action waits for visibility first — the #1 Detox flake, gone by construction</li>
+              <li>"Mobile waits too" → only if you remember <code>waitForElementById</code>; here it's not optional</li>
+            </ul></td></tr>
+            <tr><td>Faster signal</td><td><ul>
+              <li>Default tier 1s vs mobile's uniform 60s — a real failure returns in ~1s</li>
+              <li>"Won't 1s flake?" → slow steps opt up (M/L/XL), named at the call site</li>
+            </ul></td></tr>
+            <tr><td>Clearer failures</td><td><ul>
+              <li>Error names the element + strategy, not <code>web element to exist</code></li>
+              <li>Known error screens report the on-screen text, not a generic timeout</li>
+            </ul></td></tr>
+            <tr><td>Cleaner to change</td><td><ul>
+              <li>Pages are leaves; cross-page logic written once in <code>flows/</code>, reused</li>
+              <li>"Mobile has flow-helpers" → but its pages call pages (<code>BuySellPage</code> → 2 pages); here that's impossible</li>
+            </ul></td></tr>
+            <tr><td>Explicit deps</td><td><ul>
+              <li>Imports → go-to-definition, autocomplete, knip, safe renames</li>
+              <li>No 83-global <code>global.d.ts</code> to keep in sync; types can't drift</li>
+            </ul></td></tr>
+            <tr><td>Easier to onboard</td><td><ul>
+              <li>Specs read as <code>app.*</code>; conventions written (README + docs/ + AGENTS.md)</li>
+              <li>A new dev — or AI — finds a helper because it's imported, not ambient</li>
+            </ul></td></tr>
+          </tbody>
+        </table>
+        <aside class="notes">Q&A armor: each benefit with its proof and the rebuttal to the obvious pushback. You don't have to present it — keep it ready to jump to when a claim gets challenged. Facts to anchor on: waitForElementById is opt-in in mobile; mobile's default is 60s; BuySellPage.chooseAssetIfNotSelected drives two pages; global.d.ts declares 83 globals.</aside>
+      </section>
+
+      <section class="center">
+        <h2>The plan</h2>
+        <ul>
+          <li>Keep <code>detox-next-gen</code> as a <span class="win">reference + lab</span> — prove patterns here first</li>
+          <li>Add the improvements into <code>e2e/mobile</code> — <span class="win">in-place, incremental</span></li>
+        </ul>
+        <p class="lead">Harvest the lab into the suite we already trust.</p>
+        <aside class="notes">detox-next-gen isn't thrown away — it's the reference + lab where these patterns (and the diagnostics win) got validated. We fold the improvements into mobile incrementally: timeouts tiers + failure diagnostics are additive and land now; typed element handles get used on new specs; pages-as-leaves is a convention for new code. This avoids the two-suite maintenance tax and divergence.</aside>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: "c/t",
+      transition: "fade",
+      plugins: [RevealHighlight, RevealNotes],
+    });
+  </script>
+</body>
+</html>
