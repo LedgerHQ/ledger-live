@@ -14,6 +14,7 @@ It is **not** a replacement for `e2e/mobile` yet — treat it as a sandbox.
 | [docs/page-objects.md](docs/page-objects.md) | Adding or changing a page object (`pages/`) |
 | [docs/specs.md](docs/specs.md) | Writing or changing a spec (`specs/`) |
 | [docs/timeouts.md](docs/timeouts.md) | Choosing a wait timeout |
+| [docs/debugging.md](docs/debugging.md) | Investigating a failure — artifacts captured on failure & where |
 
 ## Layout
 

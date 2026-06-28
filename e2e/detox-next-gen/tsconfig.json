@@ -12,5 +12,13 @@
     "skipLibCheck": true,
     "types": ["jest", "detox", "node"]
   },
-  "include": ["bridge/**/*", "helpers/**/*", "pages/**/*", "specs/**/*", "flows/**/*", ".detoxrc.js"]
+  "include": [
+    "bridge/**/*",
+    "helpers/**/*",
+    "pages/**/*",
+    "specs/**/*",
+    "flows/**/*",
+    "jest.environment.ts",
+    ".detoxrc.js"
+  ]
 }

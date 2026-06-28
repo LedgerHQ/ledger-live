@@ -43,7 +43,12 @@ module.exports = {
   ],
   testEnvironment: "<rootDir>/jest.environment.ts",
   testEnvironmentOptions: {
+    // `jest-metadata/environment-listener` MUST come first: it advances
+    // jest-metadata's per-test `currentMetadata` pointer that the allure
+    // listener + adapter push attachments onto. Without it every attachment
+    // lands on the root node and is dropped from result.json (orphaned files).
     eventListeners: [
+      "jest-metadata/environment-listener",
       "jest-allure2-reporter/environment-listener",
       ["detox-allure2-adapter"],
     ],
