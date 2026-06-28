@@ -21,7 +21,7 @@ export class ReceivePage extends CommonPage {
   }
 
   /** Confirm the newly discovered account (discovery can take minutes). */
-  async confirmAccountAddition(timeout = TIMEOUTS.XL): Promise<void> {
+  async confirmAccountAddition(timeout = TIMEOUTS.XS): Promise<void> {
     await this.tapConfirm({ timeout });
   }
 

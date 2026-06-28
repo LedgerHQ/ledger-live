@@ -140,7 +140,7 @@ describe("Swap — ETH → ETH_USDT via Speculos", () => {
     // 8. High Fee modal — appears when network fees are >10% of the swap
     //     amount (the OKX router call has a non-trivial fee on small amounts).
     //     Dismissed silently if not shown.
-    await app.swap.dismissHighFeeModal();
+    await app.send.dismissHighFeeModal();
 
     // 9. Speculos's Ethereum app shows a "Blind signing ahead" warning before
     //     "Review transaction" for a contract call with blind signing on.

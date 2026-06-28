@@ -90,12 +90,12 @@ export class SwapLiveAppPage extends LiveAppPage {
   }
 
   /** Wait for at least one provider quote card to appear. */
-  async waitForAnyQuote(timeout = TIMEOUTS.M): Promise<void> {
+  async waitForAnyQuote(timeout = TIMEOUTS.XS): Promise<void> {
     await this.anyProviderCard.wait({ timeout });
   }
 
   /** Wait for a specific provider's quote card to appear (fail fast if it doesn't quote this pair). */
-  async waitForProvider(name: string, timeout = TIMEOUTS.M): Promise<void> {
+  async waitForProvider(name: string, timeout = TIMEOUTS.XS): Promise<void> {
     await this.providerCard(name).wait({ timeout });
   }
 
@@ -127,7 +127,7 @@ export class SwapLiveAppPage extends LiveAppPage {
   }
 
   /** Wait for the step-approval button to reappear (DEX flow returns here after signing). */
-  async expectBackOnStepApproval(timeout = TIMEOUTS.L): Promise<void> {
+  async expectBackOnStepApproval(timeout = TIMEOUTS.XS): Promise<void> {
     await this.stepApprovalButton.wait({ timeout });
   }
 }

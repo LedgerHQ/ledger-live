@@ -10,8 +10,8 @@ which feature needs it. One source of truth: `TIMEOUTS`.
 
 | Tier | ms | Use for |
 |---|---|---|
-| `XS` | 15s | snappy native UI (the native default) |
-| `S` | 30s | webview content settling (the web default) |
+| `XS` | 1s | the default for every call site (native **and** web) |
+| `S` | 5s | first bump-up when `XS` proves too tight |
 | `M` | 60s | a network round-trip (e.g. swap quotes) |
 | `L` | 120s | signed-transaction processing / on-chain settlement |
 | `XL` | 180s | a multi-minute on-device stream (e.g. account discovery) |
@@ -20,7 +20,7 @@ which feature needs it. One source of truth: `TIMEOUTS`.
 
 ## Rules
 
-- **No inline `{ timeout: N }` literals.** Rely on the lib default (`XS` native, `S` web).
-- Override **only** for genuinely slower operations, and use a tier — never a raw number.
-- Expose the override as a method param default, e.g. `expectSuccess(timeout = TIMEOUTS.L)`.
+- **No inline `{ timeout: N }` literals.** Rely on the lib default (`XS`, for both native and web).
+- Call sites default to `XS`; bump an individual one up a tier **only** once a flow proves it needs longer — and use a tier, never a raw number.
+- Expose the override as a method param default, e.g. `waitForAnyQuote(timeout = TIMEOUTS.XS)`.
 - Pick the smallest tier that comfortably covers the operation's worst case.

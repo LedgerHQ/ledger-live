@@ -6,12 +6,16 @@
  *
  * Picking a tier: choose the smallest that comfortably covers the operation's
  * worst case. The parenthetical examples are hints, not bindings.
+ *
+ * Current convention: call sites default to `XS`; bump an individual call site
+ * up a tier only once a flow proves it needs longer. `S`–`XL` stay defined as
+ * those on-demand escape hatches.
  */
 export const TIMEOUTS = {
-  /** 15s — snappy, already-rendered native UI. */
-  XS: 15_000,
-  /** 30s — content that settles asynchronously (e.g. a webview). */
-  S: 30_000,
+  /** 1s — snappy, already-rendered native UI. */
+  XS: 1_000,
+  /** 5s — content that settles asynchronously (e.g. a webview). */
+  S: 5_000,
   /** 60s — gated on a single network round-trip. */
   M: 60_000,
   /** 120s — gated on a signed transaction processing / on-chain settlement. */

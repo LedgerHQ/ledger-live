@@ -36,9 +36,13 @@ export interface WebSurface {
 export function webView(scope?: Detox.NativeMatcher): WebSurface {
   const root: Detox.WebViewElement = scope ? web(scope) : web;
   return {
-    testId: testId => new WebHandle(root.element(by.web.cssSelector(`[data-testid="${testId}"]`))),
-    css: selector => new WebHandle(root.element(by.web.cssSelector(selector))),
-    id: htmlId => new WebHandle(root.element(by.web.id(htmlId))),
-    xpath: expr => new WebHandle(root.element(by.web.xpath(expr))),
+    testId: testId =>
+      new WebHandle(
+        root.element(by.web.cssSelector(`[data-testid="${testId}"]`)),
+        `testId "${testId}"`,
+      ),
+    css: selector => new WebHandle(root.element(by.web.cssSelector(selector)), `css "${selector}"`),
+    id: htmlId => new WebHandle(root.element(by.web.id(htmlId)), `id "${htmlId}"`),
+    xpath: expr => new WebHandle(root.element(by.web.xpath(expr)), `xpath "${expr}"`),
   };
 }

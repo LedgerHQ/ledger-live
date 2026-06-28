@@ -20,6 +20,7 @@ import { WalletPage } from "./wallet.page";
 import { TransferMenuDrawer } from "./transferMenu.drawer";
 import { ModularDrawer } from "./modular.drawer";
 import { ReceivePage } from "./receive.page";
+import { SendPage } from "./send.page";
 import { SwapPage } from "./swap.page";
 import { SwapLiveAppPage } from "./swapLiveApp.page";
 
@@ -38,6 +39,7 @@ export class Application {
   private readonly transferMenuDrawer = lazy(TransferMenuDrawer);
   private readonly modularDrawerPage = lazy(ModularDrawer);
   private readonly receivePage = lazy(ReceivePage);
+  private readonly sendPage = lazy(SendPage);
   private readonly swapPage = lazy(SwapPage);
   private readonly swapLiveAppPage = lazy(SwapLiveAppPage);
 
@@ -55,6 +57,9 @@ export class Application {
   }
   get receive(): ReceivePage {
     return this.receivePage();
+  }
+  get send(): SendPage {
+    return this.sendPage();
   }
   get swap(): SwapPage {
     return this.swapPage();

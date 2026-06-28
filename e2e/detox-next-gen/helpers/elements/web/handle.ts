@@ -19,7 +19,7 @@ import { TIMEOUTS, POLL_INTERVAL } from "../../timeouts";
 export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
 export type WebWaitOpts = {
-  /** Max time to poll. Default {@link TIMEOUTS.S}. */
+  /** Max time to poll. Default {@link TIMEOUTS.XS}. */
   timeout?: number;
   /** Gap between polls. Default {@link POLL_INTERVAL}. */
   interval?: number;
@@ -54,7 +54,16 @@ const SET_VALUE_SCRIPT = `(el, val) => {
 }`;
 
 export class WebHandle {
-  constructor(private readonly target: Detox.WebElement) {}
+  /**
+   * @param target the resolved Detox web element.
+   * @param description human-readable locator (e.g. `testId "pay-button"`),
+   *   surfaced in {@link wait}'s timeout error so a failure names the element.
+   *   Supplied by the `webView(...)` factories in ./surface.
+   */
+  constructor(
+    private readonly target: Detox.WebElement,
+    private readonly description: string,
+  ) {}
 
   /** The underlying Detox web element — escape hatch. */
   get raw(): Detox.WebElement {
@@ -82,7 +91,7 @@ export class WebHandle {
 
   /** Poll until the element exists (or, with `{ visible: true }`, is on-screen). */
   async wait(opts: WebWaitOpts = {}): Promise<Detox.WebElement> {
-    const timeout = opts.timeout ?? TIMEOUTS.S;
+    const timeout = opts.timeout ?? TIMEOUTS.XS;
     const interval = opts.interval ?? POLL_INTERVAL;
     const start = Date.now();
     for (;;) {
@@ -90,9 +99,9 @@ export class WebHandle {
       if (ready) return this.target;
       if (Date.now() - start > timeout) {
         throw new Error(
-          `WebHandle.wait: timed out after ${timeout}ms waiting for web element to ${
-            opts.visible ? "be visible" : "exist"
-          }`,
+          `WebHandle.wait: timed out after ${timeout}ms waiting for web element ${
+            this.description
+          } to ${opts.visible ? "be visible" : "exist"}`,
         );
       }
       await sleep(interval);
