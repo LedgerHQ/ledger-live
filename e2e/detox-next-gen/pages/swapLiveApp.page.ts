@@ -33,15 +33,20 @@ export class SwapLiveAppPage extends LiveAppPage {
   private readonly executeButton = (name: string): WebHandle =>
     this.web.css(`[data-testid^="quote-container-${name}"] [data-testid="execute-button"]`);
 
-  /** Open the Swap Live App via deeplink and wait for the form to render. */
-  async openViaDeeplink(): Promise<void> {
+  /**
+   * Open the Swap Live App via deeplink and wait for the form to render. The
+   * default is {@link TIMEOUTS.M}: this is a cold webview boot (fetch + render
+   * the live-app bundle over the network, ~8s), not a snappy native screen, so
+   * the `XS` web default is far too short.
+   */
+  async openViaDeeplink(timeout = TIMEOUTS.M): Promise<void> {
     await device.openURL({ url: this.deeplink });
-    await this.fromSelector.wait();
+    await this.fromSelector.wait({ timeout });
   }
 
-  /** Wait for the swap form to be present. */
-  async expectForm(): Promise<void> {
-    await this.fromSelector.wait();
+  /** Wait for the swap form to be present (network-gated webview boot → {@link TIMEOUTS.M}). */
+  async expectForm(timeout = TIMEOUTS.M): Promise<void> {
+    await this.fromSelector.wait({ timeout });
   }
 
   /** Tap the "from" coin selector (opens the native modular drawer). */
@@ -89,13 +94,13 @@ export class SwapLiveAppPage extends LiveAppPage {
     await this.getQuotesButton.tap();
   }
 
-  /** Wait for at least one provider quote card to appear. */
-  async waitForAnyQuote(timeout = TIMEOUTS.XS): Promise<void> {
+  /** Wait for at least one provider quote card to appear (quote fetch is network-gated → {@link TIMEOUTS.M}). */
+  async waitForAnyQuote(timeout = TIMEOUTS.M): Promise<void> {
     await this.anyProviderCard.wait({ timeout });
   }
 
-  /** Wait for a specific provider's quote card to appear (fail fast if it doesn't quote this pair). */
-  async waitForProvider(name: string, timeout = TIMEOUTS.XS): Promise<void> {
+  /** Wait for a specific provider's quote card to appear (network-gated → {@link TIMEOUTS.M}). */
+  async waitForProvider(name: string, timeout = TIMEOUTS.M): Promise<void> {
     await this.providerCard(name).wait({ timeout });
   }
 

@@ -13,7 +13,7 @@
  * global `expect`.
  */
 import { element, waitFor, expect as detoxExpect } from "detox";
-import { TIMEOUTS } from "../../timeouts";
+import { TIMEOUTS, POLL_INTERVAL, sleep } from "../../timeouts";
 
 export type ActionOpts = {
   /** Max time to wait for the element before acting. Default {@link TIMEOUTS.XS}. */
@@ -85,6 +85,38 @@ export class NativeHandle {
     await waitFor(el(this.matcher, opts.index))
       .not.toBeVisible()
       .withTimeout(opts.timeout ?? TIMEOUTS.XS);
+  }
+
+  /**
+   * Wait until this element is visible, racing it against an error element so a
+   * known failure screen fails fast — with its on-screen text — instead of
+   * burning the whole timeout. Generic across flows: pass any success vs error
+   * locators (swap success vs device-action error, a Send confirmation vs a Send
+   * error, …) plus an `errorLabel` for the thrown message.
+   *
+   * Polls (not Detox `waitFor`) so both outcomes are checked each tick — required
+   * when synchronization is disabled, as in the on-device signing flows.
+   */
+  async waitVisibleOrError(
+    errorTarget: NativeHandle,
+    o: ActionOpts & { errorLabel?: string } = {},
+  ): Promise<void> {
+    const timeout = o.timeout ?? TIMEOUTS.XS;
+    const label = o.errorLabel ?? "waitVisibleOrError";
+    const start = Date.now();
+    for (;;) {
+      if (await this.isVisible()) return;
+      if (await errorTarget.isVisible()) {
+        const detail = (await errorTarget.getText().catch(() => "")).trim();
+        throw new Error(`${label} failed: error screen shown${detail ? ` — "${detail}"` : ""}`);
+      }
+      if (Date.now() - start >= timeout) {
+        throw new Error(
+          `${label}: element not visible within ${timeout}ms (no error screen shown)`,
+        );
+      }
+      await sleep(POLL_INTERVAL);
+    }
   }
 
   /** Wait for visibility, then tap. */

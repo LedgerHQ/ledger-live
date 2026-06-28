@@ -10,9 +10,21 @@ import { CommonPage } from "./common.page";
 
 export class SwapPage extends CommonPage {
   private readonly successTitle = byId("swap-success-title");
+  // Generic device-action error screen (same testID e2e/mobile races against).
+  private readonly deviceActionError = byId("error-description-deviceAction");
 
-  /** Wait for the swap success (PendingOperation) screen. */
-  async expectSuccess(timeout = TIMEOUTS.XS): Promise<void> {
-    await this.successTitle.waitVisible({ timeout });
+  /**
+   * Wait for the swap to complete (the PendingOperation success screen), racing
+   * it against the device-action error screen so a failure fails fast. Budget is
+   * {@link TIMEOUTS.L}: sign → broadcast → settle → render is a real long async op
+   * and Detox sync is disabled here, so an explicit wait is required. The race is
+   * the generic {@link NativeHandle.waitVisibleOrError} — other flows reuse it
+   * with their own success/error locators.
+   */
+  async expectSuccess(timeout = TIMEOUTS.L): Promise<void> {
+    await this.successTitle.waitVisibleOrError(this.deviceActionError, {
+      timeout,
+      errorLabel: "Swap",
+    });
   }
 }
