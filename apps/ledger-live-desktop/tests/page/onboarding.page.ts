@@ -15,6 +15,7 @@ export class OnboardingPage extends AppPage {
   private stepperContinueButton = this.page.getByTestId("v3-modal-stepper-continue");
   private stepperEndButton = this.page.getByTestId("v3-modal-stepper-end");
   private tutorialContinueButton = this.page.getByTestId("v3-tutorial-continue");
+  private tutorialContinueSecondaryButton = this.page.getByTestId("v3-tutorial-continue-secondary");
   private pinCodeCheckbox = this.page.getByTestId("v3-private-pin-code-checkbox");
   private pinCodeDrawer = this.page.getByTestId("v3-pin-code-drawer");
   private recoveryPhraseCheckbox = this.page.getByTestId("v3-recovery-phrase-checkbox");
@@ -115,6 +116,14 @@ export class OnboardingPage extends AppPage {
 
   async continueTutorial() {
     await this.tutorialContinueButton.click();
+  }
+
+  async continueTutorialSecondary() {
+    await this.tutorialContinueSecondaryButton.click();
+  }
+
+  async waitForOnboardingComplete() {
+    await this.tutorialContinueButton.waitFor({ state: "detached" });
   }
 
   async acceptPrivatePinCode() {
