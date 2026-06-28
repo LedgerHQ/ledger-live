@@ -29,3 +29,6 @@ export type TimeoutCategory = keyof typeof TIMEOUTS;
 
 /** Gap between polls when waiting on a webview element (Detox has no web `waitFor`). */
 export const POLL_INTERVAL = 500;
+
+/** `await sleep(ms)` — a small Promise-based delay for poll spacing and fixed waits. */
+export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));

@@ -24,6 +24,7 @@
 import { device } from "detox";
 import { startSession, endSession } from "../../helpers/session";
 import { SpeculosHandle } from "../../helpers/speculos";
+import { sleep } from "../../helpers/timeouts";
 import * as bridge from "../../bridge/server";
 import {
   pressUntilTextFound,
@@ -84,9 +85,9 @@ describe("Swap — ETH → ETH_USDT via Speculos", () => {
       });
     await pressUntilTextFound(DeviceLabels.SETTINGS);
     await pressBoth(); // enter Settings
-    await new Promise(r => setTimeout(r, 300));
+    await sleep(300);
     await pressBoth(); // toggle the first item (Blind signing → Enabled)
-    await new Promise(r => setTimeout(r, 300));
+    await sleep(300);
     await pressUntilTextFound("Back");
     await pressBoth();
     await bridge.swapSetup();
@@ -162,7 +163,7 @@ describe("Swap — ETH → ETH_USDT via Speculos", () => {
         break;
       }
       if (/review transaction/i.test(screen)) break;
-      await new Promise(r => setTimeout(r, 500));
+      await sleep(500);
     }
 
     // 10. Drive Speculos to sign. DEX swaps via the Ethereum app surface raw

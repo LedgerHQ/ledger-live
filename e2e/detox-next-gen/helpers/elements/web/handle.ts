@@ -13,10 +13,7 @@
  * never builds `by.web.value`/`label`/`type` (iOS-only).
  */
 import { expect as detoxExpect } from "detox";
-import { TIMEOUTS, POLL_INTERVAL } from "../../timeouts";
-
-/** `await sleep(ms)` — the only intentional delay in this module (poll spacing). */
-export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+import { TIMEOUTS, POLL_INTERVAL, sleep } from "../../timeouts";
 
 export type WebWaitOpts = {
   /** Max time to poll. Default {@link TIMEOUTS.XS}. */

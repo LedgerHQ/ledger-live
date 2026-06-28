@@ -11,6 +11,7 @@
  */
 import net from "node:net";
 import { WebSocketServer, WebSocket } from "ws";
+import { sleep } from "../helpers/timeouts";
 
 type Message =
   | { type: "acceptTerms" }
@@ -61,7 +62,7 @@ async function waitForClient(timeoutMs = 15_000): Promise<void> {
     if (Date.now() - start > timeoutMs) {
       throw new Error("[bridge] app did not connect — is Config.DETOX set in the build?");
     }
-    await new Promise(r => setTimeout(r, 50));
+    await sleep(50);
   }
 }
 

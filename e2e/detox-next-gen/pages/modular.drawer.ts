@@ -4,7 +4,7 @@
  */
 import { by } from "detox";
 import { byId, byText, byMatcher, NativeHandle } from "../helpers/elements";
-import { POLL_INTERVAL, TIMEOUTS } from "../helpers/timeouts";
+import { POLL_INTERVAL, TIMEOUTS, sleep } from "../helpers/timeouts";
 import { CommonPage } from "./common.page";
 
 export class ModularDrawer extends CommonPage {
@@ -60,7 +60,7 @@ export class ModularDrawer extends CommonPage {
         await networkRow.tap();
         return;
       }
-      await new Promise<void>(resolve => setTimeout(resolve, POLL_INTERVAL));
+      await sleep(POLL_INTERVAL);
     }
     throw new Error(
       `Modular drawer settled on neither the network step (network-item-${network}) nor the ` +
