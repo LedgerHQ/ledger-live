@@ -1,15 +1,6 @@
 import { useFeature } from "@features/platform-feature-flags";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import {
-  Aside,
-  Button,
-  Drawer,
-  Flex,
-  IconsLegacy,
-  InfiniteLoader,
-  Logos,
-  ProgressBar,
-} from "@ledgerhq/react-ui";
+import { Button, Drawer, Flex, IconsLegacy, InfiniteLoader, ProgressBar } from "@ledgerhq/react-ui";
 import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -46,12 +37,9 @@ import { RecoveryHowTo1 } from "~/renderer/components/Onboarding/Screens/Tutoria
 import { RecoveryHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo2";
 import { RecoveryHowTo3 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo3";
 import { UseRecoverySheet } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/UseRecoverySheet";
-import { openURL } from "~/renderer/linking";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { OnboardingUseCase } from "../../OnboardingUseCase";
-import { urls } from "~/config/urls";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import { SecureYourCrypto } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/SecureYourCrypto";
@@ -99,12 +87,9 @@ const StepContent = styled.div`
 `;
 
 type FlowStepperProps = {
-  illustration?: React.ReactNode;
-  content?: React.ReactNode;
-  AsideFooter?: React.ElementType;
   ProgressBar?: React.ReactNode;
-  continueLabel?: string;
-  continueLabelSecondary?: string;
+  continueLabel?: React.ReactNode;
+  continueLabelSecondary?: React.ReactNode;
   continueLoading?: boolean;
   continueDisabled?: boolean;
   backLabel?: string;
@@ -115,16 +100,7 @@ type FlowStepperProps = {
   handleContinueSecondary?: () => void;
 };
 
-const FooterContainer = styled(Flex).attrs({ rowGap: 3, height: 120 })`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-`;
-
 const FlowStepper: React.FC<FlowStepperProps> = ({
-  illustration,
-  AsideFooter,
   continueLabel,
   continueLabelSecondary,
   backLabel,
@@ -137,35 +113,10 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   handleContinue,
   handleContinueSecondary,
 }) => {
-  const urlFaq = useLocalizedUrl(urls.faq);
-  const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
-
-  const handleHelp = () => openURL(urlFaq);
-
   const { t } = useTranslation();
-
-  const Footer = (
-    <FooterContainer>{AsideFooter ? <AsideFooter onClick={handleHelp} /> : null}</FooterContainer>
-  );
 
   return (
     <FlowStepperContainer>
-      {!nanoOnboardingFundWalletFeature && (
-        <Aside
-          backgroundColor="constant.purple"
-          header={
-            <Flex justifyContent="center">
-              <Logos.LedgerLiveRegular width={155} height={32} />
-            </Flex>
-          }
-          footer={Footer}
-          width="324px"
-          p={10}
-          position="relative"
-        >
-          {illustration}
-        </Aside>
-      )}
       <FlowStepperContentContainer flexGrow={1} justifyContent="center">
         <FlowStepperContent flexDirection="column" /* Agrandir ici */>
           {ProgressBar}
@@ -328,7 +279,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
   const trustchain = useSelector(trustchainSelector);
   const isLedgerSyncActive = Boolean(trustchain?.rootId);
-  const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
   const nanoOnboardingEnableSyncFeature = useFeature("lldOnboardingEnableSync")?.params?.nanos;
   const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
   const hasSyncStep = nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current;
@@ -664,14 +614,12 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         canContinue: !!connectedDevice && genuineCheckPassed,
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            if (nanoOnboardingFundWalletFeature) {
-              if (hasSyncStep) {
-                navigate(`${path}/${ScreenId.enableSync}`);
-                return;
-              } else {
-                navigate(`${path}/${ScreenId.secureYourCrypto}`);
-                return;
-              }
+            if (hasSyncStep) {
+              navigate(`${path}/${ScreenId.enableSync}`);
+              return;
+            } else {
+              navigate(`${path}/${ScreenId.secureYourCrypto}`);
+              return;
             }
           }
           completeOnboarding();
@@ -748,30 +696,16 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
       },
     ];
 
-    if (nanoOnboardingFundWalletFeature) {
-      if (hasSyncStep) {
-        return unfilteredScreens;
-      } else {
-        return unfilteredScreens.filter(({ id }) => id !== ScreenId.enableSync);
-      }
+    if (hasSyncStep) {
+      return unfilteredScreens;
     }
-
-    return unfilteredScreens.filter(
-      ({ id }) =>
-        ![
-          ScreenId.enableSync,
-          ScreenId.secureYourCrypto,
-          ScreenId.welcomeToWalletWithFunds,
-          ScreenId.welcomeToWalletWithoutFunds,
-        ].includes(id),
-    );
+    return unfilteredScreens.filter(({ id }) => id !== ScreenId.enableSync);
   }, [
     completeOnboarding,
     connectedDevice,
     dispatch,
     fromRecover,
     navigate,
-    nanoOnboardingFundWalletFeature,
     openAssetFlow,
     openDrawer,
     path,
@@ -825,7 +759,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
       stepList.splice(3, 1);
     }
 
-    if (useCase === OnboardingUseCase.setupDevice && nanoOnboardingFundWalletFeature) {
+    if (useCase === OnboardingUseCase.setupDevice) {
       if (hasSyncStep) {
         stepList.push({
           name: "enableSync",
@@ -843,7 +777,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     }
 
     return stepList;
-  }, [nanoOnboardingFundWalletFeature, useCase, hasSyncStep]);
+  }, [useCase, hasSyncStep]);
 
   const currentScreenIndex = useMemo(
     () => screens.findIndex(s => s.id === currentStep),
@@ -858,10 +792,8 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     id: currentScreenId,
   } = screens[currentScreenIndex];
   const CurrentScreen = component as unknown as {
-    Illustration: React.JSX.Element;
-    Footer: React.ElementType;
-    continueLabel: string;
-    continueLabelSecondary: string;
+    continueLabel?: React.ReactNode;
+    continueLabelSecondary?: React.ReactNode;
   };
 
   const screenStepIndex = useMemo(
@@ -1021,8 +953,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
       </Drawer>
 
       <FlowStepper
-        illustration={CurrentScreen.Illustration}
-        AsideFooter={CurrentScreen.Footer}
         continueDisabled={canContinue === false}
         ProgressBar={
           useCase !== OnboardingUseCase.connectDevice && useCase !== OnboardingUseCase.recover ? (
