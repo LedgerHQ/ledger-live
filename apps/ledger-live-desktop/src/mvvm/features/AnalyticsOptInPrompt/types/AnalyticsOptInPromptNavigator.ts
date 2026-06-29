@@ -5,6 +5,13 @@ export const EntryPoint = {
 
 export type EntryPoint = (typeof EntryPoint)[keyof typeof EntryPoint];
 
+export type AnalyticsOptInPromptHostProps = Readonly<{
+  onClose: () => void;
+  onSubmit?: () => void;
+  isOpened?: boolean;
+  entryPoint: EntryPoint;
+}>;
+
 export const FieldKeySwitch = {
   AnalyticsData: "AnalyticsData",
   PersonalizationData: "PersonalizationData",
