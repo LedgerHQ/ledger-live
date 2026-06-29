@@ -9105,18 +9105,18 @@
       },
       "actions" : {
         "title" : "Piyasa trendlerini anında görün",
-        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hemen görün ve içgörüleri eyleme dönüştürün."
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hızlıca görün ve içgörüleri eyleme dönüştürün."
       }
     },
     "cta" : {
       "continue" : "Devam",
-      "explore" : "Yeni portföyünüzü keşfedin"
+      "explore" : "Yeni portföyü keşfet"
     }
   },
   "q2Tour" : {
     "slides" : {
       "welcome" : {
-        "title" : "Daha akıllı portföy yönetimi. Daha net büyütme yolları",
+        "title" : "Daha akıllı portföy yönetimi. Portföyünüzü büyütmek için daha net adımlar.",
         "description" : ""
       },
       "aggregatedBalance" : {
@@ -9124,8 +9124,8 @@
         "description" : "USDC gibi çok zincirli varlıklar artık tek bir toplamla gösteriliyor. Basit, doğru, net."
       },
       "pnl" : {
-        "title" : "Getirileriniz tam önünüzde ve merkezde",
-        "description" : "Portföyünüzde ve analiz sayfasında her varlığın sağladığı kazanç ve kaybı görün."
+        "title" : "Getirileriniz merkezde ve tam önünüzde",
+        "description" : "Her bir varlığa ait kâr ve zarar durumunu, portföyünüzde ve analiz sayfanızda detaylıca inceleyin."
       },
       "earnSimulator" : {
         "title" : "Kazanç potansiyelinizi test edin",
@@ -9137,8 +9137,8 @@
       }
     },
     "cta" : {
-      "seeWhatsNew" : "Yenilikleri görün",
-      "next" : "Sonraki",
+      "seeWhatsNew" : "Yenilikleri gör",
+      "next" : "İleri",
       "gotIt" : "Anladım"
     }
   },
@@ -9146,16 +9146,16 @@
     "cta" : {
       "continue" : "Devam",
       "done" : "Tamam",
-      "fundYourWallet" : "Cüzdanınıza fon aktarın",
-      "discoverSwap" : "Takası keşfedin",
+      "fundYourWallet" : "Cüzdana fon aktar",
+      "discoverSwap" : "Takası keşfet",
       "discoverEarn" : "Kazan bölümünü keşfet",
-      "getCard" : "Kart alın",
+      "getCard" : "Kart al",
       "viewPortfolio" : "Portföyü görüntüle"
     },
     "slides" : {
       "fund" : {
         "title" : "Cüzdanınıza fon aktararak başlayın.",
-        "subTitle" : "Ledger Wallet'ı dilediğiniz şekilde fonlayın: transfer edin, satın alın veya nakit paranızı stabil coinlere dönüştürün."
+        "subTitle" : "Ledger Wallet'ı dilediğiniz şekilde fonlayın: varlık transfer edin, satın alın veya nakit paranızı stabil coin'lere dönüştürün."
       },
       "portfolio" : {
         "title" : "Piyasanın bir adım önünde olun",
