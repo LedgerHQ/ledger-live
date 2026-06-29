@@ -1,21 +1,14 @@
 import React, { memo } from "react";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
-import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import type { AnalyticsOptInPromptHostProps } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import AnalyticsOptInScreen from "LLD/features/AnalyticsOptInPrompt/screens/AnalyticsOptInScreen";
 import Box from "~/renderer/components/Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { useDrawerLogic } from "../hooks/useDrawerLogic";
 
-interface AnalyticsOptInPromptProps {
-  onClose: () => void;
-  onSubmit?: () => void;
-  isOpened?: boolean;
-  entryPoint: EntryPoint;
-}
-
 const AnalyticsOptInPrompt = memo(
-  ({ onClose, onSubmit, isOpened, entryPoint }: AnalyticsOptInPromptProps) => {
+  ({ onClose, onSubmit, isOpened, entryPoint }: AnalyticsOptInPromptHostProps) => {
     const { colors } = useTheme();
     const { step, setStep, handleRequestBack, handleRequestClose, preventClosable } =
       useDrawerLogic({
