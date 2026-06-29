@@ -3,14 +3,8 @@ import { BigNumber } from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Switch,
-  Keyboard,
-  SafeAreaView,
-} from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback, Switch, Keyboard } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
@@ -123,6 +117,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
         currency="dot"
       />
       <SafeAreaView
+        edges={["left", "right", "bottom"]}
         style={[
           styles.root,
           {

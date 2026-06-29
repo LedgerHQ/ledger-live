@@ -1,6 +1,7 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { StyleSheet, BackHandler, Platform } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "~/context/hooks";
 
 import { useNavigation } from "@react-navigation/native";
@@ -125,7 +126,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
 
   return (
-    <SafeAreaView style={[styles.root]}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}

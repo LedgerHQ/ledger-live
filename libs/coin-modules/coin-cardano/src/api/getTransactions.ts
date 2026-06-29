@@ -95,8 +95,9 @@ async function getSyncedTransactionsByChain(
   };
   transactions.forEach(trx => {
     [...trx.inputs, ...trx.outputs].forEach(io => {
-      if (availablePaymentCredentialsMap[io.paymentKey]) {
-        availablePaymentCredentialsMap[io.paymentKey].isUsed = true;
+      const credential = availablePaymentCredentialsMap[io.paymentKey];
+      if (credential) {
+        availablePaymentCredentialsMap[io.paymentKey] = { ...credential, isUsed: true };
       }
     });
   });
