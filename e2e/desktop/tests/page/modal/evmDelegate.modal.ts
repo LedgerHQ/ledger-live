@@ -23,6 +23,16 @@ export class EvmDelegateModal extends Modal {
     await this.rewardsInfoContinueButton.click();
   }
 
+  @step("Continue from EVM rewards info modal if it is shown")
+  async continueFromRewardsInfoIfPresent() {
+    // Stake opens either the rewards-info modal or the validator list; wait for
+    // whichever renders, then dismiss the info modal only if it showed.
+    await expect(this.rewardsInfoContinueButton.or(this.validatorList)).toBeVisible();
+    if (await this.rewardsInfoContinueButton.isVisible()) {
+      await this.rewardsInfoContinueButton.click();
+    }
+  }
+
   @step("Expect validator list to be visible")
   async expectValidatorListVisible() {
     await expect(this.validatorList).toBeVisible();

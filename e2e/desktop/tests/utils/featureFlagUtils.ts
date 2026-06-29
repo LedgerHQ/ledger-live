@@ -60,7 +60,7 @@ export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
   stakePrograms: {
     enabled: true,
     params: {
-      list: ["cosmos"],
+      list: ["cosmos", "sei_evm"],
       redirects: {
         "ethereum/erc20/usd__coin": {
           platform: "earn",

@@ -3,6 +3,7 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
 const DELEGATION_AMOUNT = "1";
 const delegation = new Delegate(Account.SEI_EVM_1, DELEGATION_AMOUNT, "first-available");
@@ -17,6 +18,7 @@ test.use({
       enabled: true,
       params: { supportedCurrencyIds: ["sei_evm"] },
     },
+    ...FF_STAKE_PROGRAMS_MODAL,
   },
 });
 
@@ -34,9 +36,8 @@ test.describe("SEI EVM Native Staking - Delegate flow", () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(delegation.account.accountName);
 
-      await app.evmDelegate.startFromEmptyState();
-      await app.evmDelegate.continueFromRewardsInfo();
-
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.evmDelegate.continueFromRewardsInfoIfPresent();
       await app.evmDelegate.expectValidatorListVisible();
       await app.evmDelegate.continueValidatorStep();
       await app.evmDelegate.setAmountAndContinue(DELEGATION_AMOUNT);
