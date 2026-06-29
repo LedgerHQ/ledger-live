@@ -2813,7 +2813,7 @@
   "tabs" : {
     "portfolio" : "วอลเล็ต",
     "accounts" : "บัญชี",
-    "transfer" : "การโอน",
+    "transfer" : "โอน",
     "manager" : "Ledger ของฉัน",
     "myWallet" : "วอลเล็ตของฉัน",
     "settings" : "การตั้งค่า",
@@ -2915,7 +2915,7 @@
       "stake" : "Stake"
     },
     "quickActionsCtas" : {
-      "transfer" : "การโอน",
+      "transfer" : "โอน",
       "swap" : "สวอป",
       "buy" : "ซื้อ",
       "connect" : "เชื่อมต่อ",
@@ -2923,7 +2923,7 @@
       "receive" : "รับ",
       "send" : "ส่ง",
       "transferDrawer" : {
-        "title" : "การโอน",
+        "title" : "โอน",
         "receiveCrypto" : "รับผ่านที่อยู่ของคริปโต",
         "sendCrypto" : "ส่งคริปโต",
         "bankTransfer" : "รับโอนเงินจากบัญชีธนาคาร",
@@ -9410,7 +9410,7 @@
     },
     "balanceDetails" : {
       "totalBalance" : "ยอดคงเหลือทั้งหมด",
-      "transfer" : "การโอน",
+      "transfer" : "โอน",
       "availableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
       "earnDeposit" : "ฝากเพื่อสร้างรายได้",
       "earnBanner" : "รับผลตอบแทนสูงสุด {{apy}}% {{type}}",
