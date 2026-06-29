@@ -117,7 +117,7 @@ export default function VoteSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="VoteFlow" name="Summary" flow="stake" action="vote" currency="celo" />
 
       <View style={styles.body}>

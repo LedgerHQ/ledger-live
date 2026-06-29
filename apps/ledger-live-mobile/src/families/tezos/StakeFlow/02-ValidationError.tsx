@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { StyleSheet, SafeAreaView } from "react-native";
+import { StyleSheet } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
@@ -24,7 +25,10 @@ export default function ValidationError() {
     navigation.goBack();
   }, [navigation]);
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      edges={["top", "left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen
         category="TezosStakeFlow"
         name="ValidationError"

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
-import { View, StyleSheet, FlatList, SafeAreaView, ListRenderItem } from "react-native";
+import { View, StyleSheet, FlatList, ListRenderItem } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
@@ -209,6 +210,7 @@ function SelectAccount({ navigation, route }: Props) {
 
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {

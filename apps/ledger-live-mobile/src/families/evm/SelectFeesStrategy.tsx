@@ -12,7 +12,6 @@ import { useTranslation } from "~/context/Locale";
 import {
   FlatList,
   ListRenderItemInfo,
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
@@ -246,14 +245,14 @@ export default function SelectFeesStrategy({
             </Alert>
           </TouchableOpacity>
         )}
-        <SafeAreaView style={styles.strategiesContainer}>
+        <View style={styles.strategiesContainer}>
           <FlatList
             data={customFees ? strategiesWithCustom : strategies}
             renderItem={renderItem}
             keyExtractor={s => s}
             extraData={feesStrategy}
           />
-        </SafeAreaView>
+        </View>
         <TouchableOpacity
           style={[
             styles.customizeFeesButton,

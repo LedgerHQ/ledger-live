@@ -19,7 +19,6 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import {
-  SafeAreaView,
   Keyboard,
   KeyboardAvoidingViewProps,
   Platform,
@@ -28,6 +27,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import Button from "~/components/Button";
 import CurrencyInput from "~/components/CurrencyInput";
@@ -123,7 +123,10 @@ export default function SelectAmount({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background.main }]}
+    >
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
