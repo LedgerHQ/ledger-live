@@ -46,6 +46,8 @@ import InfoStateDevTool from "./InfoStateDevTool";
 import InfoStateDevScreen from "./InfoStateDevTool/screens/InfoStateDevScreen";
 import DeviceActionContentDevTool from "./DeviceActionContentDevTool";
 import DeviceActionContentDevScreen from "./DeviceActionContentDevTool/screens/DeviceActionContentDevScreen";
+import DeviceIntentExecutorDevTool from "./DeviceIntentExecutorDevTool";
+import DeviceIntentExecutorDevScreen from "./DeviceIntentExecutorDevTool/screens/DeviceIntentExecutorDevScreen";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -153,6 +155,7 @@ const Default = () => {
       <GenericAwarenessModalDevTool />
       <InfoStateDevTool />
       <DeviceActionContentDevTool />
+      <DeviceIntentExecutorDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
@@ -169,6 +172,7 @@ const SectionDeveloper = () => (
       <Route path="generic-awareness-modal-qa" element={<GenericAwarenessModalDevScreen />} />
       <Route path="info-state-qa" element={<InfoStateDevScreen />} />
       <Route path="device-action-content-qa" element={<DeviceActionContentDevScreen />} />
+      <Route path="device-intent-executor-qa" element={<DeviceIntentExecutorDevScreen />} />
       <Route path="*" element={<Default />} />
     </Routes>
   </>
