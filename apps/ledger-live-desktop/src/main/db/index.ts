@@ -58,6 +58,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "wallet",
   "market",
   "marketBanner",
+  "knownDevices",
   "cryptoAssets",
   "identities",
   "featureFlags",

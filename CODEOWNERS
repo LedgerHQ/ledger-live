@@ -279,6 +279,8 @@ apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/liv
 **/BleDevicePairing*                                               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/reducers/knownDevices.ts               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/reducers/__tests__/knownDevices.test.ts @ledgerhq/live-devices
+apps/ledger-live-desktop/src/renderer/reducers/knownDevices.ts     @ledgerhq/live-devices
+apps/ledger-live-desktop/src/renderer/reducers/knownDevices.test.ts @ledgerhq/live-devices
 apps/ledger-live-mobile/src/transport/                             @ledgerhq/live-devices
 apps/ledger-live-mobile/src/react-native-hw-transport-ble/         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
