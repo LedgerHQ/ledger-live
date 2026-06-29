@@ -636,9 +636,9 @@ jobs:
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
           path: e2e/userdata/generated
-          key: e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
           restore-keys: |
-            e2e-userdata-mobile-
+            develop/e2e-userdata-mobile-
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
@@ -874,9 +874,9 @@ jobs:
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
           path: e2e/userdata/generated
-          key: e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
           restore-keys: |
-            e2e-userdata-mobile-
+            develop/e2e-userdata-mobile-
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}

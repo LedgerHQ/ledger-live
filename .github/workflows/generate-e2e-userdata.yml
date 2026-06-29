@@ -91,7 +91,16 @@ jobs:
       - name: Compute cache key date
         id: meta
         shell: bash
-        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+          # Scope the cache key to the IAM-writable S3 namespace: the develop
+          # OIDC role can only write under `develop/`, so keys generated on the
+          # develop branch (e.g. the daily cron) must carry that prefix.
+          PREFIX=""
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            PREFIX="develop/"
+          fi
+          echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Generate app.json userdata (Speculos)
         env:
@@ -149,7 +158,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1.9.0
         with:
           path: e2e/userdata/generated
-          key: ${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
+          key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
@@ -208,7 +217,16 @@ jobs:
       - name: Compute cache key date
         id: meta
         shell: bash
-        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+          # Scope the cache key to the IAM-writable S3 namespace: the develop
+          # OIDC role can only write under `develop/`, so keys generated on the
+          # develop branch (e.g. the daily cron) must carry that prefix.
+          PREFIX=""
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            PREFIX="develop/"
+          fi
+          echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Generate app.json userdata (Speculos)
         env:
@@ -266,7 +284,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1.9.0
         with:
           path: e2e/userdata/generated
-          key: ${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
+          key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
