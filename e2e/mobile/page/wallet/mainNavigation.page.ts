@@ -35,7 +35,7 @@ export default class MainNavigationPage {
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
   async waitForWallet40Ready(timeout = 60000) {
-    await waitForElementById(this.topBarMyWalletId, timeout);
+    await waitForElementById(this.topBarDiscoverId, timeout);
   }
 
   @Step("Wait for Legacy navigation to be ready")
