@@ -7,7 +7,7 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { withTranslation, Trans } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
@@ -22,6 +22,7 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
 import { Account, Operation } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/families/mina/types";
 
 export type Props = {
   stepId: StepId;
@@ -90,9 +91,9 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const { account, source = "Account Page", mode } = params;
   const steps = mode === "undelegate" ? undelegateSteps : delegateSteps;
 
+  const bridge = useAccountBridge<Transaction>(account);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
-    useBridgeTransaction(() => {
-      const bridge = getAccountBridge(account);
+    useBridgeTransaction(bridge, () => {
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {

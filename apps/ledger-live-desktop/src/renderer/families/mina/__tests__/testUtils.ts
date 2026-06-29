@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
-import { MinaAccount, Transaction, TransactionStatus } from "@ledgerhq/live-common/families/mina/types";
-import { ValidatorInfo } from "@ledgerhq/coin-mina/api/types";
+import {
+  MinaAccount,
+  Transaction,
+  TransactionStatus,
+  ValidatorInfo,
+} from "@ledgerhq/live-common/families/mina/types";
 import { Operation } from "@ledgerhq/types-live";
 import { StepProps } from "../StakingFlowModal/types";
 
