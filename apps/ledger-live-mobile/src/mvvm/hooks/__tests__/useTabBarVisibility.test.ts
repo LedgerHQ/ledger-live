@@ -21,28 +21,6 @@ const withFeatureFlag = (enabled: boolean, params?: Record<string, unknown>) =>
   );
 
 describe("useTabBarVisibility", () => {
-  describe("when lwmWallet40 feature flag is disabled", () => {
-    it("should throw error with descriptive message", () => {
-      expect(() => {
-        renderHook(() => useTabBarVisibility(), {
-          overrideInitialState: withFeatureFlag(false),
-        });
-      }).toThrow(
-        "[useTabBarVisibility] This hook requires the 'lwmWallet40' feature flag to be enabled",
-      );
-    });
-
-    it("should include guidance in error message", () => {
-      expect(() => {
-        renderHook(() => useTabBarVisibility(), {
-          overrideInitialState: withFeatureFlag(false),
-        });
-      }).toThrow(
-        "Ensure that any component using this hook is only rendered within Wallet 4.0-gated navigation trees",
-      );
-    });
-  });
-
   describe("when lwmWallet40 feature flag is enabled", () => {
     const getStateWithFeatureFlag = (isMainNavigatorVisible: boolean) => (state: State) => ({
       ...withFeatureFlag(true, { mainNavigation: true })(state),
@@ -135,14 +113,6 @@ describe("useTabBarVisibility", () => {
       // Unmount and verify restoration
       unmount();
       expect(store.getState().appstate.isMainNavigatorVisible).toBe(true);
-    });
-
-    it("should throw error when feature flag is disabled", () => {
-      expect(() => {
-        renderHook(() => useHideTabBar(), {
-          overrideInitialState: withFeatureFlag(false),
-        });
-      }).toThrow("[useTabBarVisibility] This hook requires the 'lwmWallet40' feature flag");
     });
 
     it("should restore previous hidden state on unmount when initially hidden", () => {

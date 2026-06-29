@@ -1,18 +1,13 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Box } from "@ledgerhq/native-ui";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";
-import {
-  Portfolio as NewPortfolio,
-  ReadOnlyPortfolio as NewReadOnlyPortfolio,
-} from "LLM/features/Portfolio";
+import { Portfolio, ReadOnlyPortfolio } from "LLM/features/Portfolio";
 import { useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const/navigation";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import Portfolio from "~/screens/Portfolio";
-import ReadOnlyPortfolio from "~/screens/Portfolio/ReadOnly";
 import WalletTabBackgroundGradient from "../WalletTab/WalletTabBackgroundGradient";
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
@@ -30,18 +25,11 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
-  const {
-    isEnabled: isNewPortfolioEnabled,
-    shouldDisplayWallet40MainNav: shouldDisplayWallet40TopBar,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayWallet40MainNav: shouldDisplayWallet40TopBar } =
+    useWalletFeaturesConfig("mobile");
   const { backgroundColor } = useWallet40Theme("mobile");
 
-  const PortfolioComponent = useMemo(() => {
-    if (readOnlyModeEnabled && hasNoAccounts) {
-      return isNewPortfolioEnabled ? NewReadOnlyPortfolio : ReadOnlyPortfolio;
-    }
-    return isNewPortfolioEnabled ? NewPortfolio : Portfolio;
-  }, [readOnlyModeEnabled, hasNoAccounts, isNewPortfolioEnabled]);
+  const PortfolioComponent = readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio;
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>

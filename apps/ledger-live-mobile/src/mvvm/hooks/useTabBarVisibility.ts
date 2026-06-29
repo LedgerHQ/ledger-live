@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 /**
  * Hook to control tab bar visibility in Wallet 4.0.
@@ -63,7 +62,6 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
  */
 export function useTabBarVisibility() {
   const dispatch = useDispatch();
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
   const isTabBarVisible = useSelector(isMainNavigatorVisibleSelector);
 
   const showTabBar = useCallback(() => {
@@ -73,15 +71,6 @@ export function useTabBarVisibility() {
   const hideTabBar = useCallback(() => {
     dispatch(updateMainNavigatorVisibility(false));
   }, [dispatch]);
-
-  // Fail-fast: Prevent usage in non-Wallet40 contexts
-  if (!isWallet40Enabled) {
-    throw new Error(
-      "[useTabBarVisibility] This hook requires the 'lwmWallet40' feature flag to be enabled. " +
-        "Ensure that any component using this hook is only rendered within Wallet 4.0-gated navigation trees " +
-        "where useWalletFeaturesConfig('mobile').isEnabled is true, or handle this error via an error boundary.",
-    );
-  }
 
   return {
     isTabBarVisible,

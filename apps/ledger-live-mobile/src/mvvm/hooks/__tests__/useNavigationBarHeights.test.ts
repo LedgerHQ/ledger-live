@@ -35,18 +35,6 @@ const withTabBarVisibility = (isVisible: boolean) => (state: State) => ({
 });
 
 describe("useNavigationBarHeights", () => {
-  describe("when lwmWallet40 feature flag is disabled", () => {
-    it("should throw error", () => {
-      expect(() => {
-        renderHook(() => useNavigationBarHeights(), {
-          overrideInitialState: withFeatureFlag(false),
-        });
-      }).toThrow(
-        "[useNavigationBarHeights] This hook requires the 'lwmWallet40' feature flag to be enabled",
-      );
-    });
-  });
-
   describe("when lwmWallet40 feature flag is enabled", () => {
     it("should calculate top height including the insets top", () => {
       const { result } = renderHook(() => useNavigationBarHeights(), {

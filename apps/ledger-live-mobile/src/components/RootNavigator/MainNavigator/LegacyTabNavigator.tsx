@@ -1,7 +1,7 @@
 import React from "react";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "~/const";
-import { PortfolioTabIcon } from "~/screens/Portfolio";
+import PortfolioTabIcon from "~/screens/Portfolio/TabIcon";
 import Transfer, { TransferTabIcon } from "~/components/TabBar/Transfer";
 import TabIcon from "~/components/TabIcon";
 import PortfolioNavigator from "../PortfolioNavigator";
