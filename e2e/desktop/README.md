@@ -82,7 +82,7 @@ pnpm e2e:desktop test:playwright <testFileName>
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
-### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON override
 
 You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.
 
@@ -110,16 +110,17 @@ export E2E_FEATURE_FLAGS_JSON='{"myFeature":{"enabled":true,"params":{"foo":"bar
 Notes:
 
 - Arrays, scalars, or invalid JSON are rejected.
-- `E2E_FEATURE_FLAGS_JSON` is merged with default E2E flags.
+- `E2E_FEATURE_FLAGS_JSON` OVERRIDES any other E2E feature flags.
 - Per-test `featureFlags` fixture values still override env-provided values when both set the same key.
 
-### 7. Wallet 4.0 Asset Section
+### 7. Feature Flag presets
 
-The Wallet 4.0 Asset Section (`assetSection`) is ON by default for all desktop E2E tests.
-You can run the "Asset Section OFF" variant of the tests by setting the E2E environment variable:
+It is possible to choose an optional Feature Flag set for the test run.
+
+Set the env var to the desired value, eg:
 
 ```bash
-export E2E_ENABLE_ASSET_SECTION=0
+export E2E_DESKTOP_FEATURE_FLAGS="wallet40-q2"
 ```
 
-To run the Asset Section OFF variant on CI, untick the "Enable the Wallet 4.0 Asset Section" checkbox on the desktop E2E GitHub workflow.
+Or use the "Choose a feature flag set" options dropdown on the Github workflow.

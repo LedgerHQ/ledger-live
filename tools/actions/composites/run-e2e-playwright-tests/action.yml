@@ -18,8 +18,9 @@ inputs:
     required: false
   repeat_each:
     description: "Repeat each test N times (omit to run tests once)"
-  enable_asset_section:
-    description: "Enable the Wallet 4.0 Asset Section"
+    required: false
+  feature_flags:
+    description: "Choose a feature flag set for the run"
     required: false
 outputs:
   passed:
@@ -95,12 +96,9 @@ runs:
           REPEAT_ARG="--repeat-each=${{ inputs.repeat_each }}"
         fi
 
-        if [[ "${{ inputs.enable_asset_section }}" = "false" ]]; then
-          export E2E_ENABLE_ASSET_SECTION=0
-          echo "Asset Section disabled!"
-        else
-          export E2E_ENABLE_ASSET_SECTION=1
-          echo "Asset Section enabled!"
+        if [ -n "${{ inputs.feature_flags }}" ]; then
+          export E2E_DESKTOP_FEATURE_FLAGS="${{ inputs.feature_flags }}"
+          echo "Running with feature flags set '${E2E_DESKTOP_FEATURE_FLAGS}'"
         fi
 
         set +e
