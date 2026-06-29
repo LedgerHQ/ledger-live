@@ -3,7 +3,8 @@ import { Platform } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
+import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
+import { Trans } from "~/context/Locale";
 import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
@@ -35,7 +36,28 @@ function AddAccountNavigator({ route, navigation }: Props) {
       screenOptions={{
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
-        headerRight: () => <NavigationHeaderCloseButton onPress={handleClose} />,
+        headerRight: () => (
+          <NavigationHeaderCloseButtonAdvanced
+            withConfirmation
+            skipNavigation
+            onClose={handleClose}
+            confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
+            confirmButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.cancel" />}
+            rejectButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.continue" />}
+            cancelCTAConfig={{ type: "primary", outline: true }}
+            customDrawerStyle={{
+              title: {
+                textAlign: "left",
+                fontSize: 18,
+                fontWeight: 600,
+                lineHeight: 32.4,
+                letterSpacing: -0.72,
+                marginBottom: 16,
+                marginTop: -45,
+              },
+            }}
+          />
+        ),
       }}
     >
       <Stack.Screen
@@ -52,4 +74,3 @@ const options = {
   headerShown: false,
 };
 export { AddAccountNavigator as component, options };
-export default AddAccountNavigator;
