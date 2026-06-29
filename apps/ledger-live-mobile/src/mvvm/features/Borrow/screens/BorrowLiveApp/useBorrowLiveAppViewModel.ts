@@ -29,10 +29,7 @@ export type BorrowWebviewInputs = {
   currencyTicker: string;
   OS: string;
   platform: "LLM";
-  // Device safe area insets (in px), so the borrow web app can avoid notches
-  // / home indicators when it owns its own screen padding. Inside the webview
-  // `env(safe-area-inset-*)` returns 0 because the host already offsets the
-  // viewport, so we forward the real values from `useSafeAreaInsets`.
+  // Safe-area insets (RN layout units) forwarded to the web app; stringified for query params.
   safeAreaTop: string;
   safeAreaBottom: string;
   safeAreaLeft: string;

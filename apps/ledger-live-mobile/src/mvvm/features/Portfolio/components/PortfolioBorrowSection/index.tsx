@@ -28,12 +28,10 @@ export const PortfolioBorrowSection = ({ onPress }: PortfolioBorrowSectionProps)
   const { bottom } = useSafeAreaInsets();
   const { shouldDisplayOperationsList } = useWalletFeaturesConfig("mobile");
 
-  /** Tx History in header: this section is last — safe area + s24 below the card. */
-  const bottomPadding = shouldDisplayOperationsList ? bottom + 24 : undefined;
+  const containerStyle = shouldDisplayOperationsList ? { paddingBottom: bottom + 24 } : undefined;
 
   return (
-    <Box
-      style={bottomPadding === undefined ? undefined : { paddingBottom: bottomPadding }}
+    <Box style={containerStyle}
       lx={{
         paddingTop: "s32",
         paddingHorizontal: "s16",
