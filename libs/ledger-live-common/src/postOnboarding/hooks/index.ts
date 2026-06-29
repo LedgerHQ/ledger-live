@@ -5,5 +5,6 @@ export * from "./usePostOnboardingPortfolioWidgetVisibility";
 export * from "./usePostOnboardingHubState";
 export * from "./useStartPostOnboardingCallback";
 export * from "./useAutoDismissPostOnboardingEntryPoint";
+export * from "./useBackfillOnboardingDate";
 export * from "./usePostOnboardingDeeplinkHandler";
 export * from "./useCheckAccountWithFundsAction";

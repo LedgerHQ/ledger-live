@@ -61,3 +61,14 @@ export const postOnboardingSetFinished: ActionCreatorPlain = () => ({
   type: `${actionTypePrefix}SET_FINISHED`,
   payload: undefined,
 });
+
+/**
+ * Sets (or, with `null`, resets) the persisted onboarding date used as the
+ * starting point for the large-screen upsell cooldown. Takes a `Date` object;
+ * the reducer serializes it to an ISO 8601 string for storage. Drives the
+ * legacy backfill and QA tooling.
+ */
+export const setPostOnboardingDate: ActionCreator<Date | null> = date => ({
+  type: `${actionTypePrefix}SET_ONBOARDING_DATE`,
+  payload: date,
+});

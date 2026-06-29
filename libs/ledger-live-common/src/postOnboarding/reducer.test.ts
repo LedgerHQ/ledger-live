@@ -4,6 +4,7 @@ import reducer, {
   hubStateSelector,
   initialState,
   postOnboardingDeviceModelIdSelector,
+  postOnboardingOnboardingDateSelector,
   postOnboardingSelector,
   walletEntryPointEligibleForPortfolioSelector,
 } from "./reducer";
@@ -15,6 +16,7 @@ import {
   clearPostOnboardingLastActionCompleted,
   hidePostOnboardingWalletEntryPoint,
   setPostOnboardingWalletEntryPointEligibility,
+  setPostOnboardingDate,
   addPostOnboardingAction,
   removePostOnboardingActionCompleted,
 } from "./actions";
@@ -32,6 +34,7 @@ const initializationParamsA: Parameters<typeof initPostOnboarding> = [
 
 // initialState -> importPostOnboardingState(...initializationParamsA)
 const stateA0: PostOnboardingState = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -52,6 +55,7 @@ const stateA0: PostOnboardingState = {
 
 // stateA0 -> setPostOnboardingActionCompleted(claimMock)
 const stateA1: PostOnboardingState = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -72,6 +76,7 @@ const stateA1: PostOnboardingState = {
 
 // stateA1 -> clearPostOnboardingLastActionCompleted()
 const stateA2: PostOnboardingState = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -92,6 +97,7 @@ const stateA2: PostOnboardingState = {
 
 // stateA2 -> setPostOnboardingActionCompleted(personalizeMock)
 const stateA3: PostOnboardingState = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -112,6 +118,7 @@ const stateA3: PostOnboardingState = {
 
 // stateA3 -> hidePostOnboardingWalletEntryPoint()
 const stateA4: PostOnboardingState = {
+  onboardingDate: new Date("2020-01-20").toISOString(), // preserved by hidePostOnboardingWalletEntryPoint()
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: true, // stateA3 -> hidePostOnboardingWalletEntryPoint()
   entryPointFirstDisplayedDate: null,
@@ -132,6 +139,7 @@ const stateA4: PostOnboardingState = {
 
 // stateA0 -> addPostOnboardingAction(recoverMock)
 const stateA5: PostOnboardingState = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -154,6 +162,7 @@ const stateA5: PostOnboardingState = {
 
 // stateA1 -> removePostOnboardingActionCompleted(claimMock)
 const stateA6: PostOnboardingState = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -181,6 +190,7 @@ const initializationParamsB: Parameters<typeof initPostOnboarding> = [
 
 // initialState -> importPostOnboardingState(...initializationParamsB)
 const stateB0 = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoS,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -193,6 +203,7 @@ const stateB0 = {
 
 // stateB0 -> setPostOnboardingActionCompleted(claimMock)
 const stateB1 = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoS,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -212,6 +223,7 @@ const initializationParamsC: Parameters<typeof initPostOnboarding> = [
 
 // initialState -> importPostOnboardingState(...initializationParamsC)
 const stateC0 = {
+  onboardingDate: new Date("2020-01-20").toISOString(),
   deviceModelId: DeviceModelId.nanoSP,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -329,6 +341,61 @@ describe("postOnboarding reducer (& action creators)", () => {
     expect(state).toBe(stateBefore);
   });
 
+  it("should set onboardingDate (as an ISO string) on initPostOnboarding", () => {
+    state = reducer(state, initPostOnboarding(...initializationParamsA));
+    expect(typeof state.onboardingDate).toBe("string");
+    expect(state.onboardingDate).toBe(new Date("2020-01-20").toISOString());
+  });
+
+  it("should preserve an existing onboardingDate when re-initialized for another device", () => {
+    state = reducer(state, initPostOnboarding(...initializationParamsA));
+    const firstDate = state.onboardingDate;
+    expect(firstDate).toBe(new Date("2020-01-20").toISOString());
+
+    // A later onboarding of a different device must NOT reset the cooldown anchor.
+    jest.setSystemTime(new Date("2021-09-09"));
+    state = reducer(state, initPostOnboarding(...initializationParamsB));
+    expect(state.deviceModelId).toBe(DeviceModelId.nanoS); // the rest of the state did re-init
+    expect(state.onboardingDate).toBe(firstDate); // but onboardingDate is preserved
+
+    // Restore the fake clock so later tests that assume 2020-01-20 are unaffected.
+    jest.setSystemTime(new Date("2020-01-20"));
+  });
+
+  it("should not wipe onboardingDate when hiding the wallet entry point", () => {
+    state = stateA3;
+    state = reducer(state, hidePostOnboardingWalletEntryPoint());
+    expect(state.onboardingDate).toBe(new Date("2020-01-20").toISOString());
+  });
+
+  it("should default onboardingDate to null when missing from imported state", () => {
+    const { onboardingDate, ...withoutDate } = stateA0;
+    state = reducer(state, importPostOnboardingState({ newState: withoutDate }));
+    expect(state.onboardingDate).toBe(null);
+  });
+
+  it("should round-trip onboardingDate through importPostOnboardingState", () => {
+    state = reducer(state, importPostOnboardingState({ newState: stateA0 }));
+    expect(state.onboardingDate).toBe(new Date("2020-01-20").toISOString());
+  });
+
+  it("should set and reset onboardingDate via setPostOnboardingDate", () => {
+    const date = new Date("2021-05-05");
+    state = reducer(state, setPostOnboardingDate(date));
+    expect(state.onboardingDate).toBe(date.toISOString());
+
+    state = reducer(state, setPostOnboardingDate(null));
+    expect(state.onboardingDate).toBe(null);
+  });
+
+  it("should ignore a non-Date, non-null payload for setPostOnboardingDate", () => {
+    state = reducer(state, setPostOnboardingDate(new Date("2021-05-05")));
+    const before = state;
+    // @ts-expect-error - testing with an invalid (string) payload
+    state = reducer(state, setPostOnboardingDate("2022-06-06"));
+    expect(state).toBe(before);
+  });
+
   it("should handle successive actions properly", () => {
     // initializing state with new device & set of actions
     state = reducer(state, initPostOnboarding(...initializationParamsA));
@@ -382,6 +449,7 @@ describe("postOnboarding reducer (& action creators)", () => {
 describe("postOnboarding selectors", () => {
   it("should keep valid device ids", () => {
     const stateValidDeviceId: PostOnboardingState = {
+      onboardingDate: null,
       deviceModelId: DeviceModelId.nanoX,
       walletEntryPointDismissed: false,
       entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -411,6 +479,7 @@ describe("postOnboarding selectors", () => {
 
   it('should sanitize "nanoFTS" device ids to "stax"', () => {
     const stateValidDeviceId: PostOnboardingState = {
+      onboardingDate: null,
       // @ts-expect-error - testing with "nanoFTS" device id
       deviceModelId: "nanoFTS",
       walletEntryPointDismissed: false,
@@ -461,5 +530,16 @@ describe("postOnboarding selectors", () => {
 
     const storeStateNull = { postOnboarding: initialState };
     expect(walletEntryPointEligibleForPortfolioSelector(storeStateNull)).toBe(null);
+  });
+
+  it("should return onboardingDate from state", () => {
+    const date = new Date("2021-05-05").toISOString();
+    const storeStateWithDate = {
+      postOnboarding: { ...initialState, onboardingDate: date },
+    };
+    expect(postOnboardingOnboardingDateSelector(storeStateWithDate)).toBe(date);
+
+    const storeStateNull = { postOnboarding: initialState };
+    expect(postOnboardingOnboardingDateSelector(storeStateNull)).toBe(null);
   });
 });

@@ -207,6 +207,15 @@ export type PostOnboardingState = {
    * Did the user started the PostOnboarding without closing or finishing it ?
    */
   postOnboardingInProgress: boolean;
+
+  /**
+   * Date the user completed onboarding, as an ISO 8601 string. Starting point
+   * for the large-screen upsell cooldown. Stored as a string so it
+   * survives JSON persistence/rehydration unchanged. Null means not set yet
+   * (backfilled to "today" on first launch for legacy users who onboarded
+   * before this field existed).
+   */
+  onboardingDate: string | null;
 };
 
 /**

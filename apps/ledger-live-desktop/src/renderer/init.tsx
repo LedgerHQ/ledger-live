@@ -339,8 +339,9 @@ async function init() {
     check();
   });
 
-  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
-
+  // Rehydrate the post-onboarding slice before the first render so the
+  // onboardingDate backfill effect (useBackfillOnboardingDate) never runs
+  // against the un-rehydrated initial state and overwrites a stored date.
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -349,6 +350,8 @@ async function init() {
       }),
     );
   }
+
+  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
   await dispatch(fetchTrustchain());
   await dispatch(fetchWallet());

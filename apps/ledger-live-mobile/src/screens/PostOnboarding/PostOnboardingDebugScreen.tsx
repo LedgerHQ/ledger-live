@@ -10,7 +10,10 @@ import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { usePostOnboardingHubCompletionContext } from "~/logic/postOnboarding/usePostOnboardingHubCompletionContext";
 import { setStoreValue } from "~/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
-import { removePostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import {
+  removePostOnboardingActionCompleted,
+  setPostOnboardingDate,
+} from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useDispatch } from "~/context/hooks";
 import {
@@ -29,7 +32,11 @@ export default () => {
     await setStoreValue("DISPLAY_BANNER", "true", protectId);
     dispatch(setDisplayBanner({ protectId, displayBanner: true }));
     dispatch(setRecoverStateAction({ protectId, subscriptionState: input }));
-    dispatch(removePostOnboardingActionCompleted({ actionId: PostOnboardingActionId.recover }));
+    dispatch(
+      removePostOnboardingActionCompleted({
+        actionId: PostOnboardingActionId.recover,
+      }),
+    );
   };
 
   const handleInitPostOnboardingHub = useCallback(
@@ -91,6 +98,19 @@ export default () => {
           title="Recover - Complete"
           desc="Set recover local state to being complete"
           onPress={() => setRecoverState(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)}
+        />
+
+        <SettingsRow
+          title="Set onboardingDate = 31 days ago"
+          desc="Simulate an elapsed large-screen upsell cooldown."
+          onPress={() =>
+            dispatch(setPostOnboardingDate(new Date(Date.now() - 31 * 24 * 60 * 60 * 1000)))
+          }
+        />
+        <SettingsRow
+          title="Reset onboardingDate (null)"
+          desc="Clear the persisted onboarding date (re-backfilled to today on next launch)."
+          onPress={() => dispatch(setPostOnboardingDate(null))}
         />
       </ScrollView>
     </SafeAreaViewFixed>

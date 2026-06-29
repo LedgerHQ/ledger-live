@@ -13,6 +13,7 @@ export const initialState: PostOnboardingState = {
   actionsCompleted: {},
   lastActionCompleted: null,
   postOnboardingInProgress: false,
+  onboardingDate: null,
 };
 
 type PartialNewStatePayload = { newState: Partial<PostOnboardingState> };
@@ -33,14 +34,16 @@ export type Payload =
   | InitPayload
   | SetActionCompletedPayload
   | AddPayload
-  | boolean;
+  | boolean
+  | Date
+  | null;
 
 const handlers: ReducerMap<PostOnboardingState, Payload> = {
   POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState => ({
     ...initialState,
     ...(payload as PartialNewStatePayload).newState,
   }),
-  POST_ONBOARDING_INIT: (_, { payload }) => {
+  POST_ONBOARDING_INIT: (state, { payload }) => {
     const { deviceModelId, actionsIds } = payload as InitPayload;
     return {
       deviceModelId,
@@ -51,6 +54,9 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
       postOnboardingInProgress: true,
+      // Set once: onboardingDate is the completion / cooldown anchor, so re-initializing
+      // post-onboarding (another device, debug screens) must not overwrite an existing date.
+      onboardingDate: state.onboardingDate ?? new Date().toISOString(),
     };
   },
   POST_ONBOARDING_ADD_ACTION: (state, { payload }) => {
@@ -113,6 +119,14 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
     ...state,
     postOnboardingInProgress: false,
   }),
+
+  POST_ONBOARDING_SET_ONBOARDING_DATE: (state, { payload }) => {
+    if (payload !== null && !(payload instanceof Date)) return state;
+    return {
+      ...state,
+      onboardingDate: payload === null ? null : payload.toISOString(),
+    };
+  },
 };
 
 export default handleActions<PostOnboardingState, Payload>(handlers, initialState);
@@ -178,4 +192,9 @@ export const entryPointFirstDisplayedDateSelector = createSelector(
 export const walletEntryPointEligibleForPortfolioSelector = createSelector(
   postOnboardingSelector,
   postOnboarding => postOnboarding.walletEntryPointEligibleForPortfolio,
+);
+
+export const postOnboardingOnboardingDateSelector = createSelector(
+  postOnboardingSelector,
+  postOnboarding => postOnboarding.onboardingDate,
 );

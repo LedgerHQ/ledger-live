@@ -27,11 +27,12 @@ import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
 import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
+import { useBackfillOnboardingDate } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
-import { allowDebugReactQuerySelector } from "./reducers/settings";
+import { allowDebugReactQuerySelector, hasCompletedOnboardingSelector } from "./reducers/settings";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 
 const reloadApp = (event: KeyboardEvent) => {
@@ -52,6 +53,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 
   useBraze();
   useResetTimeRangeOnGraphRework();
+  useBackfillOnboardingDate(useSelector(hasCompletedOnboardingSelector));
 
   useEffect(() => {
     const reload = (e: KeyboardEvent) => {

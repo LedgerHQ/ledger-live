@@ -25,6 +25,7 @@ import {
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
   isPostOnboardingFlowSelector,
+  hasCompletedOnboardingSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
@@ -68,7 +69,10 @@ import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
-import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import {
+  useAutoDismissPostOnboardingEntryPoint,
+  useBackfillOnboardingDate,
+} from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
@@ -230,6 +234,7 @@ function App() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();
+  useBackfillOnboardingDate(useSelector(hasCompletedOnboardingSelector));
 
   return (
     <>
