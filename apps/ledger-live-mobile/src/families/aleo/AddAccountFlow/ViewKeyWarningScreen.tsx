@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Linking, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
@@ -8,6 +8,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Trans, useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import type { AleoViewKeyFlowParamList } from "./types";
+import ConfirmationModal from "~/components/ConfirmationModal";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyWarning>;
 
@@ -49,8 +50,20 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
 
   const { onCloseNavigation } = route.params;
 
+  const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
+  const [onModalHide, setOnModalHide] = useState<(() => void) | undefined>(undefined);
+
   const onCancel = useCallback(() => {
-    onCloseNavigation?.();
+    setIsConfirmationModalOpened(true);
+  }, []);
+
+  const closeConfirmationModal = useCallback(() => {
+    setIsConfirmationModalOpened(false);
+  }, []);
+
+  const onConfirmCancel = useCallback(() => {
+    setOnModalHide(() => onCloseNavigation);
+    setIsConfirmationModalOpened(false);
   }, [onCloseNavigation]);
 
   return (
@@ -89,6 +102,25 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
           {t("aleo.addAccount.stepViewKeyWarning.cta.cancel")}
         </Button>
       </View>
+      <ConfirmationModal
+        isOpened={isConfirmationModalOpened}
+        onClose={closeConfirmationModal}
+        onConfirm={onConfirmCancel}
+        onModalHide={onModalHide}
+        confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
+        confirmButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.cancel" />}
+        rejectButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.continue" />}
+        cancelCTAConfig={{ type: "primary", outline: true }}
+        customTitleStyle={{
+          textAlign: "left",
+          fontSize: 18,
+          fontWeight: "600",
+          lineHeight: 32.4,
+          letterSpacing: -0.72,
+          marginBottom: 16,
+          marginTop: -45,
+        }}
+      />
     </SafeAreaView>
   );
 }

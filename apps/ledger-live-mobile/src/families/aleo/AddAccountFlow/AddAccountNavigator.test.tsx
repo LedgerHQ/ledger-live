@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { render } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
-import AddAccountNavigator, { component, options } from "./AddAccountNavigator";
+import { component as AddAccountNavigator, options } from "./AddAccountNavigator";
 import type { AleoAddAccountParamList } from "./types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -80,10 +80,6 @@ describe("AleoAddAccountNavigator", () => {
 
   it("exports headerShown: false options", () => {
     expect(options).toEqual({ headerShown: false });
-  });
-
-  it("exports component equal to the default export", () => {
-    expect(component).toBe(AddAccountNavigator);
   });
 
   it("renders on iOS", () => {
