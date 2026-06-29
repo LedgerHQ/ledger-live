@@ -14,6 +14,22 @@ const testPathIgnorePatterns = [
 
 const esmDeps = ["ky", "@mysten", "@scure", "@noble"];
 
+// Integration tests that depend on flaky third-party/external nodes and explorers.
+// Excluded from the per-PR and daily integration runs; executed weekly instead
+// (see .github/workflows/test-integration-weekly.yml).
+const weeklyIntegrationTests = [
+  "src/families/cosmos/lastBlock.integration.test.ts",
+  "src/families/cosmos/datasets/persistence.integration.test.ts",
+  "src/families/cosmos/datasets/stargaze.integration.test.ts",
+  "src/families/cosmos/datasets/quicksilver.integration.test.ts",
+  "src/families/cosmos/datasets/xion.integration.test.ts",
+  "src/families/mina/bridge.integration.test.ts",
+];
+
+const weeklyIntegrationTestsRegex = weeklyIntegrationTests.map(
+  p => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\//g, "[/\\\\]") + "$",
+);
+
 let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
   testPathIgnorePatterns.push(".*\\.integration\\.test\\.[tj]s");
@@ -21,6 +37,12 @@ if (process.env.IGNORE_INTEGRATION_TESTS) {
 
 if (process.env.ONLY_INTEGRATION_TESTS) {
   testRegex = "(/__tests__/.*|(\\.|/)integration\\.(test|spec))\\.[jt]sx?$";
+  // Keep flaky network-only tests out of PR + daily runs.
+  testPathIgnorePatterns.push(...weeklyIntegrationTestsRegex);
+}
+
+if (process.env.ONLY_WEEKLY_INTEGRATION_TESTS) {
+  testRegex = weeklyIntegrationTestsRegex;
 }
 
 if (process.env.USE_BACKEND_MOCKS) {
