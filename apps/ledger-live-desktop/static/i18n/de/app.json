@@ -8227,11 +8227,11 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "Vermögenswert auswählen"
+      "title" : "Asset auswählen"
     },
     "selectAccount" : {
       "title" : "Konto auswählen",
-      "addAccount" : "Neues oder bestehendes Konto hinzufügen",
+      "addAccount" : "Neues/bestehendes Konto hinzufügen",
       "perpetualsBanner" : "Derzeit nur mit USD Coin (USDC) auf der Arbitrum-Chain unterstützt."
     }
   },
@@ -8687,7 +8687,7 @@
     },
     "searchPlaceholder" : "Nach Name oder Adresse suchen",
     "emptyAssetList" : "Keine Assets gefunden",
-    "selectAsset" : "Vermögenswert auswählen",
+    "selectAsset" : "Asset auswählen",
     "selectNetwork" : "Netzwerk auswählen",
     "selectAccount" : "Konto auswählen",
     "accountCount_one" : "{{count}} Konto",
