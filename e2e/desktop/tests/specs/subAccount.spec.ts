@@ -104,7 +104,7 @@ for (const token of subAccounts) {
           "@NanoGen5",
           `@${token.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.XLM_USDC ? ["@smoke"] : []),
+          ...(token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -220,7 +220,7 @@ for (const token of subAccounts) {
           "@NanoGen5",
           `@${token.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.SUI_USDC_1 ? ["@smoke"] : []),
+          ...(token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -437,7 +437,6 @@ for (const transaction of transactionsAddressValid) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
-          "@smoke",
           "@solana",
           "@family-solana",
         ],
