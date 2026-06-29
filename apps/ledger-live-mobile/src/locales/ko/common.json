@@ -1258,13 +1258,13 @@
       "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
     },
     "TonExcessFee" : {
-      "title" : "It constitutes a token transfer. You will pay 0.1 GRAM in fees, and any extra will be returned to you."
+      "title" : "트랜잭션 진행 시, 토큰이 전송됩니다. 수수료로 0.1 GRAM이 부과되며, 초과 금액은 반환됩니다."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Insufficient funds in main account (GRAM) to calculate fees. The minimum required balance is 0.1 GRAM."
+      "title" : "메인 계정(GRAM)에 수수료 계산을 위한 잔액이 부족합니다. 최소 0.1 GRAM이 필요합니다."
     },
     "TonMinimumRequired" : {
-      "title" : "Insufficient funds. The minimum required balance is 0.02 GRAM."
+      "title" : "잔액이 부족합니다. 잔액으로 최소 0.02 GRAM이 필요합니다."
     },
     "BackupAppDataError" : {
       "title" : "앱 데이터 백업 중 오류가 발생했습니다"
@@ -3394,12 +3394,12 @@
     }
   },
   "distribution" : {
-    "header" : "자산 배분",
-    "list" : "자산 배분 ({{count}})",
+    "header" : "자산 구성",
+    "list" : "자산 구성 ({{count}})",
     "assets_one" : "자산",
     "assets_other" : "자산",
     "total" : "총 잔액",
-    "listAccount" : "자산 배분 ({{count}})",
+    "listAccount" : "자산 구성 ({{count}})",
     "title" : "자산",
     "moreAssets" : "더 추가하기"
   },
@@ -4205,10 +4205,10 @@
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
         "contact_support" : "고객 지원 문의",
-        "ton_title" : "Ledger Nano S™ does not support swapping Gram",
-        "ton_description" : "To swap Gram, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "ton_tokens_title" : "Ledger Nano S™ does not support swapping Gram Tokens",
-        "ton_tokens_description" : "To swap Gram Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_title" : "Ledger Nano S™는 Gram 스왑을 지원하지 않습니다.",
+        "ton_description" : "Gram을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+        "ton_tokens_title" : "Ledger Nano S™는 Gram 토큰 스왑을 지원하지 않습니다.",
+        "ton_tokens_description" : "Gram 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
         "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "near_title" : "Ledger Nano S™는 Near 스왑을 지원하지 않습니다.",
@@ -9004,13 +9004,13 @@
         "content" : {
           "able" : {
             "title" : "사용자의 동의 하에 Ledger는 사용자가 Ledger Wallet을 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
-            "diagAndUsage" : "Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두 개선(분석)하는 것이 목적입니다.",
-            "personnalizationData" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
+            "diagAndUsage" : "Ledger Wallet 성능 측정, 앱 & 사용자 경험 분석 및 개선",
+            "personnalizationData" : "사용자 선호에 맞춘 개인화된 추천 및 콘텐츠 제공, 마케팅 캠페인 효과 측정"
           },
           "unable" : {
             "title" : "Ledger Wallet은 다음과 관련한 정보를 결코 수집하지 않습니다.",
-            "adresses" : "고객 자산.",
-            "balance" : "고객 포트폴리오.",
+            "adresses" : "사용자 자산",
+            "balance" : "사용자 포트폴리오",
             "personnalInfos" : "사용자 개인 식별 정보(예: 이름이나 이메일 주소)"
           },
           "moreOptions" : "환경 설정 관리",
