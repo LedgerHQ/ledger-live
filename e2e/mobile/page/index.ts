@@ -29,6 +29,7 @@ import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import MainNavigationPage from "./wallet/mainNavigation.page";
 import MyWalletPage from "./wallet/myWallet.page";
 import OperationPage from "./wallet/operation.page";
+import TopBarSearchPage from "./wallet/topBarSearch.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
@@ -90,9 +91,11 @@ export class Application {
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
+  private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
+    this.market.resetFlags();
     const userdataSpeculos = `temp-userdata-${randomUUID()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
@@ -241,5 +244,9 @@ export class Application {
 
   public get modularDrawer() {
     return this.modularDrawerPageInstance();
+  }
+
+  public get topBarSearch() {
+    return this.topBarSearchPageInstance();
   }
 }

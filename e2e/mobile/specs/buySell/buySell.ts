@@ -106,8 +106,8 @@ export async function runNavigateToBuyFromMarketPageTest(
         await app.portfolio.tapWalletTabSelector("Market");
       }
       await app.market.searchAsset(buySell.crypto.currency.ticker);
-      await app.market.expectMarketRowTitle(buySell.crypto.currency.ticker);
-      await app.market.openAssetPage(buySell.crypto.currency.ticker);
+      await app.market.expectMarketRowTitle(buySell.crypto.currency);
+      await app.market.openAssetPage(buySell.crypto.currency);
       await app.market.tapOnMarketQuickActionButton("buy");
       await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
