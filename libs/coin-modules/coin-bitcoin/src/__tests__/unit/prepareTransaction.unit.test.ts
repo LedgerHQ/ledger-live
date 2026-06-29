@@ -111,6 +111,7 @@ describe("prepareTransaction", () => {
       })),
       defaultFeePerByte: new BigNumber("2"),
     },
+    relayFeePerByte: new BigNumber("1"),
   };
 
   const makeTransaction = (overrides: Partial<Transaction> = {}): Transaction =>

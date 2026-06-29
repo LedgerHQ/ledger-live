@@ -15,7 +15,7 @@ import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
-import { TaprootNotActivated } from "./errors";
+import { TaprootNotActivated, FeeTooLow } from "./errors";
 import { Currency } from "./wallet-btc";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
@@ -79,10 +79,20 @@ export const getTransactionStatus: AccountBridge<
   let estimatedFees = new BigNumber(0);
   const { opReturnData, changeAddress } = transaction;
 
+  const networkRelayFee = transaction.networkInfo?.relayFeePerByte;
+  const relayFeePerByte =
+    networkRelayFee && networkRelayFee.gt(0)
+      ? networkRelayFee
+      : account.currency.id === "bitcoin"
+        ? new BigNumber(1)
+        : undefined;
+
   if (!transaction.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
   } else if (transaction.feePerByte.eq(0)) {
     errors.feePerByte = new FeeRequired();
+  } else if (relayFeePerByte && transaction.feePerByte.lt(relayFeePerByte)) {
+    errors.feePerByte = new FeeTooLow();
   } else if (transaction.recipient && !errors.recipient) {
     await calculateFees({
       account: account,

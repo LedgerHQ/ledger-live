@@ -57,6 +57,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     networkInfo: tr.networkInfo && {
       family: tr.networkInfo.family,
       feeItems: fromFeeItemsRaw(tr.networkInfo.feeItems),
+      relayFeePerByte: new BigNumber(tr.networkInfo.relayFeePerByte ?? 0),
     },
     feesStrategy: tr.feesStrategy,
     opReturnData: tr.opReturnData,
@@ -75,6 +76,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     networkInfo: t.networkInfo && {
       family: t.networkInfo.family,
       feeItems: toFeeItemsRaw(t.networkInfo.feeItems),
+      relayFeePerByte: t.networkInfo.relayFeePerByte.toString(),
     },
     feesStrategy: t.feesStrategy,
     opReturnData: t.opReturnData,

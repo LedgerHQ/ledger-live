@@ -66,8 +66,13 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
     })),
     defaultFeePerByte: clamped[Math.floor(clamped.length / 2)] || new BigNumber(0),
   };
+  // BTC enforces a 1 sat/vB floor (Bitcoin Core's minrelaytxfee default); other coins use the node value as-is
+  const relayFeePerByte =
+    account.currency.id === "bitcoin" ? BigNumber.max(floorSatPerVB, 1) : floorSatPerVB;
+
   return {
     family: "bitcoin",
     feeItems,
+    relayFeePerByte,
   };
 }
