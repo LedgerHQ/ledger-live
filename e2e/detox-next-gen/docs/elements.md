@@ -24,11 +24,26 @@ Webview → build a surface scoped to one webview, then match within it:
 The webview's testID is **supplied by the caller** (a page object — see
 [page-objects.md](./page-objects.md)), so the lib stays app-agnostic.
 
+## Scope — compose locators (don't index)
+
+Refine a locator by **structure** instead of position. Each returns a new handle (immutable), so they chain with `.atIndex` and every action method.
+
+- `child.withAncestor(parent)` — `child` restricted to matches under `parent`. Chains: `c.withAncestor(b).withAncestor(a)`.
+- `el.withDescendant(inner)` — the row/container that *contains* `inner`.
+- `a.and(b)` — both matchers must hold on one element.
+
+```ts
+await byText("Send").withAncestor(byId("account-row-BTC")).tap();  // scope by structure
+await byText("Send").atIndex(2).tap();                             // ✗ brittle: breaks on reorder
+```
+
+Prefer `withAncestor` over `atIndex(n)` into a list. **Caveat:** Detox scopes by re-matching the ancestor *pattern*, not a resolved element, so the ancestor locator must be **unique** — a non-unique ancestor (`byType`, a shared id) scopes to *every* match's descendants, and an `atIndex` on the ancestor is not carried in. Native only; inside a webview a CSS descendant selector already does this (`w.css(".row-BTC .send")`).
+
 ## Act — methods on the handle
 
 `await byId("submit").tap()` — every native action waits for visibility first.
 
-- Native: `tap / typeText / replaceText / clearText / waitVisible / waitExists / waitGone / getText / getAttributes / isVisible / exists`, plus `.atIndex(n)` and `.raw`.
+- Native: `tap / typeText / replaceText / clearText / waitVisible / waitExists / waitGone / getText / getAttributes / isVisible / exists`, plus the locator refiners `.atIndex(n)` / `.withAncestor` / `.withDescendant` / `.and` (see **Scope** above) and `.raw`.
 - Web: `tap({ scroll? }) / click / type / wait({ visible? }) / exists / visible / scrollIntoView / getValue / raw`.
 
 ## Web gotchas (handled by the lib)

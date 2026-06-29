@@ -49,6 +49,21 @@ export class NativeHandle {
     return new NativeHandle(this.matcher, index);
   }
 
+  /** Restrict to matches under `ancestor` (Detox `by.*.withAncestor`). */
+  withAncestor(ancestor: NativeHandle): NativeHandle {
+    return new NativeHandle(this.matcher.withAncestor(ancestor.matcher), this.index);
+  }
+
+  /** Restrict to matches that contain `descendant` (Detox `by.*.withDescendant`). */
+  withDescendant(descendant: NativeHandle): NativeHandle {
+    return new NativeHandle(this.matcher.withDescendant(descendant.matcher), this.index);
+  }
+
+  /** Intersect with another matcher — both must hold (Detox `by.*.and`). */
+  and(other: NativeHandle): NativeHandle {
+    return new NativeHandle(this.matcher.and(other.matcher), this.index);
+  }
+
   /** The underlying Detox element — escape hatch for longPress/swipe/scroll/etc. */
   get raw(): Detox.NativeElement {
     return el(this.matcher, this.index);
