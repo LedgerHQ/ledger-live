@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import eip55 from "eip55";
-import resolver from "./hw-getAddress";
-import type { EvmSigner } from "./types/signer";
+import resolver from "./getAddress";
+import type { EvmSigner } from "@ledgerhq/live-signer-evm";
 
 const address = "0xc3f95102D5c8F2c83e49Ce3Acfb905eDfb7f37dE";
 const spy = jest.fn().mockImplementation(async () =>

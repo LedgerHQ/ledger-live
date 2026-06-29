@@ -1,8 +1,7 @@
 import { fail, AssertionError } from "assert";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { Account } from "@ledgerhq/types-live";
 import { concat, of, throwError } from "rxjs";
-import { makeAccount } from "./fixtures/common.fixtures";
-import { prepareMessageToSign, signMessage } from "./hw-signMessage";
+import { prepareMessageToSign, signMessage } from "./signerMessage";
 
 const signPersonalMessage = jest.fn(() =>
   concat(
@@ -31,10 +30,7 @@ const signerContextMock: any = async (_deviceId: string, fn: any) => {
   });
 };
 
-const account = makeAccount(
-  "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-  getCryptoCurrencyById("ethereum"),
-);
+const account = { freshAddressPath: "44'/60'/0'/0/0" } as unknown as Account;
 
 const eip712message = {
   domain: {

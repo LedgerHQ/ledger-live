@@ -2,7 +2,7 @@ import { isEIP712Message } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage, DeviceId, TypedEvmMessage } from "@ledgerhq/types-live";
 import { ethers } from "ethers";
-import { EvmSignature, EvmSigner, EvmSignerEvent } from "./types/signer";
+import { EvmSignature, EvmSigner, EvmSignerEvent } from "@ledgerhq/live-signer-evm";
 
 export const prepareMessageToSign = ({ message }: { message: string }): TypedEvmMessage => {
   const parsedMessage = ((): string | Record<string, unknown> => {

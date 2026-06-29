@@ -3,8 +3,6 @@
     "src/cli-transaction.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
-    "src/hw-getAddress.ts",
-    "src/hw-signMessage.ts",
     "src/logic.ts",
     "src/specs.ts",
     "src/transaction.ts",
@@ -42,7 +40,6 @@
     "@ethersproject/signing-key",
     "@ledgerhq/cryptoassets-evm-signatures/data/evm/index",
     "bn.js",
-    "lru-cache",
-    "@ledgerhq/hw-app-eth/services/types"
+    "lru-cache"
   ]
 }
