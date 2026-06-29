@@ -1,10 +1,32 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BalanceHistoryCache } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { CardanoAccount, CardanoDelegation } from "../types";
+import { CardanoAccount, CardanoDelegation, CardanoOutput } from "../types";
+
+const getDefaultUtxos = (): Array<CardanoOutput> => [
+  {
+    hash: "e807160f59455ffc011e6d0a48c0922645797707b8520788f176ca21f2b49561",
+    index: 0,
+    address:
+      "00bd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07db5e8ece0982acc4883de67c2e3411cc26bd56686a162074998c02bc",
+    amount: new BigNumber(100e6),
+    tokens: [],
+    paymentCredential: {
+      key: "bd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07", // gitleaks:allow
+      path: {
+        account: 0,
+        chain: 0,
+        coin: 1815,
+        index: 0,
+        purpose: 1852,
+      },
+    },
+  },
+];
 
 export const getCardanoAccountFixture = (params: {
   delegation?: Partial<CardanoDelegation>;
+  utxos?: Array<CardanoOutput>;
 }): CardanoAccount => ({
   type: "Account",
   id: "cardano-testnet-1",
@@ -57,26 +79,7 @@ export const getCardanoAccountFixture = (params: {
         },
       },
     ],
-    utxos: [
-      {
-        hash: "e807160f59455ffc011e6d0a48c0922645797707b8520788f176ca21f2b49561",
-        index: 0,
-        address:
-          "00bd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07db5e8ece0982acc4883de67c2e3411cc26bd56686a162074998c02bc",
-        amount: new BigNumber(100e6),
-        tokens: [],
-        paymentCredential: {
-          key: "bd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07",
-          path: {
-            account: 0,
-            chain: 0,
-            coin: 1815,
-            index: 0,
-            purpose: 1852,
-          },
-        },
-      },
-    ],
+    utxos: params.utxos ?? getDefaultUtxos(),
     delegation: params.delegation as any,
     protocolParams: {} as any,
   },
