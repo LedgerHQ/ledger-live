@@ -171,7 +171,7 @@ describe("LiveAppModal Integration", () => {
       expect(lastCall.inputs).toEqual(
         expect.objectContaining({
           uiVersion: "v1",
-          lw40enabled: "false",
+          lw40enabled: "true",
           ethDepositCohort: expect.any(String),
         }),
       );
