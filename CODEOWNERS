@@ -119,7 +119,7 @@ libs/ledger-live-common/src/bot/                                    @ledgerhq/co
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
 libs/ledger-live-common/src/apps/config.ts                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
-libs/ledger-live-common/src/flows/send/                             @ledgerhq/coin-integration
+libs/ledger-live-common/src/flows/                                  @ledgerhq/coin-integration
 libs/ledger-live-common/src/intents/                                @ledgerhq/coin-integration
 libs/ledger-live-common/src/transaction/                            @ledgerhq/coin-integration
 libs/ledger-live-common/src/walletConnect/                          @ledgerhq/coin-integration
