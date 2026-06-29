@@ -90,7 +90,7 @@ describe("MarketList Layout", () => {
 
       renderWithReactQuery(<MarketListTest />, {
         overrideInitialState: withFlagOverrides(
-          { lwmWallet40: { enabled: true, params: { marketBanner: true } } },
+          { lwmWallet40: { enabled: true } },
           withEmptyStarredFilter,
         ),
       });
@@ -108,7 +108,7 @@ describe("MarketList Layout", () => {
 
       renderWithReactQuery(<MarketListTest />, {
         overrideInitialState: withFlagOverrides(
-          { lwmWallet40: { enabled: true, params: { marketBanner: true } } },
+          { lwmWallet40: { enabled: true } },
           withEmptyStarredFilter,
         ),
       });

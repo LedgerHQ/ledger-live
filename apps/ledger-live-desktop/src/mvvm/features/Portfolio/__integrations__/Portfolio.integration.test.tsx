@@ -677,7 +677,7 @@ describe("PortfolioView", () => {
 const walletV4TourFlagOverrides = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
-    params: { tour: true, mainNavigation: true, marketBanner: true },
+    params: { tour: true, mainNavigation: true },
   },
 });
 

@@ -17,26 +17,21 @@ export const getWallet40Attributes = (
 
   return {
     isEnabled,
-    marketBanner: wallet40FeatureFlag?.params?.marketBanner ?? false,
     graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
     // quickActionCtas only exists on the mobile (lwm) flag; the lwd schema does not declare it.
     ...(platform === "lwm" && {
-      quickActionCtas:
-        analyticsFeatureFlagMethod("lwmWallet40")?.params?.quickActionCtas ??
-        false,
+      quickActionCtas: analyticsFeatureFlagMethod("lwmWallet40")?.params?.quickActionCtas ?? false,
     }),
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     q2Tour: wallet40FeatureFlag?.params?.q2Tour ?? false,
     mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
-    balanceRefreshRework:
-      wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
+    balanceRefreshRework: wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
     operationsList: wallet40FeatureFlag?.params?.operationsList ?? false,
     myWallet: wallet40FeatureFlag?.params?.myWallet ?? false,
-    assetDiscoverability:
-      wallet40FeatureFlag?.params?.assetDiscoverability ?? false,
+    assetDiscoverability: wallet40FeatureFlag?.params?.assetDiscoverability ?? false,
     aggregatedAssets: wallet40FeatureFlag?.params?.aggregatedAssets ?? false,
     pnl: wallet40FeatureFlag?.params?.pnl ?? false,
     earnUpselling: wallet40FeatureFlag?.params?.earnUpselling ?? false,

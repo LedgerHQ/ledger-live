@@ -23,7 +23,6 @@ const wallet40AndExchangeFeatureFlags = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
     params: {
-      marketBanner: true,
       graphRework: true,
     },
   },

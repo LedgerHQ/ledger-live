@@ -431,10 +431,10 @@ export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
 
 /** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
-    ? {
-        yieldId: string;
-      }
-    : unknown;
+  ? {
+      yieldId: string;
+    }
+  : unknown;
 
 /** @deprecated Part of the legacy Ledger Live feature-flag types. Moved to `@shared/feature-flags`. */
 export type Redirect<M extends PlatformManifestId> = {
@@ -946,7 +946,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 }>;
 
 type Feature_Wallet40_Params = {
-  marketBanner: boolean;
   graphRework: boolean;
   mainNavigation: boolean;
   tour: boolean;
