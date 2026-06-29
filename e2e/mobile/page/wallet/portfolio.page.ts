@@ -15,8 +15,6 @@ export default class PortfolioPage {
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsId = "topbar-settings";
-  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
-  topBarMyWalletId = "topbar-mywallet";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
@@ -76,16 +74,6 @@ export default class PortfolioPage {
     accountName
       ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
       : getElementByIdWithDescendantTexts(this.operationRowBody, operationType);
-
-  @Step("Navigate to Settings")
-  async navigateToSettings() {
-    if (isWallet40) {
-      await tapById(this.topBarMyWalletId);
-      await tapById(this.myWalletHeaderSettingsButtonId);
-    } else {
-      await tapByElement(await this.portfolioSettingsButton());
-    }
-  }
 
   @Step("Wait for portfolio page to load")
   async waitForPortfolioPageToLoad(timeout = 120000) {
