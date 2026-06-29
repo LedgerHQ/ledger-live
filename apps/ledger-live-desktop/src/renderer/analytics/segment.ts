@@ -192,7 +192,7 @@ const getPtxAttributes = () => {
     stakingProvidersEnabled,
     ptxCard: ptxCard?.enabled,
     ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio?.enabled,
-    ptxBorrowLiveApp: !!ptxBorrowLiveApp?.enabled,
+    borrowFeature: !!ptxBorrowLiveApp?.enabled,
     stablecoinYield,
     bitcoinYield,
     ethDepositScreen,
