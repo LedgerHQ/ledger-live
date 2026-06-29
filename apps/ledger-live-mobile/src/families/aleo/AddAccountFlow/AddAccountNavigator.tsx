@@ -1,38 +1,37 @@
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
-import { CommonActions, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
-import { NavigatorName, ScreenName } from "~/const";
+import type {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
 import { AleoAddAccountParamList, AleoViewKeyFlowParamList } from "./types";
 import ViewKeyWarningScreen from "./ViewKeyWarningScreen";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type Props = StackNavigatorProps<AleoAddAccountParamList, ScreenName.AleoAddAccount>;
 
 const Stack = createNativeStackNavigator<AleoViewKeyFlowParamList>();
 
+const DEFAULT_ADD_ACCOUNT_FLOW_DEPTH = 2; // SelectDevice + AddAccounts
+
 function AddAccountNavigator({ route, navigation }: Props) {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, false), [colors]);
-
-  // Navigation (which calls exitProcess → navigation.goBack()
-  // in Navigator.tsx and fails when there is no back history in BaseNavigator).
-  // Instead, call goBack() directly from this level where navigation.getParent() reliably
-  // reaches BaseNavigator, and fall back to an explicit navigate when canGoBack() is false.
+  const initialRouteName = route.params.initialRoute ?? ScreenName.AleoViewKeyWarning;
+  const navigationDepth = route.params.navigationDepth;
   const handleClose = useCallback(() => {
-    const parent = navigation.getParent();
-    if (parent?.canGoBack()) {
-      parent.goBack();
-    } else {
-      parent?.dispatch(CommonActions.navigate({ name: NavigatorName.Main }));
-    }
-  }, [navigation]);
+    const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+    parent?.pop(navigationDepth ?? DEFAULT_ADD_ACCOUNT_FLOW_DEPTH);
+  }, [navigation, navigationDepth]);
 
   return (
     <Stack.Navigator
-      initialRouteName={ScreenName.AleoViewKeyWarning}
+      initialRouteName={initialRouteName}
       screenOptions={{
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",

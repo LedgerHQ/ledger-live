@@ -7,7 +7,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceSelectionNavigationProps, DeviceSelectionNavigatorParamsList } from "../../types";
-import { getCustomAddAccountFlow } from "LLM/features/Accounts/screens/ScanDeviceAccounts/customAddAccountFlow";
+import { getCustomAddAccountFlow } from "LLM/features/Accounts/customAddAccountFlow";
 import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
