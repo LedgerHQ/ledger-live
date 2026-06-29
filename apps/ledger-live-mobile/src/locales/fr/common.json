@@ -1488,7 +1488,7 @@
     "title" : "Désinstallez puis réinstallez Ledger Wallet",
     "description" : "Veuillez désinstaller puis réinstaller l’application sur votre téléphone pour supprimer les données de Ledger Wallet, y compris de comptes et paramètres.",
     "button" : "Réinitialiser",
-    "warning" : "La réinitialisation de Ledger Wallet effacera l’historique des transactions Swap de tous vos comptes."
+    "warning" : "La réinitialisation de Ledger Wallet effacera l’historique des opérations Swap de tous vos comptes."
   },
   "globalSearch" : {
     "searchPlaceholder" : "Rechercher un actif",
@@ -3616,7 +3616,7 @@
       "clearCacheModalDesc" : "Une nouvelle analyse complète des transactions sur le réseau sera effectuée. L’historique des comptes sera reconstruit et les soldes seront recalculés.",
       "clearCacheButton" : "Effacer",
       "exportLogs" : "Enregistrer les logs",
-      "exportLogsDesc" : "Sauvegarder les logs de l’application Ledger Wallet peut être nécessaire à des fins de dépannage.",
+      "exportLogsDesc" : "Télécharger les logs de l’application Ledger Wallet peut être nécessaire à des fins de dépannage.",
       "hardReset" : "Réinitialiser l’application Ledger Wallet",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de l’application Ledger Wallet, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une application Ledger Wallet vierge.",
       "repairDevice" : "Réparer votre appareil Ledger",
@@ -5917,7 +5917,7 @@
             "pending" : {
               "title" : "Diffusion de la transaction..."
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -6906,7 +6906,7 @@
             "pending" : {
               "title" : "Diffusion de la transaction..."
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       },
@@ -6954,7 +6954,7 @@
             "pending" : {
               "title" : "Diffusion de la transaction..."
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -6981,7 +6981,7 @@
             "pending" : {
               "title" : "Diffusion de la transaction..."
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -7020,7 +7020,7 @@
             "pending" : {
               "title" : "Diffusion de la transaction..."
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -7044,7 +7044,7 @@
               "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -7212,7 +7212,7 @@
             "pending" : {
               "title" : "Diffusion de la transaction..."
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -8394,7 +8394,7 @@
       "title" : "Répartition"
     },
     "operations" : {
-      "title" : "Historique des transactions"
+      "title" : "Historique des opérations"
     }
   },
   "pnl" : {
@@ -8578,7 +8578,7 @@
             "title" : "Vous avez mis vos actifs en staking",
             "description" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau."
           },
-          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
         }
       }
     },
@@ -8602,7 +8602,7 @@
             "title" : "Vous avez déstaké vos actifs",
             "description" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau."
           },
-          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
         }
       }
     },
@@ -8628,7 +8628,7 @@
             "title" : "Vous avez redélégué vos actifs",
             "description" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau."
           },
-          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
         }
       }
     },
@@ -8654,7 +8654,7 @@
             "title" : "Vous avez bien demandé vos récompenses. Elles ont été ajoutées à votre solde disponible.",
             "description" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau."
           },
-          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
         }
       }
     },
@@ -9384,14 +9384,14 @@
       "tradingVolume" : "Volume de trading (24h)",
       "tradingVolumeTooltip" : "Le montant total échangé au cours des dernières 24 heures.",
       "error" : "Impossible de charger les statistiques du marché.",
-      "disclaimer" : "Statistiques sur le marché fournies par CoinGecko"
+      "disclaimer" : "Statistiques du marché fournies par CoinGecko"
     },
     "pricePerformance" : {
       "title" : "Historique de performance",
       "allTimeHigh" : "Haut (historique)",
       "allTimeLow" : "Bas (historique)",
       "yearsAgo" : "Il y a {{count}} ans",
-      "monthsAgo" : "Il y a {{count}} min.",
+      "monthsAgo" : "Il y a {{count}} mois",
       "daysAgo" : "Il y a {{count}} j.",
       "hoursAgo" : "Il y a {{count}} h",
       "minutesAgo" : "Il y a {{count}} min.",
@@ -9835,7 +9835,7 @@
     }
   },
   "fearAndGreed" : {
-    "title" : "Sentiment du marché",
+    "title" : "Sentiment",
     "description" : "Cet indicateur représente le sentiment général du marché de 0 à 100, sur la base notamment de la volatilité, de la dynamique du marché et des tendances sociales. Des valeurs basses indiquent la peur, des valeurs élevées signalent la cupidité.",
     "disclaimer" : "Les données proviennent de CoinMarketCap. Fournies à titre informatif uniquement.",
     "levels" : {
@@ -9890,7 +9890,7 @@
       },
       "navigation" : {
         "title" : "Accédez instantanément aux actions clés",
-        "description" : "Échangez, transférez et achetez des actifs en toute simplicité. Les sections Gagner et Carte se trouvent désormais en bas de votre app."
+        "description" : "Échangez, transférez et achetez en toute simplicité. Les sections Gagner et Carte sont désormais en bas de votre app."
       },
       "actions" : {
         "title" : "Suivez l’évolution des marchés",
@@ -9996,7 +9996,7 @@
         },
         "saveLogs" : {
           "title" : "Enregistrer les logs",
-          "description" : "Sauvegarder les logs de Ledger Wallet à des fins de dépannage."
+          "description" : "Télécharger les logs de Ledger Wallet."
         },
         "ledgerStatus" : {
           "title" : "Statut de Ledger",
@@ -10004,7 +10004,7 @@
         },
         "clearCache" : {
           "title" : "Vider le cache",
-          "description" : "Scanner les transactions et recalculer les soldes."
+          "description" : "Recalculer les soldes."
         }
       }
     },
