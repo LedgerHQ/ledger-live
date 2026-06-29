@@ -44,7 +44,9 @@ function Effect({
   itemsRef: React.RefObject<WatchedItem[]>;
   outOfViewThreshold: number;
 }) {
-  const watchedItem = useRef(new WeakMap<WatchedItem, boolean>());
+  // Keyed by the stable `target` ref, not the WatchedItem, so visibility memory
+  // survives re-subscriptions and avoids re-firing on re-render.
+  const visibilityByTarget = useRef(new WeakMap<RefObject<View | null>, boolean>());
 
   const hasItems = useSelector(inViewHasItemsSelector);
 
@@ -61,7 +63,7 @@ function Effect({
           from(
             Promise.all(
               items.map(async item => {
-                const threshold = watchedItem.current.get(item)
+                const threshold = visibilityByTarget.current.get(item.target)
                   ? outOfViewThreshold
                   : inViewThreshold;
 
@@ -74,8 +76,8 @@ function Effect({
       )
       .subscribe(xs => {
         xs.forEach(({ item, entry }) => {
-          if (entry.isInView === watchedItem.current.get(item)) return;
-          watchedItem.current.set(item, entry.isInView);
+          if (entry.isInView === visibilityByTarget.current.get(item.target)) return;
+          visibilityByTarget.current.set(item.target, entry.isInView);
           item.onInViewUpdate(entry);
         });
       });
