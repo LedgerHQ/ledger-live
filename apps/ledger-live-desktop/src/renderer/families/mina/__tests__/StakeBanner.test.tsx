@@ -3,11 +3,11 @@ import { render, screen } from "tests/testSetup";
 import StakeBanner from "../StakeBanner";
 import { createMockMinaAccount, createDelegatingMinaAccount } from "./testUtils";
 import { track } from "~/renderer/analytics/segment";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 jest.mock("~/renderer/analytics/segment");
 
-jest.mock("@ledgerhq/live-common/featureFlags/useFeature");
+jest.mock("@features/platform-feature-flags");
 const mockUseFeature = jest.mocked(useFeature);
 
 jest.mock("~/renderer/hooks/useGetStakeLabelLocaleBased", () => ({

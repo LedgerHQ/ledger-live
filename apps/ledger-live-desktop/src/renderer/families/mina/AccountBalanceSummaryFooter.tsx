@@ -8,7 +8,8 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { MinaFamily } from "./types";
+import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { CopiableField } from "./CopiableField";
 import { Trans, useTranslation } from "react-i18next";
@@ -48,7 +49,11 @@ const Title = styled(Text).attrs(() => ({
   margin-right: ${p => p.theme.space[1]}px;
 `;
 
-const AccountBalanceSummaryFooter: MinaFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
+type Props = {
+  account: MinaAccount | TokenAccount;
+};
+
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const { t } = useTranslation();
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
