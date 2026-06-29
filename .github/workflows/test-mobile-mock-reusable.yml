@@ -685,7 +685,6 @@ jobs:
     continue-on-error: true
     needs: [build-android, determine-builds]
     # Only run on merge to develop (push), not on PRs
-    if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
     env:
@@ -1086,7 +1085,6 @@ jobs:
     continue-on-error: true
     runs-on: [ledger-live-medium]
     needs: [detox-ui-e2e-ios, detox-ui-e2e-android]
-    if: ${{ !cancelled() && (needs.detox-ui-e2e-ios.outputs.artifact || needs.detox-ui-e2e-android.outputs.artifact) }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
     steps:
