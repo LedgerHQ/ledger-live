@@ -181,7 +181,15 @@ async function init() {
   }
   // Initialize identities before Sentry so Sentry user id (datadogId) is set correctly
   await initIdentities(store);
-  sentry(() => sentryLogsSelector(store.getState()), store);
+  // lldDatadog XOR-switches the crash backend (see main/index.ts): when the flag is on, Datadog is
+  // active and Sentry is muted; both stay gated by the sentryLogs opt-in. Read live from the store
+  // so the backend flips as soon as the flag resolves.
+  sentry(
+    () =>
+      sentryLogsSelector(store.getState()) &&
+      !selectFeature(store.getState(), "lldDatadog").enabled,
+    store,
+  );
   let notifiedSentryLogs = false;
   store.subscribe(() => {
     const next = sentryLogsSelector(store.getState());
