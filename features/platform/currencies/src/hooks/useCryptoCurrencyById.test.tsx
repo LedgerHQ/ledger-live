@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
-import { useCryptoCurrencyById } from "../useCryptoCurrencyById";
+import { useCryptoCurrencyById } from "./useCryptoCurrencyById";
 
 describe("useCryptoCurrencyById", () => {
   it("returns the registry entry for a known id", () => {

@@ -10,7 +10,7 @@ export interface UseSupportedCurrenciesOptions {
 /**
  * Applies feature-flag gating to a registry-backed supported-currency list.
  *
- * Support is registry-driven (coin-module loaders, PR #18256); this hook does
+ * Support is registry-driven (coin-module loaders); this hook does
  * NOT maintain its own list. The caller passes the registry-backed set (e.g.
  * live-common's `listSupportedCurrencies()`); the hook returns it minus the
  * currencies whose gating feature flag is disabled.

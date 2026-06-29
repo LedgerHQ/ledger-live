@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
-import { useSupportedCurrencies } from "../useSupportedCurrencies";
-import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "../../__tests__/renderWithStore";
+import { useSupportedCurrencies } from "./useSupportedCurrencies";
+import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "../renderWithStore";
 
 const bitcoin = CRYPTO_CURRENCIES_REGISTRY.bitcoin; // not feature-flagged
 const aleo = CRYPTO_CURRENCIES_REGISTRY.aleo; // gated by currencyAleo

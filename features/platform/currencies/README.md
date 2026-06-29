@@ -18,9 +18,11 @@ the `@domain/entity-currency-*` packages** (no slices here).
 
 ## Architecture
 
-- **Store** — the single runtime cache for token data is the `@domain/api-currency-token`
-  RTK-Query instance. `buildCryptoAssetsStore` adapts it to the `CryptoAssetsStore` port;
-  the app store wiring (single-source gate) is owned by LIVE-32346.
+- **Legacy store (`src/legacy/store/`, temporary)** — the single runtime cache for token data is the
+  `@domain/api-currency-token` RTK-Query instance. `buildCryptoAssetsStore` adapts it to the
+  `CryptoAssetsStore` port to preserve the legacy `getCryptoAssetsStore()` contract during the
+  migration. It is a strangler facade scheduled for removal — see
+  [`src/legacy/store/FUTURE.md`](./src/legacy/store/FUTURE.md).
 - **Supported set** — support is registry-driven (coin-module loaders). This package does
   not maintain its own list: `useSupportedCurrencies` takes the registry-backed list as
   input and applies feature-flag gating via `@features/platform-feature-flags`.

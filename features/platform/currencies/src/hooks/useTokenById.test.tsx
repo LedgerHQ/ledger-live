@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { useFindTokenByIdQuery } from "@domain/api-currency-token";
-import { useTokenById } from "../useTokenById";
+import { useTokenById } from "./useTokenById";
 
 jest.mock("@domain/api-currency-token", () => ({
   useFindTokenByIdQuery: jest.fn(() => ({ data: undefined, isLoading: false })),

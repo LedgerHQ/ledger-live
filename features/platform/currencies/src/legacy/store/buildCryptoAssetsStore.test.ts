@@ -3,7 +3,7 @@ import {
   buildCryptoAssetsStore,
   remapRtkQueryError,
   type CryptoAssetsStoreDispatch,
-} from "../buildCryptoAssetsStore";
+} from "./buildCryptoAssetsStore";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "../../errors";
 
 function setup() {

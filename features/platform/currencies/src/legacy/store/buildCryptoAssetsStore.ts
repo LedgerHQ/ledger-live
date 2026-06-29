@@ -1,7 +1,7 @@
 import type { SerializedError, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { cryptoAssetsApi, type CryptoAssetsApi } from "@domain/api-currency-token";
-import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "../errors";
+import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "../../errors";
 import type { CryptoAssetsStore } from "./port";
 
 /**

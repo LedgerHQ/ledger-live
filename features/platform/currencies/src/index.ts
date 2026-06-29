@@ -1,3 +1,3 @@
 export * from "./errors";
-export * from "./store";
+export * from "./legacy";
 export * from "./hooks";

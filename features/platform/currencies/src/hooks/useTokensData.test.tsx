@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useGetTokensDataInfiniteQuery } from "@domain/api-currency-token";
-import { useTokensData } from "../useTokensData";
+import { useTokensData } from "./useTokensData";
 
 jest.mock("@domain/api-currency-token", () => ({
   useGetTokensDataInfiniteQuery: jest.fn(),
