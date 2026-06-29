@@ -21,9 +21,9 @@ import BigNumber from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
-import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
-import { Transaction as EvmTransaction } from "./types";
-import { getEstimatedFees } from "./utils";
+import { acceptTransaction, avalancheSpeculosDeviceAction } from "./deviceActions";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
 
 const testTimeout = 10 * 60 * 1000;
 

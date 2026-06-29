@@ -4916,12 +4916,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../../domain-service
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4955,18 +4949,12 @@ importers:
       ethers:
         specifier: 6.15.0
         version: 6.15.0
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       imurmurhash:
         specifier: ^0.1.4
         version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       react-native-get-random-values:
         specifier: ^1.8.0
         version: 1.11.0
@@ -4995,9 +4983,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -8287,6 +8272,9 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
+      '@ledgerhq/domain-service':
+        specifier: workspace:^
+        version: link:../domain-service
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors

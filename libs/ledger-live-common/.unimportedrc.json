@@ -544,6 +544,7 @@
     "src/families/evm/staking/logic.ts",
     "src/families/evm/staking/react.ts",
     "src/families/evm/staking/types.ts",
+    "src/families/evm/common.fixtures.ts",
     "src/families/evm/transaction.fixtures.ts",
     "src/families/evm/waitForConfirmation.ts",
     "src/families/evm/walletApiAdapter.ts",
