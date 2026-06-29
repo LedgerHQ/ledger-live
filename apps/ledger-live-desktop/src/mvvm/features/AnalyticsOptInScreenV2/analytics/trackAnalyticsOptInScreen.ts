@@ -19,6 +19,7 @@ const basePayload = (page: string): TrackPayload => ({
 export const trackAnalyticsOptInScreenClick = (
   button: string,
   page: keyof typeof ANALYTICS_OPT_IN_SCREEN_PAGES,
+  shouldWeTrack: boolean,
 ) => {
   track(
     "button_clicked",
@@ -29,11 +30,15 @@ export const trackAnalyticsOptInScreenClick = (
       variant: ANALYTICS_OPT_IN_SCREEN_VARIANT,
       entryPoint: "Onboarding",
     },
-    true,
+    shouldWeTrack,
   );
 };
 
-export const trackAnalyticsOptInScreenToggle = (toggle: string, value: boolean) => {
+export const trackAnalyticsOptInScreenToggle = (
+  toggle: string,
+  value: boolean,
+  shouldWeTrack: boolean,
+) => {
   track(
     "toggle_clicked",
     {
@@ -44,6 +49,6 @@ export const trackAnalyticsOptInScreenToggle = (toggle: string, value: boolean) 
       variant: ANALYTICS_OPT_IN_SCREEN_VARIANT,
       entryPoint: "Onboarding",
     },
-    true,
+    shouldWeTrack,
   );
 };

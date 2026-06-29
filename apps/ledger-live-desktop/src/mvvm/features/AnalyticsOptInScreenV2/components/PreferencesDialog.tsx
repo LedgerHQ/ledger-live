@@ -6,6 +6,7 @@ import Track from "~/renderer/analytics/Track";
 
 export type PreferencesDialogProps = Readonly<{
   isOpen: boolean;
+  shouldWeTrack: boolean;
   onBackFromPreferences: () => void;
   onClosed: () => void;
   draftShareAnalytics: boolean;
@@ -19,6 +20,7 @@ export type PreferencesDialogProps = Readonly<{
 
 export function PreferencesDialog({
   isOpen,
+  shouldWeTrack,
   onBackFromPreferences,
   onClosed,
   draftShareAnalytics,
@@ -54,7 +56,7 @@ export function PreferencesDialog({
         onOpenAutoFocus={event => event.preventDefault()}
         onCloseAutoFocus={handleCloseAutoFocus}
       >
-        {isOpen ? <Track onMount mandatory event={page} page={page} /> : null}
+        {isOpen ? <Track onMount mandatory={shouldWeTrack} event={page} page={page} /> : null}
         <AnalyticsConsentPreferencesView
           onBackFromPreferences={onBackFromPreferences}
           draftShareAnalytics={draftShareAnalytics}

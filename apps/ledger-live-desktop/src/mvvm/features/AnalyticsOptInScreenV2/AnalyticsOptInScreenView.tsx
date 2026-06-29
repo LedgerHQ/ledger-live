@@ -12,6 +12,7 @@ export function AnalyticsOptInScreenView({
   isOpened,
   step,
   isPreferencesDialogOpen,
+  shouldWeTrack,
   handleAcceptAll,
   handleRefuseAll,
   handlePrevious,
@@ -39,6 +40,7 @@ export function AnalyticsOptInScreenView({
       >
         <div className="relative flex h-full min-h-0 flex-col">
           <AnalyticsConsentScreen
+            shouldWeTrack={shouldWeTrack}
             onAcceptAll={handleAcceptAll}
             onRefuseAll={handleRefuseAll}
             onPrevious={handlePrevious}
@@ -49,6 +51,7 @@ export function AnalyticsOptInScreenView({
       </div>
       <PreferencesDialog
         isOpen={isPreferencesDialogOpen}
+        shouldWeTrack={shouldWeTrack}
         onBackFromPreferences={handleBackFromPreferences}
         onClosed={handlePreferencesDialogClosed}
         draftShareAnalytics={draftShareAnalytics}
