@@ -7,6 +7,7 @@ import {
   useWalletAPIServer,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
+import { broadcastLogger } from "~/datadog/logs";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
@@ -333,6 +334,7 @@ function useWebView(
     webviewHook,
     uiHook,
     customHandlers,
+    broadcastLogger,
   });
 
   useEffect(() => {

@@ -17,6 +17,7 @@ import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { broadcastLogger } from "~/datadog";
 import { useSelector } from "~/context/hooks";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
@@ -162,6 +163,7 @@ export function useWebView(
     webviewHook,
     uiHook,
     customHandlers,
+    broadcastLogger,
   });
   const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState, cacheBustedLoaded] =
     useCacheBustedLiveAppsDB();

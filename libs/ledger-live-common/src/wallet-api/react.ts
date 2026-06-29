@@ -56,6 +56,14 @@ import {
 } from "./logic";
 import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
+import {
+  BroadcastFlow,
+  buildBroadcastCommonEvent,
+  buildBroadcastFailureEvent,
+  buildBroadcastSuccessEvent,
+  getBroadcastTransactionType,
+  type BroadcastLogger,
+} from "./broadcastLogEvent";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { Transaction } from "../coin-modules/transaction-types";
@@ -279,6 +287,8 @@ export type useWalletAPIServerOptions = {
   };
   uiHook: Partial<UiHook>;
   customHandlers?: WalletAPICustomHandlers;
+  /** Optional sink for Datadog broadcast log events, injected by each app. */
+  broadcastLogger?: BroadcastLogger;
 };
 
 export function useWalletAPIServer({
@@ -303,6 +313,7 @@ export function useWalletAPIServer({
     "exchange.complete": uiExchangeComplete,
   },
   customHandlers,
+  broadcastLogger,
 }: useWalletAPIServerOptions): {
   onMessage: (event: string) => void;
   server: WalletAPIServer;
@@ -993,6 +1004,17 @@ export function useWalletAPIServer({
               network: networkId,
             };
 
+            const broadcastLogEvent = buildBroadcastCommonEvent({
+              account,
+              mainAccount,
+              flow: BroadcastFlow.WalletApiSignAndBroadcast,
+              manifestId: manifest.id,
+              source: { type: "live-app", name: manifest.id },
+              transactionType: getBroadcastTransactionType(transaction),
+              // `useAllAmount` is family-specific and absent from the wallet-api common shape.
+              isSendMax: Boolean((transaction as { useAllAmount?: boolean }).useAllAmount),
+            });
+
             let optimisticOperation: Operation = signedOperation.operation;
 
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
@@ -1007,8 +1029,12 @@ export function useWalletAPIServer({
                   },
                 });
                 tracking.broadcastSuccess(manifest, broadcastTrackingData);
+                broadcastLogger?.(buildBroadcastSuccessEvent(broadcastLogEvent));
               } catch (error) {
                 tracking.broadcastFail(manifest, broadcastTrackingData);
+                broadcastLogger?.(
+                  buildBroadcastFailureEvent(broadcastLogEvent, error, signedOperation),
+                );
                 throw error;
               }
             }
@@ -1022,7 +1048,16 @@ export function useWalletAPIServer({
         );
       },
     );
-  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
+  }, [
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiTxBroadcast,
+    uiTxSign,
+    broadcastLogger,
+  ]);
 
   const onLoad = useCallback(() => {
     tracking.loadSuccess(manifest);

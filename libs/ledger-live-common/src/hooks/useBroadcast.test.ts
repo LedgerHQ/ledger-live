@@ -79,6 +79,7 @@ describe("useBroadcast", () => {
 
       expect(logger).toHaveBeenCalledWith({
         status: "success",
+        flow: "send",
         currencyId: "currency-id",
         tokenId: expectedTokenId,
         family: "family",
@@ -118,7 +119,9 @@ describe("useBroadcast", () => {
 
       expect(logger).toHaveBeenCalledWith({
         status: "failure",
+        flow: "send",
         error: new Error("Broadcast failed"),
+        errorType: "Unknown",
         currencyId: "currency-id",
         tokenId: expectedTokenId,
         family: "family",

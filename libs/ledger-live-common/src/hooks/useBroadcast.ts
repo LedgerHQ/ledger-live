@@ -6,54 +6,31 @@ import type {
   AccountLike,
   Account,
   BroadcastConfig,
-  TransactionSource,
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { formatOperation, getMainAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { execAndWaitAtLeast } from "../promise";
+import {
+  BroadcastFlow,
+  buildBroadcastCommonEvent,
+  buildBroadcastFailureEvent,
+  buildBroadcastSuccessEvent,
+  type BroadcastLogger,
+  type LogEvent,
+} from "../wallet-api/broadcastLogEvent";
 
-type CommonLogEvent = {
-  appVersion: string;
-  source?: TransactionSource;
-  currencyId: string;
-  family: string;
-  tokenId?: string;
-  isTestnet: boolean;
-  isSendMax: boolean;
-};
-
-type ErrorLogEvent = {
-  status: "failure";
-  error: Error;
-  txPayload: {
-    signature: string;
-    rawData?: Record<string, unknown>;
-  };
-} & CommonLogEvent;
-
-type SuccessLogEvent = { status: "success" } & CommonLogEvent;
-
-export type LogEvent = SuccessLogEvent | ErrorLogEvent;
+// Re-exported for backward compatibility — consumers import `LogEvent` from this module.
+export type { LogEvent, BroadcastLogger };
 
 export type SignTransactionArgs = {
   account?: AccountLike | null;
   parentAccount?: Account | null;
   broadcastConfig?: BroadcastConfig;
-  logger?: (event: LogEvent) => void;
+  logger?: BroadcastLogger;
   transaction?: TransactionCommon | null;
 };
-
-function toError(err: unknown): Error {
-  if (err instanceof Error) return err;
-  if (typeof err === "string") return new Error(err);
-  try {
-    return new Error(JSON.stringify(err));
-  } catch {
-    return new Error(String(err));
-  }
-}
 
 export const useBroadcast = ({
   account,
@@ -72,15 +49,13 @@ export const useBroadcast = ({
         return Promise.resolve(signedOperation.operation);
       }
 
-      const commonLogEvent: CommonLogEvent = {
-        appVersion: getEnv("LEDGER_CLIENT_VERSION"),
+      const commonLogEvent = buildBroadcastCommonEvent({
+        account,
+        mainAccount,
+        flow: BroadcastFlow.Send,
         source: broadcastConfig?.source,
-        currencyId: mainAccount.currency.id,
-        family: mainAccount.currency.family,
-        isTestnet: Boolean(mainAccount.currency.isTestnetFor),
         isSendMax: Boolean(transaction?.useAllAmount),
-        ...(account.type === "TokenAccount" ? { tokenId: account.token.id } : {}),
-      };
+      });
 
       return execAndWaitAtLeast(3000, async () => {
         try {
@@ -94,24 +69,12 @@ export const useBroadcast = ({
             `✔️ broadcasted! optimistic operation: ${(await formatOperation(mainAccount))(operation)}`,
           );
           if (logger) {
-            logger({
-              status: "success",
-              ...commonLogEvent,
-            });
+            logger(buildBroadcastSuccessEvent(commonLogEvent));
           }
           return operation;
         } catch (err) {
-          const error = toError(err);
           if (logger) {
-            logger({
-              status: "failure",
-              error,
-              txPayload: {
-                signature: signedOperation.signature,
-                ...(signedOperation.rawData ? { rawData: signedOperation.rawData } : {}),
-              },
-              ...commonLogEvent,
-            });
+            logger(buildBroadcastFailureEvent(commonLogEvent, err, signedOperation));
           }
           throw err;
         }
