@@ -4918,16 +4918,10 @@ importers:
       react-native-get-random-values:
         specifier: ^1.8.0
         version: 1.11.0
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
     devDependencies:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/hw-app-eth':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-app-eth
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -6930,6 +6924,9 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
+      '@ledgerhq/live-signer-evm':
+        specifier: workspace:^
+        version: link:../../live-signer-evm
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -8241,6 +8238,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
+      '@ledgerhq/evm-tools':
+        specifier: workspace:^
+        version: link:../evm-tools
       '@ledgerhq/hw-app-algorand':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-algorand
@@ -11883,9 +11883,6 @@ importers:
 
   libs/live-signer-evm:
     dependencies:
-      '@ledgerhq/coin-evm':
-        specifier: workspace:^
-        version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
         specifier: 2.1.0
         version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
@@ -22225,7 +22222,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true

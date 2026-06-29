@@ -308,6 +308,7 @@
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/hw-app-aptos": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",

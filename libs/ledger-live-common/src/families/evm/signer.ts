@@ -1,13 +1,18 @@
 import { filter, firstValueFrom } from "rxjs";
-import { EvmAddress, EvmSignature, EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
+import {
+  DmkSignerEth,
+  LegacySignerEth,
+  type EvmAddress,
+  type EvmSignature,
+  type EvmSigner,
+} from "@ledgerhq/live-signer-evm";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
 import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { Signature } from "ethers";
 import type { DomainServiceResolution } from "@ledgerhq/types-live";
-import resolver from "@ledgerhq/coin-evm/hw-getAddress";
+import resolver from "./getAddress";
 import { CreateSigner, executeWithSigner } from "../../bridge/setup";
 import type { CoinFrameworkSigner } from "../../bridge/generic-coin-framework/types";
 

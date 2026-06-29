@@ -2,7 +2,7 @@ import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddres
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import eip55 from "eip55";
-import { EvmSigner } from "./types/signer";
+import { EvmSigner } from "@ledgerhq/live-signer-evm";
 
 const resolver = (signerContext: SignerContext<Pick<EvmSigner, "getAddress">>): GetAddressFn => {
   return async (deviceId: string, { path, verify, currency }: GetAddressOptions) => {
