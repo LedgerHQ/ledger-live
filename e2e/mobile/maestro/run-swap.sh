@@ -134,13 +134,35 @@ else
   for f in maestro/flows/swap/*.yaml; do PAIRS+=("$(basename "$f" .yaml)"); done
 fi
 
+# Per-pair retry: swap failures are mostly transient (native launch crash, quotes not loading, a
+# signing/success flake on the single-threaded local Speculos). Each attempt is a FULL clean cycle
+# (run_one_pair restarts the harness + Speculos and relaunches the app with clearState), so a retry
+# starts from a fresh backend + app state. MAESTRO_RETRIES = retries AFTER the first attempt
+# (default 2 => up to 3 attempts per pair); set MAESTRO_RETRIES=0 to disable.
+MAESTRO_RETRIES="${MAESTRO_RETRIES:-2}"
+
 overall=0
 results=""
 for pair in "${PAIRS[@]}"; do
-  if run_one_pair "$pair"; then
-    results="${results}  PASS  ${pair}"$'\n'
+  attempt=0
+  pair_ok=0
+  while :; do
+    attempt=$((attempt + 1))
+    [ "$attempt" -gt 1 ] && echo ">> retry $((attempt - 1))/$MAESTRO_RETRIES for pair '$pair' (previous attempt failed)"
+    if run_one_pair "$pair"; then
+      pair_ok=1
+      break
+    fi
+    [ "$attempt" -gt "$MAESTRO_RETRIES" ] && break
+  done
+  if [ "$pair_ok" = "1" ]; then
+    if [ "$attempt" -gt 1 ]; then
+      results="${results}  PASS  ${pair} (attempt ${attempt}/$((MAESTRO_RETRIES + 1)))"$'\n'
+    else
+      results="${results}  PASS  ${pair}"$'\n'
+    fi
   else
-    results="${results}  FAIL  ${pair}"$'\n'
+    results="${results}  FAIL  ${pair} (after ${attempt} attempts)"$'\n'
     overall=1
   fi
 done

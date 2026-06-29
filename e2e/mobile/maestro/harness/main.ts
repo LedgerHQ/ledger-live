@@ -357,10 +357,13 @@ async function setupSwap(): Promise<void> {
     }
   })();
 
-  // Drive the WebView quote selection + execute via the in-app webview driver (Maestro can't
-  // reliably tap the WebView keypad/quote/execute buttons). Runs in the background and polls until
-  // Maestro has opened the swap screen + tapped "View quotes". Do NOT await.
-  void driveSwapExecute();
+  // Swap UI driving is now done NATIVELY by Maestro on both iOS and Android (flows/swap subflow:
+  // "View quotes" -> provider card -> "Swap with X"). The by-text taps fire the live-app's React
+  // onClick reliably and the buttons are not clipped (verified on iOS WKWebView), so the bridge
+  // webviewDriver is no longer needed and is NOT invoked by default — running it concurrently would
+  // race Maestro and double-execute the swap. Kept available behind MAESTRO_WEBVIEW_DRIVER=1 for
+  // debugging the old qaa-1242 DOM path. Do NOT await.
+  if (process.env.MAESTRO_WEBVIEW_DRIVER === "1") void driveSwapExecute();
 
   // eslint-disable-next-line no-console
   console.log(`[maestro-harness] swap backend ready (Exchange + Speculos, amount=${amount}).`);

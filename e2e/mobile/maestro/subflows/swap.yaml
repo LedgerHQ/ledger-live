@@ -54,10 +54,11 @@ appId: ${APP_ID}
     timeout: 30000
 - tapOn:
     text: "25%"
-# Quotes/provider/execute: iOS is driven by the harness (webviewDriver); Android taps them directly.
+# Quotes/provider/execute are driven natively by Maestro on BOTH iOS and Android. By-text taps fire
+# the swap live-app's React onClick reliably (verified on iOS WKWebView): "View quotes" -> quotes
+# render -> provider card -> "Swap with X". The buttons sit above the home indicator, so they are not
+# clipped. The old iOS-only bridge webviewDriver path is disabled (see harness main.ts driveSwapExecute).
 - runFlow:
-    when:
-      platform: Android
     commands:
       - extendedWaitUntil:
           visible:

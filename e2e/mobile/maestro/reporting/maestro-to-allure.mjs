@@ -132,6 +132,15 @@ function attachText(content, name, ext, type) {
   return { name, source, type };
 }
 
+// Allure's TestResult schema types statusDetails.trace as a String, but Maestro's command JSON often
+// has error.stackTrace as an ARRAY of frames (and debugMessage can be absent). Coerce to a string so
+// `allure generate` doesn't fail deserialization (Jackson MismatchedInputException on an array).
+function toTrace(err) {
+  if (!err) return "";
+  const t = err.debugMessage || err.stackTrace || "";
+  return Array.isArray(t) ? t.join("\n") : typeof t === "string" ? t : JSON.stringify(t);
+}
+
 function toStep(n) {
   const step = {
     name: commandName(n.cmd),
@@ -145,7 +154,7 @@ function toStep(n) {
   };
   const err = n.meta.error;
   if (n.meta.status === "FAILED" && err) {
-    step.statusDetails = { message: err.message || "", trace: err.debugMessage || err.stackTrace || "" };
+    step.statusDetails = { message: err.message || "", trace: toTrace(err) };
   }
   if (n.type === "takeScreenshotCommand") {
     let p = (n.cmd.takeScreenshotCommand || {}).path;
@@ -280,7 +289,7 @@ function convertFlow(dir) {
   if (failed) {
     result.statusDetails = {
       message: failed.meta.error?.message || "Flow failed",
-      trace: failed.meta.error?.debugMessage || failed.meta.error?.stackTrace || "",
+      trace: toTrace(failed.meta.error),
     };
   }
   writeFileSync(join(RESULTS, `${result.uuid}-result.json`), JSON.stringify(result));
