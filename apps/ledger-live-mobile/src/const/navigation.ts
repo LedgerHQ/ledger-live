@@ -421,6 +421,9 @@ export enum ScreenName {
   CantonOnboardAccount = "CantonOnboardAccount",
   // Concordium
   ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
+  // Aleo
+  AleoAddAccount = "AleoAddAccount",
+  AleoViewKeyWarning = "AleoViewKeyWarning",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",

@@ -44,6 +44,7 @@ const targets = [
   "ExpiryDurationInput",
   "ShouldUseReceiveOptions",
   "PendingTransferProposals",
+  "customAddAccountFlow",
 ];
 
 async function genTarget(target) {
