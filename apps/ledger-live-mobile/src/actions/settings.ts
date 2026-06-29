@@ -35,7 +35,6 @@ import {
   SettingsShowTokenPayload,
   SettingsUpdateCurrencyPayload,
   SettingsActionTypes,
-  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
@@ -217,10 +216,6 @@ export const setNotifications = createAction<SettingsSetNotificationsPayload>(
 export const setCloseWithdrawBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
-export const setWalletTabNavigatorLastVisitedTab =
-  createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
-    SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB,
-  );
 export const setDateFormat = createAction<SettingsSetDateFormatPayload>(
   SettingsActionTypes.SETTINGS_SET_DATE_FORMAT,
 );

@@ -355,7 +355,6 @@ export const DeeplinksProvider = ({
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
   const {
-    shouldDisplayMarketBanner,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
@@ -714,13 +713,7 @@ export const DeeplinksProvider = ({
             const validatedCategory = shouldDisplayAssetDiscoverability
               ? validateMarketListCategory(searchParams.get("category"))
               : undefined;
-            if (shouldDisplayMarketBanner) {
-              return handleMarketBannerDeeplink(validatedCategory);
-            }
-            return getStateFromPath(
-              validatedCategory ? `market?category=${validatedCategory}` : "market",
-              config,
-            );
+            return handleMarketBannerDeeplink(validatedCategory);
           }
 
           // Handle asset deeplink - validate currencyId before navigation
@@ -936,7 +929,6 @@ export const DeeplinksProvider = ({
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
-    shouldDisplayMarketBanner,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,

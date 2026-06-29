@@ -153,8 +153,6 @@ function getNavigatorParams<T extends TransactionCommon>({
     case ScreenName.Account:
     case ScreenName.Asset:
       return [NavigatorName.Accounts, params];
-    case ScreenName.MarketDetail:
-      return [NavigatorName.Market, params];
     default:
       return [NavigatorName.Base, params];
   }

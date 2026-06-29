@@ -39,7 +39,6 @@ interface UsePortfolioViewModelResult {
   shouldDisplayQuickActionCtas: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
-  shouldDisplayMarketBanner: boolean;
   shouldDisplayBorrowSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
@@ -69,7 +68,6 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayQuickActionCtas,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
-    shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
@@ -170,7 +168,6 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
     showAssets,
     isLNSUpsellBannerShown,
