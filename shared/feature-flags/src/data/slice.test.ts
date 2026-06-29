@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, type Middleware } from "@reduxjs/toolkit";
 import {
   featureFlagsReducer,
   setOverride,
   setAllOverrides,
   setBannerVisible,
   setRemoteFlagsReady,
+  syncRemoteConfig,
   importState,
 } from "./slice";
 import { createFeatureFlagsMiddleware, type FeatureFlagsMiddlewareConfig } from "./middleware";
@@ -325,8 +326,8 @@ describe("middleware behavior", () => {
 
     jest.advanceTimersByTime(1_000);
     await flushPromises();
-    // Reducer state is unchanged because syncRemoteConfig is not dispatched on failure;
-    // the previous resolved value remains visible.
+    // syncRemoteConfig already fired on the earlier success, so the failed poll does
+    // not re-resolve (the one-shot guard is spent); the previous value remains visible.
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 
@@ -345,9 +346,60 @@ describe("middleware behavior", () => {
     const store = createStore(undefined, { fetchRemoteFlags: fetcher, refreshInterval: 1_000 });
 
     await flushPromises();
-    // syncRemoteConfig never fires on failure, so resolved stays at defaults.
+    // With no overrides/env and an empty remote, the first-settle re-resolve yields defaults.
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
     expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
+  });
+
+  it("applies envFlags at boot even when the first fetch fails", async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error("network down"));
+    const store = createStore(undefined, {
+      resolutionConfig: {
+        envFlags: { mockFeature: { enabled: true, params: { fromEnv: true } } },
+      },
+      fetchRemoteFlags: fetcher,
+      refreshInterval: 1_000,
+    });
+
+    await flushPromises();
+    expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
+      enabled: true,
+      params: { fromEnv: true },
+      overridesRemote: true,
+      overriddenByEnv: true,
+    });
+  });
+
+  it("dispatches syncRemoteConfig only once across repeated failed polls", async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error("network down"));
+    const dispatchedTypes: string[] = [];
+    const recorder: Middleware = () => next => action => {
+      dispatchedTypes.push((action as { type: string }).type);
+      return next(action);
+    };
+    const store = configureStore({
+      reducer: { featureFlags: featureFlagsReducer },
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware()
+          .concat(recorder)
+          .concat(
+            createFeatureFlagsMiddleware({
+              resolutionConfig: {},
+              fetchRemoteFlags: fetcher,
+              refreshInterval: 1_000,
+            }),
+          ),
+    });
+
+    await flushPromises(); // first settle (failure) → one syncRemoteConfig
+    jest.advanceTimersByTime(1_000);
+    await flushPromises(); // second failed poll → no re-resolve
+    jest.advanceTimersByTime(1_000);
+    await flushPromises(); // third failed poll → no re-resolve
+
+    const syncs = dispatchedTypes.filter(type => type === syncRemoteConfig.type).length;
+    expect(syncs).toBe(1);
+    expect(fetcher).toHaveBeenCalledTimes(3);
   });
 
   it("does not schedule any timer when fetchRemoteFlags is omitted", () => {
