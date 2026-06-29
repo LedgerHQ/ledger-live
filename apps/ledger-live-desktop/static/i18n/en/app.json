@@ -9376,7 +9376,7 @@
       },
       "continueOnDevice": {
         "title": "Continue on your {{productName}}",
-        "description": "Follow the instructions displayed on your Secure Screen"
+        "description": "Follow the instructions displayed on your Secure Screen."
       }
     },
     "errors": {
