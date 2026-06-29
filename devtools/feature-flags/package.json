@@ -35,7 +35,7 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-utils-shared": "0.1.4",
+    "@ledgerhq/lumen-utils-shared": "0.1.7",
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-slot": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",
