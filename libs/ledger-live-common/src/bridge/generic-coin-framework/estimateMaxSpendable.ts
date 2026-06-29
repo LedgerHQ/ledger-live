@@ -3,7 +3,12 @@ import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { getMainAccount } from "../../account";
 import { getCoinModuleApi } from "./api";
 import { createTransaction } from "./createTransaction";
-import { computeUseAllAmount, getPendingTokenSpent, transactionToIntent } from "./utils";
+import {
+  computeUseAllAmount,
+  getNativeSpendableAfterPending,
+  getPendingTokenSpent,
+  transactionToIntent,
+} from "./utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 import { getBridgeApi } from "./bridge";
@@ -27,22 +32,23 @@ export function genericEstimateMaxSpendable(
       useAllAmount: true,
     };
 
-    const estimation: FeeEstimation = BigNumber.isBigNumber(transaction?.fees)
-      ? {
-          value: BigInt(transaction.fees.toFixed()),
-          parameters: BigNumber.isBigNumber(transaction?.additionalFees)
-            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
-            : undefined,
-        }
-      : await coinModuleApi.estimateFees(
-          transactionToIntent(
-            mainAccount,
-            draftTransaction,
-            bridgeApi.computeIntentType,
-            coinModuleApi.craftTransactionData,
-          ),
-        );
+    const estimated = await coinModuleApi.estimateFees(
+      transactionToIntent(
+        mainAccount,
+        draftTransaction,
+        bridgeApi.computeIntentType,
+        coinModuleApi.craftTransactionData,
+      ),
+    );
+    const estimation: FeeEstimation = {
+      value: BigNumber.isBigNumber(transaction?.fees)
+        ? BigInt(transaction.fees.toFixed())
+        : estimated.value,
+      parameters: BigNumber.isBigNumber(transaction?.additionalFees)
+        ? { ...estimated.parameters, additionalFees: BigInt(transaction.additionalFees.toFixed()) }
+        : estimated.parameters,
+    };
 
-    return computeUseAllAmount(estimation, account.spendableBalance);
+    return computeUseAllAmount(estimation, getNativeSpendableAfterPending(account));
   };
 }

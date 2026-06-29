@@ -447,6 +447,44 @@ describe("estimateFees", () => {
     });
   });
 
+  it("forwards stakedBalance and unstakedBalance to the logic estimate for send-max", async () => {
+    (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
+      type: "user",
+      balance: 1000,
+      revealed: true,
+      address: "tz1test",
+      publicKey: "edpktest",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+      stakedBalance: 200,
+      unstakedBalance: 300,
+    });
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      amount: 500n,
+    });
+
+    await api.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: "tz1test",
+      recipient: "tz1recipient",
+      amount: 0n,
+      useAllAmount: true,
+    } as TransactionIntent);
+
+    expect(logicEstimateFees).toHaveBeenCalledWith(
+      expect.objectContaining({
+        account: expect.objectContaining({ stakedBalance: 200n, unstakedBalance: 300n }),
+      }),
+    );
+  });
+
   it("should throw taquito errors", async () => {
     logicEstimateFees.mockResolvedValue({
       estimatedFees: DEFAULT_ESTIMATED_FEES,

@@ -4,7 +4,8 @@ import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
   computeUseAllAmount,
-  extractBalances,
+  getNativeSpendableAfterPending,
+  getPendingTokenSpent,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
@@ -81,7 +82,10 @@ export function genericPrepareTransaction(
     let amount = transaction.amount;
     if (transaction.useAllAmount && transaction.subAccountId) {
       const subAccount = account.subAccounts?.find(acc => acc.id === transaction.subAccountId);
-      amount = subAccount?.spendableBalance ?? amount;
+      if (subAccount) {
+        const pendingTokenSpent = getPendingTokenSpent(subAccount.pendingOperations ?? []);
+        amount = BigNumber.max(0, subAccount.spendableBalance.minus(pendingTokenSpent));
+      }
     }
 
     // Pass any parameters that help estimating fees
@@ -106,40 +110,30 @@ export function genericPrepareTransaction(
       gasLimit: transaction.customGasLimit,
       gasOptions: transaction.gasOptions,
     });
+
+    const estimated =
+      customParametersFees && !transaction.useAllAmount
+        ? undefined
+        : await coinModuleApi.estimateFees(intent, customFeesParameters);
     const estimation: FeeEstimation = customParametersFees
-      ? {
-          value: BigInt(customParametersFees.toFixed()),
-          parameters: BigNumber.isBigNumber(transaction.additionalFees)
-            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
-            : undefined,
-        }
-      : await coinModuleApi.estimateFees(intent, customFeesParameters);
+      ? { value: BigInt(customParametersFees.toFixed()), parameters: estimated?.parameters }
+      : (estimated as FeeEstimation);
     const fees = new BigNumber(estimation.value.toString());
 
     let nextAmount = transaction.amount;
     if (transaction.useAllAmount) {
-      if (transaction.subAccountId) {
-        // token send-max uses the full token balance (fees are paid in the native unit)
-        nextAmount = amount;
-      } else if (intent.intentType === "staking" || (!!assetReference && !!assetOwner)) {
-        // staking and tokens without a subAccountId have a coin-specific max we can't
-        // compute generically, so let the coin module work it out via validateIntent
-        const { amount: validated } = await coinModuleApi.validateIntent(
-          transactionToIntent(
-            account,
-            { ...transaction, assetOwner, assetReference },
-            bridgeApi.computeIntentType,
-            coinModuleApi.craftTransactionData,
-          ),
-          extractBalances(account, getAssetFromTokenForCurrency),
-        );
-        nextAmount = new BigNumber(validated.toString());
-      } else {
-        nextAmount = computeUseAllAmount(estimation, account.spendableBalance);
-      }
+      // token: full token balance (fees are paid in the native unit), else compute from the estimation
+      nextAmount = transaction.subAccountId
+        ? amount
+        : computeUseAllAmount(estimation, getNativeSpendableAfterPending(account));
     }
 
-    if (bnEq(transaction.fees, fees) && bnEq(transaction.amount, nextAmount)) {
+    if (
+      bnEq(transaction.fees, fees) &&
+      bnEq(transaction.amount, nextAmount) &&
+      (transaction.assetReference ?? "") === assetReference &&
+      (transaction.assetOwner ?? "") === assetOwner
+    ) {
       return transaction;
     }
 

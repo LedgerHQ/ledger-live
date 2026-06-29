@@ -1,5 +1,7 @@
 ---
 "@ledgerhq/live-common": patch
+"@ledgerhq/coin-evm": patch
+"@ledgerhq/coin-tezos": patch
 ---
 
-generic coin-framework bridge: compute the `useAllAmount` (send-max) amount once. `prepareTransaction` now derives the final amount from the single fee estimation (`parameters.amount` when the coin module provides it, e.g. Tezos, otherwise `spendableBalance - fees`), `signOperation` reuses that amount instead of recomputing it, and `estimateMaxSpendable` no longer calls `validateIntent`. `getTransactionStatus` still uses `validateIntent` for errors/warnings, so the displayed amount is unchanged (LIVE-22227, LIVE-22228, LIVE-22229).
+generic coin-framework bridge: compute the send-max (`useAllAmount`) amount once in `prepareTransaction` and reuse it in `signOperation`, instead of recomputing it via `validateIntent` in `prepareTransaction`, `signOperation` and `estimateMaxSpendable`. The amount is `parameters.amount` when the coin exposes it (Tezos), the token sub-account balance for token sends, otherwise `spendableBalance - max(reserve, fees)` (coin-evm now exposes `reserve`/`amountScale` for delegate). Pending operations are subtracted so the amount stays consistent with `getTransactionStatus` (LIVE-22227, LIVE-22228, LIVE-22229).

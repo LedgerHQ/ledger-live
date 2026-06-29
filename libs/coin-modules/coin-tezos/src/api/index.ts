@@ -240,6 +240,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
     revealed: senderAccountInfo.revealed,
     balance: BigInt(senderAccountInfo.balance),
     stakedBalance: BigInt(senderAccountInfo.stakedBalance ?? 0),
+    unstakedBalance: BigInt(senderAccountInfo.unstakedBalance ?? 0),
   };
 
   const tokenEstimationInfo =

@@ -203,6 +203,9 @@ export async function estimateFees({
         account.unstakedBalance ?? 0n,
         BigInt(mainOpFee) + revealFee,
       );
+    } else if (transaction.useAllAmount && transaction.mode === "unstake") {
+      // unstake-max draws from the staked balance, not the spendable balance
+      estimation.amount = account.stakedBalance ?? 0n;
     } else {
       estimation.amount = transaction.amount;
     }

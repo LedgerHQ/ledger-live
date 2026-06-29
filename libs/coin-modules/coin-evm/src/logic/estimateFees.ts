@@ -12,6 +12,7 @@ import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
 import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
 import { isEthAddress, isStakingIntent } from "../utils";
+import { STAKING_CONTRACTS } from "../staking";
 import { getTransactionType, prepareUnsignedTxParams } from "./common";
 import { getNextSequence } from "./getNextSequence";
 
@@ -200,6 +201,18 @@ export async function estimateFees(
   };
   const additionalFees = await computeAdditionalFees(currency, unsignedTransaction);
 
+  // delegate send-max: expose reserve/scale so the bridge can compute the amount (it has the balance)
+  const stakingConfig = STAKING_CONTRACTS[currency.id];
+  const delegateMaxParams =
+    transactionIntent.useAllAmount &&
+    isStakingIntent(transactionIntent) &&
+    transactionIntent.mode === "delegate"
+      ? {
+          reserve: stakingConfig?.delegationMaxAmountReserve,
+          amountScale: stakingConfig?.calldataAmountScale,
+        }
+      : undefined;
+
   return {
     value: BigInt(fee.toString()),
     parameters: {
@@ -208,6 +221,7 @@ export async function estimateFees(
       additionalFees: additionalFees && BigInt(additionalFees.toFixed()),
       gasLimit: BigInt(gasLimit.toFixed()),
       gasOptions: finalGasOptions && toApiGasOptions(finalGasOptions),
+      ...delegateMaxParams,
     },
   };
 }

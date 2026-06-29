@@ -254,6 +254,28 @@ describe("estimateFees", () => {
     expect(result.amount).toBe(4321n);
   });
 
+  it("useAllAmount unstake resolves max to the staked balance", async () => {
+    mockTezosToolkit.estimate.unstake.mockResolvedValue({
+      suggestedFeeMutez: 710,
+      gasLimit: 1200,
+      storageLimit: 6,
+      burnFeeMutez: 0,
+      opSize: 100,
+    });
+
+    const result = await estimateFees({
+      account: { ...revealedAccount, stakedBalance: 5000n },
+      transaction: {
+        mode: "unstake",
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      },
+    });
+
+    expect(result.amount).toBe(5000n);
+  });
+
   it("useAllAmount stake coerces amount to 1 for estimation and resolves max to balance minus fees and reserve", async () => {
     const suggestedFee = 700;
     const balance = 1_000_000n;
