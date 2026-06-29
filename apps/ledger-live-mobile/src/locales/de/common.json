@@ -2880,7 +2880,7 @@
     },
     "walletBalance" : "Kontostand der Wallet",
     "balance" : {
-      "noSigner" : "Deine sichere Krypto-Wallet",
+      "noSigner" : "Deine sichere\nKrypto-Wallet",
       "noAccounts" : "Beginne mit Einzahlungen in deine Wallet"
     },
     "seeAllAssets" : "Alle Vermögenswerte anzeigen",
@@ -4883,7 +4883,7 @@
   "addAccounts" : {
     "addNew" : "Neu hinzufügen",
     "seeAllAccounts" : "Alle Konten anzeigen",
-    "addNewOrExisting" : "Neues oder bestehendes Konto hinzufügen",
+    "addNewOrExisting" : "Neues/bestehendes Konto hinzufügen",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit oder Native Segwit?"
     },
@@ -9434,7 +9434,7 @@
   },
   "assetSelection" : {
     "selectCrypto" : {
-      "title" : "Vermögenswert auswählen"
+      "title" : "Asset auswählen"
     },
     "selectNetwork" : {
       "title" : "Blockchain-Netzwerk auswählen, zu dem der Vermögenswert gehört",
@@ -9537,7 +9537,7 @@
     "openStore" : "Aktualisieren"
   },
   "modularDrawer" : {
-    "selectAsset" : "Vermögenswert auswählen",
+    "selectAsset" : "Asset auswählen",
     "selectNetwork" : "Netzwerk auswählen",
     "selectAccount" : "Konto auswählen",
     "searchPlaceholder" : "Nach Name oder Adresse suchen",

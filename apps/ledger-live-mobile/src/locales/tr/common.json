@@ -27,7 +27,7 @@
     "device" : "Cihaz",
     "cryptoAsset" : "Kripto varlık",
     "skip" : "Atla",
-    "next" : "Sonraki",
+    "next" : "İleri",
     "noCryptoFound" : "Kripto varlık bulunamadı",
     "needHelp" : "Yardıma mı ihtiyacınız var?",
     "edit" : "Düzenle",
@@ -1731,7 +1731,7 @@
   },
   "productTour" : {
     "swap" : {
-      "cta" : "Takası keşfedin",
+      "cta" : "Takası keşfet",
       "title" : "Uygulama değiştirmeden takas yapın",
       "subTitle" : "Güvenilir takas sağlayıcılarımız aracılığıyla binlerce varlık ile sınırsız işlem yapmanın keyfini çıkarın."
     },
@@ -1741,7 +1741,7 @@
       "subTitle" : "Kripto varlıklarınızı Kazan bölümünde çalıştırın."
     },
     "card" : {
-      "cta" : "Kart alın",
+      "cta" : "Kart al",
       "title" : "Kriptolarınızı gerçek hayatta harcayın",
       "subTitle" : "Kripto kartınızla ister internette ister mağazada ödeme yapın ve para iadesi kazanın"
     },
@@ -1751,27 +1751,27 @@
       "subTitle" : "Varlıklarınızı, ödüllerinizi ve piyasa trendlerinizi kolayca takip edin."
     },
     "fund" : {
-      "cta" : "Cüzdanınıza fon aktarın",
+      "cta" : "Cüzdana fon aktar",
       "title" : "Cüzdanınıza fon aktararak başlayın.",
-      "subTitle" : "Ledger Wallet'ı dilediğiniz şekilde fonlayın: transfer edin, satın alın veya nakit paranızı stabil coinlere dönüştürün."
+      "subTitle" : "Ledger Wallet'ı dilediğiniz şekilde fonlayın: varlık transfer edin, satın alın veya nakit paranızı stabil coin'lere dönüştürün."
     }
   },
   "q2WalletV4Tour" : {
     "cta" : {
-      "start" : "Yenilikleri görün",
-      "next" : "Sonraki",
+      "start" : "Yenilikleri gör",
+      "next" : "İleri",
       "done" : "Anladım"
     },
     "portfolio" : {
-      "title" : "Daha akıllı portföy yönetimi. Daha net büyütme yolları"
+      "title" : "Daha akıllı portföy yönetimi. Portföyünüzü büyütmek için daha net adımlar."
     },
     "balance" : {
       "title" : "Her varlık için tek bir bakiye",
       "subTitle" : "USDT gibi çok zincirli varlıklar artık tek bir toplamla gösteriliyor. Basit, doğru, net."
     },
     "returns" : {
-      "title" : "Getirileriniz tam önünüzde ve merkezde",
-      "subTitle" : "Portföyünüzde ve analiz sayfasında her varlığın sağladığı kazanç ve kaybı görün."
+      "title" : "Getirileriniz merkezde ve tam önünüzde",
+      "subTitle" : "Her bir varlığa ait kâr ve zarar durumunu, portföyünüzde ve analiz sayfanızda detaylıca inceleyin."
     },
     "earn" : {
       "title" : "Kazanç potansiyelinizi test edin",
@@ -9882,7 +9882,7 @@
     }
   },
   "walletV4Tour" : {
-    "title" : "Yeni portföyünüzü keşfedin",
+    "title" : "Yeni portföyü keşfet",
     "slides" : {
       "portfolio" : {
         "title" : "Portföyünüz şimdi daha net",
@@ -9894,11 +9894,11 @@
       },
       "actions" : {
         "title" : "Piyasa trendlerini anında görün",
-        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hemen görün ve içgörüleri eyleme dönüştürün."
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hızlıca görün ve içgörüleri eyleme dönüştürün."
       }
     },
     "cta" : {
-      "continue" : "Sonraki",
+      "continue" : "İleri",
       "explore" : "Yeni portföyü keşfet"
     }
   },
