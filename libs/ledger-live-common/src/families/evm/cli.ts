@@ -4,8 +4,8 @@ import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { getErc20ApproveData } from "./logic/getErc20Data";
-import { Transaction } from "./types";
+import { getErc20ApproveData } from "@ledgerhq/coin-evm/logic/getErc20Data";
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 
 const modes = ["send", "revokeApproval", "approve"] as const;
 type Mode = (typeof modes)[number];

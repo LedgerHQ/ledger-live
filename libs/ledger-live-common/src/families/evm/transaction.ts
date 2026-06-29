@@ -21,7 +21,7 @@ import type {
   Strategy,
   TransactionStatus,
   TransactionStatusRaw,
-} from "./types";
+} from "@ledgerhq/coin-evm/types/index";
 
 /* istanbul ignore next: don't test CLI text helpers */
 /**

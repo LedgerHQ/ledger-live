@@ -9,9 +9,7 @@ import {
   rawEip1559Tx,
   rawLegacyTx,
   rawNftEip1559Tx,
-} from "./fixtures/transaction.fixtures";
-import { getNodeApi } from "./network/node";
-import { mockNodeApi } from "./network/node/node.fixtures";
+} from "./transaction.fixtures";
 import {
   fromTransactionRaw,
   fromTransactionStatusRaw,
@@ -24,22 +22,9 @@ import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   FeeData,
-} from "./types";
-
-jest.mock("./network/node", () => ({
-  ...jest.requireActual("./network/node"),
-  getNodeApi: jest.fn(),
-}));
-
-const mockGetNodeApi = jest.mocked(getNodeApi);
+} from "@ledgerhq/coin-evm/types/index";
 
 describe("EVM Family", () => {
-  const nodeApiMock = mockNodeApi();
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockGetNodeApi.mockReturnValue(nodeApiMock);
-  });
   describe("transaction.ts", () => {
     describe("fromTransactionRaw", () => {
       describe("without customGasLimit", () => {
