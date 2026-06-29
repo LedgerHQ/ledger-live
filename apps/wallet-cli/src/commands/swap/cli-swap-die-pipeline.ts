@@ -5,6 +5,7 @@ import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/d
 import {
   createSwapFlowMachine,
   planSwapFlow,
+  type SwapFlowPlan,
   type SwapFlowResolvers,
   type SwapFlowResult,
 } from "@ledgerhq/live-common/wallet-api/Exchange/swapFlow/index";
@@ -65,13 +66,7 @@ export type CliSwapDieInput = {
 };
 
 export type CliSwapDieResult = {
-  plan:
-    | "skip"
-    | "approval-only"
-    | "approval-then-swap"
-    | "direct-swap"
-    | "permit-then-swap"
-    | "approval-then-permit-then-swap";
+  plan: SwapFlowPlan["kind"];
   skipReason?: string;
   result: SwapFlowResult;
 };

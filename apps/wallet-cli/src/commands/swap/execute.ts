@@ -109,7 +109,7 @@ async function selectDieQuote(args: {
   sendAddress: string;
   receiveAddress: string;
 }): Promise<Quote> {
-  const { quotes, errors } = await getQuotes(
+  const { quotes, providerErrors } = await getQuotes(
     {
       providers: [args.provider],
       data: {
@@ -129,8 +129,8 @@ async function selectDieQuote(args: {
   const match = quotes.find(q => q.provider === args.provider) ?? quotes[0];
   if (!match) {
     const summary =
-      errors.length > 0
-        ? errors.map(e => `${e.provider}: ${e.message}`).join("; ")
+      providerErrors.length > 0
+        ? providerErrors.map(e => `${e.provider}: ${e.message}`).join("; ")
         : "no quotes returned";
     throw new Error(`No quote from '${args.provider}': ${summary}`);
   }
