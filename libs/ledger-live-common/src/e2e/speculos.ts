@@ -64,6 +64,12 @@ import { sleep } from "./index";
 import { delegateMina } from "./families/mina";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
+const SCREEN_POLL_INTERVAL_MS = 500;
+const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+// Derived from timeout + interval so the budget can't silently drift if either changes.
+const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+  SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
+);
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -557,7 +563,7 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
       return texts;
     }
 
-    await sleep(500);
+    await sleep(SCREEN_POLL_INTERVAL_MS);
   }
 
   throw new Error(
@@ -565,25 +571,30 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   );
 }
 
-export async function waitForReviewTransaction(): Promise<void> {
+export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
   if (!isTouchDevice()) {
-    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
     return;
   }
 
   const port = getEnv("SPECULOS_API_PORT");
-  for (let attempt = 0; attempt < 60; attempt++) {
-    const texts = await fetchCurrentScreenTexts(port);
+  let texts = "";
+  let enabled = false;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    texts = await fetchCurrentScreenTexts(port);
     if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
       return;
     }
-    if (texts.includes(DeviceLabels.YES_ENABLE)) {
+    if (!enabled && texts.includes(DeviceLabels.YES_ENABLE)) {
       await pressAndRelease(DeviceLabels.YES_ENABLE);
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-      return;
+      enabled = true; // press once, then keep polling for review within the same budget
     }
-    await sleep(500);
+    await sleep(SCREEN_POLL_INTERVAL_MS);
   }
+
+  throw new Error(
+    `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`,
+  );
 }
 
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
@@ -998,7 +1009,7 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitForReviewTransaction();
+      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       const events =
         getSpeculosModel() === DeviceModelId.nanoS
           ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
@@ -1021,12 +1032,12 @@ export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
           await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
           await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
         } else {
-          await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+          await waitFor(DeviceLabels.REVIEW_TRANSACTION, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
           await pressUntilTextFound(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
           await buttons.both();
         }
       } else {
-        await waitForReviewTransaction();
+        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       }
 
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
@@ -1043,7 +1054,7 @@ export const verifyAmountsAndRejectSwap = withDeviceController(
   ({ getButtonsController }) =>
     async (swap: Swap, amount: string) => {
       const buttons = getButtonsController();
-      await waitForReviewTransaction();
+      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       let events: string[] = [];
       if (isTouchDevice()) {
         events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
