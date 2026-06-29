@@ -7,6 +7,12 @@ import { of, Observable } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
 
+// With lwmWallet40 enabled (now the default), the Modular Drawer renders the Lumen
+// `QueuedDrawerBottomSheet`
+jest.mock("@gorhom/bottom-sheet", () =>
+  require("@tests/mocks/gorhomBottomSheetLifecycle").createGorhomBottomSheetLifecycleMock(),
+);
+
 // Needed for receive navigator
 jest.mock("@ledgerhq/live-config/LiveConfig", () => {
   const mockConfig = { mock: { type: "string", default: "test" } };

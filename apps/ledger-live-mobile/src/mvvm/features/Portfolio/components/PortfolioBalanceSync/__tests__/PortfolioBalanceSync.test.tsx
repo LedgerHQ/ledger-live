@@ -75,7 +75,11 @@ describe("PortfolioBalanceSync", () => {
   });
 
   it("sets isLoading true when syncPhase is syncing", () => {
-    mockUsePortfolioBalance.mockReturnValue(makeReturn({ syncPhase: "syncing" }));
+    // With the balance-refresh rework (lwmWallet40, on by default) loading is scoped to the
+    // CVS phase (cvPending), so a user-triggered sync reports isCvPending true.
+    mockUsePortfolioBalance.mockReturnValue(
+      makeReturn({ syncPhase: "syncing", isCvPending: true }),
+    );
 
     const { store } = render(<PortfolioBalanceSync />);
     const state = store.getState() as State;

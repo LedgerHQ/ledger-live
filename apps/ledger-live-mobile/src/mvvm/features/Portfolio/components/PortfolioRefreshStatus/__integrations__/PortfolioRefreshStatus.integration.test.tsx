@@ -32,10 +32,21 @@ jest.mock("react-native-reanimated", () => {
 import React from "react";
 import { render, screen, act, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
+import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 import { REFRESH_STATUS_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
 import { PortfolioRefreshStatus } from "../index";
-import { setRefreshCompleted } from "~/reducers/portfolioRefresh";
+import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import { State } from "~/reducers/types";
+
+// In the rework (lwmWallet40, on by default) refreshing / up-to-date are driven by the sync
+// lifecycle from usePortfolioBalance, not by redux — so we mock its syncPhase.
+jest.mock("LLM/hooks/usePortfolioBalance");
+
+const mockBalance = (syncPhase: SyncPhase, isManualRefreshLoading = false) =>
+  jest.mocked(usePortfolioBalanceModule.usePortfolioBalance).mockReturnValue({
+    syncPhase,
+    isManualRefreshLoading,
+  } as ReturnType<typeof usePortfolioBalanceModule.usePortfolioBalance>);
 
 const FIXED_NOW = new Date("2025-08-15T12:00:00Z").getTime();
 
@@ -48,17 +59,6 @@ const makeAccount = (lastSyncDate: Date) => ({
 
 const withBalanceRefreshRework = withFlagOverrides({
   lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-});
-
-const withRefreshing = (): ((state: State) => State) => state => ({
-  ...state,
-  portfolioRefresh: {
-    isRefreshing: true,
-    lastSyncTimestampSnapshot: null,
-    hasCompletedInitialSync: false,
-    lastUserSyncClickTimestamp: 0,
-    lastOfflineRefreshAttemptTimestamp: 0,
-  },
 });
 
 const withIdle =
@@ -90,21 +90,26 @@ const withOfflineAttempt = (): ((state: State) => State) => state =>
     },
   });
 
-const renderRefreshing = () =>
-  render(<PortfolioRefreshStatus />, {
-    overrideInitialState: withRefreshing(),
+const renderRefreshing = () => {
+  mockBalance("syncing", true);
+  return render(<PortfolioRefreshStatus />, {
+    overrideInitialState: withBalanceRefreshRework,
   });
+};
 
-const completeRefresh = (store: ReturnType<typeof renderRefreshing>["store"]) =>
+const completeRefresh = (rerender: ReturnType<typeof renderRefreshing>["rerender"]) => {
+  mockBalance("synced");
   act(() => {
-    store.dispatch(setRefreshCompleted());
+    rerender(<PortfolioRefreshStatus />);
   });
+};
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 describe("PortfolioRefreshStatus", () => {
   beforeEach(() => {
     jest.setSystemTime(FIXED_NOW);
+    mockBalance("synced");
   });
 
   describe("idle state", () => {
@@ -158,8 +163,8 @@ describe("PortfolioRefreshStatus", () => {
 
   describe("up-to-date state", () => {
     it("should show checkmark and 'You're up to date' without spinner right after refresh completes", () => {
-      const { store } = renderRefreshing();
-      completeRefresh(store);
+      const { rerender } = renderRefreshing();
+      completeRefresh(rerender);
 
       expect(screen.getByTestId("portfolio-refresh-status-up-to-date")).toBeVisible();
       expect(screen.getByText("Portfolio up to date")).toBeVisible();
@@ -168,8 +173,8 @@ describe("PortfolioRefreshStatus", () => {
     });
 
     it("should hide after the visibility duration elapses", () => {
-      const { store } = renderRefreshing();
-      completeRefresh(store);
+      const { rerender } = renderRefreshing();
+      completeRefresh(rerender);
 
       expect(screen.getByTestId("portfolio-refresh-status-up-to-date")).toBeVisible();
 

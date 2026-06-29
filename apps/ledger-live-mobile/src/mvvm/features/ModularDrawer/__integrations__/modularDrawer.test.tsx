@@ -92,7 +92,8 @@ const DRAWER_VARIANTS: DrawerVariant[] = [
     label: "Gorhom (legacy)",
     backButtonTestId: "drawer-back-button",
     renderOptions: {
-      overrideInitialState: withReadOnlyDisabled,
+      overrideInitialState: (state: State) =>
+        withFlagOverrides({ lwmWallet40: { enabled: false } })(withReadOnlyDisabled(state)),
     },
   },
   {

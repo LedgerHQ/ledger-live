@@ -34,8 +34,10 @@ const mockContentSizeChangeEvent = (width: number, height: number) => ({
 });
 
 describe("portfolioAssets", () => {
-  it("should render quick actions", async () => {
-    const { getByText } = render(
+  it("should not render the legacy quick actions bar with wallet 4.0 enabled", async () => {
+    // With wallet 4.0 (lwmWallet40, on by default) the quick action CTAs are handled by the
+    // wallet 4.0 navigation, so PortfolioAssets no longer renders its legacy PortfolioQuickActionsBar.
+    const { queryByText } = render(
       <TestNavigator>
         <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
       </TestNavigator>,
@@ -47,7 +49,7 @@ describe("portfolioAssets", () => {
       },
     );
     const quickActions = [/buy/i, /swap/i, /send/i, /receive/i];
-    quickActions.forEach(action => expect(getByText(action)).toBeVisible());
+    quickActions.forEach(action => expect(queryByText(action)).toBeNull());
   });
 
   it("should track click on tab account", async () => {

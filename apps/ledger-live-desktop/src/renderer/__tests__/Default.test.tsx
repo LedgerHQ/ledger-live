@@ -82,6 +82,7 @@ describe("Default", () => {
             devicesModelList: [],
             anonymousUserNotifications: {},
             orderAccounts: "balance|desc",
+            starredMarketCoins: [],
           },
         },
         initialRoute: "/",

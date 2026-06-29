@@ -61,6 +61,12 @@ const withFreezeFlag = {
   }),
 };
 
+const withoutFreezeFlag = {
+  overrideInitialState: withFlagOverrides({
+    lwmWallet40: { enabled: true, params: { balanceRefreshRework: false } },
+  }),
+};
+
 describe("usePortfolioBalanceSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -85,8 +91,9 @@ describe("usePortfolioBalanceSectionViewModel", () => {
 
   describe("isLoading", () => {
     it("is true while syncPhase is syncing, false otherwise", () => {
-      const { result, rerender } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel(defaultProps),
+      const { result, rerender } = renderHook(
+        () => usePortfolioBalanceSectionViewModel(defaultProps),
+        withoutFreezeFlag,
       );
       expect(result.current.isLoading).toBe(false);
 
@@ -138,8 +145,9 @@ describe("usePortfolioBalanceSectionViewModel", () => {
         makeReturn({ balanceAvailable: false, syncPhase: "syncing", portfolio: emptyPortfolio }),
       );
 
-      const { result, rerender } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel(defaultProps),
+      const { result, rerender } = renderHook(
+        () => usePortfolioBalanceSectionViewModel(defaultProps),
+        withoutFreezeFlag,
       );
       expect(result.current.isBalanceAvailable).toBe(false);
 

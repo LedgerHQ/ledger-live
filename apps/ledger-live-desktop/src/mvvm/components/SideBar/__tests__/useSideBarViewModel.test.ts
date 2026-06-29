@@ -57,12 +57,18 @@ const ACTIVE_CHANGE_NAV_CASES = Object.keys(SIDEBAR_VALUE_TO_PATH)
   }));
 
 describe("useSideBarViewModel", () => {
+  const originalInnerWidth = window.innerWidth;
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
-    // Wallet 4.0 (enabled by default) auto-collapses the sidebar on narrow
-    // viewports. Use a wide viewport so the collapse logic under test is deterministic.
+    // Wallet 4.0 auto-collapses the sidebar on narrow viewports; use a wide one
+    // so the collapse logic under test is deterministic.
     window.innerWidth = 1440;
+  });
+
+  afterEach(() => {
+    window.innerWidth = originalInnerWidth;
   });
 
   it("should return correct default state", () => {
