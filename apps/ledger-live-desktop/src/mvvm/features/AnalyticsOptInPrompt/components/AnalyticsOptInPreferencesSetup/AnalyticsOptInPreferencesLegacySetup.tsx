@@ -1,9 +1,13 @@
-import React, { useCallback, useState } from "react";
-import { Box, Text, Flex, Switch } from "@ledgerhq/react-ui";
-import styled, { useTheme } from "styled-components";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Box, Flex, Switch, Text } from "@ledgerhq/react-ui";
+import styled, { useTheme } from "styled-components";
 import RevokeInfoField from "LLD/features/AnalyticsOptInPrompt/screens/components/RevokeInfoField";
 import { FieldKeySwitch } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import {
+  AnalyticsOptInPreferencesCopyKeys,
+  useAnalyticsOptInPreferencesSetup,
+} from "./useAnalyticsOptInPreferencesSetup";
 
 const BodyBox = styled(Box)`
   display: flex;
@@ -13,38 +17,29 @@ const BodyBox = styled(Box)`
   max-height: calc(100vh - 26%);
 `;
 
-interface ManagePreferencesBodyProps {
-  onSwitchChange: (key: FieldKeySwitch) => void;
-  handleOpenPrivacyPolicy: () => void;
-}
+export type AnalyticsOptInPreferencesLegacySetupProps = Readonly<{
+  copyKeys: AnalyticsOptInPreferencesCopyKeys;
+  onPreferencesChange: (preferences: Record<FieldKeySwitch, boolean>) => void;
+  onOpenTrackingPolicy: () => void;
+}>;
 
-const ManagePreferencesBody = ({
-  onSwitchChange,
-  handleOpenPrivacyPolicy,
-}: ManagePreferencesBodyProps) => {
+export function AnalyticsOptInPreferencesLegacySetup({
+  copyKeys,
+  onPreferencesChange,
+  onOpenTrackingPolicy,
+}: AnalyticsOptInPreferencesLegacySetupProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [checked, setChecked] = useState<Record<FieldKeySwitch, boolean>>({
-    AnalyticsData: false,
-    PersonalizationData: false,
-  });
-
-  const onClick = useCallback(
-    (key: FieldKeySwitch) => {
-      setChecked(prevChecked => ({ ...prevChecked, [key]: !prevChecked[key] }));
-      onSwitchChange(key);
-    },
-    [onSwitchChange],
-  );
+  const { preferences, togglePreference } = useAnalyticsOptInPreferencesSetup(onPreferencesChange);
 
   const fields: Record<FieldKeySwitch, { title: string; description: string }> = {
     AnalyticsData: {
-      title: "analyticsOptInPrompt.screen.analyticsData.title",
-      description: "analyticsOptInPrompt.screen.analyticsData.description",
+      title: copyKeys.analyticsTitle,
+      description: copyKeys.analyticsDescription,
     },
     PersonalizationData: {
-      title: "analyticsOptInPrompt.screen.personalizationData.title",
-      description: "analyticsOptInPrompt.screen.personalizationData.description",
+      title: copyKeys.personalizationTitle,
+      description: copyKeys.personalizationDescription,
     },
   };
 
@@ -72,9 +67,9 @@ const ManagePreferencesBody = ({
                   {t(title)}
                 </Text>
                 <Switch
-                  onChange={() => onClick(key)}
+                  onChange={() => togglePreference(key)}
                   name={key}
-                  checked={checked[key]}
+                  checked={preferences[key]}
                   size={"normal"}
                 />
               </Flex>
@@ -90,9 +85,7 @@ const ManagePreferencesBody = ({
           );
         })}
       </Flex>
-      <RevokeInfoField handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
+      <RevokeInfoField handleOpenPrivacyPolicy={onOpenTrackingPolicy} />
     </BodyBox>
   );
-};
-
-export default ManagePreferencesBody;
+}
