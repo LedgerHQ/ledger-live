@@ -3,8 +3,6 @@ import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
 
 export class TezosUnstakeModal extends Modal {
-  // The staking-section dropdown ids come from DropDownSelector's `buttonId` ("tezos-staking-menu"):
-  // the trigger is `#<buttonId>` and each item is `#<buttonId>-<key>`.
   private readonly stakingMenuButton = this.page.locator("#tezos-staking-menu");
   private readonly unstakeMenuItem = this.page.locator("#tezos-staking-menu-unstake");
   private readonly amountField = this.page.getByTestId("modal-amount-field");

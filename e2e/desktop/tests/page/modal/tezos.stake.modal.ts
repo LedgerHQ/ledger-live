@@ -16,6 +16,13 @@ export class TezosStakeModal extends Modal {
     exact: false,
   });
 
+  @step("Verify the validator step is shown")
+  async verifyValidatorStep() {
+    await expect(this.title).toBeVisible();
+    await expect(this.content).toBeVisible();
+    await expect(this.validatorContinueButton).toBeVisible();
+  }
+
   @step("Continue from the validator step")
   async continueFromValidator() {
     await this.validatorContinueButton.click();

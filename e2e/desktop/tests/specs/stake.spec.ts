@@ -8,6 +8,18 @@ import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers"
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const family = getFamilyByCurrencyId(Account.XTZ_1.currency.id);
+
+// Shared modal/test config for the Tezos staking specs. DISABLE_TRANSACTION_BROADCAST is off by
+// default (CI never broadcasts); set it to "0" locally to broadcast + confirm the op on-chain.
+const tezosStakeUse = (account: Delegate) => ({
+  env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
+  teamOwner: Team.BST,
+  userdata: "skip-onboarding-with-last-seen-device",
+  speculosApp: account.account.currency.speculosApp,
+  cliCommands: [liveDataCommand(account.account)],
+  featureFlags: { lldTezosStaking: { enabled: true } },
+});
+
 const tags = [
   "@NanoSP",
   "@LNS",
@@ -23,18 +35,10 @@ const tags = [
 // DELEGATED + STAKED for the stake (Earn -> stake modal) and unstake (staking-section menu) flows.
 // (index 0 must stay undelegated: the legacy receive/add-account/delegate Tezos specs rely on it.)
 test.describe("e2e staking - Tezos - earning choice", () => {
-  // XTZ_1: funded + undelegated -> Earn routes to the earning-choice chooser.
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
 
-  test.use({
-    // off by default (CI); with DISABLE_TRANSACTION_BROADCAST=0 this delegates idx0 on-chain — undelegate after to reset.
-    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-    featureFlags: { lldTezosStaking: { enabled: true } },
-  });
+  // With DISABLE_TRANSACTION_BROADCAST=0 this delegates idx0 on-chain — undelegate after to reset.
+  test.use(tezosStakeUse(account));
 
   test(
     "Earning choice routes to delegate and stake",
@@ -56,6 +60,7 @@ test.describe("e2e staking - Tezos - earning choice", () => {
       // Stake branch: chooser -> 5-step stake modal -> sign the delegation step.
       await app.account.startStakingFlowFromMainStakeButton();
       await app.tezosEarningChoice.chooseStake();
+      await app.tezosStake.verifyValidatorStep();
       await app.tezosStake.continueFromValidator();
       await app.speculos.signDelegationTransaction(account);
       // No success screen here by design: the flow advances to the staking amount step, which waits
@@ -66,18 +71,9 @@ test.describe("e2e staking - Tezos - earning choice", () => {
 });
 
 test.describe("e2e staking - Tezos - stake", () => {
-  // XTZ_2 must be already delegated + funded so pressing Earn opens the stake modal directly.
   const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
 
-  test.use({
-    // off by default (CI); run with DISABLE_TRANSACTION_BROADCAST=0 to broadcast + confirm the stake on-chain.
-    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-    featureFlags: { lldTezosStaking: { enabled: true } },
-  });
+  test.use(tezosStakeUse(account));
 
   test(
     "Stake on a delegated account",
@@ -97,23 +93,16 @@ test.describe("e2e staking - Tezos - stake", () => {
       await app.speculos.signDelegationTransaction(account);
       await app.tezosStake.verifySuccessMessage();
       await app.tezosStake.clickVisitAccountButton();
+      // Visiting the account closes the modal and routes to /account/:id.
+      await app.account.expectAccountHeaderVisible();
     },
   );
 });
 
 test.describe("e2e staking - Tezos - unstake", () => {
-  // XTZ_2 must be delegated + have a staked balance so the staking section (and its unstake menu) render.
   const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
 
-  test.use({
-    // off by default (CI); run with DISABLE_TRANSACTION_BROADCAST=0 to broadcast + confirm the unstake on-chain.
-    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-    featureFlags: { lldTezosStaking: { enabled: true } },
-  });
+  test.use(tezosStakeUse(account));
 
   test(
     "Unstake from a staked account",
@@ -137,18 +126,10 @@ test.describe("e2e staking - Tezos - unstake", () => {
 });
 
 test.describe("e2e staking - Tezos - change validator blocked", () => {
-  // XTZ_2 is delegated + staked, so changing validator is blocked until the user unstakes first.
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
-  test.use({
-    // assertion-only (never signs); env-driven for consistency
-    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-    featureFlags: { lldTezosStaking: { enabled: true } },
-  });
+  // Assertion-only (never signs).
+  test.use(tezosStakeUse(account));
 
   test(
     "Change validator is blocked while staked",
@@ -162,24 +143,16 @@ test.describe("e2e staking - Tezos - change validator blocked", () => {
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.tezosUnstakeRequired.openChangeValidator();
       await app.tezosUnstakeRequired.verifyVisible();
-      await app.tezosUnstakeRequired.dismiss();
+      await app.tezosUnstakeRequired.clickCloseButton();
     },
   );
 });
 
 test.describe("e2e staking - Tezos - end delegation blocked", () => {
-  // XTZ_2 is delegated + staked, so stopping delegation is blocked until the user unstakes first.
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
-  test.use({
-    // assertion-only (never signs); env-driven for consistency
-    env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-    featureFlags: { lldTezosStaking: { enabled: true } },
-  });
+  // Assertion-only (never signs).
+  test.use(tezosStakeUse(account));
 
   test(
     "Stopping delegation is blocked while staked",
@@ -193,7 +166,7 @@ test.describe("e2e staking - Tezos - end delegation blocked", () => {
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.tezosUnstakeRequired.openStopDelegation();
       await app.tezosUnstakeRequired.verifyVisible();
-      await app.tezosUnstakeRequired.dismiss();
+      await app.tezosUnstakeRequired.clickCloseButton();
     },
   );
 });
