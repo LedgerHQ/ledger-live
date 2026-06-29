@@ -736,6 +736,9 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
+      '@ledgerhq/live-e2e-shared':
+        specifier: workspace:^
+        version: link:../../e2e/shared
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env

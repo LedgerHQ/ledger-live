@@ -613,12 +613,6 @@ jobs:
           command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
 
-      - name: Build E2E shared lib
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
-        with:
-          command: pnpm exec nx run @ledgerhq/live-e2e-shared:build
-          disable_cache: false
-
       - name: Set DISABLE_TRANSACTION_BROADCAST
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
@@ -856,12 +850,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run @ledgerhq/live-cli:build
-          disable_cache: false
-
-      - name: Build E2E shared lib
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
-        with:
-          command: pnpm exec nx run @ledgerhq/live-e2e-shared:build
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
