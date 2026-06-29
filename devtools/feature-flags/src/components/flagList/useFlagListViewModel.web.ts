@@ -28,19 +28,17 @@ export interface FlagListViewProps {
 export function useFlagListViewModel(props: FeatureFlagsToolProps): FlagListViewProps {
   const { overrides, setOverride, clearAllOverrides } = props;
 
-  const exportOverrides =
-    props.exportOverrides ??
-    (() => {
-      const { content, filename } = buildOverridesExport(overrides);
-      saveFile(content, filename);
-    });
+  const exportOverrides = () => {
+    const { content, filename } = buildOverridesExport(overrides);
+    saveFile(content, filename);
+  };
 
   const importOverrides = () => {
     readFile()
       .then(parseOverridesImport)
       .then(({ overrides: imported, warnings }) => {
         warnings.forEach(warning => console.warn(warning));
-        props.importOverrides(imported);
+        props.setAllOverrides(imported);
       })
       .catch(error => {
         console.warn("Import cancelled or failed", error);
