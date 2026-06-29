@@ -25,7 +25,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
 
     return {
       isEnabled,
-      shouldDisplayMarketBanner: isEnabled && Boolean(params?.marketBanner),
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
@@ -69,8 +68,6 @@ export type Wallet40Params = Partial<
 export interface WalletFeaturesConfig {
   /** Whether the feature flag is enabled */
   readonly isEnabled: boolean;
-  /** Whether to show the market banner on portfolio */
-  readonly shouldDisplayMarketBanner: boolean;
   /** Whether to show the graph rework UI */
   readonly shouldDisplayGraphRework: boolean;
   /** Whether to show quick action CTAs */

@@ -215,13 +215,11 @@ const MainSideBar = () => {
     earnLabel,
     isCardDisabled,
     isLiveAppTabSelected,
-    isMarketBannerEnabled,
     isWallet40MainNavEnabled,
     referralProgramConfig,
     getMinHeightForStarredAccountsList,
     handleCollapse,
     handleClickDashboard,
-    handleClickMarket,
     handleClickAccounts,
     handleClickManager,
     handleClickCatalog,
@@ -270,17 +268,6 @@ const MainSideBar = () => {
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
-                {!isMarketBannerEnabled && (
-                  <SideBarListItem
-                    id={"market"}
-                    label={t("sidebar.market")}
-                    icon={Icons.GraphAsc}
-                    iconActiveColor="wallet"
-                    onClick={handleClickMarket}
-                    isActive={locationPathname.startsWith("/market")}
-                    collapsed={secondAnim}
-                  />
-                )}
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}

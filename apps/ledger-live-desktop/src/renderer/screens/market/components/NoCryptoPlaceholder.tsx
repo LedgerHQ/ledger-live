@@ -1,15 +1,13 @@
+import React from "react";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { TFunction } from "i18next";
-import React from "react";
 import { Trans } from "react-i18next";
 import Track from "~/renderer/analytics/Track";
 import Image from "~/renderer/components/Image";
-
 import NoResultsFoundDark from "~/renderer/images/no-results-found-dark.png";
 import NoResultsFoundLight from "~/renderer/images/no-results-found-light.png";
-
-import { Button } from "../..";
+import { Button } from "./Button";
 
 type NoCryptoPlaceholderProps = {
   requestParams: MarketListRequestParams;

@@ -140,7 +140,6 @@ export function useSideBarViewModel(): SideBarViewModel {
   const recoverHomePath = useAccountPath(recoverFeature);
 
   const {
-    shouldDisplayMarketBanner: isMarketBannerEnabled,
     shouldDisplayWallet40MainNav: isWallet40MainNavEnabled,
     shouldDisplayAssetSection,
     shouldDisplayMyWallet: isMyWalletEnabled,
@@ -335,7 +334,6 @@ export function useSideBarViewModel(): SideBarViewModel {
     isCardDisabled,
     isAccountsDisabled: noAccounts,
     isLiveAppTabSelected,
-    isMarketBannerEnabled,
     isWallet40MainNavEnabled,
     isMyWalletEnabled,
     referralProgramConfig,
