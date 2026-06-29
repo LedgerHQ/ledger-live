@@ -6,7 +6,7 @@ import IconCoins from "~/renderer/icons/Coins";
 import { MinaFamily } from "./types";
 import { useTranslation } from "react-i18next";
 
-const AccountHeaderManageActions: MinaFamily["accountHeaderManageActions"] = ({
+const AccountHeaderManageActions: NonNullable<MinaFamily["accountHeaderManageActions"]> = ({
   account,
   parentAccount,
 }) => {
