@@ -17,9 +17,9 @@ describe("AccountHeaderManageActions", () => {
     );
 
     expect(result.current).toHaveLength(1);
-    expect(result.current[0].key).toBe("Stake");
-    expect(result.current[0].accountActionsTestId).toBe("stake-button");
-    expect(result.current[0].disabled).toBe(false);
+    expect(result.current?.[0].key).toBe("Stake");
+    expect(result.current?.[0].accountActionsTestId).toBe("stake-button");
+    expect(result.current?.[0].disabled).toBe(false);
   });
 
   it("returns a stake action with change delegation label when account has active delegation", () => {
@@ -31,7 +31,7 @@ describe("AccountHeaderManageActions", () => {
     );
 
     expect(result.current).toHaveLength(1);
-    expect(result.current[0].key).toBe("Stake");
+    expect(result.current?.[0].key).toBe("Stake");
   });
 
   it("includes correct event properties", () => {
@@ -42,8 +42,8 @@ describe("AccountHeaderManageActions", () => {
       { minimal: false },
     );
 
-    expect(result.current[0].event).toBe("button_clicked");
-    expect(result.current[0].eventProperties).toEqual({ button: "stake" });
+    expect(result.current?.[0].event).toBe("button_clicked");
+    expect(result.current?.[0].eventProperties).toEqual({ button: "stake" });
   });
 
   it("has an onClick handler defined", () => {
@@ -54,6 +54,6 @@ describe("AccountHeaderManageActions", () => {
       { minimal: false },
     );
 
-    expect(typeof result.current[0].onClick).toBe("function");
+    expect(typeof result.current?.[0].onClick).toBe("function");
   });
 });
