@@ -25,7 +25,7 @@ import {
   WALLET_API_VERSION,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -59,7 +59,6 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
 
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const navigate = useNavigate();
   // Persist initial returnTo in a ref so it survives in-webview navigations that push
@@ -120,7 +119,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
 
   return (
     <>
-      {shouldDisplayWallet40MainNav && headerKey ? (
+      {headerKey ? (
         <PageHeader title={t(headerKey)} onBack={() => navigate(returnTo, { replace: true })} />
       ) : null}
       <Box
