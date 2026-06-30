@@ -124,7 +124,7 @@ const ContextMenu = ({ account, stakingEnabled }: Props) => {
     );
   };
   return (
-    <DropDownSelector items={items} renderItem={renderItem}>
+    <DropDownSelector items={items} renderItem={renderItem} buttonId="tezos-delegation-menu">
       {() => (
         <Container
           style={{
