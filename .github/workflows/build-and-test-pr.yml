@@ -10,7 +10,7 @@ concurrency:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
   pull-requests: write
   actions: write
 
@@ -34,7 +34,7 @@ jobs:
         if: ${{ env.IS_SMARTLING == 'true' }}
         run: |
           echo "should_skip=true" >> $GITHUB_OUTPUT
-          gh pr close ${{ github.event.pull_request.number }} -R LedgerHQ/ledger-live
+          gh pr close ${{ github.event.pull_request.number }} -R LedgerHQ/ledger-live --delete-branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
