@@ -174,6 +174,7 @@ export function computeDustAmount(
   if (
     currency.network.dustPolicy === "PER_KBYTE" &&
     derivationMode !== undefined &&
+    Object.prototype.hasOwnProperty.call(INPUT_WEIGHT_SPECS, derivationMode) &&
     relayFeePerByteSatVb !== undefined &&
     relayFeePerByteSatVb.isFinite() &&
     relayFeePerByteSatVb.gt(0)

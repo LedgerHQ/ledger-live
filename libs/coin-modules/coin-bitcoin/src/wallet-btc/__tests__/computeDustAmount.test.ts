@@ -57,6 +57,15 @@ describe("computeDustAmount", () => {
       expect(computeDustAmount(bitcoin, 200, { relayFeePerByteSatVb: new BigNumber(5) })).toBe(600);
     });
 
+    it("falls back (no throw) when derivation mode is unknown", () => {
+      expect(
+        computeDustAmount(bitcoin, 200, {
+          derivationMode: "Unknown",
+          relayFeePerByteSatVb: new BigNumber(5),
+        }),
+      ).toBe(600);
+    });
+
     it("falls back when relay fee is zero", () => {
       expect(
         computeDustAmount(bitcoin, 200, {
