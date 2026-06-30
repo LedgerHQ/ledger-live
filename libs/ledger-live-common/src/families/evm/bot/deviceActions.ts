@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import type { DeviceAction, State } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
+import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 
 const maxFeesExpectedValue = ({
   account,

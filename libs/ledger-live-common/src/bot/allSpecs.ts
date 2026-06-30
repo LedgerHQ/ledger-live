@@ -10,7 +10,7 @@ import canton from "@ledgerhq/coin-canton/specs";
 import celo from "@ledgerhq/coin-celo/specs";
 import concordium from "@ledgerhq/coin-concordium/specs";
 import cosmos from "@ledgerhq/coin-cosmos/specs";
-import evm from "@ledgerhq/coin-evm/specs";
+import evm from "../families/evm/bot/specs";
 import hedera from "@ledgerhq/coin-hedera/specs";
 import filecoin from "@ledgerhq/coin-filecoin/specs";
 import internet_computer from "@ledgerhq/coin-internet_computer/specs";
