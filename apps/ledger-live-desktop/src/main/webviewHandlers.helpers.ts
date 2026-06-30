@@ -78,5 +78,5 @@ export function mergeCspHeaders(
 export const WEBVIEW_GUEST_CSP =
   "frame-src 'self' http: https: blob:; " +
   "child-src 'self' http: https: blob:; " +
-  "worker-src 'self' http: https: blob:; " +
+  "worker-src 'self' http: https: blob: data:; " +
   "form-action 'self' http: https:;";
