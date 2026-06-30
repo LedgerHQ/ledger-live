@@ -180,7 +180,11 @@ export function computeDustAmount(
     relayFeePerByteSatVb.gt(0)
   ) {
     const inputVBytes = vbytesCeilFromWeight(inputWeight(derivationMode));
-    const coreDust = relayFeePerByteSatVb.times(3).times(inputVBytes).toNumber();
+    const coreDust = relayFeePerByteSatVb
+      .times(3)
+      .times(inputVBytes)
+      .integerValue(BigNumber.ROUND_CEIL)
+      .toNumber();
     return Math.max(coreDust, legacyDust);
   }
 

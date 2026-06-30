@@ -35,6 +35,16 @@ describe("computeDustAmount", () => {
       ).toBe(3 * 58 * 10);
     });
 
+    it("rounds the dust up to an integer for a fractional relay fee", () => {
+      // 3 * 68 * 0.1 = 20.4 -> 21
+      expect(
+        computeDustAmount(bitcoin, 0, {
+          derivationMode: DerivationModes.NATIVE_SEGWIT,
+          relayFeePerByteSatVb: new BigNumber(0.1),
+        }),
+      ).toBe(21);
+    });
+
     it("never drops below the legacy threshold (low relay fee floor)", () => {
       // 3 * 68 * 1 = 204 < legacy 3 * 400 = 1200
       expect(

@@ -170,7 +170,7 @@ export const getTransactionStatus: AccountBridge<
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (transaction.feePerByte) {
+  if (transaction.feePerByte && transaction.feePerByte.gt(0)) {
     const txSize = Math.ceil(estimatedFees.toNumber() / transaction.feePerByte.toNumber());
     const crypto = cryptoFactory(account.currency.id as Currency);
     const derivationMode = (account as BitcoinAccount).bitcoinResources?.walletAccount?.params

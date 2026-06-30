@@ -286,5 +286,10 @@ describe("getTransactionStatus on Bitcoin", () => {
       const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 1, 1));
       expect(status.errors.dustLimit).toBeUndefined();
     });
+
+    it("does not compute dust (no DustLimit) when feePerByte is zero", async () => {
+      const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 0, 10));
+      expect(status.errors.dustLimit).toBeUndefined();
+    });
   });
 });
