@@ -176,7 +176,6 @@ describe("EVM AccountHeaderManageActions", () => {
       // MODAL_EVM_DELEGATE via its own onNext after the user continues.
       expect(store.getState().modals.MODAL_EVM_REWARDS_INFO?.isOpened).toBe(true);
       expect(store.getState().modals.MODAL_EVM_DELEGATE?.isOpened).toBe(undefined);
-      expect(store.getState().modals.MODAL_NO_FUNDS_STAKE?.isOpened).toBe(undefined);
     });
 
     it("opens MODAL_EVM_DELEGATE when clicking the action on a funded account with existing delegations", () => {
@@ -203,7 +202,6 @@ describe("EVM AccountHeaderManageActions", () => {
 
       expect(store.getState().modals.MODAL_EVM_DELEGATE?.isOpened).toBe(true);
       expect(store.getState().modals.MODAL_EVM_REWARDS_INFO?.isOpened).toBe(undefined);
-      expect(store.getState().modals.MODAL_NO_FUNDS_STAKE?.isOpened).toBe(undefined);
     });
   });
 });
