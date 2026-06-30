@@ -71,8 +71,7 @@ describe("validateIntent", () => {
         value: 200_000n,
       },
     );
-    // Self-send is valid on-chain, so it is a non-blocking warning, not an error (LIVE-33176).
-    // Reuses the shared, already-localized error class (as VeChain does for its self-send warning).
+    // Self-send is a non-blocking warning, reusing the shared already-localized error. LIVE-33176.
     expect(res.errors.recipient).toBeUndefined();
     expect(res.warnings.recipient?.name).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
   });

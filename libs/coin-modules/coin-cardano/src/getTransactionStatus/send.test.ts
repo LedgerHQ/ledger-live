@@ -66,7 +66,8 @@ describe("getSendTransactionStatus", () => {
   it("warns (without blocking) when the recipient is one of the account's own addresses", async () => {
     mockedBuildTransaction.mockResolvedValueOnce({} as never);
     // The fixture's only UTXO is paid to the account's own external credential; its bech32 form is
-    // therefore one of the account's own addresses (a self-send).
+    // therefore one of the account's own addresses (a self-send). This is the warning the new send
+    // flow surfaces as the recipient warning banner.
     const ownAddress = TyphonUtils.getAddressFromHex(
       Buffer.from(account.cardanoResources.utxos[0].address, "hex"),
     ).getBech32();

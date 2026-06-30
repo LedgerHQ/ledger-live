@@ -8,6 +8,8 @@ export const descriptor: CoinDescriptor = {
       hasPresets: false,
       hasCustom: false,
     },
-    selfTransfer: "free",
+    // A Cardano self-send is valid on-chain (funds return to one of the account's own UTXOs) but
+    // is almost always a mistake, so warn without blocking — mirrors vechain/near (LIVE-33176).
+    selfTransfer: "warning",
   },
 };
