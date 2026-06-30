@@ -5,11 +5,6 @@ import {
   type TokensDataWithPagination,
 } from "@domain/api-currency-token";
 
-const emptyData = (): TokensDataWithPagination => ({
-  tokens: [],
-  pagination: { nextCursor: "" },
-});
-
 /**
  * Paginated CAL token list. Joins the RTK-Query infinite-query pages into a single
  * `{ tokens, pagination }` and exposes a `loadNext` when more pages are available.
@@ -29,17 +24,14 @@ export function useTokensData(params: GetTokensDataParams) {
     isFetchingNextPage,
   } = useGetTokensDataInfiniteQuery(params);
 
-  const joinedPages = useMemo(
-    () =>
-      data?.pages.reduce<TokensDataWithPagination>(
-        (acc, page) => ({
-          tokens: [...acc.tokens, ...page.tokens],
-          pagination: { nextCursor: page.pagination.nextCursor },
-        }),
-        emptyData(),
-      ),
-    [data],
-  );
+  const joinedPages = useMemo<TokensDataWithPagination | undefined>(() => {
+    if (!data) return undefined;
+    return {
+      // Single O(n) pass — avoid re-spreading the accumulator on every page.
+      tokens: data.pages.flatMap(page => page.tokens),
+      pagination: { nextCursor: data.pages.at(-1)?.pagination.nextCursor ?? "" },
+    };
+  }, [data]);
 
   const hasMore = Boolean(joinedPages?.pagination.nextCursor);
   const isInitialLoading = isLoading || (isFetching && !isFetchingNextPage);
