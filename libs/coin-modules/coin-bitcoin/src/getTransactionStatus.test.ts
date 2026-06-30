@@ -1,10 +1,11 @@
 /* eslint @typescript-eslint/consistent-type-assertions: 0 */
 
 import { Account } from "@ledgerhq/types-live";
+import { InvalidAddress } from "@ledgerhq/errors";
 import { BitcoinInput, Transaction } from "./types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { DustLimit } from "@ledgerhq/errors";
-import { RbfBuildError, FeeTooLow } from "./errors";
+import { RbfBuildError, FeeTooLow, ZcashSaplingRecipientNotSupported } from "./errors";
 import BigNumber from "bignumber.js";
 
 // Mock modules before importing the module under test
@@ -25,13 +26,22 @@ jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => {
   };
 });
 
+// Mock the UA classifier so the Zcash tests below are isolated from F4Jumble.
+// Keep this alongside the other module mocks (before the module-under-test import)
+// so the mock is applied deterministically regardless of the Jest/TS transform.
+jest.mock("./chain-adapters/zcash/address", () => ({
+  classifyZcashRecipient: jest.fn(),
+}));
+
 import * as cache from "./cache";
 import * as sanction from "@ledgerhq/ledger-wallet-framework/sanction/index";
+import * as zcashAddress from "./chain-adapters/zcash/address";
 import getTransactionStatus, { MAX_BLOCK_HEIGHT_FOR_TAPROOT } from "./getTransactionStatus";
 
 const calculateFeesSpy = jest.mocked(cache.calculateFees);
 const validateRecipientSpy = jest.mocked(cache.validateRecipient);
 const isAddressSanctionedSpy = jest.mocked(sanction.isAddressSanctioned);
+const mockClassifyZcash = jest.mocked(zcashAddress.classifyZcashRecipient);
 
 describe("getTransactionStatus on Bitcoin", () => {
   it("should return as sender error only sanctioned utxo addresses", async () => {
@@ -197,7 +207,11 @@ describe("getTransactionStatus on Bitcoin", () => {
         changeAddressWarning: undefined,
       });
       isAddressSanctionedSpy.mockResolvedValue(false);
-      calculateFeesSpy.mockResolvedValue({ txInputs: [], txOutputs: [], fees: BigNumber(0) });
+      calculateFeesSpy.mockResolvedValue({
+        txInputs: [],
+        txOutputs: [],
+        fees: BigNumber(0),
+      });
     });
 
     const buildAccount = () =>
@@ -213,7 +227,11 @@ describe("getTransactionStatus on Bitcoin", () => {
         feePerByte: BigNumber(feePerByte),
         networkInfo:
           relayFeePerByte !== undefined
-            ? { family: "bitcoin", feeItems: {}, relayFeePerByte: BigNumber(relayFeePerByte) }
+            ? {
+                family: "bitcoin",
+                feeItems: {},
+                relayFeePerByte: BigNumber(relayFeePerByte),
+              }
             : undefined,
       }) as unknown as Transaction;
 
@@ -252,7 +270,11 @@ describe("getTransactionStatus on Bitcoin", () => {
         changeAddressWarning: undefined,
       });
       isAddressSanctionedSpy.mockResolvedValue(false);
-      calculateFeesSpy.mockResolvedValue({ txInputs: [], txOutputs: [], fees: BigNumber(0) });
+      calculateFeesSpy.mockResolvedValue({
+        txInputs: [],
+        txOutputs: [],
+        fees: BigNumber(0),
+      });
     });
 
     // Native SegWit input = 68 vB, so relay-aware dust = 3 * 68 * relayFeePerByte
@@ -260,7 +282,9 @@ describe("getTransactionStatus on Bitcoin", () => {
       ({
         currency: { id: "bitcoin" },
         blockHeight: MAX_BLOCK_HEIGHT_FOR_TAPROOT + 1,
-        bitcoinResources: { walletAccount: { params: { derivationMode: "Native SegWit" } } },
+        bitcoinResources: {
+          walletAccount: { params: { derivationMode: "Native SegWit" } },
+        },
       }) as unknown as Account;
 
     const buildTransaction = (amount: number, feePerByte: number, relayFeePerByte: number) =>
@@ -297,17 +321,6 @@ describe("getTransactionStatus on Bitcoin", () => {
 // ---------------------------------------------------------------------------
 // Zcash shielded-context recipient validation
 // ---------------------------------------------------------------------------
-
-// Mock the UA classifier so these tests are isolated from F4Jumble
-jest.mock("./chain-adapters/zcash/address", () => ({
-  classifyZcashRecipient: jest.fn(),
-}));
-
-import { ZcashSaplingRecipientNotSupported } from "./errors";
-import { InvalidAddress } from "@ledgerhq/errors";
-import * as zcashAddress from "./chain-adapters/zcash/address";
-
-const mockClassifyZcash = jest.mocked(zcashAddress.classifyZcashRecipient);
 
 describe("getTransactionStatus — Zcash shielded-context recipient validation", () => {
   const zcashAccount = {
@@ -347,7 +360,10 @@ describe("getTransactionStatus — Zcash shielded-context recipient validation",
   it("sets errors.recipient = ZcashSaplingRecipientNotSupported for a zs Sapling address", async () => {
     mockClassifyZcash.mockReturnValue({ error: "sapling-unsupported" });
 
-    const tx = { ...baseZcashTx, recipient: "zs1saplingaddr" } as unknown as Transaction;
+    const tx = {
+      ...baseZcashTx,
+      recipient: "zs1saplingaddr",
+    } as unknown as Transaction;
     const status = await getTransactionStatus(zcashAccount, tx);
 
     expect(status.errors.recipient).toBeInstanceOf(ZcashSaplingRecipientNotSupported);
@@ -356,7 +372,10 @@ describe("getTransactionStatus — Zcash shielded-context recipient validation",
   it("sets errors.recipient = InvalidAddress for a Sprout / garbage address", async () => {
     mockClassifyZcash.mockReturnValue({ error: "invalid" });
 
-    const tx = { ...baseZcashTx, recipient: "zcspurious" } as unknown as Transaction;
+    const tx = {
+      ...baseZcashTx,
+      recipient: "zcspurious",
+    } as unknown as Transaction;
     const status = await getTransactionStatus(zcashAccount, tx);
 
     expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
@@ -372,11 +391,70 @@ describe("getTransactionStatus — Zcash shielded-context recipient validation",
     });
     mockClassifyZcash.mockReturnValue({ recipientType: "private" });
 
-    const tx = { ...baseZcashTx, recipient: "u1orchardaddr" } as unknown as Transaction;
+    const tx = {
+      ...baseZcashTx,
+      recipient: "u1orchardaddr",
+    } as unknown as Transaction;
     const status = await getTransactionStatus(zcashAccount, tx);
 
     // The Zcash block clears the error set by validateRecipient
     expect(status.errors.recipient).toBeUndefined();
+  });
+
+  // TODO(zcash transparent-to-shielded): once the Zcash chain adapter handles
+  // "transparent-to-shielded" in its own getTransactionStatus, the default path is
+  // short-circuited and the skipLegacyFeeCalculation workaround is removed — update
+  // this test to assert the adapter path (fees computed via PCZT) instead.
+  it("accepts a shielded recipient from a transparent sender without running the legacy fee builder", async () => {
+    // Legacy validation rejects u1 (as it does without shielded context)...
+    validateRecipientSpy.mockResolvedValue({
+      recipientError: new Error("shared validator rejects u1 without shielded context"),
+      recipientWarning: undefined,
+      changeAddressError: undefined,
+      changeAddressWarning: undefined,
+    });
+    // ...but the recipient classifies as a valid shielded (Orchard) address.
+    mockClassifyZcash.mockReturnValue({ recipientType: "private" });
+
+    const tx = {
+      ...baseZcashTx,
+      sender: "public",
+      transferType: "transparent-to-shielded",
+      recipient: "u1orchardaddr",
+      feePerByte: BigNumber(1),
+    } as unknown as Transaction;
+
+    const status = await getTransactionStatus(zcashAccount, tx);
+
+    // Recipient is accepted regardless of the (transparent) sender selection...
+    expect(status.errors.recipient).toBeUndefined();
+    // ...and the legacy Bitcoin fee builder (which throws InvalidAddress on u1)
+    // is skipped, so the status resolves cleanly instead of rejecting.
+    expect(calculateFeesSpy).not.toHaveBeenCalled();
+  });
+
+  it("keeps the validateRecipient error for a transparent recipient (does not clear it)", async () => {
+    // classifyZcashRecipient only checks the t1/t3 prefix + length, not the
+    // Base58Check checksum, so a malformed transparent address can still be
+    // classified as "public". The shared validateRecipient error must survive.
+    const invalidAddressError = new InvalidAddress("", {
+      currencyName: "Zcash",
+    });
+    validateRecipientSpy.mockResolvedValue({
+      recipientError: invalidAddressError,
+      recipientWarning: undefined,
+      changeAddressError: undefined,
+      changeAddressWarning: undefined,
+    });
+    mockClassifyZcash.mockReturnValue({ recipientType: "public" });
+
+    const tx = {
+      ...baseZcashTx,
+      recipient: "t1malformedtransparentaddr",
+    } as unknown as Transaction;
+    const status = await getTransactionStatus(zcashAccount, tx);
+
+    expect(status.errors.recipient).toBe(invalidAddressError);
   });
 
   it("does not apply Zcash logic when sender field is absent (flag-off)", async () => {

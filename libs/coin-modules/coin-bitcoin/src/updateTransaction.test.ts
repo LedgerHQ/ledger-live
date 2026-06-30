@@ -1,14 +1,15 @@
-import { updateTransaction } from "./updateTransaction";
-
-// Mock the address classifier so tests are isolated from F4Jumble
+// Mock the address classifier so tests are isolated from F4Jumble.
+// Keep this before the module-under-test import so the mock is applied
+// deterministically regardless of the Jest/TS transform.
 jest.mock("./chain-adapters/zcash/address", () => ({
   classifyZcashRecipient: jest.fn(),
-  deriveZcashTransferType: jest.requireActual(
-    "./chain-adapters/zcash/address",
-  ).deriveZcashTransferType,
+  deriveZcashTransferType: jest.requireActual("./chain-adapters/zcash/address")
+    .deriveZcashTransferType,
 }));
 
 import * as addressModule from "./chain-adapters/zcash/address";
+import { updateTransaction } from "./updateTransaction";
+
 const mockClassify = jest.mocked(addressModule.classifyZcashRecipient);
 
 function makeBaseTx(extra: Record<string, unknown> = {}) {
@@ -36,7 +37,7 @@ describe("updateTransaction — Zcash shielded context", () => {
     const tx = makeBaseTx({ transferType: "transparent", sender: "public" });
     const result = updateTransaction(tx as never, {
       recipient: "u1orchardaddress",
-    }) as typeof tx & { recipientType: string; transferType: string };
+    }) as unknown as typeof tx & { recipientType: string; transferType: string };
 
     expect(result.recipientType).toBe("private");
     expect(result.transferType).toBe("transparent-to-shielded");
@@ -49,19 +50,23 @@ describe("updateTransaction — Zcash shielded context", () => {
     const tx = makeBaseTx({ transferType: "shielded", sender: "private" });
     const result = updateTransaction(tx as never, {
       recipient: "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8",
-    }) as typeof tx & { recipientType: string; transferType: string };
+    }) as unknown as typeof tx & { recipientType: string; transferType: string };
 
     expect(result.recipientType).toBe("public");
     expect(result.transferType).toBe("shielded-to-transparent");
   });
 
-  it("clears recipientType and sets transferType=shielded when recipient is invalid/Sapling", () => {
+  it("clears recipientType and sets transferType=transparent when recipient is invalid/Sapling", () => {
     mockClassify.mockReturnValue({ error: "sapling-unsupported" });
 
-    const tx = makeBaseTx({ transferType: "transparent", sender: "public", recipientType: "public" });
+    const tx = makeBaseTx({
+      transferType: "transparent",
+      sender: "public",
+      recipientType: "public",
+    });
     const result = updateTransaction(tx as never, {
       recipient: "zs1saplingaddress",
-    }) as typeof tx & { recipientType: unknown; transferType: string };
+    }) as unknown as typeof tx & { recipientType: unknown; transferType: string };
 
     // recipientType cleared because classify returned an error
     expect(result.recipientType).toBeUndefined();
@@ -70,10 +75,14 @@ describe("updateTransaction — Zcash shielded context", () => {
   });
 
   it("clears recipientType when recipient is empty", () => {
-    const tx = makeBaseTx({ transferType: "transparent-to-shielded", sender: "public", recipientType: "private" });
+    const tx = makeBaseTx({
+      transferType: "transparent-to-shielded",
+      sender: "public",
+      recipientType: "private",
+    });
     const result = updateTransaction(tx as never, {
       recipient: "",
-    }) as typeof tx & { recipientType: unknown; transferType: string };
+    }) as unknown as typeof tx & { recipientType: unknown; transferType: string };
 
     expect(result.recipientType).toBeUndefined();
     // public sender + undefined = transparent
@@ -88,7 +97,7 @@ describe("updateTransaction — non-Zcash / flag-off passthrough", () => {
     const tx = makeBaseTx({ transferType: "transparent" });
     const result = updateTransaction(tx as never, {
       recipient: "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8",
-    }) as typeof tx & { recipientType?: unknown };
+    }) as unknown as typeof tx & { recipientType?: unknown };
 
     expect(result.recipientType).toBeUndefined();
     expect(mockClassify).not.toHaveBeenCalled();

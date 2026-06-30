@@ -20,8 +20,13 @@ export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] 
   if ("sender" in updatedT) {
     const zt = updatedT as ZcashTransaction;
     const cls = zt.recipient ? classifyZcashRecipient(zt.recipient) : undefined;
-    zt.recipientType = cls && "recipientType" in cls ? cls.recipientType : undefined;
-    zt.transferType = deriveZcashTransferType(zt.sender, zt.recipientType);
+    const recipientType = cls && "recipientType" in cls ? cls.recipientType : undefined;
+    if (recipientType !== undefined) {
+      zt.recipientType = recipientType;
+    } else {
+      delete zt.recipientType;
+    }
+    zt.transferType = deriveZcashTransferType(zt.sender, recipientType);
   }
 
   return updatedT;

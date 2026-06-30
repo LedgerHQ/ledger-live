@@ -22,11 +22,7 @@ import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
-import {
-  TaprootNotActivated,
-  FeeTooLow,
-  ZcashSaplingRecipientNotSupported,
-} from "./errors";
+import { TaprootNotActivated, FeeTooLow, ZcashSaplingRecipientNotSupported } from "./errors";
 import { classifyZcashRecipient } from "./chain-adapters/zcash/address";
 import { Currency } from "./wallet-btc";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
@@ -35,216 +31,249 @@ import { getChainAdapter } from "./chain-adapters/registry";
 
 export const MAX_BLOCK_HEIGHT_FOR_TAPROOT = 709632;
 
-export const getTransactionStatus: AccountBridge<
-  Transaction,
-  Account,
-  TransactionStatus
->["getTransactionStatus"] = async (
+type ErrorMap = Record<string, Error>;
+
+type FeeCalculation = {
+  txInputs: BitcoinInput[];
+  txOutputs: BitcoinOutput[];
+  estimatedFees: BigNumber;
+};
+
+// Zcash shielded context: refine recipient validation only where the shared
+// validator gets it wrong. Gated on "sender" in transaction so the flag-off /
+// non-shielded path is unchanged. Returns whether the legacy Bitcoin fee
+// calculation must be skipped (a valid Orchard UA the legacy builder can't encode).
+//
+// We only OVERRIDE validateRecipient's result for a private (Orchard UA)
+// recipient. For transparent recipients we keep the shared result untouched:
+// classifyZcashRecipient checks only the prefix + length (not the Base58Check
+// checksum), so clearing errors here would let a malformed address slip through.
+//
+// TODO(zcash transparent-to-shielded): validation-only workaround. When PCZT
+// building lands and the Zcash chain adapter handles "transparent-to-shielded" in
+// its own getTransactionStatus, REMOVE this: the adapter short-circuits before
+// reaching this default path. See chain-adapters/zcash/index.ts.
+function refineZcashRecipient(
   account: Account,
   transaction: Transaction,
-) => {
-  const adapter = getChainAdapter(account.currency.id);
-  const custom = adapter.getTransactionStatus?.(account, transaction);
-  if (custom) return custom;
+  errors: ErrorMap,
+): boolean {
+  const isZcashShielded =
+    account.currency.id === "zcash" && "sender" in transaction && !!transaction.recipient;
+  if (!isZcashShielded) return false;
 
-  const errors: Record<string, Error> = {};
-  const warnings: Record<string, Error> = {};
-  const useAllAmount = !!transaction.useAllAmount;
-  const {
-    recipientError,
-    recipientWarning,
-    changeAddressError,
-    changeAddressWarning,
-  } = await validateRecipient(
-    account.currency,
-    transaction.recipient,
-    transaction?.changeAddress,
-  );
-
-  if (recipientError) {
-    errors.recipient = recipientError;
+  const cls = classifyZcashRecipient(transaction.recipient);
+  if ("error" in cls) {
+    errors.recipient =
+      cls.error === "sapling-unsupported"
+        ? new ZcashSaplingRecipientNotSupported()
+        : new InvalidAddress("", { currencyName: account.currency.name });
+    return false;
   }
 
-  if (recipientWarning) {
-    warnings.recipient = recipientWarning;
+  if (cls.recipientType === "private") {
+    delete errors.recipient;
+    return true;
   }
 
-  // Zcash shielded context: override recipient validation for transparent and
-  // transparent-to-shielded flows. Gated on "sender" in transaction so the
-  // flag-off / non-shielded path is unchanged. The adapter's getTransactionStatus
-  // handles shielded / shielded-to-transparent; this block handles the remaining
-  // transfer types that fall through to the default Bitcoin path.
-  if (
-    account.currency.id === "zcash" &&
-    "sender" in transaction &&
-    transaction.recipient
-  ) {
-    const cls = classifyZcashRecipient(transaction.recipient);
-    if ("error" in cls) {
-      errors.recipient =
-        cls.error === "sapling-unsupported"
-          ? new ZcashSaplingRecipientNotSupported()
-          : new InvalidAddress("", { currencyName: account.currency.name });
-    } else {
-      delete errors.recipient;
-    }
-  }
+  return false;
+}
 
-  if (changeAddressError) {
-    errors.changeAddress = changeAddressError;
-  }
+async function validateRecipientAndChange(
+  account: Account,
+  transaction: Transaction,
+  errors: ErrorMap,
+  warnings: ErrorMap,
+): Promise<boolean> {
+  const { recipientError, recipientWarning, changeAddressError, changeAddressWarning } =
+    await validateRecipient(account.currency, transaction.recipient, transaction?.changeAddress);
 
-  if (changeAddressWarning) {
-    warnings.changeAddress = changeAddressWarning;
-  }
+  if (recipientError) errors.recipient = recipientError;
+  if (recipientWarning) warnings.recipient = recipientWarning;
 
-  // Safeguard before Taproot activation
-  if (
+  const skipLegacyFeeCalculation = refineZcashRecipient(account, transaction, errors);
+
+  if (changeAddressError) errors.changeAddress = changeAddressError;
+  if (changeAddressWarning) warnings.changeAddress = changeAddressWarning;
+
+  return skipLegacyFeeCalculation;
+}
+
+// Safeguard before Taproot activation
+async function applyTaprootSafeguard(
+  account: Account,
+  transaction: Transaction,
+  errors: ErrorMap,
+): Promise<void> {
+  const applies =
     transaction.recipient &&
     !errors.recipient &&
     !errors.changeAddress &&
     account.currency.id === "bitcoin" &&
-    account.blockHeight <= MAX_BLOCK_HEIGHT_FOR_TAPROOT
-  ) {
-    const isTaproot = await isTaprootRecipient(
-      account.currency,
-      transaction.recipient,
-    );
-    const changeAddressIsTaproot = transaction.changeAddress
-      ? await isTaprootRecipient(account.currency, transaction.changeAddress)
-      : false;
-    if (isTaproot) {
-      errors.recipient = new TaprootNotActivated();
-    }
-    if (changeAddressIsTaproot) {
-      errors.changeAddress = new TaprootNotActivated();
-    }
-  }
+    account.blockHeight <= MAX_BLOCK_HEIGHT_FOR_TAPROOT;
+  if (!applies) return;
 
-  let txInputs: BitcoinInput[] = [];
-  let txOutputs: BitcoinOutput[] = [];
-  let estimatedFees = new BigNumber(0);
-  const { opReturnData, changeAddress } = transaction;
+  const isTaproot = await isTaprootRecipient(account.currency, transaction.recipient);
+  const changeAddressIsTaproot = transaction.changeAddress
+    ? await isTaprootRecipient(account.currency, transaction.changeAddress)
+    : false;
 
+  if (isTaproot) errors.recipient = new TaprootNotActivated();
+  if (changeAddressIsTaproot) errors.changeAddress = new TaprootNotActivated();
+}
+
+function getRelayFeePerByte(account: Account, transaction: Transaction): BigNumber | undefined {
   const networkRelayFee = transaction.networkInfo?.relayFeePerByte;
-  const relayFeePerByte =
-    networkRelayFee && networkRelayFee.gt(0)
-      ? networkRelayFee
-      : account.currency.id === "bitcoin"
-      ? new BigNumber(1)
-      : undefined;
+  if (networkRelayFee && networkRelayFee.gt(0)) return networkRelayFee;
+  return account.currency.id === "bitcoin" ? new BigNumber(1) : undefined;
+}
+
+async function computeFees(
+  account: Account,
+  transaction: Transaction,
+  errors: ErrorMap,
+  skipLegacyFeeCalculation: boolean,
+): Promise<FeeCalculation> {
+  const empty: FeeCalculation = {
+    txInputs: [],
+    txOutputs: [],
+    estimatedFees: new BigNumber(0),
+  };
+
+  const relayFeePerByte = getRelayFeePerByte(account, transaction);
 
   if (!transaction.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
-  } else if (transaction.feePerByte.eq(0)) {
+    return empty;
+  }
+  if (transaction.feePerByte.eq(0)) {
     errors.feePerByte = new FeeRequired();
-  } else if (relayFeePerByte && transaction.feePerByte.lt(relayFeePerByte)) {
+    return empty;
+  }
+  if (relayFeePerByte && transaction.feePerByte.lt(relayFeePerByte)) {
     errors.feePerByte = new FeeTooLow();
-  } else if (transaction.recipient && !errors.recipient) {
-    await calculateFees({
-      account: account,
-      transaction: transaction,
-    }).then(
-      (res) => {
-        txInputs = res.txInputs;
-        txOutputs = res.txOutputs;
-        estimatedFees = res.fees;
-      },
-      (error) => {
-        if (error.name === "NotEnoughBalance") {
-          errors.amount = error;
-        } else if (error.name === "DustLimit") {
-          errors.dustLimit = error;
-        } else if (error.name === "RbfBuildError") {
-          errors.replacement = error;
-        } else {
-          throw error;
-        }
-      },
-    );
+    return empty;
+  }
+  if (!transaction.recipient || errors.recipient || skipLegacyFeeCalculation) {
+    return empty;
   }
 
-  const sumOfInputs = txInputs.reduce(
-    (sum, input) => sum.plus(input.value ?? 0),
-    new BigNumber(0),
+  try {
+    const res = await calculateFees({ account, transaction });
+    return {
+      txInputs: res.txInputs,
+      txOutputs: res.txOutputs,
+      estimatedFees: res.fees,
+    };
+  } catch (error) {
+    const err = error as Error;
+    if (err.name === "NotEnoughBalance") errors.amount = err;
+    else if (err.name === "DustLimit") errors.dustLimit = err;
+    else if (err.name === "RbfBuildError") errors.replacement = err;
+    else throw error;
+    return empty;
+  }
+}
+
+async function collectSanctionedInputs(
+  account: Account,
+  txInputs: BitcoinInput[],
+): Promise<string[]> {
+  const sanctionedAddresses: string[] = [];
+  for (const input of txInputs) {
+    if (input.address && (await isAddressSanctioned(account.currency, input.address))) {
+      sanctionedAddresses.push(input.address);
+    }
+  }
+  return sanctionedAddresses;
+}
+
+function checkDustLimit(
+  account: Account,
+  transaction: Transaction,
+  amount: BigNumber,
+  estimatedFees: BigNumber,
+  errors: ErrorMap,
+): void {
+  if (!transaction.feePerByte || !transaction.feePerByte.gt(0)) return;
+
+  const txSize = Math.ceil(estimatedFees.toNumber() / transaction.feePerByte.toNumber());
+  const crypto = cryptoFactory(account.currency.id as Currency);
+  const derivationMode = (account as BitcoinAccount).bitcoinResources?.walletAccount?.params
+    .derivationMode;
+  const dustAmount = computeDustAmount(crypto, txSize, {
+    derivationMode,
+    relayFeePerByteSatVb: transaction.networkInfo?.relayFeePerByte,
+  });
+
+  if (amount.gt(0) && amount.lt(dustAmount)) {
+    errors.dustLimit = new DustLimit();
+  }
+}
+
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  Account,
+  TransactionStatus
+>["getTransactionStatus"] = async (account: Account, transaction: Transaction) => {
+  const adapter = getChainAdapter(account.currency.id);
+  const custom = adapter.getTransactionStatus?.(account, transaction);
+  if (custom) return custom;
+
+  const errors: ErrorMap = {};
+  const warnings: ErrorMap = {};
+  const useAllAmount = !!transaction.useAllAmount;
+
+  const skipLegacyFeeCalculation = await validateRecipientAndChange(
+    account,
+    transaction,
+    errors,
+    warnings,
   );
 
+  await applyTaprootSafeguard(account, transaction, errors);
+
+  const { txInputs, txOutputs, estimatedFees } = await computeFees(
+    account,
+    transaction,
+    errors,
+    skipLegacyFeeCalculation,
+  );
+
+  const sumOfInputs = txInputs.reduce((sum, input) => sum.plus(input.value ?? 0), new BigNumber(0));
   const sumOfChanges = txOutputs
-    .filter((o) => o.isChange)
+    .filter(o => o.isChange)
     .reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
 
-  if (txInputs) {
-    log("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
-
-    const sanctionedAddresses: string[] = [];
-    for (const input of txInputs) {
-      if (input.address) {
-        const addressIsSanctioned = await isAddressSanctioned(
-          account.currency,
-          input.address,
-        );
-        if (addressIsSanctioned) {
-          sanctionedAddresses.push(input.address);
-        }
-      }
-    }
-
-    if (sanctionedAddresses.length > 0) {
-      errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
-        addresses: sanctionedAddresses,
-      });
-    }
+  log("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
+  const sanctionedAddresses = await collectSanctionedInputs(account, txInputs);
+  if (sanctionedAddresses.length > 0) {
+    errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
+      addresses: sanctionedAddresses,
+    });
   }
-
-  if (txOutputs) {
-    log(
-      "bitcoin",
-      `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`,
-    );
-  }
+  log("bitcoin", `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`);
 
   const totalSpent = sumOfInputs.minus(sumOfChanges);
-  const amount = useAllAmount
-    ? totalSpent.minus(estimatedFees)
-    : transaction.amount;
-  log(
-    "bitcoin",
-    `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`,
-  );
+  const amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount;
+  log("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
 
   // For RBF cancel transactions, we're sending the same amount as the original tx but to ourselves (change address)
   // The recipient is the change address, so the external amount is effectively cancelled
   const isRbfCancel =
-    transaction.replaceTxId &&
-    transaction.recipient === transaction.changeAddress;
+    transaction.replaceTxId && transaction.recipient === transaction.changeAddress;
 
   if (!errors.amount && !amount.gt(0) && !isRbfCancel) {
-    errors.amount = useAllAmount
-      ? new NotEnoughBalance()
-      : new AmountRequired();
+    errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   }
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (transaction.feePerByte && transaction.feePerByte.gt(0)) {
-    const txSize = Math.ceil(
-      estimatedFees.toNumber() / transaction.feePerByte.toNumber(),
-    );
-    const crypto = cryptoFactory(account.currency.id as Currency);
-    const derivationMode = (account as BitcoinAccount).bitcoinResources
-      ?.walletAccount?.params.derivationMode;
-    const dustAmount = computeDustAmount(crypto, txSize, {
-      derivationMode,
-      relayFeePerByteSatVb: transaction.networkInfo?.relayFeePerByte,
-    });
+  checkDustLimit(account, transaction, amount, estimatedFees, errors);
 
-    if (amount.gt(0) && amount.lt(dustAmount)) {
-      errors.dustLimit = new DustLimit();
-    }
-  }
-
+  const { opReturnData, changeAddress } = transaction;
   if (opReturnData && opReturnData.length > OP_RETURN_DATA_SIZE_LIMIT) {
     errors.opReturnSizeLimit = new OpReturnDataSizeLimit();
   }

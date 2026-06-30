@@ -30,6 +30,13 @@ class ZCash extends Base {
     return await this.getLegacyAddress(xpub, account, index);
   }
 
+  // NOTE: only transparent t1 (P2PKH) / t3 (P2SH) outputs are supported here.
+  // Shielded outputs (Sapling zs / unified u1 with an Orchard receiver) are NOT
+  // representable as a Bitcoin output script and will throw InvalidAddress below.
+  // TODO(zcash transparent-to-shielded): shielded outputs must be built via PCZT
+  // in the Zcash chain adapter, never through this legacy script encoder. Callers
+  // on the transparent-to-shielded path are expected to bypass this method (see
+  // the skipLegacyFeeCalculation workaround in getTransactionStatus.ts).
   toOutputScript(address: string): Buffer {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();

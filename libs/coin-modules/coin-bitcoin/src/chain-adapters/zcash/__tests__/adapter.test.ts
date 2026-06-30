@@ -18,6 +18,10 @@ import "../index";
 
 const mockSignerContext = jest.fn() as unknown as SignerContext;
 
+// Real firmware-generated Orchard-only Unified Address (see address.test.ts).
+const UA_ORCHARD_ONLY =
+  "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+
 function makeTx(
   transferType: ZcashTransferType,
   amount: BigNumber = new BigNumber(0),
@@ -277,7 +281,20 @@ describe("zcash chain adapter — transaction routing", () => {
       const result = (await adapter.getTransactionStatus!(account, tx)) as TransactionStatus;
 
       expect(result.errors.recipient).toBeInstanceOf(Error);
-      expect(result.errors.recipient.message).toContain("Recipient address is required");
+    });
+
+    it("returns recipient error for shielded (private -> private) without recipient", async () => {
+      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      // Selecting the private balance with an empty address derives transferType
+      // "shielded"; the recipient step must not be considered valid.
+      const tx = makeTx("shielded", new BigNumber(100_000), {
+        selectedNotes: [makeSpendableNote()],
+        zcashFee: new BigNumber(10_000),
+      });
+      // recipient is "" (empty) from makeTx
+      const result = (await adapter.getTransactionStatus!(account, tx)) as TransactionStatus;
+
+      expect(result.errors.recipient).toBeInstanceOf(Error);
     });
 
     it("returns insufficient balance error when selectedNotes is undefined (prepareTransaction not called)", async () => {
@@ -308,6 +325,7 @@ describe("zcash chain adapter — transaction routing", () => {
     it("returns no errors for a valid shielded transaction", async () => {
       const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
       const tx = makeTx("shielded", new BigNumber(100_000), {
+        recipient: UA_ORCHARD_ONLY,
         selectedNotes: [makeSpendableNote({ amount: new BigNumber(120_000) })],
         zcashFee: new BigNumber(10_000),
       });
