@@ -19,6 +19,10 @@ on:
         required: true
       NX_KEY:
         required: true
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -42,6 +46,8 @@ jobs:
       AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
       NX_KEY: ${{ secrets.NX_KEY }}
     with:
       scope: devtools

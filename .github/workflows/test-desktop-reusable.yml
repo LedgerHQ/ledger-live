@@ -28,6 +28,10 @@ on:
         required: true
       SLACK_LIVE_CI_BOT_TOKEN:
         required: true
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -187,6 +191,8 @@ jobs:
       CI_OS: "ubuntu-22.04"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       LC_ALL: en_US.UTF-8
+      FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-linux-16CPU-64RAM]

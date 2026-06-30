@@ -1,5 +1,9 @@
 {
   "namedInputs": {
+    "quarantine": [
+      "{workspaceRoot}/quarantine/**/*",
+      "{workspaceRoot}/quarantine/.bypass-allow"
+    ],
     "sharedGlobals": [
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/nx.workspace.json",
@@ -380,6 +384,7 @@
       "inputs": [
         "default",
         "^default",
+        "quarantine",
         {
           "env": "CI_OS"
         }
@@ -457,7 +462,12 @@
         "{projectRoot}/coverage/lcov.info",
         "{projectRoot}/coverage/sonar-executionTests-report.xml"
       ],
-      "cache": true
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "quarantine"
+      ]
     },
     "clean": {
       "cache": false

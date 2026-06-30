@@ -38,8 +38,8 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "test": "test-quarantine run jest --",
+    "coverage": "test-quarantine run jest -- --coverage",
     "unimported": "unimported"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
