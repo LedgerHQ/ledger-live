@@ -62,7 +62,7 @@ export const CLI_SWAP_FLOW_PORTS: SwapFlowPorts<CliSwapIntent, CliInitInput> = {
       return { transactionData, appName };
     } catch (err) {
       walletCliDebug(
-        `Sap-api failed after ${Date.now() - startedAt}ms — ${err instanceof Error ? `${err.name}: ${err.message}` : String(err)}`
+        `Swap-api failed after ${Date.now() - startedAt}ms — ${err instanceof Error ? `${err.name}: ${err.message}` : String(err)}`
       );
       throw err;
     }

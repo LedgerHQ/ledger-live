@@ -94,6 +94,8 @@ const SIGN_INTENT_KINDS = new Set<CliSwapIntent["kind"]>([
   "sign-swap",
 ]);
 
+const RFQ_PLAN_KINDS = new Set<SwapFlowPlan["kind"]>(["rfq-order", "approval-then-rfq-order"]);
+
 function launchIntent(args: {
   intent: CliSwapIntent;
   initInput: CliInitInput | null;
@@ -152,7 +154,7 @@ function launchIntent(args: {
           }
           break;
         case "broadcasted":
-          out.swapExecuteProgress(`Boadcasted ${state.hash};`);
+          out.swapExecuteProgress(`Broadcasted ${state.hash};`);
           break;
         case "confirmed":
           send({ type: "JOB_CONFIRMED", hash: state.hash });
@@ -223,6 +225,14 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
 
   if (plan.kind === "skip") {
     return { plan: "skip", skipReason: plan.reason, result: {} };
+  }
+
+  if (RFQ_PLAN_KINDS.has(plan.kind)) {
+    return {
+      plan: "skip",
+      skipReason: `rfq-plan-unsupported-in-cli (${plan.kind})`,
+      result: {},
+    };
   }
 
   const result = await withLedgerManagerAppSession(ETHEREUM_APP_NAME, async () => {

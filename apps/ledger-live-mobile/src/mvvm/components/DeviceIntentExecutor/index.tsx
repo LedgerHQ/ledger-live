@@ -89,7 +89,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
             {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
             <DeviceIntentExecutor
               {...wrappedProps}
-              platformConfig={platformConfig}
+              platformConfig={LWM_EXECUTOR_PLATFORM_CONFIG}
               initializerConfig={wrappedProps.initializerConfig}
             />
           </BottomSheetView>

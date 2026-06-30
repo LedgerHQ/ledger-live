@@ -218,11 +218,9 @@ export async function executeSwapCommand({
         `[i] Using device-intent (DIE) pipeline for provider=${provider}; fetching quote…`,
       );
 
-      const receiveAddress =
-        toParentAccount.type === "Account"
-          ? toParentAccount.freshAddress
-          : getMainAccount(toParentAccount, getParentAccount(toParentAccount, [toParentAccount]))
-              .freshAddress;
+      const toParent = getParentAccount(toAccount, accounts);
+      const mainToAccount: Account = getMainAccount(toAccount, toParent);
+      const receiveAddress = mainToAccount.freshAddress;
 
       const quote = await selectDieQuote({
         provider,
