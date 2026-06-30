@@ -1,7 +1,9 @@
 import { PendingOperation } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
+import { useFeature } from "@features/platform-feature-flags";
 import React from "react";
 import { connect } from "react-redux";
 import Alert from "~/renderer/components/Alert";
@@ -15,20 +17,35 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 type Props = {
   account: BitcoinAccount;
   confirmationsNb: number;
+  transaction?: Transaction;
+  status?: TransactionStatus;
 };
 
 const SendRecipientFields = (props: Props) => {
-  const { confirmationsNb, account } = props;
+  const { confirmationsNb, account, status } = props;
   const pendingOperationError = new PendingOperation();
   const operations = account.pendingOperations.concat(account.operations);
   const incomingTransactionPending = operations.some(
     op => op.type === "IN" && !isConfirmedOperation(op, account, confirmationsNb),
   );
-  return incomingTransactionPending ? (
-    <Alert type={"warning"} mt={4}>
-      <TranslatedError error={pendingOperationError} field="description" />
-    </Alert>
-  ) : null;
+
+  const zcashShielded = useFeature("zcashShielded");
+  const isZcash = account.currency.id === "zcash" && zcashShielded?.enabled;
+
+  return (
+    <>
+      {incomingTransactionPending ? (
+        <Alert type={"warning"} mt={4}>
+          <TranslatedError error={pendingOperationError} field="description" />
+        </Alert>
+      ) : null}
+      {isZcash && status?.errors?.recipient ? (
+        <Alert type={"warning"} mt={4}>
+          <TranslatedError error={status.errors.recipient} field="title" />
+        </Alert>
+      ) : null}
+    </>
+  );
 };
 
 const m = connect(
