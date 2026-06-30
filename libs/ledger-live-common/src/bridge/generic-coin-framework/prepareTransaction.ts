@@ -1,7 +1,12 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
-import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
+import {
+  bigNumberToBigIntDeep,
+  extractBalances,
+  toGasOptionsFromUnknown,
+  transactionToIntent,
+} from "./utils";
 import BigNumber from "bignumber.js";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -24,10 +29,11 @@ function assetInfosFallback(transaction: GenericTransaction): {
 
 function propagateField(estimation: FeeEstimation, field: string, dest: GenericTransaction): void {
   const value = estimation?.parameters?.[field];
-  if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") return;
 
   switch (field) {
     case "type":
+      if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string")
+        return;
       dest[field] = Number(value.toString());
       return;
     case "storageLimit":
@@ -36,8 +42,15 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
     case "maxFeePerGas":
     case "maxPriorityFeePerGas":
     case "additionalFees":
+      if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string")
+        return;
       dest[field] = new BigNumber(value.toString());
       return;
+    case "gasOptions": {
+      const gasOptions = toGasOptionsFromUnknown(value);
+      if (gasOptions) dest.gasOptions = gasOptions;
+      return;
+    }
     default:
       return;
   }
@@ -120,6 +133,10 @@ export function genericPrepareTransaction(
         "maxFeePerGas",
         "maxPriorityFeePerGas",
         "additionalFees",
+        // Slow/medium/fast presets produced by the coin-module: surfaced as-is
+        // so the UI can render fee presets without ever fetching them itself.
+        // Families that don't produce them leave this untouched.
+        "gasOptions",
       ];
 
       for (const field of fieldsToPropagate) {

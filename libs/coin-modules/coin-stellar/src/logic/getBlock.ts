@@ -195,6 +195,7 @@ function blockOperationsPathStrictReceive(op: RawPathStrictReceiveOp): BlockOper
 type TxContext = {
   memo: StellarMemo | undefined;
   sequence: string | undefined;
+  feeCharged: string;
 };
 
 function mapSupportedOperationToBlockOperations(
@@ -211,12 +212,12 @@ function mapSupportedOperationToBlockOperations(
   }
   if (op.type === "change_trust") {
     const isOptOut = new BigNumber(op.limit || "0").eq(0);
-    // Align with listOperations details (convertToLegacyOperation output)
+    // Align with listOperations: assetAmount = fee_charged (not the trustline limit)
     return [
       {
         type: "other",
         ledgerOpType: isOptOut ? "OPT_OUT" : "OPT_IN",
-        assetAmount: op.asset_code ? op.limit : undefined,
+        assetAmount: op.asset_code ? txCtx.feeCharged : undefined,
         ...(txCtx.memo && { memo: txCtx.memo }),
         ...(txCtx.sequence && { sequence: txCtx.sequence }),
       },
@@ -242,6 +243,7 @@ async function blockTransactionForHash(
   const txCtx: TxContext = {
     memo: decodeMemo(tx),
     sequence: parseSequence(tx.source_account_sequence),
+    feeCharged: new BigNumber(tx.fee_charged || "0").toString(),
   };
 
   let blockOperations: BlockOperation[] = [];

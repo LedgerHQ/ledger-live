@@ -10,8 +10,8 @@ const testConfig = {
     "@Stax",
     "@Flex",
     "@NanoGen5",
-    "@polkadot",
-    "@family-polkadot",
+    "@polygon",
+    "@family-evm",
   ],
 };
 

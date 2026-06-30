@@ -100,7 +100,12 @@ export function SendHeader() {
       return (
         <div className="-mt-12 mb-24 px-24">
           <div className="relative">
-            <AddressInput className="w-full" value={addressInputValue} hideClearButton />
+            <AddressInput
+              className="w-full"
+              value={addressInputValue}
+              hideClearButton
+              prefix={t("newSendFlow.to")}
+            />
             <button
               type="button"
               className="absolute inset-0"
@@ -120,6 +125,7 @@ export function SendHeader() {
           id="send-recipient-input"
           data-testid="send-recipient-input"
           autoFocus
+          prefix={t("newSendFlow.to")}
           value={addressInputValue}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}

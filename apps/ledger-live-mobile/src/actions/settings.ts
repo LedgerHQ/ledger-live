@@ -35,10 +35,10 @@ import {
   SettingsShowTokenPayload,
   SettingsUpdateCurrencyPayload,
   SettingsActionTypes,
-  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
+  SettingsHideSmallValueTokenOperationsPayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
@@ -51,6 +51,7 @@ import {
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
+  SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -144,6 +145,10 @@ export const setFilterTokenOperationsZeroAmount =
   createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
     SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT,
   );
+export const setHideSmallValueTokenOperations =
+  createAction<SettingsHideSmallValueTokenOperationsPayload>(
+    SettingsActionTypes.SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS,
+  );
 export const blacklistToken = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,
 );
@@ -216,10 +221,6 @@ export const setNotifications = createAction<SettingsSetNotificationsPayload>(
 export const setCloseWithdrawBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
-export const setWalletTabNavigatorLastVisitedTab =
-  createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
-    SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB,
-  );
 export const setDateFormat = createAction<SettingsSetDateFormatPayload>(
   SettingsActionTypes.SETTINGS_SET_DATE_FORMAT,
 );
@@ -253,6 +254,10 @@ export const setSupportedCounterValues = createAction<SettingsSetSupportedCounte
 
 export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(
   SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT,
+);
+
+export const setDebugOsUpdateBannerMode = createAction<SettingsSetDebugOsUpdateBannerMode>(
+  SettingsActionTypes.SET_DEBUG_OS_UPDATE_BANNER_MODE,
 );
 
 export const setAnalyticsConsentInfo = createAction<SettingsSetAnalyticsConsentInfoPayload>(

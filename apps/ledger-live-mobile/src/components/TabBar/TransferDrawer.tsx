@@ -245,10 +245,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       screen = "Wallet";
       break;
     }
-    case snakeCase(NavigatorName.Market): {
-      screen = "Market";
-      break;
-    }
     case snakeCase(NavigatorName.Discover): {
       screen = "Discover";
       break;

@@ -5,6 +5,7 @@ import { AssetHeader } from "./components/AssetHeader";
 import { ActionBar } from "./components/ActionBar";
 import { ChartSection } from "./components/ChartSection";
 import { FallbackBanner } from "./components/FallbackBanner";
+import { RobinhoodDisclaimerBanner } from "./components/RobinhoodDisclaimerBanner";
 import { HiddenBanner } from "./components/HiddenBanner";
 import { resolveRampLedgerIds } from "./utils/resolveRampLedgerIds";
 import { MarketPriceSection } from "./components/MarketPriceSection";
@@ -103,6 +104,8 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         {showPortfolioSections && (
           <TotalBalance distributionItem={distributionItem} isLoading={portfolioSectionLoading} />
         )}
+
+        <RobinhoodDisclaimerBanner distributionItem={distributionItem} />
 
         <MetricsRowSection
           distributionItem={distributionItem}

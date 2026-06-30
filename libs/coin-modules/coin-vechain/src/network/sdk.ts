@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
 import type {
   AccountResponse,
@@ -272,20 +271,4 @@ export const getBlockRef = async (): Promise<string> => {
   });
 
   return data.id.slice(0, 18);
-};
-
-/**
- * Get fees paid for the transaction
- * @param transactionId - the id of the transaction
- * @return the fee paid in VTHO or 0
- */
-export const getFees = async (transactionID: string): Promise<BigNumber> => {
-  const { data } = await network<{ paid: string }>({
-    method: "GET",
-    url: `${BASE_URL}/transactions/${transactionID}/receipt`,
-    params: { id: transactionID },
-  });
-
-  if (!data || !data.paid) return new BigNumber(0);
-  return new BigNumber(data.paid);
 };

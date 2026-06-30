@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getSwapTransactionStatusDetailsViewModel } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
@@ -9,7 +9,6 @@ import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { openURL } from "~/renderer/linking";
 import { CopyIconButton } from "./CopyIconButton";
 import { DetailRow } from "./DetailRow";
-import { truncateMiddle } from "../../utils";
 
 type DetailsSectionProps = Readonly<{
   feesAmount?: string;
@@ -29,7 +28,12 @@ export function DetailsSection({
   swapId,
 }: DetailsSectionProps) {
   const { t } = useTranslation();
-  const providerName = provider ? getProviderName(provider) : undefined;
+  const detailsViewModel = getSwapTransactionStatusDetailsViewModel({
+    provider,
+    providerData,
+    swapId,
+  });
+  const { providerMainUrl, providerName, shouldShowProvider, truncatedSwapId } = detailsViewModel;
 
   return (
     <section>
@@ -59,16 +63,16 @@ export function DetailsSection({
             )
           }
         />
-        {provider && providerName ? (
+        {shouldShowProvider && provider ? (
           <DetailRow
             label={t("swap2.modals.transactionStatus.sections.details.provider")}
             value={
-              providerData?.mainUrl ? (
+              providerMainUrl ? (
                 <button
                   type="button"
                   data-testid="swap-transaction-details-provider"
                   className="inline-flex cursor-pointer items-center gap-6 border-0 bg-transparent p-0 body-3 text-base"
-                  onClick={() => openURL(providerData.mainUrl, "SwapTransactionStatus_Provider")}
+                  onClick={() => openURL(providerMainUrl, "SwapTransactionStatus_Provider")}
                 >
                   <span>{providerName}</span>
                   <ProviderIcon name={provider} size="XXS" borderRadius={4} />
@@ -90,7 +94,7 @@ export function DetailsSection({
           value={
             <div className="inline-flex items-center gap-6">
               <span data-testid="swap-transaction-details-swap-id" className="body-3-semi-bold">
-                {truncateMiddle(swapId)}
+                {truncatedSwapId}
               </span>
               <CopyIconButton text={swapId} />
             </div>

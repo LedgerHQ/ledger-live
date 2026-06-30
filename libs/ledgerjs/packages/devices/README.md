@@ -21,13 +21,15 @@ Logic for all Ledger devices.
 *   [ledgerUSBVendorId](#ledgerusbvendorid)
 *   [getDeviceModel](#getdevicemodel)
     *   [Parameters](#parameters)
-*   [identifyTargetId](#identifytargetid)
+*   [getProductName](#getproductname)
     *   [Parameters](#parameters-1)
-*   [identifyUSBProductId](#identifyusbproductid)
+*   [identifyTargetId](#identifytargetid)
     *   [Parameters](#parameters-2)
+*   [identifyUSBProductId](#identifyusbproductid)
+    *   [Parameters](#parameters-3)
 *   [getBluetoothServiceUuids](#getbluetoothserviceuuids)
 *   [getInfosForServiceUuid](#getinfosforserviceuuid)
-    *   [Parameters](#parameters-3)
+    *   [Parameters](#parameters-4)
 *   [DeviceModel](#devicemodel)
 *   [BluetoothInfos](#bluetoothinfos)
 
@@ -102,6 +104,20 @@ Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 *   `id` **DeviceModelId**&#x20;
 
 Returns **[DeviceModel](#devicemodel)**&#x20;
+
+### getProductName
+
+Return the official, full product name of a device model
+(e.g. "Ledger Flex", "Ledger Nano X").
+
+This is the canonical name and must be used as-is: do not strip the
+"Ledger" prefix, reword, or otherwise transform it.
+
+#### Parameters
+
+*   `id` **DeviceModelId**&#x20;
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 ### identifyTargetId
 

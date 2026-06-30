@@ -1,11 +1,11 @@
-import type { DiscoveryError } from "../../../types";
-import { DiscoveryErrorTypes } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
+import { BaseDiscoveryErrorTypes, DiscoveryErrorTypes } from "../../../types";
 import { AndroidLocationServicePreflightCheck } from "./AndroidLocationServicePreflightCheck";
 import type { AndroidPreflightRequirements } from "./androidPreflightRequirements";
 import type { LocationHelperModule, LocationServiceResponse } from "../nativeModules";
 import type { DiscoveryPreflightResult } from "../preflightResult";
 
-const retry = jest.fn<Promise<true | DiscoveryError>, []>();
+const retry = jest.fn<Promise<true | MobileDiscoveryError>, []>();
 
 describe("AndroidLocationServicePreflightCheck", () => {
   beforeEach(() => {
@@ -102,7 +102,7 @@ describe("AndroidLocationServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrorTypes.Unknown,
+      type: BaseDiscoveryErrorTypes.Unknown,
       error: nativeError,
       resolution: { type: "check-only", retry },
     });
@@ -127,7 +127,7 @@ const makeRequirements = (): AndroidPreflightRequirements => ({
   locationPermission: null,
 });
 
-const getError = (result: DiscoveryPreflightResult): DiscoveryError => {
+const getError = (result: DiscoveryPreflightResult): MobileDiscoveryError => {
   if (result.success) {
     throw new Error("Expected a failed preflight result");
   }

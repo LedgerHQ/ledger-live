@@ -82,4 +82,6 @@ export class AppInfos {
   static readonly MINA = new AppInfos("Mina");
 
   static readonly CONCORDIUM = new AppInfos("Concordium");
+
+  static readonly SEI = new AppInfos("Sei");
 }

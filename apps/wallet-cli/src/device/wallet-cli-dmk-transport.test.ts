@@ -7,9 +7,7 @@ type SendApduArgs = {
   abortTimeout?: number;
 };
 
-function makeDmk(
-  onSendApdu: (args: SendApduArgs) => { data: Uint8Array; statusCode: Uint8Array },
-) {
+function makeDmk(onSendApdu: (args: SendApduArgs) => { data: Uint8Array; statusCode: Uint8Array }) {
   return {
     sendApdu: async (args: SendApduArgs) => onSendApdu(args),
   };

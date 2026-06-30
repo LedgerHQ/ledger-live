@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { CommonActions, NavigationProp, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -158,7 +157,6 @@ describe("NotificationsPrompt swap flow", () => {
         {
           action: "swap",
           shouldPrompt: true,
-          variant: AB_TESTING_VARIANTS.B,
           repromptDelay: null,
           dismissedCount: 0,
           skipReason: undefined,
@@ -177,7 +175,6 @@ describe("NotificationsPrompt swap flow", () => {
         drawerPromptTarget: "globalPushNotifications",
         repromptDelay: null,
         dismissedCount: 0,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -207,7 +204,6 @@ describe("NotificationsPrompt swap flow", () => {
         {
           action: "swap",
           shouldPrompt: true,
-          variant: AB_TESTING_VARIANTS.B,
           repromptDelay: null,
           dismissedCount: 0,
           skipReason: undefined,
@@ -223,7 +219,6 @@ describe("NotificationsPrompt swap flow", () => {
         drawerPromptTarget: "globalPushNotifications",
         repromptDelay: null,
         dismissedCount: 0,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
   });

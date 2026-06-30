@@ -71,7 +71,7 @@ describe("getDescriptor", () => {
       },
     });
     expect(typeof descriptor?.send.fees.presets?.getOptions).toBe("function");
-    expect(typeof descriptor?.send.amount?.getPlugins).toBe("function");
+    expect(descriptor?.send.amount?.effects?.map(e => e.id)).toEqual(["syncGasOptions"]);
   });
 
   it("should return descriptor for solana", () => {
@@ -417,9 +417,14 @@ describe("sendFeatures", () => {
     expect(sendFeatures.getAmountPlugins(bitcoin)).toEqual([]);
   });
 
-  it("should expose amount plugins for evm", () => {
+  it("should not expose legacy amount plugins for evm", () => {
     const ethereum = getCryptoCurrencyById("ethereum");
-    expect(sendFeatures.getAmountPlugins(ethereum)).toEqual(["evmGasOptionsSync"]);
+    expect(sendFeatures.getAmountPlugins(ethereum)).toEqual([]);
+  });
+
+  it("should expose the gas options sync effect for evm", () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    expect(sendFeatures.getAmountEffects(ethereum).map(e => e.id)).toEqual(["syncGasOptions"]);
   });
 
   it("should get memo type", () => {

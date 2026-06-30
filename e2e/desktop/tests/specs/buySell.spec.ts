@@ -61,6 +61,7 @@ for (const asset of assets) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: crypto.currency.speculosApp,
       cliCommands: [liveDataCommand(crypto)],
+      speculosForSetupOnly: true,
     });
 
     const family = getFamilyByCurrencyId(crypto.currency.id);
@@ -214,6 +215,7 @@ test.describe("Sell flow - ", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: crypto.currency.speculosApp,
     cliCommands: [liveDataCommand(crypto)],
+    speculosForSetupOnly: true,
   });
 
   const family = getFamilyByCurrencyId(crypto.currency.id);

@@ -12,7 +12,7 @@ import { useWalletV4TourDrawer, WalletV4TourDrawer } from "LLM/features/WalletV4
 import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import TrackScreen from "~/analytics/TrackScreen";
 import { usePortfolioBorrowSectionViewModel } from "../../components/PortfolioBorrowSection/usePortfolioBorrowSectionViewModel";
@@ -43,7 +43,7 @@ import {
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
@@ -61,7 +61,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
@@ -142,13 +141,11 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       </Box>,
     );
 
-    if (shouldDisplayMarketBanner) {
-      sections.push(
-        <Box key="marketBanner" px={6}>
-          <MarketBanner />
-        </Box>,
-      );
-    }
+    sections.push(
+      <Box key="marketBanner" px={6}>
+        <MarketBanner />
+      </Box>,
+    );
 
     sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
@@ -195,7 +192,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
     shouldDisplayQuickActionCtas,

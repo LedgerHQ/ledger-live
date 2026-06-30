@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { EventLog, TransferLog } from "../types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getFees } from "../network";
+import { getFees } from "../network/getFees";
 import { ABIEvent, Hex, VIP180_ABI } from "@vechain/sdk-core";
 
 export const mapVetTransfersToOperations = async (

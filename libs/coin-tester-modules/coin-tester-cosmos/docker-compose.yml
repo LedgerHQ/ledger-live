@@ -1,0 +1,29 @@
+services:
+  babylond:
+    platform: linux/amd64
+    image: coin-tester-babylond:latest
+    build:
+      context: .
+      dockerfile: babylond.Dockerfile
+    # The tester-derived address to pre-fund at genesis (see entrypoint.sh).
+    # Set by scenarii/Babylon.ts on process.env before `compose up`. `:-` keeps
+    # `compose down` (teardown) quiet when it isn't set; the entrypoint's `:?`
+    # guard still enforces presence at container runtime.
+    environment:
+      - DEV_ADDRESS=${DEV_ADDRESS:-}
+    ports:
+      - "1317:1317"
+      - "26657:26657"
+      - "9090:9090"
+    healthcheck:
+      # LCD `latest block` endpoint — only responds once the chain has produced
+      # a block, which the single validator does on its own within a few seconds.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/blocks/latest >/dev/null"]
+      interval: 5s
+      timeout: 10s
+      retries: 24
+      start_period: 30s
+
+# No named volume: a single node keeps its state in the container filesystem,
+# and `down --volumes` (killBabylond) discards the container — each run sees a
+# fresh chain from genesis.

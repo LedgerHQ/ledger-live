@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import {
-  connectDeviceUseCase,
+  connectDevice,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
-  type ConnectDeviceUseCaseInput,
+  type ConnectDeviceInput,
   type DisplayedDevice,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-mobile";
@@ -14,7 +14,7 @@ import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { KnownDevice } from "@ledgerhq/live-dmk-shared";
 
-type DeviceConnectionResult = Parameters<ConnectDeviceUseCaseInput["onConnected"]>[0];
+type DeviceConnectionResult = Parameters<ConnectDeviceInput["onConnected"]>[0];
 
 type StateHistoryEntry = {
   id: number;
@@ -75,7 +75,7 @@ export default function DebugConnectDeviceScreen() {
     setLastError(null);
     setConnectionResult(null);
 
-    subscriptionRef.current = connectDeviceUseCase({
+    subscriptionRef.current = connectDevice({
       knownDevices,
       dmk,
       onConnected: handleConnected,
@@ -100,8 +100,8 @@ export default function DebugConnectDeviceScreen() {
           Connect Device Playground
         </Text>
         <Text variant="small" color="neutral.c70">
-          Exercises connectDeviceUseCase, the connect-device flow used by Device Intent Executor. It
-          uses the persisted known devices from Redux, starts real DMK discovery, and exposes the
+          Exercises connectDevice, the connect-device flow used by Device Intent Executor. It uses
+          the persisted known devices from Redux, starts real DMK discovery, and exposes the
           callbacks emitted to the UI.
         </Text>
       </Flex>

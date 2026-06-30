@@ -2,7 +2,7 @@ import { useCallback, useContext } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useRefreshAccountsOrdering } from "~/actions/general";
+import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
@@ -28,7 +28,7 @@ const useReadOnlyPortfolioViewModel = (navigation: {
 
   usePortfolioAnalyticsOptInPrompt();
 
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+  const refreshAccountsOrdering = useRefreshAccountsOrderingAfterInteractions();
   useFocusEffect(refreshAccountsOrdering);
 
   const onBackFromUpdate = useCallback(() => {

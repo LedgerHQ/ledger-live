@@ -1,15 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-if (typeof globalThis.setImmediate !== "function") {
-  // Force React scheduler to avoid MessageChannel in jsdom + detectOpenHandles.
-  // @ts-expect-error Test-only polyfill for environments without setImmediate.
-  globalThis.setImmediate = (callback: (...args: unknown[]) => void, ...args: unknown[]) => {
-    setTimeout(() => callback(...args), 0);
-  };
-}
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-const { renderHook, act, cleanup } = require("@testing-library/react");
+import { renderHook, act, cleanup } from "@testing-library/react";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";

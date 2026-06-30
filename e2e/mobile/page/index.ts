@@ -22,12 +22,14 @@ import SettingsHelpPage from "./settings/settingsHelp.page";
 import SettingsPage from "./settings/settings.page";
 import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
+import EvmStakePage from "./trade/evmStake.page";
 import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import MainNavigationPage from "./wallet/mainNavigation.page";
 import MyWalletPage from "./wallet/myWallet.page";
 import OperationPage from "./wallet/operation.page";
+import TopBarSearchPage from "./wallet/topBarSearch.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
@@ -76,6 +78,7 @@ export class Application {
   private settingsGeneralPageInstance = lazyInit(SettingsGeneralPage);
   private speculosPageInstance = lazyInit(SpeculosPage);
   private stakePageInstance = lazyInit(StakePage);
+  private evmStakePageInstance = lazyInit(EvmStakePage);
   private swapLiveAppInstance = lazyInit(SwapLiveAppPage);
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
@@ -88,10 +91,11 @@ export class Application {
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
+  private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
-    this.modularDrawer.resetFlags();
+    this.market.resetFlags();
     const userdataSpeculos = `temp-userdata-${randomUUID()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
@@ -190,6 +194,10 @@ export class Application {
     return this.stakePageInstance();
   }
 
+  public get evmStake() {
+    return this.evmStakePageInstance();
+  }
+
   public get swap() {
     return this.swapPageInstance();
   }
@@ -236,5 +244,9 @@ export class Application {
 
   public get modularDrawer() {
     return this.modularDrawerPageInstance();
+  }
+
+  public get topBarSearch() {
+    return this.topBarSearchPageInstance();
   }
 }

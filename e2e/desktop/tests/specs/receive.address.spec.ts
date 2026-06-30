@@ -69,7 +69,7 @@ for (const receive of nativeAccounts) {
           "@NanoGen5",
           `@${receive.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(receive.account === Account.SOL_1 ? ["@smoke"] : []),
+          ...(receive.account === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",

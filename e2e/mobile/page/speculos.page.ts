@@ -11,6 +11,7 @@ import {
   verifyAmountsAndRejectSwap,
   approveToken,
   signTypedMessage as signTypedMessageDevice,
+  acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { setExchangeDependencies } from "../utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -77,9 +78,19 @@ export default class SpeculosPage {
     await approveToken();
   }
 
+  @Step("Sign EVM contract transaction on device")
+  async signEvmContractTransaction() {
+    await approveToken();
+  }
+
   @Step("Sign typed message on device")
   async signTypedMessage() {
     await signTypedMessageDevice();
+  }
+
+  @Step("Check and accept if available enable transaction check")
+  async acceptEnableTransactionCheck() {
+    await acceptEnableTransactionCheckDevice();
   }
 
   async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {

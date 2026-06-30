@@ -10,4 +10,9 @@ export class OnboardingPage extends AppPage {
     await this.getStartedButton.waitFor({ state: "visible" });
     await this.buyDeviceButton.waitFor({ state: "visible" });
   }
+
+  @step("Click get started button")
+  async clickGetStartedButton() {
+    await this.getStartedButton.click();
+  }
 }

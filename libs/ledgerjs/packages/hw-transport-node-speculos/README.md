@@ -36,14 +36,16 @@ async function exampleAdvanced() {
 
 ### With ledger-live CLI
 
-It's working with SPECULOS\_APDU\_PORT and SPECULOS\_HOST envs.
+The `ledger-live` CLI (`@ledgerhq/live-cli`) is Speculos-only internal test/dev plumbing.
+It works with the SPECULOS\_APDU\_PORT and SPECULOS\_HOST envs.
 
 ```sh
-SPECULOS_APDU_PORT=40000 ledger-live sync -c btc
-
-# starts an http proxy with speculos (http proxy that works with LLD and LLM)
-SPECULOS_APDU_PORT=40000 ledger-live proxy
+SPECULOS_APDU_PORT=40000 ledger-live liveData -c btc
 ```
+
+To expose a Speculos device over HTTP (e.g. to drive it from LWD/LWM), use `pnpm apdu-proxy`.
+
+For real-device flows, use the Ledger Live desktop or mobile app, or `@ledgerhq/wallet-cli`.
 
 To make it work with Docker, I had to expose some port and do this:
 

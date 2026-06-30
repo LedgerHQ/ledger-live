@@ -3,7 +3,7 @@ import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { isSpeculosRemote, isWallet40 } from "../helpers/commonHelpers";
+import { isSpeculosRemote } from "../helpers/commonHelpers";
 import {
   deleteSpeculos,
   launchSpeculos,
@@ -14,18 +14,24 @@ import {
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { getMergedFeatureFlags } from "./featureFlagUtils";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
-    throw new Error("Test failed - aborting initialization to prevent orphaned Speculos instances");
+    throw new Error(
+      "Test failed - aborting initialization to prevent orphaned Speculos instances",
+    );
   }
 }
 
-type CliCommand = (
+type CliCommand = ((
   userdataPath?: string,
   speculosAddress?: string,
-) => Observable<unknown> | Promise<unknown> | string;
+) => Observable<unknown> | Promise<unknown> | string) & {
+  canUseGeneratedUserdata?: () => boolean;
+};
+
+export let isMyWalletEnabled = false;
 
 export type InitOptions = {
   speculosApp?: SpeculosAppType;
@@ -37,6 +43,7 @@ export type InitOptions = {
   userdata?: string;
   testedCurrencies?: string[];
   featureFlags?: PartialFeatures;
+  speculosForSetupOnly?: boolean;
 };
 
 type Entry = {
@@ -70,9 +77,11 @@ async function executeCliCommand(
 
 // Setup all Speculos devices in parallel for better performance.
 // If any launch fails, release the ones that already came up to avoid leaking pods.
-async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record<string, Entry>> {
+async function launchSpeculosDevices(
+  toStart: SpeculosAppType[],
+): Promise<Record<string, Entry>> {
   const results = await Promise.allSettled(
-    toStart.map(async app => {
+    toStart.map(async (app) => {
       checkTestFailed();
       const device = await launchSpeculos(app.name);
       return {
@@ -92,8 +101,8 @@ async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record
 
   if (failures.length) {
     await Promise.all(
-      launched.map(entry =>
-        deleteSpeculos(entry.deviceId).catch(err =>
+      launched.map((entry) =>
+        deleteSpeculos(entry.deviceId).catch((err) =>
           log.warn(
             "E2E",
             `Cleanup after partial launch failure: failed to delete ${entry.deviceId}: ${sanitizeError(err)}`,
@@ -146,7 +155,9 @@ async function executeCliCommandsOnApp(
         await registerSpeculos(speculosPort);
 
         for (let i = 0; i < cmds.length; i++) {
-          log.info(`  📝 [${app.name}] Executing command ${i + 1}/${cmds.length}`);
+          log.info(
+            `  📝 [${app.name}] Executing command ${i + 1}/${cmds.length}`,
+          );
           await executeCliCommand(cmds[i], userdataPath, deviceId);
         }
 
@@ -193,7 +204,9 @@ async function setupMainSpeculosApp(
 ): Promise<void> {
   const main = entryMap[speculosApp.name];
   if (!main) {
-    throw new Error(`No entry found for main speculos app: ${speculosApp.name}`);
+    throw new Error(
+      `No entry found for main speculos app: ${speculosApp.name}`,
+    );
   }
 
   const maxRetries = 3;
@@ -205,7 +218,9 @@ async function setupMainSpeculosApp(
     attempt++;
 
     try {
-      log.info(`\n🔄 [${speculosApp.name}] Main setup attempt ${attempt}/${maxRetries}`);
+      log.info(
+        `\n🔄 [${speculosApp.name}] Main setup attempt ${attempt}/${maxRetries}`,
+      );
 
       if (isSpeculosRemote()) await waitForSpeculosReady(main.deviceId);
       await registerSpeculos(main.speculosPort);
@@ -222,7 +237,9 @@ async function setupMainSpeculosApp(
       if (attempt < maxRetries) {
         checkTestFailed();
 
-        log.info(`[${speculosApp.name}] Creating new main Speculos instance for retry`);
+        log.info(
+          `[${speculosApp.name}] Creating new main Speculos instance for retry`,
+        );
         await removeSpeculosAndDeregisterKnownSpeculos(main.deviceId);
         const device = await launchSpeculos(main.name);
 
@@ -285,7 +302,9 @@ async function executeCliCommands(
       }
 
       if (attempt < maxRetries) {
-        log.info(`[Global CLI] Retrying full command run (attempt ${attempt + 1}/${maxRetries})`);
+        log.info(
+          `[Global CLI] Retrying full command run (attempt ${attempt + 1}/${maxRetries})`,
+        );
       }
     }
   }
@@ -303,12 +322,33 @@ export class InitializationManager {
     userdataPath: string,
     userdataSpeculos: string,
   ): Promise<void> {
-    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags = {} } = options;
+    const {
+      speculosApp,
+      cliCommands = [],
+      cliCommandsOnApp = [],
+      featureFlags = {},
+      speculosForSetupOnly,
+    } = options;
 
     await InitializationManager.setFeatureFlags(featureFlags);
 
+    const skipSpeculos =
+      !!speculosForSetupOnly &&
+      cliCommandsOnApp.length === 0 &&
+      cliCommands.length > 0 &&
+      cliCommands.every((cmd) => cmd.canUseGeneratedUserdata?.() ?? false);
+
+    if (skipSpeculos) {
+      await executeCliCommands(cliCommands, userdataPath);
+      await InitializationManager.finalizeSetup(userdataSpeculos);
+      return;
+    }
+
     // Group commands by app name
-    const commandsByAppMap = new Map<string, { app: SpeculosAppType; cmds: CliCommand[] }>();
+    const commandsByAppMap = new Map<
+      string,
+      { app: SpeculosAppType; cmds: CliCommand[] }
+    >();
     for (const { app, cmd } of cliCommandsOnApp) {
       const existing = commandsByAppMap.get(app.name);
       if (existing) {
@@ -323,15 +363,20 @@ export class InitializationManager {
     const appsToLaunch = [
       ...new Map(
         commandsByApp
-          .map(x => x.app)
+          .map((x) => x.app)
           .concat(speculosApp ? [speculosApp] : [])
-          .map(app => [app.name, app]),
+          .map((app) => [app.name, app]),
       ).values(),
     ];
     const speculosDevices = await launchSpeculosDevices(appsToLaunch);
 
     // Execute app-specific commands with retry logic
-    await executeCliCommandsOnApp(commandsByApp, speculosDevices, userdataPath, speculosApp);
+    await executeCliCommandsOnApp(
+      commandsByApp,
+      speculosDevices,
+      userdataPath,
+      speculosApp,
+    );
 
     // Setup main Speculos app if specified
     if (speculosApp) {
@@ -343,58 +388,25 @@ export class InitializationManager {
     }
 
     // Execute global commands with internal full-run retry and Speculos re-initialization
-    await executeCliCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
+    await executeCliCommands(
+      cliCommands,
+      userdataPath,
+      speculosApp,
+      speculosDevices,
+    );
 
-    // Finalize setup only after successful global CLI run
+    await InitializationManager.finalizeSetup(userdataSpeculos);
+  }
+
+  private static async finalizeSetup(userdataSpeculos: string): Promise<void> {
     await loadConfig(userdataSpeculos, true);
   }
 
   static async setFeatureFlags(featureFlags: PartialFeatures) {
-    const defaultFlags = {
-      lwmWallet40: {
-        enabled: isWallet40,
-        params: {
-          mainNavigation: isWallet40,
-          marketBanner: isWallet40,
-          graphRework: isWallet40,
-          quickActionCtas: isWallet40,
-          tour: false,
-          lazyOnboarding: isWallet40,
-          balanceRefreshRework: isWallet40,
-          assetSection: false,
-          operationsList: false,
-          aggregatedAssets: false,
-          myWallet: isWallet40,
-          pnl: false,
-          assetDiscoverability: false,
-        },
-      },
-      onboardingWidget: {
-        enabled: true,
-      },
-      llmModularDrawer: {
-        enabled: true,
-        params: {
-          add_account: true,
-          live_app: true,
-          live_apps_allowlist: [],
-          live_apps_blocklist: ["revoke-cash"],
-          receive_flow: true,
-          send_flow: false,
-          enableModularization: true,
-          searchDebounceTime: 300,
-          backendEnvironment: "PROD",
-        },
-      },
-    };
-    const extraFeatureFlags = parseExtraFeatureFlags<PartialFeatures>(
-      process.env.E2E_FEATURE_FLAGS_JSON,
-    );
-    const mergedFeatureFlags = {
-      ...defaultFlags,
-      ...extraFeatureFlags,
-      ...featureFlags,
-    };
+    const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
+    const wallet40 = mergedFeatureFlags.lwmWallet40;
+    isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
+
     await allure.attachment(
       "Merged Feature Flags",
       JSON.stringify(mergedFeatureFlags, null, 2),

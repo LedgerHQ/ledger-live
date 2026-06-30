@@ -19,9 +19,9 @@ const baseProps: FeatureFlagsToolProps = {
   resolved,
   overrides: {},
   setOverride: jest.fn(),
+  setAllOverrides: jest.fn(),
   clearOverride: jest.fn(),
   clearAllOverrides: jest.fn(),
-  importOverrides: jest.fn(),
 };
 
 const renderViewModel = (props: FeatureFlagsToolProps) =>
@@ -40,35 +40,27 @@ describe("useFlagListViewModel", () => {
       const { content, filename } = buildOverridesExport(overrides);
       expect(saveFileMock).toHaveBeenCalledWith(content, filename);
     });
-
-    it("uses the injected exportOverrides when provided", () => {
-      const exportOverrides = jest.fn();
-      const { current } = renderViewModel({ ...baseProps, exportOverrides });
-      current.toolBarProps.actions.exportOverrides();
-      expect(exportOverrides).toHaveBeenCalledTimes(1);
-      expect(saveFileMock).not.toHaveBeenCalled();
-    });
   });
 
   describe("import action", () => {
-    it("applies the imported overrides", async () => {
-      const importOverrides = jest.fn();
+    it("applies the imported overrides through setAllOverrides", async () => {
+      const setAllOverrides = jest.fn();
       readFileMock.mockResolvedValue(JSON.stringify({ mockFeature: { enabled: true } }));
-      const { current } = renderViewModel({ ...baseProps, importOverrides });
+      const { current } = renderViewModel({ ...baseProps, setAllOverrides });
       current.toolBarProps.actions.importOverrides();
       await waitFor(() =>
-        expect(importOverrides).toHaveBeenCalledWith({ mockFeature: { enabled: true } }),
+        expect(setAllOverrides).toHaveBeenCalledWith({ mockFeature: { enabled: true } }),
       );
     });
 
     it("ignores a cancelled or failed import", async () => {
-      const importOverrides = jest.fn();
+      const setAllOverrides = jest.fn();
       const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
       readFileMock.mockRejectedValue(new Error("cancelled"));
-      const { current } = renderViewModel({ ...baseProps, importOverrides });
+      const { current } = renderViewModel({ ...baseProps, setAllOverrides });
       current.toolBarProps.actions.importOverrides();
       await waitFor(() => expect(warnSpy).toHaveBeenCalled());
-      expect(importOverrides).not.toHaveBeenCalled();
+      expect(setAllOverrides).not.toHaveBeenCalled();
     });
   });
 });

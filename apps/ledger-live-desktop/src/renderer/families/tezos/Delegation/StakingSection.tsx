@@ -178,7 +178,7 @@ const StakingSection = ({ account, info }: Props) => {
           />
         </Base>
         <Cta>
-          <DropDownSelector items={items} renderItem={renderItem}>
+          <DropDownSelector items={items} renderItem={renderItem} buttonId="tezos-staking-menu">
             {() => (
               <MenuButton>
                 <IconsLegacy.OthersMedium size={14} color={theme.colors.neutral.c70} />

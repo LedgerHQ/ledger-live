@@ -34,12 +34,24 @@ const STARRED_ACCOUNT_ITEM_HEIGHT = 55;
 
 /** Registry for sidebar entries that only do push(path) + trackEntry(entry). */
 const SIDEBAR_NAV_REGISTRY = {
-  handleClickDashboard: { path: SIDEBAR_VALUE_TO_PATH.home, trackEntry: "/portfolio" },
-  handleClickAccounts: { path: SIDEBAR_VALUE_TO_PATH.accounts, trackEntry: "accounts" },
-  handleClickCatalog: { path: SIDEBAR_VALUE_TO_PATH.discover, trackEntry: "platform" },
+  handleClickDashboard: {
+    path: SIDEBAR_VALUE_TO_PATH.home,
+    trackEntry: "/portfolio",
+  },
+  handleClickAccounts: {
+    path: SIDEBAR_VALUE_TO_PATH.accounts,
+    trackEntry: "accounts",
+  },
+  handleClickCatalog: {
+    path: SIDEBAR_VALUE_TO_PATH.discover,
+    trackEntry: "platform",
+  },
   handleClickEarn: { path: SIDEBAR_VALUE_TO_PATH.earn, trackEntry: "earn" },
   handleClickSwap: { path: SIDEBAR_VALUE_TO_PATH.swap, trackEntry: "swap" },
-  handleClickCardWallet: { path: SIDEBAR_VALUE_TO_PATH.card, trackEntry: "card" },
+  handleClickCardWallet: {
+    path: SIDEBAR_VALUE_TO_PATH.card,
+    trackEntry: "card",
+  },
   // Legacy-only entries (not in Wallet 4.0 sidebar)
   handleClickMarket: { path: "/market", trackEntry: "market" },
   handleClickManager: { path: "/manager", trackEntry: "manager" },
@@ -128,9 +140,6 @@ export function useSideBarViewModel(): SideBarViewModel {
   const recoverHomePath = useAccountPath(recoverFeature);
 
   const {
-    shouldDisplayMarketBanner: isMarketBannerEnabled,
-    shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
-    shouldDisplayWallet40MainNav: isWallet40MainNavEnabled,
     shouldDisplayAssetSection,
     shouldDisplayMyWallet: isMyWalletEnabled,
     isEnabled: isWallet40Enabled,
@@ -288,11 +297,7 @@ export function useSideBarViewModel(): SideBarViewModel {
         return;
       }
       if (isSideBarNavValue(value)) {
-        if (
-          isWallet40MainNavEnabled &&
-          value === "home" &&
-          location.pathname === SIDEBAR_VALUE_TO_PATH.home
-        ) {
+        if (value === "home" && location.pathname === SIDEBAR_VALUE_TO_PATH.home) {
           handleScrollToTop();
         }
         const path = value === "accounts" ? accountsSidebarPath : SIDEBAR_VALUE_TO_PATH[value];
@@ -307,7 +312,6 @@ export function useSideBarViewModel(): SideBarViewModel {
       push,
       trackEntry,
       location.pathname,
-      isWallet40MainNavEnabled,
       accountsSidebarPath,
     ],
   );
@@ -324,9 +328,6 @@ export function useSideBarViewModel(): SideBarViewModel {
     isCardDisabled,
     isAccountsDisabled: noAccounts,
     isLiveAppTabSelected,
-    isMarketBannerEnabled,
-    isQuickActionCtasEnabled,
-    isWallet40MainNavEnabled,
     isMyWalletEnabled,
     referralProgramConfig,
     recoverFeature,

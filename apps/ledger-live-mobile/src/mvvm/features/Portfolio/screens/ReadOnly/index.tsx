@@ -12,7 +12,7 @@ import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderF
 import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
 import { PortfolioBalanceSection } from "../../components/PortfolioBalanceSection";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { ScreenName } from "~/const";
 import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection/PortfolioNoSignerContent";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
@@ -21,7 +21,7 @@ import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {

@@ -1,13 +1,6 @@
 import React, { useCallback } from "react";
-import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Platform,
-  ScrollView,
-  Linking,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform, ScrollView, Linking } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { rgba } from "../../colors";
@@ -64,6 +57,7 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
   const [primaryColor, textColor, bulletColor] = [colors.card, colors.darkBlue, colors.lightLive];
   return sceneInfoProps ? (
     <SafeAreaView
+      edges={["top", "left", "right", "bottom"]}
       style={[
         styles.root,
         {

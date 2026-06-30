@@ -258,9 +258,9 @@ describe("validateIntent", () => {
         );
 
         expect(result.errors.amount).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
-        expect(
-          (result.errors.amount as Error & { minimumAmount?: string })?.minimumAmount,
-        ).toBe("1 SOL");
+        expect((result.errors.amount as Error & { minimumAmount?: string })?.minimumAmount).toBe(
+          "1 SOL",
+        );
       });
 
       it("should error when useAllAmount yields a value below the stake minimum delegation", async () => {
@@ -350,9 +350,7 @@ describe("validateIntent", () => {
 
       it("should return validation errors instead of rejecting when getStakeMinimumDelegation would fail and recipient is invalid", async () => {
         const api = {
-          getStakeMinimumDelegation: jest
-            .fn()
-            .mockRejectedValue(new Error("RPC unreachable")),
+          getStakeMinimumDelegation: jest.fn().mockRejectedValue(new Error("RPC unreachable")),
         } as unknown as ChainAPI;
 
         await expect(
@@ -370,9 +368,7 @@ describe("validateIntent", () => {
 
       it("skips the minimum-delegation check when the RPC call fails (best-effort)", async () => {
         const api = {
-          getStakeMinimumDelegation: jest
-            .fn()
-            .mockRejectedValue(new Error("RPC unreachable")),
+          getStakeMinimumDelegation: jest.fn().mockRejectedValue(new Error("RPC unreachable")),
         } as unknown as ChainAPI;
 
         const result = await validateIntentRaw(
@@ -504,6 +500,18 @@ describe("validateIntent", () => {
         });
 
         expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      });
+
+      it("keeps the returned amount clamped to 0 even when errors are set", async () => {
+        const result = await validateIntent(
+          makeWithdrawIntent({ amount: -1_000n }),
+          makeBalances(3000n, 0n),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.amount).toBe(0n);
+        expect(result.totalSpent).toBe(5000n);
       });
     });
   });

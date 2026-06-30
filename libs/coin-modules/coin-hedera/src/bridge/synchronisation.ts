@@ -17,7 +17,14 @@ import { resolveConfig } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
 import type { HederaAccount } from "../types";
-import { getSubAccounts, prepareOperations, applyPendingExtras, mergeSubAccounts } from "./utils";
+import {
+  buildCalTokenMap,
+  resolveBridgeOperations,
+  getSubAccounts,
+  prepareOperations,
+  applyPendingExtras,
+  mergeSubAccounts,
+} from "./utils";
 
 export const getAccountShape: GetAccountShape<HederaAccount> = async (
   info,
@@ -64,12 +71,20 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     latestOperationTimestamp = new BigNumber(timestamp).toFixed(9);
   }
 
+  const calTokenByAddress = await buildCalTokenMap({
+    erc20Tokens,
+    mirrorTokens,
+    currencyId: currency.id,
+  });
+
   const latestAccountOperations = await listOperationsV2({
     currencyId: currency.id,
     address,
     evmAddress,
     mirrorTokens,
-    erc20Tokens,
+    tokenEvmAddresses: [...calTokenByAddress.values()]
+      .filter(token => token.tokenType === "erc20")
+      .map(token => token.contractAddress.toLowerCase()),
     ...(latestOperationTimestamp && { cursor: latestOperationTimestamp }),
     fetchAllPages: true,
     skipFeesForTokenOperations: false,
@@ -77,10 +92,14 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     useSyntheticBlocks: false,
   });
 
-  const newOperations = await prepareOperations(
-    latestAccountOperations.coinOperations,
-    latestAccountOperations.tokenOperations,
-  );
+  const { bridgeCoinOperations, bridgeTokenOperations } = resolveBridgeOperations({
+    coinOperations: latestAccountOperations.coinOperations,
+    tokenOperations: latestAccountOperations.tokenOperations,
+    ledgerAccountId: liveAccountId,
+    calTokenByAddress,
+  });
+
+  const newOperations = await prepareOperations(bridgeCoinOperations, bridgeTokenOperations);
   const enrichedNewOperations = applyPendingExtras(newOperations, pendingOperations);
   const operations = shouldSyncFromScratch
     ? enrichedNewOperations
@@ -97,9 +116,10 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 
   const newSubAccounts = await getSubAccounts({
     ledgerAccountId: liveAccountId,
-    latestTokenOperations: latestAccountOperations.tokenOperations,
+    latestTokenOperations: bridgeTokenOperations,
     mirrorTokens,
     erc20Tokens,
+    calTokenByAddress,
   });
 
   const subAccounts = shouldSyncFromScratch

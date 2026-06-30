@@ -44,6 +44,7 @@ test.describe("Password", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
+    speculosForSetupOnly: true,
   });
 
   test(
@@ -85,6 +86,7 @@ test.describe("counter value selection", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
+    speculosForSetupOnly: true,
   });
 
   test(
@@ -174,7 +176,7 @@ test.describe("Reset app", () => {
       await app.settings.resetApp();
       await app.settingsModal.checkResetModal();
       await app.settingsModal.clickOnConfirmButton();
-      await app.onboarding.waitForLaunch();
+      await app.onboarding.clickGetStartedButton();
       const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
       await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
     },

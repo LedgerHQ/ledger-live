@@ -1,7 +1,12 @@
 import BigNumber from "bignumber.js";
 import { TRANSACTION_TYPE } from "../../constants";
 import type { AleoTransactionIntent, Transaction, TransactionRaw } from "../../types";
-import { mockUnspentRecord1, mockUnspentRecord2 } from "./account.fixture";
+import {
+  mockUnspentRecord1,
+  mockUnspentRecord2,
+  mockUnspentTokenRecord1,
+  mockUnspentTokenRecord2,
+} from "./account.fixture";
 import { MOCK_TOKEN_PROGRAM_ID } from "./currency.fixture";
 
 export const getMockedTransaction = (overrides?: Partial<Transaction>): Transaction => {
@@ -129,5 +134,49 @@ export const mockTxIntentConvertTokenPublicToPrivate: AleoTransactionIntent = {
   data: {
     type: TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
     programId: MOCK_TOKEN_PROGRAM_ID,
+  },
+};
+
+export const mockTxIntentTransferTokenPrivate: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 200n,
+  type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+  data: {
+    type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    programId: MOCK_TOKEN_PROGRAM_ID,
+    records: [mockUnspentTokenRecord1.decryptedData],
+  },
+};
+
+export const mockTxIntentTransferTokenPrivate2: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 200n,
+  type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+  data: {
+    type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    programId: MOCK_TOKEN_PROGRAM_ID,
+    records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
+  },
+};
+
+export const mockTxIntentConvertTokenPrivateToPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 400n,
+  type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  data: {
+    type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+    programId: MOCK_TOKEN_PROGRAM_ID,
+    records: [mockUnspentTokenRecord1.decryptedData],
+  },
+};
+
+export const mockTxIntentConvertTokenPrivateToPublic2: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 400n,
+  type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  data: {
+    type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+    programId: MOCK_TOKEN_PROGRAM_ID,
+    records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
   },
 };

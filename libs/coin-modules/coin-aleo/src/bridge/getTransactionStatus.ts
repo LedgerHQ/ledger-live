@@ -7,6 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import type {
   AleoAccount,
   Transaction as AleoTransaction,
@@ -16,6 +17,7 @@ import type {
   TransactionTransfer,
   AleoCoinConfig,
 } from "../types";
+import type { AleoUnspentRecord } from "../types/logic";
 import { estimateFees, validateAddress } from "../logic";
 import {
   calculateAmount,
@@ -23,9 +25,15 @@ import {
   getRecordByCommitment,
   isPrivateTransaction,
   isSelfTransferTransaction,
+  isTokenTransaction,
+  getAleoSubAccount,
+  sumPrivateRecords,
 } from "../logic/utils";
 import aleoCoinConfig from "../config";
-import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "../constants";
+import {
+  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+} from "../constants";
 import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
@@ -38,18 +46,46 @@ import {
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
 
-function getValidRecord({
-  account,
-  commitment,
-}: {
-  account: AleoAccount;
-  commitment: string | null;
-}) {
-  if (!commitment) {
-    return null;
+/**
+ * Resolve the amount records for a private transaction.
+ * @param account - The Aleo account.
+ * @param transaction - The Aleo transaction.
+ * @returns The amount records.
+ */
+function resolveAmountRecords(account: AleoAccount, transaction: TransactionPrivate) {
+  const isTokenTx = isTokenTransaction(transaction);
+  const tokenAccount = getAleoSubAccount(account, transaction.subAccountId);
+
+  if (isTokenTx) {
+    invariant(tokenAccount, `aleo: tokenAccount is missing (${transaction.subAccountId})`);
   }
 
-  return getRecordByCommitment({ account, commitment });
+  const maxRecords = isTokenTx
+    ? MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION
+    : MAX_PRIVATE_RECORDS_PER_TRANSACTION;
+
+  const records = transaction.properties.amountRecordCommitments
+    .map(commitment =>
+      getRecordByCommitment({
+        account,
+        commitment,
+        ...(isTokenTx && tokenAccount && { tokenAccount }),
+      }),
+    )
+    .filter((record): record is AleoUnspentRecord => record !== null);
+
+  const totalValue = sumPrivateRecords(records);
+
+  const privateBalance = isTokenTx
+    ? (tokenAccount?.privateBalance ?? new BigNumber(0))
+    : (account.aleoResources?.privateBalance ?? new BigNumber(0));
+
+  return {
+    records,
+    totalValue,
+    privateBalance,
+    maxRecords,
+  };
 }
 
 /**
@@ -88,28 +124,18 @@ function validatePrivateTransaction({
   config: AleoCoinConfig;
 }): Errors {
   const errors: Errors = {};
-  const { feeRecordCommitment, amountRecordCommitments } = transaction.properties;
-  const amountRecords = amountRecordCommitments
-    .map(commitment => getValidRecord({ account, commitment }))
-    .filter((record): record is NonNullable<typeof record> => !!record);
-
-  const totalAmountRecordsValue = amountRecords.reduce(
-    (sum, record) => sum.plus(new BigNumber(record.microcredits)),
-    new BigNumber(0),
+  const { records, totalValue, privateBalance, maxRecords } = resolveAmountRecords(
+    account,
+    transaction,
   );
 
-  const privateBalance = account.aleoResources?.privateBalance ?? new BigNumber(0);
-  const hasSelectedRecord = amountRecords.length > 0;
-
-  if (config.recordPickingStrategy === "manual" && !hasSelectedRecord) {
+  if (config.recordPickingStrategy === "manual" && records.length === 0) {
     errors.amountRecord = new AleoAmountRecordRequired();
-  } else if (config.recordPickingStrategy === "auto" && !hasSelectedRecord) {
+  } else if (config.recordPickingStrategy === "auto" && records.length === 0) {
     errors.amount = resolveAutoPickingAmountError(amount, privateBalance);
-  } else if (amountRecords.length > MAX_PRIVATE_RECORDS_PER_TRANSACTION) {
-    errors.amount = new AleoTooManyRecordsSelected(undefined, {
-      count: MAX_PRIVATE_RECORDS_PER_TRANSACTION,
-    });
-  } else if (amount.gt(totalAmountRecordsValue)) {
+  } else if (records.length > maxRecords) {
+    errors.amount = new AleoTooManyRecordsSelected(undefined, { count: maxRecords });
+  } else if (amount.gt(totalValue)) {
     errors.amount = new NotEnoughBalance();
   }
 
@@ -117,16 +143,51 @@ function validatePrivateTransaction({
     return errors;
   }
 
-  const feeRecord = getValidRecord({ account, commitment: feeRecordCommitment });
-  const availableRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(record =>
-    new BigNumber(record.microcredits).isGreaterThan(0),
+  return {
+    ...errors,
+    ...validatePrivateFeeRecord({ account, transaction, estimatedFees }),
+  };
+}
+
+/**
+ * Fee is always paid in ALEO credits, even for token transactions.
+ * Requires a valid fee record, distinct from amount records (native txs only), with enough balance.
+ */
+function validatePrivateFeeRecord({
+  account,
+  transaction,
+  estimatedFees,
+}: {
+  account: AleoAccount;
+  transaction: TransactionPrivate;
+  estimatedFees: BigNumber;
+}): Errors {
+  const errors: Errors = {};
+  const { feeRecordCommitment } = transaction.properties;
+  const feeRecord = feeRecordCommitment
+    ? getRecordByCommitment({ account, commitment: feeRecordCommitment })
+    : null;
+  const availableNativeRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(
+    record => new BigNumber(record.microcredits).isGreaterThan(0),
   );
 
-  if (availableRecords.length <= 1) {
+  // Token transactions only need 1 native record for the fee (amount records come from the token pool).
+  if (!isTokenTransaction(transaction) && availableNativeRecords.length <= 1) {
     errors.feeRecord = new AleoTwoRecordsRequired();
-  } else if (!feeRecord || amountRecordCommitments.includes(feeRecord.commitment)) {
+    return errors;
+  }
+
+  const feeRecordMatchesAmountRecord =
+    !isTokenTransaction(transaction) &&
+    !!feeRecord &&
+    transaction.properties.amountRecordCommitments.includes(feeRecord.commitment);
+
+  if (!feeRecord || feeRecordMatchesAmountRecord) {
     errors.feeRecord = new AleoFeeRecordRequired();
-  } else if (estimatedFees.gt(new BigNumber(feeRecord.microcredits))) {
+    return errors;
+  }
+
+  if (estimatedFees.gt(new BigNumber(feeRecord.microcredits))) {
     errors.feeRecord = new AleoFeeRecordInsufficientBalance();
   }
 
@@ -147,10 +208,9 @@ async function validateRecipient({
   }
 
   const isValidRecipient = await validateAddress(recipient, {});
-  const currencyName = account.currency.name;
 
   if (!isValidRecipient) {
-    return new InvalidAddress("", { currencyName });
+    return new InvalidAddress("", { currencyName: account.currency.name });
   }
 
   if (!allowSelfTransfer && account.freshAddress === recipient) {
@@ -158,6 +218,33 @@ async function validateRecipient({
   }
 
   return null;
+}
+
+function validatePublicFees({
+  account,
+  transaction,
+  config,
+  estimatedFees,
+}: {
+  account: AleoAccount;
+  transaction: TransactionSelfTransfer | TransactionTransfer;
+  config: AleoCoinConfig;
+  estimatedFees: BigNumber;
+}): Errors {
+  const errors: Errors = {};
+
+  if (config.isFeeSponsored || isPrivateTransaction(transaction)) {
+    return errors;
+  }
+
+  const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
+
+  if (transparentBalance.lt(estimatedFees)) {
+    errors.fees = new NotEnoughBalance();
+    return errors;
+  }
+
+  return errors;
 }
 
 async function handleTransferTransaction({
@@ -169,21 +256,15 @@ async function handleTransferTransaction({
   transaction: TransactionSelfTransfer | TransactionTransfer;
   allowSelfTransfer: boolean;
 }): Promise<AleoTransactionStatus> {
+  const config = aleoCoinConfig.getCoinConfig(account.currency.id);
+  const transactionType = transaction.mode;
+  const feeEstimation = estimateFees({ configOrCurrencyId: config, transactionType });
+  const estimatedFees = new BigNumber(feeEstimation.value.toString());
+  const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
+  const availableBalance = getAvailableBalance(account, transaction);
+
   const errors: Errors = {};
   const warnings: Warnings = {};
-
-  const availableBalance = getAvailableBalance(account, transaction);
-  const config = aleoCoinConfig.getCoinConfig(account.currency.id);
-  const feeEstimation = estimateFees({
-    configOrCurrencyId: config,
-    transactionType: transaction.mode,
-  });
-  const estimatedFees = new BigNumber(feeEstimation.value.toString());
-  const calculatedAmount = calculateAmount({
-    transaction,
-    account,
-    estimatedFees,
-  });
 
   const recipientError = await validateRecipient({
     account,
@@ -195,7 +276,7 @@ async function handleTransferTransaction({
     errors.recipient = recipientError;
   }
 
-  if (transaction.amount.eq(0) && !transaction.useAllAmount) {
+  if (!transaction.useAllAmount && transaction.amount.lte(0)) {
     errors.amount = new AmountRequired();
   }
 
@@ -211,6 +292,8 @@ async function handleTransferTransaction({
       }),
     );
   }
+
+  Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
   if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();

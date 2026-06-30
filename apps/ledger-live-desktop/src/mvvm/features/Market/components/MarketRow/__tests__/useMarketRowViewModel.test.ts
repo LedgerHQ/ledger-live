@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testSetup";
+import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketRowViewModel } from "../useMarketRowViewModel";
@@ -24,15 +24,13 @@ jest.mock("~/renderer/hooks/useGetStakeLabelLocaleBased", () => ({
   useGetStakeLabelLocaleBased: () => "Earn",
 }));
 
-const mockShouldDisplayAggregatedAssets = jest.fn(() => true);
-jest.mock("@features/platform-feature-flags", () => ({
-  ...jest.requireActual("@features/platform-feature-flags"),
-  useWalletFeaturesConfig: () => ({
-    shouldDisplayAggregatedAssets: mockShouldDisplayAggregatedAssets(),
-    shouldDisplayAssetSection: true,
-    shouldDisplayWallet40MainNav: true,
-  }),
-}));
+const aggregatedAssetsEnabled = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+});
+
+const aggregatedAssetsDisabled = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { aggregatedAssets: false } },
+});
 
 const mockedUseMarketActions = jest.mocked(useMarketActions);
 
@@ -49,26 +47,30 @@ const allActionsAvailable = {
   availableOnStake: true,
 };
 
-function renderViewModel(overrides: Partial<Parameters<typeof useMarketRowViewModel>[0]> = {}) {
-  return renderHook(() =>
-    useMarketRowViewModel({
-      size: 56,
-      start: 112,
-      currency: bitcoinCurrency,
-      counterCurrency: "usd",
-      locale: "en",
-      range: "24h",
-      isStarred: false,
-      toggleStar: jest.fn(),
-      ...overrides,
-    }),
+function renderViewModel(
+  overrides: Partial<Parameters<typeof useMarketRowViewModel>[0]> = {},
+  initialState = aggregatedAssetsEnabled,
+) {
+  return renderHook(
+    () =>
+      useMarketRowViewModel({
+        size: 56,
+        start: 112,
+        currency: bitcoinCurrency,
+        counterCurrency: "usd",
+        locale: "en",
+        range: "24h",
+        isStarred: false,
+        toggleStar: jest.fn(),
+        ...overrides,
+      }),
+    { initialState },
   );
 }
 
 describe("useMarketRowViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockShouldDisplayAggregatedAssets.mockReturnValue(true);
     mockedUseMarketActions.mockReturnValue(allActionsAvailable);
   });
 
@@ -107,8 +109,7 @@ describe("useMarketRowViewModel", () => {
   });
 
   it("should navigate to /asset/ when shouldDisplayAggregatedAssets is true", () => {
-    mockShouldDisplayAggregatedAssets.mockReturnValue(true);
-    const { result } = renderViewModel();
+    const { result } = renderViewModel({}, aggregatedAssetsEnabled);
 
     act(() => result.current.onCurrencyClick());
 
@@ -118,8 +119,7 @@ describe("useMarketRowViewModel", () => {
   });
 
   it("should navigate to /market/ when shouldDisplayAggregatedAssets is false", () => {
-    mockShouldDisplayAggregatedAssets.mockReturnValue(false);
-    const { result } = renderViewModel();
+    const { result } = renderViewModel({}, aggregatedAssetsDisabled);
 
     act(() => result.current.onCurrencyClick());
 

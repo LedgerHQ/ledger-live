@@ -1,5 +1,5 @@
 import { State as BlePlxState } from "react-native-ble-plx";
-import type { DiscoveryError } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
 import { DiscoveryErrorTypes } from "../../../types";
 import {
   AndroidBluetoothServicePreflightCheck,
@@ -21,7 +21,7 @@ jest.mock("react-native-ble-plx", () => ({
   },
 }));
 
-const retry = jest.fn<Promise<true | DiscoveryError>, []>();
+const retry = jest.fn<Promise<true | MobileDiscoveryError>, []>();
 
 describe("AndroidBluetoothServicePreflightCheck", () => {
   beforeEach(() => {
@@ -196,7 +196,7 @@ const makeRequirements = (): AndroidPreflightRequirements => ({
   locationPermission: null,
 });
 
-const getError = (result: DiscoveryPreflightResult): DiscoveryError => {
+const getError = (result: DiscoveryPreflightResult): MobileDiscoveryError => {
   if (result.success) {
     throw new Error("Expected a failed preflight result");
   }

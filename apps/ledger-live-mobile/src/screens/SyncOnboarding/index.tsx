@@ -14,11 +14,11 @@ import {
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
-import { PlainOverlay } from "./DesyncOverlay";
+import { PlainOverlay } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
 import { track } from "~/analytics";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
-import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import { type SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import TwoStepSyncOnboardingCompanion from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/TwoStepSyncOnboardingCompanion";
 import { useFeature } from "@features/platform-feature-flags";

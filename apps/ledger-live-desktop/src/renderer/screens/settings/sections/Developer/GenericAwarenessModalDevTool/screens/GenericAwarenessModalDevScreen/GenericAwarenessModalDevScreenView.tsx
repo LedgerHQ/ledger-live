@@ -8,6 +8,7 @@ import { DevFormCard } from "../../components/DevFormCard";
 import { DevLabeledInput } from "../../components/DevLabeledInput";
 import { DevLabeledSelect } from "../../components/DevLabeledSelect";
 import { DevSavedCardRow } from "../../components/DevSavedCardRow";
+import { DevDismissedCampaignIdRow } from "../../components/DevDismissedCampaignIdRow";
 import { DevSectionHeader } from "../../components/DevSectionHeader";
 import { DevSurfaceSection } from "../../components/DevSurfaceSection";
 import { COPY } from "../../utils/copy";
@@ -37,6 +38,8 @@ export function GenericAwarenessModalDevScreenView({
   campaignId,
   deeplink,
   savedCards,
+  gamDismissedIds,
+  hasGamDismissedIds,
   slideKeys,
   itemKeys,
   onBack,
@@ -52,9 +55,9 @@ export function GenericAwarenessModalDevScreenView({
   onAddToStore,
   onPreview,
   onRemoveAll,
-  onLoadSamples,
   onRemoveSavedCard,
   onResetFormDefaults,
+  onClearGamDismissed,
 }: Readonly<Props>) {
   return (
     <Box grow shrink className="p-8 pb-16">
@@ -262,7 +265,7 @@ export function GenericAwarenessModalDevScreenView({
         )}
 
         <section className="flex flex-col gap-4 py-24">
-          <h2 className="body-2-semi-bold text-muted">{COPY.sectionActions}</h2>
+          <DevSectionHeader title={COPY.sectionActions} />
           <DevButtonGroup>
             <Button size="sm" appearance="accent" onClick={onAddToStore}>
               {COPY.addToStore}
@@ -270,16 +273,38 @@ export function GenericAwarenessModalDevScreenView({
             <Button size="sm" appearance="accent" onClick={onPreview}>
               {COPY.preview}
             </Button>
-            <Button size="sm" appearance="gray" onClick={onResetFormDefaults}>
+            <Button size="sm" appearance="base" onClick={onResetFormDefaults}>
               {COPY.resetForm}
-            </Button>
-            <Button size="sm" appearance="gray" onClick={onLoadSamples}>
-              {COPY.loadSamples}
             </Button>
           </DevButtonGroup>
         </section>
 
         <section className="flex flex-col gap-6">
+          <DevSectionHeader
+            title={COPY.sectionGamDismissedIds}
+            action={
+              <Button
+                size="sm"
+                appearance="gray"
+                disabled={!hasGamDismissedIds}
+                onClick={onClearGamDismissed}
+              >
+                {COPY.clearGamDismissed}
+              </Button>
+            }
+          />
+          {gamDismissedIds.length === 0 ? (
+            <p className="body-2 leading-relaxed text-muted">{COPY.noGamDismissedIds}</p>
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {gamDismissedIds.map(id => (
+                <DevDismissedCampaignIdRow key={id} id={id} />
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="flex flex-col gap-6 py-24">
           <DevSectionHeader title={COPY.sectionSavedCards} />
           {savedCards.length === 0 ? (
             <p className="body-2 leading-relaxed text-muted">{COPY.noSavedCards}</p>
@@ -295,7 +320,7 @@ export function GenericAwarenessModalDevScreenView({
               ))}
             </ul>
           )}
-          <DevButtonGroup className="border-t border-muted-subtle pt-6">
+          <DevButtonGroup className="border-t border-muted-subtle pt-12">
             <Button size="sm" appearance="red" onClick={onRemoveAll}>
               {COPY.removeAll}
             </Button>

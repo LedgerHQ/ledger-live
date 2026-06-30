@@ -28,6 +28,10 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     getFeeCurrencyAccountId: jest.fn(() => null),
   },
 }));
+jest.mock("@ledgerhq/live-countervalues-react", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+  useCalculateCountervalueCallback: jest.fn(() => (_from: unknown, value: unknown) => value),
+}));
 
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedGetMainAccount = jest.mocked(getMainAccount);

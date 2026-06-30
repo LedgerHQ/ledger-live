@@ -26,6 +26,7 @@ import {
 
 import { marketStoreSelector } from "../reducers/market";
 import { marketBannerStoreSelector } from "../reducers/marketBanner";
+import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
@@ -151,6 +152,10 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
   if (oldState.history !== newState.history) {
     setKey("app", "history", newState.history);
+  }
+
+  if (oldState.knownDevices !== newState.knownDevices) {
+    setKey("app", "knownDevices", knownDevicesStoreSelector(newState));
   }
 
   if (

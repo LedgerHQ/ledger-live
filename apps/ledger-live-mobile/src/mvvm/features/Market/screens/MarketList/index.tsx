@@ -7,11 +7,9 @@ import {
 } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
-import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import SearchHeader from "./components/SearchHeader";
@@ -76,7 +74,6 @@ function View({
   const { colors } = useTheme();
 
   // When marketBanner is enabled, tabs are hidden and we navigate directly to MarketList
-  const { shouldDisplayMarketBanner: isMarketBannerEnabled } = useWalletFeaturesConfig("mobile");
   const insets = useSafeAreaInsets();
   // Get navigation header height. Subtract safe area top because CollapsibleHeaderFlatList
   // already handles safe area via its own SafeAreaView wrapper.
@@ -165,26 +162,21 @@ function View({
         colors={[colors.primary.c80]}
         tintColor={colors.primary.c80}
         onRefresh={handlePullToRefresh}
-        progressViewOffset={isMarketBannerEnabled ? headerSpacerHeight : undefined}
+        progressViewOffset={headerSpacerHeight}
       />
     ),
   };
 
-  // When marketBanner is enabled (standalone mode), use SafeAreaView without top edge
-  // (CollapsibleHeaderFlatList already handles safe area top), but add spacer for transparent header.
-  // In tabs mode, use WalletTabSafeAreaView which handles the collapsible header spacer.
-  const SafeAreaWrapper = isMarketBannerEnabled ? SafeAreaView : WalletTabSafeAreaView;
   const safeAreaEdges = ["left", "right"] as const;
 
   const listHeaderComponent = (
-    <SafeAreaWrapper edges={safeAreaEdges}>
-      {/* Spacer for transparent navigation header in standalone mode */}
-      {isMarketBannerEnabled && <RNView style={{ height: headerSpacerHeight }} />}
+    <SafeAreaView edges={safeAreaEdges}>
+      <RNView style={{ height: headerSpacerHeight }} />
       <Flex backgroundColor={colors.background.main}>
         <SearchHeader search={search} updateMarketParams={updateMarketParams} />
         <BottomSection />
       </Flex>
-    </SafeAreaWrapper>
+    </SafeAreaView>
   );
 
   return (

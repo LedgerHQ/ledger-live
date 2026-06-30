@@ -23,7 +23,7 @@ export class LiveAppWebview {
     this.liveAppDevtools = page.getByTestId("live-app-devtools");
     this.liveAppClose = page.getByTestId("live-app-close");
     this.liveAppLoadingSpinner = page.getByTestId("live-app-loading-spinner");
-    this.selectAssetSearchBar = page.getByTestId("select-asset-drawer-search-input");
+    this.selectAssetSearchBar = page.getByTestId("modular-asset-dialog-search-input");
   }
 
   static async startLiveApp(
@@ -122,7 +122,9 @@ export class LiveAppWebview {
     const devtools = devToolsIndex !== -1 ? all[devToolsIndex] : undefined;
 
     if (devtools) {
-      await devtools.waitForEvent("close", { timeout: this.defaultWebViewTimeout });
+      await devtools.waitForEvent("close", {
+        timeout: this.defaultWebViewTimeout,
+      });
     }
 
     await expect

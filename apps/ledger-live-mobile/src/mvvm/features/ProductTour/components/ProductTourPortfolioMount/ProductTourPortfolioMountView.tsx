@@ -14,16 +14,15 @@ export const ProductTourPortfolioMountView = ({
   onPrimaryAction,
   completeProductTour,
 }: UseProductTourPortfolioMountViewModelResult) => {
-  // Latch mounting once eligible. Completing the tour flips `isProductTourEligible` and `isDrawerOpen`
-  // to false in the same render; without this latch the drawer would unmount mid-dismiss, leaving a
-  // stale entry in the modal provider that blocks every subsequent drawer. Once mounted it stays
-  // mounted (closed, idle) for the session.
+  // Latch on the first eligible render and stay mounted for the session. Completing the tour flips
+  // eligibility to false mid-dismiss; without the latch the drawer would unmount and leave a stale
+  // entry in the modal provider, blocking every subsequent drawer.
   const hasBeenEligibleRef = useRef(isProductTourEligible);
   if (isProductTourEligible) {
     hasBeenEligibleRef.current = true;
   }
 
-  if (!hasBeenEligibleRef.current && !isDrawerOpen) {
+  if (!hasBeenEligibleRef.current) {
     return null;
   }
 

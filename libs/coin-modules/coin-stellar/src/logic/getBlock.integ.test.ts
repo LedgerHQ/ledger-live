@@ -45,11 +45,9 @@ describe("getBlock (integration)", () => {
     const knownPayment = block.transactions.find(
       tx => tx.hash === "efcffb9877c73e74a8c816f57fdeab578fb88646bfa7149399604b59f9ae9ff6",
     );
-    expect(knownPayment).not.toBeUndefined();
-    expect(knownPayment?.failed).toBe(false);
-    expect(knownPayment?.operations.length).toBeGreaterThanOrEqual(2);
-    expect(knownPayment?.operations).toEqual(
-      expect.arrayContaining([
+    expect(knownPayment).toMatchObject({
+      failed: false,
+      operations: expect.arrayContaining([
         expect.objectContaining({
           type: "transfer",
           address: "GDL5OWCFRU6TJFZC6TRR5EJBWWFVGYAD3P2UKMF3P2JDKCDKHFM4AWES",
@@ -61,7 +59,7 @@ describe("getBlock (integration)", () => {
           amount: 10000200n,
         }),
       ]),
-    );
+    });
   });
 
   it("returns consistent metadata between getBlockInfo and getBlock", async () => {

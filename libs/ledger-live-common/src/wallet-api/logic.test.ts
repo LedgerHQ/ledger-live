@@ -1,4 +1,5 @@
 import {
+  accountGetPublicKeyLogic,
   bitcoinFamilyAccountGetAddressLogic,
   bitcoinFamilyAccountGetAddressesLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
@@ -915,6 +916,129 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
   });
 });
 
+describe("accountGetPublicKeyLogic", () => {
+  // Given
+  const mockAccountGetPublicKeyRequested = jest.fn();
+  const mockAccountGetPublicKeyFail = jest.fn();
+  const mockAccountGetPublicKeySuccess = jest.fn();
+
+  const tezosCrypto = cryptocurrenciesById["tezos"];
+  const tezosAccountId = "js:2:tezos:0x013:";
+  const tezosPublicKey = "edpkuBknW28nW72KG6RoHtYW7p12T6GKc7nAbwYX5m8Wd9sDVC9yav";
+
+  const context = createContextContainingAccountId({
+    tracking: {
+      accountGetPublicKeyRequested: mockAccountGetPublicKeyRequested,
+      accountGetPublicKeyFail: mockAccountGetPublicKeyFail,
+      accountGetPublicKeySuccess: mockAccountGetPublicKeySuccess,
+    },
+    accountsParams: [{ id: "11" }, { id: "12" }, { id: "13", currency: tezosCrypto }],
+  });
+
+  beforeEach(() => {
+    mockAccountGetPublicKeyRequested.mockClear();
+    mockAccountGetPublicKeyFail.mockClear();
+    mockAccountGetPublicKeySuccess.mockClear();
+    mockedGetAccountIdFromWalletAccountId.mockClear();
+    // seedIdentifier holds the base58 public key for a scanned tezos account
+    const tezosAccount = context.accounts.find(a => a.id === tezosAccountId);
+    if (tezosAccount?.type === "Account") tezosAccount.seedIdentifier = tezosPublicKey;
+  });
+
+  const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+  it.each([
+    {
+      desc: "receive unknown accountId",
+      accountId: undefined,
+      errorMessage: `accountId ${walletAccountId} unknown`,
+    },
+    {
+      desc: "account not found",
+      accountId: "js:2:ethereum:0x010:",
+      errorMessage: "account not found",
+    },
+    {
+      desc: "account family has no resolver",
+      accountId: "js:2:ethereum:0x012:",
+      errorMessage: "account.getPublicKey not implemented",
+    },
+  ])("returns an error when $desc", async ({ accountId, errorMessage }) => {
+    // Given
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+
+    // When
+    await expect(async () => {
+      await accountGetPublicKeyLogic(context, walletAccountId);
+    }).rejects.toThrow(errorMessage);
+
+    // Then
+    expect(mockAccountGetPublicKeyRequested).toHaveBeenCalledTimes(1);
+    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(1);
+    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(0);
+  });
+
+  it("returns the public key for a tezos account", async () => {
+    // Given
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tezosAccountId);
+
+    // When
+    const result = await accountGetPublicKeyLogic(context, walletAccountId);
+
+    // Then
+    expect(result).toEqual(tezosPublicKey);
+    expect(mockAccountGetPublicKeyRequested).toHaveBeenCalledTimes(1);
+    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(0);
+    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns the parent public key for a tezos token account", async () => {
+    // Given a token account whose parent is the tezos main account
+    const tokenAccountId = "js:2:tezos:0x013:+token";
+    context.accounts = [createTokenAccount(tokenAccountId, tezosAccountId), ...context.accounts];
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tokenAccountId);
+
+    // When
+    const result = await accountGetPublicKeyLogic(context, walletAccountId);
+
+    // Then
+    expect(result).toEqual(tezosPublicKey);
+    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(0);
+    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects (and tracks failure) when seedIdentifier is not a tezos public key", async () => {
+    // Given a tezos account whose seedIdentifier is not a base58 public key
+    const tezosAccount = context.accounts.find(a => a.id === tezosAccountId);
+    if (tezosAccount?.type === "Account") tezosAccount.seedIdentifier = "0x01";
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tezosAccountId);
+
+    // When / Then
+    await expect(accountGetPublicKeyLogic(context, walletAccountId)).rejects.toThrow(
+      "account.getPublicKey not implemented",
+    );
+    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(1);
+    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(0);
+  });
+
+  it("rejects (and tracks failure) when a token account's parent is missing", async () => {
+    // Given a token account whose parent is not in the accounts list
+    const tokenAccountId = "js:2:tezos:0xorphan:+token";
+    context.accounts = [
+      createTokenAccount(tokenAccountId, "js:2:tezos:0xmissing:"),
+      ...context.accounts,
+    ];
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tokenAccountId);
+
+    // When / Then — getParentAccount throws; it must surface as a rejection, not a sync throw
+    await expect(accountGetPublicKeyLogic(context, walletAccountId)).rejects.toThrow(
+      "account not found",
+    );
+    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(1);
+    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(0);
+  });
+});
+
 describe("bitcoinFamilyAccountGetAddressesLogic", () => {
   const mockBitcoinFamilyAccountAddressesRequested = jest.fn();
   const mockBitcoinFamilyAccountAddressesFail = jest.fn();
@@ -1450,11 +1574,11 @@ function createMessageData() {
   };
 }
 
-function createTokenAccount(id = "32"): TokenAccount {
+function createTokenAccount(id = "32", parentId = "whatever"): TokenAccount {
   return {
     type: "TokenAccount",
     id,
-    parentId: "whatever",
+    parentId,
     token: createTokenCurrency(),
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),

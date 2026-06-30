@@ -20,7 +20,10 @@ import { formatAPIValueWithCode } from "../common";
 import { SolanaStakeAccountAmountTooLow } from "../errors";
 import { isValidBase58Address, isSolanaStakingTransactionIntent } from "../logic";
 import { getAtaDataLengthForMint } from "../helpers/token";
-import { getMaybeTokenMint, getStakeAccountMinimumBalanceForRentExemption } from "../network/chain/web3";
+import {
+  getMaybeTokenMint,
+  getStakeAccountMinimumBalanceForRentExemption,
+} from "../network/chain/web3";
 import type { SolanaTokenProgram } from "../types";
 import type { ChainAPI } from "../network";
 

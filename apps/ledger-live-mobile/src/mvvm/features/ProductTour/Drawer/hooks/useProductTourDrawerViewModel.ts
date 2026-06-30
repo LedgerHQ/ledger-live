@@ -10,12 +10,21 @@ import { productTourDeeplinkNonceSelector } from "~/reducers/appstate";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { ProductTourDrawerViewModel } from "../types";
 import { track } from "~/analytics";
-import { NavigatorName } from "~/const/navigation";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
 type CloseSource = "cross" | "external" | "internal";
+
+// Module-scoped so the auto-open only fires once per app session, even if the
+// Portfolio screen remounts (e.g. after deleting the last account of a currency,
+// which calls `navigation.replace(NavigatorName.Base)`).
+let hasAutoOpenedThisSession = false;
+
+export const __resetProductTourAutoOpenForTests = () => {
+  hasAutoOpenedThisSession = false;
+};
 
 export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   const currentIndexRef = useRef(0);
@@ -25,7 +34,14 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   const lastHandledDeeplinkNonceRef = useRef(0);
   const lwmProductTour = useFeature("lwmProductTour");
   const isLWMProductTourEnabled = !!lwmProductTour?.enabled;
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(() => {
+    const shouldAutoOpen =
+      !hasAutoOpenedThisSession && !productTourCompleted && isLWMProductTourEnabled;
+    if (shouldAutoOpen) {
+      hasAutoOpenedThisSession = true;
+    }
+    return shouldAutoOpen;
+  });
   const dispatch = useDispatch();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
@@ -89,7 +105,7 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
         case "portfolio":
           navigation.navigate(NavigatorName.Main, {
             screen: NavigatorName.Portfolio,
-            params: { screen: NavigatorName.WalletTab },
+            params: { screen: ScreenName.Portfolio },
           });
           break;
       }

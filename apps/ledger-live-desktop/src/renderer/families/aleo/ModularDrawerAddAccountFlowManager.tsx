@@ -6,7 +6,7 @@ import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
-import { patchAccountWithViewKey } from "@ledgerhq/live-common/families/aleo/utils";
+import { buildAccountsWithViewKeys } from "@ledgerhq/live-common/families/aleo/react";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
@@ -104,13 +104,7 @@ const ModularDrawerAddAccountFlowManager = ({
         return;
       }
 
-      const accountsWithViewKeys = selectedAccounts.reduce<Account[]>((acc, account) => {
-        const viewKey = result[account.id];
-        if (viewKey) {
-          acc.push(patchAccountWithViewKey(account, viewKey));
-        }
-        return acc;
-      }, []);
+      const accountsWithViewKeys = buildAccountsWithViewKeys(selectedAccounts, result);
 
       setSelectedAccounts(accountsWithViewKeys);
 

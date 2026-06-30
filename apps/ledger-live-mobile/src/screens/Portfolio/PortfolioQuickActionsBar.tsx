@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
@@ -7,6 +7,8 @@ import { QuickActionList, type QuickActionButtonProps } from "@ledgerhq/native-u
 import { track } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 const SHARED_CONFIG = {
   variant: "small" as const,
@@ -20,17 +22,26 @@ function PortfolioQuickActionsBar() {
   const { quickActionsList } = useQuickActions();
 
   const { SEND, RECEIVE, BUY, SWAP, STAKE } = quickActionsList;
+  const { isEnabled: isNewSendFlowEnabled } = useNewSendFlowFeature();
+
+  const trackingProperties = useMemo(() => {
+    return getSendFlowTrackingProperties(null, null, isNewSendFlowEnabled);
+  }, [isNewSendFlowEnabled]);
 
   const onPress = useCallback(
     (action: QuickAction, eventButton: string) => {
-      track("button_clicked", { button: eventButton, page: router.name });
+      track("button_clicked", {
+        button: eventButton,
+        page: router.name,
+        ...(SEND && SEND.route && action.route?.[0] === SEND.route[0] ? trackingProperties : {}),
+      });
       if (action.customHandler) {
         action.customHandler();
       } else if (action.route) {
         navigation.navigate<keyof BaseNavigatorStackParamList>(...action.route);
       }
     },
-    [navigation, router.name],
+    [navigation, router.name, SEND, trackingProperties],
   );
 
   const quickActionsData: QuickActionButtonProps[] = [

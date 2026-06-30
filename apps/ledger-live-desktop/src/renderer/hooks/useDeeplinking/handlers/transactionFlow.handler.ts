@@ -121,7 +121,7 @@ async function handleTransactionFlow(
   const matchingAccounts = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
 
   if (!matchingAccounts.length) {
-    openAddAccountFlow(foundCurrency, true, openModalWithAccount);
+    openAddAccountFlow(foundCurrency, openModalWithAccount);
     return;
   }
 

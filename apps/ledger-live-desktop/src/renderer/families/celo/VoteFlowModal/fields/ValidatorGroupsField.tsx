@@ -31,7 +31,7 @@ const ValidatorGroupsField = ({
 }: Props) => {
   invariant(account && account.celoResources, "celo account and resources required");
   const [search, setSearch] = useState("");
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(true);
   const unit = useAccountUnit(account);
   const validatorGroups = useValidatorGroups(search);
   const onSearch = useCallback(
@@ -50,12 +50,12 @@ const ValidatorGroupsField = ({
     containerRef.current?.querySelector("input")?.focus();
   }, []);
   if (!status) return null;
-  const renderItem = (validatorGroup: CeloValidatorGroup, validatorGroupIdx: number) => {
+  const renderItem = (validatorGroup: CeloValidatorGroup) => {
     return (
       <ValidatorGroupRow
         currency={account.currency}
         active={chosenValidatorGroupAddress === validatorGroup.address}
-        showStake={validatorGroupIdx !== 0}
+        showStake={true}
         onClick={onChangeValidatorGroup}
         key={validatorGroup.address}
         validatorGroup={validatorGroup}

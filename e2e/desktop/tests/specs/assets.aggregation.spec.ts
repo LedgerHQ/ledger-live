@@ -4,7 +4,7 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
+import { FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
 
 /**
  * Suite: Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail
@@ -23,7 +23,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "portfolioWithManyStablecoins",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(
@@ -59,7 +59,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(
@@ -105,7 +105,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(
@@ -158,7 +158,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(

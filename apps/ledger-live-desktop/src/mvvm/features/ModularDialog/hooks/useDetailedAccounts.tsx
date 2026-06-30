@@ -84,7 +84,7 @@ export const useDetailedAccounts = (
       button: "Add a new account",
       page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
-    openAddAccountFlow(asset, false, wrappedOnAccountSelected);
+    openAddAccountFlow(asset, wrappedOnAccountSelected);
   }, [asset, openAddAccountFlow, trackModularDialogEvent, wrappedOnAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };

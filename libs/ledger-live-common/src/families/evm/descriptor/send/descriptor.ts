@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { SendDescriptor } from "../../../../bridge/descriptor/types";
+import { syncGasOptionsEffect } from "./effects";
 import { evmCustomFeeConfig, isBigNumber, isRecord } from "./fees";
 
 const EVM_STRATEGIES = ["slow", "medium", "fast"] as const;
@@ -71,7 +72,7 @@ export const evmSendDescriptor: SendDescriptor = {
     custom: evmCustomFeeConfig,
   },
   amount: {
-    getPlugins: () => ["evmGasOptionsSync"],
+    effects: [syncGasOptionsEffect],
   },
   selfTransfer: "free",
   errors: {

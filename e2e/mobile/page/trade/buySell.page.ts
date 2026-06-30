@@ -2,7 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
+import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default class BuySellPage {
@@ -69,16 +69,7 @@ export default class BuySellPage {
   @Step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
     await tapWebElementByTestId(this.cryptoCurrencySelector);
-    if (await app.modularDrawer.isFlowEnabled("live_app")) {
-      if (isIos()) {
-        await app.modularDrawer.selectAssetBuySellIosWorkaround(account);
-      } else {
-        await app.modularDrawer.selectAsset(account);
-      }
-    } else {
-      await this.selectCurrency(account.currency.id);
-      await app.common.selectAccount(account);
-    }
+    await app.modularDrawer.selectAsset(account);
     jestExpect(await getWebElementText(this.cryptoCurrencySelector)).toBe(account.currency.ticker);
     jestExpect(await getWebElementText(this.cryptoAccountSelector)).toBe(
       `${getParentAccountName(account)}${account.tokenType ? ` (${account.currency.ticker})` : ""}`,

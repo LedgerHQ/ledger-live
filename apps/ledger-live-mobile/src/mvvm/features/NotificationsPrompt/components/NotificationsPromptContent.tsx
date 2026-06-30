@@ -1,8 +1,6 @@
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { useFeature } from "@features/platform-feature-flags";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import type { NotificationPromptTarget } from "../types";
 import { getNotificationsPromptCopy } from "../utils/getNotificationsPromptCopy";
 
@@ -12,13 +10,8 @@ type NotificationsPromptContentProps = {
 
 export const NotificationsPromptContent = ({ promptTarget }: NotificationsPromptContentProps) => {
   const { t } = useTranslation();
-  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
 
-  const isVariantB =
-    featureNewWordingNotificationsDrawer?.enabled === true &&
-    featureNewWordingNotificationsDrawer?.params?.variant === AB_TESTING_VARIANTS.B;
-
-  const { titleKey, descriptionKey } = getNotificationsPromptCopy(promptTarget, isVariantB);
+  const { titleKey, descriptionKey } = getNotificationsPromptCopy(promptTarget);
 
   return (
     <>

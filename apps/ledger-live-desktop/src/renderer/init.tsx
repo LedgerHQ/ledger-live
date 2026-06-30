@@ -52,6 +52,7 @@ import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
+import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { setupRecentAddressesStore } from "./recentAddresses";
@@ -180,7 +181,15 @@ async function init() {
   }
   // Initialize identities before Sentry so Sentry user id (datadogId) is set correctly
   await initIdentities(store);
-  sentry(() => sentryLogsSelector(store.getState()), store);
+  // lldDatadog XOR-switches the crash backend (see main/index.ts): when the flag is on, Datadog is
+  // active and Sentry is muted; both stay gated by the sentryLogs opt-in. Read live from the store
+  // so the backend flips as soon as the flag resolves.
+  sentry(
+    () =>
+      sentryLogsSelector(store.getState()) &&
+      !selectFeature(store.getState(), "lldDatadog").enabled,
+    store,
+  );
   let notifiedSentryLogs = false;
   store.subscribe(() => {
     const next = sentryLogsSelector(store.getState());
@@ -210,6 +219,20 @@ async function init() {
 
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
+  }
+
+  // Hydrate persisted known devices before settings so the settings-based
+  // migration only seeds the store for first-time users (empty known devices).
+  const persistedKnownDevices = await getKey("app", "knownDevices");
+  if (persistedKnownDevices?.knownDevices?.length) {
+    store.dispatch(
+      importKnownDevices({
+        knownDevices: persistedKnownDevices.knownDevices.flatMap(device => {
+          const knownDevice = mapPersistedKnownDeviceToKnownDevice(device);
+          return knownDevice ? [knownDevice] : [];
+        }),
+      }),
+    );
   }
 
   fetchSettings(settingsToLoad)(store.dispatch);

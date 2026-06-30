@@ -6,6 +6,8 @@ import {
   SolanaMemoIsTooLong,
   SolanaRecipientAccountNotFunded,
   SolanaStakeAccountAmountTooLow,
+  SolanaStakeAccountNothingToWithdraw,
+  SolanaStakeNoWithdrawAuth,
 } from "./errors";
 import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 import * as logicValidateMemo from "./logic/validateMemo";
@@ -718,9 +720,128 @@ describe("testing prepareTransaction", () => {
 
       const amountError = preparedTransaction.model.commandDescriptor?.errors.amount;
       expect(amountError).toBeInstanceOf(SolanaStakeAccountAmountTooLow);
-      expect(
-        (amountError as Error & { minimumAmount?: string })?.minimumAmount,
-      ).toBe("1 SOL");
+      expect((amountError as Error & { minimumAmount?: string })?.minimumAmount).toBe("1 SOL");
+    });
+
+    describe("stake.withdraw", () => {
+      const stakeAccAddr = "2d3BEsPXeBvSjN5WZojX4ZWnakbt6rLd1Q7LpqdLjt53";
+      const senderAddress = "Sender11111111111111111111111111111111";
+      const STALE_WITHDRAWABLE = 161_310_212_991;
+      const RENT_EXEMPT_RESERVE = 2_282_880;
+
+      const makeAccount = (overrides?: Partial<SolanaAccount>): SolanaAccount =>
+        ({
+          currency: { units: [{ magnitude: 9 }] },
+          freshAddress: senderAddress,
+          solanaResources: {
+            unstakeReserve: new BigNumber(1_000_000),
+            stakes: [
+              {
+                stakeAccAddr,
+                hasStakeAuth: true,
+                hasWithdrawAuth: true,
+                delegation: undefined,
+                stakeAccBalance: STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE,
+                rentExemptReserve: RENT_EXEMPT_RESERVE,
+                withdrawable: STALE_WITHDRAWABLE,
+                activation: { state: "inactive", active: 0, inactive: STALE_WITHDRAWABLE },
+              },
+            ],
+          },
+          ...overrides,
+        }) as unknown as SolanaAccount;
+
+      it("clamps the encoded amount to the live on-chain balance when sync data is stale", async () => {
+        mockedEstimateFeeAndSpendable.mockResolvedValueOnce({
+          fee: 5000,
+          spendable: new BigNumber(1_000_000),
+        });
+
+        const withdrawTx = transaction({
+          kind: "stake.withdraw",
+          uiState: { stakeAccAddr },
+        });
+
+        const prepared = await prepareTransaction(makeAccount(), withdrawTx, {
+          getBalance: () => Promise.resolve(RENT_EXEMPT_RESERVE),
+        } as unknown as ChainAPI);
+
+        const command = prepared.model.commandDescriptor?.command;
+        expect(command?.kind).toBe("stake.withdraw");
+        if (command?.kind === "stake.withdraw") {
+          expect(command.amount).toBe(RENT_EXEMPT_RESERVE);
+        }
+        expect(prepared.model.commandDescriptor?.errors.stakeAccAddr).toBeUndefined();
+      });
+
+      it("flags SolanaStakeAccountNothingToWithdraw when the live balance is empty", async () => {
+        mockedEstimateFeeAndSpendable.mockResolvedValueOnce({
+          fee: 5000,
+          spendable: new BigNumber(1_000_000),
+        });
+
+        const withdrawTx = transaction({
+          kind: "stake.withdraw",
+          uiState: { stakeAccAddr },
+        });
+
+        const prepared = await prepareTransaction(makeAccount(), withdrawTx, {
+          getBalance: () => Promise.resolve(0),
+        } as unknown as ChainAPI);
+
+        expect(prepared.model.commandDescriptor?.errors.stakeAccAddr).toBeInstanceOf(
+          SolanaStakeAccountNothingToWithdraw,
+        );
+        const command = prepared.model.commandDescriptor?.command;
+        if (command?.kind === "stake.withdraw") {
+          expect(command.amount).toBe(0);
+        }
+      });
+
+      it("zeroes the encoded amount when the stake account has no withdraw authority", async () => {
+        mockedEstimateFeeAndSpendable.mockResolvedValueOnce({
+          fee: 5000,
+          spendable: new BigNumber(1_000_000),
+        });
+
+        const withdrawTx = transaction({
+          kind: "stake.withdraw",
+          uiState: { stakeAccAddr },
+        });
+
+        const prepared = await prepareTransaction(
+          makeAccount({
+            solanaResources: {
+              unstakeReserve: new BigNumber(1_000_000),
+              stakes: [
+                {
+                  stakeAccAddr,
+                  hasStakeAuth: true,
+                  hasWithdrawAuth: false,
+                  delegation: undefined,
+                  stakeAccBalance: STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE,
+                  rentExemptReserve: RENT_EXEMPT_RESERVE,
+                  withdrawable: STALE_WITHDRAWABLE,
+                  activation: { state: "inactive", active: 0, inactive: STALE_WITHDRAWABLE },
+                },
+              ],
+            },
+          } as unknown as Partial<SolanaAccount>),
+          withdrawTx,
+          {
+            getBalance: () => Promise.resolve(STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE),
+          } as unknown as ChainAPI,
+        );
+
+        expect(prepared.model.commandDescriptor?.errors.stakeAccAddr).toBeInstanceOf(
+          SolanaStakeNoWithdrawAuth,
+        );
+        const command = prepared.model.commandDescriptor?.command;
+        expect(command?.kind).toBe("stake.withdraw");
+        if (command?.kind === "stake.withdraw") {
+          expect(command.amount).toBe(0);
+        }
+      });
     });
 
     it("should derive stake.split command with seed <= 32 bytes", async () => {

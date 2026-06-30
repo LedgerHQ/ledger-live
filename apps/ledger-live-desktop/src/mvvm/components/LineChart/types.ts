@@ -79,4 +79,6 @@ export type LineChartProps = Readonly<{
   yAxis?: LineChartYAxisConfig;
   /** Optional control rendered inline at the end of the range-selector row (e.g. a chart options menu). */
   rangeSelectorTrailing?: ReactNode;
+  /** Subset of ranges to show in the selector. Defaults to all supported ranges. */
+  ranges?: readonly LineChartRange[];
 }>;

@@ -5,7 +5,6 @@ import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/in
 import useDynamicContent from "./useDynamicContent";
 import { AllLocations, BrazeContentCard, CategoryContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
-import { FeatureToggle } from "@features/platform-feature-flags";
 import { filterCategoriesByLocation, formatCategories } from "./utils";
 
 const Category: ListRenderItem<CategoriesWithCards> = ({ item }) => (
@@ -23,7 +22,7 @@ type CategoriesWithCards = {
   cards: BrazeContentCard[];
 };
 
-const ContentCardsLocationComponent = ({
+const ContentCardsLocation = ({
   locationId,
   hasStickyCta,
   bottomSpacing,
@@ -54,11 +53,5 @@ const ContentCardsLocationComponent = ({
     </Flex>
   );
 };
-
-const ContentCardsLocation = (props: Props) => (
-  <FeatureToggle featureId="flexibleContentCards">
-    <ContentCardsLocationComponent {...props} />
-  </FeatureToggle>
-);
 
 export default ContentCardsLocation;

@@ -83,6 +83,7 @@ export function useSignatureViewModel() {
     statusActions: status,
     onFinish: navigation.goToNextStep,
     registerPendingOperation,
+    recipientEnsName: state.recipient?.ensName,
   });
 
   return {

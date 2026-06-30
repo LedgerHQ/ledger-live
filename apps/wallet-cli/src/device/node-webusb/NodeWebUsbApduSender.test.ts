@@ -309,7 +309,9 @@ describe("NodeWebUsbApduSender — real DMK framing round-trip", () => {
     const response = { data: new Uint8Array(), status: new Uint8Array([0x90, 0x00]) };
 
     const singleFrameFake = createFakeLedgerDevice(response);
-    const singleFrameResult = await buildSender(singleFrameFake.device).sendApdu(singleFrameCommand);
+    const singleFrameResult = await buildSender(singleFrameFake.device).sendApdu(
+      singleFrameCommand,
+    );
 
     expect(singleFrameResult.isRight()).toBe(true);
     expect(singleFrameFake.getHostFrames()).toHaveLength(1);
@@ -322,9 +324,7 @@ describe("NodeWebUsbApduSender — real DMK framing round-trip", () => {
 
     expect(twoFrameResult.isRight()).toBe(true);
     expect(twoFrameFake.getHostFrames()).toHaveLength(2);
-    expect(Array.from(twoFrameFake.getReceivedCommands()[0]!)).toEqual(
-      Array.from(twoFrameCommand),
-    );
+    expect(Array.from(twoFrameFake.getReceivedCommands()[0]!)).toEqual(Array.from(twoFrameCommand));
   });
 
   it("reads a response continuation frame only after the first WebUSB frame is full", async () => {
@@ -352,7 +352,9 @@ describe("NodeWebUsbApduSender — real DMK framing round-trip", () => {
     const responseStatus = new Uint8Array([0x69, 0x85]); // conditions of use not satisfied
     const fake = createFakeLedgerDevice({ data: new Uint8Array(), status: responseStatus });
 
-    const result = await buildSender(fake.device).sendApdu(new Uint8Array([0xe0, 0x02, 0x00, 0x00]));
+    const result = await buildSender(fake.device).sendApdu(
+      new Uint8Array([0xe0, 0x02, 0x00, 0x00]),
+    );
 
     expect(result.isRight()).toBe(true);
     result.ifRight(response => {

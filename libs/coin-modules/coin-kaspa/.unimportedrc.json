@@ -82,6 +82,7 @@
     "@ledgerhq/ledger-wallet-framework",
     "@ledgerhq/live-env",
     "@ledgerhq/live-network",
+    "@ledgerhq/live-promise",
     "@ledgerhq/logs",
     "@ledgerhq/types-cryptoassets",
     "bip32",

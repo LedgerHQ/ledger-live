@@ -1,4 +1,10 @@
-import { getDelegateEvents, getDeviceLabels, pressUntilTextFound } from "../speculos";
+import expect from "expect";
+import {
+  containsSubstringInEvent,
+  getDelegateEvents,
+  getDeviceLabels,
+  pressUntilTextFound,
+} from "../speculos";
 import { isTouchDevice, getSpeculosModel } from "../speculosAppVersion";
 import { Delegate } from "../models/Delegate";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -15,7 +21,13 @@ export const delegateTezos = withDeviceController(
         delegatingAccount.account.currency.speculosApp,
       );
 
-      await getDelegateEvents(delegatingAccount);
+      const events = await getDelegateEvents(delegatingAccount);
+      // Stake/unstake reviews show the amount on-device; a pure delegation (amount "N/A") shows the
+      // baker address + fee but no amount, so only assert when an amount is expected.
+      if (delegatingAccount.amount !== "N/A") {
+        const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
+        expect(isAmountCorrect).toBeTruthy();
+      }
       await pressUntilTextFound(delegateConfirmLabel);
 
       if (isTouchDevice()) {

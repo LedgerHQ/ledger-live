@@ -31,7 +31,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectNoAccount();
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.portfolio.navigateToSettings();
+    await app.mainNavigation.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
     await app.settingsGeneral.navigateToLedgerSync();
     await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
@@ -45,7 +45,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(2, app.ledgerSync.ledgerSyncPushDataArgs.data);
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.portfolio.navigateToSettings();
+    await app.mainNavigation.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
     await device.disableSynchronization(); // TODO: Remove line when LIVE-15405 is fixed
     await app.settingsGeneral.navigateToLedgerSync();

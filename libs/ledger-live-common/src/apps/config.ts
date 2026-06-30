@@ -95,6 +95,12 @@ const appConfig: Record<string, ConfigInfo> = {
       minVersion: "5.6.0",
     },
   },
+  config_nanoapp_aleo: {
+    type: "object",
+    default: {
+      minVersion: "1.1.0",
+    },
+  },
 };
 
 export { appConfig };

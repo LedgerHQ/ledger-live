@@ -7,6 +7,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useStableGasOptions } from "@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions";
+import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { useCustomFeesViewModel } from "../hooks/useCustomFeesViewModel";
 import { CustomFeesScreenView } from "./CustomFeesScreenView";
 
@@ -33,6 +34,14 @@ export function CustomFeesScreenInner({
   );
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const stableTransaction = useStableGasOptions(transaction);
+
+  useFlowEffects({
+    account,
+    parentAccount,
+    transaction,
+    currency,
+    updateTransaction: transactionActions.updateTransaction,
+  });
 
   const viewModel = useCustomFeesViewModel({
     account,

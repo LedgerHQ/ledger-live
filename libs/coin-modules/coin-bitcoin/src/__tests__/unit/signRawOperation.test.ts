@@ -242,7 +242,6 @@ describe("signRawOperation (PSBT path)", () => {
     // The fresh change address must be reachable by its script hash — this is
     // the contract the fix enforces: the hardware app can identify the change output.
     const hashResult = extractHashFromScriptPubKey(freshChangeScript);
-    expect(hashResult).toBeDefined();
     expect(map.has(hashResult!.hashHex)).toBe(true);
 
     const entry = map.get(hashResult!.hashHex)!;

@@ -73,7 +73,7 @@ export const useDetailedAccounts = (
       button: "Add a new account",
       page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
-    openAddAccountFlow(asset, false, onAccountSelected);
+    openAddAccountFlow(asset, onAccountSelected);
   }, [trackModularDialogEvent, openAddAccountFlow, asset, onAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };

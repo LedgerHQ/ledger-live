@@ -9,6 +9,8 @@ export type FormattedAmount = Readonly<{
   value: BigNumber;
 }>;
 
+const getUnitMaxDecimalLength = (unit: Unit): number => Math.max(0, unit.magnitude);
+
 const formatUnitForInput = (unit: Unit, amount: BigNumber, locale: string): string =>
   formatCurrencyUnit(unit, amount, {
     showCode: false,
@@ -25,7 +27,7 @@ export function formatAmountForInput(unit: Unit, amount: BigNumber, locale: stri
 export function formatFiatForInput(unit: Unit, amount: BigNumber, locale: string): string {
   if (amount.isZero()) return "";
   const formatted = formatUnitForInput(unit, amount, locale);
-  return trimTrailingZeros(clampDecimals(formatted));
+  return trimTrailingZeros(clampDecimals(formatted, getUnitMaxDecimalLength(unit)));
 }
 
 export function processRawInput(rawValue: string, unit: Unit, locale: string): FormattedAmount {
@@ -49,13 +51,11 @@ export function processFiatInput(
   isOverLimit: boolean;
 }> {
   const sanitized = sanitizeValueString(fiatUnit, rawValue, locale);
-  const clampedDisplay = clampDecimals(sanitized.display);
+  const maxDecimalLength = getUnitMaxDecimalLength(fiatUnit);
+  const clampedDisplay = clampDecimals(sanitized.display, maxDecimalLength);
   const nextSanitized = sanitizeValueString(fiatUnit, clampedDisplay, locale);
   const value = nextSanitized.value ? new BigNumber(nextSanitized.value) : new BigNumber(0);
-  // Keep the same behavior as the hook did previously:
-  // - we clamp what is displayed,
-  // - and we avoid pushing transaction updates while the user is typing > 2 decimals.
-  const isOverLimit = isOverDecimalLimit(sanitized.display);
+  const isOverLimit = isOverDecimalLimit(sanitized.display, maxDecimalLength);
 
   return {
     display: sanitized.display,

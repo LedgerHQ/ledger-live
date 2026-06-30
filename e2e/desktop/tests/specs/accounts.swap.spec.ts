@@ -363,8 +363,8 @@ test.describe("Swap a coin for which you have no account yet - from present to n
         await app.addAccount.done();
         await app.swapDrawer.selectAccountByName(account2);
       }
-      await app.swap.checkAssetFromContains(account1.currency.name);
-      await app.swap.checkAssetToContains(account2.currency.name);
+      await app.swap.checkAssetFromContains(account1.currency.ticker);
+      await app.swap.checkAssetToContains(account2.currency.ticker);
     },
   );
 });
@@ -436,8 +436,8 @@ test.describe("Swap a coin for which you have no account yet - from not present 
         await app.swap.selectAssetTo(account2.currency.name);
         await app.swapDrawer.selectAccountByName(account2);
       }
-      await app.swap.checkAssetFromContains(account1.currency.name);
-      await app.swap.checkAssetToContains(account2.currency.name);
+      await app.swap.checkAssetFromContains(account1.currency.ticker);
+      await app.swap.checkAssetToContains(account2.currency.ticker);
     },
   );
 });
@@ -495,8 +495,8 @@ test.describe("Swap a coin for which you have no account yet - both not present"
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
-        await app.swap.checkAssetFromContains(account1.currency.name);
-        await app.swap.checkAssetToContains(account2.currency.name);
+        await app.swap.checkAssetFromContains(account1.currency.ticker);
+        await app.swap.checkAssetToContains(account2.currency.ticker);
       }
     },
   );

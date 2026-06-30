@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
-import DesyncOverlay from "~/screens/SyncOnboarding/DesyncOverlay";
+import DesyncOverlay from "../DesyncOverlay";
 import FirstStepSyncOnboarding from "../FirstStepSyncOnboarding";
 import SecondStepSyncOnboarding from "../SecondStepSyncOnboarding";
 import { SEED_STATE } from "../../types";

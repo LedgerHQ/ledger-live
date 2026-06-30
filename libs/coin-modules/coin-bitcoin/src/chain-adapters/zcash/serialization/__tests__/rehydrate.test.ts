@@ -57,25 +57,15 @@ describe("rehydrateTransaction", () => {
 
     const result = rehydrateTransaction(raw);
 
-    expect(result.decryptedData).toBeDefined();
-
-    // Orchard outputs
-    const orchard = result.decryptedData!.orchard_outputs;
-    expect(orchard).toHaveLength(2);
-    expect(orchard[0].amount).toBeInstanceOf(BigNumber);
-    expect(orchard[0].amount.toFixed()).toBe("500000");
-    expect(orchard[0].memo).toBe("hello");
-    expect(orchard[0].transfer_type).toBe("incoming");
-    expect(orchard[1].amount.toFixed()).toBe("200000");
-    expect(orchard[1].transfer_type).toBe("outgoing");
-
-    // Sapling outputs
-    const sapling = result.decryptedData!.sapling_outputs;
-    expect(sapling).toHaveLength(1);
-    expect(sapling[0].amount).toBeInstanceOf(BigNumber);
-    expect(sapling[0].amount.toFixed()).toBe("100000");
-    expect(sapling[0].memo).toBe("memo-sap");
-    expect(sapling[0].transfer_type).toBe("internal");
+    expect(result.decryptedData).toEqual({
+      orchard_outputs: [
+        { amount: new BigNumber("500000"), memo: "hello", transfer_type: "incoming" },
+        { amount: new BigNumber("200000"), memo: "", transfer_type: "outgoing" },
+      ],
+      sapling_outputs: [
+        { amount: new BigNumber("100000"), memo: "memo-sap", transfer_type: "internal" },
+      ],
+    });
   });
 
   it("handles empty orchard and sapling arrays in decryptedData", () => {
@@ -88,9 +78,7 @@ describe("rehydrateTransaction", () => {
 
     const result = rehydrateTransaction(raw);
 
-    expect(result.decryptedData).toBeDefined();
-    expect(result.decryptedData!.orchard_outputs).toEqual([]);
-    expect(result.decryptedData!.sapling_outputs).toEqual([]);
+    expect(result.decryptedData).toEqual({ orchard_outputs: [], sapling_outputs: [] });
   });
 
   it("handles a zero fee", () => {
@@ -239,7 +227,6 @@ describe("rehydrateSyncResult", () => {
     // Second transaction: with decryptedData
     expect(result.transactions[1].id).toBe("tx2");
     expect(result.transactions[1].fee.toFixed()).toBe("2000");
-    expect(result.transactions[1].decryptedData).toBeDefined();
     expect(result.transactions[1].decryptedData!.orchard_outputs[0].amount.toFixed()).toBe("300");
     expect(result.transactions[1].decryptedData!.sapling_outputs[0].amount.toFixed()).toBe("400");
     expect(result.transactions[1].decryptedData!.sapling_outputs[0].memo).toBe("hi");

@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/transactionStatus/index";
+import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { Reducer } from "redux";
 import type { State } from "~/renderer/reducers";
 

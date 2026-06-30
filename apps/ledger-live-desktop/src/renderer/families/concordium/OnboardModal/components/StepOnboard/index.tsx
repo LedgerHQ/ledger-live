@@ -48,9 +48,9 @@ export default function StepOnboard({
           </Box>
 
           <AcknowledgmentList>
-            {[...new Array(4).keys()].map(i => (
-              <li key={i}>
-                <Trans i18nKey={`families.concordium.addAccount.acknowledge.list.${i + 1}`}>
+            {["separateSeed", "outsideLedgerLive", "signingSecure"].map(key => (
+              <li key={key}>
+                <Trans i18nKey={`families.concordium.addAccount.acknowledge.list.${key}`}>
                   <Text fontWeight="700" />
                 </Trans>
               </li>

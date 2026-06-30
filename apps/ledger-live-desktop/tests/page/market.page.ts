@@ -7,7 +7,11 @@ export class MarketPage extends AppPage {
   private marketRangeSelect = this.page.getByTestId("market-range-select");
   private starFilterButton = this.page.getByTestId("market-star-button");
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
-  private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`);
+  // Match the row test id case-insensitively: the legacy MarketRow and the new
+  // MarketRowView both build `market-${currency.ticker}-row`, but `currency.ticker`
+  // casing follows the data source (lowercase in e2e mocks, uppercase in real data).
+  private coinRow = (ticker: string) =>
+    this.page.getByTestId(new RegExp(`^market-${ticker}-row$`, "i"));
   private coinPageContainer = this.page.getByTestId("market-coin-page-container");
   private starButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-star-button`);
   private buyButton = (ticker: string) =>
@@ -87,7 +91,6 @@ export class MarketPage extends AppPage {
   @step("Start stake flow for $0")
   async startStakeFlowByTicker(ticker: string) {
     await this.stakeButton(ticker).click();
-    await this.page.getByText("choose account").waitFor({ state: "visible" });
-    await this.page.getByText("Add account").waitFor({ state: "visible" });
+    await this.page.getByRole("dialog").first().waitFor({ state: "visible" });
   }
 }

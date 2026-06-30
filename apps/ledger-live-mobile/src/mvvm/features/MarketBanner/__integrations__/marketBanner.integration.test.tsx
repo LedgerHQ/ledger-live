@@ -58,51 +58,13 @@ describe("MarketBanner Integration Tests", () => {
     });
   });
 
-  describe("Feature flag handling", () => {
-    it("should not render when lwmWallet40 feature flag is disabled", () => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: false, params: { marketBanner: true } },
-        }),
-      });
-
-      expect(screen.queryByTestId("market-banner-container")).toBeNull();
-    });
-
-    it("should not render when marketBanner param is false", () => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: false } },
-        }),
-      });
-
-      expect(screen.queryByTestId("market-banner-container")).toBeNull();
-    });
-
-    it("should render when lwmWallet40 is enabled and marketBanner is true", async () => {
-      server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
-
-      renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
-        }),
-      });
-
-      expect(await screen.findByTestId("market-banner-container")).toBeVisible();
-    });
-  });
-
   describe("Filter trigger", () => {
     const renderWithAssetDiscoverability = (assetDiscoverability: boolean) => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       return renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true, assetDiscoverability } },
+          lwmWallet40: { enabled: true, params: { assetDiscoverability } },
         }),
       });
     };
@@ -168,7 +130,7 @@ describe("MarketBanner Integration Tests", () => {
           const flagged = withFlagOverrides({
             lwmWallet40: {
               enabled: true,
-              params: { marketBanner: true, assetDiscoverability: true },
+              params: { assetDiscoverability: true },
             },
           })(state);
           return {
@@ -201,7 +163,7 @@ describe("MarketBanner Integration Tests", () => {
           const flagged = withFlagOverrides({
             lwmWallet40: {
               enabled: true,
-              params: { marketBanner: true, assetDiscoverability: true },
+              params: { assetDiscoverability: true },
             },
           })(state);
           return {
@@ -231,7 +193,7 @@ describe("MarketBanner Integration Tests", () => {
           const flagged = withFlagOverrides({
             lwmWallet40: {
               enabled: true,
-              params: { marketBanner: true, assetDiscoverability: false },
+              params: { assetDiscoverability: false },
             },
           })(state);
           return {
@@ -258,7 +220,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -273,7 +235,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -285,7 +247,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -301,7 +263,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -316,7 +278,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -329,7 +291,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -355,7 +317,7 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
             enabled: true,
-            params: { marketBanner: true, assetDiscoverability: true },
+            params: { assetDiscoverability: true },
           },
         }),
       });
@@ -374,7 +336,7 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
             enabled: true,
-            params: { marketBanner: true, assetDiscoverability: true },
+            params: { assetDiscoverability: true },
           },
         }),
       });
@@ -392,7 +354,7 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
             enabled: true,
-            params: { marketBanner: true, aggregatedAssets: true },
+            params: { aggregatedAssets: true },
           },
         }),
       });
@@ -417,7 +379,7 @@ describe("MarketBanner Integration Tests", () => {
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -434,7 +396,7 @@ describe("MarketBanner Integration Tests", () => {
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -455,7 +417,7 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
             enabled: true,
-            params: { marketBanner: true, aggregatedAssets: true },
+            params: { aggregatedAssets: true },
           },
         }),
       });
@@ -482,7 +444,7 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
             enabled: true,
-            params: { marketBanner: true, aggregatedAssets: false },
+            params: { aggregatedAssets: false },
           },
         }),
       });
@@ -502,7 +464,7 @@ describe("MarketBanner Integration Tests", () => {
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -544,7 +506,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -556,7 +518,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
@@ -586,7 +548,7 @@ describe("MarketBanner Integration Tests", () => {
 
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
+          lwmWallet40: { enabled: true },
         }),
       });
 
