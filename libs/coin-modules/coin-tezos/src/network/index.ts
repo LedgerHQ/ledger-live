@@ -5,6 +5,7 @@ export {
   default as tzkt,
   fetchAllTransactions,
   fetchBlockDelegations,
+  fetchBlockOriginations,
   fetchBlockStaking,
   fetchBlockTokenTransfers,
   fetchBlockTransactions,

@@ -215,10 +215,7 @@ function buildParentMap(ops: APIOperation[]): Map<number, APITransactionType> {
   return parentMap;
 }
 
-function keepNativeOp(
-  op: APIOperation,
-  address: string,
-): op is ConvertibleOperation {
+function keepNativeOp(op: APIOperation, address: string): op is ConvertibleOperation {
   if (
     !(
       isAPITransactionType(op) ||
@@ -406,7 +403,12 @@ export async function listOperations(
   return [sortedOperations, nextToken];
 }
 
-type ConvertibleOperation = APITransactionType | APIDelegationType | APIRevealType | APIStakingType | APIOriginationType;
+type ConvertibleOperation =
+  | APITransactionType
+  | APIDelegationType
+  | APIRevealType
+  | APIStakingType
+  | APIOriginationType;
 
 /**
  * TzKT omits `block` on staking ops returned by /accounts/{addr}/operations.

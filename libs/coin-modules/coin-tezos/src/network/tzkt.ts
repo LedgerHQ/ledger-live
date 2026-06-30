@@ -7,6 +7,7 @@ import {
   APIBlock,
   APIDelegationType,
   APIOperation,
+  APIOriginationType,
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
@@ -222,7 +223,14 @@ const api = {
   async getBlockTokenTransfersPage(level: number, cursor?: number): Promise<APITokenTransfer[]> {
     // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
     // offset.cr cursor advancing forward regardless of the API's default ordering.
-    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    // Filter to FA2 tokenId=0 to match listOperations (getAccountTokenTransfers).
+    const params: Record<string, unknown> = {
+      level,
+      limit: BLOCK_PAGE_SIZE,
+      "sort.asc": "id",
+      "token.standard": "fa2",
+      "token.tokenId": "0",
+    };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,
@@ -243,6 +251,21 @@ const api = {
     };
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches a single page of `origination` operations at the given block level.
+   * Internal — used by `fetchBlockOriginations` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetOriginations
+   */
+  async getBlockOriginationsPage(level: number, cursor?: number): Promise<APIOriginationType[]> {
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APIOriginationType[]>({
+      url: `${getExplorerUrl()}/v1/operations/originations`,
       params,
     });
     return data;
@@ -507,6 +530,30 @@ export const fetchBlockStaking = async (level: number): Promise<APIStakingType[]
     );
   }
   return stakingOps;
+};
+
+/**
+ * Fetches ALL `origination` operations for a given block level, paginating through
+ * TzKT's cursor-based pages (`offset.cr`) until exhausted.
+ */
+export const fetchBlockOriginations = async (level: number): Promise<APIOriginationType[]> => {
+  const originations: APIOriginationType[] = [];
+  let cursor: number | undefined;
+  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
+  do {
+    const page = await api.getBlockOriginationsPage(level, cursor);
+    if (page.length === 0) break;
+    originations.push(...page);
+    if (page.length < BLOCK_PAGE_SIZE) break;
+    cursor = page.at(-1)!.id;
+  } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockOriginations: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
+  return originations;
 };
 
 export default api;

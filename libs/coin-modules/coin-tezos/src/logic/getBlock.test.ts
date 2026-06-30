@@ -1,6 +1,7 @@
 import type { OtherBlockOperation } from "@ledgerhq/coin-module-framework/api/types";
 import type {
   APIDelegationType,
+  APIOriginationType,
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
@@ -14,17 +15,23 @@ import { getBlock } from "./getBlock";
 // ---------------------------------------------------------------------------
 
 const mockGetBlockByLevel = jest.fn();
+const mockGetOperationsOrigination = jest.fn();
 const mockFetchBlockTransactions = jest.fn();
 const mockFetchBlockTokenTransfers = jest.fn();
 const mockFetchBlockDelegations = jest.fn();
 const mockFetchBlockStaking = jest.fn();
+const mockFetchBlockOriginations = jest.fn();
 
 jest.mock("../network", () => ({
-  tzkt: { getBlockByLevel: (...args: unknown[]) => mockGetBlockByLevel(...args) },
+  tzkt: {
+    getBlockByLevel: (...args: unknown[]) => mockGetBlockByLevel(...args),
+    getOperationsOrigination: (...args: unknown[]) => mockGetOperationsOrigination(...args),
+  },
   fetchBlockTransactions: (...args: unknown[]) => mockFetchBlockTransactions(...args),
   fetchBlockTokenTransfers: (...args: unknown[]) => mockFetchBlockTokenTransfers(...args),
   fetchBlockDelegations: (...args: unknown[]) => mockFetchBlockDelegations(...args),
   fetchBlockStaking: (...args: unknown[]) => mockFetchBlockStaking(...args),
+  fetchBlockOriginations: (...args: unknown[]) => mockFetchBlockOriginations(...args),
 }));
 
 // ---------------------------------------------------------------------------
@@ -65,7 +72,7 @@ function makeTokenTransfer(overrides: Partial<APITokenTransfer> = {}): APITokenT
       id: 1,
       contract: { address: "KT1FATezosContract" },
       tokenId: "0",
-      standard: "fa1.2",
+      standard: "fa2",
       metadata: { name: "TezToken", symbol: "TZT" },
     },
     from: { address: "tz1Sender" },
@@ -122,6 +129,26 @@ function makeDelegation(overrides: Partial<APIDelegationType> = {}): APIDelegati
   } as APIDelegationType;
 }
 
+function makeOrigination(overrides: Partial<APIOriginationType> = {}): APIOriginationType {
+  return {
+    id: 400,
+    hash: "opOrigination1",
+    type: "origination",
+    sender: { address: "tz1Deployer" },
+    counter: 1,
+    level: 5_000_000,
+    block: "BLockHash123",
+    timestamp: "2024-01-01T00:00:00Z",
+    bakerFee: 5000,
+    storageFee: 1000000,
+    allocationFee: 64250,
+    status: "applied",
+    contractBalance: 0,
+    originatedContract: { address: "KT1NewContract" },
+    ...overrides,
+  } as APIOriginationType;
+}
+
 // ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------
@@ -132,6 +159,8 @@ beforeEach(() => {
   mockFetchBlockTokenTransfers.mockResolvedValue([]);
   mockFetchBlockDelegations.mockResolvedValue([]);
   mockFetchBlockStaking.mockResolvedValue([]);
+  mockFetchBlockOriginations.mockResolvedValue([]);
+  mockGetOperationsOrigination.mockResolvedValue([]);
 });
 
 // ---------------------------------------------------------------------------
@@ -570,7 +599,7 @@ describe("FA token transfers", () => {
     const tx = result.transactions[0];
     expect(tx.operations).toHaveLength(4);
     const tokenOps = tx.operations.filter(
-      op => op.type === "transfer" && "asset" in op && (op as any).asset.type === "token",
+      op => op.type === "transfer" && "asset" in op && (op as any).asset.type === "fa2",
     );
     expect(tokenOps).toHaveLength(2);
   });
@@ -738,7 +767,7 @@ describe("FA token transfers", () => {
     // the same contract are not conflated.
     const op = result.transactions[0].operations[0] as any;
     expect(op.asset).toMatchObject({
-      type: "token",
+      type: "fa2",
       assetReference: "KT1SpecificContract:7",
       name: "MyFA2Token",
     });
@@ -1137,11 +1166,127 @@ describe("staking operations", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 8. Network call contract
+// 8. Origination operations
+// ---------------------------------------------------------------------------
+
+describe("origination operations", () => {
+  it("produces a fee-only BlockTransaction for a zero-balance origination", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: 0 })]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.hash).toBe("opOrigination1");
+    expect(tx.fees).toBe(1_069_250n); // 5000 + 1000000 + 64250
+    expect(tx.feesPayer).toBe("tz1Deployer");
+    expect(tx.failed).toBe(false);
+    // zero-balance origination still emits a transfer with amount 0
+    expect(tx.operations).toHaveLength(1);
+    expect((tx.operations[0] as any).amount).toBe(0n);
+  });
+
+  it("produces an outgoing transfer for an origination with contractBalance > 0", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: 500_000 })]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.operations).toHaveLength(1);
+    const op = tx.operations[0] as any;
+    expect(op.amount).toBe(-500_000n);
+    expect(op.address).toBe("tz1Deployer");
+    expect(op.peer).toBe("KT1NewContract");
+    expect(op.asset.type).toBe("native");
+  });
+
+  it("marks a failed origination and emits no operations", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockOriginations.mockResolvedValue([
+      makeOrigination({ status: "failed", contractBalance: 500_000 }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.failed).toBe(true);
+    expect(tx.operations).toEqual([]);
+    expect(tx.fees).toBe(1_069_250n);
+  });
+
+  it("skips an origination with no hash", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ hash: undefined })]);
+
+    const result = await getBlock(5_000_000);
+    expect(result.transactions).toHaveLength(0);
+  });
+
+  it("returns empty operations when sender is null", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockOriginations.mockResolvedValue([
+      makeOrigination({ sender: null, contractBalance: 100_000 }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.operations).toHaveLength(0);
+    expect(tx.feesPayer).toBeUndefined();
+  });
+
+  it("attaches token transfers to origination parent via originationId", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockOriginations.mockResolvedValue([
+      makeOrigination({ id: 400, hash: "opOrig1", contractBalance: 0 }),
+    ]);
+    mockFetchBlockTokenTransfers.mockResolvedValue([
+      makeTokenTransfer({ transactionId: undefined, originationId: 400, amount: "1000" }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    // origination tx should contain both the native transfer and the token ops
+    const origTx = result.transactions.find(t => t.hash === "opOrig1");
+    expect(origTx).toBeDefined();
+    const tokenOps = origTx!.operations.filter(
+      op => op.type === "transfer" && "asset" in op && (op as any).asset.type === "fa2",
+    );
+    expect(tokenOps).toHaveLength(2); // from + to
+  });
+
+  it("resolves cross-block origination hash for token transfers", async () => {
+    // Token transfer at this block has originationId=999 pointing to an origination
+    // from a different block. getBlock should batch-fetch the origination to resolve the hash.
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTokenTransfers.mockResolvedValue([
+      makeTokenTransfer({ id: 50, transactionId: undefined, originationId: 999, amount: "500" }),
+    ]);
+    mockGetOperationsOrigination.mockResolvedValue([
+      { id: 999, hash: "opCrossBlockOrig", block: "BLsomeOtherBlock" },
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    // The token transfer should use the resolved origination hash, not "token-50"
+    expect(mockGetOperationsOrigination).toHaveBeenCalledWith(0, undefined, { "id.in": "999" });
+    const tx = result.transactions.find(t => t.hash === "opCrossBlockOrig");
+    expect(tx).toBeDefined();
+    expect(tx!.operations).toHaveLength(2); // from + to token ops
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 9. Network call contract
 // ---------------------------------------------------------------------------
 
 describe("network calls", () => {
-  it("issues all six network calls with the correct heights", async () => {
+  it("issues all seven network calls with the correct heights", async () => {
     // Given
     const height = 6_000_000;
     mockGetBlockByLevel.mockResolvedValue(makeBlock(height));
@@ -1161,6 +1306,8 @@ describe("network calls", () => {
     expect(mockFetchBlockDelegations).toHaveBeenCalledWith(height);
     expect(mockFetchBlockStaking).toHaveBeenCalledTimes(1);
     expect(mockFetchBlockStaking).toHaveBeenCalledWith(height);
+    expect(mockFetchBlockOriginations).toHaveBeenCalledTimes(1);
+    expect(mockFetchBlockOriginations).toHaveBeenCalledWith(height);
   });
 
   it("propagates errors from getBlockByLevel", async () => {
