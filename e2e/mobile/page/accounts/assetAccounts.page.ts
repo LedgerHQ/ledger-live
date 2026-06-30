@@ -22,8 +22,9 @@ export default class AssetAccountsPage {
 
   @Step("Wait for individual asset rows to load")
   async waitForAccountAssetsToLoad(assetName: string) {
-    await waitForElementById(this.titleId(assetName));
-    await waitForElementById(this.accountAssetId(assetName));
+    const assetNameId = assetName.toLowerCase();
+    await waitForElementById(this.titleId(assetNameId));
+    await waitForElementById(this.accountAssetId(assetNameId));
   }
 
   @Step("Open asset list via deeplink")
