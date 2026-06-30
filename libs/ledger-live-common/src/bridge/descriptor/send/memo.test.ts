@@ -1,4 +1,4 @@
-import { applyMemoToTransaction } from "./memo";
+import { applyMemoToTransaction, buildRecipientTransactionPatch } from "./memo";
 
 describe("applyMemoToTransaction", () => {
   describe("empty value is treated as cleared (no memo/tag)", () => {
@@ -39,6 +39,78 @@ describe("applyMemoToTransaction", () => {
 
     it("unknown family: generic memo", () => {
       expect(applyMemoToTransaction("algorand", "note")).toEqual({ memo: "note" });
+    });
+  });
+});
+
+describe("buildRecipientTransactionPatch", () => {
+  it("applies a generic recipient address", () => {
+    expect(
+      buildRecipientTransactionPatch({ family: "cosmos" }, { address: "cosmos1abc123" }),
+    ).toEqual({
+      recipient: "cosmos1abc123",
+    });
+  });
+
+  it("applies memo through the family memo registry", () => {
+    expect(
+      buildRecipientTransactionPatch(
+        { family: "solana", model: { kind: "transfer", uiState: {} } },
+        { address: "solana-address", memo: { value: "solana memo" } },
+      ),
+    ).toEqual({
+      recipient: "solana-address",
+      model: {
+        kind: "transfer",
+        uiState: { memo: "solana memo" },
+      },
+    });
+  });
+
+  it("applies a valid destination tag through the memo registry", () => {
+    expect(
+      buildRecipientTransactionPatch(
+        { family: "xrp" },
+        { address: "xrp-address", destinationTag: "12345" },
+      ),
+    ).toEqual({
+      recipient: "xrp-address",
+      tag: 12345,
+    });
+  });
+
+  it("clears an empty destination tag through the memo registry", () => {
+    expect(
+      buildRecipientTransactionPatch(
+        { family: "xrp" },
+        { address: "xrp-address", destinationTag: "" },
+      ),
+    ).toEqual({
+      recipient: "xrp-address",
+      tag: undefined,
+    });
+  });
+
+  it("clears a whitespace-only destination tag through the memo registry", () => {
+    expect(
+      buildRecipientTransactionPatch(
+        { family: "xrp" },
+        { address: "xrp-address", destinationTag: "   " },
+      ),
+    ).toEqual({
+      recipient: "xrp-address",
+      tag: undefined,
+    });
+  });
+
+  it("ignores invalid destination tags", () => {
+    expect(
+      buildRecipientTransactionPatch(
+        { family: "xrp" },
+        { address: "xrp-address", destinationTag: "invalid" },
+      ),
+    ).toEqual({
+      recipient: "xrp-address",
     });
   });
 });
