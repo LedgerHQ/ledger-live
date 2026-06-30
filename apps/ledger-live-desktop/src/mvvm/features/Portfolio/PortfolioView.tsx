@@ -25,7 +25,6 @@ export const PortfolioView = memo(function PortfolioView({
   totalOperations,
   totalCurrencies,
   hasExchangeBannerCTA,
-  shouldDisplayGraphRework,
   shouldDisplayAssetSection,
   shouldDisplayAssetDiscoverability,
   shouldDisplayBorrowSection,
@@ -58,7 +57,7 @@ export const PortfolioView = memo(function PortfolioView({
         <div className="flex flex-1 flex-col gap-32 pb-32">
           <div className="flex flex-col gap-24">
             <PageHeader title={t("portfolio.title")} />
-            {shouldDisplayGraphRework && <Balance />}
+            <Balance />
 
             <QuickActions trackingPageName={PORTFOLIO_TRACKING_PAGE_NAME} />
 

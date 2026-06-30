@@ -165,7 +165,6 @@ describe("PortfolioView", () => {
     totalOperations: 10,
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
-    shouldDisplayGraphRework: true,
     shouldDisplayAssetSection: true,
     shouldDisplayAssetDiscoverability: false,
     shouldDisplayOperationsList: true,
@@ -198,8 +197,8 @@ describe("PortfolioView", () => {
   });
 
   describe("Balance", () => {
-    it("should render Balance with total balance when shouldDisplayGraphRework is true", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+    it("should render Balance with total balance", () => {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -210,13 +209,8 @@ describe("PortfolioView", () => {
       expect(screen.getByTestId("portfolio-total-balance")).toBeVisible();
     });
 
-    it("should not render Balance when shouldDisplayGraphRework is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={false} />);
-      expect(screen.queryByTestId("portfolio-balance")).toBeNull();
-    });
-
     it("should navigate to analytics when clicking on balance", async () => {
-      const { user } = render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      const { user } = render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -229,7 +223,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render NoBalanceView when user has no accounts", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [],
           settings: AFTER_ONBOARDING_STATE,
@@ -241,7 +235,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render BalanceView when user has accounts but no funds", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [EMPTY_BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -252,7 +246,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render NoDeviceView when no device has been onboarded", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [],
           settings: {
@@ -268,7 +262,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render NoDeviceView when user completed lazy onboarding without a device", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [],
           settings: {
@@ -282,7 +276,7 @@ describe("PortfolioView", () => {
       expect(screen.queryByTestId("portfolio-balance")).toBeNull();
     });
     it("should display discreet placeholders when discreet mode is enabled", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -298,7 +292,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render Balance with total balance and show actual amount when discreet mode is disabled", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -322,7 +316,7 @@ describe("PortfolioView", () => {
         pending: true,
       });
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -347,7 +341,7 @@ describe("PortfolioView", () => {
         balanceHistory: [],
       });
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -374,7 +368,7 @@ describe("PortfolioView", () => {
         createPortfolioMock({ percentage: 0.0542, value: 5000 }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -391,7 +385,7 @@ describe("PortfolioView", () => {
         createPortfolioMock({ percentage: -0.0315, value: -3000 }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -405,7 +399,7 @@ describe("PortfolioView", () => {
     it("should show 0% when percentage is zero", () => {
       mockUsePortfolioThrottled.mockReturnValue(createPortfolioMock({ percentage: 0, value: 0 }));
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -416,12 +410,6 @@ describe("PortfolioView", () => {
       expect(screen.getByTestId("portfolio-trend-percentage")).toBeVisible();
       expect(screen.getByText("0.00%")).toBeVisible();
       expect(screen.getByText(/today/i)).toBeVisible();
-    });
-
-    it("should not render Trend when shouldDisplayGraphRework is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={false} />);
-
-      expect(screen.queryByTestId("portfolio-trend")).toBeNull();
     });
   });
 

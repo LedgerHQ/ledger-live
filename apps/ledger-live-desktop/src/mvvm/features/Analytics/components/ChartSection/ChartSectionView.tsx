@@ -8,8 +8,7 @@ type ChartSectionViewProps = Readonly<{
 }>;
 
 export function ChartSectionView({ viewModel }: ChartSectionViewProps) {
-  const { balanceInfo, hoveredBalance, chart, isLoading, shouldDisplayBalanceRefreshRework } =
-    viewModel;
+  const { balanceInfo, hoveredBalance, chart, isLoading } = viewModel;
 
   return (
     <div className="flex flex-col gap-24" data-testid="analytics-chart-section">
@@ -17,7 +16,6 @@ export function ChartSectionView({ viewModel }: ChartSectionViewProps) {
         balanceInfo={balanceInfo}
         hoveredBalance={hoveredBalance}
         isLoading={isLoading}
-        shouldDisplayBalanceRefreshRework={shouldDisplayBalanceRefreshRework}
       />
       <LineChart {...chart} />
     </div>

@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { Portfolio, ValueChange } from "@ledgerhq/types-live";
 import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
@@ -27,13 +26,11 @@ export interface PortfolioBalanceDisplayState {
   readonly syncPhase: SyncPhase;
   readonly valueChange: ValueChange;
   readonly balanceInfo: PortfolioBalanceInfo;
-  readonly shouldDisplayBalanceRefreshRework: boolean;
 }
 
 export function usePortfolioBalanceDisplayState(
   options: UsePortfolioBalanceDisplayStateOptions = {},
 ): PortfolioBalanceDisplayState {
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("desktop");
   const {
     portfolio,
     counterValue,
@@ -50,8 +47,8 @@ export function usePortfolioBalanceDisplayState(
     rawBalanceAvailable,
     syncPhase,
     latestBalance: latestBalanceValue,
-    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
-    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
+    shouldFreezeOnSync: true,
+    cvPending: isCvPending,
   });
 
   const valueChange = portfolio.countervalueChange;
@@ -76,7 +73,6 @@ export function usePortfolioBalanceDisplayState(
       syncPhase,
       valueChange,
       balanceInfo,
-      shouldDisplayBalanceRefreshRework,
     }),
     [
       portfolio,
@@ -89,7 +85,6 @@ export function usePortfolioBalanceDisplayState(
       syncPhase,
       valueChange,
       balanceInfo,
-      shouldDisplayBalanceRefreshRework,
     ],
   );
 }

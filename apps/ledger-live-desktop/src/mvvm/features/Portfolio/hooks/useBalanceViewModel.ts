@@ -31,15 +31,8 @@ export const useBalanceViewModel = (
   const theme = useSelector(themeSelector);
   const { hasAccount } = useAccountStatus();
 
-  const {
-    counterValue,
-    displayedBalance,
-    balanceAvailable,
-    isLoading,
-    isColdStart,
-    valueChange,
-    shouldDisplayBalanceRefreshRework,
-  } = usePortfolioBalanceDisplayState(options);
+  const { counterValue, displayedBalance, balanceAvailable, isLoading, isColdStart, valueChange } =
+    usePortfolioBalanceDisplayState(options);
 
   const unit = counterValue.units[0];
 
@@ -82,7 +75,6 @@ export const useBalanceViewModel = (
     hasAccount,
     hasOnboardedDevice,
     isColdStart,
-    shouldDisplayBalanceRefreshRework,
     isLoading,
     theme,
   };

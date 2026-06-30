@@ -21,13 +21,11 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
     counterValue,
     selectedTimeRange,
     navigateToDashboard,
-    shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayPnl,
     balanceInfo,
     portfolio,
     isLoading,
-    shouldDisplayBalanceRefreshRework,
   } = viewModel;
 
   const { t } = useTranslation();
@@ -42,19 +40,13 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
         data-testid="analytics-chart"
       >
         {shouldDisplayPnl ? (
-          <ChartSection
-            balanceInfo={balanceInfo}
-            portfolio={portfolio}
-            isLoading={isLoading}
-            shouldDisplayBalanceRefreshRework={shouldDisplayBalanceRefreshRework}
-          />
+          <ChartSection balanceInfo={balanceInfo} portfolio={portfolio} isLoading={isLoading} />
         ) : (
           <PortfolioBalanceSummary
             counterValue={counterValue}
             chartColor={colors.wallet}
             range={selectedTimeRange}
             isWallet40
-            shouldDisplayGraphRework={shouldDisplayGraphRework}
             balanceInfo={balanceInfo}
           />
         )}

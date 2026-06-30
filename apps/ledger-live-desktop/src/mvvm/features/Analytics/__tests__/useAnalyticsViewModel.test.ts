@@ -28,7 +28,6 @@ describe("useAnalyticsViewModel", () => {
         countervalueChange: { percentage: 0.2, value: 200 },
       },
       isLoading: false,
-      shouldDisplayBalanceRefreshRework: false,
     } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
   });
 
@@ -39,7 +38,7 @@ describe("useAnalyticsViewModel", () => {
     const { result } = renderHook(() => useAnalyticsViewModel(), {
       initialState: {
         ...withFlagOverrides({
-          lwdWallet40: { enabled: true, params: { graphRework: true, pnl: true } },
+          lwdWallet40: { enabled: true, params: { pnl: true } },
         }),
         settings: {
           ...INITIAL_STATE,
@@ -51,7 +50,6 @@ describe("useAnalyticsViewModel", () => {
 
     expect(result.current.counterValue).toBe(getFiatCurrencyByTicker("USD"));
     expect(result.current.selectedTimeRange).toBe("day");
-    expect(result.current.shouldDisplayGraphRework).toBe(true);
     expect(result.current.shouldDisplayPnl).toBe(false);
     expect(result.current.balanceInfo.valueChange).toEqual({ percentage: 0.2, value: 200 });
     expect(result.current.portfolio.countervalueChange).toEqual({ percentage: 0.2, value: 200 });
@@ -74,12 +72,11 @@ describe("useAnalyticsViewModel", () => {
         countervalueChange: { percentage: 0.08, value: 80 },
       },
       isLoading: false,
-      shouldDisplayBalanceRefreshRework: false,
     } as ReturnType<typeof usePortfolioBalanceDisplayStateModule.usePortfolioBalanceDisplayState>);
 
     const { result } = renderHook(() => useAnalyticsViewModel(), {
       initialState: {
-        ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { graphRework: true } } }),
+        ...withFlagOverrides({ lwdWallet40: { enabled: true } }),
         settings: {
           ...INITIAL_STATE,
           counterValue: "USD",

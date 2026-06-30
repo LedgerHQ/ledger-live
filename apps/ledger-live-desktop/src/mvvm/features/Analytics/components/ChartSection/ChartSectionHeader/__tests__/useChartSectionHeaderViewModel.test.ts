@@ -14,7 +14,6 @@ describe("useChartSectionHeaderViewModel", () => {
           },
           hoveredBalance: null,
           isLoading: false,
-          shouldDisplayBalanceRefreshRework: true,
         }),
       { initialState: chartSectionHeaderInitialState },
     );
@@ -31,7 +30,6 @@ describe("useChartSectionHeaderViewModel", () => {
           balanceInfo: mockPortfolioBalanceInfo,
           hoveredBalance: 1000,
           isLoading: false,
-          shouldDisplayBalanceRefreshRework: true,
         }),
       { initialState: chartSectionHeaderInitialState },
     );
@@ -46,7 +44,6 @@ describe("useChartSectionHeaderViewModel", () => {
           balanceInfo: mockPortfolioBalanceInfo,
           hoveredBalance: null,
           isLoading: true,
-          shouldDisplayBalanceRefreshRework: true,
         }),
       { initialState: chartSectionHeaderInitialState },
     );

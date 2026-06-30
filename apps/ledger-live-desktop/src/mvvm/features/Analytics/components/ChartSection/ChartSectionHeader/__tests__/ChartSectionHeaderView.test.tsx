@@ -8,7 +8,6 @@ const baseViewModel: ChartSectionHeaderViewModel = {
   balance: mockPortfolioBalanceInfo.totalBalance,
   balanceAvailable: true,
   isLoading: false,
-  shouldDisplayBalanceRefreshRework: true,
   balanceFormatter: value => ({
     currencyText: "$",
     decimalSeparator: ".",
