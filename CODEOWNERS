@@ -400,7 +400,7 @@ apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                          
 apps/ledger-live-mobile/src/mvvm/features/Onboarding/                                          @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/PostOnboardingHubDrawer/                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
-apps/ledger-live-mobile/src/mvvm/contexts/InViewContext/                                       @ledgerhq/wallet-xp @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/contexts/InViewContext/                                       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
