@@ -76,6 +76,11 @@ describe("TransferDrawer Navigation", () => {
       button: "send",
       buttonLocation: "quick_action_transfer",
       page: SOURCE_SCREEN,
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+      flow: "send",
+      newSendFlow: false,
     });
   });
 

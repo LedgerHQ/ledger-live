@@ -1,4 +1,4 @@
-import type { DiscoveryError } from "../../types";
+import type { MobileDiscoveryError } from "../../types";
 
 export type DiscoveryPreflightResult =
   | {
@@ -6,7 +6,7 @@ export type DiscoveryPreflightResult =
     }
   | {
       success: false;
-      discoveryError: DiscoveryError;
+      discoveryError: MobileDiscoveryError;
     };
 
 export interface DiscoveryPreflightChecks {
@@ -16,7 +16,7 @@ export interface DiscoveryPreflightChecks {
 export const successPreflightResult: DiscoveryPreflightResult = { success: true };
 
 export const mapDiscoveryErrorToPreflightResult = (
-  discoveryError: DiscoveryError,
+  discoveryError: MobileDiscoveryError,
 ): DiscoveryPreflightResult => ({
   success: false,
   discoveryError,
@@ -24,7 +24,7 @@ export const mapDiscoveryErrorToPreflightResult = (
 
 export const retryPreflightCheck = async (
   check: () => Promise<DiscoveryPreflightResult>,
-): Promise<true | DiscoveryError> => {
+): Promise<true | MobileDiscoveryError> => {
   const result = await check();
 
   return result.success ? true : result.discoveryError;

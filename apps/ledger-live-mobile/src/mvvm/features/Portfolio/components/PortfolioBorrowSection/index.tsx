@@ -1,4 +1,6 @@
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   Box,
   Button,
@@ -23,9 +25,13 @@ interface PortfolioBorrowSectionProps {
 
 export const PortfolioBorrowSection = ({ onPress }: PortfolioBorrowSectionProps) => {
   const { t } = useTranslation();
+  const { bottom } = useSafeAreaInsets();
+  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("mobile");
+
+  const containerStyle = shouldDisplayOperationsList ? { paddingBottom: bottom + 24 } : undefined;
 
   return (
-    <Box
+    <Box style={containerStyle}
       lx={{
         paddingTop: "s32",
         paddingHorizontal: "s16",

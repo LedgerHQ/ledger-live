@@ -112,8 +112,7 @@ export function useMarket() {
     fallbackForCryptoCountervalues: true,
   });
 
-  const { shouldDisplayMarketBanner: filterBySupported, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
 
   // When asset discoverability is on, the category bar is the source of truth for
   // the starred / stocks lists; otherwise we keep the legacy `starred` param behaviour.
@@ -122,7 +121,7 @@ export function useMarket() {
 
   const starFilterOn = isStarredCategory || starred.length > 0;
 
-  const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
+  const shouldDisplayLiveCompatible = marketParams.liveCompatible;
 
   const needsUsdFallback = shouldDisplayAssetDiscoverability && resolvedNeedsUsdFallback;
   // Counter value sent to the markets endpoint (usd on fallback so the request succeeds).

@@ -78,8 +78,7 @@ export default function DashboardPage() {
     useDisplayOnPortfolioAnalytics();
 
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
-  const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
-    useWalletFeaturesConfig("desktop");
+  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
 
   return (
     <>
@@ -97,7 +96,7 @@ export default function DashboardPage() {
             hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
           />
           <Flex flexDirection="column" rowGap={32}>
-            {shouldDisplayMarketBanner && __DEV__ && <MarketBannerFeature />}
+            {__DEV__ && <MarketBannerFeature />}
             <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
               {!hasInstalledApps ? (
                 <EmptyStateInstalledApps />

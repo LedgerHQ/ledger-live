@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { ConfirmationStatusLayout } from "../ConfirmationStatusLayout";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useAnalytics } from "~/analytics";
+import { useSendFlowData } from "../../../../context/SendFlowContext";
 
 export type ConfirmationScreenViewProps = Readonly<{
   title: string;
@@ -21,6 +24,17 @@ export function ConfirmationScreenView({
   onViewTransaction,
   onClose,
 }: ConfirmationScreenViewProps) {
+  const { state } = useSendFlowData();
+  const trackingProperties = useMemo(() => {
+    const { account, parentAccount } = state.account;
+    return getSendFlowTrackingProperties(account, parentAccount);
+  }, [state.account]);
+
+  const { track } = useAnalytics();
+  useEffect(() => {
+    track("send_modal", { ...trackingProperties, name: "step confirmation" });
+  }, [track, trackingProperties]);
+
   return (
     <ConfirmationStatusLayout
       tone="success"

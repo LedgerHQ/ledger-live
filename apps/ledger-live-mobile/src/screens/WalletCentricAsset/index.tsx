@@ -124,6 +124,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         onLayout={onGraphCardLayout}
         key="AssetGraph"
         testID={`account-assets-${currency.name.toLocaleLowerCase()}`}
+        collapsable={false}
       >
         <AssetGraph
           accounts={cryptoAccounts}

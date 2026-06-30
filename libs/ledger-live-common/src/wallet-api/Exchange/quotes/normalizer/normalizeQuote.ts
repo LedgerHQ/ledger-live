@@ -67,5 +67,12 @@ export function normalizeQuote(
     quote.formatted = buildFormattedQuoteValues(quoteDetails, feeEstimate, formatContext);
   }
 
+  // Forward the raw provider-specific blob verbatim so DEX execution paths
+  // (custom.swap device-intent flow) can call provider swap endpoints without
+  // re-fetching the quote.
+  if (rawQuote.customFields) {
+    quote.customFields = rawQuote.customFields as unknown as Record<string, unknown>;
+  }
+
   return quote;
 }

@@ -52,6 +52,7 @@ import {
 import { Flex } from "@ledgerhq/react-ui";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { useTrackFundsReceived } from "LLD/features/Analytics/hooks/useTrackFundsReceived";
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
@@ -89,8 +90,7 @@ const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 const Perps = lazy(() => import("LLD/features/Perps"));
 const Borrow = lazy(() => import("LLD/features/Borrow"));
-const Market40 = lazy(() => import("LLD/features/Market"));
-const Market = lazy(() => import("~/renderer/screens/market"));
+const Market = lazy(() => import("LLD/features/Market"));
 
 const MarketCoin = lazy(() => import("~/renderer/screens/market/MarketCoin"));
 const WelcomeScreenSettings = lazy(
@@ -254,12 +254,10 @@ const RecoverPlayerWithFeatureToggle = () => {
 
 // Shared content for the main app layout
 const MainAppContent = ({
-  shouldDisplayMarketBanner,
   shouldDisplayWallet40MainNav,
   shouldDisplayAssetSection,
   shouldDisplayAggregatedAssets,
 }: {
-  shouldDisplayMarketBanner: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAggregatedAssets: boolean;
@@ -324,10 +322,7 @@ const MainAppContent = ({
             shouldDisplayAggregatedAssets ? <RedirectMarketToAsset /> : withSuspense(MarketCoin)({})
           }
         />
-        <Route
-          path="/market"
-          element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
-        />
+        <Route path="/market" element={withSuspense(Market)({})} />
         <Route path="/bank/*" element={withSuspense(Bank)({})} />
         <Route path="/analytics" element={withSuspense(Analytics)({})} />
         <Route path="/history" element={withSuspense(History)({})} />
@@ -344,7 +339,6 @@ export const MainAppLayout = () => {
   const theme = useSelector(themeSelector);
   const styledComponentsTheme = useTheme();
   const {
-    shouldDisplayMarketBanner,
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
@@ -393,7 +387,6 @@ export const MainAppLayout = () => {
         }
       >
         <MainAppContent
-          shouldDisplayMarketBanner={shouldDisplayMarketBanner}
           shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
           shouldDisplayAssetSection={shouldDisplayAssetSection}
           shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
@@ -435,6 +428,7 @@ export default function Default() {
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 
   useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
+  useTrackFundsReceived();
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();

@@ -163,7 +163,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
+    <SafeAreaView
+      isFlex
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen
         category="DelegationFlow"
         name={route.params.skipStartedStep ? "Step Starter" : "Summary"}

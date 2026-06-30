@@ -49,6 +49,7 @@ import {
   signTransactionLogic,
   bitcoinFamilyAccountGetAddressLogic,
   bitcoinFamilyAccountGetAddressesLogic,
+  accountGetPublicKeyLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
   protectStorageLogic,
@@ -1211,6 +1212,12 @@ export function useWalletAPIServer({
         accountId,
         derivationPath,
       );
+    });
+  }, [accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    server.setHandler("account.getPublicKey", ({ accountId }) => {
+      return accountGetPublicKeyLogic({ manifest, accounts, tracking }, accountId);
     });
   }, [accounts, manifest, server, tracking]);
 

@@ -19,11 +19,8 @@ import {
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";
@@ -331,15 +328,6 @@ export function useSelectAccount({
   manifest: LiveAppManifest;
   setCurrentAccountHistDb?: SetCurrentAccountHistDb;
 }) {
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "lldModularDrawer",
-  });
-
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: manifest.id,
-  });
-
   const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
     manifest.id,
@@ -371,31 +359,16 @@ export function useSelectAccount({
         ? "Discover"
         : (currentRouteNameRef.current ?? "Unknown");
 
-    if (modularDrawerVisible) {
-      dispatch(setFlowValue(flow));
-      dispatch(setSourceValue(source));
+    dispatch(setFlowValue(flow));
+    dispatch(setSourceValue(source));
 
-      openAssetAndAccount({
-        currencies: currencyIds,
-        onSuccess,
-        onCancel,
-        areCurrenciesFiltered: true,
-      });
-    } else {
-      setDrawer(
-        SelectAccountAndCurrencyDrawer,
-        {
-          flow,
-          source,
-          currencyIds,
-          onAccountSelected: onSuccess,
-        },
-        {
-          onRequestClose: onCancel,
-        },
-      );
-    }
-  }, [modularDrawerVisible, dispatch, flow, openAssetAndAccount, currencyIds, onSuccess, onCancel]);
+    openAssetAndAccount({
+      currencies: currencyIds,
+      onSuccess,
+      onCancel,
+      areCurrenciesFiltered: true,
+    });
+  }, [dispatch, flow, openAssetAndAccount, currencyIds, onSuccess, onCancel]);
 
   return { onSelectAccount, currentAccount };
 }

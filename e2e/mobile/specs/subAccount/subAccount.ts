@@ -149,34 +149,14 @@ export function runAddSubAccountTest(testConfig: {
     tags.forEach(tag => $Tag(tag));
     it(`Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker}`, async () => {
       await app.portfolio.addAccount();
-
-      const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
-
-      if (isModularDrawer) {
-        await app.addAccount.importWithYourLedger();
-        await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
-        await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
-        if (networks) {
-          await app.modularDrawer.validateNetworksScreen(networks);
-          await app.modularDrawer.selectNetwork(asset.parentAccount!.currency.name);
-        } else {
-          await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
-        }
+      await app.addAccount.importWithYourLedger();
+      await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+      if (networks) {
+        await app.modularDrawer.validateNetworksScreen(networks);
+        await app.modularDrawer.selectNetwork(asset.parentAccount!.currency.name);
       } else {
-        await app.addAccount.importWithYourLedger();
-        await app.common.performSearch(
-          asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
-        );
-        if (asset.tokenType) {
-          await app.receive.selectCurrencyByType(asset.tokenType);
-        } else {
-          await app.receive.selectCurrency(asset.currency.id);
-        }
-        const networkId =
-          asset?.parentAccount === undefined
-            ? asset.currency.speculosApp.name.toLowerCase()
-            : asset?.parentAccount?.currency.id;
-        await app.receive.selectNetworkIfAsked(networkId);
+        await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
       }
 
       const accountId = await app.addAccount.addAccountAtIndex(

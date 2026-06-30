@@ -63,6 +63,7 @@ import type {
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
+  SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -81,12 +82,9 @@ import type {
   SettingsSetHasSeenQ2WalletV4TourPayload,
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
+  SettingsHideSmallValueTokenOperationsPayload,
 } from "../actions/types";
-import {
-  SettingsActionTypes,
-  SettingsSetWalletTabNavigatorLastVisitedTabPayload,
-} from "../actions/types";
-import { ScreenName } from "~/const";
+import { SettingsActionTypes } from "../actions/types";
 import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
 import {
   needsConsentRenewal,
@@ -115,6 +113,7 @@ export const INITIAL_STATE: SettingsState = {
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
   filterTokenOperationsZeroAmount: true,
+  hideSmallValueTokenOperations: false,
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
@@ -158,7 +157,6 @@ export const INITIAL_STATE: SettingsState = {
     topGainersLosers: true,
   },
   neverClickedOnAllowNotificationsButton: true,
-  walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: true, // will be set to false at the end of an onboarding, not false by default to avoid upsell for existing users
@@ -170,6 +168,7 @@ export const INITIAL_STATE: SettingsState = {
   userNps: null,
   supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
+  debugOsUpdateBannerMode: "off",
   dismissedContentCards: {},
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
@@ -410,6 +409,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ).payload,
   }),
 
+  [SettingsActionTypes.SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS]: (state, action) => ({
+    ...state,
+    hideSmallValueTokenOperations: (action as Action<SettingsHideSmallValueTokenOperationsPayload>)
+      .payload,
+  }),
+
   [SettingsActionTypes.SHOW_TOKEN]: (state, action) => {
     const ids = state.blacklistedTokenIds;
     return {
@@ -563,13 +568,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
-    ...state,
-    walletTabNavigatorLastVisitedTab: (
-      action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
-    ).payload,
-  }),
-
   [SettingsActionTypes.SETTINGS_SET_DATE_FORMAT]: (state, action) => ({
     ...state,
     dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload,
@@ -606,6 +604,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT]: (state, action) => ({
     ...state,
     hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
+  }),
+  [SettingsActionTypes.SET_DEBUG_OS_UPDATE_BANNER_MODE]: (state, action) => ({
+    ...state,
+    debugOsUpdateBannerMode: (action as Action<SettingsSetDebugOsUpdateBannerMode>).payload,
   }),
   [SettingsActionTypes.SET_DISMISSED_CONTENT_CARD]: (state, action) => ({
     ...state,
@@ -857,6 +859,15 @@ export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>
+  state.settings.hideSmallValueTokenOperations;
+export const hideSmallValueTokenOperationsFeatureEnabledSelector = (state: State) => {
+  const feature = selectFeature(state, "lwmDustFiltering");
+  return feature?.enabled === true;
+};
+export const hideSmallValueTokenOperationsEffectiveSelector = (state: State) =>
+  hideSmallValueTokenOperationsFeatureEnabledSelector(state) &&
+  hideSmallValueTokenOperationsEnabledSelector(state);
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners;
 export const hasAvailableUpdateSelector = (state: State) => state.settings.hasAvailableUpdate;
 export const dismissedDynamicCardsSelector = (state: State) => state.settings.dismissedDynamicCards;
@@ -915,8 +926,6 @@ export const onboardingTypeSelector = (state: State) => state.settings.onboardin
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
-export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
-  state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
@@ -931,6 +940,8 @@ export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
+export const debugOsUpdateBannerModeSelector = (state: State) =>
+  state.settings.debugOsUpdateBannerMode;
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const isFromLedgerSyncOnboardingSelector = (state: State) =>
   state.settings.fromLedgerSyncOnboarding;

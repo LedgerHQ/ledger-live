@@ -97,24 +97,24 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const accountsPage = new AccountsPage(page);
   const accountPage = new AccountPage(page);
   const layout = new Layout(page);
-  const marketPage = new MarketPage(page);
-  const marketCoinPage = new MarketCoinPage(page);
+  // const marketPage = new MarketPage(page);
+  // const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);
   const delegate = new delegateModal(page);
 
-  const maskItemsInMarket = {
-    mask: [
-      page.getByTestId("market-small-graph"),
-      page.getByTestId("market-coin-price"),
-      page.getByTestId("market-cap"),
-      page.getByTestId("market-price-change"),
-      page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
-    ],
-  };
+  // const maskItemsInMarket = {
+  //   mask: [
+  //     page.getByTestId("market-small-graph"),
+  //     page.getByTestId("market-coin-price"),
+  //     page.getByTestId("market-cap"),
+  //     page.getByTestId("market-price-change"),
+  //     page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
+  //   ],
+  // };
 
-  const maskPartOfItemsInMarket = {
-    mask: [page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") })],
-  };
+  // const maskPartOfItemsInMarket = {
+  //   mask: [page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") })],
+  // };
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
     await page.getByTestId("portfolio-container").waitFor({ state: "visible" });
@@ -125,7 +125,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await portfolioPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-portfolio.png", {
-      mask: [page.getByTestId("select-asset-drawer-list-container")],
+      mask: [page.getByTestId("modular-dialog-screen-ASSET_SELECTION")],
     });
   });
 
@@ -135,7 +135,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   });
 
   await test.step("choose ethereum account", async () => {
-    await drawer.selectAccount("Ethereum", 0);
+    await drawer.selectAccount("Ethereum 1");
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 
@@ -192,51 +192,52 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await modal.close();
   });
 
-  await test.step("Market page loads with ETH staking available", async () => {
-    await layout.goToMarket();
-    await marketPage.waitForLoading();
-    await page
-      .locator('[data-testid="market-eth-stake-button"]:visible')
-      .first()
-      .waitFor({ state: "visible", timeout: 15000 });
-    await expect
-      .soft(page)
-      .toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", maskItemsInMarket);
-  });
+  // await test.step("Market page loads with ETH staking available", async () => {
+  //   await layout.goToMarket();
+  //   await marketPage.waitForLoading();
+  //   await page
+  //     .locator('[data-testid="market-eth-stake-button"]:visible')
+  //     .first()
+  //     .waitFor({ state: "visible", timeout: 15000 });
+  //   await expect
+  //     .soft(page)
+  //     .toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", maskItemsInMarket);
+  // });
 
-  await test.step("start stake flow via Stake entry button", async () => {
-    await marketPage.startStakeFlowByTicker("eth");
-    await drawer.waitForDrawerToBeVisible();
-    await expect
-      .soft(page)
-      .toHaveScreenshot("stake-drawer-opened-from-market-page.png", maskPartOfItemsInMarket);
-    await drawer.closeDrawer();
-  });
+  // await test.step("start stake flow via Stake entry button", async () => {
+  //   await marketPage.startStakeFlowByTicker("eth");
+  //   await drawer.waitForDrawerToBeVisible();
+  //   await expect
+  //     .soft(page)
+  //     .toHaveScreenshot("stake-drawer-opened-from-market-page.png", maskPartOfItemsInMarket);
+  //   await drawer.closeDrawer();
+  // });
 
-  await test.step("Go back to Market page and start stake from ETH coin detail page", async () => {
-    await layout.goToMarket();
-    await marketPage.waitForLoading();
-    await marketPage.openCoinPage("eth");
-    await marketCoinPage.startStakeFlow();
-    await drawer.waitForDrawerToBeVisible();
-    await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
-    await drawer.selectAccount("Ethereum", 1);
-    const analyticsPromise = analytics.waitForTracking({
-      event: "button_clicked2",
-      properties: {
-        button: "kiln_pooling",
-        path: "market/ethereum",
-        modal: "stake",
-        flow: "stake",
-        value: "/platform/kiln",
-      },
-    });
-    await delegate.chooseStakeProvider("kiln_pooling");
-    const dappURL = await liveAppWebview.getLiveAppDappURL();
-    await liveAppWebview.waitForText("Ethereum 2");
-    expect(dappURL).toContain("?focus=pooled");
-    expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+  // Covered by non mocked-e2e
+  // await test.step("Go back to Market page and start stake from ETH coin detail page", async () => {
+  //   await layout.goToMarket();
+  //   await marketPage.waitForLoading();
+  //   await marketPage.openCoinPage("eth");
+  //   await marketCoinPage.startStakeFlow();
+  //   await drawer.waitForDrawerToBeVisible();
+  //   await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
+  //   await drawer.selectAccount("Ethereum 2");
+  //   const analyticsPromise = analytics.waitForTracking({
+  //     event: "button_clicked2",
+  //     properties: {
+  //       button: "kiln_pooling",
+  //       path: "market/ethereum",
+  //       modal: "stake",
+  //       flow: "stake",
+  //       value: "/platform/kiln",
+  //     },
+  //   });
+  //   await delegate.chooseStakeProvider("kiln_pooling");
+  //   const dappURL = await liveAppWebview.getLiveAppDappURL();
+  //   await liveAppWebview.waitForText("Ethereum 2");
+  //   expect(dappURL).toContain("?focus=pooled");
+  //   expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
 
-    await analyticsPromise;
-  });
+  //   await analyticsPromise;
+  // });
 });

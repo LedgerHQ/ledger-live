@@ -44,6 +44,7 @@ import {
   decodeAccountIdWithTokenAccountAddress,
   isEd25519Address,
   isValidBase58Address,
+  withdrawableFromStake,
 } from "./logic";
 import { MAX_MEMO_LENGTH, validateMemo } from "./logic/validateMemo";
 import { ChainAPI } from "./network";
@@ -813,11 +814,25 @@ async function deriveStakeWithdrawCommandDescriptor(
 
   const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
+  let withdrawable = stake?.withdrawable ?? 0;
+
   if (!errors.stakeAccAddr && stake !== undefined) {
     if (!stake.hasWithdrawAuth) {
+      withdrawable = 0;
       errors.stakeAccAddr = new SolanaStakeNoWithdrawAuth();
-    } else if (stake.withdrawable <= 0) {
-      errors.stakeAccAddr = new SolanaStakeAccountNothingToWithdraw();
+    } else {
+      const liveLamports = await api.getBalance(uiState.stakeAccAddr);
+      withdrawable = Math.max(
+        0,
+        withdrawableFromStake({
+          stakeAccBalance: liveLamports,
+          activation: stake.activation,
+          rentExemptReserve: stake.rentExemptReserve,
+        }),
+      );
+      if (withdrawable <= 0) {
+        errors.stakeAccAddr = new SolanaStakeAccountNothingToWithdraw();
+      }
     }
   }
 
@@ -831,7 +846,7 @@ async function deriveStakeWithdrawCommandDescriptor(
       kind: "stake.withdraw",
       authorizedAccAddr: mainAccount.freshAddress,
       stakeAccAddr: uiState.stakeAccAddr,
-      amount: stake?.withdrawable ?? 0,
+      amount: withdrawable,
       toAccAddr: mainAccount.freshAddress,
     },
     fee,

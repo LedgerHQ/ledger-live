@@ -283,7 +283,7 @@ export async function findFreePort(): Promise<number> {
           resolve(port);
         });
       } else {
-        log("Unable to determine port. Selecting default");
+        console.log("Unable to determine port. Selecting default");
         resolve(8099);
       }
     });

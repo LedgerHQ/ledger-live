@@ -1,12 +1,13 @@
 import React from "react";
 import {
-  Box,
   Card,
   CardContent,
+  CardContentDescription,
+  CardContentRow,
+  CardContentTitle,
   CardHeader,
   CardLeading,
   CardTrailing,
-  Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { PnlCardProps } from "./types";
@@ -33,18 +34,14 @@ export function PnlCard(props: Readonly<PnlCardProps>) {
       <CardHeader>
         <CardLeading>
           <CardContent>
-            <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
-              <Text typography="body3" lx={{ color: "muted" }}>
-                {title}
-              </Text>
+            <CardContentRow lx={{ gap: "s4" }}>
+              <CardContentDescription>{title}</CardContentDescription>
               {showInfoIcon ? <Information size={16} color="muted" /> : null}
-            </Box>
-            <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
+            </CardContentRow>
+            <CardContentRow lx={{ gap: "s4" }}>
               {TrendIcon ? <TrendIcon size={16} color={trendColor} /> : null}
-              <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                {displayedValue}
-              </Text>
-            </Box>
+              <CardContentTitle>{displayedValue}</CardContentTitle>
+            </CardContentRow>
           </CardContent>
         </CardLeading>
         {showChevron ? (

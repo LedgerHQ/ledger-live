@@ -29,14 +29,11 @@ function formatEventsForError(events: string[], maxLength = 1000): string {
 }
 
 // TODO: remove once LIVE-28070 is fixed
-function shouldSkipTouchValidation(tx: Transaction): boolean {
-  const isPolOrBase =
+function shouldSkipRecipientDisplayValidation(tx: Transaction): boolean {
+  return (
     tx.accountToCredit.currency.id === Currency.POL.id ||
-    tx.accountToCredit.currency.id === Currency.BASE.id;
-  const isStaxOrFlex =
-    process.env.SPECULOS_DEVICE === Device.STAX.name ||
-    process.env.SPECULOS_DEVICE === Device.FLEX.name;
-  return isStaxOrFlex && isPolOrBase;
+    tx.accountToCredit.currency.id === Currency.BASE.id
+  );
 }
 
 function validateTransactionData(tx: Transaction, events: string[]) {
@@ -46,6 +43,10 @@ function validateTransactionData(tx: Transaction, events: string[]) {
     throw new Error(
       `Expected amount "${tx.amount}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
     );
+  }
+
+  if (shouldSkipRecipientDisplayValidation(tx)) {
+    return;
   }
 
   if (tx.accountToCredit.ensName && process.env.SPECULOS_DEVICE !== Device.LNS.name) {
@@ -71,16 +72,14 @@ function validateTransactionData(tx: Transaction, events: string[]) {
 async function sendEvmTouchDevices(tx: Transaction) {
   await waitForReviewTransaction();
 
-  const skipValidation = shouldSkipTouchValidation(tx);
   const events: string[] = [];
   if (tx.accountToCredit.ensName) {
     const ensEvents = await getEnsScreenTexts(tx.accountToCredit.ensName);
     events.push(...ensEvents);
   }
   events.push(...(await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN)));
-  if (!skipValidation) {
-    validateTransactionData(tx, events);
-  }
+  validateTransactionData(tx, events);
+
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 

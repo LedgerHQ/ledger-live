@@ -283,6 +283,19 @@ export class Account {
   static readonly ICP_1 = new Account(Currency.ICP, "Internet Computer 1", 0, "44'/223'/0'/0/0");
   static readonly ICP_2 = new Account(Currency.ICP, "Internet Computer 2", 1, "44'/223'/1'/0/0");
 
+  static readonly SEI_EVM_1 = new Account(
+    Currency.SEI_EVM,
+    "SEI Network (EVM) 1",
+    0,
+    "44'/60'/0'/0/0",
+  );
+  static readonly SEI_EVM_2 = new Account(
+    Currency.SEI_EVM,
+    "SEI Network (EVM) 2",
+    1,
+    "44'/60'/1'/0/0",
+  );
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", 0, "");
 }
 

@@ -23,7 +23,7 @@ describe("addAccount.handler", () => {
       addAccountHandler({ type: "add-account", currency: "bitcoin" }, context);
 
       expect(mockFindCryptoCurrencyByKeyword).toHaveBeenCalledWith("BITCOIN");
-      expect(context.openAddAccountFlow).toHaveBeenCalledWith(mockCurrency, true);
+      expect(context.openAddAccountFlow).toHaveBeenCalledWith(mockCurrency);
     });
 
     it("opens add account modal via openAssetFlow when currency not found", () => {
@@ -44,7 +44,7 @@ describe("addAccount.handler", () => {
       addAccountHandler({ type: "add-account", currency: "ETHEREUM" }, context);
 
       expect(mockFindCryptoCurrencyByKeyword).toHaveBeenCalledWith("ETHEREUM");
-      expect(context.openAddAccountFlow).toHaveBeenCalledWith(mockCurrency, true);
+      expect(context.openAddAccountFlow).toHaveBeenCalledWith(mockCurrency);
     });
 
     it("opens add account modal via openAssetFlow when currency is not provided", () => {

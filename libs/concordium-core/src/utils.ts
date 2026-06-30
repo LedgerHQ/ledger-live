@@ -1,4 +1,3 @@
-import BIPPath from "bip32-path";
 import { SchemeId } from "./types";
 
 /**
@@ -142,49 +141,6 @@ export function serializeYearMonth(yearMonth: string): Buffer {
   const serializedYear = encodeWord16(year);
   const serializedMonth = encodeWord8(month);
   return Buffer.concat([serializedYear, serializedMonth]);
-}
-
-/**
- * Serializes a BIP32 path array into device-compatible format.
- * Format: [1 byte: path length] [4 bytes per element: path components]
- * @private
- * @param path - BIP32 path as number array
- * @returns Serialized path buffer
- */
-export function serializePath(path: number[]): Buffer {
-  const buf = Buffer.alloc(1 + path.length * 4);
-  buf.writeUInt8(path.length, 0);
-  for (const [i, num] of path.entries()) {
-    buf.writeUInt32BE(num, 1 + i * 4);
-  }
-  return buf;
-}
-
-/**
- * Converts a BIP32 path string to serialized Buffer format.
- *
- * @param originalPath - BIP32 path string (e.g., "44'/919'/0'/0/0")
- * @returns Serialized path buffer ready for device transmission
- */
-export function pathToBuffer(originalPath: string): Buffer {
-  const pathNums: number[] = BIPPath.fromString(originalPath).toPathArray();
-  return serializePath(pathNums);
-}
-
-/**
- * Chunks a buffer into smaller pieces of a maximum size.
- *
- * @param buffer - The buffer to chunk
- * @param maxSize - Maximum size of each chunk
- * @returns Array of buffer chunks
- */
-export function chunkBuffer(buffer: Buffer, maxSize: number): Buffer[] {
-  if (maxSize <= 0) {
-    throw new Error(`maxSize must be positive, got ${maxSize}`);
-  }
-  return Array.from({ length: Math.ceil(buffer.length / maxSize) }, (_, i) =>
-    Buffer.from(buffer.subarray(i * maxSize, (i + 1) * maxSize)),
-  );
 }
 
 /**

@@ -88,7 +88,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const {
     isEnabled: isWallet40Enabled,
     shouldDisplayQuickActionCtas,
-    shouldDisplayMarketBanner,
     shouldDisplayAssetSection,
   } = useWalletFeaturesConfig("mobile");
 
@@ -147,7 +146,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
       {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
 
-      {shouldDisplayMarketBanner && __DEV__ && (
+      {__DEV__ && (
         <Box pb={24}>
           <MarketBannerFeature />
         </Box>

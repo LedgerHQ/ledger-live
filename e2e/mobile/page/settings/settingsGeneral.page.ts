@@ -97,6 +97,9 @@ export default class SettingsGeneralPage {
     await this.enterNewPassword(password);
     await this.enterNewPassword(password);
     await this.expectPasswordToggleValue("ON");
+    // Recurring JS timers post-RN-0.81 keep Detox's idle sync from completing during
+    // background transitions; opt out around sendToHome/launchApp to avoid the hang.
+    await app.common.disableSynchronizationForiOS();
     await device.sendToHome();
     if (isAndroid()) {
       /*
@@ -107,5 +110,6 @@ export default class SettingsGeneralPage {
       await delay(2000);
     }
     await device.launchApp({ newInstance: false }); // bring back from background
+    await app.common.enableSynchronization();
   }
 }

@@ -88,6 +88,7 @@ export class InitializationManager {
           aggregatedAssets: false,
           myWallet: IS_WALLET_40,
           pnl: false,
+          assetDiscoverability: false,
         },
       },
       llmModularDrawer: {

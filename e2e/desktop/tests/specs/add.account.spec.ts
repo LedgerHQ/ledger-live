@@ -23,7 +23,9 @@ const currencies = [
   { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682" },
   { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683" },
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
-  { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
+  // TODO: TON E2E test disabled
+  // Re-enable when the renaming from TON to GRAM has been completed
+  // { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },

@@ -548,7 +548,9 @@ async function formatFeeOnlyOperation(
   };
 }
 
-export function decodeMemo(transaction: Horizon.ServerApi.TransactionRecord): StellarMemo | undefined {
+export function decodeMemo(
+  transaction: Horizon.ServerApi.TransactionRecord,
+): StellarMemo | undefined {
   switch (transaction.memo_type) {
     case "none":
       return { type: "NO_MEMO" };

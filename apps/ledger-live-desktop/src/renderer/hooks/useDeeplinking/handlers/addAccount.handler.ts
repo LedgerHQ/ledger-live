@@ -13,7 +13,7 @@ export const addAccountHandler: DeeplinkHandler<"add-account"> = (
   );
 
   if (foundCurrency) {
-    openAddAccountFlow(foundCurrency, true);
+    openAddAccountFlow(foundCurrency);
   } else {
     // No currency or unknown currency: open Add Account modal so user can select one
     openAssetFlow();

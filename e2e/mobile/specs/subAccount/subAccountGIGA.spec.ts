@@ -16,7 +16,6 @@ const transactionE2E = [
       "@Stax",
       "@Flex",
       "@NanoGen5",
-      "@smoke",
       "@solana",
       "@family-solana",
     ],

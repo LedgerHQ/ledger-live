@@ -1,19 +1,29 @@
 /**
- * Generates one TypeScript file per crypto currency under src/currencies/.
+ * Seeds/syncs this package's currency files from the legacy `@ledgerhq/cryptoassets`
+ * registry so the two stay at parity during the migration (this registry is the
+ * primary source — see README; legacy is dual-maintained until it is dropped).
  * Run with: NODE_OPTIONS="--conditions=@ledgerhq/source" npx tsx scripts/generate-currencies.mts
  *
- * Source of truth: @ledgerhq/cryptoassets cryptocurrenciesById
- * Output: src/currencies/<id>.ts + src/currencies/index.ts
+ * Input:  @ledgerhq/cryptoassets `cryptocurrenciesById`
+ * Output: src/currencies/<id>.ts + src/currencies/index.ts (file names follow legacy keys)
  */
 
-import { cryptocurrenciesById } from "../../../../libs/ledgerjs/packages/cryptoassets/src/currencies";
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+
+// Dynamic import so tsx resolves the extensionless TS specifier (static imports
+// fall through to Node 24's native TS resolver, which cannot add the extension).
+const { cryptocurrenciesById } = await import(
+  "../../../../libs/ledgerjs/packages/cryptoassets/src/currencies"
+);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = join(__dirname, "../src/currencies");
 
+// Wipe the output dir so currencies dropped/renamed in legacy don't leave stale
+// orphan files (the whole directory is generated; nothing here is hand-written).
+rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 
 function serialize(value: unknown, indent = 0): string {
@@ -37,25 +47,27 @@ function serialize(value: unknown, indent = 0): string {
       ([, v]) => v !== undefined,
     );
     if (entries.length === 0) return "{}";
-    const props = entries
-      .map(([k, v]) => `${inner}${k}: ${serialize(v, indent + 1)}`)
-      .join(",\n");
+    const props = entries.map(([k, v]) => `${inner}${k}: ${serialize(v, indent + 1)}`).join(",\n");
     return `{\n${props},\n${pad}}`;
   }
 
   return String(value);
 }
 
-// Deduplicate keys that differ only in casing (e.g. "lbry" and "LBRY" are the same
-// currency). Sort case-insensitively so lowercase forms are processed first and win.
-const allIds = Object.keys(cryptocurrenciesById).sort((a, b) =>
-  a.toLowerCase().localeCompare(b.toLowerCase()) || a.localeCompare(b),
+// Emit one file per currency `.id`. A few legacy map keys differ from the currency's
+// own `.id` (e.g. key "groestlcoin" → id "groestcoin"), and on load the legacy store
+// reuses `cryptocurrenciesById` as its by-id index, adding `.id`-keyed aliases — so
+// `Object.keys` can surface the same `.id` twice. The domain registry is keyed by
+// `.id`, so dedupe by `.id`. Sort case-insensitively so the lowercase key wins / names
+// the file.
+const allIds = Object.keys(cryptocurrenciesById).sort(
+  (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()) || a.localeCompare(b),
 );
 const seen = new Set<string>();
-const ids = allIds.filter(id => {
-  const key = id.toLowerCase();
-  if (seen.has(key)) return false;
-  seen.add(key);
+const ids = allIds.filter(key => {
+  const currencyId = (cryptocurrenciesById[key] as { id: string }).id;
+  if (seen.has(currencyId)) return false;
+  seen.add(currencyId);
   return true;
 });
 
@@ -71,9 +83,7 @@ for (const id of ids) {
 }
 
 // Generate index.ts
-const exports = ids
-  .map(id => `export * from "./${id}";`)
-  .join("\n");
+const exports = ids.map(id => `export * from "./${id}";`).join("\n");
 
 writeFileSync(join(outDir, "index.ts"), `${exports}\n`);
 

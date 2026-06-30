@@ -50,6 +50,26 @@ describe("PnlCard integration", () => {
 
       expect(onPress).toHaveBeenCalledTimes(1);
     });
+
+    it("keeps long titles on one line", () => {
+      const longTitle = "Unrealised return across the full portfolio";
+
+      render(
+        <PnlCard
+          type="interactive"
+          title={longTitle}
+          value={VALUE}
+          trend="up"
+          onPress={jest.fn()}
+        />,
+        { overrideInitialState: withPnl(true) },
+      );
+
+      expect(screen.getByText(longTitle).props).toMatchObject({
+        numberOfLines: 1,
+        ellipsizeMode: "tail",
+      });
+    });
   });
 
   describe("info variant", () => {

@@ -9,7 +9,7 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
-import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
+import { useDistribution, useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
@@ -107,7 +107,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   }, [setAddModalOpened]);
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+  const refreshAccountsOrdering = useRefreshAccountsOrderingAfterInteractions();
   useFocusEffect(refreshAccountsOrdering);
 
   useEffect(() => {

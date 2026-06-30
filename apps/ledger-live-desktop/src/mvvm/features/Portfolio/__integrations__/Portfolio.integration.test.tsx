@@ -153,7 +153,10 @@ const createPortfolioMock = (countervalueChange: {
   countervalueChange,
 });
 
-const defaultPortfolioMock = createPortfolioMock({ percentage: 0.0542, value: 5000 });
+const defaultPortfolioMock = createPortfolioMock({
+  percentage: 0.0542,
+  value: 5000,
+});
 
 describe("PortfolioView", () => {
   const defaultProps = {
@@ -162,9 +165,7 @@ describe("PortfolioView", () => {
     totalOperations: 10,
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
-    shouldDisplayMarketBanner: true,
     shouldDisplayGraphRework: true,
-    shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
     shouldDisplayAssetDiscoverability: false,
     shouldDisplayOperationsList: true,
@@ -432,7 +433,7 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
@@ -449,7 +450,7 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       expect(screen.getByTestId("skeleton-list")).toBeVisible();
     });
@@ -461,28 +462,18 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("generic-error")).toBeVisible();
       });
     });
-
-    it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Market")).toBeNull();
-    });
   });
 
   describe("QuickActions", () => {
-    it("should render QuickActions when shouldDisplayQuickActionCtas is true", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />);
+    it("should render QuickActions ", () => {
+      render(<PortfolioView {...defaultProps} />);
       expect(screen.getByTestId("quick-actions-actions-list")).toBeVisible();
-    });
-
-    it("should not render QuickActions when shouldDisplayQuickActionCtas is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={false} />);
-      expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
     });
   });
 
@@ -686,7 +677,7 @@ describe("PortfolioView", () => {
 const walletV4TourFlagOverrides = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
-    params: { tour: true, mainNavigation: true, marketBanner: true },
+    params: { tour: true, mainNavigation: true },
   },
 });
 

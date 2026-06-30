@@ -3,8 +3,11 @@ import VersionNumber from "react-native-version-number";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { useFeature } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapDadaMarketToDisplayData } from "LLM/features/GlobalSearch/utils/mapDadaMarketToDisplayData";
 import { track } from "~/analytics";
@@ -36,6 +39,12 @@ export function useGlobalSearchResults(): GlobalSearchResults {
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
   const version = VersionNumber.appVersion ?? "";
 
+  const modularDrawer = useFeature("llmModularDrawer");
+  const isStaging = modularDrawer?.params?.backendEnvironment === "STAGING";
+  const includeTestNetworks = useEnv("MANAGER_DEV_MODE");
+  // Hide currencies disabled by a feature flag, mirroring the receive flow.
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+
   const handleTrackSearch = useCallback(
     (query: string) => track("search_query", { query, page: ScreenName.GlobalSearch }),
     [],
@@ -63,6 +72,8 @@ export function useGlobalSearchResults(): GlobalSearchResults {
     version,
     search: query,
     skip: query.length === 0,
+    isStaging,
+    includeTestNetworks,
   });
 
   const searchResults = useMemo<MarketAssetDisplayData[]>(() => {
@@ -71,6 +82,11 @@ export function useGlobalSearchResults(): GlobalSearchResults {
     return data.currenciesOrder.metaCurrencyIds.flatMap(id => {
       const meta = data.cryptoAssets[id];
       if (!meta) return [];
+      // Drop an asset whose every network currency is disabled by a feature flag.
+      const networks = Object.keys(meta.assetsIds);
+      if (networks.length > 0 && networks.every(network => deactivatedCurrencyIds.has(network))) {
+        return [];
+      }
       const currency = selectCurrencyForMetaId(id, data);
       if (!currency) return [];
 
@@ -82,7 +98,16 @@ export function useGlobalSearchResults(): GlobalSearchResults {
         ),
       ];
     });
-  }, [data, query, counterCurrency, counterValueUnit, usdToFiatRate, locale, t]);
+  }, [
+    data,
+    query,
+    deactivatedCurrencyIds,
+    counterCurrency,
+    counterValueUnit,
+    usdToFiatRate,
+    locale,
+    t,
+  ]);
 
   const isLoadingSearch = isSearchActive && (isDebouncing || isLoading || rateStatus === "loading");
   const clearSearch = useCallback(() => handleSearch(""), [handleSearch]);

@@ -36,3 +36,17 @@ Running the app in debug mode allows us to see bridge logs, inspect the UI, etc.
 
 1. Set the debug env var in your terminal: `export E2E_DEBUG_APP=true`
 2. Launch a test for the relevant patform, eg `pnpm android --spec specs/swapETH_ETH_USDT.spec.ts`
+
+## Pointing to a specific platform version
+
+It is possible to point to a custom Android or iOS platform version.
+
+Just set the relevant env var:
+
+```bash
+# ANDROID
+export E2E_WDIO_ANDROID_VERSION="16.0"
+
+# IOS
+export E2E_WDIO_IOS_VERSION="26.3"
+```

@@ -3,9 +3,7 @@ import { flagWith } from "../../define";
 
 export const lwdWallet40 = flagWith(
   {
-    marketBanner: z.boolean(),
     graphRework: z.boolean(),
-    quickActionCtas: z.boolean(),
     mainNavigation: z.boolean(),
     tour: z.boolean(),
     q2Tour: z.boolean(),
@@ -24,9 +22,7 @@ export const lwdWallet40 = flagWith(
   {
     enabled: false,
     params: {
-      marketBanner: true,
       graphRework: true,
-      quickActionCtas: true,
       mainNavigation: true,
       tour: true,
       q2Tour: false,

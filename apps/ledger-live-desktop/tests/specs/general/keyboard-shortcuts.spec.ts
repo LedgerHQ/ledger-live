@@ -2,7 +2,7 @@ import os from "os";
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../component/layout.component";
-import { AddAccountModal } from "../../page/modal/add.account.modal";
+import { Drawer } from "../../component/drawer.component";
 import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({
@@ -29,7 +29,7 @@ test.use({
 test("Keyboard shortcuts", async ({ page }) => {
   const layout = new Layout(page);
   const portfolioPage = new PortfolioPage(page);
-  const addAccountModal = new AddAccountModal(page);
+  const drawer = new Drawer(page);
 
   // test that CTRL+SHIFT+I doesn't open devtools
   await test.step("it doesn't open devtools", async () => {
@@ -48,18 +48,20 @@ test("Keyboard shortcuts", async ({ page }) => {
     expect(isDevToolsOpened).toBe(false);
   });
 
-  // test navigation with keyboard in modal
-  await test.step("it navigates in modal with keyboard", async () => {
+  // test navigation with keyboard in add account dialog
+  await test.step("it navigates in add account dialog with keyboard", async () => {
     await portfolioPage.openAddAccountModal();
+    await drawer.waitForAssetAccountSelectorVisible();
     await page.keyboard.press("Shift+Tab"); // -> select close button
-    await page.keyboard.press("Tab"); // -> goes back to select account input
+    await page.keyboard.press("Tab"); // -> goes back to search input
 
     // must focus the input
     await page.keyboard.press("Space");
-    await expect(addAccountModal.selectAccountInput).toBeFocused();
+    await expect(drawer.assetSearchInput).toBeFocused();
 
-    // must close the modal
+    // must close the dialog
     await page.keyboard.press("Escape");
+    await drawer.waitForDrawerToDisappear();
   });
 
   // test that backspace doesn't go back in history

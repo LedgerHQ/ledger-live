@@ -2,10 +2,6 @@
     "compilerOptions": {
         "moduleResolution": "NodeNext",
         "module": "NodeNext",
-        "lib": [
-            "es2022",
-            "dom"
-        ],
         "types": [
             "node",
             "@wdio/globals/types",

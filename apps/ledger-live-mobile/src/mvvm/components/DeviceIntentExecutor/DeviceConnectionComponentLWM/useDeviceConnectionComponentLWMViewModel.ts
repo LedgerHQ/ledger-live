@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
 import { log } from "@ledgerhq/logs";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
-  connectDeviceUseCase,
+  connectDevice,
   type ConnectDeviceUIState,
   ConnectDeviceUIStateTypes,
   useDeviceManagementKit,
@@ -32,6 +32,7 @@ import { useSourceFlow } from "../utils/SourceFlowContext";
 const LOG_TYPE = "DeviceConnectionComponentLWM";
 
 type UseDeviceConnectionComponentLWMViewModelParams = {
+  deviceConnectionParams: DeviceConnectionParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
 };
 
@@ -43,6 +44,7 @@ export type DeviceConnectionComponentLWMViewModel = {
 };
 
 export function useDeviceConnectionComponentLWMViewModel({
+  deviceConnectionParams,
   onConnected,
 }: UseDeviceConnectionComponentLWMViewModelParams): DeviceConnectionComponentLWMViewModel {
   const platform = Platform.OS === "ios" ? "ios" : "android";
@@ -59,7 +61,7 @@ export function useDeviceConnectionComponentLWMViewModel({
   // DMK unavailability is a misconfiguration (LWM provider missing) rather than a
   // runtime connection failure: throw synchronously so the nearest React
   // ErrorBoundary catches it. Runtime errors that escape the inner state machine
-  // are funnelled by `connectDeviceUseCase` into a terminal `UnknownError` UI state
+  // are funnelled by `connectDevice` into a terminal `UnknownError` UI state
   // and reach this hook via `next`, never via the observable's error channel.
   if (!dmk) {
     log(LOG_TYPE, "DMK unavailable");
@@ -165,14 +167,15 @@ export function useDeviceConnectionComponentLWMViewModel({
   );
 
   useEffect(() => {
-    const subscription = connectDeviceUseCase({
+    const subscription = connectDevice({
       knownDevices,
+      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds,
       dmk,
       onConnected: wrappedOnConnected,
     }).subscribe({ next: setState });
 
     return () => subscription.unsubscribe();
-  }, [dmk, knownDevices, wrappedOnConnected]);
+  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, knownDevices, wrappedOnConnected]);
 
   return {
     state,

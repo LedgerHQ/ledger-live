@@ -49,7 +49,10 @@ function createLogger(): LoggerPublisherService {
   } as unknown as LoggerPublisherService;
 }
 
-function createRecordingLogger(records: { errors: unknown[]; warnings: unknown[] }): LoggerPublisherService {
+function createRecordingLogger(records: {
+  errors: unknown[];
+  warnings: unknown[];
+}): LoggerPublisherService {
   return {
     subscribers: [],
     debug: () => {},
@@ -599,9 +602,7 @@ describe("NodeWebUsbTransport", () => {
       device: originalWebUsbDevice as never,
       interfaceNumber: 1,
     };
-    let machine:
-      | DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
-      | undefined;
+    let machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies> | undefined;
 
     const transport = createTestTransport(
       params => {
@@ -2103,7 +2104,9 @@ describe("NodeWebUsbTransport", () => {
     });
     const connectedDevice = unwrapConnectedDevice(connectResult);
 
-    await expect(transport.disconnect({ connectedDevice })).rejects.toThrow("APDU sender close failed");
+    await expect(transport.disconnect({ connectedDevice })).rejects.toThrow(
+      "APDU sender close failed",
+    );
 
     const callsBefore = machineSendApduCalls;
     const apduResult = await connectedDevice.sendApdu(new Uint8Array([0xb0, 0x01]));
@@ -2130,9 +2133,7 @@ describe("NodeWebUsbTransport", () => {
       device: originalWebUsbDevice as never,
       interfaceNumber: 1,
     };
-    let machine:
-      | DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
-      | undefined;
+    let machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies> | undefined;
 
     const transport = createTestTransport(
       params => {
@@ -2205,9 +2206,7 @@ describe("NodeWebUsbTransport", () => {
       device: originalWebUsbDevice as never,
       interfaceNumber: 1,
     };
-    let machine:
-      | DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
-      | undefined;
+    let machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies> | undefined;
 
     const transport = createTestTransport(
       params => {

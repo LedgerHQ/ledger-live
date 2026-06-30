@@ -87,9 +87,7 @@ describe("Wallet 4.0 - Portfolio", () => {
     await app.portfolio.pressQuickActionTransferButton();
     await app.portfolio.checkTransferBottomSheetReceiveButtonVisibility();
     await app.portfolio.checkTransferBottomSheetSendButtonVisibility();
-    if (await app.portfolio.isNoahEnabled()) {
-      await app.portfolio.checkTransferBottomSheetBankTransferButtonVisibility();
-    }
+    await app.portfolio.checkTransferBottomSheetBankTransferButtonVisibility();
     await app.portfolio.pressTransferBottomSheetReceiveButton();
     await app.modularDrawer.checkSelectAssetPage();
     await app.portfolio.closeBottomSheet();

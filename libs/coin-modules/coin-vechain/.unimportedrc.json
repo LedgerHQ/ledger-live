@@ -52,6 +52,7 @@
     "src/datasets/vechain.ts",
     "src/index.ts",
     "src/mock.ts",
+    "src/network/getFees.ts",
     "src/network/index.ts",
     "src/network/sdk.ts",
     "src/signer/getAddress.ts",

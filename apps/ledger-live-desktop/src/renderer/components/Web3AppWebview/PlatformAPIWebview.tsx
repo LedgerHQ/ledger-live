@@ -41,8 +41,6 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@features/platform-feature-flags";
@@ -103,14 +101,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
     const listCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
-    const { isModularDrawerVisible } = useModularDrawerVisibility({
-      modularDrawerFeatureFlagKey: "lldModularDrawer",
-    });
-    const modularDrawerVisible = isModularDrawerVisible({
-      location: ModularDrawerLocation.LIVE_APP,
-      liveAppId: manifest.id,
-    });
-
     const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
 
     const openAssetAndAccountSelector = useCallback(
@@ -141,17 +131,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           request,
           deactivatedCurrencyIds,
           openAssetAndAccountSelector,
-          modularDrawerVisible,
         );
       },
-      [
-        manifest,
-        dispatch,
-        walletState,
-        deactivatedCurrencyIds,
-        openAssetAndAccountSelector,
-        modularDrawerVisible,
-      ],
+      [manifest, dispatch, walletState, deactivatedCurrencyIds, openAssetAndAccountSelector],
     );
 
     const receiveOnAccount = useCallback(

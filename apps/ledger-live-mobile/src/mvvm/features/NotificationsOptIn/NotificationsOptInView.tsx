@@ -24,7 +24,6 @@ export function NotificationsOptInView({ viewModel }: Props) {
           source="onboarding"
           repromptDelay={viewModel.nextRepromptDelay}
           dismissedCount={viewModel.dismissedCount}
-          variant={viewModel.variant}
         />
         <Box lx={{ flex: 1, paddingBottom: "s24" }}>
           <Box lx={{ alignItems: "flex-start", paddingHorizontal: "s4", paddingTop: "s8" }}>

@@ -1,11 +1,15 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Features } from "@shared/feature-flags";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { isSmallValueTokenOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import {
   flattenOperationWithInternalsAndNfts,
   isAddressPoisoningOperation,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
+import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
 
 /**
  * Mirrors {@link useAddressPoisoningOperationsFamilies} using Redux-resolved flags.
@@ -43,6 +47,9 @@ export function hasUnreadOperations(
   lastSeenDate: string | null,
   shouldFilterTokenOps: boolean,
   addressPoisoningFamilies: string[] | null,
+  shouldHideSmallValueTokenOperations = false,
+  countervaluesState?: CounterValuesState,
+  userCounterValueCurrency?: Currency,
 ): boolean {
   if (!lastSeenDate) return false;
 
@@ -50,12 +57,33 @@ export function hasUnreadOperations(
   if (lastSeenTs === null) return false;
 
   const filterOperation = (operation: Operation, account: AccountLike): boolean => {
-    if (!shouldFilterTokenOps) return true;
-    return !isAddressPoisoningOperation(
-      operation,
-      account,
-      addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-    );
+    if (
+      shouldFilterTokenOps &&
+      isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      shouldHideSmallValueTokenOperations &&
+      countervaluesState &&
+      userCounterValueCurrency &&
+      isSmallValueTokenOperation({
+        operation,
+        account,
+        countervaluesState,
+        userCounterValueCurrency,
+        thresholdUsd: HISTORY_DUST_FILTER_THRESHOLD_USD,
+      })
+    ) {
+      return false;
+    }
+
+    return true;
   };
 
   const allAccounts = flattenAccounts(accounts);

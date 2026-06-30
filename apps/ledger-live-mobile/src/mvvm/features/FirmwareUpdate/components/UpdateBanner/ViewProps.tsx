@@ -1,4 +1,5 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { DebugOsUpdateBannerMode } from "~/reducers/types";
 
 export interface ViewProps {
   bannerVisible: boolean;
@@ -10,6 +11,7 @@ export interface ViewProps {
   isUpdateSupportedButDeviceNotWired: boolean;
   shouldDisplayWallet40MainNav: boolean;
   isInMyLedgerDeviceScreen: boolean;
+  debugBannerMode: DebugOsUpdateBannerMode;
 }
 
 export type DrawerProps = Pick<

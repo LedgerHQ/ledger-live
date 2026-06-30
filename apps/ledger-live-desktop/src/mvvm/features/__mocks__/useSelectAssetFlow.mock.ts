@@ -1,7 +1,7 @@
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetType } from "../ModularDialog/types";
 
 export const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 export const ethereumCurrency = getCryptoCurrencyById("ethereum");

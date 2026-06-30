@@ -2,6 +2,14 @@ import os from "os";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import BigNumber from "bignumber.js";
+import { setCryptoCurrenciesStore } from "@ledgerhq/cryptoassets";
+import {
+  CRYPTO_CURRENCIES_REGISTRY,
+  CRYPTO_CURRENCY_ALIASES,
+} from "@domain/entity-currency-crypto";
+
+// The domain registry is the runtime source of truth for currency data.
+setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 
 let ledgerClientVersion = `lld/${__APP_VERSION__}`;
 

@@ -27,17 +27,17 @@ export default function StepOnboard({ onAgree, onCancel }: Props) {
               <Trans i18nKey="concordium.onboard.acknowledge.description" />
             </Text>
 
-            {[1, 2, 3, 4].map(i => (
-              <Flex key={i} flexDirection="row" columnGap={8}>
+            {["separateSeed", "outsideLedgerLive", "signingSecure"].map(key => (
+              <Flex key={key} flexDirection="row" columnGap={8}>
                 <Text variant="body" color="neutral.c80">
                   {"\u2022"}
                 </Text>
                 <Flex flexDirection="column" flex={1} rowGap={4}>
                   <Text variant="body" fontWeight="semiBold" color="neutral.c100">
-                    <Trans i18nKey={`concordium.onboard.acknowledge.list.${i}.title`} />
+                    <Trans i18nKey={`concordium.onboard.acknowledge.list.${key}.title`} />
                   </Text>
                   <Text variant="body" color="neutral.c80">
-                    <Trans i18nKey={`concordium.onboard.acknowledge.list.${i}.description`} />
+                    <Trans i18nKey={`concordium.onboard.acknowledge.list.${key}.description`} />
                   </Text>
                 </Flex>
               </Flex>

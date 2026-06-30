@@ -4,7 +4,6 @@ import { performSwapUntilQuoteSelectionStep } from "../flows/swap.flows.ts";
 
 import { setEnv } from "@ledgerhq/live-env";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";

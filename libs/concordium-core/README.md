@@ -1,13 +1,13 @@
 # @ledgerhq/concordium-core
 
-Shared Concordium protocol types, serialization, and utilities used by both `@ledgerhq/hw-app-concordium` and `@ledgerhq/coin-concordium`.
+Shared Concordium protocol types, serialization, and utilities used by `@ledgerhq/coin-concordium` and `@ledgerhq/live-signer-concordium`.
 
 ## Purpose
 
-This package extracts shared protocol-level logic so that the hardware wallet app and the coin module can depend on it independently, without the coin module depending on the hardware wallet app.
+This package extracts shared protocol-level logic so that the coin module and the device signer can depend on it independently.
 
 ```
-hw-app-concordium ←── @ledgerhq/concordium-core ──→ coin-concordium
+live-signer-concordium ←── @ledgerhq/concordium-core ──→ coin-concordium
 ```
 
 ## Exported APIs
@@ -20,10 +20,9 @@ hw-app-concordium ←── @ledgerhq/concordium-core ──→ coin-concordium
 - `TransferPayload` — Simple transfer payload
 - `TransferWithMemoPayload` — Transfer with memo payload
 - `TransactionPayload` — Union of transfer payload types
-- `CredentialDeploymentTransaction` — Credential deployment in hw-app format
+- `CredentialDeploymentTransaction` — Credential deployment in device format
 - `IdOwnershipProofs` — ID ownership proofs from Concordium ID App
 - `Address` — Address response from device
-- `VerifyAddressResponse` — Verify address response from device
 - `SigningResult` — Signing result with signature and serialized transaction
 
 ### Address (`src/address.ts`)
@@ -50,9 +49,6 @@ hw-app-concordium ←── @ledgerhq/concordium-core ──→ coin-concordium
 - `serializeMap` — Serialize a Record to binary format
 - `serializeVerifyKey` — Serialize a public key with scheme prefix
 - `serializeYearMonth` — Serialize YYYYMM date string
-- `serializePath` — Serialize BIP32 path array to Buffer
-- `pathToBuffer` — Convert BIP32 path string to device-compatible Buffer
-- `chunkBuffer` — Split a buffer into fixed-size chunks
 
 ### Serialization (`src/serialization.ts`)
 
@@ -70,5 +66,5 @@ hw-app-concordium ←── @ledgerhq/concordium-core ──→ coin-concordium
 
 ## Related Packages
 
-- `@ledgerhq/hw-app-concordium` — Ledger device communication for Concordium (depends on this package for shared types/serialization; adds APDU-specific functions)
 - `@ledgerhq/coin-concordium` — Ledger Live coin module for Concordium (depends on this package for shared types/serialization)
+- `@ledgerhq/live-signer-concordium` — Ledger Live signer for Concordium over the Device Management Kit (depends on this package for shared types/serialization)

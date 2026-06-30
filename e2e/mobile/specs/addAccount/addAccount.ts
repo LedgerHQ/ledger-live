@@ -20,17 +20,9 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-
-      const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
-      if (isModularDrawer) {
-        await app.modularDrawer.performSearchByTicker(currency.ticker);
-        await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
-        await app.modularDrawer.selectNetworkIfAsked(currency.name);
-      } else {
-        await app.common.performSearch(currency.id);
-        await app.receive.selectCurrency(currency.id);
-        await app.receive.selectNetworkIfAsked(currency.id);
-      }
+      await app.modularDrawer.performSearchByTicker(currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
+      await app.modularDrawer.selectNetworkIfAsked(currency.name);
 
       const accountId = await app.addAccount.addAccountAtIndex(
         `${currency.name} 1`,

@@ -14,7 +14,7 @@ const nonMockableScenarios = [
   "tokenExpires", // can't simulate token expiration
   "userRefusesAuth", // can't simulate device interaction at the moment
   "userRefusesRemoveMember", // can't simulate device interaction at the moment
-  "ringInitPreservesLedgerSyncMember", // mock SDK does not model per-app member eviction
+  "ringInitPreservesLedgerSyncMember", // scenario does not clean up its trustchain (shared in-memory mock state)
 ];
 
 const scenarioFolder = path.join(__dirname, "../../../tests/scenarios");

@@ -1,6 +1,5 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
-import { DatadogWebpackPlugin } from "@datadog/electron-sdk/webpack-plugin";
 import { commonConfig, rootFolder, outputFolder } from "./rspack.common";
 import {
   buildMainEnv,
@@ -8,7 +7,6 @@ import {
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-  isDatadogConfigured,
 } from "./utils";
 
 /**
@@ -41,18 +39,6 @@ export function createMainConfig(
       mainFields: ["main", "module"],
     },
     plugins: [
-      new DatadogWebpackPlugin(),
-      // Registered after DatadogWebpackPlugin so it is prepended last, running before the SDK's
-      // instrument banner: disables dd-trace when unconfigured, else its hook stalls <webview> loads.
-      ...(isDatadogConfigured()
-        ? []
-        : [
-            new rspack.BannerPlugin({
-              banner: 'process.env.DD_TRACE_ENABLED="false";',
-              raw: true,
-              entryOnly: true,
-            }),
-          ]),
       ...getRsdoctorPlugin("main"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),

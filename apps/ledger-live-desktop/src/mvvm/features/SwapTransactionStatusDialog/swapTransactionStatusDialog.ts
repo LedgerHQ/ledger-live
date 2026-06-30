@@ -1,4 +1,4 @@
-import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/transactionStatus/index";
+import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import {
   closeDialogWithData,
   openDialogWithData,

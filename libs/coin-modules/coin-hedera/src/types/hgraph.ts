@@ -15,6 +15,7 @@ export interface LatestIndexedConsensusTimestamp {
 
 export interface ERC20TokenAccount {
   token_id: number;
+  token_evm_address: string | null;
   balance: number;
   balance_timestamp: number;
   created_timestamp: number;

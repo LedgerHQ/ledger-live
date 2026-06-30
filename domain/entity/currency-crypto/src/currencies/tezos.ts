@@ -9,6 +9,7 @@ export const tezos = currency({
   ticker: "XTZ",
   scheme: "tezos",
   color: "#007BFF",
+  keywords: ["xtz", "tezos"],
   family: "tezos",
   blockAvgTime: 60,
   units: [

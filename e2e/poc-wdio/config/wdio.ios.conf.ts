@@ -20,7 +20,7 @@ const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
       "appium:wdaLocalPort": 8203 + i,
       "appium:mjpegServerPort": 9100 + i,
       "custom:capa": { websocketPort: 8098 + i },
-      "appium:platformVersion": process.env.CI ? "26.3" : "26.2",
+      "appium:platformVersion": process.env.E2E_WDIO_IOS_VERSION || "26.3",
       "appium:automationName": "XCUITest",
       "appium:wdaLaunchTimeout": 180_000,
       "appium:wdaStartupRetries": 3,

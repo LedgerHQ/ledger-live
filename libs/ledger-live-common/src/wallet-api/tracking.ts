@@ -264,6 +264,15 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     bitcoinFamilyAccountPublicKeySuccess: (manifest: AppManifest) => {
       track("WalletAPI bitcoin family account publicKey success", getEventData(manifest));
     },
+    accountGetPublicKeyRequested: (manifest: AppManifest) => {
+      track("WalletAPI account getPublicKey requested", getEventData(manifest));
+    },
+    accountGetPublicKeyFail: (manifest: AppManifest) => {
+      track("WalletAPI account getPublicKey fail", getEventData(manifest));
+    },
+    accountGetPublicKeySuccess: (manifest: AppManifest) => {
+      track("WalletAPI account getPublicKey success", getEventData(manifest));
+    },
     bitcoinFamilyAccountXpubRequested: (manifest: AppManifest) => {
       track("WalletAPI bitcoin family account xpub requested", getEventData(manifest));
     },

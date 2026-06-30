@@ -157,6 +157,10 @@
     },
     "./libs/asset-aggregation": {
       "entry": ["src/index.ts"]
+    },
+    "./libs/coin-tester-modules/coin-tester-cosmos": {
+      "entry": ["src/scenarii/Babylon.ts", "src/scenarii/Cosmos.ts"],
+      "ignoreDependencies": ["expect"]
     }
   }
 }

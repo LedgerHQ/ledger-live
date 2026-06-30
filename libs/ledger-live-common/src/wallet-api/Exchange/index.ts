@@ -27,6 +27,19 @@ export {
 export { getQuotes } from "./quotes";
 export type * from "./quotes";
 
+// DEX execution helpers used by `custom.swap` device-intent flows
+export {
+  buildProviderTransactionData,
+  isDexExecutionProvider,
+  DEFAULT_DEX_GAS_LIMIT,
+  DEFAULT_DEX_GAS_LIMIT_MULTIPLIER,
+} from "./dex";
+export type {
+  DexBuildContext,
+  DexProvider,
+  DexProviderTransactionData,
+  DexTransactionData,
+} from "./dex";
 // Swap transaction status (Wallet API getTransactionStatus)
 export { getTransactionStatus } from "./transactionStatus";
 export type * from "./transactionStatus";

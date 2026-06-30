@@ -35,14 +35,20 @@ export const isExchangeSupportedByApp = (appName: string, appVersion: string): b
   return !!(valid(minVersion) && valid(appVersion) && gte(appVersion, minVersion));
 };
 
+const ARC_NATIVE_USDC_TOKEN_ID_BY_CURRENCY_ID: Record<string, string> = {
+  arc: "arc/erc20/usdc_0x0000000000000000000000000000000000000000",
+  arc_testnet: "arc_testnet/erc20/usdc_0x3600000000000000000000000000000000000000",
+};
+
 export const getCurrencyExchangeConfig = async (
   currency: CryptoCurrency | TokenCurrency,
 ): Promise<ExchangeCurrencyNameAndSignature> => {
   const env = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
-  const res = await calService.findCurrencyData(currency.id, { env });
+  const lookupId = ARC_NATIVE_USDC_TOKEN_ID_BY_CURRENCY_ID[currency.id] ?? currency.id;
+  const res = await calService.findCurrencyData(lookupId, { env });
 
   if (!res) {
-    throw new Error(`Exchange, missing configuration for ${currency.id}`);
+    throw new Error(`Exchange, missing configuration for ${lookupId}`);
   }
 
   return {

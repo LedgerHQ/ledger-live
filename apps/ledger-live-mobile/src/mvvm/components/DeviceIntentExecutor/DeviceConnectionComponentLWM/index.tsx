@@ -4,10 +4,11 @@ import { DeviceConnectionComponentLWMView } from "./DeviceConnectionComponentLWM
 import { useDeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
 const DeviceConnectionComponentLWM: DeviceConnectionComponent = ({
-  deviceConnectionParams: _deviceConnectionParams,
+  deviceConnectionParams,
   onConnected,
 }) => {
   const viewModel = useDeviceConnectionComponentLWMViewModel({
+    deviceConnectionParams,
     onConnected,
   });
 

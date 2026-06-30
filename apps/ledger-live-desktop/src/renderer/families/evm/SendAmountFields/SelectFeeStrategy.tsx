@@ -1,6 +1,6 @@
 import { isStrategyDisabled } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
 import {
   Transaction as EvmTransaction,
   GasOptions,

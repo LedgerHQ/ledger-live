@@ -1,5 +1,5 @@
 import { CommonActions } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
+import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigateBackToSwapTab";
 
 describe("navigateBackToSwapTab", () => {
@@ -12,16 +12,18 @@ describe("navigateBackToSwapTab", () => {
   }) => {
     const dispatch = jest.fn();
     const goBack = jest.fn();
+    const getParent = jest.fn(() => parentNavigation);
 
     return {
       navigation: {
         dispatch,
         getState: () => ({ routeNames }) as const,
-        getParent: () => parentNavigation,
+        getParent,
         goBack,
       },
       dispatch,
       goBack,
+      getParent,
     };
   };
 
@@ -48,10 +50,10 @@ describe("navigateBackToSwapTab", () => {
     expect(goBack).not.toHaveBeenCalled();
   });
 
-  it("should reset root navigation through Main and Swap in Wallet40", () => {
+  it("should go back through the Base navigator in Wallet40", () => {
     const parentDispatch = jest.fn();
     const parentGoBack = jest.fn();
-    const { navigation, dispatch } = createNavigation({
+    const { navigation, dispatch, goBack, getParent } = createNavigation({
       routeNames: [ScreenName.SwapHistory],
       parentNavigation: { dispatch: parentDispatch, goBack: parentGoBack },
     });
@@ -60,24 +62,12 @@ describe("navigateBackToSwapTab", () => {
       navigation,
     });
 
+    // The Base navigator must be targeted explicitly by id, not by tree position.
+    expect(getParent).toHaveBeenCalledWith(BASE_NAVIGATOR_ID);
     expect(dispatch).not.toHaveBeenCalled();
-    expect(parentDispatch).toHaveBeenCalledWith(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Main,
-            params: {
-              screen: NavigatorName.Swap,
-              params: {
-                screen: ScreenName.SwapTab,
-              },
-            },
-          },
-        ],
-      }),
-    );
-    expect(parentGoBack).not.toHaveBeenCalled();
+    expect(goBack).not.toHaveBeenCalled();
+    expect(parentDispatch).not.toHaveBeenCalled();
+    expect(parentGoBack).toHaveBeenCalledTimes(1);
   });
 
   it("should fallback to goBack when no parent navigation exists", () => {

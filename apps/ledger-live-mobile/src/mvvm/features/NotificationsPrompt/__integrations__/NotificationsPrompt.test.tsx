@@ -12,7 +12,6 @@ import { notificationsDataOfUserSelector } from "~/reducers/notifications";
 import { notificationsSelector } from "~/reducers/settings";
 import { add, sub, type Duration } from "date-fns";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 import { NotificationsSettings, NotificationsState } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
@@ -101,7 +100,6 @@ describe("NotificationsPrompt Integration", () => {
     alreadyDelayedToLater,
     dismissedOptInDrawerAtList,
     notificationSettings = {},
-    variant = AB_TESTING_VARIANTS.B,
     skipStorageSetup = false,
   }: {
     actionSource?: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">;
@@ -112,7 +110,6 @@ describe("NotificationsPrompt Integration", () => {
     alreadyDelayedToLater?: boolean;
     dismissedOptInDrawerAtList?: number[];
     notificationSettings?: Partial<NotificationsSettings>;
-    variant?: ABTestingVariants;
     skipStorageSetup?: boolean;
   }) {
     mockHasPermission.mockResolvedValue(osPermission);
@@ -167,7 +164,6 @@ describe("NotificationsPrompt Integration", () => {
       {
         overrideInitialState: withFlagOverrides(
           createNotificationsPromptFeatureFlags({
-            variant,
             repromptSchedule: REPROMPT_SCHEDULE.map(s => ({
               months: 0,
               hours: 0,
@@ -999,42 +995,4 @@ describe("NotificationsPrompt Integration", () => {
     });
   });
 
-  describe("A/B test", () => {
-    describe("variant A (legacy)", () => {
-      it("should show drawer after onboarding action", async () => {
-        const { tryTriggerDrawer } = await setup({
-          osPermission: AuthorizationStatus.NOT_DETERMINED,
-          appNotifications: false,
-          variant: AB_TESTING_VARIANTS.A,
-        });
-
-        await tryTriggerDrawer();
-        expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
-      });
-
-      it("should never show drawer after non-onboarding actions", async () => {
-        const { tryTriggerDrawer } = await setup({
-          actionSource: "add_favorite_coin",
-          osPermission: AuthorizationStatus.AUTHORIZED,
-          appNotifications: false,
-          variant: AB_TESTING_VARIANTS.A,
-        });
-
-        await tryTriggerDrawer();
-        expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-      });
-
-      it("should never show drawer after inactivity", async () => {
-        await setup({
-          osPermission: AuthorizationStatus.AUTHORIZED,
-          appNotifications: false,
-          lastActionAt: sub(Date.now(), INACTIVITY_REPROMPT).getTime(),
-          variant: AB_TESTING_VARIANTS.A,
-        });
-
-        act(() => jest.runOnlyPendingTimers());
-        expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-      });
-    });
-  });
 });

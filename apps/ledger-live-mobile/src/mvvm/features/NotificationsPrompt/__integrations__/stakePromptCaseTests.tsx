@@ -1,4 +1,3 @@
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { act, screen, waitFor } from "@tests/test-renderer";
 import { track } from "~/analytics";
 import type { StakePromptCase } from "./stakePromptFixtures";
@@ -30,7 +29,6 @@ export function describeStakePromptCaseChunk(cases: StakePromptCase[], part: num
           {
             action: "stake",
             shouldPrompt: true,
-            variant: AB_TESTING_VARIANTS.B,
             repromptDelay: null,
             dismissedCount: 0,
             skipReason: undefined,
@@ -46,7 +44,6 @@ export function describeStakePromptCaseChunk(cases: StakePromptCase[], part: num
           drawerPromptTarget: "globalPushNotifications",
           repromptDelay: null,
           dismissedCount: 0,
-          variant: AB_TESTING_VARIANTS.B,
         });
       },
     );

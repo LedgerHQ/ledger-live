@@ -89,38 +89,6 @@ export const BASE_USD_FEE_BY_OPERATION_TYPE = {
   [HEDERA_OPERATION_TYPES.ContractCall]: 0, // Contract call fees are based on gas used and are handled separately
 } as const satisfies Record<HEDERA_OPERATION_TYPES, number>;
 
-/**
- * Array of supported ERC20 token IDs for Hedera.
- *
- * This is a temporary solution to allow bypassing deprecated methods.
- * It is essential to update this list in the future to ensure support
- * for other erc20 tokens.
- *
- * task that should remove this: https://ledgerhq.atlassian.net/browse/LIVE-24948
- */
-export const SUPPORTED_ERC20_TOKENS = [
-  {
-    id: "hedera/erc20/weth_0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
-    contractAddress: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
-    tokenId: "0.0.9470869",
-  },
-  {
-    id: "hedera/erc20/bonzo_atoken_usdc_0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-    contractAddress: "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-    tokenId: "0.0.7308496",
-  },
-  {
-    id: "hedera/erc20/audd_0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
-    contractAddress: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
-    tokenId: "0.0.8317070",
-  },
-  {
-    id: "hedera/erc20/wrapped_btc_0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
-    contractAddress: "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
-    tokenId: "0.0.10047837",
-  },
-];
-
 export const MAP_STAKING_MODE_TO_MEMO: Record<string, string> = {
   [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Collect Staking Rewards",
   [HEDERA_TRANSACTION_MODES.Delegate]: "Stake",

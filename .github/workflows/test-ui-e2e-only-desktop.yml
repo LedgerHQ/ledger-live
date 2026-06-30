@@ -195,6 +195,9 @@ jobs:
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+      cache-bucket: ll-nx-cache
+      USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
+      E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
     outputs:
       test_passed: ${{ steps.run-playwright.outputs.passed }}
       test_failed: ${{ steps.run-playwright.outputs.failed }}
@@ -331,6 +334,28 @@ jobs:
               process.exit(1);
             }
           ' "$raw"
+
+      - name: Compute userdata cache key date
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore pre-generated E2E userdata (app.json) from S3 cache
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: develop/e2e-userdata-desktop-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            develop/e2e-userdata-desktop-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: Run Playwright E2E tests
         id: run-playwright

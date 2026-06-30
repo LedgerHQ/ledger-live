@@ -88,6 +88,7 @@ test.describe("Earn [v2]", () => {
           ...FF_STAKE_PROGRAMS_MODAL,
         },
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
 
       test(
@@ -137,6 +138,7 @@ test.describe("Earn [v2]", () => {
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_DESKTOP_FLAGS,
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
 
       test(
@@ -204,6 +206,7 @@ test.describe("Earn [v2]", () => {
       speculosApp: account.currency.speculosApp,
       featureFlags: EARN_V2_DESKTOP_FLAGS,
       cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4643";
@@ -229,6 +232,7 @@ test.describe("Earn [v2]", () => {
       speculosApp: account.currency.speculosApp,
       featureFlags: EARN_V2_DESKTOP_FLAGS,
       cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4645";
@@ -268,6 +272,7 @@ test.describe("Earn [v2]", () => {
           ...FF_STAKE_PROGRAMS_MODAL,
         },
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
 
       test(
@@ -312,6 +317,7 @@ test.describe("Earn [v2]", () => {
         },
       },
       cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4647";
@@ -342,6 +348,7 @@ test.describe("Earn [v2]", () => {
       speculosApp: parentAccount.currency.speculosApp,
       featureFlags: EARN_V2_DESKTOP_FLAGS,
       cliCommands: [liveDataWithAddressCommand(parentAccount)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4648";

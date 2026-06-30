@@ -67,6 +67,7 @@ libs/asset-aggregation/                                  @ledgerhq/wallet-xp
 libs/asset-detail/                                       @ledgerhq/wallet-xp
 libs/wallet-pnl/                                         @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
+libs/live-wallet/src/walletsync/                          @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
@@ -118,7 +119,7 @@ libs/ledger-live-common/src/bot/                                    @ledgerhq/co
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
 libs/ledger-live-common/src/apps/config.ts                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
-libs/ledger-live-common/src/flows/send/                             @ledgerhq/coin-integration
+libs/ledger-live-common/src/flows/                                  @ledgerhq/coin-integration
 libs/ledger-live-common/src/intents/                                @ledgerhq/coin-integration
 libs/ledger-live-common/src/transaction/                            @ledgerhq/coin-integration
 libs/ledger-live-common/src/walletConnect/                          @ledgerhq/coin-integration
@@ -202,6 +203,7 @@ apps/ledger-live-mobile/src/components/Stake/                        					@ledge
 apps/ledger-live-mobile/src/components/WebPTXPlayer/                 					@ledgerhq/ptx
 apps/ledger-live-mobile/src/reducers/earn.ts                         					@ledgerhq/ptx
 apps/ledger-live-mobile/src/reducers/swap.ts                         					@ledgerhq/ptx
+apps/ledger-live-mobile/src/reducers/swapTransactionStatusDrawer.ts           @ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/Exchange/                        					@ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/PTX/                             					@ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/Swap/                            					@ledgerhq/ptx
@@ -277,6 +279,8 @@ apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/liv
 **/BleDevicePairing*                                               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/reducers/knownDevices.ts               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/reducers/__tests__/knownDevices.test.ts @ledgerhq/live-devices
+apps/ledger-live-desktop/src/renderer/reducers/knownDevices.ts     @ledgerhq/live-devices
+apps/ledger-live-desktop/src/renderer/reducers/knownDevices.test.ts @ledgerhq/live-devices
 apps/ledger-live-mobile/src/transport/                             @ledgerhq/live-devices
 apps/ledger-live-mobile/src/react-native-hw-transport-ble/         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
@@ -361,6 +365,7 @@ apps/ledger-live-desktop/src/mvvm/features/GenericAwarenessModal/               
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInScreenV2/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/FinishOnboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/GenericAwarenessModalDevTool/  @ledgerhq/engagement
@@ -471,6 +476,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/tsconfig*                                          @ledgerhq/platform
 **/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
+mise.toml                                             @ledgerhq/platform
 
 # CI — Nx
 /nx.json                                              @ledgerhq/platform @ledgerhq/wallet-ci

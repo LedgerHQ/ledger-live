@@ -129,7 +129,6 @@ describe("formatFeeRate", () => {
   });
 
   it("returns empty string for undefined", () => {
-    // @ts-expect-error - Testing runtime behavior with undefined, function handles it with optional chaining
     expect(formatFeeRate(undefined)).toBe("");
   });
 

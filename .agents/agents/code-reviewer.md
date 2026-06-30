@@ -39,6 +39,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - **New dependency in `package.json`**: must not duplicate an existing capability; peer compatibility must be verified; link to [bundlephobia](https://bundlephobia.com) with size impact.
 - **`pnpm-lock.yaml` diff**: Flag unrelated version bumps, mass reformatting, or entries not explained by the PR's `package.json` changes. The lockfile diff should be entirely explainable by the stated dependency changes.
 - **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.
+- **Don't add to live-common**: `libs/ledger-live-common/` is maintenance-only — bugfixes and edits to existing code are fine, but flag new features/folders/top-level modules added there. New shared code goes to a new `libs/*` package (that is expected, not a smell) — but the new package's `package.json` **must** contain `"private": true` to prepare for the domain transition; flag it if missing.
 - **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md` and `domain/api/README.md`.
 - **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md`.
 - Sonar issues: complexity, duplication, security hotspots

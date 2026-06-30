@@ -1,10 +1,21 @@
-min_version = '2026.3.1'
+min_version = '2026.4.8'
 
 [settings]
 experimental = true
 lockfile = true
 # Download the pre-compiled binaries
 ruby.compile = false
+
+lockfile_platforms = [
+  "linux-arm64",
+  "linux-arm64-musl",
+  "linux-x64",
+  "linux-x64-musl",
+  "macos-arm64",
+  "macos-x64",
+  "windows-arm64",
+  "windows-x64",
+]
 
 [plugins]
 bundler = "jonathanmorley/asdf-bundler"

@@ -52,7 +52,10 @@ export function registerCurrencyInStore(
 
   if (!currency.isTestnetFor) {
     const currencyAlreadySet = store.cryptocurrenciesByTicker[currency.ticker];
-    const currencyHasTickerInKeywords = Boolean(currency?.keywords?.includes(currency.ticker));
+    const tickerLower = currency.ticker.toLowerCase();
+    const currencyHasTickerInKeywords = Boolean(
+      currency.keywords?.some(k => k.toLowerCase() === tickerLower),
+    );
 
     if (
       !currencyAlreadySet ||
@@ -79,15 +82,40 @@ function buildCryptoCurrenciesStore(currencies: CryptoCurrency[]): CryptoCurrenc
  * Injects the crypto-currency registry from the canonical currency list.
  * This should be called once during application initialization.
  *
- * The caller only provides the currencies; the by-id/ticker/scheme indices and the
- * dev/prod arrays are derived here so they stay consistent by construction.
+ * The caller provides the currencies; the by-id/ticker/scheme indices and the dev/prod arrays are
+ * derived here so they stay consistent by construction. `aliases` maps a legacy alias key to a
+ * canonical id (e.g. `{ osmosis: "osmo" }`) so id lookups by that alias keep resolving, as they do
+ * against the bundled map which exposes the same legacy aliases.
  *
  * Uses globalThis to ensure a single shared reference across all module instances,
  * which is critical when coin-modules are lazy-loaded and may resolve to separate
  * module copies.
  */
-export function setCryptoCurrenciesStore(currencies: CryptoCurrency[]): void {
-  globalThis.__ledgerCryptoCurrenciesStore = buildCryptoCurrenciesStore(currencies);
+export function setCryptoCurrenciesStore(
+  currencies: CryptoCurrency[],
+  aliases: Record<string, string> = {},
+): void {
+  const store = buildCryptoCurrenciesStore(currencies);
+  for (const [alias, id] of Object.entries(aliases)) {
+    // Fail fast on a misconfigured alias map at injection time, rather than silently dropping it and
+    // letting a later getCryptoCurrencyById(alias) throw an opaque "not found" at runtime.
+    const currency = store.cryptocurrenciesById[id];
+    if (!currency) {
+      throw new Error(
+        `setCryptoCurrenciesStore: alias "${alias}" points to unknown currency id "${id}"`,
+      );
+    }
+    // The by-id map is null-prototype and only ever holds defined currencies, so a direct read is a
+    // safe own-key existence check (no prototype traversal) — and avoids Object.hasOwn, which needs a
+    // newer lib target than this package compiles against.
+    if (store.cryptocurrenciesById[alias]) {
+      throw new Error(
+        `setCryptoCurrenciesStore: alias "${alias}" collides with an existing currency id`,
+      );
+    }
+    store.cryptocurrenciesById[alias] = currency;
+  }
+  globalThis.__ledgerCryptoCurrenciesStore = store;
 }
 
 /**

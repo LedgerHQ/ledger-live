@@ -8,6 +8,7 @@ async function initApp(options: ApplicationOptions) {
     userdata: options.userdata,
     cliCommands: options.cliCommands,
     speculosApp: options.speculosApp,
+    speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }
@@ -33,7 +34,7 @@ export function runUserClearApplicationCacheTest(
     test("The user can clear application cache", async () => {
       await app.portfolio.tapTabSelector("Accounts");
       const countBeforeClearingCache = await app.portfolio.countAccounts();
-      await app.portfolio.navigateToSettings();
+      await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToHelpSettings();
       await app.settingsHelp.clickOnClearCacheRow();
       await app.settingsHelp.checkClearCacheModalIsDisplayed();
@@ -56,7 +57,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
     tags.forEach(tag => $Tag(tag));
 
     test("Verify that user can export logs", async () => {
-      await app.portfolio.navigateToSettings();
+      await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToHelpSettings();
       await app.settingsHelp.clickOnExportLogsRow();
       await app.settingsHelp.verifyLogsAreExported();
@@ -74,7 +75,7 @@ export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: stri
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test("Verify that user can access Ledger Support (Web Link)", async () => {
-      await app.portfolio.navigateToSettings();
+      await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToHelpSettings();
       await app.settingsHelp.expectLedgerSupportUrlToBeCorrect();
     });
@@ -99,7 +100,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test("Verify that user can select counter value to display amount in Ledger Live", async () => {
-      await app.portfolio.navigateToSettings();
+      await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToGeneralSettings();
       await app.settingsGeneral.changeCounterValue("Euro - EUR");
       await app.settingsGeneral.expectCounterValue("EUR");
@@ -116,16 +117,8 @@ async function initPasswordTest() {
   const nanoApp = AppInfos.ETHEREUM;
   await app.init({
     speculosApp: nanoApp,
-    cliCommands: [
-      async (userdataPath?: string) => {
-        return CLI.liveData({
-          currency: nanoApp.name,
-          index: 0,
-          appjson: userdataPath,
-          add: true,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(Account.ETH_1)],
+    speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }
@@ -136,7 +129,7 @@ export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
   describe("Password Lock Screen - Unlock with correct password", () => {
     beforeAll(async () => {
       await initPasswordTest();
-      await app.portfolio.navigateToSettings();
+      await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToGeneralSettings();
       await app.settingsGeneral.setupPasswordAndLock(CORRECT_PASSWORD);
       await app.passwordEntry.expectLock();
@@ -160,7 +153,7 @@ export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
   describe("Password Lock Screen - Stay locked with incorrect password", () => {
     beforeAll(async () => {
       await initPasswordTest();
-      await app.portfolio.navigateToSettings();
+      await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToGeneralSettings();
       await app.settingsGeneral.setupPasswordAndLock(CORRECT_PASSWORD);
       await app.passwordEntry.expectLock();

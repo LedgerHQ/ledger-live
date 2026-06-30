@@ -79,6 +79,7 @@ export function useSignatureViewModel() {
     statusActions: status,
     onFinish: goToConfirmation,
     registerPendingOperation,
+    recipientEnsName: state.recipient?.ensName,
   });
 
   useEffect(() => {

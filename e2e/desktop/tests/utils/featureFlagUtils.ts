@@ -11,9 +11,7 @@ export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> =
 export const isAssetSectionEnabled = process.env.E2E_ENABLE_ASSET_SECTION !== "0";
 
 const lwdWallet40BaseParams = {
-  marketBanner: true,
   graphRework: true,
-  quickActionCtas: true,
   mainNavigation: true,
 } as const;
 
@@ -62,7 +60,7 @@ export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
   stakePrograms: {
     enabled: true,
     params: {
-      list: ["cosmos"],
+      list: ["cosmos", "sei_evm"],
       redirects: {
         "ethereum/erc20/usd__coin": {
           platform: "earn",

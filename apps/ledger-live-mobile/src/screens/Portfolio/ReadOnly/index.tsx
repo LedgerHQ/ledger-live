@@ -7,7 +7,7 @@ import { useSelector } from "~/context/hooks";
 import { Box, Button, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useRefreshAccountsOrdering } from "~/actions/general";
+import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import GraphCardContainer from "../GraphCardContainer";
@@ -61,7 +61,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   usePortfolioAnalyticsOptInPrompt();
 
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+  const refreshAccountsOrdering = useRefreshAccountsOrderingAfterInteractions();
   useFocusEffect(refreshAccountsOrdering);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);

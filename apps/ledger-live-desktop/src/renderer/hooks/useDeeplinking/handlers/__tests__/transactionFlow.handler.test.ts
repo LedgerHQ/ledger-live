@@ -104,11 +104,7 @@ describe("transactionFlow.handler", () => {
 
       await sendHandler({ type: "send", currency: "ethereum" }, context);
 
-      expect(context.openAddAccountFlow).toHaveBeenCalledWith(
-        mockCurrency,
-        true,
-        expect.any(Function),
-      );
+      expect(context.openAddAccountFlow).toHaveBeenCalledWith(mockCurrency, expect.any(Function));
     });
 
     it("opens send flow with pre-selected account", async () => {

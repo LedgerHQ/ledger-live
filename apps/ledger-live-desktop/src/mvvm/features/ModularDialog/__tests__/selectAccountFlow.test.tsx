@@ -26,6 +26,13 @@ import {
   mockOnAccountSelected,
 } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
+import { setDrawer } from "~/renderer/drawers/Provider";
+
+jest.mock("~/renderer/drawers/Provider", () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  setDrawer: jest.fn(),
+}));
 
 const actualUseDispatch = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux").useDispatch;
 jest.mock("LLD/hooks/redux", () => {
@@ -55,7 +62,10 @@ const mockCurrencies = currencies.map(currency => currency.id);
 
 const defaultModularDialogState = {
   isOpen: true,
-  dialogParams: { currencies: mockCurrencies, onAccountSelected: mockOnAccountSelected },
+  dialogParams: {
+    currencies: mockCurrencies,
+    onAccountSelected: mockOnAccountSelected,
+  },
 };
 
 const createFilteredModularDialogState = (currencies: string[]) => ({
@@ -102,7 +112,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should navigate to AccountSelection step after network selection", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { accounts: [ETH_ACCOUNT], modularDialog: defaultModularDialogState },
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: defaultModularDialogState,
+      },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -121,7 +134,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should call onSelectAccount after accountSelection", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { accounts: [ETH_ACCOUNT], modularDialog: defaultModularDialogState },
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: defaultModularDialogState,
+      },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -192,15 +208,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
     expect(screen.getByText(/add account/i)).toBeVisible();
     await user.click(screen.getByText(/add account/i));
-    expect(mockDispatch).toHaveBeenCalledWith({
-      payload: {
-        data: {
-          currency: bitcoinCurrencyResult,
-        },
-        name: "MODAL_ADD_ACCOUNTS",
-      },
-      type: "MODAL_OPEN",
-    });
+    expect(setDrawer).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(setDrawer).mock.calls[0][1]).toEqual(
+      expect.objectContaining({ currency: bitcoinCurrencyResult }),
+    );
 
     useDispatchMock.mockImplementation(actualUseDispatch);
   });
@@ -281,7 +292,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
           flow: "flowTest",
           source: "sourceTest",
           isOpen: true,
-          dialogParams: { currencies: mockCurrencies, onAccountSelected: mockOnAccountSelected },
+          dialogParams: {
+            currencies: mockCurrencies,
+            onAccountSelected: mockOnAccountSelected,
+          },
         },
       },
     });
@@ -483,7 +497,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
   it("should NOT display description when there are accounts for the selected network", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
-      initialState: { accounts: [ETH_ACCOUNT], modularDialog: defaultModularDialogState },
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: defaultModularDialogState,
+      },
     });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());

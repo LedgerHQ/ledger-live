@@ -19,9 +19,7 @@ type ConnectAppState = DeviceActionState<
   ConnectAppDAIntermediateValue
 >;
 
-type ConnectAppOnceResult =
-  | { status: "success" }
-  | { status: "error"; error: ConnectAppDAError };
+type ConnectAppOnceResult = { status: "success" } | { status: "error"; error: ConnectAppDAError };
 
 /**
  * Default unlock timeout: how long ConnectApp waits for the user to unlock the device

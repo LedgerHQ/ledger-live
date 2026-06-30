@@ -96,6 +96,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
+    const ptxBorrowLiveAppFlag = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
     const llmSyncOnboardingIncr1Flag = analyticsFeatureFlagMethod("llmSyncOnboardingIncr1");
     const lwmAnalyticsConsentOnboardingFlag = analyticsFeatureFlagMethod(
       "lwmAnalyticsConsentOnboarding",
@@ -113,6 +114,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+    const borrowFeature = Boolean(ptxBorrowLiveAppFlag?.enabled);
     const llmSyncOnboardingIncr1 = Boolean(llmSyncOnboardingIncr1Flag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
@@ -149,6 +151,7 @@ const getFeatureFlagProperties = () => {
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
       ptxSwapLiveAppKycWarningEnabled,
+      borrowFeature,
       llmSyncOnboardingIncr1,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
@@ -229,20 +232,6 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
-  };
-};
-
-const getOptimiseOptInNotificationsNewWordingAttributes = (): Record<string, unknown> => {
-  if (!analyticsFeatureFlagMethod) return {};
-  const optimiseOptInNotificationsNewWording = analyticsFeatureFlagMethod(
-    "lwmNewWordingOptInNotificationsDrawer",
-  );
-  const isFFEnabled = optimiseOptInNotificationsNewWording?.enabled;
-
-  if (!isFFEnabled) return {};
-
-  return {
-    pushOptInVariant: optimiseOptInNotificationsNewWording?.params?.variant,
   };
 };
 
@@ -416,8 +405,6 @@ const extraProperties = async (store: AppStore) => {
     ({ event }) => event === STARTUP_EVENTS.APP_STARTED,
   )?.time;
 
-  const optimiseOptInNotificationsNewWordingAttributes =
-    getOptimiseOptInNotificationsNewWordingAttributes();
   const backupHubAttributes = getBackupHubAttributes();
 
   return {
@@ -472,7 +459,6 @@ const extraProperties = async (store: AppStore) => {
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
-    ...optimiseOptInNotificationsNewWordingAttributes,
     ...remoteABTestingAttributes,
   };
 };

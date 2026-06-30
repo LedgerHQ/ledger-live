@@ -22,7 +22,7 @@ const workerConfigs: WebdriverIO.Capabilities[] = Array.from(
       "appium:chromedriverPort": 8210 + i,
       "appium:mjpegServerPort": 7810 + i,
       "custom:capa": { websocketPort: 8098 + i },
-      "appium:platformVersion": "16.0",
+      "appium:platformVersion": process.env.E2E_WDIO_ANDROID_VERSION || "16.0",
       "appium:automationName": "UiAutomator2",
       "appium:adbExecTimeout": 30_000,
       "appium:skipLogcatCapture": false,

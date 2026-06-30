@@ -27,6 +27,7 @@ describe("Account name change", () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataCommand(account)],
+      speculosForSetupOnly: true,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
