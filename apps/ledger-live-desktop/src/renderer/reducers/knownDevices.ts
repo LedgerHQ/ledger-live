@@ -1,16 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "./index";
 import type { SettingsState } from "./settings";
-
-/**
- * Transport identifier used by the DMK WebHID transport (`webHidIdentifier`).
- * Desktop only connects over WebHID, so all known devices use this transport.
- */
-export const WEB_HID_TRANSPORT_IDENTIFIER: KnownDevice["transport"] = "web-hid";
 
 export type KnownDevicesState = {
   knownDevices: KnownDevice[];
@@ -46,7 +41,7 @@ function mapToWebHidKnownDevice(
   name: string | null = null,
 ): KnownDevice {
   return {
-    transport: WEB_HID_TRANSPORT_IDENTIFIER,
+    transport: webHidTransportIdentifier,
     deviceModelId,
     id: "",
     name,
@@ -72,7 +67,7 @@ export function mapDeviceToKnownDevice(device: Device | null | undefined): Known
 export function mapKnownDeviceToPersistedKnownDevice(
   device: KnownDevice,
 ): PersistedKnownDevice | null {
-  if (device.transport === WEB_HID_TRANSPORT_IDENTIFIER) {
+  if (device.transport === webHidTransportIdentifier) {
     return { ...device, transport: "webhid" };
   }
 
@@ -87,7 +82,7 @@ export function mapPersistedKnownDeviceToKnownDevice(
   device: Omit<KnownDevice, "transport"> & { transport: string },
 ): KnownDevice | null {
   if (device.transport === "webhid") {
-    return { ...device, transport: WEB_HID_TRANSPORT_IDENTIFIER };
+    return { ...device, transport: webHidTransportIdentifier };
   }
 
   return null;

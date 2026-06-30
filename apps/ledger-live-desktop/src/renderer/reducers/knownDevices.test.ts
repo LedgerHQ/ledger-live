@@ -1,9 +1,9 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import reducer, {
   INITIAL_STATE,
-  WEB_HID_TRANSPORT_IDENTIFIER,
   importKnownDevices,
   knownDevicesSelector,
   knownDevicesStoreSelector,
@@ -41,10 +41,6 @@ const setLastOnboardedDevice = (payload: Device | null) => ({
 const addDevice = (payload: Device) => ({ type: "ADD_DEVICE", payload });
 
 describe("knownDevices reducer", () => {
-  it("normalizes known devices as web-hid", () => {
-    expect(WEB_HID_TRANSPORT_IDENTIFIER).toBe("web-hid");
-  });
-
   it("starts empty", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toEqual(INITIAL_STATE);
   });
@@ -57,7 +53,7 @@ describe("knownDevices reducer", () => {
       );
       expect(state.knownDevices).toEqual([
         {
-          transport: WEB_HID_TRANSPORT_IDENTIFIER,
+          transport: webHidTransportIdentifier,
           deviceModelId: DeviceModelId.stax,
           id: "",
           name: null,
@@ -78,7 +74,7 @@ describe("knownDevices reducer", () => {
       );
       expect(state.knownDevices).toEqual([
         {
-          transport: WEB_HID_TRANSPORT_IDENTIFIER,
+          transport: webHidTransportIdentifier,
           deviceModelId: DeviceModelId.europa,
           id: "",
           name: "My Flex",
@@ -110,7 +106,7 @@ describe("knownDevices reducer", () => {
       const seeded: KnownDevicesState = {
         knownDevices: [
           {
-            transport: WEB_HID_TRANSPORT_IDENTIFIER,
+            transport: webHidTransportIdentifier,
             deviceModelId: DeviceModelId.europa,
             id: "",
             name: null,
@@ -130,7 +126,7 @@ describe("knownDevices reducer", () => {
       const state = reducer(INITIAL_STATE, lastSeenDeviceInfo(DeviceModelId.stax));
       expect(state.knownDevices).toEqual([
         {
-          transport: WEB_HID_TRANSPORT_IDENTIFIER,
+          transport: webHidTransportIdentifier,
           deviceModelId: DeviceModelId.stax,
           id: "",
           name: null,
@@ -145,7 +141,7 @@ describe("knownDevices reducer", () => {
       );
       expect(state.knownDevices).toEqual([
         {
-          transport: WEB_HID_TRANSPORT_IDENTIFIER,
+          transport: webHidTransportIdentifier,
           deviceModelId: DeviceModelId.europa,
           id: "",
           name: "Flex",
@@ -160,7 +156,7 @@ describe("knownDevices reducer", () => {
       );
       expect(state.knownDevices).toEqual([
         {
-          transport: WEB_HID_TRANSPORT_IDENTIFIER,
+          transport: webHidTransportIdentifier,
           deviceModelId: DeviceModelId.stax,
           id: "",
           name: "Stax",
@@ -194,7 +190,7 @@ describe("knownDevices reducer", () => {
       const seeded: KnownDevicesState = {
         knownDevices: [
           {
-            transport: WEB_HID_TRANSPORT_IDENTIFIER,
+            transport: webHidTransportIdentifier,
             deviceModelId: DeviceModelId.stax,
             id: "",
             name: null,
@@ -211,7 +207,7 @@ describe("knownDevices reducer", () => {
       const persisted: KnownDevicesState = {
         knownDevices: [
           {
-            transport: WEB_HID_TRANSPORT_IDENTIFIER,
+            transport: webHidTransportIdentifier,
             deviceModelId: DeviceModelId.europa,
             id: "",
             name: "Flex",
@@ -227,7 +223,7 @@ describe("knownDevices reducer", () => {
     it("returns the known devices from the root state", () => {
       const knownDevices = [
         {
-          transport: WEB_HID_TRANSPORT_IDENTIFIER,
+          transport: webHidTransportIdentifier,
           deviceModelId: DeviceModelId.stax,
           id: "",
           name: null,
@@ -241,7 +237,7 @@ describe("knownDevices reducer", () => {
 
   describe("serialization", () => {
     const webHidKnownDevice: KnownDevice = {
-      transport: WEB_HID_TRANSPORT_IDENTIFIER,
+      transport: webHidTransportIdentifier,
       deviceModelId: DeviceModelId.stax,
       id: "",
       name: "My Stax",
@@ -270,7 +266,7 @@ describe("knownDevices reducer", () => {
           name: "Flex",
         };
         expect(mapPersistedKnownDeviceToKnownDevice(persisted)).toEqual({
-          transport: WEB_HID_TRANSPORT_IDENTIFIER,
+          transport: webHidTransportIdentifier,
           deviceModelId: DeviceModelId.europa,
           id: "",
           name: "Flex",
