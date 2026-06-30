@@ -4,6 +4,10 @@
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src",
@@ -14,12 +18,10 @@
     "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/market-banner"
   },
-  "dependencies": {
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:"
-  },
+  "dependencies": {},
   "devDependencies": {
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",
