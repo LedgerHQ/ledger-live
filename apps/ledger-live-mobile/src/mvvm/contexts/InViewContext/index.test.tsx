@@ -27,9 +27,17 @@ function Consumer({
   depValue: number;
 }) {
   const ref = useRef<View | null>(null);
-  // Inline callback like the real carousel; changing `depValue` forces a re-subscription.
-  // oxlint-disable-next-line react-hooks/exhaustive-deps -- depValue intentionally drives re-subscription
-  useInViewContext(entry => onUpdate(entry), [onUpdate, depValue], ref);
+  // The callback closes over `depValue`, so bumping it changes the memoized callback
+  // identity and forces a re-subscription with a new WatchedItem but the same target
+  // ref — exactly how the carousel re-subscribes when it rebuilds its `items`.
+  useInViewContext(
+    entry => {
+      if (depValue < 0) return;
+      onUpdate(entry);
+    },
+    [onUpdate, depValue],
+    ref,
+  );
   return <View ref={ref} />;
 }
 
