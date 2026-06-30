@@ -10,11 +10,11 @@ const SUCCESS = 0x9000; // 36864
 
 const privkey = sha256(Buffer.from("coin-cosmos signRawOperation test seed"));
 
-function makeAccount(): CosmosAccount {
+function makeAccount(freshAddressPath = "44'/118'/0'/0/0"): CosmosAccount {
   return {
     id: "js:2:cosmos:cosmos1xxx:",
     freshAddress: "cosmos1xxx",
-    freshAddressPath: "44'/118'/0'/0/0",
+    freshAddressPath,
     currency: { id: "cosmos", units: [{ code: "ATOM" }, { code: "uatom" }] },
   } as unknown as CosmosAccount;
 }
@@ -191,6 +191,38 @@ describe("buildSignRawOperation", () => {
       ),
     ).rejects.toThrow("device returned no signature");
     expect(signer.sign).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes the HRP as the 3rd sign arg for ethermint chains (coin type 60)", async () => {
+    const signer = makeRealSigner();
+    const signRawOperation = buildSignRawOperation(signerContextOf(signer));
+
+    await firstValueFrom(
+      signRawOperation({
+        account: makeAccount("44'/60'/0'/0/0"),
+        deviceId: "mock",
+        transaction: makeSignDocJson(MSG_SEND),
+      }).pipe(toArray()),
+    );
+
+    // ethermint/60 → HRP (the cosmos chain prefix) is passed as the 3rd arg.
+    expect(signer.sign.mock.calls[0][2]).toBe("cosmos");
+  });
+
+  it("rejects a malformed derivation path before any device interaction", async () => {
+    const signer = makeRealSigner();
+    const signRawOperation = buildSignRawOperation(signerContextOf(signer));
+
+    await expect(
+      firstValueFrom(
+        signRawOperation({
+          account: makeAccount("not-a-path"),
+          deviceId: "mock",
+          transaction: makeSignDocJson(MSG_SEND),
+        }).pipe(toArray()),
+      ),
+    ).rejects.toThrow("malformed derivation path");
+    expect(signer.sign).not.toHaveBeenCalled();
   });
 
   it("rejects malformed JSON before any device interaction", async () => {

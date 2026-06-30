@@ -36,7 +36,13 @@ function assertValidStdSignDoc(doc: unknown): asserts doc is StdSignDoc {
 }
 
 function parseDerivationPath(freshAddressPath: string): number[] {
-  return freshAddressPath.split("/").map(segment => Number.parseInt(segment.replace(/'/g, ""), 10));
+  const path = freshAddressPath
+    .split("/")
+    .map(segment => Number.parseInt(segment.replace(/'/g, ""), 10));
+  if (path.length < 2 || path.some(Number.isNaN)) {
+    throw new Error(`signRawOperation: malformed derivation path "${freshAddressPath}"`);
+  }
+  return path;
 }
 
 function signTransaction(
@@ -94,16 +100,17 @@ async function performSignRawOperation(
     throw new Error(`signRawOperation: device returned no signature (return_code ${return_code})`);
   }
 
-  observer.next({ type: "device-signature-granted" });
-
   // DER → fixed 64-byte r‖s, hex-encoded.
   const signature = Buffer.from(Secp256k1Signature.fromDer(resSignature).toFixedLength()).toString(
     "hex",
   );
 
+  // Mirror signOperation: don't emit any post-device event once unsubscribed.
   if (isCancelled()) {
     return;
   }
+
+  observer.next({ type: "device-signature-granted" });
 
   // Optimistic operation: the real tx is assembled and broadcast by the
   // dApp, so we only have a placeholder here.
