@@ -29,47 +29,79 @@ export type ZcashRecipientClass =
   | { error: "sapling-unsupported" }
   | { error: "invalid" };
 
+// ---------------------------------------------------------------------------
+// F4Jumble -- ZIP-316 section 3, ported from librustzcash components/f4jumble
+// ---------------------------------------------------------------------------
+
+// Personalization for H rounds: b"UA_F4Jumble_H" (13 bytes) + [i, 0, 0]
+function hPers(i: number): Uint8Array {
+  const p = new Uint8Array(16);
+  const s = "UA_F4Jumble_H";
+  for (let k = 0; k < s.length; k++) p[k] = s.charCodeAt(k);
+  p[13] = i;
+  // p[14] and p[15] remain 0
+  return p;
+}
+
+// Personalization for G rounds: b"UA_F4Jumble_G" (13 bytes) + [i, j & 0xFF, (j >> 8) & 0xFF]
+function gPers(i: number, j: number): Uint8Array {
+  const p = new Uint8Array(16);
+  const s = "UA_F4Jumble_G";
+  for (let k = 0; k < s.length; k++) p[k] = s.charCodeAt(k);
+  p[13] = i;
+  p[14] = j & 0xff;
+  p[15] = (j >> 8) & 0xff;
+  return p;
+}
+
 /**
- * Inverse F4Jumble permutation from ZIP-316 section 3.
+ * Inverse F4Jumble permutation (ZIP-316 section 3).
+ * Ported from librustzcash components/f4jumble.
  *
- * F4Jumble is a wide-block permutation using BLAKE2b with personalization "UA-F4Jumble".
- * Split: H = min(l, 64); left = bytes[0..H], right = bytes[H..l].
+ * Split: left_length = min(64, floor(len/2))
+ *        left  = bytes[0..left_length]
+ *        right = bytes[left_length..]
  *
- * Forward: a = left XOR H(right), b = right XOR H(a), c = a XOR H(b), d = b XOR H(c)
- * Inverse (given output c || d):
- *   b = d XOR BLAKE2b(c, outlen=l-H)
- *   a = c XOR BLAKE2b(b, outlen=H)
+ * h_round(i): h = BLAKE2b(right, dkLen=left.length, pers=H_PERS(i))
+ *             left ^= h
+ *
+ * g_round(i): for j in 0..ceil(right.length/64):
+ *               h = BLAKE2b(left, dkLen=64, pers=G_PERS(i,j))
+ *               right[j*64..] ^= h (up to right.length)
+ *
+ * INVERSE applies rounds in order: h_round(1); g_round(1); h_round(0); g_round(0)
  */
 function f4jumbleInverse(bytes: Uint8Array): Uint8Array {
-  const l = bytes.length;
-  const H = Math.min(l, 64);
+  const len = bytes.length;
+  const leftLen = Math.min(64, Math.floor(len / 2));
 
-  const personStr = "UA-F4Jumble";
-  const person = new Uint8Array(16);
-  for (let i = 0; i < personStr.length; i++) {
-    person[i] = personStr.charCodeAt(i);
+  const left = bytes.slice(0, leftLen);
+  const right = bytes.slice(leftLen);
+
+  function hRound(i: number): void {
+    const h = blake2b(right, { dkLen: leftLen, personalization: hPers(i) });
+    for (let k = 0; k < leftLen; k++) left[k] ^= h[k];
   }
 
-  const c = bytes.slice(0, H);
-  const d = bytes.slice(H);
-
-  // b = d XOR BLAKE2b(c, outlen=l-H)
-  const hashC = blake2b(c, { dkLen: l - H, personalization: person });
-  const b = new Uint8Array(l - H);
-  for (let i = 0; i < l - H; i++) {
-    b[i] = d[i] ^ hashC[i];
+  function gRound(i: number): void {
+    const rightLen = right.length;
+    const chunks = Math.ceil(rightLen / 64);
+    for (let j = 0; j < chunks; j++) {
+      const h = blake2b(left, { dkLen: 64, personalization: gPers(i, j) });
+      const chunkSize = Math.min(64, rightLen - j * 64);
+      for (let k = 0; k < chunkSize; k++) right[j * 64 + k] ^= h[k];
+    }
   }
 
-  // a = c XOR BLAKE2b(b, outlen=H)
-  const hashB = blake2b(b, { dkLen: H, personalization: person });
-  const a = new Uint8Array(H);
-  for (let i = 0; i < H; i++) {
-    a[i] = c[i] ^ hashB[i];
-  }
+  // Inverse round order: h1, g1, h0, g0
+  hRound(1);
+  gRound(1);
+  hRound(0);
+  gRound(0);
 
-  const result = new Uint8Array(l);
-  result.set(a, 0);
-  result.set(b, H);
+  const result = new Uint8Array(len);
+  result.set(left, 0);
+  result.set(right, leftLen);
   return result;
 }
 
