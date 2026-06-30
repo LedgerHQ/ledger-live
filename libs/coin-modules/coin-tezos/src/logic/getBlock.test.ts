@@ -1252,9 +1252,9 @@ describe("origination operations", () => {
     const result = await getBlock(5_000_000);
 
     // origination tx should contain both the native transfer and the token ops
-    const origTx = result.transactions.find(t => t.hash === "opOrig1");
-    expect(origTx).toBeDefined();
-    const tokenOps = origTx!.operations.filter(
+    const origTx = result.transactions.find(t => t.hash === "opOrig1")!;
+    expect(origTx).not.toBeUndefined();
+    const tokenOps = origTx.operations.filter(
       op => op.type === "transfer" && "asset" in op && (op as any).asset.type === "fa2",
     );
     expect(tokenOps).toHaveLength(2); // from + to
@@ -1275,9 +1275,9 @@ describe("origination operations", () => {
 
     // The token transfer should use the resolved origination hash, not "token-50"
     expect(mockGetOperationsOrigination).toHaveBeenCalledWith(0, undefined, { "id.in": "999" });
-    const tx = result.transactions.find(t => t.hash === "opCrossBlockOrig");
-    expect(tx).toBeDefined();
-    expect(tx!.operations).toHaveLength(2); // from + to token ops
+    const tx = result.transactions.find(t => t.hash === "opCrossBlockOrig")!;
+    expect(tx).not.toBeUndefined();
+    expect(tx.operations).toHaveLength(2); // from + to token ops
   });
 });
 
