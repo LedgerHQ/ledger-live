@@ -29,7 +29,8 @@ import {
   resolveSwapProvider,
   WALLET_CLI_DEFAULT_SWAP_PROVIDERS,
 } from "./providers";
-import { swapFlowId, trackSwapFailed, trackSwapSimulated } from "./swap-analytics";
+import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
+import { swapFlowId, trackSwapFailed, trackSwapSimulated } from "../../analytics/swap-analytics";
 import { getErrorDetails } from "@ledgerhq/live-common/exchange/error";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;

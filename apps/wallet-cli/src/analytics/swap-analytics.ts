@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { track } from "../../analytics/segment";
+import { track } from "./segment";
 
 const QUOTE = "Swap - Quote";
 const EXECUTE = "Swap - Execute";

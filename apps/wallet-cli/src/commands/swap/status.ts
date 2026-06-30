@@ -6,7 +6,7 @@ import { createCommandOutput } from "../../output";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { mapSwapStatusLine } from "./status-shared";
 import { resolveSwapProvider } from "./providers";
-import { swapFlowId, trackSwapStatusPolled } from "./swap-analytics";
+import { swapFlowId, trackSwapStatusPolled } from "../../analytics/swap-analytics";
 
 export default defineCommand({
   name: "status",
