@@ -1,6 +1,7 @@
 import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
+import { isMyWalletEnabled } from "../../utils/initUtil";
 
 type Wallet40TabName = "home" | "swap" | "earn" | "card";
 
@@ -11,8 +12,12 @@ export default class MainNavigationPage {
   // --- Wallet 4.0 top bar buttons ---
   topBarDiscoverId = "topbar-discover";
   topBarMyWalletId = "topbar-mywallet";
+  topBarMyLedgerId = "topbar-myledger";
+  topBarSettingsId = "topbar-settings";
+  topBarNotificationsId = "topbar-notifications";
   topBarTransactionHistoryId = "topbar-transaction-history";
   headerBackButtonId = "header-back-button";
+  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
 
   // --- Legacy bottom tabs ---
   legacyPortfolioTabId = "tab-bar-portfolio";
@@ -71,6 +76,16 @@ export default class MainNavigationPage {
     await tapById(this.topBarTransactionHistoryId);
   }
 
+  @Step("Navigate to Settings")
+  async navigateToSettings() {
+    if (isMyWalletEnabled) {
+      await tapById(this.topBarMyWalletId);
+      await tapById(this.myWalletHeaderSettingsButtonId);
+    } else {
+      await tapById(this.topBarSettingsId);
+    }
+  }
+
   // =====================
   // Legacy Tab Actions
   // =====================
@@ -109,7 +124,13 @@ export default class MainNavigationPage {
 
   @Step("Expect Wallet 4.0 top bar to be visible")
   async expectWallet40TopBarVisible() {
-    await detoxExpect(getElementById(this.topBarMyWalletId)).toBeVisible();
+    if (isMyWalletEnabled) {
+      await detoxExpect(getElementById(this.topBarMyWalletId)).toBeVisible();
+    } else {
+      await detoxExpect(getElementById(this.topBarMyLedgerId)).toBeVisible();
+      await detoxExpect(getElementById(this.topBarNotificationsId)).toBeVisible();
+      await detoxExpect(getElementById(this.topBarSettingsId)).toBeVisible();
+    }
     await detoxExpect(getElementById(this.topBarDiscoverId)).toBeVisible();
     await detoxExpect(getElementById(this.topBarTransactionHistoryId)).toBeVisible();
   }
@@ -135,7 +156,11 @@ export default class MainNavigationPage {
 
   @Step("Expect Wallet 4.0 top bar NOT visible")
   async expectWallet40TopBarNotVisible() {
-    await detoxExpect(getElementById(this.topBarMyWalletId)).not.toBeVisible();
+    if (isMyWalletEnabled) {
+      await detoxExpect(getElementById(this.topBarMyWalletId)).not.toBeVisible();
+    } else {
+      await detoxExpect(getElementById(this.topBarMyLedgerId)).not.toBeVisible();
+    }
   }
 
   // =====================
