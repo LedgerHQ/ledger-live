@@ -495,6 +495,7 @@ export async function getBlock(height: number): Promise<Block> {
   const unresolvedOrigIds = [
     ...new Set(
       tokenTransfers
+        .filter(t => t.transactionId === undefined)
         .map(t => t.originationId)
         .filter((id): id is number => id !== undefined && !knownIds.has(id)),
     ),
