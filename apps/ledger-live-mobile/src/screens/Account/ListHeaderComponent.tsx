@@ -12,6 +12,7 @@ import {
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import type { TFunction } from "i18next";
+import { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
@@ -25,6 +26,7 @@ import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
+import perFamilyEarnSectionLabel from "../../generated/EarnSectionLabel";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import {
@@ -154,6 +156,7 @@ export function useListHeaderComponents({
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
       account: account as Account &
+        AleoAccount &
         AptosAccount &
         CeloAccount &
         CosmosAccount &
@@ -173,6 +176,11 @@ export function useListHeaderComponents({
     currencyConfig &&
     "disableDelegation" in currencyConfig &&
     currencyConfig.disableDelegation === true;
+
+  const earnSectionLabel =
+    family in perFamilyEarnSectionLabel
+      ? (perFamilyEarnSectionLabel[family] ? t(perFamilyEarnSectionLabel[family]) : null)
+      : t("account.earn");
 
   return {
     listHeaderComponents: [
@@ -219,7 +227,9 @@ export function useListHeaderComponents({
       (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)
         ? [
             <SectionContainer key="AccountHeader">
-              <SectionTitle title={t("account.earn")} containerProps={{ mx: 6, mb: 6 }} />
+              {earnSectionLabel && (
+                <SectionTitle title={earnSectionLabel} containerProps={{ mx: 6, mb: 6 }} />
+              )}
               <Box>
                 {AccountHeaderRendered && (
                   <Box mx={6} mb={6}>
@@ -241,7 +251,10 @@ export function useListHeaderComponents({
             </SectionContainer>,
           ]
         : []),
-      ...(!empty && account.type === "Account" && account.subAccounts
+      ...(!empty &&
+      account.type === "Account" &&
+      account.subAccounts &&
+      (account.subAccounts.length > 0 || (currency.tokenTypes?.length ?? 0) > 0)
         ? [
             <SectionContainer px={6} key="SubAccountsList">
               <SubAccountsList
