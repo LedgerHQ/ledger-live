@@ -1,5 +1,6 @@
+import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
 import { FullConfig } from "@playwright/test";
-import { execFileSync } from "child_process";
+import { execFileSync } from "node:child_process";
 import { responseLogfilePath } from "./networkResponseLogger";
 import { mkdirSync, promises as fs, unlink, writeFileSync } from "fs";
 import {
@@ -38,6 +39,8 @@ export default async function globalSetup(_config: FullConfig) {
     [
       `SPECULOS_DEVICE=${SPECULOS_DEVICE}`,
       `SPECULOS_FIRMWARE_VERSION=${SPECULOS_FIRMWARE_VERSION}`,
+      `E2E_DESKTOP_FEATURE_FLAGS=${process.env.E2E_DESKTOP_FEATURE_FLAGS}`,
+      `E2E_FEATURE_FLAGS_JSON=${JSON.stringify(parseExtraFeatureFlags(process.env.E2E_FEATURE_FLAGS_JSON))}`,
       "",
     ].join("\n"),
     { encoding: "utf8", flag: "w" },

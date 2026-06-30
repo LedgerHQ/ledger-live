@@ -130,7 +130,9 @@ export class PortfolioPage extends AppPage {
 
   @step("Click on asset row $0")
   async clickOnSelectedAssetRow(asset: string) {
-    const assetRow = isAssetSectionEnabled ? this.w40AssetRow(asset) : this.legacyAssetRow(asset);
+    const assetRow = (await isAssetSectionEnabled(this.page))
+      ? this.w40AssetRow(asset)
+      : this.legacyAssetRow(asset);
     await assetRow.click();
   }
 
@@ -191,7 +193,7 @@ export class PortfolioPage extends AppPage {
   @step("Expect asset row $0 to have the correct counter value $1")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
     // ON: dedicated W40 value cell. OFF: legacy AssetDistribution row (contains price + counter value).
-    const rowValue = isAssetSectionEnabled
+    const rowValue = (await isAssetSectionEnabled(this.page))
       ? this.w40AssetRowValue(asset)
       : this.legacyAssetRow(asset);
     await expect(rowValue).toBeVisible();

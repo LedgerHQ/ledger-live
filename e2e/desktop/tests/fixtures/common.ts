@@ -25,8 +25,7 @@ import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-common/e2e/sp
 import { attachNetworkLogging } from "../utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
-import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
+import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 
 type CliCommand = ((userdataPath?: string) => Observable<unknown> | Promise<unknown> | string) & {
   canUseGeneratedUserdata?: () => boolean;
@@ -70,29 +69,6 @@ const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
-
-const EXTRA_FEATURE_FLAGS: OptionalFeatureMap = parseExtraFeatureFlags(
-  process.env.E2E_FEATURE_FLAGS_JSON,
-);
-
-const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
-  lldModularDrawer: {
-    enabled: true,
-    params: {
-      add_account: true,
-      earn_flow: true,
-      live_app: true,
-      receive_flow: false,
-      send_flow: false,
-      enableModularization: true,
-      enableDialogDesktop: true,
-      searchDebounceTime: 300,
-      backendEnvironment: "PROD",
-      live_apps_allowlist: [],
-      live_apps_blocklist: [],
-    },
-  },
-};
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   const label = cmd.name || "anonymous";
@@ -229,13 +205,9 @@ export const test = base.extend<TestFixtures>({
     use,
     testInfo,
   ) => {
-    const mergedFeatureFlags = merge(
-      {},
-      DEFAULT_FEATURE_FLAGS,
-      EXTRA_FEATURE_FLAGS,
-      LWD_WALLET_40_FF_ENABLED, //Todo: Remove when Testing Firebase is sync with prod firebase
-      featureFlags,
-    );
+    const mergedFeatureFlags = getMergedFeatureFlags({
+      testFlags: featureFlags,
+    });
     await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
 
     // default environment variables
