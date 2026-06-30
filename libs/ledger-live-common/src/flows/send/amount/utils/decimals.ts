@@ -1,4 +1,4 @@
-export function clampDecimals(display: string): string {
+export function clampDecimals(display: string, maxDecimalLength = 2): string {
   const dotIndex = display.lastIndexOf(".");
   const commaIndex = display.lastIndexOf(",");
   const sepIndex = Math.max(dotIndex, commaIndex);
@@ -7,16 +7,17 @@ export function clampDecimals(display: string): string {
   const integerPart = display.slice(0, sepIndex);
   const sep = display[sepIndex];
   const decimals = display.slice(sepIndex + 1);
-  if (decimals.length <= 2) return display;
-  return `${integerPart}${sep}${decimals.slice(0, 2)}`;
+  if (maxDecimalLength <= 0) return integerPart;
+  if (decimals.length <= maxDecimalLength) return display;
+  return `${integerPart}${sep}${decimals.slice(0, maxDecimalLength)}`;
 }
 
-export function isOverDecimalLimit(display: string): boolean {
+export function isOverDecimalLimit(display: string, maxDecimalLength = 2): boolean {
   const dotIndex = display.lastIndexOf(".");
   const commaIndex = display.lastIndexOf(",");
   const sepIndex = Math.max(dotIndex, commaIndex);
   if (sepIndex === -1) return false;
-  return display.length - sepIndex - 1 > 2;
+  return display.length - sepIndex - 1 > maxDecimalLength;
 }
 
 export function trimTrailingZeros(display: string): string {
