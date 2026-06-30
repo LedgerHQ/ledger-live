@@ -1,4 +1,5 @@
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
@@ -40,7 +41,17 @@ setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   beforeAll(async () => {
     await app.init({
-      userdata: "wallet40-many-stablecoins",
+      userdata: "skip-onboarding-with-last-seen-device",
+      cliCommandsOnApp: [
+        {
+          app: Account.ETH_1.currency.speculosApp,
+          cmd: liveDataCommand(Account.ETH_1),
+        },
+        {
+          app: Account.POL_1.currency.speculosApp,
+          cmd: liveDataCommand(Account.POL_1),
+        },
+      ],
       featureFlags: ASSET_AGGREGATION_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
